@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hausaufgabe Wortarten 9. Klasse</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+  h1 { text-align: center; }
+  .question { background: #fff; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  .question p { margin: 0 0 10px; }
+  .submit-btn { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  input[name="studentName"] { padding: 5px; font-size: 16px; width: 200px; }
+</style>
+</head>
+<body>
+
+<h1>Hausaufgabe Wortarten – 9. Klasse</h1>
+
+<div>
+  <label for="studentName"><strong>Schülername (Kürzel):</strong></label>
+  <input type="text" id="studentName" placeholder="z.B. ML">
+</div>
+
+<form id="quizForm">
+
+<!-- Aufgaben: Beispielstruktur, insgesamt ca. 50 Aufgaben -->
+<div class="question">
+  <p>1. Wähle die richtige Wortart für <strong>"laufen"</strong>:</p>
+  <label><input type="radio" name="q1" value="Verb"> Verb</label><br>
+  <label><input type="radio" name="q1" value="Substantiv"> Substantiv</label><br>
+  <label><input type="radio" name="q1" value="Adjektiv"> Adjektiv</label>
+</div>
+
+<div class="question">
+  <p>2. Wähle die richtige Wortart für <strong>"schnell"</strong>:</p>
+  <label><input type="radio" name="q2" value="Adjektiv"> Adjektiv</label><br>
+  <label><input type="radio" name="q2" value="Verb"> Verb</label><br>
+  <label><input type="radio" name="q2" value="Substantiv"> Substantiv</label>
+</div>
+
+<div class="question">
+  <p>3. Relativ- oder Demonstrativpronomen? <strong>"der"</strong> im Satz: „Der Mann, der dort steht, ist mein Lehrer.“</p>
+  <label><input type="radio" name="q3" value="Relativpronomen"> Relativpronomen</label><br>
+  <label><input type="radio" name="q3" value="Demonstrativpronomen"> Demonstrativpronomen</label>
+</div>
+
+<div class="question">
+  <p>4. Personal- Possessiv- oder Demonstrativpronomen? <strong>"mein"</strong> im Satz: „Mein Hund schläft.“</p>
+  <label><input type="radio" name="q4" value="Personalpronomen"> Personalpronomen</label><br>
+  <label><input type="radio" name="q4" value="Possessivpronomen"> Possessivpronomen</label><br>
+  <label><input type="radio" name="q4" value="Demonstrativpronomen"> Demonstrativpronomen</label>
+</div>
+
+<div class="question">
+  <p>5. Wähle die Wortart für <strong>"Haus"</strong>:</p>
+  <label><input type="radio" name="q5" value="Substantiv"> Substantiv</label><br>
+  <label><input type="radio" name="q5" value="Verb"> Verb</label><br>
+  <label><input type="radio" name="q5" value="Adjektiv"> Adjektiv</label>
+</div>
+
+<div class="question">
+  <p>6. Wähle die Wortart für <strong>"schön"</strong>:</p>
+  <label><input type="radio" name="q6" value="Adjektiv"> Adjektiv</label><br>
+  <label><input type="radio" name="q6" value="Substantiv"> Substantiv</label><br>
+  <label><input type="radio" name="q6" value="Verb"> Verb</label>
+</div>
+
+<div class="question">
+  <p>7. Personal-, Possessiv-, Demonstrativ- oder Relativpronomen? <strong>"sie"</strong> im Satz: „Sie geht nach Hause.“</p>
+  <label><input type="radio" name="q7" value="Personalpronomen"> Personalpronomen</label><br>
+  <label><input type="radio" name="q7" value="Possessivpronomen"> Possessivpronomen</label><br>
+  <label><input type="radio" name="q7" value="Demonstrativpronomen"> Demonstrativpronomen</label><br>
+  <label><input type="radio" name="q7" value="Relativpronomen"> Relativpronomen</label>
+</div>
+
+<div class="question">
+  <p>8. Relativ- oder Demonstrativpronomen? <strong>"dieser"</strong> im Satz: „Dieser Mann ist mein Onkel.“</p>
+  <label><input type="radio" name="q8" value="Relativpronomen"> Relativpronomen</label><br>
+  <label><input type="radio" name="q8" value="Demonstrativpronomen"> Demonstrativpronomen</label>
+</div>
+
+<!-- Weitere Fragen bis q50 folgen hier in gleicher Struktur -->
+
+</form>
+
+<button class="submit-btn" onclick="submitAll()">Alle Antworten absenden</button>
+
+<script>
+// Google Sheets Web-App URL
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwoSyrBICskrw4tOV6kgNN4hRzyfHfVac8DniFcgaU-8wTYr1YvmbOojnh50P9Tsqk/exec";
+
+// Funktion, um eine Antwort zu senden
+function sendResult(name, frage, antwort) {
+  fetch(SHEET_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({name: name, frage: frage, antwort: antwort})
+  })
+  .then(response => response.json())
+  .then(data => console.log("Antwort gespeichert:", data))
+  .catch(error => console.error("Fehler:", error));
+}
+
+// Alle Antworten auf einmal senden
+function submitAll() {
+  const name = document.getElementById("studentName").value.trim();
+  if(!name) {
+    alert("Bitte gib zuerst dein Kürzel ein!");
+    return;
+  }
+
+  const form = document.getElementById("quizForm");
+  const inputs = form.querySelectorAll("input[type='radio']:checked");
+
+  if(inputs.length === 0) {
+    alert("Bitte wähle mindestens eine Antwort!");
+    return;
+  }
+
+  inputs.forEach(input => {
+    sendResult(name, input.name, input.value);
+  });
+
+  alert("Alle Antworten wurden gespeichert!");
+}
+</script>
+
+</body>
+</html>
