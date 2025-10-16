@@ -24,6 +24,7 @@
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,20,30,0.45);z-index:9999}
 .modal .card{background:#fff;max-width:780px;width:96%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.18);padding:16px}
 .modal h3{margin:0 0 8px 0}
+  .toast{position:sticky;top:0;z-index:1000;margin:-8px -8px 12px -8px;padding:10px 14px;border-radius:10px;border:1px solid #d6eaff;background:#eef6ff;color:#0b63d6;display:none}.toast.err{background:#ffeef0;border-color:#ffd6d9;color:#b02121}
   </style>
 </head>
 <body>
@@ -32,6 +33,7 @@
       <h1>Wortarten-Test</h1>
       <div class="small">Abruf aller Einsendungen aus Firebase</div>
     </header>
+    <div id="toast" class="toast"></div>
 
     <div id="studentArea" style="margin-top:20px;">
       <p>Trage deinen Namen ein und bearbeite die Aufgaben:</p>
@@ -223,7 +225,7 @@ function gradeFromPercent(p){
 // ---- Absenden (Speichern) ----
 const submitBtn = document.getElementById('submitBtn');
 const resultBox = document.getElementById('resultBox');
-submitBtn.addEventListener('click', submitAnswers);
+submitBtn.addEventListener('click', ()=>{ if(confirm('Willst du wirklich abgeben?')) submitAnswers(); });
 
 async function submitAnswers(){
   const name = document.getElementById('studentName').value.trim();
@@ -275,6 +277,8 @@ async function submitAnswers(){
     html += `</details>`;
     resultBox.innerHTML = html;
 
+    showToast('✅ Abgabe gespeichert. Punkte: '+evalRes.points+'/'+evalRes.total+' ('+evalRes.percent+'%). Note: '+gradeFromPercent(evalRes.percent)+'.', true);
+
   }catch(err){
     console.error('Fehler beim Speichern:', err);
     alert('Fehler beim Speichern. Siehe Konsole.');
@@ -290,7 +294,7 @@ const submissionsContainer=document.getElementById('submissionsContainer');
 
 loginBtn.addEventListener('click',()=>{
   const entered=document.getElementById('teacherPass').value;
-  if(entered===TEACHER_PASSWORD){
+  if(entered===TEACHER_PASSWORD){ showToast('👨‍🏫 Lehrerbereich geöffnet', true);
     document.getElementById('loginArea').style.display='none';
     teacherPanel.style.display='block';
     refreshSubmissions();
@@ -349,28 +353,28 @@ async function refreshSubmissions(){
 async function exportCsv(){
   try{
     let snap;
-    try{ snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc'))); }
-    catch(e){ console.warn('CSV-Fallback ohne orderBy:',e); snap = await getDocs(collection(db,'submissions')); }
+    try {
+      snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc')));
+    } catch(e) {
+      console.warn('CSV-Fallback ohne orderBy:', e);
+      snap = await getDocs(collection(db,'submissions'));
+    }
 
-    if(snap.empty){ alert('Keine Einsendungen.'); return; }
+    if (snap.empty) { alert('Keine Einsendungen.'); return; }
 
     const header = ['Name', ...Array.from({length:tasks.length},(_,i)=>`Q${i+1}`), 'Punkte', 'Prozent', 'Note', 'Timestamp'];
     const rows = [header];
 
-    snap.forEach(docSnap=>{
+    snap.forEach(docSnap => {
       const d = docSnap.data();
       const row = [d.studentName || ''];
-      for(let i=1;i<=tasks.length;i++){
+      for (let i=1;i<=tasks.length;i++){
         const v = d.answers ? d.answers['a'+i] : '';
-        row.push(Array.isArray(v)? v.join('; ') : (v||''));
+        row.push(Array.isArray(v) ? v.join('; ') : (v||''));
       }
       const note = (d.percent!=null? gradeFromPercent(d.percent) : '');
       const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toISOString() : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000).toISOString() : (d.createdAtLocal || ''));
-      row.push(d.score!=null? d.score : '');
-      row.push(d.percent!=null? d.percent : '');
-      row.push(note);
-      row.push(ts);
-      rows.push(row);
+      rows.push([ ...row, (d.score??''), (d.percent??''), note, ts ]);
     });
 
     const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('
@@ -379,12 +383,18 @@ async function exportCsv(){
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-  }catch(err){
-    console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
+  } catch(err){
+    console.error('Exportfehler:', err);
+    alert('Fehler beim Export. Siehe Konsole.');
   }
 }
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+function showToast(msg, ok=true){
+  const t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.className = ok? 'toast' : 'toast err'; t.style.display='block';
+  clearTimeout(window.__toastTO); window.__toastTO=setTimeout(()=>{ t.style.display='none'; }, 4000);
+}
+
 // ------- Bewertungs-Modal Logik -------
 const modal = document.getElementById('reviewModal');
 const modalBody = document.getElementById('modalBody');
