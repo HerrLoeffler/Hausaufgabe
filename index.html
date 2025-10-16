@@ -94,29 +94,29 @@ const db = getFirestore(app);
 
 // ---- Aufgaben (5 Stück, verschiedene Typen) ----
 const tasks = [
-  {id:1, question:"Markiere alle Substantive: Der Hund läuft im Park.", type:"multi", options:["Hund","läuft","Park"]},
-  {id:2, question:"Welche Wortart ist 'und'?", type:"single", options:["Verb","Konjunktion","Adjektiv"]},
-  {id:3, question:"Setze ein passendes Adjektiv ein: Der Film war ___.", type:"text"},
-  {id:4, question:"Wähle alle Verben: Sie tanzt und singt im Regen.", type:"multi", options:["tanzt","singt","im"]},
-  {id:5, question:"Bestimme die Wortart: schnell", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]},
-  {id:6, question:"Welche Präposition passt? Wir treffen uns ___ der Schule.", type:"single", options:["vor","und","aber"]},
-  {id:7, question:"In: 'Der Schüler, der zu spät kam, entschuldigte sich.' — Das zweite 'der' ist ...", type:"single", options:["Relativpronomen","Demonstrativpronomen"]},
-  {id:8, question:"Wähle alle Konjunktionen: Er blieb zu Hause, weil er krank war, und schlief.", type:"multi", options:["weil","und","krankt"]},
-  {id:9, question:"Welche Wortart ist 'niemand'?", type:"single", options:["Pronomen","Adverb","Adjektiv"]},
-  {id:10, question:"Setze ein passendes Possessivpronomen ein: 'Das ist ___ Heft.'", type:"text"}
+  {id:1, question:"Markiere alle Substantive: Die Katze schläft auf dem Sofa.", type:"multi", options:["Katze","schläft","Sofa"]},
+  {id:2, question:"Welche Wortart ist 'doch'?", type:"single", options:["Verb","Konjunktion","Adverb"]},
+  {id:3, question:"Setze ein passendes Adjektiv ein: Die Aufgabe war ___.", type:"text"},
+  {id:4, question:"Wähle alle Verben: Wir fahren und lachen im Bus.", type:"multi", options:["fahren","lachen","im"]},
+  {id:5, question:"Bestimme die Wortart: äußerst", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]},
+  {id:6, question:"Welche Präposition passt? Die Jacke hängt ___ der Tür.", type:"single", options:["an","aber","und"]},
+  {id:7, question:"In: 'Jenes Buch ist vergriffen.' — 'Jenes' ist ...", type:"single", options:["Demonstrativpronomen","Relativpronomen"]},
+  {id:8, question:"Wähle alle Konjunktionen: Er blieb, obwohl es spät war, und lernte weiter.", type:"multi", options:["obwohl","und","spät"]},
+  {id:9, question:"Welche Pronomenart ist 'welcher' in 'Der Schüler, welcher ...'?", type:"single", options:["Relativpronomen","Demonstrativpronomen"]},
+  {id:10, question:"Setze ein Possessivpronomen ein: 'Das ist ___ Platz.'", type:"text"}
 ];
 
 // ---- Antwortschlüssel für Auswertung ----
 const answerKey = {
-  1: {type:'multi', correct:["Hund","Park"]},
+  1: {type:'multi', correct:["Katze","Sofa"]},
   2: {type:'single', correct:["Konjunktion"]},
-  3: {type:'text', correct:["spannend","langweilig","toll","interessant","fesselnd","schlecht","gut","beeindruckend"]},
-  4: {type:'multi', correct:["tanzt","singt"]},
-  5: {type:'single', correct:["Adjektiv","Adverb"]},
-  6: {type:'single', correct:["vor"]},
-  7: {type:'single', correct:["Relativpronomen"]},
-  8: {type:'multi', correct:["weil","und"]},
-  9: {type:'single', correct:["Pronomen"]},
+  3: {type:'text', correct:["schwierig","knifflig","einfach","langweilig","anspruchsvoll","machbar","komplex","öde"]},
+  4: {type:'multi', correct:["fahren","lachen"]},
+  5: {type:'single', correct:["Adverb"]},
+  6: {type:'single', correct:["an"]},
+  7: {type:'single', correct:["Demonstrativpronomen"]},
+  8: {type:'multi', correct:["obwohl","und"]},
+  9: {type:'single', correct:["Relativpronomen"]},
   10:{type:'text',  correct:["mein","dein","sein","ihr","unser","euer","ihr"]}
 };
 
