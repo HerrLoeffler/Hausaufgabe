@@ -75,6 +75,39 @@
     </div>
   </div>
 
+<script>
+// --- Fallback-Renderer, damit Aufgaben IMMER sichtbar sind, auch wenn Firebase-Imports blockiert sind ---
+(function(){
+  try{
+    const tasksDiv = document.getElementById('tasks');
+    if(!tasksDiv) return;
+    if(tasksDiv.childElementCount>0) return; // schon gerendert
+    const tasksFallback = [
+      {id:1, question:"Markiere alle Substantive: Die Katze schläft auf dem Sofa.", type:"multi", options:["Katze","schläft","Sofa"]},
+      {id:2, question:"Welche Wortart ist 'doch'?", type:"single", options:["Verb","Konjunktion","Adverb"]},
+      {id:3, question:"Setze ein passendes Adjektiv ein: Die Aufgabe war ___.", type:"text"},
+      {id:4, question:"Wähle alle Verben: Wir fahren und lachen im Bus.", type:"multi", options:["fahren","lachen","im"]},
+      {id:5, question:"Bestimme die Wortart: äußerst", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]}
+    ];
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+    tasksFallback.forEach(t=>{
+      const div=document.createElement('div'); div.className='task';
+      const p=document.createElement('p'); p.textContent = `${t.id}. ${t.question}`; div.appendChild(p);
+      if(t.type==='multi'){
+        const opts = shuffle([...t.options]);
+        opts.forEach(opt=>{ const lbl=document.createElement('label'); const cb=document.createElement('input'); cb.type='checkbox'; cb.name='a'+t.id; cb.value=opt; lbl.appendChild(cb); lbl.appendChild(document.createTextNode(' '+opt)); div.appendChild(lbl); });
+      }else if(t.type==='single'){
+        const opts = shuffle([...t.options]);
+        opts.forEach(opt=>{ const lbl=document.createElement('label'); const rb=document.createElement('input'); rb.type='radio'; rb.name='a'+t.id; rb.value=opt; lbl.appendChild(rb); lbl.appendChild(document.createTextNode(' '+opt)); div.appendChild(lbl); });
+      }else{
+        const input=document.createElement('input'); input.type='text'; input.name='a'+t.id; input.placeholder='Antwort eingeben'; div.appendChild(input);
+      }
+      tasksDiv.appendChild(div);
+    });
+  }catch(e){ /* ignore */ }
+})();
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
@@ -324,8 +357,8 @@ async function exportCsv(){
     const header = ['Name', ...Array.from({length:tasks.length},(_,i)=>`Q${i+1}`), 'Punkte', 'Prozent', 'Note', 'Timestamp'];
     const rows = [header];
 
-    snap.forEach(doc=>{
-      const d = doc.data();
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
       const row = [d.studentName || ''];
       for(let i=1;i<=tasks.length;i++){
         const v = d.answers ? d.answers['a'+i] : '';
@@ -342,34 +375,6 @@ async function exportCsv(){
 
     const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('
 ');
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),4000);
-  }catch(err){
-    console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
-  }
-}
-    catch(e){ console.warn('CSV-Fallback ohne orderBy:',e); snap = await getDocs(collection(db,'submissions')); }
-
-    if(snap.empty){ alert('Keine Einsendungen.'); return; }
-
-    const rows = [['Name', ...Array.from({length:tasks.length},(_,i)=>`Q${i+1}`), 'Punkte', 'Prozent', 'Timestamp']];
-    snap.forEach(doc=>{
-      const d = doc.data();
-      const row = [d.studentName || ''];
-      for(let i=1;i<=tasks.length;i++){
-        const v = d.answers ? d.answers['a'+i] : '';
-        row.push(Array.isArray(d.answers['a'+i])? d.answers['a'+i].join('; ') : (v||''));
-      }
-      const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toISOString() : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000).toISOString() : (d.createdAtLocal || ''));
-      row.push(d.score!=null? d.score : '');
-      row.push(d.percent!=null? d.percent : '');
-      row.push(ts);
-      rows.push(row);
-    });
-
-    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
