@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wortarten-Test — Lehrerbereich mit Firebase</title>
+  <style>
+    body{font-family:Inter,system-ui;background:#f4f7fb;margin:0;padding:24px}
+    .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
+    header{display:flex;justify-content:space-between;align-items:center}
+    h1{color:#0b63d6;font-size:20px;margin:0}
+    .small{font-size:13px;color:#667}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #eaeaea;padding:8px;text-align:left;font-size:13px}
+    th{background:#f0f4ff}
+    button{background:#0b63d6;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+    button.secondary{background:#eef6ff;color:#0b63d6;border:1px solid #d6eaff}
+    input[type=password], input[type=text]{padding:8px;border:1px solid #ccc;border-radius:6px;width:240px}
+    #teacherPanel{display:none;margin-top:14px;padding:12px;background:#fff8e6;border-radius:8px;border:1px solid #ffecb3}
+    .task{margin:12px 0;padding:10px;border:1px solid #eef3ff;border-radius:10px;background:#fbfdff}
+    .task p{margin:0 0 6px 0;font-weight:600}
+    label{display:block;margin:4px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Wortarten-Test — Lehrerbereich</h1>
+      <div class="small">Abruf aller Einsendungen aus Firebase</div>
+    </header>
+
+    <div id="studentArea" style="margin-top:20px;">
+      <p>Trage deinen Namen ein und bearbeite die Aufgaben:</p>
+      <input type="text" id="studentName" placeholder="Vorname Nachname">
+      <div id="tasks"></div>
+      <button id="submitBtn">Antworten absenden</button>
+      <div id="resultBox" class="small" style="display:none;margin-top:10px;padding:10px;border-radius:8px;background:#f0f7ff;border:1px solid #dbeeff"></div>
+    </div>
+
+    <div id="loginArea" style="margin-top:28px;">
+      <p>Bitte Passwort eingeben, um den Lehrerbereich zu öffnen:</p>
+      <input type="password" id="teacherPass" placeholder="Lehrerpasswort">
+      <button id="loginBtn">Login</button>
+      <div id="loginMsg" class="small" style="color:#b33;margin-top:8px;"></div>
+    </div>
+
+    <div id="teacherPanel">
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="refreshSub" class="secondary">Aktualisieren</button>
+        <button id="exportCsv" class="secondary">Export CSV</button>
+        <div class="small" style="margin-left:auto">Neueste zuerst • zeigt alle Felder (auch Checkboxen)</div>
+      </div>
+      <div id="submissionsContainer" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+// ---- Firebase ----
+const firebaseConfig = {
+  apiKey: "AIzaSyCOWi7ecJR17wzEsm2q6wPR1BZWV-VrDBo",
+  authDomain: "hausaufgabe-40294.firebaseapp.com",
+  projectId: "hausaufgabe-40294",
+  storageBucket: "hausaufgabe-40294.firebasestorage.app",
+  messagingSenderId: "275544438191",
+  appId: "1:275544438191:web:d68f43e7e43025df76eb5a",
+  measurementId: "G-HPGHMYZXNJ"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ---- Aufgaben (5 Stück, verschiedene Typen) ----
+const tasks = [
+  {id:1, question:"Markiere alle Substantive: Der Hund läuft im Park.", type:"multi", options:["Hund","läuft","Park"]},
+  {id:2, question:"Welche Wortart ist 'und'?", type:"single", options:["Verb","Konjunktion","Adjektiv"]},
+  {id:3, question:"Setze ein passendes Adjektiv ein: Der Film war ___.", type:"text"},
+  {id:4, question:"Wähle alle Verben: Sie tanzt und singt im Regen.", type:"multi", options:["tanzt","singt","im"]},
+  {id:5, question:"Bestimme die Wortart: schnell", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]},
+  {id:6, question:"Welche Präposition passt? Wir treffen uns ___ der Schule.", type:"single", options:["vor","und","aber"]},
+  {id:7, question:"In: 'Der Schüler, der zu spät kam, entschuldigte sich.' — Das zweite 'der' ist ...", type:"single", options:["Relativpronomen","Demonstrativpronomen"]},
+  {id:8, question:"Wähle alle Konjunktionen: Er blieb zu Hause, weil er krank war, und schlief.", type:"multi", options:["weil","und","krankt"]},
+  {id:9, question:"Welche Wortart ist 'niemand'?", type:"single", options:["Pronomen","Adverb","Adjektiv"]},
+  {id:10, question:"Setze ein passendes Possessivpronomen ein: 'Das ist ___ Heft.'", type:"text"}
+];
+
+// ---- Antwortschlüssel für Auswertung ----
+const answerKey = {
+  1: {type:'multi', correct:["Hund","Park"]},
+  2: {type:'single', correct:["Konjunktion"]},
+  3: {type:'text', correct:["spannend","langweilig","toll","interessant","fesselnd","schlecht","gut","beeindruckend"]},
+  4: {type:'multi', correct:["tanzt","singt"]},
+  5: {type:'single', correct:["Adjektiv","Adverb"]},
+  6: {type:'single', correct:["vor"]},
+  7: {type:'single', correct:["Relativpronomen"]},
+  8: {type:'multi', correct:["weil","und"]},
+  9: {type:'single', correct:["Pronomen"]},
+  10:{type:'text',  correct:["mein","dein","sein","ihr","unser","euer","ihr"]}
+};
+
+// ---- Render Aufgaben ----
+const tasksDiv = document.getElementById('tasks');
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function renderTasks(){
+  tasksDiv.innerHTML = '';
+  tasks.forEach(t=>{
+    const div = document.createElement('div');
+    div.className='task';
+    const p = document.createElement('p');
+    p.textContent = `${t.id}. ${t.question}`;
+    div.appendChild(p);
+
+    if(t.type==='multi'){
+      const opts = shuffle([...t.options]);
+      opts.forEach(opt=>{
+        const lbl = document.createElement('label');
+        const cb = document.createElement('input'); cb.type='checkbox'; cb.name='a'+t.id; cb.value=opt;
+        lbl.appendChild(cb); lbl.appendChild(document.createTextNode(' '+opt));
+        div.appendChild(lbl);
+      });
+    } else if(t.type==='single'){
+      const opts = shuffle([...t.options]);
+      opts.forEach(opt=>{
+        const lbl = document.createElement('label');
+        const rb = document.createElement('input'); rb.type='radio'; rb.name='a'+t.id; rb.value=opt;
+        lbl.appendChild(rb); lbl.appendChild(document.createTextNode(' '+opt));
+        div.appendChild(lbl);
+      });
+    } else { // text
+      const input = document.createElement('input'); input.type='text'; input.name='a'+t.id; input.placeholder='Antwort eingeben';
+      div.appendChild(input);
+    }
+
+    tasksDiv.appendChild(div);
+  });
+}
+renderTasks();
+
+// ---- Auswertung ----
+function normalize(s){ return String(s||'').trim().toLowerCase(); }
+function arraysEqualAsSets(a,b){ if(a.length!==b.length) return false; const A=new Set(a.map(normalize)); const B=new Set(b.map(normalize)); if(A.size!==B.size) return false; for(const v of A){ if(!B.has(v)) return false; } return true; }
+function evaluate(answers){
+  let points=0; const details=[];
+  for(const t of tasks){
+    const key='a'+t.id; const given = answers[key]; const spec = answerKey[t.id]; let ok=false;
+    if(spec.type==='multi'){
+      const g = Array.isArray(given)? given.map(normalize) : [];
+      ok = arraysEqualAsSets(g, spec.correct.map(normalize));
+    } else if(spec.type==='single'){
+      ok = spec.correct.map(normalize).includes(normalize(given));
+    } else { // text
+      ok = spec.correct.map(normalize).includes(normalize(given));
+    }
+    if(ok) points++;
+    details.push({id:t.id, q:t.question, given, correct:spec.correct, ok});
+  }
+  return {points, total: tasks.length, percent: Math.round(points/tasks.length*100), details};
+}
+
+// ---- Absenden (Speichern) ----
+const submitBtn = document.getElementById('submitBtn');
+const resultBox = document.getElementById('resultBox');
+submitBtn.addEventListener('click', submitAnswers);
+
+async function submitAnswers(){
+  const name = document.getElementById('studentName').value.trim();
+  if(!name){ alert('Bitte Namen eingeben!'); return; }
+
+  const answers = {};
+  for(const t of tasks){
+    const key = 'a'+t.id;
+    if(t.type==='multi'){
+      const vals = Array.from(document.querySelectorAll(`input[name="${key}"]:checked`)).map(c=>c.value);
+      answers[key] = vals;
+    } else if(t.type==='single'){
+      const val = document.querySelector(`input[name="${key}"]:checked`)?.value || '';
+      answers[key] = val;
+    } else { // text
+      const val = document.querySelector(`input[name="${key}"]`)?.value || '';
+      answers[key] = val;
+    }
+  }
+
+  // Auswertung lokal (für Feedback) + mit speichern
+  const evalRes = evaluate(answers);
+
+  try{
+    const docRef = await addDoc(collection(db,'submissions'),{
+      studentName: name,
+      answers,
+      score: evalRes.points,
+      total: evalRes.total,
+      percent: evalRes.percent,
+      createdAt: serverTimestamp(),
+      createdAtLocal: new Date().toISOString()
+    });
+    console.log('Gespeichert in Firestore, DocID:', docRef.id);
+
+    // Feedback für Schüler
+    resultBox.style.display='block';
+    let html = `<strong>Abgabe gespeichert</strong> — ${evalRes.points}/${evalRes.total} Punkte (${evalRes.percent}%).`;
+    html += `<details style="margin-top:8px"><summary>Antworten & Lösungen ansehen</summary>`;
+    evalRes.details.forEach(d=>{
+      const given = Array.isArray(d.given)? d.given.join(', ') : (d.given||'(leer)');
+      const correct = Array.isArray(d.correct)? d.correct.join(', ') : d.correct;
+      html += `<div style="margin-top:6px;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">`+
+              `<div style="font-weight:600">${d.id}. ${d.q}</div>`+
+              `<div>Deine Antwort: ${escapeHtml(given)} ${d.ok? '✅' : '❌'}</div>`+
+              `<div>Korrekt: ${escapeHtml(String(correct))}</div>`+
+              `</div>`;
+    });
+    html += `</details>`;
+    resultBox.innerHTML = html;
+
+  }catch(err){
+    console.error('Fehler beim Speichern:', err);
+    alert('Fehler beim Speichern. Siehe Konsole.');
+  }
+}
+
+// ---- Lehrerbereich ----
+const TEACHER_PASSWORD='lehrer123';
+const loginBtn=document.getElementById('loginBtn');
+const loginMsg=document.getElementById('loginMsg');
+const teacherPanel=document.getElementById('teacherPanel');
+const submissionsContainer=document.getElementById('submissionsContainer');
+
+loginBtn.addEventListener('click',()=>{
+  const entered=document.getElementById('teacherPass').value;
+  if(entered===TEACHER_PASSWORD){
+    document.getElementById('loginArea').style.display='none';
+    teacherPanel.style.display='block';
+    refreshSubmissions();
+  } else {
+    loginMsg.textContent='Falsches Passwort!';
+  }
+});
+
+document.getElementById('refreshSub').addEventListener('click', refreshSubmissions);
+document.getElementById('exportCsv').addEventListener('click', exportCsv);
+
+async function refreshSubmissions(){
+  submissionsContainer.innerHTML='<div class="small">Lade Einsendungen…</div>';
+  try{
+    let snap;
+    try{
+      // bevorzugt: nach Serverzeit sortieren
+      snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc')));
+    }catch(e){
+      // Fallback: unsortiert (wenn createdAt noch nicht gesetzt ist)
+      console.warn('Fallback ohne orderBy(createdAt):', e);
+      snap = await getDocs(collection(db,'submissions'));
+    }
+
+    if(snap.empty){ submissionsContainer.innerHTML='<div class="small">Keine Einsendungen gefunden.</div>'; return; }
+
+    let html = '<table><thead><tr><th>Name</th>';
+    for(let i=1;i<=tasks.length;i++){ html += `<th>Q${i}</th>`; }
+    html += '<th>Punkte</th><th>%</th><th>Zeit</th></tr></thead><tbody>';
+
+    snap.forEach(doc=>{
+      const d = doc.data();
+      html += `<tr><td>${escapeHtml(d.studentName||'')}</td>`;
+      for(let i=1;i<=tasks.length;i++){
+        const v = d.answers ? d.answers['a'+i] : '';
+        html += `<td>${escapeHtml(Array.isArray(v)? v.join(', '): (v||''))}</td>`;
+      }
+      const pts = (d.score!=null? d.score : '');
+      const pc = (d.percent!=null? d.percent : '');
+      const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000) : (d.createdAtLocal ? new Date(d.createdAtLocal) : null));
+      html += `<td>${escapeHtml(String(pts))}</td><td>${escapeHtml(String(pc))}</td><td>${ts? escapeHtml(ts.toLocaleString()) : ''}</td></tr>`;
+    });
+
+    html += '</tbody></table>';
+    submissionsContainer.innerHTML = html;
+  }catch(err){
+    console.error('Ladefehler:',err);
+    submissionsContainer.innerHTML = '<div class="small">Fehler beim Laden der Einsendungen. Siehe Konsole.</div>';
+  }
+}
+
+async function exportCsv(){
+  try{
+    let snap;
+    try{ snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc'))); }
+    catch(e){ console.warn('CSV-Fallback ohne orderBy:',e); snap = await getDocs(collection(db,'submissions')); }
+
+    if(snap.empty){ alert('Keine Einsendungen.'); return; }
+
+    const rows = [['Name', ...Array.from({length:tasks.length},(_,i)=>`Q${i+1}`), 'Punkte', 'Prozent', 'Timestamp']];
+    snap.forEach(doc=>{
+      const d = doc.data();
+      const row = [d.studentName || ''];
+      for(let i=1;i<=tasks.length;i++){
+        const v = d.answers ? d.answers['a'+i] : '';
+        row.push(Array.isArray(d.answers['a'+i])? d.answers['a'+i].join('; ') : (v||''));
+      }
+      const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toISOString() : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000).toISOString() : (d.createdAtLocal || ''));
+      row.push(d.score!=null? d.score : '');
+      row.push(d.percent!=null? d.percent : '');
+      row.push(ts);
+      rows.push(row);
+    });
+
+    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  }catch(err){
+    console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
+  }
+}
+
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+</script>
+</body>
+</html>
