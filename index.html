@@ -9,14 +9,14 @@
     .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
     header{display:flex;justify-content:space-between;align-items:center}
     h1{color:#0b63d6;font-size:20px;margin:0}
-    .small{font-size:12px;color:#667}
+    .small{font-size:13px;color:#667}
 
-    /* Lehrerbereich kompakter & linksbündig */
+    /* wieder breiteres Layout */
     table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #eaeaea;padding:6px;text-align:left;font-size:12px;vertical-align:top}
+    th,td{border:1px solid #eaeaea;padding:8px;text-align:left;font-size:13px;vertical-align:top}
     th{background:#f0f4ff}
 
-    button{background:#0b63d6;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px}
+    button{background:#0b63d6;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
     button.secondary{background:#eef6ff;color:#0b63d6;border:1px solid #d6eaff}
     input[type=password], input[type=text]{padding:8px;border:1px solid #ccc;border-radius:6px;width:240px}
     #teacherPanel{display:none;margin-top:14px;padding:12px;background:#fff8e6;border-radius:8px;border:1px solid #ffecb3}
@@ -26,25 +26,24 @@
 
     /* Anzeige/Editor in Q-Zellen */
     .pts-line{display:flex;align-items:center;gap:6px;margin-top:6px}
-    .q-pts-label{font-size:11px;color:#445;white-space:nowrap}
-    .q-pts{width:52px;padding:3px 6px;border:1px solid #ccd6e6;border-radius:6px;text-align:center;font-size:12px}
+    .q-pts-label{font-size:12px;color:#445;white-space:nowrap}
+    .q-pts{width:56px;padding:4px 6px;border:1px solid #ccd6e6;border-radius:6px;text-align:center}
 
-    /* Spaltenbreiten (breit aber kompakt) */
-    .col-name{width:150px}
-    .col-q{min-width:120px;width:120px}
-    .col-sum{width:88px}
-    .col-pc{width:60px}
-    .col-note{width:60px}
-    .col-time{width:160px}
-    .col-act{width:260px}
+    /* Spaltenbreiten (breit) */
+    .col-name{width:160px}
+    .col-q{min-width:140px;width:140px}
+    .col-sum{width:100px}
+    .col-pc{width:70px}
+    .col-note{width:70px}
+    .col-time{width:170px}
+    .col-act{width:210px}
 
-    /* Antworten: links, Zeilenumbruch statt Überlappung, Höhe begrenzt */
-    .ans{white-space:normal;word-break:break-word;max-height:70px;overflow:auto}
+    /* Antworten begrenzen, damit nichts überlappt */
+    .ans{max-height:64px;overflow:auto}
 
     .save-btn{background:#16a34a;border:1px solid #b7f0c2;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
     .view-btn{background:#5551ff;border:1px solid #cfd2ff;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
     .edit-btn{background:#0ea5e9;border:1px solid #bfe6fb;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
-    .global-edit{background:#0ea5e9;border:1px solid #bfe6fb}
 
     /* Modal */
     #modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;padding:16px}
@@ -79,11 +78,10 @@
     </div>
 
     <div id="teacherPanel">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:10px;align-items:center">
         <button id="refreshSub" class="secondary">Aktualisieren</button>
         <button id="exportCsv" class="secondary">Export CSV</button>
-        <button id="toggleAllEdit" class="global-edit">Alle Punkte editieren</button>
-        <div class="small" style="margin-left:auto">Linksgebunden • Edit-Modus pro Zeile oder global</div>
+        <div class="small" style="margin-left:auto">Neueste zuerst • Einzelpunkte per „Punkte editieren“ bearbeiten</div>
       </div>
       <div id="submissionsContainer" style="margin-top:14px"></div>
     </div>
@@ -117,75 +115,45 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ---- 30 Aufgaben (klar & mittelstufengerecht) ----
+// ---- Aufgaben ----
 const tasks = [
-  {id:1,  points:1, type:"multi",  question:"Markiere alle Nomen: Die Katze schläft auf dem Sofa.", options:["Katze","schläft","Sofa","auf"]},
-  {id:2,  points:1, type:"single", question:"Welche Wortart ist „laufen“?", options:["Nomen","Verb","Adjektiv"]},
-  {id:3,  points:1, type:"multi",  question:"Wähle alle Adjektive:", options:["schnell","blau","gehen","Auto"]},
-  {id:4,  points:1, type:"single", question:"Welche Wortart ist „heute“?", options:["Adverb","Nomen","Verb"]},
-  {id:5,  points:1, type:"multi",  question:"Wähle alle Präpositionen:", options:["unter","wegen","Kind","spielen","über"]},
-  {id:6,  points:1, type:"multi",  question:"Wähle alle Konjunktionen:", options:["und","oder","aber","Auto","weil"]},
-  {id:7,  points:1, type:"single", question:"Welche Wortart ist „drei“?", options:["Numerale","Adverb","Adjektiv"]},
-  {id:8,  points:1, type:"multi",  question:"Markiere Personalpronomen: Ich sehe dich, er wartet.", options:["Ich","dich","er","wartet"]},
-  {id:9,  points:1, type:"multi",  question:"Wähle Possessivpronomen:", options:["mein","dein","sein","Hund","bunt"]},
-  {id:10, points:1, type:"single", question:"Welche Wortart ist „dieser“ (als Hinweiswort)?", options:["Demonstrativpronomen","Personalpronomen","Nomen"]},
-  {id:11, points:1, type:"single", question:"Relativpronomen erkennen: „Das ist die Schülerin, ___ gestern gefehlt hat.“", options:["die","jenes","wir"]},
-  {id:12, points:1, type:"single", question:"Welche Wortart ist „unter“?", options:["Präposition","Konjunktion","Adverb"]},
-  {id:13, points:1, type:"single", question:"Welche Wortart ist „weil“?", options:["Konjunktion","Adverb","Numerale"]},
-  {id:14, points:1, type:"single", question:"Welche Wortart ist „sieben“?", options:["Numerale","Adjektiv","Nomen"]},
-  {id:15, points:1, type:"text",  question:"Setze ein passendes Adjektiv ein: Das Essen war ___. (z. B. lecker)",},
-  {id:16, points:1, type:"multi",  question:"Welche Wörter sind Nomen?", options:["Freude","laufen","schnell","Tisch"]},
-  {id:17, points:1, type:"multi",  question:"Welche Wörter sind Verben?", options:["gehen","spielen","lieb","Haus"]},
-  {id:18, points:1, type:"multi",  question:"Welche Wörter sind Adjektive?", options:["klug","rot","gestern","laufen"]},
-  {id:19, points:1, type:"multi",  question:"Welche Wörter sind Adverbien?", options:["gestern","dort","schön","spielen"]},
-  {id:20, points:1, type:"single", question:"Welche Wortart ist „und“?", options:["Konjunktion","Präposition","Adverb"]},
-  {id:21, points:1, type:"single", question:"Welche Wortart ist „ohne“?", options:["Präposition","Konjunktion","Verb"]},
-  {id:22, points:1, type:"single", question:"Pronomenart in „Das ist sein Fahrrad.“ — „sein“ ist …", options:["Possessivpronomen","Personalpronomen","Demonstrativpronomen"]},
-  {id:23, points:1, type:"single", question:"Pronomenart in „Dieses Buch gehört Anna.“ — „Dieses“ ist …", options:["Demonstrativpronomen","Relativpronomen","Personalpronomen"]},
-  {id:24, points:1, type:"single", question:"Pronomenart in „Das ist der Mann, der hilft.“ — „der“ (2.) ist …", options:["Relativpronomen","Possessivpronomen","Adjektiv"]},
-  {id:25, points:1, type:"single", question:"Pronomenart in „Ich komme später.“ — „Ich“ ist …", options:["Personalpronomen","Relativpronomen","Demonstrativpronomen"]},
-  {id:26, points:1, type:"text",  question:"Setze das Personalpronomen (3. Person Plural, Nominativ): ___ kommen später."},
-  {id:27, points:1, type:"multi",  question:"Welche Konjunktionen verbinden gleichrangige Sätze/Wörter?", options:["und","oder","aber","weil","dass"]},
-  {id:28, points:1, type:"multi",  question:"Welche Präpositionen verlangen in der Regel den Dativ?", options:["mit","aus","für","ohne"]},
-  {id:29, points:1, type:"multi",  question:"Wähle alle Demonstrativpronomen:", options:["dieser","jene","solches","wir","mein"]},
-  {id:30, points:1, type:"multi",  question:"Wähle alle Possessivpronomen:", options:["mein","unser","euer","dieser","sie"]}
+  {id:1, points:1, question:"Markiere alle Substantive: Der Hund läuft im Park.", type:"multi", options:["Hund","läuft","Park"]},
+  {id:2, points:1, question:"Welche Wortart ist 'und'?", type:"single", options:["Verb","Konjunktion","Adjektiv"]},
+  {id:3, points:1, question:"Setze ein passendes Adjektiv ein: Der Film war ___.", type:"text"},
+  {id:4, points:1, question:"Wähle alle Verben: Sie tanzt und singt im Regen.", type:"multi", options:["tanzt","singt","im"]},
+  {id:5, points:1, question:"Bestimme die Wortart: schnell", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]},
+  {id:6, points:1, question:"Synonyme wählen: Welche Wörter bedeuten ungefähr dasselbe wie „wütend“?", type:"multi", options:["zornig","verärgert","rasend","fröhlich","gelassen"]},
+  {id:7, points:1, question:"Antonym (Gegenteil): Was ist das Gegenteil von „sparsam“?", type:"single", options:["geizig","verschwenderisch","vorsichtig"]},
+  {id:8, points:1, question:"Kollokationen: Was passt zu „eine Entscheidung …“? (alle richtigen auswählen)", type:"multi", options:["treffen","fällen","legen","machen"]},
+  {id:9, points:1, question:"Wortbildung mit Präfix: Ergänze so, dass „nicht verständlich“ entsteht: ___verständlich", type:"text"},
+  {id:10, points:1, question:"Zusammensetzung: Wie heißt ein Vertrag für das Handy? (Schreibe das zusammengesetzte Nomen.)", type:"text"},
+  {id:11, points:1, question:"Welches Wort passt NICHT in die Reihe (Bedeutungsfeld „sprechen“)?", type:"single", options:["plaudern","flüstern","schreien","laufen","reden"]},
+  {id:12, points:1, question:"Anglizismen: Welche Wörter sind aus dem Englischen entlehnt und so im Deutschen üblich?", type:"multi", options:["downloaden","chillen","Team","Zeitgeist","Fernsehen"]},
+  {id:13, points:1, question:"Redewendung ergänzen: „Jemandem ___ die Sprünge helfen.“", type:"single", options:["auf","über","unter"]},
+  {id:14, points:1, question:"Falsche Freunde (Deutsch–Englisch): Welche bedeuten im Deutschen etwas anderes als das ähnlich klingende englische Wort? (alle richtigen auswählen)", type:"multi", options:["eventuell","aktuell","Chef","Gift","Computer"]},
+  {id:15, points:1, question:"Treffendstes Wort: „Der Schüler zeigte große ___: Er arbeitete selbstständig und zuverlässig.“", type:"single", options:["Disziplin","Temperatur","Landschaft"]}
 ];
 
-// ---- Antwortschlüssel (einfach & eindeutig) ----
+// ---- Antwortschlüssel ----
 const answerKey = {
-  1:  {type:'multi',  correct:["Katze","Sofa"]},
-  2:  {type:'single', correct:["Verb"]},
-  3:  {type:'multi',  correct:["schnell","blau"]},
-  4:  {type:'single', correct:["Adverb"]},
-  5:  {type:'multi',  correct:["unter","wegen","über"]},
-  6:  {type:'multi',  correct:["und","oder","aber","weil"]},
-  7:  {type:'single', correct:["Numerale"]},
-  8:  {type:'multi',  correct:["Ich","dich","er"]},
-  9:  {type:'multi',  correct:["mein","dein","sein"]},
-  10: {type:'single', correct:["Demonstrativpronomen"]},
-  11: {type:'single', correct:["die"]},
-  12: {type:'single', correct:["Präposition"]},
-  13: {type:'single', correct:["Konjunktion"]},
-  14: {type:'single', correct:["Numerale"]},
-  15: {type:'text',  correct:["lecker","gut","schlecht","würzig","kalt","heiß","fettig","salzig","süß","bitter","sauer"]},
-  16: {type:'multi',  correct:["Freude","Tisch"]},
-  17: {type:'multi',  correct:["gehen","spielen"]},
-  18: {type:'multi',  correct:["klug","rot"]},
-  19: {type:'multi',  correct:["gestern","dort"]},
-  20: {type:'single', correct:["Konjunktion"]},
-  21: {type:'single', correct:["Präposition"]},
-  22: {type:'single', correct:["Possessivpronomen"]},
-  23: {type:'single', correct:["Demonstrativpronomen"]},
-  24: {type:'single', correct:["Relativpronomen"]},
-  25: {type:'single', correct:["Personalpronomen"]},
-  26: {type:'text',  correct:["sie"]},  // 3. Person Plural Nominativ
-  27: {type:'multi',  correct:["und","oder","aber"]},
-  28: {type:'multi',  correct:["mit","aus"]},
-  29: {type:'multi',  correct:["dieser","jene","solches"]},
-  30: {type:'multi',  correct:["mein","unser","euer"]}
+  1: {type:'multi', correct:["Hund","Park"]},
+  2: {type:'single', correct:["Konjunktion"]},
+  3: {type:'text', correct:["spannend","langweilig","toll","interessant","fesselnd","schlecht","gut","beeindruckend"]},
+  4: {type:'multi', correct:["tanzt","singt"]},
+  5: {type:'single', correct:["Adjektiv","Adverb"]},
+  6: {type:'multi', correct:["zornig","verärgert","rasend"]},
+  7: {type:'single', correct:["verschwenderisch"]},
+  8: {type:'multi', correct:["treffen","fällen"]},
+  9: {type:'text', correct:["unverständlich"]},
+  10:{type:'text', correct:["handyvertrag","mobilfunkvertrag","mobiltelefonvertrag"]},
+  11:{type:'single', correct:["laufen"]},
+  12:{type:'multi', correct:["downloaden","chillen","team"]},
+  13:{type:'single', correct:["auf"]},
+  14:{type:'multi', correct:["eventuell","aktuell","chef","gift"]},
+  15:{type:'single', correct:["Disziplin"]}
 };
 
-// ---- Hilfsstrukturen & Bewertung (unverändert) ----
+// Hilfsstrukturen & Bewertung
 const tasksById = Object.fromEntries(tasks.map(t=>[t.id,t]));
 function normalize(s){ return String(s||'').trim().toLowerCase(); }
 function arraysEqualAsSets(a,b){
@@ -214,7 +182,7 @@ function autoPoints(taskId, given){
   return isCorrect(taskId, given) ? (Number(t.points)||0) : 0;
 }
 
-// ---- Schüler-Rendering (zeigt Punkte je Aufgabe) ----
+// ---- Schüler-Rendering ----
 const tasksDiv = document.getElementById('tasks');
 function renderTasks(){
   tasksDiv.innerHTML = '';
@@ -367,7 +335,7 @@ async function handleSubmitClick(){
       const given = Array.isArray(d.given)? d.given.join(', ') : (d.given||'(leer)');
       const correct = Array.isArray(d.correct)? d.correct.join(', ') : d.correct;
       html += `<div style="margin-top:6px;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">`+
-              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'}</span></div>`+
+              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'})</span></div>`+
               `<div>Deine Antwort: ${escapeHtml(given)} ${d.ok? '<span class="ok">✅ richtig</span>' : '<span class="bad">❌ falsch</span>'}</div>`+
               `<div>Korrekt: ${escapeHtml(String(correct))}</div>`+
               `</div>`;
@@ -391,7 +359,6 @@ const loginBtn=document.getElementById('loginBtn');
 const loginMsg=document.getElementById('loginMsg');
 const teacherPanel=document.getElementById('teacherPanel');
 const submissionsContainer=document.getElementById('submissionsContainer');
-const toggleAllBtn=document.getElementById('toggleAllEdit');
 
 loginBtn.addEventListener('click',()=>{
   const entered=document.getElementById('teacherPass').value;
@@ -407,7 +374,7 @@ loginBtn.addEventListener('click',()=>{
 document.getElementById('refreshSub').addEventListener('click', refreshSubmissions);
 document.getElementById('exportCsv').addEventListener('click', exportCsv);
 
-// ---- Lehrer-Tabelle mit globalem Edit-Schalter ----
+// ---- Lehrer-Tabelle mit „Punkte editieren“-Modus pro Zeile ----
 async function refreshSubmissions(){
   submissionsContainer.innerHTML='<div class="small">Lade Einsendungen…</div>';
   try{
@@ -448,7 +415,7 @@ async function refreshSubmissions(){
         const ok = isCorrect(q, given);
         const okBadge = ok ? '<span class="ok">✅</span>' : '<span class="bad">❌</span>';
 
-        // Anzeige-Modus (Spans) – Inputs erst bei Edit
+        // Anzeige-Modus (Spans) – Inputs werden erst bei "Punkte editieren" erzeugt
         rowHtml += `<td class="col-q">
           <div class="ans">${escapeHtml(givenStr||'(leer)')} ${okBadge}</div>
           <div class="pts-line">
@@ -479,11 +446,8 @@ async function refreshSubmissions(){
     });
 
     html += '</tbody></table>';
-    html += `<div class="small" style="margin-top:8px">Tipp: Globaler Schalter oben („Alle Punkte editieren“) oder pro Zeile mit „Punkte editieren“.</div>`;
+    html += `<div class="small" style="margin-top:8px">Tipp: Erst „Punkte editieren“, dann gewünschte Punkte eintragen und „Speichern“ drücken. „Gesamt“ = Summe der Einzelpunkte.</div>`;
     submissionsContainer.innerHTML = html;
-
-    // Wenn globaler Edit-Schalter aktiv war, nachladen → wieder aktivieren
-    if(toggleAllBtn.dataset.mode==='edit'){ setAllRowsEdit(true); }
 
   }catch(err){
     console.error('Ladefehler:',err);
@@ -491,11 +455,12 @@ async function refreshSubmissions(){
   }
 }
 
-// Einzelzeilen-Editmodus umschalten
+// Row-Edit-Modus an/aus schalten
 function toggleEditMode(row, toEdit){
   const modeBtn = row.querySelector('.edit-btn');
   const displays = row.querySelectorAll('.pts-display');
   if(toEdit){
+    // Spans -> Inputs
     displays.forEach(span=>{
       const val = span.textContent.trim();
       const q = span.dataset.q;
@@ -507,8 +472,10 @@ function toggleEditMode(row, toEdit){
       input.setAttribute('data-q', q);
       span.replaceWith(input);
     });
-    if(modeBtn){ modeBtn.textContent = 'Felder sperren'; modeBtn.setAttribute('data-mode','edit'); }
+    modeBtn.textContent = 'Felder sperren';
+    modeBtn.setAttribute('data-mode','edit');
   }else{
+    // Inputs -> Spans (ohne Speichern)
     const inputs = row.querySelectorAll('input.q-pts');
     inputs.forEach(inp=>{
       const q = inp.dataset.q;
@@ -518,26 +485,12 @@ function toggleEditMode(row, toEdit){
       span.textContent = inp.value;
       inp.replaceWith(span);
     });
-    if(modeBtn){ modeBtn.textContent = 'Punkte editieren'; modeBtn.setAttribute('data-mode','view'); }
+    modeBtn.textContent = 'Punkte editieren';
+    modeBtn.setAttribute('data-mode','view');
   }
 }
 
-// Globaler Edit-Schalter
-const toggleAllBtn=document.getElementById('toggleAllEdit');
-toggleAllBtn.addEventListener('click', ()=>{
-  const toEdit = toggleAllBtn.dataset.mode!=='edit';
-  setAllRowsEdit(toEdit);
-  toggleAllBtn.dataset.mode = toEdit ? 'edit' : 'view';
-  toggleAllBtn.textContent = toEdit ? 'Alle Felder sperren' : 'Alle Punkte editieren';
-});
-
-function setAllRowsEdit(toEdit){
-  document.querySelectorAll('#submissionsContainer tbody tr').forEach(tr=>{
-    toggleEditMode(tr, toEdit);
-  });
-}
-
-// Anzeigen / Editieren / Speichern
+// Event-Delegation: Anzeigen / Editieren / Speichern
 submissionsContainer.addEventListener('click', async (e)=>{
   const viewBtn = e.target.closest('.view-btn');
   const editBtn = e.target.closest('.edit-btn');
@@ -548,11 +501,12 @@ submissionsContainer.addEventListener('click', async (e)=>{
   const docId = (viewBtn||editBtn||saveBtn).dataset.doc;
 
   if(viewBtn){
+    // Modal mit Details
     const name = row.querySelector('.col-name').textContent;
     let body = `<div class="small">Schüler/in: <strong>${escapeHtml(name)}</strong></div>`;
     body += `<div style="margin-top:6px">`;
     for(let q=1;q<=tasks.length;q++){
-      const qCell = row.querySelectorAll('.col-q')[q-1];
+      const qCell = row.querySelector(`.col-q:nth-of-type(${q+1})`); // +1 wegen Name-Spalte
       const ansText = qCell.querySelector('.ans')?.textContent || '';
       const ptsVal = qCell.querySelector('.pts-display')?.textContent || qCell.querySelector('.q-pts')?.value || '0';
       body += `<div style="margin:6px 0;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">
@@ -574,17 +528,35 @@ submissionsContainer.addEventListener('click', async (e)=>{
 
   if(saveBtn){
     try{
+      // Sicherstellen, dass wir Werte aus Inputs holen (wenn gerade im Edit-Modus)
+      if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
+        // nichts – Inputs sind sichtbar
+      }else{
+        // in view-Mode -> in Inputs wechseln, direkt wieder zurück? Wir lesen in jedem Fall aktuelle Werte:
+      }
+
       const teacherPoints = {};
       let sum = 0;
 
-      const nodes = row.querySelectorAll('input.q-pts, .pts-display');
-      for(const n of nodes){
-        const q = n.dataset.q;
-        const raw = ('value' in n) ? n.value : n.textContent;
-        const val = Number((raw||'').toString().replace(',','.'));
-        if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
-        teacherPoints[q] = val;
-        sum += val;
+      // Wenn Inputs da → aus Inputs lesen, sonst aus Spans
+      const inputs = row.querySelectorAll('input.q-pts');
+      if(inputs.length){
+        for(const inp of inputs){
+          const q = inp.dataset.q;
+          const val = Number((inp.value||'').toString().replace(',','.'));
+          if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
+          teacherPoints[q] = val;
+          sum += val;
+        }
+      }else{
+        const spans = row.querySelectorAll('.pts-display');
+        for(const sp of spans){
+          const q = sp.dataset.q;
+          const val = Number((sp.textContent||'').toString().replace(',','.'));
+          if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
+          teacherPoints[q] = val;
+          sum += val;
+        }
       }
 
       const maxPts = totalMaxPoints();
@@ -597,12 +569,14 @@ submissionsContainer.addEventListener('click', async (e)=>{
         maxPoints: maxPts
       });
 
+      // UI aktualisieren
       row.querySelector('.sum-cell').textContent = String(sum);
       row.querySelector('.pc-cell').textContent = String(percent);
       row.querySelector('.note-cell').textContent = String(gradeFromPercent(percent));
 
+      // nach Speichern zurück in Anzeige-Modus
       if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
-        toggleEditMode(row,false);
+        toggleEditMode(row, false);
       }
     }catch(err){
       console.error('Fehler beim Speichern:',err);
