@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wortarten-Test — Lehrerbereich mit Firebase</title>
+  <title>Prozentrechnung — Lehrerbereich mit Firebase</title>
   <style>
     body{font-family:Inter,system-ui;background:#f4f7fb;margin:0;padding:24px}
     .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
     header{display:flex;justify-content:space-between;align-items:center}
     h1{color:#0b63d6;font-size:20px;margin:0}
-    .small{font-size:13px;color:#667}
+    .small{font-size:12px;color:#667}
 
-    /* wieder breiteres Layout */
+    /* Lehrerbereich kompakt & linksbündig */
     table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #eaeaea;padding:8px;text-align:left;font-size:13px;vertical-align:top}
+    th,td{border:1px solid #eaeaea;padding:6px;text-align:left;font-size:12px;vertical-align:top}
     th{background:#f0f4ff}
 
-    button{background:#0b63d6;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+    button{background:#0b63d6;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px}
     button.secondary{background:#eef6ff;color:#0b63d6;border:1px solid #d6eaff}
     input[type=password], input[type=text]{padding:8px;border:1px solid #ccc;border-radius:6px;width:240px}
     #teacherPanel{display:none;margin-top:14px;padding:12px;background:#fff8e6;border-radius:8px;border:1px solid #ffecb3}
@@ -26,24 +26,25 @@
 
     /* Anzeige/Editor in Q-Zellen */
     .pts-line{display:flex;align-items:center;gap:6px;margin-top:6px}
-    .q-pts-label{font-size:12px;color:#445;white-space:nowrap}
-    .q-pts{width:56px;padding:4px 6px;border:1px solid #ccd6e6;border-radius:6px;text-align:center}
+    .q-pts-label{font-size:11px;color:#445;white-space:nowrap}
+    .q-pts{width:52px;padding:3px 6px;border:1px solid #ccd6e6;border-radius:6px;text-align:center;font-size:12px}
 
-    /* Spaltenbreiten (breit) */
-    .col-name{width:160px}
-    .col-q{min-width:140px;width:140px}
-    .col-sum{width:100px}
-    .col-pc{width:70px}
-    .col-note{width:70px}
-    .col-time{width:170px}
-    .col-act{width:210px}
+    /* Spaltenbreiten (breit aber kompakt) */
+    .col-name{width:150px}
+    .col-q{min-width:120px;width:120px}
+    .col-sum{width:88px}
+    .col-pc{width:60px}
+    .col-note{width:60px}
+    .col-time{width:160px}
+    .col-act{width:260px}
 
-    /* Antworten begrenzen, damit nichts überlappt */
-    .ans{max-height:64px;overflow:auto}
+    /* Antworten: links, Umbruch, Höhe begrenzt */
+    .ans{white-space:normal;word-break:break-word;max-height:70px;overflow:auto}
 
     .save-btn{background:#16a34a;border:1px solid #b7f0c2;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
     .view-btn{background:#5551ff;border:1px solid #cfd2ff;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
     .edit-btn{background:#0ea5e9;border:1px solid #bfe6fb;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
+    .global-edit{background:#0ea5e9;border:1px solid #bfe6fb}
 
     /* Modal */
     #modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;padding:16px}
@@ -58,7 +59,7 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Wortarten-Test — Lehrerbereich</h1>
+      <h1>Prozentrechnung — Lehrerbereich</h1>
       <div class="small">Abruf aller Einsendungen aus Firebase</div>
     </header>
 
@@ -78,10 +79,11 @@
     </div>
 
     <div id="teacherPanel">
-      <div style="display:flex;gap:10px;align-items:center">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <button id="refreshSub" class="secondary">Aktualisieren</button>
         <button id="exportCsv" class="secondary">Export CSV</button>
-        <div class="small" style="margin-left:auto">Neueste zuerst • Einzelpunkte per „Punkte editieren“ bearbeiten</div>
+        <button id="toggleAllEdit" class="global-edit">Alle Punkte editieren</button>
+        <div class="small" style="margin-left:auto">Linksgebunden • Edit-Modus pro Zeile oder global</div>
       </div>
       <div id="submissionsContainer" style="margin-top:14px"></div>
     </div>
@@ -115,45 +117,93 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ---- Aufgaben ----
+/* =========================
+   25 Aufgaben – Prozentrechnung (P, G, p%)
+   ========================= */
 const tasks = [
-  {id:1, points:1, question:"Markiere alle Substantive: Der Hund läuft im Park.", type:"multi", options:["Hund","läuft","Park"]},
-  {id:2, points:1, question:"Welche Wortart ist 'und'?", type:"single", options:["Verb","Konjunktion","Adjektiv"]},
-  {id:3, points:1, question:"Setze ein passendes Adjektiv ein: Der Film war ___.", type:"text"},
-  {id:4, points:1, question:"Wähle alle Verben: Sie tanzt und singt im Regen.", type:"multi", options:["tanzt","singt","im"]},
-  {id:5, points:1, question:"Bestimme die Wortart: schnell", type:"single", options:["Adjektiv","Adverb","Nomen","Verb"]},
-  {id:6, points:1, question:"Synonyme wählen: Welche Wörter bedeuten ungefähr dasselbe wie „wütend“?", type:"multi", options:["zornig","verärgert","rasend","fröhlich","gelassen"]},
-  {id:7, points:1, question:"Antonym (Gegenteil): Was ist das Gegenteil von „sparsam“?", type:"single", options:["geizig","verschwenderisch","vorsichtig"]},
-  {id:8, points:1, question:"Kollokationen: Was passt zu „eine Entscheidung …“? (alle richtigen auswählen)", type:"multi", options:["treffen","fällen","legen","machen"]},
-  {id:9, points:1, question:"Wortbildung mit Präfix: Ergänze so, dass „nicht verständlich“ entsteht: ___verständlich", type:"text"},
-  {id:10, points:1, question:"Zusammensetzung: Wie heißt ein Vertrag für das Handy? (Schreibe das zusammengesetzte Nomen.)", type:"text"},
-  {id:11, points:1, question:"Welches Wort passt NICHT in die Reihe (Bedeutungsfeld „sprechen“)?", type:"single", options:["plaudern","flüstern","schreien","laufen","reden"]},
-  {id:12, points:1, question:"Anglizismen: Welche Wörter sind aus dem Englischen entlehnt und so im Deutschen üblich?", type:"multi", options:["downloaden","chillen","Team","Zeitgeist","Fernsehen"]},
-  {id:13, points:1, question:"Redewendung ergänzen: „Jemandem ___ die Sprünge helfen.“", type:"single", options:["auf","über","unter"]},
-  {id:14, points:1, question:"Falsche Freunde (Deutsch–Englisch): Welche bedeuten im Deutschen etwas anderes als das ähnlich klingende englische Wort? (alle richtigen auswählen)", type:"multi", options:["eventuell","aktuell","Chef","Gift","Computer"]},
-  {id:15, points:1, question:"Treffendstes Wort: „Der Schüler zeigte große ___: Er arbeitete selbstständig und zuverlässig.“", type:"single", options:["Disziplin","Temperatur","Landschaft"]}
+  // Umwandlungen Prozent/Dezimal/Bruch
+  {id:1,  points:1, type:"text",  question:"Wandle 25% in eine Dezimalzahl um."},
+  {id:2,  points:1, type:"text",  question:"Wandle 0,4 in Prozent um."},
+  {id:3,  points:1, type:"text",  question:"Wandle den Bruch 3/5 in Prozent um."},
+  {id:4,  points:1, type:"text",  question:"Wandle 12,5% als Bruch in vollständig gekürzter Form."},
+
+  // „Was ist gesucht?“ / Erkennen von P, G, p%
+  {id:5,  points:1, type:"single", question:"In einer Klasse sind 12 von 30 Schülern Linkshänder. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
+  {id:6,  points:1, type:"single", question:"20% von 150 sind 30. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
+  {id:7,  points:1, type:"single", question:"45 ist 15% von G. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
+  {id:8,  points:1, type:"single", question:"P beträgt 18 bei G = 120. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
+
+  // Formeln (mit P und p%)
+  {id:9,  points:1, type:"single", question:"Welche Formel ist korrekt für den Prozentwert P?", options:["P = (p% · G) / 100","P = (G · 100) / p%","p% = (P / G) · 100"]},
+  {id:10, points:1, type:"single", question:"Welche Formel ist korrekt für den Grundwert G?", options:["G = (P · 100) / p%","G = (p% · P) / 100","G = (P / p%) · 10000"]},
+  {id:11, points:1, type:"single", question:"Welche Formel ist korrekt für den Prozentsatz p%?", options:["p% = (P / G) · 100","p% = (G / P) · 100","p% = (P · G) · 100"]},
+
+  // Reine P-Berechnungen
+  {id:12, points:1, type:"text",  question:"Berechne den Prozentwert P: 15% von 200."},
+  {id:13, points:1, type:"text",  question:"Berechne den Prozentwert P: 7% von 300."},
+  {id:14, points:1, type:"text",  question:"Berechne den Prozentwert P: 12,5% von 640."},
+
+  // Reine G-Berechnungen
+  {id:15, points:1, type:"text",  question:"45 ist 15% von G. Bestimme G."},
+  {id:16, points:1, type:"text",  question:"32 ist 40% von G. Bestimme G."},
+  {id:17, points:1, type:"text",  question:"24 ist 6% von G. Bestimme G."},
+
+  // Reine p%-Berechnungen
+  {id:18, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 18 von 120?"},
+  {id:19, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 75 von 300?"},
+  {id:20, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 27 von 90?"},
+
+  // Einfache Textaufgaben (nur P/G/p%)
+  {id:21, points:1, type:"text",  question:"Ein Pullover kostet 80 €. Rabatt 20%. Wie groß ist der Prozentwert P (Rabattbetrag in €)?"},
+  {id:22, points:1, type:"text",  question:"Ein Konto wächst um 12% bei 2.500 €. Wie groß ist der Zuwachs P (in €)?"},
+  {id:23, points:1, type:"text",  question:"Ein Fahrrad kostet 360 €. 90 € entsprechen welchem Prozentsatz p%?"},
+  {id:24, points:1, type:"text",  question:"In einer Klasse mögen 8 von 25 Schüler Mathe. Wie groß ist der Prozentsatz p%?"},
+  {id:25, points:1, type:"text",  question:"Ein Handy (400 €) wird um 15% reduziert. Wie hoch ist der Preisnachlass P (in €)?"}
 ];
 
-// ---- Antwortschlüssel ----
+/* ====== Antwortschlüssel (angepasst auf P und p%) ====== */
 const answerKey = {
-  1: {type:'multi', correct:["Hund","Park"]},
-  2: {type:'single', correct:["Konjunktion"]},
-  3: {type:'text', correct:["spannend","langweilig","toll","interessant","fesselnd","schlecht","gut","beeindruckend"]},
-  4: {type:'multi', correct:["tanzt","singt"]},
-  5: {type:'single', correct:["Adjektiv","Adverb"]},
-  6: {type:'multi', correct:["zornig","verärgert","rasend"]},
-  7: {type:'single', correct:["verschwenderisch"]},
-  8: {type:'multi', correct:["treffen","fällen"]},
-  9: {type:'text', correct:["unverständlich"]},
-  10:{type:'text', correct:["handyvertrag","mobilfunkvertrag","mobiltelefonvertrag"]},
-  11:{type:'single', correct:["laufen"]},
-  12:{type:'multi', correct:["downloaden","chillen","team"]},
-  13:{type:'single', correct:["auf"]},
-  14:{type:'multi', correct:["eventuell","aktuell","chef","gift"]},
-  15:{type:'single', correct:["Disziplin"]}
+  // Umwandlungen
+  1:  {type:'text',  correct:["0.25","0,25","25%","1/4"]},
+  2:  {type:'text',  correct:["40%","40","0.4","0,4"]},
+  3:  {type:'text',  correct:["60%","60","0.6","0,6","60/100"]},
+  4:  {type:'text',  correct:["1/8","0.125","0,125","12,5%","12.5%"]},
+
+  // Was ist gesucht? (Bezeichnungen geändert)
+  5:  {type:'single', correct:["Prozentsatz (p%)"]},
+  6:  {type:'single', correct:["Prozentwert (P)"]},
+  7:  {type:'single', correct:["Grundwert (G)"]},
+  8:  {type:'single', correct:["Prozentsatz (p%)"]},
+
+  // Formeln
+  9:  {type:'single', correct:["P = (p% · G) / 100"]},
+  10: {type:'single', correct:["G = (P · 100) / p%"]},
+  11: {type:'single', correct:["p% = (P / G) · 100"]},
+
+  // P
+  12: {type:'text',  correct:["30","30€","€30","30 euro","30 eur","0.15*200","(15/100)*200"]},
+  13: {type:'text',  correct:["21","21€","€21","21 euro","21 eur","0.07*300","(7/100)*300"]},
+  14: {type:'text',  correct:["80","80€","€80","80 euro","80 eur","0.125*640","(12.5/100)*640","(12,5/100)*640"]},
+
+  // G
+  15: {type:'text',  correct:["300","300€","€300","300 euro","300 eur","45*100/15"]},
+  16: {type:'text',  correct:["80","80€","€80","80 euro","80 eur","32*100/40"]},
+  17: {type:'text',  correct:["400","400€","€400","400 euro","400 eur","24*100/6"]},
+
+  // p%
+  18: {type:'text',  correct:["15%","15","0.15","0,15","18/120*100","(18/120)*100"]},
+  19: {type:'text',  correct:["25%","25","0.25","0,25","75/300*100","(75/300)*100"]},
+  20: {type:'text',  correct:["30%","30","0.3","0,3","27/90*100","(27/90)*100"]},
+
+  // Textaufgaben
+  21: {type:'text',  correct:["16","16€","€16","16 euro","16 eur","0.2*80","(20/100)*80"]},
+  22: {type:'text',  correct:["300","300€","€300","300 euro","300 eur","0.12*2500","(12/100)*2500"]},
+  23: {type:'text',  correct:["25%","25","0.25","0,25","90/360*100","(90/360)*100"]},
+  24: {type:'text',  correct:["32%","32","0.32","0,32","8/25*100","(8/25)*100"]},
+  25: {type:'text',  correct:["60","60€","€60","60 euro","60 eur","0.15*400","(15/100)*400"]}
 };
 
-// Hilfsstrukturen & Bewertung
+// ======= Hilfsstrukturen & Bewertung (unverändert) =======
 const tasksById = Object.fromEntries(tasks.map(t=>[t.id,t]));
 function normalize(s){ return String(s||'').trim().toLowerCase(); }
 function arraysEqualAsSets(a,b){
@@ -182,7 +232,7 @@ function autoPoints(taskId, given){
   return isCorrect(taskId, given) ? (Number(t.points)||0) : 0;
 }
 
-// ---- Schüler-Rendering ----
+// ---- Schüler-Rendering (zeigt Punkte je Aufgabe) ----
 const tasksDiv = document.getElementById('tasks');
 function renderTasks(){
   tasksDiv.innerHTML = '';
@@ -335,7 +385,7 @@ async function handleSubmitClick(){
       const given = Array.isArray(d.given)? d.given.join(', ') : (d.given||'(leer)');
       const correct = Array.isArray(d.correct)? d.correct.join(', ') : d.correct;
       html += `<div style="margin-top:6px;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">`+
-              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'})</span></div>`+
+              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'}</span></div>`+
               `<div>Deine Antwort: ${escapeHtml(given)} ${d.ok? '<span class="ok">✅ richtig</span>' : '<span class="bad">❌ falsch</span>'}</div>`+
               `<div>Korrekt: ${escapeHtml(String(correct))}</div>`+
               `</div>`;
@@ -359,6 +409,7 @@ const loginBtn=document.getElementById('loginBtn');
 const loginMsg=document.getElementById('loginMsg');
 const teacherPanel=document.getElementById('teacherPanel');
 const submissionsContainer=document.getElementById('submissionsContainer');
+const toggleAllBtn=document.getElementById('toggleAllEdit');
 
 loginBtn.addEventListener('click',()=>{
   const entered=document.getElementById('teacherPass').value;
@@ -374,7 +425,7 @@ loginBtn.addEventListener('click',()=>{
 document.getElementById('refreshSub').addEventListener('click', refreshSubmissions);
 document.getElementById('exportCsv').addEventListener('click', exportCsv);
 
-// ---- Lehrer-Tabelle mit „Punkte editieren“-Modus pro Zeile ----
+// ---- Lehrer-Tabelle mit globalem Edit-Schalter ----
 async function refreshSubmissions(){
   submissionsContainer.innerHTML='<div class="small">Lade Einsendungen…</div>';
   try{
@@ -400,7 +451,7 @@ async function refreshSubmissions(){
       const id = docSnap.id;
 
       const ans = d.answers || {};
-      const tPts = d.teacherPoints || {}; // { "1": 1, ... }
+      const tPts = d.teacherPoints || {};
 
       let rowHtml = `<tr data-doc="${id}" data-max="${d.maxPoints ?? maxPtsNow}"><td class="col-name">${escapeHtml(d.studentName||'')}</td>`;
       let sumPoints = 0;
@@ -415,7 +466,6 @@ async function refreshSubmissions(){
         const ok = isCorrect(q, given);
         const okBadge = ok ? '<span class="ok">✅</span>' : '<span class="bad">❌</span>';
 
-        // Anzeige-Modus (Spans) – Inputs werden erst bei "Punkte editieren" erzeugt
         rowHtml += `<td class="col-q">
           <div class="ans">${escapeHtml(givenStr||'(leer)')} ${okBadge}</div>
           <div class="pts-line">
@@ -446,8 +496,10 @@ async function refreshSubmissions(){
     });
 
     html += '</tbody></table>';
-    html += `<div class="small" style="margin-top:8px">Tipp: Erst „Punkte editieren“, dann gewünschte Punkte eintragen und „Speichern“ drücken. „Gesamt“ = Summe der Einzelpunkte.</div>`;
+    html += `<div class="small" style="margin-top:8px">Tipp: Globaler Schalter oben („Alle Punkte editieren“) oder pro Zeile mit „Punkte editieren“.</div>`;
     submissionsContainer.innerHTML = html;
+
+    if(toggleAllBtn.dataset.mode==='edit'){ setAllRowsEdit(true); }
 
   }catch(err){
     console.error('Ladefehler:',err);
@@ -455,12 +507,11 @@ async function refreshSubmissions(){
   }
 }
 
-// Row-Edit-Modus an/aus schalten
+// Einzelzeilen-Editmodus
 function toggleEditMode(row, toEdit){
   const modeBtn = row.querySelector('.edit-btn');
   const displays = row.querySelectorAll('.pts-display');
   if(toEdit){
-    // Spans -> Inputs
     displays.forEach(span=>{
       const val = span.textContent.trim();
       const q = span.dataset.q;
@@ -472,10 +523,8 @@ function toggleEditMode(row, toEdit){
       input.setAttribute('data-q', q);
       span.replaceWith(input);
     });
-    modeBtn.textContent = 'Felder sperren';
-    modeBtn.setAttribute('data-mode','edit');
+    if(modeBtn){ modeBtn.textContent = 'Felder sperren'; modeBtn.setAttribute('data-mode','edit'); }
   }else{
-    // Inputs -> Spans (ohne Speichern)
     const inputs = row.querySelectorAll('input.q-pts');
     inputs.forEach(inp=>{
       const q = inp.dataset.q;
@@ -485,12 +534,25 @@ function toggleEditMode(row, toEdit){
       span.textContent = inp.value;
       inp.replaceWith(span);
     });
-    modeBtn.textContent = 'Punkte editieren';
-    modeBtn.setAttribute('data-mode','view');
+    if(modeBtn){ modeBtn.textContent = 'Punkte editieren'; modeBtn.setAttribute('data-mode','view'); }
   }
 }
 
-// Event-Delegation: Anzeigen / Editieren / Speichern
+// Globaler Edit-Schalter
+const toggleAllBtn=document.getElementById('toggleAllEdit');
+toggleAllBtn.addEventListener('click', ()=>{
+  const toEdit = toggleAllBtn.dataset.mode!=='edit';
+  setAllRowsEdit(toEdit);
+  toggleAllBtn.dataset.mode = toEdit ? 'edit' : 'view';
+  toggleAllBtn.textContent = toEdit ? 'Alle Felder sperren' : 'Alle Punkte editieren';
+});
+function setAllRowsEdit(toEdit){
+  document.querySelectorAll('#submissionsContainer tbody tr').forEach(tr=>{
+    toggleEditMode(tr, toEdit);
+  });
+}
+
+// Anzeigen / Editieren / Speichern
 submissionsContainer.addEventListener('click', async (e)=>{
   const viewBtn = e.target.closest('.view-btn');
   const editBtn = e.target.closest('.edit-btn');
@@ -501,12 +563,11 @@ submissionsContainer.addEventListener('click', async (e)=>{
   const docId = (viewBtn||editBtn||saveBtn).dataset.doc;
 
   if(viewBtn){
-    // Modal mit Details
     const name = row.querySelector('.col-name').textContent;
     let body = `<div class="small">Schüler/in: <strong>${escapeHtml(name)}</strong></div>`;
     body += `<div style="margin-top:6px">`;
     for(let q=1;q<=tasks.length;q++){
-      const qCell = row.querySelector(`.col-q:nth-of-type(${q+1})`); // +1 wegen Name-Spalte
+      const qCell = row.querySelectorAll('.col-q')[q-1];
       const ansText = qCell.querySelector('.ans')?.textContent || '';
       const ptsVal = qCell.querySelector('.pts-display')?.textContent || qCell.querySelector('.q-pts')?.value || '0';
       body += `<div style="margin:6px 0;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">
@@ -528,35 +589,17 @@ submissionsContainer.addEventListener('click', async (e)=>{
 
   if(saveBtn){
     try{
-      // Sicherstellen, dass wir Werte aus Inputs holen (wenn gerade im Edit-Modus)
-      if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
-        // nichts – Inputs sind sichtbar
-      }else{
-        // in view-Mode -> in Inputs wechseln, direkt wieder zurück? Wir lesen in jedem Fall aktuelle Werte:
-      }
-
       const teacherPoints = {};
       let sum = 0;
 
-      // Wenn Inputs da → aus Inputs lesen, sonst aus Spans
-      const inputs = row.querySelectorAll('input.q-pts');
-      if(inputs.length){
-        for(const inp of inputs){
-          const q = inp.dataset.q;
-          const val = Number((inp.value||'').toString().replace(',','.'));
-          if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
-          teacherPoints[q] = val;
-          sum += val;
-        }
-      }else{
-        const spans = row.querySelectorAll('.pts-display');
-        for(const sp of spans){
-          const q = sp.dataset.q;
-          const val = Number((sp.textContent||'').toString().replace(',','.'));
-          if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
-          teacherPoints[q] = val;
-          sum += val;
-        }
+      const nodes = row.querySelectorAll('input.q-pts, .pts-display');
+      for(const n of nodes){
+        const q = n.dataset.q;
+        const raw = ('value' in n) ? n.value : n.textContent;
+        const val = Number((raw||'').toString().replace(',','.'));
+        if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
+        teacherPoints[q] = val;
+        sum += val;
       }
 
       const maxPts = totalMaxPoints();
@@ -569,14 +612,12 @@ submissionsContainer.addEventListener('click', async (e)=>{
         maxPoints: maxPts
       });
 
-      // UI aktualisieren
       row.querySelector('.sum-cell').textContent = String(sum);
       row.querySelector('.pc-cell').textContent = String(percent);
       row.querySelector('.note-cell').textContent = String(gradeFromPercent(percent));
 
-      // nach Speichern zurück in Anzeige-Modus
       if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
-        toggleEditMode(row, false);
+        toggleEditMode(row,false);
       }
     }catch(err){
       console.error('Fehler beim Speichern:',err);
@@ -630,7 +671,7 @@ async function exportCsv(){
     const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
+    const a = document.createElement('a'); a.href=url; a.download='einsendungen_prozentrechnung.csv'; a.click();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
   }catch(err){
     console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
