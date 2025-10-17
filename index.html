@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Prozentrechnung — Lehrerbereich mit Firebase</title>
+  <title>Wortarten-Test — Lehrerbereich mit Firebase</title>
   <style>
     body{font-family:Inter,system-ui;background:#f4f7fb;margin:0;padding:24px}
     .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
@@ -11,7 +11,7 @@
     h1{color:#0b63d6;font-size:20px;margin:0}
     .small{font-size:12px;color:#667}
 
-    /* Lehrerbereich kompakt & linksbündig */
+    /* Lehrerbereich kompakter & linksbündig */
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th,td{border:1px solid #eaeaea;padding:6px;text-align:left;font-size:12px;vertical-align:top}
     th{background:#f0f4ff}
@@ -38,12 +38,12 @@
     .col-time{width:160px}
     .col-act{width:260px}
 
-    /* Antworten: links, Umbruch, Höhe begrenzt */
+    /* Antworten: links, Zeilenumbruch statt Überlappung, Höhe begrenzt */
     .ans{white-space:normal;word-break:break-word;max-height:70px;overflow:auto}
 
     .save-btn{background:#16a34a;border:1px solid #b7f0c2;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
     .view-btn{background:#5551ff;border:1px solid #cfd2ff;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
-    .edit-btn{background:#0ea5e9;border:1px solid #bfe6fb;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
+    .edit-btn{background:#0ea5e9;border:1px solid #bfe6fb;color:#fff;padding:6px 10px;margin-left:4px}
     .global-edit{background:#0ea5e9;border:1px solid #bfe6fb}
 
     /* Modal */
@@ -59,7 +59,7 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Prozentrechnung — Lehrerbereich</h1>
+      <h1>Wortarten-Test — Lehrerbereich</h1>
       <div class="small">Abruf aller Einsendungen aus Firebase</div>
     </header>
 
@@ -117,93 +117,95 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* =========================
-   25 Aufgaben – Prozentrechnung (P, G, p%)
-   ========================= */
+// ---- Aufgaben: MATHE Prozentrechnung (P, p%, G) — 25 Aufgaben ----
 const tasks = [
-  // Umwandlungen Prozent/Dezimal/Bruch
-  {id:1,  points:1, type:"text",  question:"Wandle 25% in eine Dezimalzahl um."},
-  {id:2,  points:1, type:"text",  question:"Wandle 0,4 in Prozent um."},
-  {id:3,  points:1, type:"text",  question:"Wandle den Bruch 3/5 in Prozent um."},
-  {id:4,  points:1, type:"text",  question:"Wandle 12,5% als Bruch in vollständig gekürzter Form."},
+  // Formeln ankreuzen
+  {id:1,  points:1, question:"Welche Formel berechnet den Prozentwert P? (alle richtigen auswählen)", type:"multi", options:["P = G · p%","P = G / p%","P = p% / G"]},
+  {id:2,  points:1, question:"Welche Formel berechnet den Grundwert G? (alle richtigen auswählen)", type:"multi", options:["G = P / p%","G = P · p%","G = p% / P"]},
+  {id:3,  points:1, question:"Welche Formel berechnet den Prozentsatz p%? (alle richtigen auswählen)", type:"multi", options:["p% = P / G","p% = G / P","p% = P · G"]},
 
-  // „Was ist gesucht?“ / Erkennen von P, G, p%
-  {id:5,  points:1, type:"single", question:"In einer Klasse sind 12 von 30 Schülern Linkshänder. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
-  {id:6,  points:1, type:"single", question:"20% von 150 sind 30. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
-  {id:7,  points:1, type:"single", question:"45 ist 15% von G. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
-  {id:8,  points:1, type:"single", question:"P beträgt 18 bei G = 120. Gesucht ist …", options:["Prozentwert (P)","Grundwert (G)","Prozentsatz (p%)"]},
+  // Umwandlungen
+  {id:4,  points:1, question:"Schreibe als Prozent: 0,4", type:"text"},
+  {id:5,  points:1, question:"Schreibe als Prozent: 5/8", type:"text"},
+  {id:6,  points:1, question:"Schreibe als Dezimalzahl: 7%", type:"text"},
 
-  // Formeln (mit P und p%)
-  {id:9,  points:1, type:"single", question:"Welche Formel ist korrekt für den Prozentwert P?", options:["P = (p% · G) / 100","P = (G · 100) / p%","p% = (P / G) · 100"]},
-  {id:10, points:1, type:"single", question:"Welche Formel ist korrekt für den Grundwert G?", options:["G = (P · 100) / p%","G = (p% · P) / 100","G = (P / p%) · 10000"]},
-  {id:11, points:1, type:"single", question:"Welche Formel ist korrekt für den Prozentsatz p%?", options:["p% = (P / G) · 100","p% = (G / P) · 100","p% = (P · G) · 100"]},
+  // Grundaufgaben P, p, G
+  {id:7,  points:1, question:"Berechne den Prozentwert P: G = 200, p = 12%", type:"text"},
+  {id:8,  points:1, question:"Berechne den Prozentsatz p: G = 90, P = 18", type:"text"},
+  {id:9,  points:1, question:"Berechne den Grundwert G: P = 45, p = 15%", type:"text"},
 
-  // Reine P-Berechnungen
-  {id:12, points:1, type:"text",  question:"Berechne den Prozentwert P: 15% von 200."},
-  {id:13, points:1, type:"text",  question:"Berechne den Prozentwert P: 7% von 300."},
-  {id:14, points:1, type:"text",  question:"Berechne den Prozentwert P: 12,5% von 640."},
+  // kurze MC/Checks
+  {id:10, points:1, question:"25% von 44 sind …", type:"single", options:["10","11","12","13"]},
+  {id:11, points:1, question:"Welche Angaben sind äquivalent zu 0,125? (alle richtigen auswählen)", type:"multi", options:["12,5%","1/8","0,125","125%"]},
 
-  // Reine G-Berechnungen
-  {id:15, points:1, type:"text",  question:"45 ist 15% von G. Bestimme G."},
-  {id:16, points:1, type:"text",  question:"32 ist 40% von G. Bestimme G."},
-  {id:17, points:1, type:"text",  question:"24 ist 6% von G. Bestimme G."},
+  // leichte Textaufgaben
+  {id:12, points:1, question:"Text: In einer Klasse mit 28 Schülern sind 25% Fahrschüler. Wie viele Fahrschüler sind das? (Zahl)", type:"text"},
+  {id:13, points:1, question:"Rabatt: Ein Hoodie kostet 120€. Es gibt 15% Rabatt. Wie hoch ist der Rabattbetrag P? (nur Betrag)", type:"text"},
+  {id:14, points:1, question:"30% entsprechen 24. Wie groß ist der Grundwert G?", type:"text"},
 
-  // Reine p%-Berechnungen
-  {id:18, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 18 von 120?"},
-  {id:19, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 75 von 300?"},
-  {id:20, points:1, type:"text",  question:"Wie groß ist der Prozentsatz p%: 27 von 90?"},
+  // mittlere Kopfrechnen/Anteile
+  {id:15, points:1, question:"12,5% von 48 sind …", type:"single", options:["5","6","7","8"]},
+  {id:16, points:1, question:"Von 250€ sind 5€ Gebühren. Wie groß ist der Prozentsatz p?", type:"text"},
+  {id:17, points:1, question:"Berechne den Prozentwert P: 18% von 360", type:"text"},
 
-  // Einfache Textaufgaben (nur P/G/p%)
-  {id:21, points:1, type:"text",  question:"Ein Pullover kostet 80 €. Rabatt 20%. Wie groß ist der Prozentwert P (Rabattbetrag in €)?"},
-  {id:22, points:1, type:"text",  question:"Ein Konto wächst um 12% bei 2.500 €. Wie groß ist der Zuwachs P (in €)?"},
-  {id:23, points:1, type:"text",  question:"Ein Fahrrad kostet 360 €. 90 € entsprechen welchem Prozentsatz p%?"},
-  {id:24, points:1, type:"text",  question:"In einer Klasse mögen 8 von 25 Schüler Mathe. Wie groß ist der Prozentsatz p%?"},
-  {id:25, points:1, type:"text",  question:"Ein Handy (400 €) wird um 15% reduziert. Wie hoch ist der Preisnachlass P (in €)?"}
+  // Verständnis Drittel
+  {id:18, points:1, question:"Welche Schreibweisen entsprechen einem Drittel (≈ 33,33…%)? (alle richtigen auswählen)", type:"multi", options:["1/3","33,33%","0,333...","33%"]},
+
+  // weitere Umwandlung & p-Berechnung
+  {id:19, points:1, question:"Schreibe als Dezimalzahl: 2,5%", type:"text"},
+  {id:20, points:1, question:"Welcher Prozentsatz? 9 von 60 sind … %", type:"text"},
+  {id:21, points:1, question:"Grundwert berechnen: 27 sind 9% von G.", type:"text"},
+
+  // realitätsnahe kurze Texte
+  {id:22, points:1, question:"Text: 20% Anzahlung betragen 160€. Wie hoch ist der Grundwert (Gesamtpreis) G?", type:"text"},
+  {id:23, points:1, question:"Umfrage: 45% von 200 Personen stimmen zu. Wie viele Personen sind das? (Prozentwert P)", type:"text"},
+
+  // Schreibweisen-Check
+  {id:24, points:1, question:"Welche Schreibweisen entsprechen 70%? (alle richtigen auswählen)", type:"multi", options:["0,7","7/10","70/100","0,07"]},
+
+  // Abschluss p-Berechnung
+  {id:25, points:1, question:"Welcher Prozentsatz p? 12€ von 80€ sind … %", type:"text"}
 ];
 
-/* ====== Antwortschlüssel (angepasst auf P und p%) ====== */
+// ---- Antwortschlüssel ----
 const answerKey = {
-  // Umwandlungen
-  1:  {type:'text',  correct:["0.25","0,25","25%","1/4"]},
-  2:  {type:'text',  correct:["40%","40","0.4","0,4"]},
-  3:  {type:'text',  correct:["60%","60","0.6","0,6","60/100"]},
-  4:  {type:'text',  correct:["1/8","0.125","0,125","12,5%","12.5%"]},
+  1:  {type:'multi',  correct:["P = G · p%"]},
+  2:  {type:'multi',  correct:["G = P / p%"]},
+  3:  {type:'multi',  correct:["p% = P / G"]},
 
-  // Was ist gesucht? (Bezeichnungen geändert)
-  5:  {type:'single', correct:["Prozentsatz (p%)"]},
-  6:  {type:'single', correct:["Prozentwert (P)"]},
-  7:  {type:'single', correct:["Grundwert (G)"]},
-  8:  {type:'single', correct:["Prozentsatz (p%)"]},
+  4:  {type:'text',   correct:["40%","40 %","40"]},
+  5:  {type:'text',   correct:["62,5%","62.5%","62,5 %","62.5 %","62,5"]},
+  6:  {type:'text',   correct:["0,07","0.07"]},
 
-  // Formeln
-  9:  {type:'single', correct:["P = (p% · G) / 100"]},
-  10: {type:'single', correct:["G = (P · 100) / p%"]},
-  11: {type:'single', correct:["p% = (P / G) · 100"]},
+  7:  {type:'text',   correct:["24","24€","24 €"]},
+  8:  {type:'text',   correct:["20%","20 %","20"]},
+  9:  {type:'text',   correct:["300"]},
 
-  // P
-  12: {type:'text',  correct:["30","30€","€30","30 euro","30 eur","0.15*200","(15/100)*200"]},
-  13: {type:'text',  correct:["21","21€","€21","21 euro","21 eur","0.07*300","(7/100)*300"]},
-  14: {type:'text',  correct:["80","80€","€80","80 euro","80 eur","0.125*640","(12.5/100)*640","(12,5/100)*640"]},
+  10: {type:'single', correct:["11"]},
+  11: {type:'multi',  correct:["12,5%","1/8","0,125"]},
 
-  // G
-  15: {type:'text',  correct:["300","300€","€300","300 euro","300 eur","45*100/15"]},
-  16: {type:'text',  correct:["80","80€","€80","80 euro","80 eur","32*100/40"]},
-  17: {type:'text',  correct:["400","400€","€400","400 euro","400 eur","24*100/6"]},
+  12: {type:'text',   correct:["7"]},
+  13: {type:'text',   correct:["18","18€","18 €"]},
+  14: {type:'text',   correct:["80"]},
 
-  // p%
-  18: {type:'text',  correct:["15%","15","0.15","0,15","18/120*100","(18/120)*100"]},
-  19: {type:'text',  correct:["25%","25","0.25","0,25","75/300*100","(75/300)*100"]},
-  20: {type:'text',  correct:["30%","30","0.3","0,3","27/90*100","(27/90)*100"]},
+  15: {type:'single', correct:["6"]},
+  16: {type:'text',   correct:["2%","2 %","2"]},
+  17: {type:'text',   correct:["64,8","64.8","64,8€","64.8€","64,8 €","64.8 €"]},
 
-  // Textaufgaben
-  21: {type:'text',  correct:["16","16€","€16","16 euro","16 eur","0.2*80","(20/100)*80"]},
-  22: {type:'text',  correct:["300","300€","€300","300 euro","300 eur","0.12*2500","(12/100)*2500"]},
-  23: {type:'text',  correct:["25%","25","0.25","0,25","90/360*100","(90/360)*100"]},
-  24: {type:'text',  correct:["32%","32","0.32","0,32","8/25*100","(8/25)*100"]},
-  25: {type:'text',  correct:["60","60€","€60","60 euro","60 eur","0.15*400","(15/100)*400"]}
+  18: {type:'multi',  correct:["1/3","33,33%","0,333..."]},
+
+  19: {type:'text',   correct:["0,025","0.025"]},
+  20: {type:'text',   correct:["15%","15 %","15"]},
+  21: {type:'text',   correct:["300"]},
+
+  22: {type:'text',   correct:["800","800€","800 €"]},
+  23: {type:'text',   correct:["90"]},
+
+  24: {type:'multi',  correct:["0,7","7/10","70/100"]},
+  25: {type:'text',   correct:["15%","15 %","15"]}
 };
 
-// ======= Hilfsstrukturen & Bewertung (unverändert) =======
+// Hilfsstrukturen & Bewertung
 const tasksById = Object.fromEntries(tasks.map(t=>[t.id,t]));
 function normalize(s){ return String(s||'').trim().toLowerCase(); }
 function arraysEqualAsSets(a,b){
@@ -232,7 +234,7 @@ function autoPoints(taskId, given){
   return isCorrect(taskId, given) ? (Number(t.points)||0) : 0;
 }
 
-// ---- Schüler-Rendering (zeigt Punkte je Aufgabe) ----
+// ---- Schüler-Rendering ----
 const tasksDiv = document.getElementById('tasks');
 function renderTasks(){
   tasksDiv.innerHTML = '';
@@ -385,7 +387,7 @@ async function handleSubmitClick(){
       const given = Array.isArray(d.given)? d.given.join(', ') : (d.given||'(leer)');
       const correct = Array.isArray(d.correct)? d.correct.join(', ') : d.correct;
       html += `<div style="margin-top:6px;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">`+
-              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'}</span></div>`+
+              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'})</span></div>`+
               `<div>Deine Antwort: ${escapeHtml(given)} ${d.ok? '<span class="ok">✅ richtig</span>' : '<span class="bad">❌ falsch</span>'}</div>`+
               `<div>Korrekt: ${escapeHtml(String(correct))}</div>`+
               `</div>`;
@@ -499,6 +501,7 @@ async function refreshSubmissions(){
     html += `<div class="small" style="margin-top:8px">Tipp: Globaler Schalter oben („Alle Punkte editieren“) oder pro Zeile mit „Punkte editieren“.</div>`;
     submissionsContainer.innerHTML = html;
 
+    // Wenn globaler Edit-Schalter aktiv war, nachladen → wieder aktivieren
     if(toggleAllBtn.dataset.mode==='edit'){ setAllRowsEdit(true); }
 
   }catch(err){
@@ -507,7 +510,7 @@ async function refreshSubmissions(){
   }
 }
 
-// Einzelzeilen-Editmodus
+// Einzelzeilen-Editmodus umschalten
 function toggleEditMode(row, toEdit){
   const modeBtn = row.querySelector('.edit-btn');
   const displays = row.querySelectorAll('.pts-display');
@@ -539,20 +542,20 @@ function toggleEditMode(row, toEdit){
 }
 
 // Globaler Edit-Schalter
-const toggleAllBtn=document.getElementById('toggleAllEdit');
-toggleAllBtn.addEventListener('click', ()=>{
+document.getElementById('toggleAllEdit').addEventListener('click', ()=>{
   const toEdit = toggleAllBtn.dataset.mode!=='edit';
   setAllRowsEdit(toEdit);
   toggleAllBtn.dataset.mode = toEdit ? 'edit' : 'view';
   toggleAllBtn.textContent = toEdit ? 'Alle Felder sperren' : 'Alle Punkte editieren';
 });
+
 function setAllRowsEdit(toEdit){
   document.querySelectorAll('#submissionsContainer tbody tr').forEach(tr=>{
     toggleEditMode(tr, toEdit);
   });
 }
 
-// Anzeigen / Editieren / Speichern
+// Event-Delegation: Anzeigen / Editieren / Speichern
 submissionsContainer.addEventListener('click', async (e)=>{
   const viewBtn = e.target.closest('.view-btn');
   const editBtn = e.target.closest('.edit-btn');
@@ -563,6 +566,7 @@ submissionsContainer.addEventListener('click', async (e)=>{
   const docId = (viewBtn||editBtn||saveBtn).dataset.doc;
 
   if(viewBtn){
+    // Modal mit Details
     const name = row.querySelector('.col-name').textContent;
     let body = `<div class="small">Schüler/in: <strong>${escapeHtml(name)}</strong></div>`;
     body += `<div style="margin-top:6px">`;
@@ -616,6 +620,7 @@ submissionsContainer.addEventListener('click', async (e)=>{
       row.querySelector('.pc-cell').textContent = String(percent);
       row.querySelector('.note-cell').textContent = String(gradeFromPercent(percent));
 
+      // wenn Zeile im Edit-Modus war, wieder sperren
       if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
         toggleEditMode(row,false);
       }
@@ -671,7 +676,7 @@ async function exportCsv(){
     const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='einsendungen_prozentrechnung.csv'; a.click();
+    const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
   }catch(err){
     console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
