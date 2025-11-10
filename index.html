@@ -27,7 +27,7 @@
   <div class="wrap">
     <header>
       <h1>Deutsch-Test — Lehrerbereich</h1>
-      <div class="small">Wortarten · Satzzeichen · Zeitformen</div>
+      <div class="small">Wortarten · Verbformen · Zeitformen</div>
     </header>
 
     <div id="studentArea" style="margin-top:20px;">
@@ -66,60 +66,72 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ---------- Aufgaben Deutsch (Wortarten, Satzzeichen, Zeitformen) ----------
+// ---------- Aufgaben Deutsch (didaktisch aufgebaut) ----------
 const tasks = [
-  {id:1, points:1, question:"Welche Wortart ist 'laufen'?", type:"single", options:["Verb","Nomen","Adjektiv"]},
-  {id:2, points:1, question:"Welche Wortart ist 'schön'?", type:"single", options:["Verb","Adjektiv","Pronomen"]},
-  {id:3, points:1, question:"Welche Wörter sind Nomen?", type:"multi", options:["Haus","blau","laufen","Kind"]},
-  {id:4, points:1, question:"Welche Wörter sind Verben?", type:"multi", options:["gehen","Haus","rennen","schnell"]},
-  {id:5, points:1, question:"Welche Wortart ist 'ich'?", type:"single", options:["Pronomen","Adjektiv","Verb"]},
-  {id:6, points:1, question:"Welche Satzzeichen gehören ans Satzende?", type:"multi", options:[".","!","?"]},
-  {id:7, points:1, question:"Welche Satzzeichen benutzt man bei einem Fragesatz?", type:"single", options:[".","?","!"]},
-  {id:8, points:1, question:"Welche Satzzeichen benutzt man bei einem Ausrufesatz?", type:"single", options:[".","!","?"]},
-  {id:9, points:1, question:"Wähle alle Zeitformen des Verbs: 'ich gehe'", type:"multi", options:["ich gehe","ich ging","ich bin gegangen","ich war gegangen","ich werde gehen","ich werde gegangen sein"]},
-  {id:10, points:1, question:"'ich aß' steht im …", type:"single", options:["Präsens","Präteritum","Perfekt","Plusquamperfekt"]},
-  {id:11, points:1, question:"'ich habe gespielt' steht im …", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt","Futur I"]},
-  {id:12, points:1, question:"'ich war gelaufen' steht im …", type:"single", options:["Plusquamperfekt","Perfekt","Präteritum","Futur II"]},
-  {id:13, points:1, question:"'ich werde lernen' steht im …", type:"single", options:["Futur I","Präsens","Perfekt","Plusquamperfekt"]},
-  {id:14, points:1, question:"'ich werde gegangen sein' steht im …", type:"single", options:["Futur II","Perfekt","Präteritum","Plusquamperfekt"]},
-  {id:15, points:1, question:"Welche Wörter sind Adjektive?", type:"multi", options:["schnell","blau","laufen","Auto","freundlich"]},
-  {id:16, points:1, question:"Welche Wortart beschreibt Tätigkeiten?", type:"single", options:["Verb","Nomen","Adjektiv"]},
-  {id:17, points:1, question:"Welche Wortart beschreibt Eigenschaften?", type:"single", options:["Adjektiv","Nomen","Verb"]},
-  {id:18, points:1, question:"Welche Zeitform hat das Verb: 'Er wird morgen arbeiten.'", type:"single", options:["Futur I","Präsens","Perfekt"]},
-  {id:19, points:1, question:"Welche Zeitform hat das Verb: 'Sie hat den Ball gefangen.'", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt"]},
-  {id:20, points:1, question:"Welche Zeitform hat das Verb: 'Er war im Kino gewesen.'", type:"single", options:["Plusquamperfekt","Perfekt","Futur II"]},
-  {id:21, points:1, question:"Wähle alle richtigen Schreibweisen eines Aussagesatzes.", type:"multi", options:["Ich mag Pizza.","ich mag Pizza","Ich mag pizza!","Ich mag Pizza!"]},
-  {id:22, points:1, question:"Welche Wörter sind Pronomen?", type:"multi", options:["ich","du","er","Auto","laufen"]},
-  {id:23, points:1, question:"Welche Zeitform: 'Wir schreiben einen Brief.'", type:"single", options:["Präsens","Perfekt","Futur I"]},
-  {id:24, points:1, question:"Welche Zeitform: 'Wir schrieben einen Brief.'", type:"single", options:["Präteritum","Perfekt","Präsens"]},
-  {id:25, points:1, question:"Welche Zeitform: 'Wir haben einen Brief geschrieben.'", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt"]}
+  // Wortarten (Grundlage)
+  {id:1, points:1, question:"Welche Wortart ist „laufen“?", type:"single", options:["Verb","Nomen","Adjektiv"]},
+  {id:2, points:1, question:"Welche Wortart ist „freundlich“?", type:"single", options:["Adjektiv","Verb","Pronomen"]},
+  {id:3, points:1, question:"Welche Wörter sind Nomen?", type:"multi", options:["der Tisch","laufen","die Freiheit","schnell"]},
+  {id:4, points:1, question:"Welche Wörter sind Verben?", type:"multi", options:["spielen","singen","Auto","das Haus"]},
+  {id:5, points:1, question:"Welche Wortart ersetzt ein Nomen?", type:"single", options:["Pronomen","Adverb","Artikel"]},
+
+  // Verbformen / finite Verb
+  {id:6, points:1, question:"In welchem Satz ist das Verb richtig gebeugt?", type:"single", options:["Wir gehen nach Hause.","Ich gehen nach Hause.","Du geht nach Hause."]},
+  {id:7, points:1, question:"Welches Wort ist das finite Verb im Satz: „Morgen werden wir ins Kino gehen.“?", type:"single", options:["werden","gehen","Morgen"]},
+  {id:8, points:1, question:"3. Person Singular Präsens von „lesen“ lautet …", type:"single", options:["er liest","er lesen","er las"]},
+
+  // Zeitformen erkennen
+  {id:9, points:1, question:"„ich spielte“ steht im …", type:"single", options:["Präteritum","Perfekt","Präsens","Futur I"]},
+  {id:10, points:1, question:"„ich habe gespielt“ steht im …", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt","Futur I"]},
+  {id:11, points:1, question:"„ich war gegangen“ steht im …", type:"single", options:["Plusquamperfekt","Perfekt","Präteritum","Futur II"]},
+  {id:12, points:1, question:"„ich werde spielen“ steht im …", type:"single", options:["Futur I","Präsens","Perfekt","Präteritum"]},
+  {id:13, points:1, question:"„ich werde gespielt haben“ steht im …", type:"single", options:["Futur II","Futur I","Perfekt","Plusquamperfekt"]},
+
+  // mehrere Formen zuordnen
+  {id:14, points:1, question:"Welche Formen stehen im Perfekt?", type:"multi", options:["ich habe gelernt","ich bin gegangen","ich hatte gelernt","ich werde lernen"]},
+  {id:15, points:1, question:"Welche Formen stehen im Plusquamperfekt?", type:"multi", options:["ich hatte gelernt","ich war gegangen","ich werde gelernt haben","ich habe gelernt"]},
+  {id:16, points:1, question:"Welche Formen stehen im Präsens?", type:"multi", options:["ich spiele","wir gehen","ich werde gehen","ich spielte"]},
+  {id:17, points:1, question:"Welche Sätze stehen im Präteritum?", type:"multi", options:["Er ging nach Hause.","Wir gehen nach Hause.","Sie spielte gestern Klavier.","Ich werde gehen."]},
+
+  // Anwendung / richtige Bildung
+  {id:18, points:1, question:"Welche Verbform passt: „Morgen ___ ich dir helfen.“", type:"single", options:["werde","habe","war"]},
+  {id:19, points:1, question:"Welche Zeitform drückt Vorzeitigkeit zur Vergangenheit aus?", type:"single", options:["Plusquamperfekt","Perfekt","Futur II"]},
+  {id:20, points:1, question:"Welche Variante ist korrekt im Perfekt?", type:"single", options:["Ich habe den Text geschrieben.","Ich habe den Text schreibte.","Ich bin den Text geschrieben."]},
+  {id:21, points:1, question:"Setze „fahren“ in Perfekt, 1. Person Plural.", type:"single", options:["Wir sind gefahren.","Wir haben gefahren.","Wir werden fahren."]},
+  {id:22, points:1, question:"Welche Kombination ist richtig gebildet?", type:"single", options:["Futur II: Ich werde gegangen sein.","Perfekt: Ich werde gegangen.","Präteritum: Ich bin gegangen."]},
+
+  // Abschluss / gemischt
+  {id:23, points:1, question:"Welche Wortarten kommen im Satz „Der alte Mann liest langsam.“ vor?", type:"multi", options:["Artikel","Adjektiv","Nomen","Verb","Adverb"]},
+  {id:24, points:1, question:"Welche Sätze enthalten ein Modalverb im Präsens?", type:"multi", options:["Ich kann schwimmen.","Ich schwamm.","Wir mussten gehen.","Er will lesen."]},
+  {id:25, points:1, question:"„Am Freitag haben wir Sport gemacht.“ steht im …", type:"single", options:["Perfekt","Präteritum","Futur I"]}
 ];
 
+// ---------- Antwortschlüssel ----------
 const answerKey = {
   1:{type:"single",correct:["Verb"]},
   2:{type:"single",correct:["Adjektiv"]},
-  3:{type:"multi",correct:["Haus","Kind"]},
-  4:{type:"multi",correct:["gehen","rennen"]},
+  3:{type:"multi",correct:["der Tisch","die Freiheit"]},
+  4:{type:"multi",correct:["spielen","singen"]},
   5:{type:"single",correct:["Pronomen"]},
-  6:{type:"multi",correct:[".","!","?"]},
-  7:{type:"single",correct:["?"]},
-  8:{type:"single",correct:["!"]},
-  9:{type:"multi",correct:["ich gehe","ich ging","ich bin gegangen","ich war gegangen","ich werde gehen","ich werde gegangen sein"]},
-  10:{type:"single",correct:["Präteritum"]},
-  11:{type:"single",correct:["Perfekt"]},
-  12:{type:"single",correct:["Plusquamperfekt"]},
-  13:{type:"single",correct:["Futur I"]},
-  14:{type:"single",correct:["Futur II"]},
-  15:{type:"multi",correct:["schnell","blau","freundlich"]},
-  16:{type:"single",correct:["Verb"]},
-  17:{type:"single",correct:["Adjektiv"]},
-  18:{type:"single",correct:["Futur I"]},
-  19:{type:"single",correct:["Perfekt"]},
-  20:{type:"single",correct:["Plusquamperfekt"]},
-  21:{type:"multi",correct:["Ich mag Pizza."]},
-  22:{type:"multi",correct:["ich","du","er"]},
-  23:{type:"single",correct:["Präsens"]},
-  24:{type:"single",correct:["Präteritum"]},
+  6:{type:"single",correct:["Wir gehen nach Hause."]},
+  7:{type:"single",correct:["werden"]},
+  8:{type:"single",correct:["er liest"]},
+  9:{type:"single",correct:["Präteritum"]},
+  10:{type:"single",correct:["Perfekt"]},
+  11:{type:"single",correct:["Plusquamperfekt"]},
+  12:{type:"single",correct:["Futur I"]},
+  13:{type:"single",correct:["Futur II"]},
+  14:{type:"multi",correct:["ich habe gelernt","ich bin gegangen"]},
+  15:{type:"multi",correct:["ich hatte gelernt","ich war gegangen"]},
+  16:{type:"multi",correct:["ich spiele","wir gehen"]},
+  17:{type:"multi",correct:["Er ging nach Hause.","Sie spielte gestern Klavier."]},
+  18:{type:"single",correct:["werde"]},
+  19:{type:"single",correct:["Plusquamperfekt"]},
+  20:{type:"single",correct:["Ich habe den Text geschrieben."]},
+  21:{type:"single",correct:["Wir sind gefahren."]},
+  22:{type:"single",correct:["Futur II: Ich werde gegangen sein."]},
+  23:{type:"multi",correct:["Artikel","Adjektiv","Nomen","Verb","Adverb"]},
+  24:{type:"multi",correct:["Ich kann schwimmen.","Er will lesen."]},
   25:{type:"single",correct:["Perfekt"]}
 };
 
@@ -132,11 +144,11 @@ function arraysEqualAsSets(a,b){
 }
 function isCorrect(id,g){
   const spec=answerKey[id]; if(!spec)return false;
-  if(spec.type==="multi"){return arraysEqualAsSets(Array.isArray(g)?g:[],spec.correct);}
+  if(spec.type==="multi"){ return arraysEqualAsSets(Array.isArray(g)?g:[], spec.correct); }
   return spec.correct.map(normalize).includes(normalize(g));
 }
-function autoPoints(id,g){return isCorrect(id,g)?(tasksById[id].points||1):0;}
-function totalMaxPoints(){return tasks.reduce((s,t)=>s+t.points,0);}
+function autoPoints(id,g){ return isCorrect(id,g) ? (tasksById[id].points||1) : 0; }
+function totalMaxPoints(){ return tasks.reduce((s,t)=>s+t.points,0); }
 
 const tasksDiv=document.getElementById("tasks");
 tasks.forEach(t=>{
@@ -169,24 +181,40 @@ submitBtn.addEventListener("click",async()=>{
     if(t.type==="multi")answers[key]=[...document.querySelectorAll(`input[name="${key}"]:checked`)].map(x=>x.value);
     else answers[key]=document.querySelector(`input[name="${key}"]:checked`)?.value||"";
   }
-  let sum=0; for(const t of tasks){sum+=autoPoints(t.id,answers["a"+t.id]);}
+  let sum=0; for(const t of tasks){ sum+=autoPoints(t.id,answers["a"+t.id]); }
   const percent=Math.round(sum/totalMaxPoints()*100);
   try{
-    await addDoc(collection(db,"submissions"),{studentName:name,answers,score:sum,percent,createdAt:serverTimestamp()});
+    await addDoc(collection(db,"submissions"),{
+      studentName:name,
+      answers,
+      score:sum,
+      percent,
+      createdAt:serverTimestamp()
+    });
     resultBox.style.display="block";
     resultBox.innerHTML=`<strong>Abgabe gespeichert:</strong> ${sum}/${totalMaxPoints()} Punkte (${percent} %)`;
-  }catch(e){console.error(e);alert("Fehler beim Speichern.");}
+  }catch(e){
+    console.error(e);
+    alert("Fehler beim Speichern.");
+  }
 });
 
 const TEACHER_PASSWORD="lehrer123";
 document.getElementById("loginBtn").addEventListener("click",async()=>{
-  if(document.getElementById("teacherPass").value!==TEACHER_PASSWORD)return document.getElementById("loginMsg").textContent="Falsches Passwort!";
+  if(document.getElementById("teacherPass").value!==TEACHER_PASSWORD){
+    document.getElementById("loginMsg").textContent="Falsches Passwort!";
+    return;
+  }
   document.getElementById("loginArea").style.display="none";
   document.getElementById("teacherPanel").style.display="block";
   const subC=document.getElementById("submissionsContainer");
   let snap;
-  try{snap=await getDocs(query(collection(db,"submissions"),orderBy("createdAt","desc")));}catch{snap=await getDocs(collection(db,"submissions"));}
-  if(snap.empty)return subC.textContent="Keine Einsendungen.";
+  try{
+    snap=await getDocs(query(collection(db,"submissions"),orderBy("createdAt","desc")));
+  }catch{
+    snap=await getDocs(collection(db,"submissions"));
+  }
+  if(snap.empty){ subC.textContent="Keine Einsendungen."; return; }
   let html="<table><tr><th>Name</th><th>Punkte</th><th>%</th></tr>";
   snap.forEach(d=>{
     const x=d.data();
