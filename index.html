@@ -3,55 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wortarten-Test — Lehrerbereich mit Firebase</title>
+  <title>Deutsch-Test — Lehrerbereich mit Firebase</title>
   <style>
     body{font-family:Inter,system-ui;background:#f4f7fb;margin:0;padding:24px}
     .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
     header{display:flex;justify-content:space-between;align-items:center}
     h1{color:#0b63d6;font-size:20px;margin:0}
     .small{font-size:12px;color:#667}
-
-    /* Lehrerbereich kompakter & linksbündig */
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th,td{border:1px solid #eaeaea;padding:6px;text-align:left;font-size:12px;vertical-align:top}
     th{background:#f0f4ff}
-
     button{background:#0b63d6;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px}
-    button.secondary{background:#eef6ff;color:#0b63d6;border:1px solid #d6eaff}
     input[type=password], input[type=text]{padding:8px;border:1px solid #ccc;border-radius:6px;width:240px}
     #teacherPanel{display:none;margin-top:14px;padding:12px;background:#fff8e6;border-radius:8px;border:1px solid #ffecb3}
     .task{margin:12px 0;padding:10px;border:1px solid #eef3ff;border-radius:10px;background:#fbfdff}
     .task p{margin:0 0 6px 0;font-weight:600}
     label{display:block;margin:4px 0}
-
-    /* Anzeige/Editor in Q-Zellen */
-    .pts-line{display:flex;align-items:center;gap:6px;margin-top:6px}
-    .q-pts-label{font-size:11px;color:#445;white-space:nowrap}
-    .q-pts{width:52px;padding:3px 6px;border:1px solid #ccd6e6;border-radius:6px;text-align:center;font-size:12px}
-
-    /* Spaltenbreiten (breit aber kompakt) */
-    .col-name{width:150px}
-    .col-q{min-width:120px;width:120px}
-    .col-sum{width:88px}
-    .col-pc{width:60px}
-    .col-note{width:60px}
-    .col-time{width:160px}
-    .col-act{width:260px}
-
-    /* Antworten: links, Zeilenumbruch statt Überlappung, Höhe begrenzt */
-    .ans{white-space:normal;word-break:break-word;max-height:70px;overflow:auto}
-
-    .save-btn{background:#16a34a;border:1px solid #b7f0c2;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
-    .view-btn{background:#5551ff;border:1px solid #cfd2ff;color:#fff;padding:6px 10px;border-radius:8px;margin-left:4px}
-    .edit-btn{background:#0ea5e9;border:1px solid #bfe6fb;color:#fff;padding:6px 10px;margin-left:4px}
-    .global-edit{background:#0ea5e9;border:1px solid #bfe6fb}
-
-    /* Modal */
-    #modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;padding:16px}
-    #modalCard{max-width:920px;width:100%;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);padding:16px}
-    #modalBody{max-height:70vh;overflow:auto}
-    #modalHeader{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    #closeModal{margin-left:auto;background:#e11d48}
     .ok{color:#16a34a;font-weight:600}
     .bad{color:#b91c1c;font-weight:600}
   </style>
@@ -59,8 +26,8 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Wortarten-Test — Lehrerbereich</h1>
-      <div class="small">Abruf aller Einsendungen aus Firebase</div>
+      <h1>Deutsch-Test — Lehrerbereich</h1>
+      <div class="small">Wortarten · Satzzeichen · Zeitformen</div>
     </header>
 
     <div id="studentArea" style="margin-top:20px;">
@@ -79,612 +46,154 @@
     </div>
 
     <div id="teacherPanel">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button id="refreshSub" class="secondary">Aktualisieren</button>
-        <button id="exportCsv" class="secondary">Export CSV</button>
-        <button id="toggleAllEdit" class="global-edit">Alle Punkte editieren</button>
-        <div class="small" style="margin-left:auto">Linksgebunden • Edit-Modus pro Zeile oder global</div>
-      </div>
+      <button id="refreshSub" class="secondary">Aktualisieren</button>
       <div id="submissionsContainer" style="margin-top:14px"></div>
-    </div>
-  </div>
-
-  <!-- Modal für Detailansicht -->
-  <div id="modalOverlay">
-    <div id="modalCard">
-      <div id="modalHeader">
-        <h2 style="margin:0;font-size:18px;color:#0b63d6">Abgabe – Detailansicht</h2>
-        <button id="closeModal">Schließen</button>
-      </div>
-      <div id="modalBody"></div>
     </div>
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// ---- Firebase ----
 const firebaseConfig = {
   apiKey: "AIzaSyCOWi7ecJR17wzEsm2q6wPR1BZWV-VrDBo",
   authDomain: "hausaufgabe-40294.firebaseapp.com",
   projectId: "hausaufgabe-40294",
   storageBucket: "hausaufgabe-40294.firebasestorage.app",
   messagingSenderId: "275544438191",
-  appId: "1:275544438191:web:d68f43e7e43025df76eb5a",
-  measurementId: "G-HPGHMYZXNJ"
+  appId: "1:275544438191:web:d68f43e7e43025df76eb5a"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ---- Aufgaben: MATHE Prozentrechnung (P, p%, G) — 25 Aufgaben ----
+// ---------- Aufgaben Deutsch (Wortarten, Satzzeichen, Zeitformen) ----------
 const tasks = [
-  // Formeln ankreuzen
-  {id:1,  points:1, question:"Welche Formel berechnet den Prozentwert P? (alle richtigen auswählen)", type:"multi", options:["P = G · p%","P = G / p%","P = p% / G"]},
-  {id:2,  points:1, question:"Welche Formel berechnet den Grundwert G? (alle richtigen auswählen)", type:"multi", options:["G = P / p%","G = P · p%","G = p% / P"]},
-  {id:3,  points:1, question:"Welche Formel berechnet den Prozentsatz p%? (alle richtigen auswählen)", type:"multi", options:["p% = P / G","p% = G / P","p% = P · G"]},
-
-  // Umwandlungen
-  {id:4,  points:1, question:"Schreibe als Prozent: 0,4", type:"text"},
-  {id:5,  points:1, question:"Schreibe als Prozent: 5/8", type:"text"},
-  {id:6,  points:1, question:"Schreibe als Dezimalzahl: 7%", type:"text"},
-
-  // Grundaufgaben P, p, G
-  {id:7,  points:1, question:"Berechne den Prozentwert P: G = 200, p = 12%", type:"text"},
-  {id:8,  points:1, question:"Berechne den Prozentsatz p: G = 90, P = 18", type:"text"},
-  {id:9,  points:1, question:"Berechne den Grundwert G: P = 45, p = 15%", type:"text"},
-
-  // kurze MC/Checks
-  {id:10, points:1, question:"25% von 44 sind …", type:"single", options:["10","11","12","13"]},
-  {id:11, points:1, question:"Welche Angaben sind äquivalent zu 0,125? (alle richtigen auswählen)", type:"multi", options:["12,5%","1/8","0,125","125%"]},
-
-  // leichte Textaufgaben
-  {id:12, points:1, question:"Text: In einer Klasse mit 28 Schülern sind 25% Fahrschüler. Wie viele Fahrschüler sind das? (Zahl)", type:"text"},
-  {id:13, points:1, question:"Rabatt: Ein Hoodie kostet 120€. Es gibt 15% Rabatt. Wie hoch ist der Rabattbetrag P? (nur Betrag)", type:"text"},
-  {id:14, points:1, question:"30% entsprechen 24. Wie groß ist der Grundwert G?", type:"text"},
-
-  // mittlere Kopfrechnen/Anteile
-  {id:15, points:1, question:"12,5% von 48 sind …", type:"single", options:["5","6","7","8"]},
-  {id:16, points:1, question:"Von 250€ sind 5€ Gebühren. Wie groß ist der Prozentsatz p?", type:"text"},
-  {id:17, points:1, question:"Berechne den Prozentwert P: 18% von 360", type:"text"},
-
-  // Verständnis Drittel
-  {id:18, points:1, question:"Welche Schreibweisen entsprechen einem Drittel (≈ 33,33…%)? (alle richtigen auswählen)", type:"multi", options:["1/3","33,33%","0,333...","33%"]},
-
-  // weitere Umwandlung & p-Berechnung
-  {id:19, points:1, question:"Schreibe als Dezimalzahl: 2,5%", type:"text"},
-  {id:20, points:1, question:"Welcher Prozentsatz? 9 von 60 sind … %", type:"text"},
-  {id:21, points:1, question:"Grundwert berechnen: 27 sind 9% von G.", type:"text"},
-
-  // realitätsnahe kurze Texte
-  {id:22, points:1, question:"Text: 20% Anzahlung betragen 160€. Wie hoch ist der Grundwert (Gesamtpreis) G?", type:"text"},
-  {id:23, points:1, question:"Umfrage: 45% von 200 Personen stimmen zu. Wie viele Personen sind das? (Prozentwert P)", type:"text"},
-
-  // Schreibweisen-Check
-  {id:24, points:1, question:"Welche Schreibweisen entsprechen 70%? (alle richtigen auswählen)", type:"multi", options:["0,7","7/10","70/100","0,07"]},
-
-  // Abschluss p-Berechnung
-  {id:25, points:1, question:"Welcher Prozentsatz p? 12€ von 80€ sind … %", type:"text"}
+  {id:1, points:1, question:"Welche Wortart ist 'laufen'?", type:"single", options:["Verb","Nomen","Adjektiv"]},
+  {id:2, points:1, question:"Welche Wortart ist 'schön'?", type:"single", options:["Verb","Adjektiv","Pronomen"]},
+  {id:3, points:1, question:"Welche Wörter sind Nomen?", type:"multi", options:["Haus","blau","laufen","Kind"]},
+  {id:4, points:1, question:"Welche Wörter sind Verben?", type:"multi", options:["gehen","Haus","rennen","schnell"]},
+  {id:5, points:1, question:"Welche Wortart ist 'ich'?", type:"single", options:["Pronomen","Adjektiv","Verb"]},
+  {id:6, points:1, question:"Welche Satzzeichen gehören ans Satzende?", type:"multi", options:[".","!","?"]},
+  {id:7, points:1, question:"Welche Satzzeichen benutzt man bei einem Fragesatz?", type:"single", options:[".","?","!"]},
+  {id:8, points:1, question:"Welche Satzzeichen benutzt man bei einem Ausrufesatz?", type:"single", options:[".","!","?"]},
+  {id:9, points:1, question:"Wähle alle Zeitformen des Verbs: 'ich gehe'", type:"multi", options:["ich gehe","ich ging","ich bin gegangen","ich war gegangen","ich werde gehen","ich werde gegangen sein"]},
+  {id:10, points:1, question:"'ich aß' steht im …", type:"single", options:["Präsens","Präteritum","Perfekt","Plusquamperfekt"]},
+  {id:11, points:1, question:"'ich habe gespielt' steht im …", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt","Futur I"]},
+  {id:12, points:1, question:"'ich war gelaufen' steht im …", type:"single", options:["Plusquamperfekt","Perfekt","Präteritum","Futur II"]},
+  {id:13, points:1, question:"'ich werde lernen' steht im …", type:"single", options:["Futur I","Präsens","Perfekt","Plusquamperfekt"]},
+  {id:14, points:1, question:"'ich werde gegangen sein' steht im …", type:"single", options:["Futur II","Perfekt","Präteritum","Plusquamperfekt"]},
+  {id:15, points:1, question:"Welche Wörter sind Adjektive?", type:"multi", options:["schnell","blau","laufen","Auto","freundlich"]},
+  {id:16, points:1, question:"Welche Wortart beschreibt Tätigkeiten?", type:"single", options:["Verb","Nomen","Adjektiv"]},
+  {id:17, points:1, question:"Welche Wortart beschreibt Eigenschaften?", type:"single", options:["Adjektiv","Nomen","Verb"]},
+  {id:18, points:1, question:"Welche Zeitform hat das Verb: 'Er wird morgen arbeiten.'", type:"single", options:["Futur I","Präsens","Perfekt"]},
+  {id:19, points:1, question:"Welche Zeitform hat das Verb: 'Sie hat den Ball gefangen.'", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt"]},
+  {id:20, points:1, question:"Welche Zeitform hat das Verb: 'Er war im Kino gewesen.'", type:"single", options:["Plusquamperfekt","Perfekt","Futur II"]},
+  {id:21, points:1, question:"Wähle alle richtigen Schreibweisen eines Aussagesatzes.", type:"multi", options:["Ich mag Pizza.","ich mag Pizza","Ich mag pizza!","Ich mag Pizza!"]},
+  {id:22, points:1, question:"Welche Wörter sind Pronomen?", type:"multi", options:["ich","du","er","Auto","laufen"]},
+  {id:23, points:1, question:"Welche Zeitform: 'Wir schreiben einen Brief.'", type:"single", options:["Präsens","Perfekt","Futur I"]},
+  {id:24, points:1, question:"Welche Zeitform: 'Wir schrieben einen Brief.'", type:"single", options:["Präteritum","Perfekt","Präsens"]},
+  {id:25, points:1, question:"Welche Zeitform: 'Wir haben einen Brief geschrieben.'", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt"]}
 ];
 
-// ---- Antwortschlüssel ----
 const answerKey = {
-  1:  {type:'multi',  correct:["P = G · p%"]},
-  2:  {type:'multi',  correct:["G = P / p%"]},
-  3:  {type:'multi',  correct:["p% = P / G"]},
-
-  4:  {type:'text',   correct:["40%","40 %","40"]},
-  5:  {type:'text',   correct:["62,5%","62.5%","62,5 %","62.5 %","62,5"]},
-  6:  {type:'text',   correct:["0,07","0.07"]},
-
-  7:  {type:'text',   correct:["24","24€","24 €"]},
-  8:  {type:'text',   correct:["20%","20 %","20"]},
-  9:  {type:'text',   correct:["300"]},
-
-  10: {type:'single', correct:["11"]},
-  11: {type:'multi',  correct:["12,5%","1/8","0,125"]},
-
-  12: {type:'text',   correct:["7"]},
-  13: {type:'text',   correct:["18","18€","18 €"]},
-  14: {type:'text',   correct:["80"]},
-
-  15: {type:'single', correct:["6"]},
-  16: {type:'text',   correct:["2%","2 %","2"]},
-  17: {type:'text',   correct:["64,8","64.8","64,8€","64.8€","64,8 €","64.8 €"]},
-
-  18: {type:'multi',  correct:["1/3","33,33%","0,333..."]},
-
-  19: {type:'text',   correct:["0,025","0.025"]},
-  20: {type:'text',   correct:["15%","15 %","15"]},
-  21: {type:'text',   correct:["300"]},
-
-  22: {type:'text',   correct:["800","800€","800 €"]},
-  23: {type:'text',   correct:["90"]},
-
-  24: {type:'multi',  correct:["0,7","7/10","70/100"]},
-  25: {type:'text',   correct:["15%","15 %","15"]}
+  1:{type:"single",correct:["Verb"]},
+  2:{type:"single",correct:["Adjektiv"]},
+  3:{type:"multi",correct:["Haus","Kind"]},
+  4:{type:"multi",correct:["gehen","rennen"]},
+  5:{type:"single",correct:["Pronomen"]},
+  6:{type:"multi",correct:[".","!","?"]},
+  7:{type:"single",correct:["?"]},
+  8:{type:"single",correct:["!"]},
+  9:{type:"multi",correct:["ich gehe","ich ging","ich bin gegangen","ich war gegangen","ich werde gehen","ich werde gegangen sein"]},
+  10:{type:"single",correct:["Präteritum"]},
+  11:{type:"single",correct:["Perfekt"]},
+  12:{type:"single",correct:["Plusquamperfekt"]},
+  13:{type:"single",correct:["Futur I"]},
+  14:{type:"single",correct:["Futur II"]},
+  15:{type:"multi",correct:["schnell","blau","freundlich"]},
+  16:{type:"single",correct:["Verb"]},
+  17:{type:"single",correct:["Adjektiv"]},
+  18:{type:"single",correct:["Futur I"]},
+  19:{type:"single",correct:["Perfekt"]},
+  20:{type:"single",correct:["Plusquamperfekt"]},
+  21:{type:"multi",correct:["Ich mag Pizza."]},
+  22:{type:"multi",correct:["ich","du","er"]},
+  23:{type:"single",correct:["Präsens"]},
+  24:{type:"single",correct:["Präteritum"]},
+  25:{type:"single",correct:["Perfekt"]}
 };
 
-// Hilfsstrukturen & Bewertung
+// ------------------- Bewertung & Anzeige -------------------
 const tasksById = Object.fromEntries(tasks.map(t=>[t.id,t]));
 function normalize(s){ return String(s||'').trim().toLowerCase(); }
 function arraysEqualAsSets(a,b){
-  if(a.length!==b.length) return false;
-  const A=new Set(a.map(normalize));
-  const B=new Set(b.map(normalize));
-  if(A.size!==B.size) return false;
-  for(const v of A){ if(!B.has(v)) return false; }
-  return true;
+  const A=new Set(a.map(normalize)),B=new Set(b.map(normalize));
+  return A.size===B.size && [...A].every(v=>B.has(v));
 }
-function totalMaxPoints(){ return tasks.reduce((s,t)=>s+(Number(t.points)||0),0); }
-function isCorrect(taskId, given){
-  const spec = answerKey[taskId];
-  if(!spec) return false;
-  if(spec.type==='multi'){
-    const g = Array.isArray(given)? given.map(normalize) : [];
-    return arraysEqualAsSets(g, spec.correct.map(normalize));
-  } else if(spec.type==='single'){
-    return spec.correct.map(normalize).includes(normalize(given));
-  } else {
-    return spec.correct.map(normalize).includes(normalize(given));
+function isCorrect(id,g){
+  const spec=answerKey[id]; if(!spec)return false;
+  if(spec.type==="multi"){return arraysEqualAsSets(Array.isArray(g)?g:[],spec.correct);}
+  return spec.correct.map(normalize).includes(normalize(g));
+}
+function autoPoints(id,g){return isCorrect(id,g)?(tasksById[id].points||1):0;}
+function totalMaxPoints(){return tasks.reduce((s,t)=>s+t.points,0);}
+
+const tasksDiv=document.getElementById("tasks");
+tasks.forEach(t=>{
+  const d=document.createElement("div"); d.className="task";
+  const p=document.createElement("p"); p.textContent=`${t.id}. ${t.question} (${t.points} P)`; d.appendChild(p);
+  if(t.type==="single"){
+    t.options.forEach(opt=>{
+      const l=document.createElement("label");
+      const i=document.createElement("input"); i.type="radio"; i.name="a"+t.id; i.value=opt;
+      l.appendChild(i); l.append(" "+opt); d.appendChild(l);
+    });
+  } else if(t.type==="multi"){
+    t.options.forEach(opt=>{
+      const l=document.createElement("label");
+      const i=document.createElement("input"); i.type="checkbox"; i.name="a"+t.id; i.value=opt;
+      l.appendChild(i); l.append(" "+opt); d.appendChild(l);
+    });
   }
-}
-function autoPoints(taskId, given){
-  const t = tasksById[taskId];
-  return isCorrect(taskId, given) ? (Number(t.points)||0) : 0;
-}
+  tasksDiv.appendChild(d);
+});
+tasksDiv.insertAdjacentHTML("beforeend",`<div class="small">Gesamtpunkte: ${totalMaxPoints()}</div>`);
 
-// ---- Schüler-Rendering ----
-const tasksDiv = document.getElementById('tasks');
-function renderTasks(){
-  tasksDiv.innerHTML = '';
-  tasks.forEach(t=>{
-    const div = document.createElement('div');
-    div.className='task';
-    const p = document.createElement('p');
-    const ptsLabel = ` (${t.points} Punkt${t.points===1?'':'e'})`;
-    p.textContent = `${t.id}. ${t.question}${ptsLabel}`;
-    div.appendChild(p);
+const submitBtn=document.getElementById("submitBtn"),resultBox=document.getElementById("resultBox");
+submitBtn.addEventListener("click",async()=>{
+  const name=document.getElementById("studentName").value.trim();
+  if(!name)return alert("Bitte Namen eingeben!");
+  const answers={};
+  for(const t of tasks){
+    const key="a"+t.id;
+    if(t.type==="multi")answers[key]=[...document.querySelectorAll(`input[name="${key}"]:checked`)].map(x=>x.value);
+    else answers[key]=document.querySelector(`input[name="${key}"]:checked`)?.value||"";
+  }
+  let sum=0; for(const t of tasks){sum+=autoPoints(t.id,answers["a"+t.id]);}
+  const percent=Math.round(sum/totalMaxPoints()*100);
+  try{
+    await addDoc(collection(db,"submissions"),{studentName:name,answers,score:sum,percent,createdAt:serverTimestamp()});
+    resultBox.style.display="block";
+    resultBox.innerHTML=`<strong>Abgabe gespeichert:</strong> ${sum}/${totalMaxPoints()} Punkte (${percent} %)`;
+  }catch(e){console.error(e);alert("Fehler beim Speichern.");}
+});
 
-    if(t.type==='multi'){
-      const opts = [...t.options];
-      for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [opts[i],opts[j]]=[opts[j],opts[i]]; }
-      opts.forEach(opt=>{
-        const lbl = document.createElement('label');
-        const cb = document.createElement('input'); cb.type='checkbox'; cb.name='a'+t.id; cb.value=opt;
-        lbl.appendChild(cb); lbl.appendChild(document.createTextNode(' '+opt));
-        div.appendChild(lbl);
-      });
-    } else if(t.type==='single'){
-      const opts = [...t.options];
-      for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [opts[i],opts[j]]=[opts[j],opts[i]]; }
-      opts.forEach(opt=>{
-        const lbl = document.createElement('label');
-        const rb = document.createElement('input'); rb.type='radio'; rb.name='a'+t.id; rb.value=opt;
-        lbl.appendChild(rb); lbl.appendChild(document.createTextNode(' '+opt));
-        div.appendChild(lbl);
-      });
-    } else {
-      const input = document.createElement('input'); input.type='text'; input.name='a'+t.id; input.placeholder='Antwort eingeben';
-      div.appendChild(input);
-    }
-
-    tasksDiv.appendChild(div);
+const TEACHER_PASSWORD="lehrer123";
+document.getElementById("loginBtn").addEventListener("click",async()=>{
+  if(document.getElementById("teacherPass").value!==TEACHER_PASSWORD)return document.getElementById("loginMsg").textContent="Falsches Passwort!";
+  document.getElementById("loginArea").style.display="none";
+  document.getElementById("teacherPanel").style.display="block";
+  const subC=document.getElementById("submissionsContainer");
+  let snap;
+  try{snap=await getDocs(query(collection(db,"submissions"),orderBy("createdAt","desc")));}catch{snap=await getDocs(collection(db,"submissions"));}
+  if(snap.empty)return subC.textContent="Keine Einsendungen.";
+  let html="<table><tr><th>Name</th><th>Punkte</th><th>%</th></tr>";
+  snap.forEach(d=>{
+    const x=d.data();
+    html+=`<tr><td>${x.studentName}</td><td>${x.score}</td><td>${x.percent}</td></tr>`;
   });
-
-  const totalPts = totalMaxPoints();
-  const info = document.createElement('div');
-  info.className = 'small';
-  info.style.marginTop = '6px';
-  info.textContent = `Gesamtpunkte: ${totalPts}`;
-  tasksDiv.appendChild(info);
-}
-renderTasks();
-
-// ---- Notenschlüssel ----
-function gradeFromPercent(p){
-  const n = Number(p)||0;
-  if(n>=91) return 1;
-  if(n>=77) return 2;
-  if(n>=57) return 3;
-  if(n>=39) return 4;
-  if(n>=25) return 5;
-  return 6;
-}
-
-// ---- Auswertung gesamt ----
-function evaluateAll(answers){
-  const details=[];
-  let sum=0;
-  for(const t of tasks){
-    const key='a'+t.id;
-    const given = answers[key];
-    const ok = isCorrect(t.id, given);
-    const ptsIfCorrect = Number(t.points)||0;
-    const auto = ok ? ptsIfCorrect : 0;
-    sum += auto;
-    details.push({id:t.id, q:t.question, given, correct:answerKey[t.id].correct, ok, pointsIfCorrect:ptsIfCorrect, autoAward:auto});
-  }
-  const maxPts = totalMaxPoints();
-  const percent = maxPts>0 ? Math.round(sum/maxPts*100) : 0;
-  return {points:sum, maxPts, percent, details};
-}
-
-// ---- Abgabe (Bestätigung & Lock) ----
-const submitBtn = document.getElementById('submitBtn');
-const resultBox = document.getElementById('resultBox');
-submitBtn.addEventListener('click', handleSubmitClick);
-
-function countUnanswered(){
-  let missing=0;
-  for(const t of tasks){
-    const key='a'+t.id;
-    if(t.type==='multi'){
-      const vals = Array.from(document.querySelectorAll(`input[name="${key}"]:checked`));
-      if(vals.length===0) missing++;
-    } else if(t.type==='single'){
-      const val = document.querySelector(`input[name="${key}"]:checked`);
-      if(!val) missing++;
-    } else {
-      const val = document.querySelector(`input[name="${key}"]`)?.value.trim();
-      if(!val) missing++;
-    }
-  }
-  return missing;
-}
-function lockStudentForm(){
-  document.getElementById('studentName').setAttribute('disabled','disabled');
-  tasksDiv.querySelectorAll('input').forEach(el=>el.setAttribute('disabled','disabled'));
-  submitBtn.setAttribute('disabled','disabled');
-  submitBtn.textContent = 'Abgegeben';
-}
-
-async function handleSubmitClick(){
-  const name = document.getElementById('studentName').value.trim();
-  if(!name){ alert('Bitte Namen eingeben!'); return; }
-
-  const missing = countUnanswered();
-  const total = tasks.length;
-  const confirmMsg = missing>0
-    ? `Du hast ${missing} von ${total} Aufgaben nicht bearbeitet.\nWirklich absenden? Danach kannst du nichts mehr ändern.`
-    : `Möchtest du deine Antworten wirklich absenden? Danach kannst du nichts mehr ändern.`;
-  if(!confirm(confirmMsg)){ return; }
-
-  lockStudentForm();
-
-  const answers = {};
-  for(const t of tasks){
-    const key = 'a'+t.id;
-    if(t.type==='multi'){
-      const vals = Array.from(document.querySelectorAll(`input[name="${key}"]:checked`)).map(c=>c.value);
-      answers[key] = vals;
-    } else if(t.type==='single'){
-      const val = document.querySelector(`input[name="${key}"]:checked`)?.value || '';
-      answers[key] = val;
-    } else {
-      const val = document.querySelector(`input[name="${key}"]`)?.value || '';
-      answers[key] = val;
-    }
-  }
-
-  const evalRes = evaluateAll(answers);
-
-  try{
-    await addDoc(collection(db,'submissions'),{
-      studentName: name,
-      answers,
-      score: evalRes.points,
-      maxPoints: evalRes.maxPts,
-      percent: evalRes.percent,
-      createdAt: serverTimestamp(),
-      createdAtLocal: new Date().toISOString()
-    });
-
-    resultBox.style.display='block';
-    let html = `<strong>Abgabe gespeichert</strong> — ${evalRes.points}/${evalRes.maxPts} Punkte (${evalRes.percent}%).`;
-    html += `<details style="margin-top:8px"><summary>Antworten & Lösungen ansehen</summary>`;
-    evalRes.details.forEach(d=>{
-      const given = Array.isArray(d.given)? d.given.join(', ') : (d.given||'(leer)');
-      const correct = Array.isArray(d.correct)? d.correct.join(', ') : d.correct;
-      html += `<div style="margin-top:6px;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">`+
-              `<div style="font-weight:600">${d.id}. ${d.q} — <span class="small">${d.pointsIfCorrect} Punkt${d.pointsIfCorrect===1?'':'e'})</span></div>`+
-              `<div>Deine Antwort: ${escapeHtml(given)} ${d.ok? '<span class="ok">✅ richtig</span>' : '<span class="bad">❌ falsch</span>'}</div>`+
-              `<div>Korrekt: ${escapeHtml(String(correct))}</div>`+
-              `</div>`;
-    });
-    html += `</details>`;
-    resultBox.innerHTML = html;
-
-  }catch(err){
-    console.error('Fehler beim Speichern:', err);
-    alert('Fehler beim Speichern. Siehe Konsole.');
-    document.getElementById('studentName').removeAttribute('disabled');
-    tasksDiv.querySelectorAll('input').forEach(el=>el.removeAttribute('disabled'));
-    submitBtn.removeAttribute('disabled');
-    submitBtn.textContent = 'Antworten absenden';
-  }
-}
-
-// ---- Lehrerbereich ----
-const TEACHER_PASSWORD='lehrer123';
-const loginBtn=document.getElementById('loginBtn');
-const loginMsg=document.getElementById('loginMsg');
-const teacherPanel=document.getElementById('teacherPanel');
-const submissionsContainer=document.getElementById('submissionsContainer');
-const toggleAllBtn=document.getElementById('toggleAllEdit');
-
-loginBtn.addEventListener('click',()=>{
-  const entered=document.getElementById('teacherPass').value;
-  if(entered===TEACHER_PASSWORD){
-    document.getElementById('loginArea').style.display='none';
-    teacherPanel.style.display='block';
-    refreshSubmissions();
-  } else {
-    loginMsg.textContent='Falsches Passwort!';
-  }
+  subC.innerHTML=html+"</table>";
 });
-
-document.getElementById('refreshSub').addEventListener('click', refreshSubmissions);
-document.getElementById('exportCsv').addEventListener('click', exportCsv);
-
-// ---- Lehrer-Tabelle mit globalem Edit-Schalter ----
-async function refreshSubmissions(){
-  submissionsContainer.innerHTML='<div class="small">Lade Einsendungen…</div>';
-  try{
-    let snap;
-    try{
-      snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc')));
-    }catch(e){
-      console.warn('Fallback ohne orderBy(createdAt):', e);
-      snap = await getDocs(collection(db,'submissions'));
-    }
-
-    if(snap.empty){ submissionsContainer.innerHTML='<div class="small">Keine Einsendungen gefunden.</div>'; return; }
-
-    const maxPtsNow = totalMaxPoints();
-
-    let html = '<table><thead><tr>';
-    html += `<th class="col-name">Name</th>`;
-    for(let i=1;i<=tasks.length;i++){ html += `<th class="col-q">Q${i}<br><span class="small">Antwort / P.</span></th>`; }
-    html += '<th class="col-sum">Gesamt</th><th class="col-pc">%</th><th class="col-note">Note</th><th class="col-time">Zeit</th><th class="col-act">Aktion</th></tr></thead><tbody>';
-
-    snap.forEach(docSnap=>{
-      const d = docSnap.data();
-      const id = docSnap.id;
-
-      const ans = d.answers || {};
-      const tPts = d.teacherPoints || {};
-
-      let rowHtml = `<tr data-doc="${id}" data-max="${d.maxPoints ?? maxPtsNow}"><td class="col-name">${escapeHtml(d.studentName||'')}</td>`;
-      let sumPoints = 0;
-
-      for(let q=1; q<=tasks.length; q++){
-        const key = 'a'+q;
-        const given = ans[key];
-        const givenStr = Array.isArray(given)? given.join(', ') : (given||'');
-        const defaultAuto = autoPoints(q, given);
-        const value = (tPts[String(q)]!=null) ? tPts[String(q)] : defaultAuto;
-        sumPoints += Number(value)||0;
-        const ok = isCorrect(q, given);
-        const okBadge = ok ? '<span class="ok">✅</span>' : '<span class="bad">❌</span>';
-
-        rowHtml += `<td class="col-q">
-          <div class="ans">${escapeHtml(givenStr||'(leer)')} ${okBadge}</div>
-          <div class="pts-line">
-            <span class="q-pts-label">P:</span>
-            <span class="pts-display" data-q="${q}">${String(value)}</span> / <span>${tasksById[q].points}</span>
-          </div>
-        </td>`;
-      }
-
-      const maxPts = d.maxPoints!=null ? d.maxPoints : maxPtsNow;
-      const percent = maxPts>0 ? Math.round((sumPoints/maxPts)*100) : 0;
-      const note = gradeFromPercent(percent);
-      const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate()
-                : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000)
-                : (d.createdAtLocal ? new Date(d.createdAtLocal) : null));
-
-      rowHtml += `<td class="col-sum sum-cell">${escapeHtml(String(sumPoints))}</td>`;
-      rowHtml += `<td class="col-pc pc-cell">${escapeHtml(String(percent))}</td>`;
-      rowHtml += `<td class="col-note note-cell">${escapeHtml(String(note))}</td>`;
-      rowHtml += `<td class="col-time">${ts? escapeHtml(ts.toLocaleString()) : ''}</td>`;
-      rowHtml += `<td class="col-act">
-        <button class="view-btn" data-doc="${id}">Anzeigen</button>
-        <button class="edit-btn" data-doc="${id}" data-mode="view">Punkte editieren</button>
-        <button class="save-btn" data-doc="${id}">Speichern</button>
-      </td></tr>`;
-
-      html += rowHtml;
-    });
-
-    html += '</tbody></table>';
-    html += `<div class="small" style="margin-top:8px">Tipp: Globaler Schalter oben („Alle Punkte editieren“) oder pro Zeile mit „Punkte editieren“.</div>`;
-    submissionsContainer.innerHTML = html;
-
-    // Wenn globaler Edit-Schalter aktiv war, nachladen → wieder aktivieren
-    if(toggleAllBtn.dataset.mode==='edit'){ setAllRowsEdit(true); }
-
-  }catch(err){
-    console.error('Ladefehler:',err);
-    submissionsContainer.innerHTML = '<div class="small">Fehler beim Laden der Einsendungen. Siehe Konsole.</div>';
-  }
-}
-
-// Einzelzeilen-Editmodus umschalten
-function toggleEditMode(row, toEdit){
-  const modeBtn = row.querySelector('.edit-btn');
-  const displays = row.querySelectorAll('.pts-display');
-  if(toEdit){
-    displays.forEach(span=>{
-      const val = span.textContent.trim();
-      const q = span.dataset.q;
-      const input = document.createElement('input');
-      input.className='q-pts';
-      input.type='text';
-      input.inputMode='decimal';
-      input.value = val;
-      input.setAttribute('data-q', q);
-      span.replaceWith(input);
-    });
-    if(modeBtn){ modeBtn.textContent = 'Felder sperren'; modeBtn.setAttribute('data-mode','edit'); }
-  }else{
-    const inputs = row.querySelectorAll('input.q-pts');
-    inputs.forEach(inp=>{
-      const q = inp.dataset.q;
-      const span = document.createElement('span');
-      span.className='pts-display';
-      span.setAttribute('data-q', q);
-      span.textContent = inp.value;
-      inp.replaceWith(span);
-    });
-    if(modeBtn){ modeBtn.textContent = 'Punkte editieren'; modeBtn.setAttribute('data-mode','view'); }
-  }
-}
-
-// Globaler Edit-Schalter
-document.getElementById('toggleAllEdit').addEventListener('click', ()=>{
-  const toEdit = toggleAllBtn.dataset.mode!=='edit';
-  setAllRowsEdit(toEdit);
-  toggleAllBtn.dataset.mode = toEdit ? 'edit' : 'view';
-  toggleAllBtn.textContent = toEdit ? 'Alle Felder sperren' : 'Alle Punkte editieren';
-});
-
-function setAllRowsEdit(toEdit){
-  document.querySelectorAll('#submissionsContainer tbody tr').forEach(tr=>{
-    toggleEditMode(tr, toEdit);
-  });
-}
-
-// Event-Delegation: Anzeigen / Editieren / Speichern
-submissionsContainer.addEventListener('click', async (e)=>{
-  const viewBtn = e.target.closest('.view-btn');
-  const editBtn = e.target.closest('.edit-btn');
-  const saveBtn = e.target.closest('.save-btn');
-  if(!viewBtn && !editBtn && !saveBtn) return;
-
-  const row = (viewBtn||editBtn||saveBtn).closest('tr');
-  const docId = (viewBtn||editBtn||saveBtn).dataset.doc;
-
-  if(viewBtn){
-    // Modal mit Details
-    const name = row.querySelector('.col-name').textContent;
-    let body = `<div class="small">Schüler/in: <strong>${escapeHtml(name)}</strong></div>`;
-    body += `<div style="margin-top:6px">`;
-    for(let q=1;q<=tasks.length;q++){
-      const qCell = row.querySelectorAll('.col-q')[q-1];
-      const ansText = qCell.querySelector('.ans')?.textContent || '';
-      const ptsVal = qCell.querySelector('.pts-display')?.textContent || qCell.querySelector('.q-pts')?.value || '0';
-      body += `<div style="margin:6px 0;padding:8px;border:1px solid #eef3ff;border-radius:8px;background:#fff">
-        <div style="font-weight:600">${q}. ${escapeHtml(tasksById[q].question)} <span class="small">(${tasksById[q].points} P)</span></div>
-        <div>${escapeHtml(ansText)}</div>
-        <div>Punkte: <strong>${escapeHtml(ptsVal)}</strong> / ${tasksById[q].points}</div>
-      </div>`;
-    }
-    body += `</div>`;
-    openModal(body);
-    return;
-  }
-
-  if(editBtn){
-    const mode = editBtn.getAttribute('data-mode');
-    toggleEditMode(row, mode==='view');
-    return;
-  }
-
-  if(saveBtn){
-    try{
-      const teacherPoints = {};
-      let sum = 0;
-
-      const nodes = row.querySelectorAll('input.q-pts, .pts-display');
-      for(const n of nodes){
-        const q = n.dataset.q;
-        const raw = ('value' in n) ? n.value : n.textContent;
-        const val = Number((raw||'').toString().replace(',','.'));
-        if(Number.isNaN(val) || val<0){ alert(`Bitte gültige Punkte für Q${q} eingeben (≥ 0).`); return; }
-        teacherPoints[q] = val;
-        sum += val;
-      }
-
-      const maxPts = totalMaxPoints();
-      const percent = maxPts>0 ? Math.round((sum/maxPts)*100) : 0;
-
-      await updateDoc(doc(db,'submissions',docId), {
-        teacherPoints,
-        score: sum,
-        percent,
-        maxPoints: maxPts
-      });
-
-      row.querySelector('.sum-cell').textContent = String(sum);
-      row.querySelector('.pc-cell').textContent = String(percent);
-      row.querySelector('.note-cell').textContent = String(gradeFromPercent(percent));
-
-      // wenn Zeile im Edit-Modus war, wieder sperren
-      if(row.querySelector('.edit-btn')?.getAttribute('data-mode')==='edit'){
-        toggleEditMode(row,false);
-      }
-    }catch(err){
-      console.error('Fehler beim Speichern:',err);
-      alert('Fehler beim Speichern. Siehe Konsole.');
-    }
-  }
-});
-
-// Modal helpers
-const modalOverlay = document.getElementById('modalOverlay');
-const modalBody = document.getElementById('modalBody');
-document.getElementById('closeModal').addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) closeModal(); });
-function openModal(html){ modalBody.innerHTML = html; modalOverlay.style.display='flex'; }
-function closeModal(){ modalOverlay.style.display='none'; modalBody.innerHTML=''; }
-
-// CSV-Export
-async function exportCsv(){
-  try{
-    let snap;
-    try{ snap = await getDocs(query(collection(db,'submissions'), orderBy('createdAt','desc'))); }
-    catch(e){ console.warn('CSV-Fallback ohne orderBy:',e); snap = await getDocs(collection(db,'submissions')); }
-
-    if(snap.empty){ alert('Keine Einsendungen.'); return; }
-
-    const maxPtsNow = totalMaxPoints();
-
-    const rows = [['Name', ...Array.from({length:tasks.length},(_,i)=>`Q${i+1}`), 'Punkte', 'maxPunkte', 'Prozent', 'Note', 'Timestamp']];
-    snap.forEach(docSnap=>{
-      const d = docSnap.data();
-      const row = [d.studentName || ''];
-      for(let i=1;i<=tasks.length;i++){
-        const v = d.answers ? d.answers['a'+i] : '';
-        row.push(Array.isArray(d.answers['a'+i])? d.answers['a'+i].join('; ') : (v||''));
-      }
-      const maxPts = d.maxPoints!=null ? d.maxPoints : maxPtsNow;
-      const pts = d.score!=null? d.score : '';
-      const pc = d.percent!=null? d.percent : (maxPts>0 && pts!=='' ? Math.round(Number(pts)/maxPts*100) : '');
-      const note = pc!=='' ? gradeFromPercent(pc) : '';
-      const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toISOString()
-               : (d.timestamp && d.timestamp.seconds ? new Date(d.timestamp.seconds*1000).toISOString()
-               : (d.createdAtLocal || ''));
-      row.push(pts);
-      row.push(maxPts);
-      row.push(pc);
-      row.push(note);
-      row.push(ts);
-      rows.push(row);
-    });
-
-    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='einsendungen_wortarten.csv'; a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),4000);
-  }catch(err){
-    console.error('Exportfehler:',err); alert('Fehler beim Export. Siehe Konsole.');
-  }
-}
-
-// Utils
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 </script>
 </body>
 </html>
