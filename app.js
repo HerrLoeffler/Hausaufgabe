@@ -1,3 +1,5 @@
+const APP_VERSION = "2.0.1";
+console.info(`Lernplattform v${APP_VERSION}`);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
   getAuth,
@@ -84,7 +86,7 @@ function baseStudentUrl(code, preview=false){
   if(preview) url.searchParams.set("preview", "1");
   return url.toString();
 }
-function randomCode(length=10){
+function randomCode(length=8){
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
   crypto.getRandomValues(new Uint32Array(length)).forEach(n => out += alphabet[n % alphabet.length]);
@@ -139,8 +141,9 @@ $("forgotBtn").addEventListener("click", async ()=>{
 $("logoutBtn").addEventListener("click",()=> signOut(auth));
 $("joinForm").addEventListener("submit",(e)=>{
   e.preventDefault();
-  const code = $("joinCode").value.trim().toUpperCase().replace(/\s/g,"");
+  const code = $("joinCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(!code){ toast("Bitte einen Testcode eingeben.","error"); return; }
+  if(code.length < 4 || code.length > 16){ toast("Der Testcode ist ungültig.","error"); return; }
   const url = new URL(location.href); url.search=""; url.searchParams.set("test",code); location.href=url.toString();
 });
 $("brandBtn").addEventListener("click",()=>{
@@ -167,8 +170,16 @@ onAuthStateChanged(auth, async (user)=>{
     }catch{}
   }
   setTeacherBar();
-  const studentCode = new URLSearchParams(location.search).get("test");
-  if(studentCode){ await loadStudentQuiz(studentCode.toUpperCase()); return; }
+  const rawStudentCode = new URLSearchParams(location.search).get("test");
+  const studentCode = rawStudentCode ? rawStudentCode.toUpperCase().replace(/[^A-Z0-9]/g,"") : "";
+  if(studentCode){
+    if(studentCode.length < 4 || studentCode.length > 16){
+      showView("studentView");
+      $("studentQuizCard").innerHTML=`<h1>Test nicht verfügbar</h1><p>Der Testcode ist ungültig.</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a>`;
+      return;
+    }
+    await loadStudentQuiz(studentCode); return;
+  }
   if(user){ await loadDashboard(); }
   else showView("authView");
 });
@@ -219,19 +230,29 @@ function renderQuizList(){
   });
 }
 async function createQuiz(){
-  try{
-    // Kein Vorab-Lesezugriff mehr: Firestore-Regeln blockieren das Lesen
-    // eines noch nicht existierenden Quiz-Dokuments. Ein 10-stelliger
-    // Zufallscode macht Kollisionen praktisch ausgeschlossen.
+  if(!state.user){ toast("Bitte zuerst anmelden.","error"); return; }
+  for(let attempt=1; attempt<=5; attempt++){
     const code = randomCode();
+    if(state.quizzes.some(q=>q.id===code)) continue;
     const quiz = {
       title:"Neuer Test", subject:"", grade:"", description:"Bearbeite alle Aufgaben sorgfältig.",
       ownerId:state.user.uid, published:false, accessCode:code,
       questionCount:0,totalPoints:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
     };
-    await setDoc(doc(db,"quizzes",code),quiz);
-    await openEditor(code);
-  }catch(err){ console.error(err); toast("Test konnte nicht erstellt werden.","error"); }
+    try{
+      await setDoc(doc(db,"quizzes",code),quiz);
+      await openEditor(code);
+      return;
+    }catch(err){
+      // Bei einer extrem seltenen Code-Kollision mit einem fremden Test blockieren
+      // die Firestore-Regeln das Überschreiben. Dann probieren wir einen neuen Code.
+      if(err?.code === "permission-denied" && attempt < 5) continue;
+      console.error(err);
+      toast("Test konnte nicht erstellt werden.","error");
+      return;
+    }
+  }
+  toast("Testcode konnte nicht erzeugt werden. Bitte erneut versuchen.","error");
 }
 async function deleteQuiz(code){
   const q = state.quizzes.find(x=>x.id===code);
@@ -250,8 +271,9 @@ async function deleteQuiz(code){
 $("addQuestionBtn").addEventListener("click",()=>{ state.questions.push(newQuestion()); renderQuestions(); markDirty(); });
 $("saveQuizBtn").addEventListener("click",()=>saveCurrentQuiz(false));
 $("publishBtn").addEventListener("click",publishCurrentQuiz);
-$("previewBtn").addEventListener("click",()=>{
+$("previewBtn").addEventListener("click",async ()=>{
   if(!state.currentQuiz) return;
+  if(!(await saveCurrentQuiz(false))) return;
   window.open(baseStudentUrl(state.currentQuiz.id, true),"_blank","noopener");
 });
 function newQuestion(type="single"){
@@ -285,7 +307,15 @@ function renderQuestions(){
     text.addEventListener("input",e=>{q.text=e.target.value;markDirty();});
     type.addEventListener("change",e=>{
       q.type=e.target.value; q.points=q.type==="multi"?2:1;
-      q.options=q.type==="text"?[]:(q.options?.length?q.options:[{text:"",correct:true},{text:"",correct:false}]);
+      if(q.type==="text"){
+        q.options=[];
+      }else{
+        q.options=q.options?.length?q.options:[{text:"",correct:true},{text:"",correct:false}];
+        if(q.type!=="multi"){
+          const firstCorrect=Math.max(0,q.options.findIndex(o=>o.correct));
+          q.options.forEach((o,i)=>o.correct=i===firstCorrect);
+        }
+      }
       q.acceptedAnswers=q.acceptedAnswers||[]; renderQuestions(); markDirty();
     });
     points.addEventListener("input",e=>{q.points=Math.max(.5,Number(e.target.value)||1);updateSummary();markDirty();});
@@ -521,7 +551,16 @@ function openReview(id){
   state.resultQuestions.forEach((q,i)=>{
     const g=s.grading?.[q.id]||{awardedPoints:0,maxPoints:Number(q.points)||0};const div=document.createElement("div");div.className="reviewQuestion";div.innerHTML=`<strong>${i+1}. ${escapeHtml(q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q,s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label>Punkte:</label><input class="manualPoints" data-qid="${q.id}" type="number" min="0" max="${Number(q.points)}" step="0.1" value="${Number(g.awardedPoints??g.autoPoints??0)}"><span>/ ${Number(q.points)}</span></div>`;root.appendChild(div);
   });
-  const recompute=()=>{const pts=Array.from(panel.querySelectorAll(".manualPoints")).reduce((sum,x)=>sum+(Number(x.value)||0),0);const max=state.resultQuestions.reduce((sum,q)=>sum+Number(q.points||0),0);const pc=max?Math.round(pts/max*100):0;$("reviewTotal").textContent=`${Math.round(pts*10)/10}/${max} Punkte · ${pc}% · Note ${gradeFromPercent(pc)}`;};
+  const recompute=()=>{
+    const pts=Array.from(panel.querySelectorAll(".manualPoints")).reduce((sum,x)=>{
+      const q=state.resultQuestions.find(item=>item.id===x.dataset.qid);
+      const max=Number(q?.points||0);
+      return sum+Math.max(0,Math.min(max,Number(x.value)||0));
+    },0);
+    const max=state.resultQuestions.reduce((sum,q)=>sum+Number(q.points||0),0);
+    const pc=max?Math.round(pts/max*100):0;
+    $("reviewTotal").textContent=`${Math.round(pts*10)/10}/${max} Punkte · ${pc}% · Note ${gradeFromPercent(pc)}`;
+  };
   panel.querySelectorAll(".manualPoints").forEach(x=>x.addEventListener("input",recompute));recompute();$("closeReview").addEventListener("click",()=>panel.classList.add("hidden"));$("saveReview").addEventListener("click",()=>saveReview(s.id));panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
 async function saveReview(submissionId){

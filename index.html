@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lernplattform – Tests einfach erstellen</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="app-version" content="2.0.1" />
+  <link rel="stylesheet" href="styles.css?v=2.0.1" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -34,7 +35,7 @@
           <p>Du brauchst keinen Account. Gib den Code deiner Lehrkraft ein.</p>
           <form id="joinForm" class="stack compact">
             <label>Testcode
-              <input id="joinCode" type="text" maxlength="8" autocomplete="off" placeholder="z. B. AB12CD" />
+              <input id="joinCode" type="text" autocomplete="off" maxlength="16" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7M4X2PA" />
             </label>
             <button class="button primary" type="submit">Test öffnen</button>
           </form>
@@ -226,6 +227,6 @@
     </article>
   </template>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=2.0.1"></script>
 </body>
 </html>
