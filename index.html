@@ -2,226 +2,230 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Deutsch-Test — Lehrerbereich mit Firebase</title>
-  <style>
-    body{font-family:Inter,system-ui;background:#f4f7fb;margin:0;padding:24px}
-    .wrap{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
-    header{display:flex;justify-content:space-between;align-items:center}
-    h1{color:#0b63d6;font-size:20px;margin:0}
-    .small{font-size:12px;color:#667}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #eaeaea;padding:6px;text-align:left;font-size:12px;vertical-align:top}
-    th{background:#f0f4ff}
-    button{background:#0b63d6;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px}
-    input[type=password], input[type=text]{padding:8px;border:1px solid #ccc;border-radius:6px;width:240px}
-    #teacherPanel{display:none;margin-top:14px;padding:12px;background:#fff8e6;border-radius:8px;border:1px solid #ffecb3}
-    .task{margin:12px 0;padding:10px;border:1px solid #eef3ff;border-radius:10px;background:#fbfdff}
-    .task p{margin:0 0 6px 0;font-weight:600}
-    label{display:block;margin:4px 0}
-    .ok{color:#16a34a;font-weight:600}
-    .bad{color:#b91c1c;font-weight:600}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lernplattform – Tests einfach erstellen</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Deutsch-Test — Lehrerbereich</h1>
-      <div class="small">Wortarten · Verbformen · Zeitformen</div>
-    </header>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <div id="studentArea" style="margin-top:20px;">
-      <p>Trage deinen Namen ein und bearbeite die Aufgaben:</p>
-      <input type="text" id="studentName" placeholder="Vorname Nachname">
-      <div id="tasks"></div>
-      <button id="submitBtn">Antworten absenden</button>
-      <div id="resultBox" class="small" style="display:none;margin-top:10px;padding:10px;border-radius:8px;background:#f0f7ff;border:1px solid #dbeeff"></div>
+  <header class="topbar">
+    <button id="brandBtn" class="brand" type="button" aria-label="Startseite">
+      <span class="brandMark">L</span>
+      <span>
+        <strong>Lernplattform</strong>
+        <small>Tests erstellen · durchführen · auswerten</small>
+      </span>
+    </button>
+    <div id="userBar" class="userBar hidden">
+      <span id="userLabel"></span>
+      <button id="logoutBtn" class="button ghost" type="button">Abmelden</button>
     </div>
+  </header>
 
-    <div id="loginArea" style="margin-top:28px;">
-      <p>Bitte Passwort eingeben, um den Lehrerbereich zu öffnen:</p>
-      <input type="password" id="teacherPass" placeholder="Lehrerpasswort">
-      <button id="loginBtn">Login</button>
-      <div id="loginMsg" class="small" style="color:#b33;margin-top:8px;"></div>
-    </div>
+  <main class="shell">
+    <!-- Öffentliche Start-/Loginseite -->
+    <section id="authView" class="view">
+      <div class="heroGrid">
+        <article class="card heroCard">
+          <span class="eyebrow">Für Schülerinnen & Schüler</span>
+          <h1>Testcode eingeben</h1>
+          <p>Du brauchst keinen Account. Gib den Code deiner Lehrkraft ein.</p>
+          <form id="joinForm" class="stack compact">
+            <label>Testcode
+              <input id="joinCode" type="text" maxlength="8" autocomplete="off" placeholder="z. B. AB12CD" />
+            </label>
+            <button class="button primary" type="submit">Test öffnen</button>
+          </form>
+        </article>
 
-    <div id="teacherPanel">
-      <button id="refreshSub" class="secondary">Aktualisieren</button>
-      <div id="submissionsContainer" style="margin-top:14px"></div>
-    </div>
-  </div>
+        <article class="card">
+          <div class="tabs" role="tablist">
+            <button id="loginTab" class="tab active" type="button">Anmelden</button>
+            <button id="registerTab" class="tab" type="button">Account erstellen</button>
+          </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+          <form id="loginForm" class="stack authForm">
+            <h2>Lehrer-Login</h2>
+            <label>E-Mail
+              <input id="loginEmail" type="email" autocomplete="email" required />
+            </label>
+            <label>Passwort
+              <input id="loginPassword" type="password" autocomplete="current-password" required />
+            </label>
+            <button class="button primary" type="submit">Anmelden</button>
+            <button id="forgotBtn" class="linkButton" type="button">Passwort vergessen?</button>
+          </form>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCOWi7ecJR17wzEsm2q6wPR1BZWV-VrDBo",
-  authDomain: "hausaufgabe-40294.firebaseapp.com",
-  projectId: "hausaufgabe-40294",
-  storageBucket: "hausaufgabe-40294.firebasestorage.app",
-  messagingSenderId: "275544438191",
-  appId: "1:275544438191:web:d68f43e7e43025df76eb5a"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+          <form id="registerForm" class="stack authForm hidden">
+            <h2>Lehrer-Account erstellen</h2>
+            <label>Name
+              <input id="registerName" type="text" autocomplete="name" required />
+            </label>
+            <label>E-Mail
+              <input id="registerEmail" type="email" autocomplete="email" required />
+            </label>
+            <label>Passwort
+              <input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required />
+            </label>
+            <label>Passwort wiederholen
+              <input id="registerPassword2" type="password" minlength="6" autocomplete="new-password" required />
+            </label>
+            <button class="button primary" type="submit">Account erstellen</button>
+            <p class="hint">Die Zugangsdaten werden von Firebase Authentication verwaltet – nicht in der Test-Datenbank gespeichert.</p>
+          </form>
+        </article>
+      </div>
+    </section>
 
-// ---------- Aufgaben Deutsch (didaktisch aufgebaut) ----------
-const tasks = [
-  // Wortarten (Grundlage)
-  {id:1, points:1, question:"Welche Wortart ist „laufen“?", type:"single", options:["Verb","Nomen","Adjektiv"]},
-  {id:2, points:1, question:"Welche Wortart ist „freundlich“?", type:"single", options:["Adjektiv","Verb","Pronomen"]},
-  {id:3, points:1, question:"Welche Wörter sind Nomen?", type:"multi", options:["der Tisch","laufen","die Freiheit","schnell"]},
-  {id:4, points:1, question:"Welche Wörter sind Verben?", type:"multi", options:["spielen","singen","Auto","das Haus"]},
-  {id:5, points:1, question:"Welche Wortart ersetzt ein Nomen?", type:"single", options:["Pronomen","Adverb","Artikel"]},
+    <!-- Lehrer-Dashboard -->
+    <section id="dashboardView" class="view hidden">
+      <div class="pageHead">
+        <div>
+          <span class="eyebrow">Lehrerbereich</span>
+          <h1>Meine Tests</h1>
+          <p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p>
+        </div>
+        <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
+      </div>
+      <div id="quizList" class="quizGrid"></div>
+      <div id="emptyQuizState" class="empty hidden">
+        <div class="emptyIcon">＋</div>
+        <h2>Noch kein Test vorhanden</h2>
+        <p>Erstelle deinen ersten Test. Die Schüler benötigen später nur einen Code oder Link.</p>
+        <button id="emptyNewQuizBtn" class="button primary" type="button">Ersten Test erstellen</button>
+      </div>
+    </section>
 
-  // Verbformen / finite Verb
-  {id:6, points:1, question:"In welchem Satz ist das Verb richtig gebeugt?", type:"single", options:["Wir gehen nach Hause.","Ich gehen nach Hause.","Du geht nach Hause."]},
-  {id:7, points:1, question:"Welches Wort ist das finite Verb im Satz: „Morgen werden wir ins Kino gehen.“?", type:"single", options:["werden","gehen","Morgen"]},
-  {id:8, points:1, question:"3. Person Singular Präsens von „lesen“ lautet …", type:"single", options:["er liest","er lesen","er las"]},
+    <!-- Test-Editor -->
+    <section id="editorView" class="view hidden">
+      <div class="pageHead stickyHead">
+        <div>
+          <button id="backFromEditor" class="linkButton left" type="button">← Zurück</button>
+          <h1 id="editorHeading">Test bearbeiten</h1>
+          <p id="saveState">Noch nicht gespeichert</p>
+        </div>
+        <div class="actions">
+          <button id="previewBtn" class="button secondary" type="button">Schüleransicht</button>
+          <button id="saveQuizBtn" class="button secondary" type="button">Speichern</button>
+          <button id="publishBtn" class="button primary" type="button">Veröffentlichen</button>
+        </div>
+      </div>
 
-  // Zeitformen erkennen
-  {id:9, points:1, question:"„ich spielte“ steht im …", type:"single", options:["Präteritum","Perfekt","Präsens","Futur I"]},
-  {id:10, points:1, question:"„ich habe gespielt“ steht im …", type:"single", options:["Perfekt","Präteritum","Plusquamperfekt","Futur I"]},
-  {id:11, points:1, question:"„ich war gegangen“ steht im …", type:"single", options:["Plusquamperfekt","Perfekt","Präteritum","Futur II"]},
-  {id:12, points:1, question:"„ich werde spielen“ steht im …", type:"single", options:["Futur I","Präsens","Perfekt","Präteritum"]},
-  {id:13, points:1, question:"„ich werde gespielt haben“ steht im …", type:"single", options:["Futur II","Futur I","Perfekt","Plusquamperfekt"]},
+      <div class="editorLayout">
+        <aside class="card settingsCard">
+          <h2>Test-Einstellungen</h2>
+          <div class="stack compact">
+            <label>Titel
+              <input id="quizTitle" type="text" placeholder="z. B. Wortarten – Wiederholung" />
+            </label>
+            <label>Fach
+              <input id="quizSubject" type="text" placeholder="Deutsch" />
+            </label>
+            <label>Klassenstufe
+              <input id="quizGrade" type="text" placeholder="9" />
+            </label>
+            <label>Hinweis für Schüler
+              <textarea id="quizDescription" rows="4" placeholder="Bearbeite alle Aufgaben sorgfältig."></textarea>
+            </label>
+          </div>
+          <div class="summaryBox">
+            <div><span>Aufgaben</span><strong id="questionCount">0</strong></div>
+            <div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div>
+            <div><span>Status</span><strong id="publishStatus">Entwurf</strong></div>
+          </div>
+        </aside>
 
-  // mehrere Formen zuordnen
-  {id:14, points:1, question:"Welche Formen stehen im Perfekt?", type:"multi", options:["ich habe gelernt","ich bin gegangen","ich hatte gelernt","ich werde lernen"]},
-  {id:15, points:1, question:"Welche Formen stehen im Plusquamperfekt?", type:"multi", options:["ich hatte gelernt","ich war gegangen","ich werde gelernt haben","ich habe gelernt"]},
-  {id:16, points:1, question:"Welche Formen stehen im Präsens?", type:"multi", options:["ich spiele","wir gehen","ich werde gehen","ich spielte"]},
-  {id:17, points:1, question:"Welche Sätze stehen im Präteritum?", type:"multi", options:["Er ging nach Hause.","Wir gehen nach Hause.","Sie spielte gestern Klavier.","Ich werde gehen."]},
+        <div>
+          <div id="questionList" class="questionList"></div>
+          <button id="addQuestionBtn" class="button addQuestion" type="button">+ Aufgabe hinzufügen</button>
+        </div>
+      </div>
+    </section>
 
-  // Anwendung / richtige Bildung
-  {id:18, points:1, question:"Welche Verbform passt: „Morgen ___ ich dir helfen.“", type:"single", options:["werde","habe","war"]},
-  {id:19, points:1, question:"Welche Zeitform drückt Vorzeitigkeit zur Vergangenheit aus?", type:"single", options:["Plusquamperfekt","Perfekt","Futur II"]},
-  {id:20, points:1, question:"Welche Variante ist korrekt im Perfekt?", type:"single", options:["Ich habe den Text geschrieben.","Ich habe den Text schreibte.","Ich bin den Text geschrieben."]},
-  {id:21, points:1, question:"Setze „fahren“ in Perfekt, 1. Person Plural.", type:"single", options:["Wir sind gefahren.","Wir haben gefahren.","Wir werden fahren."]},
-  {id:22, points:1, question:"Welche Kombination ist richtig gebildet?", type:"single", options:["Futur II: Ich werde gegangen sein.","Perfekt: Ich werde gegangen.","Präteritum: Ich bin gegangen."]},
+    <!-- Veröffentlichung -->
+    <section id="publishView" class="view hidden">
+      <div class="card publishCard">
+        <button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button>
+        <span class="successIcon">✓</span>
+        <h1>Test ist veröffentlicht</h1>
+        <p>Schüler können den Test über den Code, Link oder QR-Code öffnen.</p>
+        <div class="publishGrid">
+          <div>
+            <span class="labelText">Testcode</span>
+            <div id="publishedCode" class="bigCode"></div>
+            <div class="actions center">
+              <button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button>
+              <button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button>
+            </div>
+            <input id="publishedLink" class="shareLink" type="text" readonly />
+          </div>
+          <div class="qrWrap">
+            <div id="qrcode"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  // Abschluss / gemischt
-  {id:23, points:1, question:"Welche Wortarten kommen im Satz „Der alte Mann liest langsam.“ vor?", type:"multi", options:["Artikel","Adjektiv","Nomen","Verb","Adverb"]},
-  {id:24, points:1, question:"Welche Sätze enthalten ein Modalverb im Präsens?", type:"multi", options:["Ich kann schwimmen.","Ich schwamm.","Wir mussten gehen.","Er will lesen."]},
-  {id:25, points:1, question:"„Am Freitag haben wir Sport gemacht.“ steht im …", type:"single", options:["Perfekt","Präteritum","Futur I"]}
-];
+    <!-- Ergebnisse -->
+    <section id="resultsView" class="view hidden">
+      <div class="pageHead">
+        <div>
+          <button id="backFromResults" class="linkButton left" type="button">← Zurück</button>
+          <span class="eyebrow">Ergebnisse</span>
+          <h1 id="resultsHeading">Test</h1>
+          <p id="resultsMeta"></p>
+        </div>
+        <div class="actions">
+          <button id="exportResultsBtn" class="button secondary" type="button">CSV exportieren</button>
+          <button id="refreshResultsBtn" class="button primary" type="button">Aktualisieren</button>
+        </div>
+      </div>
+      <div id="resultsTableWrap" class="card tableCard"></div>
+      <div id="reviewPanel" class="card reviewPanel hidden"></div>
+    </section>
 
-// ---------- Antwortschlüssel ----------
-const answerKey = {
-  1:{type:"single",correct:["Verb"]},
-  2:{type:"single",correct:["Adjektiv"]},
-  3:{type:"multi",correct:["der Tisch","die Freiheit"]},
-  4:{type:"multi",correct:["spielen","singen"]},
-  5:{type:"single",correct:["Pronomen"]},
-  6:{type:"single",correct:["Wir gehen nach Hause."]},
-  7:{type:"single",correct:["werden"]},
-  8:{type:"single",correct:["er liest"]},
-  9:{type:"single",correct:["Präteritum"]},
-  10:{type:"single",correct:["Perfekt"]},
-  11:{type:"single",correct:["Plusquamperfekt"]},
-  12:{type:"single",correct:["Futur I"]},
-  13:{type:"single",correct:["Futur II"]},
-  14:{type:"multi",correct:["ich habe gelernt","ich bin gegangen"]},
-  15:{type:"multi",correct:["ich hatte gelernt","ich war gegangen"]},
-  16:{type:"multi",correct:["ich spiele","wir gehen"]},
-  17:{type:"multi",correct:["Er ging nach Hause.","Sie spielte gestern Klavier."]},
-  18:{type:"single",correct:["werde"]},
-  19:{type:"single",correct:["Plusquamperfekt"]},
-  20:{type:"single",correct:["Ich habe den Text geschrieben."]},
-  21:{type:"single",correct:["Wir sind gefahren."]},
-  22:{type:"single",correct:["Futur II: Ich werde gegangen sein."]},
-  23:{type:"multi",correct:["Artikel","Adjektiv","Nomen","Verb","Adverb"]},
-  24:{type:"multi",correct:["Ich kann schwimmen.","Er will lesen."]},
-  25:{type:"single",correct:["Perfekt"]}
-};
+    <!-- Schüler-Test -->
+    <section id="studentView" class="view hidden">
+      <div id="studentQuizCard" class="card studentQuizCard">
+        <div id="studentLoading">Test wird geladen …</div>
+      </div>
+    </section>
+  </main>
 
-// ------------------- Bewertung & Anzeige -------------------
-const tasksById = Object.fromEntries(tasks.map(t=>[t.id,t]));
-function normalize(s){ return String(s||'').trim().toLowerCase(); }
-function arraysEqualAsSets(a,b){
-  const A=new Set(a.map(normalize)),B=new Set(b.map(normalize));
-  return A.size===B.size && [...A].every(v=>B.has(v));
-}
-function isCorrect(id,g){
-  const spec=answerKey[id]; if(!spec)return false;
-  if(spec.type==="multi"){ return arraysEqualAsSets(Array.isArray(g)?g:[], spec.correct); }
-  return spec.correct.map(normalize).includes(normalize(g));
-}
-function autoPoints(id,g){ return isCorrect(id,g) ? (tasksById[id].points||1) : 0; }
-function totalMaxPoints(){ return tasks.reduce((s,t)=>s+t.points,0); }
+  <template id="questionTemplate">
+    <article class="card questionCard">
+      <div class="questionTop">
+        <div class="dragHandle" title="Reihenfolge">⋮⋮</div>
+        <strong class="questionNumber"></strong>
+        <div class="questionActions">
+          <button class="iconButton moveUp" type="button" title="Nach oben">↑</button>
+          <button class="iconButton moveDown" type="button" title="Nach unten">↓</button>
+          <button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button>
+          <button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button>
+        </div>
+      </div>
+      <div class="questionGrid">
+        <label class="grow">Frage
+          <textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea>
+        </label>
+        <label>Typ
+          <select class="qType">
+            <option value="single">Single Choice</option>
+            <option value="multi">Multiple Choice</option>
+            <option value="text">Freitext</option>
+            <option value="dropdown">Dropdown</option>
+          </select>
+        </label>
+        <label class="pointsLabel">Punkte
+          <input class="qPoints" type="number" min="0.5" step="0.5" value="1" />
+        </label>
+      </div>
+      <div class="answerEditor"></div>
+    </article>
+  </template>
 
-const tasksDiv=document.getElementById("tasks");
-tasks.forEach(t=>{
-  const d=document.createElement("div"); d.className="task";
-  const p=document.createElement("p"); p.textContent=`${t.id}. ${t.question} (${t.points} P)`; d.appendChild(p);
-  if(t.type==="single"){
-    t.options.forEach(opt=>{
-      const l=document.createElement("label");
-      const i=document.createElement("input"); i.type="radio"; i.name="a"+t.id; i.value=opt;
-      l.appendChild(i); l.append(" "+opt); d.appendChild(l);
-    });
-  } else if(t.type==="multi"){
-    t.options.forEach(opt=>{
-      const l=document.createElement("label");
-      const i=document.createElement("input"); i.type="checkbox"; i.name="a"+t.id; i.value=opt;
-      l.appendChild(i); l.append(" "+opt); d.appendChild(l);
-    });
-  }
-  tasksDiv.appendChild(d);
-});
-tasksDiv.insertAdjacentHTML("beforeend",`<div class="small">Gesamtpunkte: ${totalMaxPoints()}</div>`);
-
-const submitBtn=document.getElementById("submitBtn"),resultBox=document.getElementById("resultBox");
-submitBtn.addEventListener("click",async()=>{
-  const name=document.getElementById("studentName").value.trim();
-  if(!name)return alert("Bitte Namen eingeben!");
-  const answers={};
-  for(const t of tasks){
-    const key="a"+t.id;
-    if(t.type==="multi")answers[key]=[...document.querySelectorAll(`input[name="${key}"]:checked`)].map(x=>x.value);
-    else answers[key]=document.querySelector(`input[name="${key}"]:checked`)?.value||"";
-  }
-  let sum=0; for(const t of tasks){ sum+=autoPoints(t.id,answers["a"+t.id]); }
-  const percent=Math.round(sum/totalMaxPoints()*100);
-  try{
-    await addDoc(collection(db,"submissions"),{
-      studentName:name,
-      answers,
-      score:sum,
-      percent,
-      createdAt:serverTimestamp()
-    });
-    resultBox.style.display="block";
-    resultBox.innerHTML=`<strong>Abgabe gespeichert:</strong> ${sum}/${totalMaxPoints()} Punkte (${percent} %)`;
-  }catch(e){
-    console.error(e);
-    alert("Fehler beim Speichern.");
-  }
-});
-
-const TEACHER_PASSWORD="lehrer123";
-document.getElementById("loginBtn").addEventListener("click",async()=>{
-  if(document.getElementById("teacherPass").value!==TEACHER_PASSWORD){
-    document.getElementById("loginMsg").textContent="Falsches Passwort!";
-    return;
-  }
-  document.getElementById("loginArea").style.display="none";
-  document.getElementById("teacherPanel").style.display="block";
-  const subC=document.getElementById("submissionsContainer");
-  let snap;
-  try{
-    snap=await getDocs(query(collection(db,"submissions"),orderBy("createdAt","desc")));
-  }catch{
-    snap=await getDocs(collection(db,"submissions"));
-  }
-  if(snap.empty){ subC.textContent="Keine Einsendungen."; return; }
-  let html="<table><tr><th>Name</th><th>Punkte</th><th>%</th></tr>";
-  snap.forEach(d=>{
-    const x=d.data();
-    html+=`<tr><td>${x.studentName}</td><td>${x.score}</td><td>${x.percent}</td></tr>`;
-  });
-  subC.innerHTML=html+"</table>";
-});
-</script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

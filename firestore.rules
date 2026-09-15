@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsQuiz(quizId) {
+      return signedIn()
+        && get(/databases/$(database)/documents/quizzes/$(quizId)).data.ownerId == request.auth.uid;
+    }
+
+    function quizPublished(quizId) {
+      return get(/databases/$(database)/documents/quizzes/$(quizId)).data.published == true;
+    }
+
+    // Lehrerprofile: nur der jeweilige Benutzer selbst.
+    match /users/{userId} {
+      allow create: if signedIn() && request.auth.uid == userId;
+      allow read, update, delete: if signedIn() && request.auth.uid == userId;
+    }
+
+    // Tests: veröffentlichte Tests sind für Schüler lesbar.
+    // Unveröffentlichte Tests nur für den Eigentümer.
+    match /quizzes/{quizId} {
+      allow get: if resource.data.published == true
+                 || (signedIn() && resource.data.ownerId == request.auth.uid);
+      allow list: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if signedIn()
+                    && request.resource.data.ownerId == request.auth.uid;
+      allow update: if signedIn()
+                    && resource.data.ownerId == request.auth.uid
+                    && request.resource.data.ownerId == request.auth.uid;
+      allow delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+
+      match /questions/{questionId} {
+        allow read: if quizPublished(quizId) || ownsQuiz(quizId);
+        allow create, update, delete: if ownsQuiz(quizId);
+      }
+
+      match /submissions/{submissionId} {
+        // Schüler dürfen nur neue Abgaben an veröffentlichte Tests schreiben.
+        // Lesen/Ändern dürfen ausschließlich die Eigentümer des Tests.
+        allow create: if quizPublished(quizId)
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.answers is map;
+        allow read, update, delete: if ownsQuiz(quizId);
+      }
+    }
+
+    // TEMPORÄR: erhält deine alte V1 unter /submissions am Leben.
+    // Sobald V2 produktiv ist, diesen Block löschen.
+    match /submissions/{legacyId} {
+      allow create, read: if true;
+      allow update, delete: if false;
+    }
+  }
+}
