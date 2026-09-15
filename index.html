@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lernplattform – Tests einfach erstellen</title>
-  <meta name="app-version" content="2.0.1" />
-  <link rel="stylesheet" href="styles.css?v=2.0.1" />
+  <meta name="app-version" content="2.1.0" />
+  <link rel="stylesheet" href="styles.css?v=2.1.0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -14,19 +14,16 @@
   <header class="topbar">
     <button id="brandBtn" class="brand" type="button" aria-label="Startseite">
       <span class="brandMark">L</span>
-      <span>
-        <strong>Lernplattform</strong>
-        <small>Tests erstellen · durchführen · auswerten</small>
-      </span>
+      <span><strong>Lernplattform</strong><small>Tests erstellen · durchführen · auswerten</small></span>
     </button>
     <div id="userBar" class="userBar hidden">
       <span id="userLabel"></span>
+      <button id="settingsTopBtn" class="button ghost" type="button">Einstellungen</button>
       <button id="logoutBtn" class="button ghost" type="button">Abmelden</button>
     </div>
   </header>
 
   <main class="shell">
-    <!-- Öffentliche Start-/Loginseite -->
     <section id="authView" class="view">
       <div class="heroGrid">
         <article class="card heroCard">
@@ -46,187 +43,160 @@
             <button id="loginTab" class="tab active" type="button">Anmelden</button>
             <button id="registerTab" class="tab" type="button">Account erstellen</button>
           </div>
-
           <form id="loginForm" class="stack authForm">
             <h2>Lehrer-Login</h2>
-            <label>E-Mail
-              <input id="loginEmail" type="email" autocomplete="email" required />
-            </label>
-            <label>Passwort
-              <input id="loginPassword" type="password" autocomplete="current-password" required />
-            </label>
+            <label>E-Mail<input id="loginEmail" type="email" autocomplete="email" required /></label>
+            <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
             <button class="button primary" type="submit">Anmelden</button>
             <button id="forgotBtn" class="linkButton" type="button">Passwort vergessen?</button>
           </form>
-
           <form id="registerForm" class="stack authForm hidden">
             <h2>Lehrer-Account erstellen</h2>
-            <label>Name
-              <input id="registerName" type="text" autocomplete="name" required />
-            </label>
-            <label>E-Mail
-              <input id="registerEmail" type="email" autocomplete="email" required />
-            </label>
-            <label>Passwort
-              <input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required />
-            </label>
-            <label>Passwort wiederholen
-              <input id="registerPassword2" type="password" minlength="6" autocomplete="new-password" required />
-            </label>
+            <label>Name<input id="registerName" type="text" autocomplete="name" required /></label>
+            <label>E-Mail<input id="registerEmail" type="email" autocomplete="email" required /></label>
+            <label>Passwort<input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required /></label>
+            <label>Passwort wiederholen<input id="registerPassword2" type="password" minlength="6" autocomplete="new-password" required /></label>
             <button class="button primary" type="submit">Account erstellen</button>
-            <p class="hint">Die Zugangsdaten werden von Firebase Authentication verwaltet – nicht in der Test-Datenbank gespeichert.</p>
+            <p class="hint">Die Zugangsdaten werden von Firebase Authentication verwaltet.</p>
           </form>
         </article>
       </div>
     </section>
 
-    <!-- Lehrer-Dashboard -->
     <section id="dashboardView" class="view hidden">
       <div class="pageHead">
-        <div>
-          <span class="eyebrow">Lehrerbereich</span>
-          <h1>Meine Tests</h1>
-          <p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p>
+        <div><span class="eyebrow">Lehrerbereich</span><h1>Meine Tests</h1><p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p></div>
+        <div class="actions dashboardActions">
+          <button id="aiCreateBtn" class="button secondary" type="button">✨ KI-Vorlage</button>
+          <button id="settingsBtn" class="button secondary" type="button">⚙ Einstellungen</button>
+          <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
         </div>
-        <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
+      </div>
+      <div class="card dashboardToolbar">
+        <label class="searchField">Tests durchsuchen<input id="quizSearch" type="search" placeholder="Titel, Fach, Klasse oder Code …" /></label>
+        <label>Status<select id="quizFilter"><option value="all">Alle Tests</option><option value="published">Veröffentlicht</option><option value="draft">Entwürfe</option></select></label>
       </div>
       <div id="quizList" class="quizGrid"></div>
       <div id="emptyQuizState" class="empty hidden">
-        <div class="emptyIcon">＋</div>
-        <h2>Noch kein Test vorhanden</h2>
-        <p>Erstelle deinen ersten Test. Die Schüler benötigen später nur einen Code oder Link.</p>
+        <div class="emptyIcon">＋</div><h2>Noch kein Test vorhanden</h2><p>Erstelle deinen ersten Test. Schüler benötigen später nur einen Code oder Link.</p>
         <button id="emptyNewQuizBtn" class="button primary" type="button">Ersten Test erstellen</button>
+      </div>
+      <div id="noFilterState" class="empty hidden"><h2>Keine passenden Tests</h2><p>Ändere Suche oder Filter.</p></div>
+    </section>
+
+    <section id="settingsView" class="view hidden">
+      <div class="pageHead">
+        <div><button id="backFromSettings" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Lehrerbereich</span><h1>Einstellungen</h1><p>Standardwerte und Bewertung für neue Tests.</p></div>
+        <button id="saveSettingsBtn" class="button primary" type="button">Einstellungen speichern</button>
+      </div>
+      <div class="settingsPageGrid">
+        <article class="card">
+          <h2>Standardwerte für neue Tests</h2>
+          <div class="stack">
+            <label>Standardfach<input id="defaultSubject" type="text" placeholder="z. B. Deutsch" /></label>
+            <label>Standard-Klassenstufe<input id="defaultGrade" type="text" placeholder="z. B. 9" /></label>
+            <label>Standard-Hinweis für Schüler<textarea id="defaultDescription" rows="4"></textarea></label>
+            <label>Nach der Abgabe standardmäßig
+              <select id="defaultResultMode">
+                <option value="none">Nur „Abgabe gespeichert“</option>
+                <option value="points">Punkte anzeigen</option>
+                <option value="points_percent">Punkte + Prozent anzeigen</option>
+                <option value="points_grade">Punkte + Prozent + Note anzeigen</option>
+              </select>
+            </label>
+            <label class="checkRow"><input id="defaultShowSolutions" type="checkbox" /> Richtige Lösungen nach der Abgabe anzeigen</label>
+          </div>
+        </article>
+        <article class="card gradeScalePanel">
+          <div class="sectionHead"><div><h2>Notenschlüssel</h2><p>Ein Schlüssel wird als Standard für neue Tests verwendet.</p></div><button id="addGradeScaleBtn" class="button secondary" type="button">+ Schlüssel</button></div>
+          <div id="gradeScaleList" class="gradeScaleList"></div>
+        </article>
       </div>
     </section>
 
-    <!-- Test-Editor -->
+    <section id="aiView" class="view hidden">
+      <div class="pageHead">
+        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">KI-Vorbereitung</span><h1>Test schneller erstellen</h1><p>Prompt erzeugen, in ChatGPT verwenden und das JSON anschließend hier importieren.</p></div>
+      </div>
+      <div class="aiGrid">
+        <article class="card">
+          <h2>1. Test beschreiben</h2>
+          <div class="formGrid2">
+            <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
+            <label>Klasse<input id="aiGrade" type="text" placeholder="9" /></label>
+            <label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label>
+            <label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label>
+            <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
+            <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="50" value="10" /></label>
+            <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
+            <label>Dauer (Min.)<input id="aiDuration" type="number" min="5" value="30" /></label>
+            <label>Gesamtpunkte ca.<input id="aiPoints" type="number" min="1" value="20" /></label>
+          </div>
+          <p class="labelLike">Aufgabentypen erlauben</p>
+          <div id="aiTypeChecks" class="typeCheckGrid"></div>
+          <button id="generatePromptBtn" class="button primary" type="button">Prompt erzeugen</button>
+        </article>
+        <article class="card">
+          <div class="sectionHead"><div><h2>2. Prompt</h2><p>Diesen Text in ChatGPT einfügen.</p></div><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button></div>
+          <textarea id="aiPromptOutput" class="codeArea" rows="18" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
+        </article>
+      </div>
+      <article class="card importCard">
+        <div class="sectionHead"><div><h2>3. KI-Ergebnis importieren</h2><p>Die JSON-Antwort aus ChatGPT einfügen. Der Test landet danach im normalen Editor.</p></div><button id="importJsonBtn" class="button primary" type="button">JSON als Test importieren</button></div>
+        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder='{"title":"Zinsrechnung", "questions":[…]}'></textarea>
+      </article>
+    </section>
+
     <section id="editorView" class="view hidden">
       <div class="pageHead stickyHead">
-        <div>
-          <button id="backFromEditor" class="linkButton left" type="button">← Zurück</button>
-          <h1 id="editorHeading">Test bearbeiten</h1>
-          <p id="saveState">Noch nicht gespeichert</p>
-        </div>
-        <div class="actions">
-          <button id="previewBtn" class="button secondary" type="button">Schüleransicht</button>
-          <button id="saveQuizBtn" class="button secondary" type="button">Speichern</button>
-          <button id="publishBtn" class="button primary" type="button">Veröffentlichen</button>
-        </div>
+        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p></div>
+        <div class="actions"><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
       </div>
-
       <div class="editorLayout">
         <aside class="card settingsCard">
           <h2>Test-Einstellungen</h2>
           <div class="stack compact">
-            <label>Titel
-              <input id="quizTitle" type="text" placeholder="z. B. Wortarten – Wiederholung" />
-            </label>
-            <label>Fach
-              <input id="quizSubject" type="text" placeholder="Deutsch" />
-            </label>
-            <label>Klassenstufe
-              <input id="quizGrade" type="text" placeholder="9" />
-            </label>
-            <label>Hinweis für Schüler
-              <textarea id="quizDescription" rows="4" placeholder="Bearbeite alle Aufgaben sorgfältig."></textarea>
-            </label>
+            <label>Titel<input id="quizTitle" type="text" placeholder="z. B. Wortarten – Wiederholung" /></label>
+            <label>Fach<input id="quizSubject" type="text" placeholder="Deutsch" /></label>
+            <label>Klassenstufe<input id="quizGrade" type="text" placeholder="9" /></label>
+            <label>Hinweis für Schüler<textarea id="quizDescription" rows="4"></textarea></label>
+            <label>Notenschlüssel<select id="quizGradeScale"></select></label>
+            <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
+            <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
           </div>
-          <div class="summaryBox">
-            <div><span>Aufgaben</span><strong id="questionCount">0</strong></div>
-            <div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div>
-            <div><span>Status</span><strong id="publishStatus">Entwurf</strong></div>
-          </div>
+          <div class="summaryBox"><div><span>Aufgaben</span><strong id="questionCount">0</strong></div><div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div><div><span>Status</span><strong id="publishStatus">Entwurf</strong></div></div>
         </aside>
-
-        <div>
-          <div id="questionList" class="questionList"></div>
-          <button id="addQuestionBtn" class="button addQuestion" type="button">+ Aufgabe hinzufügen</button>
-        </div>
+        <div><div id="questionList" class="questionList"></div><button id="addQuestionBtn" class="button addQuestion" type="button">+ Aufgabe hinzufügen</button></div>
       </div>
     </section>
 
-    <!-- Veröffentlichung -->
     <section id="publishView" class="view hidden">
-      <div class="card publishCard">
-        <button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button>
-        <span class="successIcon">✓</span>
-        <h1>Test ist veröffentlicht</h1>
-        <p>Schüler können den Test über den Code, Link oder QR-Code öffnen.</p>
-        <div class="publishGrid">
-          <div>
-            <span class="labelText">Testcode</span>
-            <div id="publishedCode" class="bigCode"></div>
-            <div class="actions center">
-              <button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button>
-              <button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button>
-            </div>
-            <input id="publishedLink" class="shareLink" type="text" readonly />
-          </div>
-          <div class="qrWrap">
-            <div id="qrcode"></div>
-          </div>
-        </div>
-      </div>
+      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><span class="successIcon">✓</span><h1>Test ist veröffentlicht</h1><p>Schüler können den Test über den Code, Link oder QR-Code öffnen.</p><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div></div>
     </section>
 
-    <!-- Ergebnisse -->
     <section id="resultsView" class="view hidden">
-      <div class="pageHead">
-        <div>
-          <button id="backFromResults" class="linkButton left" type="button">← Zurück</button>
-          <span class="eyebrow">Ergebnisse</span>
-          <h1 id="resultsHeading">Test</h1>
-          <p id="resultsMeta"></p>
-        </div>
-        <div class="actions">
-          <button id="exportResultsBtn" class="button secondary" type="button">CSV exportieren</button>
-          <button id="refreshResultsBtn" class="button primary" type="button">Aktualisieren</button>
-        </div>
-      </div>
-      <div id="resultsTableWrap" class="card tableCard"></div>
-      <div id="reviewPanel" class="card reviewPanel hidden"></div>
+      <div class="pageHead"><div><button id="backFromResults" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Ergebnisse</span><h1 id="resultsHeading">Test</h1><p id="resultsMeta"></p></div><div class="actions"><button id="exportResultsBtn" class="button secondary" type="button">CSV exportieren</button><button id="refreshResultsBtn" class="button primary" type="button">Aktualisieren</button></div></div>
+      <div id="resultsTableWrap" class="card tableCard"></div><div id="reviewPanel" class="card reviewPanel hidden"></div>
     </section>
 
-    <!-- Schüler-Test -->
-    <section id="studentView" class="view hidden">
-      <div id="studentQuizCard" class="card studentQuizCard">
-        <div id="studentLoading">Test wird geladen …</div>
-      </div>
-    </section>
+    <section id="studentView" class="view hidden"><div id="studentQuizCard" class="card studentQuizCard"><div id="studentLoading">Test wird geladen …</div></div></section>
   </main>
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop">
-        <div class="dragHandle" title="Reihenfolge">⋮⋮</div>
-        <strong class="questionNumber"></strong>
-        <div class="questionActions">
-          <button class="iconButton moveUp" type="button" title="Nach oben">↑</button>
-          <button class="iconButton moveDown" type="button" title="Nach unten">↓</button>
-          <button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button>
-          <button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button>
-        </div>
-      </div>
+      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
       <div class="questionGrid">
-        <label class="grow">Frage
-          <textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea>
-        </label>
-        <label>Typ
-          <select class="qType">
-            <option value="single">Single Choice</option>
-            <option value="multi">Multiple Choice</option>
-            <option value="text">Freitext</option>
-            <option value="dropdown">Dropdown</option>
-          </select>
-        </label>
-        <label class="pointsLabel">Punkte
-          <input class="qPoints" type="number" min="0.5" step="0.5" value="1" />
-        </label>
+        <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
+        <label>Typ<select class="qType">
+          <option value="single">Single Choice</option><option value="multi">Multiple Choice</option><option value="text">Freitext</option><option value="dropdown">Dropdown</option>
+          <option value="truefalse">Richtig / Falsch</option><option value="gapfill">Lückentext</option><option value="matching">Zuordnen</option><option value="ordering">Sortieren / Reihenfolge</option><option value="grouping">Gruppieren / Kategorien</option><option value="markwords">Wörter markieren</option><option value="number">Zahl / Rechenergebnis</option>
+        </select></label>
+        <label class="pointsLabel">Punkte<input class="qPoints" type="number" min="0.5" step="0.5" value="1" /></label>
       </div>
       <div class="answerEditor"></div>
     </article>
   </template>
 
-  <script type="module" src="app.js?v=2.0.1"></script>
+  <script type="module" src="app.js?v=2.1.0"></script>
 </body>
 </html>
