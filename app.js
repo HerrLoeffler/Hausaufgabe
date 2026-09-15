@@ -84,19 +84,11 @@ function baseStudentUrl(code, preview=false){
   if(preview) url.searchParams.set("preview", "1");
   return url.toString();
 }
-function randomCode(length=6){
+function randomCode(length=10){
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
   crypto.getRandomValues(new Uint32Array(length)).forEach(n => out += alphabet[n % alphabet.length]);
   return out;
-}
-async function uniqueQuizCode(){
-  for(let i=0;i<12;i++){
-    const code = randomCode();
-    const snap = await getDoc(doc(db,"quizzes",code));
-    if(!snap.exists()) return code;
-  }
-  throw new Error("Kein eindeutiger Testcode konnte erzeugt werden.");
 }
 function setTeacherBar(){
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
@@ -228,7 +220,10 @@ function renderQuizList(){
 }
 async function createQuiz(){
   try{
-    const code = await uniqueQuizCode();
+    // Kein Vorab-Lesezugriff mehr: Firestore-Regeln blockieren das Lesen
+    // eines noch nicht existierenden Quiz-Dokuments. Ein 10-stelliger
+    // Zufallscode macht Kollisionen praktisch ausgeschlossen.
+    const code = randomCode();
     const quiz = {
       title:"Neuer Test", subject:"", grade:"", description:"Bearbeite alle Aufgaben sorgfältig.",
       ownerId:state.user.uid, published:false, accessCode:code,
