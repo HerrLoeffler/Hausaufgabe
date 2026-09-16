@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.0";
+const APP_VERSION = "2.1.1";
 console.info(`Lernplattform v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -26,11 +26,18 @@ import {
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const $ = (id) => document.getElementById(id);
 const views = [
@@ -164,7 +171,7 @@ function clamp(n, min, max) {
 }
 
 function round1(n) {
-  return Math.round(Number(n || 0) * 10) / 10;
+  return Math.round(Number(n || 0) * 2) / 2;
 }
 
 function getSettings(profile = state.profile) {
@@ -392,7 +399,7 @@ function filteredQuizzes() {
     if (status === "published" && !q.published) return false;
     if (status === "draft" && q.published) return false;
     if (!term) return true;
-    const hay = normalize([q.title, q.subject, q.grade, q.id].join(" "));
+    const hay = normalize([q.title, q.subject, q.grade, q.id, q.description].join(" "));
     return hay.includes(term);
   });
 }
@@ -510,7 +517,7 @@ async function duplicateQuiz(code) {
       showSolutions: source.showSolutions ?? getSettings().defaultShowSolutions,
       published: false,
       questionCount: questions.length,
-      totalPoints: questions.reduce((sum, q) => sum + Number(q.points || 0), 0)
+      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
     };
     const { code: newCode } = await createQuizDocument(base);
     for (let i = 0; i < questions.length; i += 1) {
@@ -691,7 +698,7 @@ function generateAiPrompt() {
     toast("Bitte mindestens einen Aufgabentyp auswählen.", "error");
     return;
   }
-  const prompt = `Du erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Alle Vorkommen dieser Wörter gelten als richtig.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.`;
+  const prompt = `Du erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
@@ -708,7 +715,7 @@ function normalizeImportedQuestion(raw, index) {
   const type = QUESTION_TYPES.some(([value]) => value === raw.type) ? raw.type : "text";
   const q = newQuestion(type, false);
   q.text = String(raw.text || `Aufgabe ${index + 1}`);
-  q.points = Math.max(0.5, Number(raw.points) || 1);
+  q.points = Math.max(0.5, round1(Number(raw.points) || 1));
   if (["single", "multi", "dropdown"].includes(type)) {
     q.options = Array.isArray(raw.options)
       ? raw.options.map((o) => ({ text: String(o.text || ""), correct: Boolean(o.correct) }))
@@ -767,7 +774,7 @@ async function importAiJson() {
       grade: String(data.grade || $("aiGrade").value || getSettings().defaultGrade || ""),
       description: String(data.description || getSettings().defaultDescription),
       questionCount: questions.length,
-      totalPoints: questions.reduce((sum, q) => sum + Number(q.points || 0), 0)
+      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
     };
     const { code } = await createQuizDocument(base);
     for (let i = 0; i < questions.length; i += 1) {
@@ -813,6 +820,7 @@ function newQuestion(type = "single", needsFirestoreId = true) {
 }
 
 function initializeTypeData(q, type) {
+  q.points = Math.max(0.5, round1(Number(q.points) || (type === "multi" ? 2 : 1)));
   if (["single", "multi", "dropdown"].includes(type)) {
     q.options = q.options?.length ? q.options : [{ text: "", correct: true }, { text: "", correct: false }];
     if (type !== "multi") {
@@ -904,19 +912,24 @@ function renderQuestions() {
     const type = node.querySelector(".qType");
     const points = node.querySelector(".qPoints");
     const caption = node.querySelector(".questionTextCaption");
+    const textLabel = node.querySelector(".questionTextLabel");
 
-    caption.textContent = q.type === "gapfill" ? "Lückentext" : q.type === "markwords" ? "Arbeitsauftrag" : "Frage";
-    text.placeholder = q.type === "gapfill" ? "z. B. Die Hauptstadt von Bayern ist [München]." : "Frage eingeben …";
+    caption.textContent = q.type === "markwords" ? "Arbeitsauftrag" : "Frage";
+    text.placeholder = "Frage eingeben …";
     text.value = q.text || "";
     type.value = q.type;
-    points.value = q.points || 1;
+    points.value = Math.max(0.5, round1(q.points || 1));
+
+    if (q.type === "gapfill") textLabel.classList.add("hidden");
 
     text.addEventListener("input", (e) => {
       q.text = e.target.value;
       markDirty();
     });
     type.addEventListener("change", (e) => {
+      const previousType = q.type;
       q.type = e.target.value;
+      if (previousType === "gapfill" && q.type !== "gapfill") q.text = gapTextToPlain(q.text);
       q.points = q.type === "multi" ? 2 : 1;
       initializeTypeData(q, q.type);
       renderQuestions();
@@ -926,6 +939,11 @@ function renderQuestions() {
       q.points = Math.max(0.5, Number(e.target.value) || 1);
       updateSummary();
       markDirty();
+    });
+    points.addEventListener("change", (e) => {
+      q.points = Math.max(0.5, round1(Number(e.target.value) || 1));
+      e.target.value = q.points;
+      updateSummary();
     });
     node.querySelector(".moveUp").addEventListener("click", () => moveQuestion(index, -1));
     node.querySelector(".moveDown").addEventListener("click", () => moveQuestion(index, 1));
@@ -937,6 +955,11 @@ function renderQuestions() {
         markDirty();
       }
     });
+
+    const imageEditor = document.createElement("div");
+    imageEditor.className = "questionImageEditor";
+    node.querySelector(".answerEditor").before(imageEditor);
+    renderQuestionImageEditor(imageEditor, q);
     renderAnswerEditor(node.querySelector(".answerEditor"), q);
     root.appendChild(node);
   });
@@ -968,6 +991,387 @@ function makeMiniButton(text, handler) {
   btn.textContent = text;
   btn.addEventListener("click", handler);
   return btn;
+}
+
+
+async function blobToImage(blob) {
+  if ("createImageBitmap" in window) {
+    try { return await createImageBitmap(blob); } catch (_) {}
+  }
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Bild konnte nicht gelesen werden.")); };
+    img.src = url;
+  });
+}
+
+async function compressQuestionImage(blob) {
+  const image = await blobToImage(blob);
+  const sourceWidth = image.width || image.naturalWidth;
+  const sourceHeight = image.height || image.naturalHeight;
+  const maxSide = 1800;
+  const scale = Math.min(1, maxSide / Math.max(sourceWidth, sourceHeight));
+  const width = Math.max(1, Math.round(sourceWidth * scale));
+  const height = Math.max(1, Math.round(sourceHeight * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0, width, height);
+  if (typeof image.close === "function") image.close();
+  const toBlob = (type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+  return (await toBlob("image/webp", 0.86)) || (await toBlob("image/jpeg", 0.88)) || blob;
+}
+
+async function uploadQuestionImage(blob, q) {
+  if (!state.user || !state.currentQuiz?.id || !q?.id) {
+    toast("Bild kann diesem Test gerade nicht zugeordnet werden.", "error");
+    return;
+  }
+  if (!blob?.type?.startsWith("image/")) {
+    toast("Bitte eine Bilddatei verwenden.", "error");
+    return;
+  }
+  if (blob.size > 20 * 1024 * 1024) {
+    toast("Das Bild ist zu groß. Maximal 20 MB vor der Komprimierung.", "error");
+    return;
+  }
+  try {
+    toast("Bild wird vorbereitet …");
+    const optimized = await compressQuestionImage(blob);
+    const extension = optimized.type === "image/jpeg" ? "jpg" : "webp";
+    const path = `quiz-images/${state.user.uid}/${state.currentQuiz.id}/${q.id}/${crypto.randomUUID()}.${extension}`;
+    const ref = storageRef(storage, path);
+    await uploadBytes(ref, optimized, { contentType: optimized.type || `image/${extension}` });
+    q.imageUrl = await getDownloadURL(ref);
+    q.imagePath = path;
+    q.imageAlt = q.imageAlt || "";
+    markDirty();
+    renderQuestions();
+    toast("Bild eingefügt.");
+  } catch (err) {
+    console.error(err);
+    const message = String(err?.code || err?.message || "");
+    if (message.includes("storage/unauthorized") || message.includes("storage/unknown")) {
+      toast("Bild-Upload ist noch nicht freigeschaltet. Prüfe Firebase Storage und die Storage-Regeln.", "error");
+    } else {
+      toast("Bild konnte nicht hochgeladen werden.", "error");
+    }
+  }
+}
+
+function renderQuestionImageEditor(container, q) {
+  container.innerHTML = "";
+  const title = document.createElement("div");
+  title.className = "imageEditorTitle";
+  title.innerHTML = `<span class="labelLike">Bild zur Aufgabe <small>(optional)</small></span>`;
+  container.appendChild(title);
+
+  if (q.imageUrl) {
+    const preview = document.createElement("div");
+    preview.className = "questionImagePreview";
+    preview.innerHTML = `<img src="${escapeHtml(q.imageUrl)}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+    container.appendChild(preview);
+
+    const alt = document.createElement("label");
+    alt.className = "stack compact imageAltField";
+    alt.innerHTML = `<span>Bildbeschreibung <small>(optional)</small></span><input type="text" value="${escapeHtml(q.imageAlt || "")}" placeholder="z. B. Zimmer mit Tisch und Teddy">`;
+    alt.querySelector("input").addEventListener("input", (e) => { q.imageAlt = e.target.value; markDirty(); });
+    container.appendChild(alt);
+
+    const actions = document.createElement("div");
+    actions.className = "imageActions";
+    const file = document.createElement("input");
+    file.type = "file";
+    file.accept = "image/*";
+    file.className = "hidden";
+    file.addEventListener("change", () => file.files?.[0] && uploadQuestionImage(file.files[0], q));
+    const replace = makeMiniButton("Bild ersetzen", () => file.click());
+    const shot = makeMiniButton("Screenshot", () => captureScreenForQuestion(q));
+    const remove = makeMiniButton("Bild entfernen", () => {
+      q.imageUrl = "";
+      q.imagePath = "";
+      q.imageAlt = "";
+      markDirty();
+      renderQuestions();
+    });
+    remove.classList.add("dangerMini");
+    actions.append(replace, shot, remove, file);
+    container.appendChild(actions);
+    return;
+  }
+
+  const open = makeMiniButton("+ Bild hinzufügen", () => {
+    panel.classList.toggle("hidden");
+    if (!panel.classList.contains("hidden")) panel.focus();
+  });
+  open.classList.add("imageAddButton");
+  container.appendChild(open);
+
+  const panel = document.createElement("div");
+  panel.className = "imageDropPanel hidden";
+  panel.tabIndex = 0;
+  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div>`;
+  const actions = panel.querySelector(".imageActions");
+  const file = document.createElement("input");
+  file.type = "file";
+  file.accept = "image/*";
+  file.className = "hidden";
+  file.addEventListener("change", () => file.files?.[0] && uploadQuestionImage(file.files[0], q));
+  actions.append(makeMiniButton("Datei auswählen", () => file.click()), makeMiniButton("Screenshot aufnehmen", () => captureScreenForQuestion(q)), file);
+
+  ["dragenter", "dragover"].forEach((name) => panel.addEventListener(name, (e) => {
+    e.preventDefault();
+    panel.classList.add("dragOver");
+  }));
+  ["dragleave", "drop"].forEach((name) => panel.addEventListener(name, (e) => {
+    e.preventDefault();
+    panel.classList.remove("dragOver");
+  }));
+  panel.addEventListener("drop", (e) => {
+    const image = Array.from(e.dataTransfer?.files || []).find((f) => f.type.startsWith("image/"));
+    if (image) uploadQuestionImage(image, q);
+    else toast("In der Ablage wurde kein Bild gefunden.", "error");
+  });
+  panel.addEventListener("paste", (e) => {
+    const item = Array.from(e.clipboardData?.items || []).find((x) => x.type.startsWith("image/"));
+    const image = item?.getAsFile();
+    if (image) {
+      e.preventDefault();
+      uploadQuestionImage(image, q);
+    }
+  });
+  container.appendChild(panel);
+}
+
+async function captureScreenForQuestion(q) {
+  if (!navigator.mediaDevices?.getDisplayMedia) {
+    toast("Dieser Browser unterstützt direkte Screenshots nicht.", "error");
+    return;
+  }
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    const video = document.createElement("video");
+    video.srcObject = stream;
+    video.muted = true;
+    await new Promise((resolve, reject) => {
+      video.onloadedmetadata = resolve;
+      video.onerror = reject;
+    });
+    await video.play();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    stream.getTracks().forEach((track) => track.stop());
+    stream = null;
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Screenshot konnte nicht erzeugt werden.");
+    openScreenshotCropper(blob, q);
+  } catch (err) {
+    stream?.getTracks().forEach((track) => track.stop());
+    if (err?.name !== "NotAllowedError") {
+      console.error(err);
+      toast("Screenshot konnte nicht aufgenommen werden.", "error");
+    }
+  }
+}
+
+function openScreenshotCropper(blob, q) {
+  const url = URL.createObjectURL(blob);
+  const overlay = document.createElement("div");
+  overlay.className = "cropOverlay";
+  overlay.innerHTML = `<div class="cropDialog"><div class="cropHead"><div><h2>Screenshot zuschneiden</h2><p>Ziehe einen Rahmen um den Bereich, den du verwenden möchtest.</p></div><button class="iconButton cropClose" type="button">×</button></div><div class="cropStage"><img alt="Screenshot-Vorschau"><div class="cropSelection hidden"></div></div><div class="cropActions"><button class="button ghost cropCancel" type="button">Abbrechen</button><button class="button secondary cropFull" type="button">Gesamtes Bild</button><button class="button primary cropUse" type="button">Ausschnitt übernehmen</button></div></div>`;
+  document.body.appendChild(overlay);
+  const img = overlay.querySelector("img");
+  const stage = overlay.querySelector(".cropStage");
+  const selection = overlay.querySelector(".cropSelection");
+  img.src = url;
+  let rect = null;
+  let start = null;
+
+  const cleanup = () => {
+    URL.revokeObjectURL(url);
+    overlay.remove();
+  };
+  overlay.querySelector(".cropClose").addEventListener("click", cleanup);
+  overlay.querySelector(".cropCancel").addEventListener("click", cleanup);
+
+  const point = (e) => {
+    const r = stage.getBoundingClientRect();
+    return { x: clamp(e.clientX - r.left, 0, r.width), y: clamp(e.clientY - r.top, 0, r.height), stageRect: r };
+  };
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    start = point(e);
+    rect = { x: start.x, y: start.y, w: 0, h: 0 };
+    selection.classList.remove("hidden");
+    stage.setPointerCapture?.(e.pointerId);
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!start) return;
+    const p = point(e);
+    rect = { x: Math.min(start.x, p.x), y: Math.min(start.y, p.y), w: Math.abs(p.x - start.x), h: Math.abs(p.y - start.y) };
+    Object.assign(selection.style, { left: `${rect.x}px`, top: `${rect.y}px`, width: `${rect.w}px`, height: `${rect.h}px` });
+  });
+  const endSelection = () => { start = null; };
+  stage.addEventListener("pointerup", endSelection);
+  stage.addEventListener("pointercancel", endSelection);
+
+  const cropAndUpload = async (useFull = false) => {
+    if (!img.naturalWidth || !img.naturalHeight) return;
+    const display = img.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    const imageOffsetX = display.left - stageRect.left;
+    const imageOffsetY = display.top - stageRect.top;
+    const chosen = useFull ? { x: imageOffsetX, y: imageOffsetY, w: display.width, h: display.height } : rect;
+    if (!chosen || chosen.w < 8 || chosen.h < 8) {
+      toast("Bitte zuerst einen Bereich markieren.", "error");
+      return;
+    }
+    const x = clamp(chosen.x - imageOffsetX, 0, display.width);
+    const y = clamp(chosen.y - imageOffsetY, 0, display.height);
+    const w = clamp(chosen.w, 1, display.width - x);
+    const h = clamp(chosen.h, 1, display.height - y);
+    const sx = Math.round((x / display.width) * img.naturalWidth);
+    const sy = Math.round((y / display.height) * img.naturalHeight);
+    const sw = Math.max(1, Math.round((w / display.width) * img.naturalWidth));
+    const sh = Math.max(1, Math.round((h / display.height) * img.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = sw;
+    canvas.height = sh;
+    canvas.getContext("2d").drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+    const cropped = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    cleanup();
+    if (cropped) await uploadQuestionImage(cropped, q);
+  };
+  overlay.querySelector(".cropFull").addEventListener("click", () => cropAndUpload(true));
+  overlay.querySelector(".cropUse").addEventListener("click", () => cropAndUpload(false));
+}
+
+function serializeGapComposer(root) {
+  const walk = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent || "";
+    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+    const el = node;
+    if (el.classList?.contains("gapChip")) {
+      let answers = [];
+      try { answers = JSON.parse(el.dataset.answers || "[]"); } catch (_) {}
+      return `[${answers.map((x) => String(x).trim()).filter(Boolean).join("|")}]`;
+    }
+    if (el.tagName === "BR") return "\n";
+    const inner = Array.from(el.childNodes).map(walk).join("");
+    return ["DIV", "P"].includes(el.tagName) ? `${inner}\n` : inner;
+  };
+  return Array.from(root.childNodes).map(walk).join("").replace(/\n+$/, "");
+}
+
+function makeGapChip(answers, q, editor) {
+  const initial = answers.map((x) => String(x).trim()).filter(Boolean);
+  const span = document.createElement("span");
+  span.className = "gapChip";
+  span.contentEditable = "false";
+  span.dataset.answers = JSON.stringify(initial);
+  const label = document.createElement("span");
+  label.className = "gapChipLabel";
+  label.textContent = initial[0] || "Lücke";
+  label.title = "Klicken, um alternative richtige Antworten einzutragen";
+  label.addEventListener("click", () => {
+    let current = [];
+    try { current = JSON.parse(span.dataset.answers || "[]"); } catch (_) {}
+    const value = prompt("Akzeptierte Antworten, durch Kommas getrennt:", current.join(", "));
+    if (value === null) return;
+    const next = value.split(",").map((x) => x.trim()).filter(Boolean);
+    if (!next.length) return toast("Mindestens eine richtige Antwort erforderlich.", "error");
+    span.dataset.answers = JSON.stringify(next);
+    label.textContent = next[0];
+    q.text = serializeGapComposer(editor);
+    markDirty();
+  });
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "gapChipRemove";
+  remove.textContent = "×";
+  remove.title = "Lücke entfernen";
+  remove.addEventListener("click", () => {
+    let current = [];
+    try { current = JSON.parse(span.dataset.answers || "[]"); } catch (_) {}
+    span.replaceWith(document.createTextNode(current[0] || ""));
+    q.text = serializeGapComposer(editor);
+    markDirty();
+  });
+  span.append(label, remove);
+  return span;
+}
+
+function fillGapComposer(editor, q) {
+  editor.innerHTML = "";
+  const source = String(q.text || "");
+  const regex = /\[([^\]]+)\]/g;
+  let last = 0;
+  let match;
+  while ((match = regex.exec(source))) {
+    if (match.index > last) editor.appendChild(document.createTextNode(source.slice(last, match.index)));
+    editor.appendChild(makeGapChip(match[1].split("|"), q, editor));
+    last = match.index + match[0].length;
+  }
+  if (last < source.length) editor.appendChild(document.createTextNode(source.slice(last)));
+}
+
+function renderGapfillEditor(container, q) {
+  const info = document.createElement("p");
+  info.className = "hint";
+  info.textContent = "Schreibe deinen Text, markiere anschließend ein Wort oder einen Ausdruck und klicke auf „Als Lücke markieren“.";
+  const editor = document.createElement("div");
+  editor.className = "gapComposer";
+  editor.contentEditable = "true";
+  editor.dataset.placeholder = "z. B. Die Hauptstadt von Bayern ist München.";
+  fillGapComposer(editor, q);
+  editor.addEventListener("input", () => { q.text = serializeGapComposer(editor); markDirty(); });
+  editor.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain") || "";
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    const node = document.createTextNode(text);
+    range.insertNode(node);
+    range.setStartAfter(node);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    q.text = serializeGapComposer(editor);
+    markDirty();
+  });
+  const actions = document.createElement("div");
+  actions.className = "gapActions";
+  const mark = makeMiniButton("Als Lücke markieren", () => {
+    const selection = window.getSelection();
+    if (!selection?.rangeCount || selection.isCollapsed) return toast("Markiere zuerst das Wort oder den Ausdruck für die Lücke.", "error");
+    const range = selection.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)) return toast("Die Markierung muss im Lückentext liegen.", "error");
+    const selected = selection.toString().trim();
+    if (!selected) return toast("Markiere zuerst einen Text für die Lücke.", "error");
+    range.deleteContents();
+    const chip = makeGapChip([selected], q, editor);
+    range.insertNode(chip);
+    range.setStartAfter(chip);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    q.text = serializeGapComposer(editor);
+    markDirty();
+  });
+  actions.appendChild(mark);
+  const note = document.createElement("small");
+  note.className = "hint";
+  note.textContent = "Tipp: Klicke auf eine markierte Lücke, um alternative richtige Antworten einzutragen.";
+  container.append(info, editor, actions, note);
 }
 
 function renderAnswerEditor(container, q) {
@@ -1026,7 +1430,7 @@ function renderAnswerEditor(container, q) {
   if (q.type === "text") {
     const label = document.createElement("label");
     label.className = "stack compact";
-    label.innerHTML = `<span>Automatisch akzeptierte Antworten <small>(mit Komma trennen)</small></span><input type="text" value="${escapeHtml((q.acceptedAnswers || []).join(", "))}" placeholder="z. B. spannend, interessant">`;
+    label.innerHTML = `<span>Automatisch akzeptierte Antworten <small>(durch Kommas getrennt)</small></span><input type="text" value="${escapeHtml((q.acceptedAnswers || []).join(", "))}" placeholder="z. B. spannend, interessant">`;
     label.querySelector("input").addEventListener("input", (e) => {
       q.acceptedAnswers = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
       markDirty();
@@ -1056,10 +1460,7 @@ function renderAnswerEditor(container, q) {
   }
 
   if (q.type === "gapfill") {
-    const box = document.createElement("div");
-    box.className = "infoBox";
-    box.innerHTML = `<strong>So funktioniert der Lückentext</strong><p>Schreibe die Lösung direkt im Fragetext in eckige Klammern. Alternativen trennst du mit <code>|</code>.</p><code>Die Hauptstadt von Bayern ist [München|Muenchen].</code><p>Die Lösungen werden Schülern nicht im Aufgabentext angezeigt.</p>`;
-    container.appendChild(box);
+    renderGapfillEditor(container, q);
     return;
   }
 
@@ -1154,7 +1555,7 @@ function renderAnswerEditor(container, q) {
     container.appendChild(passage);
     const targets = document.createElement("label");
     targets.className = "stack compact markTargets";
-    targets.innerHTML = `<span>Zielwörter <small>(mit Komma trennen; alle Vorkommen werden als richtig gewertet)</small></span><input value="${escapeHtml((q.targetWords || []).join(", "))}" placeholder="z. B. ich, du, wir">`;
+    targets.innerHTML = `<span>Zielwörter <small>(durch Kommas getrennt)</small></span><input value="${escapeHtml((q.targetWords || []).join(", "))}" placeholder="z. B. ich, du, wir"><small class="hint">Jedes passende Wort im Text gilt als richtige Markierung.</small>`;
     targets.querySelector("input").addEventListener("input", (e) => {
       q.targetWords = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
       markDirty();
@@ -1189,6 +1590,10 @@ function markSaved() {
   $("saveState").textContent = "✓ Gespeichert";
   $("saveState").style.color = "#15803d";
   updateSummary();
+}
+
+function gapTextToPlain(text) {
+  return String(text || "").replace(/\[([^\]]+)\]/g, (_, inside) => String(inside).split("|")[0].trim());
 }
 
 function parseGaps(text) {
@@ -1230,7 +1635,7 @@ function validateQuiz() {
     }
     if (q.type === "gapfill") {
       const gaps = parseGaps(q.text);
-      if (!gaps.length || gaps.some((g) => !g.answers.length)) return `Aufgabe ${i + 1}: Der Lückentext braucht mindestens eine Lösung in [eckigen Klammern].`;
+      if (!gaps.length || gaps.some((g) => !g.answers.length)) return `Aufgabe ${i + 1}: Markiere mindestens eine Stelle als Lücke.`;
     }
     if (q.type === "matching") {
       if ((q.pairs || []).length < 2 || q.pairs.some((p) => !p.left.trim() || !p.right.trim())) return `Aufgabe ${i + 1}: Mindestens zwei vollständige Zuordnungspaare erforderlich.`;
@@ -1255,9 +1660,14 @@ function sanitizeQuestionForSave(q) {
   const base = {
     type: q.type,
     text: String(q.text || "").trim(),
-    points: Number(q.points),
+    points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
+  if (q.imageUrl) {
+    base.imageUrl = String(q.imageUrl);
+    base.imagePath = String(q.imagePath || "");
+    base.imageAlt = String(q.imageAlt || "").trim();
+  }
   if (["single", "multi", "dropdown"].includes(q.type)) {
     base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct) }));
   }
@@ -1618,6 +2028,13 @@ function renderStudentQuiz(quiz, questions) {
     if (q.type !== "gapfill") section.innerHTML = `<h3>${i + 1}. ${escapeHtml(q.text)} <span class="meta">(${Number(q.points)} P.)</span></h3>`;
     else section.innerHTML = `<h3>${i + 1}. Lückentext <span class="meta">(${Number(q.points)} P.)</span></h3>`;
 
+    if (q.imageUrl) {
+      const figure = document.createElement("figure");
+      figure.className = "studentQuestionImage";
+      figure.innerHTML = `<img src="${escapeHtml(q.imageUrl)}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+      section.appendChild(figure);
+    }
+
     if (q.type === "text") {
       const inp = document.createElement("input");
       inp.type = "text";
@@ -1693,7 +2110,7 @@ function readStudentAnswer(q) {
 }
 
 function evaluateAnswer(q, given) {
-  const max = Number(q.points) || 0;
+  const max = round1(Number(q.points) || 0);
   if (q.type === "text") {
     if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
     const ok = (q.acceptedAnswers || []).map(normalize).includes(normalize(given));
@@ -1964,7 +2381,7 @@ function openReview(id) {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
-    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label>Punkte:</label><input class="manualPoints" data-qid="${q.id}" type="number" min="0" max="${Number(q.points)}" step="0.1" value="${Number(g.awardedPoints ?? g.autoPoints ?? 0)}"><span>/ ${Number(q.points)}</span></div>`;
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label>Punkte:</label><input class="manualPoints" data-qid="${q.id}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
     root.appendChild(div);
   });
 
@@ -1972,14 +2389,22 @@ function openReview(id) {
     const pts = Array.from(panel.querySelectorAll(".manualPoints")).reduce((sum, x) => {
       const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
       const max = Number(q?.points || 0);
-      return sum + Math.max(0, Math.min(max, Number(x.value) || 0));
+      return sum + Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
     }, 0);
     const max = state.resultQuestions.reduce((sum, q) => sum + Number(q.points || 0), 0);
     const pc = max ? Math.round((pts / max) * 100) : 0;
     const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
     $("reviewTotal").textContent = `${round1(pts)}/${round1(max)} Punkte · ${pc}% · Note ${gradeFromPercent(pc, scale)}`;
   };
-  panel.querySelectorAll(".manualPoints").forEach((x) => x.addEventListener("input", recompute));
+  panel.querySelectorAll(".manualPoints").forEach((x) => {
+    x.addEventListener("input", recompute);
+    x.addEventListener("change", () => {
+      const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
+      const max = round1(Number(q?.points || 0));
+      x.value = Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
+      recompute();
+    });
+  });
   recompute();
   $("closeReview").addEventListener("click", () => panel.classList.add("hidden"));
   $("saveReview").addEventListener("click", () => saveReview(s.id));
@@ -1996,7 +2421,7 @@ async function saveReview(submissionId) {
   panel.querySelectorAll(".manualPoints").forEach((inp) => {
     const q = state.resultQuestions.find((x) => x.id === inp.dataset.qid);
     const qMax = Number(q?.points || 0);
-    const awarded = Math.max(0, Math.min(qMax, Number(inp.value) || 0));
+    const awarded = Math.max(0, Math.min(qMax, round1(Number(inp.value) || 0)));
     grading[inp.dataset.qid] = {
       ...(grading[inp.dataset.qid] || {}),
       awardedPoints: round1(awarded),
