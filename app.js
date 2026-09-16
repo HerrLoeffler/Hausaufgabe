@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.1-free-images";
+const APP_VERSION = "2.1.2";
 console.info(`Lernplattform v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -41,6 +41,7 @@ const views = [
   "editorView",
   "publishView",
   "resultsView",
+  "templateView",
   "studentView"
 ];
 
@@ -84,7 +85,11 @@ const state = {
   resultQuestions: [],
   submissions: [],
   settingsDraft: null,
-  gradeScalesDraft: null
+  gradeScalesDraft: null,
+  isDirty: false,
+  currentSharedTemplate: null,
+  studentTimerInterval: null,
+  studentAttempt: null
 };
 
 function showView(id) {
@@ -133,12 +138,28 @@ function fmtDate(value) {
   return ms ? new Date(ms).toLocaleString("de-DE") : "–";
 }
 
+function formatDuration(seconds) {
+  const total = Number(seconds);
+  if (!Number.isFinite(total) || total < 0) return "–";
+  const min = Math.floor(total / 60);
+  const sec = Math.round(total % 60);
+  return `${min}:${String(sec).padStart(2, "0")} min`;
+}
+
 function baseStudentUrl(code, preview = false) {
   const url = new URL(window.location.href);
   url.search = "";
   url.hash = "";
   url.searchParams.set("test", code);
   if (preview) url.searchParams.set("preview", "1");
+  return url.toString();
+}
+
+function baseTemplateUrl(code) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("template", code);
   return url.toString();
 }
 
@@ -341,7 +362,21 @@ onAuthStateChanged(auth, async (user) => {
   }
   setTeacherBar();
 
-  const rawStudentCode = new URLSearchParams(location.search).get("test");
+  const params = new URLSearchParams(location.search);
+  const rawTemplateCode = params.get("template");
+  const templateCode = rawTemplateCode ? rawTemplateCode.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+  if ($("sharedLoginNotice")) $("sharedLoginNotice").classList.add("hidden");
+  if (templateCode) {
+    if (!user) {
+      showView("authView");
+      $("sharedLoginNotice")?.classList.remove("hidden");
+      return;
+    }
+    await loadSharedTemplate(templateCode);
+    return;
+  }
+
+  const rawStudentCode = params.get("test");
   const studentCode = rawStudentCode ? rawStudentCode.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
   if (studentCode) {
     if (studentCode.length < 4 || studentCode.length > 16) {
@@ -362,7 +397,8 @@ $("newQuizBtn").addEventListener("click", createQuiz);
 $("emptyNewQuizBtn").addEventListener("click", createQuiz);
 $("quizSearch").addEventListener("input", renderQuizList);
 $("quizFilter").addEventListener("change", renderQuizList);
-$("backFromEditor").addEventListener("click", loadDashboard);
+$("quizSort")?.addEventListener("change", renderQuizList);
+$("backFromEditor").addEventListener("click", leaveEditorToDashboard);
 $("backFromResults").addEventListener("click", loadDashboard);
 $("settingsBtn").addEventListener("click", openSettings);
 $("settingsTopBtn").addEventListener("click", openSettings);
@@ -388,13 +424,31 @@ async function loadDashboard() {
 function filteredQuizzes() {
   const term = normalize($("quizSearch")?.value || "");
   const status = $("quizFilter")?.value || "all";
-  return state.quizzes.filter((q) => {
-    if (status === "published" && !q.published) return false;
-    if (status === "draft" && q.published) return false;
+  const sort = $("quizSort")?.value || "updated";
+  const list = state.quizzes.filter((q) => {
+    const isEnded = Boolean(q.ended);
+    const isPublished = Boolean(q.published) && !isEnded;
+    if (status === "published" && !isPublished) return false;
+    if (status === "ended" && !isEnded) return false;
+    if (status === "draft" && (isPublished || isEnded)) return false;
     if (!term) return true;
     const hay = normalize([q.title, q.subject, q.grade, q.id, q.description].join(" "));
     return hay.includes(term);
   });
+  const collator = new Intl.Collator("de", { numeric: true, sensitivity: "base" });
+  list.sort((a, b) => {
+    if (sort === "title") return collator.compare(a.title || "", b.title || "");
+    if (sort === "subject") return collator.compare(a.subject || "", b.subject || "") || collator.compare(a.title || "", b.title || "");
+    if (sort === "grade") return collator.compare(a.grade || "", b.grade || "") || collator.compare(a.title || "", b.title || "");
+    return toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt);
+  });
+  return list;
+}
+
+function quizStatusMeta(q) {
+  if (q.ended) return { label: "Beendet", cls: "ended" };
+  if (q.published) return { label: "Veröffentlicht", cls: "published" };
+  return { label: "Entwurf", cls: "draft" };
 }
 
 function renderQuizList() {
@@ -406,6 +460,7 @@ function renderQuizList() {
   if (!filtered.length) return;
 
   filtered.forEach((q) => {
+    const status = quizStatusMeta(q);
     const card = document.createElement("article");
     card.className = "card quizCard";
     card.innerHTML = `
@@ -414,23 +469,32 @@ function renderQuizList() {
           <h3>${escapeHtml(q.title || "Unbenannter Test")}</h3>
           <div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${q.id}</div>
         </div>
-        <span class="status ${q.published ? "published" : "draft"}">${q.published ? "Veröffentlicht" : "Entwurf"}</span>
+        <span class="status ${status.cls}">${status.label}</span>
       </div>
       <div class="quizStats">
         <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
         <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
+        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : ""}
       </div>
-      <div class="quizActions">
+      <div class="quizActions primaryQuizActions">
         <button class="button secondary edit">Bearbeiten</button>
         <button class="button secondary results">Ergebnisse</button>
+        ${q.published && !q.ended ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+      </div>
+      <div class="quizActions secondaryQuizActions">
         <button class="button ghost duplicate">Duplizieren</button>
-        ${q.published ? `<button class="button ghost share">Teilen</button>` : ""}
+        <button class="button ghost teacherShare">Mit Kollegen teilen</button>
+        ${q.published && !q.ended ? `<button class="button ghost end">Beenden</button>` : ""}
+        ${q.ended ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
         <button class="button danger remove">Löschen</button>
       </div>`;
     card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
     card.querySelector(".results").addEventListener("click", () => openResults(q.id));
     card.querySelector(".duplicate").addEventListener("click", () => duplicateQuiz(q.id));
-    card.querySelector(".share")?.addEventListener("click", () => showPublish(q.id));
+    card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
+    card.querySelector(".teacherShare").addEventListener("click", () => shareQuizTemplate(q.id));
+    card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
+    card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
     card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
     list.appendChild(card);
   });
@@ -448,8 +512,11 @@ function quizDefaults() {
     gradeScaleSnapshot: deepClone(scale),
     resultMode: settings.defaultResultMode || "points_grade",
     showSolutions: Boolean(settings.defaultShowSolutions),
+    timeLimitMinutes: null,
     ownerId: state.user.uid,
     published: false,
+    ended: false,
+    shareEnabled: false,
     questionCount: 0,
     totalPoints: 0
   };
@@ -508,7 +575,10 @@ async function duplicateQuiz(code) {
       gradeScaleSnapshot: deepClone(getQuizScale(source)),
       resultMode: source.resultMode || getSettings().defaultResultMode,
       showSolutions: source.showSolutions ?? getSettings().defaultShowSolutions,
+      timeLimitMinutes: Number(source.timeLimitMinutes) > 0 ? Number(source.timeLimitMinutes) : null,
       published: false,
+      ended: false,
+      shareEnabled: false,
       questionCount: questions.length,
       totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
     };
@@ -534,12 +604,181 @@ async function deleteQuiz(code) {
     for (const d of qSnap.docs) await deleteDoc(d.ref);
     const sSnap = await getDocs(collection(db, "quizzes", code, "submissions"));
     for (const d of sSnap.docs) await deleteDoc(d.ref);
+    const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
+    for (const d of aSnap.docs) await deleteDoc(d.ref);
     await deleteDoc(doc(db, "quizzes", code));
     toast("Test gelöscht.");
     await loadDashboard();
   } catch (err) {
     console.error(err);
     toast("Test konnte nicht vollständig gelöscht werden.", "error");
+  }
+}
+
+
+// ---------- Teststatus + Teilen mit Kollegen ----------
+async function endQuiz(code, { returnToEditor = false } = {}) {
+  const quiz = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null);
+  if (!quiz) return;
+  if (returnToEditor && state.currentQuiz?.id === code && state.isDirty) {
+    const saved = await saveCurrentQuiz(false);
+    if (!saved) return;
+  }
+  if (!confirm(`Test „${quiz.title || code}“ jetzt beenden? Schüler können ihn danach nicht mehr öffnen oder neu abgeben. Ergebnisse bleiben erhalten.`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      published: false,
+      ended: true,
+      endedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: false, ended: true };
+    toast("Test beendet.");
+    if (returnToEditor) {
+      updateSummary();
+      updateEditorPublishControls();
+    } else {
+      await loadDashboard();
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht beendet werden.", "error");
+  }
+}
+
+async function reopenQuiz(code, { returnToEditor = false } = {}) {
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      published: true,
+      ended: false,
+      reopenedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: true, ended: false };
+    toast("Test wieder geöffnet.");
+    if (returnToEditor) {
+      updateSummary();
+      updateEditorPublishControls();
+      showPublish(code);
+    } else {
+      await loadDashboard();
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht wieder geöffnet werden.", "error");
+  }
+}
+
+async function shareQuizTemplate(code) {
+  if (!state.user) return;
+  try {
+    if (state.currentQuiz?.id === code && state.isDirty) {
+      const saved = await saveCurrentQuiz(false);
+      if (!saved) return;
+    }
+    await updateDoc(doc(db, "quizzes", code), {
+      shareEnabled: true,
+      sharedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz.shareEnabled = true;
+    const link = baseTemplateUrl(code);
+    await copyText(link, "Vorlagen-Link kopiert. Dein Kollege erhält eine eigene Kopie.");
+  } catch (err) {
+    console.error(err);
+    toast("Vorlagen-Link konnte nicht erstellt werden. Prüfe nach dem Deploy die neuen Firestore-Regeln.", "error");
+  }
+}
+
+async function loadSharedTemplate(code) {
+  showView("templateView");
+  $("templateCard").innerHTML = `<div>Vorlage wird geladen …</div>`;
+  try {
+    const snap = await getDoc(doc(db, "quizzes", code));
+    if (!snap.exists()) throw new Error("Diese Vorlage existiert nicht mehr.");
+    const quiz = { id: code, ...snap.data() };
+    if (!quiz.shareEnabled && quiz.ownerId !== state.user?.uid) throw new Error("Die Freigabe dieser Vorlage wurde deaktiviert.");
+    const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
+    const questions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.currentSharedTemplate = { quiz, questions };
+    const timeInfo = Number(quiz.timeLimitMinutes) > 0 ? ` · ${Number(quiz.timeLimitMinutes)} Min. Zeitlimit` : "";
+    $("templateCard").innerHTML = `
+      <button id="backTemplateDashboard" class="linkButton left" type="button">← Zu meinen Tests</button>
+      <span class="eyebrow">Von einer Lehrkraft geteilt</span>
+      <h1>${escapeHtml(quiz.title || "Geteilter Test")}</h1>
+      <p>${escapeHtml(quiz.description || "")}</p>
+      <div class="templateMeta">${escapeHtml(quiz.subject || "–")} · Klasse ${escapeHtml(quiz.grade || "–")} · ${questions.length} Aufgaben · ${Number(quiz.totalPoints || 0)} Punkte${timeInfo}</div>
+      <div class="shareInfoBox">Du erhältst eine unabhängige Kopie. Schülernamen, Abgaben und Ergebnisse des Kollegen werden nicht übernommen.</div>
+      <div class="actions templateActions">
+        <button id="importTemplateCopy" class="button primary" type="button">Als Kopie zu meinen Tests hinzufügen</button>
+        <button id="cancelTemplateCopy" class="button ghost" type="button">Abbrechen</button>
+      </div>`;
+    $("backTemplateDashboard").addEventListener("click", clearTemplateUrlAndDashboard);
+    $("cancelTemplateCopy").addEventListener("click", clearTemplateUrlAndDashboard);
+    $("importTemplateCopy").addEventListener("click", importSharedTemplate);
+  } catch (err) {
+    console.error(err);
+    $("templateCard").innerHTML = `<h1>Vorlage nicht verfügbar</h1><p>${escapeHtml(err.message || "Die Vorlage konnte nicht geladen werden.")}</p><button id="templateErrorBack" class="button primary" type="button">Zu meinen Tests</button>`;
+    $("templateErrorBack")?.addEventListener("click", clearTemplateUrlAndDashboard);
+  }
+}
+
+function clearTemplateUrlAndDashboard() {
+  const url = new URL(location.href);
+  url.searchParams.delete("template");
+  history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+  state.currentSharedTemplate = null;
+  loadDashboard();
+}
+
+async function importSharedTemplate() {
+  const source = state.currentSharedTemplate;
+  if (!source?.quiz || !state.user) return;
+  const btn = $("importTemplateCopy");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Wird kopiert …";
+  }
+  try {
+    const quiz = source.quiz;
+    const base = {
+      title: `${quiz.title || "Geteilter Test"} – Kopie`,
+      subject: quiz.subject || "",
+      grade: quiz.grade || "",
+      description: quiz.description || "",
+      gradeScaleId: quiz.gradeScaleId || "shared-scale",
+      gradeScaleSnapshot: quiz.gradeScaleSnapshot?.thresholds?.length === 6
+        ? deepClone(quiz.gradeScaleSnapshot)
+        : deepClone(getScaleById(getSettings().defaultGradeScaleId)),
+      resultMode: quiz.resultMode || getSettings().defaultResultMode,
+      showSolutions: quiz.showSolutions ?? getSettings().defaultShowSolutions,
+      timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+      published: false,
+      ended: false,
+      shareEnabled: false,
+      questionCount: source.questions.length,
+      totalPoints: round1(source.questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
+    };
+    const { code: newCode } = await createQuizDocument(base);
+    for (let i = 0; i < source.questions.length; i += 1) {
+      const original = source.questions[i];
+      const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const copy = sanitizeQuestionForSave({ ...deepClone(original), id: ref.id, position: i + 1 });
+      await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
+    }
+    const url = new URL(location.href);
+    url.searchParams.delete("template");
+    history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+    state.currentSharedTemplate = null;
+    toast("Vorlage als eigene Kopie hinzugefügt.");
+    await openEditor(newCode);
+  } catch (err) {
+    console.error(err);
+    toast("Vorlage konnte nicht kopiert werden.", "error");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Als Kopie zu meinen Tests hinzufügen";
+    }
   }
 }
 
@@ -556,6 +795,8 @@ $("addGradeScaleBtn").addEventListener("click", () => {
 });
 
 function openSettings() {
+  if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen im Test. Wirklich ohne Speichern zu den Einstellungen wechseln?")) return;
+  state.isDirty = false;
   state.settingsDraft = deepClone(getSettings());
   state.gradeScalesDraft = deepClone(getGradeScales());
   $("defaultSubject").value = state.settingsDraft.defaultSubject || "";
@@ -669,6 +910,7 @@ function openAiView() {
   const settings = getSettings();
   $("aiSubject").value = settings.defaultSubject || "";
   $("aiGrade").value = settings.defaultGrade || "";
+  if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
   const root = $("aiTypeChecks");
   root.innerHTML = "";
   QUESTION_TYPES.forEach(([value, label]) => {
@@ -691,7 +933,9 @@ function generateAiPrompt() {
     toast("Bitte mindestens einen Aufgabentyp auswählen.", "error");
     return;
   }
-  const prompt = `Du erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.`;
+  const customNotes = $("aiCustomNotes")?.value.trim() || "";
+  const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
+  const prompt = `Du erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
@@ -791,6 +1035,20 @@ $("addQuestionBtn").addEventListener("click", () => {
 });
 $("saveQuizBtn").addEventListener("click", () => saveCurrentQuiz(true));
 $("publishBtn").addEventListener("click", publishCurrentQuiz);
+$("shareTemplateBtn")?.addEventListener("click", async () => {
+  if (!state.currentQuiz) return;
+  await shareQuizTemplate(state.currentQuiz.id);
+});
+$("endQuizBtn")?.addEventListener("click", async () => {
+  if (!state.currentQuiz) return;
+  if (state.isDirty && !(await saveCurrentQuiz(false))) return;
+  endQuiz(state.currentQuiz.id, { returnToEditor: true });
+});
+$("quizUseTimeLimit")?.addEventListener("change", (e) => {
+  $("quizTimeLimitWrap").classList.toggle("hidden", !e.target.checked);
+  markDirty();
+});
+$("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
 $("previewBtn").addEventListener("click", async () => {
   if (!state.currentQuiz) return;
   if (!(await saveCurrentQuiz(false))) return;
@@ -862,10 +1120,15 @@ async function openEditor(code) {
     populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
     $("quizResultMode").value = q.resultMode || "points_grade";
     $("quizShowSolutions").checked = q.showSolutions ?? true;
+    const hasTimeLimit = Number(q.timeLimitMinutes) > 0;
+    $("quizUseTimeLimit").checked = hasTimeLimit;
+    $("quizTimeLimitMinutes").value = hasTimeLimit ? Number(q.timeLimitMinutes) : 10;
+    $("quizTimeLimitWrap").classList.toggle("hidden", !hasTimeLimit);
     $("editorHeading").textContent = q.title || "Test bearbeiten";
     showView("editorView");
     renderQuestions();
     markSaved();
+    updateEditorPublishControls();
   } catch (err) {
     console.error(err);
     toast("Test konnte nicht geöffnet werden.", "error");
@@ -1610,19 +1873,42 @@ function renderAnswerEditor(container, q) {
 function updateSummary() {
   $("questionCount").textContent = state.questions.length;
   $("totalPoints").textContent = round1(state.questions.reduce((sum, q) => sum + (Number(q.points) || 0), 0));
-  $("publishStatus").textContent = state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
+  $("publishStatus").textContent = state.currentQuiz?.ended ? "Beendet" : state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
+}
+
+function updateEditorPublishControls() {
+  if (!state.currentQuiz) return;
+  const ended = Boolean(state.currentQuiz.ended);
+  const published = Boolean(state.currentQuiz.published) && !ended;
+  $("endQuizBtn")?.classList.toggle("hidden", !published);
+  if ($("publishBtn")) $("publishBtn").textContent = ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen";
 }
 
 function markDirty() {
+  state.isDirty = true;
   $("saveState").textContent = "Ungespeicherte Änderungen";
   $("saveState").style.color = "#9a6700";
 }
 
 function markSaved() {
+  state.isDirty = false;
   $("saveState").textContent = "✓ Gespeichert";
   $("saveState").style.color = "#15803d";
   updateSummary();
+  updateEditorPublishControls();
 }
+
+function leaveEditorToDashboard() {
+  if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen. Wirklich ohne Speichern zurückgehen?")) return;
+  state.isDirty = false;
+  loadDashboard();
+}
+
+window.addEventListener("beforeunload", (event) => {
+  if (!state.isDirty) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
 
 function gapTextToPlain(text) {
   return String(text || "").replace(/\[([^\]]+)\]/g, (_, inside) => String(inside).split("|")[0].trim());
@@ -1655,6 +1941,10 @@ function markwordCorrectIndexes(q) {
 function validateQuiz() {
   if (!$("quizTitle").value.trim()) return "Bitte einen Titel eingeben.";
   if (!state.questions.length) return "Bitte mindestens eine Aufgabe hinzufügen.";
+  if ($("quizUseTimeLimit")?.checked) {
+    const minutes = Number($("quizTimeLimitMinutes")?.value);
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 300) return "Das Zeitlimit muss zwischen 1 und 300 ganzen Minuten liegen.";
+  }
   for (let i = 0; i < state.questions.length; i += 1) {
     const q = state.questions[i];
     if (!q.text.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
@@ -1749,6 +2039,7 @@ async function saveCurrentQuiz(showMessage = true) {
       gradeScaleSnapshot: scaleSnapshot,
       resultMode: $("quizResultMode").value,
       showSolutions: $("quizShowSolutions").checked,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
       questionCount: state.questions.length,
       totalPoints,
       updatedAt: serverTimestamp()
@@ -1784,14 +2075,21 @@ async function saveCurrentQuiz(showMessage = true) {
 
 async function publishCurrentQuiz() {
   if (!(await saveCurrentQuiz(false))) return;
+  if (state.currentQuiz.published && !state.currentQuiz.ended) {
+    showPublish(state.currentQuiz.id);
+    return;
+  }
   try {
     await updateDoc(doc(db, "quizzes", state.currentQuiz.id), {
       published: true,
+      ended: false,
       publishedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
     state.currentQuiz.published = true;
+    state.currentQuiz.ended = false;
     updateSummary();
+    updateEditorPublishControls();
     toast("Test veröffentlicht.");
     showPublish(state.currentQuiz.id);
   } catch (err) {
@@ -1844,10 +2142,11 @@ async function loadStudentQuiz(code) {
     const quiz = { id: code, ...quizSnap.data() };
     const preview = new URLSearchParams(location.search).get("preview") === "1";
     const ownerPreview = preview && state.user && quiz.ownerId === state.user.uid;
+    if (quiz.ended && !ownerPreview) throw new Error("Dieser Test wurde beendet.");
     if (!quiz.published && !ownerPreview) throw new Error("Dieser Test ist noch nicht veröffentlicht.");
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
     const questions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
-    renderStudentQuiz(quiz, questions);
+    renderStudentQuiz(quiz, questions, { ownerPreview });
   } catch (err) {
     console.error(err);
     $("studentQuizCard").innerHTML = `<h1>Test nicht verfügbar</h1><p>${escapeHtml(err.message)}</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a>`;
@@ -2040,19 +2339,107 @@ function renderMarkwordsStudent(section, q) {
   section.appendChild(wrap);
 }
 
-function renderStudentQuiz(quiz, questions) {
+function studentTimerKey(quizId) {
+  return `lernplattform_timer_${quizId}`;
+}
+
+function readStoredTimer(quizId) {
+  try {
+    const value = JSON.parse(localStorage.getItem(studentTimerKey(quizId)) || "null");
+    return value && (value.attemptId || Number(value.startedAt) > 0) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredTimer(quizId, value) {
+  localStorage.setItem(studentTimerKey(quizId), JSON.stringify(value));
+}
+
+async function resolveStudentAttempt(quiz, name) {
+  const stored = readStoredTimer(quiz.id);
+  if (stored?.attemptId) {
+    try {
+      const snap = await getDoc(doc(db, "quizzes", quiz.id, "attempts", stored.attemptId));
+      if (snap.exists()) {
+        const data = snap.data();
+        const startedAt = toMillis(data.startedAt) || Number(stored.startedAt) || 0;
+        if (startedAt) {
+          const attempt = {
+            attemptId: stored.attemptId,
+            startedAt,
+            name: data.studentName || stored.name || name,
+            timeLimitMinutes: Number(data.timeLimitMinutes || quiz.timeLimitMinutes)
+          };
+          saveStoredTimer(quiz.id, attempt);
+          state.studentAttempt = attempt;
+          return attempt;
+        }
+      }
+    } catch (err) {
+      console.warn("Gespeicherter Zeitversuch konnte nicht geladen werden:", err);
+    }
+  }
+
+  // Ältere lokale Timer aus Testversionen werden nicht zurückgesetzt, sondern übernommen.
+  if (stored?.startedAt && !stored?.attemptId) {
+    const attempt = {
+      attemptId: null,
+      startedAt: Number(stored.startedAt),
+      name: stored.name || name,
+      timeLimitMinutes: Number(quiz.timeLimitMinutes)
+    };
+    state.studentAttempt = attempt;
+    return attempt;
+  }
+
+  const attemptId = randomId("attempt");
+  const ref = doc(db, "quizzes", quiz.id, "attempts", attemptId);
+  await setDoc(ref, {
+    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes)),
+    startedAt: serverTimestamp(),
+    createdAtLocal: new Date().toISOString()
+  });
+  const snap = await getDoc(ref);
+  const startedAt = toMillis(snap.data()?.startedAt) || Date.now();
+  const attempt = {
+    attemptId,
+    startedAt,
+    name,
+    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes))
+  };
+  saveStoredTimer(quiz.id, attempt);
+  state.studentAttempt = attempt;
+  return attempt;
+}
+
+function stopStudentTimer() {
+  if (state.studentTimerInterval) clearInterval(state.studentTimerInterval);
+  state.studentTimerInterval = null;
+}
+
+function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
+  stopStudentTimer();
   const root = $("studentQuizCard");
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : 0;
+  const timed = minutes > 0 && !ownerPreview;
+  const storedTimer = timed ? readStoredTimer(quiz.id) : null;
+  const timerMeta = minutes > 0
+    ? `<span class="studentTimeInfo">⏱ ${minutes} Minuten${ownerPreview ? " · Vorschau ohne laufenden Timer" : ""}</span>`
+    : "";
   root.innerHTML = `
     <div class="studentHead">
-      <span class="eyebrow">${escapeHtml(quiz.subject || "Test")} · Klasse ${escapeHtml(quiz.grade || "–")}</span>
+      <div class="studentHeadTop"><span class="eyebrow">${escapeHtml(quiz.subject || "Test")} · Klasse ${escapeHtml(quiz.grade || "–")}</span>${timerMeta}</div>
       <h1>${escapeHtml(quiz.title)}</h1>
       <p>${escapeHtml(quiz.description || "")}</p>
       <div class="meta">${questions.length} Aufgaben · ${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte · Code ${quiz.id}</div>
     </div>
     <form id="studentForm">
-      <label class="studentNameLabel">Dein Name oder Kürzel<input id="studentName" type="text" required placeholder="Vorname Nachname"></label>
-      <div id="studentQuestions"></div>
-      <button id="studentSubmitBtn" class="button primary studentSubmit" type="submit">Antworten abgeben</button>
+      <label class="studentNameLabel">Dein Name oder Kürzel<input id="studentName" type="text" required placeholder="Vorname Nachname" value="${escapeHtml(storedTimer?.name || "")}"></label>
+      ${timed ? `<div id="studentStartGate" class="studentStartGate"><div><strong>${storedTimer ? "Laufenden Test fortsetzen" : `Zeitlimit: ${minutes} Minuten`}</strong><p>${storedTimer ? "Der Timer läuft seit deinem ersten Start weiter." : "Der Countdown beginnt erst, wenn du auf „Test starten“ klickst. Bei 00:00 werden deine aktuellen Antworten automatisch abgegeben."}</p></div><button id="studentStartBtn" class="button primary" type="button">${storedTimer ? "Test fortsetzen" : "Test starten"}</button></div>` : ""}
+      <div id="studentTimerBar" class="studentTimerBar ${timed ? "hidden" : ""}"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
+      <div id="studentQuestions" class="${timed ? "hidden" : ""}"></div>
+      <button id="studentSubmitBtn" class="button primary studentSubmit ${timed ? "hidden" : ""}" type="submit">Antworten abgeben</button>
     </form>
     <div id="studentResult" class="studentResult hidden"></div>`;
   const qRoot = $("studentQuestions");
@@ -2116,7 +2503,69 @@ function renderStudentQuiz(quiz, questions) {
 
     qRoot.appendChild(section);
   });
+
   $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions));
+  if (timed) {
+    $("studentStartBtn").addEventListener("click", () => startTimedStudentQuiz(quiz, questions));
+  } else {
+    $("studentTimerBar")?.classList.add("hidden");
+  }
+}
+
+async function startTimedStudentQuiz(quiz, questions) {
+  const nameInput = $("studentName");
+  let name = nameInput.value.trim();
+  if (!name) {
+    toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    nameInput.focus();
+    return;
+  }
+  const startBtn = $("studentStartBtn");
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = "Timer wird gestartet …";
+  }
+  try {
+    const attempt = await resolveStudentAttempt(quiz, name);
+    name = attempt.name || name;
+    nameInput.value = name;
+    nameInput.readOnly = true;
+    $("studentStartGate")?.classList.add("hidden");
+    $("studentQuestions")?.classList.remove("hidden");
+    $("studentSubmitBtn")?.classList.remove("hidden");
+    $("studentTimerBar")?.classList.remove("hidden");
+    runStudentTimer(quiz, questions, attempt.startedAt, attempt.timeLimitMinutes);
+  } catch (err) {
+    console.error(err);
+    toast("Der Timer konnte nicht gestartet werden. Bitte Seite neu laden und erneut versuchen.", "error");
+    if (startBtn) {
+      startBtn.disabled = false;
+      startBtn.textContent = readStoredTimer(quiz.id) ? "Test fortsetzen" : "Test starten";
+    }
+  }
+}
+
+function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null) {
+  stopStudentTimer();
+  const limitMinutes = Number(attemptLimitMinutes) > 0 ? Number(attemptLimitMinutes) : Number(quiz.timeLimitMinutes);
+  const totalSeconds = Math.max(60, Math.round(limitMinutes * 60));
+  let autoSubmitting = false;
+  const tick = () => {
+    const elapsed = Math.floor((Date.now() - Number(startedAt)) / 1000);
+    const remaining = Math.max(0, totalSeconds - elapsed);
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    if ($("studentTimerText")) $("studentTimerText").textContent = `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    $("studentTimerBar")?.classList.toggle("timerWarning", remaining <= 60);
+    if (remaining <= 0 && !autoSubmitting) {
+      autoSubmitting = true;
+      stopStudentTimer();
+      toast("Zeit abgelaufen – der Test wird automatisch abgegeben.");
+      submitStudentQuiz(null, quiz, questions, { force: true, autoSubmitted: true, startedAt });
+    }
+  };
+  tick();
+  state.studentTimerInterval = window.setInterval(tick, 1000);
 }
 
 function readStudentAnswer(q) {
@@ -2223,14 +2672,14 @@ function evaluateAnswer(q, given) {
   return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
 }
 
-async function submitStudentQuiz(e, quiz, questions) {
-  e.preventDefault();
-  const name = $("studentName").value.trim();
+async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null } = {}) {
+  e?.preventDefault?.();
+  const name = $("studentName")?.value.trim() || readStoredTimer(quiz.id)?.name || "";
   if (!name) {
     toast("Bitte deinen Namen eingeben.", "error");
     return;
   }
-  if (!confirm("Willst du den Test wirklich abgeben?")) return;
+  if (!force && !confirm("Willst du den Test wirklich abgeben?")) return;
 
   const answers = {};
   const grading = {};
@@ -2256,10 +2705,17 @@ async function submitStudentQuiz(e, quiz, questions) {
   const percent = maxPoints ? Math.round((points / maxPoints) * 100) : 0;
   const scale = deepClone(getQuizScale(quiz));
   const grade = needsReview ? null : gradeFromPercent(percent, scale);
+  const storedTimer = readStoredTimer(quiz.id);
+  const activeAttempt = state.studentAttempt?.startedAt ? state.studentAttempt : storedTimer;
+  const effectiveStart = Number(startedAt || activeAttempt?.startedAt || 0) || null;
+  const elapsedSeconds = effectiveStart ? Math.max(0, Math.round((Date.now() - effectiveStart) / 1000)) : null;
 
   try {
-    $("studentSubmitBtn").disabled = true;
-    $("studentSubmitBtn").textContent = "Wird gespeichert …";
+    stopStudentTimer();
+    if ($("studentSubmitBtn")) {
+      $("studentSubmitBtn").disabled = true;
+      $("studentSubmitBtn").textContent = autoSubmitted ? "Zeit abgelaufen – wird gespeichert …" : "Wird gespeichert …";
+    }
     await addDoc(collection(db, "quizzes", quiz.id, "submissions"), {
       studentName: name,
       answers,
@@ -2271,16 +2727,27 @@ async function submitStudentQuiz(e, quiz, questions) {
       grade,
       gradeScaleSnapshot: scale,
       status: needsReview ? "review" : "graded",
+      timeLimitMinutes: Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) > 0 ? Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) : null,
+      attemptId: activeAttempt?.attemptId || null,
+      startedAtServerMillis: effectiveStart,
+      startedAtLocal: effectiveStart ? new Date(effectiveStart).toISOString() : null,
+      elapsedSeconds,
+      autoSubmitted: Boolean(autoSubmitted),
       submittedAt: serverTimestamp(),
       submittedAtLocal: new Date().toISOString()
     });
+    localStorage.removeItem(studentTimerKey(quiz.id));
+    state.studentAttempt = null;
     renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
-    toast("Abgabe erfolgreich gespeichert.");
+    toast(autoSubmitted ? "Zeit abgelaufen. Deine Abgabe wurde gespeichert." : "Abgabe erfolgreich gespeichert.");
   } catch (err) {
     console.error(err);
     toast("Abgabe konnte nicht gespeichert werden.", "error");
-    $("studentSubmitBtn").disabled = false;
-    $("studentSubmitBtn").textContent = "Antworten abgeben";
+    if ($("studentSubmitBtn")) {
+      $("studentSubmitBtn").disabled = false;
+      $("studentSubmitBtn").textContent = "Antworten abgeben";
+    }
+    if (Number(quiz.timeLimitMinutes) > 0 && effectiveStart && !autoSubmitted) runStudentTimer(quiz, questions, effectiveStart, activeAttempt?.timeLimitMinutes);
   }
 }
 
@@ -2375,7 +2842,8 @@ async function openResults(code) {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.submittedAt || b.submittedAtLocal) - toMillis(a.submittedAt || a.submittedAtLocal));
     $("resultsHeading").textContent = quiz.title;
-    $("resultsMeta").textContent = `${state.submissions.length} Abgaben · ${quiz.totalPoints || 0} Punkte maximal · Notenschlüssel: ${getQuizScale(quiz).name || "Standard"}`;
+    const timeMeta = Number(quiz.timeLimitMinutes) > 0 ? ` · Zeitlimit: ${Number(quiz.timeLimitMinutes)} Min.` : "";
+    $("resultsMeta").textContent = `${state.submissions.length} Abgaben · ${quiz.totalPoints || 0} Punkte maximal · Notenschlüssel: ${getQuizScale(quiz).name || "Standard"}${timeMeta}`;
     showView("resultsView");
     renderResultsTable();
     $("reviewPanel").classList.add("hidden");
@@ -2398,9 +2866,11 @@ function renderResultsTable() {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  let html = `<table class="resultTable"><thead><tr><th>Name</th><th>Punkte</th><th>%</th><th>Note</th><th>Status</th><th>Zeit</th><th></th></tr></thead><tbody>`;
+  let html = `<table class="resultTable"><thead><tr><th>Name</th><th>Punkte</th><th>%</th><th>Note</th><th>Status</th><th>Dauer</th><th>Abgegeben</th><th></th></tr></thead><tbody>`;
   state.submissions.forEach((s) => {
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span></td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${s.id}">Bewerten</button></td></tr>`;
+    const duration = formatDuration(s.elapsedSeconds);
+    const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${s.id}">Bewerten</button></td></tr>`;
   });
   html += "</tbody></table>";
   wrap.innerHTML = html;
@@ -2498,12 +2968,12 @@ function exportResultsCsv() {
     toast("Keine Ergebnisse zum Exportieren.", "error");
     return;
   }
-  const header = ["Name", ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Zeit"];
+  const header = ["Name", ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
   const rows = [header];
   state.submissions.forEach((s) => {
     const r = [s.studentName];
     state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id])));
-    r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, fmtDate(s.submittedAt || s.submittedAtLocal));
+    r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
     rows.push(r);
   });
   const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");

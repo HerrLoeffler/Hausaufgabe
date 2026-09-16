@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lernplattform – Tests einfach erstellen</title>
-  <meta name="app-version" content="2.1.1" />
-  <link rel="stylesheet" href="styles.css?v=2.1.1-free-images" />
+  <meta name="app-version" content="2.1.2" />
+  <link rel="stylesheet" href="styles.css?v=2.1.2" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -25,6 +25,7 @@
 
   <main class="shell">
     <section id="authView" class="view">
+      <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
       <div class="heroGrid">
         <article class="card heroCard">
           <span class="eyebrow">Für Schülerinnen & Schüler</span>
@@ -74,7 +75,8 @@
       </div>
       <div class="card dashboardToolbar">
         <label class="searchField">Tests durchsuchen<input id="quizSearch" type="search" placeholder="Titel, Fach, Klasse, Code oder Hinweis …" /></label>
-        <label>Status<select id="quizFilter"><option value="all">Alle Tests</option><option value="published">Veröffentlicht</option><option value="draft">Entwürfe</option></select></label>
+        <label>Status<select id="quizFilter"><option value="all">Alle Tests</option><option value="published">Veröffentlicht</option><option value="ended">Beendet</option><option value="draft">Entwürfe</option></select></label>
+        <label>Sortieren<select id="quizSort"><option value="updated">Zuletzt bearbeitet</option><option value="title">Titel A–Z</option><option value="subject">Fach A–Z</option><option value="grade">Klasse</option></select></label>
       </div>
       <div id="quizList" class="quizGrid"></div>
       <div id="emptyQuizState" class="empty hidden">
@@ -134,16 +136,19 @@
           </div>
           <p class="labelLike">Aufgabentypen erlauben</p>
           <div id="aiTypeChecks" class="typeCheckGrid"></div>
+          <label class="aiNotesField">Eigene Wünsche / Beschreibung des Tests <small>(optional)</small>
+            <textarea id="aiCustomNotes" rows="5" placeholder="z. B. Schwerpunkte, gewünschte Aufgaben, Themen, die vermieden werden sollen, besondere Anforderungen …"></textarea>
+          </label>
           <button id="generatePromptBtn" class="button primary" type="button">Prompt erzeugen</button>
         </article>
         <article class="card">
-          <div class="sectionHead"><div><h2>2. Prompt</h2><p>Diesen Text z. B. in ChatGPT, Claude oder Gemini einfügen.</p></div><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button></div>
+          <div class="sectionHead"><div><h2>2. Prompt</h2><p>Diesen Text in eine KI-Anwendung deiner Wahl einfügen.</p><small class="hint">Zum Beispiel ChatGPT, Claude oder Gemini.</small></div><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button></div>
           <div class="aiMaterialTip"><strong>💡 Tipp:</strong> Du kannst in deiner KI zusätzlich Buchseiten, Arbeitsblätter, Screenshots oder Fotos deines Unterrichtsmaterials hochladen. So wird der Test genauer auf deinen aktuellen Unterricht abgestimmt.<small>Keine personenbezogenen Schülerdaten hochladen.</small></div>
           <textarea id="aiPromptOutput" class="codeArea" rows="18" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
         </article>
       </div>
       <article class="card importCard">
-        <div class="sectionHead"><div><h2>3. KI-Ergebnis importieren</h2><p>Die JSON-Antwort deiner KI einfügen. Der Test landet danach im normalen Editor.</p></div><button id="importJsonBtn" class="button primary" type="button">JSON als Test importieren</button></div>
+        <div class="sectionHead"><div><h2>3. KI-Ergebnis importieren</h2><p>Die JSON-Antwort deiner KI einfügen. Der Test landet danach im normalen Editor.</p><div class="aiImportNote">Der KI-erstellte Test ist eine sehr gute Grundlage. Prüfe ihn vor dem Einsatz kurz und passe ihn bei Bedarf im Editor an.</div></div><button id="importJsonBtn" class="button primary" type="button">JSON als Test importieren</button></div>
         <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder='{"title":"Zinsrechnung", "questions":[…]}'></textarea>
       </article>
     </section>
@@ -151,7 +156,7 @@
     <section id="editorView" class="view hidden">
       <div class="pageHead stickyHead">
         <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p></div>
-        <div class="actions"><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
+        <div class="actions"><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
       </div>
       <div class="editorLayout">
         <aside class="card settingsCard">
@@ -164,6 +169,11 @@
             <label>Notenschlüssel<select id="quizGradeScale"></select></label>
             <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
             <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
+            <div class="timeLimitSettings">
+              <label class="checkRow"><input id="quizUseTimeLimit" type="checkbox" /> Zeitlimit verwenden</label>
+              <label id="quizTimeLimitWrap" class="hidden">Zeitlimit in Minuten<input id="quizTimeLimitMinutes" type="number" min="1" max="300" step="1" value="10" /></label>
+              <small class="hint">Der Countdown startet erst, wenn der Schüler auf „Test starten“ klickt. Bei 00:00 werden die aktuellen Antworten automatisch abgegeben.</small>
+            </div>
           </div>
           <div class="summaryBox"><div><span>Aufgaben</span><strong id="questionCount">0</strong></div><div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div><div><span>Status</span><strong id="publishStatus">Entwurf</strong></div></div>
         </aside>
@@ -178,6 +188,11 @@
     <section id="resultsView" class="view hidden">
       <div class="pageHead"><div><button id="backFromResults" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Ergebnisse</span><h1 id="resultsHeading">Test</h1><p id="resultsMeta"></p></div><div class="actions"><button id="exportResultsBtn" class="button secondary" type="button">CSV exportieren</button><button id="refreshResultsBtn" class="button primary" type="button">Aktualisieren</button></div></div>
       <div id="resultsTableWrap" class="card tableCard"></div><div id="reviewPanel" class="card reviewPanel hidden"></div>
+    </section>
+
+
+    <section id="templateView" class="view hidden">
+      <div id="templateCard" class="card templateCard"><div>Vorlage wird geladen …</div></div>
     </section>
 
     <section id="studentView" class="view hidden"><div id="studentQuizCard" class="card studentQuizCard"><div id="studentLoading">Test wird geladen …</div></div></section>
@@ -198,6 +213,6 @@
     </article>
   </template>
 
-  <script type="module" src="app.js?v=2.1.1-free-images"></script>
+  <script type="module" src="app.js?v=2.1.2"></script>
 </body>
 </html>
