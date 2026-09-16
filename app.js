@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.1";
+const APP_VERSION = "2.1.1-free-images";
 console.info(`Lernplattform v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -26,18 +26,11 @@ import {
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const $ = (id) => document.getElementById(id);
 const views = [
@@ -1011,18 +1004,55 @@ async function compressQuestionImage(blob) {
   const image = await blobToImage(blob);
   const sourceWidth = image.width || image.naturalWidth;
   const sourceHeight = image.height || image.naturalHeight;
-  const maxSide = 1800;
-  const scale = Math.min(1, maxSide / Math.max(sourceWidth, sourceHeight));
-  const width = Math.max(1, Math.round(sourceWidth * scale));
-  const height = Math.max(1, Math.round(sourceHeight * scale));
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(image, 0, 0, width, height);
+  const MAX_BYTES = 280 * 1024;
+  const MAX_SIDE = 1400;
+  const MIN_SIDE = 420;
+
+  let scale = Math.min(1, MAX_SIDE / Math.max(sourceWidth, sourceHeight));
+  let best = null;
+
+  const toBlob = (canvas, type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+
+  for (let pass = 0; pass < 6; pass += 1) {
+    const width = Math.max(1, Math.round(sourceWidth * scale));
+    const height = Math.max(1, Math.round(sourceHeight * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, width, height);
+
+    for (const quality of [0.82, 0.72, 0.62, 0.52, 0.42]) {
+      const out = (await toBlob(canvas, "image/webp", quality)) || (await toBlob(canvas, "image/jpeg", quality));
+      if (!out) continue;
+      if (!best || out.size < best.size) best = out;
+      if (out.size <= MAX_BYTES) {
+        if (typeof image.close === "function") image.close();
+        return out;
+      }
+    }
+
+    const longest = Math.max(width, height);
+    if (longest <= MIN_SIDE) break;
+    scale *= 0.78;
+  }
+
   if (typeof image.close === "function") image.close();
-  const toBlob = (type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
-  return (await toBlob("image/webp", 0.86)) || (await toBlob("image/jpeg", 0.88)) || blob;
+  if (best && best.size <= 360 * 1024) return best;
+  throw new Error("IMAGE_TOO_LARGE_AFTER_COMPRESSION");
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Bild konnte nicht gelesen werden."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function getQuestionImageSrc(q) {
+  return String(q?.imageDataUrl || q?.imageUrl || "");
 }
 
 async function uploadQuestionImage(blob, q) {
@@ -1041,23 +1071,23 @@ async function uploadQuestionImage(blob, q) {
   try {
     toast("Bild wird vorbereitet …");
     const optimized = await compressQuestionImage(blob);
-    const extension = optimized.type === "image/jpeg" ? "jpg" : "webp";
-    const path = `quiz-images/${state.user.uid}/${state.currentQuiz.id}/${q.id}/${crypto.randomUUID()}.${extension}`;
-    const ref = storageRef(storage, path);
-    await uploadBytes(ref, optimized, { contentType: optimized.type || `image/${extension}` });
-    q.imageUrl = await getDownloadURL(ref);
-    q.imagePath = path;
+    const dataUrl = await blobToDataUrl(optimized);
+    if (dataUrl.length > 500000) throw new Error("IMAGE_DATA_TOO_LARGE");
+    q.imageDataUrl = dataUrl;
+    q.imageByteSize = optimized.size;
     q.imageAlt = q.imageAlt || "";
+    // Falls ein alter Storage-Link vorhanden war, hat die neue lokale Bildversion Vorrang.
+    q.imageUrl = "";
+    q.imagePath = "";
     markDirty();
     renderQuestions();
-    toast("Bild eingefügt.");
+    toast("Bild eingefügt. Es wird zusammen mit der Aufgabe gespeichert.");
   } catch (err) {
     console.error(err);
-    const message = String(err?.code || err?.message || "");
-    if (message.includes("storage/unauthorized") || message.includes("storage/unknown")) {
-      toast("Bild-Upload ist noch nicht freigeschaltet. Prüfe Firebase Storage und die Storage-Regeln.", "error");
+    if (String(err?.message || err).includes("IMAGE_")) {
+      toast("Das Bild ist auch nach der Komprimierung noch zu groß. Bitte einen kleineren Ausschnitt verwenden.", "error");
     } else {
-      toast("Bild konnte nicht hochgeladen werden.", "error");
+      toast("Bild konnte nicht eingefügt werden.", "error");
     }
   }
 }
@@ -1069,10 +1099,10 @@ function renderQuestionImageEditor(container, q) {
   title.innerHTML = `<span class="labelLike">Bild zur Aufgabe <small>(optional)</small></span>`;
   container.appendChild(title);
 
-  if (q.imageUrl) {
+  if (getQuestionImageSrc(q)) {
     const preview = document.createElement("div");
     preview.className = "questionImagePreview";
-    preview.innerHTML = `<img src="${escapeHtml(q.imageUrl)}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+    preview.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
     container.appendChild(preview);
 
     const alt = document.createElement("label");
@@ -1091,6 +1121,8 @@ function renderQuestionImageEditor(container, q) {
     const replace = makeMiniButton("Bild ersetzen", () => file.click());
     const shot = makeMiniButton("Screenshot", () => captureScreenForQuestion(q));
     const remove = makeMiniButton("Bild entfernen", () => {
+      q.imageDataUrl = "";
+      q.imageByteSize = 0;
       q.imageUrl = "";
       q.imagePath = "";
       q.imageAlt = "";
@@ -1663,7 +1695,12 @@ function sanitizeQuestionForSave(q) {
     points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
-  if (q.imageUrl) {
+  if (q.imageDataUrl) {
+    base.imageDataUrl = String(q.imageDataUrl);
+    base.imageByteSize = Number(q.imageByteSize || 0);
+    base.imageAlt = String(q.imageAlt || "").trim();
+  } else if (q.imageUrl) {
+    // Abwärtskompatibilität für eventuell bereits vorhandene Storage-Bilder.
     base.imageUrl = String(q.imageUrl);
     base.imagePath = String(q.imagePath || "");
     base.imageAlt = String(q.imageAlt || "").trim();
@@ -2028,10 +2065,10 @@ function renderStudentQuiz(quiz, questions) {
     if (q.type !== "gapfill") section.innerHTML = `<h3>${i + 1}. ${escapeHtml(q.text)} <span class="meta">(${Number(q.points)} P.)</span></h3>`;
     else section.innerHTML = `<h3>${i + 1}. Lückentext <span class="meta">(${Number(q.points)} P.)</span></h3>`;
 
-    if (q.imageUrl) {
+    if (getQuestionImageSrc(q)) {
       const figure = document.createElement("figure");
       figure.className = "studentQuestionImage";
-      figure.innerHTML = `<img src="${escapeHtml(q.imageUrl)}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+      figure.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
       section.appendChild(figure);
     }
 
