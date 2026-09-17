@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.2";
+const APP_VERSION = "2.2.0";
 console.info(`Lernplattform v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -24,9 +24,15 @@ import {
   query,
   where,
   orderBy,
-  serverTimestamp
+  onSnapshot,
+  serverTimestamp,
+  getCountFromServer,
+  collectionGroup,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
+import * as firebaseModule from "./firebase-config.js";
+const firebaseConfig = firebaseModule.firebaseConfig;
+const appEnvironment = firebaseModule.appEnvironment || "production";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -36,6 +42,9 @@ const $ = (id) => document.getElementById(id);
 const views = [
   "authView",
   "dashboardView",
+  "createView",
+  "trashView",
+  "adminView",
   "settingsView",
   "aiView",
   "editorView",
@@ -89,10 +98,23 @@ const state = {
   isDirty: false,
   currentSharedTemplate: null,
   studentTimerInterval: null,
-  studentAttempt: null
+  studentAttempt: null,
+  publishUnsubs: [],
+  publishClockInterval: null,
+  studentQuizUnsub: null,
+  studentProgressObserver: null,
+  adminUsers: [],
+  adminQuizzes: [],
+  adminFeedback: [],
+  adminAnnouncements: [],
+  adminAudit: [],
+  shownThisLogin: new Set(),
+  activeAnnouncementDialogId: null
 };
 
 function showView(id) {
+  if (id !== "publishView") clearPublishSubscriptions();
+  if (id !== "studentView") clearStudentSubscriptions();
   views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -184,6 +206,43 @@ function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
+const PENDING_TEMPLATE_KEY = "lernplattformPendingTemplate";
+
+function normalizeTemplateCode(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw, location.href);
+    const fromUrl = url.searchParams.get("template");
+    if (fromUrl) return String(fromUrl).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  } catch {}
+  return raw.toUpperCase().replace(/^V[\s-]*/, "").replace(/[^A-Z0-9]/g, "");
+}
+
+function rememberPendingTemplate(code) {
+  if (code) sessionStorage.setItem(PENDING_TEMPLATE_KEY, code);
+}
+
+function clearPendingTemplate() {
+  sessionStorage.removeItem(PENDING_TEMPLATE_KEY);
+}
+
+function clearPublishSubscriptions() {
+  state.publishUnsubs.forEach((fn) => {
+    try { fn?.(); } catch {}
+  });
+  state.publishUnsubs = [];
+  if (state.publishClockInterval) clearInterval(state.publishClockInterval);
+  state.publishClockInterval = null;
+}
+
+function clearStudentSubscriptions() {
+  try { state.studentQuizUnsub?.(); } catch {}
+  state.studentQuizUnsub = null;
+  try { state.studentProgressObserver?.disconnect?.(); } catch {}
+  state.studentProgressObserver = null;
+}
+
 function round1(n) {
   return Math.round(Number(n || 0) * 2) / 2;
 }
@@ -230,10 +289,52 @@ function scaleRangeText(scale) {
   }).join(" · ");
 }
 
+function isAdmin() {
+  return state.profile?.role === "admin";
+}
+
+function isSuspended(profile = state.profile) {
+  return profile?.status === "suspended";
+}
+
+function activeQuizzes(list = state.quizzes) {
+  return list.filter((q) => !q.isDeleted);
+}
+
+function deletedQuizzes(list = state.quizzes) {
+  return list.filter((q) => Boolean(q.isDeleted));
+}
+
+function startOfDaysAgo(days) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - Number(days || 0));
+  return d;
+}
+
+function safeDialogOpen(dialog) {
+  if (!dialog) return;
+  try { dialog.showModal(); } catch { dialog.setAttribute("open", ""); }
+}
+
+function safeDialogClose(dialog) {
+  if (!dialog) return;
+  try { dialog.close(); } catch { dialog.removeAttribute("open"); }
+}
+
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
   $("userBar").classList.toggle("hidden", !loggedIn);
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
+  $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
+  $("appFooter")?.classList.toggle("hidden", !loggedIn);
+  const staging = appEnvironment === "staging";
+  const env = $("environmentBadge");
+  if (env) {
+    env.textContent = staging ? "TESTUMGEBUNG" : "";
+    env.classList.toggle("hidden", !staging || !loggedIn);
+  }
+  $("stagingBanner")?.classList.toggle("hidden", !staging);
 }
 
 async function ensureProfileDefaults() {
@@ -243,9 +344,24 @@ async function ensureProfileDefaults() {
   const patch = {};
   if (!current.settings) patch.settings = deepClone(DEFAULT_SETTINGS);
   if (!Array.isArray(current.gradeScales) || !current.gradeScales.length) patch.gradeScales = [deepClone(DEFAULT_SCALE)];
+  if (!current.role) patch.role = "teacher";
+  if (!current.status) patch.status = "active";
   if (Object.keys(patch).length) {
     await setDoc(ref, patch, { merge: true });
     state.profile = { ...current, ...patch };
+  }
+}
+
+async function touchLastActive() {
+  if (!state.user || isSuspended()) return;
+  const key = `lastActive:${state.user.uid}`;
+  const previous = Number(localStorage.getItem(key) || 0);
+  if (Date.now() - previous < 15 * 60 * 1000) return;
+  try {
+    await updateDoc(doc(db, "users", state.user.uid), { lastActiveAt: serverTimestamp(), appVersion: APP_VERSION });
+    localStorage.setItem(key, String(Date.now()));
+  } catch (err) {
+    console.warn("Letzte Aktivität konnte nicht aktualisiert werden:", err);
   }
 }
 
@@ -290,6 +406,9 @@ $("registerForm").addEventListener("submit", async (e) => {
       displayName: name,
       email,
       role: "teacher",
+      status: "active",
+      lastActiveAt: serverTimestamp(),
+      appVersion: APP_VERSION,
       settings: deepClone(DEFAULT_SETTINGS),
       gradeScales: [deepClone(DEFAULT_SCALE)],
       createdAt: serverTimestamp()
@@ -331,6 +450,7 @@ $("joinForm").addEventListener("submit", (e) => {
 });
 
 $("brandBtn").addEventListener("click", () => {
+  clearPendingTemplate();
   const url = new URL(location.href);
   url.search = "";
   url.hash = "";
@@ -356,23 +476,39 @@ onAuthStateChanged(auth, async (user) => {
       const p = await getDoc(doc(db, "users", user.uid));
       state.profile = p.exists() ? p.data() : { displayName: user.displayName || user.email };
       await ensureProfileDefaults();
+      if (isSuspended()) {
+        toast("Dieser Account wurde vorübergehend gesperrt. Bitte wende dich an den Administrator.", "error");
+        await signOut(auth);
+        return;
+      }
+      state.shownThisLogin = new Set();
+      await touchLastActive();
     } catch (err) {
       console.error(err);
     }
+  } else {
+    state.shownThisLogin = new Set();
   }
   setTeacherBar();
 
   const params = new URLSearchParams(location.search);
   const rawTemplateCode = params.get("template");
-  const templateCode = rawTemplateCode ? rawTemplateCode.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+  const templateCodeFromUrl = normalizeTemplateCode(rawTemplateCode);
+  if (templateCodeFromUrl) rememberPendingTemplate(templateCodeFromUrl);
+  const pendingTemplateCode = templateCodeFromUrl || normalizeTemplateCode(sessionStorage.getItem(PENDING_TEMPLATE_KEY));
   if ($("sharedLoginNotice")) $("sharedLoginNotice").classList.add("hidden");
-  if (templateCode) {
+  if (pendingTemplateCode) {
     if (!user) {
       showView("authView");
       $("sharedLoginNotice")?.classList.remove("hidden");
       return;
     }
-    await loadSharedTemplate(templateCode);
+    if (!templateCodeFromUrl) {
+      const url = new URL(location.href);
+      url.searchParams.set("template", pendingTemplateCode);
+      history.replaceState({}, "", url.pathname + url.search);
+    }
+    await loadSharedTemplate(pendingTemplateCode);
     return;
   }
 
@@ -393,8 +529,15 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ---------- Dashboard ----------
-$("newQuizBtn").addEventListener("click", createQuiz);
-$("emptyNewQuizBtn").addEventListener("click", createQuiz);
+$("newQuizBtn").addEventListener("click", openCreateView);
+$("emptyNewQuizBtn").addEventListener("click", openCreateView);
+$("backFromCreate")?.addEventListener("click", loadDashboard);
+$("createManualBtn")?.addEventListener("click", createQuiz);
+$("createAiBtn")?.addEventListener("click", openAiView);
+$("templateImportForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  openTemplateFromInput($("templateImportInput")?.value || "");
+});
 $("quizSearch").addEventListener("input", renderQuizList);
 $("quizFilter").addEventListener("change", renderQuizList);
 $("quizSort")?.addEventListener("change", renderQuizList);
@@ -403,9 +546,39 @@ $("backFromResults").addEventListener("click", loadDashboard);
 $("settingsBtn").addEventListener("click", openSettings);
 $("settingsTopBtn").addEventListener("click", openSettings);
 $("aiCreateBtn").addEventListener("click", openAiView);
+$("trashBtn")?.addEventListener("click", openTrash);
+$("backFromTrash")?.addEventListener("click", loadDashboard);
+$("adminTopBtn")?.addEventListener("click", openAdmin);
+$("backFromAdmin")?.addEventListener("click", loadDashboard);
+$("refreshAdminBtn")?.addEventListener("click", () => loadAdminData(true));
+
+function openCreateView() {
+  if (!state.user) {
+    showView("authView");
+    return;
+  }
+  if ($("templateImportInput")) $("templateImportInput").value = "";
+  showView("createView");
+}
+
+function openTemplateFromInput(value) {
+  const code = normalizeTemplateCode(value);
+  if (!code || code.length < 4 || code.length > 16) {
+    toast("Bitte einen gültigen Freigabelink oder Vorlagencode eingeben.", "error");
+    return;
+  }
+  rememberPendingTemplate(code);
+  const url = new URL(location.href);
+  url.search = "";
+  url.searchParams.set("template", code);
+  history.replaceState({}, "", url.pathname + url.search);
+  loadSharedTemplate(code);
+}
 
 async function loadDashboard() {
   if (!state.user) return;
+  clearPublishSubscriptions();
+  clearStudentSubscriptions();
   showView("dashboardView");
   $("quizList").innerHTML = `<div class="card">Tests werden geladen …</div>`;
   try {
@@ -414,6 +587,7 @@ async function loadDashboard() {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
     renderQuizList();
+    await loadAnnouncements();
   } catch (err) {
     console.error(err);
     $("quizList").innerHTML = "";
@@ -426,6 +600,7 @@ function filteredQuizzes() {
   const status = $("quizFilter")?.value || "all";
   const sort = $("quizSort")?.value || "updated";
   const list = state.quizzes.filter((q) => {
+    if (q.isDeleted) return false;
     const isEnded = Boolean(q.ended);
     const isPublished = Boolean(q.published) && !isEnded;
     if (status === "published" && !isPublished) return false;
@@ -447,6 +622,8 @@ function filteredQuizzes() {
 
 function quizStatusMeta(q) {
   if (q.ended) return { label: "Beendet", cls: "ended" };
+  if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
+  if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
   if (q.published) return { label: "Veröffentlicht", cls: "published" };
   return { label: "Entwurf", cls: "draft" };
 }
@@ -455,8 +632,9 @@ function renderQuizList() {
   const list = $("quizList");
   list.innerHTML = "";
   const filtered = filteredQuizzes();
-  $("emptyQuizState").classList.toggle("hidden", state.quizzes.length !== 0);
-  $("noFilterState").classList.toggle("hidden", state.quizzes.length === 0 || filtered.length !== 0);
+  const active = activeQuizzes();
+  $("emptyQuizState").classList.toggle("hidden", active.length !== 0);
+  $("noFilterState").classList.toggle("hidden", active.length === 0 || filtered.length !== 0);
   if (!filtered.length) return;
 
   filtered.forEach((q) => {
@@ -475,6 +653,7 @@ function renderQuizList() {
         <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
         <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
         ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : ""}
+        ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
       </div>
       <div class="quizActions primaryQuizActions">
         <button class="button secondary edit">Bearbeiten</button>
@@ -513,9 +692,16 @@ function quizDefaults() {
     resultMode: settings.defaultResultMode || "points_grade",
     showSolutions: Boolean(settings.defaultShowSolutions),
     timeLimitMinutes: null,
+    startMode: "student",
+    shuffleQuestions: false,
+    shuffleAnswers: false,
+    sessionState: "open",
+    sessionRunId: null,
+    sessionStartedAt: null,
     ownerId: state.user.uid,
     published: false,
     ended: false,
+    isDeleted: false,
     shareEnabled: false,
     questionCount: 0,
     totalPoints: 0
@@ -576,6 +762,12 @@ async function duplicateQuiz(code) {
       resultMode: source.resultMode || getSettings().defaultResultMode,
       showSolutions: source.showSolutions ?? getSettings().defaultShowSolutions,
       timeLimitMinutes: Number(source.timeLimitMinutes) > 0 ? Number(source.timeLimitMinutes) : null,
+      startMode: source.startMode === "teacher" ? "teacher" : "student",
+      shuffleQuestions: Boolean(source.shuffleQuestions),
+      shuffleAnswers: Boolean(source.shuffleAnswers),
+      sessionState: "open",
+      sessionRunId: null,
+      sessionStartedAt: null,
       published: false,
       ended: false,
       shareEnabled: false,
@@ -598,7 +790,48 @@ async function duplicateQuiz(code) {
 
 async function deleteQuiz(code) {
   const q = state.quizzes.find((x) => x.id === code);
-  if (!confirm(`Test „${q?.title || code}“ wirklich löschen? Aufgaben und Abgaben werden ebenfalls entfernt.`)) return;
+  if (!confirm(`Test „${q?.title || code}“ in den Papierkorb verschieben? Aufgaben und Ergebnisse bleiben erhalten.`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      isDeleted: true,
+      deletedAt: serverTimestamp(),
+      deletedBy: state.user.uid,
+      published: false,
+      ended: true,
+      updatedAt: serverTimestamp()
+    });
+    toast("Test in den Papierkorb verschoben.");
+    await loadDashboard();
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht in den Papierkorb verschoben werden.", "error");
+  }
+}
+
+async function restoreQuiz(code, { admin = false } = {}) {
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      isDeleted: false,
+      deletedAt: null,
+      deletedBy: null,
+      published: false,
+      ended: false,
+      updatedAt: serverTimestamp()
+    });
+    if (admin) await writeAdminAudit("quiz_restored", { quizId: code });
+    const localQuiz = state.quizzes.find((x) => x.id === code);
+    if (localQuiz) Object.assign(localQuiz, { isDeleted: false, deletedAt: null, deletedBy: null, published: false, ended: false });
+    toast("Test als Entwurf wiederhergestellt.");
+    if (admin) await loadAdminData(true); else await openTrash();
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht wiederhergestellt werden.", "error");
+  }
+}
+
+async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
+  const q = (admin ? state.adminQuizzes : state.quizzes).find((x) => x.id === code);
+  if (!confirm(`Test „${q?.title || code}“ endgültig löschen? Das entfernt auch Aufgaben und Abgaben. Dieser Schritt kann nicht rückgängig gemacht werden.`)) return;
   try {
     const qSnap = await getDocs(collection(db, "quizzes", code, "questions"));
     for (const d of qSnap.docs) await deleteDoc(d.ref);
@@ -607,12 +840,31 @@ async function deleteQuiz(code) {
     const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
     for (const d of aSnap.docs) await deleteDoc(d.ref);
     await deleteDoc(doc(db, "quizzes", code));
-    toast("Test gelöscht.");
-    await loadDashboard();
+    if (admin) await writeAdminAudit("quiz_deleted_permanently", { quizId: code, title: q?.title || "" });
+    state.quizzes = state.quizzes.filter((x) => x.id !== code);
+    toast("Test endgültig gelöscht.");
+    if (admin) await loadAdminData(true); else await openTrash();
   } catch (err) {
     console.error(err);
     toast("Test konnte nicht vollständig gelöscht werden.", "error");
   }
+}
+
+async function openTrash() {
+  if (!state.user) return;
+  showView("trashView");
+  const root = $("trashList");
+  root.innerHTML = "";
+  const items = deletedQuizzes().sort((a, b) => toMillis(b.deletedAt) - toMillis(a.deletedAt));
+  $("emptyTrashState")?.classList.toggle("hidden", items.length > 0);
+  items.forEach((q) => {
+    const card = document.createElement("article");
+    card.className = "card quizCard trashCard";
+    card.innerHTML = `<div class="quizCardTop"><div><h3>${escapeHtml(q.title || "Unbenannter Test")}</h3><div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${escapeHtml(q.id)}</div></div><span class="status ended">Papierkorb</span></div><p class="hint">Gelöscht: ${escapeHtml(fmtDate(q.deletedAt))}</p><div class="quizActions"><button class="button primary restore">Wiederherstellen</button><button class="button danger purge">Endgültig löschen</button></div>`;
+    card.querySelector(".restore").addEventListener("click", () => restoreQuiz(q.id));
+    card.querySelector(".purge").addEventListener("click", () => permanentlyDeleteQuiz(q.id));
+    root.appendChild(card);
+  });
 }
 
 
@@ -629,10 +881,11 @@ async function endQuiz(code, { returnToEditor = false } = {}) {
     await updateDoc(doc(db, "quizzes", code), {
       published: false,
       ended: true,
+      sessionState: "ended",
       endedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
-    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: false, ended: true };
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: false, ended: true, sessionState: "ended" };
     toast("Test beendet.");
     if (returnToEditor) {
       updateSummary();
@@ -648,13 +901,19 @@ async function endQuiz(code, { returnToEditor = false } = {}) {
 
 async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
+    const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
+    const teacherMode = current.startMode === "teacher";
+    const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", code), {
       published: true,
       ended: false,
+      sessionState: teacherMode ? "waiting" : "open",
+      sessionRunId: runId,
+      sessionStartedAt: null,
       reopenedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
-    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: true, ended: false };
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: true, ended: false, sessionState: teacherMode ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null };
     toast("Test wieder geöffnet.");
     if (returnToEditor) {
       updateSummary();
@@ -682,13 +941,36 @@ async function shareQuizTemplate(code) {
       updatedAt: serverTimestamp()
     });
     if (state.currentQuiz?.id === code) state.currentQuiz.shareEnabled = true;
-    const link = baseTemplateUrl(code);
-    await copyText(link, "Vorlagen-Link kopiert. Dein Kollege erhält eine eigene Kopie.");
+    openShareDialog(code);
   } catch (err) {
     console.error(err);
-    toast("Vorlagen-Link konnte nicht erstellt werden. Prüfe nach dem Deploy die neuen Firestore-Regeln.", "error");
+    toast("Vorlage konnte nicht freigegeben werden. Prüfe nach dem Deploy die Firestore-Regeln.", "error");
   }
 }
+
+function openShareDialog(code) {
+  const dialog = $("shareDialog");
+  if (!dialog) return;
+  $("shareDialogLink").value = baseTemplateUrl(code);
+  $("shareDialogCode").value = `V-${code}`;
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");
+}
+
+function closeShareDialog() {
+  const dialog = $("shareDialog");
+  if (!dialog) return;
+  if (typeof dialog.close === "function") dialog.close();
+  else dialog.removeAttribute("open");
+}
+
+$("closeShareDialog")?.addEventListener("click", closeShareDialog);
+$("doneShareDialog")?.addEventListener("click", closeShareDialog);
+$("copyShareLinkBtn")?.addEventListener("click", () => copyText($("shareDialogLink")?.value || "", "Vorlagen-Link kopiert."));
+$("copyShareCodeBtn")?.addEventListener("click", () => copyText($("shareDialogCode")?.value || "", "Vorlagencode kopiert."));
+$("shareDialog")?.addEventListener("click", (e) => {
+  if (e.target === $("shareDialog")) closeShareDialog();
+});
 
 async function loadSharedTemplate(code) {
   showView("templateView");
@@ -728,6 +1010,7 @@ function clearTemplateUrlAndDashboard() {
   url.searchParams.delete("template");
   history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
   state.currentSharedTemplate = null;
+  clearPendingTemplate();
   loadDashboard();
 }
 
@@ -753,6 +1036,12 @@ async function importSharedTemplate() {
       resultMode: quiz.resultMode || getSettings().defaultResultMode,
       showSolutions: quiz.showSolutions ?? getSettings().defaultShowSolutions,
       timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+      startMode: quiz.startMode === "teacher" ? "teacher" : "student",
+      shuffleQuestions: Boolean(quiz.shuffleQuestions),
+      shuffleAnswers: Boolean(quiz.shuffleAnswers),
+      sessionState: "open",
+      sessionRunId: null,
+      sessionStartedAt: null,
       published: false,
       ended: false,
       shareEnabled: false,
@@ -770,6 +1059,7 @@ async function importSharedTemplate() {
     url.searchParams.delete("template");
     history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
     state.currentSharedTemplate = null;
+    clearPendingTemplate();
     toast("Vorlage als eigene Kopie hinzugefügt.");
     await openEditor(newCode);
   } catch (err) {
@@ -905,6 +1195,11 @@ $("backFromAi").addEventListener("click", loadDashboard);
 $("generatePromptBtn").addEventListener("click", generateAiPrompt);
 $("copyPromptBtn").addEventListener("click", () => copyText($("aiPromptOutput").value, "Prompt kopiert."));
 $("importJsonBtn").addEventListener("click", importAiJson);
+$("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://chatgpt.com/", "ChatGPT"));
+$("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
+$("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
+$("selectJsonFileBtn")?.addEventListener("click", () => $("aiJsonFile")?.click());
+$("aiJsonFile")?.addEventListener("change", loadJsonFile);
 
 function openAiView() {
   const settings = getSettings();
@@ -935,7 +1230,7 @@ function generateAiPrompt() {
   }
   const customNotes = $("aiCustomNotes")?.value.trim() || "";
   const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
-  const prompt = `Du erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.`;
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
@@ -946,6 +1241,70 @@ function stripCodeFence(text) {
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/, "")
     .trim();
+}
+
+function extractJsonPayload(text) {
+  const cleaned = stripCodeFence(text);
+  if (!cleaned) return "";
+  try { JSON.parse(cleaned); return cleaned; } catch {}
+  const start = cleaned.indexOf("{");
+  if (start < 0) return cleaned;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < cleaned.length; i += 1) {
+    const ch = cleaned[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') { inString = true; continue; }
+    if (ch === "{") depth += 1;
+    if (ch === "}") {
+      depth -= 1;
+      if (depth === 0) return cleaned.slice(start, i + 1);
+    }
+  }
+  return cleaned.slice(start);
+}
+
+async function openAiProvider(url, label) {
+  const prompt = $("aiPromptOutput")?.value?.trim();
+  if (!prompt) {
+    toast("Bitte zuerst den Prompt erzeugen.", "error");
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(prompt);
+    window.open(url, "_blank", "noopener");
+    toast(`Prompt kopiert – ${label} wurde geöffnet.`);
+  } catch (err) {
+    console.error(err);
+    window.open(url, "_blank", "noopener");
+    toast(`${label} wurde geöffnet. Bitte den Prompt manuell kopieren.`, "error");
+  }
+}
+
+async function loadJsonFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    toast("Die JSON-Datei ist ungewöhnlich groß. Bitte eine Datei unter 2 MB verwenden.", "error");
+    event.target.value = "";
+    return;
+  }
+  try {
+    $("aiJsonInput").value = await file.text();
+    $("aiJsonHelp")?.classList.add("hidden");
+    toast("JSON-Datei geladen.");
+  } catch (err) {
+    console.error(err);
+    toast("Die Datei konnte nicht gelesen werden.", "error");
+  } finally {
+    event.target.value = "";
+  }
 }
 
 function normalizeImportedQuestion(raw, index) {
@@ -986,7 +1345,7 @@ function normalizeImportedQuestion(raw, index) {
 }
 
 async function importAiJson() {
-  const rawText = stripCodeFence($("aiJsonInput").value);
+  const rawText = extractJsonPayload($("aiJsonInput").value);
   if (!rawText) {
     toast("Bitte zuerst die JSON-Antwort einfügen.", "error");
     return;
@@ -994,8 +1353,14 @@ async function importAiJson() {
   let data;
   try {
     data = JSON.parse(rawText);
+    $("aiJsonHelp")?.classList.add("hidden");
   } catch (err) {
-    toast("Das eingefügte Ergebnis ist kein gültiges JSON.", "error");
+    const help = $("aiJsonHelp");
+    if (help) {
+      help.innerHTML = `<strong>Die Antwort ist noch kein gültiges JSON.</strong><span>Bitte die KI erneut bitten: „Gib ausschließlich gültiges JSON ohne Erklärung oder Markdown aus.“</span><small>Technischer Hinweis: ${escapeHtml(err.message || "JSON konnte nicht gelesen werden")}</small>`;
+      help.classList.remove("hidden");
+    }
+    toast("Das eingefügte Ergebnis ist noch kein gültiges JSON.", "error");
     return;
   }
   if (!Array.isArray(data.questions) || !data.questions.length) {
@@ -1044,8 +1409,18 @@ $("endQuizBtn")?.addEventListener("click", async () => {
   if (state.isDirty && !(await saveCurrentQuiz(false))) return;
   endQuiz(state.currentQuiz.id, { returnToEditor: true });
 });
+function updateTimeLimitHint() {
+  const teacherMode = $("quizStartMode")?.value === "teacher";
+  const hint = $("timeLimitHint");
+  if (!hint) return;
+  hint.textContent = teacherMode
+    ? "Die Schüler warten zunächst im Warteraum. Der Countdown startet für alle gleichzeitig, wenn du den Test freigibst."
+    : "Der Countdown startet erst, wenn der Schüler auf „Test starten“ klickt. Bei 00:00 werden die aktuellen Antworten automatisch abgegeben.";
+}
+
 $("quizUseTimeLimit")?.addEventListener("change", (e) => {
   $("quizTimeLimitWrap").classList.toggle("hidden", !e.target.checked);
+  updateTimeLimitHint();
   markDirty();
 });
 $("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
@@ -1120,10 +1495,14 @@ async function openEditor(code) {
     populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
     $("quizResultMode").value = q.resultMode || "points_grade";
     $("quizShowSolutions").checked = q.showSolutions ?? true;
+    $("quizStartMode").value = q.startMode === "teacher" ? "teacher" : "student";
+    $("quizShuffleQuestions").checked = Boolean(q.shuffleQuestions);
+    $("quizShuffleAnswers").checked = Boolean(q.shuffleAnswers);
     const hasTimeLimit = Number(q.timeLimitMinutes) > 0;
     $("quizUseTimeLimit").checked = hasTimeLimit;
     $("quizTimeLimitMinutes").value = hasTimeLimit ? Number(q.timeLimitMinutes) : 10;
     $("quizTimeLimitWrap").classList.toggle("hidden", !hasTimeLimit);
+    updateTimeLimitHint();
     $("editorHeading").textContent = q.title || "Test bearbeiten";
     showView("editorView");
     renderQuestions();
@@ -1152,9 +1531,15 @@ function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
     markDirty();
   });
 });
-["quizGradeScale", "quizResultMode", "quizShowSolutions"].forEach((id) => {
+["quizGradeScale", "quizResultMode", "quizShowSolutions", "quizShuffleQuestions", "quizShuffleAnswers"].forEach((id) => {
   $(id).addEventListener("change", () => markDirty());
 });
+$("quizStartMode")?.addEventListener("change", () => {
+  updateTimeLimitHint();
+  markDirty();
+});
+
+let draggedQuestionIndex = null;
 
 function renderQuestions() {
   const root = $("questionList");
@@ -1163,6 +1548,7 @@ function renderQuestions() {
     q.position = index + 1;
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
+    node.dataset.index = String(index);
     node.querySelector(".questionNumber").textContent = `Aufgabe ${index + 1}`;
     const text = node.querySelector(".qText");
     const type = node.querySelector(".qType");
@@ -1203,7 +1589,42 @@ function renderQuestions() {
     });
     node.querySelector(".moveUp").addEventListener("click", () => moveQuestion(index, -1));
     node.querySelector(".moveDown").addEventListener("click", () => moveQuestion(index, 1));
+    node.querySelector(".collapseQuestion")?.addEventListener("click", (e) => {
+      const collapsed = node.classList.toggle("collapsed");
+      e.currentTarget.textContent = collapsed ? "⌄" : "⌃";
+      e.currentTarget.title = collapsed ? "Aufgabe ausklappen" : "Aufgabe einklappen";
+    });
     node.querySelector(".duplicateQuestion").addEventListener("click", () => duplicateQuestion(index));
+
+    const dragHandle = node.querySelector(".dragHandle");
+    dragHandle?.addEventListener("mousedown", () => { node.draggable = true; });
+    node.addEventListener("dragstart", (e) => {
+      draggedQuestionIndex = index;
+      node.classList.add("questionDragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    node.addEventListener("dragover", (e) => {
+      if (draggedQuestionIndex === null || draggedQuestionIndex === index) return;
+      e.preventDefault();
+      node.classList.add("questionDropTarget");
+    });
+    node.addEventListener("dragleave", () => node.classList.remove("questionDropTarget"));
+    node.addEventListener("drop", (e) => {
+      e.preventDefault();
+      node.classList.remove("questionDropTarget");
+      if (draggedQuestionIndex === null || draggedQuestionIndex === index) return;
+      const [moved] = state.questions.splice(draggedQuestionIndex, 1);
+      state.questions.splice(index, 0, moved);
+      draggedQuestionIndex = null;
+      renderQuestions();
+      markDirty();
+    });
+    node.addEventListener("dragend", () => {
+      draggedQuestionIndex = null;
+      node.draggable = false;
+      node.classList.remove("questionDragging");
+      document.querySelectorAll(".questionDropTarget").forEach((el) => el.classList.remove("questionDropTarget"));
+    });
     node.querySelector(".deleteQuestion").addEventListener("click", () => {
       if (confirm("Aufgabe löschen?")) {
         state.questions.splice(index, 1);
@@ -2040,10 +2461,18 @@ async function saveCurrentQuiz(showMessage = true) {
       resultMode: $("quizResultMode").value,
       showSolutions: $("quizShowSolutions").checked,
       timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value === "teacher" ? "teacher" : "student",
+      shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked,
       questionCount: state.questions.length,
       totalPoints,
       updatedAt: serverTimestamp()
     };
+    if (state.currentQuiz.published && !state.currentQuiz.ended && patch.startMode !== state.currentQuiz.startMode) {
+      patch.sessionState = patch.startMode === "teacher" ? "waiting" : "open";
+      patch.sessionRunId = patch.startMode === "teacher" ? randomId("run") : null;
+      patch.sessionStartedAt = null;
+    }
     await updateDoc(doc(db, "quizzes", code), patch);
 
     const currentIds = new Set();
@@ -2080,14 +2509,22 @@ async function publishCurrentQuiz() {
     return;
   }
   try {
+    const teacherMode = state.currentQuiz.startMode === "teacher";
+    const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", state.currentQuiz.id), {
       published: true,
       ended: false,
+      sessionState: teacherMode ? "waiting" : "open",
+      sessionRunId: runId,
+      sessionStartedAt: null,
       publishedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
     state.currentQuiz.published = true;
     state.currentQuiz.ended = false;
+    state.currentQuiz.sessionState = teacherMode ? "waiting" : "open";
+    state.currentQuiz.sessionRunId = runId;
+    state.currentQuiz.sessionStartedAt = null;
     updateSummary();
     updateEditorPublishControls();
     toast("Test veröffentlicht.");
@@ -2115,6 +2552,7 @@ async function copyText(text, message) {
 
 async function showPublish(code) {
   try {
+    clearPublishSubscriptions();
     const snap = await getDoc(doc(db, "quizzes", code));
     if (!snap.exists()) return;
     state.currentQuiz = { id: code, ...snap.data() };
@@ -2126,16 +2564,121 @@ async function showPublish(code) {
     qr.innerHTML = "";
     if (window.QRCode) new window.QRCode(qr, { text: link, width: 190, height: 190, correctLevel: window.QRCode.CorrectLevel.M });
     else qr.textContent = "QR-Code-Bibliothek konnte nicht geladen werden.";
+    setupTeacherLivePanel(code);
   } catch (err) {
     console.error(err);
     toast("Freigabe konnte nicht geladen werden.", "error");
   }
 }
 
+function setupTeacherLivePanel(code) {
+  clearPublishSubscriptions();
+  const panel = $("teacherLivePanel");
+  if (!panel) return;
+  let liveQuiz = state.currentQuiz;
+  let attempts = [];
+  let submissions = [];
+  const render = () => renderTeacherLivePanel(liveQuiz, attempts, submissions);
+
+  state.publishUnsubs.push(onSnapshot(doc(db, "quizzes", code), (snap) => {
+    if (!snap.exists()) return;
+    liveQuiz = { id: code, ...snap.data() };
+    state.currentQuiz = liveQuiz;
+    render();
+  }, (err) => console.warn("Live-Teststatus:", err)));
+
+  state.publishUnsubs.push(onSnapshot(collection(db, "quizzes", code, "attempts"), (snap) => {
+    attempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => console.warn("Warteraum:", err)));
+
+  state.publishUnsubs.push(onSnapshot(collection(db, "quizzes", code, "submissions"), (snap) => {
+    submissions = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => console.warn("Live-Abgaben:", err)));
+  render();
+}
+
+function renderTeacherLivePanel(quiz, attempts, submissions) {
+  const panel = $("teacherLivePanel");
+  if (!panel || !quiz) return;
+  if (state.publishClockInterval) clearInterval(state.publishClockInterval);
+  state.publishClockInterval = null;
+
+  const runId = quiz.sessionRunId || "";
+  const runAttempts = attempts.filter((a) => !runId || a.sessionRunId === runId);
+  const runSubmissions = submissions.filter((a) => !runId || a.sessionRunId === runId);
+  const startMode = quiz.startMode === "teacher" ? "teacher" : "student";
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : 0;
+
+  if (quiz.ended) {
+    panel.innerHTML = `<div class="liveStatusRow"><div class="liveIcon muted">■</div><div><span class="eyebrow">Test beendet</span><h3>Der Schülerzugang ist geschlossen</h3><p>Alle bisherigen Ergebnisse bleiben erhalten.</p></div></div>`;
+    return;
+  }
+
+  if (startMode !== "teacher") {
+    panel.innerHTML = `<div class="liveStatusRow"><div class="liveIcon">▶</div><div><span class="eyebrow">Startmodus</span><h3>Schüler starten selbst</h3><p>${minutes ? `Jeder Schüler startet seinen eigenen ${minutes}-Minuten-Countdown.` : "Die Aufgaben sind nach Eingabe des Namens direkt verfügbar."}</p></div></div>`;
+    return;
+  }
+
+  if (quiz.sessionState === "running") {
+    panel.innerHTML = `
+      <div class="liveStatusRow running"><div class="livePulse"></div><div class="liveGrow"><span class="eyebrow">Live im Unterricht</span><h3>Test läuft</h3><p><strong>${runAttempts.length}</strong> beigetreten · <strong>${runSubmissions.length}</strong> abgegeben</p></div>
+      <div class="liveClock"><small>${minutes ? "Verbleibend" : "Läuft seit"}</small><strong id="teacherSessionClock">--:--</strong></div></div>
+      <div class="liveActions"><button id="liveResultsBtn" class="button secondary" type="button">Ergebnisse ansehen</button><button id="liveEndBtn" class="button danger" type="button">Test beenden</button></div>`;
+    $("liveResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
+    $("liveEndBtn")?.addEventListener("click", () => endQuiz(quiz.id));
+    const tick = () => updateTeacherSessionClock(quiz);
+    tick();
+    state.publishClockInterval = setInterval(tick, 1000);
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="liveStatusRow waiting"><div class="liveIcon waiting">⌛</div><div class="liveGrow"><span class="eyebrow">Warteraum</span><h3>${runAttempts.length} ${runAttempts.length === 1 ? "Schüler ist" : "Schüler sind"} bereit</h3><p>Die Aufgaben bleiben verborgen, bis du den Test für alle startest.${minutes ? ` Dann laufen für alle gleichzeitig ${minutes} Minuten.` : ""}</p></div></div>
+    <div class="liveActions"><button id="liveStartBtn" class="button primary bigAction" type="button">Test für alle starten</button><button id="liveRefreshResultsBtn" class="button ghost" type="button">Ergebnisse</button></div>`;
+  $("liveStartBtn")?.addEventListener("click", () => startTeacherSession(quiz.id, runAttempts.length));
+  $("liveRefreshResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
+}
+
+function updateTeacherSessionClock(quiz) {
+  const el = $("teacherSessionClock");
+  if (!el) return;
+  const started = toMillis(quiz.sessionStartedAt);
+  if (!started) {
+    el.textContent = "00:00";
+    return;
+  }
+  const elapsed = Math.max(0, Math.floor((Date.now() - started) / 1000));
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : 0;
+  const seconds = minutes ? Math.max(0, Math.round(minutes * 60) - elapsed) : elapsed;
+  el.textContent = formatDuration(seconds);
+  el.classList.toggle("clockWarning", Boolean(minutes && seconds <= 60));
+}
+
+async function startTeacherSession(code, readyCount = 0) {
+  const message = readyCount
+    ? `${readyCount} ${readyCount === 1 ? "Schüler ist" : "Schüler sind"} bereit. Test jetzt für alle starten?`
+    : "Noch niemand ist im Warteraum. Test trotzdem starten?";
+  if (!confirm(message)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      sessionState: "running",
+      sessionStartedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    toast("Test für alle gestartet.");
+  } catch (err) {
+    console.error(err);
+    toast("Der Test konnte nicht gestartet werden.", "error");
+  }
+}
+
 // ---------- Schüleransicht ----------
 async function loadStudentQuiz(code) {
+  clearStudentSubscriptions();
   showView("studentView");
-  $("studentQuizCard").innerHTML = `<div id="studentLoading">Test wird geladen …</div>`;
+  $("studentQuizCard").innerHTML = `<div id="studentLoading" class="studentLoadingCard"><span class="loadingDot"></span><div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div></div>`;
   try {
     const quizSnap = await getDoc(doc(db, "quizzes", code));
     if (!quizSnap.exists()) throw new Error("Dieser Test existiert nicht.");
@@ -2145,12 +2688,57 @@ async function loadStudentQuiz(code) {
     if (quiz.ended && !ownerPreview) throw new Error("Dieser Test wurde beendet.");
     if (!quiz.published && !ownerPreview) throw new Error("Dieser Test ist noch nicht veröffentlicht.");
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
-    const questions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const sourceQuestions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const questions = prepareStudentQuestions(quiz, sourceQuestions, ownerPreview);
     renderStudentQuiz(quiz, questions, { ownerPreview });
   } catch (err) {
     console.error(err);
-    $("studentQuizCard").innerHTML = `<h1>Test nicht verfügbar</h1><p>${escapeHtml(err.message)}</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a>`;
+    $("studentQuizCard").innerHTML = `<div class="studentUnavailable"><span class="studentUnavailableIcon">!</span><h1>Test nicht verfügbar</h1><p>${escapeHtml(err.message)}</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a></div>`;
   }
+}
+
+function hashString(value) {
+  let h = 2166136261;
+  for (const ch of String(value)) {
+    h ^= ch.charCodeAt(0);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function getStudentShuffleSeed(quizId) {
+  const key = `lernplattform_seed_${quizId}`;
+  let seed = sessionStorage.getItem(key);
+  if (!seed) {
+    seed = `${Date.now()}_${Math.random()}_${crypto.randomUUID?.() || ""}`;
+    sessionStorage.setItem(key, seed);
+  }
+  return seed;
+}
+
+function seededShuffle(array, seedText) {
+  const copy = [...array];
+  let seed = hashString(seedText) || 1;
+  const next = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(next() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function prepareStudentQuestions(quiz, questions, ownerPreview = false) {
+  if (!quiz.shuffleQuestions || ownerPreview) return questions;
+  return seededShuffle(questions, `${getStudentShuffleSeed(quiz.id)}:questions`);
+}
+
+function studentOptionEntries(quiz, q, ownerPreview = false) {
+  const entries = (q.options || []).map((option, originalIndex) => ({ option, originalIndex }));
+  if (!quiz.shuffleAnswers || ownerPreview) return entries;
+  return seededShuffle(entries, `${getStudentShuffleSeed(quiz.id)}:answers:${q.id}`);
 }
 
 function shuffled(array) {
@@ -2369,7 +2957,9 @@ async function resolveStudentAttempt(quiz, name) {
             attemptId: stored.attemptId,
             startedAt,
             name: data.studentName || stored.name || name,
-            timeLimitMinutes: Number(data.timeLimitMinutes || quiz.timeLimitMinutes)
+            timeLimitMinutes: Number(data.timeLimitMinutes || quiz.timeLimitMinutes),
+            sessionRunId: data.sessionRunId || quiz.sessionRunId || null,
+            mode: data.mode || "student"
           };
           saveStoredTimer(quiz.id, attempt);
           state.studentAttempt = attempt;
@@ -2381,13 +2971,14 @@ async function resolveStudentAttempt(quiz, name) {
     }
   }
 
-  // Ältere lokale Timer aus Testversionen werden nicht zurückgesetzt, sondern übernommen.
   if (stored?.startedAt && !stored?.attemptId) {
     const attempt = {
       attemptId: null,
       startedAt: Number(stored.startedAt),
       name: stored.name || name,
-      timeLimitMinutes: Number(quiz.timeLimitMinutes)
+      timeLimitMinutes: Number(quiz.timeLimitMinutes),
+      sessionRunId: quiz.sessionRunId || null,
+      mode: "student"
     };
     state.studentAttempt = attempt;
     return attempt;
@@ -2396,7 +2987,12 @@ async function resolveStudentAttempt(quiz, name) {
   const attemptId = randomId("attempt");
   const ref = doc(db, "quizzes", quiz.id, "attempts", attemptId);
   await setDoc(ref, {
+    studentName: name,
+    mode: "student",
+    status: "running",
     timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes)),
+    sessionRunId: quiz.sessionRunId || null,
+    joinedAt: serverTimestamp(),
     startedAt: serverTimestamp(),
     createdAtLocal: new Date().toISOString()
   });
@@ -2406,7 +3002,56 @@ async function resolveStudentAttempt(quiz, name) {
     attemptId,
     startedAt,
     name,
-    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes))
+    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes)),
+    sessionRunId: quiz.sessionRunId || null,
+    mode: "student"
+  };
+  saveStoredTimer(quiz.id, attempt);
+  state.studentAttempt = attempt;
+  return attempt;
+}
+
+async function joinTeacherSession(quiz, name) {
+  const stored = readStoredTimer(quiz.id);
+  if (stored?.attemptId && stored.sessionRunId === quiz.sessionRunId) {
+    try {
+      const snap = await getDoc(doc(db, "quizzes", quiz.id, "attempts", stored.attemptId));
+      if (snap.exists()) {
+        const attempt = {
+          attemptId: stored.attemptId,
+          name: snap.data().studentName || stored.name || name,
+          sessionRunId: quiz.sessionRunId || null,
+          timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+          mode: "teacher",
+          startedAt: toMillis(quiz.sessionStartedAt) || null
+        };
+        saveStoredTimer(quiz.id, attempt);
+        state.studentAttempt = attempt;
+        return attempt;
+      }
+    } catch (err) {
+      console.warn("Gespeicherter Warteraum-Eintrag konnte nicht geladen werden:", err);
+    }
+  }
+
+  const attemptId = randomId("attempt");
+  const ref = doc(db, "quizzes", quiz.id, "attempts", attemptId);
+  await setDoc(ref, {
+    studentName: name,
+    mode: "teacher",
+    status: quiz.sessionState === "running" ? "running" : "ready",
+    timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : null,
+    sessionRunId: quiz.sessionRunId || null,
+    joinedAt: serverTimestamp(),
+    createdAtLocal: new Date().toISOString()
+  });
+  const attempt = {
+    attemptId,
+    name,
+    sessionRunId: quiz.sessionRunId || null,
+    timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+    mode: "teacher",
+    startedAt: toMillis(quiz.sessionStartedAt) || null
   };
   saveStoredTimer(quiz.id, attempt);
   state.studentAttempt = attempt;
@@ -2420,26 +3065,50 @@ function stopStudentTimer() {
 
 function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
   stopStudentTimer();
+  clearStudentSubscriptions();
   const root = $("studentQuizCard");
   const minutes = Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : 0;
   const timed = minutes > 0 && !ownerPreview;
-  const storedTimer = timed ? readStoredTimer(quiz.id) : null;
+  const teacherControlled = quiz.startMode === "teacher" && !ownerPreview;
+  const storedAttempt = !ownerPreview ? readStoredTimer(quiz.id) : null;
+  const storedForRun = storedAttempt && (!teacherControlled || storedAttempt.sessionRunId === quiz.sessionRunId) ? storedAttempt : null;
+  const selfTimedGate = timed && !teacherControlled;
+  const gateRequired = teacherControlled || selfTimedGate;
   const timerMeta = minutes > 0
-    ? `<span class="studentTimeInfo">⏱ ${minutes} Minuten${ownerPreview ? " · Vorschau ohne laufenden Timer" : ""}</span>`
-    : "";
+    ? `<span class="studentTimeInfo">⏱ ${minutes} Minuten${ownerPreview ? " · Vorschau ohne laufenden Timer" : teacherControlled ? " · gemeinsamer Start" : ""}</span>`
+    : teacherControlled ? `<span class="studentTimeInfo">👩‍🏫 gemeinsamer Start</span>` : "";
+
+  let gateHtml = "";
+  if (teacherControlled) {
+    const running = quiz.sessionState === "running";
+    gateHtml = `<div id="studentStartGate" class="studentStartGate teacherGate">
+      <div class="studentGateIcon">${running ? "▶" : "⌛"}</div>
+      <div class="studentGateCopy"><strong>${running ? "Der Test läuft bereits" : storedForRun ? "Du bist im Warteraum" : "Gemeinsamer Start durch die Lehrkraft"}</strong>
+      <p>${running ? "Du kannst jetzt noch beitreten. Bei einem Zeitlimit bekommst du nur die verbleibende Zeit." : storedForRun ? "Du bist bereit. Warte, bis deine Lehrkraft den Test für alle startet." : "Gib deinen Namen ein und melde dich als bereit. Die Aufgaben erscheinen erst nach dem Start durch die Lehrkraft."}</p></div>
+      <button id="studentStartBtn" class="button primary" type="button">${running ? "Jetzt beitreten" : storedForRun ? "Bereit ✓" : "Ich bin bereit"}</button>
+    </div>`;
+  } else if (selfTimedGate) {
+    gateHtml = `<div id="studentStartGate" class="studentStartGate"><div class="studentGateIcon">⏱</div><div class="studentGateCopy"><strong>${storedForRun ? "Laufenden Test fortsetzen" : `Zeitlimit: ${minutes} Minuten`}</strong><p>${storedForRun ? "Der Timer läuft seit deinem ersten Start weiter." : "Der Countdown beginnt erst, wenn du auf „Test starten“ klickst. Bei 00:00 werden deine aktuellen Antworten automatisch abgegeben."}</p></div><button id="studentStartBtn" class="button primary" type="button">${storedForRun ? "Test fortsetzen" : "Test starten"}</button></div>`;
+  }
+
   root.innerHTML = `
     <div class="studentHead">
       <div class="studentHeadTop"><span class="eyebrow">${escapeHtml(quiz.subject || "Test")} · Klasse ${escapeHtml(quiz.grade || "–")}</span>${timerMeta}</div>
       <h1>${escapeHtml(quiz.title)}</h1>
       <p>${escapeHtml(quiz.description || "")}</p>
-      <div class="meta">${questions.length} Aufgaben · ${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte · Code ${quiz.id}</div>
+      <div class="studentMetaRow"><span>${questions.length} Aufgaben</span><span>${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte</span><span>Code ${quiz.id}</span></div>
     </div>
     <form id="studentForm">
-      <label class="studentNameLabel">Dein Name oder Kürzel<input id="studentName" type="text" required placeholder="Vorname Nachname" value="${escapeHtml(storedTimer?.name || "")}"></label>
-      ${timed ? `<div id="studentStartGate" class="studentStartGate"><div><strong>${storedTimer ? "Laufenden Test fortsetzen" : `Zeitlimit: ${minutes} Minuten`}</strong><p>${storedTimer ? "Der Timer läuft seit deinem ersten Start weiter." : "Der Countdown beginnt erst, wenn du auf „Test starten“ klickst. Bei 00:00 werden deine aktuellen Antworten automatisch abgegeben."}</p></div><button id="studentStartBtn" class="button primary" type="button">${storedTimer ? "Test fortsetzen" : "Test starten"}</button></div>` : ""}
-      <div id="studentTimerBar" class="studentTimerBar ${timed ? "hidden" : ""}"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
-      <div id="studentQuestions" class="${timed ? "hidden" : ""}"></div>
-      <button id="studentSubmitBtn" class="button primary studentSubmit ${timed ? "hidden" : ""}" type="submit">Antworten abgeben</button>
+      <div class="studentIdentityCard"><label class="studentNameLabel">Dein Name oder Kürzel<input id="studentName" type="text" required placeholder="Vorname Nachname" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Dein Name wird nur deiner Lehrkraft zusammen mit der Abgabe angezeigt.</small></div>
+      ${gateHtml}
+      <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
+      <div id="studentProgressBar" class="studentProgressWrap ${gateRequired ? "hidden" : ""}">
+        <div class="studentProgressTop"><strong id="studentProgressText">0 von ${questions.length} bearbeitet</strong><span id="studentOpenCount">${questions.length} offen</span></div>
+        <div class="studentProgressTrack"><span id="studentProgressFill"></span></div>
+        <div id="studentQuestionNav" class="studentQuestionNav" aria-label="Aufgabennavigation"></div>
+      </div>
+      <div id="studentQuestions" class="${gateRequired ? "hidden" : ""}"></div>
+      <div id="studentSubmitArea" class="studentSubmitArea ${gateRequired ? "hidden" : ""}"><div><strong>Fertig?</strong><small>Prüfe offene Aufgaben noch einmal, bevor du endgültig abgibst.</small></div><button id="studentSubmitBtn" class="button primary studentSubmit" type="submit">Antworten abgeben</button></div>
     </form>
     <div id="studentResult" class="studentResult hidden"></div>`;
   const qRoot = $("studentQuestions");
@@ -2449,8 +3118,9 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.className = "studentQuestion";
     section.dataset.qid = q.id;
     section.dataset.type = q.type;
-    if (q.type !== "gapfill") section.innerHTML = `<h3>${i + 1}. ${escapeHtml(q.text)} <span class="meta">(${Number(q.points)} P.)</span></h3>`;
-    else section.innerHTML = `<h3>${i + 1}. Lückentext <span class="meta">(${Number(q.points)} P.)</span></h3>`;
+    section.dataset.index = String(i);
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${escapeHtml(q.text)}</h3>`;
+    else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
       const figure = document.createElement("figure");
@@ -2473,13 +3143,14 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     } else if (q.type === "dropdown") {
       const sel = document.createElement("select");
       sel.name = q.id;
-      sel.innerHTML = `<option value="">Bitte auswählen …</option>` + (q.options || []).map((o, idx) => `<option value="${idx}">${escapeHtml(o.text)}</option>`).join("");
+      const entries = studentOptionEntries(quiz, q, ownerPreview);
+      sel.innerHTML = `<option value="">Bitte auswählen …</option>` + entries.map(({ option, originalIndex }) => `<option value="${originalIndex}">${escapeHtml(option.text)}</option>`).join("");
       section.appendChild(sel);
     } else if (q.type === "single" || q.type === "multi") {
-      (q.options || []).forEach((o, idx) => {
+      studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }) => {
         const label = document.createElement("label");
         label.className = "choice";
-        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${idx}"><span>${escapeHtml(o.text)}</span>`;
+        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}"><span>${escapeHtml(option.text)}</span>`;
         section.appendChild(label);
       });
     } else if (q.type === "truefalse") {
@@ -2504,12 +3175,130 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     qRoot.appendChild(section);
   });
 
+  setupStudentProgress(questions);
   $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions));
-  if (timed) {
-    $("studentStartBtn").addEventListener("click", () => startTimedStudentQuiz(quiz, questions));
+
+  if (teacherControlled) {
+    const btn = $("studentStartBtn");
+    if (storedForRun && quiz.sessionState !== "running") {
+      $("studentName").readOnly = true;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Bereit ✓";
+      }
+      watchTeacherStart(quiz, questions, storedForRun);
+    } else if (storedForRun && quiz.sessionState === "running") {
+      $("studentName").readOnly = true;
+      activateStudentTest(quiz, questions, storedForRun, { teacherControlled: true });
+      watchTeacherStart(quiz, questions, storedForRun);
+    } else {
+      btn?.addEventListener("click", () => joinTeacherControlledQuiz(quiz, questions));
+    }
+  } else if (selfTimedGate) {
+    $("studentStartBtn")?.addEventListener("click", () => startTimedStudentQuiz(quiz, questions));
+  } else {
+    $("studentTimerBar")?.classList.add("hidden");
+    refreshStudentProgress(questions);
+  }
+}
+
+async function joinTeacherControlledQuiz(quiz, questions) {
+  const nameInput = $("studentName");
+  const name = nameInput?.value.trim() || "";
+  if (!name) {
+    toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    nameInput?.focus();
+    return;
+  }
+  const btn = $("studentStartBtn");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Wird angemeldet …";
+  }
+  try {
+    const latestSnap = await getDoc(doc(db, "quizzes", quiz.id));
+    if (!latestSnap.exists()) throw new Error("Test nicht gefunden");
+    const latestQuiz = { id: quiz.id, ...latestSnap.data() };
+    if (latestQuiz.ended || !latestQuiz.published) throw new Error("Der Test ist nicht mehr geöffnet.");
+    const attempt = await joinTeacherSession(latestQuiz, name);
+    nameInput.value = attempt.name || name;
+    nameInput.readOnly = true;
+    if (latestQuiz.sessionState === "running") {
+      activateStudentTest(latestQuiz, questions, attempt, { teacherControlled: true });
+    } else {
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Bereit ✓";
+      }
+      const copy = $("studentStartGate")?.querySelector(".studentGateCopy");
+      if (copy) copy.innerHTML = `<strong>Du bist bereit</strong><p>Warte, bis deine Lehrkraft den Test für alle startet. Diese Seite aktualisiert sich automatisch.</p>`;
+    }
+    watchTeacherStart(latestQuiz, questions, attempt);
+  } catch (err) {
+    console.error(err);
+    toast(err.message || "Der Warteraum konnte nicht geöffnet werden.", "error");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Ich bin bereit";
+    }
+  }
+}
+
+function watchTeacherStart(quiz, questions, attempt) {
+  try { state.studentQuizUnsub?.(); } catch {}
+  state.studentQuizUnsub = onSnapshot(doc(db, "quizzes", quiz.id), (snap) => {
+    if (!snap.exists()) return;
+    const liveQuiz = { id: quiz.id, ...snap.data() };
+    if (liveQuiz.ended || !liveQuiz.published) {
+      stopStudentTimer();
+      const gate = $("studentStartGate");
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">■</div><div class="studentGateCopy"><strong>Der Test wurde beendet</strong><p>Bitte wende dich an deine Lehrkraft.</p></div>`;
+      $("studentQuestions")?.classList.add("hidden");
+      $("studentSubmitArea")?.classList.add("hidden");
+      $("studentProgressBar")?.classList.add("hidden");
+      return;
+    }
+    if (attempt.sessionRunId && liveQuiz.sessionRunId && attempt.sessionRunId !== liveQuiz.sessionRunId) {
+      const gate = $("studentStartGate");
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">↻</div><div class="studentGateCopy"><strong>Eine neue Testrunde wurde vorbereitet</strong><p>Lade die Seite neu und melde dich erneut als bereit.</p></div><button class="button primary" type="button" onclick="location.reload()">Neu laden</button>`;
+      return;
+    }
+    if (liveQuiz.sessionState === "running") {
+      activateStudentTest(liveQuiz, questions, { ...attempt, startedAt: toMillis(liveQuiz.sessionStartedAt) || attempt.startedAt }, { teacherControlled: true });
+    }
+  }, (err) => console.warn("Live-Start konnte nicht beobachtet werden:", err));
+}
+
+function activateStudentTest(quiz, questions, attempt, { teacherControlled = false } = {}) {
+  const gate = $("studentStartGate");
+  if (gate?.dataset.activated === "1") return;
+  const startedAt = Number(attempt?.startedAt || toMillis(quiz.sessionStartedAt) || 0);
+  const minutes = Number(attempt?.timeLimitMinutes || quiz.timeLimitMinutes) > 0 ? Number(attempt?.timeLimitMinutes || quiz.timeLimitMinutes) : 0;
+  state.studentAttempt = { ...(attempt || {}), startedAt: startedAt || null, timeLimitMinutes: minutes || null, sessionRunId: attempt?.sessionRunId || quiz.sessionRunId || null };
+  if (state.studentAttempt.attemptId) saveStoredTimer(quiz.id, state.studentAttempt);
+  if (teacherControlled && minutes && startedAt) {
+    const remaining = Math.round(minutes * 60) - Math.floor((Date.now() - startedAt) / 1000);
+    if (remaining <= 0) {
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">⌛</div><div class="studentGateCopy"><strong>Die Bearbeitungszeit ist abgelaufen</strong><p>Bitte wende dich an deine Lehrkraft.</p></div>`;
+      return;
+    }
+  }
+  if (gate) {
+    gate.dataset.activated = "1";
+    gate.classList.add("hidden");
+  }
+  $("studentQuestions")?.classList.remove("hidden");
+  $("studentSubmitArea")?.classList.remove("hidden");
+  $("studentProgressBar")?.classList.remove("hidden");
+  if ($("studentName")) $("studentName").readOnly = true;
+  if (minutes && startedAt) {
+    $("studentTimerBar")?.classList.remove("hidden");
+    runStudentTimer(quiz, questions, startedAt, minutes);
   } else {
     $("studentTimerBar")?.classList.add("hidden");
   }
+  refreshStudentProgress(questions);
+  setTimeout(() => $("studentProgressBar")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
 }
 
 async function startTimedStudentQuiz(quiz, questions) {
@@ -2530,11 +3319,7 @@ async function startTimedStudentQuiz(quiz, questions) {
     name = attempt.name || name;
     nameInput.value = name;
     nameInput.readOnly = true;
-    $("studentStartGate")?.classList.add("hidden");
-    $("studentQuestions")?.classList.remove("hidden");
-    $("studentSubmitBtn")?.classList.remove("hidden");
-    $("studentTimerBar")?.classList.remove("hidden");
-    runStudentTimer(quiz, questions, attempt.startedAt, attempt.timeLimitMinutes);
+    activateStudentTest(quiz, questions, attempt);
   } catch (err) {
     console.error(err);
     toast("Der Timer konnte nicht gestartet werden. Bitte Seite neu laden und erneut versuchen.", "error");
@@ -2543,6 +3328,66 @@ async function startTimedStudentQuiz(quiz, questions) {
       startBtn.textContent = readStoredTimer(quiz.id) ? "Test fortsetzen" : "Test starten";
     }
   }
+}
+
+function setupStudentProgress(questions) {
+  const nav = $("studentQuestionNav");
+  if (!nav) return;
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.querySelectorAll(".questionNavDot").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
+      section?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+  const root = $("studentQuestions");
+  const markTouched = (event) => {
+    const section = event.target.closest?.(".studentQuestion");
+    if (section) section.dataset.touched = "1";
+    setTimeout(() => refreshStudentProgress(questions), 0);
+  };
+  root?.addEventListener("input", markTouched);
+  root?.addEventListener("change", markTouched);
+  root?.addEventListener("click", markTouched);
+  state.studentProgressObserver = new MutationObserver(() => refreshStudentProgress(questions));
+  if (root) state.studentProgressObserver.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+}
+
+function studentAnswerIsComplete(q, given) {
+  if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
+  if (q.type === "multi") return Array.isArray(given) && given.length > 0;
+  if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
+  if (q.type === "matching") return Object.keys(given || {}).length === (q.pairs || []).length && Object.values(given || {}).every((x) => String(x) !== "");
+  if (q.type === "grouping") {
+    const expected = (q.groups || []).reduce((sum, g) => sum + (g.items || []).length, 0);
+    return Object.keys(given || {}).length === expected;
+  }
+  if (q.type === "ordering") {
+    const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+    return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
+  }
+  if (q.type === "markwords") return Array.isArray(given) && given.length > 0;
+  return false;
+}
+
+function getUnansweredQuestions(questions) {
+  return questions.filter((q) => !studentAnswerIsComplete(q, readStudentAnswer(q)));
+}
+
+function refreshStudentProgress(questions) {
+  if (!$("studentProgressBar") || $("studentProgressBar").classList.contains("hidden")) return;
+  const unanswered = getUnansweredQuestions(questions);
+  const done = questions.length - unanswered.length;
+  const percent = questions.length ? Math.round((done / questions.length) * 100) : 0;
+  if ($("studentProgressText")) $("studentProgressText").textContent = `${done} von ${questions.length} bearbeitet`;
+  if ($("studentOpenCount")) $("studentOpenCount").textContent = unanswered.length ? `${unanswered.length} offen` : "Alles bearbeitet ✓";
+  if ($("studentProgressFill")) $("studentProgressFill").style.width = `${percent}%`;
+  questions.forEach((q) => {
+    const btn = $("studentQuestionNav")?.querySelector(`[data-qid="${CSS.escape(q.id)}"]`);
+    if (!btn) return;
+    const complete = !unanswered.includes(q);
+    btn.classList.toggle("complete", complete);
+  });
 }
 
 function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null) {
@@ -2679,7 +3524,13 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
     toast("Bitte deinen Namen eingeben.", "error");
     return;
   }
-  if (!force && !confirm("Willst du den Test wirklich abgeben?")) return;
+  if (!force) {
+    const unanswered = getUnansweredQuestions(questions);
+    const message = unanswered.length
+      ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`
+      : "Alles bearbeitet. Test jetzt endgültig abgeben?";
+    if (!confirm(message)) return;
+  }
 
   const answers = {};
   const grading = {};
@@ -2729,6 +3580,8 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
       status: needsReview ? "review" : "graded",
       timeLimitMinutes: Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) > 0 ? Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) : null,
       attemptId: activeAttempt?.attemptId || null,
+      sessionRunId: activeAttempt?.sessionRunId || quiz.sessionRunId || null,
+      startMode: quiz.startMode === "teacher" ? "teacher" : "student",
       startedAtServerMillis: effectiveStart,
       startedAtLocal: effectiveStart ? new Date(effectiveStart).toISOString() : null,
       elapsedSeconds,
@@ -2738,6 +3591,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
     });
     localStorage.removeItem(studentTimerKey(quiz.id));
     state.studentAttempt = null;
+    clearStudentSubscriptions();
     renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
     toast(autoSubmitted ? "Zeit abgelaufen. Deine Abgabe wurde gespeichert." : "Abgabe erfolgreich gespeichert.");
   } catch (err) {
@@ -2985,3 +3839,426 @@ function exportResultsCsv() {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+
+// ---------- Mitteilungen, Feedback & Administration (V2.2.0) ----------
+$("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
+$("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
+$("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
+$("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
+$("closeFeedbackDialog")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
+$("cancelFeedbackBtn")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
+$("sendFeedbackBtn")?.addEventListener("click", sendFeedback);
+$("closeAnnouncementDialog")?.addEventListener("click", dismissCurrentAnnouncement);
+$("announcementDialogOk")?.addEventListener("click", dismissCurrentAnnouncement);
+$("announcementDialog")?.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  dismissCurrentAnnouncement();
+});
+
+function openFeedbackDialog() {
+  if (!state.user) return;
+  $("feedbackMessage").value = "";
+  $("feedbackTestCode").value = state.currentQuiz?.id || state.currentResultsQuiz?.id || "";
+  $("feedbackCategory").value = "bug";
+  safeDialogOpen($("feedbackDialog"));
+}
+
+async function sendFeedback() {
+  const message = $("feedbackMessage")?.value.trim();
+  if (!message) {
+    toast("Bitte kurz beschreiben, worum es geht.", "error");
+    return;
+  }
+  const btn = $("sendFeedbackBtn");
+  if (btn) btn.disabled = true;
+  try {
+    await addDoc(collection(db, "feedback"), {
+      userId: state.user.uid,
+      displayName: state.profile?.displayName || state.user.displayName || "",
+      email: state.user.email || state.profile?.email || "",
+      category: $("feedbackCategory")?.value || "other",
+      testCode: $("feedbackTestCode")?.value.trim().toUpperCase() || null,
+      message,
+      appVersion: APP_VERSION,
+      environment: appEnvironment || "production",
+      userAgent: navigator.userAgent,
+      pageUrl: location.href,
+      status: "new",
+      createdAt: serverTimestamp()
+    });
+    safeDialogClose($("feedbackDialog"));
+    toast("Danke! Dein Feedback wurde gesendet.");
+  } catch (err) {
+    console.error(err);
+    toast("Feedback konnte nicht gesendet werden.", "error");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function announcementIsActive(a) {
+  if (a.active === false) return false;
+  const now = Date.now();
+  const start = a.startsAt ? Date.parse(a.startsAt) : 0;
+  const end = a.endsAt ? Date.parse(a.endsAt) : 0;
+  if (start && now < start) return false;
+  if (end && now > end) return false;
+  return true;
+}
+
+function announcementIcon(type) {
+  return ({ welcome: "👋", news: "✨", info: "ℹ️", warning: "⚠️" })[type] || "ℹ️";
+}
+
+async function loadAnnouncements() {
+  if (!state.user || isSuspended()) return;
+  const host = $("announcementHost");
+  if (!host) return;
+  host.innerHTML = "";
+  try {
+    const [aSnap, seenSnap] = await Promise.all([
+      getDocs(collection(db, "announcements")),
+      getDocs(collection(db, "users", state.user.uid, "announcementViews"))
+    ]);
+    const seen = new Map(seenSnap.docs.map((d) => [d.id, d.data()]));
+    const announcements = aSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter(announcementIsActive)
+      .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+
+    let popup = null;
+    for (const a of announcements) {
+      const view = seen.get(a.id);
+      const frequency = a.frequency || "once";
+      if (frequency === "once" && view?.seenAt) continue;
+      if (frequency === "until_closed" && view?.dismissedAt) continue;
+      if (frequency === "every_login" && state.shownThisLogin.has(a.id)) continue;
+      if (a.display === "popup" && !popup) {
+        popup = a;
+        continue;
+      }
+      renderAnnouncementBanner(a);
+      if (frequency === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+      if (frequency === "every_login") state.shownThisLogin.add(a.id);
+    }
+    if (popup) await showAnnouncementPopup(popup);
+  } catch (err) {
+    console.warn("Mitteilungen konnten nicht geladen werden:", err);
+  }
+}
+
+function renderAnnouncementBanner(a) {
+  const host = $("announcementHost");
+  const box = document.createElement("article");
+  box.className = `announcementBanner announcement-${a.type || "info"}`;
+  box.innerHTML = `<span class="announcementIcon">${announcementIcon(a.type)}</span><div class="announcementBody"><strong>${escapeHtml(a.title || "Hinweis")}</strong><p>${escapeHtml(a.text || "")}</p></div><button class="announcementClose iconButton" type="button" aria-label="Schließen">×</button>`;
+  box.querySelector(".announcementClose").addEventListener("click", async () => {
+    box.remove();
+    if ((a.frequency || "once") === "until_closed") await markAnnouncementView(a.id, { dismissedAt: serverTimestamp() });
+    else if ((a.frequency || "once") === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+  });
+  host.appendChild(box);
+}
+
+async function showAnnouncementPopup(a) {
+  state.activeAnnouncementDialogId = a.id;
+  $("announcementDialogEyebrow").textContent = `${announcementIcon(a.type)} ${announcementTypeLabel(a.type)}`;
+  $("announcementDialogTitle").textContent = a.title || "Hinweis";
+  $("announcementDialogText").textContent = a.text || "";
+  safeDialogOpen($("announcementDialog"));
+  if ((a.frequency || "once") === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+  if ((a.frequency || "once") === "every_login") state.shownThisLogin.add(a.id);
+}
+
+async function dismissCurrentAnnouncement() {
+  const id = state.activeAnnouncementDialogId;
+  safeDialogClose($("announcementDialog"));
+  state.activeAnnouncementDialogId = null;
+  if (!id) return;
+  try {
+    const snap = await getDoc(doc(db, "announcements", id));
+    if (snap.exists() && (snap.data().frequency || "once") === "until_closed") {
+      await markAnnouncementView(id, { dismissedAt: serverTimestamp() });
+    }
+  } catch (err) { console.warn(err); }
+}
+
+async function markAnnouncementView(id, patch) {
+  try {
+    await setDoc(doc(db, "users", state.user.uid, "announcementViews", id), {
+      announcementId: id,
+      ...patch,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) { console.warn("Mitteilung konnte nicht als gesehen markiert werden:", err); }
+}
+
+function announcementTypeLabel(type) {
+  return ({ welcome: "Begrüßung", news: "Neuigkeit", info: "Info", warning: "Warnung" })[type] || "Hinweis";
+}
+
+// ----- Admin -----
+document.querySelectorAll(".adminTab").forEach((btn) => btn.addEventListener("click", () => switchAdminTab(btn.dataset.adminTab)));
+$("adminTeacherSearch")?.addEventListener("input", renderAdminTeachers);
+$("adminTestSearch")?.addEventListener("input", renderAdminTests);
+$("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
+$("saveAnnouncementBtn")?.addEventListener("click", saveAnnouncement);
+$("resetAnnouncementBtn")?.addEventListener("click", resetAnnouncementForm);
+
+async function openAdmin() {
+  if (!state.user || !isAdmin()) {
+    toast("Dieser Bereich ist nur für Administratoren verfügbar.", "error");
+    return;
+  }
+  showView("adminView");
+  switchAdminTab("overview", false);
+  await loadAdminData(true);
+}
+
+function switchAdminTab(name, scroll = true) {
+  document.querySelectorAll(".adminTab").forEach((btn) => btn.classList.toggle("active", btn.dataset.adminTab === name));
+  document.querySelectorAll(".adminPanel").forEach((panel) => panel.classList.add("hidden"));
+  const map = { overview: "adminPanelOverview", teachers: "adminPanelTeachers", tests: "adminPanelTests", messages: "adminPanelMessages", feedback: "adminPanelFeedback", audit: "adminPanelAudit" };
+  $(map[name] || map.overview)?.classList.remove("hidden");
+  if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function loadAdminData(showToast = false) {
+  if (!isAdmin()) return;
+  const refresh = $("refreshAdminBtn");
+  if (refresh) { refresh.disabled = true; refresh.textContent = "Lädt …"; }
+  try {
+    const [usersSnap, quizzesSnap, announcementsSnap, feedbackSnap, auditSnap] = await Promise.all([
+      getDocs(collection(db, "users")),
+      getDocs(collection(db, "quizzes")),
+      getDocs(collection(db, "announcements")),
+      getDocs(collection(db, "feedback")),
+      getDocs(collection(db, "adminAudit"))
+    ]);
+    state.adminUsers = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt)).slice(0, 100);
+    await renderAdminOverview();
+    renderAdminTeachers();
+    renderAdminTests();
+    renderAdminAnnouncements();
+    renderAdminFeedback();
+    renderAdminAudit();
+    if (showToast) toast("Admin-Daten aktualisiert.");
+  } catch (err) {
+    console.error(err);
+    toast("Admin-Daten konnten nicht geladen werden. Prüfe Rolle und Firestore-Regeln.", "error");
+  } finally {
+    if (refresh) { refresh.disabled = false; refresh.textContent = "Aktualisieren"; }
+  }
+}
+
+async function renderAdminOverview() {
+  const activeTests = state.adminQuizzes.filter((q) => !q.isDeleted);
+  const published = activeTests.filter((q) => q.published && !q.ended).length;
+  const ended = activeTests.filter((q) => q.ended).length;
+  let submissions = "–";
+  try {
+    const c = await getCountFromServer(collectionGroup(db, "submissions"));
+    submissions = c.data().count;
+  } catch (err) { console.warn("Abgaben-Zählung nicht verfügbar:", err); }
+  const cards = [
+    ["Lehrkräfte", state.adminUsers.length, "👩‍🏫"],
+    ["Tests", activeTests.length, "📝"],
+    ["Veröffentlicht", published, "🟢"],
+    ["Beendet", ended, "✅"],
+    ["Abgaben", submissions, "📥"],
+    ["Im Papierkorb", state.adminQuizzes.filter((q) => q.isDeleted).length, "🗑️"]
+  ];
+  $("adminStats").innerHTML = cards.map(([label, value, icon]) => `<article class="card adminStatCard"><span>${icon}</span><div><strong>${escapeHtml(value)}</strong><small>${escapeHtml(label)}</small></div></article>`).join("");
+
+  const activeSince = (date) => state.adminUsers.filter((u) => {
+    const ms = toMillis(u.lastActiveAt || u.createdAt);
+    return ms && ms >= date.getTime();
+  }).length;
+  $("adminActivityStats").innerHTML = [
+    ["Heute", startOfDaysAgo(0)],
+    ["7 Tage", startOfDaysAgo(6)],
+    ["30 Tage", startOfDaysAgo(29)]
+  ].map(([label, since]) => {
+    const n = activeSince(since);
+    const pct = state.adminUsers.length ? Math.round(n / state.adminUsers.length * 100) : 0;
+    return `<div class="activityRow"><div><strong>${label}</strong><span>${n} aktiv</span></div><div class="activityTrack"><i style="width:${pct}%"></i></div></div>`;
+  }).join("");
+  $("adminSystemInfo").innerHTML = `<div><span>App-Version</span><strong>v${APP_VERSION}</strong></div><div><span>Umgebung</span><strong>${escapeHtml(appEnvironment || "production")}</strong></div><div><span>Firebase-Projekt</span><strong>${escapeHtml(firebaseConfig.projectId)}</strong></div><div><span>Feedback offen</span><strong>${state.adminFeedback.filter((f)=>f.status !== "done").length}</strong></div>`;
+  const consoleLink = $("adminFirebaseConsoleLink");
+  if (consoleLink) consoleLink.href = `https://console.firebase.google.com/project/${encodeURIComponent(firebaseConfig.projectId)}/overview`;
+}
+
+function teacherQuizCount(uid) {
+  return state.adminQuizzes.filter((q) => q.ownerId === uid && !q.isDeleted).length;
+}
+
+function renderAdminTeachers() {
+  const root = $("adminTeachersTable");
+  if (!root) return;
+  const term = normalize($("adminTeacherSearch")?.value || "");
+  const users = state.adminUsers.filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term)).sort((a,b)=>String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de"));
+  if (!users.length) { root.innerHTML = `<div class="emptyInline">Keine Lehrkräfte gefunden.</div>`; return; }
+  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : (u.role === "admin" ? "Admin" : "Aktiv")}</span></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
+  root.querySelectorAll(".adminTeacherOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTeacher(btn.dataset.id)));
+}
+
+function openAdminTeacher(uid) {
+  const u = state.adminUsers.find((x)=>x.id===uid);
+  if (!u) return;
+  const tests = state.adminQuizzes.filter((q)=>q.ownerId===uid && !q.isDeleted).sort((a,b)=>toMillis(b.updatedAt)-toMillis(a.updatedAt));
+  const detail = $("adminTeacherDetail");
+  detail.classList.remove("hidden");
+  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Lehrkraft</span><h2>${escapeHtml(u.displayName || u.email || "Lehrkraft")}</h2><p>${escapeHtml(u.email || "")}</p></div><button class="iconButton closeAdminDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Registriert: <strong>${escapeHtml(fmtDate(u.createdAt))}</strong></span><span>Letzte Aktivität: <strong>${escapeHtml(fmtDate(u.lastActiveAt))}</strong></span><span>Tests: <strong>${tests.length}</strong></span></div><div class="actions adminDetailActions"><button class="button secondary adminResetPassword" type="button">Reset-Mail senden</button>${u.id !== state.user.uid ? `<button class="button ${u.status === "suspended" ? "primary" : "danger"} adminToggleUser" type="button">${u.status === "suspended" ? "Entsperren" : "Account sperren"}</button>` : ""}</div><h3>Tests</h3><div class="miniTestList">${tests.length ? tests.map((q)=>`<button type="button" class="miniTest adminOpenTestFromTeacher" data-id="${escapeHtml(q.id)}"><span><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></span><span>→</span></button>`).join("") : `<p class="hint">Noch keine Tests.</p>`}</div>`;
+  detail.querySelector(".closeAdminDetail").addEventListener("click",()=>detail.classList.add("hidden"));
+  detail.querySelector(".adminResetPassword").addEventListener("click",()=>adminSendPasswordReset(u));
+  detail.querySelector(".adminToggleUser")?.addEventListener("click",()=>toggleUserSuspension(u));
+  detail.querySelectorAll(".adminOpenTestFromTeacher").forEach((btn)=>btn.addEventListener("click",()=>{ switchAdminTab("tests"); openAdminTest(btn.dataset.id); }));
+  detail.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+async function adminSendPasswordReset(user) {
+  if (!user?.email) return;
+  if (!confirm(`Passwort-Reset-Mail an ${user.email} senden?`)) return;
+  try {
+    await sendPasswordResetEmail(auth, user.email);
+    await writeAdminAudit("password_reset_sent", { userId: user.id, email: user.email });
+    toast("Reset-Mail wurde versendet.");
+  } catch (err) { console.error(err); toast("Reset-Mail konnte nicht versendet werden.", "error"); }
+}
+
+async function toggleUserSuspension(user) {
+  if (!user || user.id === state.user.uid) return;
+  const suspend = user.status !== "suspended";
+  const verb = suspend ? "sperren" : "entsperren";
+  if (!confirm(`${user.displayName || user.email} wirklich ${verb}?`)) return;
+  try {
+    await updateDoc(doc(db, "users", user.id), { status: suspend ? "suspended" : "active", statusUpdatedAt: serverTimestamp(), statusUpdatedBy: state.user.uid });
+    await writeAdminAudit(suspend ? "user_suspended" : "user_unsuspended", { userId: user.id, email: user.email || "" });
+    toast(suspend ? "Account gesperrt." : "Account entsperrt.");
+    await loadAdminData(false);
+    openAdminTeacher(user.id);
+  } catch (err) { console.error(err); toast("Accountstatus konnte nicht geändert werden.", "error"); }
+}
+
+function adminQuizStatus(q) {
+  if (q.isDeleted) return "Papierkorb";
+  if (q.ended) return "Beendet";
+  if (q.published) return "Veröffentlicht";
+  return "Entwurf";
+}
+
+function ownerLabel(uid) {
+  const u = state.adminUsers.find((x)=>x.id===uid);
+  return u?.displayName || u?.email || uid || "–";
+}
+
+function renderAdminTests() {
+  const root = $("adminTestsTable");
+  if (!root) return;
+  const term = normalize($("adminTestSearch")?.value || "");
+  const list = state.adminQuizzes.filter((q)=>!term || normalize(`${q.title||""} ${q.subject||""} ${q.grade||""} ${q.id} ${ownerLabel(q.ownerId)}`).includes(term)).sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt));
+  if (!list.length) { root.innerHTML = `<div class="emptyInline">Keine Tests gefunden.</div>`; return; }
+  root.innerHTML = `<table><thead><tr><th>Test</th><th>Lehrkraft</th><th>Status</th><th>Aufgaben</th><th>Zuletzt geändert</th><th></th></tr></thead><tbody>${list.map((q)=>`<tr><td><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></td><td>${escapeHtml(ownerLabel(q.ownerId))}</td><td>${escapeHtml(adminQuizStatus(q))}</td><td>${Number(q.questionCount||0)}</td><td>${escapeHtml(fmtDate(q.updatedAt||q.createdAt))}</td><td><button class="button ghost adminTestOpen" data-id="${escapeHtml(q.id)}" type="button">Ansehen</button></td></tr>`).join("")}</tbody></table>`;
+  root.querySelectorAll(".adminTestOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTest(btn.dataset.id)));
+}
+
+async function openAdminTest(code) {
+  const q = state.adminQuizzes.find((x)=>x.id===code);
+  if (!q) return;
+  const detail = $("adminTestDetail");
+  detail.classList.remove("hidden");
+  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Supportansicht</span><h2>${escapeHtml(q.title || "Unbenannter Test")}</h2><p>${escapeHtml(ownerLabel(q.ownerId))} · Code ${escapeHtml(q.id)}</p></div><button class="iconButton closeAdminTestDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Status: <strong>${escapeHtml(adminQuizStatus(q))}</strong></span><span>Fach: <strong>${escapeHtml(q.subject||"–")}</strong></span><span>Klasse: <strong>${escapeHtml(q.grade||"–")}</strong></span><span>Aufgaben: <strong>${Number(q.questionCount||0)}</strong></span></div><div id="adminQuestionPreview" class="adminQuestionPreview">Aufgaben werden geladen …</div><div class="actions">${q.isDeleted ? `<button class="button primary adminRestoreQuiz" type="button">Wiederherstellen</button><button class="button danger adminPurgeQuiz" type="button">Endgültig löschen</button>` : ""}</div>`;
+  detail.querySelector(".closeAdminTestDetail").addEventListener("click",()=>detail.classList.add("hidden"));
+  detail.querySelector(".adminRestoreQuiz")?.addEventListener("click",()=>restoreQuiz(code,{admin:true}));
+  detail.querySelector(".adminPurgeQuiz")?.addEventListener("click",()=>permanentlyDeleteQuiz(code,{admin:true}));
+  try {
+    const snap = await getDocs(query(collection(db,"quizzes",code,"questions"),orderBy("position")));
+    const qs = snap.docs.map((d)=>({id:d.id,...d.data()}));
+    $("adminQuestionPreview").innerHTML = qs.length ? qs.map((item,i)=>`<div class="adminQuestionRow"><span>${i+1}</span><div><strong>${escapeHtml(item.text||"Ohne Fragetext")}</strong><small>${escapeHtml(QUESTION_TYPES.find(([v])=>v===item.type)?.[1]||item.type||"–")} · ${Number(item.points||0)} P.</small></div></div>`).join("") : `<p class="hint">Keine Aufgaben.</p>`;
+  } catch (err) { console.error(err); $("adminQuestionPreview").textContent="Aufgaben konnten nicht geladen werden."; }
+  detail.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function resetAnnouncementForm() {
+  $("announcementEditId").value="";
+  $("announcementType").value="welcome";
+  $("announcementDisplay").value="banner";
+  $("announcementFrequency").value="once";
+  $("announcementActive").checked=true;
+  $("announcementTitle").value="";
+  $("announcementText").value="";
+  $("announcementStart").value="";
+  $("announcementEnd").value="";
+  $("saveAnnouncementBtn").textContent="Mitteilung speichern";
+}
+
+function localDateTimeValue(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const p=(n)=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function editAnnouncement(id) {
+  const a=state.adminAnnouncements.find((x)=>x.id===id); if(!a)return;
+  $("announcementEditId").value=a.id;
+  $("announcementType").value=a.type||"info";
+  $("announcementDisplay").value=a.display||"banner";
+  $("announcementFrequency").value=a.frequency||"once";
+  $("announcementActive").checked=a.active!==false;
+  $("announcementTitle").value=a.title||"";
+  $("announcementText").value=a.text||"";
+  $("announcementStart").value=localDateTimeValue(a.startsAt);
+  $("announcementEnd").value=localDateTimeValue(a.endsAt);
+  $("saveAnnouncementBtn").textContent="Änderungen speichern";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function saveAnnouncement() {
+  if (!isAdmin()) return;
+  const title=$("announcementTitle").value.trim(); const text=$("announcementText").value.trim();
+  if(!title||!text){toast("Titel und Nachricht dürfen nicht leer sein.","error");return;}
+  const startRaw=$("announcementStart").value; const endRaw=$("announcementEnd").value;
+  if(startRaw&&endRaw&&new Date(endRaw)<=new Date(startRaw)){toast("Das Enddatum muss nach dem Start liegen.","error");return;}
+  const id=$("announcementEditId").value.trim();
+  const data={type:$("announcementType").value,display:$("announcementDisplay").value,frequency:$("announcementFrequency").value,active:$("announcementActive").checked,title,text,startsAt:startRaw?new Date(startRaw).toISOString():null,endsAt:endRaw?new Date(endRaw).toISOString():null,updatedAt:serverTimestamp(),updatedBy:state.user.uid};
+  try{
+    if(id){await updateDoc(doc(db,"announcements",id),data);await writeAdminAudit("announcement_updated",{announcementId:id,title});}
+    else{const ref=await addDoc(collection(db,"announcements"),{...data,createdAt:serverTimestamp(),createdBy:state.user.uid});await writeAdminAudit("announcement_created",{announcementId:ref.id,title});}
+    resetAnnouncementForm(); toast("Mitteilung gespeichert."); await loadAdminData(false);
+  }catch(err){console.error(err);toast("Mitteilung konnte nicht gespeichert werden.","error");}
+}
+
+async function deleteAnnouncement(id) {
+  const a=state.adminAnnouncements.find((x)=>x.id===id); if(!a)return;
+  if(!confirm(`Mitteilung „${a.title||"Hinweis"}“ löschen?`))return;
+  try{await deleteDoc(doc(db,"announcements",id));await writeAdminAudit("announcement_deleted",{announcementId:id,title:a.title||""});toast("Mitteilung gelöscht.");await loadAdminData(false);}catch(err){console.error(err);toast("Mitteilung konnte nicht gelöscht werden.","error");}
+}
+
+function renderAdminAnnouncements() {
+  const root=$("adminAnnouncementList"); if(!root)return;
+  if(!state.adminAnnouncements.length){root.innerHTML=`<p class="hint">Noch keine Mitteilungen.</p>`;return;}
+  root.innerHTML=state.adminAnnouncements.map((a)=>`<article class="adminAnnouncementItem"><div><span class="announcementMiniIcon">${announcementIcon(a.type)}</span><div><strong>${escapeHtml(a.title||"Hinweis")}</strong><small>${escapeHtml(announcementTypeLabel(a.type))} · ${a.display==="popup"?"Popup":"Dashboard"} · ${a.frequency==="every_login"?"jeder Login":a.frequency==="until_closed"?"bis geschlossen":"einmal"}${a.active===false?" · deaktiviert":""}</small></div></div><div class="actions"><button class="button ghost editAnnouncement" data-id="${escapeHtml(a.id)}" type="button">Bearbeiten</button><button class="button danger deleteAnnouncement" data-id="${escapeHtml(a.id)}" type="button">Löschen</button></div></article>`).join("");
+  root.querySelectorAll(".editAnnouncement").forEach((b)=>b.addEventListener("click",()=>editAnnouncement(b.dataset.id)));
+  root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
+}
+
+function feedbackCategoryLabel(v){return({bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+function renderAdminFeedback(){
+  const root=$("adminFeedbackList"); if(!root)return; const filter=$("adminFeedbackFilter")?.value||"all";
+  const list=state.adminFeedback.filter((f)=>filter==="all"||f.status===filter);
+  root.innerHTML=list.length?list.map((f)=>`<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}</span><h3>${escapeHtml(f.displayName||f.email||"Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode?` · Test ${escapeHtml(f.testCode)}`:""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status==="new"?"selected":""}>Neu</option><option value="working" ${f.status==="working"?"selected":""}>In Bearbeitung</option><option value="done" ${f.status==="done"?"selected":""}>Erledigt</option></select></div><p>${escapeHtml(f.message||"")}</p><details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email||"–")}</span><span>Version: ${escapeHtml(f.appVersion||"–")}</span><span>Umgebung: ${escapeHtml(f.environment||"–")}</span><span>Browser: ${escapeHtml(f.userAgent||"–")}</span></div></details></article>`).join(""):`<div class="emptyInline">Kein Feedback in dieser Ansicht.</div>`;
+  root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
+}
+
+async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
+
+function renderAdminAudit(){const root=$("adminAuditList");if(!root)return;root.innerHTML=state.adminAudit.length?state.adminAudit.map((a)=>`<div class="auditItem"><span>${escapeHtml(fmtDate(a.createdAt))}</span><strong>${escapeHtml(a.action||"Aktion")}</strong><small>${escapeHtml(a.adminEmail||a.adminUid||"")}</small></div>`).join(""):`<p class="hint">Noch keine Admin-Aktionen protokolliert.</p>`;}
+
+async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}

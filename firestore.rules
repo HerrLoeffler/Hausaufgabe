@@ -5,82 +5,172 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function ownsQuiz(quizId) {
+    function currentUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
       return signedIn()
+        && currentUserData().get('role', 'teacher') == 'admin'
+        && currentUserData().get('status', 'active') != 'suspended';
+    }
+
+    function accountActive() {
+      return signedIn() && currentUserData().get('status', 'active') != 'suspended';
+    }
+
+    function ownsQuiz(quizId) {
+      return accountActive()
         && get(/databases/$(database)/documents/quizzes/$(quizId)).data.ownerId == request.auth.uid;
     }
 
     function quizPublished(quizId) {
       let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
-      return quiz.published == true && quiz.get('ended', false) == false;
+      return quiz.published == true
+        && quiz.get('ended', false) == false
+        && quiz.get('isDeleted', false) == false;
     }
 
     function quizShared(quizId) {
       let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
-      return signedIn() && quiz.get('shareEnabled', false) == true;
+      return accountActive()
+        && quiz.get('shareEnabled', false) == true
+        && quiz.get('isDeleted', false) == false;
     }
 
-    // Lehrerprofile: nur der jeweilige Benutzer selbst.
+    // Lehrerprofile. Rolle und Sperrstatus können durch normale Nutzer nicht verändert werden.
     match /users/{userId} {
-      allow create: if signedIn() && request.auth.uid == userId;
-      allow read, update, delete: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn()
+                    && request.auth.uid == userId
+                    && request.resource.data.get('role', 'teacher') == 'teacher'
+                    && request.resource.data.get('status', 'active') == 'active';
+
+      allow get: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+
+      allow update: if isAdmin()
+                    || (
+                      accountActive()
+                      && request.auth.uid == userId
+                      && request.resource.data.get('role', 'teacher') == resource.data.get('role', 'teacher')
+                      && request.resource.data.get('status', 'active') == resource.data.get('status', 'active')
+                    );
+
+      allow delete: if isAdmin() || (accountActive() && request.auth.uid == userId);
+
+      match /announcementViews/{announcementId} {
+        allow read, create, update, delete: if isAdmin()
+          || (accountActive() && request.auth.uid == userId);
+      }
     }
 
     match /quizzes/{quizId} {
-      // Veröffentlichte Tests sind für Schüler lesbar. Bei beendeten Tests darf nur
-      // die Test-Metainfo gelesen werden, damit eine verständliche Meldung erscheint.
-      // Geteilte Vorlagen sind ausschließlich für angemeldete Lehrkräfte lesbar.
-      allow get: if resource.data.published == true
-                 || resource.data.get('ended', false) == true
-                 || (signedIn() && resource.data.ownerId == request.auth.uid)
-                 || (signedIn() && resource.data.get('shareEnabled', false) == true);
+      // Schüler dürfen nur aktuell veröffentlichte Tests lesen. Beendete Tests liefern
+      // weiterhin Metadaten für eine verständliche Meldung, aber nie aus dem Papierkorb.
+      allow get: if (
+                    resource.data.get('isDeleted', false) == false
+                    && (
+                      resource.data.published == true
+                      || resource.data.get('ended', false) == true
+                      || ownsQuiz(quizId)
+                      || quizShared(quizId)
+                    )
+                  ) || isAdmin();
 
-      // Diese Query wird im Lehrer-Dashboard immer mit ownerId == request.auth.uid ausgeführt.
-      allow list: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isAdmin()
+                  || (accountActive() && resource.data.ownerId == request.auth.uid);
 
-      allow create: if signedIn()
+      allow create: if accountActive()
                     && request.resource.data.ownerId == request.auth.uid;
 
-      allow update: if signedIn()
-                    && resource.data.ownerId == request.auth.uid
-                    && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isAdmin()
+                    || (
+                      accountActive()
+                      && resource.data.ownerId == request.auth.uid
+                      && request.resource.data.ownerId == request.auth.uid
+                    );
 
-      allow delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow delete: if isAdmin()
+                    || (accountActive() && resource.data.ownerId == request.auth.uid);
 
       match /questions/{questionId} {
-        allow read: if quizPublished(quizId) || ownsQuiz(quizId) || quizShared(quizId);
-        allow create, update, delete: if ownsQuiz(quizId);
+        allow read: if quizPublished(quizId) || ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
+        allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
       }
 
-      // Serverseitiger Startzeitpunkt für Tests mit Zeitlimit.
-      // Schüler kennen nur ihre zufällige attemptId; eine Auflistung ist nicht erlaubt.
+      // Zeitversuche und Warteraum. Schüler dürfen nur ihren zufälligen Eintrag anlegen
+      // und über dessen ID wieder lesen; eine Auflistung ist Eigentümer/Admin vorbehalten.
       match /attempts/{attemptId} {
         allow create: if quizPublished(quizId)
-                      && request.resource.data.timeLimitMinutes is int
-                      && request.resource.data.timeLimitMinutes >= 1
-                      && request.resource.data.timeLimitMinutes <= 300
-                      && request.resource.data.startedAt == request.time;
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.studentName.size() <= 120
+                      && (
+                        request.resource.data.mode == 'student'
+                        || request.resource.data.mode == 'teacher'
+                      )
+                      && (
+                        request.resource.data.status == 'ready'
+                        || request.resource.data.status == 'running'
+                      )
+                      && request.resource.data.joinedAt == request.time
+                      && (
+                        request.resource.data.timeLimitMinutes == null
+                        || (
+                          request.resource.data.timeLimitMinutes is int
+                          && request.resource.data.timeLimitMinutes >= 1
+                          && request.resource.data.timeLimitMinutes <= 300
+                        )
+                      )
+                      && (
+                        request.resource.data.mode == 'teacher'
+                        || (
+                          request.resource.data.mode == 'student'
+                          && request.resource.data.startedAt == request.time
+                        )
+                      );
 
-        allow get: if quizPublished(quizId) || ownsQuiz(quizId);
-        allow list, delete: if ownsQuiz(quizId);
+        allow get: if quizPublished(quizId) || ownsQuiz(quizId) || isAdmin();
+        allow list, delete: if ownsQuiz(quizId) || isAdmin();
         allow update: if false;
       }
 
       match /submissions/{submissionId} {
-        // Schüler dürfen nur neue Abgaben an aktuell geöffnete Tests schreiben.
-        // Lesen/Ändern dürfen ausschließlich die Eigentümer des Tests.
         allow create: if quizPublished(quizId)
                       && request.resource.data.studentName is string
                       && request.resource.data.studentName.size() > 0
                       && request.resource.data.studentName.size() <= 120
                       && request.resource.data.answers is map;
 
-        allow read, update, delete: if ownsQuiz(quizId);
+        allow read, update, delete: if ownsQuiz(quizId) || isAdmin();
       }
     }
 
-    // TEMPORÄR: erhält die alte V1 unter /submissions am Leben.
-    // Sobald V2 produktiv ersetzt, kann dieser Block entfernt werden.
+    // Mitteilungen: aktive Lehrkräfte lesen, Admins verwalten.
+    match /announcements/{announcementId} {
+      allow read: if accountActive() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Feedback: Lehrkräfte können eigenes Feedback anlegen; nur Admins lesen/verwalten.
+    match /feedback/{feedbackId} {
+      allow create: if accountActive()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 2000;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Unveränderliches Protokoll wichtiger Adminaktionen.
+    match /adminAudit/{auditId} {
+      allow create: if isAdmin();
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // TEMPORÄR: hält die alte V1 unter /submissions am Leben.
+    // Sobald V1 endgültig abgeschaltet ist, diesen Block entfernen.
     match /submissions/{legacyId} {
       allow create, read: if true;
       allow update, delete: if false;
