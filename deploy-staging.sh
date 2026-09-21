@@ -18,9 +18,9 @@ fi
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
-cp index.html app.js styles.css firebase-config.js public/
+cp index.html app.js styles.css firebase-config.js ai-json-tools.js public/
 
 echo "Deploy STAGING -> ${PROJECT_ID}"
-firebase deploy --project "$PROJECT_ID" --only firestore:rules,hosting
+firebase deploy --project "$PROJECT_ID" --only firestore:rules,firestore:indexes,hosting
 
 echo "Fertig: https://${PROJECT_ID}.web.app"

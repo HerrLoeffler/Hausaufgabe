@@ -1,5 +1,6 @@
-const APP_VERSION = "2.2.0";
-console.info(`Lernplattform v${APP_VERSION}`);
+const APP_VERSION = "2.2.3";
+const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
+console.info(`${BRAND.name} v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
@@ -31,6 +32,7 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js";
+import { parseJsonWithRepair } from "./ai-json-tools.js";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -109,7 +111,9 @@ const state = {
   adminAnnouncements: [],
   adminAudit: [],
   shownThisLogin: new Set(),
-  activeAnnouncementDialogId: null
+  activeAnnouncementDialogId: null,
+  adminOverviewPeriod: "7d",
+  pendingImportReport: null
 };
 
 function showView(id) {
@@ -545,7 +549,6 @@ $("backFromEditor").addEventListener("click", leaveEditorToDashboard);
 $("backFromResults").addEventListener("click", loadDashboard);
 $("settingsBtn").addEventListener("click", openSettings);
 $("settingsTopBtn").addEventListener("click", openSettings);
-$("aiCreateBtn").addEventListener("click", openAiView);
 $("trashBtn")?.addEventListener("click", openTrash);
 $("backFromTrash")?.addEventListener("click", loadDashboard);
 $("adminTopBtn")?.addEventListener("click", openAdmin);
@@ -579,6 +582,7 @@ async function loadDashboard() {
   if (!state.user) return;
   clearPublishSubscriptions();
   clearStudentSubscriptions();
+  state.pendingImportReport = null;
   showView("dashboardView");
   $("quizList").innerHTML = `<div class="card">Tests werden geladen …</div>`;
   try {
@@ -1230,44 +1234,331 @@ function generateAiPrompt() {
   }
   const customNotes = $("aiCustomNotes")?.value.trim() || "";
   const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
-  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
 
-function stripCodeFence(text) {
-  return String(text || "")
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/, "")
-    .trim();
+function canonicalImportToken(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
 }
 
-function extractJsonPayload(text) {
-  const cleaned = stripCodeFence(text);
-  if (!cleaned) return "";
-  try { JSON.parse(cleaned); return cleaned; } catch {}
-  const start = cleaned.indexOf("{");
-  if (start < 0) return cleaned;
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-  for (let i = start; i < cleaned.length; i += 1) {
-    const ch = cleaned[i];
-    if (inString) {
-      if (escaped) escaped = false;
-      else if (ch === "\\") escaped = true;
-      else if (ch === '"') inString = false;
-      continue;
+function looseField(obj, aliases, fallback = undefined) {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return fallback;
+  const wanted = new Set(aliases.map(canonicalImportToken));
+  for (const [key, value] of Object.entries(obj)) {
+    if (wanted.has(canonicalImportToken(key))) return value;
+  }
+  return fallback;
+}
+
+function numberLoose(value, fallback = NaN) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : fallback;
+  const text = String(value ?? "").trim().replace(/\s/g, "").replace(",", ".");
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function booleanLoose(value, fallback = null) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  const token = canonicalImportToken(value);
+  if (["true", "wahr", "richtig", "yes", "ja", "correct", "1"].includes(token)) return true;
+  if (["false", "falsch", "no", "nein", "incorrect", "0"].includes(token)) return false;
+  return fallback;
+}
+
+function pushUnique(list, message) {
+  if (message && !list.includes(message)) list.push(message);
+}
+
+function normalizeQuestionTypeLoose(value) {
+  const token = canonicalImportToken(value);
+  const map = {
+    single: "single", singlechoice: "single", singleanswer: "single", radio: "single", mcq: "single",
+    multi: "multi", multiple: "multi", multiplechoice: "multi", multichoice: "multi", checkbox: "multi", checkboxes: "multi",
+    text: "text", freitext: "text", freetext: "text", shortanswer: "text", openanswer: "text", open: "text",
+    dropdown: "dropdown", select: "dropdown", auswahl: "dropdown",
+    truefalse: "truefalse", boolean: "truefalse", richtigfalsch: "truefalse", wahrfalsch: "truefalse",
+    gapfill: "gapfill", fillblank: "gapfill", fillintheblank: "gapfill", lueckentext: "gapfill", luckentext: "gapfill",
+    matching: "matching", match: "matching", zuordnen: "matching", zuordnung: "matching",
+    ordering: "ordering", order: "ordering", sorting: "ordering", sortieren: "ordering", reihenfolge: "ordering",
+    grouping: "grouping", group: "grouping", categorization: "grouping", kategorisieren: "grouping", gruppieren: "grouping",
+    markwords: "markwords", highlightwords: "markwords", highlight: "markwords", woertermarkieren: "markwords", wortemarkieren: "markwords",
+    number: "number", numeric: "number", zahl: "number", rechenaufgabe: "number", calculation: "number"
+  };
+  return map[token] || null;
+}
+
+function normalizeOptionList(rawOptions) {
+  if (!Array.isArray(rawOptions)) return [];
+  return rawOptions.map((option) => {
+    if (typeof option === "string" || typeof option === "number") return { text: String(option), correct: false };
+    if (!option || typeof option !== "object") return { text: "", correct: false };
+    return {
+      text: String(looseField(option, ["text", "label", "answer", "option", "antwort"], "") || ""),
+      correct: Boolean(booleanLoose(looseField(option, ["correct", "isCorrect", "right", "richtig"], false), false))
+    };
+  });
+}
+
+function applyCorrectHint(options, hint, multiple = false) {
+  if (!options.length || hint == null) return false;
+  const hints = Array.isArray(hint) ? hint : [hint];
+  let matched = false;
+  const normalizedHints = new Set(hints.map((x) => canonicalImportToken(x)).filter(Boolean));
+
+  hints.forEach((rawHint) => {
+    const n = numberLoose(rawHint, NaN);
+    if (Number.isInteger(n)) {
+      let idx = -1;
+      if (n === 0) idx = 0;
+      else if (n >= 1 && n <= options.length) idx = n - 1;
+      if (idx >= 0 && idx < options.length) {
+        options[idx].correct = true;
+        matched = true;
+      }
     }
-    if (ch === '"') { inString = true; continue; }
-    if (ch === "{") depth += 1;
-    if (ch === "}") {
-      depth -= 1;
-      if (depth === 0) return cleaned.slice(start, i + 1);
+  });
+
+  options.forEach((option) => {
+    if (normalizedHints.has(canonicalImportToken(option.text))) {
+      option.correct = true;
+      matched = true;
+    }
+  });
+
+  if (matched && !multiple) {
+    const first = options.findIndex((o) => o.correct);
+    options.forEach((o, i) => { o.correct = i === first; });
+  }
+  return matched;
+}
+
+function normalizeImportedQuestion(rawInput, index, report) {
+  const raw = rawInput && typeof rawInput === "object" && !Array.isArray(rawInput) ? rawInput : { text: String(rawInput ?? "") };
+  const rawType = looseField(raw, ["type", "questionType", "aufgabentyp", "format"], "text");
+  let type = normalizeQuestionTypeLoose(rawType);
+  if (!type) {
+    type = "text";
+    pushUnique(report.warnings, `Aufgabe ${index + 1}: Unbekannter Aufgabentyp „${String(rawType || "–")}“ wurde als Freitext übernommen.`);
+  } else if (canonicalImportToken(rawType) !== type) {
+    pushUnique(report.repairs, `Aufgabe ${index + 1}: Aufgabentyp „${String(rawType)}“ wurde als „${type}“ erkannt.`);
+  }
+
+  const q = newQuestion(type, false);
+  const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
+  q.text = String(rawText || "").trim();
+  if (!q.text) {
+    q.text = `Aufgabe ${index + 1}`;
+    pushUnique(report.warnings, `Aufgabe ${index + 1}: Fragetext fehlt und muss im Editor ergänzt werden.`);
+  }
+
+  const rawPoints = numberLoose(looseField(raw, ["points", "point", "score", "punkte"], 1), 1);
+  q.points = Math.max(0.5, Math.round(rawPoints * 2) / 2);
+  if (Math.abs(q.points - rawPoints) > 0.001) {
+    pushUnique(report.repairs, `Aufgabe ${index + 1}: Punkte wurden auf ${q.points} (0,5er-Schritt) angepasst.`);
+  }
+
+  if (["single", "multi", "dropdown"].includes(type)) {
+    const rawOptions = looseField(raw, ["options", "answers", "choices", "antworten", "answerOptions"], []);
+    q.options = normalizeOptionList(rawOptions);
+    if (q.options.length < 2) {
+      while (q.options.length < 2) q.options.push({ text: "", correct: false });
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Es fehlen Antwortmöglichkeiten; bitte im Editor ergänzen.`);
+    }
+
+    const correctHint = looseField(raw, ["correctAnswer", "correctAnswers", "solution", "solutions", "richtigeAntwort", "richtigeAntworten"], null);
+    if (!q.options.some((o) => o.correct) && correctHint != null && applyCorrectHint(q.options, correctHint, type === "multi")) {
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Richtige Antwort(en) aus dem Lösungsfeld übernommen.`);
+    }
+
+    const correctCount = q.options.filter((o) => o.correct).length;
+    if (type === "multi") {
+      if (!correctCount) pushUnique(report.warnings, `Aufgabe ${index + 1}: Keine richtige Antwort markiert; bitte prüfen.`);
+    } else if (!correctCount) {
+      q.options[0].correct = true;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Keine richtige Antwort markiert. Die erste Antwort wurde vorläufig gewählt – bitte prüfen.`);
+    } else if (correctCount > 1) {
+      const first = q.options.findIndex((o) => o.correct);
+      q.options.forEach((o, i) => { o.correct = i === first; });
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Mehrere Antworten waren als richtig markiert. Nur die erste wurde übernommen – bitte prüfen.`);
     }
   }
-  return cleaned.slice(start);
+
+  if (type === "text") {
+    const answers = looseField(raw, ["acceptedAnswers", "answers", "solutions", "correctAnswers", "musterloesungen", "musterlosungen"], []);
+    q.acceptedAnswers = Array.isArray(answers) ? answers.map(String).map((x) => x.trim()).filter(Boolean) : (answers ? [String(answers).trim()] : []);
+    q.manualReview = Boolean(booleanLoose(looseField(raw, ["manualReview", "manual", "manuellPruefen", "manuellprufen"], null), !q.acceptedAnswers.length));
+    if (!q.acceptedAnswers.length && !q.manualReview) q.manualReview = true;
+    if (!q.acceptedAnswers.length) pushUnique(report.repairs, `Aufgabe ${index + 1}: Freitext ohne Musterlösung wird zur manuellen Prüfung markiert.`);
+  }
+
+  if (type === "truefalse") {
+    const bool = booleanLoose(looseField(raw, ["correctBoolean", "correct", "answer", "solution", "richtig"], null), null);
+    if (bool == null) {
+      q.correctBoolean = true;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Lösung für Richtig/Falsch fehlt. „Richtig“ wurde vorläufig gesetzt – bitte prüfen.`);
+    } else q.correctBoolean = bool;
+  }
+
+  if (type === "gapfill") {
+    const hasGap = /\[[^\]]+\]/.test(q.text);
+    if (!hasGap) {
+      const answersRaw = looseField(raw, ["answers", "correctAnswers", "solutions", "acceptedAnswers", "gaps"], []);
+      const answers = Array.isArray(answersRaw) ? answersRaw.map(String).filter(Boolean) : (answersRaw ? [String(answersRaw)] : []);
+      const blanks = q.text.match(/_{2,}|\{\s*blank\s*\}|\[\s*\]/gi) || [];
+      if (answers.length && blanks.length === answers.length) {
+        let cursor = 0;
+        q.text = q.text.replace(/_{2,}|\{\s*blank\s*\}|\[\s*\]/gi, () => `[${answers[cursor++]}]`);
+        pushUnique(report.repairs, `Aufgabe ${index + 1}: Lücken und Lösungen wurden automatisch in Testify-Format umgewandelt.`);
+      } else {
+        pushUnique(report.warnings, `Aufgabe ${index + 1}: Im Lückentext wurde keine eindeutig erkennbare Lösung in [Klammern] gefunden.`);
+      }
+    }
+  }
+
+  if (type === "matching") {
+    const pairsRaw = looseField(raw, ["pairs", "matches", "matching", "zuordnungen"], []);
+    let pairs = [];
+    if (Array.isArray(pairsRaw)) {
+      pairs = pairsRaw.map((p) => {
+        if (Array.isArray(p)) return { left: String(p[0] ?? ""), right: String(p[1] ?? "") };
+        return {
+          left: String(looseField(p, ["left", "term", "from", "begriff"], "") || ""),
+          right: String(looseField(p, ["right", "match", "to", "zuordnung"], "") || "")
+        };
+      });
+    } else if (pairsRaw && typeof pairsRaw === "object") {
+      pairs = Object.entries(pairsRaw).map(([left, right]) => ({ left, right: String(right) }));
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Zuordnungstabelle wurde in Paare umgewandelt.`);
+    }
+    q.pairs = pairs.length ? pairs : q.pairs;
+    if (q.pairs.length < 2 || q.pairs.some((p) => !p.left.trim() || !p.right.trim())) pushUnique(report.warnings, `Aufgabe ${index + 1}: Zuordnungspaare bitte prüfen bzw. ergänzen.`);
+  }
+
+  if (type === "ordering") {
+    const items = looseField(raw, ["items", "steps", "order", "elements", "reihenfolge"], []);
+    q.items = Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : q.items;
+    if (q.items.length < 2) pushUnique(report.warnings, `Aufgabe ${index + 1}: Für eine Reihenfolge werden mindestens zwei Elemente benötigt.`);
+  }
+
+  if (type === "grouping") {
+    const groupsRaw = looseField(raw, ["groups", "categories", "kategorien", "gruppen"], []);
+    if (Array.isArray(groupsRaw)) {
+      q.groups = groupsRaw.map((g, groupIndex) => ({
+        name: String(looseField(g, ["name", "category", "title", "gruppe"], `Kategorie ${groupIndex + 1}`) || `Kategorie ${groupIndex + 1}`),
+        items: (() => {
+          const items = looseField(g, ["items", "elements", "words", "begriffe"], []);
+          return Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : [];
+        })()
+      }));
+    } else if (groupsRaw && typeof groupsRaw === "object") {
+      q.groups = Object.entries(groupsRaw).map(([name, items]) => ({ name, items: Array.isArray(items) ? items.map(String) : [String(items)] }));
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Kategorien wurden in Testify-Gruppen umgewandelt.`);
+    }
+    if (q.groups.length < 2 || q.groups.some((g) => !g.name.trim() || !g.items.length)) pushUnique(report.warnings, `Aufgabe ${index + 1}: Kategorien und Inhalte bitte prüfen.`);
+  }
+
+  if (type === "markwords") {
+    q.passage = String(looseField(raw, ["passage", "sourceText", "markText", "textToMark", "markiertext"], "") || "").trim();
+    const targetWords = looseField(raw, ["targetWords", "words", "correctWords", "targets", "zielwoerter", "zielworter"], []);
+    q.targetWords = Array.isArray(targetWords) ? targetWords.map(String).map((x) => x.trim()).filter(Boolean) : (targetWords ? [String(targetWords)] : []);
+    if (!q.passage) pushUnique(report.warnings, `Aufgabe ${index + 1}: Der Text zum Markieren fehlt.`);
+    if (!q.targetWords.length) pushUnique(report.warnings, `Aufgabe ${index + 1}: Die Zielwörter fehlen.`);
+    else {
+      const hay = normalize(q.passage);
+      const missing = q.targetWords.filter((word) => !hay.includes(normalize(word)));
+      if (missing.length) pushUnique(report.warnings, `Aufgabe ${index + 1}: ${missing.length} Zielwort/Zielwörter kommen im Markiertext nicht eindeutig vor.`);
+    }
+  }
+
+  if (type === "number") {
+    const answer = numberLoose(looseField(raw, ["numericAnswer", "answer", "correctAnswer", "solution", "result", "ergebnis"], NaN), NaN);
+    if (Number.isFinite(answer)) q.numericAnswer = answer;
+    else {
+      q.numericAnswer = 0;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Das richtige Rechenergebnis fehlt. 0 wurde vorläufig gesetzt – bitte prüfen.`);
+    }
+    q.tolerance = Math.max(0, numberLoose(looseField(raw, ["tolerance", "tol", "abweichung"], 0), 0));
+    q.unit = String(looseField(raw, ["unit", "einheit"], "") || "");
+  }
+
+  q.position = index + 1;
+  return q;
+}
+
+function normalizeImportedPayload(data, parseInfo = {}) {
+  const report = {
+    repairedSyntax: Boolean(parseInfo.repaired),
+    repairs: [...(parseInfo.changes || [])],
+    warnings: []
+  };
+
+  let root = data;
+  if (Array.isArray(root)) {
+    root = { questions: root };
+    pushUnique(report.repairs, "Aufgabenliste ohne Testhülle wurde automatisch erkannt.");
+  }
+  if (!root || typeof root !== "object") return { ok: false, error: "Die KI-Antwort enthält kein Test-Objekt.", report };
+
+  let questionsRaw = looseField(root, ["questions", "tasks", "aufgaben", "items"], null);
+  if (!Array.isArray(questionsRaw)) {
+    const nested = looseField(root, ["test", "quiz", "assessment"], null);
+    if (nested && typeof nested === "object") {
+      root = nested;
+      questionsRaw = looseField(root, ["questions", "tasks", "aufgaben", "items"], null);
+      if (Array.isArray(questionsRaw)) pushUnique(report.repairs, "Verschachteltes Test-Objekt wurde automatisch erkannt.");
+    }
+  }
+  if (!Array.isArray(questionsRaw) || !questionsRaw.length) return { ok: false, error: "Es wurde keine Aufgabenliste erkannt.", report };
+
+  const questions = questionsRaw.map((raw, index) => normalizeImportedQuestion(raw, index, report));
+  const meta = {
+    title: String(looseField(root, ["title", "name", "testTitle", "titel"], "KI-Test") || "KI-Test").trim(),
+    subject: String(looseField(root, ["subject", "fach"], "") || "").trim(),
+    grade: String(looseField(root, ["grade", "class", "classLevel", "gradeLevel", "klasse", "klassenstufe"], "") || "").trim(),
+    description: String(looseField(root, ["description", "instructions", "instruction", "hinweis", "beschreibung"], "") || "").trim()
+  };
+  return { ok: true, meta, questions, report };
+}
+
+function setAiImportHelp({ title, message, details = [], tone = "error" }) {
+  const help = $("aiJsonHelp");
+  if (!help) return;
+  help.className = `jsonHelp ${tone}`;
+  help.innerHTML = `<strong>${escapeHtml(title)}</strong>${message ? `<span>${escapeHtml(message)}</span>` : ""}${details.length ? `<ul>${details.slice(0, 8).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>` : ""}`;
+}
+
+function clearAiImportHelp() {
+  const help = $("aiJsonHelp");
+  if (!help) return;
+  help.className = "jsonHelp hidden";
+  help.innerHTML = "";
+}
+
+function renderImportReviewBanner() {
+  const host = $("importReviewBanner");
+  if (!host) return;
+  const report = state.pendingImportReport;
+  if (!report || report.quizId !== state.currentQuiz?.id || (!report.repairs?.length && !report.warnings?.length)) {
+    host.classList.add("hidden");
+    host.innerHTML = "";
+    return;
+  }
+  const repairCount = report.repairs?.length || 0;
+  const warningCount = report.warnings?.length || 0;
+  host.classList.remove("hidden");
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `Test importiert – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : "KI-Antwort automatisch repariert und importiert"}</strong><p>${repairCount ? `${repairCount} technische Anpassung${repairCount === 1 ? "" : "en"} wurden automatisch erledigt.` : ""}${repairCount && warningCount ? " " : ""}${warningCount ? "Inhaltlich uneindeutige Stellen wurden nicht geraten, sondern markiert." : " Der Test kann jetzt normal bearbeitet werden."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
+  host.querySelector(".closeImportReview")?.addEventListener("click", () => {
+    state.pendingImportReport = null;
+    host.classList.add("hidden");
+  });
 }
 
 async function openAiProvider(url, label) {
@@ -1291,14 +1582,14 @@ async function loadJsonFile(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   if (file.size > 2 * 1024 * 1024) {
-    toast("Die JSON-Datei ist ungewöhnlich groß. Bitte eine Datei unter 2 MB verwenden.", "error");
+    toast("Die Datei ist ungewöhnlich groß. Bitte eine Datei unter 2 MB verwenden.", "error");
     event.target.value = "";
     return;
   }
   try {
     $("aiJsonInput").value = await file.text();
-    $("aiJsonHelp")?.classList.add("hidden");
-    toast("JSON-Datei geladen.");
+    clearAiImportHelp();
+    toast("KI-Antwort geladen.");
   } catch (err) {
     console.error(err);
     toast("Die Datei konnte nicht gelesen werden.", "error");
@@ -1307,74 +1598,46 @@ async function loadJsonFile(event) {
   }
 }
 
-function normalizeImportedQuestion(raw, index) {
-  const type = QUESTION_TYPES.some(([value]) => value === raw.type) ? raw.type : "text";
-  const q = newQuestion(type, false);
-  q.text = String(raw.text || `Aufgabe ${index + 1}`);
-  q.points = Math.max(0.5, round1(Number(raw.points) || 1));
-  if (["single", "multi", "dropdown"].includes(type)) {
-    q.options = Array.isArray(raw.options)
-      ? raw.options.map((o) => ({ text: String(o.text || ""), correct: Boolean(o.correct) }))
-      : [{ text: "", correct: true }, { text: "", correct: false }];
-  }
-  if (type === "text") {
-    q.acceptedAnswers = Array.isArray(raw.acceptedAnswers) ? raw.acceptedAnswers.map(String) : [];
-    q.manualReview = Boolean(raw.manualReview);
-  }
-  if (type === "truefalse") q.correctBoolean = Boolean(raw.correctBoolean);
-  if (type === "matching") {
-    q.pairs = Array.isArray(raw.pairs) ? raw.pairs.map((p) => ({ left: String(p.left || ""), right: String(p.right || "") })) : q.pairs;
-  }
-  if (type === "ordering") q.items = Array.isArray(raw.items) ? raw.items.map(String) : q.items;
-  if (type === "grouping") {
-    q.groups = Array.isArray(raw.groups)
-      ? raw.groups.map((g) => ({ name: String(g.name || ""), items: Array.isArray(g.items) ? g.items.map(String) : [] }))
-      : q.groups;
-  }
-  if (type === "markwords") {
-    q.passage = String(raw.passage || "");
-    q.targetWords = Array.isArray(raw.targetWords) ? raw.targetWords.map(String) : [];
-  }
-  if (type === "number") {
-    q.numericAnswer = Number(raw.numericAnswer);
-    q.tolerance = Math.max(0, Number(raw.tolerance) || 0);
-    q.unit = String(raw.unit || "");
-  }
-  q.position = index + 1;
-  return q;
-}
-
 async function importAiJson() {
-  const rawText = extractJsonPayload($("aiJsonInput").value);
-  if (!rawText) {
-    toast("Bitte zuerst die JSON-Antwort einfügen.", "error");
+  const source = $("aiJsonInput").value;
+  if (!source.trim()) {
+    toast("Bitte zuerst die Antwort deiner KI einfügen.", "error");
     return;
   }
-  let data;
+
+  const parsed = parseJsonWithRepair(source);
+  if (!parsed.ok) {
+    setAiImportHelp({
+      title: "Testify konnte die KI-Antwort noch nicht sicher erkennen.",
+      message: "Du musst nicht zur KI zurück. Prüfe, ob die Antwort vollständig kopiert wurde. Testify repariert typische JSON-Fehler bereits automatisch.",
+      details: [parsed.error?.message || "Unbekannter Formatfehler"],
+      tone: "error"
+    });
+    toast("KI-Antwort konnte nicht importiert werden.", "error");
+    return;
+  }
+
+  const normalized = normalizeImportedPayload(parsed.data, parsed);
+  if (!normalized.ok) {
+    setAiImportHelp({
+      title: "Die Antwort ist lesbar, aber noch kein vollständiger Test.",
+      message: normalized.error,
+      details: normalized.report?.repairs || [],
+      tone: "warning"
+    });
+    toast(normalized.error, "error");
+    return;
+  }
+
+  const { meta, questions, report } = normalized;
+  clearAiImportHelp();
   try {
-    data = JSON.parse(rawText);
-    $("aiJsonHelp")?.classList.add("hidden");
-  } catch (err) {
-    const help = $("aiJsonHelp");
-    if (help) {
-      help.innerHTML = `<strong>Die Antwort ist noch kein gültiges JSON.</strong><span>Bitte die KI erneut bitten: „Gib ausschließlich gültiges JSON ohne Erklärung oder Markdown aus.“</span><small>Technischer Hinweis: ${escapeHtml(err.message || "JSON konnte nicht gelesen werden")}</small>`;
-      help.classList.remove("hidden");
-    }
-    toast("Das eingefügte Ergebnis ist noch kein gültiges JSON.", "error");
-    return;
-  }
-  if (!Array.isArray(data.questions) || !data.questions.length) {
-    toast("Im JSON wurde keine Aufgabenliste gefunden.", "error");
-    return;
-  }
-  try {
-    const questions = data.questions.map(normalizeImportedQuestion);
     const base = {
       ...quizDefaults(),
-      title: String(data.title || "KI-Test"),
-      subject: String(data.subject || $("aiSubject").value || getSettings().defaultSubject || ""),
-      grade: String(data.grade || $("aiGrade").value || getSettings().defaultGrade || ""),
-      description: String(data.description || getSettings().defaultDescription),
+      title: meta.title || "KI-Test",
+      subject: meta.subject || $("aiSubject").value || getSettings().defaultSubject || "",
+      grade: meta.grade || $("aiGrade").value || getSettings().defaultGrade || "",
+      description: meta.description || getSettings().defaultDescription,
       questionCount: questions.length,
       totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
     };
@@ -1384,7 +1647,10 @@ async function importAiJson() {
       const ref = doc(collection(db, "quizzes", code, "questions"));
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
-    toast("KI-Test importiert.");
+    state.pendingImportReport = { ...report, quizId: code };
+    if (report.warnings.length) toast(`Test importiert – ${report.warnings.length} Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
+    else if (report.repairs.length) toast("KI-Antwort automatisch repariert und importiert.");
+    else toast("KI-Test importiert.");
     await openEditor(code);
   } catch (err) {
     console.error(err);
@@ -1505,6 +1771,7 @@ async function openEditor(code) {
     updateTimeLimitHint();
     $("editorHeading").textContent = q.title || "Test bearbeiten";
     showView("editorView");
+    renderImportReviewBanner();
     renderQuestions();
     markSaved();
     updateEditorPublishControls();
@@ -3841,7 +4108,7 @@ function exportResultsCsv() {
 }
 
 
-// ---------- Mitteilungen, Feedback & Administration (V2.2.0) ----------
+// ---------- Mitteilungen, Feedback & Administration (V2.2.3) ----------
 $("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
 $("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
 $("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
@@ -3849,18 +4116,48 @@ $("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDial
 $("closeFeedbackDialog")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
 $("cancelFeedbackBtn")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
 $("sendFeedbackBtn")?.addEventListener("click", sendFeedback);
+$("feedbackCategory")?.addEventListener("change", updateFeedbackPrompt);
 $("closeAnnouncementDialog")?.addEventListener("click", dismissCurrentAnnouncement);
 $("announcementDialogOk")?.addEventListener("click", dismissCurrentAnnouncement);
 $("announcementDialog")?.addEventListener("cancel", (event) => {
   event.preventDefault();
   dismissCurrentAnnouncement();
 });
+renderAnnouncementPreview();
+updateFeedbackPrompt();
+
+const FEEDBACK_PROMPTS = {
+  bug: {
+    hint: "Was ist passiert? Beschreibe kurz, was du gemacht hast.",
+    placeholder: "Was ist passiert? Was hast du gemacht, bevor der Fehler auftrat?"
+  },
+  idea: {
+    hint: "Beschreibe kurz deine Idee und wobei sie dir helfen würde.",
+    placeholder: "Was würdest du dir wünschen? Was würde dir den Schulalltag erleichtern?"
+  },
+  question: {
+    hint: "Stell deine Frage so konkret wie möglich.",
+    placeholder: "Was möchtest du wissen?"
+  },
+  other: {
+    hint: "Für alles, was in keine andere Kategorie passt.",
+    placeholder: "Was möchtest du uns mitteilen?"
+  }
+};
+
+function updateFeedbackPrompt() {
+  const category = $("feedbackCategory")?.value || "other";
+  const prompt = FEEDBACK_PROMPTS[category] || FEEDBACK_PROMPTS.other;
+  if ($("feedbackMessageHint")) $("feedbackMessageHint").textContent = prompt.hint;
+  if ($("feedbackMessage")) $("feedbackMessage").placeholder = prompt.placeholder;
+}
 
 function openFeedbackDialog() {
   if (!state.user) return;
   $("feedbackMessage").value = "";
   $("feedbackTestCode").value = state.currentQuiz?.id || state.currentResultsQuiz?.id || "";
   $("feedbackCategory").value = "bug";
+  updateFeedbackPrompt();
   safeDialogOpen($("feedbackDialog"));
 }
 
@@ -4000,11 +4297,28 @@ function announcementTypeLabel(type) {
 
 // ----- Admin -----
 document.querySelectorAll(".adminTab").forEach((btn) => btn.addEventListener("click", () => switchAdminTab(btn.dataset.adminTab)));
+document.querySelectorAll(".adminPeriodBtn").forEach((btn) => btn.addEventListener("click", async () => {
+  state.adminOverviewPeriod = btn.dataset.period || "7d";
+  document.querySelectorAll(".adminPeriodBtn").forEach((b) => b.classList.toggle("active", b === btn));
+  await renderAdminOverview();
+}));
 $("adminTeacherSearch")?.addEventListener("input", renderAdminTeachers);
+$("adminTeacherStatusFilter")?.addEventListener("change", renderAdminTeachers);
+$("exportAdminTeachersBtn")?.addEventListener("click", exportAdminTeachersCsv);
 $("adminTestSearch")?.addEventListener("input", renderAdminTests);
+$("adminTestStatusFilter")?.addEventListener("change", renderAdminTests);
+$("adminTestOwnerFilter")?.addEventListener("change", renderAdminTests);
+$("adminTestPeriodFilter")?.addEventListener("change", renderAdminTests);
+$("exportAdminTestsBtn")?.addEventListener("click", exportAdminTestsCsv);
+$("adminFeedbackSearch")?.addEventListener("input", renderAdminFeedback);
+$("adminFeedbackCategory")?.addEventListener("change", renderAdminFeedback);
 $("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
 $("saveAnnouncementBtn")?.addEventListener("click", saveAnnouncement);
 $("resetAnnouncementBtn")?.addEventListener("click", resetAnnouncementForm);
+["announcementType","announcementDisplay","announcementFrequency","announcementTitle","announcementText","announcementActive","announcementStart","announcementEnd"].forEach((id) => {
+  $(id)?.addEventListener("input", renderAnnouncementPreview);
+  $(id)?.addEventListener("change", renderAnnouncementPreview);
+});
 
 async function openAdmin() {
   if (!state.user || !isAdmin()) {
@@ -4041,6 +4355,7 @@ async function loadAdminData(showToast = false) {
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt)).slice(0, 100);
+    renderAdminFilterOptions();
     await renderAdminOverview();
     renderAdminTeachers();
     renderAdminTests();
@@ -4057,54 +4372,114 @@ async function loadAdminData(showToast = false) {
 }
 
 async function renderAdminOverview() {
+  const period = state.adminOverviewPeriod || "7d";
+  const since = adminPeriodStart(period);
+  const inPeriod = (value) => !since || toMillis(value) >= since.getTime();
   const activeTests = state.adminQuizzes.filter((q) => !q.isDeleted);
-  const published = activeTests.filter((q) => q.published && !q.ended).length;
-  const ended = activeTests.filter((q) => q.ended).length;
-  let submissions = "–";
-  try {
-    const c = await getCountFromServer(collectionGroup(db, "submissions"));
-    submissions = c.data().count;
-  } catch (err) { console.warn("Abgaben-Zählung nicht verfügbar:", err); }
-  const cards = [
-    ["Lehrkräfte", state.adminUsers.length, "👩‍🏫"],
-    ["Tests", activeTests.length, "📝"],
-    ["Veröffentlicht", published, "🟢"],
-    ["Beendet", ended, "✅"],
-    ["Abgaben", submissions, "📥"],
-    ["Im Papierkorb", state.adminQuizzes.filter((q) => q.isDeleted).length, "🗑️"]
+
+  const activeTeachers = state.adminUsers.filter((u) => inPeriod(u.lastActiveAt || u.createdAt)).length;
+  const newTeachers = state.adminUsers.filter((u) => inPeriod(u.createdAt)).length;
+  const createdTests = state.adminQuizzes.filter((q) => inPeriod(q.createdAt)).length;
+  const publishedTests = state.adminQuizzes.filter((q) => q.publishedAt && inPeriod(q.publishedAt)).length;
+  const endedTests = state.adminQuizzes.filter((q) => q.endedAt && inPeriod(q.endedAt)).length;
+  const submissions = await adminSubmissionCount(since);
+
+  const periodLabels = { today: "heute", "7d": "in den letzten 7 Tagen", "30d": "in den letzten 30 Tagen", all: "seit Start" };
+  const description = $("adminPeriodDescription");
+  if (description) description.textContent = `Aktivität ${periodLabels[period] || periodLabels["7d"]}.`;
+
+  const cards = period === "all" ? [
+    ["Lehrkräfte registriert", state.adminUsers.length, "◎"],
+    ["Tests erstellt", state.adminQuizzes.length, "✎"],
+    ["Jemals veröffentlicht", state.adminQuizzes.filter((q) => q.publishedAt).length, "↗"],
+    ["Tests beendet", state.adminQuizzes.filter((q) => q.endedAt).length, "✓"],
+    ["Abgaben", submissions, "↓"],
+    ["Feedback erhalten", state.adminFeedback.length, "💬"]
+  ] : [
+    ["Aktive Lehrkräfte", activeTeachers, "◎"],
+    ["Neu registriert", newTeachers, "+"],
+    ["Tests erstellt", createdTests, "✎"],
+    ["Veröffentlicht", publishedTests, "↗"],
+    ["Beendet", endedTests, "✓"],
+    ["Abgaben", submissions, "↓"]
   ];
   $("adminStats").innerHTML = cards.map(([label, value, icon]) => `<article class="card adminStatCard"><span>${icon}</span><div><strong>${escapeHtml(value)}</strong><small>${escapeHtml(label)}</small></div></article>`).join("");
 
-  const activeSince = (date) => state.adminUsers.filter((u) => {
-    const ms = toMillis(u.lastActiveAt || u.createdAt);
-    return ms && ms >= date.getTime();
-  }).length;
-  $("adminActivityStats").innerHTML = [
-    ["Heute", startOfDaysAgo(0)],
-    ["7 Tage", startOfDaysAgo(6)],
-    ["30 Tage", startOfDaysAgo(29)]
-  ].map(([label, since]) => {
-    const n = activeSince(since);
-    const pct = state.adminUsers.length ? Math.round(n / state.adminUsers.length * 100) : 0;
-    return `<div class="activityRow"><div><strong>${label}</strong><span>${n} aktiv</span></div><div class="activityTrack"><i style="width:${pct}%"></i></div></div>`;
-  }).join("");
-  $("adminSystemInfo").innerHTML = `<div><span>App-Version</span><strong>v${APP_VERSION}</strong></div><div><span>Umgebung</span><strong>${escapeHtml(appEnvironment || "production")}</strong></div><div><span>Firebase-Projekt</span><strong>${escapeHtml(firebaseConfig.projectId)}</strong></div><div><span>Feedback offen</span><strong>${state.adminFeedback.filter((f)=>f.status !== "done").length}</strong></div>`;
+  const publishedNow = activeTests.filter((q) => q.published && !q.ended).length;
+  const inventory = [
+    ["Lehrkräfte gesamt", state.adminUsers.length],
+    ["Tests gesamt", activeTests.length],
+    ["Aktuell veröffentlicht", publishedNow],
+    ["Im Papierkorb", state.adminQuizzes.filter((q) => q.isDeleted).length],
+    ["Offenes Feedback", state.adminFeedback.filter((f) => f.status !== "done").length]
+  ];
+  $("adminInventoryStats").innerHTML = inventory.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+
+  $("adminSystemInfo").innerHTML = `<div><span>Marke</span><strong>${escapeHtml(BRAND.name)}</strong></div><div><span>App-Version</span><strong>v${APP_VERSION}</strong></div><div><span>Umgebung</span><strong>${escapeHtml(appEnvironment || "production")}</strong></div><div><span>Firebase-Projekt</span><strong>${escapeHtml(firebaseConfig.projectId)}</strong></div>`;
   const consoleLink = $("adminFirebaseConsoleLink");
   if (consoleLink) consoleLink.href = `https://console.firebase.google.com/project/${encodeURIComponent(firebaseConfig.projectId)}/overview`;
+}
+
+function adminPeriodStart(period) {
+  if (period === "all") return null;
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  if (period === "7d") d.setDate(d.getDate() - 6);
+  if (period === "30d") d.setDate(d.getDate() - 29);
+  return d;
+}
+
+async function adminSubmissionCount(since = null) {
+  try {
+    const ref = collectionGroup(db, "submissions");
+    const source = since ? query(ref, where("submittedAt", ">=", Timestamp.fromDate(since))) : ref;
+    const c = await getCountFromServer(source);
+    return c.data().count;
+  } catch (err) {
+    console.warn("Abgaben-Zählung nicht verfügbar:", err);
+    return "–";
+  }
+}
+
+function renderAdminFilterOptions() {
+  const select = $("adminTestOwnerFilter");
+  if (!select) return;
+  const current = select.value || "all";
+  const users = [...state.adminUsers].sort((a, b) => String(a.displayName || a.email || "").localeCompare(String(b.displayName || b.email || ""), "de"));
+  select.innerHTML = `<option value="all">Alle Lehrkräfte</option>${users.map((u) => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.displayName || u.email || "Lehrkraft")}</option>`).join("")}`;
+  select.value = users.some((u) => u.id === current) ? current : "all";
 }
 
 function teacherQuizCount(uid) {
   return state.adminQuizzes.filter((q) => q.ownerId === uid && !q.isDeleted).length;
 }
 
+function adminUserStatusKey(u) {
+  if (u.status === "suspended") return "suspended";
+  if (u.role === "admin") return "admin";
+  return "active";
+}
+
 function renderAdminTeachers() {
   const root = $("adminTeachersTable");
   if (!root) return;
   const term = normalize($("adminTeacherSearch")?.value || "");
-  const users = state.adminUsers.filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term)).sort((a,b)=>String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de"));
+  const status = $("adminTeacherStatusFilter")?.value || "all";
+  const users = state.adminUsers
+    .filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term))
+    .filter((u) => status === "all" || adminUserStatusKey(u) === status)
+    .sort((a,b)=>String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de"));
   if (!users.length) { root.innerHTML = `<div class="emptyInline">Keine Lehrkräfte gefunden.</div>`; return; }
   root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : (u.role === "admin" ? "Admin" : "Aktiv")}</span></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
   root.querySelectorAll(".adminTeacherOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTeacher(btn.dataset.id)));
+}
+
+function exportAdminTeachersCsv() {
+  const users = state.adminUsers.map((u) => [
+    u.displayName || "", u.email || "", u.role || "teacher", u.status || "active",
+    fmtDate(u.createdAt), fmtDate(u.lastActiveAt), teacherQuizCount(u.id), u.appVersion || ""
+  ]);
+  downloadAdminCsv("testify_lehrkraefte.csv", [["Name","E-Mail","Rolle","Status","Registriert","Letzte Aktivität","Tests","App-Version"], ...users]);
 }
 
 function openAdminTeacher(uid) {
@@ -4113,7 +4488,7 @@ function openAdminTeacher(uid) {
   const tests = state.adminQuizzes.filter((q)=>q.ownerId===uid && !q.isDeleted).sort((a,b)=>toMillis(b.updatedAt)-toMillis(a.updatedAt));
   const detail = $("adminTeacherDetail");
   detail.classList.remove("hidden");
-  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Lehrkraft</span><h2>${escapeHtml(u.displayName || u.email || "Lehrkraft")}</h2><p>${escapeHtml(u.email || "")}</p></div><button class="iconButton closeAdminDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Registriert: <strong>${escapeHtml(fmtDate(u.createdAt))}</strong></span><span>Letzte Aktivität: <strong>${escapeHtml(fmtDate(u.lastActiveAt))}</strong></span><span>Tests: <strong>${tests.length}</strong></span></div><div class="actions adminDetailActions"><button class="button secondary adminResetPassword" type="button">Reset-Mail senden</button>${u.id !== state.user.uid ? `<button class="button ${u.status === "suspended" ? "primary" : "danger"} adminToggleUser" type="button">${u.status === "suspended" ? "Entsperren" : "Account sperren"}</button>` : ""}</div><h3>Tests</h3><div class="miniTestList">${tests.length ? tests.map((q)=>`<button type="button" class="miniTest adminOpenTestFromTeacher" data-id="${escapeHtml(q.id)}"><span><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></span><span>→</span></button>`).join("") : `<p class="hint">Noch keine Tests.</p>`}</div>`;
+  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Lehrkraft</span><h2>${escapeHtml(u.displayName || u.email || "Lehrkraft")}</h2><p>${escapeHtml(u.email || "")}</p></div><button class="iconButton closeAdminDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Registriert: <strong>${escapeHtml(fmtDate(u.createdAt))}</strong></span><span>Letzte Aktivität: <strong>${escapeHtml(fmtDate(u.lastActiveAt))}</strong></span><span>Rolle: <strong>${u.role === "admin" ? "Admin" : "Lehrkraft"}</strong></span><span>Status: <strong>${u.status === "suspended" ? "Gesperrt" : "Aktiv"}</strong></span><span>Tests: <strong>${tests.length}</strong></span><span>App-Version: <strong>${escapeHtml(u.appVersion || "–")}</strong></span></div><div class="actions adminDetailActions"><button class="button secondary adminResetPassword" type="button">Reset-Mail senden</button>${u.id !== state.user.uid ? `<button class="button ${u.status === "suspended" ? "primary" : "danger"} adminToggleUser" type="button">${u.status === "suspended" ? "Entsperren" : "Account sperren"}</button>` : ""}</div><h3>Tests</h3><div class="miniTestList">${tests.length ? tests.map((q)=>`<button type="button" class="miniTest adminOpenTestFromTeacher" data-id="${escapeHtml(q.id)}"><span><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></span><span>→</span></button>`).join("") : `<p class="hint">Noch keine Tests.</p>`}</div>`;
   detail.querySelector(".closeAdminDetail").addEventListener("click",()=>detail.classList.add("hidden"));
   detail.querySelector(".adminResetPassword").addEventListener("click",()=>adminSendPasswordReset(u));
   detail.querySelector(".adminToggleUser")?.addEventListener("click",()=>toggleUserSuspension(u));
@@ -4157,14 +4532,69 @@ function ownerLabel(uid) {
   return u?.displayName || u?.email || uid || "–";
 }
 
+function adminTestMatchesStatus(q, status) {
+  if (status === "all") return true;
+  if (status === "trash") return Boolean(q.isDeleted);
+  if (q.isDeleted) return false;
+  if (status === "ended") return Boolean(q.ended);
+  if (status === "published") return Boolean(q.published && !q.ended);
+  if (status === "draft") return !q.published && !q.ended;
+  return true;
+}
+
+function adminTestPeriodStart(period) {
+  if (!period || period === "all") return null;
+  const days = Number(period.replace("d", ""));
+  if (!Number.isFinite(days)) return null;
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - Math.max(0, days - 1));
+  return d;
+}
+
+function filteredAdminTests() {
+  const term = normalize($("adminTestSearch")?.value || "");
+  const status = $("adminTestStatusFilter")?.value || "all";
+  const owner = $("adminTestOwnerFilter")?.value || "all";
+  const since = adminTestPeriodStart($("adminTestPeriodFilter")?.value || "all");
+  return state.adminQuizzes
+    .filter((q) => !term || normalize(`${q.title||""} ${q.subject||""} ${q.grade||""} ${q.id} ${ownerLabel(q.ownerId)}`).includes(term))
+    .filter((q) => adminTestMatchesStatus(q, status))
+    .filter((q) => owner === "all" || q.ownerId === owner)
+    .filter((q) => !since || toMillis(q.updatedAt || q.createdAt) >= since.getTime())
+    .sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt));
+}
+
 function renderAdminTests() {
   const root = $("adminTestsTable");
   if (!root) return;
-  const term = normalize($("adminTestSearch")?.value || "");
-  const list = state.adminQuizzes.filter((q)=>!term || normalize(`${q.title||""} ${q.subject||""} ${q.grade||""} ${q.id} ${ownerLabel(q.ownerId)}`).includes(term)).sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt));
-  if (!list.length) { root.innerHTML = `<div class="emptyInline">Keine Tests gefunden.</div>`; return; }
-  root.innerHTML = `<table><thead><tr><th>Test</th><th>Lehrkraft</th><th>Status</th><th>Aufgaben</th><th>Zuletzt geändert</th><th></th></tr></thead><tbody>${list.map((q)=>`<tr><td><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></td><td>${escapeHtml(ownerLabel(q.ownerId))}</td><td>${escapeHtml(adminQuizStatus(q))}</td><td>${Number(q.questionCount||0)}</td><td>${escapeHtml(fmtDate(q.updatedAt||q.createdAt))}</td><td><button class="button ghost adminTestOpen" data-id="${escapeHtml(q.id)}" type="button">Ansehen</button></td></tr>`).join("")}</tbody></table>`;
+  const list = filteredAdminTests();
+  if (!list.length) { root.innerHTML = `<div class="emptyInline">Keine Tests für diese Filter gefunden.</div>`; return; }
+  root.innerHTML = `<table><thead><tr><th>Test</th><th>Lehrkraft</th><th>Status</th><th>Aufgaben</th><th>Zuletzt geändert</th><th></th></tr></thead><tbody>${list.map((q)=>`<tr><td><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></td><td>${escapeHtml(ownerLabel(q.ownerId))}</td><td><span class="adminStatusPill status-${escapeHtml(adminQuizStatus(q).toLowerCase())}">${escapeHtml(adminQuizStatus(q))}</span></td><td>${Number(q.questionCount||0)}</td><td>${escapeHtml(fmtDate(q.updatedAt||q.createdAt))}</td><td><button class="button ghost adminTestOpen" data-id="${escapeHtml(q.id)}" type="button">Ansehen</button></td></tr>`).join("")}</tbody></table>`;
   root.querySelectorAll(".adminTestOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTest(btn.dataset.id)));
+}
+
+function exportAdminTestsCsv() {
+  const rows = filteredAdminTests().map((q) => [q.id, q.title || "", q.subject || "", q.grade || "", ownerLabel(q.ownerId), adminQuizStatus(q), Number(q.questionCount || 0), fmtDate(q.createdAt), fmtDate(q.updatedAt)]);
+  downloadAdminCsv("testify_tests.csv", [["Testcode","Titel","Fach","Klasse","Lehrkraft","Status","Aufgaben","Erstellt","Zuletzt geändert"], ...rows]);
+}
+
+function downloadAdminCsv(filename, rows) {
+  const safeCell = (value) => {
+    let text = String(value ?? "");
+    if (/^[=+\-@]/.test(text)) text = `'${text}`;
+    return `"${text.replace(/"/g, '""')}"`;
+  };
+  const csv = rows.map((r) => r.map(safeCell).join(";")).join("\n");
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 async function openAdminTest(code) {
@@ -4184,6 +4614,44 @@ async function openAdminTest(code) {
   detail.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+function announcementDisplayLabel(value) {
+  return value === "popup" ? "Popup beim Öffnen" : "Karte im Dashboard";
+}
+
+function announcementFrequencyLabel(value) {
+  return ({ once: "einmal pro Nutzer", every_login: "bei jedem Login", until_closed: "bis zum Schließen" })[value] || "einmal pro Nutzer";
+}
+
+function announcementPreviewFallback(type) {
+  return ({
+    welcome: ["Schön, dass du da bist!", "Viel Spaß beim Erstellen und Ausprobieren."],
+    news: ["Neu in Testify", "Hier kannst du kurz auf eine neue Funktion aufmerksam machen."],
+    info: ["Kurzer Hinweis", "Hier steht eine sachliche Information für die Lehrkräfte."],
+    warning: ["Wichtiger Hinweis", "Hier steht eine wichtige Information, die nicht übersehen werden sollte."]
+  })[type] || ["Hinweis", "Hier erscheint deine Mitteilung."];
+}
+
+function renderAnnouncementPreview() {
+  const root = $("announcementPreview");
+  if (!root) return;
+  const type = $("announcementType")?.value || "info";
+  const display = $("announcementDisplay")?.value || "banner";
+  const frequency = $("announcementFrequency")?.value || "once";
+  const fallback = announcementPreviewFallback(type);
+  const title = $("announcementTitle")?.value.trim() || fallback[0];
+  const text = $("announcementText")?.value.trim() || fallback[1];
+  const active = $("announcementActive")?.checked !== false;
+  const meta = `${announcementDisplayLabel(display)} · ${announcementFrequencyLabel(frequency)}${active ? "" : " · deaktiviert"}`;
+  if ($("announcementPreviewMeta")) $("announcementPreviewMeta").textContent = meta;
+
+  if (display === "popup") {
+    root.innerHTML = `<div class="announcementPreviewBackdrop"><div class="announcementPreviewDialog"><div class="announcementPreviewDialogHead"><div><span class="eyebrow">${announcementIcon(type)} ${escapeHtml(announcementTypeLabel(type))}</span><strong>${escapeHtml(title)}</strong></div><span class="announcementPreviewX">×</span></div><p>${escapeHtml(text)}</p><div class="announcementPreviewDialogFoot"><span>Alles klar</span></div></div></div>`;
+  } else {
+    root.innerHTML = `<div class="announcementBanner announcement-${escapeHtml(type)} announcementPreviewBanner"><span class="announcementIcon">${announcementIcon(type)}</span><div class="announcementBody"><strong>${escapeHtml(title)}</strong><p>${escapeHtml(text)}</p></div><span class="announcementPreviewX">×</span></div>`;
+  }
+  root.classList.toggle("previewInactive", !active);
+}
+
 function resetAnnouncementForm() {
   $("announcementEditId").value="";
   $("announcementType").value="welcome";
@@ -4194,7 +4662,8 @@ function resetAnnouncementForm() {
   $("announcementText").value="";
   $("announcementStart").value="";
   $("announcementEnd").value="";
-  $("saveAnnouncementBtn").textContent="Mitteilung speichern";
+  $("saveAnnouncementBtn").textContent="Mitteilung veröffentlichen";
+  renderAnnouncementPreview();
 }
 
 function localDateTimeValue(iso) {
@@ -4217,6 +4686,7 @@ function editAnnouncement(id) {
   $("announcementStart").value=localDateTimeValue(a.startsAt);
   $("announcementEnd").value=localDateTimeValue(a.endsAt);
   $("saveAnnouncementBtn").textContent="Änderungen speichern";
+  renderAnnouncementPreview();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -4231,7 +4701,7 @@ async function saveAnnouncement() {
   try{
     if(id){await updateDoc(doc(db,"announcements",id),data);await writeAdminAudit("announcement_updated",{announcementId:id,title});}
     else{const ref=await addDoc(collection(db,"announcements"),{...data,createdAt:serverTimestamp(),createdBy:state.user.uid});await writeAdminAudit("announcement_created",{announcementId:ref.id,title});}
-    resetAnnouncementForm(); toast("Mitteilung gespeichert."); await loadAdminData(false);
+    resetAnnouncementForm(); toast(id ? "Änderungen gespeichert." : "Mitteilung veröffentlicht."); await loadAdminData(false);
   }catch(err){console.error(err);toast("Mitteilung konnte nicht gespeichert werden.","error");}
 }
 
@@ -4251,14 +4721,56 @@ function renderAdminAnnouncements() {
 
 function feedbackCategoryLabel(v){return({bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 function renderAdminFeedback(){
-  const root=$("adminFeedbackList"); if(!root)return; const filter=$("adminFeedbackFilter")?.value||"all";
-  const list=state.adminFeedback.filter((f)=>filter==="all"||f.status===filter);
-  root.innerHTML=list.length?list.map((f)=>`<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}</span><h3>${escapeHtml(f.displayName||f.email||"Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode?` · Test ${escapeHtml(f.testCode)}`:""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status==="new"?"selected":""}>Neu</option><option value="working" ${f.status==="working"?"selected":""}>In Bearbeitung</option><option value="done" ${f.status==="done"?"selected":""}>Erledigt</option></select></div><p>${escapeHtml(f.message||"")}</p><details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email||"–")}</span><span>Version: ${escapeHtml(f.appVersion||"–")}</span><span>Umgebung: ${escapeHtml(f.environment||"–")}</span><span>Browser: ${escapeHtml(f.userAgent||"–")}</span></div></details></article>`).join(""):`<div class="emptyInline">Kein Feedback in dieser Ansicht.</div>`;
+  const root=$("adminFeedbackList"); if(!root)return;
+  const status=$("adminFeedbackFilter")?.value||"all";
+  const category=$("adminFeedbackCategory")?.value||"all";
+  const term=normalize($("adminFeedbackSearch")?.value||"");
+  const list=state.adminFeedback
+    .filter((f)=>status==="all"||f.status===status)
+    .filter((f)=>category==="all"||f.category===category)
+    .filter((f)=>!term||normalize(`${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""}`).includes(term));
+  root.innerHTML=list.length?list.map((f)=>`<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}</span><h3>${escapeHtml(f.displayName||f.email||"Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode?` · Test ${escapeHtml(f.testCode)}`:""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status==="new"?"selected":""}>Neu</option><option value="working" ${f.status==="working"?"selected":""}>In Bearbeitung</option><option value="done" ${f.status==="done"?"selected":""}>Erledigt</option></select></div><p>${escapeHtml(f.message||"")}</p><details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email||"–")}</span><span>Version: ${escapeHtml(f.appVersion||"–")}</span><span>Umgebung: ${escapeHtml(f.environment||"–")}</span><span>Browser: ${escapeHtml(f.userAgent||"–")}</span></div></details></article>`).join(""):`<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`;
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
 }
 
 async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
 
-function renderAdminAudit(){const root=$("adminAuditList");if(!root)return;root.innerHTML=state.adminAudit.length?state.adminAudit.map((a)=>`<div class="auditItem"><span>${escapeHtml(fmtDate(a.createdAt))}</span><strong>${escapeHtml(a.action||"Aktion")}</strong><small>${escapeHtml(a.adminEmail||a.adminUid||"")}</small></div>`).join(""):`<p class="hint">Noch keine Admin-Aktionen protokolliert.</p>`;}
+function auditActionInfo(action) {
+  return ({
+    announcement_created: ["📣", "Mitteilung veröffentlicht"],
+    announcement_updated: ["✏️", "Mitteilung geändert"],
+    announcement_deleted: ["🗑️", "Mitteilung gelöscht"],
+    feedback_status_changed: ["💬", "Feedbackstatus geändert"],
+    password_reset_sent: ["🔑", "Passwort-Reset versendet"],
+    user_suspended: ["⛔", "Lehrkraft gesperrt"],
+    user_unsuspended: ["✅", "Lehrkraft entsperrt"],
+    quiz_restored: ["↩️", "Test wiederhergestellt"],
+    quiz_deleted_permanently: ["🗑️", "Test endgültig gelöscht"]
+  })[action] || ["⚙️", action || "Admin-Aktion"];
+}
+
+function auditStatusLabel(status) {
+  return ({ new: "Neu", working: "In Bearbeitung", done: "Erledigt" })[status] || status || "";
+}
+
+function auditDetailText(entry) {
+  const d = entry.details || {};
+  if (entry.action?.startsWith("announcement_")) return d.title ? `„${d.title}“` : "Mitteilung";
+  if (entry.action === "feedback_status_changed") return `Neuer Status: ${auditStatusLabel(d.status)}`;
+  if (["password_reset_sent","user_suspended","user_unsuspended"].includes(entry.action)) return d.email || "Lehrkraft";
+  if (entry.action === "quiz_restored") return d.quizId ? `Test ${d.quizId}` : "Test";
+  if (entry.action === "quiz_deleted_permanently") return d.title ? `${d.title}${d.quizId ? ` · ${d.quizId}` : ""}` : (d.quizId ? `Test ${d.quizId}` : "Test");
+  return "";
+}
+
+function renderAdminAudit(){
+  const root=$("adminAuditList");
+  if(!root)return;
+  root.innerHTML=state.adminAudit.length?state.adminAudit.map((a)=>{
+    const [icon,label]=auditActionInfo(a.action);
+    const detail=auditDetailText(a);
+    return `<div class="auditItem"><span class="auditIcon">${icon}</span><div class="auditMain"><strong>${escapeHtml(label)}</strong><small>${escapeHtml(a.adminEmail||a.adminUid||"Admin")} · ${escapeHtml(fmtDate(a.createdAt))}</small>${detail?`<p>${escapeHtml(detail)}</p>`:""}</div></div>`;
+  }).join(""):`<p class="hint">Noch keine Admin-Aktionen protokolliert.</p>`;
+}
 
 async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}

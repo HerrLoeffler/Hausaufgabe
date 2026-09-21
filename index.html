@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lernplattform – Tests einfach erstellen</title>
-  <meta name="app-version" content="2.2.0" />
-  <link rel="stylesheet" href="styles.css?v=2.2.0" />
+  <title>Testify – Tests. Einfach digital.</title>
+  <meta name="app-version" content="2.2.3" />
+  <link rel="stylesheet" href="styles.css?v=2.2.3" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -13,9 +13,9 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <header class="topbar">
-    <button id="brandBtn" class="brand" type="button" aria-label="Startseite">
-      <span class="brandMark">L</span>
-      <span><strong>Lernplattform</strong><small>Tests erstellen · durchführen · auswerten</small></span>
+    <button id="brandBtn" class="brand" type="button" aria-label="Testify Startseite">
+      <span class="brandMark" aria-hidden="true"><span class="brandLetter">T</span><span class="brandTick">✓</span></span>
+      <span class="brandCopy"><strong>Testify</strong><small>Tests. Einfach digital.</small></span>
     </button>
     <div id="userBar" class="userBar hidden">
       <span id="environmentBadge" class="envBadge hidden"></span>
@@ -31,7 +31,7 @@
       <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
       <div class="heroGrid">
         <article class="card heroCard">
-          <span class="eyebrow">Für Schülerinnen & Schüler</span>
+          <span class="eyebrow">Testify für Schülerinnen & Schüler</span>
           <h1>Testcode eingeben</h1>
           <p>Du brauchst keinen Account. Gib den Code deiner Lehrkraft ein.</p>
           <form id="joinForm" class="stack compact">
@@ -72,7 +72,6 @@
         <div><span class="eyebrow">Lehrerbereich</span><h1>Meine Tests</h1><p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p></div>
         <div class="actions dashboardActions">
           <button id="trashBtn" class="button ghost" type="button">🗑 Papierkorb</button>
-          <button id="aiCreateBtn" class="button secondary" type="button">✨ KI-Vorlage</button>
           <button id="settingsBtn" class="button secondary" type="button">⚙ Einstellungen</button>
           <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
         </div>
@@ -141,21 +140,40 @@
       </div>
 
       <section id="adminPanelOverview" class="adminPanel">
+        <div class="card adminOverviewToolbar">
+          <div><span class="eyebrow">Nutzung</span><h2>Was passiert in Testify?</h2><p id="adminPeriodDescription">Aktivität der letzten 7 Tage.</p></div>
+          <div class="segmented adminPeriodSelector" role="group" aria-label="Zeitraum auswählen">
+            <button class="segment adminPeriodBtn" type="button" data-period="today">Heute</button>
+            <button class="segment adminPeriodBtn active" type="button" data-period="7d">7 Tage</button>
+            <button class="segment adminPeriodBtn" type="button" data-period="30d">30 Tage</button>
+            <button class="segment adminPeriodBtn" type="button" data-period="all">Gesamt</button>
+          </div>
+        </div>
         <div id="adminStats" class="adminStatsGrid"></div>
         <div class="adminOverviewGrid">
-          <article class="card"><div class="sectionHead"><div><h2>Aktivität</h2><p>Aktive Lehrkräfte anhand ihrer letzten Nutzung.</p></div></div><div id="adminActivityStats" class="activityBars"></div></article>
-          <article class="card"><h2>Betrieb & Version</h2><div id="adminSystemInfo" class="systemInfoList"></div><a id="adminFirebaseConsoleLink" class="button secondary adminConsoleLink" href="#" target="_blank" rel="noopener">Firebase Console öffnen</a><p class="hint">Exakte Firebase-Quoten werden nicht aus dem Browser ausgelesen. Die App zeigt hier nur eigene Dokumentzahlen.</p></article>
+          <article class="card"><div class="sectionHead"><div><h2>Bestand</h2><p>Aktueller Stand – unabhängig vom gewählten Zeitraum.</p></div></div><div id="adminInventoryStats" class="inventoryGrid"></div></article>
+          <article class="card"><h2>Betrieb & Version</h2><div id="adminSystemInfo" class="systemInfoList"></div><div class="firebaseUsageBox"><div><strong>Firebase-Nutzung</strong><p>Reads, Writes, Speicher und Kontingente direkt bei Firebase prüfen.</p></div><a id="adminFirebaseConsoleLink" class="button secondary adminConsoleLink" href="#" target="_blank" rel="noopener">Firebase Console öffnen</a></div></article>
         </div>
       </section>
 
       <section id="adminPanelTeachers" class="adminPanel hidden">
-        <div class="card adminToolbar"><label class="searchField">Lehrkräfte durchsuchen<input id="adminTeacherSearch" type="search" placeholder="Name oder E-Mail …" /></label></div>
+        <div class="card adminToolbar">
+          <label class="searchField">Lehrkräfte durchsuchen<input id="adminTeacherSearch" type="search" placeholder="Name oder E-Mail …" /></label>
+          <label>Status<select id="adminTeacherStatusFilter"><option value="all">Alle</option><option value="active">Aktiv</option><option value="admin">Admins</option><option value="suspended">Gesperrt</option></select></label>
+          <button id="exportAdminTeachersBtn" class="button secondary" type="button">CSV exportieren</button>
+        </div>
         <div id="adminTeachersTable" class="card tableCard"></div>
         <div id="adminTeacherDetail" class="card adminDetail hidden"></div>
       </section>
 
       <section id="adminPanelTests" class="adminPanel hidden">
-        <div class="card adminToolbar"><label class="searchField">Tests durchsuchen<input id="adminTestSearch" type="search" placeholder="Titel, Fach, Klasse, Testcode oder Lehrkraft …" /></label></div>
+        <div class="card adminToolbar adminToolbarWrap">
+          <label class="searchField">Tests durchsuchen<input id="adminTestSearch" type="search" placeholder="Titel, Fach, Klasse, Testcode oder Lehrkraft …" /></label>
+          <label>Status<select id="adminTestStatusFilter"><option value="all">Alle Status</option><option value="draft">Entwürfe</option><option value="published">Veröffentlicht</option><option value="ended">Beendet</option><option value="trash">Papierkorb</option></select></label>
+          <label>Lehrkraft<select id="adminTestOwnerFilter"><option value="all">Alle Lehrkräfte</option></select></label>
+          <label>Geändert<select id="adminTestPeriodFilter"><option value="all">Gesamter Zeitraum</option><option value="7d">Letzte 7 Tage</option><option value="30d">Letzte 30 Tage</option><option value="90d">Letzte 90 Tage</option></select></label>
+          <button id="exportAdminTestsBtn" class="button secondary" type="button">CSV exportieren</button>
+        </div>
         <div id="adminTestsTable" class="card tableCard"></div>
         <div id="adminTestDetail" class="card adminDetail hidden"></div>
       </section>
@@ -167,16 +185,20 @@
             <input id="announcementEditId" type="hidden" />
             <div class="stack compact">
               <div class="formGrid2">
-                <label>Typ<select id="announcementType"><option value="welcome">👋 Begrüßung</option><option value="news">✨ Neuigkeit</option><option value="info">ℹ️ Info</option><option value="warning">⚠️ Warnung</option></select></label>
-                <label>Darstellung<select id="announcementDisplay"><option value="banner">Karte im Dashboard</option><option value="popup">Popup beim Öffnen</option></select></label>
-                <label>Anzeige<select id="announcementFrequency"><option value="once">Einmal pro Nutzer</option><option value="every_login">Bei jedem Login</option><option value="until_closed">Bis der Nutzer sie schließt</option></select></label>
+                <label>Art der Mitteilung<select id="announcementType"><option value="welcome">👋 Begrüßung</option><option value="news">✨ Neuigkeit</option><option value="info">ℹ️ Info</option><option value="warning">⚠️ Warnung</option></select><small class="fieldHint">Bestimmt Symbol, Farbgebung und Ton der Mitteilung.</small></label>
+                <label>Anzeigeform<select id="announcementDisplay"><option value="banner">Karte im Dashboard</option><option value="popup">Popup beim Öffnen</option></select><small class="fieldHint">Dashboard-Karten sind dezent; Popups werden direkt eingeblendet.</small></label>
+                <label>Häufigkeit<select id="announcementFrequency"><option value="once">Einmal pro Nutzer</option><option value="every_login">Bei jedem Login</option><option value="until_closed">Bis der Nutzer sie schließt</option></select><small class="fieldHint">Legt fest, wie oft eine Lehrkraft die Mitteilung sieht.</small></label>
                 <label class="checkRow adminActiveCheck"><input id="announcementActive" type="checkbox" checked /> Aktiv</label>
                 <label class="span2">Titel<input id="announcementTitle" type="text" maxlength="100" placeholder="Schön, dass du da bist!" /></label>
                 <label class="span2">Nachricht<textarea id="announcementText" rows="5" maxlength="1000" placeholder="Kurze Nachricht an die Lehrkräfte …"></textarea></label>
                 <label>Start <small>(optional)</small><input id="announcementStart" type="datetime-local" /></label>
                 <label>Ende <small>(optional)</small><input id="announcementEnd" type="datetime-local" /></label>
               </div>
-              <button id="saveAnnouncementBtn" class="button primary" type="button">Mitteilung speichern</button>
+              <div class="announcementPreviewBlock">
+                <div class="announcementPreviewHead"><div><span class="eyebrow">Live-Vorschau</span><strong>So sehen Lehrkräfte die Mitteilung</strong></div><small id="announcementPreviewMeta"></small></div>
+                <div id="announcementPreview" class="announcementPreview" aria-live="polite"></div>
+              </div>
+              <button id="saveAnnouncementBtn" class="button primary" type="button">Mitteilung veröffentlichen</button>
             </div>
           </article>
           <article class="card"><h2>Mitteilungen</h2><div id="adminAnnouncementList" class="adminAnnouncementList"></div></article>
@@ -184,7 +206,11 @@
       </section>
 
       <section id="adminPanelFeedback" class="adminPanel hidden">
-        <div class="card adminToolbar"><label>Status<select id="adminFeedbackFilter"><option value="all">Alle</option><option value="new">Neu</option><option value="working">In Bearbeitung</option><option value="done">Erledigt</option></select></label></div>
+        <div class="card adminToolbar">
+          <label class="searchField">Feedback durchsuchen<input id="adminFeedbackSearch" type="search" placeholder="Name, E-Mail, Nachricht oder Testcode …" /></label>
+          <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
+          <label>Status<select id="adminFeedbackFilter"><option value="all">Alle Status</option><option value="new">Neu</option><option value="working">In Bearbeitung</option><option value="done">Erledigt</option></select></label>
+        </div>
         <div id="adminFeedbackList" class="feedbackList"></div>
       </section>
 
@@ -225,7 +251,7 @@
 
     <section id="aiView" class="view hidden">
       <div class="pageHead">
-        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">KI-Vorbereitung</span><h1>Test schneller erstellen</h1><p>Prompt erzeugen, in einer KI deiner Wahl verwenden und das JSON anschließend hier importieren.</p></div>
+        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Eigene KI verwenden</h1><p>Kostenlos mit ChatGPT, Claude oder Gemini: Prompt erzeugen, Antwort zurückkopieren – Testify repariert typische Formatfehler automatisch.</p></div>
       </div>
       <div class="aiGrid">
         <article class="card">
@@ -256,8 +282,8 @@
         </article>
       </div>
       <article class="card importCard">
-        <div class="sectionHead"><div><h2>3. KI-Ergebnis importieren</h2><p>Die JSON-Antwort deiner KI einfügen oder eine JSON-Datei auswählen. Der Test landet danach im normalen Editor.</p><div class="aiImportNote">Der KI-erstellte Test ist eine sehr gute Grundlage. Prüfe ihn vor dem Einsatz kurz und passe ihn bei Bedarf im Editor an.</div></div><div class="actions"><input id="aiJsonFile" class="hidden" type="file" accept=".json,application/json,text/plain" /><button id="selectJsonFileBtn" class="button secondary" type="button">JSON-Datei auswählen</button><button id="importJsonBtn" class="button primary" type="button">JSON als Test importieren</button></div></div>
-        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder='{"title":"Zinsrechnung", "questions":[…]}'></textarea>
+        <div class="sectionHead"><div><h2>3. KI-Antwort zurück zu Testify</h2><p>Kopiere die komplette Antwort deiner KI hier hinein. Du musst sie nicht selbst auf gültiges JSON prüfen.</p><div class="aiImportNote"><strong>Testify repariert automatisch:</strong> typografische Anführungszeichen, Markdown-Codeblöcke, Begleittext, einfache Anführungszeichen, True/False/None, überflüssige Kommas und weitere typische KI-Formatfehler. Inhaltlich uneindeutige Stellen werden nicht geraten, sondern im Editor markiert.</div></div><div class="actions"><input id="aiJsonFile" class="hidden" type="file" accept=".json,application/json,text/plain" /><button id="selectJsonFileBtn" class="button secondary" type="button">Antwort-Datei auswählen</button><button id="importJsonBtn" class="button primary" type="button">KI-Antwort prüfen &amp; importieren</button></div></div>
+        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder="Komplette Antwort aus ChatGPT, Claude oder Gemini hier einfügen …"></textarea>
         <div id="aiJsonHelp" class="jsonHelp hidden"></div>
       </article>
     </section>
@@ -267,6 +293,7 @@
         <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p></div>
         <div class="actions"><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
       </div>
+      <div id="importReviewBanner" class="importReviewBanner hidden"></div>
       <div class="editorLayout">
         <aside class="card settingsCard">
           <h2>Test-Einstellungen</h2>
@@ -337,7 +364,7 @@
     <div class="stack compact">
       <label>Kategorie<select id="feedbackCategory"><option value="bug">🐞 Fehler</option><option value="idea">💡 Wunsch / Idee</option><option value="question">❓ Frage</option><option value="other">💬 Sonstiges</option></select></label>
       <label>Betroffener Testcode <small>(optional)</small><input id="feedbackTestCode" type="text" maxlength="16" /></label>
-      <label>Nachricht<textarea id="feedbackMessage" rows="6" maxlength="2000" placeholder="Was ist passiert bzw. was wünschst du dir?"></textarea></label>
+      <label>Nachricht<small id="feedbackMessageHint" class="fieldHint">Was ist passiert? Beschreibe kurz, was du gemacht hast.</small><textarea id="feedbackMessage" rows="6" maxlength="2000" placeholder="Was ist passiert? Was hast du gemacht, bevor der Fehler auftrat?"></textarea></label>
       <div class="actions"><button id="cancelFeedbackBtn" class="button ghost" type="button">Abbrechen</button><button id="sendFeedbackBtn" class="button primary" type="button">Feedback senden</button></div>
     </div>
   </dialog>
@@ -349,13 +376,13 @@
   </dialog>
 
   <dialog id="whatsNewDialog" class="shareDialog whatsNewDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.2.0</span><h2>Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.2.3</span><h2>Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <div class="whatsNewList">
-      <div><span>🛡️</span><p><strong>Admin-Zentrale</strong><small>Nutzer, Tests, Mitteilungen, Feedback und Support im Blick.</small></p></div>
-      <div><span>📣</span><p><strong>Mitteilungen</strong><small>Einmalig, bei jedem Login oder bis zum Schließen anzeigen.</small></p></div>
-      <div><span>🗑️</span><p><strong>Papierkorb</strong><small>Tests werden nicht sofort endgültig gelöscht.</small></p></div>
-      <div><span>✨</span><p><strong>KI-Workflow</strong><small>Direkte KI-Links und robusterer JSON-Import.</small></p></div>
-      <div><span>▶️</span><p><strong>Unterrichtsmodus</strong><small>Gemeinsamer Start, Warteraum und optionale Mischung.</small></p></div>
+      <div><span>🛠️</span><p><strong>KI-Antworten werden automatisch repariert</strong><small>Typische Formatfehler aus ChatGPT, Claude oder Gemini blockieren den Import nicht mehr sofort.</small></p></div>
+      <div><span>⚠️</span><p><strong>Nur Uneindeutiges muss geprüft werden</strong><small>Testify korrigiert technische Fehler selbst und zeigt fachlich offene Stellen verständlich im Editor an.</small></p></div>
+      <div><span>＋</span><p><strong>Ein klarer Start für neue Tests</strong><small>„+ Neuer Test“ ist jetzt der einzige Einstieg. Danach wählst du manuell, mit KI oder von Kollegen übernehmen.</small></p></div>
+      <div><span>✨</span><p><strong>Eigene KI bleibt kostenlos nutzbar</strong><small>Prompt kopieren, ChatGPT/Claude/Gemini öffnen und die komplette Antwort wieder in Testify einfügen.</small></p></div>
+      <div><span>📊</span><p><strong>Adminbereich &amp; Testify-Branding</strong><small>Zeiträume, Filter, CSV-Export, Mitteilungen-Vorschau und der neue Testify-Auftritt bleiben enthalten.</small></p></div>
     </div>
     <div class="shareDialogFoot"><button id="whatsNewOk" class="button primary" type="button">Schließen</button></div>
   </dialog>
@@ -368,8 +395,8 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span id="footerVersion">v2.2.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.2.3</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.2.0"></script>
+  <script type="module" src="app.js?v=2.2.3"></script>
 </body>
 </html>
