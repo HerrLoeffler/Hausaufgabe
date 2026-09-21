@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
-  <meta name="app-version" content="2.2.3" />
-  <link rel="stylesheet" href="styles.css?v=2.2.3" />
+  <meta name="app-version" content="2.3.0" />
+  <link rel="stylesheet" href="styles.css?v=2.3.0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -71,8 +71,7 @@
       <div class="pageHead">
         <div><span class="eyebrow">Lehrerbereich</span><h1>Meine Tests</h1><p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p></div>
         <div class="actions dashboardActions">
-          <button id="trashBtn" class="button ghost" type="button">🗑 Papierkorb</button>
-          <button id="settingsBtn" class="button secondary" type="button">⚙ Einstellungen</button>
+          <button id="trashBtn" class="button ghost compactTrashBtn" type="button">🗑 Papierkorb</button>
           <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
         </div>
       </div>
@@ -121,7 +120,7 @@
       <div class="pageHead">
         <div><button id="backFromTrash" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Meine Tests</span><h1>Papierkorb</h1><p>Gelöschte Tests bleiben mit Aufgaben und Ergebnissen erhalten, bis du sie endgültig löschst.</p></div>
       </div>
-      <div id="trashList" class="quizGrid"></div>
+      <div id="trashList" class="quizGrid trashGrid"></div>
       <div id="emptyTrashState" class="empty hidden"><div class="emptyIcon">✓</div><h2>Der Papierkorb ist leer</h2><p>Hier erscheinen Tests, die du aus „Meine Tests“ entfernst.</p></div>
     </section>
 
@@ -282,8 +281,8 @@
         </article>
       </div>
       <article class="card importCard">
-        <div class="sectionHead"><div><h2>3. KI-Antwort zurück zu Testify</h2><p>Kopiere die komplette Antwort deiner KI hier hinein. Du musst sie nicht selbst auf gültiges JSON prüfen.</p><div class="aiImportNote"><strong>Testify repariert automatisch:</strong> typografische Anführungszeichen, Markdown-Codeblöcke, Begleittext, einfache Anführungszeichen, True/False/None, überflüssige Kommas und weitere typische KI-Formatfehler. Inhaltlich uneindeutige Stellen werden nicht geraten, sondern im Editor markiert.</div></div><div class="actions"><input id="aiJsonFile" class="hidden" type="file" accept=".json,application/json,text/plain" /><button id="selectJsonFileBtn" class="button secondary" type="button">Antwort-Datei auswählen</button><button id="importJsonBtn" class="button primary" type="button">KI-Antwort prüfen &amp; importieren</button></div></div>
-        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder="Komplette Antwort aus ChatGPT, Claude oder Gemini hier einfügen …"></textarea>
+        <div class="sectionHead"><div><h2>3. Antwort in Testify einfügen</h2><p>Kopiere die Antwort deiner KI hier hinein.</p></div><div class="actions"><button id="importJsonBtn" class="button primary" type="button">Antwort importieren</button></div></div>
+        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder="Antwort aus ChatGPT, Claude oder Gemini hier einfügen …"></textarea>
         <div id="aiJsonHelp" class="jsonHelp hidden"></div>
       </article>
     </section>
@@ -376,15 +375,23 @@
   </dialog>
 
   <dialog id="whatsNewDialog" class="shareDialog whatsNewDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.2.4</span><h2>Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.3.0</span><h2>Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <div class="whatsNewList">
-      <div><span>🛠️</span><p><strong>KI-Antworten werden automatisch repariert</strong><small>Typische Formatfehler aus ChatGPT, Claude oder Gemini blockieren den Import nicht mehr sofort.</small></p></div>
-      <div><span>⚠️</span><p><strong>Nur Uneindeutiges muss geprüft werden</strong><small>Testify korrigiert technische Fehler selbst und zeigt fachlich offene Stellen verständlich im Editor an.</small></p></div>
-      <div><span>＋</span><p><strong>Ein klarer Start für neue Tests</strong><small>„+ Neuer Test“ ist jetzt der einzige Einstieg. Danach wählst du manuell, mit KI oder von Kollegen übernehmen.</small></p></div>
-      <div><span>✨</span><p><strong>Eigene KI bleibt kostenlos nutzbar</strong><small>Prompt kopieren, ChatGPT/Claude/Gemini öffnen und die komplette Antwort wieder in Testify einfügen.</small></p></div>
-      <div><span>📊</span><p><strong>Adminbereich &amp; Testify-Branding</strong><small>Zeiträume, Filter, CSV-Export, Mitteilungen-Vorschau und der neue Testify-Auftritt bleiben enthalten.</small></p></div>
+      <div><span>✓</span><p><strong>Testify hat ein neues Erscheinungsbild</strong><small>Klarer, ruhiger und weiterhin auf das Wesentliche reduziert.</small></p></div>
+      <div><span>＋</span><p><strong>Neue Tests starten einfacher</strong><small>Nach „+ Neuer Test“ wählst du manuell, mit KI oder über eine Vorlage von Kollegen.</small></p></div>
+      <div><span>✨</span><p><strong>KI-Antworten lassen sich zuverlässiger übernehmen</strong><small>Füge einfach die komplette Antwort deiner KI ein. Testify übernimmt den Test und markiert nur Stellen, die du prüfen solltest.</small></p></div>
+      <div><span>↗</span><p><strong>Tests mit Kollegen teilen</strong><small>Freigabelink oder Vorlagencode weitergeben – Schülerdaten werden dabei nicht geteilt.</small></p></div>
+      <div><span>🗑</span><p><strong>Papierkorb für Tests</strong><small>Gelöschte Tests lassen sich wiederherstellen oder bewusst endgültig löschen.</small></p></div>
+      <div><span>💬</span><p><strong>Mitteilungen & Feedback</strong><small>Hinweise aus Testify erhalten und Fragen, Fehler oder Wünsche direkt zurückmelden.</small></p></div>
     </div>
     <div class="shareDialogFoot"><button id="whatsNewOk" class="button primary" type="button">Schließen</button></div>
+  </dialog>
+
+  <dialog id="dangerConfirmDialog" class="shareDialog dangerConfirmDialog">
+    <div class="dangerConfirmIcon" aria-hidden="true">!</div>
+    <div class="shareDialogHead"><div><span class="eyebrow dangerEyebrow">Unwiderruflich</span><h2 id="dangerConfirmTitle">Test endgültig löschen?</h2></div></div>
+    <p id="dangerConfirmText">Test, Aufgaben und Ergebnisse werden unwiderruflich gelöscht.</p>
+    <div class="shareDialogFoot dangerConfirmFoot"><button id="dangerConfirmCancel" class="button secondary" type="button">Abbrechen</button><button id="dangerConfirmOk" class="button danger" type="button">Endgültig löschen</button></div>
   </dialog>
 
   <dialog id="shareDialog" class="shareDialog">
@@ -395,8 +402,8 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.2.4</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.2.3"></script>
+  <script type="module" src="app.js?v=2.3.0"></script>
 </body>
 </html>

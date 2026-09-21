@@ -1,4 +1,4 @@
-const APP_VERSION = "2.2.4";
+const APP_VERSION = "2.3.0";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -31,8 +31,8 @@ import {
   collectionGroup,
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import * as firebaseModule from "./firebase-config.js";
-import { parseJsonWithRepair } from "./ai-json-tools.js";
+import * as firebaseModule from "./firebase-config.js?v=2.3.0";
+import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -547,7 +547,7 @@ $("quizFilter").addEventListener("change", renderQuizList);
 $("quizSort")?.addEventListener("change", renderQuizList);
 $("backFromEditor").addEventListener("click", leaveEditorToDashboard);
 $("backFromResults").addEventListener("click", loadDashboard);
-$("settingsBtn").addEventListener("click", openSettings);
+$("settingsBtn")?.addEventListener("click", openSettings);
 $("settingsTopBtn").addEventListener("click", openSettings);
 $("trashBtn")?.addEventListener("click", openTrash);
 $("backFromTrash")?.addEventListener("click", loadDashboard);
@@ -629,6 +629,7 @@ function quizStatusMeta(q) {
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
   if (q.published) return { label: "Veröffentlicht", cls: "published" };
+  if (Number(q.questionCount || 0) === 0) return { label: "Unvollständig", cls: "incomplete" };
   return { label: "Entwurf", cls: "draft" };
 }
 
@@ -833,9 +834,48 @@ async function restoreQuiz(code, { admin = false } = {}) {
   }
 }
 
+function confirmPermanentDelete(quizTitle) {
+  const dialog = $("dangerConfirmDialog");
+  const title = $("dangerConfirmTitle");
+  const text = $("dangerConfirmText");
+  const cancelBtn = $("dangerConfirmCancel");
+  const confirmBtn = $("dangerConfirmOk");
+  if (!dialog || !title || !text || !cancelBtn || !confirmBtn) {
+    return Promise.resolve(confirm(`Test „${quizTitle}“ endgültig löschen? Test, Aufgaben und Ergebnisse werden unwiderruflich gelöscht.`));
+  }
+  title.textContent = "Test endgültig löschen?";
+  text.textContent = `„${quizTitle}“ sowie alle Aufgaben und Ergebnisse werden unwiderruflich gelöscht. Dieser Schritt kann nicht rückgängig gemacht werden.`;
+  confirmBtn.textContent = "Endgültig löschen";
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      dialog.close();
+      cleanup();
+      resolve(value);
+    };
+    const onCancel = (event) => { event?.preventDefault?.(); finish(false); };
+    const onConfirm = () => finish(true);
+    const onBackdrop = (event) => { if (event.target === dialog) finish(false); };
+    const cleanup = () => {
+      cancelBtn.removeEventListener("click", onCancel);
+      confirmBtn.removeEventListener("click", onConfirm);
+      dialog.removeEventListener("cancel", onCancel);
+      dialog.removeEventListener("click", onBackdrop);
+    };
+    cancelBtn.addEventListener("click", onCancel);
+    confirmBtn.addEventListener("click", onConfirm);
+    dialog.addEventListener("cancel", onCancel);
+    dialog.addEventListener("click", onBackdrop);
+    dialog.showModal();
+  });
+}
+
 async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
   const q = (admin ? state.adminQuizzes : state.quizzes).find((x) => x.id === code);
-  if (!confirm(`Test „${q?.title || code}“ endgültig löschen? Das entfernt auch Aufgaben und Abgaben. Dieser Schritt kann nicht rückgängig gemacht werden.`)) return;
+  const approved = await confirmPermanentDelete(q?.title || code);
+  if (!approved) return;
   try {
     const qSnap = await getDocs(collection(db, "quizzes", code, "questions"));
     for (const d of qSnap.docs) await deleteDoc(d.ref);
@@ -864,7 +904,7 @@ async function openTrash() {
   items.forEach((q) => {
     const card = document.createElement("article");
     card.className = "card quizCard trashCard";
-    card.innerHTML = `<div class="quizCardTop"><div><h3>${escapeHtml(q.title || "Unbenannter Test")}</h3><div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${escapeHtml(q.id)}</div></div><span class="status ended">Papierkorb</span></div><p class="hint">Gelöscht: ${escapeHtml(fmtDate(q.deletedAt))}</p><div class="quizActions"><button class="button primary restore">Wiederherstellen</button><button class="button danger purge">Endgültig löschen</button></div>`;
+    card.innerHTML = `<div class="trashCardContent"><h3>${escapeHtml(q.title || "Unbenannter Test")}</h3><div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${escapeHtml(q.id)}</div><p class="trashDeletedAt">Gelöscht: ${escapeHtml(fmtDate(q.deletedAt))}</p></div><div class="quizActions trashActions"><button class="button primary restore">Wiederherstellen</button><button class="button danger purge">Endgültig löschen</button></div>`;
     card.querySelector(".restore").addEventListener("click", () => restoreQuiz(q.id));
     card.querySelector(".purge").addEventListener("click", () => permanentlyDeleteQuiz(q.id));
     root.appendChild(card);
@@ -1202,8 +1242,6 @@ $("importJsonBtn").addEventListener("click", importAiJson);
 $("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://chatgpt.com/", "ChatGPT"));
 $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
-$("selectJsonFileBtn")?.addEventListener("click", () => $("aiJsonFile")?.click());
-$("aiJsonFile")?.addEventListener("change", loadJsonFile);
 
 function openAiView() {
   const settings = getSettings();
@@ -1551,10 +1589,9 @@ function renderImportReviewBanner() {
     host.innerHTML = "";
     return;
   }
-  const repairCount = report.repairs?.length || 0;
   const warningCount = report.warnings?.length || 0;
   host.classList.remove("hidden");
-  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `Test importiert – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : "KI-Antwort automatisch repariert und importiert"}</strong><p>${repairCount ? `${repairCount} technische Anpassung${repairCount === 1 ? "" : "en"} wurden automatisch erledigt.` : ""}${repairCount && warningCount ? " " : ""}${warningCount ? "Inhaltlich uneindeutige Stellen wurden nicht geraten, sondern markiert." : " Der Test kann jetzt normal bearbeitet werden."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `Test importiert – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : "Test importiert"}</strong><p>${warningCount ? "Einige Stellen waren nicht eindeutig und wurden zur Prüfung markiert." : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
   host.querySelector(".closeImportReview")?.addEventListener("click", () => {
     state.pendingImportReport = null;
     host.classList.add("hidden");
@@ -1578,26 +1615,6 @@ async function openAiProvider(url, label) {
   }
 }
 
-async function loadJsonFile(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) {
-    toast("Die Datei ist ungewöhnlich groß. Bitte eine Datei unter 2 MB verwenden.", "error");
-    event.target.value = "";
-    return;
-  }
-  try {
-    $("aiJsonInput").value = await file.text();
-    clearAiImportHelp();
-    toast("KI-Antwort geladen.");
-  } catch (err) {
-    console.error(err);
-    toast("Die Datei konnte nicht gelesen werden.", "error");
-  } finally {
-    event.target.value = "";
-  }
-}
-
 async function importAiJson() {
   const source = $("aiJsonInput").value;
   if (!source.trim()) {
@@ -1608,8 +1625,8 @@ async function importAiJson() {
   const parsed = parseJsonWithRepair(source);
   if (!parsed.ok) {
     setAiImportHelp({
-      title: "Testify konnte die KI-Antwort noch nicht sicher erkennen.",
-      message: "Du musst nicht zur KI zurück. Prüfe, ob die Antwort vollständig kopiert wurde. Testify repariert typische JSON-Fehler bereits automatisch.",
+      title: "Die Antwort konnte noch nicht sicher erkannt werden.",
+      message: "Prüfe, ob du die vollständige Antwort deiner KI kopiert hast, und versuche den Import erneut.",
       details: [parsed.error?.message || "Unbekannter Formatfehler"],
       tone: "error"
     });
@@ -1649,7 +1666,7 @@ async function importAiJson() {
     }
     state.pendingImportReport = { ...report, quizId: code };
     if (report.warnings.length) toast(`Test importiert – ${report.warnings.length} Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
-    else if (report.repairs.length) toast("KI-Antwort automatisch repariert und importiert.");
+    else if (report.repairs.length) toast("Test importiert.");
     else toast("KI-Test importiert.");
     await openEditor(code);
   } catch (err) {
@@ -4409,14 +4426,14 @@ async function renderAdminOverview() {
   $("adminStats").innerHTML = cards.map(([label, value, icon]) => `<article class="card adminStatCard"><span>${icon}</span><div><strong>${escapeHtml(value)}</strong><small>${escapeHtml(label)}</small></div></article>`).join("");
 
   const publishedNow = activeTests.filter((q) => q.published && !q.ended).length;
+  const trashCount = state.adminQuizzes.filter((q) => q.isDeleted).length;
   const inventory = [
     ["Lehrkräfte gesamt", state.adminUsers.length],
     ["Tests gesamt", activeTests.length],
     ["Aktuell veröffentlicht", publishedNow],
-    ["Im Papierkorb", state.adminQuizzes.filter((q) => q.isDeleted).length],
     ["Offenes Feedback", state.adminFeedback.filter((f) => f.status !== "done").length]
   ];
-  $("adminInventoryStats").innerHTML = inventory.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+  $("adminInventoryStats").innerHTML = `${inventory.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}<div class="inventorySecondary"><span>🗑 Papierkorb</span><strong>${escapeHtml(trashCount)}</strong></div>`;
 
   $("adminSystemInfo").innerHTML = `<div><span>Marke</span><strong>${escapeHtml(BRAND.name)}</strong></div><div><span>App-Version</span><strong>v${APP_VERSION}</strong></div><div><span>Umgebung</span><strong>${escapeHtml(appEnvironment || "production")}</strong></div><div><span>Firebase-Projekt</span><strong>${escapeHtml(firebaseConfig.projectId)}</strong></div>`;
   const consoleLink = $("adminFirebaseConsoleLink");
@@ -4527,6 +4544,7 @@ function adminQuizStatus(q) {
   if (q.isDeleted) return "Papierkorb";
   if (q.ended) return "Beendet";
   if (q.published) return "Veröffentlicht";
+  if (Number(q.questionCount || 0) === 0) return "Unvollständig";
   return "Entwurf";
 }
 
