@@ -1,4 +1,4 @@
-const APP_VERSION = "2.2.3";
+const APP_VERSION = "2.2.4";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -4124,7 +4124,6 @@ $("announcementDialog")?.addEventListener("cancel", (event) => {
   dismissCurrentAnnouncement();
 });
 renderAnnouncementPreview();
-updateFeedbackPrompt();
 
 const FEEDBACK_PROMPTS = {
   bug: {
@@ -4144,6 +4143,10 @@ const FEEDBACK_PROMPTS = {
     placeholder: "Was möchtest du uns mitteilen?"
   }
 };
+
+// Initialisierung erst nach FEEDBACK_PROMPTS: sonst stoppt das Modul
+// mit einer ReferenceError und nachfolgende Admin-Event-Listener werden nicht registriert.
+updateFeedbackPrompt();
 
 function updateFeedbackPrompt() {
   const category = $("feedbackCategory")?.value || "other";
