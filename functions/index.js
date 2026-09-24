@@ -103,6 +103,6 @@ exports.generateQuestionMedia = onCall(callableOpts, async request => {
   const prompt = String(request.data?.prompt || "").slice(0, 3000); if (!prompt) throw new HttpsError("invalid-argument", "Bildbeschreibung fehlt.");
   const maxBytes = request.data?.purpose === "option" ? 95 * 1024 : 280 * 1024;
   const asset = await generateImageAsset({ prompt, altText: String(request.data?.altText || "").slice(0, 500), maxBytes });
-  await logUsage(uid, "image", {}, { model: "gpt-image-2.5-flare" });
+  await logUsage(uid, "image", {}, { model: "gpt-image-2" });
   return { asset };
 });
