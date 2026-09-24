@@ -1244,6 +1244,9 @@ $("importJsonBtn").addEventListener("click", importAiJson);
 $("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://chatgpt.com/", "ChatGPT"));
 $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
+$("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
+$("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
+$("aiImageMode")?.addEventListener("change", updateAiImageControls);
 
 async function openAiView() {
   const settings = getSettings();
