@@ -115,7 +115,8 @@ const state = {
   shownThisLogin: new Set(),
   activeAnnouncementDialogId: null,
   adminOverviewPeriod: "7d",
-  pendingImportReport: null
+  pendingImportReport: null,
+  aiMaterials: []
 };
 
 function showView(id) {
