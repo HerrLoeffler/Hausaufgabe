@@ -228,3 +228,17 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .compactTrashBtn{opacity:.82;font-weight:700}
 .compactTrashBtn:hover{opacity:1}
 @media(max-width:760px){.trashActions{flex-direction:column;align-items:stretch}.trashActions .button{width:100%;min-width:0}.dangerConfirmFoot{flex-direction:column-reverse}}
+
+/* ---------- AI integration beta ---------- */
+.aiStatusNotice{margin:0 0 16px;padding:12px 14px;border-radius:12px;background:var(--surface-2,#f6f7f9);border:1px solid var(--line,#dde1e6);font-size:.92rem}
+.aiStatusNotice.error{background:#fff1f0;border-color:#f1b4af}
+.aiUploadBox{display:flex;flex-direction:column;gap:5px;border:1.5px dashed var(--line,#cfd5dc);border-radius:14px;padding:18px;cursor:pointer;background:var(--surface-2,#fafbfc)}
+.aiUploadBox:hover{border-color:var(--accent,#315efb)} .aiUploadBox input{margin-top:8px}
+.aiMaterialList{display:grid;gap:8px;margin:12px 0}.aiMaterialItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line,#dde1e6);border-radius:10px}.aiMaterialItem small{display:block;opacity:.7}.aiMaterialItem .progress{font-variant-numeric:tabular-nums}
+.aiOptionsBlock{margin-top:16px}.aiGenerateButton{width:100%;margin-top:16px}.aiProgress{margin-top:12px;padding:12px;border-radius:10px;background:var(--surface-2,#f6f7f9);font-weight:600}
+.legacyAiDetails{margin-top:16px}.legacyAiDetails summary{cursor:pointer;font-weight:700}.legacyAiDetails .codeArea{margin-top:12px}
+.questionAiPanel{margin:10px 0 4px;padding:12px;border:1px solid var(--line,#dde1e6);border-radius:12px;background:var(--surface-2,#fafbfc)}.questionAiPanel textarea{width:100%;min-height:72px}.questionAiChips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.questionAiActions{display:flex;gap:8px;flex-wrap:wrap}.questionAiBusy{opacity:.65;pointer-events:none}
+.questionActions .aiEditQuestion,.questionActions .aiVariantQuestion{white-space:nowrap}
+@media(max-width:720px){.questionActions .aiEditQuestion,.questionActions .aiVariantQuestion{font-size:.74rem;padding:6px 8px}.aiGrid{grid-template-columns:1fr}}
+.optionImageThumb{width:68px;height:68px;object-fit:cover;border-radius:10px;border:1px solid var(--line,#dde1e6)}
+.choiceImage{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid var(--line,#dde1e6);display:block;margin:6px 0}

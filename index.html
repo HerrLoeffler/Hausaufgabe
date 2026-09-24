@@ -250,11 +250,12 @@
 
     <section id="aiView" class="view hidden">
       <div class="pageHead">
-        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Eigene KI verwenden</h1><p>Kostenlos mit ChatGPT, Claude oder Gemini: Prompt erzeugen, Antwort zurückkopieren – Testify repariert typische Formatfehler automatisch.</p></div>
+        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Test mit KI erstellen</h1><p>Beschreibe den Test – Testify erstellt einen bearbeitbaren Entwurf direkt in deinem Editor.</p></div>
       </div>
+      <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
       <div class="aiGrid">
         <article class="card">
-          <h2>1. Test beschreiben</h2>
+          <h2>Test beschreiben</h2>
           <div class="formGrid2">
             <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
             <label>Klasse<input id="aiGrade" type="text" placeholder="9" /></label>
@@ -263,28 +264,39 @@
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
             <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="50" value="10" /></label>
             <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
-            <label>Dauer (Min.)<input id="aiDuration" type="number" min="5" value="30" /></label>
-            <label>Gesamtpunkte ca.<input id="aiPoints" type="number" min="1" value="20" /></label>
+            <label>Dauer (Min.)<input id="aiDuration" type="number" min="1" max="300" value="30" /></label>
+            <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
           <p class="labelLike">Aufgabentypen erlauben</p>
           <div id="aiTypeChecks" class="typeCheckGrid"></div>
-          <label class="aiNotesField">Eigene Wünsche / Beschreibung des Tests <small>(optional)</small>
-            <textarea id="aiCustomNotes" rows="5" placeholder="z. B. Schwerpunkte, gewünschte Aufgaben, Themen, die vermieden werden sollen, besondere Anforderungen …"></textarea>
-          </label>
-          <button id="generatePromptBtn" class="button primary" type="button">Prompt erzeugen</button>
+          <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
         </article>
         <article class="card">
-          <div class="sectionHead"><div><h2>2. Prompt</h2><p>Diesen Text in eine KI-Anwendung deiner Wahl einfügen.</p><small class="hint">Der Prompt wird beim Öffnen einer KI automatisch in die Zwischenablage kopiert.</small></div><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button></div>
-          <div class="providerQuickActions"><button id="openChatGptBtn" class="button providerButton" type="button">ChatGPT öffnen</button><button id="openClaudeBtn" class="button providerButton" type="button">Claude öffnen</button><button id="openGeminiBtn" class="button providerButton" type="button">Gemini öffnen</button></div>
-          <div class="aiMaterialTip"><strong>💡 Tipp:</strong> Du kannst in deiner KI zusätzlich Buchseiten, Arbeitsblätter, Screenshots oder Fotos deines Unterrichtsmaterials hochladen. So wird der Test genauer auf deinen aktuellen Unterricht abgestimmt.<small>Keine personenbezogenen Schülerdaten hochladen.</small></div>
-          <textarea id="aiPromptOutput" class="codeArea" rows="18" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
+          <h2>Material &amp; Bilder</h2>
+          <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
+          <div id="aiMaterialList" class="aiMaterialList"></div>
+          <div class="stack compact aiOptionsBlock">
+            <label>Material verwenden<select id="aiMaterialMode"><option value="consider">Berücksichtigen, wenn relevant</option><option value="inspiration">Als Inspiration verwenden</option><option value="only">Nur aus Material erstellen</option></select></label>
+            <label>Bilder<select id="aiImageMode"><option value="sparse" selected>Sparsam, nur wo sinnvoll</option><option value="none">Keine Bilder</option></select></label>
+            <label id="aiVisualCountWrap">Max. visuelle Aufgaben<select id="aiMaxVisual"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></label>
+            <label class="checkRow"><input id="aiAllowImageChoices" type="checkbox" checked /> Bildantworten erlauben</label>
+          </div>
+          <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
+          <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
+          <small class="hint">Der erzeugte Test ist zunächst nur ein Entwurf. Du prüfst und bearbeitest ihn vor der Veröffentlichung.</small>
         </article>
       </div>
-      <article class="card importCard">
-        <div class="sectionHead"><div><h2>3. Antwort in Testify einfügen</h2><p>Kopiere die Antwort deiner KI hier hinein.</p></div><div class="actions"><button id="importJsonBtn" class="button primary" type="button">Antwort importieren</button></div></div>
-        <textarea id="aiJsonInput" class="codeArea" rows="14" placeholder="Antwort aus ChatGPT, Claude oder Gemini hier einfügen …"></textarea>
+      <details class="card legacyAiDetails">
+        <summary>Erweiterter manueller JSON-Import</summary>
+        <p>Der bisherige Copy-&amp;-Paste-Weg bleibt als Rückfalloption erhalten.</p>
+        <div class="actions"><button id="generatePromptBtn" class="button secondary" type="button">Prompt erzeugen</button><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button><button id="openChatGptBtn" class="button providerButton" type="button">ChatGPT öffnen</button><button id="openClaudeBtn" class="button providerButton" type="button">Claude öffnen</button><button id="openGeminiBtn" class="button providerButton" type="button">Gemini öffnen</button></div>
+        <textarea id="aiPromptOutput" class="codeArea" rows="10" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
+        <textarea id="aiJsonInput" class="codeArea" rows="10" placeholder="JSON-Antwort hier einfügen …"></textarea>
         <div id="aiJsonHelp" class="jsonHelp hidden"></div>
-      </article>
+        <div class="actions"><button id="importJsonBtn" class="button primary" type="button">Antwort importieren</button></div>
+        <input id="aiJsonFile" type="file" accept=".json,application/json" class="hidden" />
+        <button id="selectJsonFileBtn" class="linkButton" type="button">JSON-Datei auswählen</button>
+      </details>
     </section>
 
     <section id="editorView" class="view hidden">
@@ -344,7 +356,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
+      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Gleichwertige neue Variante">↻ Neue Variante</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -404,6 +416,6 @@
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.3.0"></script>
+  <script type="module" src="app.js?v=2.3.1-ai1"></script>
 </body>
 </html>
