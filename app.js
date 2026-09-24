@@ -92,6 +92,7 @@ const state = {
   profile: null,
   quizzes: [],
   currentQuiz: null,
+  newManualQuiz: false,
   questions: [],
   loadedQuestionIds: new Set(),
   currentResultsQuiz: null,
@@ -745,13 +746,13 @@ async function createQuiz() {
     toast("Bitte zuerst anmelden.", "error");
     return;
   }
-  try {
-    const { code } = await createQuizDocument();
-    await openEditor(code);
-  } catch (err) {
-    console.error(err);
-    toast("Test konnte nicht erstellt werden.", "error");
-  }
+  const code = randomCode();
+  state.newManualQuiz = true;
+  state.currentQuiz = { ...quizDefaults(), id: code };
+  state.questions = [];
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
+  renderEditorState(state.currentQuiz);
 }
 
 async function duplicateQuiz(code) {
@@ -1947,6 +1948,7 @@ async function openEditor(code) {
     if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
     const q = { id: quizSnap.id, ...quizSnap.data() };
     if (q.ownerId !== state.user.uid) throw new Error("Kein Zugriff");
+    state.newManualQuiz = false;
     state.currentQuiz = q;
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
     state.questions = qs.docs.map((d) => {
@@ -1955,32 +1957,39 @@ async function openEditor(code) {
       return item;
     });
     state.loadedQuestionIds = new Set(state.questions.map((x) => x.id));
-
-    $("quizTitle").value = q.title || "";
-    $("quizSubject").value = q.subject || "";
-    $("quizGrade").value = q.grade || "";
-    $("quizDescription").value = q.description || "";
-    populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
-    $("quizResultMode").value = q.resultMode || "points_grade";
-    $("quizShowSolutions").checked = q.showSolutions ?? true;
-    $("quizStartMode").value = q.startMode === "teacher" ? "teacher" : "student";
-    $("quizShuffleQuestions").checked = Boolean(q.shuffleQuestions);
-    $("quizShuffleAnswers").checked = Boolean(q.shuffleAnswers);
-    const hasTimeLimit = Number(q.timeLimitMinutes) > 0;
-    $("quizUseTimeLimit").checked = hasTimeLimit;
-    $("quizTimeLimitMinutes").value = hasTimeLimit ? Number(q.timeLimitMinutes) : 10;
-    $("quizTimeLimitWrap").classList.toggle("hidden", !hasTimeLimit);
-    updateTimeLimitHint();
-    $("editorHeading").textContent = q.title || "Test bearbeiten";
-    showView("editorView");
-    renderImportReviewBanner();
-    renderQuestions();
-    markSaved();
-    updateEditorPublishControls();
+    renderEditorState(q);
   } catch (err) {
     console.error(err);
     toast("Test konnte nicht geöffnet werden.", "error");
   }
+}
+
+function renderEditorState(q) {
+  $("quizTitle").value = q.title || "";
+  $("quizSubject").value = q.subject || "";
+  $("quizGrade").value = q.grade || "";
+  $("quizDescription").value = q.description || "";
+  populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
+  $("quizResultMode").value = q.resultMode || "points_grade";
+  $("quizShowSolutions").checked = q.showSolutions ?? true;
+  $("quizStartMode").value = q.startMode === "teacher" ? "teacher" : "student";
+  $("quizShuffleQuestions").checked = Boolean(q.shuffleQuestions);
+  $("quizShuffleAnswers").checked = Boolean(q.shuffleAnswers);
+  const hasTimeLimit = Number(q.timeLimitMinutes) > 0;
+  $("quizUseTimeLimit").checked = hasTimeLimit;
+  $("quizTimeLimitMinutes").value = hasTimeLimit ? Number(q.timeLimitMinutes) : 10;
+  $("quizTimeLimitWrap").classList.toggle("hidden", !hasTimeLimit);
+  updateTimeLimitHint();
+  $("editorHeading").textContent = q.title || "Test bearbeiten";
+  showView("editorView");
+  renderImportReviewBanner();
+  renderQuestions();
+  if (state.newManualQuiz) {
+    state.isDirty = false;
+    $("saveState").textContent = "Noch nicht gespeichert";
+    $("saveState").style.color = "#667085";
+  } else markSaved();
+  updateEditorPublishControls();
 }
 
 function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
@@ -2842,6 +2851,8 @@ function updateEditorPublishControls() {
   const ended = Boolean(state.currentQuiz.ended);
   const published = Boolean(state.currentQuiz.published) && !ended;
   $("endQuizBtn")?.classList.toggle("hidden", !published);
+  if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz;
+  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz;
   if ($("publishBtn")) $("publishBtn").textContent = ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen";
 }
 
@@ -2862,6 +2873,8 @@ function markSaved() {
 function leaveEditorToDashboard() {
   if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen. Wirklich ohne Speichern zurückgehen?")) return;
   state.isDirty = false;
+  state.newManualQuiz = false;
+  state.currentQuiz = null;
   loadDashboard();
 }
 
@@ -2987,7 +3000,7 @@ async function saveCurrentQuiz(showMessage = true) {
     return false;
   }
   try {
-    const code = state.currentQuiz.id;
+    let code = state.currentQuiz.id;
     const totalPoints = round1(state.questions.reduce((s, q) => s + (Number(q.points) || 0), 0));
     const selectedScaleId = $("quizGradeScale").value;
     const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
@@ -3009,12 +3022,17 @@ async function saveCurrentQuiz(showMessage = true) {
       totalPoints,
       updatedAt: serverTimestamp()
     };
-    if (state.currentQuiz.published && !state.currentQuiz.ended && patch.startMode !== state.currentQuiz.startMode) {
+    if (!state.newManualQuiz && state.currentQuiz.published && !state.currentQuiz.ended && patch.startMode !== state.currentQuiz.startMode) {
       patch.sessionState = patch.startMode === "teacher" ? "waiting" : "open";
       patch.sessionRunId = patch.startMode === "teacher" ? randomId("run") : null;
       patch.sessionStartedAt = null;
     }
-    await updateDoc(doc(db, "quizzes", code), patch);
+    if (state.newManualQuiz) {
+      const created = await createQuizDocument(patch);
+      code = created.code;
+      state.currentQuiz = { ...created.quiz, ...patch, id: code };
+      state.newManualQuiz = false;
+    } else await updateDoc(doc(db, "quizzes", code), patch);
 
     const currentIds = new Set();
     for (let i = 0; i < state.questions.length; i += 1) {
