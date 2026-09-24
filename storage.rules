@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function activeUser() {
+      return signedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.status == 'active';
+    }
+    match /aiUploads/{uid}/{materialId}/{fileName} {
+      allow read: if activeUser() && request.auth.uid == uid;
+      allow create: if activeUser()
+                    && request.auth.uid == uid
+                    && request.resource.size <= 15 * 1024 * 1024
+                    && request.resource.contentType.matches('^(application/pdf|image/(jpeg|png|webp)|text/(plain|csv)|application/vnd\\.openxmlformats-officedocument\\.(wordprocessingml\\.document|presentationml\\.presentation|spreadsheetml\\.sheet))$');
+      allow update: if false;
+      allow delete: if activeUser() && request.auth.uid == uid;
+    }
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}
