@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.0" />
-  <link rel="stylesheet" href="styles.css?v=2.3.0" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai5" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -267,8 +267,9 @@
             <label>Dauer (Min.)<input id="aiDuration" type="number" min="1" max="300" value="30" /></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
-          <p class="labelLike">Aufgabentypen erlauben</p>
-          <div id="aiTypeChecks" class="typeCheckGrid"></div>
+          <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">5 ausgewählt</span></summary>
+            <div id="aiTypeChecks" class="typeCheckGrid"></div>
+          </details>
           <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
         </article>
         <article class="card">
@@ -301,8 +302,8 @@
 
     <section id="editorView" class="view hidden">
       <div class="pageHead stickyHead">
-        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p></div>
-        <div class="actions"><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
+        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p><div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div></div>
+        <div class="actions"><button id="createSimilarTestBtn" class="button secondary" type="button" title="Eigenständigen, ähnlichen Test als neuen Entwurf erstellen">✨ Ähnlichen Test erstellen</button><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
       </div>
       <div id="importReviewBanner" class="importReviewBanner hidden"></div>
       <div class="editorLayout">
@@ -356,7 +357,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Gleichwertige neue Variante">↻ Neue Variante</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
+      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -416,6 +417,6 @@
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai4"></script>
+  <script type="module" src="app.js?v=2.3.1-ai5"></script>
 </body>
 </html>

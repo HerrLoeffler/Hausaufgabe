@@ -8,7 +8,26 @@ test("points require half steps",()=>{const q=base(); q.points=1.3; assert.ok(va
 test("no images blocks media",()=>{const q=base(); q.mediaIntent.kind="ai_generated"; assert.ok(validateQuestion(q,{allowImages:false}).length);});
 test("image choices obey switch",()=>{const q=base(); q.mediaIntent={kind:"image_choices",prompt:"x",altText:"x",count:4,sourceMaterialId:"",reason:"x"}; assert.ok(validateQuestion(q,{allowImageChoices:false}).length);});
 test("unsupported uploaded crop cannot silently lose a requested image",()=>{const q=base(); q.mediaIntent={kind:"uploaded_crop",prompt:"",altText:"x",count:0,sourceMaterialId:"m1",reason:"x"}; assert.ok(validateQuestion(q,{materialIds:["m1"]}).some(x=>x.includes("nicht automatisch")));});
-test("test detects duplicate questions",()=>assert.ok(validateTest({title:"T",questions:[base(),base()]}).some(x=>x.includes("identisch"))));
+test("test detects duplicate questions",()=>assert.ok(validateTest({title:"T",questions:[base(),base()]}).some(x=>x.includes("wiederholt"))));
+test("equivalent phrasing with the same answer is rejected",()=>{
+  const first=base(); first.text="Wähle den Schal aus."; first.options=[{text:"Schal",correct:true},{text:"Gürtel",correct:false}];
+  const second=base(); second.text="Welches Bild zeigt den Schal?"; second.options=[{text:"Gürtel",correct:false},{text:"Schal",correct:true}];
+  assert.ok(validateTest({title:"T",questions:[first,second]}).some(x=>x.includes("wiederholt")));
+  assert.ok(validateTest({title:"T",questions:[second]},{referenceQuestions:[first]}).some(x=>x.includes("Ausgangstests")));
+});
+test("other skills may reuse an answer without being rejected",()=>{
+  const first=base(); first.text="Wähle den Schal aus."; first.options=[{text:"Schal",correct:true},{text:"Gürtel",correct:false}];
+  const second=base(); second.text="Was trägt man bei Frost am Hals?"; second.options=first.options;
+  assert.deepEqual(validateTest({title:"T",questions:[first,second]}),[]);
+  second.type="gapfill"; second.text="Am Hals trägt man einen [Schal].";
+  assert.deepEqual(validateTest({title:"T",questions:[first,second]}),[]);
+});
+test("duplicated answer options are invalid",()=>{
+  const q=base(); q.options=[{text:"Schal",correct:true},{text:"schal!",correct:false}];
+  assert.ok(validateQuestion(q).some(x=>x.includes("eindeutig")));
+  q.options=[{text:"a scarf",correct:true},{text:"scarf",correct:false}];
+  assert.ok(validateQuestion(q).some(x=>x.includes("eindeutig")));
+});
 test("exact image counts reject a draft without requested images",()=>{
   const q=base();
   assert.ok(validateTest({title:"T",questions:[q]},{imageQuestionCount:1,imageAnswerQuestionCount:0}).some(x=>x.includes("1 Aufgaben mit einem Bild")));

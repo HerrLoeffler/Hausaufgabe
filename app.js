@@ -1246,7 +1246,13 @@ $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://clau
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
+$("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
 ["aiImageQuestionCount", "aiImageAnswerCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
+
+function updateAiTypeCount() {
+  const selected = $("aiTypeChecks")?.querySelectorAll('input[type="checkbox"]:checked').length || 0;
+  if ($("aiTypeCount")) $("aiTypeCount").textContent = `${selected} ausgewählt`;
+}
 
 async function openAiView() {
   const settings = getSettings();
@@ -1262,6 +1268,7 @@ async function openAiView() {
     item.innerHTML = `<input type="checkbox" value="${value}" ${defaultChecked ? "checked" : ""}><span>${escapeHtml(label)}</span>`;
     root.appendChild(item);
   });
+  updateAiTypeCount();
   renderAiMaterials();
   updateAiImageControls();
   showView("aiView");
@@ -1286,14 +1293,20 @@ function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
   if (code.includes("resource-exhausted")) return "Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen.";
   if (code.includes("deadline-exceeded")) return "Die KI braucht gerade zu lange. Bitte erneut versuchen.";
   if (code.includes("unauthenticated")) return "Bitte neu anmelden und erneut versuchen.";
+  if (code.includes("failed-precondition") && Array.isArray(err?.details?.errors)) return `Die KI konnte noch kein gültiges Ergebnis erstellen: ${err.details.errors.slice(0, 2).join(" ")}`.slice(0, 360);
   return String(err?.message || fallback).replace(/^Firebase:\s*/i, "").slice(0, 260) || fallback;
 }
 
-function setAiProgress(message = "", isError = false) {
-  const box = $("aiProgress");
+function setAiProgress(message = "", isError = false, percent = null, hint = "", targetId = "aiProgress") {
+  const box = $(targetId);
   if (!box) return;
   if (!message) { box.classList.add("hidden"); box.textContent = ""; return; }
-  box.textContent = message;
+  box.setAttribute("aria-live", percent === null ? "polite" : "off");
+  if (percent === null) box.textContent = message;
+  else {
+    const value = Math.max(0, Math.min(100, Math.round(percent)));
+    box.innerHTML = `<div class="aiProgressHeading"><strong>${escapeHtml(message)}</strong><span>ca. ${value} %</span></div><div class="aiProgressTrack" role="progressbar" aria-label="Geschätzter Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}"><div class="aiProgressFill" style="width:${value}%"></div></div><small>${escapeHtml(hint || "Die Erstellung kann mehrere Minuten dauern. Bitte warte, bis der Entwurf geöffnet wird.")}</small>`;
+  }
   box.classList.toggle("error", isError);
   box.classList.remove("hidden");
 }
@@ -1364,43 +1377,69 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
       const prompt = `Erzeuge eine klare, neutrale Schulaufgaben-Illustration für die Antwortoption „${opt.text}“. Keine Schrift und keine Markierung, die richtig oder falsch verrät. Einheitlicher sachlicher Stil, quadratisch.`;
-      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, altText: `Abbildung: ${opt.text}`, purpose: "option" });
+      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, altText: `Bildantwort ${i + 1}`, purpose: "option" });
       if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
-      choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: result.asset.imageAlt || `Abbildung: ${opt.text}` });
+      choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
     }
     choices.forEach((asset, i) => Object.assign(q.options[i], asset));
+    q.imageChoicesOnly = true;
   }
 }
 
 async function generateAiTestNative() {
-  const btn = $("generateAiTestBtn");
+  try { await createAiTestFromRequest(collectAiRequest()); }
+  catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
+}
+
+async function createAiTestFromRequest(request, { similar = false, sourceQuiz = null } = {}) {
+  const btn = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
+  const targetId = similar ? "similarTestProgress" : "aiProgress";
+  const show = (message, percent = null, isError = false, hint = "") => setAiProgress(message, isError, percent, hint, targetId);
+  let timer;
   try {
-    const request = collectAiRequest();
     btn.disabled = true;
-    setAiProgress(request.materials.length ? "Material wird analysiert und der Test geplant …" : "Test wird geplant und erstellt …");
+    const start = Date.now();
+    const planning = request.materials.length ? "Material wird analysiert und der Test geplant …" : "KI entwirft und prüft die Aufgaben …";
+    const renderPlanning = () => {
+      const seconds = Math.floor((Date.now() - start) / 1000);
+      const estimate = Math.min(65, 8 + Math.floor(57 * (1 - Math.exp(-seconds / 50))));
+      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Die KI-Anfrage kann mehrere Minuten dauern.`);
+    };
+    renderPlanning();
+    timer = setInterval(renderPlanning, 1000);
     const response = await aiApi.generateTest(request);
+    clearInterval(timer); timer = null;
     const data = response?.test;
     if (!data?.questions?.length) throw new Error("Die KI hat keine Aufgaben geliefert.");
-    setAiProgress("Entwurf wird in Testify angelegt …");
+    show("Entwurf wird gespeichert …", 70);
     const report = { warnings: [], repairs: [] };
-    const base = { ...quizDefaults(), title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(data.description || getSettings().defaultDescription), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
+    const inherited = sourceQuiz ? {
+      gradeScaleId: sourceQuiz.gradeScaleId, gradeScaleSnapshot: deepClone(getQuizScale(sourceQuiz)),
+      resultMode: sourceQuiz.resultMode, showSolutions: sourceQuiz.showSolutions,
+      timeLimitMinutes: sourceQuiz.timeLimitMinutes, startMode: sourceQuiz.startMode,
+      shuffleQuestions: sourceQuiz.shuffleQuestions, shuffleAnswers: sourceQuiz.shuffleAnswers
+    } : {};
+    const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(data.description || getSettings().defaultDescription), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
     const { code } = await createQuizDocument(base);
     for (let i = 0; i < data.questions.length; i += 1) {
       const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
       const ref = doc(collection(db, "quizzes", code, "questions")); q.id = ref.id; q.position = i + 1;
+      show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
-        setAiProgress(`Aufgabe ${i + 1}/${data.questions.length}: passendes Bild wird vorbereitet …`);
+        show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
         try { await applyGeneratedMedia(raw, q, code, ref.id); } catch (err) { console.warn("Bildgenerierung fehlgeschlagen", err); report.warnings.push(`Aufgabe ${i + 1}: Bild oder Bildantworten konnten nicht erzeugt werden; die Aufgabe wurde ohne Bilder übernommen.`); }
       }
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
-    setAiProgress(); toast("KI-Entwurf erstellt.");
+    show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
+    toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
     await openEditor(code);
+    setAiProgress("", false, null, "", targetId);
     state.pendingImportReport = { ...report, quizId: code };
     renderImportReviewBanner();
   } catch (err) {
-    console.error(err); setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error");
-  } finally { btn.disabled = false; }
+    console.error(err); show(aiFriendlyError(err), null, true); toast(aiFriendlyError(err), "error");
+  } finally { if (timer) clearInterval(timer); btn.disabled = false; }
 }
 
 function generateAiPrompt() {
@@ -1828,6 +1867,7 @@ $("addQuestionBtn").addEventListener("click", () => {
 });
 $("saveQuizBtn").addEventListener("click", () => saveCurrentQuiz(true));
 $("publishBtn").addEventListener("click", publishCurrentQuiz);
+$("createSimilarTestBtn")?.addEventListener("click", createSimilarTest);
 $("shareTemplateBtn")?.addEventListener("click", async () => {
   if (!state.currentQuiz) return;
   await shareQuizTemplate(state.currentQuiz.id);
@@ -2074,7 +2114,36 @@ function renderQuestions() {
 }
 
 function questionContext(index) {
-  return { title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "", neighbors: state.questions.filter((_, i) => i !== index).slice(Math.max(0, index - 2), index + 2).map(x => x.text).filter(Boolean) };
+  const others = state.questions.filter((_, i) => i !== index).slice(0, 50);
+  return {
+    title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
+    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: q.imageChoicesOnly ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } }))
+  };
+}
+
+function questionForAi(q) {
+  const copy = sanitizeQuestionForSave(q);
+  delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
+  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, ...option }) => option);
+  return copy;
+}
+
+async function createSimilarTest() {
+  if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
+  if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
+  const questions = state.questions;
+  const hasImageAnswers = q => ["single", "multi"].includes(q.type) && q.options?.length >= 2 && q.options?.length <= 4 && q.options.every(o => o.imageDataUrl);
+  const imageAnswerQuestionCount = Math.min(3, questions.filter(hasImageAnswers).length);
+  const imageQuestionCount = Math.min(5 - imageAnswerQuestionCount, questions.filter(q => !hasImageAnswers(q) && getQuestionImageSrc(q)).length);
+  const request = {
+    schoolType: "Mittelschule", region: "Bayern", subject: $("quizSubject").value.trim(), grade: $("quizGrade").value.trim(),
+    topic: $("quizTitle").value.trim() || "Ähnlicher Test", difficulty: "gemischt", count: questions.length,
+    duration: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) || 30 : 30, points: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+    allowedTypes: [...new Set(questions.map(q => q.type))], notes: "Erstelle eine eigenständige Variante mit gleicher Kompetenz, ähnlichem Schwierigkeitsgrad und neuen Beispielen. Verwende keine wortgleichen Aufgaben.",
+    materials: [], materialMode: "consider", imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount,
+    sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: hasImageAnswers(q) ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
+  };
+  await createAiTestFromRequest(request, { similar: true, sourceQuiz: state.currentQuiz });
 }
 
 function toggleQuestionAiPanel(node, q, index) {
@@ -2093,15 +2162,21 @@ function toggleQuestionAiPanel(node, q, index) {
 
 async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null } = {}) {
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
+  if (variant && state.questions.length >= 50) return toast("Ein Test kann höchstens 50 Aufgaben enthalten.", "error");
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = await aiApi.regenerateQuestion({ question: sanitizeQuestionForSave(q), instruction, variant, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: true, materials: [] });
-    const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report); next.id = q.id; next.position = q.position; next._aiUndo = old;
+    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: true, materials: [] });
+    const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
+    next.id = variant ? doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id : q.id;
+    next.position = variant ? index + 2 : q.position;
+    if (!variant) next._aiUndo = old;
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
-      try { await applyGeneratedMedia(response.question, next, state.currentQuiz.id, q.id); } catch (err) { console.warn(err); toast("Aufgabe wurde erstellt, das Bild aber nicht.", "error"); }
-    } else if (q.imageDataUrl || q.imageUrl) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
-    state.questions[index] = next; renderQuestions(); markDirty(); toast(variant ? "Neue Variante erstellt." : "Aufgabe überarbeitet.");
+      try { await applyGeneratedMedia(response.question, next, state.currentQuiz.id, next.id); } catch (err) { console.warn(err); toast("Aufgabe wurde erstellt, das Bild aber nicht.", "error"); }
+    } else if (!variant && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
+    if (variant) state.questions.splice(index + 1, 0, next);
+    else state.questions[index] = next;
+    renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
   } catch (err) { console.error(err); toast(aiFriendlyError(err, "Aufgabe konnte nicht überarbeitet werden."), "error"); }
   finally { card?.classList.remove("questionAiBusy"); }
 }
@@ -2883,6 +2958,7 @@ function sanitizeQuestionForSave(q) {
   }
   if (["single", "multi", "dropdown"].includes(q.type)) {
     base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}) }));
+    if (q.imageChoicesOnly) base.imageChoicesOnly = true;
   }
   if (q.type === "text") {
     base.acceptedAnswers = (q.acceptedAnswers || []).map((x) => String(x).trim()).filter(Boolean);
@@ -3611,10 +3687,14 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       sel.innerHTML = `<option value="">Bitte auswählen …</option>` + entries.map(({ option, originalIndex }) => `<option value="${originalIndex}">${escapeHtml(option.text)}</option>`).join("");
       section.appendChild(sel);
     } else if (q.type === "single" || q.type === "multi") {
-      studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }) => {
+      const imageOnly = q.options?.length >= 2 && q.options.every(o => o.imageDataUrl) &&
+        (q.imageChoicesOnly || q.options.every(o => /^Abbildung:\s*/i.test(o.imageAlt || "")));
+      studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }, shownIndex) => {
         const label = document.createElement("label");
         label.className = "choice";
-        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(option.imageAlt || `Abbildung: ${option.text}`)}">` : ""}<span>${escapeHtml(option.text)}</span>`;
+        const text = imageOnly ? `Bild ${String.fromCharCode(65 + shownIndex)}` : option.text;
+        const alt = imageOnly ? "" : option.imageAlt || `Abbildung: ${option.text}`;
+        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
         section.appendChild(label);
       });
     } else if (q.type === "truefalse") {

@@ -5,7 +5,7 @@ const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
 const { testSchema, questionSchema } = require("./lib/schemas");
-const { validateTest, validateQuestion, normalizeQuestion } = require("./lib/validation");
+const { validateTest, validateQuestion, normalizeQuestion, sameQuestion } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, logUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials } = require("./lib/materials");
@@ -16,6 +16,28 @@ const { generateImageAsset } = require("./lib/media");
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };
+
+function cleanSourceTest(value) {
+  if (!value || !Array.isArray(value.questions)) return null;
+  return {
+    title: String(value.title || "").slice(0, 150),
+    questions: value.questions.slice(0, LIMITS.maxQuestions).map(q => ({
+      type: QUESTION_TYPES.includes(q?.type) ? q.type : "text",
+      text: String(q?.text || "").slice(0, 320),
+      options: Array.isArray(q?.options) ? q.options.slice(0, 6).map(o => ({ text: String(o?.text || "").slice(0, 100), correct: Boolean(o?.correct) })) : [],
+      acceptedAnswers: Array.isArray(q?.acceptedAnswers) ? q.acceptedAnswers.slice(0, 4).map(a => String(a).slice(0, 100)) : [],
+      correctBoolean: q?.correctBoolean === true,
+      pairs: Array.isArray(q?.pairs) ? q.pairs.slice(0, 8).map(p => ({ left: String(p?.left || "").slice(0, 80), right: String(p?.right || "").slice(0, 80) })) : [],
+      items: Array.isArray(q?.items) ? q.items.slice(0, 10).map(x => String(x).slice(0, 100)) : [],
+      groups: Array.isArray(q?.groups) ? q.groups.slice(0, 6).map(g => ({ name: String(g?.name || "").slice(0, 80), items: Array.isArray(g?.items) ? g.items.slice(0, 8).map(x => String(x).slice(0, 80)) : [] })) : [],
+      passage: String(q?.passage || "").slice(0, 400),
+      targetWords: Array.isArray(q?.targetWords) ? q.targetWords.slice(0, 8).map(x => String(x).slice(0, 80)) : [],
+      numericAnswer: Number.isFinite(Number(q?.numericAnswer)) ? Number(q.numericAnswer) : null,
+      unit: String(q?.unit || "").slice(0, 30),
+      mediaIntent: { kind: ["ai_generated", "image_choices"].includes(q?.mediaIntent?.kind) ? q.mediaIntent.kind : "none" }
+    }))
+  };
+}
 
 function cleanInput(data = {}) {
   const count = Math.max(1, Math.min(LIMITS.maxQuestions, Number(data.count) || 10));
@@ -44,7 +66,8 @@ function cleanInput(data = {}) {
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? imageAnswerQuestionCount : undefined,
     allowImageChoices: exactImageCounts ? imageAnswerQuestionCount > 0 : Boolean(data.allowImageChoices) && imageMode !== "none",
     maxVisualQuestions: exactImageCounts ? imageQuestionCount + imageAnswerQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
-    materialMode: ["consider", "inspiration", "only"].includes(data.materialMode) ? data.materialMode : "consider"
+    materialMode: ["consider", "inspiration", "only"].includes(data.materialMode) ? data.materialMode : "consider",
+    sourceTest: cleanSourceTest(data.sourceTest)
   };
 }
 
@@ -73,18 +96,20 @@ exports.generateTest = onCall(callableOpts, async request => {
   const materials = sanitizeMaterials(request.data?.materials, uid);
   const materialContent = materials.length ? await materialInputs(materials, uid) : [];
   const materialIds = materials.map(m => m.id);
-  const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount };
+  const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions };
   let result = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
+  const usage = { ...result.usage };
   result.data.questions = result.data.questions.map(normalizeQuestion);
   let errors = validateTest(result.data, options);
   if (errors.length) {
     const repair = await structuredResponse({ schema: testSchema, schemaName: "testify_test_repair_v1", userPrompt: `${testUserPrompt(input)}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nRepariere ausschließlich diese Fehler und gib den vollständigen Test neu aus.\nVorheriger Entwurf: ${JSON.stringify(result.data)}`, content: materialContent });
+    for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(repair.usage[key] || 0);
     repair.data.questions = repair.data.questions.map(normalizeQuestion);
     errors = validateTest(repair.data, options);
     result = repair;
   }
+  await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: result.data.questions.length, failed: Boolean(errors.length) });
   if (errors.length) throw new HttpsError("failed-precondition", "Die KI konnte keinen zuverlässig gültigen Test erzeugen.", { errors: errors.slice(0, 10) });
-  await logUsage(uid, "test", result.usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: result.data.questions.length });
   return { test: result.data, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION } };
 });
 
@@ -96,8 +121,10 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const { data, usage } = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant) }) });
   const normalized = normalizeQuestion(data);
   const errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: Boolean(request.data?.allowImageChoices), materialIds });
+  const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
+  if (request.data?.variant && [question, ...existing].some(other => sameQuestion(other, normalized))) errors.push("Die Variante wiederholt eine bestehende Aufgabe.");
+  await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length) });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION });
   return { question: normalized };
 });
 

@@ -4,6 +4,31 @@ const { QUESTION_TYPES, LIMITS } = require("./constants");
 
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
 function normalizeText(value) { return String(value ?? "").trim(); }
+function comparable(value) {
+  return normalizeText(value).normalize("NFKC").toLocaleLowerCase("de").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
+}
+function comparableAnswer(value) { return comparable(value).replace(/^(?:a|an|the|ein|eine|einen|einem|eines|der|die|das) /, ""); }
+const INSTRUCTION_WORDS = new Set("welche welcher welches welchen wähle waehle kreuze an zu aus richtige richtiges richtigen antwort bild abbildung zeigt sehen sie du das die der den dem ein eine einen einem eines ist sind wird werden auf im in mit und oder welche bilder choice choose select identify which what is the a an of shown picture image correct answer item".split(" "));
+function keyTerms(text) { return [...new Set(comparable(text).split(" ").filter(w => w.length > 1 && !INSTRUCTION_WORDS.has(w)))]; }
+function answerKey(q) {
+  if (["single", "dropdown", "multi"].includes(q.type)) return (q.options || []).filter(o => o.correct).map(o => comparableAnswer(o.text)).sort().join("|");
+  if (q.type === "text") return (q.acceptedAnswers || []).map(comparableAnswer).sort().join("|");
+  if (q.type === "gapfill") return [...String(q.text || "").matchAll(/\[([^\]]+)\]/g)].map(m => comparable(m[1].split("|")[0])).join("|");
+  if (q.type === "number") return `${q.numericAnswer}:${comparable(q.unit)}`;
+  return "";
+}
+function sameQuestion(a, b) {
+  if (!a || !b || !a.text || !b.text) return false;
+  const family = t => ["single", "dropdown"].includes(t) ? "choice" : t;
+  if (family(a.type) !== family(b.type) || (a.mediaIntent?.kind || "none") !== (b.mediaIntent?.kind || "none")) return false;
+  const stemA = comparable(a.text), stemB = comparable(b.text);
+  if (stemA === stemB) return true;
+  if (!answerKey(a) || answerKey(a) !== answerKey(b)) return false;
+  const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
+  if (!termsA.length || !termsB.length) return false;
+  const overlap = termsA.filter(x => termsB.includes(x)).length;
+  return overlap / Math.max(termsA.length, termsB.length) >= 0.8;
+}
 
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {
   const errors = [];
@@ -14,6 +39,8 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   if (["single", "dropdown", "multi"].includes(q.type)) {
     const opts = Array.isArray(q.options) ? q.options : [];
     if (opts.length < 2 || opts.some(o => !normalizeText(o.text))) errors.push("Antwortoptionen unvollständig.");
+    const labels = opts.map(o => comparableAnswer(o.text)).filter(Boolean);
+    if (new Set(labels).size !== labels.length) errors.push("Antwortoptionen müssen eindeutig sein.");
     const correct = opts.filter(o => o.correct).length;
     if (q.type === "multi" ? correct < 1 : correct !== 1) errors.push(q.type === "multi" ? "Multiple Choice braucht mindestens eine richtige Antwort." : "Genau eine Antwort muss richtig sein.");
   }
@@ -67,9 +94,11 @@ function validateTest(test, opts = {}) {
   const qs = Array.isArray(test.questions) ? test.questions : [];
   if (!qs.length || qs.length > LIMITS.maxQuestions) errors.push("Ungültige Aufgabenanzahl.");
   qs.forEach((q, i) => validateQuestion(q, opts).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`)));
-  const normalizedTexts = qs.map(q => normalizeText(q.text).toLocaleLowerCase("de")).filter(Boolean);
-  const duplicate = normalizedTexts.find((x, i) => normalizedTexts.indexOf(x) !== i);
-  if (duplicate) errors.push("Mindestens zwei Aufgaben sind identisch.");
+  for (let i = 0; i < qs.length; i += 1) {
+    const prior = qs.findIndex((q, j) => j < i && sameQuestion(q, qs[i]));
+    if (prior >= 0) errors.push(`Aufgabe ${i + 1} wiederholt inhaltlich Aufgabe ${prior + 1}.`);
+    if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
+  }
   if (opts.expectedCount && qs.length !== opts.expectedCount) errors.push(`Erwartet ${opts.expectedCount} Aufgaben, erhalten ${qs.length}.`);
   if (opts.targetPoints) {
     const sum = roundHalf(qs.reduce((s, q) => s + Number(q.points || 0), 0));
@@ -90,4 +119,4 @@ function validateTest(test, opts = {}) {
   return errors;
 }
 
-module.exports = { validateQuestion, validateTest, normalizeQuestion, roundHalf };
+module.exports = { validateQuestion, validateTest, normalizeQuestion, roundHalf, sameQuestion };
