@@ -438,7 +438,14 @@ $("forgotBtn").addEventListener("click", async () => {
   }
 });
 
-$("logoutBtn").addEventListener("click", () => signOut(auth));
+$("logoutBtn").addEventListener("click", async () => {
+  await Promise.race([
+    Promise.allSettled(state.aiMaterials.map(m => aiApi.removeMaterial(m))),
+    new Promise(resolve => setTimeout(resolve, 2000))
+  ]);
+  state.aiMaterials = [];
+  await signOut(auth);
+});
 
 $("joinForm").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -477,6 +484,7 @@ function authMessage(err) {
 }
 
 onAuthStateChanged(auth, async (user) => {
+  if (state.user?.uid !== user?.uid) state.aiMaterials = [];
   state.user = user;
   state.profile = null;
   if (user) {
@@ -1257,6 +1265,7 @@ function updateAiTypeCount() {
 
 async function openAiView() {
   const settings = getSettings();
+  $("aiMaterialConfirmed").checked = false;
   $("aiSubject").value = settings.defaultSubject || "";
   $("aiGrade").value = settings.defaultGrade || "";
   if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
@@ -1327,7 +1336,17 @@ function renderAiMaterials() {
     const row = document.createElement("div"); row.className = "aiMaterialItem";
     const size = m.size ? `${Math.max(1, Math.round(m.size / 1024))} KB` : "";
     row.innerHTML = `<div><strong>${escapeHtml(m.name)}</strong><small>${escapeHtml(m.mimeType)}${size ? ` · ${size}` : ""}</small></div><button type="button" class="miniButton">Entfernen</button>`;
-    row.querySelector("button").addEventListener("click", async () => { row.classList.add("questionAiBusy"); await aiApi.removeMaterial(m); state.aiMaterials = state.aiMaterials.filter(x => x.id !== m.id); renderAiMaterials(); });
+    row.querySelector("button").addEventListener("click", async () => {
+      row.classList.add("questionAiBusy");
+      try {
+        await aiApi.removeMaterial(m);
+        state.aiMaterials = state.aiMaterials.filter(x => x.id !== m.id);
+        renderAiMaterials();
+      } catch (err) {
+        row.classList.remove("questionAiBusy");
+        toast(aiFriendlyError(err, "Material konnte nicht gelöscht werden. Bitte erneut versuchen."), "error");
+      }
+    });
     root.appendChild(row);
   });
 }
@@ -1335,6 +1354,11 @@ function renderAiMaterials() {
 async function handleAiMaterialFiles(event) {
   const files = Array.from(event.target.files || []);
   event.target.value = "";
+  if (files.length && !$("aiMaterialConfirmed").checked) {
+    toast("Bitte zuerst die Prüfung von Daten und Nutzungsrechten bestätigen.", "error");
+    $("aiMaterialConfirmed").focus();
+    return;
+  }
   for (const file of files) {
     if (state.aiMaterials.length >= 5) { toast("Maximal fünf Materialien pro Generierung.", "error"); break; }
     try {
@@ -1347,6 +1371,7 @@ async function handleAiMaterialFiles(event) {
 }
 
 function collectAiRequest() {
+  if (state.aiMaterials.length && !$("aiMaterialConfirmed").checked) throw new Error("Bitte die Prüfung der hochgeladenen Materialien bestätigen.");
   const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
   if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
   if (!allowedTypes.length) throw new Error("Bitte mindestens einen Aufgabentyp auswählen.");
@@ -1440,7 +1465,19 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     renderImportReviewBanner();
   } catch (err) {
     console.error(err); show(aiFriendlyError(err), null, true); toast(aiFriendlyError(err), "error");
-  } finally { if (timer) clearInterval(timer); btn.disabled = false; }
+  } finally {
+    if (timer) clearInterval(timer);
+    if (request.materials.length) {
+      const ids = new Set(request.materials.map(m => m.id));
+      const uploaded = state.aiMaterials.filter(m => ids.has(m.id));
+      const results = await Promise.allSettled(uploaded.map(m => aiApi.removeMaterial(m)));
+      const failedIds = new Set(uploaded.filter((m, i) => results[i].status === "rejected").map(m => m.id));
+      state.aiMaterials = state.aiMaterials.filter(m => !ids.has(m.id) || failedIds.has(m.id));
+      renderAiMaterials();
+      if (failedIds.size) toast("Ein Material konnte nicht bestätigt gelöscht werden. Bitte bei „Entfernen“ erneut versuchen.", "error");
+    }
+    btn.disabled = false;
+  }
 }
 
 function generateAiPrompt() {
@@ -2140,6 +2177,7 @@ function questionForAi(q) {
 async function createSimilarTest() {
   if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
   if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
+  if (!confirm("Für einen ähnlichen Test werden die Texte, Antwortoptionen und Lösungen des Ausgangstests an OpenAI gesendet. Bitte prüfe vorher, dass sie keine personenbezogenen Daten oder nicht für externe KI freigegebenen Materialien enthalten. Test erstellen?")) return;
   const questions = state.questions;
   const hasImageAnswers = q => ["single", "multi"].includes(q.type) && q.options?.length >= 2 && q.options?.length <= 4 && q.options.every(o => o.imageDataUrl);
   const imageAnswerQuestionCount = Math.min(3, questions.filter(hasImageAnswers).length);

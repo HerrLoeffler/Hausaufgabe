@@ -7,9 +7,13 @@ service firebase.storage {
         && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
         && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.status == 'active';
     }
+    function aiBetaUser() {
+      return activeUser()
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
     match /aiUploads/{uid}/{materialId}/{fileName} {
       allow read: if activeUser() && request.auth.uid == uid;
-      allow create: if activeUser()
+      allow create: if aiBetaUser()
                     && request.auth.uid == uid
                     && request.resource.size <= 15 * 1024 * 1024
                     && request.resource.contentType.matches('^(application/pdf|image/(jpeg|png|webp)|text/(plain|csv)|application/vnd\\.openxmlformats-officedocument\\.(wordprocessingml\\.document|presentationml\\.presentation|spreadsheetml\\.sheet))$');

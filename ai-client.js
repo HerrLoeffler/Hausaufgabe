@@ -42,7 +42,9 @@ export function createAiClient(app, getUid) {
     return { id, storagePath, mimeType: file.type, name: file.name, size: file.size };
   }
   async function removeMaterial(material) {
-    if (material?.storagePath) await deleteObject(ref(storage, material.storagePath)).catch(() => {});
+    if (!material?.storagePath) return;
+    try { await deleteObject(ref(storage, material.storagePath)); }
+    catch (err) { if (err?.code !== "storage/object-not-found") throw err; }
   }
   return { ...api, uploadMaterial, removeMaterial };
 }

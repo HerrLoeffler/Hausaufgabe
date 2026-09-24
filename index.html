@@ -250,7 +250,7 @@
 
     <section id="aiView" class="view hidden">
       <div class="pageHead">
-        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Test mit KI erstellen</h1><p>Beschreibe den Test – Testify erstellt einen bearbeitbaren Entwurf direkt in deinem Editor.</p></div>
+        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Test mit KI erstellen</h1><p>Beschreibe den Test – Testify erstellt einen bearbeitbaren Entwurf direkt in deinem Editor. Thema und Wünsche werden dafür an OpenAI gesendet; bitte keine personenbezogenen Daten eingeben.</p></div>
       </div>
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
       <div class="aiGrid">
@@ -274,8 +274,13 @@
         </article>
         <article class="card">
           <h2>Material &amp; Bilder</h2>
+          <div class="aiUploadNotice" id="aiUploadNotice">
+            <strong>Vor dem Hochladen prüfen</strong>
+            <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
+            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich habe geprüft: Das Material enthält keine personenbezogenen Daten von Schülern oder Dritten, und die Rechte für diese KI-Verarbeitung sind geklärt.</span></label>
+            <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
+          </div>
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
-          <small class="hint">Hochgeladene Materialien werden für die Testerstellung an OpenAI übermittelt. Sie bleiben im privaten Speicher, bis du sie über „Entfernen“ löschst.</small>
           <div id="aiMaterialList" class="aiMaterialList"></div>
           <div class="stack compact aiOptionsBlock">
             <label>Material verwenden<select id="aiMaterialMode"><option value="consider">Berücksichtigen, wenn relevant</option><option value="inspiration">Als Inspiration verwenden</option><option value="only">Nur aus Material erstellen</option></select></label>

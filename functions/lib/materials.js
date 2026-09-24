@@ -30,4 +30,16 @@ async function materialInputs(materials, uid) {
   }
   return out;
 }
-module.exports = { sanitizeMaterials, materialInputs };
+
+async function deleteUploadedMaterials(materials) {
+  if (!materials.length) return;
+  const bucket = getStorage().bucket();
+  const results = await Promise.allSettled(materials.map(async m => {
+    try { await bucket.file(m.storagePath).delete(); }
+    catch (err) { if (Number(err?.code) !== 404) throw err; }
+  }));
+  const failed = results.filter(result => result.status === "rejected").length;
+  if (failed) console.error(`KI-Material: ${failed} von ${materials.length} Uploads konnten nicht gelöscht werden.`);
+}
+
+module.exports = { sanitizeMaterials, materialInputs, deleteUploadedMaterials };

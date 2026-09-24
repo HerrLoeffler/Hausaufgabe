@@ -49,6 +49,7 @@ The script deploys only to `hausaufgabe-staging`: Firestore rules, Storage rules
 5. Verify the generated draft opens in the normal editor and can be saved/previewed.
 6. Test `✨ KI bearbeiten` and `↻ Neue Variante` on one question and verify `↶` undo appears.
 7. Only after text generation works, test one small PDF/image upload.
+   First confirm the upload notice; generate once, then verify the original disappears from Storage. Upload another small file without generating and verify that `purgeAiUploads` removes it after it is more than 24 hours old (the scheduler runs daily at 03:00 UTC). Check Cloud Scheduler and function logs for failures.
 8. Set "Aufgaben mit einem Bild" to 1 and verify exactly one image appears; then set "Aufgaben mit Bildantworten" to 1 and verify all choices have images. These calls use the staging API key and incur image costs.
 
 ## 6. Known beta boundaries
@@ -56,6 +57,7 @@ The script deploys only to `hausaufgabe-staging`: Firestore rules, Storage rules
 - App Check enforcement is not yet enabled; server-side Auth, active-account, admin-beta and quota checks are active.
 - Deterministic cropping of a region from uploaded material is not part of the first smoke test. The AI is instructed not to rely on this path yet.
 - Generated images reuse Testify's existing embedded image representation for compatibility during the beta.
+- Only use own or expressly cleared teaching material without personal data in this beta. Source files are sent to OpenAI; generated illustrations do not imply that the original upload is private from the text-model provider. The staging notice is not a substitute for the school's DPO review or the required processor and privacy documents.
 
 ## 7. Rollback
 

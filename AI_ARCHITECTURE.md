@@ -31,12 +31,14 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 - Existing Testify question images remain compatible through `imageDataUrl` / `imageUrl`.
 - AI-generated images are generated server-side with `gpt-image-2`, compressed to WebP, and returned as a bounded `imageDataUrl`. This deliberately reuses the existing renderer for the first beta and avoids introducing a second student-asset authorization path at the same time as the AI backend.
 - Image-answer options use optional `imageDataUrl` / `imageAlt` fields on existing single/multi options; old options remain valid.
-- Teacher source materials are uploaded privately to Cloud Storage under `aiUploads/{uid}/...` and read by the backend with the Admin SDK.
+- Teacher source materials are uploaded privately to Cloud Storage under `aiUploads/{uid}/...` and read by the backend with the Admin SDK. The original bytes are sent to the OpenAI Responses API when generating from materials; the image endpoint receives only a newly written text prompt.
 - AI-generated source crops are not automatically faked. `uploaded_crop` remains reserved for the later deterministic crop workflow.
 
 ## Source material
 
-Supported beta MIME types: PDF, JPEG, PNG, WebP, TXT, CSV, DOCX, PPTX and XLSX, max 15 MB each and max five files per generation. Uploads are private to the owner. Material contents are explicitly treated as untrusted data in prompts so embedded instructions cannot override Testify rules.
+Supported beta MIME types: PDF, JPEG, PNG, WebP, TXT, CSV, DOCX, PPTX and XLSX, max 15 MB each and max five files per generation. Uploads are private to the owner; new uploads are restricted to active beta admins. Material contents are explicitly treated as untrusted data in prompts so embedded instructions cannot override Testify rules. The upload form requires confirmation that no third-party personal data is present and the rights to process the material with external AI are cleared. This declaration is a guardrail, not a license or a substitute for the school's legal review.
+
+After an AI test generation or material analysis attempt, the server deletes the uploaded originals, including on errors. The client also tries to remove them and keeps failed deletions visible. Logout attempts to clear pending materials and removes their names from local state when accounts change. A daily scheduled job deletes abandoned uploads once they are at least 24 hours old (normally within 24–48 hours of upload). This only covers Firebase originals. The API requests set `store: false`, but default OpenAI abuse-monitoring logs can contain customer content for up to 30 days. Generated questions, images, student submissions and AI usage events in Firestore need a separate retention policy.
 
 ## Quotas and observability
 
