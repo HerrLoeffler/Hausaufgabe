@@ -277,9 +277,9 @@
           <div id="aiMaterialList" class="aiMaterialList"></div>
           <div class="stack compact aiOptionsBlock">
             <label>Material verwenden<select id="aiMaterialMode"><option value="consider">Berücksichtigen, wenn relevant</option><option value="inspiration">Als Inspiration verwenden</option><option value="only">Nur aus Material erstellen</option></select></label>
-            <label>Bilder<select id="aiImageMode"><option value="sparse" selected>Sparsam, nur wo sinnvoll</option><option value="none">Keine Bilder</option></select></label>
-            <label id="aiVisualCountWrap">Max. visuelle Aufgaben<select id="aiMaxVisual"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></label>
-            <label class="checkRow"><input id="aiAllowImageChoices" type="checkbox" checked /> Bildantworten erlauben</label>
+            <label>Aufgaben mit einem Bild<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
+            <label>Aufgaben mit Bildantworten<input id="aiImageAnswerCount" type="number" min="0" max="3" step="1" value="0" /></label>
+            <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
           </div>
           <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
           <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
@@ -416,6 +416,6 @@
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai3"></script>
+  <script type="module" src="app.js?v=2.3.1-ai4"></script>
 </body>
 </html>

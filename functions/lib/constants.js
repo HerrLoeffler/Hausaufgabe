@@ -1,9 +1,9 @@
 "use strict";
 
 const REGION = "europe-west1";
-const TEXT_MODEL = "gpt-5.6-terra";
+const TEXT_MODEL = "gpt-5.6-luna";
 const IMAGE_MODEL = "gpt-image-2";
-const PROMPT_VERSION = "testify-ai-v1";
+const PROMPT_VERSION = "testify-ai-v2";
 const AI_SCHEMA_VERSION = 1;
 const QUESTION_TYPES = Object.freeze([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
@@ -26,7 +26,7 @@ const LIMITS = Object.freeze({
   testPerDay: 40,
   questionPerMinute: 12,
   questionPerDay: 300,
-  imagePerMinute: 6,
+  imagePerMinute: 16,
   imagePerDay: 80,
   materialPerMinute: 6,
   materialPerDay: 100

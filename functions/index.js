@@ -22,13 +22,28 @@ function cleanInput(data = {}) {
   const points = Math.max(0.5, Math.round((Number(data.points) || 20) * 2) / 2);
   const allowedTypes = Array.isArray(data.allowedTypes) ? data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : [];
   if (!allowedTypes.length) throw new HttpsError("invalid-argument", "Mindestens ein Aufgabentyp ist erforderlich.");
-  const imageMode = data.imageMode === "none" ? "none" : "sparse";
+  const exactImageCounts = Object.hasOwn(data, "imageQuestionCount") || Object.hasOwn(data, "imageAnswerQuestionCount");
+  const imageQuestionCount = Number(data.imageQuestionCount);
+  const imageAnswerQuestionCount = Number(data.imageAnswerQuestionCount);
+  if (exactImageCounts) {
+    if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > LIMITS.maxVisualQuestions ||
+        !Number.isInteger(imageAnswerQuestionCount) || imageAnswerQuestionCount < 0 || imageAnswerQuestionCount > 3 ||
+        imageQuestionCount + imageAnswerQuestionCount > Math.min(count, LIMITS.maxVisualQuestions)) {
+      throw new HttpsError("invalid-argument", "Bildanzahlen sind ungültig: zusammen höchstens 5 Bildaufgaben und nicht mehr als Aufgaben insgesamt.");
+    }
+    if (imageAnswerQuestionCount && !allowedTypes.some(t => ["single", "multi"].includes(t))) {
+      throw new HttpsError("invalid-argument", "Für Bildantworten Single Choice oder Multiple Choice erlauben.");
+    }
+  }
+  const imageMode = exactImageCounts ? (imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none") : data.imageMode === "none" ? "none" : "sparse";
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, duration: Math.max(1, Math.min(300, Number(data.duration) || 30)), points,
-    allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, allowImageChoices: Boolean(data.allowImageChoices) && imageMode !== "none",
-    maxVisualQuestions: imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
+    allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
+    imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? imageAnswerQuestionCount : undefined,
+    allowImageChoices: exactImageCounts ? imageAnswerQuestionCount > 0 : Boolean(data.allowImageChoices) && imageMode !== "none",
+    maxVisualQuestions: exactImageCounts ? imageQuestionCount + imageAnswerQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: ["consider", "inspiration", "only"].includes(data.materialMode) ? data.materialMode : "consider"
   };
 }
@@ -58,7 +73,7 @@ exports.generateTest = onCall(callableOpts, async request => {
   const materials = sanitizeMaterials(request.data?.materials, uid);
   const materialContent = materials.length ? await materialInputs(materials, uid) : [];
   const materialIds = materials.map(m => m.id);
-  const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions };
+  const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount };
   let result = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
   result.data.questions = result.data.questions.map(normalizeQuestion);
   let errors = validateTest(result.data, options);

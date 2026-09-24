@@ -20,9 +20,10 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 
 - Responses API.
 - Structured Outputs with strict JSON Schema.
-- Text model: `gpt-5.6-terra`.
+- Text model on staging: `gpt-5.6-luna` (compare generated test quality before promoting).
 - `store: false`.
 - Test generation validates the result again with Testify-specific semantic rules. One bounded repair request is allowed when a structurally valid response violates semantic constraints.
+- The teacher requests exact numbers of questions with one generated image (0–5) and questions with illustrated answer options (0–3), with at most five visual questions total. Validation and the bounded repair require those counts. Each illustrated choice triggers a separate image request (2–4 per question); the form shows the total range before generation. Cached older clients retain their original optional-image behavior.
 - Per-question AI edits return exactly one question and preserve the existing question ID client-side.
 
 ## Media

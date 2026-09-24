@@ -1246,7 +1246,7 @@ $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://clau
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
-$("aiImageMode")?.addEventListener("change", updateAiImageControls);
+["aiImageQuestionCount", "aiImageAnswerCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
 
 async function openAiView() {
   const settings = getSettings();
@@ -1299,10 +1299,10 @@ function setAiProgress(message = "", isError = false) {
 }
 
 function updateAiImageControls() {
-  const enabled = $("aiImageMode")?.value !== "none";
-  $("aiMaxVisual") && ($("aiMaxVisual").disabled = !enabled);
-  $("aiAllowImageChoices") && ($("aiAllowImageChoices").disabled = !enabled);
-  $("aiVisualCountWrap")?.classList.toggle("disabled", !enabled);
+  const images = Number($("aiImageQuestionCount")?.value || 0);
+  const answers = Number($("aiImageAnswerCount")?.value || 0);
+  const hint = $("aiImageCountHint");
+  if (hint) hint.textContent = images + answers ? `${images + answers} Aufgaben mit Bildern · ${images + answers * 2} bis ${images + answers * 4} Bildgenerierungen (Bildantworten: 2–4 Bilder je Aufgabe).` : "Ohne Bilder. Du kannst die gewünschte Anzahl oben festlegen.";
 }
 
 function renderAiMaterials() {
@@ -1336,11 +1336,20 @@ function collectAiRequest() {
   const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
   if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
   if (!allowedTypes.length) throw new Error("Bitte mindestens einen Aufgabentyp auswählen.");
+  if (!$("aiImageQuestionCount").value.trim() || !$("aiImageAnswerCount").value.trim()) throw new Error("Bitte beide Bildanzahlen angeben (0 ist möglich).");
+  const count = Number($("aiCount").value);
+  const imageQuestionCount = Number($("aiImageQuestionCount").value);
+  const imageAnswerQuestionCount = Number($("aiImageAnswerCount").value);
+  if (!Number.isInteger(count) || count < 1 || count > 50) throw new Error("Bitte 1 bis 50 Aufgaben wählen.");
+  if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
+  if (!Number.isInteger(imageAnswerQuestionCount) || imageAnswerQuestionCount < 0 || imageAnswerQuestionCount > 3) throw new Error("Bitte 0 bis 3 Aufgaben mit Bildantworten wählen.");
+  if (imageQuestionCount + imageAnswerQuestionCount > Math.min(count, 5)) throw new Error("Insgesamt höchstens 5 Bildaufgaben und nicht mehr Bildaufgaben als Aufgaben wählen.");
+  if (imageAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Bildantworten bitte Single Choice oder Multiple Choice erlauben.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
-    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count: Number($("aiCount").value) || 10, duration: Number($("aiDuration").value) || 30, points: Number($("aiPoints").value) || 20,
+    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, duration: Number($("aiDuration").value) || 30, points: Number($("aiPoints").value) || 20,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
-    imageMode: $("aiImageMode").value, maxVisualQuestions: Number($("aiMaxVisual").value) || 3, allowImageChoices: $("aiAllowImageChoices").checked && $("aiImageMode").value !== "none"
+    imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount
   };
 }
 
@@ -1351,12 +1360,15 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
     const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
     Object.assign(q, result.asset || {});
   } else if (intent.kind === "image_choices" && ["single", "multi"].includes(q.type)) {
+    const choices = [];
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
       const prompt = `Erzeuge eine klare, neutrale Schulaufgaben-Illustration für die Antwortoption „${opt.text}“. Keine Schrift und keine Markierung, die richtig oder falsch verrät. Einheitlicher sachlicher Stil, quadratisch.`;
       const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, altText: `Abbildung: ${opt.text}`, purpose: "option" });
-      opt.imageDataUrl = result.asset?.imageDataUrl || ""; opt.imageAlt = result.asset?.imageAlt || `Abbildung: ${opt.text}`;
+      if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
+      choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: result.asset.imageAlt || `Abbildung: ${opt.text}` });
     }
+    choices.forEach((asset, i) => Object.assign(q.options[i], asset));
   }
 }
 
@@ -1378,7 +1390,7 @@ async function generateAiTestNative() {
       const ref = doc(collection(db, "quizzes", code, "questions")); q.id = ref.id; q.position = i + 1;
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
         setAiProgress(`Aufgabe ${i + 1}/${data.questions.length}: passendes Bild wird vorbereitet …`);
-        try { await applyGeneratedMedia(raw, q, code, ref.id); } catch (err) { console.warn("Bildgenerierung fehlgeschlagen", err); report.warnings.push(`Aufgabe ${i + 1}: Bild konnte nicht erzeugt werden; die Aufgabe wurde ohne Bild übernommen.`); }
+        try { await applyGeneratedMedia(raw, q, code, ref.id); } catch (err) { console.warn("Bildgenerierung fehlgeschlagen", err); report.warnings.push(`Aufgabe ${i + 1}: Bild oder Bildantworten konnten nicht erzeugt werden; die Aufgabe wurde ohne Bilder übernommen.`); }
       }
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }

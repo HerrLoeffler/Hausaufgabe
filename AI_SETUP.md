@@ -49,7 +49,7 @@ The script deploys only to `hausaufgabe-staging`: Firestore rules, Storage rules
 5. Verify the generated draft opens in the normal editor and can be saved/previewed.
 6. Test `✨ KI bearbeiten` and `↻ Neue Variante` on one question and verify `↶` undo appears.
 7. Only after text generation works, test one small PDF/image upload.
-8. Only after uploads work, enable sparse images and test one generated image.
+8. Set "Aufgaben mit einem Bild" to 1 and verify exactly one image appears; then set "Aufgaben mit Bildantworten" to 1 and verify all choices have images. These calls use the staging API key and incur image costs.
 
 ## 6. Known beta boundaries
 

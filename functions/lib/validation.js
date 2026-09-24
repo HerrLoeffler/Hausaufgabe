@@ -5,7 +5,7 @@ const { QUESTION_TYPES, LIMITS } = require("./constants");
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
 function normalizeText(value) { return String(value ?? "").trim(); }
 
-function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, materialIds = [] } = {}) {
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {
   const errors = [];
   if (!q || typeof q !== "object") return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
@@ -34,8 +34,12 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   const mi = q.mediaIntent || { kind: "none" };
   if (!allowImages && mi.kind !== "none") errors.push("Bilder sind für diesen Test deaktiviert.");
   if (!allowImageChoices && mi.kind === "image_choices") errors.push("Bildantworten sind deaktiviert.");
-  if (mi.kind === "uploaded_crop" && (!mi.sourceMaterialId || !materialIds.includes(mi.sourceMaterialId))) errors.push("Upload-Ausschnitt verweist auf kein freigegebenes Material.");
-  if (mi.kind === "image_choices" && (mi.count < 2 || mi.count > 4)) errors.push("Bildantworten brauchen 2–4 Bilder.");
+  if (mi.kind === "ai_generated" && !normalizeText(mi.prompt)) errors.push("Bildbeschreibung fehlt.");
+  if (mi.kind === "uploaded_crop") errors.push("Upload-Ausschnitte werden derzeit nicht automatisch erstellt.");
+  if (mi.kind === "image_choices") {
+    if (!["single", "multi"].includes(q.type)) errors.push("Bildantworten brauchen Single Choice oder Multiple Choice.");
+    if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 4 || mi.count !== q.options.length) errors.push("Bildantworten brauchen genau 2–4 Bilder, eines pro Antwortoption.");
+  }
   return errors;
 }
 
@@ -74,6 +78,14 @@ function validateTest(test, opts = {}) {
   if (opts.maxVisualQuestions != null) {
     const count = qs.filter(q => q.mediaIntent?.kind && q.mediaIntent.kind !== "none").length;
     if (count > opts.maxVisualQuestions) errors.push(`Zu viele visuelle Aufgaben (${count}/${opts.maxVisualQuestions}).`);
+  }
+  if (opts.imageQuestionCount != null) {
+    const count = qs.filter(q => q.mediaIntent?.kind === "ai_generated").length;
+    if (count !== opts.imageQuestionCount) errors.push(`Erwartet ${opts.imageQuestionCount} Aufgaben mit einem Bild, erhalten ${count}.`);
+  }
+  if (opts.imageAnswerQuestionCount != null) {
+    const count = qs.filter(q => q.mediaIntent?.kind === "image_choices").length;
+    if (count !== opts.imageAnswerQuestionCount) errors.push(`Erwartet ${opts.imageAnswerQuestionCount} Aufgaben mit Bildantworten, erhalten ${count}.`);
   }
   return errors;
 }
