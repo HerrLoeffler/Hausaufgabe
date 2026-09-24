@@ -2,7 +2,7 @@
 
 const REGION = "europe-west1";
 const TEXT_MODEL = "gpt-5.6-terra";
-const IMAGE_MODEL = "gpt-image-2.5-flare";
+const IMAGE_MODEL = "gpt-image-2";
 const PROMPT_VERSION = "testify-ai-v1";
 const AI_SCHEMA_VERSION = 1;
 const QUESTION_TYPES = Object.freeze([
