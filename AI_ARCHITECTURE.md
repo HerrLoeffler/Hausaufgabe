@@ -28,7 +28,7 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 ## Media
 
 - Existing Testify question images remain compatible through `imageDataUrl` / `imageUrl`.
-- AI-generated images are generated server-side with `gpt-image-2.5-flare`, compressed to WebP, and returned as a bounded `imageDataUrl`. This deliberately reuses the existing renderer for the first beta and avoids introducing a second student-asset authorization path at the same time as the AI backend.
+- AI-generated images are generated server-side with `gpt-image-2`, compressed to WebP, and returned as a bounded `imageDataUrl`. This deliberately reuses the existing renderer for the first beta and avoids introducing a second student-asset authorization path at the same time as the AI backend.
 - Image-answer options use optional `imageDataUrl` / `imageAlt` fields on existing single/multi options; old options remain valid.
 - Teacher source materials are uploaded privately to Cloud Storage under `aiUploads/{uid}/...` and read by the backend with the Admin SDK.
 - AI-generated source crops are not automatically faked. `uploaded_crop` remains reserved for the later deterministic crop workflow.
