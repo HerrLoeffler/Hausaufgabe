@@ -1,0 +1,42 @@
+name: AI Staging Checks
+
+on:
+  push:
+    branches:
+      - feature/ai-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node 22 tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install function dependencies
+        working-directory: functions
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: functions
+        run: npm test
+
+      - name: Check function syntax
+        working-directory: functions
+        run: npm run check
+
+      - name: Check browser app syntax
+        run: node --check app.js
