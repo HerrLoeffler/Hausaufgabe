@@ -3,8 +3,8 @@
 const REGION = "europe-west1";
 const TEXT_MODEL = "gpt-5.6-luna";
 const IMAGE_MODEL = "gpt-image-2";
-const PROMPT_VERSION = "testify-ai-v10";
-const AI_SCHEMA_VERSION = 1;
+const PROMPT_VERSION = "testify-ai-v11";
+const AI_SCHEMA_VERSION = 2;
 const QUESTION_TYPES = Object.freeze([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
   "matching", "ordering", "grouping", "markwords", "number"
