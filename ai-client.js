@@ -27,6 +27,7 @@ export function createAiClient(app, getUid) {
     status: call("getAiStatus", 30000),
     reportRightsIssue: call("reportRightsIssue", 30000),
     generateTest: call("generateTest", 540000),
+    startAiTestJob: call("startAiTestJob", 60000),
     regenerateQuestion: call("regenerateQuestion", 180000),
     analyzeMaterial: call("analyzeMaterial", 300000),
     generateQuestionMedia: call("generateQuestionMedia", 300000)

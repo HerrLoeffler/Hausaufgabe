@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.1-ai21" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai20" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai22" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -76,6 +76,8 @@
         </div>
       </div>
       <div id="announcementHost" class="announcementHost"></div>
+      <div id="aiJobsList" class="aiJobsList hidden" aria-live="polite"></div>
+      <div id="localDraftList" class="aiJobsList hidden"></div>
       <div class="card dashboardToolbar">
         <label class="searchField">Tests durchsuchen<input id="quizSearch" type="search" placeholder="Titel, Fach, Klasse, Code oder Hinweis …" /></label>
         <label>Status<select id="quizFilter"><option value="all">Alle Tests</option><option value="published">Veröffentlicht</option><option value="ended">Beendet</option><option value="draft">Entwürfe</option></select></label>
@@ -320,7 +322,7 @@
           </div>
           <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
           <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
-          <small class="hint">Die Erstellung kann mehrere Minuten dauern. Der Test ist zunächst ein Entwurf: Bitte prüfe ihn vor der Veröffentlichung.</small>
+          <small class="hint">Du kannst die Seite nach dem Start verlassen. Den Fortschritt und den fertigen Entwurf findest du unter „Meine Tests“. Bitte prüfe alle Aufgaben vor der Veröffentlichung.</small>
         </article>
       </div>
       <details class="card legacyAiDetails">
@@ -483,9 +485,9 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai21</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai22</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai21"></script>
+  <script type="module" src="app.js?v=2.3.1-ai22"></script>
 </body>
 </html>

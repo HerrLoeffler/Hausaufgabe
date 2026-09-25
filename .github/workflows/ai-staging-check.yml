@@ -39,4 +39,7 @@ jobs:
         run: npm run check
 
       - name: Check browser app syntax
-        run: node --check app.js
+        run: |
+          node --check app.js
+          node --check ai-client.js
+          node --check editor-drafts.js

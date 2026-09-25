@@ -49,6 +49,8 @@ echo "3/4 Functions-Syntax und Bezeichner prüfen"
 echo
 echo "4/4 Browser-App prüfen"
 node --check app.js
+node --check ai-client.js
+node --check editor-drafts.js
 
 echo
 echo "✓ Alle Prüfungen erfolgreich."
@@ -58,7 +60,7 @@ echo
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
-cp index.html app.js styles.css firebase-config.js ai-json-tools.js ai-client.js public/
+cp index.html app.js styles.css firebase-config.js ai-json-tools.js ai-client.js editor-drafts.js public/
 
 echo "Deploy STAGING -> ${PROJECT_ID}"
 firebase deploy --project "$PROJECT_ID" --only firestore:rules,storage,functions,hosting

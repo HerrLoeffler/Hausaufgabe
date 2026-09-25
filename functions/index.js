@@ -1,11 +1,13 @@
 "use strict";
 
-const { randomUUID, createHash } = require("node:crypto");
+const { randomUUID, randomBytes, createHash } = require("node:crypto");
 const { initializeApp } = require("firebase-admin/app");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onTaskDispatched } = require("firebase-functions/v2/tasks");
 const { defineSecret } = require("firebase-functions/params");
 const { getStorage } = require("firebase-admin/storage");
+const { getFunctions } = require("firebase-admin/functions");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
 const { testSchema, questionSchema } = require("./lib/schemas");
@@ -21,6 +23,7 @@ const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } 
 const { createVerifiedMedia } = require("./lib/media-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
+const { quizForGeneratedTest, storedAiQuestion, imageCount } = require("./lib/ai-job");
 
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
@@ -177,26 +180,28 @@ exports.getAiStatus = onCall(callableOpts, async request => {
   return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, qualityMemoryVersion: MEMORY_VERSION };
 });
 
-exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
-  const requestId = String(request.data?.clientRequestId || randomUUID().slice(0, 8))
+async function generateTestForUser(uid, data, onProgress = async () => {}) {
+  const requestId = String(data?.clientRequestId || randomUUID().slice(0, 8))
     .replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
   const startedAt = Date.now();
   console.info("KI-Test-Anfrage gestartet:", { requestId });
-  const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
-  const input = cleanInput(request.data || {});
+  const input = cleanInput(data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
-  const materials = sanitizeMaterials(request.data?.materials, uid);
+  const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   let phase = "material";
   try {
+    await onProgress("material", 5, "Material wird eingelesen …");
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
     phase = "feedback";
+    await onProgress("feedback", 10, "Aufgabenhinweise werden vorbereitet …");
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade });
     const memoryGuide = qualityMemoryPrompt(memory);
     const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}`;
     phase = "test-generation";
+    await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: generationPrompt, content: materialContent });
     const usage = { ...first.usage };
@@ -224,12 +229,14 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       }
     };
     phase = "test-repair";
+    await onProgress("test-repair", 38, "Aufgaben und Punkte werden geprüft …");
     const result = await validateAndRepairTest(normalizeTest(first.data), options, repairs);
     if (result.errors.length) {
       await recordUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: true, errors: result.errors.slice(0, 6) });
       throw new HttpsError("failed-precondition", "Auch nach automatischer Neuerstellung sind Aufgaben fehlerhaft.", { errors: result.errors.slice(0, 10) });
     }
     phase = "quality-review";
+    await onProgress("quality-review", 50, "Aufgaben werden fachlich geprüft …");
     let reviewed;
     try {
       reviewed = await reviewAndRepairTest(result.test, options, {
@@ -285,6 +292,190 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
     throw reportAiError(err, phase);
   } finally {
     await deleteUploadedMaterials(materials);
+  }
+}
+
+exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
+  const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
+  return generateTestForUser(uid, request.data || {});
+});
+
+function aiJobLock(uid) { return getFirestore().doc(`users/${uid}/aiRuntime/current`); }
+
+async function releaseAiJob(uid, jobId) {
+  const ref = aiJobLock(uid);
+  await getFirestore().runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (snap.data()?.activeJobId === jobId) tx.delete(ref);
+  });
+}
+
+exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async request => {
+  const { uid } = await requireAiUser(request);
+  const input = cleanInput(request.data || {});
+  if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
+  const materials = sanitizeMaterials(request.data?.materials, uid);
+  if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
+  const sourceQuizId = String(request.data?.sourceQuizId || "").slice(0, 40);
+  if (sourceQuizId) {
+    const source = await getFirestore().doc(`quizzes/${sourceQuizId}`).get();
+    if (!source.exists || source.data()?.ownerId !== uid || source.data()?.rightsHold) throw new HttpsError("permission-denied", "Auf den Ausgangstest kann nicht zugegriffen werden.");
+  }
+  const requestId = String(request.data?.clientRequestId || randomUUID().slice(0, 12)).replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
+  const db = getFirestore();
+  // Repeated start requests with the same client ID must not charge for another test.
+  const jobRef = db.collection("aiJobs").doc(createHash("sha256").update(`${uid}:${requestId}`).digest("hex").slice(0, 40));
+  const lockRef = aiJobLock(uid);
+  const now = Timestamp.now();
+  let existingId = "";
+  await db.runTransaction(async tx => {
+    const previous = await tx.get(jobRef);
+    if (previous.exists && previous.data()?.ownerId === uid) {
+      existingId = jobRef.id;
+      return;
+    }
+    const lock = await tx.get(lockRef);
+    const activeId = lock.data()?.activeJobId;
+    if (activeId) {
+      const active = await tx.get(db.collection("aiJobs").doc(activeId));
+      if (active.exists && active.data()?.ownerId === uid && ["queued", "running"].includes(active.data()?.status)
+        && now.toMillis() - active.data()?.createdAt?.toMillis() < 40 * 60 * 1000) {
+        existingId = activeId;
+        return;
+      }
+      if (active.exists && active.data()?.ownerId === uid && ["queued", "running"].includes(active.data()?.status)) {
+        tx.update(active.ref, { status: "failed", stage: "failed", progressMessage: "Die Erstellung hat zu lange gedauert.", updatedAt: now });
+      }
+    }
+    tx.create(jobRef, {
+      ownerId: uid, status: "queued", stage: "queued", progressMessage: "Erstellung wird gestartet …", percent: 0,
+      completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0,
+      subject: input.subject, grade: input.grade, topic: input.topic, requestId,
+      input: { ...Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)), clientRequestId: requestId }, materials, sourceQuizId,
+      createdAt: now, updatedAt: now
+    });
+    tx.set(lockRef, { activeJobId: jobRef.id, updatedAt: now });
+  });
+  if (existingId) return { jobId: existingId, resumed: true };
+  try {
+    await getFunctions().taskQueue(`locations/${REGION}/functions/processAiTestJob`)
+      .enqueue({ jobId: jobRef.id }, { id: jobRef.id, dispatchDeadlineSeconds: 1800 });
+    return { jobId: jobRef.id };
+  } catch (err) {
+    console.error("KI-Hintergrundauftrag konnte nicht eingereiht werden:", { jobId: jobRef.id, code: err?.code });
+    await jobRef.update({ status: "failed", stage: "failed", progressMessage: "Erstellung konnte nicht gestartet werden.", updatedAt: Timestamp.now() });
+    await releaseAiJob(uid, jobRef.id);
+    throw reportAiError(err, "job-queue");
+  }
+});
+
+const QUIZ_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+async function createAiQuiz(db, ownerId, jobId, base) {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const code = [...randomBytes(8)].map(n => QUIZ_ALPHABET[n % QUIZ_ALPHABET.length]).join("");
+    const ref = db.collection("quizzes").doc(code);
+    try {
+      await ref.create({ ...base, ownerId, accessCode: code, generationJobId: jobId,
+        createdAt: Timestamp.now(), updatedAt: Timestamp.now() });
+      return { code, ref };
+    } catch (err) {
+      if (err?.code !== 6 && err?.code !== "already-exists") throw err;
+    }
+  }
+  throw new Error("Testcode konnte nicht erzeugt werden.");
+}
+
+exports.processAiTestJob = onTaskDispatched({
+  region: REGION, secrets: [OPENAI_API_KEY], memory: "1GiB", timeoutSeconds: 1800,
+  retryConfig: { maxAttempts: 1 }, rateLimits: { maxConcurrentDispatches: 2 }
+}, async request => {
+  const jobId = String(request.data?.jobId || "");
+  if (!/^[a-zA-Z0-9_-]{10,80}$/.test(jobId)) return;
+  const db = getFirestore();
+  const jobRef = db.collection("aiJobs").doc(jobId);
+  const job = await db.runTransaction(async tx => {
+    const snap = await tx.get(jobRef);
+    if (!snap.exists || snap.data()?.status !== "queued") return null;
+    tx.update(jobRef, { status: "running", stage: "starting", startedAt: Timestamp.now(), updatedAt: Timestamp.now() });
+    return snap.data();
+  });
+  if (!job) return;
+  const { ownerId: uid } = job;
+  let quizRef = null;
+  try {
+    const { profile } = await requireAiUser({ auth: { uid } });
+    const sourceSnap = job.sourceQuizId ? await db.collection("quizzes").doc(job.sourceQuizId).get() : null;
+    if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
+    const progress = async (stage, percent, message) => jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
+    const response = await generateTestForUser(uid, { ...job.input, materials: job.materials }, progress);
+    const questions = response.test.questions;
+    const totalImages = imageCount(questions);
+    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Bilder werden gespeichert …", imageTotal: totalImages, updatedAt: Timestamp.now() });
+    const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
+    quizRef = quiz.ref;
+    await jobRef.update({ quizId: quiz.code, updatedAt: Timestamp.now() });
+    let completedImages = 0;
+    let totalPoints = 0;
+    for (let index = 0; index < questions.length; index += 1) {
+      const raw = questions[index];
+      await progress(raw.mediaIntent?.kind !== "none" ? "generate_media" : "prepare_question", 65 + Math.floor(30 * index / questions.length), `Aufgabe ${index + 1} von ${questions.length} wird vorbereitet …`);
+      const q = await storedAiQuestion(raw, index, {
+        model: response.meta.model, promptVersion: response.meta.promptVersion,
+        kind: job.sourceQuizId ? "similar" : "generated",
+        generateMedia: async options => (await createVerifiedMedia({ uid, ...options })).asset,
+        onImage: async () => {
+          completedImages += 1;
+          await jobRef.update({ imageCompleted: completedImages, updatedAt: Timestamp.now() });
+        }
+      });
+      await quizRef.collection("questions").doc(`q${String(index + 1).padStart(3, "0")}`).create({ ...q, updatedAt: Timestamp.now() });
+      totalPoints += q.points;
+      await quizRef.update({ questionCount: index + 1, totalPoints, updatedAt: Timestamp.now() });
+      await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
+    }
+    await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
+      qualityWarnings: response.meta.qualityWarnings || [], updatedAt: Timestamp.now() });
+    await jobRef.update({ status: "ready", stage: "ready", percent: 100,
+      progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
+      qualityWarnings: response.meta.qualityWarnings || [] });
+    console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
+  } catch (err) {
+    const reported = err?.code === "image-mismatch"
+      ? reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
+        reason: String(err.lastIssue || "").slice(0, 180)
+      }), "image-review")
+      : reportAiError(err, "background-test");
+    const message = reported.code === "failed-precondition" && Array.isArray(reported.details?.errors)
+      ? `Die KI konnte noch kein gültiges Ergebnis erstellen: ${reported.details.errors.slice(0, 2).join(" ")}`.slice(0, 350)
+      : reported.message;
+    await jobRef.update({ status: "failed", stage: "failed", progressMessage: message,
+      errorCode: reported.code, errorReference: reported.details?.reference || "", updatedAt: Timestamp.now() });
+    if (quizRef) await quizRef.update({ generationStatus: "failed", updatedAt: Timestamp.now() });
+  } finally {
+    await releaseAiJob(uid, jobId);
+  }
+});
+
+// A killed worker cannot run its finally block. Close timed-out jobs so teachers
+// can retry and the dashboard never remains indefinitely at "in progress".
+exports.expireAiTestJobs = onSchedule({ schedule: "every 15 minutes", region: REGION, timeoutSeconds: 120, memory: "256MiB" }, async () => {
+  const db = getFirestore();
+  const cutoff = Date.now() - 40 * 60 * 1000;
+  for (const status of ["queued", "running"]) {
+    const jobs = await db.collection("aiJobs").where("status", "==", status).limit(250).get();
+    for (const snap of jobs.docs) {
+      const job = snap.data();
+      if ((job.createdAt?.toMillis() || Date.now()) >= cutoff) continue;
+      const expired = await db.runTransaction(async tx => {
+        const current = await tx.get(snap.ref);
+        if (current.data()?.status !== status || (current.data()?.createdAt?.toMillis() || Date.now()) >= cutoff) return false;
+        tx.update(snap.ref, { status: "failed", stage: "failed", progressMessage: "Die Erstellung hat zu lange gedauert. Bitte erneut versuchen.", updatedAt: Timestamp.now() });
+        return true;
+      });
+      if (!expired) continue;
+      if (job.quizId) await db.collection("quizzes").doc(job.quizId).update({ generationStatus: "failed", updatedAt: Timestamp.now() });
+      await releaseAiJob(job.ownerId, snap.id);
+    }
   }
 });
 

@@ -66,6 +66,13 @@ service cloud.firestore {
       }
     }
 
+    // Hintergrundaufträge können sensible Materialangaben enthalten. Nur der
+    // Eigentümer darf den Status lesen; Änderungen erfolgen ausschließlich serverseitig.
+    match /aiJobs/{jobId} {
+      allow get, list: if accountActive() && resource.data.ownerId == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
     match /quizzes/{quizId} {
       // Schüler dürfen nur aktuell veröffentlichte Tests lesen. Beendete Tests liefern
       // weiterhin Metadaten für eine verständliche Meldung, aber nie aus dem Papierkorb.

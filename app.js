@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai21";
+const APP_VERSION = "2.3.1-ai22";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -33,7 +33,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai10";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai22";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai22";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -118,6 +119,11 @@ const state = {
   adminOverviewPeriod: "7d",
   pendingImportReport: null,
   aiMaterials: [],
+  aiJobs: [],
+  aiJobsUnsub: null,
+  aiStarting: false,
+  draftCheckpointSaved: true,
+  draftBaseUpdatedAt: 0,
   teacherTourConfig: null
 };
 
@@ -785,7 +791,12 @@ function authMessage(err) {
 }
 
 onAuthStateChanged(auth, async (user) => {
-  if (state.user?.uid !== user?.uid) state.aiMaterials = [];
+  if (state.user?.uid !== user?.uid) {
+    state.aiMaterials = [];
+    state.aiJobsUnsub?.();
+    state.aiJobsUnsub = null;
+    state.aiJobs = [];
+  }
   state.user = user;
   state.profile = null;
   if (user) {
@@ -897,6 +908,8 @@ async function loadDashboard() {
   clearStudentSubscriptions();
   state.pendingImportReport = null;
   showView("dashboardView");
+  watchAiJobs();
+  await renderLocalDraftList();
   $("quizList").innerHTML = `<div class="card">Tests werden geladen …</div>`;
   try {
     const snap = await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", state.user.uid)));
@@ -904,6 +917,7 @@ async function loadDashboard() {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
     renderQuizList();
+    await renderLocalDraftList();
     await loadTeacherTourConfig();
     const tourOpened = maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
@@ -919,12 +933,106 @@ async function loadDashboard() {
   }
 }
 
+function watchAiJobs() {
+  if (!state.user || state.aiJobsUnsub) return;
+  const uid = state.user.uid;
+  state.aiJobsUnsub = onSnapshot(query(collection(db, "aiJobs"), where("ownerId", "==", uid)), async snapshot => {
+    if (state.user?.uid !== uid) return;
+    state.aiJobs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+    renderAiJobs();
+    for (const job of state.aiJobs) {
+      if (!["ready", "failed"].includes(job.status) || !job.quizId ||
+          state.quizzes.some(quiz => quiz.id === job.quizId && quiz.generationStatus === job.status)) continue;
+      try {
+        const snap = await getDoc(doc(db, "quizzes", job.quizId));
+        if (state.user?.uid !== uid || !snap.exists() || snap.data().ownerId !== uid) continue;
+        state.quizzes = [{ id: snap.id, ...snap.data() }, ...state.quizzes.filter(quiz => quiz.id !== snap.id)];
+        renderQuizList();
+      } catch (err) { console.warn("Fertiger KI-Test konnte noch nicht geladen werden:", err); }
+    }
+  }, err => {
+    console.error("KI-Aufträge konnten nicht geladen werden:", err);
+    $("aiJobsList").classList.remove("hidden");
+    $("aiJobsList").textContent = "Der Fortschritt der KI-Erstellung konnte nicht geladen werden. Bitte aktualisiere die Seite.";
+    state.aiJobsUnsub = null;
+  });
+}
+
+function renderAiJobs() {
+  const host = $("aiJobsList");
+  const recent = state.aiJobs.filter(job => ["queued", "running"].includes(job.status)
+    || (Date.now() - toMillis(job.updatedAt || job.createdAt) < 7 * 24 * 60 * 60 * 1000)).slice(0, 8);
+  host.replaceChildren();
+  host.classList.toggle("hidden", !recent.length);
+  for (const job of recent) {
+    const card = document.createElement("article");
+    const finished = job.status === "ready";
+    const failed = job.status === "failed";
+    const percentage = Math.max(0, Math.min(100, Number(job.percent) || 0));
+    card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}`;
+    card.innerHTML = `<div><strong>${escapeHtml(job.sourceQuizId ? "Ähnlichen Test erstellen" : "KI-Test erstellen")} · ${escapeHtml(job.subject || job.topic || "Neuer Test")}</strong><p>${escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
+      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Entwurf bereit" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}`}</small></div>
+      ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
+      ${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf öffnen"}</button>` : ""}
+      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button>' : ""}`;
+    card.querySelector(".openAiJob")?.addEventListener("click", () => openEditor(job.quizId));
+    card.querySelector(".reportAiJob")?.addEventListener("click", () => showReportableError({
+      code: job.sourceQuizId ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
+      message: job.progressMessage || "KI-Erstellung fehlgeschlagen.",
+      error: { code: job.errorCode || "failed-precondition", message: job.progressMessage,
+        details: { reference: job.errorReference, phase: job.stage } },
+      action: job.sourceQuizId ? "background_similar_test" : "background_ai_test",
+      details: { jobId: job.id, requestId: job.requestId, quizId: job.quizId || "",
+        requestedCount: job.requestedCount, completedCount: job.completedCount,
+        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted }
+    }));
+    host.appendChild(card);
+  }
+  const current = state.aiJobs.find(job => ["queued", "running"].includes(job.status));
+  const busy = state.aiJobs.some(job => ["queued", "running"].includes(job.status));
+  if ($("generateAiTestBtn")) {
+    $("generateAiTestBtn").disabled = busy || state.aiStarting;
+    $("generateAiTestBtn").textContent = busy || state.aiStarting ? "✨ Erstellung läuft" : "✨ Test erstellen";
+  }
+  if (current && !$("aiView").classList.contains("hidden")) {
+    setAiProgress(current.progressMessage, current.status === "failed", Number(current.percent || 0),
+      current.status === "ready" ? "Der fertige Entwurf liegt unter „Meine Tests“." : "Du kannst die Seite verlassen; unter „Meine Tests“ bleibt der Fortschritt sichtbar.");
+  }
+}
+
+async function renderLocalDraftList() {
+  const host = $("localDraftList");
+  const uid = state.user?.uid;
+  if (!uid) { host.replaceChildren(); host.classList.add("hidden"); return; }
+  try {
+    const drafts = await listEditorDrafts(uid);
+    if (state.user?.uid !== uid) return;
+    host.replaceChildren();
+    const visible = drafts.filter(draft => draft.newManualQuiz
+      || state.quizzes.some(quiz => quiz.id === draft.quizId && !quiz.isDeleted));
+    host.classList.toggle("hidden", !visible.length);
+    if (visible.length && !activeQuizzes().length) $("emptyQuizState").classList.add("hidden");
+    for (const draft of visible) {
+      const card = document.createElement("article");
+      card.className = "card aiJobCard";
+      card.innerHTML = `<div><strong>Lokaler Bearbeitungsstand · ${escapeHtml(draft.quiz?.title || "Neuer Test")}</strong>
+        <p>${Number(draft.questions?.length || 0)} Aufgaben · zuletzt lokal gesichert ${escapeHtml(new Date(draft.savedAt).toLocaleString("de-DE"))}</p>
+        <small>Nur in diesem Browser verfügbar. Zum Übertragen auf andere Geräte im Editor „Speichern“ wählen.</small></div>
+        <button class="button secondary resumeDraft" type="button">Bearbeitung fortsetzen</button>`;
+      card.querySelector(".resumeDraft").addEventListener("click", () => draft.newManualQuiz ? resumeManualDraft(draft) : openEditor(draft.quizId));
+      host.appendChild(card);
+    }
+  } catch (err) { console.warn("Lokale Entwürfe konnten nicht gelesen werden:", err); }
+}
+
 function filteredQuizzes() {
   const term = normalize($("quizSearch")?.value || "");
   const status = $("quizFilter")?.value || "all";
   const sort = $("quizSort")?.value || "updated";
   const list = state.quizzes.filter((q) => {
     if (q.isDeleted) return false;
+    if (q.generationStatus === "running") return false;
     const isEnded = Boolean(q.ended);
     const isPublished = Boolean(q.published) && !isEnded && !q.rightsHold;
     if (status === "published" && !isPublished) return false;
@@ -945,6 +1053,7 @@ function filteredQuizzes() {
 }
 
 function quizStatusMeta(q) {
+  if (q.generationStatus === "failed") return { label: "KI-Teilentwurf", cls: "incomplete" };
   if (q.rightsHold) return { label: "Zugang gesperrt", cls: "rightsHold" };
   if (q.ended) return { label: "Beendet", cls: "ended" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
@@ -1066,6 +1175,7 @@ async function createQuiz() {
   const code = randomCode();
   state.newManualQuiz = true;
   state.currentQuiz = { ...quizDefaults(), id: code };
+  state.draftBaseUpdatedAt = 0;
   state.questions = [];
   state.loadedQuestionIds = new Set();
   state.pendingImportReport = null;
@@ -1598,6 +1708,8 @@ async function openAiView() {
   updateAiImageControls();
   updateAiPointsControls();
   showView("aiView");
+  setAiProgress("");
+  renderAiJobs();
   const notice = $("aiBetaNotice");
   try {
     notice.className = "aiStatusNotice";
@@ -1773,155 +1885,36 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
-  try { await createAiTestFromRequest(collectAiRequest()); }
+  try { await startAiCreationJob(collectAiRequest()); }
   catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
 }
 
-// Keep a generated draft and finished image assets in this tab for a retry.
-// Nothing is written to Firestore until every question has been prepared.
-let pendingAiCreation = null;
-
-async function createAiTestFromRequest(request, { similar = false, sourceQuiz = null } = {}) {
-  const btn = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
+async function startAiCreationJob(request, { similar = false, sourceQuiz = null } = {}) {
+  const button = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
   const targetId = similar ? "similarTestProgress" : "aiProgress";
-  const show = (message, percent = null, isError = false, hint = "") => setAiProgress(message, isError, percent, hint, targetId);
-  let timer;
-  let incompleteQuizCode = null;
-  let errorStage = "prepare_request";
-  let errorQuestionPosition = 0;
-  let generationRequestId = "";
-  let generationDurationMs = null;
-  const signature = JSON.stringify({ ...request, materials: [], similar, sourceQuizId: sourceQuiz?.id || "" });
-  const materialKey = (request.materials || []).map(material => material.id).join("|");
-  const resumable = pendingAiCreation?.signature === signature &&
-    (pendingAiCreation.materialKey === materialKey || (pendingAiCreation.materialKey && !materialKey))
-    ? pendingAiCreation : null;
-  if (resumable) {
-    generationRequestId = resumable.clientRequestId || "";
-    generationDurationMs = resumable.generationDurationMs ?? null;
-  }
+  button.disabled = true;
+  state.aiStarting = true;
+  setAiProgress("Der Hintergrundauftrag wird gestartet …", false, 0, "Sobald der Start bestätigt ist, kannst du die Seite verlassen.", targetId);
   try {
-    if (!resumable) pendingAiCreation = null;
-    btn.disabled = true;
-    const start = Date.now();
-    const planning = "Dein Test wird erstellt …";
-    const renderPlanning = () => {
-      const seconds = Math.floor((Date.now() - start) / 1000);
-      const estimate = Math.min(65, 8 + Math.floor(57 * (1 - Math.exp(-seconds / 50))));
-      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Die Erstellung kann mehrere Minuten dauern. Bitte dieses Fenster geöffnet lassen.`);
-    };
-    renderPlanning();
-    timer = setInterval(renderPlanning, 1000);
-    errorStage = "generate_test";
-    let response = resumable?.response;
-    if (!response) {
-      generationRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-      const generationStartedAt = Date.now();
-      try { response = await aiApi.generateTest({ ...request, clientRequestId: generationRequestId }); }
-      finally { generationDurationMs = Date.now() - generationStartedAt; }
+    const clientRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+    const response = await aiApi.startAiTestJob({ ...request, sourceQuizId: sourceQuiz?.id || "", clientRequestId });
+    if (!response?.jobId) throw new Error("Der Hintergrundauftrag wurde nicht bestätigt.");
+    if (!similar) {
+      const submitted = new Set((request.materials || []).map(material => material.id));
+      state.aiMaterials = state.aiMaterials.filter(material => !submitted.has(material.id));
+      renderAiMaterials();
     }
-    clearInterval(timer); timer = null;
-    errorStage = "prepare_questions";
-    const data = response?.test;
-    if (!data?.questions?.length) throw new Error("Die KI hat keine Aufgaben geliefert.");
-    show("Aufgaben und Bilder werden vorbereitet …", 70);
-    const qualityWarnings = Array.isArray(response?.meta?.qualityWarnings)
-      ? response.meta.qualityWarnings.map(value => String(value).slice(0, 300))
-      : [];
-    const report = resumable?.report || { warnings: qualityWarnings.map(value => `KI-Qualitätsprüfung: ${value}`), repairs: [] };
-    const inherited = sourceQuiz ? {
-      gradeScaleId: sourceQuiz.gradeScaleId, gradeScaleSnapshot: deepClone(getQuizScale(sourceQuiz)),
-      resultMode: sourceQuiz.resultMode, showSolutions: sourceQuiz.showSolutions,
-      timeLimitMinutes: sourceQuiz.timeLimitMinutes, startMode: sourceQuiz.startMode,
-      shuffleQuestions: sourceQuiz.shuffleQuestions, shuffleAnswers: sourceQuiz.shuffleAnswers
-    } : {};
-    const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(getSettings().defaultDescription || "Viel Erfolg beim Test!"), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
-    // Prepare every task and generated image before creating a quiz document.
-    // A media failure must not leave an empty draft in the teacher's dashboard.
-    const mediaRequestId = resumable?.mediaRequestId || `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-    const prepared = resumable?.prepared || [];
-    pendingAiCreation = { signature, materialKey: resumable?.materialKey ?? materialKey, response, report, mediaRequestId, prepared, current: resumable?.current || null, clientRequestId: generationRequestId, generationDurationMs };
-    for (let i = prepared.length; i < data.questions.length; i += 1) {
-      errorQuestionPosition = i + 1;
-      errorStage = "prepare_question";
-      const raw = data.questions[i];
-      const q = pendingAiCreation.current?.index === i
-        ? pendingAiCreation.current.question : normalizeImportedQuestion(raw, i, report);
-      q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
-      q.id ||= doc(collection(db, "quizzes", mediaRequestId, "questions")).id; q.position = i + 1;
-      pendingAiCreation.current = { index: i, question: q };
-      show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
-      if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
-        show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
-        errorStage = "generate_media";
-        await applyGeneratedMedia(raw, q, mediaRequestId, q.id);
-        errorStage = "prepare_question";
-      }
-      prepared.push(q);
-      pendingAiCreation.current = null;
-    }
-    show("Entwurf wird gespeichert …", 99);
-    errorStage = "save_quiz";
-    errorQuestionPosition = 0;
-    const { code } = await createQuizDocument(base);
-    incompleteQuizCode = code;
-    errorStage = "save_questions";
-    for (const q of prepared) {
-      errorQuestionPosition = q.position || 0;
-      await setDoc(doc(db, "quizzes", code, "questions", q.id), { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() });
-    }
-    incompleteQuizCode = null;
-    pendingAiCreation = null;
-    show("Entwurf fertig.", 100, false, report.warnings.length ? "Der Test wurde gespeichert. Bitte die markierten Qualitäts-Hinweise prüfen." : "Der neue Test wird geöffnet.");
-    if (report.warnings.length) toast(`KI-Entwurf erstellt – ${report.warnings.length} Qualitäts-Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
-    else toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
-    await openEditor(code);
-    setAiProgress("", false, null, "", targetId);
-    state.pendingImportReport = { ...report, quizId: code };
-    renderImportReviewBanner();
+    toast(response.resumed ? "Dein laufender KI-Auftrag ist unter „Meine Tests“ sichtbar." : "Erstellung gestartet. Den Fortschritt findest du unter „Meine Tests“.");
+    await loadDashboard();
   } catch (err) {
-    if (incompleteQuizCode) {
-      try {
-        const partial = await getDocs(collection(db, "quizzes", incompleteQuizCode, "questions"));
-        for (const question of partial.docs) await deleteDoc(question.ref);
-        await deleteDoc(doc(db, "quizzes", incompleteQuizCode));
-      } catch (cleanupError) { console.error("Unvollständiger KI-Entwurf konnte nicht gelöscht werden:", cleanupError); }
-    }
-    console.error(err);
     const friendly = aiFriendlyError(err);
-    show(friendly, null, true, pendingAiCreation?.signature === signature ? "Erneut auf „Test erstellen“ klicken: Bereits fertige Aufgaben und Bilder werden in diesem Tab weiterverwendet." : "");
+    setAiProgress(friendly, true, null, "", targetId);
     showReportableError({
       code: similar ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
-      message: friendly,
-      error: err,
-      action: similar ? "create_similar_test" : "create_ai_test",
-      details: {
-        stage: errorStage,
-        clientRequestId: generationRequestId,
-        generationDurationMs,
-        questionPosition: errorQuestionPosition,
-        requestedCount: Number(request?.count || 0),
-        targetPoints: Number(request?.points || 0),
-        imageMode: String(request?.imageMode || "none"),
-        imageQuestionCount: Number(request?.imageQuestionCount || 0),
-        imageAnswerQuestionCount: Number(request?.imageAnswerQuestionCount || 0),
-        materialCount: Array.isArray(request?.materials) ? request.materials.length : 0,
-        allowedTypeCount: Array.isArray(request?.allowedTypes) ? request.allowedTypes.length : 0
-      }
+      message: friendly, error: err,
+      action: similar ? "start_similar_test" : "start_ai_test"
     });
-  } finally {
-    if (timer) clearInterval(timer);
-    if (request.materials.length) {
-      const ids = new Set(request.materials.map(m => m.id));
-      const uploaded = state.aiMaterials.filter(m => ids.has(m.id));
-      const results = await Promise.allSettled(uploaded.map(m => aiApi.removeMaterial(m)));
-      const failedIds = new Set(uploaded.filter((m, i) => results[i].status === "rejected").map(m => m.id));
-      state.aiMaterials = state.aiMaterials.filter(m => !ids.has(m.id) || failedIds.has(m.id));
-      renderAiMaterials();
-      if (failedIds.size) toast("Ein Material konnte nicht bestätigt gelöscht werden. Bitte bei „Entfernen“ erneut versuchen.", "error");
-    }
-    btn.disabled = false;
-  }
+  } finally { state.aiStarting = false; renderAiJobs(); }
 }
 
 function generateAiPrompt() {
@@ -2258,7 +2251,8 @@ function renderImportReviewBanner() {
   }
   const warningCount = report.warnings?.length || 0;
   host.classList.remove("hidden");
-  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `Test importiert – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : "Test importiert"}</strong><p>${warningCount ? "Einige Stellen waren nicht eindeutig und wurden zur Prüfung markiert." : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
+  const heading = state.currentQuiz?.generationJobId ? "KI-Test erstellt" : "Test importiert";
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : heading}</strong><p>${warningCount ? "Einige Stellen waren nicht eindeutig und wurden zur Prüfung markiert." : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
   host.querySelector(".closeImportReview")?.addEventListener("click", () => {
     state.pendingImportReport = null;
     host.classList.add("hidden");
@@ -2431,8 +2425,13 @@ async function openEditor(code) {
     if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
     const q = { id: quizSnap.id, ...quizSnap.data() };
     if (q.ownerId !== state.user.uid) throw new Error("Kein Zugriff");
+    if (q.generationStatus === "running") return toast("Dieser Test wird gerade erstellt. Den Fortschritt siehst du unter „Meine Tests“.");
     state.newManualQuiz = false;
+    state.draftBaseUpdatedAt = toMillis(q.updatedAt);
     state.currentQuiz = q;
+    state.pendingImportReport = q.qualityWarnings?.length
+      ? { quizId: code, warnings: q.qualityWarnings.map(warning => `KI-Qualitätsprüfung: ${warning}`), repairs: [] }
+      : null;
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
     state.questions = qs.docs.map((d) => {
       const item = { id: d.id, ...d.data() };
@@ -2441,10 +2440,36 @@ async function openEditor(code) {
     });
     state.loadedQuestionIds = new Set(state.questions.map((x) => x.id));
     renderEditorState(q);
+    const draft = await readEditorDraft(state.user.uid, code).catch(err => { console.warn("Lokaler Entwurf nicht verfügbar:", err); return null; });
+    if (state.currentQuiz?.id !== code || $("editorView").classList.contains("hidden")) return;
+    if (!draft) return;
+    if (toMillis(q.updatedAt) > Number(draft.baseUpdatedAt || 0) + 1500 &&
+        !confirm("Dieser Test wurde seit deiner lokalen Sicherung auf einem anderen Gerät oder in einem anderen Tab gespeichert. Deinen lokalen Bearbeitungsstand trotzdem wiederherstellen?")) {
+      await removeEditorDraft(state.user.uid, code).catch(console.warn);
+      return;
+    }
+    state.draftBaseUpdatedAt = Number(draft.baseUpdatedAt || 0);
+    state.currentQuiz = { ...q, ...draft.quiz };
+    state.questions = (draft.questions || []).map(item => { initializeTypeData(item, item.type || "single"); return item; });
+    renderEditorState(state.currentQuiz);
+    markDirty();
+    toast("Lokaler Bearbeitungsstand wiederhergestellt. Bitte nach der Prüfung speichern.");
   } catch (err) {
     console.error(err);
     toast("Test konnte nicht geöffnet werden.", "error");
   }
+}
+
+function resumeManualDraft(draft) {
+  if (draft.ownerId !== state.user?.uid) return;
+  state.newManualQuiz = true;
+  state.draftBaseUpdatedAt = 0;
+  state.currentQuiz = { ...quizDefaults(), ...draft.quiz, id: draft.quizId };
+  state.questions = (draft.questions || []).map(item => { initializeTypeData(item, item.type || "single"); return item; });
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
+  renderEditorState(state.currentQuiz);
+  markDirty();
 }
 
 function renderEditorState(q) {
@@ -2740,7 +2765,7 @@ async function createSimilarTest() {
     materials: [], materialMode: "consider", imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount,
     sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: hasImageAnswers(q) ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
   };
-  await createAiTestFromRequest(request, { similar: true, sourceQuiz: state.currentQuiz });
+  await startAiCreationJob(request, { similar: true, sourceQuiz: state.currentQuiz });
 }
 
 function toggleQuestionAiPanel(node, q, index) {
@@ -3463,22 +3488,82 @@ function updateEditorPublishControls() {
   if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen"; }
 }
 
+let draftTimer = null;
+let draftRevision = 0;
+
+function editorDraftSnapshot() {
+  const quiz = state.currentQuiz;
+  if (!state.user || !quiz) return null;
+  const scaleId = $("quizGradeScale").value;
+  const scale = scaleId === quiz.gradeScaleId ? getQuizScale(quiz) : getScaleById(scaleId);
+  return {
+    key: draftKey(state.user.uid, quiz.id), ownerId: state.user.uid, quizId: quiz.id,
+    newManualQuiz: state.newManualQuiz, baseUpdatedAt: state.draftBaseUpdatedAt,
+    savedAt: Date.now(),
+    quiz: {
+      title: $("quizTitle").value, subject: $("quizSubject").value, grade: $("quizGrade").value,
+      description: $("quizDescription").value, gradeScaleId: scaleId,
+      gradeScaleSnapshot: deepClone(scale), resultMode: $("quizResultMode").value,
+      showSolutions: $("quizShowSolutions").checked,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked
+    },
+    questions: deepClone(state.questions)
+  };
+}
+
+async function persistEditorDraft() {
+  if (!state.isDirty) return;
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  const revision = draftRevision;
+  let draft;
+  try {
+    draft = editorDraftSnapshot();
+    if (!draft) return;
+    await saveEditorDraft(draft);
+    if (state.isDirty && state.user?.uid === draft.ownerId && state.currentQuiz?.id === draft.quizId && revision === draftRevision) {
+      state.draftCheckpointSaved = true;
+      $("saveState").textContent = "✓ Lokal gesichert · Noch nicht auf dem Server";
+      $("saveState").style.color = "#9a6700";
+    }
+  } catch (err) {
+    console.error("Lokaler Bearbeitungsstand konnte nicht gesichert werden:", err);
+    if (state.isDirty && revision === draftRevision) {
+      state.draftCheckpointSaved = false;
+      $("saveState").textContent = "Sicherung fehlgeschlagen · Bitte auf „Speichern“ klicken";
+    }
+  }
+}
+
 function markDirty() {
   state.isDirty = true;
-  $("saveState").textContent = "Ungespeicherte Änderungen";
+  state.draftCheckpointSaved = false;
+  draftRevision += 1;
+  $("saveState").textContent = "Änderungen werden lokal gesichert …";
   $("saveState").style.color = "#9a6700";
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(persistEditorDraft, 180);
 }
 
 function markSaved() {
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  draftRevision += 1;
   state.isDirty = false;
+  state.draftCheckpointSaved = true;
   $("saveState").textContent = "✓ Gespeichert";
   $("saveState").style.color = "#15803d";
   updateSummary();
   updateEditorPublishControls();
 }
 
-function leaveEditorToDashboard() {
-  if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen. Wirklich ohne Speichern zurückgehen?")) return;
+async function leaveEditorToDashboard() {
+  if (state.isDirty && !state.draftCheckpointSaved) {
+    await persistEditorDraft();
+    if (!state.draftCheckpointSaved) return toast("Der Bearbeitungsstand konnte nicht gesichert werden. Bitte auf „Speichern“ klicken.", "error");
+  }
   state.isDirty = false;
   state.newManualQuiz = false;
   state.currentQuiz = null;
@@ -3486,9 +3571,12 @@ function leaveEditorToDashboard() {
 }
 
 window.addEventListener("beforeunload", (event) => {
-  if (!state.isDirty) return;
+  if (!state.isDirty || state.draftCheckpointSaved) return;
   event.preventDefault();
   event.returnValue = "";
+});
+window.addEventListener("pagehide", () => {
+  if (state.isDirty && !state.draftCheckpointSaved) persistEditorDraft();
 });
 
 function gapTextToPlain(text) {
@@ -3607,8 +3695,11 @@ async function saveCurrentQuiz(showMessage = true) {
     toast(error, "error");
     return false;
   }
+  let manualDraftId = null;
   try {
     let code = state.currentQuiz.id;
+    const oldDraftId = code;
+    const revisionAtSave = draftRevision;
     const totalPoints = round1(state.questions.reduce((s, q) => s + (Number(q.points) || 0), 0));
     const selectedScaleId = $("quizGradeScale").value;
     const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
@@ -3637,6 +3728,7 @@ async function saveCurrentQuiz(showMessage = true) {
     }
     if (state.newManualQuiz) {
       const created = await createQuizDocument(patch);
+      manualDraftId = oldDraftId;
       code = created.code;
       state.currentQuiz = { ...created.quiz, ...patch, id: code };
       state.newManualQuiz = false;
@@ -3659,11 +3751,21 @@ async function saveCurrentQuiz(showMessage = true) {
     state.loadedQuestionIds = currentIds;
     state.currentQuiz = { ...state.currentQuiz, ...patch };
     $("editorHeading").textContent = patch.title;
-    markSaved();
+    if (draftRevision === revisionAtSave) markSaved();
+    else markDirty();
+    state.draftBaseUpdatedAt = Date.now();
+    if (oldDraftId !== code || !state.isDirty) {
+      await removeEditorDraft(state.user.uid, oldDraftId).catch(err => console.warn("Lokale Sicherung konnte nicht entfernt werden:", err));
+    }
     if (showMessage) toast("Test gespeichert.");
     return true;
   } catch (err) {
     console.error(err);
+    if (manualDraftId && state.currentQuiz?.id !== manualDraftId) {
+      markDirty();
+      await persistEditorDraft();
+      if (state.draftCheckpointSaved) await removeEditorDraft(state.user.uid, manualDraftId).catch(console.warn);
+    }
     toast("Speichern fehlgeschlagen.", "error");
     return false;
   }
