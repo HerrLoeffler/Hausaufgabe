@@ -86,3 +86,28 @@ test("variant duplicate check still rejects near-identical wording",()=>{
   const copy=base(); copy.text="Berechne 25 Prozent von 80 €."; copy.options=[{text:"20 Euro",correct:true},{text:"25 Euro",correct:false}];
   assert.equal(variantRepeats(original,copy),true);
 });
+
+
+test("image choices accept short labels when dedicated scenes are concrete",()=>{
+  const q=base();
+  q.type="single";
+  q.text="Welche Abbildung zeigt die gesuchte Lage?";
+  q.options=[
+    {text:"Bild A",correct:true,imageScene:"Ein rotes Buch liegt vollständig unter einem Holztisch."},
+    {text:"Bild B",correct:false,imageScene:"Ein rotes Buch liegt vollständig auf einem Holztisch."}
+  ];
+  q.mediaIntent={kind:"image_choices",prompt:"",altText:"",count:2,sourceMaterialId:"",reason:""};
+  assert.deepEqual(validateQuestion(q,{allowImages:true,allowImageChoices:true}),[]);
+});
+
+test("image choices reject placeholder scene descriptions",()=>{
+  const q=base();
+  q.type="single";
+  q.text="Welche Abbildung passt?";
+  q.options=[
+    {text:"Bild A",correct:true,imageScene:"Bild A"},
+    {text:"Bild B",correct:false,imageScene:"Ein rotes Buch liegt auf einem Holztisch."}
+  ];
+  q.mediaIntent={kind:"image_choices",prompt:"",altText:"",count:2,sourceMaterialId:"",reason:""};
+  assert.ok(validateQuestion(q,{allowImages:true,allowImageChoices:true}).some(error=>/Szenenbeschreibung/.test(error)));
+});
