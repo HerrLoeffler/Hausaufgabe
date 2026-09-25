@@ -117,58 +117,108 @@ const state = {
   activeAnnouncementDialogId: null,
   adminOverviewPeriod: "7d",
   pendingImportReport: null,
-  aiMaterials: []
+  aiMaterials: [],
+  teacherTourConfig: null
 };
 
 
-const TEACHER_TOUR_VERSION = "ai-beta-tour-v2";
-const TEACHER_TOUR_STEPS = Object.freeze([
-  {
-    icon: "👋",
-    title: "Schön, dass du da bist!",
-    text: "Du testest die neuen KI-Funktionen von Testify. Die wichtigsten Neuerungen zeigen wir dir kurz in vier Schritten.",
-    bullets: ["KI-Tests bleiben Entwürfe, bis du sie geprüft und veröffentlicht hast."]
-  },
-  {
-    icon: "✨",
-    title: "Tests mit KI erstellen",
-    text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und anschließend im Editor anpassen.",
-    bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "⚠ Jede KI-Generierung verursacht Kosten – bitte gezielt und sparsam nutzen. Das gilt auch für „KI bearbeiten“ und „Variante hinzufügen“."]
-  },
-  {
-    icon: "☺",
-    title: "KI-Aufgaben kurz bewerten",
-    text: "Bewerte möglichst jede KI-Aufgabe mit ☺ oder ☹. So lernt Testify, was gut funktioniert und wo typische Fehler entstehen.",
-    bullets: ["☺ Gut: Aufgabe kann so bleiben.", "☹ Problem: Grund auswählen und Aufgabe behalten, ersetzen oder entfernen."]
-  },
-  {
-    icon: "↻",
-    title: "Aufgaben gezielt verändern",
-    text: "„KI bearbeiten“ verbessert eine Aufgabe nach deinem Hinweis. „Variante hinzufügen“ erstellt eine gleichwertige neue Aufgabe.",
-    bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "💬 Fehler, Wünsche oder Ideen? Nutze unten die Feedback-Funktion – Rückmeldungen helfen besonders in der aktuellen Entwicklungsphase."]
+const DEFAULT_TEACHER_TOUR_CONFIG = Object.freeze({
+  enabled: true,
+  version: "ai-beta-tour-v3",
+  steps: [
+    {
+      icon: "👋",
+      title: "Schön, dass du da bist!",
+      text: "Du testest die neuen KI-Funktionen von Testify. Die wichtigsten Neuerungen zeigen wir dir kurz in vier Schritten.",
+      bullets: ["KI-Tests bleiben Entwürfe, bis du sie geprüft und veröffentlicht hast."]
+    },
+    {
+      icon: "✨",
+      title: "Tests mit KI erstellen",
+      text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und anschließend im Editor anpassen.",
+      bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "⚠ Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen – auch „KI bearbeiten“ und „Variante hinzufügen“."]
+    },
+    {
+      icon: "☺",
+      title: "KI-Aufgaben kurz bewerten",
+      text: "Bewerte möglichst jede KI-Aufgabe mit ☺ oder ☹. So lernt Testify, was gut funktioniert und wo typische Fehler entstehen.",
+      bullets: ["☺ Gut: Aufgabe kann so bleiben.", "☹ Problem: Grund auswählen und Aufgabe behalten, ersetzen oder entfernen."]
+    },
+    {
+      icon: "↻",
+      title: "Aufgaben gezielt verändern",
+      text: "„KI bearbeiten“ verbessert eine Aufgabe nach deinem Hinweis. „Variante hinzufügen“ erstellt eine gleichwertige neue Aufgabe.",
+      bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "💬 Fehler, Wünsche oder Ideen? Nutze unten die Feedback-Funktion – Rückmeldungen helfen besonders in der aktuellen Entwicklungsphase."]
+    }
+  ]
+});
+
+function normalizeTeacherTourConfig(raw = {}) {
+  const sourceSteps = Array.isArray(raw.steps) ? raw.steps : DEFAULT_TEACHER_TOUR_CONFIG.steps;
+  const steps = sourceSteps
+    .slice(0, 10)
+    .map((step, index) => ({
+      icon: String(step?.icon || "•").trim().slice(0, 8) || "•",
+      title: String(step?.title || `Schritt ${index + 1}`).trim().slice(0, 120),
+      text: String(step?.text || "").trim().slice(0, 1200),
+      bullets: (Array.isArray(step?.bullets) ? step.bullets : String(step?.bullets || "").split("\n"))
+        .map(value => String(value || "").trim().slice(0, 500))
+        .filter(Boolean)
+        .slice(0, 8)
+    }))
+    .filter(step => step.title || step.text || step.bullets.length);
+  return {
+    enabled: raw.enabled !== false,
+    version: String(raw.version || DEFAULT_TEACHER_TOUR_CONFIG.version).trim().slice(0, 120) || DEFAULT_TEACHER_TOUR_CONFIG.version,
+    steps: steps.length ? steps : deepClone(DEFAULT_TEACHER_TOUR_CONFIG.steps)
+  };
+}
+
+async function loadTeacherTourConfig({ force = false } = {}) {
+  if (state.teacherTourConfig && !force) return state.teacherTourConfig;
+  try {
+    const snap = await getDoc(doc(db, "appConfig", "teacherTour"));
+    state.teacherTourConfig = normalizeTeacherTourConfig(snap.exists() ? snap.data() : DEFAULT_TEACHER_TOUR_CONFIG);
+  } catch (err) {
+    console.warn("Tutorial-Konfiguration konnte nicht geladen werden:", err);
+    state.teacherTourConfig = normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
   }
-]);
+  return state.teacherTourConfig;
+}
+
+function currentTeacherTourConfig() {
+  return state.teacherTourConfig || normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
+}
+
 let teacherTourIndex = 0;
 
 function teacherTourStorageKey() {
-  return state.user ? `teacherTour:${state.user.uid}:${TEACHER_TOUR_VERSION}` : "";
+  const config = currentTeacherTourConfig();
+  return state.user ? `teacherTour:${state.user.uid}:${config.version}` : "";
 }
 
 function renderTeacherTourStep() {
-  const step = TEACHER_TOUR_STEPS[teacherTourIndex] || TEACHER_TOUR_STEPS[0];
+  const config = currentTeacherTourConfig();
+  const steps = config.steps || [];
+  const step = steps[teacherTourIndex] || steps[0];
   if (!step) return;
-  $("teacherTourStepLabel").textContent = `${teacherTourIndex + 1} von ${TEACHER_TOUR_STEPS.length}`;
+  $("teacherTourStepLabel").textContent = `${teacherTourIndex + 1} von ${steps.length}`;
   $("teacherTourIcon").textContent = step.icon;
   $("teacherTourTitle").textContent = step.title;
   $("teacherTourText").textContent = step.text;
-  $("teacherTourBullets").innerHTML = step.bullets.map(item => `<div class="teacherTourBullet"><span>✓</span><p>${escapeHtml(item)}</p></div>`).join("");
-  $("teacherTourDots").innerHTML = TEACHER_TOUR_STEPS.map((_, index) => `<span class="teacherTourDot${index === teacherTourIndex ? " active" : ""}"></span>`).join("");
+  $("teacherTourBullets").innerHTML = step.bullets.map(item => {
+    const warning = item.trim().startsWith("⚠");
+    return `<div class="teacherTourBullet${warning ? " warning" : ""}"><span>${warning ? "⚠" : "✓"}</span><p>${escapeHtml(warning ? item.replace(/^⚠\\s*/, "") : item)}</p></div>`;
+  }).join("");
+  $("teacherTourDots").innerHTML = steps.map((_, index) => `<span class="teacherTourDot${index === teacherTourIndex ? " active" : ""}"></span>`).join("");
   $("teacherTourBack").disabled = teacherTourIndex === 0;
-  $("teacherTourNext").textContent = teacherTourIndex === TEACHER_TOUR_STEPS.length - 1 ? "Los geht’s" : "Weiter";
+  $("teacherTourNext").textContent = teacherTourIndex === steps.length - 1 ? "Los geht’s" : "Weiter";
 }
 
 function maybeShowTeacherTour() {
   if (!state.user || isSuspended()) return false;
+  const config = currentTeacherTourConfig();
+  if (!config.enabled || !config.steps?.length) return false;
   const key = teacherTourStorageKey();
   try { if (key && localStorage.getItem(key) === "done") return false; } catch (_) {}
   teacherTourIndex = 0;
@@ -847,6 +897,7 @@ async function loadDashboard() {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
     renderQuizList();
+    await loadTeacherTourConfig();
     const tourOpened = maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
   } catch (err) {
@@ -4968,7 +5019,7 @@ $("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("wha
 $("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
 $("teacherTourBack")?.addEventListener("click", () => { if (teacherTourIndex > 0) { teacherTourIndex -= 1; renderTeacherTourStep(); } });
 $("teacherTourNext")?.addEventListener("click", async () => {
-  if (teacherTourIndex < TEACHER_TOUR_STEPS.length - 1) { teacherTourIndex += 1; renderTeacherTourStep(); return; }
+  if (teacherTourIndex < currentTeacherTourConfig().steps.length - 1) { teacherTourIndex += 1; renderTeacherTourStep(); return; }
   await finishTeacherTour();
 });
 $("teacherTourSkip")?.addEventListener("click", finishTeacherTour);
@@ -5179,6 +5230,9 @@ $("adminFeedbackCategory")?.addEventListener("change", renderAdminFeedback);
 $("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
 $("saveAnnouncementBtn")?.addEventListener("click", saveAnnouncement);
 $("resetAnnouncementBtn")?.addEventListener("click", resetAnnouncementForm);
+$("addTeacherTourStepBtn")?.addEventListener("click", () => addAdminTeacherTourStep());
+$("saveTeacherTourBtn")?.addEventListener("click", saveAdminTeacherTour);
+$("showTeacherTourPreviewBtn")?.addEventListener("click", showAdminTeacherTourPreview);
 ["announcementType","announcementDisplay","announcementFrequency","announcementTitle","announcementText","announcementActive","announcementStart","announcementEnd"].forEach((id) => {
   $(id)?.addEventListener("input", renderAnnouncementPreview);
   $(id)?.addEventListener("change", renderAnnouncementPreview);
@@ -5232,7 +5286,9 @@ async function loadAdminData(showToast = false) {
     await renderAdminOverview();
     renderAdminTeachers();
     renderAdminTests();
+    await loadTeacherTourConfig({ force: true });
     renderAdminAnnouncements();
+    renderAdminTeacherTour();
     renderAdminFeedback();
     renderAdminAudit();
     if (showToast) toast("Admin-Daten aktualisiert.");
@@ -5593,6 +5649,127 @@ function renderAdminAnnouncements() {
   root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
 }
 
+function teacherTourStepEditor(step, index, total) {
+  return `<article class="teacherTourAdminStep" data-index="${index}">
+    <div class="teacherTourAdminStepHead">
+      <strong>Schritt ${index + 1}</strong>
+      <div class="teacherTourAdminStepActions">
+        <button class="button ghost tourMoveUp" type="button" ${index === 0 ? "disabled" : ""}>↑</button>
+        <button class="button ghost tourMoveDown" type="button" ${index === total - 1 ? "disabled" : ""}>↓</button>
+        <button class="button danger tourRemove" type="button" ${total <= 1 ? "disabled" : ""}>Löschen</button>
+      </div>
+    </div>
+    <div class="teacherTourAdminFields">
+      <label>Symbol<input class="tourStepIcon" type="text" maxlength="8" value="${escapeHtml(step.icon || "")}" placeholder="✨" /></label>
+      <label class="tourStepTitleField">Titel<input class="tourStepTitle" type="text" maxlength="120" value="${escapeHtml(step.title || "")}" /></label>
+      <label class="span2">Text<textarea class="tourStepText" rows="3" maxlength="1200">${escapeHtml(step.text || "")}</textarea></label>
+      <label class="span2">Hinweise <small>(eine Zeile pro Punkt)</small><textarea class="tourStepBullets" rows="4" maxlength="3500">${escapeHtml((step.bullets || []).join("\n"))}</textarea></label>
+    </div>
+  </article>`;
+}
+
+function renderAdminTeacherTour() {
+  const root = $("teacherTourAdminList");
+  if (!root) return;
+  const config = currentTeacherTourConfig();
+  if ($("teacherTourAdminEnabled")) $("teacherTourAdminEnabled").checked = config.enabled;
+  if ($("teacherTourAdminVersion")) $("teacherTourAdminVersion").textContent = config.version;
+  root.innerHTML = config.steps.map((step, index) => teacherTourStepEditor(step, index, config.steps.length)).join("");
+  bindAdminTeacherTourStepButtons();
+}
+
+function readAdminTeacherTourSteps() {
+  return Array.from(document.querySelectorAll(".teacherTourAdminStep")).map((card, index) => ({
+    icon: card.querySelector(".tourStepIcon")?.value.trim() || "•",
+    title: card.querySelector(".tourStepTitle")?.value.trim() || `Schritt ${index + 1}`,
+    text: card.querySelector(".tourStepText")?.value.trim() || "",
+    bullets: (card.querySelector(".tourStepBullets")?.value || "").split("\n").map(value => value.trim()).filter(Boolean)
+  }));
+}
+
+function bindAdminTeacherTourStepButtons() {
+  document.querySelectorAll(".teacherTourAdminStep").forEach((card, index, cards) => {
+    card.querySelector(".tourMoveUp")?.addEventListener("click", () => moveAdminTeacherTourStep(index, -1));
+    card.querySelector(".tourMoveDown")?.addEventListener("click", () => moveAdminTeacherTourStep(index, 1));
+    card.querySelector(".tourRemove")?.addEventListener("click", () => removeAdminTeacherTourStep(index));
+  });
+}
+
+function syncAdminTeacherTourDraft(steps) {
+  state.teacherTourConfig = normalizeTeacherTourConfig({
+    ...currentTeacherTourConfig(),
+    enabled: $("teacherTourAdminEnabled")?.checked !== false,
+    steps
+  });
+  renderAdminTeacherTour();
+}
+
+function moveAdminTeacherTourStep(index, delta) {
+  const steps = readAdminTeacherTourSteps();
+  const next = index + delta;
+  if (next < 0 || next >= steps.length) return;
+  [steps[index], steps[next]] = [steps[next], steps[index]];
+  syncAdminTeacherTourDraft(steps);
+}
+
+function removeAdminTeacherTourStep(index) {
+  const steps = readAdminTeacherTourSteps();
+  if (steps.length <= 1) return;
+  steps.splice(index, 1);
+  syncAdminTeacherTourDraft(steps);
+}
+
+function addAdminTeacherTourStep() {
+  const steps = readAdminTeacherTourSteps();
+  steps.push({ icon: "ℹ️", title: "Neue Information", text: "", bullets: [] });
+  syncAdminTeacherTourDraft(steps);
+}
+
+async function saveAdminTeacherTour() {
+  if (!isAdmin()) return;
+  const button = $("saveTeacherTourBtn");
+  if (button) button.disabled = true;
+  try {
+    const previous = currentTeacherTourConfig();
+    const steps = readAdminTeacherTourSteps();
+    if (!steps.length) throw new Error("Mindestens ein Tutorial-Schritt ist erforderlich.");
+    const reshow = $("teacherTourReshow")?.checked !== false;
+    const version = reshow ? `admin-${Date.now()}` : previous.version;
+    const config = normalizeTeacherTourConfig({
+      enabled: $("teacherTourAdminEnabled")?.checked !== false,
+      version,
+      steps
+    });
+    await setDoc(doc(db, "appConfig", "teacherTour"), {
+      ...config,
+      updatedAt: serverTimestamp(),
+      updatedBy: state.user.uid
+    }, { merge: true });
+    state.teacherTourConfig = config;
+    await writeAdminAudit("teacher_tour_updated", { version, steps: config.steps.length, enabled: config.enabled, reshow });
+    renderAdminTeacherTour();
+    toast(reshow ? "Tutorial gespeichert. Es wird Lehrkräften erneut angezeigt." : "Tutorial gespeichert.");
+  } catch (err) {
+    console.error(err);
+    toast(err?.message || "Tutorial konnte nicht gespeichert werden.", "error");
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+function showAdminTeacherTourPreview() {
+  if (!isAdmin()) return;
+  const steps = readAdminTeacherTourSteps();
+  state.teacherTourConfig = normalizeTeacherTourConfig({
+    ...currentTeacherTourConfig(),
+    enabled: true,
+    steps
+  });
+  teacherTourIndex = 0;
+  renderTeacherTourStep();
+  safeDialogOpen($("teacherTourDialog"));
+}
+
 function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
@@ -5648,6 +5825,7 @@ function auditActionInfo(action) {
     announcement_created: ["📣", "Mitteilung veröffentlicht"],
     announcement_updated: ["✏️", "Mitteilung geändert"],
     announcement_deleted: ["🗑️", "Mitteilung gelöscht"],
+    teacher_tour_updated: ["🧭", "Lehrer-Tutorial geändert"],
     feedback_status_changed: ["💬", "Feedbackstatus geändert"],
     password_reset_sent: ["🔑", "Passwort-Reset versendet"],
     user_suspended: ["⛔", "Lehrkraft gesperrt"],
@@ -5664,6 +5842,7 @@ function auditStatusLabel(status) {
 function auditDetailText(entry) {
   const d = entry.details || {};
   if (entry.action?.startsWith("announcement_")) return d.title ? `„${d.title}“` : "Mitteilung";
+  if (entry.action === "teacher_tour_updated") return `${d.steps || "?"} Schritte · ${d.enabled === false ? "deaktiviert" : "aktiv"}${d.reshow ? " · erneut anzeigen" : ""}`;
   if (entry.action === "feedback_status_changed") return `Neuer Status: ${auditStatusLabel(d.status)}`;
   if (["password_reset_sent","user_suspended","user_unsuspended"].includes(entry.action)) return d.email || "Lehrkraft";
   if (entry.action === "quiz_restored") return d.quizId ? `Test ${d.quizId}` : "Test";
