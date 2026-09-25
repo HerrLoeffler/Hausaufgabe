@@ -227,9 +227,33 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       throw reportAiError(err, phase);
     }
     phase = "usage-log";
-    await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: reviewed.test.questions.length, replacedQuestions: result.replaced + reviewed.replaced, questionRepairAttempts: result.questionAttempts + reviewed.questionAttempts, qualityReviewPasses: reviewed.reviewPasses, fullRepair: result.fullRepair, failed: Boolean(reviewed.errors.length) });
-    if (reviewed.errors.length) throw new HttpsError("failed-precondition", "Der Test hat die Qualitätsprüfung nach erneuter Erstellung nicht bestanden.", { errors: reviewed.errors.slice(0, 10) });
-    return { test: reviewed.test, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, replacedQuestions: result.replaced + reviewed.replaced, qualityReviewPasses: reviewed.reviewPasses, fullRepair: result.fullRepair } };
+    const hardErrors = validateTest(reviewed.test, options);
+    const qualityWarnings = hardErrors.length ? [] : reviewed.errors.slice(0, 10);
+    await logUsage(uid, "test", usage, {
+      model: TEXT_MODEL,
+      promptVersion: PROMPT_VERSION,
+      questionCount: reviewed.test.questions.length,
+      replacedQuestions: result.replaced + reviewed.replaced,
+      questionRepairAttempts: result.questionAttempts + reviewed.questionAttempts,
+      qualityReviewPasses: reviewed.reviewPasses,
+      fullRepair: result.fullRepair,
+      failed: Boolean(hardErrors.length),
+      errors: hardErrors.slice(0, 10),
+      qualityWarnings
+    });
+    if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
+    return {
+      test: reviewed.test,
+      meta: {
+        model: TEXT_MODEL,
+        promptVersion: PROMPT_VERSION,
+        schemaVersion: AI_SCHEMA_VERSION,
+        replacedQuestions: result.replaced + reviewed.replaced,
+        qualityReviewPasses: reviewed.reviewPasses,
+        fullRepair: result.fullRepair,
+        qualityWarnings
+      }
+    };
   } catch (err) {
     throw reportAiError(err, phase);
   } finally {
