@@ -2297,6 +2297,9 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     const entry = {
     userId: state.user.uid, displayName: state.profile?.displayName || state.user.displayName || "", email: state.user.email || "",
     category: "ai_question", testCode: state.currentQuiz.id, questionId: q.id, questionPosition: index + 1,
+    subject: String($("quizSubject")?.value || state.currentQuiz?.subject || "").trim().slice(0, 120),
+    grade: String($("quizGrade")?.value || state.currentQuiz?.grade || "").trim().slice(0, 60),
+    questionType: String(q.type || "").slice(0, 30), feedbackSchemaVersion: 2,
     message: verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
     verdict, reason, teacherComment: note, action, questionSnapshot: snapshot,
     model: String(q.aiOrigin?.model || "").slice(0, 60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0, 60),
