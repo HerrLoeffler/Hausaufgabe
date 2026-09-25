@@ -166,7 +166,7 @@ function feedbackMemory(globalFeedback = [], context = {}) {
       continue;
     }
 
-    if (!Object.hasOwn(reasonScores, entry.reason)) continue;
+    if (!Object.hasOwn(reasonSignals, entry.reason)) continue;
     reasonReports[entry.reason] += 1;
     reasonSignals[entry.reason].set(teacherKey, Math.max(reasonSignals[entry.reason].get(teacherKey) || 0, weight));
 
