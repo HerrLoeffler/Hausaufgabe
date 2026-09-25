@@ -43,6 +43,41 @@ function balanceTestPoints(test, targetPoints) {
   return { ...test, questions: test.questions.map((question, index) => ({ ...question, points: units[index] / 2 })) };
 }
 
+// A model occasionally returns one or two extra tasks. Keep the requested image
+// counts and drop a faulty task first, so the rest can be repaired individually.
+function trimSurplusQuestions(test, options) {
+  const expected = Number(options.expectedCount);
+  if (!Number.isInteger(expected) || expected < 1 || !Array.isArray(test.questions)) return { test, options };
+  const surplus = test.questions.length - expected;
+  if (surplus < 1 || surplus > 2) return { test, options };
+
+  let draft = test;
+  let adjustedOptions = options;
+  for (let removed = 0; removed < surplus; removed += 1) {
+    const questions = draft.questions;
+    const kinds = ["ai_generated", "image_choices"];
+    const counts = Object.fromEntries(kinds.map(kind => [kind, questions.filter(q => q?.mediaIntent?.kind === kind).length]));
+    const issues = new Map(questionIssues(draft, adjustedOptions).map(({ index, reasons }) => [index, reasons.length]));
+    const candidates = questions.map((question, index) => {
+      const kind = question?.mediaIntent?.kind;
+      const required = kind === "ai_generated" ? adjustedOptions.imageQuestionCount
+        : kind === "image_choices" ? adjustedOptions.imageAnswerQuestionCount : null;
+      if (required != null && counts[kind] <= required) return null;
+      const extraVisual = required != null && counts[kind] > required;
+      return { index, score: (extraVisual ? 100 : 0) + (issues.get(index) || 0) * 10 };
+    }).filter(Boolean).sort((a, b) => b.score - a.score || b.index - a.index);
+    if (!candidates.length) return { test, options };
+    const index = candidates[0].index;
+    draft = { ...draft, questions: questions.filter((_, i) => i !== index) };
+    if (adjustedOptions.reviewIssues?.length) adjustedOptions = {
+      ...adjustedOptions,
+      reviewIssues: adjustedOptions.reviewIssues.filter(issue => issue.index !== index)
+        .map(issue => issue.index > index ? { ...issue, index: issue.index - 1 } : issue)
+    };
+  }
+  return { test: draft, options: adjustedOptions };
+}
+
 async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8) {
   let attempts = 0;
   let replaced = 0;
@@ -91,8 +126,13 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     ? maxQuestionAttempts
     : Math.min(16, Math.max(8, Math.ceil(expectedCount * 0.75)));
   const localIssueLimit = Math.min(12, Math.max(6, Math.ceil(expectedCount * 0.5)));
-  const balance = draft => options.expectedCount && draft.questions?.length !== options.expectedCount ? draft : balanceTestPoints(draft, options.targetPoints);
-  test = balance(test);
+  const prepare = draft => {
+    const trimmed = trimSurplusQuestions(draft, options);
+    options = trimmed.options;
+    return options.expectedCount && trimmed.test.questions?.length !== options.expectedCount
+      ? trimmed.test : balanceTestPoints(trimmed.test, options.targetPoints);
+  };
+  test = prepare(test);
   let questionAttempts = 0;
   let replaced = 0;
   let fullRepair = false;
@@ -109,7 +149,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
       if (!validateTest(test, options).length) continue;
     }
     if (!fullRepair) {
-      test = balance(await regenerateTest(test, validateTest(test, options)));
+      test = prepare(await regenerateTest(test, validateTest(test, options)));
       fullRepair = true;
       continue;
     }

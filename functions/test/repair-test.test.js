@@ -122,6 +122,60 @@ test("regenerates an excessive question count instead of failing during point ba
   assert.equal(result.fullRepair, true);
 });
 
+test("report AI-CREATE-001: 16 tasks for 15 with duplicate answers in task 11", async () => {
+  const questions = Array.from({ length: 16 }, (_, index) => question(index + 1));
+  questions[10].options = [{ text: "Schal", correct: true }, { text: "schal!", correct: false }];
+  const result = await validateAndRepairTest({ title: "Deutsch", questions }, options(15), {
+    generateQuestion: async () => { throw new Error("The faulty surplus task should be removed"); },
+    regenerateTest: async () => { throw new Error("A complete regeneration is unnecessary"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.length, 15);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 15);
+  assert.equal(result.test.questions[10], questions[11]);
+  assert.equal(result.fullRepair, false);
+  assert.equal(result.questionAttempts, 0);
+});
+
+test("a full regeneration with one extra task is trimmed and remaining invalid questions repaired", async () => {
+  const regenerated = Array.from({ length: 16 }, (_, index) => question(index + 1));
+  regenerated[10].options = [{ text: "Schal", correct: true }, { text: "schal!", correct: false }];
+  let attempts = 0;
+  const result = await validateAndRepairTest({ title: "Deutsch", questions: [question(1)] }, options(15), {
+    generateQuestion: async () => { attempts += 1; throw new Error("No replacement needed"); },
+    regenerateTest: async () => ({ title: "Deutsch", questions: regenerated })
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.length, 15);
+  assert.equal(attempts, 0);
+  assert.equal(result.fullRepair, true);
+});
+
+test("trimming an extra task preserves required image tasks and repairs the remaining faulty task", async () => {
+  const questions = [question(1, "ai_generated"), question(2), question(3), question(4)];
+  questions[2].options = [{ text: "gleich", correct: true }, { text: "gleich!", correct: false }];
+  const opts = { ...options(3), imageQuestionCount: 1 };
+  let indexToRepair = -1;
+  const result = await validateAndRepairTest({ title: "Bilder", questions }, opts, {
+    generateQuestion: async ({ index }) => { indexToRepair = index; return question(30); },
+    regenerateTest: async () => { throw new Error("A full regeneration is unnecessary"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.length, 3);
+  assert.equal(result.test.questions[0], questions[0]);
+  assert.equal(indexToRepair, -1); // The invalid non-image task was removed.
+
+  const extraImage = question(5, "ai_generated");
+  const second = await validateAndRepairTest({ title: "Bilder", questions: [...questions.slice(0, 3), extraImage] }, opts, {
+    generateQuestion: async ({ index }) => { indexToRepair = index; return question(30); },
+    regenerateTest: async () => { throw new Error("The extra image and local error can be fixed without a full regeneration"); }
+  });
+  assert.deepEqual(second.errors, []);
+  assert.equal(indexToRepair, 2);
+  assert.equal(second.test.questions[0], questions[0]);
+  assert.equal(second.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, 1);
+});
+
 test("does not return a broken test after the bounded repair budget", async () => {
   const bad = question(1);
   bad.options = [{ text: "gleich", correct: true }, { text: "gleich", correct: false }];

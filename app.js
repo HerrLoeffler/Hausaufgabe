@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai19";
+const APP_VERSION = "2.3.1-ai20";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -318,6 +318,8 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
     providerCode,
     serverReference: String(error?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40),
     serverPhase: String(error?.details?.phase || "").slice(0, 100),
+    validationErrors: Array.isArray(error?.details?.errors)
+      ? error.details.errors.slice(0, 10).map(value => String(value).slice(0, 240)).join("\n") : "",
     rawMessage,
     stack,
     view: currentViewId(),
@@ -381,6 +383,7 @@ async function submitTechnicalErrorReport(card) {
         providerCode: payload.providerCode,
         serverReference: payload.serverReference,
         serverPhase: payload.serverPhase,
+        validationErrors: payload.validationErrors,
         rawMessage: payload.rawMessage,
         stack: payload.stack,
         view: payload.view,
@@ -5790,6 +5793,34 @@ function showAdminTeacherTourPreview() {
 }
 
 function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+
+function formatTechnicalErrorReport(report) {
+  const t = report.technicalDetails || {};
+  const fields = [
+    ["Fehlercode", report.errorCode], ["Report-ID", report.reportId], ["Fingerprint", report.fingerprint],
+    ["Meldung", report.message], ["Aktion", report.action], ["Originalfehler", t.rawMessage],
+    ["Validierungsfehler", t.validationErrors], ["Provider-Code", t.providerCode], ["Fehlertyp", t.errorName],
+    ["Server-Referenz", t.serverReference], ["Server-Phase", t.serverPhase],
+    ["Ansicht", t.view], ["Client-Phase", t.stage], ["Aufgabe", t.questionPosition],
+    ["Aufgabentyp", t.questionType], ["Bildart", t.mediaKind],
+    ["Gewünschte Aufgaben", t.requestedCount], ["Aufgaben im Editor", t.questionCount],
+    ["Zielpunkte", t.targetPoints], ["Bildmodus", t.imageMode],
+    ["Aufgaben mit Bild", t.imageQuestionCount], ["Aufgaben mit Bildantworten", t.imageAnswerQuestionCount],
+    ["Materialien", t.materialCount], ["Erlaubte Aufgabentypen", t.allowedTypeCount],
+    ["Andere Aufgabe verlangt", t.requireDifferent], ["Länge der Anweisung", t.instructionLength],
+    ["Aufgaben im Test", t.testQuestionCount],
+    ["Datei", t.file], ["Zeile", t.line], ["Spalte", t.column],
+    ["Testcode", report.testCode], ["Version", report.appVersion], ["Umgebung", report.environment],
+    ["Gemeldet", fmtDate(report.createdAt)], ["Client-Zeit", t.occurredAtClient],
+    ["Browser", report.userAgent], ["Sprache", t.language], ["Online", t.online],
+    ["Viewport", t.viewport], ["Bildschirm", t.screen], ["Häufigkeit", t.occurrences],
+    ["Stacktrace", t.stack]
+  ];
+  return ["Testify · technischer Fehlerbericht", ...fields
+    .filter(([, value]) => value !== undefined && value !== null && value !== "" && value !== "–")
+    .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
+}
+
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -5816,12 +5847,17 @@ function renderAdminFeedback(){
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
-    const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div></div>` : "";
+    const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
     return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
+  root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {
+    if (!isAdmin()) return;
+    const report = state.adminFeedback.find(item => item.id === button.dataset.id && item.category === "app_error");
+    if (report) copyText(formatTechnicalErrorReport(report), "Fehlerbericht kopiert.");
+  }));
   root.querySelectorAll(".rightsHoldToggle").forEach(button => button.addEventListener("click", () => toggleRightsHold(button.dataset.code, button.dataset.hold === "true")));
 }
 

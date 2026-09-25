@@ -70,8 +70,24 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   if (q.type === "truefalse" && typeof q.correctBoolean !== "boolean") errors.push("Richtig/Falsch-Lösung fehlt.");
   if (q.type === "gapfill" && !/\[[^\]]+\]/.test(q.text || "")) errors.push("Lückentext enthält keine [Lösung].");
   if (q.type === "matching" && (!Array.isArray(q.pairs) || q.pairs.length < 2 || q.pairs.some(p => !normalizeText(p.left) || !normalizeText(p.right)))) errors.push("Zuordnung braucht mindestens zwei vollständige Paare.");
+  if (q.type === "matching" && Array.isArray(q.pairs)) {
+    for (const side of ["left", "right"]) {
+      const entries = q.pairs.map(pair => comparableAnswer(pair?.[side])).filter(Boolean);
+      if (new Set(entries).size !== entries.length) errors.push(side === "left" ? "Satzanfänge der Zuordnung müssen eindeutig sein." : "Zuordnungswörter müssen eindeutig sein.");
+    }
+  }
   if (q.type === "ordering" && (!Array.isArray(q.items) || q.items.length < 2 || q.items.some(x => !normalizeText(x)))) errors.push("Sortierung braucht mindestens zwei Elemente.");
+  if (q.type === "ordering" && Array.isArray(q.items)) {
+    const entries = q.items.map(comparableAnswer).filter(Boolean);
+    if (new Set(entries).size !== entries.length) errors.push("Sortierelemente müssen eindeutig sein.");
+  }
   if (q.type === "grouping" && (!Array.isArray(q.groups) || q.groups.length < 2 || q.groups.some(g => !normalizeText(g.name) || !Array.isArray(g.items) || !g.items.length))) errors.push("Gruppierung braucht mindestens zwei vollständige Gruppen.");
+  if (q.type === "grouping" && Array.isArray(q.groups)) {
+    const names = q.groups.map(group => comparable(group?.name)).filter(Boolean);
+    const items = q.groups.flatMap(group => Array.isArray(group?.items) ? group.items.map(comparableAnswer).filter(Boolean) : []);
+    if (new Set(names).size !== names.length) errors.push("Gruppen müssen eindeutig benannt sein.");
+    if (new Set(items).size !== items.length) errors.push("Jedes Wort darf in der Gruppierung nur einmal vorkommen.");
+  }
   if (q.type === "markwords") {
     if (!normalizeText(q.passage)) errors.push("Markiertext fehlt.");
     const targets = Array.isArray(q.targetWords) ? q.targetWords.filter(normalizeText) : [];

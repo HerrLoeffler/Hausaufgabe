@@ -33,6 +33,21 @@ test("duplicated answer options are invalid",()=>{
   q.options=[{text:"a scarf",correct:true},{text:"scarf",correct:false}];
   assert.ok(validateQuestion(q).some(x=>x.includes("eindeutig")));
 });
+test("matching has distinct left and right entries",()=>{
+  const q=base("matching"); q.pairs=[{left:"Satz A",right:"laufen"},{left:"Satz B",right:"Laufen!"}];
+  assert.ok(validateQuestion(q).some(error=>error.includes("Zuordnungswörter müssen eindeutig")));
+  q.pairs=[{left:"Satz A",right:"laufen"},{left:"Satz A!",right:"gehen"}];
+  assert.ok(validateQuestion(q).some(error=>error.includes("Satzanfänge der Zuordnung")));
+  q.pairs=[{left:"Satz A",right:"laufen"},{left:"Satz B",right:"gehen"}];
+  assert.deepEqual(validateQuestion(q),[]);
+});
+test("grouping and ordering reject identical displayed items",()=>{
+  const grouping=base("grouping");
+  grouping.groups=[{name:"Verben",items:["gehen"]},{name:"Adverbien",items:["Gehen!"]}];
+  assert.ok(validateQuestion(grouping).some(error=>error.includes("nur einmal")));
+  const ordering=base("ordering"); ordering.items=["zuerst","Zuerst!"];
+  assert.ok(validateQuestion(ordering).some(error=>error.includes("Sortierelemente")));
+});
 test("exact image counts reject a draft without requested images",()=>{
   const q=base();
   assert.ok(validateTest({title:"T",questions:[q]},{imageQuestionCount:1,imageAnswerQuestionCount:0}).some(x=>x.includes("1 Aufgaben mit einem Bild")));
