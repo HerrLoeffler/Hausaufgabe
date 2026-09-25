@@ -27,11 +27,16 @@ const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };
 
 function reportAiError(err, phase) {
-  if (err instanceof HttpsError) return err;
   const reference = randomUUID().slice(0, 8);
+  if (err instanceof HttpsError) {
+    const details = err.details && typeof err.details === "object" && !Array.isArray(err.details) ? err.details : {};
+    const errors = Array.isArray(details.errors) ? details.errors.slice(0, 10).map(value => String(value).slice(0, 240)) : [];
+    console.warn("KI-Anfrage kontrolliert beendet:", { reference, phase, code: err.code, message: String(err.message || "").slice(0, 300), errors });
+    return new HttpsError(err.code, err.message, { ...details, reference, phase });
+  }
   console.error("KI-Anfrage fehlgeschlagen:", { reference, phase, name: err?.name, status: err?.status, code: err?.code, providerRequestId: err?.request_id });
   const mapped = classifyAiFailure(err);
-  return new HttpsError(mapped.code, mapped.message, { reference });
+  return new HttpsError(mapped.code, mapped.message, { reference, phase });
 }
 
 // Public notice channel for rights holders; the report is never sent to the AI.
