@@ -5,7 +5,14 @@ const { QUESTION_TYPES, LIMITS } = require("./constants");
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
 function normalizeText(value) { return String(value ?? "").trim(); }
 function comparable(value) {
-  return normalizeText(value).normalize("NFKC").toLocaleLowerCase("de").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
+  return normalizeText(value)
+    .normalize("NFKC")
+    .toLocaleLowerCase("de")
+    .replace(/€/g, " euro ")
+    .replace(/%/g, " prozent ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .replace(/\s+/g, " ");
 }
 function comparableAnswer(value) { return comparable(value).replace(/^(?:a|an|the|ein|eine|einen|einem|eines|der|die|das) /, ""); }
 const INSTRUCTION_WORDS = new Set("welche welcher welches welchen wähle waehle kreuze an zu aus richtige richtiges richtigen antwort bild abbildung zeigt sehen sie du das die der den dem ein eine einen einem eines ist sind wird werden auf im in mit und oder welche bilder choice choose select identify which what is the a an of shown picture image correct answer item".split(" "));
