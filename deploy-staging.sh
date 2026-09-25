@@ -51,17 +51,17 @@ node --check app.js
 
 echo
 echo "✓ Alle Prüfungen erfolgreich."
-echo "✓ Zielprojekt: \${PROJECT_ID}"
-echo "✓ Produktion (\${PRODUCTION_ID}) bleibt unangetastet."
+echo "✓ Zielprojekt: ${PROJECT_ID}"
+echo "✓ Produktion (${PRODUCTION_ID}) bleibt unangetastet."
 echo
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
 cp index.html app.js styles.css firebase-config.js ai-json-tools.js ai-client.js public/
 
-echo "Deploy STAGING -> \${PROJECT_ID}"
+echo "Deploy STAGING -> ${PROJECT_ID}"
 firebase deploy --project "$PROJECT_ID" --only firestore:rules,storage,functions,hosting
 
 echo
 echo "✓ STAGING erfolgreich deployed:"
-echo "https://\${PROJECT_ID}.web.app"
+echo "https://${PROJECT_ID}.web.app"
