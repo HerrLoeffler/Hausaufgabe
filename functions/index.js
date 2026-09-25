@@ -93,17 +93,19 @@ async function structuredResponse({ schema, schemaName, userPrompt, content = []
   return { data: JSON.parse(raw), usage: response.usage || {} };
 }
 
-async function loadQualityMemory(uid) {
+async function loadQualityMemory() {
   try {
-    const feedback = getFirestore().collection("feedback");
-    const [global, own] = await Promise.all([
-      feedback.where("category", "==", "ai_question").limit(300).get(),
-      feedback.where("userId", "==", uid).limit(300).get()
-    ]);
-    return feedbackMemory(global.docs.map(doc => doc.data()), own.docs.map(doc => doc.data()));
+    // Read reports from every teacher, including older ones. Only fields needed for
+    // local comparisons are fetched; private notes and identities never enter the AI prompt.
+    const reports = await getFirestore().collection("feedback")
+      .where("category", "==", "ai_question")
+      .where("verdict", "==", "bad")
+      .select("category", "verdict", "reason", "questionSnapshot")
+      .get();
+    return feedbackMemory(reports.docs.map(doc => doc.data()));
   } catch (err) {
-    console.warn("Bewertungsverlauf konnte nicht geladen werden:", err);
-    return feedbackMemory();
+    console.error("Bewertungsverlauf konnte nicht geladen werden:", err);
+    throw new HttpsError("unavailable", "Die Qualitätsrückmeldungen können gerade nicht geladen werden. Bitte erneut versuchen.");
   }
 }
 
@@ -133,7 +135,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
   try {
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
-    const memory = await loadQualityMemory(uid);
+    const memory = await loadQualityMemory();
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
     const usage = { ...first.usage };
@@ -201,7 +203,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const prompt = questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
-  const memory = await loadQualityMemory(uid);
+  const memory = await loadQualityMemory();
   const usage = {};
   let normalized, errors;
   for (let attempt = 0; attempt < 3; attempt += 1) {

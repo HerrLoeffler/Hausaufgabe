@@ -15,10 +15,14 @@ function question(n) {
 }
 const options = { expectedCount: 1, targetPoints: 1, allowedTypes: ["single"], allowImages: false };
 
-test("negative feedback blocks the teacher's recurring task; categories guide review without sending notes", async () => {
-  const bad = { category: "ai_question", verdict: "bad", reason: "incorrect", teacherComment: "Private Notiz 123", questionSnapshot: question(2) };
-  const memory = feedbackMemory([bad], [bad, { ...bad, verdict: "good", questionSnapshot: question(3) }]);
-  assert.deepEqual(memory.priorityReasons, ["incorrect"]);
+test("feedback from another teacher blocks a recurring error, while only error types guide review", async () => {
+  const bad = { category: "ai_question", userId: "teacher-A", verdict: "bad", reason: "incorrect", teacherComment: "Private Notiz 123", questionSnapshot: question(2) };
+  const memory = feedbackMemory([
+    bad, { ...bad, userId: "teacher-B", verdict: "good", questionSnapshot: question(3) },
+    { ...bad, userId: "teacher-C", reason: "duplicate", questionSnapshot: question(4) },
+    { ...bad, userId: "teacher-D", reason: "image_mismatch", questionSnapshot: question(5) }
+  ]);
+  assert.deepEqual(new Set(memory.priorityReasons), new Set(["incorrect", "duplicate", "image_mismatch"]));
   assert.equal(memory.negativeQuestions.length, 1);
   assert.ok(validateTest({ title: "Mathe", questions: [question(2)] }, { ...options, negativeQuestions: memory.negativeQuestions }).some(error => error.includes("fehlerhaft bewertet")));
   assert.deepEqual(validateTest({ title: "Mathe", questions: [question(3)] }, { ...options, negativeQuestions: memory.negativeQuestions }), []);
@@ -28,6 +32,17 @@ test("negative feedback blocks the teacher's recurring task; categories guide re
   });
   assert.deepEqual(replacement.errors, []);
   assert.equal(replacement.test.questions[0].text, question(4).text);
+});
+
+test("the global memory considers reports after the old 300-report cutoff and deduplicates tasks", () => {
+  const reports = Array.from({ length: 350 }, (_, index) => ({
+    category: "ai_question", userId: `teacher-${index}`, verdict: "bad", reason: "incorrect",
+    questionSnapshot: question(index + 1)
+  }));
+  reports.push({ ...reports[349], userId: "teacher-351" });
+  const memory = feedbackMemory(reports);
+  assert.equal(memory.negativeQuestions.length, 350);
+  assert.ok(validateTest({ title: "Mathe", questions: [question(350)] }, { ...options, negativeQuestions: memory.negativeQuestions }).some(error => error.includes("fehlerhaft bewertet")));
 });
 
 test("independent review replaces a semantically wrong task and reviews the repaired result", async () => {
