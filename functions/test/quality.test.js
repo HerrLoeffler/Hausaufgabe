@@ -4,7 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { normalizeQuestion, validateTest } = require("../lib/validation");
 const { validateAndRepairTest } = require("../lib/repair-test");
-const { feedbackMemory, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("../lib/quality");
+const { MEMORY_VERSION, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("../lib/quality");
 
 function question(n) {
   return normalizeQuestion({
@@ -32,6 +32,48 @@ test("feedback from another teacher blocks a recurring error, while only error t
   });
   assert.deepEqual(replacement.errors, []);
   assert.equal(replacement.test.questions[0].text, question(4).text);
+});
+
+test("quality memory v2 learns positive patterns and recurring scoped errors without leaking comments", () => {
+  const green = (teacher, n, version = "testify-ai-v10") => ({
+    category: "ai_question", userId: teacher, verdict: "good", reason: "",
+    subject: "Deutsch", grade: "9", questionType: "single", promptVersion: version,
+    teacherComment: "PRIVATE GOOD NOTE", questionSnapshot: question(n)
+  });
+  const bad = (teacher, n) => ({
+    category: "ai_question", userId: teacher, verdict: "bad", reason: "answer_leak",
+    subject: "Deutsch", grade: "9", questionType: "single", promptVersion: "testify-ai-v10",
+    teacherComment: "PRIVATE BAD NOTE", questionSnapshot: question(n)
+  });
+  const memory = feedbackMemory([
+    green("teacher-A", 2), green("teacher-B", 3),
+    bad("teacher-A", 4), bad("teacher-B", 5), bad("teacher-C", 6),
+    { ...bad("teacher-X", 7), subject: "Mathematik", reason: "incorrect" }
+  ], { subject: "Deutsch", grade: "9", questionType: "single" });
+
+  assert.equal(memory.memoryVersion, MEMORY_VERSION);
+  assert.equal(memory.positivePatterns[0].reports, 2);
+  assert.equal(memory.positivePatterns[0].teachers, 2);
+  assert.equal(memory.priorityReasons[0], "answer_leak");
+  assert.ok(memory.ruleCandidates.some(candidate => candidate.reason === "answer_leak" && candidate.reports === 3 && candidate.teachers === 3));
+  assert.equal(memory.versionStats["testify-ai-v10"].good, 2);
+  assert.equal(memory.versionStats["testify-ai-v10"].bad, 4);
+
+  const prompt = qualityMemoryPrompt(memory, { questionType: "single" });
+  assert.match(prompt, /Positiv bewertete Strukturmuster/);
+  assert.match(prompt, /Wiederkehrende Warnmuster/);
+  assert.equal(prompt.includes("PRIVATE GOOD NOTE"), false);
+  assert.equal(prompt.includes("PRIVATE BAD NOTE"), false);
+  assert.equal(prompt.includes(question(2).text), false);
+});
+
+test("one teacher alone cannot create a recurring rule candidate", () => {
+  const reports = [1, 2, 3, 4].map(n => ({
+    category: "ai_question", userId: "teacher-A", verdict: "bad", reason: "ambiguous",
+    subject: "Deutsch", grade: "9", questionType: "text", questionSnapshot: question(n)
+  }));
+  const memory = feedbackMemory(reports, { subject: "Deutsch", grade: "9" });
+  assert.equal(memory.ruleCandidates.length, 0);
 });
 
 test("the global memory considers reports after the old 300-report cutoff and deduplicates tasks", () => {
