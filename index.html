@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.0" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai13" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai15" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -368,7 +368,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
+      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -424,6 +424,25 @@
     <div class="shareDialogFoot"><button id="whatsNewOk" class="button primary" type="button">Schließen</button></div>
   </dialog>
 
+  <dialog id="teacherTourDialog" class="shareDialog teacherTourDialog">
+    <div class="teacherTourTop">
+      <span id="teacherTourStepLabel" class="eyebrow">1 von 4</span>
+      <button id="teacherTourClose" class="iconButton" type="button" aria-label="Tutorial schließen">×</button>
+    </div>
+    <div id="teacherTourIcon" class="teacherTourIcon" aria-hidden="true">👋</div>
+    <h2 id="teacherTourTitle">Schön, dass du da bist!</h2>
+    <p id="teacherTourText"></p>
+    <div id="teacherTourBullets" class="teacherTourBullets"></div>
+    <div id="teacherTourDots" class="teacherTourDots" aria-hidden="true"></div>
+    <div class="shareDialogFoot teacherTourFoot">
+      <button id="teacherTourSkip" class="button ghost" type="button">Überspringen</button>
+      <div class="teacherTourNav">
+        <button id="teacherTourBack" class="button secondary" type="button">Zurück</button>
+        <button id="teacherTourNext" class="button primary" type="button">Weiter</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="dangerConfirmDialog" class="shareDialog dangerConfirmDialog">
     <div class="dangerConfirmIcon" aria-hidden="true">!</div>
     <div class="shareDialogHead"><div><span class="eyebrow dangerEyebrow">Unwiderruflich</span><h2 id="dangerConfirmTitle">Test endgültig löschen?</h2></div></div>
@@ -442,6 +461,6 @@
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai14"></script>
+  <script type="module" src="app.js?v=2.3.1-ai15"></script>
 </body>
 </html>
