@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai20";
+const APP_VERSION = "2.3.1-ai21";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -1789,11 +1789,17 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
   let incompleteQuizCode = null;
   let errorStage = "prepare_request";
   let errorQuestionPosition = 0;
+  let generationRequestId = "";
+  let generationDurationMs = null;
   const signature = JSON.stringify({ ...request, materials: [], similar, sourceQuizId: sourceQuiz?.id || "" });
   const materialKey = (request.materials || []).map(material => material.id).join("|");
   const resumable = pendingAiCreation?.signature === signature &&
     (pendingAiCreation.materialKey === materialKey || (pendingAiCreation.materialKey && !materialKey))
     ? pendingAiCreation : null;
+  if (resumable) {
+    generationRequestId = resumable.clientRequestId || "";
+    generationDurationMs = resumable.generationDurationMs ?? null;
+  }
   try {
     if (!resumable) pendingAiCreation = null;
     btn.disabled = true;
@@ -1807,7 +1813,13 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     renderPlanning();
     timer = setInterval(renderPlanning, 1000);
     errorStage = "generate_test";
-    const response = resumable?.response || await aiApi.generateTest(request);
+    let response = resumable?.response;
+    if (!response) {
+      generationRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+      const generationStartedAt = Date.now();
+      try { response = await aiApi.generateTest({ ...request, clientRequestId: generationRequestId }); }
+      finally { generationDurationMs = Date.now() - generationStartedAt; }
+    }
     clearInterval(timer); timer = null;
     errorStage = "prepare_questions";
     const data = response?.test;
@@ -1828,7 +1840,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     // A media failure must not leave an empty draft in the teacher's dashboard.
     const mediaRequestId = resumable?.mediaRequestId || `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const prepared = resumable?.prepared || [];
-    pendingAiCreation = { signature, materialKey: resumable?.materialKey ?? materialKey, response, report, mediaRequestId, prepared, current: resumable?.current || null };
+    pendingAiCreation = { signature, materialKey: resumable?.materialKey ?? materialKey, response, report, mediaRequestId, prepared, current: resumable?.current || null, clientRequestId: generationRequestId, generationDurationMs };
     for (let i = prepared.length; i < data.questions.length; i += 1) {
       errorQuestionPosition = i + 1;
       errorStage = "prepare_question";
@@ -1885,6 +1897,8 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       action: similar ? "create_similar_test" : "create_ai_test",
       details: {
         stage: errorStage,
+        clientRequestId: generationRequestId,
+        generationDurationMs,
         questionPosition: errorQuestionPosition,
         requestedCount: Number(request?.count || 0),
         targetPoints: Number(request?.points || 0),
@@ -5801,6 +5815,7 @@ function formatTechnicalErrorReport(report) {
     ["Meldung", report.message], ["Aktion", report.action], ["Originalfehler", t.rawMessage],
     ["Validierungsfehler", t.validationErrors], ["Provider-Code", t.providerCode], ["Fehlertyp", t.errorName],
     ["Server-Referenz", t.serverReference], ["Server-Phase", t.serverPhase],
+    ["Anfragenkennung", t.clientRequestId], ["Erstellungsdauer (ms)", t.generationDurationMs],
     ["Ansicht", t.view], ["Client-Phase", t.stage], ["Aufgabe", t.questionPosition],
     ["Aufgabentyp", t.questionType], ["Bildart", t.mediaKind],
     ["Gewünschte Aufgaben", t.requestedCount], ["Aufgaben im Editor", t.questionCount],

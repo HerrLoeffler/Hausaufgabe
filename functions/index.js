@@ -178,6 +178,10 @@ exports.getAiStatus = onCall(callableOpts, async request => {
 });
 
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
+  const requestId = String(request.data?.clientRequestId || randomUUID().slice(0, 8))
+    .replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
+  const startedAt = Date.now();
+  console.info("KI-Test-Anfrage gestartet:", { requestId });
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   const input = cleanInput(request.data || {});
@@ -277,6 +281,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       }
     };
   } catch (err) {
+    console.warn("KI-Test-Anfrage gescheitert:", { requestId, phase, durationMs: Date.now() - startedAt, code: err?.code || err?.name || "unknown" });
     throw reportAiError(err, phase);
   } finally {
     await deleteUploadedMaterials(materials);
