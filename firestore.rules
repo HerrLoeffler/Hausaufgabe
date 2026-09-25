@@ -163,6 +163,13 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // App-Konfiguration: aktive Lehrkräfte lesen, Admins verwalten.
+    // Der Lehrer-Tutorial-Ablauf liegt unter appConfig/teacherTour.
+    match /appConfig/{configId} {
+      allow read: if accountActive() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
     // Feedback: Lehrkräfte können eigenes Feedback anlegen und die eigene KI-Bewertung ändern; nur Admins lesen/verwalten alle Einträge.
     match /feedback/{feedbackId} {
       allow create: if accountActive()
