@@ -31,6 +31,20 @@ function sameQuestion(a, b) {
   return overlap / Math.max(termsA.length, termsB.length) >= (sameFormat ? 0.8 : 0.9);
 }
 
+function variantRepeats(a, b) {
+  if (!a || !b || !a.text || !b.text) return false;
+  const stemA = comparable(a.text), stemB = comparable(b.text);
+  if (stemA === stemB) return true;
+  const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
+  if (!termsA.length || !termsB.length) return false;
+  const setA = new Set(termsA), setB = new Set(termsB);
+  if (setA.size === setB.size && [...setA].every(term => setB.has(term))) return true;
+  if (Math.min(setA.size, setB.size) < 3) return false;
+  const overlap = [...setA].filter(term => setB.has(term)).length;
+  const union = new Set([...setA, ...setB]).size;
+  return union > 0 && overlap / union >= 0.88;
+}
+
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {
   const errors = [];
   if (!q || typeof q !== "object") return ["Aufgabe fehlt."];
@@ -142,4 +156,4 @@ function validateTest(test, opts = {}) {
   return errors;
 }
 
-module.exports = { validateQuestion, validateTest, normalizeQuestion, roundHalf, sameQuestion };
+module.exports = { validateQuestion, validateTest, normalizeQuestion, roundHalf, sameQuestion, variantRepeats };
