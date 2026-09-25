@@ -59,6 +59,11 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (targets.length && !targets.some(w => haystack.includes(normalizeText(w).toLocaleLowerCase("de")))) errors.push("Kein Zielwort kommt im Markiertext vor.");
   }
   if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) errors.push("Numerische Lösung fehlt.");
+  if (q.type === "number" && /\b(?:wie viele|anzahl der)\s+komma(?:s|ta)?\b/i.test(q.text || "")) {
+    const quotedSentences = [...String(q.text).matchAll(/„([^“]+)“|"([^"]+)"/g)].map(match => match[1] || match[2]);
+    const sentence = quotedSentences.length ? quotedSentences.join(" ") : String(q.text).split(/[?:]/).slice(1).join(" ");
+    if (sentence.includes(",")) errors.push("Bei einer Frage nach der Anzahl der Kommas darf der zu prüfende Satz noch keine Kommas enthalten.");
+  }
   const mi = q.mediaIntent || { kind: "none" };
   if (!allowImages && mi.kind !== "none") errors.push("Bilder sind für diesen Test deaktiviert.");
   if (!allowImageChoices && mi.kind === "image_choices") errors.push("Bildantworten sind deaktiviert.");
@@ -67,6 +72,19 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   if (mi.kind === "image_choices") {
     if (!["single", "multi"].includes(q.type)) errors.push("Bildantworten brauchen Single Choice oder Multiple Choice.");
     if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 4 || mi.count !== q.options.length) errors.push("Bildantworten brauchen genau 2–4 Bilder, eines pro Antwortoption.");
+    if ((q.options || []).some(o => /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(o.text || ""))) errors.push("Jede Bildantwort braucht eine konkrete, eigene Szenenbeschreibung.");
+    const stem = comparable(q.text);
+    const stemTerms = keyTerms(q.text);
+    if (/\b(wieder|erneut|noch einmal)\b/.test(stem) && /\b(bedeutung|abbildung|bild|zeigt)\b/.test(stem)) {
+      errors.push("Die zeitliche Bedeutung von ‚wieder‘ ist aus einem einzelnen Bild nicht eindeutig erkennbar.");
+    }
+    if (/welche pr[aä]position/.test(stem) && /\b(unter|auf|ueber|über|neben|zwischen|hinter|vor)\b/.test(stem)) {
+      errors.push("Der Fragetext nennt bereits die gesuchte räumliche Beziehung.");
+    }
+    if (!/\bwelche[sr]?\s+(abbildung|bild)\b/.test(stem) && (q.options || []).filter(o => o.correct).some(o => {
+      const terms = keyTerms(o.text).filter(term => term.length >= 3);
+      return terms.length && terms.every(term => stemTerms.includes(term)) && (terms.length >= 2 || /\b(welche|welches|welcher)\b/.test(stem));
+    })) errors.push("Die Lösung der Bildantwort steht bereits im Fragetext.");
   }
   return errors;
 }

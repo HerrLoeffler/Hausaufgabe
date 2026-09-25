@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.0" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai5" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai7" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -207,7 +207,7 @@
       <section id="adminPanelFeedback" class="adminPanel hidden">
         <div class="card adminToolbar">
           <label class="searchField">Feedback durchsuchen<input id="adminFeedbackSearch" type="search" placeholder="Name, E-Mail, Nachricht oder Testcode …" /></label>
-          <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
+          <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="ai_question">KI-Aufgaben</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
           <label>Status<select id="adminFeedbackFilter"><option value="all">Alle Status</option><option value="new">Neu</option><option value="working">In Bearbeitung</option><option value="done">Erledigt</option></select></label>
         </div>
         <div id="adminFeedbackList" class="feedbackList"></div>
@@ -365,7 +365,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
+      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -425,6 +425,6 @@
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai6"></script>
+  <script type="module" src="app.js?v=2.3.1-ai7"></script>
 </body>
 </html>

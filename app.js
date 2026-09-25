@@ -1439,7 +1439,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
     const choices = [];
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
-      const prompt = `Erzeuge eine klare, neutrale Schulaufgaben-Illustration für die Antwortoption „${opt.text}“. Keine Schrift und keine Markierung, die richtig oder falsch verrät. Einheitlicher sachlicher Stil, quadratisch.`;
+      const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${opt.text}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
       const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, altText: `Bildantwort ${i + 1}`, purpose: "option" });
       if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
       choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
@@ -1486,6 +1486,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const { code } = await createQuizDocument(base);
     for (let i = 0; i < data.questions.length; i += 1) {
       const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
+      q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
       const ref = doc(collection(db, "quizzes", code, "questions")); q.id = ref.id; q.position = i + 1;
       show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
@@ -1920,6 +1921,7 @@ async function importAiJson() {
     const { code } = await createQuizDocument(base);
     for (let i = 0; i < questions.length; i += 1) {
       const q = questions[i];
+      q.aiOrigin = { kind: "imported", model: "extern", promptVersion: "" };
       const ref = doc(collection(db, "quizzes", code, "questions"));
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
@@ -2148,6 +2150,14 @@ function renderQuestions() {
     node.querySelector(".duplicateQuestion").addEventListener("click", () => duplicateQuestion(index));
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
     node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => regenerateQuestionWithAi(q, index, { variant: true }));
+    const canRate = isAdmin() || Boolean(q.aiOrigin);
+    for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
+    node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
+    node.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "bad");
+    if (canRate) {
+      node.querySelector(".aiFeedbackGood")?.addEventListener("click", () => submitAiQuestionFeedback(q, index, { verdict: "good", action: "keep" }));
+      node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
+    }
 
     const dragHandle = node.querySelector(".dragHandle");
     dragHandle?.addEventListener("mousedown", () => { node.draggable = true; });
@@ -2207,8 +2217,96 @@ function questionContext(index) {
 function questionForAi(q) {
   const copy = sanitizeQuestionForSave(q);
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
+  delete copy.aiOrigin;
   if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, ...option }) => option);
   return copy;
+}
+
+const AI_QUALITY_REASONS = Object.freeze({
+  incorrect: "Fachlich falsch oder unsinnig",
+  answer_leak: "Lösung wird bereits verraten",
+  image_mismatch: "Bild oder Bildantwort passt nicht",
+  ambiguous: "Missverständlich oder mehrere Lösungen",
+  other: "Anderer Grund"
+});
+
+function aiQuestionFeedbackSnapshot(q) {
+  return {
+    type: String(q.type || "").slice(0, 30), text: String(q.text || "").slice(0, 900), points: Number(q.points) || 1,
+    options: (q.options || []).slice(0, 6).map(o => ({ text: String(o.text || "").slice(0, 180), correct: Boolean(o.correct) })),
+    acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4).map(answer => String(answer).slice(0, 120)),
+    numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
+    passage: String(q.passage || "").slice(0, 600),
+    imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
+  };
+}
+
+async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep" }) {
+  if (!state.user || !state.currentQuiz?.id) return;
+  if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
+    toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
+    return false;
+  }
+  const note = String(comment || "").trim().slice(0, 500);
+  if (verdict === "bad" && (!Object.hasOwn(AI_QUALITY_REASONS, reason) || (reason === "other" && !note))) {
+    toast("Bitte einen Grund wählen und bei „Anderer Grund“ kurz beschreiben, was nicht passt.", "error");
+    return;
+  }
+  try {
+    const snapshot = aiQuestionFeedbackSnapshot(q);
+    const fingerprint = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
+    const hash = Array.from(new Uint8Array(fingerprint)).slice(0, 10).map(byte => byte.toString(16).padStart(2, "0")).join("");
+    const id = `aiq-${state.currentQuiz.id}-${q.id}-${state.user.uid}-${hash}`;
+    const label = AI_QUALITY_REASONS[reason] || "";
+    const entry = {
+    userId: state.user.uid, displayName: state.profile?.displayName || state.user.displayName || "", email: state.user.email || "",
+    category: "ai_question", testCode: state.currentQuiz.id, questionId: q.id, questionPosition: index + 1,
+    message: verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
+    verdict, reason, teacherComment: note, action, questionSnapshot: snapshot,
+    model: String(q.aiOrigin?.model || "").slice(0, 60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0, 60),
+    appVersion: APP_VERSION, environment: appEnvironment, status: verdict === "good" ? "done" : "new", createdAt: serverTimestamp()
+    };
+    await setDoc(doc(db, "feedback", id), entry);
+    q._aiFeedbackVerdict = verdict;
+    const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+    card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", verdict === "good");
+    card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", verdict === "bad");
+    if (action === "remove") {
+      state.questions.splice(index, 1);
+      renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
+    } else if (action === "replace") {
+      toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
+      const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Bei Bildantworten müssen alle Bilder zum Fragetext passen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
+      await regenerateQuestionWithAi(q, index, { instruction, requireDifferent: true });
+    } else toast(verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
+    return true;
+  } catch (err) {
+    console.error(err);
+    toast("Aufgabenfeedback konnte nicht gespeichert werden.", "error");
+    return false;
+  }
+}
+
+function toggleAiQualityPanel(node, q, index) {
+  const current = node.querySelector(".aiQualityPanel");
+  if (current) { current.remove(); return; }
+  const panel = document.createElement("div");
+  panel.className = "aiQualityPanel";
+  const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
+  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong><p>Grund, Hinweis, Aufgaben- und Antworttexte werden im Admin-Feedback gespeichert; Bilder und Uploads nicht. Bitte keine personenbezogenen Daten eintragen.${live ? " Ein veröffentlichter Test kann hier nur bewertet werden." : ""}</p><label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${live ? "" : '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button><button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
+  for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
+    panel.querySelector(selector)?.addEventListener("click", async () => {
+      const buttons = panel.querySelectorAll("button");
+      buttons.forEach(button => { button.disabled = true; });
+      try {
+        const saved = await submitAiQuestionFeedback(q, index, { verdict: "bad", reason: panel.querySelector(".aiQualityReason").value, comment: panel.querySelector(".aiQualityComment").value, action });
+        if (saved) panel.remove();
+      } finally { buttons.forEach(button => { button.disabled = false; }); }
+    });
+  }
+  node.querySelector(".questionGrid").after(panel);
+  panel.querySelector(".aiQualityReason").focus();
 }
 
 async function createSimilarTest() {
@@ -2244,14 +2342,15 @@ function toggleQuestionAiPanel(node, q, index) {
   node.querySelector(".questionGrid").after(panel); input.focus();
 }
 
-async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null } = {}) {
+async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false } = {}) {
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 50) return toast("Ein Test kann höchstens 50 Aufgaben enthalten.", "error");
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: true, materials: [] });
+    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: true, materials: [] });
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
+    next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
     next.id = variant ? doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
     if (!variant) next._aiUndo = old;
@@ -3034,6 +3133,7 @@ function sanitizeQuestionForSave(q) {
     points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
+  if (q.aiOrigin?.kind) base.aiOrigin = { kind: String(q.aiOrigin.kind).slice(0, 30), model: String(q.aiOrigin.model || "").slice(0, 60), promptVersion: String(q.aiOrigin.promptVersion || "").slice(0, 60) };
   if (q.imageDataUrl) {
     base.imageDataUrl = String(q.imageDataUrl);
     base.imageByteSize = Number(q.imageByteSize || 0);
@@ -5092,7 +5192,7 @@ function renderAdminAnnouncements() {
   root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
 }
 
-function feedbackCategoryLabel(v){return({bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+function feedbackCategoryLabel(v){return({ai_question:"KI-Aufgabe",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -5101,8 +5201,15 @@ function renderAdminFeedback(){
   const list=state.adminFeedback
     .filter((f)=>status==="all"||f.status===status)
     .filter((f)=>category==="all"||f.category===category)
-    .filter((f)=>!term||normalize(`${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""}`).includes(term));
-  root.innerHTML=list.length?list.map((f)=>`<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}</span><h3>${escapeHtml(f.displayName||f.email||"Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode?` · Test ${escapeHtml(f.testCode)}`:""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status==="new"?"selected":""}>Neu</option><option value="working" ${f.status==="working"?"selected":""}>In Bearbeitung</option><option value="done" ${f.status==="done"?"selected":""}>Erledigt</option></select></div><p>${escapeHtml(f.message||"")}</p><details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email||"–")}</span><span>Version: ${escapeHtml(f.appVersion||"–")}</span><span>Umgebung: ${escapeHtml(f.environment||"–")}</span><span>Browser: ${escapeHtml(f.userAgent||"–")}</span></div></details></article>`).join(""):`<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`;
+    .filter((f)=>!term||normalize(`${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""}`).includes(term));
+  const aiItems = list.filter(f => f.category === "ai_question");
+  const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
+  const summary = aiItems.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
+  root.innerHTML = summary + (list.length ? list.map(f => {
+    const q = f.questionSnapshot;
+    const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${snapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span></div></details></article>`;
+  }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
 }
 

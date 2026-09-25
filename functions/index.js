@@ -150,14 +150,23 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const allowedTypes = Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
-  const { data, usage } = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant) }) });
-  const normalized = normalizeQuestion(data);
-  const errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: Boolean(request.data?.allowImageChoices), materialIds });
+  const prompt = questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
-  if (request.data?.variant && [question, ...existing].some(other => sameQuestion(other, normalized))) errors.push("Die Variante wiederholt eine bestehende Aufgabe.");
+  const usage = {};
+  let normalized, errors;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const result = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
+    for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
+    normalized = normalizeQuestion(result.data);
+    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: Boolean(request.data?.allowImageChoices), materialIds });
+    if (request.data?.variant || request.data?.requireDifferent) {
+      if ([question, ...existing].some(other => sameQuestion(other, normalized))) errors.push("Die neue Aufgabe wiederholt eine bestehende Aufgabe.");
+    }
+    if (!errors.length) break;
+  }
   await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length) });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  return { question: normalized };
+  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION } };
 });
 
 exports.analyzeMaterial = onCall(callableOpts, async request => {

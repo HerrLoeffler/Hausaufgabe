@@ -152,14 +152,53 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
-    // Feedback: Lehrkräfte können eigenes Feedback anlegen; nur Admins lesen/verwalten.
+    // Feedback: Lehrkräfte können eigenes Feedback anlegen und die eigene KI-Bewertung ändern; nur Admins lesen/verwalten alle Einträge.
     match /feedback/{feedbackId} {
       allow create: if accountActive()
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.message is string
                     && request.resource.data.message.size() > 0
-                    && request.resource.data.message.size() <= 2000;
-      allow read, update, delete: if isAdmin();
+                    && request.resource.data.message.size() <= 2000
+                    && (
+                      request.resource.data.get('category', '') != 'ai_question'
+                      || (
+                        (isAdmin() || ownsQuiz(request.resource.data.get('testCode', '')))
+                        && request.resource.data.get('verdict', '') in ['good', 'bad']
+                        && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'other']
+                        && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
+                        && request.resource.data.get('teacherComment', '') is string
+                        && request.resource.data.get('teacherComment', '').size() <= 500
+                        && (request.resource.data.reason != 'other' || request.resource.data.teacherComment.size() > 0)
+                        && request.resource.data.get('action', '') in ['keep', 'replace', 'remove']
+                        && request.resource.data.get('questionSnapshot', null) is map
+                        && request.resource.data.questionSnapshot.get('text', '') is string
+                        && request.resource.data.questionSnapshot.get('text', '').size() <= 900
+                      )
+                    );
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (
+          accountActive()
+          && resource.data.get('category', '') == 'ai_question'
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.get('category', '') == 'ai_question'
+          && request.resource.data.get('testCode', '') == resource.data.get('testCode', '')
+          && request.resource.data.get('questionId', '') == resource.data.get('questionId', '')
+          && ownsQuiz(resource.data.get('testCode', ''))
+          && request.resource.data.get('questionSnapshot', null) == resource.data.get('questionSnapshot', null)
+          && request.resource.data.message is string
+          && request.resource.data.message.size() > 0
+          && request.resource.data.message.size() <= 2000
+          && request.resource.data.get('verdict', '') in ['good', 'bad']
+          && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'other']
+          && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
+          && request.resource.data.get('teacherComment', '') is string
+          && request.resource.data.get('teacherComment', '').size() <= 500
+          && (request.resource.data.reason != 'other' || request.resource.data.teacherComment.size() > 0)
+          && request.resource.data.get('action', '') in ['keep', 'replace', 'remove']
+          && request.resource.data.get('status', '') in ['new', 'done']
+        );
     }
 
     // Unveränderliches Protokoll wichtiger Adminaktionen.

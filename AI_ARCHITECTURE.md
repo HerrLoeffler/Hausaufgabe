@@ -26,6 +26,14 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 - Total points are brought to the teacher's requested value in deterministic 0.5-point steps before semantic validation, including after full regeneration; incompatible counts and point totals are rejected before the AI request.
 - The teacher requests exact numbers of questions with one generated image (0–5) and questions with illustrated answer options (0–3), with at most five visual questions total. Validation and the bounded repair require those counts. Each illustrated choice triggers a separate image request (2–4 per question); the form shows the total range before generation. Cached older clients retain their original optional-image behavior.
 - Per-question AI edits return exactly one question and preserve the existing question ID client-side.
+- Quality checks reject comma-counting tasks that already show the commas and image-choice tasks that disclose the answer or try to express a non-observable temporal meaning through one image. These are targeted checks, not a guarantee of semantic accuracy. Illustration prompts ask for the specific objects and relationship in each answer; the teacher still reviews the resulting images.
+
+## Beta question feedback
+
+- The editor offers green and red ratings on AI-generated tasks (admins can also rate legacy tasks). Red feedback requires one of five reason codes and optionally a short teacher note; "other" requires a note. The teacher can keep, replace with AI or remove the task after saving the feedback. Positive ratings keep the task.
+- Feedback is stored in the existing private Firestore `feedback` collection under `category: "ai_question"`. The record contains teacher ID, test/question IDs, rating, reason, optional comment, action, prompt/model version and a bounded question/answer snapshot. It does not copy image binaries, uploaded material or student submissions. Repeated ratings of the same question content update the same record.
+- The admin Feedback tab filters KI-Aufgaben, shows reason counts and lets the admin inspect the question snapshot and mark negative reports as reviewed. Positive ratings are recorded as completed. Review recurring reasons, decide which issues are generalizable, then make versioned prompt/validator changes and add regression cases. Feedback never automatically retrains the model or enters unrelated generation prompts. If the teacher explicitly chooses AI replacement, that teacher's note is sent as an instruction for that one replacement.
+- Image mismatches require teacher review: the stored snapshot records that an image existed, but does not archive the actual picture. This limits reproduction after removal and calls for a separate, consent-aware image quality workflow if image errors become frequent.
 
 ## Media
 

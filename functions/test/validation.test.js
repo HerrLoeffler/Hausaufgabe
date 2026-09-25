@@ -47,3 +47,29 @@ test("image answers require 2 to 4 options with matching count and supported que
   q.type="dropdown";
   assert.ok(validateQuestion(q).some(x=>x.includes("Single Choice")));
 });
+test("a comma-count question cannot already show the counted commas",()=>{
+  const q=base("number"); q.text="Wie viele Kommas müssen in diesem Satz stehen? „Weil es regnete, blieben wir zu Hause, obwohl wir gern spazieren gegangen wären.“";
+  assert.ok(validateQuestion(q).some(x=>x.includes("noch keine Kommas")));
+  q.text="Wie viele Kommas müssen in diesem Satz stehen? „Weil es regnete blieben wir zu Hause obwohl wir gern spazieren gegangen wären.“";
+  assert.deepEqual(validateQuestion(q),[]);
+  q.text="Wie viele Kommas fehlen, wenn du den Satz liest? „Weil es regnete blieben wir zu Hause.“";
+  assert.deepEqual(validateQuestion(q),[]);
+});
+test("single-image answers reject the already disclosed spatial relation",()=>{
+  const q=base(); q.mediaIntent.kind="image_choices"; q.mediaIntent.count=2;
+  q.text="Das Bild zeigt ein Buch unter einem Tisch. Welche Präposition beschreibt die Lage des Buches richtig?";
+  q.options=[{text:"Buch unter dem Tisch",correct:true},{text:"Buch auf dem Tisch",correct:false}];
+  assert.ok(validateQuestion(q).some(x=>x.includes("räumliche Beziehung")));
+  q.text="Welche Abbildung zeigt ein Buch an der richtigen Stelle zum Tisch?";
+  assert.deepEqual(validateQuestion(q),[]);
+  q.text="Welche Abbildung zeigt ein Buch unter einem Tisch?";
+  assert.deepEqual(validateQuestion(q),[]); // The scene is the target of an image-recognition task.
+});
+test("a single image cannot convey the temporal meaning of wieder",()=>{
+  const q=base(); q.mediaIntent.kind="image_choices"; q.mediaIntent.count=2;
+  q.text="Welche Abbildung passt zur Bedeutung von ‚wieder‘ in ‚Der Junge kommt wieder nach Hause‘?";
+  q.options=[{text:"Junge vor Haustür",correct:true},{text:"Junge vor Mauer",correct:false}];
+  assert.ok(validateQuestion(q).some(x=>x.includes("einzelnen Bild")));
+  q.text="Welche Abbildung zeigt einen Jungen vor einer Haustür?";
+  assert.deepEqual(validateQuestion(q),[]);
+});
