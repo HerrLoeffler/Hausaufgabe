@@ -120,6 +120,70 @@ const state = {
   aiMaterials: []
 };
 
+
+const TEACHER_TOUR_VERSION = "ai-beta-tour-v1";
+const TEACHER_TOUR_STEPS = Object.freeze([
+  {
+    icon: "👋",
+    title: "Schön, dass du da bist!",
+    text: "Du testest die neuen KI-Funktionen von Testify. In dieser Beta hilft dein Feedback direkt dabei, die Aufgabenerstellung zuverlässiger zu machen.",
+    bullets: ["Erstellte KI-Tests bleiben Entwürfe, bis du sie prüfst und veröffentlichst.", "Fehler oder Auffälligkeiten bitte direkt an den Aufgaben markieren."]
+  },
+  {
+    icon: "✨",
+    title: "Tests jetzt direkt mit KI erstellen",
+    text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und danach wie gewohnt im Editor anpassen.",
+    bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "Die Aufgaben werden automatisch geprüft und bei erkannten Fehlern neu erstellt."]
+  },
+  {
+    icon: "☺",
+    title: "Bitte möglichst jede KI-Aufgabe bewerten",
+    text: "Die Smileys sind unser Qualitätsgedächtnis. Je mehr echte Rückmeldungen wir sammeln, desto gezielter können zukünftige Aufgaben geprüft werden.",
+    bullets: ["☺ Grün: Aufgabe ist gut und kann so bleiben.", "☹ Rot: Grund auswählen; Aufgabe behalten, neu erstellen oder entfernen.", "Grüne und rote Bewertungen fließen in zukünftige Qualitätsprüfungen ein."]
+  },
+  {
+    icon: "↻",
+    title: "Aufgaben direkt weiterentwickeln",
+    text: "Im Editor kannst du einzelne Aufgaben verändern, ohne den ganzen Test neu zu erzeugen.",
+    bullets: ["„✨ KI bearbeiten“ überarbeitet genau diese Aufgabe nach deinem Hinweis.", "„✨ Variante hinzufügen“ ergänzt eine neue gleichwertige Aufgabe mit anderem Beispiel oder Kontext.", "Bitte jede neue Variante kurz prüfen und bewerten."]
+  }
+]);
+let teacherTourIndex = 0;
+
+function teacherTourStorageKey() {
+  return state.user ? `teacherTour:${state.user.uid}:${TEACHER_TOUR_VERSION}` : "";
+}
+
+function renderTeacherTourStep() {
+  const step = TEACHER_TOUR_STEPS[teacherTourIndex] || TEACHER_TOUR_STEPS[0];
+  if (!step) return;
+  $("teacherTourStepLabel").textContent = `${teacherTourIndex + 1} von ${TEACHER_TOUR_STEPS.length}`;
+  $("teacherTourIcon").textContent = step.icon;
+  $("teacherTourTitle").textContent = step.title;
+  $("teacherTourText").textContent = step.text;
+  $("teacherTourBullets").innerHTML = step.bullets.map(item => `<div class="teacherTourBullet"><span>✓</span><p>${escapeHtml(item)}</p></div>`).join("");
+  $("teacherTourDots").innerHTML = TEACHER_TOUR_STEPS.map((_, index) => `<span class="teacherTourDot${index === teacherTourIndex ? " active" : ""}"></span>`).join("");
+  $("teacherTourBack").disabled = teacherTourIndex === 0;
+  $("teacherTourNext").textContent = teacherTourIndex === TEACHER_TOUR_STEPS.length - 1 ? "Los geht’s" : "Weiter";
+}
+
+function maybeShowTeacherTour() {
+  if (!state.user || isSuspended()) return false;
+  const key = teacherTourStorageKey();
+  try { if (key && localStorage.getItem(key) === "done") return false; } catch (_) {}
+  teacherTourIndex = 0;
+  renderTeacherTourStep();
+  safeDialogOpen($("teacherTourDialog"));
+  return true;
+}
+
+async function finishTeacherTour() {
+  const key = teacherTourStorageKey();
+  try { if (key) localStorage.setItem(key, "done"); } catch (_) {}
+  safeDialogClose($("teacherTourDialog"));
+  await loadAnnouncements();
+}
+
 function showView(id) {
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
@@ -607,7 +671,8 @@ async function loadDashboard() {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
     renderQuizList();
-    await loadAnnouncements();
+    const tourOpened = maybeShowTeacherTour();
+    if (!tourOpened) await loadAnnouncements();
   } catch (err) {
     console.error(err);
     $("quizList").innerHTML = "";
@@ -2190,6 +2255,8 @@ function renderQuestions() {
     for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
     node.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "bad");
+    node.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "good"));
+    node.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "bad"));
     if (canRate) {
       node.querySelector(".aiFeedbackGood")?.addEventListener("click", () => submitAiQuestionFeedback(q, index, { verdict: "good", action: "keep" }));
       node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
@@ -2310,6 +2377,8 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
     card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", verdict === "good");
     card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", verdict === "bad");
+    card?.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(verdict === "good"));
+    card?.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(verdict === "bad"));
     if (action === "remove") {
       state.questions.splice(index, 1);
       renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
@@ -4661,6 +4730,14 @@ $("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
 $("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
 $("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
 $("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
+$("teacherTourBack")?.addEventListener("click", () => { if (teacherTourIndex > 0) { teacherTourIndex -= 1; renderTeacherTourStep(); } });
+$("teacherTourNext")?.addEventListener("click", async () => {
+  if (teacherTourIndex < TEACHER_TOUR_STEPS.length - 1) { teacherTourIndex += 1; renderTeacherTourStep(); return; }
+  await finishTeacherTour();
+});
+$("teacherTourSkip")?.addEventListener("click", finishTeacherTour);
+$("teacherTourClose")?.addEventListener("click", finishTeacherTour);
+$("teacherTourDialog")?.addEventListener("cancel", (event) => { event.preventDefault(); finishTeacherTour(); });
 $("closeFeedbackDialog")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
 $("cancelFeedbackBtn")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
 $("sendFeedbackBtn")?.addEventListener("click", sendFeedback);
