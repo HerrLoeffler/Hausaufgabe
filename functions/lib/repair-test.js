@@ -81,7 +81,11 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
   return { test, attempts, replaced };
 }
 
-async function validateAndRepairTest(test, options, { generateQuestion, regenerateTest, maxQuestionAttempts = 8 }) {
+async function validateAndRepairTest(test, options, { generateQuestion, regenerateTest, maxQuestionAttempts } = {}) {
+  const expectedCount = Number(options.expectedCount || test.questions?.length || 0);
+  const repairLimit = Number.isInteger(maxQuestionAttempts) && maxQuestionAttempts > 0
+    ? maxQuestionAttempts
+    : Math.min(16, Math.max(8, Math.ceil(expectedCount * 0.75)));
   const balance = draft => options.expectedCount && draft.questions?.length !== options.expectedCount ? draft : balanceTestPoints(draft, options.targetPoints);
   test = balance(test);
   let questionAttempts = 0;
@@ -92,8 +96,8 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     if (!errors.length) return { test, errors, questionAttempts, replaced, fullRepair };
 
     const issues = questionIssues(test, options);
-    if (!globalIssues(test, options).length && questionAttempts < maxQuestionAttempts && (fullRepair || issues.length <= 6)) {
-      const result = await replaceInvalidQuestions(test, options, generateQuestion, maxQuestionAttempts - questionAttempts);
+    if (!globalIssues(test, options).length && questionAttempts < repairLimit && (fullRepair || issues.length <= 6)) {
+      const result = await replaceInvalidQuestions(test, options, generateQuestion, repairLimit - questionAttempts);
       test = result.test;
       questionAttempts += result.attempts;
       replaced += result.replaced;
