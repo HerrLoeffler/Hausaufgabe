@@ -61,7 +61,11 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
 
     const reasons = validateQuestion(candidate, options);
     if (candidate.mediaIntent.kind !== original.mediaIntent.kind) reasons.push(`Die Bildart muss ${original.mediaIntent.kind} bleiben.`);
-    if (sameQuestion(original, candidate)) reasons.push("Die neue Aufgabe ist der ersetzten zu ähnlich.");
+    const sceneOnlyRepair = issue.reasons.length > 0 && issue.reasons.every(reason =>
+      reason === "Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung." ||
+      reason === "Die Szenen der Bildantworten müssen eindeutig verschieden sein."
+    );
+    if (!sceneOnlyRepair && sameQuestion(original, candidate)) reasons.push("Die neue Aufgabe ist der ersetzten zu ähnlich.");
     if (test.questions.some((other, i) => i !== index && sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt eine andere Aufgabe des Tests.");
     if (options.referenceQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt den Ausgangstest.");
     if (options.negativeQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe ähnelt einer als fehlerhaft bewerteten Aufgabe.");
