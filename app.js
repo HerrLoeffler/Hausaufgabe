@@ -33,7 +33,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai1";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai10";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -618,7 +618,7 @@ function filteredQuizzes() {
   const list = state.quizzes.filter((q) => {
     if (q.isDeleted) return false;
     const isEnded = Boolean(q.ended);
-    const isPublished = Boolean(q.published) && !isEnded;
+    const isPublished = Boolean(q.published) && !isEnded && !q.rightsHold;
     if (status === "published" && !isPublished) return false;
     if (status === "ended" && !isEnded) return false;
     if (status === "draft" && (isPublished || isEnded)) return false;
@@ -637,6 +637,7 @@ function filteredQuizzes() {
 }
 
 function quizStatusMeta(q) {
+  if (q.rightsHold) return { label: "Zugang gesperrt", cls: "rightsHold" };
   if (q.ended) return { label: "Beendet", cls: "ended" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
@@ -675,20 +676,19 @@ function renderQuizList() {
       <div class="quizActions primaryQuizActions">
         <button class="button secondary edit">Bearbeiten</button>
         <button class="button secondary results">Ergebnisse</button>
-        ${q.published && !q.ended ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+        ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
       </div>
       <div class="quizActions secondaryQuizActions">
-        <button class="button ghost duplicate">Duplizieren</button>
-        <button class="button ghost teacherShare">Mit Kollegen teilen</button>
-        ${q.published && !q.ended ? `<button class="button ghost end">Beenden</button>` : ""}
-        ${q.ended ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
+        ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
+        ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
+        ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
         <button class="button danger remove">Löschen</button>
       </div>`;
     card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
     card.querySelector(".results").addEventListener("click", () => openResults(q.id));
-    card.querySelector(".duplicate").addEventListener("click", () => duplicateQuiz(q.id));
+    card.querySelector(".duplicate")?.addEventListener("click", () => duplicateQuiz(q.id));
     card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
-    card.querySelector(".teacherShare").addEventListener("click", () => shareQuizTemplate(q.id));
+    card.querySelector(".teacherShare")?.addEventListener("click", () => shareQuizTemplate(q.id));
     card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
     card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
     card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
@@ -719,6 +719,7 @@ function quizDefaults() {
     published: false,
     ended: false,
     isDeleted: false,
+    rightsHold: false,
     shareEnabled: false,
     questionCount: 0,
     totalPoints: 0
@@ -766,6 +767,7 @@ async function createQuiz() {
 async function duplicateQuiz(code) {
   const source = state.quizzes.find((q) => q.id === code);
   if (!source) return;
+  if (source.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   try {
     const qSnap = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
     const questions = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -958,6 +960,7 @@ async function endQuiz(code, { returnToEditor = false } = {}) {
 async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
     const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
+    if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
     const teacherMode = current.startMode === "teacher";
     const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", code), {
@@ -986,6 +989,7 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
 
 async function shareQuizTemplate(code) {
   if (!state.user) return;
+  if (state.quizzes.find(q => q.id === code)?.rightsHold || (state.currentQuiz?.id === code && state.currentQuiz.rightsHold)) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   try {
     if (state.currentQuiz?.id === code && state.isDirty) {
       const saved = await saveCurrentQuiz(false);
@@ -1303,12 +1307,18 @@ async function openAiView() {
 
 function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
   const code = String(err?.code || "");
+  const reference = String(err?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
+  const suffix = reference ? ` (Fehlernummer ${reference})` : "";
+  if (code.includes("internal") || String(err?.message || "").trim().toLowerCase() === "internal") {
+    return `Bei der KI-Erstellung ist ein technischer Fehler aufgetreten. Bitte erneut versuchen${suffix}.`;
+  }
   if (code.includes("permission-denied")) return "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet.";
-  if (code.includes("resource-exhausted")) return "Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen.";
-  if (code.includes("deadline-exceeded")) return "Die KI braucht gerade zu lange. Bitte erneut versuchen.";
+  if (code.includes("resource-exhausted")) return `Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen${suffix}.`;
+  if (code.includes("deadline-exceeded")) return `Die KI braucht gerade zu lange. Bitte erneut versuchen${suffix}.`;
   if (code.includes("unauthenticated")) return "Bitte neu anmelden und erneut versuchen.";
   if (code.includes("failed-precondition") && Array.isArray(err?.details?.errors)) return `Die KI konnte noch kein gültiges Ergebnis erstellen: ${err.details.errors.slice(0, 2).join(" ")}`.slice(0, 360);
-  return String(err?.message || fallback).replace(/^Firebase:\s*/i, "").slice(0, 260) || fallback;
+  const message = String(err?.message || fallback).replace(/^Firebase:\s*/i, "");
+  return `${message}${suffix}`.slice(0, 300) || fallback;
 }
 
 function setAiProgress(message = "", isError = false, percent = null, hint = "", targetId = "aiProgress") {
@@ -1475,7 +1485,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     clearInterval(timer); timer = null;
     const data = response?.test;
     if (!data?.questions?.length) throw new Error("Die KI hat keine Aufgaben geliefert.");
-    show("Entwurf wird gespeichert …", 70);
+    show("Aufgaben und Bilder werden vorbereitet …", 70);
     const report = { warnings: [], repairs: [] };
     const inherited = sourceQuiz ? {
       gradeScaleId: sourceQuiz.gradeScaleId, gradeScaleSnapshot: deepClone(getQuizScale(sourceQuiz)),
@@ -1484,18 +1494,26 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       shuffleQuestions: sourceQuiz.shuffleQuestions, shuffleAnswers: sourceQuiz.shuffleAnswers
     } : {};
     const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(data.description || getSettings().defaultDescription), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
-    const { code } = await createQuizDocument(base);
-    incompleteQuizCode = code;
+    // Prepare every task and generated image before creating a quiz document.
+    // A media failure must not leave an empty draft in the teacher's dashboard.
+    const mediaRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+    const prepared = [];
     for (let i = 0; i < data.questions.length; i += 1) {
       const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
       q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
-      const ref = doc(collection(db, "quizzes", code, "questions")); q.id = ref.id; q.position = i + 1;
+      q.id = doc(collection(db, "quizzes", mediaRequestId, "questions")).id; q.position = i + 1;
       show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
         show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
-        await applyGeneratedMedia(raw, q, code, ref.id);
+        await applyGeneratedMedia(raw, q, mediaRequestId, q.id);
       }
-      await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
+      prepared.push(q);
+    }
+    show("Entwurf wird gespeichert …", 99);
+    const { code } = await createQuizDocument(base);
+    incompleteQuizCode = code;
+    for (const q of prepared) {
+      await setDoc(doc(db, "quizzes", code, "questions", q.id), { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() });
     }
     incompleteQuizCode = null;
     show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
@@ -2321,6 +2339,7 @@ function toggleAiQualityPanel(node, q, index) {
 
 async function createSimilarTest() {
   if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
+  if (state.currentQuiz.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
   if (!confirm("Für einen ähnlichen Test werden die Texte, Antwortoptionen und Lösungen des Ausgangstests an OpenAI gesendet. Bitte prüfe vorher, dass sie keine personenbezogenen Daten oder nicht für externe KI freigegebenen Materialien enthalten. Test erstellen?")) return;
   const questions = state.questions;
@@ -3027,17 +3046,18 @@ function renderAnswerEditor(container, q) {
 function updateSummary() {
   $("questionCount").textContent = state.questions.length;
   $("totalPoints").textContent = round1(state.questions.reduce((sum, q) => sum + (Number(q.points) || 0), 0));
-  $("publishStatus").textContent = state.currentQuiz?.ended ? "Beendet" : state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
+  $("publishStatus").textContent = state.currentQuiz?.rightsHold ? "Zugang gesperrt" : state.currentQuiz?.ended ? "Beendet" : state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
 }
 
 function updateEditorPublishControls() {
   if (!state.currentQuiz) return;
   const ended = Boolean(state.currentQuiz.ended);
   const published = Boolean(state.currentQuiz.published) && !ended;
-  $("endQuizBtn")?.classList.toggle("hidden", !published);
-  if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz;
-  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz;
-  if ($("publishBtn")) $("publishBtn").textContent = ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen";
+  const blocked = Boolean(state.currentQuiz.rightsHold);
+  $("endQuizBtn")?.classList.toggle("hidden", !published || blocked);
+  if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz || blocked;
+  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked;
+  if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen"; }
 }
 
 function markDirty() {
@@ -3247,6 +3267,7 @@ async function saveCurrentQuiz(showMessage = true) {
 }
 
 async function publishCurrentQuiz() {
+  if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (state.currentQuiz.published && !state.currentQuiz.ended) {
     showPublish(state.currentQuiz.id);
@@ -4598,6 +4619,33 @@ function exportResultsCsv() {
 
 
 // ---------- Mitteilungen, Feedback & Administration (V2.2.3) ----------
+$("openRightsReport")?.addEventListener("click", () => {
+  $("rightsReportForm")?.reset();
+  $("rightsReportStatus").textContent = "";
+  const code = new URLSearchParams(location.search).get("test");
+  if (code) $("rightsTarget").value = code;
+  safeDialogOpen($("rightsReportDialog"));
+});
+$("closeRightsReport")?.addEventListener("click", () => safeDialogClose($("rightsReportDialog")));
+$("cancelRightsReport")?.addEventListener("click", () => safeDialogClose($("rightsReportDialog")));
+$("rightsReportForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("sendRightsReport");
+  button.disabled = true;
+  $("rightsReportStatus").textContent = "Meldung wird übermittelt …";
+  try {
+    const receipt = await aiApi.reportRightsIssue({
+      target: $("rightsTarget").value.trim(), work: $("rightsWork").value.trim(),
+      email: $("rightsEmail").value.trim(), explanation: $("rightsExplanation").value.trim()
+    });
+    safeDialogClose($("rightsReportDialog"));
+    toast(`Ihr Rechtehinweis ist eingegangen${receipt?.reference ? ` (Kennung ${receipt.reference})` : ""}.`);
+  } catch (err) {
+    $("rightsReportStatus").textContent = String(err?.code || "").includes("invalid-argument") || String(err?.code || "").includes("resource-exhausted")
+      ? String(err.message || "Bitte Eingaben prüfen.")
+      : "Der Hinweis konnte gerade nicht zugestellt werden. Bitte später erneut versuchen.";
+  } finally { button.disabled = false; }
+});
 $("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
 $("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
 $("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
@@ -4846,6 +4894,9 @@ async function loadAdminData(showToast = false) {
     state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    const openRightsCount = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
+    const feedbackTab = document.querySelector('[data-admin-tab="feedback"]');
+    if (feedbackTab) feedbackTab.textContent = openRightsCount ? `Feedback · ${openRightsCount} Rechtehinweis${openRightsCount === 1 ? "" : "e"}` : "Feedback";
     state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt)).slice(0, 100);
     renderAdminFilterOptions();
     await renderAdminOverview();
@@ -5212,7 +5263,7 @@ function renderAdminAnnouncements() {
   root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
 }
 
-function feedbackCategoryLabel(v){return({ai_question:"KI-Aufgabe",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -5221,19 +5272,37 @@ function renderAdminFeedback(){
   const list=state.adminFeedback
     .filter((f)=>status==="all"||f.status===status)
     .filter((f)=>category==="all"||f.category===category)
-    .filter((f)=>!term||normalize(`${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""}`).includes(term));
+    .filter((f)=>!term||normalize(`${f.id||""} ${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""}`).includes(term))
+    .sort((a,b)=>(b.category==="rights"&&b.status!=="done")-(a.category==="rights"&&a.status!=="done"));
   const aiItems = list.filter(f => f.category === "ai_question");
   const reasonCounts = Object.entries({ ...AI_QUALITY_REASONS, ambiguous: "Mehrdeutig (ältere Meldungen)" }).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
   const summary = aiItems.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
-  root.innerHTML = summary + (list.length ? list.map(f => {
+  const openRights = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
+  const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
+  root.innerHTML = rightsSummary + summary + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${snapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span></div></details></article>`;
+    const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
+    const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span></div></details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
+  root.querySelectorAll(".rightsHoldToggle").forEach(button => button.addEventListener("click", () => toggleRightsHold(button.dataset.code, button.dataset.hold === "true")));
 }
 
-async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
+async function toggleRightsHold(code, hold) {
+  if (!confirm(hold ? `Test ${code} für Schüler und Freigabelinks vorübergehend sperren?` : `Sperre für Test ${code} nach Klärung aufheben?`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), { rightsHold: hold, rightsHoldAt: hold ? serverTimestamp() : null, rightsHoldBy: hold ? state.user.uid : null });
+    await writeAdminAudit(hold ? "rights_hold_placed" : "rights_hold_released", { quizId: code });
+    const quiz = state.adminQuizzes.find(q => q.id === code);
+    if (quiz) quiz.rightsHold = hold;
+    renderAdminFeedback();
+    toast(hold ? "Testzugang gesperrt. Bitte den Hinweis prüfen und die meldende Person informieren." : "Testzugang wieder freigegeben.");
+  } catch (err) { console.error(err); toast("Testzugang konnte nicht geändert werden.", "error"); }
+}
+
+async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const pending=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab)tab.textContent=pending?`Feedback · ${pending} Rechtehinweis${pending===1?"":"e"}`:"Feedback";toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
 
 function auditActionInfo(action) {
   return ({

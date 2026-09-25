@@ -211,6 +211,12 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 
 /* Testify V2.3.0 – Release Candidate */
 .status.incomplete{color:#9a6700;background:#fff7d6}
+.quizCardTop{align-items:flex-start}
+.quizCardTop>div{min-width:0;flex:1}
+.quizCardTop>.status{display:inline-flex;align-items:center;align-self:flex-start;flex:0 0 auto;min-height:0;padding:5px 9px;border-radius:8px;line-height:1.25}
+.status.rightsHold{color:#9f2525;background:#fff1f1;border-color:#ffd5d5}
+.rightsFooter{margin-top:0;padding-bottom:16px}
+.rightsReportActions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 .trashGrid{align-items:stretch}
 .trashCard{min-height:230px;background:linear-gradient(180deg,#fbfcfe,#f8fafc);border-style:solid;border-color:#dde4ed;box-shadow:none}
 .trashCard:before{background:#cbd5e1}

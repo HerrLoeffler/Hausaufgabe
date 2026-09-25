@@ -28,14 +28,16 @@ service cloud.firestore {
       let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
       return quiz.published == true
         && quiz.get('ended', false) == false
-        && quiz.get('isDeleted', false) == false;
+        && quiz.get('isDeleted', false) == false
+        && quiz.get('rightsHold', false) == false;
     }
 
     function quizShared(quizId) {
       let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
       return accountActive()
         && quiz.get('shareEnabled', false) == true
-        && quiz.get('isDeleted', false) == false;
+        && quiz.get('isDeleted', false) == false
+        && quiz.get('rightsHold', false) == false;
     }
 
     // Lehrerprofile. Rolle und Sperrstatus können durch normale Nutzer nicht verändert werden.
@@ -70,10 +72,15 @@ service cloud.firestore {
       allow get: if (
                     resource.data.get('isDeleted', false) == false
                     && (
-                      resource.data.published == true
-                      || resource.data.get('ended', false) == true
-                      || ownsQuiz(quizId)
-                      || quizShared(quizId)
+                      ownsQuiz(quizId)
+                      || (
+                        resource.data.get('rightsHold', false) == false
+                        && (
+                          resource.data.published == true
+                          || resource.data.get('ended', false) == true
+                          || quizShared(quizId)
+                        )
+                      )
                     )
                   ) || isAdmin();
 
@@ -81,17 +88,21 @@ service cloud.firestore {
                   || (accountActive() && resource.data.ownerId == request.auth.uid);
 
       allow create: if accountActive()
-                    && request.resource.data.ownerId == request.auth.uid;
+                    && request.resource.data.ownerId == request.auth.uid
+                    && request.resource.data.get('rightsHold', false) == false;
 
       allow update: if isAdmin()
                     || (
                       accountActive()
                       && resource.data.ownerId == request.auth.uid
                       && request.resource.data.ownerId == request.auth.uid
+                      && request.resource.data.get('rightsHold', false) == resource.data.get('rightsHold', false)
+                      && request.resource.data.get('rightsHoldAt', null) == resource.data.get('rightsHoldAt', null)
+                      && request.resource.data.get('rightsHoldBy', null) == resource.data.get('rightsHoldBy', null)
                     );
 
       allow delete: if isAdmin()
-                    || (accountActive() && resource.data.ownerId == request.auth.uid);
+                    || (accountActive() && resource.data.ownerId == request.auth.uid && resource.data.get('rightsHold', false) == false);
 
       match /questions/{questionId} {
         allow read: if quizPublished(quizId) || ownsQuiz(quizId) || quizShared(quizId) || isAdmin();

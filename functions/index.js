@@ -1,11 +1,12 @@
 "use strict";
 
+const { randomUUID, createHash } = require("node:crypto");
 const { initializeApp } = require("firebase-admin/app");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const { getStorage } = require("firebase-admin/storage");
-const { getFirestore } = require("firebase-admin/firestore");
+const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
 const { testSchema, questionSchema } = require("./lib/schemas");
 const { validateTest, validateQuestion, normalizeQuestion, sameQuestion } = require("./lib/validation");
@@ -18,10 +19,47 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { generateImageAsset } = require("./lib/media");
+const { classifyAiFailure } = require("./lib/ai-errors");
+const { normalizeRightsReport } = require("./lib/rights-report");
 
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };
+
+function reportAiError(err, phase) {
+  if (err instanceof HttpsError) return err;
+  const reference = randomUUID().slice(0, 8);
+  console.error("KI-Anfrage fehlgeschlagen:", { reference, phase, name: err?.name, status: err?.status, code: err?.code, providerRequestId: err?.request_id });
+  const mapped = classifyAiFailure(err);
+  return new HttpsError(mapped.code, mapped.message, { reference });
+}
+
+// Public notice channel for rights holders; the report is never sent to the AI.
+// Limit unauthenticated submissions without storing a plaintext IP address.
+exports.reportRightsIssue = onCall({ region: REGION, timeoutSeconds: 30, memory: "256MiB", enforceAppCheck: false }, async request => {
+  let report;
+  try { report = normalizeRightsReport(request.data); }
+  catch (err) { throw new HttpsError("invalid-argument", err.message); }
+  const db = getFirestore();
+  const day = new Date().toISOString().slice(0, 10);
+  const source = String(request.rawRequest?.ip || report.email);
+  const key = createHash("sha256").update(`${day}:${source}`).digest("hex");
+  const limitRef = db.doc(`rightsReportRate/${day}-${key}`);
+  const reportRef = db.collection("feedback").doc();
+  await db.runTransaction(async tx => {
+    const snap = await tx.get(limitRef);
+    if (Number(snap.data()?.count || 0) >= 5) throw new HttpsError("resource-exhausted", "Zu viele Meldungen. Bitte morgen erneut versuchen.");
+    tx.set(limitRef, { count: Number(snap.data()?.count || 0) + 1, createdAt: Timestamp.now() });
+    tx.create(reportRef, {
+      category: "rights", status: "new", userId: request.auth?.uid || null,
+      email: report.email, displayName: "Rechtehinweis", testCode: report.testCode || null,
+      target: report.target, work: report.work,
+      message: `Werk: ${report.work}\nBetroffener Inhalt: ${report.target}\nBegründung: ${report.explanation}`,
+      createdAt: FieldValue.serverTimestamp()
+    });
+  });
+  return { received: true, reference: reportRef.id.slice(0, 8) };
+});
 
 function cleanSourceTest(value) {
   if (!value || !Array.isArray(value.questions)) return null;
@@ -81,16 +119,18 @@ function cleanInput(data = {}) {
 }
 
 async function structuredResponse({ schema, schemaName, userPrompt, content = [], systemPrompt = SYSTEM }) {
-  const response = await getOpenAI().responses.create({
+  let response;
+  try { response = await getOpenAI().responses.create({
     model: TEXT_MODEL,
     store: false,
     reasoning: { effort: "medium" },
     input: [{ role: "system", content: [{ type: "input_text", text: systemPrompt }] }, { role: "user", content: [{ type: "input_text", text: userPrompt }, ...content] }],
     text: { format: { type: "json_schema", name: schemaName, strict: true, schema } }
-  });
+  }); } catch (err) { throw reportAiError(err, schemaName); }
   const raw = response.output_text;
-  if (!raw) throw new HttpsError("internal", "Die KI hat keine verwertbare Antwort geliefert.");
-  return { data: JSON.parse(raw), usage: response.usage || {} };
+  if (!raw) throw new HttpsError("unavailable", "Die KI hat keine verwertbare Antwort geliefert. Bitte erneut versuchen.");
+  try { return { data: JSON.parse(raw), usage: response.usage || {} }; }
+  catch (err) { throw reportAiError(err, `${schemaName}-json`); }
 }
 
 async function loadQualityMemory() {
@@ -116,8 +156,7 @@ async function reviewDraft(test, memory) {
       userPrompt: reviewPrompt(test, memory)
     });
   } catch (err) {
-    console.error("Unabhängige Aufgabenprüfung fehlgeschlagen:", err);
-    throw new HttpsError("unavailable", "Die KI-Qualitätsprüfung ist gerade nicht erreichbar. Bitte erneut versuchen.");
+    throw reportAiError(err, "quality-review");
   }
 }
 
@@ -127,15 +166,19 @@ exports.getAiStatus = onCall(callableOpts, async request => {
 });
 
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
-  const { uid } = await requireAiUser(request); await consumeQuota(uid, "test");
+  const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
+  await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   const input = cleanInput(request.data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(request.data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
+  let phase = "material";
   try {
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
+    phase = "feedback";
     const memory = await loadQualityMemory();
+    phase = "test-generation";
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
     const usage = { ...first.usage };
@@ -162,11 +205,13 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
         return normalizeTest(repair.data);
       }
     };
+    phase = "test-repair";
     const result = await validateAndRepairTest(normalizeTest(first.data), options, repairs);
     if (result.errors.length) {
       await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: true, errors: result.errors.slice(0, 6) });
       throw new HttpsError("failed-precondition", "Auch nach automatischer Neuerstellung sind Aufgaben fehlerhaft.", { errors: result.errors.slice(0, 10) });
     }
+    phase = "quality-review";
     let reviewed;
     try {
       reviewed = await reviewAndRepairTest(result.test, options, {
@@ -179,12 +224,14 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       });
     } catch (err) {
       await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: true, qualityReviewError: true });
-      console.error("KI-Qualitätsprüfung fehlgeschlagen:", err);
-      throw new HttpsError("unavailable", "Die Qualitätsprüfung konnte nicht abgeschlossen werden. Bitte erneut versuchen.");
+      throw reportAiError(err, phase);
     }
+    phase = "usage-log";
     await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: reviewed.test.questions.length, replacedQuestions: result.replaced + reviewed.replaced, questionRepairAttempts: result.questionAttempts + reviewed.questionAttempts, qualityReviewPasses: reviewed.reviewPasses, fullRepair: result.fullRepair, failed: Boolean(reviewed.errors.length) });
     if (reviewed.errors.length) throw new HttpsError("failed-precondition", "Der Test hat die Qualitätsprüfung nach erneuter Erstellung nicht bestanden.", { errors: reviewed.errors.slice(0, 10) });
     return { test: reviewed.test, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, replacedQuestions: result.replaced + reviewed.replaced, qualityReviewPasses: reviewed.reviewPasses, fullRepair: result.fullRepair } };
+  } catch (err) {
+    throw reportAiError(err, phase);
   } finally {
     await deleteUploadedMaterials(materials);
   }
@@ -196,7 +243,17 @@ exports.purgeAiUploads = onSchedule({ schedule: "every day 03:00", timeZone: "Et
   if (failed) throw new Error("KI-Materialbereinigung: Einige alte Uploads konnten nicht gelöscht werden.");
 });
 
+exports.purgeRightsReportRates = onSchedule({ schedule: "every day 04:00", timeZone: "Etc/UTC", region: REGION, timeoutSeconds: 120, memory: "256MiB" }, async () => {
+  const cutoff = Timestamp.fromMillis(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  const reports = await getFirestore().collection("rightsReportRate").where("createdAt", "<", cutoff).limit(400).get();
+  if (reports.empty) return;
+  const batch = getFirestore().batch();
+  reports.docs.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
+});
+
 exports.regenerateQuestion = onCall(callableOpts, async request => {
+  try {
   const { uid } = await requireAiUser(request); await consumeQuota(uid, "question");
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const allowedTypes = Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
@@ -225,6 +282,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length) });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
   return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION } };
+  } catch (err) { throw reportAiError(err, "question-regeneration"); }
 });
 
 exports.analyzeMaterial = onCall(callableOpts, async request => {
@@ -242,7 +300,7 @@ exports.analyzeMaterial = onCall(callableOpts, async request => {
 });
 
 exports.generateQuestionMedia = onCall(callableOpts, async request => {
-  const { uid } = await requireAiUser(request);
+  const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "image-access"); });
   const quizId = String(request.data?.quizId || ""); const questionId = String(request.data?.questionId || "");
   if (!/^[A-Z0-9_-]{4,40}$/i.test(quizId) || !/^[A-Z0-9_-]{4,80}$/i.test(questionId)) throw new HttpsError("invalid-argument", "Ungültige Test- oder Aufgaben-ID.");
   const prompt = String(request.data?.prompt || "").slice(0, 3000); if (!prompt) throw new HttpsError("invalid-argument", "Bildbeschreibung fehlt.");
@@ -272,7 +330,6 @@ exports.generateQuestionMedia = onCall(callableOpts, async request => {
   } catch (err) {
     if (err?.code === "image-mismatch") throw new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`);
     if (err instanceof HttpsError) throw err;
-    console.error("Bild- oder Bildqualitätsprüfung fehlgeschlagen:", err);
-    throw new HttpsError("unavailable", "Die Bildprüfung konnte nicht abgeschlossen werden. Bitte erneut versuchen.");
+    throw reportAiError(err, "image-generation-or-review");
   }
 });
