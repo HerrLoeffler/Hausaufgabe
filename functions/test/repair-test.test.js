@@ -155,3 +155,55 @@ test("larger tests get a larger local repair budget", async () => {
   assert.equal(result.replaced, 7);
   assert.deepEqual(result.errors, []);
 });
+
+
+test("regression: image answer placeholders are repaired instead of aborting the whole test", async () => {
+  const questions = Array.from({ length: 10 }, (_, index) => question(index + 1));
+  const badImageQuestion = normalizeQuestion({
+    type: "single",
+    text: "Welche Abbildung zeigt das Buch unter dem Tisch?",
+    points: 1,
+    options: [
+      { text: "Bild A", correct: true, imageScene: "Bild A" },
+      { text: "Bild B", correct: false, imageScene: "Ein rotes Buch liegt auf einem Holztisch." }
+    ],
+    mediaIntent: { kind: "image_choices", prompt: "", altText: "", count: 2, sourceMaterialId: "", reason: "" }
+  });
+  questions[7] = badImageQuestion;
+  const opts = {
+    ...options(10),
+    allowImageChoices: true,
+    imageAnswerQuestionCount: 1
+  };
+  let calls = 0;
+  const result = await validateAndRepairTest({ title: "Deutsch", questions }, opts, {
+    generateQuestion: async ({ index, reasons, attempt }) => {
+      assert.equal(index, 7);
+      calls += 1;
+      assert.ok(reasons.some(reason => reason.includes("Szenenbeschreibung")));
+      if (attempt === 1) {
+        return {
+          ...badImageQuestion,
+          options: [
+            { text: "Bild A", correct: true, imageScene: "Abbildung 1" },
+            { text: "Bild B", correct: false, imageScene: "Ein rotes Buch liegt auf einem Holztisch." }
+          ]
+        };
+      }
+      return {
+        ...badImageQuestion,
+        options: [
+          { text: "Bild A", correct: true, imageScene: "Ein rotes Buch liegt vollständig unter einem Holztisch." },
+          { text: "Bild B", correct: false, imageScene: "Ein rotes Buch liegt vollständig auf einem Holztisch." }
+        ]
+      };
+    },
+    regenerateTest: async () => { throw new Error("The whole test must not be regenerated for one bad image scene"); }
+  });
+  assert.equal(calls, 2);
+  assert.equal(result.replaced, 1);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.length, 10);
+  assert.equal(result.test.questions[7].options[0].text, "Bild A");
+  assert.match(result.test.questions[7].options[0].imageScene, /Buch.*unter.*Tisch/i);
+});
