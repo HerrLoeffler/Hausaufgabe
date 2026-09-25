@@ -20,14 +20,15 @@ function answerKey(q) {
 function sameQuestion(a, b) {
   if (!a || !b || !a.text || !b.text) return false;
   const family = t => ["single", "dropdown"].includes(t) ? "choice" : t;
-  if (family(a.type) !== family(b.type) || (a.mediaIntent?.kind || "none") !== (b.mediaIntent?.kind || "none")) return false;
+  const sameFormat = family(a.type) === family(b.type) && (a.mediaIntent?.kind || "none") === (b.mediaIntent?.kind || "none");
   const stemA = comparable(a.text), stemB = comparable(b.text);
-  if (stemA === stemB) return true;
-  if (!answerKey(a) || answerKey(a) !== answerKey(b)) return false;
+  const keyA = answerKey(a), keyB = answerKey(b);
+  if (stemA === stemB) return sameFormat || Boolean(keyA && keyA === keyB);
+  if (!keyA || keyA !== keyB) return false;
   const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
   if (!termsA.length || !termsB.length) return false;
   const overlap = termsA.filter(x => termsB.includes(x)).length;
-  return overlap / Math.max(termsA.length, termsB.length) >= 0.8;
+  return overlap / Math.max(termsA.length, termsB.length) >= (sameFormat ? 0.8 : 0.9);
 }
 
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {

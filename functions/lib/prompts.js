@@ -20,4 +20,26 @@ function testUserPrompt(input) {
 function questionUserPrompt({ question, instruction, testContext, variant }) {
   return `${variant ? "Erzeuge eine gleichwertige ZUSÄTZLICHE Aufgabe mit neuen Zahlen, Beispielen oder Kontexten; die ursprüngliche Aufgabe bleibt bestehen" : "Überarbeite die Aufgabe nach dem Lehrerwunsch"}.\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(question)}\nLehrerwunsch: ${instruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort.`;
 }
-module.exports = { SYSTEM, testUserPrompt, questionUserPrompt };
+function replacementQuestionPrompt({ input, test, index, original, reasons, attempt }) {
+  const otherQuestions = test.questions.filter((_, i) => i !== index).map(q => ({
+    text: String(q.text || "").slice(0, 170), type: q.type,
+    answer: (q.options || []).filter(o => o.correct).map(o => o.text).slice(0, 3)
+  }));
+  const referenceQuestions = input.sourceTest?.questions?.map(q => String(q.text || "").slice(0, 170)) || [];
+  const materialRule = input.materialMode === "only" ? "Nutze für den Inhalt ausschließlich die beigefügten Materialien." : "Berücksichtige beigefügte Materialien, soweit relevant.";
+  return [
+    "Erstelle genau EINE neue, eigenständige Aufgabe als Ersatz für Aufgabe " + (index + 1) + " eines bereits entworfenen Tests. Gib nur eine Aufgabe gemäß Schema zurück, keinen ganzen Test.",
+    "Fach: " + input.subject + "; Klasse: " + input.grade + "; Schulart: " + input.schoolType + "; Thema: " + input.topic + "; Schwierigkeit: " + input.difficulty + ".",
+    "Lehrerwünsche: " + (input.notes || "keine") + ". " + materialRule,
+    "Fehler der bisherigen Aufgabe und/oder des letzten Ersatzversuchs: " + reasons.join(" "),
+    "Ersetzte Aufgabe (nur als Kontext, nicht umformulieren): " + JSON.stringify({ type: original.type, text: original.text, options: original.options, points: original.points, mediaIntent: original.mediaIntent }),
+    "Verbindlich: Punkte " + original.points + "; Bildart mediaIntent.kind=" + original.mediaIntent.kind + "; " + (input.allowedTypes.includes(original.type) ? "Aufgabentyp " + original.type + "." : "Erlaubte Aufgabentypen: " + input.allowedTypes.join(", ") + "."),
+    "Bei image_choices: Single/Multiple Choice mit 2–4 jeweils unterschiedlichen Bildantworten; mediaIntent.count gleich der Zahl der Antwortoptionen. Bei ai_generated: neuer konkreter Bildprompt ohne Lösungshinweis. Bei none: keine Bilder.",
+    "Neue Zahlen, neuer Kontext oder anderer fachlicher Teilaspekt. Übernimm nicht bloß den Fragetext mit korrigierten Antwortoptionen. Jede Antwortoption muss eindeutig verschieden sein, und die richtige Antwort muss fachlich stimmen.",
+    "Andere Aufgaben im Test (keine Frage oder Lösung daraus wiederholen): " + JSON.stringify(otherQuestions).slice(0, 14000),
+    referenceQuestions.length ? "Fragen des Ausgangstests ebenfalls nicht wiederholen: " + JSON.stringify(referenceQuestions).slice(0, 7000) : "",
+    "Versuch " + attempt + " für diese Aufgabe. Prüfe die neue Aufgabe selbst gegen die genannten Fehler."
+  ].join("\n");
+}
+
+module.exports = { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt };

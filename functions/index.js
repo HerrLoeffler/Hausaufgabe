@@ -11,9 +11,10 @@ const { validateTest, validateQuestion, normalizeQuestion, sameQuestion } = requ
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, logUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("./lib/materials");
+const { validateAndRepairTest } = require("./lib/repair-test");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
-const { SYSTEM, testUserPrompt, questionUserPrompt } = require("./lib/prompts");
+const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { generateImageAsset } = require("./lib/media");
 
 initializeApp();
@@ -92,7 +93,7 @@ exports.getAiStatus = onCall(callableOpts, async request => {
   return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION };
 });
 
-exports.generateTest = onCall(callableOpts, async request => {
+exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
   const { uid } = await requireAiUser(request); await consumeQuota(uid, "test");
   const input = cleanInput(request.data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
@@ -101,20 +102,34 @@ exports.generateTest = onCall(callableOpts, async request => {
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions };
-    let result = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
-    const usage = { ...result.usage };
-    result.data.questions = result.data.questions.map(normalizeQuestion);
-    let errors = validateTest(result.data, options);
-    if (errors.length) {
-      const repair = await structuredResponse({ schema: testSchema, schemaName: "testify_test_repair_v1", userPrompt: `${testUserPrompt(input)}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nRepariere ausschließlich diese Fehler und gib den vollständigen Test neu aus.\nVorheriger Entwurf: ${JSON.stringify(result.data)}`, content: materialContent });
-      for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(repair.usage[key] || 0);
-      repair.data.questions = repair.data.questions.map(normalizeQuestion);
-      errors = validateTest(repair.data, options);
-      result = repair;
-    }
-    await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: result.data.questions.length, failed: Boolean(errors.length) });
-    if (errors.length) throw new HttpsError("failed-precondition", "Die KI konnte keinen zuverlässig gültigen Test erzeugen.", { errors: errors.slice(0, 10) });
-    return { test: result.data, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION } };
+    const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
+    const usage = { ...first.usage };
+    const addUsage = next => {
+      for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
+    };
+    const normalizeTest = data => ({ ...data, questions: data.questions.map(normalizeQuestion) });
+    const result = await validateAndRepairTest(normalizeTest(first.data), options, {
+      generateQuestion: async ({ test, index, original, reasons, attempt }) => {
+        const replacement = await structuredResponse({
+          schema: questionSchema, schemaName: "testify_test_question_replacement_v1",
+          userPrompt: replacementQuestionPrompt({ input, test, index, original, reasons, attempt }), content: materialContent
+        });
+        addUsage(replacement.usage);
+        return replacement.data;
+      },
+      regenerateTest: async (test, errors) => {
+        const repair = await structuredResponse({
+          schema: testSchema, schemaName: "testify_test_repair_v1",
+          userPrompt: `${testUserPrompt(input)}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
+          content: materialContent
+        });
+        addUsage(repair.usage);
+        return normalizeTest(repair.data);
+      }
+    });
+    await logUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionCount: result.test.questions.length, replacedQuestions: result.replaced, questionRepairAttempts: result.questionAttempts, fullRepair: result.fullRepair, failed: Boolean(result.errors.length) });
+    if (result.errors.length) throw new HttpsError("failed-precondition", "Auch nach automatischer Neuerstellung sind Aufgaben fehlerhaft.", { errors: result.errors.slice(0, 10) });
+    return { test: result.test, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, replacedQuestions: result.replaced, fullRepair: result.fullRepair } };
   } finally {
     await deleteUploadedMaterials(materials);
   }

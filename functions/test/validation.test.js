@@ -22,6 +22,11 @@ test("other skills may reuse an answer without being rejected",()=>{
   second.type="gapfill"; second.text="Am Hals trägt man einen [Schal].";
   assert.deepEqual(validateTest({title:"T",questions:[first,second]}),[]);
 });
+test("identical question with the same solution is detected across text and image formats",()=>{
+  const first=base(); first.text="Welches Tier lebt im Wasser?"; first.options=[{text:"Fisch",correct:true},{text:"Katze",correct:false}];
+  const second=base("text"); second.text="Welches Tier lebt im Wasser?"; second.acceptedAnswers=["Fisch"]; second.mediaIntent={kind:"ai_generated",prompt:"Tiere im See",altText:"Tiere",count:1,sourceMaterialId:"",reason:""};
+  assert.ok(validateTest({title:"T",questions:[first,second]}).some(x=>x.includes("wiederholt")));
+});
 test("duplicated answer options are invalid",()=>{
   const q=base(); q.options=[{text:"Schal",correct:true},{text:"schal!",correct:false}];
   assert.ok(validateQuestion(q).some(x=>x.includes("eindeutig")));

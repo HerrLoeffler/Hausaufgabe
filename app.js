@@ -1429,7 +1429,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const renderPlanning = () => {
       const seconds = Math.floor((Date.now() - start) / 1000);
       const estimate = Math.min(65, 8 + Math.floor(57 * (1 - Math.exp(-seconds / 50))));
-      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Die KI-Anfrage kann mehrere Minuten dauern.`);
+      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Fehlerhafte oder doppelte Aufgaben werden automatisch neu erstellt; das kann mehrere Minuten dauern.`);
     };
     renderPlanning();
     timer = setInterval(renderPlanning, 1000);
@@ -1458,7 +1458,8 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
     show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
-    toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
+    const replaced = Number(response?.meta?.replacedQuestions || 0);
+    toast(`${similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt."}${replaced ? ` ${replaced} ${replaced === 1 ? "Aufgabe wurde" : "Aufgaben wurden"} wegen Prüffehlern neu erstellt.` : ""}`);
     await openEditor(code);
     setAiProgress("", false, null, "", targetId);
     state.pendingImportReport = { ...report, quizId: code };
