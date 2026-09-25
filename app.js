@@ -121,31 +121,31 @@ const state = {
 };
 
 
-const TEACHER_TOUR_VERSION = "ai-beta-tour-v1";
+const TEACHER_TOUR_VERSION = "ai-beta-tour-v2";
 const TEACHER_TOUR_STEPS = Object.freeze([
   {
     icon: "👋",
     title: "Schön, dass du da bist!",
-    text: "Du testest die neuen KI-Funktionen von Testify. In dieser Beta hilft dein Feedback direkt dabei, die Aufgabenerstellung zuverlässiger zu machen.",
-    bullets: ["Erstellte KI-Tests bleiben Entwürfe, bis du sie prüfst und veröffentlichst.", "Fehler oder Auffälligkeiten bitte direkt an den Aufgaben markieren."]
+    text: "Du testest die neuen KI-Funktionen von Testify. Die wichtigsten Neuerungen zeigen wir dir kurz in vier Schritten.",
+    bullets: ["KI-Tests bleiben Entwürfe, bis du sie geprüft und veröffentlicht hast."]
   },
   {
     icon: "✨",
-    title: "Tests jetzt direkt mit KI erstellen",
-    text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und danach wie gewohnt im Editor anpassen.",
-    bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "Die Aufgaben werden automatisch geprüft und bei erkannten Fehlern neu erstellt."]
+    title: "Tests mit KI erstellen",
+    text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und anschließend im Editor anpassen.",
+    bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "⚠ Jede KI-Generierung verursacht Kosten – bitte gezielt und sparsam nutzen. Das gilt auch für „KI bearbeiten“ und „Variante hinzufügen“."]
   },
   {
     icon: "☺",
-    title: "Bitte möglichst jede KI-Aufgabe bewerten",
-    text: "Die Smileys sind unser Qualitätsgedächtnis. Je mehr echte Rückmeldungen wir sammeln, desto gezielter können zukünftige Aufgaben geprüft werden.",
-    bullets: ["☺ Grün: Aufgabe ist gut und kann so bleiben.", "☹ Rot: Grund auswählen; Aufgabe behalten, neu erstellen oder entfernen.", "Grüne und rote Bewertungen fließen in zukünftige Qualitätsprüfungen ein."]
+    title: "KI-Aufgaben kurz bewerten",
+    text: "Bewerte möglichst jede KI-Aufgabe mit ☺ oder ☹. So lernt Testify, was gut funktioniert und wo typische Fehler entstehen.",
+    bullets: ["☺ Gut: Aufgabe kann so bleiben.", "☹ Problem: Grund auswählen und Aufgabe behalten, ersetzen oder entfernen."]
   },
   {
     icon: "↻",
-    title: "Aufgaben direkt weiterentwickeln",
-    text: "Im Editor kannst du einzelne Aufgaben verändern, ohne den ganzen Test neu zu erzeugen.",
-    bullets: ["„✨ KI bearbeiten“ überarbeitet genau diese Aufgabe nach deinem Hinweis.", "„✨ Variante hinzufügen“ ergänzt eine neue gleichwertige Aufgabe mit anderem Beispiel oder Kontext.", "Bitte jede neue Variante kurz prüfen und bewerten."]
+    title: "Aufgaben gezielt verändern",
+    text: "„KI bearbeiten“ verbessert eine Aufgabe nach deinem Hinweis. „Variante hinzufügen“ erstellt eine gleichwertige neue Aufgabe.",
+    bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "💬 Fehler, Wünsche oder Ideen? Nutze unten die Feedback-Funktion – Rückmeldungen helfen besonders in der aktuellen Entwicklungsphase."]
   }
 ]);
 let teacherTourIndex = 0;
