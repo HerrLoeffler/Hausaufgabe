@@ -136,3 +136,22 @@ test("does not return a broken test after the bounded repair budget", async () =
   assert.equal(full, 1);
   assert.ok(result.errors.some(e => e.includes("eindeutig")));
 });
+
+
+test("larger tests get a larger local repair budget", async () => {
+  const questions = Array.from({ length: 20 }, (_, index) => question(index + 1));
+  for (const index of [2, 5, 8, 11, 14, 17, 19]) {
+    questions[index].options = [{ text: "gleich", correct: true }, { text: "gleich!", correct: false }];
+  }
+  let calls = 0;
+  const result = await validateAndRepairTest({ title: "Großer Test", questions }, options(20), {
+    generateQuestion: async ({ index }) => {
+      calls += 1;
+      return question(200 + index);
+    },
+    regenerateTest: async () => { throw new Error("Local repairs should be sufficient for seven broken tasks"); }
+  });
+  assert.equal(calls, 7);
+  assert.equal(result.replaced, 7);
+  assert.deepEqual(result.errors, []);
+});
