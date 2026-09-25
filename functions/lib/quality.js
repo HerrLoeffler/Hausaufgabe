@@ -263,6 +263,13 @@ function qualityMemoryPrompt(memory = {}, { questionType = "" } = {}) {
   if (specificReasons.length) {
     lines.push(`Aus bisherigen Lehrerbewertungen besonders vermeiden: ${specificReasons.map(key => QUALITY_REASONS[key]).filter(Boolean).join("; ")}.`);
   }
+  if (!questionType) {
+    const typeGuidance = Object.entries(memory.typePriorityReasons || {})
+      .slice(0, 5)
+      .map(([type, reasons]) => `${type}: ${reasons.map(key => QUALITY_REASONS[key]).filter(Boolean).join(", ")}`)
+      .filter(Boolean);
+    if (typeGuidance.length) lines.push("Je Aufgabentyp besonders beachten: " + typeGuidance.join("; ") + ".");
+  }
   if (positives.length) {
     lines.push("Positiv bewertete Strukturmuster in ähnlichem Kontext: " + positives.map(pattern =>
       `${describePositivePattern(pattern)} (${pattern.reports} Bewertung${pattern.reports === 1 ? "" : "en"})`
