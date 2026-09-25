@@ -1518,8 +1518,14 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
     const choices = [];
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
-      const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${opt.text}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
-      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, expectedScene: opt.text, altText: `Bildantwort ${i + 1}`, purpose: "option" });
+      const rawOpt = rawQuestion?.options?.[i] || {};
+      const scene = String(rawOpt.imageScene || opt.imageScene || opt.text || "").trim();
+      if (!scene || /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(scene)) {
+        throw new Error(`Bildantwort ${i + 1} hat keine konkrete Szenenbeschreibung.`);
+      }
+      opt.imageScene = scene;
+      const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${scene}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
+      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, expectedScene: scene, altText: `Bildantwort ${i + 1}`, purpose: "option" });
       if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
       choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
     }
@@ -1700,6 +1706,7 @@ function normalizeOptionList(rawOptions) {
     return {
       text: String(looseField(option, ["text", "label", "answer", "option", "antwort"], "") || ""),
       correct: Boolean(booleanLoose(looseField(option, ["correct", "isCorrect", "right", "richtig"], false), false)),
+      imageScene: String(option.imageScene || ""),
       imageDataUrl: String(option.imageDataUrl || ""),
       imageAlt: String(option.imageAlt || "")
     };
