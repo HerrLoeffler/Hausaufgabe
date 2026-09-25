@@ -4,8 +4,12 @@ const { QUESTION_TYPES } = require("./constants");
 
 const optionSchema = {
   type: "object", additionalProperties: false,
-  properties: { text: { type: "string" }, correct: { type: "boolean" } },
-  required: ["text", "correct"]
+  properties: {
+    text: { type: "string" },
+    correct: { type: "boolean" },
+    imageScene: { type: "string" }
+  },
+  required: ["text", "correct", "imageScene"]
 };
 const pairSchema = {
   type: "object", additionalProperties: false,
