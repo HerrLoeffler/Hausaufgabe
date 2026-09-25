@@ -67,7 +67,7 @@ const DEFAULT_SCALE = {
 const DEFAULT_SETTINGS = {
   defaultSubject: "",
   defaultGrade: "",
-  defaultDescription: "Bearbeite alle Aufgaben sorgfältig.",
+  defaultDescription: "Viel Erfolg beim Test!",
   defaultGradeScaleId: "standard",
   defaultResultMode: "points_grade",
   defaultShowSolutions: true
@@ -256,7 +256,11 @@ function round1(n) {
 }
 
 function getSettings(profile = state.profile) {
-  return { ...DEFAULT_SETTINGS, ...(profile?.settings || {}) };
+  const settings = { ...DEFAULT_SETTINGS, ...(profile?.settings || {}) };
+  if (!settings.defaultDescription || settings.defaultDescription === "Bearbeite alle Aufgaben sorgfältig.") {
+    settings.defaultDescription = DEFAULT_SETTINGS.defaultDescription;
+  }
+  return settings;
 }
 
 function getGradeScales(profile = state.profile) {
@@ -703,7 +707,7 @@ function quizDefaults() {
     title: "Neuer Test",
     subject: settings.defaultSubject || "",
     grade: settings.defaultGrade || "",
-    description: settings.defaultDescription || "Bearbeite alle Aufgaben sorgfältig.",
+    description: settings.defaultDescription || "Viel Erfolg beim Test!",
     gradeScaleId: scale.id,
     gradeScaleSnapshot: deepClone(scale),
     resultMode: settings.defaultResultMode || "points_grade",
@@ -1233,7 +1237,7 @@ async function saveSettings() {
   const settings = {
     defaultSubject: $("defaultSubject").value.trim(),
     defaultGrade: $("defaultGrade").value.trim(),
-    defaultDescription: $("defaultDescription").value.trim() || "Bearbeite alle Aufgaben sorgfältig.",
+    defaultDescription: $("defaultDescription").value.trim() || "Viel Erfolg beim Test!",
     defaultGradeScaleId: selectedDefault,
     defaultResultMode: $("defaultResultMode").value,
     defaultShowSolutions: $("defaultShowSolutions").checked
@@ -1496,7 +1500,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       timeLimitMinutes: sourceQuiz.timeLimitMinutes, startMode: sourceQuiz.startMode,
       shuffleQuestions: sourceQuiz.shuffleQuestions, shuffleAnswers: sourceQuiz.shuffleAnswers
     } : {};
-    const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(data.description || getSettings().defaultDescription), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
+    const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(getSettings().defaultDescription || "Viel Erfolg beim Test!"), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
     // Prepare every task and generated image before creating a quiz document.
     // A media failure must not leave an empty draft in the teacher's dashboard.
     const mediaRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
@@ -2325,7 +2329,7 @@ function toggleAiQualityPanel(node, q, index) {
   const panel = document.createElement("div");
   panel.className = "aiQualityPanel";
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
-  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong><p>Grund, Hinweis, Aufgaben- und Antworttexte werden gespeichert. Testify nutzt Fehlermeldungen aller Lehrkräfte für künftige Qualitätsprüfungen; andere Lehrkräfte sehen deine Angaben nicht. Bilder und Uploads werden hier nicht gespeichert. Hinweise werden nur bei „neu erstellen“ für diese Aufgabe an die KI gesendet. Bitte keine personenbezogenen Daten eintragen.${live ? " Ein veröffentlichter Test kann hier nur bewertet werden." : ""}</p><label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${live ? "" : '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button><button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong>${live ? "<p>Ein veröffentlichter Test kann hier nur bewertet werden.</p>" : ""}<label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${live ? "" : '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button><button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
   panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
     panel.querySelector(selector)?.addEventListener("click", async () => {
