@@ -141,7 +141,7 @@ test("two wrong images are rejected and images without an expected scene skip vi
   await assert.rejects(verifyImageScene("Buch unter dem Tisch", {
     generate: async () => { generated += 1; return {}; },
     inspect: async () => { inspected += 1; return { matches: false, reason: "Falsches Bild" }; }
-  }), error => error.code === "image-mismatch");
+  }), error => error.code === "image-mismatch" && error.lastIssue === "Falsches Bild");
   assert.equal(generated, 2);
   assert.equal(inspected, 2);
   await verifyImageScene("", { generate: async () => { generated += 1; return {}; }, inspect: async () => { throw new Error("Should skip vision"); } });

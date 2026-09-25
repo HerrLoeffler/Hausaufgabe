@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.0";
+const APP_VERSION = "2.3.1-ai19";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -316,6 +316,8 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
     userMessage: String(message || "Etwas hat nicht funktioniert.").slice(0, 800),
     errorName: String(error?.name || "Error").slice(0, 120),
     providerCode,
+    serverReference: String(error?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40),
+    serverPhase: String(error?.details?.phase || "").slice(0, 100),
     rawMessage,
     stack,
     view: currentViewId(),
@@ -377,6 +379,8 @@ async function submitTechnicalErrorReport(card) {
       technicalDetails: {
         errorName: payload.errorName,
         providerCode: payload.providerCode,
+        serverReference: payload.serverReference,
+        serverPhase: payload.serverPhase,
         rawMessage: payload.rawMessage,
         stack: payload.stack,
         view: payload.view,
@@ -1743,13 +1747,13 @@ function collectAiRequest() {
 async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
   const intent = rawQuestion?.mediaIntent;
   if (!intent || intent.kind === "none") return;
-  if (intent.kind === "ai_generated" && intent.prompt) {
+  if (intent.kind === "ai_generated" && intent.prompt && !q.imageDataUrl) {
     const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
     Object.assign(q, result.asset || {});
   } else if (intent.kind === "image_choices" && ["single", "multi"].includes(q.type)) {
-    const choices = [];
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
+      if (opt.imageDataUrl) continue;
       const rawOpt = rawQuestion?.options?.[i] || {};
       const scene = String(rawOpt.imageScene || opt.imageScene || opt.text || "").trim();
       if (!scene || /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(scene)) {
@@ -1759,9 +1763,8 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
       const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${scene}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
       const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, expectedScene: scene, altText: `Bildantwort ${i + 1}`, purpose: "option" });
       if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
-      choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
+      Object.assign(opt, { imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
     }
-    choices.forEach((asset, i) => Object.assign(q.options[i], asset));
     q.imageChoicesOnly = true;
   }
 }
@@ -1771,6 +1774,10 @@ async function generateAiTestNative() {
   catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
 }
 
+// Keep a generated draft and finished image assets in this tab for a retry.
+// Nothing is written to Firestore until every question has been prepared.
+let pendingAiCreation = null;
+
 async function createAiTestFromRequest(request, { similar = false, sourceQuiz = null } = {}) {
   const btn = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
   const targetId = similar ? "similarTestProgress" : "aiProgress";
@@ -1779,7 +1786,13 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
   let incompleteQuizCode = null;
   let errorStage = "prepare_request";
   let errorQuestionPosition = 0;
+  const signature = JSON.stringify({ ...request, materials: [], similar, sourceQuizId: sourceQuiz?.id || "" });
+  const materialKey = (request.materials || []).map(material => material.id).join("|");
+  const resumable = pendingAiCreation?.signature === signature &&
+    (pendingAiCreation.materialKey === materialKey || (pendingAiCreation.materialKey && !materialKey))
+    ? pendingAiCreation : null;
   try {
+    if (!resumable) pendingAiCreation = null;
     btn.disabled = true;
     const start = Date.now();
     const planning = "Dein Test wird erstellt …";
@@ -1791,7 +1804,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     renderPlanning();
     timer = setInterval(renderPlanning, 1000);
     errorStage = "generate_test";
-    const response = await aiApi.generateTest(request);
+    const response = resumable?.response || await aiApi.generateTest(request);
     clearInterval(timer); timer = null;
     errorStage = "prepare_questions";
     const data = response?.test;
@@ -1800,7 +1813,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const qualityWarnings = Array.isArray(response?.meta?.qualityWarnings)
       ? response.meta.qualityWarnings.map(value => String(value).slice(0, 300))
       : [];
-    const report = { warnings: qualityWarnings.map(value => `KI-Qualitätsprüfung: ${value}`), repairs: [] };
+    const report = resumable?.report || { warnings: qualityWarnings.map(value => `KI-Qualitätsprüfung: ${value}`), repairs: [] };
     const inherited = sourceQuiz ? {
       gradeScaleId: sourceQuiz.gradeScaleId, gradeScaleSnapshot: deepClone(getQuizScale(sourceQuiz)),
       resultMode: sourceQuiz.resultMode, showSolutions: sourceQuiz.showSolutions,
@@ -1810,14 +1823,18 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(getSettings().defaultDescription || "Viel Erfolg beim Test!"), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
     // Prepare every task and generated image before creating a quiz document.
     // A media failure must not leave an empty draft in the teacher's dashboard.
-    const mediaRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-    const prepared = [];
-    for (let i = 0; i < data.questions.length; i += 1) {
+    const mediaRequestId = resumable?.mediaRequestId || `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+    const prepared = resumable?.prepared || [];
+    pendingAiCreation = { signature, materialKey: resumable?.materialKey ?? materialKey, response, report, mediaRequestId, prepared, current: resumable?.current || null };
+    for (let i = prepared.length; i < data.questions.length; i += 1) {
       errorQuestionPosition = i + 1;
       errorStage = "prepare_question";
-      const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
+      const raw = data.questions[i];
+      const q = pendingAiCreation.current?.index === i
+        ? pendingAiCreation.current.question : normalizeImportedQuestion(raw, i, report);
       q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
-      q.id = doc(collection(db, "quizzes", mediaRequestId, "questions")).id; q.position = i + 1;
+      q.id ||= doc(collection(db, "quizzes", mediaRequestId, "questions")).id; q.position = i + 1;
+      pendingAiCreation.current = { index: i, question: q };
       show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
         show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
@@ -1826,6 +1843,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
         errorStage = "prepare_question";
       }
       prepared.push(q);
+      pendingAiCreation.current = null;
     }
     show("Entwurf wird gespeichert …", 99);
     errorStage = "save_quiz";
@@ -1838,6 +1856,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       await setDoc(doc(db, "quizzes", code, "questions", q.id), { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() });
     }
     incompleteQuizCode = null;
+    pendingAiCreation = null;
     show("Entwurf fertig.", 100, false, report.warnings.length ? "Der Test wurde gespeichert. Bitte die markierten Qualitäts-Hinweise prüfen." : "Der neue Test wird geöffnet.");
     if (report.warnings.length) toast(`KI-Entwurf erstellt – ${report.warnings.length} Qualitäts-Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
     else toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
@@ -1855,7 +1874,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     }
     console.error(err);
     const friendly = aiFriendlyError(err);
-    show(friendly, null, true);
+    show(friendly, null, true, pendingAiCreation?.signature === signature ? "Erneut auf „Test erstellen“ klicken: Bereits fertige Aufgaben und Bilder werden in diesem Tab weiterverwendet." : "");
     showReportableError({
       code: similar ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
       message: friendly,

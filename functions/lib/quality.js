@@ -356,6 +356,7 @@ async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts 
   }
   const error = new Error("Eine Bildantwort passte nach erneuter Erstellung nicht zur beschriebenen Szene.");
   error.code = "image-mismatch";
+  error.lastIssue = lastIssue;
   throw error;
 }
 

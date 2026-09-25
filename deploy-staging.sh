@@ -17,9 +17,10 @@ if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
 fi
 
 NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
-if [[ "$NODE_MAJOR" != "22" ]]; then
-  echo "FEHLER: Node 22 wird benötigt. Aktuell: $(node --version)"
-  echo "Bitte zuerst: nvm use 22"
+NODE_MINOR="$(node -p 'process.versions.node.split(".")[1]')"
+if [[ "$NODE_MAJOR" != "22" || "$NODE_MINOR" -lt 13 ]]; then
+  echo "FEHLER: Node 22.13 oder neuer wird benötigt. Aktuell: $(node --version)"
+  echo "Bitte zuerst: nvm install 22 && nvm use 22"
   exit 1
 fi
 
@@ -28,7 +29,7 @@ echo "=== STAGING PREFLIGHT ==="
 echo "1/4 Abhängigkeiten installieren"
 (
   cd functions
-  npm ci
+  npm ci --include=dev
 )
 
 echo
@@ -39,7 +40,7 @@ echo "2/4 Tests ausführen"
 )
 
 echo
-echo "3/4 Functions-Syntax prüfen"
+echo "3/4 Functions-Syntax und Bezeichner prüfen"
 (
   cd functions
   npm run check

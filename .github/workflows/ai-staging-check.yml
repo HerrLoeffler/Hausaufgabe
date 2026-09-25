@@ -28,13 +28,13 @@ jobs:
 
       - name: Install function dependencies
         working-directory: functions
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run unit tests
         working-directory: functions
         run: npm test
 
-      - name: Check function syntax
+      - name: Check function syntax and identifiers
         working-directory: functions
         run: npm run check
 

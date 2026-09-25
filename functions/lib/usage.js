@@ -34,4 +34,19 @@ async function logUsage(uid, kind, usage = {}, extra = {}) {
   const ref = getFirestore().collection(`users/${uid}/aiEvents`).doc();
   await ref.set({ kind, inputTokens: usage.input_tokens || 0, outputTokens: usage.output_tokens || 0, totalTokens: usage.total_tokens || 0, ...extra, createdAt: FieldValue.serverTimestamp() });
 }
-module.exports = { consumeQuota, logUsage };
+
+// Quotas are enforced before an AI call. A later telemetry write must not discard
+// the paid-for response or trigger a second generation on the client's retry.
+async function recordUsage(uid, kind, usage = {}, extra = {}, write = logUsage) {
+  try {
+    await write(uid, kind, usage, extra);
+    return true;
+  } catch (err) {
+    console.error("KI-Nutzungsprotokoll konnte nicht geschrieben werden:", {
+      kind, code: err?.code, name: err?.name
+    });
+    return false;
+  }
+}
+
+module.exports = { consumeQuota, logUsage, recordUsage };
