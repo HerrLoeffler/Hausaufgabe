@@ -128,8 +128,10 @@ function topReasons(scoreMap, max = 3) {
 
 function feedbackMemory(globalFeedback = [], context = {}) {
   const target = targetContext(context);
-  const reasonScores = Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
-  const typeScores = {};
+  const reasonSignals = Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, new Map()]));
+  const reasonReports = Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
+  const typeSignals = {};
+  const typeReports = {};
   const negativeQuestions = [];
   const seenNegative = new Set();
   const positiveMap = new Map();
@@ -156,21 +158,25 @@ function feedbackMemory(globalFeedback = [], context = {}) {
       if (!entry.questionSnapshot || !isRelevant) continue;
       const shape = positiveShape(entry.questionSnapshot);
       const key = JSON.stringify(shape);
-      const bucket = positiveMap.get(key) || { ...shape, reports: 0, score: 0, teachers: new Set() };
+      const bucket = positiveMap.get(key) || { ...shape, reports: 0, teachers: new Set(), teacherWeights: new Map() };
       bucket.reports += 1;
-      bucket.score += weight;
       bucket.teachers.add(teacherKey);
+      bucket.teacherWeights.set(teacherKey, Math.max(bucket.teacherWeights.get(teacherKey) || 0, weight));
       positiveMap.set(key, bucket);
       continue;
     }
 
     if (!Object.hasOwn(reasonScores, entry.reason)) continue;
-    reasonScores[entry.reason] += weight;
+    reasonReports[entry.reason] += 1;
+    reasonSignals[entry.reason].set(teacherKey, Math.max(reasonSignals[entry.reason].get(teacherKey) || 0, weight));
 
     const type = ctx.type || String(entry.questionSnapshot?.type || "").slice(0, 30);
     if (type) {
-      typeScores[type] ||= Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
-      typeScores[type][entry.reason] += weight;
+      typeSignals[type] ||= Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, new Map()]));
+      typeReports[type] ||= Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
+      typeReports[type][entry.reason] += 1;
+      const signals = typeSignals[type][entry.reason];
+      signals.set(teacherKey, Math.max(signals.get(teacherKey) || 0, weight));
     }
 
     if (entry.reason !== "other") {
@@ -197,16 +203,34 @@ function feedbackMemory(globalFeedback = [], context = {}) {
     }
   }
 
+  const reasonScores = Object.fromEntries(Object.keys(QUALITY_REASONS).map(reason => {
+    const teacherScore = [...reasonSignals[reason].values()].reduce((sum, value) => sum + value, 0);
+    const repeatBonus = Math.min(reasonReports[reason], reasonSignals[reason].size * 3) * 0.2;
+    return [reason, teacherScore + repeatBonus];
+  }));
   const priorityReasons = topReasons(reasonScores, 3);
+
   const typePriorityReasons = Object.fromEntries(
-    Object.entries(typeScores)
-      .map(([type, scores]) => [type, topReasons(scores, 2)])
+    Object.entries(typeSignals)
+      .map(([type, reasons]) => {
+        const scores = Object.fromEntries(Object.keys(QUALITY_REASONS).map(reason => {
+          const teacherScore = [...reasons[reason].values()].reduce((sum, value) => sum + value, 0);
+          const repeatBonus = Math.min(typeReports[type][reason], reasons[reason].size * 3) * 0.2;
+          return [reason, teacherScore + repeatBonus];
+        }));
+        return [type, topReasons(scores, 2)];
+      })
       .filter(([, reasons]) => reasons.length)
   );
 
   const positivePatterns = [...positiveMap.values()]
-    .map(item => ({ ...item, teachers: item.teachers.size }))
-    .sort((a, b) => b.score - a.score || b.reports - a.reports)
+    .map(item => {
+      const teacherScore = [...item.teacherWeights.values()].reduce((sum, value) => sum + value, 0);
+      const repeatBonus = Math.min(item.reports, item.teachers.size * 3) * 0.2;
+      const { teacherWeights, ...pattern } = item;
+      return { ...pattern, teachers: item.teachers.size, score: teacherScore + repeatBonus };
+    })
+    .sort((a, b) => b.score - a.score || b.teachers - a.teachers || b.reports - a.reports)
     .slice(0, 6);
 
   const ruleCandidates = [...candidateMap.values()]
