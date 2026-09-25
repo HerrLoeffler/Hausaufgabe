@@ -1486,7 +1486,10 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const data = response?.test;
     if (!data?.questions?.length) throw new Error("Die KI hat keine Aufgaben geliefert.");
     show("Aufgaben und Bilder werden vorbereitet …", 70);
-    const report = { warnings: [], repairs: [] };
+    const qualityWarnings = Array.isArray(response?.meta?.qualityWarnings)
+      ? response.meta.qualityWarnings.map(value => String(value).slice(0, 300))
+      : [];
+    const report = { warnings: qualityWarnings.map(value => `KI-Qualitätsprüfung: ${value}`), repairs: [] };
     const inherited = sourceQuiz ? {
       gradeScaleId: sourceQuiz.gradeScaleId, gradeScaleSnapshot: deepClone(getQuizScale(sourceQuiz)),
       resultMode: sourceQuiz.resultMode, showSolutions: sourceQuiz.showSolutions,
@@ -1516,8 +1519,9 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       await setDoc(doc(db, "quizzes", code, "questions", q.id), { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() });
     }
     incompleteQuizCode = null;
-    show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
-    toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
+    show("Entwurf fertig.", 100, false, report.warnings.length ? "Der Test wurde gespeichert. Bitte die markierten Qualitäts-Hinweise prüfen." : "Der neue Test wird geöffnet.");
+    if (report.warnings.length) toast(`KI-Entwurf erstellt – ${report.warnings.length} Qualitäts-Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
+    else toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
     await openEditor(code);
     setAiProgress("", false, null, "", targetId);
     state.pendingImportReport = { ...report, quizId: code };
