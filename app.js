@@ -199,6 +199,182 @@ function toast(message, type = "success") {
   window.__toastTimer = setTimeout(() => (el.className = "toast"), 3200);
 }
 
+const REPORTABLE_ERROR_CODES = Object.freeze({
+  aiCreate: "AI-CREATE-001",
+  aiSimilar: "AI-SIMILAR-001",
+  aiEdit: "AI-EDIT-001",
+  aiVariant: "AI-VARIANT-001",
+  dataLoad: "APP-DATA-001",
+  unexpected: "APP-UNEXPECTED-001"
+});
+
+function currentViewId() {
+  return views.find((id) => !$(id)?.classList.contains("hidden")) || "unknown";
+}
+
+function shortErrorFingerprint(value) {
+  let hash = 2166136261;
+  for (const char of String(value || "")) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36).toUpperCase().padStart(7, "0").slice(-7);
+}
+
+function cleanTechnicalDetails(details = {}) {
+  const out = {};
+  for (const [key, value] of Object.entries(details || {})) {
+    if (value == null) out[key] = null;
+    else if (typeof value === "boolean" || typeof value === "number") out[key] = value;
+    else out[key] = String(value).slice(0, 1000);
+  }
+  return out;
+}
+
+function ensureReportableErrorHost() {
+  let host = $("reportableErrorHost");
+  if (host) return host;
+  host = document.createElement("div");
+  host.id = "reportableErrorHost";
+  host.className = "reportableErrorHost";
+  host.setAttribute("aria-live", "assertive");
+  document.body.appendChild(host);
+  return host;
+}
+
+function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message = "Etwas hat nicht funktioniert.", error = null, action = "unknown", details = {} } = {}) {
+  const host = ensureReportableErrorHost();
+  const rawMessage = String(error?.message || error || "").slice(0, 1800);
+  const providerCode = String(error?.code || error?.status || "").slice(0, 160);
+  const stack = String(error?.stack || "").slice(0, 7000);
+  const cleanedDetails = cleanTechnicalDetails(details);
+  const fingerprint = shortErrorFingerprint([code, action, providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
+  const existing = host.querySelector(`[data-error-fingerprint="${fingerprint}"]`);
+  if (existing) {
+    existing.__reportPayload.occurrences += 1;
+    const count = existing.querySelector(".reportableErrorOccurrences");
+    if (count) count.textContent = ` · ${existing.__reportPayload.occurrences}× aufgetreten`;
+    existing.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    return existing.__reportPayload;
+  }
+
+  const quiz = state.currentQuiz || state.currentResultsQuiz || null;
+  const payload = {
+    errorCode: code,
+    fingerprint,
+    action: String(action || "unknown").slice(0, 120),
+    userMessage: String(message || "Etwas hat nicht funktioniert.").slice(0, 800),
+    errorName: String(error?.name || "Error").slice(0, 120),
+    providerCode,
+    rawMessage,
+    stack,
+    view: currentViewId(),
+    pageUrl: location.href.slice(0, 1200),
+    testCode: String(quiz?.id || "").slice(0, 80),
+    questionCount: Array.isArray(state.questions) ? state.questions.length : 0,
+    appVersion: APP_VERSION,
+    environment: appEnvironment || "production",
+    userAgent: navigator.userAgent.slice(0, 1200),
+    language: String(navigator.language || "").slice(0, 40),
+    online: navigator.onLine,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+    screen: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+    occurredAtClient: new Date().toISOString(),
+    occurrences: 1,
+    details: cleanedDetails
+  };
+
+  const card = document.createElement("section");
+  card.className = "reportableErrorCard";
+  card.dataset.errorFingerprint = fingerprint;
+  card.__reportPayload = payload;
+  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen automatisch an Testify gesendet – keine Schülerantworten.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
+  card.querySelector(".reportableErrorClose").addEventListener("click", () => card.remove());
+  card.querySelector(".reportableErrorSend").addEventListener("click", () => submitTechnicalErrorReport(card));
+  host.prepend(card);
+  return payload;
+}
+
+async function submitTechnicalErrorReport(card) {
+  const payload = card?.__reportPayload;
+  const button = card?.querySelector(".reportableErrorSend");
+  const status = card?.querySelector(".reportableErrorStatus");
+  if (!payload || !button) return;
+  if (!state.user) {
+    if (status) status.textContent = "Bitte als Lehrkraft anmelden, um den Fehler zu melden.";
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "Wird gemeldet …";
+  const reportId = `RPT-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().replace(/-/g, "").slice(0, 5).toUpperCase()}`;
+  try {
+    await setDoc(doc(db, "feedback", `err-${reportId.toLowerCase()}`), {
+      userId: state.user.uid,
+      displayName: state.profile?.displayName || state.user.displayName || "",
+      email: state.user.email || state.profile?.email || "",
+      category: "app_error",
+      message: `Technischer Fehler ${payload.errorCode}: ${payload.userMessage}`,
+      errorCode: payload.errorCode,
+      reportId,
+      fingerprint: payload.fingerprint,
+      action: payload.action,
+      testCode: payload.testCode || null,
+      feedbackSchemaVersion: 3,
+      appVersion: payload.appVersion,
+      environment: payload.environment,
+      userAgent: payload.userAgent,
+      pageUrl: payload.pageUrl,
+      technicalDetails: {
+        errorName: payload.errorName,
+        providerCode: payload.providerCode,
+        rawMessage: payload.rawMessage,
+        stack: payload.stack,
+        view: payload.view,
+        questionCount: payload.questionCount,
+        language: payload.language,
+        online: payload.online,
+        viewport: payload.viewport,
+        screen: payload.screen,
+        occurredAtClient: payload.occurredAtClient,
+        occurrences: payload.occurrences,
+        ...payload.details
+      },
+      status: "new",
+      createdAt: serverTimestamp()
+    });
+    card.classList.add("reported");
+    button.textContent = "Gemeldet ✓";
+    if (status) status.textContent = `Report ${reportId}`;
+  } catch (reportError) {
+    console.error("Technischer Fehler konnte nicht gemeldet werden:", reportError);
+    button.disabled = false;
+    button.textContent = "Problem melden";
+    if (status) status.textContent = "Melden fehlgeschlagen – bitte erneut versuchen.";
+  }
+}
+
+window.addEventListener("error", (event) => {
+  if (!event.error) return;
+  if (event.filename && !event.filename.startsWith(location.origin)) return;
+  showReportableError({
+    code: REPORTABLE_ERROR_CODES.unexpected,
+    message: "In Testify ist ein unerwarteter Fehler aufgetreten.",
+    error: event.error,
+    action: "window_error",
+    details: { file: event.filename || "", line: event.lineno || 0, column: event.colno || 0 }
+  });
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason instanceof Error ? event.reason : new Error(String(event.reason || "Unbekannter Promise-Fehler"));
+  showReportableError({
+    code: REPORTABLE_ERROR_CODES.unexpected,
+    message: "Eine Aktion konnte nicht vollständig abgeschlossen werden.",
+    error: reason,
+    action: "unhandled_promise"
+  });
+});
+
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;",
@@ -676,7 +852,12 @@ async function loadDashboard() {
   } catch (err) {
     console.error(err);
     $("quizList").innerHTML = "";
-    toast("Tests konnten nicht geladen werden. Prüfe die Firestore-Regeln.", "error");
+    showReportableError({
+      code: REPORTABLE_ERROR_CODES.dataLoad,
+      message: "Tests konnten nicht geladen werden.",
+      error: err,
+      action: "load_dashboard"
+    });
   }
 }
 
@@ -1545,6 +1726,8 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
   const show = (message, percent = null, isError = false, hint = "") => setAiProgress(message, isError, percent, hint, targetId);
   let timer;
   let incompleteQuizCode = null;
+  let errorStage = "prepare_request";
+  let errorQuestionPosition = 0;
   try {
     btn.disabled = true;
     const start = Date.now();
@@ -1556,8 +1739,10 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     };
     renderPlanning();
     timer = setInterval(renderPlanning, 1000);
+    errorStage = "generate_test";
     const response = await aiApi.generateTest(request);
     clearInterval(timer); timer = null;
+    errorStage = "prepare_questions";
     const data = response?.test;
     if (!data?.questions?.length) throw new Error("Die KI hat keine Aufgaben geliefert.");
     show("Aufgaben und Bilder werden vorbereitet …", 70);
@@ -1577,20 +1762,28 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     const mediaRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const prepared = [];
     for (let i = 0; i < data.questions.length; i += 1) {
+      errorQuestionPosition = i + 1;
+      errorStage = "prepare_question";
       const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
       q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
       q.id = doc(collection(db, "quizzes", mediaRequestId, "questions")).id; q.position = i + 1;
       show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
         show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
+        errorStage = "generate_media";
         await applyGeneratedMedia(raw, q, mediaRequestId, q.id);
+        errorStage = "prepare_question";
       }
       prepared.push(q);
     }
     show("Entwurf wird gespeichert …", 99);
+    errorStage = "save_quiz";
+    errorQuestionPosition = 0;
     const { code } = await createQuizDocument(base);
     incompleteQuizCode = code;
+    errorStage = "save_questions";
     for (const q of prepared) {
+      errorQuestionPosition = q.position || 0;
       await setDoc(doc(db, "quizzes", code, "questions", q.id), { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() });
     }
     incompleteQuizCode = null;
@@ -1609,7 +1802,26 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
         await deleteDoc(doc(db, "quizzes", incompleteQuizCode));
       } catch (cleanupError) { console.error("Unvollständiger KI-Entwurf konnte nicht gelöscht werden:", cleanupError); }
     }
-    console.error(err); show(aiFriendlyError(err), null, true); toast(aiFriendlyError(err), "error");
+    console.error(err);
+    const friendly = aiFriendlyError(err);
+    show(friendly, null, true);
+    showReportableError({
+      code: similar ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
+      message: friendly,
+      error: err,
+      action: similar ? "create_similar_test" : "create_ai_test",
+      details: {
+        stage: errorStage,
+        questionPosition: errorQuestionPosition,
+        requestedCount: Number(request?.count || 0),
+        targetPoints: Number(request?.points || 0),
+        imageMode: String(request?.imageMode || "none"),
+        imageQuestionCount: Number(request?.imageQuestionCount || 0),
+        imageAnswerQuestionCount: Number(request?.imageAnswerQuestionCount || 0),
+        materialCount: Array.isArray(request?.materials) ? request.materials.length : 0,
+        allowedTypeCount: Array.isArray(request?.allowedTypes) ? request.allowedTypes.length : 0
+      }
+    });
   } finally {
     if (timer) clearInterval(timer);
     if (request.materials.length) {
@@ -2476,7 +2688,24 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (variant) state.questions.splice(index + 1, 0, next);
     else state.questions[index] = next;
     renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
-  } catch (err) { console.error(err); toast(aiFriendlyError(err, "Aufgabe konnte nicht überarbeitet werden."), "error"); }
+  } catch (err) {
+    console.error(err);
+    const friendly = aiFriendlyError(err, variant ? "Variante konnte nicht erstellt werden." : "Aufgabe konnte nicht überarbeitet werden.");
+    showReportableError({
+      code: variant ? REPORTABLE_ERROR_CODES.aiVariant : REPORTABLE_ERROR_CODES.aiEdit,
+      message: friendly,
+      error: err,
+      action: variant ? "add_ai_variant" : "edit_question_with_ai",
+      details: {
+        questionPosition: index + 1,
+        questionType: String(q?.type || ""),
+        mediaKind: String(q?.mediaIntent?.kind || "none"),
+        instructionLength: String(instruction || "").length,
+        requireDifferent: Boolean(requireDifferent),
+        testQuestionCount: Array.isArray(state.questions) ? state.questions.length : 0
+      }
+    });
+  }
   finally { card?.classList.remove("questionAiBusy"); }
 }
 
@@ -4990,8 +5219,14 @@ async function loadAdminData(showToast = false) {
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     const openRightsCount = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
+    const openErrorCount = state.adminFeedback.filter(f => f.category === "app_error" && f.status !== "done").length;
     const feedbackTab = document.querySelector('[data-admin-tab="feedback"]');
-    if (feedbackTab) feedbackTab.textContent = openRightsCount ? `Feedback · ${openRightsCount} Rechtehinweis${openRightsCount === 1 ? "" : "e"}` : "Feedback";
+    if (feedbackTab) {
+      const parts = [];
+      if (openErrorCount) parts.push(`${openErrorCount} Fehler`);
+      if (openRightsCount) parts.push(`${openRightsCount} Rechtehinweis${openRightsCount === 1 ? "" : "e"}`);
+      feedbackTab.textContent = parts.length ? `Feedback · ${parts.join(" · ")}` : "Feedback";
+    }
     state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt)).slice(0, 100);
     renderAdminFilterOptions();
     await renderAdminOverview();
@@ -5358,7 +5593,7 @@ function renderAdminAnnouncements() {
   root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
 }
 
-function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -5367,19 +5602,28 @@ function renderAdminFeedback(){
   const list=state.adminFeedback
     .filter((f)=>status==="all"||f.status===status)
     .filter((f)=>category==="all"||f.category===category)
-    .filter((f)=>!term||normalize(`${f.id||""} ${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""}`).includes(term))
+    .filter((f)=>!term||normalize(`${f.id||""} ${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""} ${f.errorCode||""} ${f.reportId||""} ${f.action||""} ${f.technicalDetails?.rawMessage||""}`).includes(term))
     .sort((a,b)=>(b.category==="rights"&&b.status!=="done")-(a.category==="rights"&&a.status!=="done"));
   const aiItems = list.filter(f => f.category === "ai_question");
   const reasonCounts = Object.entries({ ...AI_QUALITY_REASONS, ambiguous: "Mehrdeutig (ältere Meldungen)" }).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
   const summary = aiItems.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
+  const errorItems = list.filter(f => f.category === "app_error");
+  const errorGroups = [...errorItems.reduce((map, item) => {
+    const key = item.errorCode || "UNBEKANNT";
+    map.set(key, (map.get(key) || 0) + 1);
+    return map;
+  }, new Map()).entries()].sort((a, b) => b[1] - a[1]);
+  const errorSummary = errorItems.length ? `<div class="aiFeedbackSummary errorFeedbackSummary"><strong>Technische Fehler:</strong> ${errorItems.length} Meldung${errorItems.length === 1 ? "" : "en"}${errorGroups.length ? `<br>${errorGroups.map(([key, count]) => `${escapeHtml(key)}: ${count}`).join(" · ")}` : ""}</div>` : "";
   const openRights = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
   const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
-  root.innerHTML = rightsSummary + summary + (list.length ? list.map(f => {
+  root.innerHTML = rightsSummary + errorSummary + summary + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
+    const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
+    const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span></div></details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
   root.querySelectorAll(".rightsHoldToggle").forEach(button => button.addEventListener("click", () => toggleRightsHold(button.dataset.code, button.dataset.hold === "true")));
@@ -5397,7 +5641,7 @@ async function toggleRightsHold(code, hold) {
   } catch (err) { console.error(err); toast("Testzugang konnte nicht geändert werden.", "error"); }
 }
 
-async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const pending=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab)tab.textContent=pending?`Feedback · ${pending} Rechtehinweis${pending===1?"":"e"}`:"Feedback";toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
+async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const rights=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const errors=state.adminFeedback.filter(x=>x.category==="app_error"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab){const parts=[];if(errors)parts.push(`${errors} Fehler`);if(rights)parts.push(`${rights} Rechtehinweis${rights===1?"":"e"}`);tab.textContent=parts.length?`Feedback · ${parts.join(" · ")}`:"Feedback";}toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
 
 function auditActionInfo(action) {
   return ({
