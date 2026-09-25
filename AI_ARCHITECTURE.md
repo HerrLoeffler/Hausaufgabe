@@ -23,6 +23,7 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 - Text model on staging: `gpt-5.6-luna` (compare generated test quality before promoting).
 - `store: false`.
 - Test generation validates the result again with Testify-specific semantic rules. Individual invalid or repeated questions are replaced through bounded, independently validated question requests while the valid questions, point total and selected image counts remain intact. If there are global errors or local replacement is exhausted, one full-test repair is attempted. Only a fully valid test reaches the editor; repair attempts are counted in token usage and may increase costs and runtime.
+- Total points are brought to the teacher's requested value in deterministic 0.5-point steps before semantic validation, including after full regeneration; incompatible counts and point totals are rejected before the AI request.
 - The teacher requests exact numbers of questions with one generated image (0–5) and questions with illustrated answer options (0–3), with at most five visual questions total. Validation and the bounded repair require those counts. Each illustrated choice triggers a separate image request (2–4 per question); the form shows the total range before generation. Cached older clients retain their original optional-image behavior.
 - Per-question AI edits return exactly one question and preserve the existing question ID client-side.
 
@@ -32,6 +33,7 @@ The browser uses `ai-client.js`; model names, quotas and API credentials remain 
 - AI-generated images are generated server-side with `gpt-image-2`, compressed to WebP, and returned as a bounded `imageDataUrl`. This deliberately reuses the existing renderer for the first beta and avoids introducing a second student-asset authorization path at the same time as the AI backend.
 - Image-answer options use optional `imageDataUrl` / `imageAlt` fields on existing single/multi options; old options remain valid.
 - Teacher source materials are uploaded privately to Cloud Storage under `aiUploads/{uid}/...` and read by the backend with the Admin SDK. The original bytes are sent to the OpenAI Responses API when generating from materials; the image endpoint receives only a newly written text prompt.
+- The material selector offers two content-scope choices: topic guidance with supplementary knowledge or subject matter limited to the uploaded material. Neither mode changes the fact that the original bytes are transferred to OpenAI, so neither mode clears privacy or reuse rights.
 - AI-generated source crops are not automatically faked. `uploaded_crop` remains reserved for the later deterministic crop workflow.
 
 ## Source material

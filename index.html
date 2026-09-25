@@ -267,7 +267,8 @@
             <label>Dauer (Min.)<input id="aiDuration" type="number" min="1" max="300" value="30" /></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
-          <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">5 ausgewählt</span></summary>
+          <p id="aiPointsHint" class="hint" aria-live="polite"></p>
+          <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
           </details>
           <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
@@ -283,14 +284,15 @@
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
           <div id="aiMaterialList" class="aiMaterialList"></div>
           <div class="stack compact aiOptionsBlock">
-            <label>Material verwenden<select id="aiMaterialMode"><option value="consider">Berücksichtigen, wenn relevant</option><option value="inspiration">Als Inspiration verwenden</option><option value="only">Nur aus Material erstellen</option></select></label>
-            <label>Aufgaben mit einem Bild<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
-            <label>Aufgaben mit Bildantworten<input id="aiImageAnswerCount" type="number" min="0" max="3" step="1" value="0" /></label>
+            <label>Wie soll das Material helfen?<select id="aiMaterialMode" disabled><option value="inspiration">Als Orientierung für Themen nutzen</option><option value="only">Inhalte auf das Material begrenzen</option></select></label>
+            <small class="hint">Testify fordert eigenständige Aufgaben und bei Bedarf neue Bilder an. Die Originaldatei wird trotzdem an OpenAI übertragen. Die Auswahl ist nach einem Upload verfügbar.</small>
+            <label>Aufgaben mit einem Bild (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
+            <label>Aufgaben mit Bildantworten (0–3)<input id="aiImageAnswerCount" type="number" min="0" max="3" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
             <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
           </div>
           <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
           <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
-          <small class="hint">Der erzeugte Test ist zunächst nur ein Entwurf. Fehlerhafte oder doppelte Aufgaben werden automatisch neu erstellt; zusätzliche KI-Anfragen können Kosten verursachen. Prüfe den Test vor der Veröffentlichung.</small>
+          <small class="hint">Die Erstellung kann mehrere Minuten dauern. Der Test ist zunächst ein Entwurf: Bitte prüfe ihn vor der Veröffentlichung.</small>
         </article>
       </div>
       <details class="card legacyAiDetails">

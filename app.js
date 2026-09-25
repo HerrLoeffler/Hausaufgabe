@@ -1257,6 +1257,7 @@ $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
 ["aiImageQuestionCount", "aiImageAnswerCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
+["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
 
 function updateAiTypeCount() {
   const selected = $("aiTypeChecks")?.querySelectorAll('input[type="checkbox"]:checked').length || 0;
@@ -1269,18 +1270,21 @@ async function openAiView() {
   $("aiSubject").value = settings.defaultSubject || "";
   $("aiGrade").value = settings.defaultGrade || "";
   if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
+  $("aiMaterialMode").value = "inspiration";
   const root = $("aiTypeChecks");
   root.innerHTML = "";
-  QUESTION_TYPES.forEach(([value, label]) => {
+  const types = [...QUESTION_TYPES.filter(([value]) => !["text", "number"].includes(value)), ...QUESTION_TYPES.filter(([value]) => ["text", "number"].includes(value))];
+  types.forEach(([value, label]) => {
     const item = document.createElement("label");
     item.className = "checkTile";
-    const defaultChecked = ["single", "multi", "text", "truefalse", "number"].includes(value);
+    const defaultChecked = !["text", "number"].includes(value);
     item.innerHTML = `<input type="checkbox" value="${value}" ${defaultChecked ? "checked" : ""}><span>${escapeHtml(label)}</span>`;
     root.appendChild(item);
   });
   updateAiTypeCount();
   renderAiMaterials();
   updateAiImageControls();
+  updateAiPointsControls();
   showView("aiView");
   const notice = $("aiBetaNotice");
   try {
@@ -1322,16 +1326,46 @@ function setAiProgress(message = "", isError = false, percent = null, hint = "",
 }
 
 function updateAiImageControls() {
-  const images = Number($("aiImageQuestionCount")?.value || 0);
-  const answers = Number($("aiImageAnswerCount")?.value || 0);
+  const imageInput = $("aiImageQuestionCount");
+  const answerInput = $("aiImageAnswerCount");
+  const images = Number(imageInput.value);
+  const answers = Number(answerInput.value);
+  const count = Number($("aiCount").value);
+  const imageInvalid = !imageInput.value.trim() || !Number.isInteger(images) || images < 0 || images > 5;
+  const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answers) || answers < 0 || answers > 3;
+  const combinedInvalid = !imageInvalid && !answerInvalid && Number.isInteger(count) && count >= 1 && images + answers > Math.min(count, 5);
   const hint = $("aiImageCountHint");
-  if (hint) hint.textContent = images + answers ? `${images + answers} Aufgaben mit Bildern · ${images + answers * 2} bis ${images + answers * 4} Bildgenerierungen (Bildantworten: 2–4 Bilder je Aufgabe).` : "Ohne Bilder. Du kannst die gewünschte Anzahl oben festlegen.";
+  imageInput.setAttribute("aria-invalid", String(imageInvalid || combinedInvalid));
+  answerInput.setAttribute("aria-invalid", String(answerInvalid || combinedInvalid));
+  const errors = [];
+  if (imageInvalid) errors.push("Für Aufgaben mit einem Bild bitte eine ganze Zahl von 0 bis 5 eingeben.");
+  if (answerInvalid) errors.push("Für Bildantworten bitte eine ganze Zahl von 0 bis 3 eingeben.");
+  if (combinedInvalid) errors.push(`Zusammen sind höchstens ${Math.min(count, 5)} Bildaufgaben bei ${count} Aufgaben möglich. Bitte die Zahlen korrigieren.`);
+  if (hint) {
+    hint.textContent = errors.length ? errors.join(" ") : images + answers ? `${images + answers} Aufgaben mit Bildern · ${images + answers * 2} bis ${images + answers * 4} Bildgenerierungen (Bildantworten: 2–4 Bilder je Aufgabe). Zusammen höchstens 5 Bildaufgaben.` : "Ohne Bilder. Zusammen sind höchstens 5 Bildaufgaben möglich.";
+    hint.classList.toggle("aiInputError", errors.length > 0);
+  }
+}
+
+function updateAiPointsControls() {
+  const input = $("aiPoints");
+  const hint = $("aiPointsHint");
+  const count = Number($("aiCount").value);
+  const points = Number(input.value);
+  const invalid = !input.value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8 || (Number.isInteger(count) && count > 0 && points < count / 2);
+  input.setAttribute("aria-invalid", String(invalid));
+  if (hint) {
+    hint.textContent = invalid ? `Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen${Number.isInteger(count) && count > 0 ? `; bei ${count} Aufgaben mindestens ${count / 2} Punkte` : ""}.` : "Jede Aufgabe erhält mindestens 0,5 Punkte.";
+    hint.classList.toggle("aiInputError", invalid);
+  }
 }
 
 function renderAiMaterials() {
   const root = $("aiMaterialList");
   if (!root) return;
   root.innerHTML = "";
+  $("aiMaterialMode").disabled = state.aiMaterials.length === 0;
+  if (!state.aiMaterials.length) $("aiMaterialMode").value = "inspiration";
   state.aiMaterials.forEach((m) => {
     const row = document.createElement("div"); row.className = "aiMaterialItem";
     const size = m.size ? `${Math.max(1, Math.round(m.size / 1024))} KB` : "";
@@ -1377,16 +1411,19 @@ function collectAiRequest() {
   if (!allowedTypes.length) throw new Error("Bitte mindestens einen Aufgabentyp auswählen.");
   if (!$("aiImageQuestionCount").value.trim() || !$("aiImageAnswerCount").value.trim()) throw new Error("Bitte beide Bildanzahlen angeben (0 ist möglich).");
   const count = Number($("aiCount").value);
+  const points = Number($("aiPoints").value);
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
   const imageAnswerQuestionCount = Number($("aiImageAnswerCount").value);
   if (!Number.isInteger(count) || count < 1 || count > 50) throw new Error("Bitte 1 bis 50 Aufgaben wählen.");
+  if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
+  if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
   if (!Number.isInteger(imageAnswerQuestionCount) || imageAnswerQuestionCount < 0 || imageAnswerQuestionCount > 3) throw new Error("Bitte 0 bis 3 Aufgaben mit Bildantworten wählen.");
   if (imageQuestionCount + imageAnswerQuestionCount > Math.min(count, 5)) throw new Error("Insgesamt höchstens 5 Bildaufgaben und nicht mehr Bildaufgaben als Aufgaben wählen.");
   if (imageAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Bildantworten bitte Single Choice oder Multiple Choice erlauben.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
-    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, duration: Number($("aiDuration").value) || 30, points: Number($("aiPoints").value) || 20,
+    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, duration: Number($("aiDuration").value) || 30, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount
   };
@@ -1425,11 +1462,11 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
   try {
     btn.disabled = true;
     const start = Date.now();
-    const planning = request.materials.length ? "Material wird analysiert und der Test geplant …" : "KI entwirft und prüft die Aufgaben …";
+    const planning = "Dein Test wird erstellt …";
     const renderPlanning = () => {
       const seconds = Math.floor((Date.now() - start) / 1000);
       const estimate = Math.min(65, 8 + Math.floor(57 * (1 - Math.exp(-seconds / 50))));
-      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Fehlerhafte oder doppelte Aufgaben werden automatisch neu erstellt; das kann mehrere Minuten dauern.`);
+      show(planning, estimate, false, `Seit ${seconds} Sekunden · geschätzter Fortschritt. Die Erstellung kann mehrere Minuten dauern. Bitte dieses Fenster geöffnet lassen.`);
     };
     renderPlanning();
     timer = setInterval(renderPlanning, 1000);
@@ -1458,8 +1495,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
     show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
-    const replaced = Number(response?.meta?.replacedQuestions || 0);
-    toast(`${similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt."}${replaced ? ` ${replaced} ${replaced === 1 ? "Aufgabe wurde" : "Aufgaben wurden"} wegen Prüffehlern neu erstellt.` : ""}`);
+    toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
     await openEditor(code);
     setAiProgress("", false, null, "", targetId);
     state.pendingImportReport = { ...report, quizId: code };

@@ -17,6 +17,28 @@ function globalIssues(test, options) {
   return validateTest(test, options).filter(error => !/^Aufgabe \d+(?::| wiederholt)/.test(error));
 }
 
+function balanceTestPoints(test, targetPoints) {
+  if (!Number.isFinite(targetPoints) || targetPoints <= 0 || !test.questions?.length) return test;
+  const targetUnits = Math.round(targetPoints * 2);
+  const units = test.questions.map(q => Math.max(1, Math.round(Number(q.points) * 2)));
+  if (targetUnits < units.length) throw new RangeError("Für diese Aufgabenanzahl sind mindestens 0,5 Punkte pro Aufgabe nötig.");
+  let difference = targetUnits - units.reduce((sum, value) => sum + value, 0);
+  if (!difference) return test;
+  const order = units.map((_, index) => index).sort((a, b) => units[b] - units[a] || a - b);
+  if (difference > 0) {
+    for (let step = 0; step < difference; step += 1) units[order[step % order.length]] += 1;
+  } else {
+    difference = -difference;
+    while (difference > 0) {
+      for (const index of order) {
+        if (units[index] > 1) { units[index] -= 1; difference -= 1; }
+        if (!difference) break;
+      }
+    }
+  }
+  return { ...test, questions: test.questions.map((question, index) => ({ ...question, points: units[index] / 2 })) };
+}
+
 async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8) {
   let attempts = 0;
   let replaced = 0;
@@ -54,6 +76,8 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
 }
 
 async function validateAndRepairTest(test, options, { generateQuestion, regenerateTest, maxQuestionAttempts = 8 }) {
+  const balance = draft => options.expectedCount && draft.questions?.length !== options.expectedCount ? draft : balanceTestPoints(draft, options.targetPoints);
+  test = balance(test);
   let questionAttempts = 0;
   let replaced = 0;
   let fullRepair = false;
@@ -70,7 +94,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
       if (!validateTest(test, options).length) continue;
     }
     if (!fullRepair) {
-      test = await regenerateTest(test, validateTest(test, options));
+      test = balance(await regenerateTest(test, validateTest(test, options)));
       fullRepair = true;
       continue;
     }
@@ -78,4 +102,4 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
   }
 }
 
-module.exports = { questionIssues, globalIssues, replaceInvalidQuestions, validateAndRepairTest };
+module.exports = { questionIssues, globalIssues, balanceTestPoints, replaceInvalidQuestions, validateAndRepairTest };

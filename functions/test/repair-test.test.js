@@ -3,7 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { validateTest, normalizeQuestion } = require("../lib/validation");
-const { validateAndRepairTest } = require("../lib/repair-test");
+const { balanceTestPoints, validateAndRepairTest } = require("../lib/repair-test");
 
 function question(n, kind = "none") {
   return normalizeQuestion({
@@ -60,6 +60,44 @@ test("screenshot case: retries task 7 with duplicate answers and preserves exact
   assert.deepEqual(result.errors, []);
 });
 
+test("screenshot case: fixes 20.5 instead of 20 points and replaces invalid task 8", async () => {
+  const questions = Array.from({ length: 10 }, (_, index) => ({ ...question(index + 1), points: 2 }));
+  questions[0].points = 4;
+  questions[1].points = 0.5;
+  questions[7].options = [{ text: "gleich", correct: true }, { text: "gleich!", correct: false }];
+  const opts = { ...options(10), targetPoints: 20 };
+  assert.ok(validateTest({ title: "Mathematik", questions }, opts).some(e => e.includes("Gesamtpunkte 20.5 statt 20")));
+  let calls = 0;
+  const result = await validateAndRepairTest({ title: "Mathematik", questions }, opts, {
+    generateQuestion: async ({ index, original }) => {
+      calls += 1;
+      assert.equal(index, 7);
+      assert.equal(original.points, 2);
+      return { ...question(101), points: 1 };
+    },
+    regenerateTest: async () => { throw new Error("No full-test regeneration needed for points"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(calls, 1);
+  assert.equal(result.test.questions[0].points, 3.5);
+  assert.equal(result.test.questions[7].points, 2);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 20);
+});
+
+test("fixes a pure point mismatch without spending another AI request", async () => {
+  const testDraft = { title: "A", questions: [question(1), question(2), { ...question(3), points: 1.5 }] };
+  const result = await validateAndRepairTest(testDraft, options(3), {
+    generateQuestion: async () => { throw new Error("No question needs regeneration"); },
+    regenerateTest: async () => { throw new Error("No full-test regeneration needed"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 3);
+});
+
+test("points cannot be balanced below 0.5 per task", () => {
+  assert.throws(() => balanceTestPoints({ title: "A", questions: [question(1), question(2), question(3)] }, 1), /mindestens 0,5 Punkte/);
+});
+
 test("repairs a global question-count error with one complete regeneration", async () => {
   const opts = options(3);
   const result = await validateAndRepairTest({ title: "A", questions: [question(1), question(2)] }, opts, {
@@ -72,6 +110,16 @@ test("repairs a global question-count error with one complete regeneration", asy
   assert.deepEqual(result.errors, []);
   assert.equal(result.fullRepair, true);
   assert.equal(result.questionAttempts, 0);
+});
+
+test("regenerates an excessive question count instead of failing during point balancing", async () => {
+  const opts = options(2);
+  const result = await validateAndRepairTest({ title: "A", questions: [1, 2, 3, 4, 5].map(question) }, opts, {
+    generateQuestion: async () => { throw new Error("Not a question error"); },
+    regenerateTest: async () => ({ title: "A", questions: [question(1), question(2)] })
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.fullRepair, true);
 });
 
 test("does not return a broken test after the bounded repair budget", async () => {

@@ -45,7 +45,10 @@ function cleanSourceTest(value) {
 
 function cleanInput(data = {}) {
   const count = Math.max(1, Math.min(LIMITS.maxQuestions, Number(data.count) || 10));
-  const points = Math.max(0.5, Math.round((Number(data.points) || 20) * 2) / 2);
+  const rawPoints = data.points === undefined ? 20 : Number(data.points);
+  if (!Number.isFinite(rawPoints) || rawPoints < 0.5 || Math.abs(rawPoints * 2 - Math.round(rawPoints * 2)) > 1e-8) throw new HttpsError("invalid-argument", "Gesamtpunkte müssen in positiven 0,5er-Schritten angegeben werden.");
+  const points = Math.round(rawPoints * 2) / 2;
+  if (points < count / 2) throw new HttpsError("invalid-argument", `Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   const allowedTypes = Array.isArray(data.allowedTypes) ? data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : [];
   if (!allowedTypes.length) throw new HttpsError("invalid-argument", "Mindestens ein Aufgabentyp ist erforderlich.");
   const exactImageCounts = Object.hasOwn(data, "imageQuestionCount") || Object.hasOwn(data, "imageAnswerQuestionCount");
@@ -70,7 +73,7 @@ function cleanInput(data = {}) {
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? imageAnswerQuestionCount : undefined,
     allowImageChoices: exactImageCounts ? imageAnswerQuestionCount > 0 : Boolean(data.allowImageChoices) && imageMode !== "none",
     maxVisualQuestions: exactImageCounts ? imageQuestionCount + imageAnswerQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
-    materialMode: ["consider", "inspiration", "only"].includes(data.materialMode) ? data.materialMode : "consider",
+    materialMode: data.materialMode === "only" ? "only" : "inspiration",
     sourceTest: cleanSourceTest(data.sourceTest)
   };
 }
@@ -98,6 +101,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
   const input = cleanInput(request.data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(request.data?.materials, uid);
+  if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   try {
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
