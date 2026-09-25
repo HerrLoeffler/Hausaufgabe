@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.0" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai16" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai17" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -201,6 +201,31 @@
             </div>
           </article>
           <article class="card"><h2>Mitteilungen</h2><div id="adminAnnouncementList" class="adminAnnouncementList"></div></article>
+
+          <article class="card teacherTourAdminCard">
+            <div class="sectionHead">
+              <div>
+                <span class="eyebrow">Onboarding</span>
+                <h2>Lehrer-Tutorial</h2>
+                <p>Reihenfolge und Inhalte des Tutorials direkt hier verwalten.</p>
+              </div>
+              <label class="checkRow adminActiveCheck"><input id="teacherTourAdminEnabled" type="checkbox" checked /> Aktiv</label>
+            </div>
+            <div class="teacherTourFlowInfo">
+              <strong>Ablauf nach dem Login</strong>
+              <span>1. Lehrer-Tutorial → 2. Popup-Mitteilung → 3. Dashboard-Mitteilungen</span>
+              <small>Aktuelle Tutorial-Version: <code id="teacherTourAdminVersion">–</code></small>
+            </div>
+            <div id="teacherTourAdminList" class="teacherTourAdminList"></div>
+            <div class="teacherTourAdminFooter">
+              <button id="addTeacherTourStepBtn" class="button secondary" type="button">+ Schritt hinzufügen</button>
+              <label class="checkRow teacherTourReshowCheck"><input id="teacherTourReshow" type="checkbox" checked /> Nach dem Speichern allen Lehrkräften erneut anzeigen</label>
+              <div class="teacherTourAdminSaveActions">
+                <button id="showTeacherTourPreviewBtn" class="button ghost" type="button">Vorschau anzeigen</button>
+                <button id="saveTeacherTourBtn" class="button primary" type="button">Tutorial speichern</button>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -461,6 +486,6 @@
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai17"></script>
+  <script type="module" src="app.js?v=2.3.1-ai18"></script>
 </body>
 </html>
