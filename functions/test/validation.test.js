@@ -1,6 +1,6 @@
 "use strict";
 const test = require("node:test"); const assert = require("node:assert/strict");
-const { validateQuestion, validateTest, normalizeQuestion } = require("../lib/validation");
+const { validateQuestion, validateTest, normalizeQuestion, variantRepeats } = require("../lib/validation");
 function base(type="single") { return normalizeQuestion({ type, text:"Frage?", points:1, options:[{text:"A",correct:true},{text:"B",correct:false}], acceptedAnswers:["x"], manualReview:false, correctBoolean:true, pairs:[{left:"a",right:"b"},{left:"c",right:"d"}], items:["a","b"], groups:[{name:"A",items:["a"]},{name:"B",items:["b"]}], passage:"Haus geht", targetWords:["Haus"], numericAnswer:2, tolerance:0, unit:"", mediaIntent:{kind:"none",prompt:"",altText:"",count:0,sourceMaterialId:"",reason:""} }); }
 test("valid single",()=>assert.deepEqual(validateQuestion(base()),[]));
 test("invalid single with two correct",()=>{const q=base(); q.options[1].correct=true; assert.ok(validateQuestion(q).length);});
@@ -72,4 +72,17 @@ test("a single image cannot convey the temporal meaning of wieder",()=>{
   assert.ok(validateQuestion(q).some(x=>x.includes("einzelnen Bild")));
   q.text="Welche Abbildung zeigt einen Jungen vor einer Haustür?";
   assert.deepEqual(validateQuestion(q),[]);
+});
+
+
+test("variant duplicate check allows same learning goal with a genuinely new example",()=>{
+  const original=base(); original.text="Bestimme die Wortart des Wortes schnell im Satz: Er läuft schnell nach Hause."; original.options=[{text:"Adverb",correct:true},{text:"Nomen",correct:false}];
+  const variant=base(); variant.text="Bestimme die Wortart des Wortes heute im Satz: Wir fahren heute nach München."; variant.options=[{text:"Adverb",correct:true},{text:"Nomen",correct:false}];
+  assert.equal(variantRepeats(original,variant),false);
+});
+
+test("variant duplicate check still rejects near-identical wording",()=>{
+  const original=base(); original.text="Berechne 25 Prozent von 80 Euro."; original.options=[{text:"20 Euro",correct:true},{text:"25 Euro",correct:false}];
+  const copy=base(); copy.text="Berechne 25 Prozent von 80 €."; copy.options=[{text:"20 Euro",correct:true},{text:"25 Euro",correct:false}];
+  assert.equal(variantRepeats(original,copy),true);
 });
