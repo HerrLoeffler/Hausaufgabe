@@ -14,7 +14,7 @@ const { requireAiUser } = require("./lib/access");
 const { consumeQuota, logUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("./lib/materials");
 const { validateAndRepairTest } = require("./lib/repair-test");
-const { reviewSchema, imageReviewSchema, REVIEW_SYSTEM, feedbackMemory, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("./lib/quality");
+const { MEMORY_VERSION, reviewSchema, imageReviewSchema, REVIEW_SYSTEM, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("./lib/quality");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
@@ -138,16 +138,15 @@ async function structuredResponse({ schema, schemaName, userPrompt, content = []
   catch (err) { throw reportAiError(err, `${schemaName}-json`); }
 }
 
-async function loadQualityMemory() {
+async function loadQualityMemory(context = {}) {
   try {
-    // Read reports from every teacher, including older ones. Only fields needed for
-    // local comparisons are fetched; private notes and identities never enter the AI prompt.
+    // Good and bad ratings are aggregated across teachers. Teacher IDs are used only
+    // to count independent signals; names, emails and private comments are never loaded.
     const reports = await getFirestore().collection("feedback")
       .where("category", "==", "ai_question")
-      .where("verdict", "==", "bad")
-      .select("category", "verdict", "reason", "questionSnapshot")
+      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion")
       .get();
-    return feedbackMemory(reports.docs.map(doc => doc.data()));
+    return feedbackMemory(reports.docs.map(doc => doc.data()), context);
   } catch (err) {
     console.error("Bewertungsverlauf konnte nicht geladen werden:", err);
     throw new HttpsError("unavailable", "Die Qualitätsrückmeldungen können gerade nicht geladen werden. Bitte erneut versuchen.");
@@ -167,7 +166,7 @@ async function reviewDraft(test, memory) {
 
 exports.getAiStatus = onCall(callableOpts, async request => {
   const { profile } = await requireAiUser(request);
-  return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION };
+  return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, qualityMemoryVersion: MEMORY_VERSION };
 });
 
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
@@ -182,10 +181,12 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
     phase = "feedback";
-    const memory = await loadQualityMemory();
+    const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade });
+    const memoryGuide = qualityMemoryPrompt(memory);
+    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}`;
     phase = "test-generation";
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
-    const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: testUserPrompt(input), content: materialContent });
+    const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: generationPrompt, content: materialContent });
     const usage = { ...first.usage };
     const addUsage = next => {
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
@@ -195,7 +196,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       generateQuestion: async ({ test, index, original, reasons, attempt }) => {
         const replacement = await structuredResponse({
           schema: questionSchema, schemaName: "testify_test_question_replacement_v1",
-          userPrompt: replacementQuestionPrompt({ input, test, index, original, reasons, attempt }), content: materialContent
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
@@ -203,7 +204,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
           schema: testSchema, schemaName: "testify_test_repair_v1",
-          userPrompt: `${testUserPrompt(input)}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
+          userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });
         addUsage(repair.usage);
@@ -244,7 +245,11 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
       fullRepair: result.fullRepair,
       failed: Boolean(hardErrors.length),
       errors: hardErrors.slice(0, 10),
-      qualityWarnings
+      qualityWarnings,
+      qualityMemoryVersion: memory.memoryVersion,
+      feedbackSignals: memory.stats?.total || 0,
+      positivePatterns: memory.positivePatterns?.length || 0,
+      recurringRuleCandidates: memory.ruleCandidates?.length || 0
     });
     if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
     return {
@@ -287,9 +292,11 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const allowedTypes = Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
-  const prompt = questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
+  const basePrompt = questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
-  const memory = await loadQualityMemory();
+  const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" });
+  const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
+  const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}`;
   const usage = {};
   let normalized, errors;
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -308,7 +315,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     }
     if (!errors.length) break;
   }
-  await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length) });
+  await logUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
   return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION } };
   } catch (err) { throw reportAiError(err, "question-regeneration"); }
