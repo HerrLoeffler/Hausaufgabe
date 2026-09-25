@@ -1423,7 +1423,7 @@ function collectAiRequest() {
   if (imageAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Bildantworten bitte Single Choice oder Multiple Choice erlauben.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
-    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, duration: Number($("aiDuration").value) || 30, points,
+    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount
   };
@@ -1433,14 +1433,14 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
   const intent = rawQuestion?.mediaIntent;
   if (!intent || intent.kind === "none") return;
   if (intent.kind === "ai_generated" && intent.prompt) {
-    const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
+    const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
     Object.assign(q, result.asset || {});
   } else if (intent.kind === "image_choices" && ["single", "multi"].includes(q.type)) {
     const choices = [];
     for (let i = 0; i < q.options.length; i += 1) {
       const opt = q.options[i];
       const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${opt.text}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
-      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, altText: `Bildantwort ${i + 1}`, purpose: "option" });
+      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, expectedScene: opt.text, altText: `Bildantwort ${i + 1}`, purpose: "option" });
       if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
       choices.push({ imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
     }
@@ -1459,6 +1459,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
   const targetId = similar ? "similarTestProgress" : "aiProgress";
   const show = (message, percent = null, isError = false, hint = "") => setAiProgress(message, isError, percent, hint, targetId);
   let timer;
+  let incompleteQuizCode = null;
   try {
     btn.disabled = true;
     const start = Date.now();
@@ -1484,6 +1485,7 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     } : {};
     const base = { ...quizDefaults(), ...inherited, title: String(data.title || "KI-Test"), subject: String(data.subject || request.subject || ""), grade: String(data.grade || request.grade || ""), description: String(data.description || getSettings().defaultDescription), questionCount: data.questions.length, totalPoints: round1(data.questions.reduce((sum, raw) => sum + Number(raw.points || 0), 0)) };
     const { code } = await createQuizDocument(base);
+    incompleteQuizCode = code;
     for (let i = 0; i < data.questions.length; i += 1) {
       const raw = data.questions[i]; const q = normalizeImportedQuestion(raw, i, report);
       q.aiOrigin = { kind: similar ? "similar" : "generated", model: String(response?.meta?.model || ""), promptVersion: String(response?.meta?.promptVersion || "") };
@@ -1491,10 +1493,11 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
       show(`Aufgabe ${i + 1} von ${data.questions.length} wird vorbereitet …`, 70 + (29 * i / data.questions.length));
       if (raw.mediaIntent?.kind && raw.mediaIntent.kind !== "none" && request.imageMode !== "none" && raw.mediaIntent.kind !== "uploaded_crop") {
         show(`Aufgabe ${i + 1} von ${data.questions.length}: Bild wird erstellt …`, 70 + (29 * i / data.questions.length), false, "Bildgenerierung kann etwas dauern. Die Anzeige wird nach jeder Aufgabe aktualisiert.");
-        try { await applyGeneratedMedia(raw, q, code, ref.id); } catch (err) { console.warn("Bildgenerierung fehlgeschlagen", err); report.warnings.push(`Aufgabe ${i + 1}: Bild oder Bildantworten konnten nicht erzeugt werden; die Aufgabe wurde ohne Bilder übernommen.`); }
+        await applyGeneratedMedia(raw, q, code, ref.id);
       }
       await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
     }
+    incompleteQuizCode = null;
     show("Entwurf fertig.", 100, false, "Der neue Test wird geöffnet.");
     toast(similar ? "Ähnlicher Test als neuer Entwurf erstellt." : "KI-Entwurf erstellt.");
     await openEditor(code);
@@ -1502,6 +1505,13 @@ async function createAiTestFromRequest(request, { similar = false, sourceQuiz = 
     state.pendingImportReport = { ...report, quizId: code };
     renderImportReviewBanner();
   } catch (err) {
+    if (incompleteQuizCode) {
+      try {
+        const partial = await getDocs(collection(db, "quizzes", incompleteQuizCode, "questions"));
+        for (const question of partial.docs) await deleteDoc(question.ref);
+        await deleteDoc(doc(db, "quizzes", incompleteQuizCode));
+      } catch (cleanupError) { console.error("Unvollständiger KI-Entwurf konnte nicht gelöscht werden:", cleanupError); }
+    }
     console.error(err); show(aiFriendlyError(err), null, true); toast(aiFriendlyError(err), "error");
   } finally {
     if (timer) clearInterval(timer);
@@ -1530,7 +1540,7 @@ function generateAiPrompt() {
   }
   const customNotes = $("aiCustomNotes")?.value.trim() || "";
   const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
-  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Bearbeitungszeit ca. ${Number($("aiDuration").value) || 30} Minuten\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
@@ -2223,10 +2233,10 @@ function questionForAi(q) {
 }
 
 const AI_QUALITY_REASONS = Object.freeze({
-  incorrect: "Fachlich falsch oder unsinnig",
+  incorrect: "Fachlich falsch, unsinnig oder mehrdeutig",
   answer_leak: "Lösung wird bereits verraten",
   image_mismatch: "Bild oder Bildantwort passt nicht",
-  ambiguous: "Missverständlich oder mehrere Lösungen",
+  duplicate: "Doppelt oder zu ähnlich",
   other: "Anderer Grund"
 });
 
@@ -2293,7 +2303,7 @@ function toggleAiQualityPanel(node, q, index) {
   const panel = document.createElement("div");
   panel.className = "aiQualityPanel";
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
-  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong><p>Grund, Hinweis, Aufgaben- und Antworttexte werden im Admin-Feedback gespeichert; Bilder und Uploads nicht. Bitte keine personenbezogenen Daten eintragen.${live ? " Ein veröffentlichter Test kann hier nur bewertet werden." : ""}</p><label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${live ? "" : '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button><button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong><p>Grund, Hinweis, Aufgaben- und Antworttexte werden gespeichert; deine Bewertungen fließen in künftige Qualitätsprüfungen ein. Bilder und Uploads werden hier nicht gespeichert. Hinweise werden nur bei „neu erstellen“ für diese Aufgabe an die KI gesendet. Bitte keine personenbezogenen Daten eintragen.${live ? " Ein veröffentlichter Test kann hier nur bewertet werden." : ""}</p><label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${live ? "" : '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button><button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
   panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
     panel.querySelector(selector)?.addEventListener("click", async () => {
@@ -2320,7 +2330,7 @@ async function createSimilarTest() {
   const request = {
     schoolType: "Mittelschule", region: "Bayern", subject: $("quizSubject").value.trim(), grade: $("quizGrade").value.trim(),
     topic: $("quizTitle").value.trim() || "Ähnlicher Test", difficulty: "gemischt", count: questions.length,
-    duration: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) || 30 : 30, points: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+    points: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
     allowedTypes: [...new Set(questions.map(q => q.type))], notes: "Erstelle eine eigenständige Variante mit gleicher Kompetenz, ähnlichem Schwierigkeitsgrad und neuen Beispielen. Verwende keine wortgleichen Aufgaben.",
     materials: [], materialMode: "consider", imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount,
     sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: hasImageAnswers(q) ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
@@ -2355,7 +2365,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     next.position = variant ? index + 2 : q.position;
     if (!variant) next._aiUndo = old;
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
-      try { await applyGeneratedMedia(response.question, next, state.currentQuiz.id, next.id); } catch (err) { console.warn(err); toast("Aufgabe wurde erstellt, das Bild aber nicht.", "error"); }
+      await applyGeneratedMedia(response.question, next, state.currentQuiz.id, next.id);
     } else if (!variant && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
     if (variant) state.questions.splice(index + 1, 0, next);
     else state.questions[index] = next;
@@ -3914,6 +3924,16 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
 
   setupStudentProgress(questions);
   $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions));
+  $("studentName").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault();
+    if (!e.currentTarget.value.trim()) return toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    e.currentTarget.blur();
+    const next = $("studentStartBtn") && !$("studentStartBtn").disabled
+      ? $("studentStartBtn") : $("studentQuestions")?.querySelector("input, select, textarea, button");
+    next?.focus();
+    toast("Name übernommen. Abgabe erst über „Antworten abgeben“.");
+  });
 
   if (teacherControlled) {
     const btn = $("studentStartBtn");
@@ -5203,7 +5223,7 @@ function renderAdminFeedback(){
     .filter((f)=>category==="all"||f.category===category)
     .filter((f)=>!term||normalize(`${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""}`).includes(term));
   const aiItems = list.filter(f => f.category === "ai_question");
-  const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
+  const reasonCounts = Object.entries({ ...AI_QUALITY_REASONS, ambiguous: "Mehrdeutig (ältere Meldungen)" }).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
   const summary = aiItems.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
   root.innerHTML = summary + (list.length ? list.map(f => {
     const q = f.questionSnapshot;

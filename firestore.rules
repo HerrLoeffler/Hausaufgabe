@@ -164,7 +164,7 @@ service cloud.firestore {
                       || (
                         (isAdmin() || ownsQuiz(request.resource.data.get('testCode', '')))
                         && request.resource.data.get('verdict', '') in ['good', 'bad']
-                        && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'other']
+                        && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'duplicate', 'other']
                         && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
                         && request.resource.data.get('teacherComment', '') is string
                         && request.resource.data.get('teacherComment', '').size() <= 500
@@ -191,7 +191,7 @@ service cloud.firestore {
           && request.resource.data.message.size() > 0
           && request.resource.data.message.size() <= 2000
           && request.resource.data.get('verdict', '') in ['good', 'bad']
-          && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'other']
+          && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'duplicate', 'other']
           && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
           && request.resource.data.get('teacherComment', '') is string
           && request.resource.data.get('teacherComment', '').size() <= 500

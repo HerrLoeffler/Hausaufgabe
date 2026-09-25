@@ -264,7 +264,6 @@
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
             <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="50" value="10" /></label>
             <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
-            <label>Dauer (Min.)<input id="aiDuration" type="number" min="1" max="300" value="30" /></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
           <p id="aiPointsHint" class="hint" aria-live="polite"></p>
@@ -278,7 +277,7 @@
           <div class="aiUploadNotice" id="aiUploadNotice">
             <strong>Vor dem Hochladen prüfen</strong>
             <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
-            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich habe geprüft: Das Material enthält keine personenbezogenen Daten von Schülern oder Dritten, und die Rechte für diese KI-Verarbeitung sind geklärt.</span></label>
+            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich bestätige, dass ich dieses Material für die Speicherung und Übermittlung an einen externen KI-Dienst verwenden darf und dass es keine personenbezogenen Daten von Schülern oder Dritten enthält.</span></label>
             <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
           </div>
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
@@ -425,6 +424,6 @@
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.0</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai7"></script>
+  <script type="module" src="app.js?v=2.3.1-ai8"></script>
 </body>
 </html>

@@ -117,6 +117,10 @@ function validateTest(test, opts = {}) {
     const prior = qs.findIndex((q, j) => j < i && sameQuestion(q, qs[i]));
     if (prior >= 0) errors.push(`Aufgabe ${i + 1} wiederholt inhaltlich Aufgabe ${prior + 1}.`);
     if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
+    if (opts.negativeQuestions?.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1}: Eine ähnliche Aufgabe wurde zuvor als fehlerhaft bewertet.`);
+    for (const issue of opts.reviewIssues || []) {
+      if (issue.index === i && comparable(issue.text) === comparable(qs[i].text)) errors.push(`Aufgabe ${i + 1}: Qualitätsprüfung: ${issue.detail}`);
+    }
   }
   if (opts.expectedCount && qs.length !== opts.expectedCount) errors.push(`Erwartet ${opts.expectedCount} Aufgaben, erhalten ${qs.length}.`);
   if (opts.targetPoints) {

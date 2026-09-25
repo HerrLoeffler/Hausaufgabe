@@ -9,6 +9,10 @@ function questionIssues(test, options) {
     const prior = questions.findIndex((other, i) => i < index && sameQuestion(other, question));
     if (prior >= 0) reasons.push(`Inhaltlich wie Aufgabe ${prior + 1}.`);
     if (options.referenceQuestions?.some(other => sameQuestion(other, question))) reasons.push("Wiederholt den Ausgangstest.");
+    if (options.negativeQuestions?.some(other => sameQuestion(other, question))) reasons.push("Ähnelt einer zuvor als fehlerhaft bewerteten Aufgabe.");
+    for (const issue of options.reviewIssues || []) {
+      if (issue.index === index && String(issue.text || "").trim() === String(question.text || "").trim()) reasons.push(`Qualitätsprüfung: ${issue.detail}`);
+    }
     return reasons.length ? [{ index, reasons }] : [];
   });
 }
@@ -60,6 +64,8 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     if (sameQuestion(original, candidate)) reasons.push("Die neue Aufgabe ist der ersetzten zu ähnlich.");
     if (test.questions.some((other, i) => i !== index && sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt eine andere Aufgabe des Tests.");
     if (options.referenceQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt den Ausgangstest.");
+    if (options.negativeQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe ähnelt einer als fehlerhaft bewerteten Aufgabe.");
+    if (options.reviewIssues?.some(issue => issue.index === index && String(issue.text || "").trim() === candidate.text)) reasons.push("Die neue Aufgabe wiederholt die bemängelte Fragestellung.");
     if (!reasons.length) {
       const next = { ...test, questions: test.questions.map((question, i) => i === index ? candidate : question) };
       reasons.push(...globalIssues(next, options));
