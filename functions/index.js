@@ -9,7 +9,7 @@ const { getStorage } = require("firebase-admin/storage");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
 const { testSchema, questionSchema } = require("./lib/schemas");
-const { validateTest, validateQuestion, normalizeQuestion, sameQuestion } = require("./lib/validation");
+const { validateTest, validateQuestion, normalizeQuestion, sameQuestion, variantRepeats } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, logUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("./lib/materials");
@@ -299,12 +299,15 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}`;
   const usage = {};
   let normalized, errors;
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+  const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const result = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
     errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: Boolean(request.data?.allowImageChoices), materialIds });
-    if (request.data?.variant || request.data?.requireDifferent) {
+    if (request.data?.variant) {
+      if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
+    } else if (request.data?.requireDifferent) {
       if ([question, ...existing].some(other => sameQuestion(other, normalized))) errors.push("Die neue Aufgabe wiederholt eine bestehende Aufgabe.");
     }
     if (memory.negativeQuestions.some(other => sameQuestion(other, normalized))) errors.push("Die Aufgabe ähnelt einer zuvor als fehlerhaft bewerteten Aufgabe.");
