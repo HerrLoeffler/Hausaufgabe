@@ -93,7 +93,12 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   if (mi.kind === "image_choices") {
     if (!["single", "multi"].includes(q.type)) errors.push("Bildantworten brauchen Single Choice oder Multiple Choice.");
     if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 4 || mi.count !== q.options.length) errors.push("Bildantworten brauchen genau 2–4 Bilder, eines pro Antwortoption.");
-    if ((q.options || []).some(o => /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(o.text || ""))) errors.push("Jede Bildantwort braucht eine konkrete, eigene Szenenbeschreibung.");
+    const scenes = (q.options || []).map(o => normalizeText(o.imageScene || o.text));
+    if (scenes.some(scene => !scene || /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(scene))) {
+      errors.push("Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung.");
+    }
+    const comparableScenes = scenes.filter(Boolean).map(comparable);
+    if (new Set(comparableScenes).size !== comparableScenes.length) errors.push("Die Szenen der Bildantworten müssen eindeutig verschieden sein.");
     const stem = comparable(q.text);
     const stemTerms = keyTerms(q.text);
     if (/\b(wieder|erneut|noch einmal)\b/.test(stem) && /\b(bedeutung|abbildung|bild|zeigt)\b/.test(stem)) {
@@ -114,7 +119,7 @@ function normalizeQuestion(q) {
   const copy = JSON.parse(JSON.stringify(q));
   copy.points = Math.max(0.5, roundHalf(copy.points || 1));
   copy.text = normalizeText(copy.text);
-  copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o.text), correct: !!o.correct })) : [];
+  copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o.text), correct: !!o.correct, imageScene: normalizeText(o.imageScene) })) : [];
   copy.acceptedAnswers = Array.isArray(copy.acceptedAnswers) ? copy.acceptedAnswers.map(normalizeText).filter(Boolean) : [];
   copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p.left), right: normalizeText(p.right) })) : [];
   copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];
