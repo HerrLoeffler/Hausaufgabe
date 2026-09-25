@@ -965,6 +965,7 @@ function renderAiJobs() {
     || (Date.now() - toMillis(job.updatedAt || job.createdAt) < 7 * 24 * 60 * 60 * 1000)).slice(0, 8);
   host.replaceChildren();
   host.classList.toggle("hidden", !recent.length);
+  if (recent.some(job => ["queued", "running"].includes(job.status))) $("emptyQuizState").classList.add("hidden");
   for (const job of recent) {
     const card = document.createElement("article");
     const finished = job.status === "ready";
@@ -1019,8 +1020,17 @@ async function renderLocalDraftList() {
       card.innerHTML = `<div><strong>Lokaler Bearbeitungsstand · ${escapeHtml(draft.quiz?.title || "Neuer Test")}</strong>
         <p>${Number(draft.questions?.length || 0)} Aufgaben · zuletzt lokal gesichert ${escapeHtml(new Date(draft.savedAt).toLocaleString("de-DE"))}</p>
         <small>Nur in diesem Browser verfügbar. Zum Übertragen auf andere Geräte im Editor „Speichern“ wählen.</small></div>
-        <button class="button secondary resumeDraft" type="button">Bearbeitung fortsetzen</button>`;
+        <div class="quizActions"><button class="button secondary resumeDraft" type="button">Bearbeitung fortsetzen</button>
+        <button class="button ghost discardDraft" type="button">Lokalen Stand verwerfen</button></div>`;
       card.querySelector(".resumeDraft").addEventListener("click", () => draft.newManualQuiz ? resumeManualDraft(draft) : openEditor(draft.quizId));
+      card.querySelector(".discardDraft").addEventListener("click", async () => {
+        if (!confirm("Diesen lokalen Bearbeitungsstand wirklich verwerfen? Bereits auf dem Server gespeicherte Tests bleiben erhalten.")) return;
+        try {
+          await removeEditorDraft(uid, draft.quizId);
+          await renderLocalDraftList();
+          renderQuizList();
+        } catch (err) { console.error(err); toast("Lokaler Bearbeitungsstand konnte nicht entfernt werden.", "error"); }
+      });
       host.appendChild(card);
     }
   } catch (err) { console.warn("Lokale Entwürfe konnten nicht gelesen werden:", err); }
@@ -1068,7 +1078,9 @@ function renderQuizList() {
   list.innerHTML = "";
   const filtered = filteredQuizzes();
   const active = activeQuizzes();
-  $("emptyQuizState").classList.toggle("hidden", active.length !== 0);
+  const hasPendingWork = state.aiJobs.some(job => ["queued", "running"].includes(job.status))
+    || $("localDraftList").childElementCount > 0;
+  $("emptyQuizState").classList.toggle("hidden", active.length !== 0 || hasPendingWork);
   $("noFilterState").classList.toggle("hidden", active.length === 0 || filtered.length !== 0);
   if (!filtered.length) return;
 
