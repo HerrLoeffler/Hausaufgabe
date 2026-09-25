@@ -2,6 +2,8 @@
 
 const { validateAndRepairTest } = require("./repair-test");
 
+const MEMORY_VERSION = 2;
+
 const QUALITY_REASONS = Object.freeze({
   incorrect: "fachlich falsche oder sinnlose Aufgaben",
   answer_leak: "Lösung wird in der Frage verraten",
@@ -39,32 +41,245 @@ const REVIEW_SYSTEM = "Du prüfst bereits erstellte Schulaufgaben unabhängig un
 // Duplicate questions are test-specific; a bad image can come from a correct text prompt.
 const REUSABLE_QUESTION_ERRORS = new Set(["incorrect", "answer_leak", "ambiguous"]);
 
-function feedbackMemory(globalFeedback = []) {
-  const counts = Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
-  const negativeQuestions = [];
-  const seen = new Set();
-  for (const entry of globalFeedback) {
-    if (entry?.category !== "ai_question" || entry.verdict !== "bad" || !Object.hasOwn(counts, entry.reason)) continue;
-    counts[entry.reason] += 1;
-    if (!REUSABLE_QUESTION_ERRORS.has(entry.reason) || !entry.questionSnapshot?.text) continue;
-    const q = entry.questionSnapshot;
-    const snapshot = {
-      type: q.type, text: q.text, options: q.options || [], acceptedAnswers: q.acceptedAnswers || [],
-      numericAnswer: q.numericAnswer, unit: q.unit || "",
-      mediaIntent: { kind: q.imageChoices ? "image_choices" : q.imagePresent ? "ai_generated" : "none" }
-    };
-    const key = JSON.stringify(snapshot);
-    if (!seen.has(key)) { seen.add(key); negativeQuestions.push(snapshot); }
-  }
-  const priorityReasons = Object.keys(counts).filter(key => counts[key] > 0).sort((a, b) => counts[b] - counts[a]).slice(0, 3);
-  return { priorityReasons, negativeQuestions };
+function norm(value, max = 120) {
+  return String(value || "").trim().toLocaleLowerCase("de-DE").slice(0, max);
 }
 
-function reviewPrompt(test, { priorityReasons = [] } = {}) {
-  const priorities = priorityReasons.length
-    ? `Aus bisherigen Lehrerbewertungen besonders beachten: ${priorityReasons.map(key => QUALITY_REASONS[key]).join("; ")}. Die Bewertungen sind Hinweise, keine Beweise.`
-    : "";
-  return `Prüfe JEDE Aufgabe dieses Tests anhand von Frage, Lösung und Bildbeschreibung. Prüfe fachliche Richtigkeit, Sinn, Eindeutigkeit, versteckte Lösungshinweise, logisch korrekte Antwortoptionen und inhaltliche Dopplungen zwischen Aufgaben. Eine Frage nach der Zahl von Kommas muss den Beispielsatz ohne Kommas zeigen. Ein einzelnes Standbild zeigt keine zeitliche Wiederholung wie „wieder“. Bei Bildantworten müssen die Szenen dieselben genannten Gegenstände zeigen und zur Frage passen; nur die zu prüfende Eigenschaft darf sich ändern. Tatsächlich erzeugte Bildpixel liegen noch nicht vor; bewerte hier die geplanten Szenen. Gib nur eindeutig feststellbare Probleme zurück. Indizes beginnen bei 0. Beschreibe jedes Problem konkret und knapp auf Deutsch. ${priorities}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions })}`;
+function entryContext(entry = {}) {
+  return {
+    subject: norm(entry.subject),
+    grade: norm(entry.grade, 60),
+    type: norm(entry.questionType || entry.questionSnapshot?.type, 30)
+  };
+}
+
+function targetContext(context = {}) {
+  return {
+    subject: norm(context.subject),
+    grade: norm(context.grade, 60),
+    type: norm(context.questionType || context.type, 30)
+  };
+}
+
+function subjectRelevant(entry, target) {
+  return !target.subject || !entry.subject || entry.subject === target.subject;
+}
+
+function contextWeight(entry, target) {
+  let score = 1;
+  if (target.subject && entry.subject) {
+    if (entry.subject !== target.subject) return 0.25;
+    score += 4;
+  }
+  if (target.grade && entry.grade) {
+    if (entry.grade === target.grade) score += 3;
+    else score += 0.25;
+  }
+  if (target.type && entry.type) {
+    if (entry.type === target.type) score += 3;
+    else return 0.25;
+  }
+  return score;
+}
+
+function questionSnapshotForMemory(q = {}) {
+  const existingKind = q.mediaIntent?.kind;
+  const kind = ["ai_generated", "image_choices"].includes(existingKind)
+    ? existingKind
+    : q.imageChoices ? "image_choices" : q.imagePresent ? "ai_generated" : "none";
+  return {
+    type: q.type,
+    text: q.text,
+    options: q.options || [],
+    acceptedAnswers: q.acceptedAnswers || [],
+    numericAnswer: q.numericAnswer,
+    unit: q.unit || "",
+    mediaIntent: { kind }
+  };
+}
+
+function textLengthBucket(text) {
+  const length = String(text || "").trim().length;
+  if (length <= 80) return "kurz";
+  if (length <= 180) return "mittel";
+  return "lang";
+}
+
+function positiveShape(q = {}) {
+  const kind = q.mediaIntent?.kind ||
+    (q.imageChoices ? "image_choices" : q.imagePresent ? "ai_generated" : "none");
+  return {
+    type: String(q.type || "text").slice(0, 30),
+    points: Math.round((Number(q.points) || 1) * 2) / 2,
+    optionCount: Array.isArray(q.options) ? q.options.length : 0,
+    textLength: textLengthBucket(q.text),
+    hasPassage: Boolean(String(q.passage || "").trim()),
+    mediaKind: ["none", "ai_generated", "image_choices"].includes(kind) ? kind : "none"
+  };
+}
+
+function topReasons(scoreMap, max = 3) {
+  return Object.entries(scoreMap)
+    .filter(([, score]) => score > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, max)
+    .map(([reason]) => reason);
+}
+
+function feedbackMemory(globalFeedback = [], context = {}) {
+  const target = targetContext(context);
+  const reasonScores = Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
+  const typeScores = {};
+  const negativeQuestions = [];
+  const seenNegative = new Set();
+  const positiveMap = new Map();
+  const candidateMap = new Map();
+  const versionMap = new Map();
+  const stats = { total: 0, good: 0, bad: 0, relevantGood: 0, relevantBad: 0 };
+
+  for (const entry of globalFeedback) {
+    if (entry?.category !== "ai_question" || !["good", "bad"].includes(entry.verdict)) continue;
+    const ctx = entryContext(entry);
+    const weight = contextWeight(ctx, target);
+    const isRelevant = subjectRelevant(ctx, target);
+    const teacherKey = String(entry.userId || "unknown").slice(0, 128);
+    const version = String(entry.promptVersion || "unknown").slice(0, 80);
+    const versionStats = versionMap.get(version) || { good: 0, bad: 0 };
+    versionStats[entry.verdict] += 1;
+    versionMap.set(version, versionStats);
+
+    stats.total += 1;
+    stats[entry.verdict] += 1;
+    if (isRelevant) stats[entry.verdict === "good" ? "relevantGood" : "relevantBad"] += 1;
+
+    if (entry.verdict === "good") {
+      if (!entry.questionSnapshot || !isRelevant) continue;
+      const shape = positiveShape(entry.questionSnapshot);
+      const key = JSON.stringify(shape);
+      const bucket = positiveMap.get(key) || { ...shape, reports: 0, score: 0, teachers: new Set() };
+      bucket.reports += 1;
+      bucket.score += weight;
+      bucket.teachers.add(teacherKey);
+      positiveMap.set(key, bucket);
+      continue;
+    }
+
+    if (!Object.hasOwn(reasonScores, entry.reason)) continue;
+    reasonScores[entry.reason] += weight;
+
+    const type = ctx.type || String(entry.questionSnapshot?.type || "").slice(0, 30);
+    if (type) {
+      typeScores[type] ||= Object.fromEntries(Object.keys(QUALITY_REASONS).map(key => [key, 0]));
+      typeScores[type][entry.reason] += weight;
+    }
+
+    if (entry.reason !== "other") {
+      const candidateSubject = ctx.subject || "*";
+      const candidateGrade = ctx.grade || "*";
+      const candidateType = type || "*";
+      const candidateKey = [candidateSubject, candidateGrade, candidateType, entry.reason].join("|");
+      const candidate = candidateMap.get(candidateKey) || {
+        subject: candidateSubject, grade: candidateGrade, type: candidateType,
+        reason: entry.reason, reports: 0, score: 0, teachers: new Set()
+      };
+      candidate.reports += 1;
+      candidate.score += weight;
+      candidate.teachers.add(teacherKey);
+      candidateMap.set(candidateKey, candidate);
+    }
+
+    if (!REUSABLE_QUESTION_ERRORS.has(entry.reason) || !entry.questionSnapshot?.text || !isRelevant) continue;
+    const snapshot = questionSnapshotForMemory(entry.questionSnapshot);
+    const key = JSON.stringify(snapshot);
+    if (!seenNegative.has(key)) {
+      seenNegative.add(key);
+      negativeQuestions.push(snapshot);
+    }
+  }
+
+  const priorityReasons = topReasons(reasonScores, 3);
+  const typePriorityReasons = Object.fromEntries(
+    Object.entries(typeScores)
+      .map(([type, scores]) => [type, topReasons(scores, 2)])
+      .filter(([, reasons]) => reasons.length)
+  );
+
+  const positivePatterns = [...positiveMap.values()]
+    .map(item => ({ ...item, teachers: item.teachers.size }))
+    .sort((a, b) => b.score - a.score || b.reports - a.reports)
+    .slice(0, 6);
+
+  const ruleCandidates = [...candidateMap.values()]
+    .map(item => ({ ...item, teachers: item.teachers.size }))
+    .filter(item => item.reports >= 3 && item.teachers >= 2)
+    .filter(item => (!target.subject || item.subject === "*" || item.subject === target.subject))
+    .filter(item => (!target.grade || item.grade === "*" || item.grade === target.grade))
+    .sort((a, b) => b.score - a.score || b.reports - a.reports)
+    .slice(0, 8);
+
+  const versionStats = Object.fromEntries(
+    [...versionMap.entries()].map(([version, value]) => {
+      const total = value.good + value.bad;
+      return [version, { ...value, total, approvalRate: total ? Math.round((value.good / total) * 1000) / 10 : null }];
+    })
+  );
+
+  return {
+    memoryVersion: MEMORY_VERSION,
+    priorityReasons,
+    typePriorityReasons,
+    negativeQuestions,
+    positivePatterns,
+    ruleCandidates,
+    versionStats,
+    stats
+  };
+}
+
+function describePositivePattern(pattern) {
+  const parts = [pattern.type || "Aufgabe"];
+  if (pattern.optionCount) parts.push(`${pattern.optionCount} Antwortoptionen`);
+  parts.push(`${pattern.textLength} formuliert`);
+  if (pattern.points) parts.push(`${pattern.points} P.`);
+  if (pattern.hasPassage) parts.push("mit Textgrundlage");
+  if (pattern.mediaKind === "ai_generated") parts.push("mit Aufgabenbild");
+  if (pattern.mediaKind === "image_choices") parts.push("mit Bildantworten");
+  if (pattern.mediaKind === "none") parts.push("ohne Bild");
+  return parts.join(", ");
+}
+
+function qualityMemoryPrompt(memory = {}, { questionType = "" } = {}) {
+  const specificReasons = questionType && memory.typePriorityReasons?.[questionType]
+    ? memory.typePriorityReasons[questionType]
+    : memory.priorityReasons || [];
+  const positives = (memory.positivePatterns || [])
+    .filter(pattern => !questionType || pattern.type === questionType)
+    .slice(0, 4);
+  const candidates = (memory.ruleCandidates || [])
+    .filter(candidate => !questionType || candidate.type === "*" || candidate.type === questionType)
+    .slice(0, 4);
+
+  const lines = [];
+  if (specificReasons.length) {
+    lines.push(`Aus bisherigen Lehrerbewertungen besonders vermeiden: ${specificReasons.map(key => QUALITY_REASONS[key]).filter(Boolean).join("; ")}.`);
+  }
+  if (positives.length) {
+    lines.push("Positiv bewertete Strukturmuster in ähnlichem Kontext: " + positives.map(pattern =>
+      `${describePositivePattern(pattern)} (${pattern.reports} Bewertung${pattern.reports === 1 ? "" : "en"})`
+    ).join("; ") + ". Nutze diese Muster nur, wenn sie fachlich zur Aufgabe passen.");
+  }
+  if (candidates.length) {
+    lines.push("Wiederkehrende Warnmuster aus mehreren Lehrkräften besonders streng prüfen: " + candidates.map(candidate =>
+      `${candidate.type === "*" ? "allgemein" : candidate.type}: ${QUALITY_REASONS[candidate.reason]} (${candidate.reports} Meldungen, ${candidate.teachers} Lehrkräfte)`
+    ).join("; ") + ".");
+  }
+  if (!lines.length) return "";
+  return "Qualitätsgedächtnis von Testify (aggregierte Signale, keine Beweise und keine früheren Aufgaben kopieren):\n- " + lines.join("\n- ");
+}
+
+function reviewPrompt(test, memory = {}) {
+  const memoryGuide = qualityMemoryPrompt(memory);
+  return `Prüfe JEDE Aufgabe dieses Tests anhand von Frage, Lösung und Bildbeschreibung. Prüfe fachliche Richtigkeit, Sinn, Eindeutigkeit, versteckte Lösungshinweise, logisch korrekte Antwortoptionen und inhaltliche Dopplungen zwischen Aufgaben. Eine Frage nach der Zahl von Kommas muss den Beispielsatz ohne Kommas zeigen. Ein einzelnes Standbild zeigt keine zeitliche Wiederholung wie „wieder“. Bei Bildantworten müssen die Szenen dieselben genannten Gegenstände zeigen und zur Frage passen; nur die zu prüfende Eigenschaft darf sich ändern. Tatsächlich erzeugte Bildpixel liegen noch nicht vor; bewerte hier die geplanten Szenen. Gib nur eindeutig feststellbare Probleme zurück. Indizes beginnen bei 0. Beschreibe jedes Problem konkret und knapp auf Deutsch.${memoryGuide ? `\n${memoryGuide}` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions })}`;
 }
 
 function normalizeReviewIssues(response, test) {
@@ -113,4 +328,8 @@ async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts 
   throw error;
 }
 
-module.exports = { reviewSchema, imageReviewSchema, REVIEW_SYSTEM, feedbackMemory, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene };
+module.exports = {
+  MEMORY_VERSION, reviewSchema, imageReviewSchema, REVIEW_SYSTEM,
+  feedbackMemory, qualityMemoryPrompt, reviewPrompt,
+  normalizeReviewIssues, reviewAndRepairTest, verifyImageScene
+};
