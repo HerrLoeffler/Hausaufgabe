@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
   <meta name="app-version" content="2.3.0" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai10" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai13" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -275,10 +275,14 @@
         <article class="card">
           <h2>Material &amp; Bilder</h2>
           <div class="aiUploadNotice" id="aiUploadNotice">
-            <strong>Vor dem Hochladen prüfen</strong>
-            <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
-            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich bestätige, dass ich dieses Material für die Speicherung und Übermittlung an einen externen KI-Dienst verwenden darf und dass es keine personenbezogenen Daten von Schülern oder Dritten enthält.</span></label>
-            <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
+            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich darf dieses Material speichern und an OpenAI übermitteln; es enthält keine personenbezogenen Daten.</span></label>
+            <details class="aiUploadLegalDetails">
+              <summary>Datenschutz &amp; Rechte – Details</summary>
+              <div>
+                <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
+                <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
+              </div>
+            </details>
           </div>
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
           <div id="aiMaterialList" class="aiMaterialList"></div>
