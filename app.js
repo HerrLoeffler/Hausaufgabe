@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai22";
+const APP_VERSION = "2.3.1-ai23";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -33,8 +33,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai22";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai22";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai23";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai23";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -869,6 +869,12 @@ $("templateImportForm")?.addEventListener("submit", (e) => {
 $("quizSearch").addEventListener("input", renderQuizList);
 $("quizFilter").addEventListener("change", renderQuizList);
 $("quizSort")?.addEventListener("change", renderQuizList);
+$("clearQuizFiltersBtn")?.addEventListener("click", () => {
+  $("quizSearch").value = "";
+  $("quizFilter").value = "all";
+  renderQuizList();
+  $("quizSearch").focus();
+});
 $("backFromEditor").addEventListener("click", leaveEditorToDashboard);
 $("backFromResults").addEventListener("click", loadDashboard);
 $("settingsBtn")?.addEventListener("click", openSettings);
@@ -1077,7 +1083,10 @@ function renderQuizList() {
   const list = $("quizList");
   list.innerHTML = "";
   const filtered = filteredQuizzes();
-  const active = activeQuizzes();
+  const active = activeQuizzes().filter(q => q.generationStatus !== "running");
+  $("quizResultsCount").textContent = active.length
+    ? `${filtered.length} von ${active.length} ${active.length === 1 ? "Test" : "Tests"} angezeigt`
+    : "";
   const hasPendingWork = state.aiJobs.some(job => ["queued", "running"].includes(job.status))
     || $("localDraftList").childElementCount > 0;
   $("emptyQuizState").classList.toggle("hidden", active.length !== 0 || hasPendingWork);
@@ -1103,16 +1112,18 @@ function renderQuizList() {
         ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
       </div>
       <div class="quizActions primaryQuizActions">
-        <button class="button secondary edit">Bearbeiten</button>
-        <button class="button secondary results">Ergebnisse</button>
+        <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
+        <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
         ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
       </div>
-      <div class="quizActions secondaryQuizActions">
-        ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
-        ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
-        ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
-        <button class="button danger remove">Löschen</button>
-      </div>`;
+      <details class="quizMore"><summary>Weitere Aktionen</summary>
+        <div class="quizActions secondaryQuizActions">
+          ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
+          ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
+          ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
+          <button class="button danger remove">Löschen</button>
+        </div>
+      </details>`;
     card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
     card.querySelector(".results").addEventListener("click", () => openResults(q.id));
     card.querySelector(".duplicate")?.addEventListener("click", () => duplicateQuiz(q.id));
@@ -1690,7 +1701,7 @@ $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemi
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
-["aiImageQuestionCount", "aiImageAnswerCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
+["aiImageQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
 ["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
 
 function updateAiTypeCount() {
@@ -1769,22 +1780,17 @@ function setAiProgress(message = "", isError = false, percent = null, hint = "",
 
 function updateAiImageControls() {
   const imageInput = $("aiImageQuestionCount");
-  const answerInput = $("aiImageAnswerCount");
   const images = Number(imageInput.value);
-  const answers = Number(answerInput.value);
   const count = Number($("aiCount").value);
   const imageInvalid = !imageInput.value.trim() || !Number.isInteger(images) || images < 0 || images > 5;
-  const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answers) || answers < 0 || answers > 3;
-  const combinedInvalid = !imageInvalid && !answerInvalid && Number.isInteger(count) && count >= 1 && images + answers > Math.min(count, 5);
+  const combinedInvalid = !imageInvalid && Number.isInteger(count) && count >= 1 && images > count;
   const hint = $("aiImageCountHint");
   imageInput.setAttribute("aria-invalid", String(imageInvalid || combinedInvalid));
-  answerInput.setAttribute("aria-invalid", String(answerInvalid || combinedInvalid));
   const errors = [];
   if (imageInvalid) errors.push("Für Aufgaben mit einem Bild bitte eine ganze Zahl von 0 bis 5 eingeben.");
-  if (answerInvalid) errors.push("Für Bildantworten bitte eine ganze Zahl von 0 bis 3 eingeben.");
-  if (combinedInvalid) errors.push(`Zusammen sind höchstens ${Math.min(count, 5)} Bildaufgaben bei ${count} Aufgaben möglich. Bitte die Zahlen korrigieren.`);
+  if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Aufgabenbilder möglich.`);
   if (hint) {
-    hint.textContent = errors.length ? errors.join(" ") : images + answers ? `${images + answers} Aufgaben mit Bildern · ${images + answers * 2} bis ${images + answers * 4} Bildgenerierungen (Bildantworten: 2–4 Bilder je Aufgabe). Zusammen höchstens 5 Bildaufgaben.` : "Ohne Bilder. Zusammen sind höchstens 5 Bildaufgaben möglich.";
+    hint.textContent = errors.length ? errors.join(" ") : images ? `${images} ${images === 1 ? "Aufgabe" : "Aufgaben"} mit einem Bild in der Fragestellung. Antwortoptionen bleiben Text.` : "Ohne KI-Bilder. Antwortoptionen bleiben Text.";
     hint.classList.toggle("aiInputError", errors.length > 0);
   }
 }
@@ -1851,23 +1857,20 @@ function collectAiRequest() {
   const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
   if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
   if (!allowedTypes.length) throw new Error("Bitte mindestens einen Aufgabentyp auswählen.");
-  if (!$("aiImageQuestionCount").value.trim() || !$("aiImageAnswerCount").value.trim()) throw new Error("Bitte beide Bildanzahlen angeben (0 ist möglich).");
+  if (!$("aiImageQuestionCount").value.trim()) throw new Error("Bitte die Anzahl der Aufgabenbilder angeben (0 ist möglich).");
   const count = Number($("aiCount").value);
   const points = Number($("aiPoints").value);
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
-  const imageAnswerQuestionCount = Number($("aiImageAnswerCount").value);
   if (!Number.isInteger(count) || count < 1 || count > 50) throw new Error("Bitte 1 bis 50 Aufgaben wählen.");
   if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
   if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
-  if (!Number.isInteger(imageAnswerQuestionCount) || imageAnswerQuestionCount < 0 || imageAnswerQuestionCount > 3) throw new Error("Bitte 0 bis 3 Aufgaben mit Bildantworten wählen.");
-  if (imageQuestionCount + imageAnswerQuestionCount > Math.min(count, 5)) throw new Error("Insgesamt höchstens 5 Bildaufgaben und nicht mehr Bildaufgaben als Aufgaben wählen.");
-  if (imageAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Bildantworten bitte Single Choice oder Multiple Choice erlauben.");
+  if (imageQuestionCount > count) throw new Error("Bitte nicht mehr Aufgabenbilder als Aufgaben wählen.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
-    imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount
+    imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0
   };
 }
 
@@ -1877,22 +1880,6 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
   if (intent.kind === "ai_generated" && intent.prompt && !q.imageDataUrl) {
     const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
     Object.assign(q, result.asset || {});
-  } else if (intent.kind === "image_choices" && ["single", "multi"].includes(q.type)) {
-    for (let i = 0; i < q.options.length; i += 1) {
-      const opt = q.options[i];
-      if (opt.imageDataUrl) continue;
-      const rawOpt = rawQuestion?.options?.[i] || {};
-      const scene = String(rawOpt.imageScene || opt.imageScene || opt.text || "").trim();
-      if (!scene || /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(scene)) {
-        throw new Error(`Bildantwort ${i + 1} hat keine konkrete Szenenbeschreibung.`);
-      }
-      opt.imageScene = scene;
-      const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${scene}“. Kontext der Frage: „${rawQuestion.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
-      const result = await aiApi.generateQuestionMedia({ quizId: code, questionId: `${questionId}-opt-${i}`, prompt, expectedScene: scene, altText: `Bildantwort ${i + 1}`, purpose: "option" });
-      if (!result.asset?.imageDataUrl) throw new Error("Bildantwort fehlt.");
-      Object.assign(opt, { imageDataUrl: result.asset.imageDataUrl, imageAlt: `Bildantwort ${i + 1}` });
-    }
-    q.imageChoicesOnly = true;
   }
 }
 
@@ -2656,15 +2643,15 @@ function questionContext(index) {
   const others = state.questions.filter((_, i) => i !== index).slice(0, 50);
   return {
     title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
-    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: q.imageChoicesOnly ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } }))
+    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" } }))
   };
 }
 
 function questionForAi(q) {
   const copy = sanitizeQuestionForSave(q);
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
-  delete copy.aiOrigin;
-  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, ...option }) => option);
+  delete copy.aiOrigin; delete copy.imageChoicesOnly;
+  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, ...option }) => option);
   return copy;
 }
 
@@ -2727,7 +2714,7 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
       renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
     } else if (action === "replace") {
       toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
-      const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Bei Bildantworten müssen alle Bilder zum Fragetext passen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
+      const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Antwortoptionen müssen aus eindeutigem Text bestehen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
       await regenerateQuestionWithAi(q, index, { instruction, requireDifferent: true });
     } else toast(verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
     return true;
@@ -2766,16 +2753,14 @@ async function createSimilarTest() {
   if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
   if (!confirm("Für einen ähnlichen Test werden die Texte, Antwortoptionen und Lösungen des Ausgangstests an OpenAI gesendet. Bitte prüfe vorher, dass sie keine personenbezogenen Daten oder nicht für externe KI freigegebenen Materialien enthalten. Test erstellen?")) return;
   const questions = state.questions;
-  const hasImageAnswers = q => ["single", "multi"].includes(q.type) && q.options?.length >= 2 && q.options?.length <= 4 && q.options.every(o => o.imageDataUrl);
-  const imageAnswerQuestionCount = Math.min(3, questions.filter(hasImageAnswers).length);
-  const imageQuestionCount = Math.min(5 - imageAnswerQuestionCount, questions.filter(q => !hasImageAnswers(q) && getQuestionImageSrc(q)).length);
+  const imageQuestionCount = Math.min(5, questions.filter(q => getQuestionImageSrc(q)).length);
   const request = {
     schoolType: "Mittelschule", region: "Bayern", subject: $("quizSubject").value.trim(), grade: $("quizGrade").value.trim(),
     topic: $("quizTitle").value.trim() || "Ähnlicher Test", difficulty: "gemischt", count: questions.length,
     points: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
     allowedTypes: [...new Set(questions.map(q => q.type))], notes: "Erstelle eine eigenständige Variante mit gleicher Kompetenz, ähnlichem Schwierigkeitsgrad und neuen Beispielen. Verwende keine wortgleichen Aufgaben.",
-    materials: [], materialMode: "consider", imageMode: imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount,
-    sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: hasImageAnswers(q) ? "image_choices" : getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
+    materials: [], materialMode: "consider", imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
+    sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
   };
   await startAiCreationJob(request, { similar: true, sourceQuiz: state.currentQuiz });
 }
@@ -2797,10 +2782,11 @@ function toggleQuestionAiPanel(node, q, index) {
 async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false } = {}) {
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 50) return toast("Ein Test kann höchstens 50 Aufgaben enthalten.", "error");
+  if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: true, materials: [] });
+    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
     next.id = variant ? doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id : q.id;

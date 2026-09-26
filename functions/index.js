@@ -92,7 +92,7 @@ function cleanSourceTest(value) {
       targetWords: Array.isArray(q?.targetWords) ? q.targetWords.slice(0, 8).map(x => String(x).slice(0, 80)) : [],
       numericAnswer: Number.isFinite(Number(q?.numericAnswer)) ? Number(q.numericAnswer) : null,
       unit: String(q?.unit || "").slice(0, 30),
-      mediaIntent: { kind: ["ai_generated", "image_choices"].includes(q?.mediaIntent?.kind) ? q.mediaIntent.kind : "none" }
+      mediaIntent: { kind: q?.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }
     }))
   };
 }
@@ -107,26 +107,25 @@ function cleanInput(data = {}) {
   if (!allowedTypes.length) throw new HttpsError("invalid-argument", "Mindestens ein Aufgabentyp ist erforderlich.");
   const exactImageCounts = Object.hasOwn(data, "imageQuestionCount") || Object.hasOwn(data, "imageAnswerQuestionCount");
   const imageQuestionCount = Number(data.imageQuestionCount);
-  const imageAnswerQuestionCount = Number(data.imageAnswerQuestionCount);
+  const imageAnswerQuestionCount = Number(data.imageAnswerQuestionCount ?? 0);
   if (exactImageCounts) {
     if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > LIMITS.maxVisualQuestions ||
-        !Number.isInteger(imageAnswerQuestionCount) || imageAnswerQuestionCount < 0 || imageAnswerQuestionCount > 3 ||
-        imageQuestionCount + imageAnswerQuestionCount > Math.min(count, LIMITS.maxVisualQuestions)) {
-      throw new HttpsError("invalid-argument", "Bildanzahlen sind ungültig: zusammen höchstens 5 Bildaufgaben und nicht mehr als Aufgaben insgesamt.");
-    }
-    if (imageAnswerQuestionCount && !allowedTypes.some(t => ["single", "multi"].includes(t))) {
-      throw new HttpsError("invalid-argument", "Für Bildantworten Single Choice oder Multiple Choice erlauben.");
+        imageQuestionCount > count) {
+      throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Aufgabenbilder wählen, höchstens eines je Aufgabe.");
     }
   }
-  const imageMode = exactImageCounts ? (imageQuestionCount + imageAnswerQuestionCount ? "exact" : "none") : data.imageMode === "none" ? "none" : "sparse";
+  if (imageAnswerQuestionCount !== 0 || !Number.isInteger(imageAnswerQuestionCount)) {
+    throw new HttpsError("invalid-argument", "Die KI erstellt keine Bildantworten mehr. Bitte nur Aufgabenbilder wählen.");
+  }
+  const imageMode = exactImageCounts ? (imageQuestionCount ? "exact" : "none") : data.imageMode === "none" ? "none" : "sparse";
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
     allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
-    imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? imageAnswerQuestionCount : undefined,
-    allowImageChoices: exactImageCounts ? imageAnswerQuestionCount > 0 : Boolean(data.allowImageChoices) && imageMode !== "none",
-    maxVisualQuestions: exactImageCounts ? imageQuestionCount + imageAnswerQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
+    imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
+    allowImageChoices: false,
+    maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
     sourceTest: cleanSourceTest(data.sourceTest)
   };
@@ -185,11 +184,11 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     .replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
   const startedAt = Date.now();
   console.info("KI-Test-Anfrage gestartet:", { requestId });
-  await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   const input = cleanInput(data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
+  await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   let phase = "material";
   try {
     await onProgress("material", 5, "Material wird eingelesen …");
@@ -512,7 +511,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     const result = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
-    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: Boolean(request.data?.allowImageChoices), materialIds });
+    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
     } else if (request.data?.requireDifferent) {
@@ -547,11 +546,12 @@ exports.analyzeMaterial = onCall(callableOpts, async request => {
 });
 
 exports.generateQuestionMedia = onCall(callableOpts, async request => {
+  if (request.data?.purpose === "option") throw new HttpsError("invalid-argument", "Die KI erzeugt keine Antwortbilder mehr.");
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "image-access"); });
   const quizId = String(request.data?.quizId || ""); const questionId = String(request.data?.questionId || "");
   if (!/^[A-Z0-9_-]{4,40}$/i.test(quizId) || !/^[A-Z0-9_-]{4,80}$/i.test(questionId)) throw new HttpsError("invalid-argument", "Ungültige Test- oder Aufgaben-ID.");
   const prompt = String(request.data?.prompt || "").slice(0, 3000); if (!prompt) throw new HttpsError("invalid-argument", "Bildbeschreibung fehlt.");
-  const maxBytes = request.data?.purpose === "option" ? 95 * 1024 : 280 * 1024;
+  const maxBytes = 280 * 1024;
   const expectedScene = String(request.data?.expectedScene || "").slice(0, 400);
   try {
     return await createVerifiedMedia({ uid, questionId, prompt, expectedScene, altText: String(request.data?.altText || "").slice(0, 500), maxBytes });

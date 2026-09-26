@@ -31,20 +31,9 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
     aiOrigin: { kind, model, promptVersion }
   };
   const intent = raw.mediaIntent || { kind: "none" };
+  if (intent.kind === "image_choices") throw new Error("Die KI erzeugt keine Bildantworten mehr.");
   if (["single", "multi", "dropdown"].includes(q.type)) {
     q.options = raw.options.map(o => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct) }));
-    if (intent.kind === "image_choices") {
-      q.imageChoicesOnly = true;
-      for (let i = 0; i < q.options.length; i += 1) {
-        const scene = String(raw.options[i].imageScene || "").trim();
-        const prompt = `Erzeuge ausschließlich diese konkrete Antwortszene: „${scene}“. Kontext der Frage: „${raw.text}“. Zeige genau die in dieser Antwort beschriebenen Gegenstände und ihre räumliche Beziehung; tausche keinen Gegenstand gegen einen anderen aus. Kein Text, keine Beschriftung und keine Markierung der Lösung. Einheitlicher sachlicher Stil, quadratisch.`;
-        const asset = await generateMedia({ questionId: `q${index + 1}-opt-${i}`, prompt, expectedScene: scene, altText: `Bildantwort ${i + 1}`, maxBytes: 95 * 1024 });
-        if (!asset?.imageDataUrl) throw new Error(`Bildantwort ${i + 1} fehlt.`);
-        q.options[i].imageDataUrl = asset.imageDataUrl;
-        q.options[i].imageAlt = `Bildantwort ${i + 1}`;
-        await onImage();
-      }
-    }
   }
   if (intent.kind === "ai_generated") {
     const asset = await generateMedia({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
@@ -63,8 +52,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
 }
 
 function imageCount(questions) {
-  return questions.reduce((sum, q) => sum + (q.mediaIntent?.kind === "ai_generated" ? 1
-    : q.mediaIntent?.kind === "image_choices" ? q.options.length : 0), 0);
+  return questions.filter(q => q.mediaIntent?.kind === "ai_generated").length;
 }
 
 module.exports = { quizForGeneratedTest, storedAiQuestion, imageCount };

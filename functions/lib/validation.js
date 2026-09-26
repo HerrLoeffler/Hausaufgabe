@@ -136,6 +136,16 @@ function normalizeQuestion(q) {
   copy.points = Math.max(0.5, roundHalf(copy.points || 1));
   copy.text = normalizeText(copy.text);
   copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o.text), correct: !!o.correct, imageScene: normalizeText(o.imageScene) })) : [];
+  if (["single", "dropdown", "multi"].includes(copy.type)) {
+    const distinct = new Map();
+    for (const option of copy.options) {
+      const key = comparableAnswer(option.text);
+      if (!key || !distinct.has(key)) distinct.set(key || Symbol(), option);
+      else distinct.get(key).correct ||= option.correct;
+    }
+    // A single remaining choice cannot make a valid question; let the repair pass replace it.
+    if (distinct.size >= 2) copy.options = [...distinct.values()];
+  }
   copy.acceptedAnswers = Array.isArray(copy.acceptedAnswers) ? copy.acceptedAnswers.map(normalizeText).filter(Boolean) : [];
   copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p.left), right: normalizeText(p.right) })) : [];
   copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];

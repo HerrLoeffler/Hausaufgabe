@@ -6,10 +6,9 @@ const optionSchema = {
   type: "object", additionalProperties: false,
   properties: {
     text: { type: "string" },
-    correct: { type: "boolean" },
-    imageScene: { type: "string" }
+    correct: { type: "boolean" }
   },
-  required: ["text", "correct", "imageScene"]
+  required: ["text", "correct"]
 };
 const pairSchema = {
   type: "object", additionalProperties: false,
@@ -24,7 +23,7 @@ const groupSchema = {
 const mediaIntentSchema = {
   type: "object", additionalProperties: false,
   properties: {
-    kind: { type: "string", enum: ["none", "ai_generated", "uploaded_crop", "image_choices"] },
+    kind: { type: "string", enum: ["none", "ai_generated"] },
     prompt: { type: "string" },
     altText: { type: "string" },
     count: { type: "integer", minimum: 0, maximum: 4 },

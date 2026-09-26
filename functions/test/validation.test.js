@@ -33,6 +33,15 @@ test("duplicated answer options are invalid",()=>{
   q.options=[{text:"a scarf",correct:true},{text:"scarf",correct:false}];
   assert.ok(validateQuestion(q).some(x=>x.includes("eindeutig")));
 });
+test("AI normalization removes duplicate options only when a solvable choice remains",()=>{
+  const q=base();
+  q.options=[{text:"Schal",correct:true},{text:"schal!",correct:false},{text:"Mütze",correct:false}];
+  const cleaned=normalizeQuestion(q);
+  assert.deepEqual(cleaned.options.map(o=>o.text),["Schal","Mütze"]);
+  assert.deepEqual(validateQuestion(cleaned),[]);
+  q.options=[{text:"Schal",correct:true},{text:"schal!",correct:false}];
+  assert.ok(validateQuestion(normalizeQuestion(q)).some(error=>error.includes("eindeutig")));
+});
 test("matching has distinct left and right entries",()=>{
   const q=base("matching"); q.pairs=[{left:"Satz A",right:"laufen"},{left:"Satz B",right:"Laufen!"}];
   assert.ok(validateQuestion(q).some(error=>error.includes("Zuordnungswörter müssen eindeutig")));

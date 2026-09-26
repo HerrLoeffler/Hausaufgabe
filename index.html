@@ -4,11 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
-  <meta name="app-version" content="2.3.1-ai21" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai22" />
+  <meta name="app-version" content="2.3.1-ai23" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai23" />
+  <link rel="stylesheet" href="design-system.css?v=2.3.1-ai23" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
+  <a class="skipLink" href="#mainContent">Zum Inhalt springen</a>
   <div id="stagingBanner" class="stagingBanner hidden">TESTUMGEBUNG · Keine echten Leistungsnachweise verwenden</div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
@@ -26,13 +28,14 @@
     </div>
   </header>
 
-  <main class="shell">
+  <main id="mainContent" class="shell">
     <section id="authView" class="view">
       <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
+      <div class="authIntro"><span class="eyebrow">Tests. Einfach digital.</span><h1>Tests öffnen oder erstellen.</h1><p>Mit Testcode starten oder als Lehrkraft anmelden.</p></div>
       <div class="heroGrid">
         <article class="card heroCard">
-          <span class="eyebrow">Testify für Schülerinnen & Schüler</span>
-          <h1>Testcode eingeben</h1>
+          <span class="eyebrow">Für Schülerinnen und Schüler</span>
+          <h2>Testcode eingeben</h2>
           <p>Du brauchst keinen Account. Gib den Code deiner Lehrkraft ein.</p>
           <form id="joinForm" class="stack compact">
             <label>Testcode
@@ -43,12 +46,13 @@
         </article>
 
         <article class="card">
+          <span class="eyebrow teacherEyebrow">Für Lehrkräfte</span>
           <div class="tabs" role="tablist">
             <button id="loginTab" class="tab active" type="button">Anmelden</button>
             <button id="registerTab" class="tab" type="button">Account erstellen</button>
           </div>
           <form id="loginForm" class="stack authForm">
-            <h2>Lehrer-Login</h2>
+            <h2>Bei Testify anmelden</h2>
             <label>E-Mail<input id="loginEmail" type="email" autocomplete="email" required /></label>
             <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
             <button class="button primary" type="submit">Anmelden</button>
@@ -83,12 +87,13 @@
         <label>Status<select id="quizFilter"><option value="all">Alle Tests</option><option value="published">Veröffentlicht</option><option value="ended">Beendet</option><option value="draft">Entwürfe</option></select></label>
         <label>Sortieren<select id="quizSort"><option value="updated">Zuletzt bearbeitet</option><option value="title">Titel A–Z</option><option value="subject">Fach A–Z</option><option value="grade">Klasse</option></select></label>
       </div>
+      <p id="quizResultsCount" class="resultsCount" role="status" aria-live="polite"></p>
       <div id="quizList" class="quizGrid"></div>
       <div id="emptyQuizState" class="empty hidden">
         <div class="emptyIcon">＋</div><h2>Noch kein Test vorhanden</h2><p>Erstelle deinen ersten Test. Schüler benötigen später nur einen Code oder Link.</p>
         <button id="emptyNewQuizBtn" class="button primary" type="button">Ersten Test erstellen</button>
       </div>
-      <div id="noFilterState" class="empty hidden"><h2>Keine passenden Tests</h2><p>Ändere Suche oder Filter.</p></div>
+      <div id="noFilterState" class="empty hidden"><h2>Keine passenden Tests</h2><p>Ändere Suche oder Filter.</p><button id="clearQuizFiltersBtn" class="button secondary" type="button">Suche und Filter zurücksetzen</button></div>
     </section>
 
     <section id="createView" class="view hidden">
@@ -282,7 +287,7 @@
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
       <div class="aiGrid">
         <article class="card">
-          <h2>Test beschreiben</h2>
+          <div class="aiSectionTitle"><span aria-hidden="true">1</span><div><h2>Test festlegen</h2><p>Die wichtigsten Angaben für deinen Entwurf.</p></div></div>
           <div class="formGrid2">
             <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
             <label>Klasse<input id="aiGrade" type="text" placeholder="9" /></label>
@@ -300,7 +305,7 @@
           <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
         </article>
         <article class="card">
-          <h2>Material &amp; Bilder</h2>
+          <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material &amp; Bilder</h2><p>Optional ergänzen, was wirklich hilft.</p></div></div>
           <div class="aiUploadNotice" id="aiUploadNotice">
             <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich darf dieses Material speichern und an OpenAI übermitteln; es enthält keine personenbezogenen Daten.</span></label>
             <details class="aiUploadLegalDetails">
@@ -316,11 +321,11 @@
           <div class="stack compact aiOptionsBlock">
             <label>Wie soll das Material helfen?<select id="aiMaterialMode" disabled><option value="inspiration">Als Orientierung für Themen nutzen</option><option value="only">Inhalte auf das Material begrenzen</option></select></label>
             <small class="hint">Testify fordert eigenständige Aufgaben und bei Bedarf neue Bilder an. Die Originaldatei wird trotzdem an OpenAI übertragen. Die Auswahl ist nach einem Upload verfügbar.</small>
-            <label>Aufgaben mit einem Bild (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
-            <label>Aufgaben mit Bildantworten (0–3)<input id="aiImageAnswerCount" type="number" min="0" max="3" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
+            <label>Aufgaben mit einem Bild in der Fragestellung (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
             <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
           </div>
           <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
+          <small class="hint aiCostNote">Jede KI-Erstellung und jedes generierte Aufgabenbild verursacht Kosten.</small>
           <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
           <small class="hint">Du kannst die Seite nach dem Start verlassen. Den Fortschritt und den fertigen Entwurf findest du unter „Meine Tests“. Bitte prüfe alle Aufgaben vor der Veröffentlichung.</small>
         </article>
@@ -485,9 +490,9 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai22</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai23</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai22"></script>
+  <script type="module" src="app.js?v=2.3.1-ai23"></script>
 </body>
 </html>

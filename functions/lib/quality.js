@@ -277,7 +277,7 @@ function qualityMemoryPrompt(memory = {}, { questionType = "" } = {}) {
     ? memory.typePriorityReasons[questionType]
     : memory.priorityReasons || [];
   const positives = (memory.positivePatterns || [])
-    .filter(pattern => !questionType || pattern.type === questionType)
+    .filter(pattern => pattern.mediaKind !== "image_choices" && (!questionType || pattern.type === questionType))
     .slice(0, 4);
   const candidates = (memory.ruleCandidates || [])
     .filter(candidate => !questionType || candidate.type === "*" || candidate.type === questionType)

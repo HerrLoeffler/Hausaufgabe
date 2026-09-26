@@ -3,6 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { quizForGeneratedTest, storedAiQuestion, imageCount } = require("../lib/ai-job");
+const { questionSchema } = require("../lib/schemas");
 
 test("a background test starts unpublished and inherits a similar test's settings", () => {
   const quiz = quizForGeneratedTest({ title: "Neue Variante", subject: "Deutsch", grade: "9" },
@@ -17,30 +18,37 @@ test("a background test starts unpublished and inherits a similar test's setting
   assert.equal(quiz.shuffleQuestions, true);
 });
 
-test("image answers are stored on their options and counted before the job advances", async () => {
-  const sceneCalls = [];
-  let completed = 0;
+test("AI never generates answer images, including from an older queued job", async () => {
+  let generated = false;
   const raw = {
     type: "single", text: "Welches Bild zeigt einen roten Ball?", points: 2,
     options: [{ text: "A", correct: true, imageScene: "roter Ball" }, { text: "B", correct: false, imageScene: "blauer Ball" }],
     mediaIntent: { kind: "image_choices" }
   };
-  const question = await storedAiQuestion(raw, 3, {
+  await assert.rejects(storedAiQuestion(raw, 3, {
     model: "model", promptVersion: "v1",
-    generateMedia: async ({ questionId, expectedScene }) => {
-      sceneCalls.push({ questionId, expectedScene });
-      return { imageDataUrl: `data:image/webp;base64,${sceneCalls.length}` };
-    },
+    generateMedia: async () => { generated = true; return {}; }
+  }), /keine Bildantworten/);
+  assert.equal(generated, false);
+  assert.equal(imageCount([raw]), 0);
+  assert.deepEqual(questionSchema.properties.mediaIntent.properties.kind.enum, ["none", "ai_generated"]);
+  assert.deepEqual(questionSchema.properties.options.items.required, ["text", "correct"]);
+});
+
+test("an image in the question is still generated and saved", async () => {
+  let completed = 0;
+  const raw = { type: "single", text: "Was zeigt die Abbildung?", points: 1,
+    options: [{ text: "Kreis", correct: true }, { text: "Rechteck", correct: false }],
+    mediaIntent: { kind: "ai_generated", prompt: "Ein Kreis", altText: "Ein Kreis" } };
+  const question = await storedAiQuestion(raw, 0, {
+    model: "model", promptVersion: "v13",
+    generateMedia: async () => ({ imageDataUrl: "data:image/webp;base64,abc" }),
     onImage: async () => { completed += 1; }
   });
-  assert.equal(imageCount([raw]), 2);
-  assert.equal(completed, 2);
-  assert.deepEqual(sceneCalls.map(call => call.questionId), ["q4-opt-0", "q4-opt-1"]);
-  assert.deepEqual(sceneCalls.map(call => call.expectedScene), ["roter Ball", "blauer Ball"]);
-  assert.equal(question.options[0].imageDataUrl, "data:image/webp;base64,1");
-  assert.equal(question.options[1].correct, false);
-  assert.equal(question.imageChoicesOnly, true);
-  assert.equal(question.position, 4);
+  assert.equal(imageCount([raw]), 1);
+  assert.equal(completed, 1);
+  assert.equal(question.imageDataUrl, "data:image/webp;base64,abc");
+  assert.equal(question.options[0].imageDataUrl, undefined);
 });
 
 test("a missing generated image fails the question instead of storing an empty asset", async () => {

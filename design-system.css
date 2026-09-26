@@ -1,0 +1,156 @@
+/* Testify UI layer: one focused action per surface, strong readable contrast,
+   consistent spacing, visible state and comfortable keyboard/touch targets. */
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #1c2940;
+  --muted: #59687b;
+  --line: #dae3ee;
+  --primary: #2458cb;
+  --primary2: #1949b5;
+  --soft: #edf3ff;
+  --brand-ink: #1c2940;
+  --shadow: 0 8px 28px rgba(24, 44, 79, .055);
+  --focus-ring: 0 0 0 3px rgba(36, 88, 203, .24);
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); line-height: 1.5; }
+h1, h2, h3 { text-wrap: balance; }
+p { color: var(--muted); }
+.shell { max-width: 1240px; padding-top: 40px; }
+.card { background: var(--card); border-color: var(--line); box-shadow: var(--shadow); }
+.topbar { background: #fff; box-shadow: none; border-color: var(--line); }
+.brandMark { background: var(--primary); box-shadow: none; }
+.brandMark::before { display: none; }
+.brandTick { box-shadow: none; }
+.eyebrow { color: var(--primary); letter-spacing: .085em; }
+.pageHead h1 { font-size: clamp(2rem, 2.6vw, 2.75rem); letter-spacing: -.04em; }
+.pageHead p { font-size: 15px; line-height: 1.55; }
+
+.skipLink {
+  position: fixed; z-index: 1000; top: 8px; left: 12px; transform: translateY(-150%);
+  padding: 10px 14px; border-radius: 9px; background: #fff; color: var(--primary);
+  font-weight: 750; box-shadow: var(--shadow);
+}
+.skipLink:focus { transform: none; }
+:where(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid rgba(36, 88, 203, .56); outline-offset: 3px;
+}
+:where(input, select, textarea):focus-visible { outline: 0; box-shadow: var(--focus-ring); }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  border-color: #b8c6d8; font-size: 15px; min-height: 44px;
+}
+input::placeholder, textarea::placeholder { color: #68788d; }
+.button { min-height: 42px; box-shadow: none; }
+.button.primary { background: var(--primary); box-shadow: none; }
+.button.primary:hover { background: var(--primary2); box-shadow: none; }
+.button.secondary { color: var(--primary2); border-color: #c4d4f1; background: var(--soft); }
+.button.ghost { color: #34445b; background: #fff; border-color: var(--line); }
+.button:hover, .quizCard:hover, button.createChoiceCard:hover { transform: none; }
+.button:active, button.createChoiceCard:active { transform: translateY(1px); }
+.linkButton, .footerLink { color: var(--primary2); }
+
+/* Start: choose an audience, then complete one short task. */
+.authIntro { max-width: 1020px; margin: 26px auto 0; }
+.authIntro .eyebrow { display: block; margin-bottom: 8px; }
+.authIntro h1 { margin: 0 0 7px; font-size: clamp(2rem, 3.4vw, 3.1rem); letter-spacing: -.05em; }
+.authIntro p { margin: 0; font-size: 16px; }
+.heroGrid { max-width: 1020px; margin: 27px auto 0; gap: 18px; align-items: stretch; }
+.heroGrid > .card { padding: 30px; min-height: 370px; }
+.heroCard { background: #204caa; border: 1px solid #204caa; box-shadow: var(--shadow); }
+.heroCard h2 { margin: 10px 0 8px; font-size: clamp(1.75rem, 2.5vw, 2.25rem); letter-spacing: -.035em; }
+.heroCard p { color: #e4ecff; max-width: 35ch; margin: 0 0 28px; font-size: 15px; }
+.heroCard .eyebrow { color: #dbe7ff; }
+.heroCard .stack label { color: #fff; font-size: 14px; }
+.heroCard .button.primary { background: #fff; color: #1949a9; }
+.heroCard .button.primary:hover { background: #e9f0ff; }
+.heroCard input { border: 1px solid #c5d5f4; }
+.heroGrid > .card:not(.heroCard) { display: flex; flex-direction: column; }
+.teacherEyebrow { display: block; margin: 1px 0 12px; }
+.heroGrid .tabs { margin: 0 0 15px; }
+.heroGrid .authForm h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 2px; }
+.heroGrid .authForm { gap: 13px; }
+.heroGrid .authForm .button.primary { margin-top: 5px; }
+
+/* Dashboard: visible results and a primary task per test. */
+.dashboardToolbar { margin-bottom: 10px; padding: 16px 18px; background: #fff; backdrop-filter: none; }
+.dashboardToolbar label { font-size: 12px; }
+.resultsCount { min-height: 20px; margin: 0 2px 16px; font-size: 13px; font-weight: 650; }
+.quizGrid { gap: 16px; }
+.quizCard { min-height: 0; padding: 21px; background: #fff; border-color: var(--line); box-shadow: var(--shadow); }
+.quizCard:before { display: none; }
+.quizCard:hover { border-color: #aec5eb; box-shadow: 0 10px 30px rgba(24, 44, 79, .09); }
+.quizCard h3 { font-size: 19px; letter-spacing: -.025em; }
+.quizCard .meta { color: var(--muted); font-size: 12px; }
+.quizStats { margin-top: 2px; gap: 16px; border-color: #e6ebf2; }
+.quizStats strong { font-size: 18px; }
+.quizStats span { color: var(--muted); }
+.primaryQuizActions { margin-top: auto; }
+.primaryQuizActions .button { flex: 1 1 auto; min-height: 40px; padding: 9px 10px; }
+.quizMore { border-top: 1px solid #e6ebf2; margin-top: 1px; padding-top: 9px; }
+.quizMore summary { color: var(--primary2); font-size: 12px; font-weight: 750; cursor: pointer; width: fit-content; }
+.quizMore[open] summary { margin-bottom: 10px; }
+.quizMore .secondaryQuizActions { padding-top: 4px; border: 0; }
+.quizMore .button { min-height: 36px; }
+.empty { padding: 48px 20px; }
+.empty h2 { margin-bottom: 5px; }
+.empty p { margin: 0 auto 18px; }
+
+/* Creation and editing: numbered steps and prominent progress. */
+.createChoiceCard { box-shadow: var(--shadow); border-color: var(--line); }
+.createChoiceCard:hover { border-color: #9db9eb; box-shadow: 0 10px 28px rgba(24, 44, 79, .1); }
+.choiceArrow { color: var(--primary); }
+.aiGrid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 18px; }
+.aiGrid > .card { padding: 24px; }
+.aiSectionTitle { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.aiSectionTitle > span { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 10px; background: var(--soft); color: var(--primary2); font-weight: 800; }
+.aiSectionTitle h2 { margin: 0; font-size: 21px; }
+.aiSectionTitle p { margin: 1px 0 0; font-size: 12px; }
+.aiGrid .aiTypePicker { margin: 17px 0; }
+.aiGrid .aiNotesField { margin-bottom: 0; }
+.aiOptionsBlock { padding-top: 16px; border-top: 1px solid var(--line); }
+.aiGenerateButton { min-height: 49px; font-size: 15px; }
+.aiCostNote { display: block; margin: 12px 0 5px; color: #5a4531; font-weight: 650; }
+.aiGenerateButton + .hint { display: block; line-height: 1.45; }
+.aiProgress { border-color: #c3d5f3; background: #f4f8ff; }
+.aiProgress.error { border-color: #eac2c0; background: #fff5f4; }
+.aiJobCard { border-left: 4px solid var(--primary); }
+.aiJobCard.aiJobFailed { border-left-color: #b42318; }
+.stickyHead { background: rgba(245, 247, 251, .97); }
+#editorView .stickyHead > div:first-child { flex: 0 1 275px; }
+#editorView .stickyHead > .actions { flex: 1; justify-content: flex-end; }
+.settingsCard { border-color: var(--line); }
+.questionCard, .studentQuestion { border-color: var(--line); box-shadow: var(--shadow); }
+.questionCard:focus-within { border-color: #94afe5; }
+.studentQuestion .choice:has(input:checked) { background: #eaf1ff; border-color: #779ee6; box-shadow: inset 0 0 0 1px #779ee6; }
+.studentQuestion .choice input { accent-color: var(--primary); }
+.studentProgressTrack span, .aiProgressFill { background: var(--primary); }
+.studentQuestionNav .questionNavDot { min-width: 36px; min-height: 36px; }
+.studentHead { background: #204caa; box-shadow: var(--shadow); }
+
+@media (max-width: 1000px) {
+  .aiGrid { grid-template-columns: 1fr; }
+  #editorView .stickyHead { position: static; flex-direction: column; }
+  #editorView .stickyHead > .actions { justify-content: flex-start; }
+}
+@media (max-width: 900px) {
+  .heroGrid { grid-template-columns: 1fr; }
+  .heroGrid > .card { min-height: 0; }
+}
+@media (max-width: 700px) {
+  .shell { padding-top: 24px; }
+  .authIntro { margin-top: 12px; }
+  .authIntro p { font-size: 14px; }
+  .heroGrid { margin-top: 20px; }
+  .heroGrid > .card { padding: 22px; }
+  .heroCard p { margin-bottom: 18px; }
+  .quizMore .secondaryQuizActions .button { flex: 1 1 46%; }
+  .aiGrid > .card { padding: 20px; }
+  .aiSectionTitle { margin-bottom: 18px; }
+  .studentQuestion .choice { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
