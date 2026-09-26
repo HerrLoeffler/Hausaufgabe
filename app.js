@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai23";
+const APP_VERSION = "2.3.1-ai25";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -33,8 +33,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai23";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai23";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai25";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai25";
+import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai25";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -869,6 +870,13 @@ $("templateImportForm")?.addEventListener("submit", (e) => {
 $("quizSearch").addEventListener("input", renderQuizList);
 $("quizFilter").addEventListener("change", renderQuizList);
 $("quizSort")?.addEventListener("change", renderQuizList);
+$("dashboardOverview")?.addEventListener("click", event => {
+  const metric = event.target.closest(".dashboardMetric");
+  if (!metric) return;
+  $("quizSearch").value = "";
+  $("quizFilter").value = $("quizFilter").value === metric.dataset.filter ? "all" : metric.dataset.filter;
+  renderQuizList();
+});
 $("clearQuizFiltersBtn")?.addEventListener("click", () => {
   $("quizSearch").value = "";
   $("quizFilter").value = "all";
@@ -923,6 +931,7 @@ async function loadDashboard() {
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
     renderQuizList();
+    renderAiJobs();
     await renderLocalDraftList();
     await loadTeacherTourConfig();
     const tourOpened = maybeShowTeacherTour();
@@ -955,6 +964,7 @@ function watchAiJobs() {
         if (state.user?.uid !== uid || !snap.exists() || snap.data().ownerId !== uid) continue;
         state.quizzes = [{ id: snap.id, ...snap.data() }, ...state.quizzes.filter(quiz => quiz.id !== snap.id)];
         renderQuizList();
+        renderAiJobs();
       } catch (err) { console.warn("Fertiger KI-Test konnte noch nicht geladen werden:", err); }
     }
   }, err => {
@@ -967,8 +977,13 @@ function watchAiJobs() {
 
 function renderAiJobs() {
   const host = $("aiJobsList");
-  const recent = state.aiJobs.filter(job => ["queued", "running"].includes(job.status)
-    || (Date.now() - toMillis(job.updatedAt || job.createdAt) < 7 * 24 * 60 * 60 * 1000)).slice(0, 8);
+  const recent = state.aiJobs.filter(job => {
+    if (["queued", "running"].includes(job.status)) return true;
+    if (Date.now() - toMillis(job.updatedAt || job.createdAt) >= 7 * 24 * 60 * 60 * 1000) return false;
+    if (job.status !== "ready") return true;
+    const quiz = state.quizzes.find(item => item.id === job.quizId);
+    return shouldShowAiJob(job, quiz);
+  }).slice(0, 8);
   host.replaceChildren();
   host.classList.toggle("hidden", !recent.length);
   if (recent.some(job => ["queued", "running"].includes(job.status))) $("emptyQuizState").classList.add("hidden");
@@ -977,13 +992,16 @@ function renderAiJobs() {
     const finished = job.status === "ready";
     const failed = job.status === "failed";
     const percentage = Math.max(0, Math.min(100, Number(job.percent) || 0));
-    card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}`;
-    card.innerHTML = `<div><strong>${escapeHtml(job.sourceQuizId ? "Ähnlichen Test erstellen" : "KI-Test erstellen")} · ${escapeHtml(job.subject || job.topic || "Neuer Test")}</strong><p>${escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
-      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Entwurf bereit" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}`}</small></div>
+    card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}${finished ? " aiJobReady" : ""}`;
+    card.innerHTML = `<div class="aiJobStatusIcon" aria-hidden="true">${failed ? "!" : finished ? "✓" : "⋯"}</div>
+      <div class="aiJobBody"><strong>${escapeHtml(job.sourceQuizId ? "Ähnlicher Test" : "KI-Test")} · ${escapeHtml(job.subject || job.topic || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
+      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}`}</small></div>
       ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
-      ${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf öffnen"}</button>` : ""}
-      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button>' : ""}`;
+      <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
+      ${finished && job.quizId ? '<button class="button ghost completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}
+      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button>' : ""}</div>`;
     card.querySelector(".openAiJob")?.addEventListener("click", () => openEditor(job.quizId));
+    card.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(job.quizId));
     card.querySelector(".reportAiJob")?.addEventListener("click", () => showReportableError({
       code: job.sourceQuizId ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
       message: job.progressMessage || "KI-Erstellung fehlgeschlagen.",
@@ -1053,7 +1071,7 @@ function filteredQuizzes() {
     const isPublished = Boolean(q.published) && !isEnded && !q.rightsHold;
     if (status === "published" && !isPublished) return false;
     if (status === "ended" && !isEnded) return false;
-    if (status === "draft" && (isPublished || isEnded)) return false;
+    if (status === "draft" && (q.published || isEnded)) return false;
     if (!term) return true;
     const hay = normalize([q.title, q.subject, q.grade, q.id, q.description].join(" "));
     return hay.includes(term);
@@ -1084,6 +1102,17 @@ function renderQuizList() {
   list.innerHTML = "";
   const filtered = filteredQuizzes();
   const active = activeQuizzes().filter(q => q.generationStatus !== "running");
+  const counts = {
+    published: active.filter(q => q.published && !q.ended && !q.rightsHold).length,
+    draft: active.filter(q => !q.published && !q.ended).length,
+    ended: active.filter(q => q.ended).length
+  };
+  $("publishedQuizCount").textContent = counts.published;
+  $("draftQuizCount").textContent = counts.draft;
+  $("endedQuizCount").textContent = counts.ended;
+  $("dashboardOverview").querySelectorAll(".dashboardMetric").forEach(metric => {
+    metric.setAttribute("aria-pressed", String($("quizFilter").value === metric.dataset.filter));
+  });
   $("quizResultsCount").textContent = active.length
     ? `${filtered.length} von ${active.length} ${active.length === 1 ? "Test" : "Tests"} angezeigt`
     : "";
@@ -2243,19 +2272,52 @@ function renderImportReviewBanner() {
   const host = $("importReviewBanner");
   if (!host) return;
   const report = state.pendingImportReport;
-  if (!report || report.quizId !== state.currentQuiz?.id || (!report.repairs?.length && !report.warnings?.length)) {
+  const pendingAiReview = isAiReviewPending(state.currentQuiz);
+  const hasReport = report?.quizId === state.currentQuiz?.id && (report.repairs?.length || report.warnings?.length);
+  if (!pendingAiReview && !hasReport) {
     host.classList.add("hidden");
     host.innerHTML = "";
     return;
   }
-  const warningCount = report.warnings?.length || 0;
+  const warningCount = hasReport ? report.warnings?.length || 0 : 0;
   host.classList.remove("hidden");
-  const heading = state.currentQuiz?.generationJobId ? "KI-Test erstellt" : "Test importiert";
-  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✅"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} – ${warningCount} Hinweis${warningCount === 1 ? "" : "e"} bitte prüfen` : heading}</strong><p>${warningCount ? "Einige Stellen waren nicht eindeutig und wurden zur Prüfung markiert." : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><button class="iconButton closeImportReview" type="button" aria-label="Hinweise schließen">×</button>`;
+  const heading = pendingAiReview ? "KI-Entwurf prüfen" : state.currentQuiz?.generationJobId ? "KI-Teilentwurf" : "Test importiert";
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? "Kontrolliere Aufgaben und Lösungen. Danach kannst du die Prüfung dauerhaft abschließen." : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${warningCount ? `<details><summary>Hinweise anzeigen</summary><ul>${report.warnings.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : ""}</div><div class="importReviewActions">${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
+  host.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(state.currentQuiz.id, true));
   host.querySelector(".closeImportReview")?.addEventListener("click", () => {
     state.pendingImportReport = null;
     host.classList.add("hidden");
   });
+}
+
+async function completeAiReview(code, fromEditor = false) {
+  try {
+    let quiz = state.quizzes.find(item => item.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null);
+    if (!quiz) {
+      const snapshot = await getDoc(doc(db, "quizzes", code));
+      if (snapshot.exists()) quiz = { id: snapshot.id, ...snapshot.data() };
+    }
+    if (!quiz || quiz.ownerId !== state.user?.uid || quiz.generationStatus !== "ready") {
+      toast("Der Entwurf ist noch nicht verfügbar. Bitte aktualisiere die Seite.", "error");
+      return;
+    }
+    if (fromEditor && state.isDirty && !(await saveCurrentQuiz(false))) return;
+    await updateDoc(doc(db, "quizzes", code), { aiReviewAcknowledgedAt: serverTimestamp() });
+    const acknowledgedAt = new Date();
+    if (state.currentQuiz?.id === code) {
+      state.currentQuiz.aiReviewAcknowledgedAt = acknowledgedAt;
+      state.pendingImportReport = null;
+      renderImportReviewBanner();
+    }
+    const latestQuiz = state.currentQuiz?.id === code ? state.currentQuiz : quiz;
+    state.quizzes = [{ ...latestQuiz, aiReviewAcknowledgedAt: acknowledgedAt }, ...state.quizzes.filter(item => item.id !== code)];
+    renderAiJobs();
+    renderQuizList();
+    toast("Prüfung abgeschlossen. Der Hinweis wird nicht erneut angezeigt.");
+  } catch (err) {
+    console.error(err);
+    toast("Prüfstatus konnte nicht gespeichert werden. Bitte erneut versuchen.", "error");
+  }
 }
 
 async function openAiProvider(url, label) {
@@ -2428,7 +2490,7 @@ async function openEditor(code) {
     state.newManualQuiz = false;
     state.draftBaseUpdatedAt = toMillis(q.updatedAt);
     state.currentQuiz = q;
-    state.pendingImportReport = q.qualityWarnings?.length
+    state.pendingImportReport = q.qualityWarnings?.length && !q.aiReviewAcknowledgedAt && !q.published
       ? { quizId: code, warnings: q.qualityWarnings.map(warning => `KI-Qualitätsprüfung: ${warning}`), repairs: [] }
       : null;
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
@@ -3793,6 +3855,10 @@ async function publishCurrentQuiz() {
     state.currentQuiz.sessionState = teacherMode ? "waiting" : "open";
     state.currentQuiz.sessionRunId = runId;
     state.currentQuiz.sessionStartedAt = null;
+    state.pendingImportReport = null;
+    renderImportReviewBanner();
+    state.quizzes = state.quizzes.map(item => item.id === state.currentQuiz.id ? { ...item, published: true } : item);
+    renderAiJobs();
     updateSummary();
     updateEditorPublishControls();
     toast("Test veröffentlicht.");

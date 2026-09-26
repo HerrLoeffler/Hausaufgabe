@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
-  <meta name="app-version" content="2.3.1-ai23" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai23" />
-  <link rel="stylesheet" href="design-system.css?v=2.3.1-ai23" />
+  <meta name="app-version" content="2.3.1-ai25" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai25" />
+  <link rel="stylesheet" href="design-system.css?v=2.3.1-ai25" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -73,7 +73,13 @@
 
     <section id="dashboardView" class="view hidden">
       <div class="pageHead">
-        <div><span class="eyebrow">Lehrerbereich</span><h1>Meine Tests</h1><p>Erstellen, bearbeiten, veröffentlichen und Ergebnisse ansehen.</p></div>
+        <div><span class="eyebrow">Dein Arbeitsbereich</span><h1>Meine Tests</h1><p>Alles für deinen nächsten Leistungsnachweis an einem Ort.</p>
+          <div id="dashboardOverview" class="dashboardOverview" aria-label="Tests nach Status">
+            <button class="dashboardMetric" type="button" data-filter="published" aria-pressed="false"><strong id="publishedQuizCount">–</strong><span>Veröffentlicht</span></button>
+            <button class="dashboardMetric" type="button" data-filter="draft" aria-pressed="false"><strong id="draftQuizCount">–</strong><span>Entwürfe</span></button>
+            <button class="dashboardMetric" type="button" data-filter="ended" aria-pressed="false"><strong id="endedQuizCount">–</strong><span>Beendet</span></button>
+          </div>
+        </div>
         <div class="actions dashboardActions">
           <button id="trashBtn" class="button ghost compactTrashBtn" type="button">🗑 Papierkorb</button>
           <button id="newQuizBtn" class="button primary" type="button">+ Neuer Test</button>
@@ -490,9 +496,9 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai23</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai25</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai23"></script>
+  <script type="module" src="app.js?v=2.3.1-ai25"></script>
 </body>
 </html>

@@ -73,7 +73,38 @@ input::placeholder, textarea::placeholder { color: #68788d; }
 .heroGrid .authForm { gap: 13px; }
 .heroGrid .authForm .button.primary { margin-top: 5px; }
 
-/* Dashboard: visible results and a primary task per test. */
+/* Dashboard: one unmistakable workspace, quick status access, compact jobs. */
+#dashboardView > .pageHead {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px; overflow: hidden; isolation: isolate;
+  margin: 0 0 24px; padding: 36px 40px 30px; border-radius: 24px;
+  background: #112844; color: #fff; box-shadow: 0 18px 40px rgba(17, 40, 68, .14);
+}
+#dashboardView > .pageHead::after {
+  content: ""; position: absolute; z-index: -1; width: 460px; height: 460px;
+  right: -110px; bottom: -350px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(72, 134, 235, .38), rgba(72, 134, 235, 0) 68%);
+  pointer-events: none;
+}
+#dashboardView > .pageHead > div:first-child { max-width: none; }
+#dashboardView > .pageHead .eyebrow { color: #a8d6ff; }
+#dashboardView > .pageHead h1 { color: #fff; font-size: clamp(2.35rem, 3.7vw, 3.4rem); margin: 7px 0 4px; }
+#dashboardView > .pageHead p { color: #d5e3f5; font-size: 15px; }
+#dashboardView .dashboardActions { align-self: start; padding: 0; align-items: center; }
+#dashboardView #newQuizBtn { background: #f6f9ff; color: #163b73; font-size: 14px; min-height: 46px; }
+#dashboardView #newQuizBtn:hover { background: #e2edff; color: #102e5a; }
+#dashboardView #trashBtn { color: #e3eeff; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .23); min-height: 46px; opacity: 1; }
+#dashboardView #trashBtn:hover { background: rgba(255, 255, 255, .16); color: #fff; }
+.dashboardOverview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.dashboardMetric {
+  display: flex; align-items: baseline; gap: 9px; min-height: 48px; padding: 10px 14px;
+  border: 1px solid rgba(227, 239, 255, .25); border-radius: 11px;
+  background: rgba(255, 255, 255, .07); color: #f5f9ff; cursor: pointer; text-align: left;
+  transition: background .15s, border-color .15s;
+}
+.dashboardMetric:hover, .dashboardMetric[aria-pressed="true"] { background: rgba(255, 255, 255, .17); border-color: rgba(227, 239, 255, .65); }
+.dashboardMetric strong { font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1; }
+.dashboardMetric span { font-size: 12px; font-weight: 650; color: #dbe8f8; }
 .dashboardToolbar { margin-bottom: 10px; padding: 16px 18px; background: #fff; backdrop-filter: none; }
 .dashboardToolbar label { font-size: 12px; }
 .resultsCount { min-height: 20px; margin: 0 2px 16px; font-size: 13px; font-weight: 650; }
@@ -117,6 +148,21 @@ input::placeholder, textarea::placeholder { color: #68788d; }
 .aiProgress.error { border-color: #eac2c0; background: #fff5f4; }
 .aiJobCard { border-left: 4px solid var(--primary); }
 .aiJobCard.aiJobFailed { border-left-color: #b42318; }
+#aiJobsList .aiJobCard {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 7px 15px; align-items: center; padding: 17px 20px; border-radius: 16px;
+}
+.aiJobStatusIcon { display: grid; place-items: center; align-self: start; width: 38px; height: 38px; border-radius: 11px; background: #e9f2ff; color: var(--primary2); font-size: 20px; font-weight: 800; }
+.aiJobReady .aiJobStatusIcon { background: #eaf7ef; color: #187346; }
+.aiJobFailed .aiJobStatusIcon { background: #fff0ee; color: #a72a23; }
+.aiJobBody { min-width: 0; }
+#aiJobsList .aiJobCard p { margin: 2px 0 0; font-size: 13px; }
+.aiJobActions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.aiJobActions:empty { display: none; }
+#aiJobsList .aiJobCard .aiProgressTrack, #aiJobsList .aiJobCard > small { grid-column: 2 / -1; }
+#aiJobsList .aiJobCard .button { min-height: 39px; font-size: 12px; white-space: nowrap; }
+.importReviewActions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.importReviewActions .button { min-height: 37px; font-size: 12px; }
 .stickyHead { background: rgba(245, 247, 251, .97); }
 #editorView .stickyHead > div:first-child { flex: 0 1 275px; }
 #editorView .stickyHead > .actions { flex: 1; justify-content: flex-end; }
@@ -133,6 +179,8 @@ input::placeholder, textarea::placeholder { color: #68788d; }
   .aiGrid { grid-template-columns: 1fr; }
   #editorView .stickyHead { position: static; flex-direction: column; }
   #editorView .stickyHead > .actions { justify-content: flex-start; }
+  #dashboardView > .pageHead { grid-template-columns: 1fr; }
+  #dashboardView .dashboardActions { justify-content: flex-start; }
 }
 @media (max-width: 900px) {
   .heroGrid { grid-template-columns: 1fr; }
@@ -140,6 +188,16 @@ input::placeholder, textarea::placeholder { color: #68788d; }
 }
 @media (max-width: 700px) {
   .shell { padding-top: 24px; }
+  #dashboardView > .pageHead { padding: 27px 22px; border-radius: 19px; gap: 18px; }
+  #dashboardView > .pageHead h1 { font-size: 2.35rem; }
+  #dashboardView .dashboardActions { width: 100%; }
+  #dashboardView .dashboardActions .button { flex: 1 1 auto; }
+  .dashboardMetric { flex: 1 1 138px; }
+  #aiJobsList .aiJobCard { grid-template-columns: 38px minmax(0, 1fr); padding: 16px; gap: 8px 12px; }
+  .aiJobActions { grid-column: 2; justify-content: flex-start; }
+  .aiJobActions .button { white-space: normal; }
+  .importReviewActions { grid-column: 2; justify-content: flex-start; }
+  .importReviewActions .closeImportReview { margin-top: 0; }
   .authIntro { margin-top: 12px; }
   .authIntro p { font-size: 14px; }
   .heroGrid { margin-top: 20px; }
