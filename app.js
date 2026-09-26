@@ -123,6 +123,7 @@ const state = {
   aiJobs: [],
   aiJobsUnsub: null,
   aiStarting: false,
+  aiVariantsRunning: false,
   draftCheckpointSaved: true,
   draftBaseUpdatedAt: 0,
   teacherTourConfig: null
@@ -288,6 +289,14 @@ function cleanTechnicalDetails(details = {}) {
   return out;
 }
 
+function serializeAiDiagnostic(value) {
+  if (!value || typeof value !== "object") return "";
+  try {
+    const json = JSON.stringify(value, null, 2);
+    return json.length <= 60000 ? json : JSON.stringify({ truncated: true, excerpt: json.slice(0, 58000) });
+  } catch (_) { return "Diagnosedaten konnten nicht serialisiert werden."; }
+}
+
 function ensureReportableErrorHost() {
   let host = $("reportableErrorHost");
   if (host) return host;
@@ -325,6 +334,8 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
     providerCode,
     serverReference: String(error?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40),
     serverPhase: String(error?.details?.phase || "").slice(0, 100),
+    serverReason: String(error?.details?.reason || "").slice(0, 1200),
+    aiDiagnostic: serializeAiDiagnostic(error?.details?.diagnostic),
     validationErrors: Array.isArray(error?.details?.errors)
       ? error.details.errors.slice(0, 10).map(value => String(value).slice(0, 240)).join("\n") : "",
     rawMessage,
@@ -349,7 +360,7 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
   card.className = "reportableErrorCard";
   card.dataset.errorFingerprint = fingerprint;
   card.__reportPayload = payload;
-  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen automatisch an Testify gesendet – keine Schülerantworten.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
+  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen sowie die betroffene KI-Aufgabe, Bildbeschreibungen und Prüfgründe an Testify gesendet – keine Schülerantworten oder hochgeladenen Dateien.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
   card.querySelector(".reportableErrorClose").addEventListener("click", () => card.remove());
   card.querySelector(".reportableErrorSend").addEventListener("click", () => submitTechnicalErrorReport(card));
   host.prepend(card);
@@ -380,7 +391,7 @@ async function submitTechnicalErrorReport(card) {
       fingerprint: payload.fingerprint,
       action: payload.action,
       testCode: payload.testCode || null,
-      feedbackSchemaVersion: 3,
+      feedbackSchemaVersion: 4,
       appVersion: payload.appVersion,
       environment: payload.environment,
       userAgent: payload.userAgent,
@@ -390,6 +401,8 @@ async function submitTechnicalErrorReport(card) {
         providerCode: payload.providerCode,
         serverReference: payload.serverReference,
         serverPhase: payload.serverPhase,
+        serverReason: payload.serverReason,
+        aiDiagnostic: payload.aiDiagnostic,
         validationErrors: payload.validationErrors,
         rawMessage: payload.rawMessage,
         stack: payload.stack,
@@ -1006,7 +1019,7 @@ function renderAiJobs() {
       code: job.sourceQuizId ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
       message: job.progressMessage || "KI-Erstellung fehlgeschlagen.",
       error: { code: job.errorCode || "failed-precondition", message: job.progressMessage,
-        details: { reference: job.errorReference, phase: job.stage } },
+        details: { ...job.errorDetails, reference: job.errorReference, phase: job.errorDetails?.phase || job.stage } },
       action: job.sourceQuizId ? "background_similar_test" : "background_ai_test",
       details: { jobId: job.id, requestId: job.requestId, quizId: job.quizId || "",
         requestedCount: job.requestedCount, completedCount: job.completedCount,
@@ -1014,16 +1027,20 @@ function renderAiJobs() {
     }));
     host.appendChild(card);
   }
-  const current = state.aiJobs.find(job => ["queued", "running"].includes(job.status));
-  const busy = state.aiJobs.some(job => ["queued", "running"].includes(job.status));
+  const activeCount = state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length;
   if ($("generateAiTestBtn")) {
-    $("generateAiTestBtn").disabled = busy || state.aiStarting;
-    $("generateAiTestBtn").textContent = busy || state.aiStarting ? "✨ Erstellung läuft" : "✨ Test erstellen";
+    $("generateAiTestBtn").disabled = activeCount >= 2 || state.aiStarting;
+    $("generateAiTestBtn").textContent = state.aiStarting ? "✨ Wird gestartet …"
+      : activeCount >= 2 ? "Zwei Tests werden erstellt" : activeCount === 1 ? "✨ Zweiten Test erstellen" : "✨ Test erstellen";
   }
-  if (current && !$("aiView").classList.contains("hidden")) {
-    setAiProgress(current.progressMessage, current.status === "failed", Number(current.percent || 0),
-      current.status === "ready" ? "Der fertige Entwurf liegt unter „Meine Tests“." : "Du kannst die Seite verlassen; unter „Meine Tests“ bleibt der Fortschritt sichtbar.");
+  const notice = $("aiActiveJobsNotice");
+  if (notice) {
+    notice.classList.toggle("hidden", activeCount === 0);
+    notice.textContent = activeCount >= 2
+      ? "Zwei Tests laufen im Hintergrund. Sobald einer fertig ist, kannst du den nächsten starten. Den Fortschritt findest du unter „Meine Tests“."
+      : "Ein Test läuft im Hintergrund. Du kannst einen zweiten Test starten. Den Fortschritt findest du unter „Meine Tests“.";
   }
+  updateEditorPublishControls();
 }
 
 async function renderLocalDraftList() {
@@ -1779,6 +1796,7 @@ async function openAiView() {
 
 function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
   const code = String(err?.code || "");
+  if (err?.details?.reason === "active-job-limit") return "Es laufen bereits zwei Tests. Sobald einer fertig ist, kannst du den nächsten starten.";
   const reference = String(err?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
   const suffix = reference ? ` (Fehlernummer ${reference})` : "";
   if (code.includes("internal") || String(err?.message || "").trim().toLowerCase() === "internal") {
@@ -1907,7 +1925,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
   const intent = rawQuestion?.mediaIntent;
   if (!intent || intent.kind === "none") return;
   if (intent.kind === "ai_generated" && intent.prompt && !q.imageDataUrl) {
-    const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, altText: intent.altText || "Abbildung zur Aufgabe" });
+    const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, question: rawQuestion, altText: intent.altText || "Abbildung zur Aufgabe" });
     Object.assign(q, result.asset || {});
   }
 }
@@ -1918,6 +1936,10 @@ async function generateAiTestNative() {
 }
 
 async function startAiCreationJob(request, { similar = false, sourceQuiz = null } = {}) {
+  if (state.aiStarting) return;
+  if (state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2) {
+    return toast("Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist.", "error");
+  }
   const button = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
   const targetId = similar ? "similarTestProgress" : "aiProgress";
   button.disabled = true;
@@ -1927,6 +1949,10 @@ async function startAiCreationJob(request, { similar = false, sourceQuiz = null 
     const clientRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const response = await aiApi.startAiTestJob({ ...request, sourceQuizId: sourceQuiz?.id || "", clientRequestId });
     if (!response?.jobId) throw new Error("Der Hintergrundauftrag wurde nicht bestätigt.");
+    if (!state.aiJobs.some(job => job.id === response.jobId)) state.aiJobs.push({
+      id: response.jobId, status: "queued", topic: request.topic, subject: request.subject,
+      requestedCount: request.count, sourceQuizId: sourceQuiz?.id || "", createdAt: Date.now()
+    });
     if (!similar) {
       const submitted = new Set((request.materials || []).map(material => material.id));
       state.aiMaterials = state.aiMaterials.filter(material => !submitted.has(material.id));
@@ -2642,7 +2668,7 @@ function renderQuestions() {
     });
     node.querySelector(".duplicateQuestion").addEventListener("click", () => duplicateQuestion(index));
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
-    node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => regenerateQuestionWithAi(q, index, { variant: true }));
+    node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => openQuestionVariantDialog(q, index));
     const canRate = isAdmin() || Boolean(q.aiOrigin);
     for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
@@ -2839,6 +2865,96 @@ function toggleQuestionAiPanel(node, q, index) {
   panel.querySelector(".aiCancel").addEventListener("click", () => panel.remove());
   panel.querySelector(".aiApply").addEventListener("click", () => regenerateQuestionWithAi(q, index, { instruction: input.value.trim(), panel }));
   node.querySelector(".questionGrid").after(panel); input.focus();
+}
+
+function defaultVariantMediaKind(q) {
+  return getQuestionImageSrc(q) ? "ai_generated" : "none";
+}
+
+function openQuestionVariantDialog(q, index) {
+  if (state.aiVariantsRunning) return;
+  const available = Math.min(5, 50 - state.questions.length);
+  if (available < 1) return toast("Ein Test kann höchstens 50 Aufgaben enthalten.", "error");
+  const dialog = document.createElement("dialog");
+  dialog.className = "shareDialog";
+  dialog.innerHTML = `<form class="stack compact"><h2>Varianten hinzufügen</h2>
+    <p>Neue Beispiele für Aufgabe ${index + 1}. Die ursprüngliche Aufgabe bleibt erhalten.</p>
+    <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? "Varianten" : "Variante"}</option>`).join("")}</select></label>
+    <label>Bilder<select name="mediaKind"><option value="none">Ohne Bild</option><option value="ai_generated">Mit Bild zur Aufgabe</option></select></label>
+    <p class="hint">Bilder werden passend zu jeder Variante neu erstellt. Bitte diesen Dialog bis zum Abschluss geöffnet lassen.</p>
+    <p class="variantProgress" role="status" aria-live="polite"></p>
+    <div class="actions"><button type="button" class="button ghost variantCancel">Abbrechen</button><button type="submit" class="button primary">Varianten erstellen</button></div></form>`;
+  const form = dialog.querySelector("form");
+  form.elements.mediaKind.value = defaultVariantMediaKind(q);
+  dialog.querySelector(".variantCancel").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("cancel", event => { if (state.aiVariantsRunning) event.preventDefault(); });
+  dialog.addEventListener("close", () => dialog.remove());
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (state.aiVariantsRunning) return;
+    const count = Number(form.elements.count.value);
+    const mediaKind = form.elements.mediaKind.value;
+    state.aiVariantsRunning = true;
+    form.querySelectorAll("button, select").forEach(el => { el.disabled = true; });
+    try {
+      await createQuestionVariants(q, { count, mediaKind, onProgress: text => { dialog.querySelector(".variantProgress").textContent = text; } });
+    } finally { state.aiVariantsRunning = false; dialog.close(); }
+  });
+  document.body.appendChild(dialog);
+  dialog.showModal();
+}
+
+async function createQuestionVariants(q, { count, mediaKind, onProgress = () => {} }) {
+  if (!Number.isInteger(count) || count < 1 || count > 5 || state.questions.length + count > 50) {
+    return toast("Bitte 1 bis 5 Varianten wählen; insgesamt sind höchstens 50 Aufgaben möglich.", "error");
+  }
+  const quizId = state.currentQuiz?.id;
+  const uid = state.user?.uid;
+  const source = questionForAi(q);
+  let created = 0;
+  let anchorId = q.id;
+  let rawQuestion = null;
+  const ensureEditor = () => {
+    if (!quizId || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.some(question => question.id === q.id)) {
+      throw new Error("Der Ausgangstest ist nicht mehr geöffnet. Weitere Varianten wurden gestoppt.");
+    }
+  };
+  try {
+    for (let i = 0; i < count; i += 1) {
+      ensureEditor();
+      const sourceIndex = state.questions.findIndex(question => question.id === q.id);
+      rawQuestion = null;
+      onProgress(`Variante ${i + 1} von ${count} wird erstellt …${created ? ` ${created} bereits hinzugefügt.` : ""}`);
+      const response = await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind,
+        testContext: questionContext(sourceIndex), allowedTypes: QUESTION_TYPES.map(([v]) => v),
+        allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
+      ensureEditor();
+      rawQuestion = response.question;
+      if ((rawQuestion?.mediaIntent?.kind || "none") !== mediaKind) throw new Error("Die Variante entspricht nicht der gewählten Bildart.");
+      const next = normalizeImportedQuestion(rawQuestion, sourceIndex, { warnings: [], repairs: [] });
+      next.aiOrigin = { kind: "variant", model: String(response.meta?.model || ""), promptVersion: String(response.meta?.promptVersion || "") };
+      next.id = doc(collection(db, "quizzes", quizId, "questions")).id;
+      if (mediaKind !== "none") {
+        onProgress(`Bilder für Variante ${i + 1} von ${count} werden erstellt und geprüft …`);
+        await applyGeneratedMedia(rawQuestion, next, quizId, next.id);
+      }
+      ensureEditor();
+      const position = state.questions.findIndex(question => question.id === anchorId) + 1;
+      state.questions.splice(position, 0, next);
+      anchorId = next.id;
+      created += 1;
+      markDirty();
+    }
+    toast(`${created} ${created === 1 ? "Variante hinzugefügt" : "Varianten hinzugefügt"}. Bitte speichern.`);
+  } catch (err) {
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
+      message: `${created} von ${count} Varianten hinzugefügt. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`,
+      error: err, action: "add_ai_variants", details: { variantCount: count, variantsCreated: created, mediaKind,
+        questionPosition: state.questions.findIndex(question => question.id === q.id) + 1, questionType: q.type }
+    });
+  } finally {
+    if (state.currentQuiz?.id === quizId && state.user?.uid === uid) renderQuestions();
+  }
 }
 
 async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false } = {}) {
@@ -3544,7 +3660,8 @@ function updateEditorPublishControls() {
   const blocked = Boolean(state.currentQuiz.rightsHold);
   $("endQuizBtn")?.classList.toggle("hidden", !published || blocked);
   if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz || blocked;
-  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked;
+  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked || state.aiStarting
+    || state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2;
   if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen"; }
 }
 
@@ -5981,6 +6098,9 @@ function formatTechnicalErrorReport(report) {
     ["Meldung", report.message], ["Aktion", report.action], ["Originalfehler", t.rawMessage],
     ["Validierungsfehler", t.validationErrors], ["Provider-Code", t.providerCode], ["Fehlertyp", t.errorName],
     ["Server-Referenz", t.serverReference], ["Server-Phase", t.serverPhase],
+    ["Ablehnungsgrund", t.serverReason], ["KI-Diagnose (Aufgabe, Bildversuche und Prüfgründe)", t.aiDiagnostic],
+    ["Hintergrundauftrag", t.jobId], ["Gespeicherte Aufgaben", t.completedCount],
+    ["Geplante Bilder", t.imageTotal], ["Gespeicherte Bilder", t.imageCompleted],
     ["Anfragenkennung", t.clientRequestId], ["Erstellungsdauer (ms)", t.generationDurationMs],
     ["Ansicht", t.view], ["Client-Phase", t.stage], ["Aufgabe", t.questionPosition],
     ["Aufgabentyp", t.questionType], ["Bildart", t.mediaKind],
@@ -5988,6 +6108,7 @@ function formatTechnicalErrorReport(report) {
     ["Zielpunkte", t.targetPoints], ["Bildmodus", t.imageMode],
     ["Aufgaben mit Bild", t.imageQuestionCount], ["Aufgaben mit Bildantworten", t.imageAnswerQuestionCount],
     ["Materialien", t.materialCount], ["Erlaubte Aufgabentypen", t.allowedTypeCount],
+    ["Gewünschte Varianten", t.variantCount], ["Erstellte Varianten", t.variantsCreated],
     ["Andere Aufgabe verlangt", t.requireDifferent], ["Länge der Anweisung", t.instructionLength],
     ["Aufgaben im Test", t.testQuestionCount],
     ["Datei", t.file], ["Zeile", t.line], ["Spalte", t.column],

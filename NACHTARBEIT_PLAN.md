@@ -2,6 +2,8 @@
 
 Stand: 26. September 2026. Arbeitsbranch `feature/ai-integration`; ausschließlich das Firebase-Projekt `hausaufgabe-staging`. Produktion nur nach ausdrücklicher Freigabe.
 
+**Quellstand:** Die auf Staging ausgelieferte Frontend-Version `ai24` enthielt zusätzliche Funktionen für zwei parallele KI-Aufträge, Aufgabenvarianten und Fehlerdiagnose, die noch nicht im Git-Branch waren. Diese Frontend-Änderungen wurden in `ai25` übernommen. Der zugehörige Functions-Quellstand aus der Cloud Shell muss noch in Git abgeglichen werden. Bis dahin ausschließlich `./deploy-staging-hosting.sh` verwenden; `./deploy-staging.sh` blockiert standardmäßig einen möglichen Rückschritt des Backends.
+
 ## Produktziel und Nachweis
 
 Testify soll Lehrkräften verlässliche digitale Leistungsnachweise ermöglichen: einen Test schnell erstellen, fachlich kontrollieren, sicher durchführen und Ergebnisse nachvollziehbar auswerten. Jede Änderung braucht eine beobachtbare Verbesserung für eine dieser Aufgaben. Farben und Abstände allein gelten nicht als abgeschlossene Neugestaltung.

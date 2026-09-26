@@ -11,6 +11,15 @@ if [[ "$PROJECT_ID" == "$PRODUCTION_ID" ]]; then
   exit 1
 fi
 
+# Die auf Staging ausgelieferten ai24-Functions sind noch nicht vollständig im
+# Git-Branch. Ein Komplettdeploy aus diesem Checkout würde sie zurückrollen.
+if [[ "${TESTIFY_ALLOW_FULL_STAGING_DEPLOY:-}" != "yes" ]]; then
+  echo "FEHLER: Functions-Quellstand zuerst mit Staging abgleichen."
+  echo "Für reine Frontend-Änderungen: ./deploy-staging-hosting.sh"
+  echo "Nach Quellabgleich: TESTIFY_ALLOW_FULL_STAGING_DEPLOY=yes ./deploy-staging.sh"
+  exit 1
+fi
+
 if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   echo "FEHLER: firebase-config.staging.js zeigt nicht auf hausaufgabe-staging. Abbruch."
   exit 1
