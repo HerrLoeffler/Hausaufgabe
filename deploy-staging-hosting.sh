@@ -13,6 +13,7 @@ node --check app.js
 node --check ai-client.js
 node --check ui-enhancements.js
 node --check gradecrew-brand.js
+node --check layout-enhancements.js
 node --check editor-drafts.js
 node --check ai-review-state.js
 node --check ordering-grading.mjs
@@ -27,7 +28,7 @@ test -f assets/gradecrew/crew-lineup.svg
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
-cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js gradecrew-brand.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
+cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js gradecrew-brand.js layout-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
 rm -rf public/assets/gradecrew
 mkdir -p public/assets
 cp -R assets/gradecrew public/assets/
