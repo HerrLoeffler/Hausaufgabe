@@ -33,17 +33,54 @@ def source_fingerprint(files):
     return digest.hexdigest()
 
 
+def runtime_at_commit(commit):
+    names = subprocess.check_output(
+        ["git", "ls-tree", "-r", "--name-only", commit, "functions"],
+        cwd=ROOT,
+        text=True,
+    ).splitlines()
+    return runtime({
+        name.removeprefix("functions/"): subprocess.check_output(["git", "show", f"{commit}:{name}"], cwd=ROOT)
+        for name in names
+        if name.startswith("functions/")
+    })
+
+
+def known_branch_fingerprints():
+    """Accept exact runtime snapshots that already existed on this branch.
+
+    Staging functions are often deployed selectively. That means different
+    functions can legitimately run source packages from different earlier
+    commits on the same development branch. Those states are known and safe to
+    replace with HEAD; an actually unknown server-only change still aborts.
+    """
+    commits = [BASE]
+    history = subprocess.check_output(
+        ["git", "log", "--format=%H", f"{BASE}..HEAD", "--", "functions"],
+        cwd=ROOT,
+        text=True,
+    ).splitlines()
+    commits.extend(history)
+    result = {}
+    for commit in commits:
+        try:
+            result[source_fingerprint(runtime_at_commit(commit))] = commit
+        except subprocess.CalledProcessError:
+            continue
+    return result
+
+
 def unexpected_files(deployed, baseline, proposed):
     return sorted(name for name in set(deployed) | set(baseline)
                   if deployed.get(name) != baseline.get(name) and deployed.get(name) != proposed.get(name))
 
 
 def main():
-    names = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", BASE, "functions"], cwd=ROOT, text=True).splitlines()
-    baseline = runtime({name.removeprefix("functions/"): subprocess.check_output(["git", "show", f"{BASE}:{name}"], cwd=ROOT) for name in names if name.startswith("functions/")})
+    baseline = runtime_at_commit(BASE)
     proposed = runtime({path.relative_to(ROOT / "functions").as_posix(): path.read_bytes()
                         for path in (ROOT / "functions").rglob("*")
                         if path.is_file() and not path.is_symlink() and "node_modules" not in path.parts})
+    known = known_branch_fingerprints()
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
     backup = Path.home() / f"testify-vor-ai29-{stamp}.zip"
     problems, archives = [], {}
@@ -70,8 +107,13 @@ def main():
             for name, data in deployed.items():
                 output.writestr(f"{function}/{name}", data)
             differences = unexpected_files(deployed, baseline, proposed)
-            if source_fingerprint(deployed) == LEGACY_SOURCE_FINGERPRINT:
+            fingerprint = source_fingerprint(deployed)
+            if fingerprint == LEGACY_SOURCE_FINGERPRINT:
                 print(f"{function}: bekannten älteren Stand erkannt; Bilddiagnose und Auftragssteuerung wurden übernommen.", flush=True)
+                differences = []
+            elif fingerprint in known:
+                short = known[fingerprint][:8]
+                print(f"{function}: bekannten Branch-Stand {short} erkannt; Update ist sicher.", flush=True)
                 differences = []
             if differences:
                 problems.append(f"{function}: {', '.join(differences)}")
@@ -81,7 +123,7 @@ def main():
         print("Diese ZIP enthält den fehlenden Serverstand (keine .env-Dateien). Für die Zusammenführung im Chat bereitstellen.")
         print(f"Cloud-Shell-Download: cloudshell download {backup}")
         raise SystemExit(2)
-    print("Laufender Servercode entspricht dem geprüften Stand. Staging-Update kann fortfahren.")
+    print("Laufender Servercode entspricht einem bekannten geprüften Branch-Stand. Staging-Update kann fortfahren.")
 
 
 if __name__ == "__main__":
