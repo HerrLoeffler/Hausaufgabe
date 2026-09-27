@@ -9,7 +9,7 @@ function explicitBoolean(value) {
   if (typeof value === "string") {
     const text = value.trim().toLocaleLowerCase("de");
     if (["true", "wahr", "richtig"].includes(text)) return true;
-    if (["false", "falsch"].includes(text)) return false;
+    if (["false", "falsch", "falsch"].includes(text)) return false;
   }
   return value; // A missing/ambiguous answer must fail validation, never become false.
 }
@@ -54,18 +54,43 @@ function sameQuestion(a, b) {
   return overlap / Math.max(termsA.length, termsB.length) >= (sameFormat ? 0.8 : 0.9);
 }
 
+function variantContentKey(q) {
+  if (!q || typeof q !== "object") return "";
+  if (["single", "dropdown", "multi", "text", "gapfill", "number"].includes(q.type)) return answerKey(q);
+  if (q.type === "matching") return (q.pairs || [])
+    .map(pair => `${comparableAnswer(pair?.left)}=>${comparableAnswer(pair?.right)}`)
+    .filter(Boolean).sort().join("|");
+  if (q.type === "ordering") return (q.items || []).map(comparableAnswer).filter(Boolean).join("|");
+  if (q.type === "grouping") return (q.groups || [])
+    .map(group => `${comparable(group?.name)}:${(group?.items || []).map(comparableAnswer).filter(Boolean).sort().join(",")}`)
+    .filter(Boolean).sort().join("|");
+  if (q.type === "markwords") return `${comparable(q.passage)}::${(q.targetWords || []).map(comparableAnswer).filter(Boolean).sort().join("|")}`;
+  if (q.type === "truefalse") return typeof q.correctBoolean === "boolean" ? String(q.correctBoolean) : "";
+  return "";
+}
+
 function variantRepeats(a, b) {
   if (!a || !b || !a.text || !b.text) return false;
   const stemA = comparable(a.text), stemB = comparable(b.text);
-  if (stemA === stemB) return true;
+  const contentA = variantContentKey(a), contentB = variantContentKey(b);
+  // Many structured tasks legitimately share a short instruction such as
+  // "Ordne die Wörter zu". In that case the actual pairs/items/groups are the task.
+  // Reject only when that task content is also the same.
+  if (stemA === stemB) {
+    if (contentA && contentB) return contentA === contentB;
+    return true;
+  }
+  const structural = new Set(["matching", "ordering", "grouping", "markwords"]);
+  if (a.type === b.type && structural.has(a.type) && contentA && contentB && contentA !== contentB) return false;
   const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
   if (!termsA.length || !termsB.length) return false;
   const setA = new Set(termsA), setB = new Set(termsB);
-  if (setA.size === setB.size && [...setA].every(term => setB.has(term))) return true;
+  if (setA.size === setB.size && [...setA].every(term => setB.has(term))) return contentA && contentB ? contentA === contentB : true;
   if (Math.min(setA.size, setB.size) < 3) return false;
   const overlap = [...setA].filter(term => setB.has(term)).length;
   const union = new Set([...setA, ...setB]).size;
-  return union > 0 && overlap / union >= 0.88;
+  if (!(union > 0 && overlap / union >= 0.88)) return false;
+  return contentA && contentB ? contentA === contentB : true;
 }
 
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind } = {}) {
