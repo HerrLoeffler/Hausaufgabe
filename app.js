@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai26";
+const APP_VERSION = "2.3.1-ai27";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -34,9 +34,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai26";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai26";
-import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai26";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai27";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai27";
+import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai27";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -1876,7 +1876,8 @@ function updateAiImageControls() {
   if (imageInvalid) errors.push("Für Aufgaben mit einem Bild bitte eine ganze Zahl von 0 bis 5 eingeben.");
   if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Aufgabenbilder möglich.`);
   if (hint) {
-    hint.textContent = errors.length ? errors.join(" ") : images ? `${images} ${images === 1 ? "Aufgabe" : "Aufgaben"} mit einem Bild in der Fragestellung. Antwortoptionen bleiben Text.` : "Ohne KI-Bilder. Antwortoptionen bleiben Text.";
+    hint.textContent = errors.join(" ");
+    hint.classList.toggle("hidden", errors.length === 0);
     hint.classList.toggle("aiInputError", errors.length > 0);
   }
 }
