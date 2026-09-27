@@ -40,7 +40,8 @@ function fallbackQuestionText(text, intent = {}) {
     .replace(/\bdie abbildung\b/giu, "die Beschreibung")
     .replace(/\bauf der abbildung\b/giu, "in der Beschreibung")
     .replace(/\bin der abbildung\b/giu, "in der Beschreibung");
-  return `Beschreibung statt Bild: ${description}\n\n${rewritten}`.trim();
+  const sentence = rewritten ? rewritten.charAt(0).toLocaleUpperCase("de-DE") + rewritten.slice(1) : "";
+  return `Beschreibung statt Bild: ${description}\n\n${sentence}`.trim();
 }
 
 async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, onImage = async () => {}, onImageFallback = async () => {} }) {
