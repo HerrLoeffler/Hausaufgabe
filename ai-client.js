@@ -16,7 +16,7 @@ function scheduleVisualEnhancements() {
   if (visualEnhancementsScheduled || typeof window === "undefined") return;
   visualEnhancementsScheduled = true;
   window.setTimeout(() => {
-    import("./visual-enhancements.js?v=2.3.1-ai32").catch(err => {
+    import("./visual-enhancements.js?v=2.3.1-ai33").catch(err => {
       console.warn("GradeCrew-Visualisierung konnte nicht geladen werden. Die Kern-App läuft weiter.", err);
     });
   }, 0);
