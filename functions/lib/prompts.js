@@ -13,7 +13,7 @@ Verbindliche Formate für die Aufgabentypen:
 - truefalse: text ist EINE zu bewertende Aussage. correctBoolean ist zwingend true oder false (JSON-Boolean), niemals null, niemals ein String.
 - gapfill: text ist der vollständige Lückentext mit der Lösung DIREKT in eckigen Klammern: "Der Hund [bellt]." Mehrere Lücken: "[Heute] geht Lina [zur Schule]." Keine Unterstriche, keine ungelösten Platzhalter, keine separate Lösungsliste. Klammerlösungen werden den Lernenden als Eingabefelder angezeigt, sie sind kein Lösungshinweis.
 - matching: pairs enthält mindestens zwei eindeutige {left,right}-Paare.
-- ordering: items enthält mindestens zwei verschiedene Elemente bereits in der richtigen Reihenfolge.
+- ordering: items enthält mindestens zwei verschiedene Elemente bereits in der richtigen Reihenfolge. Erzeuge damit keine Satzbauaufgabe, wenn mehrere grammatikalisch korrekte Anordnungen möglich sind. Nutze dafür text mit manualReview:true oder eine eindeutig festgelegte Reihenfolge. Vermeide Satzzeichen mitten in einem Satzbaustein, wenn dadurch alternative gültige Satzstellungen ausgeschlossen werden.
 - grouping: groups enthält mindestens zwei benannte Gruppen mit korrekt zugeordneten items, jeder Begriff kommt genau einmal vor.
 - markwords: passage enthält den zu markierenden Text; JEDES targetWords-Element kommt darin als ganzes Wort vor.
 - number: numericAnswer ist eine echte Zahl (auch 0), niemals null; tolerance ist nicht negativ.

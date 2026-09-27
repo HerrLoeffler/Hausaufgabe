@@ -40,7 +40,7 @@ fi
 
 mkdir -p public
 
-cp index.html app.js styles.css design-system.css ai-json-tools.js ai-client.js editor-drafts.js ai-review-state.js public/
+cp index.html app.js styles.css design-system.css ai-json-tools.js ai-client.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
 cp firebase-config.production.js public/firebase-config.js
 
 restore_staging_config() {

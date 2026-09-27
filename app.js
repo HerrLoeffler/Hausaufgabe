@@ -37,6 +37,7 @@ import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
 import { createAiClient } from "./ai-client.js?v=2.3.1-ai29";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai29";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-ai29";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-ai29";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -2299,7 +2300,11 @@ function normalizeImportedQuestion(rawInput, index, report) {
   if (type === "ordering") {
     const items = looseField(raw, ["items", "steps", "order", "elements", "reihenfolge"], []);
     q.items = Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : q.items;
+    const extraOrders = looseField(raw, ["acceptedOrders", "alternativeOrders"], []);
+    q.acceptedOrders = Array.isArray(extraOrders) ? extraOrders.filter(order => validOrder(order, q.items.length)) : [];
+    q.manualReview = orderingNeedsReview({ ...q, manualReview: raw.manualReview === true });
     if (q.items.length < 2) pushUnique(report.warnings, `Aufgabe ${index + 1}: Für eine Reihenfolge werden mindestens zwei Elemente benötigt.`);
+    if (q.manualReview) pushUnique(report.warnings, `Aufgabe ${index + 1}: Satzbau kann mehrere richtige Reihenfolgen haben. Ergänze Varianten und prüfe die Antworten manuell.`);
   }
 
   if (type === "grouping") {
@@ -2678,7 +2683,10 @@ function initializeTypeData(q, type) {
   }
   if (type === "truefalse") q.correctBoolean = q.correctBoolean ?? true;
   if (type === "matching") q.pairs = q.pairs?.length ? q.pairs : [{ left: "", right: "" }, { left: "", right: "" }];
-  if (type === "ordering") q.items = q.items?.length ? q.items : ["", ""];
+  if (type === "ordering") {
+    q.items = q.items?.length ? q.items : ["", ""];
+    q.acceptedOrders = Array.isArray(q.acceptedOrders) ? q.acceptedOrders : [];
+  }
   if (type === "grouping") q.groups = q.groups?.length ? q.groups : [{ name: "Kategorie 1", items: [] }, { name: "Kategorie 2", items: [] }];
   if (type === "markwords") {
     q.passage = q.passage || "";
@@ -3862,7 +3870,7 @@ function renderAnswerEditor(container, q) {
   if (q.type === "ordering") {
     const info = document.createElement("p");
     info.className = "hint";
-    info.textContent = "Gib die Elemente bereits in der richtigen Reihenfolge ein. Für Schüler werden sie gemischt.";
+    info.textContent = "Gib eine richtige Reihenfolge ein. Für Schüler werden die Bausteine gemischt. Bei Satzbau weitere gültige Reihenfolgen ergänzen; die Bewertung bleibt zur Kontrolle offen.";
     container.appendChild(info);
     q.items.forEach((item, idx) => {
       const row = document.createElement("div");
@@ -3882,6 +3890,14 @@ function renderAnswerEditor(container, q) {
       renderQuestions();
       markDirty();
     }));
+    const alternatives = document.createElement("label");
+    alternatives.className = "stack compact orderingAlternatives";
+    alternatives.innerHTML = `<span>Weitere richtige Reihenfolgen <small>(Positionsnummern; eine Variante pro Zeile)</small></span><textarea rows="3" placeholder="z. B. 3, 2, 1, 4">${escapeHtml((q.acceptedOrders || []).map(order => order.map(index => index + 1).join(", ")).join("\n"))}</textarea><small class="hint">Jede Zeile muss jeden Baustein genau einmal enthalten. Satzbauantworten bitte zusätzlich manuell prüfen.</small>`;
+    alternatives.querySelector("textarea").addEventListener("input", (event) => {
+      q.acceptedOrdersInput = event.target.value;
+      markDirty();
+    });
+    container.appendChild(alternatives);
     return;
   }
 
@@ -4108,6 +4124,10 @@ function validateQuiz() {
     }
     if (q.type === "ordering") {
       if ((q.items || []).length < 2 || q.items.some((x) => !String(x).trim())) return `Aufgabe ${i + 1}: Mindestens zwei vollständige Elemente für die Reihenfolge erforderlich.`;
+      const lines = String(q.acceptedOrdersInput ?? (q.acceptedOrders || []).map(order => order.map(index => index + 1).join(", ")).join("\n")).split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      const orders = lines.map(line => line.split(/[;,\s]+/).map(value => Number(value) - 1));
+      if (orders.some(order => !validOrder(order, q.items.length))) return `Aufgabe ${i + 1}: Jede zusätzliche Reihenfolge muss alle Positionsnummern von 1 bis ${q.items.length} genau einmal enthalten.`;
+      q.acceptedOrders = orders;
     }
     if (q.type === "grouping") {
       if ((q.groups || []).length < 2 || q.groups.some((g) => !g.name.trim() || !(g.items || []).length)) return `Aufgabe ${i + 1}: Jede Kategorie braucht einen Namen und mindestens ein Element.`;
@@ -4150,7 +4170,11 @@ function sanitizeQuestionForSave(q) {
   }
   if (q.type === "truefalse") base.correctBoolean = Boolean(q.correctBoolean);
   if (q.type === "matching") base.pairs = (q.pairs || []).map((p) => ({ left: String(p.left || "").trim(), right: String(p.right || "").trim() }));
-  if (q.type === "ordering") base.items = (q.items || []).map((x) => String(x).trim());
+  if (q.type === "ordering") {
+    base.items = (q.items || []).map((x) => String(x).trim());
+    base.acceptedOrders = (q.acceptedOrders || []).filter(order => validOrder(order, base.items.length));
+    base.manualReview = orderingNeedsReview(q);
+  }
   if (q.type === "grouping") base.groups = (q.groups || []).map((g) => ({ name: String(g.name || "").trim(), items: (g.items || []).map((x) => String(x).trim()).filter(Boolean) }));
   if (q.type === "markwords") {
     base.passage = String(q.passage || "").trim();
@@ -5238,12 +5262,9 @@ function evaluateAnswer(q, given) {
     return { awarded: round1(ratio * max), max, needsReview: false, correct: good === total };
   }
   if (q.type === "ordering") {
-    const total = (q.items || []).length;
-    const values = Array.isArray(given) ? given : [];
-    let good = 0;
-    for (let i = 0; i < total; i += 1) if (String(values[i]) === String(i)) good += 1;
+    const { good, total, correct } = gradeOrdering(q, given);
     const ratio = total ? good / total : 0;
-    return { awarded: round1(ratio * max), max, needsReview: false, correct: good === total };
+    return { awarded: round1(ratio * max), max, needsReview: orderingNeedsReview(q), correct };
   }
   if (q.type === "grouping") {
     let total = 0;
@@ -5404,7 +5425,7 @@ function correctDisplay(q) {
   if (q.type === "truefalse") return q.correctBoolean ? "Richtig" : "Falsch";
   if (q.type === "gapfill") return parseGaps(q.text).map((g, i) => `Lücke ${i + 1}: ${g.answers.join(" / ")}`).join("; ");
   if (q.type === "matching") return (q.pairs || []).map((p) => `${p.left} → ${p.right}`).join("; ");
-  if (q.type === "ordering") return (q.items || []).join(" → ");
+  if (q.type === "ordering") return acceptedOrderingOrders(q).map(order => order.map(index => q.items[index]).join(" → ")).join(" / ");
   if (q.type === "grouping") return (q.groups || []).map((g) => `${g.name}: ${(g.items || []).join(", ")}`).join("; ");
   if (q.type === "markwords") return tokenizeWords(q.passage).filter((t) => t.isWord && markwordCorrectIndexes(q).includes(String(t.wordIndex))).map((t) => t.text).join(", ");
   return (q.options || []).filter((o) => o.correct).map((o) => o.text).join(", ");
@@ -5506,6 +5527,36 @@ function openReview(id) {
     const div = document.createElement("div");
     div.className = "reviewQuestion";
     div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label>Punkte:</label><input class="manualPoints" data-qid="${q.id}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
+    const imageSrc = getQuestionImageSrc(q);
+    if (imageSrc) {
+      const figure = document.createElement("figure");
+      figure.className = "reviewQuestionImage";
+      const img = document.createElement("img");
+      img.src = imageSrc;
+      img.alt = q.imageAlt || `Bild zu Aufgabe ${i + 1}`;
+      img.loading = "lazy";
+      figure.appendChild(img);
+      div.querySelector("strong")?.after(figure);
+    }
+    if (Array.isArray(q.options) && q.options.some(option => option.imageDataUrl)) {
+      const options = document.createElement("div");
+      options.className = "reviewChoiceImages";
+      q.options.forEach((option, index) => {
+        if (!option.imageDataUrl) return;
+        const img = document.createElement("img");
+        img.src = option.imageDataUrl;
+        img.alt = option.imageAlt || `Antwortbild ${index + 1}`;
+        img.loading = "lazy";
+        options.appendChild(img);
+      });
+      div.querySelector("strong")?.after(options);
+    }
+    if (q.type === "ordering" && orderingNeedsReview(q)) {
+      const hint = document.createElement("p");
+      hint.className = "hint";
+      hint.textContent = "Satzbau: Weitere grammatikalisch richtige Reihenfolgen können möglich sein. Bitte die Antwort prüfen und Punkte gegebenenfalls anpassen.";
+      div.querySelector(".reviewPoints")?.before(hint);
+    }
     root.appendChild(div);
   });
 

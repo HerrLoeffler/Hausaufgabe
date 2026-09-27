@@ -56,9 +56,7 @@ Firebase Console → Firestore Database → Rules / Regeln.
 
 Den Inhalt aus `firestore.rules` einfügen und **Publish / Veröffentlichen**.
 
-Wichtig: Der Legacy-Block am Ende hält die bisherige V1-Collection `/submissions` vorübergehend weiter offen, damit deine alte Live-Seite nicht sofort kaputtgeht.
-
-Sobald V2 die alte V1 ersetzt, sollte dieser Legacy-Block entfernt werden.
+Wichtig: Die alte V1-Collection `/submissions` ist in diesen Regeln für Clients gesperrt. Die V2-App nutzt `quizzes/{code}/submissions`. Vor einem Regel-Deployment den tatsächlich verwendeten Stand und alte V1-Nutzung prüfen; zuerst nur im Staging-Projekt testen. Vorhandene V1-Daten werden durch die Regeländerung nicht gelöscht.
 
 ## 4. `dev` separat testen
 
