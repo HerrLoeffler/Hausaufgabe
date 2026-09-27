@@ -1,8 +1,8 @@
 const ASSETS = Object.freeze({
-  guide: "assets/gradecrew/penguin-guide.svg",
-  create: "assets/gradecrew/falcon-create.svg",
-  improve: "assets/gradecrew/fox-improve.svg",
-  grade: "assets/gradecrew/owl-grade.svg"
+  guide: "/assets/gradecrew/penguin-guide.svg",
+  create: "/assets/gradecrew/falcon-create.svg",
+  improve: "/assets/gradecrew/fox-improve.svg",
+  grade: "/assets/gradecrew/owl-grade.svg"
 });
 
 function ensureBrandStyles() {
