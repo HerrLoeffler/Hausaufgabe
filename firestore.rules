@@ -40,12 +40,13 @@ service cloud.firestore {
         && quiz.get('rightsHold', false) == false;
     }
 
-    // Lehrerprofile. Rolle und Sperrstatus können durch normale Nutzer nicht verändert werden.
+    // Lehrerprofile. Rolle, Sperrstatus und Beta-Freigabe können durch normale Nutzer nicht verändert werden.
     match /users/{userId} {
       allow create: if signedIn()
                     && request.auth.uid == userId
                     && request.resource.data.get('role', 'teacher') == 'teacher'
-                    && request.resource.data.get('status', 'active') == 'active';
+                    && request.resource.data.get('status', 'active') == 'active'
+                    && request.resource.data.get('aiBetaEnabled', false) == false;
 
       allow get: if signedIn() && (request.auth.uid == userId || isAdmin());
       allow list: if isAdmin();
@@ -56,6 +57,7 @@ service cloud.firestore {
                       && request.auth.uid == userId
                       && request.resource.data.get('role', 'teacher') == resource.data.get('role', 'teacher')
                       && request.resource.data.get('status', 'active') == resource.data.get('status', 'active')
+                      && request.resource.data.get('aiBetaEnabled', false) == resource.data.get('aiBetaEnabled', false)
                       && request.resource.data.get('aiPreferences', '') is string
                       && request.resource.data.get('aiPreferences', '').size() <= 1000
                     );
