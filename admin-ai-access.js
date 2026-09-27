@@ -3,6 +3,7 @@ import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/fi
 
 let selectedUserId = "";
 let refreshToken = 0;
+let decorating = false;
 
 function toast(message, type = "success") {
   const node = document.getElementById("toast");
@@ -20,27 +21,35 @@ function removeExisting() {
 }
 
 async function decorateTeacherDetail() {
+  if (decorating) return;
   const detail = document.getElementById("adminTeacherDetail");
-  if (!detail || detail.classList.contains("hidden") || !selectedUserId) return;
+  const uid = selectedUserId;
+  if (!detail || detail.classList.contains("hidden") || !uid) return;
+
+  decorating = true;
   const token = ++refreshToken;
   const app = getApps()[0];
-  if (!app) return;
+  if (!app) {
+    decorating = false;
+    return;
+  }
   const db = getFirestore(app);
 
   try {
-    const snap = await getDoc(doc(db, "users", selectedUserId));
-    if (token !== refreshToken || !snap.exists()) return;
+    const snap = await getDoc(doc(db, "users", uid));
+    if (token !== refreshToken || selectedUserId !== uid || !snap.exists()) return;
     const profile = snap.data() || {};
-    removeExisting();
 
     const meta = detail.querySelector(".adminDetailMeta");
     const actions = detail.querySelector(".adminDetailActions");
     if (!meta || !actions) return;
 
-    const metaItem = document.createElement("span");
-    metaItem.id = "adminAiBetaMeta";
+    removeExisting();
     const alwaysAllowed = profile.role === "admin";
     const enabled = alwaysAllowed || profile.aiBetaEnabled === true;
+
+    const metaItem = document.createElement("span");
+    metaItem.id = "adminAiBetaMeta";
     metaItem.innerHTML = `KI-Beta: <strong class="${enabled ? "aiAccessOn" : "aiAccessOff"}">${alwaysAllowed ? "Admin · immer freigeschaltet" : enabled ? "Freigeschaltet" : "Nicht freigeschaltet"}</strong>`;
     meta.appendChild(metaItem);
 
@@ -60,7 +69,7 @@ async function decorateTeacherDetail() {
       button.disabled = true;
       button.textContent = next ? "Wird freigeschaltet …" : "Wird gesperrt …";
       try {
-        await updateDoc(doc(db, "users", selectedUserId), { aiBetaEnabled: next });
+        await updateDoc(doc(db, "users", uid), { aiBetaEnabled: next });
         toast(next ? "KI-Beta wurde freigeschaltet." : "KI-Zugriff wurde gesperrt.");
         await decorateTeacherDetail();
       } catch (err) {
@@ -72,6 +81,8 @@ async function decorateTeacherDetail() {
     });
   } catch (err) {
     console.warn("KI-Beta-Status konnte nicht geladen werden:", err);
+  } finally {
+    decorating = false;
   }
 }
 
@@ -84,20 +95,18 @@ document.addEventListener("click", event => {
   }
   if (target?.closest(".closeAdminDetail")) {
     selectedUserId = "";
+    refreshToken += 1;
     removeExisting();
   }
 }, true);
 
-const observer = new MutationObserver(() => {
-  if (selectedUserId) window.setTimeout(decorateTeacherDetail, 0);
-});
-
 function start() {
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-  const style = document.createElement("style");
-  style.id = "gradecrewAdminAiAccessStyles";
-  style.textContent = `.aiAccessOn{color:#177245}.aiAccessOff{color:#8a5a00}#adminAiBetaToggle{white-space:nowrap}`;
-  document.head.appendChild(style);
+  if (!document.getElementById("gradecrewAdminAiAccessStyles")) {
+    const style = document.createElement("style");
+    style.id = "gradecrewAdminAiAccessStyles";
+    style.textContent = `.aiAccessOn{color:#177245}.aiAccessOff{color:#8a5a00}#adminAiBetaToggle{white-space:nowrap}`;
+    document.head.appendChild(style);
+  }
 }
 
 if (document.body) start();
