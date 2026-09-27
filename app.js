@@ -205,6 +205,11 @@ let firstAiGuideStep = "";
 let firstAiGuideTarget = null;
 let firstAiGuideResizeHandler = null;
 let firstAiGuideOfferTimer = null;
+let firstAiGuideForceConsumed = false;
+
+function firstAiGuideForcePreview() {
+  return new URLSearchParams(location.search).get("firstGuide") === "1" && !firstAiGuideForceConsumed;
+}
 
 function firstTestGuideKey() {
   return state.user ? `firstAiGuide:${state.user.uid}:${FIRST_AI_GUIDE_VERSION}` : "";
@@ -219,7 +224,10 @@ function firstAiGuideSkippedThisSession() {
 }
 
 function firstAiGuideEligible() {
-  if (!state.user || isSuspended() || firstAiGuideDone() || firstAiGuideSkippedThisSession()) return false;
+  const forced = firstAiGuideForcePreview();
+  if (!state.user || isSuspended()) return false;
+  if (forced) return true;
+  if (firstAiGuideDone() || firstAiGuideSkippedThisSession()) return false;
   const quizzes = activeQuizzes().filter(q => q.generationStatus !== "running");
   const hasAiWork = state.aiJobs.some(job => ["queued", "running", "ready"].includes(job.status));
   return quizzes.length === 0 && !hasAiWork;
@@ -416,6 +424,7 @@ function scheduleFirstAiGuideOffer(attempt = 0) {
       if (attempt < 40) scheduleFirstAiGuideOffer(attempt + 1);
       return;
     }
+    if (firstAiGuideForcePreview()) firstAiGuideForceConsumed = true;
     renderFirstAiGuideStep("intro");
   }, attempt ? 500 : 650);
 }
