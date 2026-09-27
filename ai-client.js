@@ -1,6 +1,7 @@
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { getStorage, ref, uploadBytesResumable, deleteObject } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 import { applyVariantInstruction } from "./ui-enhancements.js?v=2.3.1-ai31";
+import "./gradecrew-brand.js?v=gradecrew-v1";
 
 const REGION = "europe-west1";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
