@@ -135,3 +135,41 @@ test("image choices reject placeholder scene descriptions",()=>{
   q.mediaIntent={kind:"image_choices",prompt:"",altText:"",count:2,sourceMaterialId:"",reason:""};
   assert.ok(validateQuestion(q,{allowImages:true,allowImageChoices:true}).some(error=>/Szenenbeschreibung/.test(error)));
 });
+
+test("missing answers cannot become a false boolean or numeric zero", () => {
+  for (const value of [null, undefined, "", " ", true]) {
+    const q = base("number"); q.numericAnswer = value;
+    assert.ok(validateQuestion(normalizeQuestion(q)).some(error => error.includes("Numerische Lösung")));
+  }
+  const zero = base("number"); zero.numericAnswer = 0;
+  assert.deepEqual(validateQuestion(normalizeQuestion(zero)), []);
+  const falseAnswer = base("truefalse"); falseAnswer.correctBoolean = "false";
+  assert.equal(normalizeQuestion(falseAnswer).correctBoolean, false);
+  falseAnswer.correctBoolean = null;
+  assert.ok(validateQuestion(normalizeQuestion(falseAnswer)).some(error => error.includes("Richtig/Falsch")));
+});
+test("gap answers must be nonblank and correctly bracketed", () => {
+  for (const text of ["Der Hund [ ].", "Der Hund [bellt|].", "Der Hund [bellt] und [läuft."]) {
+    const q = base("gapfill"); q.text = text;
+    assert.ok(validateQuestion(q).length, text);
+  }
+});
+test("all marking targets must occur as complete selectable words", () => {
+  const q = base("markwords"); q.passage = "Das Haus ist groß.";
+  for (const targets of [["Haus", "Baum"], ["aus"], ["Haus ist"]]) {
+    q.targetWords = targets;
+    assert.ok(validateQuestion(q).some(error => error.includes("ganzes Wort")));
+  }
+  q.targetWords = ["Haus"];
+  assert.deepEqual(validateQuestion(q), []);
+});
+test("malformed nested output becomes a validation issue without crashing normalization", () => {
+  for (const raw of [null, [], { type: "single", options: [null] }, { type: "matching", pairs: [null] }, { type: "grouping", groups: [null] }]) {
+    assert.ok(validateQuestion(normalizeQuestion(raw)).length);
+  }
+});
+test("string false options are normalized explicitly instead of becoming true", () => {
+  const q = base(); q.options[1].correct = "false";
+  assert.equal(normalizeQuestion(q).options[1].correct, false);
+  assert.deepEqual(validateQuestion(normalizeQuestion(q)), []);
+});

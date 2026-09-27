@@ -10,7 +10,9 @@ const { getStorage } = require("firebase-admin/storage");
 const { getFunctions } = require("firebase-admin/functions");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
-const { testSchema, questionSchema } = require("./lib/schemas");
+const { questionSchema, questionSchemaForType, testSchemaForRequest } = require("./lib/schemas");
+const { requestStructured, AiResponseError } = require("./lib/structured-response");
+const { generateTestInBatches } = require("./lib/test-batches");
 const { validateTest, validateQuestion, normalizeQuestion, sameQuestion, variantRepeats } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
@@ -30,12 +32,12 @@ const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };
 
 function reportAiError(err, phase) {
-  const reference = randomUUID().slice(0, 8);
+  const reference = /^[a-zA-Z0-9-]{1,40}$/.test(err?.details?.reference || "") ? err.details.reference : randomUUID().slice(0, 8);
   if (err instanceof HttpsError) {
     const details = err.details && typeof err.details === "object" && !Array.isArray(err.details) ? err.details : {};
     const errors = Array.isArray(details.errors) ? details.errors.slice(0, 10).map(value => String(value).slice(0, 240)) : [];
     console.warn("KI-Anfrage kontrolliert beendet:", { reference, phase, code: err.code, message: String(err.message || "").slice(0, 300), errors });
-    return new HttpsError(err.code, err.message, { ...details, reference, phase });
+    return new HttpsError(err.code, err.message, { ...details, reference, phase: details.phase || phase });
   }
   const programmingError = ["ReferenceError", "TypeError"].includes(err?.name) && !err?.status;
   console.error("KI-Anfrage fehlgeschlagen:", {
@@ -132,18 +134,16 @@ function cleanInput(data = {}) {
 }
 
 async function structuredResponse({ schema, schemaName, userPrompt, content = [], systemPrompt = SYSTEM }) {
-  let response;
-  try { response = await getOpenAI().responses.create({
-    model: TEXT_MODEL,
-    store: false,
-    reasoning: { effort: "medium" },
-    input: [{ role: "system", content: [{ type: "input_text", text: systemPrompt }] }, { role: "user", content: [{ type: "input_text", text: userPrompt }, ...content] }],
-    text: { format: { type: "json_schema", name: schemaName, strict: true, schema } }
-  }); } catch (err) { throw reportAiError(err, schemaName); }
-  const raw = response.output_text;
-  if (!raw) throw new HttpsError("unavailable", "Die KI hat keine verwertbare Antwort geliefert. Bitte erneut versuchen.");
-  try { return { data: JSON.parse(raw), usage: response.usage || {} }; }
-  catch (err) { throw reportAiError(err, `${schemaName}-json`); }
+  try {
+    return await requestStructured(params => getOpenAI().responses.create(params, { timeout: 180000, maxRetries: 2 }), {
+      model: TEXT_MODEL, store: false, reasoning: { effort: "medium" },
+      input: [{ role: "system", content: [{ type: "input_text", text: systemPrompt }] }, { role: "user", content: [{ type: "input_text", text: userPrompt }, ...content] }],
+      text: { format: { type: "json_schema", name: schemaName, strict: true, schema } }
+    });
+  } catch (err) {
+    const failure = err instanceof AiResponseError ? new HttpsError(err.code, err.message, err.details) : err;
+    throw reportAiError(failure, schemaName);
+  }
 }
 
 async function loadQualityMemory(context = {}) {
@@ -166,7 +166,7 @@ async function loadQualityMemory(context = {}) {
 async function reviewDraft(test, memory) {
   try {
     return await structuredResponse({
-      schema: reviewSchema, schemaName: "testify_quality_review_v1", systemPrompt: REVIEW_SYSTEM,
+      schema: { ...reviewSchema, properties: { issues: { ...reviewSchema.properties.issues, items: { ...reviewSchema.properties.issues.items, properties: { ...reviewSchema.properties.issues.items.properties, index: { type: "integer", minimum: 0, maximum: Math.max(0, test.questions.length - 1) } } } } } }, schemaName: "testify_quality_review_v2", systemPrompt: REVIEW_SYSTEM,
       userPrompt: reviewPrompt(test, memory)
     });
   } catch (err) {
@@ -202,16 +202,21 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
-    const first = await structuredResponse({ schema: testSchema, schemaName: "testify_test_v1", userPrompt: generationPrompt, content: materialContent });
+    const first = await generateTestInBatches(input, async (batch, prior) => {
+      await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
+      const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
+      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none" }),
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${priorContext}`, content: materialContent });
+    });
     const usage = { ...first.usage };
     const addUsage = next => {
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
     };
-    const normalizeTest = data => ({ ...data, questions: data.questions.map(normalizeQuestion) });
+    const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
     const repairs = {
       generateQuestion: async ({ test, index, original, reasons, attempt }) => {
         const replacement = await structuredResponse({
-          schema: questionSchema, schemaName: "testify_test_question_replacement_v1",
+          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }), schemaName: "testify_test_question_replacement_v2",
           userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}`, content: materialContent
         });
         addUsage(replacement.usage);
@@ -219,7 +224,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       },
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
-          schema: testSchema, schemaName: "testify_test_repair_v1",
+          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none" }), schemaName: "testify_test_repair_v2",
           userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });

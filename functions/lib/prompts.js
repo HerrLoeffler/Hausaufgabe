@@ -7,6 +7,19 @@ Nutze Material nur, um Inhalte und Kompetenzen abzuleiten. Übernimm keine läng
 Halte die von der Lehrkraft gewählte Anzahl an Bildern in den Aufgabenstellungen exakt ein; bei älteren Anfragen ohne feste Anzahl nutze solche Bilder sparsam und nur mit didaktischem Mehrwert. Erzeuge keine Bildabsicht, wenn Bilder deaktiviert sind. Für exakte Diagramme, Beschriftungen oder Geometrie vermeide unzuverlässige generative Bilder und wähle stattdessen geeignete andere Bildmotive. Verwende mediaIntent.kind ausschließlich none oder ai_generated. Antwortoptionen bestehen immer aus eindeutigem Text; erzeuge keine Antwortbilder.\n
 
 Qualitätsprüfung vor der Ausgabe: Die Lösung darf nicht bereits im Fragetext, in der Aufgabenstellung oder im abgebildeten Beispiel stehen. Bei Zuordnungen muss jede linke Seite genau eine eindeutige rechte Lösung haben; weder gleiche noch sinnverwandte Antwortwörter dürfen mehrere Zuordnungen ermöglichen. Bei Gruppierungen darf jeder Begriff nur in genau eine Gruppe passen; wähle insbesondere bei Wortarten keine Begriffe, die ohne Satzkontext mehreren Wortarten angehören können. Bei Aufgaben zur Anzahl von Kommas zeige den zu bearbeitenden Satz ohne bereits gesetzte Kommas. Bei Aufgabenbildern muss die Frage anhand des Bildes fachlich sinnvoll und eindeutig lösbar sein; abstrakte zeitliche Bedeutungen wie „wieder“ lassen sich durch ein einzelnes Bild gewöhnlich nicht eindeutig darstellen. Prüfe, ob jede Bildbeschreibung konkret umsetzbar ist.\n
+Verbindliche Formate für die Aufgabentypen:
+- single/dropdown: options enthält mindestens zwei verschiedene Texte und genau ein correct:true.
+- multi: options enthält mindestens zwei verschiedene Texte, davon mindestens ein correct:true und mindestens ein correct:false.
+- truefalse: text ist EINE zu bewertende Aussage. correctBoolean ist zwingend true oder false (JSON-Boolean), niemals null, niemals ein String.
+- gapfill: text ist der vollständige Lückentext mit der Lösung DIREKT in eckigen Klammern: "Der Hund [bellt]." Mehrere Lücken: "[Heute] geht Lina [zur Schule]." Keine Unterstriche, keine ungelösten Platzhalter, keine separate Lösungsliste. Klammerlösungen werden den Lernenden als Eingabefelder angezeigt, sie sind kein Lösungshinweis.
+- matching: pairs enthält mindestens zwei eindeutige {left,right}-Paare.
+- ordering: items enthält mindestens zwei verschiedene Elemente bereits in der richtigen Reihenfolge.
+- grouping: groups enthält mindestens zwei benannte Gruppen mit korrekt zugeordneten items, jeder Begriff kommt genau einmal vor.
+- markwords: passage enthält den zu markierenden Text; JEDES targetWords-Element kommt darin als ganzes Wort vor.
+- number: numericAnswer ist eine echte Zahl (auch 0), niemals null; tolerance ist nicht negativ.
+- text: acceptedAnswers enthält die korrekten Antworten oder manualReview ist ausdrücklich true.
+Prüfe diese Regeln auch bei jeder Ersatzaufgabe. Felder ohne Bedeutung für den gewählten Typ sind keine Lösungen.
+
 Gib ausschließlich Daten gemäß dem vorgegebenen JSON-Schema zurück.`;
 
 function testUserPrompt(input) {

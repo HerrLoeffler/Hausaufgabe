@@ -44,7 +44,7 @@ test("screenshot case: retries task 7 with duplicate answers and preserves exact
   bad.options = [{ text: "gleich", correct: true }, { text: "gleich!", correct: false }];
   const opts = { ...options(7), imageQuestionCount: 1 };
   let calls = 0;
-  const result = await validateAndRepairTest({ title: "Bilder", questions: [goodImage, ...[2, 3, 4, 5, 6].map(question), bad] }, opts, {
+  const result = await validateAndRepairTest({ title: "Bilder", questions: [goodImage, ...[2, 3, 4, 5, 6].map(n => question(n)), bad] }, opts, {
     generateQuestion: async ({ index, reasons, attempt }) => {
       assert.equal(index, 6);
       calls += 1;
@@ -114,7 +114,7 @@ test("repairs a global question-count error with one complete regeneration", asy
 
 test("regenerates an excessive question count instead of failing during point balancing", async () => {
   const opts = options(2);
-  const result = await validateAndRepairTest({ title: "A", questions: [1, 2, 3, 4, 5].map(question) }, opts, {
+  const result = await validateAndRepairTest({ title: "A", questions: [1, 2, 3, 4, 5].map(n => question(n)) }, opts, {
     generateQuestion: async () => { throw new Error("Not a question error"); },
     regenerateTest: async () => ({ title: "A", questions: [question(1), question(2)] })
   });
@@ -182,7 +182,7 @@ test("does not return a broken test after the bounded repair budget", async () =
   let calls = 0;
   let full = 0;
   const result = await validateAndRepairTest({ title: "A", questions: [bad] }, options(1), {
-    generateQuestion: async () => { calls += 1; return question(1); },
+    generateQuestion: async () => { calls += 1; return bad; },
     regenerateTest: async draft => { full += 1; return draft; },
     maxQuestionAttempts: 4
   });
@@ -260,4 +260,36 @@ test("regression: image answer placeholders are repaired instead of aborting the
   assert.equal(result.test.questions.length, 10);
   assert.equal(result.test.questions[7].options[0].text, "Bild A");
   assert.match(result.test.questions[7].options[0].imageScene, /Buch.*unter.*Tisch/i);
+});
+
+test("RPT-MUJS1QL5-01B32: 50 tasks, 40 points, five missing booleans and five gap solutions", async () => {
+  const questions = Array.from({ length: 50 }, (_, i) => question(100 + i));
+  for (let i = 10; i < 15; i++) questions[i] = normalizeQuestion({ type: "truefalse", text: `Aussage ${i}: Ein Satz kann mehrere Satzglieder enthalten.`, points: 1, correctBoolean: null });
+  for (let i = 20; i < 25; i++) questions[i] = normalizeQuestion({ type: "gapfill", text: `Satz ${i}: Der Hund ___.`, points: 1 });
+  const opts = { ...options(50), allowedTypes: ["single", "truefalse", "gapfill"], targetPoints: 40 };
+  const calls = [];
+  const result = await validateAndRepairTest({ title: "Satzbaustelle", questions }, opts, {
+    generateQuestion: async ({ index, original }) => {
+      calls.push(index);
+      return original.type === "truefalse" ? { ...original, correctBoolean: true } : { ...original, text: `Satz ${index}: Der Hund [bellt].` };
+    }, regenerateTest: async () => { throw new Error("Good tasks must be retained"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(calls.length, 10);
+  assert.equal(result.test.questions.length, 50);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 40);
+  for (const index of [0, 9, 15, 19, 25, 49]) assert.equal(result.test.questions[index].text, questions[index].text);
+});
+test("all 50 faulty slots get a replacement chance without regenerating the test", async () => {
+  const questions = Array.from({ length: 50 }, (_, i) => normalizeQuestion({ type: "truefalse", text: `Die Zahl ${i} ist nicht negativ.`, points: 1, correctBoolean: null }));
+  const visits = [];
+  const result = await validateAndRepairTest({ title: "A", questions }, { ...options(50), allowedTypes: ["truefalse"] }, {
+    generateQuestion: async ({ index, original, attempt }) => {
+      visits.push(index);
+      return index === 0 && attempt === 1 ? original : { ...original, correctBoolean: true };
+    }, regenerateTest: async () => { throw new Error("No full regeneration expected"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(visits.slice(0, 50), Array.from({ length: 50 }, (_, i) => i));
+  assert.equal(visits[50], 0);
 });

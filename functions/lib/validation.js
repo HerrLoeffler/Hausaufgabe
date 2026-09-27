@@ -3,7 +3,16 @@
 const { QUESTION_TYPES, LIMITS } = require("./constants");
 
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
-function normalizeText(value) { return String(value ?? "").trim(); }
+function normalizeText(value) { return ["string", "number"].includes(typeof value) ? String(value).trim() : ""; }
+function explicitBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const text = value.trim().toLocaleLowerCase("de");
+    if (["true", "wahr", "richtig"].includes(text)) return true;
+    if (["false", "falsch"].includes(text)) return false;
+  }
+  return value; // A missing/ambiguous answer must fail validation, never become false.
+}
 function comparable(value) {
   return normalizeText(value)
     .normalize("NFKC")
@@ -54,22 +63,29 @@ function variantRepeats(a, b) {
 
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {
   const errors = [];
-  if (!q || typeof q !== "object") return ["Aufgabe fehlt."];
+  if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
   if (!normalizeText(q.text)) errors.push("Fragetext fehlt.");
-  if (!(Number(q.points) >= 0.5) || Math.abs(Number(q.points) * 2 - Math.round(Number(q.points) * 2)) > 1e-9) errors.push("Punkte müssen positive 0,5-Schritte sein.");
+  if (!Number.isFinite(Number(q.points)) || !(Number(q.points) >= 0.5) || Math.abs(Number(q.points) * 2 - Math.round(Number(q.points) * 2)) > 1e-9) errors.push("Punkte müssen positive 0,5-Schritte sein.");
   if (["single", "dropdown", "multi"].includes(q.type)) {
     const opts = Array.isArray(q.options) ? q.options : [];
-    if (opts.length < 2 || opts.some(o => !normalizeText(o.text))) errors.push("Antwortoptionen unvollständig.");
-    const labels = opts.map(o => comparableAnswer(o.text)).filter(Boolean);
+    if (opts.length < 2 || opts.some(o => !normalizeText(o?.text))) errors.push("Antwortoptionen unvollständig.");
+    const labels = opts.map(o => comparableAnswer(o?.text)).filter(Boolean);
     if (new Set(labels).size !== labels.length) errors.push("Antwortoptionen müssen eindeutig sein.");
-    const correct = opts.filter(o => o.correct).length;
+    if (opts.some(o => typeof o?.correct !== "boolean")) errors.push("Antwortmarkierungen müssen true oder false sein.");
+    const correct = opts.filter(o => o?.correct === true).length;
     if (q.type === "multi" ? correct < 1 : correct !== 1) errors.push(q.type === "multi" ? "Multiple Choice braucht mindestens eine richtige Antwort." : "Genau eine Antwort muss richtig sein.");
   }
   if (q.type === "text" && !q.manualReview && !(Array.isArray(q.acceptedAnswers) && q.acceptedAnswers.some(normalizeText))) errors.push("Freitext braucht Lösungen oder manuelle Prüfung.");
   if (q.type === "truefalse" && typeof q.correctBoolean !== "boolean") errors.push("Richtig/Falsch-Lösung fehlt.");
-  if (q.type === "gapfill" && !/\[[^\]]+\]/.test(q.text || "")) errors.push("Lückentext enthält keine [Lösung].");
-  if (q.type === "matching" && (!Array.isArray(q.pairs) || q.pairs.length < 2 || q.pairs.some(p => !normalizeText(p.left) || !normalizeText(p.right)))) errors.push("Zuordnung braucht mindestens zwei vollständige Paare.");
+  if (q.type === "gapfill") {
+    const text = normalizeText(q.text);
+    const gaps = [...text.matchAll(/\[([^\[\]]*)\]/g)];
+    if (!gaps.length) errors.push("Lückentext enthält keine [Lösung].");
+    else if (gaps.some(gap => gap[1].split("|").some(answer => !answer.trim()))) errors.push("Jede Lücke braucht eine nicht leere Lösung.");
+    if (/[\[\]]/.test(text.replace(/\[[^\[\]]*\]/g, ""))) errors.push("Klammern im Lückentext sind nicht vollständig.");
+  }
+  if (q.type === "matching" && (!Array.isArray(q.pairs) || q.pairs.length < 2 || q.pairs.some(p => !normalizeText(p?.left) || !normalizeText(p?.right)))) errors.push("Zuordnung braucht mindestens zwei vollständige Paare.");
   if (q.type === "matching" && Array.isArray(q.pairs)) {
     for (const side of ["left", "right"]) {
       const entries = q.pairs.map(pair => comparableAnswer(pair?.[side])).filter(Boolean);
@@ -81,7 +97,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     const entries = q.items.map(comparableAnswer).filter(Boolean);
     if (new Set(entries).size !== entries.length) errors.push("Sortierelemente müssen eindeutig sein.");
   }
-  if (q.type === "grouping" && (!Array.isArray(q.groups) || q.groups.length < 2 || q.groups.some(g => !normalizeText(g.name) || !Array.isArray(g.items) || !g.items.length))) errors.push("Gruppierung braucht mindestens zwei vollständige Gruppen.");
+  if (q.type === "grouping" && (!Array.isArray(q.groups) || q.groups.length < 2 || q.groups.some(g => !normalizeText(g?.name) || !Array.isArray(g?.items) || !g.items.length || g.items.some(item => !normalizeText(item))))) errors.push("Gruppierung braucht mindestens zwei vollständige Gruppen.");
   if (q.type === "grouping" && Array.isArray(q.groups)) {
     const names = q.groups.map(group => comparable(group?.name)).filter(Boolean);
     const items = q.groups.flatMap(group => Array.isArray(group?.items) ? group.items.map(comparableAnswer).filter(Boolean) : []);
@@ -92,16 +108,17 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (!normalizeText(q.passage)) errors.push("Markiertext fehlt.");
     const targets = Array.isArray(q.targetWords) ? q.targetWords.filter(normalizeText) : [];
     if (!targets.length) errors.push("Zielwörter fehlen.");
-    const haystack = normalizeText(q.passage).toLocaleLowerCase("de");
-    if (targets.length && !targets.some(w => haystack.includes(normalizeText(w).toLocaleLowerCase("de")))) errors.push("Kein Zielwort kommt im Markiertext vor.");
+    const words = new Set((normalizeText(q.passage).match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu) || []).map(word => word.toLocaleLowerCase("de")));
+    if (targets.some(word => !words.has(normalizeText(word).toLocaleLowerCase("de")))) errors.push("Jedes Zielwort muss als ganzes Wort im Markiertext vorkommen.");
   }
-  if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) errors.push("Numerische Lösung fehlt.");
+  if (q.type === "number" && (q.numericAnswer === null || q.numericAnswer === undefined || typeof q.numericAnswer === "boolean" || !String(q.numericAnswer).trim() || !Number.isFinite(Number(q.numericAnswer)))) errors.push("Numerische Lösung fehlt.");
   if (q.type === "number" && /\b(?:wie viele|anzahl der)\s+komma(?:s|ta)?\b/i.test(q.text || "")) {
     const quotedSentences = [...String(q.text).matchAll(/„([^“]+)“|"([^"]+)"/g)].map(match => match[1] || match[2]);
     const sentence = quotedSentences.length ? quotedSentences.join(" ") : String(q.text).split(/[?:]/).slice(1).join(" ");
     if (sentence.includes(",")) errors.push("Bei einer Frage nach der Anzahl der Kommas darf der zu prüfende Satz noch keine Kommas enthalten.");
   }
   const mi = q.mediaIntent || { kind: "none" };
+  if (!["none", "ai_generated", "image_choices", "uploaded_crop"].includes(mi.kind)) errors.push("Unbekannte Bildart.");
   if (!allowImages && mi.kind !== "none") errors.push("Bilder sind für diesen Test deaktiviert.");
   if (!allowImageChoices && mi.kind === "image_choices") errors.push("Bildantworten sind deaktiviert.");
   if (mi.kind === "ai_generated" && !normalizeText(mi.prompt)) errors.push("Bildbeschreibung fehlt.");
@@ -132,29 +149,30 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
 }
 
 function normalizeQuestion(q) {
-  const copy = JSON.parse(JSON.stringify(q));
-  copy.points = Math.max(0.5, roundHalf(copy.points || 1));
+  const copy = q && typeof q === "object" && !Array.isArray(q) ? JSON.parse(JSON.stringify(q)) : {};
+  copy.points = Number.isFinite(Number(copy.points)) ? Math.max(0.5, roundHalf(copy.points || 1)) : 1;
   copy.text = normalizeText(copy.text);
-  copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o.text), correct: !!o.correct, imageScene: normalizeText(o.imageScene) })) : [];
+  copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o?.text), correct: explicitBoolean(o?.correct), imageScene: normalizeText(o?.imageScene) })) : [];
   if (["single", "dropdown", "multi"].includes(copy.type)) {
     const distinct = new Map();
     for (const option of copy.options) {
       const key = comparableAnswer(option.text);
       if (!key || !distinct.has(key)) distinct.set(key || Symbol(), option);
-      else distinct.get(key).correct ||= option.correct;
+      else if (typeof distinct.get(key).correct === "boolean" && typeof option.correct === "boolean") distinct.get(key).correct ||= option.correct;
     }
     // A single remaining choice cannot make a valid question; let the repair pass replace it.
     if (distinct.size >= 2) copy.options = [...distinct.values()];
   }
   copy.acceptedAnswers = Array.isArray(copy.acceptedAnswers) ? copy.acceptedAnswers.map(normalizeText).filter(Boolean) : [];
-  copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p.left), right: normalizeText(p.right) })) : [];
+  copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p?.left), right: normalizeText(p?.right) })) : [];
   copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];
-  copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g.name), items: Array.isArray(g.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];
+  copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g?.name), items: Array.isArray(g?.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];
   copy.targetWords = Array.isArray(copy.targetWords) ? copy.targetWords.map(normalizeText).filter(Boolean) : [];
   copy.passage = normalizeText(copy.passage);
+  if (copy.correctBoolean !== undefined) copy.correctBoolean = explicitBoolean(copy.correctBoolean);
   copy.unit = normalizeText(copy.unit);
   copy.tolerance = Math.max(0, Number(copy.tolerance) || 0);
-  copy.mediaIntent = copy.mediaIntent || { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
+  copy.mediaIntent = (copy.mediaIntent && typeof copy.mediaIntent === "object" && !Array.isArray(copy.mediaIntent) ? copy.mediaIntent : null) || { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
   return copy;
 }
 

@@ -24,7 +24,7 @@ function globalIssues(test, options) {
 function balanceTestPoints(test, targetPoints) {
   if (!Number.isFinite(targetPoints) || targetPoints <= 0 || !test.questions?.length) return test;
   const targetUnits = Math.round(targetPoints * 2);
-  const units = test.questions.map(q => Math.max(1, Math.round(Number(q.points) * 2)));
+  const units = test.questions.map(q => Number.isFinite(Number(q?.points)) ? Math.max(1, Math.round(Number(q.points) * 2)) : 2);
   if (targetUnits < units.length) throw new RangeError("Für diese Aufgabenanzahl sind mindestens 0,5 Punkte pro Aufgabe nötig.");
   let difference = targetUnits - units.reduce((sum, value) => sum + value, 0);
   if (!difference) return test;
@@ -84,7 +84,9 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
   const tried = new Map();
   const feedback = new Map();
   while (attempts < maxAttempts) {
-    const issue = questionIssues(test, options).find(({ index }) => (tried.get(index) || 0) < 3);
+    const issue = questionIssues(test, options)
+      .filter(({ index }) => (tried.get(index) || 0) < 3)
+      .sort((a, b) => (tried.get(a.index) || 0) - (tried.get(b.index) || 0) || a.index - b.index)[0];
     if (!issue) break;
     const { index } = issue;
     const original = test.questions[index];
@@ -100,7 +102,11 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
       reason === "Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung." ||
       reason === "Die Szenen der Bildantworten müssen eindeutig verschieden sein."
     );
-    if (!sceneOnlyRepair && sameQuestion(original, candidate)) reasons.push("Die neue Aufgabe ist der ersetzten zu ähnlich.");
+    // A structurally invalid question can keep its wording while its missing
+    // answer is repaired. Content/duplicate defects still need a new task.
+    const structuralOnly = validateQuestion(original, options).length > 0
+      && issue.reasons.every(reason => validateQuestion(original, options).includes(reason));
+    if (!sceneOnlyRepair && !structuralOnly && sameQuestion(original, candidate)) reasons.push("Die neue Aufgabe ist der ersetzten zu ähnlich.");
     if (test.questions.some((other, i) => i !== index && sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt eine andere Aufgabe des Tests.");
     if (options.referenceQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe wiederholt den Ausgangstest.");
     if (options.negativeQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe ähnelt einer als fehlerhaft bewerteten Aufgabe.");
@@ -124,8 +130,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
   const expectedCount = Number(options.expectedCount || test.questions?.length || 0);
   const repairLimit = Number.isInteger(maxQuestionAttempts) && maxQuestionAttempts > 0
     ? maxQuestionAttempts
-    : Math.min(16, Math.max(8, Math.ceil(expectedCount * 0.75)));
-  const localIssueLimit = Math.min(12, Math.max(6, Math.ceil(expectedCount * 0.5)));
+    : Math.min(100, Math.max(8, expectedCount * 2));
   const prepare = draft => {
     const trimmed = trimSurplusQuestions(draft, options);
     options = trimmed.options;
@@ -140,13 +145,14 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     const errors = validateTest(test, options);
     if (!errors.length) return { test, errors, questionAttempts, replaced, fullRepair };
 
-    const issues = questionIssues(test, options);
-    if (!globalIssues(test, options).length && questionAttempts < repairLimit && (fullRepair || issues.length <= localIssueLimit)) {
-      const result = await replaceInvalidQuestions(test, options, generateQuestion, repairLimit - questionAttempts);
+    if (!globalIssues(test, options).length && questionAttempts < repairLimit) {
+      const remaining = repairLimit - questionAttempts;
+      const passBudget = fullRepair ? remaining : Math.min(remaining, Math.max(questionIssues(test, options).length, Math.ceil(repairLimit / 2)));
+      const result = await replaceInvalidQuestions(test, options, generateQuestion, passBudget);
       test = result.test;
       questionAttempts += result.attempts;
       replaced += result.replaced;
-      if (!validateTest(test, options).length) continue;
+      if (!validateTest(test, options).length || (result.replaced > 0 && questionAttempts < repairLimit)) continue;
     }
     if (!fullRepair) {
       test = prepare(await regenerateTest(test, validateTest(test, options)));

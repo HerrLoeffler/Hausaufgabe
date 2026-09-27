@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/ai-integration
+      - fix/ai-format-reliability
   workflow_dispatch:
 
 permissions:

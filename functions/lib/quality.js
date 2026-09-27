@@ -318,7 +318,7 @@ function normalizeReviewIssues(response, test) {
   const byIndex = new Map();
   for (const issue of response.issues) {
     const index = issue?.index;
-    if (!Number.isInteger(index) || index < 0 || index >= test.questions.length || !reviewSchema.properties.issues.items.properties.reason.enum.includes(issue.reason)) continue;
+    if (!Number.isInteger(index) || index < 0 || index >= test.questions.length || !reviewSchema.properties.issues.items.properties.reason.enum.includes(issue.reason)) throw new Error("KI-Qualitätsprüfung lieferte ungültige Aufgabenindizes oder Fehlergründe.");
     const detail = String(issue?.detail || "").trim().slice(0, 200) || QUALITY_REASONS[issue.reason] || "Doppelte Aufgabe";
     const previous = byIndex.get(index);
     if (!previous) byIndex.set(index, { index, text: test.questions[index].text, detail: `${issue.reason}: ${detail}` });
@@ -351,10 +351,11 @@ async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts 
     const asset = await generate(attempt, lastIssue);
     if (!expectedScene) return { asset, attempts: attempt };
     const verdict = await inspect(asset);
-    if (verdict?.matches === true) return { asset, attempts: attempt };
+    if (typeof verdict?.matches !== "boolean") throw new Error("Bildprüfung lieferte keine gültige Entscheidung.");
+    if (verdict.matches === true) return { asset, attempts: attempt };
     lastIssue = String(verdict?.reason || "Die Szene stimmt nicht überein").slice(0, 180);
   }
-  const error = new Error("Eine Bildantwort passte nach erneuter Erstellung nicht zur beschriebenen Szene.");
+  const error = new Error("Ein Aufgabenbild passte nach erneuter Erstellung nicht zur beschriebenen Szene.");
   error.code = "image-mismatch";
   error.lastIssue = lastIssue;
   throw error;
