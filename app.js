@@ -200,6 +200,54 @@ function currentTeacherTourConfig() {
   return state.teacherTourConfig || normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
 }
 
+function firstTestGuideKey() {
+  return state.user ? `firstTestGuide:${state.user.uid}` : "";
+}
+
+function firstTestGuideDismissed() {
+  try { return localStorage.getItem(firstTestGuideKey()) === "dismissed"; } catch (_) { return false; }
+}
+
+function renderFirstTestGuide() {
+  const dashboard = $("firstTestDashboard");
+  const editor = $("firstTestEditor");
+  const quizzes = activeQuizzes().filter(q => q.generationStatus !== "running");
+  const finished = quizzes.some(q => q.published || q.ended);
+  const visible = Boolean(state.user && !finished && !firstTestGuideDismissed());
+  const inEditor = !$("editorView").classList.contains("hidden") && Boolean(state.currentQuiz);
+  dashboard.classList.toggle("hidden", !visible || inEditor);
+  editor.classList.toggle("hidden", !visible || !inEditor);
+  if (!visible) return;
+  const hasDraft = quizzes.length > 0 || inEditor;
+  const hasQuestions = inEditor ? state.questions.length > 0 : quizzes.some(q => Number(q.questionCount) > 0);
+  const previewId = inEditor ? state.currentQuiz.id : quizzes.find(q => Number(q.questionCount) > 0)?.id;
+  let previewed = false;
+  try { previewed = Boolean(previewId && localStorage.getItem(`firstTestPreview:${state.user.uid}:${previewId}`)); } catch (_) {}
+  const steps = [
+    ["Test anlegen", hasDraft],
+    ["Aufgaben hinzufügen und Lösungen prüfen", hasQuestions],
+    ["Schüleransicht prüfen", previewed]
+  ];
+  const target = inEditor ? editor : dashboard;
+  const action = inEditor
+    ? `<button class="button secondary firstTestAction" type="button">${hasQuestions ? "Schüleransicht öffnen" : "Aufgabe hinzufügen"}</button>`
+    : `<button class="button secondary firstTestAction" type="button">${hasDraft ? "Entwurf öffnen" : "Test erstellen"}</button>`;
+  target.innerHTML = `<div class="firstTestGuideHead"><div><span class="eyebrow">Dein erster Test</span><h2>${hasDraft ? "So geht es weiter" : "In drei Schritten zum ersten Test"}</h2><p>Du kannst jederzeit weiterarbeiten. Veröffentliche erst, wenn Aufgaben und Lösungen stimmen.</p></div><button class="iconButton firstTestDismiss" type="button" aria-label="Einstiegshilfe schließen">×</button></div>
+    <ol class="firstTestSteps">${steps.map(([label, done], i) => `<li class="${done ? "done" : ""}"><span aria-hidden="true">${done ? "✓" : i + 1}</span>${label}</li>`).join("")}</ol>${action}`;
+  target.querySelector(".firstTestDismiss").addEventListener("click", () => {
+    try { localStorage.setItem(firstTestGuideKey(), "dismissed"); } catch (_) {}
+    dashboard.classList.add("hidden"); editor.classList.add("hidden");
+  });
+  target.querySelector(".firstTestAction").addEventListener("click", () => {
+    if (inEditor) {
+      if (hasQuestions) $("previewBtn").click(); else $("addQuestionBtn").click();
+    } else if (hasDraft) {
+      const draft = quizzes.find(q => !q.published && !q.ended);
+      if (draft) openEditor(draft.id); else openCreateView();
+    } else openCreateView();
+  });
+}
+
 let teacherTourIndex = 0;
 
 function teacherTourStorageKey() {
@@ -1179,6 +1227,7 @@ function renderQuizList() {
     : "";
   const hasPendingWork = state.aiJobs.some(job => ["queued", "running"].includes(job.status))
     || $("localDraftList").childElementCount > 0;
+  renderFirstTestGuide();
   $("emptyQuizState").classList.toggle("hidden", active.length !== 0 || hasPendingWork);
   $("noFilterState").classList.toggle("hidden", active.length === 0 || filtered.length !== 0);
   if (!filtered.length) return;
@@ -2666,6 +2715,8 @@ $("previewBtn").addEventListener("click", async () => {
   if (!state.currentQuiz) return;
   if (!(await saveCurrentQuiz(false))) return;
   window.open(baseStudentUrl(state.currentQuiz.id, true), "_blank", "noopener");
+  try { localStorage.setItem(`firstTestPreview:${state.user.uid}:${state.currentQuiz.id}`, "opened"); } catch (_) {}
+  renderFirstTestGuide();
 });
 
 function newQuestion(type = "single", needsFirestoreId = true) {
@@ -2795,6 +2846,7 @@ function renderEditorState(q) {
   } else markSaved();
   updateEditorPublishControls();
   renderVariantProgress();
+  renderFirstTestGuide();
 }
 
 function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
@@ -3979,6 +4031,7 @@ function updateSummary() {
   $("questionCount").textContent = state.questions.length;
   $("totalPoints").textContent = round1(state.questions.reduce((sum, q) => sum + (Number(q.points) || 0), 0));
   $("publishStatus").textContent = state.currentQuiz?.rightsHold ? "Zugang gesperrt" : state.currentQuiz?.ended ? "Beendet" : state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
+  if (!$("editorView").classList.contains("hidden")) renderFirstTestGuide();
 }
 
 function updateEditorPublishControls() {
