@@ -16,7 +16,7 @@ PROJECT = "hausaufgabe-staging"
 # The uploaded 27 September backup showed that two functions still run the older
 # source. It contained the two-job lock and detailed image diagnostics, both of
 # which are integrated in this branch. Accept that exact source archive only.
-LEGACY_SOURCE_FINGERPRINT = "6ad2d0fc4fa44a29b429b65e9d2b33b969cfa6150f543d3076127e181b894dd1"
+LEGACY_SOURCE_FINGERPRINT = "9f3252dbd01c8bafe4a462fff4de343f9def248e1a125af55c7f14924717898f"
 spec = importlib.util.spec_from_file_location("source_export", ROOT / "tools/collect-ai-source.py")
 exporter = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(exporter)
