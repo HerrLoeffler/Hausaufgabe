@@ -48,9 +48,9 @@ function addCrewPreview() {
   if (!intro || intro.querySelector(".gradecrewCrewPreview")) return;
   const preview = document.createElement("div");
   preview.className = "gradecrewCrewPreview";
-  preview.setAttribute("aria-label", "GradeCrew: Guide, Create, Improve und Grade");
+  preview.setAttribute("aria-label", "GradeCrew: Walkthrough, Create, Refine und Evaluate");
   preview.innerHTML = `<span>Deine Crew für digitale Tests</span><div class="gradecrewCrewFaces">
-    <img src="${ASSETS.guide}" alt=""/><img src="${ASSETS.create}" alt=""/><img src="${ASSETS.improve}" alt=""/><img src="${ASSETS.grade}" alt=""/>
+    <img src="${ASSETS.guide}" alt="" title="W · Walkthrough"/><img src="${ASSETS.create}" alt="" title="C · Create"/><img src="${ASSETS.improve}" alt="" title="R · Refine"/><img src="${ASSETS.grade}" alt="" title="E · Evaluate"/>
   </div>`;
   intro.appendChild(preview);
 }
@@ -62,7 +62,7 @@ function enhanceCreateCard() {
   card.classList.add("gradecrewCreateCard");
   const icon = card.querySelector(".choiceIcon");
   if (icon) icon.innerHTML = `<img src="${ASSETS.create}" alt=""/>`;
-  card.setAttribute("title", "Create · Der GradeCrew-Falke erstellt deinen KI-Test");
+  card.setAttribute("title", "C · Create · Der Falke erstellt deinen KI-Test");
 }
 
 function enhanceEmptyState() {
@@ -80,6 +80,7 @@ function enhanceTeacherTour() {
   icon.dataset.gradecrew = "1";
   icon.classList.add("gradecrewTourMascot");
   icon.innerHTML = `<img src="${ASSETS.guide}" alt=""/>`;
+  icon.setAttribute("title", "W · Walkthrough");
 }
 
 function enhanceFirstGuide() {
@@ -89,7 +90,8 @@ function enhanceFirstGuide() {
   if (!h2) return;
   const head = document.createElement("div");
   head.className = "gradecrewGuideHeader";
-  head.innerHTML = `<img src="${ASSETS.guide}" alt=""/><span>Guide · Schritt für Schritt</span>`;
+  head.innerHTML = `<img src="${ASSETS.guide}" alt=""/><span>Schritt für Schritt</span>`;
+  head.setAttribute("title", "W · Walkthrough");
   h2.before(head);
 }
 
@@ -97,6 +99,7 @@ function enhanceQualityBanner() {
   const banner = document.querySelector("#importReviewBanner");
   if (!banner || banner.classList.contains("hidden")) return;
   banner.classList.add("gradecrewQualityBanner");
+  banner.setAttribute("title", "E · Evaluate · Qualität prüfen");
   if (!banner.querySelector(".gradecrewReviewMascot")) {
     const img = document.createElement("img");
     img.src = ASSETS.grade;
@@ -107,9 +110,15 @@ function enhanceQualityBanner() {
 }
 
 function enhanceImprovePanels(root = document) {
-  root.querySelectorAll?.(".questionAiPanel").forEach(panel => panel.classList.add("gradecrewImprovePanel"));
+  root.querySelectorAll?.(".questionAiPanel").forEach(panel => {
+    panel.classList.add("gradecrewImprovePanel");
+    panel.setAttribute("title", "R · Refine · Aufgabe verbessern");
+  });
   root.querySelectorAll?.("dialog.shareDialog").forEach(dialog => {
-    if (dialog.querySelector("h2")?.textContent?.trim() === "Varianten hinzufügen") dialog.classList.add("gradecrewVariantDialog");
+    if (dialog.querySelector("h2")?.textContent?.trim() === "Varianten hinzufügen") {
+      dialog.classList.add("gradecrewVariantDialog");
+      dialog.setAttribute("title", "R · Refine · Varianten erstellen");
+    }
   });
 }
 
