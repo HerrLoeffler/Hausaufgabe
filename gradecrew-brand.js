@@ -9,38 +9,51 @@ function ensureBrandStyles() {
   if (document.querySelector('link[data-gradecrew-brand="1"]')) return;
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "gradecrew-brand.css?v=gradecrew-v1";
+  link.href = "gradecrew-brand.css?v=gradecrew-v1.3";
   link.dataset.gradecrewBrand = "1";
   document.head.appendChild(link);
 }
 
-function replaceBrandText(root = document.body) {
+function setTextIfChanged(node, value) {
+  if (node && node.textContent !== value) node.textContent = value;
+}
+
+function replaceBrandText(root) {
   if (!root) return;
   const blocked = new Set(["SCRIPT", "STYLE", "TEXTAREA", "INPUT", "CODE", "PRE"]);
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const nodes = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-  nodes.forEach(node => {
-    if (!node.parentElement || blocked.has(node.parentElement.tagName)) return;
+  const replaceNode = node => {
+    if (!node?.parentElement || blocked.has(node.parentElement.tagName)) return;
     if (node.nodeValue?.includes("Testify")) node.nodeValue = node.nodeValue.replaceAll("Testify", "GradeCrew");
-  });
+  };
+  if (root.nodeType === Node.TEXT_NODE) {
+    replaceNode(root);
+    return;
+  }
+  if (!(root instanceof Element || root instanceof Document || root instanceof DocumentFragment)) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) replaceNode(walker.currentNode);
 }
 
 function applyCoreBrand() {
-  document.title = document.title.replace("Testify", "GradeCrew");
+  if (document.title.includes("Testify")) document.title = document.title.replaceAll("Testify", "GradeCrew");
   const brand = document.querySelector(".brand");
   const mark = brand?.querySelector(".brandMark");
   const word = brand?.querySelector(".brandCopy strong");
   if (mark && mark.dataset.gradecrew !== "1") {
     mark.dataset.gradecrew = "1";
     mark.classList.add("gradecrewMark");
-    mark.textContent = "G";
+    setTextIfChanged(mark, "G");
   }
-  if (word) { word.textContent = "GradeCrew"; word.classList.add("gradecrewWordmark"); }
-  if (brand) brand.setAttribute("aria-label", "GradeCrew Startseite");
-  document.querySelectorAll(".footerBrand").forEach(el => { el.textContent = "GradeCrew"; });
+  if (word) {
+    setTextIfChanged(word, "GradeCrew");
+    word.classList.add("gradecrewWordmark");
+  }
+  if (brand && brand.getAttribute("aria-label") !== "GradeCrew Startseite") brand.setAttribute("aria-label", "GradeCrew Startseite");
+  document.querySelectorAll(".footerBrand").forEach(el => setTextIfChanged(el, "GradeCrew"));
   const banner = document.querySelector("#stagingBanner");
-  if (banner?.textContent?.includes("TESTUMGEBUNG")) banner.textContent = "GRADECREW TESTUMGEBUNG · Keine echten Leistungsnachweise verwenden";
+  if (banner?.textContent?.includes("TESTUMGEBUNG") && banner.textContent !== "GRADECREW TESTUMGEBUNG · Keine echten Leistungsnachweise verwenden") {
+    banner.textContent = "GRADECREW TESTUMGEBUNG · Keine echten Leistungsnachweise verwenden";
+  }
 }
 
 function addCrewPreview() {
@@ -48,9 +61,9 @@ function addCrewPreview() {
   if (!intro || intro.querySelector(".gradecrewCrewPreview")) return;
   const preview = document.createElement("div");
   preview.className = "gradecrewCrewPreview";
-  preview.setAttribute("aria-label", "GradeCrew: Walkthrough, Create, Refine und Evaluate");
+  preview.setAttribute("aria-label", "GradeCrew für Hilfe, Erstellen, Verbessern und Prüfen");
   preview.innerHTML = `<span>Deine Crew für digitale Tests</span><div class="gradecrewCrewFaces">
-    <img src="${ASSETS.guide}" alt="" title="W · Walkthrough"/><img src="${ASSETS.create}" alt="" title="C · Create"/><img src="${ASSETS.improve}" alt="" title="R · Refine"/><img src="${ASSETS.grade}" alt="" title="E · Evaluate"/>
+    <img src="${ASSETS.guide}" alt="" title="Hilfe & Orientierung"/><img src="${ASSETS.create}" alt="" title="Erstellen"/><img src="${ASSETS.improve}" alt="" title="Verbessern"/><img src="${ASSETS.grade}" alt="" title="Prüfen & Bewerten"/>
   </div>`;
   intro.appendChild(preview);
 }
@@ -62,7 +75,7 @@ function enhanceCreateCard() {
   card.classList.add("gradecrewCreateCard");
   const icon = card.querySelector(".choiceIcon");
   if (icon) icon.innerHTML = `<img src="${ASSETS.create}" alt=""/>`;
-  card.setAttribute("title", "C · Create · Der Falke erstellt deinen KI-Test");
+  card.setAttribute("title", "Der Falke erstellt deinen KI-Test");
 }
 
 function enhanceEmptyState() {
@@ -80,7 +93,7 @@ function enhanceTeacherTour() {
   icon.dataset.gradecrew = "1";
   icon.classList.add("gradecrewTourMascot");
   icon.innerHTML = `<img src="${ASSETS.guide}" alt=""/>`;
-  icon.setAttribute("title", "W · Walkthrough");
+  icon.setAttribute("title", "Hilfe & Orientierung");
 }
 
 function enhanceFirstGuide() {
@@ -91,7 +104,7 @@ function enhanceFirstGuide() {
   const head = document.createElement("div");
   head.className = "gradecrewGuideHeader";
   head.innerHTML = `<img src="${ASSETS.guide}" alt=""/><span>Schritt für Schritt</span>`;
-  head.setAttribute("title", "W · Walkthrough");
+  head.setAttribute("title", "Hilfe & Orientierung");
   h2.before(head);
 }
 
@@ -99,7 +112,7 @@ function enhanceQualityBanner() {
   const banner = document.querySelector("#importReviewBanner");
   if (!banner || banner.classList.contains("hidden")) return;
   banner.classList.add("gradecrewQualityBanner");
-  banner.setAttribute("title", "E · Evaluate · Qualität prüfen");
+  banner.setAttribute("title", "Qualität prüfen");
   if (!banner.querySelector(".gradecrewReviewMascot")) {
     const img = document.createElement("img");
     img.src = ASSETS.grade;
@@ -112,12 +125,12 @@ function enhanceQualityBanner() {
 function enhanceImprovePanels(root = document) {
   root.querySelectorAll?.(".questionAiPanel").forEach(panel => {
     panel.classList.add("gradecrewImprovePanel");
-    panel.setAttribute("title", "R · Refine · Aufgabe verbessern");
+    panel.setAttribute("title", "Aufgabe verbessern");
   });
   root.querySelectorAll?.("dialog.shareDialog").forEach(dialog => {
     if (dialog.querySelector("h2")?.textContent?.trim() === "Varianten hinzufügen") {
       dialog.classList.add("gradecrewVariantDialog");
-      dialog.setAttribute("title", "R · Refine · Varianten erstellen");
+      dialog.setAttribute("title", "Varianten erstellen");
     }
   });
 }
@@ -136,14 +149,13 @@ function collapseAiPreferences() {
   const body = details.querySelector(".gradecrewPreferenceBody");
   body.append(label, actions);
   const ownSmall = label.querySelector("small");
-  if (ownSmall) ownSmall.textContent = "optional";
+  if (ownSmall) setTextIfChanged(ownSmall, "optional");
   const textNode = Array.from(label.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.nodeValue?.includes("Meine dauerhaften"));
   if (textNode) textNode.nodeValue = "Vorgaben für meine KI-Tests ";
 }
 
-function scan(root = document) {
+function scanStructure(root = document) {
   applyCoreBrand();
-  replaceBrandText(root instanceof HTMLElement ? root : document.body);
   addCrewPreview();
   enhanceCreateCard();
   enhanceEmptyState();
@@ -154,18 +166,30 @@ function scan(root = document) {
   enhanceImprovePanels(root instanceof HTMLElement ? root : document);
 }
 
-ensureBrandStyles();
-if (document.body) scan();
-else document.addEventListener("DOMContentLoaded", () => scan(), { once: true });
+let scanScheduled = false;
+function scheduleStructureScan(root = document) {
+  if (scanScheduled) return;
+  scanScheduled = true;
+  requestAnimationFrame(() => {
+    scanScheduled = false;
+    try { scanStructure(root); }
+    catch (err) { console.warn("GradeCrew-Visualisierung konnte nicht vollständig angewendet werden:", err); }
+  });
+}
 
-const observer = new MutationObserver(records => {
-  let needsScan = false;
-  for (const record of records) {
-    if (record.type === "childList" && record.addedNodes.length) { needsScan = true; break; }
-    if (record.type === "attributes") { needsScan = true; break; }
-  }
-  if (needsScan) queueMicrotask(() => scan());
-});
+function start() {
+  ensureBrandStyles();
+  replaceBrandText(document.body);
+  scanStructure(document);
 
-if (document.body) observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-else document.addEventListener("DOMContentLoaded", () => observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] }), { once: true });
+  const observer = new MutationObserver(records => {
+    for (const record of records) {
+      for (const node of record.addedNodes) replaceBrandText(node);
+    }
+    scheduleStructureScan(document);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+if (document.body) start();
+else document.addEventListener("DOMContentLoaded", start, { once: true });
