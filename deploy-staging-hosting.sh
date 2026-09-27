@@ -11,6 +11,7 @@ fi
 
 node --check app.js
 node --check ai-client.js
+node --check ui-enhancements.js
 node --check editor-drafts.js
 node --check ai-review-state.js
 node --check ordering-grading.mjs
@@ -19,7 +20,7 @@ node --test ordering-grading.test.mjs
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
-cp index.html app.js styles.css design-system.css firebase-config.js ai-json-tools.js ai-client.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
+cp index.html app.js styles.css design-system.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
 
 echo "Deploy HOSTING -> ${PROJECT_ID} (Functions, Regeln und Storage bleiben unverändert)"
 firebase deploy --project "$PROJECT_ID" --only hosting
