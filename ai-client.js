@@ -11,12 +11,24 @@ const ALLOWED_MIME = new Set([
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 ]);
 
+let visualEnhancementsScheduled = false;
+function scheduleVisualEnhancements() {
+  if (visualEnhancementsScheduled || typeof window === "undefined") return;
+  visualEnhancementsScheduled = true;
+  window.setTimeout(() => {
+    import("./visual-enhancements.js?v=2.3.1-ai32").catch(err => {
+      console.warn("GradeCrew-Visualisierung konnte nicht geladen werden. Die Kern-App läuft weiter.", err);
+    });
+  }, 0);
+}
+
 function safeName(name) {
   return String(name || "material").normalize("NFKC").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 120) || "material";
 }
 function randomId(prefix = "m") { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`; }
 
 export function createAiClient(app, getUid) {
+  scheduleVisualEnhancements();
   const functions = getFunctions(app, REGION);
   const storage = getStorage(app);
   const call = (name, timeoutMs = 180000) => async (payload) => {
