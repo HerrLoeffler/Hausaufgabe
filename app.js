@@ -1847,6 +1847,7 @@ $("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://cha
 $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
+$("saveAiPreferencesBtn")?.addEventListener("click", () => saveAiPreferences());
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
 ["aiImageQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", updateAiImageControls));
@@ -1863,6 +1864,7 @@ async function openAiView() {
   $("aiSubject").value = settings.defaultSubject || "";
   $("aiGrade").value = settings.defaultGrade || "";
   if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
+  if ($("aiPersonalPreferences")) $("aiPersonalPreferences").value = String(state.profile?.aiPreferences || "");
   $("aiMaterialMode").value = "inspiration";
   const root = $("aiTypeChecks");
   root.innerHTML = "";
@@ -2034,8 +2036,21 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
-  try { await startAiCreationJob(collectAiRequest()); }
+  try {
+    const request = collectAiRequest();
+    await saveAiPreferences({ silent: true });
+    await startAiCreationJob(request);
+  }
   catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
+}
+
+async function saveAiPreferences({ silent = false } = {}) {
+  if (!state.user) throw new Error("Bitte zuerst anmelden.");
+  const preferences = String($("aiPersonalPreferences")?.value || "").trim();
+  if (preferences.length > 1000) throw new Error("Bitte maximal 1000 Zeichen für dauerhafte KI-Vorgaben verwenden.");
+  await updateDoc(doc(db, "users", state.user.uid), { aiPreferences: preferences });
+  state.profile = { ...state.profile, aiPreferences: preferences };
+  if (!silent) toast("Deine KI-Vorgaben wurden gespeichert.");
 }
 
 async function startAiCreationJob(request, { similar = false, sourceQuiz = null } = {}) {
@@ -2976,6 +2991,7 @@ function aiQuestionFeedbackSnapshot(q) {
     correctBoolean: q.type === "truefalse" ? q.correctBoolean : null,
     pairs: (q.pairs || []).slice(0, 15).map(pair => ({ left: String(pair.left).slice(0, 180), right: String(pair.right).slice(0, 180) })),
     items: (q.items || []).slice(0, 20).map(item => String(item).slice(0, 180)),
+    acceptedOrders: (q.acceptedOrders || []).slice(0, 12).map(order => order.slice(0, 20)),
     groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
     targetWords: (q.targetWords || []).slice(0, 30),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,

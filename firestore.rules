@@ -56,6 +56,8 @@ service cloud.firestore {
                       && request.auth.uid == userId
                       && request.resource.data.get('role', 'teacher') == resource.data.get('role', 'teacher')
                       && request.resource.data.get('status', 'active') == resource.data.get('status', 'active')
+                      && request.resource.data.get('aiPreferences', '') is string
+                      && request.resource.data.get('aiPreferences', '').size() <= 1000
                     );
 
       allow delete: if isAdmin() || (accountActive() && request.auth.uid == userId);

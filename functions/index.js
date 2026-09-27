@@ -18,7 +18,7 @@ const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("./lib/materials");
 const { validateAndRepairTest } = require("./lib/repair-test");
-const { MEMORY_VERSION, reviewSchema, REVIEW_SYSTEM, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest } = require("./lib/quality");
+const { MEMORY_VERSION, QUALITY_REASONS, reviewSchema, REVIEW_SYSTEM, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest } = require("./lib/quality");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
@@ -149,7 +149,18 @@ async function structuredResponse({ schema, schemaName, userPrompt, content = []
   }
 }
 
-async function loadQualityMemory(context = {}) {
+function teacherQualityGuide(memory = {}) {
+  const lines = [];
+  const preferences = String(memory.teacherPreferences || "").trim().slice(0, 1000);
+  if (preferences) lines.push(`Dauerhafte Vorgaben dieser Lehrkraft: ${preferences}`);
+  const reasons = memory.personal?.priorityReasons || [];
+  if (reasons.length) lines.push(`Aus den eigenen Bewertungen dieser Lehrkraft besonders prüfen: ${reasons.slice(0, 3).map(reason => QUALITY_REASONS[reason]).filter(Boolean).join(", ")}.`);
+  const types = (memory.personal?.positivePatterns || []).slice(0, 3).map(pattern => pattern.type).filter(Boolean);
+  if (types.length) lines.push(`Diese Lehrkraft hat passende Aufgabenstrukturen häufig positiv bewertet: ${[...new Set(types)].join(", ")}. Nur nutzen, wenn sie zum Lernziel passen.`);
+  return lines.length ? `\nPersönliche Präferenzen (keine fachliche Richtigkeit überschreiben):\n- ${lines.join("\n- ")}` : "";
+}
+
+async function loadQualityMemory(context = {}, uid = "") {
   try {
     // Good and bad ratings are aggregated across teachers. Teacher IDs are used only
     // to count independent signals; names, emails and private comments are never loaded.
@@ -157,7 +168,15 @@ async function loadQualityMemory(context = {}) {
       .where("category", "==", "ai_question")
       .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion", "reviewOutcome", "reviewerReason")
       .get();
-    return feedbackMemory(reports.docs.map(doc => doc.data()), context);
+    const entries = reports.docs.map(doc => doc.data());
+    const global = feedbackMemory(entries, context);
+    if (!uid) return global;
+    let teacherPreferences = "";
+    try {
+      const profile = await getFirestore().doc(`users/${uid}`).get();
+      teacherPreferences = String(profile.data()?.aiPreferences || "").slice(0, 1000);
+    } catch (err) { console.warn("Persönliche KI-Vorgaben konnten nicht geladen werden:", err?.code || err?.name); }
+    return { ...global, personal: feedbackMemory(entries.filter(entry => entry.userId === uid), context), teacherPreferences };
   } catch (err) {
     console.error("Bewertungsverlauf konnte nicht geladen werden:", err);
     // Feedback is an aid to quality, not a prerequisite for a new test. The
@@ -199,9 +218,10 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const materialIds = materials.map(m => m.id);
     phase = "feedback";
     await onProgress("feedback", 10, "Aufgabenhinweise werden vorbereitet …");
-    const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade });
+    const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
     const memoryGuide = qualityMemoryPrompt(memory);
-    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}`;
+    const personalGuide = teacherQualityGuide(memory);
+    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
@@ -209,7 +229,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${priorContext}`, content: materialContent });
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${personalGuide}${priorContext}`, content: materialContent });
     });
     const usage = { ...first.usage };
     const addUsage = next => {
@@ -220,7 +240,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       generateQuestion: async ({ test, index, original, reasons, attempt }) => {
         const replacement = await structuredResponse({
           schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}`, content: materialContent
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
@@ -505,9 +525,9 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
   const basePrompt = questionUserPrompt({ mediaKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
-  const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" });
+  const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
   const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
-  const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}`;
+  const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}${teacherQualityGuide(memory)}`;
   const usage = {};
   let normalized, errors;
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;

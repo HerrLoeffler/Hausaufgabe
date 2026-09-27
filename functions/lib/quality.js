@@ -347,7 +347,7 @@ function questionForReview(q, index) {
   if (q.type === "text") { answerKey.acceptedAnswers = q.acceptedAnswers || []; answerKey.manualReview = Boolean(q.manualReview); }
   if (q.type === "number") { studentView.unit = q.unit || ""; answerKey.numericAnswer = q.numericAnswer; answerKey.tolerance = q.tolerance || 0; }
   if (q.type === "markwords") { studentView.passage = q.passage || ""; answerKey.targetWords = q.targetWords || []; }
-  if (q.type === "ordering") { studentView.items = sorted(q.items || []); studentView.displayOrder = "shuffled"; answerKey.orderedItems = q.items || []; }
+  if (q.type === "ordering") { studentView.items = sorted(q.items || []); studentView.displayOrder = "shuffled"; answerKey.orderedItems = q.items || []; answerKey.acceptedOrders = q.acceptedOrders || []; answerKey.manualReview = Boolean(q.manualReview); }
   if (q.type === "matching") {
     studentView.left = (q.pairs || []).map(pair => pair.left);
     studentView.right = sorted((q.pairs || []).map(pair => pair.right));
@@ -370,6 +370,7 @@ studentView enthält die sichtbare Schüleransicht. answerKey ist ausschließlic
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
 Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
+Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
 Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
 Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
 }
@@ -448,7 +449,7 @@ async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts 
 }
 
 module.exports = {
-  MEMORY_VERSION, reviewSchema, imageReviewSchema, REVIEW_SYSTEM,
+  MEMORY_VERSION, QUALITY_REASONS, reviewSchema, imageReviewSchema, REVIEW_SYSTEM,
   feedbackMemory, qualityMemoryPrompt, questionForReview, reviewPrompt,
   normalizeReviewIssues, reviewAndRepairTest, verifyImageScene
 };

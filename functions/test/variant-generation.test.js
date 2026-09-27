@@ -24,7 +24,7 @@ test("the actual variant handler constrains type and chosen image mode before ca
       questionSchema, questionSchemaForType, questionUserPrompt, normalizeQuestion, validateQuestion,
       requireAiUser: async () => ({ uid: "teacher" }), consumeQuota: async () => {},
       sanitizeMaterials: () => [], loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 3, stats: {} }),
-      qualityMemoryPrompt: () => "", variantRepeats: () => false, sameQuestion: () => false,
+      qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", variantRepeats: () => false, sameQuestion: () => false,
       structuredResponse: async ({ schema, userPrompt }) => {
         calls += 1;
         assert.deepEqual(schema.properties.type.enum, ["gapfill"]);

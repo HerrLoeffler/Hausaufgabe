@@ -54,7 +54,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   if (q.type === "text") { q.acceptedAnswers = raw.acceptedAnswers; q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "truefalse") q.correctBoolean = raw.correctBoolean;
   if (q.type === "matching") q.pairs = raw.pairs;
-  if (q.type === "ordering") q.items = raw.items;
+  if (q.type === "ordering") { q.items = raw.items; q.acceptedOrders = raw.acceptedOrders || []; q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "grouping") q.groups = raw.groups;
   if (q.type === "markwords") { q.passage = raw.passage; q.targetWords = raw.targetWords; }
   if (q.type === "number") { q.numericAnswer = raw.numericAnswer; q.tolerance = raw.tolerance; q.unit = raw.unit; }

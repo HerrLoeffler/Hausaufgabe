@@ -13,6 +13,13 @@ function explicitBoolean(value) {
   }
   return value; // A missing/ambiguous answer must fail validation, never become false.
 }
+function isSentenceOrder(text) {
+  return /\bsatz(?:es|baustein\w*|bau\w*|glieder\w*|stellung\w*)?\b|\bsätze\b|\bwörter\s+(?:zu\s+einem\s+)?satz/iu.test(String(text || ""));
+}
+function validOrder(order, length) {
+  return Array.isArray(order) && order.length === length && new Set(order).size === length
+    && order.every(index => Number.isInteger(index) && index >= 0 && index < length);
+}
 function comparable(value) {
   return normalizeText(value)
     .normalize("NFKC")
@@ -96,6 +103,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   if (q.type === "ordering" && Array.isArray(q.items)) {
     const entries = q.items.map(comparableAnswer).filter(Boolean);
     if (new Set(entries).size !== entries.length) errors.push("Sortierelemente müssen eindeutig sein.");
+    if (q.acceptedOrders !== undefined && (!Array.isArray(q.acceptedOrders) || q.acceptedOrders.some(order => !validOrder(order, q.items.length)))) errors.push("Zusätzliche Reihenfolgen müssen jeden Baustein genau einmal enthalten.");
   }
   if (q.type === "grouping" && (!Array.isArray(q.groups) || q.groups.length < 2 || q.groups.some(g => !normalizeText(g?.name) || !Array.isArray(g?.items) || !g.items.length || g.items.some(item => !normalizeText(item))))) errors.push("Gruppierung braucht mindestens zwei vollständige Gruppen.");
   if (q.type === "grouping" && Array.isArray(q.groups)) {
@@ -167,6 +175,10 @@ function normalizeQuestion(q) {
   copy.acceptedAnswers = Array.isArray(copy.acceptedAnswers) ? copy.acceptedAnswers.map(normalizeText).filter(Boolean) : [];
   copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p?.left), right: normalizeText(p?.right) })) : [];
   copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];
+  if (copy.type === "ordering") {
+    copy.acceptedOrders = Array.isArray(copy.acceptedOrders) ? copy.acceptedOrders : [];
+    copy.manualReview = copy.manualReview === true || isSentenceOrder(copy.text);
+  }
   copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g?.name), items: Array.isArray(g?.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];
   copy.targetWords = Array.isArray(copy.targetWords) ? copy.targetWords.map(normalizeText).filter(Boolean) : [];
   copy.passage = normalizeText(copy.passage);

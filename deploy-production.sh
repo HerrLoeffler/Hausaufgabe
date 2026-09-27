@@ -26,6 +26,16 @@ if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   exit 1
 fi
 
+# Dieses Skript veröffentlicht nur Hosting und Regeln. Eine KI-Oberfläche ohne
+# ihre Produktionsfunktionen würde den Kollegentest zuverlässig blockieren.
+# Vor einem KI-Release zusätzlich private Lösungen und serverseitige Abgabe
+# migrieren und einen eigenen geprüften Functions-Deploy vorbereiten.
+if grep -q 'const APP_VERSION = "2.3.1-ai' app.js; then
+  echo "FEHLER: KI-Beta benötigt Produktionsfunktionen und den sicheren Abgabeablauf."
+  echo "Dieses Skript kann derzeit nur die ältere Browser-App vollständig veröffentlichen."
+  exit 1
+fi
+
 echo
 echo "ACHTUNG: Du bist dabei, die LIVE-SEITE zu aktualisieren:"
 echo "https://hausaufgabe-40294.web.app"

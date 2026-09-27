@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const Ajv = require("ajv");
 const { questionSchemaForType, testSchemaForRequest } = require("../lib/schemas");
 const { validateQuestion, normalizeQuestion } = require("../lib/validation");
+const { storedAiQuestion } = require("../lib/ai-job");
 const ajv = new Ajv({ allErrors: true });
 const mediaIntent = { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
 const samples = {
@@ -15,7 +16,7 @@ const samples = {
   number: { text: "Berechne 4 minus 4.", numericAnswer: 0, unit: "", tolerance: 0 },
   text: { text: "Nenne das Gegenteil von hell.", acceptedAnswers: ["dunkel"], manualReview: false },
   matching: { text: "Ordne die Artikel zu.", pairs: [{ left: "Haus", right: "das" }, { left: "Baum", right: "der" }] },
-  ordering: { text: "Ordne die Zahlen aufsteigend.", items: ["1", "2", "3"] },
+  ordering: { text: "Ordne die Zahlen aufsteigend.", items: ["1", "2", "3"], acceptedOrders: [], manualReview: false },
   grouping: { text: "Ordne nach Wortart.", groups: [{ name: "Nomen", items: ["Baum", "Haus"] }, { name: "Verben", items: ["laufen", "singen"] }] },
   markwords: { text: "Markiere die Nomen.", passage: "Der Hund spielt im Garten.", targetWords: ["Hund", "Garten"] }
 };
@@ -36,6 +37,22 @@ test("report RPT-MUJS1QL5-01B32: null true/false answers and gapfill without sol
   const gap = ajv.compile(questionSchemaForType("gapfill"));
   for (const text of ["Der Hund ___.", "Der Hund [].", "Der Hund [   ]."]) assert.equal(gap(sample("gapfill", { text })), false, text);
   assert.equal(gap(sample("gapfill", { text: "[Heute] gehen wir [nach Hause|heim]." })), true);
+});
+test("AI ordering output requires explicit alternatives and a review flag", () => {
+  const check = ajv.compile(questionSchemaForType("ordering"));
+  const sentence = sample("ordering", { text: "Baue einen Satz.", items: ["Mia", "spielt", "heute"], acceptedOrders: [[2, 1, 0]], manualReview: true });
+  assert.equal(check(sentence), true);
+  assert.equal(check({ ...sentence, acceptedOrders: undefined }), false);
+  assert.equal(check({ ...sentence, manualReview: undefined }), false);
+  assert.deepEqual(validateQuestion(normalizeQuestion(sentence)), []);
+  assert.ok(validateQuestion(normalizeQuestion({ ...sentence, acceptedOrders: [[2, 2, 0]] })).some(error => error.includes("Reihenfolgen")));
+  assert.equal(normalizeQuestion({ ...sentence, manualReview: false }).manualReview, true);
+});
+test("AI-generated sentence alternatives survive storage for teacher and pupil grading", async () => {
+  const sentence = normalizeQuestion(sample("ordering", { text: "Baue einen Satz.", items: ["Mia", "spielt", "heute"], acceptedOrders: [[2, 1, 0]], manualReview: false }));
+  const stored = await storedAiQuestion(sentence, 0, { model: "mock", promptVersion: "v16" });
+  assert.deepEqual(stored.acceptedOrders, [[2, 1, 0]]);
+  assert.equal(stored.manualReview, true);
 });
 test("request schema enforces exact count, permitted types and no image mode", () => {
   const check = ajv.compile(testSchemaForRequest({ count: 2, allowedTypes: ["truefalse", "gapfill"], allowImages: false }));

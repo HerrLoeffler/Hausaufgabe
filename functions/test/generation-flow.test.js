@@ -23,6 +23,7 @@ test("actual generation handler connects constrained batches, validation, review
       generateTestInBatches, validateAndRepairTest, reviewAndRepairTest,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
       consumeQuota: async () => {}, materialInputs: async () => [], qualityMemoryPrompt: () => "",
+      teacherQualityGuide: () => "",
       loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
       structuredResponse: async ({ schema, schemaName, userPrompt }) => {
         assert.equal(schemaName, "testify_test_v2"); calls++;

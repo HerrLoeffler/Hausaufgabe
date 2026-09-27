@@ -44,6 +44,7 @@ const questionSchema = {
     correctBoolean: { type: "boolean", description: "Für truefalse zwingend true oder false, niemals null. Bei anderen Typen false." },
     pairs: { type: "array", items: pairSchema },
     items: { type: "array", items: { type: "string" } },
+    acceptedOrders: { type: "array", items: { type: "array", items: { type: "integer", minimum: 0 } } },
     groups: { type: "array", items: groupSchema },
     passage: { type: "string" },
     targetWords: { type: "array", items: { type: "string" } },
@@ -52,7 +53,7 @@ const questionSchema = {
     unit: { type: "string" },
     mediaIntent: mediaIntentSchema
   },
-  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit", "mediaIntent"]
+  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit", "mediaIntent"]
 };
 // Compact per-type schemas prevent irrelevant nullable fields from being used as
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
@@ -60,7 +61,7 @@ const NONEMPTY = { type: "string", pattern: "\\S" };
 const TYPE_FIELDS = {
   single: ["options"], multi: ["options"], dropdown: ["options"],
   text: ["acceptedAnswers", "manualReview"], truefalse: ["correctBoolean"],
-  gapfill: [], matching: ["pairs"], ordering: ["items"], grouping: ["groups"],
+  gapfill: [], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
   markwords: ["passage", "targetWords"], number: ["numericAnswer", "tolerance", "unit"]
 };
 function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
@@ -84,7 +85,7 @@ function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
     properties.pairs.items.properties.left = { ...NONEMPTY };
     properties.pairs.items.properties.right = { ...NONEMPTY };
   }
-  if (type === "ordering") { properties.items.minItems = 2; properties.items.items = { ...NONEMPTY }; }
+  if (type === "ordering") { properties.items.minItems = 2; properties.items.items = { ...NONEMPTY }; properties.acceptedOrders.maxItems = 12; }
   if (type === "grouping") {
     properties.groups.minItems = 2;
     properties.groups.items.properties.name = { ...NONEMPTY };
