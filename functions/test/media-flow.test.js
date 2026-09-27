@@ -9,11 +9,11 @@ const { recordUsage } = require("../lib/usage");
 test("a generated image reaches the teacher after image and review accounting", async () => {
   const calls = [];
   const result = await createVerifiedMedia({
-    uid: "teacher", questionId: "q1", prompt: "Ein Buch auf einem Tisch", expectedScene: "Ein Buch auf einem Tisch", altText: "Buch", maxBytes: 95000
+    uid: "teacher", questionId: "q1", prompt: "Ein Buch auf einem Tisch", expectedScene: "Ein Buch auf einem Tisch", questionText: "Welcher Gegenstand liegt auf dem Tisch?", altText: "Buch", maxBytes: 95000
   }, {
     consume: async (...args) => calls.push(["quota", ...args]),
     generate: async args => { calls.push(["generate", args.prompt]); return { imageDataUrl: "data:image/webp;base64,dGVzdA==" }; },
-    inspect: async () => ({ verdict: { matches: true, reason: "" }, usage: { input_tokens: 7 } }),
+    inspect: async (_asset, _scene, questionText) => { calls.push(["question", questionText]); return { verdict: { matches: true, reason: "" }, usage: { input_tokens: 7 } }; },
     record: async (_uid, kind, _usage, extra) => calls.push(["usage", kind, extra.model])
   });
   assert.equal(result.asset.imageDataUrl, "data:image/webp;base64,dGVzdA==");
@@ -21,6 +21,7 @@ test("a generated image reaches the teacher after image and review accounting", 
     ["quota", "teacher", "image"],
     ["generate", "Ein Buch auf einem Tisch"],
     ["usage", "image", IMAGE_MODEL],
+    ["question", "Welcher Gegenstand liegt auf dem Tisch?"],
     ["usage", "image_review", TEXT_MODEL]
   ]);
 });
@@ -43,13 +44,15 @@ test("a failed usage write does not discard a paid-for image", async () => {
   }
 });
 
-test("two unsuitable images retain both visual review reasons in the error report", async () => {
+test("three unsuitable images retain all visual review reasons in the error report", async () => {
   let attempts = 0;
-  await assert.rejects(createVerifiedMedia({ uid: "teacher", questionId: "q3", prompt: "Buch unter Tisch", expectedScene: "Buch unter Tisch" }, {
+  await assert.rejects(createVerifiedMedia({ uid: "teacher", questionId: "q3", prompt: "Buch unter Tisch", expectedScene: "Buch unter Tisch", questionText: "Wo liegt das Buch?" }, {
     consume: async () => {},
     generate: async () => ({ imageDataUrl: "generated", imageByteSize: 2048 }),
     inspect: async () => ({ verdict: { matches: false, reason: `falsche Lage ${++attempts}` }, usage: {} }),
     record: async () => {}
-  }), error => error.code === "image-mismatch" && error.diagnostic.attempts.length === 2
-    && error.diagnostic.attempts[0].reason === "falsche Lage 1" && error.diagnostic.attempts[1].reason === "falsche Lage 2");
+  }), error => error.code === "image-mismatch" && error.diagnostic.attempts.length === 3
+    && error.diagnostic.attempts[0].reason === "falsche Lage 1"
+    && error.diagnostic.attempts[1].reason === "falsche Lage 2"
+    && error.diagnostic.attempts[2].reason === "falsche Lage 3");
 });
