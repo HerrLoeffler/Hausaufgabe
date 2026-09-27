@@ -27,7 +27,11 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   };
 }
 
-async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, onImage = async () => {} }) {
+function isProgrammingMediaError(err) {
+  return ["ReferenceError", "TypeError", "SyntaxError"].includes(String(err?.name || ""));
+}
+
+async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, onImage = async () => {}, onImageFallback = async () => {} }) {
   const q = {
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
     aiOrigin: { kind, model, promptVersion }
@@ -46,10 +50,20 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
     q.options = raw.options.map(o => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct) }));
   }
   if (intent.kind === "ai_generated") {
-    const asset = await media({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
-    if (!asset?.imageDataUrl) throw new Error(`Bild zu Aufgabe ${index + 1} fehlt.`);
-    Object.assign(q, asset);
-    await onImage();
+    try {
+      const asset = await media({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), questionText: q.text, altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
+      if (!asset?.imageDataUrl) throw new Error(`Bild zu Aufgabe ${index + 1} fehlt.`);
+      Object.assign(q, asset);
+      q.aiOrigin.mediaStatus = "ready";
+      await onImage();
+    } catch (err) {
+      if (isProgrammingMediaError(err)) throw err;
+      const reason = String(err?.lastIssue || err?.message || "Bild konnte nicht zuverlässig erzeugt werden.").slice(0, 500);
+      q.aiOrigin.mediaStatus = "omitted";
+      q.aiOrigin.mediaReason = reason;
+      q.aiMediaWarning = "Das vorgesehene KI-Bild konnte nicht zuverlässig erzeugt werden. Die Aufgabe wurde ohne Bild gespeichert; bitte vor dem Veröffentlichen kurz prüfen.";
+      await onImageFallback({ index, reason, diagnostic: err?.diagnostic || null });
+    }
   }
   if (q.type === "text") { q.acceptedAnswers = raw.acceptedAnswers; q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "truefalse") q.correctBoolean = raw.correctBoolean;
