@@ -2,6 +2,26 @@
 const { HttpsError } = require("firebase-functions/v2/https");
 const { getStorage } = require("firebase-admin/storage");
 const { LIMITS, MATERIAL_MIME_TYPES } = require("./constants");
+const sharp = require("sharp");
+
+// Remove identifying upload filenames and image metadata before provider calls.
+// This deliberately makes no claim to anonymize names inside documents/pixels.
+async function prepareMaterialInput(buf, mimeType, index) {
+  if (mimeType.startsWith("image/")) {
+    const expected = { "image/jpeg": "jpeg", "image/png": "png", "image/webp": "webp" }[mimeType];
+    const source = sharp(buf, { limitInputPixels: 40000000 });
+    if (!expected || (await source.metadata()).format !== expected) throw new HttpsError("invalid-argument", "Dateityp und Bildinhalt stimmen nicht überein.");
+    const clean = await source.rotate().toFormat(expected, { quality: 95 }).toBuffer();
+    if (clean.length > LIMITS.maxMaterialBytes) throw new HttpsError("invalid-argument", "Das aufbereitete Bild ist zu groß. Bitte verkleinern.");
+    return { type: "input_image", image_url: `data:${mimeType};base64,${clean.toString("base64")}`, detail: "high" };
+  }
+  const extensions = { "application/pdf": "pdf", "text/plain": "txt", "text/csv": "csv",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx" };
+  if (!extensions[mimeType]) throw new HttpsError("invalid-argument", "Nicht unterstütztes Materialformat.");
+  return { type: "input_file", filename: `unterrichtsmaterial-${index + 1}.${extensions[mimeType]}`, file_data: `data:${mimeType};base64,${buf.toString("base64")}` };
+}
 
 function sanitizeMaterials(materials, uid) {
   const list = Array.isArray(materials) ? materials.slice(0, LIMITS.maxMaterials) : [];
@@ -21,12 +41,7 @@ async function materialInputs(materials, uid) {
     const file = bucket.file(m.storagePath); const [meta] = await file.getMetadata();
     if (Number(meta.size || 0) > LIMITS.maxMaterialBytes) throw new HttpsError("invalid-argument", `${m.name} ist zu groß.`);
     const [buf] = await file.download();
-    const base64 = buf.toString("base64");
-    if (m.mimeType.startsWith("image/")) {
-      out.push({ type: "input_image", image_url: `data:${m.mimeType};base64,${base64}`, detail: "high" });
-    } else {
-      out.push({ type: "input_file", filename: m.name, file_data: `data:${m.mimeType};base64,${base64}` });
-    }
+    out.push(await prepareMaterialInput(buf, m.mimeType, out.length));
   }
   return out;
 }
@@ -42,4 +57,4 @@ async function deleteUploadedMaterials(materials) {
   if (failed) console.error(`KI-Material: ${failed} von ${materials.length} Uploads konnten nicht gelöscht werden.`);
 }
 
-module.exports = { sanitizeMaterials, materialInputs, deleteUploadedMaterials };
+module.exports = { sanitizeMaterials, materialInputs, deleteUploadedMaterials, prepareMaterialInput };

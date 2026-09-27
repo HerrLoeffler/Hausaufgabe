@@ -53,7 +53,7 @@ test("actual generation handler connects constrained batches, validation, review
     assert.equal(response.test.questions.length, 50);
     assert.equal(response.test.questions.reduce((sum, q) => sum + q.points, 0), 40);
     assert.equal(response.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, pictureCount);
-    assert.equal(response.meta.promptVersion, "testify-ai-v14");
+    assert.equal(response.meta.promptVersion, constants.PROMPT_VERSION);
     assert.equal(response.meta.qualityWarnings.length, 0);
     assert.equal(usage[0][2].total_tokens, 130);
     assert.ok(progress.some(([stage]) => stage === "quality-review"));

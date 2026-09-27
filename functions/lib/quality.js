@@ -2,7 +2,7 @@
 
 const { validateAndRepairTest } = require("./repair-test");
 
-const MEMORY_VERSION = 2;
+const MEMORY_VERSION = 3;
 
 const QUALITY_REASONS = Object.freeze({
   incorrect: "fachlich falsche oder sinnlose Aufgaben",
@@ -21,9 +21,10 @@ const reviewSchema = {
       properties: {
         index: { type: "integer" },
         reason: { type: "string", enum: ["incorrect", "answer_leak", "image_mismatch", "ambiguous", "duplicate"] },
-        detail: { type: "string" }
+        detail: { type: "string" },
+        evidence: { type: "string", description: "Bei answer_leak: wörtlicher Lösungshinweis aus studentView.text oder studentView.passage, sonst leer." }
       },
-      required: ["index", "reason", "detail"]
+      required: ["index", "reason", "detail", "evidence"]
     } }
   },
   required: ["issues"]
@@ -92,6 +93,12 @@ function questionSnapshotForMemory(q = {}) {
     text: q.text,
     options: q.options || [],
     acceptedAnswers: q.acceptedAnswers || [],
+    correctBoolean: q.correctBoolean,
+    pairs: q.pairs || [],
+    items: q.items || [],
+    groups: q.groups || [],
+    passage: q.passage || "",
+    targetWords: q.targetWords || [],
     numericAnswer: q.numericAnswer,
     unit: q.unit || "",
     mediaIntent: { kind }
@@ -137,11 +144,23 @@ function feedbackMemory(globalFeedback = [], context = {}) {
   const positiveMap = new Map();
   const candidateMap = new Map();
   const versionMap = new Map();
+  const falsePositiveMap = new Map();
   const stats = { total: 0, good: 0, bad: 0, relevantGood: 0, relevantBad: 0 };
 
   for (const entry of globalFeedback) {
     if (entry?.category !== "ai_question" || !["good", "bad"].includes(entry.verdict)) continue;
     const ctx = entryContext(entry);
+    // Rejecting a reviewer warning does not certify the entire question as good.
+    // Keep it separate from question approval rates and negative examples.
+    if (entry.reviewOutcome === "false_positive") {
+      if (subjectRelevant(ctx, target) && QUALITY_REASONS[entry.reviewerReason]) {
+        const key = `${ctx.type}:${entry.reviewerReason}`;
+        const item = falsePositiveMap.get(key) || { type: ctx.type, reason: entry.reviewerReason, reports: 0 };
+        item.reports += 1;
+        falsePositiveMap.set(key, item);
+      }
+      continue;
+    }
     const weight = contextWeight(ctx, target);
     const isRelevant = subjectRelevant(ctx, target);
     const teacherKey = String(entry.userId || "unknown").slice(0, 128);
@@ -256,6 +275,7 @@ function feedbackMemory(globalFeedback = [], context = {}) {
     positivePatterns,
     ruleCandidates,
     versionStats,
+    reviewerFalsePositives: [...falsePositiveMap.values()].sort((a, b) => b.reports - a.reports).slice(0, 6),
     stats
   };
 }
@@ -308,9 +328,50 @@ function qualityMemoryPrompt(memory = {}, { questionType = "" } = {}) {
   return "Qualitätsgedächtnis von Testify (aggregierte Signale, keine Beweise und keine früheren Aufgaben kopieren):\n- " + lines.join("\n- ");
 }
 
+function questionForReview(q, index) {
+  const studentView = { text: String(q.text || "") };
+  const answerKey = {};
+  const sorted = values => [...values].sort((a, b) => String(a).localeCompare(String(b), "de"));
+  if (q.type === "gapfill") {
+    answerKey.gaps = [];
+    studentView.text = studentView.text.replace(/\[([^\]]+)\]/g, (_, solution) => {
+      answerKey.gaps.push(solution.split("|").map(value => value.trim()));
+      return `____ (${answerKey.gaps.length})`;
+    });
+  }
+  if (["single", "multi", "dropdown"].includes(q.type)) {
+    studentView.options = (q.options || []).map(option => String(option.text || ""));
+    answerKey.correctOptions = (q.options || []).flatMap((option, i) => option.correct ? [i] : []);
+  }
+  if (q.type === "truefalse") { studentView.choices = ["Richtig", "Falsch"]; answerKey.correctBoolean = q.correctBoolean; }
+  if (q.type === "text") { answerKey.acceptedAnswers = q.acceptedAnswers || []; answerKey.manualReview = Boolean(q.manualReview); }
+  if (q.type === "number") { studentView.unit = q.unit || ""; answerKey.numericAnswer = q.numericAnswer; answerKey.tolerance = q.tolerance || 0; }
+  if (q.type === "markwords") { studentView.passage = q.passage || ""; answerKey.targetWords = q.targetWords || []; }
+  if (q.type === "ordering") { studentView.items = sorted(q.items || []); studentView.displayOrder = "shuffled"; answerKey.orderedItems = q.items || []; }
+  if (q.type === "matching") {
+    studentView.left = (q.pairs || []).map(pair => pair.left);
+    studentView.right = sorted((q.pairs || []).map(pair => pair.right));
+    studentView.displayOrder = "right side shuffled";
+    answerKey.pairs = q.pairs || [];
+  }
+  if (q.type === "grouping") {
+    studentView.categories = (q.groups || []).map(group => group.name);
+    studentView.items = sorted((q.groups || []).flatMap(group => group.items || []));
+    answerKey.groups = q.groups || [];
+  }
+  return { index, type: q.type, studentView, answerKey, plannedImage: q.mediaIntent?.kind === "ai_generated" ? String(q.mediaIntent.prompt || "") : null };
+}
+
 function reviewPrompt(test, memory = {}) {
   const memoryGuide = qualityMemoryPrompt(memory);
-  return `Prüfe JEDE Aufgabe dieses Tests anhand von Frage, Lösung und Bildbeschreibung. Prüfe fachliche Richtigkeit, Sinn, Eindeutigkeit, versteckte Lösungshinweise, logisch korrekte Antwortoptionen und inhaltliche Dopplungen zwischen Aufgaben. Bei Zuordnungen muss jeder Satzanfang eine eindeutig passende Lösung haben, auch wenn sinnverwandte Wörter vorkommen. Bei Wortarten-Gruppierungen darf kein Wort ohne Kontext mehreren Kategorien zugeordnet werden können. Eine Frage nach der Zahl von Kommas muss den Beispielsatz ohne Kommas zeigen. Ein einzelnes Standbild zeigt keine zeitliche Wiederholung wie „wieder“. Bei Bildantworten müssen die Szenen dieselben genannten Gegenstände zeigen und zur Frage passen; nur die zu prüfende Eigenschaft darf sich ändern. Tatsächlich erzeugte Bildpixel liegen noch nicht vor; bewerte hier die geplanten Szenen. WICHTIG: Bei Lückentext-Aufgaben (type gapfill) stehen Lösungen intern in eckigen Klammern, z. B. [München]. Diese Klammerinhalte werden Schülern als leere Eingabefelder angezeigt und sind deshalb KEIN answer_leak. Bewerte nur Inhalte als Lösungshinweis, die Schüler tatsächlich sehen. Interne Lösungsfelder, correct-Markierungen und Metadaten sind nicht sichtbar. Gib nur eindeutig feststellbare Probleme zurück. Indizes beginnen bei 0. Beschreibe jedes Problem konkret und knapp auf Deutsch.${memoryGuide ? `\n${memoryGuide}` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions })}`;
+  const falseAlarms = (memory.reviewerFalsePositives || []).map(item => `${item.type}/${item.reason}: ${item.reports}`).join(", ");
+  return `Prüfe JEDE Aufgabe auf fachliche Richtigkeit, Eindeutigkeit, passende Lösungen und Dopplungen.
+studentView enthält die sichtbare Schüleransicht. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
+Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
+Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
+Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
+Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
+Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
 }
 
 function normalizeReviewIssues(response, test) {
@@ -320,15 +381,20 @@ function normalizeReviewIssues(response, test) {
     const index = issue?.index;
     if (!Number.isInteger(index) || index < 0 || index >= test.questions.length || !reviewSchema.properties.issues.items.properties.reason.enum.includes(issue.reason)) throw new Error("KI-Qualitätsprüfung lieferte ungültige Aufgabenindizes oder Fehlergründe.");
     const reason = String(issue.reason);
-    const rawDetail = String(issue?.detail || "").trim().slice(0, 200) || QUALITY_REASONS[reason] || "Qualitätsproblem";
+    if (reason === "answer_leak" && typeof issue.evidence === "string") {
+      const view = questionForReview(test.questions[index], index).studentView;
+      const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
+      const evidence = normalize(issue.evidence);
+      if (!evidence || ![view.text, view.passage].some(value => normalize(value).includes(evidence))) continue;
+    }
+    const rawDetail = String(issue?.detail || "").trim().slice(0, 900) || QUALITY_REASONS[reason] || "Qualitätsproblem";
     const previous = byIndex.get(index);
     if (!previous) byIndex.set(index, { index, text: test.questions[index].text, reason, detail: `${reason}: ${rawDetail}` });
-    else if (previous.detail.length < 400) {
+    else if (previous.detail.length < 1800) {
       previous.detail += `; ${reason}: ${rawDetail}`;
       previous.reason = previous.reason === reason ? reason : "multiple";
     }
   }
-  if (response.issues.length && !byIndex.size) throw new Error("KI-Qualitätsprüfung lieferte ungültige Aufgabenindizes.");
   return [...byIndex.values()];
 }
 
@@ -345,7 +411,13 @@ async function reviewAndRepairTest(test, options, { review, generateQuestion, re
     draft = repaired.test;
     replaced += repaired.replaced;
     questionAttempts += repaired.questionAttempts;
-    if (repaired.errors.length) return { test: draft, errors: repaired.errors, issues, reviewPasses, replaced, questionAttempts };
+    if (repaired.errors.length) {
+      // A partial repair can replace some tasks. Old indices/texts must never
+      // become warnings on the new content: independently review that draft.
+      const remaining = normalizeReviewIssues(await review(draft), draft);
+      reviewPasses += 1;
+      return { test: draft, errors: repaired.errors, issues: remaining, reviewPasses, replaced, questionAttempts };
+    }
   }
   const finalIssues = normalizeReviewIssues(await review(draft), draft);
   reviewPasses += 1;
@@ -377,6 +449,6 @@ async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts 
 
 module.exports = {
   MEMORY_VERSION, reviewSchema, imageReviewSchema, REVIEW_SYSTEM,
-  feedbackMemory, qualityMemoryPrompt, reviewPrompt,
+  feedbackMemory, qualityMemoryPrompt, questionForReview, reviewPrompt,
   normalizeReviewIssues, reviewAndRepairTest, verifyImageScene
 };

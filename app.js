@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai28";
+const APP_VERSION = "2.3.1-ai29";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -34,9 +34,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai28";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai28";
-import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai28";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai29";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai29";
+import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-ai29";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -825,11 +825,14 @@ function authMessage(err) {
 
 onAuthStateChanged(auth, async (user) => {
   if (state.user?.uid !== user?.uid) {
+    state.variantTask = null;
+    state.aiVariantsRunning = false;
     state.aiMaterials = [];
     state.aiJobsUnsub?.();
     state.aiJobsUnsub = null;
     state.aiJobs = [];
     $("reportableErrorHost")?.replaceChildren();
+    $("variantBackgroundProgress")?.replaceChildren();
   }
   state.user = user;
   state.profile = null;
@@ -1080,6 +1083,7 @@ function renderAiJobs() {
       : "Ein Test läuft im Hintergrund. Du kannst einen zweiten Test starten. Den Fortschritt findest du unter „Meine Tests“.";
   }
   updateEditorPublishControls();
+  renderVariantProgress();
 }
 
 async function renderLocalDraftList() {
@@ -2392,21 +2396,6 @@ function clearAiImportHelp() {
   help.innerHTML = "";
 }
 
-function parseStoredQualityIssue(value) {
-  if (!value) return null;
-  if (typeof value === "object" && Number.isInteger(Number(value.questionPosition))) {
-    return {
-      questionPosition: Number(value.questionPosition),
-      reason: String(value.reason || "other"),
-      detail: String(value.detail || "").replace(/^[a-z_]+:\s*/i, "").trim()
-    };
-  }
-  const text = String(value || "").replace(/^KI-Qualitätsprüfung:\s*/i, "").trim();
-  const match = text.match(/^Aufgabe\s+(\d+):\s*(?:(incorrect|answer_leak|image_mismatch|ambiguous|duplicate|multiple):\s*)?(.*)$/i);
-  if (!match) return null;
-  return { questionPosition: Number(match[1]), reason: match[2] || "other", detail: String(match[3] || "").trim() };
-}
-
 function qualityIssueShortLabel(issue) {
   const labels = {
     incorrect: "Inhalt prüfen",
@@ -2420,25 +2409,50 @@ function qualityIssueShortLabel(issue) {
   return labels[issue?.reason] || labels.other;
 }
 
-function buildQualityReviewReport(quiz, code) {
-  if (!quiz || quiz.aiReviewAcknowledgedAt || quiz.published) return null;
-  const structured = Array.isArray(quiz.qualityIssues) ? quiz.qualityIssues.map(parseStoredQualityIssue).filter(Boolean) : [];
-  const warnings = Array.isArray(quiz.qualityWarnings) ? quiz.qualityWarnings : [];
-  const parsedWarnings = warnings.map(parseStoredQualityIssue).filter(Boolean);
-  const seen = new Set();
-  const issues = [...structured, ...parsedWarnings].filter(issue => {
-    const key = `${issue.questionPosition}:${issue.reason}:${issue.detail}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-  const generalWarnings = warnings.filter(warning => !parseStoredQualityIssue(warning));
-  if (!issues.length && !generalWarnings.length && !isAiReviewPending(quiz)) return null;
-  return { quizId: code, issues, warnings: generalWarnings, repairs: [] };
+function activeQualityIssue(index) {
+  const question = state.questions[index];
+  const issue = state.pendingImportReport?.issues?.find(item => item.questionId === question?.id);
+  return issue ? { ...issue, questionPosition: index + 1, changed: Boolean(issue.reviewKey && issue.reviewKey !== questionReviewKey(question)) } : null;
 }
 
-function activeQualityIssue(index) {
-  return state.pendingImportReport?.issues?.find(issue => issue.questionPosition === index + 1) || null;
+function syncQualityReport() {
+  const report = state.pendingImportReport;
+  if (!report || report.quizId !== state.currentQuiz?.id) return;
+  report.issues = currentQualityIssues(report.issues, state.questions).map(({ changed, ...issue }) => issue);
+  state.currentQuiz.qualityIssues = report.issues;
+  state.currentQuiz.qualityWarnings = [...(report.warnings || []), ...report.issues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)];
+}
+
+function resolveQualityIssues(questionId) {
+  if (!state.pendingImportReport) return;
+  state.pendingImportReport.issues = (state.pendingImportReport.issues || []).filter(issue => issue.questionId !== questionId);
+  syncQualityReport();
+  renderQuestions();
+  markDirty();
+}
+
+function renderQualityIssue(node, q, index) {
+  const issue = activeQualityIssue(index);
+  if (!issue) return;
+  const detail = document.createElement("details");
+  detail.className = "qualityIssueDetail";
+  detail.innerHTML = `<summary>${escapeHtml(issue.changed ? "Aufgabe geändert · nochmals prüfen" : qualityIssueShortLabel(issue))}</summary><p>${escapeHtml(issue.detail)}</p><div class="qualityIssueActions"><button type="button" class="button secondary fixQualityIssue">Mit KI verbessern</button><button type="button" class="button ghost resolveQualityIssue">Geprüft</button><button type="button" class="button ghost rejectQualityIssue">Warnung passt nicht</button></div>`;
+  detail.querySelector(".fixQualityIssue").addEventListener("click", () => regenerateQuestionWithAi(q, state.questions.findIndex(item => item.id === q.id), { instruction: `Prüfe diese Rückmeldung anhand der tatsächlichen Schüleransicht und korrigiere belegbare Fehler: ${issue.detail}. Interne Lösungen sind nicht sichtbar.`, panel: detail }));
+  detail.querySelector(".resolveQualityIssue").addEventListener("click", () => resolveQualityIssues(q.id));
+  detail.querySelector(".rejectQualityIssue").addEventListener("click", async event => {
+    event.currentTarget.disabled = true;
+    const saved = await submitAiQuestionFeedback(q, state.questions.findIndex(item => item.id === q.id), { verdict: "good", reviewOutcome: "false_positive", reviewerReason: issue.reason });
+    if (saved) resolveQualityIssues(q.id);
+    else event.target.disabled = false;
+  });
+  node.querySelector(".questionTop").after(detail);
+}
+
+function renderQuestionOutline() {
+  const host = $("questionOutline");
+  if (!host) return;
+  host.innerHTML = state.questions.map((q, index) => `<button type="button" class="questionOutlineItem${activeQualityIssue(index) ? " hasIssue" : ""}" data-position="${index + 1}" aria-label="Aufgabe ${index + 1}${activeQualityIssue(index) ? ", Hinweis prüfen" : ""}">${index + 1}${activeQualityIssue(index) ? " !" : ""}</button>`).join("");
+  host.querySelectorAll("button").forEach(button => button.addEventListener("click", () => scrollToQualityIssue(button.dataset.position)));
 }
 
 function scrollToQualityIssue(position) {
@@ -2446,6 +2460,11 @@ function scrollToQualityIssue(position) {
   const card = document.querySelector(`.questionCard[data-index="${index}"]`);
   if (!card) return;
   card.classList.remove("collapsed");
+  if (state.questions[index]) state.questions[index]._collapsed = false;
+  const detail = card.querySelector(".qualityIssueDetail");
+  if (detail) detail.open = true;
+  card.tabIndex = -1;
+  card.focus({ preventScroll: true });
   const collapse = card.querySelector(".collapseQuestion");
   if (collapse) { collapse.textContent = "⌃"; collapse.title = "Aufgabe einklappen"; }
   card.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2456,9 +2475,10 @@ function scrollToQualityIssue(position) {
 function renderImportReviewBanner() {
   const host = $("importReviewBanner");
   if (!host) return;
+  if (state.reviewBannerDismissedFor === state.currentQuiz?.id) { host.classList.add("hidden"); return; }
   const report = state.pendingImportReport;
   const pendingAiReview = isAiReviewPending(state.currentQuiz);
-  const issues = report?.quizId === state.currentQuiz?.id ? (report.issues || []) : [];
+  const issues = report?.quizId === state.currentQuiz?.id ? currentQualityIssues(report.issues, state.questions) : [];
   const generalWarnings = report?.quizId === state.currentQuiz?.id ? (report.warnings || []) : [];
   const warningCount = issues.length + generalWarnings.length;
   const hasReport = warningCount > 0 || Boolean(report?.repairs?.length);
@@ -2471,14 +2491,13 @@ function renderImportReviewBanner() {
   const heading = pendingAiReview ? "KI-Entwurf prüfen" : state.currentQuiz?.generationJobId ? "KI-Teilentwurf" : "Test importiert";
   const issueButtons = issues.length ? `<div class="qualityJumpList">${issues.map(issue => `<button class="qualityJump" type="button" data-position="${issue.questionPosition}"><strong>Aufgabe ${issue.questionPosition}</strong><span>${escapeHtml(qualityIssueShortLabel(issue))}</span></button>`).join("")}</div>` : "";
   const general = generalWarnings.length ? `<details><summary>${generalWarnings.length} weiterer Hinweis${generalWarnings.length === 1 ? "" : "e"}</summary><ul>${generalWarnings.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : "";
-  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? (warningCount ? "Testify hat diese Stellen markiert. Tippe auf eine Aufgabe, um direkt dorthin zu springen." : "Kontrolliere den Test kurz und schließe die Prüfung danach ab.") : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${issueButtons}${general}</div><div class="importReviewActions">${issues.length ? '<button class="button ghost jumpFirstQualityIssue" type="button">Ersten Hinweis öffnen</button>' : ""}${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? (warningCount ? "Testify hat diese Stellen markiert. Klicke auf eine Aufgabe, um sie zu prüfen." : "Kontrolliere den Test kurz und schließe die Prüfung danach ab.") : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${issueButtons}${general}</div><div class="importReviewActions">${issues.length ? '<button class="button ghost jumpFirstQualityIssue" type="button">Ersten Hinweis öffnen</button>' : ""}${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
   host.querySelectorAll(".qualityJump").forEach(button => button.addEventListener("click", () => scrollToQualityIssue(button.dataset.position)));
   host.querySelector(".jumpFirstQualityIssue")?.addEventListener("click", () => scrollToQualityIssue(issues[0]?.questionPosition));
   host.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(state.currentQuiz.id, true));
   host.querySelector(".closeImportReview")?.addEventListener("click", () => {
-    state.pendingImportReport = null;
+    state.reviewBannerDismissedFor = state.currentQuiz?.id;
     host.classList.add("hidden");
-    renderQuestions();
   });
 }
 
@@ -2499,7 +2518,7 @@ async function completeAiReview(code, fromEditor = false) {
     if (state.currentQuiz?.id === code) {
       state.currentQuiz.aiReviewAcknowledgedAt = acknowledgedAt;
       state.pendingImportReport = null;
-      renderImportReviewBanner();
+      renderQuestions();
     }
     const latestQuiz = state.currentQuiz?.id === code ? state.currentQuiz : quiz;
     state.quizzes = [{ ...latestQuiz, aiReviewAcknowledgedAt: acknowledgedAt }, ...state.quizzes.filter(item => item.id !== code)];
@@ -2682,13 +2701,15 @@ async function openEditor(code) {
     state.newManualQuiz = false;
     state.draftBaseUpdatedAt = toMillis(q.updatedAt);
     state.currentQuiz = q;
-    state.pendingImportReport = buildQualityReviewReport(q, code);
+    state.reviewBannerDismissedFor = null;
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
     state.questions = qs.docs.map((d) => {
       const item = { id: d.id, ...d.data() };
       initializeTypeData(item, item.type || "single");
       return item;
     });
+    state.pendingImportReport = buildQualityReviewReport(q, code, state.questions);
+    syncQualityReport();
     state.loadedQuestionIds = new Set(state.questions.map((x) => x.id));
     renderEditorState(q);
     const draft = await readEditorDraft(state.user.uid, code).catch(err => { console.warn("Lokaler Entwurf nicht verfügbar:", err); return null; });
@@ -2702,6 +2723,7 @@ async function openEditor(code) {
     state.draftBaseUpdatedAt = Number(draft.baseUpdatedAt || 0);
     state.currentQuiz = { ...q, ...draft.quiz };
     state.questions = (draft.questions || []).map(item => { initializeTypeData(item, item.type || "single"); return item; });
+    state.pendingImportReport = buildQualityReviewReport(state.currentQuiz, code, state.questions);
     renderEditorState(state.currentQuiz);
     markDirty();
     toast("Lokaler Bearbeitungsstand wiederhergestellt. Bitte nach der Prüfung speichern.");
@@ -2749,6 +2771,7 @@ function renderEditorState(q) {
     $("saveState").style.color = "#667085";
   } else markSaved();
   updateEditorPublishControls();
+  renderVariantProgress();
 }
 
 function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
@@ -2786,6 +2809,12 @@ function renderQuestions() {
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
     node.dataset.index = String(index);
+    if (q._collapsed) {
+      node.classList.add("collapsed");
+      const collapse = node.querySelector(".collapseQuestion");
+      if (collapse) { collapse.textContent = "⌄"; collapse.title = "Aufgabe ausklappen"; }
+    }
+    renderQualityIssue(node, q, index);
     const qualityIssue = activeQualityIssue(index);
     if (qualityIssue) {
       node.classList.add("qualityIssueQuestion");
@@ -2838,6 +2867,7 @@ function renderQuestions() {
     node.querySelector(".moveDown").addEventListener("click", () => moveQuestion(index, 1));
     node.querySelector(".collapseQuestion")?.addEventListener("click", (e) => {
       const collapsed = node.classList.toggle("collapsed");
+      q._collapsed = collapsed;
       e.currentTarget.textContent = collapsed ? "⌄" : "⌃";
       e.currentTarget.title = collapsed ? "Aufgabe ausklappen" : "Aufgabe einklappen";
     });
@@ -2900,10 +2930,13 @@ function renderQuestions() {
     root.appendChild(node);
   });
   updateSummary();
+  syncQualityReport();
+  renderImportReviewBanner();
+  renderQuestionOutline();
 }
 
 function questionContext(index) {
-  const others = state.questions.filter((_, i) => i !== index).slice(0, 50);
+  const others = state.questions.filter((_, i) => i !== index).slice(0, 100);
   return {
     title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
     existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" } }))
@@ -2919,7 +2952,8 @@ function questionForAi(q) {
 }
 
 const AI_QUALITY_REASONS = Object.freeze({
-  incorrect: "Fachlich falsch, unsinnig oder mehrdeutig",
+  incorrect: "Fachlich falsch oder unsinnig",
+  ambiguous: "Mehrdeutig oder zu wenig Kontext",
   answer_leak: "Lösung wird bereits verraten",
   image_mismatch: "Bild oder Bildantwort passt nicht",
   duplicate: "Doppelt oder zu ähnlich",
@@ -2931,13 +2965,18 @@ function aiQuestionFeedbackSnapshot(q) {
     type: String(q.type || "").slice(0, 30), text: String(q.text || "").slice(0, 900), points: Number(q.points) || 1,
     options: (q.options || []).slice(0, 6).map(o => ({ text: String(o.text || "").slice(0, 180), correct: Boolean(o.correct) })),
     acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4).map(answer => String(answer).slice(0, 120)),
+    correctBoolean: q.type === "truefalse" ? q.correctBoolean : null,
+    pairs: (q.pairs || []).slice(0, 15).map(pair => ({ left: String(pair.left).slice(0, 180), right: String(pair.right).slice(0, 180) })),
+    items: (q.items || []).slice(0, 20).map(item => String(item).slice(0, 180)),
+    groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
+    targetWords: (q.targetWords || []).slice(0, 30),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
     passage: String(q.passage || "").slice(0, 600),
     imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
   };
 }
 
-async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep" }) {
+async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep", reviewOutcome = "", reviewerReason = "" }) {
   if (!state.user || !state.currentQuiz?.id) return;
   if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
     toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
@@ -2949,29 +2988,38 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     return;
   }
   try {
+    const feedbackQuizId = state.currentQuiz.id;
+    const feedbackUid = state.user.uid;
+    const feedbackContext = {
+      subject: String($("quizSubject")?.value || state.currentQuiz.subject || "").trim().slice(0, 120),
+      grade: String($("quizGrade")?.value || state.currentQuiz.grade || "").trim().slice(0, 60)
+    };
     const snapshot = aiQuestionFeedbackSnapshot(q);
     const fingerprint = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
     const hash = Array.from(new Uint8Array(fingerprint)).slice(0, 10).map(byte => byte.toString(16).padStart(2, "0")).join("");
-    const id = `aiq-${state.currentQuiz.id}-${q.id}-${state.user.uid}-${hash}`;
+    const id = `aiq-${feedbackQuizId}-${q.id}-${feedbackUid}-${hash}${reviewOutcome ? "-review-" + reviewerReason : ""}`;
     const label = AI_QUALITY_REASONS[reason] || "";
     const entry = {
-    userId: state.user.uid, displayName: state.profile?.displayName || state.user.displayName || "", email: state.user.email || "",
-    category: "ai_question", testCode: state.currentQuiz.id, questionId: q.id, questionPosition: index + 1,
-    subject: String($("quizSubject")?.value || state.currentQuiz?.subject || "").trim().slice(0, 120),
-    grade: String($("quizGrade")?.value || state.currentQuiz?.grade || "").trim().slice(0, 60),
-    questionType: String(q.type || "").slice(0, 30), feedbackSchemaVersion: 2,
-    message: verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
+    userId: feedbackUid,
+    category: "ai_question", testCode: feedbackQuizId, questionId: q.id, questionPosition: index + 1,
+    ...feedbackContext,
+    questionType: String(q.type || "").slice(0, 30), feedbackSchemaVersion: 3,
+    message: reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen: " + qualityIssueShortLabel({ reason: reviewerReason }) : verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
     verdict, reason, teacherComment: note, action, questionSnapshot: snapshot,
+    ...(reviewOutcome ? { reviewOutcome, reviewerReason } : {}),
     model: String(q.aiOrigin?.model || "").slice(0, 60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0, 60),
-    appVersion: APP_VERSION, environment: appEnvironment, status: verdict === "good" ? "done" : "new", createdAt: serverTimestamp()
+    appVersion: APP_VERSION, environment: appEnvironment, status: reviewOutcome ? "new" : verdict === "good" ? "done" : "new", createdAt: serverTimestamp()
     };
     await setDoc(doc(db, "feedback", id), entry);
-    q._aiFeedbackVerdict = verdict;
+    if (state.currentQuiz?.id !== feedbackQuizId || state.user?.uid !== feedbackUid) return false;
+    index = state.questions.findIndex(item => item.id === q.id);
+    if (index < 0) return false;
+    q._aiFeedbackVerdict = reviewOutcome ? "" : verdict;
     const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
-    card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", verdict === "good");
-    card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", verdict === "bad");
-    card?.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(verdict === "good"));
-    card?.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(verdict === "bad"));
+    card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "good");
+    card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "bad");
+    card?.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "good"));
+    card?.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "bad"));
     if (action === "remove") {
       state.questions.splice(index, 1);
       renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
@@ -2979,7 +3027,7 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
       toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
       const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Antwortoptionen müssen aus eindeutigem Text bestehen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
       await regenerateQuestionWithAi(q, index, { instruction, requireDifferent: true });
-    } else toast(verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
+    } else toast(reviewOutcome === "false_positive" ? "Fehlalarm gemeldet. Danke für die Korrektur." : verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
     return true;
   } catch (err) {
     console.error(err);
@@ -3047,7 +3095,8 @@ function defaultVariantMediaKind(q) {
 }
 
 function openQuestionVariantDialog(q, index) {
-  if (state.aiVariantsRunning) return toast("Es werden bereits Varianten im Hintergrund erstellt.");
+  if (state.newManualQuiz) return toast("Bitte den Test zuerst speichern. Danach kannst du Varianten hinzufügen.");
+  if (state.aiVariantsRunning || state.variantTask?.questions?.length) return toast("Bitte die laufenden Varianten abwarten oder die fertigen Varianten übernehmen.");
   const available = Math.min(5, 100 - state.questions.length);
   if (available < 1) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   const dialog = document.createElement("dialog");
@@ -3056,7 +3105,7 @@ function openQuestionVariantDialog(q, index) {
     <p>Neue Beispiele für Aufgabe ${index + 1}. Die ursprüngliche Aufgabe bleibt erhalten.</p>
     <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? "Varianten" : "Variante"}</option>`).join("")}</select></label>
     <label>Bilder<select name="mediaKind"><option value="none">Ohne Bild</option><option value="ai_generated">Mit Bild zur Aufgabe</option></select></label>
-    <p class="hint">Nach dem Start läuft die Erstellung im Hintergrund. Du kannst währenddessen im Test weiterarbeiten.</p>
+    <p class="hint">Du kannst weiterarbeiten. Fertige Varianten übernimmst du anschließend mit einem Klick. Diesen Tab geöffnet lassen.</p>
     <div class="actions"><button type="button" class="button ghost variantCancel">Abbrechen</button><button type="submit" class="button primary">Im Hintergrund erstellen</button></div></form>`;
   const form = dialog.querySelector("form");
   form.elements.mediaKind.value = defaultVariantMediaKind(q);
@@ -3067,72 +3116,99 @@ function openQuestionVariantDialog(q, index) {
     if (state.aiVariantsRunning) return;
     const count = Number(form.elements.count.value);
     const mediaKind = form.elements.mediaKind.value;
-    state.aiVariantsRunning = true;
     dialog.close();
-    setAiProgress(`Varianten für Aufgabe ${index + 1} werden im Hintergrund erstellt …`, false, null, "", "variantBackgroundProgress");
-    void createQuestionVariants(q, {
-      count,
-      mediaKind,
-      onProgress: text => setAiProgress(text, false, null, "", "variantBackgroundProgress")
-    }).finally(() => {
-      state.aiVariantsRunning = false;
-      setTimeout(() => setAiProgress("", false, null, "", "variantBackgroundProgress"), 2500);
-    });
+    void createQuestionVariants(q, { count, mediaKind });
   });
   document.body.appendChild(dialog);
   dialog.showModal();
 }
 
-async function createQuestionVariants(q, { count, mediaKind, onProgress = () => {} }) {
+function renderVariantProgress() {
+  const host = $("variantBackgroundProgress");
+  const task = state.variantTask;
+  if (!host) return;
+  if (!task || task.uid !== state.user?.uid) { host.classList.add("hidden"); host.innerHTML = ""; return; }
+  host.classList.remove("hidden");
+  const ready = task.questions.length;
+  const inSource = state.currentQuiz?.id === task.quizId;
+  host.innerHTML = `<div><strong>${escapeHtml(task.message)}</strong><small>${task.running ? "Du kannst weiterarbeiten. Lass diesen Tab geöffnet." : inSource ? "Fertige Varianten erst bei Bedarf in den Test übernehmen." : "Die Varianten warten im Ausgangstest."}</small></div>${ready && inSource ? `<button type="button" class="button secondary applyVariants">${ready} ${ready === 1 ? "Variante übernehmen" : "Varianten übernehmen"}</button>` : ""}${!task.running ? '<button type="button" class="button ghost discardVariants">Verwerfen</button>' : ""}`;
+  host.querySelector(".applyVariants")?.addEventListener("click", applyPendingVariants);
+  host.querySelector(".discardVariants")?.addEventListener("click", () => {
+    if (ready && !confirm("Die fertigen Varianten verwerfen?")) return;
+    state.variantTask = null;
+    renderVariantProgress();
+  });
+}
+
+function applyPendingVariants() {
+  const task = state.variantTask;
+  if (!task || task.uid !== state.user?.uid || task.quizId !== state.currentQuiz?.id) return;
+  if (state.currentQuiz.published && !state.currentQuiz.ended) return toast("Bitte den veröffentlichten Test zuerst beenden.", "error");
+  const available = Math.max(0, 100 - state.questions.length);
+  if (!available) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
+  const next = task.questions.splice(0, available);
+  if (!next.length) return;
+  const anchor = state.questions.findIndex(q => q.id === task.anchorId);
+  state.questions.splice(anchor < 0 ? state.questions.length : anchor + 1, 0, ...next);
+  task.anchorId = next.at(-1).id;
+  renderQuestions();
+  markDirty();
+  if (!task.running && !task.questions.length) state.variantTask = null;
+  renderVariantProgress();
+  toast(`${next.length} ${next.length === 1 ? "Variante übernommen" : "Varianten übernommen"}. Bitte speichern.`);
+}
+
+async function createQuestionVariants(q, { count, mediaKind }) {
+  if (state.aiVariantsRunning || state.variantTask?.questions?.length) return;
   if (!Number.isInteger(count) || count < 1 || count > 5 || state.questions.length + count > 100) {
     return toast("Bitte 1 bis 5 Varianten wählen; insgesamt sind höchstens 100 Aufgaben möglich.", "error");
   }
   const quizId = state.currentQuiz?.id;
   const uid = state.user?.uid;
+  if (!quizId || !uid) return;
   const source = questionForAi(q);
-  let created = 0;
-  let anchorId = q.id;
-  let rawQuestion = null;
-  const ensureEditor = () => {
-    if (!quizId || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.some(question => question.id === q.id)) {
-      throw new Error("Der Ausgangstest ist nicht mehr geöffnet. Weitere Varianten wurden gestoppt.");
-    }
+  const context = questionContext(state.questions.findIndex(item => item.id === q.id));
+  const task = { quizId, uid, sourceId: q.id, anchorId: q.id, questions: [], running: true, message: "Varianten werden erstellt …" };
+  state.variantTask = task;
+  state.aiVariantsRunning = true;
+  const ensureOwner = () => {
+    if (state.user?.uid !== uid || state.variantTask !== task) throw new Error("Varianten nach dem Abmelden gestoppt.");
   };
+  renderVariantProgress();
   try {
     for (let i = 0; i < count; i += 1) {
-      ensureEditor();
-      const sourceIndex = state.questions.findIndex(question => question.id === q.id);
-      rawQuestion = null;
-      onProgress(`Variante ${i + 1} von ${count} wird erstellt …${created ? ` ${created} bereits hinzugefügt.` : ""}`);
+      ensureOwner();
+      task.message = `Variante ${i + 1} von ${count} wird erstellt …`;
+      renderVariantProgress();
       const response = await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind,
-        testContext: questionContext(sourceIndex), allowedTypes: QUESTION_TYPES.map(([v]) => v),
-        allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
-      ensureEditor();
-      rawQuestion = response.question;
+        testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
+      ensureOwner();
+      const rawQuestion = response.question;
       if ((rawQuestion?.mediaIntent?.kind || "none") !== mediaKind) throw new Error("Die Variante entspricht nicht der gewählten Bildart.");
-      const next = normalizeImportedQuestion(rawQuestion, sourceIndex, { warnings: [], repairs: [] });
+      const next = normalizeImportedQuestion(rawQuestion, 0, { warnings: [], repairs: [] });
       next.aiOrigin = { kind: "variant", model: String(response.meta?.model || ""), promptVersion: String(response.meta?.promptVersion || "") };
       next.id = doc(collection(db, "quizzes", quizId, "questions")).id;
       if (mediaKind !== "none") {
-        onProgress(`Bilder für Variante ${i + 1} von ${count} werden erstellt und geprüft …`);
+        task.message = `Bild für Variante ${i + 1} von ${count} wird geprüft …`;
+        renderVariantProgress();
         await applyGeneratedMedia(rawQuestion, next, quizId, next.id);
       }
-      ensureEditor();
-      const position = state.questions.findIndex(question => question.id === anchorId) + 1;
-      state.questions.splice(position, 0, next);
-      anchorId = next.id;
-      created += 1;
-      markDirty();
+      ensureOwner();
+      task.questions.push(next);
+      context.existingQuestions.push(questionForAi(next));
+      renderVariantProgress();
     }
-    toast(`${created} ${created === 1 ? "Variante hinzugefügt" : "Varianten hinzugefügt"}. Bitte speichern.`);
+    task.message = `${count} ${count === 1 ? "Variante ist" : "Varianten sind"} fertig.`;
   } catch (err) {
-    showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
-      message: `${created} von ${count} Varianten hinzugefügt. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`,
-      error: err, action: "add_ai_variants", details: { variantCount: count, variantsCreated: created, mediaKind,
-        questionPosition: state.questions.findIndex(question => question.id === q.id) + 1, questionType: q.type }
+    task.message = `${task.questions.length} von ${count} Varianten bereit. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`;
+    if (state.user?.uid === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
+      message: task.message, error: err, action: "add_ai_variants", details: { variantCount: count, variantsCreated: task.questions.length, mediaKind, questionType: q.type }
     });
   } finally {
-    if (state.currentQuiz?.id === quizId && state.user?.uid === uid) renderQuestions();
+    task.running = false;
+    if (state.variantTask === task || !state.variantTask) state.aiVariantsRunning = false;
+    if (state.user?.uid !== uid && state.variantTask === task) state.variantTask = null;
+    renderVariantProgress();
   }
 }
 
@@ -3140,20 +3216,25 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 100) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
+  const target = { quizId: state.currentQuiz?.id, uid: state.user?.uid, questionId: q.id, reviewKey: questionReviewKey(q) };
+  if (editorQuestionIndex(state, target) < 0) return;
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
     const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
-    next.id = variant ? doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id : q.id;
+    next.id = variant ? doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
     if (!variant) next._aiUndo = old;
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
-      await applyGeneratedMedia(response.question, next, state.currentQuiz.id, next.id);
+      await applyGeneratedMedia(response.question, next, target.quizId, next.id);
     } else if (!variant && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
+    index = editorQuestionIndex(state, target);
+    if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     if (variant) state.questions.splice(index + 1, 0, next);
-    else state.questions[index] = next;
+    else { state.questions[index] = next; resolveQualityIssues(q.id); }
     renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
   } catch (err) {
     console.error(err);
@@ -3362,7 +3443,7 @@ function renderQuestionImageEditor(container, q) {
   const panel = document.createElement("div");
   panel.className = "imageDropPanel hidden";
   panel.tabIndex = 0;
-  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Beschreibe kurz, was auf dem Bild zu sehen sein soll. Jede Generierung verursacht Kosten.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Zahlenstrahl von 0 bis 100 mit Markierung bei 35"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
+  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Kurz beschreiben. Die Beschreibung geht an OpenAI; keine personenbezogenen Angaben. Kostenpflichtig.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
   const actions = panel.querySelector(".imageActions");
   const file = document.createElement("input");
   file.type = "file";
@@ -3402,6 +3483,8 @@ async function generateAiImageForQuestion(q, panel) {
   const prompt = promptInput?.value.trim() || "";
   if (!prompt) return toast("Bitte kurz beschreiben, welches Bild erstellt werden soll.", "error");
   if (!state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
+  const target = { quizId: state.currentQuiz.id, uid: state.user?.uid, questionId: q.id, reviewKey: questionReviewKey(q) };
+  if (editorQuestionIndex(state, target) < 0) return;
   const previous = button?.textContent || "KI-Bild erstellen";
   if (button) { button.disabled = true; button.textContent = "Bild wird erstellt …"; }
   try {
@@ -3414,10 +3497,12 @@ async function generateAiImageForQuestion(q, panel) {
       altText: `KI-generierte Abbildung: ${prompt}`.slice(0, 500)
     });
     if (!result?.asset?.imageDataUrl) throw new Error("Die KI hat kein Bild zurückgegeben.");
+    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Das Bild wurde nicht eingefügt.");
     Object.assign(q, result.asset);
     q.imageAlt = result.asset.imageAlt || `KI-generierte Abbildung: ${prompt}`.slice(0, 500);
     markDirty();
-    renderQuestions();
+    const imageEditor = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"] .questionImageEditor`);
+    if (imageEditor) renderQuestionImageEditor(imageEditor, q);
     toast("KI-Bild eingefügt. Bitte kurz prüfen und den Test speichern.");
   } catch (err) {
     console.error(err);
@@ -3895,7 +3980,8 @@ function editorDraftSnapshot() {
       showSolutions: $("quizShowSolutions").checked,
       timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
       startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
-      shuffleAnswers: $("quizShuffleAnswers").checked
+      shuffleAnswers: $("quizShuffleAnswers").checked,
+      qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || []
     },
     questions: deepClone(state.questions)
   };
@@ -3945,6 +4031,7 @@ function markSaved() {
   $("saveState").style.color = "#15803d";
   updateSummary();
   updateEditorPublishControls();
+  renderVariantProgress();
 }
 
 async function leaveEditorToDashboard() {
@@ -4092,7 +4179,9 @@ async function saveCurrentQuiz(showMessage = true) {
     const selectedScaleId = $("quizGradeScale").value;
     const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
     const scaleSnapshot = scaleChanged ? getScaleById(selectedScaleId) : deepClone(getQuizScale(state.currentQuiz));
+    syncQualityReport();
     const patch = {
+      qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || [],
       title: $("quizTitle").value.trim(),
       subject: $("quizSubject").value.trim(),
       grade: $("quizGrade").value.trim(),
@@ -4760,7 +4849,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       <div class="studentMetaRow"><span>${questions.length} Aufgaben</span><span>${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte</span><span>Code ${quiz.id}</span></div>
     </div>
     <form id="studentForm">
-      <div class="studentIdentityCard"><label class="studentNameLabel">Dein Name oder Kürzel<input id="studentName" type="text" required placeholder="Vorname Nachname" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Dein Name wird nur deiner Lehrkraft zusammen mit der Abgabe angezeigt.</small></div>
+      <div class="studentIdentityCard"><label class="studentNameLabel">Dein Kürzel<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Kürzel deiner Lehrkraft" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Nutze das Kürzel, das deine Lehrkraft dir gegeben hat.</small></div>
       ${gateHtml}
       <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
       <div id="studentProgressBar" class="studentProgressWrap ${gateRequired ? "hidden" : ""}">
@@ -6344,9 +6433,10 @@ function renderAdminFeedback(){
     .filter((f)=>category==="all"||f.category===category)
     .filter((f)=>!term||normalize(`${f.id||""} ${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""} ${f.errorCode||""} ${f.reportId||""} ${f.action||""} ${f.technicalDetails?.rawMessage||""}`).includes(term))
     .sort((a,b)=>(b.category==="rights"&&b.status!=="done")-(a.category==="rights"&&a.status!=="done"));
-  const aiItems = list.filter(f => f.category === "ai_question");
-  const reasonCounts = Object.entries({ ...AI_QUALITY_REASONS, ambiguous: "Mehrdeutig (ältere Meldungen)" }).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
-  const summary = aiItems.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
+  const aiReviewFalsePositives = list.filter(f => f.category === "ai_question" && f.reviewOutcome === "false_positive");
+  const aiItems = list.filter(f => f.category === "ai_question" && f.reviewOutcome !== "false_positive");
+  const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
+  const summary = aiItems.length || aiReviewFalsePositives.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch · ${aiReviewFalsePositives.length} zurückgewiesene Prüferwarnungen${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
   const errorItems = list.filter(f => f.category === "app_error");
   const errorGroups = [...errorItems.reduce((map, item) => {
     const key = item.errorCode || "UNBEKANNT";
@@ -6363,7 +6453,7 @@ function renderAdminFeedback(){
     const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
   root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {

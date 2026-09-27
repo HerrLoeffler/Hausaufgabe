@@ -4,7 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { normalizeQuestion, validateTest } = require("../lib/validation");
 const { validateAndRepairTest } = require("../lib/repair-test");
-const { MEMORY_VERSION, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("../lib/quality");
+const { MEMORY_VERSION, feedbackMemory, qualityMemoryPrompt, questionForReview, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest, verifyImageScene } = require("../lib/quality");
 
 function question(n) {
   return normalizeQuestion({
@@ -154,4 +154,42 @@ test("quality prompt knows that gapfill brackets are hidden from pupils", () => 
   const prompt = reviewPrompt({ subject: "Deutsch", grade: "5", questions: [{ type: "gapfill", text: "Ich helfe [dem] Kind.", points: 1, mediaIntent: { kind: "none" } }] }, {});
   assert.match(prompt, /KEIN answer_leak/);
   assert.match(prompt, /leere Eingabefelder/);
+});
+
+test("reported gapfill solutions are only in the answer key, never in the student view", () => {
+  for (const text of ["Ich helfe [dem] Kind.", "Lina [räumt] das Zimmer [auf].", "Wann [beginnt] der Unterricht?", "Heute [besichtigt] er das Schloss.", "[der neugierige Tim] fragt nach."]) {
+    const q = { type: "gapfill", text };
+    const projected = questionForReview(q, 0);
+    assert.equal(projected.studentView.text.includes("["), false);
+    assert.equal(projected.answerKey.gaps.length, [...text.matchAll(/\[/g)].length);
+    const issues = normalizeReviewIssues({ issues: [{ index: 0, reason: "answer_leak", detail: "Steht in eckigen Klammern.", evidence: text.match(/\[[^\]]+\]/)[0] }] }, { questions: [q] });
+    assert.deepEqual(issues, []);
+  }
+});
+
+test("a genuinely visible answer leak is retained and repaired", () => {
+  const q = { type: "gapfill", text: "Nutze dem. Ich helfe [dem] Kind." };
+  const issues = normalizeReviewIssues({ issues: [{ index: 0, reason: "answer_leak", detail: "Die Anweisung gibt die einzige Lösung vor.", evidence: "Nutze dem." }] }, { questions: [q] });
+  assert.equal(issues.length, 1);
+});
+
+test("truefalse and ordering separate deliberate falsehoods and stored order from the pupil view", () => {
+  const q = questionForReview({ type: "truefalse", text: "In jeder Frage steht das Verb zuerst.", correctBoolean: false }, 0);
+  assert.equal(q.answerKey.correctBoolean, false);
+  assert.equal(Object.hasOwn(q.studentView, "correctBoolean"), false);
+  const sorted = questionForReview({ type: "ordering", text: "Ordne", items: ["B", "A"] }, 1);
+  assert.deepEqual(sorted.answerKey.orderedItems, ["B", "A"]);
+  assert.deepEqual(sorted.studentView.items, ["A", "B"]);
+  assert.equal(sorted.studentView.displayOrder, "shuffled");
+});
+
+test("rejecting a reviewer warning teaches reviewer caution without blacklisting or endorsing the question", () => {
+  const memory = feedbackMemory([{ category: "ai_question", verdict: "good", reviewOutcome: "false_positive", reviewerReason: "answer_leak", questionType: "gapfill", subject: "Deutsch", userId: "teacher", questionSnapshot: question(1), teacherComment: "PRIVATE" }], { subject: "Deutsch" });
+  assert.deepEqual(memory.negativeQuestions, []);
+  assert.deepEqual(memory.positivePatterns, []);
+  assert.equal(memory.stats.total, 0);
+  assert.deepEqual(memory.reviewerFalsePositives, [{ type: "gapfill", reason: "answer_leak", reports: 1 }]);
+  const prompt = reviewPrompt({ questions: [] }, memory);
+  assert.ok(prompt.includes("zurückgewiesene Prüferwarnungen"));
+  assert.equal(prompt.includes("PRIVATE"), false);
 });

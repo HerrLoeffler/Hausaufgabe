@@ -5,6 +5,7 @@ on:
     branches:
       - feature/ai-integration
       - fix/ai-format-reliability
+      - fix/ai-review-workflow
   workflow_dispatch:
 
 permissions:
@@ -45,4 +46,4 @@ jobs:
           node --check ai-client.js
           node --check editor-drafts.js
           node --check ai-review-state.js
-          node --test ai-review-state.test.js ai-job-report.test.js
+          node --test ai-*.test.js

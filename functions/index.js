@@ -152,7 +152,7 @@ async function loadQualityMemory(context = {}) {
     // to count independent signals; names, emails and private comments are never loaded.
     const reports = await getFirestore().collection("feedback")
       .where("category", "==", "ai_question")
-      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion")
+      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion", "reviewOutcome", "reviewerReason")
       .get();
     return feedbackMemory(reports.docs.map(doc => doc.data()), context);
   } catch (err) {
@@ -166,7 +166,7 @@ async function loadQualityMemory(context = {}) {
 async function reviewDraft(test, memory) {
   try {
     return await structuredResponse({
-      schema: { ...reviewSchema, properties: { issues: { ...reviewSchema.properties.issues, items: { ...reviewSchema.properties.issues.items, properties: { ...reviewSchema.properties.issues.items.properties, index: { type: "integer", minimum: 0, maximum: Math.max(0, test.questions.length - 1) } } } } } }, schemaName: "testify_quality_review_v2", systemPrompt: REVIEW_SYSTEM,
+      schema: { ...reviewSchema, properties: { issues: { ...reviewSchema.properties.issues, items: { ...reviewSchema.properties.issues.items, properties: { ...reviewSchema.properties.issues.items.properties, index: { type: "integer", minimum: 0, maximum: Math.max(0, test.questions.length - 1) } } } } } }, schemaName: "testify_quality_review_v3", systemPrompt: REVIEW_SYSTEM,
       userPrompt: reviewPrompt(test, memory)
     });
   } catch (err) {
@@ -257,10 +257,11 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     }
     phase = "usage-log";
     const hardErrors = validateTest(reviewed.test, options);
-    const qualityIssues = hardErrors.length ? [] : (reviewed.issues || []).slice(0, 10).map(issue => ({
+    const qualityIssues = hardErrors.length ? [] : (reviewed.issues || []).map(issue => ({
       questionPosition: issue.index + 1,
+      questionId: `q${String(issue.index + 1).padStart(3, "0")}`,
       reason: String(issue.reason || "other").slice(0, 30),
-      detail: String(issue.detail || "").replace(/^[a-z_]+:\s*/i, "").slice(0, 300)
+      detail: String(issue.detail || "").replace(/^[a-z_]+:\s*/i, "").slice(0, 1800)
     }));
     const qualityWarnings = hardErrors.length ? [] : [
       ...(memory.unavailable ? ["Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."] : []),

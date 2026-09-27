@@ -1,6 +1,6 @@
 # Testify: Datenschutz, Unterrichtsmaterial und nächste Schritte
 
-Stand: 24.09.2026. Nur Staging-Zweig `feature/ai-integration`; ein Git-Push allein aktiviert die Änderungen nicht in Firebase.
+Aktualisierung 27.09.2026: Die aktuelle, konkret am Code abgeglichene Bestandsaufnahme steht in [PRODUCT_PRIVACY_REVIEW.md](PRODUCT_PRIVACY_REVIEW.md). ai29 auf `fix/ai-review-workflow` ergänzt erste Maßnahmen; ein Git-Push aktiviert sie nicht in Firebase. Die folgenden älteren Planungspunkte sind weiterhin offen, soweit im aktuellen Bericht nicht ausdrücklich umgesetzt.
 
 ## Tatsächliche Datenflüsse
 
@@ -19,7 +19,7 @@ Stand: 24.09.2026. Nur Staging-Zweig `feature/ai-integration`; ein Git-Push alle
 
 ### P0 – vor Nutzung mit echtem Schulmaterial und echten Schülerdaten
 
-1. **Staging prüfen:** `./deploy-staging.sh` im authentifizierten Projekt ausführen, Storage-Regeln, neue Funktion `purgeAiUploads` und Löschung nach Erfolg/Fehler anhand unkritischer Testdateien überprüfen. Den Cloud-Scheduler-Job und seine Fehler protokollieren bzw. alarmieren.
+1. **Staging prüfen:** Für ai29 ausschließlich `bash deploy-staging-ai29.sh` auf dem vorgesehenen Branch verwenden. Der Ablauf sichert und vergleicht zuerst den laufenden Code; abweichende Stände werden nicht überschrieben. Storage-Regeln, `purgeAiUploads` und Löschung nach Erfolg/Fehler anhand unkritischer Testdateien separat überprüfen. Den Cloud-Scheduler-Job und seine Fehler protokollieren bzw. alarmieren.
 2. **Schule und Betreiber klären:** Wer entscheidet über Zwecke/Mittel, und wer sind Auftragsverarbeiter? Mit Schulleitung/Datenschutzbeauftragtem Rechtsgrundlage, Datenarten, Verzeichnis, Informationspflichten, Speicherfristen und ggf. Datenschutz-Folgenabschätzung klären. Verträge und Unterauftragsverarbeiter für Firebase/Google und OpenAI sowie Drittlandtransfers und tatsächliche Datenstandorte prüfen. Solange ungeklärt: keine echten Schülerdaten an die KI.
 3. **Materialregeln veröffentlichen:** Nur eigene oder ausdrücklich für externe KI freigegebene Materialien ohne personenbezogene Daten zulassen. Für Schulbuchseiten und Verlagsarbeitsblätter ist die normale Kopiererlaubnis keine Erlaubnis zum KI-Upload. Regelung zum Umgang mit versehentlich hochgeladenem Material und Rechteanfragen dokumentieren; betroffene Uploads und eventuell nachgebildete Ausgaben entfernen.
 4. **Prüfungssicherheit herstellen:** Lösungen von öffentlich lesbaren Fragen trennen, Bewertung/Abgabe serverseitig validieren und Versuche an einen sicheren Ablauf binden. Bis dahin keine unbeaufsichtigten benoteten Prüfungen, weil Abruf der Lösungen und frei behauptete Punktzahlen technisch möglich sind.
