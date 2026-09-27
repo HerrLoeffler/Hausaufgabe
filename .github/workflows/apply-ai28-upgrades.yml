@@ -32,7 +32,15 @@ jobs:
           cache-dependency-path: functions/package-lock.json
 
       - name: Apply guarded source patch
-        run: python3 tools/apply-editor-quality-upgrades.py
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('tools/apply-editor-quality-upgrades.py')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('re.subn(pattern, repl, text, count=1, flags=re.S)', 're.subn(pattern, lambda _match: repl, text, count=1, flags=re.S)')
+          p.write_text(s, encoding='utf-8')
+          PY
+          python3 tools/apply-editor-quality-upgrades.py
 
       - name: Install function dependencies
         working-directory: functions
