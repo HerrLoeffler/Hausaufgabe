@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai29";
+const APP_VERSION = "2.3.1-ai30";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -34,10 +34,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai29";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai29";
-import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-ai29";
-import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-ai29";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai30";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai30";
+import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-ai30";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-ai30";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -200,52 +200,228 @@ function currentTeacherTourConfig() {
   return state.teacherTourConfig || normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
 }
 
+const FIRST_AI_GUIDE_VERSION = "first-ai-test-v1";
+let firstAiGuideStep = "";
+let firstAiGuideTarget = null;
+let firstAiGuideResizeHandler = null;
+let firstAiGuideOfferTimer = null;
+
 function firstTestGuideKey() {
-  return state.user ? `firstTestGuide:${state.user.uid}` : "";
+  return state.user ? `firstAiGuide:${state.user.uid}:${FIRST_AI_GUIDE_VERSION}` : "";
 }
 
-function firstTestGuideDismissed() {
-  try { return localStorage.getItem(firstTestGuideKey()) === "dismissed"; } catch (_) { return false; }
+function firstAiGuideDone() {
+  try { return localStorage.getItem(firstTestGuideKey()) === "done"; } catch (_) { return false; }
+}
+
+function firstAiGuideSkippedThisSession() {
+  try { return sessionStorage.getItem(`${firstTestGuideKey()}:skip`) === "1"; } catch (_) { return false; }
+}
+
+function firstAiGuideEligible() {
+  if (!state.user || isSuspended() || firstAiGuideDone() || firstAiGuideSkippedThisSession()) return false;
+  const quizzes = activeQuizzes().filter(q => q.generationStatus !== "running");
+  const hasAiWork = state.aiJobs.some(job => ["queued", "running", "ready"].includes(job.status));
+  return quizzes.length === 0 && !hasAiWork;
+}
+
+function ensureFirstAiGuideUi() {
+  let backdrop = $("firstAiGuideBackdrop");
+  let card = $("firstAiGuideCard");
+  if (!backdrop) {
+    backdrop = document.createElement("div");
+    backdrop.id = "firstAiGuideBackdrop";
+    backdrop.className = "firstAiGuideBackdrop hidden";
+    document.body.appendChild(backdrop);
+  }
+  if (!card) {
+    card = document.createElement("section");
+    card.id = "firstAiGuideCard";
+    card.className = "firstAiGuideCard hidden";
+    card.setAttribute("role", "dialog");
+    card.setAttribute("aria-modal", "true");
+    card.setAttribute("aria-live", "polite");
+    document.body.appendChild(card);
+  }
+  return { backdrop, card };
+}
+
+function clearFirstAiGuideTarget() {
+  firstAiGuideTarget?.classList.remove("firstAiGuideSpotlight");
+  firstAiGuideTarget = null;
+  if (firstAiGuideResizeHandler) {
+    window.removeEventListener("resize", firstAiGuideResizeHandler);
+    window.removeEventListener("scroll", firstAiGuideResizeHandler, true);
+    firstAiGuideResizeHandler = null;
+  }
+}
+
+function hideFirstAiGuide() {
+  clearFirstAiGuideTarget();
+  const { backdrop, card } = ensureFirstAiGuideUi();
+  backdrop.classList.add("hidden");
+  card.classList.add("hidden");
+  card.classList.remove("centered");
+}
+
+function skipFirstAiGuideForSession() {
+  try { sessionStorage.setItem(`${firstTestGuideKey()}:skip`, "1"); } catch (_) {}
+  firstAiGuideStep = "";
+  hideFirstAiGuide();
+}
+
+function markFirstAiGuideDone() {
+  try { localStorage.setItem(firstTestGuideKey(), "done"); } catch (_) {}
+  firstAiGuideStep = "";
+  hideFirstAiGuide();
+}
+
+function firstAiGuideTargetFor(step) {
+  if (step === "new") return $("newQuizBtn");
+  if (step === "ai") return $("createAiBtn");
+  if (step === "details") return $("aiTopic")?.closest("article.card") || $("aiTopic");
+  if (step === "generate") return $("generateAiTestBtn");
+  if (step === "running") return $("aiJobsList");
+  return null;
+}
+
+function positionFirstAiGuideCard() {
+  const card = $("firstAiGuideCard");
+  if (!card || card.classList.contains("hidden") || !firstAiGuideTarget) return;
+  const rect = firstAiGuideTarget.getBoundingClientRect();
+  const gap = 14;
+  const margin = 12;
+  const cardRect = card.getBoundingClientRect();
+  const width = Math.min(cardRect.width || 360, window.innerWidth - margin * 2);
+  let left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin));
+  let top = rect.bottom + gap;
+  if (top + cardRect.height > window.innerHeight - margin) top = Math.max(margin, rect.top - cardRect.height - gap);
+  card.style.left = `${Math.round(left)}px`;
+  card.style.top = `${Math.round(top)}px`;
+}
+
+function firstAiGuideCardHtml({ eyebrow, title, text, extra = "", action = "", showLater = true }) {
+  return `<div class="firstAiGuideHead"><span class="eyebrow">${escapeHtml(eyebrow)}</span><button class="firstAiGuideClose" type="button" aria-label="Für jetzt schließen">×</button></div>
+    <h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p>${extra}
+    <div class="firstAiGuideActions">${showLater ? '<button class="button ghost firstAiGuideLater" type="button">Später</button>' : ""}${action}</div>`;
+}
+
+function bindFirstAiGuideCommon(card) {
+  card.querySelector(".firstAiGuideClose")?.addEventListener("click", skipFirstAiGuideForSession);
+  card.querySelector(".firstAiGuideLater")?.addEventListener("click", skipFirstAiGuideForSession);
+}
+
+function renderFirstAiGuideStep(step) {
+  const { backdrop, card } = ensureFirstAiGuideUi();
+  clearFirstAiGuideTarget();
+  firstAiGuideStep = step;
+  backdrop.classList.remove("hidden");
+  card.classList.remove("hidden", "centered");
+
+  if (step === "intro") {
+    card.classList.add("centered");
+    card.style.left = "";
+    card.style.top = "";
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Dein erster Test",
+      title: "Erstelle deinen ersten Test mit KI",
+      text: "Ich führe dich direkt durch die echte Erstellung. Du klickst und füllst die markierten Bereiche selbst aus – in vier kurzen Schritten.",
+      extra: '<div class="firstAiGuideMiniFlow"><span>+ Neuer Test</span><b>→</b><span>Mit KI</span><b>→</b><span>Angaben</span><b>→</b><span>Erstellen</span></div>',
+      action: '<button class="button primary firstAiGuideStart" type="button">Los geht’s</button>'
+    });
+    bindFirstAiGuideCommon(card);
+    card.querySelector(".firstAiGuideStart")?.addEventListener("click", () => renderFirstAiGuideStep("new"));
+    return;
+  }
+
+  firstAiGuideTarget = firstAiGuideTargetFor(step);
+  if (!firstAiGuideTarget || firstAiGuideTarget.classList.contains("hidden")) {
+    hideFirstAiGuide();
+    return;
+  }
+  firstAiGuideTarget.classList.add("firstAiGuideSpotlight");
+  firstAiGuideTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  if (step === "new") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 1 von 4",
+      title: "Starte einen neuen Test",
+      text: "Klicke jetzt auf den markierten Button „+ Neuer Test“.",
+      extra: '<div class="firstAiGuidePointer">Klicke auf den hervorgehobenen Bereich.</div>'
+    });
+  } else if (step === "ai") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 2 von 4",
+      title: "Wähle „Mit KI erstellen“",
+      text: "So erstellt Testify den ersten Entwurf für dich. Danach kannst du jede Aufgabe normal bearbeiten.",
+      extra: '<div class="firstAiGuidePointer">Klicke auf „Mit KI erstellen“.</div>'
+    });
+  } else if (step === "details") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 3 von 4",
+      title: "Beschreibe deinen Test",
+      text: "Trage Fach, Klasse und vor allem das Thema ein. Aufgabenanzahl, Schwierigkeit und Punkte kannst du direkt anpassen.",
+      extra: '<div id="firstAiGuideValidation" class="firstAiGuideValidation hidden"></div>',
+      action: '<button class="button primary firstAiGuideNext" type="button">Weiter</button>'
+    });
+  } else if (step === "generate") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 4 von 4",
+      title: "Jetzt mit KI erstellen",
+      text: "Klicke auf „Test erstellen“. Testify erzeugt den Entwurf im Hintergrund und prüft ihn anschließend automatisch.",
+      extra: '<div class="firstAiGuideCost"><strong>⚠ Kostenhinweis</strong><span>Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen.</span></div><div class="firstAiGuidePointer">Zum Starten den markierten Button anklicken.</div>'
+    });
+  } else if (step === "running") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Geschafft",
+      title: "Dein KI-Test wird erstellt",
+      text: "Die Erstellung läuft im Hintergrund. Du kannst weiterarbeiten oder die Seite verlassen. Sobald der Test fertig ist, öffnest du hier „Entwurf prüfen“.",
+      action: '<button class="button primary firstAiGuideFinish" type="button">Verstanden</button>',
+      showLater: false
+    });
+    card.querySelector(".firstAiGuideFinish")?.addEventListener("click", hideFirstAiGuide);
+  }
+
+  bindFirstAiGuideCommon(card);
+  card.querySelector(".firstAiGuideNext")?.addEventListener("click", () => {
+    const subject = $("aiSubject")?.value.trim();
+    const grade = $("aiGrade")?.value.trim();
+    const topic = $("aiTopic")?.value.trim();
+    if (!subject || !grade || !topic) {
+      const validation = $("firstAiGuideValidation");
+      if (validation) {
+        validation.textContent = "Bitte zuerst Fach, Klasse und Thema eintragen.";
+        validation.classList.remove("hidden");
+      }
+      (!subject ? $("aiSubject") : !grade ? $("aiGrade") : $("aiTopic"))?.focus();
+      return;
+    }
+    renderFirstAiGuideStep("generate");
+  });
+
+  requestAnimationFrame(() => {
+    positionFirstAiGuideCard();
+    firstAiGuideResizeHandler = positionFirstAiGuideCard;
+    window.addEventListener("resize", firstAiGuideResizeHandler);
+    window.addEventListener("scroll", firstAiGuideResizeHandler, true);
+  });
+}
+
+function scheduleFirstAiGuideOffer(attempt = 0) {
+  clearTimeout(firstAiGuideOfferTimer);
+  if (!firstAiGuideEligible() || $("dashboardView")?.classList.contains("hidden")) return;
+  firstAiGuideOfferTimer = setTimeout(() => {
+    if (!firstAiGuideEligible()) return;
+    if (document.querySelector("dialog[open]")) {
+      if (attempt < 40) scheduleFirstAiGuideOffer(attempt + 1);
+      return;
+    }
+    renderFirstAiGuideStep("intro");
+  }, attempt ? 500 : 650);
 }
 
 function renderFirstTestGuide() {
-  const dashboard = $("firstTestDashboard");
-  const editor = $("firstTestEditor");
-  const quizzes = activeQuizzes().filter(q => q.generationStatus !== "running");
-  const finished = quizzes.some(q => q.published || q.ended);
-  const visible = Boolean(state.user && !finished && !firstTestGuideDismissed());
-  const inEditor = !$("editorView").classList.contains("hidden") && Boolean(state.currentQuiz);
-  dashboard.classList.toggle("hidden", !visible || inEditor);
-  editor.classList.toggle("hidden", !visible || !inEditor);
-  if (!visible) return;
-  const hasDraft = quizzes.length > 0 || inEditor;
-  const hasQuestions = inEditor ? state.questions.length > 0 : quizzes.some(q => Number(q.questionCount) > 0);
-  const previewId = inEditor ? state.currentQuiz.id : quizzes.find(q => Number(q.questionCount) > 0)?.id;
-  let previewed = false;
-  try { previewed = Boolean(previewId && localStorage.getItem(`firstTestPreview:${state.user.uid}:${previewId}`)); } catch (_) {}
-  const steps = [
-    ["Test anlegen", hasDraft],
-    ["Aufgaben hinzufügen und Lösungen prüfen", hasQuestions],
-    ["Schüleransicht prüfen", previewed]
-  ];
-  const target = inEditor ? editor : dashboard;
-  const action = inEditor
-    ? `<button class="button secondary firstTestAction" type="button">${hasQuestions ? "Schüleransicht öffnen" : "Aufgabe hinzufügen"}</button>`
-    : `<button class="button secondary firstTestAction" type="button">${hasDraft ? "Entwurf öffnen" : "Test erstellen"}</button>`;
-  target.innerHTML = `<div class="firstTestGuideHead"><div><span class="eyebrow">Dein erster Test</span><h2>${hasDraft ? "So geht es weiter" : "In drei Schritten zum ersten Test"}</h2><p>Du kannst jederzeit weiterarbeiten. Veröffentliche erst, wenn Aufgaben und Lösungen stimmen.</p></div><button class="iconButton firstTestDismiss" type="button" aria-label="Einstiegshilfe schließen">×</button></div>
-    <ol class="firstTestSteps">${steps.map(([label, done], i) => `<li class="${done ? "done" : ""}"><span aria-hidden="true">${done ? "✓" : i + 1}</span>${label}</li>`).join("")}</ol>${action}`;
-  target.querySelector(".firstTestDismiss").addEventListener("click", () => {
-    try { localStorage.setItem(firstTestGuideKey(), "dismissed"); } catch (_) {}
-    dashboard.classList.add("hidden"); editor.classList.add("hidden");
-  });
-  target.querySelector(".firstTestAction").addEventListener("click", () => {
-    if (inEditor) {
-      if (hasQuestions) $("previewBtn").click(); else $("addQuestionBtn").click();
-    } else if (hasDraft) {
-      const draft = quizzes.find(q => !q.published && !q.ended);
-      if (draft) openEditor(draft.id); else openCreateView();
-    } else openCreateView();
-  });
+  if (firstAiGuideStep) requestAnimationFrame(positionFirstAiGuideCard);
 }
 
 let teacherTourIndex = 0;
@@ -985,6 +1161,7 @@ function openCreateView() {
   }
   if ($("templateImportInput")) $("templateImportInput").value = "";
   showView("createView");
+  if (firstAiGuideStep === "new") setTimeout(() => renderFirstAiGuideStep("ai"), 80);
 }
 
 function openTemplateFromInput(value) {
@@ -1021,6 +1198,7 @@ async function loadDashboard() {
     await loadTeacherTourConfig();
     const tourOpened = maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
+    scheduleFirstAiGuideOffer();
   } catch (err) {
     console.error(err);
     $("quizList").innerHTML = "";
@@ -1932,6 +2110,7 @@ async function openAiView() {
   showView("aiView");
   setAiProgress("");
   renderAiJobs();
+  if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
   try {
     notice.className = "aiStatusNotice";
@@ -2116,6 +2295,8 @@ async function startAiCreationJob(request, { similar = false, sourceQuiz = null 
     const clientRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const response = await aiApi.startAiTestJob({ ...request, sourceQuizId: sourceQuiz?.id || "", clientRequestId });
     if (!response?.jobId) throw new Error("Der Hintergrundauftrag wurde nicht bestätigt.");
+    const guidedFirstTest = !similar && firstAiGuideStep === "generate";
+    if (guidedFirstTest) markFirstAiGuideDone();
     if (!state.aiJobs.some(job => job.id === response.jobId)) state.aiJobs.push({
       id: response.jobId, status: "queued", topic: request.topic, subject: request.subject,
       requestedCount: request.count, sourceQuizId: sourceQuiz?.id || "", createdAt: Date.now()
@@ -2127,6 +2308,7 @@ async function startAiCreationJob(request, { similar = false, sourceQuiz = null 
     }
     toast(response.resumed ? "Dein laufender KI-Auftrag ist unter „Meine Tests“ sichtbar." : "Erstellung gestartet. Den Fortschritt findest du unter „Meine Tests“.");
     await loadDashboard();
+    if (guidedFirstTest) setTimeout(() => renderFirstAiGuideStep("running"), 180);
   } catch (err) {
     const friendly = aiFriendlyError(err);
     setAiProgress(friendly, true, null, "", targetId);
