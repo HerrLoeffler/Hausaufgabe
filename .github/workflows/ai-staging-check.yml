@@ -42,7 +42,7 @@ jobs:
 
       - name: Check browser app syntax
         run: |
-          if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js' ai-client.js; then
+          if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js|^import .*variant-enhancements\.js' ai-client.js; then
             echo 'Visual modules must not be statically imported from ai-client.js'
             exit 1
           fi
@@ -52,6 +52,7 @@ jobs:
           node --check visual-enhancements.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
+          node --check variant-enhancements.js
           node --check editor-drafts.js
           node --check ai-review-state.js
           node --check ordering-grading.mjs
