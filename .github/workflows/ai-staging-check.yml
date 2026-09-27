@@ -42,6 +42,10 @@ jobs:
 
       - name: Check browser app syntax
         run: |
+          if grep -Eq 'gradecrew-brand\.js|layout-enhancements\.js' ai-client.js; then
+            echo 'Visual modules must not be imported from ai-client.js'
+            exit 1
+          fi
           node --check app.js
           node --check ai-client.js
           node --check ui-enhancements.js
