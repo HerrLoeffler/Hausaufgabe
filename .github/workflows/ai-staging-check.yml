@@ -45,8 +45,14 @@ jobs:
           node --check app.js
           node --check ai-client.js
           node --check ui-enhancements.js
+          node --check gradecrew-brand.js
           node --check editor-drafts.js
           node --check ai-review-state.js
           node --check ordering-grading.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
+          test -f assets/gradecrew/penguin-guide.svg
+          test -f assets/gradecrew/falcon-create.svg
+          test -f assets/gradecrew/fox-improve.svg
+          test -f assets/gradecrew/owl-grade.svg
+          test -f assets/gradecrew/crew-lineup.svg
