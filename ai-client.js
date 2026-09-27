@@ -1,5 +1,6 @@
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { getStorage, ref, uploadBytesResumable, deleteObject } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
+import { applyVariantInstruction } from "./ui-enhancements.js?v=2.3.1-ai31";
 
 const REGION = "europe-west1";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
@@ -23,12 +24,13 @@ export function createAiClient(app, getUid) {
     const result = await fn(payload);
     return result.data;
   };
+  const regenerateQuestion = call("regenerateQuestion", 180000);
   const api = {
     status: call("getAiStatus", 30000),
     reportRightsIssue: call("reportRightsIssue", 30000),
     generateTest: call("generateTest", 540000),
     startAiTestJob: call("startAiTestJob", 60000),
-    regenerateQuestion: call("regenerateQuestion", 180000),
+    regenerateQuestion: payload => regenerateQuestion(applyVariantInstruction(payload)),
     analyzeMaterial: call("analyzeMaterial", 300000),
     generateQuestionMedia: call("generateQuestionMedia", 300000)
   };
