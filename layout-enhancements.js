@@ -128,6 +128,21 @@ else document.addEventListener("DOMContentLoaded", start, { once: true });
 const style = document.createElement("style");
 style.id = "gradeCrewCompactLayout";
 style.textContent = `
+/* Dashboard: compact and consistent */
+#dashboardView .quizGrid{align-items:start;gap:14px}
+#dashboardView .quizCard{min-height:0!important;padding:18px!important;gap:10px!important;align-self:start}
+#dashboardView .quizCardTop{min-height:0;align-items:flex-start}
+#dashboardView .quizCard h3{font-size:17px!important;line-height:1.2!important;margin-bottom:4px!important}
+#dashboardView .quizCard .meta{font-size:12px;line-height:1.4}
+#dashboardView .quizStats{padding:10px 0!important;margin:1px 0 0;gap:10px!important}
+#dashboardView .primaryQuizActions{margin-top:0!important;padding-top:1px}
+#dashboardView .quizActions{gap:7px}
+#dashboardView .quizActions .button{padding:9px 11px}
+#dashboardView .secondaryQuizActions{margin-top:1px;padding-top:7px!important}
+
+/* Variant dialog must stay centered regardless of editor scroll position */
+dialog.shareDialog.gradecrewVariantDialog{position:fixed!important;inset:0!important;margin:auto!important;max-height:calc(100dvh - 32px)!important;overflow:auto!important}
+
 /* Editor: tasks first */
 #editorView .compactEditorHead{top:72px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;margin:0 0 12px;padding:8px 0;background:rgba(244,247,251,.97);backdrop-filter:blur(12px)}
 #editorView .editorHeadCopy{min-width:0}.editorTitleRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0}
@@ -152,6 +167,6 @@ style.textContent = `
 .studentQuestion{scroll-margin-top:162px!important}
 body:has(#studentView:not(.hidden)) .rightsFooter{display:none!important}
 @media(max-width:900px){#editorView .compactEditorHead{top:68px;grid-template-columns:1fr;padding:7px 0}.editorTitleRow{grid-template-columns:auto minmax(0,1fr)}#editorView #saveState{grid-column:2}.compactEditorHead>.actions{overflow-x:auto;padding-bottom:2px}.compactEditorHead>.actions::-webkit-scrollbar{display:none}#editorView .editorLayout{grid-template-columns:1fr}#editorView .settingsCard{position:static;max-height:none}.studentProgressCompact{top:68px!important;border-radius:0 0 12px 12px!important}.studentQuestion{scroll-margin-top:150px!important}}
-@media(max-width:620px){#editorView #editorHeading{font-size:17px}.editorTitleRow{gap:7px}.compactEditorHead>.actions .button{font-size:11px;padding:7px 9px}#editorView #previewBtn{display:none}.studentProgressCompact{top:0!important}}
+@media(max-width:620px){#editorView #editorHeading{font-size:17px}.editorTitleRow{gap:7px}.compactEditorHead>.actions .button{font-size:11px;padding:7px 9px}#editorView #previewBtn{display:none}.studentProgressCompact{top:0!important}#dashboardView .quizCard{padding:16px!important}}
 `;
 document.head.appendChild(style);
