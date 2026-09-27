@@ -61,7 +61,7 @@ function variantRepeats(a, b) {
   return union > 0 && overlap / union >= 0.88;
 }
 
-function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true } = {}) {
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind } = {}) {
   const errors = [];
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
@@ -118,6 +118,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (sentence.includes(",")) errors.push("Bei einer Frage nach der Anzahl der Kommas darf der zu prüfende Satz noch keine Kommas enthalten.");
   }
   const mi = q.mediaIntent || { kind: "none" };
+  if (requiredMediaKind && mi.kind !== requiredMediaKind) errors.push(`Die gewählte Bildart muss eingehalten werden: mediaIntent.kind=${requiredMediaKind}.`);
   if (!["none", "ai_generated", "image_choices", "uploaded_crop"].includes(mi.kind)) errors.push("Unbekannte Bildart.");
   if (!allowImages && mi.kind !== "none") errors.push("Bilder sind für diesen Test deaktiviert.");
   if (!allowImageChoices && mi.kind === "image_choices") errors.push("Bildantworten sind deaktiviert.");

@@ -57,3 +57,11 @@ test("a missing generated image fails the question instead of storing an empty a
     mediaIntent: { kind: "ai_generated", prompt: "drei Bälle", altText: "Bälle" }
   }, 0, { model: "model", promptVersion: "v1", generateMedia: async () => ({}) }), /Bild zu Aufgabe 1 fehlt/);
 });
+
+test("an image failure retains the question and its position for a useful report", async () => {
+  const raw = { type: "number", text: "Wie viele Bälle?", points: 1, numericAnswer: 3,
+    mediaIntent: { kind: "ai_generated", prompt: "drei Bälle", altText: "Bälle" } };
+  await assert.rejects(storedAiQuestion(raw, 4, {
+    model: "model", promptVersion: "v15", generateMedia: async () => { throw new Error("Bilddienst nicht erreichbar"); }
+  }), error => error.diagnostic.questionPosition === 5 && error.diagnostic.question.text === "Wie viele Bälle?");
+});

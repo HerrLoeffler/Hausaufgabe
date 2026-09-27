@@ -42,3 +42,14 @@ test("a failed usage write does not discard a paid-for image", async () => {
     console.error = original;
   }
 });
+
+test("two unsuitable images retain both visual review reasons in the error report", async () => {
+  let attempts = 0;
+  await assert.rejects(createVerifiedMedia({ uid: "teacher", questionId: "q3", prompt: "Buch unter Tisch", expectedScene: "Buch unter Tisch" }, {
+    consume: async () => {},
+    generate: async () => ({ imageDataUrl: "generated", imageByteSize: 2048 }),
+    inspect: async () => ({ verdict: { matches: false, reason: `falsche Lage ${++attempts}` }, usage: {} }),
+    record: async () => {}
+  }), error => error.code === "image-mismatch" && error.diagnostic.attempts.length === 2
+    && error.diagnostic.attempts[0].reason === "falsche Lage 1" && error.diagnostic.attempts[1].reason === "falsche Lage 2");
+});

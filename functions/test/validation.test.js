@@ -6,6 +6,13 @@ test("valid single",()=>assert.deepEqual(validateQuestion(base()),[]));
 test("invalid single with two correct",()=>{const q=base(); q.options[1].correct=true; assert.ok(validateQuestion(q).length);});
 test("points require half steps",()=>{const q=base(); q.points=1.3; assert.ok(validateQuestion(q).some(x=>x.includes("0,5")));});
 test("no images blocks media",()=>{const q=base(); q.mediaIntent.kind="ai_generated"; assert.ok(validateQuestion(q,{allowImages:false}).length);});
+test("variant image selection is enforced after normalization",()=>{
+  const q=base();
+  assert.ok(validateQuestion(q,{requiredMediaKind:"ai_generated"}).some(x=>x.includes("ai_generated")));
+  q.mediaIntent={kind:"ai_generated",prompt:"Ein Buch auf dem Tisch",altText:"Buch"};
+  assert.deepEqual(validateQuestion(q,{requiredMediaKind:"ai_generated"}),[]);
+  assert.ok(validateQuestion(q,{requiredMediaKind:"none"}).some(x=>x.includes("mediaIntent.kind=none")));
+});
 test("image choices obey switch",()=>{const q=base(); q.mediaIntent={kind:"image_choices",prompt:"x",altText:"x",count:4,sourceMaterialId:"",reason:"x"}; assert.ok(validateQuestion(q,{allowImageChoices:false}).length);});
 test("unsupported uploaded crop cannot silently lose a requested image",()=>{const q=base(); q.mediaIntent={kind:"uploaded_crop",prompt:"",altText:"x",count:0,sourceMaterialId:"m1",reason:"x"}; assert.ok(validateQuestion(q,{materialIds:["m1"]}).some(x=>x.includes("nicht automatisch")));});
 test("test detects duplicate questions",()=>assert.ok(validateTest({title:"T",questions:[base(),base()]}).some(x=>x.includes("wiederholt"))));

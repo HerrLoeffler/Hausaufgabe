@@ -26,7 +26,7 @@ node --check ai-review-state.js
 node --test ai-*.test.js
 PYTHONDONTWRITEBYTECODE=1 python3 tools/check-ai29-source.py
 echo "2/3 Betroffene Staging-Funktionen aktualisieren"
-firebase deploy --project hausaufgabe-staging --only functions:getAiStatus,functions:generateTest,functions:processAiTestJob,functions:regenerateQuestion,functions:generateQuestionMedia,functions:analyzeMaterial
+firebase deploy --project hausaufgabe-staging --only functions:getAiStatus,functions:generateTest,functions:startAiTestJob,functions:processAiTestJob,functions:regenerateQuestion,functions:generateQuestionMedia,functions:analyzeMaterial
 echo "3/3 Staging-Oberfläche aktualisieren"
 bash deploy-staging-hosting.sh
 echo "Staging ai29 bereit. Jetzt mit unkritischen Beispielen prüfen."

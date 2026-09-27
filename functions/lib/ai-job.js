@@ -1,5 +1,7 @@
 "use strict";
 
+const { questionSnapshot } = require("./diagnostics");
+
 const DEFAULT_SCALE = { id: "standard", name: "Standard", thresholds: [91, 77, 57, 39, 25, 0] };
 
 function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
@@ -30,13 +32,21 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
     aiOrigin: { kind, model, promptVersion }
   };
+  const media = async options => {
+    try { return await generateMedia(options); }
+    catch (err) {
+      err.diagnostic = { ...err.diagnostic, questionPosition: index + 1,
+        question: questionSnapshot(raw), optionPosition: options.optionPosition || null };
+      throw err;
+    }
+  };
   const intent = raw.mediaIntent || { kind: "none" };
   if (intent.kind === "image_choices") throw new Error("Die KI erzeugt keine Bildantworten mehr.");
   if (["single", "multi", "dropdown"].includes(q.type)) {
     q.options = raw.options.map(o => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct) }));
   }
   if (intent.kind === "ai_generated") {
-    const asset = await generateMedia({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
+    const asset = await media({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
     if (!asset?.imageDataUrl) throw new Error(`Bild zu Aufgabe ${index + 1} fehlt.`);
     Object.assign(q, asset);
     await onImage();

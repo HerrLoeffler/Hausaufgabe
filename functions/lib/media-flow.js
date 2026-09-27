@@ -22,21 +22,38 @@ async function inspectImageScene(asset, expectedScene) {
 async function createVerifiedMedia({ uid, questionId, prompt, expectedScene, altText, maxBytes }, {
   consume = consumeQuota, generate = generateImageAsset, inspect = inspectImageScene, record = recordUsage
 } = {}) {
-  const verified = await verifyImageScene(expectedScene, {
-    generate: async (attempt, lastIssue) => {
-      await consume(uid, "image");
-      const imagePrompt = attempt === 1 ? prompt : `${prompt}\nKorrigiere den vorigen Fehlversuch: ${lastIssue}. Halte dich exakt an die gewünschten Gegenstände und ihre Beziehung.`;
-      const asset = await generate({ prompt: imagePrompt, altText, maxBytes });
-      await record(uid, "image", {}, { model: IMAGE_MODEL, attempts: attempt, questionId });
-      return asset;
-    },
-    inspect: async asset => {
-      const check = await inspect(asset, expectedScene);
-      await record(uid, "image_review", check.usage || {}, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionId });
-      return check.verdict;
-    }
-  });
-  return { asset: verified.asset };
+  const diagnostic = {
+    schemaVersion: 1, questionId: String(questionId || "").slice(0, 80),
+    expectedScene: String(expectedScene || "").slice(0, 3000),
+    imageModel: IMAGE_MODEL, reviewModel: TEXT_MODEL, promptVersion: PROMPT_VERSION,
+    reviewDetail: "low", attempts: []
+  };
+  try {
+    const verified = await verifyImageScene(expectedScene, {
+      generate: async (attempt, lastIssue) => {
+        await consume(uid, "image");
+        const imagePrompt = attempt === 1 ? prompt : `${prompt}\nKorrigiere den vorigen Fehlversuch: ${lastIssue}. Halte dich exakt an die gewünschten Gegenstände und ihre Beziehung.`;
+        diagnostic.attempts.push({ attempt, prompt: String(imagePrompt || "").slice(0, 4000), stage: "generation" });
+        const asset = await generate({ prompt: imagePrompt, altText, maxBytes });
+        Object.assign(diagnostic.attempts.at(-1), { stage: "review", imageByteSize: Number(asset.imageByteSize || 0) });
+        await record(uid, "image", {}, { model: IMAGE_MODEL, attempts: attempt, questionId });
+        return asset;
+      },
+      inspect: async asset => {
+        const check = await inspect(asset, expectedScene);
+        Object.assign(diagnostic.attempts.at(-1), {
+          stage: "reviewed", matches: check.verdict?.matches === true,
+          reason: String(check.verdict?.reason || "").slice(0, 1200)
+        });
+        await record(uid, "image_review", check.usage || {}, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, questionId });
+        return check.verdict;
+      }
+    });
+    return { asset: verified.asset };
+  } catch (err) {
+    err.diagnostic = { ...diagnostic, ...err.diagnostic };
+    throw err;
+  }
 }
 
 module.exports = { createVerifiedMedia };

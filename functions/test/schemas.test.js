@@ -51,3 +51,14 @@ test("replacement image schema requires its scene and half-step points", () => {
   assert.equal(check(sample("number", { points: 0.7, mediaIntent: { ...mediaIntent, kind: "ai_generated", prompt: "Baum" } })), false);
   assert.equal(check(sample("number", { mediaIntent: { ...mediaIntent, kind: "ai_generated", prompt: "Baum" } })), true);
 });
+test("a variant keeps the chosen question type and image mode in the provider schema", () => {
+  const withoutImage = ajv.compile(questionSchemaForType("gapfill", { mediaKind: "none" }));
+  const withImage = ajv.compile(questionSchemaForType("gapfill", { mediaKind: "ai_generated" }));
+  const q = sample("gapfill");
+  assert.equal(withoutImage(q), true);
+  assert.equal(withImage(q), false);
+  const picture = { ...q, mediaIntent: { ...mediaIntent, kind: "ai_generated", prompt: "Ein Hund neben einer Hundehütte" } };
+  assert.equal(withImage(picture), true);
+  assert.equal(withoutImage(picture), false);
+  assert.equal(withImage({ ...picture, type: "truefalse", correctBoolean: false }), false);
+});

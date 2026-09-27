@@ -11,8 +11,12 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "8dbfaaaaf022499610fd0a854fcb2836ebef9528"
-TARGETS = ("getAiStatus", "generateTest", "processAiTestJob", "regenerateQuestion", "generateQuestionMedia", "analyzeMaterial")
+TARGETS = ("getAiStatus", "generateTest", "startAiTestJob", "processAiTestJob", "regenerateQuestion", "generateQuestionMedia", "analyzeMaterial")
 PROJECT = "hausaufgabe-staging"
+# The uploaded 27 September backup showed that two functions still run the older
+# source. It contained the two-job lock and detailed image diagnostics, both of
+# which are integrated in this branch. Accept that exact source archive only.
+LEGACY_SOURCE_FINGERPRINT = "6ad2d0fc4fa44a29b429b65e9d2b33b969cfa6150f543d3076127e181b894dd1"
 spec = importlib.util.spec_from_file_location("source_export", ROOT / "tools/collect-ai-source.py")
 exporter = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(exporter)
@@ -20,6 +24,13 @@ spec.loader.exec_module(exporter)
 
 def runtime(files):
     return {name: data for name, data in files.items() if name in {"index.js", "package.json", "package-lock.json"} or name.startswith("lib/")}
+
+
+def source_fingerprint(files):
+    digest = hashlib.sha256()
+    for name, data in sorted(files.items()):
+        digest.update(name.encode() + b"\0" + len(data).to_bytes(8, "big") + data)
+    return digest.hexdigest()
 
 
 def unexpected_files(deployed, baseline, proposed):
@@ -30,7 +41,9 @@ def unexpected_files(deployed, baseline, proposed):
 def main():
     names = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", BASE, "functions"], cwd=ROOT, text=True).splitlines()
     baseline = runtime({name.removeprefix("functions/"): subprocess.check_output(["git", "show", f"{BASE}:{name}"], cwd=ROOT) for name in names if name.startswith("functions/")})
-    proposed = {name: (ROOT / "functions" / name).read_bytes() for name in baseline if (ROOT / "functions" / name).is_file()}
+    proposed = runtime({path.relative_to(ROOT / "functions").as_posix(): path.read_bytes()
+                        for path in (ROOT / "functions").rglob("*")
+                        if path.is_file() and not path.is_symlink() and "node_modules" not in path.parts})
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
     backup = Path.home() / f"testify-vor-ai29-{stamp}.zip"
     problems, archives = [], {}
@@ -57,6 +70,9 @@ def main():
             for name, data in deployed.items():
                 output.writestr(f"{function}/{name}", data)
             differences = unexpected_files(deployed, baseline, proposed)
+            if source_fingerprint(deployed) == LEGACY_SOURCE_FINGERPRINT:
+                print(f"{function}: bekannten älteren Stand erkannt; Bilddiagnose und Auftragssteuerung wurden übernommen.", flush=True)
+                differences = []
             if differences:
                 problems.append(f"{function}: {', '.join(differences)}")
     print(f"Quellcode gesichert: {backup}", flush=True)

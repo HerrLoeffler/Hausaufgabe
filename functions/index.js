@@ -26,6 +26,8 @@ const { createVerifiedMedia } = require("./lib/media-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
 const { quizForGeneratedTest, storedAiQuestion, imageCount } = require("./lib/ai-job");
+const { reserveJob, releaseJob } = require("./lib/job-slots");
+const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
@@ -36,8 +38,9 @@ function reportAiError(err, phase) {
   if (err instanceof HttpsError) {
     const details = err.details && typeof err.details === "object" && !Array.isArray(err.details) ? err.details : {};
     const errors = Array.isArray(details.errors) ? details.errors.slice(0, 10).map(value => String(value).slice(0, 240)) : [];
+    const diagnostic = err.diagnostic || details.diagnostic || null;
     console.warn("KI-Anfrage kontrolliert beendet:", { reference, phase, code: err.code, message: String(err.message || "").slice(0, 300), errors });
-    return new HttpsError(err.code, err.message, { ...details, reference, phase: details.phase || phase });
+    return new HttpsError(err.code, err.message, { ...details, diagnostic, reference, phase: details.phase || phase });
   }
   const programmingError = ["ReferenceError", "TypeError"].includes(err?.name) && !err?.status;
   console.error("KI-Anfrage fehlgeschlagen:", {
@@ -47,7 +50,7 @@ function reportAiError(err, phase) {
     location: programmingError ? String(err.stack || "").split("\n").find(line => line.includes("/functions/"))?.trim() : undefined
   });
   const mapped = classifyAiFailure(err);
-  return new HttpsError(mapped.code, mapped.message, { reference, phase });
+  return new HttpsError(mapped.code, mapped.message, { reference, phase, diagnostic: err?.diagnostic || null });
 }
 
 // Public notice channel for rights holders; the report is never sent to the AI.
@@ -314,11 +317,7 @@ exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async re
 function aiJobLock(uid) { return getFirestore().doc(`users/${uid}/aiRuntime/current`); }
 
 async function releaseAiJob(uid, jobId) {
-  const ref = aiJobLock(uid);
-  await getFirestore().runTransaction(async tx => {
-    const snap = await tx.get(ref);
-    if (snap.data()?.activeJobId === jobId) tx.delete(ref);
-  });
+  await releaseJob(getFirestore(), aiJobLock(uid), jobId);
 }
 
 exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async request => {
@@ -338,36 +337,14 @@ exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async r
   const jobRef = db.collection("aiJobs").doc(createHash("sha256").update(`${uid}:${requestId}`).digest("hex").slice(0, 40));
   const lockRef = aiJobLock(uid);
   const now = Timestamp.now();
-  let existingId = "";
-  await db.runTransaction(async tx => {
-    const previous = await tx.get(jobRef);
-    if (previous.exists && previous.data()?.ownerId === uid) {
-      existingId = jobRef.id;
-      return;
-    }
-    const lock = await tx.get(lockRef);
-    const activeId = lock.data()?.activeJobId;
-    if (activeId) {
-      const active = await tx.get(db.collection("aiJobs").doc(activeId));
-      if (active.exists && active.data()?.ownerId === uid && ["queued", "running"].includes(active.data()?.status)
-        && now.toMillis() - active.data()?.createdAt?.toMillis() < 40 * 60 * 1000) {
-        existingId = activeId;
-        return;
-      }
-      if (active.exists && active.data()?.ownerId === uid && ["queued", "running"].includes(active.data()?.status)) {
-        tx.update(active.ref, { status: "failed", stage: "failed", progressMessage: "Die Erstellung hat zu lange gedauert.", updatedAt: now });
-      }
-    }
-    tx.create(jobRef, {
+  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, jobData: {
       ownerId: uid, status: "queued", stage: "queued", progressMessage: "Erstellung wird gestartet …", percent: 0,
       completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0,
       subject: input.subject, grade: input.grade, topic: input.topic, requestId,
       input: { ...Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)), clientRequestId: requestId }, materials, sourceQuizId,
       createdAt: now, updatedAt: now
-    });
-    tx.set(lockRef, { activeJobId: jobRef.id, updatedAt: now });
-  });
-  if (existingId) return { jobId: existingId, resumed: true };
+    } });
+  if (reservation.resumed) return reservation;
   try {
     await getFunctions().taskQueue(`locations/${REGION}/functions/processAiTestJob`)
       .enqueue({ jobId: jobRef.id }, { id: jobRef.id, dispatchDeadlineSeconds: 1800 });
@@ -413,11 +390,17 @@ exports.processAiTestJob = onTaskDispatched({
   if (!job) return;
   const { ownerId: uid } = job;
   let quizRef = null;
+  let activeQuestion = null;
+  let activePosition = null;
+  let activeStage = "starting";
   try {
     const { profile } = await requireAiUser({ auth: { uid } });
     const sourceSnap = job.sourceQuizId ? await db.collection("quizzes").doc(job.sourceQuizId).get() : null;
     if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
-    const progress = async (stage, percent, message) => jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
+    const progress = async (stage, percent, message) => {
+      activeStage = stage;
+      return jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
+    };
     const response = await generateTestForUser(uid, { ...job.input, materials: job.materials }, progress);
     const questions = response.test.questions;
     const totalImages = imageCount(questions);
@@ -429,6 +412,8 @@ exports.processAiTestJob = onTaskDispatched({
     let totalPoints = 0;
     for (let index = 0; index < questions.length; index += 1) {
       const raw = questions[index];
+      activeQuestion = raw;
+      activePosition = index + 1;
       await progress(raw.mediaIntent?.kind !== "none" ? "generate_media" : "prepare_question", 65 + Math.floor(30 * index / questions.length), `Aufgabe ${index + 1} von ${questions.length} wird vorbereitet …`);
       const q = await storedAiQuestion(raw, index, {
         model: response.meta.model, promptVersion: response.meta.promptVersion,
@@ -451,16 +436,21 @@ exports.processAiTestJob = onTaskDispatched({
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [] });
     console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
   } catch (err) {
+    err.diagnostic = { ...err.diagnostic, schemaVersion: 1, jobId, stage: activeStage,
+      questionPosition: activePosition, question: activeQuestion ? questionSnapshot(activeQuestion) : null,
+      textModel: TEXT_MODEL, promptVersion: PROMPT_VERSION,
+      request: requestSnapshot(job.input), materialCount: job.materials?.length || 0 };
     const reported = err?.code === "image-mismatch"
       ? reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
-        reason: String(err.lastIssue || "").slice(0, 180)
+        reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic
       }), "image-review")
       : reportAiError(err, "background-test");
     const message = reported.code === "failed-precondition" && Array.isArray(reported.details?.errors)
       ? `Die KI konnte noch kein gültiges Ergebnis erstellen: ${reported.details.errors.slice(0, 2).join(" ")}`.slice(0, 350)
       : reported.message;
     await jobRef.update({ status: "failed", stage: "failed", progressMessage: message,
-      errorCode: reported.code, errorReference: reported.details?.reference || "", updatedAt: Timestamp.now() });
+      errorCode: reported.code, errorReference: reported.details?.reference || "",
+      errorDetails: reported.details || {}, updatedAt: Timestamp.now() });
     if (quizRef) await quizRef.update({ generationStatus: "failed", updatedAt: Timestamp.now() });
   } finally {
     await releaseAiJob(uid, jobId);
@@ -511,7 +501,9 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const allowedTypes = Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
-  const basePrompt = questionUserPrompt({ question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
+  const mediaKind = request.data?.mediaKind;
+  if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
+  const basePrompt = questionUserPrompt({ mediaKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" });
   const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
@@ -519,11 +511,14 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const usage = {};
   let normalized, errors;
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
+  const variantSchema = request.data?.variant && QUESTION_TYPES.includes(question.type)
+    ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind })
+    : questionSchema;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const result = await structuredResponse({ schema: questionSchema, schemaName: "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
+    const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
-    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds });
+    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
     } else if (request.data?.requireDifferent) {
@@ -568,9 +563,11 @@ exports.generateQuestionMedia = onCall(callableOpts, async request => {
   try {
     return await createVerifiedMedia({ uid, questionId, prompt, expectedScene, altText: String(request.data?.altText || "").slice(0, 500), maxBytes });
   } catch (err) {
+    err.diagnostic = { ...err.diagnostic, question: questionSnapshot(request.data?.question || {}),
+      optionPosition: Number(request.data?.optionPosition) || null };
     if (err?.code === "image-mismatch") {
       throw reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
-        reason: String(err.lastIssue || "").slice(0, 180)
+        reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic
       }), "image-review");
     }
     if (err instanceof HttpsError) throw reportAiError(err, "image-generation-or-review");
