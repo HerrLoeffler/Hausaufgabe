@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+<title id="title">GradeCrew · Guide, Create, Improve, Grade</title><desc id="desc">Die vier GradeCrew-Figuren als gemeinsames Line-up.</desc>
+<rect width="1280" height="360" rx="36" fill="#F8FAFD"/>
+<circle cx="160" cy="180" r="124" fill="#EEF5FB"/><circle cx="480" cy="180" r="124" fill="#F1F5F9"/><circle cx="800" cy="180" r="124" fill="#FFF3EC"/><circle cx="1120" cy="180" r="124" fill="#F8F2EB"/>
+<image href="penguin-guide.svg" x="30" y="30" width="260" height="260"/><image href="falcon-create.svg" x="350" y="30" width="260" height="260"/><image href="fox-improve.svg" x="670" y="30" width="260" height="260"/><image href="owl-grade.svg" x="990" y="30" width="260" height="260"/>
+<g font-family="Inter,ui-sans-serif,system-ui,sans-serif" text-anchor="middle"><text x="160" y="326" font-size="15" font-weight="700" fill="#40516B">Guide</text><text x="480" y="326" font-size="15" font-weight="700" fill="#40516B">Create</text><text x="800" y="326" font-size="15" font-weight="700" fill="#40516B">Improve</text><text x="1120" y="326" font-size="15" font-weight="700" fill="#40516B">Grade</text></g>
+</svg>
