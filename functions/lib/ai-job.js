@@ -31,6 +31,18 @@ function isProgrammingMediaError(err) {
   return ["ReferenceError", "TypeError", "SyntaxError"].includes(String(err?.name || ""));
 }
 
+function fallbackQuestionText(text, intent = {}) {
+  const description = String(intent.altText || intent.prompt || "Illustration zur Aufgabe").trim().slice(0, 700);
+  const rewritten = String(text || "").trim()
+    .replace(/\bauf dem bild\b/giu, "in der Beschreibung")
+    .replace(/\bim bild\b/giu, "in der Beschreibung")
+    .replace(/\bdas bild\b/giu, "die Beschreibung")
+    .replace(/\bdie abbildung\b/giu, "die Beschreibung")
+    .replace(/\bauf der abbildung\b/giu, "in der Beschreibung")
+    .replace(/\bin der abbildung\b/giu, "in der Beschreibung");
+  return `Beschreibung statt Bild: ${description}\n\n${rewritten}`.trim();
+}
+
 async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, onImage = async () => {}, onImageFallback = async () => {} }) {
   const q = {
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
@@ -59,9 +71,10 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
     } catch (err) {
       if (isProgrammingMediaError(err)) throw err;
       const reason = String(err?.lastIssue || err?.message || "Bild konnte nicht zuverlässig erzeugt werden.").slice(0, 500);
+      q.text = fallbackQuestionText(q.text, intent);
       q.aiOrigin.mediaStatus = "omitted";
       q.aiOrigin.mediaReason = reason;
-      q.aiMediaWarning = "Das vorgesehene KI-Bild konnte nicht zuverlässig erzeugt werden. Die Aufgabe wurde ohne Bild gespeichert; bitte vor dem Veröffentlichen kurz prüfen.";
+      q.aiMediaWarning = "Das vorgesehene KI-Bild konnte nicht zuverlässig erzeugt werden. Testify hat die Bildbeschreibung stattdessen direkt in die Aufgabe übernommen; bitte vor dem Veröffentlichen kurz prüfen.";
       await onImageFallback({ index, reason, diagnostic: err?.diagnostic || null });
     }
   }
@@ -79,4 +92,4 @@ function imageCount(questions) {
   return questions.filter(q => q.mediaIntent?.kind === "ai_generated").length;
 }
 
-module.exports = { quizForGeneratedTest, storedAiQuestion, imageCount };
+module.exports = { quizForGeneratedTest, storedAiQuestion, imageCount, fallbackQuestionText };
