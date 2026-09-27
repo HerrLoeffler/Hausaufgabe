@@ -37,7 +37,16 @@ function questionUserPrompt({ question, instruction, testContext, variant, requi
   const mediaRule = mediaKind === "none" ? "Verbindlich: mediaIntent.kind=none. Die Aufgabe muss vollständig ohne Bilder lösbar sein; formuliere Bildbezüge entsprechend um."
     : mediaKind === "ai_generated" ? "Verbindlich: mediaIntent.kind=ai_generated. Erstelle einen neuen konkreten Bildprompt passend zur neuen Aufgabe; das alte Bild wird nicht übernommen."
     : "";
-  return `${task}.\n${mediaRule}\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(question)}\nLehrerwunsch: ${instruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort. Antwortoptionen bestehen aus eindeutigem Text. Ein Bild ist nur in der Fragestellung erlaubt.`;
+  const variantRule = !variant ? "" : question?.type === "matching"
+    ? "Bei matching darf die allgemeine Arbeitsanweisung ähnlich bleiben, aber ersetze die inhaltlichen Zuordnungspaare vollständig durch neue, fachlich gleichwertige Paare."
+    : question?.type === "grouping"
+      ? "Bei grouping darf die allgemeine Arbeitsanweisung ähnlich bleiben, aber verwende neue Gruppeninhalte bzw. neue eindeutig zuordenbare Begriffe."
+      : question?.type === "ordering"
+        ? "Bei ordering darf die allgemeine Arbeitsanweisung ähnlich bleiben, aber verwende neue Sortierelemente bzw. einen neuen fachlich gleichwertigen Ablauf."
+        : question?.type === "markwords"
+          ? "Bei markwords darf die allgemeine Arbeitsanweisung ähnlich bleiben, aber verwende einen neuen Markiertext und neue passende Zielwörter."
+          : "Die neue Aufgabe muss dieselbe Kompetenz prüfen, aber konkrete Zahlen, Beispiele, Antwortinhalte oder den Kontext sichtbar verändern.";
+  return `${task}.\n${mediaRule}\n${variantRule}\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(question)}\nLehrerwunsch: ${instruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort. Antwortoptionen bestehen aus eindeutigem Text. Ein Bild ist nur in der Fragestellung erlaubt.`;
 }
 function replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind = original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) {
   const otherQuestions = test.questions.filter((_, i) => i !== index).map(q => ({
