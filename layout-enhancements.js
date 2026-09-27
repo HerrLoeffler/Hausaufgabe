@@ -102,10 +102,18 @@ function cleanMarkwordDuplicates(root = document) {
   root.querySelectorAll?.("#editorView .questionCard").forEach(cleanEditorMarkword);
 }
 
+function disableQuestionDragging(root = document) {
+  root.querySelectorAll?.("#editorView .questionCard").forEach(card => {
+    card.draggable = false;
+    card.removeAttribute("draggable");
+  });
+}
+
 function applyLayoutEnhancements(root = document) {
   enhanceEditorHeader();
   enhanceEditorSettings();
   cleanMarkwordDuplicates(root);
+  disableQuestionDragging(root);
 }
 
 const observer = new MutationObserver(records => {
@@ -144,6 +152,7 @@ style.textContent = `
 dialog.shareDialog.gradecrewVariantDialog{position:fixed!important;inset:0!important;margin:auto!important;max-height:calc(100dvh - 32px)!important;overflow:auto!important}
 
 /* Editor: tasks first */
+#editorView .dragHandle{display:none!important}
 #editorView .compactEditorHead{top:72px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;margin:0 0 12px;padding:8px 0;background:rgba(244,247,251,.97);backdrop-filter:blur(12px)}
 #editorView .editorHeadCopy{min-width:0}.editorTitleRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0}
 #editorView #editorHeading{font-size:20px;line-height:1.2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
