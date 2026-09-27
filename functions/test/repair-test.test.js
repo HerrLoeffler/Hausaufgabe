@@ -60,6 +60,39 @@ test("screenshot case: retries task 7 with duplicate answers and preserves exact
   assert.deepEqual(result.errors, []);
 });
 
+test("report RPT-MUK7TAFH: repairs duplicate task and two missing images in a 50 question test", async () => {
+  const questions = Array.from({ length: 50 }, (_, i) => question(i + 1, i < 3 ? "ai_generated" : "none"));
+  questions[35] = question(7);
+  const opts = { ...options(50), targetPoints: 100, imageQuestionCount: 5, maxVisualQuestions: 5 };
+  const calls = [];
+  const result = await validateAndRepairTest({ title: "Prozent", questions }, opts, {
+    generateQuestion: async ({ index, mediaKind }) => {
+      calls.push({ index, mediaKind });
+      return question(101 + calls.length, mediaKind);
+    },
+    regenerateTest: async () => { throw new Error("No full 50-question regeneration needed"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.length, 50);
+  assert.equal(result.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, 5);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 100);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].index, 35);
+  assert.deepEqual(calls.map(call => call.mediaKind), ["ai_generated", "ai_generated"]);
+  assert.equal(result.fullRepair, false);
+});
+
+test("excess image intent is repaired locally while preserving exact count", async () => {
+  const questions = [question(1, "ai_generated"), question(2, "ai_generated"), question(3)];
+  const opts = { ...options(3), imageQuestionCount: 1, maxVisualQuestions: 1 };
+  const result = await validateAndRepairTest({ title: "Bilder", questions }, opts, {
+    generateQuestion: async ({ mediaKind }) => question(20, mediaKind),
+    regenerateTest: async () => { throw new Error("No full repair needed"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, 1);
+});
+
 test("screenshot case: fixes 20.5 instead of 20 points and replaces invalid task 8", async () => {
   const questions = Array.from({ length: 10 }, (_, index) => ({ ...question(index + 1), points: 2 }));
   questions[0].points = 4;

@@ -21,6 +21,17 @@ function globalIssues(test, options) {
   return validateTest(test, options).filter(error => !/^Aufgabe \d+(?::| wiederholt)/.test(error));
 }
 
+function imageQuota(test, options) {
+  if (!Number.isInteger(options.imageQuestionCount)) return null;
+  const actual = test.questions.filter(q => q.mediaIntent?.kind === "ai_generated").length;
+  return { actual, target: options.imageQuestionCount, distance: Math.abs(actual - options.imageQuestionCount) };
+}
+
+function isImageQuotaIssue(error) {
+  return /^Erwartet \d+ Aufgaben mit einem Bild, erhalten \d+\.$/.test(error)
+    || /^Zu viele visuelle Aufgaben \(\d+\/\d+\)\.$/.test(error);
+}
+
 function balanceTestPoints(test, targetPoints) {
   if (!Number.isFinite(targetPoints) || targetPoints <= 0 || !test.questions?.length) return test;
   const targetUnits = Math.round(targetPoints * 2);
@@ -84,20 +95,31 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
   const tried = new Map();
   const feedback = new Map();
   while (attempts < maxAttempts) {
-    const issue = questionIssues(test, options)
+    const quota = imageQuota(test, options);
+    const issues = questionIssues(test, options);
+    const candidates = issues
       .filter(({ index }) => (tried.get(index) || 0) < 3)
-      .sort((a, b) => (tried.get(a.index) || 0) - (tried.get(b.index) || 0) || a.index - b.index)[0];
+      .sort((a, b) => (tried.get(a.index) || 0) - (tried.get(b.index) || 0) || a.index - b.index);
+    const eligible = index => (tried.get(index) || 0) < 3 && (quota.actual < quota.target
+      ? test.questions[index].mediaIntent?.kind === "none"
+      : test.questions[index].mediaIntent?.kind === "ai_generated");
+    const quotaIssue = quota?.distance ? candidates.find(({ index }) => eligible(index))
+      || test.questions.map((_, index) => index).filter(eligible)
+        .sort((a, b) => (tried.get(a) || 0) - (tried.get(b) || 0) || a - b)
+        .map(index => ({ index, reasons: [] }))[0] : null;
+    const issue = quotaIssue || candidates[0];
     if (!issue) break;
     const { index } = issue;
     const original = test.questions[index];
+    const mediaKind = quotaIssue ? (quota.actual < quota.target ? "ai_generated" : "none") : (original.mediaIntent?.kind || "none");
     const priorAttempts = tried.get(index) || 0;
     tried.set(index, priorAttempts + 1);
     attempts += 1;
-    const candidate = normalizeQuestion(await generate({ test, index, original, reasons: [...issue.reasons, ...(feedback.get(index) || [])], attempt: priorAttempts + 1 }));
+    const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaIssue ? [`Für diesen Test sind exakt ${quota.target} Bildaufgaben erforderlich; erstelle diese Aufgabe mit mediaIntent.kind=${mediaKind}.`] : [])], attempt: priorAttempts + 1 }));
     candidate.points = original.points;
 
     const reasons = validateQuestion(candidate, options);
-    if (candidate.mediaIntent.kind !== original.mediaIntent.kind) reasons.push(`Die Bildart muss ${original.mediaIntent.kind} bleiben.`);
+    if (candidate.mediaIntent.kind !== mediaKind) reasons.push(`Die Bildart muss ${mediaKind} sein.`);
     const sceneOnlyRepair = issue.reasons.length > 0 && issue.reasons.every(reason =>
       reason === "Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung." ||
       reason === "Die Szenen der Bildantworten müssen eindeutig verschieden sein."
@@ -113,7 +135,8 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     if (options.reviewIssues?.some(issue => issue.index === index && String(issue.text || "").trim() === candidate.text)) reasons.push("Die neue Aufgabe wiederholt die bemängelte Fragestellung.");
     if (!reasons.length) {
       const next = { ...test, questions: test.questions.map((question, i) => i === index ? candidate : question) };
-      reasons.push(...globalIssues(next, options));
+      const nextQuota = imageQuota(next, options);
+      reasons.push(...globalIssues(next, options).filter(error => !isImageQuotaIssue(error) || !quota?.distance || nextQuota.distance >= quota.distance));
       if (!reasons.length) {
         test = next;
         replaced += 1;
@@ -145,7 +168,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     const errors = validateTest(test, options);
     if (!errors.length) return { test, errors, questionAttempts, replaced, fullRepair };
 
-    if (!globalIssues(test, options).length && questionAttempts < repairLimit) {
+    if (globalIssues(test, options).every(isImageQuotaIssue) && questionAttempts < repairLimit) {
       const remaining = repairLimit - questionAttempts;
       const passBudget = fullRepair ? remaining : Math.min(remaining, Math.max(questionIssues(test, options).length, Math.ceil(repairLimit / 2)));
       const result = await replaceInvalidQuestions(test, options, generateQuestion, passBudget);

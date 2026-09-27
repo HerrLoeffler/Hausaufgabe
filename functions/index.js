@@ -237,10 +237,10 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     };
     const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
     const repairs = {
-      generateQuestion: async ({ test, index, original, reasons, attempt }) => {
+      generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind }) => {
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
+          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none") }), schemaName: "testify_test_question_replacement_v2",
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;

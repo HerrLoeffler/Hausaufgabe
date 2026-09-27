@@ -39,7 +39,7 @@ function questionUserPrompt({ question, instruction, testContext, variant, requi
     : "";
   return `${task}.\n${mediaRule}\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(question)}\nLehrerwunsch: ${instruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort. Antwortoptionen bestehen aus eindeutigem Text. Ein Bild ist nur in der Fragestellung erlaubt.`;
 }
-function replacementQuestionPrompt({ input, test, index, original, reasons, attempt }) {
+function replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind = original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) {
   const otherQuestions = test.questions.filter((_, i) => i !== index).map(q => ({
     text: String(q.text || "").slice(0, 170), type: q.type,
     answer: (q.options || []).filter(o => o.correct).map(o => o.text).slice(0, 3)
@@ -52,7 +52,7 @@ function replacementQuestionPrompt({ input, test, index, original, reasons, atte
     "Lehrerwünsche: " + (input.notes || "keine") + ". " + materialRule,
     "Fehler der bisherigen Aufgabe und/oder des letzten Ersatzversuchs: " + reasons.join(" "),
     "Ersetzte Aufgabe (nur als Kontext, nicht umformulieren): " + JSON.stringify({ type: original.type, text: original.text, options: original.options, points: original.points, mediaIntent: original.mediaIntent }),
-    "Verbindlich: Punkte " + original.points + "; Bildart mediaIntent.kind=" + (original.mediaIntent.kind === "ai_generated" ? "ai_generated" : "none") + "; " + (input.allowedTypes.includes(original.type) ? "Aufgabentyp " + original.type + "." : "Erlaubte Aufgabentypen: " + input.allowedTypes.join(", ") + "."),
+    "Verbindlich: Punkte " + original.points + "; Bildart mediaIntent.kind=" + mediaKind + "; " + (input.allowedTypes.includes(original.type) ? "Aufgabentyp " + original.type + "." : "Erlaubte Aufgabentypen: " + input.allowedTypes.join(", ") + "."),
     "Bei ai_generated: neuer konkreter Bildprompt für die Fragestellung ohne Lösungshinweis. Bei none: keine Bilder. Antwortoptionen sind immer eindeutiger Text.",
     "Neue Zahlen, neuer Kontext oder anderer fachlicher Teilaspekt. Übernimm nicht bloß den Fragetext mit korrigierten Antwortoptionen. Jede Antwortoption muss eindeutig verschieden sein, und die richtige Antwort muss fachlich stimmen. Keine Lösung im Fragetext verraten; bei Komma-Zählaufgaben den Satz ohne Kommas zeigen. Abstrakte Begriffe wie ‚wieder‘ nicht mit einem Einzelbild abfragen.",
     "Andere Aufgaben im Test (keine Frage oder Lösung daraus wiederholen): " + JSON.stringify(otherQuestions).slice(0, 14000),
