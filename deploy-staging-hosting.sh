@@ -9,6 +9,12 @@ if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   exit 1
 fi
 
+# Reine Branding-/Layoutmodule dürfen den kritischen App-Start nicht blockieren.
+if grep -Eq 'gradecrew-brand\.js|layout-enhancements\.js' ai-client.js; then
+  echo "FEHLER: ai-client.js darf keine reinen Branding-/Layoutmodule importieren."
+  exit 1
+fi
+
 node --check app.js
 node --check ai-client.js
 node --check ui-enhancements.js
