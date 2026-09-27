@@ -3,7 +3,7 @@
 function planTestBatches(input, batchSize = 10) {
   const count = input.count;
   const units = Math.round(input.points * 2);
-  if (!Number.isInteger(count) || count < 1 || count > 50 || !Number.isFinite(units) || units < count) throw new RangeError("Ungültige Testgröße oder Punkte");
+  if (!Number.isInteger(count) || count < 1 || count > 100 || !Number.isFinite(units) || units < count) throw new RangeError("Ungültige Testgröße oder Punkte");
   if (!Number.isInteger(batchSize) || batchSize < 1) throw new RangeError("Ungültige Blockgröße");
   const size = count > 20 ? batchSize : count;
   const imageCount = input.exactImageCounts ? input.imageQuestionCount : input.maxVisualQuestions || 0;

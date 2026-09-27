@@ -101,12 +101,12 @@ function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
 function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true } = {}) {
   const types = [...new Set(allowedTypes)].filter(type => QUESTION_TYPES.includes(type));
   if (!types.length) throw new TypeError("Mindestens ein Aufgabentyp ist erforderlich");
-  if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 50)) throw new RangeError("Ungültige Aufgabenanzahl");
+  if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 100)) throw new RangeError("Ungültige Aufgabenanzahl");
   return {
     type: "object", additionalProperties: false,
     properties: {
       title: { ...NONEMPTY }, subject: { type: "string" }, grade: { type: "string" }, description: { type: "string" },
-      questions: { type: "array", minItems: count || 1, maxItems: count || 50,
+      questions: { type: "array", minItems: count || 1, maxItems: count || 100,
         items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages })) } }
     },
     required: ["title", "subject", "grade", "description", "questions"]

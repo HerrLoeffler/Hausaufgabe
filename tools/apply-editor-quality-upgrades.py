@@ -20,7 +20,7 @@ def replace_once(text, old, new, label):
 
 
 def replace_regex_once(text, pattern, repl, label):
-    new, count = re.subn(pattern, repl, text, count=1, flags=re.S)
+    new, count = re.subn(pattern, lambda _match: repl, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError(f"{label}: expected exactly one regex match, found {count}")
     return new

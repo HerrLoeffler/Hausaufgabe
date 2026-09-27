@@ -118,7 +118,8 @@ test("a persistent review failure never releases the draft", async () => {
     regenerateTest: async () => { throw new Error("Unnecessary full repair"); }
   });
   assert.equal(result.errors.length, 1);
-  assert.equal(result.replaced, 1);
+  assert.equal(result.replaced, 2);
+  assert.equal(result.reviewPasses, 3);
 });
 
 test("invalid reviewer indices fail instead of silently passing", () => {
@@ -146,4 +147,11 @@ test("two wrong images are rejected and images without an expected scene skip vi
   assert.equal(inspected, 2);
   await verifyImageScene("", { generate: async () => { generated += 1; return {}; }, inspect: async () => { throw new Error("Should skip vision"); } });
   assert.equal(generated, 3);
+});
+
+
+test("quality prompt knows that gapfill brackets are hidden from pupils", () => {
+  const prompt = reviewPrompt({ subject: "Deutsch", grade: "5", questions: [{ type: "gapfill", text: "Ich helfe [dem] Kind.", points: 1, mediaIntent: { kind: "none" } }] }, {});
+  assert.match(prompt, /KEIN answer_leak/);
+  assert.match(prompt, /leere Eingabefelder/);
 });

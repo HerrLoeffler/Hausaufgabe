@@ -257,9 +257,14 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     }
     phase = "usage-log";
     const hardErrors = validateTest(reviewed.test, options);
+    const qualityIssues = hardErrors.length ? [] : (reviewed.issues || []).slice(0, 10).map(issue => ({
+      questionPosition: issue.index + 1,
+      reason: String(issue.reason || "other").slice(0, 30),
+      detail: String(issue.detail || "").replace(/^[a-z_]+:\s*/i, "").slice(0, 300)
+    }));
     const qualityWarnings = hardErrors.length ? [] : [
       ...(memory.unavailable ? ["Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."] : []),
-      ...reviewed.errors
+      ...qualityIssues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)
     ].slice(0, 10);
     await recordUsage(uid, "test", usage, {
       model: TEXT_MODEL,
@@ -288,7 +293,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         replacedQuestions: result.replaced + reviewed.replaced,
         qualityReviewPasses: reviewed.reviewPasses,
         fullRepair: result.fullRepair,
-        qualityWarnings
+        qualityWarnings,
+        qualityIssues
       }
     };
   } catch (err) {
@@ -438,10 +444,10 @@ exports.processAiTestJob = onTaskDispatched({
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
     }
     await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
-      qualityWarnings: response.meta.qualityWarnings || [], updatedAt: Timestamp.now() });
+      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [], updatedAt: Timestamp.now() });
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
-      qualityWarnings: response.meta.qualityWarnings || [] });
+      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [] });
     console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
   } catch (err) {
     const reported = err?.code === "image-mismatch"

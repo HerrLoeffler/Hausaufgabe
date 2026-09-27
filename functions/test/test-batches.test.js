@@ -7,7 +7,7 @@ const { balanceTestPoints } = require("../lib/repair-test");
 const { storedAiQuestion } = require("../lib/ai-job");
 
 test("all sizes preserve count, half-step points and exact image allocation", () => {
-  for (let count = 1; count <= 50; count++) for (let images = 0; images <= Math.min(5, count); images++) for (const points of [count / 2, count / 2 + 0.5, count + 3.5]) {
+  for (let count = 1; count <= 100; count++) for (let images = 0; images <= Math.min(5, count); images++) for (const points of [count / 2, count / 2 + 0.5, count + 3.5]) {
     const batches = planTestBatches({ count, points, exactImageCounts: true, imageQuestionCount: images, imageMode: images ? "exact" : "none" });
     assert.equal(batches.reduce((n, b) => n + b.count, 0), count);
     assert.equal(batches.reduce((n, b) => n + b.points, 0), points);
@@ -40,4 +40,18 @@ test("50-task generation assembles and stores the draft with zero, one and five 
     assert.equal(imageCalls, images); assert.equal(stored.length, 50);
     assert.ok(stored.every(q => q.correctBoolean === false));
   }
+});
+
+
+test("100-task generation is split into ten bounded batches", async () => {
+  const input = { count: 100, points: 50, exactImageCounts: true, imageQuestionCount: 5, imageMode: "exact" };
+  let calls = 0;
+  const output = await generateTestInBatches(input, async (batch, prior) => {
+    calls += 1;
+    assert.ok(batch.count <= 10);
+    assert.equal(prior.length, batch.batchOffset);
+    return { data: { title: "Großer Test", subject: "Deutsch", grade: "5", description: "", questions: Array.from({ length: batch.count }, (_, i) => ({ type: "truefalse", text: `Aussage ${batch.batchOffset + i + 1}`, points: 0.5, correctBoolean: true, mediaIntent: { kind: i < batch.imageQuestionCount ? "ai_generated" : "none", prompt: i < batch.imageQuestionCount ? "Schulszene" : "" } })) }, usage: {} };
+  });
+  assert.equal(calls, 10);
+  assert.equal(output.data.questions.length, 100);
 });

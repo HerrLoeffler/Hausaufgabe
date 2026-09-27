@@ -310,7 +310,7 @@ function qualityMemoryPrompt(memory = {}, { questionType = "" } = {}) {
 
 function reviewPrompt(test, memory = {}) {
   const memoryGuide = qualityMemoryPrompt(memory);
-  return `Prüfe JEDE Aufgabe dieses Tests anhand von Frage, Lösung und Bildbeschreibung. Prüfe fachliche Richtigkeit, Sinn, Eindeutigkeit, versteckte Lösungshinweise, logisch korrekte Antwortoptionen und inhaltliche Dopplungen zwischen Aufgaben. Bei Zuordnungen muss jeder Satzanfang eine eindeutig passende Lösung haben, auch wenn sinnverwandte Wörter vorkommen. Bei Wortarten-Gruppierungen darf kein Wort ohne Kontext mehreren Kategorien zugeordnet werden können. Eine Frage nach der Zahl von Kommas muss den Beispielsatz ohne Kommas zeigen. Ein einzelnes Standbild zeigt keine zeitliche Wiederholung wie „wieder“. Bei Bildantworten müssen die Szenen dieselben genannten Gegenstände zeigen und zur Frage passen; nur die zu prüfende Eigenschaft darf sich ändern. Tatsächlich erzeugte Bildpixel liegen noch nicht vor; bewerte hier die geplanten Szenen. Gib nur eindeutig feststellbare Probleme zurück. Indizes beginnen bei 0. Beschreibe jedes Problem konkret und knapp auf Deutsch.${memoryGuide ? `\n${memoryGuide}` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions })}`;
+  return `Prüfe JEDE Aufgabe dieses Tests anhand von Frage, Lösung und Bildbeschreibung. Prüfe fachliche Richtigkeit, Sinn, Eindeutigkeit, versteckte Lösungshinweise, logisch korrekte Antwortoptionen und inhaltliche Dopplungen zwischen Aufgaben. Bei Zuordnungen muss jeder Satzanfang eine eindeutig passende Lösung haben, auch wenn sinnverwandte Wörter vorkommen. Bei Wortarten-Gruppierungen darf kein Wort ohne Kontext mehreren Kategorien zugeordnet werden können. Eine Frage nach der Zahl von Kommas muss den Beispielsatz ohne Kommas zeigen. Ein einzelnes Standbild zeigt keine zeitliche Wiederholung wie „wieder“. Bei Bildantworten müssen die Szenen dieselben genannten Gegenstände zeigen und zur Frage passen; nur die zu prüfende Eigenschaft darf sich ändern. Tatsächlich erzeugte Bildpixel liegen noch nicht vor; bewerte hier die geplanten Szenen. WICHTIG: Bei Lückentext-Aufgaben (type gapfill) stehen Lösungen intern in eckigen Klammern, z. B. [München]. Diese Klammerinhalte werden Schülern als leere Eingabefelder angezeigt und sind deshalb KEIN answer_leak. Bewerte nur Inhalte als Lösungshinweis, die Schüler tatsächlich sehen. Interne Lösungsfelder, correct-Markierungen und Metadaten sind nicht sichtbar. Gib nur eindeutig feststellbare Probleme zurück. Indizes beginnen bei 0. Beschreibe jedes Problem konkret und knapp auf Deutsch.${memoryGuide ? `\n${memoryGuide}` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions })}`;
 }
 
 function normalizeReviewIssues(response, test) {
@@ -319,10 +319,14 @@ function normalizeReviewIssues(response, test) {
   for (const issue of response.issues) {
     const index = issue?.index;
     if (!Number.isInteger(index) || index < 0 || index >= test.questions.length || !reviewSchema.properties.issues.items.properties.reason.enum.includes(issue.reason)) throw new Error("KI-Qualitätsprüfung lieferte ungültige Aufgabenindizes oder Fehlergründe.");
-    const detail = String(issue?.detail || "").trim().slice(0, 200) || QUALITY_REASONS[issue.reason] || "Doppelte Aufgabe";
+    const reason = String(issue.reason);
+    const rawDetail = String(issue?.detail || "").trim().slice(0, 200) || QUALITY_REASONS[reason] || "Qualitätsproblem";
     const previous = byIndex.get(index);
-    if (!previous) byIndex.set(index, { index, text: test.questions[index].text, detail: `${issue.reason}: ${detail}` });
-    else if (previous.detail.length < 400) previous.detail += `; ${issue.reason}: ${detail}`;
+    if (!previous) byIndex.set(index, { index, text: test.questions[index].text, reason, detail: `${reason}: ${rawDetail}` });
+    else if (previous.detail.length < 400) {
+      previous.detail += `; ${reason}: ${rawDetail}`;
+      previous.reason = previous.reason === reason ? reason : "multiple";
+    }
   }
   if (response.issues.length && !byIndex.size) throw new Error("KI-Qualitätsprüfung lieferte ungültige Aufgabenindizes.");
   return [...byIndex.values()];
@@ -331,18 +335,28 @@ function normalizeReviewIssues(response, test) {
 async function reviewAndRepairTest(test, options, { review, generateQuestion, regenerateTest, maxReviews = 3 }) {
   let draft = test;
   let reviewPasses = 0, replaced = 0, questionAttempts = 0;
-  for (let pass = 0; pass < maxReviews; pass += 1) {
+  // Every detected issue gets a repair attempt. Only after all repair rounds do we
+  // run one final independent review whose remaining issues become teacher hints.
+  for (let repairRound = 0; repairRound < maxReviews; repairRound += 1) {
     const issues = normalizeReviewIssues(await review(draft), draft);
     reviewPasses += 1;
-    if (!issues.length) return { test: draft, errors: [], reviewPasses, replaced, questionAttempts };
-    if (pass === maxReviews - 1) return { test: draft, errors: issues.map(issue => `Aufgabe ${issue.index + 1}: ${issue.detail}`), reviewPasses, replaced, questionAttempts };
+    if (!issues.length) return { test: draft, errors: [], issues: [], reviewPasses, replaced, questionAttempts };
     const repaired = await validateAndRepairTest(draft, { ...options, reviewIssues: issues }, { generateQuestion, regenerateTest });
     draft = repaired.test;
     replaced += repaired.replaced;
     questionAttempts += repaired.questionAttempts;
-    if (repaired.errors.length) return { test: draft, errors: repaired.errors, reviewPasses, replaced, questionAttempts };
+    if (repaired.errors.length) return { test: draft, errors: repaired.errors, issues, reviewPasses, replaced, questionAttempts };
   }
-  throw new Error("Qualitätsprüfung ohne Ergebnis beendet.");
+  const finalIssues = normalizeReviewIssues(await review(draft), draft);
+  reviewPasses += 1;
+  return {
+    test: draft,
+    errors: finalIssues.map(issue => `Aufgabe ${issue.index + 1}: ${issue.detail}`),
+    issues: finalIssues,
+    reviewPasses,
+    replaced,
+    questionAttempts
+  };
 }
 
 async function verifyImageScene(expectedScene, { generate, inspect, maxAttempts = 2 }) {

@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Testify – Tests. Einfach digital.</title>
-  <meta name="app-version" content="2.3.1-ai27" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-ai27" />
-  <link rel="stylesheet" href="design-system.css?v=2.3.1-ai27" />
+  <meta name="app-version" content="2.3.1-ai28" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-ai28" />
+  <link rel="stylesheet" href="design-system.css?v=2.3.1-ai28" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -300,7 +300,7 @@
             <label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label>
             <label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label>
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
-            <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="50" value="10" /></label>
+            <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
             <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
@@ -352,7 +352,7 @@
 
     <section id="editorView" class="view hidden">
       <div class="pageHead stickyHead">
-        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p><div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div></div>
+        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p><div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div><div id="variantBackgroundProgress" class="aiProgress hidden variantBackgroundProgress" role="status" aria-live="polite"></div></div>
         <div class="actions"><button id="createSimilarTestBtn" class="button secondary" type="button" title="Eigenständigen, ähnlichen Test als neuen Entwurf erstellen">✨ Ähnlichen Test erstellen</button><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
       </div>
       <div id="importReviewBanner" class="importReviewBanner hidden"></div>
@@ -497,9 +497,9 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai27</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">Testify</span><span>·</span><span id="footerVersion">v2.3.1-ai28</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Rechtsverletzung melden</button></footer>
 
-  <script type="module" src="app.js?v=2.3.1-ai27"></script>
+  <script type="module" src="app.js?v=2.3.1-ai28"></script>
 </body>
 </html>

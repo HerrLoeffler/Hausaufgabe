@@ -17,7 +17,7 @@ const MATERIAL_MIME_TYPES = Object.freeze([
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 ]);
 const LIMITS = Object.freeze({
-  maxQuestions: 50,
+  maxQuestions: 100,
   maxPromptChars: 6000,
   maxMaterials: 5,
   maxMaterialBytes: 15 * 1024 * 1024,
