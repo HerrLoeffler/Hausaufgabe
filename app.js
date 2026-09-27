@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-ai25";
+const APP_VERSION = "2.3.1-ai26";
 const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -19,6 +19,7 @@ import {
   setDoc,
   addDoc,
   updateDoc,
+  writeBatch,
   deleteDoc,
   collection,
   getDocs,
@@ -33,9 +34,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai25";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai25";
-import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai25";
+import { createAiClient } from "./ai-client.js?v=2.3.1-ai26";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai26";
+import { isAiReviewPending, shouldShowAiJob } from "./ai-review-state.js?v=2.3.1-ai26";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -314,7 +315,7 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
   const providerCode = String(error?.code || error?.status || "").slice(0, 160);
   const stack = String(error?.stack || "").slice(0, 7000);
   const cleanedDetails = cleanTechnicalDetails(details);
-  const fingerprint = shortErrorFingerprint([code, action, providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
+  const fingerprint = shortErrorFingerprint([code, action, cleanedDetails.jobId || "", providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
   const existing = host.querySelector(`[data-error-fingerprint="${fingerprint}"]`);
   if (existing) {
     existing.__reportPayload.occurrences += 1;
@@ -376,11 +377,16 @@ async function submitTechnicalErrorReport(card) {
     if (status) status.textContent = "Bitte als Lehrkraft anmelden, um den Fehler zu melden.";
     return;
   }
+  const uid = state.user.uid;
+  const jobId = payload.details?.jobId;
+  const jobNotice = jobId && state.aiJobs.some(job => job.id === jobId && job.status === "failed")
+    ? { reason: "reported", at: Date.now() } : null;
   button.disabled = true;
   button.textContent = "Wird gemeldet …";
   const reportId = `RPT-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().replace(/-/g, "").slice(0, 5).toUpperCase()}`;
   try {
-    await setDoc(doc(db, "feedback", `err-${reportId.toLowerCase()}`), {
+    const batch = writeBatch(db);
+    batch.set(doc(db, "feedback", `err-${reportId.toLowerCase()}`), {
       userId: state.user.uid,
       displayName: state.profile?.displayName || state.user.displayName || "",
       email: state.user.email || state.profile?.email || "",
@@ -419,6 +425,19 @@ async function submitTechnicalErrorReport(card) {
       status: "new",
       createdAt: serverTimestamp()
     });
+    if (jobNotice) {
+      jobNotice.reportId = reportId;
+      batch.set(doc(db, "users", uid), { aiJobNotices: { [jobId]: jobNotice } }, { merge: true });
+    }
+    await batch.commit();
+    if (state.user?.uid !== uid) { card.remove(); return; }
+    if (jobNotice) {
+      state.profile = { ...state.profile, aiJobNotices: { ...state.profile?.aiJobNotices, [jobId]: jobNotice } };
+      renderAiJobs();
+      card.remove();
+      toast(`Problem gemeldet · ${reportId}`);
+      return;
+    }
     card.classList.add("reported");
     button.textContent = "Gemeldet ✓";
     if (status) status.textContent = `Report ${reportId}`;
@@ -810,6 +829,7 @@ onAuthStateChanged(auth, async (user) => {
     state.aiJobsUnsub?.();
     state.aiJobsUnsub = null;
     state.aiJobs = [];
+    $("reportableErrorHost")?.replaceChildren();
   }
   state.user = user;
   state.profile = null;
@@ -988,14 +1008,32 @@ function watchAiJobs() {
   });
 }
 
+async function dismissAiJob(job, button) {
+  if (!state.user || job.status !== "failed") return;
+  const uid = state.user.uid;
+  const notice = { reason: "dismissed", at: Date.now() };
+  button.disabled = true;
+  try {
+    await setDoc(doc(db, "users", uid), { aiJobNotices: { [job.id]: notice } }, { merge: true });
+    if (state.user?.uid !== uid) return;
+    state.profile = { ...state.profile, aiJobNotices: { ...state.profile?.aiJobNotices, [job.id]: notice } };
+    renderAiJobs();
+    toast("Hinweis ausgeblendet. Gespeicherte Teilentwürfe bleiben unter Meine Tests erhalten.");
+  } catch (err) {
+    console.error("KI-Hinweis konnte nicht ausgeblendet werden:", err);
+    if (state.user?.uid !== uid) return;
+    button.disabled = false;
+    toast("Ausblenden konnte nicht gespeichert werden. Bitte erneut versuchen.", "error");
+  }
+}
+
 function renderAiJobs() {
   const host = $("aiJobsList");
   const recent = state.aiJobs.filter(job => {
     if (["queued", "running"].includes(job.status)) return true;
     if (Date.now() - toMillis(job.updatedAt || job.createdAt) >= 7 * 24 * 60 * 60 * 1000) return false;
-    if (job.status !== "ready") return true;
     const quiz = state.quizzes.find(item => item.id === job.quizId);
-    return shouldShowAiJob(job, quiz);
+    return shouldShowAiJob(job, quiz, state.profile?.aiJobNotices?.[job.id]);
   }).slice(0, 8);
   host.replaceChildren();
   host.classList.toggle("hidden", !recent.length);
@@ -1012,7 +1050,8 @@ function renderAiJobs() {
       ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
       <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
       ${finished && job.quizId ? '<button class="button ghost completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}
-      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button>' : ""}</div>`;
+      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button><button class="button ghost dismissAiJob" type="button">Ausblenden</button>' : ""}</div>`;
+    card.querySelector(".dismissAiJob")?.addEventListener("click", event => dismissAiJob(job, event.currentTarget));
     card.querySelector(".openAiJob")?.addEventListener("click", () => openEditor(job.quizId));
     card.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(job.quizId));
     card.querySelector(".reportAiJob")?.addEventListener("click", () => showReportableError({

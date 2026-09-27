@@ -13,7 +13,7 @@ node --check app.js
 node --check ai-client.js
 node --check editor-drafts.js
 node --check ai-review-state.js
-node --test ai-review-state.test.js
+node --test ai-review-state.test.js ai-job-report.test.js
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public

@@ -4,7 +4,10 @@ export function isAiReviewPending(quiz) {
     && !quiz.published && !quiz.aiReviewAcknowledgedAt && !quiz.isDeleted);
 }
 
-export function shouldShowAiJob(job, quiz) {
+export function shouldShowAiJob(job, quiz, notice) {
+  // A notice never hides work that is still running or a later successful result.
+  if (["queued", "running"].includes(job.status)) return true;
+  if (job.status === "failed") return !["reported", "dismissed"].includes(notice?.reason) && !quiz?.isDeleted;
   if (job.status !== "ready" || !quiz) return true;
   return !quiz.isDeleted && !quiz.published && !quiz.aiReviewAcknowledgedAt;
 }
