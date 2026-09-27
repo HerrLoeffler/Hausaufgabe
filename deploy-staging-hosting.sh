@@ -10,7 +10,7 @@ if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
 fi
 
 # Reine Branding-/Layoutmodule dürfen den kritischen App-Start nicht statisch blockieren.
-if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js' ai-client.js; then
+if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js|^import .*variant-enhancements\.js' ai-client.js; then
   echo "FEHLER: ai-client.js darf keine statischen Branding-/Layoutimporte enthalten."
   exit 1
 fi
@@ -21,6 +21,7 @@ node --check ui-enhancements.js
 node --check visual-enhancements.js
 node --check gradecrew-brand.js
 node --check layout-enhancements.js
+node --check variant-enhancements.js
 node --check editor-drafts.js
 node --check ai-review-state.js
 node --check ordering-grading.mjs
@@ -35,7 +36,7 @@ test -f assets/gradecrew/crew-lineup.svg
 
 cp firebase-config.staging.js firebase-config.js
 mkdir -p public
-cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
+cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
 rm -rf public/assets/gradecrew
 mkdir -p public/assets
 cp -R assets/gradecrew public/assets/
