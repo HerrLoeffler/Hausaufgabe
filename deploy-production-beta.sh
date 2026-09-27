@@ -50,6 +50,7 @@ node --check ui-enhancements.js
 node --check visual-enhancements.js
 node --check gradecrew-brand.js
 node --check layout-enhancements.js
+node --check variant-enhancements.js
 node --check editor-drafts.js
 node --check ai-review-state.js
 node --check ordering-grading.mjs
@@ -76,7 +77,7 @@ if [[ "$confirmation" != "BETA-LIVE" ]]; then
 fi
 
 mkdir -p public
-cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.production.js ai-json-tools.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
+cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.production.js ai-json-tools.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
 cp firebase-config.production.js public/firebase-config.js
 rm -rf public/assets/gradecrew
 mkdir -p public/assets
