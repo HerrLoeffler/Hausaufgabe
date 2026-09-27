@@ -33,9 +33,18 @@ if [[ ! -f firebase-config.staging.js ]] || ! grep -q 'projectId: "hausaufgabe-s
   exit 1
 fi
 
+# Vor dem Secret-Zugriff explizit prüfen, ob Secret Manager in Production aktiviert ist.
+# So kann gcloud nicht mehr unsichtbar auf eine interaktive API-Aktivierungsfrage warten.
+if ! gcloud services list --enabled --project="$PROJECT_ID" --filter='config.name:secretmanager.googleapis.com' --format='value(config.name)' --quiet 2>/dev/null | grep -qx 'secretmanager.googleapis.com'; then
+  echo "FEHLER: Secret Manager API ist im Production-Projekt nicht aktiviert."
+  echo "Einmalig ausführen:"
+  echo "  gcloud services enable secretmanager.googleapis.com --project=$PROJECT_ID"
+  exit 1
+fi
+
 # Niemals den Secret-Wert ausgeben. Nur prüfen, ob im Production-Projekt eine aktive Version existiert.
-if ! gcloud secrets versions access latest --secret=OPENAI_API_KEY --project="$PROJECT_ID" >/dev/null 2>&1; then
-  echo "FEHLER: OPENAI_API_KEY ist im Production-Projekt nicht verfügbar."
+if ! timeout 20s gcloud secrets versions access latest --secret=OPENAI_API_KEY --project="$PROJECT_ID" --quiet >/dev/null 2>&1; then
+  echo "FEHLER: OPENAI_API_KEY ist im Production-Projekt nicht verfügbar oder nicht lesbar."
   echo "Secret zuerst sicher im Projekt $PROJECT_ID anlegen; Wert niemals im Terminal-Log ausgeben."
   exit 1
 fi
