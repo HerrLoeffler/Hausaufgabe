@@ -18,9 +18,9 @@ export function startVisualEnhancements() {
 
     const modules = [
       ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc5"],
+      ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc5"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
-      ["Varianten", "./variant-enhancements.js?v=2.3.1-gc2"],
-      ["Admin-KI-Rechte", "./admin-ai-access.js?v=2.3.1-gc2"]
+      ["Varianten", "./variant-enhancements.js?v=2.3.1-gc2"]
     ];
     const results = await Promise.allSettled(modules.map(([, path]) => import(path)));
     results.forEach((result, index) => {
