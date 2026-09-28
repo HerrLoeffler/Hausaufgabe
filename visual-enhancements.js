@@ -5,6 +5,16 @@ export function startVisualEnhancements() {
   started = true;
 
   window.setTimeout(async () => {
+    // One-time copy replacement before the tour observer starts. Keeping this
+    // outside the observer prevents repeated DOM writes on every UI mutation.
+    const manualHint = document.querySelector("#createManualBtn .choiceText small");
+    if (manualHint) {
+      const replacement = document.createElement("span");
+      replacement.className = "gcTourManualHint";
+      replacement.textContent = "Oder ganz klassisch: leer starten und jede Aufgabe selbst bauen.";
+      manualHint.replaceWith(replacement);
+    }
+
     const modules = [
       ["Crew-Tour", "./gradecrew-tour.js?v=2.3.1-gc3"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
