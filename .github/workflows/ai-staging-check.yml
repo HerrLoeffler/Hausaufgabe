@@ -61,6 +61,7 @@ jobs:
           node --check gradecrew-tour-v8.js
           node --check tutorial-variant-fallback.js
           node --check crew-tour-hardening.js
+          node --check crew-tour-gc22-polish.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
           node --check variant-enhancements.js
