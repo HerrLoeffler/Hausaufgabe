@@ -11,7 +11,8 @@ esac
 PROJECT_ID="hausaufgabe-staging"
 CHANNEL_ID="gradecrew-fast-quiz"
 
-node --check lab/fast-quiz/app-v2.js
+node --check lab/fast-quiz/math-engine.js
+node --check lab/fast-quiz/app-v3.js
 node --check tools/build-lab-fast-quiz.mjs
 
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-fast-quiz.XXXXXX")"
@@ -19,7 +20,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-fast-quiz.mjs "$BUILD_DIR"
 
 if [ "$MODE" = "--check" ]; then
-  echo "Fast Quiz Lab V2 ist syntaktisch und als isolierter Build geprüft. Es wurde nichts veröffentlicht."
+  echo "Fast Quiz Lab V3 ist syntaktisch und als isolierter Build geprüft. Es wurde nichts veröffentlicht."
   exit 0
 fi
 
@@ -37,4 +38,4 @@ firebase hosting:channel:deploy "$CHANNEL_ID" \
   --project "$PROJECT_ID" \
   --non-interactive
 
-echo "Fast Quiz Lab V2 veröffentlicht. Die Firebase CLI zeigt oben die Preview-URL an."
+echo "Fast Quiz Lab V3 veröffentlicht. Die Firebase CLI zeigt oben die Preview-URL an."
