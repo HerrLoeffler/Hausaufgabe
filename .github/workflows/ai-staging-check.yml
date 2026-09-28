@@ -58,6 +58,8 @@ jobs:
           node --check teacher-copy-polish.js
           node --check gradecrew-tour.js
           node --check gradecrew-tour-v7.js
+          node --check gradecrew-tour-v8.js
+          node --check tutorial-variant-fallback.js
           node --check crew-tour-hardening.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
