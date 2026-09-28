@@ -10,6 +10,7 @@ function suppressLegacyUi() {
   document.getElementById("firstAiGuideCard")?.classList.add("hidden");
   document.querySelectorAll(".firstAiGuideSpotlight").forEach(node => node.classList.remove("firstAiGuideSpotlight"));
   closeDialog(document.getElementById("teacherTourDialog"));
+  closeDialog(document.getElementById("announcementDialog"));
 }
 
 function removeTourAbortControls(root = document) {
@@ -27,7 +28,8 @@ function installStyles() {
   style.textContent = `
     .gcCoachClose { display: none !important; }
     #firstAiGuideBackdrop,
-    #firstAiGuideCard { display: none !important; }
+    #firstAiGuideCard,
+    #announcementHost { display: none !important; }
   `;
   document.head.appendChild(style);
 }
@@ -39,11 +41,13 @@ function installCrewTourHardening() {
   suppressLegacyUi();
   removeTourAbortControls();
 
-  // The old four-step onboarding is retired. If legacy code attempts to open it
-  // again, close it immediately so it can never sit above the Crew journey.
-  const legacyDialog = document.getElementById("teacherTourDialog");
-  if (legacyDialog) {
-    new MutationObserver(() => suppressLegacyUi()).observe(legacyDialog, {
+  // Old onboarding and automatic info popups are retired while the Crew journey
+  // is the primary onboarding. They may still exist for admin configuration, but
+  // they are not allowed to open over the product tour.
+  for (const id of ["teacherTourDialog", "announcementDialog"]) {
+    const dialog = document.getElementById(id);
+    if (!dialog) continue;
+    new MutationObserver(() => suppressLegacyUi()).observe(dialog, {
       attributes: true,
       attributeFilter: ["open"]
     });
