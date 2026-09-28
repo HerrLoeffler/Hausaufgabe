@@ -32,7 +32,7 @@ if [ ! -d "$FUNCTION_DIR/node_modules/firebase-functions" ] || [ ! -d "$FUNCTION
   if [ -f "$FUNCTION_DIR/package-lock.json" ]; then
     npm --prefix "$FUNCTION_DIR" ci --omit=dev
   else
-    npm --prefix "$FUNCTION_DIR" install --omit=dev
+    npm --prefix "$FUNCTION_DIR" install --omit=dev --package-lock=false
   fi
 fi
 
