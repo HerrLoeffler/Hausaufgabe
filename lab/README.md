@@ -8,81 +8,117 @@ Lab -> bewerten -> eigener Feature-Branch -> vollständige Integration -> Stagin
 
 Ein Lab-Experiment darf bewusst unvollständig sein. Es soll zuerst beantworten, ob eine Idee in der Nutzung funktioniert.
 
-## Fast Quiz V3
+## Fast Quiz V4
 
-Pfad: `lab/fast-quiz/`
+Frontend: `lab/fast-quiz/`
 
-Fast Quiz ist in V3 bewusst auf Grundrechenarten fokussiert. Keine Prozentrechnung, Wortarten oder sonstigen Demo-Themen mehr.
+Separates Lab-Backend: `lab/fast-quiz-functions/`
 
-### Inhalte
+Fast Quiz ist aktuell bewusst vollständig auf Grundrechenarten fokussiert.
 
-- Addition, Subtraktion, Multiplikation, Division einzeln kombinierbar
-- Natürliche Zahlen, ganze Zahlen, Dezimalzahlen und Brüche einzeln kombinierbar
-- vier Niveaus: Basis, Standard, Fortgeschritten, Profi
-- 1 bis 5 Minuten Spielzeit
-- deterministischer Seed: gleiche Runde = gleiche Aufgabenfolge
-- ausgewählte Kombinationen aus Rechenart und Zahlenbereich werden zyklisch ausbalanciert
-- Brüche werden exakt gerechnet und vollständig gekürzt
-- Divisionen werden so erzeugt, dass die Lösung im gewählten Zahlenbereich sinnvoll bleibt
+### Drei klare Modi
 
-### Spielregeln
+1. **Üben**
+   - Rechenarten, Zahlenbereiche, Niveau und 1–5 Minuten frei wählen
+   - persönliche Bestwerte lokal speichern
+   - gleiche Aufgaben oder neue Aufgaben erneut spielen
 
-- +100 Punkte je richtiger Antwort
-- Minuspunkte bei Fehler konfigurierbar: 0 / 25 / 50 / 100 / 200
-- Sperre nach Fehler konfigurierbar: 0 / 2 / 5 / 10 / 30 Sekunden
-- Zeitbonus ein/aus
-- Serienbonus ein/aus
-- negative Punktzahl ein/aus
-- Lösung nach Fehler anzeigen ein/aus
-- Bestenliste: live / erst nach Ende / verborgen
+2. **All-Time-Highscore**
+   - feste faire Regeln
+   - alle vier Grundrechenarten
+   - 2 Minuten
+   - neue, aber gleichwertig generierte Aufgaben pro Versuch
+   - gemeinsame Bestenliste im Staging-Backend
+   - getrennte Bestenlisten je Zahlenbereich und Niveau
 
-### Modi
+3. **Live mit Lehrkraft**
+   - Lehrkraft konfiguriert Rechenarten, Zahlenbereiche, Niveau, Zeit und Fehlerregeln
+   - 6-stelliger Code + QR-Code
+   - bis zu 30 Teilnehmende
+   - Lehrkraft startet die Runde zentral
+   - gemeinsamer Countdown
+   - Lehrkraft sieht das Scoreboard immer live
+   - Schüler sehen die Rangliste je nach Lehrereinstellung live, nach Ende oder gar nicht
 
-1. **Frei üben**: beliebig oft, persönlicher Bestwert wird lokal je exakt gleicher Konfiguration gespeichert.
-2. **Lehrer-Runde – Live**: Lehrkraft konfiguriert, erstellt sechsstelligen Code, Schüler treten bei, Lehrkraft startet, gemeinsamer Countdown, gemeinsamer Seed, laufende Ergebnissynchronisierung.
-3. **Lehrer-Runde – selbstständig**: dieselbe Konfiguration kann ohne gemeinsamen Start bearbeitet werden.
+### Zahlenbereiche
 
-### Lab-Multiplayer
+- Natürliche Zahlen
+- Ganze Zahlen inklusive Vorzeichen
+- Dezimalzahlen
+- Brüche
 
-V3 verwendet für das Lab absichtlich `localStorage` als austauschbaren Prototyp-Speicher. Dadurch lassen sich Lobby, Startsignal, Spielerstatus und Bestenliste bereits zwischen mehreren Tabs/Fenstern desselben Browsers testen, ohne Staging-Firestore-Regeln anzufassen.
+### Vier klar definierte Niveaus
 
-Für echte Geräteübergreifende Nutzung wird diese Speicherstelle später durch einen Firebase-Adapter ersetzt. Das UI-, Seed-, Generator- und Scoring-Modell kann dabei bestehen bleiben.
+- Niveau 1 · Grundlagen
+- Niveau 2 · Standard
+- Niveau 3 · Erweitert
+- Niveau 4 · Komplex
 
-### Anti-Spam
+Die konkreten Zahlenräume und Aufgabenstrukturen sind für jeden Zahlenbereich in `math-engine-v4.js` fest definiert und werden im Konfigurator erklärt.
 
-Blindes Durchklicken kann die Lehrkraft gezielt unattraktiv machen. Empfohlener Wettkampf-Standard:
+### Anti-Spam / Fehlversuche
 
-- +100 richtige Antwort
-- −50 falsche Antwort
-- 5 Sekunden Sperre nach Fehler
-- negative Punkte erlaubt
-- Zeitbonus aktiv
+Konfigurierbar:
 
-Bei einer zufälligen Trefferchance von 25 % und zusätzlicher Sperrzeit ist permanentes Drücken derselben Antwort damit kein sinnvoller Weg zum Highscore.
+- 0 / 25 / 50 / 100 / 200 Minuspunkte
+- 0 / 2 / 5 / 10 / 30 Sekunden Sperrzeit
+- Zeitbonus an/aus
+- Serienbonus an/aus
+- negative Punktzahlen an/aus
+- richtige Lösung nach Fehler anzeigen/verbergen
 
-## Lokal / Build prüfen
+Der offizielle Highscore-Modus verwendet ein fixes Regelwerk, damit alle Einträge vergleichbar bleiben.
+
+## Technische Trennung
+
+Fast Quiz nutzt eine eigene Firebase Functions-Codebase `fastquiz`. Es werden keine bestehenden GradeCrew-Functions und keine Firestore-Regeln verändert.
+
+Die Function `fastQuizApi` verwaltet ausschließlich:
+
+- Live-Räume unter `fastQuizRooms`
+- Teilnehmer der Live-Räume
+- Highscore-Versuche unter `fastQuizHighscoreAttempts`
+- All-Time-Bestenlisten unter `fastQuizBoards`
+
+Das Frontend liegt weiterhin nur in einem Firebase Hosting Preview Channel. Production und der Live-Channel von Staging werden dabei nicht verändert.
+
+## Prüfen
+
+Frontend:
 
 ```bash
 bash deploy-lab-fast-quiz.sh --check
 ```
 
-Der Check prüft `math-engine.js`, `app-v3.js` und den isolierten Hosting-Build. Es wird nichts veröffentlicht.
-
-## Preview veröffentlichen
+Backend:
 
 ```bash
-bash deploy-lab-fast-quiz.sh --deploy
+bash deploy-lab-fast-quiz-backend.sh --check
 ```
 
-Der Befehl deployt ausschließlich den Firebase Hosting Preview Channel `gradecrew-fast-quiz` im Projekt `hausaufgabe-staging`. Der Live-Channel von Staging und das Produktionsprojekt werden nicht verändert.
+Alles zusammen:
 
-Firebase Preview-URLs sind öffentlich für Personen, die die URL kennen. Im Lab keine echten Schülerdaten oder Geheimnisse verwenden.
+```bash
+bash deploy-lab-fast-quiz-full.sh --check
+```
 
-## Nächste technische Stufe
+## Veröffentlichen
 
-1. Firebase-Room-Adapter für mehrere Geräte
-2. serverseitige Score-Validierung gegen manipulierte Clients
-3. Lehrer-Bestenliste dauerhaft speichern
-4. Antwortpositionen pro Spieler variieren, Aufgabenfolge aber identisch halten
-5. Aufgabenpakete aus dem GradeCrew-Quality-Pool oder aus einmalig geprüfter KI-Generierung einspeisen
-6. adaptive Übungsrunde aus Fehlerschwerpunkten erzeugen
+Alles zusammen:
+
+```bash
+bash deploy-lab-fast-quiz-full.sh --deploy
+```
+
+Das Script deployt zuerst ausschließlich die Functions-Codebase `fastquiz` in `hausaufgabe-staging` und danach ausschließlich den Preview-Channel `gradecrew-fast-quiz`.
+
+Firebase Preview-URLs sind öffentlich für Personen, die die URL kennen. Im Lab deshalb weiterhin nur Kürzel oder kurze Namen und keine sensiblen Schülerdaten verwenden.
+
+## Später denkbar
+
+- geprüfte GradeCrew-Aufgabenpools für andere Fächer
+- KI erzeugt vor einer Runde ein geprüftes Aufgabenpaket zu einem beliebigen Thema
+- Klassen-/Gruppenzuordnung
+- Wochen- oder Schulhighscores
+- Lehrer kann fertige Fast-Quiz-Konfigurationen speichern
+- adaptive Übung aus Fehlerprofilen
