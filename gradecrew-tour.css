@@ -22,7 +22,7 @@
 .gcTourFinalFlow{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:15px 0 2px;color:#526277}.gcTourFinalFlow span{font-size:12px;font-weight:750}.gcTourFinalFlow b{color:#98a2b3}
 .gradecrewAiPrimary{position:relative;border:2px solid #93afe0!important;background:#f5f8ff!important;box-shadow:0 10px 30px rgb(40 90 201 / 10%)}.gradecrewAiPrimary .choiceIcon{background:#e8f0f7!important}.gradecrewRecommended{position:absolute;top:12px;right:12px;padding:4px 7px;border-radius:999px;background:#285ac9;color:#fff;font-size:10px;font-weight:800;letter-spacing:.035em;text-transform:uppercase}
 .gcTourChangedQuestion{border-color:#a9cbb6!important;box-shadow:0 0 0 2px #edf8f0!important}
-.gradecrewTourLaunch{white-space:nowrap}
+.gradecrewTourLaunch{white-space:nowrap}.gcTourManualHint{display:block;color:var(--muted);font-size:12px;line-height:1.45}
 .gradecrewCrewTourReady .firstAiGuideBackdrop,.gradecrewCrewTourReady .firstAiGuideCard{display:none!important}
 @media(max-width:720px){.gcTourRoot.centered .gcTourCard{width:min(520px,calc(100vw - 20px));padding:20px}.gcTourCrewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gcTourCard{width:min(390px,calc(100vw - 18px));padding:17px}.gcTourCopy h2{font-size:21px}.gcTourSpeaker img{width:50px;height:50px;flex-basis:50px}}
 @media(prefers-reduced-motion:reduce){.gcTourHighlight{transition:none}.gcTourWorking>span{animation:none}}
