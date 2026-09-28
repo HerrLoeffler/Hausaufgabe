@@ -29,7 +29,7 @@ body.gcRealTourActive:not(.gcTourAnswering){touch-action:none}
 .gcCrewIntroMember:first-child img{width:90px;height:94px}
 .gcCrewIntroMember strong{font-size:13px;color:#173b36}.gcCrewIntroMember span{font-size:11px;color:#687a74}.gcCrewIntroMember small{font-size:10px;line-height:1.35;color:#60736c;max-width:130px}
 
-.gcHandoffFaces{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin:0 0 16px}
+.gcHandoffFaces{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;width:min(100%,360px);margin:0 auto 16px}
 .gcHandoffFaces>div{display:grid;justify-items:center;gap:2px}.gcHandoffFaces img{width:108px;height:108px;object-fit:contain}.gcHandoffFaces strong{font-size:13px}.gcHandoffFaces>span{font-size:24px;color:#97aaa3}
 .gcCoachHandoff,.gcCoachThanks,.gcEditSuccess,.gcVariantIntro{text-align:center}
 .gcCoachHandoff .eyebrow,.gcCoachThanks .eyebrow{display:block;margin-bottom:6px}.gcCoachHandoff h2,.gcCoachThanks h2{font-size:26px}

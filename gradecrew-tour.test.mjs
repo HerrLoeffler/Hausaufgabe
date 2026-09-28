@@ -71,7 +71,7 @@ async function until(predicate, label, timeout = 4000) {
   assert.fail(`Timed out: ${label}`);
 }
 
-test('Public wrapper keeps live flags; Remy appears alone and onboarding never starts a provider job', async t => {
+test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never starts a provider job', async t => {
   const w = fixture(t, { publicEntry: true });
   const api = adapter(w);
   const tour = w.install(api);
@@ -89,8 +89,9 @@ test('Public wrapper keeps live flags; Remy appears alone and onboarding never s
   w.document.querySelector('.gcCoachNext').click();
   tour.notify('view', { id: 'createView' });
   const handoff = w.document.querySelector('.gcCoachHandoff');
-  assert.equal(handoff.querySelectorAll('img').length, 1);
-  assert.match(handoff.querySelector('img').src, /elephant-create/);
+  assert.equal(handoff.querySelectorAll('img').length, 2);
+  assert.match(handoff.querySelectorAll('img')[0].src, /penguin-guide/);
+  assert.match(handoff.querySelectorAll('img')[1].src, /elephant-create/);
   handoff.querySelector('.gcCoachNext').click();
   tour.notify('view', { id: 'aiView' });
   assert.equal(tour.creating, true);

@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc18";
+const APP_VERSION = "2.3.1-gc19";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -1212,7 +1212,7 @@ async function loadDashboard() {
     await renderLocalDraftList();
     await loadTeacherTourConfig();
     try {
-      const module = await import("./gradecrew-tour.js?v=2.3.1-gc18");
+      const module = await import("./gradecrew-tour.js?v=2.3.1-gc19");
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
       if (!crewTour) crewTour = module.installCrewTour({
         uid: () => state.user?.uid || "",

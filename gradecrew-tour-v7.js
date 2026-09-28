@@ -254,10 +254,8 @@ export function installCrewTour(api) {
     if (!owned()) return;
     root = document.createElement("aside");
     root.className = "gcRealCoach gcCoachCentered gcCoachHandoff";
-    const faces = toRole === "create"
-      ? `<div>${image(toRole,148)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`
-      : `<div>${image(fromRole,108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>→</span><div>${image(toRole,108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`;
-    root.innerHTML = `<div class="gcHandoffFaces">${faces}</div><span class="eyebrow">${toRole === "create" ? "Remy · Erstellen" : "Die Crew arbeitet zusammen"}</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
+    const faces = `<div>${image(fromRole,108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>→</span><div>${image(toRole,108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`;
+    root.innerHTML = `<div class="gcHandoffFaces">${faces}</div><span class="eyebrow">Die Crew arbeitet zusammen</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
     root.querySelector(".gcCoachNext").addEventListener("click", next);
     document.body.classList.add("gcCoachVisible");
     document.body.append(root);
@@ -547,7 +545,7 @@ export function installCrewTour(api) {
       if(allowed[stage]&&!allowed[stage].includes(data.id)){error("Die Tour ist aus dem vorgesehenen Schritt gesprungen. Lade die Seite neu; die Einführung startet anschließend wieder am Anfang.",()=>location.reload());return;}
     }
     if(event==="view"&&data.id==="createView"&&stage==="new"){
-      stage="handoff";handoff("guide","create","Hallo, ich bin Remy!","Ich erstelle mit dir den ersten Entwurf und zeige dir, welche Angaben GradeCrew dafür braucht.",()=>{stage="choice";coach("create","Wir starten mit KI.","„Mit KI erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben verfügbar, stehen heute aber nicht im Mittelpunkt.",{target:"#createAiBtn",interactiveTarget:true});});return;
+      stage="handoff";handoff("guide","create","Das ist Remy!","Remy erstellt mit dir deinen ersten Test. Er zeigt dir gleich, welche Angaben er dafür braucht. Ich bin danach wieder für dich da.",()=>{stage="choice";coach("create","Wir starten mit KI.","„Mit KI erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben verfügbar, stehen heute aber nicht im Mittelpunkt.",{target:"#createAiBtn",interactiveTarget:true});});return;
     }
     if(event==="view"&&data.id==="aiView"&&stage==="choice"){
       stage="form-intro";coach("create","Wir bauen einen Test für Klasse 4.","Englisch, Grundschule: Colours, animals & school things. Ich fülle die echten Felder gleich Schritt für Schritt aus.",{button:"Felder ausfüllen",onButton:ghostFillForm,centered:true});return;
@@ -587,7 +585,7 @@ export function installCrewTour(api) {
   document.addEventListener("gradecrew:variant-submitted",()=>variantSubmitted());
   document.addEventListener("gradecrew:variant-kept",event=>{if(!owned()||stage!=="variant-review"||event.detail?.id!==variantQuestionId||event.detail?.quizId!==quizId||event.detail?.ownerId!==owner)return;refreshWarnings({includeEdit:false});showFaultyDeleteStep();});
 
-  const style=document.createElement("link");style.rel="stylesheet";style.href="./gradecrew-tour.css?v=2.3.1-gc18";document.head.append(style);
+  const style=document.createElement("link");style.rel="stylesheet";style.href="./gradecrew-tour.css?v=2.3.1-gc19";document.head.append(style);
   addEventListener("resize",schedulePlace,{passive:true});
   document.addEventListener("gradecrew:account-changed",()=>stop());
 
