@@ -25,6 +25,14 @@ function variantSourceQuestion() {
 function buildDemoTest() {
   const demo = clone(V7_DEMO_TEST);
   demo.questions[5] = variantSourceQuestion();
+
+  // Keep the complete tutorial at 10 points while making the Crew finale count.
+  // Ordering is already graded proportionally by the core app, so four correctly
+  // placed Crew members are naturally worth 4 × 0.5 = 2 points.
+  demo.questions[0].points = 0.5;
+  demo.questions[1].points = 0.5;
+  demo.questions[9].points = 2;
+  demo.questions[9].tutorialCrewFinale = true;
   return demo;
 }
 
@@ -104,4 +112,3 @@ export function installCrewTour(api) {
   base.preparedResponse = preparedResponse;
   return base;
 }
-
