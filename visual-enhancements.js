@@ -114,8 +114,6 @@ function polishCreateChoices() {
 
   installCreateChoiceStyles();
 
-  // AI is the default GradeCrew workflow. Keep it physically first in the DOM
-  // as well as visually first, so keyboard/screen-reader order matches sighted use.
   if (grid.firstElementChild !== ai) grid.insertBefore(ai, grid.firstElementChild);
 
   let badge = ai.querySelector(".gradecrewAiBadge");
@@ -155,7 +153,7 @@ export function startVisualEnhancements() {
 
     const modules = [
       ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc9"],
-      ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc9"],
+      ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc2"]
     ];
