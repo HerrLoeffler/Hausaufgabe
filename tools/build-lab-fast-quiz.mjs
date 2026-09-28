@@ -13,17 +13,18 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'math-engine-v4.js', 'app-v4.js'];
+const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'app-v4.js'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'fastquiz-v4.css', 'math-engine-v4.js', 'app-v4.js']) {
+for (const reference of ['styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'app-v4.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
 for (const marker of ['Üben', 'All-Time-Highscore', 'Live mit Lehrkraft', 'Rundencode', 'Live-Scoreboard', '30 Teilnehmende']) {
   if (!html.includes(marker)) throw new Error(`Fast Quiz V4 build check failed: ${marker}`);
 }
+if (html.includes('<details class="developerDetails"')) throw new Error('Fast Quiz UI polish failed: developer details are still visible');
 
 const app = await fs.readFile(path.join(output, 'app-v4.js'), 'utf8');
 for (const required of ['createLiveRoom', 'joinLiveRoom', 'startHighscore', 'finishHighscoreAttempt', 'wrongPenalty', 'lockSeconds', 'roomState', 'submitLive']) {
