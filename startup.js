@@ -11,9 +11,8 @@ document.querySelectorAll('img[src*="falcon-create.svg"]').forEach(img => {
 });
 
 // The legacy first-test guide uses a full-screen visual backdrop. That backdrop
-// must never consume pointer events, otherwise the highlighted real control is
-// visible but cannot be clicked (especially when an ancestor creates its own
-// stacking context). The guide card itself remains interactive.
+// is visual only; interaction is filtered separately so only the active target
+// and the guide card can be used.
 const firstGuideClickStyle = document.createElement("style");
 firstGuideClickStyle.dataset.gradecrewFirstGuideClickFix = "1";
 firstGuideClickStyle.textContent = `
@@ -31,7 +30,7 @@ try {
   await import("./app.js?v=2.3.1-gc2");
   window.clearTimeout(slowStart);
   notice.classList.add("hidden");
-  import("./visual-enhancements.js?v=2.3.1-gc4").catch(error => {
+  import("./visual-enhancements.js?v=2.3.1-gc5").catch(error => {
     console.warn("Zusätzliche Ansichten konnten nicht geladen werden.", error);
   });
 } catch (error) {
