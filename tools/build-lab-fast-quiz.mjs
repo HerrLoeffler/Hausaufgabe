@@ -15,20 +15,20 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'app.js'];
+const files = ['index.html', 'styles.css', 'modes.css', 'app-v2.js'];
 for (const name of files) {
   await fs.copyFile(path.join(source, name), path.join(output, name));
 }
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'app.js']) {
+for (const reference of ['styles.css', 'modes.css', 'app-v2.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
 if (!html.includes('Fast Quiz')) throw new Error('Fast Quiz build check failed: page title missing');
 
-const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
-for (const required of ['roundCode', 'durationSec', 'generateQuestion', 'startRound', 'finishRound']) {
+const app = await fs.readFile(path.join(output, 'app-v2.js'), 'utf8');
+for (const required of ['roundCode', 'parseRoundCode', 'durationSec', 'generateQuestion', 'startRound', 'finishRound', 'localStorage']) {
   if (!app.includes(required)) throw new Error(`Fast Quiz build check failed: ${required}`);
 }
 
@@ -39,7 +39,7 @@ for (const name of files) {
 
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'fast-quiz',
-  format: 1,
+  format: 2,
   files: hashes
 }, null, 2) + '\n');
 
