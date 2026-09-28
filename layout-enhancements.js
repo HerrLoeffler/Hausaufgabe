@@ -109,6 +109,21 @@ function disableQuestionDragging(root = document) {
   });
 }
 
+function enhanceQuestionOutlineNavigation() {
+  if (document.documentElement.dataset.gradecrewOutlineScroll === "1") return;
+  document.documentElement.dataset.gradecrewOutlineScroll = "1";
+  document.addEventListener("click", event => {
+    const target = event.target instanceof Element ? event.target.closest("#editorView #questionOutline .questionOutlineItem") : null;
+    if (!target) return;
+    const position = Math.max(1, Number(target.dataset.position) || 1);
+    window.setTimeout(() => {
+      const card = document.querySelectorAll("#editorView .questionCard")[position - 1];
+      if (!card) return;
+      card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+  });
+}
+
 function applyLayoutEnhancements(root = document) {
   enhanceEditorHeader();
   enhanceEditorSettings();
@@ -127,6 +142,7 @@ const observer = new MutationObserver(records => {
 
 function start() {
   applyLayoutEnhancements();
+  enhanceQuestionOutlineNavigation();
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
