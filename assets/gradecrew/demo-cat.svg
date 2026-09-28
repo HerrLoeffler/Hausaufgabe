@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" role="img" aria-labelledby="title desc">
+  <title id="title">Freundliche orangefarbene Katze</title>
+  <desc id="desc">Eine sehr niedliche orangefarbene Katze sitzt vor einem ruhigen hellen Hintergrund.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fbf8"/>
+      <stop offset="1" stop-color="#edf5f1"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#173b36" flood-opacity=".13"/>
+    </filter>
+  </defs>
+  <rect width="720" height="480" rx="36" fill="url(#bg)"/>
+  <ellipse cx="360" cy="400" rx="176" ry="34" fill="#dfeae4"/>
+  <g filter="url(#shadow)">
+    <path d="M245 188 206 98c-5-12 8-22 18-14l82 61z" fill="#d9854f"/>
+    <path d="m475 188 39-90c5-12-8-22-18-14l-82 61z" fill="#d9854f"/>
+    <path d="m232 128-11-26 50 37zM488 128l11-26-50 37z" fill="#f4b6a0"/>
+    <ellipse cx="360" cy="248" rx="141" ry="136" fill="#e39258"/>
+    <path d="M270 232c18-70 164-70 180 0v99c0 70-180 70-180 0z" fill="#ed9f67"/>
+    <ellipse cx="306" cy="235" rx="19" ry="23" fill="#fff"/>
+    <ellipse cx="414" cy="235" rx="19" ry="23" fill="#fff"/>
+    <ellipse cx="308" cy="238" rx="8" ry="11" fill="#18332f"/>
+    <ellipse cx="412" cy="238" rx="8" ry="11" fill="#18332f"/>
+    <circle cx="303" cy="232" r="3" fill="#fff"/>
+    <circle cx="407" cy="232" r="3" fill="#fff"/>
+    <path d="M350 273c5-7 15-7 20 0-2 11-18 11-20 0z" fill="#8f5b50"/>
+    <path d="M360 282c0 17-14 28-30 24M360 282c0 17 14 28 30 24" fill="none" stroke="#6d463c" stroke-width="5" stroke-linecap="round"/>
+    <path d="M332 302c16 14 40 14 56 0-4 31-52 31-56 0z" fill="#fff3e8"/>
+    <path d="M283 280c-40-8-70-5-94 3M284 294c-41 3-68 12-91 24M437 280c40-8 70-5 94 3M436 294c41 3 68 12 91 24" fill="none" stroke="#6f756d" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+    <path d="M264 352c-10 70 5 84 48 84h96c43 0 58-14 48-84-41 34-151 34-192 0z" fill="#d9854f"/>
+    <path d="M268 370c-34 5-59 32-51 52 8 19 44 11 70-11" fill="none" stroke="#d9854f" stroke-width="30" stroke-linecap="round"/>
+    <path d="M452 370c34 5 59 32 51 52-8 19-44 11-70-11" fill="none" stroke="#d9854f" stroke-width="30" stroke-linecap="round"/>
+    <path d="M431 371c74 4 118 43 99 76-15 27-61 13-69-15 24 14 51 4 43-14-10-21-50-22-73-19z" fill="#e39258"/>
+    <path d="M285 189c18-18 38-25 61-27M435 189c-18-18-38-25-61-27" fill="none" stroke="#cc7441" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g opacity=".7" fill="#dcebe4">
+    <circle cx="112" cy="96" r="13"/><circle cx="602" cy="118" r="9"/><circle cx="91" cy="330" r="8"/><circle cx="622" cy="337" r="14"/>
+  </g>
+</svg>
