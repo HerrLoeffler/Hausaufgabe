@@ -32,8 +32,20 @@ function removeRedundantDraftAside() {
   });
 }
 
+function suppressLegacyInfoTour() {
+  const dialog = document.getElementById("teacherTourDialog");
+  if (!(dialog instanceof HTMLDialogElement) || dialog.dataset.gradecrewSuppressed === "1") return;
+  dialog.dataset.gradecrewSuppressed = "1";
+  if (dialog.open) dialog.close();
+  // The old welcome/info slideshow duplicates the interactive Crew onboarding.
+  // Keep it dormant for now so only one onboarding system can own the screen.
+  dialog.showModal = () => {};
+  dialog.show = () => {};
+}
+
 function polishTeacherCopy() {
   scheduled = 0;
+  suppressLegacyInfoTour();
   cleanAiStatus();
   removeInternalCostCopy();
   removeRedundantDraftAside();
