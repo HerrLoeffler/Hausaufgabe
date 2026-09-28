@@ -25,8 +25,9 @@ function removeInternalCostCopy() {
 function removeRedundantDraftAside() {
   const aiView = document.getElementById("aiView");
   if (!aiView) return;
-  aiView.querySelectorAll(".infoBox,.aiHint,.aiAside,.aiCallout,p,small").forEach(node => {
+  aiView.querySelectorAll(".infoBox,.aiHint,.aiAside,.aiCallout,aside,div,p,small").forEach(node => {
     const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+    if (text.length > 320) return;
     if (/^Entwurf bleibt bei dir\b/i.test(text) || /^Dein Entwurf bleibt bei dir\b/i.test(text)) node.remove();
   });
 }
