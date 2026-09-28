@@ -17,8 +17,8 @@ export function startVisualEnhancements() {
     }
 
     const modules = [
-      ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc5"],
-      ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc5"],
+      ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc6"],
+      ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc6"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc2"]
     ];
