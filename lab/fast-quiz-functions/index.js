@@ -229,29 +229,35 @@ async function roomState(payload) {
     await ref.update({ status: "finished", updatedAt: FieldValue.serverTimestamp() }).catch(() => {});
     room = { ...room, status: "finished" };
   }
+
   const isHost = hostAllowed(room, payload.hostToken);
-  const playersSnap = await ref.collection("players").get();
-  const players = playersSnap.docs.map(doc => {
-    const p = doc.data();
-    return {
-      id: p.id || doc.id,
-      name: text(p.name, 24),
-      status: p.status || "ready",
-      score: Number(p.score || 0),
-      correct: Number(p.correct || 0),
-      total: Number(p.total || 0),
-      bestStreak: Number(p.bestStreak || 0),
-      joinedAtMs: Number(p.joinedAtMs || 0)
-    };
-  });
-  players.sort((a, b) => b.score - a.score || b.correct - a.correct || a.joinedAtMs - b.joinedAtMs);
   const canShowLeaderboard = isHost || room.config.leaderboardMode === "live" || (room.config.leaderboardMode === "after" && room.status === "finished");
+  let players = [];
+
+  if (isHost || canShowLeaderboard) {
+    const playersSnap = await ref.collection("players").get();
+    players = playersSnap.docs.map(doc => {
+      const p = doc.data();
+      return {
+        id: p.id || doc.id,
+        name: text(p.name, 24),
+        status: p.status || "ready",
+        score: Number(p.score || 0),
+        correct: Number(p.correct || 0),
+        total: Number(p.total || 0),
+        bestStreak: Number(p.bestStreak || 0),
+        joinedAtMs: Number(p.joinedAtMs || 0)
+      };
+    });
+    players.sort((a, b) => b.score - a.score || b.correct - a.correct || a.joinedAtMs - b.joinedAtMs);
+  }
+
   return {
     code,
     status: room.status,
     seed: room.seed,
     config: room.config,
-    playerCount: players.length,
+    playerCount: Number(room.playerCount || players.length || 0),
     maxPlayers: MAX_PLAYERS,
     startsAtMs: room.startsAtMs || null,
     endsAtMs: room.endsAtMs || null,
@@ -261,7 +267,7 @@ async function roomState(payload) {
 }
 
 async function submitLive(payload) {
-  const { code, ref, room } = await getRoomOrFail(payload.code);
+  const { ref, room } = await getRoomOrFail(payload.code);
   const playerId = String(payload.playerId || "").slice(0, 80);
   if (!playerId) fail("player_invalid", "Spielerkennung fehlt.");
   const playerRef = ref.collection("players").doc(playerId);
