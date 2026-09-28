@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc2";
+const APP_VERSION = "2.3.1-gc10";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -226,6 +226,7 @@ function firstAiGuideSkippedThisSession() {
 }
 
 function firstAiGuideEligible() {
+  if (window.gradecrewPracticeReady) return false;
   const forced = firstAiGuideForcePreview();
   if (!state.user || isSuspended()) return false;
   if (forced) return true;
@@ -465,6 +466,7 @@ function renderTeacherTourStep() {
 }
 
 function maybeShowTeacherTour() {
+  if (window.gradecrewPracticeReady) return false;
   if (!state.user || isSuspended()) return false;
   const config = currentTeacherTourConfig();
   if (!config.enabled || !config.steps?.length) return false;
@@ -484,6 +486,7 @@ async function finishTeacherTour() {
 }
 
 function showView(id) {
+  if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
   const changed = $(id)?.classList.contains("hidden");
@@ -1186,6 +1189,7 @@ function openTemplateFromInput(value) {
 
 async function loadDashboard() {
   if (!state.user) return;
+  const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
   clearStudentSubscriptions();
   state.pendingImportReport = null;
@@ -1202,7 +1206,13 @@ async function loadDashboard() {
     renderAiJobs();
     await renderLocalDraftList();
     await loadTeacherTourConfig();
-    const tourOpened = maybeShowTeacherTour();
+    try {
+      await import("./gradecrew-tour.js?v=2.3.1-gc10");
+      if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
+      window.gradecrewPracticeReady = true;
+      document.dispatchEvent(new CustomEvent("gradecrew:dashboard-ready", {detail: {uid: state.user.uid, firstVisit: activeQuizzes().length === 0}}));
+    } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
+    const tourOpened = document.getElementById("gradecrewPractice")?.open || maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
     scheduleFirstAiGuideOffer();
   } catch (err) {

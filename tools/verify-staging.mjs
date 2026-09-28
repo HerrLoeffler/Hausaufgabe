@@ -10,6 +10,8 @@ const assets = [
   'startup.js',
   'app.js',
   'interface.js',
+  'gradecrew-tour.js',
+  'gradecrew-tour.css',
   'firebase-config.js',
   'visual-enhancements.js',
   'ui-enhancements.js',

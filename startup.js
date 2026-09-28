@@ -27,7 +27,7 @@ const slowStart = window.setTimeout(() => {
 }, 6000);
 
 try {
-  await import("./app.js?v=2.3.1-gc2");
+  await import("./app.js?v=2.3.1-gc10");
   window.clearTimeout(slowStart);
   notice.classList.add("hidden");
   import("./visual-enhancements.js?v=2.3.1-gc9").catch(error => {
