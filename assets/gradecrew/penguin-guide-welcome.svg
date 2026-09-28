@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+<title id="title">GradeCrew Pinguin · Guide · Coco freut sich</title><desc id="desc">Reduzierte Editorial-Illustration eines ruhigen Pinguins.</desc>
+<defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#253247"/><stop offset="1" stop-color="#151D2A"/></linearGradient><linearGradient id="belly" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F8FBFE"/><stop offset="1" stop-color="#DCEAF7"/></linearGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter></defs>
+<ellipse cx="160" cy="282" rx="72" ry="13" fill="#172033" opacity=".08" filter="url(#shadow)"/>
+<path d="M93 168c-17 20-27 49-22 76 3 15 11 22 20 16 11-8 17-25 22-47z" fill="#202B3D"/>
+<path d="M227 166c18 19 29 47 25 73-2 15-10 24-20 18-12-7-19-23-25-45z" fill="#202B3D"/>
+<path d="M160 38c-47 0-80 37-80 97 0 90 31 143 80 143s80-53 80-143c0-60-33-97-80-97z" fill="url(#body)"/>
+<path d="M160 78c-36 0-58 30-58 79 0 69 21 107 58 107s58-38 58-107c0-49-22-79-58-79z" fill="url(#belly)"/>
+<path d="M114 93c11-17 27-27 46-27 20 0 36 10 47 28-13-5-29-8-47-8-17 0-33 2-46 7z" fill="#172033"/>
+<path d="M130 107q6 -10 12 0" fill="none" stroke="#172033" stroke-width="3.5" stroke-linecap="round"/><path d="M179 107q6 -10 12 0" fill="none" stroke="#172033" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M151 118c6-5 13-5 19 0-2 8-7 12-10 12-4 0-8-4-9-12z" fill="#D69450"/>
+<path d="M128 272c-3 11-1 18 10 18h16c7 0 9-5 5-12z" fill="#D69450"/><path d="M192 272c3 11 1 18-10 18h-16c-7 0-9-5-5-12z" fill="#D69450"/>
+<path d="M123 145c9 4 20 6 37 6 16 0 28-2 37-6" fill="none" stroke="#BFD4E7" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+</svg>

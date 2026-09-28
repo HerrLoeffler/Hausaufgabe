@@ -1,217 +1,167 @@
-// Event-driven practice journey. No network, AI jobs, publication or student records.
-const TOUR_VERSION = "gradecrew-practice-v2";
-const CREW = Object.freeze({
- guide: { name: "Pinguin", role: "Dein Guide", asset: "penguin-guide" },
- create: { name: "Elefant", role: "Erstellen", asset: "elephant-create" },
- improve: { name: "Fuchs", role: "Verbessern", asset: "fox-improve" },
- grade: { name: "Eule", role: "Prüfen", asset: "owl-grade" }
+// The coach only points at the real app. The app owns persistence, rendering and grading.
+export const TOUR_VERSION = "gradecrew-live-tour-v3";
+export const CREW = Object.freeze({
+ guide: {name:"Coco", animal:"Pinguin",role:"Dein Guide",asset:"penguin-guide"},
+ create: {name:"Remy",animal:"Elefant",role:"Erstellen",asset:"elephant-create"},
+ improve: {name:"Emmi",animal:"Fuchs",role:"Überarbeiten",asset:"fox-improve"},
+ grade: {name:"Wilma",animal:"Eule",role:"Bewerten",asset:"owl-grade"}
 });
-const DEMO_TEST = Object.freeze({
-  title: "GradeCrew-Demo · Colours & school things",
-  subject: "Englisch",
-  grade: "5",
-  description: "Kurzer Beispieltest für die GradeCrew-Tour. Prüfe jede Aufgabe, bevor du einen echten Test einsetzt.",
-  questions: [
-    {
-      type: "single",
-      text: "Which word means „blau“?",
-      points: 2,
-      options: [
-        { text: "blue", correct: true },
-        { text: "green", correct: false },
-        { text: "yellow", correct: false },
-        { text: "red", correct: false }
-      ]
-    },
-    {
-      type: "matching",
-      text: "Match the school things with the German words.",
-      points: 2,
-      pairs: [
-        { left: "pencil", right: "Bleistift" },
-        { left: "ruler", right: "Lineal" },
-        { left: "exercise book", right: "Heft" },
-        { left: "schoolbag", right: "Schultasche" }
-      ]
-    },
-    {
-      type: "gapfill",
-      text: "Complete the sentences: My pencil is [red]. My exercise book is [blue].",
-      points: 2
-    },
-    {
-      type: "truefalse",
-      text: "A ruler is something you can use to measure.",
-      points: 2,
-      correctBoolean: true
-    },
-    {
-      type: "ordering",
-      text: "Put the words in the correct order.",
-      points: 2,
-      items: ["My", "schoolbag", "is", "green."]
-    },
-    {
-      type: "text",
-      text: "What is „Schultasche“ in English?",
-      points: 2,
-      acceptedAnswers: ["schoolbag", "school bag"],
-      manualReview: false
-    }
-  ]
-});
-
-const STEPS = ["Willkommen", "Die Crew", "Auftrag", "Prüfung", "Entwurf", "Verbessern", "Variante", "Einstellungen", "Schüleransicht", "Bewerten", "Freigeben", "Ergebnisse", "Geschafft"];
-const offered = new Set();
-let dialog, uid = "", step = 0, timer = 0, opener, draft, answers, submitted = false, reviewed = false;
-const $ = selector => dialog.querySelector(selector);
-const escape = text => String(text).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const key = () => `${TOUR_VERSION}:${uid}`;
-const image = role => `<img src="/assets/gradecrew/${CREW[role].asset}.svg" alt="" width="100" height="100">`;
-function reset() {
- draft = JSON.parse(JSON.stringify(DEMO_TEST));
- answers = {}; submitted = false; reviewed = false;
+const single = (text, choices, answer, image) => ({type:"single",text,points:1,options:choices.map((text,i)=>({text,correct:i===answer})),...(image?{imageUrl:`/assets/gradecrew/demo-${image}.svg`,imageAlt:({backpack:"Ein blauer Schulrucksack.",pencil:"Ein roter Bleistift aus Holz.",books:"Drei Bücher nebeneinander."})[image]}:{})});
+export const DEMO_TEST = Object.freeze({title:"Übung · Meine erste GradeCrew-Reise",subject:"Englisch",grade:"5",timeLimitMinutes:1,
+ description:"Dein Probetest: 10 kurze Aufgaben, 1 Minute. Es geht ums Ausprobieren – nicht um eine echte Schulnote.",
+ questions:[
+ single("What colour is the schoolbag?",["red","blue","green"],1,"backpack"),
+ single("What can you see?",["a ruler","a pencil","a chair"],1,"pencil"),
+ single("How many books can you see?",["two","four","three"],2,"books"),
+ single("Was heißt „Hund“ auf Englisch?",["cat","dog","bird"],1),
+ {type:"truefalse",text:"„Apple“ heißt „Apfel“.",points:1,correctBoolean:true},
+ {type:"dropdown",text:"Choose the English word for „Hallo“.",points:1,options:[{text:"Goodbye",correct:false},{text:"Hello",correct:true},{text:"Thanks",correct:false}]},
+ {type:"gapfill",text:"Setze die englische Zahl ein: one, two, [three].",points:1},
+ {type:"ordering",text:"Ordne die Zahlen von klein nach groß.",points:1,items:["one","two","three"],manualReview:false},
+ single("Which animal says „meow“?",["dog","cat","duck"],1),
+ {type:"text",text:"Nenne eine Farbe auf Englisch.",points:1,acceptedAnswers:["red","blue","green","yellow","orange","purple","pink","black","white","brown","grey","gray"],manualReview:true}
+ ]});
+export function preparedResponse(q, {variant = false, mediaKind = "none"} = {}) {
+ const question = variant ? single("Was heißt „Katze“ auf Englisch?",["dog","bird","cat"],2) : single("Wähle das englische Wort für „Hund“.",["cat","dog","bird"],1);
+ if (variant && mediaKind !== "none") throw new Error("Für diese vorbereitete Übungsvariante bitte „Ohne Bild“ wählen.");
+ return {question:{...question,mediaIntent:{kind:"none"}},meta:{model:"prepared-tutorial",promptVersion:TOUR_VERSION}};
 }
-function cancelTimer() { clearTimeout(timer); timer = 0; }
-function closeTour() {
- cancelTimer();
- if (dialog?.open) dialog.close();
- document.body.classList.remove("gcPracticeActive");
- opener?.focus?.();
-}
-function ensureDialog() {
- if (dialog) return;
- const style = document.createElement("link");
- style.rel = "stylesheet"; style.href = "./gradecrew-tour.css?v=2.3.1-gc10";
- document.head.append(style);
- dialog = document.createElement("dialog");
- dialog.id = "gradecrewPractice"; dialog.className = "gcPractice";
- dialog.setAttribute("aria-labelledby", "gcPracticeTitle");
- document.body.append(dialog);
- dialog.addEventListener("cancel", event => { event.preventDefault(); closeTour(); });
- dialog.addEventListener("close", cancelTimer);
- dialog.addEventListener("click", event => {
-  const action = event.target.closest("[data-tour-action]")?.dataset.tourAction;
-  if (action === "close") closeTour();
-  if (action === "back") render(Math.max(0, step - 1));
-  if (action === "next") advance();
-  if (action === "improve") {
-   draft.questions[3].text = "True or false: You can use a ruler to measure the length of your pencil.";
-   render(step);
+const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function installCrewTour(api) {
+ let active=false, stage="", owner="", quizId="", sourceId="", submissionId="", root, welcome, target, timer=0, frame=0, run=0, busy=false;
+ const offered=new Set();
+ const $=s=>document.querySelector(s);
+ const doneKey=()=>`${TOUR_VERSION}:${owner}`;
+ const owned=()=>active && owner===api.uid();
+ const image=(role,happy=false)=>`<img src="/assets/gradecrew/${CREW[role].asset}${happy?'-welcome':''}.svg" alt="" width="110" height="110">`;
+ function clear(){clearTimeout(timer);timer=0;cancelAnimationFrame(frame);frame=0;target?.classList.remove('gcTourTarget');target=null;}
+ function hide(){clear();root?.remove();root=null;document.body.classList.remove('gcCoachVisible');}
+ function stop({done=false}={}) {
+  ++run;active=false;busy=false;hide();welcome?.close();welcome?.remove();welcome=null;
+  document.body.classList.remove('gcRealTourActive');
+  if(done)try{localStorage.setItem(doneKey(),'done');}catch{}
+ }
+ function place(){ frame=0; }
+ function schedulePlace(){if(!frame)frame=requestAnimationFrame(place);}
+ function coach(role,title,text,selector,nextLabel,next){
+  hide();if(!owned())return;
+  root=document.createElement('aside');root.className='gcRealCoach';root.setAttribute('aria-label',`${CREW[role].name} begleitet dich`);root.setAttribute('aria-live','polite');
+  root.innerHTML=`<button class="gcCoachClose" type="button" aria-label="Tour beenden">×</button><div class="gcCoachIdentity">${image(role)}<div><span>${CREW[role].name} · ${CREW[role].role}</span><h2>${title}</h2></div></div><p>${text}</p>${nextLabel?`<button type="button" class="button primary gcCoachNext">${nextLabel}</button>`:''}<small>Übung in deiner echten GradeCrew-Oberfläche</small>`;
+  root.querySelector('.gcCoachClose').onclick=()=>stop();
+  if(next)root.querySelector('.gcCoachNext').onclick=()=>{if(!busy)next();};
+  document.body.classList.add('gcCoachVisible');document.body.append(root);
+  target=typeof selector==='string'?$(selector):selector;
+  if(target){
+   const node=target;node.classList.add('gcTourTarget');
+   queueMicrotask(()=>{
+    if(!node.isConnected || target!==node || !owned())return;
+    // Reveal native action menus after the current click has finished bubbling.
+    for(let parent=node.parentElement;parent;parent=parent.parentElement) if(parent.tagName==='DETAILS')parent.open=true;
+    node.scrollIntoView({block:'start',behavior:'auto'});
+   });
   }
-  if (action === "variant") {
-   if (draft.questions.length === 6) draft.questions.push({type:"single",text:"Which word means „grün“?",points:2,options:[{text:"green",correct:true},{text:"red",correct:false}]});
-   render(step);
+  schedulePlace();
+ }
+ function error(message,retry){coach('guide','Hier hat es noch nicht geklappt.',escape(message),null,'Erneut versuchen',retry);}
+ function start(){
+  if(active || !api.uid() || !api.isDashboard() || $('dialog[open]'))return;
+  api.beginRun();owner=api.uid();quizId='';sourceId='';submissionId='';active=true;stage='welcome';run++;
+  document.body.classList.add('gcRealTourActive');
+  welcome=document.createElement('dialog');welcome.className='gcCrewWelcome';welcome.setAttribute('aria-labelledby','gcWelcomeTitle');
+  welcome.innerHTML=`<button class="gcCoachClose" type="button" aria-label="Tour schließen">×</button><span class="eyebrow">Schön, dass du da bist</span><h1 id="gcWelcomeTitle">Deine Crew freut sich auf dich.</h1><div class="gcWelcomeLineup">${Object.entries(CREW).map(([role,m])=>`<div>${image(role,true)}<strong>${m.name}</strong><small>${m.animal}</small></div>`).join('')}</div><p>Einmal gemeinsam erstellen, überarbeiten, ausfüllen und bewerten.</p><button type="button" class="button primary gcWelcomeStart">Crew kennenlernen</button>`;
+  document.body.append(welcome);welcome.showModal();
+  welcome.querySelector('.gcCoachClose').onclick=()=>stop();welcome.addEventListener('cancel',e=>{e.preventDefault();stop();});
+  welcome.querySelector('.gcWelcomeStart').onclick=()=>{welcome.close();welcome.remove();welcome=null;stage='guide';coach('guide','Hallo, ich bin Coco!','Ich bin dein Pinguin-Guide. Wir klicken gemeinsam durch GradeCrew. Unser Übungstest und deine Abgabe bleiben danach in „Meine Tests“.',null,'Los geht’s',()=>{stage='new';coach('guide','Wir starten deinen ersten Test.','Klicke auf „Neuer Test“. Ich bleibe an deiner Seite.','#newQuizBtn');});};
+ }
+ function form(){
+  stage='form';api.prefill();
+  coach('create','Hallo, ich bin Remy!','Ich bin der Elefant fürs Erstellen. Englisch, Klasse 5, zehn Aufgaben und drei Bilder sind schon eingetragen. Schau dir das Formular an. Über „Test erstellen“ übernimmst du unseren vorbereiteten Übungstest.','#aiView .aiGrid > .card','Zum Erstellen-Button',()=>coach('create','Bereit für unseren Entwurf?','Klicke jetzt den echten Erstellen-Button. In dieser Tour nutze ich vorbereitete Aufgaben.','#generateAiTestBtn'));
+ }
+ function draft(){
+  stage='draft';sourceId=api.questionId(3);
+  coach('improve','Hallo, ich bin Emmi!','Ich bin der Fuchs fürs Überarbeiten. Ich helfe dir beim Aufgabencheck, beim Verbessern und bei Varianten. Schau dir die drei Bildaufgaben an. Danach verbessern wir Aufgabe 4.','#questionList .questionCard','Aufgabe 4 verbessern',()=>{
+   stage='edit';api.focusQuestion(sourceId);coach('improve','Ein Auftrag an mich.','Öffne „KI bearbeiten“ bei dieser Aufgabe. In der Tour zeige ich dir eine vorbereitete, klarere Formulierung.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiEditQuestion`);
+  });
+ }
+ function variant(){stage='variant';api.focusQuestion(sourceId);coach('improve','Jetzt ein anderes Beispiel.','Klicke bei derselben Aufgabe auf „Variante hinzufügen“. Wähle eine Variante ohne Bild und starte sie. Die vorhandenen drei Bildaufgaben bleiben erhalten.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiVariantQuestion`);}
+ function settings(){
+  stage='settings';api.showSettings();coach('guide','Eine Minute zum Ausprobieren.','Unser Probetest hat zehn Aufgaben und eine Minute Zeit. Der Countdown startet erst in der Schüleransicht. Die Freigabe und deine Abgabe werden wirklich gespeichert.','#editorView .editorSettingsDisclosure','Test freigeben',()=>{
+   const issues=api.checkDemo();if(issues)return error(issues,settings);
+   stage='publish';coach('guide','Alles bereit?','Klicke auf „Veröffentlichen“. Danach wechseln wir über den echten Testzugang in deine Schülerrolle.','#publishBtn');
+  });
+ }
+ function notify(event,data={}){
+  if(!owned())return;
+  if(event==='view') {
+   const allowed={new:['dashboardView','createView'],choice:['createView','aiView'],form:['aiView'],creating:['aiView','editorView'],draft:['editorView'],edit:['editorView'],variant:['editorView'],remove:['editorView'],settings:['editorView'],publish:['editorView','publishView'],published:['publishView','studentView'],identity:['studentView'],answering:['studentView'],submitted:['studentView','resultsView'],results:['resultsView'],review:['resultsView'],finish:['resultsView']};
+   if(allowed[stage] && !allowed[stage].includes(data.id)){stop();return;}
   }
- });
- dialog.addEventListener("input", event => {
-  if (event.target.name?.startsWith("answer")) { answers[event.target.name] = event.target.value; reviewed = false; submitted = false; }
-  if (event.target.id === "gcQuestionText") draft.questions[0].text = event.target.value;
- });
-}
-function content(role, title, text, body = "", next = "Weiter") {
- const member = CREW[role];
- dialog.innerHTML = `<header><span>Probedurchlauf · ${step + 1} / ${STEPS.length}</span><button type="button" data-tour-action="close" aria-label="Tutorial schließen">×</button></header>
- <progress max="${STEPS.length}" value="${step + 1}" aria-label="Fortschritt"></progress>
- <div class="gcPracticeSpeaker">${image(role)}<div><span>${member.name} · ${member.role}</span><h2 id="gcPracticeTitle" tabindex="-1">${title}</h2></div></div>
- <p>${text}</p><main>${body}</main><footer><small>Vorgefertigter Übungstest. Keine KI-Anfrage, keine Veröffentlichung.</small><div>${step ? '<button class="button ghost" type="button" data-tour-action="back">Zurück</button>' : ''}<button class="button primary" type="button" data-tour-action="next">${next}</button></div></footer>`;
- $("#gcPracticeTitle").focus({preventScroll:true});
- dialog.scrollTop = 0;
-}
-function questionList() {
- return `<ol class="gcPracticeQuestions">${draft.questions.map(q => `<li><strong>${escape(q.text)}</strong><small>${q.points} Punkte · ${escape(q.type)}</small></li>`).join("")}</ol>`;
-}
-function answerFields() {
- const fields = [
-  ["Which word means „blau“?", ["blue", "green", "yellow"]],
-  ["What is „pencil“ in German?", ["Bleistift", "Lineal", "Heft"]],
-  ["Complete: My pencil is … (rot).", ["red", "blue", "green"]],
-  ["You can use a ruler to measure your pencil.", ["True", "False"]],
-  ["Choose the correct sentence.", ["My schoolbag is green.", "Green schoolbag my is."]],
-  ["What is „Schultasche“ in English?", null]
- ];
- return fields.map(([label, options], i) => `<label>${i + 1}. ${label}${options ? `<select name="answer${i}"><option value="">Bitte auswählen</option>${options.map(o => `<option ${answers['answer'+i] === o ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input name="answer${i}" value="${escape(answers['answer'+i] || '')}" autocomplete="off">`}</label>`).join('');
-}
-function score() {
- const expected = ["blue", "Bleistift", "red", "True", "My schoolbag is green."];
- return expected.reduce((sum, value, i) => sum + (answers['answer'+i] === value ? 2 : 0), 0) + (reviewed ? Number(answers.manualPoints || 0) : 0);
-}
-function render(index) {
- cancelTimer(); step = index;
- switch(step) {
- case 0:
-  content("guide", "Einmal gemeinsam durch GradeCrew.", "Ich begleite dich vom ersten Auftrag bis zur Bewertung. Du probierst alle Schritte mit einem vorbereiteten Englisch-Test aus.", "<p>Deine bestehenden Tests bleiben unverändert. Du kannst jederzeit schließen und neu starten.</p>", "Crew kennenlernen"); break;
- case 1:
-  content("guide", "Vier Kollegen, ein gemeinsamer Weg.", "Ich bleibe dein Guide. Der Elefant erstellt, der Fuchs verbessert und die Eule hilft beim Prüfen.", `<div class="gcPracticeCrew">${Object.entries(CREW).map(([role,m])=>`<div>${image(role)}<strong>${m.name}</strong><small>${m.role}</small></div>`).join('')}</div>`, "Test vorbereiten"); break;
- case 2:
-  content("create", "Ich habe den Auftrag schon vorbereitet.", "Englisch, Klasse 5: Farben und Schulsachen. Bei einem echten KI-Test legst du hier Thema, Umfang und Wünsche fest. Für die Übung ist alles ausgefüllt.", `<div class="gcPracticeForm"><label>Fach<input value="Englisch" readonly></label><label>Klasse<input value="5" readonly></label><label>Thema<input value="Colours & school things" readonly></label><label>Umfang<input value="6 Aufgaben · 12 Punkte · ohne Bilder" readonly></label></div>`, "Beispiel prüfen"); break;
- case 3:
-  content("create", "Der vorbereitete Test wird geprüft.", "Die Übung zeigt den Prüfablauf. Nach drei Sekunden geht es automatisch zum Entwurf. Eine echte KI-Erstellung kann länger dauern.", '<p role="status">6 Aufgaben · Lösungen hinterlegt · 12 Punkte</p>', "Jetzt weiter");
-  timer = setTimeout(() => { if (dialog.open && step === 3) render(4); }, 3000); break;
- case 4:
-  content("grade", "Prüfe Aufgaben und Lösungen.", "KI-Ergebnisse sind Entwürfe. Lies sie fachlich durch, bevor du sie einsetzt. Hier kannst du die erste Frage direkt umformulieren.", `<label>Aufgabe 1<textarea id="gcQuestionText">${escape(draft.questions[0].text)}</textarea></label><p>Lösung: blue · 2 Punkte</p>${questionList()}`, "Zum Fuchs"); break;
- case 5:
-  content("improve", "Eine Aufgabe verständlicher formulieren.", "Im Produkt gibst du unter „KI bearbeiten“ deinen Änderungswunsch an. Hier zeige ich eine vorbereitete Überarbeitung.", `<blockquote>${escape(draft.questions[3].text)}</blockquote><button class="button secondary" data-tour-action="improve" type="button">Beispiel überarbeiten</button>`, "Varianten ausprobieren"); $('[data-tour-action="next"]').disabled = !draft.questions[3].text.includes("length of your pencil"); break;
- case 6:
-  content("improve", "Gleicher Aufgabentyp, neuer Inhalt.", "Eine Variante ergänzt eine ähnliche Aufgabe. Füge die vorbereitete Variante hinzu; in dieser Übung bleibt der Schüler-Probetest anschließend bei sechs Aufgaben und zwölf Punkten.", `<button class="button secondary" data-tour-action="variant" type="button" ${draft.questions.length > 6 ? 'disabled' : ''}>${draft.questions.length > 6 ? 'Variante hinzugefügt' : 'Variante hinzufügen'}</button>${draft.questions.length > 6 ? '<p>Which word means „grün“? · Lösung: green</p>' : ''}`, "Durchführung einstellen"); $('[data-tour-action="next"]').disabled = draft.questions.length === 6; break;
- case 7:
-  content("guide", "So soll deine Klasse arbeiten.", "Zeitlimit, gemischte Reihenfolge und Ergebnisanzeige stellst du vor der Freigabe ein. Probiere die Schalter aus – sie gelten nur für diese Demonstration.", '<label><input type="checkbox"> Aufgaben mischen</label><label><input type="checkbox"> Ergebnisse nach Abgabe zeigen</label><label>Zeitlimit<select><option>Ohne Zeitlimit</option><option>10 Minuten</option></select></label>', "Selbst ausfüllen"); break;
- case 8:
-  content("guide", "Jetzt bist du in der Schülerrolle.", "Fülle die sechs Beispielantworten aus und gib sie ab. Die Zuordnung und Sortierung sind hier für die Übung als kompakte Auswahl dargestellt.", `<div class="gcPracticeForm">${answerFields()}</div><p role="alert" id="gcAnswerError"></p>`, "Antworten abgeben"); break;
- case 9:
-  content("grade", "Eine Antwort bewusst nachprüfen.", "Die ersten fünf Antworten sind automatisch bewertet. Prüfe die Freitextantwort und vergib selbst 0, 1 oder 2 Punkte. Hier lautet die Musterlösung „schoolbag“ oder „school bag“.", `<p>Automatisch: ${score() - (reviewed ? Number(answers.manualPoints || 0) : 0)} / 10 Punkte</p><blockquote>${escape(answers.answer5 || 'Keine Antwort')}</blockquote><label>Punkte für die Freitextantwort<select id="gcManualPoints"><option value="">Bitte bewerten</option>${[0,1,2].map(n=>`<option value="${n}" ${reviewed && Number(answers.manualPoints) === n ? 'selected' : ''}>${n} Punkte</option>`).join('')}</select></label><p id="gcAnswerError" role="alert"></p>`, "Bewertung speichern"); break;
- case 10:
-  content("guide", "So gibst du einen echten Test frei.", "Nach der Prüfung wählst du „Veröffentlichen“. Danach teilst du Testcode, Link oder QR-Code. In dieser Tour simulieren wir die Freigabe – niemand kann dem Übungstest beitreten.", '<p class="gcPracticeCode">DEMO-01</p><p>Beispielcode · kein gültiger Zugang</p>', "Demo-Ergebnisse öffnen"); break;
- case 11:
-  content("grade", "Vom Ergebnis zurück zur Antwort.", "Im echten Ergebnisbereich prüfst du einzelne Antworten und passt die Bewertung an. Unsere Übungsabgabe ist jetzt vollständig bewertet.", `<p class="gcPracticeScore">${score()} / 12 Punkte</p><p>Demo-Schüler · 6 Antworten · ${reviewed ? 'Freitext geprüft' : 'Prüfung offen'}</p>`, "Abschließen"); break;
- case 12:
-  content("guide", "Bereit für deinen eigenen Test.", "Du hast einen Auftrag vorbereitet, Aufgaben verbessert, eine Variante ergänzt, Antworten abgegeben und bewertet. Starte deinen echten Test anschließend über „Neuer Test → Mit KI erstellen“.", '<p>Die Übung wurde nicht als echter Test gespeichert.</p>', "Zurück zu GradeCrew"); break;
- }
-}
-function advance() {
- if (step === 4 && !draft.questions[0].text.trim()) { $("#gcQuestionText").focus(); return; }
- if (step === 5 && !draft.questions[3].text.includes("length of your pencil")) {
-  const button = $('[data-tour-action="improve"]'); button.focus(); return;
- }
- if (step === 6 && draft.questions.length === 6) { $('[data-tour-action="variant"]').focus(); return; }
- if (step === 8) {
-  if (Array.from({length:6},(_,i)=>answers['answer'+i]?.trim()).some(value=>!value)) {
-   $("#gcAnswerError").textContent = "Bitte beantworte zuerst alle sechs Aufgaben."; return;
+  if(data.quizId && quizId && data.quizId!==quizId)return;
+  if(event==='view' && data.id==='createView' && stage==='new'){stage='choice';coach('create','Remy übernimmt den Entwurf.','Wähle „Mit KI erstellen“.','#createAiBtn');}
+  if(event==='view' && data.id==='aiView' && stage==='choice')form();
+  if(event==='edit-opened' && stage==='edit'){
+   const panel=$('.questionAiPanel');const input=panel?.querySelector('textarea');if(input)input.value='Formuliere den Arbeitsauftrag klarer.';
+   coach('improve','So gibst du deinen Wunsch an.','Der Wunsch ist vorbereitet. Klicke auf „Änderung erstellen“ – genau so funktioniert es auch später.',panel?.querySelector('.aiApply'));
   }
-  submitted = true;
+  if(event==='edited' && stage==='edit')variant();
+  if(event==='variants-ready' && stage==='variant')coach('improve','Die Variante ist fertig.','Übernimm die Variante über die normale Variantenanzeige. Danach entfernen wir die ursprüngliche Aufgabe, damit es bei zehn bleibt.','#variantBackgroundProgress');
+  if(event==='variants-applied' && stage==='variant'){
+   stage='remove';api.focusQuestion(sourceId);coach('improve','Du entscheidest, welche Aufgabe bleibt.','Die neue Variante ist übernommen. Lösche jetzt die ursprüngliche Hund-Aufgabe mit dem Papierkorb und bestätige. So bleiben genau zehn Aufgaben.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .deleteQuestion`);
+  }
+  if(event==='question-deleted' && stage==='remove' && data.questionId===sourceId)settings();
+  if(event==='published' && stage==='publish'){
+   stage='published';coach('guide','Das ist der echte Zugang.','Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“. Du bleibst im selben Tab und siehst dieselbe Oberfläche wie deine Klasse.','#openPublishedStudentBtn');
+  }
+  if(event==='student-ready' && stage==='published'){
+   stage='identity';coach('guide','Wie dürfen wir dich nennen?','Gib einen Namen oder ein Kürzel ein. Schüler können aus Datenschutzgründen ein von dir vergebenes Kürzel verwenden. Danach klickst du auf „Test starten“ – deine Minute beginnt.','.studentIdentityCard','Zum Start',()=>coach('guide','Eine Minute – viel Spaß!','Klicke auf „Test starten“. Bei 00:00 werden auch unvollständige Antworten automatisch abgegeben.','#studentStartBtn'));
+  }
+  if(event==='student-started' && stage==='identity'){stage='answering';hide();}
+  if(event==='submitted' && ['answering','identity'].includes(stage)){
+   submissionId=data.submissionId;stage='submitted';coach('guide','Deine Abgabe ist gespeichert.','Das sind deine echten Übungsergebnisse. Öffne jetzt die Lehrkraft-Auswertung; dort wartet Wilma auf dich.','#studentTeacherResultsBtn');
+  }
+  if(event==='results-ready' && ['submitted','review-saving'].includes(stage)){
+   if(stage==='review-saving')return;
+   stage='results';coach('grade','Hallo, ich bin Wilma!','Ich bin die Eule fürs Bewerten. Hier steht deine echte Abgabe. Öffne „Bewerten“ in deiner Zeile – wir schauen uns Antworten, Bilder und Punkte gemeinsam an.',`#resultsTableWrap .reviewBtn[data-id="${CSS.escape(submissionId)}"]`);
+  }
+  if(event==='review-opened' && stage==='results' && data.submissionId===submissionId){
+   stage='review';coach('grade','Dein Urteil zählt.','Du siehst die Antwort, die Lösung und bei Bildaufgaben auch das Bild. Prüfe besonders die freie Farbangabe am Ende. Ändere bei Bedarf Punkte und klicke auf „Bewertung speichern“.','#reviewPanel','Zur letzten Antwort',()=>{api.focusReviewLast();coach('grade','Freie Antworten brauchen deinen Blick.','Ist die genannte Farbe richtig? Vergib die passenden Punkte. Speichere anschließend deine Bewertung.','#saveReview');});
+  }
+  if(event==='review-saved' && stage==='review' && data.submissionId===submissionId){
+   stage='finish';coach('guide','Geschafft – das war dein erster Durchlauf!','Erstellt, überarbeitet, eine Minute selbst ausgefüllt und wirklich bewertet. Der Übungstest samt Ergebnissen bleibt in deiner Übersicht. Du kannst ihn später wie jeden anderen Test beenden oder löschen.','#resultsTableWrap','Tour abschließen',()=>stop({done:true}));
+  }
  }
- if (step === 9) {
-  const points = $("#gcManualPoints").value;
-  if (!submitted || !["0","1","2"].includes(points)) { $("#gcAnswerError").textContent = "Bitte wähle die Punkte für die Freitextantwort."; return; }
-  answers.manualPoints = points; reviewed = true;
+ async function create(){
+  if(!owned()||stage!=='form'||busy)return;
+  busy=true;const token=run;stage='creating';
+  coach('create','Ich bereite deinen Test vor.','Zehn Aufgaben, drei Bilder. Der Entwurf öffnet sich nach der kurzen Prüfung automatisch.','#aiProgress');
+  let delay;
+  const wait=new Promise(resolve=>{delay=setTimeout(resolve,3000);});
+  try{
+   const created=quizId || await api.createDemo(DEMO_TEST);
+   if(owned()&&token===run)quizId=created;
+   await wait;
+   if(!owned()||token!==run)return;
+   quizId=created;
+   await api.openEditor(created);
+   if(!owned()||token!==run)return;
+   if(!api.isEditor(created))throw new Error('Der gespeicherte Übungstest konnte nicht geöffnet werden.');
+   draft();
+  }catch(err){if(owned()&&token===run){stage='form';error(err.message,()=>create());}}
+  finally{clearTimeout(delay);if(token===run)busy=false;}
  }
- if (step === 12) { try { localStorage.setItem(key(), "done"); } catch {} closeTour(); return; }
- render(step + 1);
+ function dashboard({uid,firstVisit}){
+  if(active)return;
+  if(owner && owner!==uid)stop();owner=uid;
+  let button=$('#gradecrewTourBtn');
+  if(!button){button=document.createElement('button');button.id='gradecrewTourBtn';button.type='button';button.className='button ghost';$('.dashboardActions')?.append(button);}
+  button.textContent='Mit der Crew starten';button.onclick=start;
+  if(firstVisit&&!offered.has(uid)){
+   offered.add(uid);let done=false;try{done=localStorage.getItem(doneKey())==='done';}catch{}
+   if(!done)start();
+  }
+ }
+ const style=document.createElement('link');style.rel='stylesheet';style.href='./gradecrew-tour.css?v=2.3.1-gc11';document.head.append(style);
+ addEventListener('resize',schedulePlace,{passive:true});addEventListener('scroll',schedulePlace,{passive:true,capture:true});
+ document.addEventListener('gradecrew:account-changed',()=>stop());
+ return {start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&['form','creating'].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse};
 }
-function startTour() {
- if (!uid) return;
- ensureDialog();
- if (dialog.open || document.querySelector("dialog[open]")) return;
- opener = document.activeElement;
- reset(); dialog.showModal(); document.body.classList.add("gcPracticeActive"); render(0);
-}
-function dashboardReady(event) {
- const nextUid = event.detail?.uid || "";
- if (uid !== nextUid) closeTour();
- uid = nextUid;
- const actions = document.querySelector("#dashboardView .dashboardActions");
- if (actions && !document.getElementById("gradecrewTourBtn")) {
-  const button = document.createElement("button"); button.id = "gradecrewTourBtn";
-  button.type = "button"; button.className = "button ghost"; button.textContent = "GradeCrew ausprobieren";
-  button.addEventListener("click", startTour); actions.append(button);
- }
- // Explicit replay is always available; no body observer or repeated auto-start.
- if (event.detail?.firstVisit && !offered.has(uid)) {
-  offered.add(uid);
-  let done = false; try { done = localStorage.getItem(key()) === "done"; } catch {}
-  if (!done) startTour();
- }
-}
-document.addEventListener("gradecrew:dashboard-ready", dashboardReady);
-document.addEventListener("gradecrew:signed-out", () => { closeTour(); uid = ""; });
-export { startTour, DEMO_TEST, CREW };

@@ -18,7 +18,14 @@ const assets = [
   'variant-enhancements.js',
   'gradecrew-brand.css',
   'workspace.css',
-  'assets/gradecrew/penguin-guide.svg'
+  'assets/gradecrew/penguin-guide.svg',
+  'assets/gradecrew/penguin-guide-welcome.svg',
+  'assets/gradecrew/elephant-create-welcome.svg',
+  'assets/gradecrew/fox-improve-welcome.svg',
+  'assets/gradecrew/owl-grade-welcome.svg',
+  'assets/gradecrew/demo-backpack.svg',
+  'assets/gradecrew/demo-pencil.svg',
+  'assets/gradecrew/demo-books.svg'
 ];
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

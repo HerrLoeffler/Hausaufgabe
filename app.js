@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc10";
+const APP_VERSION = "2.3.1-gc11";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -48,6 +48,10 @@ const db = getFirestore(app);
 const aiApi = createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || "");
 
 const $ = (id) => document.getElementById(id);
+let crewTour = null;
+let tutorialDraft = null;
+const studentSubmissionBusy = new Set();
+const completedStudentSubmissions = new Set();
 installWorkspaceInteractions();
 const views = [
   "authView",
@@ -493,6 +497,7 @@ function showView(id) {
   views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
   if (changed) requestAnimationFrame(() => focusView($(id)));
   window.scrollTo({ top: 0, behavior: scrollBehavior() });
+  if (typeof crewTour !== "undefined") crewTour?.notify("view", {id});
 }
 
 function toast(message, type = "success") {
@@ -1207,12 +1212,27 @@ async function loadDashboard() {
     await renderLocalDraftList();
     await loadTeacherTourConfig();
     try {
-      await import("./gradecrew-tour.js?v=2.3.1-gc10");
+      const module = await import("./gradecrew-tour.js?v=2.3.1-gc11");
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
+      if (!crewTour) crewTour = module.installCrewTour({
+        uid: () => state.user?.uid || "",
+        isDashboard: () => !$("dashboardView").classList.contains("hidden"),
+        beginRun: () => { tutorialDraft = null; },
+        prefill: prefillTutorialRequest,
+        createDemo: createTutorialQuiz,
+        openEditor,
+        isEditor: code => state.currentQuiz?.id === code && !$("editorView").classList.contains("hidden"),
+        questionId: index => state.questions[index]?.id || "",
+        focusQuestion: id => focusEditorQuestion(state.questions.findIndex(q => q.id === id)),
+        showSettings: () => { const section = document.querySelector(".editorSettingsDisclosure"); if (section) section.open = true; },
+        checkDemo: () => state.questions.length !== 10 ? "Für die Tour brauchen wir genau zehn Aufgaben. Entferne die ursprüngliche Aufgabe nach dem Übernehmen der Variante."
+          : (!$("quizUseTimeLimit").checked || Number($("quizTimeLimitMinutes").value) !== 1 || $("quizStartMode").value !== "student") ? "Bitte eine Minute Zeitlimit und Start durch Schüler einstellen." : null,
+        focusReviewLast: () => { const input = document.querySelector("#reviewQuestions .reviewQuestion:last-child .manualPoints"); input?.scrollIntoView({block:"center"}); input?.focus(); }
+      });
       window.gradecrewPracticeReady = true;
-      document.dispatchEvent(new CustomEvent("gradecrew:dashboard-ready", {detail: {uid: state.user.uid, firstVisit: activeQuizzes().length === 0}}));
+      crewTour.dashboard({uid: state.user.uid, firstVisit: activeQuizzes().length === 0});
     } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
-    const tourOpened = document.getElementById("gradecrewPractice")?.open || maybeShowTeacherTour();
+    const tourOpened = crewTour?.active || maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
     scheduleFirstAiGuideOffer();
   } catch (err) {
@@ -2128,6 +2148,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
+  if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
     notice.textContent = "KI-Verbindung wird geprüft …";
@@ -2282,6 +2303,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
+  if (crewTour?.creating) return crewTour.create();
   try {
     const request = collectAiRequest();
     await saveAiPreferences({ silent: true });
@@ -3175,6 +3197,7 @@ function renderQuestions() {
         renderQuestions();
         markDirty();
         focusEditorQuestion(Math.min(index, state.questions.length - 1));
+        if (typeof crewTour !== "undefined") crewTour?.notify("question-deleted", {quizId: state.currentQuiz?.id, questionId: q.id});
       }
     });
 
@@ -3234,6 +3257,7 @@ function aiQuestionFeedbackSnapshot(q) {
 }
 
 async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep", reviewOutcome = "", reviewerReason = "" }) {
+  if (state.currentQuiz?.tutorialVersion) return toast("Übungsfeedback fließt nicht in die KI-Qualitätsdaten ein.");
   if (!state.user || !state.currentQuiz?.id) return;
   if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
     toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
@@ -3347,6 +3371,7 @@ function toggleQuestionAiPanel(node, q, index) {
   panel.querySelector(".aiCancel").addEventListener("click", () => panel.remove());
   panel.querySelector(".aiApply").addEventListener("click", () => regenerateQuestionWithAi(q, index, { instruction: input.value.trim(), panel }));
   node.querySelector(".questionGrid").after(panel); input.focus();
+  if (typeof crewTour !== "undefined") crewTour?.notify("edit-opened", {quizId: state.currentQuiz?.id});
 }
 
 function defaultVariantMediaKind(q) {
@@ -3422,6 +3447,7 @@ function applyPendingVariants() {
   if (!task.running && !task.questions.length) state.variantTask = null;
   renderVariantProgress();
   toast(`${next.length} ${next.length === 1 ? "Variante übernommen" : "Varianten übernommen"}. Bitte speichern.`);
+  if (typeof crewTour !== "undefined") crewTour?.notify("variants-applied", {quizId: task.quizId});
 }
 
 async function createQuestionVariants(q, { count, mediaKind, instruction = "" }) {
@@ -3446,7 +3472,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
       ensureOwner();
       task.message = `Variante ${i + 1} von ${count} wird erstellt …`;
       renderVariantProgress();
-      const response = await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
+      const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(quizId)) ? crewTour.preparedResponse(q, {variant:true,mediaKind}) : await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
         testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
       ensureOwner();
       const rawQuestion = response.question;
@@ -3465,6 +3491,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
       renderVariantProgress();
     }
     task.message = `${count} ${count === 1 ? "Variante ist" : "Varianten sind"} fertig.`;
+    if (typeof crewTour !== "undefined") crewTour?.notify("variants-ready", {quizId});
   } catch (err) {
     task.message = `${task.questions.length} von ${count} Varianten bereit. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`;
     if (state.user?.uid === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
@@ -3513,7 +3540,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
     if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
@@ -3528,6 +3555,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (variant) state.questions.splice(index + 1, 0, next);
     else { state.questions[index] = next; resolveQualityIssues(q.id); }
     renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
+    if (typeof crewTour !== "undefined") crewTour?.notify("edited", {quizId: target.quizId});
   } catch (err) {
     console.error(err);
     const friendly = aiFriendlyError(err, variant ? "Variante konnte nicht erstellt werden." : "Aufgabe konnte nicht überarbeitet werden.");
@@ -4607,6 +4635,7 @@ async function publishCurrentQuiz() {
 
 // ---------- Teilen / QR ----------
 $("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
+$("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
 $("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
 $("copyLinkBtn").addEventListener("click", () => copyText($("publishedLink").value, "Link kopiert."));
 
@@ -4634,6 +4663,7 @@ async function showPublish(code) {
     if (window.QRCode) new window.QRCode(qr, { text: link, width: 190, height: 190, correctLevel: window.QRCode.CorrectLevel.M });
     else qr.textContent = "QR-Code-Bibliothek konnte nicht geladen werden.";
     setupTeacherLivePanel(code);
+    crewTour?.notify("published", {quizId: code});
   } catch (err) {
     console.error(err);
     toast("Freigabe konnte nicht geladen werden.", "error");
@@ -5168,7 +5198,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       <div class="studentMetaRow"><span>${questions.length} Aufgaben</span><span>${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte</span><span>Code ${quiz.id}</span></div>
     </div>
     <form id="studentForm">
-      <div class="studentIdentityCard"><label class="studentNameLabel">Dein Kürzel<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Kürzel deiner Lehrkraft" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Nutze das Kürzel, das deine Lehrkraft dir gegeben hat.</small></div>
+      <div class="studentIdentityCard"><label class="studentNameLabel">Wie dürfen wir dich nennen?<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Name oder vereinbartes Kürzel" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel statt deines Namens verwenden.</small></div>
       ${gateHtml}
       <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
       <div id="studentProgressBar" class="studentProgressWrap ${gateRequired ? "hidden" : ""}">
@@ -5283,6 +5313,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     $("studentTimerBar")?.classList.add("hidden");
     refreshStudentProgress(questions);
   }
+  crewTour?.notify("student-ready", {quizId: quiz.id});
 }
 
 async function joinTeacherControlledQuiz(quiz, questions) {
@@ -5382,6 +5413,7 @@ function activateStudentTest(quiz, questions, attempt, { teacherControlled = fal
   }
   refreshStudentProgress(questions);
   setTimeout(() => $("studentProgressBar")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }), 80);
+  crewTour?.notify("student-started", {quizId: quiz.id});
 }
 
 async function startTimedStudentQuiz(quiz, questions) {
@@ -5493,7 +5525,7 @@ function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null)
     }
   };
   tick();
-  state.studentTimerInterval = window.setInterval(tick, 1000);
+  if (!autoSubmitting) state.studentTimerInterval = window.setInterval(tick, 1000);
 }
 
 function readStudentAnswer(q) {
@@ -5599,6 +5631,8 @@ function evaluateAnswer(q, given) {
 
 async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null } = {}) {
   e?.preventDefault?.();
+  const submissionKey = `${quiz.id}:${state.studentAttempt?.attemptId || "untimed"}`;
+  if ($("studentForm")?.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
   const name = $("studentName")?.value.trim() || readStoredTimer(quiz.id)?.name || "";
   if (!name) {
     toast("Bitte deinen Namen eingeben.", "error");
@@ -5640,14 +5674,16 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   const effectiveStart = Number(startedAt || activeAttempt?.startedAt || 0) || null;
   const elapsedSeconds = effectiveStart ? Math.max(0, Math.round((Date.now() - effectiveStart) / 1000)) : null;
 
+  studentSubmissionBusy.add(submissionKey);
   try {
     stopStudentTimer();
     if ($("studentSubmitBtn")) {
       $("studentSubmitBtn").disabled = true;
       $("studentSubmitBtn").textContent = autoSubmitted ? "Zeit abgelaufen – wird gespeichert …" : "Wird gespeichert …";
     }
-    await addDoc(collection(db, "quizzes", quiz.id, "submissions"), {
+    const submissionRef = await addDoc(collection(db, "quizzes", quiz.id, "submissions"), {
       studentName: name,
+      isTutorial: Boolean(quiz.tutorialVersion),
       answers,
       grading,
       autoPoints: points,
@@ -5668,11 +5704,14 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
       submittedAt: serverTimestamp(),
       submittedAtLocal: new Date().toISOString()
     });
-    localStorage.removeItem(studentTimerKey(quiz.id));
+    completedStudentSubmissions.add(submissionKey);
+    if ($("studentForm")) $("studentForm").dataset.submitted = "true";
+    try { localStorage.removeItem(studentTimerKey(quiz.id)); } catch (error) { console.warn("Lokaler Timer konnte nicht entfernt werden", error); }
     state.studentAttempt = null;
     clearStudentSubscriptions();
     renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
     toast(autoSubmitted ? "Zeit abgelaufen. Deine Abgabe wurde gespeichert." : "Abgabe erfolgreich gespeichert.");
+    crewTour?.notify("submitted", {quizId: quiz.id, submissionId: submissionRef.id});
   } catch (err) {
     console.error(err);
     toast("Abgabe konnte nicht gespeichert werden.", "error");
@@ -5681,7 +5720,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
       $("studentSubmitBtn").textContent = "Antworten abgeben";
     }
     if (Number(quiz.timeLimitMinutes) > 0 && effectiveStart && !autoSubmitted) runStudentTimer(quiz, questions, effectiveStart, activeAttempt?.timeLimitMinutes);
-  }
+  } finally { studentSubmissionBusy.delete(submissionKey); }
 }
 
 function answerDisplay(q, given) {
@@ -5744,7 +5783,9 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
     if (needsReview) summary += `<p>Mindestens eine Antwort wird noch von der Lehrkraft geprüft.</p>`;
   }
   if (showSolutions && mode !== "none") summary += `<div id="studentResultDetails"></div>`;
+  if (state.user?.uid === quiz.ownerId) summary += '<button id="studentTeacherResultsBtn" class="button primary" type="button">Zur Lehrkraft-Auswertung</button>';
   box.innerHTML = summary;
+  $("studentTeacherResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
 
   const details = $("studentResultDetails");
   if (!details) return;
@@ -5780,6 +5821,7 @@ async function openResults(code) {
     showView("resultsView");
     renderResultsTable();
     $("reviewPanel").classList.add("hidden");
+    crewTour?.notify("results-ready", {quizId: code});
   } catch (err) {
     console.error(err);
     toast("Ergebnisse konnten nicht geladen werden.", "error");
@@ -5887,6 +5929,7 @@ function openReview(id) {
   $("saveReview").addEventListener("click", () => saveReview(s.id));
   $("reviewHeading").focus({ preventScroll: true });
   panel.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+  if (typeof crewTour !== "undefined") crewTour?.notify("review-opened", {quizId: state.currentResultsQuiz?.id, submissionId:id});
 }
 
 async function saveReview(submissionId) {
@@ -5928,6 +5971,7 @@ async function saveReview(submissionId) {
     });
     toast("Bewertung gespeichert.");
     await openResults(state.currentResultsQuiz.id);
+    crewTour?.notify("review-saved", {quizId: state.currentResultsQuiz.id, submissionId});
   } catch (err) {
     console.error(err);
     toast("Bewertung konnte nicht gespeichert werden.", "error");
@@ -6876,3 +6920,33 @@ async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await
 
 document.addEventListener("gradecrew:variant-request", handleVariantRequest);
 document.addEventListener("gradecrew:variant-kept", handleVariantKept);
+
+
+// ---------- Guided onboarding: normal quiz data, normal editor, normal submissions ----------
+function prefillTutorialRequest() {
+  const values = {aiSubject:"Englisch",aiGrade:"5",aiSchoolType:"Mittelschule",aiRegion:"Bayern",aiTopic:"Colours, animals & school things",aiCount:"10",aiPoints:"10",aiImageQuestionCount:"3",aiCustomNotes:"Vorbereiteter Übungstest mit drei Bildaufgaben. Anschließend eine Minute selbst ausprobieren."};
+  for (const [id,value] of Object.entries(values)) {
+    const input=$(id); if (!input) continue;
+    input.value=value;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));
+  }
+}
+async function createTutorialQuiz(payload) {
+  const uid=state.user?.uid;
+  if (!uid || isSuspended() || !crewTour?.creating) throw new Error("Bitte die Tour im angemeldeten Konto starten.");
+  if (!tutorialDraft || tutorialDraft.uid !== uid) {
+    const created=await createQuizDocument({...quizDefaults(),title:payload.title,subject:payload.subject,grade:payload.grade,
+      description:payload.description,timeLimitMinutes:1,startMode:"student",resultMode:"points_grade",showSolutions:true,
+      tutorialVersion:"gradecrew-live-tour-v3",tutorialReady:false,questionCount:10,totalPoints:10});
+    tutorialDraft={uid,code:created.code};
+  }
+  const {code}=tutorialDraft;
+  if (state.user?.uid !== uid || !crewTour?.creating) throw new Error("Tour beendet. Der begonnene Übungsentwurf bleibt in deiner Übersicht.");
+  const batch=writeBatch(db);
+  payload.questions.forEach((raw,index)=>{
+    const question={...deepClone(raw),position:index+1,aiOrigin:{kind:"tutorial",model:"prepared-tutorial",promptVersion:"gradecrew-live-tour-v3"}};
+    batch.set(doc(db,"quizzes",code,"questions",`tutorial-${index+1}`),{...sanitizeQuestionForSave(question),updatedAt:serverTimestamp()});
+  });
+  batch.update(doc(db,"quizzes",code),{tutorialReady:true,updatedAt:serverTimestamp()});
+  await batch.commit();
+  return code;
+}

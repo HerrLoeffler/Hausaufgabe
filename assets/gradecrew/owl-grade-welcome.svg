@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+<title id="title">GradeCrew Eule · Grade · Wilma freut sich</title><desc id="desc">Reduzierte Editorial-Illustration einer konzentrierten Eule.</desc>
+<defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B68F68"/><stop offset="1" stop-color="#8E6C4E"/></linearGradient><linearGradient id="face" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F6EADC"/><stop offset="1" stop-color="#E7D2BC"/></linearGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter></defs>
+<ellipse cx="160" cy="284" rx="78" ry="13" fill="#172033" opacity=".08" filter="url(#shadow)"/>
+<path d="M104 82 84 43c26 5 43 17 54 36zM216 82l21-39c-27 5-44 17-55 37z" fill="#7F6047"/>
+<path d="M93 134c0-55 28-91 67-91 40 0 68 36 68 91v66c0 46-27 77-68 77-40 0-67-31-67-77z" fill="url(#body)"/>
+<path d="M103 116c12-30 31-45 57-45 27 0 47 15 58 45-10 35-30 52-58 52-27 0-47-17-57-52z" fill="url(#face)"/>
+<path d="M111 118c10-18 24-28 42-29-9 11-13 24-11 39-13-1-23-4-31-10zM209 118c-10-18-24-28-42-29 9 11 13 24 11 39 13-1 23-4 31-10z" fill="#D9C0A8" opacity=".9"/>
+<path d="M133 114q6 -10 12 0" fill="none" stroke="#172033" stroke-width="3.5" stroke-linecap="round"/><path d="M175 114q6 -10 12 0" fill="none" stroke="#172033" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M151 131c6-4 12-4 18 0-3 8-7 12-9 12-3 0-7-4-9-12z" fill="#D59A47"/>
+<path d="M112 164c9 11 15 29 17 54-13-6-23-15-29-28zM208 164c-9 11-15 29-17 54 13-6 23-15 29-28z" fill="#7F6047"/>
+<path d="M131 190c8 7 18 10 29 10 12 0 22-3 30-10M132 209c8 6 17 9 28 9 11 0 21-3 28-9" fill="none" stroke="#C8A888" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+<path d="M136 271c-1 10 4 16 14 16M184 271c1 10-4 16-14 16" fill="none" stroke="#B48348" stroke-width="6" stroke-linecap="round"/>
+</svg>
