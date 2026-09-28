@@ -10,6 +10,18 @@ document.querySelectorAll('img[src*="falcon-create.svg"]').forEach(img => {
   img.src = img.src.replace("falcon-create.svg", "elephant-create.svg");
 });
 
+// The legacy first-test guide uses a full-screen visual backdrop. That backdrop
+// must never consume pointer events, otherwise the highlighted real control is
+// visible but cannot be clicked (especially when an ancestor creates its own
+// stacking context). The guide card itself remains interactive.
+const firstGuideClickStyle = document.createElement("style");
+firstGuideClickStyle.dataset.gradecrewFirstGuideClickFix = "1";
+firstGuideClickStyle.textContent = `
+  .firstAiGuideBackdrop { pointer-events: none !important; }
+  .firstAiGuideCard { pointer-events: auto !important; }
+`;
+document.head.appendChild(firstGuideClickStyle);
+
 const slowStart = window.setTimeout(() => {
   message.textContent = "GradeCrew wird geladen …";
   notice.classList.remove("hidden");
