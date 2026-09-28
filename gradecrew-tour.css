@@ -6,7 +6,7 @@
   padding:18px 20px 17px;box-shadow:0 24px 70px rgba(23,55,42,.22);color:#203c39;
   transition:left .22s ease,top .22s ease,transform .18s ease,box-shadow .18s ease
 }
-.gcCoachCentered{width:min(470px,calc(100vw - 28px));padding:24px 26px}
+.gcCoachCentered{width:min(620px,calc(100vw - 28px));padding:26px 28px}
 .gcCoachIdentity{display:flex;align-items:center;gap:12px;padding-right:0}
 .gcCoachIdentity img{width:86px;height:96px;object-fit:contain;flex:none;filter:drop-shadow(0 8px 12px rgba(26,55,46,.09))}
 .gcCoachIdentity span{display:block;font-size:12px;color:#60736c;margin-bottom:3px}
@@ -14,15 +14,23 @@
 .gcRealCoach p{font-size:14px;line-height:1.62;margin:14px 0;color:#526661}
 .gcRealCoach>small{display:block;margin-top:12px;font-size:10px;line-height:1.45;color:#7a8983}
 .gcRealCoach .button{white-space:normal;min-height:44px}
-/* Die geführte Einführung ist verbindlich: kein X, kein Escape-Abbruch. */
 .gcCoachClose{display:none!important}
 .gcCoachStatus{margin:12px 0 4px;padding:10px 12px;border-radius:11px;background:#eef5ff;color:#275ca9;font-size:12px;font-weight:750}
 .gcCoachNudge{animation:gcCoachNudge .32s ease}
 @keyframes gcCoachNudge{0%,100%{transform:translateX(0)}30%{transform:translateX(-5px)}60%{transform:translateX(5px)}}
 
+/* The opening moment introduces the whole Crew as one product system. */
+.gcCrewIntroGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 12px}
+.gcCrewIntroMember{display:grid;justify-items:center;align-content:start;gap:2px;min-width:0;padding:13px 8px 11px;border:1px solid #e0e8e4;border-radius:15px;background:#f8fbf9;text-align:center}
+.gcCrewIntroMember img{width:82px;height:88px;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(26,55,46,.08))}
+.gcCrewIntroMember:first-child img{width:90px;height:94px}
+.gcCrewIntroMember strong{font-size:13px;color:#173b36}.gcCrewIntroMember span{font-size:11px;color:#687a74}
+.gcCrewIntroPromise{margin:8px 0 18px!important;padding:10px 12px;border-radius:12px;background:#f3f7f5;color:#456059!important;font-size:12px!important;text-align:center}
+
 .gcHandoffFaces{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin:0 0 16px}
 .gcHandoffFaces>div{display:grid;justify-items:center;gap:2px}.gcHandoffFaces img{width:108px;height:108px;object-fit:contain}.gcHandoffFaces strong{font-size:13px}.gcHandoffFaces>span{font-size:24px;color:#97aaa3}
-.gcCoachHandoff .eyebrow{display:block;margin-bottom:6px}.gcCoachHandoff h2{font-size:24px}
+.gcCoachHandoff .eyebrow,.gcCoachThanks .eyebrow{display:block;margin-bottom:6px}.gcCoachHandoff h2,.gcCoachThanks h2{font-size:26px}
+.gcThanksFaces{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin:0 0 14px}.gcThanksFaces>div{display:grid;justify-items:center;gap:3px}.gcThanksFaces img{width:120px;height:126px;object-fit:contain}.gcThanksFaces strong{font-size:13px}.gcThanksFaces>span{font-size:28px;color:#d08e68}
 .gcCoachFinishFlow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:16px 0 4px;padding:12px;border-radius:12px;background:#f4f8f6;color:#36564d;font-size:12px;font-weight:750}.gcCoachFinishFlow b{color:#91a49d}
 
 /* The highlighted real control stays crisp and clearly actionable. */
@@ -33,6 +41,18 @@
 }
 .gcRealTourActive .gcTourTyping{outline-color:#2f64d6!important;background:#fff!important}
 .gcRealTourActive .gcTourDeleteTarget{display:inline-grid!important;place-items:center!important;width:38px!important;height:38px!important;min-width:38px!important;padding:0!important;border:1px solid #efb4ad!important;border-radius:9px!important;background:#fff1ef!important;color:#c52a23!important;font-size:24px!important;font-weight:800!important;opacity:1!important;visibility:visible!important}
+
+/* The variant dialog is the only interaction layer while Emmi prepares it. */
+dialog.gcTourVariantDialog{width:min(560px,calc(100vw - 28px));border:0;border-radius:20px;padding:0;box-shadow:0 28px 90px rgba(15,23,42,.28)}
+dialog.gcTourVariantDialog::backdrop{background:rgba(15,23,42,.48);backdrop-filter:blur(2px)}
+.gcRealTourActive dialog.gcTourVariantDialog .variantRequestClose,
+.gcRealTourActive dialog.gcTourVariantDialog .variantRequestCancel{display:none!important}
+.gcRealTourActive dialog.gcTourVariantDialog select,
+.gcRealTourActive dialog.gcTourVariantDialog textarea,
+.gcRealTourActive dialog.gcTourVariantDialog button{pointer-events:none}
+.gcRealTourActive dialog.gcTourVariantDialog .gcTourTarget{pointer-events:auto!important}
+.gcTourVariantMentor{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:12px 13px;border:1px solid #d8e6df;border-radius:14px;background:#f6faf8;color:#284a42}
+.gcTourVariantMentor img{width:68px;height:74px;object-fit:contain;flex:none}.gcTourVariantMentor>div{display:grid;gap:2px}.gcTourVariantMentor span{font-size:11px;color:#6a7c75}.gcTourVariantMentor strong{font-size:15px;color:#173b36}.gcTourVariantMentor p{margin:2px 0!important;font-size:12px!important;line-height:1.45!important}.gcTourVariantMentor small{font-size:11px;color:#6c7f78}
 
 /* Temporary tutorial quality hints in the real editor outline. */
 .gcTourQualityFlag{position:relative!important;border-color:#e2b84b!important;background:#fff8e6!important;color:#74540b!important}
@@ -52,12 +72,15 @@
 .gcRealCoach :focus-visible{outline:3px solid #2f64d6;outline-offset:3px}
 
 @media(max-width:900px){
-  .gcRealCoach,.gcCoachCentered{width:min(420px,calc(100vw - 20px));max-height:min(46dvh,420px);padding:15px 17px}
+  .gcRealCoach,.gcCoachCentered{width:min(520px,calc(100vw - 20px));max-height:min(58dvh,520px);padding:15px 17px}
   .gcCoachIdentity img{width:62px;height:70px}.gcRealCoach h2{font-size:18px}.gcRealCoach p{font-size:13px;line-height:1.5;margin:9px 0}.gcRealCoach>small{display:none}
+  .gcCrewIntroGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gcCrewIntroMember img{width:70px;height:76px}
   .gcRealTourActive .gcTourTarget{scroll-margin-top:230px;scroll-margin-bottom:230px}
 }
 @media(max-width:520px){
-  .gcRealCoach,.gcCoachCentered{width:calc(100vw - 16px);max-height:44dvh;padding:13px 14px;border-radius:17px}
+  .gcRealCoach,.gcCoachCentered{width:calc(100vw - 16px);max-height:72dvh;padding:13px 14px;border-radius:17px}
   .gcCoachIdentity{gap:8px}.gcCoachIdentity img{width:52px;height:58px}.gcCoachIdentityPrompt .gcCoachIdentity img{width:72px;height:78px}.gcCoachIdentityPrompt h2{font-size:21px}
-  .gcHandoffFaces img{width:76px;height:76px}.gcHandoffFaces>span{font-size:18px}
+  .gcHandoffFaces img{width:76px;height:76px}.gcHandoffFaces>span{font-size:18px}.gcThanksFaces img{width:82px;height:88px}
+  .gcCrewIntroGrid{gap:7px}.gcCrewIntroMember{padding:9px 6px}.gcCrewIntroMember img{width:58px;height:64px}.gcCrewIntroMember:first-child img{width:64px;height:68px}
+  dialog.gcTourVariantDialog{width:calc(100vw - 18px)}
 }
