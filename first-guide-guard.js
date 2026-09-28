@@ -1,5 +1,7 @@
 let installed = false;
 let polishTimer = 0;
+let shadeFrame = 0;
+let guideShades = [];
 
 function activeGuideParts() {
   const backdrop = document.getElementById("firstAiGuideBackdrop");
@@ -68,6 +70,67 @@ function keepKeyboardInsideGuide(event) {
   }
 }
 
+function removeGuideShades() {
+  guideShades.forEach(node => node.remove());
+  guideShades = [];
+}
+
+function makeShade() {
+  const node = document.createElement("div");
+  node.className = "gcFirstGuideShade";
+  Object.assign(node.style, {
+    position: "fixed",
+    zIndex: "1000",
+    pointerEvents: "none",
+    background: "rgba(15, 23, 42, .52)",
+    backdropFilter: "blur(1px)",
+    WebkitBackdropFilter: "blur(1px)"
+  });
+  document.body.appendChild(node);
+  return node;
+}
+
+function syncGuideSpotlight() {
+  shadeFrame = 0;
+  const { active, backdrop, target } = activeGuideParts();
+  if (backdrop) {
+    // Keep the legacy backdrop as a lifecycle marker only. The real dimming is
+    // drawn around the target so the actionable control stays fully bright.
+    backdrop.style.background = "transparent";
+    backdrop.style.backdropFilter = "none";
+    backdrop.style.webkitBackdropFilter = "none";
+  }
+  if (!active || !target || !target.getClientRects().length) {
+    removeGuideShades();
+    return;
+  }
+
+  if (guideShades.length !== 4) {
+    removeGuideShades();
+    guideShades = Array.from({ length: 4 }, makeShade);
+  }
+
+  const rect = target.getBoundingClientRect();
+  const pad = 10;
+  const left = Math.max(0, rect.left - pad);
+  const top = Math.max(0, rect.top - pad);
+  const right = Math.min(window.innerWidth, rect.right + pad);
+  const bottom = Math.min(window.innerHeight, rect.bottom + pad);
+  const width = Math.max(0, right - left);
+  const height = Math.max(0, bottom - top);
+  const [north, south, west, east] = guideShades;
+
+  Object.assign(north.style, { left: "0px", top: "0px", width: "100vw", height: `${top}px` });
+  Object.assign(south.style, { left: "0px", top: `${bottom}px`, width: "100vw", height: `${Math.max(0, window.innerHeight - bottom)}px` });
+  Object.assign(west.style, { left: "0px", top: `${top}px`, width: `${left}px`, height: `${height}px` });
+  Object.assign(east.style, { left: `${right}px`, top: `${top}px`, width: `${Math.max(0, window.innerWidth - right)}px`, height: `${height}px` });
+}
+
+function scheduleSpotlightSync() {
+  if (shadeFrame) return;
+  shadeFrame = requestAnimationFrame(syncGuideSpotlight);
+}
+
 function isElephantStep(card) {
   const eyebrow = card?.querySelector(".eyebrow")?.textContent || "";
   const title = card?.querySelector("h2")?.textContent || "";
@@ -77,7 +140,10 @@ function isElephantStep(card) {
 function polishGuideCopy() {
   polishTimer = 0;
   const { active, card } = activeGuideParts();
-  if (!active || !card) return;
+  if (!active || !card) {
+    scheduleSpotlightSync();
+    return;
+  }
 
   // Cost information is an operator concern, not part of the teacher journey.
   card.querySelectorAll(".firstAiGuideCost").forEach(node => node.remove());
@@ -94,6 +160,7 @@ function polishGuideCopy() {
   if (paragraph && /Wähle\s+[„\"]Mit KI erstellen/i.test(title)) {
     paragraph.textContent = "Ab hier übernimmt unser Elefant. Er hilft dir, aus deinen Vorgaben einen passenden Test zu erstellen.";
   }
+  scheduleSpotlightSync();
 }
 
 function schedulePolish() {
@@ -116,9 +183,11 @@ function installFirstGuideGuard() {
   document.addEventListener("keydown", keepKeyboardInsideGuide, true);
   document.addEventListener("focusin", keepFocusInsideGuide, true);
 
-  // The guide changes after the allowed click. Polish only then instead of
-  // observing the entire application DOM continuously.
+  // Update only at real guide events, resize and scroll; never observe the
+  // entire application DOM.
   document.addEventListener("click", schedulePolish, false);
+  window.addEventListener("resize", scheduleSpotlightSync, { passive: true });
+  window.addEventListener("scroll", scheduleSpotlightSync, { passive: true, capture: true });
   schedulePolish();
 }
 
