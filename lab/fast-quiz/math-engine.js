@@ -12,13 +12,12 @@
       if (!Number.isInteger(n) || !Number.isInteger(d) || d === 0) throw new Error('Invalid fraction');
       if (d < 0) { n *= -1; d *= -1; }
       const g = gcd(n, d);
-      this.n = n / g;
-      this.d = d / g;
+      this.n = n / g; this.d = d / g;
     }
-    add(other) { return new Fraction(this.n * other.d + other.n * this.d, this.d * other.d); }
-    sub(other) { return new Fraction(this.n * other.d - other.n * this.d, this.d * other.d); }
-    mul(other) { return new Fraction(this.n * other.n, this.d * other.d); }
-    div(other) { if (!other.n) throw new Error('Division by zero'); return new Fraction(this.n * other.d, this.d * other.n); }
+    add(o) { return new Fraction(this.n * o.d + o.n * this.d, this.d * o.d); }
+    sub(o) { return new Fraction(this.n * o.d - o.n * this.d, this.d * o.d); }
+    mul(o) { return new Fraction(this.n * o.n, this.d * o.d); }
+    div(o) { if (!o.n) throw new Error('Division by zero'); return new Fraction(this.n * o.d, this.d * o.n); }
     value() { return this.n / this.d; }
     key() { return `${this.n}/${this.d}`; }
   }
@@ -41,19 +40,15 @@
   const int = (rng, min, max) => Math.floor(rng() * (max - min + 1)) + min;
   const pick = (rng, list) => list[Math.floor(rng() * list.length)];
   function shuffle(rng, list) {
-    const result = [...list];
-    for (let i = result.length - 1; i > 0; i -= 1) {
+    const copy = [...list];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
       const j = Math.floor(rng() * (i + 1));
-      [result[i], result[j]] = [result[j], result[i]];
+      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-    return result;
+    return copy;
   }
 
-  function decimalPlaces(level) {
-    return level === 'basic' ? 1 : level === 'standard' ? pick(Math.random, [1, 2]) : 2;
-  }
-
-  function round(value, places = 2) {
+  function round(value, places = 4) {
     const factor = 10 ** places;
     return Math.round((value + Number.EPSILON) * factor) / factor;
   }
@@ -62,8 +57,10 @@
     return new Intl.NumberFormat('de-DE', { maximumFractionDigits: 4, useGrouping: false }).format(value);
   }
 
+  function fmtInteger(value) { return String(value).replace('-', '−'); }
+
   function fmtFraction(frac, mixed = false) {
-    if (frac.d === 1) return String(frac.n);
+    if (frac.d === 1) return fmtInteger(frac.n);
     const sign = frac.n < 0 ? '−' : '';
     const n = Math.abs(frac.n);
     if (mixed && n > frac.d) {
@@ -74,161 +71,206 @@
     return `${sign}${n}/${frac.d}`;
   }
 
-  function levelBounds(level, domain) {
-    const table = {
-      natural: {
-        basic: { addMax: 50, mulMax: 10 }, standard: { addMax: 200, mulMax: 12 },
-        advanced: { addMax: 1000, mulMax: 25 }, expert: { addMax: 5000, mulMax: 99 }
-      },
-      integer: {
-        basic: { max: 20 }, standard: { max: 50 }, advanced: { max: 100 }, expert: { max: 250 }
-      }
-    };
-    return table[domain]?.[level] || {};
-  }
-
-  function naturalQuestion(rng, operation, level) {
-    const { addMax, mulMax } = levelBounds(level, 'natural');
-    let a, b, answer;
-    if (operation === 'add') {
-      a = int(rng, level === 'basic' ? 1 : 10, addMax); b = int(rng, 1, addMax); answer = a + b;
-    } else if (operation === 'sub') {
-      a = int(rng, 2, addMax * (level === 'expert' ? 2 : 1)); b = int(rng, 1, a); answer = a - b;
-    } else if (operation === 'mul') {
-      a = int(rng, 2, mulMax); b = int(rng, 2, level === 'expert' ? 30 : mulMax); answer = a * b;
-    } else {
-      b = int(rng, 2, mulMax); answer = int(rng, 2, level === 'basic' ? 10 : level === 'standard' ? 15 : 25); a = b * answer;
+  function uniqueStrings(rng, correct, candidates, fallbackFactory) {
+    const values = [correct];
+    for (const candidate of candidates) {
+      if (!candidate || values.includes(candidate)) continue;
+      values.push(candidate);
+      if (values.length === 4) break;
     }
-    return numericQuestion(rng, a, b, operation, answer, 0, 'natural');
-  }
-
-  function integerQuestion(rng, operation, level) {
-    const max = levelBounds(level, 'integer').max;
-    let a, b, answer;
-    if (operation === 'div') {
-      b = signedNonZero(rng, Math.max(4, Math.floor(max / 4)));
-      answer = signedNonZero(rng, Math.max(5, Math.floor(max / 3)));
-      a = b * answer;
-    } else {
-      a = signed(rng, max); b = signed(rng, max);
-      answer = operation === 'add' ? a + b : operation === 'sub' ? a - b : a * b;
-      if (operation === 'mul' && level !== 'expert') {
-        a = signed(rng, Math.min(15, max)); b = signed(rng, Math.min(15, max)); answer = a * b;
-      }
+    let i = 1;
+    while (values.length < 4) {
+      const candidate = fallbackFactory(i++);
+      if (!values.includes(candidate)) values.push(candidate);
     }
-    return numericQuestion(rng, a, b, operation, answer, 0, 'integer');
+    return shuffle(rng, values);
   }
 
-  function signed(rng, max) { return int(rng, -max, max); }
-  function signedNonZero(rng, max) { let v = 0; while (!v) v = signed(rng, max); return v; }
-
-  function decimalQuestion(rng, operation, level) {
-    const places = level === 'basic' ? 1 : level === 'standard' ? pick(rng, [1, 2]) : 2;
-    const scale = 10 ** places;
-    const maxWhole = level === 'basic' ? 20 : level === 'standard' ? 50 : level === 'advanced' ? 100 : 250;
-    let a, b, answer;
-    if (operation === 'div') {
-      b = int(rng, 2, level === 'basic' ? 10 : 20) / (level === 'expert' ? 10 : 1);
-      const target = int(rng, 2, level === 'basic' ? 20 : 50) / (level === 'advanced' || level === 'expert' ? 10 : 1);
-      a = round(b * target, places + 1); answer = round(target, 3);
-    } else {
-      a = int(rng, 1, maxWhole * scale) / scale;
-      b = int(rng, 1, maxWhole * scale) / scale;
-      answer = operation === 'add' ? a + b : operation === 'sub' ? a - b : a * b;
-      if (operation === 'sub' && level === 'basic' && answer < 0) [a, b, answer] = [b, a, -answer];
-      answer = round(answer, operation === 'mul' ? Math.min(4, places * 2) : places + 1);
-    }
-    return numericQuestion(rng, a, b, operation, answer, Math.max(places, 1), 'decimal');
-  }
-
-  function randomFraction(rng, level) {
-    const maxD = level === 'basic' ? 8 : level === 'standard' ? 12 : level === 'advanced' ? 16 : 24;
-    const d = int(rng, 2, maxD);
-    const maxN = level === 'basic' ? d - 1 : level === 'standard' ? d + 2 : level === 'advanced' ? d * 2 : d * 3;
-    return new Fraction(int(rng, 1, Math.max(1, maxN)), d);
-  }
-
-  function fractionQuestion(rng, operation, level) {
-    let a = randomFraction(rng, level);
-    let b;
-    if (level === 'basic' && (operation === 'add' || operation === 'sub')) {
-      b = new Fraction(int(rng, 1, Math.max(1, a.d - 1)), a.d);
-    } else {
-      b = randomFraction(rng, level);
-    }
-    if (operation === 'sub' && level === 'basic' && a.value() < b.value()) [a, b] = [b, a];
-    if (operation === 'div' && b.n === 0) b = new Fraction(1, b.d);
-    const answer = operation === 'add' ? a.add(b) : operation === 'sub' ? a.sub(b) : operation === 'mul' ? a.mul(b) : a.div(b);
-    const mixed = level === 'expert';
-    const correct = fmtFraction(answer, mixed);
-    const distractorFractions = [
-      new Fraction(answer.n + answer.d, answer.d),
-      new Fraction(answer.n + 1, answer.d),
-      new Fraction(answer.n - 1 || answer.n + 2, answer.d),
-      new Fraction(answer.n, Math.max(1, answer.d + 1))
-    ];
-    const options = uniqueOptions(rng, correct, distractorFractions.map(f => fmtFraction(f, mixed)));
-    return {
-      id: `fraction:${operation}:${level}:${a.key()}:${b.key()}`,
-      prompt: `${fmtFraction(a, mixed)} ${OP_SYMBOL[operation]} ${fmtFraction(b, mixed)} = ?`,
-      options,
-      correct,
-      explanation: `Das vollständig gekürzte Ergebnis ist ${correct}.`,
-      domain: 'fraction', operation, level
-    };
-  }
-
-  function numericQuestion(rng, a, b, operation, answer, places, domain) {
-    const display = value => domain === 'decimal' ? fmtDecimal(value) : String(value).replace('-', '−');
+  function numericOptions(rng, answer, domain, precision = 0) {
+    const display = domain === 'decimal' ? fmtDecimal : fmtInteger;
     const correct = display(answer);
     const magnitude = Math.max(1, Math.abs(answer));
-    const step = domain === 'decimal' ? (places >= 2 ? 0.1 : 1) : Math.max(1, Math.round(Math.sqrt(magnitude) / 2));
-    const candidates = [answer + step, answer - step, answer + step * 2, answer - step * 2, -answer];
-    const options = uniqueOptions(rng, correct, candidates.map(v => display(round(v, 4))));
+    const step = domain === 'decimal'
+      ? (precision >= 2 ? 0.1 : magnitude < 10 ? 0.5 : 1)
+      : Math.max(1, Math.round(Math.sqrt(magnitude) / 2));
+    const raw = [answer + step, answer - step, answer + 2 * step, answer - 2 * step, -answer, answer * 10, answer / 10]
+      .map(value => domain === 'decimal' ? round(value, 4) : Math.round(value));
+    return uniqueStrings(rng, correct, raw.map(display), i => display(domain === 'decimal' ? round(answer + i * step, 4) : answer + i * step));
+  }
+
+  function makeNumericQuestion(rng, a, b, operation, answer, domain, precision = 0) {
+    const display = domain === 'decimal' ? fmtDecimal : fmtInteger;
+    const correct = display(answer);
     return {
       id: `${domain}:${operation}:${a}:${b}`,
       prompt: `${display(a)} ${OP_SYMBOL[operation]} ${display(b)} = ?`,
-      options,
+      options: numericOptions(rng, answer, domain, precision),
       correct,
       explanation: `${display(a)} ${OP_SYMBOL[operation]} ${display(b)} = ${correct}.`,
       domain, operation
     };
   }
 
-  function uniqueOptions(rng, correct, candidates) {
-    const values = [correct];
-    for (const item of candidates) {
-      if (item === correct || values.includes(item) || item === 'NaN' || item === '∞') continue;
-      values.push(item);
-      if (values.length === 4) break;
+  const NATURAL = {
+    basic: { add: 50, mul: 10, divResult: 10 },
+    standard: { add: 250, mul: 12, divResult: 20 },
+    advanced: { add: 1200, mul: 25, divResult: 40 },
+    expert: { add: 6000, mul: 99, divResult: 99 }
+  };
+
+  function naturalQuestion(rng, operation, level) {
+    const p = NATURAL[level];
+    let a, b, answer;
+    if (operation === 'add') {
+      a = int(rng, level === 'basic' ? 1 : 10, p.add); b = int(rng, 1, p.add); answer = a + b;
+    } else if (operation === 'sub') {
+      a = int(rng, 2, p.add * (level === 'expert' ? 2 : 1)); b = int(rng, 1, a); answer = a - b;
+    } else if (operation === 'mul') {
+      a = int(rng, 2, p.mul); b = int(rng, 2, level === 'expert' ? 40 : p.mul); answer = a * b;
+    } else {
+      b = int(rng, 2, p.mul); answer = int(rng, 2, p.divResult); a = b * answer;
     }
-    let bump = 1;
-    while (values.length < 4) {
-      const item = `${correct} ${bump > 0 ? '+' : ''}${bump}`;
-      if (!values.includes(item)) values.push(item);
-      bump += 1;
+    return makeNumericQuestion(rng, a, b, operation, answer, 'natural');
+  }
+
+  const INTEGER_MAX = { basic: 20, standard: 50, advanced: 120, expert: 300 };
+  function signed(rng, max) { return int(rng, -max, max); }
+  function signedNonZero(rng, max) { let n = 0; while (!n) n = signed(rng, max); return n; }
+
+  function integerQuestion(rng, operation, level) {
+    const max = INTEGER_MAX[level];
+    let a, b, answer;
+    if (operation === 'div') {
+      b = signedNonZero(rng, Math.max(5, Math.floor(max / 4)));
+      answer = signedNonZero(rng, Math.max(6, Math.floor(max / 3)));
+      a = b * answer;
+    } else if (operation === 'mul') {
+      const factorMax = level === 'expert' ? 30 : level === 'advanced' ? 20 : 12;
+      a = signedNonZero(rng, factorMax); b = signedNonZero(rng, factorMax); answer = a * b;
+    } else {
+      a = signed(rng, max); b = signed(rng, max); answer = operation === 'add' ? a + b : a - b;
     }
-    return shuffle(rng, values);
+    return makeNumericQuestion(rng, a, b, operation, answer, 'integer');
+  }
+
+  const DECIMAL = {
+    basic: { places: [1], maxWhole: 20, divisorPlaces: 0 },
+    standard: { places: [1, 2], maxWhole: 50, divisorPlaces: 0 },
+    advanced: { places: [1, 2], maxWhole: 120, divisorPlaces: 1 },
+    expert: { places: [2, 3], maxWhole: 300, divisorPlaces: 1 }
+  };
+
+  function randomDecimal(rng, maxWhole, places) {
+    const scale = 10 ** places;
+    return int(rng, 1, maxWhole * scale) / scale;
+  }
+
+  function decimalQuestion(rng, operation, level) {
+    const p = DECIMAL[level];
+    const places = pick(rng, p.places);
+    let a, b, answer;
+    if (operation === 'div') {
+      const divisorScale = 10 ** p.divisorPlaces;
+      b = int(rng, 2, 15 * divisorScale) / divisorScale;
+      const targetPlaces = level === 'basic' ? 1 : level === 'standard' ? 1 : 2;
+      answer = randomDecimal(rng, level === 'expert' ? 30 : 20, targetPlaces);
+      a = round(b * answer, Math.min(4, p.divisorPlaces + targetPlaces));
+    } else {
+      a = randomDecimal(rng, p.maxWhole, places);
+      b = randomDecimal(rng, p.maxWhole, places);
+      if (operation === 'add') answer = a + b;
+      else if (operation === 'sub') {
+        if (level === 'basic' && a < b) [a, b] = [b, a];
+        answer = a - b;
+      } else answer = a * b;
+      answer = round(answer, Math.min(4, operation === 'mul' ? places * 2 : places));
+    }
+    return makeNumericQuestion(rng, a, b, operation, answer, 'decimal', places);
+  }
+
+  const FRACTION_DENOMS = {
+    basic: [2, 3, 4, 5, 6, 8, 10],
+    standard: [2, 3, 4, 5, 6, 8, 9, 10, 12],
+    advanced: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16],
+    expert: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 20, 24]
+  };
+
+  function randomFraction(rng, level, denominator = null) {
+    const d = denominator || pick(rng, FRACTION_DENOMS[level]);
+    const factor = level === 'basic' ? 1 : level === 'standard' ? 1.25 : level === 'advanced' ? 2 : 3;
+    const maxN = Math.max(1, Math.floor(d * factor));
+    return new Fraction(int(rng, 1, maxN), d);
+  }
+
+  function fractionDistractors(operation, a, b, answer) {
+    const candidates = [];
+    if (operation === 'add') {
+      candidates.push(new Fraction(a.n + b.n, a.d + b.d));
+      candidates.push(new Fraction(a.n + b.n, a.d));
+    } else if (operation === 'sub') {
+      if (a.n !== b.n) candidates.push(new Fraction(a.n - b.n, Math.max(1, a.d + b.d)));
+      if (a.d === b.d && a.n !== b.n) candidates.push(new Fraction(Math.abs(a.n - b.n), a.d + 1));
+    } else if (operation === 'mul') {
+      candidates.push(new Fraction(a.n * b.n, Math.max(1, a.d + b.d)));
+      candidates.push(new Fraction(a.n + b.n, a.d * b.d));
+    } else {
+      candidates.push(a.mul(b));
+      candidates.push(new Fraction(a.n * b.n, a.d * b.d));
+    }
+    candidates.push(new Fraction(answer.n + 1, answer.d));
+    candidates.push(new Fraction(answer.n - 1 || answer.n + 2, answer.d));
+    candidates.push(new Fraction(answer.n, answer.d + 1));
+    return candidates;
+  }
+
+  function fractionQuestion(rng, operation, level) {
+    let a, b;
+    if (level === 'basic' && (operation === 'add' || operation === 'sub')) {
+      const d = pick(rng, FRACTION_DENOMS.basic);
+      a = randomFraction(rng, level, d); b = randomFraction(rng, level, d);
+    } else {
+      a = randomFraction(rng, level); b = randomFraction(rng, level);
+    }
+    if (operation === 'sub' && level === 'basic' && a.value() < b.value()) [a, b] = [b, a];
+    const answer = operation === 'add' ? a.add(b) : operation === 'sub' ? a.sub(b) : operation === 'mul' ? a.mul(b) : a.div(b);
+    const mixed = level === 'expert';
+    const correct = fmtFraction(answer, mixed);
+    const candidates = fractionDistractors(operation, a, b, answer).map(value => fmtFraction(value, mixed));
+    const options = uniqueStrings(rng, correct, candidates, i => fmtFraction(new Fraction(answer.n + i, answer.d), mixed));
+    return {
+      id: `fraction:${operation}:${level}:${a.key()}:${b.key()}`,
+      prompt: `${fmtFraction(a, mixed)} ${OP_SYMBOL[operation]} ${fmtFraction(b, mixed)} = ?`,
+      options, correct,
+      explanation: `Das vollständig gekürzte Ergebnis ist ${correct}.`,
+      domain: 'fraction', operation
+    };
   }
 
   function createEngine(config) {
     const rng = createRng(config.seed >>> 0);
-    const operations = config.operations?.length ? config.operations : ['add', 'sub', 'mul', 'div'];
-    const domains = config.domains?.length ? config.domains : ['natural'];
+    const operations = config.operations?.length ? [...config.operations] : ['add', 'sub', 'mul', 'div'];
+    const domains = config.domains?.length ? [...config.domains] : ['natural'];
     const level = config.level || 'standard';
     const seen = new Set();
+    const combinations = domains.flatMap(domain => operations.map(operation => ({ domain, operation })));
+    let cycle = [];
+
+    function nextPair() {
+      if (!cycle.length) cycle = shuffle(rng, combinations);
+      return cycle.shift();
+    }
+
+    function build(domain, operation) {
+      return domain === 'natural' ? naturalQuestion(rng, operation, level)
+        : domain === 'integer' ? integerQuestion(rng, operation, level)
+        : domain === 'decimal' ? decimalQuestion(rng, operation, level)
+        : fractionQuestion(rng, operation, level);
+    }
 
     function next() {
-      let question;
-      for (let attempt = 0; attempt < 20; attempt += 1) {
-        const operation = pick(rng, operations);
-        const domain = pick(rng, domains);
-        question = domain === 'natural' ? naturalQuestion(rng, operation, level)
-          : domain === 'integer' ? integerQuestion(rng, operation, level)
-          : domain === 'decimal' ? decimalQuestion(rng, operation, level)
-          : fractionQuestion(rng, operation, level);
-        if (!seen.has(question.id)) break;
-      }
+      const pair = nextPair();
+      let question = build(pair.domain, pair.operation);
+      for (let attempt = 0; attempt < 20 && seen.has(question.id); attempt += 1) question = build(pair.domain, pair.operation);
       seen.add(question.id);
       return question;
     }
