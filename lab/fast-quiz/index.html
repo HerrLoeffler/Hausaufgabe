@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>GradeCrew Lab · Fast Quiz</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="labTopbar">
+    <a class="brand" href="./" aria-label="GradeCrew Lab Fast Quiz neu laden">
+      <span class="brandMark" aria-hidden="true">G</span>
+      <span><strong>GradeCrew</strong><small>Lab · Fast Quiz</small></span>
+    </a>
+    <span class="labBadge">EXPERIMENT</span>
+  </header>
+
+  <main class="shell">
+    <section id="setupView" class="view" aria-labelledby="setupTitle">
+      <div class="pageHead">
+        <p class="eyebrow">GRADECREW LAB</p>
+        <h1 id="setupTitle">Fast Quiz</h1>
+        <p>Ein Thema. Wenig Zeit. So viele Aufgaben wie möglich.</p>
+      </div>
+
+      <div class="setupGrid">
+        <form id="setupForm" class="card setupCard">
+          <div class="field">
+            <label for="topic">Thema</label>
+            <select id="topic" name="topic">
+              <option value="percent">Mathematik · Prozentrechnung</option>
+              <option value="mental">Mathematik · Kopfrechnen</option>
+              <option value="wordclass">Deutsch · Wortarten</option>
+            </select>
+            <small>Im Lab nutzen wir lokale Beispieldaten. Später kann hier die KI jedes gewünschte Thema erzeugen.</small>
+          </div>
+
+          <fieldset class="field">
+            <legend>Dauer</legend>
+            <div class="durationPicker" role="radiogroup" aria-label="Dauer des Fast Quiz">
+              <label><input type="radio" name="duration" value="1"><span>1</span></label>
+              <label><input type="radio" name="duration" value="2"><span>2</span></label>
+              <label><input type="radio" name="duration" value="3" checked><span>3</span></label>
+              <label><input type="radio" name="duration" value="4"><span>4</span></label>
+              <label><input type="radio" name="duration" value="5"><span>5</span></label>
+            </div>
+            <small>Minuten</small>
+          </fieldset>
+
+          <div class="field">
+            <label for="level">Niveau</label>
+            <select id="level" name="level">
+              <option value="easy">Leicht</option>
+              <option value="medium" selected>Mittel</option>
+              <option value="hard">Anspruchsvoll</option>
+            </select>
+          </div>
+
+          <div class="fairnessBox">
+            <div>
+              <strong>Fair-Play-Runde</strong>
+              <p>Alle mit demselben Rundencode erhalten Aufgaben aus demselben Niveau und derselben Aufgabenlogik.</p>
+            </div>
+            <button id="rerollSeedBtn" class="textButton" type="button">Neuer Code</button>
+            <code id="roundCode">FAST-0000</code>
+          </div>
+
+          <button class="primaryButton" type="submit">Fast Quiz starten</button>
+        </form>
+
+        <aside class="card conceptCard">
+          <span class="conceptNumber">01</span>
+          <h2>Für Training gebaut. Für Live-Duelle vorbereitet.</h2>
+          <p>Die Runde erzeugt fortlaufend neue Aufgaben. Es gibt kein festes Ende – erst der Timer stoppt das Quiz.</p>
+          <div class="conceptFacts">
+            <span><strong>1–5 min</strong> frei wählbar</span>
+            <span><strong>∞</strong> Aufgabenstrom</span>
+            <span><strong>gleich</strong> im Niveau</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="quizView" class="view" hidden aria-labelledby="questionTitle">
+      <div class="quizBar">
+        <div>
+          <span class="miniLabel">FAST QUIZ</span>
+          <strong id="activeTopic">Prozentrechnung</strong>
+        </div>
+        <div class="roundInfo"><span>Runde</span><code id="activeRoundCode">FAST-0000</code></div>
+      </div>
+
+      <div class="timerTrack" aria-hidden="true"><div id="timerFill"></div></div>
+
+      <div class="quizStatus" aria-live="polite">
+        <div class="timerBox"><span>Zeit</span><strong id="timer">03:00</strong></div>
+        <div><span>Richtig</span><strong id="correctCount">0</strong></div>
+        <div><span>Serie</span><strong id="streakCount">0</strong></div>
+        <div><span>Punkte</span><strong id="scoreCount">0</strong></div>
+      </div>
+
+      <article class="card questionCard">
+        <div class="questionMeta"><span id="questionNumber">Aufgabe 1</span><span id="difficultyLabel">Mittel</span></div>
+        <h2 id="questionTitle">Frage wird vorbereitet …</h2>
+        <div id="answers" class="answers" role="group" aria-label="Antwortmöglichkeiten"></div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </article>
+
+      <p class="keyboardHint">Tipp: Antworten mit den Tasten 1–4 auswählen.</p>
+    </section>
+
+    <section id="resultView" class="view" hidden aria-labelledby="resultTitle">
+      <div class="resultHero">
+        <p class="eyebrow">ZEIT UM</p>
+        <h1 id="resultTitle">Fast Quiz beendet</h1>
+        <p id="resultSummary">Du hast in 3 Minuten 0 Aufgaben bearbeitet.</p>
+      </div>
+
+      <div class="resultGrid">
+        <div class="resultMetric"><span>Richtig</span><strong id="resultCorrect">0</strong></div>
+        <div class="resultMetric"><span>Genauigkeit</span><strong id="resultAccuracy">0 %</strong></div>
+        <div class="resultMetric"><span>Beste Serie</span><strong id="resultStreak">0</strong></div>
+        <div class="resultMetric"><span>Punkte</span><strong id="resultScore">0</strong></div>
+      </div>
+
+      <div class="card resultCard">
+        <div>
+          <span class="miniLabel">NÄCHSTER SCHRITT</span>
+          <h2>Noch eine Runde?</h2>
+          <p>Gleiches Thema und Niveau, aber ein neuer Aufgabenstrom.</p>
+        </div>
+        <div class="resultActions">
+          <button id="againBtn" class="primaryButton" type="button">Nochmal spielen</button>
+          <button id="settingsBtn" class="secondaryButton" type="button">Einstellungen ändern</button>
+        </div>
+      </div>
+
+      <details class="developerDetails">
+        <summary>Entwicklerdaten dieser Runde</summary>
+        <pre id="sessionDump"></pre>
+      </details>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
