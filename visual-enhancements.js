@@ -5,8 +5,9 @@ export function startVisualEnhancements() {
   started = true;
 
   window.setTimeout(async () => {
-    // One-time copy replacement before the tour observer starts. Keeping this
-    // outside the observer prevents repeated DOM writes on every UI mutation.
+    // Keep optional presentation code isolated from the core app. The new
+    // Crew-Tour is intentionally paused until its spotlight/observer flow is
+    // proven stable in real Chrome and Safari sessions.
     const manualHint = document.querySelector("#createManualBtn .choiceText small");
     if (manualHint) {
       const replacement = document.createElement("span");
@@ -16,7 +17,6 @@ export function startVisualEnhancements() {
     }
 
     const modules = [
-      ["Crew-Tour", "./gradecrew-tour.js?v=2.3.1-gc3"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc2"],
       ["Admin-KI-Rechte", "./admin-ai-access.js?v=2.3.1-gc2"]
