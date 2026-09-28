@@ -1,7 +1,6 @@
-// Guided onboarding uses the real GradeCrew UI, but deterministic tutorial data.
-// The tour owns navigation only while it is active; the app still owns persistence,
-// rendering, grading and all normal AI flows outside the tutorial.
-export const TOUR_VERSION = "gradecrew-live-tour-v5";
+// Guided onboarding uses the real GradeCrew UI with deterministic tutorial data.
+// Normal product behaviour remains unchanged outside the tutorial.
+export const TOUR_VERSION = "gradecrew-live-tour-v6";
 
 export const CREW = Object.freeze({
   guide: { name: "Coco", animal: "Pinguin", role: "Dein Guide", asset: "penguin-guide" },
@@ -35,7 +34,7 @@ export const DEMO_TEST = Object.freeze({
     single("What colour is the schoolbag?", ["red", "blue", "green"], 1, "backpack"),
     single("What can you see?", ["a ruler", "a pencil", "a chair"], 1, "pencil"),
     single("How many books can you see?", ["two", "four", "three"], 2, "books"),
-    // Intentionally inconsistent language so Emmi can demonstrate a useful AI edit.
+    // This one deliberately breaks the otherwise English task language so Emmi can fix it.
     single("Was heißt „Hund“ auf Englisch?", ["cat", "dog", "bird"], 1),
     { type: "truefalse", text: "Decide whether this is correct: „Red“ means „rot“.", points: 1, correctBoolean: true },
     { type: "dropdown", text: "Choose the English word for „blau“.", points: 1, options: [
@@ -43,21 +42,21 @@ export const DEMO_TEST = Object.freeze({
     ] },
     { type: "gapfill", text: "Complete the colour word: gr[ee]n.", points: 1 },
     { type: "ordering", text: "Put the colours in this order: red, yellow, green.", points: 1, items: ["red", "yellow", "green"], manualReview: false },
-    // Deliberately wrong answer key. The tour later explains that AI can make mistakes
-    // and removes this task after a useful variant has been added.
+    // Deliberately wrong answer key. The tour later explains why AI output must be checked.
     single("Which English word means the German colour „gelb“?", ["yellow", "blue", "red"], 1),
     { type: "text", text: "Write one colour in English.", points: 1,
       acceptedAnswers: ["red", "blue", "green", "yellow", "orange", "purple", "pink", "black", "white", "brown", "grey", "gray"], manualReview: true }
   ]
 });
-// Make the deliberately faulty task actually faulty: blue is marked as correct.
 DEMO_TEST.questions[8].options.forEach((option, index) => { option.correct = index === 1; });
 
 export function preparedResponse(_q, { variant = false, mediaKind = "none" } = {}) {
   if (variant) {
-    if (mediaKind !== "none") throw new Error("Die vorbereitete Katze-Variante dieser Tour wird ohne zusätzliches Bild erstellt.");
     const question = single("Choose the English word for „Katze“.", ["dog", "bird", "cat"], 2);
-    return { question: { ...question, mediaIntent: { kind: "none" } }, meta: { model: "prepared-tutorial", promptVersion: TOUR_VERSION } };
+    return {
+      question: { ...question, mediaIntent: { kind: "none" }, tutorialImageUrl: "/assets/gradecrew/demo-cat.svg" },
+      meta: { model: "prepared-tutorial", promptVersion: TOUR_VERSION }
+    };
   }
   const question = single("Choose the English word for „Hund“.", ["cat", "dog", "bird"], 1);
   return { question: { ...question, mediaIntent: { kind: "none" } }, meta: { model: "prepared-tutorial", promptVersion: TOUR_VERSION } };
@@ -148,7 +147,6 @@ export function installCrewTour(api) {
 
   function blockOutsideTour(event) {
     if (!owned() || !event.isTrusted) return;
-    // A highlighted submit button also needs its form's submit event to pass.
     if (event.type === "submit" && targetInteractive && target?.form === event.target) return;
     if (isAllowedNode(event.target)) return;
     event.preventDefault();
@@ -185,7 +183,7 @@ export function installCrewTour(api) {
     const margin = 18;
     if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
       root.style.left = `${Math.max(margin, Math.round((innerWidth - rect.width) / 2))}px`;
-      root.style.top = `${Math.max(70, Math.round(Math.min(innerHeight * .14, innerHeight - rect.height - margin)))}px`;
+      root.style.top = `${Math.max(64, Math.round(Math.min(innerHeight * .12, innerHeight - rect.height - margin)))}px`;
       return;
     }
     const t = target.getBoundingClientRect();
@@ -240,6 +238,16 @@ export function installCrewTour(api) {
     return target;
   }
 
+  async function waitForElement(selector, timeout = 3500) {
+    const start = performance.now();
+    while (owned() && performance.now() - start < timeout) {
+      const node = $(selector);
+      if (node?.isConnected) return node;
+      await sleep(80);
+    }
+    return null;
+  }
+
   function coach(role, title, text, {
     target: selector = null,
     button = "",
@@ -287,9 +295,9 @@ export function installCrewTour(api) {
   function crewIntro() {
     const cards = Object.entries(CREW).map(([role, member]) => `
       <div class="gcCrewIntroMember">${image(role, role === "guide" ? 104 : 94)}<strong>${escapeHtml(member.name)}</strong><span>${escapeHtml(member.role)}</span></div>`).join("");
-    coach("guide", "Willkommen bei GradeCrew.", "Ich bin Coco und begleite dich durch deine erste GradeCrew-Reise. Bevor wir loslegen: Das ist deine Crew.", {
+    coach("guide", "Willkommen bei GradeCrew.", "Mit GradeCrew erstellst, bearbeitest, führst und bewertest du digitale Tests, Übungen und Leistungsnachweise an einem Ort. Ich bin Coco und begleite dich durch deine erste GradeCrew-Reise.", {
       centered: true,
-      body: `<div class="gcCrewIntroGrid">${cards}</div><p class="gcCrewIntroPromise">Remy erstellt · Emmi überarbeitet · Wilma bewertet · Coco führt dich durch alles.</p>`,
+      body: `<p class="gcCrewIntroLead">Bevor wir loslegen: Das ist deine Crew.</p><div class="gcCrewIntroGrid">${cards}</div><p class="gcCrewIntroPromise">Remy erstellt · Emmi überarbeitet · Wilma bewertet · Coco führt dich durch alles.</p>`,
       button: "Mit der Crew starten",
       onButton: () => {
         stage = "new";
@@ -368,11 +376,11 @@ export function installCrewTour(api) {
       target: "#aiCustomNotes",
       body: '<div class="gcCoachStatus">Eigene Wünsche werden ergänzt …</div>'
     });
-    await typeField("#aiCustomNotes", "Kurze, klare Aufgaben für Klasse 4. Einfache Farben, Tiere und Schulsachen. Alle Arbeitsaufträge auf Englisch. Abwechslungsreiche Aufgabentypen.", "Eigene Wünsche werden ergänzt …", token, 13);
+    await typeField("#aiCustomNotes", "Kurze, klare Aufgaben für die 4. Klasse Grundschule. Einfache Farben, Tiere und Schulsachen. Alle Arbeitsaufträge auf Englisch. Abwechslungsreiche Aufgabentypen.", "Eigene Wünsche werden ergänzt …", token, 13);
     if (!owned() || token !== run) return;
     busy = false;
     stage = "form";
-    coach("create", "Alles klar.", "Damit habe ich genug. Klicke jetzt auf „Test erstellen“ – ich erstelle den ersten Entwurf und prüfe ihn anschließend.", {
+    coach("create", "Perfekt – alle nötigen Informationen sind eingetragen.", "Klicke jetzt auf „Test erstellen“. Ich erstelle den ersten Entwurf und prüfe ihn anschließend.", {
       target: "#generateAiTestBtn",
       interactiveTarget: true
     });
@@ -383,7 +391,7 @@ export function installCrewTour(api) {
     const token = run;
     busy = true;
     stage = "form-filling";
-    coach("create", "Ich trage die Eckdaten ein.", "Wir bauen einen Englischtest für Klasse 4. Schau zu – die Angaben schreiben sich Schritt für Schritt ins echte Formular.", {
+    coach("create", "Ich trage die Eckdaten ein.", "Wir bauen einen Englischtest für die 4. Klasse Grundschule. Schau zu – die Angaben schreiben sich Schritt für Schritt ins echte Formular.", {
       target: "#aiSubject",
       body: '<div class="gcCoachStatus">Fach auswählen …</div>'
     });
@@ -392,7 +400,7 @@ export function installCrewTour(api) {
       ["#aiGrade", "4", "Klasse: 4"],
       ["#aiSchoolType", "Grundschule", "Schulart: Grundschule"],
       ["#aiRegion", "Bayern", "Bundesland: Bayern"],
-      ["#aiTopic", "Colours, animals & school things", "Thema: Farben, Tiere & Schulsachen"],
+      ["#aiTopic", "Colours, animals & school things", "Thema: Colours, animals & school things"],
       ["#aiCount", "10", "10 Aufgaben"],
       ["#aiPoints", "10", "10 Punkte"],
       ["#aiImageQuestionCount", "3", "3 Aufgaben mit Bild"]
@@ -403,7 +411,7 @@ export function installCrewTour(api) {
     }
     busy = false;
     stage = "image-choice";
-    coach("create", "Bilder kann ich gleich mitplanen.", "Für unseren Test haben wir drei Aufgaben mit Bild ausgewählt. Das ist besonders praktisch bei Sprachtests und jüngeren Klassen.", {
+    coach("create", "Bilder kann ich gleich mitplanen.", "Für unseren Test haben wir drei Aufgaben mit Bild ausgewählt. Bilder können Wortschatz und Situationen anschaulicher machen. Später kannst du außerdem eigene PDFs, Fotos, Arbeitsblätter oder Texte hochladen, damit GradeCrew den Test noch genauer an dein Material anpasst.", {
       target: "#aiImageQuestionCount",
       button: "Eigene Wünsche ergänzen",
       onButton: () => ghostFillNotes(token)
@@ -463,13 +471,13 @@ export function installCrewTour(api) {
     stage = "outline";
     refreshWarnings();
     const outline = $("#questionOutline") || $("#editorView .settingsCard");
-    coach("improve", "KI kann Fehler machen – deshalb prüfen wir.", "GradeCrew prüft den Entwurf automatisch. Für die Einführung sind links zwei Hinweise markiert, damit du siehst, wie du gezielt eingreifen kannst.", {
+    coach("improve", "KI kann Fehler machen – deshalb prüfen wir.", "GradeCrew prüft den Entwurf automatisch. Links sind zwei Hinweise markiert, damit du siehst, wie du gezielt eingreifen kannst.", {
       target: outline,
       button: "Ersten Hinweis öffnen",
       onButton: () => {
         const warning = markOutlineWarning(sourceId, "Arbeitsauftrag passt sprachlich nicht zum restlichen Test.");
         stage = "outline-question";
-        coach("improve", "Aufgabe 4 fällt auf.", "Klicke auf die markierte Aufgabe. Der Arbeitsauftrag ist noch auf Deutsch – wir lassen ihn passend zum restlichen Test auf Englisch formulieren.", {
+        coach("improve", "Aufgabe 4 fällt auf.", "Fast alle Arbeitsaufträge sind auf Englisch. Nur diese ist noch auf Deutsch – wir lassen sie passend zum restlichen Test auf Englisch formulieren.", {
           target: warning,
           interactiveTarget: true,
           onTargetClick: () => {
@@ -517,11 +525,20 @@ export function installCrewTour(api) {
     });
   }
 
+  function editPreviewHtml() {
+    return `<div class="gcEditPreview">
+      <div class="gcEditPreviewCard gcEditPreviewBefore"><span>Vorher</span><strong>Was heißt „Hund“ auf Englisch?</strong><div class="gcMiniOptions"><i>cat</i><i class="correct">dog ✓</i><i>bird</i></div></div>
+      <b class="gcEditArrow">→</b>
+      <div class="gcEditPreviewCard gcEditPreviewAfter"><span>Jetzt im Test</span><strong>Choose the English word for „Hund“.</strong><div class="gcMiniOptions"><i>cat</i><i class="correct">dog ✓</i><i>bird</i></div></div>
+    </div>`;
+  }
+
   function celebrateEdit() {
     stage = "edit-success";
     refreshWarnings({ includeSource: false });
-    coach("improve", "Super – die KI-Überarbeitung hat geklappt.", "Die Frage ist jetzt auf Englisch. Die ursprüngliche Aufgabe wurde gezielt angepasst, ohne dass du sie neu bauen musstest.", {
+    coach("improve", "Super – die KI-Überarbeitung hat geklappt.", "Die Aufgabe war grundsätzlich gut. Wir haben nur den Arbeitsauftrag passend zum restlichen Test auf Englisch geändert. Aus einer guten Aufgabe können wir jetzt zusätzlich noch eine Variante machen.", {
       centered: true,
+      body: editPreviewHtml(),
       button: "Jetzt eine Variante erstellen",
       onButton: showVariantStep
     });
@@ -566,26 +583,26 @@ export function installCrewTour(api) {
     if (!mentor) {
       mentor = document.createElement("div");
       mentor.className = "gcTourVariantMentor";
-      mentor.innerHTML = `${image("improve", 74)}<div><span>Emmi · Überarbeiten</span><strong>Wir bauen eine zweite Version.</strong><p>Die Hund-Aufgabe bleibt. Dazu kommt gleich eine Variante mit „Katze“.</p><small>Ich fülle die Angaben für dich aus.</small></div>`;
+      mentor.innerHTML = `${image("improve", 74)}<div><span>Emmi · Überarbeiten</span><strong>Wir bauen eine zweite Version.</strong><p>Die Hund-Aufgabe bleibt. Dazu kommt eine Katze-Variante mit einem passenden Bild.</p><small>Ich fülle die Angaben für dich aus.</small></div>`;
       form.prepend(mentor);
     }
     count.value = "1";
     count.dispatchEvent(new Event("change", { bubbles: true }));
     setTarget(count, { interactive: false, scroll: false });
-    await sleep(450);
+    await sleep(420);
     if (!owned() || token !== run) return;
-    media.value = "none";
+    media.value = "ai_generated";
     media.dispatchEvent(new Event("change", { bubbles: true }));
     setTarget(media, { interactive: false, scroll: false });
-    mentor.querySelector("small").textContent = "Für diese Variante brauchen wir kein zusätzliches Bild.";
-    await sleep(550);
+    mentor.querySelector("small").textContent = "Diesmal nehmen wir direkt ein Bild dazu.";
+    await sleep(520);
     if (!owned() || token !== run) return;
     setTarget(instruction, { interactive: false, scroll: false });
     mentor.querySelector("small").textContent = "Jetzt kommt unser eigener Wunsch dazu …";
-    await typeVariantInstruction(instruction, "Nutze statt „Hund“ das Wort „Katze“.", token);
+    await typeVariantInstruction(instruction, "Nutze statt „Hund“ das Wort „Katze“ und ergänze ein passendes, freundliches Katzenbild.", token);
     if (!owned() || token !== run) return;
     mentor.querySelector("strong").textContent = "Alles vorbereitet.";
-    mentor.querySelector("p").textContent = "1 Variante · ohne Bild · Katze statt Hund.";
+    mentor.querySelector("p").textContent = "1 Variante · mit Bild · Katze statt Hund.";
     mentor.querySelector("small").textContent = "Klicke jetzt auf „Erstellen“.";
     busy = false;
     setTarget(submit, { interactive: true, scroll: false });
@@ -594,7 +611,7 @@ export function installCrewTour(api) {
   function showVariantStep() {
     stage = "variant";
     api.focusQuestion(sourceId);
-    coach("improve", "Jetzt bauen wir eine echte Variante.", "Die Hund-Aufgabe bleibt erhalten. Zusätzlich erstellen wir dieselbe Idee mit „Katze“. Klicke auf „Variante hinzufügen“.", {
+    coach("improve", "Jetzt bauen wir eine echte Variante.", "Die Hund-Aufgabe bleibt erhalten. Zusätzlich erstellen wir dieselbe Idee mit „Katze“ – diesmal gleich mit Bild. Klicke auf „Variante hinzufügen“.", {
       target: `#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiVariantQuestion`,
       interactiveTarget: true
     });
@@ -607,7 +624,61 @@ export function installCrewTour(api) {
     document.querySelectorAll(".gcTourVariantMentor").forEach(node => node.remove());
     coach("improve", "Ich erstelle die Variante …", "Die Hund-Aufgabe bleibt bestehen. Gleich kannst du die neue Katze-Variante zusätzlich übernehmen.", {
       target: "#variantBackgroundProgress",
-      body: '<div class="gcTourWorking"><span></span><span></span><span></span><small>1 Variante · ohne Bild · wird geprüft</small></div>'
+      body: '<div class="gcTourWorking"><span></span><span></span><span></span><small>1 Variante · Katze mit Bild · wird geprüft</small></div>'
+    });
+  }
+
+  function decorateTutorialCatCard() {
+    const card = $$("#questionList .questionCard").find(node => /Katze/i.test(node.querySelector(".qText")?.value || ""));
+    if (!card) return null;
+    if (!card.querySelector(".gcTutorialCatFigure")) {
+      const figure = document.createElement("figure");
+      figure.className = "gcTutorialCatFigure";
+      figure.innerHTML = '<img src="/assets/gradecrew/demo-cat.svg" alt="Sehr niedliche orangefarbene Katze"><figcaption>Tutorial-Bild zur neuen Katze-Variante</figcaption>';
+      const grid = card.querySelector(".questionGrid");
+      grid?.insertAdjacentElement("afterend", figure);
+    }
+    return card;
+  }
+
+  function decorateTutorialCatStudent() {
+    const section = $$("#studentQuestions .studentQuestion").find(node => /Katze/i.test(node.textContent || ""));
+    if (!section || section.querySelector(".gcTutorialCatStudent")) return;
+    const figure = document.createElement("figure");
+    figure.className = "studentQuestionImage gcTutorialCatStudent";
+    figure.innerHTML = '<img src="/assets/gradecrew/demo-cat.svg" alt="Sehr niedliche orangefarbene Katze">';
+    const heading = section.querySelector("h3");
+    heading?.insertAdjacentElement("afterend", figure);
+  }
+
+  async function showVariantApplyStep() {
+    if (!owned()) return;
+    stage = "variant-apply-wait";
+    const apply = await waitForElement("#variantBackgroundProgress .applyVariants", 4500);
+    if (!owned()) return;
+    if (!apply) return error("Die fertige Variante wurde noch nicht angezeigt. Bitte versuche den Schritt erneut.", showVariantApplyStep);
+    stage = "variant-apply";
+    coach("improve", "Die Katze-Variante ist fertig.", "Unten wartet das blaue Feld „1 Variante übernehmen“. Klicke genau darauf. Danach springen wir direkt zur neuen Aufgabe und bestätigen sie – so funktioniert es später auch bei deinen eigenen Varianten.", {
+      target: apply,
+      interactiveTarget: true,
+      body: '<div class="gcVariantReadyPreview"><img src="/assets/gradecrew/demo-cat.svg" alt=""><span>Katze-Variante · mit Bild</span></div>'
+    });
+  }
+
+  async function showVariantReviewStep() {
+    if (!owned()) return;
+    stage = "variant-review-wait";
+    await sleep(180);
+    const card = decorateTutorialCatCard();
+    const keep = await waitForElement("#questionList .variantReviewBar .variantKeep", 3000);
+    if (!owned()) return;
+    if (!card || !keep) return error("Die übernommene Variante konnte noch nicht zur Prüfung angezeigt werden.", showVariantReviewStep);
+    stage = "variant-review";
+    card.scrollIntoView({ block: "center", behavior: "smooth" });
+    coach("improve", "Da ist sie – inklusive Katzenbild. 🐱", "Die neue Aufgabe ist zusätzlich eingefügt. Prüfe sie kurz und klicke auf „✓ Behalten“. Genau diese Prüfung bekommst du später auch bei normalen Varianten.", {
+      target: keep,
+      interactiveTarget: true,
+      body: '<div class="gcVariantReviewPreview"><img src="/assets/gradecrew/demo-cat.svg" alt="Sehr niedliche orangefarbene Katze"><div><strong>Choose the English word for „Katze“.</strong><span>dog · bird · cat ✓</span></div></div>'
     });
   }
 
@@ -615,7 +686,7 @@ export function installCrewTour(api) {
     stage = "remove-preview";
     refreshWarnings({ includeSource: false });
     api.focusQuestion(faultyId);
-    coach("improve", "Ein Hinweis ist noch offen.", "Bei Aufgabe 9 ist für „gelb“ fälschlich „blue“ als richtige Lösung hinterlegt. KI kann Fehler machen – deshalb bleibt die Lehrkraft in der Kontrolle.", {
+    coach("improve", "Ein Hinweis ist noch offen.", "Bei Aufgabe 9 ist für „gelb“ fälschlich „blue“ als richtige Lösung hinterlegt. KI kann Fehler machen – deshalb prüfen wir auch einen guten Entwurf immer noch einmal.", {
       target: `#questionList .questionCard[data-id="${CSS.escape(faultyId)}"]`,
       button: "Fehlerhafte Aufgabe löschen",
       onButton: () => {
@@ -698,7 +769,6 @@ export function installCrewTour(api) {
     if (rows.length < 2) return;
     const byKey = new Map(rows.map(row => [String(row.dataset.key ?? ""), row]));
     if (["0", "1", "2"].every(key => byKey.has(key))) {
-      // Deterministic wrong order for the tutorial so the sorting controls are meaningful.
       [byKey.get("1"), byKey.get("0"), byKey.get("2")].forEach(row => list.appendChild(row));
       return;
     }
@@ -713,35 +783,13 @@ export function installCrewTour(api) {
 
     if (event === "view") {
       const allowed = {
-        new: ["dashboardView", "createView"],
-        handoff: ["createView"],
-        choice: ["createView", "aiView"],
-        "form-intro": ["aiView"],
-        "form-filling": ["aiView"],
-        "image-choice": ["aiView"],
-        form: ["aiView"],
-        creating: ["aiView", "editorView"],
-        draft: ["editorView"],
-        outline: ["editorView"],
-        "outline-question": ["editorView"],
-        edit: ["editorView"],
-        "edit-success": ["editorView"],
-        variant: ["editorView"],
-        "variant-dialog": ["editorView"],
-        "variant-wait": ["editorView"],
-        "variant-apply": ["editorView"],
-        "remove-preview": ["editorView"],
-        remove: ["editorView"],
-        settings: ["editorView"],
-        publish: ["editorView", "publishView"],
-        published: ["publishView", "studentView"],
-        identity: ["studentView"],
-        "identity-start": ["studentView"],
-        answering: ["studentView"],
-        submitted: ["studentView", "resultsView"],
-        results: ["resultsView"],
-        review: ["resultsView"],
-        finish: ["resultsView"]
+        new: ["dashboardView", "createView"], handoff: ["createView"], choice: ["createView", "aiView"],
+        "form-intro": ["aiView"], "form-filling": ["aiView"], "image-choice": ["aiView"], form: ["aiView"], creating: ["aiView", "editorView"],
+        draft: ["editorView"], outline: ["editorView"], "outline-question": ["editorView"], edit: ["editorView"], "edit-success": ["editorView"],
+        variant: ["editorView"], "variant-dialog": ["editorView"], "variant-wait": ["editorView"], "variant-apply-wait": ["editorView"], "variant-apply": ["editorView"],
+        "variant-review-wait": ["editorView"], "variant-review": ["editorView"], "remove-preview": ["editorView"], remove: ["editorView"], settings: ["editorView"],
+        publish: ["editorView", "publishView"], published: ["publishView", "studentView"], identity: ["studentView"], "identity-start": ["studentView"],
+        answering: ["studentView"], submitted: ["studentView", "resultsView"], results: ["resultsView"], review: ["resultsView"], finish: ["resultsView"]
       };
       if (allowed[stage] && !allowed[stage].includes(data.id)) {
         error("Die Tour ist aus dem vorgesehenen Schritt gesprungen. Lade die Seite neu; die Einführung startet anschließend wieder am Anfang.", () => location.reload());
@@ -763,7 +811,7 @@ export function installCrewTour(api) {
 
     if (event === "view" && data.id === "aiView" && stage === "choice") {
       stage = "form-intro";
-      coach("create", "Wir bauen einen Test für Klasse 4.", "Thema: Colours, Tiere und Schulsachen. Ich fülle die echten Felder jetzt von selbst aus – inklusive Bildanzahl und „Eigene Wünsche“.", {
+      coach("create", "Wir bauen einen Englischtest für die 4. Klasse Grundschule.", "Thema: Colours, animals & school things. Ich fülle die echten Felder jetzt von selbst aus – inklusive Bildanzahl und „Eigene Wünsche“.", {
         button: "Felder ausfüllen",
         onButton: ghostFillForm,
         centered: true
@@ -784,19 +832,13 @@ export function installCrewTour(api) {
     }
 
     if (event === "variants-ready" && ["variant-dialog", "variant-wait", "variant"].includes(stage)) {
-      stage = "variant-apply";
-      document.querySelectorAll(".gcTourInlineHint, .gcTourVariantMentor").forEach(node => node.remove());
-      refreshWarnings({ includeSource: false });
-      coach("improve", "Die Katze-Variante ist fertig.", "Übernimm genau diese Variante. Die Hund-Aufgabe bleibt dabei erhalten – eine Variante ist eine zusätzliche Aufgabe.", {
-        target: "#variantBackgroundProgress .applyVariants",
-        interactiveTarget: true
-      });
+      void showVariantApplyStep();
       return;
     }
 
     if (event === "variants-applied" && stage === "variant-apply") {
       refreshWarnings({ includeSource: false });
-      showFaultyDeleteStep();
+      void showVariantReviewStep();
       return;
     }
 
@@ -823,7 +865,10 @@ export function installCrewTour(api) {
       stage = "answering";
       hideCoach();
       freeRegion = $("#studentForm");
-      window.setTimeout(ensureOrderingStartsUnsorted, 80);
+      window.setTimeout(() => {
+        decorateTutorialCatStudent();
+        ensureOrderingStartsUnsorted();
+      }, 100);
       return;
     }
 
@@ -940,10 +985,15 @@ export function installCrewTour(api) {
     void prepareVariantDialog(event.detail?.dialog || null);
   });
   document.addEventListener("gradecrew:variant-submitted", () => variantSubmitted());
+  document.addEventListener("gradecrew:variant-kept", () => {
+    if (!owned() || stage !== "variant-review") return;
+    refreshWarnings({ includeSource: false });
+    showFaultyDeleteStep();
+  });
 
   const style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "./gradecrew-tour.css?v=2.3.1-gc14";
+  style.href = "./gradecrew-tour.css?v=2.3.1-gc15";
   document.head.append(style);
   addEventListener("resize", schedulePlace, { passive: true });
   addEventListener("scroll", schedulePlace, { passive: true, capture: true });
