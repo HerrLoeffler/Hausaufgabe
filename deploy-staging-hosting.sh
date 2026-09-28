@@ -8,7 +8,7 @@ PROJECT_ID="hausaufgabe-staging"
 for FILE in app.js interface.js startup.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-tour.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs; do
   node --check "$FILE"
 done
-node --test ai-*.test.js ordering-grading.test.mjs
+node --test ai-*.test.js ordering-grading.test.mjs gradecrew-tour.test.mjs
 if [ ! -d tools/ui/node_modules/jsdom ]; then
   npm ci --prefix tools/ui --no-audit --no-fund
 fi
