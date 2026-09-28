@@ -5,28 +5,7 @@ const expected = JSON.parse(await readFile(process.argv[2], 'utf8'));
 if (expected.project !== 'hausaufgabe-staging') throw new Error('Staging verification only.');
 
 const origin = 'https://hausaufgabe-staging.web.app';
-const assets = [
-  'index.html',
-  'startup.js',
-  'app.js',
-  'interface.js',
-  'gradecrew-tour.js',
-  'gradecrew-tour.css',
-  'firebase-config.js',
-  'visual-enhancements.js',
-  'ui-enhancements.js',
-  'variant-enhancements.js',
-  'gradecrew-brand.css',
-  'workspace.css',
-  'assets/gradecrew/penguin-guide.svg',
-  'assets/gradecrew/penguin-guide-welcome.svg',
-  'assets/gradecrew/elephant-create-welcome.svg',
-  'assets/gradecrew/fox-improve-welcome.svg',
-  'assets/gradecrew/owl-grade-welcome.svg',
-  'assets/gradecrew/demo-backpack.svg',
-  'assets/gradecrew/demo-pencil.svg',
-  'assets/gradecrew/demo-books.svg'
-];
+const assets = Object.keys(expected.files);
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -71,3 +50,4 @@ async function waitForAsset(name) {
 
 for (const name of assets) await waitForAsset(name);
 console.log(`Remote assets match ${expected.version} (${expected.commit.slice(0, 8)}).`);
+

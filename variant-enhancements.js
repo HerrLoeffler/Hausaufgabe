@@ -156,13 +156,11 @@ function openRequestDialog(button) {
     event.preventDefault();
     const form = event.currentTarget;
     const selectedMediaKind = String(form.elements.mediaKind.value || "none");
-    // The onboarding visually demonstrates a picture variant, but uses the fixed
-    // tutorial artwork instead of spending an image-generation request.
-    const tutorial = document.body.classList.contains("gcRealTourActive") && dialog.classList.contains("gcTourVariantDialog");
+    // The core resolves prepared tutorial artwork without changing this choice.
     const item = {
       ...meta,
       count: Number(form.elements.count.value),
-      mediaKind: tutorial ? "none" : selectedMediaKind,
+      mediaKind: selectedMediaKind,
       displayMediaKind: selectedMediaKind,
       instruction: String(form.elements.instruction.value || "").trim(),
       queuedAt: Date.now(),

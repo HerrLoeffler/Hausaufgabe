@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc11";
+const APP_VERSION = "2.3.1-gc18";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -1212,7 +1212,7 @@ async function loadDashboard() {
     await renderLocalDraftList();
     await loadTeacherTourConfig();
     try {
-      const module = await import("./gradecrew-tour.js?v=2.3.1-gc11");
+      const module = await import("./gradecrew-tour.js?v=2.3.1-gc18");
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
       if (!crewTour) crewTour = module.installCrewTour({
         uid: () => state.user?.uid || "",
@@ -2303,7 +2303,10 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
-  if (crewTour?.creating) return crewTour.create();
+  if (crewTour?.active) {
+    if (crewTour.creating) return crewTour.create();
+    return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
+  }
   try {
     const request = collectAiRequest();
     await saveAiPreferences({ silent: true });
@@ -3447,7 +3450,7 @@ function applyPendingVariants() {
   if (!task.running && !task.questions.length) state.variantTask = null;
   renderVariantProgress();
   toast(`${next.length} ${next.length === 1 ? "Variante übernommen" : "Varianten übernommen"}. Bitte speichern.`);
-  if (typeof crewTour !== "undefined") crewTour?.notify("variants-applied", {quizId: task.quizId});
+  if (typeof crewTour !== "undefined") crewTour?.notify("variants-applied", {quizId: task.quizId, questionIds: next.map(question => question.id)});
 }
 
 async function createQuestionVariants(q, { count, mediaKind, instruction = "" }) {
@@ -3472,15 +3475,23 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
       ensureOwner();
       task.message = `Variante ${i + 1} von ${count} wird erstellt …`;
       renderVariantProgress();
-      const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(quizId)) ? crewTour.preparedResponse(q, {variant:true,mediaKind}) : await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
+      const tutorialVariant = typeof crewTour !== "undefined" && crewTour?.ownsQuiz(quizId);
+      const response = tutorialVariant ? crewTour.preparedResponse(q, {variant:true,mediaKind}) : await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
         testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
       ensureOwner();
       const rawQuestion = response.question;
-      if ((rawQuestion?.mediaIntent?.kind || "none") !== mediaKind) throw new Error("Die Variante entspricht nicht der gewählten Bildart.");
+      const preparedImage = tutorialVariant && rawQuestion?.tutorialImageUrl === "/assets/gradecrew/demo-cat.svg";
+      if (!preparedImage && (rawQuestion?.mediaIntent?.kind || "none") !== mediaKind) throw new Error("Die Variante entspricht nicht der gewählten Bildart.");
       const next = normalizeImportedQuestion(rawQuestion, 0, { warnings: [], repairs: [] });
+      if (preparedImage) {
+        // Persist the fixed tutorial asset through the normal question model.
+        // Editor, student view and assessment all render the same saved image.
+        next.imageUrl = rawQuestion.tutorialImageUrl;
+        next.imageAlt = "Eine freundliche orangefarbene Katze.";
+      }
       next.aiOrigin = { kind: "variant", model: String(response.meta?.model || ""), promptVersion: String(response.meta?.promptVersion || "") };
       next.id = doc(collection(db, "quizzes", quizId, "questions")).id;
-      if (mediaKind !== "none") {
+      if (!tutorialVariant && mediaKind !== "none") {
         task.message = `Bild für Variante ${i + 1} von ${count} wird geprüft …`;
         renderVariantProgress();
         await applyGeneratedMedia(rawQuestion, next, quizId, next.id);
@@ -3491,7 +3502,6 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
       renderVariantProgress();
     }
     task.message = `${count} ${count === 1 ? "Variante ist" : "Varianten sind"} fertig.`;
-    if (typeof crewTour !== "undefined") crewTour?.notify("variants-ready", {quizId});
   } catch (err) {
     task.message = `${task.questions.length} von ${count} Varianten bereit. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`;
     if (state.user?.uid === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
@@ -3502,6 +3512,10 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
     if (state.variantTask === task || !state.variantTask) state.aiVariantsRunning = false;
     if (state.user?.uid !== uid && state.variantTask === task) state.variantTask = null;
     renderVariantProgress();
+  }
+  // Notify after the final render; otherwise the coach targets a detached button.
+  if (state.user?.uid === uid && state.variantTask === task && task.questions.length) {
+    if (typeof crewTour !== "undefined") crewTour?.notify("variants-ready", {quizId});
   }
 }
 
@@ -6924,7 +6938,7 @@ document.addEventListener("gradecrew:variant-kept", handleVariantKept);
 
 // ---------- Guided onboarding: normal quiz data, normal editor, normal submissions ----------
 function prefillTutorialRequest() {
-  const values = {aiSubject:"Englisch",aiGrade:"5",aiSchoolType:"Mittelschule",aiRegion:"Bayern",aiTopic:"Colours, animals & school things",aiCount:"10",aiPoints:"10",aiImageQuestionCount:"3",aiCustomNotes:"Vorbereiteter Übungstest mit drei Bildaufgaben. Anschließend eine Minute selbst ausprobieren."};
+  const values = {aiSubject:"Englisch",aiGrade:"4",aiSchoolType:"Grundschule",aiRegion:"Bayern",aiTopic:"Colours, animals & school things",aiCount:"10",aiPoints:"10",aiImageQuestionCount:"3",aiCustomNotes:"Vorbereiteter Übungstest mit drei Bildaufgaben. Anschließend eine Minute selbst ausprobieren."};
   for (const [id,value] of Object.entries(values)) {
     const input=$(id); if (!input) continue;
     input.value=value;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));
@@ -6936,17 +6950,18 @@ async function createTutorialQuiz(payload) {
   if (!tutorialDraft || tutorialDraft.uid !== uid) {
     const created=await createQuizDocument({...quizDefaults(),title:payload.title,subject:payload.subject,grade:payload.grade,
       description:payload.description,timeLimitMinutes:1,startMode:"student",resultMode:"points_grade",showSolutions:true,
-      tutorialVersion:"gradecrew-live-tour-v3",tutorialReady:false,questionCount:10,totalPoints:10});
+      tutorialVersion:"gradecrew-live-tour-v8",tutorialReady:false,questionCount:10,totalPoints:10});
     tutorialDraft={uid,code:created.code};
   }
   const {code}=tutorialDraft;
   if (state.user?.uid !== uid || !crewTour?.creating) throw new Error("Tour beendet. Der begonnene Übungsentwurf bleibt in deiner Übersicht.");
   const batch=writeBatch(db);
   payload.questions.forEach((raw,index)=>{
-    const question={...deepClone(raw),position:index+1,aiOrigin:{kind:"tutorial",model:"prepared-tutorial",promptVersion:"gradecrew-live-tour-v3"}};
+    const question={...deepClone(raw),position:index+1,aiOrigin:{kind:"tutorial",model:"prepared-tutorial",promptVersion:"gradecrew-live-tour-v8"}};
     batch.set(doc(db,"quizzes",code,"questions",`tutorial-${index+1}`),{...sanitizeQuestionForSave(question),updatedAt:serverTimestamp()});
   });
   batch.update(doc(db,"quizzes",code),{tutorialReady:true,updatedAt:serverTimestamp()});
   await batch.commit();
   return code;
 }
+

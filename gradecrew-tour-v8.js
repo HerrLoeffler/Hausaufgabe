@@ -2,7 +2,7 @@ import {
   installCrewTour as installV7,
   CREW,
   DEMO_TEST as V7_DEMO_TEST
-} from "./gradecrew-tour-v7.js?v=2.3.1-gc16";
+} from "./gradecrew-tour-v7.js?v=2.3.1-gc18";
 
 export const TOUR_VERSION = "gradecrew-live-tour-v8";
 export { CREW };
@@ -100,21 +100,22 @@ export function installCrewTour(api) {
   installCoachPolish();
 
   const dashboard = base.dashboard;
-  return {
-    ...base,
-    preparedResponse,
-    dashboard(args) {
-      const uid = args?.uid || api.uid?.() || "";
-      if (uid) {
-        const migrationKey = `gradecrew-tour-v8-migrated:${uid}`;
-        try {
-          if (localStorage.getItem(migrationKey) !== "1") {
-            localStorage.removeItem(`gradecrew-live-tour-v7:${uid}`);
-            localStorage.setItem(migrationKey, "1");
-          }
-        } catch {}
-      }
-      return dashboard(args);
+  // Keep V7's live active/creating getters. Spreading base snapshots both as
+  // false and accidentally routes onboarding through the paid AI job path.
+  base.preparedResponse = preparedResponse;
+  base.dashboard = function dashboardV8(args) {
+    const uid = args?.uid || api.uid?.() || "";
+    if (uid) {
+      const migrationKey = `gradecrew-tour-v8-migrated:${uid}`;
+      try {
+        if (localStorage.getItem(migrationKey) !== "1") {
+          localStorage.removeItem(`gradecrew-live-tour-v7:${uid}`);
+          localStorage.setItem(migrationKey, "1");
+        }
+      } catch {}
     }
+    return dashboard(args);
   };
+  return base;
 }
+

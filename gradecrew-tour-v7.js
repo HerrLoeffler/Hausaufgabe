@@ -70,6 +70,7 @@ export function installCrewTour(api) {
   let quizId = "";
   let editSourceId = "";
   let variantSourceId = "";
+  let variantQuestionId = "";
   let faultyId = "";
   let submissionId = "";
   let root = null;
@@ -120,7 +121,7 @@ export function installCrewTour(api) {
     hideCoach();
     clearWarnings();
     document.querySelectorAll(".gcTourInlineHint, .gcTourVariantMentor").forEach(node => node.remove());
-    document.body.classList.remove("gcRealTourActive");
+    document.body.classList.remove("gcRealTourActive", "gcTourAnswering");
     document.documentElement.classList.remove("gcTourScrollLocked");
     if (done) {
       try { localStorage.setItem(doneKey(), "done"); } catch {}
@@ -253,7 +254,10 @@ export function installCrewTour(api) {
     if (!owned()) return;
     root = document.createElement("aside");
     root.className = "gcRealCoach gcCoachCentered gcCoachHandoff";
-    root.innerHTML = `<div class="gcHandoffFaces"><div>${image(fromRole,108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>→</span><div>${image(toRole,108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div></div><span class="eyebrow">Die Crew arbeitet zusammen</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
+    const faces = toRole === "create"
+      ? `<div>${image(toRole,148)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`
+      : `<div>${image(fromRole,108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>→</span><div>${image(toRole,108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`;
+    root.innerHTML = `<div class="gcHandoffFaces">${faces}</div><span class="eyebrow">${toRole === "create" ? "Remy · Erstellen" : "Die Crew arbeitet zusammen"}</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
     root.querySelector(".gcCoachNext").addEventListener("click", next);
     document.body.classList.add("gcCoachVisible");
     document.body.append(root);
@@ -292,7 +296,7 @@ export function installCrewTour(api) {
     if (active || !api.uid() || !api.isDashboard()) return;
     suppressLegacyGuides();
     api.beginRun();
-    owner = api.uid(); quizId = ""; editSourceId = ""; variantSourceId = ""; faultyId = ""; submissionId = ""; freeRegion = null;
+    owner = api.uid(); quizId = ""; editSourceId = ""; variantSourceId = ""; variantQuestionId = ""; faultyId = ""; submissionId = ""; freeRegion = null;
     active = true; busy = false; stage = "intro"; ++run;
     document.body.classList.add("gcRealTourActive");
     document.documentElement.classList.add("gcTourScrollLocked");
@@ -470,25 +474,6 @@ export function installCrewTour(api) {
     coach("improve", "Ich erstelle die Variante …", "Die ursprüngliche Aufgabe bleibt bestehen. Gleich kannst du die neue Katzen-Variante zusätzlich übernehmen.", { target:"#variantBackgroundProgress", body:'<div class="gcTourWorking"><span></span><span></span><span></span><small>1 Variante · Katze mit Bild · wird geprüft</small></div>' });
   }
 
-  function decorateTutorialCatCard() {
-    const card = $$("#questionList .questionCard").find(node => /Katze/i.test(node.querySelector(".qText")?.value || ""));
-    if (!card) return null;
-    if (!card.querySelector(".gcTutorialCatFigure")) {
-      const figure = document.createElement("figure"); figure.className = "gcTutorialCatFigure";
-      figure.innerHTML = '<img src="/assets/gradecrew/demo-cat.svg" alt="Sehr niedliche orangefarbene Katze"><figcaption>Bild zur neuen Katzen-Variante</figcaption>';
-      card.querySelector(".questionGrid")?.insertAdjacentElement("afterend", figure);
-    }
-    return card;
-  }
-
-  function decorateTutorialCatStudent() {
-    const section = $$("#studentQuestions .studentQuestion").find(node => /Katze/i.test(node.textContent || ""));
-    if (!section || section.querySelector(".gcTutorialCatStudent")) return;
-    const figure = document.createElement("figure"); figure.className = "studentQuestionImage gcTutorialCatStudent";
-    figure.innerHTML = '<img src="/assets/gradecrew/demo-cat.svg" alt="Sehr niedliche orangefarbene Katze">';
-    section.querySelector("h3")?.insertAdjacentElement("afterend", figure);
-  }
-
   async function showVariantApplyStep() {
     if (!owned()) return;
     stage = "variant-apply-wait";
@@ -502,8 +487,11 @@ export function installCrewTour(api) {
   async function showVariantReviewStep() {
     if (!owned()) return;
     stage = "variant-review-wait";
-    const card = await waitForElement('#questionList .questionCard[data-tutorial-variant="cat"], #questionList .questionCard .qText', 1200).then(() => decorateTutorialCatCard());
-    const keep = await waitForElement("#questionList .variantReviewBar .variantKeep", 5000);
+    const token = run;
+    const selector = `#questionList .questionCard[data-id="${CSS.escape(variantQuestionId)}"]`;
+    const card = await waitForElement(selector, 1200);
+    const keep = await waitForElement(`${selector} .variantReviewBar .variantKeep`, 5000);
+    if (token !== run) return;
     if (!owned()) return;
     if (!card || !keep) return error("Die neue Katzen-Aufgabe wurde noch nicht vollständig eingefügt. Wir bleiben hier, bis sie wirklich im Test sichtbar und bestätigbar ist.", showVariantReviewStep);
     stage = "variant-review";
@@ -559,7 +547,7 @@ export function installCrewTour(api) {
       if(allowed[stage]&&!allowed[stage].includes(data.id)){error("Die Tour ist aus dem vorgesehenen Schritt gesprungen. Lade die Seite neu; die Einführung startet anschließend wieder am Anfang.",()=>location.reload());return;}
     }
     if(event==="view"&&data.id==="createView"&&stage==="new"){
-      stage="handoff";handoff("guide","create","Für den ersten Entwurf hole ich Remy dazu.","Hallo, ich bin Remy. Ich erstelle mit dir den ersten Entwurf und zeige dir, welche Angaben GradeCrew dafür braucht.",()=>{stage="choice";coach("create","Wir starten mit KI.","„Mit KI erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben verfügbar, stehen heute aber nicht im Mittelpunkt.",{target:"#createAiBtn",interactiveTarget:true});});return;
+      stage="handoff";handoff("guide","create","Hallo, ich bin Remy!","Ich erstelle mit dir den ersten Entwurf und zeige dir, welche Angaben GradeCrew dafür braucht.",()=>{stage="choice";coach("create","Wir starten mit KI.","„Mit KI erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben verfügbar, stehen heute aber nicht im Mittelpunkt.",{target:"#createAiBtn",interactiveTarget:true});});return;
     }
     if(event==="view"&&data.id==="aiView"&&stage==="choice"){
       stage="form-intro";coach("create","Wir bauen einen Test für Klasse 4.","Englisch, Grundschule: Colours, animals & school things. Ich fülle die echten Felder gleich Schritt für Schritt aus.",{button:"Felder ausfüllen",onButton:ghostFillForm,centered:true});return;
@@ -567,12 +555,12 @@ export function installCrewTour(api) {
     if(event==="edit-opened"&&stage==="edit"){void prepareEditPanel();return;}
     if(event==="edited"&&stage==="edit"){clearOutlineWarning(editSourceId);refreshWarnings({includeEdit:false});celebrateEdit();return;}
     if(event==="variants-ready"&&["variant-dialog","variant-wait","variant"].includes(stage)){void showVariantApplyStep();return;}
-    if(event==="variants-applied"&&stage==="variant-apply"){refreshWarnings({includeEdit:false});void showVariantReviewStep();return;}
+    if(event==="variants-applied"&&stage==="variant-apply"){variantQuestionId=data.questionIds?.[0]||"";refreshWarnings({includeEdit:false});void showVariantReviewStep();return;}
     if(event==="question-deleted"&&stage==="remove"&&data.questionId===faultyId){showSettingsStep();return;}
     if(event==="published"&&stage==="publish"){stage="published";coach("guide","Das ist der echte Zugang für die Klasse.","Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle.",{target:"#openPublishedStudentBtn",interactiveTarget:true});return;}
     if(event==="student-ready"&&stage==="published"){askName();return;}
-    if(event==="student-started"&&["identity","identity-start"].includes(stage)){stage="answering";hideCoach();freeRegion=$("#studentForm");setTimeout(()=>{decorateTutorialCatStudent();ensureOrderingStartsUnsorted();},100);return;}
-    if(event==="submitted"&&["answering","identity-start"].includes(stage)){submissionId=data.submissionId;freeRegion=null;stage="submitted";coach("guide","Deine Abgabe ist gespeichert.","Das waren echte Übungsantworten. Öffne jetzt die Lehrkraft-Auswertung – dort wartet Wilma auf dich.",{target:"#studentTeacherResultsBtn",interactiveTarget:true});return;}
+    if(event==="student-started"&&["identity","identity-start"].includes(stage)){stage="answering";hideCoach();freeRegion=$("#studentForm");document.documentElement.classList.remove("gcTourScrollLocked");document.body.classList.add("gcTourAnswering");setTimeout(()=>{if(owned()&&stage==="answering")ensureOrderingStartsUnsorted();},100);return;}
+    if(event==="submitted"&&["answering","identity-start"].includes(stage)){submissionId=data.submissionId;freeRegion=null;document.body.classList.remove("gcTourAnswering");document.documentElement.classList.add("gcTourScrollLocked");stage="submitted";coach("guide","Deine Abgabe ist gespeichert.","Das waren echte Übungsantworten. Öffne jetzt die Lehrkraft-Auswertung – dort wartet Wilma auf dich.",{target:"#studentTeacherResultsBtn",interactiveTarget:true});return;}
     if(event==="results-ready"&&stage==="submitted"){
       stage="results";handoff("guide","grade","Jetzt ist Wilma dran.","Hallo, ich bin Wilma. Ich zeige dir, wie automatische Bewertung und dein eigenes Urteil zusammenarbeiten.",()=>coach("grade","Öffne deine Übungsabgabe.","In deiner Zeile findest du „Bewerten“. Dort siehst du Antworten, Lösungen, Bilder und Punkte.",{target:`#resultsTableWrap .reviewBtn[data-id="${CSS.escape(submissionId)}"]`,interactiveTarget:true}));return;
     }
@@ -597,11 +585,12 @@ export function installCrewTour(api) {
 
   document.addEventListener("gradecrew:variant-dialog-opened",event=>{if(!owned()||stage!=="variant")return;void prepareVariantDialog(event.detail?.dialog||null);});
   document.addEventListener("gradecrew:variant-submitted",()=>variantSubmitted());
-  document.addEventListener("gradecrew:variant-kept",()=>{if(!owned()||stage!=="variant-review")return;refreshWarnings({includeEdit:false});showFaultyDeleteStep();});
+  document.addEventListener("gradecrew:variant-kept",event=>{if(!owned()||stage!=="variant-review"||event.detail?.id!==variantQuestionId||event.detail?.quizId!==quizId||event.detail?.ownerId!==owner)return;refreshWarnings({includeEdit:false});showFaultyDeleteStep();});
 
-  const style=document.createElement("link");style.rel="stylesheet";style.href="./gradecrew-tour.css?v=2.3.1-gc16";document.head.append(style);
+  const style=document.createElement("link");style.rel="stylesheet";style.href="./gradecrew-tour.css?v=2.3.1-gc18";document.head.append(style);
   addEventListener("resize",schedulePlace,{passive:true});
   document.addEventListener("gradecrew:account-changed",()=>stop());
 
   return { start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&["form-intro","form-filling","image-choice","form","creating"].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse };
 }
+

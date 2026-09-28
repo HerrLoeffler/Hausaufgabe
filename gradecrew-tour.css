@@ -1,7 +1,7 @@
 /* GradeCrew guided journey: the real app stays visible, but only the current
    tutorial control is interactive. The coach moves next to the current task. */
-html.gcTourScrollLocked,html:has(body.gcRealTourActive),body.gcRealTourActive{overflow:hidden!important;overscroll-behavior:none!important}
-body.gcRealTourActive{touch-action:none}
+html.gcTourScrollLocked,body.gcRealTourActive:not(.gcTourAnswering){overflow:hidden!important;overscroll-behavior:none!important}
+body.gcRealTourActive:not(.gcTourAnswering){touch-action:none}
 .gcRealCoach{
   position:fixed;z-index:2147482000;width:min(360px,calc(100vw - 28px));max-height:calc(100dvh - 28px);
   box-sizing:border-box;overflow:auto;background:#fffefa;border:1px solid #d7e0dc;border-radius:22px;
@@ -80,3 +80,4 @@ dialog.gcTourVariantDialog::backdrop{background:rgba(15,23,42,.48);backdrop-filt
 
 @media(max-width:900px){.gcRealCoach,.gcCoachCentered{width:min(560px,calc(100vw - 20px));max-height:min(64dvh,560px);padding:15px 17px}.gcCoachIdentity img{width:62px;height:70px}.gcRealCoach h2{font-size:18px}.gcRealCoach p{font-size:13px;line-height:1.5;margin:9px 0}.gcRealCoach>small{display:none}.gcCrewIntroGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gcCrewIntroMember img{width:70px;height:76px}.gcEditPreview{grid-template-columns:1fr}.gcEditArrow{transform:rotate(90deg)}.gcRealTourActive .gcTourTarget{scroll-margin-top:230px;scroll-margin-bottom:230px}}
 @media(max-width:520px){.gcRealCoach,.gcCoachCentered{width:calc(100vw - 16px);max-height:76dvh;padding:13px 14px;border-radius:17px}.gcCoachIdentity{gap:8px}.gcCoachIdentity img{width:52px;height:58px}.gcCoachIdentityPrompt .gcCoachIdentity img{width:72px;height:78px}.gcCoachIdentityPrompt h2{font-size:21px}.gcHandoffFaces img{width:76px;height:76px}.gcHandoffFaces>span{font-size:18px}.gcThanksFaces img{width:82px;height:88px}.gcCrewIntroGrid{gap:7px}.gcCrewIntroMember{padding:9px 6px}.gcCrewIntroMember img{width:58px;height:64px}.gcCrewIntroMember:first-child img{width:64px;height:68px}.gcVariantReviewPreview{grid-template-columns:84px 1fr}.gcVariantReviewPreview img{width:84px;height:66px}dialog.gcTourVariantDialog{width:calc(100vw - 18px)}}
+

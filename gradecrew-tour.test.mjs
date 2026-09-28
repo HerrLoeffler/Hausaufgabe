@@ -17,7 +17,7 @@ function fn(name) {
   return app.slice(start, app.indexOf('\n}', start) + 2);
 }
 
-function fixture(t) {
+function fixture(t, { publicEntry = false } = {}) {
   const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), {
     url: 'https://example.test', runScripts: 'outside-only', pretendToBeVisual: true
   });
@@ -29,6 +29,16 @@ function fixture(t) {
   w.CSS = { escape: value => String(value) };
   w.scrollTo = () => {};
   w.eval(source.replace(/^export /gm, '') + '\nwindow.demo=DEMO_TEST;window.install=installCrewTour;window.response=preparedResponse;window.crew=CREW;window.tourVersion=TOUR_VERSION;');
+  if (publicEntry) {
+    // Follow the shipped public entry point, including its wrapper. Testing only
+    // V7 missed V8 spreading and freezing the active/creating accessors.
+    const entry = fs.readFileSync('gradecrew-tour.js', 'utf8');
+    const modulePath = entry.match(/from "\.\/(.*?)\?/)[1];
+    const wrapper = fs.readFileSync(modulePath, 'utf8')
+      .replace(/^import \{[\s\S]*?\} from .*?;\n/, '')
+      .replace(/^export \{ CREW \};\n/m, '').replace(/^export /gm, '');
+    w.eval(`(() => { const installV7=window.install, CREW=window.crew, V7_DEMO_TEST=window.demo;\n${wrapper}\nwindow.demo=DEMO_TEST;window.install=installCrewTour;window.response=preparedResponse;window.tourVersion=TOUR_VERSION; })()`);
+  }
   return w;
 }
 
@@ -51,6 +61,168 @@ function adapter(w) {
     focusReviewLast: () => {}
   };
 }
+
+async function until(predicate, label, timeout = 4000) {
+  const end = Date.now() + timeout;
+  while (Date.now() < end) {
+    if (predicate()) return;
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  assert.fail(`Timed out: ${label}`);
+}
+
+test('Public wrapper keeps live flags; Remy appears alone and onboarding never starts a provider job', async t => {
+  const w = fixture(t, { publicEntry: true });
+  const api = adapter(w);
+  const tour = w.install(api);
+  let providerCalls = 0, preparedCalls = 0;
+  Object.assign(w, {
+    crewTour: tour, toast: () => {}, collectAiRequest: () => ({}),
+    saveAiPreferences: async () => {}, startAiCreationJob: async () => providerCalls++
+  });
+  w.eval(fn('generateAiTestNative'));
+  assert.equal(tour.active, false);
+  tour.start();
+  assert.equal(tour.active, true);
+  await w.generateAiTestNative(); // Wrong tutorial stage must fail closed.
+  assert.equal(providerCalls, 0);
+  w.document.querySelector('.gcCoachNext').click();
+  tour.notify('view', { id: 'createView' });
+  const handoff = w.document.querySelector('.gcCoachHandoff');
+  assert.equal(handoff.querySelectorAll('img').length, 1);
+  assert.match(handoff.querySelector('img').src, /elephant-create/);
+  handoff.querySelector('.gcCoachNext').click();
+  tour.notify('view', { id: 'aiView' });
+  assert.equal(tour.creating, true);
+  tour.create = async () => preparedCalls++;
+  await w.generateAiTestNative();
+  assert.equal(preparedCalls, 1);
+  assert.equal(providerCalls, 0);
+  w.document.dispatchEvent(new w.CustomEvent('gradecrew:account-changed'));
+  assert.equal(tour.active, false);
+  assert.equal(tour.creating, false);
+  await w.generateAiTestNative();
+  assert.equal(providerCalls, 1, 'ordinary creation still reaches its normal backend');
+});
+
+test('Public journey and real variant queue: prepared cat persists once, targeted Keep continues to real student/results flow', async t => {
+  const w = fixture(t, { publicEntry: true });
+  const nativeTimeout = w.setTimeout.bind(w);
+  w.setTimeout = (callback, delay, ...args) => nativeTimeout(callback, Math.min(delay, 2), ...args);
+  const api = adapter(w);
+  let nextId = 0, providers = 0, persistedDraft;
+  const state = { user: { uid: api.uid() }, currentQuiz: { id: 'DEMO1', published: false }, questions: [] };
+  const el = id => w.document.getElementById(id);
+  const render = () => {
+    const host = el('questionList'); host.replaceChildren();
+    const outline = el('questionOutline'); outline.replaceChildren();
+    state.questions.forEach((q, index) => {
+      const card = w.document.createElement('article');
+      card.className = 'questionCard'; card.dataset.id = q.id; card.dataset.index = String(index);
+      card.innerHTML = '<div class="questionTop"></div><textarea class="qText"></textarea><button class="aiEditQuestion">Edit</button><button class="aiVariantQuestion">Variant</button><button class="deleteQuestion">Delete</button>';
+      card.querySelector('.qText').value = q.text;
+      if (q.imageUrl) { const img = w.document.createElement('img'); img.src = q.imageUrl; card.append(img); }
+      card.querySelector('.deleteQuestion').onclick = () => {
+        state.questions = state.questions.filter(item => item.id !== q.id); render();
+        tour.notify('question-deleted', { quizId: 'DEMO1', questionId: q.id });
+      };
+      host.append(card);
+      const button = w.document.createElement('button'); button.className = 'questionOutlineItem'; outline.append(button);
+    });
+  };
+  api.createDemo = async payload => {
+    persistedDraft = payload;
+    state.questions = payload.questions.map((q, i) => ({ ...q, id: `tutorial-${i + 1}` }));
+    return 'DEMO1';
+  };
+  api.openEditor = async () => {
+    Object.assign(el('editorView').dataset, { quizId: 'DEMO1', ownerId: api.uid(), variantAllowed: 'true' });
+    el('editorView').classList.remove('hidden'); render();
+    tour.notify('view', { id: 'editorView' });
+  };
+  const tour = w.install(api);
+  const noProvider = async () => { providers++; throw new Error('Tutorial reached a provider'); };
+  Object.assign(w, {
+    state, crewTour: tour, $: el, db: {}, collection: (...args) => args, doc: () => ({ id: `new-${++nextId}` }),
+    questionForAi: q => ({ ...q }), questionContext: () => ({ existingQuestions: [] }),
+    // The import layer deliberately strips auxiliary metadata, as production does.
+    normalizeImportedQuestion: q => ({ type: q.type, text: q.text, points: q.points, options: q.options }),
+    renderQuestions: render, markDirty: () => {}, toast: () => {}, escapeHtml: value => String(value), round1: n => n,
+    aiFriendlyError: error => error.message, REPORTABLE_ERROR_CODES: { aiVariant: 'variant' },
+    showReportableError: report => assert.fail(report.message),
+    aiApi: { regenerateQuestion: noProvider }, applyGeneratedMedia: noProvider,
+    collectAiRequest: () => ({}), saveAiPreferences: noProvider, startAiCreationJob: noProvider
+  });
+  Object.assign(w, {
+    stopStudentTimer: () => {}, clearStudentSubscriptions: () => {}, readStoredTimer: () => null,
+    setupStudentProgress: () => {}, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
+  });
+  w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
+    'handleVariantRequest', 'handleVariantKept', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
+    'renderGapfillStudent', 'renderOrderingStudent', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+  w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
+  w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);
+  w.eval(variantEnhancements);
+  const next = () => { const button = w.document.querySelector('.gcCoachNext'); assert.ok(button); button.click(); };
+  tour.start(); next(); tour.notify('view', { id: 'createView' }); next();
+  tour.notify('view', { id: 'aiView' }); next();
+  await until(() => /Bilder plane/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'ghost-filled form');
+  assert.equal(el('aiGrade').value, '4'); next();
+  await until(() => /Perfekt/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'ghost-filled preferences');
+  await w.generateAiTestNative();
+  assert.equal(persistedDraft.questions.length, 10);
+  assert.equal(persistedDraft.questions.filter(q => q.imageUrl).length, 3);
+  assert.match(persistedDraft.questions[5].text, /Bleistift/);
+  assert.equal(tour.ownsQuiz('DEMO1'), true);
+  next(); next(); next(); // Remy -> Emmi -> quality warning.
+  w.document.querySelector('.questionOutlineItem.gcTourTarget').click();
+  await until(() => w.document.querySelector('.aiEditQuestion.gcTourTarget'), 'edit source');
+  tour.notify('edited', { quizId: 'DEMO1' }); next(); next();
+  w.document.querySelector('.aiVariantQuestion.gcTourTarget').click();
+  await until(() => w.document.querySelector('dialog .gcTourTarget[type="submit"]'), 'variant ghost fill');
+  assert.equal(w.document.querySelector('.gcRealCoach'), null, 'only the modal mentor is visible');
+  assert.equal(w.document.querySelector('dialog [name="mediaKind"]').value, 'ai_generated');
+  w.document.querySelector('dialog .gcTourTarget[type="submit"]').click();
+  await until(() => w.document.querySelector('.applyVariants.gcTourTarget'), 'live Apply target after final render');
+  assert.equal(state.questions.length, 10, 'ready variant is staged outside editor');
+  assert.equal(state.variantTask.questions[0].imageUrl, '/assets/gradecrew/demo-cat.svg');
+  w.document.querySelector('.applyVariants.gcTourTarget').click();
+  await until(() => w.document.querySelector('.variantKeep.gcTourTarget'), 'new variant review');
+  assert.equal(state.questions.length, 11);
+  const cat = state.questions.find(q => q.id.startsWith('new-'));
+  assert.ok(cat);
+  assert.equal(w.document.querySelector('.variantKeep.gcTourTarget').closest('.questionCard').dataset.id, cat.id);
+  w.document.dispatchEvent(new w.CustomEvent('gradecrew:variant-kept', { detail: { id: 'wrong', quizId: 'DEMO1', ownerId: api.uid() } }));
+  assert.ok(w.document.querySelector('.variantKeep.gcTourTarget'), 'unrelated Keep cannot advance tour');
+  w.document.querySelector('.variantKeep.gcTourTarget').click();
+  assert.equal(cat.aiVariantKept, true);
+  const reloaded = JSON.parse(JSON.stringify(w.sanitizeQuestionForSave(cat)));
+  assert.equal(reloaded.imageUrl, '/assets/gradecrew/demo-cat.svg');
+  assert.equal(reloaded.options.find(o => o.correct).text, 'cat');
+  assert.equal(reloaded.aiVariantKept, true);
+  next(); w.document.querySelector('.deleteQuestion.gcTourTarget').click();
+  assert.equal(state.questions.length, 10);
+  assert.equal(state.questions.filter(q => /Katze/.test(q.text)).length, 1);
+  next(); tour.notify('published', { quizId: 'DEMO1' });
+  w.renderStudentQuiz({ ...persistedDraft, id: 'DEMO1', startMode: 'student' }, state.questions);
+  assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
+  assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 4);
+  assert.equal(w.document.querySelectorAll('.studentQuestionImage img[src$="demo-cat.svg"]').length, 1);
+  w.document.querySelector('.gcNamePrompt input').value = 'ML'; next();
+  assert.equal(el('studentName').value, 'ML');
+  tour.notify('student-started', { quizId: 'DEMO1' });
+  assert.equal(w.document.documentElement.classList.contains('gcTourScrollLocked'), false);
+  assert.equal(w.document.body.classList.contains('gcTourAnswering'), true);
+  tour.notify('submitted', { quizId: 'DEMO1', submissionId: 'saved-answer' });
+  assert.equal(w.document.body.classList.contains('gcTourAnswering'), false);
+  el('resultsTableWrap').innerHTML = '<button class="reviewBtn" data-id="saved-answer">Bewerten</button>';
+  tour.notify('results-ready', { quizId: 'DEMO1' }); next();
+  assert.ok(w.document.querySelector('.reviewBtn.gcTourTarget'));
+  tour.notify('review-opened', { submissionId: 'saved-answer' });
+  tour.notify('review-saved', { submissionId: 'saved-answer' }); next();
+  assert.equal(tour.active, false);
+  assert.equal(providers, 0);
+});
 
 test('Crew journey explains GradeCrew, introduces the complete Crew, then points to the real New Test action', t => {
   const w = fixture(t);
