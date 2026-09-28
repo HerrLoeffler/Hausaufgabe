@@ -144,7 +144,6 @@ function openRequestDialog(button) {
   dialog.querySelector(".variantRequestClose")?.addEventListener("click", cancel);
   dialog.querySelector(".variantRequestCancel")?.addEventListener("click", cancel);
   dialog.addEventListener("cancel", event => {
-    // The mandatory Crew tour owns the modal while it is active.
     if (document.body.classList.contains("gcRealTourActive")) {
       event.preventDefault();
       return;
@@ -230,7 +229,6 @@ function captureInsertedVariants(beforeIds, item, expectedCount) {
 
 function autoFinishCurrent() {
   if (!currentItem || autoApplying || !editorIsOpen() || !itemInCurrentEditor(currentItem)) return;
-  // During the guided tour the learner must explicitly click "Variante übernehmen".
   if (document.body.classList.contains("gcRealTourActive")) return;
   const host = progressHost();
   const status = progressState(host);
@@ -335,6 +333,17 @@ document.addEventListener("click", event => {
   openRequestDialog(variantButton);
 }, true);
 
+document.addEventListener("click", event => {
+  const target = event.target instanceof Element ? event.target : null;
+  const apply = target?.closest("#variantBackgroundProgress .applyVariants");
+  if (!apply || !document.body.classList.contains("gcRealTourActive") || !currentItem) return;
+  const item = currentItem;
+  window.setTimeout(() => {
+    if (currentItem === item) currentItem = null;
+    scheduleSync();
+  }, 80);
+}, false);
+
 document.addEventListener("gradecrew:account-changed", () => {
   queue = [];
   currentItem = null;
@@ -344,8 +353,6 @@ document.addEventListener("gradecrew:account-changed", () => {
 
 const observer = new MutationObserver(() => scheduleSync());
 function start() {
-  // Observe only the three small surfaces this enhancement owns. A full-body
-  // subtree observer caused unnecessary work in earlier staging builds.
   for (const id of ["variantBackgroundProgress", "questionList", "questionOutline"]) {
     const node = document.getElementById(id);
     if (node) observer.observe(node, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "data-running", "data-ready"] });
