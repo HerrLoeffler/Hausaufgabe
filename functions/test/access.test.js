@@ -3,17 +3,17 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { aiBetaAllowed } = require("../lib/access");
 
-test("admins always have AI beta access", () => {
+test("admins have AI access", () => {
   assert.equal(aiBetaAllowed({ role: "admin" }), true);
 });
 
-test("teachers need explicit AI beta flag", () => {
+test("all teachers have AI access without a beta flag", () => {
   assert.equal(aiBetaAllowed({ role: "teacher", aiBetaEnabled: true }), true);
-  assert.equal(aiBetaAllowed({ role: "teacher", aiBetaEnabled: false }), false);
-  assert.equal(aiBetaAllowed({ role: "teacher" }), false);
+  assert.equal(aiBetaAllowed({ role: "teacher", aiBetaEnabled: false }), true);
+  assert.equal(aiBetaAllowed({ role: "teacher" }), true);
 });
 
-test("unknown roles do not get AI beta access", () => {
+test("unknown roles do not get AI access", () => {
   assert.equal(aiBetaAllowed({ role: "student", aiBetaEnabled: true }), false);
   assert.equal(aiBetaAllowed({}), false);
 });
