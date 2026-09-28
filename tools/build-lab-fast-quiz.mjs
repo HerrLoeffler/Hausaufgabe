@@ -21,15 +21,14 @@ for (const reference of ['styles.css', 'fastquiz-v4.css', 'math-engine-v4.js', '
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
-for (const marker of ['Üben', 'All-Time-Highscore', 'Live mit Lehrkraft', 'Rundencode', 'Live-Scoreboard']) {
+for (const marker of ['Üben', 'All-Time-Highscore', 'Live mit Lehrkraft', 'Rundencode', 'Live-Scoreboard', '30 Teilnehmende']) {
   if (!html.includes(marker)) throw new Error(`Fast Quiz V4 build check failed: ${marker}`);
 }
 
 const app = await fs.readFile(path.join(output, 'app-v4.js'), 'utf8');
-for (const required of ['createLiveRoom', 'joinLiveRoom', 'startHighscore', 'finishHighscoreAttempt', 'wrongPenalty', 'lockSeconds', 'roomState', 'MAX']) {
-  if (!app.includes(required) && required !== 'MAX') throw new Error(`Fast Quiz V4 app check failed: ${required}`);
+for (const required of ['createLiveRoom', 'joinLiveRoom', 'startHighscore', 'finishHighscoreAttempt', 'wrongPenalty', 'lockSeconds', 'roomState', 'submitLive']) {
+  if (!app.includes(required)) throw new Error(`Fast Quiz V4 app check failed: ${required}`);
 }
-if (!app.includes('30')) throw new Error('Fast Quiz V4 app check failed: max-player marker');
 
 const engine = await fs.readFile(path.join(output, 'math-engine-v4.js'), 'utf8');
 for (const required of ['naturalQuestion', 'integerQuestion', 'decimalQuestion', 'fractionQuestion', 'LEVEL_RULES', "n1", "n2", "n3", "n4"]) {
