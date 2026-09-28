@@ -68,38 +68,29 @@ function outlineForCard(card) {
   return document.querySelector(`#questionOutline [data-position="${index + 1}"]`);
 }
 
-function clearOutlineState() {
-  document.querySelectorAll("#questionOutline .variantWorkingOutline, #questionOutline .variantQueuedOutline, #questionOutline .variantReviewOutline")
-    .forEach(node => node.classList.remove("variantWorkingOutline", "variantQueuedOutline", "variantReviewOutline"));
-}
-
 function markOutlineState() {
-  clearOutlineState();
-
-  if (currentItem && itemInCurrentEditor(currentItem)) {
-    const card = cardById(currentItem.id);
-    const outline = outlineForCard(card);
-    if (outline) {
-      outline.classList.add("variantWorkingOutline");
-      outline.title = "KI erstellt gerade Variante(n) zu dieser Aufgabe";
-    }
-  }
-
-  queue.filter(itemInCurrentEditor).forEach(item => {
-    const outline = outlineForCard(cardById(item.id));
-    if (outline && !outline.classList.contains("variantWorkingOutline")) {
-      outline.classList.add("variantQueuedOutline");
-      outline.title = "Variante(n) vorgemerkt";
-    }
-  });
-
-  pendingReview.forEach((item, id) => {
+  const states = new Map();
+  const add = (item, id, className, title) => {
     if (!itemInCurrentEditor(item)) return;
     const outline = outlineForCard(cardById(id));
-    if (outline) {
-      outline.classList.add("variantReviewOutline");
-      outline.title = "Neue KI-Variante prüfen";
+    if (!outline) return;
+    const state = states.get(outline) || { classes: new Set(), title };
+    state.classes.add(className); state.title = title; states.set(outline, state);
+  };
+  if (currentItem) add(currentItem, currentItem.id, "variantWorkingOutline", "KI erstellt gerade Variante(n) zu dieser Aufgabe");
+  queue.forEach(item => {
+    const outline = outlineForCard(cardById(item.id));
+    if (!states.get(outline)?.classes.has("variantWorkingOutline")) add(item, item.id, "variantQueuedOutline", "Variante(n) vorgemerkt");
+  });
+  pendingReview.forEach((item, id) => add(item, id, "variantReviewOutline", "Neue KI-Variante prüfen"));
+  document.querySelectorAll("#questionOutline .questionOutlineItem").forEach(outline => {
+    const next = states.get(outline);
+    for (const name of ["variantWorkingOutline", "variantQueuedOutline", "variantReviewOutline"]) {
+      const wanted = Boolean(next?.classes.has(name));
+      if (outline.classList.contains(name) !== wanted) outline.classList.toggle(name, wanted);
     }
+    if (next && outline.title !== next.title) outline.title = next.title;
+    else if (!next && ["Neue KI-Variante prüfen", "Variante(n) vorgemerkt", "KI erstellt gerade Variante(n) zu dieser Aufgabe"].includes(outline.title)) outline.removeAttribute("title");
   });
 }
 
@@ -219,7 +210,8 @@ function decorateProgress() {
 
 function captureInsertedVariants(beforeIds, item, expectedCount) {
   const added = allQuestionCards().filter(card => card.dataset.id && !beforeIds.has(card.dataset.id));
-  added.slice(0, expectedCount).forEach(card => {
+  const inserted = added.slice(0, expectedCount);
+  inserted.forEach(card => {
     pendingReview.set(card.dataset.id, {
       quizId: item.quizId,
       ownerId: item.ownerId,
@@ -228,11 +220,11 @@ function captureInsertedVariants(beforeIds, item, expectedCount) {
       createdAt: Date.now()
     });
   });
+  return inserted.map(card => card.dataset.id);
 }
 
 function autoFinishCurrent() {
   if (!currentItem || autoApplying || !editorIsOpen() || !itemInCurrentEditor(currentItem)) return;
-  if (document.body.classList.contains("gcRealTourActive")) return;
   const host = progressHost();
   const status = progressState(host);
 
@@ -259,9 +251,14 @@ function autoFinishCurrent() {
     apply.click();
     window.setTimeout(() => {
       if (currentItem !== item || !itemInCurrentEditor(item)) { autoApplying = false; return; }
-      captureInsertedVariants(beforeIds, item, ready);
+      const questionIds = captureInsertedVariants(beforeIds, item, ready);
       currentItem = null;
       autoApplying = false;
+      decoratePendingReviews();
+      markOutlineState();
+      document.dispatchEvent(new CustomEvent("gradecrew:variants-inserted", {
+        detail: { quizId: item.quizId, ownerId: item.ownerId, sourceId: item.id, questionIds }
+      }));
       scheduleSync();
     }, 120);
     return;
@@ -334,23 +331,6 @@ document.addEventListener("click", event => {
   event.preventDefault();
   event.stopImmediatePropagation();
   openRequestDialog(variantButton);
-}, true);
-
-// Capture the editor state before the app's real apply button mutates the question list.
-// The deferred callback then knows exactly which cards were newly inserted and can show
-// the normal "Neue KI-Variante" review bar during the guided tour.
-document.addEventListener("click", event => {
-  const target = event.target instanceof Element ? event.target : null;
-  const apply = target?.closest("#variantBackgroundProgress .applyVariants");
-  if (!apply || !document.body.classList.contains("gcRealTourActive") || !currentItem) return;
-  const item = currentItem;
-  const beforeIds = new Set(allQuestionCards().map(card => card.dataset.id).filter(Boolean));
-  const ready = Math.max(1, Number(document.getElementById("variantBackgroundProgress")?.dataset.ready) || Number(item.count) || 1);
-  window.setTimeout(() => {
-    captureInsertedVariants(beforeIds, item, ready);
-    if (currentItem === item) currentItem = null;
-    scheduleSync();
-  }, 140);
 }, true);
 
 document.addEventListener("gradecrew:account-changed", () => {

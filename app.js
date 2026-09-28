@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc19";
+const APP_VERSION = "2.3.1-gc20";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -1212,7 +1212,7 @@ async function loadDashboard() {
     await renderLocalDraftList();
     await loadTeacherTourConfig();
     try {
-      const module = await import("./gradecrew-tour.js?v=2.3.1-gc19");
+      const module = await import("./gradecrew-tour.js?v=2.3.1-gc20");
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
       if (!crewTour) crewTour = module.installCrewTour({
         uid: () => state.user?.uid || "",
@@ -3181,6 +3181,9 @@ function renderQuestions() {
     node.querySelector(".duplicateQuestion").addEventListener("click", () => duplicateQuestion(index));
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
     node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => openQuestionVariantDialog(q, index));
+    if (state.currentQuiz?.tutorialVersion && !q._aiFeedbackVerdict) {
+      q._aiFeedbackVerdict = state.currentQuiz.tutorialFeedback?.[q.id]?.verdict || "";
+    }
     const canRate = isAdmin() || Boolean(q.aiOrigin);
     for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
@@ -3259,8 +3262,38 @@ function aiQuestionFeedbackSnapshot(q) {
   };
 }
 
+async function submitTutorialQuestionFeedback(q, { verdict, reason, comment, action }) {
+  const quiz = state.currentQuiz;
+  const uid = state.user?.uid;
+  if (!uid || !quiz?.tutorialVersion || !state.questions.includes(q) || q._tutorialFeedbackSaving) return false;
+  q._tutorialFeedbackSaving = true;
+  try {
+    const entry = { verdict, reason, comment, action, question: aiQuestionFeedbackSnapshot(q), updatedAt: serverTimestamp() };
+    // Keep practice feedback on its own quiz, out of global AI quality learning.
+    await updateDoc(doc(db, "quizzes", quiz.id), { [`tutorialFeedback.${q.id}`]: entry });
+    if (state.user?.uid !== uid || state.currentQuiz?.id !== quiz.id || !state.questions.includes(q)) return false;
+    quiz.tutorialFeedback = { ...quiz.tutorialFeedback, [q.id]: entry };
+    q._aiFeedbackVerdict = verdict;
+    if (action === "remove") {
+      state.questions.splice(state.questions.indexOf(q), 1);
+      markDirty();
+    } else if (action === "replace") {
+      await regenerateQuestionWithAi(q, state.questions.indexOf(q), {
+        instruction: `Korrigiere diese Aufgabe: ${reason}. ${comment}`, requireDifferent: true
+      });
+    }
+    renderQuestions();
+    toast(action === "remove" ? "Übungsrückmeldung gespeichert und Aufgabe entfernt." : "Übungsrückmeldung gespeichert.");
+    crewTour?.notify("tutorial-feedback", { quizId: quiz.id, questionId: q.id, verdict, action });
+    return true;
+  } catch (error) {
+    console.error(error);
+    toast("Übungsrückmeldung konnte nicht gespeichert werden. Bitte erneut versuchen.", "error");
+    return false;
+  } finally { q._tutorialFeedbackSaving = false; }
+}
+
 async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep", reviewOutcome = "", reviewerReason = "" }) {
-  if (state.currentQuiz?.tutorialVersion) return toast("Übungsfeedback fließt nicht in die KI-Qualitätsdaten ein.");
   if (!state.user || !state.currentQuiz?.id) return;
   if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
     toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
@@ -3270,6 +3303,9 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
   if (verdict === "bad" && (!Object.hasOwn(AI_QUALITY_REASONS, reason) || (reason === "other" && !note))) {
     toast("Bitte einen Grund wählen und bei „Anderer Grund“ kurz beschreiben, was nicht passt.", "error");
     return;
+  }
+  if (state.currentQuiz?.tutorialVersion) {
+    return submitTutorialQuestionFeedback(q, { verdict, reason, comment: note, action });
   }
   try {
     const feedbackQuizId = state.currentQuiz.id;
@@ -6964,4 +7000,3 @@ async function createTutorialQuiz(payload) {
   await batch.commit();
   return code;
 }
-

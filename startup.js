@@ -27,10 +27,10 @@ const slowStart = window.setTimeout(() => {
 }, 6000);
 
 try {
-  await import("./app.js?v=2.3.1-gc19");
+  await import("./app.js?v=2.3.1-gc20");
   window.clearTimeout(slowStart);
   notice.classList.add("hidden");
-  import("./visual-enhancements.js?v=2.3.1-gc19").catch(error => {
+  import("./visual-enhancements.js?v=2.3.1-gc20").catch(error => {
     console.warn("Zusätzliche Ansichten konnten nicht geladen werden.", error);
   });
 } catch (error) {

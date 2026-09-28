@@ -2,7 +2,7 @@ import {
   installCrewTour as installV7,
   CREW,
   DEMO_TEST as V7_DEMO_TEST
-} from "./gradecrew-tour-v7.js?v=2.3.1-gc19";
+} from "./gradecrew-tour-v7.js?v=2.3.1-gc20";
 
 export const TOUR_VERSION = "gradecrew-live-tour-v8";
 export { CREW };
@@ -12,7 +12,7 @@ const clone = value => JSON.parse(JSON.stringify(value));
 function variantSourceQuestion() {
   return {
     type: "dropdown",
-    text: "Choose the correct school thing for „Bleistift“.",
+    text: "Select the English translation of „Bleistift“.",
     points: 1,
     options: [
       { text: "pencil", correct: true },
@@ -41,7 +41,7 @@ function single(text, choices, answer) {
 
 export function preparedResponse(_question, { variant = false } = {}) {
   if (variant) {
-    const question = single("Choose the English word for „Katze“.", ["dog", "bird", "cat"], 2);
+    const question = single("Look at the picture. Which animal can you see?", ["dog", "bird", "cat"], 2);
     return {
       question: {
         ...question,
@@ -69,7 +69,7 @@ function patchCoach(coach) {
 
   const preview = coach.querySelector(".gcVariantSourcePreview");
   if (preview) {
-    preview.innerHTML = '<span>Aufgabe 6 · Dropdown</span><strong>Choose the correct school thing for „Bleistift“.</strong><small>pencil ✓ · book · schoolbag</small>';
+    preview.innerHTML = '<span>Aufgabe 6 · Dropdown</span><strong>Select the English translation of „Bleistift“.</strong><small>pencil ✓ · book · schoolbag</small>';
   }
 
   if (title === "Die hier gefällt mir gut." && paragraph) {
