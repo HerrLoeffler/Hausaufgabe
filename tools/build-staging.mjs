@@ -13,7 +13,7 @@ const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 
 if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
 const files = [
   'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'workspace.css', 'gradecrew-tour.css',
-  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'gradecrew-tour.js', 'gradecrew-brand.js',
+  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
 ];
