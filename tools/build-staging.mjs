@@ -13,7 +13,7 @@ const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 
 if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
 const files = [
   'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'workspace.css', 'gradecrew-tour.css',
-  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-brand.js',
+  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
 ];
@@ -27,8 +27,6 @@ for (const name of files) {
 }
 await fs.writeFile(path.join(output, 'firebase-config.js'), config);
 files.push('firebase-config.js');
-// Missing optional modules used to slip through a successful hosting upload.
-// Verify static/dynamic module paths, stylesheets and local SVG references.
 for (const name of files.filter(name => /\.(js|mjs|html|css)$/.test(name))) {
   const content = await fs.readFile(path.join(output, name), 'utf8');
   const references = [
@@ -52,7 +50,6 @@ const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
 if (!app.includes(`APP_VERSION = "${version}"`)) throw new Error('App and HTML versions differ.');
 const release = { project: 'hausaufgabe-staging', version, commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), files: hashes };
 await fs.writeFile(path.join(output, 'release.json'), JSON.stringify(release, null, 2) + '\n');
-// This config has no functions/rules/storage section and no production target.
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
   site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
