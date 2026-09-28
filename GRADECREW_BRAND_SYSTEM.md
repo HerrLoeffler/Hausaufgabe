@@ -1,103 +1,46 @@
-# GradeCrew Brand System · v1.2
+# GradeCrew · Produktgestaltung
 
-## Markenidee
-GradeCrew ist eine ruhige, professionelle Produktmarke für digitale Leistungsnachweise. Die Crew ist kein dekoratives Kinder-Maskottchen-System, sondern eine funktionale visuelle Sprache: Jede Figur steht für einen klaren Arbeitsschritt im Produkt.
+Stand: 28. September 2026, Version 2.3.1-gc1. Änderungen ausschließlich für Staging.
 
-## Das CREW-Prinzip
-Für die deutsche GradeCrew-Seite werden **keine englischen Rollenbegriffe als sichtbare Markenlabels erzwungen**. CREW lässt sich auch mit deutschen Verben sinnvoll erklären:
+## Eine Crew, vier verständliche Rollen
 
-| Buchstabe | Deutsche Rolle | Tier | Bedeutung | Typischer Einsatz |
-| --- | --- | --- | --- | --- |
-| **C** | **Coachen** | Pinguin | Orientieren & weiterhelfen | Onboarding, Hilfe, nächste Schritte |
-| **R** | **Redigieren** | Fuchs | Verbessern & überarbeiten | Varianten, Umformulieren, KI-Bearbeitung |
-| **E** | **Erstellen** | Falke | Schnell etwas Neues erzeugen | KI-Test, neue Aufgaben, Entwürfe |
-| **W** | **Werten** | Eule | Prüfen & bewerten | Qualität, Korrektur, Auswertung |
+| Tier | Rolle | Einsatz |
+| --- | --- | --- |
+| Pinguin | Hilfe | Einstieg, Tutorial, geführter erster Test |
+| Falke | Erstellen | KI-Erstellung, neue Tests, leerer Arbeitsbereich |
+| Fuchs | Verbessern | KI-Bearbeitung und Varianten |
+| Eule | Prüfen | Aufgabenqualität und Bewertung |
 
-**Coachen · Redigieren · Erstellen · Werten** ist die Markenlogik hinter CREW. In der eigentlichen Arbeitsoberfläche stehen weiterhin die natürlichsten deutschen Funktionsnamen wie „Erstellen“, „Verbessern“, „Prüfen“ oder „Hilfe“. Das Akronym darf niemals wichtiger werden als die Verständlichkeit.
+Kein Biber. Kein erzwungenes Akronym. Der Pinguin lässt eine spätere Verbindung zu Ben / Little Pengs offen; eine konkrete Ben-Vorlage liegt noch nicht vor. Die vorhandenen SVGs bleiben austauschbar, ohne Geschäftslogik umzubauen.
 
-## Crew
+Die Figuren sind reduzierte Tierillustrationen mit ruhiger Mimik. Keine Kleidung, Werkzeuge, menschlichen Hände oder übergroßen Augen. Auf Arbeitsansichten maximal eine hervorgehobene Figur je Bereich; keine dekorative Figur an jeder Aufgabe.
 
-### Pinguin · Coachen / Weiterhelfen
-- Rolle: Orientierung, Onboarding, Hilfe, Hinweise
-- Charakter: ruhig, zugänglich, verlässlich
-- Bewegung: aufrecht, leicht zugewandt, kleine klare Gesten
-- Einsatz: Erststart, Hilfe, Empty States, bestätigende Hinweise
+## Gestaltungsregeln
 
-### Falke · Erstellen
-- Rolle: Erstellen, Generieren, Startpunkt der KI
-- Charakter: schnell, präzise, fokussiert
-- Bewegung: leichte Vorwärtsdynamik, gespannte Silhouette
-- Einsatz: „Mit KI erstellen“, Generierungsstatus, neue Tests
+- Der Einstieg zeigt Marke und Crew, trennt Schülercode und Lehrerzugang klar und verwendet kurze Texte.
+- Dashboard und Editor geben den Aufgaben Platz. Konstante Aktionspositionen, kompakte Statusanzeigen und seltene Aktionen unter „Mehr“.
+- Weiß und kühles Hellgrau bilden die Arbeitsfläche. Blau markiert Hauptaktionen; Tierfarben bleiben kleine Akzente.
+- Schrift aus dem System, feste Bildmaße, lokale SVGs und keine zusätzliche Schrift- oder Animationsbibliothek.
+- Sichtbarer Tastaturfokus, beschriftete Eingaben, größere Hauptaktionen und reduzierte Bewegung bei entsprechender Systemeinstellung.
+- Qualitätshinweise brauchen eine Aufgabe und eine Handlung. Figuren ersetzen keine Texte oder Statusmeldungen.
 
-### Fuchs · Redigieren / Verbessern
-- Rolle: Verbessern, Varianten, Umformulieren
-- Charakter: klug, flexibel, ideenreich
-- Bewegung: leicht seitlich, aufmerksam, subtile Dynamik
-- Einsatz: KI bearbeiten, Varianten, alternative Vorschläge
+## Technische Umsetzung
 
-### Eule · Werten / Prüfen
-- Rolle: Prüfen, Bewerten, Qualität
-- Charakter: sorgfältig, ruhig, objektiv
-- Bewegung: stabil, frontal/leicht gedreht, konzentriert
-- Einsatz: Qualitätsprüfung, Bewertung, Ergebnisse
+Marke und Bilder stehen in HTML beziehungsweise den zuständigen Renderfunktionen. `gradecrew-brand.css` wird direkt geladen. Es gibt keinen Beobachter mehr, der beliebige Nutzertexte von „Testify“ in „GradeCrew“ umschreibt. Interne Firebase-Projekte, IDs, Speicherpfade und bestehende Schnittstellen behalten ihre Namen.
 
-## Stilregeln
-- Editorial SaaS statt Kinderbuch
-- reduzierte Geometrie, klare Silhouetten, ruhige Flächen
-- keine Kleidung, Taschen, Doktorhüte, Brillen oder Werkzeuge
-- keine menschlichen Hände
-- keine übergroßen Augen oder übertriebene Mimik
-- keine Chibi-/Sticker-Proportionen
-- weiche, hochwertige Schatten nur sehr sparsam
-- gleiche Strichstärken und Rundungslogik
-- Tiere bleiben klar Tiere; Persönlichkeit entsteht über Haltung und Blickrichtung
+`startup.js` trennt App-Start und optionale Erweiterungen. Ein gescheiterter Import zeigt eine wiederholbare Fehlermeldung. Layout- oder Admin-Erweiterungen sind keine Abhängigkeiten des KI-Clients.
 
-## Farbwelt
-- Ink: `#172033`
-- Slate: `#5F6B7C`
-- Cloud: `#F4F7FB`
-- GradeCrew Blue: `#2F6FED`
-- Guide Ice: `#DCEAF7`
-- Create Steel: `#60758D`
-- Improve Rust: `#C96C45`
-- Grade Sand: `#B08A61`
-- Warm Cream: `#F5E7D4`
+Varianten erhalten ihren Wunschtext pro Auftrag. Die Warteschlange kommuniziert über eng geprüfte Ereignisse mit der Kern-App, statt unsichtbare modale Dialoge zu öffnen. Test und Account werden vor Ausführung und Übernahme abgeglichen. „Behalten“ ist eine schwächere, lokal im Test gespeicherte Bestätigung; es löst keine positive globale Qualitätsbewertung und kein Modelltraining aus.
 
-Akzentfarben dürfen eine Figur unterscheiden, aber nie die UI dominieren.
+## Referenzen und Übertragung
 
-## Größen & Einsatz
-- 32–48 px: kleine Funktionsmarke / Status
-- 56–88 px: Feature-Card / Dialog
-- 120–180 px: Empty State / Onboarding
-- 240+ px: Marketing / Landingpage / Crew-Lineup
+Gezielte Referenzanalyse; keine Behauptung, tausende Seiten oder angemeldete Konkurrenzprodukte getestet zu haben.
 
-## UI-Regeln
-- Aufgaben und Arbeitsinhalte haben immer Vorrang vor Branding
-- maximal eine dominante Figur pro sichtbarem Funktionsbereich
-- keine Figur neben rein administrativen oder kritischen Warnmeldungen
-- Fehlermeldungen bleiben sachlich; Crew höchstens in der anschließenden Hilfe
-- Illustrationen ersetzen keine Labels oder Icons
-- auf dichten Arbeitsflächen nur kleine, ruhige Akzente
-- CREW-Rollen nicht zusätzlich neben jede Schaltfläche schreiben; nur dort erklären, wo die Markenlogik einen Mehrwert bringt
-- Marketing darf emotionaler und großzügiger sein; Editor, Schüleransicht und Auswertung bleiben kompakte Arbeitsoberflächen
+| Referenz | Relevantes Muster | Unsere Entscheidung |
+| --- | --- | --- |
+| [Linear: UI-Überarbeitung](https://linear.app/now/behind-the-latest-design-refresh) | Arbeitsinhalt trägt mehr Gewicht als Navigation; Aktionen sitzen vorhersehbar. | Kompakter Dashboardkopf und klare Aktionen im Editor. |
+| [Squarespace: Designbeispiele](https://www.squarespace.com/blog/graphic-design-website-examples) und [Portfolios](https://www.squarespace.com/templates/portfolio) | Typografie, Abstände und konsistente Bildsprache schaffen Hierarchie. | Prägnanter Einstieg; Tiere als zusammenhängende Bildsprache. Kein Portfolio-Layout für den Prüfungseditor. |
+| [fobizz](https://fobizz.com/de/die-fobizz-tools-fuer-schule-und-unterricht/) | Angebote werden an konkreten Lehreraufgaben erklärt. | Natürliche Verben „Erstellen“, „Verbessern“, „Prüfen“ und kurze Hilfen. |
+| [Exam.net](https://exam.net/cheat) | Durchführungssicherheit ist eine eigene Produkteigenschaft. | Separater technischer Ausbauplan, keine Sicherheit durch bloße Optik behaupten. |
 
-## Website-Map
-- Header: reine GradeCrew-Wortmarke, keine große Figur
-- Login/Marketing: kleines Crew-Lineup oder Pinguin
-- `+ Neuer Test` / KI-Erstellung: Falke · Erstellen
-- Varianten / KI bearbeiten: Fuchs · Verbessern
-- Qualitätsprüfung / Bewertung: Eule · Prüfen
-- Onboarding / Erststart: Pinguin · Weiterhelfen
-- Empty State „Noch kein Test“: Falke
-
-## Asset-Konvention
-`assets/gradecrew/<animal>-<role>.svg`
-
-Master-Dateien bleiben aus Kompatibilitätsgründen:
-- `penguin-guide.svg`
-- `falcon-create.svg`
-- `fox-improve.svg`
-- `owl-grade.svg`
-- `crew-lineup.svg`
-
-Die SVGs sind die Web-Master. Rastervarianten werden nur bei Bedarf aus den SVGs exportiert.
+Das sind Übertragungen auf GradeCrews Abläufe, keine nachgewiesenen Conversion- oder Lernerfolgseffekte. Visuelle Endkontrolle auf Staging und Rückmeldungen aus dem Kollegium bleiben notwendig.

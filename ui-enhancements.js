@@ -1,37 +1,4 @@
-let variantInstruction = "";
 let studentCleanup = null;
-
-function text(value, max = 1200) {
-  return String(value || "").trim().slice(0, max);
-}
-
-export function applyVariantInstruction(payload = {}) {
-  if (!payload?.variant || !variantInstruction) return payload;
-  return { ...payload, instruction: variantInstruction };
-}
-
-function isVariantForm(form) {
-  if (!(form instanceof HTMLFormElement)) return false;
-  const dialog = form.closest("dialog");
-  return dialog?.querySelector("h2")?.textContent?.trim() === "Varianten hinzufügen";
-}
-
-function enhanceVariantDialog(dialog) {
-  if (!(dialog instanceof HTMLDialogElement) || dialog.dataset.variantPromptEnhanced === "1") return;
-  const form = dialog.querySelector("form");
-  if (!isVariantForm(form)) return;
-  dialog.dataset.variantPromptEnhanced = "1";
-  variantInstruction = "";
-
-  const hint = form.querySelector(".hint");
-  const field = document.createElement("label");
-  field.className = "variantInstructionField";
-  field.innerHTML = `Eigener Wunsch <span class="optionalLabel">optional</span>
-    <textarea name="variantInstruction" rows="3" maxlength="1200" placeholder="z. B. nur Aufgaben zu Prozentwerten, andere Verben verwenden, schwieriger, ohne Sachaufgaben …"></textarea>
-    <small>Gilt für alle Varianten dieses Auftrags.</small>`;
-  if (hint) form.insertBefore(field, hint);
-  else form.querySelector(".actions")?.before(field);
-}
 
 function closestQuestionIndex(sections, offset) {
   let candidate = 0;
@@ -121,22 +88,14 @@ function enhanceStudentProgress(progress) {
 }
 
 function scan(root = document) {
-  root.querySelectorAll?.("dialog.shareDialog").forEach(enhanceVariantDialog);
   const progress = root.querySelector?.("#studentProgressBar") || (root.id === "studentProgressBar" ? root : null);
   if (progress) enhanceStudentProgress(progress);
 }
-
-document.addEventListener("submit", event => {
-  const form = event.target;
-  if (!isVariantForm(form)) return;
-  variantInstruction = text(form.elements.variantInstruction?.value);
-}, true);
 
 const observer = new MutationObserver(records => {
   for (const record of records) {
     for (const node of record.addedNodes) {
       if (!(node instanceof HTMLElement)) continue;
-      if (node.matches?.("dialog.shareDialog")) enhanceVariantDialog(node);
       scan(node);
     }
   }

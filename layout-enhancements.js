@@ -83,29 +83,14 @@ function cleanStudentMarkword(card) {
   if (cleaned && cleanText(cleaned) !== cleanText(heading.textContent)) heading.textContent = cleaned;
 }
 
-function cleanEditorMarkword(card) {
-  if (!(card instanceof HTMLElement)) return;
-  const type = card.querySelector(".qType");
-  if (type?.value !== "markwords") return;
-  const prompt = card.querySelector(".qText");
-  const passageLabel = [...card.querySelectorAll("label")].find(label => /Text, in dem markiert wird/i.test(label.textContent));
-  const passage = passageLabel?.querySelector("textarea")?.value;
-  if (!prompt || !passage) return;
-  const cleaned = stripDuplicatePassage(prompt.value, passage);
-  if (!cleaned || cleanText(cleaned) === cleanText(prompt.value)) return;
-  prompt.value = cleaned;
-  prompt.dispatchEvent(new Event("input", { bubbles: true }));
-}
-
 function cleanMarkwordDuplicates(root = document) {
   root.querySelectorAll?.('.studentQuestion[data-type="markwords"]').forEach(cleanStudentMarkword);
-  root.querySelectorAll?.("#editorView .questionCard").forEach(cleanEditorMarkword);
+  // Editor content is changed only by an explicit edit or import normalization.
 }
 
 function disableQuestionDragging(root = document) {
   root.querySelectorAll?.("#editorView .questionCard").forEach(card => {
-    card.draggable = false;
-    card.removeAttribute("draggable");
+    if (card.hasAttribute("draggable")) card.removeAttribute("draggable");
   });
 }
 

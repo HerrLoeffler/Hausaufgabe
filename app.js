@@ -1,5 +1,5 @@
-const APP_VERSION = "2.3.1-ai30";
-const BRAND = Object.freeze({ name: "Testify", tagline: "Tests. Einfach digital." });
+const APP_VERSION = "2.3.1-gc1";
+const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -34,10 +34,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-ai30";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-ai30";
-import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-ai30";
-import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-ai30";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc1";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc1";
+import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc1";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-gc1";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -139,26 +139,26 @@ const DEFAULT_TEACHER_TOUR_CONFIG = Object.freeze({
     {
       icon: "👋",
       title: "Schön, dass du da bist!",
-      text: "Du testest die neuen KI-Funktionen von Testify. Die wichtigsten Neuerungen zeigen wir dir kurz in vier Schritten.",
+      text: "Deine Crew hilft dir beim Erstellen, Verbessern und Prüfen. In vier Schritten bist du startklar.",
       bullets: ["KI-Tests bleiben Entwürfe, bis du sie geprüft und veröffentlicht hast."]
     },
     {
       icon: "✨",
       title: "Tests mit KI erstellen",
       text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und anschließend im Editor anpassen.",
-      bullets: ["Fach, Klasse, Thema, Aufgabentypen, Punkte und Bilder vorgeben.", "⚠ Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen – auch „KI bearbeiten“ und „Variante hinzufügen“."]
+      bullets: ["Gib Fach, Klasse und Thema vor. Alles Weitere ist anpassbar.", "⚠ KI-Erstellungen kosten Geld – auch Bilder, Änderungen und Varianten. Bitte gezielt nutzen."]
     },
     {
       icon: "☺",
       title: "KI-Aufgaben kurz bewerten",
-      text: "Bewerte möglichst jede KI-Aufgabe mit ☺ oder ☹. So lernt Testify, was gut funktioniert und wo typische Fehler entstehen.",
+      text: "Mit ☺ oder ☹ meldest du, was passt und was wir verbessern müssen.",
       bullets: ["☺ Gut: Aufgabe kann so bleiben.", "☹ Problem: Grund auswählen und Aufgabe behalten, ersetzen oder entfernen."]
     },
     {
       icon: "↻",
       title: "Aufgaben gezielt verändern",
       text: "„KI bearbeiten“ verbessert eine Aufgabe nach deinem Hinweis. „Variante hinzufügen“ erstellt eine gleichwertige neue Aufgabe.",
-      bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "💬 Fehler, Wünsche oder Ideen? Nutze unten die Feedback-Funktion – Rückmeldungen helfen besonders in der aktuellen Entwicklungsphase."]
+      bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "Fehler oder Wünsche? Unten findest du „Feedback geben“."]
     }
   ]
 });
@@ -309,7 +309,7 @@ function positionFirstAiGuideCard() {
 }
 
 function firstAiGuideCardHtml({ eyebrow, title, text, extra = "", action = "", showLater = true }) {
-  return `<div class="firstAiGuideHead"><span class="eyebrow">${escapeHtml(eyebrow)}</span><button class="firstAiGuideClose" type="button" aria-label="Für jetzt schließen">×</button></div>
+  return `<div class="gradecrewGuideHeader"><img src="/assets/gradecrew/penguin-guide.svg" width="44" height="44" alt=""><span>Deine Starthilfe</span></div><div class="firstAiGuideHead"><span class="eyebrow">${escapeHtml(eyebrow)}</span><button class="firstAiGuideClose" type="button" aria-label="Für jetzt schließen">×</button></div>
     <h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p>${extra}
     <div class="firstAiGuideActions">${showLater ? '<button class="button ghost firstAiGuideLater" type="button">Später</button>' : ""}${action}</div>`;
 }
@@ -361,7 +361,7 @@ function renderFirstAiGuideStep(step) {
     card.innerHTML = firstAiGuideCardHtml({
       eyebrow: "Schritt 2 von 4",
       title: "Wähle „Mit KI erstellen“",
-      text: "So erstellt Testify den ersten Entwurf für dich. Danach kannst du jede Aufgabe normal bearbeiten.",
+      text: "So erstellt GradeCrew den ersten Entwurf für dich. Danach kannst du jede Aufgabe normal bearbeiten.",
       extra: '<div class="firstAiGuidePointer">Klicke auf „Mit KI erstellen“.</div>'
     });
   } else if (step === "details") {
@@ -376,7 +376,7 @@ function renderFirstAiGuideStep(step) {
     card.innerHTML = firstAiGuideCardHtml({
       eyebrow: "Schritt 4 von 4",
       title: "Jetzt mit KI erstellen",
-      text: "Klicke auf „Test erstellen“. Testify erzeugt den Entwurf im Hintergrund und prüft ihn anschließend automatisch.",
+      text: "Klicke auf „Test erstellen“. GradeCrew erzeugt den Entwurf im Hintergrund und prüft ihn anschließend automatisch.",
       extra: '<div class="firstAiGuideCost"><strong>⚠ Kostenhinweis</strong><span>Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen.</span></div><div class="firstAiGuidePointer">Zum Starten den markierten Button anklicken.</div>'
     });
   } else if (step === "running") {
@@ -446,7 +446,11 @@ function renderTeacherTourStep() {
   const step = steps[teacherTourIndex] || steps[0];
   if (!step) return;
   $("teacherTourStepLabel").textContent = `${teacherTourIndex + 1} von ${steps.length}`;
-  $("teacherTourIcon").textContent = step.icon;
+  const tourIcon = $("teacherTourIcon");
+  const crew = { "👋": "penguin-guide", "✨": "falcon-create", "☺": "owl-grade", "↻": "fox-improve" };
+  tourIcon.classList.toggle("gradecrewTourMascot", Boolean(crew[step.icon]));
+  if (crew[step.icon]) tourIcon.innerHTML = `<img src="/assets/gradecrew/${crew[step.icon]}.svg" width="96" height="96" alt="" />`;
+  else tourIcon.textContent = step.icon;
   $("teacherTourTitle").textContent = step.title;
   $("teacherTourText").textContent = step.text;
   $("teacherTourBullets").innerHTML = step.bullets.map(item => {
@@ -595,7 +599,7 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
   card.className = "reportableErrorCard";
   card.dataset.errorFingerprint = fingerprint;
   card.__reportPayload = payload;
-  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen sowie die betroffene KI-Aufgabe, Bildbeschreibungen und Prüfgründe an Testify gesendet – keine Schülerantworten oder hochgeladenen Dateien.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
+  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen sowie die betroffene KI-Aufgabe, Bildbeschreibungen und Prüfgründe an GradeCrew gesendet – keine Schülerantworten oder hochgeladenen Dateien.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
   card.querySelector(".reportableErrorClose").addEventListener("click", () => card.remove());
   card.querySelector(".reportableErrorSend").addEventListener("click", () => submitTechnicalErrorReport(card));
   host.prepend(card);
@@ -688,7 +692,7 @@ window.addEventListener("error", (event) => {
   if (event.filename && !event.filename.startsWith(location.origin)) return;
   showReportableError({
     code: REPORTABLE_ERROR_CODES.unexpected,
-    message: "In Testify ist ein unerwarteter Fehler aufgetreten.",
+    message: "In GradeCrew ist ein unerwarteter Fehler aufgetreten.",
     error: event.error,
     action: "window_error",
     details: { file: event.filename || "", line: event.lineno || 0, column: event.colno || 0 }
@@ -1059,6 +1063,7 @@ function authMessage(err) {
 
 onAuthStateChanged(auth, async (user) => {
   if (state.user?.uid !== user?.uid) {
+    document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     state.variantTask = null;
     state.aiVariantsRunning = false;
     state.aiMaterials = [];
@@ -2126,12 +2131,14 @@ async function openAiView() {
     notice.textContent = "KI-Verbindung wird geprüft …";
     notice.classList.remove("hidden");
     state.aiStatus = await aiApi.status({});
-    notice.textContent = state.aiStatus?.beta ? "KI-Beta aktiv · aktuell nur für freigeschaltete Admin-Konten." : "KI ist bereit.";
+    notice.textContent = "KI ist bereit.";
   } catch (err) {
     console.warn("KI-Status nicht verfügbar:", err);
     state.aiStatus = null;
-    notice.className = "aiStatusNotice error";
-    notice.textContent = aiFriendlyError(err, "KI-Backend ist noch nicht erreichbar. Prüfe Functions, Secret und Staging-Deployment.");
+    const denied = String(err?.code || "").includes("permission-denied");
+    notice.className = `aiStatusNotice${denied ? " error" : ""}`;
+    notice.textContent = denied ? "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet."
+      : "Status gerade nicht verfügbar. Du kannst die Erstellung trotzdem versuchen.";
   }
 }
 
@@ -2526,7 +2533,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
       if (answers.length && blanks.length === answers.length) {
         let cursor = 0;
         q.text = q.text.replace(/_{2,}|\{\s*blank\s*\}|\[\s*\]/gi, () => `[${answers[cursor++]}]`);
-        pushUnique(report.repairs, `Aufgabe ${index + 1}: Lücken und Lösungen wurden automatisch in Testify-Format umgewandelt.`);
+        pushUnique(report.repairs, `Aufgabe ${index + 1}: Lücken und Lösungen wurden automatisch in GradeCrew-Format umgewandelt.`);
       } else {
         pushUnique(report.warnings, `Aufgabe ${index + 1}: Im Lückentext wurde keine eindeutig erkennbare Lösung in [Klammern] gefunden.`);
       }
@@ -2574,7 +2581,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
       }));
     } else if (groupsRaw && typeof groupsRaw === "object") {
       q.groups = Object.entries(groupsRaw).map(([name, items]) => ({ name, items: Array.isArray(items) ? items.map(String) : [String(items)] }));
-      pushUnique(report.repairs, `Aufgabe ${index + 1}: Kategorien wurden in Testify-Gruppen umgewandelt.`);
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Kategorien wurden in GradeCrew-Gruppen umgewandelt.`);
     }
     if (q.groups.length < 2 || q.groups.some((g) => !g.name.trim() || !g.items.length)) pushUnique(report.warnings, `Aufgabe ${index + 1}: Kategorien und Inhalte bitte prüfen.`);
   }
@@ -2751,7 +2758,7 @@ function renderImportReviewBanner() {
   const heading = pendingAiReview ? "KI-Entwurf prüfen" : state.currentQuiz?.generationJobId ? "KI-Teilentwurf" : "Test importiert";
   const issueButtons = issues.length ? `<div class="qualityJumpList">${issues.map(issue => `<button class="qualityJump" type="button" data-position="${issue.questionPosition}"><strong>Aufgabe ${issue.questionPosition}</strong><span>${escapeHtml(qualityIssueShortLabel(issue))}</span></button>`).join("")}</div>` : "";
   const general = generalWarnings.length ? `<details><summary>${generalWarnings.length} weiterer Hinweis${generalWarnings.length === 1 ? "" : "e"}</summary><ul>${generalWarnings.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : "";
-  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? (warningCount ? "Testify hat diese Stellen markiert. Klicke auf eine Aufgabe, um sie zu prüfen." : "Kontrolliere den Test kurz und schließe die Prüfung danach ab.") : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${issueButtons}${general}</div><div class="importReviewActions">${issues.length ? '<button class="button ghost jumpFirstQualityIssue" type="button">Ersten Hinweis öffnen</button>' : ""}${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? (warningCount ? "GradeCrew hat diese Stellen markiert. Klicke auf eine Aufgabe, um sie zu prüfen." : "Kontrolliere den Test kurz und schließe die Prüfung danach ab.") : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${issueButtons}${general}</div><div class="importReviewActions">${issues.length ? '<button class="button ghost jumpFirstQualityIssue" type="button">Ersten Hinweis öffnen</button>' : ""}${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
   host.querySelectorAll(".qualityJump").forEach(button => button.addEventListener("click", () => scrollToQualityIssue(button.dataset.position)));
   host.querySelector(".jumpFirstQualityIssue")?.addEventListener("click", () => scrollToQualityIssue(issues[0]?.questionPosition));
   host.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(state.currentQuiz.id, true));
@@ -3068,6 +3075,9 @@ $("quizStartMode")?.addEventListener("change", () => {
 let draggedQuestionIndex = null;
 
 function renderQuestions() {
+  $("editorView").dataset.quizId = state.currentQuiz?.id || "";
+  $("editorView").dataset.ownerId = state.user?.uid || "";
+  $("editorView").dataset.variantAllowed = String(!state.newManualQuiz && !(state.currentQuiz?.published && !state.currentQuiz?.ended));
   const root = $("questionList");
   root.innerHTML = "";
   state.questions.forEach((q, index) => {
@@ -3143,6 +3153,8 @@ function renderQuestions() {
     const canRate = isAdmin() || Boolean(q.aiOrigin);
     for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
+    node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackAccepted", Boolean(q.aiVariantKept && !q._aiFeedbackVerdict));
+    if (q.aiVariantKept && !q._aiFeedbackVerdict) node.querySelector(".aiFeedbackGood")?.setAttribute("title", "Variante behalten · noch nicht ausdrücklich als gut bewertet");
     node.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "bad");
     node.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "good"));
     node.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "bad"));
@@ -3212,7 +3224,7 @@ function questionContext(index) {
 function questionForAi(q) {
   const copy = sanitizeQuestionForSave(q);
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
-  delete copy.aiOrigin; delete copy.imageChoicesOnly;
+  delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
   if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, ...option }) => option);
   return copy;
 }
@@ -3282,7 +3294,9 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     index = state.questions.findIndex(item => item.id === q.id);
     if (index < 0) return false;
     q._aiFeedbackVerdict = reviewOutcome ? "" : verdict;
+    if (!reviewOutcome && q.aiVariantKept) { q.aiVariantKept = false; markDirty(); }
     const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+    card?.querySelector(".aiFeedbackGood")?.classList.remove("aiFeedbackAccepted");
     card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "good");
     card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "bad");
     card?.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "good"));
@@ -3367,11 +3381,12 @@ function openQuestionVariantDialog(q, index) {
   const available = Math.min(5, 100 - state.questions.length);
   if (available < 1) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   const dialog = document.createElement("dialog");
-  dialog.className = "shareDialog";
+  dialog.className = "shareDialog questionVariantDialog";
   dialog.innerHTML = `<form class="stack compact"><h2>Varianten hinzufügen</h2>
     <p>Neue Beispiele für Aufgabe ${index + 1}. Die ursprüngliche Aufgabe bleibt erhalten.</p>
     <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? "Varianten" : "Variante"}</option>`).join("")}</select></label>
     <label>Bilder<select name="mediaKind"><option value="none">Ohne Bild</option><option value="ai_generated">Mit Bild zur Aufgabe</option></select></label>
+    <label class="variantInstructionField">Eigener Wunsch <small>optional</small><textarea name="variantInstruction" rows="2" maxlength="1200" placeholder="z. B. andere Wörter, neuer Kontext, schwieriger …"></textarea></label>
     <p class="hint">Du kannst weiterarbeiten. Fertige Varianten übernimmst du anschließend mit einem Klick. Diesen Tab geöffnet lassen.</p>
     <div class="actions"><button type="button" class="button ghost variantCancel">Abbrechen</button><button type="submit" class="button primary">Im Hintergrund erstellen</button></div></form>`;
   const form = dialog.querySelector("form");
@@ -3383,8 +3398,9 @@ function openQuestionVariantDialog(q, index) {
     if (state.aiVariantsRunning) return;
     const count = Number(form.elements.count.value);
     const mediaKind = form.elements.mediaKind.value;
+    const instruction = String(form.elements.variantInstruction.value || "").trim().slice(0, 1200);
     dialog.close();
-    void createQuestionVariants(q, { count, mediaKind });
+    void createQuestionVariants(q, { count, mediaKind, instruction });
   });
   document.body.appendChild(dialog);
   dialog.showModal();
@@ -3397,6 +3413,10 @@ function renderVariantProgress() {
   if (!task || task.uid !== state.user?.uid) { host.classList.add("hidden"); host.innerHTML = ""; return; }
   host.classList.remove("hidden");
   const ready = task.questions.length;
+  host.dataset.running = String(task.running);
+  host.dataset.ready = String(ready);
+  host.dataset.quizId = task.quizId;
+  host.dataset.ownerId = task.uid;
   const inSource = state.currentQuiz?.id === task.quizId;
   host.innerHTML = `<div><strong>${escapeHtml(task.message)}</strong><small>${task.running ? "Du kannst weiterarbeiten. Lass diesen Tab geöffnet." : inSource ? "Fertige Varianten erst bei Bedarf in den Test übernehmen." : "Die Varianten warten im Ausgangstest."}</small></div>${ready && inSource ? `<button type="button" class="button secondary applyVariants">${ready} ${ready === 1 ? "Variante übernehmen" : "Varianten übernehmen"}</button>` : ""}${!task.running ? '<button type="button" class="button ghost discardVariants">Verwerfen</button>' : ""}`;
   host.querySelector(".applyVariants")?.addEventListener("click", applyPendingVariants);
@@ -3425,7 +3445,7 @@ function applyPendingVariants() {
   toast(`${next.length} ${next.length === 1 ? "Variante übernommen" : "Varianten übernommen"}. Bitte speichern.`);
 }
 
-async function createQuestionVariants(q, { count, mediaKind }) {
+async function createQuestionVariants(q, { count, mediaKind, instruction = "" }) {
   if (state.aiVariantsRunning || state.variantTask?.questions?.length) return;
   if (!Number.isInteger(count) || count < 1 || count > 5 || state.questions.length + count > 100) {
     return toast("Bitte 1 bis 5 Varianten wählen; insgesamt sind höchstens 100 Aufgaben möglich.", "error");
@@ -3447,7 +3467,7 @@ async function createQuestionVariants(q, { count, mediaKind }) {
       ensureOwner();
       task.message = `Variante ${i + 1} von ${count} wird erstellt …`;
       renderVariantProgress();
-      const response = await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind,
+      const response = await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
         testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
       ensureOwner();
       const rawQuestion = response.question;
@@ -3477,6 +3497,32 @@ async function createQuestionVariants(q, { count, mediaKind }) {
     if (state.user?.uid !== uid && state.variantTask === task) state.variantTask = null;
     renderVariantProgress();
   }
+}
+
+// Optional queue UI requests work through the same validated core path as the
+// ordinary dialog. No hidden modal, simulated clicks or global prompt state.
+function handleVariantRequest(event) {
+  const request = event.detail;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== state.user?.uid) return;
+  if (state.newManualQuiz || state.aiVariantsRunning || state.variantTask?.questions?.length) return;
+  if (state.currentQuiz.published && !state.currentQuiz.ended) return;
+  const question = state.questions.find(item => item.id === request.id);
+  if (!question || !Number.isInteger(request.count) || request.count < 1 || request.count > 5 || state.questions.length + request.count > 100) return;
+  if (!["none", "ai_generated"].includes(request.mediaKind)) return;
+  request.accepted = true;
+  void createQuestionVariants(question, { count: request.count, mediaKind: request.mediaKind,
+    instruction: String(request.instruction || "").trim().slice(0, 1200) });
+}
+
+function handleVariantKept(event) {
+  const request = event.detail;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== state.user?.uid) return;
+  const question = state.questions.find(item => item.id === request.id);
+  if (!question || (state.currentQuiz.published && !state.currentQuiz.ended)) return;
+  // Acceptance is a local, weaker signal; it is not an explicit quality rating.
+  question.aiVariantKept = true;
+  markDirty();
+  renderQuestions();
 }
 
 async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false } = {}) {
@@ -4409,6 +4455,7 @@ function sanitizeQuestionForSave(q) {
     points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
+  if (q.aiVariantKept === true) base.aiVariantKept = true;
   if (q.aiOrigin?.kind) base.aiOrigin = { kind: String(q.aiOrigin.kind).slice(0, 30), model: String(q.aiOrigin.model || "").slice(0, 60), promptVersion: String(q.aiOrigin.promptVersion || "").slice(0, 60) };
   if (q.imageDataUrl) {
     base.imageDataUrl = String(q.imageDataUrl);
@@ -6485,7 +6532,7 @@ function announcementFrequencyLabel(value) {
 function announcementPreviewFallback(type) {
   return ({
     welcome: ["Schön, dass du da bist!", "Viel Spaß beim Erstellen und Ausprobieren."],
-    news: ["Neu in Testify", "Hier kannst du kurz auf eine neue Funktion aufmerksam machen."],
+    news: ["Neu in GradeCrew", "Hier kannst du kurz auf eine neue Funktion aufmerksam machen."],
     info: ["Kurzer Hinweis", "Hier steht eine sachliche Information für die Lehrkräfte."],
     warning: ["Wichtiger Hinweis", "Hier steht eine wichtige Information, die nicht übersehen werden sollte."]
   })[type] || ["Hinweis", "Hier erscheint deine Mitteilung."];
@@ -6729,7 +6776,7 @@ function formatTechnicalErrorReport(report) {
     ["Viewport", t.viewport], ["Bildschirm", t.screen], ["Häufigkeit", t.occurrences],
     ["Stacktrace", t.stack]
   ];
-  return ["Testify · technischer Fehlerbericht", ...fields
+  return ["GradeCrew · technischer Fehlerbericht", ...fields
     .filter(([, value]) => value !== undefined && value !== null && value !== "" && value !== "–")
     .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
 }
@@ -6830,3 +6877,7 @@ function renderAdminAudit(){
 }
 
 async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}
+
+
+document.addEventListener("gradecrew:variant-request", handleVariantRequest);
+document.addEventListener("gradecrew:variant-kept", handleVariantKept);

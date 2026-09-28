@@ -1,7 +1,6 @@
 let queue = [];
 let currentItem = null;
 let launching = false;
-let autoLaunching = false;
 let autoApplying = false;
 let syncQueued = false;
 const pendingReview = new Map();
@@ -40,6 +39,8 @@ function sourceMeta(button) {
   if (!card || !Number.isInteger(index) || index < 0) return null;
   const field = card.querySelector(".qText");
   return {
+    quizId: document.getElementById("editorView")?.dataset.quizId || "",
+    ownerId: document.getElementById("editorView")?.dataset.ownerId || "",
     id: String(card.dataset.id || ""),
     position: index + 1,
     text: compactText(field?.value || "")
@@ -53,10 +54,9 @@ function progressHost() {
 
 function progressState(host = progressHost()) {
   if (!host) return { running: false, ready: 0, failed: false, pending: false };
-  const message = host.querySelector("strong")?.textContent || "";
-  const running = /wird erstellt|wird geprüft|werden erstellt/i.test(message);
+  const running = host.dataset.running === "true";
   const apply = host.querySelector(".applyVariants");
-  const ready = apply ? Math.max(0, Number.parseInt(apply.textContent, 10) || 0) : 0;
+  const ready = apply ? Math.max(0, Number(host.dataset.ready) || 0) : 0;
   const discard = host.querySelector(".discardVariants");
   const failed = !running && ready === 0 && Boolean(discard);
   return { running, ready, failed, pending: running || ready > 0 };
@@ -76,7 +76,7 @@ function clearOutlineState() {
 function markOutlineState() {
   clearOutlineState();
 
-  if (currentItem) {
+  if (currentItem && itemInCurrentEditor(currentItem)) {
     const card = cardById(currentItem.id);
     const outline = outlineForCard(card);
     if (outline) {
@@ -85,7 +85,7 @@ function markOutlineState() {
     }
   }
 
-  queue.forEach(item => {
+  queue.filter(itemInCurrentEditor).forEach(item => {
     const outline = outlineForCard(cardById(item.id));
     if (outline && !outline.classList.contains("variantWorkingOutline")) {
       outline.classList.add("variantQueuedOutline");
@@ -93,7 +93,8 @@ function markOutlineState() {
     }
   });
 
-  pendingReview.forEach((_, id) => {
+  pendingReview.forEach((item, id) => {
+    if (!itemInCurrentEditor(item)) return;
     const outline = outlineForCard(cardById(id));
     if (outline) {
       outline.classList.add("variantReviewOutline");
@@ -103,8 +104,8 @@ function markOutlineState() {
 }
 
 function reservedVariantCount() {
-  const queued = queue.reduce((sum, item) => sum + Number(item.count || 0), 0);
-  const active = currentItem ? Number(currentItem.count || 0) : 0;
+  const queued = queue.filter(itemInCurrentEditor).reduce((sum, item) => sum + Number(item.count || 0), 0);
+  const active = itemInCurrentEditor(currentItem) ? Number(currentItem.count || 0) : 0;
   return queued + active;
 }
 
@@ -161,69 +162,29 @@ function openRequestDialog(button) {
   try { dialog.showModal(); } catch (_) { dialog.setAttribute("open", ""); }
 }
 
-function findSourceButton(item) {
-  const card = cardById(item?.id);
-  return card?.querySelector(".aiVariantQuestion") || null;
+function itemInCurrentEditor(item) {
+  const view = document.getElementById("editorView");
+  return Boolean(item && item.quizId === view?.dataset.quizId && item.ownerId === view?.dataset.ownerId);
 }
 
-function waitForBaseDialog(attempt = 0) {
-  return new Promise(resolve => {
-    const dialog = [...document.querySelectorAll("dialog.shareDialog")].find(node =>
-      !node.classList.contains("variantRequestDialog") && node.querySelector("h2")?.textContent?.trim() === "Varianten hinzufügen"
-    );
-    if (dialog || attempt >= 20) return resolve(dialog || null);
-    window.setTimeout(() => resolve(waitForBaseDialog(attempt + 1)), 30);
-  });
+function launchItem(item) {
+  if (!itemInCurrentEditor(item) || !cardById(item.id)) return false;
+  currentItem = { ...item, startedAt: Date.now(), phase: "submitted" };
+  const request = { ...item, accepted: false };
+  document.dispatchEvent(new CustomEvent("gradecrew:variant-request", { detail: request }));
+  if (!request.accepted) currentItem = null;
+  return request.accepted;
 }
 
-async function launchItem(item) {
-  const button = findSourceButton(item);
-  if (!button) return false;
-
-  currentItem = { ...item, startedAt: Date.now(), phase: "opening" };
-  markOutlineState();
-  autoLaunching = true;
-  button.click();
-  const dialog = await waitForBaseDialog();
-  autoLaunching = false;
-
-  if (!dialog) {
-    currentItem = null;
-    return false;
-  }
-
-  dialog.classList.add("variantAutoDialog");
-  const form = dialog.querySelector("form");
-  if (!form) {
-    closeDialog(dialog);
-    currentItem = null;
-    return false;
-  }
-
-  if (form.elements.count) form.elements.count.value = String(item.count);
-  if (form.elements.mediaKind) form.elements.mediaKind.value = item.mediaKind;
-
-  let instruction = form.elements.variantInstruction;
-  if (!instruction) {
-    instruction = document.createElement("textarea");
-    instruction.name = "variantInstruction";
-    instruction.className = "hidden";
-    form.appendChild(instruction);
-  }
-  instruction.value = item.instruction || "";
-
-  currentItem.phase = "submitted";
-  form.requestSubmit();
-  window.setTimeout(scheduleSync, 20);
-  return true;
-}
 
 async function processQueue() {
   if (launching || currentItem || !queue.length || !editorIsOpen()) return;
   if (progressState().pending) return;
 
   launching = true;
-  const item = queue.shift();
+  const nextIndex = queue.findIndex(itemInCurrentEditor);
+  if (nextIndex < 0) { launching = false; return; }
+  const [item] = queue.splice(nextIndex, 1);
   item.launchAttempts = Number(item.launchAttempts || 0) + 1;
   markOutlineState();
   const launched = await launchItem(item);
@@ -247,6 +208,8 @@ function captureInsertedVariants(beforeIds, item, expectedCount) {
   const added = allQuestionCards().filter(card => card.dataset.id && !beforeIds.has(card.dataset.id));
   added.slice(0, expectedCount).forEach(card => {
     pendingReview.set(card.dataset.id, {
+      quizId: item.quizId,
+      ownerId: item.ownerId,
       sourceId: item.id,
       sourcePosition: item.position,
       createdAt: Date.now()
@@ -255,7 +218,7 @@ function captureInsertedVariants(beforeIds, item, expectedCount) {
 }
 
 function autoFinishCurrent() {
-  if (!currentItem || autoApplying || !editorIsOpen()) return;
+  if (!currentItem || autoApplying || !editorIsOpen() || !itemInCurrentEditor(currentItem)) return;
   const host = progressHost();
   const status = progressState(host);
 
@@ -281,6 +244,7 @@ function autoFinishCurrent() {
     const ready = status.ready;
     apply.click();
     window.setTimeout(() => {
+      if (currentItem !== item || !itemInCurrentEditor(item)) { autoApplying = false; return; }
       captureInsertedVariants(beforeIds, item, ready);
       currentItem = null;
       autoApplying = false;
@@ -311,8 +275,10 @@ function decorateReviewCard(card, id) {
   top?.after(bar);
 
   bar.querySelector(".variantKeep")?.addEventListener("click", () => {
+    const item = pendingReview.get(id);
     pendingReview.delete(id);
     bar.remove();
+    document.dispatchEvent(new CustomEvent("gradecrew:variant-kept", { detail: { ...item, id } }));
     scheduleSync();
   });
   bar.querySelector(".variantEdit")?.addEventListener("click", () => card.querySelector(".aiEditQuestion")?.click());
@@ -326,7 +292,8 @@ function decorateReviewCard(card, id) {
 }
 
 function decoratePendingReviews() {
-  pendingReview.forEach((_, id) => {
+  pendingReview.forEach((item, id) => {
+    if (!itemInCurrentEditor(item)) return;
     const card = cardById(id);
     if (card) decorateReviewCard(card, id);
   });
@@ -349,12 +316,18 @@ document.addEventListener("click", event => {
   const target = event.target instanceof Element ? event.target : null;
   if (!target) return;
   const variantButton = target.closest(".aiVariantQuestion");
-  if (!variantButton || autoLaunching) return;
+  if (!variantButton || variantButton.disabled || !sourceMeta(variantButton)?.quizId || document.getElementById("editorView")?.dataset.variantAllowed === "false") return;
   event.preventDefault();
   event.stopImmediatePropagation();
   openRequestDialog(variantButton);
 }, true);
 
+document.addEventListener("gradecrew:account-changed", () => {
+  queue = [];
+  currentItem = null;
+  pendingReview.clear();
+  scheduleSync();
+});
 const observer = new MutationObserver(() => scheduleSync());
 
 function start() {
@@ -366,7 +339,6 @@ function start() {
 .variantRequestDialog{position:fixed!important;inset:0!important;margin:auto!important;width:min(520px,calc(100vw - 28px))!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important;padding:22px!important}
 .variantRequestDialog::backdrop{background:rgba(15,23,42,.42);backdrop-filter:blur(3px)}
 .variantRequestHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:4px}.variantRequestHead h2{margin:0;font-size:20px}.variantRequestHead span{display:block;margin-top:4px;color:#748195;font-size:11px;font-weight:750}.variantRequestClose{border:0;background:transparent;color:#69778b;font-size:24px;line-height:1;cursor:pointer;padding:0 2px}.variantRequestDialog label{margin-top:9px}.variantRequestActions{justify-content:flex-end;margin-top:6px}.variantRequestDialog textarea{min-height:66px}.variantRequestDialog .optionalLabel{color:#8491a3;font-size:11px;font-weight:600}
-.variantAutoDialog{visibility:hidden!important;pointer-events:none!important}
 #variantBackgroundProgress.gradecrewManagedVariant{display:inline-flex!important;width:auto!important;min-height:0!important;align-items:center!important;gap:7px!important;margin:4px 0 0!important;padding:5px 8px!important;border:1px solid #d8e4f7!important;border-radius:999px!important;background:#f7faff!important;box-shadow:none!important}
 #variantBackgroundProgress.gradecrewManagedVariant>div{display:block!important}#variantBackgroundProgress.gradecrewManagedVariant strong{font-size:11px!important;color:#355271!important}#variantBackgroundProgress.gradecrewManagedVariant small,#variantBackgroundProgress.gradecrewManagedVariant .applyVariants,#variantBackgroundProgress.gradecrewManagedVariant .discardVariants{display:none!important}
 #questionOutline .questionOutlineItem{position:relative}
@@ -381,7 +353,7 @@ function start() {
     document.head.appendChild(style);
   }
   observer.observe(document.body, { childList: true, subtree: true });
-  window.setInterval(scheduleSync, 700);
+  // DOM changes publish new progress; no permanent polling loop is needed.
   scheduleSync();
 }
 

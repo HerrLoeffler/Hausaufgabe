@@ -1,0 +1,60 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const destination = process.argv[2];
+if (!destination || !path.isAbsolute(destination)) throw new Error('An absolute, empty build directory is required.');
+const output = path.join(destination, 'public');
+await fs.mkdir(output, { recursive: true });
+if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
+const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 'utf8');
+if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
+const files = [
+  'index.html', 'startup.js', 'app.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css',
+  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'gradecrew-brand.js',
+  'layout-enhancements.js', 'variant-enhancements.js', 'admin-ai-access.js',
+  'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
+];
+for (const name of await fs.readdir(path.join(root, 'assets/gradecrew'))) {
+  if (name.endsWith('.svg')) files.push(`assets/gradecrew/${name}`);
+}
+for (const name of files) {
+  const target = path.join(output, name);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await fs.copyFile(path.join(root, name), target);
+}
+await fs.writeFile(path.join(output, 'firebase-config.js'), config);
+files.push('firebase-config.js');
+// Missing optional modules used to slip through a successful hosting upload.
+// Verify static/dynamic module paths, stylesheets and local SVG references.
+for (const name of files.filter(name => /\.(js|mjs|html|css)$/.test(name))) {
+  const content = await fs.readFile(path.join(output, name), 'utf8');
+  const references = [
+    ...content.matchAll(/["'](\.\.?\/[^"'`\s]+\.(?:js|mjs)(?:\?[^"']*)?)["']/g),
+    ...content.matchAll(/(?:src|href)=["']([^"']+\.(?:js|css|svg)(?:\?[^"']*)?)["']/g),
+    ...content.matchAll(/url\(["']?([^\s)'"`]+\.svg)["']?\)/g)
+  ];
+  for (const [, reference] of references) {
+    if (/^https?:/.test(reference) || reference.includes('${')) continue;
+    const normalized = reference.split('?')[0];
+    const target = normalized.startsWith('/') ? path.join(output, normalized.slice(1)) : path.resolve(path.dirname(path.join(output, name)), normalized);
+    if (!target.startsWith(output + path.sep)) throw new Error(`Reference outside build: ${reference}`);
+    await fs.access(target).catch(() => { throw new Error(`Missing asset in ${name}: ${reference}`); });
+  }
+}
+const hashes = {};
+for (const name of files.sort()) hashes[name] = createHash('sha256').update(await fs.readFile(path.join(output, name))).digest('hex');
+const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
+const version = html.match(/name="app-version" content="([^"]+)"/)[1];
+const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
+if (!app.includes(`APP_VERSION = "${version}"`)) throw new Error('App and HTML versions differ.');
+const release = { project: 'hausaufgabe-staging', version, commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), files: hashes };
+await fs.writeFile(path.join(output, 'release.json'), JSON.stringify(release, null, 2) + '\n');
+// This config has no functions/rules/storage section and no production target.
+await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
+  site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
+  headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
+} }, null, 2) + '\n');
+console.log(`Staging build verified: ${version}, ${files.length} files.`);

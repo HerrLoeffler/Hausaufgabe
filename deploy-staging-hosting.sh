@@ -1,47 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-PROJECT_ID="hausaufgabe-staging"
 cd "$(dirname "$0")"
+MODE="${1:---check}"
+case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-staging-hosting.sh --check oder --deploy"; exit 1 ;; esac
+PROJECT_ID="hausaufgabe-staging"
 
-if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
-  echo "FEHLER: Firebase-Konfiguration zeigt nicht auf Staging."
+for FILE in app.js startup.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs; do
+  node --check "$FILE"
+done
+node --test ai-*.test.js ordering-grading.test.mjs
+if [ ! -d tools/ui/node_modules/jsdom ]; then
+  npm ci --prefix tools/ui --no-audit --no-fund
+fi
+npm test --prefix tools/ui
+BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-staging.XXXXXX")"
+trap 'rm -rf "$BUILD_DIR"' EXIT
+node tools/build-staging.mjs "$BUILD_DIR"
+if [ "$MODE" = "--check" ]; then
+  echo "Alle Prüfungen erfolgreich. Es wurde nichts veröffentlicht."
+  exit 0
+fi
+if [ -n "$(git status --porcelain --untracked-files=normal)" ]; then
+  echo "FEHLER: Nicht gespeicherte Repository-Änderungen. Bitte zuerst prüfen und committen."
   exit 1
 fi
-
-# Reine Branding-/Layoutmodule dürfen den kritischen App-Start nicht statisch blockieren.
-if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js|^import .*variant-enhancements\.js|^import .*admin-ai-access\.js' ai-client.js; then
-  echo "FEHLER: ai-client.js darf keine statischen Branding-/Layoutimporte enthalten."
-  exit 1
-fi
-
-node --check app.js
-node --check ai-client.js
-node --check ui-enhancements.js
-node --check visual-enhancements.js
-node --check gradecrew-brand.js
-node --check layout-enhancements.js
-node --check variant-enhancements.js
-node --check admin-ai-access.js
-node --check editor-drafts.js
-node --check ai-review-state.js
-node --check ordering-grading.mjs
-node --test ai-*.test.js
-node --test ordering-grading.test.mjs
-
-test -f assets/gradecrew/penguin-guide.svg
-test -f assets/gradecrew/falcon-create.svg
-test -f assets/gradecrew/fox-improve.svg
-test -f assets/gradecrew/owl-grade.svg
-test -f assets/gradecrew/crew-lineup.svg
-
-cp firebase-config.staging.js firebase-config.js
-mkdir -p public
-cp index.html app.js styles.css design-system.css gradecrew-brand.css firebase-config.js ai-json-tools.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs public/
-rm -rf public/assets/gradecrew
-mkdir -p public/assets
-cp -R assets/gradecrew public/assets/
-
-echo "Deploy HOSTING -> ${PROJECT_ID} (Functions, Regeln und Storage bleiben unverändert)"
-firebase deploy --project "$PROJECT_ID" --only hosting
-echo "✓ https://${PROJECT_ID}.web.app"
+command -v firebase >/dev/null || { echo "Firebase CLI fehlt. Installieren: npm install -g firebase-tools"; exit 1; }
+echo "Veröffentliche ausschließlich Hosting auf $PROJECT_ID."
+firebase deploy --config "$BUILD_DIR/firebase.json" --project "$PROJECT_ID" --only hosting --non-interactive
+node tools/verify-staging.mjs "$BUILD_DIR/public/release.json"
+echo "Fertig: https://hausaufgabe-staging.web.app"

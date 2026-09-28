@@ -12,7 +12,7 @@ function setup() {
   const notices = [], reports = [];
   const source = { id: "q1", type: "truefalse", text: "Ausgangsfrage", correctBoolean: false, points: 1 };
   const state = { user: { uid: "teacher" }, currentQuiz: { id: "quiz" }, questions: [source] };
-  const host = { classList: { add() {}, remove() {} }, querySelector: () => ({ addEventListener() {} }) };
+  const host = { dataset: {}, classList: { add() {}, remove() {} }, querySelector: () => ({ addEventListener() {} }) };
   const request = deferred();
   const context = vm.createContext({ state, db: {}, $: () => host, QUESTION_TYPES: [["truefalse"]],
     questionReviewKey, editorQuestionIndex,
