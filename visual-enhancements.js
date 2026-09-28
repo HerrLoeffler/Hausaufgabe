@@ -6,10 +6,10 @@ export function startVisualEnhancements() {
 
   window.setTimeout(async () => {
     const modules = [
-      ["Branding", "./gradecrew-brand.js?v=gradecrew-v1.11"],
-      ["Layout", "./layout-enhancements.js?v=gradecrew-v1.11"],
-      ["Varianten", "./variant-enhancements.js?v=gradecrew-v1.11"],
-      ["Admin-KI-Rechte", "./admin-ai-access.js?v=gradecrew-v1.11"]
+      ["Branding", "./gradecrew-brand.js?v=gradecrew-v1.12"],
+      ["Layout", "./layout-enhancements.js?v=gradecrew-v1.12"],
+      ["Varianten", "./variant-enhancements.js?v=gradecrew-v1.12"],
+      ["Admin-KI-Rechte", "./admin-ai-access.js?v=gradecrew-v1.12"]
     ];
     const results = await Promise.allSettled(modules.map(([, path]) => import(path)));
     results.forEach((result, index) => {
