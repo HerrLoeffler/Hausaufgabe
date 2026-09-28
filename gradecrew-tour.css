@@ -89,3 +89,7 @@ dialog.gcTourVariantDialog::backdrop{background:rgba(15,23,42,.48);backdrop-filt
 .gcCoachCentered>p{max-width:560px;margin-left:auto;margin-right:auto}
 .gcCoachCentered>.gcCoachNext{display:block;margin-left:auto;margin-right:auto}
 .gcThanksFaces{width:min(100%,380px);margin-left:auto;margin-right:auto}
+
+.gcCoachFinishFlow{justify-content:center}
+.gcFinishCrew{display:block;width:min(100%,560px);height:auto;margin:16px auto}
+.gcFinishChoices{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}

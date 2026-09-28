@@ -58,7 +58,7 @@ function adapter(w) {
     focusQuestion: () => {},
     showSettings: () => {},
     checkDemo: () => null,
-    focusReviewLast: () => {}
+    focusReviewQuestion: () => {}
   };
 }
 
@@ -106,11 +106,14 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
   assert.equal(providerCalls, 1, 'ordinary creation still reaches its normal backend');
 });
 
-test('Public journey and real variant queue: prepared cat persists once, targeted Keep continues to real student/results flow', async t => {
+for (const finishAction of ['create', 'settings']) test(`Public journey: variant, practice feedback, assessment and ${finishAction} finish`, async t => {
   const w = fixture(t, { publicEntry: true });
   const nativeTimeout = w.setTimeout.bind(w);
   w.setTimeout = (callback, delay, ...args) => nativeTimeout(callback, Math.min(delay, 2), ...args);
   const api = adapter(w);
+  let completions = 0, newTests = 0;
+  api.completeTour = async () => { completions++; };
+  api.startNewTest = () => { newTests++; };
   let nextId = 0, providers = 0, persistedDraft;
   const state = { user: { uid: api.uid() }, currentQuiz: { id: 'DEMO1', published: false, tutorialVersion: 'v8' }, questions: [] };
   const feedbackWrites = [];
@@ -166,7 +169,7 @@ test('Public journey and real variant queue: prepared cat persists once, targete
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
     'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
-    'renderGapfillStudent', 'renderOrderingStudent', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);
   const productionStyle = w.document.createElement('style');
@@ -178,10 +181,13 @@ test('Public journey and real variant queue: prepared cat persists once, targete
   tour.notify('view', { id: 'aiView' }); next();
   await until(() => /Bilder plane/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'ghost-filled form');
   assert.equal(el('aiGrade').value, '4'); next();
-  await until(() => /Perfekt/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'ghost-filled preferences');
+  await until(() => /Stopp/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'preferences explanation pauses');
+  assert.match(w.document.querySelector('.gcRealCoach').textContent, /allen deinen KI-Tests/);
+  next();
+  assert.match(w.document.querySelector('.gcRealCoach h2').textContent, /Perfekt/);
   await w.generateAiTestNative();
   assert.equal(persistedDraft.questions.length, 10);
-  assert.equal(persistedDraft.questions.filter(q => q.imageUrl).length, 3);
+  assert.equal(persistedDraft.questions.filter(q => q.imageUrl).length, 4);
   assert.match(persistedDraft.questions[5].text, /Bleistift/);
   assert.equal(tour.ownsQuiz('DEMO1'), true);
   next(); next(); // Remy introduces Emmi, then Emmi appears alone.
@@ -223,23 +229,25 @@ test('Public journey and real variant queue: prepared cat persists once, targete
   assert.equal(reloaded.aiVariantKept, true);
   await until(() => w.document.querySelector('.aiFeedbackGood.gcTourTarget'), 'green smiley after Keep rerender');
   w.document.querySelector('.aiFeedbackGood.gcTourTarget').click();
-  await until(() => w.document.querySelector('.aiFeedbackBad.gcTourTarget'), 'good feedback saved before red step');
-  assert.equal(feedbackWrites.length, 1);
-  assert.equal(feedbackWrites[0][`tutorialFeedback.${cat.id}`].verdict, 'good');
+  await until(() => /Ein Hinweis wartet/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'pause at second warning');
+  assert.equal(feedbackWrites.length, 0, 'practice rating does not write data');
+  next();w.document.querySelector('.questionOutlineItem.gcTourTarget').click();
+  await until(() => w.document.querySelector('.aiFeedbackBad.gcTourTarget'), 'second flagged question');
   w.document.querySelector('.aiFeedbackBad.gcTourTarget').click();
   await until(() => w.document.querySelector('.aiQualityRemove.gcTourTarget'), 'real negative-feedback panel');
   assert.equal(w.document.querySelector('.aiQualityReason').value, 'incorrect');
   w.document.querySelector('.aiQualityRemove.gcTourTarget').click();
   await until(() => state.questions.length === 10, 'negative feedback saved and faulty question removed');
-  assert.equal(feedbackWrites.length, 2);
-  assert.equal(feedbackWrites[1]['tutorialFeedback.tutorial-9'].verdict, 'bad');
-  assert.equal(feedbackWrites[1]['tutorialFeedback.tutorial-9'].action, 'remove');
+  assert.equal(feedbackWrites.length, 0);
   assert.equal(state.questions.length, 10);
   assert.equal(state.questions.filter(q => q.imageUrl?.endsWith('demo-cat.svg')).length, 1);
+  assert.match(w.document.querySelector('.gcRealCoach h2').textContent, /Danke, Emmi/);
+  next();next();next(); // Coco thanks Emmi, introduces Wilma, Wilma explains settings.
+  assert.match(w.document.querySelector('.gcRealCoach').textContent, /Mischen/);
   next(); tour.notify('published', { quizId: 'DEMO1' });
   w.renderStudentQuiz({ ...persistedDraft, id: 'DEMO1', startMode: 'student' }, state.questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
-  assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 4);
+  assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 5);
   assert.equal(w.document.querySelectorAll('.studentQuestionImage img[src$="demo-cat.svg"]').length, 1);
   w.document.querySelector('.gcNamePrompt input').value = 'ML'; next();
   assert.equal(el('studentName').value, 'ML');
@@ -249,42 +257,38 @@ test('Public journey and real variant queue: prepared cat persists once, targete
   tour.notify('submitted', { quizId: 'DEMO1', submissionId: 'saved-answer' });
   assert.equal(w.document.body.classList.contains('gcTourAnswering'), false);
   el('resultsTableWrap').innerHTML = '<button class="reviewBtn" data-id="saved-answer">Bewerten</button>';
-  tour.notify('results-ready', { quizId: 'DEMO1' }); next();
+  tour.notify('results-ready', { quizId: 'DEMO1' });
   assert.ok(w.document.querySelector('.reviewBtn.gcTourTarget'));
   tour.notify('review-opened', { submissionId: 'saved-answer' });
-  tour.notify('review-saved', { submissionId: 'saved-answer' }); next();
+  assert.match(w.document.querySelector('.gcRealCoach').textContent, /Aufgabe 5/);
+  tour.notify('review-saved', { submissionId: 'saved-answer' });
+  assert.ok(w.document.querySelector('.gcFinishCrew'));
+  assert.match(w.document.querySelector('.gcRealCoach').textContent, /\d+:\d{2} Minuten/);
+  if(finishAction==='create') {
+    next();await until(()=>!tour.active,'finish');assert.equal(newTests,1);
+  } else {
+    w.document.querySelector('.gcFinishChoices button').click();
+    await until(()=>/Reihenfolge mischen/.test(w.document.querySelector('.gcRealCoach h2')?.textContent),'optional settings');
+    next();assert.match(w.document.querySelector('.gcRealCoach h2').textContent,/Ergebnisse/);next();
+    assert.equal(newTests,0);
+  }
+  assert.equal(completions,1);
   assert.equal(tour.active, false);
   assert.equal(providers, 0);
 });
 
-test('Tutorial feedback waits for persistence, prevents double saves and stays retryable after failure', async t => {
-  const w = fixture(t);
-  const question = { id:'tutorial-9', text:'Which word means gelb?', type:'single' };
-  const events = [];
-  let writes = 0, finish;
-  Object.assign(w, {
-    state:{ user:{uid:'teacher'}, currentQuiz:{id:'DEMO',tutorialVersion:'v8'}, questions:[question] },
-    db:{}, doc:()=>({}), serverTimestamp:()=>123, aiQuestionFeedbackSnapshot:q=>({text:q.text}),
-    updateDoc:()=>{writes++;return new Promise(resolve=>{finish=resolve;});},
-    renderQuestions:()=>{}, markDirty:()=>{}, toast:()=>{}, crewTour:{notify:(...args)=>events.push(args)}
-  });
+test('Tutorial smileys demonstrate the controls without storing ratings', async t => {
+  const w=fixture(t);const question={id:'q1'};const events=[];
+  Object.assign(w,{state:{user:{uid:'a'},currentQuiz:{id:'DEMO',tutorialVersion:'v8'},questions:[question]},
+    renderQuestions:()=>{},markDirty:()=>{},toast:()=>{},updateDoc:()=>assert.fail('No persistence during practice'),
+    crewTour:{ownsQuiz:id=>id==='DEMO',notify:(...args)=>events.push(args)}});
   w.eval(fn('submitTutorialQuestionFeedback'));
-  const options = { verdict:'bad', reason:'incorrect', comment:'Wrong answer key', action:'remove' };
-  const saving = w.submitTutorialQuestionFeedback(question, options);
-  assert.equal(await w.submitTutorialQuestionFeedback(question, options), false);
-  assert.equal(writes, 1);
-  assert.equal(events.length, 0);
-  assert.equal(w.state.questions.length, 1);
-  finish(); await saving;
-  assert.equal(w.state.questions.length, 0);
-  assert.equal(events[0][0], 'tutorial-feedback');
-  w.state.questions = [question];
-  w.console.error = () => {};
-  w.updateDoc = async () => { throw new Error('offline'); };
-  assert.equal(await w.submitTutorialQuestionFeedback(question, options), false);
-  assert.equal(w.state.questions.length, 1, 'failed persistence does not remove the question');
-  assert.equal(question._tutorialFeedbackSaving, false);
-  assert.equal(events.length, 1, 'failed write cannot advance tutorial');
+  assert.equal(await w.submitTutorialQuestionFeedback(question,{verdict:'good',action:'keep'}),true);
+  assert.equal(question._aiFeedbackVerdict,'good');
+  assert.equal(w.state.questions.length,1);
+  await w.submitTutorialQuestionFeedback(question,{verdict:'bad',action:'remove'});
+  assert.equal(w.state.questions.length,0);
+  assert.equal(events.length,2);
 });
 
 test('Crew journey explains GradeCrew, introduces the complete Crew, then points to the real New Test action', t => {
@@ -311,7 +315,7 @@ test('Crew journey explains GradeCrew, introduces the complete Crew, then points
   assert.equal(tour.active, true);
 });
 
-test('Prepared tutorial test is deterministic: grade 4, ten tasks, three images and one deliberate AI-style error', t => {
+test('Prepared tutorial test is deterministic: grade 4, ten tasks, four images and one deliberate AI-style error', t => {
   const w = fixture(t);
   assert.equal(w.tourVersion, 'gradecrew-live-tour-v7');
   assert.equal(w.demo.grade, '4');
@@ -319,16 +323,18 @@ test('Prepared tutorial test is deterministic: grade 4, ten tasks, three images 
   assert.equal(w.demo.timeLimitMinutes, 1);
   assert.equal(w.demo.questions.reduce((sum, q) => sum + q.points, 0), 10);
   const pictures = w.demo.questions.filter(q => q.imageUrl);
-  assert.equal(pictures.length, 3);
+  assert.equal(pictures.length, 4);
   pictures.forEach(q => assert.ok(fs.existsSync('.' + q.imageUrl), q.imageUrl));
   assert.ok(fs.existsSync('./assets/gradecrew/demo-cat.svg'));
   const faulty = w.demo.questions[8];
   assert.match(faulty.text, /gelb/);
   assert.equal(faulty.options.find(option => option.correct)?.text, 'blue');
-  assert.equal(w.demo.questions[9].manualReview, true);
-  assert.match(w.demo.questions[4].text, /^Decide/);
+  assert.equal(w.demo.questions[4].manualReview, true);
+  assert.equal(w.demo.questions[9].type, "ordering");
+  assert.equal(w.demo.questions[9].items.join(","), "Coco,Remy,Emmi,Wilma");
+  assert.match(w.demo.questions[6].text, /^Decide/);
   assert.match(w.demo.questions[5].text, /Vogel/);
-  assert.match(w.demo.questions[7].text, /^Put/);
+  assert.equal(w.demo.questions[7].type, "markwords");
 });
 
 test('Tutorial keeps real AI concepts but uses deterministic dog edit and cat variant without provider calls', t => {
@@ -354,7 +360,7 @@ test('Tour is mandatory, quality-led and contains the intended Crew handoffs', (
   assert.match(source, /handoff\("guide","create"/);
   assert.match(source, /handoff\("create","improve"/);
   assert.match(source, /handoff\("guide","grade"/);
-  assert.doesNotMatch(source, /handoff\("guide","improve"/);
+  assert.match(source, /Danke, Emmi/);
   assert.match(source, /Danke, Remy!/);
   assert.match(source, /Bilder plane ich direkt mit ein/);
   assert.match(source, /eigene PDFs, Fotos, Arbeitsblätter oder Texte hochladen/);
@@ -425,7 +431,7 @@ test('Core persists tutorial questions with images and a one-minute test; no fak
   assert.equal(await w.createTutorialQuiz(w.demo), 'DEMO');
   assert.equal(writes[0].timeLimitMinutes, 1);
   assert.equal(writes.length, 11);
-  assert.equal(writes.slice(1).filter(q => q.imageUrl).length, 3);
+  assert.equal(writes.slice(1).filter(q => q.imageUrl).length, 4);
   assert.ok(writes.slice(1).every(q => q.aiOrigin.kind === 'tutorial'));
   assert.doesNotMatch(source, /Beispiel A|Beispiel B/);
 });
@@ -446,7 +452,7 @@ test('Actual countdown auto-submits once at sixty seconds, never on first tick',
   clock = 61000; tick(); tick(); assert.equal(submits, 1);
 });
 
-test('Real student renderer uses ten widgets, three persisted images and a gated one-minute start', t => {
+test('Real student renderer uses ten widgets, four persisted images and a gated one-minute start', t => {
   const w = fixture(t);
   const events = [];
   Object.assign(w, {
@@ -454,12 +460,12 @@ test('Real student renderer uses ten widgets, three persisted images and a gated
     escapeHtml: value => String(value).replaceAll('"', '&quot;'), round1: number => number, setupStudentProgress: () => {},
     crewTour: { notify: event => events.push(event) }, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
-  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   const questions = w.demo.questions.map((q, i) => ({ ...q, id: `q${i}` }));
   w.renderStudentQuiz({ ...w.demo, id: 'DEMO', startMode: 'student' }, questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
-  assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 3);
-  assert.equal(w.document.querySelectorAll('.sortableList .sortItem').length, 3);
+  assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 4);
+  assert.equal(w.document.querySelectorAll('.sortableList .sortItem').length, 4);
   assert.ok(w.$('studentQuestions').classList.contains('hidden'));
   assert.equal(w.$('studentTimerText').textContent, '01:00');
   assert.deepEqual(events, ['student-ready']);

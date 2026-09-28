@@ -156,7 +156,7 @@ export function startVisualEnhancements() {
       ["Crew-Tour-Sperre", "./crew-tour-hardening.js?v=2.3.1-gc13"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
-      ["Varianten", "./variant-enhancements.js?v=2.3.1-gc20"]
+      ["Varianten", "./variant-enhancements.js?v=2.3.1-gc21"]
     ];
     const results = await Promise.allSettled(modules.map(([, path]) => import(path)));
     results.forEach((result, index) => {
