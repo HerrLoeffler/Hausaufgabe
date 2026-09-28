@@ -3,6 +3,13 @@ const notice = document.getElementById("startupNotice");
 const message = document.getElementById("startupMessage");
 const retry = document.getElementById("startupRetry");
 retry?.addEventListener("click", () => location.reload());
+
+// The creator role changed from falcon to elephant. Swap the static artwork
+// before app startup so the old mascot never flashes while modules load.
+document.querySelectorAll('img[src*="falcon-create.svg"]').forEach(img => {
+  img.src = img.src.replace("falcon-create.svg", "elephant-create.svg");
+});
+
 const slowStart = window.setTimeout(() => {
   message.textContent = "GradeCrew wird geladen …";
   notice.classList.remove("hidden");
