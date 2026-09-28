@@ -1,167 +1,824 @@
-// The coach only points at the real app. The app owns persistence, rendering and grading.
-export const TOUR_VERSION = "gradecrew-live-tour-v3";
+// Guided onboarding uses the real GradeCrew UI, but deterministic tutorial data.
+// The tour owns navigation only while it is active; the app still owns persistence,
+// rendering, grading and all normal AI flows outside the tutorial.
+export const TOUR_VERSION = "gradecrew-live-tour-v4";
+
 export const CREW = Object.freeze({
- guide: {name:"Coco", animal:"Pinguin",role:"Dein Guide",asset:"penguin-guide"},
- create: {name:"Remy",animal:"Elefant",role:"Erstellen",asset:"elephant-create"},
- improve: {name:"Emmi",animal:"Fuchs",role:"Überarbeiten",asset:"fox-improve"},
- grade: {name:"Wilma",animal:"Eule",role:"Bewerten",asset:"owl-grade"}
+  guide: { name: "Coco", animal: "Pinguin", role: "Dein Guide", asset: "penguin-guide" },
+  create: { name: "Remy", animal: "Elefant", role: "Erstellen", asset: "elephant-create" },
+  improve: { name: "Emmi", animal: "Fuchs", role: "Überarbeiten", asset: "fox-improve" },
+  grade: { name: "Wilma", animal: "Eule", role: "Bewerten", asset: "owl-grade" }
 });
-const single = (text, choices, answer, image) => ({type:"single",text,points:1,options:choices.map((text,i)=>({text,correct:i===answer})),...(image?{imageUrl:`/assets/gradecrew/demo-${image}.svg`,imageAlt:({backpack:"Ein blauer Schulrucksack.",pencil:"Ein roter Bleistift aus Holz.",books:"Drei Bücher nebeneinander."})[image]}:{})});
-export const DEMO_TEST = Object.freeze({title:"Übung · Meine erste GradeCrew-Reise",subject:"Englisch",grade:"5",timeLimitMinutes:1,
- description:"Dein Probetest: 10 kurze Aufgaben, 1 Minute. Es geht ums Ausprobieren – nicht um eine echte Schulnote.",
- questions:[
- single("What colour is the schoolbag?",["red","blue","green"],1,"backpack"),
- single("What can you see?",["a ruler","a pencil","a chair"],1,"pencil"),
- single("How many books can you see?",["two","four","three"],2,"books"),
- single("Was heißt „Hund“ auf Englisch?",["cat","dog","bird"],1),
- {type:"truefalse",text:"„Apple“ heißt „Apfel“.",points:1,correctBoolean:true},
- {type:"dropdown",text:"Choose the English word for „Hallo“.",points:1,options:[{text:"Goodbye",correct:false},{text:"Hello",correct:true},{text:"Thanks",correct:false}]},
- {type:"gapfill",text:"Setze die englische Zahl ein: one, two, [three].",points:1},
- {type:"ordering",text:"Ordne die Zahlen von klein nach groß.",points:1,items:["one","two","three"],manualReview:false},
- single("Which animal says „meow“?",["dog","cat","duck"],1),
- {type:"text",text:"Nenne eine Farbe auf Englisch.",points:1,acceptedAnswers:["red","blue","green","yellow","orange","purple","pink","black","white","brown","grey","gray"],manualReview:true}
- ]});
-export function preparedResponse(q, {variant = false, mediaKind = "none"} = {}) {
- const question = variant ? single("Was heißt „Katze“ auf Englisch?",["dog","bird","cat"],2) : single("Wähle das englische Wort für „Hund“.",["cat","dog","bird"],1);
- if (variant && mediaKind !== "none") throw new Error("Für diese vorbereitete Übungsvariante bitte „Ohne Bild“ wählen.");
- return {question:{...question,mediaIntent:{kind:"none"}},meta:{model:"prepared-tutorial",promptVersion:TOUR_VERSION}};
+
+const single = (text, choices, answer, image = "") => ({
+  type: "single",
+  text,
+  points: 1,
+  options: choices.map((label, index) => ({ text: label, correct: index === answer })),
+  ...(image ? {
+    imageUrl: `/assets/gradecrew/demo-${image}.svg`,
+    imageAlt: ({
+      backpack: "Ein blauer Schulrucksack.",
+      pencil: "Ein roter Bleistift aus Holz.",
+      books: "Drei Bücher nebeneinander."
+    })[image]
+  } : {})
+});
+
+export const DEMO_TEST = Object.freeze({
+  title: "Übung · Meine erste GradeCrew-Reise",
+  subject: "Englisch",
+  grade: "4",
+  timeLimitMinutes: 1,
+  description: "Dein Probetest: 10 kurze Aufgaben, 1 Minute. Hier geht es ums Ausprobieren – nicht um eine echte Schulnote.",
+  questions: [
+    single("What colour is the schoolbag?", ["red", "blue", "green"], 1, "backpack"),
+    single("What can you see?", ["a ruler", "a pencil", "a chair"], 1, "pencil"),
+    single("How many books can you see?", ["two", "four", "three"], 2, "books"),
+    single("Was heißt „Hund“ auf Englisch?", ["cat", "dog", "bird"], 1),
+    { type: "truefalse", text: "„Red“ means „rot“.", points: 1, correctBoolean: true },
+    { type: "dropdown", text: "Choose the English word for „blau“.", points: 1, options: [
+      { text: "green", correct: false }, { text: "blue", correct: true }, { text: "yellow", correct: false }
+    ] },
+    { type: "gapfill", text: "Complete the colour: gr[ee]n.", points: 1 },
+    { type: "ordering", text: "Put the words in this order: red, yellow, green.", points: 1, items: ["red", "yellow", "green"], manualReview: false },
+    // Deliberately wrong answer key. The tour later explains that AI can make mistakes
+    // and removes this task after a useful variant has been added.
+    single("Which word means „gelb“?", ["yellow", "blue", "red"], 1),
+    { type: "text", text: "Write one colour in English.", points: 1,
+      acceptedAnswers: ["red", "blue", "green", "yellow", "orange", "purple", "pink", "black", "white", "brown", "grey", "gray"], manualReview: true }
+  ]
+});
+// Make the deliberately faulty task actually faulty: blue is marked as correct.
+DEMO_TEST.questions[8].options.forEach((option, index) => { option.correct = index === 1; });
+
+export function preparedResponse(_q, { variant = false, mediaKind = "none" } = {}) {
+  if (variant) {
+    if (mediaKind !== "none") throw new Error("Die vorbereitete Katze-Variante dieser Tour wird ohne zusätzliches Bild erstellt.");
+    const question = single("Choose the English word for „Katze“.", ["dog", "bird", "cat"], 2);
+    return { question: { ...question, mediaIntent: { kind: "none" } }, meta: { model: "prepared-tutorial", promptVersion: TOUR_VERSION } };
+  }
+  const question = single("Choose the English word for „Hund“.", ["cat", "dog", "bird"], 1);
+  return { question: { ...question, mediaIntent: { kind: "none" } }, meta: { model: "prepared-tutorial", promptVersion: TOUR_VERSION } };
 }
-const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+})[char]);
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export function installCrewTour(api) {
- let active=false, stage="", owner="", quizId="", sourceId="", submissionId="", root, welcome, target, timer=0, frame=0, run=0, busy=false;
- const offered=new Set();
- const $=s=>document.querySelector(s);
- const doneKey=()=>`${TOUR_VERSION}:${owner}`;
- const owned=()=>active && owner===api.uid();
- const image=(role,happy=false)=>`<img src="/assets/gradecrew/${CREW[role].asset}${happy?'-welcome':''}.svg" alt="" width="110" height="110">`;
- function clear(){clearTimeout(timer);timer=0;cancelAnimationFrame(frame);frame=0;target?.classList.remove('gcTourTarget');target=null;}
- function hide(){clear();root?.remove();root=null;document.body.classList.remove('gcCoachVisible');}
- function stop({done=false}={}) {
-  ++run;active=false;busy=false;hide();welcome?.close();welcome?.remove();welcome=null;
-  document.body.classList.remove('gcRealTourActive');
-  if(done)try{localStorage.setItem(doneKey(),'done');}catch{}
- }
- function place(){ frame=0; }
- function schedulePlace(){if(!frame)frame=requestAnimationFrame(place);}
- function coach(role,title,text,selector,nextLabel,next){
-  hide();if(!owned())return;
-  root=document.createElement('aside');root.className='gcRealCoach';root.setAttribute('aria-label',`${CREW[role].name} begleitet dich`);root.setAttribute('aria-live','polite');
-  root.innerHTML=`<button class="gcCoachClose" type="button" aria-label="Tour beenden">×</button><div class="gcCoachIdentity">${image(role)}<div><span>${CREW[role].name} · ${CREW[role].role}</span><h2>${title}</h2></div></div><p>${text}</p>${nextLabel?`<button type="button" class="button primary gcCoachNext">${nextLabel}</button>`:''}<small>Übung in deiner echten GradeCrew-Oberfläche</small>`;
-  root.querySelector('.gcCoachClose').onclick=()=>stop();
-  if(next)root.querySelector('.gcCoachNext').onclick=()=>{if(!busy)next();};
-  document.body.classList.add('gcCoachVisible');document.body.append(root);
-  target=typeof selector==='string'?$(selector):selector;
-  if(target){
-   const node=target;node.classList.add('gcTourTarget');
-   queueMicrotask(()=>{
-    if(!node.isConnected || target!==node || !owned())return;
-    // Reveal native action menus after the current click has finished bubbling.
-    for(let parent=node.parentElement;parent;parent=parent.parentElement) if(parent.tagName==='DETAILS')parent.open=true;
-    node.scrollIntoView({block:'start',behavior:'auto'});
-   });
+  let active = false;
+  let stage = "";
+  let owner = "";
+  let quizId = "";
+  let sourceId = "";
+  let faultyId = "";
+  let submissionId = "";
+  let root = null;
+  let target = null;
+  let targetInteractive = false;
+  let freeRegion = null;
+  let targetCleanup = null;
+  let timer = 0;
+  let frame = 0;
+  let run = 0;
+  let busy = false;
+  const offered = new Set();
+
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => [...document.querySelectorAll(selector)];
+  const doneKey = () => `${TOUR_VERSION}:${owner}`;
+  const owned = () => active && owner === api.uid();
+  const image = (role, size = 96) => `<img src="/assets/gradecrew/${CREW[role].asset}.svg" alt="" width="${size}" height="${size}">`;
+
+  function clearTarget() {
+    if (targetCleanup) targetCleanup();
+    targetCleanup = null;
+    target?.classList.remove("gcTourTarget", "gcTourDeleteTarget");
+    target = null;
+    targetInteractive = false;
+    cancelAnimationFrame(frame);
+    frame = 0;
   }
-  schedulePlace();
- }
- function error(message,retry){coach('guide','Hier hat es noch nicht geklappt.',escape(message),null,'Erneut versuchen',retry);}
- function start(){
-  if(active || !api.uid() || !api.isDashboard() || $('dialog[open]'))return;
-  api.beginRun();owner=api.uid();quizId='';sourceId='';submissionId='';active=true;stage='welcome';run++;
-  document.body.classList.add('gcRealTourActive');
-  welcome=document.createElement('dialog');welcome.className='gcCrewWelcome';welcome.setAttribute('aria-labelledby','gcWelcomeTitle');
-  welcome.innerHTML=`<button class="gcCoachClose" type="button" aria-label="Tour schließen">×</button><span class="eyebrow">Schön, dass du da bist</span><h1 id="gcWelcomeTitle">Deine Crew freut sich auf dich.</h1><div class="gcWelcomeLineup">${Object.entries(CREW).map(([role,m])=>`<div>${image(role,true)}<strong>${m.name}</strong><small>${m.animal}</small></div>`).join('')}</div><p>Einmal gemeinsam erstellen, überarbeiten, ausfüllen und bewerten.</p><button type="button" class="button primary gcWelcomeStart">Crew kennenlernen</button>`;
-  document.body.append(welcome);welcome.showModal();
-  welcome.querySelector('.gcCoachClose').onclick=()=>stop();welcome.addEventListener('cancel',e=>{e.preventDefault();stop();});
-  welcome.querySelector('.gcWelcomeStart').onclick=()=>{welcome.close();welcome.remove();welcome=null;stage='guide';coach('guide','Hallo, ich bin Coco!','Ich bin dein Pinguin-Guide. Wir klicken gemeinsam durch GradeCrew. Unser Übungstest und deine Abgabe bleiben danach in „Meine Tests“.',null,'Los geht’s',()=>{stage='new';coach('guide','Wir starten deinen ersten Test.','Klicke auf „Neuer Test“. Ich bleibe an deiner Seite.','#newQuizBtn');});};
- }
- function form(){
-  stage='form';api.prefill();
-  coach('create','Hallo, ich bin Remy!','Ich bin der Elefant fürs Erstellen. Englisch, Klasse 5, zehn Aufgaben und drei Bilder sind schon eingetragen. Schau dir das Formular an. Über „Test erstellen“ übernimmst du unseren vorbereiteten Übungstest.','#aiView .aiGrid > .card','Zum Erstellen-Button',()=>coach('create','Bereit für unseren Entwurf?','Klicke jetzt den echten Erstellen-Button. In dieser Tour nutze ich vorbereitete Aufgaben.','#generateAiTestBtn'));
- }
- function draft(){
-  stage='draft';sourceId=api.questionId(3);
-  coach('improve','Hallo, ich bin Emmi!','Ich bin der Fuchs fürs Überarbeiten. Ich helfe dir beim Aufgabencheck, beim Verbessern und bei Varianten. Schau dir die drei Bildaufgaben an. Danach verbessern wir Aufgabe 4.','#questionList .questionCard','Aufgabe 4 verbessern',()=>{
-   stage='edit';api.focusQuestion(sourceId);coach('improve','Ein Auftrag an mich.','Öffne „KI bearbeiten“ bei dieser Aufgabe. In der Tour zeige ich dir eine vorbereitete, klarere Formulierung.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiEditQuestion`);
+
+  function clearWarnings() {
+    $$(".gcTourQualityFlag").forEach(node => node.classList.remove("gcTourQualityFlag"));
+  }
+
+  function hideCoach() {
+    clearTimeout(timer);
+    timer = 0;
+    clearTarget();
+    root?.remove();
+    root = null;
+    document.body.classList.remove("gcCoachVisible");
+  }
+
+  function stop({ done = false } = {}) {
+    ++run;
+    active = false;
+    busy = false;
+    freeRegion = null;
+    hideCoach();
+    clearWarnings();
+    document.querySelectorAll(".gcTourInlineHint").forEach(node => node.remove());
+    document.body.classList.remove("gcRealTourActive");
+    if (done) {
+      try { localStorage.setItem(doneKey(), "done"); } catch {}
+    }
+  }
+
+  function isAllowedNode(node) {
+    if (!(node instanceof Node)) return false;
+    if (root?.contains(node)) return true;
+    if (targetInteractive && target?.contains(node)) return true;
+    if (freeRegion?.contains?.(node)) return true;
+    return false;
+  }
+
+  function nudgeCoach() {
+    if (!root) return;
+    root.classList.remove("gcCoachNudge");
+    void root.offsetWidth;
+    root.classList.add("gcCoachNudge");
+    window.setTimeout(() => root?.classList.remove("gcCoachNudge"), 350);
+  }
+
+  function blockOutsideTour(event) {
+    if (!owned() || !event.isTrusted || isAllowedNode(event.target)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation?.();
+    nudgeCoach();
+  }
+
+  function blockKeyboard(event) {
+    if (!owned() || !event.isTrusted) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (isAllowedNode(event.target)) return;
+    if (["Tab", "Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown", "Backspace", "Delete"].includes(event.key) || event.key.length === 1) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+      nudgeCoach();
+      root?.querySelector(".gcCoachNext, input, button")?.focus?.({ preventScroll: true });
+    }
+  }
+
+  ["pointerdown", "pointerup", "mousedown", "mouseup", "click", "dblclick", "contextmenu", "submit"].forEach(type => {
+    document.addEventListener(type, blockOutsideTour, true);
   });
- }
- function variant(){stage='variant';api.focusQuestion(sourceId);coach('improve','Jetzt ein anderes Beispiel.','Klicke bei derselben Aufgabe auf „Variante hinzufügen“. Wähle eine Variante ohne Bild und starte sie. Die vorhandenen drei Bildaufgaben bleiben erhalten.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiVariantQuestion`);}
- function settings(){
-  stage='settings';api.showSettings();coach('guide','Eine Minute zum Ausprobieren.','Unser Probetest hat zehn Aufgaben und eine Minute Zeit. Der Countdown startet erst in der Schüleransicht. Die Freigabe und deine Abgabe werden wirklich gespeichert.','#editorView .editorSettingsDisclosure','Test freigeben',()=>{
-   const issues=api.checkDemo();if(issues)return error(issues,settings);
-   stage='publish';coach('guide','Alles bereit?','Klicke auf „Veröffentlichen“. Danach wechseln wir über den echten Testzugang in deine Schülerrolle.','#publishBtn');
+  ["touchstart", "touchmove", "wheel"].forEach(type => {
+    document.addEventListener(type, blockOutsideTour, { capture: true, passive: false });
   });
- }
- function notify(event,data={}){
-  if(!owned())return;
-  if(event==='view') {
-   const allowed={new:['dashboardView','createView'],choice:['createView','aiView'],form:['aiView'],creating:['aiView','editorView'],draft:['editorView'],edit:['editorView'],variant:['editorView'],remove:['editorView'],settings:['editorView'],publish:['editorView','publishView'],published:['publishView','studentView'],identity:['studentView'],answering:['studentView'],submitted:['studentView','resultsView'],results:['resultsView'],review:['resultsView'],finish:['resultsView']};
-   if(allowed[stage] && !allowed[stage].includes(data.id)){stop();return;}
+  document.addEventListener("keydown", blockKeyboard, true);
+
+  function place() {
+    frame = 0;
+    if (!root?.isConnected) return;
+    const rect = root.getBoundingClientRect();
+    const margin = 18;
+    if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
+      root.style.left = `${Math.max(margin, Math.round((innerWidth - rect.width) / 2))}px`;
+      root.style.top = `${Math.max(86, Math.round(Math.min(innerHeight * .18, innerHeight - rect.height - margin)))}px`;
+      return;
+    }
+    const t = target.getBoundingClientRect();
+    const gap = 22;
+    const candidates = [
+      { left: t.right + gap, top: t.top + (t.height - rect.height) / 2 },
+      { left: t.left - rect.width - gap, top: t.top + (t.height - rect.height) / 2 },
+      { left: t.left + (t.width - rect.width) / 2, top: t.bottom + gap },
+      { left: t.left + (t.width - rect.width) / 2, top: t.top - rect.height - gap }
+    ];
+    const fits = candidate => candidate.left >= margin && candidate.top >= margin && candidate.left + rect.width <= innerWidth - margin && candidate.top + rect.height <= innerHeight - margin;
+    const chosen = candidates.find(fits) || candidates[2];
+    root.style.left = `${Math.round(Math.max(margin, Math.min(chosen.left, innerWidth - rect.width - margin)))}px`;
+    root.style.top = `${Math.round(Math.max(margin, Math.min(chosen.top, innerHeight - rect.height - margin)))}px`;
   }
-  if(data.quizId && quizId && data.quizId!==quizId)return;
-  if(event==='view' && data.id==='createView' && stage==='new'){stage='choice';coach('create','Remy übernimmt den Entwurf.','Wähle „Mit KI erstellen“.','#createAiBtn');}
-  if(event==='view' && data.id==='aiView' && stage==='choice')form();
-  if(event==='edit-opened' && stage==='edit'){
-   const panel=$('.questionAiPanel');const input=panel?.querySelector('textarea');if(input)input.value='Formuliere den Arbeitsauftrag klarer.';
-   coach('improve','So gibst du deinen Wunsch an.','Der Wunsch ist vorbereitet. Klicke auf „Änderung erstellen“ – genau so funktioniert es auch später.',panel?.querySelector('.aiApply'));
+
+  function schedulePlace() {
+    if (!frame) frame = requestAnimationFrame(place);
   }
-  if(event==='edited' && stage==='edit')variant();
-  if(event==='variants-ready' && stage==='variant')coach('improve','Die Variante ist fertig.','Übernimm die Variante über die normale Variantenanzeige. Danach entfernen wir die ursprüngliche Aufgabe, damit es bei zehn bleibt.','#variantBackgroundProgress');
-  if(event==='variants-applied' && stage==='variant'){
-   stage='remove';api.focusQuestion(sourceId);coach('improve','Du entscheidest, welche Aufgabe bleibt.','Die neue Variante ist übernommen. Lösche jetzt die ursprüngliche Hund-Aufgabe mit dem Papierkorb und bestätige. So bleiben genau zehn Aufgaben.',`#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .deleteQuestion`);
+
+  function setTarget(selectorOrNode, { interactive = false, onClick = null, deleteTarget = false, scroll = true } = {}) {
+    clearTarget();
+    target = typeof selectorOrNode === "string" ? $(selectorOrNode) : selectorOrNode;
+    targetInteractive = Boolean(target && interactive);
+    if (!target) {
+      schedulePlace();
+      return null;
+    }
+    target.classList.add("gcTourTarget");
+    if (deleteTarget) target.classList.add("gcTourDeleteTarget");
+    for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+      if (parent.tagName === "DETAILS") parent.open = true;
+    }
+    if (scroll) queueMicrotask(() => target?.isConnected && target.scrollIntoView({ block: "center", behavior: "smooth" }));
+    const move = () => schedulePlace();
+    addEventListener("resize", move, { passive: true });
+    addEventListener("scroll", move, { passive: true, capture: true });
+    let clickHandler = null;
+    if (onClick) {
+      clickHandler = event => {
+        if (!owned()) return;
+        window.setTimeout(() => onClick(event), 0);
+      };
+      target.addEventListener("click", clickHandler, { once: true });
+    }
+    targetCleanup = () => {
+      removeEventListener("resize", move);
+      removeEventListener("scroll", move, true);
+      if (clickHandler) target?.removeEventListener("click", clickHandler);
+    };
+    schedulePlace();
+    return target;
   }
-  if(event==='question-deleted' && stage==='remove' && data.questionId===sourceId)settings();
-  if(event==='published' && stage==='publish'){
-   stage='published';coach('guide','Das ist der echte Zugang.','Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“. Du bleibst im selben Tab und siehst dieselbe Oberfläche wie deine Klasse.','#openPublishedStudentBtn');
+
+  function coach(role, title, text, {
+    target: selector = null,
+    button = "",
+    onButton = null,
+    interactiveTarget = false,
+    onTargetClick = null,
+    centered = false,
+    body = "",
+    deleteTarget = false
+  } = {}) {
+    hideCoach();
+    if (!owned()) return null;
+    root = document.createElement("aside");
+    root.className = `gcRealCoach${centered ? " gcCoachCentered" : ""}`;
+    root.setAttribute("aria-label", `${CREW[role].name} begleitet dich`);
+    root.setAttribute("aria-live", "polite");
+    root.innerHTML = `
+      <button class="gcCoachClose" type="button" aria-label="Tour beenden">×</button>
+      <div class="gcCoachIdentity">${image(role)}<div><span>${escapeHtml(CREW[role].name)} · ${escapeHtml(CREW[role].role)}</span><h2>${escapeHtml(title)}</h2></div></div>
+      <p>${escapeHtml(text)}</p>${body}
+      ${button ? `<button type="button" class="button primary gcCoachNext">${escapeHtml(button)}</button>` : ""}
+      <small>Nur der markierte Schritt ist während der Tour bedienbar.</small>`;
+    root.querySelector(".gcCoachClose").addEventListener("click", () => stop());
+    if (button && onButton) root.querySelector(".gcCoachNext").addEventListener("click", () => { if (!busy) onButton(); });
+    document.body.classList.add("gcCoachVisible");
+    document.body.append(root);
+    if (selector) setTarget(selector, { interactive: interactiveTarget, onClick: onTargetClick, deleteTarget });
+    else schedulePlace();
+    return root;
   }
-  if(event==='student-ready' && stage==='published'){
-   stage='identity';coach('guide','Wie dürfen wir dich nennen?','Gib einen Namen oder ein Kürzel ein. Schüler können aus Datenschutzgründen ein von dir vergebenes Kürzel verwenden. Danach klickst du auf „Test starten“ – deine Minute beginnt.','.studentIdentityCard','Zum Start',()=>coach('guide','Eine Minute – viel Spaß!','Klicke auf „Test starten“. Bei 00:00 werden auch unvollständige Antworten automatisch abgegeben.','#studentStartBtn'));
+
+  function handoff(fromRole, toRole, title, text, next) {
+    hideCoach();
+    if (!owned()) return;
+    root = document.createElement("aside");
+    root.className = "gcRealCoach gcCoachCentered gcCoachHandoff";
+    root.innerHTML = `
+      <button class="gcCoachClose" type="button" aria-label="Tour beenden">×</button>
+      <div class="gcHandoffFaces"><div>${image(fromRole, 108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>→</span><div>${image(toRole, 108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div></div>
+      <span class="eyebrow">Die Crew arbeitet zusammen</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p>
+      <button type="button" class="button primary gcCoachNext">${escapeHtml(CREW[toRole].name)} übernimmt</button>`;
+    root.querySelector(".gcCoachClose").addEventListener("click", () => stop());
+    root.querySelector(".gcCoachNext").addEventListener("click", next);
+    document.body.classList.add("gcCoachVisible");
+    document.body.append(root);
+    schedulePlace();
   }
-  if(event==='student-started' && stage==='identity'){stage='answering';hide();}
-  if(event==='submitted' && ['answering','identity'].includes(stage)){
-   submissionId=data.submissionId;stage='submitted';coach('guide','Deine Abgabe ist gespeichert.','Das sind deine echten Übungsergebnisse. Öffne jetzt die Lehrkraft-Auswertung; dort wartet Wilma auf dich.','#studentTeacherResultsBtn');
+
+  function error(message, retry) {
+    coach("guide", "Hier hat es noch nicht geklappt.", message, { button: "Erneut versuchen", onButton: retry, centered: true });
   }
-  if(event==='results-ready' && ['submitted','review-saving'].includes(stage)){
-   if(stage==='review-saving')return;
-   stage='results';coach('grade','Hallo, ich bin Wilma!','Ich bin die Eule fürs Bewerten. Hier steht deine echte Abgabe. Öffne „Bewerten“ in deiner Zeile – wir schauen uns Antworten, Bilder und Punkte gemeinsam an.',`#resultsTableWrap .reviewBtn[data-id="${CSS.escape(submissionId)}"]`);
+
+  function suppressLegacyGuides() {
+    document.getElementById("firstAiGuideBackdrop")?.classList.add("hidden");
+    document.getElementById("firstAiGuideCard")?.classList.add("hidden");
+    document.querySelectorAll(".firstAiGuideSpotlight").forEach(node => node.classList.remove("firstAiGuideSpotlight"));
+    const legacy = document.getElementById("teacherTourDialog");
+    if (legacy?.open) try { legacy.close(); } catch {}
   }
-  if(event==='review-opened' && stage==='results' && data.submissionId===submissionId){
-   stage='review';coach('grade','Dein Urteil zählt.','Du siehst die Antwort, die Lösung und bei Bildaufgaben auch das Bild. Prüfe besonders die freie Farbangabe am Ende. Ändere bei Bedarf Punkte und klicke auf „Bewertung speichern“.','#reviewPanel','Zur letzten Antwort',()=>{api.focusReviewLast();coach('grade','Freie Antworten brauchen deinen Blick.','Ist die genannte Farbe richtig? Vergib die passenden Punkte. Speichere anschließend deine Bewertung.','#saveReview');});
+
+  function start() {
+    if (active || !api.uid() || !api.isDashboard()) return;
+    suppressLegacyGuides();
+    api.beginRun();
+    owner = api.uid();
+    quizId = "";
+    sourceId = "";
+    faultyId = "";
+    submissionId = "";
+    freeRegion = null;
+    active = true;
+    busy = false;
+    stage = "intro";
+    ++run;
+    document.body.classList.add("gcRealTourActive");
+    coach("guide", "Hi, ich bin Coco.", "Ich zeige dir GradeCrew an einem echten Übungstest. Wir erstellen, überarbeiten, führen durch und bewerten – Schritt für Schritt.", {
+      button: "Los geht’s",
+      onButton: () => {
+        stage = "new";
+        coach("guide", "Wir starten deinen ersten Test.", "Klicke auf „+ Neuer Test“. Alles andere bleibt während dieses Schritts gesperrt.", {
+          target: "#newQuizBtn",
+          interactiveTarget: true
+        });
+      },
+      centered: true
+    });
   }
-  if(event==='review-saved' && stage==='review' && data.submissionId===submissionId){
-   stage='finish';coach('guide','Geschafft – das war dein erster Durchlauf!','Erstellt, überarbeitet, eine Minute selbst ausgefüllt und wirklich bewertet. Der Übungstest samt Ergebnissen bleibt in deiner Übersicht. Du kannst ihn später wie jeden anderen Test beenden oder löschen.','#resultsTableWrap','Tour abschließen',()=>stop({done:true}));
+
+  async function typeField(selector, value, label, token) {
+    const input = $(selector);
+    if (!input || !owned() || token !== run) return;
+    setTarget(input, { interactive: false });
+    const status = root?.querySelector(".gcCoachStatus");
+    if (status) status.textContent = label;
+    input.classList.add("gcTourTyping");
+    if (input.tagName === "SELECT" || input.type === "number") {
+      input.value = value;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      await sleep(260);
+    } else {
+      input.value = "";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      for (const char of String(value)) {
+        if (!owned() || token !== run) return;
+        input.value += char;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        await sleep(16);
+      }
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      await sleep(220);
+    }
+    input.classList.remove("gcTourTyping");
   }
- }
- async function create(){
-  if(!owned()||stage!=='form'||busy)return;
-  busy=true;const token=run;stage='creating';
-  coach('create','Ich bereite deinen Test vor.','Zehn Aufgaben, drei Bilder. Der Entwurf öffnet sich nach der kurzen Prüfung automatisch.','#aiProgress');
-  let delay;
-  const wait=new Promise(resolve=>{delay=setTimeout(resolve,3000);});
-  try{
-   const created=quizId || await api.createDemo(DEMO_TEST);
-   if(owned()&&token===run)quizId=created;
-   await wait;
-   if(!owned()||token!==run)return;
-   quizId=created;
-   await api.openEditor(created);
-   if(!owned()||token!==run)return;
-   if(!api.isEditor(created))throw new Error('Der gespeicherte Übungstest konnte nicht geöffnet werden.');
-   draft();
-  }catch(err){if(owned()&&token===run){stage='form';error(err.message,()=>create());}}
-  finally{clearTimeout(delay);if(token===run)busy=false;}
- }
- function dashboard({uid,firstVisit}){
-  if(active)return;
-  if(owner && owner!==uid)stop();owner=uid;
-  let button=$('#gradecrewTourBtn');
-  if(!button){button=document.createElement('button');button.id='gradecrewTourBtn';button.type='button';button.className='button ghost';$('.dashboardActions')?.append(button);}
-  button.textContent='Mit der Crew starten';button.onclick=start;
-  if(firstVisit&&!offered.has(uid)){
-   offered.add(uid);let done=false;try{done=localStorage.getItem(doneKey())==='done';}catch{}
-   if(!done)start();
+
+  async function ghostFillForm() {
+    if (!owned()) return;
+    const token = run;
+    busy = true;
+    stage = "form-filling";
+    coach("create", "Ich trage die Eckdaten ein.", "Wir bauen einen kleinen Englischtest für Klasse 4. Schau zu – die Angaben schreiben sich Schritt für Schritt ins echte Formular.", {
+      target: "#aiSubject",
+      body: '<div class="gcCoachStatus">Fach auswählen …</div>'
+    });
+    const sequence = [
+      ["#aiSubject", "Englisch", "Fach: Englisch"],
+      ["#aiGrade", "4", "Klasse: 4"],
+      ["#aiSchoolType", "Grundschule", "Schulart: Grundschule"],
+      ["#aiRegion", "Bayern", "Bundesland: Bayern"],
+      ["#aiTopic", "Colours, animals & school things", "Thema: Farben, Tiere & Schulsachen"],
+      ["#aiCount", "10", "10 Aufgaben"],
+      ["#aiPoints", "10", "10 Punkte"],
+      ["#aiImageQuestionCount", "3", "3 Aufgaben mit Bild"],
+      ["#aiCustomNotes", "Kurze, klare Aufgaben für Klasse 4. Einfache Farben, Tiere und Schulsachen. Abwechslungsreiche Aufgabentypen und verständliche Arbeitsaufträge.", "Eigene Wünsche: Niveau und Inhalt genauer steuern"]
+    ];
+    for (const step of sequence) {
+      await typeField(...step, token);
+      if (!owned() || token !== run) return;
+    }
+    busy = false;
+    stage = "form";
+    coach("create", "Das reicht mir.", "Mit „Eigene Wünsche“ kannst du der KI sehr konkret sagen, was du brauchst. Klicke jetzt auf „Test erstellen“. Der Übungstest ist vorbereitet, braucht aber absichtlich einen kurzen Moment.", {
+      target: "#generateAiTestBtn",
+      interactiveTarget: true
+    });
   }
- }
- const style=document.createElement('link');style.rel='stylesheet';style.href='./gradecrew-tour.css?v=2.3.1-gc11';document.head.append(style);
- addEventListener('resize',schedulePlace,{passive:true});addEventListener('scroll',schedulePlace,{passive:true,capture:true});
- document.addEventListener('gradecrew:account-changed',()=>stop());
- return {start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&['form','creating'].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse};
+
+  function markOutlineWarning(questionId, text) {
+    const cards = $$("#questionList .questionCard");
+    const index = cards.findIndex(card => card.dataset.id === questionId);
+    const outline = $$("#questionOutline .questionOutlineItem")[index];
+    if (!outline) return null;
+    outline.classList.add("gcTourQualityFlag");
+    outline.title = text;
+    return outline;
+  }
+
+  function clearOutlineWarning(questionId) {
+    const cards = $$("#questionList .questionCard");
+    const index = cards.findIndex(card => card.dataset.id === questionId);
+    $$("#questionOutline .questionOutlineItem")[index]?.classList.remove("gcTourQualityFlag");
+  }
+
+  function beginDraftReview() {
+    stage = "draft";
+    sourceId = api.questionId(3);
+    faultyId = api.questionId(8);
+    markOutlineWarning(sourceId, "Arbeitsauftrag passt sprachlich nicht zum restlichen Test.");
+    markOutlineWarning(faultyId, "Die hinterlegte Lösung ist falsch.");
+    handoff("create", "guide", "Der Entwurf steht.", "Remy hat zehn Aufgaben und drei Bildaufgaben vorbereitet. Jetzt prüfen wir gemeinsam – denn KI kann Fehler machen.", showOutlineGuide);
+  }
+
+  function showOutlineGuide() {
+    stage = "outline";
+    const outline = $("#questionOutline") || $("#editorView .settingsCard");
+    coach("guide", "KI spart Zeit – prüfen musst du trotzdem.", "Links siehst du deine Aufgabenübersicht. Die beiden Hinweise markieren Stellen, die wir uns ansehen sollten.", {
+      target: outline,
+      button: "Ersten Hinweis öffnen",
+      onButton: () => {
+        const warning = markOutlineWarning(sourceId, "Arbeitsauftrag passt sprachlich nicht zum restlichen Test.");
+        stage = "outline-question";
+        coach("guide", "Aufgabe 4 fällt auf.", "Klicke auf die markierte Aufgabe. Der Arbeitsauftrag ist noch auf Deutsch – das lassen wir gleich überarbeiten.", {
+          target: warning,
+          interactiveTarget: true,
+          onTargetClick: () => {
+            api.focusQuestion(sourceId);
+            handoff("guide", "improve", "Dafür hole ich Emmi dazu.", "Emmi ist unser Fuchs fürs Überarbeiten. Sie hilft dir, eine einzelne Aufgabe gezielt mit KI zu verbessern.", showEditStep);
+          }
+        });
+      }
+    });
+  }
+
+  function showEditStep() {
+    stage = "edit";
+    api.focusQuestion(sourceId);
+    coach("improve", "Mach den Arbeitsauftrag englisch.", "Die Aufgabe ist inhaltlich okay, aber die Sprache passt nicht. Öffne „Mit KI überarbeiten“.", {
+      target: `#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiEditQuestion`,
+      interactiveTarget: true
+    });
+  }
+
+  async function prepareVariantDialog() {
+    stage = "variant-dialog";
+    hideCoach();
+    let dialog = null;
+    for (let i = 0; i < 30; i += 1) {
+      dialog = $("dialog[open].gradecrewVariantDialog, dialog[open].variantRequestDialog, dialog[open].questionVariantDialog, dialog[open]");
+      if (dialog?.querySelector('[name="variantInstruction"]')) break;
+      await sleep(40);
+    }
+    if (!owned() || !dialog) return error("Das Variantenfenster wurde nicht gefunden.", showVariantStep);
+    const count = dialog.querySelector('[name="count"]');
+    const media = dialog.querySelector('[name="mediaKind"]');
+    const instruction = dialog.querySelector('[name="variantInstruction"]');
+    if (count) { count.value = "1"; count.dispatchEvent(new Event("change", { bubbles: true })); }
+    if (media) { media.value = "none"; media.dispatchEvent(new Event("change", { bubbles: true })); }
+    if (instruction) {
+      instruction.value = "Nutze statt „Hund“ das Wort „Katze“.";
+      instruction.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    let hint = dialog.querySelector(".gcTourInlineHint");
+    if (!hint) {
+      hint = document.createElement("div");
+      hint.className = "gcTourInlineHint";
+      hint.innerHTML = `<strong>Emmi hat alles vorbereitet:</strong><span>1 Variante · Katze statt Hund · ohne Bild.</span>`;
+      dialog.querySelector("form")?.prepend(hint);
+    }
+    const submit = dialog.querySelector('button[type="submit"]');
+    setTarget(submit, { interactive: true });
+  }
+
+  function showVariantStep() {
+    stage = "variant";
+    api.focusQuestion(sourceId);
+    coach("improve", "Jetzt bauen wir eine echte Variante.", "Die Hund-Aufgabe bleibt erhalten. Zusätzlich erstellen wir dieselbe Idee mit „Katze“. Klicke auf „Variante hinzufügen“.", {
+      target: `#questionList .questionCard[data-id="${CSS.escape(sourceId)}"] .aiVariantQuestion`,
+      interactiveTarget: true,
+      onTargetClick: prepareVariantDialog
+    });
+  }
+
+  function showFaultyDeleteStep() {
+    stage = "remove-preview";
+    api.focusQuestion(faultyId);
+    coach("improve", "Hier steckt tatsächlich ein Fehler.", "Bei Aufgabe 9 ist für „gelb“ fälschlich „blue“ als richtige Lösung markiert. Genau deshalb bleibt die Lehrkraft in der Kontrolle. Diese fehlerhafte Aufgabe löschen wir.", {
+      target: `#questionList .questionCard[data-id="${CSS.escape(faultyId)}"]`,
+      button: "Fehlerhafte Aufgabe löschen",
+      onButton: () => {
+        stage = "remove";
+        const deleteButton = $(`#questionList .questionCard[data-id="${CSS.escape(faultyId)}"] .deleteQuestion`);
+        if (deleteButton) {
+          deleteButton.textContent = "×";
+          deleteButton.title = "Fehlerhafte Aufgabe löschen";
+          deleteButton.setAttribute("aria-label", "Fehlerhafte Aufgabe löschen");
+        }
+        coach("improve", "Weg damit.", "Klicke auf das rote × und bestätige das Löschen. Die neue Katze-Variante bleibt – danach sind es wieder genau zehn Aufgaben.", {
+          target: deleteButton,
+          interactiveTarget: true,
+          deleteTarget: true
+        });
+      }
+    });
+  }
+
+  function showSettingsStep() {
+    stage = "settings";
+    api.showSettings();
+    coach("guide", "Durchführung und Bewertung gehören zum Test dazu.", "Hier legst du zum Beispiel Zeitlimit, Lösungen, Mischen und Notenschlüssel fest. Für unsere Übung ist bereits eine Minute eingestellt – du musst nichts verändern.", {
+      target: "#editorView .editorSettingsDisclosure",
+      button: "Weiter zur Freigabe",
+      onButton: () => {
+        const issue = api.checkDemo();
+        if (issue) return error(issue, showSettingsStep);
+        stage = "publish";
+        coach("guide", "Jetzt darf der Test raus.", "Klicke auf „Veröffentlichen“. Erst dann entsteht der Zugang für deine Klasse.", {
+          target: "#publishBtn",
+          interactiveTarget: true
+        });
+      }
+    });
+  }
+
+  function askName() {
+    stage = "identity";
+    hideCoach();
+    if (!owned()) return;
+    root = document.createElement("aside");
+    root.className = "gcRealCoach gcCoachCentered gcCoachIdentityPrompt";
+    root.innerHTML = `
+      <button class="gcCoachClose" type="button" aria-label="Tour beenden">×</button>
+      <div class="gcCoachIdentity">${image("guide", 124)}<div><span>Coco · Dein Guide</span><h2>Wie heißt du eigentlich?</h2></div></div>
+      <p>Ich bin Coco – und du? Ich darf doch du sagen, oder? Für Schüler reicht später auch ein von dir vergebenes Kürzel.</p>
+      <label class="gcNamePrompt">Name oder Kürzel<input type="text" maxlength="60" autocomplete="off" placeholder="z. B. Martin oder ML"></label>
+      <div class="gcNameError" aria-live="polite"></div>
+      <button type="button" class="button primary gcCoachNext">Weiter</button>`;
+    root.querySelector(".gcCoachClose").addEventListener("click", () => stop());
+    root.querySelector(".gcCoachNext").addEventListener("click", () => {
+      const input = root.querySelector("input");
+      const value = input.value.trim();
+      if (!value) {
+        root.querySelector(".gcNameError").textContent = "Sag Coco kurz, wie wir dich nennen dürfen.";
+        input.focus();
+        return;
+      }
+      const realInput = $("#studentName");
+      if (realInput) {
+        realInput.value = value;
+        realInput.dispatchEvent(new Event("input", { bubbles: true }));
+        realInput.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      stage = "identity-start";
+      coach("guide", `Freut mich, ${value}!`, "Klicke jetzt auf „Test starten“. Dann läuft unsere eine Übungsminute. Bei 00:00 wird automatisch abgegeben.", {
+        target: "#studentStartBtn",
+        interactiveTarget: true
+      });
+    });
+    document.body.classList.add("gcCoachVisible");
+    document.body.append(root);
+    root.querySelector("input").focus();
+    schedulePlace();
+  }
+
+  function ensureOrderingStartsUnsorted() {
+    const list = $("#studentQuestions .sortableList");
+    if (!list) return;
+    const rows = [...list.querySelectorAll(".sortItem")];
+    if (rows.length < 2) return;
+    const keys = rows.map(row => row.dataset.key).join(",");
+    if (keys === rows.map((_, index) => String(index)).join(",")) {
+      list.insertBefore(rows[1], rows[0]);
+    }
+  }
+
+  function notify(event, data = {}) {
+    if (!owned()) return;
+    if (data.quizId && quizId && data.quizId !== quizId) return;
+
+    if (event === "view") {
+      const allowed = {
+        new: ["dashboardView", "createView"],
+        handoff: ["createView"],
+        choice: ["createView", "aiView"],
+        "form-intro": ["aiView"],
+        "form-filling": ["aiView"],
+        form: ["aiView"],
+        creating: ["aiView", "editorView"],
+        draft: ["editorView"],
+        outline: ["editorView"],
+        "outline-question": ["editorView"],
+        edit: ["editorView"],
+        variant: ["editorView"],
+        "variant-dialog": ["editorView"],
+        "variant-wait": ["editorView"],
+        "variant-apply": ["editorView"],
+        "remove-preview": ["editorView"],
+        remove: ["editorView"],
+        settings: ["editorView"],
+        publish: ["editorView", "publishView"],
+        published: ["publishView", "studentView"],
+        identity: ["studentView"],
+        "identity-start": ["studentView"],
+        answering: ["studentView"],
+        submitted: ["studentView", "resultsView"],
+        results: ["resultsView"],
+        review: ["resultsView"],
+        finish: ["resultsView"]
+      };
+      if (allowed[stage] && !allowed[stage].includes(data.id)) {
+        error("Die Tour ist aus dem vorgesehenen Schritt gesprungen. Starte sie am besten erneut.", () => stop());
+        return;
+      }
+    }
+
+    if (event === "view" && data.id === "createView" && stage === "new") {
+      stage = "handoff";
+      handoff("guide", "create", "Für den ersten Entwurf hole ich Remy dazu.", "Remy hat den größten Kopf in der Crew – viel Platz zum Denken. Er kümmert sich ums Erstellen.", () => {
+        stage = "choice";
+        coach("create", "Wir starten mit KI.", "„Mit KI erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben natürlich verfügbar.", {
+          target: "#createAiBtn",
+          interactiveTarget: true
+        });
+      });
+      return;
+    }
+
+    if (event === "view" && data.id === "aiView" && stage === "choice") {
+      stage = "form-intro";
+      coach("create", "Wir bauen einen Test für Klasse 4.", "Thema: Colours, Tiere und Schulsachen. Ich fülle die echten Felder jetzt von selbst aus – inklusive „Eigene Wünsche“.", {
+        button: "Felder ausfüllen",
+        onButton: ghostFillForm,
+        centered: true
+      });
+      return;
+    }
+
+    if (event === "edit-opened" && stage === "edit") {
+      const panel = $(".questionAiPanel");
+      const input = panel?.querySelector("textarea");
+      if (input) {
+        input.value = "Formuliere den Arbeitsauftrag auf Englisch.";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      coach("improve", "Genau so gibst du der KI deinen Wunsch.", "Der Hinweis ist schon eingetragen. Klicke auf „Überarbeitung erstellen“ und vergleiche danach die Aufgabe.", {
+        target: panel?.querySelector(".aiApply"),
+        interactiveTarget: true
+      });
+      return;
+    }
+
+    if (event === "edited" && stage === "edit") {
+      clearOutlineWarning(sourceId);
+      showVariantStep();
+      return;
+    }
+
+    if (event === "variants-ready" && ["variant-dialog", "variant-wait", "variant"].includes(stage)) {
+      stage = "variant-apply";
+      document.querySelectorAll(".gcTourInlineHint").forEach(node => node.remove());
+      coach("improve", "Die Katze-Variante ist fertig.", "Übernimm genau diese Variante. Die Hund-Aufgabe bleibt dabei erhalten – eine Variante ist eine zusätzliche Aufgabe.", {
+        target: "#variantBackgroundProgress .applyVariants",
+        interactiveTarget: true
+      });
+      return;
+    }
+
+    if (event === "variants-applied" && stage === "variant-apply") {
+      showFaultyDeleteStep();
+      return;
+    }
+
+    if (event === "question-deleted" && stage === "remove" && data.questionId === faultyId) {
+      showSettingsStep();
+      return;
+    }
+
+    if (event === "published" && stage === "publish") {
+      stage = "published";
+      coach("guide", "Das ist der echte Zugang für die Klasse.", "Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle.", {
+        target: "#openPublishedStudentBtn",
+        interactiveTarget: true
+      });
+      return;
+    }
+
+    if (event === "student-ready" && stage === "published") {
+      askName();
+      return;
+    }
+
+    if (event === "student-started" && ["identity", "identity-start"].includes(stage)) {
+      stage = "answering";
+      hideCoach();
+      freeRegion = $("#studentForm");
+      window.setTimeout(ensureOrderingStartsUnsorted, 80);
+      return;
+    }
+
+    if (event === "submitted" && ["answering", "identity-start"].includes(stage)) {
+      submissionId = data.submissionId;
+      freeRegion = null;
+      stage = "submitted";
+      coach("guide", "Deine Abgabe ist gespeichert.", "Das waren echte Übungsantworten. Öffne jetzt die Lehrkraft-Auswertung – dort wartet Wilma auf dich.", {
+        target: "#studentTeacherResultsBtn",
+        interactiveTarget: true
+      });
+      return;
+    }
+
+    if (event === "results-ready" && stage === "submitted") {
+      stage = "results";
+      handoff("guide", "grade", "Jetzt ist Wilma dran.", "Wilma ist unsere Eule fürs Bewerten. Sie schaut genau hin, wenn automatische Auswertung allein nicht reicht.", () => {
+        coach("grade", "Öffne deine Übungsabgabe.", "In deiner Zeile findest du „Bewerten“. Dort siehst du Antworten, Lösungen, Bilder und Punkte.", {
+          target: `#resultsTableWrap .reviewBtn[data-id="${CSS.escape(submissionId)}"]`,
+          interactiveTarget: true
+        });
+      });
+      return;
+    }
+
+    if (event === "review-opened" && stage === "results" && data.submissionId === submissionId) {
+      stage = "review";
+      coach("grade", "Automatisch, wo es eindeutig ist – du entscheidest beim Rest.", "Schau dir die freie Farbangabe am Ende an. Dort kannst du Punkte prüfen und anschließend die Bewertung speichern.", {
+        target: "#reviewPanel",
+        button: "Zur freien Antwort",
+        onButton: () => {
+          api.focusReviewLast();
+          const input = $("#reviewQuestions .reviewQuestion:last-child .manualPoints");
+          freeRegion = input?.closest(".reviewQuestion") || null;
+          coach("grade", "Dein Urteil zählt.", "Prüfe die Antwort, passe bei Bedarf die Punkte an und klicke dann auf „Bewertung speichern“.", {
+            target: "#saveReview",
+            interactiveTarget: true
+          });
+          if (input) input.classList.add("gcTourAllowedInput");
+        }
+      });
+      return;
+    }
+
+    if (event === "review-saved" && stage === "review" && data.submissionId === submissionId) {
+      freeRegion = null;
+      stage = "finish";
+      coach("guide", "Jetzt gehörst du zur Crew.", "Du hast einen Test erstellt, KI-Hinweise geprüft, mit Emmi überarbeitet, eine Variante ergänzt, selbst teilgenommen und mit Wilma bewertet.", {
+        button: "Tour abschließen",
+        onButton: () => stop({ done: true }),
+        centered: true,
+        body: '<div class="gcCoachFinishFlow"><span>Erstellen</span><b>→</b><span>Überarbeiten</span><b>→</b><span>Durchführen</span><b>→</b><span>Bewerten</span></div>'
+      });
+    }
+  }
+
+  async function create() {
+    if (!owned() || stage !== "form" || busy) return;
+    busy = true;
+    const token = run;
+    stage = "creating";
+    coach("create", "Ich denke kurz nach …", "Der Übungstest ist bewusst vorgefertigt, damit die Tour immer denselben sicheren Ablauf hat. Ich lasse ihn trotzdem wie eine echte Erstellung kurz arbeiten.", {
+      target: "#aiProgress",
+      body: '<div class="gcTourWorking"><span></span><span></span><span></span><small>10 Aufgaben · 3 Bilder · wird geprüft</small></div>'
+    });
+    let delay;
+    const wait = new Promise(resolve => { delay = setTimeout(resolve, 3000); });
+    try {
+      const created = quizId || await api.createDemo(DEMO_TEST);
+      if (owned() && token === run) quizId = created;
+      await wait;
+      if (!owned() || token !== run) return;
+      quizId = created;
+      await api.openEditor(created);
+      if (!owned() || token !== run) return;
+      if (!api.isEditor(created)) throw new Error("Der gespeicherte Übungstest konnte nicht geöffnet werden.");
+      beginDraftReview();
+    } catch (error) {
+      if (owned() && token === run) {
+        stage = "form";
+        error(error?.message || "Der Übungstest konnte nicht vorbereitet werden.", create);
+      }
+    } finally {
+      clearTimeout(delay);
+      if (token === run) busy = false;
+    }
+  }
+
+  function dashboard({ uid, firstVisit }) {
+    if (active) return;
+    if (owner && owner !== uid) stop();
+    owner = uid;
+    suppressLegacyGuides();
+    let button = $("#gradecrewTourBtn");
+    if (!button) {
+      button = document.createElement("button");
+      button.id = "gradecrewTourBtn";
+      button.type = "button";
+      button.className = "button ghost";
+      $(".dashboardActions")?.append(button);
+    }
+    button.textContent = "Mit der Crew starten";
+    button.onclick = start;
+    if (firstVisit && !offered.has(uid)) {
+      offered.add(uid);
+      let done = false;
+      try { done = localStorage.getItem(doneKey()) === "done"; } catch {}
+      if (!done) window.setTimeout(start, 350);
+    }
+  }
+
+  const style = document.createElement("link");
+  style.rel = "stylesheet";
+  style.href = "./gradecrew-tour.css?v=2.3.1-gc12";
+  document.head.append(style);
+  addEventListener("resize", schedulePlace, { passive: true });
+  addEventListener("scroll", schedulePlace, { passive: true, capture: true });
+  document.addEventListener("gradecrew:account-changed", () => stop());
+
+  return {
+    start,
+    dashboard,
+    notify,
+    stop,
+    create,
+    get active() { return owned(); },
+    get creating() { return owned() && ["form-intro", "form-filling", "form", "creating"].includes(stage); },
+    ownsQuiz: id => owned() && quizId === id,
+    preparedResponse
+  };
 }
