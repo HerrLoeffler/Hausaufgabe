@@ -155,10 +155,15 @@ function openRequestDialog(button) {
   dialog.querySelector("form")?.addEventListener("submit", event => {
     event.preventDefault();
     const form = event.currentTarget;
+    const selectedMediaKind = String(form.elements.mediaKind.value || "none");
+    // The onboarding visually demonstrates a picture variant, but uses the fixed
+    // tutorial artwork instead of spending an image-generation request.
+    const tutorial = document.body.classList.contains("gcRealTourActive") && dialog.classList.contains("gcTourVariantDialog");
     const item = {
       ...meta,
       count: Number(form.elements.count.value),
-      mediaKind: String(form.elements.mediaKind.value || "none"),
+      mediaKind: tutorial ? "none" : selectedMediaKind,
+      displayMediaKind: selectedMediaKind,
       instruction: String(form.elements.instruction.value || "").trim(),
       queuedAt: Date.now(),
       launchAttempts: 0
@@ -338,10 +343,13 @@ document.addEventListener("click", event => {
   const apply = target?.closest("#variantBackgroundProgress .applyVariants");
   if (!apply || !document.body.classList.contains("gcRealTourActive") || !currentItem) return;
   const item = currentItem;
+  const beforeIds = new Set(allQuestionCards().map(card => card.dataset.id).filter(Boolean));
+  const ready = Math.max(1, Number(document.getElementById("variantBackgroundProgress")?.dataset.ready) || Number(item.count) || 1);
   window.setTimeout(() => {
+    captureInsertedVariants(beforeIds, item, ready);
     if (currentItem === item) currentItem = null;
     scheduleSync();
-  }, 80);
+  }, 140);
 }, false);
 
 document.addEventListener("gradecrew:account-changed", () => {
