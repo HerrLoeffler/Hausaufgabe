@@ -26,6 +26,23 @@
 
       <div class="setupGrid">
         <form id="setupForm" class="card setupCard">
+          <fieldset class="field">
+            <legend>Modus</legend>
+            <div class="modePicker" role="radiogroup" aria-label="Fast-Quiz-Modus">
+              <label><input id="modePractice" type="radio" name="mode" value="practice" checked><span><strong>Üben</strong><small>Beliebig oft spielen und eigenen Bestwert schlagen.</small></span></label>
+              <label><input id="modeChallenge" type="radio" name="mode" value="challenge"><span><strong>Challenge</strong><small>Gleicher Code = gleiche Einstellungen und Aufgabenfolge.</small></span></label>
+            </div>
+          </fieldset>
+
+          <div id="challengeTools" class="challengeTools" hidden>
+            <label for="joinCode">Challenge-Code laden</label>
+            <div class="joinRow">
+              <input id="joinCode" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="z. B. FQ-PM3-ABCDE">
+              <button id="loadChallengeBtn" class="secondaryButton" type="button">Laden</button>
+            </div>
+            <small>Der Code enthält Thema, Niveau, Dauer und Aufgaben-Seed. So können mehrere Personen dieselbe Runde spielen.</small>
+          </div>
+
           <div class="field">
             <label for="topic">Thema</label>
             <select id="topic" name="topic">
@@ -33,7 +50,7 @@
               <option value="mental">Mathematik · Kopfrechnen</option>
               <option value="wordclass">Deutsch · Wortarten</option>
             </select>
-            <small>Im Lab nutzen wir lokale Beispieldaten. Später kann hier die KI jedes gewünschte Thema erzeugen.</small>
+            <small>Im Lab kommen die Aufgaben aktuell lokal aus Regeln bzw. kleinen Beispielpools. Später kann hier ein geprüfter GradeCrew-Aufgabenpool oder KI-Paket einspringen.</small>
           </div>
 
           <fieldset class="field">
@@ -60,10 +77,17 @@
           <div class="fairnessBox">
             <div>
               <strong>Fair-Play-Runde</strong>
-              <p>Alle mit demselben Rundencode erhalten Aufgaben aus demselben Niveau und derselben Aufgabenlogik.</p>
+              <p>Der Rundencode speichert Thema, Niveau, Dauer und Seed. Wer denselben Code nutzt, startet mit derselben Aufgabenfolge.</p>
             </div>
             <button id="rerollSeedBtn" class="textButton" type="button">Neuer Code</button>
-            <code id="roundCode">FAST-0000</code>
+            <code id="roundCode">FQ-PM3-00000</code>
+            <button id="copyChallengeBtn" class="textButton inlineCopy" type="button" hidden>Challenge-Link kopieren</button>
+          </div>
+
+          <div class="bestBox">
+            <span id="bestLabel">Dein persönlicher Bestwert</span>
+            <strong id="bestValue">–</strong>
+            <small>Wird nur lokal auf diesem Gerät gespeichert.</small>
           </div>
 
           <button class="primaryButton" type="submit">Fast Quiz starten</button>
@@ -71,12 +95,12 @@
 
         <aside class="card conceptCard">
           <span class="conceptNumber">01</span>
-          <h2>Für Training gebaut. Für Live-Duelle vorbereitet.</h2>
-          <p>Die Runde erzeugt fortlaufend neue Aufgaben. Es gibt kein festes Ende – erst der Timer stoppt das Quiz.</p>
+          <h2>Üben allein. Challenges mit identischer Runde.</h2>
+          <p>Im Übungsmodus jagst du deinen persönlichen Rekord. Im Challenge-Modus teilst du einen festen Code und alle starten mit derselben Aufgabenlogik.</p>
           <div class="conceptFacts">
             <span><strong>1–5 min</strong> frei wählbar</span>
             <span><strong>∞</strong> Aufgabenstrom</span>
-            <span><strong>gleich</strong> im Niveau</span>
+            <span><strong>Seed</strong> reproduzierbare Runde</span>
           </div>
         </aside>
       </div>
@@ -88,7 +112,7 @@
           <span class="miniLabel">FAST QUIZ</span>
           <strong id="activeTopic">Prozentrechnung</strong>
         </div>
-        <div class="roundInfo"><span>Runde</span><code id="activeRoundCode">FAST-0000</code></div>
+        <div class="roundInfo"><span>Runde</span><code id="activeRoundCode">FQ-PM3-00000</code></div>
       </div>
 
       <div class="timerTrack" aria-hidden="true"><div id="timerFill"></div></div>
@@ -115,6 +139,7 @@
         <p class="eyebrow">ZEIT UM</p>
         <h1 id="resultTitle">Fast Quiz beendet</h1>
         <p id="resultSummary">Du hast in 3 Minuten 0 Aufgaben bearbeitet.</p>
+        <p id="resultBest" class="resultBest"></p>
       </div>
 
       <div class="resultGrid">
@@ -128,11 +153,13 @@
         <div>
           <span class="miniLabel">NÄCHSTER SCHRITT</span>
           <h2>Noch eine Runde?</h2>
-          <p>Gleiches Thema und Niveau, aber ein neuer Aufgabenstrom.</p>
+          <p>Wiederhole exakt dieselbe Runde oder starte einen neuen Aufgabenstrom mit gleichem Thema und Niveau.</p>
         </div>
         <div class="resultActions">
-          <button id="againBtn" class="primaryButton" type="button">Nochmal spielen</button>
-          <button id="settingsBtn" class="secondaryButton" type="button">Einstellungen ändern</button>
+          <button id="sameRoundBtn" class="primaryButton" type="button">Gleiche Runde</button>
+          <button id="newRoundBtn" class="secondaryButton" type="button">Neue Runde</button>
+          <button id="copyResultChallengeBtn" class="secondaryButton" type="button" hidden>Challenge-Link kopieren</button>
+          <button id="settingsBtn" class="secondaryButton" type="button">Einstellungen</button>
         </div>
       </div>
 
@@ -143,6 +170,6 @@
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="app-v2.js"></script>
 </body>
 </html>
