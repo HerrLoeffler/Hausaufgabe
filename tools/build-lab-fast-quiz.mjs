@@ -25,9 +25,10 @@ for (const reference of ['styles.css', 'app.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
+if (!html.includes('Fast Quiz')) throw new Error('Fast Quiz build check failed: page title missing');
 
 const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
-for (const required of ['Fast Quiz', 'roundCode', 'durationSec', 'generateQuestion']) {
+for (const required of ['roundCode', 'durationSec', 'generateQuestion', 'startRound', 'finishRound']) {
   if (!app.includes(required)) throw new Error(`Fast Quiz build check failed: ${required}`);
 }
 
