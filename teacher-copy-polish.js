@@ -17,6 +17,11 @@ function removeInternalCostCopy() {
     if (/\bkosten\b|kostenpflichtig/i.test(node.textContent || "")) node.remove();
   });
 
+  document.querySelectorAll("#aiView p, #aiView small, #aiView .hint").forEach(node => {
+    const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+    if (/^(Jede )?KI-(Erstellung|Generierung)|^KI-Tests? und Bilder verursachen Kosten/i.test(text)) node.remove();
+  });
+
   document.querySelectorAll(".aiImageComposer small").forEach(node => {
     node.textContent = "Kurz beschreiben. Die Beschreibung geht an OpenAI; bitte keine personenbezogenen Angaben.";
   });
@@ -32,13 +37,39 @@ function removeRedundantDraftAside() {
   });
 }
 
+function compactTemplatePrivacyNote() {
+  const card = document.querySelector("#createView .importChoiceCard");
+  const strip = document.querySelector("#createView .privacyStrip");
+  if (!card) return;
+
+  let note = card.querySelector(".gcTemplatePrivacyNote");
+  if (!note) {
+    note = document.createElement("small");
+    note.className = "gcTemplatePrivacyNote";
+    note.textContent = "🔒 Keine Schülerdaten – nur Testinhalte werden kopiert.";
+    card.appendChild(note);
+  }
+  strip?.remove();
+}
+
+function polishAiEditLabels(root = document) {
+  root.querySelectorAll?.(".aiEditQuestion").forEach(button => {
+    button.textContent = "✨ Mit KI überarbeiten";
+    button.title = "Aufgabe mit KI überarbeiten";
+  });
+  root.querySelectorAll?.(".questionAiPanel > strong").forEach(label => {
+    label.textContent = "✨ Aufgabe mit KI überarbeiten";
+  });
+  root.querySelectorAll?.(".questionAiPanel .aiApply").forEach(button => {
+    button.textContent = "Überarbeitung erstellen";
+  });
+}
+
 function suppressLegacyInfoTour() {
   const dialog = document.getElementById("teacherTourDialog");
   if (!(dialog instanceof HTMLDialogElement) || dialog.dataset.gradecrewSuppressed === "1") return;
   dialog.dataset.gradecrewSuppressed = "1";
   if (dialog.open) dialog.close();
-  // The old welcome/info slideshow duplicates the interactive Crew onboarding.
-  // Keep it dormant for now so only one onboarding system can own the screen.
   dialog.showModal = () => {};
   dialog.show = () => {};
 }
@@ -49,6 +80,8 @@ function polishTeacherCopy() {
   cleanAiStatus();
   removeInternalCostCopy();
   removeRedundantDraftAside();
+  compactTemplatePrivacyNote();
+  polishAiEditLabels();
 }
 
 function schedulePolish() {
@@ -66,6 +99,15 @@ function installTeacherCopyPolish() {
   const status = document.getElementById("aiBetaNotice");
   if (status) {
     new MutationObserver(polishTeacherCopy).observe(status, { childList: true, characterData: true, subtree: true });
+  }
+
+  const questionList = document.getElementById("questionList");
+  if (questionList) {
+    new MutationObserver(records => {
+      records.forEach(record => record.addedNodes.forEach(node => {
+        if (node instanceof Element) polishAiEditLabels(node);
+      }));
+    }).observe(questionList, { childList: true, subtree: true });
   }
 }
 
