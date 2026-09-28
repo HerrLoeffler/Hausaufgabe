@@ -33,6 +33,9 @@ jobs:
         working-directory: functions
         run: npm ci --include=dev
 
+      - name: Install UI test dependencies
+        run: npm ci --prefix tools/ui --no-audit --no-fund
+
       - name: Run unit tests
         working-directory: functions
         run: npm test
