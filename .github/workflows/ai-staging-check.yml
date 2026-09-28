@@ -62,6 +62,7 @@ jobs:
           node --check tutorial-variant-fallback.js
           node --check crew-tour-hardening.js
           node --check crew-tour-gc22-polish.js
+          node --check crew-tour-gc23-polish.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
           node --check variant-enhancements.js
@@ -72,6 +73,7 @@ jobs:
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
+          node --test crew-tour-gc23-polish.test.mjs
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
           test -f assets/gradecrew/fox-improve.svg
