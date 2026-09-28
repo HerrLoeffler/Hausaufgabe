@@ -6,171 +6,166 @@
   <meta name="theme-color" content="#f6f7f9">
   <title>GradeCrew Lab · Fast Quiz</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="modes.css">
+  <link rel="stylesheet" href="fastquiz-v3.css">
 </head>
 <body>
   <header class="labTopbar">
-    <a class="brand" href="./" aria-label="GradeCrew Lab Fast Quiz neu laden">
+    <a class="brand" href="./" aria-label="Fast Quiz neu laden">
       <span class="brandMark" aria-hidden="true">G</span>
       <span><strong>GradeCrew</strong><small>Lab · Fast Quiz</small></span>
     </a>
-    <span class="labBadge">EXPERIMENT</span>
+    <span class="labBadge">EXPERIMENT · MATHE</span>
   </header>
 
   <main class="shell">
-    <section id="setupView" class="view" aria-labelledby="setupTitle">
-      <div class="pageHead">
+    <section id="homeView" class="view">
+      <div class="pageHead wideHead">
         <p class="eyebrow">GRADECREW LAB</p>
-        <h1 id="setupTitle">Fast Quiz</h1>
-        <p>Ein Thema. Wenig Zeit. So viele Aufgaben wie möglich.</p>
+        <h1>Fast Quiz</h1>
+        <p>Grundrechenarten unter Zeitdruck – zum Üben, als Lehrer-Runde oder live gegeneinander.</p>
       </div>
 
-      <div class="setupGrid">
-        <form id="setupForm" class="card setupCard">
-          <fieldset class="field">
-            <legend>Modus</legend>
-            <div class="modePicker" role="radiogroup" aria-label="Fast-Quiz-Modus">
-              <label><input id="modePractice" type="radio" name="mode" value="practice" checked><span><strong>Üben</strong><small>Beliebig oft spielen und eigenen Bestwert schlagen.</small></span></label>
-              <label><input id="modeChallenge" type="radio" name="mode" value="challenge"><span><strong>Challenge</strong><small>Gleicher Code = gleiche Einstellungen und Aufgabenfolge.</small></span></label>
+      <div class="modeGrid">
+        <button class="modeCard" type="button" data-open-mode="solo">
+          <span class="modeIndex">01</span><strong>Frei üben</strong>
+          <p>Beliebig oft trainieren und den eigenen Rekord schlagen.</p><span class="modeAction">Training öffnen →</span>
+        </button>
+        <button class="modeCard" type="button" data-open-mode="teacher">
+          <span class="modeIndex">02</span><strong>Lehrer-Runde</strong>
+          <p>Inhalt, Dauer, Fehlerregeln und Bestenliste festlegen.</p><span class="modeAction">Runde erstellen →</span>
+        </button>
+        <button class="modeCard" type="button" data-open-mode="join">
+          <span class="modeIndex">03</span><strong>Runde beitreten</strong>
+          <p>Code eingeben, Kürzel wählen und auf den Start warten.</p><span class="modeAction">Code eingeben →</span>
+        </button>
+      </div>
+
+      <div class="labNotice"><strong>Lab-Hinweis:</strong> Live-Runden funktionieren in dieser Testfassung zwischen Tabs/Fenstern desselben Browsers. Die Oberfläche und Synchronisation sind damit vollständig testbar. Für mehrere Geräte wird später nur der Speicheradapter gegen Firebase ausgetauscht.</div>
+    </section>
+
+    <section id="setupView" class="view" hidden>
+      <button class="backButton" type="button" data-back-home>← Zurück</button>
+      <div class="pageHead compactHead">
+        <p id="setupEyebrow" class="eyebrow">TRAINING</p>
+        <h1 id="setupTitle">Fast Quiz einstellen</h1>
+        <p id="setupSubtitle">Stelle dein Rechentraining zusammen.</p>
+      </div>
+
+      <form id="setupForm" class="setupColumns">
+        <div class="card settingsCard">
+          <section class="settingSection">
+            <div class="sectionHead"><span>1</span><div><strong>Grundrechenarten</strong><small>Mindestens eine auswählen.</small></div></div>
+            <div class="choiceGrid four" id="operationChoices">
+              <label class="checkTile"><input type="checkbox" name="operation" value="add" checked><span><b>+</b>Addition</span></label>
+              <label class="checkTile"><input type="checkbox" name="operation" value="sub" checked><span><b>−</b>Subtraktion</span></label>
+              <label class="checkTile"><input type="checkbox" name="operation" value="mul" checked><span><b>×</b>Multiplikation</span></label>
+              <label class="checkTile"><input type="checkbox" name="operation" value="div" checked><span><b>÷</b>Division</span></label>
             </div>
-          </fieldset>
+          </section>
 
-          <div id="challengeTools" class="challengeTools" hidden>
-            <label for="joinCode">Challenge-Code laden</label>
-            <div class="joinRow">
-              <input id="joinCode" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="z. B. FQ-PM3-ABCDE">
-              <button id="loadChallengeBtn" class="secondaryButton" type="button">Laden</button>
+          <section class="settingSection">
+            <div class="sectionHead"><span>2</span><div><strong>Zahlenbereiche</strong><small>Die ausgewählten Bereiche werden gleichmäßig gemischt.</small></div></div>
+            <div class="choiceGrid two" id="domainChoices">
+              <label class="checkTile"><input type="checkbox" name="domain" value="natural" checked><span><b>ℕ</b>Natürliche Zahlen</span></label>
+              <label class="checkTile"><input type="checkbox" name="domain" value="integer"><span><b>ℤ</b>Ganze Zahlen</span></label>
+              <label class="checkTile"><input type="checkbox" name="domain" value="decimal"><span><b>0,5</b>Dezimalzahlen</span></label>
+              <label class="checkTile"><input type="checkbox" name="domain" value="fraction"><span><b>¾</b>Brüche</span></label>
             </div>
-            <small>Der Code enthält Thema, Niveau, Dauer und Aufgaben-Seed. So können mehrere Personen dieselbe Runde spielen.</small>
-          </div>
+          </section>
 
-          <div class="field">
-            <label for="topic">Thema</label>
-            <select id="topic" name="topic">
-              <option value="percent">Mathematik · Prozentrechnung</option>
-              <option value="mental">Mathematik · Kopfrechnen</option>
-              <option value="wordclass">Deutsch · Wortarten</option>
-            </select>
-            <small>Im Lab kommen die Aufgaben aktuell lokal aus Regeln bzw. kleinen Beispielpools. Später kann hier ein geprüfter GradeCrew-Aufgabenpool oder KI-Paket einspringen.</small>
-          </div>
-
-          <fieldset class="field">
-            <legend>Dauer</legend>
-            <div class="durationPicker" role="radiogroup" aria-label="Dauer des Fast Quiz">
-              <label><input type="radio" name="duration" value="1"><span>1</span></label>
-              <label><input type="radio" name="duration" value="2"><span>2</span></label>
-              <label><input type="radio" name="duration" value="3" checked><span>3</span></label>
-              <label><input type="radio" name="duration" value="4"><span>4</span></label>
-              <label><input type="radio" name="duration" value="5"><span>5</span></label>
+          <section class="settingSection settingsRow">
+            <div class="field">
+              <label for="level">Niveau</label>
+              <select id="level">
+                <option value="basic">Basis</option>
+                <option value="standard" selected>Standard</option>
+                <option value="advanced">Fortgeschritten</option>
+                <option value="expert">Profi</option>
+              </select>
             </div>
-            <small>Minuten</small>
-          </fieldset>
+            <fieldset class="field">
+              <legend>Dauer</legend>
+              <div class="durationPicker compactDuration">
+                <label><input type="radio" name="duration" value="1"><span>1</span></label>
+                <label><input type="radio" name="duration" value="2"><span>2</span></label>
+                <label><input type="radio" name="duration" value="3" checked><span>3</span></label>
+                <label><input type="radio" name="duration" value="4"><span>4</span></label>
+                <label><input type="radio" name="duration" value="5"><span>5</span></label>
+              </div>
+              <small>Minuten</small>
+            </fieldset>
+          </section>
+        </div>
 
-          <div class="field">
-            <label for="level">Niveau</label>
-            <select id="level" name="level">
-              <option value="easy">Leicht</option>
-              <option value="medium" selected>Mittel</option>
-              <option value="hard">Anspruchsvoll</option>
-            </select>
+        <aside class="card teacherRulesCard">
+          <div class="sectionHead"><span>3</span><div><strong>Spielregeln</strong><small id="rulesHint">Für dein Training.</small></div></div>
+          <div class="rulesGrid">
+            <label class="field"><span>Minuspunkte bei Fehler</span><select id="wrongPenalty"><option value="0">keine</option><option value="25">−25</option><option value="50" selected>−50</option><option value="100">−100</option><option value="200">−200</option></select></label>
+            <label class="field"><span>Sperre nach Fehler</span><select id="lockSeconds"><option value="0">keine</option><option value="2">2 Sekunden</option><option value="5" selected>5 Sekunden</option><option value="10">10 Sekunden</option><option value="30">30 Sekunden</option></select></label>
+            <label class="switchRow"><input id="speedBonus" type="checkbox" checked><span><strong>Zeitbonus</strong><small>Schnelle richtige Antworten bringen bis zu 50 Zusatzpunkte.</small></span></label>
+            <label class="switchRow"><input id="streakBonus" type="checkbox" checked><span><strong>Serienbonus</strong><small>Mehrere richtige Antworten nacheinander werden belohnt.</small></span></label>
+            <label class="switchRow"><input id="allowNegative" type="checkbox" checked><span><strong>Negative Punktzahl zulassen</strong><small>Verhindert blindes Durchklicken besonders wirksam.</small></span></label>
+            <label class="switchRow"><input id="showSolution" type="checkbox" checked><span><strong>Lösung nach Fehler zeigen</strong><small>Kann die Lehrkraft für Wettkämpfe abschalten.</small></span></label>
           </div>
 
-          <div class="fairnessBox">
-            <div>
-              <strong>Fair-Play-Runde</strong>
-              <p>Der Rundencode speichert Thema, Niveau, Dauer und Seed. Wer denselben Code nutzt, startet mit derselben Aufgabenfolge.</p>
-            </div>
-            <button id="rerollSeedBtn" class="textButton" type="button">Neuer Code</button>
-            <code id="roundCode">FQ-PM3-00000</code>
-            <button id="copyChallengeBtn" class="textButton inlineCopy" type="button" hidden>Challenge-Link kopieren</button>
+          <div id="teacherOnlyRules" class="teacherOnlyRules" hidden>
+            <label class="field"><span>Bestenliste</span><select id="leaderboardMode"><option value="live">während der Runde live</option><option value="after" selected>erst nach Zeitablauf</option><option value="hidden">nicht anzeigen</option></select></label>
+            <label class="field"><span>Rundenart</span><select id="roundMode"><option value="live" selected>Live – Lehrkraft startet</option><option value="self">Selbstständig – sofort nach Beitritt</option></select></label>
           </div>
 
-          <div class="bestBox">
-            <span id="bestLabel">Dein persönlicher Bestwert</span>
-            <strong id="bestValue">–</strong>
-            <small>Wird nur lokal auf diesem Gerät gespeichert.</small>
-          </div>
-
-          <button class="primaryButton" type="submit">Fast Quiz starten</button>
-        </form>
-
-        <aside class="card conceptCard">
-          <span class="conceptNumber">01</span>
-          <h2>Üben allein. Challenges mit identischer Runde.</h2>
-          <p>Im Übungsmodus jagst du deinen persönlichen Rekord. Im Challenge-Modus teilst du einen festen Code und alle starten mit derselben Aufgabenlogik.</p>
-          <div class="conceptFacts">
-            <span><strong>1–5 min</strong> frei wählbar</span>
-            <span><strong>∞</strong> Aufgabenstrom</span>
-            <span><strong>Seed</strong> reproduzierbare Runde</span>
-          </div>
+          <div class="scoreExample"><span>Standardwertung</span><strong>+100 richtig</strong><small id="scoreRulePreview">−50 falsch · 5 s Sperre · Zeit- & Serienbonus aktiv</small></div>
+          <p id="formError" class="formError" role="alert"></p>
+          <button id="setupSubmit" class="primaryButton fullButton" type="submit">Training starten</button>
         </aside>
+      </form>
+    </section>
+
+    <section id="joinView" class="view" hidden>
+      <button class="backButton" type="button" data-back-home>← Zurück</button>
+      <div class="joinWrap card">
+        <p class="eyebrow">LEHRER-RUNDE</p><h1>Runde beitreten</h1>
+        <label class="field"><span>Rundencode</span><input id="joinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456"></label>
+        <label class="field"><span>Dein Kürzel oder kurzer Name</span><input id="joinName" maxlength="24" placeholder="z. B. ML"></label>
+        <p id="joinError" class="formError"></p>
+        <button id="joinBtn" class="primaryButton fullButton" type="button">Beitreten</button>
       </div>
     </section>
 
-    <section id="quizView" class="view" hidden aria-labelledby="questionTitle">
-      <div class="quizBar">
-        <div>
-          <span class="miniLabel">FAST QUIZ</span>
-          <strong id="activeTopic">Prozentrechnung</strong>
-        </div>
-        <div class="roundInfo"><span>Runde</span><code id="activeRoundCode">FQ-PM3-00000</code></div>
+    <section id="teacherRoomView" class="view" hidden>
+      <div class="teacherRoomHead">
+        <div><p class="eyebrow">LIVE-RUNDE</p><h1>Warteraum</h1><p id="teacherRoundSummary"></p></div>
+        <div class="roomCodePanel"><span>Rundencode</span><strong id="teacherRoomCode">000000</strong><button id="copyJoinLinkBtn" class="secondaryButton" type="button">Link kopieren</button></div>
       </div>
-
-      <div class="timerTrack" aria-hidden="true"><div id="timerFill"></div></div>
-
-      <div class="quizStatus" aria-live="polite">
-        <div class="timerBox"><span>Zeit</span><strong id="timer">03:00</strong></div>
-        <div><span>Richtig</span><strong id="correctCount">0</strong></div>
-        <div><span>Serie</span><strong id="streakCount">0</strong></div>
-        <div><span>Punkte</span><strong id="scoreCount">0</strong></div>
+      <div class="teacherDashboard">
+        <div class="card lobbyCard"><div class="panelHead"><div><strong>Teilnehmende</strong><small id="playerCount">0 bereit</small></div><span id="roomStatusBadge" class="statusBadge">WARTET</span></div><div id="playerList" class="playerList"><p class="emptyText">Noch niemand beigetreten.</p></div></div>
+        <div class="card teacherControlCard"><strong>Rundensteuerung</strong><p id="teacherRuleSummary"></p><button id="teacherStartBtn" class="primaryButton fullButton" type="button">Live-Runde starten</button><button id="teacherResetBtn" class="secondaryButton fullButton" type="button">Neue Runde vorbereiten</button><p class="localOnlyNote">Lab: Geräteübergreifende Synchronisierung folgt mit dem Firebase-Adapter. Mehrere Tabs/Fenster funktionieren bereits.</p></div>
       </div>
+      <div id="teacherLeaderboardWrap" class="card leaderboardCard" hidden><div class="panelHead"><div><strong>Bestenliste</strong><small>aktueller Stand</small></div></div><ol id="teacherLeaderboard" class="leaderboard"></ol></div>
+    </section>
 
-      <article class="card questionCard">
-        <div class="questionMeta"><span id="questionNumber">Aufgabe 1</span><span id="difficultyLabel">Mittel</span></div>
-        <h2 id="questionTitle">Frage wird vorbereitet …</h2>
-        <div id="answers" class="answers" role="group" aria-label="Antwortmöglichkeiten"></div>
-        <p id="feedback" class="feedback" aria-live="polite"></p>
-      </article>
+    <section id="waitingView" class="view" hidden>
+      <div class="waitingCard card"><p class="eyebrow">DU BIST DABEI</p><h1 id="waitingName">Bereit.</h1><p>Die Lehrkraft startet die Runde.</p><div class="waitingCode">Runde <strong id="waitingCode">000000</strong></div><div id="countdown" class="countdown" hidden>3</div></div>
+    </section>
 
+    <section id="quizView" class="view" hidden>
+      <div class="quizBar"><div><span class="miniLabel">FAST QUIZ</span><strong id="activeRoundLabel">Grundrechenarten</strong></div><div class="roundInfo"><span id="activePlayerLabel">Training</span><code id="activeRoundCode">SOLO</code></div></div>
+      <div class="timerTrack"><div id="timerFill"></div></div>
+      <div class="quizStatus"><div class="timerBox"><span>Zeit</span><strong id="timer">03:00</strong></div><div><span>Richtig</span><strong id="correctCount">0</strong></div><div><span>Serie</span><strong id="streakCount">0</strong></div><div><span>Punkte</span><strong id="scoreCount">0</strong></div></div>
+      <article class="card questionCard"><div class="questionMeta"><span id="questionNumber">Aufgabe 1</span><span id="questionMeta">Standard</span></div><h2 id="questionTitle">Frage wird vorbereitet …</h2><div id="answers" class="answers"></div><div id="penaltyLock" class="penaltyLock" hidden><strong id="penaltyLockTime">5</strong><span>Sekunden Pause nach falscher Antwort</span></div><p id="feedback" class="feedback" aria-live="polite"></p></article>
       <p class="keyboardHint">Tipp: Antworten mit den Tasten 1–4 auswählen.</p>
     </section>
 
-    <section id="resultView" class="view" hidden aria-labelledby="resultTitle">
-      <div class="resultHero">
-        <p class="eyebrow">ZEIT UM</p>
-        <h1 id="resultTitle">Fast Quiz beendet</h1>
-        <p id="resultSummary">Du hast in 3 Minuten 0 Aufgaben bearbeitet.</p>
-        <p id="resultBest" class="resultBest"></p>
-      </div>
-
-      <div class="resultGrid">
-        <div class="resultMetric"><span>Richtig</span><strong id="resultCorrect">0</strong></div>
-        <div class="resultMetric"><span>Genauigkeit</span><strong id="resultAccuracy">0 %</strong></div>
-        <div class="resultMetric"><span>Beste Serie</span><strong id="resultStreak">0</strong></div>
-        <div class="resultMetric"><span>Punkte</span><strong id="resultScore">0</strong></div>
-      </div>
-
-      <div class="card resultCard">
-        <div>
-          <span class="miniLabel">NÄCHSTER SCHRITT</span>
-          <h2>Noch eine Runde?</h2>
-          <p>Wiederhole exakt dieselbe Runde oder starte einen neuen Aufgabenstrom mit gleichem Thema und Niveau.</p>
-        </div>
-        <div class="resultActions">
-          <button id="sameRoundBtn" class="primaryButton" type="button">Gleiche Runde</button>
-          <button id="newRoundBtn" class="secondaryButton" type="button">Neue Runde</button>
-          <button id="copyResultChallengeBtn" class="secondaryButton" type="button" hidden>Challenge-Link kopieren</button>
-          <button id="settingsBtn" class="secondaryButton" type="button">Einstellungen</button>
-        </div>
-      </div>
-
-      <details class="developerDetails">
-        <summary>Entwicklerdaten dieser Runde</summary>
-        <pre id="sessionDump"></pre>
-      </details>
+    <section id="resultView" class="view" hidden>
+      <div class="resultHero"><p class="eyebrow">ZEIT UM</p><h1>Fast Quiz beendet</h1><p id="resultSummary"></p></div>
+      <div class="resultGrid"><div class="resultMetric"><span>Richtig</span><strong id="resultCorrect">0 / 0</strong></div><div class="resultMetric"><span>Genauigkeit</span><strong id="resultAccuracy">0 %</strong></div><div class="resultMetric"><span>Beste Serie</span><strong id="resultStreak">0</strong></div><div class="resultMetric"><span>Punkte</span><strong id="resultScore">0</strong></div></div>
+      <div id="personalBestCard" class="card personalBest"><span>Persönlicher Rekord</span><strong id="personalBest">–</strong><small id="personalBestNote"></small></div>
+      <div id="playerLeaderboardWrap" class="card leaderboardCard" hidden><div class="panelHead"><div><strong>Bestenliste</strong><small>deine Runde</small></div></div><ol id="playerLeaderboard" class="leaderboard"></ol></div>
+      <div class="card resultCard"><div><span class="miniLabel">WEITER</span><h2>Noch eine Runde?</h2><p id="resultActionText">Gleiche Einstellungen – du entscheidest, ob mit denselben oder neuen Aufgaben.</p></div><div class="resultActions"><button id="sameRoundBtn" class="secondaryButton" type="button">Gleiche Aufgaben</button><button id="newRoundBtn" class="primaryButton" type="button">Neue Aufgaben</button><button id="homeBtn" class="secondaryButton" type="button">Startseite</button></div></div>
+      <details class="developerDetails"><summary>Entwicklerdaten</summary><pre id="sessionDump"></pre></details>
     </section>
   </main>
 
-  <script src="app-v2.js"></script>
+  <script src="math-engine.js"></script>
+  <script src="app-v3.js"></script>
 </body>
 </html>
