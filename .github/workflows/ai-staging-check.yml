@@ -57,6 +57,7 @@ jobs:
           node --check first-guide-guard.js
           node --check teacher-copy-polish.js
           node --check gradecrew-tour.js
+          node --check gradecrew-tour-v7.js
           node --check crew-tour-hardening.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
