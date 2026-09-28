@@ -1,0 +1,28 @@
+/* GradeCrew guided product tour. Isolated selectors only; no workspace layout overrides. */
+.gcTourRoot{position:fixed;inset:0;z-index:1090;pointer-events:none;font-family:inherit;color:var(--text)}
+.gcTourRoot.hidden{display:none!important}
+.gcTourShade{position:fixed;background:rgb(15 23 42 / 54%);backdrop-filter:blur(1px);pointer-events:auto;z-index:1091}
+.gcTourHighlight{position:fixed;z-index:1092;border:3px solid #285ac9;border-radius:14px;box-shadow:0 0 0 5px rgb(255 255 255 / 94%),0 16px 44px rgb(15 23 42 / 22%);pointer-events:none;transition:left .16s ease,top .16s ease,width .16s ease,height .16s ease}
+.gcTourCard{position:fixed;z-index:1095;width:min(410px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:20px;background:#fff;border:1px solid #d8e1ec;border-radius:18px;box-shadow:0 28px 74px rgb(15 23 42 / 28%);pointer-events:auto}
+.gcTourRoot.centered .gcTourShadeTop{inset:0!important;width:100vw!important;height:100dvh!important}
+.gcTourRoot.centered .gcTourShadeRight,.gcTourRoot.centered .gcTourShadeBottom,.gcTourRoot.centered .gcTourShadeLeft,.gcTourRoot.centered .gcTourHighlight{display:none}
+.gcTourRoot.centered .gcTourCard{left:50%!important;top:50%!important;transform:translate(-50%,-50%);width:min(620px,calc(100vw - 28px));padding:26px}
+.gcTourSpeaker{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.gcTourSpeaker img{width:58px;height:58px;object-fit:contain;flex:0 0 58px}
+.gcTourSpeaker div{display:flex;flex-direction:column;gap:2px}.gcTourSpeaker strong{font-size:14px}.gcTourSpeaker span{font-size:12px;color:var(--muted)}
+.gcTourCopy h2{font-size:24px;line-height:1.22;letter-spacing:-.035em;margin:6px 0 9px}.gcTourCopy>p{font-size:14px;line-height:1.55;margin:0 0 14px;color:var(--muted)}
+.gcTourActions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:18px}.gcTourActions .button{min-height:42px}
+.gcTourCrewGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 8px}.gcTourCrewMember{display:grid;justify-items:center;gap:5px;padding:12px 8px;border:1px solid var(--line);border-radius:13px;background:#f8fafc;text-align:center}.gcTourCrewMember img{width:70px;height:70px;object-fit:contain}.gcTourCrewMember div{display:flex;flex-direction:column;gap:1px}.gcTourCrewMember strong{font-size:12px}.gcTourCrewMember span{font-size:11px;color:var(--muted)}
+.gcTourQuote,.gcTourPromise,.gcTourLiveLine{margin-top:13px;padding:11px 12px;border-radius:10px;background:#edf3fd;color:#314d75;font-size:13px;line-height:1.5}.gcTourPromise{display:grid;gap:3px}.gcTourPromise span{color:#526277}.gcTourLiveLine{font-weight:650}
+.gcTourFinePrint{display:block;margin-top:9px;color:var(--muted);font-size:11.5px;line-height:1.5}
+.gcTourChecklist{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.gcTourChecklist span{padding:6px 9px;border:1px solid #d8e1ec;border-radius:999px;background:#f8fafc;color:#465b73;font-size:11.5px;font-weight:650}
+.gcTourWorking{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:15px;padding:13px;border-radius:10px;background:#f8fafc;border:1px solid var(--line)}.gcTourWorking>span{width:8px;height:8px;border-radius:50%;background:#285ac9;animation:gcTourBounce 1s ease-in-out infinite}.gcTourWorking>span:nth-child(2){animation-delay:.14s}.gcTourWorking>span:nth-child(3){animation-delay:.28s}.gcTourWorking small{width:100%;margin-top:4px;color:var(--muted)}
+@keyframes gcTourBounce{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(-4px);opacity:1}}
+.gcTourResultExample{display:grid;gap:7px;margin:15px 0 4px}.gcTourResultExample>div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}.gcTourResultExample strong{font-size:12px}.gcTourResultExample span{font-size:12px}.gcTourResultExample b{font-size:11px;color:#216440}.gcTourResultExample b.review{color:#775110}
+.gcTourFinalFlow{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:15px 0 2px;color:#526277}.gcTourFinalFlow span{font-size:12px;font-weight:750}.gcTourFinalFlow b{color:#98a2b3}
+.gradecrewAiPrimary{position:relative;border:2px solid #93afe0!important;background:#f5f8ff!important;box-shadow:0 10px 30px rgb(40 90 201 / 10%)}.gradecrewAiPrimary .choiceIcon{background:#e8f0f7!important}.gradecrewRecommended{position:absolute;top:12px;right:12px;padding:4px 7px;border-radius:999px;background:#285ac9;color:#fff;font-size:10px;font-weight:800;letter-spacing:.035em;text-transform:uppercase}
+.gcTourChangedQuestion{border-color:#a9cbb6!important;box-shadow:0 0 0 2px #edf8f0!important}
+.gradecrewTourLaunch{white-space:nowrap}
+.gradecrewCrewTourReady .firstAiGuideBackdrop,.gradecrewCrewTourReady .firstAiGuideCard{display:none!important}
+@media(max-width:720px){.gcTourRoot.centered .gcTourCard{width:min(520px,calc(100vw - 20px));padding:20px}.gcTourCrewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gcTourCard{width:min(390px,calc(100vw - 18px));padding:17px}.gcTourCopy h2{font-size:21px}.gcTourSpeaker img{width:50px;height:50px;flex-basis:50px}}
+@media(prefers-reduced-motion:reduce){.gcTourHighlight{transition:none}.gcTourWorking>span{animation:none}}
