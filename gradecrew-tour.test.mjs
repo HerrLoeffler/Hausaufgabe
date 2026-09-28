@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
-const source = fs.readFileSync('gradecrew-tour.js', 'utf8');
+const source = fs.readFileSync('gradecrew-tour-v7.js', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 const copyPolish = fs.readFileSync('teacher-copy-polish.js', 'utf8');
 const variantEnhancements = fs.readFileSync('variant-enhancements.js', 'utf8');
@@ -61,13 +61,14 @@ test('Crew journey explains GradeCrew, introduces the complete Crew, then points
   let coach = w.document.querySelector('.gcRealCoach');
   assert.ok(coach);
   assert.match(coach.textContent, /Willkommen bei GradeCrew/);
-  assert.match(coach.textContent, /digitale Tests, Übungen und Leistungsnachweise/);
+  assert.match(coach.textContent, /digitale Tests und Übungen/);
   assert.equal(coach.querySelectorAll('.gcCrewIntroMember').length, 4);
-  assert.match(coach.textContent, /Coco/);
-  assert.match(coach.textContent, /Remy/);
-  assert.match(coach.textContent, /Emmi/);
-  assert.match(coach.textContent, /Wilma/);
+  assert.match(coach.textContent, /Ich begleite dich Schritt für Schritt/);
+  assert.match(coach.textContent, /Ich erstelle den ersten Entwurf/);
+  assert.match(coach.textContent, /Überarbeiten und bei Varianten/);
+  assert.match(coach.textContent, /Prüfen und Bewerten/);
   assert.equal(coach.querySelector('.gcCoachClose'), null);
+  assert.ok(w.document.documentElement.classList.contains('gcTourScrollLocked'));
   coach.querySelector('.gcCoachNext').click();
   coach = w.document.querySelector('.gcRealCoach');
   assert.match(coach.textContent, /Neuer Test/);
@@ -77,7 +78,7 @@ test('Crew journey explains GradeCrew, introduces the complete Crew, then points
 
 test('Prepared tutorial test is deterministic: grade 4, ten tasks, three images and one deliberate AI-style error', t => {
   const w = fixture(t);
-  assert.equal(w.tourVersion, 'gradecrew-live-tour-v6');
+  assert.equal(w.tourVersion, 'gradecrew-live-tour-v7');
   assert.equal(w.demo.grade, '4');
   assert.equal(w.demo.questions.length, 10);
   assert.equal(w.demo.timeLimitMinutes, 1);
@@ -91,13 +92,14 @@ test('Prepared tutorial test is deterministic: grade 4, ten tasks, three images 
   assert.equal(faulty.options.find(option => option.correct)?.text, 'blue');
   assert.equal(w.demo.questions[9].manualReview, true);
   assert.match(w.demo.questions[4].text, /^Decide/);
+  assert.match(w.demo.questions[5].text, /Vogel/);
   assert.match(w.demo.questions[7].text, /^Put/);
 });
 
 test('Tutorial keeps real AI concepts but uses deterministic dog edit and cat variant without provider calls', t => {
   const w = fixture(t);
   const dog = w.response(w.demo.questions[3], { variant: false });
-  const cat = w.response(w.demo.questions[3], { variant: true, mediaKind: 'ai_generated' });
+  const cat = w.response(w.demo.questions[5], { variant: true, mediaKind: 'ai_generated' });
   assert.equal(dog.question.text, 'Choose the English word for „Hund“.');
   assert.equal(cat.question.text, 'Choose the English word for „Katze“.');
   assert.equal(cat.question.options.find(option => option.correct)?.text, 'cat');
@@ -114,41 +116,48 @@ test('Tour is mandatory, quality-led and contains the intended Crew handoffs', (
   assert.match(source, /targetInteractive/);
   assert.match(source, /freeRegion/);
   assert.doesNotMatch(source, /gcCoachClose/);
-  assert.match(source, /handoff\("guide", "create"/);
-  assert.match(source, /handoff\("create", "improve"/);
-  assert.match(source, /handoff\("guide", "grade"/);
-  assert.doesNotMatch(source, /handoff\("guide", "improve"/);
+  assert.match(source, /handoff\("guide","create"/);
+  assert.match(source, /handoff\("create","improve"/);
+  assert.match(source, /handoff\("guide","grade"/);
+  assert.doesNotMatch(source, /handoff\("guide","improve"/);
   assert.match(source, /Danke, Remy!/);
-  assert.match(source, /Bilder kann ich gleich mitplanen/);
+  assert.match(source, /Bilder plane ich direkt mit ein/);
   assert.match(source, /eigene PDFs, Fotos, Arbeitsblätter oder Texte hochladen/);
   assert.match(source, /Perfekt – alle nötigen Informationen sind eingetragen/);
-  assert.match(source, /Super – die KI-Überarbeitung hat geklappt/);
-  assert.match(source, /KI kann Fehler machen/);
-  assert.match(source, /setTimeout\(resolve, 3000\)/);
+  assert.match(source, /Die Überarbeitung hat geklappt/);
+  assert.match(source, /Qualität geht immer vor/);
+  assert.match(source, /setTimeout\(resolve,3000\)/);
   assert.match(source, /ensureOrderingStartsUnsorted/);
+  assert.match(source, /gcTourScrollLocked/);
   assert.doesNotMatch(source, /bewusst vorgefertigt|sicheren Ablauf|Sprachtests/);
   assert.doesNotMatch(source, /MutationObserver/);
 });
 
-test('Edit success visibly compares the old and improved task before variants begin', () => {
+test('Edit and variant use two different tutorial tasks and variant gets its own scene', () => {
+  assert.match(source, /editSourceId = api\.questionId\(3\)/);
+  assert.match(source, /variantSourceId = api\.questionId\(5\)/);
+  assert.match(source, /Die hier gefällt mir gut/);
+  assert.match(source, /Aufgabe 6/);
+  assert.match(source, /Choose the English word for „Vogel“/);
   assert.match(source, /gcEditPreview/);
   assert.match(source, /Was heißt „Hund“ auf Englisch\?/);
   assert.match(source, /Choose the English word for „Hund“\./);
   assert.match(source, /Die Aufgabe war grundsätzlich gut/);
 });
 
-test('Variant tutorial uses one modal layer, shows a picture choice and keeps manual apply reviewable', () => {
+test('Variant tutorial uses one modal layer, shows a picture choice and blocks progress until actual apply and review', () => {
   assert.match(variantEnhancements, /gradecrew:variant-dialog-opened/);
   assert.match(variantEnhancements, /gradecrew:variant-submitted/);
   assert.match(source, /gradecrew:variant-dialog-opened/);
   assert.match(source, /\[name="instruction"\]/);
   assert.match(source, /event\.type === "submit"/);
-  assert.match(source, /Nutze statt „Hund“ das Wort „Katze“/);
+  assert.match(source, /Erstelle eine Variante mit dem Wort „Katze“/);
   assert.match(source, /Diesmal nehmen wir direkt ein Bild dazu/);
-  assert.match(source, /1 Variante · mit Bild · Katze statt Hund/);
+  assert.match(source, /1 Variante · mit Bild/);
   assert.match(source, /waitForElement\("#variantBackgroundProgress \.applyVariants"/);
   assert.match(source, /variant-review/);
   assert.match(source, /demo-cat\.svg/);
+  assert.match(source, /Erst wenn die neue Aufgabe wirklich im Test angekommen ist/);
   assert.match(variantEnhancements, /displayMediaKind/);
   assert.match(variantEnhancements, /captureInsertedVariants\(beforeIds, item, ready\)/);
   assert.match(variantEnhancements, /gcRealTourActive/);
@@ -167,20 +176,13 @@ test('Core persists tutorial questions with images and a one-minute test; no fak
   const w = fixture(t);
   const writes = [];
   Object.assign(w, {
-    state: { user: { uid: 'a' } },
-    crewTour: { creating: true },
-    tutorialDraft: null,
+    state: { user: { uid: 'a' } }, crewTour: { creating: true }, tutorialDraft: null,
     isSuspended: () => false,
     createQuizDocument: async base => { writes.push(base); return { code: 'DEMO' }; },
-    quizDefaults: () => ({ ownerId: 'a', published: false }),
-    deepClone: value => JSON.parse(JSON.stringify(value)),
+    quizDefaults: () => ({ ownerId: 'a', published: false }), deepClone: value => JSON.parse(JSON.stringify(value)),
     writeBatch: () => ({ set: (_ref, data) => writes.push(data), update: () => {}, commit: async () => {} }),
-    db: {},
-    doc: (...parts) => parts.join('/'),
-    serverTimestamp: () => 123,
-    round1: number => number,
-    orderingNeedsReview: () => false,
-    validOrder: () => true
+    db: {}, doc: (...parts) => parts.join('/'), serverTimestamp: () => 123, round1: number => number,
+    orderingNeedsReview: () => false, validOrder: () => true
   });
   w.eval(fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
   assert.equal(await w.createTutorialQuiz(w.demo), 'DEMO');
@@ -196,15 +198,8 @@ test('Actual countdown auto-submits once at sixty seconds, never on first tick',
   let clock = 1000, tick, submits = 0;
   w.Date.now = () => clock;
   Object.assign(w, {
-    $: id => w.document.getElementById(id),
-    state: {},
-    stopStudentTimer: () => {},
-    toast: () => {},
-    submitStudentQuiz: (_e, _q, _questions, opts) => {
-      submits += 1;
-      assert.equal(opts.autoSubmitted, true);
-      assert.equal(opts.force, true);
-    }
+    $: id => w.document.getElementById(id), state: {}, stopStudentTimer: () => {}, toast: () => {},
+    submitStudentQuiz: (_e, _q, _questions, opts) => { submits += 1; assert.equal(opts.autoSubmitted, true); assert.equal(opts.force, true); }
   });
   w.setInterval = callback => { tick = callback; return 1; };
   w.eval(fn('runStudentTimer'));
@@ -218,16 +213,9 @@ test('Real student renderer uses ten widgets, three persisted images and a gated
   const w = fixture(t);
   const events = [];
   Object.assign(w, {
-    $: id => w.document.getElementById(id),
-    stopStudentTimer: () => {},
-    clearStudentSubscriptions: () => {},
-    readStoredTimer: () => null,
-    escapeHtml: value => String(value).replaceAll('"', '&quot;'),
-    round1: number => number,
-    setupStudentProgress: () => {},
-    crewTour: { notify: event => events.push(event) },
-    startTimedStudentQuiz: () => {},
-    refreshStudentProgress: () => {}
+    $: id => w.document.getElementById(id), stopStudentTimer: () => {}, clearStudentSubscriptions: () => {}, readStoredTimer: () => null,
+    escapeHtml: value => String(value).replaceAll('"', '&quot;'), round1: number => number, setupStudentProgress: () => {},
+    crewTour: { notify: event => events.push(event) }, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
   w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   const questions = w.demo.questions.map((q, i) => ({ ...q, id: `q${i}` }));
@@ -246,21 +234,15 @@ test('Actual submission emits the tour transition only after Firestore confirms 
   w.document.body.insertAdjacentHTML('beforeend', '<form id="studentForm"><input id="studentName" value="ML"><button id="studentSubmitBtn"></button></form>');
   let finish;
   Object.assign(w, {
-    $: id => w.document.getElementById(id),
-    state: { studentAttempt: { attemptId: 'attempt-a', startedAt: 1000 } },
-    studentSubmissionBusy: new Set(), completedStudentSubmissions: new Set(),
-    readStoredTimer: () => null, readStudentAnswer: () => 'blue',
-    evaluateAnswer: () => ({ awarded: 1, max: 1, needsReview: false }),
-    round1: number => number, deepClone: value => value,
-    getQuizScale: () => ({ name: 'Standard' }), gradeFromPercent: () => 1,
-    studentTimerKey: id => id, stopStudentTimer: () => {}, db: {}, collection: (...x) => x,
-    serverTimestamp: () => 1,
-    addDoc: (ref, data) => { writes.push({ ref, data }); return new Promise(resolve => { finish = resolve; }); },
-    clearStudentSubscriptions: () => {}, renderStudentResult: () => {}, toast: () => {},
-    crewTour: { notify: (event, data) => events.push({ event, data }) }
+    $: id => w.document.getElementById(id), state: { studentAttempt: { attemptId: 'attempt-a', startedAt: 1000 } },
+    studentSubmissionBusy: new Set(), completedStudentSubmissions: new Set(), readStoredTimer: () => null, readStudentAnswer: () => 'blue',
+    evaluateAnswer: () => ({ awarded: 1, max: 1, needsReview: false }), round1: number => number, deepClone: value => value,
+    getQuizScale: () => ({ name: 'Standard' }), gradeFromPercent: () => 1, studentTimerKey: id => id, stopStudentTimer: () => {}, db: {}, collection: (...x) => x,
+    serverTimestamp: () => 1, addDoc: (ref, data) => { writes.push({ ref, data }); return new Promise(resolve => { finish = resolve; }); },
+    clearStudentSubscriptions: () => {}, renderStudentResult: () => {}, toast: () => {}, crewTour: { notify: (event, data) => events.push({ event, data }) }
   });
   w.eval(fn('submitStudentQuiz'));
-  const quiz = { id: 'DEMO', timeLimitMinutes: 1, tutorialVersion: 'v6' };
+  const quiz = { id: 'DEMO', timeLimitMinutes: 1, tutorialVersion: 'v7' };
   const questions = [{ id: 'q1' }];
   const pending = w.submitStudentQuiz(null, quiz, questions, { force: true, autoSubmitted: true });
   assert.equal(events.length, 0);
