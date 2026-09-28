@@ -107,8 +107,11 @@ function installFirstGuideGuard() {
 
   // The page stays visible as context, but only the current spotlight and the
   // guide card are interactive. This keeps the tour state deterministic.
-  for (const type of ["pointerdown", "pointerup", "mousedown", "mouseup", "touchstart", "click", "dblclick", "contextmenu", "wheel", "submit"]) {
-    document.addEventListener(type, blockOutsideGuide, true);
+  for (const type of ["pointerdown", "pointerup", "mousedown", "mouseup", "click", "dblclick", "contextmenu", "submit"]) {
+    document.addEventListener(type, blockOutsideGuide, { capture: true });
+  }
+  for (const type of ["touchstart", "touchmove", "wheel"]) {
+    document.addEventListener(type, blockOutsideGuide, { capture: true, passive: false });
   }
   document.addEventListener("keydown", keepKeyboardInsideGuide, true);
   document.addEventListener("focusin", keepFocusInsideGuide, true);
