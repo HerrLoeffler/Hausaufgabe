@@ -7,6 +7,7 @@
   <title>GradeCrew Lab · Fast Quiz</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="fastquiz-v4.css">
+  <link rel="stylesheet" href="fastquiz-polish.css">
 </head>
 <body>
   <header class="labTopbar">
@@ -19,45 +20,61 @@
 
   <main class="shell">
     <section id="homeView" class="view">
-      <div class="pageHead wideHead">
-        <p class="eyebrow">GRADECREW LAB</p>
-        <h1>Fast Quiz</h1>
-        <p>Grundrechenarten schnell und fair trainieren – allein, im All-Time-Highscore oder live mit der Klasse.</p>
+      <div class="homeIntro">
+        <div class="pageHead wideHead">
+          <p class="eyebrow">GRADECREW LAB</p>
+          <h1>Fast Quiz</h1>
+          <p>Grundrechenarten schnell und fair trainieren – allein, gegen die Bestenliste oder live mit der Klasse.</p>
+        </div>
+        <p class="homeIntroHint">Wähle einen Modus. Für eine Live-Runde brauchen Schüler nur den QR-Code oder den 6-stelligen Code der Lehrkraft.</p>
       </div>
 
       <div class="homeLayout">
         <div class="modeGridV4">
           <button class="modeCardV4" type="button" data-open-mode="practice">
             <span class="modeIndex">01</span>
+            <span class="modeAudience">ALLEIN TRAINIEREN</span>
             <strong>Üben</strong>
-            <p>Rechenarten, Zahlenbereiche, Niveau und Zeit frei einstellen. Beliebig oft spielen.</p>
+            <p>Du bestimmst selbst Rechenarten, Zahlenbereiche, Niveau, Dauer und Fehlerregeln.</p>
+            <div class="modeMeta"><span>frei einstellbar</span><span>beliebig oft</span><span>persönlicher Rekord</span></div>
             <span class="modeAction">Training einstellen →</span>
           </button>
 
           <button class="modeCardV4" type="button" data-open-mode="highscore">
             <span class="modeIndex">02</span>
+            <span class="modeAudience">GEGEN DIE BESTENLISTE</span>
             <strong>All-Time-Highscore</strong>
-            <p>Feste, faire Regeln. Immer neue gleichwertige Aufgaben und eine gemeinsame Bestenliste.</p>
+            <p>Feste Regeln und immer neue gleichwertige Aufgaben. Jeder Versuch zählt für dieselbe Bestenliste.</p>
+            <div class="modeMeta"><span>2 Minuten</span><span>feste Wertung</span><span>All-Time-Ranking</span></div>
             <span class="modeAction">Highscore jagen →</span>
           </button>
 
           <button class="modeCardV4" type="button" data-open-mode="live">
             <span class="modeIndex">03</span>
+            <span class="modeAudience">LEHRKRAFT STARTET</span>
             <strong>Live mit Lehrkraft</strong>
-            <p>Lehrkraft konfiguriert die Runde, bis zu 30 Teilnehmende treten bei und starten gemeinsam.</p>
+            <p>Lehrkraft stellt die Runde ein, Schüler treten per QR-Code oder Code bei und alle starten gemeinsam.</p>
+            <div class="modeMeta"><span>bis 30 Personen</span><span>gemeinsamer Start</span><span>Live-Scoreboard</span></div>
             <span class="modeAction">Live-Runde erstellen →</span>
           </button>
         </div>
 
         <aside class="card joinSideCard">
           <p class="eyebrow">SCHÜLER / TEILNEHMENDE</p>
-          <h2>Schon einen Code?</h2>
-          <p>6-stelligen Rundencode eingeben – oder einfach den QR-Code der Lehrkraft scannen.</p>
-          <label class="field" for="quickJoinCode"><span>Rundencode</span>
-            <input id="quickJoinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456">
-          </label>
-          <button id="quickJoinBtn" class="primaryButton fullButton" type="button">Runde beitreten</button>
-          <small>Ein QR-Code öffnet diese Seite bereits mit eingetragener Runde.</small>
+          <h2>Runde beitreten</h2>
+          <p>Code von der Lehrkraft eingeben. Noch einfacher: QR-Code scannen – dann ist die Runde schon ausgewählt.</p>
+          <div class="quickJoinForm">
+            <label class="field" for="quickJoinCode"><span>6-stelliger Rundencode</span>
+              <input id="quickJoinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456">
+            </label>
+            <button id="quickJoinBtn" class="primaryButton" type="button">Weiter</button>
+          </div>
+          <div class="flowStrip" aria-hidden="true">
+            <div class="flowStep"><b>1 · Code</b><span>eingeben oder QR scannen</span></div>
+            <div class="flowStep"><b>2 · Name</b><span>Kürzel wählen</span></div>
+            <div class="flowStep"><b>3 · Start</b><span>auf Lehrkraft warten</span></div>
+          </div>
+          <div class="joinHelp"><span class="joinHelpMark">i</span><span>Für eine Live-Runde müssen Schüler vorher nichts konfigurieren.</span></div>
         </aside>
       </div>
     </section>
@@ -68,6 +85,7 @@
         <p id="setupEyebrow" class="eyebrow">ÜBEN</p>
         <h1 id="setupTitle">Fast Quiz einstellen</h1>
         <p id="setupSubtitle">Stelle dein Rechentraining zusammen.</p>
+        <div class="setupContext"><span>1 · Inhalt</span><span>2 · Niveau</span><span>3 · Dauer</span><span>4 · Spielregeln</span></div>
       </div>
 
       <form id="setupForm" class="setupColumns">
@@ -93,7 +111,7 @@
           </section>
 
           <section class="settingSection">
-            <div class="sectionHead"><span>3</span><div><strong>Niveau</strong><small>Die Grenzen sind fest definiert – nicht nur „leichter“ oder „schwerer“.</small></div></div>
+            <div class="sectionHead"><span>3</span><div><strong>Niveau</strong><small>Vier klar definierte Stufen mit festen Zahlenräumen.</small></div></div>
             <div class="levelPicker" role="radiogroup" aria-label="Niveau">
               <label><input type="radio" name="level" value="n1"><span><strong>Niveau 1</strong><small>Grundlagen</small></span></label>
               <label><input type="radio" name="level" value="n2" checked><span><strong>Niveau 2</strong><small>Standard</small></span></label>
@@ -104,7 +122,7 @@
           </section>
 
           <section class="settingSection">
-            <div class="sectionHead"><span>4</span><div><strong>Dauer</strong><small>So lange werden fortlaufend neue Aufgaben gestellt.</small></div></div>
+            <div class="sectionHead"><span>4</span><div><strong>Dauer</strong><small>Bis die Zeit abläuft, kommen fortlaufend neue Aufgaben.</small></div></div>
             <div class="durationPicker compactDuration" role="radiogroup" aria-label="Dauer">
               <label><input type="radio" name="duration" value="1"><span>1</span></label>
               <label><input type="radio" name="duration" value="2"><span>2</span></label>
@@ -149,8 +167,8 @@
       <button class="backButton" type="button" data-back-home>← Zurück</button>
       <div class="pageHead compactHead">
         <p class="eyebrow">ALL-TIME-HIGHSCORE</p>
-        <h1>Ein Regelwerk. Eine Bestenliste.</h1>
-        <p>2 Minuten, alle vier Grundrechenarten, feste Wertung. Jeder Versuch erzeugt neue gleichwertige Aufgaben.</p>
+        <h1>Gleiche Regeln. Eine Bestenliste.</h1>
+        <p>Wähle Zahlenbereich und Niveau. Die Wertung ist für alle identisch, damit Ergebnisse wirklich vergleichbar bleiben.</p>
       </div>
 
       <div class="highscoreLayout">
@@ -194,11 +212,11 @@
       <div class="joinWrap card">
         <p class="eyebrow">LIVE-RUNDE</p>
         <h1>Runde beitreten</h1>
-        <p>QR-Code gescannt? Dann ist der Code bereits eingetragen.</p>
+        <p>Rundencode prüfen, einen kurzen Namen wählen und anschließend auf den gemeinsamen Start warten.</p>
         <label class="field"><span>Rundencode</span><input id="joinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456"></label>
         <label class="field"><span>Dein Kürzel oder kurzer Name</span><input id="joinName" maxlength="24" placeholder="z. B. ML"></label>
         <p id="joinError" class="formError"></p>
-        <button id="joinBtn" class="primaryButton fullButton" type="button">Beitreten</button>
+        <button id="joinBtn" class="primaryButton fullButton" type="button">Beitreten und warten</button>
       </div>
     </section>
 
@@ -267,7 +285,7 @@
       <div id="personalBestCard" class="card personalBest"><span id="personalBestLabel">Persönlicher Rekord</span><strong id="personalBest">–</strong><small id="personalBestNote"></small></div>
       <div id="playerLeaderboardWrap" class="card leaderboardCard" hidden><div class="panelHead"><div><strong id="resultLeaderboardTitle">Bestenliste</strong><small>aktueller Stand</small></div></div><ol id="playerLeaderboard" class="leaderboard"></ol></div>
       <div class="card resultCard"><div><span class="miniLabel">WEITER</span><h2>Noch eine Runde?</h2><p id="resultActionText"></p></div><div class="resultActions"><button id="sameRoundBtn" class="secondaryButton" type="button">Gleiche Aufgaben</button><button id="newRoundBtn" class="primaryButton" type="button">Neue Aufgaben</button><button id="homeBtn" class="secondaryButton" type="button">Startseite</button></div></div>
-      <details class="developerDetails"><summary>Entwicklerdaten</summary><pre id="sessionDump"></pre></details>
+      <pre id="sessionDump" hidden></pre>
     </section>
   </main>
 
