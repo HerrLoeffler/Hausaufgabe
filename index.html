@@ -4,10 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GradeCrew – Tests. Einfach digital.</title>
-  <meta name="app-version" content="2.3.1-gc1" />
-  <link rel="stylesheet" href="styles.css?v=2.3.1-gc1" />
-  <link rel="stylesheet" href="design-system.css?v=2.3.1-gc1" />
-  <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc1" />
+  <meta name="app-version" content="2.3.1-gc2" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="workspace.css?v=2.3.1-gc2" />
   <link rel="icon" href="assets/gradecrew/penguin-guide.svg" type="image/svg+xml" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
@@ -30,7 +31,7 @@
     </div>
   </header>
 
-  <main id="mainContent" class="shell">
+  <main id="mainContent" class="shell" tabindex="-1">
     <section id="authView" class="view">
       <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
       <div class="authIntro">
@@ -54,18 +55,18 @@
 
         <article class="card">
           <span class="eyebrow teacherEyebrow">Für Lehrkräfte</span>
-          <div class="tabs" role="tablist">
-            <button id="loginTab" class="tab active" type="button">Anmelden</button>
-            <button id="registerTab" class="tab" type="button">Account erstellen</button>
+          <div class="tabs" role="tablist" aria-label="Lehrerzugang">
+            <button id="loginTab" class="tab active" type="button" role="tab" aria-controls="loginForm" aria-selected="true" tabindex="0">Anmelden</button>
+            <button id="registerTab" class="tab" type="button" role="tab" aria-controls="registerForm" aria-selected="false" tabindex="-1">Account erstellen</button>
           </div>
-          <form id="loginForm" class="stack authForm">
+          <form id="loginForm" class="stack authForm" role="tabpanel" aria-labelledby="loginTab" tabindex="0">
             <h2>Willkommen zurück</h2>
             <label>E-Mail<input id="loginEmail" type="email" autocomplete="email" required /></label>
             <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
             <button class="button primary" type="submit">Anmelden</button>
             <button id="forgotBtn" class="linkButton" type="button">Passwort vergessen?</button>
           </form>
-          <form id="registerForm" class="stack authForm hidden">
+          <form id="registerForm" class="stack authForm hidden" role="tabpanel" aria-labelledby="registerTab" tabindex="0">
             <h2>Lehrer-Account erstellen</h2>
             <label>Name<input id="registerName" type="text" autocomplete="name" required /></label>
             <label>E-Mail<input id="registerEmail" type="email" autocomplete="email" required /></label>
@@ -129,6 +130,7 @@
           <span class="choiceIcon choiceIconGreen">⇩</span>
           <span class="choiceText"><strong>Von Kollegen übernehmen</strong><small>Füge einen Freigabelink oder Vorlagencode ein. Du erhältst eine eigene Kopie.</small></span>
           <form id="templateImportForm" class="templateImportForm">
+            <label class="visuallyHidden" for="templateImportInput">Freigabelink oder Vorlagencode</label>
             <input id="templateImportInput" type="text" autocomplete="off" placeholder="Freigabelink oder z. B. V-K7M4X2PA" />
             <button class="button primary" type="submit">Vorlage laden</button>
           </form>
@@ -150,16 +152,16 @@
         <div><button id="backFromAdmin" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Nur für Administratoren</span><h1>Administration</h1><p>Nutzer, Support, Mitteilungen und Betrieb auf einen Blick.</p></div>
         <button id="refreshAdminBtn" class="button secondary" type="button">Aktualisieren</button>
       </div>
-      <div class="adminTabs" role="tablist">
-        <button class="adminTab active" type="button" data-admin-tab="overview">Übersicht</button>
-        <button class="adminTab" type="button" data-admin-tab="teachers">Lehrkräfte</button>
-        <button class="adminTab" type="button" data-admin-tab="tests">Tests</button>
-        <button class="adminTab" type="button" data-admin-tab="messages">Mitteilungen</button>
-        <button class="adminTab" type="button" data-admin-tab="feedback">Feedback</button>
-        <button class="adminTab" type="button" data-admin-tab="audit">Admin-Log</button>
+      <div class="adminTabs" role="tablist" aria-label="Administrationsbereiche">
+        <button class="adminTab active" type="button" data-admin-tab="overview" id="adminTabOverview" role="tab" aria-controls="adminPanelOverview" aria-selected="true" tabindex="0">Übersicht</button>
+        <button class="adminTab" type="button" data-admin-tab="teachers" id="adminTabTeachers" role="tab" aria-controls="adminPanelTeachers" aria-selected="false" tabindex="-1">Lehrkräfte</button>
+        <button class="adminTab" type="button" data-admin-tab="tests" id="adminTabTests" role="tab" aria-controls="adminPanelTests" aria-selected="false" tabindex="-1">Tests</button>
+        <button class="adminTab" type="button" data-admin-tab="messages" id="adminTabMessages" role="tab" aria-controls="adminPanelMessages" aria-selected="false" tabindex="-1">Mitteilungen</button>
+        <button class="adminTab" type="button" data-admin-tab="feedback" id="adminTabFeedback" role="tab" aria-controls="adminPanelFeedback" aria-selected="false" tabindex="-1">Feedback</button>
+        <button class="adminTab" type="button" data-admin-tab="audit" id="adminTabAudit" role="tab" aria-controls="adminPanelAudit" aria-selected="false" tabindex="-1">Admin-Log</button>
       </div>
 
-      <section id="adminPanelOverview" class="adminPanel">
+      <section id="adminPanelOverview" class="adminPanel" role="tabpanel" aria-labelledby="adminTabOverview" tabindex="0">
         <div class="card adminOverviewToolbar">
           <div><span class="eyebrow">Nutzung</span><h2>Was passiert in GradeCrew?</h2><p id="adminPeriodDescription">Aktivität der letzten 7 Tage.</p></div>
           <div class="segmented adminPeriodSelector" role="group" aria-label="Zeitraum auswählen">
@@ -176,17 +178,17 @@
         </div>
       </section>
 
-      <section id="adminPanelTeachers" class="adminPanel hidden">
+      <section id="adminPanelTeachers" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabTeachers" tabindex="0">
         <div class="card adminToolbar">
           <label class="searchField">Lehrkräfte durchsuchen<input id="adminTeacherSearch" type="search" placeholder="Name oder E-Mail …" /></label>
           <label>Status<select id="adminTeacherStatusFilter"><option value="all">Alle</option><option value="active">Aktiv</option><option value="admin">Admins</option><option value="suspended">Gesperrt</option></select></label>
           <button id="exportAdminTeachersBtn" class="button secondary" type="button">CSV exportieren</button>
         </div>
-        <div id="adminTeachersTable" class="card tableCard"></div>
+        <div id="adminTeachersTable" class="card tableCard" tabindex="0" role="region" aria-label="Lehrkräfte – Tabelle horizontal scrollbar"></div>
         <div id="adminTeacherDetail" class="card adminDetail hidden"></div>
       </section>
 
-      <section id="adminPanelTests" class="adminPanel hidden">
+      <section id="adminPanelTests" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabTests" tabindex="0">
         <div class="card adminToolbar adminToolbarWrap">
           <label class="searchField">Tests durchsuchen<input id="adminTestSearch" type="search" placeholder="Titel, Fach, Klasse, Testcode oder Lehrkraft …" /></label>
           <label>Status<select id="adminTestStatusFilter"><option value="all">Alle Status</option><option value="draft">Entwürfe</option><option value="published">Veröffentlicht</option><option value="ended">Beendet</option><option value="trash">Papierkorb</option></select></label>
@@ -194,11 +196,11 @@
           <label>Geändert<select id="adminTestPeriodFilter"><option value="all">Gesamter Zeitraum</option><option value="7d">Letzte 7 Tage</option><option value="30d">Letzte 30 Tage</option><option value="90d">Letzte 90 Tage</option></select></label>
           <button id="exportAdminTestsBtn" class="button secondary" type="button">CSV exportieren</button>
         </div>
-        <div id="adminTestsTable" class="card tableCard"></div>
+        <div id="adminTestsTable" class="card tableCard" tabindex="0" role="region" aria-label="Tests – Tabelle horizontal scrollbar"></div>
         <div id="adminTestDetail" class="card adminDetail hidden"></div>
       </section>
 
-      <section id="adminPanelMessages" class="adminPanel hidden">
+      <section id="adminPanelMessages" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabMessages" tabindex="0">
         <div class="adminMessageGrid">
           <article class="card">
             <div class="sectionHead"><div><h2>Mitteilung erstellen</h2><p>Begrüßung, Neuigkeit, Info oder Warnung.</p></div><button id="resetAnnouncementBtn" class="button ghost" type="button">Neu</button></div>
@@ -250,7 +252,7 @@
         </div>
       </section>
 
-      <section id="adminPanelFeedback" class="adminPanel hidden">
+      <section id="adminPanelFeedback" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabFeedback" tabindex="0">
         <div class="card adminToolbar">
           <label class="searchField">Feedback durchsuchen<input id="adminFeedbackSearch" type="search" placeholder="Name, E-Mail, Nachricht oder Testcode …" /></label>
           <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="rights">Rechtehinweise</option><option value="ai_question">KI-Aufgaben</option><option value="app_error">Technische Fehler</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
@@ -259,7 +261,7 @@
         <div id="adminFeedbackList" class="feedbackList"></div>
       </section>
 
-      <section id="adminPanelAudit" class="adminPanel hidden">
+      <section id="adminPanelAudit" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabAudit" tabindex="0">
         <div class="card"><div class="sectionHead"><div><h2>Admin-Log</h2><p>Wichtige Änderungen im Administrationsbereich.</p></div></div><div id="adminAuditList" class="auditList"></div></div>
       </section>
     </section>
@@ -352,61 +354,88 @@
         <summary>Erweiterter manueller JSON-Import</summary>
         <p>Der bisherige Copy-&amp;-Paste-Weg bleibt als Rückfalloption erhalten.</p>
         <div class="actions"><button id="generatePromptBtn" class="button secondary" type="button">Prompt erzeugen</button><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button><button id="openChatGptBtn" class="button providerButton" type="button">ChatGPT öffnen</button><button id="openClaudeBtn" class="button providerButton" type="button">Claude öffnen</button><button id="openGeminiBtn" class="button providerButton" type="button">Gemini öffnen</button></div>
+        <label class="jsonFieldLabel" for="aiPromptOutput">Prompt für die KI</label>
         <textarea id="aiPromptOutput" class="codeArea" rows="10" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
+        <label class="jsonFieldLabel" for="aiJsonInput">JSON-Antwort der KI</label>
         <textarea id="aiJsonInput" class="codeArea" rows="10" placeholder="JSON-Antwort hier einfügen …"></textarea>
         <div id="aiJsonHelp" class="jsonHelp hidden"></div>
         <div class="actions"><button id="importJsonBtn" class="button primary" type="button">Antwort importieren</button></div>
-        <input id="aiJsonFile" type="file" accept=".json,application/json" class="hidden" />
+        <input id="aiJsonFile" aria-label="JSON-Datei importieren" type="file" accept=".json,application/json" class="hidden" />
         <button id="selectJsonFileBtn" class="linkButton" type="button">JSON-Datei auswählen</button>
       </details>
     </section>
 
     <section id="editorView" class="view hidden">
-      <div class="pageHead stickyHead">
-        <div><button id="backFromEditor" class="linkButton left" type="button">← Zurück</button><h1 id="editorHeading">Test bearbeiten</h1><p id="saveState">Noch nicht gespeichert</p><div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div><div id="variantBackgroundProgress" class="aiProgress hidden variantBackgroundProgress" role="status" aria-live="polite"></div></div>
-        <div class="actions"><button id="createSimilarTestBtn" class="button secondary" type="button" title="Eigenständigen, ähnlichen Test als neuen Entwurf erstellen">✨ Ähnlichen Test erstellen</button><button id="previewBtn" class="button secondary" type="button">Schüleransicht</button><button id="saveQuizBtn" class="button secondary" type="button">Speichern</button><button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button><button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button><button id="publishBtn" class="button primary" type="button">Veröffentlichen</button></div>
+      <div class="pageHead stickyHead compactEditorHead">
+        <div class="editorHeadCopy">
+          <div class="editorTitleRow">
+            <button id="backFromEditor" class="linkButton left" type="button">← Zurück</button>
+            <h1 id="editorHeading">Test bearbeiten</h1>
+          </div>
+          <p id="saveState" data-state="unsaved" role="status" aria-live="polite">Noch nicht gespeichert</p>
+          <div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
+          <div id="variantBackgroundProgress" class="aiProgress hidden variantBackgroundProgress" role="status" aria-live="polite"></div>
+        </div>
+        <div class="actions editorHeadActions" aria-label="Testaktionen">
+          <button id="previewBtn" class="button secondary" type="button">Schüleransicht</button>
+          <button id="saveQuizBtn" class="button secondary" type="button">Speichern</button>
+          <details class="editorMoreMenu">
+            <summary class="button ghost">Mehr <span aria-hidden="true">⌄</span></summary>
+            <div class="editorMorePanel">
+              <button id="createSimilarTestBtn" class="button secondary" type="button">Ähnlichen Test erstellen</button>
+              <button id="shareTemplateBtn" class="button secondary" type="button">Mit Kollegen teilen</button>
+              <button id="endQuizBtn" class="button danger hidden" type="button">Test beenden</button>
+            </div>
+          </details>
+          <button id="publishBtn" class="button primary" type="button">Veröffentlichen</button>
+        </div>
       </div>
       <div id="importReviewBanner" class="importReviewBanner hidden"></div>
       <section id="firstTestEditor" class="card firstTestGuide hidden" aria-label="Dein erster Test"></section>
       <div class="editorLayout">
         <aside class="card settingsCard">
-          <div class="questionOutlineHeader"><h2>Aufgaben</h2><span>! = Hinweis</span></div><nav id="questionOutline" class="questionOutline" aria-label="Aufgabenübersicht"></nav><h2>Test-Einstellungen</h2>
-          <div class="stack compact">
-            <label>Titel<input id="quizTitle" type="text" placeholder="z. B. Wortarten – Wiederholung" /></label>
-            <label>Fach<input id="quizSubject" type="text" placeholder="Deutsch" /></label>
-            <label>Klassenstufe<input id="quizGrade" type="text" placeholder="9" /></label>
-            <label>Hinweis für Schüler<textarea id="quizDescription" rows="4"></textarea></label>
-            <label>Notenschlüssel<select id="quizGradeScale"></select></label>
-            <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
-            <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
-            <div class="settingGroup">
-              <div class="settingGroupTitle"><span>▶</span><div><strong>Start &amp; Durchführung</strong><small>Bestimme, wie der Test im Unterricht beginnt.</small></div></div>
-              <label>Start des Tests<select id="quizStartMode"><option value="student">Schüler startet selbst</option><option value="teacher">Lehrkraft startet für alle</option></select></label>
-              <div class="timeLimitSettings">
-                <label class="checkRow"><input id="quizUseTimeLimit" type="checkbox" /> Zeitlimit verwenden</label>
-                <label id="quizTimeLimitWrap" class="hidden">Zeitlimit in Minuten<input id="quizTimeLimitMinutes" type="number" min="1" max="300" step="1" value="10" /></label>
-                <small id="timeLimitHint" class="hint">Der Countdown startet erst, wenn der Schüler auf „Test starten“ klickt. Bei 00:00 werden die aktuellen Antworten automatisch abgegeben.</small>
+          <div class="questionOutlineHeader"><h2>Aufgaben</h2><span>! = Hinweis</span></div><nav id="questionOutline" class="questionOutline" aria-label="Aufgabenübersicht"></nav>
+          <details class="editorSettingsDisclosure">
+            <summary><span>Test-Einstellungen</span><small>Titel, Durchführung &amp; Auswertung</small><b aria-hidden="true">⌄</b></summary>
+            <div class="editorSettingsBody">
+              <div class="stack compact">
+                <label>Titel<input id="quizTitle" type="text" placeholder="z. B. Wortarten – Wiederholung" /></label>
+                <label>Fach<input id="quizSubject" type="text" placeholder="Deutsch" /></label>
+                <label>Klassenstufe<input id="quizGrade" type="text" placeholder="9" /></label>
+                <label>Hinweis für Schüler<textarea id="quizDescription" rows="4"></textarea></label>
+                <label>Notenschlüssel<select id="quizGradeScale"></select></label>
+                <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
+                <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
+                <div class="settingGroup">
+                  <div class="settingGroupTitle"><span>▶</span><div><strong>Start &amp; Durchführung</strong><small>Bestimme, wie der Test im Unterricht beginnt.</small></div></div>
+                  <label>Start des Tests<select id="quizStartMode"><option value="student">Schüler startet selbst</option><option value="teacher">Lehrkraft startet für alle</option></select></label>
+                  <div class="timeLimitSettings">
+                    <label class="checkRow"><input id="quizUseTimeLimit" type="checkbox" /> Zeitlimit verwenden</label>
+                    <label id="quizTimeLimitWrap" class="hidden">Zeitlimit in Minuten<input id="quizTimeLimitMinutes" type="number" min="1" max="300" step="1" value="10" /></label>
+                    <small id="timeLimitHint" class="hint">Der Countdown startet erst, wenn der Schüler auf „Test starten“ klickt. Bei 00:00 werden die aktuellen Antworten automatisch abgegeben.</small>
+                  </div>
+                </div>
+                <div class="settingGroup">
+                  <div class="settingGroupTitle"><span>⤨</span><div><strong>Reihenfolge</strong><small>Optional für unterschiedliche Varianten in der Klasse.</small></div></div>
+                  <label class="checkRow"><input id="quizShuffleQuestions" type="checkbox" /> Aufgaben für Schüler mischen</label>
+                  <label class="checkRow"><input id="quizShuffleAnswers" type="checkbox" /> Antwortmöglichkeiten mischen</label>
+                </div>
               </div>
+              <div class="summaryBox"><div><span>Aufgaben</span><strong id="questionCount">0</strong></div><div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div><div><span>Status</span><strong id="publishStatus">Entwurf</strong></div></div>
             </div>
-            <div class="settingGroup">
-              <div class="settingGroupTitle"><span>⤨</span><div><strong>Reihenfolge</strong><small>Optional für unterschiedliche Varianten in der Klasse.</small></div></div>
-              <label class="checkRow"><input id="quizShuffleQuestions" type="checkbox" /> Aufgaben für Schüler mischen</label>
-              <label class="checkRow"><input id="quizShuffleAnswers" type="checkbox" /> Antwortmöglichkeiten mischen</label>
-            </div>
-          </div>
-          <div class="summaryBox"><div><span>Aufgaben</span><strong id="questionCount">0</strong></div><div><span>Gesamtpunkte</span><strong id="totalPoints">0</strong></div><div><span>Status</span><strong id="publishStatus">Entwurf</strong></div></div>
+          </details>
         </aside>
         <div><div id="questionList" class="questionList"></div><button id="addQuestionBtn" class="button addQuestion" type="button">+ Aufgabe hinzufügen</button></div>
       </div>
     </section>
 
     <section id="publishView" class="view hidden">
-      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
+      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" aria-label="Link zum Test für Schüler" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
     </section>
 
     <section id="resultsView" class="view hidden">
       <div class="pageHead"><div><button id="backFromResults" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Ergebnisse</span><h1 id="resultsHeading">Test</h1><p id="resultsMeta"></p></div><div class="actions"><button id="exportResultsBtn" class="button secondary" type="button">CSV exportieren</button><button id="refreshResultsBtn" class="button primary" type="button">Aktualisieren</button></div></div>
-      <div id="resultsTableWrap" class="card tableCard"></div><div id="reviewPanel" class="card reviewPanel hidden"></div>
+      <div id="resultsTableWrap" class="card tableCard" tabindex="0" role="region" aria-label="Testergebnisse – Tabelle horizontal scrollbar"></div><div id="reviewPanel" class="card reviewPanel hidden"></div>
     </section>
 
 
@@ -419,7 +448,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><div class="dragHandle" title="Reihenfolge">⋮⋮</div><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen">×</button></div></details></div></div>
+      <div class="questionTop"><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben" aria-label="Aufgabe nach oben verschieben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten" aria-label="Aufgabe nach unten verschieben">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen" aria-label="Aufgabe einklappen" aria-expanded="true">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren" aria-label="Aufgabe duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen" aria-label="Aufgabe löschen">×</button></div></details></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -432,8 +461,8 @@
     </article>
   </template>
 
-  <dialog id="feedbackDialog" class="shareDialog feedbackDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Feedback</span><h2>Frage, Fehler oder Wunsch?</h2></div><button id="closeFeedbackDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+  <dialog id="feedbackDialog" aria-labelledby="feedbackDialogTitle" class="shareDialog feedbackDialog">
+    <div class="shareDialogHead"><div><span class="eyebrow">Feedback</span><h2 id="feedbackDialogTitle">Frage, Fehler oder Wunsch?</h2></div><button id="closeFeedbackDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <p>Schreib kurz, was dir aufgefallen ist. App-Version, Browser und Zeitpunkt werden automatisch ergänzt.</p>
     <div class="stack compact">
       <label>Kategorie<select id="feedbackCategory"><option value="bug">🐞 Fehler</option><option value="idea">💡 Wunsch / Idee</option><option value="question">❓ Frage</option><option value="other">💬 Sonstiges</option></select></label>
@@ -443,8 +472,8 @@
     </div>
   </dialog>
 
-  <dialog id="rightsReportDialog" class="shareDialog feedbackDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Rechtehinweis</span><h2>Inhalte melden</h2></div><button id="closeRightsReport" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+  <dialog id="rightsReportDialog" aria-labelledby="rightsReportDialogTitle" class="shareDialog feedbackDialog">
+    <div class="shareDialogHead"><div><span class="eyebrow">Rechtehinweis</span><h2 id="rightsReportDialogTitle">Inhalte melden</h2></div><button id="closeRightsReport" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <p>Sie vermuten, dass ein Test oder eine Aufgabe Ihre Rechte verletzt? Ihre Angaben werden ausschließlich zur Prüfung der Meldung gespeichert und nicht an eine KI übermittelt. Nur Administratoren können die Meldung einsehen.</p>
     <form id="rightsReportForm" class="stack compact">
       <label>Testcode oder Link zum betroffenen Inhalt<input id="rightsTarget" type="text" maxlength="500" required /></label>
@@ -456,14 +485,14 @@
     </form>
   </dialog>
 
-  <dialog id="announcementDialog" class="shareDialog announcementDialog">
+  <dialog id="announcementDialog" aria-labelledby="announcementDialogTitle" class="shareDialog announcementDialog">
     <div class="shareDialogHead"><div><span id="announcementDialogEyebrow" class="eyebrow">Hinweis</span><h2 id="announcementDialogTitle"></h2></div><button id="closeAnnouncementDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <p id="announcementDialogText" class="announcementDialogText"></p>
     <div class="shareDialogFoot"><button id="announcementDialogOk" class="button primary" type="button">Alles klar</button></div>
   </dialog>
 
-  <dialog id="whatsNewDialog" class="shareDialog whatsNewDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.3.0</span><h2>Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+  <dialog id="whatsNewDialog" aria-labelledby="whatsNewDialogTitle" class="shareDialog whatsNewDialog">
+    <div class="shareDialogHead"><div><span class="eyebrow">Version 2.3.0</span><h2 id="whatsNewDialogTitle">Was ist neu?</h2></div><button id="closeWhatsNewDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <div class="whatsNewList">
       <div><span>✓</span><p><strong>GradeCrew hat ein neues Erscheinungsbild</strong><small>Klarer, ruhiger und weiterhin auf das Wesentliche reduziert.</small></p></div>
       <div><span>＋</span><p><strong>Neue Tests starten einfacher</strong><small>Nach „+ Neuer Test“ wählst du manuell, mit KI oder über eine Vorlage von Kollegen.</small></p></div>
@@ -475,7 +504,7 @@
     <div class="shareDialogFoot"><button id="whatsNewOk" class="button primary" type="button">Schließen</button></div>
   </dialog>
 
-  <dialog id="teacherTourDialog" class="shareDialog teacherTourDialog">
+  <dialog id="teacherTourDialog" aria-labelledby="teacherTourTitle" class="shareDialog teacherTourDialog">
     <div class="teacherTourTop">
       <span id="teacherTourStepLabel" class="eyebrow">1 von 4</span>
       <button id="teacherTourClose" class="iconButton" type="button" aria-label="Tutorial schließen">×</button>
@@ -494,26 +523,26 @@
     </div>
   </dialog>
 
-  <dialog id="dangerConfirmDialog" class="shareDialog dangerConfirmDialog">
+  <dialog id="dangerConfirmDialog" aria-labelledby="dangerConfirmTitle" class="shareDialog dangerConfirmDialog">
     <div class="dangerConfirmIcon" aria-hidden="true">!</div>
     <div class="shareDialogHead"><div><span class="eyebrow dangerEyebrow">Unwiderruflich</span><h2 id="dangerConfirmTitle">Test endgültig löschen?</h2></div></div>
     <p id="dangerConfirmText">Test, Aufgaben und Ergebnisse werden unwiderruflich gelöscht.</p>
     <div class="shareDialogFoot dangerConfirmFoot"><button id="dangerConfirmCancel" class="button secondary" type="button">Abbrechen</button><button id="dangerConfirmOk" class="button danger" type="button">Endgültig löschen</button></div>
   </dialog>
 
-  <dialog id="shareDialog" class="shareDialog">
-    <div class="shareDialogHead"><div><span class="eyebrow">Mit Kollegen teilen</span><h2>Test als Vorlage freigeben</h2></div><button id="closeShareDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
+  <dialog id="shareDialog" aria-labelledby="shareDialogTitle" class="shareDialog">
+    <div class="shareDialogHead"><div><span class="eyebrow">Mit Kollegen teilen</span><h2 id="shareDialogTitle">Test als Vorlage freigeben</h2></div><button id="closeShareDialog" class="iconButton" type="button" aria-label="Schließen">×</button></div>
     <p>Dein Kollege erhält eine unabhängige Kopie. Schülernamen, Abgaben und Ergebnisse werden nicht geteilt.</p>
     <label>Freigabelink<div class="copyField"><input id="shareDialogLink" type="text" readonly /><button id="copyShareLinkBtn" class="button secondary" type="button">Link kopieren</button></div></label>
     <label>Vorlagencode<div class="copyField"><input id="shareDialogCode" type="text" readonly /><button id="copyShareCodeBtn" class="button secondary" type="button">Code kopieren</button></div></label>
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc1</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc2</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer>
 
   <div id="startupNotice" class="startupNotice hidden" role="status" aria-live="polite"><span id="startupMessage"></span><button type="button" id="startupRetry" class="button secondary hidden">Erneut laden</button></div>
   <noscript><p class="startupNotice">Bitte JavaScript aktivieren, um GradeCrew zu verwenden.</p></noscript>
-  <script type="module" src="startup.js?v=2.3.1-gc1"></script>
+  <script type="module" src="startup.js?v=2.3.1-gc2"></script>
 </body>
 </html>

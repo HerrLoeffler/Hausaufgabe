@@ -1,6 +1,6 @@
 # GradeCrew · Produktgestaltung
 
-Stand: 28. September 2026, Version 2.3.1-gc1. Änderungen ausschließlich für Staging.
+Stand: 28. September 2026, Version 2.3.1-gc2. Änderungen ausschließlich für Staging.
 
 ## Eine Crew, vier verständliche Rollen
 
@@ -26,7 +26,7 @@ Die Figuren sind reduzierte Tierillustrationen mit ruhiger Mimik. Keine Kleidung
 
 ## Technische Umsetzung
 
-Marke und Bilder stehen in HTML beziehungsweise den zuständigen Renderfunktionen. `gradecrew-brand.css` wird direkt geladen. Es gibt keinen Beobachter mehr, der beliebige Nutzertexte von „Testify“ in „GradeCrew“ umschreibt. Interne Firebase-Projekte, IDs, Speicherpfade und bestehende Schnittstellen behalten ihre Namen.
+Marke und Bilder stehen in HTML beziehungsweise den zuständigen Renderfunktionen. `gradecrew-brand.css` und `workspace.css` werden direkt geladen. Die endgültige Editorstruktur steht im HTML; optionale Erweiterungen erzeugen keine Stylesheets. `interface.js` bündelt Tabs, Fokus, Speicherstatus und gemessene Abstände. Es gibt keinen Beobachter mehr, der beliebige Nutzertexte von „Testify“ in „GradeCrew“ umschreibt. Interne Firebase-Projekte, IDs, Speicherpfade und bestehende Schnittstellen behalten ihre Namen.
 
 `startup.js` trennt App-Start und optionale Erweiterungen. Ein gescheiterter Import zeigt eine wiederholbare Fehlermeldung. Layout- oder Admin-Erweiterungen sind keine Abhängigkeiten des KI-Clients.
 
@@ -44,3 +44,5 @@ Gezielte Referenzanalyse; keine Behauptung, tausende Seiten oder angemeldete Kon
 | [Exam.net](https://exam.net/cheat) | Durchführungssicherheit ist eine eigene Produkteigenschaft. | Separater technischer Ausbauplan, keine Sicherheit durch bloße Optik behaupten. |
 
 Das sind Übertragungen auf GradeCrews Abläufe, keine nachgewiesenen Conversion- oder Lernerfolgseffekte. Visuelle Endkontrolle auf Staging und Rückmeldungen aus dem Kollegium bleiben notwendig.
+
+Der genaue Umfang je Ansicht, ausgeführte Tests und offene visuelle Prüfungen stehen in `LAYOUT_AUDIT_GC2.md`.

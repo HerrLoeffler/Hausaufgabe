@@ -5,7 +5,7 @@ MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-staging-hosting.sh --check oder --deploy"; exit 1 ;; esac
 PROJECT_ID="hausaufgabe-staging"
 
-for FILE in app.js startup.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs; do
+for FILE in app.js interface.js startup.js ai-client.js ui-enhancements.js visual-enhancements.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs; do
   node --check "$FILE"
 done
 node --test ai-*.test.js ordering-grading.test.mjs

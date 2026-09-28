@@ -1,0 +1,275 @@
+/* Workspace components. Loaded once, after the legacy and brand styles.
+   Optional modules add behavior only; they never inject another style layer. */
+:root {
+  --topbar-height: 76px;
+  --editor-head-height: 104px;
+  --student-progress-height: 128px;
+  --student-timer-height: 0px;
+  --topbar-offset: var(--topbar-height);
+  --editor-offset: var(--editor-head-height);
+  --student-offset: var(--student-progress-height);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --ink-subtle: #526277;
+  --ink-warning: #775110;
+  --ink-error: #a6261c;
+  --ink-success: #216440;
+  --surface-info: #edf3fd;
+  --surface-warning: #fff6e4;
+  --surface-error: #fff1ef;
+  --surface-success: #edf8f0;
+}
+.visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.view, .pageHead > div, .card, .editorLayout > div { min-width: 0; }
+.view h1, .view h2, .view h3, .quizCard .meta { overflow-wrap: anywhere; }
+.view h1:focus, #mainContent:focus { outline-offset: 6px; }
+.shell :focus-visible, .topbar :focus-visible, dialog :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; box-shadow: none; }
+.button, .linkButton, .footerLink, .tab, .adminTab { min-height: 44px; }
+.button { line-height: 1.4; }
+.iconButton, .questionActions .iconButton { width: 36px; height: 36px; flex-shrink: 0; }
+.questionMore > summary { min-width: 36px; min-height: 36px; display: grid; place-items: center; }
+.hint, .fieldHint, .quizStats span, .pill, .status, .tableCard td small,
+.questionOutlineHeader span, .aiSectionTitle p { font-size: 12px; line-height: 1.5; }
+.jsonFieldLabel { display: block; font-size: 13px; font-weight: 650; margin-top: 18px; }
+.userBar { min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.userBar #userLabel { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar .brand { flex-shrink: 0; }
+.topbar .brand small { white-space: nowrap; }
+.toast { top: calc(var(--topbar-offset) + 12px); max-width: min(430px, calc(100vw - 32px)); }
+
+/* The dashboard keeps actions aligned even when titles have different lengths. */
+#dashboardView .quizGrid { align-items: stretch; gap: var(--space-4); }
+#dashboardView .quizCard { align-self: stretch; padding: 20px; gap: var(--space-3); }
+#dashboardView .quizCardTop { min-height: 0; align-items: flex-start; }
+#dashboardView .quizCard h3 { margin-bottom: 4px; font-size: 18px; line-height: 1.4; }
+#dashboardView .quizCard .meta { font-size: 13px; line-height: 1.5; }
+#dashboardView .quizStats { margin: 0; padding: 12px 0; gap: var(--space-4); }
+#dashboardView .primaryQuizActions { margin-top: auto; }
+#dashboardView .primaryQuizActions .button { min-height: 44px; }
+#dashboardView .quizActions { gap: var(--space-2); }
+#dashboardView .secondaryQuizActions { padding-top: 8px; }
+#dashboardView #trashBtn { background: var(--card); color: var(--muted); border-color: var(--line); }
+#dashboardView #trashBtn:hover { background: var(--soft); color: var(--primary2); }
+.dashboardMetric { min-height: 44px; }
+.dashboardMetric span { font-size: 12px; }
+.quizCard .quizMore summary { min-height: 36px; padding-block: 8px; }
+.dashboardToolbar :is(input, select), .formGrid2 :is(input, select) { min-width: 0; }
+
+/* Editor structure is in the original HTML, including native disclosures. */
+#editorView .compactEditorHead {
+  position: sticky; top: var(--topbar-offset); z-index: 15;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  gap: 12px 24px; margin: 0 0 16px; padding: 12px 0;
+  background: var(--bg); backdrop-filter: none;
+}
+#editorView .editorHeadCopy { min-width: 0; }
+.editorTitleRow { display: flex; align-items: baseline; gap: var(--space-3); min-width: 0; }
+#editorView #editorHeading { font-size: 22px; line-height: 1.3; margin: 0; text-wrap: initial; }
+#editorView #backFromEditor { white-space: nowrap; font-size: 13px; flex-shrink: 0; }
+#editorView #saveState {
+  display: block; width: fit-content; max-width: 100%; margin: 4px 0 0;
+  padding: 4px 8px; border: 1px solid var(--line); border-radius: 7px;
+  font-size: 12px; line-height: 1.5; color: var(--ink-subtle); background: var(--card);
+  white-space: normal; overflow-wrap: anywhere;
+}
+#editorView #saveState[data-state="saving"], #editorView #saveState[data-state="local"] { color: var(--ink-warning); background: var(--surface-warning); border-color: #e1c78e; }
+#editorView #saveState[data-state="saved"] { color: var(--ink-success); background: var(--surface-success); border-color: #b6d9c1; }
+#editorView #saveState[data-state="error"] { color: var(--ink-error); background: var(--surface-error); border-color: #e5b7b1; }
+#editorView .compactEditorHead > .actions { width: auto; flex-wrap: wrap; gap: 8px; align-items: center; overflow: visible; }
+#editorView .editorHeadActions > .button, #editorView .editorMoreMenu > summary { padding: 10px 12px; font-size: 13px; white-space: normal; }
+.editorMoreMenu { position: relative; }
+.editorMoreMenu > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.editorMoreMenu > summary::-webkit-details-marker { display: none; }
+.editorMorePanel {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 45;
+  width: 240px; max-width: calc(100vw - 48px); display: grid; gap: 4px;
+  padding: 8px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--card); box-shadow: 0 12px 32px rgb(32 43 60 / 14%);
+}
+.editorMorePanel .button { width: 100%; text-align: left; padding: 10px 12px; font-size: 13px; background: var(--card); color: var(--text); border: 0; }
+.editorMorePanel .button:hover { background: var(--soft); transform: none; }
+.editorMorePanel .button.danger { color: var(--ink-error); }
+#editorView .editorLayout { grid-template-columns: 272px minmax(0, 1fr); gap: var(--space-5); }
+#editorView .settingsCard {
+  position: sticky; top: calc(var(--topbar-offset) + var(--editor-offset) + 12px);
+  padding: 16px; border-radius: 14px;
+  max-height: calc(100dvh - var(--topbar-offset) - var(--editor-offset) - 28px);
+  overflow: auto; scrollbar-gutter: stable;
+}
+#editorView .questionOutlineHeader { margin-bottom: 8px; }
+#editorView .questionOutlineHeader h2 { font-size: 16px; margin: 0; padding: 0; border: 0; }
+#editorView #questionOutline { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; max-height: 34vh; overflow: auto; padding: 4px; margin: 4px -4px 12px; }
+.questionOutlineItem { min-height: 40px; font-size: 13px; position: relative; }
+.editorSettingsDisclosure { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 4px; }
+.editorSettingsDisclosure > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 8px; align-items: center; padding: 12px 0; color: var(--text); }
+.editorSettingsDisclosure > summary::-webkit-details-marker { display: none; }
+.editorSettingsDisclosure > summary span { font-size: 14px; font-weight: 750; }
+.editorSettingsDisclosure > summary small { grid-column: 1; font-size: 12px; line-height: 1.4; color: var(--muted); }
+.editorSettingsDisclosure > summary b { grid-column: 2; grid-row: 1 / 3; font-size: 16px; color: var(--muted); transition: transform .18s; }
+.editorSettingsDisclosure[open] > summary b { transform: rotate(180deg); }
+.editorSettingsBody { padding-top: 8px; }
+.editorSettingsBody .stack.compact { gap: 16px; }
+.editorSettingsBody label { font-size: 13px; }
+.editorSettingsBody :is(input, select, textarea) { font-size: 14px; }
+#editorView .questionCard { scroll-margin-top: calc(var(--topbar-offset) + var(--editor-offset) + 20px); }
+#editorView .questionCard :is(input, select, textarea) { scroll-margin-top: calc(var(--topbar-offset) + var(--editor-offset) + 20px); }
+.questionTop { flex-wrap: wrap; gap: 12px; }
+.questionActions { flex-wrap: wrap; gap: 6px; }
+.questionActions .miniButton { min-height: 36px; }
+.questionMoreMenu { min-width: 232px; width: max-content; max-width: calc(100vw - 64px); flex-wrap: wrap; }
+.questionMoreMenu .iconButton { flex-shrink: 0; }
+.questionCard .qText { font-size: 16px; line-height: 1.5; }
+.questionCard .questionGrid { grid-template-columns: minmax(0, 1fr) 180px 82px; }
+.qualityJump, .qualityIssueMarker { min-height: 36px; }
+
+/* Student view: timer, progress and questions use measured, independent offsets. */
+.studentTimerBar { top: var(--topbar-offset); margin-block: 12px; z-index: 9; background: var(--card); }
+.studentProgressCompact {
+  position: sticky; top: calc(var(--topbar-offset) + var(--student-timer-height) + 8px); z-index: 8;
+  margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--line);
+  border-radius: 12px; background: var(--card); box-shadow: var(--shadow);
+}
+.studentProgressCompact .studentProgressTop { font-size: 13px; flex-wrap: wrap; gap: 4px 12px; }
+.studentProgressCompact .studentProgressTrack { height: 6px; margin: 8px 0 12px; }
+.studentCompactNav { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; gap: 8px; }
+.studentCompactArrow { width: 44px; height: 44px; border: 1px solid #c7d0db; border-radius: 9px; background: var(--bg); color: var(--primary2); font-size: 22px; line-height: 1; cursor: pointer; }
+.studentCompactArrow:disabled { opacity: .4; cursor: default; }
+.studentCompactCurrent { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.studentCompactCurrent strong { font-size: 14px; color: var(--text); }
+.studentCompactCurrent small { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.studentOverviewToggle { min-height: 44px; border: 1px solid #c7d0db; border-radius: 9px; background: var(--card); color: var(--primary2); padding: 8px 10px; font-size: 13px; font-weight: 650; cursor: pointer; }
+.studentProgressCompact .studentQuestionNav { display: none; padding: 8px 4px 4px; margin: 12px -4px 0; border-top: 1px solid var(--line); max-height: 180px; overflow: auto; }
+.studentProgressCompact.overviewOpen .studentQuestionNav { display: flex; }
+.studentProgressCompact .questionNavDot.current { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); color: var(--primary2); background: var(--soft); }
+.studentQuestion { scroll-margin-top: calc(var(--topbar-offset) + var(--student-timer-height) + var(--student-offset) + 28px); }
+.studentQuestion :is(.choice, .matchingRow, .groupingItem, .orderingItem) { font-size: 16px; line-height: 1.5; }
+.studentQuestionImage img, .reviewQuestion img { max-width: 100%; height: auto; object-fit: contain; }
+body:has(#studentView:not(.hidden)) .rightsFooter { display: none; }
+
+/* Native dialogs stay in the viewport, including when the mobile keyboard opens. */
+dialog.shareDialog { position: fixed; inset: 0; margin: auto; max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain; }
+dialog.shareDialog.gradecrewVariantDialog, dialog.shareDialog.variantRequestDialog { width: min(520px, calc(100vw - 32px)); padding: 24px; }
+.variantRequestDialog::backdrop { background: rgb(15 23 42 / 42%); backdrop-filter: blur(3px); }
+.variantRequestHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+.variantRequestHead > div { min-width: 0; padding-right: 40px; }
+.variantRequestHead h2 { margin: 0; font-size: 22px; line-height: 1.3; }
+.variantRequestHead span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.variantRequestClose { min-width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--muted); font-size: 24px; line-height: 1; cursor: pointer; }
+.variantRequestDialog label { margin-top: 12px; }
+.variantRequestActions { justify-content: flex-end; margin-top: 8px; }
+.variantRequestDialog textarea, .variantInstructionField textarea { min-height: 84px; resize: vertical; }
+.variantInstructionField { display: flex; flex-direction: column; gap: 6px; color: var(--text); font-size: 13px; font-weight: 650; }
+.variantInstructionField .optionalLabel, .variantInstructionField small, .variantRequestDialog .optionalLabel { color: var(--muted); font-size: 12px; font-weight: 450; line-height: 1.5; }
+.variantInstructionField .optionalLabel { margin-left: 4px; }
+#variantBackgroundProgress.gradecrewManagedVariant { display: inline-flex; width: auto; max-width: 100%; min-height: 0; align-items: center; gap: 8px; margin: 6px 0 0; padding: 6px 10px; border: 1px solid #c3d5f3; border-radius: 8px; background: var(--surface-info); box-shadow: none; }
+#variantBackgroundProgress.gradecrewManagedVariant > div { display: block; }
+#variantBackgroundProgress.gradecrewManagedVariant strong { font-size: 12px; color: var(--primary2); }
+#variantBackgroundProgress.gradecrewManagedVariant small, #variantBackgroundProgress.gradecrewManagedVariant .applyVariants, #variantBackgroundProgress.gradecrewManagedVariant .discardVariants { display: none; }
+.questionOutlineItem.variantWorkingOutline::after, .questionOutlineItem.variantQueuedOutline::after, .questionOutlineItem.variantReviewOutline::after { content: ""; position: absolute; right: 3px; top: 3px; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 0 2px var(--card); }
+.questionOutlineItem.variantWorkingOutline { border-color: #6e99ea; background: var(--soft); }
+.questionOutlineItem.variantWorkingOutline::after { background: var(--primary); animation: variantWorkPulse 1.2s ease-in-out infinite; }
+.questionOutlineItem.variantQueuedOutline::after { background: var(--muted); }
+.questionOutlineItem.variantReviewOutline { border-color: #79bd94; background: var(--surface-success); }
+.questionOutlineItem.variantReviewOutline::after { background: var(--ink-success); }
+.variantReviewBar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; padding: 12px; border: 1px solid #b6d9c1; border-radius: 9px; background: var(--surface-success); color: var(--ink-success); font-size: 13px; }
+.variantReviewBar > span { font-weight: 750; }
+.variantReviewBar > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.variantReviewBar button { min-height: 36px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-success); font: inherit; font-weight: 650; cursor: pointer; padding: 6px 8px; }
+.variantReviewBar button:hover { background: #d9eee0; }
+.variantReviewBar .variantRemove { color: var(--ink-error); }
+@keyframes variantWorkPulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.firstAiGuideCard { max-height: calc(100dvh - 24px); overflow: auto; }
+.tableCard { max-width: 100%; overscroll-behavior-inline: contain; }
+.tableCard:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.reviewHeader { flex-wrap: wrap; }
+.reviewPanel { scroll-margin-top: calc(var(--topbar-offset) + 24px); }
+.reviewPoints { flex-wrap: wrap; gap: 8px; }
+.reviewPoints label { flex: 1 1 180px; font-size: 13px; }
+.aiAccessOn { color: var(--ink-success); }
+.aiAccessOff { color: var(--ink-warning); }
+#adminAiBetaToggle { white-space: normal; }
+.reviewQuestion { overflow-wrap: anywhere; }
+.shareDialogHead h2 { line-height: 1.3; }
+
+@media (max-width: 1100px) {
+  #editorView .compactEditorHead { grid-template-columns: 1fr; gap: 12px; }
+  #editorView .compactEditorHead > .actions { justify-content: flex-start; }
+  #editorView .editorLayout { grid-template-columns: 248px minmax(0, 1fr); gap: 16px; }
+  .questionCard .questionGrid { grid-template-columns: minmax(0, 1fr) 82px; }
+  .questionCard .questionGrid .grow { grid-column: 1 / -1; }
+}
+@media (max-width: 1000px) {
+  :root { --editor-offset: 0px; }
+  #editorView .compactEditorHead { position: static; }
+  #editorView .editorLayout { grid-template-columns: minmax(0, 1fr); }
+  #editorView .settingsCard { position: static; max-height: none; }
+  #editorView #questionOutline { max-height: 160px; }
+  .editorSettingsBody .stack.compact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .editorSettingsBody .settingGroup { grid-column: 1 / -1; }
+}
+@media (max-width: 700px) {
+  :root { --student-offset: 0px; }
+  .topbar { align-items: center; }
+  .userBar { flex: 1 1 100%; justify-content: flex-start; }
+  .userBar .button { min-height: 44px; padding: 8px 10px; font-size: 13px; }
+  .userBar .envBadge { margin-right: auto; }
+  .pageHead, .reviewHeader { align-items: flex-start; flex-direction: column; }
+  .pageHead > .actions { width: 100%; flex-wrap: wrap; }
+  #dashboardView > .pageHead { gap: 20px; padding-bottom: 24px; }
+  .dashboardToolbar { gap: 16px; }
+  #editorView .editorTitleRow { align-items: flex-start; flex-direction: column; gap: 0; }
+  #editorView #editorHeading { font-size: 24px; }
+  #editorView .editorHeadActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .editorMoreMenu > summary { width: 100%; }
+  .editorMorePanel { right: auto; left: 0; }
+  .editorSettingsBody .stack.compact { grid-template-columns: minmax(0, 1fr); }
+  .questionActions .aiEditQuestion, .questionActions .aiVariantQuestion { white-space: normal; flex: 1 1 110px; }
+  .questionTop { gap: 10px; }
+  .questionActions { width: 100%; margin-left: 0; }
+  .questionCard { padding: 16px; }
+  .studentProgressCompact { position: static; padding: 12px; }
+  .studentCompactCurrent small { display: none; }
+  .studentCompactNav { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+  .studentOverviewToggle { grid-column: 1 / -1; grid-row: 2; }
+  .studentNextQuestion { grid-column: 3; grid-row: 1; }
+  .studentProgressCompact .studentQuestionNav { max-height: 220px; }
+  .studentHead h1 { font-size: 26px; line-height: 1.25; }
+  .variantReviewBar { align-items: flex-start; flex-direction: column; }
+  .variantReviewBar > div { width: 100%; }
+  .variantReviewBar button { flex: 1 1 auto; }
+  .adminTabs { flex-wrap: wrap; overflow: visible; gap: 8px; }
+  .adminTabs .adminTab { flex: 1 1 120px; white-space: normal; }
+  .copyField { flex-wrap: wrap; }
+  .publishGrid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .bigCode { font-size: clamp(24px, 7vw, 40px); letter-spacing: .08em; overflow-wrap: anywhere; }
+  .publishCard { padding: 20px 16px; }
+  dialog.shareDialog { padding: 20px; }
+  dialog.shareDialog.variantRequestDialog { padding: 20px; }
+  .shareDialog :is(.shareDialogHead, .shareDialogFoot) { gap: 12px; }
+  .teacherTourNav { flex-wrap: wrap; }
+  .shareDialogFoot .button { min-width: 0; }
+  .authForm input, .editorSettingsBody :is(input, select, textarea),
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
+}
+@media (pointer: coarse) {
+  .iconButton, .questionActions .iconButton, .variantRequestClose { min-width: 44px; width: 44px; height: 44px; }
+  .questionActions .miniButton, .questionMore > summary, .variantReviewBar button,
+  .qualityJump, .qualityIssueMarker, .questionNavDot, .quizMore summary { min-height: 44px; }
+  .studentQuestionNav .questionNavDot { min-width: 44px; }
+  .questionMore > summary { min-width: 44px; }
+  .questionMoreMenu { width: 272px; }
+  #editorView #questionOutline { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
+  .questionOutlineItem { min-height: 44px; }
+}
+@media (max-height: 600px) {
+  :root { --topbar-offset: 0px; --editor-offset: 0px; --student-offset: 0px; }
+  .topbar, #editorView .compactEditorHead, #editorView .settingsCard, .studentProgressCompact { position: static; }
+  #editorView .settingsCard { max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .questionOutlineItem.variantWorkingOutline::after { animation: none; }
+}

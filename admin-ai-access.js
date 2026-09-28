@@ -99,15 +99,3 @@ document.addEventListener("click", event => {
     removeExisting();
   }
 }, true);
-
-function start() {
-  if (!document.getElementById("gradecrewAdminAiAccessStyles")) {
-    const style = document.createElement("style");
-    style.id = "gradecrewAdminAiAccessStyles";
-    style.textContent = `.aiAccessOn{color:#177245}.aiAccessOff{color:#8a5a00}#adminAiBetaToggle{white-space:nowrap}`;
-    document.head.appendChild(style);
-  }
-}
-
-if (document.body) start();
-else document.addEventListener("DOMContentLoaded", start, { once: true });

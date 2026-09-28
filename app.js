@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc1";
+const APP_VERSION = "2.3.1-gc2";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -34,10 +34,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc1";
-import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc1";
-import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc1";
-import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-gc1";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc2";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
+import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-gc2";
+import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -47,6 +48,7 @@ const db = getFirestore(app);
 const aiApi = createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || "");
 
 const $ = (id) => document.getElementById(id);
+installWorkspaceInteractions();
 const views = [
   "authView",
   "dashboardView",
@@ -246,8 +248,8 @@ function ensureFirstAiGuideUi() {
     card = document.createElement("section");
     card.id = "firstAiGuideCard";
     card.className = "firstAiGuideCard hidden";
-    card.setAttribute("role", "dialog");
-    card.setAttribute("aria-modal", "true");
+    card.setAttribute("role", "region");
+    card.setAttribute("aria-label", "Starthilfe für deinen ersten Test");
     card.setAttribute("aria-live", "polite");
     document.body.appendChild(card);
   }
@@ -348,7 +350,7 @@ function renderFirstAiGuideStep(step) {
     return;
   }
   firstAiGuideTarget.classList.add("firstAiGuideSpotlight");
-  firstAiGuideTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+  firstAiGuideTarget.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
 
   if (step === "new") {
     card.innerHTML = firstAiGuideCardHtml({
@@ -484,8 +486,10 @@ async function finishTeacherTour() {
 function showView(id) {
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
+  const changed = $(id)?.classList.contains("hidden");
   views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (changed) requestAnimationFrame(() => focusView($(id)));
+  window.scrollTo({ top: 0, behavior: scrollBehavior() });
 }
 
 function toast(message, type = "success") {
@@ -559,7 +563,7 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
     existing.__reportPayload.occurrences += 1;
     const count = existing.querySelector(".reportableErrorOccurrences");
     if (count) count.textContent = ` · ${existing.__reportPayload.occurrences}× aufgetreten`;
-    existing.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    existing.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
     return existing.__reportPayload;
   }
 
@@ -952,19 +956,7 @@ async function touchLastActive() {
 }
 
 // ---------- Auth / Landing ----------
-$("loginTab").addEventListener("click", () => {
-  $("loginTab").classList.add("active");
-  $("registerTab").classList.remove("active");
-  $("loginForm").classList.remove("hidden");
-  $("registerForm").classList.add("hidden");
-});
-
-$("registerTab").addEventListener("click", () => {
-  $("registerTab").classList.add("active");
-  $("loginTab").classList.remove("active");
-  $("registerForm").classList.remove("hidden");
-  $("loginForm").classList.add("hidden");
-});
+bindTabs(document.querySelector("#authView [role=tablist]"));
 
 $("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -2733,8 +2725,8 @@ function scrollToQualityIssue(position) {
   card.tabIndex = -1;
   card.focus({ preventScroll: true });
   const collapse = card.querySelector(".collapseQuestion");
-  if (collapse) { collapse.textContent = "⌃"; collapse.title = "Aufgabe einklappen"; }
-  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (collapse) { collapse.textContent = "⌃"; collapse.title = "Aufgabe einklappen"; collapse.setAttribute("aria-label", collapse.title); collapse.setAttribute("aria-expanded", "true"); }
+  card.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   card.classList.add("qualityIssueFlash");
   setTimeout(() => card.classList.remove("qualityIssueFlash"), 1800);
 }
@@ -2881,6 +2873,7 @@ $("addQuestionBtn").addEventListener("click", () => {
   state.questions.push(newQuestion());
   renderQuestions();
   markDirty();
+  focusEditorQuestion(state.questions.length - 1, ".qText");
 });
 $("saveQuizBtn").addEventListener("click", () => saveCurrentQuiz(true));
 $("publishBtn").addEventListener("click", publishCurrentQuiz);
@@ -3039,8 +3032,7 @@ function renderEditorState(q) {
   renderQuestions();
   if (state.newManualQuiz) {
     state.isDirty = false;
-    $("saveState").textContent = "Noch nicht gespeichert";
-    $("saveState").style.color = "#667085";
+    setSaveState($("saveState"), "unsaved", "Noch nicht gespeichert");
   } else markSaved();
   updateEditorPublishControls();
   renderVariantProgress();
@@ -3072,8 +3064,6 @@ $("quizStartMode")?.addEventListener("change", () => {
   markDirty();
 });
 
-let draggedQuestionIndex = null;
-
 function renderQuestions() {
   $("editorView").dataset.quizId = state.currentQuiz?.id || "";
   $("editorView").dataset.ownerId = state.user?.uid || "";
@@ -3085,10 +3075,11 @@ function renderQuestions() {
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
     node.dataset.index = String(index);
+    node.setAttribute("aria-label", `Aufgabe ${index + 1}`);
     if (q._collapsed) {
       node.classList.add("collapsed");
       const collapse = node.querySelector(".collapseQuestion");
-      if (collapse) { collapse.textContent = "⌄"; collapse.title = "Aufgabe ausklappen"; }
+      if (collapse) { collapse.textContent = "⌄"; collapse.title = "Aufgabe ausklappen"; collapse.setAttribute("aria-label", collapse.title); collapse.setAttribute("aria-expanded", "false"); }
     }
     renderQualityIssue(node, q, index);
     const qualityIssue = activeQualityIssue(index);
@@ -3129,6 +3120,7 @@ function renderQuestions() {
       initializeTypeData(q, q.type);
       renderQuestions();
       markDirty();
+      focusEditorQuestion(index, ".qType");
     });
     points.addEventListener("input", (e) => {
       q.points = Math.max(0.5, Number(e.target.value) || 1);
@@ -3141,11 +3133,15 @@ function renderQuestions() {
     });
     node.querySelector(".moveUp").addEventListener("click", () => moveQuestion(index, -1));
     node.querySelector(".moveDown").addEventListener("click", () => moveQuestion(index, 1));
+    node.querySelector(".moveUp").disabled = index === 0;
+    node.querySelector(".moveDown").disabled = index === state.questions.length - 1;
     node.querySelector(".collapseQuestion")?.addEventListener("click", (e) => {
       const collapsed = node.classList.toggle("collapsed");
       q._collapsed = collapsed;
       e.currentTarget.textContent = collapsed ? "⌄" : "⌃";
       e.currentTarget.title = collapsed ? "Aufgabe ausklappen" : "Aufgabe einklappen";
+      e.currentTarget.setAttribute("aria-label", e.currentTarget.title);
+      e.currentTarget.setAttribute("aria-expanded", String(!collapsed));
     });
     node.querySelector(".duplicateQuestion").addEventListener("click", () => duplicateQuestion(index));
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
@@ -3163,40 +3159,12 @@ function renderQuestions() {
       node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
     }
 
-    const dragHandle = node.querySelector(".dragHandle");
-    dragHandle?.addEventListener("mousedown", () => { node.draggable = true; });
-    node.addEventListener("dragstart", (e) => {
-      draggedQuestionIndex = index;
-      node.classList.add("questionDragging");
-      e.dataTransfer.effectAllowed = "move";
-    });
-    node.addEventListener("dragover", (e) => {
-      if (draggedQuestionIndex === null || draggedQuestionIndex === index) return;
-      e.preventDefault();
-      node.classList.add("questionDropTarget");
-    });
-    node.addEventListener("dragleave", () => node.classList.remove("questionDropTarget"));
-    node.addEventListener("drop", (e) => {
-      e.preventDefault();
-      node.classList.remove("questionDropTarget");
-      if (draggedQuestionIndex === null || draggedQuestionIndex === index) return;
-      const [moved] = state.questions.splice(draggedQuestionIndex, 1);
-      state.questions.splice(index, 0, moved);
-      draggedQuestionIndex = null;
-      renderQuestions();
-      markDirty();
-    });
-    node.addEventListener("dragend", () => {
-      draggedQuestionIndex = null;
-      node.draggable = false;
-      node.classList.remove("questionDragging");
-      document.querySelectorAll(".questionDropTarget").forEach((el) => el.classList.remove("questionDropTarget"));
-    });
     node.querySelector(".deleteQuestion").addEventListener("click", () => {
       if (confirm("Aufgabe löschen?")) {
         state.questions.splice(index, 1);
         renderQuestions();
         markDirty();
+        focusEditorQuestion(Math.min(index, state.questions.length - 1));
       }
     });
 
@@ -3382,6 +3350,7 @@ function openQuestionVariantDialog(q, index) {
   if (available < 1) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   const dialog = document.createElement("dialog");
   dialog.className = "shareDialog questionVariantDialog";
+  dialog.setAttribute("aria-label", "Varianten hinzufügen");
   dialog.innerHTML = `<form class="stack compact"><h2>Varianten hinzufügen</h2>
     <p>Neue Beispiele für Aufgabe ${index + 1}. Die ursprüngliche Aufgabe bleibt erhalten.</p>
     <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? "Varianten" : "Variante"}</option>`).join("")}</select></label>
@@ -3570,12 +3539,22 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   finally { card?.classList.remove("questionAiBusy"); }
 }
 
+function focusEditorQuestion(index, selector = "") {
+  const card = $("questionList").querySelector(`.questionCard[data-index="${index}"]`);
+  const field = selector && card?.querySelector(selector);
+  const target = field && !field.closest(".hidden, .collapsed") ? field : card || $("addQuestionBtn");
+  if (target === card) card.tabIndex = -1;
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
+}
+
 function moveQuestion(index, delta) {
   const next = index + delta;
   if (next < 0 || next >= state.questions.length) return;
   [state.questions[index], state.questions[next]] = [state.questions[next], state.questions[index]];
   renderQuestions();
   markDirty();
+  focusEditorQuestion(next);
 }
 
 function duplicateQuestion(index) {
@@ -3583,9 +3562,11 @@ function duplicateQuestion(index) {
   const copy = deepClone(source);
   copy.id = doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id;
   copy.text += " (Kopie)";
+  copy._collapsed = false;
   state.questions.splice(index + 1, 0, copy);
   renderQuestions();
   markDirty();
+  focusEditorQuestion(index + 1, ".qText");
 }
 
 function makeMiniButton(text, handler) {
@@ -4321,14 +4302,13 @@ async function persistEditorDraft() {
     await saveEditorDraft(draft);
     if (state.isDirty && state.user?.uid === draft.ownerId && state.currentQuiz?.id === draft.quizId && revision === draftRevision) {
       state.draftCheckpointSaved = true;
-      $("saveState").textContent = "✓ Lokal gesichert · Noch nicht auf dem Server";
-      $("saveState").style.color = "#9a6700";
+      setSaveState($("saveState"), "local", "Lokal gesichert · noch nicht auf dem Server");
     }
   } catch (err) {
     console.error("Lokaler Bearbeitungsstand konnte nicht gesichert werden:", err);
     if (state.isDirty && revision === draftRevision) {
       state.draftCheckpointSaved = false;
-      $("saveState").textContent = "Sicherung fehlgeschlagen · Bitte auf „Speichern“ klicken";
+      setSaveState($("saveState"), "error", "Sicherung fehlgeschlagen · bitte speichern");
     }
   }
 }
@@ -4337,8 +4317,7 @@ function markDirty() {
   state.isDirty = true;
   state.draftCheckpointSaved = false;
   draftRevision += 1;
-  $("saveState").textContent = "Änderungen werden lokal gesichert …";
-  $("saveState").style.color = "#9a6700";
+  setSaveState($("saveState"), "saving", "Wird lokal gesichert …");
   clearTimeout(draftTimer);
   draftTimer = setTimeout(persistEditorDraft, 180);
 }
@@ -4349,8 +4328,7 @@ function markSaved() {
   draftRevision += 1;
   state.isDirty = false;
   state.draftCheckpointSaved = true;
-  $("saveState").textContent = "✓ Gespeichert";
-  $("saveState").style.color = "#15803d";
+  setSaveState($("saveState"), "saved", "✓ Auf dem Server gespeichert");
   updateSummary();
   updateEditorPublishControls();
   renderVariantProgress();
@@ -5393,7 +5371,7 @@ function activateStudentTest(quiz, questions, attempt, { teacherControlled = fal
     $("studentTimerBar")?.classList.add("hidden");
   }
   refreshStudentProgress(questions);
-  setTimeout(() => $("studentProgressBar")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  setTimeout(() => $("studentProgressBar")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }), 80);
 }
 
 async function startTimedStudentQuiz(quiz, questions) {
@@ -5428,11 +5406,11 @@ async function startTimedStudentQuiz(quiz, questions) {
 function setupStudentProgress(questions) {
   const nav = $("studentQuestionNav");
   if (!nav) return;
-  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}" aria-label="Zu Aufgabe ${i + 1}">${i + 1}</button>`).join("");
   nav.querySelectorAll(".questionNavDot").forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
-      section?.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (section) { section.tabIndex = -1; section.focus({ preventScroll: true }); section.scrollIntoView({ behavior: scrollBehavior(), block: "start" }); }
     });
   });
   const root = $("studentQuestions");
@@ -5811,11 +5789,11 @@ function renderResultsTable() {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  let html = `<table class="resultTable"><thead><tr><th>Name</th><th>Punkte</th><th>%</th><th>Note</th><th>Status</th><th>Dauer</th><th>Abgegeben</th><th></th></tr></thead><tbody>`;
+  let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
   state.submissions.forEach((s) => {
     const duration = formatDuration(s.elapsedSeconds);
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${s.id}">Bewerten</button></td></tr>`;
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
   });
   html += "</tbody></table>";
   wrap.innerHTML = html;
@@ -5826,14 +5804,16 @@ function openReview(id) {
   const s = state.submissions.find((x) => x.id === id);
   if (!s) return;
   const panel = $("reviewPanel");
+  const returnFocus = document.activeElement;
   panel.classList.remove("hidden");
-  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2>${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
+  panel.setAttribute("aria-labelledby", "reviewHeading");
+  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
   state.resultQuestions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
-    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label>Punkte:</label><input class="manualPoints" data-qid="${q.id}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
     const imageSrc = getQuestionImageSrc(q);
     if (imageSrc) {
       const figure = document.createElement("figure");
@@ -5888,9 +5868,15 @@ function openReview(id) {
     });
   });
   recompute();
-  $("closeReview").addEventListener("click", () => panel.classList.add("hidden"));
+  $("closeReview").addEventListener("click", () => {
+    panel.classList.add("hidden");
+    const target = returnFocus?.isConnected && !returnFocus.closest(".hidden") && returnFocus !== document.body ? returnFocus : $("resultsHeading");
+    target.tabIndex = target.tabIndex < 0 ? -1 : target.tabIndex;
+    target.focus({ preventScroll: true });
+  });
   $("saveReview").addEventListener("click", () => saveReview(s.id));
-  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  $("reviewHeading").focus({ preventScroll: true });
+  panel.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
 }
 
 async function saveReview(submissionId) {
@@ -6188,7 +6174,7 @@ function announcementTypeLabel(type) {
 }
 
 // ----- Admin -----
-document.querySelectorAll(".adminTab").forEach((btn) => btn.addEventListener("click", () => switchAdminTab(btn.dataset.adminTab)));
+bindTabs(document.querySelector(".adminTabs"), tab => switchAdminTab(tab.dataset.adminTab, false));
 document.querySelectorAll(".adminPeriodBtn").forEach((btn) => btn.addEventListener("click", async () => {
   state.adminOverviewPeriod = btn.dataset.period || "7d";
   document.querySelectorAll(".adminPeriodBtn").forEach((b) => b.classList.toggle("active", b === btn));
@@ -6226,11 +6212,10 @@ async function openAdmin() {
 }
 
 function switchAdminTab(name, scroll = true) {
-  document.querySelectorAll(".adminTab").forEach((btn) => btn.classList.toggle("active", btn.dataset.adminTab === name));
-  document.querySelectorAll(".adminPanel").forEach((panel) => panel.classList.add("hidden"));
-  const map = { overview: "adminPanelOverview", teachers: "adminPanelTeachers", tests: "adminPanelTests", messages: "adminPanelMessages", feedback: "adminPanelFeedback", audit: "adminPanelAudit" };
-  $(map[name] || map.overview)?.classList.remove("hidden");
-  if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+  const list = document.querySelector(".adminTabs");
+  const selected = [...list.querySelectorAll(".adminTab")].find(tab => tab.dataset.adminTab === name) || list.querySelector(".adminTab");
+  selectTab(list, selected);
+  if (scroll) window.scrollTo({ top: 0, behavior: scrollBehavior() });
 }
 
 async function loadAdminData(showToast = false) {

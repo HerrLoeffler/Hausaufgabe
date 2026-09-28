@@ -129,9 +129,10 @@ function openRequestDialog(button) {
   document.querySelector("dialog.variantRequestDialog")?.remove();
   const dialog = document.createElement("dialog");
   dialog.className = "shareDialog variantRequestDialog";
+  dialog.setAttribute("aria-labelledby", "variantRequestTitle");
   dialog.innerHTML = `
     <form class="stack compact">
-      <div class="variantRequestHead"><div><h2>Varianten hinzufügen</h2><span>Aufgabe ${meta.position}</span></div><button type="button" class="variantRequestClose" aria-label="Schließen">×</button></div>
+      <div class="variantRequestHead"><div><h2 id="variantRequestTitle">Varianten hinzufügen</h2><span>Aufgabe ${meta.position}</span></div><button type="button" class="variantRequestClose" aria-label="Schließen">×</button></div>
       <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i === 0 ? "Variante" : "Varianten"}</option>`).join("")}</select></label>
       <label>Bild<select name="mediaKind"><option value="none">Ohne Bild</option><option value="ai_generated">Mit Bild</option></select></label>
       <label>Eigener Wunsch <span class="optionalLabel">optional</span><textarea name="instruction" rows="2" maxlength="1200" placeholder="z. B. andere Wörter, neuer Kontext, schwieriger …"></textarea></label>
@@ -331,27 +332,6 @@ document.addEventListener("gradecrew:account-changed", () => {
 const observer = new MutationObserver(() => scheduleSync());
 
 function start() {
-  if (!document.getElementById("gradecrewVariantEnhancementStyles")) {
-    const style = document.createElement("style");
-    style.id = "gradecrewVariantEnhancementStyles";
-    style.textContent = `
-#editorView .dragHandle{display:none!important}
-.variantRequestDialog{position:fixed!important;inset:0!important;margin:auto!important;width:min(520px,calc(100vw - 28px))!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important;padding:22px!important}
-.variantRequestDialog::backdrop{background:rgba(15,23,42,.42);backdrop-filter:blur(3px)}
-.variantRequestHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:4px}.variantRequestHead h2{margin:0;font-size:20px}.variantRequestHead span{display:block;margin-top:4px;color:#748195;font-size:11px;font-weight:750}.variantRequestClose{border:0;background:transparent;color:#69778b;font-size:24px;line-height:1;cursor:pointer;padding:0 2px}.variantRequestDialog label{margin-top:9px}.variantRequestActions{justify-content:flex-end;margin-top:6px}.variantRequestDialog textarea{min-height:66px}.variantRequestDialog .optionalLabel{color:#8491a3;font-size:11px;font-weight:600}
-#variantBackgroundProgress.gradecrewManagedVariant{display:inline-flex!important;width:auto!important;min-height:0!important;align-items:center!important;gap:7px!important;margin:4px 0 0!important;padding:5px 8px!important;border:1px solid #d8e4f7!important;border-radius:999px!important;background:#f7faff!important;box-shadow:none!important}
-#variantBackgroundProgress.gradecrewManagedVariant>div{display:block!important}#variantBackgroundProgress.gradecrewManagedVariant strong{font-size:11px!important;color:#355271!important}#variantBackgroundProgress.gradecrewManagedVariant small,#variantBackgroundProgress.gradecrewManagedVariant .applyVariants,#variantBackgroundProgress.gradecrewManagedVariant .discardVariants{display:none!important}
-#questionOutline .questionOutlineItem{position:relative}
-#questionOutline .questionOutlineItem.variantWorkingOutline::after,#questionOutline .questionOutlineItem.variantQueuedOutline::after,#questionOutline .questionOutlineItem.variantReviewOutline::after{content:"";position:absolute;right:3px;top:3px;width:6px;height:6px;border-radius:50%;box-shadow:0 0 0 2px #fff}
-#questionOutline .questionOutlineItem.variantWorkingOutline{border-color:#6e99ea;background:#f4f8ff}#questionOutline .questionOutlineItem.variantWorkingOutline::after{background:#2f6fed;animation:variantWorkPulse 1.2s ease-in-out infinite}
-#questionOutline .questionOutlineItem.variantQueuedOutline::after{background:#94a3b8}
-#questionOutline .questionOutlineItem.variantReviewOutline{border-color:#79bd94;background:#f5fbf7}#questionOutline .questionOutlineItem.variantReviewOutline::after{background:#2f9461}
-.variantReviewBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0 12px;padding:7px 9px;border:1px solid #dceee3;border-radius:9px;background:#f7fcf9;color:#35634a;font-size:11px}.variantReviewBar>span{font-weight:800}.variantReviewBar>div{display:flex;gap:5px;flex-wrap:wrap}.variantReviewBar button{border:0;background:transparent;color:#35634a;font:inherit;font-weight:750;cursor:pointer;padding:3px 5px}.variantReviewBar .variantRemove{color:#b42318}
-@keyframes variantWorkPulse{0%,100%{opacity:.45;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
-@media(max-width:620px){.variantRequestDialog{padding:18px!important}.variantReviewBar{align-items:flex-start;flex-direction:column}.variantReviewBar>div{width:100%}}
-`;
-    document.head.appendChild(style);
-  }
   observer.observe(document.body, { childList: true, subtree: true });
   // DOM changes publish new progress; no permanent polling loop is needed.
   scheduleSync();

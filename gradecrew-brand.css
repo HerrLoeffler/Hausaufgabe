@@ -13,14 +13,14 @@
   --crew-rust: #a44d2d;
 }
 body { color: var(--text); -webkit-font-smoothing: antialiased; }
-.topbar { height: 76px; padding-inline: max(24px, calc((100vw - 1180px) / 2)); }
+.topbar { min-height: 76px; height: auto; padding: 12px max(24px, calc((100vw - 1180px) / 2)); gap: 12px; flex-wrap: wrap; }
 .brand strong { font-size: 21px; font-weight: 800; letter-spacing: -.055em; }
-.brand small { font-size: 11px; letter-spacing: .01em; }
+.brand small { font-size: 12px; letter-spacing: .01em; }
 .brandMark { width: 38px; height: 38px; border-radius: 12px; }
 .brandLetter { font-size: 25px; }
-.stagingBanner { padding: 6px 16px; background: #fff4df; border-bottom: 1px solid #e7d7b4; color: #76521f; font-size: 11px; font-weight: 650; letter-spacing: .025em; text-transform: none; }
+.stagingBanner { padding: 6px 16px; background: #fff4df; border-bottom: 1px solid #e7d7b4; color: #76521f; font-size: 12px; font-weight: 650; letter-spacing: .025em; text-transform: none; }
 .shell { max-width: 1180px; padding: 32px 24px 56px; }
-.eyebrow { font-size: 10px; letter-spacing: .13em; font-weight: 750; }
+.eyebrow { font-size: 12px; letter-spacing: .13em; font-weight: 750; }
 .button { font-size: 13px; border-radius: 9px; }
 .card { border-radius: 16px; }
 input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radius: 9px; border-color: #c7d0db; }
@@ -34,7 +34,7 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
 .authGuide { position: relative; display: grid; place-items: center; padding: 12px 0; isolation: isolate; }
 .authGuideOrbit { position: absolute; width: 210px; height: 210px; background: var(--crew-ice); border-radius: 50% 50% 42% 42%; z-index: -1; top: 9px; }
 .authGuide > img { width: 200px; height: 200px; object-fit: contain; }
-.authGuideCaption { margin-top: 12px; color: #566b82; font-size: 10px; font-weight: 650; letter-spacing: .01em; }
+.authGuideCaption { margin-top: 12px; color: #566b82; font-size: 12px; font-weight: 650; letter-spacing: .01em; }
 .heroGrid { max-width: 1000px; grid-template-columns: 1fr 1fr; gap: 20px; margin: 0 auto; align-items: stretch; }
 .heroGrid > .card { padding: 26px 30px; min-height: 0; border-radius: 18px; }
 .heroCard { background: #edf3fa; border: 1px solid #d6e1ed; color: var(--text); box-shadow: none; }
@@ -61,13 +61,13 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
 #dashboardView > .pageHead p { color: var(--muted); font-size: 14px; }
 #dashboardView > .pageHead .eyebrow { color: var(--primary); }
 #dashboardView .dashboardActions { align-self: center; }
-#dashboardView #newQuizBtn { color: white; background: var(--primary); min-height: 42px; font-size: 13px; }
+#dashboardView #newQuizBtn { color: white; background: var(--primary); min-height: 44px; font-size: 13px; }
 #dashboardView #newQuizBtn:hover { background: var(--primary2); color: white; }
-#dashboardView #trashBtn { background: white; border-color: var(--line); color: var(--muted); min-height: 42px; }
+#dashboardView #trashBtn { background: white; border-color: var(--line); color: var(--muted); min-height: 44px; }
 .dashboardOverview { margin-top: 21px; gap: 8px; }
 .dashboardMetric { min-height: 37px; padding: 7px 12px; color: #344960; background: white; border-color: var(--line); border-radius: 8px; }
 .dashboardMetric strong { font-size: 16px; }
-.dashboardMetric span { color: #586b80; font-size: 11px; }
+.dashboardMetric span { color: #586b80; font-size: 12px; }
 .dashboardMetric:hover, .dashboardMetric[aria-pressed="true"] { background: var(--soft); border-color: #9eb6e3; }
 .dashboardToolbar { padding: 14px 16px; box-shadow: none; border-radius: 12px; }
 .quizGrid { align-items: stretch; }
@@ -95,19 +95,19 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
 .gradecrewPreferenceBody { display: grid; gap: 10px; padding-top: 14px; }
 .gradecrewPreferenceBody textarea { min-height: 76px; }
 .gradecrewPreferenceBody .aiPreferencesActions { margin: 0; }
-.gradecrewPreferenceBody .aiPreferencesActions .hint { font-size: 11px; }
+.gradecrewPreferenceBody .aiPreferencesActions .hint { font-size: 12px; }
 /* Animals identify one job each; no extra controls or decoration per question. */
 .teacherTourIcon.gradecrewTourMascot { width: 96px; height: 96px; padding: 0; background: #edf3f9; border-radius: 28px; font-size: 0; box-shadow: none; }
 .gradecrewTourMascot img { display: block; width: 96px; height: 96px; }
 .teacherTourDialog { border-radius: 22px; }
 .teacherTourDialog h2 { letter-spacing: -.035em; }
 .teacherTourBullet { padding-block: 8px; }
-.gradecrewGuideHeader { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #536881; font-size: 11px; font-weight: 600; }
+.gradecrewGuideHeader { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #536881; font-size: 12px; font-weight: 600; }
 .gradecrewGuideHeader img { object-fit: contain; }
 #importReviewBanner .importReviewIcon { width: 40px; height: 40px; flex: 0 0 40px; background: url('assets/gradecrew/owl-grade.svg') center / contain no-repeat; font-size: 0; }
 .questionAiPanel { background-image: url('assets/gradecrew/fox-improve.svg'); background-size: 38px 38px; background-position: right 12px top 12px; background-repeat: no-repeat; }
 .questionAiPanel > :first-child { padding-right: 42px; }
-.variantRequestHead { padding-right: 44px; background: url('assets/gradecrew/fox-improve.svg') right center / 42px 42px no-repeat; }
+.variantRequestHead { background: url('assets/gradecrew/fox-improve.svg') right 42px top / 42px 42px no-repeat; }
 .aiFeedbackGood.aiFeedbackAccepted:not(.aiFeedbackSelected) { color: #267049; background: linear-gradient(90deg, #d4eedf 50%, #fff 50%); border-color: #80b496; }
 .startupNotice { position: fixed; z-index: 1000; bottom: 20px; left: 50%; transform: translateX(-50%); width: min(620px, calc(100vw - 32px)); padding: 16px 20px; display: flex; align-items: center; gap: 16px; background: white; color: var(--text); border: 1px solid #b7c8df; border-radius: 12px; box-shadow: 0 8px 32px rgb(0 0 0 / 12%); font-size: 14px; }
 .startupNotice button { flex-shrink: 0; }
@@ -119,20 +119,20 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
   .heroGrid > .card { padding: 24px; }
 }
 @media (max-width: 680px) {
-  .topbar { height: 66px; padding-inline: 18px; }
+  .topbar { min-height: 66px; padding: 10px 16px; }
   .brand strong { font-size: 19px; }
-  .brand small { font-size: 10px; }
+  .brand small { font-size: 12px; }
   .shell { padding: 22px 16px 40px; }
-  .authIntro { grid-template-columns: 1fr 82px; gap: 4px; margin: 6px 0 24px; align-items: start; }
+  .authIntro { grid-template-columns: minmax(0, 1fr) 72px; gap: 12px; margin: 6px 0 24px; align-items: start; }
   .authIntro h1 { font-size: 36px; }
   .authIntro p { font-size: 13px; }
-  .authIntro .eyebrow { font-size: 9px; letter-spacing: .09em; }
+  .authIntro .eyebrow { font-size: 12px; letter-spacing: .09em; }
   .authGuide { margin-top: 24px; padding: 0; }
   .authGuide > img { width: 82px; height: 100px; }
   .authGuideOrbit { width: 86px; height: 92px; }
   .authGuideCaption { display: none; }
-  .crewRoles { gap: 12px; flex-wrap: nowrap; }
-  .crewRoles > span { gap: 3px; font-size: 10px; }
+  .crewRoles { gap: 8px 12px; flex-wrap: wrap; }
+  .crewRoles > span { gap: 3px; font-size: 12px; }
   .crewRoles img { width: 23px; height: 23px; }
   .heroGrid { grid-template-columns: 1fr; gap: 16px; }
   .heroGrid > .card { padding: 23px; }
