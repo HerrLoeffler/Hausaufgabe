@@ -143,24 +143,35 @@ function openRequestDialog(button) {
   const cancel = () => closeDialog(dialog);
   dialog.querySelector(".variantRequestClose")?.addEventListener("click", cancel);
   dialog.querySelector(".variantRequestCancel")?.addEventListener("click", cancel);
-  dialog.addEventListener("cancel", event => { event.preventDefault(); cancel(); });
+  dialog.addEventListener("cancel", event => {
+    // The mandatory Crew tour owns the modal while it is active.
+    if (document.body.classList.contains("gcRealTourActive")) {
+      event.preventDefault();
+      return;
+    }
+    event.preventDefault();
+    cancel();
+  });
   dialog.addEventListener("close", () => dialog.remove());
   dialog.querySelector("form")?.addEventListener("submit", event => {
     event.preventDefault();
     const form = event.currentTarget;
-    queue.push({
+    const item = {
       ...meta,
       count: Number(form.elements.count.value),
       mediaKind: String(form.elements.mediaKind.value || "none"),
       instruction: String(form.elements.instruction.value || "").trim(),
       queuedAt: Date.now(),
       launchAttempts: 0
-    });
+    };
+    queue.push(item);
+    document.dispatchEvent(new CustomEvent("gradecrew:variant-submitted", { detail: { dialog, item } }));
     closeDialog(dialog);
     scheduleSync();
   });
 
   try { dialog.showModal(); } catch (_) { dialog.setAttribute("open", ""); }
+  document.dispatchEvent(new CustomEvent("gradecrew:variant-dialog-opened", { detail: { dialog, meta } }));
 }
 
 function itemInCurrentEditor(item) {
@@ -176,7 +187,6 @@ function launchItem(item) {
   if (!request.accepted) currentItem = null;
   return request.accepted;
 }
-
 
 async function processQueue() {
   if (launching || currentItem || !queue.length || !editorIsOpen()) return;
@@ -220,6 +230,8 @@ function captureInsertedVariants(beforeIds, item, expectedCount) {
 
 function autoFinishCurrent() {
   if (!currentItem || autoApplying || !editorIsOpen() || !itemInCurrentEditor(currentItem)) return;
+  // During the guided tour the learner must explicitly click "Variante übernehmen".
+  if (document.body.classList.contains("gcRealTourActive")) return;
   const host = progressHost();
   const status = progressState(host);
 
@@ -329,11 +341,15 @@ document.addEventListener("gradecrew:account-changed", () => {
   pendingReview.clear();
   scheduleSync();
 });
-const observer = new MutationObserver(() => scheduleSync());
 
+const observer = new MutationObserver(() => scheduleSync());
 function start() {
-  observer.observe(document.body, { childList: true, subtree: true });
-  // DOM changes publish new progress; no permanent polling loop is needed.
+  // Observe only the three small surfaces this enhancement owns. A full-body
+  // subtree observer caused unnecessary work in earlier staging builds.
+  for (const id of ["variantBackgroundProgress", "questionList", "questionOutline"]) {
+    const node = document.getElementById(id);
+    if (node) observer.observe(node, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "data-running", "data-ready"] });
+  }
   scheduleSync();
 }
 
