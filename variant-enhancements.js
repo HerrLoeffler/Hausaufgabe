@@ -338,6 +338,9 @@ document.addEventListener("click", event => {
   openRequestDialog(variantButton);
 }, true);
 
+// Capture the editor state before the app's real apply button mutates the question list.
+// The deferred callback then knows exactly which cards were newly inserted and can show
+// the normal "Neue KI-Variante" review bar during the guided tour.
 document.addEventListener("click", event => {
   const target = event.target instanceof Element ? event.target : null;
   const apply = target?.closest("#variantBackgroundProgress .applyVariants");
@@ -350,7 +353,7 @@ document.addEventListener("click", event => {
     if (currentItem === item) currentItem = null;
     scheduleSync();
   }, 140);
-}, false);
+}, true);
 
 document.addEventListener("gradecrew:account-changed", () => {
   queue = [];
