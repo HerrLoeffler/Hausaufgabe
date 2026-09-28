@@ -20,19 +20,14 @@ function tourIsActive() {
   return document.body?.classList.contains("gcRealTourActive");
 }
 
-function keepLegacyDialogsClosed() {
-  if (!tourIsActive()) return;
-  suppressLegacyUi();
-}
-
 function installStyles() {
   if (document.querySelector("style[data-gradecrew-tour-hardening]")) return;
   const style = document.createElement("style");
   style.dataset.gradecrewTourHardening = "1";
   style.textContent = `
-    body.gcRealTourActive .gcCoachClose { display: none !important; }
-    body.gcRealTourActive #firstAiGuideBackdrop,
-    body.gcRealTourActive #firstAiGuideCard { display: none !important; }
+    .gcCoachClose { display: none !important; }
+    #firstAiGuideBackdrop,
+    #firstAiGuideCard { display: none !important; }
   `;
   document.head.appendChild(style);
 }
@@ -44,25 +39,30 @@ function installCrewTourHardening() {
   suppressLegacyUi();
   removeTourAbortControls();
 
+  // The old four-step onboarding is retired. If legacy code attempts to open it
+  // again, close it immediately so it can never sit above the Crew journey.
+  const legacyDialog = document.getElementById("teacherTourDialog");
+  if (legacyDialog) {
+    new MutationObserver(() => suppressLegacyUi()).observe(legacyDialog, {
+      attributes: true,
+      attributeFilter: ["open"]
+    });
+  }
+
+  // Coaches are direct body children. Watching only body child additions avoids
+  // the expensive whole-app observer that previously caused browser hangs.
   const bodyObserver = new MutationObserver(records => {
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (!(node instanceof Element)) continue;
-        if (node.matches?.(".gcRealCoach")) removeTourAbortControls(node);
-        else removeTourAbortControls(node);
+        removeTourAbortControls(node);
       }
     }
-    keepLegacyDialogsClosed();
+    suppressLegacyUi();
   });
   if (document.body) bodyObserver.observe(document.body, { childList: true });
 
-  const watchDialog = id => {
-    const dialog = document.getElementById(id);
-    if (!dialog) return;
-    new MutationObserver(() => keepLegacyDialogsClosed()).observe(dialog, { attributes: true, attributeFilter: ["open"] });
-  };
-  watchDialog("teacherTourDialog");
-
+  // During the mandatory first journey there is no keyboard escape route either.
   document.addEventListener("keydown", event => {
     if (!tourIsActive() || event.key !== "Escape") return;
     event.preventDefault();
