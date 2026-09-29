@@ -7,7 +7,7 @@ STAGING_ID="hausaufgabe-staging"
 cd "$(dirname "$0")"
 
 echo "=========================================="
-echo " TESTIFY - PRODUCTION DEPLOY"
+echo " GRADECREW - PRODUCTION DEPLOY"
 echo " Ziel: $PROJECT_ID"
 echo "=========================================="
 
@@ -26,13 +26,15 @@ if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   exit 1
 fi
 
-# Dieses Skript veröffentlicht nur Hosting und Regeln. Eine KI-Oberfläche ohne
-# ihre Produktionsfunktionen würde den Kollegentest zuverlässig blockieren.
-# Vor einem KI-Release zusätzlich private Lösungen und serverseitige Abgabe
-# migrieren und einen eigenen geprüften Functions-Deploy vorbereiten.
-if grep -q 'const APP_VERSION = "2.3.1-ai' app.js; then
-  echo "FEHLER: KI-Beta benötigt Produktionsfunktionen und den sicheren Abgabeablauf."
-  echo "Dieses Skript kann derzeit nur die ältere Browser-App vollständig veröffentlichen."
+# FAIL CLOSED: Die heutige GradeCrew-/KI-Oberfläche besteht aus zusätzlichen
+# Modulen und Assets und benötigt für echte Leistungsnachweise außerdem den
+# serverseitig abgesicherten Abgabeweg aus SECURE_EXAM_PLAN.md. Dieses alte
+# Skript kopiert bewusst nur den früheren Browser-Stand und darf deshalb keinen
+# aktuellen 2.3.1 Release Candidate auf Produktion veröffentlichen.
+if grep -Eq 'const APP_VERSION = "2\.3\.1-(ai|gc)' app.js; then
+  echo "FEHLER: Aktueller GradeCrew Release Candidate ist für dieses Production-Skript gesperrt."
+  echo "Vor LIVE zuerst: sicheren serverseitigen Abgabeweg fertigstellen, Production-Buildpfad erneuern und Release erneut vollständig prüfen."
+  echo "Siehe SECURE_EXAM_PLAN.md und STAGING_RELEASE_AUDIT_2026-09-29.md."
   exit 1
 fi
 
