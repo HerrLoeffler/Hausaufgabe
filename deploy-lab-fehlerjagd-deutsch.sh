@@ -5,7 +5,9 @@ MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-lab-fehlerjagd-deutsch.sh --check oder --deploy"; exit 1;; esac
 PROJECT_ID="hausaufgabe-staging"; CHANNEL_ID="gradecrew-fehlerjagd-deutsch"
 node --check lab/fehlerjagd-deutsch/deutsch-engine.js
+node --check lab/fehlerjagd-deutsch/task-integrity.js
 node --check lab/fehlerjagd-deutsch/app.js
+node --check lab/fehlerjagd-deutsch/curriculum-polish.js
 node --check tools/build-lab-fehlerjagd-deutsch.mjs
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-fehlerjagd.XXXXXX")"; trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-fehlerjagd-deutsch.mjs "$BUILD_DIR"
