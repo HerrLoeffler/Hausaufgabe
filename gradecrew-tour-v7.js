@@ -555,7 +555,7 @@ export function installCrewTour(api) {
 
   function showBadFeedbackStep() {
     stage = "feedback-bad"; refreshWarnings({includeEdit:false}); api.focusQuestion(faultyId);
-    coach("improve", "Hier stimmt die Lösung nicht.", "Für „gelb“ ist noch „blue“ markiert. Klicke auf den roten Smiley, um den Fehler zu melden.", {
+    coach("improve", "Hier stimmt die Lösung nicht.", "Bei „gelb“ ist versehentlich „blue“ als richtige Lösung markiert. Natürlich kannst du das direkt auf „yellow“ (gelb) ändern. Hier üben wir, wie du einen Fehler mit dem roten Smiley meldest.", {
       target:`#questionList .questionCard[data-id="${CSS.escape(faultyId)}"] .aiFeedbackBad`, interactiveTarget:true,
       onTargetClick:()=>{void showBadFeedbackPanel();}
     });

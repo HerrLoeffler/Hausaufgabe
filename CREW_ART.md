@@ -38,3 +38,6 @@ Validated by existing automated tour/UI tests and build; artwork SVG exports ins
 
 ## Standalone scenes (clay2)
 Five transparent standalone illustrations replace the three introduction crops and add Remy writing and Coco holding a name sign. The sign uses escaped DOM text, never user HTML. Approved `clay-thanks-remy.svg` is unchanged. These are full-canvas embedded WebP SVGs; no contact-sheet labels or neighboring cells. The student-start coach sits in document flow above the real start gate, with page scrolling enabled.
+
+### Edge cleanup
+Contact-sheet SVG viewports for thanks Emmi/Wilma, save, wait, retry and your-turn now end before caption pixels. Approved thanks Remy remains unchanged. New demo cat uses standalone artwork, no contact sheet. Built-in image generation prompt: single fluffy cream/ginger kitten, recognizable anatomy, warm storybook 3D style, pale mint background, clean margins, no text or props.

@@ -135,13 +135,13 @@ function patchBadFeedback(coach) {
   const copy = paragraph(coach);
   if (!title || !copy) return;
   title.textContent = "Schauen wir noch auf den zweiten Hinweis.";
-  copy.textContent = "Hier hat GradeCrew etwas entdeckt: Bei „gelb“ ist versehentlich noch „blue“ als richtige Lösung markiert. Genau für solche Fälle gibt es den roten Smiley.";
+  copy.textContent = "Bei „gelb“ ist versehentlich „blue“ als richtige Lösung markiert. Natürlich kannst du das direkt auf „yellow“ (gelb) ändern. Hier üben wir, wie du einen Fehler mit dem roten Smiley meldest.";
 }
 
 function patchBadFeedbackPanel(coach) {
   const copy = paragraph(coach);
   if (!copy) return;
-  copy.textContent = "Den Grund habe ich schon eingetragen. Du könntest die Aufgabe nur melden, neu erstellen lassen oder entfernen. Für unser Beispiel wählen wir „Melden & entfernen“.";
+  copy.textContent = "Du könntest die Lösung auch einfach auf „yellow“ (gelb) ändern. Hier üben wir das Melden: Den Grund habe ich schon eingetragen. Du kannst die Aufgabe nur melden, neu erstellen lassen oder entfernen. Wir wählen jetzt „Melden & entfernen“.";
 }
 
 function patchThankEmmi(coach) {

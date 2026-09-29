@@ -99,7 +99,7 @@ function patchBadFeedback(coach) {
   const copy = paragraph(coach);
   if (!title || !copy) return;
   title.textContent = "Schauen wir noch auf den zweiten Hinweis.";
-  copy.textContent = "Hier hat GradeCrew etwas entdeckt: Bei „gelb“ ist versehentlich noch „blue“ als richtige Lösung markiert. Genau für solche Fälle gibt es den roten Smiley.";
+  copy.textContent = "Bei „gelb“ ist versehentlich „blue“ als richtige Lösung markiert. Natürlich kannst du das direkt auf „yellow“ (gelb) ändern. Hier üben wir, wie du einen Fehler mit dem roten Smiley meldest.";
 }
 
 function patchThankEmmi(coach) {

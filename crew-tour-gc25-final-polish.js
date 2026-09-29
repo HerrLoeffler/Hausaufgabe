@@ -92,7 +92,7 @@ function patchFinish(coach) {
   const copy = paragraph(coach);
   if (!copy) return;
   const lead = coach.querySelector(".gc24FinishLead");
-  if (lead) lead.textContent = "Mit jedem Test wirst du vertrauter mit GradeCrew und findest schneller deinen Weg. So bleibt mehr Zeit für das, was zählt: zuhören, miteinander lachen und für die Kinder da sein. Schön, dass du zur Crew gehörst!";
+  if (lead) lead.textContent = "Mit jedem Test wirst du vertrauter mit GradeCrew und findest schneller deinen Weg. So bleibt mehr Zeit für das, was zählt: Zuhören, miteinander lachen und für die Kinder da sein. Schön, dass du zur Crew gehörst!";
   const prompt = [...coach.querySelectorAll(".gc24FinishLead")].find(node => node !== lead && /Einstellungen/i.test(node.textContent || ""));
   if (prompt) prompt.textContent = "Wenn du möchtest, schauen wir vorher noch gemeinsam in die allgemeinen Einstellungen – dort legst du deine Standardwerte für neue Tests fest.";
 }
