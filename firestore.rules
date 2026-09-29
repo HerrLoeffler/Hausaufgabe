@@ -32,6 +32,10 @@ service cloud.firestore {
         && quiz.get('rightsHold', false) == false;
     }
 
+    function quizUsesSecureExam(quizId) {
+      return get(/databases/$(database)/documents/quizzes/$(quizId)).data.get('secureExamEnabled', false) == true;
+    }
+
     function quizShared(quizId) {
       let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
       return accountActive()
@@ -116,7 +120,13 @@ service cloud.firestore {
                     || (accountActive() && resource.data.ownerId == request.auth.uid && resource.data.get('rightsHold', false) == false);
 
       match /questions/{questionId} {
-        allow read: if quizPublished(quizId) || ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
+        // Bei GradeCrew Secure darf der öffentliche Schülerclient niemals die
+        // vollständigen Aufgabendokumente mit Lösungsschlüssel lesen. Secure
+        // bekommt ausschließlich serverseitig bereinigte Aufgaben über die Function.
+        allow read: if (quizPublished(quizId) && !quizUsesSecureExam(quizId))
+                    || ownsQuiz(quizId)
+                    || quizShared(quizId)
+                    || isAdmin();
         allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
       }
 
@@ -157,8 +167,21 @@ service cloud.firestore {
         allow update: if false;
       }
 
+      // Secure-Attempts enthalten Token-Hashes, Autosaves und private
+      // Bewertungsschlüssel. Sie sind ausschließlich über Admin SDK / Functions
+      // erreichbar. Auch Lehrkräfte lesen sie nicht direkt aus dem Browser.
+      match /secureAttempts/{attemptId} {
+        allow read, write: if false;
+        match /snapshot/{questionId} {
+          allow read, write: if false;
+        }
+      }
+
       match /submissions/{submissionId} {
+        // Legacy-Browserabgabe bleibt für normale Tests erhalten. Sobald ein Test
+        // explizit Secure nutzt, darf nur die serverseitige Function eine Abgabe anlegen.
         allow create: if quizPublished(quizId)
+                      && !quizUsesSecureExam(quizId)
                       && request.resource.data.studentName is string
                       && request.resource.data.studentName.size() > 0
                       && request.resource.data.studentName.size() <= 120
