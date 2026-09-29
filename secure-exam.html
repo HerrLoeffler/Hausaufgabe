@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <title>GradeCrew Secure</title>
+  <link rel="stylesheet" href="/secure-exam.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="loadingScreen" class="centerScreen">
+      <div class="shield">✓</div>
+      <h1 id="loadingTitle">Sichere Prüfung wird vorbereitet …</h1>
+      <p id="loadingText">GradeCrew lädt nur die Aufgaben, die du für diesen Versuch sehen darfst.</p>
+      <div class="spinner" aria-label="Wird geladen"></div>
+    </section>
+
+    <section id="examScreen" class="hidden">
+      <header class="examHeader">
+        <div><span class="eyebrow">GradeCrew Secure</span><h1 id="examTitle">Test</h1><p id="examMeta"></p></div>
+        <div id="timer" class="timer hidden"><small>Verbleibend</small><strong id="timerText">--:--</strong></div>
+      </header>
+      <div class="saveRow"><span id="connectionStatus" data-kind="neutral">Gespeichert ✓</span></div>
+      <div class="progress"><div class="progressTop"><strong id="progressText">0 von 0 bearbeitet</strong></div><div class="progressTrack"><span id="progressFill"></span></div></div>
+      <div id="questions" class="questions"></div>
+      <div class="submitBar"><div><strong>Fertig?</strong><small>Prüfe offene Aufgaben noch einmal.</small></div><button id="submitButton" type="button">Antworten abgeben</button></div>
+    </section>
+
+    <section id="submittedScreen" class="centerScreen hidden">
+      <div class="shield success">✓</div>
+      <h1>Abgabe gespeichert</h1>
+      <p id="submittedScore">Deine Antworten wurden gespeichert.</p>
+      <p class="muted">GradeCrew prüft jetzt die Serverquittung. Das iPad wird erst danach freigegeben.</p>
+    </section>
+
+    <section id="fatalScreen" class="centerScreen hidden">
+      <div class="shield danger">!</div>
+      <h1>Prüfung nicht verfügbar</h1>
+      <p id="fatalMessage">Die sichere Sitzung konnte nicht geöffnet werden.</p>
+      <p class="muted">Bitte informiere deine Lehrkraft. Schließe die App nicht eigenständig.</p>
+    </section>
+  </main>
+  <script src="/secure-exam.js" defer></script>
+</body>
+</html>
