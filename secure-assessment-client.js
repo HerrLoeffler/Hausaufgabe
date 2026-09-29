@@ -26,6 +26,10 @@ function readSession(quizId) {
   }
 }
 
+function clearSession(quizId) {
+  localStorage.removeItem(sessionKey(quizId));
+}
+
 function writeSession(quizId, session) {
   const safe = {
     version: STORAGE_VERSION,
@@ -92,7 +96,16 @@ export function createSecureAssessmentClient(firebaseApp) {
   }
 
   async function getInfo(quizId) {
-    return invoke(infoCall, { quizId: String(quizId) });
+    const response = await invoke(infoCall, { quizId: String(quizId) });
+    const session = readSession(quizId);
+    const quiz = response?.quiz;
+    if (
+      quiz?.startMode === "teacher"
+      && session?.sessionRunId
+      && quiz?.sessionRunId
+      && String(session.sessionRunId) !== String(quiz.sessionRunId)
+    ) clearSession(quizId);
+    return response;
   }
 
   async function start(quizId, studentName) {
@@ -155,7 +168,7 @@ export function createSecureAssessmentClient(firebaseApp) {
   }
 
   function clear(quizId) {
-    localStorage.removeItem(sessionKey(quizId));
+    clearSession(quizId);
   }
 
   return {
