@@ -7,7 +7,8 @@
 .gcRealCoach .gcClayNames {min-height:0;gap:16px;margin:0 auto 10px;justify-content:center}
 .gcRealCoach .gcClayNames > div {gap:0}
 .gcCrewIntroCoach > .gcCoachIdentity > img {display:none}
-.gcCrewIntroCoach .gcCrewIntroMember > img {display:none}
+.gcCrewIntroCoach .gcCrewIntroMember > img {display:block}
+.gcRealCoach.gcCrewIntroCoach > .gcClayScene {display:none}
 .gcCrewIntroCoach .gcCrewIntroGrid {gap:10px}
 .gcFinishCrew {object-fit:contain;max-height:220px;animation:gcClayAppear .45s ease-out 1}
 #authView .gcClayHero {width:100%;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0;background:none}
