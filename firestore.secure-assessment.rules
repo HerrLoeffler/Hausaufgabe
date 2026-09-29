@@ -29,7 +29,8 @@ service cloud.firestore {
       return accountActive()
         && quiz.get('shareEnabled', false) == true
         && quiz.get('isDeleted', false) == false
-        && quiz.get('rightsHold', false) == false;
+        && quiz.get('rightsHold', false) == false
+        && (quiz.get('published', false) != true || quiz.get('ended', false) == true);
     }
 
     function quizContentEditable(quizId) {
@@ -124,6 +125,7 @@ service cloud.firestore {
       match /questions/{questionId} {
         // Autorendokumente enthalten den Lösungsschlüssel. Sie bleiben deshalb
         // ausschließlich für Eigentümer, angemeldete Vorlagenempfänger und Admins lesbar.
+        // Eine aktiv veröffentlichte Prüfung ist aber auch für Kollegen versiegelt.
         allow read: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
         // Ein veröffentlichter, noch nicht beendeter Test ist inhaltlich
         // unveränderlich. Das schützt alle laufenden Versuche vor Versionsdrift.
