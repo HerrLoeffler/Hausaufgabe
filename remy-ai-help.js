@@ -12,31 +12,31 @@ const STEPS = [
     target: "#aiView .aiGrid > article:first-child",
     eyebrow: "1 von 5 · Test festlegen",
     title: "Was soll entstehen?",
-    text: "Fach, Klasse und Thema geben der KI den wichtigsten Rahmen. Schulart und Bundesland helfen beim passenden Niveau. Aufgabenanzahl, Schwierigkeit, Punkte und Aufgabentypen kannst du ganz frei an deinen Unterricht anpassen."
+    text: "Fach, Klasse und Thema geben mir den wichtigsten Rahmen. Schulart und Bundesland helfen mir beim passenden Niveau. Aufgabenanzahl, Schwierigkeit, Punkte und Aufgabentypen kannst du ganz frei an deinen Unterricht anpassen."
   },
   {
     target: "#aiCustomNotes",
     eyebrow: "2 von 5 · Eigene Wünsche",
     title: "Hier wird es wirklich dein Test.",
-    text: "Dieses Feld ist optional und gilt nur für den aktuellen Test. Schreib hier zum Beispiel hinein, welche Schwerpunkte du möchtest, was unbedingt vorkommen soll oder was die KI vermeiden soll."
+    text: "Dieses Feld ist optional und gilt nur für den aktuellen Test. Schreib mir hier zum Beispiel, welche Schwerpunkte du möchtest, was unbedingt vorkommen soll oder was ich vermeiden soll."
   },
   {
     target: ".gradecrewPreferenceDetails",
-    eyebrow: "3 von 5 · Persönliche KI-Vorgaben",
-    title: "Deine Vorlieben für später.",
-    text: "Auch das ist optional. Hier kannst du allgemeine Vorlieben speichern, die GradeCrew bei zukünftigen KI-Tests berücksichtigen soll. Für diesen einen Test musst du hier nichts eintragen."
+    eyebrow: "3 von 5 · Vorgaben für Remy",
+    title: "Was soll ich mir merken?",
+    text: "Auch das ist optional. Hier kannst du mir allgemeine Vorlieben mitgeben, die ich bei deinen zukünftigen Tests berücksichtige. Für diesen einen Test musst du hier nichts eintragen."
   },
   {
     target: "#aiView .aiGrid > article:nth-child(2)",
     eyebrow: "4 von 5 · Material & Bilder",
     title: "Material nur, wenn es wirklich hilft.",
-    text: "Du kannst eigenes Material hochladen und festlegen, wie stark es verwendet werden soll. Vor dem Upload bestätigst du Rechte und Datenschutz. Außerdem bestimmst du selbst, ob und wie viele Aufgaben Bilder bekommen sollen."
+    text: "Du kannst mir eigenes Material mitgeben und festlegen, wie stark es verwendet werden soll. Vor dem Upload bestätigst du Rechte und Datenschutz. Außerdem bestimmst du selbst, ob und wie viele Aufgaben Bilder bekommen sollen."
   },
   {
     target: "#generateAiTestBtn",
     eyebrow: "5 von 5 · Bereit",
     title: "Du entscheidest, wann es losgeht.",
-    text: "Prüfe deine Angaben noch einmal. Du kannst weiterhin jedes Feld ändern. Erst mit „Test erstellen“ startet die KI – danach bekommst du einen Entwurf, den du vollständig prüfen und bearbeiten kannst."
+    text: "Prüfe deine Angaben noch einmal. Du kannst weiterhin jedes Feld ändern. Erst mit „Test erstellen“ beginnt die Erstellung – danach bekommst du einen Entwurf, den du vollständig prüfen und bearbeiten kannst."
   }
 ];
 
