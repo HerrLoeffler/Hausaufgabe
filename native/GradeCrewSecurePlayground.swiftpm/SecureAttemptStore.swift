@@ -99,7 +99,11 @@ final class SecureAttemptStore {
 
 private struct KeychainError: LocalizedError {
     let status: OSStatus
+
     var errorDescription: String? {
-        (SecCopyErrorMessageString(status, nil) as String?) ?? "Keychain-Fehler \(status)"
+        if let message = SecCopyErrorMessageString(status, nil) {
+            return message as String
+        }
+        return "Keychain-Fehler \(status)"
     }
 }
