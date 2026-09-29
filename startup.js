@@ -3,11 +3,14 @@
 // test without creating a real attempt. Existing QR codes and share links keep
 // their current ?test=CODE shape; this bootstrap performs the secure handoff.
 const routeParams = new URLSearchParams(location.search);
-const publicTestCode = String(routeParams.get("test") || "").trim();
+const rawPublicTestCode = String(routeParams.get("test") || "").trim();
+const publicTestCode = rawPublicTestCode.toUpperCase().replace(/[^A-Z0-9]/g, "");
 const teacherPreview = routeParams.get("preview") === "1";
 
 if (publicTestCode && !teacherPreview) {
   const target = new URL("./secure-student.html", location.href);
+  target.search = "";
+  target.hash = "";
   target.searchParams.set("test", publicTestCode);
   location.replace(target.href);
 } else {
