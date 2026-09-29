@@ -1,4 +1,4 @@
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -25,6 +25,10 @@ const port = Number(rawPort || 8085);
 const env = await initializeTestEnvironment({
   projectId: "demo-gradecrew-secure",
   firestore: { host, port, rules }
+});
+
+after(async () => {
+  await env.cleanup();
 });
 
 const quizId = "ABCD1234";
@@ -188,5 +192,3 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
 
   assert.ok(true);
 });
-
-await env.cleanup();
