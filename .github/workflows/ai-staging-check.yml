@@ -88,6 +88,8 @@ jobs:
           node --check ordering-grading.mjs
           node --test secure-assessment-client.test.mjs
           node --test secure-student.test.mjs
+          node --test secure-student-route.test.mjs
+          node --test secure-firestore-rules.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
