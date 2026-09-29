@@ -47,6 +47,18 @@ service cloud.firestore {
         && quiz.get('rightsHold', false) == false;
     }
 
+    function ownerQuizUpdateAllowed() {
+      let active = resource.data.get('published', false) == true
+        && resource.data.get('ended', false) == false;
+      let activeChangeSafe = request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'published', 'ended', 'sessionState', 'sessionStartedAt', 'endedAt',
+        'updatedAt', 'shareEnabled', 'sharedAt'
+      ]);
+      let activeLifecycleSafe = request.resource.data.get('published', false) == true
+        || request.resource.data.get('ended', false) == true;
+      return !active || (activeChangeSafe && activeLifecycleSafe);
+    }
+
     match /users/{userId} {
       allow create: if signedIn()
                     && request.auth.uid == userId
@@ -103,6 +115,7 @@ service cloud.firestore {
                       && request.resource.data.get('rightsHold', false) == resource.data.get('rightsHold', false)
                       && request.resource.data.get('rightsHoldAt', null) == resource.data.get('rightsHoldAt', null)
                       && request.resource.data.get('rightsHoldBy', null) == resource.data.get('rightsHoldBy', null)
+                      && ownerQuizUpdateAllowed()
                     );
 
       allow delete: if isAdmin()
