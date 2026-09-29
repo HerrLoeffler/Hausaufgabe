@@ -32,6 +32,12 @@ service cloud.firestore {
         && quiz.get('rightsHold', false) == false;
     }
 
+    function quizContentEditable(quizId) {
+      let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
+      return ownsQuiz(quizId)
+        && (quiz.get('published', false) != true || quiz.get('ended', false) == true);
+    }
+
     match /users/{userId} {
       allow create: if signedIn()
                     && request.auth.uid == userId
@@ -97,7 +103,9 @@ service cloud.firestore {
         // Autorendokumente enthalten den Lösungsschlüssel. Sie bleiben deshalb
         // ausschließlich für Eigentümer, angemeldete Vorlagenempfänger und Admins lesbar.
         allow read: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
-        allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
+        // Ein veröffentlichter, noch nicht beendeter Test ist inhaltlich
+        // unveränderlich. Das schützt alle laufenden Versuche vor Versionsdrift.
+        allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
       }
 
       match /attempts/{attemptId} {
