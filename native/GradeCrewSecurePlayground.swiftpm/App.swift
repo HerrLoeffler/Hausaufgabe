@@ -20,6 +20,15 @@ struct StartView: View {
     @State private var errorText: String?
     @State private var destination: ExamDestination?
 
+    private let codeRows = [
+        Array("123456"),
+        Array("7890AB"),
+        Array("CDEFGH"),
+        Array("IJKLMN"),
+        Array("OPQRST"),
+        Array("UVWXYZ")
+    ]
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -35,15 +44,15 @@ struct StartView: View {
 
                 ScrollView {
                     VStack(spacing: 24) {
-                        Spacer().frame(height: 30)
+                        Spacer().frame(height: 26)
 
                         ZStack {
                             Circle()
                                 .fill(.white.opacity(0.08))
-                                .frame(width: 112, height: 112)
+                                .frame(width: 104, height: 104)
 
                             Image(systemName: "lock.shield.fill")
-                                .font(.system(size: 56))
+                                .font(.system(size: 52))
                                 .foregroundStyle(.white)
                         }
 
@@ -62,19 +71,56 @@ struct StartView: View {
                                 .font(.headline)
                                 .foregroundStyle(.white)
 
-                            TextField("z. B. ABCD1234", text: $testCode)
-                                .textInputAutocapitalization(.characters)
-                                .autocorrectionDisabled()
-                                .keyboardType(.asciiCapable)
-                                .font(.title2.monospaced().weight(.semibold))
-                                .multilineTextAlignment(.center)
-                                .padding(.vertical, 18)
-                                .padding(.horizontal, 16)
-                                .background(.white.opacity(0.10))
-                                .foregroundStyle(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                .submitLabel(.go)
-                                .onSubmit(openExam)
+                            HStack(spacing: 12) {
+                                Text(testCode.isEmpty ? "CODE" : testCode)
+                                    .font(.title2.monospaced().weight(.bold))
+                                    .foregroundStyle(testCode.isEmpty ? .white.opacity(0.35) : .white)
+                                    .frame(maxWidth: .infinity, minHeight: 58)
+                                    .background(.white.opacity(0.10))
+                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                                    .accessibilityLabel("Testcode")
+
+                                Button {
+                                    if !testCode.isEmpty {
+                                        testCode.removeLast()
+                                        errorText = nil
+                                    }
+                                } label: {
+                                    Image(systemName: "delete.left.fill")
+                                        .font(.title2)
+                                        .frame(width: 58, height: 58)
+                                }
+                                .buttonStyle(.bordered)
+                                .tint(.white)
+                                .disabled(testCode.isEmpty)
+                                .accessibilityLabel("Letztes Zeichen löschen")
+                            }
+
+                            VStack(spacing: 8) {
+                                ForEach(Array(codeRows.enumerated()), id: \.offset) { _, row in
+                                    HStack(spacing: 8) {
+                                        ForEach(row, id: \.self) { character in
+                                            Button(String(character)) {
+                                                appendToCode(character)
+                                            }
+                                            .font(.headline.monospaced().weight(.semibold))
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                            .buttonStyle(.bordered)
+                                            .tint(.white)
+                                            .disabled(testCode.count >= 16)
+                                        }
+                                    }
+                                }
+                            }
+
+                            if !testCode.isEmpty {
+                                Button("Code löschen") {
+                                    testCode = ""
+                                    errorText = nil
+                                }
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.7))
+                            }
 
                             if let errorText {
                                 Text(errorText)
@@ -90,10 +136,10 @@ struct StartView: View {
                                     .padding(.vertical, 16)
                             }
                             .buttonStyle(.borderedProminent)
-                            .disabled(normalizedCode.isEmpty)
+                            .disabled(normalizedCode.count < 4)
                         }
                         .padding(24)
-                        .frame(maxWidth: 520)
+                        .frame(maxWidth: 560)
                         .background(.white.opacity(0.07))
                         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
 
@@ -123,6 +169,12 @@ struct StartView: View {
         testCode
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
+    }
+
+    private func appendToCode(_ character: Character) {
+        guard testCode.count < 16 else { return }
+        testCode.append(character)
+        errorText = nil
     }
 
     private func openExam() {
