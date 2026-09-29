@@ -56,7 +56,32 @@ jobs:
           npm test --prefix assessment-functions
           npm run check --prefix assessment-functions
 
-      - name: Check browser app syntax
+      - name: Check secure assessment browser syntax
+        run: |
+          node --check secure-assessment-client.js
+          node --check secure-student.js
+          node --check secure-solution-release.js
+          node --check secure-assessment-teacher-polish.js
+          node --check startup.js
+
+      - name: Test secure client boundary
+        run: node --test secure-assessment-client.test.mjs
+
+      - name: Test secure student renderer
+        run: node --test secure-student.test.mjs
+
+      - name: Test controlled solution release
+        run: node --test secure-solution-release.test.mjs
+
+      - name: Test teacher assessment locks
+        run: node --test secure-assessment-teacher-polish.test.mjs
+
+      - name: Test secure routing and target rules
+        run: |
+          node --test secure-student-route.test.mjs
+          node --test secure-firestore-rules.test.mjs
+
+      - name: Check legacy browser app syntax and regressions
         run: |
           if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js|^import .*variant-enhancements\.js|^import .*admin-ai-access\.js' ai-client.js; then
             echo 'Visual/admin enhancement modules must not be statically imported from ai-client.js'
@@ -64,10 +89,6 @@ jobs:
           fi
           node --check app.js
           node --check ai-client.js
-          node --check secure-assessment-client.js
-          node --check secure-student.js
-          node --check secure-solution-release.js
-          node --check secure-assessment-teacher-polish.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
           node --check first-guide-guard.js
@@ -91,12 +112,6 @@ jobs:
           node --check editor-drafts.js
           node --check ai-review-state.js
           node --check ordering-grading.mjs
-          node --test secure-assessment-client.test.mjs
-          node --test secure-student.test.mjs
-          node --test secure-solution-release.test.mjs
-          node --test secure-assessment-teacher-polish.test.mjs
-          node --test secure-student-route.test.mjs
-          node --test secure-firestore-rules.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
