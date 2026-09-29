@@ -61,6 +61,11 @@ enum SecureExamAPIError: LocalizedError {
             return message
         }
     }
+
+    var isTransportFailure: Bool {
+        if case .transport = self { return true }
+        return false
+    }
 }
 
 final class SecureExamAPI {
@@ -82,18 +87,45 @@ final class SecureExamAPI {
         )
     }
 
+    /// Prepare is idempotent even if the network drops after the server committed
+    /// the attempt but before the iPad received the response. The same locally
+    /// generated request id + bearer token are reused for every retry here.
     func prepare(code: String, studentName: String) async throws -> SecurePrepareResult {
-        let json = try await call(action: "prepare", payload: ["code": code, "studentName": studentName])
+        let prepareId = UUID().uuidString
+        let attemptToken = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+            + UUID().uuidString.replacingOccurrences(of: "-", with: "")
+        let payload: [String: Any] = [
+            "code": code,
+            "studentName": studentName,
+            "prepareId": prepareId,
+            "attemptToken": attemptToken
+        ]
+
+        var json: [String: Any]?
+        var lastError: Error?
+        for retry in 0..<3 {
+            do {
+                json = try await call(action: "prepare", payload: payload)
+                break
+            } catch let error as SecureExamAPIError where error.isTransportFailure && retry < 2 {
+                lastError = error
+                try? await Task.sleep(for: .milliseconds(350 * (retry + 1)))
+            } catch {
+                throw error
+            }
+        }
+        guard let json else { throw lastError ?? SecureExamAPIError.invalidResponse }
         guard
             let attemptId = json["attemptId"] as? String,
-            let attemptToken = json["attemptToken"] as? String,
+            let returnedToken = json["attemptToken"] as? String,
+            returnedToken == attemptToken,
             let test = decodeMetadata(json["test"])
         else { throw SecureExamAPIError.invalidResponse }
 
         let credentials = SecureAttemptCredentials(
             code: code.uppercased(),
             attemptId: attemptId,
-            attemptToken: attemptToken,
+            attemptToken: returnedToken,
             studentName: studentName,
             test: test
         )
