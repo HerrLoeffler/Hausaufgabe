@@ -75,9 +75,9 @@ function patchImageHelp(coach) {
 }
 
 function patchPreferenceTip(coach) {
-  const title = coach.querySelector("h2");
+  if (coach.dataset.gc25PreferenceTip === "1") return;
+  coach.dataset.gc25PreferenceTip = "1";
   const copy = paragraph(coach);
-  if (title && title.textContent.trim() === "Noch ein Tipp für später.") title.textContent = "Noch ein Tipp für später.";
   if (copy) copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du mir dagegen dauerhaft mitgeben, was dir bei deinen künftigen Tests wichtig ist.";
 }
 
@@ -146,6 +146,12 @@ function installObserver() {
   document.querySelectorAll(".gcRealCoach").forEach(patchCoach);
   const observer = new MutationObserver(records => {
     for (const record of records) {
+      const changedCoach = record.target instanceof Element
+        ? record.target.closest?.(".gcRealCoach")
+        : record.target?.parentElement?.closest?.(".gcRealCoach");
+      if (changedCoach && ["Noch ein Tipp für später.", "Stopp – ein kleiner Unterschied!"].includes(heading(changedCoach))) {
+        queueMicrotask(() => patchPreferenceTip(changedCoach));
+      }
       for (const node of record.addedNodes) {
         if (!(node instanceof Element)) continue;
         if (node.matches?.(".gcRealCoach")) queueMicrotask(() => patchCoach(node));
@@ -154,7 +160,7 @@ function installObserver() {
       }
     }
   });
-  if (document.body) observer.observe(document.body, { childList: true });
+  if (document.body) observer.observe(document.body, { childList: true, subtree: true });
 }
 
 export function installGc25FinalPolish() {
