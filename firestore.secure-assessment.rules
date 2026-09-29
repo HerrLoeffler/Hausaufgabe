@@ -67,22 +67,11 @@ service cloud.firestore {
     }
 
     match /quizzes/{quizId} {
-      // Quiz-Metadaten bleiben für den Join-Link lesbar. Aufgaben selbst werden
-      // für Schüler ausschließlich durch die Assessment-Functions ausgeliefert.
-      allow get: if (
-                    resource.data.get('isDeleted', false) == false
-                    && (
-                      ownsQuiz(quizId)
-                      || (
-                        resource.data.get('rightsHold', false) == false
-                        && (
-                          resource.data.published == true
-                          || resource.data.get('ended', false) == true
-                          || quizShared(quizId)
-                        )
-                      )
-                    )
-                  ) || isAdmin();
+      // SECURITY BOUNDARY: Anonyme Schüler lesen auch Quiz-Metadaten nicht mehr
+      // direkt aus Firestore. Join-Metadaten kommen ausschließlich über die
+      // serverseitige getAssessmentInfo-Callable. Dadurch gibt es für den
+      // öffentlichen Prüfungsweg keinen Firestore-Ausweichpfad mehr.
+      allow get: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
 
       allow list: if isAdmin()
                   || (accountActive() && resource.data.ownerId == request.auth.uid);
@@ -105,8 +94,8 @@ service cloud.firestore {
                     || (accountActive() && resource.data.ownerId == request.auth.uid && resource.data.get('rightsHold', false) == false);
 
       match /questions/{questionId} {
-        // SECURITY BOUNDARY: veröffentlichte Aufgaben enthalten weiterhin den
-        // Autorenschlüssel. Schüler dürfen diese Dokumente deshalb nie direkt lesen.
+        // Autorendokumente enthalten den Lösungsschlüssel. Sie bleiben deshalb
+        // ausschließlich für Eigentümer, angemeldete Vorlagenempfänger und Admins lesbar.
         allow read: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
         allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
       }
