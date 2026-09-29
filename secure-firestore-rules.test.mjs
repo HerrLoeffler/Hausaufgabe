@@ -16,7 +16,6 @@ test("secure cutover removes anonymous quiz metadata reads", () => {
   const quizzes = block("match /quizzes/{quizId}", "match /questions/{questionId}");
   assert.match(quizzes, /allow get: if ownsQuiz\(quizId\) \|\| quizShared\(quizId\) \|\| isAdmin\(\)/);
   assert.doesNotMatch(quizzes, /published\s*==\s*true/);
-  assert.doesNotMatch(quizzes, /ended/);
   assert.match(rules, /Join-Metadaten kommen ausschließlich über die/);
 });
 
@@ -24,6 +23,13 @@ test("published students cannot read authoring question documents", () => {
   const questions = block("match /questions/{questionId}", "match /attempts/{attemptId}");
   assert.match(questions, /allow read: if ownsQuiz\(quizId\) \|\| quizShared\(quizId\) \|\| isAdmin\(\)/);
   assert.doesNotMatch(questions, /quizPublished|published\s*==\s*true/);
+});
+
+test("active published assessment content is immutable to ordinary teacher clients", () => {
+  assert.match(rules, /function quizContentEditable\(quizId\)/);
+  assert.match(rules, /quiz\.get\('published', false\) != true \|\| quiz\.get\('ended', false\) == true/);
+  const questions = block("match /questions/{questionId}", "match /attempts/{attemptId}");
+  assert.match(questions, /allow create, update, delete: if quizContentEditable\(quizId\) \|\| isAdmin\(\)/);
 });
 
 test("students cannot create or update attempts directly", () => {
