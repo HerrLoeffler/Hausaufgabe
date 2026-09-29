@@ -38,6 +38,15 @@ service cloud.firestore {
         && (quiz.get('published', false) != true || quiz.get('ended', false) == true);
     }
 
+    function ownerSelfTestAllowed(quizId) {
+      let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
+      return ownsQuiz(quizId)
+        && quiz.get('published', false) == true
+        && quiz.get('ended', false) == false
+        && quiz.get('isDeleted', false) == false
+        && quiz.get('rightsHold', false) == false;
+    }
+
     match /users/{userId} {
       allow create: if signedIn()
                     && request.auth.uid == userId
@@ -109,17 +118,41 @@ service cloud.firestore {
       }
 
       match /attempts/{attemptId} {
-        // Schüler-Attempts werden ausschließlich durch Admin SDK / Callables
-        // angelegt und geändert. Lehrkräfte dürfen sie für die Liveansicht lesen.
+        // Öffentliche Schüler-Attempts werden ausschließlich durch Admin SDK /
+        // Callables angelegt. Die einzige Client-Ausnahme ist der eingeloggte
+        // Eigentümer beim internen "Test selbst ausfüllen" / Tutorial.
+        allow create: if ownerSelfTestAllowed(quizId)
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.studentName.size() <= 120;
         allow get, list, delete: if ownsQuiz(quizId) || isAdmin();
-        allow create, update: if false;
+        allow update: if false;
       }
 
       match /submissions/{submissionId} {
-        // Die verbindliche Abgabe entsteht ausschließlich serverseitig unter
-        // submissionId == attemptId. Lehrkräfte dürfen danach lesen/bewerten.
-        allow read, update, delete: if ownsQuiz(quizId) || isAdmin();
-        allow create: if false;
+        // Verbindliche öffentliche Abgaben entstehen ausschließlich serverseitig
+        // unter submissionId == attemptId. Der Eigentümer-Selbsttest bleibt als
+        // bewusst begrenzte interne Ausnahme erhalten, damit Tutorial und Vorschau
+        // nicht auf einen unsicheren öffentlichen Pfad angewiesen sind.
+        allow create: if ownerSelfTestAllowed(quizId)
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.studentName.size() <= 120
+                      && request.resource.data.answers is map;
+
+        allow read, delete: if ownsQuiz(quizId) || isAdmin();
+
+        // Nach der Abgabe sind ursprüngliche Schülerantworten und sichere
+        // Metadaten unveränderlich. Die Lehrkraft darf ausschließlich die Felder
+        // ändern, die die bestehende manuelle Bewertung tatsächlich benötigt.
+        allow update: if isAdmin()
+                      || (
+                        ownsQuiz(quizId)
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                          'grading', 'totalPoints', 'maxPoints', 'percent', 'grade',
+                          'gradeScaleSnapshot', 'status', 'reviewedAt', 'reviewedBy'
+                        ])
+                      );
       }
     }
 
