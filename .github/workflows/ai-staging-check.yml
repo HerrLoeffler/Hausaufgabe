@@ -62,6 +62,7 @@ jobs:
           node --check app.js
           node --check ai-client.js
           node --check secure-assessment-client.js
+          node --check secure-student.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
           node --check first-guide-guard.js
@@ -86,6 +87,7 @@ jobs:
           node --check ai-review-state.js
           node --check ordering-grading.mjs
           node --test secure-assessment-client.test.mjs
+          node --test secure-student.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
@@ -103,3 +105,12 @@ jobs:
           test -f assets/gradecrew/owl-grade.svg
           test -f assets/gradecrew/crew-lineup.svg
           test -f assets/gradecrew/demo-cat.svg
+
+      - name: Smoke test staging build
+        run: |
+          BUILD_DIR="$(mktemp -d)"
+          node tools/build-staging.mjs "$BUILD_DIR"
+          test -f "$BUILD_DIR/public/secure-student.html"
+          test -f "$BUILD_DIR/public/secure-student.js"
+          test -f "$BUILD_DIR/public/secure-assessment-client.js"
+          grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
