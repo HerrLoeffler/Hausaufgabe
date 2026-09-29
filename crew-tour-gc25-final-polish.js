@@ -103,20 +103,22 @@ function findFreeResponseCard() {
 }
 
 function makeReviewLayoutResponsive(coach) {
-  if (coach.dataset.gc25InlineReview === "1") return;
   const freeCard = findFreeResponseCard();
   if (!freeCard?.parentElement) return;
-  coach.dataset.gc25InlineReview = "1";
-  coach.classList.remove("gc23FreeAnswerCoach");
-  coach.classList.add("gc25InlineReviewCoach");
-  freeCard.classList.add("gc25ResponsiveReview");
+  if (coach.dataset.gc25InlineReview !== "1") {
+    coach.dataset.gc25InlineReview = "1";
+    coach.classList.remove("gc23FreeAnswerCoach");
+    coach.classList.add("gc25InlineReviewCoach");
+    freeCard.classList.add("gc25ResponsiveReview");
 
-  // The explanation becomes part of the review flow instead of floating above
-  // controls. This guarantees that points and answers stay visible on notebooks,
-  // tablets and phones regardless of viewport width.
-  freeCard.parentElement.insertBefore(coach, freeCard);
+    // Keep the explanation in normal document flow directly above the answer.
+    // It therefore cannot cover points or answer controls on notebooks, tablets
+    // or phones, regardless of the viewport width.
+    freeCard.parentElement.insertBefore(coach, freeCard);
+  }
+  freeCard.scrollIntoView({ block: "center", behavior: "instant" });
   requestAnimationFrame(() => {
-    freeCard.scrollIntoView({ block: "center", behavior: "instant" });
+    if (freeCard.isConnected) freeCard.scrollIntoView({ block: "center", behavior: "instant" });
   });
 }
 
