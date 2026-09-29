@@ -1,11 +1,13 @@
 import Foundation
 import AutomaticAssessmentConfiguration
 
-/// Build-time safety gate for the real iPad lockdown.
+/// Build-time safety gates for GradeCrew Secure.
 ///
-/// Keep `automaticAssessmentConfigurationEnabled` false until Apple has approved
-/// the AAC entitlement AND the matching signing/provisioning profile is active.
+/// Keep BOTH switches false in distributed builds until their prerequisites are
+/// fulfilled. The backend can be piloted before AAC, but production lockdown may
+/// only be enabled after Apple approved the entitlement and signing contains it.
 enum GradeCrewSecureBuild {
+    static let secureBackendEnabled = false
     static let automaticAssessmentConfigurationEnabled = false
 }
 
@@ -41,8 +43,8 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
     }
 
     /// Starts the Apple assessment session. In development builds where AAC is
-    /// intentionally disabled, the callback fires immediately so the normal
-    /// TestFlight/Staging flow stays fully usable.
+    /// intentionally disabled, the callback fires immediately so backend flow
+    /// can be tested without pretending that a real device lock is active.
     func begin(onActivated: @escaping () -> Void, onFailed: @escaping (String) -> Void) {
         failureMessage = nil
         interrupted = false
@@ -67,7 +69,8 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
         next.begin()
     }
 
-    /// Called only after GradeCrew has confirmed a successful submission.
+    /// Called only after GradeCrew has independently verified a successful
+    /// server receipt. A WebView-only success signal must never call this directly.
     func endAfterConfirmedSubmission(onEnded: @escaping () -> Void) {
         didFinish = onEnded
 
