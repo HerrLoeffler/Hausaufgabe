@@ -36,7 +36,7 @@ test('successful result is sealed and solution details are removed', async t => 
 test('back or restored form cannot submit the same attempt again', async t => {
   const w = setup(t);
   w.localStorage.setItem('gradecrew_submission_lock_v1:ABC123', JSON.stringify({version:1, quizId:'ABC123', attemptId:'untimed-uuid-test', sessionRunId:'', savedAt:Date.now()}));
-  w.dispatchEvent(new w.PageTransitionEvent('pageshow'));
+  w.dispatchEvent(new w.Event('pageshow'));
   await settle(w);
   const form = w.document.getElementById('studentForm');
   assert.equal(form.dataset.submitted, 'true');
@@ -49,7 +49,7 @@ test('a genuinely new timed attempt is not blocked by an older lock', async t =>
   const w = setup(t);
   w.localStorage.setItem('gradecrew_submission_lock_v1:ABC123', JSON.stringify({version:1, quizId:'ABC123', attemptId:'attempt-old', sessionRunId:'run-old', savedAt:Date.now()}));
   w.localStorage.setItem('lernplattform_timer_ABC123', JSON.stringify({attemptId:'attempt-new', sessionRunId:'run-new', startedAt:Date.now()}));
-  w.dispatchEvent(new w.PageTransitionEvent('pageshow'));
+  w.dispatchEvent(new w.Event('pageshow'));
   await settle(w);
   assert.notEqual(w.document.getElementById('studentForm').dataset.submitted, 'true');
   assert.equal(w.document.querySelector('.gcStudentLockedCard'), null);
