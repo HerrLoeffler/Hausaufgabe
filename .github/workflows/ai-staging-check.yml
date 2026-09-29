@@ -77,6 +77,7 @@ jobs:
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
+          node --test crew-tour-gc24-polish.test.mjs
           node --test crew-tour-gc25-final-polish.test.mjs
           node --test remy-ai-help.test.mjs
           test -f assets/gradecrew/penguin-guide.svg
