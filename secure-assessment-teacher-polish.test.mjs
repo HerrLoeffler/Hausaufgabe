@@ -9,6 +9,7 @@ test("teacher setting states that solutions are released only after test end", (
   assert.match(source, /quizShowSolutions/);
   assert.match(source, /Richtige Lösungen nach Testende anzeigen/);
   assert.match(source, /erst freigegeben, wenn du den Test beendest/);
+  assert.match(source, /nicht unverändert mit einer weiteren Gruppe verwenden/);
 });
 
 test("active published editor becomes read-only until teacher ends test", () => {
@@ -17,6 +18,14 @@ test("active published editor becomes read-only until teacher ends test", () => 
   assert.match(source, /saveButton\.disabled = true/);
   assert.match(source, /Veröffentlichter Test ist geschützt/);
   assert.match(source, /Beende den Test zuerst/);
+});
+
+test("dashboard cannot turn an active published test back into a draft", () => {
+  assert.match(source, /function patchDashboardPublishToggles/);
+  assert.match(source, /\.dashboardPublishToggle/);
+  assert.match(source, /const activePublished = toggle\.checked === true/);
+  assert.match(source, /toggle\.disabled = true/);
+  assert.match(source, /über „Beenden“ geschlossen/);
 });
 
 test("secure teacher policy is loaded only on the normal teacher app path", () => {
