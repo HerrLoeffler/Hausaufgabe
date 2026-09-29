@@ -1,0 +1,17 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const source=path.join(root,'lab','fehlerjagd-deutsch');
+const destination=process.argv[2];
+if(!destination||!path.isAbsolute(destination))throw new Error('An absolute build directory is required.');
+const output=path.join(destination,'public');await fs.mkdir(output,{recursive:true});if((await fs.readdir(output)).length)throw new Error('Build directory must be empty.');
+const files=['index.html','styles.css','deutsch-engine.js','app.js'];for(const name of files)await fs.copyFile(path.join(source,name),path.join(output,name));
+const html=await fs.readFile(path.join(output,'index.html'),'utf8');for(const marker of ['Fehlerjagd Deutsch','Üben','All-Time-Highscore','Live mit Lehrkraft','Runde beitreten','Kompetenzprofil'])if(!html.includes(marker))throw new Error(`UI marker missing: ${marker}`);
+const engine=await fs.readFile(path.join(output,'deutsch-engine.js'),'utf8');for(const marker of ['Rechtschreibstrategien','Groß- & Kleinschreibung','Wortarten','Satzglieder','createEngine','multi'])if(!engine.includes(marker))throw new Error(`Engine marker missing: ${marker}`);
+const app=await fs.readFile(path.join(output,'app.js'),'utf8');for(const marker of ['createLive','joinLive','startHighscore','finishGame','skillProfile','fehlerjagdApi'])if(!app.includes(marker))throw new Error(`App marker missing: ${marker}`);
+const hashes={};for(const name of files)hashes[name]=createHash('sha256').update(await fs.readFile(path.join(output,name))).digest('hex');
+await fs.writeFile(path.join(output,'lab-release.json'),JSON.stringify({experiment:'fehlerjagd-deutsch',format:1,files:hashes},null,2)+'\n');
+await fs.writeFile(path.join(destination,'firebase.json'),JSON.stringify({hosting:{site:'hausaufgabe-staging',public:'public',ignore:['**/.*'],headers:[{source:'**',headers:[{key:'Cache-Control',value:'no-cache'}]}]}},null,2)+'\n');
+console.log(`Fehlerjagd Deutsch build verified: ${files.length} app files.`);
