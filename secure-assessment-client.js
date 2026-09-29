@@ -3,6 +3,10 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 const REGION = "europe-west1";
 const STORAGE_VERSION = "v2";
 
+function normalizeQuizId(value) {
+  return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
 function randomUrlSafe(bytes = 32) {
   const buffer = new Uint8Array(bytes);
   crypto.getRandomValues(buffer);
@@ -12,7 +16,7 @@ function randomUrlSafe(bytes = 32) {
 }
 
 function sessionKey(quizId) {
-  return `gradecrew_secure_assessment:${STORAGE_VERSION}:${String(quizId || "")}`;
+  return `gradecrew_secure_assessment:${STORAGE_VERSION}:${normalizeQuizId(quizId)}`;
 }
 
 function readSession(quizId) {
@@ -31,9 +35,10 @@ function clearSession(quizId) {
 }
 
 function writeSession(quizId, session) {
+  const normalizedId = normalizeQuizId(quizId);
   const safe = {
     version: STORAGE_VERSION,
-    quizId: String(quizId),
+    quizId: normalizedId,
     clientAttemptId: String(session.clientAttemptId),
     attemptToken: String(session.attemptToken),
     attemptId: session.attemptId ? String(session.attemptId) : null,
@@ -42,7 +47,7 @@ function writeSession(quizId, session) {
     sessionRunId: session.sessionRunId ? String(session.sessionRunId) : null,
     updatedAt: Date.now()
   };
-  localStorage.setItem(sessionKey(quizId), JSON.stringify(safe));
+  localStorage.setItem(sessionKey(normalizedId), JSON.stringify(safe));
   return safe;
 }
 
@@ -96,22 +101,54 @@ export function createSecureAssessmentClient(firebaseApp) {
     }
   }
 
-  async function getInfo(quizId) {
-    const response = await invoke(infoCall, { quizId: String(quizId) });
-    const session = readSession(quizId);
-    const quiz = response?.quiz;
-    if (
-      session?.sessionRunId
-      && quiz?.sessionRunId
-      && String(session.sessionRunId) !== String(quiz.sessionRunId)
-    ) clearSession(quizId);
-    return response;
+  async function getInfo(rawQuizId) {
+    const quizId = normalizeQuizId(rawQuizId);
+    try {
+      const response = await invoke(infoCall, { quizId });
+      const session = readSession(quizId);
+      const quiz = response?.quiz;
+      if (
+        session?.sessionRunId
+        && quiz?.sessionRunId
+        && String(session.sessionRunId) !== String(quiz.sessionRunId)
+      ) clearSession(quizId);
+      return response;
+    } catch (infoError) {
+      // A finished assessment must stay closed to new browsers, but the browser
+      // that already owns a submitted attempt may still retrieve its own signed
+      // receipt (and, after teacher release, its solutions). Resume is protected
+      // by attemptId + the locally held high-entropy token.
+      const session = readSession(quizId);
+      if (session?.attemptId && session?.attemptToken) {
+        try {
+          const resumed = await invoke(resumeCall, {
+            quizId,
+            attemptId: session.attemptId,
+            attemptToken: session.attemptToken
+          });
+          if (resumed?.status === "submitted" && resumed?.receipt && resumed?.quiz) {
+            writeSession(quizId, {
+              ...session,
+              studentName: resumed.studentName || session.studentName,
+              status: "submitted",
+              sessionRunId: resumed.sessionRunId || session.sessionRunId || null
+            });
+            return { quiz: resumed.quiz, submittedAttemptAvailable: true };
+          }
+        } catch {
+          // Preserve the original public-info error. A running/ready attempt is
+          // not allowed to bypass an ended/blocked test through this fallback.
+        }
+      }
+      throw infoError;
+    }
   }
 
-  async function start(quizId, studentName) {
+  async function start(rawQuizId, studentName) {
+    const quizId = normalizeQuizId(rawQuizId);
     const session = ensureSession(quizId);
     const response = await invoke(startCall, {
-      quizId: String(quizId),
+      quizId,
       studentName: String(studentName || "").trim(),
       clientAttemptId: session.clientAttemptId,
       attemptToken: session.attemptToken
@@ -126,11 +163,12 @@ export function createSecureAssessmentClient(firebaseApp) {
     return response;
   }
 
-  async function resume(quizId) {
+  async function resume(rawQuizId) {
+    const quizId = normalizeQuizId(rawQuizId);
     const session = readSession(quizId);
     if (!session?.attemptId || !session?.attemptToken) return null;
     const response = await invoke(resumeCall, {
-      quizId: String(quizId),
+      quizId,
       attemptId: session.attemptId,
       attemptToken: session.attemptToken
     });
@@ -143,11 +181,12 @@ export function createSecureAssessmentClient(firebaseApp) {
     return response;
   }
 
-  async function submit(quizId, answers, { autoSubmitted = false } = {}) {
+  async function submit(rawQuizId, answers, { autoSubmitted = false } = {}) {
+    const quizId = normalizeQuizId(rawQuizId);
     const session = readSession(quizId);
     if (!session?.attemptId || !session?.attemptToken) throw new Error("Dieser Test wurde in diesem Browser noch nicht gestartet.");
     const response = await invoke(submitCall, {
-      quizId: String(quizId),
+      quizId,
       attemptId: session.attemptId,
       attemptToken: session.attemptToken,
       answers: answers && typeof answers === "object" ? answers : {},
@@ -157,18 +196,19 @@ export function createSecureAssessmentClient(firebaseApp) {
     return response;
   }
 
-  async function getReceipt(quizId) {
+  async function getReceipt(rawQuizId) {
+    const quizId = normalizeQuizId(rawQuizId);
     const session = readSession(quizId);
     if (!session?.attemptId || !session?.attemptToken) return null;
     return invoke(receiptCall, {
-      quizId: String(quizId),
+      quizId,
       attemptId: session.attemptId,
       attemptToken: session.attemptToken
     });
   }
 
-  function clear(quizId) {
-    clearSession(quizId);
+  function clear(rawQuizId) {
+    clearSession(normalizeQuizId(rawQuizId));
   }
 
   return {
