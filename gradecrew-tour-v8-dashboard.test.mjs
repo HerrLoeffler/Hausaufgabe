@@ -1,0 +1,53 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const { JSDOM } = require('./tools/ui/node_modules/jsdom');
+const v7Source = fs.readFileSync('gradecrew-tour-v7.js', 'utf8');
+const v8Source = fs.readFileSync('gradecrew-tour-v8.js', 'utf8');
+
+function fixture(t) {
+  const dom = new JSDOM('<!doctype html><html><body><div class="dashboardActions"></div></body></html>', {
+    url: 'https://example.test', runScripts: 'outside-only', pretendToBeVisual: true
+  });
+  const w = dom.window;
+  t.after(() => w.close());
+  w.HTMLElement.prototype.scrollIntoView = function () {};
+
+  w.eval(v7Source.replace(/^export /gm, '') + '\nwindow.installV7=installCrewTour;window.crewV7=CREW;window.demoV7=DEMO_TEST;');
+  const wrapper = v8Source
+    .replace(/^import \{[\s\S]*?\} from .*?;\n/, '')
+    .replace(/^export \{ CREW \};\n/m, '')
+    .replace(/^export /gm, '');
+  w.eval(`(() => { const installV7=window.installV7, CREW=window.crewV7, V7_DEMO_TEST=window.demoV7;\n${wrapper}\nwindow.installV8=installCrewTour; })()`);
+  return w;
+}
+
+function adapter() {
+  return {
+    uid: () => 'teacher-a',
+    isDashboard: () => true,
+    beginRun: () => {},
+    createDemo: async () => 'DEMO1',
+    openEditor: async () => {},
+    isEditor: () => true,
+    questionId: index => `tutorial-${index + 1}`,
+    focusQuestion: () => {},
+    showSettings: () => {},
+    checkDemo: () => null,
+    focusReviewQuestion: () => {}
+  };
+}
+
+test('completed onboarding leaves no permanent Mit der Crew starten launcher', t => {
+  const w = fixture(t);
+  const tour = w.installV8(adapter());
+
+  tour.dashboard({ uid: 'teacher-a', firstVisit: false, completed: false });
+  assert.equal(w.document.getElementById('gradecrewTourBtn')?.textContent, 'Mit der Crew starten');
+
+  tour.dashboard({ uid: 'teacher-a', firstVisit: true, completed: true });
+  assert.equal(w.document.getElementById('gradecrewTourBtn'), null);
+});
