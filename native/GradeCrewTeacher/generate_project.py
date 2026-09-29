@@ -150,6 +150,8 @@ scheme_dir = project_dir / 'xcshareddata' / 'xcschemes'
 scheme_dir.mkdir(parents=True, exist_ok=True)
 (scheme_dir / 'GradeCrew.xcscheme').write_text(xml)
 
-assert len(source_paths) == 5
+assert source_paths
 assert all(source.is_file() for source in source_paths)
-print('GradeCrew Teacher Xcode project generated: 5 shared/native Swift sources.')
+assert any(source.name == 'GradeCrewTeacherApp.swift' for source in source_paths)
+assert any(source.name == 'GradeCrewDesignTokens.swift' for source in source_paths)
+print(f'GradeCrew Teacher Xcode project generated: {len(source_paths)} shared/native Swift sources.')
