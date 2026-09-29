@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>GradeCrew · Sicherer Test</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./design-system.css">
+  <link rel="stylesheet" href="./gradecrew-brand.css">
+  <link rel="stylesheet" href="./secure-student.css">
+</head>
+<body class="secureAssessmentPage">
+  <header class="secureTopbar">
+    <a class="secureBrand" href="./" aria-label="GradeCrew Startseite">
+      <span class="secureBrandMark">G</span>
+      <span><strong>GradeCrew</strong><small>Sicherer Leistungsnachweis</small></span>
+    </a>
+    <span id="secureConnection" class="secureConnection" aria-live="polite">Verbindung wird geprüft …</span>
+  </header>
+
+  <main class="secureShell">
+    <section id="secureLoading" class="secureCard secureLoading" aria-live="polite">
+      <span class="loadingDot"></span>
+      <div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div>
+    </section>
+
+    <section id="secureIntro" class="secureCard hidden">
+      <div class="secureEyebrow" id="secureMeta"></div>
+      <h1 id="secureTitle">Test</h1>
+      <p id="secureDescription"></p>
+      <div class="secureFacts" id="secureFacts"></div>
+      <form id="secureStartForm" class="secureStartForm">
+        <label>Wie dürfen wir dich nennen?
+          <input id="secureStudentName" type="text" maxlength="120" autocomplete="off" required placeholder="Name oder vereinbartes Kürzel">
+        </label>
+        <small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel verwenden.</small>
+        <button id="secureStartBtn" class="button primary" type="submit">Test starten</button>
+      </form>
+    </section>
+
+    <section id="secureWaiting" class="secureCard hidden" aria-live="polite">
+      <div class="secureWaitIcon">⌛</div>
+      <h1>Du bist bereit</h1>
+      <p>Warte, bis deine Lehrkraft den Test für alle startet. Diese Seite prüft den Start automatisch.</p>
+      <strong id="secureWaitingName"></strong>
+    </section>
+
+    <section id="secureAssessment" class="hidden">
+      <div class="secureAssessmentHead secureCard">
+        <div>
+          <div class="secureEyebrow" id="secureRunningMeta"></div>
+          <h1 id="secureRunningTitle">Test</h1>
+        </div>
+        <div id="secureTimer" class="secureTimer hidden"><small>Verbleibend</small><strong id="secureTimerText">--:--</strong></div>
+      </div>
+      <div class="secureProgress secureCard">
+        <div><strong id="secureProgressText">0 Aufgaben bearbeitet</strong><span id="secureOpenText"></span></div>
+        <div class="secureProgressTrack"><span id="secureProgressFill"></span></div>
+      </div>
+      <form id="secureAssessmentForm">
+        <div id="secureQuestions" class="secureQuestionList"></div>
+        <div class="secureSubmit secureCard">
+          <div><strong>Fertig?</strong><small>Prüfe deine Antworten noch einmal. Die Abgabe ist endgültig.</small></div>
+          <button id="secureSubmitBtn" class="button primary" type="submit">Antworten abgeben</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="secureResult" class="secureCard hidden" aria-live="polite"></section>
+    <section id="secureError" class="secureCard secureError hidden" role="alert"></section>
+  </main>
+
+  <script type="module" src="./secure-student.js"></script>
+</body>
+</html>
