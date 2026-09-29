@@ -14,7 +14,7 @@ function waitForNewPageAndCrop(previousCount){
 }
 function ensureClipboardButton(){const actions=document.querySelector('#vrDropZone .vrDropActions');if(!actions||$('vrPasteImageBtn'))return;const btn=document.createElement('button');btn.id='vrPasteImageBtn';btn.className='secondary';btn.type='button';btn.textContent='📋 Bild einfügen';btn.addEventListener('click',pasteFromClipboard);actions.append(btn);const hint=document.createElement('small');hint.className='vrClipboardHint';hint.textContent='Oder Screenshot kopieren und hier Strg+V / Cmd+V drücken.';actions.closest('#vrDropZone')?.append(hint);}
 async function pasteFromClipboard(){
-  if(!navigator.clipboard?.read){status('Direktes Einfügen wird von diesem Browser nicht unterstützt. Kopiere den Screenshot und drücke hier Strg+V bzw. Cmd+V.');return;}
+  if(!navigator.clipboard?.read){status('Direktes Einfügen wird von diesem Browser nicht unterstützt. Kopiere den Screenshot und füge ihn mit Strg+V / Cmd+V ein oder wähle die Bilddatei aus.');return;}
   try{
     const items=await navigator.clipboard.read();
     for(const item of items){
@@ -30,7 +30,7 @@ async function pasteFromClipboard(){
     }
     status('In der Zwischenablage wurde kein Bild gefunden.');
   }catch(err){
-    status('Zwischenablage konnte nicht direkt gelesen werden. Kopiere den Screenshot und drücke hier Strg+V bzw. Cmd+V.');
+    status('Zwischenablage konnte nicht direkt gelesen werden. Nutze Strg+V / Cmd+V oder „Dateien auswählen“.');
   }
 }
 function handlePaste(e){
@@ -49,7 +49,12 @@ function handlePaste(e){
 }
 async function captureScreen(e){
   if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
-  if(!navigator.mediaDevices?.getDisplayMedia){status('Dieser Browser unterstützt direkte Bildschirm-Screenshots nicht. Nutze „Dateien auswählen“ oder füge einen Screenshot mit Cmd+V / Strg+V ein.');return;}
+  if(!navigator.mediaDevices?.getDisplayMedia){
+    const input=$('vrMultiInput');
+    if(input){status('Direkte Bildschirmaufnahme ist auf diesem Gerät nicht verfügbar. Wähle deinen Screenshot oder ein Bild aus.');input.click();}
+    else status('Direkte Bildschirmaufnahme ist auf diesem Gerät nicht verfügbar. Nutze „Dateien auswählen“.');
+    return;
+  }
   let stream=null;
   try{
     status('Wähle jetzt Bildschirm, Fenster oder Tab aus …');
@@ -75,7 +80,14 @@ async function captureScreen(e){
     status(`Screenshot konnte nicht erstellt werden: ${err?.message||'Unbekannter Fehler'}`);
   }
 }
-function wireScreenshotButton(){const btn=$('photoImportBtn');if(!btn||btn.dataset.screenCapture)return;btn.dataset.screenCapture='1';btn.textContent='🖥 Screenshot aufnehmen';btn.addEventListener('click',captureScreen,true);}
+function wireScreenshotButton(){
+  const btn=$('photoImportBtn');if(!btn||btn.dataset.screenCapture)return;
+  btn.dataset.screenCapture='1';
+  const direct=Boolean(navigator.mediaDevices?.getDisplayMedia);
+  btn.textContent=direct?'🖥 Screenshot aufnehmen':'🖼 Screenshot / Bild wählen';
+  btn.title=direct?'Bildschirm, Fenster oder Tab auswählen':'Screenshot oder Bilddatei vom Gerät auswählen';
+  btn.addEventListener('click',captureScreen,true);
+}
 function init(){wireScreenshotButton();ensureClipboardButton();document.addEventListener('paste',handlePaste);const target=$('setEditorView');if(target)new MutationObserver(()=>{wireScreenshotButton();ensureClipboardButton();}).observe(target,{childList:true,subtree:true});}
 init();
 })();
