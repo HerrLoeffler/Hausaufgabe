@@ -60,6 +60,17 @@ service cloud.firestore {
       return !active || (activeChangeSafe && activeLifecycleSafe);
     }
 
+    function ownerQuizDeleteAllowed() {
+      return accountActive()
+        && resource.data.ownerId == request.auth.uid
+        && resource.data.get('rightsHold', false) == false
+        && (
+          resource.data.get('published', false) != true
+          || resource.data.get('ended', false) == true
+          || resource.data.get('isDeleted', false) == true
+        );
+    }
+
     match /users/{userId} {
       allow create: if signedIn()
                     && request.auth.uid == userId
@@ -119,8 +130,9 @@ service cloud.firestore {
                       && ownerQuizUpdateAllowed()
                     );
 
-      allow delete: if isAdmin()
-                    || (accountActive() && resource.data.ownerId == request.auth.uid && resource.data.get('rightsHold', false) == false);
+      // A running assessment must not disappear underneath active attempts.
+      // Owners delete only inactive/ended/trash quizzes; admins retain support access.
+      allow delete: if isAdmin() || ownerQuizDeleteAllowed();
 
       match /questions/{questionId} {
         // Autorendokumente enthalten den Lösungsschlüssel. Sie bleiben deshalb
