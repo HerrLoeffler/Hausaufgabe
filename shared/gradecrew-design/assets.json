@@ -1,0 +1,57 @@
+{
+  "$schemaVersion": 1,
+  "version": "1.0.0",
+  "root": "assets/gradecrew",
+  "brand": {
+    "icon": "penguin-icon.svg",
+    "crewLineup": "crew-lineup.svg"
+  },
+  "mascots": {
+    "coco": {
+      "role": "guide",
+      "animal": "penguin",
+      "primary": "penguin-guide.svg",
+      "welcome": "penguin-guide-welcome.svg",
+      "nameScene": "clay-coco-name.svg"
+    },
+    "remy": {
+      "role": "create",
+      "animal": "elephant",
+      "primary": "elephant-create.svg",
+      "welcome": "elephant-create-welcome.svg",
+      "writingScene": "clay-remy-writing.svg"
+    },
+    "emmi": {
+      "role": "improve",
+      "animal": "fox",
+      "primary": "fox-improve.svg",
+      "welcome": "fox-improve-welcome.svg"
+    },
+    "wilma": {
+      "role": "grade",
+      "animal": "owl",
+      "primary": "owl-grade.svg",
+      "welcome": "owl-grade-welcome.svg"
+    }
+  },
+  "scenes": {
+    "welcome": "clay-welcome.svg",
+    "finale": "clay-finale.svg",
+    "introduceRemy": "clay-introduce-remy.svg",
+    "introduceEmmi": "clay-introduce-emmi.svg",
+    "introduceWilma": "clay-introduce-wilma.svg",
+    "thanksRemy": "clay-thanks-remy.svg",
+    "thanksEmmi": "clay-thanks-emmi.svg",
+    "thanksWilma": "clay-thanks-wilma.svg",
+    "wait": "clay-wait.svg",
+    "save": "clay-save.svg",
+    "retry": "clay-retry.svg",
+    "yourTurn": "clay-your-turn.svg"
+  },
+  "rules": {
+    "singleSource": true,
+    "noProductSpecificCopies": true,
+    "legacyAliasesMayExist": true,
+    "newCodeMustUseManifestNames": true
+  }
+}
