@@ -11,7 +11,6 @@ function setup(t, url = 'https://example.test/?test=ABC123') {
   const dom = new JSDOM(`<!doctype html><html><head></head><body><section id="studentView"><div id="studentQuizCard"><form id="studentForm"><input id="studentName" value="M"><button id="studentSubmitBtn" type="submit">Abgeben</button></form><div id="studentResult" class="hidden"></div></div></section></body></html>`, { url, runScripts:'outside-only', pretendToBeVisual:true });
   const w = dom.window;
   t.after(() => w.close());
-  if (!w.crypto.randomUUID) w.crypto.randomUUID = () => 'uuid-test';
   w.eval(source.replace(/^export /gm, ''));
   return w;
 }
@@ -35,7 +34,8 @@ test('successful result is sealed and solution details are removed', async t => 
 
 test('back or restored form cannot submit the same attempt again', async t => {
   const w = setup(t);
-  w.localStorage.setItem('gradecrew_submission_lock_v1:ABC123', JSON.stringify({version:1, quizId:'ABC123', attemptId:'untimed-uuid-test', sessionRunId:'', savedAt:Date.now()}));
+  w.sessionStorage.setItem('gradecrew_untimed_attempt_v1:ABC123', 'untimed-fixed');
+  w.localStorage.setItem('gradecrew_submission_lock_v1:ABC123', JSON.stringify({version:1, quizId:'ABC123', attemptId:'untimed-fixed', sessionRunId:'', savedAt:Date.now()}));
   w.dispatchEvent(new w.Event('pageshow'));
   await settle(w);
   const form = w.document.getElementById('studentForm');
