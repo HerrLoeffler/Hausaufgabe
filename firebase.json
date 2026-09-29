@@ -5,6 +5,23 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/secure-exam.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-store, max-age=0" },
+          { "key": "X-Frame-Options", "value": "DENY" },
+          { "key": "Referrer-Policy", "value": "no-referrer" },
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src https://europe-west1-hausaufgabe-staging.cloudfunctions.net https://europe-west1-hausaufgabe-40294.cloudfunctions.net; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" }
+        ]
+      },
+      {
+        "source": "/secure-exam.js",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-store, max-age=0" }
+        ]
+      }
     ]
   },
   "firestore": {
