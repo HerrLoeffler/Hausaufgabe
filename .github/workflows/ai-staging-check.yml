@@ -17,7 +17,7 @@ jobs:
   test:
     name: Node 22 tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -39,6 +39,9 @@ jobs:
 
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
+
+      - name: Install security rules test dependencies
+        run: npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
 
       - name: Run unit tests
         working-directory: functions
@@ -76,10 +79,13 @@ jobs:
       - name: Test teacher assessment locks
         run: node --test secure-assessment-teacher-polish.test.mjs
 
-      - name: Test secure routing and target rules
+      - name: Test secure routing and target rules source contracts
         run: |
           node --test secure-student-route.test.mjs
           node --test secure-firestore-rules.test.mjs
+
+      - name: Test secure Firestore rules in emulator
+        run: npm run test:secure --prefix tools/rules
 
       - name: Check legacy browser app syntax and regressions
         run: |
