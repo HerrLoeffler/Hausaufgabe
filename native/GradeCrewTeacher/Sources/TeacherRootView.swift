@@ -55,7 +55,19 @@ private struct PlaceholderView: View {
     var body: some View {
         ZStack {
             GradeCrewDesignTokens.Colors.background.ignoresSafeArea()
-            ContentUnavailableView(title, systemImage: "hammer", description: Text(message))
+            VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
+                Image(systemName: "hammer")
+                    .font(.system(size: 34))
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                Text(title)
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+                Text(message)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                    .frame(maxWidth: 460)
+            }
+            .padding(GradeCrewDesignTokens.Spacing.xl)
         }
         .navigationTitle(title)
     }
