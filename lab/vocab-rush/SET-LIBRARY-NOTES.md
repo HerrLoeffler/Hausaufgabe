@@ -1,37 +1,28 @@
-# Vocab Rush – Vokabelbibliothek
+# Vocab Rush – Set-Bibliothek
 
 ## Ziel
+Eigene Vokabelsets bleiben wiederverwendbar und können einzeln oder kombiniert gespielt werden.
 
-Eigene Vokabelsets bleiben dauerhaft im Browser gespeichert und können später erneut für Üben oder Live-Runden verwendet werden.
+## Verhalten
+- Sets können erstellt, umbenannt, bearbeitet, dupliziert und gelöscht werden.
+- Mehrere Sets können gleichzeitig ausgewählt werden, z. B. Unit 1 + Unit 2 oder alle Sets.
+- Beim Kombinieren werden identische englische Einträge zusammengeführt.
+- Die Bibliothek liegt im Lab-Prototyp weiterhin lokal im Browser (`localStorage`).
+- Für die spätere GradeCrew-Integration sollen Sets an den Lehreraccount gebunden in Firestore gespeichert werden.
 
-## Auswahl
+## Import
+- Mehrere JPG/PNG/WebP-Dateien können per Dateiauswahl oder Drag & Drop gesammelt werden.
+- PDFs werden im Browser seitenweise gerendert und anschließend wie Bilder verarbeitet.
+- Pro Importvorgang sind aktuell maximal 20 Seiten vorgesehen.
+- Pro Seite kann vor der KI-Erkennung ein Ausschnitt festgelegt werden.
+- Bereits verarbeitete Seiten bleiben erhalten; weitere Seiten werden ergänzt statt vorhandene Ergebnisse zu ersetzen.
+- Vokabeln aus mehreren Seiten werden dedupliziert und in einer gemeinsamen Prüfliste zusammengeführt.
 
-- Ein einzelnes Set kann gespielt werden.
-- Mehrere Sets können gleichzeitig ausgewählt und vor dem Start zu einer temporären Spielauswahl zusammengeführt werden.
-- `Alle auswählen` ermöglicht z. B. die Wiederholung mehrerer Units vor einer Schulaufgabe.
-- Doppelte englische Einträge werden beim Zusammenführen zusammengeführt; mehrere deutsche Bedeutungen bleiben erhalten.
+## Lernen
+- Falsche Antworten im Übungsmodus erhalten einen großen, mindestens fünf Sekunden sichtbaren **MERKEN**-Hinweis.
+- Bei eigenen Vokabelsets kann optional **„Nach Fehler selbst schreiben“** aktiviert werden.
+- Ist diese Option aktiv, muss die englische Vokabel einmal korrekt eingegeben werden, bevor die Lernüberlagerung geschlossen werden kann.
+- Highscore und Live bleiben schnell und werden nicht durch diese Lernüberlagerung verändert.
 
-## Verwaltung
-
-Gespeicherte Sets können:
-
-- umbenannt,
-- inhaltlich bearbeitet,
-- dupliziert,
-- gelöscht werden.
-
-Das Löschen betrifft nur die lokale Vocab-Rush-Bibliothek dieses Browsers.
-
-## Mehrseiten-Import
-
-- Bilder und Screenshots können mehrfach hinzugefügt werden, ohne vorherige Seiten zu ersetzen.
-- Drag & Drop wird unterstützt.
-- PDFs werden im Browser seitenweise gerendert; maximal 20 Importseiten pro Arbeitsvorgang.
-- Pro Seite kann vor der KI-Erkennung ein Ausschnitt gewählt werden.
-- Bereits ausgelesene Seiten werden nicht erneut an die KI geschickt, solange ihr Ausschnitt nicht geändert wurde.
-- Neue Seiten können später ergänzt und separat ausgelesen werden.
-- Ergebnisse mehrerer Seiten werden zusammengeführt und dedupliziert.
-
-## Datenschutz / Verarbeitung
-
-Die Importseiten werden für den Prototyp im Browser gehalten und einzeln an die bestehende `vocabRushApi`-Erkennung geschickt. Das bestehende Backend speichert das Foto nicht als Vokabelset; gespeichert wird lokal erst die vom Nutzer geprüfte strukturierte Vokabelliste.
+## Produktprinzip
+Vokabelinhalt und Spielmodus bleiben getrennt: Dasselbe Set kann in Üben und Live verwendet werden; ein späterer Set-spezifischer Highscore kann ergänzt werden.
