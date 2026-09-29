@@ -16,7 +16,11 @@ if ! command -v node >/dev/null || [ "$(node -p 'Number(process.versions.node.sp
 fi
 command -v firebase >/dev/null || { echo "Firebase CLI fehlt."; exit 1; }
 
-echo "Prüfe Functions für STAGING: $PROJECT_ID"
+# IMPORTANT: firebase.json now has more than one Functions codebase. This legacy
+# helper is intentionally restricted to the existing AI codebase. The secure
+# assessment codebase has its own reviewed deployment script and must never be
+# pulled in by a broad `--only functions` selector.
+echo "Prüfe AI-Functions für STAGING: $PROJECT_ID"
 (
   cd functions
   npm ci --include=dev
@@ -24,7 +28,7 @@ echo "Prüfe Functions für STAGING: $PROJECT_ID"
   npm run check
 )
 
-echo "Deploye ausschließlich Functions auf STAGING: $PROJECT_ID"
-firebase deploy --project "$PROJECT_ID" --only functions --non-interactive
+echo "Deploye ausschließlich Functions-Codebase 'ai' auf STAGING: $PROJECT_ID"
+firebase deploy --project "$PROJECT_ID" --only functions:ai --non-interactive
 
-echo "Functions-Staging-Deploy abgeschlossen. Production wurde nicht berührt."
+echo "AI-Functions-Staging-Deploy abgeschlossen. Assessment und Production wurden nicht berührt."
