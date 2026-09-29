@@ -11,7 +11,7 @@ done
 if [ ! -d tools/ui/node_modules/jsdom ]; then
   npm ci --prefix tools/ui --no-audit --no-fund
 fi
-node --test ai-*.test.js ordering-grading.test.mjs gradecrew-tour.test.mjs crew-tour-gc23-polish.test.mjs crew-tour-gc24-polish.test.mjs crew-tour-gc25-final-polish.test.mjs remy-ai-help.test.mjs
+node --test ai-*.test.js ordering-grading.test.mjs gradecrew-tour.test.mjs gradecrew-tour-v8-dashboard.test.mjs crew-tour-gc23-polish.test.mjs crew-tour-gc24-polish.test.mjs crew-tour-gc25-final-polish.test.mjs remy-ai-help.test.mjs
 npm test --prefix tools/ui
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-staging.XXXXXX")"
 trap 'rm -rf "$BUILD_DIR"' EXIT
