@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = [{
-  files: ["index.js", "lib/**/*.js", "test/**/*.js"],
+  files: ["*.js", "lib/**/*.js", "test/**/*.js"],
   languageOptions: {
     sourceType: "commonjs",
     globals: {
