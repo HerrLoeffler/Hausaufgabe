@@ -27,6 +27,6 @@
 @media(max-width:640px){#authView .authIntro{grid-template-columns:1fr;gap:8px}#authView .gcClayHero{margin-top:0}}
 
 /* The real start control stays below the guide in document flow, including on phones. */
-body.gcRealTourActive.gcTourInlineStart{overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
+body.gcRealTourActive.gcTourInlineStart:not(.gcTourAnswering){overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
 .gcRealCoach.gcCoachInlineStart{position:relative!important;inset:auto!important;transform:none!important;width:100%!important;max-width:600px!important;max-height:none!important;margin:16px auto!important;box-sizing:border-box;z-index:auto!important}
 .gcTourInlineStart #studentStartGate{scroll-margin-block:20px}
