@@ -9,7 +9,7 @@ function patchSecureSolutionSetting() {
 
   const hint = document.createElement("small");
   hint.className = "hint secureSolutionPolicyHint";
-  hint.textContent = "Sicherheitsmodus: Lösungen werden erst freigegeben, wenn du den Test beendest – nie direkt nach der Abgabe einzelner Schüler.";
+  hint.textContent = "Sicherheitsmodus: Lösungen werden erst freigegeben, wenn du den Test beendest – nie direkt nach der Abgabe einzelner Schüler. Aktiviere das nur, wenn du denselben Test danach nicht unverändert mit einer weiteren Gruppe verwenden möchtest.";
   label.insertAdjacentElement("afterend", hint);
 }
 
@@ -51,9 +51,29 @@ function patchPublishedAssessmentLock() {
   }
 }
 
+function patchDashboardPublishToggles() {
+  document.querySelectorAll(".dashboardPublishToggle").forEach(toggle => {
+    const activePublished = toggle.checked === true;
+    if (activePublished) {
+      if (!Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
+        toggle.dataset.secureWasDisabled = String(toggle.disabled);
+      }
+      toggle.disabled = true;
+      toggle.title = "Ein laufender Test wird über „Beenden“ geschlossen – nicht wieder zum Entwurf gemacht.";
+      toggle.setAttribute("aria-label", "Veröffentlicht. Zum Schließen des laufenden Tests bitte „Beenden“ verwenden.");
+    } else if (Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
+      toggle.disabled = toggle.dataset.secureWasDisabled === "true";
+      delete toggle.dataset.secureWasDisabled;
+      toggle.removeAttribute("title");
+      toggle.removeAttribute("aria-label");
+    }
+  });
+}
+
 function patchAll() {
   patchSecureSolutionSetting();
   patchPublishedAssessmentLock();
+  patchDashboardPublishToggles();
 }
 
 patchAll();
