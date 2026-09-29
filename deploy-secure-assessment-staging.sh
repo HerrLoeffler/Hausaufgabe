@@ -3,26 +3,36 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 PROJECT_ID="hausaufgabe-staging"
+PRODUCTION_ID="hausaufgabe-40294"
 BRANCH="feature/secure-assessment-v1"
 
+if [[ "$PROJECT_ID" == "$PRODUCTION_ID" ]]; then
+  echo "FEHLER: Staging-Ziel entspricht Production. Abbruch."
+  exit 1
+fi
 if [[ "$(git branch --show-current)" != "$BRANCH" ]]; then
   echo "FEHLER: Secure Assessment darf derzeit nur vom Branch $BRANCH deployed werden."
   exit 1
 fi
-
 if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   echo "FEHLER: Nicht gespeicherte Repository-Änderungen. Erst sichern oder verwerfen."
   git status --short
   exit 1
 fi
-
 if [[ "$(node -p 'process.versions.node.split(".")[0]')" != "22" ]]; then
   echo "FEHLER: Node 22 erforderlich. Bitte zuerst: nvm use 22"
   exit 1
 fi
-
 if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   echo "FEHLER: Staging-Konfiguration zeigt nicht auf $PROJECT_ID."
+  exit 1
+fi
+if [[ "$(node -p 'require("./assessment-functions/package.json").main')" != "main.js" ]]; then
+  echo "FEHLER: Assessment-Codebase zeigt nicht auf main.js."
+  exit 1
+fi
+if grep -q 'require("./index")' assessment-functions/main.js || ! grep -q 'secure-lifecycle' assessment-functions/main.js; then
+  echo "FEHLER: Assessment-Einstieg ist nicht der gehärtete Secure-Lifecycle."
   exit 1
 fi
 
@@ -31,19 +41,22 @@ command -v firebase >/dev/null || {
   exit 1
 }
 
-# Kein package-lock während des Prüfdeploys erzeugen; der Branch muss sauber bleiben.
 npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
-node --test secure-assessment-client.test.mjs secure-student.test.mjs
+node --test secure-assessment-client.test.mjs secure-student.test.mjs secure-student-route.test.mjs secure-firestore-rules.test.mjs
 
-cat <<'EOF'
+cat <<EOF
 ==========================================
  GRADECREW SECURE ASSESSMENT · STAGING
 ==========================================
-Es werden ausschließlich die Functions des Codebase "assessment" auf
+Projekt: $PROJECT_ID
+Branch:  $BRANCH
+Commit:  $(git rev-parse HEAD)
+
+Es werden ausschließlich die Functions der Codebase "assessment" auf
 hausaufgabe-staging veröffentlicht. Hosting, Firestore-Regeln, die bestehende
-KI-Codebase und Production bleiben unverändert.
+AI-Codebase und Production ($PRODUCTION_ID) bleiben unverändert.
 EOF
 
 firebase deploy \
@@ -53,4 +66,4 @@ firebase deploy \
 
 echo
 echo "Secure Assessment Backend auf Staging veröffentlicht."
-echo "Nächster Schritt: sicheren Schülerclient separat auf Staging veröffentlichen und adversarial testen."
+echo "Noch KEIN Security-Cutover: Hosting und Firestore-Regeln sind unverändert."
