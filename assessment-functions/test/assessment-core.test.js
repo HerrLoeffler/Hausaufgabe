@@ -12,7 +12,9 @@ const {
   assertNoSolutionLeak
 } = require("../lib/assessment-core");
 
-const TOKEN = "abcdefghijklmnopqrstuvwxyzABCDE_1234567890";
+const CLIENT_TOKEN = "abcdefghijklmnopqrstuvwxyzABCDE_1234567890";
+const PAPER_SECRET = "server_only_paper_secret_ABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890";
+const OTHER_PAPER_SECRET = "another_server_secret_ZYXWVUTSRQPONMLKJIHGFEDCBA_9876543210";
 
 function sampleQuestions() {
   return [
@@ -66,15 +68,15 @@ function sampleQuestions() {
 }
 
 test("attempt token is stored only as a one-way hash", () => {
-  const hash = tokenHash(TOKEN);
+  const hash = tokenHash(CLIENT_TOKEN);
   assert.match(hash, /^[a-f0-9]{64}$/);
-  assert.notEqual(hash, TOKEN);
-  assert.equal(secureTokenMatches(TOKEN, hash), true);
-  assert.equal(secureTokenMatches(`${TOKEN}x`, hash), false);
+  assert.notEqual(hash, CLIENT_TOKEN);
+  assert.equal(secureTokenMatches(CLIENT_TOKEN, hash), true);
+  assert.equal(secureTokenMatches(`${CLIENT_TOKEN}x`, hash), false);
 });
 
 test("student paper contains no direct solution fields across every supported interaction", () => {
-  const { paper } = buildAssessmentContract(sampleQuestions(), TOKEN);
+  const { paper } = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
   assert.equal(assertNoSolutionLeak(paper), true);
   const raw = JSON.stringify(paper);
   assert.doesNotMatch(raw, /acceptedAnswers|correctBoolean|numericAnswer|targetWords|acceptedOrders|gradingKey|answerKey/);
@@ -82,14 +84,26 @@ test("student paper contains no direct solution fields across every supported in
   assert.doesNotMatch(raw, /\[am\|'m\]|\[are\|'re\]/);
 });
 
+test("client attempt credential cannot reproduce the server-only opaque answer mapping", () => {
+  const actual = buildAssessmentContract(sampleQuestions(), PAPER_SECRET).paper;
+  const guessedWithClientToken = buildAssessmentContract(sampleQuestions(), CLIENT_TOKEN).paper;
+  const actualSingle = actual.find(q => q.id === "single");
+  const guessedSingle = guessedWithClientToken.find(q => q.id === "single");
+  assert.notDeepEqual(actualSingle.options.map(option => option.id), guessedSingle.options.map(option => option.id));
+  const actualOrder = actual.find(q => q.id === "order");
+  const guessedOrder = guessedWithClientToken.find(q => q.id === "order");
+  assert.notDeepEqual(actualOrder.items.map(item => item.id), guessedOrder.items.map(item => item.id));
+});
+
 test("matching, grouping and ordering do not reveal their answer mapping through IDs or source order", () => {
-  const { paper } = buildAssessmentContract(sampleQuestions(), TOKEN);
+  const { paper } = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
   const matching = paper.find(q => q.id === "match");
   assert.equal(matching.leftItems.length, 2);
   assert.equal(matching.rightItems.length, 2);
   assert.ok(matching.leftItems.every(x => !/^\d+$/.test(x.id)));
   assert.ok(matching.rightItems.every(x => !/^\d+$/.test(x.id)));
   assert.notDeepEqual(matching.leftItems.map(x => x.id), matching.rightItems.map(x => x.id));
+  assert.notDeepEqual(matching.rightItems.map(item => item.text), ["Berlin", "Paris"]);
 
   const grouping = paper.find(q => q.id === "group");
   assert.ok(grouping.groups.every(group => !group.items));
@@ -100,10 +114,10 @@ test("matching, grouping and ordering do not reveal their answer mapping through
   assert.notDeepEqual(ordering.items.map(item => item.text), ["first", "second", "third"]);
 });
 
-test("same attempt token produces a stable paper; another attempt receives different opaque IDs and shuffle", () => {
-  const one = buildAssessmentContract(sampleQuestions(), TOKEN);
-  const again = buildAssessmentContract(sampleQuestions(), TOKEN);
-  const other = buildAssessmentContract(sampleQuestions(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz123456");
+test("same paper secret produces a stable paper; another server secret changes opaque IDs and shuffle", () => {
+  const one = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
+  const again = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
+  const other = buildAssessmentContract(sampleQuestions(), OTHER_PAPER_SECRET);
   assert.deepEqual(one.paper, again.paper);
   assert.equal(one.sourceFingerprint, again.sourceFingerprint);
   assert.notDeepEqual(one.paper, other.paper);
@@ -111,7 +125,7 @@ test("same attempt token produces a stable paper; another attempt receives diffe
 });
 
 test("server grading accepts opaque answers and never trusts client points", () => {
-  const { paper, gradingKey } = buildAssessmentContract(sampleQuestions(), TOKEN);
+  const { paper, gradingKey } = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
   const byId = Object.fromEntries(paper.map(question => [question.id, question]));
   const answers = {};
 
@@ -154,8 +168,24 @@ test("server grading accepts opaque answers and never trusts client points", () 
   assert.equal(result.grading.group.correct, true);
 });
 
+test("blank numeric answer never becomes numeric zero", () => {
+  const zeroQuestion = [{ id: "zero", position: 1, type: "number", text: "0 + 0", points: 1, numericAnswer: 0, tolerance: 0 }];
+  const { gradingKey } = buildAssessmentContract(zeroQuestion, PAPER_SECRET);
+  const result = gradeSubmission(gradingKey, { zero: "" });
+  assert.equal(result.autoPoints, 0);
+  assert.equal(result.grading.zero.correct, false);
+});
+
+test("blank truefalse answer never becomes false", () => {
+  const falseQuestion = [{ id: "false", position: 1, type: "truefalse", text: "2 + 2 = 5", points: 1, correctBoolean: false }];
+  const { gradingKey } = buildAssessmentContract(falseQuestion, PAPER_SECRET);
+  const result = gradeSubmission(gradingKey, { false: "" });
+  assert.equal(result.autoPoints, 0);
+  assert.equal(result.grading.false.correct, false);
+});
+
 test("server grading rejects wrong opaque mappings even when displayed labels look plausible", () => {
-  const { paper, gradingKey } = buildAssessmentContract(sampleQuestions(), TOKEN);
+  const { paper, gradingKey } = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
   const matchQ = paper.find(q => q.id === "match");
   const answers = {
     match: {
@@ -169,7 +199,7 @@ test("server grading rejects wrong opaque mappings even when displayed labels lo
 });
 
 test("answer storage drops unknown questions and clamps oversized values", () => {
-  const { gradingKey } = buildAssessmentContract(sampleQuestions(), TOKEN);
+  const { gradingKey } = buildAssessmentContract(sampleQuestions(), PAPER_SECRET);
   const stored = sanitizeAnswersForStorage(gradingKey, {
     single: "x".repeat(5000),
     unknown: "do not store",
