@@ -20,7 +20,17 @@ test("secure assessment client uses callable functions and never imports Firesto
 test("browser stores only its opaque attempt credential, never grading material", () => {
   assert.match(source, /clientAttemptId/);
   assert.match(source, /attemptToken/);
+  assert.match(source, /sessionRunId/);
   assert.doesNotMatch(source, /gradingKey|paperSecret|correctOptionIds|acceptedAnswers|numericAnswer|correctBoolean|targetWords|acceptedOrders/);
+});
+
+test("new teacher run clears only the stale local attempt before resume", () => {
+  const infoBlock = source.slice(source.indexOf("async function getInfo("), source.indexOf("async function start("));
+  assert.match(infoBlock, /quiz\?\.startMode === "teacher"/);
+  assert.match(infoBlock, /session\?\.sessionRunId/);
+  assert.match(infoBlock, /quiz\?\.sessionRunId/);
+  assert.match(infoBlock, /session\.sessionRunId\) !== String\(quiz\.sessionRunId\)/);
+  assert.match(infoBlock, /clearSession\(quizId\)/);
 });
 
 test("submission sends answers but never client-computed points, grade or grading", () => {
