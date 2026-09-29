@@ -7,6 +7,7 @@ on:
       - fix/ai-format-reliability
       - fix/ai-review-workflow
       - fix/gradecrew-staging-polish
+      - feature/gradecrew-secure-ios
   workflow_dispatch:
 
 permissions:
@@ -51,6 +52,7 @@ jobs:
             exit 1
           fi
           node --check app.js
+          node --check secure-exam.js
           node --check ai-client.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
@@ -86,6 +88,8 @@ jobs:
           node --test crew-tour-gc26-story-polish.test.mjs
           node --test student-attempt-guard.test.mjs
           node --test remy-ai-help.test.mjs
+          test -f secure-exam.html
+          test -f secure-exam.css
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
           test -f assets/gradecrew/fox-improve.svg
