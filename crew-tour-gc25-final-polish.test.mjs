@@ -49,13 +49,20 @@ test('gc25 makes Remy own the material and preference language', async t => {
   await settle(w);
   assert.match(prefs.querySelector('p').textContent, /Vorgaben für Remy/);
   assert.doesNotMatch(prefs.querySelector('p').textContent, /KI-Vorgaben/);
+});
 
-  prefs.remove();
-  const legacyPrefs = coach(w, 'Stopp – ein kleiner Unterschied!', 'Im Feld darunter kannst du später persönliche Vorlieben hinterlegen.');
-  w.document.body.append(legacyPrefs);
+test('gc25 also fixes the preference copy when gc23 changes the existing coach in place', async t => {
+  const w = setup(t);
+  const prefs = coach(w, 'Passt das so?', 'Das sind unsere Wünsche für genau diesen Test.');
+  w.document.body.append(prefs);
   await settle(w);
-  assert.match(legacyPrefs.querySelector('p').textContent, /Vorgaben für Remy/);
-  assert.doesNotMatch(legacyPrefs.querySelector('p').textContent, /persönliche Vorlieben|KI-Vorgaben/i);
+
+  prefs.querySelector('h2').textContent = 'Noch ein Tipp für später.';
+  prefs.querySelector('p').textContent = '„Eigene Wünsche“ gelten nur für diesen Test. Unter „Persönliche KI-Vorgaben“ kannst du dagegen Vorlieben hinterlegen.';
+  await settle(w);
+
+  assert.match(prefs.querySelector('p').textContent, /Vorgaben für Remy/);
+  assert.doesNotMatch(prefs.querySelector('p').textContent, /Persönliche KI-Vorgaben|persönliche Vorlieben/i);
 });
 
 test('gc25 shortens Wilma test settings copy', async t => {
