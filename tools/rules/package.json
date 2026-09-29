@@ -1,0 +1,14 @@
+{
+  "name": "gradecrew-security-rules-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:secure": "firebase emulators:exec --project demo-gradecrew-secure --config ../../firebase.secure-assessment-emulator.json --only firestore \"node secure-assessment-rules.emulator.test.mjs\""
+  },
+  "dependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0",
+    "firebase-tools": "15.30.2"
+  }
+}
