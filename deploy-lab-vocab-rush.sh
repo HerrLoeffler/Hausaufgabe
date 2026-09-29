@@ -9,6 +9,7 @@ node --check lab/vocab-rush/app.js
 node --check lab/vocab-rush/library-plus.js
 node --check lab/vocab-rush/mode-consistency.js
 node --check lab/vocab-rush/learning-plus.js
+node --check lab/vocab-rush/ux-polish.js
 node --check lab/vocab-rush/camera-plus.js
 node --check lab/vocab-rush/crop-universal.js
 node --check tools/build-lab-vocab-rush.mjs
