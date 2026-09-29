@@ -48,6 +48,7 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
         interrupted = false
         didActivate = onActivated
         didFail = onFailed
+        didFinish = nil
 
         guard lockdownEnabled else {
             phase = .active
@@ -143,6 +144,7 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
         let callback = didFail
         didFail = nil
         didActivate = nil
+        didFinish = nil
         callback?(message)
     }
 
@@ -158,11 +160,20 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
     func assessmentSessionDidEnd(_ session: AEAssessmentSession) {
         guard self.session === session else { return }
         self.session = nil
+        didActivate = nil
 
         if interrupted {
             phase = .failed
-            status = failureMessage ?? "Prüfungsmodus wurde unterbrochen."
-        } else if failureMessage != nil {
+            let message = failureMessage ?? "Prüfungsmodus wurde unterbrochen."
+            status = message
+            let callback = didFail
+            didFail = nil
+            didFinish = nil
+            callback?(message)
+            return
+        }
+
+        if failureMessage != nil {
             phase = .failed
             status = failureMessage ?? "Prüfungsmodus beendet."
         } else {
@@ -172,7 +183,7 @@ final class SecureAssessmentController: NSObject, ObservableObject, AEAssessment
 
         let callback = didFinish
         didFinish = nil
-        didActivate = nil
+        didFail = nil
         callback?()
     }
 }
