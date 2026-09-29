@@ -273,7 +273,21 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   assert.ok(w.document.querySelector('.reviewBtn.gcTourTarget'));
   tour.notify('review-opened', { submissionId: 'saved-answer' });
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /Aufgabe 5/);
+  const panel = el('reviewPanel');
+  panel.innerHTML = '<div id="reviewQuestions"><div class="reviewQuestion"><strong>5. Write one colour in English.</strong><input class="manualPoints" data-qid="tutorial-5"></div></div><div id="saveOrigin"><button id="saveReview">Bewertung speichern</button></div>';
+  let saves = 0;
+  const save = el('saveReview');
+  save.addEventListener('click', () => saves++);
+  next();
+  const freeCard = panel.querySelector('.reviewQuestion');
+  assert.equal(freeCard.nextElementSibling, save, 'real save button follows free answer');
+  assert.ok(w.document.body.classList.contains('gcTourInlineReview'));
+  assert.equal(w.document.documentElement.classList.contains('gcTourScrollLocked'), false);
+  save.click();
+  assert.equal(saves, 1, 'moving the button preserves its listener');
   tour.notify('review-saved', { submissionId: 'saved-answer' });
+  assert.equal(save.parentElement.id, 'saveOrigin', 'save button restored after review');
+  assert.equal(w.document.body.classList.contains('gcTourInlineReview'), false);
   assert.ok(w.document.querySelector('.gcFinishCrew'));
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /\d+:\d{2} Minuten/);
   if(finishAction==='create') {

@@ -105,6 +105,7 @@ function findFreeResponseCard() {
 function makeReviewLayoutResponsive(coach) {
   const freeCard = findFreeResponseCard();
   if (!freeCard?.parentElement) return;
+  const firstPlacement = coach.dataset.gc25InlineReview !== "1";
   if (coach.dataset.gc25InlineReview !== "1") {
     coach.dataset.gc25InlineReview = "1";
     coach.classList.remove("gc23FreeAnswerCoach");
@@ -116,9 +117,11 @@ function makeReviewLayoutResponsive(coach) {
     // or phones, regardless of the viewport width.
     freeCard.parentElement.insertBefore(coach, freeCard);
   }
-  freeCard.scrollIntoView({ block: "center", behavior: "instant" });
+  // Opening the on-screen keyboard must not repeatedly recenter the card.
+  if (!firstPlacement) return;
+  coach.scrollIntoView({ block: "start", behavior: "instant" });
   requestAnimationFrame(() => {
-    if (freeCard.isConnected) freeCard.scrollIntoView({ block: "center", behavior: "instant" });
+    if (coach.isConnected) coach.scrollIntoView({ block: "start", behavior: "instant" });
   });
 }
 

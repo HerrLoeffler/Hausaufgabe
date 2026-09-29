@@ -2,6 +2,9 @@
    tutorial control is interactive. The coach moves next to the current task. */
 html.gcTourScrollLocked,body.gcRealTourActive:not(.gcTourAnswering){overflow:hidden!important;overscroll-behavior:none!important}
 body.gcRealTourActive:not(.gcTourAnswering){touch-action:none}
+body.gcRealTourActive.gcTourInlineReview:not(.gcTourAnswering){overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
+body.gcTourInlineReview #saveReview.gc23SaveReviewFloating,
+body.gcTourInlineReview #saveReview.gcTourTarget{position:relative!important;inset:auto!important;transform:none!important;display:block;max-width:100%;margin:20px 0 28px;white-space:normal}
 .gcRealCoach{
   position:fixed;z-index:2147482000;width:min(360px,calc(100vw - 28px));max-height:calc(100dvh - 28px);
   box-sizing:border-box;overflow:auto;background:#fffefa;border:1px solid #d7e0dc;border-radius:22px;

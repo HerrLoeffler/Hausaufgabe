@@ -15,7 +15,7 @@ function setup(t) {
   </body></html>`, { url: 'https://example.test', runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window;
   t.after(() => w.close());
-  w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = '1'; };
+  w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = String(Number(this.dataset.scrolled || 0) + 1); };
   w.eval(source.replace(/^export /gm, ''));
   return w;
 }
@@ -74,5 +74,11 @@ test('gc25 puts free-response coach in normal document flow so controls cannot b
   assert.equal(review.nextElementSibling, free);
   assert.equal(review.classList.contains('gc23FreeAnswerCoach'), false);
   assert.ok(free.classList.contains('gc25ResponsiveReview'));
-  assert.equal(free.dataset.scrolled, '1');
+  assert.ok(Number(review.dataset.scrolled) >= 1);
+  await new Promise(resolve => w.setTimeout(resolve, 40));
+  const scrollCount = review.dataset.scrolled;
+  w.innerHeight = 300;
+  w.dispatchEvent(new w.Event('resize'));
+  await new Promise(resolve => w.setTimeout(resolve, 40));
+  assert.equal(review.dataset.scrolled, scrollCount, 'keyboard resize does not recenter the answer');
 });

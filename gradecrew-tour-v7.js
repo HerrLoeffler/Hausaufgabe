@@ -123,7 +123,7 @@ export function installCrewTour(api) {
     clearTarget();
     root?.remove();
     root = null;
-    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart");
+    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart", "gcTourInlineReview");
   }
 
   function stop({ done = false } = {}) {
@@ -161,7 +161,7 @@ export function installCrewTour(api) {
     if (!owned() || !event.isTrusted) return;
     // A whitelisted submit button must be allowed to submit its own form.
     if (event.type === "submit" && targetInteractive && target?.form === event.target) return;
-    if (root?.classList.contains("gcCoachInlineStart") && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
+    if ((root?.classList.contains("gcCoachInlineStart") || document.body.classList.contains("gcTourInlineReview")) && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
     if (isAllowedNode(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -172,6 +172,7 @@ export function installCrewTour(api) {
   function blockKeyboard(event) {
     if (!owned() || !event.isTrusted) return;
     if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (document.body.classList.contains("gcTourInlineReview") && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
     if (isAllowedNode(event.target)) return;
     if (["Tab", "Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown", "Backspace", "Delete", "Escape"].includes(event.key) || event.key.length === 1) {
       event.preventDefault();
@@ -188,7 +189,7 @@ export function installCrewTour(api) {
 
   function place() {
     frame = 0;
-    if (!root?.isConnected || root.classList.contains("gcCoachInlineStart")) return;
+    if (!root?.isConnected || root.classList.contains("gcCoachInlineStart") || root.classList.contains("gc25InlineReviewCoach")) return;
     const rect = root.getBoundingClientRect();
     const margin = 18;
     if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
@@ -268,6 +269,23 @@ export function installCrewTour(api) {
     } else document.body.append(root);
     if (selector) setTarget(selector, { interactive: interactiveTarget, onClick: onTargetClick, deleteTarget });
     else schedulePlace();
+    if (selector === "#saveReview" && freeRegion?.isConnected && target) {
+      // Keep the actual save control next to the answer, without covering it.
+      const save = target;
+      const origin = document.createComment("tutorial-save-review-origin");
+      save.before(origin);
+      freeRegion.after(save);
+      document.body.classList.add("gcTourInlineReview");
+      document.documentElement.classList.remove("gcTourScrollLocked");
+      const previousCleanup = targetCleanup;
+      targetCleanup = () => {
+        previousCleanup?.();
+        if (origin.isConnected) origin.replaceWith(save);
+        else origin.remove();
+        save.classList.remove("gc23SaveReviewFloating");
+        document.body.classList.remove("gcTourInlineReview");
+      };
+    }
     return root;
   }
 
