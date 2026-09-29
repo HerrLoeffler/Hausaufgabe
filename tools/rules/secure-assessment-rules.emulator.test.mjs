@@ -176,7 +176,17 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
     }
   });
 
-  await t.test("ending the test is allowed and only then may owner edit questions", async () => {
+  await t.test("colleague sharing never opens an active assessment answer key", async () => {
+    await assertSucceeds(updateDoc(doc(owner, "quizzes", quizId), {
+      shareEnabled: true,
+      sharedAt: new Date(),
+      updatedAt: new Date()
+    }));
+    await assertFails(getDoc(doc(other, "quizzes", quizId)));
+    await assertFails(getDoc(doc(other, "quizzes", quizId, "questions", "q1")));
+  });
+
+  await t.test("ending the test is allowed and only then restores authoring and colleague sharing", async () => {
     await assertSucceeds(updateDoc(doc(owner, "quizzes", quizId), {
       ended: true,
       endedAt: new Date(),
@@ -185,6 +195,8 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
     await assertSucceeds(updateDoc(doc(owner, "quizzes", quizId, "questions", "q1"), {
       text: "Nach Testende editierbar"
     }));
+    await assertSucceeds(getDoc(doc(other, "quizzes", quizId)));
+    await assertSucceeds(getDoc(doc(other, "quizzes", quizId, "questions", "q1")));
     await assertFails(setDoc(doc(owner, "quizzes", quizId, "attempts", "owner-after-end"), {
       studentName: "Zu spät"
     }));
