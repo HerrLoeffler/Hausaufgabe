@@ -1,0 +1,7 @@
+{
+  "functions": [{
+    "source": "lab/vocab-rush-functions",
+    "codebase": "vocabrush",
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+  }]
+}
