@@ -43,6 +43,10 @@ if ! grep -q 'secure-lifecycle' assessment-functions/main.js; then
   echo "FEHLER: main.js exportiert den autoritativen Secure-Lifecycle nicht."
   exit 1
 fi
+if ! grep -q '"codebase": "assessment"' firebase.json; then
+  echo "FEHLER: firebase.json enthält die isolierte Assessment-Codebase nicht."
+  exit 1
+fi
 
 # Exact top-level dependency versions are pinned in package.json. A committed
 # package-lock remains a release-hygiene follow-up before Production; Preview
@@ -50,19 +54,50 @@ fi
 npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
-node --test secure-assessment-client.test.mjs secure-student.test.mjs secure-student-route.test.mjs secure-firestore-rules.test.mjs
+
+node --check secure-assessment-client.js
+node --check secure-student.js
+node --check secure-deadline-guard.js
+node --check secure-result-policy.js
+node --check secure-solution-release.js
+node --check secure-assessment-teacher-polish.js
+node --check startup.js
+
+node --test \
+  secure-assessment-client.test.mjs \
+  secure-student.test.mjs \
+  secure-deadline-guard.test.mjs \
+  secure-result-policy.test.mjs \
+  secure-solution-release.test.mjs \
+  secure-assessment-teacher-polish.test.mjs \
+  secure-student-route.test.mjs \
+  secure-firestore-rules.test.mjs
 
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-secure-preview.XXXXXX")"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-staging.mjs "$BUILD_DIR"
-test -f "$BUILD_DIR/public/secure-student.html"
-test -f "$BUILD_DIR/public/secure-student.js"
-test -f "$BUILD_DIR/public/secure-assessment-client.js"
+for REQUIRED in \
+  secure-student.html \
+  secure-student.js \
+  secure-assessment-client.js \
+  secure-deadline-guard.js \
+  secure-result-policy.js \
+  secure-solution-release.js \
+  secure-assessment-teacher-polish.js; do
+  test -f "$BUILD_DIR/public/$REQUIRED" || {
+    echo "FEHLER: $REQUIRED fehlt im Preview-Build."
+    exit 1
+  }
+done
+grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
+grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
+grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
 
 if [[ "$MODE" = "--check" ]]; then
   echo "Secure Assessment Preview geprüft. Es wurde nichts veröffentlicht."
   echo "Commit: $(git rev-parse HEAD)"
+  echo "Hinweis: Die semantischen Firestore-Emulator-Tests laufen verpflichtend in GitHub CI mit Java 21."
   exit 0
 fi
 
