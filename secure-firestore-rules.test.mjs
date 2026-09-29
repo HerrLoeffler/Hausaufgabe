@@ -32,16 +32,31 @@ test("active published assessment content is immutable to ordinary teacher clien
   assert.match(questions, /allow create, update, delete: if quizContentEditable\(quizId\) \|\| isAdmin\(\)/);
 });
 
-test("students cannot create or update attempts directly", () => {
+test("anonymous students cannot write attempts; only active owner self-test may create one", () => {
+  assert.match(rules, /function ownerSelfTestAllowed\(quizId\)/);
   const attempts = block("match /attempts/{attemptId}", "match /submissions/{submissionId}");
-  assert.match(attempts, /allow create, update: if false/);
+  assert.match(attempts, /allow create: if ownerSelfTestAllowed\(quizId\)/);
   assert.match(attempts, /allow get, list, delete: if ownsQuiz\(quizId\) \|\| isAdmin\(\)/);
+  assert.match(attempts, /allow update: if false/);
+  assert.doesNotMatch(attempts, /quizPublished/);
 });
 
-test("students cannot create submissions directly", () => {
+test("anonymous students cannot create submissions; owner self-test remains narrowly available", () => {
   const submissions = block("match /submissions/{submissionId}", "match /assessmentPrivate/{privateId}");
-  assert.match(submissions, /allow create: if false/);
-  assert.match(submissions, /allow read, update, delete: if ownsQuiz\(quizId\) \|\| isAdmin\(\)/);
+  assert.match(submissions, /allow create: if ownerSelfTestAllowed\(quizId\)/);
+  assert.match(submissions, /request\.resource\.data\.answers is map/);
+  assert.doesNotMatch(submissions, /quizPublished/);
+});
+
+test("teacher review cannot rewrite original student answers or secure receipt metadata", () => {
+  const submissions = block("match /submissions/{submissionId}", "match /assessmentPrivate/{privateId}");
+  assert.match(submissions, /affectedKeys\(\)\.hasOnly/);
+  for (const field of ["grading", "totalPoints", "maxPoints", "percent", "grade", "gradeScaleSnapshot", "status", "reviewedAt", "reviewedBy"]) {
+    assert.match(submissions, new RegExp(`'${field}'`));
+  }
+  assert.doesNotMatch(submissions, /'answers'/);
+  assert.doesNotMatch(submissions, /'attemptId'/);
+  assert.doesNotMatch(submissions, /'secureAnswerDigest'/);
 });
 
 test("assessment secrets and rate limits are never client-readable or writable", () => {
