@@ -1,5 +1,6 @@
 "use strict";
 
+const { randomBytes } = require("node:crypto");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
@@ -71,8 +72,8 @@ function timestampFromMillis(value) {
 
 function validateQuizOpen(quiz) {
   if (!quiz) throw new HttpsError("not-found", "Dieser Test existiert nicht.");
-  if (quiz.get ? quiz.get("isDeleted", false) : quiz.isDeleted === true) throw new HttpsError("not-found", "Dieser Test ist nicht verfügbar.");
-  if (quiz.get ? quiz.get("rightsHold", false) : quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist vorübergehend gesperrt.");
+  if (quiz.isDeleted === true) throw new HttpsError("not-found", "Dieser Test ist nicht verfügbar.");
+  if (quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist vorübergehend gesperrt.");
   if (quiz.published !== true) throw new HttpsError("failed-precondition", "Dieser Test ist noch nicht veröffentlicht.");
   if (quiz.ended === true) throw new HttpsError("failed-precondition", "Dieser Test wurde beendet.");
 }
@@ -139,12 +140,22 @@ function submissionRef(quizId, attemptId) {
   return getFirestore().doc(`quizzes/${quizId}/submissions/${attemptId}`);
 }
 
+function assessmentPrivateRef(quizId, attemptId) {
+  return getFirestore().doc(`assessmentPrivate/${quizId}_${attemptId}`);
+}
+
 function deriveAttemptId(quizId, clientAttemptId) {
   return `a_${sha256(`gradecrew-attempt:v1:${quizId}:${clientAttemptId}`).slice(0, 28)}`;
 }
 
-function assertAttemptToken(attempt, token) {
-  if (!secureTokenMatches(token, attempt?.tokenHash)) throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch gehört nicht zu diesem Browser.");
+function createPaperSecret() {
+  return randomBytes(32).toString("base64url");
+}
+
+function assertAttemptToken(privateData, token) {
+  if (!secureTokenMatches(token, privateData?.tokenHash)) {
+    throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch gehört nicht zu diesem Browser.");
+  }
 }
 
 function assertSameRun(attempt, quiz) {
@@ -163,13 +174,10 @@ async function rateLimitStart(request, quizId, tx) {
   const ref = getFirestore().doc(`assessmentRateLimits/${day}-${rateId}`);
   const snap = await tx.get(ref);
   const count = Number(snap.data()?.count || 0);
-  if (count >= START_RATE_LIMIT_PER_DAY) throw new HttpsError("resource-exhausted", "Für diesen Test wurden von diesem Anschluss heute ungewöhnlich viele Starts angefordert.");
-  tx.set(ref, {
-    count: count + 1,
-    quizId,
-    day,
-    updatedAt: Timestamp.now()
-  }, { merge: true });
+  if (count >= START_RATE_LIMIT_PER_DAY) {
+    throw new HttpsError("resource-exhausted", "Für diesen Test wurden von diesem Anschluss heute ungewöhnlich viele Starts angefordert.");
+  }
+  tx.set(ref, { count: count + 1, quizId, day, updatedAt: Timestamp.now() }, { merge: true });
 }
 
 function gradingScaleSnapshot(quiz) {
@@ -203,9 +211,10 @@ function makeReceipt(submission, quiz) {
   return receipt;
 }
 
-async function contractForExistingAttempt(quizId, token, expectedFingerprint) {
+async function contractForExistingAttempt(quizId, paperSecret, expectedFingerprint) {
+  if (!paperSecret) throw new HttpsError("data-loss", "Die sichere Aufgabenabbildung fehlt.");
   const questions = await readQuestions(quizId);
-  const contract = buildAssessmentContract(questions, token);
+  const contract = buildAssessmentContract(questions, paperSecret);
   assertNoSolutionLeak(contract.paper);
   if (expectedFingerprint && contract.sourceFingerprint !== expectedFingerprint) {
     throw new HttpsError(
@@ -234,9 +243,9 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   validateQuizOpen(quiz);
   const questions = await readQuestions(quizId);
   if (!questions.length) throw new HttpsError("failed-precondition", "Dieser Test enthält keine Aufgaben.");
-  const contract = buildAssessmentContract(questions, attemptToken);
-  assertNoSolutionLeak(contract.paper);
-  const ref = attemptRef(quizId, id);
+
+  const aRef = attemptRef(quizId, id);
+  const pRef = assessmentPrivateRef(quizId, id);
   const now = Date.now();
   const mode = sessionMode(quiz);
   const desiredStatus = attemptStatusForStart(quiz);
@@ -244,17 +253,24 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   const limit = timeLimitMinutes(quiz);
   const deadlineAt = deadlineMillis(startedAtMillis, limit);
   const scale = gradingScaleSnapshot(quiz);
+  const newPaperSecret = createPaperSecret();
+  const newContract = buildAssessmentContract(questions, newPaperSecret);
+  assertNoSolutionLeak(newContract.paper);
 
   let storedAttempt;
+  let storedPrivate;
+  let createdNew = false;
   await db.runTransaction(async tx => {
-    const existing = await tx.get(ref);
-    if (existing.exists) {
-      const data = existing.data();
-      assertAttemptToken(data, attemptToken);
-      if (String(data.studentName || "") !== studentName) {
+    const existingAttempt = await tx.get(aRef);
+    const existingPrivate = await tx.get(pRef);
+    if (existingAttempt.exists || existingPrivate.exists) {
+      if (!existingAttempt.exists || !existingPrivate.exists) throw new HttpsError("data-loss", "Der Bearbeitungsversuch ist unvollständig gespeichert.");
+      storedAttempt = existingAttempt.data();
+      storedPrivate = existingPrivate.data();
+      assertAttemptToken(storedPrivate, attemptToken);
+      if (String(storedAttempt.studentName || "") !== studentName) {
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
-      storedAttempt = data;
       return;
     }
 
@@ -263,7 +279,6 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       attemptId: id,
       quizId,
       studentName,
-      tokenHash: tokenHash(attemptToken),
       mode,
       status: desiredStatus,
       sessionRunId: mode === "teacher" ? String(quiz.sessionRunId || "") || null : null,
@@ -271,23 +286,35 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       joinedAt: Timestamp.now(),
       startedAt: timestampFromMillis(startedAtMillis),
       deadlineAt: timestampFromMillis(deadlineAt),
-      sourceFingerprint: contract.sourceFingerprint,
-      gradingKey: contract.gradingKey,
       gradeScaleSnapshot: scale,
       resultMode: String(quiz.resultMode || "points_grade").slice(0, 40),
-      questionCount: contract.paper.length,
-      maxPoints: contract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
+      questionCount: newContract.paper.length,
+      maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
+      secureAssessmentVersion: 1,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     };
-    tx.create(ref, created);
+    const privateData = {
+      quizId,
+      attemptId: id,
+      tokenHash: tokenHash(attemptToken),
+      paperSecret: newPaperSecret,
+      sourceFingerprint: newContract.sourceFingerprint,
+      gradingKey: newContract.gradingKey,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
+    };
+    tx.create(aRef, created);
+    tx.create(pRef, privateData);
     storedAttempt = created;
+    storedPrivate = privateData;
+    createdNew = true;
   });
 
   assertSameRun(storedAttempt, quiz);
-  if (storedAttempt.sourceFingerprint !== contract.sourceFingerprint) {
-    throw new HttpsError("failed-precondition", "Dieser Bearbeitungsversuch passt nicht mehr zur aktuellen Testversion.");
-  }
+  const contract = createdNew
+    ? newContract
+    : await contractForExistingAttempt(quizId, storedPrivate.paperSecret, storedPrivate.sourceFingerprint);
   return attemptPublicState(storedAttempt, quiz, storedAttempt.status === "running" ? contract.paper : null);
 });
 
@@ -297,16 +324,21 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
   const token = cleanAttemptToken(request.data?.attemptToken);
   const db = getFirestore();
   const { data: quiz } = await readQuiz(quizId);
-  const ref = attemptRef(quizId, id);
-  let snap = await ref.get();
-  if (!snap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
-  let attempt = snap.data();
-  assertAttemptToken(attempt, token);
+  const aRef = attemptRef(quizId, id);
+  const pRef = assessmentPrivateRef(quizId, id);
+  let [attemptSnap, privateSnap] = await Promise.all([aRef.get(), pRef.get()]);
+  if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
+  let attempt = attemptSnap.data();
+  let privateData = privateSnap.data();
+  assertAttemptToken(privateData, token);
 
   if (attempt.status === "submitted") {
     const submissionSnap = await submissionRef(quizId, id).get();
     if (!submissionSnap.exists) throw new HttpsError("data-loss", "Die Abgabe konnte nicht geladen werden.");
-    return { ...attemptPublicState(attempt, quiz, null), receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, quiz) };
+    return {
+      ...attemptPublicState(attempt, quiz, null),
+      receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, quiz)
+    };
   }
 
   validateQuizOpen(quiz);
@@ -316,12 +348,11 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
     const startedAtMillis = toMillis(quiz.sessionStartedAt) || Date.now();
     const deadlineAt = deadlineMillis(startedAtMillis, attempt.timeLimitMinutes);
     await db.runTransaction(async tx => {
-      const current = await tx.get(ref);
+      const current = await tx.get(aRef);
       if (!current.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
       const data = current.data();
-      assertAttemptToken(data, token);
       if (data.status === "ready") {
-        tx.update(ref, {
+        tx.update(aRef, {
           status: "running",
           startedAt: timestampFromMillis(startedAtMillis),
           deadlineAt: timestampFromMillis(deadlineAt),
@@ -329,12 +360,14 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
         });
       }
     });
-    snap = await ref.get();
-    attempt = snap.data();
+    [attemptSnap, privateSnap] = await Promise.all([aRef.get(), pRef.get()]);
+    attempt = attemptSnap.data();
+    privateData = privateSnap.data();
+    assertAttemptToken(privateData, token);
   }
 
   const contract = attempt.status === "running"
-    ? await contractForExistingAttempt(quizId, token, attempt.sourceFingerprint)
+    ? await contractForExistingAttempt(quizId, privateData.paperSecret, privateData.sourceFingerprint)
     : null;
   return attemptPublicState(attempt, quiz, contract?.paper || null);
 });
@@ -347,14 +380,18 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
   const db = getFirestore();
   const { data: quiz } = await readQuiz(quizId);
   const aRef = attemptRef(quizId, id);
+  const pRef = assessmentPrivateRef(quizId, id);
   const sRef = submissionRef(quizId, id);
 
   let receipt;
   await db.runTransaction(async tx => {
-    const [attemptSnap, existingSubmission] = await Promise.all([tx.get(aRef), tx.get(sRef)]);
-    if (!attemptSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
+    const attemptSnap = await tx.get(aRef);
+    const privateSnap = await tx.get(pRef);
+    const existingSubmission = await tx.get(sRef);
+    if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
     const attempt = attemptSnap.data();
-    assertAttemptToken(attempt, token);
+    const privateData = privateSnap.data();
+    assertAttemptToken(privateData, token);
 
     if (existingSubmission.exists || attempt.status === "submitted") {
       if (!existingSubmission.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
@@ -373,7 +410,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
       throw new HttpsError("deadline-exceeded", "Die serverseitige Abgabefrist ist abgelaufen. Bitte wende dich an deine Lehrkraft.");
     }
 
-    const gradingKey = Array.isArray(attempt.gradingKey) ? attempt.gradingKey : [];
+    const gradingKey = Array.isArray(privateData.gradingKey) ? privateData.gradingKey : [];
     if (!gradingKey.length) throw new HttpsError("data-loss", "Der serverseitige Bewertungsschlüssel fehlt.");
     const answers = sanitizeAnswersForStorage(gradingKey, request.data?.answers);
     const result = gradeSubmission(gradingKey, answers);
@@ -409,8 +446,13 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
       status: "submitted",
       submittedAt,
       submissionId: id,
-      updatedAt: submittedAt,
-      gradingKey: FieldValue.delete()
+      updatedAt: submittedAt
+    });
+    tx.update(pRef, {
+      gradingKey: FieldValue.delete(),
+      paperSecret: FieldValue.delete(),
+      sourceFingerprint: FieldValue.delete(),
+      updatedAt: submittedAt
     });
     receipt = makeReceipt(submission, quiz);
   });
@@ -422,13 +464,14 @@ exports.getAssessmentReceipt = onCall(callableOpts, async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
-  const [quizResult, attemptSnap, submissionSnap] = await Promise.all([
+  const [quizResult, attemptSnap, privateSnap, submissionSnap] = await Promise.all([
     readQuiz(quizId),
     attemptRef(quizId, id).get(),
+    assessmentPrivateRef(quizId, id).get(),
     submissionRef(quizId, id).get()
   ]);
-  if (!attemptSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
-  assertAttemptToken(attemptSnap.data(), token);
+  if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
+  assertAttemptToken(privateSnap.data(), token);
   if (!submissionSnap.exists) throw new HttpsError("failed-precondition", "Für diesen Versuch liegt noch keine Abgabe vor.");
   return { receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, quizResult.data) };
 });
