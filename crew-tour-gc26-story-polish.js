@@ -41,6 +41,13 @@ function installStyles() {
     .gc26NameSign:before{content:"";position:absolute;left:-12px;top:50%;width:12px;height:2px;background:#b89b67}
     .gc26NameSign strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
     .gc26NameHeart{color:#c35c62;font-size:17px;line-height:1}
+    .gc26NameReveal .gcCoachIdentity{display:flex!important;flex-direction:column;align-items:center;text-align:center}
+    .gc26NamePortrait{position:relative;width:220px;max-width:100%;flex:none}
+    .gc26NamePortrait>img{display:block!important;width:100%!important;height:auto!important;max-width:none!important;animation:none!important}
+    .gc26NamePortrait .gc26NameSign{position:absolute;left:23%;top:54%;width:54%;height:17%;min-width:0;max-width:none;padding:0;border:0;border-radius:0;background:none;box-shadow:none;transform:none;animation:none;justify-content:center;text-align:center}
+    .gc26NamePortrait .gc26NameSign:before,.gc26NamePortrait .gc26NameHeart{display:none}
+    .gc26NamePortrait .gc26NameSign strong{white-space:normal;overflow:visible;overflow-wrap:anywhere;line-height:1.1;font-size:15px}
+    .gc26NamePortrait .gc26LongName strong{font-size:10px}
     @keyframes gc26Pass{from{opacity:.25;transform:translateX(-7px)}to{opacity:1;transform:none}}
     @keyframes gc26Write{0%{opacity:0;transform:translate(-5px,5px) rotate(-10deg)}100%{opacity:1;transform:rotate(-5deg)}}
     @keyframes gc26Sign{from{opacity:0;transform:translateY(8px) rotate(-5deg)}to{opacity:1;transform:rotate(-2deg)}}
@@ -72,15 +79,10 @@ function polishHandoff(coach) {
 function polishRemyWorking(coach) {
   const title = titleOf(coach);
   if (!["Wir bauen einen Test für Klasse 4.", "Sag mir, was dir wichtig ist."].includes(title)) return;
-  if (coach.querySelector(".gc26PencilBadge")) return;
   coach.classList.add("gc26RemyWorking");
-  const identity = coach.querySelector(".gcCoachIdentity");
-  if (!identity) return;
-  const badge = document.createElement("span");
-  badge.className = "gc26PencilBadge";
-  badge.setAttribute("aria-hidden", "true");
-  badge.innerHTML = '✏️ <small>Remy trägt ein</small>';
-  identity.appendChild(badge);
+  const image = coach.querySelector(".gcCoachIdentity > img");
+  if (image) { image.src = "/assets/gradecrew/clay-remy-writing.svg"; image.alt = "Remy schreibt mit seinem Rüssel und einem Bleistift."; }
+
 }
 
 function ensureFriendlyNameQuestion(coach) {
@@ -108,7 +110,13 @@ function polishNameReveal(coach) {
   const label = document.createElement("strong");
   label.textContent = name;
   sign.append(heart, label);
-  image.insertAdjacentElement("afterend", sign);
+  const portrait = document.createElement("div");
+  portrait.className = "gc26NamePortrait";
+  image.before(portrait);
+  image.src = "/assets/gradecrew/clay-coco-name.svg";
+  image.alt = "Coco hält ein Namensschild mit einem kleinen Herz.";
+  portrait.append(image, sign);
+  if (name.length > 24) sign.classList.add("gc26LongName");
 }
 
 function patchCoach(coach) {

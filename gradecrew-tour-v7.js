@@ -123,7 +123,7 @@ export function installCrewTour(api) {
     clearTarget();
     root?.remove();
     root = null;
-    document.body.classList.remove("gcCoachVisible");
+    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart");
   }
 
   function stop({ done = false } = {}) {
@@ -161,6 +161,7 @@ export function installCrewTour(api) {
     if (!owned() || !event.isTrusted) return;
     // A whitelisted submit button must be allowed to submit its own form.
     if (event.type === "submit" && targetInteractive && target?.form === event.target) return;
+    if (root?.classList.contains("gcCoachInlineStart") && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
     if (isAllowedNode(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -187,7 +188,7 @@ export function installCrewTour(api) {
 
   function place() {
     frame = 0;
-    if (!root?.isConnected) return;
+    if (!root?.isConnected || root.classList.contains("gcCoachInlineStart")) return;
     const rect = root.getBoundingClientRect();
     const margin = 18;
     if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
@@ -258,7 +259,13 @@ export function installCrewTour(api) {
     root.innerHTML = `<div class="gcCoachIdentity">${image(role)}<div><span>${escapeHtml(CREW[role].name)} · ${escapeHtml(CREW[role].role)}</span><h2>${escapeHtml(title)}</h2></div></div><p>${escapeHtml(text)}</p>${body}${button ? `<button type="button" class="button primary gcCoachNext">${escapeHtml(button)}</button>` : ""}<small>Nur der markierte Schritt ist während der Tour bedienbar.</small>`;
     if (button && onButton) root.querySelector(".gcCoachNext").addEventListener("click", () => { if (!busy) onButton(); });
     document.body.classList.add("gcCoachVisible");
-    document.body.append(root);
+    const startGate = stage === "identity-start" && selector === "#studentStartBtn" ? $("#studentStartGate") : null;
+    if (startGate) {
+      root.classList.add("gcCoachInlineStart");
+      document.body.classList.add("gcTourInlineStart");
+      document.documentElement.classList.remove("gcTourScrollLocked");
+      startGate.before(root);
+    } else document.body.append(root);
     if (selector) setTarget(selector, { interactive: interactiveTarget, onClick: onTargetClick, deleteTarget });
     else schedulePlace();
     return root;

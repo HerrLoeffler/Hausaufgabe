@@ -35,3 +35,6 @@ Validated by existing automated tour/UI tests and build; artwork SVG exports ins
 - While Remy fills the real AI form, his coach card gets a small pencil/work cue so it visually reads as Remy actively entering the values. The real fields remain the focus and nothing new becomes interactive.
 - Coco's name question retains the friendly `Ich darf doch du sagen, oder?` line. After the name is entered, the next Coco scene dynamically shows that exact name on a small warm sign with a heart before the test starts.
 - All additions remain responsive, decorative and reduced-motion safe. They do not change tutorial state, scoring, provider calls or the real editor/student workflow.
+
+## Standalone scenes (clay2)
+Five transparent standalone illustrations replace the three introduction crops and add Remy writing and Coco holding a name sign. The sign uses escaped DOM text, never user HTML. Approved `clay-thanks-remy.svg` is unchanged. These are full-canvas embedded WebP SVGs; no contact-sheet labels or neighboring cells. The student-start coach sits in document flow above the real start gate, with page scrolling enabled.

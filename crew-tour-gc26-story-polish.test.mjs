@@ -42,7 +42,7 @@ test('Remy filling the real form gets a pencil work cue', async t => {
   const node = coach(w, { title:'Wir bauen einen Test für Klasse 4.' });
   await settle(w);
   assert.ok(node.classList.contains('gc26RemyWorking'));
-  assert.match(node.querySelector('.gc26PencilBadge')?.textContent || '', /Remy trägt ein/);
+  assert.match(node.querySelector('.gcCoachIdentity img').src, /clay-remy-writing.svg$/);
 });
 
 test('Coco keeps the du joke and later shows the entered name on a heart sign', async t => {
@@ -56,6 +56,7 @@ test('Coco keeps the du joke and later shows the entered name on a heart sign', 
   assert.ok(reveal.classList.contains('gc26NameReveal'));
   assert.equal(reveal.querySelector('.gc26NameSign strong')?.textContent, 'Martin');
   assert.equal(reveal.querySelector('.gc26NameHeart')?.textContent, '♥');
+  assert.match(reveal.querySelector('.gc26NamePortrait img').src, /clay-coco-name.svg$/);
 });
 
 test('approved Danke Remy scene is untouched', async t => {
@@ -66,3 +67,14 @@ test('approved Danke Remy scene is untouched', async t => {
   assert.equal(node.querySelector('.gc26PencilBadge'), null);
   assert.equal(node.querySelector('.gc26NameSign'), null);
 });
+
+ test('name placard preserves long names as text without creating markup', async t => {
+  const w = setup(t);
+  const name = '<img src=x onerror=alert(1)> Alexandra';
+  const node = coach(w, { title: 'Freut mich, Name!' });
+  node.querySelector('h2').textContent = `Freut mich, ${name}!`;
+  await settle(w);
+  assert.equal(node.querySelector('.gc26NameSign strong').textContent, name);
+  assert.equal(node.querySelector('.gc26NameSign img'), null);
+  assert.ok(node.querySelector('.gc26LongName'));
+ });

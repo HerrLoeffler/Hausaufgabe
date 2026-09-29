@@ -2,7 +2,7 @@ import {
   installCrewTour as installV7,
   CREW,
   DEMO_TEST as V7_DEMO_TEST
-} from "./gradecrew-tour-v7.js?v=clay1";
+} from "./gradecrew-tour-v7.js?v=clay2";
 
 export const TOUR_VERSION = "gradecrew-live-tour-v8";
 export { CREW };
