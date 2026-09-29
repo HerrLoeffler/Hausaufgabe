@@ -17,9 +17,11 @@ struct ExamDestination: Identifiable {
 }
 
 struct StartView: View {
+    @StateObject private var assessment = SecureAssessmentController()
     @State private var testCode = ""
     @State private var errorText: String?
     @State private var destination: ExamDestination?
+    @State private var completionText: String?
 
     var body: some View {
         ZStack {
@@ -57,6 +59,14 @@ struct StartView: View {
                             .foregroundStyle(.white.opacity(0.72))
                     }
 
+                    if let completionText {
+                        Label(completionText, systemImage: "checkmark.seal.fill")
+                            .font(.headline)
+                            .foregroundStyle(.green)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 18)
+                    }
+
                     VStack(spacing: 16) {
                         Text("Testcode eingeben")
                             .font(.headline)
@@ -81,13 +91,16 @@ struct StartView: View {
                         }
 
                         Button(action: openExam) {
-                            Label("Staging-Test öffnen", systemImage: "arrow.right.circle.fill")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
+                            Label(
+                                assessment.lockdownEnabled ? "Prüfungsmodus starten" : "Staging-Test öffnen",
+                                systemImage: assessment.lockdownEnabled ? "lock.shield.fill" : "arrow.right.circle.fill"
+                            )
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
                         }
                         .buttonStyle(.borderedProminent)
-                        .disabled(normalizedCode.count < 4)
+                        .disabled(normalizedCode.count < 4 || assessment.phase == .starting || assessment.phase == .ending)
                     }
                     .padding(24)
                     .frame(maxWidth: 560)
@@ -95,8 +108,10 @@ struct StartView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
 
                     Label(
-                        "Entwicklungsmodus · die iPad-Sperre ist noch nicht aktiv",
-                        systemImage: "hammer.fill"
+                        assessment.lockdownEnabled
+                            ? "AAC-Prüfungsmodus aktiviert"
+                            : "Entwicklungsmodus · AAC ist vorbereitet, aber noch deaktiviert",
+                        systemImage: assessment.lockdownEnabled ? "lock.shield.fill" : "hammer.fill"
                     )
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.58))
@@ -106,11 +121,45 @@ struct StartView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 28)
             }
+
+            if assessment.phase == .starting {
+                SecureTransitionOverlay(
+                    icon: "lock.shield.fill",
+                    title: "Prüfungsmodus wird aktiviert …",
+                    message: assessment.status
+                )
+            }
         }
         .fullScreenCover(item: $destination) { item in
-            ExamView(url: item.url) {
-                destination = nil
-            }
+            ExamView(
+                url: item.url,
+                secureMode: assessment.lockdownEnabled,
+                assessmentPhase: assessment.phase,
+                closeDevelopmentPreview: {
+                    guard !assessment.lockdownEnabled else { return }
+                    destination = nil
+                },
+                submissionConfirmed: {
+                    guard assessment.lockdownEnabled else {
+                        // In development/TestFlight preview mode the web result remains visible.
+                        return
+                    }
+                    assessment.endAfterConfirmedSubmission {
+                        DispatchQueue.main.async {
+                            completionText = "Abgabe gespeichert. Prüfungsmodus sicher beendet."
+                            destination = nil
+                        }
+                    }
+                },
+                testUnavailable: { reason in
+                    assessment.abort(reason: reason) {
+                        DispatchQueue.main.async {
+                            errorText = reason
+                            destination = nil
+                        }
+                    }
+                }
+            )
         }
         .tint(.blue)
     }
@@ -140,7 +189,51 @@ struct StartView: View {
 
         testCode = code
         errorText = nil
-        destination = ExamDestination(url: url)
+        completionText = nil
+
+        assessment.begin(
+            onActivated: {
+                DispatchQueue.main.async {
+                    destination = ExamDestination(url: url)
+                }
+            },
+            onFailed: { message in
+                DispatchQueue.main.async {
+                    errorText = message
+                    destination = nil
+                }
+            }
+        )
+    }
+}
+
+struct SecureTransitionOverlay: View {
+    let icon: String
+    let title: String
+    let message: String
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.72).ignoresSafeArea()
+            VStack(spacing: 18) {
+                Image(systemName: icon)
+                    .font(.system(size: 52))
+                    .foregroundStyle(.white)
+                ProgressView()
+                    .tint(.white)
+                    .scaleEffect(1.25)
+                Text(title)
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                Text(message)
+                    .font(.body)
+                    .foregroundStyle(.white.opacity(0.72))
+                    .multilineTextAlignment(.center)
+            }
+            .padding(32)
+            .frame(maxWidth: 480)
+        }
     }
 }
 
@@ -186,7 +279,6 @@ final class KeyboardInputView: UIView, UIKeyInput, UITextInputTraits {
     var onTextChanged: ((String) -> Void)?
     var onSubmit: (() -> Void)?
 
-    // UITextInputTraits: use Apple's normal keyboard, not a replacement input view.
     var keyboardType: UIKeyboardType = .asciiCapable
     var returnKeyType: UIReturnKeyType = .go
     var enablesReturnKeyAutomatically: Bool = false
@@ -309,40 +401,111 @@ final class KeyboardInputView: UIView, UIKeyInput, UITextInputTraits {
     }
 }
 
+enum GradeCrewWebEvent {
+    case testReady
+    case submissionConfirmed
+    case testUnavailable(String)
+}
+
 struct ExamView: View {
     let url: URL
-    let close: () -> Void
+    let secureMode: Bool
+    let assessmentPhase: SecureAssessmentController.Phase
+    let closeDevelopmentPreview: () -> Void
+    let submissionConfirmed: () -> Void
+    let testUnavailable: (String) -> Void
+
+    @State private var webReady = false
+    @State private var submissionReceived = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            GradeCrewWebView(url: url)
-                .ignoresSafeArea()
-
-            Button(action: close) {
-                Image(systemName: "xmark")
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                    .padding(12)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Circle())
+            GradeCrewWebView(url: url) { event in
+                switch event {
+                case .testReady:
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        webReady = true
+                    }
+                case .submissionConfirmed:
+                    guard !submissionReceived else { return }
+                    submissionReceived = true
+                    submissionConfirmed()
+                case .testUnavailable(let message):
+                    testUnavailable(message)
+                }
             }
-            .padding()
-            .accessibilityLabel("Entwicklungsvorschau schließen")
+            .opacity(webReady && !shouldHideExam ? 1 : 0.01)
+            .allowsHitTesting(webReady && !shouldHideExam)
+            .ignoresSafeArea()
+
+            if !webReady && !submissionReceived {
+                SecureTransitionOverlay(
+                    icon: secureMode ? "lock.shield.fill" : "hourglass",
+                    title: "Test wird geladen …",
+                    message: secureMode
+                        ? "Der Prüfungsmodus ist aktiv. GradeCrew bereitet deine Aufgaben vor."
+                        : "GradeCrew lädt den Test und deine Aufgaben."
+                )
+            }
+
+            if submissionReceived && secureMode {
+                SecureTransitionOverlay(
+                    icon: "checkmark.seal.fill",
+                    title: "Abgabe gespeichert ✓",
+                    message: "Prüfungsmodus wird sicher beendet …"
+                )
+            } else if secureMode && assessmentPhase == .ending {
+                SecureTransitionOverlay(
+                    icon: "exclamationmark.shield.fill",
+                    title: "Prüfungsmodus wird beendet …",
+                    message: "Bitte einen Moment warten."
+                )
+            }
+
+            if !secureMode {
+                Button(action: closeDevelopmentPreview) {
+                    Image(systemName: "xmark")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .padding(12)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                }
+                .padding()
+                .accessibilityLabel("Entwicklungsvorschau schließen")
+            }
         }
+        .interactiveDismissDisabled(secureMode)
+    }
+
+    private var shouldHideExam: Bool {
+        secureMode && (assessmentPhase == .ending || assessmentPhase == .failed || submissionReceived)
     }
 }
 
 struct GradeCrewWebView: UIViewRepresentable {
     let url: URL
+    let onEvent: (GradeCrewWebEvent) -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(onEvent: onEvent)
     }
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .nonPersistent()
         configuration.preferences.javaScriptCanOpenWindowsAutomatically = false
+
+        // Bridge only observes the trusted GradeCrew student UI. It is useful for
+        // the hardware pilot, but a production secure release should ultimately
+        // end AAC from a server-verified submission receipt.
+        let bridgeScript = WKUserScript(
+            source: Self.bridgeJavaScript,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: true
+        )
+        configuration.userContentController.addUserScript(bridgeScript)
+        configuration.userContentController.add(context.coordinator, name: "gradecrewSecure")
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
@@ -355,8 +518,62 @@ struct GradeCrewWebView: UIViewRepresentable {
 
     func updateUIView(_ webView: WKWebView, context: Context) {}
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
+        webView.navigationDelegate = nil
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "gradecrewSecure")
+    }
+
+    private static let bridgeJavaScript = #"""
+    (() => {
+      if (window.__gradeCrewSecureBridgeInstalled) return;
+      window.__gradeCrewSecureBridgeInstalled = true;
+      const sent = new Set();
+
+      const send = (type, payload = {}) => {
+        if (sent.has(type)) return;
+        try {
+          window.webkit.messageHandlers.gradecrewSecure.postMessage({ type, ...payload });
+          sent.add(type);
+        } catch (_) {}
+      };
+
+      const check = () => {
+        const unavailable = document.querySelector('#studentQuizCard .studentUnavailable');
+        if (unavailable) {
+          const message = unavailable.querySelector('p')?.textContent?.trim() || 'Dieser Test ist nicht verfügbar.';
+          send('testUnavailable', { message });
+          return;
+        }
+
+        const form = document.getElementById('studentForm');
+        const questions = document.getElementById('studentQuestions');
+        if (form && questions) send('testReady');
+
+        const result = document.getElementById('studentResult');
+        const submitted = form?.dataset?.submitted === 'true';
+        const resultVisible = result && !result.classList.contains('hidden');
+        if (submitted && resultVisible) send('submissionConfirmed');
+      };
+
+      const observer = new MutationObserver(check);
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'data-submitted']
+      });
+      document.addEventListener('DOMContentLoaded', check, { once: true });
+      check();
+    })();
+    """#
+
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         private let allowedHost = "hausaufgabe-staging.web.app"
+        private let onEvent: (GradeCrewWebEvent) -> Void
+
+        init(onEvent: @escaping (GradeCrewWebEvent) -> Void) {
+            self.onEvent = onEvent
+        }
 
         func webView(
             _ webView: WKWebView,
@@ -373,6 +590,32 @@ struct GradeCrewWebView: UIViewRepresentable {
                 decisionHandler(.allow)
             } else {
                 decisionHandler(.cancel)
+            }
+        }
+
+        func userContentController(
+            _ userContentController: WKUserContentController,
+            didReceive message: WKScriptMessage
+        ) {
+            guard message.name == "gradecrewSecure",
+                  let webView = message.webView,
+                  webView.url?.scheme == "https",
+                  webView.url?.host == allowedHost,
+                  let body = message.body as? [String: Any],
+                  let type = body["type"] as? String else { return }
+
+            DispatchQueue.main.async { [onEvent] in
+                switch type {
+                case "testReady":
+                    onEvent(.testReady)
+                case "submissionConfirmed":
+                    onEvent(.submissionConfirmed)
+                case "testUnavailable":
+                    let text = (body["message"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+                    onEvent(.testUnavailable(text?.isEmpty == false ? text! : "Dieser Test ist nicht verfügbar."))
+                default:
+                    break
+                }
             }
         }
     }
