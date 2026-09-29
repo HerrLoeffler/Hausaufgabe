@@ -157,6 +157,7 @@ export function startVisualEnhancements() {
       ["Crew-Tour-gc23", "./crew-tour-gc23-polish.js?v=2.3.1-gc23"],
       ["Crew-Tour-gc24", "./crew-tour-gc24-polish.js?v=2.3.1-gc24"],
       ["Crew-Tour-gc25", "./crew-tour-gc25-final-polish.js?v=2.3.1-gc25"],
+      ["Crew-Tour-gc26", "./crew-tour-gc26-story-polish.js?v=2.3.1-gc26-story"],
       ["Remy-Hilfe", "./remy-ai-help.js?v=2.3.1-gc26"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
