@@ -1,9 +1,6 @@
 "use strict";
 
-const base = require("./index");
-const { submitAssessmentAttempt } = require("./lib/secure-submit");
-
-module.exports = {
-  ...base,
-  submitAssessmentAttempt
-};
+// One authoritative export surface for the assessment codebase. Keeping the
+// lifecycle in one module prevents Firebase from accidentally deploying an
+// older submit handler while CI exercises a newer one.
+module.exports = require("./lib/secure-lifecycle");
