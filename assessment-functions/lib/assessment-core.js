@@ -1,0 +1,432 @@
+"use strict";
+
+const { createHash, createHmac, timingSafeEqual } = require("node:crypto");
+
+const SUPPORTED_TYPES = new Set([
+  "single", "multi", "text", "dropdown", "truefalse", "gapfill",
+  "matching", "ordering", "grouping", "markwords", "number"
+]);
+
+function clampString(value, max = 500) {
+  return String(value ?? "").slice(0, max);
+}
+
+function normalize(value) {
+  return String(value ?? "").trim().toLocaleLowerCase("de-DE").replace(/\s+/g, " ");
+}
+
+function normalizeWord(value) {
+  return normalize(value).replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+}
+
+function round1(value) {
+  return Math.round((Number(value) || 0) * 10) / 10;
+}
+
+function sha256(value) {
+  return createHash("sha256").update(String(value)).digest("hex");
+}
+
+function tokenHash(token) {
+  return sha256(`gradecrew-assessment-token:v1:${String(token || "")}`);
+}
+
+function validAttemptToken(token) {
+  return typeof token === "string" && /^[A-Za-z0-9_-]{32,128}$/.test(token);
+}
+
+function secureTokenMatches(rawToken, storedHash) {
+  if (!validAttemptToken(rawToken) || !/^[a-f0-9]{64}$/.test(String(storedHash || ""))) return false;
+  const actual = Buffer.from(tokenHash(rawToken), "hex");
+  const expected = Buffer.from(String(storedHash), "hex");
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
+function opaqueId(token, questionId, kind, index) {
+  return createHmac("sha256", token)
+    .update(`gradecrew-paper:v1:${questionId}:${kind}:${index}`)
+    .digest("base64url")
+    .slice(0, 18);
+}
+
+function deterministicOrder(items, token, scope) {
+  return items
+    .map((item, index) => ({
+      item,
+      score: createHmac("sha256", token).update(`shuffle:${scope}:${index}`).digest("hex")
+    }))
+    .sort((a, b) => a.score.localeCompare(b.score))
+    .map(entry => entry.item);
+}
+
+function tokenizeWords(text) {
+  const pieces = String(text || "").split(/([\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*)/gu).filter(Boolean);
+  let wordIndex = 0;
+  return pieces.map(piece => {
+    const isWord = /[\p{L}\p{N}]/u.test(piece[0] || "");
+    return { text: piece, isWord, wordIndex: isWord ? wordIndex++ : null };
+  });
+}
+
+function parseGapAuthoringText(text) {
+  const raw = String(text || "");
+  const gaps = [];
+  const regex = /\[([^\]]+)\]/g;
+  let match;
+  while ((match = regex.exec(raw))) {
+    gaps.push({
+      start: match.index,
+      end: regex.lastIndex,
+      answers: match[1].split("|").map(value => value.trim()).filter(Boolean)
+    });
+  }
+  return gaps;
+}
+
+function publicGapSegments(question, token) {
+  const text = String(question.text || "");
+  const gaps = parseGapAuthoringText(text);
+  const segments = [];
+  let cursor = 0;
+  gaps.forEach((gap, index) => {
+    if (gap.start > cursor) segments.push({ type: "text", text: text.slice(cursor, gap.start) });
+    segments.push({ type: "gap", id: opaqueId(token, question.id, "gap", index) });
+    cursor = gap.end;
+  });
+  if (cursor < text.length) segments.push({ type: "text", text: text.slice(cursor) });
+  return segments;
+}
+
+function safeImage(question) {
+  const src = clampString(question.imageDataUrl || question.imageUrl || "", 750000);
+  if (!src) return null;
+  return {
+    src,
+    alt: clampString(question.imageAlt || "Abbildung zur Aufgabe", 300)
+  };
+}
+
+function commonPublicQuestion(question) {
+  const type = SUPPORTED_TYPES.has(question.type) ? question.type : "text";
+  return {
+    id: clampString(question.id, 120),
+    position: Number(question.position) || 0,
+    type,
+    text: type === "gapfill" ? "Lückentext" : clampString(question.text, 5000),
+    points: round1(question.points),
+    image: safeImage(question)
+  };
+}
+
+function buildPublicQuestion(question, token) {
+  const q = commonPublicQuestion(question);
+  const type = q.type;
+
+  if (["single", "multi", "dropdown"].includes(type)) {
+    q.options = (Array.isArray(question.options) ? question.options : []).slice(0, 20).map((option, index) => ({
+      id: opaqueId(token, question.id, "option", index),
+      text: clampString(option?.text, 1000),
+      image: option?.imageDataUrl || option?.imageUrl ? {
+        src: clampString(option.imageDataUrl || option.imageUrl, 750000),
+        alt: clampString(option.imageAlt || "Antwortabbildung", 300)
+      } : null
+    }));
+  } else if (type === "number") {
+    q.unit = clampString(question.unit, 60);
+  } else if (type === "gapfill") {
+    q.segments = publicGapSegments(question, token);
+  } else if (type === "matching") {
+    const pairs = Array.isArray(question.pairs) ? question.pairs.slice(0, 30) : [];
+    q.leftItems = pairs.map((pair, index) => ({
+      id: opaqueId(token, question.id, "matching-left", index),
+      text: clampString(pair?.left, 1000)
+    }));
+    q.rightItems = deterministicOrder(pairs.map((pair, index) => ({
+      id: opaqueId(token, question.id, "matching-right", index),
+      text: clampString(pair?.right, 1000)
+    })), token, `${question.id}:matching-right`);
+  } else if (type === "ordering") {
+    const items = Array.isArray(question.items) ? question.items.slice(0, 40) : [];
+    q.items = deterministicOrder(items.map((text, index) => ({
+      id: opaqueId(token, question.id, "ordering-item", index),
+      text: clampString(text, 1000)
+    })), token, `${question.id}:ordering-items`);
+  } else if (type === "grouping") {
+    const groups = Array.isArray(question.groups) ? question.groups.slice(0, 20) : [];
+    q.groups = groups.map((group, groupIndex) => ({
+      id: opaqueId(token, question.id, "group", groupIndex),
+      name: clampString(group?.name, 500)
+    }));
+    const items = [];
+    groups.forEach((group, groupIndex) => {
+      (Array.isArray(group?.items) ? group.items : []).slice(0, 40).forEach((text, itemIndex) => {
+        items.push({
+          id: opaqueId(token, question.id, `group-item-${groupIndex}`, itemIndex),
+          text: clampString(text, 1000)
+        });
+      });
+    });
+    q.items = deterministicOrder(items, token, `${question.id}:grouping-items`);
+  } else if (type === "markwords") {
+    q.passage = clampString(question.passage, 12000);
+  }
+
+  return q;
+}
+
+function buildGradingKey(question, token) {
+  const type = SUPPORTED_TYPES.has(question.type) ? question.type : "text";
+  const key = {
+    id: clampString(question.id, 120),
+    type,
+    points: round1(question.points),
+    manualReview: question.manualReview === true
+  };
+
+  if (["single", "multi", "dropdown"].includes(type)) {
+    key.correctOptionIds = (Array.isArray(question.options) ? question.options : [])
+      .map((option, index) => option?.correct ? opaqueId(token, question.id, "option", index) : null)
+      .filter(Boolean);
+  } else if (type === "text") {
+    key.acceptedAnswers = (Array.isArray(question.acceptedAnswers) ? question.acceptedAnswers : [])
+      .slice(0, 20).map(value => clampString(value, 1000));
+  } else if (type === "number") {
+    key.numericAnswer = Number(question.numericAnswer);
+    key.tolerance = Math.max(0, Number(question.tolerance) || 0);
+  } else if (type === "truefalse") {
+    key.correctBoolean = question.correctBoolean === true;
+  } else if (type === "gapfill") {
+    key.gaps = parseGapAuthoringText(question.text).map((gap, index) => ({
+      id: opaqueId(token, question.id, "gap", index),
+      acceptedAnswers: gap.answers.slice(0, 20).map(value => clampString(value, 1000))
+    }));
+  } else if (type === "matching") {
+    const pairs = Array.isArray(question.pairs) ? question.pairs.slice(0, 30) : [];
+    key.matches = pairs.map((_, index) => ({
+      leftId: opaqueId(token, question.id, "matching-left", index),
+      rightId: opaqueId(token, question.id, "matching-right", index)
+    }));
+  } else if (type === "ordering") {
+    const length = Array.isArray(question.items) ? question.items.length : 0;
+    const primary = Array.from({ length }, (_, index) => index);
+    const extras = Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [];
+    const seen = new Set();
+    key.acceptedOrders = [primary, ...extras]
+      .filter(order => Array.isArray(order) && order.length === length && new Set(order).size === length && order.every(index => Number.isInteger(index) && index >= 0 && index < length))
+      .filter(order => {
+        const marker = order.join(",");
+        if (seen.has(marker)) return false;
+        seen.add(marker);
+        return true;
+      })
+      .map(order => order.map(index => opaqueId(token, question.id, "ordering-item", index)));
+  } else if (type === "grouping") {
+    const groups = Array.isArray(question.groups) ? question.groups.slice(0, 20) : [];
+    key.assignments = [];
+    groups.forEach((group, groupIndex) => {
+      (Array.isArray(group?.items) ? group.items : []).slice(0, 40).forEach((_, itemIndex) => {
+        key.assignments.push({
+          itemId: opaqueId(token, question.id, `group-item-${groupIndex}`, itemIndex),
+          groupId: opaqueId(token, question.id, "group", groupIndex)
+        });
+      });
+    });
+  } else if (type === "markwords") {
+    const targets = new Set((Array.isArray(question.targetWords) ? question.targetWords : []).map(normalizeWord).filter(Boolean));
+    key.correctWordIndexes = tokenizeWords(question.passage)
+      .filter(tokenized => tokenized.isWord && targets.has(normalizeWord(tokenized.text)))
+      .map(tokenized => String(tokenized.wordIndex));
+  }
+
+  return key;
+}
+
+function buildAssessmentContract(questions, token) {
+  if (!validAttemptToken(token)) throw new Error("Invalid attempt token");
+  const normalized = (Array.isArray(questions) ? questions : [])
+    .map((question, index) => ({ ...question, id: String(question?.id || `q${index + 1}`) }))
+    .sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0));
+  const paper = normalized.map(question => buildPublicQuestion(question, token));
+  const gradingKey = normalized.map(question => buildGradingKey(question, token));
+  const sourceFingerprint = sha256(JSON.stringify({ paper, gradingKey }));
+  return { paper, gradingKey, sourceFingerprint };
+}
+
+function gradeQuestion(key, given) {
+  const max = round1(key.points);
+  const type = key.type;
+
+  if (type === "text") {
+    if (key.manualReview) return { autoPoints: 0, awardedPoints: 0, maxPoints: max, needsReview: true, correct: null };
+    const ok = (key.acceptedAnswers || []).map(normalize).includes(normalize(given));
+    return { autoPoints: ok ? max : 0, awardedPoints: ok ? max : 0, maxPoints: max, needsReview: false, correct: ok };
+  }
+  if (type === "number") {
+    const value = Number(String(given ?? "").trim().replace(",", "."));
+    const ok = Number.isFinite(value) && Number.isFinite(key.numericAnswer) && Math.abs(value - key.numericAnswer) <= key.tolerance + 1e-9;
+    return { autoPoints: ok ? max : 0, awardedPoints: ok ? max : 0, maxPoints: max, needsReview: false, correct: ok };
+  }
+  if (type === "truefalse") {
+    const bool = given === true || String(given).toLowerCase() === "true";
+    const ok = bool === key.correctBoolean;
+    return { autoPoints: ok ? max : 0, awardedPoints: ok ? max : 0, maxPoints: max, needsReview: false, correct: ok };
+  }
+  if (type === "gapfill") {
+    const values = Array.isArray(given) ? given : null;
+    let good = 0;
+    (key.gaps || []).forEach((gap, index) => {
+      const answer = values ? values[index] : given?.[gap.id];
+      if ((gap.acceptedAnswers || []).map(normalize).includes(normalize(answer))) good += 1;
+    });
+    const total = (key.gaps || []).length;
+    const awarded = round1((total ? good / total : 0) * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: false, correct: total > 0 && good === total };
+  }
+  if (type === "matching") {
+    const map = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+    let good = 0;
+    (key.matches || []).forEach(pair => { if (String(map[pair.leftId] || "") === pair.rightId) good += 1; });
+    const total = (key.matches || []).length;
+    const awarded = round1((total ? good / total : 0) * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: false, correct: total > 0 && good === total };
+  }
+  if (type === "ordering") {
+    const values = Array.isArray(given) ? given.map(String) : [];
+    const orders = Array.isArray(key.acceptedOrders) ? key.acceptedOrders : [];
+    const length = orders[0]?.length || 0;
+    const best = Math.max(0, ...orders.map(order => order.reduce((count, id, index) => count + (values[index] === id ? 1 : 0), 0)));
+    const awarded = round1((length ? best / length : 0) * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: key.manualReview, correct: length > 0 && values.length === length && best === length };
+  }
+  if (type === "grouping") {
+    const map = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+    let good = 0;
+    (key.assignments || []).forEach(entry => { if (String(map[entry.itemId] || "") === entry.groupId) good += 1; });
+    const total = (key.assignments || []).length;
+    const awarded = round1((total ? good / total : 0) * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: false, correct: total > 0 && good === total };
+  }
+  if (type === "markwords") {
+    const correct = new Set((key.correctWordIndexes || []).map(String));
+    const selected = Array.isArray(given) ? given.map(String) : [];
+    const good = selected.filter(value => correct.has(value)).length;
+    const bad = selected.filter(value => !correct.has(value)).length;
+    const ratio = Math.max(0, Math.min(1, (good - bad) / Math.max(1, correct.size)));
+    const awarded = round1(ratio * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: false, correct: good === correct.size && bad === 0 && selected.length === correct.size };
+  }
+
+  const correctIds = (key.correctOptionIds || []).map(String);
+  if (type === "multi") {
+    const selected = Array.isArray(given) ? [...new Set(given.map(String))] : [];
+    const good = selected.filter(value => correctIds.includes(value)).length;
+    const bad = selected.filter(value => !correctIds.includes(value)).length;
+    const ratio = Math.max(0, Math.min(1, (good - bad) / Math.max(1, correctIds.length)));
+    const awarded = round1(ratio * max);
+    return { autoPoints: awarded, awardedPoints: awarded, maxPoints: max, needsReview: false, correct: good === correctIds.length && bad === 0 && selected.length === correctIds.length };
+  }
+  const ok = correctIds.includes(String(given ?? ""));
+  return { autoPoints: ok ? max : 0, awardedPoints: ok ? max : 0, maxPoints: max, needsReview: false, correct: ok };
+}
+
+function gradeSubmission(gradingKey, answers) {
+  const safeAnswers = answers && typeof answers === "object" && !Array.isArray(answers) ? answers : {};
+  const grading = {};
+  let autoPoints = 0;
+  let maxPoints = 0;
+  let needsReview = false;
+  for (const key of Array.isArray(gradingKey) ? gradingKey : []) {
+    const result = gradeQuestion(key, safeAnswers[key.id]);
+    grading[key.id] = result;
+    autoPoints += result.autoPoints;
+    maxPoints += result.maxPoints;
+    needsReview ||= result.needsReview;
+  }
+  autoPoints = round1(autoPoints);
+  maxPoints = round1(maxPoints);
+  const percent = maxPoints ? Math.round((autoPoints / maxPoints) * 100) : 0;
+  return { grading, autoPoints, totalPoints: autoPoints, maxPoints, percent, needsReview };
+}
+
+function gradeFromPercent(percent, thresholds) {
+  const list = Array.isArray(thresholds) && thresholds.length === 6 ? thresholds.map(Number) : [91, 77, 57, 39, 25, 0];
+  const value = Number(percent) || 0;
+  for (let index = 0; index < 6; index += 1) if (value >= list[index]) return index + 1;
+  return 6;
+}
+
+function sanitizeAnswersForStorage(gradingKey, answers) {
+  const source = answers && typeof answers === "object" && !Array.isArray(answers) ? answers : {};
+  const out = {};
+  const allowed = new Map((Array.isArray(gradingKey) ? gradingKey : []).map(key => [key.id, key]));
+  for (const [questionId, key] of allowed.entries()) {
+    const value = source[questionId];
+    if (["single", "dropdown", "truefalse", "text", "number"].includes(key.type)) {
+      out[questionId] = clampString(value, 4000);
+    } else if (["multi", "ordering", "markwords", "gapfill"].includes(key.type)) {
+      out[questionId] = (Array.isArray(value) ? value : []).slice(0, 100).map(item => clampString(item, 1000));
+    } else if (["matching", "grouping"].includes(key.type)) {
+      const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+      out[questionId] = Object.fromEntries(Object.entries(map).slice(0, 100).map(([k, v]) => [clampString(k, 100), clampString(v, 100)]));
+    }
+  }
+  return out;
+}
+
+function publicQuizMetadata(quiz, quizId) {
+  return {
+    id: quizId,
+    title: clampString(quiz?.title, 200),
+    subject: clampString(quiz?.subject, 120),
+    grade: clampString(quiz?.grade, 80),
+    description: clampString(quiz?.description, 2000),
+    questionCount: Math.max(0, Number(quiz?.questionCount) || 0),
+    totalPoints: round1(quiz?.totalPoints),
+    timeLimitMinutes: Number(quiz?.timeLimitMinutes) > 0 ? Math.min(300, Math.round(Number(quiz.timeLimitMinutes))) : null,
+    startMode: quiz?.startMode === "teacher" ? "teacher" : "student",
+    sessionState: clampString(quiz?.sessionState || "open", 30),
+    sessionRunId: clampString(quiz?.sessionRunId || "", 120) || null,
+    published: quiz?.published === true,
+    ended: quiz?.ended === true,
+    resultMode: clampString(quiz?.resultMode || "points_grade", 40)
+  };
+}
+
+function assertNoSolutionLeak(paper) {
+  const forbiddenKeys = new Set([
+    "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
+    "targetWords", "acceptedOrders", "gradingKey", "answerKey", "solutions"
+  ]);
+  const visit = value => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      if (forbiddenKeys.has(key)) throw new Error(`Student paper contains forbidden field: ${key}`);
+      visit(child);
+    }
+  };
+  visit(paper);
+  return true;
+}
+
+module.exports = {
+  SUPPORTED_TYPES,
+  normalize,
+  round1,
+  sha256,
+  tokenHash,
+  validAttemptToken,
+  secureTokenMatches,
+  opaqueId,
+  deterministicOrder,
+  tokenizeWords,
+  parseGapAuthoringText,
+  buildPublicQuestion,
+  buildGradingKey,
+  buildAssessmentContract,
+  gradeQuestion,
+  gradeSubmission,
+  gradeFromPercent,
+  sanitizeAnswersForStorage,
+  publicQuizMetadata,
+  assertNoSolutionLeak
+};
