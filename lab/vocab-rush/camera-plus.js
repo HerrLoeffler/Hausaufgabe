@@ -27,9 +27,11 @@ function removeLegacyPhotoUi(){
   $('photoImportBtn')?.remove();
   $('photoInput')?.remove();
   const head=document.querySelector('#setEditorView .pageHead>p:not(.eyebrow)');
-  if(head)head.textContent='Bild/PDF, Zwischenablage, Copy & Paste oder direkt bearbeiten. Vor dem Speichern wird alles geprüft.';
+  const headText='Bild/PDF, Zwischenablage, Copy & Paste oder direkt bearbeiten. Vor dem Speichern wird alles geprüft.';
+  if(head&&head.textContent!==headText)head.textContent=headText;
   const privacy=document.querySelector('#setEditorView .privacyNote');
-  if(privacy)privacy.textContent='Bilder und PDFs dienen nur zum Erkennen der Vokabeln. Bitte keine personenbezogenen Schülerdaten hochladen.';
+  const privacyText='Bilder und PDFs dienen nur zum Erkennen der Vokabeln. Bitte keine personenbezogenen Schülerdaten hochladen.';
+  if(privacy&&privacy.textContent!==privacyText)privacy.textContent=privacyText;
   document.querySelectorAll('#customSetup .sourcePicker small').forEach(el=>{
     if(el.textContent.includes('Foto/KI-Import'))el.textContent='Eigene Liste, Copy & Paste oder Bild/PDF-Import.';
   });
@@ -90,11 +92,6 @@ function init(){
   removeLegacyPhotoUi();
   ensureClipboardButton();
   document.addEventListener('paste',handlePaste);
-  const target=$('setEditorView');
-  if(target)new MutationObserver(()=>{
-    removeLegacyPhotoUi();
-    ensureClipboardButton();
-  }).observe(target,{childList:true,subtree:true});
 }
 init();
 })();
