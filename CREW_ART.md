@@ -27,3 +27,11 @@ The group scenes have a warm ivory background; individual character sheets have 
 crew-clay.css adds one-shot entrance, thinking and celebration transforms, not frame-by-frame character animation. No new observers, timers or dependencies. Motion is disabled with prefers-reduced-motion. Group images are decorative where nearby text conveys meaning; the homepage has a descriptive alt. Reduced heights on narrow/short screens keep controls reachable.
 
 Validated by existing automated tour/UI tests and build; artwork SVG exports inspected separately. Authenticated Chrome/Safari end-to-end visual acceptance remains a staging check. Do not describe CSS whole-figure transforms as articulated flipper/trunk animation.
+
+## gc26 story polish
+
+- Keep the approved centered `Danke, Remy!` scene unchanged.
+- Introduction handoffs (`Das ist Remy!`, `Das ist Emmi!`, `Das ist Wilma!`) keep the clay scene but add a clearly visible directional handoff cue between the two names. The story must read as one Crew member handing over to the next, not as two unrelated portraits.
+- While Remy fills the real AI form, his coach card gets a small pencil/work cue so it visually reads as Remy actively entering the values. The real fields remain the focus and nothing new becomes interactive.
+- Coco's name question retains the friendly `Ich darf doch du sagen, oder?` line. After the name is entered, the next Coco scene dynamically shows that exact name on a small warm sign with a heart before the test starts.
+- All additions remain responsive, decorative and reduced-motion safe. They do not change tutorial state, scoring, provider calls or the real editor/student workflow.
