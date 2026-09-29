@@ -61,6 +61,7 @@ jobs:
           fi
           node --check app.js
           node --check ai-client.js
+          node --check secure-assessment-client.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
           node --check first-guide-guard.js
@@ -84,6 +85,7 @@ jobs:
           node --check editor-drafts.js
           node --check ai-review-state.js
           node --check ordering-grading.mjs
+          node --test secure-assessment-client.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
