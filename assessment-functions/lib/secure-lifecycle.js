@@ -32,11 +32,13 @@ const callableOpts = {
 };
 const START_RATE_LIMIT_PER_DAY = 250;
 const SUBMIT_GRACE_SECONDS = 30;
+const END_SUBMIT_GRACE_SECONDS = 90;
+const PRIVATE_PAYLOAD_SOFT_LIMIT_BYTES = 850_000;
 const RESULT_MODES = new Set(["none", "points", "points_percent", "points_grade"]);
 
 function cleanQuizId(value) {
-  const quizId = String(value || "").trim();
-  if (!/^[A-Za-z0-9_-]{3,100}$/.test(quizId)) throw new HttpsError("invalid-argument", "Ungültiger Testcode.");
+  const quizId = String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!/^[A-Z0-9]{4,16}$/.test(quizId)) throw new HttpsError("invalid-argument", "Ungültiger Testcode.");
   return quizId;
 }
 
@@ -86,6 +88,21 @@ function validateQuizOpen(quiz) {
   if (quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist vorübergehend gesperrt.");
   if (quiz.published !== true) throw new HttpsError("failed-precondition", "Dieser Test ist noch nicht veröffentlicht.");
   if (quiz.ended === true) throw new HttpsError("failed-precondition", "Dieser Test wurde beendet.");
+}
+
+function validateSubmissionWindow(quiz, attempt, nowMillis) {
+  if (!quiz) throw new HttpsError("not-found", "Dieser Test existiert nicht.");
+  if (quiz.isDeleted === true) throw new HttpsError("not-found", "Dieser Test ist nicht verfügbar.");
+  if (quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist vorübergehend gesperrt.");
+  if (quiz.published === true && quiz.ended !== true) return;
+  const endedAtMillis = toMillis(quiz.endedAt);
+  if (
+    quiz.ended === true
+    && attempt?.status === "running"
+    && Number.isFinite(endedAtMillis)
+    && nowMillis <= endedAtMillis + END_SUBMIT_GRACE_SECONDS * 1000
+  ) return;
+  throw new HttpsError("failed-precondition", "Dieser Test wurde beendet.");
 }
 
 function sessionMode(quiz) {
@@ -166,25 +183,27 @@ function gapSolutionDisplay(text) {
     values.push(String(inside).split("|").map(value => value.trim()).filter(Boolean).join(" / "));
     return "____";
   });
-  return { visible: cleanDisplay(visible, 5000), answer: values.map((value, index) => `Lücke ${index + 1}: ${value}`).join("; ") };
+  return {
+    visible: cleanDisplay(visible, 1500),
+    answer: cleanDisplay(values.map((value, index) => `Lücke ${index + 1}: ${value}`).join("; "), 5000)
+  };
 }
 
 function buildSolutionSnapshot(questions) {
   return (Array.isArray(questions) ? questions : []).map((question, index) => {
     const type = String(question?.type || "text");
-    let prompt = type === "gapfill" ? "Lückentext" : cleanDisplay(question?.text, 5000);
+    let prompt = type === "gapfill" ? "Lückentext" : cleanDisplay(question?.text, 1500);
     let answer = "";
-
     if (["single", "multi", "dropdown"].includes(type)) {
       answer = (Array.isArray(question.options) ? question.options : [])
         .filter(option => option?.correct === true)
-        .map(option => cleanDisplay(option?.text, 1000))
+        .map(option => cleanDisplay(option?.text, 500))
         .filter(Boolean)
         .join(", ");
     } else if (type === "text") {
       answer = question.manualReview === true
         ? "wird von der Lehrkraft geprüft"
-        : (Array.isArray(question.acceptedAnswers) ? question.acceptedAnswers : []).map(value => cleanDisplay(value, 1000)).filter(Boolean).join(" / ");
+        : (Array.isArray(question.acceptedAnswers) ? question.acceptedAnswers : []).map(value => cleanDisplay(value, 500)).filter(Boolean).join(" / ");
     } else if (type === "number") {
       const number = Number(question.numericAnswer);
       const unit = cleanDisplay(question.unit, 60);
@@ -198,10 +217,10 @@ function buildSolutionSnapshot(questions) {
       answer = gap.answer;
     } else if (type === "matching") {
       answer = (Array.isArray(question.pairs) ? question.pairs : [])
-        .map(pair => `${cleanDisplay(pair?.left, 800)} → ${cleanDisplay(pair?.right, 800)}`)
+        .map(pair => `${cleanDisplay(pair?.left, 400)} → ${cleanDisplay(pair?.right, 400)}`)
         .join("; ");
     } else if (type === "ordering") {
-      const items = Array.isArray(question.items) ? question.items.map(value => cleanDisplay(value, 1000)) : [];
+      const items = Array.isArray(question.items) ? question.items.map(value => cleanDisplay(value, 500)) : [];
       const primary = items.map((_, itemIndex) => itemIndex);
       const alternatives = [primary, ...(Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [])]
         .filter(order => Array.isArray(order) && order.length === items.length && new Set(order).size === items.length && order.every(itemIndex => Number.isInteger(itemIndex) && itemIndex >= 0 && itemIndex < items.length));
@@ -209,19 +228,31 @@ function buildSolutionSnapshot(questions) {
       answer = unique.map(order => order.map(itemIndex => items[itemIndex]).join(" → ")).join(" / ");
     } else if (type === "grouping") {
       answer = (Array.isArray(question.groups) ? question.groups : [])
-        .map(group => `${cleanDisplay(group?.name, 500)}: ${(Array.isArray(group?.items) ? group.items : []).map(item => cleanDisplay(item, 800)).join(", ")}`)
+        .map(group => `${cleanDisplay(group?.name, 300)}: ${(Array.isArray(group?.items) ? group.items : []).map(item => cleanDisplay(item, 400)).join(", ")}`)
         .join("; ");
     } else if (type === "markwords") {
-      answer = [...new Set((Array.isArray(question.targetWords) ? question.targetWords : []).map(value => cleanDisplay(value, 500)).filter(Boolean))].join(", ");
+      answer = [...new Set((Array.isArray(question.targetWords) ? question.targetWords : []).map(value => cleanDisplay(value, 300)).filter(Boolean))].join(", ");
     }
-
     return {
       id: cleanDisplay(question?.id || `q${index + 1}`, 120),
       position: Number(question?.position) || index + 1,
       prompt,
-      answer: cleanDisplay(answer || "–", 12000)
+      answer: cleanDisplay(answer || "–", 5000)
     };
   });
+}
+
+function privatePayloadBytes(value) {
+  return Buffer.byteLength(JSON.stringify(value), "utf8");
+}
+
+function assertPrivatePayloadSafe(privateData) {
+  if (privatePayloadBytes(privateData) > PRIVATE_PAYLOAD_SOFT_LIMIT_BYTES) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Dieser Test ist für den sicheren Prüfungsmodus zu umfangreich. Bitte teile ihn in zwei kürzere Tests."
+    );
+  }
 }
 
 function attemptPublicState(attempt, quiz, paper = null) {
@@ -302,7 +333,11 @@ async function rateLimitStart(request, quizId, tx) {
 function makeReceipt(submission, quiz = null, privateData = null) {
   const mode = normalizeResultMode(submission?.resultMode);
   const configured = submission?.showSolutionsAfterEnd === true && mode !== "none";
-  const released = configured && quiz?.ended === true && Array.isArray(privateData?.solutionSnapshot);
+  const released = configured
+    && quiz?.ended === true
+    && quiz?.isDeleted !== true
+    && quiz?.rightsHold !== true
+    && Array.isArray(privateData?.solutionSnapshot);
   const receipt = {
     submissionId: submission?.attemptId || submission?.id || null,
     attemptId: submission?.attemptId || null,
@@ -353,7 +388,6 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   const clientAttemptId = cleanClientAttemptId(request.data?.clientAttemptId);
   const attemptToken = cleanAttemptToken(request.data?.attemptToken);
   const db = getFirestore();
-
   const { ref: quizRef, data: initialQuiz } = await readQuiz(quizId);
   validateQuizOpen(initialQuiz);
   const initialRunId = effectiveRunId(initialQuiz, quizId);
@@ -369,7 +403,6 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   assertNoSolutionLeak(newContract.paper);
   const newDecoderShape = buildTeacherDecoderShape(questions);
   const newSolutionSnapshot = buildSolutionSnapshot(questions);
-
   let storedAttempt;
   let storedPrivate;
   let currentQuiz;
@@ -408,6 +441,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
     const deadlineAt = deadlineMillis(startedAtMillis, limit);
     const scale = gradingScaleSnapshot(currentQuiz);
     const resultMode = normalizeResultMode(currentQuiz.resultMode);
+    const showSolutionsAfterEnd = currentQuiz.showSolutions === true && resultMode !== "none";
     const created = {
       attemptId: id,
       quizId,
@@ -421,7 +455,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       deadlineAt: timestampFromMillis(deadlineAt),
       gradeScaleSnapshot: scale,
       resultMode,
-      showSolutionsAfterEnd: currentQuiz.showSolutions === true,
+      showSolutionsAfterEnd,
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
       secureAssessmentVersion: 2,
@@ -437,13 +471,14 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       authoringFingerprint: newContract.authoringFingerprint,
       gradingKey: newContract.gradingKey,
       decoderShape: newDecoderShape,
-      solutionSnapshot: newSolutionSnapshot,
+      solutionSnapshot: showSolutionsAfterEnd ? newSolutionSnapshot : null,
       shuffleQuestions: initialOptions.shuffleQuestions,
       shuffleAnswers: initialOptions.shuffleAnswers,
       sessionRunId: currentRunId,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     };
+    assertPrivatePayloadSafe(privateData);
     tx.create(aRef, created);
     tx.create(pRef, privateData);
     storedAttempt = created;
@@ -481,7 +516,6 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
   validateQuizOpen(initialQuiz);
   assertSameRun(attempt, initialQuiz, quizId);
   let currentQuiz = initialQuiz;
-
   if (attempt.mode === "teacher" && attempt.status === "ready" && initialQuiz.sessionState === "running") {
     await db.runTransaction(async tx => {
       const quizSnap = await tx.get(quizRef);
@@ -531,8 +565,8 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   const sRef = submissionRef(quizId, id);
-
   let receipt;
+
   await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const attemptSnap = await tx.get(aRef);
@@ -542,26 +576,23 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
     const attempt = attemptSnap.data();
     const privateData = privateSnap.data();
     assertAttemptToken(privateData, token);
-
     if (existingSubmission.exists || attempt.status === "submitted") {
       if (!existingSubmission.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
       receipt = makeReceipt({ id: existingSubmission.id, ...existingSubmission.data() }, quizSnap.exists ? quizSnap.data() : null, privateData);
       return;
     }
-
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
     const quiz = quizSnap.data();
-    validateQuizOpen(quiz);
+    const nowMillis = Date.now();
+    validateSubmissionWindow(quiz, attempt, nowMillis);
     assertSameRun(attempt, quiz, quizId);
     if (attempt.status !== "running") throw new HttpsError("failed-precondition", "Der Test wurde für diesen Versuch noch nicht gestartet.");
 
     const startedAtMillis = toMillis(attempt.startedAt);
     const deadlineAtMillis = toMillis(attempt.deadlineAt) || deadlineMillis(startedAtMillis, attempt.timeLimitMinutes);
-    const nowMillis = Date.now();
     if (deadlineAtMillis && nowMillis > deadlineAtMillis + SUBMIT_GRACE_SECONDS * 1000) {
       throw new HttpsError("deadline-exceeded", "Die serverseitige Abgabefrist ist abgelaufen. Bitte wende dich an deine Lehrkraft.");
     }
-
     const gradingKey = Array.isArray(privateData.gradingKey) ? privateData.gradingKey : [];
     const decoderShape = Array.isArray(privateData.decoderShape) ? privateData.decoderShape : [];
     const paperSecret = String(privateData.paperSecret || "");
@@ -620,7 +651,6 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
     });
     receipt = makeReceipt(submission, quiz, privateData);
   });
-
   return { receipt };
 });
 
