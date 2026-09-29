@@ -11,6 +11,14 @@ test("teacher setting states that solutions are released only after test end", (
   assert.match(source, /erst freigegeben, wenn du den Test beendest/);
 });
 
+test("active published editor becomes read-only until teacher ends test", () => {
+  assert.match(source, /endQuizBtn/);
+  assert.match(source, /layout\.inert = locked/);
+  assert.match(source, /saveButton\.disabled = true/);
+  assert.match(source, /Veröffentlichter Test ist geschützt/);
+  assert.match(source, /Beende den Test zuerst/);
+});
+
 test("secure teacher policy is loaded only on the normal teacher app path", () => {
   const redirectIndex = startup.indexOf("location.replace(target.href)");
   const importIndex = startup.indexOf("secure-assessment-teacher-polish.js");
