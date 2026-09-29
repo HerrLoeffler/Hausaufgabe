@@ -30,7 +30,7 @@ try {
   await import("./app.js?v=2.3.1-gc21");
   window.clearTimeout(slowStart);
   notice.classList.add("hidden");
-  import("./visual-enhancements.js?v=2.3.1-gc25").catch(error => {
+  import("./visual-enhancements.js?v=2.3.1-gc26").catch(error => {
     console.warn("Zusätzliche Ansichten konnten nicht geladen werden.", error);
   });
 } catch (error) {
