@@ -7,12 +7,16 @@ const source=path.join(root,'lab','fehlerjagd-deutsch');
 const destination=process.argv[2];
 if(!destination||!path.isAbsolute(destination))throw new Error('An absolute build directory is required.');
 const output=path.join(destination,'public');await fs.mkdir(output,{recursive:true});if((await fs.readdir(output)).length)throw new Error('Build directory must be empty.');
-const files=['index.html','styles.css','curriculum-polish.css','deutsch-engine.js','task-integrity.js','app.js','curriculum-polish.js'];for(const name of files)await fs.copyFile(path.join(source,name),path.join(output,name));
-const html=await fs.readFile(path.join(output,'index.html'),'utf8');for(const marker of ['Fehlerjagd Deutsch','Üben','All-Time-Highscore','Live mit Lehrkraft','Runde beitreten','Kompetenzprofil','komplex & transferorientiert','task-integrity.js','curriculum-polish.js'])if(!html.includes(marker))throw new Error(`UI marker missing: ${marker}`);
+const files=['index.html','styles.css','curriculum-polish.css','deutsch-engine.js','task-integrity.js','app.js','curriculum-polish.js','feedback-polish.js'];for(const name of files)await fs.copyFile(path.join(source,name),path.join(output,name));
+const htmlPath=path.join(output,'index.html');
+let html=await fs.readFile(htmlPath,'utf8');
+if(!html.includes('feedback-polish.js')){html=html.replace('</body>','  <script src="feedback-polish.js"></script>\n</body>');await fs.writeFile(htmlPath,html);}
+for(const marker of ['Fehlerjagd Deutsch','Üben','All-Time-Highscore','Live mit Lehrkraft','Runde beitreten','Kompetenzprofil','komplex & transferorientiert','task-integrity.js','curriculum-polish.js','feedback-polish.js'])if(!html.includes(marker))throw new Error(`UI marker missing: ${marker}`);
 const engine=await fs.readFile(path.join(output,'deutsch-engine.js'),'utf8');for(const marker of ['Rechtschreibstrategien','Groß- & Kleinschreibung','Wortarten','Satzglieder','Konjunktiv & indirekte Rede','introducedGrade','createEngine','multi'])if(!engine.includes(marker))throw new Error(`Engine marker missing: ${marker}`);
 const integrity=await fs.readFile(path.join(output,'task-integrity.js'),'utf8');for(const marker of ['OVERRIDES','validSingle','validMulti','case-05','multi-04'])if(!integrity.includes(marker))throw new Error(`Integrity marker missing: ${marker}`);
 const app=await fs.readFile(path.join(output,'app.js'),'utf8');for(const marker of ['createLive','joinLive','startHighscore','finishGame','skillProfile','fehlerjagdApi'])if(!app.includes(marker))throw new Error(`App marker missing: ${marker}`);
 const polish=await fs.readFile(path.join(output,'curriculum-polish.js'),'utf8');for(const marker of ['NEU IN JGST.','WIEDERHOLEN & VERTIEFEN','mindestens 5 Sekunden','showSolution.disabled'])if(!polish.includes(marker))throw new Error(`Polish marker missing: ${marker}`);
+const feedbackPolish=await fs.readFile(path.join(output,'feedback-polish.js'),'utf8');for(const marker of ['Erklärung','feedbackStructured','isPractice'])if(!feedbackPolish.includes(marker))throw new Error(`Feedback polish marker missing: ${marker}`);
 const hashes={};for(const name of files)hashes[name]=createHash('sha256').update(await fs.readFile(path.join(output,name))).digest('hex');
 await fs.writeFile(path.join(output,'lab-release.json'),JSON.stringify({experiment:'fehlerjagd-deutsch',format:2,files:hashes},null,2)+'\n');
 await fs.writeFile(path.join(destination,'firebase.json'),JSON.stringify({hosting:{site:'hausaufgabe-staging',public:'public',ignore:['**/.*'],headers:[{source:'**',headers:[{key:'Cache-Control',value:'no-cache'}]}]}},null,2)+'\n');
