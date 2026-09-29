@@ -107,6 +107,18 @@ export function installCrewTour(api) {
   const base = installV7(proxy);
   installCoachPolish();
 
+  // Once onboarding has been completed for this account, do not keep a
+  // persistent "Mit der Crew starten" button on the dashboard. Optional help
+  // is now offered contextually by Remy only when creating an AI test.
+  const dashboard = base.dashboard.bind(base);
+  base.dashboard = args => {
+    if (args?.completed) {
+      document.getElementById("gradecrewTourBtn")?.remove();
+      return;
+    }
+    dashboard(args);
+  };
+
   // Keep V7's live active/creating getters. Spreading base snapshots both as
   // false and accidentally routes onboarding through the paid AI job path.
   base.preparedResponse = preparedResponse;
