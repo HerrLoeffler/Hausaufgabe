@@ -24,9 +24,9 @@ test("browser stores only its opaque attempt credential, never grading material"
   assert.doesNotMatch(source, /gradingKey|paperSecret|correctOptionIds|acceptedAnswers|numericAnswer|correctBoolean|targetWords|acceptedOrders/);
 });
 
-test("new teacher run clears only the stale local attempt before resume", () => {
+test("every new publication run clears the stale local attempt before resume", () => {
   const infoBlock = source.slice(source.indexOf("async function getInfo("), source.indexOf("async function start("));
-  assert.match(infoBlock, /quiz\?\.startMode === "teacher"/);
+  assert.doesNotMatch(infoBlock, /quiz\?\.startMode === "teacher"/);
   assert.match(infoBlock, /session\?\.sessionRunId/);
   assert.match(infoBlock, /quiz\?\.sessionRunId/);
   assert.match(infoBlock, /session\.sessionRunId\) !== String\(quiz\.sessionRunId\)/);
