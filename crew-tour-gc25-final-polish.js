@@ -77,7 +77,7 @@ function patchImageHelp(coach) {
 function patchPreferenceTip(coach) {
   const title = coach.querySelector("h2");
   const copy = paragraph(coach);
-  if (title) title.textContent = "Noch ein Tipp für später.";
+  if (title && title.textContent.trim() === "Noch ein Tipp für später.") title.textContent = "Noch ein Tipp für später.";
   if (copy) copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du mir dagegen dauerhaft mitgeben, was dir bei deinen künftigen Tests wichtig ist.";
 }
 
@@ -135,7 +135,7 @@ function patchCoach(coach) {
   if (!(coach instanceof Element) || !coach.classList.contains("gcRealCoach")) return;
   const title = heading(coach);
   if (title === "Bilder plane ich direkt mit ein.") patchImageHelp(coach);
-  else if (title === "Noch ein Tipp für später.") patchPreferenceTip(coach);
+  else if (title === "Noch ein Tipp für später." || title === "Stopp – ein kleiner Unterschied!") patchPreferenceTip(coach);
   else if (title === "So ist unser Probetest eingestellt." || title === "So läuft unser Probetest.") patchTestSettings(coach);
   else if (title === "Dein Urteil zählt.") patchReview(coach);
   else if (title === "Super – du gehörst jetzt zur Crew!") patchFinish(coach);
