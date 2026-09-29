@@ -9,6 +9,7 @@ import {
   assertSucceeds
 } from "@firebase/rules-unit-testing";
 import {
+  deleteDoc,
   doc,
   getDoc,
   setDoc,
@@ -137,7 +138,7 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
     }));
   });
 
-  await t.test("active test may start but cannot return to draft", async () => {
+  await t.test("active test may start but cannot return to draft or be physically deleted", async () => {
     await assertSucceeds(updateDoc(doc(owner, "quizzes", quizId), {
       sessionState: "running",
       sessionStartedAt: new Date(),
@@ -147,6 +148,8 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
       published: false,
       updatedAt: new Date()
     }));
+    await assertFails(deleteDoc(doc(owner, "quizzes", quizId)));
+    await assertSucceeds(getDoc(doc(owner, "quizzes", quizId)));
   });
 
   await t.test("teacher review may change grading but not original answers or secure metadata", async () => {
@@ -186,7 +189,7 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
     await assertFails(getDoc(doc(other, "quizzes", quizId, "questions", "q1")));
   });
 
-  await t.test("ending the test is allowed and only then restores authoring and colleague sharing", async () => {
+  await t.test("ending the test restores authoring, sharing and owner deletion eligibility", async () => {
     await assertSucceeds(updateDoc(doc(owner, "quizzes", quizId), {
       ended: true,
       endedAt: new Date(),
@@ -200,6 +203,7 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
     await assertFails(setDoc(doc(owner, "quizzes", quizId, "attempts", "owner-after-end"), {
       studentName: "Zu spät"
     }));
+    await assertSucceeds(deleteDoc(doc(owner, "quizzes", quizId)));
   });
 
   assert.ok(true);
