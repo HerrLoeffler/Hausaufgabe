@@ -39,33 +39,42 @@ struct TeacherRootView: View {
         case .dashboard:
             TeacherDashboardView()
         case .tests:
-            PlaceholderView(title: "Meine Tests", message: "Hier erscheinen als Nächstes die echten GradeCrew-Tests aus Firestore.")
+            TeacherTestsView()
         case .classes:
-            PlaceholderView(title: "Klassen", message: "Klassen und Zuweisungen folgen nach dem ersten Test-Workflow.")
+            TeacherPlaceholderView(
+                title: "Klassen",
+                systemImage: "person.3",
+                message: "Klassen, Schülerkürzel und Testzuweisungen folgen nach der Firebase-Anbindung."
+            )
         case .settings:
-            PlaceholderView(title: "Einstellungen", message: "Die App verwendet dieselben GradeCrew-Grundwerte wie die Webplattform.")
+            TeacherPlaceholderView(
+                title: "Einstellungen",
+                systemImage: "gearshape",
+                message: "Die App verwendet bereits dieselben GradeCrew-Designwerte wie die Webplattform."
+            )
         }
     }
 }
 
-private struct PlaceholderView: View {
+private struct TeacherPlaceholderView: View {
     let title: String
+    let systemImage: String
     let message: String
 
     var body: some View {
         ZStack {
             GradeCrewDesignTokens.Colors.background.ignoresSafeArea()
             VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                Image(systemName: "hammer")
-                    .font(.system(size: 34))
+                Image(systemName: systemImage)
+                    .font(.system(size: 38))
                     .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
                 Text(title)
-                    .font(.title2.weight(.semibold))
+                    .font(.title2.bold())
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                 Text(message)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    .frame(maxWidth: 460)
+                    .frame(maxWidth: 440)
             }
             .padding(GradeCrewDesignTokens.Spacing.xl)
         }
