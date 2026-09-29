@@ -6,7 +6,7 @@ import WebKit
 struct GradeCrewSecurePlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
-            StartView()
+            GradeCrewSecureRootView()
         }
     }
 }
