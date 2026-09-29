@@ -1,6 +1,7 @@
 const params = new URLSearchParams(location.search);
 const normalizeQuizId = value => String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-const quizId = normalizeQuizId(params.get("test"));
+const rawQuizId = String(params.get("test") || "").trim();
+const quizId = normalizeQuizId(rawQuizId);
 const SESSION_VERSION = "v2";
 const DRAFT_VERSION = "v1";
 const MAX_AGE_MS = 12 * 60 * 60 * 1000;
@@ -21,8 +22,11 @@ function readCredential() {
   }
 }
 
+// The main secure-student renderer intentionally keeps its existing volatile
+// key contract. Persistent storage is canonicalized so differently formatted
+// URLs still resolve to the same attempt after a full tab/browser restart.
 function volatileDraftKey(attemptId) {
-  return `gradecrew_secure_answers:v1:${quizId}:${attemptId}`;
+  return `gradecrew_secure_answers:v1:${rawQuizId}:${attemptId}`;
 }
 
 function persistentDraftKey(attemptId) {
