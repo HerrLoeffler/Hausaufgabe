@@ -1,0 +1,27 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync("secure-solution-release.js", "utf8");
+const html = fs.readFileSync("secure-student.html", "utf8");
+const lifecycle = fs.readFileSync("assessment-functions/lib/secure-lifecycle.js", "utf8");
+
+test("solution UI uses only the token-protected receipt callable and never Firestore", () => {
+  assert.match(source, /createSecureAssessmentClient/);
+  assert.match(source, /api\.getReceipt\(quizId\)/);
+  assert.doesNotMatch(source, /firebase-firestore\.js|\bgetFirestore\b|\bgetDocs\b|\bdoc\b|\bonSnapshot\b/);
+  assert.match(html, /secure-solution-release\.js/);
+});
+
+test("student UI renders solutions only when server marks them released", () => {
+  assert.match(source, /receipt\.solutionsReleased && Array\.isArray\(receipt\.solutions\)/);
+  assert.match(source, /erst nach dem Beenden des Tests freigegeben/);
+  assert.match(source, /Lösungsfreigabe prüfen/);
+});
+
+test("server release requires snapshotted teacher opt-in and ended quiz", () => {
+  assert.match(lifecycle, /submission\?\.showSolutionsAfterEnd === true && mode !== "none"/);
+  assert.match(lifecycle, /configured && quiz\?\.ended === true/);
+  assert.match(lifecycle, /solutionSnapshot/);
+  assert.doesNotMatch(source, /showSolutionsAfterEnd/);
+});
