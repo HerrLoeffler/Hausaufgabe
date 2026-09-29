@@ -15,7 +15,8 @@ const files = [
   'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'crew-clay.css', 'workspace.css', 'gradecrew-tour.css',
   'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
-  'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
+  'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs',
+  'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js'
 ];
 for (const name of await fs.readdir(path.join(root, 'assets/gradecrew'))) {
   if (name.endsWith('.svg')) files.push(`assets/gradecrew/${name}`);
