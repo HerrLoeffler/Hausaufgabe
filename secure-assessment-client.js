@@ -1,7 +1,7 @@
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
 const REGION = "europe-west1";
-const STORAGE_VERSION = "v1";
+const STORAGE_VERSION = "v2";
 
 function randomUrlSafe(bytes = 32) {
   const buffer = new Uint8Array(bytes);
@@ -68,6 +68,7 @@ function normalizeCallableError(error) {
     "not-found": "Dieser Test oder Bearbeitungsversuch wurde nicht gefunden.",
     "permission-denied": "Dieser Bearbeitungsversuch gehört nicht zu diesem Browser.",
     "failed-precondition": error?.message || "Der Test kann gerade nicht fortgesetzt werden.",
+    "aborted": "Der Test wurde gerade geändert. Bitte versuche es erneut.",
     "deadline-exceeded": "Die serverseitige Abgabefrist ist abgelaufen. Bitte wende dich an deine Lehrkraft.",
     "resource-exhausted": "Zu viele Startversuche. Bitte kurz warten oder die Lehrkraft informieren.",
     "unavailable": "GradeCrew ist gerade nicht erreichbar. Deine Eingaben bleiben im Browser; versuche es gleich erneut."
@@ -100,8 +101,7 @@ export function createSecureAssessmentClient(firebaseApp) {
     const session = readSession(quizId);
     const quiz = response?.quiz;
     if (
-      quiz?.startMode === "teacher"
-      && session?.sessionRunId
+      session?.sessionRunId
       && quiz?.sessionRunId
       && String(session.sessionRunId) !== String(quiz.sessionRunId)
     ) clearSession(quizId);
