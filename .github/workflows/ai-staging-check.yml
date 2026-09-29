@@ -69,6 +69,7 @@ jobs:
         run: |
           node --check secure-assessment-client.js
           node --check secure-student.js
+          node --check secure-deadline-guard.js
           node --check secure-solution-release.js
           node --check secure-assessment-teacher-polish.js
           node --check startup.js
@@ -76,8 +77,10 @@ jobs:
       - name: Test secure client boundary
         run: node --test secure-assessment-client.test.mjs
 
-      - name: Test secure student renderer
-        run: node --test secure-student.test.mjs
+      - name: Test secure student renderer and deadline guard
+        run: |
+          node --test secure-student.test.mjs
+          node --test secure-deadline-guard.test.mjs
 
       - name: Test controlled solution release
         run: node --test secure-solution-release.test.mjs
@@ -150,7 +153,9 @@ jobs:
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-student.js"
           test -f "$BUILD_DIR/public/secure-assessment-client.js"
+          test -f "$BUILD_DIR/public/secure-deadline-guard.js"
           test -f "$BUILD_DIR/public/secure-solution-release.js"
           test -f "$BUILD_DIR/public/secure-assessment-teacher-polish.js"
+          grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
