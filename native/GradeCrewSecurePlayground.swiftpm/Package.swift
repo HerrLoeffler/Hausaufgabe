@@ -1,7 +1,7 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 
 // WARNING:
-// Swift Playground may regenerate this file. Keep app code in App.swift.
+// Swift Playgrounds may regenerate this file. Keep app code in App.swift.
 
 import PackageDescription
 import AppleProductTypes
@@ -18,7 +18,7 @@ let package = Package(
             bundleIdentifier: "de.gradecrew.secure.playground",
             displayVersion: "0.1",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .lock),
+            appIcon: .placeholder(icon: .checkmark),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
                 .pad
@@ -28,7 +28,8 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .education
         )
     ],
     targets: [
@@ -37,6 +38,5 @@ let package = Package(
             path: ".",
             exclude: ["README.md"]
         )
-    ],
-    swiftLanguageVersions: [.version("6")]
+    ]
 )
