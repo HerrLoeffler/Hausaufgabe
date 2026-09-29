@@ -7,6 +7,7 @@ PROJECT_ID="hausaufgabe-staging"; CHANNEL_ID="gradecrew-vocab-rush"
 node --check lab/vocab-rush/curriculum.js
 node --check lab/vocab-rush/app.js
 node --check lab/vocab-rush/library-plus.js
+node --check lab/vocab-rush/learning-plus.js
 node --check tools/build-lab-vocab-rush.mjs
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-vocab-rush.XXXXXX")"; trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-vocab-rush.mjs "$BUILD_DIR"
