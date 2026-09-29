@@ -35,7 +35,7 @@ jobs:
         run: npm ci --include=dev
 
       - name: Install secure assessment dependencies
-        run: npm install --prefix assessment-functions --no-audit --no-fund
+        run: npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
 
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
@@ -50,6 +50,9 @@ jobs:
 
       - name: Test secure assessment backend
         run: |
+          test "$(node -p 'require("./assessment-functions/package.json").main')" = "main.js"
+          ! grep -q 'require("./index")' assessment-functions/main.js
+          grep -q 'secure-lifecycle' assessment-functions/main.js
           npm test --prefix assessment-functions
           npm run check --prefix assessment-functions
 
@@ -63,6 +66,8 @@ jobs:
           node --check ai-client.js
           node --check secure-assessment-client.js
           node --check secure-student.js
+          node --check secure-solution-release.js
+          node --check secure-assessment-teacher-polish.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
           node --check first-guide-guard.js
@@ -88,6 +93,8 @@ jobs:
           node --check ordering-grading.mjs
           node --test secure-assessment-client.test.mjs
           node --test secure-student.test.mjs
+          node --test secure-solution-release.test.mjs
+          node --test secure-assessment-teacher-polish.test.mjs
           node --test secure-student-route.test.mjs
           node --test secure-firestore-rules.test.mjs
           node --test crew-art.test.mjs
@@ -115,4 +122,7 @@ jobs:
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-student.js"
           test -f "$BUILD_DIR/public/secure-assessment-client.js"
+          test -f "$BUILD_DIR/public/secure-solution-release.js"
+          test -f "$BUILD_DIR/public/secure-assessment-teacher-polish.js"
+          grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
