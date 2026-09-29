@@ -1,6 +1,7 @@
 const params = new URLSearchParams(location.search);
-const quizId = String(params.get("test") || "").trim();
-const SESSION_VERSION = "v1";
+const normalizeQuizId = value => String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+const quizId = normalizeQuizId(params.get("test"));
+const SESSION_VERSION = "v2";
 const DRAFT_VERSION = "v1";
 const MAX_AGE_MS = 12 * 60 * 60 * 1000;
 const result = document.getElementById("secureResult");
@@ -13,6 +14,7 @@ function readCredential() {
   try {
     const value = JSON.parse(localStorage.getItem(credentialKey()) || "null");
     if (!value || value.version !== SESSION_VERSION || !value.attemptId) return null;
+    if (normalizeQuizId(value.quizId) !== quizId) return null;
     return value;
   } catch {
     return null;
