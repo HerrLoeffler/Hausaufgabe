@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>GradeCrew Lab · Fehlerjagd Deutsch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Fehlerjagd neu laden"><span class="brandMark">G</span><span><strong>GradeCrew</strong><small>Lab · Fehlerjagd Deutsch</small></span></a>
+    <span class="labBadge">EXPERIMENT · DEUTSCH</span>
+  </header>
+
+  <main class="shell">
+    <section id="homeView" class="view">
+      <div class="hero">
+        <p class="eyebrow">GRADECREW GAMES</p>
+        <h1>Fehlerjagd Deutsch</h1>
+        <p>Rechtschreibung und Grammatik erkennen, begründen und verbessern – allein, im Highscore oder live mit der Klasse.</p>
+        <div class="heroFacts"><span>Mittelschule Bayern</span><span>Jgst. 5–9</span><span>Quali-orientiert</span><span>LehrplanPLUS</span></div>
+      </div>
+
+      <div class="homeLayout">
+        <div class="modeGrid">
+          <button class="modeCard" data-open="practice" type="button"><span class="num">01</span><span class="audience">ALLEIN TRAINIEREN</span><strong>Üben</strong><p>Jahrgangsstufe und Themen frei auswählen. Sofortige Erklärung nach jeder Aufgabe.</p><div class="chips"><span>frei einstellbar</span><span>Fehlerprofil</span><span>persönlicher Rekord</span></div><b>Training einstellen →</b></button>
+          <button class="modeCard" data-open="highscore" type="button"><span class="num">02</span><span class="audience">GEGEN DIE BESTENLISTE</span><strong>All-Time-Highscore</strong><p>Feste Regeln, immer neue gleichwertige Aufgaben und eine gemeinsame Bestenliste.</p><div class="chips"><span>2 Minuten</span><span>feste Wertung</span><span>Ranking</span></div><b>Highscore jagen →</b></button>
+          <button class="modeCard" data-open="live" type="button"><span class="num">03</span><span class="audience">LEHRKRAFT STARTET</span><strong>Live mit Lehrkraft</strong><p>Lehrkraft wählt Jahrgang und Kompetenzen. Bis zu 30 Personen starten gemeinsam.</p><div class="chips"><span>QR-Code</span><span>bis 30 Personen</span><span>Live-Scoreboard</span></div><b>Live-Runde erstellen →</b></button>
+        </div>
+
+        <aside class="card joinCard">
+          <p class="eyebrow">SCHÜLER / TEILNEHMENDE</p><h2>Runde beitreten</h2><p>QR-Code scannen oder den 6-stelligen Code der Lehrkraft eingeben.</p>
+          <label class="field"><span>Rundencode</span><input id="quickJoinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456"></label>
+          <button id="quickJoinBtn" class="primary full" type="button">Weiter</button>
+          <div class="joinSteps"><span><b>1</b> Code</span><span><b>2</b> Name</span><span><b>3</b> Start</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="setupView" class="view" hidden>
+      <button class="back" data-home type="button">← Zurück</button>
+      <div class="pageHead"><p id="setupEyebrow" class="eyebrow">ÜBEN</p><h1 id="setupTitle">Fehlerjagd einstellen</h1><p id="setupSubtitle">Wähle Jahrgangsstufe und Kompetenzen.</p></div>
+      <form id="setupForm" class="setupGrid">
+        <div class="card setupMain">
+          <section class="setupSection"><div class="sectionHead"><span>1</span><div><strong>Jahrgangsstufe</strong><small>Regelklasse Mittelschule Bayern</small></div></div><div id="gradePicker" class="gradePicker">
+            <label><input type="radio" name="grade" value="5"><span>5</span></label><label><input type="radio" name="grade" value="6"><span>6</span></label><label><input type="radio" name="grade" value="7"><span>7</span></label><label><input type="radio" name="grade" value="8"><span>8</span></label><label><input type="radio" name="grade" value="9" checked><span>9</span></label><label><input type="radio" name="grade" value="qa"><span>Quali</span></label>
+          </div><div id="curriculumHint" class="curriculumHint"></div></section>
+
+          <section class="setupSection"><div class="sectionHead"><span>2</span><div><strong>Kompetenzen</strong><small>Mindestens einen Bereich auswählen. Nicht passende Inhalte werden automatisch ausgeblendet.</small></div></div><div id="skillChoices" class="skillGrid"></div></section>
+
+          <section class="setupSection"><div class="sectionHead"><span>3</span><div><strong>Niveau</strong><small>Die Aufgaben bleiben lehrplangerecht; das Niveau steuert Komplexität und Ablenkungen.</small></div></div><div class="levelPicker"><label><input type="radio" name="level" value="n1"><span><b>Niveau 1</b><small>klar & fokussiert</small></span></label><label><input type="radio" name="level" value="n2" checked><span><b>Niveau 2</b><small>Standard</small></span></label><label><input type="radio" name="level" value="n3"><span><b>Niveau 3</b><small>anspruchsvoll</small></span></label><label><input type="radio" name="level" value="n4"><span><b>Niveau 4</b><small>Quali-nah</small></span></label></div></section>
+
+          <section class="setupSection"><div class="sectionHead"><span>4</span><div><strong>Dauer</strong><small>Fortlaufend neue Aufgaben bis die Zeit abläuft.</small></div></div><div class="durationPicker"><label><input type="radio" name="duration" value="1"><span>1</span></label><label><input type="radio" name="duration" value="2"><span>2</span></label><label><input type="radio" name="duration" value="3" checked><span>3</span></label><label><input type="radio" name="duration" value="4"><span>4</span></label><label><input type="radio" name="duration" value="5"><span>5</span></label></div><small>Minuten</small></section>
+        </div>
+
+        <aside class="card rulesCard"><div class="sectionHead"><span>5</span><div><strong>Spielregeln</strong><small id="rulesHint">Für dein Training.</small></div></div>
+          <label class="field"><span>Minuspunkte bei Fehler</span><select id="wrongPenalty"><option value="0">keine</option><option value="25">−25</option><option value="50" selected>−50</option><option value="100">−100</option></select></label>
+          <label class="field"><span>Sperre nach Fehler</span><select id="lockSeconds"><option value="0">keine</option><option value="2">2 Sekunden</option><option value="5" selected>5 Sekunden</option><option value="10">10 Sekunden</option><option value="30">30 Sekunden</option></select></label>
+          <label class="toggle"><input id="speedBonus" type="checkbox" checked><span><b>Zeitbonus</b><small>Schnelle richtige Antworten bringen Zusatzpunkte.</small></span></label>
+          <label class="toggle"><input id="streakBonus" type="checkbox" checked><span><b>Serienbonus</b><small>Mehrere richtige Lösungen nacheinander werden belohnt.</small></span></label>
+          <label class="toggle"><input id="showSolution" type="checkbox" checked><span><b>Erklärung zeigen</b><small>Nach Fehlern die Regel oder Strategie einblenden.</small></span></label>
+          <div id="teacherRules" hidden><label class="field"><span>Bestenliste für Schüler</span><select id="leaderboardMode"><option value="live">während der Runde</option><option value="after" selected>erst am Ende</option><option value="hidden">nicht anzeigen</option></select></label><small>Die Lehrkraft sieht das Scoreboard immer live.</small></div>
+          <div class="scoreBox"><span>Wertung</span><strong>+100 richtig</strong><small id="scorePreview">−50 falsch · 5 s Sperre · Zeit- & Serienbonus</small></div>
+          <p id="setupError" class="error"></p><button id="setupSubmit" class="primary full" type="submit">Training starten</button>
+        </aside>
+      </form>
+    </section>
+
+    <section id="highscoreView" class="view" hidden>
+      <button class="back" data-home type="button">← Zurück</button><div class="pageHead"><p class="eyebrow">ALL-TIME-HIGHSCORE</p><h1>Deutsch unter Zeitdruck.</h1><p>Zwei Minuten, feste Regeln, neue gleichwertige Aufgaben. Bestenlisten werden nach Jahrgang und Bereich getrennt.</p></div>
+      <div class="highscoreGrid"><div class="card highscoreConfig"><label class="field"><span>Kürzel oder kurzer Name</span><input id="highscoreName" maxlength="24" placeholder="z. B. ML"></label><label class="field"><span>Jahrgang</span><select id="highscoreGrade"><option>5</option><option>6</option><option>7</option><option>8</option><option selected>9</option><option value="qa">Quali</option></select></label><label class="field"><span>Bereich</span><select id="highscoreFocus"><option value="mix">Mix</option><option value="spelling">Rechtschreibung</option><option value="grammar">Grammatik</option><option value="qa">Quali-Mix</option></select></label><div class="fixedRules"><b>Feste Regeln</b><span>2:00 min</span><span>+100 richtig</span><span>−100 falsch</span><span>3 s Sperre</span><span>keine Lösung während der Runde</span></div><p id="highscoreError" class="error"></p><button id="startHighscoreBtn" class="primary full" type="button">Highscore-Versuch starten</button></div><div class="card boardCard"><div class="panelHead"><div><strong>All-Time-Bestenliste</strong><small id="boardLabel"></small></div><button id="refreshBoardBtn" class="textBtn" type="button">Aktualisieren</button></div><ol id="highscoreBoard" class="leaderboard"><li class="empty">Noch keine Einträge.</li></ol></div></div>
+    </section>
+
+    <section id="joinView" class="view" hidden><button class="back" data-home type="button">← Zurück</button><div class="card joinPage"><p class="eyebrow">LIVE-RUNDE</p><h1>Runde beitreten</h1><p>Nach dem QR-Scan ist der Code bereits eingetragen.</p><label class="field"><span>Rundencode</span><input id="joinCode" class="codeInput" inputmode="numeric" maxlength="6" placeholder="123456"></label><label class="field"><span>Dein Kürzel oder kurzer Name</span><input id="joinName" maxlength="24" placeholder="z. B. ML"></label><p id="joinError" class="error"></p><button id="joinBtn" class="primary full" type="button">Beitreten</button></div></section>
+
+    <section id="teacherView" class="view" hidden><div class="teacherHead"><div><p class="eyebrow">LIVE MIT LEHRKRAFT</p><h1>Warteraum</h1><p id="teacherSummary"></p></div><div class="card shareCard"><div><span>Rundencode</span><strong id="roomCode">000000</strong></div><div id="qrBox" class="qrBox"></div><button id="copyLinkBtn" class="secondary" type="button">Beitrittslink kopieren</button><small>Bis zu 30 Teilnehmende.</small></div></div><div class="teacherGrid"><div class="card"><div class="panelHead"><div><strong>Teilnehmende</strong><small id="playerCount">0 / 30 bereit</small></div><span id="roomBadge" class="badge">WARTET</span></div><div id="playerList" class="playerList"><p class="empty">Noch niemand beigetreten.</p></div></div><div class="card controlCard"><strong>Rundensteuerung</strong><p id="teacherRulesSummary"></p><button id="startLiveBtn" class="primary full" type="button">Live-Runde starten</button><button id="newLiveBtn" class="secondary full" type="button">Neue Runde vorbereiten</button></div></div><div class="card boardCard liveBoard"><div class="panelHead"><div><strong>Live-Scoreboard</strong><small id="liveBoardStatus">erscheint ab dem Start</small></div></div><ol id="liveBoard" class="leaderboard"><li class="empty">Noch keine Punkte.</li></ol></div></section>
+
+    <section id="waitingView" class="view" hidden><div class="card waiting"><p class="eyebrow">DU BIST DABEI</p><h1 id="waitingName">Bereit.</h1><p>Die Lehrkraft startet die Runde.</p><div class="waitingCode">Runde <b id="waitingCode">000000</b></div><div id="countdown" class="countdown" hidden>3</div></div></section>
+
+    <section id="gameView" class="view" hidden><div class="gameBar"><div><span class="mini">FEHLERJAGD</span><strong id="roundLabel">Deutsch</strong></div><div><span id="playerLabel">Üben</span><code id="roundCodeLabel">SOLO</code></div></div><div class="timerTrack"><div id="timerFill"></div></div><div class="stats"><div><span>Zeit</span><strong id="timer">03:00</strong></div><div><span>Richtig</span><strong id="correctCount">0</strong></div><div><span>Serie</span><strong id="streakCount">0</strong></div><div><span>Punkte</span><strong id="scoreCount">0</strong></div></div><article class="card taskCard"><div class="taskMeta"><span id="taskNumber">Aufgabe 1</span><span id="taskSkill"></span></div><p id="taskInstruction" class="instruction"></p><h2 id="taskPrompt"></h2><div id="taskContext" class="taskContext"></div><div id="answers" class="answers"></div><button id="multiSubmit" class="primary multiSubmit" type="button" hidden>Auswahl prüfen</button><div id="penaltyLock" class="penalty" hidden><strong id="penaltyTime">5</strong><span>Sekunden Pause nach falscher Antwort</span></div><div id="feedback" class="feedback" aria-live="polite"></div></article></section>
+
+    <section id="resultView" class="view" hidden><div class="resultHero"><p class="eyebrow">RUNDE BEENDET</p><h1>Deine Fehlerjagd</h1><p id="resultSummary"></p></div><div class="resultMetrics"><div><span>Richtig</span><strong id="resultCorrect"></strong></div><div><span>Genauigkeit</span><strong id="resultAccuracy"></strong></div><div><span>Beste Serie</span><strong id="resultStreak"></strong></div><div><span>Punkte</span><strong id="resultScore"></strong></div></div><div class="resultColumns"><div class="card"><div class="panelHead"><div><strong>Dein Kompetenzprofil</strong><small>aus dieser Runde</small></div></div><div id="skillProfile" class="skillProfile"></div></div><div id="resultBoardCard" class="card boardCard" hidden><div class="panelHead"><div><strong>Bestenliste</strong><small>aktueller Stand</small></div></div><ol id="resultBoard" class="leaderboard"></ol></div></div><div class="card resultActions"><div><h2>Noch eine Runde?</h2><p id="resultActionText"></p></div><div><button id="sameRoundBtn" class="secondary" type="button">Gleiche Auswahl</button><button id="newRoundBtn" class="primary" type="button">Neue Aufgaben</button><button id="homeBtn" class="secondary" type="button">Startseite</button></div></div><pre id="debugDump" hidden></pre></section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="deutsch-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
