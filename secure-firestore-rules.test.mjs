@@ -12,10 +12,18 @@ function block(start, next) {
   return rules.slice(from, to);
 }
 
+test("secure cutover removes anonymous quiz metadata reads", () => {
+  const quizzes = block("match /quizzes/{quizId}", "match /questions/{questionId}");
+  assert.match(quizzes, /allow get: if ownsQuiz\(quizId\) \|\| quizShared\(quizId\) \|\| isAdmin\(\)/);
+  assert.doesNotMatch(quizzes, /published\s*==\s*true/);
+  assert.doesNotMatch(quizzes, /ended/);
+  assert.match(rules, /Join-Metadaten kommen ausschließlich über die/);
+});
+
 test("published students cannot read authoring question documents", () => {
   const questions = block("match /questions/{questionId}", "match /attempts/{attemptId}");
   assert.match(questions, /allow read: if ownsQuiz\(quizId\) \|\| quizShared\(quizId\) \|\| isAdmin\(\)/);
-  assert.doesNotMatch(questions, /quizPublished/);
+  assert.doesNotMatch(questions, /quizPublished|published\s*==\s*true/);
 });
 
 test("students cannot create or update attempts directly", () => {
@@ -35,4 +43,9 @@ test("assessment secrets and rate limits are never client-readable or writable",
   const rateBlock = block("match /assessmentRateLimits/{rateId}", "match /announcements/{announcementId}");
   assert.match(privateBlock, /allow read, write: if false/);
   assert.match(rateBlock, /allow read, write: if false/);
+});
+
+test("legacy top-level submissions stay closed", () => {
+  const legacy = block("match /submissions/{legacyId}", null);
+  assert.match(legacy, /allow read, write: if false/);
 });
