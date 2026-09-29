@@ -12,10 +12,18 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "functions": {
-    "source": "functions",
-    "runtime": "nodejs22"
-  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "ai",
+      "runtime": "nodejs22"
+    },
+    {
+      "source": "assessment-functions",
+      "codebase": "assessment",
+      "runtime": "nodejs22"
+    }
+  ],
   "storage": {
     "rules": "storage.rules"
   }
