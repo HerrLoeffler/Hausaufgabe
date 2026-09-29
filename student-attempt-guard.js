@@ -110,7 +110,7 @@ function installSolutionShield() {
 function hideSolutions() {
   const details = document.getElementById("studentResultDetails");
   if (!details) return;
-  details.replaceChildren();
+  if (details.childNodes.length) details.replaceChildren();
   if (!details.previousElementSibling?.classList?.contains("gcStudentResultNotice")) {
     const note = document.createElement("div");
     note.className = "gcStudentResultNotice";
@@ -122,10 +122,12 @@ function hideSolutions() {
 function sealForm() {
   const form = document.getElementById("studentForm");
   if (!form) return;
-  form.dataset.submitted = "true";
-  form.setAttribute("aria-hidden", "true");
-  form.classList.add("hidden");
-  form.querySelectorAll("input, select, textarea, button").forEach(control => { control.disabled = true; });
+  if (form.dataset.submitted !== "true") form.dataset.submitted = "true";
+  if (form.getAttribute("aria-hidden") !== "true") form.setAttribute("aria-hidden", "true");
+  if (!form.classList.contains("hidden")) form.classList.add("hidden");
+  form.querySelectorAll("input, select, textarea, button").forEach(control => {
+    if (!control.disabled) control.disabled = true;
+  });
 }
 
 function showLockedNotice() {
@@ -148,10 +150,16 @@ function showLockedNotice() {
 
 let pendingAttempt = null;
 let sealedThisPage = false;
+let resultObserver = null;
 
 function resultWasSaved() {
   const result = document.getElementById("studentResult");
   return Boolean(result && !result.classList.contains("hidden") && /Abgabe gespeichert/i.test(result.textContent || ""));
+}
+
+function stopResultObserver() {
+  resultObserver?.disconnect();
+  resultObserver = null;
 }
 
 function sealSuccessfulSubmission() {
@@ -162,6 +170,7 @@ function sealSuccessfulSubmission() {
   sealedThisPage = true;
   sealForm();
   hideSolutions();
+  stopResultObserver();
   return true;
 }
 
@@ -183,7 +192,7 @@ function blockDuplicateSubmit(event) {
 
 function restoreGuard() {
   if (!isStudentRoute()) return;
-  document.body.classList.add("gcStudentPublicRun");
+  if (!document.body.classList.contains("gcStudentPublicRun")) document.body.classList.add("gcStudentPublicRun");
   installSolutionShield();
   const code = quizCode();
   if (activeLock(code)) showLockedNotice();
@@ -191,8 +200,14 @@ function restoreGuard() {
 }
 
 function installObserver() {
-  const observer = new MutationObserver(() => restoreGuard());
-  observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  const root = document.getElementById("studentQuizCard") || document.body;
+  if (!root || resultObserver) return;
+  resultObserver = new MutationObserver(() => {
+    if (sealSuccessfulSubmission()) return;
+    const code = quizCode();
+    if (activeLock(code)) showLockedNotice();
+  });
+  resultObserver.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
 }
 
 export function installStudentAttemptGuard() {
