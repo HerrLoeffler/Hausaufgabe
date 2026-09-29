@@ -32,6 +32,20 @@ test("active published assessment content is immutable to ordinary teacher clien
   assert.match(questions, /allow create, update, delete: if quizContentEditable\(quizId\) \|\| isAdmin\(\)/);
 });
 
+test("active assessment lifecycle cannot be pushed back to an editable draft", () => {
+  assert.match(rules, /function ownerQuizUpdateAllowed\(\)/);
+  const lifecycle = block("function ownerQuizUpdateAllowed()", "match /users/{userId}");
+  assert.match(lifecycle, /resource\.data\.get\('published', false\) == true/);
+  assert.match(lifecycle, /resource\.data\.get\('ended', false\) == false/);
+  assert.match(lifecycle, /affectedKeys\(\)\.hasOnly/);
+  assert.match(lifecycle, /'sessionState'/);
+  assert.match(lifecycle, /'endedAt'/);
+  assert.match(lifecycle, /request\.resource\.data\.get\('published', false\) == true/);
+  assert.match(lifecycle, /request\.resource\.data\.get\('ended', false\) == true/);
+  const quizzes = block("match /quizzes/{quizId}", "match /questions/{questionId}");
+  assert.match(quizzes, /&& ownerQuizUpdateAllowed\(\)/);
+});
+
 test("anonymous students cannot write attempts; only active owner self-test may create one", () => {
   assert.match(rules, /function ownerSelfTestAllowed\(quizId\)/);
   const attempts = block("match /attempts/{attemptId}", "match /submissions/{submissionId}");
