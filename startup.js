@@ -43,6 +43,9 @@ if (publicTestCode && !teacherPreview) {
     await import("./app.js?v=2.3.1-gc21");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
+    import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
+      console.warn("Secure-Assessment-Hinweise konnten nicht geladen werden.", error);
+    });
     import("./visual-enhancements.js?v=2.3.1-gc26").catch(error => {
       console.warn("Zusätzliche Ansichten konnten nicht geladen werden.", error);
     });
