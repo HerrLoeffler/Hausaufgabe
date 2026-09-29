@@ -1,59 +1,35 @@
-# GradeCrew Lab · Vocab Rush
+# Vocab Rush Lab
 
-## Ziel
-
-Vocab Rush ist das Englisch-Spiel innerhalb von GradeCrew Games. Es verwendet dieselben drei Modi wie Fast Quiz und Fehlerjagd:
-
-1. Üben
-2. All-Time-Highscore
-3. Live mit Lehrkraft
+Vocab Rush ist das dritte experimentelle GradeCrew-Spiel neben Fast Quiz und Fehlerjagd Deutsch.
 
 ## Zwei Inhaltsquellen
 
-### Lehrplan-Training
+### 1. Lehrplan-Training
+Direkt spielbare Englischthemen für Mittelschule Bayern, Jahrgangsstufen 5–9. Die Themen werden nach ihrer lehrplanbezogenen Einführung gekennzeichnet und können später wiederholt bzw. vertieft werden.
 
-Eingebaute Übungen für Mittelschule Bayern, Regelklasse, Jgst. 5–9. Die Jahrgangsstufe steuert Empfehlungen und Progression; ältere Themen bleiben als Wiederholung verfügbar.
+### 2. Meine Vokabeln
+Eigene Vokabelsets aus dem aktuellen Unterricht. Sets können manuell, per Copy & Paste oder über Foto/Screenshot/PDF mit KI-Erkennung angelegt werden. Vor dem Speichern wird die erkannte Liste von der Lehrkraft geprüft.
 
-Beispiele:
-- Jgst. 5: simple present, simple past, question words, prepositions, some/any/no, einfache phrasal verbs und collocations, irregular verbs.
-- Jgst. 6: present progressive, will-future, Modalverben, adjective comparison, object pronouns und erweiterte Wortstellung.
-- Jgst. 7: present perfect, Possessiv-/Reflexiv-/Relativpronomen, quantities, should/shouldn't.
-- Jgst. 8: going-to-future, relative clauses, adverbs, (a) few/(a) little, weitere phrasal verbs/collocations.
-- Jgst. 9: past progressive, if-clauses type I, may/might, tense mix sowie komplexere phrasal verbs/collocations.
+## Drei Modi
+- **Üben**: lernorientiert, Fehler werden wiederholt; falsche Lösungen erscheinen mindestens fünf Sekunden groß als MERKEN-Hinweis. Bei eigenen Vokabeln kann optional verlangt werden, die englische Vokabel nach einem Fehler einmal korrekt selbst zu schreiben.
+- **All-Time-Highscore**: feste Lehrplan-Disziplinen mit vergleichbaren Regeln.
+- **Live mit Lehrkraft**: QR-Code, bis zu 30 Teilnehmende, gemeinsamer Start und Live-Scoreboard.
 
-Fachliche Referenz: LehrplanPLUS Mittelschule Bayern, Englisch Regelklasse 5–9.
+## Vokabelbibliothek
+- Sets können bearbeitet, dupliziert und gelöscht werden.
+- Mehrere Sets können gemeinsam ausgewählt werden, etwa Unit 1 + Unit 2 oder alle Units.
+- Mehrseiten-Import hält bereits hinzugefügte Seiten fest; neue Seiten ergänzen den Import statt vorherige zu ersetzen.
+- Unterstützt werden Bilder, Screenshots, Drag & Drop sowie PDFs mit mehreren Seiten.
+- Pro Seite kann ein Ausschnitt gewählt werden.
 
-### Meine Vokabeln
+## Foto/KI
+Der Browser sendet Bilddaten ausschließlich an die separate Staging-Function `vocabRushApi`. Der OpenAI-Key bleibt serverseitig im Firebase Secret. Das Modell liefert strukturierte Englisch-Deutsch-Vokabelpaare; das Foto selbst wird vom Vocab-Rush-Code nicht dauerhaft gespeichert. Erst die geprüfte Vokabelliste wird übernommen.
 
-Eigene aktuelle Unterrichtsvokabeln können als Set angelegt werden:
-- manuell,
-- Copy & Paste,
-- Foto/Screenshot mit KI-Extraktion.
+## Lab-Isolation
+- Branch: `lab/vocab-rush`
+- Worktree: `~/gradecrew-vocab-rush`
+- Firebase: `hausaufgabe-staging`
+- eigene Functions-Codebase: `vocabrush`
+- eigener Preview-Channel: `gradecrew-vocab-rush`
 
-Ein Set enthält Englisch als `source` und eine oder mehrere akzeptierte deutsche Bedeutungen als `targets`.
-
-## Fotoimport
-
-Der Browser verkleinert das Bild vor dem Upload. Das Bild wird an die separate Staging-Function `vocabRushApi` gesendet und nicht dauerhaft gespeichert. Die Function nutzt den Firebase-Secret `OPENAI_API_KEY`, sendet das Bild mit `store:false` an die OpenAI Responses API und erzwingt ein JSON-Schema für die extrahierten Vokabeln.
-
-Vor dem Speichern erscheint immer eine bearbeitbare Prüfliste. Unsichere Einträge werden vom Modell mit `needsReview` markiert. Die Lehrkraft bleibt für die endgültige Übernahme verantwortlich.
-
-## Lernlogik
-
-Im Übungsmodus steht Lernen vor Punkten:
-- nach Fehlern mindestens 5 Sekunden Merkzeit,
-- richtige Lösung/Zuordnung wird angezeigt,
-- falsch beantwortete eigene Vokabeln werden zeitnah erneut eingestreut,
-- kein Zeitbonus im Standard-Übungsmodus.
-
-Highscore verwendet feste Regeln und zunächst nur eingebaute Lehrplan-Disziplinen, damit Ergebnisse vergleichbar sind.
-
-Live unterstützt Lehrplan-Themen und eigene Vokabelsets mit QR-Code, gemeinsamem Start und bis zu 30 Teilnehmenden.
-
-## Datenschutz / Rechte
-
-- API-Key niemals im Browsercode.
-- Fotos nicht dauerhaft speichern.
-- Keine personenbezogenen Schülerdaten fotografieren.
-- Fotografierte Verlagsseiten werden nicht automatisch in einen globalen GradeCrew-Pool übernommen.
-- Gespeichert wird nur die vom Nutzer geprüfte strukturierte Vokabelliste.
+Fast Quiz, Fehlerjagd, Games Hub, normales Staging-Hosting und Production werden durch die Lab-Deployskripte nicht verändert.
