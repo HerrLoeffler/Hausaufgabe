@@ -13,6 +13,7 @@ const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 
 if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
 const files = [
   'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'crew-clay.css', 'workspace.css', 'gradecrew-tour.css',
+  'secure-exam.html', 'secure-exam.js', 'secure-exam.css',
   'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
@@ -52,6 +53,15 @@ const release = { project: 'hausaufgabe-staging', version, commit: execFileSync(
 await fs.writeFile(path.join(output, 'release.json'), JSON.stringify(release, null, 2) + '\n');
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
   site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
-  headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
+  headers: [
+    { source: '/secure-exam.html', headers: [
+      { key: 'Cache-Control', value: 'no-store, max-age=0' },
+      { key: 'X-Frame-Options', value: 'DENY' },
+      { key: 'Referrer-Policy', value: 'no-referrer' },
+      { key: 'Content-Security-Policy', value: "default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src https://europe-west1-hausaufgabe-staging.cloudfunctions.net; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" }
+    ] },
+    { source: '/secure-exam.js', headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0' }] },
+    { source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }
+  ]
 } }, null, 2) + '\n');
 console.log(`Staging build verified: ${version}, ${files.length} files.`);
