@@ -48,14 +48,12 @@ if ! grep -q '"codebase": "assessment"' firebase.json; then
   exit 1
 fi
 
-# Exact top-level dependency versions are pinned in package.json. A committed
-# package-lock remains a release-hygiene follow-up before Production; Preview
-# intentionally does not mutate the repository with a generated lockfile.
 npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
 
 node --check secure-assessment-client.js
+node --check secure-draft-persistence.js
 node --check secure-student.js
 node --check secure-deadline-guard.js
 node --check secure-result-policy.js
@@ -65,6 +63,7 @@ node --check startup.js
 
 node --test \
   secure-assessment-client.test.mjs \
+  secure-draft-persistence.test.mjs \
   secure-student.test.mjs \
   secure-deadline-guard.test.mjs \
   secure-result-policy.test.mjs \
@@ -78,6 +77,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-staging.mjs "$BUILD_DIR"
 for REQUIRED in \
   secure-student.html \
+  secure-draft-persistence.js \
   secure-student.js \
   secure-assessment-client.js \
   secure-deadline-guard.js \
@@ -89,6 +89,7 @@ for REQUIRED in \
     exit 1
   }
 done
+grep -q 'secure-draft-persistence.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
