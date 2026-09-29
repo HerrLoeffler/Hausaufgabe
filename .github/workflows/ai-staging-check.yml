@@ -64,6 +64,7 @@ jobs:
           node --check crew-tour-gc22-polish.js
           node --check crew-tour-gc23-polish.js
           node --check crew-tour-gc24-polish.js
+          node --check crew-tour-gc25-final-polish.js
           node --check remy-ai-help.js
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
@@ -76,6 +77,7 @@ jobs:
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
+          node --test crew-tour-gc25-final-polish.test.mjs
           node --test remy-ai-help.test.mjs
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
