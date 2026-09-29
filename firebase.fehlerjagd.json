@@ -1,0 +1,9 @@
+{
+  "functions": [
+    {
+      "source": "lab/fehlerjagd-deutsch-functions",
+      "codebase": "fehlerjagd",
+      "runtime": "nodejs22"
+    }
+  ]
+}
