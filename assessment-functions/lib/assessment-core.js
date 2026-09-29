@@ -19,8 +19,9 @@ function normalizeWord(value) {
   return normalize(value).replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
 }
 
+// GradeCrew awards points on the same 0.5 grid that teachers configure in the editor.
 function round1(value) {
-  return Math.round((Number(value) || 0) * 10) / 10;
+  return Math.round((Number(value) || 0) * 2) / 2;
 }
 
 function sha256(value) {
@@ -59,6 +60,7 @@ function deterministicOrder(items, secret, scope) {
     score: createHmac("sha256", secret).update(`shuffle:${scope}:${index}`).digest("hex")
   }));
   tagged.sort((a, b) => a.score.localeCompare(b.score));
+  // If shuffling is explicitly requested, never hand out the original order by chance.
   if (tagged.length > 1 && tagged.every((entry, index) => entry.sourceIndex === index)) {
     tagged.push(tagged.shift());
   }
@@ -124,12 +126,12 @@ function commonPublicQuestion(question) {
   };
 }
 
-function buildPublicQuestion(question, secret) {
+function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) {
   const q = commonPublicQuestion(question);
   const type = q.type;
 
   if (["single", "multi", "dropdown"].includes(type)) {
-    q.options = (Array.isArray(question.options) ? question.options : []).slice(0, 20).map((option, index) => ({
+    const options = (Array.isArray(question.options) ? question.options : []).slice(0, 20).map((option, index) => ({
       id: opaqueId(secret, question.id, "option", index),
       text: clampString(option?.text, 1000),
       image: option?.imageDataUrl || option?.imageUrl ? {
@@ -137,6 +139,7 @@ function buildPublicQuestion(question, secret) {
         alt: clampString(option.imageAlt || "Antwortabbildung", 300)
       } : null
     }));
+    q.options = shuffleAnswers ? deterministicOrder(options, secret, `${question.id}:options`) : options;
   } else if (type === "number") {
     q.unit = clampString(question.unit, 60);
   } else if (type === "gapfill") {
@@ -247,15 +250,59 @@ function buildGradingKey(question, secret) {
   return key;
 }
 
-function buildAssessmentContract(questions, secret) {
+function fingerprintQuestion(question) {
+  return {
+    id: String(question?.id || ""), position: Number(question?.position) || 0,
+    type: String(question?.type || ""), text: String(question?.text || ""), points: Number(question?.points) || 0,
+    imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
+    options: Array.isArray(question?.options) ? question.options.map(option => ({
+      text: String(option?.text || ""), correct: option?.correct === true,
+      imageDataUrl: String(option?.imageDataUrl || ""), imageUrl: String(option?.imageUrl || ""), imageAlt: String(option?.imageAlt || "")
+    })) : [],
+    acceptedAnswers: Array.isArray(question?.acceptedAnswers) ? question.acceptedAnswers.map(String) : [],
+    manualReview: question?.manualReview === true,
+    numericAnswer: Number.isFinite(Number(question?.numericAnswer)) ? Number(question.numericAnswer) : null,
+    tolerance: Number(question?.tolerance) || 0, unit: String(question?.unit || ""),
+    correctBoolean: question?.correctBoolean === true,
+    pairs: Array.isArray(question?.pairs) ? question.pairs.map(pair => ({ left: String(pair?.left || ""), right: String(pair?.right || "") })) : [],
+    items: Array.isArray(question?.items) ? question.items.map(String) : [],
+    acceptedOrders: Array.isArray(question?.acceptedOrders) ? question.acceptedOrders : [],
+    groups: Array.isArray(question?.groups) ? question.groups.map(group => ({ name: String(group?.name || ""), items: Array.isArray(group?.items) ? group.items.map(String) : [] })) : [],
+    passage: String(question?.passage || ""),
+    targetWords: Array.isArray(question?.targetWords) ? question.targetWords.map(String) : []
+  };
+}
+
+function authoringFingerprint(questions, { shuffleQuestions = false, shuffleAnswers = false } = {}) {
+  const normalized = (Array.isArray(questions) ? questions : [])
+    .map((question, index) => ({ ...question, id: String(question?.id || `q${index + 1}`) }))
+    .sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0));
+  return sha256(JSON.stringify({
+    shuffleQuestions: Boolean(shuffleQuestions),
+    shuffleAnswers: Boolean(shuffleAnswers),
+    questions: normalized.map(fingerprintQuestion)
+  }));
+}
+
+function buildAssessmentContract(questions, secret, { shuffleQuestions = false, shuffleAnswers = false } = {}) {
   if (typeof secret !== "string" || !/^[A-Za-z0-9_-]{32,128}$/.test(secret)) throw new Error("Invalid paper secret");
   const normalized = (Array.isArray(questions) ? questions : [])
     .map((question, index) => ({ ...question, id: String(question?.id || `q${index + 1}`) }))
     .sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0));
-  const paper = normalized.map(question => buildPublicQuestion(question, secret));
-  const gradingKey = normalized.map(question => buildGradingKey(question, secret));
+  const entries = normalized.map(question => ({
+    paper: buildPublicQuestion(question, secret, { shuffleAnswers }),
+    key: buildGradingKey(question, secret)
+  }));
+  const naturalPaper = entries.map(entry => entry.paper);
+  const paper = shuffleQuestions ? deterministicOrder(naturalPaper, secret, "questions") : naturalPaper;
+  const gradingKey = entries.map(entry => entry.key);
   const sourceFingerprint = sha256(JSON.stringify({ paper, gradingKey }));
-  return { paper, gradingKey, sourceFingerprint };
+  return {
+    paper,
+    gradingKey,
+    sourceFingerprint,
+    authoringFingerprint: authoringFingerprint(normalized, { shuffleQuestions, shuffleAnswers })
+  };
 }
 
 function resultShape(max, awarded, needsReview, correct) {
@@ -435,6 +482,7 @@ module.exports = {
   parseGapAuthoringText,
   buildPublicQuestion,
   buildGradingKey,
+  authoringFingerprint,
   buildAssessmentContract,
   gradeQuestion,
   gradeSubmission,
