@@ -7,12 +7,16 @@ const path = require("node:path");
 
 const main = fs.readFileSync(require.resolve("../main.js"), "utf8");
 const lifecycle = fs.readFileSync(require.resolve("../lib/secure-lifecycle.js"), "utf8");
+const cleanup = fs.readFileSync(require.resolve("../lib/cleanup.js"), "utf8");
 const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
 
-test("firebase package entrypoint is exactly the hardened lifecycle", () => {
+test("firebase package entrypoint exports hardened lifecycle and cleanup only", () => {
   assert.equal(pkg.main, "main.js");
-  assert.match(main, /module\.exports = require\("\.\/lib\/secure-lifecycle"\)/);
+  assert.match(main, /require\("\.\/lib\/secure-lifecycle"\)/);
+  assert.match(main, /require\("\.\/lib\/cleanup"\)/);
   assert.doesNotMatch(main, /require\("\.\/index"\)/);
+  assert.match(cleanup, /cleanupAssessmentPrivateOnQuizDelete/);
+  assert.match(cleanup, /collection\("assessmentPrivate"\)\.where\("quizId", "==", quizId\)/);
 });
 
 test("authoritative lifecycle reads current quiz state inside submit transaction", () => {
