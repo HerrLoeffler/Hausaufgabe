@@ -24,6 +24,12 @@ test("browser stores only its opaque attempt credential, never grading material"
   assert.doesNotMatch(source, /gradingKey|paperSecret|correctOptionIds|acceptedAnswers|numericAnswer|correctBoolean|targetWords|acceptedOrders/);
 });
 
+test("join codes keep legacy normalization semantics", () => {
+  assert.match(source, /function normalizeQuizId/);
+  assert.match(source, /toUpperCase\(\)\.replace\(\/\[\^A-Z0-9\]\/g, ""\)/);
+  assert.match(source, /sessionKey\(normalizedId\)/);
+});
+
 test("every new publication run clears the stale local attempt before resume", () => {
   const infoBlock = source.slice(source.indexOf("async function getInfo("), source.indexOf("async function start("));
   assert.doesNotMatch(infoBlock, /quiz\?\.startMode === "teacher"/);
@@ -31,6 +37,16 @@ test("every new publication run clears the stale local attempt before resume", (
   assert.match(infoBlock, /quiz\?\.sessionRunId/);
   assert.match(infoBlock, /session\.sessionRunId\) !== String\(quiz\.sessionRunId\)/);
   assert.match(infoBlock, /clearSession\(quizId\)/);
+});
+
+test("an ended public test can recover only an already-owned submitted attempt", () => {
+  const infoBlock = source.slice(source.indexOf("async function getInfo("), source.indexOf("async function start("));
+  assert.match(infoBlock, /const session = readSession\(quizId\)/);
+  assert.match(infoBlock, /session\?\.attemptId && session\?\.attemptToken/);
+  assert.match(infoBlock, /invoke\(resumeCall/);
+  assert.match(infoBlock, /resumed\?\.status === "submitted"/);
+  assert.match(infoBlock, /submittedAttemptAvailable: true/);
+  assert.match(infoBlock, /throw infoError/);
 });
 
 test("submission sends answers but never client-computed points, grade or grading", () => {
