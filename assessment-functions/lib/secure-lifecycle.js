@@ -92,9 +92,6 @@ function sessionMode(quiz) {
   return quiz.startMode === "teacher" ? "teacher" : "student";
 }
 
-// GradeCrew historically created sessionRunId only for teacher-controlled tests.
-// Secure assessments need a run identity for every publication so a reopened
-// self-start test cannot accidentally reuse a completed browser attempt.
 function effectiveRunId(quiz, quizId) {
   if (sessionMode(quiz) === "teacher") {
     const explicit = String(quiz.sessionRunId || "").trim();
@@ -157,6 +154,74 @@ function gradingScaleSnapshot(quiz) {
     name: String(quiz.gradeScaleSnapshot?.name || "Standard").slice(0, 120),
     thresholds
   };
+}
+
+function cleanDisplay(value, max = 4000) {
+  return String(value ?? "").trim().slice(0, max);
+}
+
+function gapSolutionDisplay(text) {
+  const values = [];
+  const visible = String(text || "").replace(/\[([^\]]+)\]/g, (_, inside) => {
+    values.push(String(inside).split("|").map(value => value.trim()).filter(Boolean).join(" / "));
+    return "____";
+  });
+  return { visible: cleanDisplay(visible, 5000), answer: values.map((value, index) => `Lücke ${index + 1}: ${value}`).join("; ") };
+}
+
+function buildSolutionSnapshot(questions) {
+  return (Array.isArray(questions) ? questions : []).map((question, index) => {
+    const type = String(question?.type || "text");
+    let prompt = type === "gapfill" ? "Lückentext" : cleanDisplay(question?.text, 5000);
+    let answer = "";
+
+    if (["single", "multi", "dropdown"].includes(type)) {
+      answer = (Array.isArray(question.options) ? question.options : [])
+        .filter(option => option?.correct === true)
+        .map(option => cleanDisplay(option?.text, 1000))
+        .filter(Boolean)
+        .join(", ");
+    } else if (type === "text") {
+      answer = question.manualReview === true
+        ? "wird von der Lehrkraft geprüft"
+        : (Array.isArray(question.acceptedAnswers) ? question.acceptedAnswers : []).map(value => cleanDisplay(value, 1000)).filter(Boolean).join(" / ");
+    } else if (type === "number") {
+      const number = Number(question.numericAnswer);
+      const unit = cleanDisplay(question.unit, 60);
+      const tolerance = Math.max(0, Number(question.tolerance) || 0);
+      answer = `${Number.isFinite(number) ? number : ""}${unit ? ` ${unit}` : ""}${tolerance ? ` (±${tolerance})` : ""}`.trim();
+    } else if (type === "truefalse") {
+      answer = question.correctBoolean === true ? "Richtig" : "Falsch";
+    } else if (type === "gapfill") {
+      const gap = gapSolutionDisplay(question.text);
+      prompt = gap.visible || "Lückentext";
+      answer = gap.answer;
+    } else if (type === "matching") {
+      answer = (Array.isArray(question.pairs) ? question.pairs : [])
+        .map(pair => `${cleanDisplay(pair?.left, 800)} → ${cleanDisplay(pair?.right, 800)}`)
+        .join("; ");
+    } else if (type === "ordering") {
+      const items = Array.isArray(question.items) ? question.items.map(value => cleanDisplay(value, 1000)) : [];
+      const primary = items.map((_, itemIndex) => itemIndex);
+      const alternatives = [primary, ...(Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [])]
+        .filter(order => Array.isArray(order) && order.length === items.length && new Set(order).size === items.length && order.every(itemIndex => Number.isInteger(itemIndex) && itemIndex >= 0 && itemIndex < items.length));
+      const unique = [...new Map(alternatives.map(order => [order.join(","), order])).values()];
+      answer = unique.map(order => order.map(itemIndex => items[itemIndex]).join(" → ")).join(" / ");
+    } else if (type === "grouping") {
+      answer = (Array.isArray(question.groups) ? question.groups : [])
+        .map(group => `${cleanDisplay(group?.name, 500)}: ${(Array.isArray(group?.items) ? group.items : []).map(item => cleanDisplay(item, 800)).join(", ")}`)
+        .join("; ");
+    } else if (type === "markwords") {
+      answer = [...new Set((Array.isArray(question.targetWords) ? question.targetWords : []).map(value => cleanDisplay(value, 500)).filter(Boolean))].join(", ");
+    }
+
+    return {
+      id: cleanDisplay(question?.id || `q${index + 1}`, 120),
+      position: Number(question?.position) || index + 1,
+      prompt,
+      answer: cleanDisplay(answer || "–", 12000)
+    };
+  });
 }
 
 function attemptPublicState(attempt, quiz, paper = null) {
@@ -234,8 +299,10 @@ async function rateLimitStart(request, quizId, tx) {
   tx.set(ref, { count: count + 1, quizId, day, updatedAt: Timestamp.now() }, { merge: true });
 }
 
-function makeReceipt(submission) {
+function makeReceipt(submission, quiz = null, privateData = null) {
   const mode = normalizeResultMode(submission?.resultMode);
+  const configured = submission?.showSolutionsAfterEnd === true && mode !== "none";
+  const released = configured && quiz?.ended === true && Array.isArray(privateData?.solutionSnapshot);
   const receipt = {
     submissionId: submission?.attemptId || submission?.id || null,
     attemptId: submission?.attemptId || null,
@@ -243,7 +310,8 @@ function makeReceipt(submission) {
     needsReview: submission?.status === "review",
     resultMode: mode,
     submittedAtMillis: toMillis(submission?.submittedAt),
-    solutionsReleased: false
+    solutionsConfigured: configured,
+    solutionsReleased: released
   };
   if (["points", "points_percent", "points_grade"].includes(mode)) {
     receipt.totalPoints = Number(submission?.totalPoints) || 0;
@@ -251,6 +319,7 @@ function makeReceipt(submission) {
   }
   if (["points_percent", "points_grade"].includes(mode)) receipt.percent = Number(submission?.percent) || 0;
   if (mode === "points_grade" && submission?.grade != null) receipt.grade = Number(submission.grade);
+  if (released) receipt.solutions = privateData.solutionSnapshot;
   return receipt;
 }
 
@@ -299,6 +368,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   const newContract = buildAssessmentContract(questions, newPaperSecret, initialOptions);
   assertNoSolutionLeak(newContract.paper);
   const newDecoderShape = buildTeacherDecoderShape(questions);
+  const newSolutionSnapshot = buildSolutionSnapshot(questions);
 
   let storedAttempt;
   let storedPrivate;
@@ -351,6 +421,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       deadlineAt: timestampFromMillis(deadlineAt),
       gradeScaleSnapshot: scale,
       resultMode,
+      showSolutionsAfterEnd: currentQuiz.showSolutions === true,
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
       secureAssessmentVersion: 2,
@@ -366,6 +437,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
       authoringFingerprint: newContract.authoringFingerprint,
       gradingKey: newContract.gradingKey,
       decoderShape: newDecoderShape,
+      solutionSnapshot: newSolutionSnapshot,
       shuffleQuestions: initialOptions.shuffleQuestions,
       shuffleAnswers: initialOptions.shuffleAnswers,
       sessionRunId: currentRunId,
@@ -402,7 +474,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
     if (!submissionSnap.exists) throw new HttpsError("data-loss", "Die Abgabe konnte nicht geladen werden.");
     return {
       ...attemptPublicState(attempt, initialQuiz, null),
-      receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() })
+      receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, initialQuiz, privateData)
     };
   }
 
@@ -473,7 +545,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
 
     if (existingSubmission.exists || attempt.status === "submitted") {
       if (!existingSubmission.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
-      receipt = makeReceipt({ id: existingSubmission.id, ...existingSubmission.data() });
+      receipt = makeReceipt({ id: existingSubmission.id, ...existingSubmission.data() }, quizSnap.exists ? quizSnap.data() : null, privateData);
       return;
     }
 
@@ -518,6 +590,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
       grade,
       gradeScaleSnapshot: scale,
       resultMode,
+      showSolutionsAfterEnd: attempt.showSolutionsAfterEnd === true,
       status: result.needsReview ? "review" : "graded",
       timeLimitMinutes: attempt.timeLimitMinutes || null,
       sessionRunId: attempt.sessionRunId || null,
@@ -545,7 +618,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
       authoringFingerprint: FieldValue.delete(),
       updatedAt: submittedAt
     });
-    receipt = makeReceipt(submission);
+    receipt = makeReceipt(submission, quiz, privateData);
   });
 
   return { receipt };
@@ -555,7 +628,8 @@ exports.getAssessmentReceipt = onCall(callableOpts, async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
-  const [attemptSnap, privateSnap, submissionSnap] = await Promise.all([
+  const [quizSnap, attemptSnap, privateSnap, submissionSnap] = await Promise.all([
+    getFirestore().doc(`quizzes/${quizId}`).get(),
     attemptRef(quizId, id).get(),
     assessmentPrivateRef(quizId, id).get(),
     submissionRef(quizId, id).get()
@@ -563,5 +637,11 @@ exports.getAssessmentReceipt = onCall(callableOpts, async request => {
   if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
   assertAttemptToken(privateSnap.data(), token);
   if (!submissionSnap.exists) throw new HttpsError("failed-precondition", "Für diesen Versuch liegt noch keine Abgabe vor.");
-  return { receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }) };
+  return {
+    receipt: makeReceipt(
+      { id: submissionSnap.id, ...submissionSnap.data() },
+      quizSnap.exists ? quizSnap.data() : null,
+      privateSnap.data()
+    )
+  };
 });
