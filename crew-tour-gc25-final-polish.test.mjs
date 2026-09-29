@@ -49,6 +49,13 @@ test('gc25 makes Remy own the material and preference language', async t => {
   await settle(w);
   assert.match(prefs.querySelector('p').textContent, /Vorgaben für Remy/);
   assert.doesNotMatch(prefs.querySelector('p').textContent, /KI-Vorgaben/);
+
+  prefs.remove();
+  const legacyPrefs = coach(w, 'Stopp – ein kleiner Unterschied!', 'Im Feld darunter kannst du später persönliche Vorlieben hinterlegen.');
+  w.document.body.append(legacyPrefs);
+  await settle(w);
+  assert.match(legacyPrefs.querySelector('p').textContent, /Vorgaben für Remy/);
+  assert.doesNotMatch(legacyPrefs.querySelector('p').textContent, /persönliche Vorlieben|KI-Vorgaben/i);
 });
 
 test('gc25 shortens Wilma test settings copy', async t => {
