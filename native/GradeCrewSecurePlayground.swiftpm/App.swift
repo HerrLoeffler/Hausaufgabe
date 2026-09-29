@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import WebKit
 
 @main
@@ -19,15 +20,6 @@ struct StartView: View {
     @State private var testCode = ""
     @State private var errorText: String?
     @State private var destination: ExamDestination?
-
-    private let codeRows = [
-        Array("123456"),
-        Array("7890AB"),
-        Array("CDEFGH"),
-        Array("IJKLMN"),
-        Array("OPQRST"),
-        Array("UVWXYZ")
-    ]
 
     var body: some View {
         NavigationStack {
@@ -71,56 +63,20 @@ struct StartView: View {
                                 .font(.headline)
                                 .foregroundStyle(.white)
 
-                            HStack(spacing: 12) {
-                                Text(testCode.isEmpty ? "CODE" : testCode)
-                                    .font(.title2.monospaced().weight(.bold))
-                                    .foregroundStyle(testCode.isEmpty ? .white.opacity(0.35) : .white)
-                                    .frame(maxWidth: .infinity, minHeight: 58)
-                                    .background(.white.opacity(0.10))
-                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                    .accessibilityLabel("Testcode")
+                            SystemCodeField(
+                                text: $testCode,
+                                placeholder: "z. B. ABCD1234",
+                                onSubmit: openExam
+                            )
+                            .frame(height: 60)
+                            .padding(.horizontal, 16)
+                            .background(.white.opacity(0.10))
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
-                                Button {
-                                    if !testCode.isEmpty {
-                                        testCode.removeLast()
-                                        errorText = nil
-                                    }
-                                } label: {
-                                    Image(systemName: "delete.left.fill")
-                                        .font(.title2)
-                                        .frame(width: 58, height: 58)
-                                }
-                                .buttonStyle(.bordered)
-                                .tint(.white)
-                                .disabled(testCode.isEmpty)
-                                .accessibilityLabel("Letztes Zeichen löschen")
-                            }
-
-                            VStack(spacing: 8) {
-                                ForEach(Array(codeRows.enumerated()), id: \.offset) { _, row in
-                                    HStack(spacing: 8) {
-                                        ForEach(row, id: \.self) { character in
-                                            Button(String(character)) {
-                                                appendToCode(character)
-                                            }
-                                            .font(.headline.monospaced().weight(.semibold))
-                                            .frame(maxWidth: .infinity, minHeight: 44)
-                                            .buttonStyle(.bordered)
-                                            .tint(.white)
-                                            .disabled(testCode.count >= 16)
-                                        }
-                                    }
-                                }
-                            }
-
-                            if !testCode.isEmpty {
-                                Button("Code löschen") {
-                                    testCode = ""
-                                    errorText = nil
-                                }
-                                .font(.footnote.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.7))
-                            }
+                            Text("Tippe in das Feld. Es wird die normale iPad-Systemtastatur verwendet; eine Hardware-Tastatur kann ebenfalls eingeben.")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.52))
+                                .multilineTextAlignment(.center)
 
                             if let errorText {
                                 Text(errorText)
@@ -171,12 +127,6 @@ struct StartView: View {
             .uppercased()
     }
 
-    private func appendToCode(_ character: Character) {
-        guard testCode.count < 16 else { return }
-        testCode.append(character)
-        errorText = nil
-    }
-
     private func openExam() {
         let code = normalizedCode
         let valid = code.range(of: "^[A-Z0-9]{4,16}$", options: .regularExpression) != nil
@@ -197,6 +147,108 @@ struct StartView: View {
         testCode = code
         errorText = nil
         destination = ExamDestination(url: url)
+    }
+}
+
+/// Uses Apple's standard UITextField and therefore Apple's normal system keyboard.
+/// No custom keyboard or replacement input view is installed.
+struct SystemCodeField: UIViewRepresentable {
+    @Binding var text: String
+    let placeholder: String
+    let onSubmit: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    func makeUIView(context: Context) -> UITextField {
+        let field = UITextField(frame: .zero)
+        field.delegate = context.coordinator
+        field.addTarget(context.coordinator, action: #selector(Coordinator.editingChanged(_:)), for: .editingChanged)
+
+        field.textAlignment = .center
+        field.font = .monospacedSystemFont(ofSize: 23, weight: .semibold)
+        field.textColor = .white
+        field.tintColor = .white
+        field.backgroundColor = .clear
+        field.borderStyle = .none
+
+        field.autocapitalizationType = .allCharacters
+        field.autocorrectionType = .no
+        field.spellCheckingType = .no
+        field.smartDashesType = .no
+        field.smartQuotesType = .no
+        field.smartInsertDeleteType = .no
+        field.keyboardType = .asciiCapable
+        field.returnKeyType = .go
+        field.clearButtonMode = .whileEditing
+
+        field.attributedPlaceholder = NSAttributedString(
+            string: placeholder,
+            attributes: [.foregroundColor: UIColor.white.withAlphaComponent(0.35)]
+        )
+
+        field.accessibilityLabel = "Testcode"
+        field.textContentType = .oneTimeCode
+        field.text = text
+        return field
+    }
+
+    func updateUIView(_ field: UITextField, context: Context) {
+        context.coordinator.parent = self
+        if field.text != text {
+            field.text = text
+        }
+    }
+
+    final class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: SystemCodeField
+
+        init(parent: SystemCodeField) {
+            self.parent = parent
+        }
+
+        @objc func editingChanged(_ sender: UITextField) {
+            let cleaned = sanitize(sender.text ?? "")
+            if sender.text != cleaned {
+                sender.text = cleaned
+            }
+            parent.text = cleaned
+        }
+
+        func textField(
+            _ textField: UITextField,
+            shouldChangeCharactersIn range: NSRange,
+            replacementString string: String
+        ) -> Bool {
+            guard let current = textField.text,
+                  let swiftRange = Range(range, in: current) else {
+                return true
+            }
+
+            let proposed = current.replacingCharacters(in: swiftRange, with: string)
+            let cleaned = sanitize(proposed)
+
+            textField.text = cleaned
+            parent.text = cleaned
+            return false
+        }
+
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            parent.onSubmit()
+            return true
+        }
+
+        private func sanitize(_ raw: String) -> String {
+            let uppercased = raw.uppercased()
+            let asciiOnly = uppercased.replacingOccurrences(
+                of: "[^A-Z0-9]",
+                with: "",
+                options: .regularExpression
+            )
+            return String(asciiOnly.prefix(16))
+        }
     }
 }
 
