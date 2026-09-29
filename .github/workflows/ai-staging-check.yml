@@ -7,6 +7,7 @@ on:
       - fix/ai-format-reliability
       - fix/ai-review-workflow
       - fix/gradecrew-staging-polish
+      - feature/secure-assessment-v1
   workflow_dispatch:
 
 permissions:
@@ -33,6 +34,9 @@ jobs:
         working-directory: functions
         run: npm ci --include=dev
 
+      - name: Install secure assessment dependencies
+        run: npm install --prefix assessment-functions --no-audit --no-fund
+
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
@@ -43,6 +47,11 @@ jobs:
       - name: Check function syntax and identifiers
         working-directory: functions
         run: npm run check
+
+      - name: Test secure assessment backend
+        run: |
+          npm test --prefix assessment-functions
+          npm run check --prefix assessment-functions
 
       - name: Check browser app syntax
         run: |
