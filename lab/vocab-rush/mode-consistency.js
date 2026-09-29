@@ -43,8 +43,9 @@ function renderHsSets(){
 }
 function syncHsUi(){
   const custom=hsSource()==='custom';
-  if($('vrHsCurriculum'))$('vrHsCurriculum').hidden=custom;
-  if($('vrHsCustom'))$('vrHsCustom').hidden=!custom;
+  const curriculum=$('vrHsCurriculum'),own=$('vrHsCustom');
+  if(curriculum)curriculum.hidden=custom;
+  if(own)own.hidden=!custom;
   const board=$('boardLabel');if(board)board.textContent=hsLabel();
 }
 function ensureHighscoreOptions(){
@@ -52,14 +53,18 @@ function ensureHighscoreOptions(){
   if(!card||$('vrHighscoreOptions'))return;
   const gradeLabel=$('highscoreGrade')?.closest('label'),topicLabel=$('highscoreTopic')?.closest('label'),nameLabel=$('highscoreName')?.closest('label');
   if(!gradeLabel||!topicLabel||!nameLabel)return;
+  const topicCaption=topicLabel.querySelector('span');if(topicCaption)topicCaption.textContent='Thema';
+  const title=document.querySelector('#highscoreView .pageHead h1');if(title)title.textContent='Dein Highscore.';
+  const subtitle=document.querySelector('#highscoreView .pageHead>p:not(.eyebrow)');if(subtitle)subtitle.textContent='Wähle Lehrplan-Thema oder eigene Vokabeln. Für jede Variante gibt es eine passende Bestenliste.';
   const block=document.createElement('div');block.id='vrHighscoreOptions';block.className='vrHighscoreOptions';
-  block.innerHTML=`<div class="vrHsHead"><strong>Inhalt</strong><small>Wie bei Üben und Live: Lehrplan oder deine eigenen Vokabelsets.</small></div>
-    <div class="sourcePicker compact vrHsSource"><label><input type="radio" name="vrHighscoreSource" value="curriculum" checked><span><b>Lehrplan-Training</b><small>Feste Disziplin</small></span></label><label><input type="radio" name="vrHighscoreSource" value="custom"><span><b>Meine Vokabeln</b><small>Ein oder mehrere Sets</small></span></label></div>
-    <div id="vrHsCurriculum" class="vrHsFields"></div>
-    <div id="vrHsCustom" class="vrHsCustom" hidden><div class="vrHsHead"><strong>Vokabelsets</strong><small>Mehrere Sets können gemeinsam gespielt werden.</small></div><div id="vrHighscoreSets" class="vrHsSets"></div><label class="field"><span>Abfragerichtung</span><select id="vrHighscoreDirection"><option value="mixed">Gemischt · DE ↔ EN</option><option value="en-de">EN → DE</option><option value="de-en">DE → EN</option></select></label></div>
-    <label class="toggle vrHsWrite"><input id="vrHighscoreWriteAfterWrong" type="checkbox"><span><b>Nach Fehler richtige Lösung schreiben</b><small>Erst korrekt eintippen, dann geht es weiter. Dieser Modus hat eine eigene Bestenliste.</small></span></label>`;
+  block.innerHTML=`<div class="vrHsHead vrHsMainHead"><strong>Was möchtest du spielen?</strong><small>Wähle genau eine Inhaltsquelle.</small></div>
+    <div class="sourcePicker compact vrHsSource"><label><input type="radio" name="vrHighscoreSource" value="curriculum" checked><span><b>Lehrplan-Thema</b><small>Jahrgang und Thema auswählen</small></span></label><label><input type="radio" name="vrHighscoreSource" value="custom"><span><b>Meine Vokabeln</b><small>Eigene gespeicherte Sets spielen</small></span></label></div>
+    <div id="vrHsCurriculum" class="vrHsBranch"><div class="vrHsBranchHead"><strong>Lehrplan-Thema</strong><small>Nur diese Auswahl zählt für deine Runde.</small></div><div id="vrHsCurriculumFields" class="vrHsFields"></div></div>
+    <div id="vrHsCustom" class="vrHsBranch vrHsCustom" hidden><div class="vrHsBranchHead"><strong>Meine Vokabeln</strong><small>Ein oder mehrere Sets gemeinsam spielen.</small></div><div id="vrHighscoreSets" class="vrHsSets"></div><label class="field"><span>Abfragerichtung</span><select id="vrHighscoreDirection"><option value="mixed">Gemischt · DE ↔ EN</option><option value="en-de">EN → DE</option><option value="de-en">DE → EN</option></select></label></div>
+    <label class="toggle vrHsWrite"><input id="vrHighscoreWriteAfterWrong" type="checkbox"><span><b>Nach Fehler richtige Lösung schreiben</b><small>Erst korrekt eintippen, dann geht es weiter. Diese Einstellung hat eine eigene Bestenliste.</small></span></label>`;
   nameLabel.after(block);
-  const curriculum=$('vrHsCurriculum');curriculum.append(gradeLabel,topicLabel);
+  $('vrHsCurriculumFields').append(gradeLabel,topicLabel);
+  const fixed=card.querySelector('.fixedRules');if(fixed)block.after(fixed);
   block.querySelectorAll('input[name="vrHighscoreSource"]').forEach(x=>x.addEventListener('change',()=>{syncHsUi();triggerBoardRefresh();}));
   $('vrHighscoreDirection').addEventListener('change',triggerBoardRefresh);
   $('vrHighscoreWriteAfterWrong').addEventListener('change',triggerBoardRefresh);
