@@ -34,7 +34,7 @@ Der neue Code unter `SecureBackendFlow.swift`, `SecureExamAPI.swift` und `Secure
 9. Die Abgabe wird serverseitig bewertet und deterministisch unter der Attempt-ID gespeichert. Doppelte Submit-Aufrufe liefern dieselbe Abgabe/Quittung zurück.
 10. Der WebView meldet nur `submissionPending`. Die native App ruft danach selbst `verify` beim GradeCrew-Server auf. **Nur eine passende Serverquittung darf AAC beenden.**
 
-`GradeCrewSecureRootView` ist bereits als späterer Umschaltpunkt angelegt. `App.swift` verwendet weiterhin absichtlich den bekannten `StartView`, solange `secureBackendEnabled` noch nicht freigegeben ist.
+`App.swift` läuft bereits über `GradeCrewSecureRootView`. Da `secureBackendEnabled` weiterhin auf `false` steht, rendert dieser Wrapper exakt den bisher getesteten `StartView`. Für die spätere Aktivierung ist deshalb kein erneuter Umbau des App-Einstiegs mehr nötig – nur der bewusst gesperrte Feature-Schalter.
 
 ## AAC / Lockdown
 
@@ -57,7 +57,7 @@ Vor einem echten Pilot deshalb:
 2. Secure-Functions + Rules + Secure-Hosting ausschließlich auf `hausaufgabe-staging` deployen;
 3. einen eigenen Pilot-Test auf `secureExamEnabled: true` setzen;
 4. Preflight, Start, Autosave, Reload, Offline/Online, Zeitablauf, Doppelabgabe und Receipt-Verify testen;
-5. erst danach `secureBackendEnabled` aktivieren und `App.swift` auf `GradeCrewSecureRootView()` umschalten;
+5. erst danach `secureBackendEnabled` für einen neuen Staging/TestFlight-Pilot aktivieren;
 6. AAC separat erst nach Apple-Freigabe aktivieren.
 
 Produktion und der aktuell funktionierende TestFlight-Build werden durch die vorbereiteten Branch-Änderungen nicht verändert.
