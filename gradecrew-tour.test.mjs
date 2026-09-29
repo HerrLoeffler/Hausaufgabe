@@ -89,9 +89,9 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
   w.document.querySelector('.gcCoachNext').click();
   tour.notify('view', { id: 'createView' });
   const handoff = w.document.querySelector('.gcCoachHandoff');
-  assert.equal(handoff.querySelectorAll('img').length, 2);
-  assert.match(handoff.querySelectorAll('img')[0].src, /penguin-guide/);
-  assert.match(handoff.querySelectorAll('img')[1].src, /elephant-create/);
+  assert.equal(handoff.querySelectorAll('.gcHandoffFaces img').length, 2);
+  assert.match(handoff.querySelectorAll('.gcHandoffFaces img')[0].src, /penguin-guide/);
+  assert.match(handoff.querySelectorAll('.gcHandoffFaces img')[1].src, /elephant-create/);
   handoff.querySelector('.gcCoachNext').click();
   tour.notify('view', { id: 'aiView' });
   assert.equal(tour.creating, true);

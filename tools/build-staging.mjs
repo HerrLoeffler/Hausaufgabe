@@ -12,7 +12,7 @@ if ((await fs.readdir(output)).length) throw new Error('Build directory must be 
 const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 'utf8');
 if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
 const files = [
-  'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'workspace.css', 'gradecrew-tour.css',
+  'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'crew-clay.css', 'workspace.css', 'gradecrew-tour.css',
   'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'remy-ai-help.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs'
@@ -36,7 +36,7 @@ for (const name of files.filter(name => /\.(js|mjs|html|css)$/.test(name))) {
   ];
   for (const [, reference] of references) {
     if (/^https?:/.test(reference) || reference.includes('${')) continue;
-    const normalized = reference.split('?')[0];
+    const normalized = reference.split(/[?#]/)[0];
     const target = normalized.startsWith('/') ? path.join(output, normalized.slice(1)) : path.resolve(path.dirname(path.join(output, name)), normalized);
     if (!target.startsWith(output + path.sep)) throw new Error(`Reference outside build: ${reference}`);
     await fs.access(target).catch(() => { throw new Error(`Missing asset in ${name}: ${reference}`); });

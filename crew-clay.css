@@ -1,0 +1,26 @@
+/* GradeCrew clay artwork. Short entrance gestures, no perpetual movement. */
+.gcClayCharacter {object-fit:contain;transform-origin:50% 88%;animation:gcClayHello .65s ease-out 1}
+.gcClayPose3 {animation:gcClayThink 1.4s ease-in-out 1}
+.gcClayPose6 {animation:gcClayCelebrate .75s ease-out 1}
+.gcRealCoach .gcClayScene {display:block;width:min(100%,440px);height:auto;max-height:210px;object-fit:contain;margin:0 auto 8px;animation:gcClayAppear .45s ease-out 1}
+.gcRealCoach .gcClayNames img {display:none!important}
+.gcRealCoach .gcClayNames {min-height:0;gap:16px;margin:0 auto 10px;justify-content:center}
+.gcRealCoach .gcClayNames > div {gap:0}
+.gcCrewIntroCoach > .gcCoachIdentity > img {display:none}
+.gcCrewIntroCoach .gcCrewIntroMember > img {display:none}
+.gcCrewIntroCoach .gcCrewIntroGrid {gap:10px}
+.gcFinishCrew {object-fit:contain;max-height:220px;animation:gcClayAppear .45s ease-out 1}
+#authView .gcClayHero {width:100%;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0;background:none}
+#authView .gcClayHero > img {width:min(100%,520px);height:auto;max-width:100%;object-fit:contain;filter:none;animation:gcClayAppear .65s ease-out 1}
+#authView .gcClayHero .authGuideCaption {position:static;max-width:none;text-align:center;margin-top:10px}
+@keyframes gcClayHello {0%{transform:translateY(5px) rotate(-3deg);opacity:.35}65%{transform:translateY(0) rotate(2deg)}100%{transform:none;opacity:1}}
+@keyframes gcClayThink {0%,100%{transform:none}45%{transform:rotate(-3deg)}75%{transform:rotate(1deg)}}
+@keyframes gcClayCelebrate {0%{transform:none}35%{transform:translateY(-7px) rotate(-3deg)}70%{transform:translateY(0) rotate(2deg)}100%{transform:none}}
+@keyframes gcClayAppear {from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media(max-width:640px){#authView .gcClayHero > img{width:min(100%,330px)}#authView .gcClayHero .authGuideCaption{display:block;font-size:12px}.gcRealCoach .gcClayScene{max-height:140px}.gcFinishCrew{max-height:160px}}
+@media(prefers-reduced-motion:reduce){.gcClayCharacter,.gcRealCoach .gcClayScene,.gcFinishCrew,#authView .gcClayHero>img{animation:none!important;transition:none!important}}
+
+.gcClayScene,.gcFinishCrew,#authView .gcClayHero>img{border-radius:16px}
+@media(max-height:740px){.gcRealCoach .gcClayScene{max-height:145px}.gcCrewIntroCoach .gcCrewIntroMember small{display:none}}
+#authView .authIntro{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px}
+@media(max-width:640px){#authView .authIntro{grid-template-columns:1fr;gap:8px}#authView .gcClayHero{margin-top:0}}

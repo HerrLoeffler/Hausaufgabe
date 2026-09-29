@@ -90,7 +90,18 @@ export function installCrewTour(api) {
   const $$ = selector => [...document.querySelectorAll(selector)];
   const doneKey = () => `${TOUR_VERSION}:${owner}`;
   const owned = () => active && owner === api.uid();
-  const image = (role, size = 96) => `<img src="/assets/gradecrew/${CREW[role].asset}.svg" alt="" width="${size}" height="${size}">`;
+  // Six named pose viewports share one cached SVG per character.
+  const image = (role, size = 96) => {
+    const poses = {
+      guide: {new:5,published:2,identity:4,"identity-start":5,finish:6},
+      create: {"form-intro":2,"form-filling":2,"image-choice":2,form:2,creating:3,draft:5},
+      improve: {outline:2,"outline-question":2,edit:2,"edit-success":5,"variant-intro":4,variant:4,"variant-dialog":4,"variant-wait":2,"variant-outline":4,"variant-review":4,"feedback-good":5,"feedback-bad":3,"feedback-panel":6},
+      grade: {settings:2,publish:3,results:4,review:6,finish:5}
+    };
+    const pose = poses[role]?.[stage] || 1;
+    return `<img class="gcClayCharacter gcClayPose${pose}" src="/assets/gradecrew/${CREW[role].asset}.svg?clay=1#pose-${pose}" alt="" width="${size}" height="${size}" decoding="async">`;
+  };
+  const scene = (name, alt = "") => `<img class="gcClayScene" src="/assets/gradecrew/clay-${name}.svg" alt="${escapeHtml(alt)}" width="570" height="320" decoding="async">`;
 
   function clearTarget() {
     if (targetCleanup) targetCleanup();
@@ -259,7 +270,8 @@ export function installCrewTour(api) {
     root = document.createElement("aside");
     root.className = "gcRealCoach gcCoachCentered gcCoachHandoff";
     const faces = `<div>${image(fromRole,108)}<strong>${escapeHtml(CREW[fromRole].name)}</strong></div><span>${title.startsWith("Danke")?"♡":"→"}</span><div>${image(toRole,108)}<strong>${escapeHtml(CREW[toRole].name)}</strong></div>`;
-    root.innerHTML = `<div class="gcHandoffFaces">${faces}</div><span class="eyebrow">Die Crew arbeitet zusammen</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
+    const sceneName = title.startsWith("Danke") ? ({create:"thanks-remy",improve:"thanks-emmi",grade:"thanks-wilma"}[toRole]) : ({create:"introduce-remy",improve:"introduce-emmi",grade:"introduce-wilma"}[toRole]);
+    root.innerHTML = `${sceneName ? scene(sceneName) : ""}<div class="gcHandoffFaces${sceneName ? " gcClayNames" : ""}">${faces}</div><span class="eyebrow">Die Crew arbeitet zusammen</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p><button type="button" class="button primary gcCoachNext">${escapeHtml(buttonLabel)}</button>`;
     root.querySelector(".gcCoachNext").addEventListener("click", next);
     document.body.classList.add("gcCoachVisible");
     document.body.append(root);
@@ -271,7 +283,7 @@ export function installCrewTour(api) {
     coach("guide", "Willkommen bei GradeCrew.", "Mit GradeCrew erstellst und verbesserst du digitale Tests und Übungen. Ich bin Coco und begleite dich durch deine erste GradeCrew-Reise.", {
       centered: true,
       className: "gcCrewIntroCoach",
-      body: `<p class="gcCrewIntroLead">Bevor wir loslegen: Das ist deine Crew.</p><div class="gcCrewIntroGrid">${cards}</div>`,
+      body: `${scene("welcome")}<p class="gcCrewIntroLead">Bevor wir loslegen: Das ist deine Crew.</p><div class="gcCrewIntroGrid">${cards}</div>`,
       button: "Mit der Crew starten",
       onButton: () => {
         stage = "new";
@@ -370,7 +382,7 @@ export function installCrewTour(api) {
   function thankRemy() {
     stage = "draft"; hideCoach(); if (!owned()) return;
     root = document.createElement("aside"); root.className = "gcRealCoach gcCoachCentered gcCoachThanks";
-    root.innerHTML = `<div class="gcThanksFaces"><div>${image("guide",118)}<strong>Coco</strong></div><span>♡</span><div>${image("create",126)}<strong>Remy</strong></div></div><span class="eyebrow">Der erste Entwurf steht</span><h2>Danke, Remy!</h2><p>Zehn Aufgaben sind da – mit Bildern und einer kleinen Überraschung am Schluss. Jetzt schauen wir gemeinsam auf den Feinschliff.</p><button type="button" class="button primary gcCoachNext">Zum Feinschliff</button>`;
+    root.innerHTML = `${scene("thanks-remy")}<div class="gcThanksFaces gcClayNames"><div>${image("guide",118)}<strong>Coco</strong></div><span>♡</span><div>${image("create",126)}<strong>Remy</strong></div></div><span class="eyebrow">Der erste Entwurf steht</span><h2>Danke, Remy!</h2><p>Zehn Aufgaben sind da – mit Bildern und einer kleinen Überraschung am Schluss. Jetzt schauen wir gemeinsam auf den Feinschliff.</p><button type="button" class="button primary gcCoachNext">Zum Feinschliff</button>`;
     root.querySelector(".gcCoachNext").addEventListener("click", () => handoff("create","improve","Das ist Emmi!","Emmi schaut mit dir genauer hin. Sie hilft dir, Aufgaben zu verbessern und neue Varianten zu erstellen.",()=>coach("improve","Hallo, ich bin Emmi!","Wir prüfen deinen Entwurf, überarbeiten eine Aufgabe und probieren eine Bild-Variante aus.",{centered:true,button:"Gemeinsam prüfen",onButton:showOutlineGuide}),"Zu Emmi"));
     document.body.classList.add("gcCoachVisible"); document.body.append(root); schedulePlace();
   }
@@ -479,7 +491,7 @@ export function installCrewTour(api) {
   function variantSubmitted() {
     if (!owned() || stage !== "variant-dialog") return;
     busy = false; stage = "variant-wait"; document.querySelectorAll(".gcTourVariantMentor").forEach(node => node.remove());
-    coach("improve", "Ich erstelle die Variante …", "Die ursprüngliche Aufgabe bleibt bestehen. Gleich kannst du die neue Katzen-Variante zusätzlich übernehmen.", { target:"#variantBackgroundProgress", body:'<div class="gcTourWorking"><span></span><span></span><span></span><small>1 Variante · Katze mit Bild · wird geprüft</small></div>' });
+    coach("improve", "Ich erstelle die Variante …", "Die ursprüngliche Aufgabe bleibt bestehen. Gleich kannst du die neue Katzen-Variante zusätzlich übernehmen.", { target:"#variantBackgroundProgress", body:scene("wait")+'<div class="gcTourWorking"><span></span><span></span><span></span><small>1 Variante · Katze mit Bild · wird geprüft</small></div>' });
   }
 
   async function showVariantOutlineStep() {
@@ -642,7 +654,7 @@ export function installCrewTour(api) {
     const elapsed=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")} Minuten`;
     coach("guide","Super – du gehörst jetzt zur Crew!",`In ${elapsed} hast du deinen Übungstest erstellt, überarbeitet, selbst ausgefüllt und bewertet. Lust, gleich einen eigenen Test auszuprobieren?`,{
       centered:true,button:"Eigenen Test erstellen",onButton:()=>{void finishTour("create");},
-      body:'<img class="gcFinishCrew" src="/assets/gradecrew/demo-crew.svg" alt="Coco, Remy, Emmi und Wilma feiern deinen Abschluss"><div class="gcCoachFinishFlow"><span>Erstellen</span><b>→</b><span>Überarbeiten</span><b>→</b><span>Durchführen</span><b>→</b><span>Bewerten</span></div>'
+      body:'<img class="gcFinishCrew" src="/assets/gradecrew/clay-finale.svg" alt="Coco, Remy, Emmi und Wilma feiern deinen Abschluss"><div class="gcCoachFinishFlow"><span>Erstellen</span><b>→</b><span>Überarbeiten</span><b>→</b><span>Durchführen</span><b>→</b><span>Bewerten</span></div>'
     });
     const choices=document.createElement("div");choices.className="gcFinishChoices";
     for(const [label,action] of [["Einstellungen kurz kennenlernen","settings"],["Tour abschließen",""]]) {
@@ -653,7 +665,7 @@ export function installCrewTour(api) {
 
   async function create() {
     if(!owned()||stage!=="form"||busy)return;busy=true;const token=run;stage="creating";
-    coach("create","Ich erstelle deinen Test …","Aus deinen Angaben entsteht jetzt der erste Entwurf. Danach wird er geprüft, bevor wir ihn gemeinsam ansehen.",{target:"#aiProgress",body:'<div class="gcTourWorking"><span></span><span></span><span></span><small>10 Aufgaben · 3 Bilder · wird geprüft</small></div>'});
+    coach("create","Ich erstelle deinen Test …","Aus deinen Angaben entsteht jetzt der erste Entwurf. Danach wird er geprüft, bevor wir ihn gemeinsam ansehen.",{target:"#aiProgress",body:scene("wait")+'<div class="gcTourWorking"><span></span><span></span><span></span><small>10 Aufgaben · 3 Bilder · wird geprüft</small></div>'});
     let delay;const wait=new Promise(resolve=>{delay=setTimeout(resolve,3000);});
     try{const created=quizId||await api.createDemo(DEMO_TEST);if(owned()&&token===run)quizId=created;await wait;if(!owned()||token!==run)return;quizId=created;await api.openEditor(created);if(!owned()||token!==run)return;if(!api.isEditor(created))throw new Error("Der Übungstest konnte nicht geöffnet werden.");beginDraftReview();}
     catch(err){if(owned()&&token===run){stage="form";error(err?.message||"Der Übungstest konnte nicht vorbereitet werden.",create);}}
