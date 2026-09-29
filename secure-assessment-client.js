@@ -35,6 +35,7 @@ function writeSession(quizId, session) {
     attemptId: session.attemptId ? String(session.attemptId) : null,
     studentName: session.studentName ? String(session.studentName) : null,
     status: session.status ? String(session.status) : null,
+    sessionRunId: session.sessionRunId ? String(session.sessionRunId) : null,
     updatedAt: Date.now()
   };
   localStorage.setItem(sessionKey(quizId), JSON.stringify(safe));
@@ -47,7 +48,8 @@ function newSession(quizId) {
     attemptToken: randomUrlSafe(32),
     attemptId: null,
     studentName: null,
-    status: "new"
+    status: "new",
+    sessionRunId: null
   });
 }
 
@@ -105,7 +107,8 @@ export function createSecureAssessmentClient(firebaseApp) {
       ...session,
       attemptId: response.attemptId,
       studentName: response.studentName || studentName,
-      status: response.status
+      status: response.status,
+      sessionRunId: response.sessionRunId || null
     });
     return response;
   }
@@ -121,7 +124,8 @@ export function createSecureAssessmentClient(firebaseApp) {
     writeSession(quizId, {
       ...session,
       studentName: response.studentName || session.studentName,
-      status: response.status
+      status: response.status,
+      sessionRunId: response.sessionRunId || session.sessionRunId || null
     });
     return response;
   }
