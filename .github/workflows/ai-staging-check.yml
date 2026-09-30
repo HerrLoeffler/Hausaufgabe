@@ -8,7 +8,6 @@ on:
       - fix/ai-review-workflow
       - fix/gradecrew-staging-polish
       - feature/secure-assessment-v1
-      - integration/secure-assessment-mobile-gc28
   pull_request:
     branches:
       - feature/secure-assessment-v1
@@ -16,6 +15,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: gradecrew-staging-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
