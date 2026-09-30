@@ -3,6 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+python3 prepare_testflight_assets.py
 python3 generate_project.py
 
 if ! command -v xcodebuild >/dev/null 2>&1; then
