@@ -85,7 +85,7 @@ for name in ['Debug', 'Release']:
         buildSettings={
             'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew',
             'PRODUCT_NAME': '$(TARGET_NAME)',
-            'MARKETING_VERSION': '0.1.2',
+            'MARKETING_VERSION': '0.1.3',
             'CURRENT_PROJECT_VERSION': '1',
             'CODE_SIGN_STYLE': 'Automatic',
             'GENERATE_INFOPLIST_FILE': 'YES',
@@ -174,3 +174,4 @@ assert (ASSET_CATALOG / 'AppIcon.appiconset' / 'AppIcon.png').is_file()
 assert any(source.name == 'GradeCrewTeacherApp.swift' for source in source_paths)
 assert any(source.name == 'GradeCrewDesignTokens.swift' for source in source_paths)
 print(f'GradeCrew Teacher Xcode project generated: {len(source_paths)} shared/native Swift sources + AppIcon assets.')
+

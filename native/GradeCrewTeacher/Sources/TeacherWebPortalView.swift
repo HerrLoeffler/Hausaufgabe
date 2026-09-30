@@ -1,7 +1,9 @@
 import SwiftUI
 import WebKit
+import UIKit
 
 struct GradeCrewAppEnvironment {
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
     static let stagingBaseURL = URL(string: "https://hausaufgabe-staging.web.app/")!
 
     static var teacherHomeURL: URL {
@@ -9,7 +11,7 @@ struct GradeCrewAppEnvironment {
         components.queryItems = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),
-            URLQueryItem(name: "appVersion", value: "0.1.2"),
+            URLQueryItem(name: "appVersion", value: version),
         ]
         return components.url ?? stagingBaseURL
     }
@@ -19,7 +21,7 @@ struct GradeCrewAppEnvironment {
         var items = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),
-            URLQueryItem(name: "appVersion", value: "0.1.2"),
+            URLQueryItem(name: "appVersion", value: version),
             URLQueryItem(name: "intent", value: intent),
         ]
         if let quizID, !quizID.isEmpty {
@@ -88,6 +90,7 @@ struct GradeCrewWebView: UIViewRepresentable {
         var parent: GradeCrewWebView
         var didLoadInitialURL = false
         var lastReloadID: Int
+        private var cancelDialog: (() -> Void)?
 
         init(parent: GradeCrewWebView) {
             self.parent = parent
@@ -113,8 +116,69 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
 
         private func finishWith(error: Error) {
+            if (error as NSError).code == NSURLErrorCancelled { return }
             parent.isLoading = false
             parent.errorMessage = error.localizedDescription
+        }
+
+        // The web app uses confirm() for deleting tests and ending sessions.
+        // Every WebKit callback must finish exactly once, including teardown.
+        private func presentDialog(_ alert: UIAlertController, in webView: WKWebView, fallback: @escaping () -> Void) {
+            cancelActiveDialog()
+            var responder: UIResponder? = webView
+            while let current = responder, !(current is UIViewController) { responder = current.next }
+            guard let presenter = responder as? UIViewController,
+                  presenter.viewIfLoaded?.window != nil,
+                  presenter.presentedViewController == nil else { fallback(); return }
+            cancelDialog = { [weak alert] in alert?.dismiss(animated: false); fallback() }
+            presenter.present(alert, animated: true)
+        }
+
+        func cancelActiveDialog() {
+            let cancel = cancelDialog
+            cancelDialog = nil
+            cancel?()
+        }
+
+        func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+                     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+            var completed = false
+            let finish = { if !completed { completed = true; completionHandler() } }
+            let alert = UIAlertController(title: "GradeCrew", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in finish() })
+            presentDialog(alert, in: webView, fallback: finish)
+        }
+
+        func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+                     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+            var completed = false
+            let finish: (Bool) -> Void = { result in
+                if !completed { completed = true; completionHandler(result) }
+            }
+            let alert = UIAlertController(title: "GradeCrew", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel) { _ in finish(false) })
+            alert.addAction(UIAlertAction(title: "Bestätigen", style: .default) { _ in finish(true) })
+            presentDialog(alert, in: webView) { finish(false) }
+        }
+
+        func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String,
+                     defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+                     completionHandler: @escaping (String?) -> Void) {
+            var completed = false
+            let finish: (String?) -> Void = { result in
+                if !completed { completed = true; completionHandler(result) }
+            }
+            let alert = UIAlertController(title: "GradeCrew", message: prompt, preferredStyle: .alert)
+            alert.addTextField { $0.text = defaultText }
+            alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel) { _ in finish(nil) })
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak alert] _ in finish(alert?.textFields?.first?.text) })
+            presentDialog(alert, in: webView) { finish(nil) }
+        }
+
+        func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+            cancelActiveDialog()
+            parent.isLoading = false
+            parent.errorMessage = "Die Webansicht wurde beendet. Bitte lade GradeCrew erneut."
         }
 
         func webView(
@@ -141,6 +205,7 @@ struct GradeCrewWebView: UIViewRepresentable {
         configuration.websiteDataStore = .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.allowsInlineMediaPlayback = true
+        configuration.applicationNameForUserAgent = "GradeCrew-iOS/\(GradeCrewAppEnvironment.version)"
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
@@ -150,8 +215,14 @@ struct GradeCrewWebView: UIViewRepresentable {
         webView.scrollView.contentInsetAdjustmentBehavior = .automatic
         webView.isOpaque = false
         webView.backgroundColor = .clear
-        webView.customUserAgent = "GradeCrew-iOS/0.1.2"
         return webView
+    }
+
+    static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
+        coordinator.cancelActiveDialog()
+        webView.stopLoading()
+        webView.navigationDelegate = nil
+        webView.uiDelegate = nil
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
@@ -172,3 +243,4 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
     }
 }
+

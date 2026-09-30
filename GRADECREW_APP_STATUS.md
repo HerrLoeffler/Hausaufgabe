@@ -3,8 +3,22 @@
 Stand: 2026-09-30
 Branch: `feature/shared-gradecrew-design-system`
 Bundle ID: `de.gradecrew`
-TestFlight-Version: `0.1.2`
+Zuletzt nachgewiesen hochgeladene TestFlight-Version: `0.1.2`
 GitHub Actions Run: `36656798111` — erfolgreich gebaut und zu App Store Connect/TestFlight hochgeladen
+
+## Fortsetzung 30.09.2026: 0.1.3
+
+Code ergänzt: echte alert/confirm/prompt-Dialoge in WKUIDelegate; Cancel bei
+Abbau der WebView; ignorierte abgebrochene Navigation; sichtbarer Webprozessfehler.
+Die Standard-WebKit-Browserkennung bleibt erhalten und bekommt nur den App-Zusatz.
+Die Version für URLs/Browsersignatur stammt aus dem Bundle statt aus drei Konstanten.
+Der Cloud-Build reagiert jetzt auch auf Änderungen an nativen Quelldateien.
+Build-/Upload-Ergebnis für 0.1.3 nach dem Lauf prüfen, hier noch nicht behauptet.
+
+**Wichtige Abweichung:** normale Staging-URL liefert weiterhin gc21 / 4707c45
+(30.09.2026 erneut per release.json geprüft). Die gc27-Preview ist ein anderer
+Hosting-Channel. App-Update und Web-Deployment nicht verwechseln.
+Siehe PROJECT_INTEGRATION_STATUS.md und den korrigierten TESTFLIGHT.md-Leitfaden.
 
 ## Was jetzt wirklich funktioniert
 
@@ -96,3 +110,4 @@ Nächster Schritt:
 - GradeCrew Secure bleibt separat unter `de.gradecrew.secure`.
 - Sichere Produktions-Tags/Branches nicht überschreiben.
 - Keine Mock-/Preview-Daten wieder in den sichtbaren Teacher-App-Flow einführen.
+

@@ -1,72 +1,48 @@
-# GradeCrew Teacher · lokaler Test und TestFlight
+# GradeCrew auf dem iPad – aktueller TestFlight-Weg
 
-Stand: 30. September 2026
+Stand: 30.09.2026. Haupt-App **GradeCrew**, Bundle-ID **de.gradecrew**.
+Secure bleibt eine eigene App: **de.gradecrew.secure**.
 
-## 1. Erster lokaler Test
+## Bereits nachgewiesen
 
-Auf dem Mac:
+GitHub-Lauf 36656798111 hat Version 0.1.2 kompiliert, signiert und erfolgreich
+zu App Store Connect hochgeladen. Apple-Konto, Signing und API-Key sind eingerichtet.
+Keine neue App-ID anlegen, keine Schlüssel in den Chat kopieren.
+Die frühere Demo mit erfundenen Tests wurde entfernt. Die App lädt die echte
+Webplattform samt Firebase-Weblogin aus der persistenten WKWebView-Sitzung.
 
-```bash
-cd ~/Hausaufgabe
-git fetch origin
-git switch feature/shared-gradecrew-design-system
-git pull --ff-only
-bash native/GradeCrewTeacher/verify-on-mac.sh
-open native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj
-```
+## Schnellster Weg zum nächsten Build
 
-Danach in Xcode einen iPad- oder iPhone-Simulator wählen und `Run` drücken.
+Änderungen unter native/GradeCrewTeacher, native/Shared oder am TestFlight-Workflow
+auf feature/shared-gradecrew-design-system lösen den vorhandenen Cloud-Build aus.
+Er archiviert zuerst mit Xcode und lädt nur bei Erfolg hoch. Version 0.1.3 ergänzt
+Web-Bestätigungen, Textdialoge, korrekte Browserkennung und Fehler bei Webprozess-Abbruch.
+Die Buildnummer stammt aus GITHUB_RUN_NUMBER.
 
-Der aktuelle MVP zeigt native GradeCrew-Oberflächen mit lokalen Beispieldaten. `Neuen Test erstellen` und `Im GradeCrew-Editor öffnen` laden ausschließlich die Staging-Webumgebung `https://hausaufgabe-staging.web.app/` in einem WKWebView.
+Nach grünem Upload: App Store Connect verarbeitet den Build. Anschließend in
+TestFlight bei GradeCrew aktualisieren; falls nötig den Build der internen Testgruppe
+zuordnen. Erfolgreicher Upload allein beweist noch keine installierbare Freigabe.
+Keine externen Einladungen oder App-Store-Veröffentlichung automatisch ausführen.
 
-## 2. Test auf dem eigenen iPhone/iPad
+## Zwei getrennte Aktualisierungen
 
-1. Gerät per Kabel oder drahtlos mit Xcode verbinden.
-2. In Xcode unter `Signing & Capabilities` das eigene Team wählen.
-3. Bundle ID vorerst `de.gradecrew.teacher` belassen, sofern sie im Developer-Account verfügbar ist.
-4. Das echte Gerät als Run-Destination wählen.
-5. `Run` drücken.
+- Swift-/WebView-Änderung: neuer TestFlight-Build.
+- Website/Tutorial/Editor: Hosting-Deploy auf die URL, welche die App tatsächlich lädt.
 
-Für reine Tests auf dem eigenen Gerät reicht grundsätzlich ein persönliches Xcode-Team; für TestFlight und App-Store-Verteilung ist das Apple Developer Program erforderlich.
+Aktuelle App-URL: https://hausaufgabe-staging.web.app/
+Am 30.09.2026 erneut gelesen: release.json = gc21 / 4707c45.
+Die gc27-Security-Preview liegt auf einem anderen Hosting-Channel. Sie kommt nicht
+allein durch einen neuen App-Build in diese WebView. Preview-URL vor Verwendung
+explizit verifizieren; ablaufende Preview-URLs nicht fest in den App-Build schreiben.
 
-## 3. TestFlight vorbereiten
+## Kurzer echter Gerätetest für 0.1.3
 
-Vor dem ersten Upload:
+1. Login und Wiederöffnung der App (Sitzung bleibt erhalten).
+2. Einen eigenen Wegwerf-Test löschen: Abbrechen erhält ihn, Bestätigen löscht ihn.
+3. Eine Testsitzung beenden: Bestätigung sichtbar, Abbrechen ohne Aktion.
+4. Tutorial mit Bildschirmtastatur, Hoch-/Querformat und kleiner Breite.
+5. Upload, CSV-Export, Zwischenablage und Links ausdrücklich auf dem iPad prüfen.
+6. Offline öffnen und Retry; dabei keinen laufenden echten Schüler-Test verwenden.
 
-- Apple-Developer-Mitgliedschaft aktiv.
-- In App Store Connect einen App-Eintrag `GradeCrew` für iOS/iPadOS anlegen.
-- Bundle ID muss exakt zum Xcode-Projekt passen.
-- Version z. B. `0.1.0`, Build `1`.
-- App-Datenschutz und erforderliche App-Informationen später vollständig pflegen.
-
-## 4. Build hochladen
-
-In Xcode:
-
-1. `Any iOS Device (arm64)` bzw. ein geeignetes Generic Device wählen.
-2. `Product > Archive`.
-3. Organizer öffnet sich.
-4. `Distribute App`.
-5. `App Store Connect` wählen.
-6. Upload abschließen.
-
-Anschließend verarbeitet App Store Connect den Build. Danach erscheint er im Bereich TestFlight.
-
-## 5. Interner Test
-
-Für den schnellsten Testweg zuerst eine interne TestFlight-Gruppe anlegen. Interne Tester müssen App-Store-Connect-Nutzer des Accounts sein. Build der Gruppe zuweisen und auf iPhone/iPad über die TestFlight-App installieren.
-
-## 6. Externer Test
-
-Erst danach Kolleginnen/Kollegen als externe Tester einladen. Für externe Tests sind zusätzliche Beta-Testinformationen nötig und der erste Build einer Version wird typischerweise an TestFlight App Review geschickt. Externe Tester können anschließend per E-Mail oder öffentlichem Link eingeladen werden.
-
-## Noch nicht für TestFlight freigeben
-
-Der aktuelle MVP ist für Simulator-/Gerätetests gedacht. Vor einem breiteren externen Test fehlen mindestens:
-
-- echtes Firebase Authentication in der nativen App,
-- echte Firestore-Testliste statt Fixtures,
-- sichere Übergabe der eingeloggten Sitzung an den eingebetteten Editor,
-- App-Icon und finale Launch-Darstellung,
-- Fehler-/Offlinezustände,
-- Datenschutzhinweise und App-Store-Metadaten.
+Native Firebase-SDK-Anbindung ist eine spätere Ausbaustufe, keine Voraussetzung,
+um die schon funktionierende Webplattform jetzt über TestFlight zu testen.
