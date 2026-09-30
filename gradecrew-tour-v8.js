@@ -68,11 +68,13 @@ export function preparedResponse(_question, { variant = false } = {}) {
 
 function patchCoach(coach) {
   if (!(coach instanceof Element)) return;
-  const title = coach.querySelector("h2")?.textContent?.trim() || "";
+  const titleNode = coach.querySelector("h2");
+  const title = titleNode?.textContent?.trim() || "";
   const paragraph = coach.querySelector(":scope > p");
 
   if (title.includes("KI spart Zeit")) {
-    if (paragraph) paragraph.textContent = "GradeCrew prüft den Entwurf automatisch. Trotzdem schauen wir kurz gemeinsam drauf – denn kleine KI-Fehler können vorkommen. Unser Ziel ist ein möglichst sauberer, direkt einsetzbarer Test.";
+    if (titleNode) titleNode.textContent = "Remy nimmt dir viel Arbeit ab.";
+    if (paragraph) paragraph.textContent = "Auch mit seinem großen Elefantenkopf kann Remy sich mal vertun. Deshalb schauen wir kurz gemeinsam über den Entwurf – so wird aus seiner Vorarbeit dein sauberer Test.";
   }
 
   const preview = coach.querySelector(".gcVariantSourcePreview");
@@ -107,11 +109,55 @@ export function installCrewTour(api) {
   const base = installV7(proxy);
   installCoachPolish();
 
+  let tutorialSubmissionId = "";
+  let reviewFallbackTimer = 0;
+
+  const clearReviewFallback = () => {
+    if (reviewFallbackTimer) clearTimeout(reviewFallbackTimer);
+    reviewFallbackTimer = 0;
+  };
+
+  const scheduleReviewFallback = () => {
+    clearReviewFallback();
+    if (!tutorialSubmissionId) return;
+    const tryOpenCurrentReview = () => {
+      reviewFallbackTimer = 0;
+      const panel = document.getElementById("reviewPanel");
+      if (panel && !panel.classList.contains("hidden")) return;
+      const button = [...document.querySelectorAll("#resultsTableWrap .reviewBtn")]
+        .find(node => node.dataset.id === tutorialSubmissionId && !node.disabled);
+      if (button) {
+        // Programmatic click is deliberately only a tutorial fail-safe. It opens
+        // the exact same submitted practice attempt and never saves a grade.
+        button.click();
+        return;
+      }
+      reviewFallbackTimer = setTimeout(tryOpenCurrentReview, 2000);
+    };
+    // On iPad a long pause can leave V7 holding a stale table-button reference
+    // after a results re-render. Give the user time to click normally, then
+    // recover by opening the current matching button from the live DOM.
+    reviewFallbackTimer = setTimeout(tryOpenCurrentReview, 20_000);
+  };
+
+  const notify = base.notify.bind(base);
+  base.notify = (event, data = {}) => {
+    if (event === "submitted" && data?.submissionId) {
+      tutorialSubmissionId = String(data.submissionId);
+      clearReviewFallback();
+    }
+    const result = notify(event, data);
+    if (event === "results-ready") scheduleReviewFallback();
+    if (event === "review-opened" || event === "review-saved") clearReviewFallback();
+    return result;
+  };
+
   // Once onboarding has been completed for this account, do not keep a
   // persistent "Mit der Crew starten" button on the dashboard. Optional help
   // is now offered contextually by Remy only when creating an AI test.
   const dashboard = base.dashboard.bind(base);
   base.dashboard = args => {
+    clearReviewFallback();
     if (args?.completed) {
       document.getElementById("gradecrewTourBtn")?.remove();
       return;
