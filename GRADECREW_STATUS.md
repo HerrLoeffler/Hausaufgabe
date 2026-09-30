@@ -21,7 +21,13 @@ Neu korrigiert und mit ausgeführten Handler-Tests abgesichert:
 Lokale Prüfung: 36 Backend-Tests und 42 Secure-Client-/Rules-Quellvertragstests bestanden.
 12 neue Backend-Verhaltenstests führen die echten Handler mit einem In-Memory-Admin-SDK-Adapter aus;
 das ersetzt weder echte Firestore-Transaktionskonkurrenz noch einen Firebase-End-to-End-Test.
-Der vollständige CI-Lauf für diesen neuen Patch ist separat zu prüfen.
+Neue Code-Baseline: `93dff9cccca087a4cdf40c2f3afe152b8c9f6cdd`.
+GitHub Actions **#319 BESTANDEN**, einschließlich echtem Rules-Emulator,
+Legacy-/Tutorial-Regressionen und Staging-Build.
+Öffentliches Staging-Release unabhängig gelesen: `2.3.1-gc21`, Commit `4707c45`.
+Alle **66/66 veröffentlichten Dateien** stimmen per SHA-256 mit `release.json` überein.
+Der neue Security-Pfad wurde in diesem Audit nicht deployed. Firebase-Preview und
+reale End-to-End-/Lasttests wurden nicht durchgeführt.
 
 **Zusätzlicher Funktionsblocker korrigiert:** Der laufende Schüler-Renderer fragt jetzt
 alle fünf Sekunden mit Attempt-Token einen schlanken Status ohne Aufgaben-Reads ab.

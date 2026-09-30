@@ -41,6 +41,13 @@ Der Countdown verwendet jetzt Serverzeit plus monotone Laufzeit statt der Gerät
 Diese Korrekturen benötigen zusätzlich reale Firebase-/iOS-/Offline-Prüfungen.
 Gates C–G und die weiteren Härtungspunkte bleiben offen.
 
+Abschlussnachweis für den neuen Code: Commit `93dff9cccca087a4cdf40c2f3afe152b8c9f6cdd`,
+GitHub Actions #319 **SUCCESS** (https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36653445506).
+Damit ist auch der vollständige aktuelle CI-Lauf inklusive Firestore-Emulator grün.
+Staging-Manifest weiterhin `2.3.1-gc21` @ `4707c45`; alle 66 veröffentlichten Dateien
+gegen Manifest-Hashes geprüft und identisch. Keine Veröffentlichung durch dieses Audit.
+Die neuen Änderungen sind Code-/CI-geprüft, aber nicht im echten Firebase-Preview abgenommen.
+
 Die folgenden Abschnitte dokumentieren die historische Baseline; Aussagen zu vollständiger
 Fehlerfreiheit oder aktueller CI-Abnahme gelten ausdrücklich nicht automatisch für den Patch.
 
