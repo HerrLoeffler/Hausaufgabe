@@ -26,19 +26,29 @@ test("Gate E lab creates one 11-type system test for 30 participants", () => {
   for (const type of expectedTypes) assert.match(source, new RegExp(`type: "${type}"`));
 });
 
+test("Gate E lab uses the logged-in teacher only for setup and a separate unauthenticated student app for load", () => {
+  assert.match(source, /STUDENT_APP_NAME = "gradecrew-gate-e-students"/);
+  assert.match(source, /initializeApp\(firebaseConfig, STUDENT_APP_NAME\)/);
+  assert.match(source, /runGateE\(root, teacherApp, studentApp/);
+  assert.match(source, /runLoadTest\(studentApp/);
+  assert.doesNotMatch(source, /getAuth\(studentApp\)/);
+});
+
 test("Gate E lab exercises concurrency, polling, idempotency and solution protection", () => {
   assert.match(source, /Promise\.all\(students\.map/);
   assert.match(source, /POLL_ROUNDS = 3/);
   assert.match(source, /Doppelabgabe war nicht idempotent/);
   assert.match(source, /Lösung vor Testende ausgeliefert/);
-  assert.match(source, /expected 11\/11|erwartete 11\/11/);
+  assert.match(source, /erwartete 11\/11/);
+  assert.match(source, /response\.receipt \|\| response/);
   assert.match(source, /maxPaperBytes/);
   assert.match(source, /p95/);
   assert.match(source, /p99/);
 });
 
 test("Gate E lab is reachable only through explicit staging debug URL and included in build", () => {
-  assert.match(tour, /params|get\("gateE"\)|new URLSearchParams/);
+  assert.match(tour, /new URLSearchParams/);
+  assert.match(tour, /get\("gateE"\) === "1"/);
   assert.match(tour, /import\("\.\/gate-e-lab\.js"\)/);
   assert.match(build, /'gate-e-lab\.js'/);
 });
