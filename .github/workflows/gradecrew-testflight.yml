@@ -1,0 +1,127 @@
+name: GradeCrew → TestFlight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-testflight
+  cancel-in-progress: false
+
+jobs:
+  build-and-upload:
+    name: Build and upload GradeCrew
+    runs-on: macos-26
+    timeout-minutes: 45
+
+    env:
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      BUNDLE_ID: de.gradecrew
+      MARKETING_VERSION: 0.1.0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_PRIVATE_KEY APPLE_TEAM_ID; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is missing. Add it under Settings → Secrets and variables → Actions."
+              exit 1
+            fi
+          done
+          echo "All required Apple secrets are present."
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Prepare GradeCrew assets and Xcode project
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 native/GradeCrewTeacher/prepare_testflight_assets.py
+          python3 native/GradeCrewTeacher/generate_project.py
+
+      - name: Prepare App Store Connect key
+        id: apple-key
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          echo "path=$KEY_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Archive GradeCrew
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj \
+            -scheme GradeCrew \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/GradeCrew.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "${{ steps.apple-key.outputs.path }}" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            MARKETING_VERSION="$MARKETING_VERSION" \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            CODE_SIGN_STYLE=Automatic \
+            archive
+
+      - name: Create export options
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>destination</key>
+            <string>upload</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>teamID</key>
+            <string>${APPLE_TEAM_ID}</string>
+            <key>manageAppVersionAndBuildNumber</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Upload to App Store Connect / TestFlight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/GradeCrewExport"
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$RUNNER_TEMP/GradeCrew.xcarchive" \
+            -exportPath "$RUNNER_TEMP/GradeCrewExport" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "${{ steps.apple-key.outputs.path }}" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+
+      - name: Remove private key
+        if: always()
+        shell: bash
+        run: rm -f "${{ steps.apple-key.outputs.path }}"
