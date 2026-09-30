@@ -30,6 +30,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Validate deployment script guardrails
+        run: |
+          bash -n deploy-staging-hosting.sh
+          bash -n deploy-secure-assessment-preview.sh
+          grep -q 'BRANCH="feature/secure-assessment-v1"' deploy-secure-assessment-preview.sh
+          grep -q 'PROJECT_ID="hausaufgabe-staging"' deploy-secure-assessment-preview.sh
+          grep -q 'PRODUCTION_ID="hausaufgabe-40294"' deploy-secure-assessment-preview.sh
+          grep -q 'bash deploy-staging-hosting.sh --check' deploy-secure-assessment-preview.sh
+          grep -q -- '--only functions:assessment' deploy-secure-assessment-preview.sh
+          grep -q 'hosting:channel:deploy' deploy-secure-assessment-preview.sh
+          ! grep -q -- '--only firestore' deploy-secure-assessment-preview.sh
+
       - name: Use Node 22
         uses: actions/setup-node@v5
         with:
@@ -182,3 +194,5 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
+          grep -q '"mobileTutorial": "gc28-mobile"' "$BUILD_DIR/public/release.json"
+          grep -q '"secureAssessment": "v1"' "$BUILD_DIR/public/release.json"
