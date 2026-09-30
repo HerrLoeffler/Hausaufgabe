@@ -13,11 +13,15 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'app-v4.js'];
+const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'rounding-plus.js', 'app-v4.js'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
-const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'app-v4.js']) {
+const indexPath = path.join(output, 'index.html');
+let html = await fs.readFile(indexPath, 'utf8');
+html = html.replace('<script src="app-v4.js"></script>', '<script src="rounding-plus.js"></script><script src="app-v4.js"></script>');
+await fs.writeFile(indexPath, html);
+
+for (const reference of ['styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'rounding-plus.js', 'app-v4.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
@@ -36,13 +40,18 @@ for (const required of ['naturalQuestion', 'integerQuestion', 'decimalQuestion',
   if (!engine.includes(required)) throw new Error(`Fast Quiz V4 math-engine check failed: ${required}`);
 }
 
+const rounding = await fs.readFile(path.join(output, 'rounding-plus.js'), 'utf8');
+for (const required of ['Runden', 'Tausendstel', 'decimalRoundingQuestion', 'v2_rounding', 'Schnellwahl: nur Runden']) {
+  if (!rounding.includes(required) && required !== 'v2_rounding') throw new Error(`Fast Quiz rounding check failed: ${required}`);
+}
+
 const hashes = {};
 for (const name of files) hashes[name] = createHash('sha256').update(await fs.readFile(path.join(output, name))).digest('hex');
 
-await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({ experiment: 'fast-quiz', format: 4, files: hashes }, null, 2) + '\n');
+await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({ experiment: 'fast-quiz', format: 5, files: hashes }, null, 2) + '\n');
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
   site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
 } }, null, 2) + '\n');
 
-console.log(`Fast Quiz Lab V4 build verified: ${files.length} app files.`);
+console.log(`Fast Quiz Lab V5 build verified: ${files.length} app files inklusive Runden bis Tausendstel.`);
