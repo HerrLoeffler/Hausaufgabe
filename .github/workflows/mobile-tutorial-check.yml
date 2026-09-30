@@ -1,0 +1,39 @@
+name: GradeCrew mobile tutorial check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/gradecrew-staging-polish
+    paths:
+      - .github/workflows/mobile-tutorial-check.yml
+      - first-guide-responsive.js
+      - first-guide-responsive.test.mjs
+      - crew-tour-responsive.js
+      - mobile-viewport-polish.js
+      - visual-enhancements.js
+      - deploy-staging-hosting.sh
+      - tools/build-staging.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-mobile-tutorial-check
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout staging polish branch
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate GradeCrew staging mobile tutorial
+        run: bash deploy-staging-hosting.sh --check
