@@ -4,15 +4,19 @@ import hashlib, json
 
 ROOT = Path(__file__).resolve().parent
 SHARED = ROOT.parent / 'Shared'
+ASSET_CATALOG = ROOT / 'Resources' / 'Assets.xcassets'
 objects = {}
+
 
 def ident(name):
     return hashlib.sha256(name.encode()).hexdigest()[:24].upper()
+
 
 def obj(key_name, **values):
     key = ident(key_name)
     objects[key] = values
     return key
+
 
 source_paths = list(sorted((ROOT / 'Sources').glob('*.swift'))) + [
     SHARED / 'GradeCrewDesignTokens.swift',
@@ -33,6 +37,15 @@ for source in source_paths:
     files.append(ref)
     builds.append(obj('build-' + str(relative), isa='PBXBuildFile', fileRef=ref))
 
+asset_ref = obj(
+    'Resources/Assets.xcassets',
+    isa='PBXFileReference',
+    lastKnownFileType='folder.assetcatalog',
+    path='Resources/Assets.xcassets',
+    sourceTree='<group>',
+)
+asset_build = obj('build-Resources/Assets.xcassets', isa='PBXBuildFile', fileRef=asset_ref)
+
 product = obj(
     'product',
     isa='PBXFileReference',
@@ -41,10 +54,10 @@ product = obj(
     sourceTree='BUILT_PRODUCTS_DIR',
 )
 products = obj('products', isa='PBXGroup', children=[product], name='Products', sourceTree='<group>')
-main = obj('main', isa='PBXGroup', children=files + [products], sourceTree='<group>')
+main = obj('main', isa='PBXGroup', children=files + [asset_ref, products], sourceTree='<group>')
 sources = obj('sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=builds, runOnlyForDeploymentPostprocessing='0')
 frameworks = obj('frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
-resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
+resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build], runOnlyForDeploymentPostprocessing='0')
 
 project_configs = []
 target_configs = []
@@ -77,11 +90,13 @@ for name in ['Debug', 'Release']:
             'CODE_SIGN_STYLE': 'Automatic',
             'GENERATE_INFOPLIST_FILE': 'YES',
             'INFOPLIST_KEY_CFBundleDisplayName': 'GradeCrew',
+            'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption': 'NO',
             'INFOPLIST_KEY_UILaunchScreen_Generation': 'YES',
             'INFOPLIST_KEY_UIApplicationSceneManifest_Generation': 'YES',
             'INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents': 'YES',
             'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone': 'UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
             'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad': 'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
+            'ASSETCATALOG_COMPILER_APPICON_NAME': 'AppIcon',
             'TARGETED_DEVICE_FAMILY': '1,2',
             'SUPPORTED_PLATFORMS': 'iphoneos iphonesimulator',
             'SUPPORTS_MACCATALYST': 'NO',
@@ -118,12 +133,14 @@ project = obj(
     targets=[target],
 )
 
+
 def encode(value):
     if isinstance(value, dict):
         return '{\n' + ''.join(f'{encode(k)} = {encode(v)};\n' for k, v in value.items()) + '}'
     if isinstance(value, list):
         return '(\n' + ''.join(encode(v) + ',\n' for v in value) + ')'
     return json.dumps(str(value), ensure_ascii=False)
+
 
 project_dir = ROOT / 'GradeCrewTeacher.xcodeproj'
 project_dir.mkdir(exist_ok=True)
@@ -152,6 +169,8 @@ scheme_dir.mkdir(parents=True, exist_ok=True)
 
 assert source_paths
 assert all(source.is_file() for source in source_paths)
+assert ASSET_CATALOG.is_dir(), 'Run prepare_testflight_assets.py first.'
+assert (ASSET_CATALOG / 'AppIcon.appiconset' / 'AppIcon.png').is_file()
 assert any(source.name == 'GradeCrewTeacherApp.swift' for source in source_paths)
 assert any(source.name == 'GradeCrewDesignTokens.swift' for source in source_paths)
-print(f'GradeCrew Teacher Xcode project generated: {len(source_paths)} shared/native Swift sources.')
+print(f'GradeCrew Teacher Xcode project generated: {len(source_paths)} shared/native Swift sources + AppIcon assets.')
