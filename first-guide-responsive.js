@@ -240,7 +240,8 @@ function observeGuideCard(card) {
   if (!card || cardObserver) return;
   if ("MutationObserver" in window) {
     cardObserver = new MutationObserver(scheduleSettledLayout);
-    cardObserver.observe(card, { attributes: true, childList: true, subtree: true, characterData: true });
+    // Observe guide content changes, not our own class/style positioning writes.
+    cardObserver.observe(card, { childList: true, subtree: true, characterData: true });
   }
   if ("ResizeObserver" in window) {
     const resizeObserver = new ResizeObserver(scheduleLayout);
