@@ -48,9 +48,15 @@ if ! grep -q '"codebase": "assessment"' firebase.json; then
   exit 1
 fi
 
+# Backend zuerst separat prüfen. Der anschließende gemeinsame Staging-Check
+# validiert zusätzlich den vollständigen Browser-/Tutorial-/Diagnose-RC und den
+# tatsächlichen Hosting-Build. So kann der Security-Preview nicht versehentlich
+# einen älteren Mobile-/Tutorial-Stand ausliefern.
 npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
+
+bash deploy-staging-hosting.sh --check
 
 node --check secure-assessment-client.js
 node --check secure-draft-persistence.js
@@ -76,6 +82,9 @@ BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gradecrew-secure-preview.XXXXXX")"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-staging.mjs "$BUILD_DIR"
 for REQUIRED in \
+  mobile-viewport-polish.js \
+  first-guide-responsive.js \
+  crew-tour-responsive.js \
   secure-student.html \
   secure-draft-persistence.js \
   secure-student.js \
@@ -94,9 +103,11 @@ grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
+grep -q '"mobileTutorial": "gc28-mobile"' "$BUILD_DIR/public/release.json"
+grep -q '"secureAssessment": "v1"' "$BUILD_DIR/public/release.json"
 
 if [[ "$MODE" = "--check" ]]; then
-  echo "Secure Assessment Preview geprüft. Es wurde nichts veröffentlicht."
+  echo "Secure Assessment Preview + vollständiger GradeCrew-RC geprüft. Es wurde nichts veröffentlicht."
   echo "Commit: $(git rev-parse HEAD)"
   echo "Hinweis: Die semantischen Firestore-Emulator-Tests laufen verpflichtend in GitHub CI mit Java 21."
   exit 0
