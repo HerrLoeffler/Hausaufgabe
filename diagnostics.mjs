@@ -24,9 +24,26 @@ export function createDiagnostics({ now = () => Date.now(), capacity = 40 } = {}
   }
   return {
     record,
-    setRelease(value) { release = { commit: /^[a-f0-9]{40}$/.test(value?.commit || '') ? value.commit : '', version: String(value?.version || '').slice(0, 60) }; },
+    setRelease(value) {
+      const components = {};
+      for (const key of ['app', 'mobileTutorial', 'secureAssessment']) {
+        const component = String(value?.components?.[key] || '').replace(/[^a-z0-9_.:+-]/gi, '').slice(0, 60);
+        if (component) components[key] = component;
+      }
+      release = {
+        commit: /^[a-f0-9]{40}$/.test(value?.commit || '') ? value.commit : '',
+        version: String(value?.version || '').slice(0, 60),
+        ...(Object.keys(components).length ? { components } : {})
+      };
+    },
     clear() { events.length = 0; },
-    snapshot() { return { schemaVersion: 1, release: { ...release }, breadcrumbs: events.map(e => ({ ...e })) }; }
+    snapshot() {
+      return {
+        schemaVersion: 1,
+        release: { ...release, ...(release.components ? { components: { ...release.components } } : {}) },
+        breadcrumbs: events.map(e => ({ ...e }))
+      };
+    }
   };
 }
 export function installDiagnostics(recorder, doc = document, win = window) {

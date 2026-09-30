@@ -3,13 +3,15 @@ import assert from 'node:assert/strict';
 import { createDiagnostics, redactTechnicalText } from './diagnostics.mjs';
 import { filterLogs, groupErrors, supportExport } from './admin-log-tools.mjs';
 
-test('breadcrumbs are bounded, allowlisted, resettable and snapshots independent', () => {
+test('breadcrumbs and release metadata are bounded, allowlisted, resettable and snapshots independent', () => {
  let time = 0; const d = createDiagnostics({ now: () => time++, capacity: 3 });
- d.setRelease({ commit: 'a'.repeat(40), version: 'gc27', secret: 'NO' });
+ d.setRelease({ commit: 'a'.repeat(40), version: 'gc27', secret: 'NO', components: { app: 'gc27', mobileTutorial: 'gc28-mobile', secureAssessment: 'v1', secret: 'NO' } });
  for (let i = 0; i < 8; i++) d.record('view', { view: `view${i}`, password: 'NO', answers: 'NO', name: 'NO' });
  const snap = d.snapshot(); assert.equal(snap.breadcrumbs.length, 3);
  assert.equal(JSON.stringify(snap).includes('NO'), false);
+ assert.deepEqual(snap.release.components, { app: 'gc27', mobileTutorial: 'gc28-mobile', secureAssessment: 'v1' });
  snap.breadcrumbs[0].view = 'changed'; assert.notEqual(d.snapshot().breadcrumbs[0].view, 'changed');
+ snap.release.components.mobileTutorial = 'changed'; assert.equal(d.snapshot().release.components.mobileTutorial, 'gc28-mobile');
  d.clear(); assert.equal(d.snapshot().breadcrumbs.length, 0);
 });
 test('technical URLs, credentials, email and image blobs are scrubbed', () => {
