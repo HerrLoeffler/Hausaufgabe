@@ -1,4 +1,4 @@
-import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
   getFirestore,
@@ -9,11 +9,12 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { appEnvironment } from "./firebase-config.js";
+import { appEnvironment, firebaseConfig } from "./firebase-config.js";
 
 const REGION = "europe-west1";
 const PARTICIPANTS = 30;
 const POLL_ROUNDS = 3;
+const STUDENT_APP_NAME = "gradecrew-gate-e-students";
 const SYSTEM_TITLE = "SYSTEMTEST – Gate E – 30 Teilnehmer";
 const FORBIDDEN_PAPER_KEYS = new Set([
   "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
@@ -309,8 +310,8 @@ async function createSystemTest(db, user) {
   return { code, questions };
 }
 
-async function runLoadTest(app, quizId, onProgress) {
-  const functions = getFunctions(app, REGION);
+async function runLoadTest(studentApp, quizId, onProgress) {
+  const functions = getFunctions(studentApp, REGION);
   const calls = Object.fromEntries([
     "getAssessmentInfo", "startAssessmentAttempt", "resumeAssessmentAttempt",
     "submitAssessmentAttempt", "getAssessmentReceipt"
@@ -378,21 +379,25 @@ async function runLoadTest(app, quizId, onProgress) {
       invoke("submitAssessmentAttempt", payload),
       invoke("submitAssessmentAttempt", payload)
     ]);
-    const firstId = receiptId(first.receipt || first);
-    const duplicateId = receiptId(duplicate.receipt || duplicate);
+    const firstReceipt = first.receipt || first;
+    const duplicateReceipt = duplicate.receipt || duplicate;
+    const firstId = receiptId(firstReceipt);
+    const duplicateId = receiptId(duplicateReceipt);
     if (!firstId || firstId !== duplicateId) throw new Error(`${student.name}: Doppelabgabe war nicht idempotent.`);
-    if (hasSolutions(first.receipt || first) || hasSolutions(duplicate.receipt || duplicate)) throw new Error(`${student.name}: Lösung vor Testende ausgeliefert.`);
-    return first.receipt || first;
+    if (hasSolutions(firstReceipt) || hasSolutions(duplicateReceipt)) throw new Error(`${student.name}: Lösung vor Testende ausgeliefert.`);
+    return firstReceipt;
   }));
 
   onProgress(`4/4 · ${PARTICIPANTS} Receipts nachprüfen …`);
   const finalReceipts = await Promise.all(started.map(async student => {
-    const receipt = await invoke("getAssessmentReceipt", {
+    const response = await invoke("getAssessmentReceipt", {
       quizId,
       attemptId: student.attemptId,
       attemptToken: student.attemptToken
     });
+    const receipt = response.receipt || response;
     if (hasSolutions(receipt)) throw new Error(`${student.name}: Receipt enthält vor Testende Lösungen.`);
+    if (!receiptId(receipt)) throw new Error(`${student.name}: Receipt enthält keine Abgabe-ID.`);
     if (Number(receipt.totalPoints) !== Number(receipt.maxPoints) || Number(receipt.maxPoints) !== 11) {
       throw new Error(`${student.name}: erwartete 11/11 Punkte, erhalten ${receipt.totalPoints ?? "?"}/${receipt.maxPoints ?? "?"}.`);
     }
@@ -416,7 +421,7 @@ async function runLoadTest(app, quizId, onProgress) {
   };
 }
 
-async function runGateE(root, app, user) {
+async function runGateE(root, teacherApp, studentApp, user) {
   const button = root.querySelector(".ge-start");
   const report = root.querySelector(".ge-report");
   button.disabled = true;
@@ -425,12 +430,12 @@ async function runGateE(root, app, user) {
   let code = "";
   try {
     setStatus(root, "Systemtest wird in deinem Staging-Konto angelegt …");
-    const db = getFirestore(app);
+    const db = getFirestore(teacherApp);
     const created = await createSystemTest(db, user);
     code = created.code;
     setStatus(root, `Test ${code} wurde veröffentlicht.\n30 virtuelle Schüler werden gestartet …`);
     await sleep(250);
-    const result = await runLoadTest(app, code, text => setStatus(root, `${text}\nTestcode: ${code}`));
+    const result = await runLoadTest(studentApp, code, text => setStatus(root, `${text}\nTestcode: ${code}`));
     await updateDoc(doc(db, "quizzes", code), {
       gateELastRunAt: serverTimestamp(),
       gateELastRunPass: true,
@@ -442,7 +447,7 @@ async function runGateE(root, app, user) {
     report.classList.remove("hidden");
   } catch (error) {
     if (code) {
-      await updateDoc(doc(getFirestore(app), "quizzes", code), {
+      await updateDoc(doc(getFirestore(teacherApp), "quizzes", code), {
         gateELastRunAt: serverTimestamp(),
         gateELastRunPass: false,
         gateELastRunError: String(error?.message || error).slice(0, 600),
@@ -460,8 +465,10 @@ async function runGateE(root, app, user) {
 export function installGateELab() {
   const params = new URLSearchParams(location.search);
   if (appEnvironment !== "staging" || params.get("gateE") !== "1") return;
-  const app = getApp();
-  const auth = getAuth(app);
+  const teacherApp = getApp();
+  const studentApp = getApps().find(app => app.name === STUDENT_APP_NAME)
+    || initializeApp(firebaseConfig, STUDENT_APP_NAME);
+  const auth = getAuth(teacherApp);
   const root = panel();
   setStatus(root, "Warte auf das eingeloggte Staging-Konto …");
   onAuthStateChanged(auth, user => {
@@ -472,10 +479,10 @@ export function installGateELab() {
       return;
     }
     button.disabled = false;
-    setStatus(root, "Bereit. Der Systemtest wird dem aktuell eingeloggten Lehrkraftkonto zugeordnet.");
+    setStatus(root, "Bereit. Der Systemtest wird dem aktuell eingeloggten Lehrkraftkonto zugeordnet. Die 30 Schüler laufen getrennt und ohne Lehrkraft-Login.");
     if (!button.dataset.bound) {
       button.dataset.bound = "1";
-      button.addEventListener("click", () => runGateE(root, app, auth.currentUser));
+      button.addEventListener("click", () => runGateE(root, teacherApp, studentApp, auth.currentUser));
     }
   });
 }
