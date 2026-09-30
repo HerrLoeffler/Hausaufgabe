@@ -153,6 +153,7 @@ export function startVisualEnhancements() {
 
     const modules = [
       ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc9"],
+      ["Startguide-Responsive", "./first-guide-responsive.js?v=2.3.1-gc28-mobile"],
       ["Crew-Tour-Sperre", "./crew-tour-hardening.js?v=2.3.1-gc13"],
       ["Crew-Tour-gc23", "./crew-tour-gc23-polish.js?v=2.3.1-gc23"],
       ["Crew-Tour-gc24", "./crew-tour-gc24-polish.js?v=2.3.1-gc24"],
