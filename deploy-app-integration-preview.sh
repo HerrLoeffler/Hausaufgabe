@@ -12,13 +12,9 @@ fi
 if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   echo "FEHLER: Nicht gespeicherte Änderungen. Erst sichern."; git status --short; exit 1
 fi
-# The runtime must survive a fresh Cloud Shell reconnect.
-export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then . "$NVM_DIR/nvm.sh"; fi
-if ! command -v nvm >/dev/null 2>&1; then echo "FEHLER: nvm fehlt."; exit 1; fi
-nvm install 22 >/dev/null
-nvm use 22 >/dev/null
-[[ "$(node -p 'process.versions.node.split(".")[0]')" == "22" ]]
+# The runtime must also work when a fresh Cloud Shell has no nvm at all.
+. tools/cloud-shell-runtime.sh
+gradecrew_use_node22
 grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js
 npm ci --prefix tools/ui --no-audit --no-fund
 for FILE in app.js startup.js visual-enhancements.js mobile-viewport-polish.js first-guide-responsive.js crew-tour-responsive.js gate-e-lab.js tools/gate-e-load-test.mjs; do node --check "$FILE"; done
@@ -33,7 +29,7 @@ test -f "$BUILD_DIR/public/assessment-receipt-check.mjs"
 if [[ "$MODE" == "--check" ]]; then
   echo "App-Integration gc28 geprüft. Es wurde nichts veröffentlicht."; exit 0
 fi
-if ! command -v firebase >/dev/null 2>&1; then npm install -g firebase-tools; fi
+gradecrew_use_firebase
 echo "Veröffentliche ausschließlich Hosting-Preview $CHANNEL auf $PROJECT_ID."
 echo "Bereits deployte Assessment-Functions werden verwendet. Normales Staging, Regeln und Production bleiben unverändert."
 firebase hosting:channel:deploy "$CHANNEL" --project "$PROJECT_ID" --config "$BUILD_DIR/firebase.json" --expires 7d --non-interactive

@@ -49,11 +49,17 @@ git pull --ff-only
 bash deploy-app-integration-preview.sh --deploy
 ```
 
-Das Skript prüft Branch/sauberen Stand, lädt nvm, aktiviert Node 22 und führt
+Das Skript prüft Branch/sauberen Stand, verwendet vorhandenes Node 22 oder richtet
+fehlendes nvm/Node 22 im Benutzerverzeichnis ein und führt
 Tests/Build aus, bevor es einen Hosting-Preview-Channel veröffentlicht. Bei
 fehlender Firebase-Anmeldung normal interaktiv anmelden; keine Token in Chat/Repo.
 Die am Ende ausgegebene URL sichern. Es werden keine Functions, Firestore-Regeln
 oder normale Hosting-Release verändert. Bereits deployte Staging-Functions verwendet.
+
+Beim ersten Versuch am 30.09.2026 wurde nichts veröffentlicht: nvm fehlte.
+Das war ein Bootstrap-Fehler des Skripts; der gemeinsame Runtime-Helfer behebt
+ihn ohne manuelle Installation oder globale Schreibrechte. Nach `git pull --ff-only`
+denselben Deploy-Befehl wiederholen. Nicht einen älteren Branch als Umweg deployen.
 
 ## Überschaubarer erster Gerätetest
 

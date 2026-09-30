@@ -51,6 +51,11 @@ jobs:
       - name: Install security rules test dependencies
         run: npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
 
+      - name: Verify fresh Cloud Shell runtime
+        run: |
+          bash -n tools/cloud-shell-runtime.sh deploy-app-integration-preview.sh cloud-shell-bootstrap.sh
+          python3 -m unittest tools.test_cloud_shell_runtime -v
+
       - name: Run unit tests
         working-directory: functions
         run: npm test

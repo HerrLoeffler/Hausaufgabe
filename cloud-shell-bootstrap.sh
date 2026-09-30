@@ -29,30 +29,9 @@ git fetch --all --prune
 git checkout "$BRANCH"
 git pull --ff-only
 
-export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-  # shellcheck disable=SC1090
-  . "$NVM_DIR/nvm.sh"
-fi
-
-if ! command -v nvm >/dev/null 2>&1; then
-  echo "FEHLER: nvm ist in dieser Cloud-Shell nicht verfügbar."
-  exit 1
-fi
-
-# Absichtlich immer 'nvm install 22': Das ist idempotent und funktioniert auch
-# nach einem Cloud-Shell-Reconnect, wenn die VM die zuvor installierte Version
-# nicht mehr besitzt.
-nvm install 22
-nvm use 22
-nvm alias default 22 >/dev/null
-
-# Deploy-Skripte verwenden den Firebase-CLI-Befehl direkt. In einer frischen
-# Cloud-Shell kann er fehlen, deshalb nur bei Bedarf installieren.
-if ! command -v firebase >/dev/null 2>&1; then
-  echo "Firebase CLI fehlt – wird einmalig für diese Umgebung installiert …"
-  npm install -g firebase-tools
-fi
+. tools/cloud-shell-runtime.sh
+gradecrew_use_node22
+gradecrew_use_firebase
 
 echo
 echo "Bereit."

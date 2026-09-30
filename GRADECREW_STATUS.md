@@ -25,6 +25,10 @@ Keine Aussage, dass gc28 bereits deployed oder physisch auf dem iPad geprüft se
 **Nächster konkreter Weg: APP_INTEGRATION_RUNBOOK.md.**
 Neues selbstbootstrappendes Skript: `deploy-app-integration-preview.sh --deploy`.
 Veröffentlicht nur Hosting-Preview auf Staging, nutzt bereits deployte Functions.
+Erster Nutzer-Deploy stoppte vor Veröffentlichung mit `nvm fehlt`; Ursache und
+Korrektur in CLOUD_SHELL_RUNBOOK.md dokumentiert. Gemeinsamer Runtime-Helfer nutzt
+vorhandenes Node 22 oder richtet fehlendes nvm selbst im Benutzerverzeichnis ein.
+Ausgeführte Shell-Regressionen sichern den frischen Start und sichere Fehlerabbruchpfade.
 Der 30er-Test ist ein Parallel-Smoke-Test; `fullGateEVerified` bleibt false.
 Alle bisherigen offenen Security-Gates bleiben offen, Production unverändert.
 
@@ -192,5 +196,4 @@ Dann die von Firebase ausgegebene Preview-URL sichern. Diese Preview-URL plus ei
 - keine Punkte/Noten aus dem Schülerbrowser als vertrauenswürdig akzeptieren
 - aktive Prüfung nicht editierbar oder löschbar machen
 - Tutorial-/Owner-Preview-Ausnahme nicht mit anonymem Schülerzugriff verwechseln
-
 

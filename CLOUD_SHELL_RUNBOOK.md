@@ -13,16 +13,23 @@ Niemals voraussetzen, dass aus einer vorherigen Sitzung noch Folgendes aktiv ode
 - geladene `nvm`-Umgebung;
 - vorhandene Firebase CLI.
 
-## Neue verbindliche Regel: Deployskripte bootstrappen ihre Runtime selbst
+## App-Integration: Deployskript richtet die Runtime selbst ein
 
-Deploy-/Checkskripte dürfen **nicht** davon abhängen, dass zuvor `nvm use 22` in einer anderen Shell ausgeführt wurde. Jedes relevante Deployskript muss im eigenen Prozess:
-1. `nvm` laden;
-2. `nvm install 22` idempotent ausführen;
-3. `nvm use 22` ausführen;
-4. die aktive Node-Hauptversion prüfen;
-5. bei einem echten Deploy die Firebase CLI bei Bedarf installieren.
+Das App-Integration-Deploy-/Checkskript darf **nicht** davon abhängen, dass zuvor `nvm use 22` in einer anderen Shell ausgeführt wurde. Ebenso darf eine vorhandene nvm-Installation nicht vorausgesetzt werden.
+
+`deploy-app-integration-preview.sh` und `cloud-shell-bootstrap.sh` verwenden dafür den gemeinsamen Helfer `tools/cloud-shell-runtime.sh` im eigenen Prozess:
+1. vorhandenes Node 22 mit npm direkt verwenden;
+2. andernfalls vorhandenes nvm laden oder die feste offizielle nvm-Version v0.40.3 herunterladen und ihren Commit prüfen;
+3. Node 22 installieren/aktivieren und die aktive Hauptversion prüfen;
+4. bei einem echten Deploy fehlende Firebase CLI im Benutzer-Cache installieren.
+
+Keine globalen Installationsrechte nötig; Shellprofile und Repository bleiben unverändert. Die älteren branchspezifischen Preview-Skripte benötigen weiterhin ihren eigenen kompatiblen Branch; dieses Update ersetzt sie nicht auf anderen Branches.
 
 Damit entfällt die fehleranfällige Übergabe einer Node-Umgebung zwischen Kind- und Eltern-Shell.
+
+## Fehlernachweis vom 30.09.2026
+
+Der erste App-Integration-Deploy stoppte mit `FEHLER: nvm fehlt.` vor Tests und Veröffentlichung. Ursache: Das Skript konnte vorhandenes nvm laden, aber keine fehlende Installation einrichten. Der gemeinsame Runtime-Helfer korrigiert genau diese Voraussetzung. Ausgeführte Shell-Tests prüfen die frische Sitzung, Wiederverwendung, fehlgeschlagenen Download und falschen Download-Commit sowie die Firebase-Installation ohne globale Rechte.
 
 ## Verbindliches Muster für ChatGPT-Befehle
 
