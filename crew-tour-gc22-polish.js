@@ -83,7 +83,7 @@ function patchPreferencesCoach(coach) {
     ownWishes.classList.remove("gc22TutorialFocus");
     preferenceSummary.classList.add("gc22TutorialFocus");
     title.textContent = "Noch ein Tipp für später.";
-    copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Persönliche KI-Vorgaben“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
+    copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
     continueButton.textContent = "Verstanden – weiter";
     continueButton.replaceWith(continueButton.cloneNode(true));
     const finalButton = coach.querySelector(".gcCoachNext");
@@ -213,3 +213,4 @@ export function installGc22TourPolish() {
 }
 
 installGc22TourPolish();
+

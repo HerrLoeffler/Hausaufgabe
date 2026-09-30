@@ -130,7 +130,7 @@ function showError(error, { retry = true } = {}) {
   const title = document.createElement("h1");
   title.textContent = "Test kann gerade nicht fortgesetzt werden";
   const copy = document.createElement("p");
-  copy.textContent = error?.message || "Unbekannter Fehler.";
+  copy.textContent = (error?.message || "Unbekannter Fehler.") + (error?.reference ? ` · Fehlerkennung: ${error.reference}` : "");
   host.append(icon, title, copy);
   if (retry) {
     const button = document.createElement("button");
@@ -592,7 +592,7 @@ async function submitAssessment(autoSubmitted = false) {
     setConnection(error.code !== "unavailable", error.code === "unavailable" ? "Verbindung unterbrochen" : "Abgabe nicht gespeichert");
     const message = document.createElement("p");
     message.className = "secureInlineError";
-    message.textContent = `${error.message} Deine Antworten bleiben in diesem Tab erhalten.`;
+    message.textContent = `${error.message}${error.reference ? ` · Fehlerkennung: ${error.reference}` : ""} Deine Antworten bleiben in diesem Tab erhalten.`;
     document.querySelector(".secureSubmit .secureInlineError")?.remove();
     $("secureSubmitBtn")?.parentElement?.appendChild(message);
   }

@@ -96,3 +96,14 @@ dialog.gcTourVariantDialog::backdrop{background:rgba(15,23,42,.48);backdrop-filt
 .gcCoachFinishFlow{justify-content:center}
 .gcFinishCrew{display:block;width:min(100%,560px);height:auto;margin:16px auto}
 .gcFinishChoices{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+
+/* One calm, connected tutorial section. The explanation never covers its task. */
+.gcRealCoach.gcCoachContext{position:relative!important;inset:auto!important;transform:none!important;width:100%!important;max-width:100%!important;max-height:none!important;box-sizing:border-box;grid-column:1/-1;margin:20px 0 0!important;border:2px solid #2f64d6;border-bottom:1px solid #cddcfb;border-radius:18px 18px 0 0!important;scroll-margin-top:84px;z-index:1204}
+.gcTourContextTarget{border:2px solid #2f64d6!important;border-top:0!important;border-radius:0 0 18px 18px!important;margin-top:0!important;position:relative;z-index:1202;background:#fff;scroll-margin-top:84px}
+.gcTourContextTarget .questionImagePreview,.gcTourContextTarget .questionImage,.gcTourContextTarget img[src*="demo-cat"]{object-fit:contain!important;height:auto!important;max-height:340px!important;width:100%;overflow:visible!important}
+.gcTourContextTarget textarea#aiCustomNotes{min-height:150px;overflow:auto}
+.gcTourContext .gcCoachContext .gcCoachIdentity img{width:68px!important;height:68px!important;object-fit:contain}
+@media(max-width:640px){.gcRealCoach.gcCoachContext{padding:16px!important;margin-top:12px!important}.gcCoachContext p{font-size:14px;line-height:1.6}.gcTourContextTarget img[src*="demo-cat"]{max-height:260px!important}}
+
+body.gcRealTourActive.gcTourContext:not(.gcTourAnswering){overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}

@@ -43,7 +43,7 @@ if (publicTestCode && !teacherPreview) {
   }, 6000);
 
   try {
-    await import("./app.js?v=2.3.1-gc21");
+    await import("./app.js?v=2.3.1-gc27");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
@@ -60,3 +60,4 @@ if (publicTestCode && !teacherPreview) {
     retry.classList.remove("hidden");
   }
 }
+

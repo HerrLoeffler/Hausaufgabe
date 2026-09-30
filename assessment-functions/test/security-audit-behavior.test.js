@@ -34,6 +34,8 @@ function fixture() {
     exports, Buffer,
     Date: class extends Date { static now() { return now; } },
     require: name => {
+      if (name === './observability') return require('../lib/observability');
+      if (name === 'firebase-functions/logger') return { info() {}, warn() {}, error() {} };
       if (name === 'node:crypto') return require(name);
       if (name === 'firebase-admin/app') return { getApps: () => [{}] };
       if (name === 'firebase-admin/firestore') return { getFirestore: () => db, Timestamp: { now: () => now, fromMillis: n => n }, FieldValue: { delete: () => deleted } };

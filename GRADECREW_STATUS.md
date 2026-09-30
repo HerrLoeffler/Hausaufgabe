@@ -4,6 +4,26 @@ Stand: 30.09.2026
 
 Diese Datei ist die kompakte Übergabe für neue GradeCrew-Chats. Für Security-Details zusätzlich `SECURE_ASSESSMENT_AUDIT_2026-09-30.md` lesen.
 
+## Aktuelle Fortsetzung: Diagnose und Tutorial gc27
+
+Implementiert auf `feature/secure-assessment-v1`, noch nicht auf Firebase veröffentlicht:
+- begrenzte technische Browser-Ablaufspur samt Release-Commit;
+- Assessment-Serverkennungen und strukturierte Logs ohne Request-/Antwortdaten;
+- Admin-Filter, Sortierung, Fehlergruppen, Diagnoseexport und Untersuchung pro Fehler;
+- Admin-Audit mit je 200 Einträgen und Nachladen;
+- Wünsche manuell bestätigen, langsamere Schreibanimation, Hilfe direkt bei der Aufgabe;
+- Du-Frage auch im überschreibenden gc23-Modul wiederhergestellt;
+- vier transparente Figurenatlanten mit einzeln geclippten Posen und sauberen Rändern.
+
+**Einstieg für Diagnose und Codebereinigung: DIAGNOSTICS_GUIDE.md.**
+Dort stehen Ablauf, Code-Landkarte, Ursache/Fix-Tabelle, Datenschutzgrenzen und Folgearbeit.
+Lokaler Durchlauf: 121 Tests bestanden (Backend, Diagnose, Tour, Secure-Client, Assets).
+Alle 24 Figurenposen auf hellem/dunklem Hintergrund visuell geprüft.
+Finale CI und Asset-Prüfung werden beim Commit gesondert festgehalten.
+Keine Behauptung eines erfolgreichen Firebase-/iPhone-End-to-End-Tests für gc27.
+Lokaler Chromium-Download scheiterte; DOM-Tests sind kein visueller Browsernachweis.
+Offene Security-Gates C–G bleiben unverändert bestehen.
+
 ## Übernahmeprüfung vom 30.09.2026 – aktueller Zusatz
 
 Der vorherige Stand `7eca11133eef6e16292ca085100c8d2a64922a5e` wurde unabhängig geprüft.

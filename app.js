@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc21";
+const APP_VERSION = "2.3.1-gc27";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -26,6 +26,8 @@ import {
   query,
   where,
   orderBy,
+  limit,
+  startAfter,
   onSnapshot,
   serverTimestamp,
   getCountFromServer,
@@ -39,6 +41,12 @@ import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEdit
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-gc2";
 import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
+import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
+import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
+const diagnostics = createDiagnostics();
+installDiagnostics(diagnostics);
+fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
+let adminAuditCursor = null;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -490,6 +498,7 @@ async function finishTeacherTour() {
 }
 
 function showView(id) {
+  diagnostics.record("view", { view: id });
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
@@ -561,11 +570,11 @@ function ensureReportableErrorHost() {
 
 function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message = "Etwas hat nicht funktioniert.", error = null, action = "unknown", details = {} } = {}) {
   const host = ensureReportableErrorHost();
-  const rawMessage = String(error?.message || error || "").slice(0, 1800);
+  const rawMessage = redactTechnicalText(error?.message || error || "", 1800);
   const providerCode = String(error?.code || error?.status || "").slice(0, 160);
-  const stack = String(error?.stack || "").slice(0, 7000);
+  const stack = redactTechnicalText(error?.stack || "", 7000);
   const cleanedDetails = cleanTechnicalDetails(details);
-  const fingerprint = shortErrorFingerprint([code, action, cleanedDetails.jobId || "", providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
+  const fingerprint = shortErrorFingerprint([code, action, cleanedDetails.stage || "", providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
   const existing = host.querySelector(`[data-error-fingerprint="${fingerprint}"]`);
   if (existing) {
     existing.__reportPayload.occurrences += 1;
@@ -576,7 +585,10 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
   }
 
   const quiz = state.currentQuiz || state.currentResultsQuiz || null;
+  diagnostics.record("error", { code, action, stage: cleanedDetails.stage });
   const payload = {
+    diagnostics: diagnostics.snapshot(),
+    severity: diagnosticSeverity(providerCode || code),
     errorCode: code,
     fingerprint,
     action: String(action || "unknown").slice(0, 120),
@@ -592,7 +604,7 @@ function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message
     rawMessage,
     stack,
     view: currentViewId(),
-    pageUrl: location.href.slice(0, 1200),
+    pageUrl: location.origin + location.pathname,
     testCode: String(quiz?.id || "").slice(0, 80),
     questionCount: Array.isArray(state.questions) ? state.questions.length : 0,
     appVersion: APP_VERSION,
@@ -647,12 +659,14 @@ async function submitTechnicalErrorReport(card) {
       fingerprint: payload.fingerprint,
       action: payload.action,
       testCode: payload.testCode || null,
-      feedbackSchemaVersion: 4,
+      feedbackSchemaVersion: 5,
+      severity: payload.severity,
       appVersion: payload.appVersion,
       environment: payload.environment,
       userAgent: payload.userAgent,
       pageUrl: payload.pageUrl,
       technicalDetails: {
+        diagnostics: payload.diagnostics,
         errorName: payload.errorName,
         providerCode: payload.providerCode,
         serverReference: payload.serverReference,
@@ -1064,6 +1078,11 @@ function authMessage(err) {
 onAuthStateChanged(auth, async (user) => {
   if (state.user?.uid !== user?.uid) {
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
+    adminAuditCursor = null;
+    state.adminAudit = [];
+    state.adminFeedback = [];
+    $("adminAuditList")?.replaceChildren();
+    $("adminFeedbackList")?.replaceChildren();
     state.variantTask = null;
     state.aiVariantsRunning = false;
     state.aiMaterials = [];
@@ -6282,6 +6301,17 @@ $("exportAdminTestsBtn")?.addEventListener("click", exportAdminTestsCsv);
 $("adminFeedbackSearch")?.addEventListener("input", renderAdminFeedback);
 $("adminFeedbackCategory")?.addEventListener("change", renderAdminFeedback);
 $("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
+for (const id of ["adminFeedbackEnvironment", "adminFeedbackSeverity", "adminFeedbackVersion", "adminFeedbackFrom", "adminFeedbackTo", "adminFeedbackSort", "adminFeedbackAction", "adminFeedbackFingerprint"]) {
+  $(id)?.addEventListener("input", renderAdminFeedback);
+}
+for (const id of ["adminAuditSearch", "adminAuditAction", "adminAuditFrom", "adminAuditTo", "adminAuditSort"]) $(id)?.addEventListener("input", renderAdminAudit);
+$("adminAuditMore")?.addEventListener("click", loadMoreAdminAudit);
+$("adminFeedbackReset")?.addEventListener("click", () => {
+  document.querySelectorAll("#adminFeedbackAdvanced input").forEach(node => { node.value = ""; });
+  document.querySelectorAll("#adminFeedbackAdvanced select").forEach(node => { node.selectedIndex = 0; });
+  renderAdminFeedback();
+});
+
 $("saveAnnouncementBtn")?.addEventListener("click", saveAnnouncement);
 $("resetAnnouncementBtn")?.addEventListener("click", resetAnnouncementForm);
 $("addTeacherTourStepBtn")?.addEventListener("click", () => addAdminTeacherTourStep());
@@ -6311,6 +6341,7 @@ function switchAdminTab(name, scroll = true) {
 
 async function loadAdminData(showToast = false) {
   if (!isAdmin()) return;
+  const requestingUid = state.user.uid;
   const refresh = $("refreshAdminBtn");
   if (refresh) { refresh.disabled = true; refresh.textContent = "Lädt …"; }
   try {
@@ -6319,8 +6350,9 @@ async function loadAdminData(showToast = false) {
       getDocs(collection(db, "quizzes")),
       getDocs(collection(db, "announcements")),
       getDocs(collection(db, "feedback")),
-      getDocs(collection(db, "adminAudit"))
+      getDocs(query(collection(db, "adminAudit"), orderBy("createdAt", "desc"), limit(200)))
     ]);
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
     state.adminUsers = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
@@ -6334,7 +6366,9 @@ async function loadAdminData(showToast = false) {
       if (openRightsCount) parts.push(`${openRightsCount} Rechtehinweis${openRightsCount === 1 ? "" : "e"}`);
       feedbackTab.textContent = parts.length ? `Feedback · ${parts.join(" · ")}` : "Feedback";
     }
-    state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt)).slice(0, 100);
+    state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    adminAuditCursor = auditSnap.docs.at(-1) || null;
+    if ($("adminAuditMore")) $("adminAuditMore").disabled = auditSnap.size < 200;
     renderAdminFilterOptions();
     await renderAdminOverview();
     renderAdminTeachers();
@@ -6850,6 +6884,10 @@ function formatTechnicalErrorReport(report) {
     ["Gemeldet", fmtDate(report.createdAt)], ["Client-Zeit", t.occurredAtClient],
     ["Browser", report.userAgent], ["Sprache", t.language], ["Online", t.online],
     ["Viewport", t.viewport], ["Bildschirm", t.screen], ["Häufigkeit", t.occurrences],
+    ["Code-Commit", t.diagnostics?.release?.commit],
+    ["Technischer Ablauf", JSON.stringify(t.diagnostics?.breadcrumbs || [], null, 2)],
+    ["Ursache", report.resolution?.rootCause], ["Fix-Commit", report.resolution?.fixCommit],
+    ["Prüfnachweis", report.resolution?.verification],
     ["Stacktrace", t.stack]
   ];
   return ["GradeCrew · technischer Fehlerbericht", ...fields
@@ -6862,11 +6900,19 @@ function renderAdminFeedback(){
   const status=$("adminFeedbackFilter")?.value||"all";
   const category=$("adminFeedbackCategory")?.value||"all";
   const term=normalize($("adminFeedbackSearch")?.value||"");
-  const list=state.adminFeedback
-    .filter((f)=>status==="all"||f.status===status)
-    .filter((f)=>category==="all"||f.category===category)
-    .filter((f)=>!term||normalize(`${f.id||""} ${f.displayName||""} ${f.email||""} ${f.message||""} ${f.testCode||""} ${f.questionSnapshot?.text||""} ${f.errorCode||""} ${f.reportId||""} ${f.action||""} ${f.technicalDetails?.rawMessage||""}`).includes(term))
-    .sort((a,b)=>(b.category==="rights"&&b.status!=="done")-(a.category==="rights"&&a.status!=="done"));
+  const list = filterLogs(state.adminFeedback, {
+    status, category, term, environment: $("adminFeedbackEnvironment")?.value,
+    severity: $("adminFeedbackSeverity")?.value, version: $("adminFeedbackVersion")?.value,
+    action: $("adminFeedbackAction")?.value, fingerprint: $("adminFeedbackFingerprint")?.value,
+    from: $("adminFeedbackFrom")?.value, to: $("adminFeedbackTo")?.value, sort: $("adminFeedbackSort")?.value
+  });
+  if ($("adminFeedbackCount")) $("adminFeedbackCount").textContent = `${list.length} von ${state.adminFeedback.length} geladenen Meldungen`;
+  if ($("adminFeedbackExport")) $("adminFeedbackExport").onclick = () => {
+    const blob = new Blob([JSON.stringify(supportExport(list), null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const link = document.createElement("a");
+    link.href = url; link.download = `gradecrew-diagnose-${new Date().toISOString().slice(0, 10)}.json`; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
   const aiReviewFalsePositives = list.filter(f => f.category === "ai_question" && f.reviewOutcome === "false_positive");
   const aiItems = list.filter(f => f.category === "ai_question" && f.reviewOutcome !== "false_positive");
   const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
@@ -6880,15 +6926,19 @@ function renderAdminFeedback(){
   const errorSummary = errorItems.length ? `<div class="aiFeedbackSummary errorFeedbackSummary"><strong>Technische Fehler:</strong> ${errorItems.length} Meldung${errorItems.length === 1 ? "" : "en"}${errorGroups.length ? `<br>${errorGroups.map(([key, count]) => `${escapeHtml(key)}: ${count}`).join(" · ")}` : ""}</div>` : "";
   const openRights = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
   const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
-  root.innerHTML = rightsSummary + errorSummary + summary + (list.length ? list.map(f => {
+  const grouped = groupErrors(list);
+  const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
+  root.innerHTML = rightsSummary + errorSummary + summary + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
     const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
+  root.querySelectorAll(".errorGroupFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
+  root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
   root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {
     if (!isAdmin()) return;
@@ -6910,7 +6960,37 @@ async function toggleRightsHold(code, hold) {
   } catch (err) { console.error(err); toast("Testzugang konnte nicht geändert werden.", "error"); }
 }
 
-async function updateFeedbackStatus(id,status){try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const rights=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const errors=state.adminFeedback.filter(x=>x.category==="app_error"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab){const parts=[];if(errors)parts.push(`${errors} Fehler`);if(rights)parts.push(`${rights} Rechtehinweis${rights===1?"":"e"}`);tab.textContent=parts.length?`Feedback · ${parts.join(" · ")}`:"Feedback";}toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
+function renderErrorResolution(report) {
+  const r = report.resolution || {};
+  const trace = report.technicalDetails?.diagnostics;
+  return `<details class="errorResolution" data-report-id="${escapeHtml(report.id)}"><summary>Ursache, Lösung & Prüfnachweis</summary>
+    <p>Code-Stand: <code>${escapeHtml(trace?.release?.commit || "Bei älteren Meldungen nicht erfasst")}</code></p>
+    <pre class="supportStack">${escapeHtml(JSON.stringify(trace?.breadcrumbs || [], null, 2))}</pre>
+    <label>Wie ist der Fehler entstanden?<textarea data-resolution="rootCause" maxlength="2000">${escapeHtml(r.rootCause || "")}</textarea></label>
+    <label>Fix-Commit / Referenz<input data-resolution="fixCommit" maxlength="160" value="${escapeHtml(r.fixCommit || "")}"></label>
+    <label>Wie wurde die Korrektur geprüft?<textarea data-resolution="verification" maxlength="2000">${escapeHtml(r.verification || "")}</textarea></label>
+    <button type="button" class="button secondary saveErrorResolution">Untersuchung speichern</button></details>`;
+}
+async function saveErrorResolution(button) {
+  const host = button.closest("[data-report-id]"); const id = host?.dataset.reportId;
+  if (!id || !isAdmin()) return;
+  const resolution = Object.fromEntries([...host.querySelectorAll("[data-resolution]")].map(input => [input.dataset.resolution, input.value.trim()]));
+  button.disabled = true;
+  try {
+    await updateDoc(doc(db, "feedback", id), { resolution, updatedAt: serverTimestamp(), updatedBy: state.user.uid });
+    const row = state.adminFeedback.find(r => r.id === id); if (row) row.resolution = resolution;
+    await writeAdminAudit("feedback_investigation_saved", { feedbackId: id, fixCommit: resolution.fixCommit });
+    toast("Untersuchung gespeichert.");
+  } catch (error) { toast("Untersuchung konnte nicht gespeichert werden.", "error"); }
+  finally { button.disabled = false; }
+}
+
+async function updateFeedbackStatus(id,status){
+const report=state.adminFeedback.find(row=>row.id===id);
+if(status==="done" && report?.category==="app_error" && (!report.resolution?.rootCause || !report.resolution?.verification)){
+  toast("Bitte zuerst Ursache und Prüfnachweis unter Untersuchung speichern.","error"); renderAdminFeedback(); return;
+}
+try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const rights=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const errors=state.adminFeedback.filter(x=>x.category==="app_error"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab){const parts=[];if(errors)parts.push(`${errors} Fehler`);if(rights)parts.push(`${rights} Rechtehinweis${rights===1?"":"e"}`);tab.textContent=parts.length?`Feedback · ${parts.join(" · ")}`:"Feedback";}toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
 
 function auditActionInfo(action) {
   return ({
@@ -6918,6 +6998,7 @@ function auditActionInfo(action) {
     announcement_updated: ["✏️", "Mitteilung geändert"],
     announcement_deleted: ["🗑️", "Mitteilung gelöscht"],
     teacher_tour_updated: ["🧭", "Lehrer-Tutorial geändert"],
+    feedback_investigation_saved: ["🔎", "Fehleruntersuchung gespeichert"],
     feedback_status_changed: ["💬", "Feedbackstatus geändert"],
     password_reset_sent: ["🔑", "Passwort-Reset versendet"],
     user_suspended: ["⛔", "Lehrkraft gesperrt"],
@@ -6945,11 +7026,27 @@ function auditDetailText(entry) {
 function renderAdminAudit(){
   const root=$("adminAuditList");
   if(!root)return;
-  root.innerHTML=state.adminAudit.length?state.adminAudit.map((a)=>{
+  const list = filterLogs(state.adminAudit, { term: $("adminAuditSearch")?.value, action: $("adminAuditAction")?.value, from: $("adminAuditFrom")?.value, to: $("adminAuditTo")?.value, sort: $("adminAuditSort")?.value });
+  if ($("adminAuditCount")) $("adminAuditCount").textContent = `${list.length} Treffer in ${state.adminAudit.length} geladenen Einträgen. Ältere Einträge bei Bedarf nachladen.`;
+  root.innerHTML=list.length?list.map((a)=>{
     const [icon,label]=auditActionInfo(a.action);
     const detail=auditDetailText(a);
     return `<div class="auditItem"><span class="auditIcon">${icon}</span><div class="auditMain"><strong>${escapeHtml(label)}</strong><small>${escapeHtml(a.adminEmail||a.adminUid||"Admin")} · ${escapeHtml(fmtDate(a.createdAt))}</small>${detail?`<p>${escapeHtml(detail)}</p>`:""}</div></div>`;
   }).join(""):`<p class="hint">Noch keine Admin-Aktionen protokolliert.</p>`;
+}
+
+async function loadMoreAdminAudit() {
+  if (!isAdmin() || !adminAuditCursor) return;
+  const requestingUid = state.user.uid;
+  const button = $("adminAuditMore"); button.disabled = true;
+  try {
+    const snapshot = await getDocs(query(collection(db, "adminAudit"), orderBy("createdAt", "desc"), startAfter(adminAuditCursor), limit(200)));
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
+    const known = new Set(state.adminAudit.map(row => row.id));
+    state.adminAudit.push(...snapshot.docs.filter(d => !known.has(d.id)).map(d => ({ id: d.id, ...d.data() })));
+    adminAuditCursor = snapshot.docs.at(-1) || adminAuditCursor;
+    button.disabled = snapshot.size < 200; renderAdminAudit();
+  } catch (error) { button.disabled = false; toast("Ältere Protokolle konnten nicht geladen werden.", "error"); }
 }
 
 async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}
@@ -6987,3 +7084,4 @@ async function createTutorialQuiz(payload) {
   await batch.commit();
   return code;
 }
+

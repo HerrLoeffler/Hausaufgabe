@@ -103,7 +103,7 @@ function patchPreferencesCoach(coach) {
     ownWishes.classList.remove("gc23TutorialFocus");
     preferenceSummary.classList.add("gc23TutorialFocus");
     title.textContent = "Noch ein Tipp für später.";
-    copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Persönliche KI-Vorgaben“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
+    copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
     continueButton.textContent = "Verstanden – weiter";
     continueButton.replaceWith(continueButton.cloneNode(true));
     const finalButton = coach.querySelector(".gcCoachNext");
@@ -179,7 +179,7 @@ function patchIdentityCoach(coach) {
   if (!title) return;
   title.textContent = "Ach, fast vergessen!";
   const ps = [...coach.querySelectorAll(":scope > p")];
-  if (ps[0]) ps[0].textContent = "Wie unhöflich von mir – ich habe dich noch gar nicht gefragt, wie ich dich nennen darf.";
+  if (ps[0]) ps[0].textContent = "Wie unhöflich von mir – ich habe dich noch gar nicht gefragt, wie ich dich nennen darf. Ich darf doch du sagen, oder?";
   ps.slice(1).forEach(node => node.remove());
   const label = coach.querySelector(".gcNamePrompt");
   const input = label?.querySelector("input");
@@ -294,3 +294,4 @@ export function installGc23TourPolish() {
 }
 
 installGc23TourPolish();
+

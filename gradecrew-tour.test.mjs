@@ -183,6 +183,10 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   assert.equal(el('aiGrade').value, '4'); next();
   await until(() => /Stopp/.test(w.document.querySelector('.gcRealCoach h2')?.textContent), 'preferences explanation pauses');
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /allen deinen KI-Tests/);
+  assert.ok(w.document.querySelector('.gcRealCoach').classList.contains('gcCoachContext'));
+  assert.ok(el('aiCustomNotes').value.length > 100);
+  await new Promise(resolve => w.setTimeout(resolve, 50));
+  assert.match(w.document.querySelector('.gcRealCoach h2').textContent, /Stopp/, 'wishes explanation cannot auto-advance');
   next();
   assert.match(w.document.querySelector('.gcRealCoach h2').textContent, /Perfekt/);
   await w.generateAiTestNative();
@@ -249,6 +253,7 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
   assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 5);
   assert.equal(w.document.querySelectorAll('.studentQuestionImage img[src$="demo-cat.svg"]').length, 1);
+  assert.match(w.document.querySelector('.gcRealCoach').textContent, /Ich darf doch du sagen/);
   w.document.querySelector('.gcNamePrompt input').value = 'ML'; next();
   assert.equal(el('studentName').value, 'ML');
   const startCoach = w.document.querySelector('.gcCoachInlineStart');
@@ -521,3 +526,4 @@ test('Actual submission emits the tour transition only after Firestore confirms 
   assert.equal(writes[0].data.answers.q1, 'blue');
   assert.equal(events[0].data.submissionId, 'saved-submission');
 });
+

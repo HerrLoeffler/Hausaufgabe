@@ -19,3 +19,14 @@ test('Clay integration ships its stylesheet and respects reduced motion without 
  assert.ok(fs.readFileSync('tools/build-staging.mjs','utf8').includes("'crew-clay.css'"));
  assert.ok(fs.readFileSync('index.html','utf8').includes('clay-welcome.svg'));
 });
+
+
+test('clean atlas uses independently clipped and padded pose windows',()=>{
+ for(const name of ['penguin-guide','elephant-create','fox-improve','owl-grade']){
+  const svg=fs.readFileSync(`assets/gradecrew/${name}.svg`,'utf8');
+  assert.equal([...svg.matchAll(/overflow="hidden"/g)].length,6);
+  assert.equal([...svg.matchAll(/clip-path="url\(#crop-/g)].length,6);
+  assert.equal([...svg.matchAll(/preserveAspectRatio="xMidYMid meet"/g)].length,6);
+  assert.equal(fs.readFileSync(`assets/gradecrew/${name}-welcome.svg`,'utf8'),svg);
+ }
+});

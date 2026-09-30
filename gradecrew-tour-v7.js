@@ -123,7 +123,7 @@ export function installCrewTour(api) {
     clearTarget();
     root?.remove();
     root = null;
-    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart", "gcTourInlineReview");
+    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart", "gcTourInlineReview", "gcTourContext");
   }
 
   function stop({ done = false } = {}) {
@@ -161,7 +161,7 @@ export function installCrewTour(api) {
     if (!owned() || !event.isTrusted) return;
     // A whitelisted submit button must be allowed to submit its own form.
     if (event.type === "submit" && targetInteractive && target?.form === event.target) return;
-    if ((root?.classList.contains("gcCoachInlineStart") || document.body.classList.contains("gcTourInlineReview")) && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
+    if ((root?.classList.contains("gcCoachInlineStart") || (document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext"))) && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
     if (isAllowedNode(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -172,7 +172,7 @@ export function installCrewTour(api) {
   function blockKeyboard(event) {
     if (!owned() || !event.isTrusted) return;
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    if (document.body.classList.contains("gcTourInlineReview") && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
+    if ((document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext")) && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
     if (isAllowedNode(event.target)) return;
     if (["Tab", "Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown", "Backspace", "Delete", "Escape"].includes(event.key) || event.key.length === 1) {
       event.preventDefault();
@@ -189,7 +189,7 @@ export function installCrewTour(api) {
 
   function place() {
     frame = 0;
-    if (!root?.isConnected || root.classList.contains("gcCoachInlineStart") || root.classList.contains("gc25InlineReviewCoach")) return;
+    if (!root?.isConnected || root.classList.contains("gcCoachInlineStart") || root.classList.contains("gc25InlineReviewCoach") || root.classList.contains("gcCoachContext")) return;
     const rect = root.getBoundingClientRect();
     const margin = 18;
     if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
@@ -221,8 +221,8 @@ export function installCrewTour(api) {
     target.classList.add("gcTourTarget");
     if (deleteTarget) target.classList.add("gcTourDeleteTarget");
     for (let parent = target.parentElement; parent; parent = parent.parentElement) if (parent.tagName === "DETAILS") parent.open = true;
-    // Only the tour may reposition the page. Manual wheel/touch/keyboard scrolling is blocked.
-    if (scroll) queueMicrotask(() => target?.isConnected && target.scrollIntoView({ block: "center", behavior: "instant" }));
+    // Move gently to the next context; inline task steps also allow manual scrolling.
+    if (scroll) queueMicrotask(() => target?.isConnected && (root?.classList.contains("gcCoachContext") ? root : target).scrollIntoView({ block: root?.classList.contains("gcCoachContext") ? "start" : "center", behavior: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ? "instant" : "smooth" }));
     const move = () => schedulePlace();
     addEventListener("resize", move, { passive: true });
     addEventListener("scroll", move, { passive: true, capture: true });
@@ -283,9 +283,22 @@ export function installCrewTour(api) {
         if (origin.isConnected) origin.replaceWith(save);
         else origin.remove();
         save.classList.remove("gc23SaveReviewFloating");
-        document.body.classList.remove("gcTourInlineReview");
+        document.body.classList.remove("gcTourInlineReview", "gcTourContext");
       };
     }
+    const context = target?.closest("#questionList .questionCard") || (selector === "#aiCustomNotes" ? target?.closest("label") || target : null);
+    if (context?.parentElement) {
+      root.classList.add("gcCoachContext");
+      root.dataset.tourContext = stage;
+      context.classList.add("gcTourContextTarget");
+      context.before(root);
+      document.body.classList.add("gcTourContext");
+      document.documentElement.classList.remove("gcTourScrollLocked");
+      const previousCleanup = targetCleanup;
+      targetCleanup = () => { previousCleanup?.(); context.classList.remove("gcTourContextTarget"); };
+    }
+    root.dataset.tourStage = stage;
+    document.dispatchEvent(new CustomEvent("gradecrew:tour-step", { detail: { stage, role } }));
     return root;
   }
 
@@ -350,11 +363,11 @@ export function installCrewTour(api) {
     if (status) status.textContent = label;
     input.classList.add("gcTourTyping");
     if (input.tagName === "SELECT" || input.type === "number") {
-      input.value = value; input.dispatchEvent(new Event("input",{bubbles:true})); input.dispatchEvent(new Event("change",{bubbles:true})); await sleep(280);
+      input.value = value; input.dispatchEvent(new Event("input",{bubbles:true})); input.dispatchEvent(new Event("change",{bubbles:true})); await sleep(650);
     } else {
       input.value = ""; input.dispatchEvent(new Event("input",{bubbles:true}));
       for (const char of String(value)) { if (!owned() || token !== run) return; input.value += char; input.dispatchEvent(new Event("input",{bubbles:true})); await sleep(delay); }
-      input.dispatchEvent(new Event("change",{bubbles:true})); await sleep(240);
+      input.dispatchEvent(new Event("change",{bubbles:true})); await sleep(450);
     }
     input.classList.remove("gcTourTyping");
   }
@@ -363,11 +376,11 @@ export function installCrewTour(api) {
     if (!owned() || token !== run) return;
     busy = true; stage = "form-filling";
     coach("create", "Sag mir, was dir wichtig ist.", "Unter „Eigene Wünsche“ kannst du Niveau, Sprache, Schwerpunkt oder besondere Anforderungen genauer vorgeben.", { target: "#aiCustomNotes", body: '<div class="gcCoachStatus">Eigene Wünsche werden ergänzt …</div>' });
-    await typeField("#aiCustomNotes", "Kurze, klare Aufgaben für die 4. Klasse Grundschule. Einfache Farben, Tiere und Schulsachen. Alle Arbeitsaufträge auf Englisch. Abwechslungsreiche Aufgabentypen.", "Eigene Wünsche werden ergänzt …", token, 13);
+    await typeField("#aiCustomNotes", "Kurze, klare Aufgaben für die 4. Klasse Grundschule. Einfache Farben, Tiere und Schulsachen. Alle Arbeitsaufträge auf Englisch. Abwechslungsreiche Aufgabentypen.", "Eigene Wünsche werden ergänzt …", token, 28);
     if (!owned() || token !== run) return;
     busy = false; stage = "preferences";
     coach("create", "Stopp – ein kleiner Unterschied!", "Die eigenen Wünsche gelten nur für diesen Test. Im Feld darunter kannst du später persönliche Vorlieben hinterlegen, die bei allen deinen KI-Tests berücksichtigt werden sollen.", {
-      target:"#aiPersonalPreferences", button:"Verstanden – weiter", onButton:()=>{
+      target:"#aiCustomNotes", button:"Verstanden – weiter", onButton:()=>{
         stage="form";
         coach("create", "Perfekt – alle nötigen Informationen sind eingetragen.", "Klicke jetzt auf „Test erstellen“. Ich bereite deinen Entwurf vor.", { target:"#generateAiTestBtn", interactiveTarget:true });
       }
@@ -718,4 +731,5 @@ export function installCrewTour(api) {
 
   return { start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&["form-intro","form-filling","image-choice","preferences","form","creating"].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse };
 }
+
 

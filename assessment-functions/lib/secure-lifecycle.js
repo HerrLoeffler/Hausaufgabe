@@ -23,6 +23,10 @@ const {
 
 if (!getApps().length) initializeApp();
 
+const logger = require("firebase-functions/logger");
+const { observeAssessment } = require("./observability");
+const observed = (action, handler) => observeAssessment(action, handler, { logger, HttpsError });
+
 const REGION = "europe-west1";
 const callableOpts = {
   region: REGION,
@@ -379,14 +383,14 @@ function contractForQuestions(questions, privateData) {
   return contract;
 }
 
-exports.getAssessmentInfo = onCall(callableOpts, async request => {
+exports.getAssessmentInfo = onCall(callableOpts, observed("getAssessmentInfo", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const { data: quiz } = await readQuiz(quizId);
   validateQuizOpen(quiz);
   return { quiz: publicQuizState(quiz, quizId) };
-});
+}));
 
-exports.startAssessmentAttempt = onCall(callableOpts, async request => {
+exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentAttempt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const studentName = cleanStudentName(request.data?.studentName);
   const clientAttemptId = cleanClientAttemptId(request.data?.clientAttemptId);
@@ -500,9 +504,9 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
   }
   const contract = createdNew ? newContract : contractForQuestions(questions, storedPrivate);
   return attemptPublicState(storedAttempt, currentQuiz || initialQuiz, storedAttempt.status === "running" ? contract.paper : null);
-});
+}));
 
-exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
+exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmentAttempt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
@@ -567,9 +571,9 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
     paper = contractForQuestions(questions, privateData).paper;
   }
   return attemptPublicState(attempt, currentQuiz, paper);
-});
+}));
 
-exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
+exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmentAttempt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
@@ -666,9 +670,9 @@ exports.submitAssessmentAttempt = onCall(callableOpts, async request => {
     receipt = makeReceipt(submission, quiz, privateData);
   });
   return { receipt };
-});
+}));
 
-exports.getAssessmentReceipt = onCall(callableOpts, async request => {
+exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentReceipt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
@@ -688,4 +692,4 @@ exports.getAssessmentReceipt = onCall(callableOpts, async request => {
       privateSnap.data()
     )
   };
-});
+}));

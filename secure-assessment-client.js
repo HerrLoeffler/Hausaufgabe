@@ -81,6 +81,7 @@ function normalizeCallableError(error) {
   const wrapped = new Error(known[code] || error?.message || "Die Verbindung zum Prüfungsserver ist fehlgeschlagen.");
   wrapped.code = code || "unknown";
   wrapped.cause = error;
+  wrapped.reference = /^[A-Za-z0-9-]{1,80}$/.test(error?.details?.reference || "") ? error.details.reference : "";
   return wrapped;
 }
 

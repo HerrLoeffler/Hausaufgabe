@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GradeCrew – Tests. Einfach digital.</title>
   <meta name="crew-art-version" content="clay-2" />
-  <meta name="app-version" content="2.3.1-gc21" />
+  <meta name="app-version" content="2.3.1-gc27" />
   <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc2" />
@@ -260,11 +260,22 @@
           <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="rights">Rechtehinweise</option><option value="ai_question">KI-Aufgaben</option><option value="app_error">Technische Fehler</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
           <label>Status<select id="adminFeedbackFilter"><option value="all">Alle Status</option><option value="new">Neu</option><option value="working">In Bearbeitung</option><option value="done">Erledigt</option></select></label>
         </div>
+        <details class="card" id="adminFeedbackAdvanced"><summary>Filter & Sortierung</summary><div class="adminDiagnosticFilters">
+          <label>Umgebung<select id="adminFeedbackEnvironment"><option value="all">Alle</option><option value="staging">Staging</option><option value="production">Production</option></select></label>
+          <label>Schwere<select id="adminFeedbackSeverity"><option value="all">Alle</option><option value="error">Fehler</option><option value="warning">Warnung</option><option value="unknown">Nicht erfasst</option></select></label>
+          <label>Version<input id="adminFeedbackVersion" placeholder="z. B. gc27"></label>
+          <label>Aktion<input id="adminFeedbackAction" placeholder="z. B. generate_test"></label>
+          <label>Fingerprint<input id="adminFeedbackFingerprint" placeholder="Fehlergruppe"></label>
+          <label>Von<input id="adminFeedbackFrom" type="date"></label><label>Bis<input id="adminFeedbackTo" type="date"></label>
+          <label>Sortieren<select id="adminFeedbackSort"><option value="newest">Neueste zuerst</option><option value="oldest">Älteste zuerst</option><option value="frequent">Häufigste zuerst</option><option value="priority">Priorität</option></select></label>
+        </div><button class="button secondary" id="adminFeedbackReset" type="button">Zusatzfilter zurücksetzen</button></details>
+        <div class="actions"><span id="adminFeedbackCount" role="status"></span><button type="button" id="adminFeedbackExport" class="button secondary">Gefilterte Diagnose exportieren</button></div>
+        <p class="hint">Der Diagnoseexport enthält technische Abläufe und Untersuchungsnotizen. Kontaktdaten und Aufgabeninhalte werden ausgelassen. Freitextnotizen vor dem Weitergeben prüfen.</p>
         <div id="adminFeedbackList" class="feedbackList"></div>
       </section>
 
       <section id="adminPanelAudit" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabAudit" tabindex="0">
-        <div class="card"><div class="sectionHead"><div><h2>Admin-Log</h2><p>Wichtige Änderungen im Administrationsbereich.</p></div></div><div id="adminAuditList" class="auditList"></div></div>
+        <div class="card"><div class="sectionHead"><div><h2>Admin-Log</h2><p>Wichtige Änderungen im Administrationsbereich.</p></div></div><div class="adminDiagnosticFilters"><label>Suche<input id="adminAuditSearch" type="search" placeholder="Admin, Kennung, Aktion …"></label><label>Aktion<input id="adminAuditAction" placeholder="z. B. feedback"></label><label>Von<input id="adminAuditFrom" type="date"></label><label>Bis<input id="adminAuditTo" type="date"></label><label>Sortieren<select id="adminAuditSort"><option value="newest">Neueste zuerst</option><option value="oldest">Älteste zuerst</option></select></label></div><p id="adminAuditCount" role="status"></p><div id="adminAuditList" class="auditList"></div><button type="button" class="button secondary" id="adminAuditMore">Ältere Einträge laden</button></div>
       </section>
     </section>
 
@@ -540,12 +551,13 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc21</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc27</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer>
 
   <div id="startupNotice" class="startupNotice hidden" role="status" aria-live="polite"><span id="startupMessage"></span><button type="button" id="startupRetry" class="button secondary hidden">Erneut laden</button></div>
   <noscript><p class="startupNotice">Bitte JavaScript aktivieren, um GradeCrew zu verwenden.</p></noscript>
-  <script type="module" src="startup.js?v=2.3.1-gc21"></script>
+  <script type="module" src="startup.js?v=2.3.1-gc27"></script>
 </body>
 </html>
+
 
