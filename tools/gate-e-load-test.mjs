@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { assertReceiptMatches } from "../assessment-receipt-check.mjs";
 import { randomBytes } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 
@@ -313,6 +314,7 @@ async function main() {
     };
     if (!args.duplicateSubmit) {
       const first = (await call("submitAssessmentAttempt", payload, timeoutMs)).data;
+      assertReceiptMatches(first, student.attemptId);
       if (hasSolutions(first)) throw Object.assign(new Error("Lösungen wurden vor Testende im Receipt ausgeliefert."), { code: "early-solutions" });
       return { keyA: receiptKey(first), keyB: "", duplicateOk: true, needsReview: Boolean(first.receipt?.needsReview) };
     }
@@ -322,6 +324,8 @@ async function main() {
     ]);
     const first = a.data;
     const second = b.data;
+    assertReceiptMatches(first, student.attemptId);
+    assertReceiptMatches(second, student.attemptId);
     if (hasSolutions(first) || hasSolutions(second)) throw Object.assign(new Error("Lösungen wurden vor Testende im Receipt ausgeliefert."), { code: "early-solutions" });
     const keyA = receiptKey(first);
     const keyB = receiptKey(second);
@@ -338,6 +342,7 @@ async function main() {
       attemptId: student.attemptId,
       attemptToken: student.attemptToken
     }, timeoutMs)).data;
+    assertReceiptMatches(response, student.attemptId);
     if (hasSolutions(response)) throw Object.assign(new Error("Receipt-Nachprüfung enthält vor Testende Lösungen."), { code: "early-solutions" });
     const key = receiptKey(response);
     if (!key) throw Object.assign(new Error("Receipt enthält keine Submission-/Attempt-Kennung."), { code: "missing-receipt-id" });
@@ -360,6 +365,9 @@ async function main() {
   const report = {
     schemaVersion: 1,
     gate: "E",
+    scope: "concurrency-smoke",
+    fullGateEVerified: false,
+    outstanding: ["teacher-end-race", "network-loss", "ios-background", "maximum-payload", "sustained-load", "database-reconciliation"],
     environment: { projectId: PROJECT_ID, region: REGION, productionTouched: false },
     startedAt: startedAt.toISOString(),
     finishedAt: new Date().toISOString(),
@@ -421,3 +429,4 @@ main().catch(error => {
   if (error?.reference) console.error(`Fehlerkennung: ${error.reference}`);
   process.exitCode = 1;
 });
+

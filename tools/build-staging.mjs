@@ -13,7 +13,7 @@ const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 
 if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
 const files = [
   'diagnostics.mjs', 'admin-log-tools.mjs', 'index.html', 'startup.js', 'app.js', 'interface.js', 'styles.css', 'design-system.css', 'gradecrew-brand.css', 'crew-clay.css', 'workspace.css', 'gradecrew-tour.css',
-  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'gate-e-lab.js', 'gradecrew-brand.js',
+  'ai-json-tools.js', 'ai-client.js', 'ui-enhancements.js', 'visual-enhancements.js', 'mobile-viewport-polish.js', 'first-guide-responsive.js', 'crew-tour-responsive.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'gate-e-lab.js', 'assessment-receipt-check.mjs', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs', 'secure-assessment-teacher-polish.js',
   'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js'
@@ -56,3 +56,4 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hos
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
 } }, null, 2) + '\n');
 console.log(`Staging build verified: ${version}, ${files.length} files.`);
+

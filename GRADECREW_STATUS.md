@@ -4,6 +4,27 @@ Stand: 30.09.2026
 
 Diese Datei ist die kompakte Übergabe für neue GradeCrew-Chats. Für Security-Details zusätzlich `SECURE_ASSESSMENT_AUDIT_2026-09-30.md` lesen.
 
+## Gemeinsame Fortsetzung gc28 / App-Beta
+
+Neue gemeinsame Webbasis: `feature/gradecrew-app-integration`.
+Alle gc27-Module sowie Paralleltest und mobile Layout-Fixes vereint.
+Bei der Integration gefunden: mobiles Layout überschrieb `.gcCoachContext`;
+korrigiert und mit ausgeführtem DOM-Test gegen Tastaturhöhen geprüft.
+Receipt-Prüfung bindet jede Testabgabe nun an die richtige Attempt-ID.
+Lokale Suite: **141 Tests bestanden**. Vollständige CI noch separat festhalten.
+
+App: **0.1.3 (6)** durch Run **36712213667** erfolgreich in App Store Connect
+hochgeladen. 0.1.4 ermöglicht nun Staging-Preview-Auswahl im Beta-Menü;
+Build-/Upload-Nachweis für 0.1.4 separat prüfen.
+Normales Staging zeigt weiterhin gc21 / 4707c45 (erneut per Manifest gelesen).
+Keine Aussage, dass gc28 bereits deployed oder physisch auf dem iPad geprüft sei.
+
+**Nächster konkreter Weg: APP_INTEGRATION_RUNBOOK.md.**
+Neues selbstbootstrappendes Skript: `deploy-app-integration-preview.sh --deploy`.
+Veröffentlicht nur Hosting-Preview auf Staging, nutzt bereits deployte Functions.
+Der 30er-Test ist ein Parallel-Smoke-Test; `fullGateEVerified` bleibt false.
+Alle bisherigen offenen Security-Gates bleiben offen, Production unverändert.
+
 ## Aktuelle Fortsetzung: Diagnose und Tutorial gc27
 
 Implementiert auf `feature/secure-assessment-v1`, noch nicht auf Firebase veröffentlicht:
@@ -168,4 +189,5 @@ Dann die von Firebase ausgegebene Preview-URL sichern. Diese Preview-URL plus ei
 - keine Punkte/Noten aus dem Schülerbrowser als vertrauenswürdig akzeptieren
 - aktive Prüfung nicht editierbar oder löschbar machen
 - Tutorial-/Owner-Preview-Ausnahme nicht mit anonymem Schülerzugriff verwechseln
+
 

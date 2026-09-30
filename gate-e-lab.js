@@ -1,3 +1,4 @@
+import { assertReceiptMatches } from "./assessment-receipt-check.mjs";
 import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
@@ -381,6 +382,8 @@ async function runLoadTest(studentApp, quizId, onProgress) {
     ]);
     const firstReceipt = first.receipt || first;
     const duplicateReceipt = duplicate.receipt || duplicate;
+    assertReceiptMatches(firstReceipt, student.attemptId);
+    assertReceiptMatches(duplicateReceipt, student.attemptId);
     const firstId = receiptId(firstReceipt);
     const duplicateId = receiptId(duplicateReceipt);
     if (!firstId || firstId !== duplicateId) throw new Error(`${student.name}: Doppelabgabe war nicht idempotent.`);
@@ -396,6 +399,7 @@ async function runLoadTest(studentApp, quizId, onProgress) {
       attemptToken: student.attemptToken
     });
     const receipt = response.receipt || response;
+    assertReceiptMatches(receipt, student.attemptId);
     if (hasSolutions(receipt)) throw new Error(`${student.name}: Receipt enthält vor Testende Lösungen.`);
     if (!receiptId(receipt)) throw new Error(`${student.name}: Receipt enthält keine Abgabe-ID.`);
     if (Number(receipt.totalPoints) !== Number(receipt.maxPoints) || Number(receipt.maxPoints) !== 11) {
@@ -407,6 +411,9 @@ async function runLoadTest(studentApp, quizId, onProgress) {
   return {
     gate: "E",
     pass: true,
+    scope: "concurrency-smoke",
+    fullGateEVerified: false,
+    outstanding: ["teacher-end-race", "network-loss", "ios-background", "maximum-payload", "sustained-load", "database-reconciliation"],
     quizId,
     participants: PARTICIPANTS,
     uniqueAttempts: uniqueAttempts.size,
@@ -442,7 +449,7 @@ async function runGateE(root, teacherApp, studentApp, user) {
       gateELastRunParticipants: PARTICIPANTS,
       updatedAt: serverTimestamp()
     });
-    setStatus(root, `PASS ✅\n${PARTICIPANTS}/${PARTICIPANTS} Starts · ${result.polls}/${result.polls} Polls · ${result.submissions}/${PARTICIPANTS} Abgaben · ${result.receipts}/${PARTICIPANTS} Receipts\nTestcode: ${code}\nDie 30 Abgaben bleiben zur Sichtprüfung in „Ergebnisse“ erhalten.`);
+    setStatus(root, `Paralleltest PASS ✅ (Gate E noch nicht vollständig geprüft)\n${PARTICIPANTS}/${PARTICIPANTS} Starts · ${result.polls}/${result.polls} Polls · ${result.submissions}/${PARTICIPANTS} Abgaben · ${result.receipts}/${PARTICIPANTS} Receipts\nTestcode: ${code}\nDie 30 Abgaben bleiben zur Sichtprüfung in „Ergebnisse“ erhalten.`);
     report.textContent = JSON.stringify(result, null, 2);
     report.classList.remove("hidden");
   } catch (error) {
@@ -486,3 +493,4 @@ export function installGateELab() {
     }
   });
 }
+

@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc27";
+const APP_VERSION = "2.3.1-gc28";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 

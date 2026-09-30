@@ -152,12 +152,15 @@ export function startVisualEnhancements() {
     }, false);
 
     const modules = [
+      ["Mobile-Viewport", "./mobile-viewport-polish.js?v=2.3.1-gc28-mobile"],
       ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc9"],
+      ["Startguide-Responsive", "./first-guide-responsive.js?v=2.3.1-gc28-mobile"],
       ["Crew-Tour-Sperre", "./crew-tour-hardening.js?v=2.3.1-gc13"],
       ["Crew-Tour-gc23", "./crew-tour-gc23-polish.js?v=2.3.1-gc23"],
       ["Crew-Tour-gc24", "./crew-tour-gc24-polish.js?v=2.3.1-gc24"],
       ["Crew-Tour-gc25", "./crew-tour-gc25-final-polish.js?v=2.3.1-gc25"],
       ["Crew-Tour-gc26", "./crew-tour-gc26-story-polish.js?v=2.3.1-gc26-story-clay2"],
+      ["Crew-Tour-Responsive", "./crew-tour-responsive.js?v=2.3.1-gc28-mobile"],
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
       ["Remy-Hilfe", "./remy-ai-help.js?v=2.3.1-gc26"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
@@ -174,3 +177,4 @@ export function startVisualEnhancements() {
 }
 
 startVisualEnhancements();
+

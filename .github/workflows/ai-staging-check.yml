@@ -9,6 +9,7 @@ on:
       - fix/gradecrew-staging-polish
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
+      - feature/gradecrew-app-integration
   workflow_dispatch:
 
 permissions:
@@ -146,6 +147,10 @@ jobs:
           node --check editor-drafts.js
           node --check ai-review-state.js
           node --check ordering-grading.mjs
+          node --check first-guide-responsive.js
+          node --check crew-tour-responsive.js
+          node --check mobile-viewport-polish.js
+          node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs
           node --test diagnostics.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
@@ -183,3 +188,4 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
+
