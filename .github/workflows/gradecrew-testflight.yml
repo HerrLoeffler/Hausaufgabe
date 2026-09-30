@@ -27,7 +27,7 @@ jobs:
       APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       BUNDLE_ID: de.gradecrew
-      MARKETING_VERSION: 0.1.1
+      MARKETING_VERSION: 0.1.2
 
     steps:
       - name: Checkout
