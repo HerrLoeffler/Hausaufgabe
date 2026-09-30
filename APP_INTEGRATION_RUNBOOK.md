@@ -20,14 +20,16 @@ neuen `.gcCoachContext`-Karten nicht und behandelte sie wieder als schwebende Hi
 Die Erweiterung lässt diese Karten nun im gemeinsamen Aufgaben-/Hilfebereich;
 ein DOM-Verhaltenstest prüft das auch bei verringerter Tastaturhöhe.
 
-Lokale Prüfung: 141 Tests bestanden. Vollständige GitHub-CI vor Deploy prüfen.
+Lokale Prüfung: 141 Tests bestanden. Vollständige GitHub-CI #352 SUCCESS (Code 56737d4), Mobile-Check ebenfalls SUCCESS.
+Nachweis: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36724364436
 DOM-/Layoutberechnungen ersetzen keinen realen iPad-/iPhone-Durchlauf.
 
 ## App und Website besitzen getrennte Versionsstände
 
 - Haupt-App heißt GradeCrew, Bundle-ID `de.gradecrew`.
 - Version 0.1.3 (6) wurde laut Run 36712213667 tatsächlich gebaut/signiert/hochgeladen.
-- Version 0.1.4 ergänzt native Beta-Einstellungen und eine Staging-Preview-Wahl.
+- Version **0.1.4 (7)** durch Run 36723972615 erfolgreich gebaut/signiert/hochgeladen;
+  native Beta-Einstellungen und eine Staging-Preview-Wahl verfügbar.
 - Standard-Appadresse bleibt normales Staging; dort aktuell gc21 / 4707c45.
 - Dieser Webbranch erhält Version gc28; nach Preview-Deploy die ausgegebene URL
   in 0.1.4 → Beta-Einstellungen → Preview öffnen einsetzen.

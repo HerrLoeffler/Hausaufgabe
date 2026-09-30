@@ -11,11 +11,14 @@ Alle gc27-Module sowie Paralleltest und mobile Layout-Fixes vereint.
 Bei der Integration gefunden: mobiles Layout überschrieb `.gcCoachContext`;
 korrigiert und mit ausgeführtem DOM-Test gegen Tastaturhöhen geprüft.
 Receipt-Prüfung bindet jede Testabgabe nun an die richtige Attempt-ID.
-Lokale Suite: **141 Tests bestanden**. Vollständige CI noch separat festhalten.
+Lokale Suite: **141 Tests bestanden**. Code-Commit `56737d4b662333e3c4d6026dfd903c1d0a1fc029`.
+Vollständige **CI #352 SUCCESS**, einschließlich echtem Firestore-Regel-Emulator,
+Legacy-/Tutorial-Regressionen und Staging-Build; Mobile-Check ebenfalls SUCCESS.
+Nachweis: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36724364436
 
-App: **0.1.3 (6)** durch Run **36712213667** erfolgreich in App Store Connect
-hochgeladen. 0.1.4 ermöglicht nun Staging-Preview-Auswahl im Beta-Menü;
-Build-/Upload-Nachweis für 0.1.4 separat prüfen.
+App: **0.1.4 (7)** durch Run **36723972615** erfolgreich in App Store Connect
+hochgeladen. Routing-Test, Archive und Upload tatsächlich erfolgreich im Log.
+Staging-Preview-Auswahl im Beta-Menü verfügbar. Physischer Gerätetest ausstehend.
 Normales Staging zeigt weiterhin gc21 / 4707c45 (erneut per Manifest gelesen).
 Keine Aussage, dass gc28 bereits deployed oder physisch auf dem iPad geprüft sei.
 
