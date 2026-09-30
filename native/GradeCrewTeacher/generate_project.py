@@ -70,7 +70,7 @@ for name in ['Debug', 'Release']:
         isa='XCBuildConfiguration',
         name=name,
         buildSettings={
-            'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew.teacher',
+            'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew',
             'PRODUCT_NAME': '$(TARGET_NAME)',
             'MARKETING_VERSION': '0.1.0',
             'CURRENT_PROJECT_VERSION': '1',
