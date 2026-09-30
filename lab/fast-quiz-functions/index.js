@@ -10,7 +10,7 @@ const db = getFirestore();
 const REGION = "europe-west1";
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_PLAYERS = 30;
-const VALID_OPS = new Set(["add", "sub", "mul", "div"]);
+const VALID_OPS = new Set(["add", "sub", "mul", "div", "round"]);
 const VALID_DOMAINS = new Set(["natural", "integer", "decimal", "fraction"]);
 const VALID_LEVELS = new Set(["n1", "n2", "n3", "n4"]);
 const VALID_PENALTIES = new Set([0, 25, 50, 100, 200]);
@@ -82,14 +82,15 @@ function cleanConfig(raw = {}) {
 }
 
 function officialHighscoreConfig(domain, level) {
-  const selectedDomain = ["natural", "integer", "decimal", "fraction", "mixed"].includes(domain) ? domain : "natural";
+  const selectedDomain = ["natural", "integer", "decimal", "fraction", "mixed", "rounding"].includes(domain) ? domain : "natural";
   const selectedLevel = VALID_LEVELS.has(level) ? level : "n2";
+  const rounding = selectedDomain === "rounding";
   return {
-    boardId: `v1_${selectedDomain}_${selectedLevel}`,
+    boardId: rounding ? `v2_rounding_${selectedLevel}` : `v1_${selectedDomain}_${selectedLevel}`,
     config: {
       version: 4,
-      operations: ["add", "sub", "mul", "div"],
-      domains: selectedDomain === "mixed" ? ["natural", "integer", "decimal", "fraction"] : [selectedDomain],
+      operations: rounding ? ["round"] : ["add", "sub", "mul", "div"],
+      domains: rounding ? ["decimal"] : selectedDomain === "mixed" ? ["natural", "integer", "decimal", "fraction"] : [selectedDomain],
       level: selectedLevel,
       durationSec: 120,
       scoring: {
