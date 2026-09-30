@@ -19,7 +19,11 @@ Implementiert auf `feature/secure-assessment-v1`, noch nicht auf Firebase veröf
 Dort stehen Ablauf, Code-Landkarte, Ursache/Fix-Tabelle, Datenschutzgrenzen und Folgearbeit.
 Lokaler Durchlauf: 121 Tests bestanden (Backend, Diagnose, Tour, Secure-Client, Assets).
 Alle 24 Figurenposen auf hellem/dunklem Hintergrund visuell geprüft.
-Finale CI und Asset-Prüfung werden beim Commit gesondert festgehalten.
+Code-Commit: `8fbc8cc9e486b8a823f5dca99bcb6c574d4c5f6f`.
+GitHub Actions **#335 BESTANDEN**, einschließlich Functions-Tests, sicherem Backend,
+Firestore-Regeltest im Emulator, Tutorial-/UI-Regressionen und Staging-Build.
+Nachweis: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36678893458
+Die folgende Statusaktualisierung ändert nur dieses Dokument.
 Keine Behauptung eines erfolgreichen Firebase-/iPhone-End-to-End-Tests für gc27.
 Lokaler Chromium-Download scheiterte; DOM-Tests sind kein visueller Browsernachweis.
 Offene Security-Gates C–G bleiben unverändert bestehen.
