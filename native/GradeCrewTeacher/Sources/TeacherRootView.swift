@@ -13,7 +13,6 @@ struct TeacherRootView: View {
                 isLoading: $isLoading,
                 errorMessage: $loadError
             )
-            .ignoresSafeArea(edges: .bottom)
 
             if isLoading {
                 ProgressView()
