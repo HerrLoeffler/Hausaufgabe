@@ -2,6 +2,11 @@ name: GradeCrew → TestFlight
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/shared-gradecrew-design-system
+    paths:
+      - .github/workflows/gradecrew-testflight.yml
 
 permissions:
   contents: read
