@@ -152,6 +152,7 @@ export function startVisualEnhancements() {
     }, false);
 
     const modules = [
+      ["Mobile-Viewport", "./mobile-viewport-polish.js?v=2.3.1-gc28-mobile"],
       ["Startguide-Sperre", "./first-guide-guard.js?v=2.3.1-gc9"],
       ["Startguide-Responsive", "./first-guide-responsive.js?v=2.3.1-gc28-mobile"],
       ["Crew-Tour-Sperre", "./crew-tour-hardening.js?v=2.3.1-gc13"],
