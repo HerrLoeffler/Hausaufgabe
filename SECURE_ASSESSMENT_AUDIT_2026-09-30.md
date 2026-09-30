@@ -5,6 +5,45 @@ Branch: `feature/secure-assessment-v1`
 Ausgangspunkt: `fix/gradecrew-staging-polish` @ `4707c45ef573bf85f81655791edf909862e4f2a6`  
 Vollständig geprüfte Code-Baseline: `c22455c25d9a8db631ba5c4857c99aff0905815a` · GitHub Actions #310 · **SUCCESS**
 
+## Unabhängige Nachprüfung / Korrektur der bisherigen Aussage
+
+Die historische CI-Aussage #310 wurde über GitHub Actions samt Jobschritten bestätigt.
+Ein zweiter Review fand trotzdem fünf Fehlerklassen. Der neue Patch korrigiert:
+
+1. **P1: Lösungsausgabe überschneidet sich mit der Abgabe-Nachfrist.** Ein bereits
+   abgegebener Teilnehmer bekam sofort nach `ended=true` Lösungen, während andere
+   noch 90 Sekunden Antworten einreichen durften. Jetzt gilt Freigabe erst strikt
+   nach dieser Nachfrist; fehlende Endzeit sperrt die Ausgabe.
+2. **P1: Vorhersagbare Zweier-Mischung.** Das erzwungene Vermeiden der Originalfolge
+   reduzierte zwei Elemente auf genau eine Reihenfolge. Nun bleiben alle HMAC-basierten
+   Permutationen möglich; der Server-Schlüssel hält die Anordnung pro Attempt stabil.
+3. **P1: Doppelte Wortmarkierungen erhöhen Punkte.** Wiederholte gleiche Indizes konnten
+   bei `markwords` die volle Punktzahl erzeugen. Serverseitiges Deduplizieren verhindert dies.
+4. **P2: Erneuter Start nach Abgabe scheitert.** Der Handler versuchte einen bereits
+   gelöschten Paper-Secret wiederzuverwenden. Er liefert jetzt den vorhandenen Receipt.
+5. **P2: Vorläufige Bewertung nur optisch verborgen.** Bisher entfernte ein DOM-Observer
+   Punkte nachträglich. Jetzt geben API und Hauptrenderer bei offenem Review keine
+   vorläufigen Bewertungsergebnisse aus.
+
+Nachweis: neue `assessment-functions/test/security-audit-behavior.test.js` führt die echten
+Callable-Handler mit einem kleinen Admin-SDK-Adapter aus. Vor Korrektur scheiterten sechs
+von sieben neuen Tests; nach Korrektur und Erweiterung bestehen alle zwölf Backend-Verhaltenstests. Insgesamt lokal
+36 Backend-Tests und 42 Secure-Client-/Rules-Quellvertragstests erfolgreich. Der Adapter
+simuliert keine Firestore-Konflikte; die Tests sind kein Last- oder Produktionsnachweis.
+
+**Zusätzlicher Funktionsblocker korrigiert:** Bisher fragte der laufende Schüler-Renderer
+keinen Lehrer-Endstatus ab. Nun nutzt er alle fünf Sekunden `resumeAssessmentAttempt`
+mit `stateOnly=true`: token-geschützter Status ohne Fragen-Reads, auch während der
+Abgabe-Nachfrist. Beim Lehrer-Ende friert er Antworten ein und gibt automatisch ab.
+Wiederholungen verwenden den eingefrorenen Snapshot. Ein Browser-Verhaltenstest führt
+den echten Watcher mit simuliertem Statuswechsel und nachträglichen Eingaben aus.
+Der Countdown verwendet jetzt Serverzeit plus monotone Laufzeit statt der Geräteuhr.
+Diese Korrekturen benötigen zusätzlich reale Firebase-/iOS-/Offline-Prüfungen.
+Gates C–G und die weiteren Härtungspunkte bleiben offen.
+
+Die folgenden Abschnitte dokumentieren die historische Baseline; Aussagen zu vollständiger
+Fehlerfreiheit oder aktueller CI-Abnahme gelten ausdrücklich nicht automatisch für den Patch.
+
 ## Release-Aussage
 
 Der ursprüngliche öffentliche Schülerpfad war für verbindliche Leistungsnachweise nicht ausreichend abgesichert, weil Autor-Fragen mit Lösungen im Browser lagen und der Client selbst bewertete. Secure Assessment V1 ersetzt diesen Vertrauenspfad durch einen serverautoritativen Ablauf.
@@ -249,3 +288,4 @@ Diese Punkte sind bewusst dokumentiert und nicht als „schon gelöst“ ausgege
 ## Verbindlicher Status
 
 Secure Assessment V1 hat die bisher gefundenen kritischen Vertrauens-, Lösungs-, Bewertungs-, Lifecycle- und Rules-Probleme systematisch geschlossen. **A und B sind bewiesen. C bis F sind reale Release-Gates und dürfen nicht übersprungen werden. Production bleibt bis dahin unverändert.**
+

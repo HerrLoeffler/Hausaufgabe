@@ -60,10 +60,8 @@ function deterministicOrder(items, secret, scope) {
     score: createHmac("sha256", secret).update(`shuffle:${scope}:${index}`).digest("hex")
   }));
   tagged.sort((a, b) => a.score.localeCompare(b.score));
-  // If shuffling is explicitly requested, never hand out the original order by chance.
-  if (tagged.length > 1 && tagged.every((entry, index) => entry.sourceIndex === index)) {
-    tagged.push(tagged.shift());
-  }
+  // Keep all permutations possible. Forbidding the original order leaks the
+  // answer outright for two items (the only permitted order is its reverse).
   return tagged.map(entry => entry.item);
 }
 
@@ -368,7 +366,7 @@ function gradeQuestion(key, given) {
   }
   if (type === "markwords") {
     const correct = new Set((key.correctWordIndexes || []).map(String));
-    const selected = Array.isArray(given) ? given.map(String) : [];
+    const selected = Array.isArray(given) ? [...new Set(given.map(String))] : [];
     const good = selected.filter(value => correct.has(value)).length;
     const bad = selected.filter(value => !correct.has(value)).length;
     const ratio = Math.max(0, Math.min(1, (good - bad) / Math.max(1, correct.size)));

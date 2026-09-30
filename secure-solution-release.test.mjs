@@ -15,7 +15,7 @@ test("solution UI uses only the token-protected receipt callable and never Fires
 
 test("student UI renders solutions only when server marks them released", () => {
   assert.match(source, /receipt\.solutionsReleased\s*&&\s*Array\.isArray\(receipt\.solutions\)/);
-  assert.match(source, /erst nach dem Beenden des Tests freigegeben/);
+  assert.match(source, /bis zum Testende und dem Ablauf der kurzen Abgabe-Nachfrist geschützt/);
   assert.match(source, /Lösungsfreigabe prüfen/);
 });
 
@@ -27,3 +27,4 @@ test("server release requires snapshotted teacher opt-in and ended quiz", () => 
   assert.match(lifecycle, /solutionSnapshot/);
   assert.doesNotMatch(source, /showSolutionsAfterEnd/);
 });
+

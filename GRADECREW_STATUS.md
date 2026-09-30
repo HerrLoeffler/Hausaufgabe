@@ -4,6 +4,34 @@ Stand: 30.09.2026
 
 Diese Datei ist die kompakte Übergabe für neue GradeCrew-Chats. Für Security-Details zusätzlich `SECURE_ASSESSMENT_AUDIT_2026-09-30.md` lesen.
 
+## Übernahmeprüfung vom 30.09.2026 – aktueller Zusatz
+
+Der vorherige Stand `7eca11133eef6e16292ca085100c8d2a64922a5e` wurde unabhängig geprüft.
+GitHub Actions #310 auf `c22455c` ist tatsächlich erfolgreich, einschließlich Rules-Emulator.
+Die beiden folgenden Commits änderten nur Dokumentation. Grün bedeutete jedoch nicht fehlerfrei:
+Die Lifecycle-Tests prüften überwiegend Quelltextmuster, nicht das ausgeführte Zusammenspiel.
+
+Neu korrigiert und mit ausgeführten Handler-Tests abgesichert:
+- Lösungen erst **nach** Ablauf der gesamten 90-Sekunden-Abgabe-Nachfrist; ohne Endzeit keine Freigabe.
+- Unvoreingenommenes Mischen: Originalreihenfolge bleibt zufällig möglich. Ihr Ausschluss verriet bei zwei Elementen die Lösung durch Umkehrung.
+- Doppelte Wortmarkierungen zählen nur einmal, auch bei manipulierten API-Antworten.
+- Wiederholter Start eines bereits abgegebenen Attempts liefert den Receipt statt eines Fehlers wegen gelöschter Grading-Secrets.
+- Vorläufige Punkte/Prozent/Note bei manueller Prüfung werden bereits serverseitig zurückgehalten; Renderer prüft ebenfalls direkt.
+
+Lokale Prüfung: 36 Backend-Tests und 42 Secure-Client-/Rules-Quellvertragstests bestanden.
+12 neue Backend-Verhaltenstests führen die echten Handler mit einem In-Memory-Admin-SDK-Adapter aus;
+das ersetzt weder echte Firestore-Transaktionskonkurrenz noch einen Firebase-End-to-End-Test.
+Der vollständige CI-Lauf für diesen neuen Patch ist separat zu prüfen.
+
+**Zusätzlicher Funktionsblocker korrigiert:** Der laufende Schüler-Renderer fragt jetzt
+alle fünf Sekunden mit Attempt-Token einen schlanken Status ohne Aufgaben-Reads ab.
+Lehrer-Ende friert die Antworten ein und löst eine automatische Abgabe aus; Wiederholungen
+verwenden denselben Snapshot. Normaler Resume öffnet beendete Prüfungen weiterhin nicht.
+Serverzeit plus monotone Laufzeit ersetzen die lokale Geräteuhr im sichtbaren Countdown.
+Reale Tests von Lehrer-Ende, Netzverlust und iOS-Hintergrundbetrieb bleiben Gate D/E.
+
+Gate C–G bleiben offen. Keine neue Aussage, dass Staging oder Production bereits abgesichert sei.
+
 ## Production – NICHT VERÄNDERN
 
 - Firebase-Projekt: `hausaufgabe-40294`
@@ -25,7 +53,7 @@ Diese Datei ist die kompakte Übergabe für neue GradeCrew-Chats. Für Security-
 - Branch: `feature/secure-assessment-v1`
 - vollständig geprüfte Security-Code-Baseline: `c22455c25d9a8db631ba5c4857c99aff0905815a`
 - GitHub Actions #310 auf dieser Baseline: **SUCCESS**
-- Danach wurden nur Audit-/Statusdokumente ergänzt; Security-Code nicht verändert.
+- Bis `7eca111` folgten nur Dokumente. Danach neuer Audit-Patch: siehe Übernahmeprüfung oben; alte Baseline nicht mit dem neuen Code gleichsetzen.
 
 ### Bewiesene Gates
 
@@ -73,7 +101,7 @@ Erst nach A–F darf der Status `STAGING SECURITY READY` lauten.
 Diese Punkte nicht als erledigt darstellen:
 
 - Rate-Limit bei `startAssessmentAttempt` vor die teuren Fragen-Reads ziehen.
-- sichtbare Timer-Uhr gegen Device-Clock-Skew härten / Serverzeit-Offset.
+- Serverzeit-Countdown unter iOS-Hintergrundbetrieb und verzögerten Antworten real prüfen (Code auf Serverzeit umgestellt).
 - Firebase App Check nach realem iOS/Safari-Previewtest aktivieren.
 - zugewiesene/einmalige Schüleridentitäten für gemeinsam nacheinander genutzte Geräte.
 - längere Offline-Phasen perspektivisch mit serverseitigem Progress-Autosave.
@@ -81,7 +109,7 @@ Diese Punkte nicht als erledigt darstellen:
 - Assessment-Dependencies vor Production mit committed Lockfile reproduzierbar machen.
 - große Public-Paper-/Bild-Payloads unter Last messen.
 
-## Nächster praktischer Schritt
+## Nächster praktischer Schritt (erst nach grünem Patch-CI; Funktionsblocker oben beachten)
 
 Auf Cloud Shell, sobald der aktuelle Branch vollständig grün ist:
 
@@ -110,3 +138,4 @@ Dann die von Firebase ausgegebene Preview-URL sichern. Diese Preview-URL plus ei
 - keine Punkte/Noten aus dem Schülerbrowser als vertrauenswürdig akzeptieren
 - aktive Prüfung nicht editierbar oder löschbar machen
 - Tutorial-/Owner-Preview-Ausnahme nicht mit anonymem Schülerzugriff verwechseln
+

@@ -60,7 +60,7 @@ function renderWaiting(receipt) {
   const note = document.createElement("p");
   note.className = "secureSolutionNote";
   note.textContent = receipt.solutionsConfigured
-    ? "Lösungen sind geschützt und werden erst nach dem Beenden des Tests freigegeben."
+    ? "Lösungen bleiben bis zum Testende und dem Ablauf der kurzen Abgabe-Nachfrist geschützt."
     : "Für diesen Test ist keine Lösungsanzeige freigegeben.";
   panel.appendChild(note);
 

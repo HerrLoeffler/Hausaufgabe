@@ -36,3 +36,36 @@ test("answers survive reload only inside the browser tab and are cleared after r
   assert.match(js, /sessionStorage\.removeItem/);
   assert.doesNotMatch(js, /localStorage\.setItem\([^\n]*answers/);
 });
+
+
+test("teacher-end watcher freezes answers and retries the same snapshot", async () => {
+  const { default: vm } = await import('node:vm');
+  let callback;
+  let ended = false;
+  const controls = [{ disabled: false }];
+  const form = { inert: false, querySelectorAll: () => controls };
+  let answers = { q: 'first' };
+  const submissions = [];
+  const context = {
+    frozenAnswers: null, runningPoll: null, submitting: false, quizId: 'AUDIT1',
+    $: () => form, collectAnswers: () => answers,
+    setInterval: fn => { callback = fn; return 1; },
+    api: { resume: async (id, options) => { assert.equal(options.stateOnly, true); return { quiz: { ended } }; } },
+    submitAssessment: async () => { submissions.push(JSON.stringify(context.frozenAnswers)); },
+    setConnection: () => {}, saveDraft: () => {}, clearTimers: () => {}, showError: error => { throw error; }, showReceipt: () => {}
+  };
+  vm.createContext(context);
+  vm.runInContext(js.slice(js.indexOf('function freezeAnswers'), js.indexOf('function draftKey')), context);
+  context.watchRunningAssessment();
+  await callback(); assert.equal(submissions.length, 0);
+  ended = true; await callback();
+  assert.equal(form.inert, true); assert.equal(controls[0].disabled, true);
+  answers = { q: 'changed after end' }; await callback();
+  assert.deepEqual(submissions, ['{"q":"first"}', '{"q":"first"}']);
+});
+
+test("countdown uses server time plus monotonic elapsed time", () => {
+  assert.match(js, /serverNowMillis/);
+  assert.match(js, /serverNow \+ performance\.now\(\) - receivedAt/);
+  assert.doesNotMatch(js, /Number\(response\.deadlineAtMillis\) - Date\.now\(\)/);
+});

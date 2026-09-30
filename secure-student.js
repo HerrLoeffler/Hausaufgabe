@@ -14,6 +14,8 @@ let currentPaper = [];
 let waitingPoll = null;
 let timerInterval = null;
 let submitting = false;
+let runningPoll = null;
+let frozenAnswers = null;
 
 function setConnection(online, text) {
   const node = $("secureConnection");
@@ -30,8 +32,41 @@ function showOnly(id) {
 function clearTimers() {
   if (waitingPoll) clearInterval(waitingPoll);
   if (timerInterval) clearInterval(timerInterval);
+  if (runningPoll) clearInterval(runningPoll);
   waitingPoll = null;
   timerInterval = null;
+  runningPoll = null;
+}
+
+function freezeAnswers() {
+  if (!frozenAnswers) frozenAnswers = JSON.parse(JSON.stringify(collectAnswers()));
+  const form = $("secureAssessmentForm");
+  if (form) {
+    form.inert = true;
+    form.querySelectorAll("input, textarea, select, button").forEach(control => { control.disabled = true; });
+  }
+  return frozenAnswers;
+}
+
+function watchRunningAssessment() {
+  let busy = false;
+  runningPoll = setInterval(async () => {
+    if (busy || submitting) return;
+    busy = true;
+    try {
+      // Lightweight authenticated status read: no questions/paper are loaded.
+      const response = await api.resume(quizId, { stateOnly: true });
+      if (response?.status === "submitted" && response.receipt) {
+        showReceipt(response.receipt);
+      } else if (response?.quiz?.ended || frozenAnswers) {
+        freezeAnswers();
+        await submitAssessment(true);
+      }
+    } catch (error) {
+      if (error.code === "unavailable") setConnection(false, "Verbindung unterbrochen");
+      else { saveDraft(); clearTimers(); showError(error); }
+    } finally { busy = false; }
+  }, 5000);
 }
 
 function draftKey() {
@@ -458,6 +493,7 @@ function applyDraft(draft) {
 
 function enterAssessment(response) {
   clearTimers();
+  frozenAnswers = null;
   currentAttempt = response;
   currentQuiz = response.quiz || currentQuiz;
   currentPaper = Array.isArray(response.paper) ? response.paper : [];
@@ -471,11 +507,14 @@ function enterAssessment(response) {
   root.addEventListener("change", onAnswerChanged);
   applyDraft(readDraft());
   showOnly("secureAssessment");
+  watchRunningAssessment();
 
   if (response.deadlineAtMillis) {
     $("secureTimer").classList.remove("hidden");
+    const serverNow = Number(response.serverNowMillis) || Date.now();
+    const receivedAt = performance.now();
     const tick = () => {
-      const remaining = Number(response.deadlineAtMillis) - Date.now();
+      const remaining = Number(response.deadlineAtMillis) - (serverNow + performance.now() - receivedAt);
       $("secureTimerText").textContent = formatClock(remaining);
       $("secureTimer").classList.toggle("warning", remaining <= 60_000);
       if (remaining <= 0) {
@@ -505,7 +544,7 @@ function showReceipt(receipt) {
     : "Deine Abgabe wurde serverseitig gespeichert. Du kannst diese Seite jetzt schließen.";
   host.append(icon, title, copy);
 
-  if (receipt.resultMode !== "none" && Number.isFinite(Number(receipt.maxPoints))) {
+  if (!receipt.needsReview && receipt.resultMode !== "none" && Number.isFinite(Number(receipt.maxPoints))) {
     const score = document.createElement("div");
     score.className = "secureResultScore";
     score.textContent = `${Number(receipt.totalPoints) || 0} / ${Number(receipt.maxPoints) || 0} Punkte`;
@@ -532,15 +571,16 @@ function showReceipt(receipt) {
 
 async function submitAssessment(autoSubmitted = false) {
   if (submitting) return;
+  if (autoSubmitted) freezeAnswers();
   submitting = true;
   saveDraft();
   const button = $("secureSubmitBtn");
   if (button) {
     button.disabled = true;
-    button.textContent = autoSubmitted ? "Zeit abgelaufen – wird abgegeben …" : "Wird abgegeben …";
+    button.textContent = autoSubmitted ? "Test beendet – wird abgegeben …" : "Wird abgegeben …";
   }
   try {
-    const response = await api.submit(quizId, collectAnswers(), { autoSubmitted });
+    const response = await api.submit(quizId, frozenAnswers || collectAnswers(), { autoSubmitted });
     setConnection(true, "Sicher gespeichert");
     showReceipt(response.receipt);
   } catch (error) {

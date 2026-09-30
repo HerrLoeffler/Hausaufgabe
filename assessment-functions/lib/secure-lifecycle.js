@@ -266,6 +266,7 @@ function attemptPublicState(attempt, quiz, paper = null) {
     sessionRunId: attempt.sessionRunId || null,
     startedAtMillis,
     deadlineAtMillis,
+    serverNowMillis: Date.now(),
     timeLimitMinutes: attempt.timeLimitMinutes || null,
     paper: attempt.status === "running" ? paper : null,
     quiz: publicQuizState(quiz, attempt.quizId)
@@ -333,8 +334,11 @@ async function rateLimitStart(request, quizId, tx) {
 function makeReceipt(submission, quiz = null, privateData = null) {
   const mode = normalizeResultMode(submission?.resultMode);
   const configured = submission?.showSolutionsAfterEnd === true && mode !== "none";
+  const endedAtMillis = toMillis(quiz?.endedAt);
   const released = configured
     && quiz?.ended === true
+    && Number.isFinite(endedAtMillis)
+    && Date.now() > endedAtMillis + END_SUBMIT_GRACE_SECONDS * 1000
     && quiz?.isDeleted !== true
     && quiz?.rightsHold !== true
     && Array.isArray(privateData?.solutionSnapshot);
@@ -348,12 +352,12 @@ function makeReceipt(submission, quiz = null, privateData = null) {
     solutionsConfigured: configured,
     solutionsReleased: released
   };
-  if (["points", "points_percent", "points_grade"].includes(mode)) {
+  if (!receipt.needsReview && ["points", "points_percent", "points_grade"].includes(mode)) {
     receipt.totalPoints = Number(submission?.totalPoints) || 0;
     receipt.maxPoints = Number(submission?.maxPoints) || 0;
   }
-  if (["points_percent", "points_grade"].includes(mode)) receipt.percent = Number(submission?.percent) || 0;
-  if (mode === "points_grade" && submission?.grade != null) receipt.grade = Number(submission.grade);
+  if (!receipt.needsReview && ["points_percent", "points_grade"].includes(mode)) receipt.percent = Number(submission?.percent) || 0;
+  if (!receipt.needsReview && mode === "points_grade" && submission?.grade != null) receipt.grade = Number(submission.grade);
   if (released) receipt.solutions = privateData.solutionSnapshot;
   return receipt;
 }
@@ -486,6 +490,14 @@ exports.startAssessmentAttempt = onCall(callableOpts, async request => {
     createdNew = true;
   });
 
+  if (storedAttempt.status === "submitted") {
+    const saved = await submissionRef(quizId, id).get();
+    if (!saved.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
+    return {
+      ...attemptPublicState(storedAttempt, currentQuiz || initialQuiz, null),
+      receipt: makeReceipt({ id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
+    };
+  }
   const contract = createdNew ? newContract : contractForQuestions(questions, storedPrivate);
   return attemptPublicState(storedAttempt, currentQuiz || initialQuiz, storedAttempt.status === "running" ? contract.paper : null);
 });
@@ -494,6 +506,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
+  const stateOnly = request.data?.stateOnly === true;
   const db = getFirestore();
   const { ref: quizRef, data: initialQuiz } = await readQuiz(quizId);
   const aRef = attemptRef(quizId, id);
@@ -513,7 +526,8 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
     };
   }
 
-  validateQuizOpen(initialQuiz);
+  if (stateOnly) validateSubmissionWindow(initialQuiz, attempt, Date.now());
+  else validateQuizOpen(initialQuiz);
   assertSameRun(attempt, initialQuiz, quizId);
   let currentQuiz = initialQuiz;
   if (attempt.mode === "teacher" && attempt.status === "ready" && initialQuiz.sessionState === "running") {
@@ -548,7 +562,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, async request => {
   }
 
   let paper = null;
-  if (attempt.status === "running") {
+  if (attempt.status === "running" && !stateOnly) {
     const questions = await readQuestions(quizId);
     paper = contractForQuestions(questions, privateData).paper;
   }

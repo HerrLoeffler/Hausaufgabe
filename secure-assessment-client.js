@@ -163,14 +163,15 @@ export function createSecureAssessmentClient(firebaseApp) {
     return response;
   }
 
-  async function resume(rawQuizId) {
+  async function resume(rawQuizId, { stateOnly = false } = {}) {
     const quizId = normalizeQuizId(rawQuizId);
     const session = readSession(quizId);
     if (!session?.attemptId || !session?.attemptToken) return null;
     const response = await invoke(resumeCall, {
       quizId,
       attemptId: session.attemptId,
-      attemptToken: session.attemptToken
+      attemptToken: session.attemptToken,
+      stateOnly: Boolean(stateOnly)
     });
     writeSession(quizId, {
       ...session,

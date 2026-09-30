@@ -103,7 +103,7 @@ test("matching, grouping and ordering do not reveal their answer mapping through
   assert.ok(matching.leftItems.every(x => !/^\d+$/.test(x.id)));
   assert.ok(matching.rightItems.every(x => !/^\d+$/.test(x.id)));
   assert.notDeepEqual(matching.leftItems.map(x => x.id), matching.rightItems.map(x => x.id));
-  assert.notDeepEqual(matching.rightItems.map(item => item.text), ["Berlin", "Paris"]);
+  assert.deepEqual([...matching.rightItems.map(item => item.text)].sort(), ["Berlin", "Paris"]);
 
   const grouping = paper.find(q => q.id === "group");
   assert.ok(grouping.groups.every(group => !group.items));
@@ -111,7 +111,7 @@ test("matching, grouping and ordering do not reveal their answer mapping through
 
   const ordering = paper.find(q => q.id === "order");
   assert.ok(ordering.items.every(item => typeof item.id === "string" && item.id.length >= 10));
-  assert.notDeepEqual(ordering.items.map(item => item.text), ["first", "second", "third"]);
+  assert.deepEqual([...ordering.items.map(item => item.text)].sort(), ["first", "second", "third"]);
 });
 
 test("same paper secret produces a stable paper; another server secret changes opaque IDs and shuffle", () => {
