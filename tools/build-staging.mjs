@@ -49,10 +49,17 @@ const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
 const version = html.match(/name="app-version" content="([^"]+)"/)[1];
 const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
 if (!app.includes(`APP_VERSION = "${version}"`)) throw new Error('App and HTML versions differ.');
-const release = { project: 'hausaufgabe-staging', version, commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), files: hashes };
+const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+const release = {
+  project: 'hausaufgabe-staging',
+  version,
+  commit,
+  components: { app: version, mobileTutorial: 'gc28-mobile', secureAssessment: 'v1' },
+  files: hashes
+};
 await fs.writeFile(path.join(output, 'release.json'), JSON.stringify(release, null, 2) + '\n');
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
   site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
 } }, null, 2) + '\n');
-console.log(`Staging build verified: ${version}, ${files.length} files.`);
+console.log(`Staging build verified: ${version}, ${files.length} files, commit ${commit.slice(0, 7)}.`);
