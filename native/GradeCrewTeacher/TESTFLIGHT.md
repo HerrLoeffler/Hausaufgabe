@@ -19,6 +19,7 @@ Er archiviert zuerst mit Xcode und lädt nur bei Erfolg hoch. Version 0.1.3 erg�
 Web-Bestätigungen, Textdialoge, korrekte Browserkennung und Fehler bei Webprozess-Abbruch.
 Die Buildnummer stammt aus GITHUB_RUN_NUMBER.
 0.1.3 (6) wurde inzwischen durch Run 36712213667 erfolgreich hochgeladen.
+0.1.4 (7) wurde in Run 36723972615 erfolgreich gebaut/signiert und hochgeladen.
 0.1.4 ergänzt Beta-Einstellungen: Preview-Adresse einsetzen und die neue Webversion
 direkt in der App testen; der aktuell geladene Host bleibt sichtbar.
 

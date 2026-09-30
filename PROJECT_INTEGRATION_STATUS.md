@@ -4,11 +4,12 @@ Stand: 30.09.2026. Aussagen aus Chats wurden soweit möglich mit Code/CI verglic
 
 | Strang | Tatsächlicher Stand | Nächster Nachweis |
 |---|---|---|
-| Haupt-App de.gradecrew | 0.1.2 Upload erfolgreich, Lauf 36656798111; echte Staging-WebView | 0.1.3 Build und echter iPad-Test |
+| Haupt-App de.gradecrew | 0.1.4 (7) Upload erfolgreich, Run 36723972615; echte WebView, Dialoge, Preview-Wahl | TestFlight aktualisieren, echter iPad-Test |
 | Normales Staging | release.json gc21 / 4707c45, erneut öffentlich gelesen | konsolidierten Webstand bewusst deployen |
 | Secure Assessment gc27 | Code 8fbc8cc, CI335 grün, Branch feature/secure-assessment-v1 | Preview laut Benutzerübergabe deployed; URL/Manifest und echter Ablauf noch verifizieren |
-| 30-Teilnehmer-Test | Branch feature/gate-e-load-test, b9ba03b; CI grün | tatsächlicher Report aus Firebase fehlt hier |
-| Mobile Layout | Branch fix/gradecrew-staging-polish, f90711b | noch nicht mit gc27 zusammengeführt |
+| Gemeinsame Webversion gc28 | feature/gradecrew-app-integration, Code 56737d4; CI #352 und Mobile-Check grün; 141 lokale Tests | Hosting-Preview deployen, URL in App-Beta einsetzen |
+| 30-Teilnehmer-Test | integrierter Parallel-Smoke-Test, Receipts nun an Attempt gebunden | tatsächlicher Report aus Firebase fehlt hier |
+| Mobile Layout | f90711b in gemeinsame gc28-Basis übernommen, Inline-Coach-Konflikt behoben | realer Tastatur-/Gerätetest |
 | Secure-App de.gradecrew.secure | laut Nutzer bereits auf iPad; separater Branch/Bundle | Prüfungsablauf separat verifizieren |
 
 ## Warum die Stände auseinanderlaufen
@@ -17,8 +18,9 @@ Die native App lädt eine feste normale Staging-URL. Änderungen an einem andere
 Hosting-Channel erscheinen dort nicht. Außerdem stammen der mobile Layout-Branch
 und der Security-/gc27-Branch von unterschiedlichen Webständen. Nur Dateien zu
 kopieren oder den alten Mobile-Branch über gc27 zu deployen würde Neuerungen verlieren.
-Vor dem nächsten normalen Hosting-Deploy daher auf einem Integrationsbranch
-zusammenführen, Konflikte insbesondere an Tour/Buildskript prüfen, CI und Gerätetest.
+Die Zusammenführung erfolgte inzwischen auf feature/gradecrew-app-integration.
+CI #352 und Mobile-Check sind erfolgreich. Gerätetest und normaler Hosting-Deploy
+bleiben ausstehend; zuerst die separate gemeinsame Preview verwenden.
 
 ## Was der 30er-Test bedeutet
 

@@ -3,8 +3,9 @@
 Stand: 2026-09-30
 Branch: `feature/shared-gradecrew-design-system`
 Bundle ID: `de.gradecrew`
-Zuletzt nachgewiesen hochgeladene TestFlight-Version: `0.1.3 (6)`
-GitHub Actions Run: `36712213667` — 0.1.3 gebaut/signiert und erfolgreich zu App Store Connect hochgeladen
+Zuletzt nachgewiesen hochgeladene TestFlight-Version: **`0.1.4 (7)`**
+GitHub Actions Run: **`36723972615` SUCCESS** — 0.1.4 Routing-Test bestanden, archiviert/signiert und erfolgreich zu App Store Connect hochgeladen.
+Code-Commit: `690065581b9fabb6ffdf127060224ef116c6377d`.
 
 ## Fortsetzung 30.09.2026: 0.1.3
 
@@ -20,7 +21,8 @@ Die vom Deploy ausgegebene Staging-Preview kann direkt in der App geöffnet werd
 Keine ablaufende Preview-Adresse fest einkompiliert; Normales Staging ist per Knopf
 wiederherstellbar. Ungültige/Production-Adressen werden abgewiesen. Der echte
 Foundation-Routingcode wird vor dem Archivieren mit Swift ausgeführt.
-Build-/Upload-Ergebnis für 0.1.4 separat dokumentieren.
+0.1.4 nachgewiesen: Log meldet „Beta environment routing: passed“, „ARCHIVE SUCCEEDED“,
+„Upload succeeded“ und „EXPORT SUCCEEDED“. Ein tatsächlicher iPad-Test ist noch offen.
 
 **Wichtige Abweichung:** normale Staging-URL liefert weiterhin gc21 / 4707c45
 (30.09.2026 erneut per release.json geprüft). Die gc27-Preview ist ein anderer
