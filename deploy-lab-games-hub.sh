@@ -9,6 +9,7 @@ CHANNEL_ID="gradecrew-games-hub"
 # Fast Quiz
 node --check lab/fast-quiz/app-v4.js
 node --check lab/fast-quiz/math-engine-v4.js
+node --check lab/fast-quiz/rounding-plus.js
 
 # Fehlerjagd Deutsch
 node --check lab/fehlerjagd-deutsch/app.js
@@ -34,7 +35,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-games-hub.mjs "$BUILD_DIR"
 
 if [ "$MODE" = "--check" ]; then
-  echo "GradeCrew Games Hub mit Fast Quiz + Fehlerjagd Deutsch + Vocab Rush geprüft. Es wurde nichts veröffentlicht."
+  echo "GradeCrew Games Hub mit Fast Quiz inkl. Runden + Fehlerjagd Deutsch + Vocab Rush geprüft. Es wurde nichts veröffentlicht."
   exit 0
 fi
 
@@ -45,7 +46,7 @@ fi
 command -v firebase >/dev/null || { echo "Firebase CLI fehlt."; exit 1; }
 
 echo "Veröffentliche nur Preview-Channel '$CHANNEL_ID' im Staging-Projekt."
-echo "Enthalten: Fast Quiz + Fehlerjagd Deutsch + Vocab Rush."
+echo "Enthalten: Fast Quiz inkl. Runden + Fehlerjagd Deutsch + Vocab Rush."
 echo "Bestehende Functions/Backends, normales Staging-Hosting und Production werden nicht verändert."
 firebase hosting:channel:deploy "$CHANNEL_ID" --config "$BUILD_DIR/firebase.json" --project "$PROJECT_ID" --non-interactive
 
