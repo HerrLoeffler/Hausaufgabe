@@ -108,6 +108,11 @@ jobs:
           node --test tools/gate-e-load-test.test.mjs
           node --check gate-e-lab.js
           node --test gate-e-lab.test.mjs
+          bash -n deploy-gate-e-preview.sh
+          grep -q 'PROJECT_ID="hausaufgabe-staging"' deploy-gate-e-preview.sh
+          grep -q 'CHANNEL="gate-e-lab"' deploy-gate-e-preview.sh
+          grep -q -- '--only functions' deploy-gate-e-preview.sh && { echo 'Gate E deploy must not redeploy functions'; exit 1; } || true
+          grep -q 'hosting:channel:deploy' deploy-gate-e-preview.sh
 
       - name: Check legacy browser app syntax and regressions
         run: |
