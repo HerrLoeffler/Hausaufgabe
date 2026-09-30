@@ -4,7 +4,7 @@ import UIKit
 
 struct GradeCrewAppEnvironment {
     static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
-    static let stagingBaseURL = URL(string: "https://hausaufgabe-staging.web.app/")!
+    static var stagingBaseURL: URL { GradeCrewBetaEnvironment.baseURL(for: UserDefaults.standard.string(forKey: GradeCrewBetaEnvironment.preferenceKey) ?? "") }
 
     static var teacherHomeURL: URL {
         var components = URLComponents(url: stagingBaseURL, resolvingAgainstBaseURL: false)!
@@ -89,12 +89,14 @@ struct GradeCrewWebView: UIViewRepresentable {
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         var parent: GradeCrewWebView
         var didLoadInitialURL = false
+        var lastURL: URL
         var lastReloadID: Int
         private var cancelDialog: (() -> Void)?
 
         init(parent: GradeCrewWebView) {
             self.parent = parent
             self.lastReloadID = parent.reloadID
+            self.lastURL = parent.url
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -236,7 +238,9 @@ struct GradeCrewWebView: UIViewRepresentable {
             return
         }
 
-        if context.coordinator.lastReloadID != reloadID {
+        if context.coordinator.lastReloadID != reloadID || context.coordinator.lastURL != url {
+            context.coordinator.cancelActiveDialog()
+            context.coordinator.lastURL = url
             context.coordinator.lastReloadID = reloadID
             isLoading = true
             webView.load(URLRequest(url: url))

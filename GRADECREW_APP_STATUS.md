@@ -3,8 +3,8 @@
 Stand: 2026-09-30
 Branch: `feature/shared-gradecrew-design-system`
 Bundle ID: `de.gradecrew`
-Zuletzt nachgewiesen hochgeladene TestFlight-Version: `0.1.2`
-GitHub Actions Run: `36656798111` — erfolgreich gebaut und zu App Store Connect/TestFlight hochgeladen
+Zuletzt nachgewiesen hochgeladene TestFlight-Version: `0.1.3 (6)`
+GitHub Actions Run: `36712213667` — 0.1.3 gebaut/signiert und erfolgreich zu App Store Connect hochgeladen
 
 ## Fortsetzung 30.09.2026: 0.1.3
 
@@ -13,7 +13,14 @@ Abbau der WebView; ignorierte abgebrochene Navigation; sichtbarer Webprozessfehl
 Die Standard-WebKit-Browserkennung bleibt erhalten und bekommt nur den App-Zusatz.
 Die Version für URLs/Browsersignatur stammt aus dem Bundle statt aus drei Konstanten.
 Der Cloud-Build reagiert jetzt auch auf Änderungen an nativen Quelldateien.
-Build-/Upload-Ergebnis für 0.1.3 nach dem Lauf prüfen, hier noch nicht behauptet.
+0.1.3 Build 6: erfolgreicher Archive- und Upload-Schritt in Run 36712213667.
+
+Neu für 0.1.4: native Beta-Einstellungen zeigen Version und aktuell geöffneten Host.
+Die vom Deploy ausgegebene Staging-Preview kann direkt in der App geöffnet werden.
+Keine ablaufende Preview-Adresse fest einkompiliert; Normales Staging ist per Knopf
+wiederherstellbar. Ungültige/Production-Adressen werden abgewiesen. Der echte
+Foundation-Routingcode wird vor dem Archivieren mit Swift ausgeführt.
+Build-/Upload-Ergebnis für 0.1.4 separat dokumentieren.
 
 **Wichtige Abweichung:** normale Staging-URL liefert weiterhin gc21 / 4707c45
 (30.09.2026 erneut per release.json geprüft). Die gc27-Preview ist ein anderer

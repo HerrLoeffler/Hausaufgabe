@@ -18,6 +18,9 @@ auf feature/shared-gradecrew-design-system lösen den vorhandenen Cloud-Build au
 Er archiviert zuerst mit Xcode und lädt nur bei Erfolg hoch. Version 0.1.3 ergänzt
 Web-Bestätigungen, Textdialoge, korrekte Browserkennung und Fehler bei Webprozess-Abbruch.
 Die Buildnummer stammt aus GITHUB_RUN_NUMBER.
+0.1.3 (6) wurde inzwischen durch Run 36712213667 erfolgreich hochgeladen.
+0.1.4 ergänzt Beta-Einstellungen: Preview-Adresse einsetzen und die neue Webversion
+direkt in der App testen; der aktuell geladene Host bleibt sichtbar.
 
 Nach grünem Upload: App Store Connect verarbeitet den Build. Anschließend in
 TestFlight bei GradeCrew aktualisieren; falls nötig den Build der internen Testgruppe
@@ -35,9 +38,10 @@ Die gc27-Security-Preview liegt auf einem anderen Hosting-Channel. Sie kommt nic
 allein durch einen neuen App-Build in diese WebView. Preview-URL vor Verwendung
 explizit verifizieren; ablaufende Preview-URLs nicht fest in den App-Build schreiben.
 
-## Kurzer echter Gerätetest für 0.1.3
+## Kurzer echter Gerätetest für 0.1.4
 
-1. Login und Wiederöffnung der App (Sitzung bleibt erhalten).
+1. Beta-Einstellungen öffnen, gültige Staging-Preview einsetzen, Host prüfen.
+2. Login und Wiederöffnung der App (Sitzung bleibt erhalten).
 2. Einen eigenen Wegwerf-Test löschen: Abbrechen erhält ihn, Bestätigen löscht ihn.
 3. Eine Testsitzung beenden: Bestätigung sichtbar, Abbrechen ohne Aktion.
 4. Tutorial mit Bildschirmtastatur, Hoch-/Querformat und kleiner Breite.
