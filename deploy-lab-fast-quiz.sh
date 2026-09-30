@@ -12,6 +12,7 @@ PROJECT_ID="hausaufgabe-staging"
 CHANNEL_ID="gradecrew-fast-quiz"
 
 node --check lab/fast-quiz/math-engine-v4.js
+node --check lab/fast-quiz/rounding-plus.js
 node --check lab/fast-quiz/app-v4.js
 node --check tools/build-lab-fast-quiz.mjs
 
@@ -20,7 +21,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-fast-quiz.mjs "$BUILD_DIR"
 
 if [ "$MODE" = "--check" ]; then
-  echo "Fast Quiz Lab V4 ist syntaktisch und als isolierter Build geprüft. Es wurde nichts veröffentlicht."
+  echo "Fast Quiz Lab inkl. Runden bis Tausendstel ist syntaktisch und als isolierter Build geprüft. Es wurde nichts veröffentlicht."
   exit 0
 fi
 
@@ -38,4 +39,4 @@ firebase hosting:channel:deploy "$CHANNEL_ID" \
   --project "$PROJECT_ID" \
   --non-interactive
 
-echo "Fast Quiz Lab V4 veröffentlicht. Die Firebase CLI zeigt oben die Preview-URL an."
+echo "Fast Quiz Lab inkl. Runden veröffentlicht. Die Firebase CLI zeigt oben die Preview-URL an."
