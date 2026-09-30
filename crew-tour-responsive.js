@@ -5,7 +5,6 @@ let frame = 0;
 let settleTimers = [];
 let activeTarget = null;
 let placement = null;
-let coachObserver = null;
 let targetObserver = null;
 
 function viewportMetrics() {
@@ -169,28 +168,17 @@ function layoutCrewCoach() {
   }
 }
 
-function observeCoach() {
-  const coach = document.querySelector(".gcRealCoach");
-  if (!coach) return;
-  if (!coachObserver && "MutationObserver" in window) {
-    coachObserver = new MutationObserver(settle);
-    coachObserver.observe(coach, { attributes: true, childList: true, subtree: true, characterData: true });
-  }
-  settle();
-}
-
 export function installCrewTourResponsiveLayout() {
   if (typeof window === "undefined" || typeof document === "undefined") return;
   if (window.__gradecrewCrewTourResponsiveInstalled) return;
   window.__gradecrewCrewTourResponsiveInstalled = true;
   installStyles();
 
+  // Watch structural/content changes only. Style/class writes from our own
+  // layout pass must never retrigger the observer and create a feedback loop.
   if ("MutationObserver" in window) {
-    const bodyObserver = new MutationObserver(() => {
-      if (document.querySelector(".gcRealCoach")) observeCoach();
-      settle();
-    });
-    bodyObserver.observe(document.body, { childList: true, subtree: true });
+    const bodyObserver = new MutationObserver(settle);
+    bodyObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   document.addEventListener("click", settle, true);
@@ -200,7 +188,7 @@ export function installCrewTourResponsiveLayout() {
   window.addEventListener("scroll", schedule, { passive: true, capture: true });
   window.visualViewport?.addEventListener("resize", settle, { passive: true });
   window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
-  observeCoach();
+  settle();
 }
 
 if (typeof window !== "undefined" && typeof document !== "undefined") {
