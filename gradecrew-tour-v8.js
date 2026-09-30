@@ -9,6 +9,14 @@ export { CREW };
 
 const clone = value => JSON.parse(JSON.stringify(value));
 
+if (typeof location !== "undefined" && new URLSearchParams(location.search).get("gateE") === "1") {
+  queueMicrotask(() => {
+    import("./gate-e-lab.js")
+      .then(module => module.installGateELab())
+      .catch(error => console.error("Gate E Lab konnte nicht geladen werden", error));
+  });
+}
+
 function variantSourceQuestion() {
   return {
     type: "dropdown",
