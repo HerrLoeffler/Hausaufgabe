@@ -8,6 +8,7 @@ on:
       - fix/ai-review-workflow
       - fix/gradecrew-staging-polish
       - feature/secure-assessment-v1
+      - feature/gate-e-load-test
   workflow_dispatch:
 
 permissions:
@@ -100,6 +101,12 @@ jobs:
       - name: Test secure Firestore rules in emulator
         run: npm run test:secure --prefix tools/rules
 
+      - name: Check Gate E load runner contracts
+        run: |
+          node --check tools/gate-e-load-test.mjs
+          node tools/gate-e-load-test.mjs --help >/dev/null
+          node --test tools/gate-e-load-test.test.mjs
+
       - name: Check legacy browser app syntax and regressions
         run: |
           if grep -Eq '^import .*gradecrew-brand\.js|^import .*layout-enhancements\.js|^import .*variant-enhancements\.js|^import .*admin-ai-access\.js' ai-client.js; then
@@ -168,4 +175,3 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
-
