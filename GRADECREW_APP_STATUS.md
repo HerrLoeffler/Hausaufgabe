@@ -3,8 +3,8 @@
 Stand: 2026-09-30
 Branch: `feature/shared-gradecrew-design-system`
 Bundle ID: `de.gradecrew`
-TestFlight-Version: `0.1.1`
-GitHub Actions Run: `36653411011` — erfolgreich gebaut und zu App Store Connect/TestFlight hochgeladen
+TestFlight-Version: `0.1.2`
+GitHub Actions Run: `36656798111` — erfolgreich gebaut und zu App Store Connect/TestFlight hochgeladen
 
 ## Was jetzt wirklich funktioniert
 
@@ -12,10 +12,30 @@ GitHub Actions Run: `36653411011` — erfolgreich gebaut und zu App Store Connec
 - Automatisches Apple Signing funktioniert über den registrierten Test-iPad und den App-Store-Connect-Admin-Key.
 - Upload zu TestFlight funktioniert automatisiert.
 - Die App verwendet die persistente WKWebView-Datenablage (`WKWebsiteDataStore.default()`), damit die echte Firebase-Websession zwischen App-Starts erhalten bleibt.
-- Version 0.1.1 öffnet die echte GradeCrew-Staging-Arbeitsfläche statt einer separaten Mock-Oberfläche.
+- Version 0.1.2 öffnet die echte GradeCrew-Staging-Arbeitsfläche statt einer separaten Mock-Oberfläche.
 - Web-Navigation, Firebase-Weblogin, Tests, Editor, Abgaben und Einstellungen kommen damit aus der bestehenden GradeCrew-Webplattform.
 - Zusätzliche Browserfenster/`target=_blank` werden im selben App-WebView weitergeführt.
 - Native Ladeanzeige und Fehler-/Retry-Oberfläche sind vorhanden.
+- Die WebView wird nicht mehr unter die untere iOS-Safe-Area gezogen; `UIScrollView` darf Content-Inset-Anpassungen automatisch übernehmen.
+- App-URL und User-Agent kennzeichnen den Build als `0.1.2`.
+
+## Mobile Tutorial / Viewport
+
+Der mobile Tutorial-Fix wird auf `fix/gradecrew-staging-polish` entwickelt und bleibt bis zur Prüfung ausschließlich auf Staging.
+
+Implementiert:
+
+- adaptive Zwei-Zonen-Führung: Coach und markierte echte Funktion bekommen getrennte sichtbare Bereiche,
+- `visualViewport` statt nur `window.innerHeight` für den tatsächlich sichtbaren Bereich,
+- Reaktion auf Tastatur, Drehung und dynamische Viewport-Änderungen,
+- Safe-Area-Abstände,
+- interne Scrollbarkeit langer Coach-Karten statt Überdecken der Zielaktion,
+- gleiche mobile Positionierungslogik für den ersten KI-Guide und die komplette Crew-Tour,
+- mobile Touch-Polish-Schicht mit größeren Touchzielen und telefonfreundlichen Formularfeldern,
+- Regressionstest für kleine/große iPhones, Android-Compact und Querformat,
+- eigener GitHub Actions Check `GradeCrew mobile tutorial check`.
+
+Produktion bleibt dabei unverändert.
 
 ## Entfernt
 
@@ -33,7 +53,7 @@ Damit zeigt die App keine erfundenen Tests oder Funktionen mehr an.
 
 ## Wichtige Architekturentscheidung
 
-0.1.1 ist eine **Integrationsstufe**, nicht das langfristige Enddesign.
+0.1.x ist eine **Integrationsstufe**, nicht das langfristige Enddesign.
 
 Kurzfristig ist die existierende GradeCrew-Webplattform die Quelle der Wahrheit, damit alle bereits funktionierenden Abläufe korrekt in der App verfügbar sind. Danach werden sinnvolle Bereiche kontrolliert nativ umgesetzt, ohne Web- und App-Logik doppelt zu erfinden.
 
@@ -58,7 +78,7 @@ Produktion bleibt unverändert. Erst nach erfolgreicher Prüfung der App-Integra
 
 ## Nächster technischer Block
 
-Für eine echte native Firebase-Apple-SDK-Anbindung fehlt derzeit im Repo eine iOS-Firebase-Konfiguration (`GoogleService-Info.plist`) für `de.gradecrew`.
+Nach dem physischen Mobile-/Tutorial-Test folgt die echte native Firebase-Apple-SDK-Anbindung. Dafür fehlt derzeit im Repo eine iOS-Firebase-Konfiguration (`GoogleService-Info.plist`) für `de.gradecrew`.
 
 Nächster Schritt:
 
