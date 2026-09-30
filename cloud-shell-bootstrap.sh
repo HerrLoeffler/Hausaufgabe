@@ -6,12 +6,17 @@ cd "$(dirname "$0")"
 BRANCH="${1:-}"
 if [[ -z "$BRANCH" ]]; then
   BRANCH="$(git branch --show-current)"
+else
+  shift
 fi
 if [[ -z "$BRANCH" ]]; then
   echo "FEHLER: Kein Branch angegeben und aktueller Branch konnte nicht ermittelt werden."
-  echo "Aufruf: bash cloud-shell-bootstrap.sh <branch>"
+  echo "Aufruf: bash cloud-shell-bootstrap.sh <branch> [-- <befehl> ...]"
   exit 1
 fi
+
+# Optionales -- zwischen Branch und auszuführendem Befehl entfernen.
+if [[ "${1:-}" == "--" ]]; then shift; fi
 
 echo "=========================================="
 echo " GradeCrew · frische Cloud-Shell-Sitzung"
@@ -64,3 +69,16 @@ if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
 else
   echo "Working Tree: sauber"
 fi
+
+# WICHTIG: Ein mit `bash cloud-shell-bootstrap.sh` gestartetes Skript kann seine
+# nvm-Umgebung nicht an die Eltern-Shell zurückgeben. Deshalb wird ein optionaler
+# Folgebefehl HIER im bereits vorbereiteten Prozess ausgeführt.
+if [[ "$#" -gt 0 ]]; then
+  echo
+  echo "Starte im vorbereiteten Node-22-Kontext: $*"
+  exec "$@"
+fi
+
+echo
+echo "Hinweis: Für Folgebefehle künftig direkt mitgeben, z. B.:"
+echo "bash cloud-shell-bootstrap.sh $BRANCH -- bash deploy-gate-e-preview.sh --check"
