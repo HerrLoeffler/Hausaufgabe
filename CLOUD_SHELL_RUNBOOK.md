@@ -31,6 +31,8 @@ Damit entfällt die fehleranfällige Übergabe einer Node-Umgebung zwischen Kind
 
 Der erste App-Integration-Deploy stoppte mit `FEHLER: nvm fehlt.` vor Tests und Veröffentlichung. Ursache: Das Skript konnte vorhandenes nvm laden, aber keine fehlende Installation einrichten. Der gemeinsame Runtime-Helfer korrigiert genau diese Voraussetzung. Ausgeführte Shell-Tests prüfen die frische Sitzung, Wiederverwendung, fehlgeschlagenen Download und falschen Download-Commit sowie die Firebase-Installation ohne globale Rechte.
 
+Beim ersten CI-Durchlauf nach der Korrektur blockierte ein npm-Registry-404 für `ignore@7.0.11` bereits die Installation der Firestore-Emulator-Abhängigkeiten. `tools/rules/package.json` fixiert deshalb die verfügbare Transitivversion 7.0.10. Ein Installationsfehler vor Tests ist ausdrücklich kein Testergebnis für die Anwendung.
+
 ## Verbindliches Muster für ChatGPT-Befehle
 
 Für einen frischen Reconnect zuerst Repository und Branch synchronisieren und danach direkt das selbstbootstrappende Zielskript starten:
