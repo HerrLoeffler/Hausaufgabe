@@ -8,6 +8,10 @@ on:
       - fix/ai-review-workflow
       - fix/gradecrew-staging-polish
       - feature/secure-assessment-v1
+      - integration/secure-assessment-mobile-gc28
+  pull_request:
+    branches:
+      - feature/secure-assessment-v1
   workflow_dispatch:
 
 permissions:
@@ -110,7 +114,10 @@ jobs:
           node --check ai-client.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
+          node --check mobile-viewport-polish.js
           node --check first-guide-guard.js
+          node --check first-guide-responsive.js
+          node --check crew-tour-responsive.js
           node --check teacher-copy-polish.js
           node --check gradecrew-tour.js
           node --check gradecrew-tour-v7.js
@@ -138,6 +145,7 @@ jobs:
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
           node --test gradecrew-tour-v8-dashboard.test.mjs
+          node --test first-guide-responsive.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
           node --test crew-tour-gc24-polish.test.mjs
           node --test crew-tour-gc25-final-polish.test.mjs
@@ -155,6 +163,9 @@ jobs:
         run: |
           BUILD_DIR="$(mktemp -d)"
           node tools/build-staging.mjs "$BUILD_DIR"
+          test -f "$BUILD_DIR/public/mobile-viewport-polish.js"
+          test -f "$BUILD_DIR/public/first-guide-responsive.js"
+          test -f "$BUILD_DIR/public/crew-tour-responsive.js"
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-draft-persistence.js"
           test -f "$BUILD_DIR/public/secure-student.js"
@@ -168,4 +179,3 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
-
