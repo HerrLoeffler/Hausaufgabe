@@ -23,14 +23,31 @@ if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   git status --short
   exit 1
 fi
+
+# Frische Cloud-Shell-Sitzungen dürfen keine aktive Node-Version voraussetzen.
+# Das Deployskript lädt nvm deshalb selbst und stellt Node 22 im selben Prozess sicher.
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  # shellcheck disable=SC1090
+  . "$NVM_DIR/nvm.sh"
+fi
+if ! command -v nvm >/dev/null 2>&1; then
+  echo "FEHLER: nvm ist in dieser Cloud-Shell nicht verfügbar."
+  exit 1
+fi
+nvm install 22 >/dev/null
+nvm use 22 >/dev/null
+
 if [[ "$(node -p 'process.versions.node.split(".")[0]')" != "22" ]]; then
-  echo "FEHLER: Node 22 erforderlich. Bitte zuerst: nvm use 22"
+  echo "FEHLER: Node 22 konnte nicht aktiviert werden."
   exit 1
 fi
 if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
   echo "FEHLER: Staging-Konfiguration zeigt nicht auf $PROJECT_ID."
   exit 1
 fi
+
+echo "Gate E Preflight · Node $(node --version) · Branch $(git branch --show-current) · Commit $(git rev-parse --short HEAD)"
 
 node --check gate-e-lab.js
 node --test gate-e-lab.test.mjs
@@ -55,10 +72,10 @@ if [[ "$MODE" = "--check" ]]; then
   exit 0
 fi
 
-command -v firebase >/dev/null || {
-  echo "FEHLER: Firebase CLI fehlt."
-  exit 1
-}
+if ! command -v firebase >/dev/null 2>&1; then
+  echo "Firebase CLI fehlt – wird für diese Cloud-Shell installiert …"
+  npm install -g firebase-tools
+fi
 
 cat <<EOF
 ==========================================
