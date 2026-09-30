@@ -6,6 +6,21 @@ Isolierte Entwicklerfläche für kleine Produkt-Experimente. Lab-Code wird nicht
 
 Lab -> bewerten -> eigener Feature-Branch -> vollständige Integration -> Staging -> Live.
 
+## Gemeinsamer Spiele-Hub
+
+Aktueller Struktur-Branch: `lab/games-structure`, aufgebaut auf dem gemeinsamen Stand von `lab/vocab-rush`.
+
+Der Hub enthält **Fast Quiz**, **Fehlerjagd Deutsch** und **Vocab Rush** mit Spielsuche, Fachfiltern, Favoriten, direktem Moduseinstieg und zentralem Code-Beitritt.
+
+Der Katalog in `lab/shared/games-catalog.js` definiert alle Spiele einmal. Der Hub setzt die vollständigen Einzel-Builds zusammen und ergänzt die gemeinsame Navigation. Aufgabenengines, Vokabelsets und Backend-Codebases bleiben eigenständige Module.
+
+- [Aktueller Stand und nächste Aufgaben](../GAMES_STATUS.md)
+- [Struktur, Prüfbefehle und Cloud-Shell-Anleitung](games-hub/README.md)
+- Hub prüfen: `bash deploy-lab-games-hub.sh --check`
+- Neues Preview-Ziel: `gradecrew-games-structure` in `hausaufgabe-staging`
+
+Die folgende Fast-Quiz-Dokumentation beschreibt dessen vorhandenes Spiel- und Backend-Modul.
+
 Ein Lab-Experiment darf bewusst unvollständig sein. Es soll zuerst beantworten, ob eine Idee in der Nutzung funktioniert.
 
 ## Fast Quiz V4

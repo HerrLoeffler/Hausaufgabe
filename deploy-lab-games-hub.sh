@@ -4,7 +4,12 @@ cd "$(dirname "$0")"
 MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-lab-games-hub.sh --check oder --deploy"; exit 1;; esac
 PROJECT_ID="hausaufgabe-staging"
-CHANNEL_ID="gradecrew-games-hub"
+CHANNEL_ID="gradecrew-games-structure"
+
+# Shared catalogue and hub UI
+node --check lab/shared/games-catalog.js
+node --check lab/shared/game-shell.js
+node --check lab/games-hub/app.js
 
 # Fast Quiz
 node --check lab/fast-quiz/app-v4.js
@@ -35,7 +40,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-games-hub.mjs "$BUILD_DIR"
 
 if [ "$MODE" = "--check" ]; then
-  echo "GradeCrew Games Hub mit Fast Quiz inkl. Runden + Fehlerjagd Deutsch + Vocab Rush geprüft. Es wurde nichts veröffentlicht."
+  echo "GradeCrew Games Struktur mit allen drei vollständigen Frontends geprüft. Es wurde nichts veröffentlicht."
   exit 0
 fi
 
