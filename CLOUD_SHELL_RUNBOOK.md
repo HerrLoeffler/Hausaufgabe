@@ -13,19 +13,40 @@ Niemals voraussetzen, dass aus einer vorherigen Sitzung noch Folgendes aktiv ode
 - geladene `nvm`-Umgebung;
 - vorhandene Firebase CLI.
 
-Deshalb sollen ausführbare Befehlsblöcke für GradeCrew grundsätzlich mit dem Bootstrap beginnen:
+## Wichtige Shell-Regel
+
+Ein mit `bash cloud-shell-bootstrap.sh ...` gestartetes Skript läuft in einer **Kind-Shell**. Ein dort ausgeführtes `nvm use 22` kann die Node-Version der Eltern-Shell **nicht** dauerhaft verändern. Deshalb dürfen Bootstrap und eigentlicher Deploy-/Testbefehl nicht mehr als zwei voneinander unabhängige Bash-Aufrufe empfohlen werden.
+
+Stattdessen muss der eigentliche Befehl dem Bootstrap direkt übergeben werden. Der Bootstrap führt ihn anschließend im bereits vorbereiteten Node-22-Kontext aus.
+
+### Verbindliches Muster
 
 ```bash
 cd ~/Hausaufgabe
-bash cloud-shell-bootstrap.sh <BRANCH>
+git fetch --all --prune
+git checkout <BRANCH>
+git pull --ff-only
+bash cloud-shell-bootstrap.sh <BRANCH> -- <BEFEHL>
 ```
 
-Beispiel für Gate E:
+Beispiel Gate E Check:
 
 ```bash
 cd ~/Hausaufgabe
-bash cloud-shell-bootstrap.sh feature/gate-e-load-test
-bash deploy-gate-e-preview.sh --check
+git fetch --all --prune
+git checkout feature/gate-e-load-test
+git pull --ff-only
+bash cloud-shell-bootstrap.sh feature/gate-e-load-test -- bash deploy-gate-e-preview.sh --check
+```
+
+Beispiel Gate E Deploy:
+
+```bash
+cd ~/Hausaufgabe
+git fetch --all --prune
+git checkout feature/gate-e-load-test
+git pull --ff-only
+bash cloud-shell-bootstrap.sh feature/gate-e-load-test -- bash deploy-gate-e-preview.sh --deploy
 ```
 
 Der Bootstrap erledigt idempotent:
@@ -37,7 +58,8 @@ Der Bootstrap erledigt idempotent:
 6. `nvm use 22` und Default auf Node 22;
 7. Firebase CLI nur dann installieren, wenn sie in der aktuellen Umgebung fehlt;
 8. Node-, npm-, Firebase-, Branch- und Commit-Version anzeigen;
-9. Working-Tree-Status anzeigen.
+9. Working-Tree-Status anzeigen;
+10. den angegebenen Folgebefehl **im selben vorbereiteten Prozess** ausführen.
 
 ## Warum `nvm install 22` statt nur `nvm use 22`?
 
