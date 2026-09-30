@@ -85,7 +85,7 @@ for name in ['Debug', 'Release']:
         buildSettings={
             'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew',
             'PRODUCT_NAME': '$(TARGET_NAME)',
-            'MARKETING_VERSION': '0.1.0',
+            'MARKETING_VERSION': '0.1.1',
             'CURRENT_PROJECT_VERSION': '1',
             'CODE_SIGN_STYLE': 'Automatic',
             'GENERATE_INFOPLIST_FILE': 'YES',
