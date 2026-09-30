@@ -15,7 +15,8 @@ gradecrew_use_node22() {
   cache_root="${XDG_CACHE_HOME:-$HOME/.cache}/gradecrew"
   runtime_dir="$cache_root/nvm-$nvm_tag"
   if ! command -v nvm >/dev/null 2>&1; then
-    for candidate in "${NVM_DIR:-$HOME/.nvm}" "$HOME/.nvm" /usr/local/nvm "$runtime_dir"; do
+    # An explicit NVM_DIR is authoritative (and allows a fully isolated CI fixture).
+    for candidate in "${NVM_DIR:-$HOME/.nvm}" /usr/local/nvm "$runtime_dir"; do
       if [[ -s "$candidate/nvm.sh" ]]; then
         # nvm installs Node below NVM_DIR; system-wide read-only copies are unsuitable.
         if [[ ! -w "$candidate" ]]; then continue; fi
