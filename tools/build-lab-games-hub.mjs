@@ -16,12 +16,14 @@ async function copyFile(source,target){await fs.mkdir(path.dirname(target),{recu
 async function copyTree(sourceDir,targetDir){await fs.mkdir(targetDir,{recursive:true});for(const entry of await fs.readdir(sourceDir,{withFileTypes:true})){const src=path.join(sourceDir,entry.name),dst=path.join(targetDir,entry.name);if(entry.isDirectory())await copyTree(src,dst);else await copyFile(src,dst);}}
 async function copyWebApp(sourceDir,targetDir){await fs.mkdir(targetDir,{recursive:true});for(const entry of await fs.readdir(sourceDir,{withFileTypes:true})){if(!entry.isFile())continue;if(!/\.(?:html|css|js)$/i.test(entry.name))continue;await copyFile(path.join(sourceDir,entry.name),path.join(targetDir,entry.name));}await injectBackLink(targetDir);}
 async function injectBackLink(targetDir){const indexPath=path.join(targetDir,'index.html');let html=await fs.readFile(indexPath,'utf8');const back=`<a class="gc-games-back" href="../" aria-label="Zurück zu GradeCrew Games">← Alle Spiele</a><style>.gc-games-back{position:fixed;left:16px;bottom:16px;z-index:9999;text-decoration:none;font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#2f62d0;background:rgba(255,255,255,.94);border:1px solid #d8e0eb;border-radius:999px;padding:11px 14px;box-shadow:0 8px 28px rgba(32,52,84,.12);backdrop-filter:blur(10px)}.gc-games-back:hover{border-color:#9eb7ee;background:#fff}@media(max-width:600px){.gc-games-back{left:10px;bottom:10px;padding:10px 12px}}</style>`;html=html.replace(/<body([^>]*)>/i,`<body$1>${back}`);await fs.writeFile(indexPath,html);}
+async function injectFastQuizRounding(targetDir){const indexPath=path.join(targetDir,'index.html');let html=await fs.readFile(indexPath,'utf8');if(!html.includes('rounding-plus.js'))html=html.replace('<script src="app-v4.js"></script>','<script src="rounding-plus.js"></script><script src="app-v4.js"></script>');await fs.writeFile(indexPath,html);}
 
 const hubSource=path.join(root,'lab','games-hub');
 await copyFile(path.join(hubSource,'index.html'),path.join(output,'index.html'));
 await copyFile(path.join(hubSource,'styles.css'),path.join(output,'styles.css'));
 
 await copyWebApp(path.join(root,'lab','fast-quiz'),path.join(output,'fast-quiz'));
+await injectFastQuizRounding(path.join(output,'fast-quiz'));
 await copyWebApp(path.join(root,'lab','fehlerjagd-deutsch'),path.join(output,'fehlerjagd-deutsch'));
 
 const vocabTmp=await fs.mkdtemp(path.join(os.tmpdir(),'gradecrew-vocab-hub.'));
@@ -37,6 +39,8 @@ for(const game of ['fast-quiz','fehlerjagd-deutsch','vocab-rush']){
   const gameIndex=await fs.readFile(path.join(output,game,'index.html'),'utf8');
   if(!gameIndex.includes('← Alle Spiele'))throw new Error(`Back link missing in ${game}`);
 }
+const fastIndex=await fs.readFile(path.join(output,'fast-quiz','index.html'),'utf8');if(!fastIndex.includes('rounding-plus.js'))throw new Error('Fast Quiz rounding addon missing in Games Hub.');
+const fastRounding=await fs.readFile(path.join(output,'fast-quiz','rounding-plus.js'),'utf8');for(const marker of ['Runden','Tausendstel','Schnellwahl: nur Runden'])if(!fastRounding.includes(marker))throw new Error(`Fast Quiz rounding marker missing: ${marker}`);
 const vocabIndex=await fs.readFile(path.join(output,'vocab-rush','index.html'),'utf8');
 for(const marker of ['mode-consistency.js','ux-polish.js','camera-plus.js'])if(!vocabIndex.includes(marker))throw new Error(`Vocab Rush build marker missing: ${marker}`);
 const vocabUx=await fs.readFile(path.join(output,'vocab-rush','ux-polish.js'),'utf8');if(!vocabUx.includes('Themen ändern'))throw new Error('Vocab Rush compact topic picker missing.');
@@ -49,6 +53,6 @@ async function hashTree(dir,prefix=''){
   }
 }
 await hashTree(output);
-await fs.writeFile(path.join(output,'lab-release.json'),JSON.stringify({experiment:'gradecrew-games-hub',format:2,games:['fast-quiz','fehlerjagd-deutsch','vocab-rush'],files:hashes},null,2)+'\n');
+await fs.writeFile(path.join(output,'lab-release.json'),JSON.stringify({experiment:'gradecrew-games-hub',format:3,games:['fast-quiz','fehlerjagd-deutsch','vocab-rush'],features:{fastQuizRounding:true},files:hashes},null,2)+'\n');
 await fs.writeFile(path.join(destination,'firebase.json'),JSON.stringify({hosting:{site:'hausaufgabe-staging',public:'public',ignore:['**/.*'],headers:[{source:'**',headers:[{key:'Cache-Control',value:'no-cache'}]}]}},null,2)+'\n');
-console.log('GradeCrew Games Hub verified: Fast Quiz + Fehlerjagd Deutsch + Vocab Rush.');
+console.log('GradeCrew Games Hub verified: Fast Quiz + Runden, Fehlerjagd Deutsch + Vocab Rush.');
