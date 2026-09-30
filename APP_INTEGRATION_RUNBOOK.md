@@ -60,6 +60,8 @@ Beim ersten Versuch am 30.09.2026 wurde nichts veröffentlicht: nvm fehlte.
 Das war ein Bootstrap-Fehler des Skripts; der gemeinsame Runtime-Helfer behebt
 ihn ohne manuelle Installation oder globale Schreibrechte. Nach `git pull --ff-only`
 denselben Deploy-Befehl wiederholen. Nicht einen älteren Branch als Umweg deployen.
+Der korrigierte Stand `21a66b3` bestand AI Staging Checks #355 vollständig:
+https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36728786984
 
 ## Überschaubarer erster Gerätetest
 

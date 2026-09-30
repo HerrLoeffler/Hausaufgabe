@@ -29,6 +29,11 @@ Erster Nutzer-Deploy stoppte vor Veröffentlichung mit `nvm fehlt`; Ursache und
 Korrektur in CLOUD_SHELL_RUNBOOK.md dokumentiert. Gemeinsamer Runtime-Helfer nutzt
 vorhandenes Node 22 oder richtet fehlendes nvm selbst im Benutzerverzeichnis ein.
 Ausgeführte Shell-Regressionen sichern den frischen Start und sichere Fehlerabbruchpfade.
+Korrigierter Code-Commit `21a66b32b06761a9d35d9d9a5bd02529f20d95ee`:
+vollständige AI Staging Checks **#355 SUCCESS**, einschließlich Runtime-Tests,
+Regel-Emulator, Tutorial-Regressionen und Staging-Build.
+Nachweis: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36728786984
+Das echte Cloud-Shell-Preview ist nach dem gescheiterten ersten Versuch noch ausstehend.
 Der 30er-Test ist ein Parallel-Smoke-Test; `fullGateEVerified` bleibt false.
 Alle bisherigen offenen Security-Gates bleiben offen, Production unverändert.
 
@@ -196,4 +201,3 @@ Dann die von Firebase ausgegebene Preview-URL sichern. Diese Preview-URL plus ei
 - keine Punkte/Noten aus dem Schülerbrowser als vertrauenswürdig akzeptieren
 - aktive Prüfung nicht editierbar oder löschbar machen
 - Tutorial-/Owner-Preview-Ausnahme nicht mit anonymem Schülerzugriff verwechseln
-
