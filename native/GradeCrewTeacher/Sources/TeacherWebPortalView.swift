@@ -9,7 +9,7 @@ struct GradeCrewAppEnvironment {
         components.queryItems = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),
-            URLQueryItem(name: "appVersion", value: "0.1.1"),
+            URLQueryItem(name: "appVersion", value: "0.1.2"),
         ]
         return components.url ?? stagingBaseURL
     }
@@ -19,7 +19,7 @@ struct GradeCrewAppEnvironment {
         var items = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),
-            URLQueryItem(name: "appVersion", value: "0.1.1"),
+            URLQueryItem(name: "appVersion", value: "0.1.2"),
             URLQueryItem(name: "intent", value: intent),
         ]
         if let quizID, !quizID.isEmpty {
@@ -48,7 +48,6 @@ struct TeacherWebPortalView: View {
                     isLoading: $isLoading,
                     errorMessage: $loadError
                 )
-                .ignoresSafeArea(edges: .bottom)
 
                 if isLoading {
                     ProgressView()
@@ -148,9 +147,10 @@ struct GradeCrewWebView: UIViewRepresentable {
         webView.uiDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.keyboardDismissMode = .interactive
+        webView.scrollView.contentInsetAdjustmentBehavior = .automatic
         webView.isOpaque = false
         webView.backgroundColor = .clear
-        webView.customUserAgent = "GradeCrew-iOS/0.1.1"
+        webView.customUserAgent = "GradeCrew-iOS/0.1.2"
         return webView
     }
 
