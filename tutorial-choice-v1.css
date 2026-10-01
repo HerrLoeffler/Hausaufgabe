@@ -1,0 +1,65 @@
+.gcTutorialOffer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  margin: 0 0 18px;
+  padding: 22px 24px;
+  border: 1px solid #d7e5ff;
+  background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+  box-shadow: 0 14px 34px rgba(47, 100, 214, .10);
+}
+.gcTutorialOfferCopy { min-width: 0; }
+.gcTutorialOfferEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+  color: #2f64d6;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+.gcTutorialOffer h2 { margin: 0 0 7px; font-size: clamp(20px, 3vw, 27px); }
+.gcTutorialOffer p { margin: 0; color: #526277; line-height: 1.55; max-width: 720px; }
+.gcTutorialOfferBenefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.gcTutorialOfferBenefits span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.82);
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+}
+.gcTutorialOfferActions {
+  display: grid;
+  min-width: min(290px, 100%);
+  gap: 9px;
+}
+.gcTutorialOfferActions .button { justify-content: center; }
+.gcTutorialOfferLater {
+  border: 0;
+  background: transparent;
+  color: #667085;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#gradecrewTourBtn {
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .gcTutorialOffer { grid-template-columns: 1fr; padding: 18px; }
+  .gcTutorialOfferActions { min-width: 0; }
+}
