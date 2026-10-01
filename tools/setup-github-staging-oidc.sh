@@ -75,9 +75,26 @@ if ! gcloud iam workload-identity-pools providers describe "$PROVIDER_ID" \
     --attribute-condition="assertion.repository=='${REPO}' && assertion.ref=='refs/heads/${BRANCH}'"
 fi
 
-PROVIDER_NAME="$(gcloud iam workload-identity-pools providers describe "$PROVIDER_ID" \
-  --project "$PROJECT_ID" --location=global --workload-identity-pool="$POOL_ID" \
-  --format='value(name)')"
+# Workload Identity Provider creation can be eventually consistent for a few
+# seconds. Retry the read instead of failing immediately after a successful
+# create operation.
+PROVIDER_NAME=""
+for ATTEMPT in {1..12}; do
+  PROVIDER_NAME="$(gcloud iam workload-identity-pools providers describe "$PROVIDER_ID" \
+    --project "$PROJECT_ID" --location=global --workload-identity-pool="$POOL_ID" \
+    --format='value(name)' 2>/dev/null || true)"
+  if [[ -n "$PROVIDER_NAME" ]]; then
+    break
+  fi
+  echo "OIDC-Provider noch nicht lesbar (Versuch $ATTEMPT/12), warte 5 Sekunden ..."
+  sleep 5
+done
+
+if [[ -z "$PROVIDER_NAME" ]]; then
+  echo "FEHLER: OIDC-Provider wurde erstellt, ist aber nach 60 Sekunden noch nicht lesbar."
+  echo "Das Setup kann gefahrlos erneut gestartet werden."
+  exit 1
+fi
 
 PRINCIPAL_SET="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${POOL_ID}/attribute.repository/${REPO}"
 
