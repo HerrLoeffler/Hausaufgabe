@@ -14,10 +14,11 @@
     "preview_deployment": "verified",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 36874596096,
-      "app_ci_run_id": 36874373683,
-      "commit": "d42973e9e29361795f773f68e6d6ac8008c36917",
-      "verified_files": 82,
+      "run_id": 36878009106,
+      "app_ci_run_id": 36877793069,
+      "mobile_tutorial_run_id": 36877793076,
+      "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "verification": "Build and deploy succeeded; branch still pointed at the tested commit; published manifest and file hashes verified after deployment; verified-preview-receipt stored.",
       "date": "2026-10-01"
     }
   },
@@ -25,8 +26,8 @@
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "d42973e9e29361795f773f68e6d6ac8008c36917",
-      "handoff": "workstreams/web-app.md"
+      "observed_head": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "handoff": "workstreams/web-app.md plus workstreams/design-dashboard-v1.md"
     },
     {
       "id": "security",
@@ -47,6 +48,13 @@
       "handoff": "workstreams/design-system.md"
     },
     {
+      "id": "design-dashboard-v1",
+      "branch": "feature/design-dashboard-v1",
+      "observed_head": "ed8f1a6f3c11d823ade0a5da464b56474fd4efac",
+      "integrated_into": "feature/gradecrew-app-integration@74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "handoff": "workstreams/design-dashboard-v1.md"
+    },
+    {
       "id": "games",
       "branch": "lab/games-structure",
       "observed_head": "869ca416b868667c9e48c05f81c967fe6ad59020",
@@ -57,8 +65,8 @@
     {
       "environment": "preview",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "evidence": "Successful automatic deployment and all 82 manifest file hashes verified in Actions run 36874596096",
-      "verified_commit": "d42973e9e29361795f773f68e6d6ac8008c36917"
+      "evidence": "Automatic preview run 36878009106: build and deploy succeeded; exact tested branch head checked before deploy; published manifest and file hashes verified after deploy; verified-preview-receipt artifact stored.",
+      "verified_commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb"
     }
   ],
   "blockers": [
