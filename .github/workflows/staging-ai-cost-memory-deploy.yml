@@ -34,8 +34,9 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           test "$PROJECT_ID" = "hausaufgabe-staging"
           grep -q '"codebase": "ai"' firebase.json
-          grep -q 'crewAssistant' functions/index.js
-          grep -q 'reviseWholeTest' functions/index.js
+          grep -q '"main": "main.js"' functions/package.json
+          grep -q 'crewAssistant' functions/main.js
+          grep -q 'reviseWholeTest' functions/main.js
           echo "Source: $EXPECTED_SHA"
           echo "Target: $PROJECT_ID"
           echo "Scope: functions:ai + firestore:indexes only"
