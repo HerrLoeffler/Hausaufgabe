@@ -37,3 +37,7 @@ Die Preview-Automatik ist seit 01.10.2026 durch Lauf 36874596096 Ende-zu-Ende be
 ## Was steht auf der To-do-Liste?
 
 `TODO.md` auf dem aktuellen main ist die gemeinsame Übersicht. Jeder Chat liest sie bei dieser Frage frisch und nennt Prioritäten, Blocker und nächste Schritte. Neue Wünsche und erledigte Teilschritte dort nachführen; weitere Chats liefern ihren Stand nicht automatisch. Ohne Zugriff diese Datei als Anhang anfordern.
+
+## Verbindliche Arbeitsbedingung
+
+Alle GradeCrew-Chats – einschließlich Planung und Design – befolgen [docs/CHAT_CONTRACT.md](docs/CHAT_CONTRACT.md). Neue Wünsche bleiben nicht nur im Gespräch: Task-ID, TODO-Status und passende Übergabe vor Abschluss sichern. Bei fehlendem Zugriff die ungespeicherte Übergabe ausdrücklich nennen.

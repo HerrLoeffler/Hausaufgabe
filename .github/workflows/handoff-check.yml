@@ -1,7 +1,7 @@
 name: Project handoff checks
 on:
   push:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   pull_request:
     paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**']
   workflow_dispatch:
@@ -30,6 +30,11 @@ jobs:
         run: |
           python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
           bash -n tools/automation/setup-staging-identity.sh
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Validate telemetry contract
+        run: node --test shared/telemetry/events.test.mjs
       - name: Publish readable summary
         env:
           CHECKED_SHA: ${{ github.sha }}

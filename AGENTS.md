@@ -28,3 +28,7 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 - Zu Beginn und bei Fragen nach offenen Aufgaben TODO.md frisch auf main lesen. P0/P1, Blocker und nächste Schritte nennen; ohne GitHub-Zugriff die Datei anfordern.
 - Neue Nutzerwünsche einer Task-ID zuordnen oder ergänzen; nach gesicherten Teilschritten den Status mit Nachweisen aktualisieren. Keine Erledigt-Markierung allein wegen eines Plans.
 - Vor Änderungen an der Liste Remote-Stand erneut lesen; nur betroffene Aufgaben ändern und parallele Ergänzungen erhalten. Details und Zwischenstände weiterhin in eigener Workstream-Übergabe führen.
+
+## Pflicht zur Dokumentation aller Chats
+- docs/CHAT_CONTRACT.md gilt auch für reine Design-, Produkt- und Planungschats. Auftrag einer Task-ID zuordnen, neue Wünsche/Blocker erfassen, Entscheidungen und Gründe in der passenden Übergabe sichern.
+- Vor Abschluss oder Aufgabenwechsel TODO.md und Workstream aktualisieren; Commit, echte Prüfungen, offene Punkte und nächsten ausführbaren Schritt nennen. Ohne Schreibzugriff eine kopierbare Übergabe liefern und fehlende Speicherung ausdrücklich melden.

@@ -40,6 +40,14 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-AUTOMATION-01 | Codex-Worker aktivieren und einmal vollständig testen | Blockiert durch Einrichtung | Separater API-Key und Aktivierungsvariable fehlen laut letzter Übergabe; API-Abrechnung beachten. [Einrichtung](docs/AUTOMATION_SETUP.md) |
 | GC-GAMES-01 | Escape-Room-MVP mit Lehrerübersicht konkretisieren | Konzept erfasst, Umsetzung offen | Games-Branch zuerst prüfen; eine digitale Welt, feste sichere Mechaniken, austauschbare GradeCrew-Fragen. [Konzept](docs/games/ESCAPE_MVP.md) |
 
+## Telemetrie – neue konkrete Schritte
+
+| ID | Aufgabe | Status | Nächster Schritt |
+|---|---|---|---|
+| GC-TELEMETRY-01 | Collector und Datenvertrag | Offen, Voraussetzung vor Aktivierung | Zwecke, Rollen, Aufbewahrung, Löschung und Auth festlegen; serverseitige Validierung, Deduplizierung und Limits. [Messplan](docs/telemetry/PLAN.md) |
+| GC-TELEMETRY-02 | Beitritt/Abgabe als ersten Ablauf instrumentieren | Wartet auf GC-TELEMETRY-01 | Echte Client-/Serverereignisse, Verlustfälle, Pausen und vollständigen Nenner prüfen. |
+| GC-TELEMETRY-03 | Release-/Rundenübersicht im Adminbereich | Wartet auf Messdaten | Vorhandene Admin-Filter und Fehlergruppen erweitern; keine unbelegten KPIs anzeigen. |
+
 ## P2 – vorgemerkt, noch keine laufende Umsetzung
 
 | ID | Aufgabe | Status | Nächster Schritt |
@@ -59,3 +67,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-DESIGN-FOUNDATION | Design Bible, Screen Map und gemeinsame Tokens | Design-Dokumentation und Dashboard integriert; visuelle Abnahme separat offen |
 
 Die Liste sammelt sichtbare Aufträge und bekannte Übergaben. Sie behauptet keine Vollständigkeit über alle anderen Chats.
+
+## Ergänzung 01.10.2026 – Telemetrie-Fundament
+
+GC-TELEMETRY-BASE: gemeinsamer Ereignisvertrag und In-Memory-Puffer standardmäßig deaktiviert; Kennzahlberechnung mit explizitem Nenner; Verhaltenstests. Noch nicht im Produkt eingebunden, kein Datentransfer und kein Analytics-Dashboard. Bestehende diagnostics.mjs und admin-log-tools.mjs wurden gelesen: Filter/Sortierung/Fehlergruppen existieren bereits und sollen weiterverwendet werden.
