@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from './crew-assistant-core.mjs';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
@@ -9,39 +10,69 @@ const source = fs.readFileSync('remy-ai-help.js', 'utf8');
 
 function setup(t) {
   const dom = new JSDOM(`<!doctype html><html><head></head><body>
-    <section id="createView"><div class="createChoiceGrid"><button id="createAiBtn">Mit KI erstellen</button><button id="createManualBtn">Manuell</button><article class="importChoiceCard"></article></div></section>
-    <section id="aiView" class="hidden"><div class="aiGrid"><article><input id="aiSubject"><textarea id="aiCustomNotes"></textarea><details class="gradecrewPreferenceDetails"></details></article><article><input id="aiImageQuestionCount"></article></div><button id="generateAiTestBtn">Test erstellen</button></section>
+    <section id="aiView">
+      <div class="pageHead"><h1>Test mit KI erstellen</h1></div>
+      <label>Fach<input id="aiSubject"></label>
+      <label>Klasse<input id="aiGrade"></label>
+      <label>Schulart<input id="aiSchoolType"></label>
+      <label>Region<input id="aiRegion"></label>
+      <label>Thema<input id="aiTopic"></label>
+      <label>Schwierigkeit<input id="aiDifficulty"></label>
+      <label>Anzahl<input id="aiCount"></label>
+      <label>Punkte<input id="aiPoints"></label>
+      <details><div id="aiTypeChecks"><label><input type="checkbox" value="single" checked>Single</label><label><input type="checkbox" value="multi">Multiple</label><label><input type="checkbox" value="text">Freitext</label></div></details>
+      <label>Wünsche<textarea id="aiCustomNotes"></textarea></label>
+      <button id="generateAiTestBtn">Test erstellen</button>
+    </section>
   </body></html>`, { url: 'https://example.test', runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window;
   t.after(() => w.close());
   w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = '1'; };
-  w.document.getElementById('createAiBtn').addEventListener('click', () => w.document.getElementById('aiView').classList.remove('hidden'));
-  w.eval(source.replace(/^export /gm, ''));
+
+  w.CREW_MEMBERS = CREW_MEMBERS;
+  w.patchSummary = patchSummary;
+  w.resolveLocalCrewRequest = resolveLocalCrewRequest;
+  w.getApp = () => ({});
+  w.getFunctions = () => ({});
+  w.httpsCallable = () => async () => ({ data: {} });
+
+  const executable = source
+    .replace(/^import .*;\s*$/gm, '')
+    .replace(/^export /gm, '');
+  w.eval(executable);
   return w;
 }
 
-async function settle(w, ms = 10) {
+async function settle(w, ms = 20) {
   await new Promise(resolve => w.setTimeout(resolve, ms));
 }
 
-test('Remy help is optional, opens AI creation and never locks form controls', async t => {
+test('Remy lives inside AI creation and fills the existing form without navigation', async t => {
   const w = setup(t);
-  const launcher = w.document.getElementById('gcRemyHelpLauncher');
-  assert.ok(launcher);
-  assert.match(launcher.textContent, /Remy hilft/);
+  const panel = w.document.getElementById('gcRemyCreatePanel');
+  assert.ok(panel);
+  assert.match(panel.textContent, /Remy/);
+  assert.equal(w.document.getElementById('gcRemyHelpLauncher'), null);
 
-  launcher.click();
-  await settle(w, 80);
-  assert.equal(w.document.getElementById('aiView').classList.contains('hidden'), false);
-  assert.ok(w.document.querySelector('.gcRemyGuide'));
-  assert.match(w.document.querySelector('.gcRemyGuide').textContent, /Du kannst während meiner Hilfe alles frei anklicken/);
-  assert.equal(w.document.getElementById('aiSubject').disabled, false);
-
-  w.document.querySelector('.gcRemyNext').click();
+  const input = w.document.getElementById('gcRemyCreateInput');
+  input.value = 'Erstelle mir einen Englischtest für die 4 Klasse für Farben, leichte Aufgaben, 12 Aufgaben und 20 Punkte.';
+  w.document.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
   await settle(w);
-  assert.ok(w.document.getElementById('aiCustomNotes').classList.contains('gcRemyHelpTarget'));
 
-  w.document.querySelector('.gcRemyStop').click();
-  assert.equal(w.document.querySelector('.gcRemyGuide'), null);
-  assert.equal(w.document.querySelector('.gcRemyHelpTarget'), null);
+  assert.equal(w.document.getElementById('aiSubject').value, 'Englisch');
+  assert.equal(w.document.getElementById('aiGrade').value, '4');
+  assert.equal(w.document.getElementById('aiTopic').value, 'Farben');
+  assert.equal(w.document.getElementById('aiDifficulty').value, 'leicht');
+  assert.equal(w.document.getElementById('aiCount').value, '12');
+  assert.equal(w.document.getElementById('aiPoints').value, '20');
+  assert.equal(w.document.getElementById('aiView').classList.contains('hidden'), false);
+  assert.equal(w.document.getElementById('aiTopic').disabled, false);
+  assert.match(w.document.getElementById('gcRemyCreateStatus').textContent, /Eingetragen/);
+});
+
+test('Remy dictation is designed to survive short browser speech pauses', () => {
+  assert.match(source, /active\.continuous = true/);
+  assert.match(source, /active\.onend = \(\) =>/);
+  assert.match(source, /setTimeout\(startRecognitionCycle, 180\)/);
+  assert.doesNotMatch(source, /gcRemyHelpLauncher|createAiBtn/);
 });
