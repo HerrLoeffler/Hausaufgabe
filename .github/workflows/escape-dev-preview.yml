@@ -8,6 +8,7 @@ on:
       - 'lab/escape-room/**'
       - 'tools/build-lab-escape-room.mjs'
       - 'tools/games/escape-room.test.cjs'
+      - 'tools/games/gradecrew-escape-adapter.test.cjs'
       - '.github/workflows/escape-dev-preview.yml'
   workflow_dispatch:
 
@@ -37,8 +38,8 @@ jobs:
       - name: Install test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
 
-      - name: Run Escape Room tests
-        run: node --test tools/games/escape-room.test.cjs
+      - name: Run Escape Room and GradeCrew adapter tests
+        run: node --test tools/games/escape-room.test.cjs tools/games/gradecrew-escape-adapter.test.cjs
 
       - name: Build Escape Room only
         run: |
