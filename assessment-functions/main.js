@@ -6,5 +6,6 @@
 module.exports = {
   ...require("./lib/secure-lifecycle"),
   ...require("./lib/cleanup"),
-  ...require("./lib/telemetry")
+  ...require("./lib/telemetry"),
+  ...require("./lib/telemetry-ai")
 };
