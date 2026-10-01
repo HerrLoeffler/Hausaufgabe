@@ -110,6 +110,8 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
+    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?)|(?:mit|ohne)\b).*$/i, "")
+    .replace(/\s+(?:mit|ohne)\s+(?=(?:single|multiple|freitext|offene|dropdown|richtig|lücken|luecken|zuord|sortier|reihenfolge|gruppier|kategorien|wörter|woerter|markier|rechen|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?))).*$/i, "")
     .replace(/\b(?:mit|und)\s+(?:leichten?|mittleren?|anspruchsvollen?|schweren?|gemischten?)\s+aufgaben.*$/i, "")
     .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
     .trim()
