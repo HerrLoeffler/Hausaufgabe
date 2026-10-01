@@ -1,0 +1,55 @@
+name: Apply Escape answer modes
+
+on:
+  push:
+    branches:
+      - feature/escape-room-mvp-v1
+    paths:
+      - 'tools/apply-escape-answer-modes.mjs'
+      - '.github/workflows/apply-escape-answer-modes.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-test:
+    if: ${{ !contains(github.event.head_commit.message || '', '[escape-answer-modes-applied]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/escape-room-mvp-v1
+          fetch-depth: 0
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+
+      - name: Apply answer-mode patch
+        run: node tools/apply-escape-answer-modes.mjs
+
+      - name: Check patched browser code
+        run: node --check lab/escape-room/app.js
+
+      - name: Install test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+
+      - name: Run Escape tests before committing patch
+        run: node --test tools/games/escape-room.test.cjs tools/games/gradecrew-escape-adapter.test.cjs
+
+      - name: Commit tested answer modes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lab/escape-room/app.js
+          if git diff --cached --quiet; then
+            echo "No app.js changes to commit."
+          else
+            git commit -m "Support Escape text and number answers [escape-answer-modes-applied]"
+            git push origin HEAD:feature/escape-room-mvp-v1
+          fi
