@@ -1,24 +1,59 @@
 {
-  "schema_version": 1,
-  "observed_at": "2026-10-01",
+  "schema_version": 2,
+  "observed_at": "2026-10-02",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
-  "description": "Datierte Beobachtungen; Branches und Deployments vor Änderungen erneut prüfen.",
+  "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
+  "status_model": {
+    "ordered_stages": [
+      "branch_only",
+      "ci_green",
+      "integrated",
+      "staging_deployed",
+      "user_tested",
+      "production"
+    ],
+    "rule": "Ein Feature darf nie nur als 'fertig' bezeichnet werden. Immer Branch/Commit, CI, Integration, Staging, Nutzertest und Production getrennt ausweisen.",
+    "production_requires_explicit_user_approval": true
+  },
+  "release_train": {
+    "id": "staging-batch-2026-10-02-a",
+    "purpose": "Erster gemeinsamer Teststand für Crew Assistant, Emmi und Tutorial V2.",
+    "integration_branch": "feature/gradecrew-app-integration",
+    "observed_integration_head": "0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+    "included_workstreams": [
+      "crew-assistant",
+      "emmi-whole-test-revision",
+      "tutorial-choice-replay-v1"
+    ],
+    "gates": {
+      "combined_ci": "pending_verification",
+      "hosting_preview": "pending_verification",
+      "staging_functions": "not_deployed",
+      "staging_rules": "unchanged",
+      "desktop_ipad_iphone_test": "not_tested",
+      "user_acceptance": "not_tested",
+      "production": "not_requested"
+    },
+    "important": "Der bestehende automatische Preview-Workflow deployt Hosting, aber keine Functions. Crew Assistant und Emmi benötigen ihre neuen Staging-Callables; ein reiner Hosting-Preview ist deshalb kein vollständiger Funktionsnachweis.",
+    "next_action": "Gesamt-CI des Integrationsheads prüfen; danach sicheren Staging-Functions-Deploypfad für genau die benötigten Callables herstellen und erst dann den gemeinsamen Staging-Test als vollständig deployed markieren."
+  },
   "production": {
     "project": "hausaufgabe-40294",
     "approval_required": true,
-    "deployment_verified_this_session": false
+    "deployment_verified_this_session": false,
+    "changed_by_current_release_train": false
   },
   "automation": {
     "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "preview_deployment": "verified",
+    "preview_deployment": "verified_hosting_only",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
       "run_id": 36878009106,
       "app_ci_run_id": 36877793069,
       "mobile_tutorial_run_id": 36877793076,
       "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
-      "verification": "Build and deploy succeeded; branch still pointed at the tested commit; published manifest and file hashes verified after deployment; verified-preview-receipt stored.",
+      "verification": "Build and hosting preview deploy succeeded; exact tested branch head checked before deploy; published manifest and file hashes verified after deployment.",
       "date": "2026-10-01"
     },
     "hosting_archive": {
@@ -35,52 +70,117 @@
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
-      "handoff": "workstreams/web-app.md plus workstreams/design-dashboard-v1.md"
+      "observed_head": "0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+      "stage": "integrated",
+      "ci": "pending_verification_for_current_head",
+      "staging": "pending_verification",
+      "user_test": "not_tested",
+      "handoff": "workstreams/web-app.md",
+      "next_action": "Gesamt-CI und Staging-Deploy für den aktuellen Integrationshead verifizieren."
+    },
+    {
+      "id": "crew-assistant",
+      "branch": "feature/crew-assistant-v1",
+      "observed_head": "34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
+      "stage": "integrated",
+      "ci": "success_run_36937201021",
+      "integrated_into": "feature/gradecrew-app-integration@cbeedd3ddfb1ed75d5187b8d2e02e5a5dd6616a8",
+      "staging": "not_fully_deployed",
+      "user_test": "not_tested",
+      "next_action": "Gemeinsamen Staging-Stand inklusive crewAssistant Callable bereitstellen und testen."
+    },
+    {
+      "id": "emmi-whole-test-revision",
+      "branch": "feature/emmi-whole-test-revision-v1",
+      "observed_head": "5eee5e574c690138cdeafdcfcb74a49c6ae9d03d",
+      "stage": "integrated",
+      "ci": "included_in_crew_success_run_36937201021",
+      "integrated_into": "feature/crew-assistant-v1@34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
+      "also_in_web_integration": "feature/gradecrew-app-integration@0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+      "staging": "not_fully_deployed",
+      "user_test": "not_tested",
+      "next_action": "reviseWholeTest Callable in Staging deployen und echten Runtime-Test gegen OpenAI durchführen."
+    },
+    {
+      "id": "tutorial-choice-replay-v1",
+      "branch": "feature/tutorial-choice-replay-v1",
+      "observed_head": "d8453750be5965113217636478212d83e704174f",
+      "stage": "integrated",
+      "ci": "isolated_ci_green_run_36935628293",
+      "integrated_into": "feature/gradecrew-app-integration@0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+      "staging": "pending_verification",
+      "user_test": "not_tested",
+      "next_action": "Im gemeinsamen Staging-Stand Profilspeicherung, Abbruch und Replay auf Desktop/iPad/iPhone prüfen."
+    },
+    {
+      "id": "freetext-review",
+      "branch": "feature/freetext-review-priority",
+      "observed_head": "67dacb0e5fd1e2371ecbf142de37703e3b2ba1f7",
+      "stage": "ci_green",
+      "staging": "not_deployed",
+      "user_test": "not_tested",
+      "next_action": "Rules/Emulator gegen aktuellen Standard prüfen und danach als nächsten Staging-Batch integrieren."
+    },
+    {
+      "id": "telemetry",
+      "branch": "feature/telemetry-implementation",
+      "observed_head": "4e4f0ba90a5bbb68e63a8836782289b46fbef21f",
+      "stage": "ci_green",
+      "staging": "not_activated",
+      "user_test": "not_tested",
+      "evidence": "Assessment/Rules/Functions integration emulator passed on integration/telemetry-emulator-gate@dd722845a1f75feaa0369fde34a1d0dee3c56c52, run 36934351905.",
+      "next_action": "Retention/Dateninventar freigeben und danach kontrollierten Staging-Pilot aktivieren."
+    },
+    {
+      "id": "games-escape",
+      "branch": "feature/escape-room-mvp-v1",
+      "observed_head": "c904a67428e40f2e5257dad11a1895945f016aa7",
+      "stage": "staging_deployed",
+      "staging": "isolated_preview_only",
+      "user_test": "physical_device_test_open",
+      "next_action": "Echten Desktop/iPad-Test durchführen; Hauptprodukt-/Auth-Integration bleibt separat."
     },
     {
       "id": "security",
       "branch": "feature/secure-assessment-v1",
       "observed_head": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
-      "handoff": "GRADECREW_STATUS.md on security branch"
+      "stage": "branch_only",
+      "staging": "status_recheck_required",
+      "user_test": "30_participant_failure_unresolved",
+      "next_action": "Fehlernachweis/Logs des 30-Teilnehmer-Tests zuordnen und Security-Gates abschließen."
     },
     {
       "id": "ios-design",
       "branch": "feature/shared-gradecrew-design-system",
       "observed_head": "9fe3e37407832e20f75536bf4d59fec9ba801298",
-      "handoff": "Read current branch documentation before continuing"
-    },
-    {
-      "id": "design-foundation",
-      "branch": "feature/gradecrew-design-foundation-v1",
-      "observed_head": "07d2ad1e00de555f752be236158ef89e7d0df14f",
-      "handoff": "workstreams/design-system.md"
+      "stage": "branch_only",
+      "user_test": "not_currently_verified",
+      "next_action": "Aktuellen TestFlight-/WebView-Stand und tatsächlich verwendete Web-URL verifizieren."
     },
     {
       "id": "design-dashboard-v1",
       "branch": "feature/design-dashboard-v1",
       "observed_head": "ed8f1a6f3c11d823ade0a5da464b56474fd4efac",
-      "integrated_into": "feature/gradecrew-app-integration@74eb2ec08e81315875abfc4b1ae052d9f78797eb",
-      "handoff": "workstreams/design-dashboard-v1.md"
-    },
-    {
-      "id": "games",
-      "branch": "lab/games-structure",
-      "observed_head": "869ca416b868667c9e48c05f81c967fe6ad59020",
-      "handoff": "Read current branch documentation before continuing"
+      "stage": "integrated",
+      "integrated_into": "feature/gradecrew-app-integration",
+      "user_test": "visual_device_acceptance_open",
+      "next_action": "Gemeinsam mit dem aktuellen Staging-Batch visuell abnehmen."
     }
   ],
   "deployments": [
     {
       "environment": "preview",
+      "type": "hosting_only",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "evidence": "Automatic preview run 36878009106: build and deploy succeeded; exact tested branch head checked before deploy; published manifest and file hashes verified after deploy; verified-preview-receipt artifact stored.",
-      "verified_commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb"
+      "evidence": "Automatic preview run 36878009106 verified the previous integration head and file hashes.",
+      "verified_commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "contains_current_release_train": false
     }
   ],
   "blockers": [
-    "30-user test failed; cause not confirmed",
-    "Tutorial manual submission in app reported broken; local gc29 draft not yet integration-tested",
-    "Production security gates not all verified"
+    "Current combined staging batch still needs verified CI/deploy evidence for integration head 0261ac848a5c58fa665dc4832fe1fca17317b4c3.",
+    "Automatic preview deployment is hosting-only; Crew Assistant and Emmi need new staging Functions before full end-to-end testing.",
+    "30-user test failed; cause not confirmed.",
+    "Production security gates are not all verified."
   ]
 }
