@@ -342,6 +342,62 @@
     $('questionOptions').replaceChildren(...nodes);
   }
 
+  function renderPrimaryAnswer(question) {
+    const mode = question.answerMode || 'choice';
+    if (mode === 'choice') {
+      renderChoiceOptions(question);
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'activeLearningTask primaryAnswerTask';
+    const input = document.createElement('input');
+    input.id = 'primaryAnswerInput';
+    input.type = 'text';
+    input.autocomplete = 'off';
+    input.spellcheck = mode !== 'number';
+    input.inputMode = mode === 'number' ? 'decimal' : 'text';
+    input.placeholder = mode === 'number' ? 'Zahl eingeben' : 'Antwort eingeben';
+    wrapper.append(input);
+
+    if (mode === 'number' && question.unit) {
+      const unit = document.createElement('small');
+      unit.className = 'primaryAnswerUnit';
+      unit.textContent = `Einheit: ${question.unit}`;
+      wrapper.append(unit);
+    }
+
+    $('questionOptions').replaceChildren(wrapper);
+    setTimeout(() => input.focus(), 0);
+  }
+
+  function evaluatePrimaryAnswer(question) {
+    const mode = question.answerMode || 'choice';
+    if (mode === 'choice') {
+      const picked = $('questionOptions').querySelector('input:checked');
+      if (!picked) return { answered: false, correct: false };
+      return { answered: true, correct: Number(picked.value) === question.correctIndex };
+    }
+
+    const input = $('primaryAnswerInput');
+    const raw = String(input?.value || '').trim();
+    if (!raw) return { answered: false, correct: false };
+
+    if (mode === 'text') {
+      const accepted = (question.acceptedAnswers || []).map(normalizeAnswer);
+      return { answered: true, correct: accepted.includes(normalizeAnswer(raw)) };
+    }
+
+    if (mode === 'number') {
+      const value = Number(raw.replace(',', '.'));
+      const expected = Number(question.numericAnswer);
+      const tolerance = Math.max(0, Number(question.tolerance) || 0);
+      return { answered: true, correct: Number.isFinite(value) && Number.isFinite(expected) && Math.abs(value - expected) <= tolerance + 1e-9 };
+    }
+
+    return { answered: false, correct: false };
+  }
+
   function openQuestion(id, handler) {
     if (done(id)) {
       msg('Diese Lernaufgabe ist bereits gelöst.');
@@ -360,7 +416,7 @@
     } else {
       $('questionTitle').textContent = `Aufgabe ${id.slice(1)}`;
       $('questionPrompt').textContent = question.prompt;
-      renderChoiceOptions(question);
+      renderPrimaryAnswer(question);
     }
 
     $('questionDialog').showModal();
@@ -512,13 +568,13 @@
       return;
     }
 
-    const picked = $('questionOptions').querySelector('input:checked');
-    if (!picked) {
-      showFeedback('Wähle zuerst eine Antwort.');
+    const evaluation = evaluatePrimaryAnswer(question);
+    if (!evaluation.answered) {
+      showFeedback((question.answerMode || 'choice') === 'choice' ? 'Wähle zuerst eine Antwort.' : 'Gib zuerst eine Antwort ein.');
       return;
     }
 
-    const correct = Number(picked.value) === question.correctIndex;
+    const correct = evaluation.correct;
     S.attempts[question.id] = (S.attempts[question.id] || 0) + 1;
     const attempt = S.attempts[question.id];
 
@@ -545,11 +601,12 @@
 
     if (attempt >= D.world.remediationPolicy.retryBeforeSupport) {
       $('remyHelp').hidden = false;
-      showFeedback('Noch nicht richtig. Die Antworten wurden neu gemischt. Du kannst Remy jetzt auch konkret fragen, was unklar ist.', 'error');
+      const retryText = (question.answerMode || 'choice') === 'choice' ? 'Die Antworten wurden neu gemischt.' : 'Versuche es nach dem Hinweis noch einmal.';
+      showFeedback(`Noch nicht richtig. ${retryText} Du kannst Remy jetzt auch konkret fragen, was unklar ist.`, 'error');
     } else {
       showFeedback('Noch nicht richtig. Lies die Aufgabe noch einmal und probiere es erneut.', 'error');
     }
-    renderChoiceOptions(question);
+    renderPrimaryAnswer(question);
     save();
   });
 
@@ -1000,8 +1057,11 @@
     const edit = document.createElement('button');
     edit.type = 'button';
     edit.className = 'smallButton';
-    edit.textContent = 'Bearbeiten';
-    edit.onclick = () => openTeacherEdit(question.id);
+    const locallyEditable = (question.answerMode || 'choice') === 'choice' && (question.options || []).length === 4;
+    edit.textContent = locallyEditable ? 'Bearbeiten' : 'Im Testeditor bearbeiten';
+    edit.disabled = !locallyEditable;
+    edit.title = locallyEditable ? '' : 'Dieser Antworttyp bleibt im GradeCrew-Testeditor bearbeitbar.';
+    if (locallyEditable) edit.onclick = () => openTeacherEdit(question.id);
 
     top.append(title, edit);
 
@@ -1009,7 +1069,13 @@
     prompt.textContent = question.prompt;
 
     const solution = document.createElement('span');
-    solution.textContent = `Lösung: ${question.options[question.correctIndex]} · Hinweis: ${question.hint}`;
+    const mode = question.answerMode || 'choice';
+    const correctDisplay = mode === 'text'
+      ? (question.acceptedAnswers || []).join(' / ')
+      : mode === 'number'
+        ? `${question.numericAnswer}${question.unit ? ` ${question.unit}` : ''}${Number(question.tolerance) ? ` (±${question.tolerance})` : ''}`
+        : question.options[question.correctIndex];
+    solution.textContent = `Lösung: ${correctDisplay} · Hinweis: ${question.hint}`;
 
     const support = document.createElement('span');
     support.textContent = `Nach 3 Versuchen: ${question.remediation.explanation} · Transfer: ${question.remediation.transfer.prompt}`;

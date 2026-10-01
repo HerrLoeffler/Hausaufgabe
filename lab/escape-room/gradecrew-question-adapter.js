@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const COMPATIBLE_TYPES = Object.freeze(['single', 'dropdown', 'truefalse']);
-  const PLANNED_TYPES = Object.freeze(['text', 'number']);
+  const COMPATIBLE_TYPES = Object.freeze(['single', 'dropdown', 'truefalse', 'text', 'number']);
+  const PLANNED_TYPES = Object.freeze([]);
   const UNSUPPORTED_TYPES = Object.freeze(['multi', 'gapfill', 'matching', 'ordering', 'grouping', 'markwords']);
 
   const clone = value => JSON.parse(JSON.stringify(value));
@@ -45,17 +45,6 @@
     const errors = [];
     const warnings = [];
 
-    if (PLANNED_TYPES.includes(type)) {
-      errors.push(issue(
-        'answer_mode_not_ready',
-        type === 'text'
-          ? 'Freitext ist im GradeCrew-Datenvertrag vorbereitet, wird im Escape-Hauptslot aber erst freigeschaltet, wenn Eingabe und automatische Variantenprüfung vollständig getestet sind.'
-          : 'Zahlaufgaben sind im GradeCrew-Datenvertrag vorbereitet, werden im Escape-Hauptslot aber erst freigeschaltet, wenn Zahl/Toleranz/Einheit vollständig getestet sind.',
-        sourceIndex
-      ));
-      return { errors, warnings };
-    }
-
     if (!COMPATIBLE_TYPES.includes(type)) {
       const known = UNSUPPORTED_TYPES.includes(type);
       errors.push(issue(
@@ -71,6 +60,29 @@
     if (visualDependency(source)) {
       errors.push(issue('visual_dependency', 'Bildabhängige Aufgaben werden erst übernommen, wenn der Escape Room Bilder sicher im Lernslot anzeigen kann.', sourceIndex));
       return { errors, warnings };
+    }
+
+    if (type === 'text') {
+      const acceptedAnswers = Array.isArray(source.acceptedAnswers) ? source.acceptedAnswers.map(nonempty).filter(Boolean) : [];
+      if (source.manualReview !== false) {
+        errors.push(issue('manual_review_required', 'Freitext mit manueller Nachkorrektur darf den Spielfortschritt nicht automatisch freischalten.', sourceIndex));
+        return { errors, warnings };
+      }
+      if (!acceptedAnswers.length) {
+        errors.push(issue('missing_accepted_answers', 'Freitext benötigt mindestens eine akzeptierte Antwortvariante.', sourceIndex));
+        return { errors, warnings };
+      }
+      return { answer: { answerMode: 'text', acceptedAnswers }, errors, warnings };
+    }
+
+    if (type === 'number') {
+      const numericAnswer = Number(source.numericAnswer);
+      const tolerance = source.tolerance == null || source.tolerance === '' ? 0 : Number(source.tolerance);
+      if (!Number.isFinite(numericAnswer) || !Number.isFinite(tolerance) || tolerance < 0) {
+        errors.push(issue('invalid_numeric_answer', 'Zahlaufgaben benötigen eine numerische Lösung und eine Toleranz größer oder gleich 0.', sourceIndex));
+        return { errors, warnings };
+      }
+      return { answer: { answerMode: 'number', numericAnswer, tolerance, unit: nonempty(source.unit) }, errors, warnings };
     }
 
     if (type === 'single' || type === 'dropdown') {

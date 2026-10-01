@@ -81,7 +81,7 @@ test('adapter requires exactly eight selected questions and eight support packs'
   }
 });
 
-test('adapter fails closed for free text, number and complex question types until their engine modes are tested', () => {
+test('adapter supports safe free text and number while complex types stay fail-closed', () => {
   const { w } = loadAdapter();
   try {
     const support = supportsFromCanonical(w)[0];
@@ -90,13 +90,25 @@ test('adapter fails closed for free text, number and complex question types unti
       { type: 'text', text: 'Nenne die Hauptstadt.', acceptedAnswers: ['München'], manualReview: false },
       support, 'q1', 0
     );
-    assert.equal(text.errors[0].code, 'answer_mode_not_ready');
+    assert.equal(text.errors.length, 0);
+    assert.equal(text.question.answerMode, 'text');
+    assert.deepEqual(Array.from(text.question.acceptedAnswers), ['München']);
 
     const number = w.GradeCrewEscapeQuestionAdapter.adaptQuestion(
       { type: 'number', text: '2 + 2 = ?', numericAnswer: 4, tolerance: 0, unit: '' },
       support, 'q1', 0
     );
-    assert.equal(number.errors[0].code, 'answer_mode_not_ready');
+    assert.equal(number.errors.length, 0);
+    assert.equal(number.question.answerMode, 'number');
+    assert.equal(number.question.numericAnswer, 4);
+    assert.equal(number.question.tolerance, 0);
+
+
+    const manualText = w.GradeCrewEscapeQuestionAdapter.adaptQuestion(
+      { type: 'text', text: 'Begründe.', acceptedAnswers: ['Beispiel'], manualReview: true },
+      support, 'q1', 0
+    );
+    assert.equal(manualText.errors[0].code, 'manual_review_required');
 
     const multi = w.GradeCrewEscapeQuestionAdapter.adaptQuestion(
       { type: 'multi', text: 'Wähle alle.', options: [{ text: 'A', correct: true }, { text: 'B', correct: true }] },

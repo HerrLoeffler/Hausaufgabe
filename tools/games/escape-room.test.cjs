@@ -183,6 +183,43 @@ test('three attempts trigger mandatory active learning and transfer before progr
   }
 });
 
+test('text answer mode can unlock progress with an accepted answer', () => {
+  const { w, d } = openEscape();
+  try {
+    const set = w.GradeCrewEscapeIntegration.getQuestionSet();
+    set[0] = { ...set[0], answerMode: 'text', acceptedAnswers: ['München', 'Muenchen'] };
+    delete set[0].options;
+    delete set[0].correctIndex;
+    assert.equal(w.GradeCrewEscapeIntegration.replaceQuestionSet(set).ok, true);
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="desk"]');
+    const input = d.getElementById('primaryAnswerInput');
+    assert.ok(input);
+    input.value = 'muenchen';
+    submitForm(w, d);
+    assert.equal(d.getElementById('progressText').textContent, '1 / 8 Fragen');
+  } finally { w.close(); }
+});
+
+test('number answer mode accepts decimal comma within tolerance', () => {
+  const { w, d } = openEscape();
+  try {
+    const set = w.GradeCrewEscapeIntegration.getQuestionSet();
+    set[0] = { ...set[0], answerMode: 'number', numericAnswer: 4.5, tolerance: 0.05, unit: 'kg' };
+    delete set[0].options;
+    delete set[0].correctIndex;
+    assert.equal(w.GradeCrewEscapeIntegration.replaceQuestionSet(set).ok, true);
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="desk"]');
+    const input = d.getElementById('primaryAnswerInput');
+    assert.ok(input);
+    assert.match(d.getElementById('questionOptions').textContent, /kg/);
+    input.value = '4,52';
+    submitForm(w, d);
+    assert.equal(d.getElementById('progressText').textContent, '1 / 8 Fragen');
+  } finally { w.close(); }
+});
+
 test('local Remy knowledge answers are cached without using an external bridge', async () => {
   const { w } = openEscape();
   try {
