@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-01",
+  "repository": "HerrLoeffler/Hausaufgabe",
+  "registry_branch": "main",
+  "description": "Datierte Beobachtungen; Branches und Deployments vor Änderungen erneut prüfen.",
+  "production": {
+    "project": "hausaufgabe-40294",
+    "approval_required": true,
+    "deployment_verified_this_session": false
+  },
+  "automation": {
+    "agent_dispatch": "not_configured",
+    "preview_deployment": "not_configured",
+    "handoff_ci": "coordination_validation_and_artifact_only"
+  },
+  "workstreams": [
+    {
+      "id": "web-app",
+      "branch": "feature/gradecrew-app-integration",
+      "observed_head": "5a3b8ea168c74bc25dd14aad599670d17bafaa92",
+      "handoff": "workstreams/web-app.md"
+    },
+    {
+      "id": "security",
+      "branch": "feature/secure-assessment-v1",
+      "observed_head": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
+      "handoff": "GRADECREW_STATUS.md on security branch"
+    },
+    {
+      "id": "ios-design",
+      "branch": "feature/shared-gradecrew-design-system",
+      "observed_head": "9fe3e37407832e20f75536bf4d59fec9ba801298",
+      "handoff": "Read current branch documentation before continuing"
+    },
+    {
+      "id": "games",
+      "branch": "lab/games-structure",
+      "observed_head": "869ca416b868667c9e48c05f81c967fe6ad59020",
+      "handoff": "Read current branch documentation before continuing"
+    }
+  ],
+  "deployments": [
+    {
+      "environment": "preview",
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/",
+      "evidence": "User reported deployment; exact deployed commit not reverified",
+      "verified_commit": null
+    }
+  ],
+  "blockers": [
+    "30-user test failed; cause not confirmed",
+    "Tutorial manual submission in app reported broken; local gc29 draft not yet integration-tested",
+    "Production security gates not all verified"
+  ]
+}

@@ -1,3 +1,5 @@
+> **Historische Übergabe (29.09.2026).** Aktueller gemeinsamer Einstieg: [START_HERE.md](START_HERE.md). Branches und Aufgaben stehen in `GRADECREW_STATE.json` und `workstreams/`. Die folgenden Aussagen wurden hier nicht erneut als aktueller Release-Stand bestätigt.
+
 # GradeCrew – Cross-Chat Status
 
 > **Purpose:** This file is a compact handoff for new ChatGPT/Work chats. It is documentation only and must never be treated as production configuration.
@@ -94,3 +96,4 @@ After a meaningful GradeCrew work session, update only what changed:
 - new architectural decisions or red lines
 
 Keep it short enough that a new chat can understand the project state in a minute. Detailed history belongs in Git commits/issues, not here.
+

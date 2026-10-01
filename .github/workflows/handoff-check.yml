@@ -1,0 +1,42 @@
+name: Project handoff checks
+on:
+  push:
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/handoff-check.yml']
+  pull_request:
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/handoff-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate project coordination
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          data = json.loads(pathlib.Path('GRADECREW_STATE.json').read_text())
+          assert data['schema_version'] == 1
+          assert data['production']['project'] == 'hausaufgabe-40294'
+          assert data['production']['approval_required'] is True
+          assert data['automation']['agent_dispatch'] == 'not_configured'
+          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md']:
+              assert pathlib.Path(name).is_file(), name
+          PY
+          python3 tools/checkpoint.py --task handoff-ci --goal 'Koordinationsdateien prüfen' --done 'JSON und Einstiegsdateien geprüft; keine Anwendungstests' --next 'Baustellenspezifische CI und Deploy-Nachweise separat prüfen' --output handoff-report.json
+      - name: Publish readable summary
+        env:
+          CHECKED_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              f.write('## Projektübergabe geprüft\n\nCommit: `' + os.environ['CHECKED_SHA'] + '`\n\nJSON-Bericht als Artefakt verfügbar. Dieser Lauf prüft ausschließlich Koordinationsdateien. Kein App-Test und kein Deploy.\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: handoff-${{ github.sha }}
+          path: handoff-report.json
+          retention-days: 30
