@@ -31,7 +31,7 @@ jobs:
               assert item.get('stage') in expected, item
               assert item.get('branch'), item
               assert item.get('next_action'), item
-          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md', 'tools/release_status.py']:
+          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md', 'tools/release_status.py', 'tools/automation/deploy-staging-ai-functions.sh']:
               assert pathlib.Path(name).is_file(), name
           PY
           python3 tools/release_status.py >/dev/null
@@ -40,6 +40,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
           bash -n tools/automation/setup-staging-identity.sh
+          bash -n tools/automation/deploy-staging-ai-functions.sh
       - uses: actions/setup-node@v5
         with:
           node-version: 22
