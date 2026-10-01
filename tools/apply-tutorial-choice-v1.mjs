@@ -32,6 +32,15 @@ function patchTour() {
     );
   }
 
+  if (!source.includes("freeRegion = null;\n    removeOffer();\n    hideCoach();")) {
+    source = replaceOnce(
+      source,
+      "    freeRegion = null;\n    hideCoach();",
+      "    freeRegion = null;\n    removeOffer();\n    hideCoach();",
+      "stop removes offer"
+    );
+  }
+
   if (!source.includes("removeOffer();\n    suppressLegacyGuides();")) {
     source = replaceOnce(
       source,
