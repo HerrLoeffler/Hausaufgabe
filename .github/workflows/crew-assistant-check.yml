@@ -25,7 +25,23 @@ jobs:
           cache-dependency-path: functions/package-lock.json
 
       - name: Test browser-side Crew core
-        run: node --test crew-assistant-core.test.mjs
+        id: crew_core
+        shell: bash
+        run: |
+          set +e
+          node --test crew-assistant-core.test.mjs 2>&1 | tee crew-core-test.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit "$code"
+
+      - name: Upload Crew core test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-core-test-log-${{ github.run_id }}
+          path: crew-core-test.log
+          if-no-files-found: ignore
+          retention-days: 2
 
       - name: Install function dependencies
         working-directory: functions
