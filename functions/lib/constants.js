@@ -34,4 +34,17 @@ const LIMITS = Object.freeze({
   assistantPerDay: 400
 });
 
-module.exports = { REGION, TEXT_MODEL, IMAGE_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS };
+// Keep expensive/raw data short-lived and retain only compact aggregates long-term.
+// These values are deliberately conservative for the beta and can be tuned without
+// changing the persisted test format.
+const RETENTION = Object.freeze({
+  orphanUploadHours: 24,
+  aiEventDays: 30,
+  aiQuotaDays: 14,
+  generatedMediaCacheDays: 30
+});
+
+module.exports = {
+  REGION, TEXT_MODEL, IMAGE_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION,
+  QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS, RETENTION
+};

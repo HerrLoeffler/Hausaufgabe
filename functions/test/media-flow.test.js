@@ -26,6 +26,31 @@ test("a generated image reaches the teacher after image and review accounting", 
   ]);
 });
 
+test("a verified cache hit skips image quota, generation and repeat visual review", async () => {
+  const calls = [];
+  const cached = {
+    imageDataUrl: "data:image/webp;base64,dGVzdA==",
+    imageAlt: "Buch",
+    imageByteSize: 4,
+    cacheHit: true,
+    verifiedCache: true
+  };
+  const result = await createVerifiedMedia({
+    uid: "teacher", questionId: "q-cache", prompt: "Ein Buch auf einem Tisch", expectedScene: "Ein Buch auf einem Tisch", questionText: "Welcher Gegenstand liegt auf dem Tisch?", altText: "Buch", maxBytes: 95000
+  }, {
+    cacheLoad: async context => { calls.push(["cache", context.uid, context.prompt]); return cached; },
+    consume: async () => { throw new Error("quota must not be consumed on a cache hit"); },
+    generate: async () => { throw new Error("image API must not be called on a cache hit"); },
+    inspect: async () => { throw new Error("verified cached image must not be reviewed again"); },
+    record: async (_uid, kind, _usage, extra) => calls.push(["usage", kind, extra.cacheHit])
+  });
+  assert.equal(result.asset, cached);
+  assert.deepEqual(calls, [
+    ["cache", "teacher", "Ein Buch auf einem Tisch"],
+    ["usage", "image_cache_hit", true]
+  ]);
+});
+
 test("a failed usage write does not discard a paid-for image", async () => {
   const errors = [];
   const original = console.error;
