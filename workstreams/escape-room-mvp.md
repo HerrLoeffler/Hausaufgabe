@@ -5,7 +5,7 @@
 - Aufgabenbranch: `feature/escape-room-mvp-v1`
 - Draft-PR: `#10` gegen `lab/games-structure`
 - Basiscommit: `869ca416b868667c9e48c05f81c967fe6ad59020` (`lab/games-structure`)
-- Wichtige Checkpoints: `408f621` Engine, `19e34d1` Lösungsweg-/Resume-Tests, `2e51f89` Hub-Integration, `9dd0849` Browser-Visibility-Fix, `664f605` gemeinsame Check-/Deploy-Texte und Escape-Syntaxprüfung
+- Wichtige Checkpoints: `408f621` Engine, `19e34d1` Lösungsweg-/Resume-Tests, `2e51f89` Hub-Integration, `9dd0849` Browser-Visibility-Fix, `664f605` vollständig grüner Code-Stand
 - Betroffene Dateien: `lab/escape-room/**`, `lab/shared/games-catalog.js`, `lab/games-hub/**`, `tools/build-lab-escape-room.mjs`, `tools/games/**`, `deploy-lab-games-hub.sh`
 - Überschneidungen: spätere echte Lehrer-/KI-/Testintegration berührt die Web-App; Live/Multiplayer gehört ausdrücklich nicht zu diesem MVP
 
@@ -29,7 +29,7 @@ Erster spielbarer, vollständig digitaler Escape-Room-Prototyp „Die verriegelt
 - eigener isolierter Build mit SHA-256-Manifest
 - Games-Hub-Katalog als viertes Spiel; Escape Room bewusst nur im Modus `Üben`
 - Escape Room erscheint nicht in Rundencode-/Live-Auswahl und nicht in Highscore/Live-Modus
-- gemeinsamer Hub-Build prüft jetzt auch Escape-Daten, App und Buildskript per Syntaxcheck
+- gemeinsamer Hub-Build prüft Escape-Daten, App und Buildskript per Syntaxcheck
 
 ## Automatisierte Prüfungen
 
@@ -57,20 +57,19 @@ Der erste Chromium-Lauf nach Hub-Integration (`36923989725`) fand einen echten C
 ## Nachweisstatus
 
 - Code auf GitHub gesichert: ja, Branch `feature/escape-room-mvp-v1`, Draft-PR `#10`
-- Isolierter Build: erfolgreich
-- Node-/jsdom-Strukturtests: erfolgreich auf integriertem Stand vor Visibility-Fix; 23/23 Tests grün
-- Vollständiger Chromium-Nachweis der aktuellen Branchspitze: vor Merge über die aktuellen PR-Checks prüfen; der vorherige rote Lauf ist dokumentiert und gezielt behoben
+- Isolierter Build: **erfolgreich**
+- Node-/jsdom-Strukturtests: **23/23 grün** auf dem integrierten Code-Stand
+- Chromium-Browserprüfung: **grün** auf Code-Commit `664f605`, Workflow-Run `36924444942`; inklusive bestehender neun Spiel/Modus-Flows und Escape `practice`
 - Deployed: **nein**; weder Staging noch Production wurden in diesem Chat veröffentlicht
 - Physischer Gerätetest: **nein**; Chromium emuliert Viewports, ersetzt keinen echten iPad-/Handy-Test
 
 ## Offene Probleme und nächste Schritte
 
-1. Aktuelle PR-Checks auf der Branchspitze müssen vollständig grün sein.
-2. Danach sicheren Lab-Preview-Deploy erwägen und auf echtem Desktop/iPad testen.
-3. Adapter vom GradeCrew-Test-/KI-Frageformat auf die acht validierten Frage-Slots definieren.
-4. Lehrer-Vorschau bei echter GradeCrew-Integration an Lehrer-Auth/Berechtigungen binden.
-5. Erst nach dem Telemetrie-Collector-Vertrag die vorhandenen lokalen Event-Hooks an echte Erhebung anschließen.
-6. Welt 2 („Das verschwundene Prüfungsblatt“) erst auf dem gemeinsamen stabilen Escape-Kern aufbauen.
+1. Sicheren Lab-Preview-Deploy durchführen und auf echtem Desktop/iPad testen.
+2. Adapter vom GradeCrew-Test-/KI-Frageformat auf die acht validierten Frage-Slots definieren.
+3. Lehrer-Vorschau bei echter GradeCrew-Integration an Lehrer-Auth/Berechtigungen binden.
+4. Erst nach dem Telemetrie-Collector-Vertrag die vorhandenen lokalen Event-Hooks an echte Erhebung anschließen.
+5. Welt 2 („Das verschwundene Prüfungsblatt“) erst auf dem gemeinsamen stabilen Escape-Kern aufbauen.
 
 ## Wiederaufnahme nach Abbruch
 
