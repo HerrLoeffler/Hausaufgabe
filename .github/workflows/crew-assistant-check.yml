@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/crew-assistant-v1
+      - feature/emmi-whole-test-revision-v1
   workflow_dispatch:
 
 permissions:
@@ -12,7 +13,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -43,6 +44,12 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
 
+      - name: Check Emmi browser modules and editor bridge
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1'
+        run: |
+          node --check emmi-whole-test-revision.mjs
+          node --test emmi-whole-test-bridge.test.mjs
+
       - name: Install function dependencies
         working-directory: functions
         run: npm ci --include=dev
@@ -50,6 +57,11 @@ jobs:
       - name: Test Crew server contract
         working-directory: functions
         run: node --test test/crew-assistant.test.js
+
+      - name: Test Emmi whole-test safeguards
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1'
+        working-directory: functions
+        run: node --test test/whole-test-revision.test.js
 
       - name: Check function syntax and lint
         working-directory: functions
