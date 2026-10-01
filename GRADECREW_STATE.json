@@ -10,8 +10,8 @@
     "deployment_verified_this_session": false
   },
   "automation": {
-    "agent_dispatch": "not_configured",
-    "preview_deployment": "not_configured",
+    "agent_dispatch": "implemented_pending_credentials_and_e2e",
+    "preview_deployment": "implemented_pending_identity_and_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only"
   },
   "workstreams": [

@@ -28,7 +28,8 @@ Eine grüne CI beweist keinen Firebase-Deploy, keine Security-Freigabe und keine
 
 > Weiter mit GradeCrew, Baustelle: … . Lies auf main START_HERE.md und die passende Übergabe. Prüfe zuerst Zugriff, tatsächlichen Branch/Commit und ungesicherte Änderungen. Setze beim nächsten belegten offenen Schritt fort.
 
-## Grenzen der Automatisierung
+## Automatisierung aktivieren und prüfen
 
-Repo-Dateien starten keinen Coding-Agenten. Der ausführende Chat oder Codex-Auftrag muss separat gestartet bzw. später ausdrücklich angebunden werden. Eine Datei ist keine exklusive Arbeitssperre.
-Automatische Staging-Previews benötigen eine eingerichtete GitHub/Firebase-Authentifizierung und einen auf Staging begrenzten Workflow. Das ist hier noch nicht eingerichtet.
+Die ausführbaren Workflows und die einmalige Einrichtung stehen in `docs/AUTOMATION_SETUP.md`. Ein neuer Auftrag in `agent-queue/` kann nach Aktivierung den Codex-Worker starten. Nach erfolgreicher App-CI kann der Preview-Workflow Hosting veröffentlichen und Prüfsummen kontrollieren.
+
+Die Einrichtung von Cloud-Identität und Worker-Key sowie die ersten echten End-to-End-Läufe sind noch offen. Keine Aktivierung aus dem Vorhandensein der Dateien ableiten. Bestehende Chats müssen diesen Einstieg neu lesen. Agent-Ergebnisse werden vor Integration unabhängig geprüft.

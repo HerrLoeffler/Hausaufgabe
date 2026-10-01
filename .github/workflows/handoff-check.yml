@@ -1,9 +1,9 @@
 name: Project handoff checks
 on:
   push:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/handoff-check.yml']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**']
   pull_request:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/handoff-check.yml']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,11 +21,15 @@ jobs:
           assert data['schema_version'] == 1
           assert data['production']['project'] == 'hausaufgabe-40294'
           assert data['production']['approval_required'] is True
-          assert data['automation']['agent_dispatch'] == 'not_configured'
+          assert data['automation']['agent_dispatch'] in {'not_configured', 'implemented_pending_credentials_and_e2e', 'verified'}
           for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md']:
               assert pathlib.Path(name).is_file(), name
           PY
           python3 tools/checkpoint.py --task handoff-ci --goal 'Koordinationsdateien prüfen' --done 'JSON und Einstiegsdateien geprüft; keine Anwendungstests' --next 'Baustellenspezifische CI und Deploy-Nachweise separat prüfen' --output handoff-report.json
+      - name: Test automation boundaries
+        run: |
+          python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
+          bash -n tools/automation/setup-staging-identity.sh
       - name: Publish readable summary
         env:
           CHECKED_SHA: ${{ github.sha }}
