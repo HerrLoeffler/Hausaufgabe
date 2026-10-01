@@ -1,0 +1,76 @@
+name: GradeCrew Codex worker
+on:
+  push:
+    branches: [main]
+    paths: ['agent-queue/*.json']
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: Task filename without .json from agent-queue
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-codex-worker
+  cancel-in-progress: false
+jobs:
+  work:
+    if: github.ref == 'refs/heads/main' && vars.CODEX_WORKER_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Require worker-specific API credential
+        env:
+          WORKER_KEY: ${{ secrets.CODEX_WORKER_API_KEY }}
+        run: test -n "$WORKER_KEY" || { echo 'Missing CODEX_WORKER_API_KEY; no task started.'; exit 1; }
+      - uses: actions/checkout@v5
+        with:
+          path: control
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Select and validate the approved task
+        id: task
+        env:
+          REQUESTED_TASK: ${{ inputs.task_id }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: python3 control/tools/automation/task.py control
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.task.outputs.base_sha }}
+          path: source
+          persist-credentials: false
+      - name: Record immutable source and prepare output directory
+        run: |
+          mkdir -p output
+          git -C source rev-parse HEAD > output/base-commit.txt
+          cp control/agent-queue/${{ steps.task.outputs.task_id }}.json output/task.json
+      - name: Run isolated coding task
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.CODEX_WORKER_API_KEY }}
+          working-directory: ${{ github.workspace }}/source
+          prompt-file: ${{ github.workspace }}/control/worker-prompt.md
+          output-file: ${{ github.workspace }}/output/result.md
+          sandbox: workspace-write
+          safety-strategy: drop-sudo
+      - name: Preserve patch including untracked source files
+        if: always()
+        working-directory: source
+        run: |
+          git add --intent-to-add --all
+          git diff --binary HEAD > ../output/changes.patch
+          git status --short > ../output/working-tree.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codex-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/
+          retention-days: 30
+          if-no-files-found: warn
+  setup-needed:
+    if: vars.CODEX_WORKER_ENABLED != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Worker disabled; no API call. Follow docs/AUTOMATION_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
