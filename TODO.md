@@ -55,7 +55,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |
-| GC-ANALYTICS-01 | Nutzungs- und Spielstatistiken | Anforderung aus anderem Chat, Details einholen | Starts, Abschluss, aktive Spielzeit, Abbruch und Fehler sinnvoll definieren; keine pauschale Vollüberwachung. Games-Chat-Plan übernehmen und Datensparsamkeit prüfen. |
+| GC-ANALYTICS-01 | Nutzungs- und Spielstatistiken | Umfangreiches Messdesign dokumentiert, Implementierung offen | [Datenstrategie](docs/telemetry/MEASUREMENT_DESIGN.md): Spiele und Aufgaben nach Collector/Join-/Abgabe-Pilot anbinden; keine pauschale Vollüberwachung. |
 
 ## Zuletzt erledigt – mit Grenzen
 
@@ -71,3 +71,5 @@ Die Liste sammelt sichtbare Aufträge und bekannte Übergaben. Sie behauptet kei
 ## Ergänzung 01.10.2026 – Telemetrie-Fundament
 
 GC-TELEMETRY-BASE: gemeinsamer Ereignisvertrag und In-Memory-Puffer standardmäßig deaktiviert; Kennzahlberechnung mit explizitem Nenner; Verhaltenstests. Noch nicht im Produkt eingebunden, kein Datentransfer und kein Analytics-Dashboard. Bestehende diagnostics.mjs und admin-log-tools.mjs wurden gelesen: Filter/Sortierung/Fehlergruppen existieren bereits und sollen weiterverwendet werden.
+
+GC-TELEMETRY-DESIGN: ausführliche Datenstrategie und Code-Istbestand dokumentiert; keine neue Erhebung aktiviert. Siehe docs/telemetry/MEASUREMENT_DESIGN.md und workstreams/telemetry.md.
