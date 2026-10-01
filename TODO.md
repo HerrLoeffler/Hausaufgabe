@@ -39,7 +39,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-IOS-01 | Installierten TestFlight-Build und verwendete Web-URL bestätigen | Offen | iPad-App-Version und Einstellungen prüfen; Web-Deploy nicht mit neuem nativen Build verwechseln. |
 | GC-IOS-02 | Hybride Lehrer-App 0.2 härten und App-Store-tauglich weiterentwickeln | Review/Planung gesichert | Erst robuste WebView-App-Shell: verifizierte Preview als Beta-Quelle, Beta-Leiste entfernen, Navigation/Downloads/Share/Uploads/Diagnose/Tests verbessern; Native Dashboard erst danach gezielt. [Übergabe](workstreams/ios-app-v2.md) |
 | GC-AUTOMATION-01 | Codex-Worker aktivieren und einmal vollständig testen | Blockiert durch Einrichtung | Separater API-Key und Aktivierungsvariable fehlen laut letzter Übergabe; API-Abrechnung beachten. [Einrichtung](docs/AUTOMATION_SETUP.md) |
-| GC-GAMES-01 | Escape-Room-MVP mit Lehrerübersicht konkretisieren | Konzept erfasst, Umsetzung offen | Games-Branch zuerst prüfen; eine digitale Welt, feste sichere Mechaniken, austauschbare GradeCrew-Fragen. [Konzept](docs/games/ESCAPE_MVP.md) |
+| GC-GAMES-01 | Escape-Room-MVP mit Lehrerübersicht konkretisieren | MVP + Hub-Integration implementiert, CI grün; Lab-/Geräteabnahme offen | Branch `feature/escape-room-mvp-v1`, Draft-PR #10: „Die verriegelte Schule“ mit 3 Räumen, 8 Frage-Slots, 4 Rätseln, Preflight und Lehrerübersicht. Nächster Schritt: sicherer Lab-Preview-Deploy, echter iPad/Desktop-Test, danach GradeCrew-Test-/KI-Adapter. [Konzept](docs/games/ESCAPE_MVP.md) |
 
 ## Telemetrie – neue konkrete Schritte
 
