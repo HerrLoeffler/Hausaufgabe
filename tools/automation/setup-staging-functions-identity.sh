@@ -13,6 +13,21 @@ ACCOUNT="gradecrew-functions"
 SERVICE_ACCOUNT="$ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com"
 WORKFLOW="$REPOSITORY/.github/workflows/staging-functions.yml@refs/heads/main"
 VARIABLE="STAGING_FUNCTIONS_WIF_PROVIDER"
+POOL_DISPLAY='GradeCrew Staging Functions'
+PROVIDER_DISPLAY='GradeCrew Staging OIDC'
+MAX_WIF_DISPLAY_LENGTH=32
+
+# Google IAM limits Workload Identity pool/provider display names to 32 characters.
+# Validate this before the script can mutate APIs or IAM so setup never fails halfway
+# because of an invalid cosmetic display name.
+[[ ${#POOL_DISPLAY} -le $MAX_WIF_DISPLAY_LENGTH ]] || {
+  echo "FEHLER: Workload-Identity-Pool-Anzeigename ist länger als $MAX_WIF_DISPLAY_LENGTH Zeichen."
+  exit 1
+}
+[[ ${#PROVIDER_DISPLAY} -le $MAX_WIF_DISPLAY_LENGTH ]] || {
+  echo "FEHLER: Workload-Identity-Provider-Anzeigename ist länger als $MAX_WIF_DISPLAY_LENGTH Zeichen."
+  exit 1
+}
 
 command -v gcloud >/dev/null || { echo 'FEHLER: Dieses Skript in der authentifizierten Google Cloud Shell ausführen.'; exit 1; }
 
@@ -99,7 +114,7 @@ done
 if ! gcloud iam workload-identity-pools describe "$POOL" --location=global --project "$PROJECT_ID" >/dev/null 2>&1; then
   gcloud iam workload-identity-pools create "$POOL" \
     --location=global \
-    --display-name='GradeCrew staging Functions GitHub' \
+    --display-name="$POOL_DISPLAY" \
     --project "$PROJECT_ID"
 fi
 
@@ -118,7 +133,7 @@ else
   gcloud iam workload-identity-pools providers create-oidc "$PROVIDER" \
     --workload-identity-pool="$POOL" \
     --location=global \
-    --display-name='GradeCrew staging Functions workflow' \
+    --display-name="$PROVIDER_DISPLAY" \
     --project "$PROJECT_ID" \
     --issuer-uri=https://token.actions.githubusercontent.com \
     --attribute-mapping="$MAPPING" \
