@@ -1,0 +1,144 @@
+name: Automatic staging AI functions
+
+on:
+  workflow_run:
+    workflows: ['AI Staging Checks']
+    types: [completed]
+    branches: ['feature/gradecrew-app-integration']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-app-integration-functions
+  cancel-in-progress: false
+
+jobs:
+  deploy-ai-functions:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration' &&
+      vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      PROJECT_ID: hausaufgabe-staging
+      INTEGRATION_BRANCH: feature/gradecrew-app-integration
+      EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+      FIREBASE_TOOLS_VERSION: 15.32.0
+    steps:
+      - name: Checkout exactly the tested integration commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Refuse stale or unexpected source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          current=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${INTEGRATION_BRANCH}" --jq .object.sha)
+          test "$current" = "$EXPECTED_SHA" || {
+            echo "A newer integration revision exists; refusing stale Functions deployment."
+            echo "Expected: $EXPECTED_SHA"
+            echo "Current:  $current"
+            exit 1
+          }
+          grep -q '"codebase": "ai"' firebase.json
+          grep -q 'crewAssistant' functions/main.js
+          grep -q 'reviseWholeTest' functions/main.js
+          ! grep -q 'hausaufgabe-40294' firebase.json
+
+      - name: Re-run AI Functions tests before cloud authentication
+        run: |
+          npm ci --prefix functions --include=dev --no-audit --no-fund
+          npm test --prefix functions
+          npm run check --prefix functions
+
+      - name: Install pinned Firebase CLI before cloud authentication
+        run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund "firebase-tools@$FIREBASE_TOOLS_VERSION"
+
+      - name: Authenticate only as the staging Functions deployer
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: hausaufgabe-staging
+          workload_identity_provider: ${{ vars.STAGING_FUNCTIONS_WIF_PROVIDER }}
+          service_account: gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com
+
+      - name: Deploy only the AI Functions codebase to staging
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
+            --project "$PROJECT_ID" \
+            --only functions:ai \
+            --non-interactive
+
+      - name: Verify Crew and Emmi Functions are visible in staging
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" functions:list \
+            --project "$PROJECT_ID" --json > "$RUNNER_TEMP/functions.json"
+          node - "$RUNNER_TEMP/functions.json" <<'NODE'
+          const fs = require('node:fs');
+          const path = process.argv[2];
+          const payload = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const rows = Array.isArray(payload) ? payload : payload.result || payload.functions || [];
+          const text = JSON.stringify(rows);
+          for (const required of ['crewAssistant', 'reviseWholeTest']) {
+            if (!text.includes(required)) throw new Error(`Missing deployed staging function: ${required}`);
+          }
+          NODE
+
+      - name: Write deployment receipt
+        env:
+          RUN_ID: ${{ github.run_id }}
+          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const receipt = {
+            project: process.env.PROJECT_ID,
+            scope: 'functions:ai',
+            commit: process.env.EXPECTED_SHA,
+            integrationBranch: process.env.INTEGRATION_BRANCH,
+            workflowRun: Number(process.env.RUN_ID),
+            upstreamCiRun: Number(process.env.UPSTREAM_RUN_ID),
+            verifiedFunctions: ['crewAssistant', 'reviseWholeTest'],
+            productionChanged: false,
+            firestoreRulesChanged: false,
+            hostingChanged: false,
+            createdAt: new Date().toISOString()
+          };
+          fs.writeFileSync('staging-functions-receipt.json', JSON.stringify(receipt, null, 2) + '\n');
+          NODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: staging-functions-receipt-${{ github.event.workflow_run.head_sha }}
+          path: staging-functions-receipt.json
+          if-no-files-found: error
+          retention-days: 90
+
+  setup-needed:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration' &&
+      vars.STAGING_FUNCTIONS_WIF_PROVIDER == ''
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'AI Functions CI is green, but automatic staging Functions deployment is not activated yet.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Run tools/automation/setup-staging-functions-identity.sh once from authenticated Google Cloud Shell.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No Functions, Rules, Hosting or Production resources were changed.' >> "$GITHUB_STEP_SUMMARY"
