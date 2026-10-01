@@ -182,6 +182,7 @@ export function installCrewTour(api) {
     active = false;
     busy = false;
     freeRegion = null;
+    removeOffer();
     hideCoach();
     clearWarnings();
     document.querySelectorAll(".gcTourInlineHint, .gcTourVariantMentor").forEach(node => node.remove());
