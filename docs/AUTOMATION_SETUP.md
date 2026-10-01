@@ -1,10 +1,14 @@
 # Automatisierung: einmalige Aktivierung
 
-Stand 02.10.2026: Preview-Identität vom Nutzer eingerichtet; automatischer Hosting-Deploy wurde bereits Ende-zu-Ende bestätigt. Der Chat-Connector kann Secrets/Variablen/IAM nicht direkt verwalten. Hosting, Functions und Rules bleiben bewusst getrennte Deploy-Stufen.
+Stand 02.10.2026: Die automatische Hosting-Preview ist Ende-zu-Ende bestätigt. Für die AI-Functions ist jetzt ebenfalls ein eigener automatischer Staging-Workflow vorbereitet. **Noch nicht als aktiviert/verified bezeichnen**, bis die einmalige Google-Cloud-IAM-Einrichtung erfolgt und ein realer Workflow-Deploy erfolgreich belegt wurde. Hosting, Functions und Rules bleiben bewusst getrennte Deploy-Stufen. Production bleibt approval-gated.
 
 ## 1. Automatische Hosting-Preview
 
-In der authentifizierten Google Cloud Shell einen separaten Checkout verwenden, damit laufende Arbeiten nicht überschrieben werden:
+Die Hosting-Automatik ist bereits eingerichtet. Ein erfolgreicher push-basierter Lauf von `AI Staging Checks` auf `feature/gradecrew-app-integration` baut exakt diesen getesteten SHA, prüft vor dem Deploy erneut, dass der Branch nicht weitergezogen ist, authentifiziert kurzlebig über Workload Identity Federation und veröffentlicht ausschließlich den Staging-Preview-Channel. Danach werden Manifest und Dateihashes gegen den gebauten Stand geprüft.
+
+Die bestehende Identität `gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com` besitzt absichtlich nur Hosting-bezogene Rechte. Sie darf keine Functions deployen.
+
+Wiederherstellung/Neuaufbau nur falls nötig:
 
 ```bash
 AUTOMATION_DIR=$(mktemp -d "$HOME/gradecrew-automation.XXXXXX")
@@ -12,52 +16,53 @@ git clone --depth 1 --branch main https://github.com/HerrLoeffler/Hausaufgabe.gi
 bash "$AUTOMATION_DIR/tools/automation/setup-staging-identity.sh"
 ```
 
-Das private Repository erfordert GitHub-Anmeldung, falls noch kein Git-Zugriff eingerichtet ist. Kein Token in Chat oder Befehlszeile schreiben. Alternativ das einzelne geprüfte Skript über GitHub herunterladen und in Cloud Shell hochladen.
+Keine Service-Account-Schlüssel oder Tokens in Chat/Repo schreiben.
 
-Das Skript legt ausschließlich in `hausaufgabe-staging` einen Hosting-Serviceaccount und eine kurzlebige GitHub-Identität an. Keine JSON-Schlüsseldatei. Die Vertrauensbedingung begrenzt den Zugang auf dieses Repository (numerische ID), main und genau den Preview-Workflow. Der Serviceaccount erhält Hosting Admin und Service Usage Consumer. **IAM erlaubt damit auch normales Staging-Hosting; die Begrenzung auf den Preview-Kanal erzwingt unser Workflow.** Production erhält keine Berechtigungen.
+## 2. Automatische Staging AI Functions
 
-Falls `gh` bereits angemeldet ist, setzt das Skript die benötigte Actions-Variable selbst. Sonst den ausgegebenen öffentlichen Provider-Namen als `STAGING_WIF_PROVIDER` in den GitHub-Actions-Variablen eintragen.
+Crew Assistant, Emmi und weitere AI-Serverfunktionen leben im Firebase-Codebase `ai`. Der dauerhafte Workflow ist `.github/workflows/staging-functions.yml`.
 
-Danach einen normalen Push auf `feature/gradecrew-app-integration` durchlaufen lassen. Automatik: erfolgreiche `AI Staging Checks` → Build exakt dieses SHA ohne Cloud-Zugang → eigener Deploy-Job → Prüfsummenvergleich aller Dateien → Preview-Link und Receipt-Artefakt. Zwischenzeitlich überholte Commits werden abgewiesen. **Functions und Regeln bleiben unverändert.** Bestehender Preview-Kanal wird aktualisiert und läuft nach sieben Tagen ab.
+Er läuft nur nach einem erfolgreichen **push-basierten** `AI Staging Checks`-Lauf des Integrationsbranches und besitzt mehrere Fail-Closed-Grenzen:
 
-Bei fehlender Variable läuft nur der Build; der Actions-Bericht nennt die fehlende Einrichtung. Deaktivierung: Variable entfernen. Google-IAM-Änderungen benötigen einmalig passende Administratorrechte im Staging-Projekt.
+- Zielprojekt fest: `hausaufgabe-staging`;
+- Quelle: exakt der vom Upstream-CI getestete SHA;
+- wenn `feature/gradecrew-app-integration` inzwischen weitergezogen ist, wird der Deploy verweigert;
+- Functions-Tests und Syntax/Lint laufen erneut **vor** Cloud-Authentifizierung;
+- eigener WIF-Pool + eigener Serviceaccount `gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com`;
+- Deployscope ausschließlich `functions:ai`;
+- keine Firestore Rules, kein Hosting, kein Assessment-Codebase-Deploy und keine Production-Rolle;
+- nach Deploy werden mindestens `crewAssistant` und `reviseWholeTest` in Staging verifiziert;
+- ein Receipt-Artefakt hält Commit, CI-Lauf und Deployscope fest.
 
-## 2. Staging AI Functions
+### Einmalige Aktivierung
 
-Crew Assistant und Emmi benötigen serverseitige Callables. Dafür gibt es `tools/automation/deploy-staging-ai-functions.sh`.
-
-Der Deploy ist absichtlich enger als ein normales `firebase deploy`:
-
-- Ziel ist hart `hausaufgabe-staging`;
-- Quelle muss der **aktuelle Remote-Head** von `feature/gradecrew-app-integration` sein;
-- ein exakter 40-stelliger erwarteter SHA ist Pflicht;
-- der Deploy läuft aus einem separaten detached Worktree;
-- `crewAssistant` und `reviseWholeTest` müssen im Zielcommit vorhanden sein;
-- Functions-Abhängigkeiten, Tests und Checks laufen vor dem Deploy erneut;
-- deployt wird ausschließlich `functions:ai`;
-- Assessment-Codebase, Firestore Rules, Hosting und Production werden nicht angefordert.
-
-Zuerst Dry Run:
+Erst nachdem dieser Automationsstand auf `main` gemergt ist, einmal in der **authentifizierten Google Cloud Shell** ausführen:
 
 ```bash
-cd ~/Hausaufgabe
-git fetch --all --prune
-git checkout main
-git pull --ff-only
-bash tools/automation/deploy-staging-ai-functions.sh <VERIFIZIERTER_INTEGRATIONS_SHA>
+AUTOMATION_DIR=$(mktemp -d "$HOME/gradecrew-functions-setup.XXXXXX")
+git clone --depth 1 --branch main https://github.com/HerrLoeffler/Hausaufgabe.git "$AUTOMATION_DIR"
+bash "$AUTOMATION_DIR/tools/automation/setup-staging-functions-identity.sh"
 ```
 
-Erst wenn Dry Run und der zugehörige `AI Staging Checks`-Lauf grün sind:
+Das Setup erstellt **keinen JSON-Schlüssel**. Es richtet in `hausaufgabe-staging` einen eigenen Workload-Identity-Pool `gradecrew-functions-github`, den Provider `staging-functions` und den Serviceaccount `gradecrew-functions` ein. Die OIDC-Bedingung ist auf Repository-ID, `main` und exakt `.github/workflows/staging-functions.yml` begrenzt.
 
-```bash
-bash tools/automation/deploy-staging-ai-functions.sh <VERIFIZIERTER_INTEGRATIONS_SHA> --deploy
-```
+Der Deployer erhält staging-seitig die für den vorhandenen AI-Codebase benötigten Deploy-/Scheduler-/Task- und Secret-Metadatenrechte. `iam.serviceAccountUser` wird **nicht projektweit**, sondern nur auf tatsächlich vorhandene Runtime-/Build-Serviceaccounts vergeben. `Secret Manager Viewer` erlaubt dem Deployprozess, das vorhandene Secret `OPENAI_API_KEY` zu erkennen (`secretmanager.secrets.get`), aber nicht dessen Payload zu lesen.
 
-Das Skript verwendet eine vorhandene Firebase-CLI oder ersatzweise die gepinnte `firebase-tools@15.32.0`. Falls die persönliche Cloud-Shell-Sitzung noch nicht für Firebase authentifiziert ist, dort normal anmelden. Keine Tokens oder Schlüssel in Chat/Repo schreiben.
+Ein früherer One-shot-Deploy belegte genau diesen bisherigen IAM-Blocker: Functions-Tests und Firebase-Projektzugriff waren erfolgreich, der Deploy scheiterte anschließend mit `403 secretmanager.secrets.get` für `OPENAI_API_KEY`. Die neue Identität deckt diesen bekannten Metadatenzugriff ausdrücklich ab. Der erste echte automatische Deploy bleibt trotzdem der notwendige End-to-End-Nachweis.
 
-Wichtig: Dieser Pfad nutzt bewusst die persönliche, authentifizierte Staging-Cloud-Shell und **nicht** den Hosting-WIF-Serviceaccount. Der Hosting-Serviceaccount besitzt absichtlich keine Functions-Deploy-Rechte. Eine spätere vollautomatische Functions-CI/CD-Identität muss separat mit minimalen Rollen und eigener Workflow-Bindung eingerichtet werden.
+Wenn `gh` in Cloud Shell bereits angemeldet ist, setzt das Setup die öffentliche Repository-Variable `STAGING_FUNCTIONS_WIF_PROVIDER` automatisch. Andernfalls gibt es am Ende die zwei notwendigen `gh`-Befehle aus. Kein Secretwert wird als GitHub-Variable gespeichert.
 
-Nach erfolgreichem Functions-Deploy den exakten SHA und Deploy-Nachweis in `GRADECREW_STATE.json` unter dem aktuellen `release_train` eintragen. Erst wenn Hosting **und** benötigte Functions belegt sind, darf der Batch als vollständig `staging_deployed` gelten.
+### Danach
+
+Nach der einmaligen Aktivierung gilt für normale Staging-Entwicklung:
+
+`Feature → Integration → AI Staging Checks grün → Hosting-Preview automatisch + AI-Functions automatisch → Martin testet.`
+
+Cloud Shell ist dann **nicht mehr Teil des normalen Staging-Deployablaufs**. Sie bleibt nur für IAM-Reparaturen oder bewusst manuelle Notfall-/Diagnosepfade relevant.
+
+Der bisherige `tools/automation/deploy-staging-ai-functions.sh` bleibt als eng begrenzter manueller Fallback erhalten. Er darf nicht mit der automatischen E2E-Verifikation verwechselt werden.
+
+Erst nach erfolgreichem Functions-Workflow und Runtime-/Browserprüfung den aktuellen Release Train in `GRADECREW_STATE.json` auf `staging_deployed` hochstufen.
 
 ## 3. Codex-Worker
 
@@ -76,7 +81,7 @@ Die API-Nutzung ist vor dem ersten bezahlten Lauf zu aktivieren; ein echter End-
 > Lies auf GitHub main START_HERE.md, GRADECREW_STATE.json und docs/AUTOMATION_SETUP.md neu. Prüfe deine Baustelle, Release-Stufe, tatsächlichen Branch/Commit und offene Integrations-/Deploy-Gates. Behaupte keine Aktivierung oder Deployment-Stufe ohne Beleg.
 
 ## Quellen
-- https://learn.chatgpt.com/docs/github-action
 - https://github.com/google-github-actions/auth
 - https://firebase.google.com/docs/hosting/test-preview-deploy
-- https://firebase.google.com/docs/functions/1st-gen/organize-functions-1st
+- https://firebase.google.com/docs/functions/manage-functions
+- https://firebase.google.com/docs/projects/iam/permissions
