@@ -8,7 +8,8 @@ Die folgenden Branch-Spitzen wurden über GitHub gelesen; Deploy-Angaben sind ge
 | Baustelle | Branch | Übergabe / nächster Schritt |
 |---|---|---|
 | Website / gemeinsamer App-Webstand | feature/gradecrew-app-integration | `web-app.md` + `design-dashboard-v1.md`: Design-Dashboard V1 integriert bei `74eb2ec`; automatische Preview technisch verifiziert; visuelle Desktop-/Mobile-Abnahme offen |
-| Crew Assistant / Sprache | feature/crew-assistant-v1 | `crew-assistant.md`: Coco, Remy, Emmi und Wilma auf gemeinsamem Assistant-Core; lokaler Zero-API-Pfad + KI-Fallback, Remy→Testformular und erster Diktierknopf implementiert; CI-Lauf `36927353069` grün bei `c21b7b8`; Staging-/Geräteabnahme offen |
+| Crew Assistant / Sprache | feature/crew-assistant-v1 | `crew-assistant.md`: Coco, Remy, Emmi und Wilma auf gemeinsamem Assistant-Core; lokaler Zero-API-Pfad + KI-Fallback, Remy→Testformular und erster Diktierknopf implementiert; Head `fce4156`, CI `36927596099` grün, Draft-PR #12; Staging-/Geräteabnahme offen |
+| Emmi / ganzen Test überarbeiten | feature/emmi-whole-test-revision-v1 | `emmi-whole-test-revision.md`: eigener aktiver Workstream auf Crew-Core; Freitext-/Diktierauftrag für den ganzen Test, ein gebündelter Test-Level-KI-Aufruf, stabile Anzahl/Punkte, Bildschutz und Whole-Test-Undo; Code-Head `c291314`, CI `36933680142` grün, Draft-PR #13; Staging-/Runtime-/Geräteabnahme offen |
 | KI-Qualität / Review | fix/ai-review-workflow | `ai-quality.md`: bestehende AI-/Review-Branches zuerst genealogisch prüfen; `fix/ai-format-reliability` liegt hinter dem Review-Branch; keine dritte parallele Review-Lösung beginnen |
 | Freitext-Review / Lehrerprüfung | feature/freetext-review-priority | `freetext-review.md` + branch-eigenes `FREETEXT_REVIEW_STATUS.md`: aktueller Branch `67dacb0`; umfangreiche Arbeit, deshalb nur gezielt integrieren statt als neue Gesamtbasis behandeln |
 | Prüfungsserver / Security | feature/secure-assessment-v1 | Branch-eigene AGENTS.md, GRADECREW_STATUS.md, DIAGNOSTICS_GUIDE.md und Security-Audit lesen; reale Freigaben offen |
@@ -19,7 +20,7 @@ Die folgenden Branch-Spitzen wurden über GitHub gelesen; Deploy-Angaben sind ge
 | Release-Sicherung | main / feature/release-safety-snapshots | `release-safety.md`: automatisches Hosting-Archiv verifiziert; vierte Referenz-Seite und Daten-Backup noch offen |
 | Spiele / Escape Room | feature/escape-room-mvp-v1 → lab/games-structure | `docs/games/ESCAPE_MVP.md` + Registry: MVP auf eigenem Feature-Branch; Games-Hub und weitere Lab-/verified-Branches zuerst als Related Branches prüfen, nicht ungeprüft zusammenführen |
 | Legacy-Branch-Triage | dev (blockiert) | `legacy-branch-triage.md`: `dev` enthält noch einzigartige alte Commits und ist weder sichere Löschkandidatin noch aktuelle Entwicklungsbasis; erst fachlich zuordnen |
-| Entwicklungsordnung / Emulator-Gates | feature/dev-governance-emulator | `dev-governance-emulator.md`: Registry, Branch-/PR-Audit und wiederverwendbares Firebase-Emulator-Gate; Governance-CI `36933879010` grün, echter Firebase-/Assessment-Lauf `36934351905` grün; finalen Branch-CI nach Nachbesserungscommit prüfen |
+| Entwicklungsordnung / Emulator-Gates | feature/dev-governance-emulator | `dev-governance-emulator.md`: Registry, Branch-/PR-Audit und wiederverwendbares Firebase-Emulator-Gate; Governance-CI `36934981368` grün, Handoff-Checks `36934981597` grün, echter Firebase-/Assessment-Lauf `36934351905` grün; Draft-PR #14, keine Integration/Deploy erfolgt |
 
 ## Neue Aufgabe
 

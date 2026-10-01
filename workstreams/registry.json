@@ -29,8 +29,19 @@
       "state": "active",
       "handoff": "workstreams/crew-assistant.md",
       "taskIds": ["GC-CREW-AI-01"],
-      "relatedBranches": ["feature/emmi-whole-test-revision-v1"],
-      "notes": "Vor neuer Assistenten-, Sprach- oder Emmi-Aktion zuerst Branch und offenen PR prüfen."
+      "relatedBranches": [],
+      "notes": "Draft-PR #12. Vor neuer Assistenten-/Spracharbeit zuerst Branch und offenen PR prüfen."
+    },
+    {
+      "id": "emmi-whole-test-revision",
+      "title": "Emmi / ganzen Test überarbeiten",
+      "primaryBranch": "feature/emmi-whole-test-revision-v1",
+      "integrationTarget": "feature/crew-assistant-v1",
+      "state": "active",
+      "handoff": "workstreams/emmi-whole-test-revision.md",
+      "taskIds": ["GC-CREW-AI-02"],
+      "relatedBranches": [],
+      "notes": "Draft-PR #13 auf Crew-Core. Eigener aktiver Workstream statt bloßem Related-Branch."
     },
     {
       "id": "ai-quality",
