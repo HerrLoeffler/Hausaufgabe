@@ -54,6 +54,17 @@ The cache retention is 30 days and the daily cleanup removes older cache objects
 - orphaned upload fallback: deleted after 24 hours;
 - generated verified-image cache: deleted after 30 days.
 
+### 6. Cleanup indexes
+
+`firestore.indexes.json` now explicitly includes collection-group indexes for `expiresAt` on `aiEvents` and `aiUsage`, matching the daily cleanup queries.
+
+## Verification performed
+
+- Targeted local Node harness: 13/13 tests passed for usage retention helpers, cache-key scoping, upload/cache retention and the media-flow cache-hit path.
+- Syntax checks passed for the modified helper modules in the same harness.
+- A branch-specific GitHub Actions workflow was added, but no remote workflow run was observed through the connector after these commits. Therefore this branch is **not** marked full-CI verified yet.
+- No deploy or device verification was performed.
+
 ## What is deliberately not changed yet
 
 1. Finished test images are still embedded in the question document as optimized WebP data URLs. Moving durable test media to Storage needs a backwards-compatible renderer/storage migration and should not be mixed into this cost-control patch.
@@ -69,13 +80,14 @@ The cache retention is 30 days and the daily cleanup removes older cache objects
 3. Add accepted-answer and misconception/explanation memory for free-text grading and games, with local/rule-based matching before AI.
 4. Move durable generated task images from Firestore base64 to Storage references with compatibility support for old tests.
 5. Add an admin cost dashboard fed from `aiUsageRollups`, with cache-hit rate and estimated provider cost per real classroom round.
-6. Only after tests: integrate into `feature/gradecrew-app-integration`, deploy to Staging, verify actual Firestore/Storage behavior, then consider Production separately.
+6. Only after full repository tests: integrate into `feature/gradecrew-app-integration`, deploy to Staging, verify actual Firestore/Storage behavior, then consider Production separately.
 
 ## Status vocabulary
 
 - Code on GitHub: yes, on `feature/ai-cost-memory-v1`.
 - Integrated into GradeCrew staging branch: no.
-- Automated tests: workflow added on this branch; verify run result before integration.
+- Targeted local tests: passed.
+- Full repository CI: not yet observed/verified.
 - Deployed to Staging: no.
 - Device verified: no.
 - Production: unchanged.
