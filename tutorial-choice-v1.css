@@ -45,6 +45,13 @@
   min-width: min(290px, 100%);
   gap: 9px;
 }
+.gcTutorialOfferCrew {
+  width: 150px;
+  max-width: 60%;
+  height: auto;
+  justify-self: center;
+  margin: -12px 0 -4px;
+}
 .gcTutorialOfferActions .button { justify-content: center; }
 .gcTutorialOfferLater {
   border: 0;
@@ -56,10 +63,9 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-#gradecrewTourBtn {
-  white-space: nowrap;
-}
+#gradecrewTourBtn { white-space: nowrap; }
 @media (max-width: 760px) {
   .gcTutorialOffer { grid-template-columns: 1fr; padding: 18px; }
   .gcTutorialOfferActions { min-width: 0; }
+  .gcTutorialOfferCrew { width: 132px; margin-top: -4px; }
 }
