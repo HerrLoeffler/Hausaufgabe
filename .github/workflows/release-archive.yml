@@ -1,0 +1,69 @@
+name: Archive verified preview
+on:
+  workflow_run:
+    workflows: ['Automatic staging preview']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      preview_run_id:
+        description: Successful Automatic staging preview run ID
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths: ['release-requests/archive.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: archive-preview-${{ github.event.workflow_run.id || inputs.preview_run_id || github.sha }}
+  cancel-in-progress: false
+jobs:
+  archive:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Select verified preview run
+        id: requested
+        env:
+          EVENT_RUN: ${{ github.event.workflow_run.id }}
+          INPUT_RUN: ${{ inputs.preview_run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, re
+          run = os.environ['EVENT_RUN'] or os.environ['INPUT_RUN']
+          if not run:
+              run = str(json.loads(pathlib.Path('release-requests/archive.json').read_text())['preview_run_id'])
+          assert re.fullmatch('[1-9][0-9]{0,19}', run)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write('run=' + run + '\n')
+          PY
+      - name: Verify and package exact deployed files
+        id: snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIEW_RUN: ${{ steps.requested.outputs.run }}
+        run: python3 tools/automation/archive.py "$PREVIEW_RUN"
+      - name: Preserve snapshot without overwriting an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_TAG: ${{ steps.snapshot.outputs.tag }}
+          SOURCE_COMMIT: ${{ steps.snapshot.outputs.commit }}
+        run: |
+          if gh release view "$SNAPSHOT_TAG" --repo HerrLoeffler/Hausaufgabe >/dev/null 2>&1; then
+            echo 'Snapshot already exists; no overwrite.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          gh release create "$SNAPSHOT_TAG" snapshot-output/hosting-snapshot.zip snapshot-output/snapshot.json snapshot-output/SHA256SUMS --repo HerrLoeffler/Hausaufgabe --target "$SOURCE_COMMIT" --prerelease --title "Staging snapshot $SOURCE_COMMIT" --notes-file snapshot-output/release-notes.md
+          echo "Snapshot: https://github.com/HerrLoeffler/Hausaufgabe/releases/tag/$SNAPSHOT_TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Hosting archive only; no production approval and no database backup.' >> "$GITHUB_STEP_SUMMARY"
