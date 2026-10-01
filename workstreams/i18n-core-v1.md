@@ -1,9 +1,10 @@
 # Aufgabe: GC-I18N-02 – i18n-Core V1
 
-- Aktualisiert (UTC): 2026-10-01T22:50:00Z
+- Aktualisiert (UTC): 2026-10-01T22:55:00Z
 - Verantwortlicher Chat / Auftrag: Internationalisierung; ersten rückwärtskompatiblen i18n-Code bauen, ohne bestehende Oberfläche großflächig umzuschreiben.
 - Aufgabenbranch: `feature/i18n-core-v1`
 - Basiscommit: `74eb2ec08e81315875abfc4b1ae052d9f78797eb` (`feature/gradecrew-app-integration`)
+- Draft-PR: #17 gegen `feature/gradecrew-app-integration`
 - Betroffene Dateien: `shared/i18n/*`, diese Übergabe.
 - Überschneidungen: Web-App/Design, Secure Assessment, KI/Prompts, Crew/Sprache, native Apps. Diese erste Stufe bindet keinen dieser Bereiche aktiv um.
 
@@ -33,7 +34,9 @@ Ein isolierter Internationalisierungs-Core soll die späteren Sprach-/Regionsver
 
 ## Prüfungen
 
-Lokaler Node-Test des identischen Core-/Testinhalts: `node --test i18n-core.test.mjs` -> 6/6 Tests grün. Nach Push zusätzlich GitHub-CI/PR-Checks prüfen; lokaler Test ist kein Deploy- oder Gerätetest.
+- Lokaler Node-Test des identischen Core-/Testinhalts: `node --test i18n-core.test.mjs` -> 6/6 Tests grün.
+- GitHub PR-Workflow-Abfrage für Commit `de9bc8a478a90c1b8f769c1e7a56519e4cb3d5b9`: aktuell kein Workflow-Lauf gemeldet. Daher **kein CI-Nachweis behauptet**.
+- Lokaler Test ist kein Deploy- oder Gerätetest.
 
 ## Akzeptanz für diese Stufe
 
@@ -45,12 +48,13 @@ Lokaler Node-Test des identischen Core-/Testinhalts: `node --test i18n-core.test
 
 ## Nächster konkreter Schritt
 
-Nach CI-/Review-Abnahme einen kleinen deutschen Message-Catalog (`de-DE`) hinzufügen und **nur eine risikoarme gemeinsame Oberfläche** auf `t(key)` umstellen. Sichtbarer Text muss byte-/inhaltlich gleich bleiben. Noch nicht `app.js` vollständig migrieren.
+Nach CI-/Review-Abnahme einen kleinen deutschen Message-Catalog (`de-DE`) hinzufügen und **nur eine risikoarme gemeinsame Oberfläche** auf `t(key)` umstellen. Sichtbarer Text muss inhaltlich identisch bleiben. Noch nicht `app.js` vollständig migrieren.
 
 ## Status
 
 - Lokal geprüft: ja, isolierter Node-Test 6/6 grün.
-- Auf GitHub gesichert: ja, Branch `feature/i18n-core-v1`.
+- Auf GitHub gesichert: ja, Branch `feature/i18n-core-v1`; Draft-PR #17 offen.
+- CI: noch nicht belegt; Abfrage ergab aktuell keinen Workflow-Lauf.
 - In Integrationsbranch integriert: nein.
 - Staging deployed: nein.
 - Gerätetest: nein.
