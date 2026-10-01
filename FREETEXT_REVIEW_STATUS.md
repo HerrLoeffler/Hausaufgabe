@@ -7,6 +7,8 @@ Stand: 2026-10-01
 - Feature-Branch: `feature/freetext-review-priority`
 - Basis: `fix/gradecrew-staging-release-final`
 - Basis-Commit: `acbe25b4bf4a0a5d42f0e3e3fb08ae4493fd90e1`
+- Letzter inhaltlich geprüfter Feature-Commit vor dieser Handoff-Aktualisierung: `259a1cdd13853f3825cce4d2548b5dcdbb1e16b2`
+- Draft-PR: `#11`
 - Production wurde nicht verändert.
 - Staging wurde nicht deployed.
 
@@ -32,7 +34,8 @@ Freitextantworten sollen die bestehende automatische GradeCrew-Auswertung ergän
    - Ampelhinweise im Lehrer-Bewertungsdialog;
    - Ampel-Zusammenfassung je Abgabe in der Ergebnisliste;
    - „Unsichere zuerst“ und Wiederherstellung der Originalreihenfolge;
-   - Punktvorschläge werden nicht automatisch gespeichert; die Lehrkraft übernimmt sie aktiv und speichert anschließend die Bewertung.
+   - Punktvorschläge werden nicht automatisch gespeichert; die Lehrkraft übernimmt sie aktiv und speichert anschließend die Bewertung;
+   - DOM-Dekoration gegen wiederholte Mutation abgesichert und Ergebniskontext stabilisiert.
 4. `freetext-solution-guard.js`
    - kennzeichnet Muster-/Referenzantworten im Editor als Pflicht;
    - blockiert Speichern/Veröffentlichen aus dem Editor, wenn eine Freitextaufgabe keine Musterlösung besitzt;
@@ -44,6 +47,10 @@ Freitextantworten sollen die bestehende automatische GradeCrew-Auswertung ergän
    - Regressionstest für verpflichtende Freitext-Musterlösungen.
 7. `visual-enhancements.js`
    - lädt Lösungsschutz und Prüfhilfe als isolierte optionale Module; Kern-App bleibt bei Modulfehlern lauffähig.
+8. `firestore.rules`
+   - Client-Schreibvorgänge für Freitextfragen werden serverseitig abgewiesen, wenn `acceptedAnswers` fehlt oder leer ist;
+   - Löschen bleibt erlaubt, damit Altfragen weiterhin bereinigt werden können;
+   - Cloud-Functions/Admin-SDK-Schreibvorgänge umgehen Firestore Rules weiterhin wie vorgesehen; für KI-Erstellung greift deshalb zusätzlich das strengere KI-Schema.
 
 ## Bewusst nicht verändert
 
@@ -52,14 +59,22 @@ Freitextantworten sollen die bestehende automatische GradeCrew-Auswertung ergän
 - Keine KI-Bewertung individueller Schülerantworten; die erste Version ist deterministisch und lokal.
 - Kein Production-/Staging-Deploy.
 
+## Geprüft
+
+- `free-text-review.test.mjs`: lokal mit Node ausgeführt, 9/9 Tests bestanden.
+- PR-Diff nach Implementierung manuell geprüft; dabei wurden ein möglicher DOM-Dekorationsloop und ein Ergebniskontext-Randfall erkannt und korrigiert.
+- Draft-PR #11 ist laut GitHub konfliktfrei/mergeable.
+
 ## Noch zu prüfen
 
-1. Browser-/Staging-Test mit einem Test aus kurzen Freitexten und offenen Freitexten.
-2. Ergebnisliste mit mehreren Schülerabgaben: Ampelzählung und „Unsichere zuerst“ prüfen.
-3. Bewertungsdialog: Punktvorschlag übernehmen, manuell korrigieren, speichern, neu öffnen.
-4. Editor: Freitext ohne Musterlösung darf weder gespeichert noch veröffentlicht werden; bestehende Alt-Tests mit fehlender Lösung testen.
-5. Mobile Darstellung der neuen Toolbar/Badges.
-6. Prüfen, ob ältere Tests, die bereits ohne Musterlösung gespeichert sind, beim Dashboard-Publish sauber abgefangen werden.
+1. Firestore-Regelsyntax und Verhalten mit Emulator/Staging prüfen; die Regeländerung wurde noch nicht deployed.
+2. Backend-Schematest `functions/test/freetext-schema.test.js` im vollständigen Repo-Testlauf ausführen.
+3. Browser-/Staging-Test mit einem Test aus kurzen Freitexten und offenen Freitexten.
+4. Ergebnisliste mit mehreren Schülerabgaben: Ampelzählung und „Unsichere zuerst“ prüfen.
+5. Bewertungsdialog: Punktvorschlag übernehmen, manuell korrigieren, speichern, neu öffnen.
+6. Editor: Freitext ohne Musterlösung darf weder gespeichert noch veröffentlicht werden; bestehende Alt-Tests mit fehlender Lösung testen.
+7. Mobile Darstellung der neuen Toolbar/Badges.
+8. Prüfen, ob ältere Tests, die bereits ohne Musterlösung gespeichert sind, beim Dashboard-Publish sauber abgefangen werden.
 
 ## Nächster technischer Ausbau
 
