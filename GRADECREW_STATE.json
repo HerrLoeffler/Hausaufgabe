@@ -34,6 +34,12 @@
       "handoff": "Read current branch documentation before continuing"
     },
     {
+      "id": "design-foundation",
+      "branch": "feature/gradecrew-design-foundation-v1",
+      "observed_head": "07d2ad1e00de555f752be236158ef89e7d0df14f",
+      "handoff": "workstreams/design-system.md"
+    },
+    {
       "id": "games",
       "branch": "lab/games-structure",
       "observed_head": "869ca416b868667c9e48c05f81c967fe6ad59020",
