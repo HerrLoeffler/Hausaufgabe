@@ -1,0 +1,40 @@
+name: Crew Assistant Checks
+
+on:
+  push:
+    branches:
+      - feature/crew-assistant-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Test browser-side Crew core
+        run: node --test crew-assistant-core.test.mjs
+
+      - name: Install function dependencies
+        working-directory: functions
+        run: npm ci --include=dev
+
+      - name: Test Crew server contract
+        working-directory: functions
+        run: node --test test/crew-assistant.test.js
+
+      - name: Check function syntax and lint
+        working-directory: functions
+        run: npm run check
