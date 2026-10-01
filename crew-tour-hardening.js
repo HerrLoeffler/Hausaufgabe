@@ -13,12 +13,29 @@ function suppressLegacyUi() {
   closeDialog(document.getElementById("announcementDialog"));
 }
 
-function removeTourAbortControls(root = document) {
-  root.querySelectorAll?.(".gcCoachClose").forEach(button => button.remove());
-}
-
 function tourIsActive() {
   return document.body?.classList.contains("gcRealTourActive");
+}
+
+function requestTourAbort(source = "button") {
+  document.dispatchEvent(new CustomEvent("gradecrew:tutorial-abort-request", { detail: { source } }));
+}
+
+function ensureTourAbortControls(root = document) {
+  const coaches = [];
+  if (root instanceof Element && root.matches?.(".gcRealCoach")) coaches.push(root);
+  root.querySelectorAll?.(".gcRealCoach").forEach(coach => coaches.push(coach));
+  for (const coach of coaches) {
+    if (coach.querySelector(".gcCoachClose")) continue;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "gcCoachClose";
+    button.setAttribute("aria-label", "Tutorial beenden");
+    button.title = "Tutorial beenden";
+    button.textContent = "×";
+    button.addEventListener("click", () => requestTourAbort("close"));
+    coach.prepend(button);
+  }
 }
 
 function installStyles() {
@@ -26,7 +43,24 @@ function installStyles() {
   const style = document.createElement("style");
   style.dataset.gradecrewTourHardening = "1";
   style.textContent = `
-    .gcCoachClose { display: none !important; }
+    .gcRealCoach { position: relative; }
+    .gcCoachClose {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 4;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      color: #344054;
+      font: 700 24px/1 system-ui, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(16,24,40,.12);
+    }
+    .gcCoachClose:hover { background: #fff; transform: translateY(-1px); }
+    .gcCoachClose:focus-visible { outline: 3px solid rgba(47,100,214,.28); outline-offset: 2px; }
     #firstAiGuideBackdrop,
     #firstAiGuideCard,
     #announcementHost { display: none !important; }
@@ -39,11 +73,10 @@ function installCrewTourHardening() {
   installed = true;
   installStyles();
   suppressLegacyUi();
-  removeTourAbortControls();
+  ensureTourAbortControls();
 
-  // Old onboarding and automatic info popups are retired while the Crew journey
-  // is the primary onboarding. They may still exist for admin configuration, but
-  // they are not allowed to open over the product tour.
+  // Old onboarding and automatic info popups remain suppressed while the Crew
+  // journey is the primary onboarding. The Crew journey itself is abortable.
   for (const id of ["teacherTourDialog", "announcementDialog"]) {
     const dialog = document.getElementById(id);
     if (!dialog) continue;
@@ -53,25 +86,23 @@ function installCrewTourHardening() {
     });
   }
 
-  // Coaches are direct body children. Watching only body child additions avoids
-  // the expensive whole-app observer that previously caused browser hangs.
   const bodyObserver = new MutationObserver(records => {
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (!(node instanceof Element)) continue;
-        removeTourAbortControls(node);
+        ensureTourAbortControls(node);
       }
     }
     suppressLegacyUi();
   });
   if (document.body) bodyObserver.observe(document.body, { childList: true });
 
-  // During the mandatory first journey there is no keyboard escape route either.
   document.addEventListener("keydown", event => {
     if (!tourIsActive() || event.key !== "Escape") return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
+    requestTourAbort("escape");
   }, true);
 
   document.addEventListener("gradecrew:account-changed", suppressLegacyUi);
