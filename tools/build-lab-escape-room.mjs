@@ -13,11 +13,11 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'app.js', 'README.md'];
+const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'README.md'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'app.js']) {
+for (const reference of ['styles.css', 'escape-v2.css', 'escape-data.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'escape-tutor.js', 'app.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
@@ -67,6 +67,11 @@ for (const marker of [
   if (!adapter.includes(marker)) throw new Error(`GradeCrew Escape adapter check failed: ${marker}`);
 }
 
+const builder = await fs.readFile(path.join(output, 'gradecrew-escape-builder.js'), 'utf8');
+for (const marker of ['GradeCrewEscapeBuilder', 'teacherReview', 'launchPayload', 'validateWorldDefinition', 'runtime_missing']) {
+  if (!builder.includes(marker)) throw new Error(`GradeCrew Escape builder check failed: ${marker}`);
+}
+
 const gameData = await fs.readFile(path.join(output, 'escape-data.js'), 'utf8');
 for (const marker of [
   "id: 'q1'",
@@ -98,6 +103,7 @@ await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
     antiGuessGuard: true,
     teacherQuestionEditing: true,
     gradeCrewQuestionAdapter: true,
+    gradeCrewPreparationBuilder: true,
     gradeCrewAdapterTypes: ['single', 'dropdown', 'truefalse', 'text', 'number'],
     gradeCrewPlannedTypes: [],
     telemetryUpload: false,
