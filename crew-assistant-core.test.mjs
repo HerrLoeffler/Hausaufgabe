@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CREW_MEMBERS, parseTestRequest, resolveLocalCrewRequest } from "./crew-assistant-core.js";
+import { CREW_MEMBERS, parseTestRequest, resolveLocalCrewRequest } from "./crew-assistant-core.mjs";
 
 test("all four GradeCrew members are addressable", () => {
   assert.deepEqual(Object.keys(CREW_MEMBERS), ["coco", "remy", "emmi", "wilma"]);
