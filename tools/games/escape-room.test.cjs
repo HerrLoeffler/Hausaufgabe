@@ -93,7 +93,7 @@ test('Escape preflight accepts remediation data and rejects duplicate question i
   const { w } = openEscape();
   try {
     const D = w.GradeCrewEscapePrototype;
-    assert.equal(D.world.version, '0.2.0');
+    assert.equal(D.world.version, '0.2.1');
     assert.equal(D.validateWorldDefinition().ok, true);
 
     const bad = D.questions.map((q, i) => ({
