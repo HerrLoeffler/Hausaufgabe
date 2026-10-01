@@ -196,3 +196,86 @@ jobs:
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
           grep -q '"mobileTutorial": "gc28-mobile"' "$BUILD_DIR/public/release.json"
           grep -q '"secureAssessment": "v1"' "$BUILD_DIR/public/release.json"
+
+  preview:
+    name: Deploy secure staging preview
+    needs: test
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/feature/secure-assessment-v1' &&
+      vars.GCP_WIF_PROVIDER != '' &&
+      vars.GCP_STAGING_SERVICE_ACCOUNT != '' &&
+      vars.FIREBASE_STAGING_PROJECT == 'hausaufgabe-staging'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Pin local branch to tested commit
+        run: |
+          git checkout -B feature/secure-assessment-v1 "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git branch --show-current)" = "feature/secure-assessment-v1"
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Use Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Authenticate to Google Cloud with short-lived OIDC credentials
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.FIREBASE_STAGING_PROJECT }}
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_STAGING_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Install pinned Firebase CLI
+        run: npm install --global firebase-tools@15.30.0
+
+      - name: Fail closed on target mismatch
+        run: |
+          test "${{ vars.FIREBASE_STAGING_PROJECT }}" = "hausaufgabe-staging"
+          test "${{ vars.FIREBASE_STAGING_PROJECT }}" != "hausaufgabe-40294"
+          grep -q 'PROJECT_ID="hausaufgabe-staging"' deploy-secure-assessment-preview.sh
+          grep -q 'PRODUCTION_ID="hausaufgabe-40294"' deploy-secure-assessment-preview.sh
+          ! grep -q -- '--only firestore' deploy-secure-assessment-preview.sh
+
+      - name: Deploy isolated secure preview
+        run: |
+          set -o pipefail
+          bash deploy-secure-assessment-preview.sh --deploy | tee secure-preview-deploy.log
+
+      - name: Publish preview link in workflow summary
+        if: always()
+        run: |
+          URL="$(grep -Eo 'https://[^[:space:]]+\.web\.app' secure-preview-deploy.log 2>/dev/null | tail -n1 || true)"
+          {
+            echo '## GradeCrew Secure Assessment Preview'
+            echo
+            echo "Commit: \`$GITHUB_SHA\`"
+            if [[ -n "$URL" ]]; then
+              echo
+              echo "Preview: $URL"
+            else
+              echo
+              echo 'Preview-URL siehe Deploy-Schritt.'
+            fi
+            echo
+            echo 'Production wurde von diesem Workflow nicht konfiguriert oder deployed.'
+            echo 'Firestore-Regeln werden von diesem Preview-Workflow nicht deployed.'
+          } >> "$GITHUB_STEP_SUMMARY"
