@@ -83,7 +83,6 @@ function installCreateChoiceStyles() {
       height: 46px;
       flex: 0 0 auto;
     }
-    #createView .gradecrewAiBadge + .choiceArrow { margin-left: 0; }
     #createView .gcCreateSecondaryLabel {
       grid-column: 1 / -1;
       order: -5;
