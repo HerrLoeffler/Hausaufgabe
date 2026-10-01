@@ -11,6 +11,7 @@ on:
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
       - 'feature/design-*'
+      - feature/telemetry-implementation
   workflow_dispatch:
 
 permissions:
@@ -85,7 +86,7 @@ jobs:
           node --check startup.js
 
       - name: Test secure client boundary
-        run: node --test secure-assessment-client.test.mjs
+        run: node --test secure-assessment-client.test.mjs assessment-telemetry-transport.test.mjs
 
       - name: Test secure student persistence, renderer, deadline and result policies
         run: |

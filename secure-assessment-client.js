@@ -1,5 +1,7 @@
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
+import { createOperationTelemetry } from "./assessment-telemetry-transport.mjs";
+
 const REGION = "europe-west1";
 const STORAGE_VERSION = "v2";
 
@@ -85,7 +87,7 @@ function normalizeCallableError(error) {
   return wrapped;
 }
 
-export function createSecureAssessmentClient(firebaseApp) {
+export function createSecureAssessmentClient(firebaseApp, { telemetryEnabled = false, releaseCommit = '' } = {}) {
   const functions = getFunctions(firebaseApp, REGION);
   const infoCall = httpsCallable(functions, "getAssessmentInfo");
   const startCall = httpsCallable(functions, "startAssessmentAttempt");
@@ -93,6 +95,9 @@ export function createSecureAssessmentClient(firebaseApp) {
   const submitCall = httpsCallable(functions, "submitAssessmentAttempt");
   const receiptCall = httpsCallable(functions, "getAssessmentReceipt");
 
+  const collectCall = httpsCallable(functions, "collectAssessmentTelemetry");
+  const telemetry = createOperationTelemetry({enabled: telemetryEnabled && /^[a-f0-9]{40}$/.test(releaseCommit),release:releaseCommit,send: payload=>collectCall(payload)});
+  const telemetryScope = quizId => {const s=readSession(quizId);return s?.attemptId&&s?.attemptToken?{quizId,attemptId:s.attemptId,attemptToken:s.attemptToken}:null;};
   async function invoke(callable, data) {
     try {
       const response = await callable(data);
@@ -145,7 +150,7 @@ export function createSecureAssessmentClient(firebaseApp) {
     }
   }
 
-  async function start(rawQuizId, studentName) {
+  async function startInner(rawQuizId, studentName) {
     const quizId = normalizeQuizId(rawQuizId);
     const session = ensureSession(quizId);
     const response = await invoke(startCall, {
@@ -183,7 +188,7 @@ export function createSecureAssessmentClient(firebaseApp) {
     return response;
   }
 
-  async function submit(rawQuizId, answers, { autoSubmitted = false } = {}) {
+  async function submitInner(rawQuizId, answers, { autoSubmitted = false } = {}) {
     const quizId = normalizeQuizId(rawQuizId);
     const session = readSession(quizId);
     if (!session?.attemptId || !session?.attemptToken) throw new Error("Dieser Test wurde in diesem Browser noch nicht gestartet.");
@@ -210,10 +215,21 @@ export function createSecureAssessmentClient(firebaseApp) {
   }
 
   function clear(rawQuizId) {
+    telemetry.clear();
     clearSession(normalizeQuizId(rawQuizId));
   }
 
+  async function start(rawQuizId, studentName) {
+    const id=normalizeQuizId(rawQuizId);
+    return telemetry.measure('join',()=>startInner(id,studentName),{getScope:()=>telemetryScope(id)});
+  }
+  async function submit(rawQuizId,answers,options={}) {
+    const id=normalizeQuizId(rawQuizId);
+    return telemetry.measure('submit',()=>submitInner(id,answers,options),{trigger:options.autoSubmitted?'deadline':'manual',getScope:()=>telemetryScope(id)});
+  }
   return {
+    telemetryHealth: telemetry.health,
+    clearTelemetry: telemetry.clear,
     getInfo,
     start,
     resume,

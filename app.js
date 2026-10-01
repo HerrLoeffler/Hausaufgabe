@@ -43,6 +43,8 @@ import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview 
 import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
+import { installTelemetryAdmin } from "./telemetry-admin.mjs";
+let telemetryAdminUnmount = null;
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -6328,6 +6330,8 @@ async function openAdmin() {
     return;
   }
   showView("adminView");
+  telemetryAdminUnmount?.();
+  telemetryAdminUnmount = appEnvironment === "staging" ? installTelemetryAdmin({app,host:$("adminView")}) : null;
   switchAdminTab("overview", false);
   await loadAdminData(true);
 }

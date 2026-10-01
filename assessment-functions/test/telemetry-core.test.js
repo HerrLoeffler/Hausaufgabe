@@ -1,0 +1,10 @@
+"use strict";
+const test=require('node:test'),assert=require('node:assert/strict');
+const {validateBatch,enabled,projectEvent,summarize}=require('../lib/telemetry-core');
+const event=()=>({id:'12345678-1234-4123-8123-123456789abc',at:'2026-10-01T20:00:00.000Z',action:'submit',outcome:'ok',code:'none',durationMs:23,trigger:'manual',reference:''});
+const batch=()=>({scope:{quizId:'ABCD',attemptId:null,attemptToken:null},release:'a'.repeat(40),events:[event()]});
+test('strict data contract excludes answers names URLs and extra credentials',()=>{assert.equal(validateBatch(batch()).events.length,1);for(const key of ['answers','name','url','prompt']){const b=batch();b.events[0][key]='private';assert.throws(()=>validateBatch(b));}const b=batch();b.events.push(event());assert.throws(()=>validateBatch(b));});
+test('invalid duration scope dates and batch bounds rejected',()=>{for(const change of [b=>b.events[0].durationMs=-1,b=>b.events[0].at='garbage',b=>b.scope.quizId='../users',b=>b.events=Array(21).fill(event()),b=>b.events[0].action='arbitrary']){const b=batch();change(b);assert.throws(()=>validateBatch(b));}});
+test('activation is fail closed to production',()=>{assert.equal(enabled({GC_TELEMETRY_ENABLED:'true',GCLOUD_PROJECT:'hausaufgabe-40294'}),false);assert.equal(enabled({GC_TELEMETRY_ENABLED:'true',GCLOUD_PROJECT:'hausaufgabe-staging'}),true);});
+test('projection records evidence class and bounded expiry without credential',()=>{const row=projectEvent(event(),{ownerId:'teacher',scopeKey:'opaque',release:'a'.repeat(40),now:10});assert.equal(row.source,'client_reported');assert.equal(row.expiresAtMs,10+30*86400000);assert.equal(row.attemptToken,undefined);});
+test('summary never calls client successes server-confirmed submissions',()=>{const row=projectEvent(event(),{ownerId:'teacher',scopeKey:'opaque',release:'a'.repeat(40),now:10});const s=summarize([row],{truncated:true});assert.equal(s.coverage,'received-events-only');assert.equal(s.truncated,true);assert.equal(s.operations.submit.manual,1);assert.equal(s.operations.submit.p95Ms,23);assert.equal(s.finalizedSubmissions,undefined);});

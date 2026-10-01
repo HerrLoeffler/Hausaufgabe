@@ -5,5 +5,6 @@
 // older submit handler while CI exercises a newer one.
 module.exports = {
   ...require("./lib/secure-lifecycle"),
-  ...require("./lib/cleanup")
+  ...require("./lib/cleanup"),
+  ...require("./lib/telemetry")
 };
