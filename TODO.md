@@ -45,9 +45,9 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
-| GC-TELEMETRY-01 | Collector und Datenvertrag | Offen, Voraussetzung vor Aktivierung | Zwecke, Rollen, Aufbewahrung, Löschung und Auth festlegen; serverseitige Validierung, Deduplizierung und Limits. [Messplan](docs/telemetry/PLAN.md) |
-| GC-TELEMETRY-02 | Beitritt/Abgabe als ersten Ablauf instrumentieren | Wartet auf GC-TELEMETRY-01 | Echte Client-/Serverereignisse, Verlustfälle, Pausen und vollständigen Nenner prüfen. |
-| GC-TELEMETRY-03 | Release-/Rundenübersicht im Adminbereich | Wartet auf Messdaten | Vorhandene Admin-Filter und Fehlergruppen erweitern; keine unbelegten KPIs anzeigen. |
+| GC-TELEMETRY-01 | Collector und Datenvertrag | Implementiert auf isoliertem Branch; Aktivierung/CI/Deploy offen | `feature/telemetry-implementation` @ `4e4f0ba`: strikter Vertrag, Auth, Deduplizierung, Limits, 30-Tage-Pilot-Retention und Cleanup. Vor Aktivierung vollständige CI/Emulator-Prüfung, Cloud-Inventar und Retention-Freigabe. [Übergabe](workstreams/telemetry-implementation.md) |
+| GC-TELEMETRY-02 | Beitritt/Abgabe als ersten Ablauf instrumentieren | Teilweise implementiert, nicht aktiviert | Secure-Client misst Join/Submit nach gültigem Attempt; zusätzliche inhaltsfreie Serveroperationen erfassen gültige Start-/Submit-/Receipt-Aufrufe und Fehler. Erwartete Teilnehmerzahl und unbekannte/nicht zuordenbare Joinfälle bleiben offen. [Übergabe](workstreams/telemetry-implementation.md) |
+| GC-TELEMETRY-03 | Release-/Rundenübersicht im Adminbereich | Technische Staging-Ansicht implementiert, nicht deployed | Clientmeldungen, Serveroperationen, gespeicherter Rundenzustand und KI-Bestandsdaten getrennt anzeigen; als Nächstes CI/Emulator und sichere Staging-Aktivierung, danach lesbare UI statt Roh-JSON. [Übergabe](workstreams/telemetry-implementation.md) |
 
 ## P2 – vorgemerkt, noch keine laufende Umsetzung
 
@@ -56,7 +56,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |
-| GC-ANALYTICS-01 | Nutzungs- und Spielstatistiken | Umfangreiches Messdesign dokumentiert, Implementierung offen | [Datenstrategie](docs/telemetry/MEASUREMENT_DESIGN.md): Spiele und Aufgaben nach Collector/Join-/Abgabe-Pilot anbinden; keine pauschale Vollüberwachung. |
+| GC-ANALYTICS-01 | Nutzungs- und Spielstatistiken | Teilimplementierung auf Telemetrie-Branch; Spiele/Aufgabenaggregate offen | KI-Bestandsauswertung und aktiver Lehrerzeit-Tracker sind isoliert implementiert; Tracker noch nicht verdrahtet. Spiele und Aufgaben erst nach sicherem Collector-/Join-/Abgabe-Pilot anbinden. [Übergabe](workstreams/telemetry-implementation.md) |
 
 ## Zuletzt erledigt – mit Grenzen
 
@@ -71,6 +71,6 @@ Die Liste sammelt sichtbare Aufträge und bekannte Übergaben. Sie behauptet kei
 
 ## Ergänzung 01.10.2026 – Telemetrie-Fundament
 
-GC-TELEMETRY-BASE: gemeinsamer Ereignisvertrag und In-Memory-Puffer standardmäßig deaktiviert; Kennzahlberechnung mit explizitem Nenner; Verhaltenstests. Noch nicht im Produkt eingebunden, kein Datentransfer und kein Analytics-Dashboard. Bestehende diagnostics.mjs und admin-log-tools.mjs wurden gelesen: Filter/Sortierung/Fehlergruppen existieren bereits und sollen weiterverwendet werden.
+GC-TELEMETRY-BASE: gemeinsamer Ereignisvertrag und In-Memory-Puffer standardmäßig deaktiviert; Kennzahlberechnung mit explizitem Nenner; Verhaltenstests. Auf `feature/telemetry-implementation` wurden darauf aufbauend ein fail-closed Staging-Collector, Secure-Join/Submit-Adapter, getrennte Serveroperationsspur, Rundendiagnose, KI-Bestandsauswertung und ein isolierter aktiver Lehrerzeit-Tracker umgesetzt. Stand `4e4f0ba`: Code auf GitHub, 13 zusätzliche isolierte Rekonstruktionstests lokal grün; kein bestätigter Actions-/Deploy-/Gerätenachweis und keine Aktivierung.
 
-GC-TELEMETRY-DESIGN: ausführliche Datenstrategie und Code-Istbestand dokumentiert; keine neue Erhebung aktiviert. Siehe docs/telemetry/MEASUREMENT_DESIGN.md und workstreams/telemetry.md.
+GC-TELEMETRY-DESIGN: ausführliche Datenstrategie und Code-Istbestand dokumentiert; Production erhebt durch diese Arbeit keine neue Telemetrie. Siehe docs/telemetry/MEASUREMENT_DESIGN.md, workstreams/telemetry.md und workstreams/telemetry-implementation.md.
