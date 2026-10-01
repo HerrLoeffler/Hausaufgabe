@@ -31,6 +31,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 |---|---|---|---|
 | GC-TUTORIAL-02 | Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar | Stand prüfen | Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau. |
 | GC-TUTORIAL-03 | „Ich darf doch du sagen?“ bei der Namensfrage erhalten | Stand prüfen | Aktuellen Text und Regressionsschutz prüfen. |
+| GC-TUTORIAL-04 | Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start | Implementiert auf isoliertem Branch, Tests grün; nicht deployed / Gerätetest offen | Branch `feature/tutorial-choice-replay-v1`, Draft-PR #16: einmalige Einladung statt Zwang, Account-Entscheidung, ×/Escape-Abbruch, Dashboard-Replay und Admin „Tutorial testen“. Testlauf `36935628293` grün. Als Nächstes visuelle Profil-/Geräteabnahme und Staging-only Deploy. [Übergabe](workstreams/tutorial-choice-replay-v1.md) |
 | GC-ART-01 | Farbklekse und Randpixel an Figuren entfernen | Stand prüfen | Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten. |
 | GC-DESIGN-01 | Dashboard und Testkarten visuell feinjustieren | Implementiert, visuelle Abnahme offen | Design-Chat: bestehende Umsetzung prüfen, keine konkurrierende CSS-Schicht. |
 | GC-DESIGN-02 | Neuer Test, Editor und KI-Erstellung auf gemeinsame Komponenten umstellen | Geplant | Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten. |
