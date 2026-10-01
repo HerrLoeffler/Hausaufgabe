@@ -21,7 +21,8 @@ Stand: 01.10.2026. Diese Datei beschreibt die Spiele und ihren gemeinsamen Lab-H
 | Lab-Projekt | hausaufgabe-staging |
 | Games Dev Channel | gradecrew-games-dev |
 | Games Integrated Preview Channel | gradecrew-games-preview |
-| Veröffentlichung Escape | Deploy vorbereitet, aktuell durch fehlendes GitHub-Firebase-Servicekonto blockiert |
+| Games Dev URL | https://hausaufgabe-staging--gradecrew-games-dev-i8r23obm.web.app |
+| Veröffentlichung Escape | Games-Dev-Preview erfolgreich deployed; echte Geräteabnahme noch offen |
 | Hauptprodukt / Secure / Lehrer-App | Eigene Arbeitszweige; noch keine Escape-Integration in das Hauptprodukt |
 
 Der ältere Branch `lab/games-hub` enthält einen früheren Stand. `lab/games-structure` ist die verifizierte Struktur-Basis. Der Escape-Room-MVP wird separat auf `feature/escape-room-mvp-v1` entwickelt und ist noch nicht in die Struktur-Basis gemergt.
@@ -39,11 +40,11 @@ Für echte parallele Entwicklung können später zusätzliche PR-Preview-Channel
 
 Die Workflows `.github/workflows/games-dev-preview.yml` und `.github/workflows/games-integrated-preview.yml` bauen und testen vor jedem Deploy. Beide verwenden ausschließlich Firebase Hosting Preview Channels im Projekt `hausaufgabe-staging`; Production wird nicht angesprochen.
 
-### Aktueller Deploy-Blocker
+### Firebase-GitHub-Authentifizierung
 
-Der erste automatische Dev-Deploy auf Workflow-Run `36925726692` hat Build und alle 23 Struktur-/Escape-Tests erfolgreich abgeschlossen. Der eigentliche Firebase-Deploy wurde ausschließlich deshalb abgebrochen, weil das Repository-Secret `FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING` noch nicht eingerichtet ist. Es wurde nichts veröffentlicht und Production nicht verändert.
+Das Repository-Secret `FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING` ist eingerichtet. Der zuvor blockierte Workflow-Run `36925726692` wurde danach erneut ausgeführt und hat Build, alle 23 Struktur-/Escape-Tests sowie den Firebase-Deploy erfolgreich abgeschlossen.
 
-Einmalige Einrichtung: Firebase Hosting GitHub-Integration bzw. ein Hosting-Servicekonto mit diesem Secret-Namen einrichten. Danach kann derselbe Workflow den Dev-Channel automatisch aktualisieren.
+Der verwendete Serviceaccount ist für GradeCrew-Staging-/Preview-Hosting vorgesehen. Production bleibt getrennt; Functions und Firestore werden durch diese Games-Preview-Workflows nicht deployed.
 
 ## Vorhandene Spiele
 
@@ -99,9 +100,10 @@ Die aktuelle Lehrer-Vorschau ist ein Lab-UI-Prototyp und noch **nicht authentifi
 - erster Chromium-Integrationslauf fand einen echten Visibility-Bug; dieser wurde in `9dd0849` behoben
 - vollständiger Folgelauf auf Code-Commit `664f605`: **grün**, Workflow-Run `36924444942`
 - bestehende neun Browser-Flows blieben grün; zusätzlich Escape `practice` erfolgreich geprüft
-- Dev-Deploy-Vorbereitung auf `fc245e9`: Build und 23 Tests grün; Deployment nur wegen fehlendem Firebase-Servicekonto nicht ausgeführt
+- Games-Dev-Deploy auf dem zuvor getesteten Code-Stand `fc245e9`: 23/23 Tests grün, Build grün, Firebase Preview Channel erfolgreich veröffentlicht
+- Games-Dev-Link: `https://hausaufgabe-staging--gradecrew-games-dev-i8r23obm.web.app`
 
-**Prüfgrenze:** Serverantworten und die externe QR-Bibliothek der bestehenden Live-Spiele sind in der Browserprüfung simuliert. Escape besitzt noch keinen Backend-/KI-/Klassenanschluss. Es gab in dieser Arbeitsrunde noch keinen echten iPad-/Handy-Gerätetest und noch keinen erfolgreichen Escape-Preview-Deploy.
+**Prüfgrenze:** Serverantworten und die externe QR-Bibliothek der bestehenden Live-Spiele sind in der Browserprüfung simuliert. Escape besitzt noch keinen Backend-/KI-/Klassenanschluss. Der Preview-Deploy ist erfolgreich; eine echte iPad-/Handy-Geräteabnahme steht noch aus.
 
 ## Verbindliche Arbeitsregeln
 
@@ -118,10 +120,9 @@ Die aktuelle Lehrer-Vorschau ist ein Lab-UI-Prototyp und noch **nicht authentifi
 
 ## Nächste Aufgaben
 
-1. **Einmalige Firebase-GitHub-Authentifizierung:** Servicekonto/Secret `FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING` einrichten und Dev-Workflow erneut ausführen.
-2. **Escape Lab-Abnahme:** erfolgreichen Games-Dev-Link auf echtem Desktop/iPad testen.
-3. **Integration:** nach Abnahme PR #10 in `lab/games-structure` integrieren; dadurch später `gradecrew-games-preview` aktualisieren.
-4. **GradeCrew-Frageadapter:** vorhandene Tests und KI-generierte Fragen auf die validierten Escape-Frage-Slots abbilden.
-5. **Lehrer-Integration:** Preview und Lösungen an echte Lehrer-Auth/Berechtigungen binden.
-6. **Telemetry-Vertrag:** lokale Escape-Events erst nach festgelegtem Collector-/Privacy-Vertrag serverseitig erfassen.
-7. **Welt 2:** „Das verschwundene Prüfungsblatt“ erst auf dem stabilen gemeinsamen Escape-Kern aufbauen.
+1. **Escape Lab-Abnahme:** Games-Dev-Link auf echtem Desktop/iPad testen.
+2. **Integration:** nach Abnahme PR #10 in `lab/games-structure` integrieren; dadurch später `gradecrew-games-preview` aktualisieren.
+3. **GradeCrew-Frageadapter:** vorhandene Tests und KI-generierte Fragen auf die validierten Escape-Frage-Slots abbilden.
+4. **Lehrer-Integration:** Preview und Lösungen an echte Lehrer-Auth/Berechtigungen binden.
+5. **Telemetry-Vertrag:** lokale Escape-Events erst nach festgelegtem Collector-/Privacy-Vertrag serverseitig erfassen.
+6. **Welt 2:** „Das verschwundene Prüfungsblatt“ erst auf dem stabilen gemeinsamen Escape-Kern aufbauen.
