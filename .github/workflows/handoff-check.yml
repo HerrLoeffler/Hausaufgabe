@@ -47,6 +47,7 @@ jobs:
           bash -n tools/automation/deploy-staging-ai-functions.sh
           bash -n tools/automation/setup-staging-functions-identity.sh
           python3 - <<'PY'
+          import re
           from pathlib import Path
           workflow = Path('.github/workflows/staging-functions.yml').read_text()
           setup = Path('tools/automation/setup-staging-functions-identity.sh').read_text()
@@ -65,6 +66,10 @@ jobs:
           assert 'roles/iam.serviceAccountUser' in setup
           assert 'roles/firebasehosting.admin' not in setup
           assert 'hausaufgabe-40294' in setup  # explicit production fail-closed guard
+          for variable in ('POOL_DISPLAY', 'PROVIDER_DISPLAY'):
+              match = re.search(rf"^{variable}=['\"]([^'\"]+)['\"]$", setup, re.MULTILINE)
+              assert match, f'{variable} missing'
+              assert len(match.group(1)) <= 32, f'{variable} exceeds Google IAM 32-char limit'
           PY
       - uses: actions/setup-node@v5
         with:
