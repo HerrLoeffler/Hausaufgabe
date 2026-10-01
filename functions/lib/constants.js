@@ -29,7 +29,9 @@ const LIMITS = Object.freeze({
   imagePerMinute: 28,
   imagePerDay: 80,
   materialPerMinute: 6,
-  materialPerDay: 100
+  materialPerDay: 100,
+  assistantPerMinute: 20,
+  assistantPerDay: 400
 });
 
 module.exports = { REGION, TEXT_MODEL, IMAGE_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS };
