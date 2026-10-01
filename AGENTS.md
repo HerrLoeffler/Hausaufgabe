@@ -1,17 +1,25 @@
 # GradeCrew: Regeln für Arbeitsagenten
 
 ## Einstieg und belegbarer Stand
-- Vor Änderungen `START_HERE.md`, `GRADECREW_STATE.json` und `workstreams/README.md` auf dem aktuellen Remote-main lesen; danach die Regeln und Übergabe des tatsächlichen Arbeitsbranches.
+- Vor Änderungen `START_HERE.md`, `GRADECREW_STATE.json`, `TODO.md`, `workstreams/README.md` und `workstreams/registry.json` auf dem aktuellen Remote-main lesen; danach die Regeln und Übergabe des tatsächlichen Arbeitsbranches.
 - Ohne GitHub-Zugriff diese Einschränkung sofort nennen und die Übergabedateien anfordern. Andere Chats und Erinnerungen ersetzen keine Prüfung des Codes.
+- Remote-Branches und offene PRs frisch prüfen. Wenn ein Checkout verfügbar ist, `python tools/branch_audit.py` ausführen. Einen neuen Branch erst beginnen, wenn vorhandene Primary-/Related-Branches und PRs nicht bereits dieselbe Funktion abdecken.
 - Branch, Commit, lokale Änderungen und verfügbaren Zugriff prüfen. Nicht stillschweigend den Branch wechseln.
-- Zustände lokal, gepusht, getestet, deployed und am Gerät bestätigt getrennt mit Nachweisen dokumentieren. Keine alten Testergebnisse einem neuen Commit zuschreiben.
+- Zustände lokal, GitHub-Commit, Unit/Verhaltenstest, Emulator, CI, Deploy, Browser, Gerät und Production getrennt mit Nachweisen dokumentieren. Keine alten Testergebnisse einem neuen Commit zuschreiben.
 
 ## Parallele Aufgaben und Unterbrechungen
 - Pro Aufgabe eigener Branch und eigener Checkout/Worktree sowie eine Übergabe nach `workstreams/TEMPLATE.md`. Gemeinsame Dateien und Zuständigkeiten vorher benennen.
+- `workstreams/registry.json` pflegt primären Branch, Integrationsziel, Zustand und bekannte Related-Branches. Zustände nur nach tatsächlichem Fortschritt ändern; nichts automatisch löschen.
 - Sinnvolle Teilschritte früh committen und pushen, auch als ausdrücklich unfertigen Zwischenstand. Keine Zugangsdaten oder personenbezogenen Testdaten committen.
-- Vor längeren Arbeitsschritten und beim Abschluss die Übergabe aktualisieren: erledigt, Belege, offene Punkte, nächster konkreter Schritt. Nicht erst auf eine Tokenwarnung warten.
-- Vor Integration aktuellen Zielbranch erneut lesen, konkurrierende Änderungen erhalten und relevante Tests ausführen. Kein Force-Push, Reset oder Löschen fremder Arbeit.
+- Vor längeren Arbeitsschritten und beim Abschluss die Übergabe aktualisieren: erledigt, Belege, offene Punkte, Testmatrix, nächster konkreter Schritt. Nicht erst auf eine Tokenwarnung warten.
+- Vor Integration aktuellen Zielbranch erneut lesen, Branch-Audit wiederholen, konkurrierende Änderungen erhalten und relevante Tests ausführen. Kein Force-Push, Reset oder Löschen fremder Arbeit.
 - Routineentscheidungen selbst treffen; neue wesentliche Produktentscheidungen und große Refactors brauchen einen entsprechenden Auftrag.
+
+## Firebase-/Emulator-Pflicht
+- Änderungen an Firestore Rules, Auth/Berechtigungen, Firebase Functions, serverseitigen Transaktionen, Prüfungsabläufen oder privater Telemetrie benötigen neben Unit-/Contract-Tests passende Emulator-Tests oder einen dokumentierten Blocker.
+- Zentrale Ausführung: `bash tools/run_emulator_tests.sh`. Details und Mindestabdeckung: `docs/EMULATOR_TEST_STANDARD.md`.
+- Neue Firebase-relevante Workstreams ergänzen die Testmatrix im Handoff und möglichst domänenspezifische Emulatorfälle. `n. a.` benötigt eine Begründung.
+- Ein grüner Emulatorlauf ersetzt keinen Lasttest, kein Staging, keinen echten Gerätetest und keine Datenschutz-/Release-Freigabe.
 
 ## Sicherheit und Deployment
 - Production (`hausaufgabe-40294`) nur nach ausdrücklicher Freigabe im aktuellen Auftrag. Diese Koordinationsarbeit beinhaltet keine Deploy-Freigabe.
@@ -22,7 +30,7 @@
 - Ein CI-Lauf ersetzt weder einen echten Gerätetest noch einen bestätigten Deploy.
 
 ## Abschluss
-Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, Deployment-Status, offene Risiken und nächster Schritt. Repo-Dateien starten keinen Agenten und sichern keinen uncommitteten Code automatisch.
+Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Unit-/Emulator-/CI-Prüfungen, Deployment-Status, offene Risiken und nächster Schritt. Repo-Dateien starten keinen Agenten und sichern keinen uncommitteten Code automatisch.
 
 ## Gemeinsame To-do-Liste
 - Zu Beginn und bei Fragen nach offenen Aufgaben TODO.md frisch auf main lesen. P0/P1, Blocker und nächste Schritte nennen; ohne GitHub-Zugriff die Datei anfordern.

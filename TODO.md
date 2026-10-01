@@ -7,9 +7,10 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 - Neue Wünsche zuerst einer vorhandenen ID zuordnen; sonst eine neue eindeutige ID ergänzen. Keine stillschweigend vergessenen Wünsche.
 - Vor Arbeitsbeginn Status, zuständige Baustelle, tatsächlichen Branch und Überschneidungen prüfen. „Offen“ ist keine Behauptung, dass niemand in einem anderen Chat daran arbeitet.
+- Vor **neuer Entwicklungsarbeit** zusätzlich `workstreams/registry.json`, Remote-Branches und offene Pull Requests prüfen; bei Checkout `python tools/branch_audit.py` ausführen. Keine zweite Lösung beginnen, solange ein vorhandener Primary-/Related-Branch oder PR die Aufgabe abdecken könnte.
 - Pro Aufgabe getrennte Übergabe/Branch. Die Tabelle ist ein Überblick, keine globale exklusive Arbeitssperre.
 - Nach einem gesicherten Teilschritt genau die betroffene Zeile aktualisieren. Vor Schreiben aktuellen Remote-Stand erneut lesen und fremde Änderungen erhalten.
-- Erledigt nur mit nachvollziehbarem Nachweis; Code, CI, Deploy und Gerätetest unterscheiden. Ungeprüfte ältere Wünsche ausdrücklich als „Stand prüfen“ führen.
+- Erledigt nur mit nachvollziehbarem Nachweis; Code, Unit-/Verhaltenstest, Emulator, CI, Deploy, Browser und Gerätetest unterscheiden. Ungeprüfte ältere Wünsche ausdrücklich als „Stand prüfen“ führen.
 - Erledigte Einträge zunächst behalten, später mit Belegen archivieren. Ideen ohne Auftrag nicht eigenmächtig zu Pflichtaufgaben machen.
 - Detailstatus steht in der verlinkten Übergabe. Bei Widerspruch tatsächliche Nachweise prüfen und Übersicht berichtigen.
 - Weitere Chats werden nicht automatisch ausgelesen: dort vereinbarte Aufgaben müssen ebenfalls hier eingetragen werden.
@@ -29,6 +30,8 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
+| GC-DEV-01 | Branches, Workstreams und offene PRs bei jedem Chatstart sauber koordinieren | Umsetzung auf isoliertem Branch | `feature/dev-governance-emulator`: maschinenlesbare Registry, Branch-/PR-Audit, Überschneidungsprüfung und Lifecycle-Status entwickeln; danach CI prüfen und erst dann Integration nach main. [Übergabe](workstreams/dev-governance-emulator.md) |
+| GC-TEST-EMULATOR-01 | Firebase-Emulator als wiederverwendbares Entwicklungs-Gate für Rules, Functions, Berechtigungen, Transaktionen und Idempotenz | Testgerüst implementiert; echter Lauf/CI offen | `feature/dev-governance-emulator`: Rules-Baseline, Secure-Assessment-Lifecycle, Runner und Development-Gates angelegt. Als Nächstes auf isoliertem Firebase-Stand tatsächlich ausführen und Fehler beheben. [Standard](docs/EMULATOR_TEST_STANDARD.md) |
 | GC-TUTORIAL-02 | Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar | Stand prüfen | Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau. |
 | GC-TUTORIAL-03 | „Ich darf doch du sagen?“ bei der Namensfrage erhalten | Stand prüfen | Aktuellen Text und Regressionsschutz prüfen. |
 | GC-ART-01 | Farbklekse und Randpixel an Figuren entfernen | Stand prüfen | Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten. |

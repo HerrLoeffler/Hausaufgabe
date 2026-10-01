@@ -4,29 +4,56 @@ Gemeinsames Register: `HerrLoeffler/Hausaufgabe`, Branch **main**.
 Diese Datei ist Projektkoordination, keine Aussage darüber, welcher Code live läuft.
 
 1. GitHub-Zugriff prüfen. Ohne Zugriff sofort sagen, dass kein aktueller Code geprüft werden kann, und diese Datei, `GRADECREW_STATE.json` sowie die passende Aufgabenübergabe anfordern. Keine Zugangsdaten anfordern.
-2. Auf **main** diese Datei, `AGENTS.md`, `GRADECREW_STATE.json` sowie `TODO.md` und `workstreams/README.md` lesen. Ein alter Feature-Branch kann veraltete Kopien enthalten.
-3. Passende Baustelle auswählen; deren Remote-Branch, Commit, Regeln und Statusdateien frisch lesen. Der Registry-Eintrag ist eine datierte Beobachtung, keine automatische Wahrheit.
-4. Ziel und betroffene Dateien in einer eigenen Aufgabenübergabe festhalten. Überschneidungen abstimmen, bevor dieselben Dateien parallel verändert werden.
-5. Eigener Aufgabenbranch / eigener Checkout. Keine gemeinsamen uncommitteten Arbeitsverzeichnisse zwischen unabhängigen Chats. Bestehende Änderungen zuerst sichern, niemals durch Reset/Force-Push beseitigen.
-6. Nach einem sinnvollen Teilschritt: überprüfbaren Zwischencommit sichern, pushen und Übergabe aktualisieren. Bei Abbruch maximal den letzten ungesicherten Teilschritt verlieren.
-7. Vor Integration: aktuellen Zielbranch erneut prüfen, Konflikte bewusst lösen, passende Tests ausführen. Vor Deployment das Ziel und den genauen Commit nennen.
+2. Auf **main** diese Datei, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `workstreams/README.md` und `workstreams/registry.json` lesen. Ein alter Feature-Branch kann veraltete Kopien enthalten.
+3. Remote-Branches und offene Pull Requests frisch prüfen. Wenn ein Checkout verfügbar ist: `python tools/branch_audit.py` ausführen. Potenzielle Dateiüberschneidungen und bereits existierende Branches/PRs zur gleichen Funktion vor neuer Arbeit klären.
+4. Passende Baustelle auswählen; deren Remote-Branch, Commit, Regeln und Statusdateien frisch lesen. Der Registry-Eintrag ist eine datierte Beobachtung, keine automatische Wahrheit.
+5. **Keinen neuen parallelen Branch für dieselbe Funktion beginnen**, solange ein vorhandener Primary-/Related-Branch oder offener PR die Aufgabe bereits abdecken könnte. Erst vorhandene Arbeit prüfen, dann fortführen, integrieren oder ausdrücklich einen neuen Branch begründen.
+6. Ziel und betroffene Dateien in einer eigenen Aufgabenübergabe festhalten. Überschneidungen abstimmen, bevor dieselben Dateien parallel verändert werden.
+7. Eigener Aufgabenbranch / eigener Checkout. Keine gemeinsamen uncommitteten Arbeitsverzeichnisse zwischen unabhängigen Chats. Bestehende Änderungen zuerst sichern, niemals durch Reset/Force-Push beseitigen.
+8. Nach einem sinnvollen Teilschritt: überprüfbaren Zwischencommit sichern, pushen und Übergabe aktualisieren. Bei Abbruch maximal den letzten ungesicherten Teilschritt verlieren.
+9. Vor Integration: aktuellen Zielbranch erneut prüfen, Branch-Audit wiederholen, Konflikte bewusst lösen und passende Tests einschließlich Emulator-Gates ausführen, sofern Firebase/Security betroffen ist. Vor Deployment das Ziel und den genauen Commit nennen.
 
 ## Status korrekt unterscheiden
 
-`lokal geändert` → `Commit auf GitHub` → `Prüfungen bestanden` → `deployed` → `am Gerät bestätigt`.
+`lokal geändert` → `Commit auf GitHub` → `Unit-/Verhaltenstests` → `Emulator-Test` → `CI` → `Preview/Staging deployed` → `Browser geprüft` → `am Gerät bestätigt` → `Production`.
 Jede Stufe benötigt ihren eigenen Nachweis. Ein hochgeladener iOS-Build ist noch kein Gerätetest.
 Eine grüne CI beweist keinen Firebase-Deploy, keine Security-Freigabe und keinen bestandenen Klassentest.
 
+## Branch-/Workstream-Lebenszyklus
+
+`workstreams/registry.json` ist das maschinenlesbare Register. Zulässige Zustände:
+
+- `active`
+- `integration_ready`
+- `blocked`
+- `integrated`
+- `archive_candidate`
+
+Kein Branch wird automatisch wegen seines Alters gelöscht. Details: `docs/BRANCH_WORKSTREAM_POLICY.md`.
+
+## Emulator als Entwicklungsstandard
+
+Firebase-relevante Änderungen prüfen zusätzlich Firestore Rules, Functions, Auth/Berechtigungen, Transaktionen und Idempotenz im Emulator. Zentraler Einstieg:
+
+```bash
+bash tools/run_emulator_tests.sh
+```
+
+Die Testmatrix gehört in jeden betroffenen Workstream. Details: `docs/EMULATOR_TEST_STANDARD.md`.
+
 ## Werkzeuge
 
+- `tools/branch_audit.py`: liest Registry + Git-Refs, gleicht Workstreams/PRs ab und meldet potenzielle Dateiüberschneidungen. Verändert nichts.
+- `tools/run_emulator_tests.sh`: startet lokale Firebase-Emulatoren und zentrale Sicherheits-/Lifecycle-Tests. Deployt nichts.
 - `tools/checkpoint.py`: liest Git-Stand und schreibt einen kleinen JSON-Bericht; sichert **keinen Code**.
-- `workstreams/TEMPLATE.md`: Auftrag und Übergabe pro Aufgabe.
+- `workstreams/TEMPLATE.md`: Auftrag und Übergabe pro Aufgabe einschließlich Testmatrix.
+- `.github/workflows/development-gates.yml`: Branch-Governance + anwendbares Firebase-Emulator-Gate.
 - `.github/workflows/handoff-check.yml`: prüft die Koordinationsdateien und liefert einen Bericht im jeweiligen Actions-Lauf. Führt keine App-Tests oder Deployments aus.
 - `GRADECREW_STATUS.md`: ältere Übergabe; historische Aussagen anhand der jeweiligen Baustelle prüfen.
 
 ## Starttext zum Kopieren
 
-> Weiter mit GradeCrew, Baustelle: … . Lies auf main START_HERE.md und die passende Übergabe. Prüfe zuerst Zugriff, tatsächlichen Branch/Commit und ungesicherte Änderungen. Setze beim nächsten belegten offenen Schritt fort.
+> Weiter mit GradeCrew, Baustelle: … . Lies auf main START_HERE.md, workstreams/registry.json und die passende Übergabe. Prüfe zuerst Zugriff, Remote-Branches, offene PRs, tatsächlichen Branch/Commit und Überschneidungen. Setze beim nächsten belegten offenen Schritt fort. Bei Firebase-relevanten Änderungen plane Unit + Emulator + CI getrennt ein.
 
 ## Automatisierung aktivieren und prüfen
 

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-01",
+  "canonicalBaseBranch": "main",
+  "allowedStates": [
+    "active",
+    "integration_ready",
+    "blocked",
+    "integrated",
+    "archive_candidate"
+  ],
+  "workstreams": [
+    {
+      "id": "web-app",
+      "title": "Website / gemeinsamer App-Webstand",
+      "primaryBranch": "feature/gradecrew-app-integration",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/web-app.md",
+      "taskIds": ["GC-TUTORIAL-01", "GC-TUTORIAL-02", "GC-TUTORIAL-03", "GC-REGRESSION-01"],
+      "relatedBranches": ["fix/gradecrew-staging-polish", "fix/gradecrew-staging-release-final"],
+      "notes": "Gemeinsamer Web-Integrationsstand. Featurearbeit zuerst gegen Überschneidungen zu diesem Branch prüfen."
+    },
+    {
+      "id": "crew-assistant",
+      "title": "Crew Assistant / Sprache",
+      "primaryBranch": "feature/crew-assistant-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/crew-assistant.md",
+      "taskIds": ["GC-CREW-AI-01"],
+      "relatedBranches": ["feature/emmi-whole-test-revision-v1"],
+      "notes": "Vor neuer Assistenten-, Sprach- oder Emmi-Aktion zuerst Branch und offenen PR prüfen."
+    },
+    {
+      "id": "secure-assessment",
+      "title": "Prüfungsserver / Security",
+      "primaryBranch": "feature/secure-assessment-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/security.md",
+      "taskIds": ["GC-SECURITY-01", "GC-SECURITY-02"],
+      "relatedBranches": ["feature/gate-e-load-test", "hardening/secure-preview-full-rc-check", "integration/secure-assessment-mobile-gc28"],
+      "handoffOptional": true,
+      "notes": "Branch-eigene Security-Dokumente bleiben zusätzlich verbindlich."
+    },
+    {
+      "id": "telemetry",
+      "title": "Telemetrie / Produktdiagnose",
+      "primaryBranch": "feature/telemetry-implementation",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/telemetry-implementation.md",
+      "taskIds": ["GC-TELEMETRY-01", "GC-TELEMETRY-02", "GC-TELEMETRY-03", "GC-ANALYTICS-01"],
+      "relatedBranches": ["feature/telemetry-contract-v1", "feature/telemetry-measurement-design"],
+      "notes": "Aktivierung, Emulator, Deploy und Gerätetest getrennt nachweisen."
+    },
+    {
+      "id": "ios-teacher-app",
+      "title": "iPad-Lehrerapp",
+      "primaryBranch": "feature/shared-gradecrew-design-system",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/ios-app-v2.md",
+      "taskIds": ["GC-IOS-01", "GC-IOS-02", "GC-DEVICE-01"],
+      "relatedBranches": ["feature/gradecrew-secure-ios", "integration/secure-assessment-mobile-gc28"],
+      "notes": "Web-Deploy und nativer Build sind getrennte Zustände."
+    },
+    {
+      "id": "design-foundation",
+      "title": "Design Foundation",
+      "primaryBranch": "feature/gradecrew-design-foundation-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/design-system.md",
+      "taskIds": ["GC-ART-01", "GC-DESIGN-02"],
+      "relatedBranches": ["feature/design-dashboard-v1", "feature/shared-gradecrew-design-system"],
+      "notes": "Keine parallele zweite Token-/Asset-Schicht anlegen."
+    },
+    {
+      "id": "dashboard-design-v1",
+      "title": "Dashboard Design V1",
+      "primaryBranch": "feature/design-dashboard-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/design-dashboard-v1.md",
+      "taskIds": ["GC-DESIGN-01"],
+      "relatedBranches": [],
+      "notes": "In Web-Integration übernommen; Branch nicht als neue Gesamtbasis verwenden."
+    },
+    {
+      "id": "release-safety",
+      "title": "Release-Sicherung",
+      "primaryBranch": "feature/release-safety-snapshots",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/release-safety.md",
+      "taskIds": ["GC-RESTORE-01"],
+      "relatedBranches": [],
+      "notes": "Production bleibt ohne ausdrückliche Freigabe unangetastet."
+    },
+    {
+      "id": "games-escape",
+      "title": "Games / Escape Room",
+      "primaryBranch": "feature/escape-room-mvp-v1",
+      "integrationTarget": "lab/games-structure",
+      "state": "active",
+      "handoff": "docs/games/ESCAPE_MVP.md",
+      "taskIds": ["GC-GAMES-01", "GC-GAMES-02", "GC-GAMES-03"],
+      "relatedBranches": ["lab/games-structure", "lab/games-hub", "lab/fast-quiz", "lab/fast-quiz-v4-verified", "lab/fehlerjagd-deutsch", "lab/fehlerjagd-deutsch-v1-verified", "lab/vocab-rush", "lab/vocab-rush-v1-verified"],
+      "notes": "Lab- und verifizierte Spielbranches nicht ungeprüft zusammenführen."
+    },
+    {
+      "id": "dev-governance-emulator",
+      "title": "Entwicklungsordnung / Emulator-Gates",
+      "primaryBranch": "feature/dev-governance-emulator",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/dev-governance-emulator.md",
+      "taskIds": ["GC-DEV-01", "GC-TEST-EMULATOR-01"],
+      "relatedBranches": ["chore/gradecrew-automation", "chore/shared-agent-handoffs"],
+      "notes": "Zentrale Entwicklungsregeln und wiederverwendbares Emulator-Gate."
+    }
+  ]
+}
