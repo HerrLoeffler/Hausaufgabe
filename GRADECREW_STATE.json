@@ -33,10 +33,10 @@
       "Kontextbezogene Crew-Assistenten V2 ersetzen die gemeinsame Tierauswahl: Coco global, Remy in Test erstellen, Emmi im Editor."
     ],
     "gates": {
-      "combined_ci": "success_run_36941486945",
+      "combined_ci": "success_run_36941486945_attempt_2",
       "mobile_tutorial": "success_run_36941265518_on_same_v2_product_code_before_test_only_commit",
       "hosting_preview": "success_run_36941659842_commit_a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging_functions": "workflow_run_36941659861_setup_needed_deploy_skipped_missing_wif",
+      "staging_functions": "success_run_36943129026_commit_a61759db01e41f19b7d34e6eb0e88bac42484c1e",
       "staging_rules": "unchanged",
       "desktop_ipad_iphone_test": "not_tested_for_contextual_v2",
       "user_acceptance": "v1_feedback_received_v2_not_tested",
@@ -44,8 +44,8 @@
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 93,
-    "important": "Der aktuelle Kontextual-Crew-V2-Frontendstand ist im Staging-Preview deployed und hash-verifiziert. Klare Remy-Testwünsche werden lokal geparst und füllen das vorhandene Testformular ohne Callable. Der automatische staging-only functions:ai-Workflow ist vorhanden, hat für diesen SHA aber bewusst nicht deployed, weil STAGING_FUNCTIONS_WIF_PROVIDER noch nicht eingerichtet ist. Deshalb sind offene Coco-/Remy-KI-Fallbacks und Emmis echte reviseWholeTest-Runtime noch nicht als staging_deployed zu werten.",
-    "next_action": "V2 im aktuellen Preview praktisch testen. Danach einmalig tools/automation/setup-staging-functions-identity.sh in authentifizierter Google Cloud Shell ausführen, STAGING_FUNCTIONS_WIF_PROVIDER setzen lassen und einen exakten grünen Integrations-SHA per Automatic staging AI functions verifizieren. Erst danach Coco-KI-Fallback und Emmi Runtime testen."
+    "important": "Der aktuelle Kontextual-Crew-V2-Frontendstand ist im Staging-Preview deployed und hash-verifiziert. Der staging-only functions:ai-Workflow wurde Ende-zu-Ende erfolgreich verifiziert: WIF-Authentifizierung, Deploy und anschließende Sichtbarkeitsprüfung von crewAssistant und reviseWholeTest waren erfolgreich. Der gemeinsame Batch ist damit technisch auf Staging deployed; offen ist jetzt Martins Browser-/Geräteabnahme.",
+    "next_action": "Den gemeinsamen Staging-Stand praktisch testen: Coco/Remy-Fallback, Remy-Formularfüllung, Emmis ganzen-Test-Überarbeitung, Tutorial V2 sowie Desktop/iPad/iPhone. Erst nach Martins Prüfung auf user_tested hochstufen."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -55,12 +55,13 @@
   },
   "automation": {
     "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "preview_deployment": "verified_hosting_only_current_contextual_v2",
-    "staging_ai_functions_deploy": "automatic_workflow_implemented_pending_one_time_wif_setup_and_e2e",
+    "preview_deployment": "verified_hosting_current_contextual_v2",
+    "staging_ai_functions_deploy": "verified_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
       "run_id": 36941659842,
       "app_ci_run_id": 36941486945,
+      "app_ci_attempt": 2,
       "mobile_tutorial_run_id": 36941265518,
       "commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
@@ -72,8 +73,14 @@
     "functions_automation_evidence": {
       "workflow": ".github/workflows/staging-functions.yml",
       "setup_script": "tools/automation/setup-staging-functions-identity.sh",
-      "automatic_run_id": 36941659861,
-      "automatic_run_result": "setup_needed_success_deploy_skipped_missing_STAGING_FUNCTIONS_WIF_PROVIDER",
+      "wif_setup": "completed_by_authenticated_cloud_shell_2026-10-02",
+      "automatic_run_id": 36943129026,
+      "automatic_run_result": "success_deployed_and_verified",
+      "upstream_ci_run_id": 36941486945,
+      "upstream_ci_attempt": 2,
+      "deployed_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+      "receipt_artifact_id": 11200528486,
+      "receipt_artifact_name": "staging-functions-receipt-a61759db01e41f19b7d34e6eb0e88bac42484c1e",
       "verified_functions_target": [
         "crewAssistant",
         "reviseWholeTest"
@@ -98,56 +105,57 @@
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
       "observed_head": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "stage": "integrated",
-      "ci": "success_run_36941486945",
-      "staging": "hosting_preview_deployed_functions_pending",
+      "stage": "staging_deployed",
+      "ci": "success_run_36941486945_attempt_2",
+      "staging": "hosting_preview_and_required_ai_functions_deployed",
       "user_test": "contextual_v2_not_tested",
       "handoff": "workstreams/web-app.md",
-      "next_action": "Contextual V2 im Preview testen; danach einmalige Functions-WIF-Aktivierung und functions:ai E2E abschließen."
+      "next_action": "Gemeinsamen Browser-/Gerätetest auf dem aktuellen Preview durchführen."
     },
     {
       "id": "crew-assistant",
       "branch": "feature/crew-assistant-v1",
       "observed_head": "34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
-      "stage": "integrated",
-      "ci": "combined_web_ci_success_run_36941486945",
+      "stage": "staging_deployed",
+      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
       "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "contextual_v2_frontend_deployed_callable_pending",
+      "staging": "frontend_plus_crewAssistant_verified_run_36943129026",
       "user_test": "v1_feedback_received_v2_not_tested",
-      "next_action": "Coco V2 im Preview testen; crewAssistant erst nach staging-only functions:ai Deploy als Runtime verifizieren."
+      "next_action": "Coco/Remy im Preview praktisch testen, einschließlich KI-Fallback."
     },
     {
       "id": "contextual-crew-assistants-v2",
       "branch": "fix/contextual-crew-assistants-v2",
       "observed_feature_head": "2a03cd31a69c3802028da5713ddab7d1ce3e2727",
       "handoff_head_after_status_update": "eeb794b93b28a08c401157d9f097ace09a43393b",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "feature_ci": "success_run_36941146019",
-      "combined_ci": "success_run_36941486945",
+      "combined_ci": "success_run_36941486945_attempt_2",
       "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "hosting_preview_deployed_and_hash_verified_functions_pending",
+      "staging": "hosting_hash_verified_plus_ai_functions_verified",
       "staging_preview_run": 36941659842,
+      "staging_functions_run": 36943129026,
       "user_test": "v2_not_tested",
       "handoff": "workstreams/contextual-crew-assistants-v2.md",
-      "next_action": "Coco-Position, Remy-Formularfüllung, kurze Sprechpausen und Emmi-UI im Preview praktisch prüfen."
+      "next_action": "Coco-Position, Remy-Formularfüllung, kurze Sprechpausen und KI-Fallback im Preview praktisch prüfen."
     },
     {
       "id": "emmi-whole-test-revision",
       "branch": "feature/emmi-whole-test-revision-v1",
       "observed_head": "5eee5e574c690138cdeafdcfcb74a49c6ae9d03d",
-      "stage": "integrated",
-      "ci": "combined_web_ci_success_run_36941486945",
+      "stage": "staging_deployed",
+      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
       "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "simplified_v2_frontend_deployed_callable_pending",
+      "staging": "frontend_plus_reviseWholeTest_verified_run_36943129026",
       "user_test": "v2_not_tested",
-      "next_action": "Emmi-UI im Preview prüfen; reviseWholeTest erst nach staging-only functions:ai Deploy runtime-testen."
+      "next_action": "Emmi im Editor mit einem echten Überarbeitungswunsch im Preview testen."
     },
     {
       "id": "tutorial-choice-replay-v1",
       "branch": "feature/tutorial-choice-replay-v1",
       "observed_head": "d8453750be5965113217636478212d83e704174f",
       "stage": "staging_deployed",
-      "ci": "combined_web_ci_success_run_36941486945",
+      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
       "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
       "staging": "verified_current_hosting_preview_run_36941659842",
       "user_test": "not_tested",
@@ -219,12 +227,25 @@
       "verified_files": 93,
       "contains_current_release_train": true,
       "device_test": "not_performed"
+    },
+    {
+      "environment": "staging",
+      "type": "functions:ai",
+      "project": "hausaufgabe-staging",
+      "evidence": "Automatic staging AI functions run 36943129026",
+      "verified_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+      "verified_functions": [
+        "crewAssistant",
+        "reviseWholeTest"
+      ],
+      "receipt_artifact_id": 11200528486,
+      "production_changed": false,
+      "firestore_rules_changed": false,
+      "hosting_changed_by_this_deploy": false
     }
   ],
   "blockers": [
-    "Automatic functions:ai deployment is implemented and CI-gated but still needs the one-time staging-only Workload Identity activation; run 36941659861 therefore skipped the deploy job by design.",
-    "Open Coco/Remy AI fallback and Emmi reviseWholeTest are not fully testable until functions:ai for a current verified integration SHA is deployed to hausaufgabe-staging.",
-    "Contextual Crew V2 has not yet been practically re-tested by Martin on the newly verified preview.",
+    "Contextual Crew V2 has not yet been practically re-tested by Martin on the newly verified preview with the AI Functions available.",
     "30-user test failed; cause not confirmed.",
     "Production security gates are not all verified."
   ]
