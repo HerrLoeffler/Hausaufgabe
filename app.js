@@ -1248,14 +1248,21 @@ async function loadDashboard() {
           : (!$("quizUseTimeLimit").checked || Number($("quizTimeLimitMinutes").value) !== 1 || $("quizStartMode").value !== "student") ? "Bitte eine Minute Zeitlimit und Start durch Schüler einstellen." : null,
         focusReviewQuestion: id => { const input = document.querySelector(`#reviewQuestions .manualPoints[data-qid="${CSS.escape(id)}"]`); input?.scrollIntoView({block:"center"}); input?.focus(); },
         startNewTest: openCreateView,
+        exitTour: () => loadDashboard(),
         completeTour: async () => {
           const uid=state.user?.uid;if(!uid)throw new Error("Bitte anmelden.");
           await updateDoc(doc(db,"users",uid),{crewTourCompletedAt:serverTimestamp()});
           if(state.user?.uid===uid)state.profile={...state.profile,crewTourCompletedAt:true};
+        },
+        handleTourOffer: async (choice = "later") => {
+          const uid=state.user?.uid;if(!uid)return;
+          const normalized=choice === "start" ? "started" : "later";
+          await updateDoc(doc(db,"users",uid),{crewTourOfferHandledAt:serverTimestamp(),crewTourOfferChoice:normalized});
+          if(state.user?.uid===uid)state.profile={...state.profile,crewTourOfferHandledAt:true,crewTourOfferChoice:normalized};
         }
       });
       window.gradecrewPracticeReady = true;
-      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt)});
+      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt), isAdmin: isAdmin()});
     } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
     const tourOpened = crewTour?.active || maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();

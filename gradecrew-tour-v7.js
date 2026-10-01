@@ -1,4 +1,4 @@
-// GradeCrew mandatory guided onboarding.
+// GradeCrew guided onboarding.
 // The real product UI is used with deterministic tutorial data so the journey is
 // reliable, costs no provider request and can still demonstrate the real workflow.
 export const TOUR_VERSION = "gradecrew-live-tour-v7";
@@ -86,6 +86,57 @@ export function installCrewTour(api) {
   let freeAnswerId = "";
   const offered = new Set();
 
+  let offerCard = null;
+
+  const offerKey = () => `${TOUR_VERSION}:${owner}:offer-handled`;
+
+  function removeOffer() {
+    offerCard?.remove();
+    offerCard = null;
+  }
+
+  function offerHandledLocally() {
+    try { return localStorage.getItem(offerKey()) === "1"; } catch { return false; }
+  }
+
+  function markOfferHandledLocally() {
+    try { localStorage.setItem(offerKey(), "1"); } catch {}
+  }
+
+  function chooseOffer(choice) {
+    markOfferHandledLocally();
+    removeOffer();
+    Promise.resolve(api.handleTourOffer?.(choice)).catch(error => {
+      console.warn("Tutorial-Auswahl konnte nicht im Profil gespeichert werden", error);
+    });
+    if (choice === "start") start();
+  }
+
+  function showOffer() {
+    if (offerCard?.isConnected || !api.isDashboard()) return;
+    const anchor = $("#announcementHost") || $("#firstTestDashboard") || $("#aiJobsList") || $("#quizList");
+    if (!anchor?.parentElement) return;
+    offerCard = document.createElement("section");
+    offerCard.id = "gradecrewTutorialOffer";
+    offerCard.className = "card gcTutorialOffer";
+    offerCard.setAttribute("aria-label", "GradeCrew-Tutorial starten oder später aufrufen");
+    offerCard.innerHTML = `<div class="gcTutorialOfferCopy"><span class="gcTutorialOfferEyebrow">👋 Deine erste GradeCrew-Reise</span><h2>Einmal alles ausprobieren – danach kennst du den ganzen Ablauf.</h2><p>Erstellen, überarbeiten, aus Schülerperspektive testen und bewerten. Du arbeitest direkt in GradeCrew mit sicheren Übungsdaten und kannst jederzeit abbrechen.</p><div class="gcTutorialOfferBenefits"><span>✓ echte Oberfläche</span><span>✓ keine KI-Kosten</span><span>✓ jederzeit abbrechbar</span></div></div><div class="gcTutorialOfferActions"><img class="gcTutorialOfferCrew" src="/assets/gradecrew/clay-welcome.svg" alt="" width="150" height="90"><button type="button" class="button primary gcTutorialOfferStart">Tutorial starten · ca. 5–7 Min.</button><button type="button" class="gcTutorialOfferLater">Jetzt nicht – später jederzeit über „Tutorial“</button></div>`;
+    offerCard.querySelector(".gcTutorialOfferStart")?.addEventListener("click", () => chooseOffer("start"));
+    offerCard.querySelector(".gcTutorialOfferLater")?.addEventListener("click", () => chooseOffer("later"));
+    anchor.before(offerCard);
+  }
+
+  function abortTour(source = "button") {
+    if (!owned()) return;
+    const elapsedSeconds = Math.max(0, Math.round((performance.now() - startedAt) / 1000));
+    const abortedStage = stage;
+    stop();
+    document.dispatchEvent(new CustomEvent("gradecrew:tutorial-aborted", {
+      detail: { source, stage: abortedStage, elapsedSeconds }
+    }));
+    Promise.resolve(api.exitTour?.()).catch(error => console.warn("Dashboard nach Tutorial-Abbruch konnte nicht geöffnet werden", error));
+  }
+
   const $ = selector => document.querySelector(selector);
   const $$ = selector => [...document.querySelectorAll(selector)];
   const doneKey = () => `${TOUR_VERSION}:${owner}`;
@@ -171,6 +222,13 @@ export function installCrewTour(api) {
 
   function blockKeyboard(event) {
     if (!owned() || !event.isTrusted) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+      abortTour("escape");
+      return;
+    }
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     if ((document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext")) && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
     if (isAllowedNode(event.target)) return;
@@ -346,6 +404,7 @@ export function installCrewTour(api) {
 
   function start() {
     if (active || !api.uid() || !api.isDashboard()) return;
+    removeOffer();
     suppressLegacyGuides();
     api.beginRun();
     owner = api.uid(); quizId = ""; editSourceId = ""; variantSourceId = ""; variantQuestionId = ""; faultyId = ""; submissionId = ""; freeRegion = null;
@@ -710,12 +769,35 @@ export function installCrewTour(api) {
     finally{clearTimeout(delay);if(token===run)busy=false;}
   }
 
-  function dashboard({uid,firstVisit,completed=false}) {
-    if(active)return;if(owner&&owner!==uid)stop();owner=uid;suppressLegacyGuides();
-    let button=$("#gradecrewTourBtn");if(!button){button=document.createElement("button");button.id="gradecrewTourBtn";button.type="button";button.className="button ghost";$(".dashboardActions")?.append(button);}button.textContent="Mit der Crew starten";button.onclick=start;
-    if(firstVisit&&!completed&&!offered.has(uid)){offered.add(uid);let done=false;try{done=localStorage.getItem(doneKey())==="done";}catch{}if(!done)setTimeout(start,350);}
+  function dashboard({ uid, firstVisit, completed = false, offerHandled = false, isAdmin = false }) {
+    if (active) return;
+    if (owner && owner !== uid) stop();
+    owner = uid;
+    suppressLegacyGuides();
+    removeOffer();
+
+    let button = $("#gradecrewTourBtn");
+    if (!button) {
+      button = document.createElement("button");
+      button.id = "gradecrewTourBtn";
+      button.type = "button";
+      button.className = "button ghost compactTutorialBtn";
+      $(".dashboardActions")?.prepend(button);
+    }
+    button.textContent = isAdmin ? "? Tutorial testen" : "? Tutorial";
+    button.title = isAdmin ? "Onboarding aus Admin-Sicht testen" : "GradeCrew-Tutorial starten";
+    button.onclick = start;
+
+    let done = completed;
+    try { done = done || localStorage.getItem(doneKey()) === "done"; } catch {}
+    const handled = offerHandled || offerHandledLocally();
+    if (firstVisit && !isAdmin && !done && !handled && !offered.has(uid)) {
+      offered.add(uid);
+      setTimeout(() => { if (!active && api.isDashboard()) showOffer(); }, 250);
+    }
   }
 
+  document.addEventListener("gradecrew:tutorial-abort-request", event => { if (owned()) abortTour(event.detail?.source || "button"); });
   document.addEventListener("gradecrew:variant-dialog-opened",event=>{if(!owned()||stage!=="variant")return;void prepareVariantDialog(event.detail?.dialog||null);});
   document.addEventListener("gradecrew:variant-submitted",()=>variantSubmitted());
   document.addEventListener("gradecrew:variants-inserted", event=>{
@@ -726,6 +808,7 @@ export function installCrewTour(api) {
   document.addEventListener("gradecrew:variant-kept",event=>{if(!owned()||stage!=="variant-review"||event.detail?.id!==variantQuestionId||event.detail?.quizId!==quizId||event.detail?.ownerId!==owner)return;const token=run;queueMicrotask(()=>{if(owned()&&token===run&&stage==="variant-review"){refreshWarnings({includeEdit:false});showGoodFeedbackStep();}});});
 
   const style=document.createElement("link");style.rel="stylesheet";style.href="./gradecrew-tour.css?v=2.3.1-gc21";document.head.append(style);
+  const choiceStyle=document.createElement("link");choiceStyle.rel="stylesheet";choiceStyle.href="./tutorial-choice-v1.css?v=1";document.head.append(choiceStyle);
   addEventListener("resize",schedulePlace,{passive:true});
   document.addEventListener("gradecrew:account-changed",()=>stop());
 
