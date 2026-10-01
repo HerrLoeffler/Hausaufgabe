@@ -1,0 +1,72 @@
+name: Escape Room Dev Preview
+
+on:
+  push:
+    branches:
+      - feature/escape-room-mvp-v1
+    paths:
+      - 'lab/escape-room/**'
+      - 'tools/build-lab-escape-room.mjs'
+      - 'tools/games/escape-room.test.cjs'
+      - '.github/workflows/escape-dev-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+env:
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+
+jobs:
+  deploy-escape-dev:
+    name: Test and deploy Escape Room dev preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+
+      - name: Run Escape Room tests
+        run: node --test tools/games/escape-room.test.cjs
+
+      - name: Build Escape Room only
+        run: |
+          BUILD_ROOT="$RUNNER_TEMP/gradecrew-escape-dev"
+          node tools/build-lab-escape-room.mjs "$BUILD_ROOT"
+          rm -rf .firebase-escape-dev
+          mkdir -p .firebase-escape-dev
+          cp -R "$BUILD_ROOT/public" .firebase-escape-dev/public
+          cp "$BUILD_ROOT/firebase.json" .firebase-escape-dev/firebase.json
+
+      - name: Check Firebase deploy credential
+        id: firebase_auth
+        shell: bash
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Firebase preview deploy skipped: repository secret FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING is not configured."
+          fi
+
+      - name: Deploy Escape Room preview channel only
+        if: steps.firebase_auth.outputs.available == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ env.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: hausaufgabe-staging
+          channelId: gradecrew-escape-dev
+          expires: 30d
+          entryPoint: .firebase-escape-dev
