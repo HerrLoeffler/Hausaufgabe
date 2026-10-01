@@ -13,7 +13,7 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'app.js', 'README.md'];
+const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'app.js', 'README.md'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
@@ -46,6 +46,11 @@ for (const marker of ['sessionCache', 'GradeCrewTutorBridge', 'knowledgeHits', '
   if (!tutor.includes(marker)) throw new Error(`Escape tutor check failed: ${marker}`);
 }
 
+const adapter = await fs.readFile(path.join(output, 'gradecrew-question-adapter.js'), 'utf8');
+for (const marker of ['GradeCrewEscapeQuestionAdapter', "'single'", "'dropdown'", "'truefalse'", 'answer_mode_not_ready', 'visual_dependency']) {
+  if (!adapter.includes(marker)) throw new Error(`GradeCrew Escape adapter check failed: ${marker}`);
+}
+
 const gameData = await fs.readFile(path.join(output, 'escape-data.js'), 'utf8');
 for (const marker of [
   "id: 'q1'",
@@ -63,8 +68,8 @@ for (const name of files) hashes[name] = createHash('sha256').update(await fs.re
 
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'escape-room-locked-school',
-  format: 2,
-  version: '0.2.0',
+  format: 3,
+  version: '0.2.1',
   files: hashes,
   features: {
     deterministicWorld: true,
@@ -76,6 +81,9 @@ await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
     tutorExternalBridge: false,
     antiGuessGuard: true,
     teacherQuestionEditing: true,
+    gradeCrewQuestionAdapter: true,
+    gradeCrewAdapterTypes: ['single', 'dropdown', 'truefalse'],
+    gradeCrewPlannedTypes: ['text', 'number'],
     telemetryUpload: false,
     teacherAuth: false
   }
@@ -90,4 +98,4 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({
   }
 }, null, 2) + '\n');
 
-console.log('Escape Room MVP build verified: locked-school v0.2.0.');
+console.log('Escape Room MVP build verified: locked-school v0.2.1.');
