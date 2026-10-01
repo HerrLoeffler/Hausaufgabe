@@ -1,9 +1,9 @@
 name: Project handoff checks
 on:
   push:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   pull_request:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,18 +18,29 @@ jobs:
           python3 - <<'PY'
           import json, pathlib
           data = json.loads(pathlib.Path('GRADECREW_STATE.json').read_text())
-          assert data['schema_version'] == 1
+          assert data['schema_version'] == 2
           assert data['production']['project'] == 'hausaufgabe-40294'
           assert data['production']['approval_required'] is True
           assert data['automation']['agent_dispatch'] in {'not_configured', 'implemented_pending_credentials_and_e2e', 'verified'}
-          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md']:
+          expected = ['branch_only', 'ci_green', 'integrated', 'staging_deployed', 'user_tested', 'production']
+          assert data['status_model']['ordered_stages'] == expected
+          release = data['release_train']
+          assert release['integration_branch'] == 'feature/gradecrew-app-integration'
+          assert isinstance(release.get('included_workstreams'), list)
+          for item in data.get('workstreams', []):
+              assert item.get('stage') in expected, item
+              assert item.get('branch'), item
+              assert item.get('next_action'), item
+          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md', 'tools/release_status.py', 'tools/automation/deploy-staging-ai-functions.sh']:
               assert pathlib.Path(name).is_file(), name
           PY
-          python3 tools/checkpoint.py --task handoff-ci --goal 'Koordinationsdateien prüfen' --done 'JSON und Einstiegsdateien geprüft; keine Anwendungstests' --next 'Baustellenspezifische CI und Deploy-Nachweise separat prüfen' --output handoff-report.json
+          python3 tools/release_status.py >/dev/null
+          python3 tools/checkpoint.py --task handoff-ci --goal 'Koordinationsdateien und Release-Status prüfen' --done 'Schema, Release Train und Einstiegsdateien geprüft; keine Anwendungstests' --next 'Baustellenspezifische CI und Deploy-Nachweise separat prüfen' --output handoff-report.json
       - name: Test automation boundaries
         run: |
           python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
           bash -n tools/automation/setup-staging-identity.sh
+          bash -n tools/automation/deploy-staging-ai-functions.sh
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -42,7 +53,7 @@ jobs:
           python3 - <<'PY'
           import os
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
-              f.write('## Projektübergabe geprüft\n\nCommit: `' + os.environ['CHECKED_SHA'] + '`\n\nJSON-Bericht als Artefakt verfügbar. Dieser Lauf prüft ausschließlich Koordinationsdateien. Kein App-Test und kein Deploy.\n')
+              f.write('## Projektübergabe geprüft\n\nCommit: `' + os.environ['CHECKED_SHA'] + '`\n\nSchema v2, Release Train und Koordinationsdateien geprüft. Dieser Lauf prüft ausschließlich Koordination. Kein App-Test und kein Deploy.\n')
           PY
       - uses: actions/upload-artifact@v4
         with:
