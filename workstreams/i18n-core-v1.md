@@ -1,20 +1,25 @@
 # Aufgabe: GC-I18N-02 – deutscher i18n-Refactor vor Sprache 2
 
-- Aktualisiert (UTC): 2026-10-01T23:18:00Z
-- Verantwortlicher Chat / Auftrag: Internationalisierung; den Web-Code jetzt vollständig hinter eine gemeinsame i18n-Grenze stellen, weiterhin ausschließlich Deutsch, anschließend Staging-/Gerätetest durch Nutzer, erst danach zweite Sprache.
-- Aufgabenbranch: `feature/i18n-core-v1`
-- Basiscommit: `74eb2ec08e81315875abfc4b1ae052d9f78797eb` (`feature/gradecrew-app-integration`)
-- Draft-PR: #17 gegen `feature/gradecrew-app-integration`
+- Aktualisiert (UTC): 2026-10-01T23:22:00Z
+- Verantwortlicher Chat / Auftrag: Internationalisierung; den Web-Code vollständig hinter eine gemeinsame i18n-Grenze stellen, weiterhin ausschließlich Deutsch, anschließend Preview-/Staging- und Gerätetest durch Nutzer, erst danach zweite Sprache.
+- Aufgabenbranch: `feature/i18n-german-refactor-v1`
+- Basiscommit: `7063aee3815fc4f5a58e443318cf2c80839719a7` (`feature/gradecrew-app-integration`)
+- Draft-PR: #20 gegen `feature/gradecrew-app-integration`
+- Vorheriger Draft-PR #17: nicht verwenden; basierte auf dem 82 Commits älteren Integrationsstand `74eb2ec…` und ist durch #20 ersetzt.
 - Überschneidungen: Web-App/Design, Secure Assessment, KI/Prompts, Crew/Sprache, Exporte, native Apps.
 
 ## Rückfallebene vor dem Umbau
 
-Zwei unveränderte Git-Referenzen wurden vor dem breiteren Refactor angelegt:
+Zwei unveränderte Git-Referenzen wurden vor dem Refactor angelegt:
 
 - `backup/staging-functional-pre-i18n-2026-10-02` -> `4707c45ef573bf85f81655791edf909862e4f2a6` (in den Projektunterlagen als funktionsfähiger normaler Staging-Stand dokumentiert).
-- `backup/app-integration-pre-i18n-2026-10-02` -> `74eb2ec08e81315875abfc4b1ae052d9f78797eb` (aktuelle Web-Integrationsbasis beim Start dieses Refactors).
+- `backup/app-integration-pre-i18n-2026-10-02` -> `74eb2ec08e81315875abfc4b1ae052d9f78797eb` (Integrationsstand beim Beginn der i18n-Arbeit).
 
 Diese Branches sichern Git-/Hosting-Codezustände. Sie sind **kein** Datenbank-, Storage- oder vollständiges Backend-Disaster-Recovery-Backup.
+
+## Parallelitätsabgleich
+
+Während des ersten i18n-Entwurfs lief `feature/gradecrew-app-integration` weiter und erreichte `7063aee…` mit u. a. Crew Assistant, Emmi, Tutorial- und AI-Kosten-/Cache-Arbeit. Deshalb wurde der alte i18n-Branch nicht erzwungen oder deployed. Der aktuelle Branch wurde frisch direkt auf `7063aee…` aufgebaut. Vergleich zum Integrationsbranch beim Aufbau: **1 Commit voraus, 0 Commits zurück**; nur die 14 gezielten i18n-Dateiänderungen liegen darüber.
 
 ## Ziel und gewünschtes Verhalten
 
@@ -29,7 +34,7 @@ Die gesamte Web-Präsentationsschicht soll bereits jetzt internationalisierungsf
 - Deterministische UI-Priorität: Nutzer -> Schule -> Gerät -> Default.
 - UI-, Inhalts- und Bewertungssprache getrennt.
 - Bildungskontext und Zeitzone separat.
-- reproduzierbarer Locale-/Policy-Snapshot für veröffentlichte Prüfungen.
+- Reproduzierbarer Locale-/Policy-Snapshot für veröffentlichte Prüfungen.
 - `Intl`-Formatierung und striktes Zahlenparsing.
 
 ### Browserweite UI-Grenze
@@ -38,36 +43,36 @@ Die gesamte Web-Präsentationsschicht soll bereits jetzt internationalisierungsf
 - `shared/i18n/messages-de-DE.mjs`: erster semantischer deutscher Katalog.
 - `shared/i18n/bootstrap.mjs`: zentrale Installation.
 - Quelltext-Lokalisierung für bestehende deutsche UI-Texte, sodass ein späterer zweiter Katalog ohne erneuten Big-Bang-Refactor greifen kann.
-- Unterstützung für dynamisch eingesetzte DOM-Texte und `aria-label`, `alt`, `placeholder`, `title` über MutationObserver **nur bei einer Nicht-Quellsprache**; bei aktuellem `de-DE` kein Übersetzungsobserver und damit kein zusätzlicher DOM-Umbau.
-- native Browser-Dialoge (`alert`, `confirm`, `prompt`) laufen über dieselbe Übersetzungsgrenze.
+- Dynamische DOM-Texte und `aria-label`, `alt`, `placeholder`, `title` sind lokalisierbar; MutationObserver wird **nur bei einer Nicht-Quellsprache** aktiv. Bei aktuellem `de-DE` entsteht kein zusätzlicher DOM-Umbau.
+- Native Browser-Dialoge (`alert`, `confirm`, `prompt`) laufen über dieselbe Übersetzungsgrenze.
 - `data-i18n-key` für neue semantische Texte möglich.
 - Aktivierung nicht freigegebener UI-Locales wirft einen Fehler; `en-*` kann aktuell nicht versehentlich aktiviert werden.
 
-### Einstiegspunkte / Build
+### Einstiegspunkte / Build / Tests
 
-- `startup.js` importiert i18n vor `app.js`; erste Start-/Fehlermeldungen verwenden semantische deutsche Keys mit identischem Fallbacktext.
+- `startup.js` installiert i18n vor `app.js`; Start-/Fehlermeldungen verwenden semantische deutsche Keys mit identischem Fallbacktext.
 - `secure-student.html` lädt denselben i18n-Bootstrap vor der Secure-Student-Runtime.
-- `tools/build-staging.mjs` nimmt alle vier i18n-Runtime-Dateien in die explizite Staging-Allowlist auf; bestehende Referenz-/Hashprüfungen gelten dadurch auch für diese Dateien.
+- `tools/build-staging.mjs` enthält die aktuellen Crew-/Emmi-/Tutorial-Dateien **plus** alle vier i18n-Runtime-Dateien in der expliziten Staging-Allowlist.
 - `i18n-integration.test.mjs` schützt Reihenfolge, Build-Inhalt und das Verbot einer zweiten Sprache in dieser Stufe.
-- CI-Workflow wurde um `feature/i18n-*` erweitert und führt Core-, Browser- und Integrations-i18n-Tests sowie den normalen vollständigen Staging-Testlauf aus.
+- `.github/workflows/ai-staging-check.yml` führt auf `feature/i18n-*` die bestehenden Staging-Tests plus i18n-Core-, Browser- und Integrationsprüfungen aus.
 
 ## Bewusst fachlich nicht blind übersetzt
 
 Siehe `shared/i18n/NON_DOM_INVENTORY.md`.
 
 - CSV-/Datei-Exporte liegen außerhalb des DOM und erhalten vor Sprache 2 einen eigenen Export-Katalog.
-- KI-Systemprompts bleiben in Stufe 1 deutsch, damit KI-Verhalten nicht durch diesen UI-Refactor verändert wird.
-- `functions/lib/validation.js` enthält bewusst deutsche fach-/sprachspezifische Heuristiken. Diese dürfen nicht generisch übersetzt werden; Sprache 2 braucht eigene Validatorregeln oder Lehrerprüfung.
-- persistierte Prüfungsinhalte sind Inhalt, keine UI, und werden durch einen UI-Sprachwechsel nie automatisch übersetzt.
-- native Swift-Oberflächen werden getrennt über Apples Lokalisierungsmechanismen vorbereitet.
+- KI-Systemprompts bleiben in Stufe 1 deutsch, damit KI-Verhalten durch diesen UI-Refactor nicht verändert wird.
+- `functions/lib/validation.js` enthält bewusst deutsche fach-/sprachspezifische Heuristiken. Sprache 2 braucht eigene Validatorregeln oder Lehrerprüfung; diese Regeln werden nicht generisch übersetzt.
+- Persistierte Prüfungsinhalte sind Inhalt, keine UI, und werden durch einen UI-Sprachwechsel nie automatisch übersetzt.
+- Native Swift-Oberflächen werden getrennt über Apples Lokalisierungsmechanismen vorbereitet.
 
-## Prüfungen
+## Bisherige Prüfungen
 
 - Ursprünglicher isolierter i18n-Core: lokal 6/6 Node-Tests grün.
 - Browser-Runtime-Verhalten: lokal rekonstruierter identischer Test 5/5 grün.
-- GitHub Actions `AI Staging Checks` wurde für i18n-Branches aktiviert.
-- Lauf `36939615946` für Commit `cc8f0491e995fbfa73ea04de76803a7b78e4a142` wurde gestartet; zum Zeitpunkt dieser Aktualisierung noch `in_progress`. Spätere Commits benötigen erneut aktuellen CI-Nachweis.
-- Kein Deployment-/Gerätenachweis aus diesen Tests ableiten.
+- Neuer sauberer Branch: Git-Vergleich gegen `feature/gradecrew-app-integration` beim Aufbau = 1 ahead / 0 behind.
+- CI für den neuen Branch muss nach diesem Commit frisch geprüft werden; ältere CI-Läufe des ersetzten Branches gelten nicht als Nachweis.
+- Kein Deployment-/Gerätenachweis aus Code-/CI-Tests ableiten.
 
 ## Was als „kompletter Refactor“ in Stufe 1 gilt
 
@@ -76,16 +81,17 @@ Für die Web-App bedeutet „komplett“ in dieser Stufe: alle sichtbaren Browse
 ## Nächster konkreter Schritt
 
 1. CI für den aktuellen Branch-Head vollständig grün bekommen.
-2. Einen sicheren Preview-/Staging-Deploy dieses deutschen Refactors erstellen, ohne Production anzufassen.
-3. Nutzer testet Lehrerablauf + Secure-Student-Ablauf auf echten Geräten vollständig.
-4. Erst nach bestätigter Funktionsparität zweite UI-Locale als separaten Schritt aktivieren; davor Non-DOM-Gates abarbeiten.
+2. Sicheren Preview-/Staging-Deploy dieses weiterhin rein deutschen Refactors erstellen, ohne Production anzufassen.
+3. Nutzer testet vollständig: Login/Dashboard, Test erstellen/importieren, KI/Editor, Tutorial/Crew, Veröffentlichung, Secure-Student, Abgabe, Auswertung und Exporte.
+4. Erst nach bestätigter Funktionsparität Sprache 2 als separaten Schritt aktivieren und vorher die Non-DOM-Gates abarbeiten.
 
 ## Status
 
 - Lokal geändert: nein; Änderungen direkt auf eigenem GitHub-Branch gesichert.
-- Auf GitHub gesichert: ja, Branch `feature/i18n-core-v1`; Draft-PR #17 offen.
+- Auf GitHub gesichert: ja, `feature/i18n-german-refactor-v1`; Draft-PR #20 offen.
 - Rückfallbranches: ja, zwei unveränderte Pre-i18n-Referenzen angelegt.
-- CI: läuft; aktuelles Ergebnis noch nicht als grün bestätigt.
+- Auf aktuelle Integrationsbasis übertragen: ja, Basis `7063aee…`.
+- CI: für aktuellen Head noch zu bestätigen.
 - In `feature/gradecrew-app-integration` integriert: nein.
 - Staging/Preview deployed: nein.
 - Gerätetest: nein.
