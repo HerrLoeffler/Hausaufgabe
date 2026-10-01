@@ -1,76 +1,117 @@
 # Aufgabe: GC-GAMES-01
 
 - Aktualisiert (UTC): 2026-10-01
-- Verantwortlicher Chat / Auftrag: Escape-Room-MVP „Die verriegelte Schule“ technisch umsetzen und in den Games Hub integrieren
+- Verantwortlicher Chat / Auftrag: Escape-Room-MVP „Die verriegelte Schule“ als lernwirksames Referenzspiel weiterentwickeln
 - Aufgabenbranch: `feature/escape-room-mvp-v1`
 - Draft-PR: `#10` gegen `lab/games-structure`
 - Basiscommit: `869ca416b868667c9e48c05f81c967fe6ad59020` (`lab/games-structure`)
-- Wichtige Checkpoints: `408f621` Engine, `19e34d1` Lösungsweg-/Resume-Tests, `2e51f89` Hub-Integration, `9dd0849` Browser-Visibility-Fix, `664f605` vollständig grüner Code-Stand
-- Betroffene Dateien: `lab/escape-room/**`, `lab/shared/games-catalog.js`, `lab/games-hub/**`, `tools/build-lab-escape-room.mjs`, `tools/games/**`, `deploy-lab-games-hub.sh`
-- Überschneidungen: spätere echte Lehrer-/KI-/Testintegration berührt die Web-App; Live/Multiplayer gehört ausdrücklich nicht zu diesem MVP
+- Wichtige ältere Checkpoints: `408f621` Engine, `19e34d1` Lösungsweg-/Resume-Tests, `2e51f89` Hub-Integration, `9dd0849` Browser-Visibility-Fix, `664f605` vollständig grüner v0.1-Code-Stand
+- v0.2-Checkpoints dieser Runde: `5bc4853` Lern-/Transferdaten, `76de659` lokaler Tutor/Cache, `53fdb64` verpflichtende Lernschleife/Anti-Raten, `4c720d3` erweiterte Tests
+- Betroffene Dateien: `lab/escape-room/**`, `tools/build-lab-escape-room.mjs`, `tools/games/escape-room.test.cjs`, Escape-Preview-Workflow und Games-Dokumentation
 
-## Ziel und gewünschtes Verhalten
+## Ziel und Produktentscheidung
 
-Erster spielbarer, vollständig digitaler Escape-Room-Prototyp „Die verriegelte Schule“ mit deterministischer Spiellogik. Lernfragen sind austauschbare Datenobjekte. Lehrkräfte müssen die Mechanik später nicht selbst bauen oder durchspielen.
+„Die verriegelte Schule“ wird zunächst als **ein einzelnes sauberes Referenzspiel** fertiggestellt. Der gemeinsame Games Hub bleibt bestehen, wird aber während dieser Escape-Iteration nicht automatisch vom Escape-Branch aktualisiert. Erst nach Abnahme wird der Stand wieder in den gemeinsamen Games-Zweig integriert.
 
-## Implementiert
+Verbindliches Lernprinzip: **Spaß motiviert; entscheidender Spielfortschritt wird regelmäßig durch nachgewiesenes Lernen verdient.** Die Details stehen in `docs/games/LEARNING_GUARDRAILS.md`.
+
+## Implementiert – v0.1 Basis
 
 - drei Räume plus Finale: Klassenzimmer → Flur → Sekretariat → Ausgang
-- acht austauschbare Single-Choice-Platzhalterfragen
+- acht austauschbare Lernslots
 - vier gezählte Minirätsel: Tafelmuster, Türcode, Spind-Symbolfolge, Schlüsselbrett-Symbolfolge
-- zusätzliche Inventarinteraktion Batterie → Taschenlampe ohne künstliche Rätselzählung
-- drei falsche Lernantworten führen zur Lösung und blockieren den Spielfortschritt nicht dauerhaft
-- lokales Speichern/Fortsetzen mit Welt-/Versionsschlüssel
-- aktive Spielzeit statt bloßer Tab-Dauer
-- kontextuelle Hinweise und einfaches Feedback am Ende
+- Inventarinteraktion Batterie → Taschenlampe
+- lokales Speichern/Fortsetzen und aktive Spielzeit
 - Preflight der Welt-/Fragedefinition
-- Lehrer-Vorschau mit Route, allen Fragen, Lösungen und Hinweisen ohne Durchspielen
+- Lehrer-Vorschau mit Route und Lerninhalten
 - lokale `gradecrew:escape-event`-Hooks, aber kein Analytics-Upload
-- eigener isolierter Build mit SHA-256-Manifest
-- Games-Hub-Katalog als viertes Spiel; Escape Room bewusst nur im Modus `Üben`
-- Escape Room erscheint nicht in Rundencode-/Live-Auswahl und nicht in Highscore/Live-Modus
-- gemeinsamer Hub-Build prüft Escape-Daten, App und Buildskript per Syntaxcheck
+- Practice-/Üben-Spiel, kein Live/Highscore
 
-## Automatisierte Prüfungen
+## Implementiert – Lern-MVP v0.2
 
-`tools/games/escape-room.test.cjs` prüft:
+### Lernschleife
 
-1. kanonischer Preflight besteht und ungültige doppelte IDs werden abgelehnt
-2. Lehrer-Vorschau zeigt Route, acht Fragen und Preflight ohne Durchspielen
-3. kompletter Lösungsweg erreicht den Ausgang; Q1 wird absichtlich dreimal falsch beantwortet und darf trotzdem keine Sackgasse erzeugen
-4. gespeicherter Fortschritt wird nach Reload wieder angeboten und korrekt fortgesetzt
+- Welt-/Fragedaten auf Version `0.2.0` erweitert.
+- Jeder Lernslot enthält Lernziel, kurze Remediation, aktive Lernaufgabe und neue Transferaufgabe.
+- Erste Fehlversuche bleiben normale Wiederholungen; Antworten werden neu gemischt.
+- Nach wiederholten Versuchen gibt es **keine automatische Freigabe mehr**.
+- Nach dem dritten Versuch ohne sicheren Lernerfolg: kurze Erklärung → aktiver Merksatz/Eingabe → neue Transferaufgabe.
+- Erst die erfolgreiche Transferaufgabe schaltet den zugehörigen Spielfortschritt frei.
+- Auch eine erst nach mehreren Auswahlversuchen gefundene richtige Antwort führt in den Lerncheck.
+- Remediation-Stufe wird im lokalen Spielstand gespeichert; Dialog schließen/neu öffnen umgeht sie nicht.
 
-Gemeinsame Regressionsprüfungen prüfen zusätzlich Hub-Filter, Modusgrenzen, Join-Auswahl, Release-Manifeste und die Escape-Integration in den Shared Shell. Chromium prüft Desktop-/Tablet-/Mobile-Hub sowie die neun bisherigen Legacy-Modi und Escape `practice`.
+### Remy / API-sparende Hilfe
 
-## Gefundener und behobener Integrationsfehler
+- `escape-tutor.js` mit lokaler Wissensbibliothek und normalisiertem Sitzungscache.
+- bekannte Verständnisfragen benötigen keinen externen API-Aufruf.
+- optionaler `window.GradeCrewTutorBridge`-Vertrag für spätere echte KI-Anbindung.
+- ohne Bridge fällt Remy auf die vorhandene fachliche Erklärung zurück.
+- Rohtext der Schülerfrage wird nicht in den lokalen Event-Hook geschrieben.
+- externe KI ist in diesem Lab-Stand **nicht** aktiviert.
 
-Der erste Chromium-Lauf nach Hub-Integration (`36923989725`) fand einen echten CSS-Fehler: `homeView` blieb trotz `hidden` sichtbar, weil die eigene `display:grid`-Regel die Browser-Standarddarstellung überstimmte. Fix in `9dd0849`: zentrale Regel `[hidden]{display:none!important}`. Der Test wurde nicht abgeschwächt.
+### Anti-Raten bei Rätseln
+
+- Spind- und Schlüsselbrett-Symbolfolgen zählen Fehlversuche.
+- Nach wiederholtem falschem Durchprobieren wird das Rätsel geschlossen.
+- Vor einem neuen Versuch muss der ursprüngliche Hinweis erneut angesehen werden.
+- Türcode und Lernfortschritt bleiben weiterhin aus gefundenen Hinweisen zusammengesetzt.
+
+### Lehrer-Inhalte
+
+- Lehrerübersicht zeigt alle acht Lernslots inklusive Lernziel, Lösung, Hinweis, Remediation und Transfer.
+- jeder Slot kann im Lab direkt bearbeitet werden.
+- Bearbeitung wird erneut gegen denselben Preflight-Vertrag validiert.
+- `window.GradeCrewEscapeIntegration.getQuestionSet()` / `replaceQuestionSet()` bildet einen validierten Inhaltsvertrag für die spätere GradeCrew-Anbindung.
+- Das ist noch **nicht** der echte Adapter zum aktuellen GradeCrew-Testformat.
+
+### Spielgefühl
+
+- kleine Explorer-Figur bewegt sich beim Antippen zu Objekten.
+- zusätzliche dezente Raum-/Hover-/Statusanimationen ohne externe Assets.
+- Point-and-Click bleibt bewusst der robuste Standard für Desktop/iPad/Handy.
+
+## Deployment-Struktur
+
+- Der bisherige gemeinsame Channel `gradecrew-games-dev` wurde bereits einmal erfolgreich mit dem v0.1-Hub veröffentlicht.
+- `.github/workflows/games-dev-preview.yml` ist auf dem Escape-Branch nun nur noch manuell startbar; Escape-Pushes überschreiben den gemeinsamen Hub nicht mehr automatisch.
+- Für v0.2 wird ein eigener Hosting-Preview-Channel `gradecrew-escape-dev` eingerichtet, der ausschließlich den isolierten Escape-Build veröffentlicht.
+- Firebase-Projekt: `hausaufgabe-staging`.
+- Production (`hausaufgabe-40294`) wird von diesen Workflows nicht angesprochen.
+- Functions/Firestore werden nicht deployed.
+
+## Tests für v0.2
+
+`tools/games/escape-room.test.cjs` wurde erweitert und prüft:
+
+1. v0.2-Preflight inklusive Remediation-/Transferdaten.
+2. Lehrerübersicht mit acht bearbeitbaren Slots.
+3. Bearbeitung eines Lernslots und Rückgabe über den Integrationsvertrag.
+4. Drei Fehlversuche führen zur verpflichtenden Lernschleife; vorher bleibt Fortschritt 0/8.
+5. lokaler Remy-Wissenshit + Sitzungscache ohne externen Bridge-Aufruf.
+6. kompletter Lösungsweg; wiederholtes Spindraten erzwingt erneutes Lesen des Hinweises.
+7. Save/Resume.
+
+Der finale CI-/Deploy-Nachweis für v0.2 wird erst nach dem neuen Escape-only Workflow eingetragen. Alte grüne v0.1-Runs dürfen nicht als v0.2-Nachweis verwendet werden.
 
 ## Umfang / nicht verändern
 
-- Bestehende drei Spiele und deren Backends nicht funktional verändern.
-- Keine Production-Veröffentlichung aus diesem Aufgabenbranch.
-- Noch keine KI-, Klassen-, Schüler-, Live-, Highscore- oder Telemetrie-Collector-Anbindung für Escape Room.
-- Lösungsschlüssel später nicht ungeschützt an Schüler ausliefern; die aktuelle Lab-Lehrerübersicht ist nur UI-Prototyp und noch kein Sicherheitsmodell.
-- Keine frei von KI erfundene ausführbare Spiellogik; KI soll später ausschließlich validierte Frage-/Inhaltsdaten liefern.
+- Bestehende drei anderen Games und deren Backends nicht funktional verändern.
+- Production nicht aus diesem Aufgabenbranch veröffentlichen.
+- Keine Live-/Highscore-/Multiplayer-Funktion für Escape in dieser Iteration.
+- Kein Telemetrie-Collector und keine dauerhafte serverseitige Speicherung von Schülerfragen ohne separaten Datenvertrag.
+- Lösungsschlüssel bei späterer Hauptprodukt-Integration nicht ungeschützt an Schüler ausliefern; Lehrer-Lab-Vorschau ist noch kein Sicherheitsmodell.
+- Keine frei von KI erfundene ausführbare Spiellogik. KI liefert später ausschließlich validierte Inhaltsdaten.
 
-## Nachweisstatus
+## Offene Punkte / nächste Schritte
 
-- Code auf GitHub gesichert: ja, Branch `feature/escape-room-mvp-v1`, Draft-PR `#10`
-- Isolierter Build: **erfolgreich**
-- Node-/jsdom-Strukturtests: **23/23 grün** auf dem integrierten Code-Stand
-- Chromium-Browserprüfung: **grün** auf Code-Commit `664f605`, Workflow-Run `36924444942`; inklusive bestehender neun Spiel/Modus-Flows und Escape `practice`
-- Deployed: **nein**; weder Staging noch Production wurden in diesem Chat veröffentlicht
-- Physischer Gerätetest: **nein**; Chromium emuliert Viewports, ersetzt keinen echten iPad-/Handy-Test
-
-## Offene Probleme und nächste Schritte
-
-1. Sicheren Lab-Preview-Deploy durchführen und auf echtem Desktop/iPad testen.
-2. Adapter vom GradeCrew-Test-/KI-Frageformat auf die acht validierten Frage-Slots definieren.
-3. Lehrer-Vorschau bei echter GradeCrew-Integration an Lehrer-Auth/Berechtigungen binden.
-4. Erst nach dem Telemetrie-Collector-Vertrag die vorhandenen lokalen Event-Hooks an echte Erhebung anschließen.
-5. Welt 2 („Das verschwundene Prüfungsblatt“) erst auf dem gemeinsamen stabilen Escape-Kern aufbauen.
+1. Escape-only Workflow hinzufügen und v0.2 CI + isolierten Build prüfen.
+2. Erfolgreich auf `gradecrew-escape-dev` deployen und echten URL-Nachweis sichern.
+3. v0.2 auf echtem Desktop und iPad testen; insbesondere Touch, Dialoge, Remediation und Lehrereditor.
+4. Danach aktuellen GradeCrew-Web-App-Fragevertrag lesen und echten Adapter planen/implementieren, ohne parallel arbeitende Web-App-Dateien blind zu überschreiben.
+5. Lehreransicht bei echter Integration an echte Lehrer-Auth/Berechtigungen binden.
+6. Externe Tutor-KI erst über eine serverseitige, datenschutzkonforme Brücke aktivieren; lokale Wissens-/Cache-Stufe bleibt davor.
+7. Welt 2 erst nach stabilem Referenzspiel.
 
 ## Wiederaufnahme nach Abbruch
 
-Zuerst `START_HERE.md`, `AGENTS.md`, `TODO.md`, `GAMES_STATUS.md`, diesen Workstream und PR `#10` lesen. Dann Branchspitze und aktuellen PR-Checkstatus verifizieren. Nicht aus Erinnerungen ableiten, dass der Branch deployed oder physisch gerätegetestet wurde.
+Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, neueste CI-Runs und Preview-URL frisch verifizieren. Code, Tests, Deploy und physische Geräteabnahme getrennt berichten.
