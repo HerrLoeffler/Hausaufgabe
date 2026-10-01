@@ -1,0 +1,46 @@
+name: Emmi Editor Bridge
+
+on:
+  push:
+    branches:
+      - feature/emmi-whole-test-revision-v1
+    paths:
+      - tools/apply-emmi-whole-test-app-patch.mjs
+      - .github/workflows/emmi-editor-bridge.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v5
+        with:
+          ref: feature/emmi-whole-test-revision-v1
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Apply targeted app bridge
+        run: node tools/apply-emmi-whole-test-app-patch.mjs
+
+      - name: Verify bridge syntax
+        run: node --check tools/apply-emmi-whole-test-app-patch.mjs
+
+      - name: Commit bridge if needed
+        shell: bash
+        run: |
+          if git diff --quiet -- app.js; then
+            echo "app.js already contains the Emmi bridge"
+            exit 0
+          fi
+          git config user.name "gradecrew-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add app.js
+          git commit -m "Wire Emmi whole-test revision into editor state [emmi-app-patch]"
+          git push origin HEAD:feature/emmi-whole-test-revision-v1
