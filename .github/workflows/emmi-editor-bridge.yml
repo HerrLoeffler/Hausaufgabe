@@ -6,6 +6,7 @@ on:
       - feature/emmi-whole-test-revision-v1
     paths:
       - tools/apply-emmi-whole-test-app-patch.mjs
+      - tools/emmi-editor-bridge-snippet.txt
       - .github/workflows/emmi-editor-bridge.yml
 
 permissions:
@@ -29,7 +30,7 @@ jobs:
       - name: Apply targeted app bridge
         run: node tools/apply-emmi-whole-test-app-patch.mjs
 
-      - name: Verify bridge syntax
+      - name: Verify patcher syntax
         run: node --check tools/apply-emmi-whole-test-app-patch.mjs
 
       - name: Commit bridge if needed
