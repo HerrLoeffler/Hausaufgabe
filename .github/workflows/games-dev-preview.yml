@@ -1,0 +1,58 @@
+name: Games Dev Preview
+
+on:
+  push:
+    branches:
+      - feature/escape-room-mvp-v1
+    paths:
+      - 'lab/**'
+      - 'tools/build-lab-*.mjs'
+      - 'tools/games/**'
+      - 'deploy-lab-games-hub.sh'
+      - '.github/workflows/games-dev-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  deploy-dev-preview:
+    name: Test and deploy Games Dev preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+
+      - name: Run structure and Escape tests
+        run: npm test --prefix tools/games
+
+      - name: Build isolated Games Hub
+        run: |
+          BUILD_ROOT="$RUNNER_TEMP/gradecrew-games-dev"
+          node tools/build-lab-games-hub.mjs "$BUILD_ROOT"
+          rm -rf .firebase-games-dev
+          mkdir -p .firebase-games-dev
+          cp -R "$BUILD_ROOT/public" .firebase-games-dev/public
+          cp "$BUILD_ROOT/firebase.json" .firebase-games-dev/firebase.json
+
+      - name: Deploy Firebase preview channel only
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}'
+          projectId: hausaufgabe-staging
+          channelId: gradecrew-games-dev
+          expires: 30d
+          entryPoint: .firebase-games-dev
