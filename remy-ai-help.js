@@ -1,201 +1,327 @@
+import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
+import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=2";
+
 let installed = false;
-let active = false;
-let stepIndex = 0;
-let guide = null;
-let currentTarget = null;
+let recognition = null;
+let keepListening = false;
+let restartTimer = null;
+let stopTimer = null;
+let dictationBase = "";
+let dictationFinal = "";
+let busy = false;
 
+const REMY = CREW_MEMBERS.remy;
 const $ = selector => document.querySelector(selector);
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const STEPS = [
-  {
-    target: "#aiView .aiGrid > article:first-child",
-    eyebrow: "1 von 5 · Test festlegen",
-    title: "Was soll entstehen?",
-    text: "Fach, Klasse und Thema geben mir den wichtigsten Rahmen. Schulart und Bundesland helfen mir beim passenden Niveau. Aufgabenanzahl, Schwierigkeit, Punkte und Aufgabentypen kannst du ganz frei an deinen Unterricht anpassen."
-  },
-  {
-    target: "#aiCustomNotes",
-    eyebrow: "2 von 5 · Eigene Wünsche",
-    title: "Hier wird es wirklich dein Test.",
-    text: "Dieses Feld ist optional und gilt nur für den aktuellen Test. Schreib mir hier zum Beispiel, welche Schwerpunkte du möchtest, was unbedingt vorkommen soll oder was ich vermeiden soll."
-  },
-  {
-    target: ".gradecrewPreferenceDetails",
-    eyebrow: "3 von 5 · Vorgaben für Remy",
-    title: "Was soll ich mir merken?",
-    text: "Auch das ist optional. Hier kannst du mir allgemeine Vorlieben mitgeben, die ich bei deinen zukünftigen Tests berücksichtige. Für diesen einen Test musst du hier nichts eintragen."
-  },
-  {
-    target: "#aiView .aiGrid > article:nth-child(2)",
-    eyebrow: "4 von 5 · Material & Bilder",
-    title: "Material nur, wenn es wirklich hilft.",
-    text: "Du kannst mir eigenes Material mitgeben und festlegen, wie stark es verwendet werden soll. Vor dem Upload bestätigst du Rechte und Datenschutz. Außerdem bestimmst du selbst, ob und wie viele Aufgaben Bilder bekommen sollen."
-  },
-  {
-    target: "#generateAiTestBtn",
-    eyebrow: "5 von 5 · Bereit",
-    title: "Du entscheidest, wann es losgeht.",
-    text: "Prüfe deine Angaben noch einmal. Du kannst weiterhin jedes Feld ändern. Erst mit „Test erstellen“ beginnt die Erstellung – danach bekommst du einen Entwurf, den du vollständig prüfen und bearbeiten kannst."
-  }
-];
 
 function installStyles() {
   if ($('style[data-remy-ai-help]')) return;
   const style = document.createElement("style");
-  style.dataset.remyAiHelp = "1";
+  style.dataset.remyAiHelp = "2";
   style.textContent = `
-    #createView .createChoiceGrid{position:relative}
-    .gcRemyHelpLauncher{
-      grid-column:1 / -1;order:-9;justify-self:end;align-self:start;z-index:4;
-      display:inline-flex;align-items:center;gap:8px;margin:-62px 78px 20px 0;padding:8px 12px;
-      border:1px solid #b9ccef;border-radius:999px;background:#fff;color:#244f9e;font-size:12px;font-weight:800;
-      box-shadow:0 5px 14px rgba(47,100,214,.08);cursor:pointer
-    }
-    .gcRemyHelpLauncher:hover{border-color:#2f64d6;background:#f7faff}
-    .gcRemyHelpLauncher img{width:25px;height:25px;object-fit:contain}
-    .gcRemyGuide{
-      position:fixed;z-index:1700;width:min(365px,calc(100vw - 28px));padding:19px 20px 17px;
-      border:1px solid #d7e1de;border-radius:20px;background:#fffdf9;color:#173b36;
-      box-shadow:0 22px 60px rgba(28,49,44,.19)
-    }
-    .gcRemyGuideHead{display:grid;grid-template-columns:64px 1fr auto;gap:11px;align-items:center}
-    .gcRemyGuideHead img{width:64px;height:64px;object-fit:contain}
-    .gcRemyGuideHead span{display:block;margin-bottom:3px;color:#667871;font-size:11px}
-    .gcRemyGuideHead h2{margin:0;font-size:20px;line-height:1.17;letter-spacing:-.02em}
-    .gcRemyGuideClose{align-self:start;border:0;background:transparent;color:#64756f;font-size:23px;line-height:1;cursor:pointer;padding:2px 4px}
-    .gcRemyGuide p{margin:13px 0;color:#526760;font-size:13px;line-height:1.58}
-    .gcRemyGuideNote{padding:9px 11px;border-radius:10px;background:#eef5ff;color:#315b8d;font-size:11px;line-height:1.45}
-    .gcRemyGuideActions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px}
-    .gcRemyGuideActions>div{display:flex;gap:7px}
-    .gcRemyHelpTarget{
-      position:relative!important;z-index:1600!important;outline:3px solid #7da1e8!important;outline-offset:5px!important;
-      border-radius:12px!important;box-shadow:0 0 0 5px rgba(255,255,255,.88),0 12px 32px rgba(47,100,214,.13)!important;
-      scroll-margin-block:140px
-    }
-    @media(max-width:760px){
-      .gcRemyHelpLauncher{margin:-8px 0 10px 0;justify-self:start}
-      .gcRemyGuide{left:10px!important;right:10px!important;bottom:10px!important;top:auto!important;width:auto!important;max-height:46dvh;overflow:auto}
-      .gcRemyHelpTarget{scroll-margin-block:260px}
-    }
+    #aiView .gcRemyCreatePanel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:13px;align-items:start;margin:0 0 16px;padding:14px 16px;border:1px solid #d9e2f2;border-radius:18px;background:#fbfdff;box-shadow:0 7px 22px rgba(42,73,126,.06)}
+    .gcRemyCreateMascot{width:58px;height:58px;object-fit:contain}.gcRemyCreateBody{min-width:0}.gcRemyCreateHead{display:flex;align-items:baseline;gap:8px;margin:1px 0 8px}.gcRemyCreateHead strong{font-size:16px}.gcRemyCreateHead span{color:#6c7786;font-size:12px}
+    .gcRemyCreateForm{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:end}.gcRemyCreateForm textarea{resize:vertical;min-height:46px;max-height:120px;padding:10px 11px;border:1px solid #cfd8e5;border-radius:13px;font:inherit;font-size:13px;line-height:1.4;background:#fff}.gcRemyCreateForm textarea:focus{outline:2px solid rgba(47,100,214,.16);border-color:#2f64d6}
+    .gcRemyCreateMic,.gcRemyCreateSend{width:44px;height:44px;border-radius:13px;border:1px solid #cfd8e5;background:#fff;font:inherit;font-size:18px;cursor:pointer}.gcRemyCreateSend{background:#2f64d6;color:#fff;border-color:#2f64d6}.gcRemyCreateMic.listening{background:#fff0f0;border-color:#e25b5b;color:#b42318;animation:gcRemyPulse 1.2s ease-in-out infinite}
+    .gcRemyCreateStatus{margin-top:7px;color:#536274;font-size:12px;line-height:1.4}.gcRemyCreateStatus.success{color:#2f6a46}.gcRemyCreateStatus.error{color:#9a3e38}.gcRemyCreateStatus[hidden]{display:none!important}
+    .gcRemyFilled{animation:gcRemyFilled 1.6s ease}.gcRemyFilled input,.gcRemyFilled select,.gcRemyFilled textarea{border-color:#5d8ce5!important;box-shadow:0 0 0 3px rgba(93,140,229,.12)!important}
+    @keyframes gcRemyPulse{50%{transform:scale(.95);box-shadow:0 0 0 5px rgba(226,91,91,.12)}}@keyframes gcRemyFilled{0%,100%{background:transparent}30%{background:#f2f7ff}}
+    @media(max-width:700px){#aiView .gcRemyCreatePanel{grid-template-columns:48px minmax(0,1fr);padding:12px}.gcRemyCreateMascot{width:48px;height:48px}.gcRemyCreateForm{grid-column:1 / -1;grid-template-columns:44px minmax(0,1fr) 44px}.gcRemyCreateHead{margin-top:4px}}
+    @media(prefers-reduced-motion:reduce){.gcRemyCreateMic.listening,.gcRemyFilled{animation:none}}
   `;
   document.head.appendChild(style);
 }
 
-function clearTarget() {
-  currentTarget?.classList.remove("gcRemyHelpTarget");
-  currentTarget = null;
-}
-
-function closeHelp() {
-  active = false;
-  clearTarget();
-  guide?.remove();
-  guide = null;
-}
-
-function placeGuide(target) {
-  if (!guide || !target || innerWidth <= 760) return;
-  const rect = target.getBoundingClientRect();
-  const width = Math.min(365, innerWidth - 28);
-  const gap = 22;
-  let left = rect.right + gap;
-  if (left + width > innerWidth - 14) left = Math.max(14, rect.left - width - gap);
-  const top = Math.max(88, Math.min(rect.top, innerHeight - guide.offsetHeight - 20));
-  guide.style.left = `${Math.round(left)}px`;
-  guide.style.top = `${Math.round(top)}px`;
-}
-
-function renderStep(index) {
-  if (!active) return;
-  stepIndex = Math.max(0, Math.min(STEPS.length - 1, index));
-  const step = STEPS[stepIndex];
-  clearTarget();
-  currentTarget = $(step.target);
-  if (!currentTarget) return closeHelp();
-  currentTarget.classList.add("gcRemyHelpTarget");
-  currentTarget.scrollIntoView({ block: "center", behavior: "smooth" });
-
-  guide?.remove();
-  guide = document.createElement("aside");
-  guide.className = "gcRemyGuide";
-  guide.setAttribute("aria-label", "Hilfe von Remy");
-  guide.innerHTML = `
-    <div class="gcRemyGuideHead">
-      <img src="/assets/gradecrew/elephant-create.svg" alt="">
-      <div><span>Remy · Hilfe beim Erstellen</span><h2>${step.title}</h2></div>
-      <button type="button" class="gcRemyGuideClose" aria-label="Hilfe schließen">×</button>
-    </div>
-    <p>${step.text}</p>
-    <div class="gcRemyGuideNote">Du kannst während meiner Hilfe alles frei anklicken, ändern und ausprobieren. Ich erkläre nur – ich sperre nichts.</div>
-    <div class="gcRemyGuideActions">
-      <button type="button" class="button ghost gcRemyBack" ${stepIndex === 0 ? "disabled" : ""}>Zurück</button>
-      <div>
-        <button type="button" class="button ghost gcRemyStop">Hilfe beenden</button>
-        <button type="button" class="button primary gcRemyNext">${stepIndex === STEPS.length - 1 ? "Alles klar" : "Weiter"}</button>
-      </div>
+function ensurePanel() {
+  const aiView = $("#aiView");
+  if (!aiView || $("#gcRemyCreatePanel")) return;
+  const panel = document.createElement("section");
+  panel.id = "gcRemyCreatePanel";
+  panel.className = "gcRemyCreatePanel";
+  panel.setAttribute("aria-label", "Test mit Remy vorbereiten");
+  panel.innerHTML = `
+    <img class="gcRemyCreateMascot" src="${REMY.asset}" alt="Remy">
+    <div class="gcRemyCreateBody">
+      <div class="gcRemyCreateHead"><strong>Remy</strong><span>Sag mir, welchen Test du brauchst.</span></div>
+      <form id="gcRemyCreateForm" class="gcRemyCreateForm">
+        <button id="gcRemyCreateMic" class="gcRemyCreateMic" type="button" aria-label="Testwunsch diktieren" title="Diktieren">🎙</button>
+        <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" placeholder="z. B. Englisch, 4. Klasse, Farben, leicht, 10 Aufgaben …"></textarea>
+        <button id="gcRemyCreateSend" class="gcRemyCreateSend" type="submit" aria-label="Übernehmen">➜</button>
+      </form>
+      <div id="gcRemyCreateStatus" class="gcRemyCreateStatus" role="status" aria-live="polite" hidden></div>
     </div>`;
-  document.body.appendChild(guide);
-  placeGuide(currentTarget);
-
-  guide.querySelector(".gcRemyGuideClose").addEventListener("click", closeHelp);
-  guide.querySelector(".gcRemyStop").addEventListener("click", closeHelp);
-  guide.querySelector(".gcRemyBack").addEventListener("click", () => renderStep(stepIndex - 1));
-  guide.querySelector(".gcRemyNext").addEventListener("click", () => {
-    if (stepIndex === STEPS.length - 1) closeHelp();
-    else renderStep(stepIndex + 1);
-  });
-}
-
-async function startHelp() {
-  if (document.body.classList.contains("gcRealTourActive")) return;
-  const aiButton = $("#createAiBtn");
-  if (!aiButton) return;
-  aiButton.click();
-  for (let i = 0; i < 50; i += 1) {
-    if (!$("#aiView")?.classList.contains("hidden")) break;
-    await wait(40);
-  }
-  if ($("#aiView")?.classList.contains("hidden")) return;
-  active = true;
-  renderStep(0);
-}
-
-function ensureLauncher() {
-  const grid = $("#createView .createChoiceGrid");
-  const ai = $("#createAiBtn");
-  if (!grid || !ai || $("#gcRemyHelpLauncher")) return;
-  const button = document.createElement("button");
-  button.id = "gcRemyHelpLauncher";
-  button.className = "gcRemyHelpLauncher";
-  button.type = "button";
-  button.innerHTML = '<img src="/assets/gradecrew/elephant-create.svg" alt=""><span>Noch unsicher? Remy hilft</span>';
-  button.addEventListener("click", event => {
+  aiView.querySelector(".pageHead")?.insertAdjacentElement("afterend", panel);
+  panel.querySelector("#gcRemyCreateForm")?.addEventListener("submit", event => {
     event.preventDefault();
-    event.stopPropagation();
-    void startHelp();
+    void submitRequest();
   });
-  ai.insertAdjacentElement("afterend", button);
+  panel.querySelector("#gcRemyCreateMic")?.addEventListener("click", toggleDictation);
+  panel.querySelector("#gcRemyCreateInput")?.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      void submitRequest();
+    }
+  });
 }
 
-function installListeners() {
-  ensureLauncher();
-  document.addEventListener("click", event => {
-    if (event.target.closest("#newQuizBtn, #emptyNewQuizBtn, #backFromAi, #backFromCreate, #brandBtn")) {
-      if (event.target.closest("#backFromAi, #brandBtn")) closeHelp();
-      setTimeout(ensureLauncher, 0);
+function currentContext() {
+  return {
+    screen: "ai_create",
+    aiForm: {
+      subject: $("#aiSubject")?.value || "",
+      grade: $("#aiGrade")?.value || "",
+      schoolType: $("#aiSchoolType")?.value || "",
+      region: $("#aiRegion")?.value || "",
+      topic: $("#aiTopic")?.value || "",
+      difficulty: $("#aiDifficulty")?.value || "",
+      count: Number($("#aiCount")?.value) || null,
+      points: Number($("#aiPoints")?.value) || null
     }
-    if (active && event.target.closest("#generateAiTestBtn")) setTimeout(closeHelp, 100);
-  }, true);
-  addEventListener("resize", () => active && placeGuide(currentTarget), { passive: true });
-  document.addEventListener("gradecrew:account-changed", closeHelp);
+  };
+}
+
+function setStatus(message = "", kind = "") {
+  const host = $("#gcRemyCreateStatus");
+  if (!host) return;
+  host.textContent = message;
+  host.className = `gcRemyCreateStatus${kind ? ` ${kind}` : ""}`;
+  host.hidden = !message;
+}
+
+function setBusy(next) {
+  busy = Boolean(next);
+  $("#gcRemyCreateSend")?.toggleAttribute("disabled", busy);
+  $("#gcRemyCreateInput")?.toggleAttribute("disabled", busy);
+  if (busy) stopDictation();
+}
+
+function highlightField(field) {
+  const label = field?.closest("label") || field;
+  if (!label) return;
+  label.classList.remove("gcRemyFilled");
+  void label.offsetWidth;
+  label.classList.add("gcRemyFilled");
+  window.setTimeout(() => label.classList.remove("gcRemyFilled"), 1800);
+}
+
+function setField(id, value) {
+  const field = $(id);
+  if (!field || value === undefined || value === null || value === "") return false;
+  field.value = String(value);
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+  field.dispatchEvent(new Event("change", { bubbles: true }));
+  highlightField(field);
+  return true;
+}
+
+function appendNote(text) {
+  const field = $("#aiCustomNotes");
+  if (!field || !text) return;
+  const current = field.value.trim();
+  if (current.toLocaleLowerCase("de-DE").includes(text.toLocaleLowerCase("de-DE"))) return;
+  field.value = [current, text].filter(Boolean).join(current ? "\n" : "");
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+  field.dispatchEvent(new Event("change", { bubbles: true }));
+  highlightField(field);
+}
+
+function applyTypePatch(patch) {
+  const root = $("#aiTypeChecks");
+  if (!root) return;
+  const boxes = Array.from(root.querySelectorAll('input[type="checkbox"]'));
+  let changed = false;
+  if (Array.isArray(patch.allowedTypes) && patch.allowedTypes.length) {
+    const wanted = new Set(patch.allowedTypes);
+    boxes.forEach(box => {
+      const next = wanted.has(box.value);
+      if (box.checked !== next) changed = true;
+      box.checked = next;
+      box.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+  if (Array.isArray(patch.excludeTypes) && patch.excludeTypes.length) {
+    const blocked = new Set(patch.excludeTypes);
+    boxes.forEach(box => {
+      if (blocked.has(box.value) && box.checked) {
+        changed = true;
+        box.checked = false;
+        box.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+  }
+  if (!boxes.some(box => box.checked) && boxes[0]) {
+    boxes[0].checked = true;
+    boxes[0].dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  if (changed) highlightField(root.closest("details") || root);
+}
+
+function applyPatch(patch = {}) {
+  setField("#aiSubject", patch.subject);
+  setField("#aiGrade", patch.grade);
+  setField("#aiSchoolType", patch.schoolType);
+  setField("#aiRegion", patch.region);
+  setField("#aiTopic", patch.topic);
+  setField("#aiDifficulty", patch.difficulty);
+  setField("#aiCount", patch.count);
+  setField("#aiPoints", patch.points);
+  applyTypePatch(patch);
+  if (patch.notes) appendNote(String(patch.notes).slice(0, 1500));
+  if (patch.durationMinutes) appendNote(`Gewünschte Bearbeitungszeit: ca. ${patch.durationMinutes} Minuten.`);
+  const summary = patchSummary(patch);
+  setStatus(summary ? `✓ Eingetragen: ${summary}` : "✓ Eingetragen.", "success");
+  $("#aiTopic")?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+async function callRemyAi(text) {
+  const functions = getFunctions(getApp(), "europe-west1");
+  const callable = httpsCallable(functions, "crewAssistant", { timeout: 90000 });
+  const result = await callable({ crewId: "remy", text, context: currentContext() });
+  return result.data || {};
+}
+
+async function submitRequest() {
+  if (busy) return;
+  const input = $("#gcRemyCreateInput");
+  const text = String(input?.value || "").trim();
+  if (!text) return;
+  stopDictation();
+  setBusy(true);
+  setStatus("Remy trägt ein …");
+  try {
+    const local = resolveLocalCrewRequest({ crewId: "remy", text, context: currentContext() });
+    if (local.handled && local.action?.type === "patch_ai_form") {
+      applyPatch(local.action.patch || {});
+      return;
+    }
+    if (local.handled) {
+      setStatus(local.reply || "Sag mir kurz, welchen Test du brauchst.");
+      return;
+    }
+    const result = await callRemyAi(text);
+    if (result.action?.type === "patch_ai_form") {
+      applyPatch(result.action.patch || {});
+      return;
+    }
+    setStatus(result.reply || "Ich konnte daraus noch keine sicheren Angaben übernehmen.");
+  } catch (error) {
+    console.warn("Remy konnte den Testwunsch nicht verarbeiten:", error?.code || error?.message || error);
+    setStatus("Das hat gerade nicht geklappt. Versuch es bitte noch einmal.", "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
+function speechConstructor() {
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+}
+
+function updateMicState() {
+  const button = $("#gcRemyCreateMic");
+  button?.classList.toggle("listening", keepListening);
+  if (button) button.textContent = keepListening ? "●" : "🎙";
+}
+
+function stopDictation() {
+  keepListening = false;
+  window.clearTimeout(restartTimer);
+  window.clearTimeout(stopTimer);
+  restartTimer = null;
+  stopTimer = null;
+  const active = recognition;
+  recognition = null;
+  try { active?.stop(); } catch (_) {}
+  updateMicState();
+}
+
+function startRecognitionCycle() {
+  if (!keepListening || recognition) return;
+  const SpeechRecognition = speechConstructor();
+  if (!SpeechRecognition) {
+    stopDictation();
+    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    return;
+  }
+
+  const active = new SpeechRecognition();
+  recognition = active;
+  active.lang = "de-DE";
+  active.interimResults = true;
+  active.continuous = true;
+  active.maxAlternatives = 1;
+
+  active.onresult = event => {
+    let interim = "";
+    for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      const transcript = String(event.results[index][0]?.transcript || "").trim();
+      if (!transcript) continue;
+      if (event.results[index].isFinal) dictationFinal = `${dictationFinal} ${transcript}`.trim();
+      else interim = `${interim} ${transcript}`.trim();
+    }
+    const input = $("#gcRemyCreateInput");
+    if (input) input.value = [dictationBase, dictationFinal, interim].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+  };
+
+  active.onerror = event => {
+    if (["not-allowed", "service-not-allowed", "audio-capture"].includes(event.error)) {
+      keepListening = false;
+      setStatus("Ich bekomme gerade keinen Mikrofonzugriff.", "error");
+    }
+  };
+
+  active.onend = () => {
+    if (recognition === active) recognition = null;
+    if (!keepListening) return updateMicState();
+    restartTimer = window.setTimeout(startRecognitionCycle, 180);
+  };
+
+  try { active.start(); }
+  catch (_) {
+    recognition = null;
+    if (keepListening) restartTimer = window.setTimeout(startRecognitionCycle, 300);
+  }
+}
+
+function toggleDictation() {
+  if (keepListening) return stopDictation();
+  if (!speechConstructor()) {
+    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    return;
+  }
+  const input = $("#gcRemyCreateInput");
+  dictationBase = String(input?.value || "").trim();
+  dictationFinal = "";
+  keepListening = true;
+  updateMicState();
+  setStatus("Ich höre zu …");
+  startRecognitionCycle();
+  stopTimer = window.setTimeout(() => {
+    stopDictation();
+    if ($("#gcRemyCreateInput")?.value.trim()) setStatus("Diktat übernommen.");
+  }, 60000);
+}
+
+function installLifecycle() {
+  const aiView = $("#aiView");
+  if (aiView) {
+    new MutationObserver(() => {
+      if (aiView.classList.contains("hidden")) stopDictation();
+    }).observe(aiView, { attributes: true, attributeFilter: ["class"] });
+  }
+  document.addEventListener("gradecrew:account-changed", () => {
+    stopDictation();
+    const input = $("#gcRemyCreateInput");
+    if (input) input.value = "";
+    setStatus("");
+  });
 }
 
 export function installRemyAiHelp() {
   if (installed || typeof document === "undefined") return;
   installed = true;
   installStyles();
-  installListeners();
+  ensurePanel();
+  installLifecycle();
 }
 
 installRemyAiHelp();

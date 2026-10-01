@@ -20,6 +20,13 @@ test("parses a natural Remy test request into a partial form patch", () => {
   assert.equal(patch.points, 20);
 });
 
+test("understands the short spoken class-and-topic phrasing used in staging feedback", () => {
+  const patch = parseTestRequest("Erstelle mir einen Test für die 4 Klasse für Farben, leichte Aufgaben");
+  assert.equal(patch.grade, "4");
+  assert.equal(patch.topic, "Farben");
+  assert.equal(patch.difficulty, "leicht");
+});
+
 test("keeps duration as an explicit request without inventing a form field", () => {
   const patch = parseTestRequest("Mathe Klasse 7 über Brüche, 15 Minuten");
   assert.equal(patch.subject, "Mathematik");
@@ -47,12 +54,20 @@ test("common questions stay local and do not request AI", () => {
   assert.equal(result.needsAi, undefined);
 });
 
-test("clear test command becomes a real form action", () => {
+test("clear Remy test command becomes a real form action", () => {
   const result = resolveLocalCrewRequest({ crewId: "remy", text: "Englisch Klasse 4 Thema Farben leicht" });
   assert.equal(result.handled, true);
   assert.equal(result.action.type, "patch_ai_form");
   assert.equal(result.action.patch.grade, "4");
   assert.equal(result.action.patch.topic, "Farben");
+});
+
+test("Coco routes test creation to Remy instead of navigating or patching the form", () => {
+  const result = resolveLocalCrewRequest({ crewId: "coco", text: "Mach mir einen Test für Klasse 4 über Farben" });
+  assert.equal(result.handled, true);
+  assert.equal(result.intent, "route_remy");
+  assert.equal(result.action, undefined);
+  assert.match(result.reply, /Remy/);
 });
 
 test("unknown open conversation is delegated to AI fallback", () => {

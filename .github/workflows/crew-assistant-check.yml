@@ -5,6 +5,7 @@ on:
     branches:
       - feature/crew-assistant-v1
       - feature/emmi-whole-test-revision-v1
+      - fix/contextual-crew-assistants-v2
   workflow_dispatch:
 
 permissions:
@@ -35,6 +36,14 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit "$code"
 
+      - name: Check contextual assistant browser modules
+        if: github.ref_name == 'fix/contextual-crew-assistants-v2'
+        run: |
+          node --check crew-assistant-ui.js
+          node --check remy-ai-help.js
+          node --check emmi-whole-test-revision.mjs
+          node --check visual-enhancements.js
+
       - name: Upload Crew core test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,7 +54,7 @@ jobs:
           retention-days: 2
 
       - name: Check Emmi browser modules and editor bridge
-        if: github.ref_name == 'feature/emmi-whole-test-revision-v1'
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2'
         run: |
           node --check emmi-whole-test-revision.mjs
           node --test emmi-whole-test-bridge.test.mjs
@@ -59,7 +68,7 @@ jobs:
         run: node --test test/crew-assistant.test.js
 
       - name: Test Emmi whole-test safeguards
-        if: github.ref_name == 'feature/emmi-whole-test-revision-v1'
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2'
         working-directory: functions
         run: node --test test/whole-test-revision.test.js
 

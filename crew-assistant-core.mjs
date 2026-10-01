@@ -76,10 +76,10 @@ const COMMON_RESPONSES = Object.freeze({
   privacy: "Für die Assistenz gilt: Bitte keine personenbezogenen Schülerdaten eingeben. Wiederkehrende Standardfragen kann GradeCrew direkt beantworten, ohne dafür jedes Mal eine KI-Anfrage zu senden.",
   cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
   capabilities: Object.freeze({
-    coco: "Ich kann dir GradeCrew erklären, dich zu Funktionen führen und den nächsten Schritt finden. Für das Erstellen, Verbessern oder Bewerten kann ich dich direkt an Remy, Emmi oder Wilma weitergeben.",
+    coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
     remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Aufgabentypen und Zusatzwünsche.",
-    emmi: "Ich kann Aufgaben prüfen, Verbesserungen vorschlagen und später gezielte Änderungen an einzelnen Aufgaben auslösen. Im ersten Entwurf beantworte ich bereits allgemeine Fragen; direkte Editor-Aktionen werden schrittweise angeschlossen.",
-    wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen. Im ersten Entwurf beantworte ich bereits allgemeine Fragen; echte Ergebnis-Aktionen werden anschließend an die bestehende Auswertung angebunden."
+    emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
+    wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
   })
 });
 
@@ -123,6 +123,8 @@ function extractTopic(text) {
   const candidates = [
     /\bthema\s*[:=-]?\s*([^.!?]+)/i,
     /\b(?:über|ueber)\s+([^.!?]+)/i,
+    /\b(?:klasse|jahrgang(?:sstufe)?)\s*\d{1,2}\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
+    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
     /\bzu\s+(?!der\s+\d|den\s+\d|einer?\s+\d)([^.!?]+)/i
   ];
   for (const pattern of candidates) {
@@ -132,9 +134,11 @@ function extractTopic(text) {
       if (topic) return topic;
     }
   }
-  const forMatch = text.match(/\b(?:für|fuer)\s+([^.!?]+)/i);
-  if (forMatch && !/^(?:die|den|der)?\s*\d+\.?\s*(?:klasse|jahrgang)/i.test(forMatch[1])) {
-    const topic = cleanTopic(forMatch[1]);
+  const forMatches = [...text.matchAll(/\b(?:für|fuer)\s+([^.!?]+)/gi)];
+  for (let index = forMatches.length - 1; index >= 0; index -= 1) {
+    const raw = forMatches[index][1];
+    if (/^(?:die|den|der)?\s*\d+\.?\s*(?:klasse|jahrgang)/i.test(raw)) continue;
+    const topic = cleanTopic(raw);
     if (topic && !/^(?:mich|uns|meine|einen?\s+test)/i.test(topic)) return topic;
   }
   return undefined;
@@ -229,15 +233,24 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {} } = 
   if (common) return { handled: true, source: "local", ...common };
 
   const patch = parseTestRequest(normalized);
-  if ((member.id === "remy" || looksLikeTestCommand(normalized)) && Object.keys(patch).length) {
+  if (member.id === "remy" && Object.keys(patch).length) {
     const summary = patchSummary(patch);
     return {
       handled: true,
       source: "local",
       intent: "patch_ai_form",
-      reply: summary ? `Klar. Ich habe verstanden: ${summary}. Ich trage das ins Testformular ein – du kannst danach alles noch ändern.` : "Klar. Ich übernehme die erkannten Angaben ins Testformular.",
+      reply: summary ? `Klar. Ich habe verstanden: ${summary}.` : "Klar. Ich übernehme die erkannten Angaben ins Testformular.",
       action: { type: "patch_ai_form", patch },
       contextUsed: Boolean(context && Object.keys(context).length)
+    };
+  }
+
+  if (member.id !== "remy" && looksLikeTestCommand(normalized)) {
+    return {
+      handled: true,
+      source: "local",
+      intent: "route_remy",
+      reply: "Für das Erstellen von Tests ist Remy da. Öffne „Neuer Test“ → „Mit KI erstellen“ – dort kannst du Remy direkt sagen oder diktieren, was du brauchst."
     };
   }
 
