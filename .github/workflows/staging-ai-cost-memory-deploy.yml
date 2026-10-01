@@ -39,7 +39,7 @@ jobs:
           grep -q 'reviseWholeTest' functions/main.js
           echo "Source: $EXPECTED_SHA"
           echo "Target: $PROJECT_ID"
-          echo "Scope: functions:ai + firestore:indexes only"
+          echo "Scope: functions:ai only; indexes remain separate"
 
       - name: Use Node 22
         uses: actions/setup-node@v5
@@ -75,20 +75,20 @@ jobs:
           set -euo pipefail
           npx --yes firebase-tools@15.32.0 projects:list --json >/dev/null
 
-      - name: Deploy AI functions and cleanup indexes to staging only
+      - name: Deploy AI functions to staging only
         shell: bash
         run: |
           set -euo pipefail
           npx --yes firebase-tools@15.32.0 deploy \
             --project "$PROJECT_ID" \
-            --only functions:ai,firestore:indexes \
+            --only functions:ai \
             --non-interactive
 
       - name: Record deploy scope
         shell: bash
         run: |
-          echo "STAGING deploy completed."
+          echo "STAGING AI-functions deploy completed."
           echo "Project: $PROJECT_ID"
           echo "Commit:  $EXPECTED_SHA"
-          echo "Deployed: functions:ai, firestore:indexes"
-          echo "Not deployed: hosting, firestore rules, assessment, production"
+          echo "Deployed: functions:ai"
+          echo "Not deployed: firestore:indexes, hosting, firestore rules, assessment, production"
