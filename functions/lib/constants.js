@@ -29,7 +29,9 @@ const LIMITS = Object.freeze({
   imagePerMinute: 28,
   imagePerDay: 80,
   materialPerMinute: 6,
-  materialPerDay: 100
+  materialPerDay: 100,
+  assistantPerMinute: 20,
+  assistantPerDay: 400
 });
 
 // Keep expensive/raw data short-lived and retain only compact aggregates long-term.

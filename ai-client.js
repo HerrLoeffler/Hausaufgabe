@@ -30,6 +30,7 @@ export function createAiClient(app, getUid) {
     generateTest: call("generateTest", 540000),
     startAiTestJob: call("startAiTestJob", 60000),
     regenerateQuestion,
+    reviseWholeTest: call("reviseWholeTest", 360000),
     analyzeMaterial: call("analyzeMaterial", 300000),
     generateQuestionMedia: call("generateQuestionMedia", 300000)
   };

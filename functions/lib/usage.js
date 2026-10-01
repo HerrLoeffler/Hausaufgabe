@@ -8,7 +8,8 @@ const map = {
   test: [LIMITS.testPerMinute, LIMITS.testPerDay],
   question: [LIMITS.questionPerMinute, LIMITS.questionPerDay],
   image: [LIMITS.imagePerMinute, LIMITS.imagePerDay],
-  material: [LIMITS.materialPerMinute, LIMITS.materialPerDay]
+  material: [LIMITS.materialPerMinute, LIMITS.materialPerDay],
+  assistant: [LIMITS.assistantPerMinute, LIMITS.assistantPerDay]
 };
 function dayKey(d = new Date()) { return d.toISOString().slice(0, 10); }
 function minuteKey(d = new Date()) { return d.toISOString().slice(0, 16); }

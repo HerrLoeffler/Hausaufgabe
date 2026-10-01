@@ -5,11 +5,11 @@
   "engines": {
     "node": "22"
   },
-  "main": "index.js",
+  "main": "main.js",
   "type": "commonjs",
   "scripts": {
     "test": "node --test",
-    "check": "node --check index.js && find lib -name '*.js' -print0 | xargs -0 -n1 node --check && eslint index.js lib test"
+    "check": "node --check main.js && node --check index.js && find lib -name '*.js' -print0 | xargs -0 -n1 node --check && eslint main.js index.js lib test"
   },
   "dependencies": {
     "firebase-admin": "^14.4.0",
