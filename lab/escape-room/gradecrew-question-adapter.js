@@ -1,7 +1,8 @@
 (() => {
   'use strict';
 
-  const COMPATIBLE_TYPES = Object.freeze(['single', 'dropdown', 'truefalse', 'text', 'number']);
+  const COMPATIBLE_TYPES = Object.freeze(['single', 'dropdown', 'truefalse']);
+  const PLANNED_TYPES = Object.freeze(['text', 'number']);
   const UNSUPPORTED_TYPES = Object.freeze(['multi', 'gapfill', 'matching', 'ordering', 'grouping', 'markwords']);
 
   const clone = value => JSON.parse(JSON.stringify(value));
@@ -44,6 +45,17 @@
     const errors = [];
     const warnings = [];
 
+    if (PLANNED_TYPES.includes(type)) {
+      errors.push(issue(
+        'answer_mode_not_ready',
+        type === 'text'
+          ? 'Freitext ist im GradeCrew-Datenvertrag vorbereitet, wird im Escape-Hauptslot aber erst freigeschaltet, wenn Eingabe und automatische Variantenprüfung vollständig getestet sind.'
+          : 'Zahlaufgaben sind im GradeCrew-Datenvertrag vorbereitet, werden im Escape-Hauptslot aber erst freigeschaltet, wenn Zahl/Toleranz/Einheit vollständig getestet sind.',
+        sourceIndex
+      ));
+      return { errors, warnings };
+    }
+
     if (!COMPATIBLE_TYPES.includes(type)) {
       const known = UNSUPPORTED_TYPES.includes(type);
       errors.push(issue(
@@ -79,49 +91,11 @@
       };
     }
 
-    if (type === 'truefalse') {
-      return {
-        answer: {
-          answerMode: 'choice',
-          options: ['Richtig', 'Falsch'],
-          correctIndex: source.correctBoolean === true ? 0 : 1
-        },
-        errors,
-        warnings
-      };
-    }
-
-    if (type === 'text') {
-      const acceptedAnswers = Array.isArray(source.acceptedAnswers)
-        ? source.acceptedAnswers.map(nonempty).filter(Boolean)
-        : [];
-      if (source.manualReview) {
-        errors.push(issue('manual_review', 'Freitext mit manueller Bewertung darf keinen automatischen Spielfortschritt freischalten.', sourceIndex));
-        return { errors, warnings };
-      }
-      if (!acceptedAnswers.length) {
-        errors.push(issue('missing_accepted_answers', 'Automatisch prüfbarer Freitext benötigt mindestens eine akzeptierte Antwort.', sourceIndex));
-        return { errors, warnings };
-      }
-      return {
-        answer: { answerMode: 'text', acceptedAnswers },
-        errors,
-        warnings
-      };
-    }
-
-    const numericAnswer = Number(source.numericAnswer);
-    const tolerance = Number(source.tolerance ?? 0);
-    if (!Number.isFinite(numericAnswer) || !Number.isFinite(tolerance) || tolerance < 0) {
-      errors.push(issue('invalid_number', 'Zahlaufgaben benötigen eine numerische Lösung und eine nichtnegative Toleranz.', sourceIndex));
-      return { errors, warnings };
-    }
     return {
       answer: {
-        answerMode: 'number',
-        numericAnswer,
-        tolerance,
-        unit: nonempty(source.unit)
+        answerMode: 'choice',
+        options: ['Richtig', 'Falsch'],
+        correctIndex: source.correctBoolean === true ? 0 : 1
       },
       errors,
       warnings
@@ -232,6 +206,7 @@
 
   window.GradeCrewEscapeQuestionAdapter = Object.freeze({
     compatibleTypes: COMPATIBLE_TYPES,
+    plannedTypes: PLANNED_TYPES,
     unsupportedTypes: UNSUPPORTED_TYPES,
     adaptQuestion,
     adaptTest
