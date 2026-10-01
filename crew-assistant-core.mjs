@@ -192,7 +192,7 @@ function parseTestRequest(input = "") {
 }
 
 function looksLikeTestCommand(text) {
-  return /\b(test|probe|prüfung|pruefung|lernzielkontrolle|aufgaben?)\b/i.test(text) ||
+  return /\b(test|probe|prüfung|pruefung|lernzielkontrolle)\b/i.test(text) ||
     /\b(?:klasse|jahrgang|punkte?|multiple[ -]?choice|freitext|zuordnung|lückentext)\b/i.test(text);
 }
 
@@ -245,7 +245,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {} } = 
     };
   }
 
-  if (member.id !== "remy" && looksLikeTestCommand(normalized)) {
+  if (member.id === "coco" && looksLikeTestCommand(normalized)) {
     return {
       handled: true,
       source: "local",
