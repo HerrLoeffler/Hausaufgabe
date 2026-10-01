@@ -2,7 +2,7 @@
   "name": "gradecrew-games-structure-checks",
   "private": true,
   "scripts": {
-    "test": "node --test regression.test.cjs escape-room.test.cjs gradecrew-escape-adapter.test.cjs",
+    "test": "node --test regression.test.cjs escape-room.test.cjs gradecrew-escape-adapter.test.cjs gradecrew-escape-builder.test.cjs",
     "test:browser": "node browser-smoke.cjs"
   },
   "devDependencies": { "jsdom": "26.1.0", "playwright": "1.62.1" }
