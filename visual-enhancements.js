@@ -159,6 +159,7 @@ export function startVisualEnhancements() {
       ["Crew-Tour-gc25", "./crew-tour-gc25-final-polish.js?v=2.3.1-gc25"],
       ["Crew-Tour-gc26", "./crew-tour-gc26-story-polish.js?v=2.3.1-gc26-story-clay2"],
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
+      ["Freitext-Lösungsschlüssel", "./freetext-solution-guard.js?v=2.3.1-gc28"],
       ["Freitext-Prüfhilfe", "./freetext-review-enhancements.js?v=2.3.1-gc28"],
       ["Remy-Hilfe", "./remy-ai-help.js?v=2.3.1-gc26"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
