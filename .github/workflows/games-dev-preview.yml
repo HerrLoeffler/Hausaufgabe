@@ -16,6 +16,9 @@ permissions:
   contents: read
   checks: write
 
+env:
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+
 jobs:
   deploy-dev-preview:
     name: Test and deploy Games Dev preview
@@ -47,11 +50,23 @@ jobs:
           cp -R "$BUILD_ROOT/public" .firebase-games-dev/public
           cp "$BUILD_ROOT/firebase.json" .firebase-games-dev/firebase.json
 
+      - name: Check Firebase deploy credential
+        id: firebase_auth
+        shell: bash
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Firebase preview deploy skipped: repository secret FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING is not configured."
+          fi
+
       - name: Deploy Firebase preview channel only
+        if: steps.firebase_auth.outputs.available == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}'
+          firebaseServiceAccount: '${{ env.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: hausaufgabe-staging
           channelId: gradecrew-games-dev
           expires: 30d
