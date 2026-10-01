@@ -44,7 +44,6 @@ const root = path.resolve(__dirname, '../..');
         if (body.action === 'roomState') data = { status:'waiting', players:[], leaderboard:[] };
         await route.fulfill({status:200, headers, contentType:'application/json', body:JSON.stringify({ok:true, data})});
       } else if (url.includes('qrcode.min.js')) {
-        // The external QR library is outside this navigation check.
         await route.fulfill({status:200, contentType:'text/javascript', body:'window.QRCode=Object.assign(function(){},{CorrectLevel:{M:0}});'});
       } else await route.abort();
     });
@@ -57,7 +56,8 @@ const root = path.resolve(__dirname, '../..');
     for (const width of [1440, 768, 390]) {
       await page.setViewportSize({width, height:width===390?844:1024});
       await page.goto(base+'/', {waitUntil:'networkidle'});
-      assert.equal(await page.locator('.gameCard').count(),3);
+      assert.equal(await page.locator('.gameCard').count(),4);
+      assert.equal(await page.locator('#joinGame option[value="escape-room"]').count(),0);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
       await page.locator('[data-subject="german"]').click();
       assert.equal(await page.locator('.gameCard').count(),1);
@@ -94,7 +94,7 @@ const root = path.resolve(__dirname, '../..');
           await page.locator('.gc-games-home').click();
           await page.locator('#gcLeaveDialog button[value="leave"]').click();
           await page.waitForURL(base+'/?mode=practice');
-          assert.equal(await page.locator('.gameCard').count(),3);
+          assert.equal(await page.locator('.gameCard').count(),4);
         }
         if (mode==='live') {
           await page.locator('#setupSubmit').click();
@@ -120,6 +120,16 @@ const root = path.resolve(__dirname, '../..');
       await page.waitForURL(base+'/?mode=live');
       assert.equal(await page.locator('[name="hub-mode"][value="live"]').isChecked(),true);
     }
+
+    await page.goto(base+'/escape-room/?mode=practice',{waitUntil:'networkidle'});
+    await visible('gameView');
+    assert.equal(await page.locator('#homeView').isVisible(),false);
+    assert.equal(await page.locator('.gc-games-nav').count(),1);
+    assert.equal(await page.locator('#teacherPreviewBtn').count(),1);
+    assert.equal(await page.evaluate(()=>location.search),'');
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+    console.log('escape-room / practice passed');
+
     await page.goto(base+'/');
     await page.locator('[data-game="vocab-rush"] .favoriteButton').click();
     await page.reload();
@@ -129,11 +139,11 @@ const root = path.resolve(__dirname, '../..');
     const noJs = await browser.newContext({javaScriptEnabled:false});
     const fallback = await noJs.newPage();
     await fallback.goto(base+'/');
-    assert.equal(await fallback.locator('.fallback a').count(),3);
+    assert.equal(await fallback.locator('.fallback a').count(),4);
     assert.equal(await fallback.locator('#joinForm').isVisible(),false);
     await noJs.close();
     assert.deepEqual(errors,[]);
-    console.log('Browser smoke passed: desktop/tablet/mobile, all nine modes, practice starts, central join, QR precedence, leave dialog and favorites. Backend and external QR library mocked.');
+    console.log('Browser smoke passed: desktop/tablet/mobile, nine legacy modes + Escape practice, central join, QR precedence, leave dialog and favorites. Backend and external QR library mocked.');
   } finally {
     if (browser) await browser.close();
     if (server) await new Promise(resolve=>server.close(resolve));

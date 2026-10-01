@@ -13,7 +13,8 @@
   const icons = {
     math: '<circle cx="48" cy="52" r="26"/><path d="M48 24v-8m-10 0h20M48 52l15-10M20 34h14M27 27v14M64 66h14M68 58l8 16"/>',
     german: '<path d="M24 18h39a7 7 0 0 1 7 7v45H24zM34 34h25M34 45h18M34 56h22"/><circle cx="64" cy="61" r="13"/><path d="m73 70 10 10M57 61h14"/>',
-    english: '<rect x="17" y="24" width="43" height="31" rx="7"/><rect x="36" y="42" width="43" height="31" rx="7"/><path d="M26 36h25M45 54h25M23 67c7 8 17 12 28 12M73 31c-7-8-17-12-28-12"/>'
+    english: '<rect x="17" y="24" width="43" height="31" rx="7"/><rect x="36" y="42" width="43" height="31" rx="7"/><path d="M26 36h25M45 54h25M23 67c7 8 17 12 28 12M73 31c-7-8-17-12-28-12"/>',
+    escape: '<rect x="25" y="15" width="46" height="66" rx="5"/><circle cx="59" cy="49" r="3"/><path d="M38 15v-4a10 10 0 0 1 20 0v4M17 48h16m-8-8 8 8-8 8"/>'
   };
   function node(tag, className, text) {
     const el = document.createElement(tag);
@@ -38,7 +39,6 @@
       if (favorites.has(game.id)) favorites.delete(game.id); else favorites.add(game.id);
       saveFavorites();
       render();
-      // Keep keyboard focus after redraw, including removal from the favorites view.
       ($('gameGrid').querySelector(`[data-game="${game.id}"] .favoriteButton`) || $('favoritesOnly')).focus({ preventScroll: true });
     });
     top.append(node('span', 'subject', game.subject.toLocaleUpperCase('de-DE')), star);
@@ -83,7 +83,7 @@
     history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
     render();
   }
-  games.forEach(game => {
+  games.filter(game => game.modes.includes('live')).forEach(game => {
     const option = node('option', '', game.name);
     option.value = game.id;
     $('joinGame').append(option);
@@ -114,7 +114,7 @@
   $('joinCode').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6); });
   $('joinForm').addEventListener('submit', event => {
     event.preventDefault();
-    const game = games.find(item => item.id === $('joinGame').value);
+    const game = games.find(item => item.id === $('joinGame').value && item.modes.includes('live'));
     const code = $('joinCode').value;
     if (!game || !/^\d{6}$/.test(code)) { $('joinForm').reportValidity(); return; }
     location.assign(`${game.id}/?join=${code}`);

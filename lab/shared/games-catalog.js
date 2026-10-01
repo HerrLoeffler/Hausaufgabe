@@ -33,6 +33,14 @@
       modes: ['practice', 'highscore', 'live'], buildScript: 'tools/build-lab-vocab-rush.mjs',
       entry: { modeAttribute: 'data-open', gameView: 'gameView', teacherView: 'teacherView' },
       backend: { codebase: 'vocabrush', api: 'vocabRushApi' }
+    },
+    {
+      id: 'escape-room', name: 'Escape Room', subject: 'Fächerübergreifend', subjectId: 'mixed', icon: 'escape',
+      description: 'Lernfragen öffnen Hinweise, Gegenstände und den Weg aus der verriegelten Schule.',
+      topics: ['Escape Room', 'Lernfragen', 'Rätsel', 'Mathematik', 'Deutsch', 'Englisch'],
+      features: ['3 Räume + Finale', '8 Lernfragen', '10–15 Minuten'],
+      modes: ['practice'], buildScript: 'tools/build-lab-escape-room.mjs',
+      entry: { modeAttribute: 'data-open-mode', gameView: 'gameView', teacherView: 'teacherGameView' }
     }
   ];
   function deepFreeze(value) {
