@@ -7,63 +7,83 @@
 - Aufgabenbranch: `feature/dev-governance-emulator`
 - Integrationsziel: `main`
 - Basiscommit: `93b6379734223b00107b4f4489586a7e7e2bbbbe`
+- Erster Governance-Commit: `c22b833a47653f409b06924899522cf6b626fd17`
 - Betroffene Bereiche: Chat-Einstieg, Workstream-Registry, Branch-Audit, CI-Gates, Firebase-Emulator-Teststandard
 
 ## Ziel
 
-Viele parallele GradeCrew-Chats und Branches sollen ohne Doppelbau und Statusverwechslung funktionieren. Firebase-relevante Entwicklungsbereiche sollen zusätzlich zu Unit-/Contract-Tests wiederverwendbare Emulatorprüfungen für Rules, Functions, Berechtigungen, Transaktionen und Idempotenz erhalten.
+Viele parallele GradeCrew-Chats und Branches sollen ohne Doppelbau und Statusverwechslung funktionieren. Firebase-relevante Entwicklungsbereiche erhalten zusätzlich zu Unit-/Contract-Tests wiederverwendbare Emulatorprüfungen für Rules, Functions, Berechtigungen, Transaktionen und Idempotenz.
 
-## Erledigt in diesem Arbeitsstand
+## Erledigt
 
-- Maschinenlesbares `workstreams/registry.json` mit Primary-/Related-Branches, Integrationsziel und Lifecycle-Zustand entworfen.
-- Verbindliche Startregeln um Remote-Branches, offene PRs und Überschneidungsprüfung erweitert.
-- `tools/branch_audit.py` entwickelt: Registry-Validierung, Branch-Verfügbarkeit, ahead/behind, offene PR-Zuordnung, potenzielle Dateiüberschneidungen und unklassifizierte Branches als Triage-Warnung.
+- Maschinenlesbares `workstreams/registry.json` mit Primary-/Related-Branches, Integrationsziel und Lifecycle-Zustand.
+- Verbindliche Startregeln: Remote-Branches, offene PRs und Dateiüberschneidungen vor neuer Arbeit prüfen.
+- `tools/branch_audit.py`: Registry-Validierung, Branch-Verfügbarkeit, ahead/behind, offene PR-Zuordnung, potenzielle Dateiüberschneidungen und unklassifizierte Branches als Triage-Warnung.
 - Branch-Lebenszyklus dokumentiert: `active`, `integration_ready`, `blocked`, `integrated`, `archive_candidate`.
-- Firebase-Emulator-Teststandard dokumentiert und in den Workstream-Handoff übernommen.
-- Zentrale Emulator-Suite angelegt:
-  - Firestore-Rules-Baseline
-  - Secure-Assessment-Lifecycle gegen Functions + Firestore Emulator
-  - Token-/Berechtigungsfehler
-  - Start-Idempotenz
-  - parallele/repetierte Submit-Idempotenz
-  - Lösungsschlüssel-Leak-Schutz
-- `tools/run_emulator_tests.sh` als gemeinsamer lokaler/CI-Einstieg erstellt; enthält keinen Deploy.
-- `.github/workflows/development-gates.yml` erstellt: Branch-Governance bei allen Entwicklungsbranchtypen; Firebase-Emulator nur wenn Firebase-Dateien im geprüften Stand vorhanden sind.
-- Start-/Agent-/Chat-Vertrag und Workstream-Template so erweitert, dass Unit, Emulator, CI, Deploy, Browser, Gerät und Production getrennt nachgewiesen werden.
+- Große lose Stränge zusätzlich eingeordnet: KI-Qualität, Freitext-Review und Legacy-Branch-Triage. `dev` bleibt wegen einzigartiger Commits bewusst blockiert und wird nicht automatisch gelöscht.
+- Firebase-Emulator-Teststandard und Testmatrix für künftige Firebase-relevante Workstreams.
+- Zentrale Emulator-Suite:
+  - Firestore-Rules-Baseline;
+  - Secure-Assessment-Lifecycle gegen echte emulierte Assessment Functions + Firestore;
+  - Token-/Berechtigungsfehler;
+  - Start-Idempotenz;
+  - parallele/repetierte Submit-Idempotenz;
+  - Lösungsschlüssel-Leak-Schutz.
+- `tools/run_emulator_tests.sh` startet ausschließlich die für den Assessment-Test benötigten Emulatoren/Functions in einem temporären Config-Scope; kein Deploy und keine Production-Zugangsdaten.
+- `.github/workflows/development-gates.yml`: Branch-Governance auf Entwicklungsbranches; Firebase-Emulator nur bei anwendbarem Firebase-Stand.
+- Start-/Agent-/Chat-Vertrag und Workstream-Template trennen Unit, Emulator, CI, Deploy, Browser, Gerät und Production.
+
+## Tatsächliche Prüfungen
+
+### Governance-Branch
+
+GitHub Actions Run `36933879010` auf `c22b833`:
+- Branch-Governance: **grün**.
+- Firebase-Job: korrekt **nicht anwendbar/übersprungen**, weil dieser reine main-basierte Koordinationsbranch kein `firebase.json`/`firestore.rules` enthält. Das ist **kein** Emulator-Laufzeitnachweis.
+
+### Echter Firebase-/Assessment-Emulator
+
+Für die Laufzeitprüfung wurde ein isolierter Testbranch `integration/telemetry-emulator-gate` direkt von `feature/telemetry-implementation@4e4f0ba90a5bbb68e63a8836782289b46fbef21f` erstellt. Er enthält nur Emulator-Testgerüst/Runner/Validation-Workflow; der Telemetrie-Produktbranch wurde nicht überschrieben.
+
+- Run `36934064744` auf `fa051678`: **fehlgeschlagen**. Ursache war ein Test-Isolationsrennen: `clearFirestore()` löste den realen Quiz-Lösch-Trigger aus; wiederverwendete Quiz-IDs erlaubten einem verspäteten Cleanup, Testdaten des nächsten Falls zu löschen. Kein bestätigter GradeCrew-Sicherheitsfehler.
+- Testfixtures anschließend pro Fall auf eindeutige Quiz-IDs umgestellt.
+- Run `36934351905` auf `dd722845a1f75feaa0369fde34a1d0dee3c56c52`: **grün**. Firestore Rules, tatsächliche Assessment Functions, Start/Resume/Submit, Berechtigungen, Transaktionen sowie parallele/repetierte Abgabe liefen gemeinsam im Emulator.
+
+Dieser Nachweis gilt für den genannten isolierten Integrationsstand. Er ist kein Staging-/Geräte-/Production-Nachweis und kein Lasttest.
 
 ## Testmatrix
 
 | Änderung / Risiko | Unit / Contract | Rules Emulator | Functions Emulator | Parallel / Idempotenz | Staging / Gerät |
 |---|---|---|---|---|---|
-| Branch-Audit / Registry | Syntax/Struktur lokal geprüft | n. a. – keine Firebase-Laufzeit | n. a. | n. a. | n. a. |
-| Firestore-Regeln | Testcode statisch geprüft | Lauf offen | n. a. | n. a. | offen |
-| Secure Assessment | bestehende isolierte Tests auf Quellbranch vorhanden | indirekt Baseline vorgesehen | Lauf offen | Lauf offen | offen |
-| Development-Gates Workflow | YAML/Struktur lokal geprüft | Lauf offen auf Firebase-Branch | Lauf offen auf Firebase-Branch | Lauf offen | n. a. |
+| Branch-Audit / Registry | Governance-CI grün | n. a. – keine Firebase-Laufzeit | n. a. | n. a. | n. a. |
+| Firestore-Regeln | zentrale Testfälle | ✅ Run `36934351905` | n. a. | n. a. | offen |
+| Secure Assessment | bestehende isolierte Tests + Emulatorfälle | ✅ | ✅ Run `36934351905` | ✅ parallele/repetierte Submit-Fälle | offen |
+| Development-Gates Workflow | ✅ Run `36933879010` | echter Firebase-Nachweis separat ✅ | echter Firebase-Nachweis separat ✅ | ✅ im Integrationslauf | n. a. |
 
 ## Zwischenstand
 
-- Lokal geändert: Struktur und Testgerüst erstellt; statische Syntax-/Strukturprüfungen erfolgreich.
-- Auf GitHub gesichert (Commit): **offen – wird nach diesem Handoff in einem zusammenhängenden Commit gesichert.**
-- Unit-/Verhaltenstests: Nur statische Checks dieses neuen Gerüsts; keine neuen Laufzeitbehauptungen.
-- Emulator-Test: **noch nicht tatsächlich ausgeführt.** Die Governance-Branchbasis enthält selbst kein `firebase.json`; echter Lauf folgt auf einem isolierten Integrations-/Firebase-Stand.
-- CI: **noch nicht bestätigt.** Workflow existiert erst mit dem neuen Commit.
+- Lokal geändert: kein ungesicherter Produktcode aus dieser Arbeit behauptet.
+- Auf GitHub gesichert: `feature/dev-governance-emulator` ab `c22b833`; getestete Nachbesserungen werden im nächsten Commit dieses Branches gesichert.
+- Emulator-Test: **grün** auf isoliertem Firebase-Integrationsbranch `dd722845`, Run `36934351905`.
+- CI: Governance-CI auf `c22b833` grün; finaler CI-Lauf nach dem Nachbesserungscommit noch erneut prüfen.
 - Preview/Staging deployed: nein.
-- Browser geprüft: n. a. für diese reine Entwicklungsinfrastruktur.
-- Gerätetest: nein / n. a. für Infrastruktur.
+- Browser geprüft: n. a. für diese Entwicklungsinfrastruktur.
+- Gerätetest: n. a. für diese Infrastruktur; Produkt-Gerätetests bleiben separat.
 - Production: unverändert.
 
-## Offene Probleme und Unsicherheiten
+## Offene Punkte
 
-- Das Repo enthält zahlreiche ältere Feature-/Fix-/Lab-/Integration-Branches. Das Audit markiert nicht registrierte Branches bewusst nur als Triage-Warnung; kein automatisches Löschen.
-- Ein echter Emulatorlauf benötigt einen Stand mit `firebase.json`, `firestore.rules` und Assessment Functions. Deshalb muss das Gerüst nach Sicherung auf einem isolierten Firebase-Integrationsstand ausgeführt werden.
-- Ein grüner Emulatorlauf ersetzt keinen Lasttest, Staging-/Gerätetest oder Production-Gate.
+- Die Registry ordnet die wichtigen aktiven Stränge ein; unklassifizierte Altbranches bleiben Triage-Warnungen und werden nie automatisch gelöscht.
+- `dev` enthält einzigartige alte Commits und muss vor Archivierung fachlich geprüft werden.
+- Nach dem finalen Governance-Commit dessen CI prüfen und danach die Integration nach `main` über einen Review-/PR-Schritt vorbereiten.
+- Das Emulator-Gate ist ein Grundgerüst: neue Firebase-Domänen ergänzen eigene fachliche Tests statt nur auf die Assessment-Suite zu vertrauen.
 
 ## Nächster konkreter Schritt
 
-Diesen Stand auf `feature/dev-governance-emulator` committen und pushen; danach einen isolierten Firebase-Teststand auf Basis des aktuellen Telemetrie/Secure-Assessment-Codes verwenden, um `bash tools/run_emulator_tests.sh` tatsächlich auszuführen und Fehler zu beheben, bevor Integration nach main vorgeschlagen wird.
+Finalen Governance-/Registry-/Emulator-Nachbesserungscommit sichern, Development-Gates erneut grün prüfen und anschließend den Branch als Integrationskandidat zu `main` bereitstellen. Kein Deploy.
 
 ## Nicht verändern
 
 - Keine Production-Deployments.
-- Keine bestehenden Games-, Crew-Assistant-, Design-, Secure-Assessment- oder Telemetriebranches überschreiben.
+- Keine bestehenden Games-, Crew-Assistant-, Design-, Secure-Assessment-, KI-, Freitext- oder Telemetriebranches überschreiben.
 - Keine Altbranches automatisch löschen oder force-pushen.

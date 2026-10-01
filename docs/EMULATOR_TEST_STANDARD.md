@@ -13,7 +13,7 @@ Unit-Tests beweisen einzelne Funktionen. Sie beweisen nicht automatisch, dass Fi
 3. **Functions Emulator**: echte exportierte Callable/HTTP-Funktionen gegen emuliertes Firestore.
 4. **Lifecycle Integration**: z. B. Start → Attempt → Submit → Receipt einschließlich Wiederholungen und Fehlerfällen.
 5. **Concurrency/Idempotenz**: parallele Starts/Abgaben dürfen keine doppelten oder widersprüchlichen Zustände erzeugen.
-6. **CI-Gate**: die gleichen Emulator-Suites laufen in Pull Requests automatisch.
+6. **CI-Gate**: die gleichen Emulator-Suites laufen in Pull Requests/Entwicklungsbranches automatisch, sobald der geprüfte Stand Firebase-relevant ist.
 7. **Staging/Gerät**: bleibt separat und wird durch Emulatorerfolg nicht ersetzt.
 
 ## Dauerhafte Regeln für neue Entwicklungsbereiche
@@ -42,6 +42,17 @@ Ein neuer Firebase-relevanter Workstream muss im Handoff eine kleine Testmatrix 
 
 Domänenspezifische Workstreams ergänzen weitere Tests; sie dürfen die zentralen Grundtests nicht ersetzen.
 
+## Test-Isolation ist selbst Teil der Qualität
+
+Emulator-Tests führen echte Trigger aus. Ein Cleanup-Trigger kann deshalb auch Testdaten löschen, wenn mehrere Fälle dieselben IDs wiederverwenden. Für Tests mit Delete-/Cleanup-Triggern gelten daher:
+
+- pro Testfall eindeutige fachliche IDs verwenden;
+- Emulatorzustand zwischen Fällen leeren, aber asynchrone Trigger als reale Nebenwirkung berücksichtigen;
+- einen fehlgeschlagenen Test erst als Produktfehler bewerten, nachdem ein Testfixture-/Trigger-Rennen ausgeschlossen wurde;
+- Testfehler und Produktfehler in der Übergabe ausdrücklich unterscheiden.
+
+Diese Regel entstand aus dem ersten echten Assessment-Emulatorlauf: Run `36934064744` entdeckte ein Fixture-Rennen; nach eindeutigen Quiz-IDs war Run `36934351905` grün.
+
 ## Lokaler Aufruf
 
 Wenn der Branch `firebase.json` und `firestore.rules` enthält:
@@ -50,7 +61,7 @@ Wenn der Branch `firebase.json` und `firestore.rules` enthält:
 bash tools/run_emulator_tests.sh
 ```
 
-Das Script installiert nichts global und deployed nichts. Es startet nur lokale Emulatoren und beendet sie nach dem Test.
+Das Script installiert nichts global und deployed nichts. Es erzeugt für den Lauf eine temporäre Firebase-Konfiguration und lädt nur die für das Assessment-Gate benötigten Functions. So werden nicht versehentlich unabhängige KI-/Produkt-Funktionen mitgestartet. Die temporäre Konfiguration wird nach dem Lauf entfernt.
 
 ## CI
 
@@ -60,6 +71,16 @@ Das Script installiert nichts global und deployed nichts. Es startet nur lokale 
 - **Firebase Emulator**: nur wenn der geprüfte Merge-Stand `firebase.json` und `firestore.rules` enthält.
 
 Der Emulator-Job darf keine Deployment-Schritte enthalten und benötigt keine Production-Zugangsdaten.
+
+## Nachweis
+
+Der erste tatsächlich ausgeführte gemeinsame Assessment-Lauf ist auf dem isolierten Branch `integration/telemetry-emulator-gate` belegt:
+
+- Fehlerlauf `36934064744` → Test-Isolationsrennen erkannt;
+- korrigierter Commit `dd722845a1f75feaa0369fde34a1d0dee3c56c52`;
+- Run `36934351905` → Emulator-Gate grün.
+
+Der Nachweis gilt exakt für diesen Integrationsstand; neue Änderungen benötigen ihren eigenen Lauf.
 
 ## Sicherheitsgrenze
 

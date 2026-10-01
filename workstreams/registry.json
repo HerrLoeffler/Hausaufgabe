@@ -33,6 +33,28 @@
       "notes": "Vor neuer Assistenten-, Sprach- oder Emmi-Aktion zuerst Branch und offenen PR prüfen."
     },
     {
+      "id": "ai-quality",
+      "title": "KI-Qualität / Review-Workflow",
+      "primaryBranch": "fix/ai-review-workflow",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/ai-quality.md",
+      "taskIds": ["GC-AI-01"],
+      "relatedBranches": ["feature/ai-integration", "fix/ai-format-reliability"],
+      "notes": "Branch-Historie zuerst prüfen; ai-format-reliability liegt hinter ai-review-workflow. Keine parallele dritte Review-Lösung beginnen."
+    },
+    {
+      "id": "freetext-review",
+      "title": "Freitext-Review / manuelle Lehrerprüfung",
+      "primaryBranch": "feature/freetext-review-priority",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/freetext-review.md",
+      "taskIds": ["GC-FREETEXT-01"],
+      "relatedBranches": [],
+      "notes": "Branch enthält umfangreiche weitere Arbeit; nicht pauschal als Gesamtbasis mergen. Branch-eigenes FREETEXT_REVIEW_STATUS.md lesen."
+    },
+    {
       "id": "secure-assessment",
       "title": "Prüfungsserver / Security",
       "primaryBranch": "feature/secure-assessment-v1",
@@ -52,8 +74,8 @@
       "state": "active",
       "handoff": "workstreams/telemetry-implementation.md",
       "taskIds": ["GC-TELEMETRY-01", "GC-TELEMETRY-02", "GC-TELEMETRY-03", "GC-ANALYTICS-01"],
-      "relatedBranches": ["feature/telemetry-contract-v1", "feature/telemetry-measurement-design"],
-      "notes": "Aktivierung, Emulator, Deploy und Gerätetest getrennt nachweisen."
+      "relatedBranches": ["feature/telemetry-contract-v1", "feature/telemetry-measurement-design", "integration/telemetry-emulator-gate"],
+      "notes": "Aktivierung, Emulator, Deploy und Gerätetest getrennt nachweisen. Emulator-Integrationsbranch ist Testbeleg, keine neue Produktbasis."
     },
     {
       "id": "ios-teacher-app",
@@ -63,7 +85,7 @@
       "state": "active",
       "handoff": "workstreams/ios-app-v2.md",
       "taskIds": ["GC-IOS-01", "GC-IOS-02", "GC-DEVICE-01"],
-      "relatedBranches": ["feature/gradecrew-secure-ios", "integration/secure-assessment-mobile-gc28"],
+      "relatedBranches": ["feature/gradecrew-secure-ios", "integration/secure-assessment-mobile-gc28", "fix/mobile-review-release-audit"],
       "notes": "Web-Deploy und nativer Build sind getrennte Zustände."
     },
     {
@@ -111,6 +133,17 @@
       "notes": "Lab- und verifizierte Spielbranches nicht ungeprüft zusammenführen."
     },
     {
+      "id": "legacy-branch-triage",
+      "title": "Legacy-Branch-Triage",
+      "primaryBranch": "dev",
+      "integrationTarget": "main",
+      "state": "blocked",
+      "handoff": "workstreams/legacy-branch-triage.md",
+      "taskIds": ["GC-DEV-01"],
+      "relatedBranches": ["chore/shared-todo-and-games-scope"],
+      "notes": "dev besitzt noch einzigartige alte Commits: nicht weiterentwickeln, nicht automatisch löschen; zuerst fachlich zuordnen."
+    },
+    {
       "id": "dev-governance-emulator",
       "title": "Entwicklungsordnung / Emulator-Gates",
       "primaryBranch": "feature/dev-governance-emulator",
@@ -119,7 +152,7 @@
       "handoff": "workstreams/dev-governance-emulator.md",
       "taskIds": ["GC-DEV-01", "GC-TEST-EMULATOR-01"],
       "relatedBranches": ["chore/gradecrew-automation", "chore/shared-agent-handoffs"],
-      "notes": "Zentrale Entwicklungsregeln und wiederverwendbares Emulator-Gate."
+      "notes": "Zentrale Entwicklungsregeln und wiederverwendbares Emulator-Gate. Alte Koordinationsbranches sind derzeit nur Referenzen."
     }
   ]
 }
