@@ -1,6 +1,6 @@
 # GradeCrew → Escape Room Inhaltsadapter
 
-Stand: 01.10.2026. Quelle für den GradeCrew-Fragevertrag ist der aktuell geprüfte Integrationsbranch `feature/gradecrew-app-integration` bei Commit `74eb2ec08e81315875abfc4b1ae052d9f78797eb`.
+Stand: 02.10.2026. Quelle für den GradeCrew-Fragevertrag ist der aktuell geprüfte Integrationsbranch `feature/gradecrew-app-integration` bei Commit `74eb2ec08e81315875abfc4b1ae052d9f78797eb`.
 
 ## Zweck
 
@@ -29,7 +29,7 @@ Das aktuelle GradeCrew-Schema kennt:
 
 Je nach Typ werden unter anderem `options`, `acceptedAnswers`, `manualReview`, `correctBoolean`, `pairs`, `items`, `acceptedOrders`, `groups`, `passage`, `targetWords`, `numericAnswer`, `tolerance` und `unit` gespeichert.
 
-## Adapter v1 – absichtlich fail-closed
+## Adapter v1 – sicher und fail-closed
 
 Aktuell sicher unterstützt:
 
@@ -38,8 +38,8 @@ Aktuell sicher unterstützt:
 | `single` | Auswahlfrage | unterstützt |
 | `dropdown` | Auswahlfrage | unterstützt |
 | `truefalse` | Richtig/Falsch | unterstützt |
-| `text` | Freitext | vorbereitet, noch gesperrt |
-| `number` | Zahl | vorbereitet, noch gesperrt |
+| `text` | Freitext | unterstützt, wenn automatisch eindeutig prüfbar |
+| `number` | Zahl | unterstützt mit Lösung/Toleranz/Einheit |
 | `multi` | Mehrfachauswahl | gesperrt |
 | `gapfill` | Lückentext | gesperrt |
 | `matching` | Zuordnung | gesperrt |
@@ -47,9 +47,25 @@ Aktuell sicher unterstützt:
 | `grouping` | Gruppierung | gesperrt |
 | `markwords` | Wörter markieren | gesperrt |
 
-Freitext und Zahl sind bewusst noch nicht als „unterstützt“ markiert, obwohl das GradeCrew-Schema die nötigen Lösungen liefert. Erst wenn die Escape-Hauptfrage Eingabe, Variantenprüfung bzw. Toleranz/Einheit vollständig rendert und testet, dürfen diese Typen Fortschritt freischalten.
+### Freitext
 
-Der Adapter erzeugt **keine erfundenen Distraktoren**, um komplexe Typen künstlich in Multiple Choice umzuwandeln.
+Freitext darf den Spielfortschritt nur dann automatisch freischalten, wenn:
+
+- `manualReview === false`, und
+- mindestens eine `acceptedAnswers`-Variante vorhanden ist.
+
+Antworten werden für den Escape-Vergleich normalisiert. Freitext, der weiterhin eine fachliche Lehrerentscheidung benötigt, bleibt absichtlich gesperrt. **Hilfe oder KI darf niemals eine unsichere automatische Bewertung in einen sicheren Spielfortschritt umdeuten.**
+
+### Zahl
+
+Zahlaufgaben unterstützen:
+
+- `numericAnswer`
+- `tolerance >= 0`
+- optionale `unit`
+- Dezimalpunkt und Dezimalkomma bei der Schüler-Eingabe.
+
+Der Adapter erfindet **keine** Distraktoren und wandelt komplexe Typen nicht künstlich in Multiple Choice um.
 
 Bildabhängige Aufgaben werden ebenfalls abgelehnt, solange der Escape-Lernslot das Bild nicht zuverlässig mitliefert. Eine Frage darf nicht durch Weglassen ihres visuellen Kontextes fachlich verändert werden.
 
@@ -95,22 +111,25 @@ Dieses Paket kann später beim Erstellen eines Escape Rooms von der GradeCrew-KI
 
 ## Sicherheits- und Qualitätsregeln
 
-- `manualReview: true` darf später niemals direkt als automatischer Fortschritts-Gate verwendet werden.
+- `manualReview: true` darf niemals direkt als automatischer Fortschritts-Gate verwendet werden.
 - Die richtige GradeCrew-Lösung bleibt die fachliche Quelle; der Adapter erfindet keine neue Lösung.
 - Lernpakete müssen vollständig sein, sonst schlägt die Adaption fehl.
 - Eine KI erzeugt Inhalte, aber keine neue ausführbare Escape-Logik.
 - Lösungen und Lernpakete gehören bei echter Schülerauslieferung hinter den vorgesehenen Lehrer-/Server-Schutz; die Lab-Seite ist kein fertiges Berechtigungsmodell.
 - Externe Remy-Hilfe wird getrennt über eine serverseitige Tutor-Brücke angeschlossen und ist kein Bestandteil des Frageadapters.
+- Remy-Hilfe ersetzt niemals den Lernnachweis; nach Hilfe gelten weiterhin die normalen Antwort-/Remediation-/Transfer-Gates.
 
-## Implementierung
+## Implementierung und Prüfung
 
 - Browser-/Lab-Adapter: `lab/escape-room/gradecrew-question-adapter.js`
-- Regressionstest: `tools/games/gradecrew-escape-adapter.test.cjs`
+- Runtime: `lab/escape-room/app.js`
+- Regressionstests: `tools/games/gradecrew-escape-adapter.test.cjs` und `tools/games/escape-room.test.cjs`
+- Freitext und Zahl wurden als echte Hauptantwortmodi getestet.
 - Der Adapter wird im isolierten Escape-Build mit ausgeliefert, ist aber noch nicht in die Haupt-Web-App verdrahtet.
 
 ## Nächste Erweiterungen
 
-1. `text` mit `acceptedAnswers` und `manualReview === false` als echten Escape-Antwortmodus implementieren und testen.
-2. `number` mit `numericAnswer`, `tolerance` und `unit` implementieren und testen.
+1. In der GradeCrew-Erstellung einen Modus **„Als Escape Room spielen“** ergänzen: acht Aufgaben auswählen/erzeugen → Lernpakete erzeugen → Lehrerprüfung → Preflight → Runde starten.
+2. Lehrer-Vorschau aus dem echten Testeditor speisen und Bearbeiten/Neu generieren sauber zurück in den GradeCrew-Testentwurf führen.
 3. Danach entscheiden, welche interaktiven GradeCrew-Typen als eigene Escape-Lerninteraktionen sinnvoll sind, statt sie auf Auswahlfragen zu reduzieren.
-4. In der GradeCrew-Erstellung einen Modus „Als Escape Room spielen“ ergänzen: acht Aufgaben auswählen/erzeugen → Lernpakete erzeugen → Lehrerprüfung → Preflight → Runde starten.
+4. Bildabhängige Aufgaben erst freigeben, wenn Bild/Alt-Text/Ausschnitt zuverlässig in den Escape-Slot übernommen werden.
