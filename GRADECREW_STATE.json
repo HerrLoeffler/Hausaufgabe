@@ -20,6 +20,15 @@
       "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
       "verification": "Build and deploy succeeded; branch still pointed at the tested commit; published manifest and file hashes verified after deployment; verified-preview-receipt stored.",
       "date": "2026-10-01"
+    },
+    "hosting_archive": {
+      "status": "verified",
+      "run_id": 36914125942,
+      "release_url": "https://github.com/HerrLoeffler/Hausaufgabe/releases/tag/preview-snapshot-74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
+      "restored_files": 84,
+      "database_backup": false,
+      "production_backup": false
     }
   },
   "workstreams": [

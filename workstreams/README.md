@@ -10,6 +10,7 @@ Die folgenden Branch-Spitzen wurden über GitHub gelesen; Deploy-Angaben sind ge
 | iPad-Lehrerapp | feature/shared-gradecrew-design-system | GRADECREW_APP_STATUS.md / native/GradeCrewTeacher/TESTFLIGHT.md lesen; Gerätestand bestätigen |
 | Design Foundation | feature/gradecrew-design-foundation-v1 | `design-system.md`: Design Bible, Screen-Map und Crew-Library-Plan gesichert; zentrale Token-/Asset-Architektur wird im Webstand weiterverwendet |
 | Dashboard Design V1 | feature/design-dashboard-v1 → integriert | `design-dashboard-v1.md`: Shared Tokens + erster Referenzscreen „Meine Tests“; Integrationscommit `74eb2ec`, CI/Mobile-Tutorial/Preview technisch grün; visuelle Abnahme offen |
+| Release-Sicherung | main / feature/release-safety-snapshots | `release-safety.md`: automatisches Hosting-Archiv verifiziert; vierte Referenz-Seite und Daten-Backup noch offen |
 | Spiele | lab/games-structure | Vor Änderungen vollständige eigene Übergabe einholen; nicht aus Website-Branch veröffentlichen |
 
 ## Neue Aufgabe
