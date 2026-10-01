@@ -160,16 +160,11 @@ export function installCrewTour(api) {
     return result;
   };
 
-  // Once onboarding has been completed for this account, do not keep a
-  // persistent "Mit der Crew starten" button on the dashboard. Optional help
-  // is now offered contextually by Remy only when creating an AI test.
+  // Completion no longer hides the manual entry point. A teacher – and
+  // especially an admin – can replay the real tutorial from the dashboard.
   const dashboard = base.dashboard.bind(base);
   base.dashboard = args => {
     clearReviewFallback();
-    if (args?.completed) {
-      document.getElementById("gradecrewTourBtn")?.remove();
-      return;
-    }
     dashboard(args);
   };
 
