@@ -10,6 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
+      - 'feature/design-*'
   workflow_dispatch:
 
 permissions:
@@ -155,6 +156,8 @@ jobs:
           node --check first-guide-responsive.js
           node --check crew-tour-responsive.js
           node --check mobile-viewport-polish.js
+          node --check tools/generate-gradecrew-design.mjs
+          node --test gradecrew-design-foundation.test.mjs
           node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs
           node --test diagnostics.test.mjs
           node --test crew-art.test.mjs
@@ -179,6 +182,8 @@ jobs:
         run: |
           BUILD_DIR="$(mktemp -d)"
           node tools/build-staging.mjs "$BUILD_DIR"
+          test -f "$BUILD_DIR/public/generated/gradecrew-design-tokens.css"
+          test -f "$BUILD_DIR/public/gradecrew-dashboard-foundation.css"
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-draft-persistence.js"
           test -f "$BUILD_DIR/public/secure-student.js"
@@ -193,4 +198,3 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
-
