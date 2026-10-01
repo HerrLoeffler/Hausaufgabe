@@ -30,18 +30,18 @@ const CREW_MEMBERS = Object.freeze({
 });
 
 const SUBJECT_PATTERNS = [
-  [/\b(mathematik|mathe)\b/i, "Mathematik"],
-  [/\bdeutsch\b/i, "Deutsch"],
-  [/\b(englisch|english)\b/i, "Englisch"],
-  [/\b(geschichte|gpg)\b/i, "GPG"],
-  [/\b(ethik)\b/i, "Ethik"],
-  [/\b(informatik|it)\b/i, "Informatik"],
-  [/\b(biologie|bio)\b/i, "Biologie"],
-  [/\b(physik)\b/i, "Physik"],
-  [/\b(chemie)\b/i, "Chemie"],
-  [/\b(kunst)\b/i, "Kunst"],
-  [/\b(musik)\b/i, "Musik"],
-  [/\b(wib|wirtschaft und beruf)\b/i, "WiB"]
+  [/\b(mathematik|mathe)(?:test|probe|prüfung|pruefung)?\b/i, "Mathematik"],
+  [/\bdeutsch(?:test|probe|prüfung|pruefung)?\b/i, "Deutsch"],
+  [/\b(englisch|english)(?:test|probe|prüfung|pruefung)?\b/i, "Englisch"],
+  [/\b(geschichte|gpg)(?:test|probe|prüfung|pruefung)?\b/i, "GPG"],
+  [/\bethik(?:test|probe|prüfung|pruefung)?\b/i, "Ethik"],
+  [/\b(informatik|it)(?:test|probe|prüfung|pruefung)?\b/i, "Informatik"],
+  [/\b(biologie|bio)(?:test|probe|prüfung|pruefung)?\b/i, "Biologie"],
+  [/\bphysik(?:test|probe|prüfung|pruefung)?\b/i, "Physik"],
+  [/\bchemie(?:test|probe|prüfung|pruefung)?\b/i, "Chemie"],
+  [/\bkunst(?:test|probe|prüfung|pruefung)?\b/i, "Kunst"],
+  [/\bmusik(?:test|probe|prüfung|pruefung)?\b/i, "Musik"],
+  [/\b(wib|wirtschaft und beruf)(?:test|probe|prüfung|pruefung)?\b/i, "WiB"]
 ];
 
 const SCHOOL_TYPE_PATTERNS = [
