@@ -4,6 +4,7 @@
   const questions = [
     {
       id: 'q1',
+      answerMode: 'choice',
       learningGoal: 'Prozentwert als Anteil eines Grundwerts berechnen',
       prompt: '25 % von 80 sind …',
       options: ['15', '20', '25', '30'],
@@ -13,7 +14,7 @@
       remediation: {
         explanation: '25 % bedeutet ein Viertel. Bei 80 kannst du deshalb durch 4 teilen: 80 ÷ 4 = 20.',
         activeTask: { instruction: 'Übertrage den Merksatz in das Terminal.', text: '25 % bedeutet ein Viertel.' },
-        transfer: { prompt: 'Wie viel sind 25 % von 40?', acceptedAnswers: ['10', '10 %'], hint: 'Teile 40 durch 4.', explanation: '40 ÷ 4 = 10.' }
+        transfer: { prompt: 'Wie viel sind 25 % von 40?', acceptedAnswers: ['10'], hint: 'Teile 40 durch 4.', explanation: '40 ÷ 4 = 10.' }
       },
       tutorAnswers: [
         { patterns: ['warum durch 4', 'viertel'], answer: '25 % sind 25 von 100, also genau ein Viertel. Deshalb kannst du bei 25 % durch 4 teilen.' },
@@ -22,6 +23,7 @@
     },
     {
       id: 'q2',
+      answerMode: 'choice',
       learningGoal: 'Prozentwert über 10-%-Schritte berechnen',
       prompt: 'Welche Zahl ist 30 % von 50?',
       options: ['10', '15', '20', '25'],
@@ -31,7 +33,7 @@
       remediation: {
         explanation: 'Wenn 10 % von 50 gleich 5 sind, sind 30 % dreimal so viel: 3 × 5 = 15.',
         activeTask: { instruction: 'Übertrage den Rechenweg.', text: '10 % von 50 = 5, also 30 % = 15.' },
-        transfer: { prompt: 'Wie viel sind 30 % von 20?', acceptedAnswers: ['6', '6 %'], hint: '10 % von 20 sind 2.', explanation: '3 × 2 = 6.' }
+        transfer: { prompt: 'Wie viel sind 30 % von 20?', acceptedAnswers: ['6'], hint: '10 % von 20 sind 2.', explanation: '3 × 2 = 6.' }
       },
       tutorAnswers: [
         { patterns: ['warum mal 3', '30 prozent'], answer: '30 % bestehen aus drei 10-%-Schritten. Wenn du 10 % kennst, nimmst du diesen Wert dreimal.' },
@@ -40,6 +42,7 @@
     },
     {
       id: 'q3',
+      answerMode: 'choice',
       learningGoal: 'Rabatt als Prozentwert berechnen',
       prompt: 'Ein Pullover kostet 60 €. Er wird um 20 % reduziert. Wie hoch ist der Rabatt?',
       options: ['6 €', '10 €', '12 €', '20 €'],
@@ -58,6 +61,7 @@
     },
     {
       id: 'q4',
+      answerMode: 'choice',
       learningGoal: 'Prozentangaben in Brüche umwandeln',
       prompt: '75 % entsprechen welchem Bruch?',
       options: ['1/4', '1/2', '3/4', '4/5'],
@@ -75,6 +79,7 @@
     },
     {
       id: 'q5',
+      answerMode: 'choice',
       learningGoal: '50 % als Hälfte erkennen',
       prompt: 'Eine Klasse hat 24 Kinder. 50 % davon sind 12 Kinder. Welche Aussage stimmt?',
       options: ['12 sind die Hälfte von 24', '12 sind 25 % von 24', '24 sind 50 % von 12', '6 sind 50 % von 24'],
@@ -92,6 +97,7 @@
     },
     {
       id: 'q6',
+      answerMode: 'choice',
       learningGoal: 'Vom Prozentwert auf den Grundwert schließen',
       prompt: '10 % einer Zahl sind 8. Wie groß ist die Zahl?',
       options: ['18', '40', '80', '800'],
@@ -109,6 +115,7 @@
     },
     {
       id: 'q7',
+      answerMode: 'choice',
       learningGoal: 'Prozentuale Veränderung auf den Ausgangswert beziehen',
       prompt: 'Ein Preis steigt von 50 € auf 55 €. Um wie viel Prozent ist er gestiegen?',
       options: ['5 %', '10 %', '11 %', '50 %'],
@@ -127,6 +134,7 @@
     },
     {
       id: 'q8',
+      answerMode: 'choice',
       learningGoal: 'Prozentwert über 10-%-Schritte berechnen',
       prompt: '40 % von 120 sind …',
       options: ['36', '40', '48', '60'],
@@ -136,7 +144,7 @@
       remediation: {
         explanation: '10 % von 120 sind 12. Für 40 % brauchst du vier 10-%-Teile: 4 × 12 = 48.',
         activeTask: { instruction: 'Übertrage den Rechenweg.', text: '10 % von 120 = 12, also 40 % = 48.' },
-        transfer: { prompt: 'Wie viel sind 40 % von 50?', acceptedAnswers: ['20', '20 %'], hint: '10 % von 50 sind 5.', explanation: '4 × 5 = 20.' }
+        transfer: { prompt: 'Wie viel sind 40 % von 50?', acceptedAnswers: ['20'], hint: '10 % von 50 sind 5.', explanation: '4 × 5 = 20.' }
       },
       tutorAnswers: [
         { patterns: ['40 prozent', 'warum mal 4'], answer: '40 % sind viermal 10 %. Wenn du 10 % kennst, multiplizierst du diesen Wert mit 4.' }
@@ -147,7 +155,7 @@
   const world = {
     id: 'locked-school-v1',
     title: 'Die verriegelte Schule',
-    version: '0.2.0',
+    version: '0.2.1',
     estimatedMinutes: [10, 15],
     contentProfile: { subject: 'Mathematik', grade: '7', topic: 'Prozentrechnung' },
     rooms: [
@@ -159,7 +167,7 @@
     lockerNumber: '12',
     lockerSequence: ['triangle', 'circle', 'square'],
     keySequence: ['star', 'diamond', 'circle'],
-    supportedQuestionTypes: ['single_choice'],
+    supportedQuestionTypes: ['choice', 'text', 'number'],
     remediationPolicy: { retryBeforeSupport: 2, remediationAtAttempt: 3, requireTransferAfterRemediation: true }
   };
 
@@ -167,14 +175,28 @@
     const errors = [];
     const warnings = [];
     const ids = new Set();
+    const modes = new Set(candidateWorld.supportedQuestionTypes || ['choice']);
 
     for (const question of candidateQuestions) {
       if (!question.id || ids.has(question.id)) errors.push(`Ungültige oder doppelte Frage-ID: ${question.id || '(leer)'}`);
       ids.add(question.id);
-      if (!Array.isArray(question.options) || question.options.length < 2) errors.push(`Frage ${question.id}: mindestens zwei Antwortoptionen erforderlich.`);
-      if (!Number.isInteger(question.correctIndex) || question.correctIndex < 0 || question.correctIndex >= question.options.length) errors.push(`Frage ${question.id}: correctIndex ungültig.`);
       if (!question.prompt?.trim()) errors.push(`Frage ${question.id}: Fragetext fehlt.`);
       if (!question.learningGoal?.trim()) warnings.push(`Frage ${question.id}: Lernziel fehlt.`);
+
+      const mode = question.answerMode || 'choice';
+      if (!modes.has(mode)) errors.push(`Frage ${question.id}: Antwortmodus ${mode} wird nicht unterstützt.`);
+      if (mode === 'choice') {
+        if (!Array.isArray(question.options) || question.options.length < 2) errors.push(`Frage ${question.id}: mindestens zwei Antwortoptionen erforderlich.`);
+        if (!Number.isInteger(question.correctIndex) || question.correctIndex < 0 || question.correctIndex >= (question.options || []).length) errors.push(`Frage ${question.id}: correctIndex ungültig.`);
+      }
+      if (mode === 'text') {
+        if (!Array.isArray(question.acceptedAnswers) || question.acceptedAnswers.filter(value => String(value || '').trim()).length < 1) errors.push(`Frage ${question.id}: akzeptierte Freitextantworten fehlen.`);
+      }
+      if (mode === 'number') {
+        if (!Number.isFinite(Number(question.numericAnswer))) errors.push(`Frage ${question.id}: numerische Lösung fehlt.`);
+        if (!Number.isFinite(Number(question.tolerance)) || Number(question.tolerance) < 0) errors.push(`Frage ${question.id}: Toleranz ungültig.`);
+      }
+
       const remediation = question.remediation;
       if (!remediation?.explanation?.trim()) errors.push(`Frage ${question.id}: kurze Fehlererklärung fehlt.`);
       if (!remediation?.activeTask?.text?.trim()) errors.push(`Frage ${question.id}: aktive Lernaufgabe fehlt.`);
@@ -195,7 +217,8 @@
 
   const freezeQuestion = question => Object.freeze({
     ...question,
-    options: Object.freeze([...question.options]),
+    options: Object.freeze([...(question.options || [])]),
+    acceptedAnswers: Object.freeze([...(question.acceptedAnswers || [])]),
     remediation: Object.freeze({
       ...question.remediation,
       activeTask: Object.freeze({ ...question.remediation.activeTask }),
@@ -213,6 +236,7 @@
       ...world,
       contentProfile: Object.freeze({ ...world.contentProfile }),
       remediationPolicy: Object.freeze({ ...world.remediationPolicy }),
+      supportedQuestionTypes: Object.freeze([...world.supportedQuestionTypes]),
       rooms: Object.freeze(world.rooms.map(room => Object.freeze({ ...room, questionIds: Object.freeze([...room.questionIds]) })))
     }),
     validateWorldDefinition
