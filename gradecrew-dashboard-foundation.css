@@ -10,9 +10,6 @@
   --primary: var(--gc-colors-primary);
   --primary2: var(--gc-colors-primary-pressed);
   --soft: var(--gc-colors-soft);
-  --success: var(--gc-colors-positive);
-  --warn: var(--gc-colors-warning);
-  --danger: var(--gc-colors-danger);
   --radius: var(--gc-radius-card);
   --shadow: var(--gc-shadows-card);
 }
