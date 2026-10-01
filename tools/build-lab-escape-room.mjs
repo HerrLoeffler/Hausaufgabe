@@ -34,6 +34,11 @@ for (const marker of [
   'item.used',
   'locker-sequence',
   'key-sequence',
+  'board-pattern',
+  'door-code',
+  'clueReviewProgress',
+  'renderPrimaryAnswer',
+  'evaluatePrimaryAnswer',
   'remediation.started',
   'transfer.answered',
   'GradeCrewEscapeIntegration'
@@ -47,7 +52,18 @@ for (const marker of ['sessionCache', 'GradeCrewTutorBridge', 'knowledgeHits', '
 }
 
 const adapter = await fs.readFile(path.join(output, 'gradecrew-question-adapter.js'), 'utf8');
-for (const marker of ['GradeCrewEscapeQuestionAdapter', "'single'", "'dropdown'", "'truefalse'", 'answer_mode_not_ready', 'visual_dependency']) {
+for (const marker of [
+  'GradeCrewEscapeQuestionAdapter',
+  "'single'",
+  "'dropdown'",
+  "'truefalse'",
+  "'text'",
+  "'number'",
+  'manual_review_required',
+  'missing_accepted_answers',
+  'invalid_numeric_answer',
+  'visual_dependency'
+]) {
   if (!adapter.includes(marker)) throw new Error(`GradeCrew Escape adapter check failed: ${marker}`);
 }
 
@@ -82,8 +98,8 @@ await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
     antiGuessGuard: true,
     teacherQuestionEditing: true,
     gradeCrewQuestionAdapter: true,
-    gradeCrewAdapterTypes: ['single', 'dropdown', 'truefalse'],
-    gradeCrewPlannedTypes: ['text', 'number'],
+    gradeCrewAdapterTypes: ['single', 'dropdown', 'truefalse', 'text', 'number'],
+    gradeCrewPlannedTypes: [],
     telemetryUpload: false,
     teacherAuth: false
   }
