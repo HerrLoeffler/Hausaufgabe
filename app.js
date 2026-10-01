@@ -140,6 +140,8 @@ const state = {
   aiJobsUnsub: null,
   aiStarting: false,
   aiVariantsRunning: false,
+  emmiRevisionRunning: false,
+  emmiRevisionUndo: null,
   draftCheckpointSaved: true,
   draftBaseUpdatedAt: 0,
   teacherTourConfig: null
@@ -7052,8 +7054,118 @@ async function loadMoreAdminAudit() {
 async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}
 
 
+
+function wholeTestRevisionFingerprint() {
+  return state.questions.map(question => `${question.id || ""}:${questionReviewKey(question)}`).join("|");
+}
+
+function wholeTestRevisionLocked(question) {
+  return Boolean(question?.imageChoicesOnly || question?.options?.some(option => option?.imageDataUrl));
+}
+
+function wholeTestRevisionSource() {
+  return {
+    title: $("quizTitle")?.value.trim() || state.currentQuiz?.title || "Test",
+    subject: $("quizSubject")?.value.trim() || state.currentQuiz?.subject || "",
+    grade: $("quizGrade")?.value.trim() || state.currentQuiz?.grade || "",
+    description: $("quizDescription")?.value.trim() || state.currentQuiz?.description || "",
+    questions: state.questions.map(question => ({
+      ...questionForAi(question),
+      locked: wholeTestRevisionLocked(question),
+      fixedImage: Boolean(getQuestionImageSrc(question)),
+      fixedImageAlt: String(question.imageAlt || "").slice(0, 500)
+    }))
+  };
+}
+
+function restoreWholeRevisionMedia(sourceQuestion, nextQuestion) {
+  for (const key of ["imageDataUrl", "imageUrl", "imagePath", "imageByteSize", "imageAlt"]) {
+    if (sourceQuestion?.[key] !== undefined) nextQuestion[key] = sourceQuestion[key];
+  }
+  return nextQuestion;
+}
+
+async function handleEmmiWholeTestRequest(event) {
+  const request = event.detail;
+  if (!request || typeof request !== "object") return;
+  const instruction = String(request.instruction || "").trim().slice(0, 2400);
+  const quizId = state.currentQuiz?.id;
+  const uid = state.user?.uid;
+  if (!quizId || !uid || instruction.length < 3 || !state.questions.length) return;
+  if (state.emmiRevisionRunning || state.aiVariantsRunning || state.variantTask?.questions?.length) return;
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+
+  const fingerprint = wholeTestRevisionFingerprint();
+  const previousQuestions = deepClone(state.questions);
+  const previousReport = state.pendingImportReport ? deepClone(state.pendingImportReport) : null;
+  request.accepted = true;
+  state.emmiRevisionRunning = true;
+
+  try {
+    const response = await aiApi.reviseWholeTest({ instruction, test: wholeTestRevisionSource() });
+    if (state.currentQuiz?.id !== quizId || state.user?.uid !== uid || wholeTestRevisionFingerprint() !== fingerprint) {
+      throw new Error("Der Test wurde während Emmis Überarbeitung verändert. Deshalb wurde die KI-Version nicht eingesetzt.");
+    }
+    const revised = response?.test?.questions;
+    if (!Array.isArray(revised) || revised.length !== state.questions.length) {
+      throw new Error("Emmis Überarbeitung hat nicht dieselbe Aufgabenanzahl und wurde deshalb nicht eingesetzt.");
+    }
+
+    const report = { warnings: [], repairs: [] };
+    const nextQuestions = revised.map((raw, index) => {
+      const sourceQuestion = state.questions[index];
+      if (wholeTestRevisionLocked(sourceQuestion)) return deepClone(sourceQuestion);
+      const next = normalizeImportedQuestion(raw, index, report);
+      next.id = sourceQuestion.id;
+      next.position = sourceQuestion.position || index + 1;
+      next._collapsed = sourceQuestion._collapsed;
+      next._aiUndo = null;
+      next.aiOrigin = {
+        kind: "whole_test_revision",
+        model: String(response?.meta?.model || sourceQuestion.aiOrigin?.model || ""),
+        promptVersion: String(response?.meta?.revisionVersion || "emmi-whole-test-v1")
+      };
+      restoreWholeRevisionMedia(sourceQuestion, next);
+      return next;
+    });
+
+    state.emmiRevisionUndo = { quizId, uid, questions: previousQuestions, pendingImportReport: previousReport };
+    state.questions = nextQuestions;
+    renderQuestions();
+    markDirty();
+    const detail = {
+      changedCount: Array.isArray(response.changedIndices) ? response.changedIndices.length : nextQuestions.length,
+      unchangedCount: Array.isArray(response.unchangedIndices) ? response.unchangedIndices.length : 0,
+      lockedCount: Number(response.lockedCount || 0),
+      invalidCount: Number(response.invalidCount || 0)
+    };
+    document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-result", { detail }));
+    toast(`Emmi hat ${detail.changedCount} Aufgabe${detail.changedCount === 1 ? "" : "n"} überarbeitet. Bitte vor dem Speichern prüfen.`);
+  } catch (err) {
+    console.error(err);
+    const message = aiFriendlyError(err, "Emmi konnte den gesamten Test nicht zuverlässig überarbeiten.");
+    document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-error", { detail: { message } }));
+  } finally {
+    state.emmiRevisionRunning = false;
+  }
+}
+
+function handleEmmiWholeTestUndo() {
+  const undo = state.emmiRevisionUndo;
+  if (!undo || undo.quizId !== state.currentQuiz?.id || undo.uid !== state.user?.uid) return;
+  state.questions = deepClone(undo.questions);
+  state.pendingImportReport = undo.pendingImportReport ? deepClone(undo.pendingImportReport) : null;
+  state.emmiRevisionUndo = null;
+  renderQuestions();
+  markDirty();
+  document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-undone"));
+  toast("Emmis Gesamtüberarbeitung wurde rückgängig gemacht.");
+}
+
 document.addEventListener("gradecrew:variant-request", handleVariantRequest);
 document.addEventListener("gradecrew:variant-kept", handleVariantKept);
+document.addEventListener("gradecrew:emmi-whole-test-request", handleEmmiWholeTestRequest);
+document.addEventListener("gradecrew:emmi-whole-test-undo", handleEmmiWholeTestUndo);
 
 
 // ---------- Guided onboarding: normal quiz data, normal editor, normal submissions ----------
