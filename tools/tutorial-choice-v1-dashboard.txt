@@ -1,0 +1,27 @@
+  function dashboard({ uid, firstVisit, completed = false, offerHandled = false, isAdmin = false }) {
+    if (active) return;
+    if (owner && owner !== uid) stop();
+    owner = uid;
+    suppressLegacyGuides();
+    removeOffer();
+
+    let button = $("#gradecrewTourBtn");
+    if (!button) {
+      button = document.createElement("button");
+      button.id = "gradecrewTourBtn";
+      button.type = "button";
+      button.className = "button ghost compactTutorialBtn";
+      $(".dashboardActions")?.prepend(button);
+    }
+    button.textContent = isAdmin ? "? Tutorial testen" : "? Tutorial";
+    button.title = isAdmin ? "Onboarding aus Admin-Sicht testen" : "GradeCrew-Tutorial starten";
+    button.onclick = start;
+
+    let done = completed;
+    try { done = done || localStorage.getItem(doneKey()) === "done"; } catch {}
+    const handled = offerHandled || offerHandledLocally();
+    if (firstVisit && !isAdmin && !done && !handled && !offered.has(uid)) {
+      offered.add(uid);
+      setTimeout(() => { if (!active && api.isDashboard()) showOffer(); }, 250);
+    }
+  }
