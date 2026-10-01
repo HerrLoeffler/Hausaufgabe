@@ -13,10 +13,13 @@ Emmi gehört in die Überarbeitungsoberfläche des Editors. Lehrkräfte sollen n
 
 Die Funktion erzeugt eine neue ungespeicherte Revision im bestehenden Editor. Sie veröffentlicht oder speichert niemals automatisch.
 
-## Branch
+## Branch und Review
 
 - Branch: `feature/emmi-whole-test-revision-v1`
 - Basis: `feature/crew-assistant-v1`
+- Draft-PR: #13 `Emmi V1: gesamten Test im Editor überarbeiten`
+- geprüfter Code-Head: `c29131428dc781ceaf0a021ec6ca058e7eb9a830`
+- finaler Code-CI: `Crew Assistant Checks` Run `36933680142` ✅
 - Production: unverändert
 - Staging: nicht aus diesem Branch deployed
 - Gerätetest: noch offen
@@ -83,7 +86,7 @@ Die Gesamtüberarbeitung ist bewusst **ein Test-Level-Aufruf** statt 10–30 Ein
 
 ## Validierung
 
-Green CI vor Cleanup: GitHub Actions `Crew Assistant Checks` Run `36933442662`.
+Finaler Code-Stand `c29131428dc781ceaf0a021ec6ca058e7eb9a830`: GitHub Actions `Crew Assistant Checks` Run `36933680142` vollständig grün.
 
 Geprüft wurden:
 
@@ -101,17 +104,14 @@ Geprüft wurden:
 - Schutz vor stillen Aufgabentypwechseln
 - Functions-Syntax und ESLint
 
-Nach dem Cleanup der temporären Patch-Hilfen soll der aktuelle Branch-Head erneut CI-grün bestätigt werden.
-
 ## Noch offen
 
-1. finaler CI-Nachweis des aufgeräumten Branch-Heads
-2. Staging-only Deploy nach Koordination
-3. echter Desktop-/iPad-/iPhone-Test
-4. echter Runtime-KI-Test mit verschiedenen Testgrößen
-5. visuelle Feinabnahme des Emmi-Panels im Editor
-6. später kontrolliertes Speech-to-Text statt browserabhängiger Recognition
-7. später Wilma direkt in der Ergebnisansicht und Coco kontextbezogen im Dashboard
+1. Staging-only Deploy nach Koordination
+2. echter Desktop-/iPad-/iPhone-Test
+3. echter Runtime-KI-Test mit verschiedenen Testgrößen
+4. visuelle Feinabnahme des Emmi-Panels im Editor
+5. später kontrolliertes Speech-to-Text statt browserabhängiger Recognition
+6. später Wilma direkt in der Ergebnisansicht und Coco kontextbezogen im Dashboard
 
 ## Nicht tun
 
