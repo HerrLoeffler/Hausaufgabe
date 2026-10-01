@@ -24,6 +24,7 @@
     selectedItem: null,
     puzzleAttempts: {},
     clueReviewRequired: {},
+    clueReviewProgress: {},
     flags: {
       deskOpened: false,
       flashlightFound: false,
@@ -754,17 +755,22 @@
     feedback.hidden = false;
     feedback.className = 'questionFeedback error';
 
-    if (attempts >= 2 && ['locker-sequence', 'key-sequence'].includes(activePuzzle)) {
-      S.clueReviewRequired[activePuzzle] = true;
-      feedback.textContent = 'Nicht weiter raten. Das Rätsel wird geschlossen – lies den ursprünglichen Hinweis noch einmal.';
+    if (attempts >= 2 && ['board-pattern', 'door-code', 'locker-sequence', 'key-sequence'].includes(activePuzzle)) {
       const puzzleId = activePuzzle;
+      S.clueReviewRequired[puzzleId] = true;
+      if (puzzleId === 'door-code') S.clueReviewProgress[puzzleId] = [];
+      feedback.textContent = 'Nicht weiter raten. Das Rätsel wird geschlossen – prüfe zuerst die Hinweise noch einmal.';
       event('puzzle.guess_guard', { puzzleId, attempts });
       save();
       setTimeout(() => {
         $('puzzleDialog').close();
-        msg(puzzleId === 'locker-sequence'
-          ? 'Schau noch einmal am Schwarzen Brett nach, bevor du den Spind erneut öffnest.'
-          : 'Lies die Symbolfolge am Computer noch einmal, bevor du das Schlüsselbrett erneut versuchst.');
+        const reviewMessages = {
+          'board-pattern': 'Schau dir die Tafel noch einmal bewusst an und achte darauf, wie sich die Zahlen verändern.',
+          'door-code': 'Prüfe die drei Codequellen noch einmal: Regal, Computer und Tafel.',
+          'locker-sequence': 'Schau noch einmal am Schwarzen Brett nach, bevor du den Spind erneut öffnest.',
+          'key-sequence': 'Lies die Symbolfolge am Computer noch einmal, bevor du das Schlüsselbrett erneut versuchst.'
+        };
+        msg(reviewMessages[puzzleId] || 'Prüfe zuerst die gefundenen Hinweise.');
       }, 450);
       return;
     }
@@ -895,6 +901,25 @@
   });
 
   function classroom(action) {
+    if (S.clueReviewRequired['door-code'] && ['shelf', 'computer', 'board'].includes(action)) {
+      const values = { shelf: '4', computer: '7', board: '8' };
+      const labels = { shelf: 'Regal', computer: 'Computer', board: 'Tafel' };
+      S.clueReviewProgress ||= {};
+      const reviewed = new Set(S.clueReviewProgress['door-code'] || []);
+      reviewed.add(action);
+      S.clueReviewProgress['door-code'] = [...reviewed];
+      const missing = ['shelf', 'computer', 'board'].filter(source => !reviewed.has(source));
+      if (!missing.length) {
+        delete S.clueReviewRequired['door-code'];
+        delete S.clueReviewProgress['door-code'];
+        S.puzzleAttempts['door-code'] = 0;
+        save();
+        return msg(`Alle Codequellen geprüft: Regal ${values.shelf} · Computer ${values.computer} · Tafel ${values.board}. Jetzt darfst du den Code erneut eingeben.`);
+      }
+      save();
+      return msg(`${labels[action]} erneut geprüft: Codefragment ${values[action]}. Noch prüfen: ${missing.map(source => labels[source]).join(', ')}.`);
+    }
+
     if (action === 'desk') return openQuestion('q1', 'q1Battery');
 
     if (action === 'cabinet') {
@@ -908,9 +933,17 @@
 
     if (action === 'shelf') return S.flags.flashlightReady ? openQuestion('q2', 'q2Code') : msg('Unter dem Regal ist es zu dunkel.');
     if (action === 'computer') return openQuestion('q3', 'q3Code');
-    if (action === 'board') return S.flags.code8
-      ? msg('Die Tafel zeigt: 2 – 4 – 6 – 8.')
-      : openPuzzle('board-pattern', 'Muster an der Tafel', '2 – 4 – 6 – ? Welche Zahl setzt das Muster fort?');
+    if (action === 'board') {
+      if (S.clueReviewRequired['board-pattern']) {
+        delete S.clueReviewRequired['board-pattern'];
+        S.puzzleAttempts['board-pattern'] = 0;
+        save();
+        return msg('Tafel erneut gelesen: 2 – 4 – 6 – ?. Achte auf den gleichbleibenden Abstand zwischen den Zahlen. Tippe die Tafel erneut an, wenn du die Fortsetzung weißt.');
+      }
+      return S.flags.code8
+        ? msg('Die Tafel zeigt: 2 – 4 – 6 – 8.')
+        : openPuzzle('board-pattern', 'Muster an der Tafel', '2 – 4 – 6 – ? Welche Zahl setzt das Muster fort?');
+    }
 
     if (action === 'door') {
       if (!(S.flags.code4 && S.flags.code7 && S.flags.code8)) return msg('Das Zahlenschloss braucht einen dreistelligen Code. Dir fehlen noch Hinweise.');

@@ -238,6 +238,50 @@ test('local Remy knowledge answers are cached without using an external bridge',
   }
 });
 
+test('repeated board guessing forces the learner to reread the pattern before retrying', () => {
+  const { w, d } = openEscape();
+  try {
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="board"]');
+    clickPuzzleText(d, '7');
+    d.getElementById('puzzleResetBtn').click();
+    clickPuzzleText(d, '10');
+    assert.equal(d.getElementById('puzzleDialog').open, false);
+    click(d, '[data-action="board"]');
+    assert.equal(d.getElementById('puzzleDialog').open, false);
+    assert.match(d.getElementById('messageBar').textContent, /gleichbleibenden Abstand/);
+    click(d, '[data-action="board"]');
+    assert.equal(d.getElementById('puzzleDialog').open, true);
+  } finally { w.close(); }
+});
+
+test('two wrong door codes require reviewing all three code sources before another attempt', () => {
+  const { w, d } = openEscape();
+  try {
+    const set = w.GradeCrewEscapeIntegration.getQuestionSet();
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="desk"]'); submitAnswer(w, d, set[0].correctIndex);
+    click(d, '[data-action="cabinet"]'); click(d, '.inventoryItem'); click(d, '[data-action="cabinet"]');
+    click(d, '[data-action="shelf"]'); submitAnswer(w, d, set[1].correctIndex);
+    click(d, '[data-action="computer"]'); submitAnswer(w, d, set[2].correctIndex);
+    click(d, '[data-action="board"]'); clickPuzzleText(d, '8');
+    click(d, '[data-action="door"]'); clickPuzzleText(d, '1'); clickPuzzleText(d, '1'); clickPuzzleText(d, '1');
+    d.getElementById('puzzleResetBtn').click();
+    clickPuzzleText(d, '2'); clickPuzzleText(d, '2'); clickPuzzleText(d, '2');
+    assert.equal(d.getElementById('puzzleDialog').open, false);
+    click(d, '[data-action="door"]');
+    assert.equal(d.getElementById('puzzleDialog').open, false);
+    click(d, '[data-action="shelf"]');
+    click(d, '[data-action="computer"]');
+    click(d, '[data-action="door"]');
+    assert.equal(d.getElementById('puzzleDialog').open, false);
+    click(d, '[data-action="board"]');
+    assert.match(d.getElementById('messageBar').textContent, /Jetzt darfst du den Code erneut eingeben/);
+    click(d, '[data-action="door"]');
+    assert.equal(d.getElementById('puzzleDialog').open, true);
+  } finally { w.close(); }
+});
+
 test('full route reaches the exit; repeated symbol guessing forces clue review', () => {
   const { w, d } = openEscape();
   try {
