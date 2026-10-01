@@ -163,6 +163,7 @@ export function startVisualEnhancements() {
       ["Crew-Tour-Responsive", "./crew-tour-responsive.js?v=2.3.1-gc28-mobile"],
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
       ["Remy-Hilfe", "./remy-ai-help.js?v=2.3.1-gc26"],
+      ["Crew-Assistent", "./crew-assistant-ui.js?v=1"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc21"]
