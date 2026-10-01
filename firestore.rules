@@ -40,6 +40,18 @@ service cloud.firestore {
         && quiz.get('rightsHold', false) == false;
     }
 
+    function validQuestionWrite() {
+      let type = request.resource.data.get('type', '');
+      let answers = request.resource.data.get('acceptedAnswers', []);
+      return type != 'text'
+        || (
+          answers is list
+          && answers.size() > 0
+          && answers[0] is string
+          && answers[0].size() > 0
+        );
+    }
+
     // Lehrerprofile. Rolle, Sperrstatus und Beta-Freigabe können durch normale Nutzer nicht verändert werden.
     match /users/{userId} {
       allow create: if signedIn()
@@ -117,7 +129,8 @@ service cloud.firestore {
 
       match /questions/{questionId} {
         allow read: if quizPublished(quizId) || ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
-        allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
+        allow create, update: if (ownsQuiz(quizId) || isAdmin()) && validQuestionWrite();
+        allow delete: if ownsQuiz(quizId) || isAdmin();
       }
 
       // Zeitversuche und Warteraum. Schüler dürfen nur ihren zufälligen Eintrag anlegen

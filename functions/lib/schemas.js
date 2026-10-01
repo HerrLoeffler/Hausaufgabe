@@ -78,6 +78,11 @@ function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
     properties.options.maxItems = 8;
     properties.options.items.properties.text = { ...NONEMPTY };
   }
+  if (type === "text") {
+    properties.acceptedAnswers.minItems = 1;
+    properties.acceptedAnswers.maxItems = 8;
+    properties.acceptedAnswers.items = { ...NONEMPTY };
+  }
   if (type === "truefalse") properties.correctBoolean = { type: "boolean" };
   if (type === "gapfill") properties.text.pattern = "\\[[^\\[\\]]*[^\\s\\[\\]][^\\[\\]]*\\]";
   if (type === "matching") {
