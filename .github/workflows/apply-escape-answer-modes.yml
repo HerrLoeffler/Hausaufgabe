@@ -5,8 +5,9 @@ on:
     branches:
       - feature/escape-room-mvp-v1
     paths:
-      - 'tools/apply-escape-answer-modes.mjs'
+      - 'tools/apply-escape-answer-modes.py'
       - '.github/workflows/apply-escape-answer-modes.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -31,24 +32,26 @@ jobs:
           cache-dependency-path: tools/games/package-lock.json
 
       - name: Apply answer-mode patch
-        run: node tools/apply-escape-answer-modes.mjs
+        run: python3 tools/apply-escape-answer-modes.py
 
       - name: Check patched browser code
-        run: node --check lab/escape-room/app.js
+        run: |
+          node --check lab/escape-room/app.js
+          node --check lab/escape-room/gradecrew-question-adapter.js
 
       - name: Install test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
 
-      - name: Run Escape tests before committing patch
+      - name: Run Escape and adapter tests before committing patch
         run: node --test tools/games/escape-room.test.cjs tools/games/gradecrew-escape-adapter.test.cjs
 
       - name: Commit tested answer modes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lab/escape-room/app.js
+          git add lab/escape-room/app.js lab/escape-room/gradecrew-question-adapter.js tools/games/escape-room.test.cjs tools/games/gradecrew-escape-adapter.test.cjs
           if git diff --cached --quiet; then
-            echo "No app.js changes to commit."
+            echo "No answer-mode changes to commit."
           else
             git commit -m "Support Escape text and number answers [escape-answer-modes-applied]"
             git push origin HEAD:feature/escape-room-mvp-v1
