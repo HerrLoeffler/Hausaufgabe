@@ -20,23 +20,25 @@
     "id": "staging-batch-2026-10-02-a",
     "purpose": "Erster gemeinsamer Teststand für Crew Assistant, Emmi und Tutorial V2.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+    "observed_integration_head": "2b5565598c82e21b0a472f171d40fdbeadd1b626",
     "included_workstreams": [
       "crew-assistant",
       "emmi-whole-test-revision",
       "tutorial-choice-replay-v1"
     ],
     "gates": {
-      "combined_ci": "pending_verification",
-      "hosting_preview": "pending_verification",
+      "combined_ci": "success_run_36937874607",
+      "hosting_preview": "success_run_36938059928_commit_2b5565598c82e21b0a472f171d40fdbeadd1b626",
       "staging_functions": "not_deployed",
       "staging_rules": "unchanged",
       "desktop_ipad_iphone_test": "not_tested",
       "user_acceptance": "not_tested",
       "production": "not_requested"
     },
-    "important": "Der bestehende automatische Preview-Workflow deployt Hosting, aber keine Functions. Crew Assistant und Emmi benötigen ihre neuen Staging-Callables; ein reiner Hosting-Preview ist deshalb kein vollständiger Funktionsnachweis.",
-    "next_action": "Gesamt-CI des Integrationsheads prüfen; danach sicheren Staging-Functions-Deploypfad für genau die benötigten Callables herstellen und erst dann den gemeinsamen Staging-Test als vollständig deployed markieren."
+    "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+    "preview_verified_files": 89,
+    "important": "Hosting des gemeinsamen Batches ist verifiziert deployed. Crew Assistant und Emmi benötigen zusätzlich die neuen Staging-Callables; deshalb ist der Gesamtbatch noch nicht vollständig staging_deployed.",
+    "next_action": "Den exakt verifizierten Integrations-SHA mit tools/automation/deploy-staging-ai-functions.sh dry-run prüfen und anschließend ausschließlich functions:ai nach hausaufgabe-staging deployen. Danach Crew/Emmi im Browser testen und erst dann als staging_deployed markieren."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -47,17 +49,20 @@
   "automation": {
     "agent_dispatch": "implemented_pending_credentials_and_e2e",
     "preview_deployment": "verified_hosting_only",
+    "staging_ai_functions_deploy": "guarded_manual_cloud_shell_path_ready",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 36878009106,
-      "app_ci_run_id": 36877793069,
-      "mobile_tutorial_run_id": 36877793076,
-      "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
-      "verification": "Build and hosting preview deploy succeeded; exact tested branch head checked before deploy; published manifest and file hashes verified after deployment.",
-      "date": "2026-10-01"
+      "run_id": 36938059928,
+      "app_ci_run_id": 36937874607,
+      "mobile_tutorial_run_id": 36937874576,
+      "commit": "2b5565598c82e21b0a472f171d40fdbeadd1b626",
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+      "verified_files": 89,
+      "verification": "Build exact tested branch head, deploy to staging preview channel and post-deploy manifest/file verification all succeeded.",
+      "date": "2026-10-02"
     },
     "hosting_archive": {
-      "status": "verified",
+      "status": "verified_previous_snapshot",
       "run_id": 36914125942,
       "release_url": "https://github.com/HerrLoeffler/Hausaufgabe/releases/tag/preview-snapshot-74eb2ec08e81315875abfc4b1ae052d9f78797eb",
       "commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
@@ -70,47 +75,46 @@
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "0261ac848a5c58fa665dc4832fe1fca17317b4c3",
+      "observed_head": "2b5565598c82e21b0a472f171d40fdbeadd1b626",
       "stage": "integrated",
-      "ci": "pending_verification_for_current_head",
-      "staging": "pending_verification",
+      "ci": "success_run_36937874607",
+      "staging": "hosting_preview_deployed_functions_pending",
       "user_test": "not_tested",
       "handoff": "workstreams/web-app.md",
-      "next_action": "Gesamt-CI und Staging-Deploy für den aktuellen Integrationshead verifizieren."
+      "next_action": "Staging AI Functions für denselben SHA deployen, danach den gemeinsamen Browser-/Gerätetest durchführen."
     },
     {
       "id": "crew-assistant",
       "branch": "feature/crew-assistant-v1",
       "observed_head": "34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
       "stage": "integrated",
-      "ci": "success_run_36937201021",
-      "integrated_into": "feature/gradecrew-app-integration@cbeedd3ddfb1ed75d5187b8d2e02e5a5dd6616a8",
-      "staging": "not_fully_deployed",
+      "ci": "combined_web_ci_success_run_36937874607",
+      "integrated_into": "feature/gradecrew-app-integration@2b5565598c82e21b0a472f171d40fdbeadd1b626",
+      "staging": "frontend_deployed_callable_pending",
       "user_test": "not_tested",
-      "next_action": "Gemeinsamen Staging-Stand inklusive crewAssistant Callable bereitstellen und testen."
+      "next_action": "crewAssistant über den guarded functions:ai Staging-Deploy bereitstellen und echten Browser-Fallback testen."
     },
     {
       "id": "emmi-whole-test-revision",
       "branch": "feature/emmi-whole-test-revision-v1",
       "observed_head": "5eee5e574c690138cdeafdcfcb74a49c6ae9d03d",
       "stage": "integrated",
-      "ci": "included_in_crew_success_run_36937201021",
-      "integrated_into": "feature/crew-assistant-v1@34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
-      "also_in_web_integration": "feature/gradecrew-app-integration@0261ac848a5c58fa665dc4832fe1fca17317b4c3",
-      "staging": "not_fully_deployed",
+      "ci": "combined_web_ci_success_run_36937874607",
+      "integrated_into": "feature/gradecrew-app-integration@2b5565598c82e21b0a472f171d40fdbeadd1b626",
+      "staging": "frontend_deployed_callable_pending",
       "user_test": "not_tested",
-      "next_action": "reviseWholeTest Callable in Staging deployen und echten Runtime-Test gegen OpenAI durchführen."
+      "next_action": "reviseWholeTest über den guarded functions:ai Staging-Deploy bereitstellen und echten Runtime-Test gegen OpenAI durchführen."
     },
     {
       "id": "tutorial-choice-replay-v1",
       "branch": "feature/tutorial-choice-replay-v1",
       "observed_head": "d8453750be5965113217636478212d83e704174f",
-      "stage": "integrated",
-      "ci": "isolated_ci_green_run_36935628293",
-      "integrated_into": "feature/gradecrew-app-integration@0261ac848a5c58fa665dc4832fe1fca17317b4c3",
-      "staging": "pending_verification",
+      "stage": "staging_deployed",
+      "ci": "combined_web_ci_success_run_36937874607",
+      "integrated_into": "feature/gradecrew-app-integration@2b5565598c82e21b0a472f171d40fdbeadd1b626",
+      "staging": "verified_hosting_preview_run_36938059928",
       "user_test": "not_tested",
-      "next_action": "Im gemeinsamen Staging-Stand Profilspeicherung, Abbruch und Replay auf Desktop/iPad/iPhone prüfen."
+      "next_action": "Profilspeicherung, Abbruch und Replay auf Desktop/iPad/iPhone im gemeinsamen Preview prüfen."
     },
     {
       "id": "freetext-review",
@@ -169,17 +173,20 @@
   ],
   "deployments": [
     {
-      "environment": "preview",
+      "environment": "staging-preview",
       "type": "hosting_only",
+      "channel": "gradecrew-app-integration",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "evidence": "Automatic preview run 36878009106 verified the previous integration head and file hashes.",
-      "verified_commit": "74eb2ec08e81315875abfc4b1ae052d9f78797eb",
-      "contains_current_release_train": false
+      "evidence": "Automatic staging preview run 36938059928",
+      "verified_commit": "2b5565598c82e21b0a472f171d40fdbeadd1b626",
+      "verified_files": 89,
+      "contains_current_release_train": true,
+      "device_test": "not_performed"
     }
   ],
   "blockers": [
-    "Current combined staging batch still needs verified CI/deploy evidence for integration head 0261ac848a5c58fa665dc4832fe1fca17317b4c3.",
-    "Automatic preview deployment is hosting-only; Crew Assistant and Emmi need new staging Functions before full end-to-end testing.",
+    "Crew Assistant and Emmi are not fully testable until functions:ai for the same verified integration SHA is deployed to hausaufgabe-staging.",
+    "Current combined batch has no Martin user-acceptance/device test yet.",
     "30-user test failed; cause not confirmed.",
     "Production security gates are not all verified."
   ]
