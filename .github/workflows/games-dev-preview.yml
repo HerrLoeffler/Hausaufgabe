@@ -1,15 +1,6 @@
 name: Games Dev Preview
 
 on:
-  push:
-    branches:
-      - feature/escape-room-mvp-v1
-    paths:
-      - 'lab/**'
-      - 'tools/build-lab-*.mjs'
-      - 'tools/games/**'
-      - 'deploy-lab-games-hub.sh'
-      - '.github/workflows/games-dev-preview.yml'
   workflow_dispatch:
 
 permissions:
@@ -21,7 +12,7 @@ env:
 
 jobs:
   deploy-dev-preview:
-    name: Test and deploy Games Dev preview
+    name: Test and deploy Games Hub dev preview
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -38,7 +29,7 @@ jobs:
       - name: Install test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
 
-      - name: Run structure and Escape tests
+      - name: Run Games Hub tests
         run: npm test --prefix tools/games
 
       - name: Build isolated Games Hub
