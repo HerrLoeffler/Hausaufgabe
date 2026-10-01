@@ -4,7 +4,7 @@
 - Verantwortlicher Chat / Auftrag: Einmalige staging-only Workload-Identity-Aktivierung für automatische `functions:ai`-Deploys reparieren und abschließen.
 - Aufgabenbranch: `fix/staging-functions-wif-display`
 - Basiscommit: `5bbb8f602f25d549e65142c87599bbd9d342d083`
-- Betroffene Dateien: `tools/automation/setup-staging-functions-identity.sh`, `.github/workflows/handoff-check.yml`, `docs/AUTOMATION_SETUP.md`, `TODO.md`, `GRADECREW_STATE.json`, diese Übergabe.
+- Betroffene Dateien: `tools/automation/setup-staging-functions-identity.sh`, `.github/workflows/handoff-check.yml`, `TODO.md`, diese Übergabe.
 - Überschneidungen mit anderen Aufgaben: Automations-/Release-Train-Koordination auf `main`; Produktcode auf `feature/gradecrew-app-integration` wird nicht verändert.
 
 ## Ziel und gewünschtes Verhalten
@@ -31,8 +31,8 @@ Der einmalige Google-Cloud-Setup-Lauf soll nach einer Unterbrechung sicher wiede
 ## Zwischenstand
 
 - Lokal geändert: n. a.; Arbeit direkt über GitHub-Branch gesichert.
-- Auf GitHub gesichert (Commit): Script-Fix `a70e5a4899aff5b71910a4946e67049aa1088bf1`; CI-Regressionsschutz `088ea7a659b2870798ad68eaa86e8fb86fb166bc`.
-- Geprüft: CI-Lauf des aktuellen Branch-Heads noch abzuwarten; `handoff-check.yml` enthält zusätzlich zur Bash-Syntaxprüfung eine explizite `<= 32`-Prüfung für beide WIF-Anzeigenamen.
+- Auf GitHub gesichert: Script-Fix `a70e5a4899aff5b71910a4946e67049aa1088bf1`; CI-Regressionsschutz `088ea7a659b2870798ad68eaa86e8fb86fb166bc`; Task-Dokumentation/TODO auf demselben Fix-Branch.
+- Geprüft: Project-Handoff-CI Run `36942320571` erfolgreich auf Commit `a4623dc955c9a00a08e6313eb5f0b1d118046b45`; darin `bash -n` sowie explizite `<= 32`-Prüfung für `POOL_DISPLAY` und `PROVIDER_DISPLAY` grün.
 - Deployed: kein Functions-Deploy durch diese Reparatur.
 - Gerätetest: n. a.
 
@@ -42,7 +42,7 @@ Der erste reale Setup-Lauf in Cloud Shell hat APIs aktiviert, den Serviceaccount
 
 ## Nächster konkreter Schritt
 
-CI des Fix-Branches grün bestätigen, PR nach `main` mergen und danach den Nutzer denselben Setup-Befehl erneut ausführen lassen. Anschließend den ersten echten automatischen `functions:ai`-Workflow prüfen.
+PR des Fix-Branches nach `main` mergen und danach denselben Setup-Befehl erneut in der bereits authentifizierten Cloud Shell ausführen. Anschließend den ersten echten automatischen `functions:ai`-Workflow prüfen.
 
 ## Wiederaufnahme nach Abbruch
 
