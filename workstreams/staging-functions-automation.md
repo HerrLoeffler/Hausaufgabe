@@ -1,49 +1,56 @@
 # Aufgabe: GC-AUTOMATION-02
 
 - Aktualisiert (UTC): 2026-10-02
-- Verantwortlicher Chat / Auftrag: Einmalige staging-only Workload-Identity-Aktivierung für automatische `functions:ai`-Deploys reparieren und abschließen.
-- Aufgabenbranch: `fix/staging-functions-wif-display`
-- Basiscommit: `5bbb8f602f25d549e65142c87599bbd9d342d083`
-- Betroffene Dateien: `tools/automation/setup-staging-functions-identity.sh`, `.github/workflows/handoff-check.yml`, `TODO.md`, diese Übergabe.
-- Überschneidungen mit anderen Aufgaben: Automations-/Release-Train-Koordination auf `main`; Produktcode auf `feature/gradecrew-app-integration` wird nicht verändert.
+- Verantwortlicher Chat / Auftrag: Einmalige staging-only Workload-Identity-Aktivierung für automatische `functions:ai`-Deploys reparieren und Ende-zu-Ende verifizieren.
+- Aufgabenbranch: `chore/record-staging-functions-e2e`
+- Basiscommit: `a20c5651892a616bbd20b238cfbfee48a628c57a`
+- Betroffene Dateien: `GRADECREW_STATE.json`, `TODO.md`, diese Übergabe.
+- Überschneidungen mit anderen Aufgaben: Release-Train-Koordination auf `main`; Produktcode auf `feature/gradecrew-app-integration` wurde nicht verändert.
 
 ## Ziel und gewünschtes Verhalten
 
-Der einmalige Google-Cloud-Setup-Lauf soll nach einer Unterbrechung sicher wiederholbar sein und den staging-only WIF-Pool/Provider für `.github/workflows/staging-functions.yml` vollständig anlegen. Danach sollen normale AI-Functions-Staging-Deploys ohne Cloud-Shell-Schritt laufen.
+Normale GradeCrew-Staging-Deploys der Firebase-Codebase `ai` sollen nach erfolgreicher Integrations-CI automatisch über GitHub Actions laufen. Cloud Shell soll nur für die einmalige IAM/WIF-Einrichtung oder spätere IAM-Reparaturen nötig sein.
 
 ## Umfang / nicht verändern
 
-- Nur `hausaufgabe-staging`.
+- Ziel ausschließlich `hausaufgabe-staging`.
+- Deployscope ausschließlich `functions:ai`.
 - Production `hausaufgabe-40294` bleibt ausgeschlossen und unverändert.
-- Kein Hosting-, Firestore-Rules- oder Assessment-Deploy.
-- Keine Service-Account-Schlüssel erzeugen.
-- Bestehende erfolgreiche IAM-Teilschritte des ersten Setup-Laufs nicht zurückrollen.
+- Kein Hosting-, Firestore-Rules- oder Assessment-Deploy durch den Functions-Workflow.
+- Keine Service-Account-Schlüssel.
 
 ## Akzeptanzkriterien
 
-- Pool- und Provider-Displaynamen sind jeweils maximal 32 Zeichen.
-- Das Setup validiert diese Grenze vor Cloud-Mutationen.
-- Wiederholter Lauf toleriert bereits vorhandenen Serviceaccount und bereits gesetzte IAM-Bindings.
-- `bash -n` und Project-Handoff-CI sind grün.
-- Ein erneuter Cloud-Shell-Lauf legt WIF-Pool/Provider an und setzt `STAGING_FUNCTIONS_WIF_PROVIDER`, sofern `gh` angemeldet ist; andernfalls werden nur die nötigen GitHub-CLI-Schritte ausgegeben.
-- Erst ein anschließender erfolgreicher echter Workflow-Deploy gilt als Functions-E2E-Nachweis.
+- Workload-Identity-Pool und Provider eingerichtet.
+- GitHub-Variable `STAGING_FUNCTIONS_WIF_PROVIDER` gesetzt.
+- Automatischer Workflow authentifiziert sich über WIF.
+- Exakter grüner Integrations-SHA wird vor Deploy erneut geprüft; stale SHA wird abgelehnt.
+- Functions-Tests laufen vor Cloud-Authentifizierung erneut.
+- `functions:ai` wird nach Staging deployed.
+- `crewAssistant` und `reviseWholeTest` werden nach Deploy in Staging verifiziert.
+- Receipt-Artefakt wird geschrieben.
+- Production bleibt unverändert.
 
 ## Zwischenstand
 
-- Lokal geändert: n. a.; Arbeit direkt über GitHub-Branch gesichert.
-- Auf GitHub gesichert: Script-Fix `a70e5a4899aff5b71910a4946e67049aa1088bf1`; CI-Regressionsschutz `088ea7a659b2870798ad68eaa86e8fb86fb166bc`; Task-Dokumentation/TODO auf demselben Fix-Branch.
-- Geprüft: Project-Handoff-CI Run `36942320571` erfolgreich auf Commit `a4623dc955c9a00a08e6313eb5f0b1d118046b45`; darin `bash -n` sowie explizite `<= 32`-Prüfung für `POOL_DISPLAY` und `PROVIDER_DISPLAY` grün.
-- Deployed: kein Functions-Deploy durch diese Reparatur.
-- Gerätetest: n. a.
+- Auf GitHub gesichert: WIF-Displaynamen-Fix über PR #22, Mergecommit `a20c5651892a616bbd20b238cfbfee48a628c57a`.
+- Einmalige Cloud-Einrichtung: erfolgreich am 02.10.2026; Pool `gradecrew-functions-github`, Provider `staging-functions`, Serviceaccount `gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com`, GitHub-Variable gesetzt.
+- Integrations-CI: Run `36941486945`, Attempt 2, Commit `a61759db01e41f19b7d34e6eb0e88bac42484c1e`, erfolgreich.
+- Automatischer Functions-E2E: Run `36943129026`, erfolgreich.
+- Nach Deploy verifiziert: `crewAssistant`, `reviseWholeTest`.
+- Receipt: Artifact ID `11200528486`, Name `staging-functions-receipt-a61759db01e41f19b7d34e6eb0e88bac42484c1e`.
+- Staging-Hosting wurde durch diesen Functions-Deploy nicht verändert; Firestore Rules ebenfalls nicht.
+- Production wurde nicht verändert.
+- Gerätetest: für die Automationsaufgabe n. a.; Produkt-Runtime im Browser/iPad bleibt separat als Nutzertest offen.
 
 ## Offene Probleme und Unsicherheiten
 
-Der erste reale Setup-Lauf in Cloud Shell hat APIs aktiviert, den Serviceaccount angelegt, Projektrollen gebunden und `actAs` auf vorhandene Runtime-/Build-Serviceaccounts begrenzt. Danach brach Google IAM beim Erstellen des Workload-Identity-Pools ab, weil `GradeCrew staging Functions GitHub` länger als 32 Zeichen war. Der Pool/Provider und damit die GitHub-WIF-Aktivierung wurden dadurch noch nicht abgeschlossen. Es gibt keinen Nachweis eines Functions-Deploys aus diesem Lauf.
+Die Deployment-Automatik selbst ist Ende-zu-Ende verifiziert. Offen ist nicht mehr die Infrastruktur, sondern die praktische Produktabnahme von Coco/Remy/Emmi auf dem gemeinsamen Staging-Stand.
 
 ## Nächster konkreter Schritt
 
-PR des Fix-Branches nach `main` mergen und danach denselben Setup-Befehl erneut in der bereits authentifizierten Cloud Shell ausführen. Anschließend den ersten echten automatischen `functions:ai`-Workflow prüfen.
+Martin testet den aktuellen gemeinsamen Staging-Stand im Browser/iPad: Coco/Remy-Fallback, Remy-Formularfüllung, Emmi-Gesamttestüberarbeitung und Tutorial. Produktfeatures erst nach dieser Abnahme auf `user_tested` setzen.
 
 ## Wiederaufnahme nach Abbruch
 
-Der reparierte Code liegt vollständig auf `fix/staging-functions-wif-display`. Nichts aus diesem Workstream darf als `staging_deployed` gelten, solange der erneute Cloud-Shell-Lauf und der echte automatische Functions-E2E-Deploy nicht erfolgreich belegt sind.
+GC-AUTOMATION-02 kann als technisch abgeschlossen behandelt werden. Bei späteren Staging-AI-Deploys ist Cloud Shell nicht mehr Teil des normalen Ablaufs. Bei Fehlern zuerst den konkreten Actions-Run und das Receipt prüfen; nicht vorsorglich IAM neu aufbauen.
