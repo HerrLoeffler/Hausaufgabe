@@ -31,7 +31,11 @@ jobs:
               assert item.get('stage') in expected, item
               assert item.get('branch'), item
               assert item.get('next_action'), item
-          for name in ['START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md', 'tools/release_status.py', 'tools/automation/deploy-staging-ai-functions.sh']:
+          for name in [
+              'START_HERE.md', 'AGENTS.md', 'workstreams/README.md', 'workstreams/TEMPLATE.md',
+              'tools/release_status.py', 'tools/automation/deploy-staging-ai-functions.sh',
+              'tools/automation/setup-staging-functions-identity.sh', '.github/workflows/staging-functions.yml'
+          ]:
               assert pathlib.Path(name).is_file(), name
           PY
           python3 tools/release_status.py >/dev/null
@@ -41,6 +45,25 @@ jobs:
           python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
           bash -n tools/automation/setup-staging-identity.sh
           bash -n tools/automation/deploy-staging-ai-functions.sh
+          bash -n tools/automation/setup-staging-functions-identity.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          workflow = Path('.github/workflows/staging-functions.yml').read_text()
+          setup = Path('tools/automation/setup-staging-functions-identity.sh').read_text()
+          assert 'PROJECT_ID: hausaufgabe-staging' in workflow
+          assert '--only functions:ai' in workflow
+          assert 'gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com' in workflow
+          assert 'STAGING_FUNCTIONS_WIF_PROVIDER' in workflow
+          assert 'github.event.workflow_run.event == \'push\'' in workflow
+          assert 'current=$(gh api' in workflow
+          assert 'hausaufgabe-40294' not in workflow
+          assert 'PROJECT_ID="hausaufgabe-staging"' in setup
+          assert 'POOL="gradecrew-functions-github"' in setup
+          assert 'roles/secretmanager.viewer' in setup
+          assert 'roles/iam.serviceAccountUser' in setup
+          assert 'roles/firebasehosting.admin' not in setup
+          assert 'hausaufgabe-40294' in setup  # explicit production fail-closed guard
+          PY
       - uses: actions/setup-node@v5
         with:
           node-version: 22
