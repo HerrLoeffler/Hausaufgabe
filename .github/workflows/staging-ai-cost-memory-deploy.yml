@@ -1,0 +1,93 @@
+name: Deploy AI cost/memory to staging
+
+on:
+  push:
+    branches:
+      - ops/staging-ai-cost-memory-20261002
+    paths:
+      - .github/workflows/staging-ai-cost-memory-deploy.yml
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_SHA: 7063aee3815fc4f5a58e443318cf2c80839719a7
+  PROJECT_ID: hausaufgabe-staging
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+
+jobs:
+  deploy-staging-ai-cost-memory:
+    name: Deploy exact verified integration commit to staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact verified integration commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+
+      - name: Guard exact source and staging target
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test "$PROJECT_ID" = "hausaufgabe-staging"
+          grep -q '"codebase": "ai"' firebase.json
+          grep -q 'crewAssistant' functions/index.js
+          grep -q 'reviseWholeTest' functions/index.js
+          echo "Source: $EXPECTED_SHA"
+          echo "Target: $PROJECT_ID"
+          echo "Scope: functions:ai + firestore:indexes only"
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Re-run AI function checks before deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --prefix functions --no-audit --no-fund
+          npm test --prefix functions
+          npm run check --prefix functions
+
+      - name: Prepare staging Firebase credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "Repository secret FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING is missing."
+            exit 1
+          fi
+          CREDENTIAL_FILE="$RUNNER_TEMP/firebase-staging-service-account.json"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$CREDENTIAL_FILE"
+          chmod 600 "$CREDENTIAL_FILE"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$CREDENTIAL_FILE" >> "$GITHUB_ENV"
+
+      - name: Verify Firebase staging access
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes firebase-tools@15.32.0 projects:list --json >/dev/null
+
+      - name: Deploy AI functions and cleanup indexes to staging only
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes firebase-tools@15.32.0 deploy \
+            --project "$PROJECT_ID" \
+            --only functions:ai,firestore:indexes \
+            --non-interactive
+
+      - name: Record deploy scope
+        shell: bash
+        run: |
+          echo "STAGING deploy completed."
+          echo "Project: $PROJECT_ID"
+          echo "Commit:  $EXPECTED_SHA"
+          echo "Deployed: functions:ai, firestore:indexes"
+          echo "Not deployed: hosting, firestore rules, assessment, production"
