@@ -1,5 +1,5 @@
 import { getApps } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { classifyFreeTextAnswer, summarizeFreeTextClassifications } from "./free-text-review.mjs?v=2.3.1-gc28";
 
 const CONTEXT_KEY = "gradecrew.freeTextReviewContext.v1";
@@ -32,9 +32,9 @@ function quizCodeFromCard(card) {
 }
 
 function activeCode() {
+  if (/^[A-Z0-9-]{4,40}$/i.test(String(context?.code || ""))) return context.code;
   const published = String(document.getElementById("publishedCode")?.textContent || "").trim();
-  if (/^[A-Z0-9-]{4,40}$/i.test(published)) return published;
-  return context?.code || "";
+  return /^[A-Z0-9-]{4,40}$/i.test(published) ? published : "";
 }
 
 function invalidateBundle() {
@@ -101,13 +101,19 @@ function escapeAttribute(value) {
 }
 
 function ensureResultsToolbar(table) {
-  const existing = document.getElementById("gcFreeTextResultsToolbar");
-  if (existing) return existing;
-  const toolbar = document.createElement("div");
-  toolbar.id = "gcFreeTextResultsToolbar";
-  toolbar.className = "gcFreeTextToolbar";
-  toolbar.innerHTML = `<div><strong>Freitext-Prüfhilfe</strong><small>🟢 eindeutig · 🟡 prüfen · 🔴 unklar. Die Ampel ist keine endgültige Bewertung.</small></div><div class="gcFreeTextToolbarActions"><button class="button secondary gcSortUncertain" type="button">Unsichere zuerst</button><button class="button ghost gcRestoreOrder" type="button">Reihenfolge zurücksetzen</button></div>`;
-  table.parentElement?.insertBefore(toolbar, table);
+  let toolbar = document.getElementById("gcFreeTextResultsToolbar");
+  if (!toolbar) {
+    toolbar = document.createElement("div");
+    toolbar.id = "gcFreeTextResultsToolbar";
+    toolbar.className = "gcFreeTextToolbar";
+    toolbar.innerHTML = `<div><strong>Freitext-Prüfhilfe</strong><small>🟢 eindeutig · 🟡 prüfen · 🔴 unklar. Die Ampel ist keine endgültige Bewertung.</small></div><div class="gcFreeTextToolbarActions"><button class="button secondary gcSortUncertain" type="button">Unsichere zuerst</button><button class="button ghost gcRestoreOrder" type="button">Reihenfolge zurücksetzen</button></div>`;
+    table.parentElement?.insertBefore(toolbar, table);
+  }
+  if (toolbar.dataset.gcBound !== "1") {
+    toolbar.dataset.gcBound = "1";
+    toolbar.querySelector(".gcSortUncertain")?.addEventListener("click", () => sortResultRows(table, true));
+    toolbar.querySelector(".gcRestoreOrder")?.addEventListener("click", () => sortResultRows(table, false));
+  }
   return toolbar;
 }
 
@@ -140,7 +146,7 @@ async function decorateResults() {
   const rows = [...table.querySelectorAll("tbody tr")];
   let hasFreeText = false;
   rows.forEach((row, originalIndex) => {
-    if (!row.dataset.gcOriginalOrder) row.dataset.gcOriginalOrder = String(originalIndex);
+    if (row.dataset.gcOriginalOrder === undefined) row.dataset.gcOriginalOrder = String(originalIndex);
     const submissionId = row.querySelector(".reviewBtn")?.dataset.id || "";
     const submission = bundle.submissions.get(submissionId);
     if (!submission) return;
@@ -151,6 +157,9 @@ async function decorateResults() {
     row.dataset.gcFreeTextPriority = String(priorityFor(items));
     row.dataset.gcFreeTextRed = String(summary.red);
     row.dataset.gcFreeTextYellow = String(summary.yellow);
+    const signature = `${summary.red}:${summary.yellow}:${summary.green}`;
+    if (row.dataset.gcFreeTextSignature === signature && row.querySelector(".gcFreeTextRowSummary")) return;
+    row.dataset.gcFreeTextSignature = signature;
     row.querySelector(".gcFreeTextRowSummary")?.remove();
     const statusCell = row.children[4] || row.lastElementChild;
     if (!statusCell) return;
@@ -165,9 +174,7 @@ async function decorateResults() {
     document.getElementById("gcFreeTextResultsToolbar")?.remove();
     return;
   }
-  const toolbar = ensureResultsToolbar(table);
-  toolbar.querySelector(".gcSortUncertain")?.addEventListener("click", () => sortResultRows(table, true), { once: true });
-  toolbar.querySelector(".gcRestoreOrder")?.addEventListener("click", () => sortResultRows(table, false), { once: true });
+  ensureResultsToolbar(table);
 }
 
 function setSuggestedPoints(input, points) {
@@ -197,12 +204,12 @@ async function decorateReviewPanel() {
   const submissionId = context?.submissionId || "";
   if (!code || !submissionId) return;
   const key = `${code}:${submissionId}:${root.children.length}`;
-  if (panel.dataset.gcFreeTextReviewKey === key) return;
+  if (root.dataset.gcFreeTextReviewKey === key) return;
 
   const bundle = await loadBundle(code);
   const submission = bundle?.submissions.get(submissionId);
   if (!bundle || !submission) return;
-  panel.dataset.gcFreeTextReviewKey = key;
+  root.dataset.gcFreeTextReviewKey = key;
   panel.querySelector(".gcFreeTextReviewToolbar")?.remove();
 
   const classifications = [];
@@ -210,7 +217,7 @@ async function decorateReviewPanel() {
   bundle.questions.forEach((question, index) => {
     const node = questionNodes[index];
     if (!node) return;
-    if (!node.dataset.gcOriginalOrder) node.dataset.gcOriginalOrder = String(index);
+    if (node.dataset.gcOriginalOrder === undefined) node.dataset.gcOriginalOrder = String(index);
     node.querySelector(".gcFreeTextQuestionHint")?.remove();
     if (question.type !== "text") {
       node.dataset.gcFreeTextPriority = "3";
