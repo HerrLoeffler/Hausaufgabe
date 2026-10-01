@@ -14,6 +14,8 @@ const firestorePort = Number(firestorePortRaw || 8080);
 const functionsHost = process.env.FUNCTIONS_EMULATOR_HOST || "127.0.0.1:5001";
 const region = process.env.GC_ASSESSMENT_REGION || "europe-west1";
 let env;
+let testSequence = 0;
+let quizId = "EMU0000";
 
 function callableUrl(name) {
   return `http://${functionsHost}/${projectId}/${region}/${name}`;
@@ -55,7 +57,7 @@ function findForbiddenSolutionKey(value, trail = "root") {
   return null;
 }
 
-async function seedAssessment() {
+async function seedAssessment(id) {
   await env.withSecurityRulesDisabled(async context => {
     const db = context.firestore();
     await setDoc(doc(db, "users", "teacher-a"), {
@@ -63,7 +65,7 @@ async function seedAssessment() {
       status: "active",
       aiBetaEnabled: false
     });
-    await setDoc(doc(db, "quizzes", "EMU1234"), {
+    await setDoc(doc(db, "quizzes", id), {
       ownerId: "teacher-a",
       title: "Emulator Mathematik",
       subject: "Mathematik",
@@ -85,7 +87,7 @@ async function seedAssessment() {
       publishedAt: new Date(),
       createdAt: new Date()
     });
-    await setDoc(doc(db, "quizzes", "EMU1234", "questions", "q1"), {
+    await setDoc(doc(db, "quizzes", id, "questions", "q1"), {
       id: "q1",
       position: 1,
       type: "single",
@@ -110,7 +112,9 @@ before(async () => {
 beforeEach(async () => {
   if (!hasAssessmentFunctions) return;
   await env.clearFirestore();
-  await seedAssessment();
+  testSequence += 1;
+  quizId = `EMU${String(testSequence).padStart(4, "0")}`;
+  await seedAssessment(quizId);
 });
 
 after(async () => {
@@ -119,13 +123,13 @@ after(async () => {
 
 test("Secure Assessment: Start ist atomar/idempotent und leakt keinen Lösungsschlüssel", { skip: !hasAssessmentFunctions }, async () => {
   const payload = {
-    quizId: "EMU1234",
+    quizId,
     studentName: "S1",
     clientAttemptId: "client_attempt_000001",
     attemptToken: "A".repeat(40)
   };
-  const first = assertSuccess(await callFunction("getAssessmentInfo", { quizId: "EMU1234" }), "info");
-  assert.equal(first.quiz.id, "EMU1234");
+  const first = assertSuccess(await callFunction("getAssessmentInfo", { quizId }), "info");
+  assert.equal(first.quiz.id, quizId);
   assert.equal(first.quiz.published, true);
 
   const started = assertSuccess(await callFunction("startAssessmentAttempt", payload), "start");
@@ -139,8 +143,8 @@ test("Secure Assessment: Start ist atomar/idempotent und leakt keinen Lösungssc
 
   await env.withSecurityRulesDisabled(async context => {
     const db = context.firestore();
-    const attempt = await getDoc(doc(db, "quizzes", "EMU1234", "attempts", started.attemptId));
-    const privateDoc = await getDoc(doc(db, "assessmentPrivate", `EMU1234_${started.attemptId}`));
+    const attempt = await getDoc(doc(db, "quizzes", quizId, "attempts", started.attemptId));
+    const privateDoc = await getDoc(doc(db, "assessmentPrivate", `${quizId}_${started.attemptId}`));
     assert.equal(attempt.exists(), true);
     assert.equal(privateDoc.exists(), true);
     assert.equal(attempt.data().status, "running");
@@ -150,7 +154,7 @@ test("Secure Assessment: Start ist atomar/idempotent und leakt keinen Lösungssc
 
 test("Secure Assessment: falscher Token und kollidierende Client-ID werden abgewiesen", { skip: !hasAssessmentFunctions }, async () => {
   const payload = {
-    quizId: "EMU1234",
+    quizId,
     studentName: "S1",
     clientAttemptId: "client_attempt_000002",
     attemptToken: "B".repeat(40)
@@ -158,7 +162,7 @@ test("Secure Assessment: falscher Token und kollidierende Client-ID werden abgew
   const started = assertSuccess(await callFunction("startAssessmentAttempt", payload), "start");
 
   const wrongToken = await callFunction("resumeAssessmentAttempt", {
-    quizId: "EMU1234",
+    quizId,
     attemptId: started.attemptId,
     attemptToken: "C".repeat(40)
   });
@@ -174,7 +178,7 @@ test("Secure Assessment: falscher Token und kollidierende Client-ID werden abgew
 test("Secure Assessment: parallele/repetierte Abgabe bleibt genau eine Submission", { skip: !hasAssessmentFunctions }, async () => {
   const attemptToken = "D".repeat(40);
   const started = assertSuccess(await callFunction("startAssessmentAttempt", {
-    quizId: "EMU1234",
+    quizId,
     studentName: "S2",
     clientAttemptId: "client_attempt_000003",
     attemptToken
@@ -182,7 +186,7 @@ test("Secure Assessment: parallele/repetierte Abgabe bleibt genau eine Submissio
 
   const correctOptionId = started.paper[0].options[1].id;
   const submitPayload = {
-    quizId: "EMU1234",
+    quizId,
     attemptId: started.attemptId,
     attemptToken,
     answers: { q1: correctOptionId }
@@ -202,9 +206,9 @@ test("Secure Assessment: parallele/repetierte Abgabe bleibt genau eine Submissio
 
   await env.withSecurityRulesDisabled(async context => {
     const db = context.firestore();
-    const submission = await getDoc(doc(db, "quizzes", "EMU1234", "submissions", started.attemptId));
-    const attempt = await getDoc(doc(db, "quizzes", "EMU1234", "attempts", started.attemptId));
-    const privateDoc = await getDoc(doc(db, "assessmentPrivate", `EMU1234_${started.attemptId}`));
+    const submission = await getDoc(doc(db, "quizzes", quizId, "submissions", started.attemptId));
+    const attempt = await getDoc(doc(db, "quizzes", quizId, "attempts", started.attemptId));
+    const privateDoc = await getDoc(doc(db, "assessmentPrivate", `${quizId}_${started.attemptId}`));
     assert.equal(submission.exists(), true);
     assert.equal(attempt.data().status, "submitted");
     assert.equal(submission.data().totalPoints, 1);
