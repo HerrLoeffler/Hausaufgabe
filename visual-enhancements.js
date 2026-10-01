@@ -83,6 +83,7 @@ function installCreateChoiceStyles() {
       height: 46px;
       flex: 0 0 auto;
     }
+    #createView .gradecrewAiBadge + .choiceArrow { margin-left: 0; }
     #createView .gcCreateSecondaryLabel {
       grid-column: 1 / -1;
       order: -5;
@@ -164,6 +165,7 @@ export function startVisualEnhancements() {
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
       ["Remy-Hilfe", "./remy-ai-help.js?v=2.3.1-gc26"],
       ["Crew-Assistent", "./crew-assistant-ui.js?v=1"],
+      ["Emmi-Gesamttest", "./emmi-whole-test-revision.mjs?v=1"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc21"]
@@ -178,4 +180,3 @@ export function startVisualEnhancements() {
 }
 
 startVisualEnhancements();
-
