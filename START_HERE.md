@@ -4,7 +4,7 @@ Gemeinsames Register: `HerrLoeffler/Hausaufgabe`, Branch **main**.
 Diese Datei ist Projektkoordination, keine Aussage darüber, welcher Code live läuft.
 
 1. GitHub-Zugriff prüfen. Ohne Zugriff sofort sagen, dass kein aktueller Code geprüft werden kann, und diese Datei, `GRADECREW_STATE.json` sowie die passende Aufgabenübergabe anfordern. Keine Zugangsdaten anfordern.
-2. Auf **main** diese Datei, `AGENTS.md`, `GRADECREW_STATE.json` und `workstreams/README.md` lesen. Ein alter Feature-Branch kann veraltete Kopien enthalten.
+2. Auf **main** diese Datei, `AGENTS.md`, `GRADECREW_STATE.json` sowie `TODO.md` und `workstreams/README.md` lesen. Ein alter Feature-Branch kann veraltete Kopien enthalten.
 3. Passende Baustelle auswählen; deren Remote-Branch, Commit, Regeln und Statusdateien frisch lesen. Der Registry-Eintrag ist eine datierte Beobachtung, keine automatische Wahrheit.
 4. Ziel und betroffene Dateien in einer eigenen Aufgabenübergabe festhalten. Überschneidungen abstimmen, bevor dieselben Dateien parallel verändert werden.
 5. Eigener Aufgabenbranch / eigener Checkout. Keine gemeinsamen uncommitteten Arbeitsverzeichnisse zwischen unabhängigen Chats. Bestehende Änderungen zuerst sichern, niemals durch Reset/Force-Push beseitigen.
@@ -33,3 +33,7 @@ Eine grüne CI beweist keinen Firebase-Deploy, keine Security-Freigabe und keine
 Die ausführbaren Workflows und die einmalige Einrichtung stehen in `docs/AUTOMATION_SETUP.md`. Ein neuer Auftrag in `agent-queue/` kann nach Aktivierung den Codex-Worker starten. Nach erfolgreicher App-CI kann der Preview-Workflow Hosting veröffentlichen und Prüfsummen kontrollieren.
 
 Die Preview-Automatik ist seit 01.10.2026 durch Lauf 36874596096 Ende-zu-Ende bestätigt (82 Dateiprüfsummen). Worker-Key, Worker-Aktivierung und dessen erster End-to-End-Lauf sind noch offen. Keine Aktivierung aus dem Vorhandensein der Dateien ableiten. Bestehende Chats müssen diesen Einstieg neu lesen. Agent-Ergebnisse werden vor Integration unabhängig geprüft.
+
+## Was steht auf der To-do-Liste?
+
+`TODO.md` auf dem aktuellen main ist die gemeinsame Übersicht. Jeder Chat liest sie bei dieser Frage frisch und nennt Prioritäten, Blocker und nächste Schritte. Neue Wünsche und erledigte Teilschritte dort nachführen; weitere Chats liefern ihren Stand nicht automatisch. Ohne Zugriff diese Datei als Anhang anfordern.
