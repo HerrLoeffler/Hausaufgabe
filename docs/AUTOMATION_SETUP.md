@@ -1,6 +1,6 @@
 # Automatisierung: einmalige Aktivierung
 
-Stand 01.10.2026: Workflows sind eingerichtet; Cloud-Berechtigungen, GitHub-Variablen und Worker-Key konnten mit dem Chat-Connector nicht gelesen oder gesetzt werden. Kein erfolgreicher Cloud-Deploy/Worker-Auftrag wird ohne echten Lauf behauptet.
+Stand 01.10.2026: Preview-Identität vom Nutzer eingerichtet; automatischer Deploy mit allen 82 Dateiprüfsummen erfolgreich bestätigt (Actions 36874596096, Beleg docs/evidence/preview-36874596096.json). Abschnitt 1 ist jetzt eine Wiederherstellungsanleitung, nicht erneut erforderlich. Worker-Key und Worker-Aktivierung bleiben offen. Der Chat-Connector kann Secrets/Variablen/IAM nicht direkt verwalten.
 
 ## 1. Automatische Hosting-Preview
 

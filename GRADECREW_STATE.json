@@ -11,14 +11,21 @@
   },
   "automation": {
     "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "preview_deployment": "implemented_pending_identity_and_e2e",
-    "handoff_ci": "coordination_validation_and_artifact_only"
+    "preview_deployment": "verified",
+    "handoff_ci": "coordination_validation_and_artifact_only",
+    "preview_evidence": {
+      "run_id": 36874596096,
+      "app_ci_run_id": 36874373683,
+      "commit": "d42973e9e29361795f773f68e6d6ac8008c36917",
+      "verified_files": 82,
+      "date": "2026-10-01"
+    }
   },
   "workstreams": [
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "5a3b8ea168c74bc25dd14aad599670d17bafaa92",
+      "observed_head": "d42973e9e29361795f773f68e6d6ac8008c36917",
       "handoff": "workstreams/web-app.md"
     },
     {
@@ -49,9 +56,9 @@
   "deployments": [
     {
       "environment": "preview",
-      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/",
-      "evidence": "User reported deployment; exact deployed commit not reverified",
-      "verified_commit": null
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+      "evidence": "Successful automatic deployment and all 82 manifest file hashes verified in Actions run 36874596096",
+      "verified_commit": "d42973e9e29361795f773f68e6d6ac8008c36917"
     }
   ],
   "blockers": [
