@@ -35,5 +35,5 @@ test("client and visual loader expose Emmi in the editor surface", () => {
 
 test("Emmi panel never auto-saves or auto-publishes", () => {
   assert.doesNotMatch(panel, /saveQuizBtn|publishBtn|saveCurrentQuiz|publishCurrentQuiz/);
-  assert.match(panel, /du prüfst den Entwurf danach selbst/i);
+  assert.match(panel, /Bitte prüfe den Test vor dem Speichern/i);
 });
