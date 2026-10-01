@@ -2,6 +2,24 @@
 // intentionally remains in the existing app so authors can inspect the exact
 // test without creating a real attempt. Existing QR codes and share links keep
 // their current ?test=CODE shape; this bootstrap performs the secure handoff.
+
+function installGradeCrewDesignStyles() {
+  const styles = [
+    ["./generated/gradecrew-design-tokens.css?v=1.1.0", "tokens-1.1.0"],
+    ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"]
+  ];
+  for (const [href, version] of styles) {
+    if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.dataset.gradecrewDesign = version;
+    document.head.appendChild(link);
+  }
+}
+
+installGradeCrewDesignStyles();
+
 const routeParams = new URLSearchParams(location.search);
 const rawPublicTestCode = String(routeParams.get("test") || "").trim();
 const publicTestCode = rawPublicTestCode.toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -60,4 +78,3 @@ if (publicTestCode && !teacherPreview) {
     retry.classList.remove("hidden");
   }
 }
-
