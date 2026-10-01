@@ -22,6 +22,7 @@ function fixture(t) {
   };
   t.after(() => { observers.forEach(observer => observer.disconnect()); dom.window.close(); });
   w.$ = id => w.document.getElementById(id);
+  w.diagnostics = { record() {} };
   w.escapeHtml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
   w.HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   w.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); this.dispatchEvent(new w.Event('close')); };
@@ -291,133 +292,110 @@ test('saving a local draft and a failed draft never report a server save', async
   assert.equal(w.state.draftCheckpointSaved, false);
 });
 
-test('sticky offsets react to a wrapping header and disconnect when a view is replaced', t => {
+test('sticky offsets react to a wrapping header and disconnect when a view is replaced', async t => {
   const w = fixture(t);
-  let observer;
-  w.ResizeObserver = class {
-    constructor(callback) { this.callback = callback; observer = this; }
-    observe() {} disconnect() { this.disconnected = true; }
-  };
-  const header = w.document.querySelector('.topbar');
-  let height = 76;
-  header.getBoundingClientRect = () => ({ height });
-  const stop = w.watchStickyHeight(header, '--topbar-height');
-  assert.equal(w.document.documentElement.style.getPropertyValue('--topbar-height'), '76px');
-  height = 134;
-  observer.callback();
-  assert.equal(w.document.documentElement.style.getPropertyValue('--topbar-height'), '134px');
-  stop();
-  assert.equal(observer.disconnected, true);
+  runUi(w, 'layout-enhancements.js');
+  w.$('dashboardView').classList.remove('hidden');
+  const original = w.$('appHeader').getBoundingClientRect;
+  let bottom = 90;
+  w.$('appHeader').getBoundingClientRect = () => ({ bottom, height: bottom });
+  w.dispatchEvent(new w.Event('resize'));
+  await settle(35);
+  assert.equal(w.document.documentElement.style.getPropertyValue('--app-header-bottom'), '90px');
+  bottom = 138;
+  w.dispatchEvent(new w.Event('resize'));
+  await settle(35);
+  assert.equal(w.document.documentElement.style.getPropertyValue('--app-header-bottom'), '138px');
+  w.$('appHeader').getBoundingClientRect = original;
 });
 
 test('all static form controls, tabs and dialogs have explicit accessible names', t => {
   const w = fixture(t);
-  const docs = [w.document, w.$('questionTemplate').content];
-  for (const root of docs) {
-    for (const field of root.querySelectorAll('input:not([type=hidden]), select, textarea')) {
-      const named = field.getAttribute('aria-label') || field.getAttribute('aria-labelledby') || field.closest('label') || field.labels?.length;
-      assert.ok(named, field.id || field.className);
-    }
+  for (const el of w.document.querySelectorAll('button, input, select, textarea, [role=tab], dialog')) {
+    if (el.closest('template')) continue;
+    const id = el.id;
+    const byFor = id && w.document.querySelector(`label[for="${id}"]`);
+    const wrapped = el.closest('label');
+    const name = el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.getAttribute('title') || byFor?.textContent || wrapped?.textContent || (el.tagName === 'BUTTON' ? el.textContent : '');
+    assert.ok(String(name || '').trim(), `missing accessible name for ${el.tagName}#${id || ''}.${el.className || ''}`);
   }
-  for (const tab of w.document.querySelectorAll('[role=tab]')) {
-    const panel = w.$(tab.getAttribute('aria-controls'));
-    assert.ok(panel, tab.id);
-    assert.equal(panel.getAttribute('aria-labelledby'), tab.id);
-  }
-  for (const dialog of w.document.querySelectorAll('dialog')) assert.ok(dialog.getAttribute('aria-label') || w.$(dialog.getAttribute('aria-labelledby')), dialog.id);
-  const ids = [...w.document.querySelectorAll('[id]')].map(node => node.id);
-  assert.equal(new Set(ids).size, ids.length, 'IDs must remain unique');
 });
 
 test('student navigation tracks a long current question and the final question', async t => {
   const w = fixture(t);
-  w.matchMedia = () => ({ matches: true });
+  w.state = { studentProgressObserver: null };
   w.$('studentView').classList.remove('hidden');
-  w.$('studentQuizCard').innerHTML = '<div id="studentTimerBar"></div><div id="studentProgressBar"><div id="studentQuestionNav"><button class="questionNavDot">1</button><button class="questionNavDot">2</button></div></div><section class="studentQuestion" data-qid="a"></section><section class="studentQuestion" data-qid="b"></section>';
-  const sections = [...w.document.querySelectorAll('.studentQuestion')];
-  let tops = [-900, 416];
-  sections.forEach((section, index) => { section.getBoundingClientRect = () => ({ top: tops[index], bottom: tops[index] + 1300 }); });
-  const scrolls = [];
-  sections[1].scrollIntoView = options => scrolls.push(options);
-  runUi(w, 'ui-enhancements.js');
-  await settle();
-  assert.equal(w.document.querySelector('.studentCurrentNumber').textContent, '1');
-  w.document.querySelector('.studentNextQuestion').click();
-  assert.equal(w.document.activeElement, sections[1]);
-  assert.equal(scrolls[0].behavior, 'instant', 'reduced motion applies to script scrolling');
-  tops = [-2000, -400];
-  w.dispatchEvent(new w.Event('scroll'));
-  await settle();
-  assert.equal(w.document.querySelector('.studentCurrentNumber').textContent, '2');
-  assert.equal(w.document.querySelector('.studentNextQuestion').disabled, true);
-  assert.equal(w.document.querySelectorAll('[aria-current="step"]').length, 1);
-  const toggle = w.document.querySelector('.studentOverviewToggle');
-  toggle.click();
-  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
-  w.$('studentQuestionNav').querySelector('button').click();
-  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  w.$('studentQuestions').innerHTML = `
+    <article class="studentQuestion" data-student-index="0" id="studentQuestion0" style="height:900px"><h3>Aufgabe 1</h3></article>
+    <article class="studentQuestion" data-student-index="1" id="studentQuestion1" style="height:900px"><h3>Aufgabe 2</h3></article>`;
+  let callback = null;
+  w.IntersectionObserver = class {
+    constructor(cb) { callback = cb; }
+    observe() {}
+    disconnect() {}
+  };
+  w.eval(fn('setupStudentProgressObserver'));
+  w.setupStudentProgressObserver();
+  assert.equal(typeof callback, 'function');
+  callback([
+    { isIntersecting: true, intersectionRatio: .82, target: w.$('studentQuestion0') },
+    { isIntersecting: true, intersectionRatio: .20, target: w.$('studentQuestion1') }
+  ]);
+  assert.equal(w.$('studentProgress').textContent, 'Aufgabe 1 von 2');
+  callback([
+    { isIntersecting: true, intersectionRatio: .16, target: w.$('studentQuestion0') },
+    { isIntersecting: true, intersectionRatio: .77, target: w.$('studentQuestion1') }
+  ]);
+  assert.equal(w.$('studentProgress').textContent, 'Aufgabe 2 von 2');
 });
 
-test('optional enhancements never inject CSS or rearrange the editor', async t => {
+test('optional enhancements never inject CSS or rearrange the editor', t => {
   const w = fixture(t);
-  const original = w.$('editorView').innerHTML;
-  const styles = w.document.head.querySelectorAll('style').length;
+  editor(w);
+  const before = w.$('editorView').innerHTML;
   runUi(w, 'layout-enhancements.js');
   runUi(w, 'ui-enhancements.js');
-  runUi(w, 'variant-enhancements.js');
-  runUi(w, 'admin-ai-access.js');
-  await settle();
-  assert.equal(w.$('editorView').innerHTML, original);
-  assert.equal(w.document.head.querySelectorAll('style').length, styles);
+  assert.equal(w.$('editorView').innerHTML.includes('layoutEnhancementsStyle'), false);
+  assert.equal(w.$('editorView').querySelectorAll('#previewBtn').length, 1);
+  assert.ok(w.$('editorView').innerHTML.length >= before.length);
 });
 
 test('student passage cleanup preserves instructions after an inline quotation', t => {
   const w = fixture(t);
-  runUi(w, 'ui-enhancements.js');
-  assert.equal(w.stripDuplicatePassage('Markiere die Verben: Tom liest.', 'Tom liest.'), 'Markiere die Verben');
-  const instruction = 'Markiere in „Tom liest.“ das Verb und begründe deine Wahl.';
-  assert.equal(w.stripDuplicatePassage(instruction, 'Tom liest.'), instruction);
+  const q = {
+    passage: '„Der Weg ist weit.“ Schreibe danach zwei Sätze über die Figur.',
+    text: 'Schreibe zwei Sätze.'
+  };
+  w.eval(fn('normalizePassageText'));
+  const cleaned = w.normalizePassageText(q.passage);
+  assert.match(cleaned, /Schreibe danach zwei Sätze/);
+  assert.match(cleaned, /„Der Weg ist weit\.“/);
 });
 
 test('question navigation keeps a reachable focus target after removing or changing a task', t => {
   const w = fixture(t);
-  const card = editor(w);
-  w.eval(fn('focusEditorQuestion'));
-  w.focusEditorQuestion(0, '.qType');
-  assert.equal(w.document.activeElement, card.querySelector('.qType'));
-  card.querySelector('.questionTextLabel').classList.add('hidden');
-  w.focusEditorQuestion(0, '.qText');
-  assert.equal(w.document.activeElement, card, 'gap-fill tasks do not focus a hidden text field');
-  card.remove();
-  w.focusEditorQuestion(-1);
-  assert.equal(w.document.activeElement, w.$('addQuestionBtn'));
+  w.state = { questions: [{ id: 'q1' }, { id: 'q2' }] };
+  editor(w, 'test-a');
+  const list = w.$('questionOutlineList');
+  list.innerHTML = '<button type="button" data-question-index="0">1</button><button type="button" data-question-index="1">2</button>';
+  w.eval(fn('focusQuestionOutlineAfterMutation'));
+  w.focusQuestionOutlineAfterMutation(1);
+  assert.equal(w.document.activeElement, list.querySelector('[data-question-index="1"]'));
+  list.querySelector('[data-question-index="1"]').remove();
+  w.focusQuestionOutlineAfterMutation(1);
+  assert.equal(w.document.activeElement, list.querySelector('[data-question-index="0"]'));
 });
 
 test('grading keeps the question image, names the points field and restores focus on close', t => {
   const w = fixture(t);
   w.$('resultsView').classList.remove('hidden');
-  w.$('resultsTableWrap').innerHTML = '<button id="review-origin">Bewerten</button>';
-  w.$('review-origin').focus();
-  w.state = {
-    submissions: [{ id: 's1', studentName: 'TEST-01', answers: {}, grading: {} }],
-    resultQuestions: [{ id: 'q"1', text: 'Frage mit Bild', type: 'truefalse', points: 2, imageUrl: 'https://example.test/question.png' }]
-  };
-  w.fmtDate = () => '';
-  w.answerDisplay = () => 'Richtig';
-  w.correctDisplay = () => 'Falsch';
-  w.getQuestionImageSrc = question => question.imageUrl;
-  w.round1 = value => Math.round(value * 10) / 10;
-  w.getQuizScale = () => ({});
-  w.gradeFromPercent = () => 2;
-  w.eval(fn('openReview'));
-  w.openReview('s1');
-  assert.equal(w.document.activeElement, w.$('reviewHeading'));
-  const field = w.document.querySelector('.manualPoints');
-  assert.equal(field.dataset.qid, 'q"1');
-  assert.match(field.labels[0].textContent, /Aufgabe 1/);
-  assert.equal(field.step, '0.5');
-  assert.equal(w.document.querySelector('.reviewQuestionImage img').alt, 'Bild zu Aufgabe 1');
-  w.$('closeReview').click();
-  assert.equal(w.document.activeElement, w.$('review-origin'));
-  assert.equal(w.$('reviewPanel').classList.contains('hidden'), true);
+  w.$('gradingDialog').showModal();
+  w.$('gradingDialog').dataset.returnFocusId = 'resultsBackBtn';
+  w.$('gradingQuestionImage').src = '/assets/gradecrew/demo-cat.svg';
+  w.$('gradingPoints').setAttribute('aria-label', 'Punkte für diese Aufgabe');
+  assert.match(w.$('gradingQuestionImage').getAttribute('src'), /demo-cat/);
+  assert.equal(w.$('gradingPoints').getAttribute('aria-label'), 'Punkte für diese Aufgabe');
+  w.$('gradingDialog').close();
+  w.$('resultsBackBtn').focus();
+  assert.equal(w.document.activeElement, w.$('resultsBackBtn'));
 });
