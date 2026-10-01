@@ -1,0 +1,328 @@
+/* GradeCrew Design Foundation V1 — first reference screen.
+   Loaded last and intentionally scoped to the teacher dashboard / create entry. */
+
+:root {
+  --bg: var(--gc-colors-background);
+  --card: var(--gc-colors-surface);
+  --text: var(--gc-colors-text);
+  --muted: var(--gc-colors-muted);
+  --line: var(--gc-colors-border);
+  --primary: var(--gc-colors-primary);
+  --primary2: var(--gc-colors-primary-pressed);
+  --soft: var(--gc-colors-soft);
+  --success: var(--gc-colors-positive);
+  --warn: var(--gc-colors-warning);
+  --danger: var(--gc-colors-danger);
+  --radius: var(--gc-radius-card);
+  --shadow: var(--gc-shadows-card);
+}
+
+#dashboardView {
+  --dashboard-control-height: var(--gc-layout-control-height);
+}
+
+/* Page hierarchy: content first, one unmistakable primary action. */
+#dashboardView > .pageHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--gc-spacing-xl);
+  margin: 0 0 var(--gc-spacing-xl);
+  padding: 4px 0 var(--gc-spacing-xl);
+  border-bottom: 1px solid var(--gc-colors-border);
+  background: transparent;
+  color: var(--gc-colors-text);
+  box-shadow: none;
+  overflow: visible;
+}
+
+#dashboardView > .pageHead::after { display: none; }
+#dashboardView > .pageHead > div:first-child { max-width: 760px; }
+#dashboardView > .pageHead .eyebrow { color: var(--gc-colors-primary); }
+#dashboardView > .pageHead h1 {
+  margin: 6px 0 5px;
+  color: var(--gc-colors-text);
+  font-size: clamp(30px, 3vw, var(--gc-typography-page-title));
+  line-height: 1.12;
+  letter-spacing: -.04em;
+}
+#dashboardView > .pageHead p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--gc-colors-muted);
+  font-size: 14px;
+}
+#dashboardView .dashboardActions {
+  align-self: center;
+  justify-content: flex-end;
+  gap: var(--gc-spacing-sm);
+  padding: 0;
+}
+#dashboardView #newQuizBtn,
+#dashboardView #trashBtn {
+  min-height: var(--dashboard-control-height);
+  border-radius: var(--gc-radius-control);
+  font-size: var(--gc-typography-button);
+}
+#dashboardView #newQuizBtn {
+  background: var(--gc-colors-primary);
+  color: white;
+  border-color: var(--gc-colors-primary);
+}
+#dashboardView #newQuizBtn:hover { background: var(--gc-colors-primary-pressed); color: white; }
+#dashboardView #trashBtn {
+  background: transparent;
+  color: var(--gc-colors-muted);
+  border-color: var(--gc-colors-border);
+}
+#dashboardView #trashBtn:hover { background: var(--gc-colors-surface); color: var(--gc-colors-text); }
+
+/* Status overview behaves like a compact filter strip, not three competing cards. */
+#dashboardView .dashboardOverview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gc-spacing-sm);
+  margin-top: var(--gc-spacing-lg);
+}
+#dashboardView .dashboardMetric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  min-height: var(--gc-layout-minimum-touch-target);
+  padding: 7px 11px;
+  border: 1px solid var(--gc-colors-border);
+  border-radius: var(--gc-radius-control);
+  background: var(--gc-colors-surface);
+  color: var(--gc-colors-text);
+  box-shadow: none;
+}
+#dashboardView .dashboardMetric strong {
+  color: var(--gc-colors-text);
+  font-size: 16px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+#dashboardView .dashboardMetric span { color: var(--gc-colors-muted); font-size: var(--gc-typography-small); }
+#dashboardView .dashboardMetric:hover,
+#dashboardView .dashboardMetric[aria-pressed="true"] {
+  border-color: #aebfe5;
+  background: var(--gc-colors-soft);
+}
+#dashboardView .dashboardMetric[aria-pressed="true"] { box-shadow: inset 0 0 0 1px #aebfe5; }
+
+/* Search and filtering stay secondary to the actual test library. */
+#dashboardView .dashboardToolbar.card {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(150px, 190px) minmax(150px, 190px);
+  gap: var(--gc-spacing-md);
+  align-items: end;
+  margin: 0 0 var(--gc-spacing-sm);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+#dashboardView .dashboardToolbar label {
+  gap: 5px;
+  color: var(--gc-colors-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+#dashboardView .dashboardToolbar :is(input, select) {
+  min-height: var(--dashboard-control-height);
+  border-color: var(--gc-colors-border);
+  border-radius: var(--gc-radius-control);
+  background: var(--gc-colors-surface);
+  color: var(--gc-colors-text);
+  box-shadow: none;
+}
+#dashboardView .dashboardToolbar :is(input, select):focus-visible {
+  border-color: #8aa8df;
+  box-shadow: 0 0 0 3px rgb(40 90 201 / 12%);
+}
+#dashboardView .resultsCount {
+  min-height: 20px;
+  margin: 0 2px var(--gc-spacing-md);
+  color: var(--gc-colors-muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+/* TestCard reference component. */
+#dashboardView .quizGrid {
+  gap: var(--gc-spacing-lg);
+  align-items: stretch;
+}
+#dashboardView .quizCard {
+  min-height: 0;
+  padding: 20px;
+  gap: var(--gc-spacing-md);
+  border: 1px solid var(--gc-colors-border);
+  border-radius: var(--gc-radius-card);
+  background: var(--gc-colors-surface);
+  box-shadow: var(--gc-shadows-card);
+  overflow: visible;
+  transition: border-color var(--gc-motion-fast-ms) ease, box-shadow var(--gc-motion-fast-ms) ease;
+}
+#dashboardView .quizCard::before { display: none; }
+#dashboardView .quizCard:hover {
+  transform: none;
+  border-color: #bac8dc;
+  box-shadow: 0 7px 24px rgb(32 43 60 / 7%);
+}
+#dashboardView .quizCardTop {
+  min-height: 58px;
+  align-items: flex-start;
+  gap: var(--gc-spacing-md);
+}
+#dashboardView .quizCardTop > div:first-child { min-width: 0; }
+#dashboardView .quizCard h3 {
+  margin: 0 0 5px;
+  color: var(--gc-colors-text);
+  font-size: var(--gc-typography-card-title);
+  line-height: 1.3;
+  letter-spacing: -.025em;
+}
+#dashboardView .quizCard .meta {
+  color: var(--gc-colors-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+#dashboardView .quizCardStatusGroup {
+  flex: 0 0 auto;
+  align-items: flex-end;
+  gap: 7px;
+}
+#dashboardView .status {
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 750;
+}
+#dashboardView .status.published,
+#dashboardView .status.running { color: var(--gc-colors-positive); background: #edf8f0; border-color: #c9e6d3; }
+#dashboardView .status.waiting { color: var(--gc-colors-warning); background: #fff7e6; border-color: #ecd7a7; }
+#dashboardView .status.ended { color: #596579; background: #f1f3f6; border-color: #dde2e9; }
+#dashboardView .status.draft,
+#dashboardView .status.incomplete { color: #596579; background: #f5f6f8; border-color: #e1e5eb; }
+#dashboardView .dashboardPublishControl {
+  gap: 6px;
+  color: var(--gc-colors-muted);
+  font-size: 10.5px;
+  font-weight: 650;
+}
+#dashboardView .dashboardSwitch { width: 32px; height: 18px; }
+#dashboardView .dashboardSwitch::after { width: 14px; height: 14px; }
+#dashboardView .dashboardPublishControl input:checked + .dashboardSwitch { background: var(--gc-colors-positive); }
+#dashboardView .dashboardPublishControl input:checked + .dashboardSwitch::after { transform: translateX(14px); }
+
+#dashboardView .quizStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0;
+  padding: 11px 0;
+  border-color: #e8ebef;
+}
+#dashboardView .quizStats div {
+  min-width: 66px;
+  padding: 0 12px;
+  border-right: 1px solid #eceff3;
+}
+#dashboardView .quizStats div:first-child { padding-left: 0; }
+#dashboardView .quizStats div:last-child { border-right: 0; }
+#dashboardView .quizStats strong { color: var(--gc-colors-text); font-size: 16px; }
+#dashboardView .quizStats span {
+  color: var(--gc-colors-muted);
+  font-size: 10px;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+#dashboardView .primaryQuizActions {
+  margin-top: auto;
+  gap: var(--gc-spacing-sm);
+}
+#dashboardView .primaryQuizActions .button {
+  min-height: var(--gc-layout-minimum-touch-target);
+  border-radius: var(--gc-radius-control);
+  font-size: 12px;
+}
+#dashboardView .quizMore {
+  margin-top: 0;
+  padding-top: 8px;
+  border-top: 1px solid #eceff3;
+}
+#dashboardView .quizMore > summary {
+  min-height: var(--gc-layout-minimum-touch-target);
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 2px;
+  color: var(--gc-colors-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+#dashboardView .quizMore > summary:hover { color: var(--gc-colors-primary-pressed); }
+#dashboardView .secondaryQuizActions {
+  gap: var(--gc-spacing-sm);
+  padding-top: 2px;
+  border: 0;
+}
+#dashboardView .secondaryQuizActions .button { min-height: 38px; font-size: 11px; }
+#dashboardView .secondaryQuizActions .button.danger { margin-left: auto; }
+
+/* Empty states should guide without becoming a second hero section. */
+#dashboardView .empty {
+  max-width: 620px;
+  margin: var(--gc-spacing-xl) auto 0;
+  padding: var(--gc-spacing-xxl) var(--gc-spacing-xl);
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--gc-radius-large-card);
+  background: rgb(255 255 255 / 55%);
+}
+#dashboardView .gradecrewEmptyMascot,
+#dashboardView .gradecrewEmptyMascot img { width: 76px; height: 76px; }
+#dashboardView .empty h2 { margin: 8px 0 5px; font-size: 19px; }
+#dashboardView .empty p { max-width: 48ch; }
+
+/* The create chooser uses the canonical Remy/create visual language. */
+#createView .createChoiceCard { border-radius: var(--gc-radius-card); }
+#createView #createAiBtn {
+  border-color: #b9c8e5;
+  background: #fbfcff;
+}
+#createView #createAiBtn:hover { border-color: #91a9d8; box-shadow: 0 7px 24px rgb(32 43 60 / 7%); }
+#createView #createAiBtn .choiceIcon { background: var(--gc-colors-crew-ice); }
+
+@media (max-width: 900px) {
+  #dashboardView > .pageHead { grid-template-columns: 1fr; align-items: start; gap: var(--gc-spacing-lg); }
+  #dashboardView .dashboardActions { justify-content: flex-start; }
+  #dashboardView .dashboardToolbar.card { grid-template-columns: 1fr 1fr; }
+  #dashboardView .dashboardToolbar .searchField { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  #dashboardView > .pageHead { padding-bottom: var(--gc-spacing-lg); }
+  #dashboardView > .pageHead h1 { font-size: 30px; }
+  #dashboardView .dashboardActions { width: 100%; }
+  #dashboardView .dashboardActions #newQuizBtn { flex: 1 1 auto; }
+  #dashboardView .dashboardActions #trashBtn { flex: 0 1 auto; }
+  #dashboardView .dashboardOverview { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  #dashboardView .dashboardMetric { min-width: 0; justify-content: center; padding-inline: 7px; }
+  #dashboardView .dashboardMetric span { font-size: 10px; }
+  #dashboardView .dashboardToolbar.card { grid-template-columns: 1fr; }
+  #dashboardView .dashboardToolbar .searchField { grid-column: auto; }
+  #dashboardView .quizCardTop { min-height: 0; flex-direction: column; }
+  #dashboardView .quizCardStatusGroup { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
+  #dashboardView .primaryQuizActions .button { flex: 1 1 46%; }
+  #dashboardView .primaryQuizActions .studentShare { flex-basis: 100%; }
+  #dashboardView .secondaryQuizActions .button { flex: 1 1 46%; }
+  #dashboardView .secondaryQuizActions .button.danger { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #dashboardView .quizCard { transition: none; }
+}
