@@ -32,6 +32,12 @@ node --check lab/vocab-rush/learning-plus.js
 node --check lab/vocab-rush/ux-polish.js
 node --check lab/vocab-rush/camera-plus.js
 node --check lab/vocab-rush/crop-universal.js
+
+# Escape Room – deterministischer Practice-MVP, noch ohne Live/Highscore
+node --check lab/escape-room/escape-data.js
+node --check lab/escape-room/app.js
+node --check tools/build-lab-escape-room.mjs
+
 node --check tools/build-lab-vocab-rush.mjs
 node --check tools/build-lab-games-hub.mjs
 
@@ -40,7 +46,7 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 node tools/build-lab-games-hub.mjs "$BUILD_DIR"
 
 if [ "$MODE" = "--check" ]; then
-  echo "GradeCrew Games Struktur mit allen drei vollständigen Frontends geprüft. Es wurde nichts veröffentlicht."
+  echo "GradeCrew Games Struktur mit allen vier Frontends geprüft. Es wurde nichts veröffentlicht."
   exit 0
 fi
 
@@ -51,8 +57,8 @@ fi
 command -v firebase >/dev/null || { echo "Firebase CLI fehlt."; exit 1; }
 
 echo "Veröffentliche nur Preview-Channel '$CHANNEL_ID' im Staging-Projekt."
-echo "Enthalten: Fast Quiz inkl. Runden + Fehlerjagd Deutsch + Vocab Rush."
+echo "Enthalten: Fast Quiz inkl. Runden + Fehlerjagd Deutsch + Vocab Rush + Escape Room (Üben)."
 echo "Bestehende Functions/Backends, normales Staging-Hosting und Production werden nicht verändert."
 firebase hosting:channel:deploy "$CHANNEL_ID" --config "$BUILD_DIR/firebase.json" --project "$PROJECT_ID" --non-interactive
 
-echo "GradeCrew Games Hub Preview mit allen 3 Spielen veröffentlicht."
+echo "GradeCrew Games Hub Preview mit allen 4 Spielen veröffentlicht."
