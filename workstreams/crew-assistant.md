@@ -15,11 +15,13 @@ Build the first GradeCrew Crew Assistant foundation so authenticated teachers ca
 
 ## Implemented in this draft
 
-- `crew-assistant-core.js`
+- `crew-assistant-core.mjs`
   - shared metadata for Coco, Remy, Emmi and Wilma
   - curated zero-API replies for greetings, capabilities, privacy and API-cost questions
   - deterministic parsing of common test requests into partial form patches
   - explicit delegation to AI only when the local layer cannot safely resolve the request
+- `crew-assistant-core.js`
+  - tiny browser compatibility re-export so existing module-loading conventions remain unchanged
 - `crew-assistant-ui.js`
   - teacher-only floating `Crew fragen` launcher
   - selectable conversations with all four Crew members
@@ -70,9 +72,11 @@ The V1 UI includes a push-to-dictate progressive enhancement using the browser s
 - Browser-core tests: `crew-assistant-core.test.mjs`
 - Server-contract tests: `functions/test/crew-assistant.test.js`
 - Branch CI: `.github/workflows/crew-assistant-check.yml`
-- First CI runs found parser/test edge cases; these are being fixed before the workstream is called green.
+- Green CI run #10: GitHub Actions run `36927353069`, head `c21b7b83afb6844be6f5dcae7fea05def0123437`.
+- The green run covers browser-core tests, server-contract tests, Functions syntax checks and ESLint.
+- Not yet runtime-tested against a deployed Firebase `crewAssistant` function and not yet visually confirmed on a real desktop/mobile device.
 
-## Next steps after green CI
+## Next steps
 
 1. Staging-only deploy of web + `crewAssistant` function after explicit review/coordination.
 2. Authenticated desktop/mobile visual smoke test.
