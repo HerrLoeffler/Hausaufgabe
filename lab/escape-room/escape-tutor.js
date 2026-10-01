@@ -2,7 +2,7 @@
   'use strict';
 
   const sessionCache = new Map();
-  const stats = { cacheHits: 0, knowledgeHits: 0, externalCalls: 0, fallbacks: 0 };
+  const stats = { cacheHits: 0, knowledgeHits: 0, genericHits: 0, externalCalls: 0, fallbacks: 0 };
 
   function normalize(text) {
     return String(text || '')
@@ -22,6 +22,33 @@
     return '';
   }
 
+  function genericHelp(question, userText) {
+    const query = normalize(userText);
+    if (!query) return '';
+
+    if (['losung', 'antwort sagen', 'sag mir die antwort', 'richtige antwort'].some(pattern => query.includes(pattern))) {
+      return `Ich verrate dir die Lösung nicht direkt. Nutze diesen Hinweis: ${question.hint}`;
+    }
+
+    if (['wie fange ich an', 'wie anfangen', 'anfangen', 'erster schritt'].some(pattern => query.includes(pattern))) {
+      return `Starte mit diesem Gedanken: ${question.hint}`;
+    }
+
+    if (['welcher schritt', 'rechenschritt', 'welcher rechenschritt', 'wichtig'].some(pattern => query.includes(pattern))) {
+      return `Der wichtige Ansatz ist: ${question.hint}`;
+    }
+
+    if (['einfacher', 'einfach erklaren', 'noch einfacher', 'verstehe ich nicht'].some(pattern => query.includes(pattern))) {
+      return question.remediation?.explanation || question.explanation || question.hint;
+    }
+
+    if (['beispiel', 'ahnliche aufgabe', 'ubung'].some(pattern => query.includes(pattern)) && question.remediation?.transfer?.prompt) {
+      return `Probier als ähnliches Beispiel: ${question.remediation.transfer.prompt} Nutze dieselbe Strategie; die Lösung verrate ich dir noch nicht.`;
+    }
+
+    return '';
+  }
+
   async function ask(question, userText) {
     const normalized = normalize(userText);
     const cacheKey = `${question.id}:${normalized}`;
@@ -35,6 +62,13 @@
       stats.knowledgeHits++;
       sessionCache.set(cacheKey, local);
       return { source: 'knowledge', answer: local };
+    }
+
+    const generic = genericHelp(question, userText);
+    if (generic) {
+      stats.genericHits++;
+      sessionCache.set(cacheKey, generic);
+      return { source: 'generic', answer: generic };
     }
 
     if (window.GradeCrewTutorBridge && typeof window.GradeCrewTutorBridge.ask === 'function') {
