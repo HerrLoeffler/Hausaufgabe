@@ -29,8 +29,14 @@ test("keeps duration as an explicit request without inventing a form field", () 
 
 test("recognizes requested and excluded task types", () => {
   const patch = parseTestRequest("Deutsch Klasse 6 Thema Wortarten mit Multiple Choice und Zuordnung, ohne Freitext");
-  assert.deepEqual(patch.allowedTypes, ["multi", "matching", "text"]);
+  assert.deepEqual(new Set(patch.allowedTypes), new Set(["multi", "matching", "text"]));
   assert.deepEqual(patch.excludeTypes, ["text"]);
+});
+
+test("separates a trailing difficulty word from a short topic", () => {
+  const patch = parseTestRequest("Englisch Klasse 4 Thema Farben leicht");
+  assert.equal(patch.topic, "Farben");
+  assert.equal(patch.difficulty, "leicht");
 });
 
 test("common questions stay local and do not request AI", () => {
