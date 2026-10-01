@@ -1,6 +1,6 @@
 # Aufgabe: GC-I18N-01 – Internationalisierungs-Fundament
 
-- Aktualisiert (UTC): 2026-10-01T22:30:00Z
+- Aktualisiert (UTC): 2026-10-01T22:35:00Z
 - Verantwortlicher Chat / Auftrag: Internationalisierung; zukünftige Mehrsprachigkeit so vorbereiten, dass Web-App, Lehrer-App, Schüleransicht, KI, Spiele und Exporte konsistent erweitert werden können.
 - Aufgabenbranch: `feature/i18n-foundation-plan`
 - Basiscommit: `28297ff03009bdf15e1230bf0c2533b63426cc9f`
@@ -170,16 +170,139 @@ Keine unkontrollierten KI-Übersetzungen direkt nach Production.
 
 Glossar festlegen, z. B. wie GradeCrew Begriffe wie Test, Leistungsnachweis, Aufgabe, Versuch, Abgabe, Bewertung und Freigabe in jeder Sprache bezeichnet.
 
+### 18. Eindeutige Locale-Priorität und Nutzerpräferenzen
+
+Sprachwahl darf nicht je Screen anders geraten werden. Eine feste Auflösungskette definieren, z. B.:
+1. explizite temporäre Sitzungswahl,
+2. gespeicherte Nutzerpräferenz,
+3. Schul-/Organisationsstandard,
+4. Browser-/Gerätevorschlag,
+5. `de-DE` als technischer Fallback.
+
+- Lehrer- und Schüleroberfläche dürfen unterschiedliche UI-Locale haben.
+- Browser-/Gerätesprache ist nur Initialvorschlag und überschreibt keine bewusste Nutzerwahl.
+- Abmelden/Anmelden, Gerätewechsel und App/Web-Nutzung müssen die gewünschte Sprache nachvollziehbar behandeln.
+- Inhaltssprache eines Tests ist von dieser Kette ausdrücklich ausgeschlossen.
+
+### 19. Prüfungs-Snapshot: Was der Schüler gesehen hat, muss reproduzierbar bleiben
+
+Für Leistungsnachweise reicht es nicht, nur den Testinhalt zu versionieren. Beim Veröffentlichen/Start eines Versuchs müssen die relevanten Sprach- und Regionsparameter eindeutig feststehen.
+
+Mindestens nachvollziehbar speichern bzw. referenzieren:
+- Test-/Versions-ID,
+- `contentLocale`,
+- verwendete Region/Bildungssystem-Konfiguration,
+- Version von Lösung/Rubrik/Bewertungsregeln,
+- bei prüfungsrelevanten Systemtexten die verwendete Sprachressourcen-Version,
+- Zeitzone/zeitrelevante Konfiguration, wenn sie für den Ablauf relevant ist.
+
+Ein später aktualisiertes Übersetzungsbundle darf nicht dazu führen, dass die Rekonstruktion einer abgeschlossenen Prüfung etwas anderes zeigt als zum Prüfungszeitpunkt. Laufende Attempts bleiben an ihren veröffentlichten Snapshot gebunden.
+
+### 20. Interne Werte niemals übersetzen
+
+Geschäftslogik, Datenbank, Rechte, Status, Aufgabentypen und Scoring verwenden stabile technische IDs/Enums, z. B. `published`, `multiple_choice`, `teacher_review_required`. Sichtbare Bezeichnungen werden nur bei der Darstellung lokalisiert.
+
+- Keine DB-Abfragen nach sichtbaren übersetzten Texten.
+- Keine Auswertungslogik auf Werten wie `"Veröffentlicht"` oder `"Published"`.
+- Keine lokalisierten Strings als dauerhafte Objekt-IDs, Rollen, Statuswerte oder API-Verträge.
+- Übersetzungen dürfen deshalb geändert werden, ohne Datenmigration oder Bewertungsänderung auszulösen.
+
+### 21. Eingabe, Parsing und fachliche Zahlenformate trennen
+
+Darstellung und akzeptierte Eingabe sind zwei verschiedene Dinge. Besonders Mathematik/Naturwissenschaften benötigen klare Regeln für:
+- `1,5` vs. `1.5`,
+- Tausendertrennzeichen,
+- Minuszeichen und Unicode-Varianten,
+- Prozent-/Währungs-/Einheitenangaben,
+- Datum/Uhrzeit,
+- Brüche und mathematische Schreibweisen.
+
+GradeCrew darf eine Antwort nicht allein deshalb als falsch markieren, weil das lokale Eingabeformat anders ist, sofern die Aufgabe dieses Format nicht ausdrücklich prüft. Umgekehrt darf Locale-Normalisierung fachlich relevante Unterschiede nicht weg-normalisieren. Regeln werden je Aufgabentyp/Fach explizit festgelegt.
+
+### 22. Gemischtsprachige Inhalte sind ein eigener Normalfall
+
+Ein Sprachtest kann mehrere Sprachen gleichzeitig enthalten: deutsche Aufgabenanweisung, englischer Ausgangstext, französisches Zitat usw. Deshalb:
+- Locale optional auch auf Teil-/Blockebene erlauben, nicht nur global pro Test.
+- HTML/Web bekommt korrekte `lang`-Attribute an Sprachwechseln.
+- Screenreader, Rechtschreibprüfung, STT/TTS und KI sollen die jeweilige Segment-Sprache kennen.
+- Zitate, Eigennamen, Formeln und Quelltexte dürfen nicht automatisch an die umgebende Sprache angepasst werden.
+
+### 23. Accessibility muss sprachbewusst sein
+
+Mehrsprachigkeit gilt auch für Hilfstechnologien:
+- `lang` und bei Bedarf `dir` korrekt setzen,
+- ARIA-Labels/Alt-Texte übersetzen,
+- Fokusreihenfolge und Tastaturbedienung bei RTL prüfen,
+- TTS-Aussprache mit passender Locale testen,
+- Sprache innerhalb einer Aufgabe für Screenreader korrekt wechseln.
+
+Eine visuell richtige Übersetzung gilt nicht als fertig, wenn sie mit Screenreader oder Tastatur unbrauchbar ist.
+
+### 24. Übersetzungsschlüssel brauchen Kontext, keine String-Fragmente
+
+Keine Sätze aus übersetzten Einzelteilen zusammensetzen. Grammatik, Wortstellung, Genus und Plural unterscheiden sich zu stark.
+
+- Vollständige Nachrichten/ICU-ähnliche Message-Patterns statt Konkatenation.
+- Platzhalter benennen (`{studentName}`, `{count}`), nicht positionsabhängig machen.
+- Übersetzer erhalten Kontext/Beschreibung, wo der Text erscheint.
+- Variablen, Markdown/HTML und Platzhalter werden automatisch auf Vollständigkeit geprüft.
+- Glossar + Tonalitätsleitfaden pro Locale; Crew-Stimme separat dokumentieren.
+
+### 25. Suchen, Sortieren und Vergleichen ebenfalls locale-sensitiv
+
+Benutzer sichtbare Listen benötigen passende Collation/Case-Folding-Regeln für Umlaute, Akzente und andere Schriftsysteme. Technische Identitäten bleiben davon getrennt.
+
+- Suche nach Testnamen darf Unicode/Diakritika sinnvoll behandeln.
+- Sortierung sichtbarer Namen über Locale-Collator statt rohe Codepoint-Reihenfolge.
+- Benutzername/Schülerkürzel/IDs niemals durch sprachabhängige Normalisierung verändern.
+
+### 26. Locale-Freigabe als Capability Matrix statt pauschalem „unterstützt“
+
+Eine Sprache kann für UI fertig sein, aber noch nicht für STT, KI-Bewertung, PDF oder Spiele. Deshalb pro Locale getrennte Freigaben, z. B.:
+- UI,
+- Testinhalt,
+- KI-Generierung,
+- Freitextbewertung,
+- STT/TTS,
+- PDF/Export,
+- Spiele,
+- Curriculum/Region,
+- Rechtstexte.
+
+Eine Region darf erst als offiziell unterstützt erscheinen, wenn die für diesen Markt notwendigen Fähigkeiten geprüft sind. Unfertige Sprachbereiche per Feature-Flag/Beta markieren statt still auf eine falsche Sprache zurückzufallen.
+
+### 27. Sichere Fallbacks, Cache und Offline-Verhalten
+
+Fallback darf Komfort erhöhen, aber keine Prüfung oder Rechtstexte verfälschen.
+
+- Bei normaler UI kann ein definierter Fallback sinnvoll sein.
+- Bei prüfungsrelevanten Anweisungen, Bewertungsregeln oder rechtlichen Einwilligungen lieber sichtbar fehlschlagen/kennzeichnen als unbemerkt eine andere Sprache anzeigen.
+- Übersetzungsbundles versionieren und mit App-/Service-Worker-Cache kompatibel halten.
+- Keine Mischung aus alter und neuer Sprachdatei nach Update/Offline-Nutzung.
+- Native App und Web-App sollen dieselben fachlichen Locale-Verträge und möglichst dieselbe Glossar-/Versionsbasis verwenden.
+
+### 28. Sprach-/KI-Provenienz und Qualitätskontrolle
+
+Bei automatisch übersetzten oder KI-generierten fachlichen Inhalten soll nachvollziehbar sein:
+- Ursprungssprache,
+- Ziel-Locale,
+- Originalversion,
+- ob maschinell erzeugt/übersetzt,
+- ob und wann fachlich durch eine Lehrkraft bestätigt.
+
+Das dient nicht der Schülerüberwachung, sondern der Qualität und Reproduzierbarkeit von Lehrmaterialien. Schülerantworten werden dafür nicht als Übersetzungstrainingsdaten gespeichert.
+
 ## Empfohlene Reihenfolge einer späteren Umsetzung
 
 1. i18n-Core + `de-DE` als einzige aktive Locale einführen, ohne sichtbare Änderung.
-2. Neue sichtbare UI-Texte nur noch über Übersetzungsschlüssel zulassen.
-3. Bestehende Kernoberfläche schrittweise extrahieren, beginnend mit gemeinsamen Komponenten/Design-System.
-4. Locale-Felder für Test/Inhalt/KI definieren und Migration alter Daten festlegen.
-5. Pseudolocale + automatisierte Schlüssel-/Layouttests.
-6. Erst danach eine echte zweite Sprache, bevorzugt als Pilot auf einem kleinen, klar abgegrenzten Bereich.
-7. KI, Crew, PDF/Export, Spiele und native App jeweils über dieselben Locale-Verträge anbinden.
-8. Region/Curriculum erst als offiziell unterstützt markieren, wenn fachliche und rechtliche Inhalte dafür geprüft sind.
+2. Feste Locale-Auflösung, stabile interne IDs und gemeinsame Locale-Verträge definieren.
+3. Neue sichtbare UI-Texte nur noch über Übersetzungsschlüssel zulassen.
+4. Bestehende Kernoberfläche schrittweise extrahieren, beginnend mit gemeinsamen Komponenten/Design-System.
+5. Locale-Felder für Test/Inhalt/KI sowie Prüfungs-Snapshot/Versionierung definieren und Migration alter Daten festlegen.
+6. Pseudolocale + automatisierte Schlüssel-/Layout-/Fallbacktests.
+7. Erst danach eine echte zweite Sprache, bevorzugt als Pilot auf einem kleinen, klar abgegrenzten Bereich.
+8. KI, Crew, PDF/Export, Spiele und native App jeweils über dieselben Locale-Verträge anbinden.
+9. Capability Matrix pro Locale führen; Region/Curriculum erst offiziell unterstützen, wenn fachliche und rechtliche Inhalte dafür geprüft sind.
 
 ## Umfang / nicht verändern
 
@@ -194,19 +317,25 @@ Glossar festlegen, z. B. wie GradeCrew Begriffe wie Test, Leistungsnachweis, Auf
 - `de-DE` verhält sich nach Einführung der i18n-Schicht funktional und visuell wie zuvor.
 - UI- und Inhaltssprache sind getrennt modelliert.
 - Test/KI/Scoring besitzen explizite Locale-Verträge.
+- Locale-Auflösung besitzt eine dokumentierte, deterministische Priorität.
 - Keine Kernlogik hängt von übersetzten sichtbaren Strings ab.
 - Fehlende Übersetzung wird im Build/Test erkannt.
 - Pseudolocale deckt Überlänge und fehlende Schlüssel auf.
 - Datum/Zahlen/Plural nutzen Locale-Formatter.
+- Fachliche Eingabe-/Parsing-Regeln sind von reiner Darstellung getrennt.
 - Neue Prüfung kann ihre Inhaltssprache fest speichern.
+- Veröffentlichte/laufende Prüfungen besitzen einen reproduzierbaren Sprach-/Regions-Snapshot.
 - Bestehende Daten erhalten eine definierte `de-DE`-Migration.
+- Gemischtsprachige Inhalte können ihre Segment-Sprache auszeichnen.
+- Accessibility-Attribute werden mit der Sprache korrekt gesetzt.
 - Keine automatische Übersetzung verändert veröffentlichte oder laufende Prüfungen.
+- Pro Locale ist sichtbar, welche Fähigkeiten tatsächlich freigegeben sind.
 
 ## Zwischenstand
 
 - Lokal geändert: nein; Connector arbeitet direkt auf eigenem GitHub-Branch.
-- Auf GitHub gesichert (Commit): diese Architekturdatei auf `feature/i18n-foundation-plan`.
-- Geprüft: Repo-Regeln, TODO, Workstream-Register, offene i18n/language-Branches und PRs wurden vor Anlage geprüft; keine bestehende Internationalisierungsbaustelle gefunden.
+- Auf GitHub gesichert (Commit): Architekturdatei auf `feature/i18n-foundation-plan`; Erweiterung um Prüfungs-Snapshot, Locale-Auflösung, stabile interne IDs, Eingabe/Parsing, Mixed-Language, Accessibility, Capability Matrix und sichere Fallbacks.
+- Geprüft: Repo-Regeln, TODO, Workstream-Register, offene i18n/language-Branches und PRs wurden vor Anlage geprüft; keine bestehende Internationalisierungsbaustelle gefunden. Zweiter Architektur-Review gegen typische Prüfungs-/Locale-Fehler durchgeführt.
 - Deployed: nein.
 - Gerätetest: nein.
 
@@ -216,10 +345,11 @@ Glossar festlegen, z. B. wie GradeCrew Begriffe wie Test, Leistungsnachweis, Auf
 - Erste Pilot-Sprache noch nicht festgelegt.
 - Umfang der regionalen Curricula/Notensysteme pro Markt noch nicht beschlossen.
 - Rechtstexte benötigen je Land gesonderte fachliche/rechtliche Prüfung; Übersetzung allein genügt nicht.
+- Welche Sprachressourcen exakt Bestandteil eines revisionssicheren Assessment-Snapshots sein müssen, wird gemeinsam mit Security/Submission festgelegt, bevor Code entsteht.
 
 ## Nächster konkreter Schritt
 
-Vor dem nächsten größeren UI-/KI-Refactor auf dem dann aktuellen Integrationsstand inventarisieren, wo sichtbare deutsche Strings, KI-Sprachannahmen, Noten-/Formatlogik und sprachabhängige Prüfungsdaten im Code liegen. Daraus einen kleinen `i18n-core`-Implementierungsauftrag erstellen, der zunächst nur `de-DE` unterstützt und keine sichtbare Produktänderung erzeugt.
+Vor dem nächsten größeren UI-/KI-Refactor auf dem dann aktuellen Integrationsstand inventarisieren, wo sichtbare deutsche Strings, KI-Sprachannahmen, Noten-/Formatlogik, lokalisierte Statuswerte, Eingabeparser und sprachabhängige Prüfungsdaten im Code liegen. Daraus einen kleinen `i18n-core`-Implementierungsauftrag erstellen, der zunächst nur `de-DE` unterstützt und keine sichtbare Produktänderung erzeugt.
 
 ## Wiederaufnahme nach Abbruch
 
