@@ -11,6 +11,7 @@ on:
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
       - 'feature/design-*'
+      - 'feature/i18n-*'
   workflow_dispatch:
 
 permissions:
@@ -83,6 +84,16 @@ jobs:
           node --check secure-solution-release.js
           node --check secure-assessment-teacher-polish.js
           node --check startup.js
+
+      - name: Test shared internationalization boundary
+        run: |
+          node --check shared/i18n/i18n-core.mjs
+          node --check shared/i18n/browser-runtime.mjs
+          node --check shared/i18n/messages-de-DE.mjs
+          node --check shared/i18n/bootstrap.mjs
+          node --test shared/i18n/i18n-core.test.mjs
+          node --test shared/i18n/browser-runtime.test.mjs
+          node --test i18n-integration.test.mjs
 
       - name: Test secure client boundary
         run: node --test secure-assessment-client.test.mjs
@@ -184,6 +195,10 @@ jobs:
           node tools/build-staging.mjs "$BUILD_DIR"
           test -f "$BUILD_DIR/public/generated/gradecrew-design-tokens.css"
           test -f "$BUILD_DIR/public/gradecrew-dashboard-foundation.css"
+          test -f "$BUILD_DIR/public/shared/i18n/i18n-core.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/browser-runtime.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/messages-de-DE.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/bootstrap.mjs"
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-draft-persistence.js"
           test -f "$BUILD_DIR/public/secure-student.js"
@@ -193,6 +208,7 @@ jobs:
           test -f "$BUILD_DIR/public/secure-solution-release.js"
           test -f "$BUILD_DIR/public/secure-assessment-teacher-polish.js"
           test -f "$BUILD_DIR/public/gate-e-lab.js"
+          grep -q 'shared/i18n/bootstrap.mjs' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-draft-persistence.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"

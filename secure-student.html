@@ -71,6 +71,8 @@
     <section id="secureError" class="secureCard secureError hidden" role="alert"></section>
   </main>
 
+  <!-- Install the shared German-only i18n boundary before any student runtime renders text. -->
+  <script type="module" src="./shared/i18n/bootstrap.mjs"></script>
   <!-- Restore an unfinished attempt before the main student module reads its draft. -->
   <script type="module" src="./secure-draft-persistence.js"></script>
   <script type="module" src="./secure-student.js"></script>

@@ -1,3 +1,5 @@
+import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=1";
+
 // Public pupils use the server-authoritative assessment path. Teacher preview
 // intentionally remains in the existing app so authors can inspect the exact
 // test without creating a real attempt. Existing QR codes and share links keep
@@ -56,7 +58,7 @@ if (publicTestCode && !teacherPreview) {
   document.head.appendChild(firstGuideClickStyle);
 
   const slowStart = window.setTimeout(() => {
-    message.textContent = "GradeCrew wird geladen …";
+    message.textContent = gradeCrewI18n.t("system.loading", {}, "GradeCrew wird geladen …");
     notice.classList.remove("hidden");
   }, 6000);
 
@@ -65,15 +67,15 @@ if (publicTestCode && !teacherPreview) {
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
-      console.warn("Secure-Assessment-Hinweise konnten nicht geladen werden.", error);
+      console.warn(gradeCrewI18n.t("system.secure_assessment_notice_failed", {}, "Secure-Assessment-Hinweise konnten nicht geladen werden."), error);
     });
     import("./visual-enhancements.js?v=2.3.1-gc26").catch(error => {
-      console.warn("Zusätzliche Ansichten konnten nicht geladen werden.", error);
+      console.warn(gradeCrewI18n.t("system.extra_views_failed", {}, "Zusätzliche Ansichten konnten nicht geladen werden."), error);
     });
   } catch (error) {
     window.clearTimeout(slowStart);
-    console.error("GradeCrew konnte nicht starten:", error);
-    message.textContent = "GradeCrew konnte nicht vollständig geladen werden. Bitte prüfe die Verbindung und lade die Seite erneut.";
+    console.error(gradeCrewI18n.t("system.start_failed", {}, "GradeCrew konnte nicht starten:"), error);
+    message.textContent = gradeCrewI18n.t("system.load_failed", {}, "GradeCrew konnte nicht vollständig geladen werden. Bitte prüfe die Verbindung und lade die Seite erneut.");
     notice.classList.remove("hidden");
     retry.classList.remove("hidden");
   }
