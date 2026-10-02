@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "candidateBranch": "feature/gradecrew-app-integration",
+  "notes": "Manuelle Abnahmen gelten immer nur fuer den in testedSha gespeicherten Stand. Bei neuem Kandidaten zeigt das Board alte Ergebnisse als erneut zu testen.",
+  "results": {}
+}
