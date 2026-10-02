@@ -27,7 +27,7 @@
       "title": "Development Status / Mehr-Chat-Control-Plane",
       "primaryBranch": "feature/development-status-v1",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/development-status-v1.md",
       "relatedBranches": [
         "feature/dev-governance-emulator"
@@ -41,7 +41,8 @@
       "state": "active",
       "relatedBranches": [
         "fix/gradecrew-staging-polish",
-        "fix/gradecrew-staging-release-final"
+        "fix/gradecrew-staging-release-final",
+        "fix/admin-controls-auth-ready"
       ]
     },
     {
