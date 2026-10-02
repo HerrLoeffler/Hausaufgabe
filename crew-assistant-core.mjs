@@ -83,6 +83,8 @@ const COMMON_RESPONSES = Object.freeze({
   })
 });
 
+const PARSER_VERSION = "remy-structure-v2";
+
 function normalizeText(value = "") {
   return String(value)
     .normalize("NFKC")
@@ -112,7 +114,10 @@ function cleanTopic(value = "") {
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
     .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?)|(?:mit|ohne)\b).*$/i, "")
     .replace(/\s+(?:mit|ohne)\s+(?=(?:single|multiple|freitext|offene|dropdown|richtig|lücken|luecken|zuord|sortier|reihenfolge|gruppier|kategorien|wörter|woerter|markier|rechen|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?))).*$/i, "")
-    .replace(/\b(?:mit|und)\s+(?:leichten?|mittleren?|anspruchsvollen?|schweren?|gemischten?)\s+aufgaben.*$/i, "")
+    .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst)\s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?)\s+(?:aufgaben?|fragen?)\b).*$/i, "")
+    .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?)\b).*$/i, "")
+    .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?)\s+(?:text|texte|aufgaben?|fragen?)\b).*$/i, "")
+    .replace(/\s+(?=(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b).*$/i, "")
     .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
     .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)\s*$/i, "")
     .trim()
@@ -144,6 +149,37 @@ function extractTopic(text) {
   return undefined;
 }
 
+function extractNotes(text) {
+  const notes = [];
+  const add = note => {
+    const value = normalizeText(note).replace(/[\s,;:.]+$/g, "");
+    if (!value) return;
+    const sentence = `${value.charAt(0).toUpperCase()}${value.slice(1)}.`;
+    if (!notes.some(existing => existing.toLocaleLowerCase("de-DE") === sentence.toLocaleLowerCase("de-DE"))) notes.push(sentence);
+  };
+
+  const progression = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
+  if (progression) add("Zuerst leichte Aufgaben, danach anspruchsvollere Aufgaben");
+
+  if (/\b(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+)?(?:einfache|leichte)\s+aufgaben\b[^.!?]{0,35}\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\b/i.test(text) ||
+      /\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+(?:einfache|leichte)\s+aufgaben\b/i.test(text)) {
+    add("Vor allem einfache Aufgaben");
+  }
+  if (/\b(?:viele|mehrere)\s+alltagsbeispiele\b/i.test(text)) add("Viele Alltagsbeispiele");
+  if (/\b(?:wenig|möglichst\s+wenig|moeglichst\s+wenig)\s+text\b/i.test(text)) add("Wenig Text");
+  if (/\b(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b/i.test(text)) add("Keine Fangfragen");
+  if (/\b(?:kurze|knappe)\s+(?:aufgaben|fragen|texte)\b/i.test(text)) add("Kurze Aufgaben");
+  if (/\b(?:klare|eindeutige|verständliche|verstaendliche)\s+(?:aufgaben|fragen|sprache)\b/i.test(text)) add("Klare, verständliche Formulierungen");
+  if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+rechenaufgaben\b/i.test(text)) add("Vor allem Rechenaufgaben");
+  if (/\b(?:viele|mehr)\s+sachaufgaben\b/i.test(text)) add("Viele Sachaufgaben");
+  if (/\bviele\s+aufgaben\b/i.test(text) && !/\b\d{1,3}\s+aufgaben\b/i.test(text)) add("Viele Aufgaben");
+
+  const explicit = text.match(/\b(?:eigene\s+)?wünsche?\s*[:=-]\s*([^.!?]+)/i);
+  if (explicit?.[1]) add(explicit[1].slice(0, 500));
+
+  return notes.join(" ").slice(0, 1000) || undefined;
+}
+
 function parseTestRequest(input = "") {
   const text = normalizeText(input);
   const patch = {};
@@ -167,10 +203,13 @@ function parseTestRequest(input = "") {
   const topic = extractTopic(text);
   if (topic) patch.topic = topic;
 
-  if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes)\b/i.test(text)) patch.difficulty = "leicht";
-  else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle)\b/i.test(text)) patch.difficulty = "anspruchsvoll";
-  else if (/\bgemischt|unterschiedliche\s+schwierigkeitsgrade\b/i.test(text)) patch.difficulty = "gemischt";
-  else if (/\bmittel|mittlere[mnr]?\b/i.test(text)) patch.difficulty = "mittel";
+  const progressiveDifficulty = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
+  if (!progressiveDifficulty) {
+    if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes)\b/i.test(text)) patch.difficulty = "leicht";
+    else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle)\b/i.test(text)) patch.difficulty = "anspruchsvoll";
+    else if (/\bgemischt|unterschiedliche\s+schwierigkeitsgrade\b/i.test(text)) patch.difficulty = "gemischt";
+    else if (/\bmittel|mittlere[mnr]?\b/i.test(text)) patch.difficulty = "mittel";
+  }
 
   const count = extractNumber(text, [/\b(\d{1,3})\s*(?:aufgaben?|fragen?)\b/i], 1, 100);
   if (count !== undefined) patch.count = count;
@@ -187,6 +226,9 @@ function parseTestRequest(input = "") {
 
   const noText = /\b(?:keine?|ohne)\s+(?:freitext|offene[nr]?\s+fragen?)\b/i.test(text);
   if (noText) patch.excludeTypes = ["text"];
+
+  const notes = extractNotes(text);
+  if (notes) patch.notes = notes;
 
   return patch;
 }
@@ -205,6 +247,7 @@ function patchSummary(patch = {}) {
   if (patch.count) parts.push(`${patch.count} Aufgaben`);
   if (patch.points) parts.push(`${patch.points} Punkte`);
   if (patch.durationMinutes) parts.push(`${patch.durationMinutes} Min.`);
+  if (patch.notes) parts.push("Wünsche übernommen");
   return parts.join(" · ");
 }
 
@@ -270,6 +313,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {} } = 
 export {
   CREW_MEMBERS,
   COMMON_RESPONSES,
+  PARSER_VERSION,
   normalizeText,
   parseTestRequest,
   patchSummary,
