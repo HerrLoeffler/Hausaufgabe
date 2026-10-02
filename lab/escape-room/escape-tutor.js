@@ -62,9 +62,10 @@
 
   async function ask(question, userText) {
     const normalized = normalize(userText);
+    const cacheQuery = String(userText || '').normalize('NFC').trim().replace(/\s+/gu, ' ');
     // An edited question may retain its ID: bind cached help to the actual content/revision/locale.
     const cacheKey = JSON.stringify([question.id, question.revision, question.locale, question.prompt,
-      question.hint, question.explanation, question.learningGoal, question.remediation, question.tutorAnswers, normalized]);
+      question.hint, question.explanation, question.learningGoal, question.remediation, question.tutorAnswers, cacheQuery]);
     const requestEpoch = epoch;
     if (sessionCache.has(cacheKey)) {
       stats.cacheHits++;

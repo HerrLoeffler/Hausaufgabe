@@ -60,6 +60,16 @@ test('bridge rejection returns existing learning explanation instead of breaking
   } finally { w.close(); }
 });
 
+test('cache does not merge mathematical operators or case-sensitive variables', async () => {
+  const { w } = loadTutor();
+  try {
+    let calls = 0; w.GradeCrewTutorBridge = { async ask() { calls++; return { answer: `Hinweis ${calls}` }; } };
+    const q = w.GradeCrewEscapePrototype.questions[0];
+    for (const text of ['Was bedeutet A+B?', 'Was bedeutet A-B?', 'Was bedeutet a-b?']) await w.GradeCrewEscapeTutor.ask(q, text);
+    assert.equal(calls, 3);
+  } finally { w.close(); }
+});
+
 test('clearing a session cancels pending work and cannot refill cache with the old answer', async () => {
   const { w } = loadTutor();
   try {
