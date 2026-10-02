@@ -1,0 +1,31 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync(new URL("./admin-test-account-controls.mjs", import.meta.url), "utf8");
+const visual = fs.readFileSync(new URL("./visual-enhancements.js", import.meta.url), "utf8");
+const build = fs.readFileSync(new URL("./tools/build-staging.mjs", import.meta.url), "utf8");
+
+test("admin test-account controls are wired into the staging UI", () => {
+  assert.match(visual, /admin-test-account-controls\.mjs\?v=1/);
+  assert.match(build, /'admin-test-account-controls\.mjs'/);
+});
+
+test("role and test-account controls are admin-gated", () => {
+  assert.match(source, /profile\.role === "admin"/);
+  assert.match(source, /gcAdminRoleSelect/);
+  assert.match(source, /isTestAccount/);
+  assert.match(source, /Als Testkonto markieren/);
+});
+
+test("archive is reversible and suspends login instead of deleting data", () => {
+  assert.match(source, /isTestAccountArchived/);
+  assert.match(source, /status: nextArchived \? "suspended" : "active"/);
+  assert.match(source, /Testkonto wieder aktivieren/);
+  assert.doesNotMatch(source, /deleteUser|deleteDoc|recursiveDelete/);
+});
+
+test("admins cannot accidentally mark an admin as a test account through the UI", () => {
+  assert.match(source, /id="gcToggleTestAccount" \$\{isAdmin \? "disabled" : ""\}/);
+  assert.match(source, /Ein Testkonto kann nicht gleichzeitig Admin sein/);
+});
