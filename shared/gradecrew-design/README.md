@@ -18,6 +18,23 @@ Web and native components share semantics, hierarchy, tokens and accessibility r
 
 `assets/gradecrew/` remains the canonical artwork library. New product code should use semantic Crew names (Coco, Remy, Emmi, Wilma and named scenes) and must not create manually edited product-specific duplicates.
 
+### Primary logo
+
+The normal GradeCrew product must consume the semantic `brand.primary`, `brand.icon` and `brand.favicon` entries from `assets.json`. Pages and apps must not hard-code a versioned logo filename.
+
+To replace the main GradeCrew logo later:
+
+1. add the new versioned SVG to `assets/gradecrew/`;
+2. change the semantic `brand.primary`, `brand.icon` and `brand.favicon` entries in `assets.json`;
+3. increment the asset manifest version;
+4. run `node tools/generate-gradecrew-design.mjs`;
+5. commit the source asset, manifest and generated web/native maps together;
+6. run brand regression and staging-build checks before integration.
+
+Consumers stay unchanged when the semantic brand entries point to a new asset. This keeps logo changes reversible and avoids product-specific copies.
+
+GradeCrew Secure may use a dedicated security product mark later. Do not replace its product-specific identity merely because the normal GradeCrew primary logo changes.
+
 ## Versioning
 
 Intentional shared-system changes increment the version in `tokens.json` and/or `assets.json`.
