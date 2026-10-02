@@ -117,6 +117,24 @@ test('accounting outage retains a good result and durable reservation still prev
   assert.equal((await ai.generate(fixture().request)).routing.accountingRecorded, false);
   await assert.rejects(ai.generate(fixture().request), /OPERATION_ALREADY_CLAIMED/); assert.equal(calls.length, 1);
 });
+test('unapproved returned model or provider retains the reservation instead of using the wrong price or retrying', async () => {
+  for (const identity of [{ provider: 'anthropic', model: 'unqualified-expensive-snapshot' },
+    { provider: 'openai', model: 'fixture-economy' }]) {
+    let validated = 0;
+    const { ai, calls, db } = engine({
+      generate: async () => ({ ...identity, stop_reason: 'end_turn', text: 'plausible', usage: { input_tokens: 10, output_tokens: 10 } }),
+      validate: () => { validated++; return true; }
+    });
+    await assert.rejects(ai.generate(fixture().request), /VALIDATION_FAILED/);
+    assert.equal(calls.length, 1);
+    assert.equal(validated, 0);
+    const op = [...db.rows.values()].find(v => v.state === 'settled');
+    assert.equal(op.actualMicros, null);
+    assert.equal(op.chargedMicros, op.reservedMicros);
+    assert.equal(op.attempts[0].costMicros, null);
+    assert.equal(op.attempts[0].status, 'identity_mismatch');
+  }
+});
 test('cancelled request makes no paid call; stalled provider cannot hold response indefinitely', async () => {
   const { ai, calls } = engine(); const cancel = new AbortController(); cancel.abort();
   await assert.rejects(ai.generate(fixture().request, { signal: cancel.signal }), /CANCELLED/); assert.equal(calls.length, 0);

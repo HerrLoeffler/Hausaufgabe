@@ -99,6 +99,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Recheck source after verification before cloud authentication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ai-gateway/tools/assert-current-source.sh
+
       - name: Authenticate as staging-only gateway deployer
         id: cloud-auth
         uses: google-github-actions/auth@v3
@@ -233,8 +238,11 @@ jobs:
           echo "openai_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/openai.json")" >> "$GITHUB_OUTPUT"
 
       - name: Promote only the verified revision
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          bash ai-gateway/tools/assert-current-source.sh
           gcloud run services update-traffic "$SERVICE" \
             --project "$PROJECT_ID" \
             --region "$REGION" \
