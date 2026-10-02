@@ -18,6 +18,11 @@ const {
   normalizeCrewResult
 } = require("./lib/crew-assistant");
 const {
+  writeCrewMetric,
+  recordCrewMetricSafe,
+  crewTelemetrySummary
+} = require("./lib/crew-telemetry");
+const {
   REVISION_VERSION,
   cleanWholeTestRevisionRequest,
   wholeTestRevisionSchema,
@@ -34,6 +39,34 @@ const assistantOpts = {
   memory: "512MiB",
   enforceAppCheck: false
 };
+const telemetryOpts = {
+  region: REGION,
+  timeoutSeconds: 60,
+  memory: "256MiB",
+  enforceAppCheck: false
+};
+
+function patchMetricFields(patch = {}) {
+  const fields = [];
+  for (const key of ["subject", "grade", "schoolType", "region", "topic", "difficulty", "count", "points", "durationMinutes", "notes"]) {
+    if (patch[key] !== undefined && patch[key] !== null && patch[key] !== "") fields.push(key);
+  }
+  if ((Array.isArray(patch.allowedTypes) && patch.allowedTypes.length) || (Array.isArray(patch.excludeTypes) && patch.excludeTypes.length)) fields.push("questionTypes");
+  return fields;
+}
+
+const recordCrewTelemetry = onCall(telemetryOpts, async request => {
+  const { uid } = await requireAiUser(request);
+  await writeCrewMetric(uid, request.data || {}, { server: false });
+  return { ok: true };
+});
+
+const getCrewTelemetrySummary = onCall(telemetryOpts, async request => {
+  const { profile } = await requireAiUser(request);
+  if (profile.role !== "admin") throw new HttpsError("permission-denied", "Nur für Administratoren.");
+  const days = Math.max(1, Math.min(90, Number(request.data?.days) || 30));
+  return crewTelemetrySummary(days);
+});
 
 const crewAssistant = onCall(assistantOpts, async request => {
   const { uid } = await requireAiUser(request);
@@ -74,9 +107,25 @@ const crewAssistant = onCall(assistantOpts, async request => {
       cacheCandidate: result.cacheCandidate,
       assistantVersion: "crew-v1"
     });
+    await recordCrewMetricSafe(uid, {
+      event: "ai_fallback_completed",
+      crewId: clean.crewId,
+      source: "ai",
+      fields: result.action.type === "patch_ai_form" ? patchMetricFields(result.action.patch) : [],
+      parserVersion: "crew-ai-v1",
+      screen: clean.context?.screen
+    }, { server: true });
     return result;
   } catch (err) {
     const code = err instanceof AiResponseError ? err.code : "unavailable";
+    await recordCrewMetricSafe(uid, {
+      event: "ai_fallback_failed",
+      crewId: clean.crewId,
+      source: "ai",
+      parserVersion: "crew-ai-v1",
+      screen: clean.context?.screen,
+      errorType: "unavailable"
+    }, { server: true });
     console.warn("Crew Assistant fehlgeschlagen:", {
       code,
       crewId: clean.crewId,
@@ -151,4 +200,10 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
   }
 });
 
-module.exports = { ...existing, crewAssistant, reviseWholeTest };
+module.exports = {
+  ...existing,
+  recordCrewTelemetry,
+  getCrewTelemetrySummary,
+  crewAssistant,
+  reviseWholeTest
+};
