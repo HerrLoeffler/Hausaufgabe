@@ -155,7 +155,7 @@ async function sendCurrentMessage() {
   input.value = "";
   addMessage("user", text);
 
-  const local = resolveLocalCrewRequest({ crewId: "coco", text, context: currentContext() });
+  const local = resolveLocalCrewRequest({ crewId: "coco", text, context: currentContext(), locale: currentUiLocale() });
   if (local.handled) {
     addMessage("assistant", local.reply);
     return;
