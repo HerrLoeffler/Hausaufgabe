@@ -10,7 +10,7 @@ Lab-Prototyp für `GC-GAMES-01`. Die erste Welt heißt **„Die verriegelte Schu
 - Hauptfragen als Auswahl, sicher automatisch prüfbarer Freitext oder Zahl mit Toleranz/Einheit
 - vier Minirätsel: Tafelmuster, Türcode, Spind-Symbolfolge, Schlüsselbrett-Symbolfolge
 - Inventar, lokale Wiederaufnahme, aktive Spielzeit und Preflight
-- kleine Explorer-Figur; Point-and-Click bleibt touchfreundlich
+- kleine Coco-Explorer-Figur; Point-and-Click bleibt touchfreundlich
 - lokale `gradecrew:escape-event`-Hooks, aber kein Analytics-Upload
 
 ## Lernschleife v0.3 – Lernen statt Durchklicken
@@ -46,11 +46,9 @@ Die verbindlichen Leitplanken stehen in `docs/games/LEARNING_GUARDRAILS.md`.
 
 Der Lab-MVP sendet standardmäßig keine Schülerfrage an einen Server. Die globale GradeCrew-Kosten-/Memory-Infrastruktur wird separat entwickelt; Escape baut keine parallele Langzeitspeicherung auf.
 
-## Coco + einfache KI-Aufgabenerstellung v0.4
+## Coco + einfache KI-Aufgabenerstellung
 
-Escape verwendet sichtbar nur noch **Coco** und die vorhandenen GradeCrew-Coco-Assets (`penguin-guide.svg` / `penguin-guide-welcome.svg`) statt Emoji-Platzhaltern oder eines zweiten Maskottchennamens. Interne Legacy-IDs wie `remyHelp` bleiben vorerst nur aus Kompatibilitätsgründen bestehen.
-
-Die Lehrer-Vorschau hat zusätzlich einen kompakten KI-Generator:
+Die Lehrer-Vorschau hat einen kompakten Generator vorbereitet:
 
 - Fach
 - Klasse
@@ -59,15 +57,13 @@ Die Lehrer-Vorschau hat zusätzlich einen kompakten KI-Generator:
 - optional ein eigener Wunsch
 - Aktion **„8 Escape-Aufgaben erstellen“**
 
-Es wird **kein zweites KI-Backend** gebaut. Der Lab-Preview nutzt den vorhandenen authentifizierten GradeCrew-Callable `generateTest` in `europe-west1`. Der eigenständige Preview zeigt bewusst **keine zweite Anmeldung**. Die echte KI-Erstellung wird erst in der GradeCrew-Lehreransicht über `GradeCrewEscapeAiBridge` und die dort bereits vorhandene Sitzung aktiviert. Im Lab bleiben die Beispielaufgaben vollständig prüf- und spielbar.
+Es wird **kein zweites KI-Backend** gebaut. Der vorhandene GradeCrew-Callable `generateTest` bleibt die spätere Quelle. Der eigenständige Preview zeigt bewusst **keine zweite Anmeldung** und versucht auch keinen anonymen Zugriff auf die geschützte KI. Erst die integrierte GradeCrew-Lehreransicht stellt über `GradeCrewEscapeAiBridge` die bereits vorhandene Lehrersitzung bereit; dann wird der Generator aktiv.
 
-Ein KI-Lauf erzeugt 16 bildfreie, automatisch prüfbare Aufgaben: die ersten 8 Hauptaufgaben und die Aufgaben 9–16 als passende Transferpaare. Nur die 8 Hauptaufgaben erscheinen als Lernslots. Die Transferaufgaben werden in die bestehende Lernschleife eingebaut. Spiellogik und Anti-Raten-Regeln werden niemals von der KI erzeugt.
-
-Der erzeugte Fragensatz wird lokal für den Preview gespeichert, damit ein Reload bzw. Save/Resume nicht auf die Prozentrechnungs-Beispielfragen zurückfällt.
+Ein KI-Lauf ist weiterhin als 16 bildfreie, automatisch prüfbare Aufgaben vorbereitet: die ersten 8 Hauptaufgaben und die Aufgaben 9–16 als passende Transferpaare. Nur die 8 Hauptaufgaben erscheinen als Lernslots. Die Transferaufgaben werden in die bestehende Lernschleife eingebaut. Spiellogik und Anti-Raten-Regeln werden niemals von der KI erzeugt.
 
 ## Kompakte Lehrerprüfung wie in GradeCrew
 
-Die Lehrer-Vorschau wurde in v0.3 bewusst näher an den aktuellen GradeCrew-Testeditor gebracht, aber einfacher gehalten:
+Die Lehrer-Vorschau orientiert sich kompakt am GradeCrew-Testeditor:
 
 - pro Karte zuerst nur **Aufgabe, Antworttyp und richtige Lösung**
 - `Lernhilfe & Transfer anzeigen` ist einklappbar
@@ -91,13 +87,25 @@ Manuell zu prüfender Freitext bleibt fail-closed: Eine fachlich unsichere autom
 
 `gradecrew-escape-builder.js` bereitet den Ablauf **GradeCrew-Test → 8 Aufgaben → Lernpakete → Lehrerprüfung → Preflight → startfähiges Escape-Paket** vor. Die eigentliche Hauptprodukt-Schaltfläche „Als Escape Room spielen“ ist noch nicht in den parallel entwickelten Haupt-App-Branch verdrahtet.
 
+## v0.5 – gemeinsamer Coco + Lehrer zuerst
+
+- Coco wird **exakt aus dem Shared-GradeCrew-Designsystem übernommen**, statt eine Escape-eigene Pinguinvariante zu pflegen.
+- `penguin-guide.svg` enthält die sechs offiziellen Clay-Posen; Escape verwendet `#pose-1` für Begrüßung, `#pose-4` für Hilfe und `#pose-5` beim Erkunden.
+- `gradecrew-brand.css` und `crew-clay.css` werden im isolierten Build aus der gemeinsamen GradeCrew-Wurzel übernommen. Escape-spezifische Styles ergänzen nur Spielspezifika.
+- Neue Runden starten nicht mehr direkt von der Startseite: **Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape starten**.
+- Der eigenständige Lab-Preview enthält keine E-Mail-/Passwort-Anmeldung mehr.
+- Der geschützte KI-Generator wird im Lab nicht anonym umgangen. Die Generator-UI und der 16-Fragen-Vertrag bleiben vorbereitet; aktiv wird er später über `GradeCrewEscapeAiBridge` mit der bereits angemeldeten GradeCrew-Lehrersitzung.
+- Production bleibt unverändert.
+
 ## Automatische Prüfungen
 
 Die Escape-, Coco-, Adapter- und Builder-Tests prüfen unter anderem:
 
 - Lehrer-Vorschau und kompakten Editor
-- kanonische Coco-Darstellung statt Emoji-Platzhalter
-- kompakten KI-Generator und 8 Haupt-/8 Transfer-Paarung
+- exakten Shared-Coco mit sechs Clay-Posen statt alter Escape-Pinguinkopie
+- **Lehrerbereich als einzigem Einstieg für eine neue Runde vor dem Spielstart**
+- **keine Firebase-Login-Abhängigkeit im Standalone-Escape**
+- Generatorvertrag mit 8 Haupt-/8 Transfer-Paarung
 - konkrete Denkhilfe nach dem ersten Fehler
 - **einmal falsch → danach richtig → Transfer erforderlich**
 - vollständige Remediation nach mehreren Fehlversuchen
@@ -108,7 +116,20 @@ Die Escape-, Coco-, Adapter- und Builder-Tests prüfen unter anderem:
 - vollständigen Lösungsweg und Save/Resume
 - GradeCrew-Test → Escape-Vorbereitung
 
-Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetrie-Upload sind im Lab weiterhin nicht aktiviert. Der Lehrer-KI-Generator verwendet dagegen bewusst den bestehenden, authentifizierten GradeCrew-Staging-Callable.
+Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetrie-Upload sind im Lab weiterhin nicht aktiviert.
+
+### Verifikation v0.5
+
+Produktcommit: `84e3a71d82c27522c994dd94af297abfafab41ed`.
+
+Automatisierter v0.5-Prüflauf `36990569083`:
+
+- fokussierte Escape-/Coco-/Tutor-/Adapter-/Builder-Tests: **27/27 grün**
+- JavaScript-Syntaxcheck: grün
+- isolierter Escape-Build: **v0.5.0 grün**
+- Shared-Coco-Prüfung: offizielles Asset mit `pose-1` bis `pose-6` vorhanden
+- Standalone-Build enthält bewusst keine `firebase-config.js`
+- Preview-Deploy wird separat über den bestehenden Escape-only Staging-Workflow ausgeführt
 
 ## Bewusste Grenzen
 
@@ -117,8 +138,8 @@ Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetri
 - Keine Live-Runde, kein Highscore und kein Multiplayer für Escape in dieser Iteration.
 - Keine serverseitige Speicherung von Schülerfragen.
 - Prozentrechnung bleibt Referenzinhalt des Prototyps.
-- Echter Desktop-/iPad-/Handy-Gerätetest dieses **v0.4-Stands** ist weiterhin separat nötig.
-- Der echte authentifizierte Klick auf `8 Escape-Aufgaben erstellen` muss nach dem Preview-Deploy einmal mit einem Lehreraccount als E2E geprüft werden; Unit-/Build-Tests ersetzen diesen Backend-E2E-Test nicht.
+- Echter Desktop-/iPad-/Handy-Gerätetest dieses **v0.5-Stands** ist weiterhin separat nötig.
+- Echte KI-Erstellung wird erst nach Anbindung an die bestehende GradeCrew-Lehrersitzung E2E getestet; im Standalone-Lab gibt es dafür bewusst weder Extra-Login noch anonymen Backend-Zugriff.
 
 ## Architektur
 
@@ -128,20 +149,11 @@ Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetri
 - `gradecrew-escape-builder.js`: Lehrerprüfung und startfähiges Escape-Paket
 - `app.js`: deterministische Engine, Lernschleife, Anti-Raten, Lehrerbearbeitung
 - `escape-teacher-compact.js`: kompakte GradeCrew-nahe Lehreroberfläche
-- `escape-coco-ai.js`: Coco-Darstellung, kompakter Lehrer-KI-Generator und bestehende GradeCrew-AI-Brücke
-- `styles.css` / `escape-v2.css`: Darstellung und Immersion
+- `escape-teacher-flow.js`: Lehrerbereich vor neuem Spielstart
+- `escape-coco-ai.js`: Coco-Darstellung, kompakter Generatorvertrag und GradeCrew-AI-Brücke
+- `gradecrew-brand.css` / `crew-clay.css`: gemeinsam übernommene GradeCrew-Designsprache und Coco-Clay-System
+- `styles.css` / `escape-v2.css`: Escape-spezifische Darstellung und Immersion
 - `tools/build-lab-escape-room.mjs`: isolierter Build mit Manifest/Prüfsummen
 - `tools/games/*.test.cjs`: Regressionstests
 
 Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
-
-
-## v0.5 – gemeinsamer Coco + Lehrer zuerst
-
-- Coco wird nicht mehr aus der alten Escape-Kopie gestaltet, sondern aus dem freigegebenen Shared-Design-System übernommen.
-- `penguin-guide.svg` nutzt die sechs offiziellen Clay-Posen; Escape verwendet `#pose-1` für Begrüßung, `#pose-4` für Hilfe und `#pose-5` beim Erkunden.
-- `gradecrew-brand.css` und `crew-clay.css` werden im isolierten Build aus der gemeinsamen GradeCrew-Wurzel übernommen. Escape-spezifische Styles liegen danach und dürfen nur Spielspezifika ergänzen.
-- Neue Runden starten nicht mehr direkt von der Startseite: **Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape starten**.
-- Der eigenständige Lab-Preview enthält keine E-Mail-/Passwort-Anmeldung mehr und ruft die geschützte GradeCrew-KI nicht anonym auf.
-- Die Generator-UI und der 16-Fragen-Vertrag bleiben vorbereitet. Erst wenn der Host `GradeCrewEscapeAiBridge` mit der bereits angemeldeten Lehrersitzung bereitstellt, wird der KI-Button aktiv.
-- Production bleibt unverändert.
