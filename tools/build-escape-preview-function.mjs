@@ -48,14 +48,14 @@ function escapePreviewPayload(data = {}) {
     count: 16,
     points: 16,
     allowedTypes: escapePreviewAllowedTypes(subject),
-    notes: teacherWish ? `${pairing}\nZusätzlicher Wunsch der Lehrkraft: ${teacherWish}` : pairing,
+    notes: teacherWish ? pairing + "\nZusätzlicher Wunsch der Lehrkraft: " + teacherWish : pairing,
     imageMode: "none",
     exactImageCounts: true,
     imageQuestionCount: 0,
     imageAnswerQuestionCount: 0,
     materialMode: "inspiration",
     materials: [],
-    clientRequestId: `escape-preview-${randomUUID().slice(0, 12)}`
+    clientRequestId: "escape-preview-" + randomUUID().slice(0, 12)
   };
 }
 
@@ -66,9 +66,9 @@ async function consumeEscapePreviewQuota(rawRequest) {
   const minute = nowDate.toISOString().slice(0, 16);
   const forwarded = String(rawRequest?.headers?.["x-forwarded-for"] || "").split(",")[0].trim();
   const source = String(rawRequest?.ip || forwarded || "unknown").slice(0, 160);
-  const sourceKey = createHash("sha256").update(`${day}:escape-preview:${source}`).digest("hex");
-  const globalRef = db.doc(`escapePreviewRate/${day}-global`);
-  const sourceRef = db.doc(`escapePreviewRate/${day}-${sourceKey}`);
+  const sourceKey = createHash("sha256").update(day + ":escape-preview:" + source).digest("hex");
+  const globalRef = db.doc("escapePreviewRate/" + day + "-global");
+  const sourceRef = db.doc("escapePreviewRate/" + day + "-" + sourceKey);
 
   await db.runTransaction(async tx => {
     const globalSnap = await tx.get(globalRef);
@@ -119,7 +119,7 @@ exports.generateEscapePreview = onRequest({
 });
 `;
 
-  return patchedImport.replace('\nfunction aiJobLock(uid)', `${snippet}\nfunction aiJobLock(uid)`);
+  return patchedImport.replace('\nfunction aiJobLock(uid)', snippet + '\nfunction aiJobLock(uid)');
 }
 
 export async function buildEscapePreviewFunctions(destination) {
