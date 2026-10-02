@@ -32,6 +32,14 @@ fs.writeFileSync(path.join(target, 'firebase.json'), JSON.stringify(firebase, nu
 const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
 const js = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
 if (!html.includes('gameCanvas') || !html.includes('touch-controls')) throw new Error('Adventure controls missing from build.');
-if (!js.includes("value==='784'") || !js.includes("new Set(['shelf','computer','board'])")) throw new Error('Adventure progression/anti-guessing guard missing.');
+if (!/value\s*===\s*['"]784['"]\s*&&\s*state\.clues\.size\s*===\s*3\s*&&\s*state\.orderNoteFound/.test(js)) {
+  throw new Error('Adventure door must require the derived 784 code, all three clues and the order note.');
+}
+if (!/new Set\(\[\s*['"]shelf['"]\s*,\s*['"]computer['"]\s*,\s*['"]board['"]\s*\]\)/.test(js)) {
+  throw new Error('Adventure anti-guessing clue-review guard missing.');
+}
+if (!js.includes('isInFlashlightBeam') || !js.includes("id: 'order-note'")) {
+  throw new Error('Adventure directional flashlight/order-note route missing.');
+}
 if (/https?:\/\//.test(html) || /https?:\/\//.test(js)) throw new Error('Adventure build must not depend on external runtime assets.');
 console.log(`Escape Adventure room-one build verified at ${target}`);
