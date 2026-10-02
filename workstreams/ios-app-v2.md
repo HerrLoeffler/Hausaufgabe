@@ -1,88 +1,113 @@
 # Aufgabe: ios-app-v2
 
-- Aktualisiert: 02.10.2026
-- Auftrag: Bestehende GradeCrew-Lehrerapp gegen den tatsächlichen GitHub-Stand prüfen und die nächste hybride App-Stufe umsetzen.
+- Aktualisiert: 03.10.2026
+- Auftrag: Bestehende GradeCrew-Lehrerapp schrittweise als hybride iPhone/iPad-App härten, ohne die schnell veränderliche Webplattform unnötig nativ zu duplizieren.
 - Task: `GC-IOS-02`
-- Status: **0.1.6 mit kanonischem GradeCrew-AppIcon auf GitHub gesichert; Routing, Icon-Erzeugung, Archive und TestFlight-Upload grün; Gerätetest offen.**
+- Status: **0.1.7 und 0.1.8 umgesetzt; finaler 0.1.8-Code auf kanonischem App-Branch; Routing-/Downloadtests, Xcode-Archive, Cloud-Signing und TestFlight-Upload grün; Apple-Verarbeitung und Gerätetest offen.**
 - Kanonischer App-Branch: `feature/shared-gradecrew-design-system`
-- Integrierter App-Code: `899bc3632b657d004ea3771418bb0c22a9a72ab5`
-- Logo-Umsetzungsbranch: `feature/ios-brand-icon-v1`, von `8bdebaf1ab701d44e57369914bd2b82fe7bdc895` abgezweigt und nach erfolgreichem Build per Fast-Forward in den kanonischen App-Branch übernommen.
-- TestFlight: Version `0.1.6`; erster erfolgreicher Logo-Build Run `37024138336`, Job `110894355082`, Build `11`. Der Fast-Forward des kanonischen App-Branches löste einen zweiten Kontrollbuild Run `37024529022`, Job `110895661852`, Build `12`, ebenfalls vollständig erfolgreich aus.
-- Web-Integrationsbranch beim vorherigen Umbau: `feature/gradecrew-app-integration` @ `8aba2a7ce70c75842fbe4b81c4e6491136366768`.
+- Integrierter App-Code: `79598be8a68d26319e5e9711d0df7c73e119684d`
+- Umsetzungsbranch: `feature/ios-app-shell-017-018`, vom bestätigten 0.1.6-Head `899bc3632b657d004ea3771418bb0c22a9a72ab5` abgezweigt und nach erfolgreichem finalen Build per Fast-Forward in den kanonischen App-Branch übernommen.
+- Finaler TestFlight-Nachweis: Version `0.1.8`, Build `17`, Run `37075968920`, Job `111065834724`: vollständig erfolgreich einschließlich Upload zu App Store Connect.
+- Separater 0.1.7-Nachweis: Run `37075335026`, Job `111063851021`: Routing, Navigationstest, Archive, Signing und Upload vollständig erfolgreich.
 - Preview-Channel: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`
 - Production: unverändert.
 
-## Was 0.1.5 geändert hat
+## Architektur
 
-Die Teacher-App bleibt bewusst eine dünne SwiftUI-/WKWebView-Hülle. Es gibt weiterhin keine doppelte native Firebase-Authentifizierung oder native Testliste. Statt fachliche Webfunktionen in Swift nachzubauen, öffnet die TestFlight-Beta standardmäßig den automatisch geprüften Integrations-Preview-Channel.
+Die Teacher-App bleibt bewusst eine SwiftUI-/WKWebView-App mit nativer Geräteschicht. Dashboard, Tests, Editor, Remy, Emmi, Games und Auswertung bleiben vorerst Web-Single-Source-of-Truth. Native Arbeit wird dort ergänzt, wo iPhone/iPad klaren Mehrwert liefern: Navigation, Dateien, Share-Sheet, Kamera/Mikrofon, Diagnose, später Web↔Native-Bridge, Scanner, Haptik und App Intents.
 
-Damit erscheinen die bereits im gemeinsamen Webstand integrierten Neuerungen direkt in der App. Reine Webupdates benötigen keinen neuen iOS-Build, solange sie nach grüner CI in denselben verifizierten Preview-Channel deployt werden.
+Integration-Preview bleibt Standard; normales Staging ist Fallback. Production-Hosts werden nicht als internes Beta-Ziel akzeptiert.
 
-Umgebungsrouting:
-- Standard: Integration-Preview `hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app`;
-- expliziter Fallback: normales Staging `hausaufgabe-staging.web.app`;
-- andere `hausaufgabe-staging--*.web.app`-Previews bleiben für gezielte Betatests zulässig;
-- Production-Hosts werden nicht als Beta-Ziel akzeptiert;
-- bei Ladefehlern kann direkt auf normales Staging zurückgefallen werden;
-- Beta-Sheet zeigt Host und Umgebung sichtbar an.
+## 0.1.7 – App-Shell und Navigation
 
-## Neu in 0.1.6: echtes GradeCrew-AppIcon
+Umgesetzt:
+- permanente Beta-Leiste aus dem Alltagslayout entfernt;
+- Diagnose/Preview-Auswahl in ein separates `GradeCrew Diagnose`-Sheet verschoben;
+- Diagnose zeigt App-Version, Build, Umgebung und geladenen Host;
+- Diagnose aus der normalen Webansicht per Zwei-Finger-Langdruck erreichbar; bei Ladefehler zusätzlich expliziter Diagnose-Button;
+- neue zentrale `GradeCrewNavigationPolicy`;
+- vertrauenswürdige GradeCrew-Staging-/Preview-/Firebase-Auth-Ziele bleiben in der App;
+- nutzeraktivierte externe Links öffnen systemgerecht außerhalb der WKWebView;
+- Production-URL wird nicht als internes Beta-Ziel behandelt;
+- `target=_blank` wird nicht mehr pauschal wieder in dieselbe WebView gezwungen;
+- eigener Swift/Foundation-Regressionscheck für Routing/Navigation;
+- zentrale Versionsquelle `native/GradeCrewTeacher/VERSION` eingeführt; Workflow, Routingtest und Projektgenerator lesen denselben Wert.
 
-Das bisherige provisorische blaue Beta-Icon mit weißem Haken ist ersetzt.
+Nachweis:
+- 0.1.7 Run `37075335026`: SUCCESS;
+- Routingtest: grün;
+- Navigationstest: grün;
+- Xcode Archive: grün;
+- App Store Connect/TestFlight Upload: grün.
 
-Verbindliche Markenquelle bleibt das zentrale Design-System:
-- Manifest: `shared/gradecrew-design/assets.json`;
-- semantischer Eintrag: `brand.icon`;
-- kanonisches Asset: `assets/gradecrew/brand-icon-v1.svg`;
-- keine separate Neuzeichnung oder Teacher-spezifische Logo-Kopie.
+## 0.1.8 – Downloads, Share, Upload-/Medienbasis
 
-`native/GradeCrewTeacher/prepare_testflight_assets.py` liest den semantischen `brand.icon`-Pfad aus dem Manifest. Auf dem macOS-CI-Runner wird das SVG gerastert, über CoreGraphics auf die gemeinsame Surface-Farbe komponiert und als opakes `1024x1024`-PNG für den iOS-AppIcon-Katalog ausgegeben. Der Build validiert PNG-Signatur, Abmessungen und fehlende Alpha-Transparenz. Änderungen unter `assets/gradecrew/**` sind jetzt ebenfalls TestFlight-Workflow-Trigger.
+Umgesetzt:
+- `WKDownloadDelegate` in der App-Shell;
+- Navigations- und Response-Downloads werden als echte WKDownloads übernommen;
+- `Content-Disposition: attachment` und nicht darstellbare MIME-Typen lösen nativen Download aus;
+- Downloads landen nur temporär in einem GradeCrew-Tempverzeichnis;
+- Dateinamen werden vor dem Schreiben bereinigt;
+- nach erfolgreichem Download öffnet sich ein natives `UIActivityViewController`-Share-Sheet;
+- damit stehen u. a. „In Dateien sichern“, AirDrop und kompatible Apps systemgerecht zur Verfügung;
+- iPad-Popover für das Share-Sheet korrekt konfiguriert;
+- temporäre Dateien werden nach Abschluss des Share-Sheets aufgeräumt;
+- Downloadfehler erhalten eine native GradeCrew-Fehlermeldung;
+- Kamera-, Fotomediathek- und Mikrofon-Nutzungsbeschreibungen in den generierten App-Infos ergänzt;
+- WebKit-Medienfreigabe wird nur für vertrauenswürdige GradeCrew-Ursprünge gewährt; externe Ursprünge werden abgewiesen;
+- Download-/Navigationspolicy hat einen eigenen Swift-Regressionscheck.
 
-Der erste Renderansatz stoppte vor Archive/Upload, weil der alte AppKit-Bitmap-Kontext das gerenderte Bild nicht flatten konnte. Es wurde kein fehlerhaftes Paket hochgeladen. Der gehärtete CoreGraphics-Pfad war anschließend grün. Der erfolgreiche Log bestätigt explizit:
-`Prepared canonical GradeCrew AppIcon from assets/gradecrew/brand-icon-v1.svg ... opaque 1024x1024.`
-Xcode erzeugte daraus die iPhone- und iPad-AppIcon-Varianten und akzeptierte das Asset ohne Fehler.
+Wichtig: Die WKDownload-Unterstützung deckt Navigation-/Response-Downloads ab. Ob jeder bestehende rein JavaScript-erzeugte Blob-Export der Webplattform direkt als WKDownload ankommt, muss am echten Gerät geprüft werden. Falls ein bestimmter Blob-Export nicht ins native Share-Sheet gelangt, wird dieser gezielt über die geplante Web↔Native-Bridge statt über weitere WKWebView-Sonderfälle angebunden.
 
-## Versionierung
+## Signing-/CI-Härtung
 
-Für 0.1.6 sind Workflow und `generate_project.py` beide auf `0.1.6` synchronisiert. Der GitHub-Run liefert weiterhin die eindeutige Buildnummer. Der erfolgreiche kanonische Kontrolllauf ist damit `0.1.6 (12)`.
+Während eines 0.1.8-Zwischenbuilds wurde ein bestehendes CI-Problem sichtbar: automatische Development-Signierung auf frischen GitHub-Runnern hatte das Apple-Zertifikatslimit erreicht (`Your account has reached the maximum number of certificates`). Der App-Code war nicht die Ursache.
 
-## Bestehende App-Shell
+Die Pipeline wurde deshalb geändert, ohne Zertifikate zu löschen oder zu widerrufen:
+- Release-Archive wird in CI ohne Development-Signatur gebaut (`CODE_SIGNING_ALLOWED=NO`);
+- Distribution-Signierung erfolgt erst beim App-Store-Connect-Export über die vorhandene Apple/API-Key-Konfiguration;
+- dadurch muss ein frischer Runner nicht für jeden Build ein weiteres Development-Zertifikat erzeugen.
 
-Weiterhin vorhanden:
-- persistenter `WKWebsiteDataStore.default()` für die Web-Anmeldung;
-- native alert/confirm/prompt-Dialoge;
-- Safe-Area-/Keyboard-Grundlagen;
-- Webprozess-Fehlerzustand und Retry;
-- Preview-Host-Validierung;
-- automatisierter TestFlight-Cloudbuild und Apple-Signing;
-- Integration-Preview als Standard und normales Staging als Fallback.
+Der finale Run `37075968920` bestätigt diesen Pfad Ende-zu-Ende:
+- `Building GradeCrew 0.1.8`;
+- Beta-Routing: passed;
+- Navigation/Download policy: passed;
+- AppIcon/Projektgenerierung: passed;
+- unsigned Release Archive: `ARCHIVE SUCCEEDED`;
+- Cloud-Sign/Export/Upload: `Upload succeeded` / `EXPORT SUCCEEDED`;
+- kompletter Job: SUCCESS.
 
-## Architekturentscheidung bleibt bestehen
+## Aktueller Statusnachweis
 
-Nicht sofort die komplette Webplattform nativ nachbauen. Solange Dashboard, Tutorial, KI-/Crew-Funktionen, Security und Design schnell weiterentwickelt werden, bleibt die Webplattform die Single Source of Truth. Die nächste Native-Stufe soll gezielt App-Mehrwert schaffen, statt Auth-, Daten- und UI-Logik zu duplizieren.
-
-Nächste Shell-Schritte nach Gerätetest:
-1. permanente Beta-Leiste aus dem Alltagslayout entfernen und Diagnose diskret erreichbar machen;
-2. klare WKWebView-Navigation-Policy: intern in GradeCrew, externe Ziele systemgerecht öffnen;
-3. Downloads/CSV/PDF/Share-Sheet sowie Upload/Kamera sauber nativ unterstützen;
-4. schmale Web↔Native-Bridge für Share, externe Links, Diagnose und später Scanner/Haptik;
-5. Offline-/Webprozess-Recovery und Release-/Host-Diagnose verbessern;
-6. Native-Verhaltenstests ausbauen;
-7. AppIcon/Launch-Auftritt auf dem echten iPad/iPhone visuell abnehmen.
-
-## Statusnachweis
-
-- Code auf Logo-Aufgabenbranch: ja, `feature/ios-brand-icon-v1`.
-- In kanonischen App-Branch integriert: ja, Fast-Forward auf `899bc363...`.
-- Kanonische Brand-Quelle statt Logo-Kopie: ja.
-- SVG -> opakes 1024x1024 AppIcon in CI: grün.
-- Routing-Test: grün.
-- Xcode Archive/Signing: grün.
-- App Store Connect/TestFlight Upload: grün, Runs `37024138336` und `37024529022`.
-- Letzter erfolgreicher Build: `0.1.6 (12)`.
-- Physischer iPhone-/iPad-Test von 0.1.6 und visuelle Bestätigung des Icons: offen.
+- 0.1.7 Code: umgesetzt und durch vollständigen TestFlight-Run bestätigt.
+- 0.1.8 Code: umgesetzt.
+- Aufgabenbranch: `feature/ios-app-shell-017-018` @ `79598be8...`.
+- Kanonischer App-Branch: per Fast-Forward auf exakt `79598be8...` integriert.
+- App-Version: `0.1.8`.
+- Build: `17` im erfolgreichen finalen Run.
+- Routingtest: grün.
+- Navigation-/Downloadtest: grün.
+- Xcode-Kompilierung/Archive: grün.
+- Distribution-Signing: grün.
+- App Store Connect/TestFlight Upload: grün.
+- Apple-Verarbeitung/installierbar: nach Upload noch separat zu bestätigen.
+- Physischer iPhone-/iPad-Test: offen.
 - Production: unverändert.
 
-## Nächster ausführbarer Schritt
+## Gerätetest 0.1.8
 
-Sobald Apple 0.1.6 in TestFlight verarbeitet hat: auf dem iPad in TestFlight aktualisieren. Prüfen, ob das echte GradeCrew-Markensymbol in TestFlight und auf dem Home-Bildschirm angezeigt wird und ob unten weiterhin `Integration` steht. Erst danach ist das AppIcon auch am Gerät bestätigt.
+Nach Apple-Verarbeitung in TestFlight auf `0.1.8` aktualisieren und nacheinander prüfen:
+1. Login/Session bleiben erhalten; Integration-Preview lädt normal.
+2. Permanente Beta-Leiste ist verschwunden.
+3. Zwei Finger etwa eine Sekunde auf die Webansicht halten → `GradeCrew Diagnose` öffnet sich.
+4. Interner GradeCrew-Link bleibt in der App; externer Link öffnet systemgerecht außerhalb.
+5. CSV/PDF/sonstigen Export auslösen → natives Share-Sheet; „In Dateien sichern“ und wenn sinnvoll AirDrop testen.
+6. PDF/Bild über den bestehenden GradeCrew-Upload auswählen.
+7. Kamera aus einem passenden Upload-Feld verwenden und Berechtigungsdialog prüfen.
+8. Remy-Spracheingabe/Mikrofon prüfen.
+
+Erst nach diesem Test sind 0.1.7/0.1.8 `user_tested`.
+
+## Danach
+
+Nächster sinnvoller Native-Block ist die schmale Web↔Native-Bridge (Share/Export, externe Links, Diagnose, später Scanner/Haptik) plus Offline-/Recovery-Härtung. Keine vollständige native Doppelimplementierung von Editor/KI/Dashboard beginnen, solange die Webplattform dort die aktiv weiterentwickelte Single Source of Truth bleibt.
