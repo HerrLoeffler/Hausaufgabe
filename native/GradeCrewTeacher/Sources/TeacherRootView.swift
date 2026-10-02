@@ -17,13 +17,18 @@ struct TeacherRootView: View {
         GradeCrewBetaEnvironment.environmentLabel(for: previewPreference)
     }
 
+    private var buildNumber: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             GradeCrewWebView(
                 url: homeURL,
                 reloadID: reloadID,
                 isLoading: $isLoading,
-                errorMessage: $loadError
+                errorMessage: $loadError,
+                onShowDiagnostics: openDiagnostics
             )
 
             if isLoading {
@@ -56,6 +61,9 @@ struct TeacherRootView: View {
                         }
                         .buttonStyle(.bordered)
                     }
+                    Button("Diagnose") { openDiagnostics() }
+                        .buttonStyle(.plain)
+                        .font(.footnote)
                 }
                 .padding(GradeCrewDesignTokens.Spacing.xl)
                 .frame(maxWidth: 420)
@@ -67,41 +75,33 @@ struct TeacherRootView: View {
             }
         }
         .background(GradeCrewDesignTokens.Colors.background)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            HStack(spacing: 12) {
-                Text("Beta \(GradeCrewAppEnvironment.version) · \(environmentLabel)")
-                    .font(.caption).foregroundStyle(.secondary)
-                Spacer()
-                Button {
-                    pendingPreview = previewPreference == GradeCrewBetaEnvironment.stablePreference ? "" : previewPreference
-                    settingsError = nil
-                    showBetaSettings = true
-                } label: { Label("Beta-Einstellungen", systemImage: "gearshape") }
-                    .font(.caption).frame(minHeight: 44)
-            }.padding(.horizontal, 16).background(.regularMaterial)
-        }
         .sheet(isPresented: $showBetaSettings) {
             NavigationStack {
                 Form {
+                    Section("App") {
+                        LabeledContent("Version", value: GradeCrewAppEnvironment.version)
+                        LabeledContent("Build", value: buildNumber)
+                        LabeledContent("Umgebung", value: environmentLabel)
+                    }
                     Section("Aktuell geöffnet") {
                         Text(homeURL.host ?? environmentLabel).textSelection(.enabled)
-                        Text("\(environmentLabel) · GradeCrew \(GradeCrewAppEnvironment.version)")
+                        Text("Die Diagnose ist im normalen App-Alltag unsichtbar. In der Webansicht mit zwei Fingern etwa eine Sekunde gedrückt halten, um sie erneut zu öffnen.")
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                     Section("Automatischer Integrationsstand") {
                         Text("TestFlight öffnet standardmäßig den automatisch geprüften GradeCrew-Integrationskanal. Neue Webstände erscheinen dort nach grüner CI und verifiziertem Preview-Deploy, ohne neuen iOS-Build.")
                         Button("Aktuelle Integration öffnen") {
                             previewPreference = ""
-                            loadError = nil
-                            isLoading = true
-                            reloadID += 1
-                            showBetaSettings = false
+                            reloadAndCloseDiagnostics()
                         }
                     }
                     Section("Andere Staging-Preview") {
                         Text("Nur für gezielte Tests: eine andere hausaufgabe-staging Preview-Adresse einsetzen. Production-Adressen werden abgewiesen.")
                         TextField("https://hausaufgabe-staging--….web.app", text: $pendingPreview)
-                            .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .keyboardType(.URL)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                         if let settingsError { Text(settingsError).foregroundStyle(.red) }
                         Button("Andere Preview öffnen") {
                             guard let url = GradeCrewBetaEnvironment.previewURL(from: pendingPreview) else {
@@ -109,27 +109,38 @@ struct TeacherRootView: View {
                                 return
                             }
                             previewPreference = url.absoluteString
-                            loadError = nil
-                            isLoading = true
-                            reloadID += 1
-                            showBetaSettings = false
+                            reloadAndCloseDiagnostics()
                         }
                         Button("Normales Staging öffnen") {
                             previewPreference = GradeCrewBetaEnvironment.stablePreference
-                            loadError = nil
-                            isLoading = true
-                            reloadID += 1
-                            showBetaSettings = false
+                            reloadAndCloseDiagnostics()
                         }
                     }
                     Section {
                         Text("Beim Wechsel wird die Seite neu geladen. Speichere vorher offene Änderungen.")
                     }
                 }
-                .navigationTitle("GradeCrew Beta")
+                .navigationTitle("GradeCrew Diagnose")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Schließen") { showBetaSettings = false } } }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Schließen") { showBetaSettings = false }
+                    }
+                }
             }
         }
+    }
+
+    private func openDiagnostics() {
+        pendingPreview = previewPreference == GradeCrewBetaEnvironment.stablePreference ? "" : previewPreference
+        settingsError = nil
+        showBetaSettings = true
+    }
+
+    private func reloadAndCloseDiagnostics() {
+        loadError = nil
+        isLoading = true
+        reloadID += 1
+        showBetaSettings = false
     }
 }
