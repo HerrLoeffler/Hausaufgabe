@@ -86,7 +86,9 @@ test('shared helper stores namespaced local preferences and fails safely on miss
   const { w } = runLocalScripts('design-system');
   try {
     assert.equal(w.GradeCrewGamesDesign.saveLocalPreference('fast-quiz', 'last-setup', { mode: 'mental' }), true);
-    assert.deepEqual(w.GradeCrewGamesDesign.loadLocalPreference('fast-quiz', 'last-setup'), { mode: 'mental' });
+    const saved = w.GradeCrewGamesDesign.loadLocalPreference('fast-quiz', 'last-setup');
+    assert.equal(saved.mode, 'mental');
+    assert.equal(Object.keys(saved).length, 1);
     assert.equal(w.GradeCrewGamesDesign.loadLocalPreference('fast-quiz', 'missing', 'fallback'), 'fallback');
     assert.throws(() => w.GradeCrewGamesDesign.saveLocalPreference('../bad', 'x', {}));
   } finally { w.close(); }
