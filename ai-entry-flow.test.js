@@ -78,6 +78,8 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(entry, /aria-hidden/);
   assert.match(entry, /aria-live/);
+  assert.match(entry, /id=\"gcEntryTutorialTitle\"/);
+  assert.match(css, /grid-template-areas:\s*\"lead\" \"crew\" \"actions\"/);
 });
 
 test('new public styling cannot target secure student screens', () => {
