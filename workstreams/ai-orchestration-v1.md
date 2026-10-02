@@ -4,7 +4,7 @@ Stand 2026-10-02. Branch `feature/ai-orchestration-v1`, Basis `890a01180ef7bfb41
 
 Auftrag: automatische, qualitätsgebundene Modellauswahl pro Aufgabe; getrenntes begrenztes Evaluationsbudget, nachvollziehbare Modell-/Kostenstatistik; gezielter Architekturcheck. Automatische Wechsel zwischen qualifizierten Routen sind ausdrücklich gewünscht. Keine Bestätigung pro Nutzeranfrage.
 
-Release-Stufe: branch_only, Implementierung läuft. Keine neuen realen Modellnachweise oder Deployments.
+Release-Stufe: branch_only, erster ausführbarer Code gesichert. Lokal: 23 Gatewaytests, 14 Qualitätsverträge, 2 Adminansichttests sowie 127 unveränderte Functions-Tests grün. Lokaler Firestore-Emulator durch Java <21 blockiert; CI mit Java 21 wird eingerichtet. Keine neuen realen Modellnachweise oder Deployments.
 
 Dateien: ai-gateway/**, shared/intelligence/**, tools/evaluation/**, eigene Adminansicht und Tests. Bestehende Firebase-Aufrufer werden erst mit erhaltenen Auth-/Quota-/Schema-Grenzen angebunden. Keine parallele Telemetriedatenbank für Inhaltsdaten.
 

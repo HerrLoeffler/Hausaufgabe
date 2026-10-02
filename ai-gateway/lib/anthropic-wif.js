@@ -22,15 +22,7 @@ async function readResponseBody(response) {
 }
 
 function describeFailure(prefix, response, body) {
-  const requestId = body && body.request_id ? ` request_id=${body.request_id}` : '';
-  const detail = body && body.error && body.error.message
-    ? body.error.message
-    : body && body.message
-      ? body.message
-      : body && body.raw
-        ? body.raw.slice(0, 300)
-        : response.statusText;
-  return new Error(`${prefix}: HTTP ${response.status}${requestId}${detail ? ` - ${detail}` : ''}`);
+  return new Error(`${prefix}: HTTP ${response.status}`);
 }
 
 function createAnthropicWifTokenProvider({ fetchImpl = fetch, now = () => Date.now(), config }) {
@@ -40,7 +32,9 @@ function createAnthropicWifTokenProvider({ fetchImpl = fetch, now = () => Date.n
   if (!config) throw new Error('Anthropic WIF config is required');
 
   async function exchange() {
+    const signal = AbortSignal.timeout(10000);
     const metadataResponse = await fetchImpl(buildMetadataUrl(config.audience), {
+      signal,
       headers: { 'Metadata-Flavor': 'Google' },
     });
     if (!metadataResponse.ok) {
@@ -61,6 +55,7 @@ function createAnthropicWifTokenProvider({ fetchImpl = fetch, now = () => Date.n
 
     const tokenResponse = await fetchImpl(`${config.baseUrl}${TOKEN_PATH}`, {
       method: 'POST',
+      signal,
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(exchangeBody),
     });
@@ -72,8 +67,9 @@ function createAnthropicWifTokenProvider({ fetchImpl = fetch, now = () => Date.n
       throw new Error('Anthropic WIF token exchange returned no access_token');
     }
 
-    const expiresInSeconds = Number(body.expires_in || 3600);
-    const expiresAt = now() + Math.max(60, expiresInSeconds) * 1000;
+    const expiresInSeconds = Number(body.expires_in);
+    if (!Number.isFinite(expiresInSeconds) || expiresInSeconds <= 0) throw new Error('INVALID_TOKEN_EXPIRY');
+    const expiresAt = now() + expiresInSeconds * 1000;
     cached = { accessToken: body.access_token, expiresAt, scope: body.scope || null };
     return cached.accessToken;
   }

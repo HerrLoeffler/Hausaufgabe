@@ -6,7 +6,7 @@ export const SCOPE_KEYS = Object.freeze([
 ]);
 const JOBS = ['test_generation', 'multiple_choice_generation', 'distractor_generation', 'solution_verification',
   'free_text_grading', 'curriculum_matching', 'student_tutoring', 'question_rewriting', 'quality_control',
-  'image_generation', 'speech_recognition', 'text_to_speech'];
+  'image_generation', 'speech_recognition', 'text_to_speech', 'game_content_generation', 'game_hint', 'crew_intent'];
 function reject(code) { throw new Error(code); }
 function probability(x) { return Number.isFinite(x) && x > 0 && x < 1; }
 function scope(value) {
