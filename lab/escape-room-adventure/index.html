@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#101827">
+  <title>GradeCrew Escape Adventure – Raum 1</title>
+  <link rel="stylesheet" href="shared/gradecrew-brand.css">
+  <link rel="stylesheet" href="shared/crew-clay.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-shell" aria-label="Escape Adventure Prototyp">
+    <header class="hud">
+      <div class="hud-title">
+        <span class="eyebrow">ESCAPE · ADVENTURE PROTOTYP</span>
+        <strong>Die verriegelte Schule · Klassenzimmer</strong>
+      </div>
+      <div class="hud-stats" aria-live="polite">
+        <span id="learningStat">Lernen 0/3</span>
+        <span id="clueStat">Code 0/3</span>
+        <button id="resetBtn" class="hud-button" type="button">Neu starten</button>
+      </div>
+    </header>
+
+    <section class="play-layout">
+      <div class="stage-card">
+        <canvas id="gameCanvas" width="960" height="600" aria-label="Steuerbares Klassenzimmer"></canvas>
+        <div id="interactionPrompt" class="interaction-prompt" hidden>
+          <span id="interactionText">Interagieren</span>
+          <button id="interactBtn" type="button">E · Interagieren</button>
+        </div>
+        <div class="control-hint" id="controlHint">
+          <span class="desktop-hint">WASD / Pfeile · E zum Interagieren · Klick zum Hinlaufen</span>
+          <span class="touch-hint">Tippe auf den Boden oder nutze das Steuerkreuz · Interagieren erscheint in der Nähe</span>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <section class="coco-card">
+          <img src="shared/penguin-guide.svg#pose-1" alt="Coco" class="coco-avatar">
+          <div>
+            <span class="eyebrow">COCO</span>
+            <strong id="cocoTitle">Wir sind eingeschlossen!</strong>
+            <p id="cocoText">Erkunde das Klassenzimmer. Wenn du nahe genug an einem Objekt bist, kannst du damit interagieren.</p>
+          </div>
+        </section>
+
+        <section class="inventory-card">
+          <div class="section-heading">
+            <span class="eyebrow">INVENTAR</span>
+            <span id="inventoryCount">0/3</span>
+          </div>
+          <div id="inventory" class="inventory-slots" aria-live="polite"></div>
+        </section>
+
+        <section class="mission-card">
+          <span class="eyebrow">RAUMZIEL</span>
+          <strong>Öffne die Klassenzimmertür.</strong>
+          <ol id="missionList">
+            <li data-step="battery">Batterie finden</li>
+            <li data-step="flashlight">Taschenlampe aktivieren</li>
+            <li data-step="code">Dreistelligen Türcode zusammensetzen</li>
+          </ol>
+        </section>
+      </aside>
+    </section>
+
+    <div class="touch-controls" aria-label="Touch-Steuerung">
+      <div class="dpad">
+        <button data-dir="up" aria-label="Nach oben">▲</button>
+        <button data-dir="left" aria-label="Nach links">◀</button>
+        <button data-dir="down" aria-label="Nach unten">▼</button>
+        <button data-dir="right" aria-label="Nach rechts">▶</button>
+      </div>
+      <button id="touchInteractBtn" class="touch-action" type="button" disabled>Interagieren</button>
+    </div>
+  </main>
+
+  <dialog id="questionDialog" class="game-dialog">
+    <form method="dialog" class="dialog-card" id="questionForm">
+      <button class="dialog-close" value="cancel" aria-label="Schließen">×</button>
+      <span class="eyebrow">LERNAUFGABE</span>
+      <h2 id="questionTitle">Aufgabe</h2>
+      <p id="questionPrompt"></p>
+      <div id="questionOptions" class="answer-grid"></div>
+      <div id="questionFeedback" class="feedback" aria-live="polite"></div>
+      <div class="dialog-actions">
+        <button id="hintBtn" class="secondary" type="button">Coco-Hinweis</button>
+        <button id="checkAnswerBtn" class="primary" type="button">Antwort prüfen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="transferDialog" class="game-dialog">
+    <form method="dialog" class="dialog-card">
+      <span class="eyebrow">KURZER LERNCHECK</span>
+      <h2>Zeig, dass das Prinzip sitzt</h2>
+      <p id="transferExplanation" class="learning-box"></p>
+      <p id="transferPrompt"></p>
+      <label class="text-answer">
+        <span>Antwort</span>
+        <input id="transferInput" autocomplete="off" inputmode="decimal" placeholder="Antwort eingeben">
+      </label>
+      <div id="transferFeedback" class="feedback" aria-live="polite"></div>
+      <div class="dialog-actions">
+        <button id="transferCheckBtn" class="primary" type="button">Lerncheck prüfen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="boardDialog" class="game-dialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="cancel" aria-label="Schließen">×</button>
+      <span class="eyebrow">TAFELRÄTSEL</span>
+      <h2>2 · 4 · 6 · ?</h2>
+      <p>Welche Zahl setzt das Muster fort?</p>
+      <div class="code-entry single-digit">
+        <input id="boardInput" inputmode="numeric" maxlength="1" aria-label="Nächste Zahl">
+      </div>
+      <div id="boardFeedback" class="feedback" aria-live="polite"></div>
+      <div class="dialog-actions"><button id="boardCheckBtn" class="primary" type="button">Prüfen</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="doorDialog" class="game-dialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="cancel" aria-label="Schließen">×</button>
+      <span class="eyebrow">KLASSENZIMMERTÜR</span>
+      <h2>Dreistelligen Code eingeben</h2>
+      <p id="doorHintText">Im Raum sind drei Codefragmente versteckt.</p>
+      <div class="code-entry">
+        <input id="doorInput" inputmode="numeric" maxlength="3" aria-label="Türcode" placeholder="_ _ _">
+      </div>
+      <div id="doorFeedback" class="feedback" aria-live="polite"></div>
+      <div class="dialog-actions"><button id="doorCheckBtn" class="primary" type="button">Tür öffnen</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="victoryDialog" class="game-dialog victory-dialog">
+    <form method="dialog" class="dialog-card victory-card">
+      <img src="shared/penguin-guide.svg#pose-4" alt="Coco" class="victory-coco">
+      <span class="eyebrow">RAUM 1 GESCHAFFT</span>
+      <h2>Die Tür springt auf! 🎉</h2>
+      <p>Du hast drei Lernaufgaben gelöst, Gegenstände kombiniert und den Code gefunden. Der nächste Raum ist in diesem Prototyp noch nicht gebaut.</p>
+      <div class="victory-stats" id="victoryStats"></div>
+      <button id="victoryRestartBtn" class="primary" value="close">Raum nochmal spielen</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
