@@ -11,7 +11,8 @@ function installGradeCrewDesignStyles() {
   const styles = [
     ["./generated/gradecrew-design-tokens.css?v=1.1.0", "tokens-1.1.0"],
     ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"],
-    ["./gradecrew-logo.css?v=1", "brand-logo-v1"]
+    ["./gradecrew-logo.css?v=1", "brand-logo-v1"],
+    ["./gradecrew-auth-startscreen.css?v=1", "auth-startscreen-v1"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
