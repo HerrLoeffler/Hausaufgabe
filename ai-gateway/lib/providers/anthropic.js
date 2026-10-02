@@ -12,48 +12,39 @@ function extractText(message) {
 }
 
 function normalizeMessages(messages) {
-  if (!Array.isArray(messages) || messages.length === 0) {
-    throw new Error('messages must be a non-empty array');
-  }
+  if (!Array.isArray(messages) || messages.length === 0) throw new Error('messages must be a non-empty array');
   return messages.map((message) => {
-    if (!message || !['user', 'assistant'].includes(message.role)) {
-      throw new Error('Each message role must be user or assistant');
-    }
-    if (typeof message.content !== 'string' && !Array.isArray(message.content)) {
-      throw new Error('Each message content must be a string or content-block array');
-    }
+    if (!message || !['user', 'assistant'].includes(message.role)) throw new Error('Each message role must be user or assistant');
+    if (typeof message.content !== 'string' && !Array.isArray(message.content)) throw new Error('Each message content must be a string or content-block array');
     return { role: message.role, content: message.content };
   });
 }
 
+function selectModel(request, config) {
+  const model = String(request.model || config.defaultModel || '').trim();
+  const allowed = Array.isArray(config.allowedModels) && config.allowedModels.length ? config.allowedModels : [config.defaultModel];
+  if (!model || !allowed.includes(model)) throw new Error('MODEL_NOT_ALLOWED');
+  return model;
+}
+
 function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
-  if (!tokenProvider || typeof tokenProvider.getAccessToken !== 'function') {
-    throw new Error('Anthropic token provider is required');
-  }
+  if (!tokenProvider || typeof tokenProvider.getAccessToken !== 'function') throw new Error('Anthropic token provider is required');
   if (!config) throw new Error('Anthropic config is required');
 
   async function generate(request, { signal } = {}) {
     const maxTokens = request.max_tokens === undefined ? 512 : request.max_tokens;
     if (!Number.isSafeInteger(maxTokens) || maxTokens < 1 || maxTokens > 16000) throw new Error('OUTPUT_LIMIT');
     if (request.temperature !== undefined && (!Number.isFinite(request.temperature) || request.temperature < 0 || request.temperature > 1)) throw new Error('INVALID_TEMPERATURE');
+    const model = selectModel(request, config);
     const messages = normalizeMessages(request.messages);
     if (signal?.aborted) throw new Error('CANCELLED');
     const accessToken = await tokenProvider.getAccessToken();
-    const body = {
-      model: request.model || config.defaultModel,
-      max_tokens: maxTokens,
-      messages,
-    };
-    if (typeof request.system === 'string' && request.system.trim()) {
-      body.system = request.system.trim();
-    }
-    if (request.temperature !== undefined) {
-      body.temperature = Number(request.temperature);
-    }
+    const body = { model, max_tokens: maxTokens, messages };
+    if (typeof request.system === 'string' && request.system.trim()) body.system = request.system.trim();
+    if (request.temperature !== undefined) body.temperature = Number(request.temperature);
 
     const response = await fetchImpl(`${config.baseUrl}/v1/messages`, {
-      method: 'POST',
-      signal,
+      method: 'POST', signal,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'anthropic-version': API_VERSION,
@@ -64,7 +55,9 @@ function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
 
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
-      const error = new Error('PROVIDER_HTTP_ERROR'); error.status = response.status; throw error;
+      const error = new Error('PROVIDER_HTTP_ERROR');
+      error.status = response.status;
+      throw error;
     }
     if (!payload || typeof payload !== 'object' || !Array.isArray(payload.content)) throw new Error('INVALID_PROVIDER_RESPONSE');
 
@@ -78,11 +71,7 @@ function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
     };
   }
 
-  return {
-    id: 'anthropic',
-    capabilities: ['text', 'vision'],
-    generate,
-  };
+  return { id: 'anthropic', capabilities: ['text', 'vision'], generate };
 }
 
 module.exports = {
@@ -90,4 +79,5 @@ module.exports = {
   createAnthropicProvider,
   extractText,
   normalizeMessages,
+  selectModel,
 };
