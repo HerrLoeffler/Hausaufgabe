@@ -9,13 +9,20 @@ Das ausgewählte GC+Bildungs-Symbol zunächst als Hauptlogo der normalen GradeCr
 - Feature-Branch: `feature/brand-logo-v1`
 - Feature-Head: `4fa14f111ef92ba5dc01b00ccfa9edad68fbf526`
 - In Web-Integrationsbranch integriert: ja
-- Aktueller geprüfter Integrationscommit: `27ebf56775a5597cd06226a3dbbbf50d76f18f5e`
-- Integrations-CI: `36983854068` erfolgreich
-- Mobile-Tutorial-Check auf identischem Produktcode vor reinem Handoff-Commit: `36983783832` erfolgreich
-- Automatic staging preview: `36984017434` erfolgreich gebaut, Preview deployed und veröffentlichte Manifest-/Dateihashes verifiziert
+- Aktueller geprüfter Integrationscommit: `bb3f8bcef9be23c3cdc706772ecd21892668fa66`
+- Integrations-CI: `36990775917` erfolgreich
+- Automatic staging preview: `36990944103` erfolgreich gebaut, Preview deployed und veröffentlichte Manifest-/Dateihashes verifiziert
 - Preview: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app`
 - Geräte-/visuelle Abnahme durch Martin: offen
 - Production: unverändert / nicht angefordert
+
+## Aktuelle Logoquelle
+- Die zuvor manuell nachgebaute SVG wurde verworfen.
+- Die von Martin am 02.10.2026 bereitgestellte echte Vektor-SVG `image.svg` ist jetzt die verbindliche visuelle Quelle für GradeCrew Hauptlogo V1.
+- Kanonische Runtime-Datei: `assets/gradecrew/brand-primary-v1.svg`.
+- Die hochgeladene SVG enthält echte Vektorpfade (17 `path`-Elemente) und keine eingebettete Rastergrafik (`image`-Elemente: 0).
+- Für die Runtime wurde ausschließlich die große eingebettete C2PA-Metadatenstruktur entfernt. Sichtbare Geometrie, Pfade, Farben, Verlauf und `viewBox="0 0 1254 1254"` stammen unverändert aus der bereitgestellten SVG.
+- Dadurch sinkt die Runtime-Dateigröße ungefähr von 80 KB auf 9 KB, ohne die sichtbare Logozeichnung neu zu interpretieren oder nachzuzeichnen.
 
 ## Zentrale Architektur
 - Kanonische Logo-Datei: `assets/gradecrew/brand-primary-v1.svg`
@@ -43,6 +50,8 @@ Die konsumierenden Seiten und Apps müssen für einen reinen Logo-Tausch nicht g
 - Staging-Build enthält Asset-Map, Logo-CSS und kanonisches SVG.
 - CI prüft Brand-Branches explizit.
 - Preview-Automation baut exakt den getesteten Commit, verweigert stale Branches und prüft nach Veröffentlichung Manifest plus Dateihashes.
+- CI-Lauf `36990775917`: vollständig erfolgreich inklusive Browser-, Secure-, Firestore- und Staging-Build-Gates.
+- Preview-Lauf `36990944103`: Build, Branch-Head-Guard, Deployment und veröffentlichte Hash-Verifikation erfolgreich.
 
 ## Nächster Schritt
-Preview auf Desktop/iPad/iPhone visuell prüfen: Headerlogo, Größe/Ausrichtung und Browser-Favicon. Die Logoform selbst ist bewusst V1 und kann später über das Manifest ersetzt werden, ohne die Architektur erneut umzubauen.
+Preview auf Desktop/iPad/iPhone visuell prüfen: Headerlogo, Größe/Ausrichtung und Browser-Favicon. Wenn die Darstellung zu klein, zu groß oder optisch ungünstig sitzt, nur die Präsentations-CSS anpassen; die bereitgestellte SVG selbst nicht erneut nachzeichnen oder durch eine KI-Interpretation ersetzen.
