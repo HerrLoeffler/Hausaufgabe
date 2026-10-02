@@ -12,7 +12,7 @@ test("admin test-account controls are wired into the staging UI", () => {
 });
 
 test("role and test-account controls are admin-gated", () => {
-  assert.match(source, /profile\.role === "admin"/);
+  assert.match(source, /snap\.data\(\)\?\.role === "admin"/);
   assert.match(source, /gcAdminRoleSelect/);
   assert.match(source, /isTestAccount/);
   assert.match(source, /Als Testkonto markieren/);
