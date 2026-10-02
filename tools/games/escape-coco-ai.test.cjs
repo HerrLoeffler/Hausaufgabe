@@ -34,7 +34,8 @@ function openEscape() {
     'escape-tutor.js',
     'app.js',
     'escape-teacher-compact.js',
-    'escape-coco-ai.js'
+    'escape-coco-ai.js',
+    'escape-teacher-flow.js'
   ]) {
     w.eval(fs.readFileSync(path.join(source, file), 'utf8'));
   }
@@ -61,8 +62,12 @@ test('Escape presents the canonical Coco artwork and compact AI teacher controls
   try {
     assert.equal(d.getElementById('remyHelpTitle').textContent, 'Frag Coco');
     assert.equal(d.getElementById('remyAskBtn').textContent, 'Coco fragen');
-    assert.match(d.querySelector('.remyAvatar img').getAttribute('src'), /assets\/gradecrew\/penguin-guide\.svg/);
-    assert.match(d.querySelector('#explorer img').getAttribute('src'), /assets\/gradecrew\/penguin-guide\.svg/);
+    assert.match(d.querySelector('.remyAvatar img').getAttribute('src'), /penguin-guide\.svg#pose-4/);
+    assert.match(d.querySelector('#explorer img').getAttribute('src'), /penguin-guide\.svg#pose-5/);
+    const cocoSvg = fs.readFileSync(path.join(root, 'assets', 'gradecrew', 'penguin-guide.svg'), 'utf8');
+    assert.match(cocoSvg, /<view id="pose-1"/);
+    assert.match(cocoSvg, /<view id="pose-6"/);
+    assert.doesNotMatch(cocoSvg, /Reduzierte Editorial-Illustration/);
     assert.ok(d.getElementById('teacherAiCard'));
     assert.ok(d.getElementById('teacherAiSubject'));
     assert.ok(d.getElementById('teacherAiGrade'));
@@ -70,6 +75,10 @@ test('Escape presents the canonical Coco artwork and compact AI teacher controls
     assert.ok(d.getElementById('teacherAiDifficulty'));
     assert.ok(d.getElementById('teacherAiNotes'));
     assert.match(d.getElementById('teacherAiGenerateBtn').textContent, /8 Escape-Aufgaben/);
+    assert.equal(d.getElementById('teacherAiLogin'), null);
+    assert.equal(d.getElementById('teacherAiEmail'), null);
+    assert.equal(d.getElementById('teacherAiPassword'), null);
+    assert.ok(d.getElementById('teacherAiConnection'));
   } finally {
     w.close();
   }
@@ -121,4 +130,36 @@ test('non-numeric subjects keep the AI type set automatically checkable and comp
   } finally {
     w.close();
   }
+});
+
+
+test('teacher preparation is the only new-run entry point before the Escape starts', () => {
+  const { w, d } = openEscape();
+  try {
+    const start = d.getElementById('startBtn');
+    const preview = d.getElementById('teacherPreviewBtn');
+    const teacherStart = d.getElementById('teacherStartBtn');
+    assert.equal(start.textContent.trim(), 'Escape vorbereiten');
+    assert.equal(preview.hidden, true);
+    assert.ok(teacherStart);
+    assert.equal(d.getElementById('gameView').hidden, true);
+
+    start.click();
+    assert.equal(d.getElementById('teacherDialog').open, true);
+    assert.equal(d.getElementById('gameView').hidden, true);
+
+    teacherStart.click();
+    assert.equal(d.getElementById('gameView').hidden, false);
+    assert.equal(d.getElementById('teacherDialog').open, false);
+  } finally {
+    w.close();
+  }
+});
+
+test('standalone Escape AI client has no Firebase login dependency', () => {
+  const sourceJs = fs.readFileSync(path.join(source, 'escape-coco-ai.js'), 'utf8');
+  assert.doesNotMatch(sourceJs, /firebase-auth/);
+  assert.doesNotMatch(sourceJs, /signInWithEmailAndPassword/);
+  assert.doesNotMatch(sourceJs, /teacherAiLogin/);
+  assert.match(sourceJs, /GradeCrewEscapeAiBridge/);
 });

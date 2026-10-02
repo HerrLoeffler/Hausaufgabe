@@ -1,4 +1,4 @@
-# GradeCrew Escape Room – Lern-MVP v0.4
+# GradeCrew Escape Room – Lern-MVP v0.5
 
 Lab-Prototyp für `GC-GAMES-01`. Die erste Welt heißt **„Die verriegelte Schule“** und wird auf `feature/escape-room-mvp-v1` zunächst als einzelnes Referenzspiel fertiggestellt. Erst nach Abnahme wird sie wieder in den gemeinsamen Games-Stand integriert.
 
@@ -59,7 +59,7 @@ Die Lehrer-Vorschau hat zusätzlich einen kompakten KI-Generator:
 - optional ein eigener Wunsch
 - Aktion **„8 Escape-Aufgaben erstellen“**
 
-Es wird **kein zweites KI-Backend** gebaut. Der Lab-Preview nutzt den vorhandenen authentifizierten GradeCrew-Callable `generateTest` in `europe-west1`. Für den eigenständigen Preview meldet sich die Lehrkraft einmal mit dem GradeCrew-Lehrerkonto an; in der späteren Haupt-App kann dieselbe UI über `GradeCrewEscapeAiBridge` die bestehende Sitzung nutzen.
+Es wird **kein zweites KI-Backend** gebaut. Der Lab-Preview nutzt den vorhandenen authentifizierten GradeCrew-Callable `generateTest` in `europe-west1`. Der eigenständige Preview zeigt bewusst **keine zweite Anmeldung**. Die echte KI-Erstellung wird erst in der GradeCrew-Lehreransicht über `GradeCrewEscapeAiBridge` und die dort bereits vorhandene Sitzung aktiviert. Im Lab bleiben die Beispielaufgaben vollständig prüf- und spielbar.
 
 Ein KI-Lauf erzeugt 16 bildfreie, automatisch prüfbare Aufgaben: die ersten 8 Hauptaufgaben und die Aufgaben 9–16 als passende Transferpaare. Nur die 8 Hauptaufgaben erscheinen als Lernslots. Die Transferaufgaben werden in die bestehende Lernschleife eingebaut. Spiellogik und Anti-Raten-Regeln werden niemals von der KI erzeugt.
 
@@ -134,3 +134,14 @@ Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetri
 - `tools/games/*.test.cjs`: Regressionstests
 
 Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
+
+
+## v0.5 – gemeinsamer Coco + Lehrer zuerst
+
+- Coco wird nicht mehr aus der alten Escape-Kopie gestaltet, sondern aus dem freigegebenen Shared-Design-System übernommen.
+- `penguin-guide.svg` nutzt die sechs offiziellen Clay-Posen; Escape verwendet `#pose-1` für Begrüßung, `#pose-4` für Hilfe und `#pose-5` beim Erkunden.
+- `gradecrew-brand.css` und `crew-clay.css` werden im isolierten Build aus der gemeinsamen GradeCrew-Wurzel übernommen. Escape-spezifische Styles liegen danach und dürfen nur Spielspezifika ergänzen.
+- Neue Runden starten nicht mehr direkt von der Startseite: **Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape starten**.
+- Der eigenständige Lab-Preview enthält keine E-Mail-/Passwort-Anmeldung mehr und ruft die geschützte GradeCrew-KI nicht anonym auf.
+- Die Generator-UI und der 16-Fragen-Vertrag bleiben vorbereitet. Erst wenn der Host `GradeCrewEscapeAiBridge` mit der bereits angemeldeten Lehrersitzung bereitstellt, wird der KI-Button aktiv.
+- Production bleibt unverändert.

@@ -90,7 +90,7 @@ Technik:
 - kein zweites KI-Backend
 - kein API-Key im Browser
 - Wiederverwendung des bestehenden authentifizierten GradeCrew-Callables `generateTest` in `europe-west1`
-- eigenständiger Escape-Preview: Lehrkraft meldet sich einmal mit ihrem GradeCrew-Lehrerkonto an
+- v0.4-Historie: der eigenständige Preview verlangte kurzzeitig eine Extra-Anmeldung; diese wird in v0.5 wieder entfernt
 - spätere Haupt-App: vorbereitete `GradeCrewEscapeAiBridge`, damit die vorhandene GradeCrew-Sitzung benutzt werden kann und keine zweite Anmeldung nötig ist
 - ein KI-Lauf erzeugt **16 bildfreie automatisch prüfbare Aufgaben**: 8 Hauptaufgaben + 8 zugeordnete Transferaufgaben
 - nur die 8 Hauptaufgaben erscheinen als Escape-Lernslots; die zweiten 8 werden als Transfer verwendet
@@ -200,3 +200,23 @@ Automatisierte Unit-/Build-/Deploy-Tests ersetzen diese echte Backend-/Gerätepr
 ## Wiederaufnahme
 
 Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, `docs/games/GRADECrew_ESCAPE_ADAPTER.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, parallele Branches/PRs, aktuellen CI-Stand und Preview-URL frisch prüfen. Code, GitHub-Sicherung, Tests, Deploy, KI-E2E, Gerätetest und Production immer getrennt berichten.
+
+
+## v0.5 – Shared Design + Lehrer-first (in Arbeit)
+
+Anforderung vom 02.10.2026:
+
+- exakt derselbe Coco wie im gemeinsamen GradeCrew-Designsystem, keine alte Escape-Pinguin-Kopie
+- keine Extra-Anmeldung im eigenständigen Escape-Lab
+- keine neue Runde direkt von der Startseite
+- Reihenfolge: **Lehrerbereich/Vorschau → Aufgaben festlegen bzw. prüfen → Start**
+
+Technische Entscheidung:
+
+- die offiziellen Coco-/Clay-Dateien werden unverändert aus `feature/shared-gradecrew-design-system` übernommen
+- `gradecrew-brand.css` bleibt gemeinsame Basissprache; `crew-clay.css` wird ebenfalls aus dem Shared-Design-System übernommen
+- echte KI bleibt geschützt und wird im Standalone-Lab nicht durch anonyme Zugriffe umgangen
+- `GradeCrewEscapeAiBridge` bleibt der Integrationspunkt für die später bereits angemeldete GradeCrew-Lehrersitzung
+- bestehende Escape-Spiel-/Lernlogik und der parallele Tutor-Cost-Guard-Branch werden nicht strukturell umgebaut
+
+**Prüfstatus:** wird durch den v0.5-Patch-Workflow getestet; danach separater Escape-only Staging-Deploy. Production bleibt unverändert.

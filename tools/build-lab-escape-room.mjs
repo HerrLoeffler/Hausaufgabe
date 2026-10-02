@@ -13,17 +13,19 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js', 'README.md'];
+const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js', 'escape-teacher-flow.js', 'README.md'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
-await fs.copyFile(path.join(root, 'firebase-config.staging.js'), path.join(output, 'firebase-config.js'));
+for (const sharedCss of ['gradecrew-brand.css', 'crew-clay.css']) {
+  await fs.copyFile(path.join(root, sharedCss), path.join(output, sharedCss));
+}
 await fs.mkdir(path.join(output, 'assets', 'gradecrew'), { recursive: true });
 for (const asset of ['penguin-guide.svg', 'penguin-guide-welcome.svg']) {
   await fs.copyFile(path.join(root, 'assets', 'gradecrew', asset), path.join(output, 'assets', 'gradecrew', asset));
 }
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'escape-v2.css', 'escape-data.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'escape-tutor.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js']) {
+for (const reference of ['gradecrew-brand.css', 'crew-clay.css', 'styles.css', 'escape-v2.css', 'escape-data.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'escape-tutor.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js', 'escape-teacher-flow.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
@@ -92,14 +94,14 @@ for (const marker of [
 
 const hashes = {};
 for (const name of files) hashes[name] = createHash('sha256').update(await fs.readFile(path.join(output, name))).digest('hex');
-for (const name of ['firebase-config.js', 'assets/gradecrew/penguin-guide.svg', 'assets/gradecrew/penguin-guide-welcome.svg']) {
+for (const name of ['gradecrew-brand.css', 'crew-clay.css', 'assets/gradecrew/penguin-guide.svg', 'assets/gradecrew/penguin-guide-welcome.svg']) {
   hashes[name] = createHash('sha256').update(await fs.readFile(path.join(output, name))).digest('hex');
 }
 
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'escape-room-locked-school',
   format: 3,
-  version: '0.4.0',
+  version: '0.5.0',
   files: hashes,
   features: {
     deterministicWorld: true,
@@ -112,6 +114,10 @@ await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
     antiGuessGuard: true,
     teacherQuestionEditing: true,
     cocoCanonicalArtwork: true,
+    sharedGradeCrewBrandSystem: true,
+    teacherFirstLaunch: true,
+    teacherStandaloneLogin: false,
+    teacherAiRequiresHostBridge: true,
     teacherAiGeneration: true,
     teacherAiUsesExistingGenerateTest: true,
     teacherAiPairedTransfers: true,
@@ -133,4 +139,4 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({
   }
 }, null, 2) + '\n');
 
-console.log('Escape Room MVP build verified: locked-school lab v0.4.0.');
+console.log('Escape Room MVP build verified: locked-school lab v0.5.0.');

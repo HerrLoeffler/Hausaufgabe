@@ -4,9 +4,9 @@
   const $ = id => document.getElementById(id);
   const D = window.GradeCrewEscapePrototype;
   const STORAGE_KEY = D ? `gradecrew-escape-teacher-set:${D.world.id}:${D.world.version}` : 'gradecrew-escape-teacher-set';
-  const COCO_PRIMARY = 'assets/gradecrew/penguin-guide.svg';
-  const COCO_WELCOME = 'assets/gradecrew/penguin-guide-welcome.svg';
-  let firebaseRuntimePromise = null;
+  const COCO_EXPLORER = 'assets/gradecrew/penguin-guide.svg#pose-5';
+  const COCO_HELP = 'assets/gradecrew/penguin-guide.svg#pose-4';
+  const COCO_WELCOME = 'assets/gradecrew/penguin-guide-welcome.svg#pose-1';
   let activeProfile = null;
 
   function clone(value) {
@@ -30,23 +30,19 @@
       .teacherAiHead p{margin:0;color:#53647c;font-size:.91rem;line-height:1.42}
       .teacherAiGrid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
       .teacherAiGrid label,.teacherAiNotes{display:grid;gap:.28rem;font-size:.78rem;font-weight:750;color:#3f4f66}
-      .teacherAiGrid input,.teacherAiGrid select,.teacherAiNotes textarea,.teacherAiLogin input{width:100%;box-sizing:border-box;border:1px solid #cfd9e8;border-radius:11px;background:#fff;padding:.68rem .75rem;font:inherit;color:#172033}
+      .teacherAiGrid input,.teacherAiGrid select,.teacherAiNotes textarea{width:100%;box-sizing:border-box;border:1px solid #cfd9e8;border-radius:11px;background:#fff;padding:.68rem .75rem;font:inherit;color:#172033}
       .teacherAiTopic{grid-column:1/-1}
       .teacherAiNotes{margin-top:.7rem}
       .teacherAiNotes textarea{resize:vertical;min-height:68px}
       .teacherAiActions{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-top:.85rem}
       .teacherAiActions .primaryButton{margin:0}
+      .teacherAiActions .primaryButton:disabled{opacity:.55;cursor:not-allowed}
       .teacherAiStatus{margin:.65rem 0 0;padding:.65rem .75rem;border-radius:11px;background:#fff;color:#41526a;font-size:.86rem;line-height:1.4}
       .teacherAiStatus.success{background:#eafaf1;color:#17643b}
       .teacherAiStatus.error{background:#fff0f0;color:#9b2c2c}
-      .teacherAiLogin{margin:.75rem 0;padding:.75rem;border-radius:13px;background:#fff;border:1px solid #dfe6f1}
-      .teacherAiLogin strong{display:block;margin-bottom:.15rem}
-      .teacherAiLogin p{margin:.1rem 0 .65rem;color:#65758b;font-size:.82rem}
-      .teacherAiLoginRow{display:grid;grid-template-columns:1fr 1fr auto;gap:.55rem;align-items:end}
-      .teacherAiLoginRow label{display:grid;gap:.25rem;font-size:.75rem;font-weight:700;color:#4b5c73}
       .teacherAiAccount{font-size:.78rem;color:#52709c}
       .teacherAiFineprint{margin:.55rem 0 0;color:#6b7a90;font-size:.75rem;line-height:1.35}
-      @media(max-width:720px){.teacherAiGrid{grid-template-columns:1fr}.teacherAiTopic{grid-column:auto}.teacherAiLoginRow{grid-template-columns:1fr}.teacherAiHead{grid-template-columns:58px 1fr}.teacherAiCoco{width:58px;height:58px}.teacherAiCoco img{width:54px;height:54px}}
+      @media(max-width:720px){.teacherAiGrid{grid-template-columns:1fr}.teacherAiTopic{grid-column:auto}.teacherAiHead{grid-template-columns:58px 1fr}.teacherAiCoco{width:58px;height:58px}.teacherAiCoco img{width:54px;height:54px}}
     `;
     document.head.append(style);
   }
@@ -62,10 +58,10 @@
 
   function applyCocoIdentity() {
     const explorer = $('explorer');
-    if (explorer && !explorer.querySelector('img')) explorer.replaceChildren(cocoImage(COCO_PRIMARY, 'cocoExplorerArt'));
+    if (explorer && !explorer.querySelector('img')) explorer.replaceChildren(cocoImage(COCO_EXPLORER, 'cocoExplorerArt gcClayCharacter'));
 
     const avatar = document.querySelector('.remyAvatar');
-    if (avatar) avatar.replaceChildren(cocoImage(COCO_PRIMARY, 'cocoHelpArt'));
+    if (avatar) avatar.replaceChildren(cocoImage(COCO_HELP, 'cocoHelpArt gcClayCharacter'));
     if ($('remyHelpTitle')) $('remyHelpTitle').textContent = 'Frag Coco';
     if ($('remyAskBtn')) $('remyAskBtn').textContent = 'Coco fragen';
     const microcopy = document.querySelector('#remyHelp .microcopy');
@@ -188,31 +184,6 @@
     };
   }
 
-  async function firebaseRuntime() {
-    if (firebaseRuntimePromise) return firebaseRuntimePromise;
-    firebaseRuntimePromise = (async () => {
-      const [appMod, authMod, functionsMod, configMod] = await Promise.all([
-        import('https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js'),
-        import('https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js'),
-        import('https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js'),
-        import('./firebase-config.js')
-      ]);
-      const existing = appMod.getApps().find(app => app.name === 'gradecrew-escape-ai');
-      const app = existing || appMod.initializeApp(configMod.firebaseConfig, 'gradecrew-escape-ai');
-      const auth = authMod.getAuth(app);
-      try { await authMod.setPersistence(auth, authMod.browserLocalPersistence); } catch {}
-      if (typeof auth.authStateReady === 'function') await auth.authStateReady();
-      const functions = functionsMod.getFunctions(app, 'europe-west1');
-      return {
-        auth,
-        authMod,
-        generateTest: functionsMod.httpsCallable(functions, 'generateTest', { timeout: 540000 }),
-        getAiStatus: functionsMod.httpsCallable(functions, 'getAiStatus', { timeout: 30000 })
-      };
-    })();
-    return firebaseRuntimePromise;
-  }
-
   function setStatus(text, kind = '') {
     const node = $('teacherAiStatus');
     if (!node) return;
@@ -253,54 +224,9 @@
     } catch {}
   }
 
-  async function refreshAuthUi() {
-    const login = $('teacherAiLogin');
-    const account = $('teacherAiAccount');
-    if (!login || !account) return;
-    if (window.GradeCrewEscapeAiBridge?.generateTest) {
-      login.hidden = true;
-      account.textContent = '✓ GradeCrew-KI verbunden';
-      return;
-    }
-    try {
-      const runtime = await firebaseRuntime();
-      const user = runtime.auth.currentUser;
-      login.hidden = Boolean(user);
-      account.textContent = user ? `✓ Angemeldet als ${user.email || 'Lehrkraft'}` : 'Für die KI-Erstellung einmal mit deinem GradeCrew-Lehrerkonto anmelden.';
-    } catch {
-      login.hidden = false;
-      account.textContent = 'GradeCrew-Anmeldung konnte noch nicht geladen werden.';
-    }
-  }
-
-  async function login() {
-    const email = String($('teacherAiEmail')?.value || '').trim();
-    const password = String($('teacherAiPassword')?.value || '');
-    if (!email || !password) return setStatus('Bitte E-Mail und Passwort eingeben.', 'error');
-    const button = $('teacherAiLoginBtn');
-    if (button) button.disabled = true;
-    setStatus('Anmeldung läuft …');
-    try {
-      const runtime = await firebaseRuntime();
-      await runtime.authMod.signInWithEmailAndPassword(runtime.auth, email, password);
-      if ($('teacherAiPassword')) $('teacherAiPassword').value = '';
-      await runtime.getAiStatus({});
-      setStatus('Angemeldet. Coco kann jetzt Aufgaben mit der GradeCrew-KI erstellen.', 'success');
-      await refreshAuthUi();
-    } catch (error) {
-      console.error('Escape AI login failed', error?.code || error?.message);
-      setStatus('Anmeldung nicht möglich. Prüfe deine GradeCrew-Zugangsdaten.', 'error');
-    } finally {
-      if (button) button.disabled = false;
-    }
-  }
-
   async function callGenerator(payload) {
     if (window.GradeCrewEscapeAiBridge?.generateTest) return window.GradeCrewEscapeAiBridge.generateTest(payload);
-    const runtime = await firebaseRuntime();
-    if (!runtime.auth.currentUser) throw new Error('not-authenticated');
-    const response = await runtime.generateTest(payload);
-    return response?.data;
+    throw new Error('gradecrew-ai-bridge-unavailable');
   }
 
   async function generate() {
@@ -324,9 +250,8 @@
       setStatus('✓ 8 Aufgaben übernommen. Bitte kurz prüfen – danach kannst du das Escape direkt starten.', 'success');
       window.dispatchEvent(new CustomEvent('gradecrew:escape-event', { detail: { name: 'teacher.ai_questions_generated', count: 8, pairedTransfers: 8 } }));
     } catch (error) {
-      const unauthenticated = String(error?.message || '').includes('not-authenticated') || String(error?.code || '').includes('unauthenticated');
-      setStatus(unauthenticated ? 'Bitte zuerst mit deinem GradeCrew-Lehrerkonto anmelden.' : `KI-Erstellung fehlgeschlagen: ${error?.message || 'Unbekannter Fehler'}`, 'error');
-      await refreshAuthUi();
+      const bridgeMissing = String(error?.message || '').includes('gradecrew-ai-bridge-unavailable');
+      setStatus(bridgeMissing ? 'Die echte GradeCrew-KI wird erst in der integrierten Lehreransicht über deine bestehende Sitzung verbunden. Im Lab ist dafür bewusst keine Extra-Anmeldung nötig.' : `KI-Erstellung fehlgeschlagen: ${error?.message || 'Unbekannter Fehler'}`, 'error');
     } finally {
       if (button) button.disabled = false;
     }
@@ -347,6 +272,17 @@
     return node;
   }
 
+  function updateConnectionUi() {
+    const button = $('teacherAiGenerateBtn');
+    const status = $('teacherAiConnection');
+    if (!button || !status) return;
+    const connected = Boolean(window.GradeCrewEscapeAiBridge?.generateTest);
+    button.disabled = !connected;
+    status.textContent = connected
+      ? '✓ GradeCrew-KI über die vorhandene Lehrersitzung verbunden.'
+      : 'Lab-Vorschau: keine Extra-Anmeldung. Die echte KI wird beim Einbau in GradeCrew über die vorhandene Lehrersitzung verbunden. Die Beispielaufgaben können jetzt schon geprüft und gespielt werden.';
+  }
+
   function buildTeacherAiCard() {
     if ($('teacherAiCard')) return;
     const overview = document.querySelector('#teacherDialog .teacherOverview');
@@ -357,19 +293,10 @@
     card.className = 'teacherAiCard';
     card.innerHTML = `
       <div class="teacherAiHead">
-        <div class="teacherAiCoco"><img src="${COCO_WELCOME}" alt="Coco"></div>
-        <div><h3>Aufgaben mit KI erstellen</h3><p>Nur das Nötigste: Fach, Klasse und Thema. Coco lässt die bestehende GradeCrew-KI 8 Lernaufgaben plus passende Transferaufgaben vorbereiten.</p></div>
+        <div class="teacherAiCoco"><img class="gcClayCharacter" src="${COCO_WELCOME}" alt="Coco"></div>
+        <div><h3>Aufgaben mit KI erstellen</h3><p>Nur Fach, Klasse, Thema und optional ein Wunsch. In GradeCrew nutzt diese Karte später automatisch die bereits angemeldete Lehrersitzung – ohne zweite Anmeldung.</p></div>
       </div>
-      <div id="teacherAiLogin" class="teacherAiLogin">
-        <strong>GradeCrew-Lehrerkonto</strong>
-        <p>Im später integrierten GradeCrew entfällt diese Extra-Anmeldung. Sie ist nur für den eigenständigen Escape-Preview nötig.</p>
-        <div class="teacherAiLoginRow">
-          <label>E-Mail<input id="teacherAiEmail" type="email" autocomplete="username"></label>
-          <label>Passwort<input id="teacherAiPassword" type="password" autocomplete="current-password"></label>
-          <button id="teacherAiLoginBtn" class="secondaryButton" type="button">Anmelden</button>
-        </div>
-      </div>
-      <div id="teacherAiAccount" class="teacherAiAccount"></div>
+      <div id="teacherAiConnection" class="teacherAiAccount"></div>
       <div class="teacherAiGrid">
         <label>Fach<input id="teacherAiSubject" type="text" value="Mathematik" placeholder="z. B. Mathematik"></label>
         <label>Klasse<input id="teacherAiGrade" type="text" value="7" placeholder="z. B. 7"></label>
@@ -382,9 +309,8 @@
       <p class="teacherAiFineprint">Die KI erzeugt nur Lerninhalte. Räume, Rätsel, Fortschrittslogik und Anti-Raten-Regeln bleiben fest in GradeCrew. Vor dem Start bitte kurz prüfen.</p>
     `;
     overview.insertAdjacentElement('afterend', card);
-    $('teacherAiLoginBtn').onclick = login;
     $('teacherAiGenerateBtn').onclick = generate;
-    refreshAuthUi();
+    updateConnectionUi();
   }
 
   function clearGeneratedSet() {
@@ -403,6 +329,7 @@
     restorePrepared();
     $('teacherResetBtn')?.addEventListener('click', clearGeneratedSet);
     window.addEventListener('gradecrew:escape-teacher-rendered', updateProfileDisplay);
+    window.addEventListener('gradecrew:escape-ai-bridge-ready', updateConnectionUi);
     window.addEventListener('gradecrew:escape-event', event => {
       if (event.detail?.name === 'teacher.question_edited' && activeProfile) {
         try {

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f7f9fc">
   <title>GradeCrew Escape Room – Die verriegelte Schule</title>
+  <link rel="stylesheet" href="gradecrew-brand.css">
+  <link rel="stylesheet" href="crew-clay.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="escape-v2.css">
 </head>
@@ -26,11 +28,11 @@
           <span>3 Räume</span><span>8 Lernfragen</span><span>4 Minirätsel</span><span>ca. 10–15 Min.</span>
         </div>
         <div class="heroActions">
-          <button id="startBtn" class="primaryButton" data-open-mode="practice" type="button">Escape starten</button>
+          <button id="startBtn" class="primaryButton" data-open-mode="practice" type="button">Escape vorbereiten</button>
           <button id="resumeBtn" class="secondaryButton" type="button" hidden>Fortsetzen</button>
-          <button id="teacherPreviewBtn" class="secondaryButton" type="button">Lehrer-Vorschau</button>
+          <button id="teacherPreviewBtn" class="secondaryButton" type="button" hidden aria-hidden="true" tabindex="-1">Lehrer-Vorschau</button>
         </div>
-        <p class="quiet">Keine Vorbereitung im Klassenzimmer. Alles passiert digital.</p>
+        <p class="quiet">Zuerst Aufgaben erstellen oder kurz prüfen. Gestartet wird anschließend im Lehrerbereich.</p>
       </div>
       <div class="schoolIllustration" aria-hidden="true">
         <div class="schoolRoof"></div>
@@ -47,7 +49,7 @@
       <div class="gameLayout">
         <section class="roomPanel" aria-label="Spielraum">
           <div id="roomScene" class="roomScene room-classroom">
-            <div id="explorer" class="explorer" aria-hidden="true"><img class="cocoExplorerArt" src="assets/gradecrew/penguin-guide.svg" alt=""></div>
+            <div id="explorer" class="explorer" aria-hidden="true"><img class="cocoExplorerArt gcClayCharacter" src="assets/gradecrew/penguin-guide.svg#pose-5" alt=""></div>
             <button class="hotspot desk" data-action="desk" type="button"><span>Lehrerpult</span></button>
             <button class="hotspot cabinet" data-action="cabinet" type="button"><span>Schrank</span></button>
             <button class="hotspot shelf" data-action="shelf" type="button"><span>Regal</span></button>
@@ -113,7 +115,7 @@
 
       <section id="remyHelp" class="remyHelp" hidden aria-labelledby="remyHelpTitle">
         <div class="remyHead">
-          <div class="remyAvatar" aria-hidden="true"><img class="cocoHelpArt" src="assets/gradecrew/penguin-guide.svg" alt=""></div>
+          <div class="remyAvatar" aria-hidden="true"><img class="cocoHelpArt gcClayCharacter" src="assets/gradecrew/penguin-guide.svg#pose-4" alt=""></div>
           <div>
             <strong id="remyHelpTitle">Frag Coco</strong>
             <span>Wenn du festhängst, sag konkret, was du nicht verstanden hast.</span>
@@ -156,10 +158,11 @@
   <dialog id="teacherDialog" class="modal teacherModal" aria-labelledby="teacherTitle">
     <form method="dialog">
       <div class="modalTop">
-        <span class="eyebrow">LEHRER-VORSCHAU · LAB</span>
+        <span class="eyebrow">LEHRERBEREICH · VORSCHAU</span>
         <button class="iconButton" value="close" aria-label="Vorschau schließen">×</button>
       </div>
-      <h2 id="teacherTitle">Die verriegelte Schule</h2>
+      <h2 id="teacherTitle">Escape vorbereiten</h2>
+      <div class="teacherFlowIntro" aria-label="Ablauf vor dem Start"><span><strong>1</strong> Aufgaben festlegen</span><span><strong>2</strong> Kurz prüfen</span><span><strong>3</strong> Escape starten</span></div>
       <div id="preflightStatus" class="preflightStatus"></div>
       <p class="labWarning"><strong>Lab-Hinweis:</strong> Diese Vorschau demonstriert nur den späteren Lehrerablauf. Die echte Berechtigungsprüfung kommt erst bei der GradeCrew-Integration.</p>
 
@@ -185,6 +188,11 @@
         </div>
         <div id="teacherQuestions" class="teacherQuestions"></div>
       </section>
+
+      <div class="teacherLaunchBar">
+        <div><strong>Alles geprüft?</strong><span>Das Spiel startet erst von hier aus.</span></div>
+        <button id="teacherStartBtn" class="primaryButton" type="button">Escape mit diesen Aufgaben starten</button>
+      </div>
     </form>
   </dialog>
 
@@ -236,5 +244,6 @@
   <script src="app.js"></script>
   <script src="escape-teacher-compact.js"></script>
   <script src="escape-coco-ai.js"></script>
+  <script src="escape-teacher-flow.js"></script>
 </body>
 </html>
