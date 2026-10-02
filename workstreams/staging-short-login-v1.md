@@ -24,6 +24,9 @@ Feature: `feature/staging-short-login-v2`
 Basis nach Parallelcheck: `feature/gradecrew-app-integration@c13431a0002ed3acec8a7b71130e9b6060a711fd`
 Feature-CI: `Staging Short Login Checks` Run `36994087223` ✅
 Integration: PR #36 -> `feature/gradecrew-app-integration@c511a3436aad7d0381833663b40d22bea2b2fb72`
+Gemeinsamer AI-Staging-Gate: Run `36994181957` ✅
+Hosting-Preview: Run `36994332076` ✅ deployed + veröffentlichte Manifest-/Dateihashes verifiziert
+Preview: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app`
 
 Der erste Entwurf wurde nicht blind gemergt, weil parallel `startup.js` für Brand-Assets geändert worden war. V2 wurde auf dem neueren Integrationsstand aufgebaut und erhält diese Änderung.
 
@@ -32,16 +35,16 @@ Der erste Entwurf wurde nicht blind gemergt, weil parallel `startup.js` für Bra
 - Code gesichert: ✅
 - Feature-CI: ✅
 - integriert: ✅
-- gemeinsamer Staging-Gate: läuft (`36994181957`)
-- Hosting-Preview mit Kurzlogin: noch nicht als deployed bestätigt
+- gemeinsamer Staging-Gate: ✅
+- Hosting-Preview mit Kurzlogin: ✅ deployed + hash-verifiziert
 - praktischer Login/Registrierungstest: offen
 - Production: unverändert
 
-## Nach dem Staging-Deploy
+## Jetzt testen
 
 Einmal im Preview unter `Account erstellen`:
 1. Name wählen
 2. Kurzname `test`
 3. eigenes Passwort setzen
 
-Danach dauerhaft mit `test` + demselben Passwort anmelden.
+Danach dauerhaft mit `test` + demselben Passwort anmelden. Der Browser kann diese Zugangsdaten zusätzlich speichern.
