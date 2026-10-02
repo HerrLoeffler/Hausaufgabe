@@ -25,6 +25,8 @@ env:
   DEPLOYER_SERVICE_ACCOUNT: gradecrew-ai-gateway-deployer@hausaufgabe-staging.iam.gserviceaccount.com
   ARTIFACT_REPOSITORY: gradecrew-ai-gateway
   INTEGRATION_BRANCH: integration/ai-gateway-staging
+  GEMINI_LOCATION: eu
+  GEMINI_MODEL: gemini-3.5-flash-lite
 
 jobs:
   verify:
@@ -67,7 +69,7 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run check
           npm test
-          bash -n deploy-staging.sh setup-openai-secret-access.sh
+          bash -n deploy-staging.sh setup-openai-secret-access.sh ../tools/automation/setup-staging-gemini-access.sh
         working-directory: ai-gateway
 
       - name: Intelligence contracts
@@ -158,6 +160,7 @@ jobs:
             --max 2 \
             --concurrency 5 \
             --timeout 60 \
+            --update-env-vars "GEMINI_ENABLED=true,GEMINI_PROJECT_ID=$PROJECT_ID,GEMINI_LOCATION=$GEMINI_LOCATION,GEMINI_DEFAULT_MODEL=$GEMINI_MODEL,GEMINI_ALLOWED_MODELS=$GEMINI_MODEL" \
             --no-traffic \
             --tag candidate \
             --quiet
@@ -182,6 +185,11 @@ jobs:
           test "$actual_sa" = "$RUNTIME_SERVICE_ACCOUNT"
           jq -e '[.spec.containers[0].env[]?.name] | index("ANTHROPIC_FEDERATION_RULE_ID") != null' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
           jq -e '.spec.containers[0].env[]? | select(.name == "OPENAI_API_KEY") | .valueFrom.secretKeyRef.name == "OPENAI_API_KEY"' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
+          jq -e '.spec.containers[0].env[]? | select(.name == "GEMINI_ENABLED") | .value == "true"' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
+          jq -e --arg project "$PROJECT_ID" '.spec.containers[0].env[]? | select(.name == "GEMINI_PROJECT_ID") | .value == $project' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
+          jq -e --arg location "$GEMINI_LOCATION" '.spec.containers[0].env[]? | select(.name == "GEMINI_LOCATION") | .value == $location' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
+          jq -e --arg model "$GEMINI_MODEL" '.spec.containers[0].env[]? | select(.name == "GEMINI_DEFAULT_MODEL") | .value == $model' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
+          jq -e --arg model "$GEMINI_MODEL" '.spec.containers[0].env[]? | select(.name == "GEMINI_ALLOWED_MODELS") | .value == $model' "$RUNNER_TEMP/revision-candidate.json" >/dev/null
 
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
           echo "url=$candidate_url" >> "$GITHUB_OUTPUT"
@@ -208,10 +216,10 @@ jobs:
           auth=(-H "Authorization: Bearer $ID_TOKEN")
 
           curl -fsS "${auth[@]}" "$CANDIDATE_URL/health" > "$RUNNER_TEMP/health.json"
-          jq -e '.ok == true and .service == "gradecrew-ai-gateway" and .providers.anthropic == "configured" and .providers.openai == "configured"' "$RUNNER_TEMP/health.json" >/dev/null
+          jq -e '.ok == true and .service == "gradecrew-ai-gateway" and .providers.anthropic == "configured" and .providers.openai == "configured" and .providers.gemini == "configured"' "$RUNNER_TEMP/health.json" >/dev/null
 
           curl -fsS "${auth[@]}" "$CANDIDATE_URL/providers" > "$RUNNER_TEMP/providers.json"
-          jq -e '[.providers[].id] | index("anthropic") != null and index("openai") != null' "$RUNNER_TEMP/providers.json" >/dev/null
+          jq -e '[.providers[].id] | index("anthropic") != null and index("openai") != null and index("gemini") != null' "$RUNNER_TEMP/providers.json" >/dev/null
 
           curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/anthropic/test" > "$RUNNER_TEMP/claude.json"
           jq -e '.provider == "anthropic" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/claude.json" >/dev/null
@@ -219,8 +227,12 @@ jobs:
           curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/openai/test" > "$RUNNER_TEMP/openai.json"
           jq -e '.provider == "openai" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/openai.json" >/dev/null
 
+          curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/gemini/test" > "$RUNNER_TEMP/gemini.json"
+          jq -e '.provider == "gemini" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/gemini.json" >/dev/null
+
           echo "claude_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/claude.json")" >> "$GITHUB_OUTPUT"
           echo "openai_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/openai.json")" >> "$GITHUB_OUTPUT"
+          echo "gemini_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/gemini.json")" >> "$GITHUB_OUTPUT"
 
       - name: Promote only the verified revision
         env:
@@ -242,7 +254,7 @@ jobs:
         run: |
           set -euo pipefail
           if ! curl -fsS -H "Authorization: Bearer $ID_TOKEN" "$SERVICE_URL/health" \
-            | jq -e '.ok == true and .providers.anthropic == "configured" and .providers.openai == "configured"' >/dev/null; then
+            | jq -e '.ok == true and .providers.anthropic == "configured" and .providers.openai == "configured" and .providers.gemini == "configured"' >/dev/null; then
             echo 'Promoted revision failed base health check; rolling traffic back.'
             gcloud run services update-traffic "$SERVICE" \
               --project "$PROJECT_ID" \
@@ -259,6 +271,7 @@ jobs:
           IMAGE_URI: ${{ steps.image.outputs.uri }}
           CLAUDE_MS: ${{ steps.smoke.outputs.claude_ms }}
           OPENAI_MS: ${{ steps.smoke.outputs.openai_ms }}
+          GEMINI_MS: ${{ steps.smoke.outputs.gemini_ms }}
         run: |
           node - <<'NODE'
           const fs = require('node:fs');
@@ -272,9 +285,10 @@ jobs:
             promotedRevision: process.env.NEW_REVISION,
             candidateSmoke: {
               health: true,
-              providers: ['anthropic', 'openai'],
+              providers: ['anthropic', 'openai', 'gemini'],
               claude: { ok: true, latencyMs: Number(process.env.CLAUDE_MS) },
-              openai: { ok: true, latencyMs: Number(process.env.OPENAI_MS) }
+              openai: { ok: true, latencyMs: Number(process.env.OPENAI_MS) },
+              gemini: { ok: true, latencyMs: Number(process.env.GEMINI_MS) }
             },
             productionChanged: false,
             legacyGenerationCutover: false,

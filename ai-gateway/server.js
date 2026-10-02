@@ -5,14 +5,17 @@ const { randomUUID } = require('node:crypto');
 const {
   anthropicConfigured, readAnthropicConfig,
   openaiConfigured, readOpenAIConfig,
+  geminiConfigured, readGeminiConfig,
 } = require('./lib/config');
 const { createAnthropicWifTokenProvider } = require('./lib/anthropic-wif');
+const { createGoogleAccessTokenProvider } = require('./lib/google-access-token');
 const { createAnthropicProvider } = require('./lib/providers/anthropic');
 const { createOpenAIProvider } = require('./lib/providers/openai');
+const { createGeminiProvider } = require('./lib/providers/gemini');
 const { JOB_KINDS, createProviderRouter } = require('./lib/router');
 
 const SERVICE = 'gradecrew-ai-gateway';
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 const MAX_BODY_BYTES = 256 * 1024;
 const REQUEST_TIMEOUT_MS = 60_000;
 
@@ -45,6 +48,7 @@ async function readJson(req) {
 function safeErrorMessage(error) {
   const known = new Set([
     'UNSUPPORTED_CAPABILITY', 'OUTPUT_LIMIT', 'INVALID_TEMPERATURE', 'INVALID_REASONING_EFFORT', 'MODEL_NOT_ALLOWED',
+    'INVALID_MESSAGE_ORDER', 'INVALID_GEMINI_LOCATION', 'PROVIDER_AUTH_FAILED', 'PROVIDER_BLOCKED',
     'INVALID_ROUTING_REQUEST', 'PROMPT_VERSION_MISMATCH', 'MISSING_VALIDATOR', 'INPUT_LIMIT', 'BUDGET_EXHAUSTED',
     'OPERATION_ALREADY_CLAIMED', 'OPERATION_ID_CONFLICT', 'DEADLINE_EXCEEDED', 'CANCELLED', 'VALIDATION_FAILED',
     'PROVIDER_FAILED', 'PROVIDER_HTTP_ERROR', 'INVALID_PROVIDER_RESPONSE', 'NO_QUALIFIED_ROUTE',
@@ -56,7 +60,7 @@ function safeErrorMessage(error) {
 
 function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
   const providers = [];
-  const status = { anthropic: 'unconfigured', openai: 'unconfigured' };
+  const status = { anthropic: 'unconfigured', openai: 'unconfigured', gemini: 'unconfigured' };
 
   if (anthropicConfigured(env)) {
     const config = readAnthropicConfig(env);
@@ -69,6 +73,13 @@ function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
     const config = readOpenAIConfig(env);
     providers.push(createOpenAIProvider({ fetchImpl, config }));
     status.openai = 'configured';
+  }
+
+  if (geminiConfigured(env)) {
+    const config = readGeminiConfig(env);
+    const tokenProvider = createGoogleAccessTokenProvider({ fetchImpl, tokenUrl: config.metadataTokenUrl });
+    providers.push(createGeminiProvider({ fetchImpl, tokenProvider, config }));
+    status.gemini = 'configured';
   }
 
   return { router: createProviderRouter({ providers }), providers, status };
@@ -84,6 +95,12 @@ function smokeRequestFor(pathname) {
   if (pathname === '/providers/openai/test') {
     return {
       provider: 'openai', job: 'quality_control', max_tokens: 32,
+      messages: [{ role: 'user', content: 'Reply with exactly: GATEWAY_OK' }],
+    };
+  }
+  if (pathname === '/providers/gemini/test') {
+    return {
+      provider: 'gemini', job: 'quality_control', max_tokens: 32, reasoning_effort: 'minimal',
       messages: [{ role: 'user', content: 'Reply with exactly: GATEWAY_OK' }],
     };
   }
@@ -112,7 +129,10 @@ function createHandler({ fetchImpl = fetch, env = process.env, orchestrator = nu
       catch { return sendJson(res, 503, { error: 'STATISTICS_UNAVAILABLE', request_id: requestId }); }
     }
 
-    const generationPaths = ['/v1/generate', '/v1/route', '/providers/anthropic/test', '/providers/openai/test'];
+    const generationPaths = [
+      '/v1/generate', '/v1/route',
+      '/providers/anthropic/test', '/providers/openai/test', '/providers/gemini/test',
+    ];
     if (req.method === 'POST' && generationPaths.includes(url.pathname)) {
       const startedAt = Date.now();
       const controller = new AbortController();

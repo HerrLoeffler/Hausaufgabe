@@ -2,11 +2,14 @@
 set -euo pipefail
 
 EXPECTED_PROJECT="hausaufgabe-staging"
-EXPECTED_BRANCH="feature/openai-gateway-provider-v1"
+EXPECTED_BRANCH="integration/ai-gateway-staging"
 SERVICE="gradecrew-ai-gateway-staging"
 REGION="europe-west1"
 SERVICE_ACCOUNT="gradecrew-ai-gateway-staging@hausaufgabe-staging.iam.gserviceaccount.com"
 OPENAI_SECRET_NAME="${OPENAI_SECRET_NAME:-OPENAI_API_KEY}"
+GEMINI_LOCATION="${GEMINI_LOCATION:-eu}"
+GEMINI_DEFAULT_MODEL="${GEMINI_DEFAULT_MODEL:-gemini-3.5-flash-lite}"
+GEMINI_ALLOWED_MODELS="${GEMINI_ALLOWED_MODELS:-gemini-3.5-flash-lite}"
 
 required=(
   ANTHROPIC_FEDERATION_RULE_ID
@@ -40,7 +43,7 @@ repo_root="$(git rev-parse --show-toplevel)"
 cd "${repo_root}"
 branch="$(git branch --show-current)"
 if [[ "${branch}" != "${EXPECTED_BRANCH}" ]]; then
-  echo "Refusing deploy from branch '${branch}'. Expected '${EXPECTED_BRANCH}'." >&2
+  echo "Refusing manual deploy from branch '${branch}'. Expected '${EXPECTED_BRANCH}'." >&2
   exit 2
 fi
 if [[ -n "$(git status --porcelain)" ]]; then
@@ -56,9 +59,10 @@ fi
 commit="$(git rev-parse HEAD)"
 echo "Deploying ${SERVICE} from ${branch}@${commit} to ${EXPECTED_PROJECT}/${REGION}"
 echo "OpenAI credential source: Secret Manager '${OPENAI_SECRET_NAME}' (value is never read by this script)."
+echo "Gemini credential source: Cloud Run runtime service account via Google metadata server (no API key)."
 
 # Custom delimiter keeps comma-separated model allowlists intact.
-ENV_VARS="^@^ANTHROPIC_FEDERATION_RULE_ID=${ANTHROPIC_FEDERATION_RULE_ID}@ANTHROPIC_ORGANIZATION_ID=${ANTHROPIC_ORGANIZATION_ID}@ANTHROPIC_SERVICE_ACCOUNT_ID=${ANTHROPIC_SERVICE_ACCOUNT_ID}@ANTHROPIC_WORKSPACE_ID=${ANTHROPIC_WORKSPACE_ID}@ANTHROPIC_DEFAULT_MODEL=${ANTHROPIC_DEFAULT_MODEL:-claude-haiku-4-5}@ANTHROPIC_ALLOWED_MODELS=${ANTHROPIC_ALLOWED_MODELS:-claude-haiku-4-5}@OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL:-gpt-5.6-luna}@OPENAI_ALLOWED_MODELS=${OPENAI_ALLOWED_MODELS:-gpt-5.6-luna}"
+ENV_VARS="^@^ANTHROPIC_FEDERATION_RULE_ID=${ANTHROPIC_FEDERATION_RULE_ID}@ANTHROPIC_ORGANIZATION_ID=${ANTHROPIC_ORGANIZATION_ID}@ANTHROPIC_SERVICE_ACCOUNT_ID=${ANTHROPIC_SERVICE_ACCOUNT_ID}@ANTHROPIC_WORKSPACE_ID=${ANTHROPIC_WORKSPACE_ID}@ANTHROPIC_DEFAULT_MODEL=${ANTHROPIC_DEFAULT_MODEL:-claude-haiku-4-5}@ANTHROPIC_ALLOWED_MODELS=${ANTHROPIC_ALLOWED_MODELS:-claude-haiku-4-5}@OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL:-gpt-5.6-luna}@OPENAI_ALLOWED_MODELS=${OPENAI_ALLOWED_MODELS:-gpt-5.6-luna}@GEMINI_ENABLED=true@GEMINI_PROJECT_ID=${EXPECTED_PROJECT}@GEMINI_LOCATION=${GEMINI_LOCATION}@GEMINI_DEFAULT_MODEL=${GEMINI_DEFAULT_MODEL}@GEMINI_ALLOWED_MODELS=${GEMINI_ALLOWED_MODELS}"
 
 gcloud run deploy "${SERVICE}" \
   --project="${EXPECTED_PROJECT}" \
@@ -73,4 +77,4 @@ gcloud run deploy "${SERVICE}" \
   --update-env-vars="${ENV_VARS}" \
   --update-secrets="OPENAI_API_KEY=${OPENAI_SECRET_NAME}:latest"
 
-echo "Deploy complete. Verify revision/source, service account, IAM requirement, max=2, concurrency=5 and both provider smoke tests."
+echo "Deploy complete. Verify revision/source, service account, IAM requirement, max=2, concurrency=5 and all three provider smoke tests."

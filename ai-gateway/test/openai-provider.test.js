@@ -103,7 +103,7 @@ test('Anthropic and OpenAI reject models outside explicit allowlists before exte
   assert.equal(anthropicTokens, 0);
 });
 
-test('gateway registers both providers only when their runtime credentials exist', () => {
+test('gateway registers providers only when their runtime credentials or opt-in configuration exist', () => {
   const env = {
     ANTHROPIC_FEDERATION_RULE_ID: 'fdrl_test',
     ANTHROPIC_ORGANIZATION_ID: 'org_test',
@@ -112,6 +112,6 @@ test('gateway registers both providers only when their runtime credentials exist
     OPENAI_API_KEY: 'sk-test-only',
   };
   const gateway = buildGateway({ env, fetchImpl: async () => { throw new Error('no network in config test'); } });
-  assert.deepEqual(gateway.status, { anthropic: 'configured', openai: 'configured' });
+  assert.deepEqual(gateway.status, { anthropic: 'configured', openai: 'configured', gemini: 'unconfigured' });
   assert.deepEqual(gateway.router.listProviders().map(p => p.id).sort(), ['anthropic', 'openai']);
 });
