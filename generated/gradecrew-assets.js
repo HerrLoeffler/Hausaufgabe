@@ -2,8 +2,8 @@
 export const GRADECREW_ASSETS = {
   "brand": {
     "primary": "assets/gradecrew/brand-primary-v1.svg",
-    "icon": "assets/gradecrew/brand-primary-v1.svg",
-    "favicon": "assets/gradecrew/brand-primary-v1.svg",
+    "icon": "assets/gradecrew/brand-icon-v1.svg",
+    "favicon": "assets/gradecrew/brand-icon-v1.svg",
     "crewLineup": "assets/gradecrew/crew-lineup.svg"
   },
   "scenes": {
