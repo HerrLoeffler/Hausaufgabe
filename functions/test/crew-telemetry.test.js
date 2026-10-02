@@ -2,7 +2,14 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { cleanMetric, uidHash } = require("../lib/crew-telemetry");
+const {
+  cleanMetric,
+  uidHash,
+  RAW_COLLECTION,
+  USER_MARKER_COLLECTION,
+  DAILY_COLLECTION,
+  EXPIRING_COLLECTIONS
+} = require("../lib/crew-telemetry");
 
 test("Crew telemetry accepts only allowlisted technical metadata", () => {
   const clean = cleanMetric({
@@ -51,4 +58,12 @@ test("user ids are pseudonymized deterministically for unique-user markers", () 
   assert.equal(a, b);
   assert.equal(a.length, 32);
   assert.notEqual(a, "teacher-123");
+});
+
+test("raw and unique-user telemetry live only in explicit expiring top-level collections", () => {
+  assert.equal(RAW_COLLECTION, "crewTelemetryEvents");
+  assert.equal(USER_MARKER_COLLECTION, "crewTelemetryUsers");
+  assert.equal(DAILY_COLLECTION, "crewTelemetryDaily");
+  assert.deepEqual(EXPIRING_COLLECTIONS, ["crewTelemetryEvents", "crewTelemetryUsers"]);
+  assert.equal(EXPIRING_COLLECTIONS.includes(DAILY_COLLECTION), false);
 });

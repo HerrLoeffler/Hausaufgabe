@@ -8,6 +8,10 @@ const { RETENTION } = require("./constants");
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_CLIENT_EVENTS_PER_DAY = 1200;
 const METRIC_VERSION = "crew-metrics-v1";
+const RAW_COLLECTION = "crewTelemetryEvents";
+const USER_MARKER_COLLECTION = "crewTelemetryUsers";
+const DAILY_COLLECTION = "crewTelemetryDaily";
+const EXPIRING_COLLECTIONS = Object.freeze([RAW_COLLECTION, USER_MARKER_COLLECTION]);
 const CREW_IDS = new Set(["coco", "remy", "emmi", "wilma"]);
 const FIELD_NAMES = new Set([
   "subject", "grade", "schoolType", "region", "topic", "difficulty",
@@ -67,11 +71,7 @@ async function consumeMetricQuota(uid, nowDate) {
     const snap = await tx.get(ref);
     const count = Number(snap.data()?.count || 0);
     if (count >= MAX_CLIENT_EVENTS_PER_DAY) throw new HttpsError("resource-exhausted", "Zu viele Telemetrieereignisse.");
-    tx.set(ref, {
-      count: count + 1,
-      updatedAt: Timestamp.now(),
-      expiresAt: expiry(3, nowDate.getTime())
-    }, { merge: true });
+    tx.set(ref, { count: count + 1, updatedAt: Timestamp.now() }, { merge: true });
   });
 }
 
@@ -81,16 +81,22 @@ async function writeCrewMetric(uid, raw = {}, options = {}) {
   const nowDate = new Date();
   const nowMs = nowDate.getTime();
   const day = dayKey(nowDate);
+  const hashedUid = uidHash(uid);
   if (!options.server) await consumeMetricQuota(uid, nowDate);
 
-  const eventRef = db.collection(`users/${uid}/crewTelemetry`).doc();
-  const dailyRef = db.doc(`crewTelemetryDaily/${day}`);
-  const userMarkerRef = db.doc(`crewTelemetryUsers/${day}/users/${uidHash(uid)}`);
+  // Privacy boundary: analytics events never live below the raw uid and never store
+  // user text, topics, wishes, audio or before/after values. The daily aggregate is
+  // content-free and may be retained; raw events/unique-user markers are expiring.
+  const eventRef = db.collection(RAW_COLLECTION).doc();
+  const dailyRef = db.doc(`${DAILY_COLLECTION}/${day}`);
+  const userMarkerRef = db.doc(`${USER_MARKER_COLLECTION}/${day}-${hashedUid}`);
   const batch = db.batch();
   const metric = compactMetric(clean);
 
   batch.set(eventRef, {
     ...metric,
+    uidHash: hashedUid,
+    day,
     metricVersion: METRIC_VERSION,
     createdAt: Timestamp.now(),
     expiresAt: expiry(RETENTION.aiEventDays || 30, nowMs)
@@ -115,7 +121,7 @@ async function writeCrewMetric(uid, raw = {}, options = {}) {
   }
   batch.set(dailyRef, increments, { merge: true });
   batch.set(userMarkerRef, {
-    uidHash: uidHash(uid),
+    uidHash: hashedUid,
     crewId: clean.crewId,
     day,
     lastSeenAt: FieldValue.serverTimestamp(),
@@ -137,6 +143,33 @@ async function recordCrewMetricSafe(uid, raw = {}, options = {}) {
   }
 }
 
+async function deleteExpiredCollection(collectionName, now = Timestamp.now(), { batchSize = 350, maxBatches = 12 } = {}) {
+  if (!EXPIRING_COLLECTIONS.includes(collectionName)) throw new Error("Collection ist nicht für Crew-Retention freigegeben.");
+  const db = getFirestore();
+  let deleted = 0;
+  for (let batchIndex = 0; batchIndex < maxBatches; batchIndex += 1) {
+    const snap = await db.collection(collectionName)
+      .where("expiresAt", "<=", now)
+      .limit(batchSize)
+      .get();
+    if (snap.empty) break;
+    const batch = db.batch();
+    for (const doc of snap.docs) batch.delete(doc.ref);
+    await batch.commit();
+    deleted += snap.size;
+    if (snap.size < batchSize) break;
+  }
+  return deleted;
+}
+
+async function cleanupExpiredCrewTelemetry(now = Timestamp.now()) {
+  const [eventsDeleted, usersDeleted] = await Promise.all([
+    deleteExpiredCollection(RAW_COLLECTION, now),
+    deleteExpiredCollection(USER_MARKER_COLLECTION, now)
+  ]);
+  return { eventsDeleted, usersDeleted };
+}
+
 function dayKeys(days, now = new Date()) {
   const keys = [];
   const end = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
@@ -148,30 +181,23 @@ async function crewTelemetrySummary(days = 30) {
   const safeDays = Math.max(1, Math.min(90, Math.round(Number(days) || 30)));
   const db = getFirestore();
   const keys = dayKeys(safeDays);
-  const dailySnaps = await db.getAll(...keys.map(key => db.doc(`crewTelemetryDaily/${key}`)));
+  const dailySnaps = await db.getAll(...keys.map(key => db.doc(`${DAILY_COLLECTION}/${key}`)));
   const totals = {};
   for (const snap of dailySnaps) {
     const data = snap.exists ? snap.data() || {} : {};
-    for (const [key, value] of Object.entries(data)) {
-      if (typeof value === "number") totals[key] = (totals[key] || 0) + value;
-    }
+    for (const [key, value] of Object.entries(data)) if (typeof value === "number") totals[key] = (totals[key] || 0) + value;
   }
 
   const unique = new Set();
-  const batches = [];
-  for (let index = 0; index < keys.length; index += 10) {
-    const slice = keys.slice(index, index + 10);
-    batches.push(Promise.all(slice.map(key => db.collection(`crewTelemetryUsers/${key}/users`).get())));
-  }
-  for (const promise of batches) {
-    const snaps = await promise;
-    for (const snap of snaps) for (const doc of snap.docs) unique.add(String(doc.data()?.uidHash || doc.id));
-  }
+  const markers = await db.collection(USER_MARKER_COLLECTION)
+    .where("day", ">=", keys[0])
+    .where("day", "<=", keys[keys.length - 1])
+    .get();
+  for (const doc of markers.docs) unique.add(String(doc.data()?.uidHash || ""));
 
-  const fields = [...FIELD_NAMES];
   const correctionsByField = {};
   const patchesByField = {};
-  for (const field of fields) {
+  for (const field of FIELD_NAMES) {
     const corrected = Number(totals[`corrected_${field}`] || 0);
     const patched = Number(totals[`patched_${field}`] || 0);
     if (corrected) correctionsByField[field] = corrected;
@@ -214,10 +240,16 @@ module.exports = {
   METRIC_VERSION,
   FIELD_NAMES,
   CLIENT_EVENTS,
+  RAW_COLLECTION,
+  USER_MARKER_COLLECTION,
+  DAILY_COLLECTION,
+  EXPIRING_COLLECTIONS,
   cleanMetric,
   writeCrewMetric,
   recordCrewMetricSafe,
   crewTelemetrySummary,
+  deleteExpiredCollection,
+  cleanupExpiredCrewTelemetry,
   dayKey,
   uidHash
 };

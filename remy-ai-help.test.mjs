@@ -35,8 +35,13 @@ function setup(t) {
   w.getApp = () => ({});
   w.getFunctions = () => ({});
   w.httpsCallable = () => async () => ({ data: {} });
+  w.recordRemyMetric = () => {};
+  w.recordRemySubmission = () => {};
+  w.recordRemyPatch = () => {};
+  w.resetRemyTelemetryContext = () => {};
 
   const executable = source
+    .replace(/import\s+\{[\s\S]*?\}\s+from\s+["']\.\/crew-telemetry-client\.mjs\?v=1["'];\s*/, '')
     .replace(/^import .*;\s*$/gm, '')
     .replace(/^export /gm, '');
   w.eval(executable);
