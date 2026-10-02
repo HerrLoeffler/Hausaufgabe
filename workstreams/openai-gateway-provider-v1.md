@@ -21,6 +21,13 @@ Die bereits vorhandene OpenAI-Nutzung von GradeCrew wird nicht neu erfunden. Sta
 - Kostenadapter berücksichtigt OpenAI `cached_tokens` als Teilmenge der Input-Tokens und verhindert Doppelberechnung.
 - Tests für Responses-Request, Ausgabe-/Stop-Normalisierung, Limits, Modell-Allowlist, Nicht-Text-Fail-Closed, Providerfehler, Cache-Kosten und Zwei-Provider-Registrierung.
 
+## Prüfungen
+
+Produktcode-Abschlusscommit `d5f3834032eb4ae51af63686ac9b867309b83d36`:
+- AI Gateway CI Run `36990775013`: erfolgreich (Syntax, Deployskript, komplette Gateway-Unit-Tests).
+- AI orchestration gates Run `36990775015`: erfolgreich, einschließlich realem Firestore-Emulator für Transaktionen/Budgets.
+- Keine echten/bezahlten Provideraufrufe in CI; die OpenAI-Tests verwenden simulierte HTTP-Antworten.
+
 ## Bewusste Grenzen
 
 - Noch **nicht deployed**; Production unverändert.
@@ -31,13 +38,12 @@ Die bereits vorhandene OpenAI-Nutzung von GradeCrew wird nicht neu erfunden. Sta
 
 ## Nächste Schritte
 
-1. PR-CI vollständig grün bestätigen (Gateway + Orchestration + Intelligence contracts).
-2. In authentifizierter Cloud Shell einmal `setup-openai-secret-access.sh` ausführen; Secretwert wird weder gelesen noch verändert.
-3. Staging-Deploy dieses Branches mit vorhandener Anthropic-WIF-Konfiguration; Production bleibt gesperrt.
-4. `GET /health`, Claude-Smoke und OpenAI-Smoke prüfen; OpenAI muss exakt `GATEWAY_OK` liefern.
-5. Erst danach einen klar begrenzten bestehenden GradeCrew-Textjob als Pilot über den Gateway anbinden und gegen die bisherige OpenAI-Pipeline benchmarken.
-6. Gemini und Mistral als weitere Adapter ergänzen; Router erst auf reale, scope-gebundene Evidenz reagieren lassen.
+1. In authentifizierter Cloud Shell einmal `setup-openai-secret-access.sh` ausführen; Secretwert wird weder gelesen noch verändert.
+2. Staging-Deploy dieses Branches mit vorhandener Anthropic-WIF-Konfiguration; Production bleibt gesperrt.
+3. `GET /health`, Claude-Smoke und OpenAI-Smoke prüfen; OpenAI muss exakt `GATEWAY_OK` liefern.
+4. Erst danach einen klar begrenzten bestehenden GradeCrew-Textjob als Pilot über den Gateway anbinden und gegen die bisherige OpenAI-Pipeline benchmarken.
+5. Gemini und Mistral als weitere Adapter ergänzen; Router erst auf reale, scope-gebundene Evidenz reagieren lassen.
 
 ## Statusbegriffe
 
-Code: auf GitHub-Branch gesichert. Tests: CI ausstehend. Staging-Integration: ausstehend. Staging-Deploy: ausstehend. Gerätetest: nicht anwendbar für Providerbasis. Production: unverändert.
+Code: auf GitHub-Branch gesichert. Tests: **CI grün** auf Produktcodecommit `d5f3834`. Staging-Integration: ausstehend. Staging-Deploy: ausstehend. Gerätetest: nicht anwendbar für Providerbasis. Production: unverändert. Dieser nachfolgende Commit ändert nur die Übergabedokumentation.
