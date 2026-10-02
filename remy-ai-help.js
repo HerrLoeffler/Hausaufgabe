@@ -14,6 +14,23 @@ let busy = false;
 const REMY = CREW_MEMBERS.remy;
 const $ = selector => document.querySelector(selector);
 
+function currentUiLocale() {
+  return /^en(?:-|$)/i.test(String(window.GradeCrewI18n?.locale || "")) ? "en-GB" : "de-DE";
+}
+
+function currentVoiceInputLocale() {
+  try {
+    const explicit = String(localStorage.getItem("gradecrew.voiceInputLocale") || "");
+    if (/^en(?:-|$)/i.test(explicit)) return "en-GB";
+    if (/^de(?:-|$)/i.test(explicit)) return "de-DE";
+  } catch (_) {}
+  return currentUiLocale();
+}
+
+function uiText(german, english) {
+  return currentUiLocale() === "en-GB" ? english : german;
+}
+
 function installStyles() {
   if ($('style[data-remy-ai-help]')) return;
   const style = document.createElement("style");
@@ -118,7 +135,7 @@ function appendNote(text) {
   const field = $("#aiCustomNotes");
   if (!field || !text) return;
   const current = field.value.trim();
-  if (current.toLocaleLowerCase("de-DE").includes(text.toLocaleLowerCase("de-DE"))) return;
+  if (current.toLocaleLowerCase().includes(text.toLocaleLowerCase())) return;
   field.value = [current, text].filter(Boolean).join(current ? "\n" : "");
   field.dispatchEvent(new Event("input", { bubbles: true }));
   field.dispatchEvent(new Event("change", { bubbles: true }));
@@ -167,16 +184,21 @@ function applyPatch(patch = {}) {
   setField("#aiPoints", patch.points);
   applyTypePatch(patch);
   if (patch.notes) appendNote(String(patch.notes).slice(0, 1500));
-  if (patch.durationMinutes) appendNote(`Gewünschte Bearbeitungszeit: ca. ${patch.durationMinutes} Minuten.`);
-  const summary = patchSummary(patch);
-  setStatus(summary ? `✓ Eingetragen: ${summary}` : "✓ Eingetragen.", "success");
+  if (patch.durationMinutes) appendNote(uiText(
+    `Gewünschte Bearbeitungszeit: ca. ${patch.durationMinutes} Minuten.`,
+    `Requested working time: approx. ${patch.durationMinutes} minutes.`
+  ));
+  const summary = patchSummary(patch, currentUiLocale());
+  setStatus(summary
+    ? uiText(`✓ Eingetragen: ${summary}`, `✓ Added: ${summary}`)
+    : uiText("✓ Eingetragen.", "✓ Added."), "success");
   $("#aiTopic")?.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 async function callRemyAi(text) {
   const functions = getFunctions(getApp(), "europe-west1");
   const callable = httpsCallable(functions, "crewAssistant", { timeout: 90000 });
-  const result = await callable({ crewId: "remy", text, context: currentContext() });
+  const result = await callable({ crewId: "remy", text, uiLocale: currentUiLocale(), context: currentContext() });
   return result.data || {};
 }
 
@@ -187,15 +209,15 @@ async function submitRequest() {
   if (!text) return;
   stopDictation();
   setBusy(true);
-  setStatus("Remy trägt ein …");
+  setStatus(uiText("Remy trägt ein …", "Remy is applying your request …"));
   try {
-    const local = resolveLocalCrewRequest({ crewId: "remy", text, context: currentContext() });
+    const local = resolveLocalCrewRequest({ crewId: "remy", text, context: currentContext(), locale: currentUiLocale() });
     if (local.handled && local.action?.type === "patch_ai_form") {
       applyPatch(local.action.patch || {});
       return;
     }
     if (local.handled) {
-      setStatus(local.reply || "Sag mir kurz, welchen Test du brauchst.");
+      setStatus(local.reply || uiText("Sag mir kurz, welchen Test du brauchst.", "Tell me briefly what test you need."));
       return;
     }
     const result = await callRemyAi(text);
@@ -203,10 +225,10 @@ async function submitRequest() {
       applyPatch(result.action.patch || {});
       return;
     }
-    setStatus(result.reply || "Ich konnte daraus noch keine sicheren Angaben übernehmen.");
+    setStatus(result.reply || uiText("Ich konnte daraus noch keine sicheren Angaben übernehmen.", "I couldn't safely apply any details from that yet."));
   } catch (error) {
     console.warn("Remy konnte den Testwunsch nicht verarbeiten:", error?.code || error?.message || error);
-    setStatus("Das hat gerade nicht geklappt. Versuch es bitte noch einmal.", "error");
+    setStatus(uiText("Das hat gerade nicht geklappt. Versuch es bitte noch einmal.", "That didn't work just now. Please try again."), "error");
   } finally {
     setBusy(false);
   }
@@ -239,13 +261,13 @@ function startRecognitionCycle() {
   const SpeechRecognition = speechConstructor();
   if (!SpeechRecognition) {
     stopDictation();
-    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    setStatus(uiText("Diktieren wird von diesem Browser nicht unterstützt.", "Dictation isn't supported by this browser."), "error");
     return;
   }
 
   const active = new SpeechRecognition();
   recognition = active;
-  active.lang = "de-DE";
+  active.lang = currentVoiceInputLocale();
   active.interimResults = true;
   active.continuous = true;
   active.maxAlternatives = 1;
@@ -265,7 +287,7 @@ function startRecognitionCycle() {
   active.onerror = event => {
     if (["not-allowed", "service-not-allowed", "audio-capture"].includes(event.error)) {
       keepListening = false;
-      setStatus("Ich bekomme gerade keinen Mikrofonzugriff.", "error");
+      setStatus(uiText("Ich bekomme gerade keinen Mikrofonzugriff.", "I can't access the microphone right now."), "error");
     }
   };
 
@@ -285,7 +307,7 @@ function startRecognitionCycle() {
 function toggleDictation() {
   if (keepListening) return stopDictation();
   if (!speechConstructor()) {
-    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    setStatus(uiText("Diktieren wird von diesem Browser nicht unterstützt.", "Dictation isn't supported by this browser."), "error");
     return;
   }
   const input = $("#gcRemyCreateInput");
@@ -293,11 +315,11 @@ function toggleDictation() {
   dictationFinal = "";
   keepListening = true;
   updateMicState();
-  setStatus("Ich höre zu …");
+  setStatus(uiText("Ich höre zu …", "I'm listening …"));
   startRecognitionCycle();
   stopTimer = window.setTimeout(() => {
     stopDictation();
-    if ($("#gcRemyCreateInput")?.value.trim()) setStatus("Diktat übernommen.");
+    if ($("#gcRemyCreateInput")?.value.trim()) setStatus(uiText("Diktat übernommen.", "Dictation added."));
   }, 60000);
 }
 
@@ -313,6 +335,9 @@ function installLifecycle() {
     const input = $("#gcRemyCreateInput");
     if (input) input.value = "";
     setStatus("");
+  });
+  window.addEventListener("gradecrew:ui-locale-changed", () => {
+    if (keepListening) stopDictation();
   });
 }
 
