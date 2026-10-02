@@ -168,18 +168,6 @@
     compactCards();
   }
 
-  const host = $('teacherQuestions');
-  if (host) {
-    let queued = false;
-    new MutationObserver(() => {
-      if (queued) return;
-      queued = true;
-      queueMicrotask(() => {
-        queued = false;
-        compactCards();
-      });
-    }).observe(host, { childList: true });
-  }
-
+  window.addEventListener('gradecrew:escape-teacher-rendered', compactCards);
   enhance();
 })();
