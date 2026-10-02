@@ -11,6 +11,7 @@ const execFileAsync = promisify(execFile);
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const destination = process.argv[2];
 const { games, modes, format: catalogFormat } = globalThis.GradeCrewGames;
+const brandIcon = 'assets/gradecrew/brand-icon-v1.svg';
 if (!destination || !path.isAbsolute(destination)) throw new Error('An absolute build directory is required.');
 const buildRoot = path.resolve(destination);
 if (buildRoot === root || buildRoot.startsWith(root + path.sep)) throw new Error('Build outside the repository to keep sources separate.');
@@ -46,7 +47,7 @@ function navigation(game) {
   const links = games.map(item => '<li><a data-gc-switch="' + item.id + '" href="../' + item.id + '/"' +
     (item.id === game.id ? ' aria-current="page"' : '') + '>' + escapeHtml(item.name) + '</a></li>').join('');
   return '<header class="gc-games-nav" data-gc-game="' + game.id + '">' +
-    '<nav class="gc-breadcrumb" aria-label="Spielnavigation"><a class="gc-games-home" href="../">← Alle Spiele</a><span class="gc-separator" aria-hidden="true">/</span>' +
+    '<nav class="gc-breadcrumb" aria-label="Spielnavigation"><img class="gc-brand-icon" src="../' + brandIcon + '" width="36" height="36" alt=""><a class="gc-games-home" href="../">← Alle Spiele</a><span class="gc-separator" aria-hidden="true">/</span>' +
     '<span class="gc-current-game"><strong>' + escapeHtml(game.name) + '</strong><small>' + escapeHtml(game.subject) + '</small></span></nav>' +
     '<details class="gc-games-switch"><summary>Spiele wechseln</summary><ul>' + links + '</ul></details></header>';
 }
@@ -54,8 +55,9 @@ const leaveDialog = '<dialog id="gcLeaveDialog" class="gc-leave-dialog" aria-lab
 for (const name of ['index.html', 'styles.css', 'app.js']) {
   await copyFile(path.join(root, 'lab', 'games-hub', name), path.join(output, name));
 }
-const sharedFiles = ['games-catalog.js', 'game-shell.css', 'game-shell.js'];
+const sharedFiles = ['games-catalog.js', 'game-shell.css', 'game-shell.js', 'brand-core.css'];
 for (const name of sharedFiles) await copyFile(path.join(root, 'lab', 'shared', name), path.join(output, 'shared', name));
+await copyFile(path.join(root, brandIcon), path.join(output, brandIcon));
 
 for (const game of games) {
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'gradecrew-game-build.'));
@@ -73,13 +75,14 @@ for (const game of games) {
       if (!html.includes(game.entry.modeAttribute + '="' + mode + '"')) throw new Error('Mode entry missing: ' + game.id + '/' + mode);
     }
     html = html.replace(headerPattern, navigation(game))
-      .replace('</head>', '<link rel="stylesheet" href="../shared/game-shell.css"></head>')
+      .replace('</head>', '<link rel="icon" href="../' + brandIcon + '" type="image/svg+xml"><link rel="stylesheet" href="../shared/game-shell.css"><link rel="stylesheet" href="../shared/brand-core.css"></head>')
       .replace('</body>', leaveDialog + '<script src="../shared/games-catalog.js"></script><script src="../shared/game-shell.js"></script></body>');
     await fs.writeFile(indexPath, html);
     const releasePath = path.join(gameDir, 'lab-release.json');
     const release = JSON.parse(await fs.readFile(releasePath, 'utf8'));
     // The original child manifest must be refreshed after adding the shared shell.
-    release.hubShellFormat = 1;
+    release.hubShellFormat = 2;
+    release.brandCore = { icon: '../' + brandIcon };
     release.files = await hashTree(gameDir);
     release.sharedFiles = await hashTree(path.join(output, 'shared'));
     await fs.writeFile(releasePath, JSON.stringify(release, null, 2) + '\n');
@@ -93,10 +96,10 @@ async function validateReferences(dir) {
     if (entry.isDirectory()) { await validateReferences(full); continue; }
     if (!entry.name.endsWith('.html')) continue;
     const html = await fs.readFile(full, 'utf8');
-    for (const match of html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)="([^"]+)"/gi)) {
+    for (const match of html.matchAll(/<(?:script|link|img)\b[^>]*\b(?:src|href)="([^"]+)"/gi)) {
       const reference = match[1];
       if (/^(?:https?:|data:|\/\/)/.test(reference)) continue;
-      const target = path.resolve(dir, reference.split(/[?#]/)[0]);
+      const target = path.resolve(path.dirname(full), reference.split(/[?#]/)[0]);
       if (!target.startsWith(output + path.sep)) throw new Error('Asset escapes the build: ' + reference);
       await fs.access(target);
     }
@@ -104,9 +107,10 @@ async function validateReferences(dir) {
 }
 await validateReferences(output);
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
-  experiment: 'gradecrew-games-hub', format: 4, catalogFormat,
+  experiment: 'gradecrew-games-hub', format: 5, catalogFormat,
   games: games.map(game => game.id), modes: modes.map(mode => mode.id),
-  features: { sharedNavigation: true, directModeEntry: true, gameFilters: true, favorites: true, centralJoin: true, canonicalGameBuilds: true, fastQuizRounding: true },
+  brandCore: { icon: brandIcon },
+  features: { sharedNavigation: true, directModeEntry: true, gameFilters: true, favorites: true, centralJoin: true, canonicalGameBuilds: true, fastQuizRounding: true, gradeCrewBrandCore: true },
   files: await hashTree(output)
 }, null, 2) + '\n');
 await fs.writeFile(path.join(buildRoot, 'firebase.json'), JSON.stringify({
