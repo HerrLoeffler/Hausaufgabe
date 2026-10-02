@@ -6,6 +6,7 @@ on:
       - feature/escape-room-mvp-v1
     paths:
       - 'tools/patch-escape-didactics-v03.py'
+      - 'tools/patch-escape-didactics-v03-fix.py'
       - 'lab/escape-room/escape-teacher-compact.js'
       - '.github/workflows/apply-escape-didactics-v03.yml'
   workflow_dispatch:
@@ -32,7 +33,9 @@ jobs:
           cache-dependency-path: tools/games/package-lock.json
 
       - name: Apply didactics patch
-        run: python3 tools/patch-escape-didactics-v03.py
+        run: |
+          python3 tools/patch-escape-didactics-v03.py
+          python3 tools/patch-escape-didactics-v03-fix.py
 
       - name: Install test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
