@@ -12,7 +12,7 @@ function installGradeCrewDesignStyles() {
     ["./generated/gradecrew-design-tokens.css?v=1.1.0", "tokens-1.1.0"],
     ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"],
     ["./gradecrew-logo.css?v=1", "brand-logo-v1"],
-    ["./gradecrew-auth-startscreen.css?v=1", "auth-startscreen-v1"]
+    ["./gradecrew-auth-startscreen.css?v=2", "auth-startscreen-v2"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
@@ -108,6 +108,9 @@ if (publicTestCode && !teacherPreview) {
   }, 6000);
 
   try {
+    // Recompose the public entry before app.js binds the existing auth/test-code
+    // handlers. The original forms and IDs are moved, not cloned or replaced.
+    await import("./gradecrew-entry-flow.js?v=1");
     await import("./app.js?v=2.3.1-gc28");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
