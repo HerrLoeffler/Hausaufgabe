@@ -3,6 +3,7 @@ import {
   CREW,
   DEMO_TEST as V7_DEMO_TEST
 } from "./gradecrew-tour-v7.js?v=clay2";
+import { installTutorialOrderingGuard } from "./tutorial-ordering-guard.js?v=1";
 
 export const TOUR_VERSION = "gradecrew-live-tour-v8";
 export { CREW };
@@ -116,6 +117,7 @@ export function installCrewTour(api) {
   };
   const base = installV7(proxy);
   installCoachPolish();
+  installTutorialOrderingGuard();
 
   let tutorialSubmissionId = "";
   let reviewFallbackTimer = 0;
