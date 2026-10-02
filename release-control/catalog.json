@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "description": "Dauerhaftes Produkt-/Abnahmeinventar. Teststatus und Deploymentstand werden separat ermittelt.",
+  "allowedManualStatuses": ["pending", "passed", "failed", "skipped"],
+  "areas": [
+    {
+      "id": "access",
+      "title": "Zugang & Rollen",
+      "features": [
+        {
+          "id": "AUTH-LOGIN",
+          "title": "Anmeldung und Rollen laden",
+          "sourceWorkstreams": ["web-app"],
+          "tests": [
+            {"id": "AUTH-LOGIN-01", "title": "Lehrkraft kann sich anmelden und landet im richtigen Bereich", "device": "desktop"},
+            {"id": "AUTH-ADMIN-01", "title": "Admin-Funktionen werden erst nach geklärter Authentifizierung geladen", "device": "desktop"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "authoring",
+      "title": "Test erstellen & bearbeiten",
+      "features": [
+        {
+          "id": "TEST-CREATE",
+          "title": "Test erstellen",
+          "sourceWorkstreams": ["web-app"],
+          "tests": [
+            {"id": "TEST-CREATE-01", "title": "Test manuell erstellen und speichern", "device": "desktop"},
+            {"id": "TEST-AI-01", "title": "Test per KI-Wunsch erstellen", "device": "desktop"},
+            {"id": "TEST-IMPORT-01", "title": "PDF/Bild/Screenshot importieren und weiterbearbeiten", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "TEST-EDITOR",
+          "title": "Editor, Varianten und Überarbeitung",
+          "sourceWorkstreams": ["web-app", "emmi-whole-test-revision"],
+          "tests": [
+            {"id": "EDITOR-01", "title": "Aufgaben im Editor ändern, speichern und erneut öffnen", "device": "desktop"},
+            {"id": "EDITOR-VARIANT-01", "title": "Aufgabenvariante erzeugen, ohne bestehende Aufgabe zu verlieren", "device": "desktop"},
+            {"id": "EMMI-01", "title": "Emmi überarbeitet den ganzen Test nach einem Wunsch", "device": "desktop"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crew",
+      "title": "Crew-Assistenten & Tutorial",
+      "features": [
+        {
+          "id": "CREW-ASSISTANTS",
+          "title": "Coco, Remy und Emmi",
+          "sourceWorkstreams": ["crew-assistant", "contextual-crew-assistants-v2", "remy-structured-telemetry-v1", "emmi-whole-test-revision"],
+          "tests": [
+            {"id": "COCO-01", "title": "Coco hilft im vorgesehenen Kontext ohne störende Überlagerung", "device": "desktop"},
+            {"id": "REMY-01", "title": "Remy versteht einen normalen Textwunsch und füllt passende Felder", "device": "desktop"},
+            {"id": "REMY-VOICE-01", "title": "Remy verarbeitet Spracheingabe und erlaubt Korrektur der erkannten Felder", "device": "ipad"},
+            {"id": "REMY-FALLBACK-01", "title": "Remy nutzt deterministische Antwort bzw. KI-Fallback passend", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "TUTORIAL",
+          "title": "Onboarding / Tutorial",
+          "sourceWorkstreams": ["tutorial-choice-replay-v1", "web-app"],
+          "tests": [
+            {"id": "TUTORIAL-START-01", "title": "Tutorial starten, überspringen, abbrechen und erneut aufrufen", "device": "desktop"},
+            {"id": "TUTORIAL-MOBILE-01", "title": "Tutorial bleibt auf iPad/iPhone vollständig bedienbar", "device": "ipad"},
+            {"id": "TUTORIAL-ORDER-01", "title": "Crew-Sortieraufgabe nur mit Pfeilen; Abgabe-Button bleibt erreichbar", "device": "ipad"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student",
+      "title": "Veröffentlichung & Schülerablauf",
+      "features": [
+        {
+          "id": "PUBLISH-STUDENT",
+          "title": "Normaler Veröffentlichungs- und Schülerablauf",
+          "sourceWorkstreams": ["web-app"],
+          "tests": [
+            {"id": "PUBLISH-01", "title": "Test veröffentlichen und Schülerzugang öffnen", "device": "desktop"},
+            {"id": "STUDENT-JOIN-01", "title": "Schüler tritt per Code bei und sieht den richtigen Test", "device": "ipad"},
+            {"id": "STUDENT-SUBMIT-01", "title": "Schüler beantwortet und gibt zuverlässig ab", "device": "ipad"}
+          ]
+        },
+        {
+          "id": "SECURE-ASSESSMENT",
+          "title": "Sicherer Prüfungsmodus",
+          "sourceWorkstreams": ["security"],
+          "tests": [
+            {"id": "SECURE-RESUME-01", "title": "Versuch starten, fortsetzen und einmalig sicher abgeben", "device": "ipad"},
+            {"id": "SECURE-LOAD-01", "title": "Mehrteilnehmer-/Lasttest ohne ungeklärten Serverfehler", "device": "server"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grading",
+      "title": "Korrektur & Ergebnisse",
+      "features": [
+        {
+          "id": "RESULTS",
+          "title": "Auswertung und Korrektur",
+          "sourceWorkstreams": ["web-app"],
+          "tests": [
+            {"id": "RESULTS-01", "title": "Abgabe erscheint vollständig in der Auswertung", "device": "desktop"},
+            {"id": "RESULTS-GRADE-01", "title": "Punkte und Notenschlüssel werden korrekt berechnet", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "FREETEXT",
+          "title": "Freitext-Prüfhilfe",
+          "sourceWorkstreams": ["freetext-review"],
+          "tests": [
+            {"id": "FREETEXT-01", "title": "Unsichere Freitextantworten werden priorisiert und Lehrkraft entscheidet final", "device": "desktop"},
+            {"id": "FREETEXT-REFERENCE-01", "title": "Freitextaufgabe besitzt eine brauchbare Referenz-/Erwartungsantwort", "device": "desktop"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ops",
+      "title": "Administration & Infrastruktur",
+      "features": [
+        {
+          "id": "REMY-TELEMETRY",
+          "title": "Remy-Nutzungs-/Qualitätsstatistik",
+          "sourceWorkstreams": ["remy-structured-telemetry-v1"],
+          "tests": [
+            {"id": "ADMIN-TELEMETRY-01", "title": "Admin sieht erwartete inhaltsfreie Remy-Nutzungs-/Qualitätssignale", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "GENERIC-TELEMETRY",
+          "title": "Generische Produktdiagnose / Telemetrie",
+          "sourceWorkstreams": ["telemetry"],
+          "tests": [
+            {"id": "GENERIC-TELEMETRY-01", "title": "Generische Collector-/Admin-Diagnose ist sicher auf Staging aktiviert", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "AI-GATEWAY",
+          "title": "AI Gateway",
+          "sourceWorkstreams": ["ai-gateway-staging-cicd-v1", "ai-gateway-foundation", "openai-gateway-provider-v1", "gemini-gateway-provider-v1"],
+          "tests": [
+            {"id": "GATEWAY-01", "title": "Gateway-Health und konfigurierte Provider-Smokes sind grün", "device": "server"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "games",
+      "title": "Games",
+      "features": [
+        {
+          "id": "ESCAPE",
+          "title": "Escape Room",
+          "sourceWorkstreams": ["games-escape", "escape-tutor-cost-guards"],
+          "tests": [
+            {"id": "ESCAPE-DESKTOP-01", "title": "Escape Room startet und läuft im Desktop-Browser durch", "device": "desktop"},
+            {"id": "ESCAPE-IPAD-01", "title": "Escape Room ist auf dem iPad vollständig bedienbar", "device": "ipad"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native",
+      "title": "iOS Lehrer-App",
+      "features": [
+        {
+          "id": "IOS-TEACHER",
+          "title": "GradeCrew Lehrer-App / TestFlight",
+          "sourceWorkstreams": ["ios-design"],
+          "tests": [
+            {"id": "IOS-ROUTING-01", "title": "Installierter TestFlight-Build öffnet den vorgesehenen GradeCrew-Teststand", "device": "ipad"},
+            {"id": "IOS-NATIVE-01", "title": "Navigation, Uploads, Downloads und Teilen funktionieren im nativen Wrapper", "device": "ipad"}
+          ]
+        }
+      ]
+    }
+  ]
+}
