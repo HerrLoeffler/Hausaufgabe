@@ -57,6 +57,9 @@ commit="$(git rev-parse HEAD)"
 echo "Deploying ${SERVICE} from ${branch}@${commit} to ${EXPECTED_PROJECT}/${REGION}"
 echo "OpenAI credential source: Secret Manager '${OPENAI_SECRET_NAME}' (value is never read by this script)."
 
+# Custom delimiter keeps comma-separated model allowlists intact.
+ENV_VARS="^@^ANTHROPIC_FEDERATION_RULE_ID=${ANTHROPIC_FEDERATION_RULE_ID}@ANTHROPIC_ORGANIZATION_ID=${ANTHROPIC_ORGANIZATION_ID}@ANTHROPIC_SERVICE_ACCOUNT_ID=${ANTHROPIC_SERVICE_ACCOUNT_ID}@ANTHROPIC_WORKSPACE_ID=${ANTHROPIC_WORKSPACE_ID}@ANTHROPIC_DEFAULT_MODEL=${ANTHROPIC_DEFAULT_MODEL:-claude-haiku-4-5}@ANTHROPIC_ALLOWED_MODELS=${ANTHROPIC_ALLOWED_MODELS:-claude-haiku-4-5}@OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL:-gpt-5.6-luna}@OPENAI_ALLOWED_MODELS=${OPENAI_ALLOWED_MODELS:-gpt-5.6-luna}"
+
 gcloud run deploy "${SERVICE}" \
   --project="${EXPECTED_PROJECT}" \
   --region="${REGION}" \
@@ -67,7 +70,7 @@ gcloud run deploy "${SERVICE}" \
   --max=2 \
   --concurrency=5 \
   --timeout=60 \
-  --update-env-vars="ANTHROPIC_FEDERATION_RULE_ID=${ANTHROPIC_FEDERATION_RULE_ID},ANTHROPIC_ORGANIZATION_ID=${ANTHROPIC_ORGANIZATION_ID},ANTHROPIC_SERVICE_ACCOUNT_ID=${ANTHROPIC_SERVICE_ACCOUNT_ID},ANTHROPIC_WORKSPACE_ID=${ANTHROPIC_WORKSPACE_ID},ANTHROPIC_DEFAULT_MODEL=${ANTHROPIC_DEFAULT_MODEL:-claude-haiku-4-5},ANTHROPIC_ALLOWED_MODELS=${ANTHROPIC_ALLOWED_MODELS:-claude-haiku-4-5},OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL:-gpt-5.6-luna},OPENAI_ALLOWED_MODELS=${OPENAI_ALLOWED_MODELS:-gpt-5.6-luna}" \
+  --update-env-vars="${ENV_VARS}" \
   --update-secrets="OPENAI_API_KEY=${OPENAI_SECRET_NAME}:latest"
 
 echo "Deploy complete. Verify revision/source, service account, IAM requirement, max=2, concurrency=5 and both provider smoke tests."
