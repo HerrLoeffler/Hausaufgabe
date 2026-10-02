@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 2,
+  "updatedAt": "2026-10-02",
+  "canonicalBaseBranch": "main",
+  "allowedStates": [
+    "active",
+    "integration_ready",
+    "blocked",
+    "integrated",
+    "archive_candidate"
+  ],
+  "staleAfterDays": 7,
+  "staleBehindThreshold": 1,
+  "ignoredBranches": [
+    "main"
+  ],
+  "ignoredPrefixes": [
+    "preview-snapshot-"
+  ],
+  "workstreams": [
+    {
+      "id": "development-status-v1",
+      "title": "Development Status / Mehr-Chat-Control-Plane",
+      "primaryBranch": "feature/development-status-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/development-status-v1.md",
+      "relatedBranches": [
+        "feature/dev-governance-emulator"
+      ]
+    },
+    {
+      "id": "web-app",
+      "title": "Website / gemeinsamer App-Webstand",
+      "primaryBranch": "feature/gradecrew-app-integration",
+      "integrationTarget": "main",
+      "state": "active",
+      "relatedBranches": [
+        "fix/gradecrew-staging-polish",
+        "fix/gradecrew-staging-release-final"
+      ]
+    },
+    {
+      "id": "crew-assistant",
+      "title": "Crew Assistant Core",
+      "primaryBranch": "feature/crew-assistant-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/contextual-crew-assistants-v2"
+      ]
+    },
+    {
+      "id": "remy-structured-telemetry-v1",
+      "title": "Remy Struktur / Telemetrie",
+      "primaryBranch": "feature/remy-structured-telemetry-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/crew-telemetry-retention-v1"
+      ]
+    },
+    {
+      "id": "emmi-whole-test-revision",
+      "title": "Emmi / ganzen Test überarbeiten",
+      "primaryBranch": "feature/emmi-whole-test-revision-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": []
+    },
+    {
+      "id": "tutorial-choice-replay-v1",
+      "title": "Tutorial Choice / Replay",
+      "primaryBranch": "feature/tutorial-choice-replay-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/tutorial-final-sort-viewport-v1"
+      ]
+    },
+    {
+      "id": "freetext-review",
+      "title": "Freitext-Prüfhilfe",
+      "primaryBranch": "feature/freetext-review-priority",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "blocked",
+      "relatedBranches": []
+    },
+    {
+      "id": "secure-assessment",
+      "title": "Prüfungsserver / Security",
+      "primaryBranch": "feature/secure-assessment-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/gate-e-load-test",
+        "hardening/secure-preview-full-rc-check",
+        "integration/secure-assessment-mobile-gc28",
+        "fix/mobile-review-release-audit"
+      ]
+    },
+    {
+      "id": "telemetry",
+      "title": "Generische Telemetrie / Produktdiagnose",
+      "primaryBranch": "feature/telemetry-implementation",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/telemetry-contract-v1",
+        "feature/telemetry-measurement-design",
+        "integration/telemetry-emulator-gate"
+      ]
+    },
+    {
+      "id": "ios-teacher-app",
+      "title": "iPad-Lehrerapp / Shared Design",
+      "primaryBranch": "feature/shared-gradecrew-design-system",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/gradecrew-secure-ios"
+      ]
+    },
+    {
+      "id": "design-foundation",
+      "title": "Design Foundation",
+      "primaryBranch": "feature/gradecrew-design-foundation-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/design-dashboard-v1",
+        "feature/brand-logo-v1"
+      ]
+    },
+    {
+      "id": "release-safety",
+      "title": "Release-Sicherung",
+      "primaryBranch": "feature/release-safety-snapshots",
+      "integrationTarget": "main",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "games-structure",
+      "title": "Games Hub / Struktur",
+      "primaryBranch": "lab/games-structure",
+      "integrationTarget": "lab/vocab-rush",
+      "state": "active",
+      "relatedBranches": [
+        "lab/games-hub",
+        "lab/fast-quiz",
+        "lab/fast-quiz-v4-verified",
+        "lab/fehlerjagd-deutsch",
+        "lab/fehlerjagd-deutsch-v1-verified",
+        "lab/vocab-rush-v1-verified"
+      ]
+    },
+    {
+      "id": "games-escape",
+      "title": "Games / Escape Room",
+      "primaryBranch": "feature/escape-room-mvp-v1",
+      "integrationTarget": "lab/games-structure",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "games-design-system",
+      "title": "Games Design System",
+      "primaryBranch": "lab/games-design-system",
+      "integrationTarget": "lab/games-structure",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "escape-tutor-cost-guards",
+      "title": "Escape Tutor Kosten-/Fallback-Guards",
+      "primaryBranch": "fix/escape-tutor-cost-guards",
+      "integrationTarget": "feature/escape-room-mvp-v1",
+      "state": "integrated",
+      "relatedBranches": []
+    },
+    {
+      "id": "ai-gateway-foundation",
+      "title": "Multi-Provider AI Gateway",
+      "primaryBranch": "feature/multi-provider-ai-gateway-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "quality-routing-contract-v1",
+      "title": "KI-Qualitäts-/Sprachvertrag",
+      "primaryBranch": "feature/quality-routing-contract-v1",
+      "integrationTarget": "feature/multi-provider-ai-gateway-v1",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "ai-orchestration-v1",
+      "title": "Automatische KI-Auswahl / Kosten",
+      "primaryBranch": "feature/ai-orchestration-v1",
+      "integrationTarget": "feature/quality-routing-contract-v1",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "openai-gateway-provider-v1",
+      "title": "OpenAI im gemeinsamen Gateway",
+      "primaryBranch": "feature/openai-gateway-provider-v1",
+      "integrationTarget": "feature/ai-orchestration-v1",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "ai-gateway-staging-cicd-v1",
+      "title": "Automatisches AI-Gateway-Staging",
+      "primaryBranch": "feature/ai-gateway-staging-cicd-v1",
+      "integrationTarget": "feature/openai-gateway-provider-v1",
+      "state": "blocked",
+      "relatedBranches": [
+        "integration/ai-gateway-staging"
+      ]
+    },
+    {
+      "id": "i18n-foundation-plan",
+      "title": "Internationalisierungsplan",
+      "primaryBranch": "feature/i18n-foundation-plan",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "feature/i18n-core-v1"
+      ]
+    },
+    {
+      "id": "dev-governance-emulator",
+      "title": "Alte Governance-/Emulator-Arbeit",
+      "primaryBranch": "feature/dev-governance-emulator",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/gradecrew-automation",
+        "chore/shared-agent-handoffs"
+      ]
+    }
+  ]
+}
