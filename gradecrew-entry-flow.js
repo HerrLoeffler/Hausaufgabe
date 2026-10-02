@@ -122,7 +122,7 @@ function renderTutorial() {
     </div>${tutorialChoice ? `<div class="gcEntryPrepared"><span>Remys vorbereitete Aufgabe</span><strong>${escapeHtml(sourceQuestion?.text || "What colour is the schoolbag?")}</strong><small>${optionText.map(escapeHtml).join(" · ")}</small><button type="button" class="button secondary" id="gcEntryPreparedKeep">Passt – weiter</button></div>` : ""}` : "";
   const resultHtml = current.result && tutorialChoice ? `<p class="gcEntryResult"><strong>Deine Auswahl:</strong> ${escapeHtml(tutorialChoice)} · keine Daten gespeichert</p>` : "";
   host.innerHTML = `<div class="gcEntryTutorialVisual"><img src="${escapeHtml(current.image)}" alt="" decoding="async"></div>
-    <div class="gcEntryTutorialCopy"><span class="gcEntryEyebrow">${escapeHtml(current.eyebrow)}</span><h2>${current.title}</h2><p>${escapeHtml(current.text)}</p>${actionHtml}${resultHtml}</div>`;
+    <div class="gcEntryTutorialCopy"><span class="gcEntryEyebrow">${escapeHtml(current.eyebrow)}</span><h2 id="gcEntryTutorialTitle">${current.title}</h2><p>${escapeHtml(current.text)}</p>${actionHtml}${resultHtml}</div>`;
   $("gcEntryTutorialProgress").textContent = `${tutorialStep + 1} / ${steps.length}`;
   const prev = $("gcEntryTutorialPrev");
   const next = $("gcEntryTutorialNext");
