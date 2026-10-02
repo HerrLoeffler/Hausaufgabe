@@ -1,0 +1,34 @@
+name: Staging Short Login Checks
+
+on:
+  push:
+    branches:
+      - feature/staging-short-login-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Test staging-only alias contract
+        run: node --test staging-short-login.test.mjs
+
+      - name: Verify staging build includes short-login module
+        run: |
+          rm -rf "$RUNNER_TEMP/gradecrew-short-login"
+          mkdir -p "$RUNNER_TEMP/gradecrew-short-login"
+          node tools/build-staging.mjs "$RUNNER_TEMP/gradecrew-short-login"
+          test -f "$RUNNER_TEMP/gradecrew-short-login/public/staging-short-login.mjs"
+          grep -q 'staging.gradecrew.test' "$RUNNER_TEMP/gradecrew-short-login/public/staging-short-login.mjs"
