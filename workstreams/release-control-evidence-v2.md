@@ -62,3 +62,14 @@ V2 pushen, PR erstellen, Workflow-Verhalten einschließlich realer Receipt-Lekt�
 - PR #51 ist nicht mehr Draft, Code unverändert `1985673476606b9222f08a014f657b7579910891`, echter Merge-Result-CI-Lauf `37074747781` vollständig grün. Integration bewusst noch offen: löst automatischen Staging-Deploy aus, der laut main-AGENTS nicht Teil dieses Koordinationsauftrags ist.
 - Registry: V2 `integrated`; Pre-Merge-CI `integration_ready`. GitHub bleibt Quelle für aktuelle Merge-/CI-Zustände. Main, Hosting, Backend, Spiele und installierte App niemals gleichsetzen.
 - Nächster konkreter Schritt: PR #51 auf ausdrückliche Staging-Aktivierung integrieren und anschließend die getrennten Hosting-/Functions-Receipts prüfen. Daneben Gateway-Preflight und Escape-Secret-Metadatenzugriff beheben; interaktive Abnahme/Fehlerhistorie, Rules-Gates und Geräteabnahme bleiben offen.
+
+## Parallel laufende Änderungen beim letzten Abgleich (23:05 UTC)
+
+Nach dem bestätigten Audit kamen weitere Commits aus anderen Chats hinzu. Diese werden hier nicht als abgeschlossen verbucht:
+
+- Gateway `integration/ai-gateway-staging@db02e3de…`, neuer Run `37075606295`: verify erfolgreich, deploy noch queued beim Abgleich. Der vorherige Preflight-Fehler bleibt historisch dokumentiert; neuen Abschluss und Receipt frisch prüfen, bevor Staging wieder bestätigt wird.
+- Neuer App-Branch `feature/ios-app-shell-017-018`: Upload `37075335026` auf `a83691f2…` erfolgreich, spätere Runs `37075458505` und `37075552505` fehlgeschlagen; letzter Head `44074912…`, Fehler bei `Archive GradeCrew`. 0.1.6 im kanonischen State ist die zuvor bestätigte Beobachtung, nicht Behauptung des neuesten parallelen App-Shell-Stands. Kein physischer Gerätetest bestätigt.
+- Neuer Design-Branch `feature/design-startscreen-v1`: AI-Staging-Checks `37075638007` liefen beim Abgleich; kein neuer Design-/Hosting-Deploy daraus ableiten.
+- Diese parallelen Primary-/Related-Branches beim nächsten Einstieg frisch mit Registry/PRs abgleichen. Keine konkurrierende Reparatur ohne Lesen der neuen Hand-offs beginnen.
+
+Abschlussnachweis unserer Änderungen auf `eba27b9d870ff82bcdba7eddb7a4db9c442592f4`: Main Release Control `37075558441`, Development Status `37075558412`, Handoff `37075558344` erfolgreich. Damit ist auch der zuvor abbrechende Main-Audit nach PR #48 bestätigt.
