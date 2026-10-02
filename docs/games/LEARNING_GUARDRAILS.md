@@ -1,12 +1,30 @@
 # GradeCrew Games – Lern- und KI-Leitplanken
 
-Stand: 01.10.2026. Gilt zunächst als verbindliche Produkt- und Architekturregel für den Escape-Room-MVP und als Vorlage für spätere GradeCrew-Games.
+Stand: 03.10.2026. Gilt zunächst als verbindliche Produkt- und Architekturregel für den Escape-Room-MVP und als Vorlage für spätere GradeCrew-Games.
 
 ## Kernprinzip
 
 **Spaß motiviert. Entscheidender Spielfortschritt wird regelmäßig durch nachgewiesenes Lernen verdient.**
 
 Ein Spiel darf Entdecken, Animationen, Items, Rätsel und reine Fun-Momente enthalten. Lernrelevante Fortschrittsstellen dürfen aber nicht dadurch lösbar sein, dass ein Schüler alle Antworten oder Symbolkombinationen stumpf durchprobiert.
+
+## Individuelle Aufgabenvarianten pro Schüler
+
+Wenn eine Lehrkraft Fachfragen bzw. Lernziele für ein Spiel vorgibt, sollen Schüler **nicht einfach dieselbe konkrete Aufgabe mit denselben Zahlen oder Antwortwerten** erhalten.
+
+Verbindliche Zielrichtung:
+
+- gleiches Lernziel, gleiche Kompetenz und vergleichbares Schwierigkeitsniveau;
+- pro Schüler bzw. Spielsession deterministisch erzeugte, äquivalente Varianten;
+- in Mathematik z. B. andere Zahlenwerte bei gleicher Rechenidee;
+- bei geeigneten anderen Fächern alternative Beispiele, Reihenfolgen, Distraktoren oder gleichwertige Formulierungen;
+- Transferaufgaben werden ebenfalls aus demselben Lernziel variiert;
+- ein Seed hält die Variante innerhalb einer Session stabil und reproduzierbar;
+- die Lehrkraft sieht weiterhin die zugrunde liegende Aufgabenfamilie und das Zielniveau.
+
+Zusätzlich darf das bloße Weitergeben eines fertigen Codes oder einer fremden Lösung den eigenen Fortschritt nicht ersetzen. Relevante Gates prüfen deshalb den **eigenen gelösten Lernzustand**. Wo sinnvoll können auch Codes, Schlüsselwerte oder daraus abgeleitete Hinweise pro Session/Schüler variiert werden, ohne die Geschichte oder das Niveau zu verändern.
+
+Damit kann die Klasse dieselbe Spielwelt gleichzeitig erleben, während Abschreiben bzw. das einfache Zurufen von Antworten deutlich weniger wirksam wird.
 
 ## Lernschleife bei Fehlern
 
