@@ -1,80 +1,138 @@
 # GradeCrew Games – aktueller Arbeitsstand
 
-Stand: 30.09.2026. Diese Datei beschreibt die Spiele und ihren gemeinsamen Lab-Hub.
+Stand: 02.10.2026. Diese Datei beschreibt die Spiele, den gemeinsamen Lab-Hub und die neue Games-Design-System-Schicht.
 
 ## Zuerst lesen
 
 1. Diese Datei.
-2. [lab/games-hub/README.md](lab/games-hub/README.md).
-3. [lab/shared/games-catalog.js](lab/shared/games-catalog.js).
-4. Den aktuellen Branch, letzten Commit und eventuell neuere Remote-Commits prüfen.
+2. `docs/games/GAMES_DESIGN_SYSTEM.md`.
+3. `lab/games-hub/README.md`.
+4. `lab/shared/games-catalog.js`.
+5. Aktuellen Branch, Commit, offene PRs und neuere Remote-Commits prüfen.
 
-## Aktiver Stand
+## Branch- und Integrationsstand
 
 | Feld | Wert |
 | --- | --- |
 | Repository | HerrLoeffler/Hausaufgabe |
-| Struktur-Branch | lab/games-structure |
-| Ausgangsbranch | lab/vocab-rush |
-| Ausgangscommit | 4e739100d8a0e8c9be08d11b7bc96ddf86f3b141 |
-| Lab-Projekt | hausaufgabe-staging |
-| Neuer Preview-Channel | gradecrew-games-structure |
-| Veröffentlichung | Vorbereitet; noch kein Deployment aus dieser Arbeitsrunde |
-| Hauptprodukt / Secure / Lehrer-App | Eigene Arbeitszweige; keine Integration durch diesen Spiele-Branch |
+| Games-Struktur-Basis | `lab/games-structure` @ `869ca416b868667c9e48c05f81c967fe6ad59020` |
+| Design-System-Arbeitsbranch | `lab/games-design-system` |
+| Struktur-PR | Draft PR #2: `lab/games-structure` -> `lab/vocab-rush` |
+| Produktweites Design-System | separater Branch `feature/shared-gradecrew-design-system`; wird **wiederverwendet**, nicht dupliziert |
+| Lab-Projekt | `hausaufgabe-staging` |
+| Preview-Channel der Games-Struktur | `gradecrew-games-structure` |
+| Production | unverändert |
 
-Der ältere Branch lab/games-hub enthält einen früheren Stand. lab/vocab-rush enthält bereits alle drei Spiele, Rundungsaufgaben, Vokabelbibliothek, Import und Lern-Ergänzungen. Er ist deshalb die Grundlage dieses Struktur-Branches.
+Der ältere Branch `lab/games-hub` ist nicht mehr die Strukturquelle. `lab/games-structure` besitzt Hub/Katalog/Navigation/Tests. `lab/games-design-system` baut ausschließlich auf diesem Stand auf.
 
 ## Vorhandene Spiele
 
 | Spiel | Frontend | Backend-Codebase | API |
 | --- | --- | --- | --- |
-| Fast Quiz | lab/fast-quiz/ | fastquiz | fastQuizApi |
-| Fehlerjagd Deutsch | lab/fehlerjagd-deutsch/ | fehlerjagd | fehlerjagdApi |
-| Vocab Rush | lab/vocab-rush/ | vocabrush | vocabRushApi |
+| Fast Quiz | `lab/fast-quiz/` | `fastquiz` | `fastQuizApi` |
+| Fehlerjagd Deutsch | `lab/fehlerjagd-deutsch/` | `fehlerjagd` | `fehlerjagdApi` |
+| Vocab Rush | `lab/vocab-rush/` | `vocabrush` | `vocabRushApi` |
 
 Alle drei bieten Üben, All-Time-Highscore und Live mit Lehrkraft. Die vorhandenen Live-Systeme nutzen QR-Code, 6-stelligen Code und bis zu 30 Teilnehmende. Fachliche Inhalte, Wertung, Aufgabenengines und gespeicherte Vokabelsets bleiben in ihren jeweiligen Spielmodulen.
 
-## In dieser Arbeitsrunde umgesetzt
+## Games Design System – Foundation v0.1.0
 
-- Ein Spiele-Katalog für Hub, Navigation und Build.
-- Spielauswahl mit Fachfiltern, Suche, Favoriten und direkten Einstiegen in die drei Modi.
-- Zentraler Code-Beitritt mit Spielauswahl.
-- Gemeinsame Navigation innerhalb aller drei Spiele.
-- Hub verwendet die vollständigen Einzel-Builds inklusive Deutsch-Feedback und Vokabelimport.
-- Verweise und Prüfsummen werden im Build kontrolliert; Spiel-Manifeste nach dem Einbau der Navigation aktualisiert.
-- Eigener neuer Preview-Channel für diesen Strukturstand.
-- Übergabe, Cloud-Shell-Einstieg mit Node 22 und automatische Prüfungen.
+### Ziel
 
-## Verifiziert
+Eine gemeinsame UX-/Komponentenschicht für alle Games, ohne ein zweites GradeCrew-Marken-/Token-System zu erzeugen.
 
-- 18 automatisierte DOM-, Navigations-, Build- und Manifestprüfungen bestanden.
-- Chromium-Browserprüfung: Desktop (1440 px), Tablet (768 px), Handy (390 px); kein horizontaler Überlauf im Hub.
-- Alle neun Kombinationen aus Spiel und Modus öffnen die richtige Ansicht.
-- Übungsrunden lassen sich in allen drei Spielen tatsächlich starten.
-- Code-Beitritt erhält führende Nullen; QR-Beitrittslinks haben Vorrang vor Modusparametern.
-- Navigation, Verlassen/Abbrechen, Favoriten nach Neuladen und Einstieg ohne JavaScript geprüft.
-- Spielprogramme und Aufgabenengines stimmen im Hub bytegenau mit ihren Quellen überein.
+Source-of-truth:
 
-**Prüfgrenze:** Serverantworten und die externe QR-Bibliothek waren in der Browserprüfung simuliert. Es wurden keine echten Räume, Highscores oder KI-Aufträge angelegt. Ein neuer Test mit 30 echten Geräten, realem Backend, KI-Import und tatsächlichen QR-Scans gehört zur nächsten Abnahme.
+1. produktweites GradeCrew Shared Design System für Farben, Spacing, Radien, Typografie und Assets;
+2. Games Design System für Spiel-UX, Komponenten, Status und Setup-Hierarchie;
+3. Einzelspiel nur für Fachlogik und notwendige Spezialfälle.
+
+### Auf GitHub umgesetzt
+
+- verbindliche Spezifikation: `docs/games/GAMES_DESIGN_SYSTEM.md`
+- gemeinsame CSS-Komponenten: `lab/shared/games-design-system.css`
+- opt-in JS-Helfer: `lab/shared/games-design-system.js`
+- Living Preview: `lab/games-system/`
+- bestehende `game-shell.css` verwendet Games-/GradeCrew-Tokens statt eigener harter Layoutwerte
+- Hub-Build liefert die Games-Schicht einmal unter `/shared/` aus
+- Hub-Build injiziert dieselbe CSS-/JS-Schicht in alle drei **kanonischen** Einzelspiel-Builds
+- Living Preview wird im isolierten Hub-Build unter `/design-system/` ausgeliefert
+- Child-Manifeste speichern `gamesDesignSystemVersion: 0.1.0`
+- Root-Manifest markiert `sharedGamesDesignSystem` und `designSystemPreview`
+- neue DOM-/Komponenten-Regressionstests
+- neue responsive Chromium-Prüfung der Living Preview
+- Games-CI auf `lab/games-design-system` erweitert
+
+### Noch nicht als erledigt behaupten
+
+- Cloud-Shell-`--check` für diesen neuen Branch wurde in dieser Chat-Arbeitsrunde noch nicht vom Nutzer ausgeführt.
+- GitHub-CI-Ergebnis des neuen Branches ist noch zu prüfen.
+- Living Preview wurde noch nicht visuell vom Nutzer auf Desktop/iPad/Handy abgenommen.
+- Fast Quiz verwendet die neuen `gcg-*`-Komponenten noch nicht als vollständigen Setup-Refactor; Foundation und gemeinsame Shell sind der erste Schritt.
+- Fehlerjagd und Vocab Rush sind noch nicht auf die neue progressive Setup-Struktur migriert.
+- keine neue echte Staging-Backend-Abnahme durch diese Design-System-Arbeit.
+- kein Production-Deploy.
+
+## Verbindliche UX-Regeln
+
+- normale Runde: höchstens 3–4 Primärentscheidungen vor Start
+- seltene Regeln unter **Weitere Einstellungen**
+- Üben / Highscore / Live = Spielmodus; fachliche Lernform ist eine getrennte Ebene
+- Highscore nur für sinnvoll vergleichbare Aufgaben
+- Live: Lehrkraft konfiguriert; Schüler nur Code/QR + Name/Kürzel
+- Status nie ausschließlich über Farbe
+- Touch-Ziele mindestens 44 px
+- kein Big-Bang-Redesign; Einzelspiele schrittweise migrieren
+
+## Geplante fachliche Referenzpfade
+
+### Fast Quiz
+
+- **Kopfrechnen** – ausschließlich mental angemessene Aufgaben
+- **Runden** – eigene klare Stellenwert-/Rundungslogik
+- **Mit Block & Stift** – bewusst komplexere Rechnungen, standardmäßig ohne aggressiven Zeitbonus
+
+### Fehlerjagd Deutsch
+
+- **Blitzrunde** – kurze, geschwindigkeitsgeeignete Aufgaben
+- **Genau prüfen** – längere Analyse-/Begründungsaufgaben
+
+### Vocab Rush
+
+- **Erkennen**
+- **Abrufen**
+- **Schreiben**
+- **Gemischt**
+
+`Nach Fehler richtig schreiben` bleibt eine Lernhilfe und ist nicht dasselbe wie der Schreibmodus.
+
+## Vorheriger Strukturstand – weiterhin gültig
+
+- gemeinsamer Spiele-Katalog
+- Fachfilter, Suche, Favoriten und direkte Modi im Hub
+- zentraler Code-Beitritt
+- gemeinsame Navigation in allen drei Spielen
+- vollständige kanonische Einzel-Builds inklusive Deutsch-Feedback und Vokabelimport
+- isolierter Preview-Channel
+- vorhandene Struktur-/Browserprüfungen
 
 ## Verbindliche Arbeitsregeln
 
-- Live bleibt bei verifizierten Releases. Lab -> bewerten -> Feature-Branch -> integrieren -> Staging -> abnehmen -> Live.
-- Verifizierte Spiele-Branches und Produktions-Tags als Referenz erhalten.
-- Das Hosting-Skript veröffentlicht ausschließlich den neuen Lab-Preview-Channel in hausaufgabe-staging.
-- Keine gemeinsame Bestenliste für Spiele mit unterschiedlicher Wertung.
-- Spielinhalte und Modus bleiben getrennt; Vokabelsets nicht durch Hub-Navigation verändern.
-- Ein Rundencode ist derzeit einem Spiel zugeordnet. Keine automatische Suche in allen Backends und kein Beitritt zu einer geratenen Runde.
-- Favoriten sind lokal im Browser; noch nicht an einen GradeCrew-Account gebunden.
-- Collections und Functions-Codebases nicht für eine reine Oberflächenänderung umstellen.
-- Neue Chats verwenden diesen Branch und aktualisieren diese Datei.
+- Production nur nach ausdrücklicher Freigabe.
+- Lab -> bewerten -> Feature/Lab-Branch -> integrieren -> Staging -> abnehmen -> Production.
+- Keine parallele zweite Games-Design-System-Lösung anfangen.
+- Vor Arbeit `feature/shared-gradecrew-design-system`, `lab/games-structure`, offene Games-PRs und diese Datei prüfen.
+- Keine gemeinsame Bestenliste für fachlich/zeitlich nicht vergleichbare Aufgaben.
+- Backend-/Collection-Verträge nicht für reine UI-Arbeit ändern.
+- Kanonische Einzelspiel-Builds erhalten; Hub setzt sie zusammen.
+- Änderungen immer unterscheiden: GitHub-Code, Check/CI, Preview-Deploy, Gerätetest, Production.
 
 ## Nächste fünf Aufgaben
 
-1. **Abnahme im Lab:** Hub mit echten Staging-Backends, allen drei Spielen und mehreren Geräten / QR-Codes testen.
-2. **Lehrkraft-Konfigurationen:** Einstellungen pro Spiel speichern, benennen und erneut öffnen; zuerst lokal, später an den Lehreraccount binden.
-3. **Gemeinsamer API-Adapter:** Aktionsnamen hinter einem Vertrag für Räume und Bestenlisten abbilden, einzeln testen; Wertungslogik je Spiel erhalten.
-4. **GradeCrew-Anbindung:** Auf Feature-Branch „Spiele“ als eigenen Bereich, Lehreraccount und später Klassen/Kürzel anbinden; lokale Vokabelsets kontrolliert übernehmen.
-5. **Staging-Abnahme:** Auth-/Klassenrechte, Raumende/Wiederbeitritt, Fehlerzustände, Datenhaltung und Betriebskosten prüfen, anschließend Live-Freigabe.
+1. **Foundation verifizieren:** `deploy-lab-games-hub.sh --check`, `npm test --prefix tools/games`, Chromium-Smokes; CI-Ergebnis prüfen.
+2. **Living Preview visuell abnehmen:** Desktop, iPad/Tablet, Handy; Fokus, Overflow, Touch, Reduced Motion prüfen.
+3. **Fast Quiz als Referenz migrieren:** Kopfrechnen / Runden / Block & Stift, Presets, Rundenzusammenfassung, `Weitere Einstellungen`; bestehende Optionen erhalten.
+4. **Fast-Quiz-Fachlogik trennen:** Kopfrechen-Generator mit mentalen Grenzen; schriftliche/komplexe Aufgaben in Block-&-Stift-Profil; Highscores nach Vergleichbarkeit trennen.
+5. **Muster übertragen:** nach Fast-Quiz-Abnahme Fehlerjagd (Blitz/Genau) und Vocab Rush (Erkennen/Abrufen/Schreiben/Gemischt) schrittweise auf dieselben Komponenten migrieren.
 
-Neue Spiele folgen nach diesen Struktur- und Abnahmeschritten.
+Neue Spiele sollten erst nach dieser Referenzmigration dieselben Komponentenverträge übernehmen.
