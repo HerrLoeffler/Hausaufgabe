@@ -17,6 +17,20 @@ if (typeof location !== "undefined" && new URLSearchParams(location.search).get(
   });
 }
 
+function installFinaleOrderingGuard() {
+  // Keep V8's single static import boundary intact: the long-lived tutorial
+  // regression fixture evaluates the wrapper source after removing that import.
+  // The guard itself has its own DOM regression tests and is loaded early enough
+  // here to be installed long before the later student/finale phase is reached.
+  import("./tutorial-ordering-guard.js?v=1")
+    .then(module => module.installTutorialOrderingGuard?.())
+    .catch(error => {
+      // In the real browser this should never fail because the staging build
+      // verifies the module exists. A failure must not break the tutorial core.
+      if (typeof console !== "undefined") console.error("Tutorial-Sortierschutz konnte nicht geladen werden", error);
+    });
+}
+
 function variantSourceQuestion() {
   return {
     type: "dropdown",
@@ -116,6 +130,7 @@ export function installCrewTour(api) {
   };
   const base = installV7(proxy);
   installCoachPolish();
+  installFinaleOrderingGuard();
 
   let tutorialSubmissionId = "";
   let reviewFallbackTimer = 0;

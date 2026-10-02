@@ -24,6 +24,26 @@ Die GradeCrew-Einführung lädt neue Lehrkräfte stark zum Tutorial ein, hält s
 
 Die erste Einladung ist bewusst sichtbar statt zwingend: Crew-Grafik, klarer Nutzen, drei kurze Vorteile und ein dominanter Start-CTA. Das Tutorial selbst sperrt weiterhin irrelevante Bedienelemente pro Schritt, besitzt aber nun jederzeit einen echten Ausstieg.
 
+## Finale-Sortierung – Arrow-only Hardening (`GC-TUTORIAL-05`)
+
+Nutzerbeobachtung vom 02.10.2026: Bei der letzten Crew-Sortieraufgabe konnte die sichtbare Drag-Markierung `⋮⋮` auf einem Touchgerät zum Ziehen/Wischen verleiten. Da die Schülerphase des Tutorials absichtlich scrollbar ist, konnte dadurch der blaue Abgabe-Button aus dem Sichtbereich geraten.
+
+Fix-Branch: `fix/tutorial-finale-arrow-only`, Basis `feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e`.
+
+Der Fix gilt ausschließlich für die Tutorial-Aufgabe `Crew-Finale`:
+
+- Drag & Drop der `.sortItem`-Zeilen wird deaktiviert; reale Ordering-Aufgaben außerhalb des Tutorials bleiben unverändert.
+- Der Drag-Griff `⋮⋮` wird ausgeblendet und für Assistenztechnik als verborgen markiert.
+- Die Reihenfolge wird nur mit den bereits vorhandenen `↑`-/`↓`-Buttons geändert; ein kurzer Hinweis erklärt dies explizit.
+- `dragstart`, Wischen und Scrollrad direkt auf einer Finale-Zeile werden abgefangen, damit die Geste nicht die Seite verschiebt.
+- Sobald das Finale im Sichtbereich ist, wird der blaue `Antworten abgeben`-Button bei Bedarf tutorial-only am unteren Viewport-Rand angeheftet.
+- Nach einer Interaktion mit der Sortierung wird bei einem starken Viewport-Drift die Finale-Aufgabe automatisch wieder ins Bild geholt.
+- Beim Verlassen der Tutorial-Antwortphase wird der ursprüngliche `draggable`-Zustand wiederhergestellt.
+
+Implementierung: `tutorial-ordering-guard.js`, Einbindung über `gradecrew-tour-v8.js`, Regressionen in `tutorial-ordering-guard.test.mjs`.
+
+Aktueller Code-Head nach Implementierung/Testdatei: `06fd97395b167f7d23311ff9a257bc0867afe271`; CI und Staging-Integration sind zum Zeitpunkt dieses Eintrags noch offen.
+
 ## Zeitmessung
 
 Die bestehende Tour misst bereits lokal `startedAt` bis Abschluss und zeigt die tatsächliche Dauer im Finale an. V1 speichert diese Dauer nicht personenbezogen. Für eine spätere datensparsame Produktmessung sollen nur Start/Abbruch/Abschluss, letzter Schritt und Dauer/Bucket über den separaten Telemetrie-Vertrag erfasst werden; keine Antworten oder Testinhalte. Bis reale Daten vorliegen, wird konservativ `ca. 5–7 Min.` kommuniziert.
@@ -67,14 +87,15 @@ Für den gemeinsamen Staging-Build wurden fehlende Runtime-Dateien in `tools/bui
 2. echte Profilspeicherung der Auswahl mit Testkonto prüfen
 3. Abbruch mitten in verschiedenen Tutorial-Phasen am echten Gerät prüfen
 4. Remy/Emmi im gemeinsam veröffentlichten Staging-Preview praktisch testen
-5. reale Dauerwerte erst nach freigegebener Telemetrie auswerten
+5. `GC-TUTORIAL-05`: Arrow-only-Finale nach grüner CI in Web-Integration übernehmen, automatisch ins Staging-Preview deployen und anschließend auf Touchgerät prüfen
+6. reale Dauerwerte erst nach freigegebener Telemetrie auswerten
 
 ## Deploy-Status
 
 - lokal geändert: n/a (GitHub-first Arbeit)
-- GitHub: **gesichert und in Web-Integration integriert**
-- automatisierte Tests: **grün**
-- Staging Preview: **deployed und hash-verifiziert**
+- GitHub: **Tutorial V2 integriert; Finale-Hardening auf eigenem Fix-Branch gesichert**
+- automatisierte Tests: **Tutorial V2 grün; Finale-Hardening CI noch offen**
+- Staging Preview: **vorheriger Tutorial-V2-Stand deployed; Finale-Hardening noch nicht deployed**
 - Staging Root `hausaufgabe-staging.web.app`: **durch diesen Vorgang nicht überschrieben**
-- Gerätetest: **offen / nicht durchgeführt**
+- Gerätetest: **für Finale-Hardening offen / nicht durchgeführt**
 - Production: **unverändert / nicht deployed**

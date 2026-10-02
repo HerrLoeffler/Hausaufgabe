@@ -10,6 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
+      - 'fix/tutorial-*'
       - 'feature/design-*'
       - 'feature/brand-*'
       - 'feature/i18n-*'
@@ -148,6 +149,7 @@ jobs:
           node --check gradecrew-tour.js
           node --check gradecrew-tour-v7.js
           node --check gradecrew-tour-v8.js
+          node --check tutorial-ordering-guard.js
           node --check tutorial-variant-fallback.js
           node --check crew-tour-hardening.js
           node --check crew-tour-gc22-polish.js
@@ -178,6 +180,7 @@ jobs:
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
           node --test gradecrew-tour-v8-dashboard.test.mjs
+          node --test tutorial-ordering-guard.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
           node --test crew-tour-gc24-polish.test.mjs
           node --test crew-tour-gc25-final-polish.test.mjs
@@ -205,6 +208,7 @@ jobs:
           test -f "$BUILD_DIR/public/shared/i18n/browser-runtime.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/messages-de-DE.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/bootstrap.mjs"
+          test -f "$BUILD_DIR/public/tutorial-ordering-guard.js"
           test -f "$BUILD_DIR/public/secure-student.html"
           test -f "$BUILD_DIR/public/secure-draft-persistence.js"
           test -f "$BUILD_DIR/public/secure-student.js"
