@@ -65,7 +65,8 @@ test('dashboard foundation stays scoped away from student and secure assessment 
 test('public entry uses the canonical manifest and remains auth-scoped', () => {
   assert.match(entryFlow, /GRADECREW_ASSETS/);
   assert.match(entryFlow, /CREW, DEMO_TEST/);
-  assert.match(startscreenCss, /#authView \.gcEntryStart/);
+  assert.match(startscreenCss, /#authView \.gcEntryShell/);
+  assert.match(startscreenCss, /#authView \.gcEntryHero/);
   assert.doesNotMatch(entryFlow, /falcon-create\.svg/);
   assert.doesNotMatch(startscreenCss, /#dashboardView/);
   assert.doesNotMatch(startscreenCss, /#studentView/);
