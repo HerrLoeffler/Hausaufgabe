@@ -82,6 +82,11 @@ function cleanNullableString(value, max) {
 }
 
 function sanitizeAiForm(raw = {}) {
+  const numeric = (value, min, max) => {
+    if (!['number', 'string'].includes(typeof value) || String(value).trim() === '') return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.max(min, Math.min(max, number)) : null;
+  };
   return {
     subject: cleanNullableString(raw.subject, 120),
     grade: cleanNullableString(raw.grade, 60),
@@ -89,8 +94,8 @@ function sanitizeAiForm(raw = {}) {
     region: cleanNullableString(raw.region, 100),
     topic: cleanNullableString(raw.topic, 500),
     difficulty: cleanNullableString(raw.difficulty, 50),
-    count: Number.isFinite(Number(raw.count)) ? Math.max(1, Math.min(100, Number(raw.count))) : null,
-    points: Number.isFinite(Number(raw.points)) ? Math.max(0.5, Math.min(500, Number(raw.points))) : null
+    count: numeric(raw.count, 1, 100),
+    points: numeric(raw.points, 0.5, 500)
   };
 }
 

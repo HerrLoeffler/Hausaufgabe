@@ -8,6 +8,7 @@ on:
       - fix/contextual-crew-assistants-v2
       - feature/remy-structured-telemetry-v1
       - fix/crew-telemetry-retention-v1
+      - fix/remy-parser-review-v1
   workflow_dispatch:
 
 permissions:
@@ -39,7 +40,7 @@ jobs:
           exit "$code"
 
       - name: Check contextual assistant browser modules
-        if: github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1'
+        if: github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1' || github.ref_name == 'fix/remy-parser-review-v1'
         run: |
           node --check crew-assistant-ui.js
           node --check remy-ai-help.js
@@ -58,7 +59,7 @@ jobs:
           retention-days: 2
 
       - name: Check Emmi browser modules and editor bridge
-        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1'
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1' || github.ref_name == 'fix/remy-parser-review-v1'
         run: |
           node --check emmi-whole-test-revision.mjs
           node --test emmi-whole-test-bridge.test.mjs
@@ -72,15 +73,16 @@ jobs:
         run: node --test test/crew-assistant.test.js
 
       - name: Test Crew telemetry privacy contract
-        if: github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1'
+        if: github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1' || github.ref_name == 'fix/remy-parser-review-v1'
         working-directory: functions
         run: node --test test/crew-telemetry.test.js
 
       - name: Test Emmi whole-test safeguards
-        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1'
+        if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1' || github.ref_name == 'fix/remy-parser-review-v1'
         working-directory: functions
         run: node --test test/whole-test-revision.test.js
 
       - name: Check function syntax and lint
         working-directory: functions
         run: npm run check
+

@@ -1,7 +1,7 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
-const PARSER_VERSION = "remy-structure-v2";
+import { PARSER_VERSION } from "./crew-assistant-core.mjs?v=3";
 const FIELD_SELECTORS = Object.freeze({
   subject: "#aiSubject",
   grade: "#aiGrade",

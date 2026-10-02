@@ -1,1 +1,1 @@
-export * from "./crew-assistant-core.mjs?v=2";
+export * from "./crew-assistant-core.mjs?v=3";

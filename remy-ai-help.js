@@ -1,12 +1,12 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=2";
+import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=3";
 import {
   recordRemyMetric,
   recordRemySubmission,
   recordRemyPatch,
   resetRemyTelemetryContext
-} from "./crew-telemetry-client.mjs?v=1";
+} from "./crew-telemetry-client.mjs?v=2";
 
 let installed = false;
 let recognition = null;
