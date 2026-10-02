@@ -48,8 +48,9 @@ cd "$WORKTREE"
 
 [[ "$(git rev-parse HEAD)" == "$EXPECTED_SHA" ]] || { echo "FEHLER: Worktree-SHA stimmt nicht."; exit 1; }
 grep -q '"codebase": "ai"' firebase.json || { echo "FEHLER: AI-Codebase fehlt in firebase.json."; exit 1; }
-grep -q 'crewAssistant' functions/main.js || { echo "FEHLER: crewAssistant fehlt im Zielcommit."; exit 1; }
-grep -q 'reviseWholeTest' functions/main.js || { echo "FEHLER: reviseWholeTest fehlt im Zielcommit."; exit 1; }
+for required in crewAssistant reviseWholeTest recordCrewTelemetry getCrewTelemetrySummary cleanupCrewTelemetry; do
+  grep -q "$required" functions/main.js || { echo "FEHLER: $required fehlt im Zielcommit."; exit 1; }
+done
 
 if grep -q 'hausaufgabe-40294' .firebaserc 2>/dev/null; then
   echo "HINWEIS: .firebaserc enthält eine Production-Referenz; deploy target bleibt trotzdem hart $PROJECT_ID."
@@ -88,6 +89,18 @@ echo "Verifiziere Firebase-Zugriff auf $PROJECT_ID ..."
 echo "Deploye ausschließlich AI-Codebase nach STAGING ..."
 "${FIREBASE[@]}" deploy --project "$PROJECT_ID" --only functions:ai --non-interactive
 
+echo "Verifiziere Crew-, Emmi- und Telemetrie-Funktionen ..."
+"${FIREBASE[@]}" functions:list --project "$PROJECT_ID" --json > "$WORKTREE/functions-after-deploy.json"
+node - "$WORKTREE/functions-after-deploy.json" <<'NODE'
+const fs = require('node:fs');
+const payload = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+const rows = Array.isArray(payload) ? payload : payload.result || payload.functions || [];
+const text = JSON.stringify(rows);
+for (const required of ['crewAssistant', 'reviseWholeTest', 'recordCrewTelemetry', 'getCrewTelemetrySummary', 'cleanupCrewTelemetry']) {
+  if (!text.includes(required)) throw new Error(`FEHLER: Staging-Funktion fehlt nach Deploy: ${required}`);
+}
+NODE
+
 echo
-echo "STAGING AI Functions deploy abgeschlossen für $EXPECTED_SHA."
+echo "STAGING AI Functions deploy abgeschlossen und verifiziert für $EXPECTED_SHA."
 echo "Production, Firestore Rules, Hosting und Assessment-Codebase wurden von diesem Skript nicht angefordert."
