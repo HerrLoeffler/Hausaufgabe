@@ -54,3 +54,11 @@ V2 pushen, PR erstellen, Workflow-Verhalten einschließlich realer Receipt-Lekt�
 - Neu erkannt: Gateway Run 37010376603 scheitert im Preflight, bevor ein neues Image oder Traffic verändert wird. Log: keine ungetaggte 100%-Revision. Nicht mit einem Ausfall des bestehenden Dienstes gleichsetzen; aktive Cloud-Run-Konfiguration separat prüfen.
 - Pre-Merge Combined CI separat in PR #51, Commit 1985673476606b9222f08a014f657b7579910891. Echte PR-Merge-Result-Prüfung 37074747781 vollständig grün, inklusive Firestore-Emulator und sämtlicher ergänzter Prüfungen. Merge auf Web würde die vorhandene Staging-Kette auslösen; in diesem Audit nicht ausgeführt.
 - GRADECREW_STATE korrigiert: Web-Evidence aktuell, Games fehlgeschlagener neuester Deploy getrennt von alter Beobachtung, iOS 0.1.6 nur Upload, Gateway letzter Erfolg historisch erhalten. Keine neue Cloud-Veröffentlichung.
+
+## Abschluss auf main
+
+- PR #50 integriert als `f79d153bf24794b18f926497469d43cea7e2c807`. Erster Main-Release-Control-Lauf `37075303003`: erfolgreich, 14 Tests und reale Receipt-Lektüre; 21 offene, 10 noch nicht bestätigte Tests, 0 Abnahmen.
+- Parallel vorbereiteter PR #48 wurde nach frischer Diff-Prüfung ebenfalls integriert (`e7a5e0d477b3fd1d6250de3c06d9233e5d4e079c`): ausschließlich Concurrency-Key der Development-Status-Action. Anlass: Main-Audit `37075302958` erneut durch PR-Ereignis abgebrochen. Nachfolge-Main-Audit prüfen.
+- PR #51 ist nicht mehr Draft, Code unverändert `1985673476606b9222f08a014f657b7579910891`, echter Merge-Result-CI-Lauf `37074747781` vollständig grün. Integration bewusst noch offen: löst automatischen Staging-Deploy aus, der laut main-AGENTS nicht Teil dieses Koordinationsauftrags ist.
+- Registry: V2 `integrated`; Pre-Merge-CI `integration_ready`. GitHub bleibt Quelle für aktuelle Merge-/CI-Zustände. Main, Hosting, Backend, Spiele und installierte App niemals gleichsetzen.
+- Nächster konkreter Schritt: PR #51 auf ausdrückliche Staging-Aktivierung integrieren und anschließend die getrennten Hosting-/Functions-Receipts prüfen. Daneben Gateway-Preflight und Escape-Secret-Metadatenzugriff beheben; interaktive Abnahme/Fehlerhistorie, Rules-Gates und Geräteabnahme bleiben offen.

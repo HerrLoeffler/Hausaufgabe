@@ -120,3 +120,5 @@ Diese Nachprüfung ergänzt ältere Zeilen; historische SHAs oben sind keine Beh
 Frühere Review-PRs #39 (Gateway), #40 (Escape) und #41 (Remy) sind inzwischen nachweislich gemergt. Das ersetzt keine aktuelle Staging-/Geräteabnahme. Codex-Worker bleibt nachrangig.
 
 GC-AI-GATEWAY-04: Neuester Gateway-Run `37010376603` ist beim Preflight gescheitert: „No untagged Cloud Run revision currently owns 100% of normal traffic.“ Keine neue Image-/Traffic-Promotion in diesem Lauf. Vorheriger Erfolg ist historisch; aktive Revision/Tags prüfen. Signierte Modellqualifikation und automatische Routing-Aktivierung bleiben eigenständig offen.
+
+Abschluss dieses Audits: PR #50 integriert (`f79d153`), Main-Release-Control `37075303003` erfolgreich. PR #48 Concurrency-Fix anschließend integriert (`e7a5e0d`); erster Main-Audit danach separat prüfen. PR #51 ist CI-grün und integrationsbereit, noch nicht gemergt/aktiviert, da der Merge automatisch Staging deployt. Kein Produkt-/Cloud-Deploy in diesem Audit. Nächster priorisierter Schritt: Staging-Aktivierung von PR #51, danach Gateway-Traffic- und Escape-Secret-Blocker bearbeiten.

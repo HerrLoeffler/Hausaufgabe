@@ -308,7 +308,7 @@
       "title": "Release Control: verifizierte Receipts und ehrliche Abnahme",
       "primaryBranch": "fix/release-control-evidence-v2",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/release-control-evidence-v2.md",
       "relatedBranches": [
         "feature/release-control-acceptance-v1"
@@ -319,7 +319,7 @@
       "title": "Combined CI vor Web-Integration",
       "primaryBranch": "fix/web-premerge-combined-ci-v1",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integration_ready",
       "handoff": "workstreams/web-premerge-combined-ci-v1.md"
     }
   ]
