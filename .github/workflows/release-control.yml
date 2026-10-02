@@ -2,15 +2,23 @@ name: GradeCrew Release Control
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'release-control/**'
+      - 'tools/*release_control*.py'
+      - '.github/workflows/release-control.yml'
   schedule:
     - cron: '29 * * * *'
   push:
     branches:
       - main
       - feature/release-control-acceptance-v1
+      - fix/release-control-evidence-v2
     paths:
       - 'release-control/**'
       - 'tools/release_control.py'
+      - 'tools/test_release_control.py'
       - 'GRADECREW_STATE.json'
       - 'workstreams/registry.json'
       - '.github/workflows/release-control.yml'
@@ -20,6 +28,9 @@ on:
       - 'Automatic staging AI functions'
       - 'Automatic staging AI gateway'
       - 'Archive verified preview'
+      - 'AI Staging Checks'
+      - 'Escape Room Dev Preview'
+      - 'GradeCrew → TestFlight'
     types: [completed]
 
 permissions:
@@ -45,6 +56,9 @@ jobs:
 
       - name: Validate Python syntax
         run: python3 -m py_compile tools/release_control.py
+
+      - name: Test release evidence and acceptance boundaries
+        run: python3 -m unittest tools.test_release_control -v
 
       - name: Build Release Control
         env:

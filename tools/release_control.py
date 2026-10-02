@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
+import io
 import json
 import os
 import pathlib
@@ -15,6 +17,7 @@ import re
 import subprocess
 import urllib.error
 import urllib.request
+import zipfile
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -25,6 +28,13 @@ REGISTRY = ROOT / "workstreams" / "registry.json"
 STAGES = ["branch_only", "ci_green", "integrated", "staging_deployed", "user_tested", "production"]
 STAGE_RANK = {stage: index for index, stage in enumerate(STAGES)}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+REPO = "HerrLoeffler/Hausaufgabe"
+WEB_BRANCH = "feature/gradecrew-app-integration"
+DEPLOYMENTS = {
+    "hosting": ("Automatic staging preview", "staging-preview.yml", "workflow_run", "main", "verified-preview-receipt", "receipt.json"),
+    "functions": ("Automatic staging AI functions", "staging-functions.yml", "workflow_run", "main", "staging-functions-receipt-", "staging-functions-receipt.json"),
+    "gateway": ("Automatic staging AI gateway", "staging-ai-gateway.yml", None, "integration/ai-gateway-staging", "staging-ai-gateway-receipt-", "staging-ai-gateway-receipt.json"),
+}
 
 
 def load_json(path: pathlib.Path) -> dict[str, Any]:
@@ -93,41 +103,97 @@ def find_ci_run(runs: list[dict[str, Any]], name: str, branch: str, sha: str | N
             and run.get("head_branch") == branch
             and run.get("head_sha") == sha
             and run.get("event") == "push"
-            and run.get("status") == "completed"
         ):
-            return {"runId": run.get("id"), "conclusion": run.get("conclusion"), "url": run.get("html_url")}
+            return {"runId": run.get("id"), "conclusion": run.get("conclusion") if run.get("status") == "completed" else None, "url": run.get("html_url")}
     return None
 
 
-def latest_artifact_sha(runs: list[dict[str, Any]], workflow_name: str, artifact_prefix: str) -> dict[str, Any] | None:
-    """Use immutable SHA embedded in deployment artifact names; no ZIP download needed."""
-    repo = os.getenv("GITHUB_REPOSITORY", "").strip()
-    if not repo:
+def receipt_document(artifact: dict[str, Any], filename: str) -> dict[str, Any]:
+    """Read one small JSON document, never extract an archive or forward tokens ourselves.
+
+    Uses the same authenticated gh transport as the existing archive workflow.
+    SHA256 verifies downloaded bytes against GitHub's artifact metadata.
+    """
+    artifact_id = artifact.get("id")
+    size = artifact.get("size_in_bytes")
+    if type(artifact_id) is not int or type(size) is not int or not 0 < size <= 1024 * 1024:
+        raise ValueError("Invalid or oversized receipt artifact")
+    data = subprocess.check_output(
+        ["gh", "api", f"repos/{REPO}/actions/artifacts/{artifact_id}/zip"],
+        timeout=30, stderr=subprocess.DEVNULL,
+    )
+    if len(data) > 1024 * 1024 or artifact.get("digest") != "sha256:" + hashlib.sha256(data).hexdigest():
+        raise ValueError("Receipt artifact digest differs")
+    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        entries = archive.infolist()
+        if len(entries) != 1 or entries[0].filename != filename or entries[0].file_size > 65536:
+            raise ValueError("Unexpected receipt archive contents")
+        receipt = json.loads(archive.read(entries[0]))
+    if not isinstance(receipt, dict):
+        raise ValueError("Receipt must be an object")
+    return receipt
+
+
+def validate_receipt(kind: str, receipt: dict[str, Any], run: dict[str, Any]) -> str:
+    sha = receipt.get("commit")
+    if not isinstance(sha, str) or not SHA_RE.fullmatch(sha) or receipt.get("project") != "hausaufgabe-staging":
+        raise ValueError("Wrong receipt project or commit")
+    if kind == "hosting":
+        if (receipt.get("channel") != "gradecrew-app-integration"
+                or str(receipt.get("ci_run")) != str(run["id"])
+                or type(receipt.get("verified_files")) is not int or receipt["verified_files"] < 1
+                or not re.fullmatch(r"https://hausaufgabe-staging--gradecrew-app-integration-[a-z0-9]+\.web\.app", str(receipt.get("url")))):
+            raise ValueError("Hosting receipt target or verification differs")
+    else:
+        expected_branch = WEB_BRANCH if kind == "functions" else "integration/ai-gateway-staging"
+        if receipt.get("productionChanged") is not False or receipt.get("integrationBranch") != expected_branch:
+            raise ValueError("Wrong deployment scope")
+        if kind == "functions":
+            required = {"crewAssistant", "reviseWholeTest", "recordCrewTelemetry", "getCrewTelemetrySummary", "cleanupCrewTelemetry"}
+            if (receipt.get("scope") != "functions:ai" or receipt.get("workflowRun") != run["id"]
+                    or receipt.get("firestoreRulesChanged") is not False
+                    or not required.issubset(receipt.get("verifiedFunctions", []))
+                    or type(receipt.get("upstreamCiRun")) is not int):
+                raise ValueError("Incomplete Functions verification")
+        elif (receipt.get("service") != "gradecrew-ai-gateway-staging" or sha != run.get("head_sha")
+                or not receipt.get("promotedRevision")
+                or receipt.get("candidateSmoke", {}).get("health") is not True
+                or any(receipt.get("candidateSmoke", {}).get(p, {}).get("ok") is not True for p in ("claude", "openai"))):
+            raise ValueError("Incomplete gateway promotion verification")
+    return sha
+
+
+def latest_deployment(runs: list[dict[str, Any]], kind: str, warnings: list[str]) -> dict[str, Any] | None:
+    """Latest trusted attempt only: never hide a newer failed/partial deployment."""
+    name, path, event, branch, prefix, filename = DEPLOYMENTS[kind]
+    relevant = [r for r in runs if r.get("path") == ".github/workflows/" + path
+                and r.get("name") == name and r.get("head_branch") == branch
+                and r.get("event") in ({event} if event else {"push", "workflow_dispatch"})
+                and r.get("repository", {}).get("full_name") == REPO
+                and r.get("head_repository", {}).get("full_name") == REPO]
+    if not relevant:
+        warnings.append(f"{kind}: kein vertrauenswürdiger Deploy-Lauf im abgefragten Zeitfenster.")
         return None
-    for run in runs:
-        if run.get("name") != workflow_name or run.get("conclusion") != "success":
-            continue
-        run_id = run.get("id")
-        if not isinstance(run_id, int):
-            continue
-        try:
-            payload = gh_request(f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
-        except (RuntimeError, urllib.error.URLError, json.JSONDecodeError):
-            continue
-        for artifact in payload.get("artifacts", []):
-            name = str(artifact.get("name") or "")
-            if artifact.get("expired") or not name.startswith(artifact_prefix):
-                continue
-            candidate = name[len(artifact_prefix):]
-            if SHA_RE.fullmatch(candidate):
-                return {
-                    "commit": candidate,
-                    "runId": run_id,
-                    "artifactId": artifact.get("id"),
-                    "artifactName": name,
-                    "evidence": "artifact_name",
-                }
-    return None
+    run = max(relevant, key=lambda r: (r.get("run_number", 0), r.get("run_attempt", 0)))
+    if run.get("status") != "completed" or run.get("conclusion") != "success":
+        warnings.append(f"{kind}: neuester Deploy-Lauf {run['id']} ist {run.get('conclusion') or run.get('status')}; aktueller Stand unbestätigt.")
+        return None
+    try:
+        payload = gh_request(f"https://api.github.com/repos/{REPO}/actions/runs/{run['id']}/artifacts?per_page=100")
+        matches = [a for a in payload.get("artifacts", []) if not a.get("expired")
+                   and (a.get("name") == prefix if kind == "hosting" else re.fullmatch(re.escape(prefix) + r"[0-9a-f]{40}", str(a.get("name"))))]
+        if len(matches) != 1:
+            raise ValueError("Missing or ambiguous deployment receipt")
+        artifact = matches[0]
+        receipt = receipt_document(artifact, filename)
+        sha = validate_receipt(kind, receipt, run)
+        if kind != "hosting" and artifact["name"] != prefix + sha:
+            raise ValueError("Artifact name and receipt commit differ")
+        return {"commit": sha, "runId": run["id"], "url": run.get("html_url"), "artifactId": artifact["id"],
+                "evidence": "validated_receipt", "receipt": receipt}
+    except (ValueError, TypeError, OSError, subprocess.SubprocessError, urllib.error.URLError, zipfile.BadZipFile) as exc:
+        warnings.append(f"{kind}: Receipt von Run {run['id']} nicht verifiziert ({type(exc).__name__}).")
+        return None
 
 
 def verified_preview_snapshot(sha: str | None) -> dict[str, Any] | None:
@@ -168,7 +234,7 @@ def feature_stage(ids: list[str], state_map: dict[str, dict[str, Any]], registry
         source_rows.append({"id": ws_id, "stage": stage, "staging": staging})
         if stage in STAGE_RANK:
             ranks.append(STAGE_RANK[stage])
-    return (STAGES[min(ranks)] if ranks else None), source_rows
+    return (STAGES[min(ranks)] if ranks and len(ranks) == len(ids) else None), source_rows
 
 
 def target_kind(feature_id: str) -> str:
@@ -179,23 +245,25 @@ def target_sha(kind: str, web_sha: str | None, gateway_evidence: dict[str, Any] 
     if kind == "web":
         return web_sha
     if kind == "gateway":
-        return str((gateway_evidence or {}).get("commit") or "") or ref_sha("integration/ai-gateway-staging")
-    if kind == "games":
-        row = state_map.get("games-escape", {})
-        return str(row.get("observed_head") or "") or ref_sha(str(registry_map.get("games-escape", {}).get("primaryBranch") or "feature/escape-room-mvp-v1"))
-    if kind == "ios":
-        row = state_map.get("ios-design", {})
-        return str(row.get("observed_head") or "") or ref_sha(str(registry_map.get("ios-teacher-app", {}).get("primaryBranch") or "feature/shared-gradecrew-design-system"))
+        return str((gateway_evidence or {}).get("commit") or "") or None
+    # Branch tips and documented observations are not installed/deployed builds.
+    # Games needs a verified Hosting/Functions receipt; iOS needs build + web SHA.
     return None
 
 
 def acceptance_view(raw: dict[str, Any] | None, current_sha: str | None) -> tuple[str, str]:
     if not raw:
         return "pending", "Noch nicht getestet"
+    if not isinstance(raw, dict):
+        return "invalid", "Abnahme muss ein Objekt sein"
     status = str(raw.get("status") or "pending")
     tested_sha = str(raw.get("testedSha") or "") or None
     note = str(raw.get("note") or "").strip()
-    if status in {"passed", "failed"} and tested_sha and current_sha and tested_sha != current_sha:
+    if status not in {"pending", "passed", "failed", "skipped"}:
+        return "invalid", "Unbekannter Abnahmestatus"
+    if status != "pending" and (not tested_sha or not SHA_RE.fullmatch(tested_sha)):
+        return "invalid", "Vollständiger getesteter SHA fehlt"
+    if status != "pending" and (not current_sha or tested_sha != current_sha):
         return "retest", note or f"Ergebnis stammt von {short(tested_sha)}"
     labels = {"pending": "Noch nicht getestet", "passed": "Bestanden", "failed": "Fehler gemeldet", "skipped": "Bewusst übersprungen"}
     return status, note or labels.get(status, status)
@@ -230,32 +298,24 @@ def main() -> int:
         errors.append(f"Kandidatenbranch fehlt: {candidate_branch}")
 
     runs: list[dict[str, Any]] = []
-    functions_evidence = gateway_evidence = None
+    hosting_evidence = functions_evidence = gateway_evidence = None
     try:
         runs = github_runs()
         if runs:
-            functions_evidence = latest_artifact_sha(runs, "Automatic staging AI functions", "staging-functions-receipt-")
-            gateway_evidence = latest_artifact_sha(runs, "Automatic staging AI gateway", "staging-ai-gateway-receipt-")
+            hosting_evidence = latest_deployment(runs, "hosting", warnings)
+            functions_evidence = latest_deployment(runs, "functions", warnings)
+            gateway_evidence = latest_deployment(runs, "gateway", warnings)
         else:
-            warnings.append("Keine Live-Actions-Daten verfügbar; Deploymentstand fällt auf dokumentierte Evidence zurück.")
+            warnings.append("Keine Live-Actions-Daten verfügbar; aktueller Deploymentstand bleibt unbestätigt.")
     except (RuntimeError, urllib.error.URLError, json.JSONDecodeError) as exc:
         warnings.append(f"GitHub-Actions-Abgleich fehlgeschlagen: {exc}")
 
     candidate_ci = find_ci_run(runs, "AI Staging Checks", candidate_branch, candidate_sha)
-    hosting_evidence = verified_preview_snapshot(candidate_sha)
+    snapshot_evidence = verified_preview_snapshot(candidate_sha)
     release_train = state.get("release_train", {})
     documented_sha = str(release_train.get("observed_integration_head") or "") or None
     if documented_sha and candidate_sha and documented_sha != candidate_sha:
         warnings.append(f"GRADECREW_STATE.json veraltet: dokumentiert {short(documented_sha)}, Integration aktuell {short(candidate_sha)}.")
-
-    if not hosting_evidence:
-        evidence = state.get("automation", {}).get("preview_evidence", {})
-        if evidence.get("commit"):
-            hosting_evidence = {"commit": evidence.get("commit"), "runId": evidence.get("run_id"), "fallback": True}
-    if not functions_evidence:
-        evidence = state.get("automation", {}).get("functions_automation_evidence", {})
-        if evidence.get("deployed_commit"):
-            functions_evidence = {"commit": evidence.get("deployed_commit"), "runId": evidence.get("automatic_run_id"), "fallback": True}
 
     hosting_sha = str((hosting_evidence or {}).get("commit") or "") or None
     functions_sha = str((functions_evidence or {}).get("commit") or "") or None
@@ -263,6 +323,9 @@ def main() -> int:
 
     state_map, registry_map = workstream_maps(state, registry)
     manual_results = acceptance.get("results", {})
+    if not isinstance(manual_results, dict):
+        errors.append("acceptance.json: results muss ein Objekt sein")
+        manual_results = {}
     known_tests: set[str] = set()
     features: list[dict[str, Any]] = []
     tests: list[dict[str, Any]] = []
@@ -275,9 +338,10 @@ def main() -> int:
             source_ids = [str(value) for value in feature.get("sourceWorkstreams", [])]
             stage, sources = feature_stage(source_ids, state_map, registry_map)
             kind = target_kind(feature_id)
-            current_sha = target_sha(kind, candidate_sha, gateway_evidence, state_map, registry_map)
-            if feature_id == "AI-GATEWAY" and gateway_evidence:
-                stage = "staging_deployed"
+            current_sha = target_sha(kind, candidate_sha if web_sync else None, gateway_evidence, state_map, registry_map)
+            available = bool(current_sha and stage in {"staging_deployed", "user_tested", "production"})
+            if not available and stage in {"staging_deployed", "user_tested", "production"}:
+                stage = "unverified"
             feature_tests: list[dict[str, Any]] = []
             for test in feature.get("tests", []):
                 test_id = str(test.get("id") or "")
@@ -288,8 +352,13 @@ def main() -> int:
                     errors.append(f"Doppelte Test-ID: {test_id}")
                 known_tests.add(test_id)
                 status, note = acceptance_view(manual_results.get(test_id), current_sha)
-                if stage not in {"staging_deployed", "user_tested", "production"} and status == "pending":
+                if status == "invalid":
+                    errors.append(f"{test_id}: {note}")
+                if not available and status == "pending":
                     status, note = "not_on_staging", "Noch nicht vollständig auf dem zugehörigen Testziel"
+                elif not available and status == "passed":
+                    status = "retest"
+                    note = "Abnahme gespeichert; aktuelles Testziel nicht vollständig bestätigt. " + note
                 row = {
                     "id": test_id,
                     "title": str(test.get("title") or test_id),
@@ -300,6 +369,7 @@ def main() -> int:
                     "areaTitle": area_title,
                     "targetKind": kind,
                     "targetSha": current_sha,
+                    "available": available,
                     "status": status,
                     "note": note,
                     "raw": manual_results.get(test_id),
@@ -312,7 +382,7 @@ def main() -> int:
     if unknown_results:
         warnings.append("Acceptance-Einträge ohne Katalog-Test: " + ", ".join(unknown_results))
 
-    statuses = ["pending", "passed", "failed", "retest", "skipped", "not_on_staging"]
+    statuses = ["pending", "passed", "failed", "retest", "skipped", "not_on_staging", "invalid"]
     counts = {status: sum(row["status"] == status for row in tests) for status in statuses}
     staged_features = sum(row["releaseStage"] in {"staging_deployed", "user_tested", "production"} for row in features)
     rules_status = str(release_train.get("gates", {}).get("staging_rules") or "unknown")
@@ -326,11 +396,14 @@ def main() -> int:
             "sha": candidate_sha,
             "ci": candidate_ci,
             "hosting": hosting_evidence,
+            "hostingSnapshot": snapshot_evidence,
             "functions": functions_evidence,
             "rules": rules_status,
             "documentedReleaseSha": documented_sha,
             "documentedStateStale": bool(documented_sha and candidate_sha and documented_sha != candidate_sha),
             "webTechnicallySynchronized": web_sync,
+            "stagingComplete": False,
+            "completionBlockers": ["Firestore-Rules-Nachweis/Cutover fehlt", "Geräte- und Martin-Abnahme separat offen"],
         },
         "otherTargets": {
             "gateway": gateway_evidence,
@@ -343,7 +416,7 @@ def main() -> int:
         "errors": errors,
     }
 
-    production_label = "⚠️ verändert" if production_changed else "🔒 unverändert"
+    production_label = "🔒 nicht freigegeben; Änderung dokumentiert" if production_changed else "🔒 nicht freigegeben (dieser Bericht prüft Production nicht)"
     lines = [
         "# GradeCrew Release Control",
         "",
@@ -357,15 +430,19 @@ def main() -> int:
         "|---|---|",
         f"| Integration | `{candidate_branch}@{short(candidate_sha)}` |",
         f"| Combined CI | {'✅ Run ' + str(candidate_ci.get('runId')) if candidate_ci and candidate_ci.get('conclusion') == 'success' else '❌/offen'} |",
-        f"| Hosting | {'✅ ' + short(hosting_sha) if hosting_sha == candidate_sha else '⚠️ ' + short(hosting_sha)} |",
-        f"| AI Functions | {'✅ ' + short(functions_sha) if functions_sha == candidate_sha else '⚠️ ' + short(functions_sha)} |",
+        f"| Hosting | {'✅ ' + short(hosting_sha) if candidate_sha and hosting_sha == candidate_sha else '⚠️ ' + short(hosting_sha)} |",
+        f"| AI Functions | {'✅ ' + short(functions_sha) if candidate_sha and functions_sha == candidate_sha else '⚠️ ' + short(functions_sha)} |",
+        f"| Hosting Snapshot | {'📦 historisch vorhanden' if snapshot_evidence else 'offen'} – kein Nachweis des aktuellen Deployments |",
         f"| Firestore Rules | `{rules_status}` (separate Deploy-Stufe) |",
-        f"| GRADECREW_STATE | {'⚠️ veraltet: ' + short(documented_sha) if documented_sha and documented_sha != candidate_sha else '✅ synchron'} |",
+        "| Staging vollständig | 🟡 nicht bestätigt; Rules und fachliche Abnahme separat prüfen |",
+        f"| GRADECREW_STATE | {'✅ Kandidaten-SHA synchron' if documented_sha and documented_sha == candidate_sha else '⚠️ fehlt/veraltet: ' + short(documented_sha)} |",
         f"| Production | {production_label} |",
         "",
         "## Deine Abnahme-Checkliste",
         "",
-        "Ein Ergebnis gilt nur für den jeweiligen `targetSha`. Nach einer relevanten Änderung wird ein altes ✅/❌ automatisch zu 🔁 Retest.",
+        "Ein Ergebnis gilt nur für den verifizierten `targetSha`. Jeder SHA-Wechsel erfordert Retest. Historische Notizen bleiben erhalten. Ein grüner Hosting/AI-Abgleich ist keine vollständige Staging- oder Production-Freigabe.",
+        "",
+        "Games: Deployment-Receipt fehlt. iOS: TestFlight-Upload, installierter Build und geladener Web-SHA müssen gemeinsam gebunden werden. Branchspitzen zählen nicht als Gerätetest.",
         "",
     ]
 

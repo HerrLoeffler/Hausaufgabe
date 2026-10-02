@@ -302,6 +302,17 @@
         "chore/gradecrew-automation",
         "chore/shared-agent-handoffs"
       ]
+    },
+    {
+      "id": "release-control-evidence-v2",
+      "title": "Release Control: verifizierte Receipts und ehrliche Abnahme",
+      "primaryBranch": "fix/release-control-evidence-v2",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/release-control-evidence-v2.md",
+      "relatedBranches": [
+        "feature/release-control-acceptance-v1"
+      ]
     }
   ]
 }
