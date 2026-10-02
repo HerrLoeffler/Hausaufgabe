@@ -9,14 +9,21 @@ assert(preview.absoluteString == "https://hausaufgabe-staging--gradecrew-app-int
 for value in ["http://hausaufgabe-staging--abc.web.app", "https://hausaufgabe-40294.web.app", "https://hausaufgabe-staging--abc.web.app.evil.test", "https://x:secret@hausaufgabe-staging--abc.web.app", "https://hausaufgabe-staging--abc.web.app:443", "https://hausaufgabe-staging--.web.app", "not a URL"] {
     assert(GradeCrewBetaEnvironment.previewURL(from: value) == nil, value)
 }
-assert(GradeCrewBetaEnvironment.baseURL(for: "broken") == GradeCrewBetaEnvironment.defaultURL)
-let normal = GradeCrewBetaEnvironment.homeURL(preference: "", version: "0.1.4")
-assert(normal.host == "hausaufgabe-staging.web.app")
-let selected = GradeCrewBetaEnvironment.homeURL(preference: preview.absoluteString, version: "0.1.4")
+assert(GradeCrewBetaEnvironment.baseURL(for: "") == GradeCrewBetaEnvironment.integrationPreviewURL)
+assert(GradeCrewBetaEnvironment.baseURL(for: "broken") == GradeCrewBetaEnvironment.integrationPreviewURL)
+assert(GradeCrewBetaEnvironment.baseURL(for: GradeCrewBetaEnvironment.stablePreference) == GradeCrewBetaEnvironment.stableStagingURL)
+assert(GradeCrewBetaEnvironment.environmentLabel(for: "") == "Integration")
+assert(GradeCrewBetaEnvironment.environmentLabel(for: GradeCrewBetaEnvironment.stablePreference) == "Staging")
+let normal = GradeCrewBetaEnvironment.homeURL(preference: "", version: "0.1.5")
+assert(normal.host == "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app")
+let stable = GradeCrewBetaEnvironment.homeURL(preference: GradeCrewBetaEnvironment.stablePreference, version: "0.1.5")
+assert(stable.host == "hausaufgabe-staging.web.app")
+let selected = GradeCrewBetaEnvironment.homeURL(preference: preview.absoluteString, version: "0.1.5")
 assert(selected.host == preview.host)
 let items = URLComponents(url: selected, resolvingAgainstBaseURL: false)!.queryItems!
-assert(items.first(where: { $0.name == "appVersion" })?.value == "0.1.4")
+assert(items.first(where: { $0.name == "appVersion" })?.value == "0.1.5")
 assert(items.first(where: { $0.name == "gradecrewApp" })?.value == "teacher")
+assert(items.first(where: { $0.name == "source" })?.value == "ios")
 print("Beta environment routing: passed")
 '''
 with tempfile.TemporaryDirectory() as work:
