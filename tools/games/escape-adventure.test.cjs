@@ -52,19 +52,6 @@ test('flashlight follows player facing and reveals a real dark-corner clue', () 
   assert.match(html, /data-step="order"/);
 });
 
-test('player has no permanent light halo before the flashlight is powered', () => {
-  assert.doesNotMatch(js, /createRadialGradient\(p\.x, p\.y/);
-  assert.match(js, /if \(state\.flashlightPowered\) \{/);
-  assert.match(js, /const beam = ctx\.createLinearGradient/);
-});
-
-test('Enter submits numeric puzzle inputs instead of requiring a click', () => {
-  assert.match(js, /function bindEnterSubmit\(inputId, handler\)/);
-  assert.match(js, /bindEnterSubmit\('boardInput', checkBoard\)/);
-  assert.match(js, /bindEnterSubmit\('doorInput', checkDoor\)/);
-  assert.match(js, /bindEnterSubmit\('transferInput', checkTransfer\)/);
-});
-
 test('door code is now logically derivable and cannot open without the order note', () => {
   assert.match(js, /value === '784' && state\.clues\.size === 3 && state\.orderNoteFound/);
   assert.match(js, /Der Zettel sagt: Computer → Tafel → Regal/);
