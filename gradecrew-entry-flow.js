@@ -178,15 +178,15 @@ function buildEntrySurface() {
           <span class="gcEntryEyebrow">Deine Crew für digitale Tests</span>
           <h1 id="gcEntryHeadline">Willkommen bei GradeCrew.</h1>
           <p>Dein Team für bessere Tests.</p>
-          <div class="gcEntryActions">
-            <button type="button" class="button primary gcEntryTutorialStart" id="gcEntryTutorialStart" data-entry-autofocus>Tutorial starten <small>Ohne Registrierung</small></button>
-            <button type="button" class="button secondary gcEntryLoginOpen" id="gcEntryLoginOpen">Anmelden</button>
-            <button type="button" class="gcEntryTextAction" id="gcEntryRegisterOpen">Account erstellen</button>
-          </div>
         </div>
         <div class="gcEntryCrewScene" aria-label="Coco, Remy, Emmi und Wilma – die GradeCrew">
           <img src="${escapeHtml(GRADECREW_ASSETS.scenes.welcome)}" alt="" class="gcEntryCrewSceneImage" decoding="async">
           <div class="gcEntryCrewStrip">${canonicalCrewCards()}</div>
+        </div>
+        <div class="gcEntryActions">
+          <button type="button" class="button primary gcEntryTutorialStart" id="gcEntryTutorialStart" data-entry-autofocus>Tutorial starten <small>Ohne Registrierung</small></button>
+          <button type="button" class="button secondary gcEntryLoginOpen" id="gcEntryLoginOpen">Anmelden</button>
+          <button type="button" class="gcEntryTextAction" id="gcEntryRegisterOpen">Account erstellen</button>
         </div>
       </div>
       <aside class="gcEntryStudent" aria-labelledby="gcEntryStudentTitle">
