@@ -1,0 +1,65 @@
+name: Escape Expedition Preview
+
+on:
+  push:
+    branches:
+      - prototype/escape-expedition-jungle-v1
+    paths:
+      - 'lab/escape-expedition/**'
+      - 'docs/games/ESCAPE_GAMES_CONCEPT.md'
+      - 'tools/build-lab-escape-expedition.mjs'
+      - 'tools/games/escape-expedition.test.cjs'
+      - '.github/workflows/escape-expedition-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+env:
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+
+jobs:
+  verify-and-deploy:
+    name: Verify and deploy multi-level expedition prototype
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify JavaScript syntax
+        run: node --check lab/escape-expedition/app.js
+
+      - name: Run expedition prototype contracts
+        run: node --test tools/games/escape-expedition.test.cjs
+
+      - name: Build isolated expedition preview
+        run: node tools/build-lab-escape-expedition.mjs .firebase-escape-expedition
+
+      - name: Check Firebase deploy credential
+        id: firebase_auth
+        shell: bash
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Expedition preview deploy skipped: staging Firebase credential missing."
+          fi
+
+      - name: Deploy Expedition preview channel only
+        if: steps.firebase_auth.outputs.available == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ env.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: hausaufgabe-staging
+          channelId: gradecrew-escape-expedition
+          expires: 30d
+          entryPoint: .firebase-escape-expedition
