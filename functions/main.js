@@ -4,6 +4,7 @@
 // add focused assistant endpoints without modifying the large, proven generation module.
 const existing = require("./index");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
 const { requireAiUser } = require("./lib/access");
@@ -20,7 +21,8 @@ const {
 const {
   writeCrewMetric,
   recordCrewMetricSafe,
-  crewTelemetrySummary
+  crewTelemetrySummary,
+  cleanupExpiredCrewTelemetry
 } = require("./lib/crew-telemetry");
 const {
   REVISION_VERSION,
@@ -66,6 +68,17 @@ const getCrewTelemetrySummary = onCall(telemetryOpts, async request => {
   if (profile.role !== "admin") throw new HttpsError("permission-denied", "Nur für Administratoren.");
   const days = Math.max(1, Math.min(90, Number(request.data?.days) || 30));
   return crewTelemetrySummary(days);
+});
+
+const cleanupCrewTelemetry = onSchedule({
+  region: REGION,
+  schedule: "35 3 * * *",
+  timeZone: "Europe/Berlin",
+  timeoutSeconds: 120,
+  memory: "256MiB"
+}, async () => {
+  const result = await cleanupExpiredCrewTelemetry();
+  console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
 const crewAssistant = onCall(assistantOpts, async request => {
@@ -204,6 +217,7 @@ module.exports = {
   ...existing,
   recordCrewTelemetry,
   getCrewTelemetrySummary,
+  cleanupCrewTelemetry,
   crewAssistant,
   reviseWholeTest
 };
