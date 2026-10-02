@@ -1,11 +1,11 @@
 {
   "$schemaVersion": 1,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "root": "assets/gradecrew",
   "brand": {
     "primary": "brand-primary-v1.svg",
-    "icon": "brand-primary-v1.svg",
-    "favicon": "brand-primary-v1.svg",
+    "icon": "brand-icon-v1.svg",
+    "favicon": "brand-icon-v1.svg",
     "crewLineup": "crew-lineup.svg"
   },
   "mascots": {
@@ -54,6 +54,10 @@
     "singleSource": true,
     "noProductSpecificCopies": true,
     "legacyAliasesMayExist": true,
-    "newCodeMustUseManifestNames": true
+    "newCodeMustUseManifestNames": true,
+    "brandCoreRequiredFor": ["web", "teacherApp", "games", "live", "student"],
+    "secureUsesDedicatedVariant": true,
+    "faviconMustUseIconAsset": true,
+    "iconMustRemainVector": true
   }
 }
