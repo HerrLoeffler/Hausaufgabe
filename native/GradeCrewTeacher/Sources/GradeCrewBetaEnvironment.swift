@@ -1,10 +1,13 @@
 import Foundation
 
-// A Beta build can select a verified staging preview without shipping an
-// expiring preview URL in the binary. Production is not a selectable target.
+// TestFlight should follow the continuously verified integration preview by default.
+// Stable staging remains an explicit fallback. Production is never selectable here.
 enum GradeCrewBetaEnvironment {
-    static let defaultURL = URL(string: "https://hausaufgabe-staging.web.app/")!
+    static let stableStagingURL = URL(string: "https://hausaufgabe-staging.web.app/")!
+    static let integrationPreviewURL = URL(string: "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/")!
+    static let defaultURL = integrationPreviewURL
     static let preferenceKey = "gradecrew.teacher.stagingPreviewURL"
+    static let stablePreference = "__stable_staging__"
 
     static func previewURL(from value: String) -> URL? {
         guard var components = URLComponents(string: value.trimmingCharacters(in: .whitespacesAndNewlines)),
@@ -22,7 +25,16 @@ enum GradeCrewBetaEnvironment {
     }
 
     static func baseURL(for preference: String) -> URL {
-        previewURL(from: preference) ?? defaultURL
+        let normalized = preference.trimmingCharacters(in: .whitespacesAndNewlines)
+        if normalized == stablePreference { return stableStagingURL }
+        return previewURL(from: normalized) ?? defaultURL
+    }
+
+    static func environmentLabel(for preference: String) -> String {
+        let url = baseURL(for: preference)
+        if url.host == integrationPreviewURL.host { return "Integration" }
+        if url.host == stableStagingURL.host { return "Staging" }
+        return "Preview"
     }
 
     static func homeURL(preference: String, version: String) -> URL {
