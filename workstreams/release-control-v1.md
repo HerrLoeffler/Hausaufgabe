@@ -27,9 +27,14 @@ Eine kanonische Produkt-/Abnahmesicht ergänzen, damit keine bereits entwickelte
 - `passed`/`failed` gilt nur für `testedSha`; neuer Ziel-SHA => `retest`.
 - Production bleibt ausdrücklich freigabepflichtig.
 
-## Offen / nächster Schritt
+## Historische nächste Schritte vor Integration
 1. Aktuellen paginierten Release-Control-Lauf auswerten: Hosting/Functions müssen aus echten Receipts statt veraltetem State kommen, soweit vorhanden.
 2. Handoff-/Registry-Einbindung auf aktuellem `main` vervollständigen, ohne PR #48 (`development-status.yml`) zu überschneiden.
 3. Draft-PR nach `main` öffnen und Release-Control + Project-Handoff-CI auf finalem Head prüfen.
 4. Nach Integration ersten kanonischen Main-Lauf prüfen.
 5. Danach kann Martin Abnahmen im Chat melden; betreuender Chat schreibt Status + exakten Ziel-SHA in `acceptance.json` und startet bei Fehler einen Fix/Retest-Zyklus.
+
+## Nachtrag nach Integration und Audit
+PR #49 wurde als `ed53a9dd127e9a3c75f0d80ec0682b29490daa5a` nach main gemergt. Board-Run `37022513923` erfolgreich. Die Schritte 1–4 oben sind historisch und kein offener Merge-Auftrag mehr.
+
+Die Nachprüfung fand Lücken zwischen Receipt-Namen und tatsächlich gelesenen Nachweisen sowie ungültige manuelle Abnahmen. V2/PR #50 ergänzt Verhaltenstests und unabhängige Receipt-Validierung. Aktueller Audit und nächste Aufgaben: [release-control-evidence-v2.md](release-control-evidence-v2.md). Noch keine interaktive Abnahme-Weboberfläche, kein Rules-Deploy und keine Production-Freigabe.

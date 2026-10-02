@@ -302,6 +302,25 @@
         "chore/gradecrew-automation",
         "chore/shared-agent-handoffs"
       ]
+    },
+    {
+      "id": "release-control-evidence-v2",
+      "title": "Release Control: verifizierte Receipts und ehrliche Abnahme",
+      "primaryBranch": "fix/release-control-evidence-v2",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/release-control-evidence-v2.md",
+      "relatedBranches": [
+        "feature/release-control-acceptance-v1"
+      ]
+    },
+    {
+      "id": "web-premerge-combined-ci-v1",
+      "title": "Combined CI vor Web-Integration",
+      "primaryBranch": "fix/web-premerge-combined-ci-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/web-premerge-combined-ci-v1.md"
     }
   ]
 }
