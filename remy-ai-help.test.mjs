@@ -41,7 +41,7 @@ function setup(t) {
   w.resetRemyTelemetryContext = () => {};
 
   const executable = source
-    .replace(/import\s+\{[\s\S]*?\}\s+from\s+["']\.\/crew-telemetry-client\.mjs\?v=1["'];\s*/, '')
+    .replace(/import\s+\{[\s\S]*?\}\s+from\s+["']\.\/crew-telemetry-client\.mjs(?:\?[^"']*)?["'];\s*/, '')
     .replace(/^import .*;\s*$/gm, '')
     .replace(/^export /gm, '');
   w.eval(executable);
