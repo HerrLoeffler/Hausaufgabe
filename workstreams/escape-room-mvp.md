@@ -5,199 +5,228 @@
 - Aufgabenbranch: `feature/escape-room-mvp-v1`
 - Draft-PR: `#10` gegen `lab/games-structure`
 - Basis: `lab/games-structure@869ca416b868667c9e48c05f81c967fe6ad59020`
-- v0.5 funktionaler Produktcommit: `84e3a71d82c27522c994dd94af297abfafab41ed`
-- v0.5 getesteter/deployter Code-Stand: `3cf6d0b235a652f93fd2b4af32f4c2e5c0dfdb68`
-- v0.5 Patch-/Verifikationsrun: `36990569083`
-- v0.5 Escape-only Preview-Run: `36990874389`
+- v0.6 funktionaler Produktcommit: `649deb8e79470d69042cb40cfb4e107514a58592`
+- v0.6 dokumentierter/deployter Code-Stand: `f38338dcd0cfad808f38b95e799c634e71b58e3d`
+- v0.6 Patch-/Verifikationsrun: `36994939830`
+- v0.6 Escape-only Preview-Run: `36995185868`
 - Preview: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
 - Production: **unverändert**
 
-## Aktueller Produktstand v0.5
-
-„Die verriegelte Schule“ bleibt zunächst die einzelne Referenzwelt. Neue Welten und eine breitere Games-Integration folgen erst nach Geräte-/UX-Abnahme.
-
-Verbindliches Lernprinzip:
+## Verbindliches Produktprinzip
 
 > **Spaß motiviert; entscheidender Spielfortschritt wird durch nachgewiesenes Lernen verdient. Blindes Klicken/Raten darf nie die schnellste Strategie sein.**
 
-Vorhanden:
+„Die verriegelte Schule“ bleibt zunächst die einzelne Referenzwelt. Neue Welten und breitere Games-Integration erst nach Geräte-/UX-Abnahme.
+
+## Referenzspiel
 
 - 3 Räume + Finale: Klassenzimmer → Flur → Sekretariat → Ausgang
 - 8 austauschbare Lernslots
 - 4 Minirätsel: Tafelmuster, Türcode, Spindfolge, Schlüsselbrettfolge
-- Inventar, lokale Wiederaufnahme, aktive Spielzeit und Preflight
-- Anti-Raten-Sperren für Lernfragen und Rätsel
-- Transferaufgabe nach einem Fehlversuch, bevor Spielfortschritt freigegeben wird
-- sicher automatisch prüfbare Auswahl-, Text- und Zahlantworten
-- kompakte Lehrerprüfung und Bearbeitung
-- Coco-Hilfe local-first; externe Tutor-KI nur über spätere Bridge
-- Practice-Spiel, aktuell kein Live/Highscore/Multiplayer
+- Inventar, Batterie/Taschenlampe, Hauptschlüssel
+- lokale Wiederaufnahme und aktive Spielzeit
+- Preflight
+- Practice-Spiel; aktuell kein Live/Highscore/Multiplayer
+- lokale Events; kein Analytics-Upload
 
-## v0.5 — Shared Coco / gemeinsames GradeCrew-Designsystem
+## Crew-Rollen — verbindlich
 
-Der frühere Escape-Stand hatte unter `assets/gradecrew/penguin-guide.svg` noch eine alte, reduzierte Pinguinzeichnung, obwohl der Dateiname dem GradeCrew-Asset entsprach. Das war die Ursache dafür, dass Coco im Escape anders aussah als auf der GradeCrew-Seite.
+Die gemeinsame GradeCrew-Rollenverteilung ist auch für Games maßgeblich:
 
-v0.5 behebt das bewusst ohne eine dritte Maskottchenkopie:
+- **Remy = Erstellen & Ideen**
+- **Coco = Begleitung & Orientierung / Lernhilfe**
+- **Emmi = Überarbeiten & Prüfen**
+- **Wilma = Bewerten & Auswerten**
 
-- offizielles `penguin-guide.svg` unverändert aus `feature/shared-gradecrew-design-system`
-- offizielles `penguin-guide-welcome.svg` ebenfalls aus dem Shared-Designsystem
-- das offizielle Sheet enthält `pose-1` bis `pose-6`
-- Begrüßung nutzt `#pose-1`
-- Hilfe nutzt `#pose-4`
-- Explorer nutzt `#pose-5`
-- `gradecrew-brand.css` wird als gemeinsame GradeCrew-Basissprache eingebunden
-- `crew-clay.css` wird ebenfalls aus dem Shared-Designsystem übernommen
-- Escape-spezifische Styles dürfen danach nur Spielspezifika ergänzen
+Konsequenz für Escape v0.6:
 
-Der Patch-Workflow hat beim Kopieren den Git-Objekthash des Coco-Assets gegen den Shared-Design-Branch geprüft. Damit ist nicht nur der Dateiname, sondern die tatsächlich übernommene Datei identisch mit diesem freigegebenen Shared-Stand.
+- Remy erscheint in der Aufgaben-Erstellung.
+- Coco bleibt Explorer und Lernhilfe im eigentlichen Spiel.
+- Keine zweite lokale Rolleninterpretation im Escape bauen.
 
-## v0.5 — Lehrerbereich vor Spielstart
+## Shared Designsystem
 
-Neue Reihenfolge für eine neue Runde:
+v0.5/v0.6 beheben Asset-Drift, bei dem unter denselben Dateinamen alte reduzierte Maskottchenbilder lagen.
 
-**Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape mit diesen Aufgaben starten**
+Aktuell verwendet Escape:
 
-Konkret:
+- Coco: Shared `assets/gradecrew/penguin-guide.svg` mit sechs Clay-Posen
+- Remy: Shared `assets/gradecrew/elephant-create.svg` mit sechs Clay-Posen
+- Remy-Erstellung: Shared `assets/gradecrew/clay-remy-writing.svg`
+- gemeinsame `gradecrew-brand.css`
+- gemeinsame `crew-clay.css`
 
-- der bisherige direkte CTA „Escape starten“ wurde zu **„Escape vorbereiten“**
-- dieser öffnet zuerst den Lehrerbereich
-- der alte zweite „Lehrer-Vorschau“-Einstieg ist für neue Runden ausgeblendet
-- im Lehrerbereich steht sichtbar der Ablauf **1 Aufgaben festlegen · 2 Kurz prüfen · 3 Escape starten**
-- erst der Button **„Escape mit diesen Aufgaben starten“** ruft den bestehenden, bereits getesteten Spielstart auf
-- Resume-/Save-Logik der bestehenden Runde bleibt getrennt erhalten
+Die einmalige v0.6-Patch-CI hat die Remy-Dateien per Git-Objekthash gegen `feature/shared-gradecrew-design-system` geprüft. Keine neue Escape-eigene Remy-/Coco-Datei bauen.
 
-`escape-teacher-flow.js` kapselt diese Reihenfolge, ohne die vorhandene Engine unnötig umzubauen.
+## Lehrer-first Startfluss
 
-## v0.5 — keine Extra-Anmeldung im Escape-Lab
+Neue Runde:
 
-Die kurzzeitig in v0.4 vorhandene zusätzliche E-Mail-/Passwort-Anmeldung im eigenständigen Escape-Preview wurde vollständig entfernt.
+**Escape vorbereiten → Lehrerbereich → Aufgaben festlegen/prüfen → Escape mit diesen Aufgaben starten**
 
-Wichtig:
+- kein direkter Start auf der ersten Seite
+- Lehrer sieht vor Start Aufgaben, Lösungen, Lernhilfen und Transfer
+- Save/Resume einer begonnenen Runde bleibt getrennt erhalten
 
-- **kein spezieller Escape-Account nötig**
-- **keine E-Mail-/Passwortfelder im Standalone-Lab**
-- keine `signInWithEmailAndPassword`-Abhängigkeit im Escape-AI-Client
-- keine Standalone-`firebase-config.js` mehr im Escape-Build
-- der geschützte GradeCrew-Callable `generateTest` wird nicht anonym umgangen
+## Remy-Erstellung v0.6
 
-Der echte Generator bleibt vorbereitet über:
-
-`GradeCrewEscapeAiBridge.generateTest(...)`
-
-Bei der späteren Integration in die GradeCrew-Lehreransicht verwendet Escape damit die **bereits vorhandene authentifizierte Lehrersitzung**. Es entsteht keine zweite Anmeldung.
-
-Im eigenständigen Preview bleibt der KI-Button deshalb bewusst deaktiviert, solange der Host keine Bridge bereitstellt. Die Beispielaufgaben können vollständig geprüft, bearbeitet und gespielt werden.
-
-## KI-Aufgabenvertrag
-
-Der einfache Lehrer-Generator ist für folgende Eingaben vorbereitet:
+Erstellungskarte:
 
 - Fach
 - Klasse
 - Thema
 - Schwierigkeit
-- optional eigener Wunsch
+- eigener Wunsch optional
+- `🎙 Mit Remy sprechen`
+- Remy-Erstellaktion
 
-Ein KI-Lauf soll weiterhin 16 bildfreie, sicher automatisch prüfbare Aufgaben liefern:
+Echter KI-Vertrag bleibt:
 
-- 8 Hauptaufgaben
-- 8 passende Transferaufgaben
+- vorhandenes Backend, kein zweites KI-Backend
+- `GradeCrewEscapeAiBridge.generateTest(...)` als Host-Integration
+- 16 bildfreie automatisch prüfbare Aufgaben pro Lauf
+- 8 Hauptaufgaben + 8 passende Transferaufgaben
+- nur Hauptaufgaben werden normale Escape-Lernslots
+- KI erzeugt keine Räume, Inventarregeln, Codes, Progressionslogik oder Anti-Raten-Regeln
 
-Nur die Hauptaufgaben erscheinen als normale Escape-Lernslots. Die Transferaufgaben greifen in die bestehende Lernschleife. KI erzeugt **keine** Räume, Inventarregeln, Codes, Progressionslogik oder Anti-Raten-Regeln.
+### Standalone-Lab ohne Extra-Login
 
-Sicher unterstützte GradeCrew-Typen:
+Der Lab-Preview enthält keine zweite E-Mail-/Passwort-Anmeldung und keinen anonym geöffneten KI-Endpunkt.
 
-- `single`
-- `dropdown`
-- `truefalse`
-- `text`, nur wenn automatisch sicher prüfbar und akzeptierte Antworten vorhanden sind
-- `number` mit Lösung, Toleranz und optionaler Einheit
+Der frühere tote Button wurde in v0.6 korrigiert:
 
-Manuell zu prüfender Freitext und bildabhängige/komplexe Typen bleiben fail-closed.
+- Button bleibt **klickbar**, auch ohne Host-Bridge.
+- Ohne Bridge übernimmt Remy Fach/Klasse/Thema als Lab-Vorschau und lässt die bestehenden Beispielaufgaben bewusst unverändert.
+- Die UI erklärt ausdrücklich, dass dabei **keine neue KI-Erstellung vorgetäuscht** wird.
+- Mit vorhandener `GradeCrewEscapeAiBridge` führt derselbe Weg die echte 8+8-Erstellung aus.
+
+Kein API-Key im Browser, kein anonymes `generateTest`, kein paralleles Preview-KI-Backend.
+
+## Sprache / Remy
+
+`escape-remy-voice.js` ergänzt eine echte Diktieroberfläche für den Standalone-Preview:
+
+- Progressive Enhancement mit `SpeechRecognition` / `webkitSpeechRecognition`
+- `🎙 Mit Remy sprechen`
+- gesprochener Text landet sichtbar im Feld `Eigener Wunsch`
+- kein Raw-Audio wird gespeichert
+- Browser ohne Speech Recognition bekommen einen lokalen Hinweis statt eines Fehlers
+
+Wichtig: Das ist nur der Lab-Adapter. Der gemeinsame Produktstand hat bereits den Crew-Assistant-/Remy-Vertrag mit Text + Push-to-Dictate + Local-first Parser + AI-Fallback. Bei Hauptproduktintegration diesen gemeinsamen Vertrag benutzen und **keinen zweiten Natural-Language-Parser oder Voice-Backend im Escape** bauen.
+
+Geplanter Produktweg bleibt:
+
+**Sprache/Text → gemeinsamer Remy/Crew Assistant → strukturierte Felder/Aktion → Lehrer bestätigt → Generierung**
+
+Später Siri/App Intents ebenfalls auf denselben Action-Contract legen.
 
 ## Lernschleife
 
 1. Beim ersten Versuch richtig → kurze Erklärung + Fortschritt.
-2. Erster Fehlversuch → konkrete fachliche Denkhilfe; bei Auswahl werden Antworten neu gemischt.
-3. Danach richtige Hauptantwort → noch kein Fortschritt; passende Transferaufgabe muss gelöst werden.
+2. Erster Fehlversuch → konkrete fachliche Denkhilfe; Auswahlantworten werden neu gemischt.
+3. Danach richtig → Transferaufgabe zum selben Lernziel erforderlich.
 4. Mehrere Fehlversuche → Erklärung + aktiver Lernschritt/Merksatz + Transfer.
-5. Erst erfolgreicher Transfer gibt den Spielfortschritt frei.
+5. Erst erfolgreicher Transfer gibt Spielfortschritt frei.
 
-Rätsel sind ebenfalls gegen Raten gehärtet: wiederholte falsche Eingaben erzwingen das erneute Lesen der tatsächlichen Hinweisquelle.
+Rätsel-Anti-Raten bleibt aktiv:
 
-## Verifikation v0.5
+- Symbolfolgen → Hinweisquelle erneut lesen
+- Tafelmuster → nach Fehlversuchen Quelle erneut prüfen
+- Türcode → nach wiederholtem Raten Regal, Computer und Tafel erneut prüfen
 
-Patch-/Produktprüfung `36990569083`:
+## Antwortmodi / GradeCrew-Adapter
 
-- **27/27 Tests grün**
-- JavaScript-Syntaxcheck grün
-- isolierter Build **v0.5.0 grün**
-- Shared-Coco mit sechs offiziellen Posen geprüft
-- Standalone-Build ohne `firebase-config.js` geprüft
-- Regression Lehrerbereich vor Start: grün
-- Regression keine Standalone-Firebase-Anmeldung: grün
+Sicher unterstützt:
 
-Escape-only Staging-Preview `36990874389` auf Code-Stand `3cf6d0b235a652f93fd2b4af32f4c2e5c0dfdb68`:
+- `single`
+- `dropdown`
+- `truefalse`
+- `text`, wenn `manualReview === false` und akzeptierte Antworten vorhanden sind
+- `number` mit numerischer Lösung, Toleranz ≥ 0 und optionaler Einheit
 
-- **27/27 Tests grün**
-- isolierter Build **v0.5.0 grün**
+Manuell zu prüfender Freitext und komplexe/bildabhängige Typen bleiben fail-closed, bis sie ohne Informationsverlust und ohne unsichere automatische Fortschrittsfreigabe eingebunden werden können.
+
+## Verifikation v0.6
+
+### Produkt-/Patch-Prüfung
+
+Run `36994939830`, Produktcommit `649deb8e79470d69042cb40cfb4e107514a58592`:
+
+- **30/30 Tests grün**
+- JavaScript-Syntaxchecks grün
+- isolierter Build **v0.6.0 grün**
+- Shared-Remy-Assets per Git-Hash geprüft
+- Remy statt Coco in der Erstellung geprüft
+- Standalone-Remy-Aktion klickbar geprüft
+- keine vorgetäuschte KI-Erstellung ohne Bridge geprüft
+- Voice-Control + Fallback geprüft
+- Standalone-Build weiterhin ohne `firebase-config.js`
+
+### Escape-only Staging Preview
+
+Run `36995185868` auf Code-Stand `f38338dcd0cfad808f38b95e799c634e71b58e3d`:
+
+- **30/30 Tests grün**
+- Build **v0.6.0 grün**
 - Firebase Credential grün
 - Preview-Deploy grün
 - URL: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
 
-Temporäre v0.5-Patchskripte und der einmalige Apply-Workflow wurden nach erfolgreichem Produktcommit wieder aus dem Branch entfernt.
+Temporäre v0.6-Patchdateien/Apply-Workflow wurden nach erfolgreicher Produktprüfung aus dem Branch entfernt. Ein zwischenzeitlicher Cleanup-Run des bereits gelöschten Einmal-Workflows schlug erwartbar fehl, weil sein Patch-Helfer in demselben Cleanup entfernt worden war; der aktuelle Head und der echte Escape-Preview-Run sind grün.
 
 ## Status — ausdrücklich getrennt
 
-- **funktionaler Produktcode auf GitHub:** ja (`84e3a71…`)
-- **bereinigter/deployter Code-Stand auf GitHub:** ja (`3cf6d0b…`)
-- **automatisiert getestet:** ja, 27/27
-- **isolierter Build:** ja, v0.5.0
+- **funktionaler Produktcode auf GitHub:** ja (`649deb8…`)
+- **bereinigter/deployter Stand auf GitHub:** ja (`f38338d…` plus dieser Handoff-Commit)
+- **automatisiert getestet:** ja, 30/30
+- **isolierter Build:** ja, v0.6.0
 - **Escape-only Staging Preview deployed:** ja
-- **Coco aus Shared-Designsystem im Code/Build verifiziert:** ja
-- **Lehrer-first Startfluss automatisiert verifiziert:** ja
-- **keine Extra-Anmeldung automatisiert verifiziert:** ja
-- **echte visuelle Abnahme am Browser/iPad/Handy:** noch nicht dokumentiert
-- **echte KI-Erstellung über bereits angemeldete GradeCrew-Sitzung:** noch nicht integriert/E2E getestet
+- **Remy-Rolle im Code/Build geprüft:** ja
+- **Shared Remy/Coco im Code/Build geprüft:** ja
+- **Voice-UI automatisiert geprüft:** ja
+- **Mikrofon auf Martins echtem Browser bestätigt:** noch nicht dokumentiert
+- **visuelle Abnahme auf Desktop/iPad/Handy:** noch nicht dokumentiert
+- **echte KI-Erstellung über angemeldete GradeCrew-Sitzung:** noch nicht integriert/E2E getestet
+- **voller gemeinsamer Remy-Natural-Language-Parser im Escape:** noch nicht integriert; bewusst nicht dupliziert
 - **in Haupt-GradeCrew integriert:** nein
 - **Production:** unverändert
 
-## Parallele Arbeit / nicht blind überschreiben
+## Parallele Arbeit / vor Änderungen frisch prüfen
 
-Vor strukturellen Änderungen frisch prüfen:
+Besonders relevant:
 
+- `feature/gradecrew-app-integration` — aktueller gemeinsamer Crew Assistant / spätere Escape-Integration
+- `feature/crew-assistant-v1` / PR #12 — Assistant-Grundlage
+- bereits integrierte Remy-Telemetrie-/Parser-Arbeit aus PR #30/#31 im App-Integration-Stand
+- `feature/shared-gradecrew-design-system` — freigegebene Crew-Artworks
 - `fix/escape-tutor-cost-guards` / PR #27 — Tutor-/Kostenlogik
-- `feature/shared-gradecrew-design-system` — gemeinsame Produkt-Designquelle
-- `feature/gradecrew-design-foundation-v1`
-- `feature/design-dashboard-v1`
 - `lab/games-design-system` / PR #28 — gamespezifische Design-Erweiterungen
-- `feature/gradecrew-app-integration` — spätere Hauptproduktintegration
-- aktuelle AI-/Gateway-/Orchestrierungsbranches vor Backend-Umbauten
-
-Keine parallele neue Coco-Datei, kein zweites KI-Backend und keine separate Escape-Authentifizierung bauen.
+- AI-Gateway-/Orchestrierungsbranches vor Backend-Umbauten
 
 ## Nicht verändern / Leitplanken
 
 - Production nicht aus diesem Branch deployen.
 - andere Games nicht funktional verändern.
-- keine KI-generierte ausführbare Spiellogik; KI liefert nur validierte Inhaltsdaten.
+- keine KI-generierte ausführbare Spiellogik.
 - keine dauerhafte Speicherung von Schülerfragen ohne separaten Datenschutz-/Datenvertrag.
 - Lösungsschlüssel bei Hauptproduktintegration nicht ungeschützt an Schüler ausliefern.
-- globale AI-Memory-/Kosten-/Routing-Infrastruktur nicht im Escape-Branch duplizieren.
-- Shared-Designsystem als Quelle benutzen statt Assets lokal neu zu interpretieren.
+- keine globale AI-Memory-/Kosten-/Routing-Infrastruktur im Escape duplizieren.
+- Shared-Designsystem als Assetquelle benutzen.
+- Remy/Coco/Emmi/Wilma-Rollen nicht lokal neu definieren.
+- Voice/Natural-Language bei Integration an den gemeinsamen Crew Assistant hängen.
 
 ## Nächste Schritte
 
-1. v0.5 Preview auf echtem Desktop öffnen und **hart neu laden**.
-2. Visuell bestätigen: Coco entspricht dem aktuellen Shared-GradeCrew-Coco; keine alte Pinguinzeichnung mehr.
-3. Flow prüfen: **Escape vorbereiten → Lehrerbereich → Fragen prüfen → Escape mit diesen Aufgaben starten**.
-4. Prüfen, dass im Standalone-Lab **keine Anmeldung** mehr erscheint.
-5. Danach denselben Stand auf iPad/Handy testen: Dialog, Sticky-Startbereich, Coco-Größen, Touchziele, Save/Resume.
-6. UX-Fehler im Escape-Branch korrigieren.
-7. Erst danach `feature/gradecrew-app-integration` und aktuelle AI-/Design-Branches erneut frisch prüfen und `GradeCrewEscapeAiBridge` an die bereits angemeldete Lehrersitzung anbinden.
-8. Dann echte KI-Erstellung 8+8 E2E testen und fachlich sichten.
-9. Welt 2 erst nach stabiler Referenzwelt/Geräteabnahme.
+1. Preview auf echtem Desktop testen: Remy-Bild, klickbarer Preview-Button, Lehrer-first Ablauf.
+2. `🎙 Mit Remy sprechen` im aktuellen Browser testen und Mikrofonfreigabe/Transkript prüfen.
+3. iPad/Handy: Darstellung, Lehrerbereich, Diktat-Fallback bzw. Unterstützung, Escape-Spiel selbst.
+4. UX-Feedback direkt im Escape-Branch korrigieren.
+5. Danach `feature/gradecrew-app-integration` + aktuelle Crew-/AI-/Design-Branches frisch prüfen.
+6. Escape in die echte GradeCrew-Lehreransicht einbinden: vorhandene Sitzung → gemeinsamer Remy → `GradeCrewEscapeAiBridge` → 8+8-Erstellung → Prüfung → Start.
+7. Gemeinsamen Remy-Natural-Language-Parser statt Escape-eigener Parserlogik verwenden.
+8. Siri/App-Intent später über denselben strukturierten Action-Contract anbinden.
+9. Welt 2 erst nach stabiler Referenzwelt und Geräteabnahme.
 
 ## Wiederaufnahme
 
-Zuerst tatsächliche Branchspitze, PR #10, offene parallele PRs/Branches und die auf diesem Branch vorhandenen Projektregeln/Statusdateien frisch prüfen. `START_HERE.md` ist auf diesem Escape-Branch aktuell nicht vorhanden und darf nicht als gelesen behauptet werden. Danach diese Übergabe, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md` und `docs/games/GRADECrew_ESCAPE_ADAPTER.md` lesen. Code, GitHub-Sicherung, Tests, Deploy, Geräteabnahme, Hauptproduktintegration und Production immer getrennt berichten.
+Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, `docs/games/GRADECrew_ESCAPE_ADAPTER.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, parallele Branches/PRs, CI und Preview frisch prüfen. Code, GitHub-Sicherung, Tests, Deploy, KI-E2E, Gerätetest und Production immer getrennt berichten.
