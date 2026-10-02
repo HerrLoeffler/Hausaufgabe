@@ -34,17 +34,24 @@ Das aktuell ausgewählte GradeCrew-Hauptsymbol zunächst als Logo der normalen L
 
 ## Geprüft
 - AI Staging Checks Run `36983427461` auf Commit `99d318f1b025443115ab22ac9fd85146cda61954`: vollständig grün.
+- Finaler Feature-Branch-Run `36983604932` auf Commit `4fa14f111ef92ba5dc01b00ccfa9edad68fbf526`: vollständig grün.
 - Dabei erfolgreich: Functions, Secure-Backend, Firestore-Regeln/Emulator, bestehende Browser-Regressionen, neuer Brand-Test und Staging-Build-Smoke.
 - Kein Production-Deploy.
+
+## Integration
+- `feature/gradecrew-app-integration` blieb während der Arbeit unverändert auf Ausgangscommit `a61759db01e41f19b7d34e6eb0e88bac42484c1e`.
+- Daher wurde der Zielbranch konfliktfrei als Fast-Forward auf `4fa14f111ef92ba5dc01b00ccfa9edad68fbf526` bewegt.
+- Dieser Dokumentations-Checkpoint erzeugt den regulären Push-Event für Integrations-CI und automatische Preview-Pipeline.
 
 ## Status
 - Branch-Implementierung: erledigt.
 - GitHub gesichert: ja.
-- CI: grün auf dem belegten Implementierungscommit.
-- In `feature/gradecrew-app-integration` integriert: noch nicht.
-- Staging deployed: noch nicht für diesen Logo-Stand.
+- Feature-CI: grün.
+- In `feature/gradecrew-app-integration` integriert: ja.
+- Integrations-CI: läuft nach diesem Checkpoint.
+- Staging deployed: noch nicht für diesen Logo-Stand bestätigt.
 - Am Gerät bestätigt: noch nicht.
 - Production: unverändert.
 
 ## Offen / nächster Schritt
-Aktuellen Zielbranch erneut prüfen. Wenn keine parallele Überschneidung vorliegt, kontrolliert in `feature/gradecrew-app-integration` integrieren. Danach Integrations-CI und automatische verifizierte Preview abwarten und erst dann als Staging-Stand melden.
+Integrations-CI und automatische verifizierte Preview für den neuen Integrationscommit abwarten. Erst nach manifest-/hash-verifiziertem Preview-Deploy als `staging_deployed` melden. Danach visuelle Abnahme von Headerlogo und Favicon auf Desktop/iPad/iPhone.
