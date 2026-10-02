@@ -2,7 +2,7 @@
 import SwiftUI
 
 enum GradeCrewDesignTokens {
-    static let version = "1.0.0"
+    static let version = "1.1.0"
 
     enum Colors {
         static let background = Color(red: 246.0 / 255.0, green: 247.0 / 255.0, blue: 249.0 / 255.0)
@@ -16,6 +16,8 @@ enum GradeCrewDesignTokens {
         static let crewIce = Color(red: 232.0 / 255.0, green: 240.0 / 255.0, blue: 247.0 / 255.0)
         static let crewRust = Color(red: 164.0 / 255.0, green: 77.0 / 255.0, blue: 45.0 / 255.0)
         static let positive = Color(red: 38.0 / 255.0, green: 112.0 / 255.0, blue: 73.0 / 255.0)
+        static let warning = Color(red: 138.0 / 255.0, green: 91.0 / 255.0, blue: 5.0 / 255.0)
+        static let danger = Color(red: 166.0 / 255.0, green: 38.0 / 255.0, blue: 28.0 / 255.0)
     }
 
     enum Radius {
@@ -41,6 +43,7 @@ enum GradeCrewDesignTokens {
         static let compactContentMax: CGFloat = 1000
         static let pageHorizontalPadding: CGFloat = 24
         static let minimumTouchTarget: CGFloat = 44
+        static let controlHeight: CGFloat = 44
     }
 
     enum Typography {
