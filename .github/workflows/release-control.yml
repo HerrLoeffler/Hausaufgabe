@@ -19,6 +19,7 @@ on:
       - 'Automatic staging preview'
       - 'Automatic staging AI functions'
       - 'Automatic staging AI gateway'
+      - 'Archive verified preview'
     types: [completed]
 
 permissions:
