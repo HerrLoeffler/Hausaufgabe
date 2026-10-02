@@ -113,6 +113,17 @@
       "manual_acceptances": 0,
       "premerge_pr": 51,
       "production_approved": false
+    },
+    "stage_guardian": {
+      "status": "implemented_disabled_integration_pending_ci",
+      "branch": "feature/stage-guardian-v1",
+      "pr": 54,
+      "worker_enabled_verified": false,
+      "worker_key_present_verified": false,
+      "evidence_run": 37077976663,
+      "max_attempts_per_stage": 3,
+      "full_pipeline_active": false,
+      "next_action": "Implement scoped patch publishing, independent reviews and gated integration; configure worker, then verify one complete pilot."
     }
   },
   "workstreams": [

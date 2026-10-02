@@ -1,0 +1,86 @@
+name: GradeCrew Stage Guardian
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '13,43 * * * *'
+  push:
+    branches: [main, feature/stage-guardian-v1]
+    paths:
+      - 'automation/guardian-policy.json'
+      - 'tools/automation/*guardian*.py'
+      - '.github/workflows/stage-guardian.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'automation/guardian-policy.json'
+      - 'tools/automation/*guardian*.py'
+      - '.github/workflows/stage-guardian.yml'
+  workflow_run:
+    workflows: ['GradeCrew Codex worker', 'AI Staging Checks', 'GradeCrew Release Control']
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-stage-guardian
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
+          persist-credentials: false
+      - name: Verify bounded continuation logic
+        run: python3 -m unittest tools.automation.test_guardian -v
+      - name: Describe next automatic steps and missing setup
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
+          WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
+        run: python3 tools/automation/guardian.py
+      - name: Publish status
+        if: always()
+        run: |
+          if [ -f artifacts/guardian/guardian.md ]; then
+            cat artifacts/guardian/guardian.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stage-guardian-status
+          path: artifacts/guardian/
+          if-no-files-found: warn
+
+  continue:
+    needs: check
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request' &&
+      vars.GRADECREW_GUARDIAN_ENABLED == 'true' &&
+      vars.CODEX_WORKER_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Reserve one attempt and dispatch an approved worker task
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
+          WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
+        run: python3 tools/automation/guardian.py --execute

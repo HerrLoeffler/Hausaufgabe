@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "enabled": false,
+  "maxAttemptsPerStage": 3,
+  "automaticProduction": false,
+  "workstreams": [],
+  "note": "No implicit authority from a stage label. Explicit pinned tasks, worker activation, and missing execution bridges must be configured before autonomous stage completion."
+}
