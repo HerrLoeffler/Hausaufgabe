@@ -1,5 +1,6 @@
 import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=1";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.2.0";
+import { installStagingShortLogin } from "./staging-short-login.mjs?v=1";
 
 // Public pupils use the server-authoritative assessment path. Teacher preview
 // intentionally remains in the existing app so authors can inspect the exact
@@ -63,6 +64,7 @@ function installGradeCrewBrandAssets() {
 
 installGradeCrewDesignStyles();
 installGradeCrewBrandAssets();
+installStagingShortLogin();
 
 const routeParams = new URLSearchParams(location.search);
 const rawPublicTestCode = String(routeParams.get("test") || "").trim();
