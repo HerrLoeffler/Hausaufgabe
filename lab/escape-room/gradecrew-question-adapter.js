@@ -78,7 +78,8 @@
     if (type === 'number') {
       const numericAnswer = Number(source.numericAnswer);
       const tolerance = source.tolerance == null || source.tolerance === '' ? 0 : Number(source.tolerance);
-      if (!Number.isFinite(numericAnswer) || !Number.isFinite(tolerance) || tolerance < 0) {
+      if (!['number', 'string'].includes(typeof source.numericAnswer) || String(source.numericAnswer).trim() === '' ||
+          !Number.isFinite(numericAnswer) || !Number.isFinite(tolerance) || tolerance < 0) {
         errors.push(issue('invalid_numeric_answer', 'Zahlaufgaben benötigen eine numerische Lösung und eine Toleranz größer oder gleich 0.', sourceIndex));
         return { errors, warnings };
       }
@@ -87,8 +88,8 @@
 
     if (type === 'single' || type === 'dropdown') {
       const options = Array.isArray(source.options) ? source.options : [];
-      const correct = options.map((option, index) => option?.correct ? index : -1).filter(index => index >= 0);
-      if (options.length < 2 || correct.length !== 1 || options.some(option => !nonempty(option?.text))) {
+      const correct = options.map((option, index) => option?.correct === true ? index : -1).filter(index => index >= 0);
+      if (options.length < 2 || correct.length !== 1 || options.some(option => typeof option?.correct !== 'boolean' || !nonempty(option?.text))) {
         errors.push(issue('invalid_choice', 'Single-/Dropdown-Aufgaben benötigen mindestens zwei Textantworten und genau eine richtige Antwort.', sourceIndex));
         return { errors, warnings };
       }
@@ -103,6 +104,9 @@
       };
     }
 
+    if (typeof source.correctBoolean !== 'boolean') {
+      return { errors: [issue('invalid_boolean_answer', 'Richtig/Falsch benötigt eine ausdrückliche boolesche Lösung.', sourceIndex)], warnings };
+    }
     return {
       answer: {
         answerMode: 'choice',
@@ -175,7 +179,7 @@
       }
       selectedPositions = sourceQuestions.map((_, index) => index);
     } else {
-      if (!Array.isArray(positions) || positions.length !== 8 || new Set(positions).size !== 8) {
+      if (!Array.isArray(positions) || positions.length !== 8 || positions.some(value => !Number.isInteger(value)) || new Set(positions).size !== 8) {
         errors.push(issue('select_eight', 'Es müssen genau 8 unterschiedliche Aufgabenpositionen ausgewählt werden.'));
         return { ok: false, errors, warnings, questions: [] };
       }
@@ -220,6 +224,7 @@
     compatibleTypes: COMPATIBLE_TYPES,
     plannedTypes: PLANNED_TYPES,
     unsupportedTypes: UNSUPPORTED_TYPES,
+    adaptAnswer,
     adaptQuestion,
     adaptTest
   });

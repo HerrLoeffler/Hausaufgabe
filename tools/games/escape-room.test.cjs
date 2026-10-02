@@ -90,6 +90,27 @@ function clickPuzzleText(d, text) {
   button.click();
 }
 
+test('numeric transfer retains tolerance and empty answers do not count as an attempt', () => {
+  const { w, d } = openEscape();
+  try {
+    const set = w.GradeCrewEscapeIntegration.getQuestionSet();
+    set[0].remediation.transfer = { prompt: 'Runde 1,25', acceptedAnswers: ['1.25'], answerMode: 'number',
+      numericAnswer: 1.25, tolerance: 0.1, hint: 'Eine Nachkommastelle.', explanation: '1,3 liegt im erlaubten Bereich.' };
+    assert.equal(w.GradeCrewEscapeIntegration.replaceQuestionSet(set).ok, true);
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="desk"]');
+    submitAnswer(w, d, (set[0].correctIndex + 1) % 4);
+    submitAnswer(w, d, set[0].correctIndex);
+    assert.ok(d.getElementById('transferInput'));
+    submitForm(w, d);
+    assert.match(d.getElementById('questionFeedback').textContent, /zuerst eine Antwort/);
+    d.getElementById('transferInput').value = '1,3';
+    submitForm(w, d);
+    assert.equal(d.getElementById('questionDialog').open, false);
+  } finally { w.close(); }
+});
+
+
 test('Escape preflight accepts remediation data and rejects duplicate question ids', () => {
   const { w } = openEscape();
   try {

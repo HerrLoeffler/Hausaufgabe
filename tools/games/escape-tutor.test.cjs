@@ -37,6 +37,54 @@ test('common Remy help stays local and never calls the external bridge', async (
   } finally { w.close(); }
 });
 
+test('simultaneous requests share one bridge call and changed content invalidates cached help', async () => {
+  const { w } = loadTutor();
+  try {
+    let calls = 0;
+    w.GradeCrewTutorBridge = { async ask() { calls++; await new Promise(resolve => setTimeout(resolve, 5)); return { answer: `Hinweis ${calls}` }; } };
+    const q = w.GradeCrewEscapePrototype.questions[0];
+    const results = await Promise.all(Array.from({ length: 8 }, () => w.GradeCrewEscapeTutor.ask(q, 'Warum ist es hier anders?')));
+    assert.equal(calls, 1); assert.equal(new Set(results.map(r => r.answer)).size, 1);
+    await w.GradeCrewEscapeTutor.ask({ ...q, prompt: 'Neue Aufgabe mit derselben ID' }, 'Warum ist es hier anders?');
+    assert.equal(calls, 2);
+  } finally { w.close(); }
+});
+
+test('bridge rejection returns existing learning explanation instead of breaking the help flow', async () => {
+  const { w } = loadTutor();
+  try {
+    w.GradeCrewTutorBridge = { async ask() { throw new Error('private provider error'); } };
+    const q = w.GradeCrewEscapePrototype.questions[0];
+    const result = await w.GradeCrewEscapeTutor.ask(q, 'Warum ist es hier anders?');
+    assert.equal(result.source, 'fallback'); assert.ok(result.answer); assert.ok(!result.answer.includes('private provider'));
+  } finally { w.close(); }
+});
+
+test('cache does not merge mathematical operators or case-sensitive variables', async () => {
+  const { w } = loadTutor();
+  try {
+    let calls = 0; w.GradeCrewTutorBridge = { async ask() { calls++; return { answer: `Hinweis ${calls}` }; } };
+    const q = w.GradeCrewEscapePrototype.questions[0];
+    for (const text of ['Was bedeutet A+B?', 'Was bedeutet A-B?', 'Was bedeutet a-b?']) await w.GradeCrewEscapeTutor.ask(q, text);
+    assert.equal(calls, 3);
+  } finally { w.close(); }
+});
+
+test('clearing a session cancels pending work and cannot refill cache with the old answer', async () => {
+  const { w } = loadTutor();
+  try {
+    let complete, calls = 0;
+    w.GradeCrewTutorBridge = { ask() { calls++; return new Promise(resolve => { complete = resolve; }); } };
+    const q = w.GradeCrewEscapePrototype.questions[0];
+    const pending = w.GradeCrewEscapeTutor.ask(q, 'Warum ist es hier anders?');
+    await Promise.resolve(); w.GradeCrewEscapeTutor.clearSessionCache(); complete({ answer: 'alte Sitzung' });
+    assert.equal((await pending).source, 'cancelled');
+    w.GradeCrewTutorBridge = { async ask() { calls++; return { answer: 'neue Sitzung' }; } };
+    assert.equal((await w.GradeCrewEscapeTutor.ask(q, 'Warum ist es hier anders?')).answer, 'neue Sitzung');
+    assert.equal(calls, 2);
+  } finally { w.close(); }
+});
+
 test('specific unknown student question can use the external bridge and is session-cached', async () => {
   const { w } = loadTutor();
   try {

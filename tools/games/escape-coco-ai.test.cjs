@@ -123,7 +123,8 @@ test('generated GradeCrew questions become eight validated Escape slots with pai
     assert.equal(prepared.ok, true);
     assert.equal(prepared.questions.length, 8);
     assert.equal(prepared.questions[0].prompt, 'Hauptaufgabe 1');
-    assert.equal(prepared.questions[0].remediation.transfer.prompt, 'Transfer 1');
+    assert.match(prepared.questions[0].remediation.transfer.prompt, /^Transfer 1\nAntwortmöglichkeiten:/);
+    assert.match(prepared.questions[0].remediation.transfer.prompt, /Transferlösung 1 falsch 3/);
     assert.ok(prepared.questions[0].remediation.transfer.acceptedAnswers.includes('Transferlösung 1'));
     assert.match(prepared.questions[0].hint, /Wortarten/);
   } finally {
@@ -187,6 +188,10 @@ test('standalone lab keeps the Remy preparation action clickable without faking 
     button.click();
     assert.match(d.getElementById('teacherContentProfile').textContent, /Deutsch · Klasse 5 · Wortarten/);
     assert.match(d.getElementById('teacherAiStatus').textContent, /keine echte KI-Erstellung vortäuschen/);
+    assert.equal(button.disabled, false);
+    d.getElementById('teacherAiTopic').value = 'Verben';
+    button.click();
+    assert.match(d.getElementById('teacherContentProfile').textContent, /Verben/);
   } finally {
     w.close();
   }
@@ -215,5 +220,81 @@ test('Remy generator exposes a role-correct API while keeping the legacy alias c
   } finally {
     w.close();
   }
+});
+
+test('transfer questions use the same strict type and image validation as main questions', () => {
+  const { w } = openEscape();
+  try {
+    const api = w.GradeCrewEscapeAiGenerator;
+    for (const question of [
+      { type: 'truefalse', text: 'Unvollständig' },
+      { type: 'number', text: 'Leere Zahl', numericAnswer: null },
+      { type: 'text', text: 'Manuell', acceptedAnswers: ['X'], manualReview: true },
+      { ...single('Bildfrage', 'X'), imageUrl: 'https://example.invalid/required.png' },
+      { type: 'multi', text: 'Mehrfach', options: [{ text: 'X', correct: true }] }
+    ]) {
+      const questions = Array.from({ length: 16 }, (_, i) => single('Frage ' + i, 'A'));
+      questions[8] = question;
+      assert.equal(api.prepareGeneratedTest({ questions }, { topic: 'Test' }).ok, false);
+    }
+    const questions = Array.from({ length: 16 }, (_, i) => single('Frage ' + i, 'A'));
+    questions[8] = { type: 'number', text: 'Runde auf eine Nachkommastelle', numericAnswer: 1.25, tolerance: 0.1 };
+    const transfer = api.prepareGeneratedTest({ questions }, { topic: 'Runden' }).questions[0].remediation.transfer;
+    assert.equal(transfer.numericAnswer, 1.25);
+    assert.equal(transfer.tolerance, 0.1);
+    assert.equal(transfer.answerMode, 'number');
+  } finally { w.close(); }
+});
+
+test('bridge ready events cannot double-generate and outdated form results are not applied', async () => {
+  const { w, d } = openEscape();
+  try {
+    let resolve, calls = 0;
+    w.GradeCrewEscapeAiBridge.generateTest = () => { calls++; return new Promise(r => { resolve = r; }); };
+    const button = d.getElementById('teacherAiGenerateBtn');
+    const pending = button.onclick();
+    w.dispatchEvent(new w.Event('gradecrew:escape-ai-bridge-ready'));
+    assert.equal(button.disabled, true);
+    await button.onclick();
+    assert.equal(calls, 1);
+    d.getElementById('teacherAiTopic').value = 'Neues Thema';
+    resolve({ questions: [] });
+    await pending;
+    assert.equal(button.disabled, false);
+    assert.match(d.getElementById('teacherAiStatus').textContent, /ältere Ergebnis wurde nicht übernommen/);
+  } finally { w.close(); }
+});
+
+test('speech final results survive Stop but stale sessions and manual edits are protected', () => {
+  const { w, d } = openEscape();
+  try {
+    const sessions = [];
+    w.SpeechRecognition = class {
+      constructor() { sessions.push(this); }
+      start() {}
+      stop() { this.stopped = true; }
+      abort() { this.aborted = true; }
+    };
+    const mic = d.getElementById('teacherAiRemyMic'), notes = d.getElementById('teacherAiNotes');
+    const result = (session, text) => session.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: text }], { isFinal: true })] });
+    mic.click(); mic.click();
+    assert.equal(sessions[0].stopped, true);
+    result(sessions[0], 'Erster Wunsch'); sessions[0].onend();
+    assert.equal(notes.value, 'Erster Wunsch');
+    mic.click(); mic.click(); mic.click();
+    const current = sessions[2];
+    result(sessions[1], 'VERALTET'); sessions[1].onend();
+    assert.equal(mic.getAttribute('aria-pressed'), 'true');
+    result(current, 'Neuer Wunsch');
+    notes.value = 'Manuell korrigiert';
+    notes.dispatchEvent(new w.Event('input'));
+    result(current, 'SPÄT');
+    assert.equal(notes.value, 'Manuell korrigiert');
+    assert.equal(current.aborted, true);
+    mic.click();
+    d.getElementById('teacherDialog').dispatchEvent(new w.Event('close'));
+    assert.equal(sessions[3].aborted, true);
+    assert.equal(mic.getAttribute('aria-pressed'), 'false');
+  } finally { w.close(); }
 });
 

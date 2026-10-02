@@ -8,6 +8,8 @@
   const COCO_HELP = 'assets/gradecrew/penguin-guide.svg#pose-4';
   const REMY_CREATE = 'assets/gradecrew/clay-remy-writing.svg';
   let activeProfile = null;
+  let generating = false;
+  let generationEpoch = 0;
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -73,6 +75,8 @@
 
   function correctAnswers(question) {
     if (!question) return [];
+    const checked = window.GradeCrewEscapeQuestionAdapter?.adaptAnswer(question, 0);
+    if (!checked || checked.errors.length) return [];
     if (question.type === 'number') {
       const value = Number(question.numericAnswer);
       if (!Number.isFinite(value)) return [];
@@ -155,9 +159,27 @@
       questions: mainQuestions
     };
     const supports = mainQuestions.map((question, index) => makeSupport(question, transferQuestions[index], topic));
+    // Preserve choice context: transfers are rendered as typed answers, so the
+    // alternatives must remain visible even though no radio group is rendered.
+    supports.forEach((support, index) => {
+      const transfer = transferQuestions[index];
+      if (['single', 'dropdown'].includes(transfer.type)) {
+        support.remediation.transfer.prompt += '\nAntwortmöglichkeiten: ' + transfer.options.map(option => option.text).join(' · ');
+      }
+      if (transfer.type === 'number') {
+        support.remediation.transfer.answerMode = 'number';
+        support.remediation.transfer.numericAnswer = Number(transfer.numericAnswer);
+        support.remediation.transfer.tolerance = Number(transfer.tolerance || 0);
+        support.remediation.transfer.unit = String(transfer.unit || '');
+      }
+    });
     const builder = window.GradeCrewEscapeBuilder;
     if (!builder) return { ok: false, errors: [{ code: 'builder_missing', message: 'Escape-Builder ist nicht geladen.' }] };
-    return builder.prepare(sourceTest, { supports });
+    const prepared = builder.prepare(sourceTest, { supports });
+    if (prepared.ok) {
+      prepared.warnings.push({ code: 'didactic_review_required', message: 'Die Lernhilfen sind allgemeine Vorlagen. Bitte Hinweise und Erklärungen fachlich ergänzen; automatisch erzeugte Fragen allein belegen noch keinen passenden Lernweg.' });
+    }
+    return prepared;
   }
 
   function safeTypes(subject) {
@@ -233,10 +255,10 @@
   }
 
   async function generate() {
+    if (generating) return;
     const settings = settingsFromUi();
     if (!settings.subject || !settings.grade || !settings.topic) return setStatus('Fach, Klasse und Thema werden benötigt.', 'error');
     const button = $('teacherAiGenerateBtn');
-    if (button) button.disabled = true;
     const connected = Boolean(window.GradeCrewEscapeAiBridge?.generateTest);
     if (!connected) {
       activeProfile = { subject: settings.subject, grade: settings.grade, topic: settings.topic };
@@ -245,9 +267,16 @@
       window.dispatchEvent(new CustomEvent('gradecrew:escape-event', { detail: { name: 'teacher.remy_preview_prepared', profile: activeProfile } }));
       return;
     }
+    generating = true;
+    const requestEpoch = generationEpoch;
+    if (button) button.disabled = true;
     setStatus('Remy erstellt 8 Lernaufgaben und passende Transferaufgaben mit der GradeCrew-KI …');
     try {
       const result = await callGenerator(generationPayload(settings));
+      if (requestEpoch !== generationEpoch || JSON.stringify(settings) !== JSON.stringify(settingsFromUi())) {
+        setStatus('Die Angaben wurden während der Erstellung geändert. Das ältere Ergebnis wurde nicht übernommen. Bitte starte die Erstellung mit den aktuellen Angaben erneut.', 'error');
+        return;
+      }
       const prepared = prepareGeneratedTest(result, settings);
       if (!prepared?.ok) {
         const message = (prepared?.errors || []).map(error => error.message || String(error)).slice(0, 3).join(' · ');
@@ -258,12 +287,13 @@
       if (!applied?.ok) throw new Error((applied?.errors || []).map(error => error.message).join(' · ') || 'Aufgaben konnten nicht übernommen werden.');
       persistPrepared(prepared, settings);
       updateProfileDisplay();
-      setStatus('✓ 8 Aufgaben übernommen. Bitte kurz prüfen – danach kannst du das Escape direkt starten.', 'success');
+      setStatus('8 Aufgaben übernommen. Bitte Aufgaben und Transfer prüfen und die allgemeinen Lernhilfe-Vorlagen fachlich ergänzen, bevor du die Runde startest.', 'success');
       window.dispatchEvent(new CustomEvent('gradecrew:escape-event', { detail: { name: 'teacher.ai_questions_generated', count: 8, pairedTransfers: 8 } }));
     } catch (error) {
       const bridgeMissing = String(error?.message || '').includes('gradecrew-ai-bridge-unavailable');
       setStatus(bridgeMissing ? 'Die echte GradeCrew-KI wird erst in der integrierten Lehreransicht über deine bestehende Sitzung verbunden. Im Lab ist dafür bewusst keine Extra-Anmeldung nötig.' : `KI-Erstellung fehlgeschlagen: ${error?.message || 'Unbekannter Fehler'}`, 'error');
     } finally {
+      generating = false;
       if (button) button.disabled = false;
     }
   }
@@ -288,7 +318,7 @@
     const status = $('teacherAiConnection');
     if (!button || !status) return;
     const connected = Boolean(window.GradeCrewEscapeAiBridge?.generateTest);
-    button.disabled = false;
+    button.disabled = generating;
     button.textContent = connected ? '✨ Remy: 8 Escape-Aufgaben erstellen' : '✨ Remy-Vorschau vorbereiten';
     status.textContent = connected
       ? '✓ Remy ist mit der GradeCrew-KI über die vorhandene Lehrersitzung verbunden.'
@@ -327,6 +357,7 @@
   }
 
   function clearGeneratedSet() {
+    generationEpoch++;
     try { localStorage.removeItem(STORAGE_KEY); } catch {}
     activeProfile = null;
     if ($('teacherContentProfile') && D) {

@@ -29,6 +29,12 @@ async function openPage(relative = '', query = '', setup) {
   w.close = () => { observers.forEach(observer => observer.disconnect()); close(); };
   w.addEventListener('error', event => errors.push(event.error || event.message));
   w.scrollTo = () => {};
+  // JSDOM exposes <dialog> but not the modal methods used by real browsers.
+  // Keep this compatibility shim test-only so product code still exercises the native API.
+  if (w.HTMLDialogElement) {
+    w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+    w.HTMLDialogElement.prototype.close = function () { this.open = false; };
+  }
   w.fetch = async (url, init) => {
     const body = JSON.parse(init?.body || '{}');
     requests.push({ url, ...body });
@@ -144,13 +150,19 @@ for (const game of ['fast-quiz', 'fehlerjagd-deutsch', 'vocab-rush']) {
   });
 }
 
-test('escape room enters practice through the shared shell and keeps the teacher preview available', async () => {
+test('escape room enters practice through teacher preparation and keeps preview controls available', async () => {
   const { w, document: d } = await openPage('escape-room', '?mode=practice');
   try {
+    assert.equal(d.getElementById('gameView').hidden, true);
+    assert.equal(d.getElementById('homeView').hidden, false);
+    assert.equal(d.getElementById('teacherDialog').open, true);
+    assert.equal(d.getElementById('teacherPreviewBtn').hidden, true);
+    assert.ok(d.getElementById('teacherStartBtn'));
+    d.getElementById('teacherStartBtn').click();
     assert.equal(d.getElementById('gameView').hidden, false);
     assert.equal(d.getElementById('homeView').hidden, true);
+    assert.equal(d.getElementById('teacherDialog').open, false);
     assert.equal(d.querySelectorAll('.gc-games-nav').length, 1);
-    assert.ok(d.getElementById('teacherPreviewBtn'));
     assert.equal(w.location.search, '');
   } finally { w.close(); }
 });

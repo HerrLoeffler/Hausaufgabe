@@ -35,6 +35,25 @@ function single(text, correct = 1, type = 'single') {
   };
 }
 
+test('missing solutions never silently become false or zero; explicit false and zero remain valid', () => {
+  const { w } = loadAdapter();
+  try {
+    const answer = question => w.GradeCrewEscapeQuestionAdapter.adaptAnswer(question, 0);
+    for (const value of [undefined, null, '', ' ', false, true]) {
+      assert.ok(answer({ type: 'number', numericAnswer: value }).errors.length);
+    }
+    for (const value of [undefined, null, '', 'false', 0]) {
+      assert.ok(answer({ type: 'truefalse', correctBoolean: value }).errors.length);
+    }
+    assert.equal(answer({ type: 'number', numericAnswer: 0 }).errors.length, 0);
+    assert.equal(answer({ type: 'truefalse', correctBoolean: false }).errors.length, 0);
+    assert.ok(answer({ type: 'single', options: [{ text: 'A', correct: 'true' }, { text: 'B', correct: false }] }).errors.length);
+    const source = { questions: Array.from({ length: 8 }, (_, i) => single(String(i))) };
+    const duplicate = w.GradeCrewEscapeQuestionAdapter.adaptTest(source, { supports: supportsFromCanonical(w), positions: [0, '0', 2, 3, 4, 5, 6, 7] });
+    assert.equal(duplicate.ok, false);
+  } finally { w.close(); }
+});
+
 test('GradeCrew adapter maps eight safe choice questions without inventing game logic', () => {
   const { w } = loadAdapter();
   try {

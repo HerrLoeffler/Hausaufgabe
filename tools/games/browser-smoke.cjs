@@ -122,10 +122,16 @@ const root = path.resolve(__dirname, '../..');
     }
 
     await page.goto(base+'/escape-room/?mode=practice',{waitUntil:'networkidle'});
+    await visible('teacherDialog');
+    assert.equal(await page.locator('#gameView').isVisible(),false);
+    assert.equal(await page.locator('#homeView').isVisible(),true);
+    assert.equal(await page.locator('#teacherPreviewBtn').isVisible(),false);
+    assert.equal(await page.locator('#teacherStartBtn').count(),1);
+    await page.locator('#teacherStartBtn').click();
     await visible('gameView');
     assert.equal(await page.locator('#homeView').isVisible(),false);
+    assert.equal(await page.locator('#teacherDialog').isVisible(),false);
     assert.equal(await page.locator('.gc-games-nav').count(),1);
-    assert.equal(await page.locator('#teacherPreviewBtn').count(),1);
     assert.equal(await page.evaluate(()=>location.search),'');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     console.log('escape-room / practice passed');
@@ -143,7 +149,7 @@ const root = path.resolve(__dirname, '../..');
     assert.equal(await fallback.locator('#joinForm').isVisible(),false);
     await noJs.close();
     assert.deepEqual(errors,[]);
-    console.log('Browser smoke passed: desktop/tablet/mobile, nine legacy modes + Escape practice, central join, QR precedence, leave dialog and favorites. Backend and external QR library mocked.');
+    console.log('Browser smoke passed: desktop/tablet/mobile, nine legacy modes + Escape teacher-first practice, central join, QR precedence, leave dialog and favorites. Backend and external QR library mocked.');
   } finally {
     if (browser) await browser.close();
     if (server) await new Promise(resolve=>server.close(resolve));
