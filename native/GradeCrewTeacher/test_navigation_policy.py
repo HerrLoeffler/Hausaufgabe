@@ -1,4 +1,4 @@
-"""Exercise the pure GradeCrew iOS navigation policy with Swift/Foundation."""
+"""Exercise the pure GradeCrew iOS navigation/download policy with Swift/Foundation."""
 from pathlib import Path
 import subprocess
 import tempfile
@@ -16,6 +16,7 @@ let mail = URL(string: "mailto:support@example.com")!
 let production = URL(string: "https://hausaufgabe-40294.web.app/")!
 let blob = URL(string: "blob:https://hausaufgabe-staging.web.app/123")!
 
+assert(GradeCrewNavigationPolicy.isTrustedHost("hausaufgabe-staging.firebaseapp.com", selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(selected, selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(stable, selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(otherPreview, selectedBaseURL: selected))
@@ -29,7 +30,12 @@ assert(GradeCrewNavigationPolicy.shouldOpenExternally(mail, selectedBaseURL: sel
 assert(GradeCrewNavigationPolicy.shouldOpenExternally(production, selectedBaseURL: selected, userActivated: true))
 assert(!GradeCrewNavigationPolicy.shouldOpenExternally(external, selectedBaseURL: selected, userActivated: false))
 assert(!GradeCrewNavigationPolicy.shouldOpenExternally(otherPreview, selectedBaseURL: selected, userActivated: true))
-print("GradeCrew navigation policy: passed")
+
+assert(GradeCrewNavigationPolicy.safeDownloadFilename("Ergebnisse 9b.csv") == "Ergebnisse 9b.csv")
+assert(GradeCrewNavigationPolicy.safeDownloadFilename("../../secret.csv") == ".-.-secret.csv")
+assert(GradeCrewNavigationPolicy.safeDownloadFilename("  ") == "GradeCrew-Download")
+assert(!GradeCrewNavigationPolicy.safeDownloadFilename(String(repeating: "a", count: 300)).isEmpty)
+print("GradeCrew navigation/download policy: passed")
 '''
 
 with tempfile.TemporaryDirectory() as work:
