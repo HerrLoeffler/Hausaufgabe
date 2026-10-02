@@ -46,3 +46,11 @@ Weitere Produktbaustellen: Secure-Exam-Ende-zu-Ende/30er-Test belastbar abschlie
 ## Nächster ausführbarer Schritt
 
 V2 pushen, PR erstellen, Workflow-Verhalten einschließlich realer Receipt-Lektüre prüfen. Danach Web-PR-Merge-Result-CI ergänzen. `development-status.yml` bleibt wegen parallelem PR #48 unverändert. Vor Integration main und PRs erneut lesen.
+
+## Gesicherter Folgecheck
+
+- PR #50 Code cba241e40c57f44b37ad88f30ae4fc59568eb2ab: Release-Control-PR-Run 37074543429, Handoff und Development Status erfolgreich. 14 Regressionstests auch auf GitHub grün.
+- Echte validierte Receipts: Hosting Run 37014137329 / Artifact 11229331114; Functions Run 37014137633 / Artifact 11229875058. Beide 8aba2a7; Combined CI 37013936361, mobiles Tutorial 37013936799. Board: 21 offene Tests, 10 nicht bestätigt testbar, 0 manuelle Abnahmen.
+- Neu erkannt: Gateway Run 37010376603 scheitert im Preflight, bevor ein neues Image oder Traffic verändert wird. Log: keine ungetaggte 100%-Revision. Nicht mit einem Ausfall des bestehenden Dienstes gleichsetzen; aktive Cloud-Run-Konfiguration separat prüfen.
+- Pre-Merge Combined CI separat in PR #51, Commit 1985673476606b9222f08a014f657b7579910891. Echte PR-Merge-Result-Prüfung 37074747781 vollständig grün, inklusive Firestore-Emulator und sämtlicher ergänzter Prüfungen. Merge auf Web würde die vorhandene Staging-Kette auslösen; in diesem Audit nicht ausgeführt.
+- GRADECREW_STATE korrigiert: Web-Evidence aktuell, Games fehlgeschlagener neuester Deploy getrennt von alter Beobachtung, iOS 0.1.6 nur Upload, Gateway letzter Erfolg historisch erhalten. Keine neue Cloud-Veröffentlichung.

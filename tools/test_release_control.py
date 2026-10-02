@@ -40,7 +40,7 @@ def receipt(kind="hosting"):
 class ReleaseControlTests(unittest.TestCase):
     def test_acceptance_requires_full_commit_for_pass_failure_and_skip(self):
         for status in ("passed", "failed", "skipped"):
-            for sha in (None, "abc1234", "", "g" * 40):
+            for sha in (None, "abc1234", "", "g" * 40, 123, 10 ** 39):
                 with self.subTest(status=status, sha=sha):
                     self.assertEqual(rc.acceptance_view({"status": status, "testedSha": sha}, A)[0], "invalid")
 
@@ -51,7 +51,7 @@ class ReleaseControlTests(unittest.TestCase):
         self.assertEqual(rc.acceptance_view({"status": "passed", "testedSha": A}, A)[0], "passed")
 
     def test_invalid_acceptance_payloads(self):
-        for value in ([1], "passed", {"status": "everything_green"}):
+        for value in ([], [1], "passed", {"status": "everything_green"}):
             self.assertEqual(rc.acceptance_view(value, A)[0], "invalid")
 
     def test_unknown_dependency_cannot_be_ignored(self):

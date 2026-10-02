@@ -107,8 +107,8 @@ Diese Nachprüfung ergänzt ältere Zeilen; historische SHAs oben sind keine Beh
 
 | ID | Aufgabe | Verifizierter Stand / nächster Schritt |
 |---|---|---|
-| GC-RELEASE-01 | Release-Board gegen falsche grüne Nachweise absichern | PR #49 integriert. V2 liest echte Receipt-Inhalte, prüft Herkunft/Digest/Scope, blockiert alte Erfolge nach neuerem Fehlversuch und ungültige Abnahmen; 14 lokale Regressionstests grün. Eigener Fix-Branch; CI/Integration separat prüfen. |
-| GC-RELEASE-02 | Combined CI **vor** Web-Integration | Aktuelle AI Staging Checks hat Push/Dispatch, keinen pull_request-Trigger. Merge-Result-Tests vor Integration ergänzen; Deploy bleibt an erfolgreichen Push gebunden. |
+| GC-RELEASE-01 | Release-Board gegen falsche grüne Nachweise absichern | PR #49 integriert. V2 liest echte Receipt-Inhalte, prüft Herkunft/Digest/Scope, blockiert alte Erfolge nach neuerem Fehlversuch und ungültige Abnahmen; 14 lokale Regressionstests grün. PR #50: Actions 37074543429 mit echten Receipts erfolgreich; Integration separat prüfen. |
+| GC-RELEASE-02 | Combined CI **vor** Web-Integration | PR #51 ergänzt Merge-Result-CI und fehlende Crew/Emmi/Admin/Login/Tutorial-Prüfungen; PR-Lauf 37074747781 vollständig grün (inklusive Firestore-Emulator). Noch nicht auf Integrationsbranch aktiviert; Deploy bleibt an erfolgreichen Push gebunden. |
 | GC-RELEASE-03 | Automatische Staging-Rules | Nicht eingerichtet. Security-Cutover-Gates und bestätigte Schema-/Client-Kompatibilität zuerst; niemals Hosting-Grün als Rules-Nachweis verwenden. |
 | GC-RELEASE-04 | Games-Lab-Automatik und Receipts | Escape-Preview-Automatik vorhanden; neuester Run 37021633218 gescheitert bei secretmanager.secrets.get für OPENAI_API_KEY. Hosting danach übersprungen. Engen IAM-/Funktions-Deploy prüfen, keinen globalen Rechte-Fix. Receipt und stale-source-Schutz fehlen. |
 | GC-RELEASE-05 | Branch Protection / Rulesets | Rulesets-API meldet Tarifbeschränkung für privates Repo; main protected=false. Protection-Details zusätzlich 403 für Connector. Keine erzwungenen Pflichtchecks behaupten. |
@@ -118,3 +118,5 @@ Diese Nachprüfung ergänzt ältere Zeilen; historische SHAs oben sind keine Beh
 | GC-RELEASE-07 | State-Drift, Release-Alter und Inventar-Vollständigkeit | GRADECREW_STATE enthält ältere Release-SHAs. Live-Evidenz im Board priorisieren; später Live-Revision/Manifest prüfen, Nachweisalter/Preview-Ablauf und Feature-Abhängigkeiten automatisiert abgleichen. |
 
 Frühere Review-PRs #39 (Gateway), #40 (Escape) und #41 (Remy) sind inzwischen nachweislich gemergt. Das ersetzt keine aktuelle Staging-/Geräteabnahme. Codex-Worker bleibt nachrangig.
+
+GC-AI-GATEWAY-04: Neuester Gateway-Run `37010376603` ist beim Preflight gescheitert: „No untagged Cloud Run revision currently owns 100% of normal traffic.“ Keine neue Image-/Traffic-Promotion in diesem Lauf. Vorheriger Erfolg ist historisch; aktive Revision/Tags prüfen. Signierte Modellqualifikation und automatische Routing-Aktivierung bleiben eigenständig offen.

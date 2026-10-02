@@ -252,16 +252,16 @@ def target_sha(kind: str, web_sha: str | None, gateway_evidence: dict[str, Any] 
 
 
 def acceptance_view(raw: dict[str, Any] | None, current_sha: str | None) -> tuple[str, str]:
-    if not raw:
+    if raw is None or raw == {}:
         return "pending", "Noch nicht getestet"
     if not isinstance(raw, dict):
         return "invalid", "Abnahme muss ein Objekt sein"
     status = str(raw.get("status") or "pending")
-    tested_sha = str(raw.get("testedSha") or "") or None
+    tested_sha = raw.get("testedSha")
     note = str(raw.get("note") or "").strip()
     if status not in {"pending", "passed", "failed", "skipped"}:
         return "invalid", "Unbekannter Abnahmestatus"
-    if status != "pending" and (not tested_sha or not SHA_RE.fullmatch(tested_sha)):
+    if status != "pending" and (not isinstance(tested_sha, str) or not SHA_RE.fullmatch(tested_sha)):
         return "invalid", "Vollständiger getesteter SHA fehlt"
     if status != "pending" and (not current_sha or tested_sha != current_sha):
         return "retest", note or f"Ergebnis stammt von {short(tested_sha)}"

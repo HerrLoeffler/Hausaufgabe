@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-02",
+  "observed_at": "2026-10-02T22:55:32.500839+00:00",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-02-a",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2, AI-Kosten-/Memory- und de-DE-i18n-Ergänzungen.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+    "observed_integration_head": "8aba2a7ce70c75842fbe4b81c4e6491136366768",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -36,19 +36,19 @@
       "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends."
     ],
     "gates": {
-      "combined_ci": "success_run_36991807963",
-      "mobile_tutorial": "success_run_36991171202_before_retention_followup_same_product_family",
-      "hosting_preview": "success_run_36991979723_commit_18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
-      "staging_functions": "success_run_36991979742_commit_18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
-      "staging_rules": "unchanged",
+      "combined_ci": "success_run_37013936361",
+      "mobile_tutorial": "success_run_37013936799",
+      "hosting_preview": "success_run_37014137329_commit_8aba2a7ce70c75842fbe4b81c4e6491136366768",
+      "staging_functions": "success_run_37014137633_commit_8aba2a7ce70c75842fbe4b81c4e6491136366768",
+      "staging_rules": "not_verified_no_rules_deploy_in_this_train",
       "desktop_ipad_iphone_test": "not_tested_for_remy_structured_telemetry",
       "user_acceptance": "previous_remy_voice_feedback_received_new_structure_and_stats_not_tested",
       "production": "not_requested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 98,
-    "important": "Der aktuelle Remy-Struktur-/Telemetry-Stand ist im Staging-Preview deployed und hash-verifiziert. Der staging-only functions:ai-Workflow deployte denselben getesteten Integrationscommit erfolgreich. Das Firebase-Deploylog bestätigt die erfolgreiche Neuanlage von recordCrewTelemetry, getCrewTelemetrySummary und cleanupCrewTelemetry sowie die Aktualisierung von crewAssistant und reviseWholeTest. Offen ist Martins praktische Browser-/Admin-Abnahme; Production blieb unverändert.",
-    "next_action": "Im Preview Remy mit dem echten Sprachbeispiel testen, ein von Remy gesetztes Feld bewusst korrigieren und anschließend als Admin Administration -> Übersicht öffnen. Prüfen, ob Sprache/Text, lokale 0-API-Auflösung und Korrektursignal in der neuen Remy-Statistik erscheinen."
+    "preview_verified_files": 103,
+    "important": "Hosting und AI-Functions für 8aba2a7 wurden im Release-Control-Review 37074543429 aus validierten Receipt-Inhalten bestätigt. Snapshot ist nur Hosting-Archiv. Rules/Security-Cutover, fachliche Abnahme und Gerätebestätigung sind separat offen; Production nicht freigegeben.",
+    "next_action": "Review PR #50 (Board-Nachweise) abschließen, PR #51 (Pre-Merge Combined CI) prüfen; danach bestätigten Preview in kurzen Abnahmeblöcken testen. Keine Production-Freigabe."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -61,24 +61,24 @@
     "staging_ai_functions_deploy": "verified_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 36991979723,
-      "app_ci_run_id": 36991807963,
-      "commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "run_id": 37014137329,
+      "app_ci_run_id": 37013936361,
+      "commit": "8aba2a7ce70c75842fbe4b81c4e6491136366768",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "verified_files": 98,
-      "receipt_artifact_id": 11219858253,
-      "verification": "Build exact tested branch head, stale-head guard, staging preview deploy and post-deploy manifest/file verification all succeeded.",
+      "verified_files": 103,
+      "receipt_artifact_id": 11229331114,
+      "verification": "Validated receipt content and artifact digest in Release Control run 37074543429; deployment verified manifest/file hashes.",
       "device_test": "not_performed",
       "date": "2026-10-02"
     },
     "functions_automation_evidence": {
       "workflow": ".github/workflows/staging-functions.yml",
       "wif_setup": "completed",
-      "automatic_run_id": 36991979742,
+      "automatic_run_id": 37014137633,
       "automatic_run_result": "success_deployed",
-      "upstream_ci_run_id": 36991807963,
-      "deployed_commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
-      "receipt_artifact_id": 11220305218,
+      "upstream_ci_run_id": 37013936361,
+      "deployed_commit": "8aba2a7ce70c75842fbe4b81c4e6491136366768",
+      "receipt_artifact_id": 11229875058,
       "firebase_deploy_log_confirmed_functions": [
         "crewAssistant",
         "reviseWholeTest",
@@ -102,7 +102,18 @@
       "production_backup": false
     },
     "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "agent_dispatch_note": "Worker-Dateien vorhanden; Aktivierung und erfolgreicher echter Worker-Lauf nicht verifiziert. Beim Aktualisieren von Teilbereichen Pflichtfelder erhalten."
+    "agent_dispatch_note": "Worker-Dateien vorhanden; Aktivierung und erfolgreicher echter Worker-Lauf nicht verifiziert. Beim Aktualisieren von Teilbereichen Pflichtfelder erhalten.",
+    "release_control_audit": {
+      "branch": "fix/release-control-evidence-v2",
+      "pr": 50,
+      "verified_run": 37074543429,
+      "tests": 14,
+      "web_components_synchronized": true,
+      "staging_complete": false,
+      "manual_acceptances": 0,
+      "premerge_pr": 51,
+      "production_approved": false
+    }
   },
   "workstreams": [
     {
@@ -209,11 +220,16 @@
     {
       "id": "games-escape",
       "branch": "feature/escape-room-mvp-v1",
-      "observed_head": "c904a67428e40f2e5257dad11a1895945f016aa7",
-      "stage": "staging_deployed",
-      "staging": "isolated_preview_only",
+      "observed_head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "stage": "branch_only",
+      "staging": "latest_run_37021633218_failed_secret_metadata_access_hosting_skipped",
       "user_test": "physical_device_test_open",
-      "next_action": "Echten Desktop/iPad-Test durchführen; Hauptprodukt-/Auth-Integration bleibt separat."
+      "next_action": "Prüfen: Secret-Metadata-Zugriff des Escape-Deployers und Architektur des neuen Preview-Functions-Pfads; anschließend verifiziertes Receipt. Älterer Preview ist nicht automatisch dieser Head.",
+      "previous_observation": {
+        "head": "c904a67428e40f2e5257dad11a1895945f016aa7",
+        "stage": "staging_deployed",
+        "staging": "isolated_preview_only"
+      }
     },
     {
       "id": "security",
@@ -228,17 +244,17 @@
       "id": "ios-design",
       "task_id": "GC-IOS-02",
       "branch": "feature/shared-gradecrew-design-system",
-      "implementation_branch": "feature/ios-latest-integration-v1",
-      "observed_head": "8bdebaf1ab701d44e57369914bd2b82fe7bdc895",
+      "implementation_branch": "feature/shared-gradecrew-design-system",
+      "observed_head": "899bc3632b657d004ea3771418bb0c22a9a72ab5",
       "stage": "ci_green",
-      "ci": "success_testflight_run_37015111963_routing_archive_upload",
-      "testflight_version": "0.1.5",
+      "ci": "success_testflight_run_37024529022",
+      "testflight_version": "0.1.6",
       "default_web_source": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/",
       "stable_staging_fallback": "https://hausaufgabe-staging.web.app/",
       "production_target_allowed": false,
-      "user_test": "0.1.5_not_installed_or_verified_on_physical_device_yet",
+      "user_test": "installed_build_and_loaded_web_sha_not_verified",
       "handoff": "workstreams/ios-app-v2.md",
-      "next_action": "Nach Apple-Verarbeitung 0.1.5 auf iPad installieren, sichtbare Umgebung Integration bestätigen und Login/Crew/Remy/Emmi/Tutorial/Editor-Kernwege praktisch testen."
+      "next_action": "0.1.6 nach Apple-Verarbeitung am iPad bestätigen; nativen Build und geladenen Web-SHA gemeinsam für Abnahme erfassen."
     },
     {
       "id": "design-dashboard-v1",
@@ -301,10 +317,10 @@
       "id": "ai-gateway-staging-cicd",
       "task_id": "GC-AI-GATEWAY-03",
       "branch": "integration/ai-gateway-staging",
-      "observed_head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
-      "stage": "staging_deployed",
-      "ci": "success_run_36999999589_verify_including_firestore_emulator",
-      "staging": "success_run_36999999589_deploy_candidate_smoke_promotion_receipt",
+      "observed_head": "479e2fa9f682c5eaef4e33292cd33c94d56943dc",
+      "stage": "ci_green",
+      "ci": "verify_job_success_run_37010376603_overall_deploy_failed",
+      "staging": "latest_run_37010376603_failed_preflight_before_image_or_traffic_change",
       "providers": [
         "anthropic",
         "openai"
@@ -312,7 +328,11 @@
       "runtime_routing": "not_enabled",
       "handoff": "workstreams/system-review-2026-10-02.md",
       "user_test": "not_performed",
-      "next_action": "Automatische Providerintegration auf Kosten-/Qualitätsgrenzen prüfen; bestehende Functions bleiben separater Pfad."
+      "next_action": "Cloud Run Traffic-Metadaten sicher prüfen: Checker verlangt untagged 100%-Revision. Vorhandene Tags/Traffic-Aufteilung nachvollziehen; Schutz nicht blind entfernen. Automatisches Routing und Functions-Pilot weiter separat offen.",
+      "last_successful_deployment": {
+        "commit": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+        "run_id": 36999999589
+      }
     }
   ],
   "deployments": [
