@@ -24,7 +24,8 @@
       syncChoice(choice);
       input.addEventListener('change', () => {
         if (input.type === 'radio' && input.name) {
-          root.querySelectorAll(`.gcg-choice input[type="radio"][name="${CSS.escape(input.name)}"]`).forEach(other => {
+          root.querySelectorAll('.gcg-choice input[type="radio"]').forEach(other => {
+            if (other.name !== input.name) return;
             const owner = other.closest('.gcg-choice');
             if (owner) syncChoice(owner);
           });
