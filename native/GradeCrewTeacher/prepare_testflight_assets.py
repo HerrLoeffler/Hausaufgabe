@@ -21,6 +21,7 @@ BRAND_ICON = REPO / MANIFEST["root"] / MANIFEST["brand"]["icon"]
 BACKGROUND = TOKENS["colors"]["surface"].lstrip("#")
 SIZE = 1024
 INSET = 64
+PREVIEW_SIZE = SIZE - (2 * INSET)
 
 resources = ROOT / "Resources" / "Assets.xcassets"
 appicon = resources / "AppIcon.appiconset"
@@ -34,11 +35,12 @@ def rgb_from_hex(value: str) -> tuple[int, int, int]:
     return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
 
 
-def appkit_render(source: Path, destination: Path) -> bool:
-    """Render through AppKit and force an opaque RGB bitmap."""
+def flatten_with_core_graphics(source: Path, destination: Path) -> None:
+    """Composite an image over the brand surface and emit an opaque RGB PNG."""
     red, green, blue = rgb_from_hex(BACKGROUND)
     swift = r'''
 import AppKit
+import CoreGraphics
 import Foundation
 
 let args = CommandLine.arguments
@@ -51,46 +53,60 @@ let red = CGFloat(Double(args[5])!) / 255.0
 let green = CGFloat(Double(args[6])!) / 255.0
 let blue = CGFloat(Double(args[7])!) / 255.0
 
-guard let image = NSImage(contentsOf: source) else { exit(2) }
-guard let bitmap = NSBitmapImageRep(
-    bitmapDataPlanes: nil,
-    pixelsWide: size,
-    pixelsHigh: size,
-    bitsPerSample: 8,
-    samplesPerPixel: 3,
-    hasAlpha: false,
-    isPlanar: false,
-    colorSpaceName: .deviceRGB,
-    bytesPerRow: 0,
-    bitsPerPixel: 24
-) else { exit(3) }
-bitmap.size = NSSize(width: size, height: size)
+guard let image = NSImage(contentsOf: source) else {
+    fputs("Could not load rendered icon image.\n", stderr)
+    exit(2)
+}
+var proposedRect = NSRect(origin: .zero, size: image.size)
+guard let sourceCG = image.cgImage(forProposedRect: &proposedRect, context: nil, hints: nil) else {
+    fputs("Could not obtain CGImage from rendered icon.\n", stderr)
+    exit(3)
+}
 
-guard let context = NSGraphicsContext(bitmapImageRep: bitmap) else { exit(4) }
-NSGraphicsContext.saveGraphicsState()
-NSGraphicsContext.current = context
-context.imageInterpolation = .high
-NSColor(calibratedRed: red, green: green, blue: blue, alpha: 1).setFill()
-NSBezierPath(rect: NSRect(x: 0, y: 0, width: size, height: size)).fill()
-let target = NSRect(
+let colorSpace = CGColorSpaceCreateDeviceRGB()
+let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
+guard let context = CGContext(
+    data: nil,
+    width: size,
+    height: size,
+    bitsPerComponent: 8,
+    bytesPerRow: size * 4,
+    space: colorSpace,
+    bitmapInfo: bitmapInfo.rawValue
+) else {
+    fputs("Could not create CoreGraphics bitmap context.\n", stderr)
+    exit(4)
+}
+
+context.setFillColor(CGColor(red: red, green: green, blue: blue, alpha: 1))
+context.fill(CGRect(x: 0, y: 0, width: size, height: size))
+context.interpolationQuality = .high
+let target = CGRect(
     x: inset,
     y: inset,
     width: CGFloat(size) - (2 * inset),
     height: CGFloat(size) - (2 * inset)
 )
-image.draw(in: target, from: NSRect(origin: .zero, size: image.size), operation: .sourceOver, fraction: 1.0)
-NSGraphicsContext.restoreGraphicsState()
+context.draw(sourceCG, in: target)
 
-guard let data = bitmap.representation(using: .png, properties: [:]) else { exit(5) }
+guard let flattened = context.makeImage() else {
+    fputs("Could not create flattened CGImage.\n", stderr)
+    exit(5)
+}
+let bitmap = NSBitmapImageRep(cgImage: flattened)
+guard let data = bitmap.representation(using: .png, properties: [:]) else {
+    fputs("Could not encode flattened image as PNG.\n", stderr)
+    exit(6)
+}
 do {
     try data.write(to: destination, options: .atomic)
 } catch {
     fputs("Could not write PNG: \(error)\n", stderr)
-    exit(6)
+    exit(7)
 }
 '''
     with tempfile.TemporaryDirectory(prefix="gradecrew-appicon-swift-") as temp:
-        script = Path(temp) / "render.swift"
+        script = Path(temp) / "flatten.swift"
         script.write_text(swift)
         result = subprocess.run(
             [
@@ -100,11 +116,9 @@ do {
             text=True,
             capture_output=True,
         )
-        if result.returncode == 0:
-            return True
-        print(result.stdout)
-        print(result.stderr)
-        return False
+        if result.returncode != 0:
+            details = (result.stderr or result.stdout or "unknown CoreGraphics error").strip()
+            raise SystemExit(f"Could not flatten GradeCrew AppIcon: {details}")
 
 
 def render_icon() -> None:
@@ -113,27 +127,26 @@ def render_icon() -> None:
             f"Canonical GradeCrew brand icon is missing: {BRAND_ICON}. "
             "Sync the asset referenced by shared/gradecrew-design/assets.json first."
         )
-
-    # Modern macOS/AppKit can load the canonical SVG directly. Keep a Quick Look
-    # fallback so the CI path remains robust if an image decoder changes.
-    if appkit_render(BRAND_ICON, output_png):
-        return
-
     if shutil.which("qlmanage") is None:
-        raise SystemExit("Could not render SVG with AppKit and qlmanage is unavailable.")
+        raise SystemExit("qlmanage is required to rasterize the canonical GradeCrew SVG on macOS CI.")
 
+    # Quick Look reliably rasterizes the canonical SVG on GitHub's macOS runner.
+    # CoreGraphics then composites it onto an opaque brand surface, because App
+    # Store icons must not carry transparency.
     with tempfile.TemporaryDirectory(prefix="gradecrew-appicon-preview-") as temp:
         temp_dir = Path(temp)
-        subprocess.run(
-            ["qlmanage", "-t", "-s", str(SIZE), "-o", str(temp_dir), str(BRAND_ICON)],
-            check=True,
-            stdout=subprocess.DEVNULL,
+        result = subprocess.run(
+            ["qlmanage", "-t", "-s", str(PREVIEW_SIZE), "-o", str(temp_dir), str(BRAND_ICON)],
+            text=True,
+            capture_output=True,
         )
+        if result.returncode != 0:
+            details = (result.stderr or result.stdout or "unknown Quick Look error").strip()
+            raise SystemExit(f"Could not rasterize GradeCrew SVG: {details}")
         previews = sorted(temp_dir.glob("*.png"))
         if not previews:
             raise SystemExit("Quick Look did not produce a PNG preview for the GradeCrew icon.")
-        if not appkit_render(previews[0], output_png):
-            raise SystemExit("Could not flatten the rendered GradeCrew icon into an opaque AppIcon PNG.")
+        flatten_with_core_graphics(previews[0], output_png)
 
 
 def verify_png(path: Path) -> None:
