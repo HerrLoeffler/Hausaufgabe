@@ -7,6 +7,7 @@ on:
       - feature/shared-gradecrew-design-system
       - feature/ios-latest-integration-v1
       - feature/ios-brand-icon-v1
+      - feature/ios-app-shell-017-018
     paths:
       - .github/workflows/gradecrew-testflight.yml
       - native/GradeCrewTeacher/**
@@ -33,11 +34,22 @@ jobs:
       APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       BUNDLE_ID: de.gradecrew
-      MARKETING_VERSION: 0.1.6
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Load app version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < native/GradeCrewTeacher/VERSION)"
+          if [ -z "$VERSION" ]; then
+            echo "::error::native/GradeCrewTeacher/VERSION is empty"
+            exit 1
+          fi
+          echo "MARKETING_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Building GradeCrew $VERSION"
 
       - name: Verify required secrets
         shell: bash
@@ -56,6 +68,9 @@ jobs:
 
       - name: Test beta environment routing
         run: python3 native/GradeCrewTeacher/test_beta_environment.py
+
+      - name: Test native navigation policy
+        run: python3 native/GradeCrewTeacher/test_navigation_policy.py
 
       - name: Prepare GradeCrew assets and Xcode project
         shell: bash
