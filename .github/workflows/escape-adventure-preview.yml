@@ -1,0 +1,67 @@
+name: Escape Adventure Room 1 Preview
+
+on:
+  push:
+    branches:
+      - prototype/escape-adventure-room1-v1
+    paths:
+      - 'lab/escape-room-adventure/**'
+      - 'tools/build-lab-escape-adventure.mjs'
+      - 'tools/games/escape-adventure.test.cjs'
+      - 'gradecrew-brand.css'
+      - 'crew-clay.css'
+      - 'assets/gradecrew/penguin-guide.svg'
+      - '.github/workflows/escape-adventure-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+env:
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+
+jobs:
+  verify-and-deploy:
+    name: Verify and deploy room-one adventure prototype
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify JavaScript syntax
+        run: node --check lab/escape-room-adventure/app.js
+
+      - name: Run room-one prototype contracts
+        run: node --test tools/games/escape-adventure.test.cjs
+
+      - name: Build isolated adventure preview
+        run: node tools/build-lab-escape-adventure.mjs .firebase-escape-adventure
+
+      - name: Check Firebase deploy credential
+        id: firebase_auth
+        shell: bash
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Adventure preview deploy skipped: staging Firebase credential missing."
+          fi
+
+      - name: Deploy Adventure preview channel only
+        if: steps.firebase_auth.outputs.available == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ env.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: hausaufgabe-staging
+          channelId: gradecrew-escape-adventure
+          expires: 30d
+          entryPoint: .firebase-escape-adventure
