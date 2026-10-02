@@ -11,6 +11,7 @@ const startup = read('startup.js');
 const build = read('tools/build-staging.mjs');
 const dashboardCss = read('gradecrew-dashboard-foundation.css');
 const startscreenCss = read('gradecrew-auth-startscreen.css');
+const entryFlow = read('gradecrew-entry-flow.js');
 
 test('shared tokens keep accessibility and canonical GradeCrew values', () => {
   assert.equal(tokens.version, '1.1.0');
@@ -35,16 +36,20 @@ test('canonical Crew manifest preserves established roles', () => {
 test('teacher startup loads shared tokens before focused design layers', () => {
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
-  const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=1');
+  const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=2');
+  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=1');
+  const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
   assert.ok(startscreenIndex > tokensIndex, 'startscreen stylesheet must follow shared tokens');
+  assert.ok(entryIndex >= 0 && entryIndex < appIndex, 'public entry must be composed before app handlers bind');
 });
 
-test('staging build packages focused design stylesheets', () => {
+test('staging build packages focused design and entry files', () => {
   assert.match(build, /generated\/gradecrew-design-tokens\.css/);
   assert.match(build, /gradecrew-dashboard-foundation\.css/);
   assert.match(build, /gradecrew-auth-startscreen\.css/);
+  assert.match(build, /gradecrew-entry-flow\.js/);
 });
 
 test('dashboard foundation stays scoped away from student and secure assessment screens', () => {
@@ -57,12 +62,11 @@ test('dashboard foundation stays scoped away from student and secure assessment 
   assert.doesNotMatch(dashboardCss, /\.studentQuestion/);
 });
 
-test('startscreen uses exact canonical Crew assets and remains auth-scoped', () => {
-  assert.match(startscreenCss, /#authView \.authGuide\.gcClayHero/);
-  assert.match(startscreenCss, /assets\/gradecrew\/elephant-create\.svg/);
-  assert.match(startscreenCss, /assets\/gradecrew\/fox-improve\.svg/);
-  assert.match(startscreenCss, /assets\/gradecrew\/owl-grade\.svg/);
-  assert.doesNotMatch(startscreenCss, /falcon-create\.svg/);
+test('public entry uses the canonical manifest and remains auth-scoped', () => {
+  assert.match(entryFlow, /GRADECREW_ASSETS/);
+  assert.match(entryFlow, /CREW, DEMO_TEST/);
+  assert.match(startscreenCss, /#authView \.gcEntryStart/);
+  assert.doesNotMatch(entryFlow, /falcon-create\.svg/);
   assert.doesNotMatch(startscreenCss, /#dashboardView/);
   assert.doesNotMatch(startscreenCss, /#studentView/);
   assert.doesNotMatch(startscreenCss, /#secure/);
