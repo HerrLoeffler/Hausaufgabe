@@ -581,31 +581,39 @@
 
     event('question.answered', { questionId: question.id, correct, attempt });
 
-    if (correct && attempt < D.world.remediationPolicy.remediationAtAttempt) {
+    if (correct && attempt === 1) {
       showFeedback(`Richtig. ${question.explanation}`, 'success');
       finishQuestion(question.id, activeQuestion.handler);
       setTimeout(() => $('questionDialog').close(), 450);
       return;
     }
 
+    if (correct && attempt === 2) {
+      renderTransfer(question);
+      showFeedback('Richtig. Weil du vorher einen Fehlversuch hattest, prüfst du das Prinzip noch kurz an einer neuen Aufgabe.', 'success');
+      event('transfer.required_after_error', { questionId: question.id, attempt });
+      return;
+    }
+
     if (correct) {
-      showFeedback('Richtig gefunden. Weil vorher mehrere Versuche nötig waren, folgt noch ein kurzer Lerncheck.', 'success');
+      showFeedback('Richtig gefunden. Weil mehrere Versuche nötig waren, klären wir den Rechenweg noch einmal und prüfen ihn danach an einer neuen Aufgabe.', 'success');
       beginRemediation(question, 'correct_after_repeated_attempts');
       return;
     }
 
     if (attempt >= D.world.remediationPolicy.remediationAtAttempt) {
-      showFeedback('Mehrfach versucht. Jetzt klären wir kurz den Rechenweg, bevor das Spiel weitergeht.', 'error');
+      showFeedback('Mehrfach versucht. Jetzt klären wir den Rechenweg Schritt für Schritt, bevor das Spiel weitergeht.', 'error');
       beginRemediation(question, 'three_wrong_answers');
       return;
     }
 
+    const retryText = (question.answerMode || 'choice') === 'choice'
+      ? 'Die Antworten wurden neu gemischt.'
+      : 'Versuche es mit der Denkhilfe noch einmal.';
+    showFeedback(`Noch nicht richtig. Denkhilfe: ${question.hint} ${retryText}`, 'error');
     if (attempt >= D.world.remediationPolicy.retryBeforeSupport) {
       $('remyHelp').hidden = false;
-      const retryText = (question.answerMode || 'choice') === 'choice' ? 'Die Antworten wurden neu gemischt.' : 'Versuche es nach dem Hinweis noch einmal.';
-      showFeedback(`Noch nicht richtig. ${retryText} Du kannst Remy jetzt auch konkret fragen, was unklar ist.`, 'error');
-    } else {
-      showFeedback('Noch nicht richtig. Lies die Aufgabe noch einmal und probiere es erneut.', 'error');
+      $('questionFeedback').textContent += ' Wenn dir der Schritt noch unklar ist, frag Remy ganz konkret.';
     }
     renderPrimaryAnswer(question);
     save();
@@ -1141,6 +1149,7 @@
     }));
 
     $('teacherQuestions').replaceChildren(...questionBank.map(teacherCard));
+    window.dispatchEvent(new CustomEvent('gradecrew:escape-teacher-rendered'));
   }
 
   function openTeacherEdit(id) {

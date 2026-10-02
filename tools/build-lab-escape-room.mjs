@@ -13,11 +13,11 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'README.md'];
+const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'escape-teacher-compact.js', 'README.md'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
-for (const reference of ['styles.css', 'escape-v2.css', 'escape-data.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'escape-tutor.js', 'app.js']) {
+for (const reference of ['styles.css', 'escape-v2.css', 'escape-data.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'escape-tutor.js', 'app.js', 'escape-teacher-compact.js']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
@@ -90,7 +90,7 @@ for (const name of files) hashes[name] = createHash('sha256').update(await fs.re
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'escape-room-locked-school',
   format: 3,
-  version: '0.2.1',
+  version: '0.2.2',
   files: hashes,
   features: {
     deterministicWorld: true,
@@ -120,4 +120,4 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({
   }
 }, null, 2) + '\n');
 
-console.log('Escape Room MVP build verified: locked-school v0.2.1.');
+console.log('Escape Room MVP build verified: locked-school lab v0.2.2.');

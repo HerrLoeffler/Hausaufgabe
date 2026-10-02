@@ -41,6 +41,7 @@ function openEscape(savedState) {
   }
 
   w.eval(fs.readFileSync(path.join(source, 'app.js'), 'utf8'));
+  w.eval(fs.readFileSync(path.join(source, 'escape-teacher-compact.js'), 'utf8'));
   return { dom, w, d: w.document };
 }
 
@@ -124,6 +125,8 @@ test('teacher preview exposes route, eight editable questions and a passing pref
     assert.equal(d.querySelectorAll('#teacherQuestions .smallButton').length, 8);
     assert.match(d.querySelector('.labWarning').textContent, /Berechtigungsprüfung/);
     assert.match(d.getElementById('teacherContentProfile').textContent, /Prozentrechnung/);
+    assert.ok(d.querySelector('#teacherEditDialog .teacherAdvancedDetails'));
+    assert.equal(d.querySelectorAll('#teacherQuestions .teacherLearningDetails').length, 8);
   } finally {
     w.close();
   }
@@ -178,6 +181,31 @@ test('three attempts trigger mandatory active learning and transfer before progr
 
     assert.equal(d.getElementById('progressText').textContent, '1 / 8 Fragen');
     assert.match(d.getElementById('inventory').textContent, /Batterie/);
+  } finally {
+    w.close();
+  }
+});
+
+test('one wrong answer gives a real hint and a later correct answer still requires transfer', () => {
+  const { w, d } = openEscape();
+  try {
+    d.getElementById('startBtn').click();
+    click(d, '[data-action="desk"]');
+    const q1 = w.GradeCrewEscapePrototype.questions[0];
+    const wrong = q1.correctIndex === 0 ? 1 : 0;
+
+    submitAnswer(w, d, wrong);
+    assert.match(d.getElementById('questionFeedback').textContent, /Denkhilfe:/);
+    assert.match(d.getElementById('questionFeedback').textContent, new RegExp(q1.hint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.doesNotMatch(d.getElementById('questionFeedback').textContent, /Lies die Aufgabe noch einmal/);
+
+    submitAnswer(w, d, q1.correctIndex);
+    assert.equal(d.getElementById('progressText').textContent, '0 / 8 Fragen');
+    assert.ok(d.getElementById('transferInput'));
+
+    d.getElementById('transferInput').value = q1.remediation.transfer.acceptedAnswers[0];
+    submitForm(w, d);
+    assert.equal(d.getElementById('progressText').textContent, '1 / 8 Fragen');
   } finally {
     w.close();
   }
