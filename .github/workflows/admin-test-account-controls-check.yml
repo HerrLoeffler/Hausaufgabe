@@ -5,8 +5,10 @@ on:
     branches:
       - feature/admin-test-account-controls-v1
       - feature/gradecrew-app-integration
+      - 'fix/admin-*'
   pull_request:
     paths:
+      - admin-test-account-bootstrap.mjs
       - admin-test-account-controls.mjs
       - admin-test-account-controls.test.mjs
       - visual-enhancements.js
@@ -24,11 +26,14 @@ jobs:
         with:
           node-version: 22
       - name: Check browser module syntax
-        run: node --check admin-test-account-controls.mjs
+        run: |
+          node --check admin-test-account-bootstrap.mjs
+          node --check admin-test-account-controls.mjs
       - name: Test admin controls contract
         run: node --test admin-test-account-controls.test.mjs
       - name: Verify staging build
         run: |
           BUILD_DIR="$(mktemp -d)"
           node tools/build-staging.mjs "$BUILD_DIR"
+          test -f "$BUILD_DIR/public/admin-test-account-bootstrap.mjs"
           test -f "$BUILD_DIR/public/admin-test-account-controls.mjs"
