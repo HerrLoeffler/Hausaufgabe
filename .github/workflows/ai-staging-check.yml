@@ -15,10 +15,17 @@ on:
       - 'feature/design-*'
       - 'feature/brand-*'
       - 'feature/i18n-*'
+  pull_request:
+    branches:
+      - feature/gradecrew-app-integration
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ai-staging-check-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -29,6 +36,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          # Default pull_request checkout tests GitHub's merge result, not only the feature head.
+          persist-credentials: false
 
       - name: Use Node 22
         uses: actions/setup-node@v5
@@ -195,6 +205,15 @@ jobs:
           test -f assets/gradecrew/owl-grade.svg
           test -f assets/gradecrew/crew-lineup.svg
           test -f assets/gradecrew/demo-cat.svg
+
+      - name: Test integrated Crew, admin, login and tutorial contracts
+        run: |
+          node --check crew-assistant-ui.js
+          node --check crew-telemetry-client.mjs
+          node --check crew-statistics-admin.mjs
+          node --check emmi-whole-test-revision.mjs
+          node --test crew-assistant-core.test.mjs emmi-whole-test-bridge.test.mjs
+          node --test admin-test-account-controls.test.mjs staging-short-login.test.mjs tutorial-choice-v1.test.mjs
 
       - name: Smoke test staging build
         run: |
