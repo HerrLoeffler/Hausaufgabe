@@ -11,6 +11,7 @@ on:
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
       - 'feature/design-*'
+      - 'feature/brand-*'
       - 'feature/i18n-*'
   workflow_dispatch:
 
@@ -169,6 +170,7 @@ jobs:
           node --check mobile-viewport-polish.js
           node --check tools/generate-gradecrew-design.mjs
           node --test gradecrew-design-foundation.test.mjs
+          node --test gradecrew-brand-assets.test.mjs
           node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs
           node --test diagnostics.test.mjs
           node --test crew-art.test.mjs
@@ -182,6 +184,7 @@ jobs:
           node --test crew-tour-gc26-story-polish.test.mjs
           node --test student-attempt-guard.test.mjs
           node --test remy-ai-help.test.mjs
+          test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
           test -f assets/gradecrew/fox-improve.svg
@@ -194,6 +197,9 @@ jobs:
           BUILD_DIR="$(mktemp -d)"
           node tools/build-staging.mjs "$BUILD_DIR"
           test -f "$BUILD_DIR/public/generated/gradecrew-design-tokens.css"
+          test -f "$BUILD_DIR/public/generated/gradecrew-assets.js"
+          test -f "$BUILD_DIR/public/gradecrew-logo.css"
+          test -f "$BUILD_DIR/public/assets/gradecrew/brand-primary-v1.svg"
           test -f "$BUILD_DIR/public/gradecrew-dashboard-foundation.css"
           test -f "$BUILD_DIR/public/shared/i18n/i18n-core.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/browser-runtime.mjs"

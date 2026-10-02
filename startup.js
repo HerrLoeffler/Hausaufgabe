@@ -1,4 +1,5 @@
 import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=1";
+import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.1.0";
 
 // Public pupils use the server-authoritative assessment path. Teacher preview
 // intentionally remains in the existing app so authors can inspect the exact
@@ -8,7 +9,8 @@ import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=1";
 function installGradeCrewDesignStyles() {
   const styles = [
     ["./generated/gradecrew-design-tokens.css?v=1.1.0", "tokens-1.1.0"],
-    ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"]
+    ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"],
+    ["./gradecrew-logo.css?v=1", "brand-logo-v1"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
@@ -20,7 +22,47 @@ function installGradeCrewDesignStyles() {
   }
 }
 
+function installGradeCrewBrandAssets() {
+  const primary = GRADECREW_ASSETS.brand?.primary;
+  const favicon = GRADECREW_ASSETS.brand?.favicon || primary;
+  if (!primary) return;
+
+  document.querySelectorAll(".brandMark, [data-gradecrew-brand-mark]").forEach((host) => {
+    if (host instanceof HTMLImageElement) {
+      host.src = primary;
+      host.dataset.gradecrewBrandMark = "1";
+      return;
+    }
+
+    let image = host.querySelector("img[data-gradecrew-brand-mark]");
+    if (!image) {
+      image = document.createElement("img");
+      image.alt = "";
+      image.width = 44;
+      image.height = 44;
+      image.dataset.gradecrewBrandMark = "1";
+      host.appendChild(image);
+    }
+    image.src = primary;
+    host.dataset.gradecrewBrandReady = "1";
+  });
+
+  if (favicon) {
+    let link = document.querySelector('link[data-gradecrew-favicon="1"], link[rel~="icon"]');
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/svg+xml";
+      document.head.appendChild(link);
+    }
+    link.dataset.gradecrewFavicon = "1";
+    link.type = "image/svg+xml";
+    link.href = favicon;
+  }
+}
+
 installGradeCrewDesignStyles();
+installGradeCrewBrandAssets();
 
 const routeParams = new URLSearchParams(location.search);
 const rawPublicTestCode = String(routeParams.get("test") || "").trim();

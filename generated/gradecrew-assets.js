@@ -1,7 +1,9 @@
 // GENERATED FILE. Edit shared/gradecrew-design/assets.json instead.
 export const GRADECREW_ASSETS = {
   "brand": {
-    "icon": "assets/gradecrew/penguin-icon.svg",
+    "primary": "assets/gradecrew/brand-primary-v1.svg",
+    "icon": "assets/gradecrew/brand-primary-v1.svg",
+    "favicon": "assets/gradecrew/brand-primary-v1.svg",
     "crewLineup": "assets/gradecrew/crew-lineup.svg"
   },
   "scenes": {

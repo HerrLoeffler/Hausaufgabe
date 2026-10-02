@@ -1,0 +1,38 @@
+/* GradeCrew primary brand mark. The artwork itself comes from the shared asset manifest. */
+.brandMark[data-gradecrew-brand-ready="1"] {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.brandMark[data-gradecrew-brand-ready="1"] > .brandLetter,
+.brandMark[data-gradecrew-brand-ready="1"] > .brandTick {
+  display: none;
+}
+
+.brandMark img[data-gradecrew-brand-mark] {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand:focus-visible .brandMark[data-gradecrew-brand-ready="1"] {
+  outline: 3px solid rgb(40 90 201 / 22%);
+  outline-offset: 3px;
+  border-radius: 9px;
+}
+
+@media (max-width: 680px) {
+  .brandMark[data-gradecrew-brand-ready="1"] {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+}

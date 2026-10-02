@@ -1,6 +1,12 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=2";
+import {
+  recordRemyMetric,
+  recordRemySubmission,
+  recordRemyPatch,
+  resetRemyTelemetryContext
+} from "./crew-telemetry-client.mjs?v=1";
 
 let installed = false;
 let recognition = null;
@@ -10,6 +16,7 @@ let stopTimer = null;
 let dictationBase = "";
 let dictationFinal = "";
 let busy = false;
+let currentInputMode = "text";
 
 const REMY = CREW_MEMBERS.remy;
 const $ = selector => document.querySelector(selector);
@@ -56,6 +63,9 @@ function ensurePanel() {
     void submitRequest();
   });
   panel.querySelector("#gcRemyCreateMic")?.addEventListener("click", toggleDictation);
+  panel.querySelector("#gcRemyCreateInput")?.addEventListener("input", event => {
+    if (event.isTrusted && !keepListening) currentInputMode = "text";
+  });
   panel.querySelector("#gcRemyCreateInput")?.addEventListener("keydown", event => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -180,34 +190,53 @@ async function callRemyAi(text) {
   return result.data || {};
 }
 
+function errorType(error) {
+  const value = String(error?.code || error?.message || "").toLowerCase();
+  if (value.includes("permission") || value.includes("unauth")) return "permission";
+  if (value.includes("network") || value.includes("fetch")) return "network";
+  if (value.includes("unavailable") || value.includes("timeout")) return "unavailable";
+  return "unknown";
+}
+
 async function submitRequest() {
   if (busy) return;
   const input = $("#gcRemyCreateInput");
   const text = String(input?.value || "").trim();
   if (!text) return;
+  const mode = currentInputMode;
+  const startedAt = performance.now();
+  recordRemySubmission(mode);
   stopDictation();
   setBusy(true);
   setStatus("Remy trägt ein …");
   try {
     const local = resolveLocalCrewRequest({ crewId: "remy", text, context: currentContext() });
     if (local.handled && local.action?.type === "patch_ai_form") {
-      applyPatch(local.action.patch || {});
+      const patch = local.action.patch || {};
+      applyPatch(patch);
+      recordRemyPatch(patch, { inputMode: mode, source: "local", latencyMs: performance.now() - startedAt });
       return;
     }
     if (local.handled) {
+      recordRemyMetric("local_response", { inputMode: mode, source: "local", latencyMs: performance.now() - startedAt });
       setStatus(local.reply || "Sag mir kurz, welchen Test du brauchst.");
       return;
     }
+    recordRemyMetric("ai_fallback_started", { inputMode: mode, source: "ai" });
     const result = await callRemyAi(text);
     if (result.action?.type === "patch_ai_form") {
-      applyPatch(result.action.patch || {});
+      const patch = result.action.patch || {};
+      applyPatch(patch);
+      recordRemyPatch(patch, { inputMode: mode, source: "ai", latencyMs: performance.now() - startedAt });
       return;
     }
     setStatus(result.reply || "Ich konnte daraus noch keine sicheren Angaben übernehmen.");
   } catch (error) {
     console.warn("Remy konnte den Testwunsch nicht verarbeiten:", error?.code || error?.message || error);
+    recordRemyMetric("request_failed", { inputMode: mode, latencyMs: performance.now() - startedAt, errorType: errorType(error) });
     setStatus("Das hat gerade nicht geklappt. Versuch es bitte noch einmal.", "error");
   } finally {
+    currentInputMode = "text";
     setBusy(false);
   }
 }
@@ -223,6 +252,7 @@ function updateMicState() {
 }
 
 function stopDictation() {
+  const wasListening = keepListening;
   keepListening = false;
   window.clearTimeout(restartTimer);
   window.clearTimeout(stopTimer);
@@ -232,6 +262,7 @@ function stopDictation() {
   recognition = null;
   try { active?.stop(); } catch (_) {}
   updateMicState();
+  if (wasListening) recordRemyMetric("voice_stopped", { inputMode: "voice" });
 }
 
 function startRecognitionCycle() {
@@ -252,6 +283,7 @@ function startRecognitionCycle() {
 
   active.onresult = event => {
     let interim = "";
+    currentInputMode = "voice";
     for (let index = event.resultIndex; index < event.results.length; index += 1) {
       const transcript = String(event.results[index][0]?.transcript || "").trim();
       if (!transcript) continue;
@@ -265,6 +297,7 @@ function startRecognitionCycle() {
   active.onerror = event => {
     if (["not-allowed", "service-not-allowed", "audio-capture"].includes(event.error)) {
       keepListening = false;
+      recordRemyMetric("request_failed", { inputMode: "voice", errorType: event.error === "audio-capture" ? "unavailable" : "permission" });
       setStatus("Ich bekomme gerade keinen Mikrofonzugriff.", "error");
     }
   };
@@ -285,13 +318,16 @@ function startRecognitionCycle() {
 function toggleDictation() {
   if (keepListening) return stopDictation();
   if (!speechConstructor()) {
+    recordRemyMetric("request_failed", { inputMode: "voice", errorType: "unsupported" });
     setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
     return;
   }
   const input = $("#gcRemyCreateInput");
   dictationBase = String(input?.value || "").trim();
   dictationFinal = "";
+  currentInputMode = "voice";
   keepListening = true;
+  recordRemyMetric("voice_started", { inputMode: "voice" });
   updateMicState();
   setStatus("Ich höre zu …");
   startRecognitionCycle();
@@ -310,6 +346,8 @@ function installLifecycle() {
   }
   document.addEventListener("gradecrew:account-changed", () => {
     stopDictation();
+    resetRemyTelemetryContext();
+    currentInputMode = "text";
     const input = $("#gcRemyCreateInput");
     if (input) input.value = "";
     setStatus("");

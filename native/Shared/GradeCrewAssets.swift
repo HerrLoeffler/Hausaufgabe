@@ -2,8 +2,15 @@
 import Foundation
 
 enum GradeCrewAssets {
-    static let version = "1.0.0"
+    static let version = "1.1.0"
     static let sourceRoot = "assets/gradecrew"
+
+    enum Brand {
+        static let primary = "assets/gradecrew/brand-primary-v1.svg"
+        static let icon = "assets/gradecrew/brand-primary-v1.svg"
+        static let favicon = "assets/gradecrew/brand-primary-v1.svg"
+        static let crewLineup = "assets/gradecrew/crew-lineup.svg"
+    }
 
     enum Coco {
         static let role = "guide"

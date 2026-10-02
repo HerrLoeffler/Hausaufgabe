@@ -118,8 +118,11 @@ const swiftAssets = [
   'enum GradeCrewAssets {',
   `    static let version = "${assets.version}"`,
   `    static let sourceRoot = "${assets.root}"`,
-  ''
+  '',
+  '    enum Brand {'
 ];
+for (const [key, value] of Object.entries(assetMap.brand || {})) swiftAssets.push(`        static let ${swiftName(key)} = "${value}"`);
+swiftAssets.push('    }', '');
 for (const [name, mascot] of Object.entries(assetMap.mascots)) {
   swiftAssets.push(`    enum ${name[0].toUpperCase()}${name.slice(1)} {`);
   for (const [key, value] of Object.entries(mascot)) swiftAssets.push(`        static let ${swiftName(key)} = "${value}"`);

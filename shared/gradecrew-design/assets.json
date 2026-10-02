@@ -1,9 +1,11 @@
 {
   "$schemaVersion": 1,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "root": "assets/gradecrew",
   "brand": {
-    "icon": "penguin-icon.svg",
+    "primary": "brand-primary-v1.svg",
+    "icon": "brand-primary-v1.svg",
+    "favicon": "brand-primary-v1.svg",
     "crewLineup": "crew-lineup.svg"
   },
   "mascots": {
