@@ -90,7 +90,7 @@ for (const name of files) hashes[name] = createHash('sha256').update(await fs.re
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'escape-room-locked-school',
   format: 3,
-  version: '0.2.2',
+  version: '0.3.0',
   files: hashes,
   features: {
     deterministicWorld: true,
@@ -120,4 +120,4 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({
   }
 }, null, 2) + '\n');
 
-console.log('Escape Room MVP build verified: locked-school lab v0.2.2.');
+console.log('Escape Room MVP build verified: locked-school lab v0.3.0.');
