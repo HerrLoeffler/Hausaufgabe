@@ -4,14 +4,23 @@
 - Vor Änderungen `START_HERE.md`, `GRADECREW_STATE.json` und `workstreams/README.md` auf dem aktuellen Remote-main lesen; danach die Regeln und Übergabe des tatsächlichen Arbeitsbranches.
 - Ohne GitHub-Zugriff diese Einschränkung sofort nennen und die Übergabedateien anfordern. Andere Chats und Erinnerungen ersetzen keine Prüfung des Codes.
 - Branch, Commit, lokale Änderungen und verfügbaren Zugriff prüfen. Nicht stillschweigend den Branch wechseln.
+- Vor neuer Entwicklungsarbeit nach frischem Fetch `python tools/development_status.py` ausführen oder den jüngsten GitHub-Actions-Lauf **GradeCrew Development Status** prüfen. Aktiven Primary Branch, Integrationsziel, offene PRs, ahead/behind, Dateiüberschneidungen und unregistrierte Branches einordnen, bevor eine parallele Lösung begonnen wird.
+- `workstreams/registry.json` ist nur die menschliche Zuordnungsschicht. Aktuelle SHAs, PRs und Diffs immer aus Git/GitHub ableiten; `GRADECREW_STATE.json` bleibt die Release-/Deploy-Sicht.
 - Zustände lokal, gepusht, getestet, deployed und am Gerät bestätigt getrennt mit Nachweisen dokumentieren. Keine alten Testergebnisse einem neuen Commit zuschreiben.
 
 ## Parallele Aufgaben und Unterbrechungen
 - Pro Aufgabe eigener Branch und eigener Checkout/Worktree sowie eine Übergabe nach `workstreams/TEMPLATE.md`. Gemeinsame Dateien und Zuständigkeiten vorher benennen.
+- Vor einer neuen parallelen Implementierung prüfen, ob bereits ein Primary-/Related-Branch oder offener PR dieselbe Funktion bzw. dieselben Dateien bearbeitet. Bei Überschneidung vorhandene Arbeit zuerst lesen und Zielbranch abstimmen.
 - Sinnvolle Teilschritte früh committen und pushen, auch als ausdrücklich unfertigen Zwischenstand. Keine Zugangsdaten oder personenbezogenen Testdaten committen.
 - Vor längeren Arbeitsschritten und beim Abschluss die Übergabe aktualisieren: erledigt, Belege, offene Punkte, nächster konkreter Schritt. Nicht erst auf eine Tokenwarnung warten.
-- Vor Integration aktuellen Zielbranch erneut lesen, konkurrierende Änderungen erhalten und relevante Tests ausführen. Kein Force-Push, Reset oder Löschen fremder Arbeit.
+- Vor Integration Live Development Status und aktuellen Zielbranch erneut prüfen, konkurrierende Änderungen erhalten und relevante Tests ausführen. Kein Force-Push, Reset oder Löschen fremder Arbeit.
 - Routineentscheidungen selbst treffen; neue wesentliche Produktentscheidungen und große Refactors brauchen einen entsprechenden Auftrag.
+
+## Development Status ist Warnsystem, keine Automatik
+- `tools/development_status.py` ist read-only. Es darf keine Branches, PRs, Dateien oder Deployments automatisch verändern.
+- Dateiüberschneidungen sind Konflikthinweise, keine Dateisperren. Zwei Workstreams dürfen dieselbe Datei nur nach bewusstem Abgleich verändern.
+- Unregistrierte Branches niemals automatisch löschen. Erst zuordnen, integrieren, archivieren oder ausdrücklich als Altbestand markieren.
+- Ein Registry-Zustand wie `integration_ready` ist eine menschliche Freigabestufe und ersetzt weder CI noch Mergeability noch aktuellen Zielbranch-Abgleich.
 
 ## Sicherheit und Deployment
 - Production (`hausaufgabe-40294`) nur nach ausdrücklicher Freigabe im aktuellen Auftrag. Diese Koordinationsarbeit beinhaltet keine Deploy-Freigabe.

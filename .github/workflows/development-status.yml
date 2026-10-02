@@ -1,0 +1,68 @@
+name: GradeCrew Development Status
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, closed]
+  push:
+    branches:
+      - main
+      - feature/gradecrew-app-integration
+      - lab/games-structure
+      - integration/ai-gateway-staging
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: gradecrew-development-status
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Live branch / PR audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout exact event commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all remote branches
+        run: |
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+
+      - name: Build Development Status
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p artifacts/development-status
+          python tools/development_status.py \
+            --json-out artifacts/development-status/development-status.json \
+            --markdown-out artifacts/development-status/development-status.md \
+            --fail-on-errors
+
+      - name: Add status to Actions summary
+        if: always()
+        run: |
+          if [ -f artifacts/development-status/development-status.md ]; then
+            cat artifacts/development-status/development-status.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "# GradeCrew Development Status" >> "$GITHUB_STEP_SUMMARY"
+            echo "Audit report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload machine-readable audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradecrew-development-status
+          path: artifacts/development-status/
+          if-no-files-found: warn
+          retention-days: 30
