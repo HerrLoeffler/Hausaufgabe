@@ -53,6 +53,17 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-TELEMETRY-02 | Beitritt/Abgabe als ersten Ablauf instrumentieren | Teilweise implementiert, nicht aktiviert | Secure-Client misst Join/Submit nach gültigem Attempt; zusätzliche inhaltsfreie Serveroperationen erfassen gültige Start-/Submit-/Receipt-Aufrufe und Fehler. Erwartete Teilnehmerzahl und unbekannte/nicht zuordenbare Joinfälle bleiben offen. [Übergabe](workstreams/telemetry-implementation.md) |
 | GC-TELEMETRY-03 | Release-/Rundenübersicht im Adminbereich | Technische Staging-Ansicht implementiert, nicht deployed | Clientmeldungen, Serveroperationen, gespeicherter Rundenzustand und KI-Bestandsdaten getrennt anzeigen; als Nächstes CI/Emulator und sichere Staging-Aktivierung, danach lesbare UI statt Roh-JSON. [Übergabe](workstreams/telemetry-implementation.md) |
 
+## Sprache, KI-Qualität und Internationalisierung – 02.10.2026
+
+| ID | Aufgabe | Status | Nächster Schritt |
+|---|---|---|---|
+| GC-INTELLIGENCE-01 | Gemeinsame Sprach-/Locale-Verträge und messbare KI-Freigabe | **ci_green**, isoliert, nicht integriert/deployed | PR [#25](https://github.com/HerrLoeffler/Hausaufgabe/pull/25), Code `5af11ca`; 14 Tests und CLI-Syntax in CI grün. [Übergabe](workstreams/quality-routing-contract-v1.md) |
+| GC-VOICE-02 | Vorhandenen Crew-Diktierpfad härten | Vertrag vorbereitet; Anbindung/Gerätetest offen | Formularrevision, Request-Deduplizierung, erlaubte Patches, Vorschau/Undo; Mikrofonabbruch, Negation, Lärm und Siri separat prüfen. Baut auf GC-CREW-AI-01 auf. |
+| GC-AI-EVAL-02 | Fachlich geprüftes Pilot-Referenzset pro Job/Sprache | Offen | Referenzen und unabhängige Stichprobe prüfen, Qualitäts-/Regressionsgrenzen vorab festlegen; echte gepaarte Modellevaluation. Keine 99,99-%-Behauptung aus kleinen Testsets. |
+| GC-AI-ROUTING-02 | Billigere Modelle nur nach belegter Qualität einsetzen | Offline-Gate implementiert; Runtime offen | Vertrauenswürdige Freigabeartefakte, Capability-Prüfung, Budget/Deadline und Rückfallpfad an Gateway anbinden; keine automatische Aktivierung durch Modell/Client. |
+| GC-I18N-02 | Vorhandenen i18n-Core fachlich und visuell absichern | Kontext-/Capability-Vertrag vorbereitet; Migration offen | Vier Sprachkontexte getrennt, Pseudolokalisierung, Nicht-DOM-Texte, Zahlen/Bewertung und sprachabhängige Spiele prüfen. Keine zusätzliche Sprache freigegeben. |
+| GC-AI-OBS-02 | Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung | Dokumentiert, nicht instrumentiert | Bestehenden Telemetrie-Collector erweitern: Operation-ID, Versionen, inhaltsfreie Fehler und Kosten pro akzeptiertem Ergebnis inklusive Wiederholung/Review. Adminfilter; keine Audio-/Antwort-/Promptprotokolle. |
+
 ## P2 – vorgemerkt, noch keine laufende Umsetzung
 
 | ID | Aufgabe | Status | Nächster Schritt |

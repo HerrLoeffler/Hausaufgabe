@@ -17,6 +17,8 @@ Die folgenden Branch-Spitzen wurden über GitHub gelesen; Deploy-Angaben sind ge
 | Release-Sicherung | main / feature/release-safety-snapshots | `release-safety.md`: automatisches Hosting-Archiv verifiziert; vierte Referenz-Seite und Daten-Backup noch offen |
 | Spiele | lab/games-structure | Vor Änderungen vollständige eigene Übergabe einholen; nicht aus Website-Branch veröffentlichen |
 
+| Sprache / KI-Qualität / Internationalisierung | feature/quality-routing-contract-v1 | `quality-routing-contract-v1.md`: gemeinsamer Vertrag + Offline-Freigabeprüfung, 14 Tests/CI grün, Draft-PR #25 gegen Gateway; noch keine Runtime-Anbindung oder Modellumschaltung |
+
 ## Neue Aufgabe
 
 Kopie von TEMPLATE.md unter einer eindeutigen ID anlegen, z. B. `workstreams/tutorial-submit.md`.

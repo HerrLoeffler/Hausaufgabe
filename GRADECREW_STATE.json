@@ -214,6 +214,22 @@
       "integrated_into": "feature/gradecrew-app-integration",
       "user_test": "visual_device_acceptance_open",
       "next_action": "Gemeinsam mit dem aktuellen Staging-Batch visuell abnehmen."
+    },
+    {
+      "id": "quality-routing-contract-v1",
+      "task_id": "GC-INTELLIGENCE-01",
+      "branch": "feature/quality-routing-contract-v1",
+      "observed_head": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+      "tested_code_commit": "5af11caa55662b7986f73ae72c535eee853f847c",
+      "stage": "ci_green",
+      "ci": "success_run_36948918111",
+      "pull_request": 25,
+      "integration": "not_integrated",
+      "staging": "not_deployed",
+      "runtime_routing": "not_enabled",
+      "user_test": "not_performed",
+      "handoff": "workstreams/quality-routing-contract-v1.md",
+      "next_action": "PR #25 prüfen; vorhandenen Crew-Patchpfad anbinden und fachlich geprüftes Pilot-Evaluationsset erstellen. Echte Runtime-Freigabe bleibt gesondert."
     }
   ],
   "deployments": [
