@@ -53,7 +53,15 @@ function createOrchestrator({ loadPolicy, store, providers, validators, now = Da
         // No SDK retries here. A second call is an explicit, budgeted qualified fallback.
         const result = await abortable(() => adapters.get(route.provider).generate({ provider: route.provider, job: profile.job,
           model: route.model, max_tokens: profile.maxOutputTokens, system: request.system, messages: request.messages }, { signal: combined }), combined);
-        attempt.costMicros = priceUsage(result.provider, result.usage, route.price);
+        // A returned alias/snapshot or provider mismatch has no approved price or
+        // quality evidence. Never price it using the requested model's rates.
+        if (result.provider !== route.provider || result.model !== route.model) {
+          receipt.actualMicros = null;
+          attempt.status = 'identity_mismatch';
+          errorCode = 'VALIDATION_FAILED';
+          break;
+        }
+        attempt.costMicros = priceUsage(route.provider, result.usage, route.price);
         if (attempt.costMicros === null) receipt.actualMicros = null;
         else if (receipt.actualMicros !== null) receipt.actualMicros += attempt.costMicros;
         const valid = result.provider === route.provider && result.model === route.model
