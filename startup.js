@@ -1,4 +1,5 @@
 import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=1";
+import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.1.0";
 
 // Public pupils use the server-authoritative assessment path. Teacher preview
 // intentionally remains in the existing app so authors can inspect the exact
@@ -20,7 +21,30 @@ function installGradeCrewDesignStyles() {
   }
 }
 
+function installGradeCrewBrandAssets() {
+  const primary = GRADECREW_ASSETS.brand?.primary;
+  const favicon = GRADECREW_ASSETS.brand?.favicon || primary;
+  if (!primary) return;
+
+  document.querySelectorAll("[data-gradecrew-brand-mark]").forEach((img) => {
+    if (img instanceof HTMLImageElement) img.src = primary;
+  });
+
+  if (favicon) {
+    let link = document.querySelector('link[data-gradecrew-favicon="1"]');
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/svg+xml";
+      link.dataset.gradecrewFavicon = "1";
+      document.head.appendChild(link);
+    }
+    link.href = favicon;
+  }
+}
+
 installGradeCrewDesignStyles();
+installGradeCrewBrandAssets();
 
 const routeParams = new URLSearchParams(location.search);
 const rawPublicTestCode = String(routeParams.get("test") || "").trim();
