@@ -20,16 +20,18 @@ let guestName = "";
 let tutorialStep = 0;
 let tutorialChoice = "";
 
-function canonicalCrewCards() {
+function supportCrewCards() {
   const roles = [
-    ["coco", "Coco", "Guide"],
     ["remy", "Remy", "Erstellen"],
     ["emmi", "Emmi", "Verbessern"],
-    ["wilma", "Wilma", "Bewerten"]
+    ["wilma", "Wilma", "Prüfen"]
   ];
   return roles.map(([key, name, role]) => {
     const mascot = GRADECREW_ASSETS.mascots?.[key];
-    return `<div class="gcEntryCrewMember"><img src="${escapeHtml(mascot?.primary || "")}" alt="" width="58" height="58"><span><strong>${name}</strong><small>${role}</small></span></div>`;
+    return `<article class="gcEntryCrewMember gcEntryCrewMember-${key}">
+      <img src="${escapeHtml(mascot?.primary || "")}" alt="" width="150" height="150" decoding="async">
+      <span><strong>${name}</strong><small>${role}</small></span>
+    </article>`;
   }).join("");
 }
 
@@ -173,26 +175,32 @@ function buildEntrySurface() {
   authView.innerHTML = `<div class="gcEntryShell">
     <section id="gcEntryStart" class="gcEntryState gcEntryStart" aria-labelledby="gcEntryHeadline">
       <div class="gcEntryBrand"><img src="${escapeHtml(GRADECREW_ASSETS.brand.primary)}" alt="GradeCrew" class="gcEntryLogo"></div>
-      <div class="gcEntryHero">
+      <div class="gcEntryWelcome">
         <div class="gcEntryLead">
-          <span class="gcEntryEyebrow">Deine Crew für digitale Tests</span>
-          <h1 id="gcEntryHeadline">Willkommen bei GradeCrew.</h1>
-          <p>Dein Team für bessere Tests.</p>
+          <h1 id="gcEntryHeadline"><span>Hi! Ich bin Coco.</span><strong>Willkommen bei GradeCrew.</strong></h1>
+          <p>Digitale Tests, schnell &amp; einfach.</p>
         </div>
-        <div class="gcEntryCrewScene" aria-label="Coco, Remy, Emmi und Wilma – die GradeCrew">
-          <img src="${escapeHtml(GRADECREW_ASSETS.scenes.welcome)}" alt="" class="gcEntryCrewSceneImage" decoding="async">
-          <div class="gcEntryCrewStrip">${canonicalCrewCards()}</div>
+        <div class="gcEntryCharacterStage" aria-label="Coco, Remy, Emmi und Wilma – die GradeCrew">
+          <div class="gcEntryCoco">
+            <img src="${escapeHtml(GRADECREW_ASSETS.mascots.coco.welcome || GRADECREW_ASSETS.mascots.coco.primary)}" alt="Coco, dein GradeCrew-Guide" decoding="async">
+            <span class="gcEntryCocoNote">Ich zeige dir mein Team!</span>
+          </div>
+          <div class="gcEntrySupportCrew">${supportCrewCards()}</div>
         </div>
         <div class="gcEntryActions">
-          <button type="button" class="button primary gcEntryTutorialStart" id="gcEntryTutorialStart" data-entry-autofocus>Tutorial starten <small>Ohne Registrierung</small></button>
-          <button type="button" class="button secondary gcEntryLoginOpen" id="gcEntryLoginOpen">Anmelden</button>
-          <button type="button" class="gcEntryTextAction" id="gcEntryRegisterOpen">Account erstellen</button>
+          <button type="button" class="button primary gcEntryTutorialStart" id="gcEntryTutorialStart" data-entry-autofocus>Crew kennenlernen <span aria-hidden="true">→</span></button>
+          <button type="button" class="button secondary gcEntryLoginOpen" id="gcEntryLoginOpen">Direkt anmelden</button>
+        </div>
+        <aside class="gcEntryStudent" aria-labelledby="gcEntryStudentTitle">
+          <div class="gcEntryStudentCopy"><h2 id="gcEntryStudentTitle">Schüler? Testcode eingeben.</h2><p>Kein Account nötig.</p></div>
+          <div id="gcEntryJoinHost"></div>
+        </aside>
+        <div class="gcEntryBenefits" aria-label="GradeCrew Vorteile">
+          <span><strong>Schnell erstellt</strong><small>In wenigen Minuten</small></span>
+          <span><strong>Einfach durchgeführt</strong><small>Für deine Klasse</small></span>
+          <span><strong>Direkt ausgewertet</strong><small>Ergebnisse im Blick</small></span>
         </div>
       </div>
-      <aside class="gcEntryStudent" aria-labelledby="gcEntryStudentTitle">
-        <div><span class="gcEntryEyebrow">Für Schülerinnen und Schüler</span><h2 id="gcEntryStudentTitle">Testcode eingeben</h2><p>Direkt zum Test – kein Account nötig.</p></div>
-        <div id="gcEntryJoinHost"></div>
-      </aside>
     </section>
 
     <section id="gcEntryLogin" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryLoginTitle">
@@ -238,7 +246,6 @@ function buildEntrySurface() {
 
   $("gcEntryTutorialStart").addEventListener("click", () => setState("tutorialName"));
   $("gcEntryLoginOpen").addEventListener("click", showLogin);
-  $("gcEntryRegisterOpen").addEventListener("click", showRegister);
   $("gcEntrySwitchRegister").addEventListener("click", showRegister);
   $("gcEntrySwitchLogin").addEventListener("click", showLogin);
   $("gcEntryGuestContinue").addEventListener("click", startGuestTutorial);
@@ -277,5 +284,3 @@ export function installGradeCrewEntryFlow() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
   return false;
 }
-
-installGradeCrewEntryFlow();

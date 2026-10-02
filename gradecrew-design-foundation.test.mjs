@@ -36,8 +36,8 @@ test('canonical Crew manifest preserves established roles', () => {
 test('teacher startup loads shared tokens before focused design layers', () => {
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
-  const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=2');
-  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=1');
+  const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=3');
+  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=2');
   const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
@@ -66,7 +66,9 @@ test('public entry uses the canonical manifest and remains auth-scoped', () => {
   assert.match(entryFlow, /GRADECREW_ASSETS/);
   assert.match(entryFlow, /CREW, DEMO_TEST/);
   assert.match(startscreenCss, /#authView \.gcEntryShell/);
-  assert.match(startscreenCss, /#authView \.gcEntryHero/);
+  assert.match(startscreenCss, /#authView \.gcEntryWelcome/);
+  assert.match(startscreenCss, /#authView \.gcEntryCharacterStage/);
+  assert.match(startscreenCss, /#authView \.gcEntryStudent/);
   assert.doesNotMatch(entryFlow, /falcon-create\.svg/);
   assert.doesNotMatch(startscreenCss, /#dashboardView/);
   assert.doesNotMatch(startscreenCss, /#studentView/);
