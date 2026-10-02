@@ -77,8 +77,8 @@
       "features": [
         {
           "id": "PUBLISH-STUDENT",
-          "title": "Veröffentlichen, beitreten und abgeben",
-          "sourceWorkstreams": ["web-app", "security"],
+          "title": "Normaler Veröffentlichungs- und Schülerablauf",
+          "sourceWorkstreams": ["web-app"],
           "tests": [
             {"id": "PUBLISH-01", "title": "Test veröffentlichen und Schülerzugang öffnen", "device": "desktop"},
             {"id": "STUDENT-JOIN-01", "title": "Schüler tritt per Code bei und sieht den richtigen Test", "device": "ipad"},
@@ -125,11 +125,19 @@
       "title": "Administration & Infrastruktur",
       "features": [
         {
-          "id": "ADMIN-TELEMETRY",
-          "title": "Admin-Übersicht und Telemetrie",
-          "sourceWorkstreams": ["remy-structured-telemetry-v1", "telemetry"],
+          "id": "REMY-TELEMETRY",
+          "title": "Remy-Nutzungs-/Qualitätsstatistik",
+          "sourceWorkstreams": ["remy-structured-telemetry-v1"],
           "tests": [
-            {"id": "ADMIN-TELEMETRY-01", "title": "Admin sieht erwartete inhaltsfreie Nutzungs-/Qualitätssignale", "device": "desktop"}
+            {"id": "ADMIN-TELEMETRY-01", "title": "Admin sieht erwartete inhaltsfreie Remy-Nutzungs-/Qualitätssignale", "device": "desktop"}
+          ]
+        },
+        {
+          "id": "GENERIC-TELEMETRY",
+          "title": "Generische Produktdiagnose / Telemetrie",
+          "sourceWorkstreams": ["telemetry"],
+          "tests": [
+            {"id": "GENERIC-TELEMETRY-01", "title": "Generische Collector-/Admin-Diagnose ist sicher auf Staging aktiviert", "device": "desktop"}
           ]
         },
         {
