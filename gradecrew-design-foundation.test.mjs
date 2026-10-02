@@ -10,6 +10,7 @@ const generatedTokens = read('generated/gradecrew-design-tokens.css');
 const startup = read('startup.js');
 const build = read('tools/build-staging.mjs');
 const dashboardCss = read('gradecrew-dashboard-foundation.css');
+const startscreenCss = read('gradecrew-auth-startscreen.css');
 
 test('shared tokens keep accessibility and canonical GradeCrew values', () => {
   assert.equal(tokens.version, '1.1.0');
@@ -31,16 +32,19 @@ test('canonical Crew manifest preserves established roles', () => {
   assert.equal(assets.rules.newCodeMustUseManifestNames, true);
 });
 
-test('teacher startup loads shared tokens before the focused dashboard layer', () => {
+test('teacher startup loads shared tokens before focused design layers', () => {
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
+  const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=1');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
+  assert.ok(startscreenIndex > tokensIndex, 'startscreen stylesheet must follow shared tokens');
 });
 
-test('staging build packages both new design stylesheets', () => {
+test('staging build packages focused design stylesheets', () => {
   assert.match(build, /generated\/gradecrew-design-tokens\.css/);
   assert.match(build, /gradecrew-dashboard-foundation\.css/);
+  assert.match(build, /gradecrew-auth-startscreen\.css/);
 });
 
 test('dashboard foundation stays scoped away from student and secure assessment screens', () => {
@@ -51,4 +55,16 @@ test('dashboard foundation stays scoped away from student and secure assessment 
   assert.doesNotMatch(dashboardCss, /#studentView/);
   assert.doesNotMatch(dashboardCss, /#secure/);
   assert.doesNotMatch(dashboardCss, /\.studentQuestion/);
+});
+
+test('startscreen uses exact canonical Crew assets and remains auth-scoped', () => {
+  assert.match(startscreenCss, /#authView \.authGuide\.gcClayHero/);
+  assert.match(startscreenCss, /assets\/gradecrew\/elephant-create\.svg/);
+  assert.match(startscreenCss, /assets\/gradecrew\/fox-improve\.svg/);
+  assert.match(startscreenCss, /assets\/gradecrew\/owl-grade\.svg/);
+  assert.doesNotMatch(startscreenCss, /falcon-create\.svg/);
+  assert.doesNotMatch(startscreenCss, /#dashboardView/);
+  assert.doesNotMatch(startscreenCss, /#studentView/);
+  assert.doesNotMatch(startscreenCss, /#secure/);
+  assert.match(startscreenCss, /prefers-reduced-motion/);
 });
