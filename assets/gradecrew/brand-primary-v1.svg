@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">GradeCrew</title>
+  <desc id="desc">Geometrisches GC-Markenzeichen mit abstrahiertem Bildungshut.</desc>
+  <defs>
+    <linearGradient id="gcNavy" x1="96" y1="144" x2="320" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#153f86"/>
+      <stop offset="1" stop-color="#071f55"/>
+    </linearGradient>
+    <linearGradient id="gcPurple" x1="286" y1="126" x2="430" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7138d8"/>
+      <stop offset="1" stop-color="#8d45f2"/>
+    </linearGradient>
+    <linearGradient id="gcCap" x1="120" y1="74" x2="397" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#39209a"/>
+      <stop offset="1" stop-color="#8138f0"/>
+    </linearGradient>
+    <mask id="gShape">
+      <rect width="512" height="512" fill="#000"/>
+      <path d="M92 190 211 121 326 187V337L211 404 92 337Z" fill="#fff"/>
+      <path d="M149 221 211 185 269 218V252H210V296H249V322L211 344 149 308Z" fill="#000"/>
+      <rect x="278" y="226" width="76" height="88" rx="10" fill="#000"/>
+      <path d="M206 246H326V299H260V329H206Z" fill="#fff"/>
+    </mask>
+  </defs>
+
+  <g aria-hidden="true">
+    <rect x="72" y="102" width="286" height="322" fill="url(#gcNavy)" mask="url(#gShape)"/>
+
+    <path d="M405 211A112 112 0 1 0 405 342" fill="none" stroke="url(#gcPurple)" stroke-width="66" stroke-linecap="round"/>
+
+    <g>
+      <path d="M110 126 258 51l148 75-148 75Z" fill="url(#gcCap)"/>
+      <path d="M141 142 258 201l117-59v39l-117 59-117-59Z" fill="#4420a7" opacity=".92"/>
+      <path d="M111 127v73" fill="none" stroke="#241270" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="111" cy="207" r="9" fill="#241270"/>
+    </g>
+  </g>
+</svg>
