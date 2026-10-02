@@ -1,0 +1,19 @@
+name: Escape tutor cost guards
+on:
+  push:
+    branches: [fix/escape-tutor-cost-guards]
+  pull_request:
+    paths: ['lab/escape-room/escape-tutor.js', 'tools/games/escape-tutor.test.cjs', '.github/workflows/escape-tutor-hardening.yml']
+permissions: { contents: read }
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: tools/games
+      - run: node --test escape-tutor.test.cjs
+        working-directory: tools/games
