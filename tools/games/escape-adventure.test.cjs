@@ -16,9 +16,13 @@ test('adventure prototype is isolated from the existing Escape game', () => {
 test('desktop and touch movement controls are both present', () => {
   assert.match(html, /id="gameCanvas"/);
   assert.match(html, /class="touch-controls"/);
+  assert.match(html, /data-dir="up"/);
+  assert.match(html, /data-dir="left"/);
+  assert.match(html, /data-dir="down"/);
+  assert.match(html, /data-dir="right"/);
   assert.match(js, /ArrowLeft/);
   assert.match(js, /pointerdown/);
-  assert.match(js, /data-dir/);
+  assert.match(js, /btn\.dataset\.dir/);
   assert.match(css, /touch-action:none/);
 });
 
