@@ -9,6 +9,7 @@ on:
       - 'tools/build-lab-escape-room.mjs'
       - 'tools/games/escape-room.test.cjs'
       - 'tools/games/escape-tutor.test.cjs'
+      - 'tools/games/escape-coco-ai.test.cjs'
       - 'tools/games/gradecrew-escape-adapter.test.cjs'
       - 'tools/games/gradecrew-escape-builder.test.cjs'
       - '.github/workflows/escape-dev-preview.yml'
@@ -40,8 +41,8 @@ jobs:
       - name: Install test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
 
-      - name: Run Escape Room, Remy and GradeCrew preparation tests
-        run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
+      - name: Run Escape Room, Coco and GradeCrew preparation tests
+        run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
 
       - name: Build Escape Room only
         run: |
