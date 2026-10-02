@@ -226,11 +226,19 @@
     },
     {
       "id": "ios-design",
+      "task_id": "GC-IOS-02",
       "branch": "feature/shared-gradecrew-design-system",
-      "observed_head": "9fe3e37407832e20f75536bf4d59fec9ba801298",
-      "stage": "branch_only",
-      "user_test": "not_currently_verified",
-      "next_action": "Aktuellen TestFlight-/WebView-Stand und tatsächlich verwendete Web-URL verifizieren."
+      "implementation_branch": "feature/ios-latest-integration-v1",
+      "observed_head": "8bdebaf1ab701d44e57369914bd2b82fe7bdc895",
+      "stage": "ci_green",
+      "ci": "success_testflight_run_37015111963_routing_archive_upload",
+      "testflight_version": "0.1.5",
+      "default_web_source": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/",
+      "stable_staging_fallback": "https://hausaufgabe-staging.web.app/",
+      "production_target_allowed": false,
+      "user_test": "0.1.5_not_installed_or_verified_on_physical_device_yet",
+      "handoff": "workstreams/ios-app-v2.md",
+      "next_action": "Nach Apple-Verarbeitung 0.1.5 auf iPad installieren, sichtbare Umgebung Integration bestätigen und Login/Crew/Remy/Emmi/Tutorial/Editor-Kernwege praktisch testen."
     },
     {
       "id": "design-dashboard-v1",
@@ -345,4 +353,3 @@
     "Production security gates are not all verified."
   ]
 }
-
