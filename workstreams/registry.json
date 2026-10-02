@@ -12,7 +12,8 @@
   "staleAfterDays": 7,
   "staleBehindThreshold": 1,
   "ignoredBranches": [
-    "main"
+    "main",
+    "automation/guardian-state"
   ],
   "ignoredPrefixes": [
     "preview-snapshot-"
@@ -321,6 +322,14 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integration_ready",
       "handoff": "workstreams/web-premerge-combined-ci-v1.md"
+    },
+    {
+      "id": "stage-guardian-v1",
+      "title": "Automatische KI-Fortsetzung der Entwicklungsphasen",
+      "primaryBranch": "feature/stage-guardian-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/stage-guardian-v1.md"
     }
   ]
 }
