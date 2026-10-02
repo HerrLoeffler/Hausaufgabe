@@ -5,10 +5,12 @@ on:
   push:
     branches:
       - feature/shared-gradecrew-design-system
+      - feature/ios-latest-integration-v1
     paths:
       - .github/workflows/gradecrew-testflight.yml
       - native/GradeCrewTeacher/**
       - native/Shared/**
+      - shared/gradecrew-design/**
 
 permissions:
   contents: read
@@ -29,7 +31,7 @@ jobs:
       APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       BUNDLE_ID: de.gradecrew
-      MARKETING_VERSION: 0.1.4
+      MARKETING_VERSION: 0.1.5
 
     steps:
       - name: Checkout
@@ -135,4 +137,3 @@ jobs:
         if: always()
         shell: bash
         run: rm -f "${{ steps.apple-key.outputs.path }}"
-
