@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import io
 import json
 import os
 import pathlib
+import re
 import subprocess
 import urllib.error
 import urllib.request
-import zipfile
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -25,6 +24,7 @@ STATE = ROOT / "GRADECREW_STATE.json"
 REGISTRY = ROOT / "workstreams" / "registry.json"
 STAGES = ["branch_only", "ci_green", "integrated", "staging_deployed", "user_tested", "production"]
 STAGE_RANK = {stage: index for index, stage in enumerate(STAGES)}
+SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def load_json(path: pathlib.Path) -> dict[str, Any]:
@@ -38,9 +38,13 @@ def git(*args: str) -> str:
     return proc.stdout.strip()
 
 
+def ref_exists(ref: str) -> bool:
+    return subprocess.run(["git", "show-ref", "--verify", "--quiet", ref], cwd=ROOT).returncode == 0
+
+
 def ref_sha(branch: str) -> str | None:
     for ref in (f"refs/remotes/origin/{branch}", f"refs/heads/{branch}"):
-        if subprocess.run(["git", "show-ref", "--verify", "--quiet", ref], cwd=ROOT).returncode == 0:
+        if ref_exists(ref):
             return git("rev-parse", ref)
     return None
 
@@ -49,7 +53,7 @@ def short(value: str | None) -> str:
     return value[:10] if value else "–"
 
 
-def gh_request(url: str, *, binary: bool = False) -> Any:
+def gh_request(url: str) -> Any:
     token = os.getenv("GITHUB_TOKEN", "").strip()
     if not token:
         raise RuntimeError("GITHUB_TOKEN fehlt")
@@ -63,12 +67,10 @@ def gh_request(url: str, *, binary: bool = False) -> Any:
         },
     )
     with urllib.request.urlopen(request, timeout=30) as response:
-        data = response.read()
-    return data if binary else json.loads(data.decode("utf-8"))
+        return json.loads(response.read().decode("utf-8"))
 
 
 def github_runs(max_pages: int = 8) -> list[dict[str, Any]]:
-    """Read enough recent runs to survive a busy multi-agent repository."""
     repo = os.getenv("GITHUB_REPOSITORY", "").strip()
     if not repo or not os.getenv("GITHUB_TOKEN", "").strip():
         return []
@@ -97,37 +99,11 @@ def find_ci_run(runs: list[dict[str, Any]], name: str, branch: str, sha: str | N
     return None
 
 
-def receipt_from_artifact(run_id: int, artifact_prefix: str) -> dict[str, Any] | None:
+def latest_artifact_sha(runs: list[dict[str, Any]], workflow_name: str, artifact_prefix: str) -> dict[str, Any] | None:
+    """Use immutable SHA embedded in deployment artifact names; no ZIP download needed."""
     repo = os.getenv("GITHUB_REPOSITORY", "").strip()
-    payload = gh_request(f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
-    artifact = next(
-        (
-            item
-            for item in payload.get("artifacts", [])
-            if str(item.get("name", "")).startswith(artifact_prefix) and not item.get("expired")
-        ),
-        None,
-    )
-    if not artifact:
+    if not repo:
         return None
-    raw = gh_request(str(artifact["archive_download_url"]), binary=True)
-    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
-        for name in archive.namelist():
-            if not name.endswith(".json"):
-                continue
-            try:
-                value = json.loads(archive.read(name).decode("utf-8"))
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                continue
-            if isinstance(value, dict) and value.get("commit"):
-                value["artifactId"] = artifact.get("id")
-                value["artifactName"] = artifact.get("name")
-                value["runId"] = run_id
-                return value
-    return None
-
-
-def latest_receipt(runs: list[dict[str, Any]], workflow_name: str, prefix: str) -> dict[str, Any] | None:
     for run in runs:
         if run.get("name") != workflow_name or run.get("conclusion") != "success":
             continue
@@ -135,11 +111,32 @@ def latest_receipt(runs: list[dict[str, Any]], workflow_name: str, prefix: str) 
         if not isinstance(run_id, int):
             continue
         try:
-            receipt = receipt_from_artifact(run_id, prefix)
-        except (RuntimeError, urllib.error.URLError, zipfile.BadZipFile, KeyError):
+            payload = gh_request(f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
+        except (RuntimeError, urllib.error.URLError, json.JSONDecodeError):
             continue
-        if receipt:
-            return receipt
+        for artifact in payload.get("artifacts", []):
+            name = str(artifact.get("name") or "")
+            if artifact.get("expired") or not name.startswith(artifact_prefix):
+                continue
+            candidate = name[len(artifact_prefix):]
+            if SHA_RE.fullmatch(candidate):
+                return {
+                    "commit": candidate,
+                    "runId": run_id,
+                    "artifactId": artifact.get("id"),
+                    "artifactName": name,
+                    "evidence": "artifact_name",
+                }
+    return None
+
+
+def verified_preview_snapshot(sha: str | None) -> dict[str, Any] | None:
+    """Preview archive tags are created only after a verified preview receipt."""
+    if not sha:
+        return None
+    tag = f"preview-snapshot-{sha}"
+    if ref_exists(f"refs/tags/{tag}"):
+        return {"commit": sha, "tag": tag, "evidence": "verified_preview_snapshot_tag"}
     return None
 
 
@@ -150,13 +147,7 @@ def workstream_maps(state: dict[str, Any], registry: dict[str, Any]) -> tuple[di
 
 
 def registry_stage(value: str) -> str | None:
-    return {
-        "integrated": "integrated",
-        "integration_ready": "ci_green",
-        "active": "branch_only",
-        "blocked": "branch_only",
-        "archive_candidate": None,
-    }.get(value)
+    return {"integrated": "integrated", "integration_ready": "ci_green", "active": "branch_only", "blocked": "branch_only", "archive_candidate": None}.get(value)
 
 
 def source_stage(ws_id: str, state_map: dict[str, dict[str, Any]], registry_map: dict[str, dict[str, Any]]) -> tuple[str | None, str | None]:
@@ -184,11 +175,11 @@ def target_kind(feature_id: str) -> str:
     return {"AI-GATEWAY": "gateway", "ESCAPE": "games", "IOS-TEACHER": "ios"}.get(feature_id, "web")
 
 
-def target_sha(kind: str, web_sha: str | None, gateway_receipt: dict[str, Any] | None, state_map: dict[str, dict[str, Any]], registry_map: dict[str, dict[str, Any]]) -> str | None:
+def target_sha(kind: str, web_sha: str | None, gateway_evidence: dict[str, Any] | None, state_map: dict[str, dict[str, Any]], registry_map: dict[str, dict[str, Any]]) -> str | None:
     if kind == "web":
         return web_sha
     if kind == "gateway":
-        return str((gateway_receipt or {}).get("commit") or "") or ref_sha("integration/ai-gateway-staging")
+        return str((gateway_evidence or {}).get("commit") or "") or ref_sha("integration/ai-gateway-staging")
     if kind == "games":
         row = state_map.get("games-escape", {})
         return str(row.get("observed_head") or "") or ref_sha(str(registry_map.get("games-escape", {}).get("primaryBranch") or "feature/escape-room-mvp-v1"))
@@ -239,42 +230,36 @@ def main() -> int:
         errors.append(f"Kandidatenbranch fehlt: {candidate_branch}")
 
     runs: list[dict[str, Any]] = []
-    hosting_receipt = functions_receipt = gateway_receipt = None
+    functions_evidence = gateway_evidence = None
     try:
         runs = github_runs()
         if runs:
-            hosting_receipt = latest_receipt(runs, "Automatic staging preview", "verified-preview-receipt")
-            functions_receipt = latest_receipt(runs, "Automatic staging AI functions", "staging-functions-receipt-")
-            gateway_receipt = latest_receipt(runs, "Automatic staging AI gateway", "staging-ai-gateway-receipt-")
+            functions_evidence = latest_artifact_sha(runs, "Automatic staging AI functions", "staging-functions-receipt-")
+            gateway_evidence = latest_artifact_sha(runs, "Automatic staging AI gateway", "staging-ai-gateway-receipt-")
         else:
             warnings.append("Keine Live-Actions-Daten verfügbar; Deploymentstand fällt auf dokumentierte Evidence zurück.")
     except (RuntimeError, urllib.error.URLError, json.JSONDecodeError) as exc:
         warnings.append(f"GitHub-Actions-Abgleich fehlgeschlagen: {exc}")
 
     candidate_ci = find_ci_run(runs, "AI Staging Checks", candidate_branch, candidate_sha)
+    hosting_evidence = verified_preview_snapshot(candidate_sha)
     release_train = state.get("release_train", {})
     documented_sha = str(release_train.get("observed_integration_head") or "") or None
     if documented_sha and candidate_sha and documented_sha != candidate_sha:
         warnings.append(f"GRADECREW_STATE.json veraltet: dokumentiert {short(documented_sha)}, Integration aktuell {short(candidate_sha)}.")
 
-    if not hosting_receipt:
+    if not hosting_evidence:
         evidence = state.get("automation", {}).get("preview_evidence", {})
         if evidence.get("commit"):
-            hosting_receipt = {"commit": evidence.get("commit"), "runId": evidence.get("run_id"), "fallback": True}
-    if not functions_receipt:
+            hosting_evidence = {"commit": evidence.get("commit"), "runId": evidence.get("run_id"), "fallback": True}
+    if not functions_evidence:
         evidence = state.get("automation", {}).get("functions_automation_evidence", {})
         if evidence.get("deployed_commit"):
-            functions_receipt = {"commit": evidence.get("deployed_commit"), "runId": evidence.get("automatic_run_id"), "fallback": True}
+            functions_evidence = {"commit": evidence.get("deployed_commit"), "runId": evidence.get("automatic_run_id"), "fallback": True}
 
-    hosting_sha = str((hosting_receipt or {}).get("commit") or "") or None
-    functions_sha = str((functions_receipt or {}).get("commit") or "") or None
-    web_sync = bool(
-        candidate_sha
-        and candidate_ci
-        and candidate_ci.get("conclusion") == "success"
-        and hosting_sha == candidate_sha
-        and functions_sha == candidate_sha
-    )
+    hosting_sha = str((hosting_evidence or {}).get("commit") or "") or None
+    functions_sha = str((functions_evidence or {}).get("commit") or "") or None
+    web_sync = bool(candidate_sha and candidate_ci and candidate_ci.get("conclusion") == "success" and hosting_sha == candidate_sha and functions_sha == candidate_sha)
 
     state_map, registry_map = workstream_maps(state, registry)
     manual_results = acceptance.get("results", {})
@@ -290,8 +275,8 @@ def main() -> int:
             source_ids = [str(value) for value in feature.get("sourceWorkstreams", [])]
             stage, sources = feature_stage(source_ids, state_map, registry_map)
             kind = target_kind(feature_id)
-            current_sha = target_sha(kind, candidate_sha, gateway_receipt, state_map, registry_map)
-            if feature_id == "AI-GATEWAY" and gateway_receipt:
+            current_sha = target_sha(kind, candidate_sha, gateway_evidence, state_map, registry_map)
+            if feature_id == "AI-GATEWAY" and gateway_evidence:
                 stage = "staging_deployed"
             feature_tests: list[dict[str, Any]] = []
             for test in feature.get("tests", []):
@@ -321,19 +306,7 @@ def main() -> int:
                 }
                 tests.append(row)
                 feature_tests.append(row)
-            features.append(
-                {
-                    "id": feature_id,
-                    "title": str(feature.get("title") or feature_id),
-                    "areaId": area_id,
-                    "areaTitle": area_title,
-                    "releaseTarget": kind,
-                    "releaseStage": stage,
-                    "targetSha": current_sha,
-                    "sourceWorkstreams": sources,
-                    "tests": feature_tests,
-                }
-            )
+            features.append({"id": feature_id, "title": str(feature.get("title") or feature_id), "areaId": area_id, "areaTitle": area_title, "releaseTarget": kind, "releaseStage": stage, "targetSha": current_sha, "sourceWorkstreams": sources, "tests": feature_tests})
 
     unknown_results = sorted(set(manual_results) - known_tests)
     if unknown_results:
@@ -352,26 +325,19 @@ def main() -> int:
             "branch": candidate_branch,
             "sha": candidate_sha,
             "ci": candidate_ci,
-            "hosting": hosting_receipt,
-            "functions": functions_receipt,
+            "hosting": hosting_evidence,
+            "functions": functions_evidence,
             "rules": rules_status,
             "documentedReleaseSha": documented_sha,
             "documentedStateStale": bool(documented_sha and candidate_sha and documented_sha != candidate_sha),
             "webTechnicallySynchronized": web_sync,
         },
         "otherTargets": {
-            "gateway": gateway_receipt,
-            "gamesSha": target_sha("games", candidate_sha, gateway_receipt, state_map, registry_map),
-            "iosSha": target_sha("ios", candidate_sha, gateway_receipt, state_map, registry_map),
+            "gateway": gateway_evidence,
+            "gamesSha": target_sha("games", candidate_sha, gateway_evidence, state_map, registry_map),
+            "iosSha": target_sha("ios", candidate_sha, gateway_evidence, state_map, registry_map),
         },
-        "summary": {
-            "features": len(features),
-            "featuresOnStagingOrLater": staged_features,
-            "featuresNotOnStaging": len(features) - staged_features,
-            "tests": len(tests),
-            **counts,
-            "productionChanged": production_changed,
-        },
+        "summary": {"features": len(features), "featuresOnStagingOrLater": staged_features, "featuresNotOnStaging": len(features) - staged_features, "tests": len(tests), **counts, "productionChanged": production_changed},
         "features": features,
         "warnings": warnings,
         "errors": errors,
