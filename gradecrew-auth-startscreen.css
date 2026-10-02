@@ -41,21 +41,24 @@
   min-height: min(590px, calc(100dvh - 238px));
   display: grid;
   grid-template-columns: minmax(350px, .86fr) minmax(430px, 1.14fr);
+  grid-template-areas: "lead crew" "actions crew";
+  grid-template-rows: auto auto;
   align-items: center;
-  gap: clamp(42px, 7vw, 98px);
+  column-gap: clamp(42px, 7vw, 98px);
+  row-gap: 0;
   padding: clamp(18px, 3.6vh, 42px) 0 clamp(20px, 3.5vh, 40px);
 }
-#authView .gcEntryLead { max-width: 520px; }
+#authView .gcEntryLead { grid-area: lead; max-width: 520px; align-self: end; }
 #authView .gcEntryLead h1 { margin: 10px 0 12px; font-size: clamp(42px, 4.4vw, 66px); line-height: .99; letter-spacing: -.045em; font-weight: 780; text-wrap: balance; }
 #authView .gcEntryLead > p { margin: 0; font-size: clamp(18px, 1.5vw, 22px); color: var(--gc-entry-muted); }
-#authView .gcEntryActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 34px; }
+#authView .gcEntryActions { grid-area: actions; display: flex; flex-wrap: wrap; align-items: center; align-self: start; gap: 12px 14px; margin-top: 34px; }
 #authView .gcEntryTutorialStart { min-height: 56px; padding: 10px 22px; font-size: 15px; display: inline-flex; flex-direction: column; justify-content: center; align-items: flex-start; border-radius: 12px; box-shadow: 0 10px 30px rgba(40, 90, 201, .16); }
 #authView .gcEntryTutorialStart small { margin-top: 2px; font-size: 11px; font-weight: 600; opacity: .82; }
 #authView .gcEntryLoginOpen { min-height: 52px; padding-inline: 20px; }
 #authView .gcEntryTextAction { min-height: 44px; border: 0; background: transparent; color: var(--gc-entry-muted); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font: inherit; font-weight: 650; padding: 8px 6px; }
 #authView .gcEntryTextAction:hover { color: var(--gc-entry-text); }
 
-#authView .gcEntryCrewScene { min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+#authView .gcEntryCrewScene { grid-area: crew; min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
 #authView .gcEntryCrewSceneImage { width: 100%; max-height: min(39vh, 390px); object-fit: contain; filter: drop-shadow(0 20px 28px rgba(32, 43, 60, .08)); }
 #authView .gcEntryCrewStrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: -2px auto 0; width: min(100%, 520px); }
 #authView .gcEntryCrewMember { min-width: 0; display: flex; align-items: center; gap: 8px; padding: 8px 9px; border-top: 1px solid rgba(32, 43, 60, .10); }
@@ -125,7 +128,7 @@
 
 @media (max-width: 900px) {
   #authView { padding-inline: 20px; }
-  #authView .gcEntryHero { min-height: auto; grid-template-columns: 1fr; gap: 22px; padding-top: 26px; }
+  #authView .gcEntryHero { min-height: auto; grid-template-columns: 1fr; grid-template-areas: "lead" "crew" "actions"; grid-template-rows: auto auto auto; gap: 22px; padding-top: 26px; }
   #authView .gcEntryLead { max-width: 650px; }
   #authView .gcEntryLead h1 { max-width: 650px; }
   #authView .gcEntryCrewScene { width: min(650px, 100%); margin: 0 auto; }
@@ -140,13 +143,12 @@
   #authView { min-height: calc(100dvh - 60px); padding: 14px 16px 28px; }
   #authView .gcEntryBrand { min-height: 48px; }
   #authView .gcEntryLogo { width: 168px; max-height: 44px; }
-  #authView .gcEntryHero { display: flex; flex-direction: column; align-items: stretch; padding: 22px 0 24px; gap: 20px; }
+  #authView .gcEntryHero { display: grid; grid-template-columns: 1fr; grid-template-areas: "lead" "crew" "actions"; align-items: stretch; padding: 22px 0 24px; gap: 20px; }
   #authView .gcEntryLead h1 { font-size: clamp(38px, 12vw, 52px); }
   #authView .gcEntryActions { display: grid; grid-template-columns: 1fr; align-items: stretch; margin-top: 28px; }
   #authView .gcEntryTutorialStart,
   #authView .gcEntryLoginOpen { width: 100%; min-height: 52px; }
   #authView .gcEntryTextAction { justify-self: start; }
-  #authView .gcEntryCrewScene { order: -1; }
   #authView .gcEntryCrewSceneImage { max-height: 240px; }
   #authView .gcEntryCrewStrip { grid-template-columns: repeat(2, 1fr); }
   #authView .gcEntryStudent { grid-template-columns: 1fr; gap: 13px; padding-top: 18px; }
