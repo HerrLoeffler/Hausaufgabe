@@ -380,8 +380,12 @@
       return { answered: true, correct: Number(picked.value) === question.correctIndex };
     }
 
-    const input = $('primaryAnswerInput');
-    const raw = String(input?.value || '').trim();
+    return evaluateTypedAnswer(question, $('primaryAnswerInput')?.value);
+  }
+
+  function evaluateTypedAnswer(question, value) {
+    const mode = question.answerMode || 'text';
+    const raw = String(value ?? '').trim();
     if (!raw) return { answered: false, correct: false };
 
     if (mode === 'text') {
@@ -506,7 +510,7 @@
     input.id = 'transferInput';
     input.type = 'text';
     input.autocomplete = 'off';
-    input.inputMode = 'text';
+    input.inputMode = question.remediation.transfer.answerMode === 'number' ? 'decimal' : 'text';
     input.placeholder = 'Antwort eingeben';
     wrapper.append(input);
     $('questionOptions').replaceChildren(wrapper);
@@ -544,9 +548,12 @@
 
     if (activeQuestion.phase === 'transfer') {
       const input = $('transferInput');
-      const answer = normalizeAnswer(input?.value || '');
-      const accepted = question.remediation.transfer.acceptedAnswers.map(normalizeAnswer);
-      const correct = accepted.includes(answer);
+      const evaluation = evaluateTypedAnswer(question.remediation.transfer, input?.value);
+      if (!evaluation.answered) {
+        showFeedback('Gib zuerst eine Antwort ein.');
+        return;
+      }
+      const correct = evaluation.correct;
       S.transferAttempts[question.id] = (S.transferAttempts[question.id] || 0) + 1;
       event('transfer.answered', {
         questionId: question.id,
@@ -1196,6 +1203,10 @@
       .split('|')
       .map(value => value.trim())
       .filter(Boolean);
+    if (next.remediation.transfer.answerMode === 'number') {
+      const first = next.remediation.transfer.acceptedAnswers[0];
+      next.remediation.transfer.numericAnswer = first ? Number(first.replace(',', '.')) : NaN;
+    }
 
     const candidate = questionBank.map((question, questionIndex) => questionIndex === index ? next : question);
     const check = D.validateWorldDefinition(D.world, candidate);

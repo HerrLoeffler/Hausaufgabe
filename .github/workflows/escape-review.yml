@@ -1,0 +1,20 @@
+name: Escape review gates
+on:
+  push:
+    branches: [fix/escape-review-v1]
+  pull_request:
+    paths: ['lab/escape-room/**', 'tools/games/**', '.github/workflows/escape-review.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - run: npm ci --prefix tools/games --ignore-scripts --no-audit --no-fund
+      - run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
+      - run: node tools/build-lab-escape-room.mjs "$RUNNER_TEMP/escape-review"
+

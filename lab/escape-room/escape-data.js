@@ -193,7 +193,7 @@
         if (!Array.isArray(question.acceptedAnswers) || question.acceptedAnswers.filter(value => String(value || '').trim()).length < 1) errors.push(`Frage ${question.id}: akzeptierte Freitextantworten fehlen.`);
       }
       if (mode === 'number') {
-        if (!Number.isFinite(Number(question.numericAnswer))) errors.push(`Frage ${question.id}: numerische Lösung fehlt.`);
+        if (!['number', 'string'].includes(typeof question.numericAnswer) || String(question.numericAnswer).trim() === '' || !Number.isFinite(Number(question.numericAnswer))) errors.push(`Frage ${question.id}: numerische Lösung fehlt.`);
         if (!Number.isFinite(Number(question.tolerance)) || Number(question.tolerance) < 0) errors.push(`Frage ${question.id}: Toleranz ungültig.`);
       }
 
@@ -201,7 +201,10 @@
       if (!remediation?.explanation?.trim()) errors.push(`Frage ${question.id}: kurze Fehlererklärung fehlt.`);
       if (!remediation?.activeTask?.text?.trim()) errors.push(`Frage ${question.id}: aktive Lernaufgabe fehlt.`);
       if (!remediation?.transfer?.prompt?.trim()) errors.push(`Frage ${question.id}: Transferfrage fehlt.`);
-      if (!Array.isArray(remediation?.transfer?.acceptedAnswers) || remediation.transfer.acceptedAnswers.length < 1) errors.push(`Frage ${question.id}: Transferantworten fehlen.`);
+      if (!Array.isArray(remediation?.transfer?.acceptedAnswers) || !remediation.transfer.acceptedAnswers.some(value => typeof value === 'string' && value.trim())) errors.push(`Frage ${question.id}: Transferantworten fehlen.`);
+      if (remediation?.transfer?.answerMode === 'number') {
+        if (typeof remediation.transfer.numericAnswer !== 'number' || !Number.isFinite(remediation.transfer.numericAnswer) || !Number.isFinite(remediation.transfer.tolerance) || remediation.transfer.tolerance < 0) errors.push(`Frage ${question.id}: numerische Transferlösung ungültig.`);
+      }
     }
 
     const referenced = candidateWorld.rooms.flatMap(room => room.questionIds || []);
