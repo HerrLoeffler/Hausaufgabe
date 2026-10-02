@@ -19,6 +19,10 @@ Die folgenden Branch-Spitzen wurden über GitHub gelesen; Deploy-Angaben sind ge
 | Spiele | lab/games-structure | Vor Änderungen vollständige eigene Übergabe einholen; nicht aus Website-Branch veröffentlichen |
 | Sprache / KI-Qualität / Internationalisierung | feature/quality-routing-contract-v1 | `quality-routing-contract-v1.md`: gemeinsamer Vertrag + Offline-Freigabeprüfung, 14 Tests/CI grün, Draft-PR #25 gegen Gateway; noch keine Runtime-Anbindung oder Modellumschaltung |
 
+| Automatische KI-Auswahl / Kosten | feature/ai-orchestration-v1 | `ai-orchestration-v1.md`: PR #26, CI/Emulator grün; echte Qualitätsfreigabe, produktive Anbindung und Admin-Mount offen |
+| Escape Tutor-Kosten | fix/escape-tutor-cost-guards | `escape-tutor-cost-guards.md`: PR #27, CI grün; gegen Escape v0.6 prüfen |
+| Gesamtprüfung / aktuelle Fortsetzung | separate Fix-Branches je Bereich | `system-review-2026-10-02.md`: neue Anhänge, aktueller Gateway/Remy/Escape-Stand und offene Integrationslücken |
+
 ## Neue Aufgabe
 
 Kopie von TEMPLATE.md unter einer eindeutigen ID anlegen, z. B. `workstreams/tutorial-submit.md`.
@@ -28,3 +32,4 @@ Kein Chat hat automatisch exklusiven Besitz einer Baustelle. Eine veraltete „i
 ## Integration
 
 Ein Integrationsauftrag nennt ausdrücklich Quellbranches und Zielbranch. Nicht pauschal einen alten App-/Design-/Spielebranch als neue Gesamtbasis deployen. Kontrollieren, ob z. B. Uploads, PDF/Bilder, Secure-Pfad und Tutorialfunktionen weiterhin enthalten sind.
+

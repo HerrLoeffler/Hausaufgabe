@@ -100,7 +100,9 @@
       "restored_files": 84,
       "database_backup": false,
       "production_backup": false
-    }
+    },
+    "agent_dispatch": "implemented_pending_credentials_and_e2e",
+    "agent_dispatch_note": "Worker-Dateien vorhanden; Aktivierung und erfolgreicher echter Worker-Lauf nicht verifiziert. Beim Aktualisieren von Teilbereichen Pflichtfelder erhalten."
   },
   "workstreams": [
     {
@@ -147,7 +149,10 @@
       "feature_ci": "success_run_36991051536",
       "retention_fix_branch": "fix/crew-telemetry-retention-v1",
       "retention_fix_ci": "success_run_36991709628",
-      "pull_requests": [30, 31],
+      "pull_requests": [
+        30,
+        31
+      ],
       "stage": "staging_deployed",
       "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
       "combined_ci": "success_run_36991807963",
@@ -251,6 +256,55 @@
       "user_test": "not_performed",
       "handoff": "workstreams/quality-routing-contract-v1.md",
       "next_action": "PR #25 prüfen; vorhandenen Crew-Patchpfad anbinden und fachlich geprüftes Pilot-Evaluationsset erstellen. Echte Runtime-Freigabe bleibt gesondert."
+    },
+    {
+      "id": "ai-orchestration-v1",
+      "task_ids": [
+        "GC-AI-ROUTING-02",
+        "GC-AI-OBS-02"
+      ],
+      "branch": "feature/ai-orchestration-v1",
+      "observed_head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+      "tested_code_commit": "c5dcc4dcf8a1057817619afbbd1f914cf142e394",
+      "stage": "ci_green",
+      "ci": "success_run_36975168993_including_firestore_emulator",
+      "pull_request": 26,
+      "downstream_integration": "integration/ai-gateway-staging@46b21ff4a8b09f2bed9888ac29a954d52c7c794e contains code",
+      "runtime_routing": "not_enabled; real qualification evidence and operational signing still required",
+      "staging": "gateway code deployed but automatic routing inactive",
+      "user_test": "not_performed",
+      "handoff": "workstreams/ai-orchestration-v1.md",
+      "next_action": "Provider-/Kostenintegration prüfen; vorhandenen begrenzten Textjob mit fachlichem Referenzset anschließen. Admin-Proxy und Mount fehlen noch."
+    },
+    {
+      "id": "escape-tutor-cost-guards",
+      "task_id": "GC-GAMES-COST-01",
+      "branch": "fix/escape-tutor-cost-guards",
+      "observed_head": "a521ec905c09793441a301c0304881a2fe9ab27e",
+      "stage": "ci_green",
+      "ci": "success_runs_36974981001_and_36974980982",
+      "pull_request": 27,
+      "staging": "not_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/escape-tutor-cost-guards.md",
+      "next_action": "Gegen aktuellen Escape-v0.6-Branch prüfen und Cache-/Kostenkorrekturen unter Erhalt der neuen Remy/Coco-Rollen übernehmen."
+    },
+    {
+      "id": "ai-gateway-staging-cicd",
+      "task_id": "GC-AI-GATEWAY-03",
+      "branch": "integration/ai-gateway-staging",
+      "observed_head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+      "stage": "staging_deployed",
+      "ci": "success_run_36999999589_verify_including_firestore_emulator",
+      "staging": "success_run_36999999589_deploy_candidate_smoke_promotion_receipt",
+      "providers": [
+        "anthropic",
+        "openai"
+      ],
+      "runtime_routing": "not_enabled",
+      "handoff": "workstreams/system-review-2026-10-02.md",
+      "user_test": "not_performed",
+      "next_action": "Automatische Providerintegration auf Kosten-/Qualitätsgrenzen prüfen; bestehende Functions bleiben separater Pfad."
     }
   ],
   "deployments": [
@@ -291,3 +345,4 @@
     "Production security gates are not all verified."
   ]
 }
+

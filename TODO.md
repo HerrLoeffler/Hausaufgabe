@@ -1,6 +1,6 @@
 # GradeCrew – gemeinsame To-do-Liste
 
-Stand: 01.10.2026. Zentrale Aufgabenübersicht auf **main**. Dies ist keine Live-Freigabe.
+Stand: 02.10.2026. Zentrale Aufgabenübersicht auf **main**. Dies ist keine Live-Freigabe.
 Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und P0, P1, blockierte Aufgaben und zuletzt Erledigtes zusammenfassen. Ohne Zugriff: fehlenden Zugriff nennen und diese Datei anfordern.
 
 ## Pflege durch jeden Arbeitschat
@@ -31,14 +31,14 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 |---|---|---|---|
 | GC-TUTORIAL-02 | Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar | Stand prüfen | Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau. |
 | GC-TUTORIAL-03 | „Ich darf doch du sagen?“ bei der Namensfrage erhalten | Stand prüfen | Aktuellen Text und Regressionsschutz prüfen. |
-| GC-TUTORIAL-04 | Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start | Implementiert auf isoliertem Branch, Tests grün; nicht deployed / Gerätetest offen | Branch `feature/tutorial-choice-replay-v1`, Draft-PR #16: einmalige Einladung statt Zwang, Account-Entscheidung, ×/Escape-Abbruch, Dashboard-Replay und Admin „Tutorial testen“. Testlauf `36935628293` grün. Als Nächstes visuelle Profil-/Geräteabnahme und Staging-only Deploy. [Übergabe](workstreams/tutorial-choice-replay-v1.md) |
+| GC-TUTORIAL-04 | Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start | Auf Staging integriert; aktuelle Geräteabnahme offen | Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe. |
 | GC-ART-01 | Farbklekse und Randpixel an Figuren entfernen | Stand prüfen | Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten. |
 | GC-DESIGN-01 | Dashboard und Testkarten visuell feinjustieren | Implementiert, visuelle Abnahme offen | Design-Chat: bestehende Umsetzung prüfen, keine konkurrierende CSS-Schicht. |
 | GC-DESIGN-02 | Neuer Test, Editor und KI-Erstellung auf gemeinsame Komponenten umstellen | Geplant | Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten. |
 | GC-DIAGNOSTICS-01 | Fehler nachvollziehbar sammeln und Admin-Logs besser filtern | Stand prüfen | Vorhandene Diagnostics/Log-Tools inventarisieren; Referenz-ID, Version, Ablauf, Filter und Sortierung prüfen; keine Antworten oder Zugangsdaten protokollieren. |
 | GC-AI-01 | KI-Qualitätsprüfung, Variantenfehler und fehlerhafte Listeneinträge prüfen | Stand prüfen, frühere Nutzerberichte | Reproduzierbare Fälle am aktuellen Stand sammeln, bestehende Fehlerbehebungen verifizieren. |
-| GC-CREW-AI-01 | Coco, Remy, Emmi und Wilma als gemeinsame KI-Assistenten mit Spracheingabe und API-sparenden Standardantworten | Erstentwurf implementiert, CI grün; nicht deployed / Gerätetest offen | Branch `feature/crew-assistant-v1`, Draft-PR #12: gemeinsamer Crew-Core, lokaler Parser/Antwortkatalog, KI-Fallback, Remy→echtes Testformular und erster Diktierknopf. Head `fce4156`, CI `36927596099` grün. Als Nächstes Staging-/Gerätetest und kontrolliertes STT. [Übergabe](workstreams/crew-assistant.md) |
-| GC-CREW-AI-02 | Emmi direkt im Editor: ganzen Test per Freitext/Sprachwunsch überarbeiten | Implementiert auf Aufbau-Branch, CI grün; nicht deployed / Gerätetest offen | Branch `feature/emmi-whole-test-revision-v1`, Draft-PR #13 auf Crew-Core: Emmi-Editorfeld, ein gebündelter Test-Level-KI-Aufruf, stabile Anzahl/Punkte, Bildschutz, Whole-Test-Undo und kein Auto-Save/Publish. Code-Head `c291314`, CI `36933680142` grün. Als Nächstes Staging-Runtime- und Geräteabnahme. [Übergabe](workstreams/emmi-whole-test-revision.md) |
+| GC-CREW-AI-01 | Coco, Remy, Emmi und Wilma als gemeinsame KI-Assistenten mit Spracheingabe und API-sparenden Standardantworten | Auf Staging integriert; aktuelle Geräteabnahme offen | Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe. |
+| GC-CREW-AI-02 | Emmi direkt im Editor: ganzen Test per Freitext/Sprachwunsch überarbeiten | Auf Staging integriert; aktuelle Geräteabnahme offen | Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe. |
 | GC-IOS-01 | Installierten TestFlight-Build und verwendete Web-URL bestätigen | Offen | iPad-App-Version und Einstellungen prüfen; Web-Deploy nicht mit neuem nativen Build verwechseln. |
 | GC-IOS-02 | Hybride Lehrer-App 0.2 härten und App-Store-tauglich weiterentwickeln | Review/Planung gesichert | Erst robuste WebView-App-Shell: verifizierte Preview als Beta-Quelle, Beta-Leiste entfernen, Navigation/Downloads/Share/Uploads/Diagnose/Tests verbessern; Native Dashboard erst danach gezielt. [Übergabe](workstreams/ios-app-v2.md) |
 | GC-AUTOMATION-01 | Codex-Worker aktivieren und einmal vollständig testen | Blockiert durch Einrichtung | Separater API-Key und Aktivierungsvariable fehlen laut letzter Übergabe; API-Abrechnung beachten. [Einrichtung](docs/AUTOMATION_SETUP.md) |
@@ -60,9 +60,19 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-INTELLIGENCE-01 | Gemeinsame Sprach-/Locale-Verträge und messbare KI-Freigabe | **ci_green**, isoliert, nicht integriert/deployed | PR [#25](https://github.com/HerrLoeffler/Hausaufgabe/pull/25), Code `5af11ca`; 14 Tests und CLI-Syntax in CI grün. [Übergabe](workstreams/quality-routing-contract-v1.md) |
 | GC-VOICE-02 | Vorhandenen Crew-Diktierpfad härten | Vertrag vorbereitet; Anbindung/Gerätetest offen | Formularrevision, Request-Deduplizierung, erlaubte Patches, Vorschau/Undo; Mikrofonabbruch, Negation, Lärm und Siri separat prüfen. Baut auf GC-CREW-AI-01 auf. |
 | GC-AI-EVAL-02 | Fachlich geprüftes Pilot-Referenzset pro Job/Sprache | Offen | Referenzen und unabhängige Stichprobe prüfen, Qualitäts-/Regressionsgrenzen vorab festlegen; echte gepaarte Modellevaluation. Keine 99,99-%-Behauptung aus kleinen Testsets. |
-| GC-AI-ROUTING-02 | Billigere Modelle nur nach belegter Qualität einsetzen | Offline-Gate implementiert; Runtime offen | Vertrauenswürdige Freigabeartefakte, Capability-Prüfung, Budget/Deadline und Rückfallpfad an Gateway anbinden; keine automatische Aktivierung durch Modell/Client. |
+| GC-AI-ROUTING-02 | Automatische Modellwahl nur nach belegter Qualität | **ci_green**, PR #26; Runtime inaktiv | Signierte Auswahl, Budgetreservierung, Deduplizierung und qualifizierter Fallback implementiert; CI `36975168993` einschließlich Firestore-Emulator grün. Code im Gateway enthalten; echte Referenzdaten, Signierbetrieb und Functions-Pilot offen. [Übergabe](workstreams/ai-orchestration-v1.md) |
 | GC-I18N-02 | Vorhandenen i18n-Core fachlich und visuell absichern | Kontext-/Capability-Vertrag vorbereitet; Migration offen | Vier Sprachkontexte getrennt, Pseudolokalisierung, Nicht-DOM-Texte, Zahlen/Bewertung und sprachabhängige Spiele prüfen. Keine zusätzliche Sprache freigegeben. |
-| GC-AI-OBS-02 | Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung | Dokumentiert, nicht instrumentiert | Bestehenden Telemetrie-Collector erweitern: Operation-ID, Versionen, inhaltsfreie Fehler und Kosten pro akzeptiertem Ergebnis inklusive Wiederholung/Review. Adminfilter; keine Audio-/Antwort-/Promptprotokolle. |
+| GC-AI-OBS-02 | Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung | Ledger/Statistik/isoliertes Admin-Widget **ci_green** | PR #26: inhaltsfreie Entscheidungen, Kosten je Modell/Job, unbekannte Kosten und geschätzte API-Ersparnis getrennt. Rollenprüfender Admin-Proxy, Widget-Mount und bestehende Functions noch offen; Remy-Metriken separat bereits deployed. |
+
+## Gesamtprüfung 02.10.2026 – gesicherte Fortsetzung
+
+| ID | Aufgabe | Status | Nächster Schritt |
+|---|---|---|---|
+| GC-HANDOFF-02 | Übergabe-CI und veraltete Aufgabenstände reparieren | Fehlendes Pflichtfeld `automation.agent_dispatch` wiederhergestellt | Run `36994507849` scheiterte nachweislich an KeyError; nach diesem Commit CI erneut prüfen. Teilupdates müssen bestehende Schlüssel erhalten. |
+| GC-GAMES-COST-01 | Doppelte Tutoraufrufe, veralteten Cache und Fehlerbehandlung beheben | **ci_green**, PR #27, nicht deployed | 6 Tests und Games-CI grün; gegen inzwischen v0.6 integrieren. [Übergabe](workstreams/escape-tutor-cost-guards.md) |
+| GC-AI-GATEWAY-03 | Claude/OpenAI-Gateway automatisch auf Staging ausrollen | **staging_deployed** | Run `36999999589` bestätigt Candidate, beide Provider-Smokes, Promotion und Receipt auf `46b21ff4`. Automatisches Routing bleibt gesondert inaktiv. |
+| GC-ARCH-AUDIT-01 | Gesamtaufbau auf Integrationslücken prüfen | In Arbeit; bisheriger Audit gesichert | Design/Sprachparser, Escape-Generator, Modellkosten und Deploy-Grenzen am aktuellen Code prüfen. [Fortsetzung](workstreams/system-review-2026-10-02.md) |
+| GC-ADMIN-SCALE-01 | Admin-Bestandsabfragen begrenzen | Befund aus bisherigem Audit, Umsetzung offen | Unbegrenzte users/quizzes/feedback-Abfragen prüfen und durch Pagination/Aggregate ersetzen. |
 
 ## P2 – vorgemerkt, noch keine laufende Umsetzung
 
@@ -89,3 +99,4 @@ Die Liste sammelt sichtbare Aufträge und bekannte Übergaben. Sie behauptet kei
 GC-TELEMETRY-BASE: gemeinsamer Ereignisvertrag und In-Memory-Puffer standardmäßig deaktiviert; Kennzahlberechnung mit explizitem Nenner; Verhaltenstests. Auf `feature/telemetry-implementation` wurden darauf aufbauend ein fail-closed Staging-Collector, Secure-Join/Submit-Adapter, getrennte Serveroperationsspur, Rundendiagnose, KI-Bestandsauswertung und ein isolierter aktiver Lehrerzeit-Tracker umgesetzt. Stand `4e4f0ba`: Code auf GitHub, 13 zusätzliche isolierte Rekonstruktionstests lokal grün; kein bestätigter Actions-/Deploy-/Gerätenachweis und keine Aktivierung.
 
 GC-TELEMETRY-DESIGN: ausführliche Datenstrategie und Code-Istbestand dokumentiert; Production erhebt durch diese Arbeit keine neue Telemetrie. Siehe docs/telemetry/MEASUREMENT_DESIGN.md, workstreams/telemetry.md und workstreams/telemetry-implementation.md.
+
