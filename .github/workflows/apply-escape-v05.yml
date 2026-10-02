@@ -6,6 +6,7 @@ on:
       - feature/escape-room-mvp-v1
     paths:
       - 'tools/patch-escape-v05.py'
+      - 'tools/patch-escape-v05-fix.py'
       - '.github/workflows/apply-escape-v05.yml'
   workflow_dispatch:
 
@@ -33,7 +34,11 @@ jobs:
           test "$(git rev-parse FETCH_HEAD:assets/gradecrew/penguin-guide.svg)" = "$(git hash-object assets/gradecrew/penguin-guide.svg)"
 
       - name: Apply v0.5 flow patch
-        run: python3 tools/patch-escape-v05.py
+        run: |
+          python3 tools/patch-escape-v05.py
+          python3 tools/patch-escape-v05-fix.py
+          node --check lab/escape-room/escape-coco-ai.js
+          node --check lab/escape-room/escape-teacher-flow.js
 
       - name: Use Node 22
         uses: actions/setup-node@v4
