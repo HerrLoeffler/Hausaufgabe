@@ -55,6 +55,7 @@ const PROTECTED_CONTENT_SELECTORS = Object.freeze([
   "#announcementDialogTitle",
   "#announcementDialogText",
   "#teacherTourAdminList",
+  ".gcCrewMsg.user",
 ]);
 
 function catalogFor(locale = activeLocale) {
@@ -91,7 +92,8 @@ export function registerCatalog(locale, entries = {}) {
   if (!entries || typeof entries !== "object" || Array.isArray(entries)) {
     throw new TypeError("Catalog entries must be an object.");
   }
-  catalogs.set(normalized, Object.freeze({ ...entries }));
+  const existing = catalogs.get(normalized) || {};
+  catalogs.set(normalized, Object.freeze({ ...existing, ...entries }));
 }
 
 export function registerSourcePatterns(locale, entries = []) {
@@ -104,7 +106,8 @@ export function registerSourcePatterns(locale, entries = []) {
     }
     return Object.freeze({ pattern: entry.pattern, replacement: entry.replacement });
   });
-  patternCatalogs.set(normalized, Object.freeze(safe));
+  const existing = patternCatalogs.get(normalized) || [];
+  patternCatalogs.set(normalized, Object.freeze([...existing, ...safe]));
 }
 
 export function getActiveUiLocale() {
