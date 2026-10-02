@@ -27,6 +27,35 @@ test("understands the short spoken class-and-topic phrasing used in staging feed
   assert.equal(patch.difficulty, "leicht");
 });
 
+test("separates the real staging sentence into topic, difficulty and wishes", () => {
+  const patch = parseTestRequest("Gymnasium Mathe 4 Klasse Prozent Thema Prozent einfache Aufgaben vor allem bitte machen");
+  assert.equal(patch.schoolType, "Gymnasium");
+  assert.equal(patch.subject, "Mathematik");
+  assert.equal(patch.grade, "4");
+  assert.equal(patch.topic, "Prozent");
+  assert.equal(patch.difficulty, "leicht");
+  assert.equal(patch.notes, "Vor allem einfache Aufgaben.");
+});
+
+test("keeps pedagogical style wishes out of the topic", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Prozentrechnung viele Alltagsbeispiele und wenig Text");
+  assert.equal(patch.topic, "Prozentrechnung");
+  assert.match(patch.notes, /Viele Alltagsbeispiele/);
+  assert.match(patch.notes, /Wenig Text/);
+});
+
+test("keeps fachlich meaningful topic additions such as Rabatt and Mehrwertsteuer", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Prozent mit Rabatt und Mehrwertsteuer");
+  assert.equal(patch.topic, "Prozent mit Rabatt und Mehrwertsteuer");
+});
+
+test("difficulty progression is a wish instead of a false global difficulty", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Brüche. Die ersten Aufgaben leicht, danach schwerer.");
+  assert.equal(patch.topic, "Brüche");
+  assert.equal(patch.difficulty, undefined);
+  assert.match(patch.notes, /Zuerst leichte Aufgaben/);
+});
+
 test("keeps duration as an explicit request without inventing a form field", () => {
   const patch = parseTestRequest("Mathe Klasse 7 über Brüche, 15 Minuten");
   assert.equal(patch.subject, "Mathematik");
