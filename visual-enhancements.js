@@ -162,9 +162,10 @@ export function startVisualEnhancements() {
       ["Crew-Tour-gc26", "./crew-tour-gc26-story-polish.js?v=2.3.1-gc26-story-clay2"],
       ["Crew-Tour-Responsive", "./crew-tour-responsive.js?v=2.3.1-gc28-mobile"],
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
-      ["Remy-Erstellen", "./remy-ai-help.js?v=2"],
+      ["Remy-Erstellen", "./remy-ai-help.js?v=3"],
       ["Coco-Hilfe", "./crew-assistant-ui.js?v=2"],
       ["Emmi-Gesamttest", "./emmi-whole-test-revision.mjs?v=2"],
+      ["Crew-Statistik", "./crew-statistics-admin.mjs?v=1"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc21"]
