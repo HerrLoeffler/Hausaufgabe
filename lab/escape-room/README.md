@@ -93,9 +93,11 @@ Manuell zu prüfender Freitext bleibt fail-closed: Eine fachlich unsichere autom
 
 ## Automatische Prüfungen
 
-Die Escape-, Tutor-, Adapter- und Builder-Tests prüfen unter anderem:
+Die Escape-, Coco-, Adapter- und Builder-Tests prüfen unter anderem:
 
 - Lehrer-Vorschau und kompakten Editor
+- kanonische Coco-Darstellung statt Emoji-Platzhalter
+- kompakten KI-Generator und 8 Haupt-/8 Transfer-Paarung
 - konkrete Denkhilfe nach dem ersten Fehler
 - **einmal falsch → danach richtig → Transfer erforderlich**
 - vollständige Remediation nach mehreren Fehlversuchen
@@ -106,16 +108,17 @@ Die Escape-, Tutor-, Adapter- und Builder-Tests prüfen unter anderem:
 - vollständigen Lösungsweg und Save/Resume
 - GradeCrew-Test → Escape-Vorbereitung
 
-Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI, Telemetrie-Upload und Lehrer-Auth sind im Lab weiterhin nicht aktiviert.
+Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetrie-Upload sind im Lab weiterhin nicht aktiviert. Der Lehrer-KI-Generator verwendet dagegen bewusst den bestehenden, authentifizierten GradeCrew-Staging-Callable.
 
 ## Bewusste Grenzen
 
-- Lehrer-Vorschau im Lab ist noch nicht authentifiziert; echte Lösungsschlüssel müssen bei der Hauptprodukt-Integration geschützt bleiben.
+- Lehrer-Vorschau im Lab ist noch nicht als eigener geschützter Produktbereich integriert; echte Lösungsschlüssel müssen bei der Hauptprodukt-Integration geschützt bleiben.
 - Noch keine echte Klassen-/Schüler-Anbindung und noch keine Hauptprodukt-Schaltfläche „Als Escape Room spielen“.
 - Keine Live-Runde, kein Highscore und kein Multiplayer für Escape in dieser Iteration.
 - Keine serverseitige Speicherung von Schülerfragen.
 - Prozentrechnung bleibt Referenzinhalt des Prototyps.
-- Echter Desktop-/iPad-/Handy-Gerätetest dieses v0.3-Stands ist weiterhin separat nötig.
+- Echter Desktop-/iPad-/Handy-Gerätetest dieses **v0.4-Stands** ist weiterhin separat nötig.
+- Der echte authentifizierte Klick auf `8 Escape-Aufgaben erstellen` muss nach dem Preview-Deploy einmal mit einem Lehreraccount als E2E geprüft werden; Unit-/Build-Tests ersetzen diesen Backend-E2E-Test nicht.
 
 ## Architektur
 
@@ -125,8 +128,9 @@ Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI, Telemetrie-U
 - `gradecrew-escape-builder.js`: Lehrerprüfung und startfähiges Escape-Paket
 - `app.js`: deterministische Engine, Lernschleife, Anti-Raten, Lehrerbearbeitung
 - `escape-teacher-compact.js`: kompakte GradeCrew-nahe Lehreroberfläche
+- `escape-coco-ai.js`: Coco-Darstellung, kompakter Lehrer-KI-Generator und bestehende GradeCrew-AI-Brücke
 - `styles.css` / `escape-v2.css`: Darstellung und Immersion
 - `tools/build-lab-escape-room.mjs`: isolierter Build mit Manifest/Prüfsummen
 - `tools/games/*.test.cjs`: Regressionstests
 
-Die spätere KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
+Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
