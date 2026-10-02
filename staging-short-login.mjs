@@ -16,12 +16,21 @@ export function resolveAuthIdentifier(value, environment = appEnvironment) {
   return alias ? `${alias}@${STAGING_ALIAS_DOMAIN}` : raw;
 }
 
+function relabelInput(input) {
+  const label = input?.closest("label");
+  if (!label) return;
+  const textNode = [...label.childNodes].find(node => node.nodeType === 3 && node.textContent.trim());
+  if (textNode) textNode.textContent = "E-Mail oder Kurzname";
+}
+
 function installHint(form, input, mode) {
   if (!form || !input || form.querySelector(".stagingShortLoginHint")) return;
-  const hint = document.createElement("p");
+  const doc = form.ownerDocument || input.ownerDocument;
+  if (!doc) return;
+  const hint = doc.createElement("p");
   hint.className = "hint stagingShortLoginHint";
   hint.textContent = mode === "register"
-    ? "STAGING: Für Testkonten reicht ein Kurzname wie „test“. Intern bleibt Firebase Auth unverändert."
+    ? "STAGING: Für Testkonten reicht ein Kurzname wie „test“. Das Passwort legst du einmal selbst fest."
     : "STAGING: E-Mail oder Kurzname wie „test“ eingeben.";
   input.closest("label")?.insertAdjacentElement("afterend", hint);
 }
@@ -34,8 +43,9 @@ function prepareInput(form, input, mode) {
   input.placeholder = mode === "register"
     ? "E-Mail oder Kurzname, z. B. test"
     : "E-Mail oder Kurzname";
-  input.autocomplete = mode === "register" ? "username" : "username";
+  input.autocomplete = "username";
   input.dataset.stagingShortLogin = "1";
+  relabelInput(input);
   installHint(form, input, mode);
 
   form.addEventListener("submit", () => {
