@@ -40,12 +40,16 @@ const root = path.resolve(__dirname, '../..');
       assert.equal(await page.locator('.gcg-advanced').count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-gcg-version')), '0.1.0');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `horizontal overflow at ${width}px`);
-      const second = page.locator('input[name="profile"]').nth(1);
-      await second.check();
-      assert.equal(await second.locator('xpath=ancestor::*[contains(@class,"gcg-choice")]').getAttribute('data-selected'), 'true');
+
+      const profileChoices = page.locator('.gcg-choice').filter({ has: page.locator('input[name="profile"]') });
+      const secondChoice = profileChoices.nth(1);
+      const secondInput = secondChoice.locator('input[name="profile"]');
+      await secondChoice.click();
+      assert.equal(await secondInput.isChecked(), true);
+      assert.equal(await secondChoice.getAttribute('data-selected'), 'true');
     }
     assert.deepEqual(errors, []);
-    console.log('Games Design System browser smoke passed: desktop/tablet/mobile, choices, disclosure and no horizontal overflow.');
+    console.log('Games Design System browser smoke passed: desktop/tablet/mobile, user-clickable choices, disclosure and no horizontal overflow.');
   } finally {
     if (browser) await browser.close();
     if (server) await new Promise(resolve => server.close(resolve));
