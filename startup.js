@@ -64,6 +64,7 @@ if (publicTestCode && !teacherPreview) {
 
   try {
     await import("./app.js?v=2.3.1-gc28");
+    await import("./shared/i18n/assessment-locale-ui.mjs?v=1");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
