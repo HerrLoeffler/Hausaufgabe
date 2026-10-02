@@ -26,6 +26,11 @@ test("archive is reversible and suspends login instead of deleting data", () => 
 });
 
 test("admins cannot accidentally mark an admin as a test account through the UI", () => {
-  assert.match(source, /id="gcToggleTestAccount" \$\{isAdmin \? "disabled" : ""\}/);
+  assert.match(source, /id="gcToggleTestAccount" \$\{isAdmin \|\| isArchived \? "disabled" : ""\}/);
   assert.match(source, /Ein Testkonto kann nicht gleichzeitig Admin sein/);
+});
+
+test("detail controls render idempotently to avoid mutation-observer loops", () => {
+  assert.match(source, /dataset\.signature === signature/);
+  assert.match(source, /existing\?\.remove\(\)/);
 });
