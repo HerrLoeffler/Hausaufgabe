@@ -1,0 +1,40 @@
+name: Games Lab Checks
+
+on:
+  push:
+    branches: [lab/games-structure]
+  pull_request:
+    paths:
+      - 'lab/**'
+      - 'tools/build-lab-*.mjs'
+      - 'tools/games/**'
+      - 'deploy-lab-games-hub.sh'
+      - 'cloud-shell-bootstrap.sh'
+      - '.github/workflows/games-lab-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  games:
+    name: Games structure and browser checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+      - name: Install test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+      - name: Check isolated build
+        run: bash deploy-lab-games-hub.sh --check
+      - name: Test structure and game entry
+        run: npm test --prefix tools/games
+      - name: Install Chromium
+        run: tools/games/node_modules/.bin/playwright install --with-deps chromium
+      - name: Check user flows in browser
+        run: npm run test:browser --prefix tools/games

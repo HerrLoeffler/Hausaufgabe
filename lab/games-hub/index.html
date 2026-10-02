@@ -4,64 +4,58 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f6f7f9">
-  <title>GradeCrew Games</title>
+  <title>GradeCrew Games · Spiel auswählen</title>
+  <meta name="description" content="Fast Quiz, Fehlerjagd Deutsch und Vocab Rush: üben, Highscores spielen oder live mit deiner Klasse starten.">
+  <link rel="icon" href="assets/gradecrew/brand-icon-v1.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="shared/brand-core.css">
+  <script src="shared/games-catalog.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
+  <a class="skipLink" href="#games">Zur Spielauswahl</a>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="GradeCrew Games Startseite"><span class="brandMark">G</span><span><strong>GradeCrew</strong><small>Games</small></span></a>
-    <div class="topMeta"><span>3 Spiele</span><span class="labBadge">GAMES LAB</span></div>
+    <a class="brand" href="./" aria-label="GradeCrew Games Startseite"><img class="brandMark" src="assets/gradecrew/brand-icon-v1.svg" width="40" height="40" alt=""><span><strong>GradeCrew</strong><small>Games</small></span></a>
+    <nav class="topNav" aria-label="Navigation"><a href="#games">Spiele</a><a href="#join">Runde beitreten</a></nav>
+    <span class="labBadge">GAMES LAB</span>
   </header>
-
   <main class="shell">
-    <section class="hero">
-      <p class="eyebrow">GRADECREW GAMES</p>
-      <h1>Drei Spiele.<br>Ein System.</h1>
-      <p>Kurze Lernspiele für Unterricht, Übung und Live-Runden. Die Bedienung bleibt über alle Spiele hinweg vertraut.</p>
-      <div class="modeLegend" aria-label="Spielmodi"><span><b>01</b> Üben</span><span><b>02</b> Highscore</span><span><b>03</b> Live</span></div>
+    <div class="heroLayout">
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">GRADECREW GAMES</p>
+        <h1 id="pageTitle">Dein Spiel.<br>Dein Modus.</h1>
+        <p>Allein trainieren, deinen Highscore verbessern oder gemeinsam mit der Klasse spielen.</p>
+        <a class="textLink" href="#games">Spiel auswählen <span aria-hidden="true">↓</span></a>
+      </section>
+      <section id="join" class="joinCard" aria-labelledby="joinTitle">
+        <p class="eyebrow">DU HAST EINEN RUNDENCODE?</p>
+        <h2 id="joinTitle">Hier bist du richtig.</h2>
+        <p>Wähle das Spiel deiner Klasse und gib den Code ein. Mit dem QR-Code kommst du direkt in die passende Runde.</p>
+        <form id="joinForm">
+          <label for="joinGame">Spiel</label>
+          <select id="joinGame" name="game" required><option value="">Spiel auswählen</option></select>
+          <label for="joinCode">6-stelliger Rundencode</label>
+          <div class="joinRow"><input id="joinCode" name="join" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="[0-9]{6}" maxlength="6" required placeholder="123456" aria-describedby="joinHint"><button class="primary" type="submit">Weiter →</button></div>
+          <small id="joinHint">Dein Kürzel gibst du im nächsten Schritt ein.</small>
+        </form>
+      </section>
+    </div>
+    <section id="games" class="library" aria-labelledby="gamesTitle">
+      <div class="sectionHeading"><div><p class="eyebrow">SPIELAUSWAHL</p><h2 id="gamesTitle">Was möchtest du machen?</h2></div><span id="gameCount" class="countBadge">3 Spiele</span></div>
+      <fieldset class="modePicker"><legend class="srOnly">Spielmodus</legend>
+        <label><input type="radio" name="hub-mode" value="practice" checked><span><b>01</b> Üben</span></label>
+        <label><input type="radio" name="hub-mode" value="highscore"><span><b>02</b> All-Time-Highscore</span></label>
+        <label><input type="radio" name="hub-mode" value="live"><span><b>03</b> Live mit Lehrkraft</span></label>
+      </fieldset>
+      <p id="modeDescription" class="modeDescription">Wähle Inhalte und Regeln für dein eigenes Training.</p>
+      <div class="filterBar"><div id="subjectFilters" class="filterGroup" aria-label="Nach Fach filtern"><button type="button" data-subject="all" aria-pressed="true">Alle Fächer</button></div><div class="filterTools"><button id="favoritesOnly" class="favoriteFilter" type="button" aria-pressed="false"><span aria-hidden="true">☆</span> Favoriten</button><label class="searchLabel"><span class="srOnly">Spiel oder Thema suchen</span><input id="gameSearch" type="search" placeholder="Spiel oder Thema suchen" autocomplete="off"></label></div></div>
+      <div id="gameGrid" class="games"></div>
+      <p id="resultsStatus" class="srOnly" role="status" aria-live="polite"></p>
+      <div id="emptyState" class="emptyState" hidden><h3>Kein passendes Spiel.</h3><p>Ändere deine Suche oder markiere ein Spiel als Favorit.</p><button id="resetFilters" class="secondary" type="button">Alle Spiele anzeigen</button></div>
+      <noscript><style>#joinForm,.modePicker,.filterBar,#modeDescription{display:none}</style><div class="fallback"><p>Öffne dein Spiel und wähle dort Üben, Highscore oder Live mit Lehrkraft:</p><a href="fast-quiz/">Fast Quiz →</a><a href="fehlerjagd-deutsch/">Fehlerjagd Deutsch →</a><a href="vocab-rush/">Vocab Rush →</a></div></noscript>
     </section>
-
-    <section class="games" aria-label="Verfügbare Spiele">
-      <a class="gameCard math" href="fast-quiz/">
-        <div class="gameTop"><span class="gameNumber">01</span><span class="subject">MATHEMATIK</span></div>
-        <div class="gameVisual" aria-hidden="true">
-          <svg viewBox="0 0 96 96" role="img"><circle cx="48" cy="52" r="26"/><path d="M48 24v-8m-10 0h20M48 52l15-10"/><path d="M20 34h14M27 27v14M64 66h14M68 58l8 16"/></svg>
-        </div>
-        <div class="gameCopy"><h2>Fast Quiz</h2><p>Grundrechenarten unter Zeitdruck – von ganzen Zahlen bis zu Brüchen.</p></div>
-        <div class="featureLine"><span>+ − × ÷</span><span>4 Niveaus</span><span>bis 30 live</span></div>
-        <div class="modes"><span>Üben</span><span>Highscore</span><span>Live</span></div>
-        <strong class="open">Fast Quiz öffnen <span>→</span></strong>
-      </a>
-
-      <a class="gameCard german" href="fehlerjagd-deutsch/">
-        <div class="gameTop"><span class="gameNumber">02</span><span class="subject">DEUTSCH</span></div>
-        <div class="gameVisual" aria-hidden="true">
-          <svg viewBox="0 0 96 96" role="img"><path d="M24 18h39a7 7 0 0 1 7 7v45H24z"/><path d="M34 34h25M34 45h18M34 56h22"/><circle cx="64" cy="61" r="13"/><path d="m73 70 10 10M57 61h14"/></svg>
-        </div>
-        <div class="gameCopy"><h2>Fehlerjagd Deutsch</h2><p>Fehler entdecken, Regeln verstehen und Sprache gezielt verbessern.</p></div>
-        <div class="featureLine"><span>Jgst. 5–9</span><span>LehrplanPLUS</span><span>Quali</span></div>
-        <div class="modes"><span>Üben</span><span>Highscore</span><span>Live</span></div>
-        <strong class="open">Fehlerjagd öffnen <span>→</span></strong>
-      </a>
-
-      <a class="gameCard english" href="vocab-rush/">
-        <div class="gameTop"><span class="gameNumber">03</span><span class="subject">ENGLISCH</span></div>
-        <div class="gameVisual" aria-hidden="true">
-          <svg viewBox="0 0 96 96" role="img"><rect x="17" y="24" width="43" height="31" rx="7"/><rect x="36" y="42" width="43" height="31" rx="7"/><path d="M26 36h25M45 54h25M23 67c7 8 17 12 28 12M73 31c-6-7-14-11-24-12"/><path d="m22 67 2 10 9-3M74 31l-2-10-9 3"/></svg>
-        </div>
-        <div class="gameCopy"><h2>Vocab Rush</h2><p>Lehrplan-Englisch oder eigene Vokabelsets lernen, merken und abrufen.</p></div>
-        <div class="featureLine"><span>eigene Sets</span><span>Jgst. 5–9</span><span>KI-Import</span></div>
-        <div class="modes"><span>Üben</span><span>Highscore</span><span>Live</span></div>
-        <strong class="open">Vocab Rush öffnen <span>→</span></strong>
-      </a>
-    </section>
-
-    <section class="testPanel" aria-label="Testbereich">
-      <div><p class="eyebrow">TESTZENTRALE</p><h2>Alle drei parallel prüfen.</h2><p>Öffne die Spiele jeweils in einem eigenen Tab. So lassen sich Üben, Highscore und Live direkt nebeneinander testen.</p></div>
-      <div class="testLinks"><a href="fast-quiz/" target="_blank" rel="noopener">Fast Quiz ↗</a><a href="fehlerjagd-deutsch/" target="_blank" rel="noopener">Fehlerjagd ↗</a><a href="vocab-rush/" target="_blank" rel="noopener">Vocab Rush ↗</a></div>
-    </section>
-
-    <section class="systemCard"><div><p class="eyebrow">EIN SYSTEM</p><h2>Einmal verstanden, überall gleich.</h2></div><p>Üben, Highscore und Live bilden das gemeinsame Grundgerüst. Jedes Spiel darf fachlich anders sein, die Navigation und die wichtigsten Regeln sollen sich aber vertraut anfühlen.</p></section>
+    <section class="howItWorks" aria-labelledby="howTitle"><div><p class="eyebrow">IM UNTERRICHT</p><h2 id="howTitle">Eine Runde, drei Schritte.</h2></div><ol><li><b>1</b><span><strong>Lehrkraft stellt ein</strong>Spiel wählen, „Live mit Lehrkraft“ öffnen und die Runde vorbereiten.</span></li><li><b>2</b><span><strong>Klasse tritt bei</strong>QR-Code scannen oder Spiel und Rundencode eingeben.</span></li><li><b>3</b><span><strong>Gemeinsam starten</strong>Die Lehrkraft startet die Runde und sieht das Live-Scoreboard.</span></li></ol></section>
+    <footer class="footer"><span>GradeCrew Games · 3 Spiele, ein gemeinsamer Einstieg.</span><small>Favoriten bleiben in diesem Browser gespeichert.</small></footer>
   </main>
 </body>
 </html>
