@@ -85,6 +85,7 @@ struct GradeCrewWebView: UIViewRepresentable {
     let reloadID: Int
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
+    var onShowDiagnostics: (() -> Void)? = nil
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         var parent: GradeCrewWebView
@@ -97,6 +98,11 @@ struct GradeCrewWebView: UIViewRepresentable {
             self.parent = parent
             self.lastReloadID = parent.reloadID
             self.lastURL = parent.url
+        }
+
+        @objc func handleDiagnosticsGesture(_ gesture: UILongPressGestureRecognizer) {
+            guard gesture.state == .began else { return }
+            parent.onShowDiagnostics?()
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -123,15 +129,47 @@ struct GradeCrewWebView: UIViewRepresentable {
             parent.errorMessage = error.localizedDescription
         }
 
+        private func openExternallyIfNeeded(_ requestURL: URL, navigationType: WKNavigationType) -> Bool {
+            let userActivated = navigationType == .linkActivated
+            guard GradeCrewNavigationPolicy.shouldOpenExternally(
+                requestURL,
+                selectedBaseURL: parent.url,
+                userActivated: userActivated
+            ) else { return false }
+            UIApplication.shared.open(requestURL)
+            return true
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction,
+            preferences: WKWebpagePreferences,
+            decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void
+        ) {
+            if let requestURL = navigationAction.request.url,
+               openExternallyIfNeeded(requestURL, navigationType: navigationAction.navigationType) {
+                decisionHandler(.cancel, preferences)
+                return
+            }
+            decisionHandler(.allow, preferences)
+        }
+
         // The web app uses confirm() for deleting tests and ending sessions.
         // Every WebKit callback must finish exactly once, including teardown.
-        private func presentDialog(_ alert: UIAlertController, in webView: WKWebView, fallback: @escaping () -> Void) {
-            cancelActiveDialog()
+        private func presenter(for webView: WKWebView) -> UIViewController? {
             var responder: UIResponder? = webView
             while let current = responder, !(current is UIViewController) { responder = current.next }
             guard let presenter = responder as? UIViewController,
-                  presenter.viewIfLoaded?.window != nil,
-                  presenter.presentedViewController == nil else { fallback(); return }
+                  presenter.viewIfLoaded?.window != nil else { return nil }
+            return presenter
+        }
+
+        private func presentDialog(_ alert: UIAlertController, in webView: WKWebView, fallback: @escaping () -> Void) {
+            cancelActiveDialog()
+            guard let presenter = presenter(for: webView), presenter.presentedViewController == nil else {
+                fallback()
+                return
+            }
             cancelDialog = { [weak alert] in alert?.dismiss(animated: false); fallback() }
             presenter.present(alert, animated: true)
         }
@@ -193,7 +231,9 @@ struct GradeCrewWebView: UIViewRepresentable {
                   let requestURL = navigationAction.request.url else {
                 return nil
             }
-            webView.load(URLRequest(url: requestURL))
+            if !openExternallyIfNeeded(requestURL, navigationType: navigationAction.navigationType) {
+                webView.load(URLRequest(url: requestURL))
+            }
             return nil
         }
     }
@@ -217,6 +257,17 @@ struct GradeCrewWebView: UIViewRepresentable {
         webView.scrollView.contentInsetAdjustmentBehavior = .automatic
         webView.isOpaque = false
         webView.backgroundColor = .clear
+
+        if onShowDiagnostics != nil {
+            let gesture = UILongPressGestureRecognizer(
+                target: context.coordinator,
+                action: #selector(Coordinator.handleDiagnosticsGesture(_:))
+            )
+            gesture.minimumPressDuration = 1.0
+            gesture.numberOfTouchesRequired = 2
+            gesture.cancelsTouchesInView = false
+            webView.addGestureRecognizer(gesture)
+        }
         return webView
     }
 
@@ -247,4 +298,3 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
     }
 }
-
