@@ -18,34 +18,37 @@
   },
   "release_train": {
     "id": "staging-batch-2026-10-02-a",
-    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit kontextbezogenen Crew-Assistenten V2, Emmi, Tutorial V2, AI-Kosten-/Memory- und de-DE-i18n-Ergänzungen.",
+    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2, AI-Kosten-/Memory- und de-DE-i18n-Ergänzungen.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+    "observed_integration_head": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
+      "remy-structured-telemetry-v1",
       "emmi-whole-test-revision",
       "tutorial-choice-replay-v1"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
       "German-only i18n boundary ist im aktuellen Integrationsstand enthalten.",
-      "Kontextbezogene Crew-Assistenten V2 ersetzen die gemeinsame Tierauswahl: Coco global, Remy in Test erstellen, Emmi im Editor."
+      "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
+      "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
+      "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends."
     ],
     "gates": {
-      "combined_ci": "success_run_36941486945_attempt_2",
-      "mobile_tutorial": "success_run_36941265518_on_same_v2_product_code_before_test_only_commit",
-      "hosting_preview": "success_run_36941659842_commit_a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging_functions": "success_run_36943129026_commit_a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+      "combined_ci": "success_run_36991807963",
+      "mobile_tutorial": "success_run_36991171202_before_retention_followup_same_product_family",
+      "hosting_preview": "success_run_36991979723_commit_18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "staging_functions": "success_run_36991979742_commit_18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
       "staging_rules": "unchanged",
-      "desktop_ipad_iphone_test": "not_tested_for_contextual_v2",
-      "user_acceptance": "v1_feedback_received_v2_not_tested",
+      "desktop_ipad_iphone_test": "not_tested_for_remy_structured_telemetry",
+      "user_acceptance": "previous_remy_voice_feedback_received_new_structure_and_stats_not_tested",
       "production": "not_requested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 93,
-    "important": "Der aktuelle Kontextual-Crew-V2-Frontendstand ist im Staging-Preview deployed und hash-verifiziert. Der staging-only functions:ai-Workflow wurde Ende-zu-Ende erfolgreich verifiziert: WIF-Authentifizierung, Deploy und anschließende Sichtbarkeitsprüfung von crewAssistant und reviseWholeTest waren erfolgreich. Der gemeinsame Batch ist damit technisch auf Staging deployed; offen ist jetzt Martins Browser-/Geräteabnahme.",
-    "next_action": "Den gemeinsamen Staging-Stand praktisch testen: Coco/Remy-Fallback, Remy-Formularfüllung, Emmis ganzen-Test-Überarbeitung, Tutorial V2 sowie Desktop/iPad/iPhone. Erst nach Martins Prüfung auf user_tested hochstufen."
+    "preview_verified_files": 98,
+    "important": "Der aktuelle Remy-Struktur-/Telemetry-Stand ist im Staging-Preview deployed und hash-verifiziert. Der staging-only functions:ai-Workflow deployte denselben getesteten Integrationscommit erfolgreich. Das Firebase-Deploylog bestätigt die erfolgreiche Neuanlage von recordCrewTelemetry, getCrewTelemetrySummary und cleanupCrewTelemetry sowie die Aktualisierung von crewAssistant und reviseWholeTest. Offen ist Martins praktische Browser-/Admin-Abnahme; Production blieb unverändert.",
+    "next_action": "Im Preview Remy mit dem echten Sprachbeispiel testen, ein von Remy gesetztes Feld bewusst korrigieren und anschließend als Admin Administration -> Übersicht öffnen. Prüfen, ob Sprache/Text, lokale 0-API-Auflösung und Korrektursignal in der neuen Remy-Statistik erscheinen."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -54,37 +57,36 @@
     "changed_by_current_release_train": false
   },
   "automation": {
-    "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "preview_deployment": "verified_hosting_current_contextual_v2",
+    "preview_deployment": "verified_hosting_current_remy_telemetry_batch",
     "staging_ai_functions_deploy": "verified_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 36941659842,
-      "app_ci_run_id": 36941486945,
-      "app_ci_attempt": 2,
-      "mobile_tutorial_run_id": 36941265518,
-      "commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+      "run_id": 36991979723,
+      "app_ci_run_id": 36991807963,
+      "commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "verified_files": 93,
+      "verified_files": 98,
+      "receipt_artifact_id": 11219858253,
       "verification": "Build exact tested branch head, stale-head guard, staging preview deploy and post-deploy manifest/file verification all succeeded.",
       "device_test": "not_performed",
       "date": "2026-10-02"
     },
     "functions_automation_evidence": {
       "workflow": ".github/workflows/staging-functions.yml",
-      "setup_script": "tools/automation/setup-staging-functions-identity.sh",
-      "wif_setup": "completed_by_authenticated_cloud_shell_2026-10-02",
-      "automatic_run_id": 36943129026,
-      "automatic_run_result": "success_deployed_and_verified",
-      "upstream_ci_run_id": 36941486945,
-      "upstream_ci_attempt": 2,
-      "deployed_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "receipt_artifact_id": 11200528486,
-      "receipt_artifact_name": "staging-functions-receipt-a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "verified_functions_target": [
+      "wif_setup": "completed",
+      "automatic_run_id": 36991979742,
+      "automatic_run_result": "success_deployed",
+      "upstream_ci_run_id": 36991807963,
+      "deployed_commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "receipt_artifact_id": 11220305218,
+      "firebase_deploy_log_confirmed_functions": [
         "crewAssistant",
-        "reviseWholeTest"
+        "reviseWholeTest",
+        "recordCrewTelemetry",
+        "getCrewTelemetrySummary",
+        "cleanupCrewTelemetry"
       ],
+      "future_verification_hardening": "PR_32_merged_main_commit_ec5e377f6fab0f72c133b2b60675cbc1f48efc27_requires_all_five_functions_in_future_receipts",
       "production_access": false,
       "hosting_scope": false,
       "firestore_rules_scope": false,
@@ -104,62 +106,81 @@
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+      "observed_head": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
       "stage": "staging_deployed",
-      "ci": "success_run_36941486945_attempt_2",
-      "staging": "hosting_preview_and_required_ai_functions_deployed",
-      "user_test": "contextual_v2_not_tested",
+      "ci": "success_run_36991807963",
+      "staging": "hosting_preview_and_ai_functions_deployed",
+      "user_test": "remy_structured_telemetry_not_tested",
       "handoff": "workstreams/web-app.md",
-      "next_action": "Gemeinsamen Browser-/Gerätetest auf dem aktuellen Preview durchführen."
+      "next_action": "Gemeinsamen Browser-/Admin-Test auf dem aktuellen Preview durchführen."
     },
     {
       "id": "crew-assistant",
       "branch": "feature/crew-assistant-v1",
       "observed_head": "34ddfb2c1bd7b68e7b97d30cef401248fc920bcd",
       "stage": "staging_deployed",
-      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
-      "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "frontend_plus_crewAssistant_verified_run_36943129026",
-      "user_test": "v1_feedback_received_v2_not_tested",
-      "next_action": "Coco/Remy im Preview praktisch testen, einschließlich KI-Fallback."
+      "ci": "combined_web_ci_success_run_36991807963",
+      "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "staging": "frontend_plus_crewAssistant_deployed",
+      "user_test": "previous_feedback_received_current_batch_not_retested",
+      "next_action": "Coco/Remy einschließlich KI-Fallback praktisch testen."
     },
     {
       "id": "contextual-crew-assistants-v2",
       "branch": "fix/contextual-crew-assistants-v2",
       "observed_feature_head": "2a03cd31a69c3802028da5713ddab7d1ce3e2727",
-      "handoff_head_after_status_update": "eeb794b93b28a08c401157d9f097ace09a43393b",
       "stage": "staging_deployed",
       "feature_ci": "success_run_36941146019",
-      "combined_ci": "success_run_36941486945_attempt_2",
-      "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "hosting_hash_verified_plus_ai_functions_verified",
-      "staging_preview_run": 36941659842,
-      "staging_functions_run": 36943129026,
-      "user_test": "v2_not_tested",
+      "combined_ci": "success_run_36991807963",
+      "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "staging": "hosting_hash_verified_plus_ai_functions_deployed",
+      "staging_preview_run": 36991979723,
+      "staging_functions_run": 36991979742,
+      "user_test": "v2_partially_tested_before_latest_structuring",
       "handoff": "workstreams/contextual-crew-assistants-v2.md",
-      "next_action": "Coco-Position, Remy-Formularfüllung, kurze Sprechpausen und KI-Fallback im Preview praktisch prüfen."
+      "next_action": "Coco-Position, Remy-Formularfüllung, Sprechpausen und KI-Fallback im aktuellen Preview prüfen."
+    },
+    {
+      "id": "remy-structured-telemetry-v1",
+      "task_id": "GC-CREW-AI-04",
+      "branch": "feature/remy-structured-telemetry-v1",
+      "feature_ci": "success_run_36991051536",
+      "retention_fix_branch": "fix/crew-telemetry-retention-v1",
+      "retention_fix_ci": "success_run_36991709628",
+      "pull_requests": [30, 31],
+      "stage": "staging_deployed",
+      "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "combined_ci": "success_run_36991807963",
+      "staging_preview_run": 36991979723,
+      "staging_functions_run": 36991979742,
+      "staging": "hosting_hash_verified_and_telemetry_callables_cleanup_deployed",
+      "privacy": "no_audio_no_transcript_no_topic_or_wish_values_no_before_after_values; raw events 30d, pseudonymous user markers 90d, content-free daily aggregates long-lived",
+      "admin_statistics": "included_in_admin_overview",
+      "user_test": "not_performed_after_deploy",
+      "handoff": "workstreams/remy-structured-telemetry-v1.md",
+      "next_action": "Echtes Beispiel prüfen, bewusste Feldkorrektur auslösen und Admin-Statistik auf eingehende Signale testen."
     },
     {
       "id": "emmi-whole-test-revision",
       "branch": "feature/emmi-whole-test-revision-v1",
       "observed_head": "5eee5e574c690138cdeafdcfcb74a49c6ae9d03d",
       "stage": "staging_deployed",
-      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
-      "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "frontend_plus_reviseWholeTest_verified_run_36943129026",
-      "user_test": "v2_not_tested",
-      "next_action": "Emmi im Editor mit einem echten Überarbeitungswunsch im Preview testen."
+      "ci": "combined_web_ci_success_run_36991807963",
+      "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "staging": "frontend_plus_reviseWholeTest_deployed",
+      "user_test": "not_retested_current_batch",
+      "next_action": "Emmi im Editor mit echtem Überarbeitungswunsch testen."
     },
     {
       "id": "tutorial-choice-replay-v1",
       "branch": "feature/tutorial-choice-replay-v1",
       "observed_head": "d8453750be5965113217636478212d83e704174f",
       "stage": "staging_deployed",
-      "ci": "combined_web_ci_success_run_36941486945_attempt_2",
-      "integrated_into": "feature/gradecrew-app-integration@a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "staging": "verified_current_hosting_preview_run_36941659842",
-      "user_test": "not_tested",
-      "next_action": "Profilspeicherung, Abbruch und Replay auf Desktop/iPad/iPhone im gemeinsamen Preview prüfen."
+      "ci": "combined_web_ci_success_run_36991807963",
+      "integrated_into": "feature/gradecrew-app-integration@18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "staging": "verified_current_hosting_preview_run_36991979723",
+      "user_test": "not_retested_current_batch",
+      "next_action": "Profilspeicherung, Abbruch und Replay praktisch prüfen."
     },
     {
       "id": "freetext-review",
@@ -168,17 +189,17 @@
       "stage": "ci_green",
       "staging": "not_deployed",
       "user_test": "not_tested",
-      "next_action": "Rules/Emulator gegen aktuellen Standard prüfen und danach als nächsten Staging-Batch integrieren."
+      "next_action": "Rules/Emulator gegen aktuellen Standard prüfen und danach kontrolliert integrieren."
     },
     {
       "id": "telemetry",
       "branch": "feature/telemetry-implementation",
       "observed_head": "4e4f0ba90a5bbb68e63a8836782289b46fbef21f",
       "stage": "ci_green",
-      "staging": "not_activated",
+      "staging": "generic_telemetry_not_activated; remy_specific_telemetry_is_separate_and_deployed",
       "user_test": "not_tested",
       "evidence": "Assessment/Rules/Functions integration emulator passed on integration/telemetry-emulator-gate@dd722845a1f75feaa0369fde34a1d0dee3c56c52, run 36934351905.",
-      "next_action": "Retention/Dateninventar freigeben und danach kontrollierten Staging-Pilot aktivieren."
+      "next_action": "Generische Telemetrie weiterhin separat behandeln; Remy-Metriken nicht mit diesem älteren Workstream verwechseln."
     },
     {
       "id": "games-escape",
@@ -238,9 +259,10 @@
       "type": "hosting_only",
       "channel": "gradecrew-app-integration",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-      "evidence": "Automatic staging preview run 36941659842",
-      "verified_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "verified_files": 93,
+      "evidence": "Automatic staging preview run 36991979723",
+      "verified_commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "verified_files": 98,
+      "receipt_artifact_id": 11219858253,
       "contains_current_release_train": true,
       "device_test": "not_performed"
     },
@@ -248,20 +270,23 @@
       "environment": "staging",
       "type": "functions:ai",
       "project": "hausaufgabe-staging",
-      "evidence": "Automatic staging AI functions run 36943129026",
-      "verified_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
-      "verified_functions": [
+      "evidence": "Automatic staging AI functions run 36991979742 plus Firebase deploy log",
+      "verified_commit": "18e30d0da1fe49b99b9a786ad634fd8f8fd0d0a7",
+      "deployed_functions_of_interest": [
         "crewAssistant",
-        "reviseWholeTest"
+        "reviseWholeTest",
+        "recordCrewTelemetry",
+        "getCrewTelemetrySummary",
+        "cleanupCrewTelemetry"
       ],
-      "receipt_artifact_id": 11200528486,
+      "receipt_artifact_id": 11220305218,
       "production_changed": false,
       "firestore_rules_changed": false,
       "hosting_changed_by_this_deploy": false
     }
   ],
   "blockers": [
-    "Contextual Crew V2 has not yet been practically re-tested by Martin on the newly verified preview with the AI Functions available.",
+    "Remy structure/telemetry has not yet been practically tested by Martin after the verified hosting + Functions deployment.",
     "30-user test failed; cause not confirmed.",
     "Production security gates are not all verified."
   ]
