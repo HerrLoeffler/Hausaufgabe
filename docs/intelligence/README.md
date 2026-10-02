@@ -1,6 +1,8 @@
 # GradeCrew: Sprache, verlässliche KI und Internationalisierung
 
-Stand: 2026-10-02. Task **GC-INTELLIGENCE-01**. Diese Architektur verbindet vorhandene Bausteine; sie schaltet keine Modelle um und aktiviert keine zusätzlichen Sprachen.
+Stand: 2026-10-02. Task **GC-INTELLIGENCE-01**.
+
+**Fortschreibung:** Der Nutzer hat automatische qualitätsgebundene Modellwechsel ausdrücklich beauftragt. Der ausführbare Router, automatische signierte Veröffentlichung aus geprüfter Evidenz, Budgetgrenzen und Statistik stehen in [AUTOMATIC_ROUTING.md](AUTOMATIC_ROUTING.md). Aussagen unten zur manuellen Runtime-Freigabe beschreiben die frühere Offline-Stufe; eine Bestätigung pro Modellwechsel oder Nutzeranfrage ist nicht vorgesehen. Diese Architektur verbindet vorhandene Bausteine; sie schaltet keine Modelle um und aktiviert keine zusätzlichen Sprachen.
 
 ## Was bereits existiert und was dieser Branch ergänzt
 

@@ -33,11 +33,16 @@ function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
   if (!config) throw new Error('Anthropic config is required');
 
   async function generate(request, { signal } = {}) {
+    const maxTokens = request.max_tokens === undefined ? 512 : request.max_tokens;
+    if (!Number.isSafeInteger(maxTokens) || maxTokens < 1 || maxTokens > 16000) throw new Error('OUTPUT_LIMIT');
+    if (request.temperature !== undefined && (!Number.isFinite(request.temperature) || request.temperature < 0 || request.temperature > 1)) throw new Error('INVALID_TEMPERATURE');
+    const messages = normalizeMessages(request.messages);
+    if (signal?.aborted) throw new Error('CANCELLED');
     const accessToken = await tokenProvider.getAccessToken();
     const body = {
       model: request.model || config.defaultModel,
-      max_tokens: Number(request.max_tokens || 512),
-      messages: normalizeMessages(request.messages),
+      max_tokens: maxTokens,
+      messages,
     };
     if (typeof request.system === 'string' && request.system.trim()) {
       body.system = request.system.trim();
@@ -59,12 +64,9 @@ function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
 
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
-      const requestId = payload && payload.request_id ? ` request_id=${payload.request_id}` : '';
-      const detail = payload && payload.error && payload.error.message
-        ? payload.error.message
-        : response.statusText;
-      throw new Error(`Anthropic Messages API failed: HTTP ${response.status}${requestId}${detail ? ` - ${detail}` : ''}`);
+      const error = new Error('PROVIDER_HTTP_ERROR'); error.status = response.status; throw error;
     }
+    if (!payload || typeof payload !== 'object' || !Array.isArray(payload.content)) throw new Error('INVALID_PROVIDER_RESPONSE');
 
     return {
       provider: 'anthropic',
@@ -73,7 +75,6 @@ function createAnthropicProvider({ fetchImpl = fetch, tokenProvider, config }) {
       text: extractText(payload),
       stop_reason: payload.stop_reason || null,
       usage: payload.usage || null,
-      raw: payload,
     };
   }
 

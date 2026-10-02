@@ -13,6 +13,9 @@ const JOB_KINDS = Object.freeze([
   'image_generation',
   'speech_recognition',
   'text_to_speech',
+  'game_content_generation',
+  'game_hint',
+  'crew_intent',
 ]);
 
 function createProviderRouter({ providers, defaultProvider = null }) {
@@ -46,6 +49,8 @@ function createProviderRouter({ providers, defaultProvider = null }) {
       throw new Error(`Unknown job kind: ${request.job}`);
     }
     const provider = selectProvider(request);
+    const required = ({ image_generation: 'image_generation', speech_recognition: 'speech_recognition', text_to_speech: 'text_to_speech' })[request.job] || 'text';
+    if (!provider.capabilities?.includes(required)) throw new Error('UNSUPPORTED_CAPABILITY');
     return provider.generate(request, options);
   }
 

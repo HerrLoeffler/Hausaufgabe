@@ -39,9 +39,11 @@ async function readJson(req) {
 }
 
 function safeErrorMessage(error) {
-  return String(error && error.message ? error.message : 'request failed')
-    .replace(/sk-ant-[A-Za-z0-9_-]+/g, '<redacted>')
-    .slice(0, 600);
+  const known = new Set(['UNSUPPORTED_CAPABILITY', 'OUTPUT_LIMIT', 'INVALID_TEMPERATURE', 'INVALID_ROUTING_REQUEST',
+    'PROMPT_VERSION_MISMATCH', 'MISSING_VALIDATOR', 'INPUT_LIMIT', 'BUDGET_EXHAUSTED', 'OPERATION_ALREADY_CLAIMED',
+    'OPERATION_ID_CONFLICT', 'DEADLINE_EXCEEDED', 'CANCELLED', 'VALIDATION_FAILED', 'PROVIDER_FAILED', 'NO_QUALIFIED_ROUTE',
+    'UNKNOWN_OR_CHANGED_SCOPE', 'UNTRUSTED_OR_EXPIRED_POLICY', 'INVALID_POLICY_SIGNATURE', 'AUTOMATIC_ROUTING_UNCONFIGURED']);
+  return known.has(error?.message) ? error.message : 'GATEWAY_REQUEST_FAILED';
 }
 
 function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
@@ -59,13 +61,14 @@ function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
 
   return {
     router,
+    providers,
     status: {
       anthropic: anthropicState,
     },
   };
 }
 
-function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
+function createHandler({ fetchImpl = fetch, env = process.env, orchestrator = null, routingSummary = null } = {}) {
   const gateway = buildGateway({ fetchImpl, env });
 
   return async function handler(req, res) {
@@ -88,11 +91,19 @@ function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
       });
     }
 
-    if (req.method === 'POST' && (url.pathname === '/v1/generate' || url.pathname === '/providers/anthropic/test')) {
+    // Cloud Run IAM protects this service. A browser-facing proxy must additionally check GradeCrew admin role.
+    if (req.method === 'GET' && url.pathname === '/v1/routing/statistics') {
+      if (!routingSummary) return sendJson(res, 503, { error: 'AUTOMATIC_ROUTING_UNCONFIGURED', request_id: requestId });
+      try { return sendJson(res, 200, await routingSummary()); }
+      catch { return sendJson(res, 503, { error: 'STATISTICS_UNAVAILABLE', request_id: requestId }); }
+    }
+
+    if (req.method === 'POST' && ['/v1/generate', '/v1/route', '/providers/anthropic/test'].includes(url.pathname)) {
       const startedAt = Date.now();
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       try {
+        if (orchestrator && url.pathname !== '/v1/route') throw new Error('AUTOMATIC_ROUTE_REQUIRED');
         const body = url.pathname === '/providers/anthropic/test'
           ? {
               provider: 'anthropic',
@@ -102,7 +113,10 @@ function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
             }
           : await readJson(req);
 
-        const result = await gateway.router.generate(body, { signal: controller.signal });
+        if (url.pathname === '/v1/route' && !orchestrator) throw new Error('AUTOMATIC_ROUTING_UNCONFIGURED');
+        const result = url.pathname === '/v1/route'
+          ? await orchestrator.generate(body, { signal: controller.signal })
+          : await gateway.router.generate(body, { signal: controller.signal });
         const latencyMs = Date.now() - startedAt;
         console.log(JSON.stringify({
           event: 'ai_gateway_request',
@@ -111,8 +125,8 @@ function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
           model: result.model,
           job: body.job || null,
           latency_ms: latencyMs,
-          input_tokens: result.usage && result.usage.input_tokens || null,
-          output_tokens: result.usage && result.usage.output_tokens || null,
+          input_tokens: result.usage?.input_tokens ?? null,
+          output_tokens: result.usage?.output_tokens ?? null,
         }));
         return sendJson(res, 200, {
           request_id: requestId,
@@ -123,6 +137,7 @@ function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
           text: result.text,
           stop_reason: result.stop_reason,
           usage: result.usage,
+          routing: result.routing || null,
         });
       } catch (error) {
         const latencyMs = Date.now() - startedAt;
@@ -148,7 +163,19 @@ function createHandler({ fetchImpl = fetch, env = process.env } = {}) {
 
 function startServer() {
   const port = Number(process.env.PORT || 8080);
-  const server = http.createServer(createHandler());
+  let automatic = null;
+  if (process.env.GC_AUTOMATIC_ROUTING === 'true') {
+    const { initializeApp, getApps } = require('firebase-admin/app');
+    const { getFirestore } = require('firebase-admin/firestore');
+    const { createAutomaticRuntime } = require('./lib/automatic-runtime');
+    if (process.env.GCLOUD_PROJECT !== 'hausaufgabe-staging') throw new Error('STAGING_PROJECT_REQUIRED');
+    if (!getApps().length) initializeApp({ projectId: 'hausaufgabe-staging' });
+    // Explicit server-owned validator module. A manifest alone cannot provide executable validation code.
+    if (!process.env.GC_ROUTING_VALIDATORS_MODULE) throw new Error('MISSING_VALIDATOR');
+    const validators = require(process.env.GC_ROUTING_VALIDATORS_MODULE);
+    automatic = createAutomaticRuntime({ providers: buildGateway().providers, db: getFirestore(), validators });
+  }
+  const server = http.createServer(createHandler({ orchestrator: automatic?.orchestrator, routingSummary: automatic?.summary }));
   server.listen(port, '0.0.0.0', () => {
     console.log(JSON.stringify({ event: 'ai_gateway_started', service: SERVICE, version: VERSION, port }));
   });
