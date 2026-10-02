@@ -37,6 +37,19 @@ Prüfen, ob GradeCrew Escape als kleines browserbasiertes Indie-Adventure mit st
 - Anti-Raten: nach wiederholtem falschem Code müssen Regal, Computer und Tafel erneut geprüft werden
 - Raum-1-Erfolg mit Lern-/Hinweis-/Zeitstatistik
 
+## Neue verbindliche Games-Regel: individuelle Varianten pro Schüler
+
+Für spätere GradeCrew-Games sollen Schüler in derselben Runde **äquivalente, aber nicht identische Lernaufgaben** bekommen. Das gilt insbesondere für leicht parametrisierbare Aufgaben wie Mathematik.
+
+- gleiches Lernziel und gleiches Niveau;
+- andere Zahlen/Beispiele/Antwortwerte je Schüler bzw. Session;
+- stabiler Seed, damit eine Variante innerhalb der Runde reproduzierbar bleibt;
+- eigener gelöster Lernzustand muss für Fortschritts-Gates maßgeblich sein;
+- bloßes Zurufen einer fremden Lösung oder eines fertigen Codes darf den eigenen Fortschritt nicht ersetzen;
+- wo sinnvoll können zusätzlich Codefragmente/Schlüsselwerte pro Schüler oder Session variiert werden, während Geschichte und Schwierigkeit gleich bleiben.
+
+Die übergreifende Regel ist zusätzlich in `docs/games/LEARNING_GUARDRAILS.md` dokumentiert.
+
 ## Warum der erste Teststand teilweise nicht lösbar war
 
 Martins erster echter Spieltest deckte zwei Probleme auf:
@@ -44,7 +57,16 @@ Martins erster echter Spieltest deckte zwei Probleme auf:
 1. Klick-to-Move zielte bei einigen Objekten auf Koordinaten im Möbel/Kollisionsbereich. Dadurch konnten besonders Schrank/Tafel nicht zuverlässig erreicht werden.
 2. Die Ziffern 4, 7 und 8 waren auffindbar, aber die Reihenfolge `784` war nicht logisch herleitbar.
 
-Beides wurde im aktuellen Stand behoben. Der dunkle Taschenlampen-Zettel ist zugleich ein echtes Explorationsrätsel statt einer bloßen UI-Erklärung.
+Beides wurde im aktuell deployten Stand behoben. Der dunkle Taschenlampen-Zettel ist zugleich ein echtes Explorationsrätsel statt einer bloßen UI-Erklärung.
+
+## Neues Playtest-Feedback vom 03.10.2026
+
+Noch offen und **nicht als behoben markieren**:
+
+1. **Enter im Zahlenfolgen-/Tafeldialog:** Martin musste auf „Prüfen“ klicken. Ursache im aktuellen Code ist nachvollziehbar: der globale Enter-Handler interagiert nur mit dem Raum, wenn kein Dialog offen ist; für `boardInput` existiert noch kein eigener Enter-Submit.
+2. **Lichtdarstellung:** aktuell wird immer ein radialer Helligkeitsbereich um die Spielfigur gezeichnet. Gewünschtes Verhalten: **kein persönlicher Lichtschein vor der Taschenlampe**; erst nach gefundener/aktivierter Taschenlampe soll der gerichtete Lichtkegel erscheinen. Die dunkle Ecke bleibt als Umgebungslicht-/Schattenelement erhalten.
+
+Diese beiden Punkte sind kleine Interaktions-/Rendering-Polishes, aber noch nicht implementiert oder deployed.
 
 ## Verifikation aktuell
 
@@ -70,10 +92,11 @@ Zusätzlich war `Escape review gates` auf dem vorhergehenden Feature-Head `b2eb0
 
 - lokal geändert: n/a (GitHub-direkter Arbeitslauf)
 - auf GitHub gesichert: ja
-- automatisiert getestet: ja, 9/9 + Syntax
-- isolierter Build: ja
-- Staging deployed: ja
-- echter Desktop-Spieltest: erster Stand durch Martin getestet; neuer Lösbarkeits-/Lichtstand noch nicht bestätigt
+- automatisiert getestet: aktuell deployter Produktstand 9/9 + Syntax
+- isolierter Build: aktuell deployter Produktstand ja
+- Staging deployed: ja, Produktstand `9eb9fa4…`
+- später dokumentierte Produktregel/Playtest-Notizen: auf GitHub gesichert, aber kein neuer Produktdeploy
+- echter Desktop-Spieltest: durchgeführt; Lösbarkeit deutlich verbessert, zwei neue Polish-Punkte gefunden (Enter + permanenter Lichtschein)
 - echter iPad-Spieltest: offen
 - echter iPhone-Spieltest: offen
 - in bestehenden Escape integriert: nein, bewusst separater Prototyp
@@ -95,11 +118,15 @@ Aktueller Prototyp nutzt einen neutralen, intern gezeichneten Spielavatar. Näch
 - keine Persistenz
 - noch keine echte GradeCrew-KI-Erstellung in diesem Prototyp
 - keine externe Tutor-KI
-- neuer Licht-/Lösbarkeitsstand noch nicht auf physischen Geräten bestätigt
+- Enter-Submit in Zahlen-/Code-Dialogen noch nicht vollständig umgesetzt
+- permanenter radialer Lichtschein um Figur soll entfernt werden
+- neuer Licht-/Lösbarkeitsstand noch nicht auf physischen Mobilgeräten bestätigt
 
 ## Architekturentscheidung
 
 Erster Prototyp bewusst Canvas 2D ohne externe Runtime-Abhängigkeit. So wird zuerst das Spielgefühl und die Gerätekompatibilität geprüft. Ein späterer Phaser-Port bleibt möglich, wenn mehr Animation, Szenenverwaltung oder Tilemaps den zusätzlichen Framework-Aufwand rechtfertigen.
+
+Für den Ausbau auf mehrere Level/Welten soll die Spiellogik zunehmend **datengetrieben und modular** werden: Szenen, Items, Hotspots, Rätseltypen und Storybeats werden als wiederverwendbare Bausteine definiert. Neue Level sollen dann überwiegend aus Konfiguration + Grafik + Story bestehen und nicht jedes Mal als neues Spiel programmiert werden.
 
 ## Abnahmekriterien
 
@@ -111,7 +138,9 @@ Erster Prototyp bewusst Canvas 2D ohne externe Runtime-Abhängigkeit. So wird zu
 6. Türcode ist logisch herleitbar und Raum ohne Raten lösbar.
 7. Bestehender Point-and-Click-Escape bleibt funktional und unberührt.
 8. Preview nur im Staging-Projekt.
+9. Enter bestätigt Zahlen-/Codeeingaben in den entsprechenden Dialogen.
+10. Ohne aktive Taschenlampe gibt es keinen persönlichen Lichtschein um die Spielfigur.
 
 ## Nächster Schritt
 
-Martin testet den neuen Preview auf Desktop und danach iPad/iPhone. Parallel kann die zentrale Games-Spielerfigur konzipiert werden. Erst nach diesem Feedback entscheiden wir über Laufanimationen/Sprites, weitere Raumgrafik und den Ausbau auf Raum 2/3 bzw. einen späteren Phaser-Port.
+Zuerst Enter-Submit und Lichtdarstellung anhand des neuen Desktop-Feedbacks polieren und automatisiert absichern. Danach Martin erneut Desktop testen lassen und anschließend iPad/iPhone. Parallel kann die zentrale Games-Spielerfigur konzipiert werden. Erst nach diesem Feedback entscheiden wir über Laufanimationen/Sprites, weitere Raumgrafik und den Ausbau auf Raum 2/3 bzw. einen späteren Phaser-Port.
