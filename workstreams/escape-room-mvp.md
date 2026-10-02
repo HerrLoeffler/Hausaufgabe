@@ -1,177 +1,155 @@
 # Aufgabe: GC-GAMES-01
 
-- Aktualisiert (UTC): 2026-10-01
-- Verantwortlicher Chat / Auftrag: Escape-Room-MVP „Die verriegelte Schule“ als lernwirksames Referenzspiel weiterentwickeln
+- Aktualisiert (UTC): 2026-10-02
+- Auftrag: Escape-Room-MVP **„Die verriegelte Schule“** als lernwirksames Referenzspiel fertigstellen
 - Aufgabenbranch: `feature/escape-room-mvp-v1`
 - Draft-PR: `#10` gegen `lab/games-structure`
-- Basiscommit: `869ca416b868667c9e48c05f81c967fe6ad59020` (`lab/games-structure`)
-- Verifizierter aktueller Preview-Stand: Commit `9f0ccac8f77210c939abd5a9f0ccc92991ca2992`, Workflow `36937439109`
+- Basis: `lab/games-structure@869ca416b868667c9e48c05f81c967fe6ad59020`
+- Produktcheckpoint v0.3: `91192bcfd21611a9fd1a6c8ea5711f38704a68c9`
+- letzter verifizierter/deployter v0.3-Stand: `33d0758dc76c6e22fdc4a1b87a738e99395b4a42`
+- verifizierter Preview-Run: `36977730312`
 - Escape-only Preview: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
-- Betroffene Dateien: `lab/escape-room/**`, `tools/build-lab-escape-room.mjs`, `tools/games/**`, Escape-Preview-Workflow und Games-Dokumentation
+- Production: **unverändert**
 
-## Ziel und Produktentscheidung
+## Produktentscheidung
 
-„Die verriegelte Schule“ wird zunächst als **ein einzelnes sauberes Referenzspiel** fertiggestellt. Der gemeinsame Games Hub bleibt bestehen, wird aber während dieser Escape-Iteration nicht automatisch vom Escape-Branch aktualisiert. Erst nach Abnahme wird der Stand wieder in den gemeinsamen Games-Zweig integriert.
+„Die verriegelte Schule“ bleibt zunächst ein einzelnes Referenzspiel. Der gemeinsame Games Hub ist nicht der aktuelle Entwicklungsfokus. Welt 2 und weitere Games erst nach sauberer Referenzwelt und Geräteabnahme.
 
-Verbindliches Lernprinzip: **Spaß motiviert; entscheidender Spielfortschritt wird regelmäßig durch nachgewiesenes Lernen verdient.** Schüler dürfen entdecken und ausprobieren, aber blindes Klicken/Raten darf nicht die schnellste Fortschrittsstrategie sein.
+Verbindliches Lernprinzip:
 
-## Implementiert – Referenzspiel
+> **Spaß motiviert; entscheidender Spielfortschritt wird durch nachgewiesenes Lernen verdient. Blindes Klicken/Raten darf nie die schnellste Strategie sein.**
 
-- drei Räume plus Finale: Klassenzimmer → Flur → Sekretariat → Ausgang
-- acht austauschbare Lernslots
-- vier gezählte Minirätsel: Tafelmuster, Türcode, Spind-Symbolfolge, Schlüsselbrett-Symbolfolge
-- Inventarinteraktion Batterie → Taschenlampe
-- lokales Speichern/Fortsetzen und aktive Spielzeit
-- Preflight der Welt-/Fragedefinition
-- Lehrer-Vorschau mit Route und Lerninhalten
-- lokale `gradecrew:escape-event`-Hooks, aber kein Analytics-Upload
-- Practice-/Üben-Spiel, kein Live/Highscore
-- kleine Explorer-Figur bewegt sich beim Antippen zu Objekten; Point-and-Click bleibt touchfreundlicher Standard
+## Referenzspiel
 
-## Lernschleife / kein Wegklicken
+- 3 Räume + Finale: Klassenzimmer → Flur → Sekretariat → Ausgang
+- 8 austauschbare Lernslots
+- 4 Minirätsel: Tafelmuster, Türcode, Spindfolge, Schlüsselbrettfolge
+- Inventar, Batterie/Taschenlampe, Hauptschlüssel
+- lokale Wiederaufnahme und aktive Spielzeit
+- Preflight
+- kleine Explorer-Figur / Point-and-Click
+- Practice-Spiel, kein Live/Highscore/Multiplayer
+- lokale Events, kein Analytics-Upload
 
-- Jeder Lernslot enthält Lernziel, Hinweis, kurze Erklärung, Remediation, aktive Lernaufgabe und Transferaufgabe.
-- Erste Fehlversuche bleiben normale Wiederholungen.
-- Nach wiederholten Fehlversuchen gibt es **keine automatische Freigabe**.
-- Nach dem dritten Versuch ohne sicheren Lernerfolg: kurze Erklärung → aktive Eingabe/Verarbeitung eines Lerninhalts → neue ähnliche Transferaufgabe.
-- Erst eine erfolgreiche Transferaufgabe schaltet den zugehörigen Spielfortschritt frei.
-- Auch eine erst nach mehreren Auswahlversuchen gefundene richtige Lösung kann weiterhin den Lerncheck auslösen.
-- Remediation-Stufe wird gespeichert; Dialog schließen/neu öffnen umgeht sie nicht.
+## Lernschleife v0.3
 
-## Antwortmodi / GradeCrew-Inhalte
+### Hauptfragen
 
-Die Escape-Runtime und der GradeCrew-Adapter unterstützen aktuell sicher:
+1. **Beim ersten Versuch richtig:** kurze Erklärung, dann Spielfortschritt.
+2. **Erster Fehlversuch:** konkrete fachliche Denkhilfe aus `question.hint`; kein generisches „lies noch einmal“. Auswahlantworten werden neu gemischt.
+3. **Danach richtig:** noch keine Freigabe. Eine neue Transferaufgabe zum selben Lernziel muss erfolgreich gelöst werden.
+4. **Mehrere Fehlversuche:** kurze sachliche Erklärung → aktiver Lernschritt/Merksatz → Transferaufgabe.
+5. Erst erfolgreicher Transfer schaltet Spielfortschritt frei.
 
-- `single` / Auswahl
-- `dropdown`
-- `truefalse`
-- `text`, wenn `manualReview === false` und mindestens eine akzeptierte Antwortvariante existiert
-- `number` mit numerischer Lösung, Toleranz ≥ 0 und optionaler Einheit; Dezimalkomma wird akzeptiert
+Damit kann ein Schüler nicht einfach Antwortmöglichkeiten nacheinander anklicken und beim zufällig richtigen zweiten Versuch sofort weiterkommen.
 
-Manuell zu prüfender Freitext bleibt absichtlich fail-closed und darf keinen automatischen Spielfortschritt auslösen. Komplexe und bildabhängige Aufgaben bleiben gesperrt, solange Escape sie nicht ohne Informationsverlust darstellen/prüfen kann.
+### Rätsel-Anti-Raten
 
-`gradecrew-question-adapter.js` übernimmt keine willkürliche Spiellogik und erfindet keine Distraktoren. Die fachliche Lösung bleibt aus dem GradeCrew-Testvertrag.
-
-## GradeCrew-Vorbereitungsschicht
-
-Neu vorhanden: `gradecrew-escape-builder.js`.
-
-Der Builder bildet den geplanten Hauptprodukt-Workflow ab:
-
-1. GradeCrew-Test bzw. acht explizit ausgewählte Aufgaben übernehmen.
-2. Acht Lernhilfe-/Transferpakete ergänzen.
-3. Adapter-Sicherheitsregeln prüfen.
-4. Escape-Preflight ausführen.
-5. Kompakte Lehrer-Prüfübersicht erzeugen: Route, alle 8 Fragen, Lösungen, Hinweise, Lernziele, Remediation und Transfer.
-6. Erst danach ein startfähiges `launchPayload` erzeugen.
-
-`GradeCrewEscapeBuilder.apply()` übergibt ein geprüftes Paket an `GradeCrewEscapeIntegration.replaceQuestionSet()`.
-
-Noch **nicht** umgesetzt ist die eigentliche Hauptprodukt-Schaltfläche **„Als Escape Room spielen“**. Diese Verdrahtung soll auf dem passenden GradeCrew-Integrationsbranch erfolgen und darf parallele Haupt-App-Arbeit nicht blind überschreiben.
+- Symbolfolgen: nach wiederholtem Raten ursprüngliche Hinweisquelle erneut lesen.
+- Tafelmuster: nach zwei falschen Versuchen schließen und Muster erneut bewusst lesen.
+- Türcode: nach zwei falschen Codes alle drei Quellen erneut prüfen: Regal, Computer, Tafel.
+- Rate-/Review-Zustand wird gespeichert; Dialog schließen umgeht ihn nicht.
 
 ## Remy / AI only when needed
 
 `escape-tutor.js` arbeitet lokal-first:
 
 1. Sitzungscache
-2. fragebezogene bekannte Verständnisfragen (`tutorAnswers`)
-3. generische lokale Hilfewünsche
+2. bekannte fragebezogene Verständnisfragen
+3. generische lokale Hilfe aus Hinweis/Erklärung/Transfer
 4. erst dann optionale externe `GradeCrewTutorBridge`
-5. fachlicher Fallback
+5. lokaler fachlicher Fallback
 
-Generische Fälle benötigen damit keine API:
+Standardfälle wie „Wie fange ich an?“, „Welcher Schritt?“, „Erklär einfacher“, „Hast du ein Beispiel?“ und „Sag mir die Lösung“ brauchen keine API. Eine wirklich individuelle unbekannte Schülerfrage kann später die externe Bridge nutzen. Remy selbst schaltet nie Spielfortschritt frei.
 
-- „Wie fange ich an?“ → vorhandener Hinweis
-- „Welcher Schritt ist wichtig?“ → vorhandener Hinweis
-- „Erklär es einfacher“ → vorhandene Remediation-Erklärung
-- „Hast du ein Beispiel?“ → Transferaufgabe als ähnliches Beispiel, ohne Lösung
-- „Sag mir die Lösung“ → Lösung wird nicht verraten; vorhandener Hinweis wird genutzt
+Die globale Kosten-/Memory-/Misconception-Infrastruktur bleibt eine separate Baustelle. Keine parallele Langzeitspeicherung auf dem Escape-Branch.
 
-Eine wirklich individuelle unbekannte Schülerfrage darf später die externe Bridge nutzen. Dieselbe Frage wird danach im Sitzungscache beantwortet. Hilfe von Remy schaltet **niemals** Spielfortschritt frei; Lernnachweis/Transfer bleiben Pflicht.
+## Antwortmodi / GradeCrew-Inhalte
 
-Die globale langfristige Kosten-/Memory-/Misconception-Infrastruktur wird separat auf `feature/ai-cost-memory-v1` entwickelt. Escape baut dafür bewusst keine parallele dauerhafte Datenspeicherung.
+Sicher unterstützt:
 
-## Anti-Raten bei Rätseln
+- `single`
+- `dropdown`
+- `truefalse`
+- `text`, wenn `manualReview === false` und akzeptierte Antworten vorliegen
+- `number` mit numerischer Lösung, Toleranz ≥ 0 und optionaler Einheit
 
-- Spind- und Schlüsselbrett-Symbolfolgen zählen Fehlversuche und verlangen danach das erneute Lesen ihrer Hinweisquelle.
-- Tafelmuster wird nach zwei falschen Versuchen geschlossen; der Schüler muss das Muster bewusst erneut lesen, bevor ein neuer Versuch möglich ist.
-- Türcode wird nach zwei falschen Codes gesperrt. Vor einem weiteren Versuch müssen **alle drei Codequellen** erneut geprüft werden: Regal, Computer, Tafel.
-- Anti-Raten-Zustand wird gespeichert und lässt sich nicht durch bloßes Schließen/Öffnen umgehen.
+Manuell zu prüfender Freitext bleibt fail-closed und darf niemals automatisch Fortschritt freigeben. Komplexe/bildabhängige Typen bleiben blockiert, bis Escape sie ohne Informationsverlust darstellen kann.
 
-## Lehrer-Inhalte
+## GradeCrew-Vorbereitungsschicht
 
-- Lehrerübersicht zeigt alle acht Lernslots inklusive Lernziel, Lösung, Hinweis, Remediation und Transfer.
-- Auswahlfragen können im Lab direkt bearbeitet werden.
-- Freitext-/Zahlfragen bleiben für die echte Integration im GradeCrew-Testeditor bearbeitbar, damit akzeptierte Varianten, Toleranz und Einheit korrekt erhalten bleiben.
-- Bearbeitete/übernommene Inhalte werden erneut gegen den Preflight-Vertrag geprüft.
-- Echte Lehrer-Auth/Berechtigungen fehlen im Lab weiterhin; Lösungen dürfen bei Produktintegration nicht ungeschützt an Schüler ausgeliefert werden.
+Vorhanden:
 
-## Deployment-Struktur
+- `gradecrew-question-adapter.js`
+- `gradecrew-escape-builder.js`
+- `GradeCrewEscapeIntegration`
 
-- gemeinsamer alter Games-Dev-Hub: vorhanden, aber nicht Fokus dieser Iteration
-- eigener Escape-only Channel: `gradecrew-escape-dev`
-- Firebase-Projekt: `hausaufgabe-staging`
-- aktuelle URL: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
-- Production (`hausaufgabe-40294`) wird nicht angesprochen
-- Functions/Firestore werden nicht durch diesen Workflow deployed
+Geplanter/technisch vorbereiteter Ablauf:
 
-## Verifizierter aktueller Stand
+**GradeCrew-Test → genau 8 geeignete Aufgaben → Lernhilfe-/Transferpakete → Sicherheitsprüfung → Escape-Preflight → Lehrerprüfung → startfähiges Launch-Paket.**
 
-Workflow `36937439109` auf Commit `9f0ccac8f77210c939abd5a9f0ccc92991ca2992`:
+Die Hauptprodukt-Schaltfläche **„Als Escape Room spielen“** ist noch nicht in `feature/gradecrew-app-integration` verdrahtet. Vor dieser Integration dort erneut aktuellen Branch/PR-/Parallelstand prüfen.
 
-- Escape-/Remy-/Adapter-/Builder-Testlauf: **20/20 grün**
-- isolierter Escape-Build: **grün**
-- Firebase-Staging-Credential: **grün**
-- Escape-only Preview-Deploy: **grün**
-- Preview-URL: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
+## Lehreroberfläche v0.3
 
-Geprüft werden unter anderem:
+Der vorherige Lab-Editor zeigte zu viele didaktische Felder gleichzeitig. v0.3 orientiert sich deshalb kompakt am aktuellen GradeCrew-Testeditor:
 
-- Preflight und Lehrer-Vorschau
-- direkte Bearbeitung eines Lernslots
-- verpflichtende Remediation + Transfer
-- Freitextantwortvarianten
-- Zahlantworten mit Dezimalkomma/Toleranz
-- lokaler Remy-Hit / generische Hilfe ohne externen API-Aufruf
-- unbekannte Remy-Frage über Bridge + Sitzungscache
-- Anti-Raten bei Tafel, Türcode und Symbolfolgen
-- kompletter Lösungsweg
-- Save/Resume
-- GradeCrew-Test → Teacher Review → Launch-Payload Builder
-- fail-closed bei manuell zu prüfendem Freitext
+- pro Frage zuerst **Aufgabe + Antworttyp + richtige Lösung**
+- Lernziel, Hinweis, Erklärung, Remediation und Transfer nur über `Lernhilfe & Transfer anzeigen`
+- Bearbeitungsdialog: **Frage + Antworten + richtige Lösung** sofort sichtbar
+- didaktische Zusatzfelder unter `Lernhilfe & Transfer anpassen (optional)` eingeklappt
+- bestehende Validierung/Preflight bleibt erhalten
+- Auswahlfragen im Lab direkt editierbar
+- Freitext/Zahl sollen bei echter Hauptproduktintegration im GradeCrew-Testeditor bearbeitet werden
 
-## Prüfgrenze
+`escape-teacher-compact.js` implementiert diese zusätzliche kompakte UI-Schicht, ohne den Haupt-App-Editor zu duplizieren.
 
-- **Auf GitHub gesichert:** ja
-- **Automatisierte Tests:** ja, aktueller Nachweis 20/20
-- **Escape-only Build:** ja
-- **Staging Preview deployed:** ja
+## Verifikation v0.3
+
+Preview-Run `36977730312` auf Commit `33d0758dc76c6e22fdc4a1b87a738e99395b4a42`:
+
+- Escape-/Remy-/Adapter-/Builder-Tests: **21/21 grün**
+- expliziter Regressionstest: **einmal falsch → danach richtig → Transfer erforderlich**: grün
+- kompakter Lehrereditor: Test grün
+- isolierter Escape-Build: grün
+- Lab-Release-Manifest: `0.3.0`
+- Firebase Credential: grün
+- Escape-only Preview-Deploy: grün
+- URL: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
+
+Nach dem Deploy wurden nur temporäre Patch-/Workflow-Hilfsdateien entfernt und diese Übergabe aktualisiert. Der deployte Produktcode wurde dabei nicht verändert.
+
+## Statusvokabular
+
+- **Produktcode auf GitHub:** ja
+- **automatisiert getestet:** ja, 21/21
+- **isolierter Build:** ja
+- **Escape-only Staging Preview deployed:** ja
+- **am echten Desktop/iPad/Handy bestätigt:** noch nicht dokumentiert
+- **in Haupt-GradeCrew integriert:** nein
 - **Production:** unverändert
-- **echter physischer iPad-/Handy-Gerätetest dieses aktuellen Stands:** noch nicht dokumentiert
-- **echte Hauptprodukt-Verknüpfung „Als Escape Room spielen“:** noch offen
-- **echte externe Tutor-KI:** noch nicht aktiviert
-- **Lehrer-Auth für Lösungen:** noch offen
+- **externe Remy-KI:** noch nicht aktiviert
+- **Lehrer-Auth für Lösungsschlüssel:** noch offen
 
-## Umfang / nicht verändern
+## Nicht verändern / Leitplanken
 
-- Bestehende drei anderen Games und deren Backends nicht funktional verändern.
-- Production nicht aus diesem Aufgabenbranch veröffentlichen.
-- Keine Live-/Highscore-/Multiplayer-Funktion für Escape in dieser Iteration.
-- Kein Telemetrie-Collector und keine dauerhafte serverseitige Speicherung von Schülerfragen ohne separaten Datenvertrag.
-- Lösungsschlüssel bei späterer Hauptprodukt-Integration nicht ungeschützt an Schüler ausliefern.
-- Keine frei von KI erfundene ausführbare Spiellogik. KI liefert ausschließlich validierte Inhaltsdaten.
-- Globale AI-Cost-/Memory-Infrastruktur nicht parallel auf diesem Branch neu bauen; `feature/ai-cost-memory-v1` koordinieren.
+- Production nicht aus diesem Branch deployen.
+- andere Games nicht funktional verändern.
+- keine frei von KI erfundene ausführbare Spiellogik; KI liefert nur validierte Inhaltsdaten.
+- keine dauerhafte Speicherung von Schülerfragen ohne separaten Datenschutz-/Datenvertrag.
+- Lösungsschlüssel bei Hauptproduktintegration nicht ungeschützt an Schüler ausliefern.
+- keine globale AI-Memory-/Kosten-Infrastruktur parallel nachbauen.
 
 ## Nächste Schritte
 
-1. Aktuellen Escape-only Stand auf echtem Desktop/iPad prüfen: Touch, Dialoge, Freitext/Zahl, Remediation, Lehrer-Vorschau und Anti-Raten.
-2. `feature/gradecrew-app-integration` und offene parallele Haupt-App-Arbeit frisch prüfen; dort den Workflow **„Als Escape Room spielen“** verdrahten, ohne gemeinsame Dateien blind zu überschreiben.
-3. Lehrerfluss: 8 Aufgaben auswählen/erzeugen → Lernpakete erzeugen → kompakte Prüfung → Bearbeiten/Neu generieren im GradeCrew-Testeditor → Preflight → Spiel starten.
-4. Lehrer-Vorschau bei echter Integration an Lehrer-Auth/Berechtigungen binden.
-5. Externe Tutor-KI erst über datenschutzkonforme serverseitige Bridge aktivieren; lokale Wissens-/Cache-Stufe bleibt davor.
-6. Später weitere interaktive GradeCrew-Fragetypen nur als echte Escape-Interaktionen ergänzen, nicht künstlich auf Multiple Choice reduzieren.
-7. Welt 2 erst nach stabilem Referenzspiel und Geräteabnahme.
+1. v0.3 auf echtem Desktop und iPad testen: insbesondere falsche Antwort → Denkhilfe → Transfer sowie kompakte Lehrerbearbeitung.
+2. UX-Feedback aus diesem Gerätetest direkt im Escape-Branch korrigieren.
+3. Danach `feature/gradecrew-app-integration`, relevante Feature-/Fix-/Integrationsbranches und offene PRs frisch prüfen.
+4. Hauptprodukt-Fluss **„Als Escape Room spielen“** anbinden: Test erstellen/öffnen → 8 Aufgaben auswählen → Lernpakete vorbereiten → kompakte Lehrerprüfung → Preflight → Spiel starten.
+5. Lehreransicht bei echter Integration an Auth/Berechtigungen binden.
+6. Externe Tutor-KI nur serverseitig/datenschutzkonform anbinden; Local-first bleibt davor.
+7. Welt 2 erst nach stabiler Referenzwelt.
 
-## Wiederaufnahme nach Abbruch
+## Wiederaufnahme
 
-Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, `docs/games/GRADECrew_ESCAPE_ADAPTER.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, offene PRs, parallele Branches, neuesten CI-Lauf und Preview-URL frisch verifizieren. Code, Tests, Deploy und physische Geräteabnahme getrennt berichten.
+Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, `docs/games/GRADECrew_ESCAPE_ADAPTER.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, parallele Branches/PRs, aktuellen CI-Stand und Preview-URL frisch prüfen. Code, GitHub-Sicherung, Tests, Deploy, Gerätetest und Production immer getrennt berichten.
