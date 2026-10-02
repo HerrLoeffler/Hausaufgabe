@@ -26,19 +26,36 @@ function installGradeCrewBrandAssets() {
   const favicon = GRADECREW_ASSETS.brand?.favicon || primary;
   if (!primary) return;
 
-  document.querySelectorAll("[data-gradecrew-brand-mark]").forEach((img) => {
-    if (img instanceof HTMLImageElement) img.src = primary;
+  document.querySelectorAll(".brandMark, [data-gradecrew-brand-mark]").forEach((host) => {
+    if (host instanceof HTMLImageElement) {
+      host.src = primary;
+      host.dataset.gradecrewBrandMark = "1";
+      return;
+    }
+
+    let image = host.querySelector("img[data-gradecrew-brand-mark]");
+    if (!image) {
+      image = document.createElement("img");
+      image.alt = "";
+      image.width = 44;
+      image.height = 44;
+      image.dataset.gradecrewBrandMark = "1";
+      host.appendChild(image);
+    }
+    image.src = primary;
+    host.dataset.gradecrewBrandReady = "1";
   });
 
   if (favicon) {
-    let link = document.querySelector('link[data-gradecrew-favicon="1"]');
+    let link = document.querySelector('link[data-gradecrew-favicon="1"], link[rel~="icon"]');
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
       link.type = "image/svg+xml";
-      link.dataset.gradecrewFavicon = "1";
       document.head.appendChild(link);
     }
+    link.dataset.gradecrewFavicon = "1";
+    link.type = "image/svg+xml";
     link.href = favicon;
   }
 }
