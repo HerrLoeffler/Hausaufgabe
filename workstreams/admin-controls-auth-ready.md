@@ -1,6 +1,6 @@
 # Admin controls auth-ready fix
 
-Stand: 02.10.2026.
+Stand: 02.10.2026. Task-ID: `GC-ADMIN-02`.
 
 ## Auftrag
 
