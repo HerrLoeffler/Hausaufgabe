@@ -5,6 +5,8 @@ import hashlib, json
 ROOT = Path(__file__).resolve().parent
 SHARED = ROOT.parent / 'Shared'
 ASSET_CATALOG = ROOT / 'Resources' / 'Assets.xcassets'
+MARKETING_VERSION = (ROOT / 'VERSION').read_text().strip()
+assert MARKETING_VERSION, 'native/GradeCrewTeacher/VERSION must not be empty.'
 objects = {}
 
 
@@ -85,7 +87,7 @@ for name in ['Debug', 'Release']:
         buildSettings={
             'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew',
             'PRODUCT_NAME': '$(TARGET_NAME)',
-            'MARKETING_VERSION': '0.1.6',
+            'MARKETING_VERSION': MARKETING_VERSION,
             'CURRENT_PROJECT_VERSION': '1',
             'CODE_SIGN_STYLE': 'Automatic',
             'GENERATE_INFOPLIST_FILE': 'YES',
@@ -173,5 +175,4 @@ assert ASSET_CATALOG.is_dir(), 'Run prepare_testflight_assets.py first.'
 assert (ASSET_CATALOG / 'AppIcon.appiconset' / 'AppIcon.png').is_file()
 assert any(source.name == 'GradeCrewTeacherApp.swift' for source in source_paths)
 assert any(source.name == 'GradeCrewDesignTokens.swift' for source in source_paths)
-print(f'GradeCrew Teacher Xcode project generated: {len(source_paths)} shared/native Swift sources + AppIcon assets.')
-
+print(f'GradeCrew Teacher Xcode project generated for {MARKETING_VERSION}: {len(source_paths)} shared/native Swift sources + AppIcon assets.')
