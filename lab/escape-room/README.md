@@ -1,81 +1,110 @@
-# GradeCrew Escape Room – Lern-MVP v0.5
+# GradeCrew Escape Room – Lern-MVP v0.6
 
-Lab-Prototyp für `GC-GAMES-01`. Die erste Welt heißt **„Die verriegelte Schule“** und wird auf `feature/escape-room-mvp-v1` zunächst als einzelnes Referenzspiel fertiggestellt. Erst nach Abnahme wird sie wieder in den gemeinsamen Games-Stand integriert.
+Lab-Prototyp für `GC-GAMES-01`. Die Referenzwelt heißt **„Die verriegelte Schule“** und wird auf `feature/escape-room-mvp-v1` als einzelnes Referenzspiel fertiggestellt. Weitere Welten und die breite Games-Integration folgen erst nach Geräte-/UX-Abnahme.
 
-## Was dieser Stand kann
+## Produktprinzip
 
-- vollständig digitales Escape-Spiel ohne Vorbereitung im Klassenraum
-- drei Räume plus Finale
-- acht austauschbare Lern-Slots
-- Hauptfragen als Auswahl, sicher automatisch prüfbarer Freitext oder Zahl mit Toleranz/Einheit
-- vier Minirätsel: Tafelmuster, Türcode, Spind-Symbolfolge, Schlüsselbrett-Symbolfolge
+**Spaß motiviert; entscheidender Spielfortschritt wird durch nachgewiesenes Lernen verdient. Blindes Klicken/Raten darf nie die schnellste Strategie sein.**
+
+Vorhanden:
+
+- vollständig digital, keine Vorbereitung im Klassenzimmer
+- 3 Räume + Finale: Klassenzimmer → Flur → Sekretariat → Ausgang
+- 8 austauschbare Lernslots
+- 4 Minirätsel: Tafelmuster, Türcode, Spindfolge, Schlüsselbrettfolge
 - Inventar, lokale Wiederaufnahme, aktive Spielzeit und Preflight
-- kleine Coco-Explorer-Figur; Point-and-Click bleibt touchfreundlich
-- lokale `gradecrew:escape-event`-Hooks, aber kein Analytics-Upload
+- Auswahl-, sicher prüfbare Freitext- und Zahlantworten
+- Anti-Raten-Sperren und Transferaufgaben nach Fehlversuchen
+- kompakte Lehrerprüfung vor dem Spielstart
+- Practice-Spiel; noch kein Live/Highscore/Multiplayer
+- lokale Events; kein Analytics-Upload aus dem Lab
 
-## Lernschleife v0.3 – Lernen statt Durchklicken
+## Crew-Rollen
 
-Entscheidender Spielfortschritt darf nicht durch systematisches Raten entstehen.
+Die Rollen folgen dem gemeinsamen GradeCrew-Crew-Vertrag:
 
-- **Beim ersten Versuch richtig:** Aufgabe ist bestanden; kurze Erklärung und Spielfortschritt.
-- **Erster Fehlversuch:** sofort eine konkrete fachliche **Denkhilfe aus dem Aufgaben-Hinweis** statt „lies noch einmal“; Antworten werden bei Auswahlaufgaben neu gemischt.
-- **Danach richtig:** noch kein direkter Spielfortschritt. Eine neue Transferaufgabe zum selben Lernziel muss zeigen, dass das Prinzip verstanden wurde.
-- **Mehrere Fehlversuche:** kurze sachliche Erklärung → aktiver Lernschritt/Merksatz → neue Transferaufgabe.
-- Erst der erfolgreiche Transfer gibt den Spielfortschritt frei.
-- Coco kann Verständnis fördern, schaltet aber niemals selbst Fortschritt frei.
+- **Remy = Erstellen & Ideen**
+- **Coco = Begleitung & Orientierung / Lernhilfe im Spiel**
+- Emmi = Überarbeiten & Prüfen
+- Wilma = Bewerten & Auswerten
 
-Damit lohnt sich blindes Klicken nicht: Wer versteht, ist schneller als jemand, der Antwortmöglichkeiten durchprobiert.
+Escape verwendet deshalb ab v0.6 Remy in der Erstellungskarte und Coco ausschließlich als Explorer-/Hilfefigur im eigentlichen Spiel.
 
-Auch die Minirätsel bleiben gegen Raten gehärtet:
+## Shared Designsystem
 
-- Spind- und Schlüsselbrett-Symbolfolgen verlangen nach wiederholten Fehlversuchen das erneute Lesen ihrer Quelle.
-- Das Tafelmuster wird nach zwei Fehlversuchen geschlossen und verlangt bewusstes erneutes Lesen des Musters.
-- Der Türcode wird nach zwei falschen Codes gesperrt. Vor einem neuen Versuch müssen Regal, Computer und Tafel erneut geprüft werden.
+Es werden keine eigenen Maskottchenvarianten für Escape gepflegt.
 
-Die verbindlichen Leitplanken stehen in `docs/games/LEARNING_GUARDRAILS.md`.
+- Coco: `assets/gradecrew/penguin-guide.svg` aus dem Shared-Designsystem
+- Remy: `assets/gradecrew/elephant-create.svg` und `assets/gradecrew/clay-remy-writing.svg` aus dem Shared-Designsystem
+- `gradecrew-brand.css` und `crew-clay.css` als gemeinsame visuelle Basis
+- Escape-spezifische Styles ergänzen nur Spielspezifika
 
-## Coco und API-Sparen
+Die CI-Prüfung vergleicht die übernommenen Remy-Dateien mit den Git-Objekten des Shared-Design-Branches, damit nicht wieder eine alte Datei nur unter demselben Namen verwendet wird.
 
-`escape-tutor.js` arbeitet nach **AI only when needed**:
+## Lehrer-first Ablauf
 
-1. bekannte Verständnisfragen aus lokalem Wissenskatalog beantworten;
-2. Wiederholungen aus dem Sitzungscache beantworten;
-3. allgemeine Hilfewünsche wie „Wie fange ich an?“, „Erklär einfacher“ oder „Gib mir ein Beispiel“ lokal aus vorhandenen Lerninformationen beantworten;
-4. nur eine wirklich individuelle Verständnisfrage über eine explizite `GradeCrewTutorBridge` an externe KI weiterreichen;
-5. ohne externe Brücke auf die fachliche Erklärung zurückfallen.
+Eine neue Runde startet nicht direkt im Spiel:
 
-Der Lab-MVP sendet standardmäßig keine Schülerfrage an einen Server. Die globale GradeCrew-Kosten-/Memory-Infrastruktur wird separat entwickelt; Escape baut keine parallele Langzeitspeicherung auf.
+**Escape vorbereiten → Lehrerbereich → Aufgaben festlegen/prüfen → Escape mit diesen Aufgaben starten**
 
-## Coco + einfache KI-Aufgabenerstellung
+Damit sieht die Lehrkraft vor dem Start immer zuerst Inhalt, Lösungen, Lernhilfen und Transferaufgaben. Die bestehende Save-/Resume-Logik einer bereits begonnenen Runde bleibt getrennt erhalten.
 
-Die Lehrer-Vorschau hat einen kompakten Generator vorbereitet:
+## Remy-Aufgabenerstellung v0.6
+
+Die Erstellungskarte enthält:
 
 - Fach
 - Klasse
 - Thema
 - Schwierigkeit
-- optional ein eigener Wunsch
-- Aktion **„8 Escape-Aufgaben erstellen“**
+- optionaler eigener Wunsch
+- `🎙 Mit Remy sprechen`
+- Remy-Erstellaktion
 
-Es wird **kein zweites KI-Backend** gebaut. Der vorhandene GradeCrew-Callable `generateTest` bleibt die spätere Quelle. Der eigenständige Preview zeigt bewusst **keine zweite Anmeldung** und versucht auch keinen anonymen Zugriff auf die geschützte KI. Erst die integrierte GradeCrew-Lehreransicht stellt über `GradeCrewEscapeAiBridge` die bereits vorhandene Lehrersitzung bereit; dann wird der Generator aktiv.
+Der echte GradeCrew-Generator bleibt über `GradeCrewEscapeAiBridge.generateTest(...)` vorbereitet. Ein echter Lauf erzeugt weiterhin 16 bildfreie, automatisch prüfbare Aufgaben:
 
-Ein KI-Lauf ist weiterhin als 16 bildfreie, automatisch prüfbare Aufgaben vorbereitet: die ersten 8 Hauptaufgaben und die Aufgaben 9–16 als passende Transferpaare. Nur die 8 Hauptaufgaben erscheinen als Lernslots. Die Transferaufgaben werden in die bestehende Lernschleife eingebaut. Spiellogik und Anti-Raten-Regeln werden niemals von der KI erzeugt.
+- 8 Hauptaufgaben
+- 8 zugeordnete Transferaufgaben
 
-## Kompakte Lehrerprüfung wie in GradeCrew
+Nur die 8 Hauptaufgaben erscheinen als normale Escape-Lernslots. Räume, Rätsel, Inventar, Codes, Progression und Anti-Raten-Regeln bleiben deterministisch und werden niemals von der KI erfunden.
 
-Die Lehrer-Vorschau orientiert sich kompakt am GradeCrew-Testeditor:
+### Standalone-Lab ohne Extra-Anmeldung
 
-- pro Karte zuerst nur **Aufgabe, Antworttyp und richtige Lösung**
-- `Lernhilfe & Transfer anzeigen` ist einklappbar
-- beim Bearbeiten stehen **Frage + Antworten + richtige Lösung** im Vordergrund
-- Lernziel, Hinweis, Lösungserklärung, Remediation, aktiver Lernschritt und Transfer liegen unter **„Lernhilfe & Transfer anpassen (optional)“**
-- die Lehrkraft muss also nicht sieben didaktische Felder anfassen, wenn nur eine Frage oder Antwort geändert werden soll
+Der Lab-Preview enthält bewusst keine zweite Lehrer-Anmeldung und keinen anonym geöffneten KI-Endpunkt.
 
-Für sicher automatisch prüfbare Freitext-/Zahlfragen bleibt der GradeCrew-Testeditor die maßgebliche Bearbeitung, damit Antwortvarianten, Toleranz und Einheit korrekt erhalten bleiben.
+Der Remy-Button ist trotzdem **klickbar**:
+
+- ohne Host-Bridge übernimmt Remy Fach/Klasse/Thema als **ehrliche Vorschauvorbereitung** und lässt die bestehenden Beispielaufgaben unverändert;
+- die UI sagt ausdrücklich, dass dabei keine neuen KI-Aufgaben vorgetäuscht werden;
+- sobald die integrierte GradeCrew-Lehreransicht die geschützte Bridge bereitstellt, führt derselbe Button die echte 8+8-Erstellung aus.
+
+So bleibt der UX-Weg testbar, ohne API-Key im Browser, anonymen KI-Zugriff oder ein zweites Backend zu bauen.
+
+## Sprache / Remy
+
+`escape-remy-voice.js` ergänzt im Lab `🎙 Mit Remy sprechen` als Progressive Enhancement nach dem bereits bestehenden GradeCrew-Diktat-V1-Prinzip:
+
+- nutzt `SpeechRecognition` / `webkitSpeechRecognition`, wenn der Browser es unterstützt
+- gesprochener Text landet sichtbar im Feld **Eigener Wunsch**
+- kein Raw-Audio wird gespeichert
+- bei fehlender Browser-Unterstützung gibt es nur eine lokale Hinweismeldung
+- spätere Produktintegration soll den gemeinsamen Crew-Assistant-/Voice-Vertrag und kontrolliertes STT verwenden; Escape baut kein separates Voice-Backend auf
+
+Der zentrale GradeCrew-Remy kann später ganze natürliche Anweisungen wie Fach, Klasse, Thema und Wünsche strukturiert auswerten. Der Standalone-Escape dupliziert diesen Parser bewusst nicht.
+
+## Lernschleife
+
+1. Beim ersten Versuch richtig → kurze Erklärung + Spielfortschritt.
+2. Erster Fehlversuch → konkrete fachliche Denkhilfe; Auswahlantworten werden neu gemischt.
+3. Danach richtige Hauptantwort → noch kein Fortschritt; passende Transferaufgabe muss gelöst werden.
+4. Mehrere Fehlversuche → Erklärung + aktiver Lernschritt/Merksatz + Transfer.
+5. Erst erfolgreicher Transfer gibt den Spielfortschritt frei.
+
+Auch Minirätsel sind gegen Raten gehärtet: wiederholte falsche Eingaben erzwingen das erneute Lesen der tatsächlichen Hinweisquelle.
 
 ## GradeCrew-Adapter
 
-`gradecrew-question-adapter.js` bildet den geprüften GradeCrew-Fragevertrag auf die acht Escape-Slots ab. Sicher unterstützt sind:
+`gradecrew-question-adapter.js` unterstützt sicher:
 
 - `single`
 - `dropdown`
@@ -83,84 +112,50 @@ Für sicher automatisch prüfbare Freitext-/Zahlfragen bleibt der GradeCrew-Test
 - `text`, wenn `manualReview === false` und akzeptierte Antworten vorhanden sind
 - `number` mit numerischer Lösung, Toleranz ≥ 0 und optionaler Einheit
 
-Manuell zu prüfender Freitext bleibt fail-closed: Eine fachlich unsichere automatische Bewertung darf keinen Spielfortschritt freischalten. Komplexe bzw. bildabhängige Typen bleiben ebenfalls gesperrt, bis sie ohne Informationsverlust dargestellt und geprüft werden können.
-
-`gradecrew-escape-builder.js` bereitet den Ablauf **GradeCrew-Test → 8 Aufgaben → Lernpakete → Lehrerprüfung → Preflight → startfähiges Escape-Paket** vor. Die eigentliche Hauptprodukt-Schaltfläche „Als Escape Room spielen“ ist noch nicht in den parallel entwickelten Haupt-App-Branch verdrahtet.
-
-## v0.5 – gemeinsamer Coco + Lehrer zuerst
-
-- Coco wird **exakt aus dem Shared-GradeCrew-Designsystem übernommen**, statt eine Escape-eigene Pinguinvariante zu pflegen.
-- `penguin-guide.svg` enthält die sechs offiziellen Clay-Posen; Escape verwendet `#pose-1` für Begrüßung, `#pose-4` für Hilfe und `#pose-5` beim Erkunden.
-- `gradecrew-brand.css` und `crew-clay.css` werden im isolierten Build aus der gemeinsamen GradeCrew-Wurzel übernommen. Escape-spezifische Styles ergänzen nur Spielspezifika.
-- Neue Runden starten nicht mehr direkt von der Startseite: **Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape starten**.
-- Der eigenständige Lab-Preview enthält keine E-Mail-/Passwort-Anmeldung mehr.
-- Der geschützte KI-Generator wird im Lab nicht anonym umgangen. Die Generator-UI und der 16-Fragen-Vertrag bleiben vorbereitet; aktiv wird er später über `GradeCrewEscapeAiBridge` mit der bereits angemeldeten GradeCrew-Lehrersitzung.
-- Production bleibt unverändert.
-
-## Automatische Prüfungen
-
-Die Escape-, Coco-, Adapter- und Builder-Tests prüfen unter anderem:
-
-- Lehrer-Vorschau und kompakten Editor
-- exakten Shared-Coco mit sechs Clay-Posen statt alter Escape-Pinguinkopie
-- **Lehrerbereich als einzigem Einstieg für eine neue Runde vor dem Spielstart**
-- **keine Firebase-Login-Abhängigkeit im Standalone-Escape**
-- Generatorvertrag mit 8 Haupt-/8 Transfer-Paarung
-- konkrete Denkhilfe nach dem ersten Fehler
-- **einmal falsch → danach richtig → Transfer erforderlich**
-- vollständige Remediation nach mehreren Fehlversuchen
-- keine Freigabe vor erfolgreichem Transfer
-- Freitext- und Zahlantworten als echte Fortschritts-Gates
-- lokalen Coco-Cache und lokale Standardhilfen ohne API-Aufruf
-- Anti-Raten-Sperren für Tafelmuster, Türcode und Symbolfolgen
-- vollständigen Lösungsweg und Save/Resume
-- GradeCrew-Test → Escape-Vorbereitung
-
-Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetrie-Upload sind im Lab weiterhin nicht aktiviert.
-
-### Verifikation v0.5
-
-Produktcommit: `84e3a71d82c27522c994dd94af297abfafab41ed`.
-
-Automatisierter v0.5-Prüflauf `36990569083`:
-
-- fokussierte Escape-/Coco-/Tutor-/Adapter-/Builder-Tests: **27/27 grün**
-- JavaScript-Syntaxcheck: grün
-- isolierter Escape-Build: **v0.5.0 grün**
-- Shared-Coco-Prüfung: offizielles Asset mit `pose-1` bis `pose-6` vorhanden
-- Standalone-Build enthält bewusst keine `firebase-config.js`
-- Preview-Deploy wird separat über den bestehenden Escape-only Staging-Workflow ausgeführt
-
-## Bewusste Grenzen
-
-- Lehrer-Vorschau im Lab ist noch nicht als eigener geschützter Produktbereich integriert; echte Lösungsschlüssel müssen bei der Hauptprodukt-Integration geschützt bleiben.
-- Noch keine echte Klassen-/Schüler-Anbindung und noch keine Hauptprodukt-Schaltfläche „Als Escape Room spielen“.
-- Keine Live-Runde, kein Highscore und kein Multiplayer für Escape in dieser Iteration.
-- Keine serverseitige Speicherung von Schülerfragen.
-- Prozentrechnung bleibt Referenzinhalt des Prototyps.
-- Echter Desktop-/iPad-/Handy-Gerätetest dieses **v0.5-Stands** ist weiterhin separat nötig.
-- Echte KI-Erstellung wird erst nach Anbindung an die bestehende GradeCrew-Lehrersitzung E2E getestet; im Standalone-Lab gibt es dafür bewusst weder Extra-Login noch anonymen Backend-Zugriff.
+Manuell zu prüfender Freitext und bildabhängige/komplexe Typen bleiben fail-closed, bis sie ohne Informationsverlust und ohne unsichere automatische Freigabe eingebunden werden können.
 
 ## Architektur
 
-- `escape-data.js`: Welt, Lern-Slots, Remediation-/Transferdaten, Preflight
-- `escape-tutor.js`: Local-first-Hilfe, Sitzungscache, optionaler externer Bridge-Vertrag
-- `gradecrew-question-adapter.js`: sicherer GradeCrew-Test → Escape-Lernslot-Adapter
+- `escape-data.js`: Welt, Lernslots, Remediation/Transfer, Preflight
+- `escape-tutor.js`: Coco-Hilfe local-first, Sitzungscache, optionale externe Tutor-Bridge
+- `gradecrew-question-adapter.js`: GradeCrew-Test → sichere Escape-Lernslots
 - `gradecrew-escape-builder.js`: Lehrerprüfung und startfähiges Escape-Paket
 - `app.js`: deterministische Engine, Lernschleife, Anti-Raten, Lehrerbearbeitung
-- `escape-teacher-compact.js`: kompakte GradeCrew-nahe Lehreroberfläche
+- `escape-teacher-compact.js`: kompakte Lehreroberfläche
 - `escape-teacher-flow.js`: Lehrerbereich vor neuem Spielstart
-- `escape-coco-ai.js`: Coco-Darstellung, kompakter Generatorvertrag und GradeCrew-AI-Brücke
-- `gradecrew-brand.css` / `crew-clay.css`: gemeinsam übernommene GradeCrew-Designsprache und Coco-Clay-System
-- `styles.css` / `escape-v2.css`: Escape-spezifische Darstellung und Immersion
-- `tools/build-lab-escape-room.mjs`: isolierter Build mit Manifest/Prüfsummen
+- `escape-coco-ai.js`: Remy-Erstellungskarte, 8+8-Generatorvertrag und Host-AI-Bridge; Coco-Identität im Spiel
+- `escape-remy-voice.js`: Standalone-Diktatadapter ohne Audio-Speicherung
+- `gradecrew-brand.css` / `crew-clay.css`: gemeinsame GradeCrew-Designbasis
+- `styles.css` / `escape-v2.css`: Escape-spezifische Darstellung
+- `tools/build-lab-escape-room.mjs`: isolierter Build mit SHA-256-Manifest
 - `tools/games/*.test.cjs`: Regressionstests
 
-Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.## v0.6 – Remy erstellt, Coco begleitet
+## Verifikation v0.6
 
-- Rollen korrigiert: **Remy** ist für das Erstellen der Escape-Lernaufgaben zuständig; **Coco** bleibt Explorer und Lernhilfe im Spiel.
-- Die Erstellungskarte verwendet das freigegebene Shared-Remy-Artwork statt einer lokalen alten Elefantenkopie.
-- Der Standalone-Lab-Button ist nicht mehr tot. Ohne geschützte GradeCrew-Bridge bereitet Remy die eingegebenen Eckdaten als ehrliche Lab-Vorschau vor; es werden dabei ausdrücklich keine neuen KI-Aufgaben vorgetäuscht.
-- Mit `GradeCrewEscapeAiBridge.generateTest` bleibt derselbe Button für die echte 8+8-Erstellung vorbereitet.
-- `🎙 Mit Remy sprechen` nutzt im Lab die bereits in GradeCrew erprobte Browser-Diktat-V1 als Progressive Enhancement und schreibt den gesprochenen Wunsch nur ins sichtbare Wunschfeld. Audio wird nicht gespeichert.
-- Die spätere Produktintegration soll weiterhin den gemeinsamen Crew-Assistant-/Voice-Vertrag verwenden; kein zweites Voice-Backend im Escape.
+Produktcommit: `649deb8e79470d69042cb40cfb4e107514a58592`.
+
+Automatisierter Prüflauf `36994939830`:
+
+- fokussierte Escape-/Remy-/Coco-/Tutor-/Adapter-/Builder-Tests: **30/30 grün**
+- JavaScript-Syntaxchecks: grün
+- isolierter Escape-Build: **v0.6.0 grün**
+- exaktes Shared-Remy-Artwork: geprüft
+- Remy-Erstellung statt Coco-Erstellung: geprüft
+- Standalone-Remy-Aktion klickbar: geprüft
+- keine vorgetäuschte KI-Erstellung ohne Host-Bridge: geprüft
+- Voice-Control vorhanden und sauberer Fallback ohne Browser-Speech-Support: geprüft
+- Standalone-Build weiterhin ohne `firebase-config.js`: geprüft
+
+Der Escape-only Staging-Deploy wird über den bestehenden Preview-Workflow separat geprüft. Production wird aus diesem Branch nicht verändert.
+
+## Bewusste Grenzen
+
+- echte neue KI-Aufgaben werden im Standalone-Lab ohne authentifizierte Host-Bridge **nicht** erzeugt
+- echte KI-Erstellung über die vorhandene GradeCrew-Lehrersitzung ist noch nicht E2E integriert
+- der volle Remy-Natural-Language-Parser wird nicht im Escape dupliziert; er gehört in den gemeinsamen Crew Assistant
+- noch keine echte Klassen-/Schüler-Anbindung und keine Hauptprodukt-Schaltfläche „Als Escape Room spielen“
+- kein Live/Highscore/Multiplayer in dieser Iteration
+- keine serverseitige Speicherung von Schülerfragen
+- echter Desktop-/iPad-/Handy-Gerätetest von v0.6 ist noch separat nötig
+
+Production bleibt unverändert.
