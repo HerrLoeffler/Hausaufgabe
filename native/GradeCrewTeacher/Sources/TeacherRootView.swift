@@ -13,6 +13,10 @@ struct TeacherRootView: View {
         GradeCrewBetaEnvironment.homeURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
     }
 
+    private var environmentLabel: String {
+        GradeCrewBetaEnvironment.environmentLabel(for: previewPreference)
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             GradeCrewWebView(
@@ -43,6 +47,15 @@ struct TeacherRootView: View {
                         reloadID += 1
                     }
                     .buttonStyle(.borderedProminent)
+                    if environmentLabel != "Staging" {
+                        Button("Normales Staging als Fallback öffnen") {
+                            previewPreference = GradeCrewBetaEnvironment.stablePreference
+                            self.loadError = nil
+                            self.isLoading = true
+                            reloadID += 1
+                        }
+                        .buttonStyle(.bordered)
+                    }
                 }
                 .padding(GradeCrewDesignTokens.Spacing.xl)
                 .frame(maxWidth: 420)
@@ -56,11 +69,11 @@ struct TeacherRootView: View {
         .background(GradeCrewDesignTokens.Colors.background)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             HStack(spacing: 12) {
-                Text("Beta \(GradeCrewAppEnvironment.version) · \(previewPreference.isEmpty ? "Staging" : "Preview")")
+                Text("Beta \(GradeCrewAppEnvironment.version) · \(environmentLabel)")
                     .font(.caption).foregroundStyle(.secondary)
                 Spacer()
                 Button {
-                    pendingPreview = previewPreference
+                    pendingPreview = previewPreference == GradeCrewBetaEnvironment.stablePreference ? "" : previewPreference
                     settingsError = nil
                     showBetaSettings = true
                 } label: { Label("Beta-Einstellungen", systemImage: "gearshape") }
@@ -71,15 +84,26 @@ struct TeacherRootView: View {
             NavigationStack {
                 Form {
                     Section("Aktuell geöffnet") {
-                        Text(homeURL.host ?? "Staging").textSelection(.enabled)
-                        Text("GradeCrew \(GradeCrewAppEnvironment.version)").foregroundStyle(.secondary)
+                        Text(homeURL.host ?? environmentLabel).textSelection(.enabled)
+                        Text("\(environmentLabel) · GradeCrew \(GradeCrewAppEnvironment.version)")
+                            .foregroundStyle(.secondary)
                     }
-                    Section("Staging-Preview") {
-                        Text("Füge die Preview-Adresse aus dem Deploy ein. Du testest dann diese Version direkt in der App. Ein anderer Server benötigt eine eigene Anmeldung.")
+                    Section("Automatischer Integrationsstand") {
+                        Text("TestFlight öffnet standardmäßig den automatisch geprüften GradeCrew-Integrationskanal. Neue Webstände erscheinen dort nach grüner CI und verifiziertem Preview-Deploy, ohne neuen iOS-Build.")
+                        Button("Aktuelle Integration öffnen") {
+                            previewPreference = ""
+                            loadError = nil
+                            isLoading = true
+                            reloadID += 1
+                            showBetaSettings = false
+                        }
+                    }
+                    Section("Andere Staging-Preview") {
+                        Text("Nur für gezielte Tests: eine andere hausaufgabe-staging Preview-Adresse einsetzen. Production-Adressen werden abgewiesen.")
                         TextField("https://hausaufgabe-staging--….web.app", text: $pendingPreview)
                             .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
                         if let settingsError { Text(settingsError).foregroundStyle(.red) }
-                        Button("Preview öffnen") {
+                        Button("Andere Preview öffnen") {
                             guard let url = GradeCrewBetaEnvironment.previewURL(from: pendingPreview) else {
                                 settingsError = "Bitte eine HTTPS-Preview-Adresse von hausaufgabe-staging verwenden."
                                 return
@@ -91,7 +115,7 @@ struct TeacherRootView: View {
                             showBetaSettings = false
                         }
                         Button("Normales Staging öffnen") {
-                            previewPreference = ""
+                            previewPreference = GradeCrewBetaEnvironment.stablePreference
                             loadError = nil
                             isLoading = true
                             reloadID += 1
