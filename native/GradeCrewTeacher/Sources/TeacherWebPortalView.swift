@@ -87,12 +87,14 @@ struct GradeCrewWebView: UIViewRepresentable {
     @Binding var errorMessage: String?
     var onShowDiagnostics: (() -> Void)? = nil
 
-    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
         var parent: GradeCrewWebView
         var didLoadInitialURL = false
         var lastURL: URL
         var lastReloadID: Int
         private var cancelDialog: (() -> Void)?
+        private weak var hostWebView: WKWebView?
+        private var downloadDestinations: [ObjectIdentifier: URL] = [:]
 
         init(parent: GradeCrewWebView) {
             self.parent = parent
@@ -151,7 +153,103 @@ struct GradeCrewWebView: UIViewRepresentable {
                 decisionHandler(.cancel, preferences)
                 return
             }
+            if navigationAction.shouldPerformDownload {
+                decisionHandler(.download, preferences)
+                return
+            }
             decisionHandler(.allow, preferences)
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationResponse: WKNavigationResponse,
+            decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
+        ) {
+            let response = navigationResponse.response
+            let disposition = (response as? HTTPURLResponse)?
+                .value(forHTTPHeaderField: "Content-Disposition")?
+                .lowercased() ?? ""
+            if disposition.contains("attachment") || !navigationResponse.canShowMIMEType {
+                decisionHandler(.download)
+            } else {
+                decisionHandler(.allow)
+            }
+        }
+
+        func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+            hostWebView = webView
+            download.delegate = self
+        }
+
+        func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
+            hostWebView = webView
+            download.delegate = self
+        }
+
+        func download(
+            _ download: WKDownload,
+            decideDestinationUsing response: URLResponse,
+            suggestedFilename: String,
+            completionHandler: @escaping (URL?) -> Void
+        ) {
+            do {
+                let root = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("GradeCrewDownloads", isDirectory: true)
+                    .appendingPathComponent(UUID().uuidString, isDirectory: true)
+                try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+                let filename = GradeCrewNavigationPolicy.safeDownloadFilename(suggestedFilename)
+                let destination = root.appendingPathComponent(filename, isDirectory: false)
+                downloadDestinations[ObjectIdentifier(download)] = destination
+                completionHandler(destination)
+            } catch {
+                completionHandler(nil)
+                presentDownloadError("Der Download konnte nicht vorbereitet werden.")
+            }
+        }
+
+        func downloadDidFinish(_ download: WKDownload) {
+            guard let destination = downloadDestinations.removeValue(forKey: ObjectIdentifier(download)) else { return }
+            guard let webView = hostWebView else {
+                cleanupDownloadedFile(destination)
+                return
+            }
+            presentShareSheet(for: destination, in: webView)
+        }
+
+        func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
+            if let destination = downloadDestinations.removeValue(forKey: ObjectIdentifier(download)) {
+                cleanupDownloadedFile(destination)
+            }
+            presentDownloadError("Der Download ist fehlgeschlagen: \(error.localizedDescription)")
+        }
+
+        private func cleanupDownloadedFile(_ fileURL: URL) {
+            try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent())
+        }
+
+        private func presentShareSheet(for fileURL: URL, in webView: WKWebView) {
+            guard let presenter = topPresenter(for: webView) else {
+                cleanupDownloadedFile(fileURL)
+                return
+            }
+            let share = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+            if let popover = share.popoverPresentationController {
+                popover.sourceView = webView
+                popover.sourceRect = CGRect(x: webView.bounds.midX, y: webView.bounds.midY, width: 1, height: 1)
+                popover.permittedArrowDirections = []
+            }
+            share.completionWithItemsHandler = { [weak self] _, _, _, _ in
+                self?.cleanupDownloadedFile(fileURL)
+            }
+            presenter.present(share, animated: true)
+        }
+
+        private func presentDownloadError(_ message: String) {
+            guard let webView = hostWebView, let presenter = topPresenter(for: webView),
+                  !(presenter is UIAlertController) else { return }
+            let alert = UIAlertController(title: "GradeCrew Download", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            presenter.present(alert, animated: true)
         }
 
         // The web app uses confirm() for deleting tests and ending sessions.
@@ -162,6 +260,12 @@ struct GradeCrewWebView: UIViewRepresentable {
             guard let presenter = responder as? UIViewController,
                   presenter.viewIfLoaded?.window != nil else { return nil }
             return presenter
+        }
+
+        private func topPresenter(for webView: WKWebView) -> UIViewController? {
+            guard var current = presenter(for: webView) else { return nil }
+            while let next = current.presentedViewController { current = next }
+            return current
         }
 
         private func presentDialog(_ alert: UIAlertController, in webView: WKWebView, fallback: @escaping () -> Void) {
@@ -215,6 +319,17 @@ struct GradeCrewWebView: UIViewRepresentable {
             presentDialog(alert, in: webView) { finish(nil) }
         }
 
+        func webView(
+            _ webView: WKWebView,
+            requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+            initiatedByFrame frame: WKFrameInfo,
+            type: WKMediaCaptureType,
+            decisionHandler: @escaping (WKPermissionDecision) -> Void
+        ) {
+            let trusted = GradeCrewNavigationPolicy.isTrustedHost(origin.host, selectedBaseURL: parent.url)
+            decisionHandler(trusted ? .grant : .deny)
+        }
+
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             cancelActiveDialog()
             parent.isLoading = false
@@ -231,7 +346,9 @@ struct GradeCrewWebView: UIViewRepresentable {
                   let requestURL = navigationAction.request.url else {
                 return nil
             }
-            if !openExternallyIfNeeded(requestURL, navigationType: navigationAction.navigationType) {
+            if navigationAction.shouldPerformDownload {
+                webView.load(navigationAction.request)
+            } else if !openExternallyIfNeeded(requestURL, navigationType: navigationAction.navigationType) {
                 webView.load(URLRequest(url: requestURL))
             }
             return nil
