@@ -1,0 +1,83 @@
+name: Apply Escape v0.6 Remy creation and voice
+
+on:
+  push:
+    branches:
+      - feature/escape-room-mvp-v1
+    paths:
+      - 'tools/patch-escape-v06.py'
+      - '.github/workflows/apply-escape-v06.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Escape branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/escape-room-mvp-v1
+          fetch-depth: 0
+
+      - name: Use exact shared GradeCrew Remy artwork
+        run: |
+          git fetch origin feature/shared-gradecrew-design-system --depth=1
+          git show FETCH_HEAD:assets/gradecrew/elephant-create.svg > assets/gradecrew/elephant-create.svg
+          git show FETCH_HEAD:assets/gradecrew/clay-remy-writing.svg > assets/gradecrew/clay-remy-writing.svg
+          test "$(git rev-parse FETCH_HEAD:assets/gradecrew/elephant-create.svg)" = "$(git hash-object assets/gradecrew/elephant-create.svg)"
+          test "$(git rev-parse FETCH_HEAD:assets/gradecrew/clay-remy-writing.svg)" = "$(git hash-object assets/gradecrew/clay-remy-writing.svg)"
+
+      - name: Apply v0.6 Remy and voice patch
+        run: |
+          python3 tools/patch-escape-v06.py
+          node --check lab/escape-room/escape-coco-ai.js
+          node --check lab/escape-room/escape-remy-voice.js
+          node --check lab/escape-room/escape-teacher-flow.js
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+
+      - name: Install game test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+
+      - name: Run focused Escape tests
+        run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
+
+      - name: Verify isolated Escape build
+        run: |
+          BUILD_ROOT="$RUNNER_TEMP/escape-v06"
+          node tools/build-lab-escape-room.mjs "$BUILD_ROOT"
+          test -f "$BUILD_ROOT/public/escape-remy-voice.js"
+          test -f "$BUILD_ROOT/public/assets/gradecrew/clay-remy-writing.svg"
+          grep -q '<view id="pose-6"' "$BUILD_ROOT/public/assets/gradecrew/elephant-create.svg"
+          grep -q 'Aufgaben mit Remy erstellen' "$BUILD_ROOT/public/escape-coco-ai.js"
+          grep -q 'Remy-Vorschau vorbereiten' "$BUILD_ROOT/public/escape-coco-ai.js"
+          test ! -f "$BUILD_ROOT/public/firebase-config.js"
+
+      - name: Commit tested product changes
+        run: |
+          if git diff --quiet; then
+            echo "No product changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            assets/gradecrew/elephant-create.svg \
+            assets/gradecrew/clay-remy-writing.svg \
+            lab/escape-room/index.html \
+            lab/escape-room/escape-coco-ai.js \
+            lab/escape-room/escape-remy-voice.js \
+            lab/escape-room/README.md \
+            tools/build-lab-escape-room.mjs \
+            tools/games/escape-coco-ai.test.cjs
+          git commit -m "Make Remy own Escape creation and add voice preview [escape-v06]"
+          git push origin HEAD:feature/escape-room-mvp-v1
