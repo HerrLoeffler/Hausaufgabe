@@ -8,8 +8,6 @@
     const style = document.createElement('style');
     style.id = 'escapeTeacherCompactStyles';
     style.textContent = `
-      .teacherCompactIntro{margin:.35rem 0 1rem;padding:.8rem 1rem;border-radius:14px;background:#f4f7fb;color:#42526b;font-size:.93rem;line-height:1.45}
-      .teacherCompactIntro strong{color:#172033}
       .teacherQuestion.compactGradecrewCard{padding:1rem 1.05rem;gap:.65rem;border:1px solid #dfe6f1;border-radius:18px;background:#fff;box-shadow:0 6px 18px rgba(26,45,75,.05)}
       .teacherQuestion.compactGradecrewCard .teacherQuestionTop{align-items:flex-start;gap:.75rem}
       .teacherQuestion.compactGradecrewCard .teacherQuestionTop strong{font-size:.83rem;text-transform:uppercase;letter-spacing:.055em;color:#5b6b82}
@@ -32,7 +30,30 @@
       .teacherAdvancedDetails[open]>summary::before{transform:rotate(90deg)}
       .teacherAdvancedBody{display:grid;gap:.85rem;padding:0 1rem 1rem}
       .teacherEditCoreHint{margin:.15rem 0 .9rem;color:#607086;font-size:.9rem;line-height:1.4}
-      @media (max-width:700px){.teacherQuestion.compactGradecrewCard{padding:.85rem}.teacherCompactMeta{align-items:flex-start;flex-direction:column}.teacherSolution{width:100%;box-sizing:border-box}}
+
+      /* Lehrer-first: Remy ist der ruhige Einstieg; Lab-/Statuskarten verschwinden aus dem Kopfbereich. */
+      #teacherDialog .labWarning,#teacherDialog .teacherCompactIntro{display:none!important}
+      #teacherDialog .teacherAiCard{margin:.45rem 0 .8rem!important}
+      #teacherDialog .teacherAiHead{grid-template-columns:70px minmax(0,1fr) auto!important;margin-bottom:.65rem!important}
+      #teacherDialog .teacherAiHead .teacherAiMicHero{align-self:center;white-space:nowrap;min-height:44px}
+      #teacherDialog .teacherAiVoiceRow{margin:.15rem 0 .2rem!important}
+      #teacherDialog .teacherAiVoiceRow .teacherAiMic{display:none!important}
+      #teacherDialog .teacherAiVoiceStatus{font-size:.74rem}
+      #teacherDialog .teacherOverview.teacherOverviewInline{margin:.65rem 0 0;padding:.65rem 0 0;border:0;border-top:1px solid #dce7f8;border-radius:0;background:transparent;box-shadow:none;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+      #teacherDialog .teacherOverview.teacherOverviewInline .eyebrow,#teacherDialog .teacherOverview.teacherOverviewInline p{display:none!important}
+      #teacherDialog .teacherOverview.teacherOverviewInline strong{font-size:.83rem;color:#49617f;font-weight:700}
+      #teacherDialog .teacherOverview.teacherOverviewInline .secondaryButton{padding:.5rem .7rem;font-size:.78rem}
+      #teacherDialog .teacherFlowIntro{margin:.2rem 0 .65rem}
+      #teacherDialog .preflightStatus{margin:.35rem 0 .65rem}
+
+      @media (max-width:700px){
+        .teacherQuestion.compactGradecrewCard{padding:.85rem}
+        .teacherCompactMeta{align-items:flex-start;flex-direction:column}
+        .teacherSolution{width:100%;box-sizing:border-box}
+        #teacherDialog .teacherAiHead{grid-template-columns:58px minmax(0,1fr)!important}
+        #teacherDialog .teacherAiHead .teacherAiMicHero{grid-column:1/-1;width:100%}
+        #teacherDialog .teacherOverview.teacherOverviewInline{align-items:flex-start;flex-direction:column}
+      }
     `;
     document.head.append(style);
   }
@@ -152,20 +173,57 @@
     else form.append(details);
   }
 
-  function addTeacherIntro() {
-    const overview = document.querySelector('#teacherDialog .teacherOverview');
-    if (!overview || document.querySelector('.teacherCompactIntro')) return;
-    const intro = document.createElement('div');
-    intro.className = 'teacherCompactIntro';
-    intro.innerHTML = '<strong>Kurzer Check vor dem Spiel:</strong> Prüfe die 8 Fragen wie in GradeCrew. Standardmäßig siehst du nur Frage und Lösung; Lernhilfen und Transfer kannst du bei Bedarf aufklappen.';
-    overview.insertAdjacentElement('afterend', intro);
+  function simplifyTeacherHeader() {
+    const dialog = $('teacherDialog');
+    const card = $('teacherAiCard');
+    const title = $('teacherTitle');
+    if (!dialog || !card || !title || card.dataset.headerSimplified === 'true') return Boolean(card);
+    card.dataset.headerSimplified = 'true';
+
+    dialog.querySelector('.labWarning')?.remove();
+    dialog.querySelector('.teacherCompactIntro')?.remove();
+
+    title.insertAdjacentElement('afterend', card);
+
+    const flow = dialog.querySelector('.teacherFlowIntro');
+    if (flow) card.insertAdjacentElement('afterend', flow);
+    const preflight = $('preflightStatus');
+    if (preflight && flow) flow.insertAdjacentElement('afterend', preflight);
+
+    const head = card.querySelector('.teacherAiHead');
+    const mic = $('teacherAiRemyMic');
+    if (head && mic) {
+      mic.classList.add('teacherAiMicHero');
+      head.append(mic);
+    }
+
+    const overview = dialog.querySelector('.teacherOverview');
+    if (overview) {
+      overview.classList.add('teacherOverviewInline');
+      const reset = $('teacherResetBtn');
+      if (reset) reset.textContent = 'Zurücksetzen';
+      const fineprint = card.querySelector('.teacherAiFineprint');
+      if (fineprint) fineprint.insertAdjacentElement('beforebegin', overview);
+      else card.append(overview);
+    }
+    return true;
+  }
+
+  function watchForTeacherAiCard() {
+    if (simplifyTeacherHeader()) return;
+    const dialog = $('teacherDialog');
+    if (!dialog) return;
+    const observer = new MutationObserver(() => {
+      if (simplifyTeacherHeader()) observer.disconnect();
+    });
+    observer.observe(dialog, { childList: true, subtree: true });
   }
 
   function enhance() {
     addStyles();
     compactEditDialog();
-    addTeacherIntro();
     compactCards();
+    watchForTeacherAiCard();
   }
 
   window.addEventListener('gradecrew:escape-teacher-rendered', compactCards);
