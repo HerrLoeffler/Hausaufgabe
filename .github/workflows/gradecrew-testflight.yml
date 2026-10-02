@@ -6,11 +6,13 @@ on:
     branches:
       - feature/shared-gradecrew-design-system
       - feature/ios-latest-integration-v1
+      - feature/ios-brand-icon-v1
     paths:
       - .github/workflows/gradecrew-testflight.yml
       - native/GradeCrewTeacher/**
       - native/Shared/**
       - shared/gradecrew-design/**
+      - assets/gradecrew/**
 
 permissions:
   contents: read
@@ -31,7 +33,7 @@ jobs:
       APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       BUNDLE_ID: de.gradecrew
-      MARKETING_VERSION: 0.1.5
+      MARKETING_VERSION: 0.1.6
 
     steps:
       - name: Checkout
