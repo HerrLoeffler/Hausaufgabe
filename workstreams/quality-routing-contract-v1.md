@@ -8,8 +8,9 @@
 - Überschneidungen: Gateway #24, Crew-/Emmi-Code, i18n-Core und Telemetrie bestehen bereits; diese Implementierungen werden nicht ersetzt.
 
 ## Gesicherter Zwischenstand
-Release-Stufe: `branch_only` (lokal geprüft, CI ausstehend).
-Implementiert: strenge Kontext-/Voice-Patch-/Capability-Verträge, Offline-Qualitätsgate mit exakten binomialen Grenzen, CLI und CI. Gemeinsamer Ausbauplan: `docs/intelligence/README.md`.
+Release-Stufe: `ci_green`. Code-Commit: `5af11caa55662b7986f73ae72c535eee853f847c`; Draft-PR [#25](https://github.com/HerrLoeffler/Hausaufgabe/pull/25) gegen Gateway-Branch, nicht integriert.
+GitHub Actions: [Intelligence contracts 36948918111](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36948918111) auf diesem Code-Commit erfolgreich (14 Tests + CLI-Syntax).
+Implementiert: strenge Kontext-/Voice-Patch-/Capability-Verträge, Offline-Qualitätsgate mit exakten binomialen Grenzen, CLI und CI. Gemeinsamer Ausbauplan: [Sprache, KI-Qualität und Internationalisierung](https://github.com/HerrLoeffler/Hausaufgabe/blob/feature/quality-routing-contract-v1/docs/intelligence/README.md).
 Lokale Tests: 14/14 bestanden; CLI-Syntax geprüft. Unabhängiger SciPy-Vergleich der Grenzen für 20 Fälle: maximale absolute Abweichung 1.78e-15. Synthetische Testfälle sind keine Modellqualitätsnachweise.
 Keine Modellumschaltung, API-Aufrufe, neue Datenerfassung oder Deployments durch diesen Arbeitsblock.
 
@@ -21,4 +22,4 @@ Keine Modellumschaltung, API-Aufrufe, neue Datenerfassung oder Deployments durch
 - Dokumentierter Anschluss an vorhandene Crew-, Gateway-, i18n- und Telemetrieschnittstellen.
 
 ## Nächster Schritt
-CI prüfen, Draft-PR gegen Gateway-Branch und gemeinsame Register ergänzen. Danach vorhandenen Crew-Controller an den Patch-Vertrag anbinden und fachlich geprüftes Pilot-Evaluationsset erstellen. Kein Runtime-Routing ohne vertrauenswürdige Freigabeartefakte.
+Vorhandenen Crew-Controller nach Review von PR #25 an den Patch-Vertrag anbinden und fachlich geprüftes Pilot-Evaluationsset erstellen. Kein Runtime-Routing ohne vertrauenswürdige Freigabeartefakte.
