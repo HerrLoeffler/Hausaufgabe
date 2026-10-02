@@ -17,8 +17,9 @@ export function installAiRoutingAdmin({ host, loadSummary }) {
   const table = el('table'); table.style.width = '100%'; const head = el('thead'), hr = el('tr');
   ['Aufgabe / Bereich', 'Modell / Auswahlgrund', 'Ergebnisse / API-Aufrufe', 'API-Kosten / Abdeckung', 'Geschätzte Ersparnis', 'Qualitäts- / Preisbelege'].forEach(t => { const th = el('th', t); th.scope = 'col'; hr.append(th); });
   head.append(hr); const body = el('tbody'); table.append(head, body); wrap.append(table);
-  panel.append(title, note, filter, sort, reload, status, wrap); host.append(panel);
-  let rows = [], disposed = false;
+  const modelDetails = el('details'), modelList = el('ul'); modelDetails.append(el('summary', 'API-Kosten je Modell aufschlüsseln'), modelList);
+  panel.append(title, note, filter, sort, reload, status, wrap, modelDetails); host.append(panel);
+  let rows = [], models = [], disposed = false;
   const money = (value, currency) => value === null ? 'unbekannt' : new Intl.NumberFormat('de-DE', { style: 'currency', currency, maximumFractionDigits: 4 }).format(value / 1000000);
   const reasonLabels = { lowest_forecast_cost_among_qualified: 'günstigste qualifizierte Route laut Vergleich',
     keep_active_cooldown: 'bewährte Route während der Wartefrist', keep_active_switch_margin: 'kein ausreichender Kostenvorteil für einen Wechsel',
@@ -35,12 +36,16 @@ export function installAiRoutingAdmin({ host, loadSummary }) {
       body.append(tr);
     }
     if (!visible.length) { const tr = el('tr'), td = el('td', 'Keine passenden Messdaten vorhanden.'); td.colSpan = 6; tr.append(td); body.append(tr); }
+    modelList.replaceChildren();
+    for (const m of models.filter(m => [m.provider, m.model, m.bucket, ...m.jobs].join(' ').toLocaleLowerCase('de').includes(query))) {
+      modelList.append(el('li', `${m.provider}/${m.model} · ${m.bucket} · ${m.jobs.join(', ')}: ${m.pricedCalls ? money(m.actualMicros, m.currency) : 'unbekannt'}, ${m.calls} API-Aufrufe, ${(m.priceCoverage * 100).toFixed(0)} % bepreist`));
+    }
   }
   filter.addEventListener('input', render); sort.addEventListener('change', render);
   reload.addEventListener('click', async () => {
     reload.disabled = true; status.textContent = 'Wird geladen …';
     try { const summary = await loadSummary(); if (disposed) return;
-      rows = summary.groups || []; render(); status.textContent = summary.truncated ? 'Begrenzter Ausschnitt. Nicht als Gesamtkosten verwenden.' : 'Nur erfasste Gateway-Anfragen; Bestands-KI und Infrastruktur sind nicht enthalten.';
+      rows = summary.groups || []; models = summary.byModel || []; render(); status.textContent = summary.truncated ? 'Begrenzter Ausschnitt. Nicht als Gesamtkosten verwenden.' : 'Nur erfasste Gateway-Anfragen; Bestands-KI und Infrastruktur sind nicht enthalten.';
     } catch { if (!disposed) status.textContent = 'Statistik nicht verfügbar. Anmeldung, Berechtigung und Backend prüfen.'; }
     finally { if (!disposed) reload.disabled = false; }
   });

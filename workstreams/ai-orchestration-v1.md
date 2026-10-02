@@ -12,11 +12,11 @@ Automatische qualitätsgebundene Modellwechsel sind ausdrücklich gewünscht. Ke
 - Separate begrenzte Evaluationsplanung; Publisher prüft Offline-Evidenz erneut und signiert. Keine bezahlten Tests in CI.
 - Inhaltsfreie Entscheidungsbelege und Statistik-Endpoint; filter-/sortierbare Admin-Komponente mit echten Auswahlgründen, Beleg-IDs, Kostenabdeckung und klar geschätzter API-Ersparnis.
 - Gateway-Härtung: sichere Fehlercodes, Token-/Temperature-Grenzen, WIF-Deadline und reale Tokenlaufzeit, kein Rohpayload. Transitive uuid-Advisories durch kompatiblen Override entfernt; npm audit meldet 0.
-- Separater Games-Fix [#27](https://github.com/HerrLoeffler/Hausaufgabe/pull/27) auf `fix/escape-tutor-cost-guards@c619568900ab620d220654c2488ee6160e5873d7`: 5 Tests und Games-Lab-CI grün; nicht deployed.
+- Separater Games-Fix [#27](https://github.com/HerrLoeffler/Hausaufgabe/pull/27) auf `fix/escape-tutor-cost-guards@a521ec905c09793441a301c0304881a2fe9ab27e`: 6 Tests lokal grün; erster Fix in Games-Lab-CI grün; nicht deployed.
 
 ## Prüfungen
-Lokal auf aktuellem Code: 24 Gatewaytests, 14 Qualitätsverträge, 5 Evaluations-/Adminansichttests grün; Syntax geprüft. 127 bestehende unveränderte KI-Functions-Tests grün. npm audit des Gateways: 0 bekannte Findings.
-Zwischencommit `4904c2bccc2ae6fd13fc4ec63f985a5c0bc9f316`: CI `36973773278` komplett erfolgreich einschließlich echtem Firestore-Emulator (Parallelität, Budgetkontinuität, idempotentes Settlement, Evaluationstrennung). Nach letzten Verbesserungen neuer exakter CI-Nachweis ausstehend. Lokal blockierte Java <21 den Emulator, CI verwendet Java 21.
+Lokal auf aktuellem Code: 25 Gatewaytests, 14 Qualitätsverträge, 5 Evaluations-/Adminansichttests grün; Syntax geprüft. 127 bestehende unveränderte KI-Functions-Tests grün. npm audit des Gateways: 0 bekannte Findings.
+Zwischencommit `4904c2bccc2ae6fd13fc4ec63f985a5c0bc9f316`: CI `36973773278` komplett erfolgreich einschließlich echtem Firestore-Emulator (Parallelität, Budgetkontinuität, idempotentes Settlement, Evaluationstrennung). Nach Kosten-/Abhängigkeitshärtung Commit `79a646d7d7db3b7061a33653dc2ba5bec0e287aa` in CI `36974823616` ebenfalls komplett erfolgreich. Letzter Nachtrag ergänzt Kostenaufschlüsselung je Modell; exakter CI-Nachweis folgt. Lokal blockierte Java <21 den Emulator, CI verwendet Java 21.
 Release-Stufe vor Abschlussprüfung: branch_only für den letzten Nachtrag; vorheriger Code CI-grün. Nicht integriert, nicht deployed, kein Gerätetest, keine neue Erhebung oder Modellumschaltung aktiviert.
 
 ## Noch erforderlich

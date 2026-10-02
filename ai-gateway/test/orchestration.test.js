@@ -147,6 +147,14 @@ test('missing token usage is unknown; cached input is billed separately; zero re
   assert.equal(priceUsage('anthropic', { input_tokens: 10, output_tokens: 10, cache_read_input_tokens: 100 }, p), 40);
   assert.equal(priceUsage('anthropic', { input_tokens: 10, output_tokens: 10, cache_creation_input_tokens: 10 }, p), null);
 });
+test('model cost breakdown allocates every fallback attempt to the model that actually incurred it', () => {
+  const summary = summarizeRouting([{ currency: 'USD', bucket: 'production', profileId: 'hint', job: 'game_hint',
+    attempts: [{ provider: 'p', model: 'small', routeId: 'r1', costMicros: 10 }, { provider: 'p', model: 'large', routeId: 'r2', costMicros: 30 }],
+    reservedMicros: 100, actualMicros: 40, costKnown: true, outcome: 'accepted' }]);
+  assert.equal(summary.byModel.find(m => m.model === 'small').actualMicros, 10);
+  assert.equal(summary.byModel.find(m => m.model === 'large').actualMicros, 30);
+  assert.equal(summary.groups[0].actualMicros, 40);
+});
 test('provider capability mismatch fails without an API call', async () => {
   let called = false; const router = createProviderRouter({ providers: [{ id: 'p', capabilities: ['text'], generate: () => { called = true; } }] });
   await assert.rejects(router.generate({ provider: 'p', job: 'speech_recognition' }), /UNSUPPORTED_CAPABILITY/); assert.equal(called, false);
