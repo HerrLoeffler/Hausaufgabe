@@ -57,8 +57,9 @@ jobs:
             exit 1
           }
           grep -q '"codebase": "ai"' firebase.json
-          grep -q 'crewAssistant' functions/main.js
-          grep -q 'reviseWholeTest' functions/main.js
+          for required in crewAssistant reviseWholeTest recordCrewTelemetry getCrewTelemetrySummary cleanupCrewTelemetry; do
+            grep -q "$required" functions/main.js || { echo "Missing required export in source: $required"; exit 1; }
+          done
           ! grep -q 'hausaufgabe-40294' firebase.json
 
       - name: Re-run AI Functions tests before cloud authentication
@@ -84,7 +85,7 @@ jobs:
             --only functions:ai \
             --non-interactive
 
-      - name: Verify Crew and Emmi Functions are visible in staging
+      - name: Verify Crew, Emmi and telemetry Functions are visible in staging
         run: |
           "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" functions:list \
             --project "$PROJECT_ID" --json > "$RUNNER_TEMP/functions.json"
@@ -94,7 +95,14 @@ jobs:
           const payload = JSON.parse(fs.readFileSync(path, 'utf8'));
           const rows = Array.isArray(payload) ? payload : payload.result || payload.functions || [];
           const text = JSON.stringify(rows);
-          for (const required of ['crewAssistant', 'reviseWholeTest']) {
+          const requiredFunctions = [
+            'crewAssistant',
+            'reviseWholeTest',
+            'recordCrewTelemetry',
+            'getCrewTelemetrySummary',
+            'cleanupCrewTelemetry'
+          ];
+          for (const required of requiredFunctions) {
             if (!text.includes(required)) throw new Error(`Missing deployed staging function: ${required}`);
           }
           NODE
@@ -113,7 +121,13 @@ jobs:
             integrationBranch: process.env.INTEGRATION_BRANCH,
             workflowRun: Number(process.env.RUN_ID),
             upstreamCiRun: Number(process.env.UPSTREAM_RUN_ID),
-            verifiedFunctions: ['crewAssistant', 'reviseWholeTest'],
+            verifiedFunctions: [
+              'crewAssistant',
+              'reviseWholeTest',
+              'recordCrewTelemetry',
+              'getCrewTelemetrySummary',
+              'cleanupCrewTelemetry'
+            ],
             productionChanged: false,
             firestoreRulesChanged: false,
             hostingChanged: false,
