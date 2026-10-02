@@ -13,7 +13,7 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js', 'escape-remy-voice.js', 'escape-teacher-flow.js', 'README.md'];
+const files = ['index.html', 'styles.css', 'escape-v2.css', 'escape-data.js', 'escape-tutor.js', 'gradecrew-question-adapter.js', 'gradecrew-escape-builder.js', 'app.js', 'escape-teacher-compact.js', 'escape-coco-ai.js', 'escape-remy-voice.js', 'escape-ai-preview-bridge.js', 'escape-teacher-flow.js', 'README.md'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 for (const sharedCss of ['gradecrew-brand.css', 'crew-clay.css']) {
@@ -29,6 +29,7 @@ for (const reference of ['gradecrew-brand.css', 'crew-clay.css', 'styles.css', '
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
   await fs.access(path.join(output, reference));
 }
+await fs.access(path.join(output, 'escape-ai-preview-bridge.js'));
 for (const marker of ['Die verriegelte Schule', 'Lehrer-Vorschau', 'data-open-mode="practice"', 'gameView', 'Frag Coco', 'escape-coco-ai.js', 'penguin-guide.svg']) {
   if (!html.includes(marker)) throw new Error(`Escape Room HTML check failed: ${marker}`);
 }
@@ -80,6 +81,12 @@ for (const marker of ['GradeCrewEscapeBuilder', 'teacherReview', 'launchPayload'
   if (!builder.includes(marker)) throw new Error(`GradeCrew Escape builder check failed: ${marker}`);
 }
 
+const previewBridge = await fs.readFile(path.join(output, 'escape-ai-preview-bridge.js'), 'utf8');
+for (const marker of ['/api/escape-preview', 'staging-preview', 'GradeCrewEscapeAiBridge', 'credentials: \'same-origin\'']) {
+  if (!previewBridge.includes(marker)) throw new Error(`Escape AI preview bridge check failed: ${marker}`);
+}
+if (/OPENAI_API_KEY|firebaseConfig|apiKey/i.test(previewBridge)) throw new Error('Escape preview bridge must not contain API credentials.');
+
 const gameData = await fs.readFile(path.join(output, 'escape-data.js'), 'utf8');
 for (const marker of [
   "id: 'q1'",
@@ -101,7 +108,7 @@ for (const name of ['gradecrew-brand.css', 'crew-clay.css', 'assets/gradecrew/pe
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
   experiment: 'escape-room-locked-school',
   format: 3,
-  version: '0.6.0',
+  version: '0.7.0',
   files: hashes,
   features: {
     deterministicWorld: true,
@@ -124,6 +131,8 @@ await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
     teacherAiGeneration: true,
     teacherAiUsesExistingGenerateTest: true,
     teacherAiPairedTransfers: true,
+    teacherAiStagingPreviewApi: true,
+    teacherAiStagingPreviewRateLimited: true,
     gradeCrewQuestionAdapter: true,
     gradeCrewPreparationBuilder: true,
     gradeCrewAdapterTypes: ['single', 'dropdown', 'truefalse', 'text', 'number'],
@@ -138,8 +147,12 @@ await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({
     site: 'hausaufgabe-staging',
     public: 'public',
     ignore: ['**/.*'],
+    rewrites: [{
+      source: '/api/escape-preview',
+      function: { functionId: 'generateEscapePreview', region: 'europe-west1' }
+    }],
     headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
   }
 }, null, 2) + '\n');
 
-console.log('Escape Room MVP build verified: locked-school lab v0.6.0.');
+console.log('Escape Room MVP build verified: locked-school lab v0.7.0.');
