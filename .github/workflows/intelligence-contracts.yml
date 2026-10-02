@@ -1,0 +1,23 @@
+name: Intelligence contracts
+on:
+  push:
+    branches: [feature/quality-routing-contract-v1]
+  pull_request:
+    paths:
+      - 'shared/intelligence/**'
+      - 'tools/evaluation/**'
+      - '.github/workflows/intelligence-contracts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test shared/intelligence/test/*.test.mjs
+      - run: node --check tools/evaluation/check-quality.mjs
