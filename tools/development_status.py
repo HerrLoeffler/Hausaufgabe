@@ -40,7 +40,9 @@ def ref_exists(ref: str) -> bool:
     ).returncode == 0
 
 
-def resolve_branch(name: str) -> str | None:
+def resolve_branch(name: str | None) -> str | None:
+    if not name:
+        return None
     for ref in (f"refs/remotes/origin/{name}", f"refs/heads/{name}"):
         if ref_exists(ref):
             return ref
@@ -71,6 +73,16 @@ def changed_files(target_ref: str, branch_ref: str) -> set[str]:
     base = run_git("merge-base", target_ref, branch_ref)
     output = run_git("diff", "--name-only", f"{base}..{branch_ref}")
     return {line for line in output.splitlines() if line.strip()}
+
+
+def is_ancestor(left_ref: str, right_ref: str) -> bool:
+    proc = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", left_ref, right_ref],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+    )
+    return proc.returncode == 0
 
 
 def remote_branches() -> list[str]:
@@ -137,6 +149,22 @@ def release_lookup(
     return by_id, by_branch
 
 
+def target_chain_reaches(
+    start_branch: str, wanted_branch: str, branch_targets: dict[str, str]
+) -> bool:
+    current = start_branch
+    seen: set[str] = set()
+    while current and current not in seen:
+        seen.add(current)
+        target = branch_targets.get(current)
+        if not target:
+            return False
+        if target == wanted_branch:
+            return True
+        current = target
+    return False
+
+
 @dataclass
 class WorkstreamAudit:
     id: str
@@ -185,6 +213,7 @@ def main() -> int:
     stale_behind_threshold = int(registry.get("staleBehindThreshold", 1))
     ignored_branches = set(registry.get("ignoredBranches", ["main"]))
     ignored_prefixes = tuple(registry.get("ignoredPrefixes", []))
+    archive_prefixes = tuple(registry.get("archivePrefixes", []))
     workstreams = registry.get("workstreams", [])
 
     ids: set[str] = set()
@@ -223,6 +252,13 @@ def main() -> int:
     release_by_id, release_by_branch = release_lookup(release_state)
     audits: list[WorkstreamAudit] = []
     file_sets: dict[str, set[str]] = {}
+    branch_refs: dict[str, str] = {}
+    branch_names_by_id: dict[str, str] = {}
+    branch_targets = {
+        str(ws.get("primaryBranch")): str(ws.get("integrationTarget"))
+        for ws in workstreams
+        if ws.get("primaryBranch") and ws.get("integrationTarget")
+    }
 
     for ws in workstreams:
         ws_id = str(ws.get("id", ""))
@@ -233,7 +269,11 @@ def main() -> int:
         handoff = str(ws.get("handoff") or "") or None
 
         branch_ref = resolve_branch(branch)
-        target_ref = resolve_branch(target) if target else None
+        target_ref = resolve_branch(target)
+
+        if branch_ref:
+            branch_refs[ws_id] = branch_ref
+            branch_names_by_id[ws_id] = branch
 
         if not branch_ref and state in ACTIVE_STATES:
             errors.append(f"{ws_id}: aktiver Branch fehlt lokal/remote: {branch}")
@@ -307,34 +347,71 @@ def main() -> int:
             )
         )
 
-    overlaps: list[dict[str, Any]] = []
+    parallel_overlaps: list[dict[str, Any]] = []
+    serial_overlaps: list[dict[str, Any]] = []
     active_ids = sorted(file_sets)
+
     for idx, left in enumerate(active_ids):
         for right in active_ids[idx + 1 :]:
             shared = sorted(file_sets[left] & file_sets[right])
-            if shared:
-                overlaps.append(
-                    {
-                        "left": left,
-                        "right": right,
-                        "count": len(shared),
-                        "files": shared[:20],
-                    }
+            if not shared:
+                continue
+
+            left_branch = branch_names_by_id.get(left, "")
+            right_branch = branch_names_by_id.get(right, "")
+            same_chain = bool(
+                left_branch
+                and right_branch
+                and (
+                    target_chain_reaches(left_branch, right_branch, branch_targets)
+                    or target_chain_reaches(right_branch, left_branch, branch_targets)
                 )
+            )
+
+            left_ref = branch_refs.get(left)
+            right_ref = branch_refs.get(right)
+            ancestor_related = bool(
+                left_ref
+                and right_ref
+                and (
+                    is_ancestor(left_ref, right_ref)
+                    or is_ancestor(right_ref, left_ref)
+                )
+            )
+
+            overlap = {
+                "left": left,
+                "right": right,
+                "count": len(shared),
+                "files": shared[:20],
+                "relation": "serial" if (same_chain or ancestor_related) else "parallel",
+            }
+            if overlap["relation"] == "serial":
+                serial_overlaps.append(overlap)
+            else:
+                parallel_overlaps.append(overlap)
 
     registered_all = set(primary_branches)
     for ws in workstreams:
+        if ws.get("integrationTarget"):
+            registered_all.add(str(ws.get("integrationTarget")))
         registered_all.update(
             str(branch) for branch in ws.get("relatedBranches", []) if branch
         )
 
     all_remote = remote_branches()
+    archive_branches = [
+        branch
+        for branch in all_remote
+        if archive_prefixes and branch.startswith(archive_prefixes)
+    ]
     unregistered = [
         branch
         for branch in all_remote
         if branch not in registered_all
         and branch not in ignored_branches
         and not branch.startswith(ignored_prefixes)
+        and not branch.startswith(archive_prefixes)
     ]
 
     if unregistered:
@@ -388,7 +465,7 @@ def main() -> int:
 
     if errors:
         health = "red"
-    elif overlaps or stale_count or unregistered_prs:
+    elif parallel_overlaps or stale_count or unregistered_prs:
         health = "yellow"
     else:
         health = "green"
@@ -396,12 +473,14 @@ def main() -> int:
     metrics = {
         "health": health,
         "activeWorkstreams": active_count,
-        "potentialOverlapPairs": len(overlaps),
+        "potentialParallelOverlapPairs": len(parallel_overlaps),
+        "expectedSerialOverlapPairs": len(serial_overlaps),
         "staleCriticalBranches": stale_count,
         "integrationReady": integration_ready_count,
         "stagingDeployedWorkstreams": staging_count,
         "openPullRequests": len(prs),
         "unregisteredBranches": len(unregistered),
+        "archiveBranches": len(archive_branches),
         "productionChangedByCurrentReleaseTrain": production_changed,
     }
 
@@ -424,9 +503,11 @@ def main() -> int:
         "errors": errors,
         "warnings": warnings,
         "workstreams": [asdict(item) for item in audits],
-        "potentialFileOverlaps": overlaps,
+        "potentialParallelFileOverlaps": parallel_overlaps,
+        "expectedSerialFileOverlaps": serial_overlaps,
         "openPullRequests": prs,
         "unregisteredBranches": unregistered,
+        "archiveBranches": archive_branches,
         "releaseBranchesMissingRegistry": release_missing_registry,
     }
 
@@ -442,7 +523,7 @@ def main() -> int:
         "",
         (
             f"{health_icon} **{active_count} aktive Baustellen** · "
-            f"🟡 **{len(overlaps)} Dateiüberschneidungen** · "
+            f"🟡 **{len(parallel_overlaps)} Parallel-Überschneidungen** · "
             f"🔴 **{stale_count} veraltete kritische Branches** · "
             f"🟦 **{integration_ready_count} integrationsbereit** · "
             f"🚀 **{staging_count} auf Staging** · "
@@ -481,9 +562,9 @@ def main() -> int:
             f"{pr_text} | {release_text} |"
         )
 
-    lines.extend(["", "## Potenzielle Dateiüberschneidungen", ""])
-    if overlaps:
-        for overlap in overlaps:
+    lines.extend(["", "## Potenzielle Parallel-Konflikte", ""])
+    if parallel_overlaps:
+        for overlap in parallel_overlaps:
             preview = ", ".join(f"`{path}`" for path in overlap["files"][:6])
             suffix = " …" if overlap["count"] > 6 else ""
             lines.append(
@@ -492,6 +573,18 @@ def main() -> int:
             )
     else:
         lines.append("- 🟢 Keine aus den aktuellen Diffs ermittelbar.")
+
+    lines.extend(["", "## Erwartete Überschneidungen in Branch-Ketten", ""])
+    if serial_overlaps:
+        for overlap in serial_overlaps:
+            preview = ", ".join(f"`{path}`" for path in overlap["files"][:4])
+            suffix = " …" if overlap["count"] > 4 else ""
+            lines.append(
+                f"- ℹ️ **{overlap['left']} ↔ {overlap['right']}**: "
+                f"{overlap['count']} Datei(en): {preview}{suffix}"
+            )
+    else:
+        lines.append("- Keine.")
 
     lines.extend(["", "## Offene Pull Requests", ""])
     if prs:
@@ -512,6 +605,15 @@ def main() -> int:
             lines.append(f"- `{branch}`")
         if len(unregistered) > 40:
             lines.append(f"- … plus {len(unregistered) - 40} weitere")
+    else:
+        lines.append("- Keine.")
+
+    lines.extend(["", "## Explizite Backup-/Archiv-Branches", ""])
+    if archive_branches:
+        for branch in archive_branches[:30]:
+            lines.append(f"- `{branch}`")
+        if len(archive_branches) > 30:
+            lines.append(f"- … plus {len(archive_branches) - 30} weitere")
     else:
         lines.append("- Keine.")
 
