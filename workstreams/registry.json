@@ -328,7 +328,7 @@
       "title": "Automatische KI-Fortsetzung der Entwicklungsphasen",
       "primaryBranch": "feature/stage-guardian-v1",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/stage-guardian-v1.md"
     }
   ]

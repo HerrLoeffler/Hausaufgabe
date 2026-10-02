@@ -33,3 +33,9 @@ Der Connector erlaubt in diesem Kontext keine Abfrage von Actions-Variablen/Secr
 
 ## Nächster konkreter Schritt
 Zuerst Patch→PR-Brücke und unabhängige Reviews fertigstellen. Danach genau einen reversiblen Pilot-Auftrag aufnehmen, Worker-Key/Variablen im sicheren GitHub-Setup bestätigen und vollständigen Durchlauf nachweisen. Erst danach weitere Workstreams aktivieren. Der Guardian ist nicht schon deshalb aktiviert, weil sein Workflow vorhanden ist.
+
+## GitHub-Nachweis vor Integration
+
+Produktcode `af9ec111a6de793300158a995e5cf4151eb47a46`: Guardian Push `37077976663` und PR `37077980044` erfolgreich; Handoff `37077980040` und Development Status `37077980004` erfolgreich. 15 Verhaltenstests auch auf GitHub bestanden. Echter Bericht: Guardian deaktiviert, `CODEX_WORKER_ENABLED` leer, `CODEX_WORKER_API_KEY` nicht konfiguriert (`WORKER_KEY_PRESENT:false`). Keine Secretwerte ausgegeben. Keine bezahlte KI-Aufgabe gestartet.
+
+PR #54 integriert ausschließlich die deaktivierte Steuerung und diese Aufgabe. Daraus folgt ausdrücklich keine vollständige autonome Pipeline. Fehlende Ausführungsschritte 1–5 oben bleiben offen; erster Pilot erst nach Patch/Review/Integration-Brücken und sicherer Worker-Einrichtung.
