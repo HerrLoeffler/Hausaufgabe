@@ -1,8 +1,8 @@
 # GradeCrew AI Gateway
 
-Status: **staging-only, branch prototype**. Production is not changed by this work.
+Status: **staging-only multi-provider gateway**. Production and GradeCrew's current direct OpenAI generation path are not changed by this work.
 
-This service is the isolated server-side entry point for multiple AI providers. Anthropic/Claude authenticates through Google Cloud -> Anthropic Workload Identity Federation (WIF), so no long-lived Anthropic key is stored. OpenAI uses GradeCrew's existing staging Secret Manager secret and the Responses API; the key is never committed, printed or copied into a deploy command.
+This service is the isolated server-side entry point for multiple AI providers. Anthropic/Claude authenticates through Google Cloud -> Anthropic Workload Identity Federation (WIF), so no long-lived Anthropic key is stored. OpenAI uses GradeCrew's existing staging Secret Manager secret and the Responses API. Gemini uses Vertex AI with the existing Cloud Run runtime service account, so no Gemini API key or additional secret is created.
 
 ## Current endpoints
 
@@ -10,30 +10,33 @@ This service is the isolated server-side entry point for multiple AI providers. 
 - `GET /providers` — configured providers and supported GradeCrew job names.
 - `POST /providers/anthropic/test` — tiny Claude smoke request (`GATEWAY_OK`).
 - `POST /providers/openai/test` — tiny OpenAI smoke request (`GATEWAY_OK`).
+- `POST /providers/gemini/test` — tiny Gemini smoke request (`GATEWAY_OK`).
 - `POST /v1/generate` — explicit provider text generation while automatic routing is disabled.
-- `POST /v1/route` — signed quality/budget router from the orchestration branch; it remains unusable until the required policy/runtime dependencies are deliberately configured.
+- `POST /v1/route` — signed quality/budget router; it remains unusable until the required policy/runtime dependencies are deliberately configured.
 
 Example explicit request:
 
 ```json
 {
-  "provider": "openai",
+  "provider": "gemini",
   "job": "question_rewriting",
   "messages": [{"role": "user", "content": "Formuliere diese Aufgabe klarer ..."}],
-  "max_tokens": 300
+  "max_tokens": 300,
+  "reasoning_effort": "minimal"
 }
 ```
 
 ## Provider safety model
 
-Provider choice and model choice are separate controls. Every runtime provider has a model allowlist. The default staging allowlists contain only the already selected inexpensive baseline models:
+Provider choice and model choice are separate controls. Every runtime provider has a model allowlist. The default staging allowlists contain only inexpensive baseline models:
 
 - Anthropic: `claude-haiku-4-5`
-- OpenAI: `gpt-5.6-luna` (same text model currently used by GradeCrew's existing OpenAI functions)
+- OpenAI: `gpt-5.6-luna`
+- Gemini: `gemini-3.5-flash-lite`
 
 A caller cannot request a more expensive model unless an operator first expands the relevant environment allowlist. Automatic routing still requires signed, scope-bound quality evidence and its own budget policy; adding a model to an allowlist does **not** qualify it for routing.
 
-OpenAI is text-only in this first gateway adapter. Image/audio capability is intentionally fail-closed until its own request contract, privacy boundary and tests exist.
+OpenAI and Gemini are text-only in their first gateway adapters. Image/audio capability is intentionally fail-closed until its own request contract, privacy boundary and tests exist.
 
 ## Anthropic WIF configuration
 
@@ -63,7 +66,7 @@ The existing staging secret is reused; no new key is needed.
    bash ai-gateway/setup-openai-secret-access.sh
    ```
 
-2. `deploy-staging.sh` mounts the secret as `OPENAI_API_KEY` through Cloud Run Secret Manager integration. The script refuses a shell-exported `OPENAI_API_KEY`.
+2. Cloud Run mounts the secret as `OPENAI_API_KEY` through Secret Manager integration. Manual deploys refuse a shell-exported `OPENAI_API_KEY`.
 
 Optional runtime metadata:
 
@@ -73,6 +76,24 @@ Optional runtime metadata:
 - `OPENAI_PROJECT_ID` / `OPENAI_ORGANIZATION_ID` if the OpenAI account requires explicit headers
 
 The adapter uses `POST /v1/responses` with `store:false`, normalizes text/status/token usage to the gateway contract and never logs provider payloads, prompts or keys.
+
+## Gemini / Vertex AI configuration
+
+Gemini is deliberately keyless. One staging-only bootstrap enables Vertex AI and gives the existing gateway runtime identity the minimal model invocation role:
+
+```bash
+bash tools/automation/setup-staging-gemini-access.sh
+```
+
+Runtime variables:
+
+- `GEMINI_ENABLED=true` — explicit opt-in
+- `GEMINI_PROJECT_ID=hausaufgabe-staging`
+- `GEMINI_LOCATION=eu` — EU multi-region endpoint and processing
+- `GEMINI_DEFAULT_MODEL=gemini-3.5-flash-lite`
+- `GEMINI_ALLOWED_MODELS=gemini-3.5-flash-lite`
+
+The adapter obtains short-lived OAuth access tokens from the Google metadata server using the Cloud Run runtime service account. It calls Vertex AI `generateContent` through the EU multi-region endpoint, maps the shared `reasoning_effort` contract to Gemini `thinkingLevel`, normalizes usage including cached/thinking tokens, and never logs provider payloads or access tokens. Gemini 3.x manages sampling automatically, so custom temperature values are validated for the shared contract but are not forwarded to Vertex AI.
 
 ## Cloud Run target
 
@@ -87,7 +108,7 @@ Staging target:
 - max instances: `2`
 - concurrency: `5`
 
-Claude is already end-to-end verified on the deployed base gateway. This OpenAI-provider branch is **not deployed yet** and makes no Production change.
+The automatic staging workflow deploys a candidate revision with zero normal traffic. It promotes only after `/health`, provider listing, and real Claude/OpenAI/Gemini smoke calls all pass. The existing rollback and stale-source guards remain active.
 
 ## Local checks
 
@@ -95,7 +116,7 @@ Claude is already end-to-end verified on the deployed base gateway. This OpenAI-
 cd ai-gateway
 npm test
 npm run check
-bash -n deploy-staging.sh setup-openai-secret-access.sh
+bash -n deploy-staging.sh setup-openai-secret-access.sh ../tools/automation/setup-staging-gemini-access.sh
 ```
 
 Tests use fake HTTP responses and make no paid provider calls.
@@ -104,8 +125,8 @@ Tests use fake HTTP responses and make no paid provider calls.
 
 The service logs only request ID, provider, model, GradeCrew job kind, latency and token counts. It does not intentionally log prompts, uploaded materials, student answers, provider error payloads or access tokens. Cloud Run IAM remains the outer access boundary; browser-facing access still requires a GradeCrew role-checking proxy.
 
-OpenAI cached tokens are accounted as a subset of `input_tokens`, so the cost layer subtracts cached input from regular input before applying the cheaper cache-read price. Missing/invalid usage remains unknown rather than being treated as zero cost.
+Cached input tokens are normalized where providers expose them so later cost accounting can price cache reads separately. Missing/invalid usage remains unknown rather than being treated as zero cost.
 
-## Next providers
+## Next provider work
 
-Gemini and Mistral should implement the same normalized provider interface. Provider quality is never guessed in code. Controlled benchmark evidence per job/model/scope must exist before the automatic router can select a candidate.
+Mistral can implement the same normalized provider interface. Provider quality is never guessed in code. Controlled benchmark evidence per job/model/scope must exist before the automatic router can select any candidate. Prompt-caching optimization should be benchmarked after the provider baseline is stable so cost/latency comparisons remain interpretable.

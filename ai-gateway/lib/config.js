@@ -6,6 +6,9 @@ const DEFAULT_MODEL = 'claude-haiku-4-5';
 const DEFAULT_OPENAI_BASE_URL = 'https://api.openai.com';
 // Keep first gateway comparison aligned with GradeCrew's current text model.
 const DEFAULT_OPENAI_MODEL = 'gpt-5.6-luna';
+const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
+const DEFAULT_GEMINI_LOCATION = 'eu';
+const DEFAULT_GOOGLE_METADATA_TOKEN_URL = 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token';
 
 function readRequiredEnv(env, name) {
   const value = String(env[name] || '').trim();
@@ -59,15 +62,50 @@ function openaiConfigured(env = process.env) {
   return Boolean(String(env.OPENAI_API_KEY || '').trim());
 }
 
+function googleVertexBaseUrl(location) {
+  const value = String(location || '').trim().toLowerCase();
+  if (!value || !/^[a-z0-9-]+$/.test(value)) throw new Error('INVALID_GEMINI_LOCATION');
+  if (value === 'global') return 'https://aiplatform.googleapis.com';
+  if (value === 'eu' || value === 'us') return `https://aiplatform.${value}.rep.googleapis.com`;
+  return `https://${value}-aiplatform.googleapis.com`;
+}
+
+function readGeminiConfig(env = process.env) {
+  const projectId = String(env.GEMINI_PROJECT_ID || env.GOOGLE_CLOUD_PROJECT || env.GCLOUD_PROJECT || '').trim();
+  if (!projectId) throw new Error('Missing required environment variable: GEMINI_PROJECT_ID');
+  const location = String(env.GEMINI_LOCATION || DEFAULT_GEMINI_LOCATION).trim().toLowerCase();
+  const defaultModel = String(env.GEMINI_DEFAULT_MODEL || DEFAULT_GEMINI_MODEL).trim();
+  return {
+    projectId,
+    location,
+    baseUrl: String(env.GEMINI_BASE_URL || googleVertexBaseUrl(location)).replace(/\/$/, ''),
+    defaultModel,
+    allowedModels: readAllowedModels(env.GEMINI_ALLOWED_MODELS, defaultModel),
+    metadataTokenUrl: String(env.GEMINI_METADATA_TOKEN_URL || DEFAULT_GOOGLE_METADATA_TOKEN_URL).trim(),
+  };
+}
+
+function geminiConfigured(env = process.env) {
+  const enabled = String(env.GEMINI_ENABLED || '').trim().toLowerCase() === 'true';
+  const projectId = String(env.GEMINI_PROJECT_ID || env.GOOGLE_CLOUD_PROJECT || env.GCLOUD_PROJECT || '').trim();
+  return enabled && Boolean(projectId);
+}
+
 module.exports = {
   DEFAULT_AUDIENCE,
   DEFAULT_BASE_URL,
   DEFAULT_MODEL,
   DEFAULT_OPENAI_BASE_URL,
   DEFAULT_OPENAI_MODEL,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GEMINI_LOCATION,
+  DEFAULT_GOOGLE_METADATA_TOKEN_URL,
   readAllowedModels,
   readAnthropicConfig,
   anthropicConfigured,
   readOpenAIConfig,
   openaiConfigured,
+  googleVertexBaseUrl,
+  readGeminiConfig,
+  geminiConfigured,
 };
