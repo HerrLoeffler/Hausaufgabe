@@ -35,15 +35,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout control-plane source
+      - name: Checkout control-plane source and all refs
         uses: actions/checkout@v5
         with:
           ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Fetch all branches for live candidate SHAs
-        run: git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
 
       - name: Validate Python syntax
         run: python3 -m py_compile tools/release_control.py
