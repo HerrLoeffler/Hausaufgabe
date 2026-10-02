@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>GradeCrew Escape Room – Die verriegelte Schule</title>
+  <link rel="stylesheet" href="gradecrew-brand.css">
+  <link rel="stylesheet" href="crew-clay.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="escape-v2.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="GradeCrew Escape Room Startseite">
+      <span class="brandMark" aria-hidden="true">GC</span>
+      <span><strong>GradeCrew</strong><small>Escape Room · Dev</small></span>
+    </a>
+  </header>
+
+  <main>
+    <section id="homeView" class="view homeView" aria-labelledby="homeTitle">
+      <div class="heroCard">
+        <div class="heroBadge">ESCAPE ROOM · ENTWICKLUNG</div>
+        <h1 id="homeTitle">Die verriegelte Schule</h1>
+        <p>Das automatische Schließsystem ist aktiv. Findet die Notentriegelung im Sekretariat und öffnet den Ausgang.</p>
+        <div class="heroFacts" aria-label="Spieldaten">
+          <span>3 Räume</span><span>8 Lernfragen</span><span>4 Minirätsel</span><span>ca. 10–15 Min.</span>
+        </div>
+        <div class="heroActions">
+          <button id="startBtn" class="primaryButton" data-open-mode="practice" type="button">Escape vorbereiten</button>
+          <button id="resumeBtn" class="secondaryButton" type="button" hidden>Fortsetzen</button>
+          <button id="teacherPreviewBtn" class="secondaryButton" type="button" hidden aria-hidden="true" tabindex="-1">Lehrer-Vorschau</button>
+        </div>
+        <p class="quiet">Zuerst Aufgaben erstellen oder kurz prüfen. Gestartet wird anschließend im Lehrerbereich.</p>
+      </div>
+      <div class="schoolIllustration" aria-hidden="true">
+        <div class="schoolRoof"></div>
+        <div class="schoolBody"><div class="windowGrid"></div><div class="schoolDoor"></div></div>
+      </div>
+    </section>
+
+    <section id="gameView" class="view gameView" hidden aria-live="polite">
+      <div class="gameHeader">
+        <div><span id="roomEyebrow" class="eyebrow">RAUM 1 VON 3</span><h2 id="roomTitle">Klassenzimmer</h2></div>
+        <div class="gameStats"><span id="timer">00:00</span><span id="progressText">0 / 8 Fragen</span></div>
+      </div>
+      <div class="progressTrack" aria-hidden="true"><div id="progressFill"></div></div>
+      <div class="gameLayout">
+        <section class="roomPanel" aria-label="Spielraum">
+          <div id="roomScene" class="roomScene room-classroom">
+            <div id="explorer" class="explorer" aria-hidden="true"><img class="cocoExplorerArt gcClayCharacter" src="assets/gradecrew/penguin-guide.svg#pose-5" alt=""></div>
+            <button class="hotspot desk" data-action="desk" type="button"><span>Lehrerpult</span></button>
+            <button class="hotspot cabinet" data-action="cabinet" type="button"><span>Schrank</span></button>
+            <button class="hotspot shelf" data-action="shelf" type="button"><span>Regal</span></button>
+            <button class="hotspot computer" data-action="computer" type="button"><span>Computer</span></button>
+            <button class="hotspot board" data-action="board" type="button"><span>Tafel</span></button>
+            <button class="hotspot exitDoor" data-action="door" type="button"><span>Tür</span></button>
+          </div>
+          <div id="messageBar" class="messageBar" role="status">Schau dich im Klassenzimmer um.</div>
+        </section>
+        <aside class="sidePanel">
+          <section class="panelCard inventoryCard" aria-labelledby="inventoryTitle">
+            <div class="panelHeading"><h3 id="inventoryTitle">Inventar</h3><span id="inventoryCount">0 / 3</span></div>
+            <div id="inventory" class="inventory"><p class="emptyText">Noch leer.</p></div>
+            <p class="microcopy">Gegenstand auswählen und anschließend das Ziel antippen.</p>
+          </section>
+          <section class="panelCard missionCard" aria-labelledby="missionTitle">
+            <div class="panelHeading"><h3 id="missionTitle">Aktuelles Ziel</h3></div>
+            <p id="missionText">Finde einen Weg aus dem Klassenzimmer.</p>
+            <div id="codeDisplay" class="codeDisplay" hidden><span>7</span><span>8</span><span>4</span></div>
+          </section>
+          <button id="hintBtn" class="hintButton" type="button">💡 Hinweis</button>
+          <button id="restartBtn" class="textButton" type="button">Spiel neu starten</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="resultView" class="view resultView" hidden aria-labelledby="resultTitle">
+      <div class="resultCard">
+        <div class="successIcon" aria-hidden="true">✓</div>
+        <p class="eyebrow">AUSGANG GEÖFFNET</p>
+        <h2 id="resultTitle">Geschafft!</h2>
+        <p>Die Notentriegelung hat funktioniert. Ihr habt die Schule verlassen.</p>
+        <div class="resultStats">
+          <div><strong id="resultQuestions">8 / 8</strong><span>Lernfragen</span></div>
+          <div><strong id="resultPuzzles">4</strong><span>Rätsel</span></div>
+          <div><strong id="resultHints">0</strong><span>Hinweise</span></div>
+          <div><strong id="resultTime">00:00</strong><span>aktive Zeit</span></div>
+        </div>
+        <div class="feedbackBlock">
+          <span>Wie war das Spiel?</span>
+          <div role="group" aria-label="Spiel bewerten">
+            <button type="button" data-feedback="4" aria-label="Sehr gut">😍</button>
+            <button type="button" data-feedback="3" aria-label="Gut">🙂</button>
+            <button type="button" data-feedback="2" aria-label="Okay">😐</button>
+            <button type="button" data-feedback="1" aria-label="Nicht gut">🙁</button>
+          </div>
+        </div>
+        <button id="homeBtn" class="primaryButton" type="button">Zurück zur Übersicht</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="questionDialog" class="modal questionModal" aria-labelledby="questionTitle">
+    <form method="dialog" id="questionForm">
+      <div class="modalTop">
+        <span id="questionContext" class="eyebrow">LERNAUFGABE</span>
+        <button class="iconButton" value="cancel" aria-label="Aufgabe schließen">×</button>
+      </div>
+      <h2 id="questionTitle">Aufgabe</h2>
+      <p id="questionPrompt"></p>
+      <div id="questionOptions" class="questionOptions"></div>
+      <div id="questionFeedback" class="questionFeedback" role="status" hidden></div>
+
+      <section id="remyHelp" class="remyHelp" hidden aria-labelledby="remyHelpTitle">
+        <div class="remyHead">
+          <div class="remyAvatar" aria-hidden="true"><img class="cocoHelpArt gcClayCharacter" src="assets/gradecrew/penguin-guide.svg#pose-4" alt=""></div>
+          <div>
+            <strong id="remyHelpTitle">Frag Coco</strong>
+            <span>Wenn du festhängst, sag konkret, was du nicht verstanden hast.</span>
+          </div>
+        </div>
+        <div class="remyQuick" aria-label="Schnelle Hilfefragen">
+          <button type="button" data-remy-question="Wie fange ich an?">Wie fange ich an?</button>
+          <button type="button" data-remy-question="Welcher Rechenschritt ist wichtig?">Welcher Schritt?</button>
+          <button type="button" data-remy-question="Kannst du es einfacher erklären?">Einfacher erklären</button>
+        </div>
+        <div class="remyAskRow">
+          <input id="remyQuestion" type="text" autocomplete="off" placeholder="Was hast du nicht verstanden?">
+          <button id="remyAskBtn" class="secondaryButton" type="button">Coco fragen</button>
+        </div>
+        <div id="remyAnswer" class="remyAnswer" role="status" hidden></div>
+        <p class="microcopy">Coco beantwortet bekannte Fragen lokal. Nur wirklich individuelle Fragen können später über die GradeCrew-KI laufen.</p>
+      </section>
+
+      <div class="modalActions">
+        <button id="questionHintBtn" class="secondaryButton" type="button">Fachlicher Hinweis</button>
+        <button id="submitAnswerBtn" class="primaryButton" type="submit" value="submit">Antwort prüfen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="puzzleDialog" class="modal puzzleModal" aria-labelledby="puzzleTitle">
+    <form method="dialog" id="puzzleForm">
+      <div class="modalTop">
+        <span class="eyebrow">MINIRÄTSEL</span>
+        <button class="iconButton" value="cancel" aria-label="Rätsel schließen">×</button>
+      </div>
+      <h2 id="puzzleTitle">Rätsel</h2>
+      <p id="puzzleText"></p>
+      <div id="puzzleBody"></div>
+      <div id="puzzleFeedback" class="questionFeedback" role="status" hidden></div>
+      <div class="modalActions"><button id="puzzleResetBtn" class="secondaryButton" type="button">Zurücksetzen</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="teacherDialog" class="modal teacherModal" aria-labelledby="teacherTitle">
+    <form method="dialog">
+      <div class="modalTop">
+        <span class="eyebrow">LEHRERBEREICH · VORSCHAU</span>
+        <button class="iconButton" value="close" aria-label="Vorschau schließen">×</button>
+      </div>
+      <h2 id="teacherTitle">Escape vorbereiten</h2>
+      <div class="teacherFlowIntro" aria-label="Ablauf vor dem Start"><span><strong>1</strong> Aufgaben festlegen</span><span><strong>2</strong> Kurz prüfen</span><span><strong>3</strong> Escape starten</span></div>
+      <div id="preflightStatus" class="preflightStatus"></div>
+      <p class="labWarning"><strong>Lab-Hinweis:</strong> Diese Vorschau demonstriert nur den späteren Lehrerablauf. Die echte Berechtigungsprüfung kommt erst bei der GradeCrew-Integration.</p>
+
+      <div class="teacherOverview">
+        <div>
+          <span class="eyebrow">AKTUELLER LERNINHALT</span>
+          <strong id="teacherContentProfile">Mathematik · Klasse 7 · Prozentrechnung</strong>
+          <p>Die 8 Lernslots können geprüft, direkt bearbeitet oder unten mit der GradeCrew-KI neu erstellt werden.</p>
+        </div>
+        <button id="teacherResetBtn" class="secondaryButton" type="button">Änderungen zurücksetzen</button>
+      </div>
+
+      <div class="teacherSummary"><span>3 Räume</span><span>8 Fragen</span><span>4 Rätsel</span><span>10–15 Min.</span></div>
+
+      <section class="teacherSection" aria-labelledby="teacherRouteTitle">
+        <h3 id="teacherRouteTitle">Spielablauf</h3>
+        <ol id="teacherRoute" class="teacherRoute"></ol>
+      </section>
+
+      <section class="teacherSection" aria-labelledby="teacherQuestionsTitle">
+        <div class="teacherSectionHead">
+          <div><h3 id="teacherQuestionsTitle">Alle Lernfragen</h3><p>Frage, Lösung, Hinweis, Lernhilfe und Transferaufgabe auf einen Blick.</p></div>
+        </div>
+        <div id="teacherQuestions" class="teacherQuestions"></div>
+      </section>
+
+      <div class="teacherLaunchBar">
+        <div><strong>Alles geprüft?</strong><span>Das Spiel startet erst von hier aus.</span></div>
+        <button id="teacherStartBtn" class="primaryButton" type="button">Escape mit diesen Aufgaben starten</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="teacherEditDialog" class="modal teacherEditModal" aria-labelledby="teacherEditTitle">
+    <form id="teacherEditForm">
+      <div class="modalTop">
+        <span class="eyebrow">AUFGABE BEARBEITEN</span>
+        <button class="iconButton" type="button" onclick="this.closest('dialog').close()" aria-label="Bearbeitung schließen">×</button>
+      </div>
+      <h2 id="teacherEditTitle">Aufgabe bearbeiten</h2>
+
+      <label class="fieldLabel">Lernziel<input id="editLearningGoal" type="text" required></label>
+      <label class="fieldLabel">Frage<textarea id="editPrompt" rows="2" required></textarea></label>
+
+      <div class="optionEditor">
+        <label class="fieldLabel">Antwort A<input id="editOption0" type="text" required></label>
+        <label class="fieldLabel">Antwort B<input id="editOption1" type="text" required></label>
+        <label class="fieldLabel">Antwort C<input id="editOption2" type="text" required></label>
+        <label class="fieldLabel">Antwort D<input id="editOption3" type="text" required></label>
+      </div>
+
+      <label class="fieldLabel">Richtige Antwort
+        <select id="editCorrectIndex">
+          <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+        </select>
+      </label>
+
+      <label class="fieldLabel">Hinweis<input id="editHint" type="text" required></label>
+      <label class="fieldLabel">Kurze Lösungserklärung<textarea id="editExplanation" rows="2" required></textarea></label>
+
+      <div class="editDivider">Lernschleife nach mehreren Fehlversuchen</div>
+      <label class="fieldLabel">Kurze Erklärung<textarea id="editRemediation" rows="3" required></textarea></label>
+      <label class="fieldLabel">Aktiver Merksatz / Eingabetext<textarea id="editCopyText" rows="2" required></textarea></label>
+      <label class="fieldLabel">Neue Transferaufgabe<input id="editTransferPrompt" type="text" required></label>
+      <label class="fieldLabel">Akzeptierte Antworten <span>(mit | trennen)</span><input id="editTransferAnswers" type="text" required></label>
+
+      <div id="teacherEditFeedback" class="questionFeedback error" hidden></div>
+      <div class="modalActions">
+        <button class="secondaryButton" type="button" onclick="this.closest('dialog').close()">Abbrechen</button>
+        <button class="primaryButton" type="submit">Änderung übernehmen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="escape-data.js"></script>
+  <script src="gradecrew-question-adapter.js"></script>
+  <script src="gradecrew-escape-builder.js"></script>
+  <script src="escape-tutor.js"></script>
+  <script src="app.js"></script>
+  <script src="escape-teacher-compact.js"></script>
+  <script src="escape-coco-ai.js"></script>
+  <script src="escape-teacher-flow.js"></script>
+</body>
+</html>

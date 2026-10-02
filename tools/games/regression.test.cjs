@@ -56,7 +56,9 @@ function change(w, element, value) {
 test('hub filters by subject and topic, resets an empty result, and updates direct mode links', async () => {
   const { w, document: d } = await openPage();
   try {
-    assert.equal(d.querySelectorAll('.gameCard').length, 3);
+    assert.equal(d.querySelectorAll('.gameCard').length, 4);
+    assert.equal(d.querySelector('[data-game="escape-room"]') !== null, true);
+    assert.equal(d.querySelector('#joinGame option[value="escape-room"]'), null);
     d.querySelector('[data-subject="german"]').click();
     assert.equal(d.querySelector('.gameCard').dataset.game, 'fehlerjagd-deutsch');
     change(w, d.getElementById('gameSearch'), 'Brüche');
@@ -68,6 +70,7 @@ test('hub filters by subject and topic, resets an empty result, and updates dire
     const live = d.querySelector('[name="hub-mode"][value="live"]');
     live.checked = true;
     live.dispatchEvent(new w.Event('change', { bubbles: true }));
+    assert.equal(d.querySelector('[data-game="escape-room"]'), null);
     assert.match(d.querySelector('.gameCard .primary').href, /fast-quiz\/\?mode=live$/);
     assert.equal(w.location.search, '?mode=live');
   } finally { w.close(); }
@@ -89,7 +92,7 @@ test('favorites persist, retain keyboard focus, and can be removed inside the fa
 test('invalid or inaccessible storage does not stop the hub', async () => {
   for (const value of ['broken json', '{"not":"an array"}', '["unknown-game"]']) {
     const { w, document: d } = await openPage('', '', w => w.localStorage.setItem('gradecrew-games-favorites-v1', value));
-    try { assert.equal(d.querySelectorAll('.gameCard').length, 3); } finally { w.close(); }
+    try { assert.equal(d.querySelectorAll('.gameCard').length, 4); } finally { w.close(); }
   }
   const { w, document: d } = await openPage('', '', w => {
     Object.defineProperty(w, 'localStorage', { get() { throw new w.DOMException('Disabled', 'SecurityError'); } });
@@ -97,11 +100,12 @@ test('invalid or inaccessible storage does not stop the hub', async () => {
   try { d.querySelector('.favoriteButton').click(); assert.equal(d.querySelector('.favoriteButton').getAttribute('aria-pressed'), 'true'); }
   finally { w.close(); }
 });
-test('joining preserves leading zeroes and requires both a game and exactly six digits', async () => {
+test('joining preserves leading zeroes and requires both a live-capable game and exactly six digits', async () => {
   const { w, document: d } = await openPage();
   try {
     const form = d.getElementById('joinForm'), code = d.getElementById('joinCode');
     assert.equal(form.checkValidity(), false);
+    assert.equal([...d.getElementById('joinGame').options].some(option => option.value === 'escape-room'), false);
     d.getElementById('joinGame').value = 'vocab-rush';
     change(w, code, '00 1-234');
     assert.equal(code.value, '001234');
@@ -139,18 +143,31 @@ for (const game of ['fast-quiz', 'fehlerjagd-deutsch', 'vocab-rush']) {
     } finally { w.close(); }
   });
 }
+
+test('escape room enters practice through the shared shell and keeps the teacher preview available', async () => {
+  const { w, document: d } = await openPage('escape-room', '?mode=practice');
+  try {
+    assert.equal(d.getElementById('gameView').hidden, false);
+    assert.equal(d.getElementById('homeView').hidden, true);
+    assert.equal(d.querySelectorAll('.gc-games-nav').length, 1);
+    assert.ok(d.getElementById('teacherPreviewBtn'));
+    assert.equal(w.location.search, '');
+  } finally { w.close(); }
+});
+
 test('built engines and applications match their canonical sources byte for byte', async () => {
   for (const [game, files] of Object.entries({
     'fast-quiz': ['app-v4.js', 'math-engine-v4.js', 'rounding-plus.js'],
     'fehlerjagd-deutsch': ['app.js', 'deutsch-engine.js', 'task-integrity.js', 'feedback-polish.js'],
-    'vocab-rush': ['app.js', 'curriculum.js', 'library-plus.js', 'mode-consistency.js', 'learning-plus.js', 'ux-polish.js', 'camera-plus.js', 'crop-universal.js']
+    'vocab-rush': ['app.js', 'curriculum.js', 'library-plus.js', 'mode-consistency.js', 'learning-plus.js', 'ux-polish.js', 'camera-plus.js', 'crop-universal.js'],
+    'escape-room': ['app.js', 'escape-data.js']
   })) {
     for (const file of files) assert.deepEqual(fs.readFileSync(path.join(output, game, file)), fs.readFileSync(path.join(root, 'lab', game, file)));
   }
 });
 test('root and child release manifests verify the actual files including the shared shell', () => {
   const sha = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-  for (const dir of ['', 'fast-quiz', 'fehlerjagd-deutsch', 'vocab-rush']) {
+  for (const dir of ['', 'fast-quiz', 'fehlerjagd-deutsch', 'vocab-rush', 'escape-room']) {
     const release = JSON.parse(fs.readFileSync(path.join(output, dir, 'lab-release.json')));
     for (const [file, hash] of Object.entries(release.files)) assert.equal(sha(path.join(output, dir, file)), hash, dir + '/' + file);
     for (const [file, hash] of Object.entries(release.sharedFiles || {})) assert.equal(sha(path.join(output, 'shared', file)), hash);

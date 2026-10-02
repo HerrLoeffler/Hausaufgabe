@@ -1,80 +1,134 @@
 # GradeCrew Games – aktueller Arbeitsstand
 
-Stand: 30.09.2026. Diese Datei beschreibt die Spiele und ihren gemeinsamen Lab-Hub.
-
-## Zuerst lesen
-
-1. Diese Datei.
-2. [lab/games-hub/README.md](lab/games-hub/README.md).
-3. [lab/shared/games-catalog.js](lab/shared/games-catalog.js).
-4. Den aktuellen Branch, letzten Commit und eventuell neuere Remote-Commits prüfen.
+Stand: 01.10.2026. Diese Datei beschreibt die Spiele und den gemeinsamen Games-Bereich. Für Escape-Arbeit zusätzlich `workstreams/escape-room-mvp.md` und `docs/games/LEARNING_GUARDRAILS.md` lesen.
 
 ## Aktiver Stand
 
 | Feld | Wert |
 | --- | --- |
 | Repository | HerrLoeffler/Hausaufgabe |
-| Struktur-Branch | lab/games-structure |
-| Ausgangsbranch | lab/vocab-rush |
-| Ausgangscommit | 4e739100d8a0e8c9be08d11b7bc96ddf86f3b141 |
+| Struktur-Basis | lab/games-structure |
+| Escape-Feature-Branch | feature/escape-room-mvp-v1 |
+| Escape-Draft-PR | #10 gegen lab/games-structure |
 | Lab-Projekt | hausaufgabe-staging |
-| Neuer Preview-Channel | gradecrew-games-structure |
-| Veröffentlichung | Vorbereitet; noch kein Deployment aus dieser Arbeitsrunde |
-| Hauptprodukt / Secure / Lehrer-App | Eigene Arbeitszweige; keine Integration durch diesen Spiele-Branch |
+| Escape Dev Channel | gradecrew-escape-dev |
+| Escape Dev URL | https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app |
+| Escape Dev Version | v0.2.0 Lern-MVP |
+| Games Dev Channel | gradecrew-games-dev |
+| Games Integrated Preview Channel | gradecrew-games-preview |
+| Production | unverändert; kein Games-/Escape-Workflow darf Production deployen |
 
-Der ältere Branch lab/games-hub enthält einen früheren Stand. lab/vocab-rush enthält bereits alle drei Spiele, Rundungsaufgaben, Vokabelbibliothek, Import und Lern-Ergänzungen. Er ist deshalb die Grundlage dieses Struktur-Branches.
+## Preview-Strategie
+
+Während „Die verriegelte Schule“ zum Referenzspiel ausgebaut wird, hat Escape bewusst einen **eigenen Entwicklungs-Preview**. Der gemeinsame Games Hub bleibt erhalten, wird aber vom Escape-Feature-Branch nicht mehr automatisch überschrieben.
+
+- `gradecrew-escape-dev`: aktuelle Escape-Baustelle, nur isolierter Escape-Build.
+- `gradecrew-games-dev`: gemeinsamer experimenteller Hub; auf diesem Branch nur manuell deploybar.
+- `gradecrew-games-preview`: später gemeinsamer geprüfter/integrationsreifer Games-Stand.
+- Einzelne fertige Spiele sollen langfristig wieder Unterpfade des gemeinsamen Systems sein. Der eigene Escape-Link ist eine Entwicklungsumgebung, keine neue dauerhafte Produkt-Domain.
+
+Alle Preview-Workflows verwenden ausschließlich Firebase Hosting im Projekt `hausaufgabe-staging`. Functions, Firestore und Production werden nicht deployed.
 
 ## Vorhandene Spiele
 
-| Spiel | Frontend | Backend-Codebase | API |
+| Spiel | Frontend | Backend-Codebase / Status | Modi |
 | --- | --- | --- | --- |
-| Fast Quiz | lab/fast-quiz/ | fastquiz | fastQuizApi |
-| Fehlerjagd Deutsch | lab/fehlerjagd-deutsch/ | fehlerjagd | fehlerjagdApi |
-| Vocab Rush | lab/vocab-rush/ | vocabrush | vocabRushApi |
+| Fast Quiz | lab/fast-quiz/ | fastquiz / fastQuizApi | Üben, Highscore, Live |
+| Fehlerjagd Deutsch | lab/fehlerjagd-deutsch/ | fehlerjagd / fehlerjagdApi | Üben, Highscore, Live |
+| Vocab Rush | lab/vocab-rush/ | vocabrush / vocabRushApi | Üben, Highscore, Live |
+| Escape Room – Die verriegelte Schule | lab/escape-room/ | isolierter Lern-MVP, noch kein echtes Tutor-/Klassenbackend | **nur Üben** |
 
-Alle drei bieten Üben, All-Time-Highscore und Live mit Lehrkraft. Die vorhandenen Live-Systeme nutzen QR-Code, 6-stelligen Code und bis zu 30 Teilnehmende. Fachliche Inhalte, Wertung, Aufgabenengines und gespeicherte Vokabelsets bleiben in ihren jeweiligen Spielmodulen.
+Die drei bisherigen Spiele behalten ihre vorhandenen Live-Systeme. Escape wird weiterhin nicht in Rundencode, Highscore oder Live angeboten.
 
-## In dieser Arbeitsrunde umgesetzt
+## Escape Room v0.2 – Lern-MVP
 
-- Ein Spiele-Katalog für Hub, Navigation und Build.
-- Spielauswahl mit Fachfiltern, Suche, Favoriten und direkten Einstiegen in die drei Modi.
-- Zentraler Code-Beitritt mit Spielauswahl.
-- Gemeinsame Navigation innerhalb aller drei Spiele.
-- Hub verwendet die vollständigen Einzel-Builds inklusive Deutsch-Feedback und Vokabelimport.
-- Verweise und Prüfsummen werden im Build kontrolliert; Spiel-Manifeste nach dem Einbau der Navigation aktualisiert.
-- Eigener neuer Preview-Channel für diesen Strukturstand.
-- Übergabe, Cloud-Shell-Einstieg mit Node 22 und automatische Prüfungen.
+### Kernspiel
+
+- 3 Räume + Finale
+- 8 validierte Lernslots
+- 4 deterministische Minirätsel
+- Inventar, Hinweise, aktive Spielzeit, lokales Fortsetzen
+- kleine Explorer-Figur bewegt sich zu angeklickten Bereichen
+- dezente zusätzliche Raum-/Interaktionsanimationen
+
+### Lernen statt Durchraten
+
+Die alte v0.1-Regel „nach drei Fehlern Lösung zeigen und weiter“ wurde entfernt.
+
+- normale Wiederholung bei frühen Fehlversuchen
+- Antwortoptionen werden neu gemischt
+- ab wiederholten Fehlversuchen kurze Erklärung + aktive Verarbeitung eines zentralen Lerninhalts
+- danach neue Transferaufgabe zum selben Lernziel
+- erst erfolgreiche Transferaufgabe schaltet den Spielfortschritt frei
+- auch eine erst nach mehreren Multiple-Choice-Versuchen gefundene richtige Antwort führt in den Lerncheck
+- Symbolfolgen sperren nach wiederholtem Raten und verlangen erneutes Lesen des ursprünglichen Hinweises
+
+Verbindliche Produktregel: `docs/games/LEARNING_GUARDRAILS.md`.
+
+### Remy / AI only when needed
+
+- lokale geprüfte Antworten für bekannte Verständnisfragen
+- normalisierter Sitzungscache für Wiederholungen
+- optionale `GradeCrewTutorBridge` für spätere externe KI
+- aktuell **kein** externer Tutor-API-Aufruf im Lab
+- Hilfe allein schaltet niemals Fortschritt frei
+- Schüler-Rohtext wird nicht in den Event-Hook geschrieben
+
+### Lehrerübersicht
+
+Vor dem Start sieht die Lehrkraft ohne Durchspielen:
+
+- Lernziel
+- Frage
+- Lösung
+- Hinweis
+- Remediation
+- Transferaufgabe
+- vollständigen Spielweg
+
+Jeder Lernslot kann im Lab direkt bearbeitet werden und wird danach erneut validiert. `GradeCrewEscapeIntegration` stellt einen validierten Frage-Set-Vertrag für die spätere Hauptprodukt-Anbindung bereit. Das ist noch nicht der echte GradeCrew-Testadapter.
+
+Die Lab-Lehreransicht ist weiterhin **nicht authentifiziert**. In der realen Integration müssen Lösungen/Lehrerrechte geschützt werden.
 
 ## Verifiziert
 
-- 18 automatisierte DOM-, Navigations-, Build- und Manifestprüfungen bestanden.
-- Chromium-Browserprüfung: Desktop (1440 px), Tablet (768 px), Handy (390 px); kein horizontaler Überlauf im Hub.
-- Alle neun Kombinationen aus Spiel und Modus öffnen die richtige Ansicht.
-- Übungsrunden lassen sich in allen drei Spielen tatsächlich starten.
-- Code-Beitritt erhält führende Nullen; QR-Beitrittslinks haben Vorrang vor Modusparametern.
-- Navigation, Verlassen/Abbrechen, Favoriten nach Neuladen und Einstieg ohne JavaScript geprüft.
-- Spielprogramme und Aufgabenengines stimmen im Hub bytegenau mit ihren Quellen überein.
+### v0.1 Historie
 
-**Prüfgrenze:** Serverantworten und die externe QR-Bibliothek waren in der Browserprüfung simuliert. Es wurden keine echten Räume, Highscores oder KI-Aufträge angelegt. Ein neuer Test mit 30 echten Geräten, realem Backend, KI-Import und tatsächlichen QR-Scans gehört zur nächsten Abnahme.
+- integrierter Code-Stand `664f605` vollständig grün, Workflow `36924444942`
+- Hub-/Browserflows mit Desktop/Tablet/Mobile bestanden
+- gemeinsamer Games-Dev-Preview erfolgreich veröffentlicht
+
+### v0.2 Escape-only
+
+Workflow `Escape Room Dev Preview`, Run `36933237316`, Commit `afbec01a4807d52b00a23c0ab804b37b0645b402`:
+
+- 7/7 Escape-Verhaltenstests grün
+- Lehrerbearbeitung getestet
+- verpflichtende Lernschleife + Transfer getestet
+- lokaler Remy-Knowledge-Hit/Cache ohne externe Bridge getestet
+- Anti-Raten-Sperre bei Symbolfolge getestet
+- kompletter Lösungsweg + Save/Resume getestet
+- isolierter Escape-Build v0.2.0 grün
+- Firebase Hosting Preview `gradecrew-escape-dev` erfolgreich deployed
+- URL: `https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app`
+
+**Prüfgrenze:** Der neue Escape-only Workflow ist automatisiert grün und deployed. Ein echter physischer iPad-/Handy-Test des v0.2-Stands ist noch offen. Die vollständigen gemeinsamen Chromium-/PR-Checks werden separat als PR-CI-Nachweis betrachtet. Keine externe Tutor-KI und kein echtes GradeCrew-Klassenbackend sind angeschlossen.
 
 ## Verbindliche Arbeitsregeln
 
-- Live bleibt bei verifizierten Releases. Lab -> bewerten -> Feature-Branch -> integrieren -> Staging -> abnehmen -> Live.
-- Verifizierte Spiele-Branches und Produktions-Tags als Referenz erhalten.
-- Das Hosting-Skript veröffentlicht ausschließlich den neuen Lab-Preview-Channel in hausaufgabe-staging.
-- Keine gemeinsame Bestenliste für Spiele mit unterschiedlicher Wertung.
-- Spielinhalte und Modus bleiben getrennt; Vokabelsets nicht durch Hub-Navigation verändern.
-- Ein Rundencode ist derzeit einem Spiel zugeordnet. Keine automatische Suche in allen Backends und kein Beitritt zu einer geratenen Runde.
-- Favoriten sind lokal im Browser; noch nicht an einen GradeCrew-Account gebunden.
-- Collections und Functions-Codebases nicht für eine reine Oberflächenänderung umstellen.
-- Neue Chats verwenden diesen Branch und aktualisieren diese Datei.
+- Production nur nach ausdrücklicher Freigabe und separatem Produktionspfad.
+- Escape zunächst als Referenzspiel sauber abnehmen; erst danach in den gemeinsamen Games-Stand integrieren.
+- Keine frei von KI erfundene ausführbare Spiellogik; KI liefert später nur validierte Inhalte.
+- Spaß ist erwünscht, aber Lernfortschritt darf nicht durch systematisches Durchprobieren ersetzbar sein.
+- Externe KI nur nach dem Prinzip deterministisch → lokale Wissensbasis → Cache → günstige KI → starkes Modell als Ausnahme.
+- Keine dauerhafte serverseitige Sammlung von Schülerfragen ohne separaten Datenschutz-/Telemetry-Vertrag.
+- Lösungen und Lehreransichten bei echter Integration nicht ungeschützt an Schüler ausliefern.
 
-## Nächste fünf Aufgaben
+## Nächste Aufgaben
 
-1. **Abnahme im Lab:** Hub mit echten Staging-Backends, allen drei Spielen und mehreren Geräten / QR-Codes testen.
-2. **Lehrkraft-Konfigurationen:** Einstellungen pro Spiel speichern, benennen und erneut öffnen; zuerst lokal, später an den Lehreraccount binden.
-3. **Gemeinsamer API-Adapter:** Aktionsnamen hinter einem Vertrag für Räume und Bestenlisten abbilden, einzeln testen; Wertungslogik je Spiel erhalten.
-4. **GradeCrew-Anbindung:** Auf Feature-Branch „Spiele“ als eigenen Bereich, Lehreraccount und später Klassen/Kürzel anbinden; lokale Vokabelsets kontrolliert übernehmen.
-5. **Staging-Abnahme:** Auth-/Klassenrechte, Raumende/Wiederbeitritt, Fehlerzustände, Datenhaltung und Betriebskosten prüfen, anschließend Live-Freigabe.
-
-Neue Spiele folgen nach diesen Struktur- und Abnahmeschritten.
+1. vollständigen PR-CI-/Chromium-Lauf für den v0.2-Head prüfen und eventuelle Regressionen beheben.
+2. Escape-v0.2 auf echtem Desktop/iPad testen; besonders Touch, Lernschleife, Remy und Lehrereditor.
+3. aktuellen `feature/gradecrew-app-integration`-Fragevertrag lesen und einen echten Adapter in isolierter Form bauen.
+4. externe Tutor-KI später über serverseitige GradeCrew-Brücke integrieren; lokale Wissens-/Cache-Stufe davor beibehalten.
+5. Lehreransicht bei Hauptprodukt-Integration an Auth/Berechtigungen binden.
+6. nach stabiler Referenzwelt Welt 2 planen.

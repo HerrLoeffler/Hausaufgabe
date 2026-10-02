@@ -1,0 +1,56 @@
+name: Apply Escape anti-guess guards
+
+on:
+  push:
+    branches:
+      - feature/escape-room-mvp-v1
+    paths:
+      - 'tools/apply-escape-guess-guards.py'
+      - '.github/workflows/apply-escape-guess-guards.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-test:
+    if: ${{ !contains(github.event.head_commit.message || '', '[escape-guess-guards-applied]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/escape-room-mvp-v1
+          fetch-depth: 0
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/games/package-lock.json
+
+      - name: Apply anti-guess patch
+        run: python3 tools/apply-escape-guess-guards.py
+
+      - name: Check browser code
+        run: node --check lab/escape-room/app.js
+
+      - name: Install test dependencies
+        run: npm ci --prefix tools/games --no-audit --no-fund
+
+      - name: Run Escape tests
+        run: node --test tools/games/escape-room.test.cjs tools/games/gradecrew-escape-adapter.test.cjs
+
+      - name: Commit tested anti-guess guards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lab/escape-room/app.js tools/games/escape-room.test.cjs
+          if git diff --cached --quiet; then
+            echo "No anti-guess changes to commit."
+          else
+            git commit -m "Harden Escape against blind guessing [escape-guess-guards-applied]"
+            git push origin HEAD:feature/escape-room-mvp-v1
+          fi

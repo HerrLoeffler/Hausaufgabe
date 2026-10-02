@@ -1,0 +1,159 @@
+# GradeCrew Escape Room – Lern-MVP v0.5
+
+Lab-Prototyp für `GC-GAMES-01`. Die erste Welt heißt **„Die verriegelte Schule“** und wird auf `feature/escape-room-mvp-v1` zunächst als einzelnes Referenzspiel fertiggestellt. Erst nach Abnahme wird sie wieder in den gemeinsamen Games-Stand integriert.
+
+## Was dieser Stand kann
+
+- vollständig digitales Escape-Spiel ohne Vorbereitung im Klassenraum
+- drei Räume plus Finale
+- acht austauschbare Lern-Slots
+- Hauptfragen als Auswahl, sicher automatisch prüfbarer Freitext oder Zahl mit Toleranz/Einheit
+- vier Minirätsel: Tafelmuster, Türcode, Spind-Symbolfolge, Schlüsselbrett-Symbolfolge
+- Inventar, lokale Wiederaufnahme, aktive Spielzeit und Preflight
+- kleine Coco-Explorer-Figur; Point-and-Click bleibt touchfreundlich
+- lokale `gradecrew:escape-event`-Hooks, aber kein Analytics-Upload
+
+## Lernschleife v0.3 – Lernen statt Durchklicken
+
+Entscheidender Spielfortschritt darf nicht durch systematisches Raten entstehen.
+
+- **Beim ersten Versuch richtig:** Aufgabe ist bestanden; kurze Erklärung und Spielfortschritt.
+- **Erster Fehlversuch:** sofort eine konkrete fachliche **Denkhilfe aus dem Aufgaben-Hinweis** statt „lies noch einmal“; Antworten werden bei Auswahlaufgaben neu gemischt.
+- **Danach richtig:** noch kein direkter Spielfortschritt. Eine neue Transferaufgabe zum selben Lernziel muss zeigen, dass das Prinzip verstanden wurde.
+- **Mehrere Fehlversuche:** kurze sachliche Erklärung → aktiver Lernschritt/Merksatz → neue Transferaufgabe.
+- Erst der erfolgreiche Transfer gibt den Spielfortschritt frei.
+- Coco kann Verständnis fördern, schaltet aber niemals selbst Fortschritt frei.
+
+Damit lohnt sich blindes Klicken nicht: Wer versteht, ist schneller als jemand, der Antwortmöglichkeiten durchprobiert.
+
+Auch die Minirätsel bleiben gegen Raten gehärtet:
+
+- Spind- und Schlüsselbrett-Symbolfolgen verlangen nach wiederholten Fehlversuchen das erneute Lesen ihrer Quelle.
+- Das Tafelmuster wird nach zwei Fehlversuchen geschlossen und verlangt bewusstes erneutes Lesen des Musters.
+- Der Türcode wird nach zwei falschen Codes gesperrt. Vor einem neuen Versuch müssen Regal, Computer und Tafel erneut geprüft werden.
+
+Die verbindlichen Leitplanken stehen in `docs/games/LEARNING_GUARDRAILS.md`.
+
+## Coco und API-Sparen
+
+`escape-tutor.js` arbeitet nach **AI only when needed**:
+
+1. bekannte Verständnisfragen aus lokalem Wissenskatalog beantworten;
+2. Wiederholungen aus dem Sitzungscache beantworten;
+3. allgemeine Hilfewünsche wie „Wie fange ich an?“, „Erklär einfacher“ oder „Gib mir ein Beispiel“ lokal aus vorhandenen Lerninformationen beantworten;
+4. nur eine wirklich individuelle Verständnisfrage über eine explizite `GradeCrewTutorBridge` an externe KI weiterreichen;
+5. ohne externe Brücke auf die fachliche Erklärung zurückfallen.
+
+Der Lab-MVP sendet standardmäßig keine Schülerfrage an einen Server. Die globale GradeCrew-Kosten-/Memory-Infrastruktur wird separat entwickelt; Escape baut keine parallele Langzeitspeicherung auf.
+
+## Coco + einfache KI-Aufgabenerstellung
+
+Die Lehrer-Vorschau hat einen kompakten Generator vorbereitet:
+
+- Fach
+- Klasse
+- Thema
+- Schwierigkeit
+- optional ein eigener Wunsch
+- Aktion **„8 Escape-Aufgaben erstellen“**
+
+Es wird **kein zweites KI-Backend** gebaut. Der vorhandene GradeCrew-Callable `generateTest` bleibt die spätere Quelle. Der eigenständige Preview zeigt bewusst **keine zweite Anmeldung** und versucht auch keinen anonymen Zugriff auf die geschützte KI. Erst die integrierte GradeCrew-Lehreransicht stellt über `GradeCrewEscapeAiBridge` die bereits vorhandene Lehrersitzung bereit; dann wird der Generator aktiv.
+
+Ein KI-Lauf ist weiterhin als 16 bildfreie, automatisch prüfbare Aufgaben vorbereitet: die ersten 8 Hauptaufgaben und die Aufgaben 9–16 als passende Transferpaare. Nur die 8 Hauptaufgaben erscheinen als Lernslots. Die Transferaufgaben werden in die bestehende Lernschleife eingebaut. Spiellogik und Anti-Raten-Regeln werden niemals von der KI erzeugt.
+
+## Kompakte Lehrerprüfung wie in GradeCrew
+
+Die Lehrer-Vorschau orientiert sich kompakt am GradeCrew-Testeditor:
+
+- pro Karte zuerst nur **Aufgabe, Antworttyp und richtige Lösung**
+- `Lernhilfe & Transfer anzeigen` ist einklappbar
+- beim Bearbeiten stehen **Frage + Antworten + richtige Lösung** im Vordergrund
+- Lernziel, Hinweis, Lösungserklärung, Remediation, aktiver Lernschritt und Transfer liegen unter **„Lernhilfe & Transfer anpassen (optional)“**
+- die Lehrkraft muss also nicht sieben didaktische Felder anfassen, wenn nur eine Frage oder Antwort geändert werden soll
+
+Für sicher automatisch prüfbare Freitext-/Zahlfragen bleibt der GradeCrew-Testeditor die maßgebliche Bearbeitung, damit Antwortvarianten, Toleranz und Einheit korrekt erhalten bleiben.
+
+## GradeCrew-Adapter
+
+`gradecrew-question-adapter.js` bildet den geprüften GradeCrew-Fragevertrag auf die acht Escape-Slots ab. Sicher unterstützt sind:
+
+- `single`
+- `dropdown`
+- `truefalse`
+- `text`, wenn `manualReview === false` und akzeptierte Antworten vorhanden sind
+- `number` mit numerischer Lösung, Toleranz ≥ 0 und optionaler Einheit
+
+Manuell zu prüfender Freitext bleibt fail-closed: Eine fachlich unsichere automatische Bewertung darf keinen Spielfortschritt freischalten. Komplexe bzw. bildabhängige Typen bleiben ebenfalls gesperrt, bis sie ohne Informationsverlust dargestellt und geprüft werden können.
+
+`gradecrew-escape-builder.js` bereitet den Ablauf **GradeCrew-Test → 8 Aufgaben → Lernpakete → Lehrerprüfung → Preflight → startfähiges Escape-Paket** vor. Die eigentliche Hauptprodukt-Schaltfläche „Als Escape Room spielen“ ist noch nicht in den parallel entwickelten Haupt-App-Branch verdrahtet.
+
+## v0.5 – gemeinsamer Coco + Lehrer zuerst
+
+- Coco wird **exakt aus dem Shared-GradeCrew-Designsystem übernommen**, statt eine Escape-eigene Pinguinvariante zu pflegen.
+- `penguin-guide.svg` enthält die sechs offiziellen Clay-Posen; Escape verwendet `#pose-1` für Begrüßung, `#pose-4` für Hilfe und `#pose-5` beim Erkunden.
+- `gradecrew-brand.css` und `crew-clay.css` werden im isolierten Build aus der gemeinsamen GradeCrew-Wurzel übernommen. Escape-spezifische Styles ergänzen nur Spielspezifika.
+- Neue Runden starten nicht mehr direkt von der Startseite: **Escape vorbereiten → Lehrerbereich → Aufgaben erstellen/prüfen → Escape starten**.
+- Der eigenständige Lab-Preview enthält keine E-Mail-/Passwort-Anmeldung mehr.
+- Der geschützte KI-Generator wird im Lab nicht anonym umgangen. Die Generator-UI und der 16-Fragen-Vertrag bleiben vorbereitet; aktiv wird er später über `GradeCrewEscapeAiBridge` mit der bereits angemeldeten GradeCrew-Lehrersitzung.
+- Production bleibt unverändert.
+
+## Automatische Prüfungen
+
+Die Escape-, Coco-, Adapter- und Builder-Tests prüfen unter anderem:
+
+- Lehrer-Vorschau und kompakten Editor
+- exakten Shared-Coco mit sechs Clay-Posen statt alter Escape-Pinguinkopie
+- **Lehrerbereich als einzigem Einstieg für eine neue Runde vor dem Spielstart**
+- **keine Firebase-Login-Abhängigkeit im Standalone-Escape**
+- Generatorvertrag mit 8 Haupt-/8 Transfer-Paarung
+- konkrete Denkhilfe nach dem ersten Fehler
+- **einmal falsch → danach richtig → Transfer erforderlich**
+- vollständige Remediation nach mehreren Fehlversuchen
+- keine Freigabe vor erfolgreichem Transfer
+- Freitext- und Zahlantworten als echte Fortschritts-Gates
+- lokalen Coco-Cache und lokale Standardhilfen ohne API-Aufruf
+- Anti-Raten-Sperren für Tafelmuster, Türcode und Symbolfolgen
+- vollständigen Lösungsweg und Save/Resume
+- GradeCrew-Test → Escape-Vorbereitung
+
+Der isolierte Build erzeugt ein SHA-256-Manifest. Externe Tutor-KI und Telemetrie-Upload sind im Lab weiterhin nicht aktiviert.
+
+### Verifikation v0.5
+
+Produktcommit: `84e3a71d82c27522c994dd94af297abfafab41ed`.
+
+Automatisierter v0.5-Prüflauf `36990569083`:
+
+- fokussierte Escape-/Coco-/Tutor-/Adapter-/Builder-Tests: **27/27 grün**
+- JavaScript-Syntaxcheck: grün
+- isolierter Escape-Build: **v0.5.0 grün**
+- Shared-Coco-Prüfung: offizielles Asset mit `pose-1` bis `pose-6` vorhanden
+- Standalone-Build enthält bewusst keine `firebase-config.js`
+- Preview-Deploy wird separat über den bestehenden Escape-only Staging-Workflow ausgeführt
+
+## Bewusste Grenzen
+
+- Lehrer-Vorschau im Lab ist noch nicht als eigener geschützter Produktbereich integriert; echte Lösungsschlüssel müssen bei der Hauptprodukt-Integration geschützt bleiben.
+- Noch keine echte Klassen-/Schüler-Anbindung und noch keine Hauptprodukt-Schaltfläche „Als Escape Room spielen“.
+- Keine Live-Runde, kein Highscore und kein Multiplayer für Escape in dieser Iteration.
+- Keine serverseitige Speicherung von Schülerfragen.
+- Prozentrechnung bleibt Referenzinhalt des Prototyps.
+- Echter Desktop-/iPad-/Handy-Gerätetest dieses **v0.5-Stands** ist weiterhin separat nötig.
+- Echte KI-Erstellung wird erst nach Anbindung an die bestehende GradeCrew-Lehrersitzung E2E getestet; im Standalone-Lab gibt es dafür bewusst weder Extra-Login noch anonymen Backend-Zugriff.
+
+## Architektur
+
+- `escape-data.js`: Welt, Lern-Slots, Remediation-/Transferdaten, Preflight
+- `escape-tutor.js`: Local-first-Hilfe, Sitzungscache, optionaler externer Bridge-Vertrag
+- `gradecrew-question-adapter.js`: sicherer GradeCrew-Test → Escape-Lernslot-Adapter
+- `gradecrew-escape-builder.js`: Lehrerprüfung und startfähiges Escape-Paket
+- `app.js`: deterministische Engine, Lernschleife, Anti-Raten, Lehrerbearbeitung
+- `escape-teacher-compact.js`: kompakte GradeCrew-nahe Lehreroberfläche
+- `escape-teacher-flow.js`: Lehrerbereich vor neuem Spielstart
+- `escape-coco-ai.js`: Coco-Darstellung, kompakter Generatorvertrag und GradeCrew-AI-Brücke
+- `gradecrew-brand.css` / `crew-clay.css`: gemeinsam übernommene GradeCrew-Designsprache und Coco-Clay-System
+- `styles.css` / `escape-v2.css`: Escape-spezifische Darstellung und Immersion
+- `tools/build-lab-escape-room.mjs`: isolierter Build mit Manifest/Prüfsummen
+- `tools/games/*.test.cjs`: Regressionstests
+
+Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
