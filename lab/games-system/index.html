@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>GradeCrew Games · Design System</title>
+  <link rel="stylesheet" href="../shared/games-design-system.css">
+  <link rel="stylesheet" href="preview.css">
+</head>
+<body>
+  <main class="gcg-shell previewShell">
+    <header class="previewHead gcg-stack">
+      <p class="gcg-eyebrow">GRADECREW GAMES · INTERNAL PREVIEW</p>
+      <h1 class="gcg-title">Games Design System</h1>
+      <p class="gcg-lead">Gemeinsame Komponenten und UX-Regeln für Fast Quiz, Fehlerjagd, Vocab Rush und künftige GradeCrew Games.</p>
+      <div class="previewVersion">Foundation <strong>v0.1.0</strong> · keine Production-Komponente</div>
+    </header>
+
+    <section class="previewSection gcg-stack" aria-labelledby="modesTitle">
+      <div><p class="gcg-eyebrow">01 · MODI</p><h2 id="modesTitle">Immer dieselben drei Einstiegspunkte</h2></div>
+      <div class="gcg-mode-grid">
+        <button class="gcg-mode-card" type="button"><span class="gcg-eyebrow">ALLEIN TRAINIEREN</span><strong>Üben</strong><p>Fehler verstehen, wiederholen und ohne unnötigen Wettbewerbsdruck lernen.</p><div class="gcg-mode-card__meta"><span>lernorientiert</span><span>frei anpassbar</span></div></button>
+        <button class="gcg-mode-card" type="button"><span class="gcg-eyebrow">VERGLEICHBAR</span><strong>Highscore</strong><p>Feste Regeln und nur Aufgaben, deren Bearbeitungszeit sinnvoll vergleichbar ist.</p><div class="gcg-mode-card__meta"><span>feste Regeln</span><span>Ranking</span></div></button>
+        <button class="gcg-mode-card" type="button"><span class="gcg-eyebrow">LEHRKRAFT STARTET</span><strong>Live</strong><p>Lehrkraft wählt Inhalt und Preset. Schüler treten nur per QR/Code und Namen bei.</p><div class="gcg-mode-card__meta"><span>QR-Code</span><span>gemeinsamer Start</span></div></button>
+      </div>
+    </section>
+
+    <section class="previewSection gcg-stack" aria-labelledby="setupTitle">
+      <div><p class="gcg-eyebrow">02 · SETUP</p><h2 id="setupTitle">Wenige Primärentscheidungen, Details auf Wunsch</h2></div>
+      <div class="gcg-setup">
+        <div class="gcg-card gcg-setup-main">
+          <div class="gcg-step">
+            <div class="gcg-step__head"><span class="gcg-step__index">1</span><div><strong>Spielweise</strong><small>Beispiel Fast Quiz</small></div></div>
+            <div class="gcg-choice-grid">
+              <label class="gcg-choice"><input type="radio" name="profile" checked><span class="gcg-choice__icon">🧠</span><span><span class="gcg-choice__title">Kopfrechnen</span><span class="gcg-choice__hint">kurz und mental lösbar</span></span></label>
+              <label class="gcg-choice"><input type="radio" name="profile"><span class="gcg-choice__icon">≈</span><span><span class="gcg-choice__title">Runden</span><span class="gcg-choice__hint">Stellenwert verstehen</span></span></label>
+              <label class="gcg-choice"><input type="radio" name="profile"><span class="gcg-choice__icon">✏️</span><span><span class="gcg-choice__title">Block & Stift</span><span class="gcg-choice__hint">bewusst komplexer</span></span></label>
+            </div>
+          </div>
+          <div class="gcg-step">
+            <div class="gcg-step__head"><span class="gcg-step__index">2</span><div><strong>Inhalt</strong><small>Presets zuerst; vollständige Auswahl optional.</small></div></div>
+            <div class="gcg-choice-grid">
+              <label class="gcg-choice"><input type="checkbox" checked><span class="gcg-choice__icon">×</span><span><span class="gcg-choice__title">Multiplikation</span><span class="gcg-choice__hint">mental geeignete Faktoren</span></span></label>
+              <label class="gcg-choice"><input type="checkbox" checked><span class="gcg-choice__icon">÷</span><span><span class="gcg-choice__title">Division</span><span class="gcg-choice__hint">glatte Ergebnisse</span></span></label>
+            </div>
+          </div>
+          <div class="gcg-step">
+            <div class="gcg-step__head"><span class="gcg-step__index">3</span><div><strong>Dauer</strong><small>Ein Standardwert reicht für den schnellen Start.</small></div></div>
+            <div class="previewDurations"><button class="gcg-button gcg-button--secondary" type="button">1 min</button><button class="gcg-button gcg-button--primary" type="button">3 min</button><button class="gcg-button gcg-button--secondary" type="button">5 min</button></div>
+          </div>
+        </div>
+        <aside class="gcg-setup-aside">
+          <div class="gcg-summary"><span class="gcg-summary__label">Deine Runde</span><span class="gcg-summary__text" data-gcg-summary-text>Kopfrechnen · × ÷ · Standard · 3 Minuten</span></div>
+          <details class="gcg-advanced"><summary>Weitere Einstellungen</summary><div class="gcg-advanced__body"><p>Minuspunkte, Sperrzeit, Zeitbonus, Serienbonus, Lösung und Bestenliste gehören hierhin – nicht in den primären Startpfad.</p></div></details>
+          <button class="gcg-button gcg-button--primary" type="button">Live-Runde erstellen</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="previewSection gcg-stack" aria-labelledby="statesTitle">
+      <div><p class="gcg-eyebrow">03 · SPIELZUSTÄNDE</p><h2 id="statesTitle">Status immer mit Text und Struktur</h2></div>
+      <div class="gcg-card gcg-stack">
+        <div class="previewStatuses"><span class="gcg-status" data-state="waiting">Wartet</span><span class="gcg-status" data-state="running">Läuft</span><span class="gcg-status" data-state="error">Fehler</span></div>
+        <div class="gcg-stats"><div class="gcg-stat"><span>Zeit</span><strong>02:41</strong></div><div class="gcg-stat"><span>Richtig</span><strong>7</strong></div><div class="gcg-stat"><span>Serie</span><strong>4</strong></div><div class="gcg-stat"><span>Punkte</span><strong>820</strong></div></div>
+        <div class="gcg-feedback" data-state="correct"><strong>Richtig.</strong> Kurzes fachliches Feedback kann direkt folgen.</div>
+        <div class="gcg-feedback" data-state="wrong"><strong>Noch nicht.</strong> Im Lernmodus folgt Erklärung oder Wiederholung statt bloßem Zeitverlust.</div>
+      </div>
+    </section>
+
+    <footer class="previewFooter"><a href="../">← Zurück zu GradeCrew Games</a><span>Nur Lab / Design-System-Vorschau</span></footer>
+  </main>
+  <script src="../shared/games-design-system.js"></script>
+</body>
+</html>
