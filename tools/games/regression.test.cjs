@@ -29,6 +29,12 @@ async function openPage(relative = '', query = '', setup) {
   w.close = () => { observers.forEach(observer => observer.disconnect()); close(); };
   w.addEventListener('error', event => errors.push(event.error || event.message));
   w.scrollTo = () => {};
+  // JSDOM exposes <dialog> but not the modal methods used by real browsers.
+  // Keep this compatibility shim test-only so product code still exercises the native API.
+  if (w.HTMLDialogElement) {
+    w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+    w.HTMLDialogElement.prototype.close = function () { this.open = false; };
+  }
   w.fetch = async (url, init) => {
     const body = JSON.parse(init?.body || '{}');
     requests.push({ url, ...body });
