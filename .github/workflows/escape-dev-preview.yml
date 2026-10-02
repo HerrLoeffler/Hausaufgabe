@@ -6,10 +6,13 @@ on:
       - feature/escape-room-mvp-v1
     paths:
       - 'lab/escape-room/**'
+      - 'functions/**'
       - 'tools/build-lab-escape-room.mjs'
+      - 'tools/build-escape-preview-function.mjs'
       - 'tools/games/escape-room.test.cjs'
       - 'tools/games/escape-tutor.test.cjs'
       - 'tools/games/escape-coco-ai.test.cjs'
+      - 'tools/games/escape-preview-function.test.cjs'
       - 'tools/games/gradecrew-escape-adapter.test.cjs'
       - 'tools/games/gradecrew-escape-builder.test.cjs'
       - '.github/workflows/escape-dev-preview.yml'
@@ -26,7 +29,7 @@ jobs:
   deploy-escape-dev:
     name: Test and deploy Escape Room dev preview
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,13 +39,23 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: tools/games/package-lock.json
+          cache-dependency-path: |
+            tools/games/package-lock.json
+            functions/package-lock.json
 
-      - name: Install test dependencies
+      - name: Install Escape test dependencies
         run: npm ci --prefix tools/games --no-audit --no-fund
 
+      - name: Install GradeCrew function dependencies
+        run: npm ci --prefix functions --include=dev --no-audit --no-fund
+
       - name: Run Escape Room, Coco and GradeCrew preparation tests
-        run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
+        run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/escape-preview-function.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
+
+      - name: Verify shared GradeCrew AI functions
+        run: |
+          npm test --prefix functions
+          npm run check --prefix functions
 
       - name: Build Escape Room only
         run: |
@@ -52,6 +65,9 @@ jobs:
           mkdir -p .firebase-escape-dev
           cp -R "$BUILD_ROOT/public" .firebase-escape-dev/public
           cp "$BUILD_ROOT/firebase.json" .firebase-escape-dev/firebase.json
+
+      - name: Prepare staging-only Escape AI function source
+        run: node tools/build-escape-preview-function.mjs "$RUNNER_TEMP/gradecrew-escape-api"
 
       - name: Check Firebase deploy credential
         id: firebase_auth
@@ -63,6 +79,22 @@ jobs:
             echo "available=false" >> "$GITHUB_OUTPUT"
             echo "::warning::Firebase preview deploy skipped: repository secret FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING is not configured."
           fi
+
+      - name: Deploy rate-limited Escape AI preview function only
+        if: steps.firebase_auth.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SA_FILE="$RUNNER_TEMP/firebase-staging-service-account.json"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$SA_FILE"
+          chmod 600 "$SA_FILE"
+          export GOOGLE_APPLICATION_CREDENTIALS="$SA_FILE"
+          cd "$RUNNER_TEMP/gradecrew-escape-api"
+          npx --yes firebase-tools@15.32.1 deploy \
+            --only functions:generateEscapePreview \
+            --project hausaufgabe-staging \
+            --config firebase.json \
+            --non-interactive
 
       - name: Deploy Escape Room preview channel only
         if: steps.firebase_auth.outputs.available == 'true'
