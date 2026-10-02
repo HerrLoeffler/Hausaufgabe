@@ -153,14 +153,19 @@ function renderDetailControls(uid) {
   const actions = root?.querySelector(".adminDetailActions");
   const user = profile(uid);
   if (!root || !actions || !user) return;
-  document.getElementById(CONTROLS_ID)?.remove();
 
   const ownAccount = auth.currentUser?.uid === uid;
   const isAdmin = user.role === "admin";
   const isTest = user.isTestAccount === true;
   const isArchived = user.isTestAccountArchived === true;
+  const signature = [uid, user.role || "teacher", isTest ? "test" : "real", isArchived ? "archived" : "active", ownAccount ? "self" : "other"].join(":");
+  const existing = document.getElementById(CONTROLS_ID);
+  if (existing?.dataset.signature === signature && existing.closest("#adminTeacherDetail")) return;
+  existing?.remove();
+
   const controls = document.createElement("div");
   controls.id = CONTROLS_ID;
+  controls.dataset.signature = signature;
   controls.className = "gcAdminTestAccountControls";
   controls.innerHTML = `
     <label>Rolle
@@ -169,9 +174,9 @@ function renderDetailControls(uid) {
         <option value="admin" ${isAdmin ? "selected" : ""}>Admin</option>
       </select>
     </label>
-    <button type="button" class="button secondary" id="gcToggleTestAccount" ${isAdmin ? "disabled" : ""}>${isTest ? "Testkonto entfernen" : "Als Testkonto markieren"}</button>
+    <button type="button" class="button secondary" id="gcToggleTestAccount" ${isAdmin || isArchived ? "disabled" : ""}>${isTest ? "Testkonto entfernen" : "Als Testkonto markieren"}</button>
     ${isTest && !ownAccount ? `<button type="button" class="button ${isArchived ? "secondary" : "ghost"}" id="gcArchiveTestAccount">${isArchived ? "Testkonto wieder aktivieren" : "Testkonto archivieren"}</button>` : ""}
-    <p class="gcAdminTestNote">${isTest ? `Dieses Konto ist als Testkonto markiert${isArchived ? " und archiviert" : ""}. Rolle: ${escapeHtml(roleLabel(user.role))}.` : "Testkonto markieren trennt Entwicklungs-/Testkonten von echten Lehrkräften. Admin-Konten können nicht als Testkonto markiert werden."}</p>
+    <p class="gcAdminTestNote">${isArchived ? "Archivierte Testkonten sind gesperrt. Vor dem Entfernen der Testkonto-Markierung bitte zuerst wieder aktivieren." : isTest ? `Dieses Konto ist als Testkonto markiert. Rolle: ${escapeHtml(roleLabel(user.role))}.` : "Testkonto markieren trennt Entwicklungs-/Testkonten von echten Lehrkräften. Admin-Konten können nicht als Testkonto markiert werden."}</p>
   `;
   actions.appendChild(controls);
 
@@ -207,7 +212,7 @@ function renderDetailControls(uid) {
     try {
       await saveUser(uid, {
         isTestAccount: nextValue,
-        isTestAccountArchived: nextValue ? false : false,
+        isTestAccountArchived: false,
         testAccountUpdatedAt: serverTimestamp(),
         testAccountUpdatedBy: auth.currentUser?.uid || ""
       }, nextValue ? "Als Testkonto markiert." : "Testkonto-Markierung entfernt.");
@@ -252,6 +257,13 @@ function installListeners() {
       scheduleDecorate(0);
       window.setTimeout(() => renderDetailControls(selectedUid), 0);
       window.setTimeout(() => renderDetailControls(selectedUid), 80);
+      return;
+    }
+    if (event.target.closest?.(".adminToggleUser")) {
+      window.setTimeout(async () => {
+        await refreshUsers();
+        scheduleDecorate();
+      }, 500);
     }
   }, true);
 
