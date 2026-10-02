@@ -153,3 +153,17 @@ Nach dem Deploy wurden nur temporäre Patch-/Workflow-Hilfsdateien entfernt und 
 ## Wiederaufnahme
 
 Zuerst `START_HERE.md`, `AGENTS.md`, `GRADECREW_STATE.json`, `TODO.md`, `GAMES_STATUS.md`, `docs/games/LEARNING_GUARDRAILS.md`, `docs/games/GRADECrew_ESCAPE_ADAPTER.md`, diese Übergabe und PR #10 lesen. Danach Branchspitze, parallele Branches/PRs, aktuellen CI-Stand und Preview-URL frisch prüfen. Code, GitHub-Sicherung, Tests, Deploy, Gerätetest und Production immer getrennt berichten.
+
+## v0.4 – Coco + kompakte KI-Aufgabenerstellung
+
+- Sichtbare Escape-Begleitung ist **Coco**; Emoji-Platzhalter und sichtbare „Remy“-Texte wurden entfernt.
+- Canonical Escape-Art: `assets/gradecrew/penguin-guide.svg` und `penguin-guide-welcome.svg`.
+- Neue Lehrer-Karte: Fach, Klasse, Thema, Schwierigkeit, optionaler Wunsch → **8 Escape-Aufgaben erstellen**.
+- Wiederverwendung des bestehenden authentifizierten GradeCrew-Callables `generateTest`; kein zweites KI-Backend und kein clientseitiger API-Key.
+- Ein KI-Lauf erzeugt 8 Hauptaufgaben + 8 passende Transferaufgaben; der Escape-Adapter/Preflight bleibt das Gate.
+- Generator beschränkt sich auf sicher automatisch prüfbare, bildfreie Typen.
+- Eigenständiger Preview: einmalige GradeCrew-E-Mail/Passwort-Anmeldung über Firebase Auth. In der späteren Haupt-App ist `GradeCrewEscapeAiBridge` als Sitzungs-/Generator-Brücke vorgesehen.
+- Generierter Satz wird im Preview lokal gespeichert und bei Reload wiederhergestellt; manuelle Änderungen werden mitgesichert.
+- Production bleibt unberührt.
+
+**Prüfstatus dieses Abschnitts:** Codeänderungen werden durch den v0.4-Patch-Workflow getestet und erst danach committed. Escape-only Staging-Deploy erfolgt anschließend durch den bestehenden Preview-Workflow; Geräteabnahme bleibt separat.

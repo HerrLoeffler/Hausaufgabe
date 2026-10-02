@@ -47,7 +47,7 @@
       <div class="gameLayout">
         <section class="roomPanel" aria-label="Spielraum">
           <div id="roomScene" class="roomScene room-classroom">
-            <div id="explorer" class="explorer" aria-hidden="true">🐧</div>
+            <div id="explorer" class="explorer" aria-hidden="true"><img class="cocoExplorerArt" src="assets/gradecrew/penguin-guide.svg" alt=""></div>
             <button class="hotspot desk" data-action="desk" type="button"><span>Lehrerpult</span></button>
             <button class="hotspot cabinet" data-action="cabinet" type="button"><span>Schrank</span></button>
             <button class="hotspot shelf" data-action="shelf" type="button"><span>Regal</span></button>
@@ -113,9 +113,9 @@
 
       <section id="remyHelp" class="remyHelp" hidden aria-labelledby="remyHelpTitle">
         <div class="remyHead">
-          <div class="remyAvatar" aria-hidden="true">🐧</div>
+          <div class="remyAvatar" aria-hidden="true"><img class="cocoHelpArt" src="assets/gradecrew/penguin-guide.svg" alt=""></div>
           <div>
-            <strong id="remyHelpTitle">Frag Remy</strong>
+            <strong id="remyHelpTitle">Frag Coco</strong>
             <span>Wenn du festhängst, sag konkret, was du nicht verstanden hast.</span>
           </div>
         </div>
@@ -126,10 +126,10 @@
         </div>
         <div class="remyAskRow">
           <input id="remyQuestion" type="text" autocomplete="off" placeholder="Was hast du nicht verstanden?">
-          <button id="remyAskBtn" class="secondaryButton" type="button">Remy fragen</button>
+          <button id="remyAskBtn" class="secondaryButton" type="button">Coco fragen</button>
         </div>
         <div id="remyAnswer" class="remyAnswer" role="status" hidden></div>
-        <p class="microcopy">Bekannte Fragen werden lokal beantwortet. Eine externe KI wird nur über eine spätere GradeCrew-Brücke genutzt.</p>
+        <p class="microcopy">Coco beantwortet bekannte Fragen lokal. Nur wirklich individuelle Fragen können später über die GradeCrew-KI laufen.</p>
       </section>
 
       <div class="modalActions">
@@ -167,7 +167,7 @@
         <div>
           <span class="eyebrow">AKTUELLER LERNINHALT</span>
           <strong id="teacherContentProfile">Mathematik · Klasse 7 · Prozentrechnung</strong>
-          <p>Die 8 Lernslots können vor dem Start geprüft und direkt bearbeitet werden. Später kann der GradeCrew-Generator dieselben Slots automatisch befüllen.</p>
+          <p>Die 8 Lernslots können geprüft, direkt bearbeitet oder unten mit der GradeCrew-KI neu erstellt werden.</p>
         </div>
         <button id="teacherResetBtn" class="secondaryButton" type="button">Änderungen zurücksetzen</button>
       </div>
@@ -235,5 +235,6 @@
   <script src="escape-tutor.js"></script>
   <script src="app.js"></script>
   <script src="escape-teacher-compact.js"></script>
+  <script src="escape-coco-ai.js"></script>
 </body>
 </html>

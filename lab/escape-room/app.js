@@ -613,7 +613,7 @@
     showFeedback(`Noch nicht richtig. Denkhilfe: ${question.hint} ${retryText}`, 'error');
     if (attempt >= D.world.remediationPolicy.retryBeforeSupport) {
       $('remyHelp').hidden = false;
-      $('questionFeedback').textContent += ' Wenn dir der Schritt noch unklar ist, frag Remy ganz konkret.';
+      $('questionFeedback').textContent += ' Wenn dir der Schritt noch unklar ist, frag Coco ganz konkret.';
     }
     renderPrimaryAnswer(question);
     save();
@@ -635,7 +635,7 @@
     if (!clean) return;
 
     $('remyAnswer').hidden = false;
-    $('remyAnswer').textContent = 'Remy denkt kurz nach …';
+    $('remyAnswer').textContent = 'Coco denkt kurz nach …';
     $('remyAskBtn').disabled = true;
 
     try {
