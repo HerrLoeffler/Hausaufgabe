@@ -17,10 +17,12 @@ Stand: 02.10.2026. Diese Datei beschreibt die Spiele, den gemeinsamen Lab-Hub un
 | Repository | HerrLoeffler/Hausaufgabe |
 | Games-Struktur-Basis | `lab/games-structure` @ `869ca416b868667c9e48c05f81c967fe6ad59020` |
 | Design-System-Arbeitsbranch | `lab/games-design-system` |
+| Design-System-PR | Draft PR #28: `lab/games-design-system` -> `lab/games-structure` |
 | Struktur-PR | Draft PR #2: `lab/games-structure` -> `lab/vocab-rush` |
 | Produktweites Design-System | separater Branch `feature/shared-gradecrew-design-system`; wird **wiederverwendet**, nicht dupliziert |
 | Lab-Projekt | `hausaufgabe-staging` |
 | Preview-Channel der Games-Struktur | `gradecrew-games-structure` |
+| bestätigte Foundation-CI | Run `36978947373` / Games Lab Checks #88: Build + 23 DOM-/Regressionstests + Chromium-Smokes grün |
 | Production | unverändert |
 
 Der ältere Branch `lab/games-hub` ist nicht mehr die Strukturquelle. `lab/games-structure` besitzt Hub/Katalog/Navigation/Tests. `lab/games-design-system` baut ausschließlich auf diesem Stand auf.
@@ -62,12 +64,22 @@ Source-of-truth:
 - neue DOM-/Komponenten-Regressionstests
 - neue responsive Chromium-Prüfung der Living Preview
 - Games-CI auf `lab/games-design-system` erweitert
+- Draft PR #28 als eigene Integrationsgrenze eröffnet
+
+### Automatisch verifiziert
+
+GitHub Actions Run `36978947373` / Games Lab Checks #88 ist vollständig grün:
+
+- isolierter Games-Hub-Build erfolgreich
+- 23/23 DOM-/Regressionstests erfolgreich
+- bestehender Chromium-Smoke: Desktop/Tablet/Handy, Hub, alle neun Kombinationen aus 3 Spielen × 3 Modi, Practice-Start, zentraler Join, QR-Priorität, Leave-Dialog und Favoriten erfolgreich
+- Games-Design-System-Chromium-Smoke: Desktop/Tablet/Handy, Auswahlkarten, Disclosure, Versionsmarker und kein horizontaler Overflow erfolgreich
+- Backends und externe QR-Bibliothek werden im Browser-Smoke bewusst gemockt; dies ist daher **keine** neue echte Backend-Abnahme
 
 ### Noch nicht als erledigt behaupten
 
 - Cloud-Shell-`--check` für diesen neuen Branch wurde in dieser Chat-Arbeitsrunde noch nicht vom Nutzer ausgeführt.
-- GitHub-CI-Ergebnis des neuen Branches ist noch zu prüfen.
-- Living Preview wurde noch nicht visuell vom Nutzer auf Desktop/iPad/Handy abgenommen.
+- Living Preview wurde noch nicht auf den isolierten Firebase-Preview-Channel aus diesem Branch deployed und vom Nutzer visuell auf realen Geräten abgenommen.
 - Fast Quiz verwendet die neuen `gcg-*`-Komponenten noch nicht als vollständigen Setup-Refactor; Foundation und gemeinsame Shell sind der erste Schritt.
 - Fehlerjagd und Vocab Rush sind noch nicht auf die neue progressive Setup-Struktur migriert.
 - keine neue echte Staging-Backend-Abnahme durch diese Design-System-Arbeit.
@@ -129,9 +141,9 @@ Source-of-truth:
 
 ## Nächste fünf Aufgaben
 
-1. **Foundation verifizieren:** `deploy-lab-games-hub.sh --check`, `npm test --prefix tools/games`, Chromium-Smokes; CI-Ergebnis prüfen.
-2. **Living Preview visuell abnehmen:** Desktop, iPad/Tablet, Handy; Fokus, Overflow, Touch, Reduced Motion prüfen.
-3. **Fast Quiz als Referenz migrieren:** Kopfrechnen / Runden / Block & Stift, Presets, Rundenzusammenfassung, `Weitere Einstellungen`; bestehende Optionen erhalten.
+1. **Foundation im Preview ansehen:** Branch lokal/Cloud Shell prüfen, isolierten Preview-Channel deployen und `/design-system/` öffnen.
+2. **Living Preview manuell abnehmen:** Desktop, iPad/Tablet, Handy; Fokus, Touch, Lesbarkeit und echte Bedienung prüfen.
+3. **Fast Quiz als Referenz auf eigenem Folgebranch migrieren:** Kopfrechnen / Runden / Block & Stift, Presets, Rundenzusammenfassung, `Weitere Einstellungen`; bestehende Optionen erhalten.
 4. **Fast-Quiz-Fachlogik trennen:** Kopfrechen-Generator mit mentalen Grenzen; schriftliche/komplexe Aufgaben in Block-&-Stift-Profil; Highscores nach Vergleichbarkeit trennen.
 5. **Muster übertragen:** nach Fast-Quiz-Abnahme Fehlerjagd (Blitz/Genau) und Vocab Rush (Erkennen/Abrufen/Schreiben/Gemischt) schrittweise auf dieselben Komponenten migrieren.
 
