@@ -150,13 +150,19 @@ for (const game of ['fast-quiz', 'fehlerjagd-deutsch', 'vocab-rush']) {
   });
 }
 
-test('escape room enters practice through the shared shell and keeps the teacher preview available', async () => {
+test('escape room enters practice through teacher preparation and keeps preview controls available', async () => {
   const { w, document: d } = await openPage('escape-room', '?mode=practice');
   try {
+    assert.equal(d.getElementById('gameView').hidden, true);
+    assert.equal(d.getElementById('homeView').hidden, false);
+    assert.equal(d.getElementById('teacherDialog').open, true);
+    assert.equal(d.getElementById('teacherPreviewBtn').hidden, true);
+    assert.ok(d.getElementById('teacherStartBtn'));
+    d.getElementById('teacherStartBtn').click();
     assert.equal(d.getElementById('gameView').hidden, false);
     assert.equal(d.getElementById('homeView').hidden, true);
+    assert.equal(d.getElementById('teacherDialog').open, false);
     assert.equal(d.querySelectorAll('.gc-games-nav').length, 1);
-    assert.ok(d.getElementById('teacherPreviewBtn'));
     assert.equal(w.location.search, '');
   } finally { w.close(); }
 });
