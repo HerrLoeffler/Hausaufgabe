@@ -63,7 +63,6 @@ jobs:
             lab/escape-room/README.md \
             tools/build-lab-escape-room.mjs \
             tools/games/package.json \
-            .github/workflows/escape-dev-preview.yml \
             workstreams/escape-room-mvp.md
           git commit -m "Use Coco and add simple Escape AI generator [escape-coco-v04]"
           git push origin HEAD:feature/escape-room-mvp-v1
