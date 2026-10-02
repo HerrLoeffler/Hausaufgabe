@@ -69,6 +69,9 @@ jobs:
       - name: Prepare staging-only Escape AI function source
         run: node tools/build-escape-preview-function.mjs "$RUNNER_TEMP/gradecrew-escape-api"
 
+      - name: Install staging-only Escape AI function dependencies
+        run: npm ci --prefix "$RUNNER_TEMP/gradecrew-escape-api/functions" --omit=dev --no-audit --no-fund
+
       - name: Check Firebase deploy credential
         id: firebase_auth
         shell: bash
