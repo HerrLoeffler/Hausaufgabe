@@ -20,13 +20,16 @@ export function installAiRoutingAdmin({ host, loadSummary }) {
   panel.append(title, note, filter, sort, reload, status, wrap); host.append(panel);
   let rows = [], disposed = false;
   const money = (value, currency) => value === null ? 'unbekannt' : new Intl.NumberFormat('de-DE', { style: 'currency', currency, maximumFractionDigits: 4 }).format(value / 1000000);
+  const reasonLabels = { lowest_forecast_cost_among_qualified: 'günstigste qualifizierte Route laut Vergleich',
+    keep_active_cooldown: 'bewährte Route während der Wartefrist', keep_active_switch_margin: 'kein ausreichender Kostenvorteil für einen Wechsel',
+    qualified_fallback_active_unavailable: 'qualifizierter Ersatz für nicht verfügbare Route', qualified_fallback_after_validation: 'qualifizierter Ersatz nach ungültiger Antwort' };
   function render() {
     body.replaceChildren(); const query = filter.value.trim().toLocaleLowerCase('de');
     const visible = rows.filter(r => [r.profileId, r.job, r.bucket, r.routeId, ...r.models].join(' ').toLocaleLowerCase('de').includes(query));
     visible.sort((a, b) => sort.value === 'requests' ? b.requests - a.requests : sort.value === 'coverage' ? a.priceCoverage - b.priceCoverage : a.currency.localeCompare(b.currency) || b.actualMicros - a.actualMicros);
     for (const r of visible) {
       const tr = el('tr');
-      [ `${r.profileId} · ${r.job} · ${r.bucket}`, `${r.models.join(', ') || 'kein Modellnachweis'} · ${r.reasons.includes('lowest_forecast_cost_among_qualified') ? 'günstigste qualifizierte Route laut Vergleich' : r.reasons.join(', ')}`,
+      [ `${r.profileId} · ${r.job} · ${r.bucket}`, `${r.models.join(', ') || 'kein Modellnachweis'} · ${r.reasons.map(reason => reasonLabels[reason] || reason).join(', ')}`,
         `${r.accepted}/${r.requests} akzeptiert · ${r.calls} API-Aufrufe`, `${r.pricedRequests ? money(r.actualMicros, r.currency) : 'unbekannt'} · ${(100 * r.priceCoverage).toFixed(0)} % bepreist`,
         `${money(r.estimatedSavingsMicros, r.currency)} · ${r.comparableRequests} vergleichbare Ergebnisse`, `${r.evidenceIds.join(', ')} / ${r.priceIds.join(', ')}` ].forEach(text => tr.append(el('td', text)));
       body.append(tr);

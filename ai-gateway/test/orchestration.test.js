@@ -67,6 +67,16 @@ test('signature, evidence binding, expiry and data policy cannot be supplied or 
     const f = fixture(); Object.assign(f.raw.profiles[0].routes[0], patch); assert.throws(() => signed(f.raw), /UNQUALIFIED_ROUTE/);
   }
 });
+test('switch margin and cooldown avoid model churn; revoked active model does not block a qualified fallback', () => {
+  const f = fixture(); f.raw.profiles[0].routes[1].forecastMicros = 990;
+  const opts = { now, availableProviders: ['anthropic'] };
+  assert.equal(chooseRoutes(signed(f.raw), 'game-hint-de', digest('scope'), opts).routes[0].id, 'quality');
+  assert.equal(chooseRoutes(signed(f.raw), 'game-hint-de', digest('scope'), opts).reason, 'keep_active_switch_margin');
+  f.raw.profiles[0].routes[1].forecastMicros = 100;
+  f.raw.profiles[0].switchAfter = now + 10000;
+  assert.equal(chooseRoutes(signed(f.raw), 'game-hint-de', digest('scope'), opts).routes[0].id, 'quality');
+  assert.equal(chooseRoutes(signed(f.raw), 'game-hint-de', digest('scope'), { ...opts, disabledRoutes: ['quality'] }).routes[0].id, 'economy');
+});
 test('one normal request makes one paid call and records a content-free decision', async () => {
   const { ai, calls, db } = engine(); const result = await ai.generate(fixture().request);
   assert.equal(calls.length, 1); assert.equal(result.model, 'fixture-economy'); assert.equal(result.routing.actualMicros, 30);
@@ -92,6 +102,7 @@ test('strict request contract prevents model/budget/prompt overrides', async () 
 test('failed validation can use exactly one qualified fallback; both attempts are charged', async () => {
   const { ai, calls } = engine({ validate: result => result.model === 'fixture-quality' });
   const result = await ai.generate(fixture().request); assert.equal(calls.length, 2); assert.equal(result.routing.actualMicros, 60);
+  assert.equal(result.routing.reason, 'qualified_fallback_after_validation');
 });
 test('unknown provider charge is retained and cannot cause blind retry', async () => {
   const { ai, calls, db } = engine({ generate: async () => { throw new Error('private prompt must not log'); } });

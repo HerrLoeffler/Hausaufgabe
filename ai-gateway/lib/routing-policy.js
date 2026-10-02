@@ -37,12 +37,16 @@ function readSignedPolicy(envelope, publicKey, now = Date.now()) {
         || r.validatorVersion !== p.validatorVersion || !id(r.evidenceId) || !validHash(r.evidenceDigest)
         || r.qualityEligible !== true || !Number.isFinite(r.expiresAt) || r.expiresAt <= now
         || !int(r.forecastMicros, 1) || typeof r.enabled !== 'boolean'
+        || !(r.apiForecastMicros == null || int(r.apiForecastMicros))
         || !r.price || r.price.currency !== data.currency || !id(r.price.id)
         || !['input', 'output', 'cacheRead', 'cacheWrite'].every(k => int(r.price[k]))
         || !Number.isFinite(r.price.expiresAt) || r.price.expiresAt <= now) fail('UNQUALIFIED_ROUTE');
       routes.add(r.id);
     }
     if (!routes.has(p.baselineRouteId)) fail('MISSING_BASELINE');
+    if (p.activeRouteId !== undefined && !routes.has(p.activeRouteId)) fail('MISSING_ACTIVE_ROUTE');
+    if (p.minimumSavingsRatio !== undefined && (!Number.isFinite(p.minimumSavingsRatio) || p.minimumSavingsRatio < 0 || p.minimumSavingsRatio >= 1)) fail('INVALID_SWITCH_POLICY');
+    if (p.switchAfter !== undefined && (!Number.isFinite(p.switchAfter) || p.switchAfter > data.expiresAt)) fail('INVALID_SWITCH_POLICY');
   }
   // Copies are frozen recursively so a trusted load cannot be changed by subsequent callers.
   const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
@@ -61,7 +65,15 @@ function chooseRoutes(policy, profileId, scopeDigest, { now = Date.now(), disabl
     && r.price.expiresAt > now && availableProviders.includes(r.provider))
     .sort((a, b) => a.forecastMicros - b.forecastMicros || a.id.localeCompare(b.id));
   if (!routes.length) fail('NO_QUALIFIED_ROUTE');
-  return { profile, routes: routes.slice(0, profile.maxCalls) };
+  const active = routes.find(r => r.id === (profile.activeRouteId || profile.baselineRouteId));
+  const savingRatio = profile.minimumSavingsRatio ?? 0.05;
+  const winner = active
+    ? ((profile.switchAfter || 0) > now ? active : routes.find(r => r.forecastMicros < active.forecastMicros * (1 - savingRatio)) || active)
+    : routes[0];
+  const reason = !active ? 'qualified_fallback_active_unavailable'
+    : winner !== active ? 'lowest_forecast_cost_among_qualified'
+      : (profile.switchAfter || 0) > now ? 'keep_active_cooldown' : 'keep_active_switch_margin';
+  return { profile, reason, routes: [winner, ...routes.filter(r => r !== winner)].slice(0, profile.maxCalls) };
 }
 
 module.exports = { readSignedPolicy, assertPolicy, chooseRoutes, digest, fail, id, int };

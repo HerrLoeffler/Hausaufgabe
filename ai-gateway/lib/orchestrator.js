@@ -22,7 +22,7 @@ function createOrchestrator({ loadPolicy, store, providers, validators, now = Da
       || request.messages.some(m => !m || !['user', 'assistant'].includes(m.role) || typeof m.content !== 'string'
         || Object.keys(m).some(k => !['role', 'content'].includes(k)))) fail('INVALID_ROUTING_REQUEST');
     const policy = await loadPolicy();
-    const { profile, routes } = chooseRoutes(policy, request.profileId, request.scopeDigest,
+    const { profile, routes, reason } = chooseRoutes(policy, request.profileId, request.scopeDigest,
       { now: now(), disabledRoutes: disabledRoutes(), availableProviders: [...adapters.keys()] });
     if (digest(request.system) !== profile.promptDigest) fail('PROMPT_VERSION_MISMATCH');
     const validate = validators[profile.validatorVersion];
@@ -36,8 +36,8 @@ function createOrchestrator({ loadPolicy, store, providers, validators, now = Da
     await store.reserve({ operationId: request.operationId, fingerprint: digest(request), policyId: policy.id,
       profileId: profile.id, bucket: profile.bucket, currency: policy.currency,
       amount: reservation, calls: routes.length, budget: policy.budgets[profile.bucket], now: started });
-    const receipt = { job: profile.job, scopeDigest: profile.scopeDigest, reason: 'lowest_forecast_cost_among_qualified',
-      actualMicros: 0, baselineEstimateMicros: profile.routes.find(r => r.id === profile.baselineRouteId).forecastMicros,
+    const receipt = { job: profile.job, scopeDigest: profile.scopeDigest, reason,
+      actualMicros: 0, baselineEstimateMicros: profile.routes.find(r => r.id === profile.baselineRouteId).apiForecastMicros ?? null,
       attempts: [], outcome: 'failed', durationMs: 0 };
     let output, errorCode = 'NO_ACCEPTED_RESULT';
     const deadline = AbortSignal.timeout(profile.deadlineMs);
@@ -45,6 +45,7 @@ function createOrchestrator({ loadPolicy, store, providers, validators, now = Da
     for (const route of routes) {
       if (combined.aborted) { errorCode = 'DEADLINE_EXCEEDED'; break; }
       if (route.expiresAt <= now() || route.price.expiresAt <= now() || policy.expiresAt <= now()) { errorCode = 'NO_QUALIFIED_ROUTE'; break; }
+      if (receipt.attempts.length) receipt.reason = 'qualified_fallback_after_validation';
       const attempt = { routeId: route.id, provider: route.provider, model: route.model,
         evidenceId: route.evidenceId, priceId: route.price.id, costMicros: null, status: 'unknown' };
       receipt.attempts.push(attempt);
