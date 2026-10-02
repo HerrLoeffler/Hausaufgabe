@@ -128,25 +128,10 @@ jobs:
             --region "$REGION" \
             --format=json > "$RUNNER_TEMP/service-before.json"
 
-          actual_sa="$(jq -r '.spec.template.spec.serviceAccountName // empty' "$RUNNER_TEMP/service-before.json")"
-          test "$actual_sa" = "$RUNTIME_SERVICE_ACCOUNT" || {
-            echo "Unexpected runtime service account: $actual_sa"
-            exit 1
-          }
-
-          jq -e '[.spec.template.spec.containers[0].env[]?.name] | index("ANTHROPIC_FEDERATION_RULE_ID") != null' "$RUNNER_TEMP/service-before.json" >/dev/null
-          jq -e '[.spec.template.spec.containers[0].env[]?.name] | index("ANTHROPIC_ORGANIZATION_ID") != null' "$RUNNER_TEMP/service-before.json" >/dev/null
-          jq -e '[.spec.template.spec.containers[0].env[]?.name] | index("ANTHROPIC_SERVICE_ACCOUNT_ID") != null' "$RUNNER_TEMP/service-before.json" >/dev/null
-          jq -e '[.spec.template.spec.containers[0].env[]?.name] | index("ANTHROPIC_WORKSPACE_ID") != null' "$RUNNER_TEMP/service-before.json" >/dev/null
-          jq -e '.spec.template.spec.containers[0].env[]? | select(.name == "OPENAI_API_KEY") | .valueFrom.secretKeyRef.name == "OPENAI_API_KEY"' "$RUNNER_TEMP/service-before.json" >/dev/null
-
-          service_url="$(jq -r '.status.url // empty' "$RUNNER_TEMP/service-before.json")"
-          previous_revision="$(jq -r '[.status.traffic[]? | select((.percent // 0) == 100 and (.tag // "") == "")][0].revisionName // empty' "$RUNNER_TEMP/service-before.json")"
-          test -n "$service_url"
-          test -n "$previous_revision"
-
-          echo "service_url=$service_url" >> "$GITHUB_OUTPUT"
-          echo "previous_revision=$previous_revision" >> "$GITHUB_OUTPUT"
+          # The checker prints only safe metadata: variable names, service-account
+          # identity, secret reference name and active revision. Secret values are
+          # never printed. It also writes service_url/previous_revision outputs on success.
+          node ai-gateway/tools/check-staging-service-config.mjs "$RUNNER_TEMP/service-before.json"
 
       - name: Configure Artifact Registry authentication
         run: gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
