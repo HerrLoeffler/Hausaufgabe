@@ -31,13 +31,14 @@ Erster Provider: Anthropic/Claude ohne langlebigen API-Key. Der Cloud-Run-Worklo
 - Claude-Aufruf nutzt `Authorization: Bearer`, `anthropic-version: 2023-06-01` und normalisiert Text/Usage/Modell.
 - Router verlangt zunächst expliziten Provider; keine automatische "beste KI" ohne Benchmarkdaten.
 - Unit-Tests simulieren Google/Anthropic vollständig ohne echte API-Kosten.
-- Eigene CI prüft Syntax und Unit-Tests.
+- Eigene CI prüft Node-Syntax, Deploy-Skript-Syntax und Unit-Tests.
 
 ## Zwischenstand
 
 - Lokal geändert: entfällt; Änderungen werden direkt auf eigenem GitHub-Branch gesichert.
-- Auf GitHub gesichert (Commit): noch offen bis erster Gateway-Commit erstellt ist.
-- Geprüft (Befehl / CI-Link / Ergebnis / Commit): Unit-/Syntax-CI nach Push offen.
+- Auf GitHub gesichert (Commit): Gateway-Grundlage `432bd4500f28ae35eb0c653f46878b82ba374f94`; Guarded-Deploy `a7957cfd7fd2d6abc5ed551346b17d1901c6992b`; CI-Härtung `14e64535c3237917f36df1cda12a3632e587687f`. Draft-PR #24.
+- Geprüft (Befehl / CI-Link / Ergebnis / Commit): GitHub Actions `AI Gateway CI` Run `36946206264` auf `14e64535...` **success**; prüft `npm run check`, `bash -n deploy-staging.sh`, `npm test`.
+- Release-Stufe: `ci_green`; noch nicht integriert und Gateway-Code noch nicht deployed.
 - Deployed (Ziel / URL / Commit / Nachweis): **Gateway-Code nicht deployed.** Manuell existiert bereits der Cloud-Run-Scaffold `gradecrew-ai-gateway-staging` in `europe-west1` mit Googles Beispiel-`hello`-Container, IAM-Authentifizierung, Servicekonto `gradecrew-ai-gateway-staging@hausaufgabe-staging.iam.gserviceaccount.com`, min 0 / max 2. Anthropic-WIF-Tokenexchange wurde in Claude Console/Cloud Shell erfolgreich authentifiziert. Diese Infrastruktur ist kein Code-Deploy-Nachweis.
 - Gerätetest (Gerät / Version / Ergebnis): nicht relevant/noch nicht erfolgt.
 
@@ -51,8 +52,8 @@ Erster Provider: Anthropic/Claude ohne langlebigen API-Key. Der Cloud-Run-Worklo
 
 ## Nächster konkreter Schritt
 
-Ersten Branch-Commit sichern, CI abwarten und erst bei grünem Stand den echten Gateway nach `gradecrew-ai-gateway-staging` deployen; dabei WIF-IDs als Umgebungsvariablen setzen, Concurrency 5 verwenden und anschließend `/health` + `/providers/anthropic/test` mit authentifiziertem Cloud-Run-Aufruf prüfen.
+In Cloud Shell den tatsächlichen lokalen Git-Stand prüfen, danach exakt den geprüften Branch `feature/multi-provider-ai-gateway-v1` holen und über `ai-gateway/deploy-staging.sh` nach `gradecrew-ai-gateway-staging` deployen. Dabei WIF-IDs als Umgebungsvariablen setzen, Concurrency 5 verwenden und anschließend `/health` + `/providers/anthropic/test` mit authentifiziertem Cloud-Run-Aufruf prüfen.
 
 ## Wiederaufnahme nach Abbruch
 
-Der Code liegt ausschließlich auf `feature/multi-provider-ai-gateway-v1`. Vor Fortsetzung Branch-Head, offene PRs und den aktuellen `feature/gradecrew-app-integration`-Head erneut prüfen. Der vorhandene Cloud-Run-Beispielcontainer darf nicht als deployed Gateway bezeichnet werden. Production bleibt tabu ohne ausdrückliche Freigabe.
+Der Code liegt auf `feature/multi-provider-ai-gateway-v1`, Draft-PR #24. Vor Fortsetzung Branch-Head, offene PRs und den aktuellen `feature/gradecrew-app-integration`-Head erneut prüfen. Der vorhandene Cloud-Run-Beispielcontainer darf nicht als deployed Gateway bezeichnet werden. Production bleibt tabu ohne ausdrückliche Freigabe.
