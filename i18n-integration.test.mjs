@@ -11,7 +11,10 @@ const browserRuntime = read("./shared/i18n/browser-runtime.mjs");
 const core = read("./shared/i18n/i18n-core.mjs");
 const germanCatalog = read("./shared/i18n/messages-de-DE.mjs");
 const englishCatalog = read("./shared/i18n/messages-en-GB.mjs");
+const englishCrewExtension = read("./shared/i18n/extensions-en-GB-crew.mjs");
 const bootstrap = read("./shared/i18n/bootstrap.mjs");
+const crewServer = read("./functions/lib/crew-assistant.js");
+const crewMain = read("./functions/main.js");
 
 test("teacher app installs shared i18n before importing the core app", () => {
   const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=1"');
@@ -33,6 +36,7 @@ test("verified staging build ships both locale catalogs and every i18n runtime d
     "shared/i18n/browser-runtime.mjs",
     "shared/i18n/messages-de-DE.mjs",
     "shared/i18n/messages-en-GB.mjs",
+    "shared/i18n/extensions-en-GB-crew.mjs",
     "shared/i18n/bootstrap.mjs",
   ]) {
     assert.match(build, new RegExp(path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${path} missing from staging build`);
@@ -45,7 +49,10 @@ test("German and English are enabled browser UI locales", () => {
   assert.match(germanCatalog, /DE_DE_MESSAGES_VERSION\s*=\s*"de-DE@1"/);
   assert.match(englishCatalog, /EN_GB_MESSAGES_VERSION\s*=\s*"en-GB@1"/);
   assert.match(bootstrap, /registerCatalog\("en-GB", enGBMessages\)/);
+  assert.match(bootstrap, /registerCatalog\("en-GB", enGBCrewMessages\)/);
   assert.match(bootstrap, /registerSourcePatterns\("en-GB", enGBSourcePatterns\)/);
+  assert.match(bootstrap, /registerSourcePatterns\("en-GB", enGBCrewSourcePatterns\)/);
+  assert.match(englishCrewExtension, /Ask Coco/);
 });
 
 test("English activation does not collapse UI, assessment content and grading language into one setting", () => {
@@ -56,11 +63,20 @@ test("English activation does not collapse UI, assessment content and grading la
   assert.match(browserRuntime, /#secureTitle/);
   assert.match(browserRuntime, /\.quizCard h3/);
   assert.match(browserRuntime, /#reviewHeading/);
+  assert.match(browserRuntime, /\.gcCrewMsg\.user/);
   assert.doesNotMatch(englishCatalog, /source:Richtig"/);
   assert.doesNotMatch(englishCatalog, /source:Falsch"/);
 });
 
-test("exactly German and English message catalogs exist for the first bilingual release", () => {
+test("Crew AI reply locale is explicit and does not become assessment language", () => {
+  assert.match(crewServer, /SUPPORTED_ASSISTANT_LOCALES/);
+  assert.match(crewServer, /Reply in natural British English/);
+  assert.match(crewServer, /Fach, Testinhalt, Aufgaben, Lösungen und Bewertungssprache sind davon getrennt/);
+  assert.match(crewMain, /crewSystemPrompt\(clean\.crewId, clean\.uiLocale\)/);
+  assert.match(crewMain, /uiLocale: clean\.uiLocale/);
+});
+
+test("exactly German and English base message catalogs exist for the first bilingual release", () => {
   const entries = fs.readdirSync(new URL("./shared/i18n/", import.meta.url));
   const messageCatalogs = entries.filter(name => /^messages-.*\.mjs$/.test(name)).sort();
   assert.deepEqual(messageCatalogs, ["messages-de-DE.mjs", "messages-en-GB.mjs"]);
