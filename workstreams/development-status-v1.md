@@ -17,10 +17,13 @@ GitHub als gemeinsame Control Plane für parallele GradeCrew-Chats/Agenten nutze
 - Unklassifizierte Branches bleiben sichtbar, bis sie fachlich zugeordnet wurden; sie werden nicht automatisch versteckt oder gelöscht.
 
 ## Status
-- Branch: `feature/development-status-v1`
-- Startbasis: `main@b71683d83f9a1a07c1262ed3002755c3e4f80b8d`
+- Ursprungsbranch: `feature/development-status-v1`
 - PR: #46 → `main`
-- Phase: `ci_green`, Integration nach finalem Zielbranch-Abgleich offen
+- geprüfter PR-Head: `89a527d03f4b6f1856f1ed1311adb3fd902fe238`
+- Merge-Commit: `65785c0455daf1f6e5646843fccfe4b2f3fcfb59`
+- Phase: **integrated**
+- Deployment: nicht anwendbar; dieses Workstream ändert nur Repo-Koordination/CI und deployt keine App oder Cloud-Ressource.
+- Production: unverändert.
 
 ## Nachweise
 
@@ -32,18 +35,35 @@ GitHub als gemeinsame Control Plane für parallele GradeCrew-Chats/Agenten nutze
 - Der Audit entdeckte selbstständig den parallel neu entstandenen PR #45 `feature/gemini-gateway-provider-v1` → `integration/ai-gateway-staging`, der zu Beginn dieser Arbeit noch nicht registriert war.
 
 ### Nachschärfung nach realen Daten
-- Parent-/Child-/Integrationsketten werden nun von echten parallelen Dateiüberschneidungen getrennt.
+- Parent-/Child-/Integrationsketten werden von echten parallelen Dateiüberschneidungen getrennt.
 - Backup-/alte `v2.*`-Branches erscheinen separat als Archivbestand statt als aktive unbekannte Arbeit.
 - Gemini-Workstream und weitere belegte Related-Branches wurden registriert.
-- Zweiter Development Status Run `37015296962`: **success**.
-- Zweiter Project handoff checks Run `37015297255`: **success**.
+- Development Status Run `37015296962`: **success**.
+- Project handoff checks Run `37015297255`: **success**.
 - Artefakt `gradecrew-development-status`, Artifact ID `11229606962`.
-- Ergebnis: 18 aktive Baustellen, **8 echte Parallel-Überschneidungen**, 0 veraltete kritische Branches, 8 Workstreams auf Staging, Production unverändert.
-- Nicht klassifizierte Remote-Branches wurden von 36 auf 8 reduziert. Diese acht bleiben absichtlich sichtbar, bis sie fachlich triagiert sind.
-- Bekannte Warnungen sind aktuell u. a. der alte Freitext-PR mit abweichendem Zielbranch sowie ein bereits integrierter Escape-Tutor-Fix mit weiterhin offenem PR. Das Audit meldet diese Widersprüche statt sie still zu korrigieren.
+- Ergebnis: 18 aktive Baustellen, 8 echte Parallel-Überschneidungen, 0 veraltete kritische Branches, 8 Workstreams auf Staging, Production unverändert.
+- Nicht klassifizierte Remote-Branches wurden von 36 auf 8 reduziert. Diese bleiben sichtbar, bis sie fachlich triagiert sind.
 
-## Zielbranch-Abgleich
-Während der Arbeit zog `main` von `b71683d...` auf `d7688fb...` weiter. Der Vergleich zeigt zwei neue Commits, deren Änderung ausschließlich `workstreams/admin-controls-auth-ready.md` betrifft. Der Development-Status-PR verändert diese Datei nicht; GitHub meldet PR #46 mergebar. Vor dem tatsächlichen Merge wird `main` trotzdem noch einmal frisch geprüft.
+### Finaler PR-Gate
+- Finaler PR-Head `89a527d...`.
+- Development Status Run `37015584696`: **success**.
+- Project handoff checks Run `37015584856`: **success**.
+- Vor Merge war `main@d7688fb...`; die seit Start hinzugekommenen Änderungen überschnitten sich nicht mit den sieben PR-Dateien.
+- PR #46 wurde exakt mit dem geprüften Head gemergt.
+
+### Kanonischer Lauf auf main
+- Der erste `main`-Push-Lauf wurde durch den eigenen Concurrency-Guard abgebrochen, weil unmittelbar parallel weitere Repo-Arbeit lief. Dadurch wurde nichts verändert.
+- Direkt danach lief die Leitstelle auf dem bereits weitergezogenen `main@dbc1d361804b0b70df78a59ba758cfdb2afef145` erfolgreich: Development Status Run `37015720282` **success**.
+- Artefakt: `gradecrew-development-status`, Artifact ID `11229682364`.
+- Ergebnis dieses kanonischen Laufs: **18 aktive Baustellen · 6 echte Parallel-Überschneidungen · 0 veraltete kritische Branches · 8 auf Staging · Production unverändert**.
+- Der Lauf sah bereits die parallel weitergezogene iOS-Arbeit. Damit ist belegt, dass die Control Plane nach Integration echte zeitgleiche Repo-Änderungen erfasst.
+- `main` zog unmittelbar danach weiter; das ist normal und soll durch weitere Push-/PR-/Stundenläufe automatisch erfasst werden.
+
+## Bekannte aktuelle Hinweise
+- Freitext-PR #11 hat noch einen alten, von der Registry abweichenden Zielbranch.
+- Escape-Tutor-Fix ist als integriert erfasst, PR #27 steht aber noch offen.
+- Einige Remote-Branches sind noch nicht klassifiziert. Sie werden absichtlich gemeldet und niemals automatisch gelöscht.
+- Echte parallele Dateiüberschneidungen sind Warnungen für den nächsten Integrationsschritt, keine Sperren.
 
 ## Akzeptanzkriterien
 1. Aktive/relevante Workstreams mit Branch, Ziel, SHA, ahead/behind und offenen PRs sichtbar. ✅
@@ -52,10 +72,9 @@ Während der Arbeit zog `main` von `b71683d...` auf `d7688fb...` weiter. Der Ver
 4. Staging-Zahl und Production-Status aus `GRADECREW_STATE.json` eingebunden. ✅
 5. Kompakte Ampel-Zeile in GitHub Actions. ✅
 6. Audit bleibt read-only und blockiert nicht automatisch normale Produktarbeit. ✅
+7. Erfolgreicher kanonischer Lauf auf `main` nach Integration. ✅
 
-## Offen / nächster Schritt
-1. Finalen PR-Head erneut durch Development Status + Handoff CI prüfen.
-2. Direkt vor Integration aktuellen `main` und Mergeability frisch prüfen.
-3. Bei grünem Stand PR #46 kontrolliert nach `main` integrieren.
-4. Danach den automatisch auf `main` laufenden Development Status als ersten kanonischen Control-Plane-Lauf verifizieren.
-5. Die verbliebenen unklassifizierten Branches später einzeln triagieren; keine automatische Löschung.
+## Nächster sinnvoller Ausbau
+- Die verbliebenen unklassifizierten Branches einzeln triagieren; keine automatische Löschung.
+- Später optional: echte Parallel-Konflikte nach Kritikalität gewichten (z. B. Build-/Rules-/Auth-Dateien höher als reine Assets).
+- Später optional: einen kompakten, direkt verlinkbaren Status-Badge/Report für `main` ergänzen. Die GitHub-Actions-Zusammenfassung bleibt die kanonische Live-Sicht.
