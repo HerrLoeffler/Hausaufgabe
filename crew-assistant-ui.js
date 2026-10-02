@@ -14,6 +14,19 @@ let dictationFinal = "";
 const $ = id => document.getElementById(id);
 const COCO = CREW_MEMBERS.coco;
 
+function currentUiLocale() {
+  return /^en(?:-|$)/i.test(String(window.GradeCrewI18n?.locale || "")) ? "en-GB" : "de-DE";
+}
+
+function currentVoiceInputLocale() {
+  try {
+    const explicit = String(localStorage.getItem("gradecrew.voiceInputLocale") || "");
+    if (/^en(?:-|$)/i.test(explicit)) return "en-GB";
+    if (/^de(?:-|$)/i.test(explicit)) return "de-DE";
+  } catch (_) {}
+  return currentUiLocale();
+}
+
 function installStyles() {
   if (document.querySelector("style[data-crew-assistant]")) return;
   const style = document.createElement("style");
@@ -50,6 +63,7 @@ function addMessage(kind, text) {
   if (!root || !text) return null;
   const node = document.createElement("div");
   node.className = `gcCrewMsg ${kind}`;
+  if (kind.split(/\s+/).includes("user")) node.dataset.i18nContent = "conversation";
   node.textContent = text;
   root.appendChild(node);
   root.scrollTop = root.scrollHeight;
@@ -149,7 +163,7 @@ async function sendCurrentMessage() {
 
   const pending = addMessage("assistant pending", "Coco denkt nach …");
   try {
-    const result = await callCrewAi({ crewId: "coco", text, context: currentContext() });
+    const result = await callCrewAi({ crewId: "coco", text, uiLocale: currentUiLocale(), context: currentContext() });
     pending?.remove();
     addMessage("assistant", result.reply || "Dazu habe ich gerade noch keine sichere Antwort.");
   } catch (error) {
@@ -192,7 +206,7 @@ function startRecognitionCycle() {
 
   const active = new SpeechRecognition();
   recognition = active;
-  active.lang = "de-DE";
+  active.lang = currentVoiceInputLocale();
   active.interimResults = true;
   active.continuous = true;
   active.maxAlternatives = 1;
@@ -253,6 +267,14 @@ function installVisibilityWatcher() {
     stopDictation();
     setOpen(false);
     updateLauncherVisibility();
+  });
+  window.addEventListener("gradecrew:ui-locale-changed", () => {
+    // The next recognition cycle picks up the new interface language unless the
+    // user has chosen a dedicated voice-input locale.
+    if (keepListening) {
+      stopDictation();
+      updateMicState();
+    }
   });
 }
 
