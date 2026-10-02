@@ -1,0 +1,79 @@
+name: GradeCrew Release Control
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '29 * * * *'
+  push:
+    branches:
+      - main
+      - feature/release-control-acceptance-v1
+    paths:
+      - 'release-control/**'
+      - 'tools/release_control.py'
+      - 'GRADECREW_STATE.json'
+      - 'workstreams/registry.json'
+      - '.github/workflows/release-control.yml'
+  workflow_run:
+    workflows:
+      - 'Automatic staging preview'
+      - 'Automatic staging AI functions'
+      - 'Automatic staging AI gateway'
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: gradecrew-release-control-${{ github.event_name }}-${{ github.ref || github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  board:
+    name: Build release / acceptance board
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout control-plane source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch all branches for live candidate SHAs
+        run: git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+
+      - name: Validate Python syntax
+        run: python3 -m py_compile tools/release_control.py
+
+      - name: Build Release Control
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p artifacts/release-control
+          python3 tools/release_control.py \
+            --json-out artifacts/release-control/release-control.json \
+            --markdown-out artifacts/release-control/release-control.md \
+            --fail-on-errors
+
+      - name: Add board to Actions summary
+        if: always()
+        run: |
+          if [ -f artifacts/release-control/release-control.md ]; then
+            cat artifacts/release-control/release-control.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '# GradeCrew Release Control' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Board could not be generated.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload machine-readable board
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradecrew-release-control
+          path: artifacts/release-control/
+          if-no-files-found: warn
+          retention-days: 30
