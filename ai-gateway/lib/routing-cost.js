@@ -1,22 +1,40 @@
 'use strict';
 
+function safeToken(value) {
+  return Number.isSafeInteger(value) && value >= 0 ? value : null;
+}
+
 function normalizedUsage(provider, usage) {
-  if (!usage || provider !== 'anthropic') return null;
-  const n = key => Number.isSafeInteger(usage[key]) && usage[key] >= 0 ? usage[key] : null;
-  const input = n('input_tokens'), output = n('output_tokens');
-  const cacheRead = usage.cache_read_input_tokens === undefined ? 0 : n('cache_read_input_tokens');
-  const cacheWrite = usage.cache_creation_input_tokens === undefined ? 0 : n('cache_creation_input_tokens');
-  if ([input, output, cacheRead, cacheWrite].some(v => v === null)) return null;
-  // Cache writes with different TTLs require a future separate price adapter. Do not underprice them.
-  if (cacheWrite > 0) return null;
-  return { input, output, cacheRead, cacheWrite };
+  if (!usage || typeof usage !== 'object') return null;
+
+  if (provider === 'anthropic') {
+    const input = safeToken(usage.input_tokens), output = safeToken(usage.output_tokens);
+    const cacheRead = usage.cache_read_input_tokens === undefined ? 0 : safeToken(usage.cache_read_input_tokens);
+    const cacheWrite = usage.cache_creation_input_tokens === undefined ? 0 : safeToken(usage.cache_creation_input_tokens);
+    if ([input, output, cacheRead, cacheWrite].some(v => v === null)) return null;
+    // Cache writes with different TTLs require a future separate price adapter. Do not underprice them.
+    if (cacheWrite > 0) return null;
+    return { input, output, cacheRead, cacheWrite };
+  }
+
+  if (provider === 'openai') {
+    const totalInput = safeToken(usage.input_tokens), output = safeToken(usage.output_tokens);
+    const cacheRead = usage.input_tokens_details?.cached_tokens === undefined
+      ? 0 : safeToken(usage.input_tokens_details.cached_tokens);
+    if ([totalInput, output, cacheRead].some(v => v === null) || cacheRead > totalInput) return null;
+    // OpenAI reports cached input as a subset of input_tokens. Remove it from regular input to avoid double billing.
+    return { input: totalInput - cacheRead, output, cacheRead, cacheWrite: 0 };
+  }
+
+  return null;
 }
 
 // Prices: integer micro-currency units per million tokens. Amounts: integer micro-currency units.
 function priceUsage(provider, usage, price) {
   const normalized = normalizedUsage(provider, usage);
   if (!normalized) return null;
-  const amount = Math.ceil(Object.entries(normalized).reduce((sum, [kind, n]) => sum + n * price[kind] / 1000000, 0));
+  const amount = Math.ceil(Object.entries(normalized)
+    .reduce((sum, [kind, n]) => sum + n * price[kind] / 1000000, 0));
   return Number.isSafeInteger(amount) && amount >= 0 ? amount : null;
 }
 
