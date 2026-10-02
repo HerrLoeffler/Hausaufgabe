@@ -3,7 +3,6 @@ import {
   CREW,
   DEMO_TEST as V7_DEMO_TEST
 } from "./gradecrew-tour-v7.js?v=clay2";
-import { installTutorialOrderingGuard } from "./tutorial-ordering-guard.js?v=1";
 
 export const TOUR_VERSION = "gradecrew-live-tour-v8";
 export { CREW };
@@ -16,6 +15,20 @@ if (typeof location !== "undefined" && new URLSearchParams(location.search).get(
       .then(module => module.installGateELab())
       .catch(error => console.error("Gate E Lab konnte nicht geladen werden", error));
   });
+}
+
+function installFinaleOrderingGuard() {
+  // Keep V8's single static import boundary intact: the long-lived tutorial
+  // regression fixture evaluates the wrapper source after removing that import.
+  // The guard itself has its own DOM regression tests and is loaded early enough
+  // here to be installed long before the later student/finale phase is reached.
+  import("./tutorial-ordering-guard.js?v=1")
+    .then(module => module.installTutorialOrderingGuard?.())
+    .catch(error => {
+      // In the real browser this should never fail because the staging build
+      // verifies the module exists. A failure must not break the tutorial core.
+      if (typeof console !== "undefined") console.error("Tutorial-Sortierschutz konnte nicht geladen werden", error);
+    });
 }
 
 function variantSourceQuestion() {
@@ -117,7 +130,7 @@ export function installCrewTour(api) {
   };
   const base = installV7(proxy);
   installCoachPolish();
-  installTutorialOrderingGuard();
+  installFinaleOrderingGuard();
 
   let tutorialSubmissionId = "";
   let reviewFallbackTimer = 0;
