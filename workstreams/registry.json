@@ -17,6 +17,10 @@
   "ignoredPrefixes": [
     "preview-snapshot-"
   ],
+  "archivePrefixes": [
+    "backup/",
+    "v2."
+  ],
   "workstreams": [
     {
       "id": "development-status-v1",
@@ -57,7 +61,9 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
       "relatedBranches": [
-        "fix/crew-telemetry-retention-v1"
+        "fix/crew-telemetry-retention-v1",
+        "fix/remy-integration-test-loader",
+        "fix/remy-parser-review-v1"
       ]
     },
     {
@@ -75,7 +81,7 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
       "relatedBranches": [
-        "fix/tutorial-final-sort-viewport-v1"
+        "fix/tutorial-finale-arrow-only"
       ]
     },
     {
@@ -129,7 +135,9 @@
       "state": "active",
       "relatedBranches": [
         "feature/design-dashboard-v1",
-        "feature/brand-logo-v1"
+        "feature/brand-logo-v1",
+        "feature/brand-core-v1",
+        "feature/games-brand-core-v1"
       ]
     },
     {
@@ -138,7 +146,21 @@
       "primaryBranch": "feature/release-safety-snapshots",
       "integrationTarget": "main",
       "state": "active",
-      "relatedBranches": []
+      "relatedBranches": [
+        "chore/release-state-v2"
+      ]
+    },
+    {
+      "id": "staging-functions-automation-history",
+      "title": "Staging Functions Automatisierung / Nachweise",
+      "primaryBranch": "chore/staging-functions-automation",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/record-staging-functions-e2e",
+        "chore/verify-crew-telemetry-staging-functions",
+        "fix/staging-functions-wif-display"
+      ]
     },
     {
       "id": "games-structure",
@@ -161,7 +183,9 @@
       "primaryBranch": "feature/escape-room-mvp-v1",
       "integrationTarget": "lab/games-structure",
       "state": "active",
-      "relatedBranches": []
+      "relatedBranches": [
+        "fix/escape-review-v1"
+      ]
     },
     {
       "id": "games-design-system",
@@ -193,7 +217,11 @@
       "primaryBranch": "feature/quality-routing-contract-v1",
       "integrationTarget": "feature/multi-provider-ai-gateway-v1",
       "state": "active",
-      "relatedBranches": []
+      "relatedBranches": [
+        "fix/ai-review-workflow",
+        "fix/ai-format-reliability",
+        "feature/ai-integration"
+      ]
     },
     {
       "id": "ai-orchestration-v1",
@@ -201,7 +229,9 @@
       "primaryBranch": "feature/ai-orchestration-v1",
       "integrationTarget": "feature/quality-routing-contract-v1",
       "state": "active",
-      "relatedBranches": []
+      "relatedBranches": [
+        "fix/ai-routing-review-v1"
+      ]
     },
     {
       "id": "openai-gateway-provider-v1",
@@ -218,8 +248,17 @@
       "integrationTarget": "feature/openai-gateway-provider-v1",
       "state": "blocked",
       "relatedBranches": [
-        "integration/ai-gateway-staging"
+        "integration/ai-gateway-staging",
+        "fix/ai-gateway-preflight-diagnostics"
       ]
+    },
+    {
+      "id": "gemini-gateway-provider-v1",
+      "title": "Gemini im Staging AI Gateway",
+      "primaryBranch": "feature/gemini-gateway-provider-v1",
+      "integrationTarget": "integration/ai-gateway-staging",
+      "state": "active",
+      "relatedBranches": []
     },
     {
       "id": "i18n-foundation-plan",
@@ -228,7 +267,28 @@
       "integrationTarget": "main",
       "state": "archive_candidate",
       "relatedBranches": [
-        "feature/i18n-core-v1"
+        "feature/i18n-core-v1",
+        "feature/i18n-english-ui-v1",
+        "feature/i18n-german-refactor-v1"
+      ]
+    },
+    {
+      "id": "system-review-2026-10-02",
+      "title": "Gesamtprüfung / Integrationslücken",
+      "primaryBranch": "chore/resume-system-audit-20261002",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/system-review-2026-10-02.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "dev-legacy-triage",
+      "title": "Legacy dev Branch",
+      "primaryBranch": "dev",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/shared-todo-and-games-scope"
       ]
     },
     {
