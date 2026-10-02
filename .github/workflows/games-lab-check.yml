@@ -2,10 +2,11 @@ name: Games Lab Checks
 
 on:
   push:
-    branches: [lab/games-structure]
+    branches: [lab/games-structure, lab/games-design-system]
   pull_request:
     paths:
       - 'lab/**'
+      - 'docs/games/**'
       - 'tools/build-lab-*.mjs'
       - 'tools/games/**'
       - 'deploy-lab-games-hub.sh'
@@ -32,7 +33,7 @@ jobs:
         run: npm ci --prefix tools/games --no-audit --no-fund
       - name: Check isolated build
         run: bash deploy-lab-games-hub.sh --check
-      - name: Test structure and game entry
+      - name: Test structure, design system and game entry
         run: npm test --prefix tools/games
       - name: Install Chromium
         run: tools/games/node_modules/.bin/playwright install --with-deps chromium

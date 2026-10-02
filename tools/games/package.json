@@ -2,8 +2,8 @@
   "name": "gradecrew-games-structure-checks",
   "private": true,
   "scripts": {
-    "test": "node --test regression.test.cjs",
-    "test:browser": "node browser-smoke.cjs"
+    "test": "node --test regression.test.cjs design-system.test.cjs",
+    "test:browser": "node browser-smoke.cjs && node design-system-browser.cjs"
   },
   "devDependencies": { "jsdom": "26.1.0", "playwright": "1.62.1" }
 }
