@@ -13,21 +13,15 @@ import {
   resolveBrowserUiLocale,
   PROTECTED_CONTENT_SELECTORS,
 } from "./browser-runtime.mjs";
+import { enGBMessages, enGBSourcePatterns, EN_GB_MESSAGES_VERSION } from "./messages-en-GB.mjs";
 
 registerCatalog("de-DE", { "system.loading": "GradeCrew wird geladen …", count: "{count} Aufgaben" });
-registerCatalog("en-GB", {
-  "system.loading": "GradeCrew is loading …",
-  count: "{count} questions",
-  "source:Neuer Test": "New test",
-  "source:Speichern": "Save",
-});
-registerSourcePatterns("en-GB", [
-  { pattern: /^Aufgabe (\d+)$/, replacement: "Question $1" },
-  { pattern: /^Antwort: (.*)$/s, replacement: "Answer: $1" },
-]);
+registerCatalog("en-GB", { ...enGBMessages, count: "{count} questions" });
+registerSourcePatterns("en-GB", enGBSourcePatterns);
 
 test("German and English are enabled UI locales", () => {
   assert.equal(SOURCE_LOCALE, "de-DE");
+  assert.equal(EN_GB_MESSAGES_VERSION, "en-GB@1");
   assert.deepEqual(supportedUiLocales(), ["de-DE", "en-GB"]);
   assert.equal(isSupportedUiLocale("de-DE"), true);
   assert.equal(isSupportedUiLocale("en-GB"), true);
@@ -41,11 +35,13 @@ test("English browser/device locale resolves to en-GB while unsupported language
   assert.equal(resolveBrowserUiLocale({ userLocale: "fr-FR", schoolLocale: "", deviceLocale: "fr-FR" }), "de-DE");
 });
 
-test("English translates exact UI source strings and dynamic UI patterns", () => {
+test("English translates real GradeCrew UI strings and dynamic UI patterns", () => {
   setActiveUiLocale("en-GB");
-  assert.equal(translateSource("Neuer Test"), "New test");
+  assert.equal(translateSource("+ Neuer Test"), "+ New test");
+  assert.equal(translateSource("Speichern"), "Save");
   assert.equal(translateSource("Aufgabe 3"), "Question 3");
   assert.equal(translateSource("Antwort: London"), "Answer: London");
+  assert.equal(t("system.loading", {}, "fallback"), "GradeCrew is loading …");
   assert.equal(t("count", { count: 2 }), "2 questions");
 });
 
