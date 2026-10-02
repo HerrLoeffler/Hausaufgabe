@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <title>GradeCrew Escape – Expedition Amazonas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <span class="eyebrow">GRADECrew ESCAPE · PROTOTYP</span>
+      <h1>Expedition Amazonas</h1>
+      <p>Die verschwundene Forschungsstation</p>
+    </div>
+    <div class="top-stats">
+      <span id="levelBadge">LEVEL 1/6</span>
+      <span id="learningBadge">🧠 0/3</span>
+      <span id="timeBadge">⏱ 0:00</span>
+    </div>
+  </header>
+
+  <main class="game-layout">
+    <section class="game-card">
+      <div class="canvas-wrap">
+        <canvas id="gameCanvas" width="960" height="600" aria-label="Expedition Amazonas Spielfeld"></canvas>
+        <div id="sceneTitle" class="scene-title"></div>
+        <div id="toast" class="toast" hidden></div>
+        <div id="interactionPrompt" class="interaction-prompt" hidden>
+          <kbd>E</kbd><span id="interactionText">Interagieren</span>
+        </div>
+      </div>
+
+      <div class="mobile-action-row">
+        <button id="touchInteractBtn" type="button" class="big-action">✋ Interagieren</button>
+        <button id="cameraBtn" type="button" class="big-action secondary">📷 Kamera</button>
+      </div>
+
+      <div class="touch-controls" aria-label="Touch-Steuerung">
+        <div class="dpad">
+          <button type="button" data-dir="up" aria-label="hoch">▲</button>
+          <button type="button" data-dir="left" aria-label="links">◀</button>
+          <button type="button" data-dir="down" aria-label="runter">▼</button>
+          <button type="button" data-dir="right" aria-label="rechts">▶</button>
+        </div>
+        <div class="touch-hint">Tippen = laufen · Steuerkreuz = fein steuern</div>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <section class="mission-card">
+        <span class="eyebrow">MISSION</span>
+        <h2 id="missionTitle">Finde Dr. Yara</h2>
+        <p id="missionText">Seit dem Sturm antwortet die Forschungsstation nicht mehr.</p>
+        <ol id="missionSteps" class="mission-steps"></ol>
+      </section>
+
+      <section class="guide-card">
+        <div class="guide-avatar">🐧</div>
+        <div>
+          <span class="eyebrow">COCO · GUIDE</span>
+          <h3 id="cocoTitle">Bereit?</h3>
+          <p id="cocoText">Der Dschungel ist groß. Zum Glück ist der Jeep vollgetankt. Fast.</p>
+        </div>
+      </section>
+
+      <section class="inventory-card">
+        <div class="section-title"><strong>Rucksack</strong><span id="seedLabel"></span></div>
+        <div id="inventory" class="inventory"></div>
+      </section>
+
+      <section class="controls-card">
+        <strong>Steuerung</strong>
+        <p>WASD / Pfeile · E / Enter · Klick/Tap</p>
+        <p>Minispiele erklären sich direkt im Spiel.</p>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="learningDialog" class="game-dialog">
+    <form id="learningForm" class="dialog-card">
+      <button class="dialog-close" type="button" data-close="learningDialog" aria-label="Schließen">×</button>
+      <span class="eyebrow">LERN-GATE</span>
+      <h2 id="learningTitle"></h2>
+      <p id="learningPrompt"></p>
+      <div id="learningOptions" class="answer-grid"></div>
+      <div id="learningFeedback" class="feedback" aria-live="polite">Wähle eine Antwort.</div>
+      <div class="dialog-actions">
+        <button id="hintBtn" type="button" class="secondary">Coco-Hinweis</button>
+        <button type="submit" class="primary">Antwort prüfen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="winchDialog" class="game-dialog mechanic-dialog">
+    <form id="winchForm" class="dialog-card">
+      <span class="eyebrow">SEILWINDE</span>
+      <h2>Zieh den Baum vom Weg</h2>
+      <p>Halte die Spannung im grünen Bereich. Drei saubere Züge reichen.</p>
+      <div class="meter"><div id="winchNeedle" class="meter-needle"></div><div class="meter-green"></div></div>
+      <div class="mechanic-status" id="winchStatus">0 / 3 sichere Züge</div>
+      <div class="dialog-actions">
+        <button id="winchPullBtn" type="button" class="primary">🪝 Ziehen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="generatorDialog" class="game-dialog mechanic-dialog">
+    <form id="generatorForm" class="dialog-card">
+      <span class="eyebrow">GENERATOR</span>
+      <h2>Strom wiederherstellen</h2>
+      <p>Die drei Stromkreise müssen in der Reihenfolge der verblassten Kontrolllampen aktiviert werden.</p>
+      <div id="generatorButtons" class="generator-buttons">
+        <button type="button" data-circuit="leaf">🟢 Blatt</button>
+        <button type="button" data-circuit="sun">🟡 Sonne</button>
+        <button type="button" data-circuit="river">🔵 Fluss</button>
+      </div>
+      <div id="generatorFeedback" class="feedback">Hinweis an der Wand: 🌿 → ☀️ → 🌊</div>
+    </form>
+  </dialog>
+
+  <dialog id="victoryDialog" class="game-dialog victory-dialog">
+    <form method="dialog" class="dialog-card victory-card">
+      <div class="victory-icon">🚁🌴</div>
+      <span class="eyebrow">MISSION GESCHAFFT</span>
+      <h2>Forschungsstation gerettet!</h2>
+      <p id="victoryText"></p>
+      <div id="victoryStats" class="victory-stats"></div>
+      <button type="button" id="restartBtn" class="primary">Nochmal mit neuer Variante</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
