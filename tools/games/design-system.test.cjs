@@ -82,7 +82,7 @@ test('living preview exposes the design version and keeps choice state synchroni
   } finally { w.close(); }
 });
 
-test('shared helper stores namespaced local preferences and fails safely on missing values', () => {
+test('shared helper stores namespaced local preferences and fails safely on missing or invalid keys', () => {
   const { w } = runLocalScripts('design-system');
   try {
     assert.equal(w.GradeCrewGamesDesign.saveLocalPreference('fast-quiz', 'last-setup', { mode: 'mental' }), true);
@@ -90,6 +90,6 @@ test('shared helper stores namespaced local preferences and fails safely on miss
     assert.equal(saved.mode, 'mental');
     assert.equal(Object.keys(saved).length, 1);
     assert.equal(w.GradeCrewGamesDesign.loadLocalPreference('fast-quiz', 'missing', 'fallback'), 'fallback');
-    assert.throws(() => w.GradeCrewGamesDesign.saveLocalPreference('../bad', 'x', {}));
+    assert.equal(w.GradeCrewGamesDesign.saveLocalPreference('../bad', 'x', {}), false);
   } finally { w.close(); }
 });
