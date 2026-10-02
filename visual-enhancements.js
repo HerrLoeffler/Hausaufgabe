@@ -166,6 +166,7 @@ export function startVisualEnhancements() {
       ["Coco-Hilfe", "./crew-assistant-ui.js?v=2"],
       ["Emmi-Gesamttest", "./emmi-whole-test-revision.mjs?v=2"],
       ["Crew-Statistik", "./crew-statistics-admin.mjs?v=1"],
+      ["Admin-Testkonten", "./admin-test-account-controls.mjs?v=1"],
       ["Lehrertexte", "./teacher-copy-polish.js?v=2.3.1-gc12"],
       ["Navigation", "./ui-enhancements.js?v=2.3.1-gc2"],
       ["Varianten", "./variant-enhancements.js?v=2.3.1-gc21"]
