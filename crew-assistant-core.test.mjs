@@ -65,7 +65,7 @@ test("keeps duration as an explicit request without inventing a form field", () 
 
 test("recognizes requested and excluded task types", () => {
   const patch = parseTestRequest("Deutsch Klasse 6 Thema Wortarten mit Multiple Choice und Zuordnung, ohne Freitext");
-  assert.deepEqual(new Set(patch.allowedTypes), new Set(["multi", "matching", "text"]));
+  assert.deepEqual(new Set(patch.allowedTypes), new Set(["multi", "matching"]));
   assert.deepEqual(patch.excludeTypes, ["text"]);
 });
 
@@ -103,4 +103,39 @@ test("unknown open conversation is delegated to AI fallback", () => {
   const result = resolveLocalCrewRequest({ crewId: "emmi", text: "Wie würdest du diese Aufgabe didaktisch verbessern?" });
   assert.equal(result.handled, false);
   assert.equal(result.needsAi, true);
+});
+
+test("only the first questions being easy does not change the whole test difficulty", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Brüche. Die ersten Aufgaben leicht.");
+  assert.equal(patch.difficulty, undefined);
+  assert.match(patch.notes, /ersten Aufgaben leicht/);
+  const global = parseTestRequest("Ein mittlerer Test. Die ersten Aufgaben leicht.");
+  assert.equal(global.difficulty, "mittel");
+});
+
+test("negation is preserved as a wish and never selects the rejected difficulty", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Brüche. Nicht leicht, sondern schwer.");
+  assert.equal(patch.difficulty, "anspruchsvoll");
+  assert.match(patch.notes, /Nicht leicht/);
+  assert.equal(parseTestRequest("Mathe Klasse 7. Nicht zu schwer.").difficulty, undefined);
+});
+
+test("excluded compound task names are not requested and do not pollute the topic", () => {
+  const patch = parseTestRequest("Deutsch Klasse 6 Thema Wortarten, keine Freitextaufgaben.");
+  assert.equal(patch.topic, "Wortarten");
+  assert.deepEqual(patch.excludeTypes, ["text"]);
+  assert.equal(patch.allowedTypes, undefined);
+});
+
+test("many questions is a wish; exact counts use the real count field", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Prozent, viele Aufgaben.");
+  assert.equal(patch.topic, "Prozent");
+  assert.equal(patch.count, undefined);
+  assert.equal(patch.notes, "Viele Aufgaben.");
+  assert.equal(parseTestRequest("Thema Prozent, 20 Aufgaben.").count, 20);
+});
+
+test("punctuation before a meaningful topic extension must not delete subject matter", () => {
+  const patch = parseTestRequest("Mathe Klasse 7 Thema Prozentrechnung, mit Rabatt und Mehrwertsteuer.");
+  assert.equal(patch.topic, "Prozentrechnung, mit Rabatt und Mehrwertsteuer");
 });

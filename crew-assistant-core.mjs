@@ -55,7 +55,7 @@ const SCHOOL_TYPE_PATTERNS = [
 const TYPE_PATTERNS = [
   [/\b(single[ -]?choice|einfachauswahl)\b/i, "single"],
   [/\b(multiple[ -]?choice|mehrfachauswahl)\b/i, "multi"],
-  [/\b(freitext|offene[nr]? frage[n]?)\b/i, "text"],
+  [/\b(freitext(?:aufgaben?|fragen?)?|offene[nr]? frage[n]?)\b/i, "text"],
   [/\b(dropdown|auswahlliste)\b/i, "dropdown"],
   [/\b(richtig\s*\/\s*falsch|richtig oder falsch|true\s*\/\s*false)\b/i, "truefalse"],
   [/\b(lückentext|lueckentext)\b/i, "gapfill"],
@@ -83,7 +83,9 @@ const COMMON_RESPONSES = Object.freeze({
   })
 });
 
-const PARSER_VERSION = "remy-structure-v2";
+const PARSER_VERSION = "remy-structure-v3";
+const INITIAL_EASY = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)\b[^.!?]{0,50}?\b(?:leicht|einfach)\b/i;
+const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?)\s+(?:(?:zu|so)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt)\b/gi;
 
 function normalizeText(value = "") {
   return String(value)
@@ -112,15 +114,16 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
-    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?)|(?:mit|ohne)\b).*$/i, "")
+    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?)).*$/i, "")
     .replace(/\s+(?:mit|ohne)\s+(?=(?:single|multiple|freitext|offene|dropdown|richtig|lücken|luecken|zuord|sortier|reihenfolge|gruppier|kategorien|wörter|woerter|markier|rechen|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?))).*$/i, "")
     .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst)\s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?)\s+(?:aufgaben?|fragen?)\b).*$/i, "")
-    .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?)\b).*$/i, "")
+    .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?|aufgaben?|fragen?)\b).*$/i, "")
+    .replace(/[,;\s]+(?:keine?|ohne)\s+(?:freitext(?:aufgaben?|fragen?)?|offene[nr]?\s+fragen?)\b.*$/i, "")
     .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?)\s+(?:text|texte|aufgaben?|fragen?)\b).*$/i, "")
     .replace(/\s+(?=(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b).*$/i, "")
     .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
     .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)\s*$/i, "")
-    .trim()
+    .replace(/[\s,;]+$/g, "")
     .slice(0, 220);
 }
 
@@ -160,6 +163,8 @@ function extractNotes(text) {
 
   const progression = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
   if (progression) add("Zuerst leichte Aufgaben, danach anspruchsvollere Aufgaben");
+  else if (INITIAL_EASY.test(text)) add("Die ersten Aufgaben leicht gestalten");
+  for (const match of text.matchAll(NEGATED_DIFFICULTY)) add(match[0]);
 
   if (/\b(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+)?(?:einfache|leichte)\s+aufgaben\b[^.!?]{0,35}\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\b/i.test(text) ||
       /\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+(?:einfache|leichte)\s+aufgaben\b/i.test(text)) {
@@ -204,11 +209,12 @@ function parseTestRequest(input = "") {
   if (topic) patch.topic = topic;
 
   const progressiveDifficulty = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
+  const difficultyText = text.replace(INITIAL_EASY, " ").replace(NEGATED_DIFFICULTY, " ");
   if (!progressiveDifficulty) {
-    if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes)\b/i.test(text)) patch.difficulty = "leicht";
-    else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle)\b/i.test(text)) patch.difficulty = "anspruchsvoll";
-    else if (/\bgemischt|unterschiedliche\s+schwierigkeitsgrade\b/i.test(text)) patch.difficulty = "gemischt";
-    else if (/\bmittel|mittlere[mnr]?\b/i.test(text)) patch.difficulty = "mittel";
+    if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes)\b/i.test(difficultyText)) patch.difficulty = "leicht";
+    else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle)\b/i.test(difficultyText)) patch.difficulty = "anspruchsvoll";
+    else if (/\bgemischt|unterschiedliche\s+schwierigkeitsgrade\b/i.test(difficultyText)) patch.difficulty = "gemischt";
+    else if (/\bmittel|mittlere[mnr]?\b/i.test(difficultyText)) patch.difficulty = "mittel";
   }
 
   const count = extractNumber(text, [/\b(\d{1,3})\s*(?:aufgaben?|fragen?)\b/i], 1, 100);
@@ -221,11 +227,14 @@ function parseTestRequest(input = "") {
   if (duration !== undefined) patch.durationMinutes = duration;
 
   const allowedTypes = [];
-  for (const [pattern, value] of TYPE_PATTERNS) if (pattern.test(text) && !allowedTypes.includes(value)) allowedTypes.push(value);
+  const excludedTypes = [];
+  for (const [pattern, value] of TYPE_PATTERNS) {
+    const excluded = new RegExp('\\b(?:keine?|ohne|nicht)\\s+(?:' + pattern.source + ')', 'i').test(text);
+    if (excluded) excludedTypes.push(value);
+    else if (pattern.test(text)) allowedTypes.push(value);
+  }
   if (allowedTypes.length) patch.allowedTypes = allowedTypes;
-
-  const noText = /\b(?:keine?|ohne)\s+(?:freitext|offene[nr]?\s+fragen?)\b/i.test(text);
-  if (noText) patch.excludeTypes = ["text"];
+  if (excludedTypes.length) patch.excludeTypes = excludedTypes;
 
   const notes = extractNotes(text);
   if (notes) patch.notes = notes;

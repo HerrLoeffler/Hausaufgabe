@@ -37,6 +37,17 @@ test("unknown crew id falls back to Coco", () => {
   assert.equal(clean.crewId, "coco");
 });
 
+test("empty numeric context stays unknown instead of inventing one question and half a point", () => {
+  for (const value of [undefined, null, "", " ", false, true]) {
+    const clean = cleanCrewRequest({ text: "Hallo", context: { aiForm: { count: value, points: value } } });
+    assert.equal(clean.context.aiForm.count, null);
+    assert.equal(clean.context.aiForm.points, null);
+  }
+  const clean = cleanCrewRequest({ text: "Hallo", context: { aiForm: { count: "20", points: 10.5 } } });
+  assert.equal(clean.context.aiForm.count, 20);
+  assert.equal(clean.context.aiForm.points, 10.5);
+});
+
 test("system prompt forbids destructive actions and raw student data workflows", () => {
   const prompt = crewSystemPrompt("wilma");
   assert.match(prompt, /Veröffentlichen, Löschen, Freigeben/);
