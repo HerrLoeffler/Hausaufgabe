@@ -11,6 +11,7 @@ const execFileAsync = promisify(execFile);
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const destination = process.argv[2];
 const { games, modes, format: catalogFormat } = globalThis.GradeCrewGames;
+const gamesDesignSystemVersion = '0.1.0';
 if (!destination || !path.isAbsolute(destination)) throw new Error('An absolute build directory is required.');
 const buildRoot = path.resolve(destination);
 if (buildRoot === root || buildRoot.startsWith(root + path.sep)) throw new Error('Build outside the repository to keep sources separate.');
@@ -51,11 +52,27 @@ function navigation(game) {
     '<details class="gc-games-switch"><summary>Spiele wechseln</summary><ul>' + links + '</ul></details></header>';
 }
 const leaveDialog = '<dialog id="gcLeaveDialog" class="gc-leave-dialog" aria-labelledby="gcLeaveTitle"><h2 id="gcLeaveTitle">Runde verlassen?</h2><p></p><form method="dialog"><button value="stay" autofocus>Hier bleiben</button><button value="leave">Spiel wechseln</button></form></dialog>';
+
 for (const name of ['index.html', 'styles.css', 'app.js']) {
   await copyFile(path.join(root, 'lab', 'games-hub', name), path.join(output, name));
 }
-const sharedFiles = ['games-catalog.js', 'game-shell.css', 'game-shell.js'];
+const sharedFiles = ['games-catalog.js', 'games-design-system.css', 'games-design-system.js', 'game-shell.css', 'game-shell.js'];
 for (const name of sharedFiles) await copyFile(path.join(root, 'lab', 'shared', name), path.join(output, 'shared', name));
+
+// Living component/UX preview. It is part of the isolated lab build, not the public product navigation.
+for (const name of ['index.html', 'preview.css']) {
+  await copyFile(path.join(root, 'lab', 'games-system', name), path.join(output, 'design-system', name));
+}
+
+// The hub consumes the same Games Design System helpers/tokens as the game shells.
+const hubIndexPath = path.join(output, 'index.html');
+let hubIndex = await fs.readFile(hubIndexPath, 'utf8');
+if (!hubIndex.includes('shared/games-design-system.css')) {
+  hubIndex = hubIndex
+    .replace('</head>', '<link rel="stylesheet" href="shared/games-design-system.css"></head>')
+    .replace('</body>', '<script src="shared/games-design-system.js"></script></body>');
+  await fs.writeFile(hubIndexPath, hubIndex);
+}
 
 for (const game of games) {
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'gradecrew-game-build.'));
@@ -73,13 +90,14 @@ for (const game of games) {
       if (!html.includes(game.entry.modeAttribute + '="' + mode + '"')) throw new Error('Mode entry missing: ' + game.id + '/' + mode);
     }
     html = html.replace(headerPattern, navigation(game))
-      .replace('</head>', '<link rel="stylesheet" href="../shared/game-shell.css"></head>')
-      .replace('</body>', leaveDialog + '<script src="../shared/games-catalog.js"></script><script src="../shared/game-shell.js"></script></body>');
+      .replace('</head>', '<link rel="stylesheet" href="../shared/games-design-system.css"><link rel="stylesheet" href="../shared/game-shell.css"></head>')
+      .replace('</body>', leaveDialog + '<script src="../shared/games-catalog.js"></script><script src="../shared/games-design-system.js"></script><script src="../shared/game-shell.js"></script></body>');
     await fs.writeFile(indexPath, html);
     const releasePath = path.join(gameDir, 'lab-release.json');
     const release = JSON.parse(await fs.readFile(releasePath, 'utf8'));
-    // The original child manifest must be refreshed after adding the shared shell.
-    release.hubShellFormat = 1;
+    // The original child manifest must be refreshed after adding the shared shell/design layer.
+    release.hubShellFormat = 2;
+    release.gamesDesignSystemVersion = gamesDesignSystemVersion;
     release.files = await hashTree(gameDir);
     release.sharedFiles = await hashTree(path.join(output, 'shared'));
     await fs.writeFile(releasePath, JSON.stringify(release, null, 2) + '\n');
@@ -96,17 +114,29 @@ async function validateReferences(dir) {
     for (const match of html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)="([^"]+)"/gi)) {
       const reference = match[1];
       if (/^(?:https?:|data:|\/\/)/.test(reference)) continue;
-      const target = path.resolve(dir, reference.split(/[?#]/)[0]);
-      if (!target.startsWith(output + path.sep)) throw new Error('Asset escapes the build: ' + reference);
+      const target = path.resolve(path.dirname(full), reference.split(/[?#]/)[0]);
+      if (target !== output && !target.startsWith(output + path.sep)) throw new Error('Asset escapes the build: ' + reference);
       await fs.access(target);
     }
   }
 }
 await validateReferences(output);
+
+const designPreview = await fs.readFile(path.join(output, 'design-system', 'index.html'), 'utf8');
+for (const marker of ['Games Design System', 'Weitere Einstellungen', 'Kopfrechnen', 'Block & Stift', 'games-design-system.css', 'games-design-system.js']) {
+  if (!designPreview.includes(marker)) throw new Error('Games Design System preview marker missing: ' + marker);
+}
+for (const game of games) {
+  const html = await fs.readFile(path.join(output, game.id, 'index.html'), 'utf8');
+  for (const marker of ['../shared/games-design-system.css', '../shared/games-design-system.js', 'data-gc-game']) {
+    if (!html.includes(marker)) throw new Error(`Shared games design layer missing in ${game.id}: ${marker}`);
+  }
+}
+
 await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({
-  experiment: 'gradecrew-games-hub', format: 4, catalogFormat,
+  experiment: 'gradecrew-games-hub', format: 5, catalogFormat, gamesDesignSystemVersion,
   games: games.map(game => game.id), modes: modes.map(mode => mode.id),
-  features: { sharedNavigation: true, directModeEntry: true, gameFilters: true, favorites: true, centralJoin: true, canonicalGameBuilds: true, fastQuizRounding: true },
+  features: { sharedNavigation: true, sharedGamesDesignSystem: true, designSystemPreview: true, directModeEntry: true, gameFilters: true, favorites: true, centralJoin: true, canonicalGameBuilds: true, fastQuizRounding: true },
   files: await hashTree(output)
 }, null, 2) + '\n');
 await fs.writeFile(path.join(buildRoot, 'firebase.json'), JSON.stringify({
@@ -115,4 +145,4 @@ await fs.writeFile(path.join(buildRoot, 'firebase.json'), JSON.stringify({
     headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
   }
 }, null, 2) + '\n');
-console.log('GradeCrew Games structure verified: ' + games.map(game => game.name).join(' + ') + '.');
+console.log('GradeCrew Games structure + Design System ' + gamesDesignSystemVersion + ' verified: ' + games.map(game => game.name).join(' + ') + '.');
