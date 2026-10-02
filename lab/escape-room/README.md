@@ -156,4 +156,11 @@ Automatisierter v0.5-Prüflauf `36990569083`:
 - `tools/build-lab-escape-room.mjs`: isolierter Build mit Manifest/Prüfsummen
 - `tools/games/*.test.cjs`: Regressionstests
 
-Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.
+Die KI darf validierte Inhaltsdaten liefern. Spiellogik und Lernleitplanken bleiben deterministisch.## v0.6 – Remy erstellt, Coco begleitet
+
+- Rollen korrigiert: **Remy** ist für das Erstellen der Escape-Lernaufgaben zuständig; **Coco** bleibt Explorer und Lernhilfe im Spiel.
+- Die Erstellungskarte verwendet das freigegebene Shared-Remy-Artwork statt einer lokalen alten Elefantenkopie.
+- Der Standalone-Lab-Button ist nicht mehr tot. Ohne geschützte GradeCrew-Bridge bereitet Remy die eingegebenen Eckdaten als ehrliche Lab-Vorschau vor; es werden dabei ausdrücklich keine neuen KI-Aufgaben vorgetäuscht.
+- Mit `GradeCrewEscapeAiBridge.generateTest` bleibt derselbe Button für die echte 8+8-Erstellung vorbereitet.
+- `🎙 Mit Remy sprechen` nutzt im Lab die bereits in GradeCrew erprobte Browser-Diktat-V1 als Progressive Enhancement und schreibt den gesprochenen Wunsch nur ins sichtbare Wunschfeld. Audio wird nicht gespeichert.
+- Die spätere Produktintegration soll weiterhin den gemeinsamen Crew-Assistant-/Voice-Vertrag verwenden; kein zweites Voice-Backend im Escape.

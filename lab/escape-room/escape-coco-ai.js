@@ -6,7 +6,7 @@
   const STORAGE_KEY = D ? `gradecrew-escape-teacher-set:${D.world.id}:${D.world.version}` : 'gradecrew-escape-teacher-set';
   const COCO_EXPLORER = 'assets/gradecrew/penguin-guide.svg#pose-5';
   const COCO_HELP = 'assets/gradecrew/penguin-guide.svg#pose-4';
-  const COCO_WELCOME = 'assets/gradecrew/penguin-guide-welcome.svg#pose-1';
+  const REMY_CREATE = 'assets/gradecrew/clay-remy-writing.svg';
   let activeProfile = null;
 
   function clone(value) {
@@ -24,8 +24,8 @@
       .remyAvatar .cocoHelpArt{width:62px;height:62px;object-fit:contain}
       .teacherAiCard{margin:1rem 0 1.15rem;padding:1rem;border:1px solid #cfe0ff;border-radius:18px;background:linear-gradient(145deg,#f7faff,#eef5ff);box-shadow:0 8px 24px rgba(36,91,173,.07)}
       .teacherAiHead{display:grid;grid-template-columns:70px 1fr;gap:.85rem;align-items:center;margin-bottom:.85rem}
-      .teacherAiCoco{width:70px;height:70px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(29,55,95,.08)}
-      .teacherAiCoco img{width:64px;height:64px;object-fit:contain}
+      .teacherAiRemy{width:70px;height:70px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(29,55,95,.08)}
+      .teacherAiRemy img{width:64px;height:64px;object-fit:contain}
       .teacherAiHead h3{margin:0 0 .2rem;font-size:1.08rem}
       .teacherAiHead p{margin:0;color:#53647c;font-size:.91rem;line-height:1.42}
       .teacherAiGrid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
@@ -37,12 +37,15 @@
       .teacherAiActions{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-top:.85rem}
       .teacherAiActions .primaryButton{margin:0}
       .teacherAiActions .primaryButton:disabled{opacity:.55;cursor:not-allowed}
+      .teacherAiVoiceRow{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-top:.7rem}
+      .teacherAiMic.listening{background:#fff0f0;border-color:#e25b5b;color:#a81f1f}
+      .teacherAiVoiceStatus{font-size:.76rem;color:#607189}
       .teacherAiStatus{margin:.65rem 0 0;padding:.65rem .75rem;border-radius:11px;background:#fff;color:#41526a;font-size:.86rem;line-height:1.4}
       .teacherAiStatus.success{background:#eafaf1;color:#17643b}
       .teacherAiStatus.error{background:#fff0f0;color:#9b2c2c}
       .teacherAiAccount{font-size:.78rem;color:#52709c}
       .teacherAiFineprint{margin:.55rem 0 0;color:#6b7a90;font-size:.75rem;line-height:1.35}
-      @media(max-width:720px){.teacherAiGrid{grid-template-columns:1fr}.teacherAiTopic{grid-column:auto}.teacherAiHead{grid-template-columns:58px 1fr}.teacherAiCoco{width:58px;height:58px}.teacherAiCoco img{width:54px;height:54px}}
+      @media(max-width:720px){.teacherAiGrid{grid-template-columns:1fr}.teacherAiTopic{grid-column:auto}.teacherAiHead{grid-template-columns:58px 1fr}.teacherAiRemy{width:58px;height:58px}.teacherAiRemy img{width:54px;height:54px}.teacherAiVoiceRow{align-items:stretch}.teacherAiMic{width:100%}}
     `;
     document.head.append(style);
   }
@@ -234,7 +237,15 @@
     if (!settings.subject || !settings.grade || !settings.topic) return setStatus('Fach, Klasse und Thema werden benötigt.', 'error');
     const button = $('teacherAiGenerateBtn');
     if (button) button.disabled = true;
-    setStatus('Coco erstellt 8 Lernaufgaben und passende Transferaufgaben mit der GradeCrew-KI …');
+    const connected = Boolean(window.GradeCrewEscapeAiBridge?.generateTest);
+    if (!connected) {
+      activeProfile = { subject: settings.subject, grade: settings.grade, topic: settings.topic };
+      updateProfileDisplay();
+      setStatus('✓ Remy hat deine Angaben für die Lab-Vorschau übernommen. Die vorhandenen Beispielaufgaben bleiben unverändert, damit wir keine echte KI-Erstellung vortäuschen. In GradeCrew erzeugt derselbe Button anschließend die neuen 8 Aufgaben.', 'success');
+      window.dispatchEvent(new CustomEvent('gradecrew:escape-event', { detail: { name: 'teacher.remy_preview_prepared', profile: activeProfile } }));
+      return;
+    }
+    setStatus('Remy erstellt 8 Lernaufgaben und passende Transferaufgaben mit der GradeCrew-KI …');
     try {
       const result = await callGenerator(generationPayload(settings));
       const prepared = prepareGeneratedTest(result, settings);
@@ -277,10 +288,11 @@
     const status = $('teacherAiConnection');
     if (!button || !status) return;
     const connected = Boolean(window.GradeCrewEscapeAiBridge?.generateTest);
-    button.disabled = !connected;
+    button.disabled = false;
+    button.textContent = connected ? '✨ Remy: 8 Escape-Aufgaben erstellen' : '✨ Remy-Vorschau vorbereiten';
     status.textContent = connected
-      ? '✓ GradeCrew-KI über die vorhandene Lehrersitzung verbunden.'
-      : 'Lab-Vorschau: keine Extra-Anmeldung. Die echte KI wird beim Einbau in GradeCrew über die vorhandene Lehrersitzung verbunden. Die Beispielaufgaben können jetzt schon geprüft und gespielt werden.';
+      ? '✓ Remy ist mit der GradeCrew-KI über die vorhandene Lehrersitzung verbunden.'
+      : 'Lab-Vorschau: Remy ist ohne Extra-Anmeldung bedienbar. Hier übernimmt er deine Angaben; echte neue KI-Aufgaben werden erst über die geschützte GradeCrew-Lehrersitzung erzeugt.';
   }
 
   function buildTeacherAiCard() {
@@ -293,8 +305,8 @@
     card.className = 'teacherAiCard';
     card.innerHTML = `
       <div class="teacherAiHead">
-        <div class="teacherAiCoco"><img class="gcClayCharacter" src="${COCO_WELCOME}" alt="Coco"></div>
-        <div><h3>Aufgaben mit KI erstellen</h3><p>Nur Fach, Klasse, Thema und optional ein Wunsch. In GradeCrew nutzt diese Karte später automatisch die bereits angemeldete Lehrersitzung – ohne zweite Anmeldung.</p></div>
+        <div class="teacherAiRemy"><img class="gcClayCharacter" src="${REMY_CREATE}" alt="Remy"></div>
+        <div><h3>Aufgaben mit Remy erstellen</h3><p>Fach, Klasse, Thema und optional ein Wunsch. Remy kümmert sich ums Erstellen; Coco bleibt im Spiel deine Begleitung und Hilfe.</p></div>
       </div>
       <div id="teacherAiConnection" class="teacherAiAccount"></div>
       <div class="teacherAiGrid">
@@ -304,9 +316,10 @@
         <label>Schwierigkeit<select id="teacherAiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
       </div>
       <label class="teacherAiNotes">Eigener Wunsch <span style="font-weight:500">(optional)</span><textarea id="teacherAiNotes" maxlength="1200" placeholder="z. B. lebensnahe Aufgaben, keine komplizierten Texte …"></textarea></label>
-      <div class="teacherAiActions"><button id="teacherAiGenerateBtn" class="primaryButton" type="button">✨ 8 Escape-Aufgaben erstellen</button><span class="teacherAiAccount">1 KI-Lauf · Transfer wird automatisch mit vorbereitet</span></div>
+      <div class="teacherAiVoiceRow"><button id="teacherAiRemyMic" class="secondaryButton teacherAiMic" type="button">🎙 Mit Remy sprechen</button><span id="teacherAiVoiceStatus" class="teacherAiVoiceStatus">Gesprochene Wünsche landen direkt im Wunschfeld.</span></div>
+      <div class="teacherAiActions"><button id="teacherAiGenerateBtn" class="primaryButton" type="button">✨ Remy: 8 Escape-Aufgaben erstellen</button><span class="teacherAiAccount">1 KI-Lauf · Transfer wird automatisch mit vorbereitet</span></div>
       <div id="teacherAiStatus" class="teacherAiStatus" role="status" hidden></div>
-      <p class="teacherAiFineprint">Die KI erzeugt nur Lerninhalte. Räume, Rätsel, Fortschrittslogik und Anti-Raten-Regeln bleiben fest in GradeCrew. Vor dem Start bitte kurz prüfen.</p>
+      <p class="teacherAiFineprint">Remy erzeugt nur Lerninhalte. Räume, Rätsel, Fortschrittslogik und Anti-Raten-Regeln bleiben fest in GradeCrew. Vor dem Start bitte kurz prüfen.</p>
     `;
     overview.insertAdjacentElement('afterend', card);
     $('teacherAiGenerateBtn').onclick = generate;
@@ -341,12 +354,14 @@
     });
   }
 
-  window.GradeCrewEscapeAiGenerator = Object.freeze({
+  const remyGenerator = Object.freeze({
     prepareGeneratedTest,
     generationPayload,
     correctAnswers,
     safeTypes
   });
+  window.GradeCrewEscapeRemyGenerator = remyGenerator;
+  window.GradeCrewEscapeAiGenerator = remyGenerator; // compatibility alias
 
   boot();
 })();

@@ -35,6 +35,7 @@ function openEscape() {
     'app.js',
     'escape-teacher-compact.js',
     'escape-coco-ai.js',
+    'escape-remy-voice.js',
     'escape-teacher-flow.js'
   ]) {
     w.eval(fs.readFileSync(path.join(source, file), 'utf8'));
@@ -74,7 +75,15 @@ test('Escape presents the canonical Coco artwork and compact AI teacher controls
     assert.ok(d.getElementById('teacherAiTopic'));
     assert.ok(d.getElementById('teacherAiDifficulty'));
     assert.ok(d.getElementById('teacherAiNotes'));
-    assert.match(d.getElementById('teacherAiGenerateBtn').textContent, /8 Escape-Aufgaben/);
+    assert.match(d.getElementById('teacherAiGenerateBtn').textContent, /Remy/);
+    assert.match(d.querySelector('.teacherAiRemy img').getAttribute('src'), /clay-remy-writing\.svg/);
+    assert.equal(d.querySelector('.teacherAiRemy img').getAttribute('alt'), 'Remy');
+    assert.match(d.querySelector('#teacherAiCard h3').textContent, /Remy/);
+    assert.ok(d.getElementById('teacherAiRemyMic'));
+    const remySvg = fs.readFileSync(path.join(root, 'assets', 'gradecrew', 'elephant-create.svg'), 'utf8');
+    assert.match(remySvg, /<view id="pose-1"/);
+    assert.match(remySvg, /<view id="pose-6"/);
+    assert.doesNotMatch(remySvg, /Reduzierte Editorial-Illustration/);
     assert.equal(d.getElementById('teacherAiLogin'), null);
     assert.equal(d.getElementById('teacherAiEmail'), null);
     assert.equal(d.getElementById('teacherAiPassword'), null);
@@ -84,7 +93,7 @@ test('Escape presents the canonical Coco artwork and compact AI teacher controls
   }
 });
 
-test('Coco generator uses one 16-question GradeCrew request for eight main-transfer pairs', () => {
+test('Remy generator uses one 16-question GradeCrew request for eight main-transfer pairs', () => {
   const { w } = openEscape();
   try {
     const payload = w.GradeCrewEscapeAiGenerator.generationPayload({
@@ -163,3 +172,48 @@ test('standalone Escape AI client has no Firebase login dependency', () => {
   assert.doesNotMatch(sourceJs, /teacherAiLogin/);
   assert.match(sourceJs, /GradeCrewEscapeAiBridge/);
 });
+
+test('standalone lab keeps the Remy preparation action clickable without faking AI generation', () => {
+  const { w, d } = openEscape();
+  try {
+    delete w.GradeCrewEscapeAiBridge;
+    w.dispatchEvent(new w.Event('gradecrew:escape-ai-bridge-ready'));
+    const button = d.getElementById('teacherAiGenerateBtn');
+    assert.equal(button.disabled, false);
+    assert.match(button.textContent, /Remy-Vorschau/);
+    d.getElementById('teacherAiSubject').value = 'Deutsch';
+    d.getElementById('teacherAiGrade').value = '5';
+    d.getElementById('teacherAiTopic').value = 'Wortarten';
+    button.click();
+    assert.match(d.getElementById('teacherContentProfile').textContent, /Deutsch · Klasse 5 · Wortarten/);
+    assert.match(d.getElementById('teacherAiStatus').textContent, /keine echte KI-Erstellung vortäuschen/);
+  } finally {
+    w.close();
+  }
+});
+
+test('Remy voice control is present and fails locally when browser speech recognition is unavailable', () => {
+  const { w, d } = openEscape();
+  try {
+    delete w.SpeechRecognition;
+    delete w.webkitSpeechRecognition;
+    d.getElementById('teacherAiRemyMic').click();
+    assert.match(d.getElementById('teacherAiVoiceStatus').textContent, /Browser noch nicht unterstützt/);
+    const voiceSource = fs.readFileSync(path.join(source, 'escape-remy-voice.js'), 'utf8');
+    assert.match(voiceSource, /SpeechRecognition/);
+    assert.doesNotMatch(voiceSource, /localStorage|sessionStorage|MediaRecorder/);
+  } finally {
+    w.close();
+  }
+});
+
+test('Remy generator exposes a role-correct API while keeping the legacy alias compatible', () => {
+  const { w } = openEscape();
+  try {
+    assert.ok(w.GradeCrewEscapeRemyGenerator);
+    assert.equal(w.GradeCrewEscapeRemyGenerator, w.GradeCrewEscapeAiGenerator);
+  } finally {
+    w.close();
+  }
+});
+
