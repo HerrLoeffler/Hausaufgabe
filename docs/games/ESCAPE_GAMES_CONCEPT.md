@@ -10,6 +10,34 @@ Kernversprechen:
 
 > **Die Lehrkraft gibt Lernziel und Rahmen vor. GradeCrew verwandelt das in ein echtes Adventure – ohne dass 30 Schüler dieselben konkreten Aufgaben oder denselben Endcode erhalten müssen.**
 
+## Zielmix: Spielen, Lernen, Rätsel
+
+Für typische Escape-Runs von ca. 15–25 Minuten gilt als Zielkorridor:
+
+- **30–35 % Lernen**: echte Fachaufgaben, Transfer und kurze Lernhilfe;
+- **45–55 % Spielen/Erkunden**: Bewegung, Werkzeuge, Fahrzeuge, Entdecken, Interaktionen, kleine Action;
+- **15–20 % Rätsel/Story**: Codes, Logik, Storybeats, Überraschungen und Übergänge.
+
+Das ist kein starres Zeitschema pro Minute. Es ist eine Designregel für den Gesamteindruck: Das Spiel muss sich zuerst wie ein gutes Adventure anfühlen und darf Lernen nicht verstecken oder verwässern. Lernen soll regelmäßig relevant sein, aber nicht permanent den Spielfluss unterbrechen.
+
+## Highlight-Anspruch
+
+Ein GradeCrew Escape soll nicht nur „funktionieren“. Es soll für Schüler ein **Highlight** sein, das sie freiwillig gerne spielen.
+
+Dafür gelten zusätzlich:
+
+- starke visuelle Identität pro Welt statt generischer Canvas-Flächen;
+- erkennbare Tiefe durch Layer, Schatten, Licht, Animationen, Partikel und Umgebungsbewegung;
+- charakteristische Soundkulisse/Musik, abschaltbar;
+- kurze, flüssige Übergänge statt harter UI-Sprünge;
+- sichtbare Reaktionen auf Aktionen: Fahrzeuge, Werkzeuge, Tiere, Maschinen und Umgebung müssen lebendig wirken;
+- möglichst wenig lange Textboxen; Story wird bevorzugt über Szene, Animation, Icons und kurze Dialoge erzählt;
+- mindestens mehrere echte Wow-Momente pro längerer Welt, nicht nur ein finales Popup;
+- Mechaniken werden nicht nur „abgehakt“, sondern bekommen gutes Game-Feel: Feedback, Timing, Kamera, Sound und kleine Überraschungen;
+- jedes Level braucht einen eigenen visuellen oder spielerischen Höhepunkt.
+
+Produktregel: **Technisch korrekt ist nur die Untergrenze. Ziel ist „das will ich nochmal spielen“.**
+
 ## Vier Ebenen
 
 ### 1. Gemeinsame Escape-Engine
@@ -122,33 +150,22 @@ Zusätzlich gilt für Escape:
 
 Die Lehrkraft kontrolliert nicht 30 Einzelfassungen. Sie prüft die Aufgabenfamilie, Lernziele, Regeln der Variantenerzeugung und repräsentative Beispiele.
 
+## Sprache und Bedienung
+
+Produktregel: **Komplexes Spiel, einfache Bedienung und einfache Sprache.**
+
+- kurze Sätze;
+- eine Handlungsaufforderung pro Schritt;
+- UI und Story standardmäßig deutlich einfacher als Lehrermaterial formulieren;
+- Niveau/Lesestufe später an Klasse und Lerngruppe anpassen;
+- Icons, Animationen und Szene erklären möglichst viel ohne Text;
+- Schwierigkeit entsteht aus Lernen, Rätsel und Mechanik – nicht aus dem Verstehen der Oberfläche.
+
 ## KI- und Kostenprinzip
 
-### Was keine KI benötigt
+Beim Spielen laufen fertige Mechaniken lokal/deterministisch. Jeep, Magnetkran, Kamera, Boot, Licht, Inventar, Physik/Kollision, Räume, Animationen, Sounds, Codes und Seed-Varianten benötigen keine KI pro Nutzung.
 
-Beim Spielen laufen fertige Mechaniken lokal/deterministisch:
-
-- Jeep;
-- Magnetkran;
-- Kamera;
-- Boot;
-- Taschenlampe;
-- Inventar;
-- Physik-/Kollisionslogik;
-- Räume, Animationen, Sounds;
-- Codes und Zustandsmaschinen;
-- aus einem validierten Seed erzeugte Zahlenvarianten.
-
-Diese Dinge verursachen keine Modellkosten pro Nutzung. Ihre Kosten bestehen primär aus einmaliger Entwicklungszeit, Assets sowie normalem Hosting/Traffic.
-
-### Wofür KI sinnvoll ist
-
-KI wird gezielt eingesetzt für:
-
-- Lehrkraftauftrag → passende Lernaufgabenfamilien;
-- Hinweise/Erklärungen/Transferaufgaben, wenn nicht bereits aus geprüften Bausteinen verfügbar;
-- optionale individuelle Coco-Hilfe bei neuen Verständnisfragen;
-- später eventuell Story-/Textvorschläge für Autoren, aber niemals ungeprüfte ausführbare Spiellogik.
+KI wird gezielt eingesetzt für Lernaufgabenfamilien, Hinweise/Erklärungen/Transferaufgaben, neue individuelle Verständnisfragen und optional Story-/Autorenvorschläge. Ausführbare Spiellogik bleibt geprüfter Code.
 
 Reihenfolge bleibt:
 
@@ -171,38 +188,24 @@ Eine Welt darf nicht nur eine Umbenennung bestehender Räume sein.
 Vor Freigabe sollte sie mindestens erfüllen:
 
 1. klare eigene Mission/Story;
-2. erkennbare eigene visuelle Identität;
+2. starke eigene visuelle Identität;
 3. mindestens 2–3 charakteristische Mechaniken oder deutlich neue Kombinationen;
 4. mehrere Wechsel zwischen Lernen, Erkunden und Spielmechanik;
-5. mindestens einen erinnerungswürdigen Moment, der kein Lernformular ist;
+5. mehrere erinnerungswürdige Momente, die kein Lernformular sind;
 6. komplette Lösbarkeit per automatischem Preflight plus Spieltest;
 7. Touch/PC-Bedienbarkeit;
-8. individuelle Lernvarianten ohne Niveauverschiebung.
+8. individuelle Lernvarianten ohne Niveauverschiebung;
+9. Schülertexte auf Zielniveau und trotzdem grundsätzlich kurz/einfach;
+10. visuelles und akustisches Polish, sodass sich die Welt wie ein kleines Spiel und nicht wie ein Prototyp anfühlt.
 
 ## Autoren-/Contentmodell später
 
-Langfristig soll eine Escape-Welt deklarativ beschrieben werden können:
-
-- Szenen;
-- erlaubte Mechaniken;
-- Objekt-/Hotspotkonfiguration;
-- Storybeats;
-- Lernslots;
-- Voraussetzungen und Belohnungen;
-- Variantengruppen;
-- Übergänge und finale Bedingungen.
+Langfristig soll eine Escape-Welt deklarativ beschrieben werden können: Szenen, erlaubte Mechaniken, Objekt-/Hotspotkonfiguration, Storybeats, Lernslots, Voraussetzungen/Belohnungen, Variantengruppen, Übergänge und finale Bedingungen.
 
 Die KI darf validierte Inhaltsfelder befüllen. Die Engine und Mechaniken selbst bleiben geprüfter Code.
 
-## Referenz für den nächsten Prototyp
+## Referenzprototyp
 
-`Expedition Amazonas – Die verschwundene Forschungsstation` soll bewusst über den bisherigen Schulraum hinausgehen und mehrere Mechaniken in einem zusammenhängenden Adventure testen:
+`Expedition Amazonas – Die verschwundene Forschungsstation` testet bewusst mehrere Mechaniken in einem zusammenhängenden Adventure: Expeditionscamp/Jeep, Dschungelpfad/Seilwinde, Wildtierzone/Kamera, Fluss/Boot, Forschungsstation/Generator und Funkmast/Finale.
 
-1. Expeditionscamp / Jeep;
-2. blockierter Dschungelpfad / Seilwinde;
-3. Wildtierzone / Kamera;
-4. Fluss / Bootssteuerung;
-5. Forschungsstation / Generator und Strom;
-6. Funkmast / Finale.
-
-Der Prototyp soll zeigen, ob eine gemeinsame Engine mehrere deutlich unterschiedliche Spielarten in einer Geschichte tragen kann, ohne den bestehenden Schul-Escape zu ersetzen oder Production anzufassen.
+Der Prototyp beweist zuerst Mechanikvielfalt. Danach folgen Stabilität, Schüler-Sprache und ein deutlicher Visual-/Game-Feel-Pass, bevor daraus die Qualitätsreferenz für weitere Welten wird.
