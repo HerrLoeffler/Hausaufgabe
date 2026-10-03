@@ -145,6 +145,14 @@ class ModelTests(unittest.TestCase):
                 m.call('build','Implement',{},p.CANDIDATE_SCHEMA)
             self.assertEqual(send.call_count,1)
 
+    def test_provider_rejection_reports_status_without_echoing_secret_body(self):
+        import io
+        error=m.urllib.error.HTTPError('https://api.openai.com/v1/responses',403,'denied',{},io.BytesIO(b'secret-provider-payload'))
+        with patch.dict(os.environ,{'CODEX_WORKER_API_KEY':'test-only'}),patch.object(m.urllib.request,'urlopen',side_effect=error) as send:
+            with self.assertRaisesRegex(RuntimeError,'HTTP 403, provider/model permission denied') as raised:
+                m.call('build','Implement',{},p.CANDIDATE_SCHEMA)
+            self.assertNotIn('secret-provider-payload',str(raised.exception));self.assertEqual(send.call_count,1)
+
 
 class ContinuationTests(unittest.TestCase):
     def test_busy_unknown_and_stopped_attempts_never_restart(self):

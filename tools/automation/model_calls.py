@@ -48,7 +48,12 @@ def call(role, instructions, context, schema, transport=None):
             if len(raw) > 2 * 1024 * 1024:
                 raise ValueError('Oversized provider response')
             payload = json.loads(raw)
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        except urllib.error.HTTPError as exc:
+            reason = {401: 'credential rejected', 403: 'provider/model permission denied', 404: 'model or endpoint unavailable',
+                      400: 'provider rejected request contract', 422: 'provider rejected request contract',
+                      429: 'rate/quota limit reached'}.get(exc.code, 'provider failure; billing outcome unknown')
+            raise RuntimeError(f"{role} ({spec['model']}): HTTP {exc.code}, {reason}; reservation retained, no automatic retry") from None
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
             # Ambiguous paid calls retain their full reservation. Never retry.
             raise RuntimeError('Provider result unknown; reservation retained, automatic retry forbidden') from None
     else:

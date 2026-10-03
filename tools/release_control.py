@@ -15,12 +15,17 @@ import os
 import pathlib
 import re
 import subprocess
+import sys
 import urllib.error
 import urllib.request
 import zipfile
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+# Preserve the existing `python tools/release_control.py` entry point while
+# importing the shared trusted execution evidence helpers.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 CATALOG = ROOT / "release-control" / "catalog.json"
 ACCEPTANCE = ROOT / "release-control" / "acceptance.json"
 STATE = ROOT / "GRADECREW_STATE.json"

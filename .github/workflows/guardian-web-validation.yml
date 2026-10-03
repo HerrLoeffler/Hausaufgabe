@@ -50,7 +50,7 @@ jobs:
           sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
           sudo mkdir -p "$RUNNER_TEMP/validator-home"
           sudo chown gradecrew-validator:gradecrew-validator "$RUNNER_TEMP/validator-home"
-          chmod a+rx "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+          chmod a+rx "$GITHUB_WORKSPACE" "$(dirname "$GITHUB_WORKSPACE")" "$RUNNER_TEMP"
           sudo chown -R gradecrew-validator:gradecrew-validator .
           sudo -u gradecrew-validator env -i PATH="$PATH" HOME="$RUNNER_TEMP/validator-home" JAVA_HOME="$JAVA_HOME" CI=true \
             bash ../control/tools/automation/validate-web.sh > ../validation.log 2>&1

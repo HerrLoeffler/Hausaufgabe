@@ -3,7 +3,9 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 import pathlib
+import subprocess
 import tempfile
 import unittest
 import zipfile
@@ -38,6 +40,14 @@ def receipt(kind="hosting"):
 
 
 class ReleaseControlTests(unittest.TestCase):
+    def test_direct_script_entry_can_import_execution_helpers_outside_repo_cwd(self):
+        root=pathlib.Path(rc.__file__).resolve().parents[1]
+        command="import runpy; ns=runpy.run_path("+repr(str(root/'tools/release_control.py'))+"); from tools.automation.guardian import validate_policy; print('importable')"
+        with tempfile.TemporaryDirectory() as directory:
+            env={k:v for k,v in os.environ.items() if k not in {'PYTHONPATH','GITHUB_TOKEN','GH_TOKEN'}}
+            result=subprocess.run(['python3','-I','-c',command],cwd=directory,env=env,text=True,capture_output=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(result.stdout.strip(),'importable')
     def guardian_fixture(self):
         attempt={'requestId':'run-pilot','integratedSha':A,'controlSha':B,'state':'integrated','publication':{'head':A}}
         ci=run(name='Guardian integrated checks',path='.github/workflows/guardian-integrated-ci.yml',event='workflow_dispatch',
