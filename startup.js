@@ -110,7 +110,10 @@ if (publicTestCode && !teacherPreview) {
   try {
     // Recompose the public entry before app.js binds the existing auth/test-code
     // handlers. The original forms and IDs are moved, not cloned or replaced.
-    await import("./gradecrew-entry-flow.js?v=2");
+    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=3");
+    const entryInstalled = installGradeCrewEntryFlow();
+    if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
+
     await import("./app.js?v=2.3.1-gc28");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");

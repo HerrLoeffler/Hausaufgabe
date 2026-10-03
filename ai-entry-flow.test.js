@@ -107,9 +107,14 @@ test('new public styling cannot target secure student screens', () => {
   assert.match(css, /#authView/);
 });
 
-test('startup installs entry before app handlers and staging packages it', () => {
-  assert.ok(startup.indexOf('gradecrew-entry-flow.js') < startup.indexOf('./app.js?v=2.3.1-gc28'));
+test('startup actively installs entry before app handlers and staging packages it', () => {
+  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=3")');
+  const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
+  const appImport = startup.indexOf('./app.js?v=2.3.1-gc28');
+  assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
+  assert.ok(installerCall > entryImport, 'entry installer must actually be called');
+  assert.ok(appImport > installerCall, 'entry must be installed before app handlers bind');
+  assert.match(startup, /if \(!entryInstalled\) throw new Error/);
   assert.match(build, /gradecrew-entry-flow\.js/);
   assert.match(startup, /auth-startscreen-v3/);
-  assert.match(startup, /gradecrew-entry-flow\.js\?v=2/);
 });
