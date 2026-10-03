@@ -1,0 +1,36 @@
+name: Admit one Guardian task
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: Reviewed exact task file on main, without .json
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-stage-guardian
+  cancel-in-progress: false
+jobs:
+  admit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Explicit task, current source, existing history and credentials gate
+        run: python3 -m tools.automation.admit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TASK_ID: ${{ inputs.task_id }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
+          WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
+          OPENAI_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY != '' }}
+          ANTHROPIC_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY != '' }}

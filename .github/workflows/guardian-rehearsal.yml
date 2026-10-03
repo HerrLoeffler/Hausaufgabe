@@ -1,0 +1,41 @@
+name: Guardian unprivileged validation rehearsal
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/automation/**'
+      - '.github/workflows/guardian-*.yml'
+  push:
+    branches: [feature/guardian-execution-v2]
+    paths:
+      - 'tools/automation/**'
+      - '.github/workflows/guardian-*.yml'
+permissions:
+  contents: read
+concurrency:
+  group: guardian-rehearsal-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      head: ${{ steps.source.outputs.head }}
+    steps:
+      - name: Read current web baseline; never accept caller-supplied source
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$GITHUB_REPOSITORY" = HerrLoeffler/Hausaufgabe
+          head=$(gh api repos/HerrLoeffler/Hausaufgabe/git/ref/heads/feature/gradecrew-app-integration --jq .object.sha)
+          test "${#head}" = 40
+          echo "head=$head" >> "$GITHUB_OUTPUT"
+  validation:
+    needs: source
+    uses: ./.github/workflows/guardian-web-validation.yml
+    with:
+      head: ${{ needs.source.outputs.head }}
+      control_sha: ${{ github.sha }}
+      rehearsal: true

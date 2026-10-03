@@ -1,6 +1,6 @@
 # Automatisierung: einmalige Aktivierung
 
-Stand 02.10.2026: Die automatische Hosting-Preview ist Ende-zu-Ende bestätigt. Für die AI-Functions ist jetzt ebenfalls ein eigener automatischer Staging-Workflow vorbereitet. **Noch nicht als aktiviert/verified bezeichnen**, bis die einmalige Google-Cloud-IAM-Einrichtung erfolgt und ein realer Workflow-Deploy erfolgreich belegt wurde. Hosting, Functions und Rules bleiben bewusst getrennte Deploy-Stufen. Production bleibt approval-gated.
+Diese Datei beschreibt die Einrichtungswege, keinen automatisch aktuellen Aktivierungsstand. Maßgeblich sind frische Actions-Runs und tatsächlich geprüfte Receipts im Release Control. Hosting, Functions und Rules bleiben getrennte Deploy-Stufen; Production braucht eine ausdrückliche Freigabe. Der Guardian-V2-Pilot ist vor seiner ersten echten Ausführung separat zu bestätigen.
 
 ## 1. Automatische Hosting-Preview
 
@@ -64,17 +64,50 @@ Der bisherige `tools/automation/deploy-staging-ai-functions.sh` bleibt als eng b
 
 Erst nach erfolgreichem Functions-Workflow und Runtime-/Browserprüfung den aktuellen Release Train in `GRADECREW_STATE.json` auf `staging_deployed` hochstufen.
 
-## 3. Codex-Worker
+## 3. Vollständige Guardian-Ausführung V2
 
-Verwendet die offizielle `openai/codex-action` mit API-Abrechnung. Das ist keine Zusage, dass vorhandenes ChatGPT-Kontingent benutzt wird. Einen separaten OpenAI-Projekt-Key mit passendem Budget/Limit verwenden; nicht den vorhandenen GradeCrew-Generator-Key zweckentfremden.
+Die Implementierung ergänzt den bisherigen isolierten Codex-Worker um Veröffentlichung, eigene Tests, unabhängige Reviews, Reparaturfeedback, Integration und verifizierte Staging-Nachweise. Vertrags-/Scope-/Kostenregeln: [automation/EXECUTION.md](../automation/EXECUTION.md).
 
-1. Unter den GitHub Actions Secrets ein Repository-Secret `CODEX_WORKER_API_KEY` hinterlegen. Geheimwert nur dort eingeben.
-2. Unter Actions-Variablen `CODEX_WORKER_ENABLED` auf `true` setzen.
-3. Betreuender Chat prüft Branch/Commit und legt genau einen konkreten Auftrag nach `agent-queue/README.md` als neue JSON-Datei auf main an. Dessen Push startet den Worker. Nicht mehrere Aufgaben gleichzeitig einreichen.
+**Aktivierung erst nach der geprüften Integration dieses Steuerungscodes auf main.** Im ausgelieferten Stand ist `automation/guardian-policy.json` deaktiviert und ohne Aufgaben. Eine vorhandene Workflow-Datei bestätigt weder einen bezahlten Pilot noch eine aktive Automatik.
 
-Worker: lesender GitHub-Zugriff, keine gespeicherten Checkout-Zugangsdaten, kein Firebase-Zugang, workspace-write-Sandbox, drop-sudo, maximal 30 Minuten. Automatisch gesichert werden Patch, Auftrag, Ausgangscommit und Bericht als 30-Tage-Artefakt. Der betreuende Chat prüft und integriert; keine automatische PR-Erstellung oder Selbstfreigabe. Harte Runner-Abbrüche können letzte Änderungen verlieren.
+### Einmalig sicher hinterlegen
 
-Die API-Nutzung ist vor dem ersten bezahlten Lauf zu aktivieren; ein echter End-to-End-Test bleibt erforderlich. Arbeitsberichte sind nicht automatisch vertrauenswürdige Testergebnisse; Integration benötigt unabhängige Prüfung.
+Unter https://github.com/HerrLoeffler/Hausaufgabe/settings/secrets/actions drei dedizierte Secrets eintragen:
+
+| Secret | Zweck |
+|---|---|
+| `CODEX_WORKER_API_KEY` | OpenAI-Projekt-Key für den begrenzten Bau-Aufruf |
+| `GUARDIAN_OPENAI_REVIEW_KEY` | Separater OpenAI-Review-Key; GPT-6 Astra muss freigeschaltet sein |
+| `GUARDIAN_ANTHROPIC_REVIEW_KEY` | Anthropic-Review-Key für Claude Sonnet 5.5 |
+
+Keine bestehenden Generator-/Production-Schlüssel wiederverwenden oder in Chat/Repo/Cloud-Shell-Befehle einkopieren. Eigene Projekt-/Provider-Ausgabenlimits und Modellzugriff prüfen. Die Engine reserviert konservativ maximal $5.50 pro Versuch, $16.50 pro Auftrag und $33 pro UTC-Tag; Cloud-/Actions-Kosten separat.
+
+Danach Actions-Variablen `CODEX_WORKER_ENABLED=true` und `GRADECREW_GUARDIAN_ENABLED=true` setzen. Unter Actions → General muss GitHub Actions PRs erstellen dürfen; Jobrechte bleiben individuell eingeschränkt. Ein Flag allein startet wegen der leeren/deaktivierten Policy keinen Auftrag.
+
+Alternativ in einer bereits bei GitHub als Repo-Eigentümer angemeldeten Shell:
+
+```bash
+bash tools/automation/setup-guardian.sh
+```
+
+Das Script fragt die drei Geheimwerte verdeckt über `gh secret set` ab, aktiviert die erforderliche PR-Erstellung und setzt Flags. Es schreibt keinen Geheimwert ins Repo und startet keinen bezahlten Auftrag. Keine pauschalen Firebase-/IAM-Rechte werden ergänzt.
+
+### Einen echten Pilot aufnehmen
+
+1. Betreuender Repo-Agent prüft frisch main, Development Status, Zielbranch, parallele Änderungen und die vollständige Task-Vorlage. Er erstellt aus einem konkreten Nutzerauftrag `agent-queue/<id>.json` mit exakten Dateien/Akzeptanzkriterien und aktuellem Integrations-SHA. Datei auf main mit CI sichern.
+2. https://github.com/HerrLoeffler/Hausaufgabe/actions/workflows/guardian-admit.yml → Run workflow → Branch main → Task-ID ohne `.json`. Das ist die ausdrückliche Aufnahme dieses begrenzten Auftrags; vorhandene Historie kann nicht durch Neuaufnahme gelöscht werden.
+3. Guardian reserviert Budget/Versuch und startet den Ausführungsworkflow. Fortschritt unter `stage-guardian.yml` und `guardian-execution.yml`; Release Control zeigt Modelle, Versuche, bekannte Nutzungsschätzung, Reservierungen und den tatsächlich bestätigten Stand.
+4. Erst **Code → PR → exakte CI → zwei unabhängige Reviews → Integration → integrierte CI → Hosting/Functions-Receipts desselben SHA** ist ein technisch vollständiger Pilot. Noch offene Rules-/Produkt-/Gerätegates bleiben sichtbar.
+
+Wenn PR-Erstellung, Provider-Modellzugriff oder WIF-Setup fehlt, ist das ein konkreter Setup-Blocker. Nicht einfach denselben bezahlten Worker-Run über GitHub „Re-run“ starten. Unklare Ergebnisse stoppen; actionable Tests/Reviews dürfen höchstens drei begrenzte Bauversuche auslösen.
+
+### Stoppen / Berechtigung entziehen
+
+`GRADECREW_GUARDIAN_ENABLED=false` verhindert weitere automatische Starts und Deployment-Fortsetzungen. Zusätzlich Policy auf main global `enabled=false` oder den konkreten Eintrag deaktivieren: aktuelle Remote-Policy wird vor privilegierten Aktionen, Provideraufrufen und Cloud-Login erneut geprüft. Einen bereits laufenden Providerrequest kann eine Flagänderung nicht zurückholen; bei Bedarf Run abbrechen und Kostenreservierung erhalten. Keine Historie löschen.
+
+### Bisheriger Codex-Worker
+
+`codex-worker.yml` bleibt für isolierte Werkzeug-Aufträge verfügbar: read-only GitHub, workspace-write, drop-sudo, kein Firebase-/Push-Zugang. Seine Patch-Artefakte sind **keine** automatische PR-/Deploy-Freigabe. Bei aktiviertem Guardian unterdrückt er direkte Push-Starts, damit nicht zwei Worker denselben Auftrag bearbeiten. Der neue V2-Worker benutzt bewusst einen begrenzten einzelnen Responses-Aufruf; so sind Modell-/Kontext-/Output-Kosten vor dem Start kontrollierbar.
 
 ## Bestehende Chats
 
@@ -85,3 +118,4 @@ Die API-Nutzung ist vor dem ersten bezahlten Lauf zu aktivieren; ein echter End-
 - https://firebase.google.com/docs/hosting/test-preview-deploy
 - https://firebase.google.com/docs/functions/manage-functions
 - https://firebase.google.com/docs/projects/iam/permissions
+

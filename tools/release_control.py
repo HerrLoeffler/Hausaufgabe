@@ -15,12 +15,17 @@ import os
 import pathlib
 import re
 import subprocess
+import sys
 import urllib.error
 import urllib.request
 import zipfile
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+# Preserve the existing `python tools/release_control.py` entry point while
+# importing the shared trusted execution evidence helpers.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 CATALOG = ROOT / "release-control" / "catalog.json"
 ACCEPTANCE = ROOT / "release-control" / "acceptance.json"
 STATE = ROOT / "GRADECREW_STATE.json"
@@ -98,6 +103,32 @@ def find_ci_run(runs: list[dict[str, Any]], name: str, branch: str, sha: str | N
     if not sha:
         return None
     for run in runs:
+        if name == "AI Staging Checks" and branch == WEB_BRANCH and run.get("name") == "Guardian integrated checks":
+            # Explicit dispatch is necessary for GITHUB_TOKEN integrations.
+            # Read the durable task binding and the real CI artifact; neither
+            # run title nor an arbitrary workflow_dispatch SHA is sufficient.
+            try:
+                from tools.automation.guardian import read_ledger
+                from tools.automation.deployment_evidence import artifact_document, verify_ci
+                ledger, _ = read_ledger()
+                matches = [a for rows in ledger["attempts"].values() for a in rows
+                           if run.get("display_title") == "Guardian integrated " + a.get("requestId", "")
+                           and a.get("integratedSha") == sha]
+                if len(matches) != 1:
+                    continue
+                attempt = matches[0]
+                if (run.get("path") != ".github/workflows/guardian-integrated-ci.yml"
+                        or run.get("event") != "workflow_dispatch" or run.get("head_branch") != "main"
+                        or run.get("head_sha") != attempt.get("ciControlSha", attempt["controlSha"])
+                        or run.get("head_repository", {}).get("full_name") != REPO):
+                    continue
+                conclusion = run.get("conclusion") if run.get("status") == "completed" else None
+                if conclusion == "success":
+                    report = artifact_document(run["id"], "guardian-integrated-evidence", "integrated-ci.json")
+                    verify_ci(run, report, attempt)
+                return {"runId": run["id"], "conclusion": conclusion, "url": run.get("html_url"), "origin": "guardian_exact_tree"}
+            except (ValueError, RuntimeError, KeyError, OSError):
+                return {"runId": run.get("id"), "conclusion": "evidence_missing", "url": run.get("html_url")}
         if (
             run.get("name") == name
             and run.get("head_branch") == branch
@@ -106,6 +137,32 @@ def find_ci_run(runs: list[dict[str, Any]], name: str, branch: str, sha: str | N
         ):
             return {"runId": run.get("id"), "conclusion": run.get("conclusion") if run.get("status") == "completed" else None, "url": run.get("html_url")}
     return None
+
+
+def automation_status() -> dict[str, Any]:
+    """Read-only execution/cost visibility; never starts or repairs an agent."""
+    status: dict[str, Any] = {"available": False, "tasks": [], "productionAutomatic": False}
+    if not os.getenv("GITHUB_TOKEN"):
+        status["reason"] = "Kein GitHub-Nachweis verfügbar"
+        return status
+    try:
+        from tools.automation.guardian import read_ledger, validate_policy
+        from tools.automation.pipeline import MODELS
+        policy = validate_policy(load_json(ROOT / "automation/guardian-policy.json"))
+        ledger, _ = read_ledger()
+        history = [a for rows in ledger["attempts"].values() for a in rows if a.get("execution") == "pipeline-v2"]
+        status.update(available=True, policyEnabled=policy["enabled"],
+            configuredTasks=sum(r.get("execution") == "pipeline-v2" for r in policy["workstreams"]),
+            reservedUsd=round(sum(r.get("reservedUsd", 0) for r in ledger.get("budgetReservations", [])), 6),
+            knownEstimatedUsd=round(sum(r.get("estimatedUsd", 0) for r in history), 6),
+            modelAssignments={role: {"provider": spec["provider"], "model": spec["model"]} for role, spec in MODELS.items()},
+            automaticModelSwitch=False,
+            tasks=[{"taskId": a["taskId"], "requestId": a["requestId"], "state": a["state"], "runId": a.get("runId"),
+                    "sha": a.get("integratedSha"), "reason": a.get("deployReason") or a.get("reason"),
+                    "estimatedUsd": a.get("estimatedUsd")} for a in history])
+    except (ValueError, RuntimeError, KeyError, OSError):
+        status["reason"] = "Ausführungsnachweis fehlt/ist ungültig; keine automatische Freigabe"
+    return status
 
 
 def receipt_document(artifact: dict[str, Any], filename: str) -> dict[str, Any]:
@@ -412,6 +469,7 @@ def main() -> int:
         },
         "summary": {"features": len(features), "featuresOnStagingOrLater": staged_features, "featuresNotOnStaging": len(features) - staged_features, "tests": len(tests), **counts, "productionChanged": production_changed},
         "features": features,
+        "automation": automation_status(),
         "warnings": warnings,
         "errors": errors,
     }
@@ -445,6 +503,20 @@ def main() -> int:
         "Games: Deployment-Receipt fehlt. iOS: TestFlight-Upload, installierter Build und geladener Web-SHA müssen gemeinsam gebunden werden. Branchspitzen zählen nicht als Gerätetest.",
         "",
     ]
+
+    automation = report["automation"]
+    lines.extend(["## KI-Ausführung und Kosten", "",
+                  "Die Leitstelle beobachtet; nur der separate Guardian führt ausdrücklich freigegebene Aufgaben aus.", ""])
+    if automation["available"]:
+        lines.extend([f"Konfigurierte Aufgaben: {automation['configuredTasks']}; Policy aktiviert: {automation['policyEnabled']}.",
+                      f"Reserviert: ${automation['reservedUsd']:.2f}; bekannte konservative Nutzungsschätzung: ${automation['knownEstimatedUsd']:.2f}. Unklare Aufrufe bleiben voll reserviert; keine Rechnung oder behauptete Einsparung.", "",
+                      "| Zweck | Provider | Modell |", "|---|---|---|"])
+        lines += [f"| {role} | {spec['provider']} | `{spec['model']}` |" for role, spec in automation["modelAssignments"].items()]
+        lines.extend(["", "| Auftrag / Versuch | Schritt | Nachweis |", "|---|---|---|"])
+        lines += [f"| {r['taskId']} / {r['requestId']} | {r['state']} | Run {r['runId'] or 'offen'}; `{short(r['sha'])}` |" for r in automation["tasks"]]
+        lines += ["", "API-Schlüssel, Pilot-Aktivierung und echter Staging-Durchlauf müssen separat bestätigt sein. Modelle wechseln nicht ungeprüft.", ""]
+    else:
+        lines += [automation["reason"], ""]
 
     for area in catalog.get("areas", []):
         area_id = str(area.get("id") or "")

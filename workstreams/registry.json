@@ -16,7 +16,8 @@
     "automation/guardian-state"
   ],
   "ignoredPrefixes": [
-    "preview-snapshot-"
+    "preview-snapshot-",
+    "automation/worker/"
   ],
   "archivePrefixes": [
     "backup/",
@@ -330,6 +331,17 @@
       "integrationTarget": "main",
       "state": "integrated",
       "handoff": "workstreams/stage-guardian-v1.md"
+    },
+    {
+      "id": "guardian-execution-v2",
+      "title": "Autonome Auftrag-PR-Review-Integration-Staging-Kette",
+      "primaryBranch": "feature/guardian-execution-v2",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/guardian-execution-v2.md",
+      "relatedBranches": [
+        "feature/stage-guardian-v1"
+      ]
     }
   ]
 }

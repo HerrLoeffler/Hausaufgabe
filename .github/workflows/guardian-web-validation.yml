@@ -1,0 +1,80 @@
+name: Guardian web validation
+on:
+  workflow_call:
+    inputs:
+      head:
+        required: true
+        type: string
+      control_sha:
+        required: true
+        type: string
+      rehearsal:
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.control_sha }}
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.head }}
+          path: source
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install unchanged baseline dependencies without privileged credentials
+        working-directory: source
+        run: |
+          npm ci --prefix functions --include=dev --no-audit --no-fund
+          npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
+          npm ci --prefix tools/ui --no-audit --no-fund
+          npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
+      - name: Execute fixed combined validation profile
+        id: tests
+        working-directory: source
+        run: |
+          sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
+          validation_root=$(mktemp -d /tmp/gradecrew-validator.XXXXXX)
+          sudo cp -a . "$validation_root/source"
+          sudo install -m 0644 ../control/tools/automation/validate-web.sh "$validation_root/validate-web.sh"
+          sudo install -d -m 0700 -o gradecrew-validator -g gradecrew-validator "$validation_root/home"
+          sudo chown -R gradecrew-validator:gradecrew-validator "$validation_root/source"
+          sudo chown root:root "$validation_root" "$validation_root/validate-web.sh"
+          sudo chmod 0755 "$validation_root"
+          sudo -u gradecrew-validator env -i PATH="$PATH" HOME="$validation_root/home" JAVA_HOME="$JAVA_HOME" CI=true \
+            /usr/bin/bash -c 'cd "$1"; exec /usr/bin/bash "$2"' validator "$validation_root/source" "$validation_root/validate-web.sh" > ../validation.log 2>&1
+      - name: Bind actual result to candidate commit and direct parent
+        if: always()
+        env:
+          TEST_RESULT: ${{ steps.tests.outcome }}
+          EXPECTED_HEAD: ${{ inputs.head }}
+          REHEARSAL: ${{ inputs.rehearsal }}
+        run: |
+          mkdir -p evidence
+          python3 control/tools/automation/validation_report.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-tests
+          path: evidence/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: guardian-validation-log
+          path: validation.log
+          if-no-files-found: warn

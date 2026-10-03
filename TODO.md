@@ -130,7 +130,8 @@ Der Auftrag ist nicht nur eine Statusanzeige: freigegebene Funktionen sollen von
 | ID | Aufgabe | Status / nächster Schritt |
 |---|---|---|
 | GC-AUTOMATION-03 | Stage Guardian mit dauerhaftem Versuchslimit und sicheren Worker-Starts | Erster Controller implementiert, 15 lokale Tests grün, Policy deaktiviert. CI prüfen. Nicht als vollständige automatische Kette melden. [Übergabe](workstreams/stage-guardian-v1.md) |
-| GC-AUTOMATION-04 | Worker-Patch automatisch als begrenzten PR sichern | Offen; Ausgangs-SHA/Dateigrenzen erzwingen, fremde Änderungen erhalten, unabhängige Tests ohne Schreib-/Cloud-Credentials. |
-| GC-AUTOMATION-05 | Unabhängige KI-Reviews und kontrollierte Integration | Offen; SHA-gebundene Review-Verträge, Provider-/Budget-Grenzen, Merge-Result-CI und Konfliktauflösung. Keine Selbstfreigabe durch Coding-Modell. |
-| GC-AUTOMATION-06 | Worker-Abschluss, Fehlerfeedback und drei begrenzte Reparaturrunden | Ledger/Sperren vorhanden; sichere Run-Zuordnung und Reconciliation fehlen. Ein gestarteter Versuch bleibt bis dahin gesperrt. |
-| GC-AUTOMATION-07 | Vollständigen Pilot von Auftrag bis verifiziertem Staging durchführen | Erst nach 04–06 und sicherer Worker-Aktivierung. Geräteabnahme und ausdrückliche Production-Freigabe bleiben manuell. |
+| GC-AUTOMATION-04 | Worker-Patch automatisch als begrenzten PR sichern | V2 in PR #57: Text-/Pfad-/SHA-Grenzen, eigener Draft-PR, getrennte feste CI; Steuerungscode noch final prüfen/integrieren. |
+| GC-AUTOMATION-05 | Unabhängige KI-Reviews und kontrollierte Integration | V2 in PR #57: Astra + Claude, exact-tree CI, sichere Fast-forward-Integration, explizite Integrations-CI und Receipt-Gates. Erste Zulassung kleine Web-Dateien; Security/Games/iOS-Profile separat offen. |
+| GC-AUTOMATION-06 | Worker-Abschluss, Fehlerfeedback und drei begrenzte Reparaturrunden | V2 in PR #57: vollständige Run-Zuordnung, Feedback/Usage, höchstens drei Bauversuche, unklare Ergebnisse stoppen; getrennte begrenzte Deploy-Retries. CI prüfen. |
+| GC-AUTOMATION-07 | Vollständigen Pilot von Auftrag bis verifiziertem Staging durchführen | Offen: drei dedizierte Secrets, Flags, konkrete Task-Aufnahme und realer Pilot erforderlich. Offline-Ablauf ist geprüft; kein bezahlter E2E-/Deploy-Nachweis. [Übergabe](workstreams/guardian-execution-v2.md) |
+

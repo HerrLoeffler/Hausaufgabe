@@ -3,7 +3,9 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 import pathlib
+import subprocess
 import tempfile
 import unittest
 import zipfile
@@ -38,6 +40,44 @@ def receipt(kind="hosting"):
 
 
 class ReleaseControlTests(unittest.TestCase):
+    def test_direct_script_entry_can_import_execution_helpers_outside_repo_cwd(self):
+        root=pathlib.Path(rc.__file__).resolve().parents[1]
+        command="import runpy; ns=runpy.run_path("+repr(str(root/'tools/release_control.py'))+"); from tools.automation.guardian import validate_policy; print('importable')"
+        with tempfile.TemporaryDirectory() as directory:
+            env={k:v for k,v in os.environ.items() if k not in {'PYTHONPATH','GITHUB_TOKEN','GH_TOKEN'}}
+            result=subprocess.run(['python3','-I','-c',command],cwd=directory,env=env,text=True,capture_output=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(result.stdout.strip(),'importable')
+    def guardian_fixture(self):
+        attempt={'requestId':'run-pilot','integratedSha':A,'controlSha':B,'state':'integrated','publication':{'head':A}}
+        ci=run(name='Guardian integrated checks',path='.github/workflows/guardian-integrated-ci.yml',event='workflow_dispatch',
+               head_branch='main',head_sha=B,display_title='Guardian integrated run-pilot')
+        report={'requestId':'run-pilot','commit':A,'branch':rc.WEB_BRANCH,'runId':123,'result':'success','profile':'web-combined-v1'}
+        return attempt,ci,report
+
+    def test_guardian_ci_needs_durable_binding_and_real_artifact(self):
+        from tools.automation import guardian, deployment_evidence
+        attempt,ci,report=self.guardian_fixture()
+        with patch.object(guardian,'read_ledger',return_value=({'attempts':{'pilot':[attempt]}},None)),patch.object(deployment_evidence,'artifact_document',return_value=report):
+            result=rc.find_ci_run([ci],'AI Staging Checks',rc.WEB_BRANCH,A)
+            self.assertEqual(result['conclusion'],'success');self.assertEqual(result['origin'],'guardian_exact_tree')
+        with patch.object(guardian,'read_ledger',return_value=({'attempts':{}},None)):
+            self.assertIsNone(rc.find_ci_run([ci],'AI Staging Checks',rc.WEB_BRANCH,A))
+
+    def test_failed_new_guardian_ci_blocks_older_push_success(self):
+        from tools.automation import guardian
+        attempt,ci,_=self.guardian_fixture()
+        old=run(name='AI Staging Checks',event='push',head_branch=rc.WEB_BRANCH)
+        with patch.object(guardian,'read_ledger',return_value=({'attempts':{'pilot':[attempt]}},None)):
+            self.assertEqual(rc.find_ci_run([ci|{'conclusion':'failure'},old],'AI Staging Checks',rc.WEB_BRANCH,A)['conclusion'],'failure')
+
+    def test_guardian_success_with_bad_receipt_cannot_fall_back_to_old_ci(self):
+        from tools.automation import guardian, deployment_evidence
+        attempt,ci,report=self.guardian_fixture()
+        old=run(name='AI Staging Checks',event='push',head_branch=rc.WEB_BRANCH)
+        with patch.object(guardian,'read_ledger',return_value=({'attempts':{'pilot':[attempt]}},None)),patch.object(deployment_evidence,'artifact_document',return_value=report|{'commit':B}):
+            self.assertEqual(rc.find_ci_run([ci,old],'AI Staging Checks',rc.WEB_BRANCH,A)['conclusion'],'evidence_missing')
+
     def test_acceptance_requires_full_commit_for_pass_failure_and_skip(self):
         for status in ("passed", "failed", "skipped"):
             for sha in (None, "abc1234", "", "g" * 40, 123, 10 ** 39):

@@ -1,0 +1,65 @@
+name: Guardian integrated checks
+run-name: Guardian integrated ${{ inputs.request_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-guardian-integrated-ci
+  cancel-in-progress: false
+env:
+  REQUEST_ID: ${{ inputs.request_id }}
+  CONTROL_SHA: ${{ github.sha }}
+  GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+jobs:
+  source:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      head: ${{ steps.source.outputs.head }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: source
+        run: python3 -m tools.automation.execution ci-prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+  validate:
+    needs: source
+    uses: ./.github/workflows/guardian-web-validation.yml
+    with:
+      head: ${{ needs.source.outputs.head }}
+      control_sha: ${{ github.sha }}
+  receipt:
+    needs: [source, validate]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record exact successful integration validation
+        env:
+          HEAD_SHA: ${{ needs.source.outputs.head }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          head = os.environ['HEAD_SHA']
+          assert re.fullmatch('[a-f0-9]{40}', head)
+          report = {'requestId': os.environ['REQUEST_ID'], 'commit': head,
+                    'branch': 'feature/gradecrew-app-integration',
+                    'runId': int(os.environ['GITHUB_RUN_ID']),
+                    'result': 'success', 'profile': 'web-combined-v1'}
+          open('integrated-ci.json', 'w').write(json.dumps(report) + '\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-integrated-evidence
+          path: integrated-ci.json
+          if-no-files-found: error
+          retention-days: 90
