@@ -1,0 +1,185 @@
+name: GradeCrew Guardian execution
+run-name: Guardian task ${{ inputs.request_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Durable reservation ID; cannot grant task authority
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-guardian-execution
+  cancel-in-progress: false
+env:
+  REQUEST_ID: ${{ inputs.request_id }}
+  CONTROL_SHA: ${{ github.sha }}
+  GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main' && vars.GRADECREW_GUARDIAN_ENABLED == 'true' && vars.CODEX_WORKER_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - run: python3 -m tools.automation.execution prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-contract
+          path: evidence/contract.json
+          if-no-files-found: error
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-contract
+          path: evidence
+      - name: One bounded coding call, no write or cloud credential
+        run: python3 -m tools.automation.execution build
+        env:
+          CODEX_WORKER_API_KEY: ${{ secrets.CODEX_WORKER_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-candidate
+          path: evidence/
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      head: ${{ steps.publish.outputs.head }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-candidate
+          path: evidence
+      - id: publish
+        run: python3 -m tools.automation.execution publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-publication
+          path: evidence/
+          if-no-files-found: error
+  validate:
+    needs: publish
+    uses: ./.github/workflows/guardian-web-validation.yml
+    with:
+      head: ${{ needs.publish.outputs.head }}
+      control_sha: ${{ github.sha }}
+  reviews:
+    needs: [publish, validate]
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [correctness, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-publication
+          path: evidence
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-tests
+          path: evidence
+      - name: Independent correctness review
+        if: matrix.role == 'correctness'
+        run: python3 -m tools.automation.execution correctness
+        env:
+          GUARDIAN_OPENAI_REVIEW_KEY: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY }}
+      - name: Independent security review
+        if: matrix.role == 'security'
+        run: python3 -m tools.automation.execution security
+        env:
+          GUARDIAN_ANTHROPIC_REVIEW_KEY: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-review-${{ matrix.role }}
+          path: evidence/${{ matrix.role }}.json
+          if-no-files-found: warn
+  integrate:
+    needs: [publish, validate, reviews]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: guardian-*
+          path: evidence
+          merge-multiple: true
+      - name: Exact-tree, two-review, current-branch integration gate
+        run: python3 -m tools.automation.execution integrate
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-integration
+          path: evidence/integration.json
+          if-no-files-found: warn
+  finalize:
+    needs: [prepare, build, publish, validate, reviews, integrate]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: guardian-*
+          path: evidence
+          merge-multiple: true
+      - name: Record completion and bounded actionable feedback
+        run: python3 -m tools.automation.execution finalize
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATION_RESULT: ${{ needs.validate.result }}
+          REVIEW_RESULT: ${{ needs.reviews.result }}
+      - name: Explain saved result
+        run: echo 'Result and blockers saved in automation/guardian-state. API ambiguity never triggers a blind retry. Production and Martin acceptance remain human gates.' >> "$GITHUB_STEP_SUMMARY"

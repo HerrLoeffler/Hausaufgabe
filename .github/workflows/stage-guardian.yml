@@ -5,19 +5,23 @@ on:
   schedule:
     - cron: '13,43 * * * *'
   push:
-    branches: [main, feature/stage-guardian-v1]
+    branches: [main, feature/stage-guardian-v1, feature/guardian-execution-v2]
     paths:
       - 'automation/guardian-policy.json'
-      - 'tools/automation/*guardian*.py'
+      - 'tools/automation/*.py'
+      - 'tools/automation/validate-web.sh'
+      - '.github/workflows/guardian-*.yml'
       - '.github/workflows/stage-guardian.yml'
   pull_request:
     branches: [main]
     paths:
       - 'automation/guardian-policy.json'
-      - 'tools/automation/*guardian*.py'
+      - 'tools/automation/*.py'
+      - 'tools/automation/validate-web.sh'
+      - '.github/workflows/guardian-*.yml'
       - '.github/workflows/stage-guardian.yml'
   workflow_run:
-    workflows: ['GradeCrew Codex worker', 'AI Staging Checks', 'GradeCrew Release Control']
+    workflows: ['GradeCrew Codex worker', 'GradeCrew Guardian execution', 'Guardian integrated checks', 'Automatic staging preview', 'Automatic staging AI functions']
     types: [completed]
 
 permissions:
@@ -39,19 +43,29 @@ jobs:
           ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
           persist-credentials: false
       - name: Verify bounded continuation logic
-        run: python3 -m unittest tools.automation.test_guardian -v
+        run: |
+          python3 -m unittest tools.automation.test_guardian tools.automation.test_pipeline -v
+          bash -n tools/automation/validate-web.sh
       - name: Describe next automatic steps and missing setup
         env:
           GH_TOKEN: ${{ github.token }}
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
           WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
           WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
-        run: python3 tools/automation/guardian.py
+          OPENAI_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY != '' }}
+          ANTHROPIC_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY != '' }}
+          CONTROL_SHA: ${{ github.sha }}
+        run: |
+          python3 tools/automation/guardian.py
+          python3 -m tools.automation.continuation
       - name: Publish status
         if: always()
         run: |
           if [ -f artifacts/guardian/guardian.md ]; then
             cat artifacts/guardian/guardian.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -f artifacts/guardian/execution.md ]; then
+            cat artifacts/guardian/execution.md >> "$GITHUB_STEP_SUMMARY"
           fi
       - uses: actions/upload-artifact@v4
         if: always()
@@ -83,4 +97,9 @@ jobs:
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
           WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
           WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
-        run: python3 tools/automation/guardian.py --execute
+          OPENAI_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY != '' }}
+          ANTHROPIC_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY != '' }}
+          CONTROL_SHA: ${{ github.sha }}
+        run: |
+          python3 tools/automation/guardian.py --execute
+          python3 -m tools.automation.continuation --execute

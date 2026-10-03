@@ -61,6 +61,10 @@ def validate_policy(policy):
             raise ValueError("Exact approved SHA and task ID required")
         if row.get("maxAutomaticStage") != "staging_deployed":
             raise ValueError("Automatic continuation stops at technical staging")
+        if row.get("execution", "legacy-worker") not in {"legacy-worker", "pipeline-v2"}:
+            raise ValueError("Unknown execution engine")
+        if row.get("execution") == "pipeline-v2" and row["baseBranch"] != "feature/gradecrew-app-integration":
+            raise ValueError("Pipeline v2 currently admits only the gated web integration target")
     return policy
 
 
@@ -164,6 +168,10 @@ def main():
     report["unconfiguredWorkstreams"] = sorted(k for k, v in stages.items() if k not in configured and v in {"branch_only", "ci_green", "integrated"})
     dispatched = False
     for original in policy["workstreams"]:
+        if original.get("execution") == "pipeline-v2":
+            report["actions"].append({"id": original["id"], "stage": "ledger_owned",
+                "action": "execution_controller", "reason": "See execution.json/md: authoritative run, reviews, integration and receipts", "attempts": 0})
+            continue
         row = {**original, "attemptLimit": policy["maxAttemptsPerStage"]}
         current = api("git/ref/heads/" + row["baseBranch"])["object"]["sha"]
         stage = stages.get(row["id"], "unknown")
