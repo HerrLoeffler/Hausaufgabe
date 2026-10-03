@@ -8,6 +8,9 @@ on:
       control_sha:
         required: true
         type: string
+      rehearsal:
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -56,6 +59,7 @@ jobs:
         env:
           TEST_RESULT: ${{ steps.tests.outcome }}
           EXPECTED_HEAD: ${{ inputs.head }}
+          REHEARSAL: ${{ inputs.rehearsal }}
         run: |
           mkdir -p evidence
           python3 control/tools/automation/validation_report.py

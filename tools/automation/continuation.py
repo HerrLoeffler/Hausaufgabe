@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from .guardian import api, read_ledger, write_ledger, validate_policy, REPO
-from .pipeline import task_contract, digest, reserve_budget, WEB
+from .pipeline import task_contract, digest, reserve_budget, WEB, control_hash
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = '.github/workflows/guardian-execution.yml'
@@ -18,7 +18,8 @@ BUSY = {'reserved', 'dispatched', 'dispatch_unknown', 'running'}
 def reconcile(attempt, runs):
     matches = [r for r in runs if r.get('display_title') == 'Guardian task ' + attempt['requestId']
                and r.get('path') == WORKFLOW and r.get('event') == 'workflow_dispatch'
-               and r.get('head_branch') == 'main' and r.get('head_sha') == attempt['controlSha']
+               and r.get('head_branch') == 'main'
+               and (r.get('head_sha') == attempt['controlSha'] or (attempt['state'] != 'running' and not attempt.get('runId')))
                and r.get('head_repository', {}).get('full_name') == REPO]
     if len(matches) > 1:
         attempt.update(state='stopped', reason='Duplicate execution runs; inspect before any further call')
@@ -35,7 +36,7 @@ def reconcile(attempt, runs):
     return attempt
 
 
-def select(row, task, history, current_sha, enabled):
+def select(row, task, history, current_sha, enabled, limit=3):
     if not enabled or not row['enabled']:
         return 'disabled', 'Activation missing'
     if current_sha != row['approvedSha']:
@@ -51,8 +52,8 @@ def select(row, task, history, current_sha, enabled):
             return 'receipts', 'Await component receipts and Martin acceptance'
         if latest['state'] != 'repairable':
             return 'blocked', 'Unknown completion state'
-    if len(history) >= 3:
-        return 'stopped', 'Three attempts exhausted; explicit new decision required'
+    if len(history) >= limit:
+        return 'stopped', 'Attempt limit exhausted; explicit new decision required'
     return 'dispatch', 'Approved initial build or bounded repair'
 
 
@@ -86,12 +87,15 @@ def main():
         current = api('git/ref/heads/' + WEB)['object']['sha']
         if history and history[-1]['state'] in {'integrated', 'staging_deployed'}:
             from .deployment_evidence import reconcile_deployment
-            if args.execute:
-                reconcile_deployment(history[-1])
+            if args.execute and enabled and row['enabled']:
+                def persist():
+                    nonlocal blob
+                    blob = write_ledger(ledger, blob)
+                reconcile_deployment(history[-1], persist=persist)
                 blob = write_ledger(ledger, blob)
             action, reason = 'await_acceptance' if history[-1]['state'] == 'staging_deployed' else 'await_receipts', history[-1].get('deployReason', 'Technical deployment receipts pending')
         else:
-            action, reason = select(row, task, history, current, enabled)
+            action, reason = select(row, task, history, current, enabled, policy['maxAttemptsPerStage'])
         if action == 'dispatch' and not ready:
             action, reason = 'setup_needed', 'Dedicated worker and both independent review credentials/activation missing'
         if action == 'dispatch' and args.execute and not dispatched:
@@ -108,7 +112,7 @@ def main():
                     # Persist budget and ownership BEFORE workflow dispatch. Unknown
                     # dispatch or provider failure never refunds this reservation.
                     history.append({'requestId': request_id, 'execution': 'pipeline-v2', 'taskId': task['id'], 'taskHash': digest(task),
-                        'approvedSha': task['base_sha'], 'state': 'reserved', 'controlSha': os.environ['CONTROL_SHA'],
+                        'approvedSha': task['base_sha'], 'state': 'reserved', 'controlSha': os.environ['CONTROL_SHA'], 'controlHash': control_hash(ROOT),
                         'reservedAt': dt.datetime.now(dt.timezone.utc).isoformat()})
                     ledger['budgetReservations'].append({**budget, 'requestId': request_id})
                     blob = write_ledger(ledger, blob)

@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import PurePosixPath
 import re
+from pathlib import Path
 
 WEB = 'feature/gradecrew-app-integration'
 MODELS = {
@@ -33,6 +34,16 @@ SECRET = re.compile(r'-----BEGIN [A-Z ]*PRIVATE KEY-----|\bsk-(?:proj-)?[A-Za-z0
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
+
+
+def control_hash(root):
+    """Documentation-only main commits do not invalidate an in-flight task."""
+    names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py',
+             'deployment_evidence.py', 'validation_report.py', 'validate-web.sh']
+    files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
+    for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml']:
+        files[name] = (Path(root)/'.github/workflows'/name).read_text()
+    return digest(files)
 
 
 def sha(value):

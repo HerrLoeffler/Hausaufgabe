@@ -163,7 +163,9 @@ def main():
     ledger, blob_sha = read_ledger()
     report = {"schemaVersion": 1, "enabled": active, "workerReady": worker_ready,
               "automaticProduction": False, "actions": [], "unconfiguredWorkstreams": [],
-              "remainingCapabilities": ["publish_worker_patch_as_scoped_PR", "independent_multi_provider_reviews", "gated_integration", "retry_feedback_and_completion_reconciliation"]}
+              "executionV2": "tools.automation.continuation",
+              "implementedCapabilities": ["scoped_PR_publication", "independent_OpenAI_Anthropic_reviews", "exact_tree_CI_and_fast_forward", "bounded_feedback_repairs", "verified_staging_receipts"],
+              "remainingCapabilities": ["real_pilot_credentials_and_E2E_proof", "security_games_native_admission_profiles", "legacy_codex_artifact_admission"]}
     configured = {r["id"] for r in policy["workstreams"]}
     report["unconfiguredWorkstreams"] = sorted(k for k, v in stages.items() if k not in configured and v in {"branch_only", "ci_green", "integrated"})
     dispatched = False

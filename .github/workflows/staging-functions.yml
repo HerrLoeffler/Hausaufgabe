@@ -2,9 +2,8 @@ name: Automatic staging AI functions
 
 on:
   workflow_run:
-    workflows: ['AI Staging Checks']
+    workflows: ['AI Staging Checks', 'Guardian integrated checks']
     types: [completed]
-    branches: ['feature/gradecrew-app-integration']
 
 permissions:
   contents: read
@@ -14,13 +13,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy-ai-functions:
+  source:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
-      github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration' &&
-      vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+      ((github.event.workflow_run.name == 'AI Staging Checks' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration') ||
+       (github.event.workflow_run.name == 'Guardian integrated checks' && github.event.workflow_run.event == 'workflow_dispatch' && github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Verify CI source, task authority, evidence and current branch
+        id: source
+        run: python3 -m tools.automation.deployment_evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-deploy-source
+          path: deployment-source.json
+          if-no-files-found: error
+          retention-days: 30
+  deploy-ai-functions:
+    needs: source
+    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -29,13 +52,13 @@ jobs:
     env:
       PROJECT_ID: hausaufgabe-staging
       INTEGRATION_BRANCH: feature/gradecrew-app-integration
-      EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+      EXPECTED_SHA: ${{ needs.source.outputs.sha }}
       FIREBASE_TOOLS_VERSION: 15.32.0
     steps:
       - name: Checkout exactly the tested integration commit
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ needs.source.outputs.sha }}
           persist-credentials: false
 
       - uses: actions/setup-node@v5
@@ -71,6 +94,19 @@ jobs:
       - name: Install pinned Firebase CLI before cloud authentication
         run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund "firebase-tools@$FIREBASE_TOOLS_VERSION"
 
+      - name: Checkout trusted deploy control after unprivileged source tests
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: deploy-control
+          persist-credentials: false
+      - name: Recheck upstream authority immediately before cloud login
+        run: python3 -m tools.automation.deployment_evidence
+        working-directory: deploy-control
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
       - name: Authenticate only as the staging Functions deployer
         uses: google-github-actions/auth@v3
         with:
@@ -138,21 +174,18 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: staging-functions-receipt-${{ github.event.workflow_run.head_sha }}
+          name: staging-functions-receipt-${{ needs.source.outputs.sha }}
           path: staging-functions-receipt.json
           if-no-files-found: error
           retention-days: 90
 
   setup-needed:
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_repository.full_name == github.repository &&
-      github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration' &&
-      vars.STAGING_FUNCTIONS_WIF_PROVIDER == ''
+    needs: source
+    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER == ''
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo 'AI Functions CI is green, but automatic staging Functions deployment is not activated yet.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Run tools/automation/setup-staging-functions-identity.sh once from authenticated Google Cloud Shell.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No Functions, Rules, Hosting or Production resources were changed.' >> "$GITHUB_STEP_SUMMARY"
+

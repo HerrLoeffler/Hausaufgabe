@@ -22,6 +22,13 @@
 - Unregistrierte Branches niemals automatisch löschen. Erst zuordnen, integrieren, archivieren oder ausdrücklich als Altbestand markieren.
 - Ein Registry-Zustand wie `integration_ready` ist eine menschliche Freigabestufe und ersetzt weder CI noch Mergeability noch aktuellen Zielbranch-Abgleich.
 
+## Autorisierte automatische Ausführung
+- Für einen Nutzerauftrag darf der betreuende Repo-Agent die begrenzte Kette aus `automation/EXECUTION.md` verwenden: konkreten SHA-/Datei-/Budget-Auftrag auf main sichern, `Admit one Guardian task` mit dessen ID starten und echten Run-/CI-/Review-/Receipt-Stand prüfen. Ein bloßer Chatplan startet nichts.
+- V2 umfasst nur ausdrücklich zugelassene kleine Web-UI-Dateien. Andere Workstreams bleiben an eigene Security-/Rules-/Signierungsprofile gebunden. Keine pauschale Verarbeitung sämtlicher Registry-Branches.
+- Der separate Execution-Controller darf nach reserviertem Budget, unveränderlicher Quelle, exakter CI und unabhängigen OpenAI-/Anthropic-Freigaben normal fast-forward integrieren und die bestehenden Staging-Deploys ausdrücklich starten. Development Status und Release Control bleiben read-only.
+- Unklare Provider-/Dispatch-/Schreib-Ergebnisse niemals blind wiederholen; Versuchszähler nicht zurücksetzen. Konkrete Test-/Review-Blocker bleiben mit Run und Fehlertext erhalten. Neue Dokumentationscommits auf main sind kein Code-Wechsel; Änderung der geprüften Controller-Dateien braucht erneute Diagnose/Freigabe.
+- Secrets ausschließlich in sicherer GitHub-Einrichtung hinterlegen. Ohne Keys, Flags, aufgenommenen Auftrag und erfolgreichen echten Pilot die Automatik nicht als aktiv oder E2E-verifiziert melden. Geräteabnahme und Production-Freigabe bleiben menschlich.
+
 ## Sicherheit und Deployment
 - Production (`hausaufgabe-40294`) nur nach ausdrücklicher Freigabe im aktuellen Auftrag. Diese Koordinationsarbeit beinhaltet keine Deploy-Freigabe.
 - Preview, normales Staging und Production getrennt behandeln. Keine automatische Übertragung von Preview-Regeln auf normales Staging; Security-Cutover benötigt die dokumentierten Gates.

@@ -34,6 +34,7 @@ def call(role, instructions, context, schema, transport=None):
         endpoint = 'https://api.anthropic.com/v1/messages'
         body = {'model': spec['model'], 'max_tokens': spec['max_output'],
                 'system': instructions, 'messages': [{'role': 'user', 'content': json.dumps(context, ensure_ascii=False)}],
+                'thinking': {'type': 'adaptive'},
                 'output_config': {'effort': 'high', 'format': {'type': 'json_schema', 'schema': schema}}}
         headers = {'x-api-key': os.environ.get(credential, ''), 'anthropic-version': '2023-06-01'}
     if transport is None:
@@ -67,9 +68,9 @@ def call(role, instructions, context, schema, transport=None):
         if payload.get('stop_reason') != 'end_turn':
             raise ValueError('Incomplete/refused model response')
         content = payload.get('content', [])
-        if not content or any(c.get('type') != 'text' for c in content):
+        if not content or any(c.get('type') not in {'text', 'thinking', 'redacted_thinking'} for c in content):
             raise ValueError('Unexpected Anthropic output')
-        result = json.loads(''.join(c['text'] for c in content))
+        result = json.loads(''.join(c['text'] for c in content if c.get('type') == 'text'))
         usage = payload.get('usage', {})
         used_in, used_out = usage.get('input_tokens'), usage.get('output_tokens')
     if type(used_in) is not int or type(used_out) is not int or not 0 <= used_in <= limit or not 0 <= used_out <= spec['max_output']:

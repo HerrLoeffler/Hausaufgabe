@@ -20,6 +20,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write
     outputs:
       head: ${{ steps.source.outputs.head }}
     steps:

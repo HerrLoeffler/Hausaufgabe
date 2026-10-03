@@ -11,6 +11,8 @@ from unittest.mock import patch
 
 from tools.automation import pipeline as p, execution as e, continuation as c, model_calls as m, deployment_evidence as d
 from tools.automation import guardian as g
+from tools.automation import admit as admission
+FRESH_DOCUMENTS = e.fresh_documents
 
 A, B, C = 'a'*40, 'b'*40, 'c'*40
 TASK = {'id': 'pilot-ui', 'base_sha': A, 'base_branch': p.WEB, 'risk': 'web-ui',
@@ -21,7 +23,7 @@ ROW = {'id': 'pilot', 'enabled': True, 'baseBranch': p.WEB, 'approvedSha': A, 't
 PUB = {'head': B, 'base': A, 'tree': C, 'candidateHash': 'd'*64, 'branch': 'automation/worker/pilot-ui/run-1', 'pr': 55, 'requestId': 'run-1'}
 TESTS = {'profile': 'web-combined-v1', 'head': B, 'base': A, 'result': 'success'}
 ATTEMPT = {'requestId': 'run-1', 'execution': 'pipeline-v2', 'taskId': TASK['id'], 'taskHash': p.digest(TASK),
-           'approvedSha': A, 'controlSha': C, 'state': 'running', 'runId': 9, 'publication': PUB}
+           'approvedSha': A, 'controlSha': C, 'controlHash': 'h'*64, 'state': 'running', 'runId': 9, 'publication': PUB}
 
 
 def review(role, verdict='approve'):
@@ -33,6 +35,22 @@ def review(role, verdict='approve'):
 
 
 class ContractTests(unittest.TestCase):
+    def test_documentation_changes_preserve_control_version_but_code_changes_do_not(self):
+        root=Path(__file__).resolve().parents[2]
+        original=p.control_hash(root)
+        with tempfile.TemporaryDirectory() as directory:
+            mirror=Path(directory)
+            for subpath in ['tools/automation', '.github/workflows']:
+                (mirror/subpath).mkdir(parents=True,exist_ok=True)
+            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','deployment_evidence.py','validation_report.py','validate-web.sh']
+            for name in names:(mirror/'tools/automation'/name).write_text((root/'tools/automation'/name).read_text())
+            for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml']:
+                (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())
+            (mirror/'TODO.md').write_text('New parallel chat notes')
+            self.assertEqual(p.control_hash(mirror),original)
+            (mirror/'tools/automation/execution.py').write_text('Different controller')
+            self.assertNotEqual(p.control_hash(mirror),original)
+
     def test_admission_is_explicit_not_general_repo_write_access(self):
         self.assertEqual(p.task_contract(copy.deepcopy(TASK)), TASK)
         for change in ({'base_branch':'main'}, {'risk':'security'}, {'base_sha':'HEAD'}, {'max_cost_usd':99},
@@ -166,6 +184,8 @@ class ExecutionTests(unittest.TestCase):
         self.data=self.root/'evidence'; self.data.mkdir()
         self.ledger={'schemaVersion':1,'attempts':{'pilot:pipeline-v2':[copy.deepcopy(ATTEMPT)]}}
         self.events=[]
+        document_reader=patch.object(e,'fresh_documents',side_effect=lambda task_id:[json.loads((self.root/'automation/guardian-policy.json').read_text()),json.loads((self.root/'agent-queue/pilot-ui.json').read_text())]);document_reader.start();self.addCleanup(document_reader.stop)
+        hashing=patch.object(e,'control_hash',return_value='h'*64);hashing.start();self.addCleanup(hashing.stop)
         for name,value in [('ROOT',self.root),('DATA',self.data)]:
             patcher=patch.object(e,name,value);patcher.start();self.addCleanup(patcher.stop)
         env=patch.dict(os.environ,{'GITHUB_REPOSITORY':g.REPO,'GUARDIAN_ENABLED':'true','CONTROL_SHA':C,'GITHUB_RUN_ID':'9','GITHUB_OUTPUT':str(self.root/'outputs')});env.start();self.addCleanup(env.stop)
@@ -219,6 +239,27 @@ class ExecutionTests(unittest.TestCase):
     def test_workflow_rerun_cannot_repeat_build_ownership(self):
         with self.assertRaisesRegex(ValueError,'already owned'):e.prepare('run-1')
 
+    def test_rerun_failed_jobs_cannot_repeat_any_paid_call(self):
+        e.save('candidate',p.candidate_contract({'summary':'test','files':[{'path':'coach.js','content':'new'}]},TASK,'run-1'))
+        with patch.dict(os.environ,{'GITHUB_RUN_ATTEMPT':'2'}),patch.object(e,'call') as provider:
+            with self.assertRaisesRegex(ValueError,'no workflow rerun'):e.build()
+            with self.assertRaisesRegex(ValueError,'no workflow rerun'):e.review('correctness')
+            self.assertFalse(provider.called)
+
+    def test_fresh_remote_authority_overrides_cached_approval(self):
+        disabled={'schemaVersion':1,'enabled':False,'maxAttemptsPerStage':3,'automaticProduction':False,'workstreams':[ROW]}
+        with patch.object(e,'fresh_documents',return_value=[disabled,TASK]),self.assertRaisesRegex(ValueError,'not activated'):
+            e.approved('run-1')
+
+    def test_task_and_policy_are_read_from_one_remote_main_snapshot(self):
+        seen=[]
+        def api(path,method='GET',body=None):
+            seen.append(path)
+            if path=='git/ref/heads/main':return {'object':{'sha':C}}
+            return {'content':base64.b64encode(b'{}').decode()}
+        with patch.object(e,'api',side_effect=api):FRESH_DOCUMENTS('pilot-ui')
+        self.assertEqual(seen,['git/ref/heads/main','contents/automation/guardian-policy.json?ref='+C,'contents/agent-queue/pilot-ui.json?ref='+C])
+
     def test_permission_revocation_or_changed_contract_blocks_privileged_step(self):
         (self.root/'agent-queue/pilot-ui.json').write_text(json.dumps(TASK|{'goal':'something different'}))
         with self.assertRaises(ValueError):e.approved('run-1')
@@ -254,12 +295,45 @@ class ExecutionTests(unittest.TestCase):
         with patch.object(e,'api',side_effect=api):e.prepare('run-1')
         self.assertEqual(e.load('contract')['taskHash'],p.digest(TASK))
 
+    def test_full_offline_execution_publishes_tests_reviews_integrates_and_accounts(self):
+        self.ledger['attempts']['pilot:pipeline-v2'][0].update(state='dispatched',runId=None,publication=None)
+        current=A
+        def api(path,method='GET',body=None):
+            nonlocal current
+            self.events.append((path,method,body))
+            if path=='git/ref/heads/'+p.WEB:return {'object':{'sha':current}}
+            if path=='git/refs/heads/'+p.WEB and method=='PATCH':current=body['sha'];return {'object':{'sha':current}}
+            if path.startswith('git/ref/heads/automation/worker/'):return {'object':{'sha':B}}
+            if path.startswith('git/matching-refs/'):return []
+            if path=='git/trees/'+A+'?recursive=1':return {'tree':[{'path':name,'mode':'100644','type':'blob','size':3,'sha':C} for name in ('coach.js','coach.css')]}
+            if path=='git/blobs/'+C:return {'content':base64.b64encode(b'old').decode()}
+            if path=='git/commits/'+A:return {'tree':{'sha':A}}
+            if path=='git/commits/'+B:return {'parents':[{'sha':A}],'tree':{'sha':C}}
+            if path=='git/trees' and method=='POST':return {'sha':C}
+            if path=='git/commits' and method=='POST':return {'sha':B}
+            if path=='pulls' and method=='POST':return {'number':55}
+            if path=='pulls/55' and method=='GET':return {'state':'open','head':{'sha':B,'repo':{'full_name':g.REPO}},'base':{'ref':p.WEB}}
+            return {}
+        roles=[]
+        def model(role,instructions,context,schema):
+            roles.append(role)
+            usage={'provider':p.MODELS[role]['provider'],'model':p.MODELS[role]['model'],'estimatedUsd':0.02}
+            if role=='build':return {'summary':'clearer','files':[{'path':'coach.js','content':'export const next = true;'}]},usage
+            binding=context['binding']
+            return {'verdict':'approve',**binding,'findings':[]},usage
+        with patch.object(e,'api',side_effect=api),patch.object(e,'call',side_effect=model):
+            e.prepare('run-1');e.build();e.publish()
+            publication=e.load('publication')
+            e.save('tests',{'profile':'web-combined-v1','head':B,'base':A,'result':'success'})
+            e.review('correctness');e.review('security');e.integrate();e.finalize('run-1')
+        self.assertEqual(roles,['build','correctness','security'])
+        self.assertEqual(current,B)
+        latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
+        self.assertEqual(latest['state'],'integrated');self.assertEqual(latest['estimatedUsd'],0.06)
+        self.assertEqual(publication['candidateHash'],e.load('candidate')['candidateHash'])
+
 
 class DeploymentTests(unittest.TestCase):
-    def run(self,result=None):
-        # Preserve unittest's run method; fixture is ci_run below.
-        return super().run(result)
-
     def ci_run(self):
         return {'id':44,'name':'Guardian integrated checks','path':'.github/workflows/guardian-integrated-ci.yml',
                 'event':'workflow_dispatch','status':'completed','conclusion':'success','run_attempt':1,
@@ -291,6 +365,46 @@ class DeploymentTests(unittest.TestCase):
             refused=subprocess.run(['git','push','origin',candidate+':refs/heads/integration'],cwd=source,capture_output=True)
             self.assertNotEqual(refused.returncode,0)
             self.assertEqual(git('--git-dir='+str(remote),'rev-parse','integration'),parallel)
+
+    def test_deploy_retry_is_durably_reserved_before_dispatch_and_bounded(self):
+        attempt=copy.deepcopy(ATTEMPT);events=[]
+        run={'id':44,'run_attempt':1}
+        with patch.object(d,'api',side_effect=lambda *args:events.append('dispatch')):
+            with self.assertRaises(ValueError):d.retry_failed_deploy(attempt,'hosting',run,lambda:events.append('persist'))
+            self.assertEqual(events,['persist','dispatch','persist'])
+            with self.assertRaisesRegex(ValueError,'already reserved'):d.retry_failed_deploy(attempt,'hosting',run,lambda:events.append('persist'))
+            with self.assertRaises(ValueError):d.retry_failed_deploy(attempt,'hosting',run|{'run_attempt':2},lambda:events.append('persist'))
+            with self.assertRaisesRegex(ValueError,'exhausted'):d.retry_failed_deploy(attempt,'hosting',run|{'run_attempt':3},lambda:events.append('persist'))
+        self.assertEqual(events.count('dispatch'),2)
+
+    def test_unknown_deploy_retry_never_dispatches_twice(self):
+        attempt=copy.deepcopy(ATTEMPT);run={'id':44,'run_attempt':1}
+        with patch.object(d,'api',side_effect=RuntimeError('unknown')) as send:
+            with self.assertRaises(ValueError):d.retry_failed_deploy(attempt,'hosting',run,lambda:None)
+            self.assertEqual(attempt['deploymentRetries']['hosting'][0]['state'],'unknown')
+            with self.assertRaises(ValueError):d.retry_failed_deploy(attempt,'hosting',run,lambda:None)
+            self.assertEqual(send.call_count,1)
+
+
+class AdmissionTests(unittest.TestCase):
+    def test_admission_is_one_exact_task_and_preserves_other_grants(self):
+        other=ROW|{'id':'other','taskId':'other-task','enabled':False,'execution':'legacy-worker'}
+        policy={'schemaVersion':1,'enabled':False,'maxAttemptsPerStage':2,'automaticProduction':False,'workstreams':[other]}
+        updated=admission.admission(policy,TASK,{'schemaVersion':1,'attempts':{}},A)
+        self.assertFalse(policy['enabled']);self.assertTrue(updated['enabled'])
+        self.assertEqual(updated['workstreams'][0],other)
+        self.assertEqual(updated['workstreams'][1]['approvedSha'],A)
+        self.assertEqual(updated['maxAttemptsPerStage'],2)
+
+    def test_admission_cannot_reset_attempt_history_or_silently_follow_new_tip(self):
+        policy={'schemaVersion':1,'enabled':False,'maxAttemptsPerStage':3,'automaticProduction':False,'workstreams':[]}
+        with self.assertRaises(ValueError):admission.admission(policy,TASK,{'attempts':{}},B)
+        with self.assertRaises(ValueError):admission.admission(policy,TASK,{'attempts':{'old':[ATTEMPT]}},A)
+
+    def test_setup_missing_is_detected_before_any_write_or_call(self):
+        with patch.dict(os.environ,{'GITHUB_REPOSITORY':g.REPO,'GITHUB_REF':'refs/heads/main','WORKER_KEY_PRESENT':'false'}),patch.object(admission,'api') as api:
+            with self.assertRaisesRegex(ValueError,'credentials'):admission.main()
+            self.assertFalse(api.called)
 
 
 if __name__=='__main__':unittest.main()
