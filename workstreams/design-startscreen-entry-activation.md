@@ -28,9 +28,10 @@ Ursache: `startup.js` importierte `gradecrew-entry-flow.js`, rief die exportiert
 ## Status
 
 - Root Cause: gefunden
-- Fix-Branch: `fix/design-startscreen-entry-activation`
+- aktiver Fix-Branch: `feature/design-startscreen-entry-activation-fix`
+- vorheriger Zwischenbranch `fix/design-startscreen-entry-activation`: superseded, keine zweite Lösung
 - Code auf GitHub: ja
-- CI: läuft / noch final zu prüfen
+- CI: durch diesen Commit ausgelöst; Ergebnis noch zu prüfen
 - Integration in `feature/gradecrew-app-integration`: erst nach grünem CI
 - Hosting Preview: danach neu deployen
 - Gerätetest: offen
