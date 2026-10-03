@@ -340,7 +340,8 @@
       "state": "integrated",
       "handoff": "workstreams/guardian-execution-v2.md",
       "relatedBranches": [
-        "feature/stage-guardian-v1"
+        "feature/stage-guardian-v1",
+        "fix/guardian-delivery-proof-v1"
       ]
     }
   ]
