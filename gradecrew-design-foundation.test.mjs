@@ -33,16 +33,18 @@ test('canonical Crew manifest preserves established roles', () => {
   assert.equal(assets.rules.newCodeMustUseManifestNames, true);
 });
 
-test('teacher startup loads shared tokens before focused design layers', () => {
+test('teacher startup loads and activates public entry before app handlers', () => {
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
   const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=3');
-  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=2');
+  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=3');
+  const installIndex = startup.indexOf('installGradeCrewEntryFlow();');
   const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
   assert.ok(startscreenIndex > tokensIndex, 'startscreen stylesheet must follow shared tokens');
-  assert.ok(entryIndex >= 0 && entryIndex < appIndex, 'public entry must be composed before app handlers bind');
+  assert.ok(entryIndex >= 0 && entryIndex < installIndex, 'public entry module must load before its installer runs');
+  assert.ok(installIndex > entryIndex && installIndex < appIndex, 'public entry installer must run before app handlers bind');
 });
 
 test('staging build packages focused design and entry files', () => {
