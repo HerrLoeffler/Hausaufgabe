@@ -6,6 +6,9 @@ Stand: 03.10.2026
 
 - Branch: `prototype/escape-expedition-jungle-v1`
 - Basis: `prototype/escape-adventure-room1-v1@23b59b21a25bcfe28f2beddd718104f467a40d12`
+- geprüfter Produktstand: `71f0a6a9c27701ebc64d9b2757d55f04f354a809`
+- Preview-Run: `37080117761`
+- Preview: `https://hausaufgabe-staging--gradecrew-escape-expedition-j2u7iae4.web.app`
 - vorheriger Adventure-Prototyp bleibt separat erhalten
 - bestehender Point-and-Click-Escape bleibt separat erhalten
 - Production: unverändert
@@ -27,7 +30,7 @@ Kern:
 
 ## Prototyp: Expedition Amazonas – Die verschwundene Forschungsstation
 
-Geplante/implementierte Abschnitte:
+Implementierte Abschnitte:
 
 1. **Expeditionscamp** – Routentablet + erstes Lern-Gate + Jeep-Schlüssel;
 2. **Dschungelpiste** – echte Jeep-Steuerung mit Hindernissen;
@@ -70,17 +73,29 @@ Mechaniken wie Jeep, Seilwinde, Kamera, Boot, Generator und Funk sind normaler C
 - eigener Staging-Preview-Channel: `gradecrew-escape-expedition`
 - keine Functions-/Firestore-/Production-Deploys aus diesem Workflow
 
-## Status
+## Verifikation
 
-- auf GitHub gesichert: ja, Branch vorhanden
-- Konzept: erstellt
-- Mehrlevel-Prototyp: erstellt
-- automatisierte Tests: Workflow läuft/noch zu bestätigen
-- isolierter Build: Workflow läuft/noch zu bestätigen
-- Staging deployed: noch zu bestätigen
-- echter Desktop-Test: offen
-- echter iPad-Test: offen
-- echter iPhone-Test: offen
+Run `37080117761` auf Produktcommit `71f0a6a9c27701ebc64d9b2757d55f04f354a809`:
+
+- JavaScript-Syntaxcheck grün;
+- **8/8 Expedition-Vertragstests grün**;
+- isolierter Expedition-Build grün;
+- Staging Firebase Credential grün;
+- Hosting-Preview `gradecrew-escape-expedition` erfolgreich deployed;
+- Preview gültig bis 02.11.2026;
+- keine Functions-/Firestore-/Production-Schritte im Workflow.
+
+## Status — getrennt
+
+- lokal geändert: n/a (GitHub-direkter Arbeitslauf)
+- auf GitHub gesichert: ja
+- automatisiert getestet: ja, 8/8 + Syntax
+- isolierter Build: ja
+- Staging deployed: ja
+- echter Desktop-Spieltest: offen
+- echter iPad-Spieltest: offen
+- echter iPhone-Spieltest: offen
+- in bestehende Escape-Welt integriert: nein, bewusst separater Prototyp
 - Production: unverändert
 
 ## Bewusst offen
@@ -93,11 +108,12 @@ Mechaniken wie Jeep, Seilwinde, Kamera, Boot, Generator und Funk sind normaler C
 - kein echtes Backend/Klassenjoin;
 - keine echte KI-Testgenerierung;
 - noch keine Persistenz über Reload;
-- Mechaniken sind im Prototyp noch in einer Datei, später modularisieren.
+- Mechaniken sind im Prototyp noch in einer Datei, später modularisieren;
+- automatisierte Vertragschecks ersetzen keinen vollständigen echten Durchspieltest; Softlocks/UX-Probleme können beim ersten manuellen Run noch gefunden werden.
 
-## Nächster Schritt nach grünem Preview
+## Nächster Schritt
 
-1. real im Browser spielen und Softlocks/Bedienfehler finden;
-2. iPad/iPhone prüfen;
+1. Martin spielt den Preview auf Desktop vollständig durch und meldet Softlocks/Bedienfehler;
+2. danach iPad/iPhone prüfen;
 3. entscheiden, welche Mechaniken qualitativ ausgebaut werden sollen;
 4. danach die Mechaniken aus `app.js` in eine wiederverwendbare Escape-Engine/Module aufteilen, statt weitere Welten als Monolith zu kopieren.
