@@ -92,11 +92,70 @@ Run `37080117761` auf Produktcommit `71f0a6a9c27701ebc64d9b2757d55f04f354a809`:
 - automatisiert getestet: ja, 8/8 + Syntax
 - isolierter Build: ja
 - Staging deployed: ja
-- echter Desktop-Spieltest: offen
+- echter Desktop-Spieltest: **erfolgt; Grundidee sehr positiv, aber deutliche Hänger/UX-Probleme gemeldet**
 - echter iPad-Spieltest: offen
 - echter iPhone-Spieltest: offen
 - in bestehende Escape-Welt integriert: nein, bewusst separater Prototyp
 - Production: unverändert
+
+## Playtest-Feedback 03.10.2026
+
+Martin bewertet Grundidee, Mechanikvielfalt und Richtung sehr positiv. Vor einem Ausbau auf weitere Welten müssen aber insbesondere zwei Punkte verbessert werden:
+
+1. **Spiel läuft/hängt noch zu oft.** Steuerung, Übergänge, Eventzustände und mögliche Softlocks müssen systematisch geglättet werden. Ziel ist ein ruhiger, unmittelbarer Spielfluss auch auf schwächeren Schulgeräten und Touch-Geräten.
+2. **Sprache ist für Schüler zu kompliziert bzw. zu erwachsen.** UI, Storytexte, Hinweise, Missionsziele und Coco-Texte müssen standardmäßig kürzer, konkreter und einfacher formuliert werden. Das sprachliche Niveau soll später an Klassenstufe/Leseniveau gekoppelt werden; unabhängig davon gilt: kurze Sätze, eine Handlungsaufforderung pro Schritt, unnötige Fach-/Menüwörter vermeiden.
+
+Produktregel daraus: **Komplexes Spiel, einfache Bedienung und einfache Sprache.** Schwierigkeit soll aus Rätsel, Lernen und Mechanik entstehen – nicht aus dem Verstehen der Benutzeroberfläche.
+
+## Nächste Entwicklungsphasen
+
+### Phase A — Stabilität / Spielgefühl
+
+Vor neuen Leveln den aktuellen Amazonas-Prototypen technisch glätten:
+- Hänger/Softlocks reproduzierbar machen und beseitigen;
+- Zustandswechsel entkoppeln, damit Dialog, Bewegung und Levelwechsel sich nicht gegenseitig blockieren;
+- Eingaben gegen Doppelklick/Doppeltap schützen;
+- Animation-/Renderpfad auf unnötige Arbeit prüfen;
+- Escape-/Reset-Pfade pro Mechanik definieren;
+- Desktop + iPad + iPhone als Pflichtmatrix.
+
+### Phase B — Schüler-UX / Sprache
+
+- zentrale Textregeln für Games statt frei formulierter langer Storytexte;
+- standardmäßig kurze Missionskarten: **Was ist los? → Was soll ich tun? → Los!**;
+- Hilfetexte maximal in kleinen Portionen;
+- Sprache parametrisiert nach Klassen-/Leseniveau;
+- Icons/Animationen übernehmen möglichst viel Erklärung;
+- Controls und Interaktionshinweise auf PC/Touch konsistent.
+
+### Phase C — Engine modularisieren
+
+Nicht weitere Welten in dieselbe Monolith-Datei schreiben. Aus Amazonas werden wiederverwendbare Module extrahiert:
+- Player/Movement/Input;
+- Scene/Level lifecycle;
+- LearningGate;
+- VehicleController (Jeep/Boot als Varianten);
+- Camera/TargetCapture;
+- Winch/Tension;
+- Sequence/Generator;
+- Radio/Code;
+- Inventory/Rewards;
+- Story/Mission UI;
+- seeded Variant Service.
+
+### Phase D — Referenzwelt qualitativ ausbauen
+
+Amazonas wird erste große Referenzwelt:
+- 6 Level nicht nur technisch, sondern visuell/sprachlich/pacing-seitig polieren;
+- stärkere Übergänge und kleine Animationen;
+- passende Sounds/Musik optional und abschaltbar;
+- mehr echtes Erkunden statt ausschließlich aufeinanderfolgender Dialoge;
+- Mechaniken jeweils kurz einführen, dann steigern;
+- finaler Games-Avatar statt Platzhalter.
+
+### Phase E — Zweite wirklich andere Welt
+
+Erst nach stabiler Engine eine zweite Welt mit anderen Kernmechaniken, z. B. Raumstation, Hafen/Schrottplatz mit Magnetkran oder Archäologie. Ziel: beweisen, dass Engine und Mechanikbibliothek skalieren, ohne dass sich das Spiel wie Amazonas mit anderem Skin anfühlt.
 
 ## Bewusst offen
 
@@ -113,7 +172,4 @@ Run `37080117761` auf Produktcommit `71f0a6a9c27701ebc64d9b2757d55f04f354a809`:
 
 ## Nächster Schritt
 
-1. Martin spielt den Preview auf Desktop vollständig durch und meldet Softlocks/Bedienfehler;
-2. danach iPad/iPhone prüfen;
-3. entscheiden, welche Mechaniken qualitativ ausgebaut werden sollen;
-4. danach die Mechaniken aus `app.js` in eine wiederverwendbare Escape-Engine/Module aufteilen, statt weitere Welten als Monolith zu kopieren.
+**Nicht sofort neue Mechaniken/Level hinzufügen.** Zuerst Phase A + B am bestehenden Amazonas-Prototypen: flüssiger, robuster und deutlich schülergerechter. Danach Module extrahieren und Amazonas qualitativ ausbauen. Erst dann zweite Welt.
