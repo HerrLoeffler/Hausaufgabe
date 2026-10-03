@@ -48,12 +48,15 @@ jobs:
         working-directory: source
         run: |
           sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
-          sudo mkdir -p "$RUNNER_TEMP/validator-home"
-          sudo chown gradecrew-validator:gradecrew-validator "$RUNNER_TEMP/validator-home"
-          chmod a+rx "$GITHUB_WORKSPACE" "$(dirname "$GITHUB_WORKSPACE")" "$RUNNER_TEMP"
-          sudo chown -R gradecrew-validator:gradecrew-validator .
-          sudo -u gradecrew-validator env -i PATH="$PATH" HOME="$RUNNER_TEMP/validator-home" JAVA_HOME="$JAVA_HOME" CI=true \
-            bash ../control/tools/automation/validate-web.sh > ../validation.log 2>&1
+          validation_root=$(mktemp -d /tmp/gradecrew-validator.XXXXXX)
+          sudo cp -a . "$validation_root/source"
+          sudo install -m 0644 ../control/tools/automation/validate-web.sh "$validation_root/validate-web.sh"
+          sudo install -d -m 0700 -o gradecrew-validator -g gradecrew-validator "$validation_root/home"
+          sudo chown -R gradecrew-validator:gradecrew-validator "$validation_root/source"
+          sudo chown root:root "$validation_root" "$validation_root/validate-web.sh"
+          sudo chmod 0755 "$validation_root"
+          sudo -u gradecrew-validator env -i PATH="$PATH" HOME="$validation_root/home" JAVA_HOME="$JAVA_HOME" CI=true \
+            /usr/bin/bash -c 'cd "$1"; exec /usr/bin/bash "$2"' validator "$validation_root/source" "$validation_root/validate-web.sh" > ../validation.log 2>&1
       - name: Bind actual result to candidate commit and direct parent
         if: always()
         env:
