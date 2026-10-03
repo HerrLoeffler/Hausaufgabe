@@ -4,5 +4,5 @@
   "maxAttemptsPerStage": 3,
   "automaticProduction": false,
   "workstreams": [],
-  "note": "No implicit authority from a stage label. Explicit pinned tasks, worker activation, and missing execution bridges must be configured before autonomous stage completion."
+  "note": "Execution V2 implemented and CI verified. Deliberately inactive: dedicated credentials, explicit task admission and a real paid API-to-Staging pilot still required; no automatic Production."
 }

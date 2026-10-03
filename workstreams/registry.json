@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-02",
+  "updatedAt": "2026-10-03",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -337,7 +337,7 @@
       "title": "Autonome Auftrag-PR-Review-Integration-Staging-Kette",
       "primaryBranch": "feature/guardian-execution-v2",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/guardian-execution-v2.md",
       "relatedBranches": [
         "feature/stage-guardian-v1"
