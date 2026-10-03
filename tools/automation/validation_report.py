@@ -9,6 +9,10 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools.automation.delivery import verify_packaging
 
+
+class CandidateSyntaxError(ValueError):
+    """Completed deterministic code failure, eligible for bounded repair."""
+
 head = subprocess.check_output(['git', '-C', 'source', 'rev-parse', 'HEAD'], text=True).strip()
 if head != os.environ['EXPECTED_HEAD'] or not re.fullmatch('[a-f0-9]{40}', head):
     raise ValueError('Validation checkout differs')
@@ -36,9 +40,9 @@ if report['result'] == 'success':
                     # silently accepting an invalid ESM file. This only parses source.
                     syntax = subprocess.run(['node','--check','--input-type=module'],input=(Path('source')/name).read_bytes(),capture_output=True)
                     if syntax.returncode:
-                        raise ValueError('Changed JavaScript syntax invalid: '+name)
+                        raise CandidateSyntaxError('Changed JavaScript syntax invalid: '+name)
     except (ValueError, OSError) as exc:
-        report['result'] = 'blocked'
+        report['result'] = 'failure' if isinstance(exc, CandidateSyntaxError) else 'blocked'
         packaging_error = str(exc)
 Path('evidence/tests.json').write_text(json.dumps(report) + '\n')
 log = Path('validation.log')

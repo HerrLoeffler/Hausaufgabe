@@ -265,7 +265,7 @@ def finalize(request_id):
     if validation == 'failure' and tests.get('result') == 'failure':
         details = load('test-feedback') if (DATA / 'test-feedback.json').exists() else {}
         feedback.append({'kind': 'tests', 'message': 'Combined CI failed; Actions run ' + str(attempt['runId']),
-                         'details': str(details.get('tail', ''))[-6000:]})
+                         'details': '\n'.join(part for part in (str(details.get('packaging', ''))[:1000], str(details.get('tail', ''))[-5000:]) if part)})
     for role in ('correctness', 'security'):
         if (DATA / (role + '.json')).exists():
             evidence = load(role)

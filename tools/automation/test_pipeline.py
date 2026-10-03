@@ -299,6 +299,15 @@ class ExecutionTests(unittest.TestCase):
         latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
         self.assertEqual(latest['state'],'repairable');self.assertEqual(latest['feedback'][0]['details'],'assertion failed')
 
+    def test_syntax_failure_diagnostic_survives_a_long_green_validation_log(self):
+        e.save('tests',TESTS|{'result':'failure'})
+        e.save('test-feedback',{'packaging':'Changed JavaScript syntax invalid: coach.js','tail':'green tests '*1000})
+        with patch.dict(os.environ,{'VALIDATION_RESULT':'failure','REVIEW_RESULT':'skipped'}):e.finalize('run-1')
+        latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
+        self.assertEqual(latest['state'],'repairable')
+        self.assertTrue(latest['feedback'][0]['details'].startswith('Changed JavaScript syntax invalid: coach.js'))
+        self.assertLessEqual(len(latest['feedback'][0]['details']),6001)
+
     def test_ledger_is_reserved_before_source_or_paid_call(self):
         self.ledger['attempts']['pilot:pipeline-v2'][0].update(state='dispatched',runId=None)
         def api(path,method='GET',body=None):
@@ -491,7 +500,7 @@ class ValidationReportTests(unittest.TestCase):
 
     def test_invalid_changed_javascript_cannot_use_other_green_tests(self):
         status,report,feedback,_,_=self.run_report(code='export const next = ;')
-        self.assertNotEqual(status,0);self.assertEqual(report['result'],'blocked')
+        self.assertNotEqual(status,0);self.assertEqual(report['result'],'failure')
         self.assertIn('syntax invalid',feedback['packaging'])
 
     def test_rehearsal_never_creates_task_promotion_proof(self):

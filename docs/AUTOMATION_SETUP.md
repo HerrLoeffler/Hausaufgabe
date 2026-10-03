@@ -4,7 +4,7 @@ Diese Datei beschreibt die Einrichtungswege, keinen automatisch aktuellen Aktivi
 
 ## 1. Automatische Hosting-Preview
 
-Die Hosting-Automatik ist bereits eingerichtet. Ein erfolgreicher push-basierter Lauf von `AI Staging Checks` auf `feature/gradecrew-app-integration` baut exakt diesen getesteten SHA, prüft vor dem Deploy erneut, dass der Branch nicht weitergezogen ist, authentifiziert kurzlebig über Workload Identity Federation und veröffentlicht ausschließlich den Staging-Preview-Channel. Danach werden Manifest und Dateihashes gegen den gebauten Stand geprüft.
+Die Hosting-Automatik ist bereits eingerichtet. Ein erfolgreicher push-basierter Lauf von `AI Staging Checks` auf `feature/gradecrew-app-integration` oder ein exakt ledger-gebundener `Guardian integrated checks`-Lauf baut den getesteten SHA, prüft vor dem Deploy erneut, dass der Branch nicht weitergezogen ist, authentifiziert kurzlebig über Workload Identity Federation und veröffentlicht ausschließlich den Staging-Preview-Channel. Danach werden Manifest und Dateihashes gegen den gebauten Stand geprüft. Eine beliebige manuelle SHA ist keine Deployfreigabe.
 
 Die bestehende Identität `gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com` besitzt absichtlich nur Hosting-bezogene Rechte. Sie darf keine Functions deployen.
 
@@ -22,7 +22,7 @@ Keine Service-Account-Schlüssel oder Tokens in Chat/Repo schreiben.
 
 Crew Assistant, Emmi und weitere AI-Serverfunktionen leben im Firebase-Codebase `ai`. Der dauerhafte Workflow ist `.github/workflows/staging-functions.yml`.
 
-Er läuft nur nach einem erfolgreichen **push-basierten** `AI Staging Checks`-Lauf des Integrationsbranches und besitzt mehrere Fail-Closed-Grenzen:
+Er läuft nach einem erfolgreichen **push-basierten** `AI Staging Checks`-Lauf des Integrationsbranches oder einem verifizierten ledger-gebundenen `Guardian integrated checks`-Lauf und besitzt mehrere Fail-Closed-Grenzen:
 
 - Zielprojekt fest: `hausaufgabe-staging`;
 - Quelle: exakt der vom Upstream-CI getestete SHA;
@@ -118,4 +118,3 @@ Wenn PR-Erstellung, Provider-Modellzugriff oder WIF-Setup fehlt, ist das ein kon
 - https://firebase.google.com/docs/hosting/test-preview-deploy
 - https://firebase.google.com/docs/functions/manage-functions
 - https://firebase.google.com/docs/projects/iam/permissions
-
