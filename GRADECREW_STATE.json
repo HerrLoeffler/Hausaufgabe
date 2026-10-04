@@ -168,7 +168,7 @@
         "branch": "fix/guardian-recovery-queue-20261004",
         "source_fix_pr": 95,
         "source_fix_merge": "b49793cd9ae0073024f5a17191dd8d623ab523cb",
-        "source_sha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
+        "source_sha": "256609f81f601896a9e683f67945743df6b2f29f",
         "ci_runs": [
           37217124832,
           37217124802,

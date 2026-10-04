@@ -25,8 +25,8 @@
       "cost_profile": "small-web-v1",
       "max_cost_usd": 2.55
     },
-    "approvedSha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
-    "taskHash": "06012cf72e6bcd0747b53702a874ed615bec6b3eaa056caa45fb621e605dfe07",
+    "approvedSha": "256609f81f601896a9e683f67945743df6b2f29f",
+    "taskHash": "d56a6630eee78bed4d137601cfae6402d202d79b1735347e6f371a8cfe4fba9f",
     "selectedBlobs": {
       "tutorial-choice-v1.css": "22bfd82f60b451f53008ceef201b6c0861e8e307"
     }

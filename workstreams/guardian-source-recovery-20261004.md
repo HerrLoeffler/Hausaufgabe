@@ -24,3 +24,7 @@ Die Homepage-Nachfolge enthält durch PR #91 einen anderen Basis-SHA als ihr alt
 ## Nächster Schritt / Wiederaufnahme
 
 Review und exakte PR-CI prüfen; Quell-/main-Stand vor Merge erneut abgleichen. Danach automatischen einmaligen Recovery- und regulären Guardian-Lauf anhand Ledger, Jobs und Receipts verfolgen. Bei unbekannten Ergebnissen oder neuem Quellwechsel stoppen und Diagnose festhalten; keine Versuche zurücksetzen.
+
+## Parallele Web-Integration während der Queue-Prüfung
+
+PR #96 wurde inzwischen auf Web integriert: 256609f81f601896a9e683f67945743df6b2f29f. Pilot-CSS, Homepage-CSS und Entry-Kontext unverändert. startup.js hat ausschließlich aktualisierte i18n-Importversionen und den neuen assessment-locale-ui-Import nach app.js. Neuer vollständiger Auftrag/Policy/Recovery werden vor dem ersten neuen Versuch auf diesen aktuellen SHA gepinnt. Homepage-Quellvertrag ebenfalls explizit erneuert: ihr aktualisierter read-only Startup-Kontext wird frisch gelesen/geprüft und mit seinem neuen Blob-SHA gebunden; Produktbrief, zulässige CSS-Datei und Budget bleiben unverändert. Kein früherer Homepage-Versuch vorhanden.
