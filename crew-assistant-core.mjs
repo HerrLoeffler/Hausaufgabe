@@ -77,13 +77,13 @@ const COMMON_RESPONSES = Object.freeze({
   cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
   capabilities: Object.freeze({
     coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
-    remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Aufgabentypen und Zusatzwünsche.",
+    remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Audio-Lösungen, Aufgabentypen und Zusatzwünsche.",
     emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
     wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
   })
 });
 
-const PARSER_VERSION = "remy-structure-v4-audio";
+const PARSER_VERSION = "remy-structure-v5-audio-solutions";
 const INITIAL_EASY = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)\b[^.!?]{0,50}?\b(?:leicht|einfach)\b/i;
 const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?)\s+(?:(?:zu|so)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt)\b/gi;
 
@@ -235,6 +235,12 @@ function parseTestRequest(input = "") {
   ], 0, 5);
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
+  const solutionAudioQuestionCount = extractNumber(text, [
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:lösungen?|loesungen?|erklärungen?|erklaerungen?)\s+(?:als|mit)\s+audio\b/i,
+    /\b(\d{1,2})\s*audio[- ]?(?:lösungen?|loesungen?|erklärungen?|erklaerungen?)\b/i
+  ], 0, 5);
+  if (solutionAudioQuestionCount !== undefined) patch.solutionAudioQuestionCount = solutionAudioQuestionCount;
+
   const allowedTypes = [];
   const excludedTypes = [];
   for (const [pattern, value] of TYPE_PATTERNS) {
@@ -266,6 +272,7 @@ function patchSummary(patch = {}) {
   if (patch.points) parts.push(`${patch.points} Punkte`);
   if (patch.durationMinutes) parts.push(`${patch.durationMinutes} Min.`);
   if (patch.audioQuestionCount !== undefined) parts.push(`${patch.audioQuestionCount} Höraufgaben`);
+  if (patch.solutionAudioQuestionCount !== undefined) parts.push(`${patch.solutionAudioQuestionCount} Audio-Lösungen`);
   if (patch.notes) parts.push("Wünsche übernommen");
   return parts.join(" · ");
 }
