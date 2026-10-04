@@ -12,7 +12,7 @@ function installGradeCrewDesignStyles() {
     ["./generated/gradecrew-design-tokens.css?v=1.1.0", "tokens-1.1.0"],
     ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"],
     ["./gradecrew-logo.css?v=1", "brand-logo-v1"],
-    ["./gradecrew-auth-startscreen.css?v=3", "auth-startscreen-v3"]
+    ["./gradecrew-auth-startscreen.css?v=4", "auth-startscreen-v4"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
@@ -110,7 +110,7 @@ if (publicTestCode && !teacherPreview) {
   try {
     // Recompose the public entry before app.js binds the existing auth/test-code
     // handlers. The original forms and IDs are moved, not cloned or replaced.
-    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=3");
+    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=4");
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 

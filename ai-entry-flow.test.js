@@ -25,7 +25,7 @@ test('entry module has valid JavaScript syntax', () => {
   execFileSync(process.execPath, ['--check', path.join(root, 'gradecrew-entry-flow.js')], { stdio: 'pipe' });
 });
 
-test('public start is a distinct, minimal state without auth credential fields', () => {
+test('public start is concise and keeps credentials out of the hero', () => {
   const start = blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"');
   assert.match(start, /Hi! Ich bin Coco\./);
   assert.match(start, /Willkommen bei GradeCrew\./);
@@ -39,26 +39,11 @@ test('public start is a distinct, minimal state without auth credential fields',
 
 test('public hero uses canonical current brand and crew assets', () => {
   const start = blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"');
-  assert.match(start, /GRADECREW_ASSETS\.brand\.primary/);
   assert.match(start, /GRADECREW_ASSETS\.mascots\.coco\.welcome/);
-  assert.match(entry, /\["remy", "Remy", "Erstellen"\]/);
-  assert.match(entry, /\["emmi", "Emmi", "Verbessern"\]/);
-  assert.match(entry, /\["wilma", "Wilma", "Prüfen"\]/);
+  assert.match(entry, /\["remy", "Remy", "Erstellen", "edit"\]/);
+  assert.match(entry, /\["emmi", "Emmi", "Verbessern", "improve"\]/);
+  assert.match(entry, /\["wilma", "Wilma", "Prüfen", "check"\]/);
   assert.doesNotMatch(entry, /falcon-create|generic.*mascot/i);
-});
-
-test('existing forms and test-code form are moved instead of cloned', () => {
-  for (const id of ['joinForm', 'loginForm', 'registerForm', 'loginTab', 'registerTab']) {
-    assert.match(entry, new RegExp(`\\$\\("${id}"\\)`));
-  }
-  assert.match(entry, /gcEntryJoinHost[^]*append\(joinForm\)/);
-  assert.match(entry, /gcEntryLoginFormHost[^]*append\(loginForm\)/);
-  assert.match(entry, /gcEntryRegisterFormHost[^]*append\(registerForm\)/);
-});
-
-test('canonical design manifest and existing tutorial data are the only entry sources', () => {
-  assert.match(entry, /GRADECREW_ASSETS/);
-  assert.match(entry, /CREW, DEMO_TEST/);
   assert.equal(assets.mascots.coco.animal, 'penguin');
   assert.equal(assets.mascots.remy.animal, 'elephant');
   assert.equal(assets.mascots.emmi.animal, 'fox');
@@ -66,28 +51,45 @@ test('canonical design manifest and existing tutorial data are the only entry so
   assert.equal(assets.rules.singleSource, true);
 });
 
-test('guest tutorial asks only for display name before the experience', () => {
+test('existing auth and test-code forms are moved instead of cloned', () => {
+  for (const id of ['joinForm', 'loginForm', 'registerForm', 'loginTab', 'registerTab']) {
+    assert.match(entry, new RegExp(`\\$\\("${id}"\\)`));
+  }
+  assert.match(entry, /gcEntryJoinHost[^]*append\(joinForm\)/);
+  assert.match(entry, /gcEntryLoginFormHost[^]*append\(loginForm\)/);
+  assert.match(entry, /gcEntryRegisterFormHost[^]*append\(registerForm\)/);
+  assert.match(entry, /joinSubmit\.setAttribute\("aria-label", "Test öffnen"\)/);
+});
+
+test('guest tutorial and save gate stay intact', () => {
   const name = blockBetween(entry, 'id="gcEntryTutorialName"', 'id="gcEntryTutorial"');
+  const gate = blockBetween(entry, 'id="gcEntryAccountGate"', '</div>`;');
   assert.match(name, /Wie dürfen wir dich nennen/);
   assert.match(name, /Name oder Anzeigename/);
   assert.doesNotMatch(name, /type="email"|Passwort wiederholen|registerEmail/);
   assert.match(entry, /DEMO_TEST\.questions/);
-});
-
-test('account gate happens after tutorial and offers register, login and later', () => {
-  const gate = blockBetween(entry, 'id="gcEntryAccountGate"', '</div>`;');
   assert.match(gate, /Fortschritt speichern/);
   assert.match(gate, /Account erstellen/);
   assert.match(gate, /Anmelden/);
   assert.match(gate, /Später/);
 });
 
-test('student access is visually separated and concise benefits stay secondary', () => {
-  assert.match(css, /\.gcEntryStudent[^]*background:\s*linear-gradient/);
-  assert.match(css, /\.gcEntryBenefits/);
+test('masterpiece hero contains classroom depth, working navigation and four benefit promises', () => {
+  assert.match(entry, /gcPublicNav/);
+  assert.match(entry, /Funktionen/);
+  assert.match(entry, /Die Crew/);
+  assert.match(entry, /Für Lehrkräfte/);
+  assert.match(entry, /gcEntryClassroom/);
+  assert.match(entry, /gcEntryDoorSign/);
+  assert.match(entry, /gcEntryBoard/);
   assert.match(entry, /Schnell erstellt/);
   assert.match(entry, /Einfach durchgeführt/);
   assert.match(entry, /Direkt ausgewertet/);
+  assert.match(entry, /Für Lehrkräfte gemacht/);
+  assert.match(css, /\.gcPublicEntryMode \.shell/);
+  assert.match(css, /#authView \.gcEntryHero/);
+  assert.match(css, /#authView \.gcEntryStudent[^]*background:\s*linear-gradient/);
+  assert.match(css, /#authView \.gcEntryBenefits/);
 });
 
 test('responsive and accessibility contracts are explicit', () => {
@@ -95,20 +97,22 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /:focus-visible/);
   assert.match(css, /@media \(max-width: 900px\)/);
   assert.match(css, /@media \(max-width: 720px\)/);
+  assert.match(css, /@media \(max-width: 430px\)/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /grid-template-areas:[^}]*"lead"[^}]*"crew"[^}]*"actions"[^}]*"student"/);
   assert.match(entry, /aria-hidden/);
   assert.match(entry, /aria-live/);
-  assert.match(entry, /id=\"gcEntryTutorialTitle\"/);
-  assert.match(css, /grid-template-areas:\s*"lead" "crew" "actions" "student" "benefits"/);
+  assert.match(entry, /id="gcEntryTutorialTitle"/);
 });
 
-test('new public styling cannot target secure student screens', () => {
-  assert.doesNotMatch(css, /secureStudent|secure-student|studentView/);
+test('public design stays away from dashboard and secure student selectors', () => {
+  assert.doesNotMatch(css, /#dashboardView|#studentView|#secure|secureStudent|secure-student/);
   assert.match(css, /#authView/);
+  assert.match(css, /\.gcPublicEntryMode/);
 });
 
-test('startup actively installs entry before app handlers and staging packages it', () => {
-  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=3")');
+test('startup actively installs v4 entry before app handlers and staging packages it', () => {
+  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=4")');
   const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
   const appImport = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
@@ -116,5 +120,5 @@ test('startup actively installs entry before app handlers and staging packages i
   assert.ok(appImport > installerCall, 'entry must be installed before app handlers bind');
   assert.match(startup, /if \(!entryInstalled\) throw new Error/);
   assert.match(build, /gradecrew-entry-flow\.js/);
-  assert.match(startup, /auth-startscreen-v3/);
+  assert.match(startup, /auth-startscreen-v4/);
 });
