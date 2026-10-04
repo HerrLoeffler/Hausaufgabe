@@ -226,17 +226,25 @@ jobs:
           curl -fsS "${auth[@]}" "$CANDIDATE_URL/providers" > "$RUNNER_TEMP/providers.json"
           jq -e '[.providers[].id] | index("anthropic") != null and index("openai") != null and index("gemini") != null and index("mistral") != null' "$RUNNER_TEMP/providers.json" >/dev/null
 
-          curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/anthropic/test" > "$RUNNER_TEMP/claude.json"
-          jq -e '.provider == "anthropic" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/claude.json" >/dev/null
+          smoke_post() {
+            label="$1"
+            path="$2"
+            file="$3"
+            provider="$4"
+            echo "Smoke test: $label"
+            code="$(curl -sS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' -o "$file" -w '%{http_code}' "$CANDIDATE_URL$path")"
+            if [[ "$code" != "200" ]]; then
+              echo "$label returned HTTP $code"
+              jq -c '{error,request_id}' "$file" 2>/dev/null || echo '{"error":"non-json-safe-gateway-response"}'
+              exit 1
+            fi
+            jq -e --arg provider "$provider" '.provider == $provider and .text == "GATEWAY_OK"' "$file" >/dev/null
+          }
 
-          curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/openai/test" > "$RUNNER_TEMP/openai.json"
-          jq -e '.provider == "openai" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/openai.json" >/dev/null
-
-          curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/gemini/test" > "$RUNNER_TEMP/gemini.json"
-          jq -e '.provider == "gemini" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/gemini.json" >/dev/null
-
-          curl -fsS "${auth[@]}" -X POST -H 'content-type: application/json' -d '{}' "$CANDIDATE_URL/providers/mistral/test" > "$RUNNER_TEMP/mistral.json"
-          jq -e '.provider == "mistral" and .text == "GATEWAY_OK"' "$RUNNER_TEMP/mistral.json" >/dev/null
+          smoke_post "Claude" "/providers/anthropic/test" "$RUNNER_TEMP/claude.json" "anthropic"
+          smoke_post "OpenAI" "/providers/openai/test" "$RUNNER_TEMP/openai.json" "openai"
+          smoke_post "Gemini" "/providers/gemini/test" "$RUNNER_TEMP/gemini.json" "gemini"
+          smoke_post "Mistral" "/providers/mistral/test" "$RUNNER_TEMP/mistral.json" "mistral"
 
           echo "claude_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/claude.json")" >> "$GITHUB_OUTPUT"
           echo "openai_ms=$(jq -r '.latency_ms' "$RUNNER_TEMP/openai.json")" >> "$GITHUB_OUTPUT"
