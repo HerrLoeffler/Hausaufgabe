@@ -70,6 +70,17 @@
       ]
     },
     {
+      "id": "posthog-staging-telemetry-v1",
+      "title": "PostHog Staging Telemetrie / Privacy Projection",
+      "primaryBranch": "feature/posthog-staging-telemetry-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/posthog-staging-telemetry-v1.md",
+      "relatedBranches": [
+        "chore/posthog-staging-functions-config-v1"
+      ]
+    },
+    {
       "id": "emmi-whole-test-revision",
       "title": "Emmi / ganzen Test überarbeiten",
       "primaryBranch": "feature/emmi-whole-test-revision-v1",
