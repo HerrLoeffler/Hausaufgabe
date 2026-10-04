@@ -132,3 +132,15 @@ Aktueller öffentlicher GitHub-Status meldet Actions allgemein als operational; 
 - Staging V2: nein
 - Gerät/Nutzertest V2: nein
 - Production: unverändert
+
+## Integration status — 2026-10-04
+
+- Audio V2 was reconciled onto the then-current `feature/gradecrew-app-integration` instead of merging the stale original branch.
+- Reconciled PR: #109, merged as `63cbac307919c6488e33afa74f4e98b3fff8e92b`.
+- Superseded stale PR: #106, closed without merge.
+- Current implementation preserves the newer DE/EN assistant/i18n separation while adding listening-audio and solution-audio counts independently.
+- Private listening and solution drafts share the protected server-side audio-draft store; solution audio remains withheld until the secure solution-release policy allows it.
+- Feature gate on the fully reconciled head `e8c85d9253fa43b93d009d3e1426eac53087ca08`: **green** (AI Staging Checks run 37229218876).
+- Post-merge integration gate on `63cbac307919c6488e33afa74f4e98b3fff8e92b`: **green** (AI Staging Checks run 37229329575). Admin test-account workflow on the same merge commit: **green** (run 37229329574).
+- Staging deployment is **not yet confirmed**. Audio V2 changes both Firebase function codebases (`ai` and `assessment`) plus the Hosting preview, so a Hosting-only preview deploy is insufficient.
+- Production remains unchanged. Do not deploy Audio V2 to Production without explicit approval after Staging verification.
