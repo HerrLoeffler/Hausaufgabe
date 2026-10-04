@@ -546,6 +546,30 @@ export const enGBMessages = Object.freeze({
     "Deine Auswahl:": "Your selection:",
     "Mit GradeCrew loslegen": "Get started with GradeCrew"
   }),
+  ...source({
+    "Entwurf prüfen": "Review draft",
+    "Teilentwurf öffnen": "Open partial draft",
+    "KI-Entwurf prüfen": "Review AI draft",
+    "KI-Teilentwurf": "Partial AI draft",
+    "Prüfung abgeschlossen": "Review complete",
+    "Problem melden": "Report problem",
+    "Ausblenden": "Dismiss",
+    "Test gespeichert.": "Test saved.",
+    "Speichern fehlgeschlagen.": "Saving failed.",
+    "Test veröffentlicht.": "Test published.",
+    "Veröffentlichen fehlgeschlagen.": "Publishing failed.",
+    "Abgabe erfolgreich gespeichert.": "Submission saved successfully.",
+    "Abgabe konnte nicht gespeichert werden.": "Submission could not be saved.",
+    "Abgabe nicht gespeichert": "Submission not saved",
+    "Antworten erneut abgeben": "Submit answers again",
+    "Alles bearbeitet. Test jetzt endgültig abgeben?": "Everything is complete. Submit the test now?",
+    "Vorschau als Schüler": "Student preview",
+    "In dieser Vorschau werden Antworten und Ergebnisse nicht gespeichert.": "Answers and results are not saved in this preview.",
+    "Vorschau auswerten": "Evaluate preview",
+    "Vorschau ausgewertet – keine Abgabe gespeichert.": "Preview evaluated – no submission saved.",
+    "Vorschau ausgewertet ✓": "Preview evaluated ✓",
+    "Diese Vorschau speichert keine Abgabe.": "This preview does not save a submission."
+  }),
 });
 
 export const enGBSourcePatterns = Object.freeze([
@@ -579,5 +603,7 @@ export const enGBSourcePatterns = Object.freeze([
   { pattern: /^(\d+) Abgabe · (.+) Punkte maximal · Notenschlüssel: (.+)$/, replacement: "$1 submission · $2 points maximum · grading scale: $3" },
   { pattern: /^ · Zeitlimit: (\d+) Min\.$/, replacement: " · time limit: $1 min." },
   { pattern: /^(\d+) von (\d+)$/, replacement: "$1 of $2" },
+  { pattern: /^(\d+) Aufgabe ist noch offen\. Trotzdem endgültig abgeben\?$/, replacement: "$1 question is still unanswered. Submit anyway?" },
+  { pattern: /^(\d+) Aufgaben sind noch offen\. Trotzdem endgültig abgeben\?$/, replacement: "$1 questions are still unanswered. Submit anyway?" },
   { pattern: /^Fehlerkennung: (.+)$/, replacement: "Error reference: $1" },
 ]);
