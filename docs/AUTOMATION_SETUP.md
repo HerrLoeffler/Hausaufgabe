@@ -119,3 +119,15 @@ Wenn PR-Erstellung, Provider-Modellzugriff oder WIF-Setup fehlt, ist das ein kon
 - https://firebase.google.com/docs/functions/manage-functions
 - https://firebase.google.com/docs/projects/iam/permissions
 
+
+## Vorbereiteter kleiner Pilot (04.10.2026)
+
+Das optionale Argument des sicheren Setups fordert nach den drei verdeckten Secret-Eingaben, den Aktivierungsflags und Bot-PR-Einstellungen genau eine Task-Aufnahme an:
+
+```bash
+bash tools/automation/setup-guardian.sh pilot-tutorial-later-a11y-20261004
+```
+
+Nur in einer bereits als Eigentümer bei GitHub authentifizierten Shell und aus einem aktuellen main-Checkout nach CI-/Integrationsprüfung dieser Änderung ausführen. Der Task muss auf main vorhanden sein; der Aufnahme-Workflow prüft Schlüssel, Flags, Historie und aktuellen Integrations-SHA erneut. Bei zwischenzeitlichem Quellwechsel wird der Pilot blockiert, vor einem bezahlten Aufruf. Kein blindes Wiederholen eines unbekannten Dispatch-Ergebnisses. Ohne Argument richtet das Skript weiterhin nur Zugang/Flags ein und startet keinen Auftrag.
+
+Der kleine Pilot behält alle vier Modelle; `small-web-v1` begrenzt Reservierungen auf 0,85 USD/Versuch und 2,55 USD/Auftrag einschließlich maximal dreier Bauversuche. Dies sind Obergrenzen, keine erwarteten Rechnungen. Große bestehende Aufträge behalten ihren bisherigen Vertrag. Details und aktuell offene Zugangshürde: [Übergabe](../workstreams/guardian-budget-pilot-v1.md).

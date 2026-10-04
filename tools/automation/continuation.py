@@ -101,7 +101,7 @@ def main():
         if action == 'dispatch' and args.execute and not dispatched:
             day = dt.datetime.now(dt.timezone.utc).date().isoformat()
             try:
-                budget = reserve_budget(ledger['budgetReservations'], task['id'], day)
+                budget = reserve_budget(ledger['budgetReservations'], task['id'], day, task=task)
             except ValueError as exc:
                 action, reason = 'stopped', str(exc)
             else:
@@ -142,4 +142,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

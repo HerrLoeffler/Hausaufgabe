@@ -133,8 +133,14 @@ Der Auftrag ist nicht nur eine Statusanzeige: freigegebene Funktionen sollen von
 | GC-AUTOMATION-04 | Worker-Patch automatisch als begrenzten PR sichern | V2 über PR #57 auf main (b2df3aa) integriert: Text-/Pfad-/SHA-Grenzen, eigener Draft-PR, getrennte feste CI. 70 lokale Tests und echte isolierte Combined CI grün; Aktivierung/Pilot noch offen. |
 | GC-AUTOMATION-05 | Unabhängige KI-Reviews und kontrollierte Integration | **Steuerung auf main integriert; noch deaktiviert.** PR #59 bindet physische Lieferung, PR #62 verlangt drei unabhängige Prüfer (Korrektheit/Sicherheit/QA), Merge `6a5c2d0`. 86 lokale Tests, Remote-Guardian-CI `37192179040` und isolierte Web-Rehearsal `37192179131` grün. Keys/Flags und echter Pilot fehlen. [Übergabe](workstreams/guardian-three-reviewers-v1.md) |
 | GC-AUTOMATION-06 | Worker-Abschluss, Fehlerfeedback und drei begrenzte Reparaturrunden | V2 über PR #57 auf main integriert: vollständige Run-Zuordnung, Feedback/Usage, höchstens drei Bauversuche, unklare Ergebnisse stoppen; getrennte begrenzte Deploy-Retries. Main-CI 37083880267 grün. |
-| GC-AUTOMATION-07 | Vollständigen Pilot von Auftrag bis verifiziertem Staging durchführen | Offen: drei dedizierte Secrets, Flags, konkrete Task-Aufnahme und realer Pilot erforderlich. Offline-Ablauf ist geprüft; kein bezahlter E2E-/Deploy-Nachweis. [Übergabe](workstreams/guardian-execution-v2.md) |
+| GC-AUTOMATION-07 | Vollständigen Pilot von Auftrag bis verifiziertem Staging durchführen | Konkreter Pilot `pilot-tutorial-later-a11y-20261004` vorbereitet: nur Tutorial-CSS, aktueller gepinnter Web-Stand, Profil `small-web-v1` (0,85 USD/Versuch; 2,55 USD/Auftrag). Keys/Flags fehlen weiter; kein bezahlter E2E-/Deploy-Nachweis. Setup kann anschließend genau eine Aufnahme anfordern. [Übergabe](workstreams/guardian-budget-pilot-v1.md) |
 
 
 GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Games und native Apps sowie explizite Konflikt-Rebase-Aufträge sind weiter offen. V2 darf diese Workstreams nicht über die Web-Allowlist übernehmen. Hauptpriorität zuerst GC-AUTOMATION-07: einen echten kleineren Pilot nach sicherer Einrichtung bestätigen.
 
+
+## Guardian-Aktivierung und günstigere kleine Aufträge – 04.10.2026
+
+| ID | Aufgabe | Status / nächster Schritt |
+|---|---|---|
+| GC-AUTOMATION-12 | Kleines Kostenprofil und konkreten E2E-Pilot fertig vorbereiten | Implementiert auf `fix/guardian-budget-pilot-v1`; 91 lokale Tests grün, Remote-CI/Integration separat offen. Gleiche vier Modelle, engere Eingabe-/Ausgabegrenzen, max. 0,85 USD/Versuch und 2,55 USD/Auftrag; Standardprofil bleibt kompatibel. Aktuelle offizielle Standardpreise geprüft. Secrets/Flags fehlen, kein bezahlter Pilot. [Übergabe](workstreams/guardian-budget-pilot-v1.md) |

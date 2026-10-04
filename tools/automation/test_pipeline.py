@@ -49,6 +49,31 @@ class ContractTests(unittest.TestCase):
                        + spec['max_output'] * spec['output']) / 1e6 for role,spec in p.MODELS.items())
         self.assertLessEqual(ceiling, p.ATTEMPT_RESERVATION_USD)
 
+    def test_small_profile_reserves_three_bounded_attempts_without_budget_reset(self):
+        task = TASK | {'cost_profile': 'small-web-v1', 'max_cost_usd': 2.55}
+        self.assertEqual(p.task_contract(task), task)
+        history = []
+        for _ in range(3):
+            history.append(p.reserve_budget(history, task['id'], '2026-10-04', task=task))
+        self.assertAlmostEqual(sum(r['reservedUsd'] for r in history), 2.55)
+        with self.assertRaisesRegex(ValueError, 'exhausted'):
+            p.reserve_budget(history, task['id'], '2026-10-05', task=task)
+        with self.assertRaisesRegex(ValueError, 'identity'):
+            p.reserve_budget([], 'different-task', '2026-10-04', task=task)
+        for changes in [{'cost_profile': 'cheap'}, {'max_cost_usd': 16.5}, {'max_cost_usd': True}]:
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                p.task_contract(task | changes)
+
+    def test_small_profile_covers_all_four_calls_and_mixed_daily_reservations(self):
+        task = TASK | {'cost_profile': 'small-web-v1', 'max_cost_usd': 2.55}
+        specs = [p.model_limits(role, task) for role in p.MODELS]
+        ceiling = sum((s['max_input'] * s['input'] + s['max_output'] * s['output']) / 1e6 for s in specs)
+        # Covers a further 10% processing premium without relying on caching.
+        self.assertLessEqual(ceiling * 1.1, p.cost_limits(task)['attempt_usd'])
+        history = [{'taskId': 'other', 'day': '2026-10-04', 'reservedUsd': 32.2}]
+        with self.assertRaisesRegex(ValueError, 'Daily'):
+            p.reserve_budget(history, task['id'], '2026-10-04', task=task)
+
     def test_old_or_incomplete_package_proof_cannot_authorize_integration(self):
         reviews={role:review(role) for role in p.REVIEW_ROLES}
         for proof in [[],['other.js']]:
@@ -160,6 +185,25 @@ class ModelTests(unittest.TestCase):
             m.call('build','Implement',{'source':'x'*p.MAX_CONTEXT},p.CANDIDATE_SCHEMA,lambda *args:calls.append(args))
         self.assertFalse(calls)
 
+    def test_small_profile_applies_provider_limits_and_never_upgrades_or_truncates(self):
+        task = TASK | {'cost_profile': 'small-web-v1', 'max_cost_usd': 2.55}
+        for role in p.MODELS:
+            calls = []
+            m.call(role, 'Review', {}, p.REVIEW_SCHEMA,
+                   lambda endpoint, body: calls.append(body) or self.response(role, {'ok': True}), task=task)
+            spec = p.model_limits(role, task)
+            self.assertEqual(calls[0]['model'], p.MODELS[role]['model'])
+            self.assertEqual(calls[0].get('max_output_tokens', calls[0].get('max_tokens')), spec['max_output'])
+            calls.clear()
+            with self.assertRaisesRegex(ValueError, 'context'):
+                m.call(role, 'Review', {'source': 'x' * spec['max_input']}, p.REVIEW_SCHEMA,
+                       lambda *args: calls.append(args), task=task)
+            self.assertFalse(calls)
+            response = self.response(role, {'ok': True})
+            response['usage']['output_tokens'] = spec['max_output'] + 1
+            with self.assertRaisesRegex(ValueError, 'accounting'):
+                m.call(role, 'Review', {}, p.REVIEW_SCHEMA, lambda *args: response, task=task)
+
     def test_unknown_paid_network_result_is_not_retried(self):
         with patch.dict(os.environ,{'CODEX_WORKER_API_KEY':'test-only'}), patch.object(m.urllib.request,'urlopen',side_effect=TimeoutError) as send:
             with self.assertRaisesRegex(RuntimeError,'unknown'):
@@ -173,6 +217,34 @@ class ModelTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'HTTP 403, provider/model permission denied') as raised:
                 m.call('build','Implement',{},p.CANDIDATE_SCHEMA)
             self.assertNotIn('secret-provider-payload',str(raised.exception));self.assertEqual(send.call_count,1)
+
+
+class SetupTests(unittest.TestCase):
+    def test_optional_pilot_is_dispatched_once_after_hidden_secret_setup(self):
+        script = Path(__file__).resolve().parent / 'setup-guardian.sh'
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            log = root / 'calls'
+            fake = root / 'gh'
+            fake.write_text('#!/bin/bash\nprintf "%s\\n" "$*" >> "$TEST_GH_LOG"\n'
+                            'if [[ "$*" == *".full_name"* ]]; then echo HerrLoeffler/Hausaufgabe; fi\n')
+            fake.chmod(0o755)
+            env = os.environ | {'PATH': str(root) + ':' + os.environ['PATH'], 'TEST_GH_LOG': str(log)}
+            result = subprocess.run(['bash', str(script), 'pilot-ui'], env=env, text=True, capture_output=True, check=True)
+            calls = log.read_text().splitlines()
+            dispatches = [r for r in calls if r.startswith('workflow run')]
+            self.assertEqual(len(dispatches), 1)
+            self.assertIn('--ref main --field task_id=pilot-ui', dispatches[0])
+            self.assertEqual(sum(r.startswith('secret set') for r in calls), 3)
+            self.assertLess(next(i for i,r in enumerate(calls) if '/agent-queue/' in r), next(i for i,r in enumerate(calls) if r.startswith('secret set')))
+            self.assertIn('Production stays locked', result.stdout)
+            log.unlink()
+            subprocess.run(['bash', str(script)], env=env, capture_output=True, check=True)
+            self.assertFalse(any(r.startswith('workflow run') for r in log.read_text().splitlines()))
+            log.unlink()
+            invalid = subprocess.run(['bash', str(script), 'bad;task'], env=env, capture_output=True)
+            self.assertEqual(invalid.returncode, 2)
+            self.assertFalse(log.exists())
 
 
 class ContinuationTests(unittest.TestCase):
@@ -312,7 +384,7 @@ class ExecutionTests(unittest.TestCase):
 
     def test_qa_sees_original_candidate_and_tests_but_no_other_reviewer_answers(self):
         e.save('candidate',p.candidate_contract({'summary':'test','files':[{'path':'coach.js','content':'new'}]},TASK,'run-1'))
-        def model(role,instructions,context,schema):
+        def model(role,instructions,context,schema,*,task=None):
             self.assertEqual(role,'qa')
             self.assertIn('observable user flows',instructions)
             self.assertEqual(set(context),{'task','originalSource','proposedFiles','binding','tests'})
@@ -374,8 +446,9 @@ class ExecutionTests(unittest.TestCase):
             if path=='pulls/55' and method=='GET':return {'state':'open','head':{'sha':B,'repo':{'full_name':g.REPO}},'base':{'ref':p.WEB}}
             return {}
         roles=[]
-        def model(role,instructions,context,schema):
+        def model(role,instructions,context,schema,*,task=None):
             roles.append(role)
+            self.assertEqual(task, context.get('task'))
             usage={'provider':p.MODELS[role]['provider'],'model':p.MODELS[role]['model'],'estimatedUsd':0.02}
             if role=='build':return {'summary':'clearer','files':[{'path':'coach.js','content':'export const next = true;'}]},usage
             binding=context['binding']
@@ -390,6 +463,13 @@ class ExecutionTests(unittest.TestCase):
         latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
         self.assertEqual(latest['state'],'integrated');self.assertEqual(latest['estimatedUsd'],0.08)
         self.assertEqual(publication['candidateHash'],e.load('candidate')['candidateHash'])
+
+    def test_full_offline_execution_carries_small_profile_to_all_four_calls(self):
+        small = TASK | {'cost_profile': 'small-web-v1', 'max_cost_usd': 2.55}
+        (self.root / 'agent-queue/pilot-ui.json').write_text(json.dumps(small))
+        self.ledger['attempts']['pilot:pipeline-v2'][0]['taskHash'] = p.digest(small)
+        with patch.dict(TASK, small, clear=True):
+            self.test_full_offline_execution_publishes_tests_reviews_integrates_and_accounts()
 
 
 class DeploymentTests(unittest.TestCase):

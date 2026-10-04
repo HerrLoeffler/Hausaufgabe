@@ -48,3 +48,18 @@ Die zusätzliche QA verwendet den vorhandenen dedizierten OpenAI-Review-Key. Vie
 - https://platform.claude.com/docs/en/api/messages/create
 - https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow
 
+
+## Kleines Kostenprofil und vorbereiteter Pilot (04.10.2026)
+
+`cost_profile` im Auftrag ist unveränderlich an dessen Hash gebunden. Fehlt es, bleibt der bisherige Vertrag `standard-v1` kompatibel; eine Budget-/Profiländerung ist keine automatische Reparaturfreigabe.
+
+| Profil | Kontextgrenze Bau / je Review, einschließlich Overhead | Max. Ausgabetokens Bau / je Review | Reservierung Versuch / Auftrag |
+|---|---|---|---|
+| standard-v1 | 80.000 / 160.000 Bytes | 24.000 / 6.000 | 5,50 / 16,50 USD |
+| small-web-v1 | 12.000 / 24.000 Bytes | 6.000 / 2.400 | 0,85 / 2,55 USD |
+
+Die vier Modelle und alle drei unabhängigen Abschlussgates bleiben gleich. Die Bytegrenzen werden konservativ als Tokens bepreist, kein angenommener Cache-Rabatt. Aktuelle Standardpreise am 04.10.2026: GPT-6.1 Sol 2/10, Astra 10/50, GPT-6 Sol 2/10, Sonnet 5.5 2/10 USD je Million Input-/Output-Tokens. Damit beträgt die rechnerische volle Vier-Aufruf-Grenze beim kleinen Profil 0,688 USD; die Reservierung 0,85 USD deckt zusätzlich eine 10%-Verarbeitungsprämie. Beim unveränderten großen Profil ergibt sich 3,06 USD gegenüber der weiter konservativen Reservierung 5,50 USD. Dies aktualisiert frühere höhere Preisansätze/5,09-USD-Berechnungen, ohne bestehende Budgets still zu verändern. Tatsächliche Rechnungen und Cloud-/Actions-Kosten separat prüfen.
+
+Zu großer Kontext wird vor dem Provideraufruf abgelehnt, nie still gekürzt oder auf das große Profil umgeschaltet. Unvollständige Ausgaben bleiben Blocker, keine automatische bezahlte Wiederholung. Gesamthistorie einschließlich unbekannter Kosten zählt weiter gegen Aufgaben- und Tagesbudget.
+
+Der konkrete noch nicht aufgenommene Pilot liegt unter `agent-queue/pilot-tutorial-later-a11y-20261004.json`: nur `tutorial-choice-v1.css`, Verbesserung des Später-Buttons für Touch und Tastatur, `small-web-v1`, gepinnter Integrations-SHA. Vor Aufnahme muss dieser SHA weiterhin aktuell sein. Geräteabnahme und Production bleiben menschlich.

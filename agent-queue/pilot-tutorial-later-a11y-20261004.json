@@ -1,0 +1,16 @@
+{
+  "id": "pilot-tutorial-later-a11y-20261004",
+  "base_branch": "feature/gradecrew-app-integration",
+  "base_sha": "7f464085e89bdb3ea331dfbc988decfa83bc59f6",
+  "risk": "web-ui",
+  "goal": "Improve the existing tutorial offer Later button (.gcTutorialOfferLater): provide a comfortable minimum 44 by 44 CSS-pixel pointer target and a clearly visible keyboard-only focus ring. This is the user-authorized bounded Guardian E2E pilot.",
+  "acceptance": "The existing .gcTutorialOfferLater control has min-height and min-width of at least 44px and a scoped :focus-visible outline of at least 2px with positive outline-offset. Preserve existing tutorial offer labels, layout breakpoints, start/later actions and all current style rules. No generic button/body selectors, animations or external dependencies. Existing combined CI and packaging proof must pass. Physical device acceptance remains manual.",
+  "constraints": "Modify only tutorial-choice-v1.css. Make the smallest additive scoped CSS change. Preserve existing rules and behavior; no changes to tests, authentication, exam logic, shared design tokens or infrastructure. If source context is insufficient, refuse. This task may proceed only via explicit admission with current source and keys; Production stays locked.",
+  "allowed_files": [
+    "tutorial-choice-v1.css"
+  ],
+  "context_files": [],
+  "validation_profile": "web-combined-v1",
+  "cost_profile": "small-web-v1",
+  "max_cost_usd": 2.55
+}
