@@ -53,6 +53,11 @@ test("audio validation requires script and exact test count", () => {
   assert.match(validateQuestion(broken).join(" "), /Hörtext fehlt/);
   const one = baseQuestion("ai_generated");
   const none = baseQuestion("none");
+  none.text = "Welche Farbe hat das Signal?";
+  none.options = [
+    { text: "Grün.", correct: true },
+    { text: "Rot.", correct: false }
+  ];
   assert.deepEqual(validateTest({ title: "Test", questions: [one, none] }, { audioQuestionCount: 1 }), []);
   assert.match(validateTest({ title: "Test", questions: [one, none] }, { audioQuestionCount: 2 }).join(" "), /2 Höraufgaben/);
 });
