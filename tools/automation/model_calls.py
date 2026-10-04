@@ -6,6 +6,7 @@ import os
 import datetime as dt
 import urllib.error
 import urllib.request
+import time
 
 from .pipeline import model_limits
 
@@ -24,6 +25,7 @@ def call(role, instructions, context, schema, transport=None, *, task=None):
         credential = 'CODEX_WORKER_API_KEY' if role == 'build' else 'GUARDIAN_OPENAI_REVIEW_KEY'
         endpoint = 'https://api.openai.com/v1/responses'
         body = {'model': spec['model'], 'store': False, 'service_tier': 'default',
+                'background': True,
                 'max_output_tokens': spec['max_output'], 'reasoning': {'effort': 'high'},
                 'instructions': instructions, 'input': json.dumps(context, ensure_ascii=False),
                 'text': {'format': {'type': 'json_schema', 'name': 'guardian_' + role,
@@ -43,18 +45,47 @@ def call(role, instructions, context, schema, transport=None, *, task=None):
         request = urllib.request.Request(endpoint, data=json.dumps(body).encode(),
                                          headers={**headers, 'Content-Type': 'application/json'}, method='POST')
         try:
-            with urllib.request.urlopen(request, timeout=240) as response:
+            # OpenAI reasoning calls run in background mode so large bounded web
+            # tasks are not lost merely because synchronous generation exceeds a
+            # short HTTP socket timeout. Creating the response is still a single
+            # paid request; subsequent GETs only retrieve that same response.
+            create_timeout = 90 if spec['provider'] == 'openai' else 240
+            with urllib.request.urlopen(request, timeout=create_timeout) as response:
                 raw = response.read(2 * 1024 * 1024 + 1)
             if len(raw) > 2 * 1024 * 1024:
                 raise ValueError('Oversized provider response')
             payload = json.loads(raw)
+
+            if spec['provider'] == 'openai' and payload.get('status') in {'queued', 'in_progress'}:
+                response_id = payload.get('id')
+                if not isinstance(response_id, str) or not response_id.startswith('resp_'):
+                    raise ValueError('Background response missing stable response ID')
+                deadline = time.monotonic() + 600
+                retrieve_url = endpoint + '/' + response_id
+                while payload.get('status') in {'queued', 'in_progress'}:
+                    if time.monotonic() >= deadline:
+                        raise RuntimeError(
+                            f'OpenAI background response {response_id} still running after 600s; '
+                            'do not create a duplicate paid request')
+                    time.sleep(2)
+                    retrieve = urllib.request.Request(
+                        retrieve_url, headers={**headers, 'Content-Type': 'application/json'}, method='GET')
+                    with urllib.request.urlopen(retrieve, timeout=60) as response:
+                        raw = response.read(2 * 1024 * 1024 + 1)
+                    if len(raw) > 2 * 1024 * 1024:
+                        raise ValueError('Oversized provider response')
+                    payload = json.loads(raw)
         except urllib.error.HTTPError as exc:
             reason = {401: 'credential rejected', 403: 'provider/model permission denied', 404: 'model or endpoint unavailable',
                       400: 'provider rejected request contract', 422: 'provider rejected request contract',
                       429: 'rate/quota limit reached'}.get(exc.code, 'provider failure; billing outcome unknown')
             raise RuntimeError(f"{role} ({spec['model']}): HTTP {exc.code}, {reason}; reservation retained, no automatic retry") from None
+        except RuntimeError:
+            raise
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
-            # Ambiguous paid calls retain their full reservation. Never retry.
+            # If creation or retrieval becomes ambiguous we still stop. Background
+            # mode makes that state far less likely and preserves a retrievable ID
+            # whenever the create request was acknowledged.
             raise RuntimeError('Provider result unknown; reservation retained, automatic retry forbidden') from None
     else:
         payload = transport(endpoint, body)
