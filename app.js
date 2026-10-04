@@ -4083,6 +4083,7 @@ function renderQuestionAudioEditor(container, q) {
 }
 
 async function generateAiAudioForQuestion(q, container) {
+  if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du KI-Audio erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
   const script = String(q.audioScript || "").replace(/\s+/g, " ").trim();
   if (!script) return toast("Bitte zuerst einen kurzen Hörtext eingeben.", "error");
