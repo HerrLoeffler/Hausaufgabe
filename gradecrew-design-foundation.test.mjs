@@ -11,6 +11,7 @@ const startup = read('startup.js');
 const build = read('tools/build-staging.mjs');
 const dashboardCss = read('gradecrew-dashboard-foundation.css');
 const startscreenCss = read('gradecrew-auth-startscreen.css');
+const startscreenPolishCss = read('gradecrew-auth-startscreen-polish.css');
 const entryFlow = read('gradecrew-entry-flow.js');
 
 test('shared tokens keep accessibility and canonical GradeCrew values', () => {
@@ -37,12 +38,14 @@ test('teacher startup loads and activates public entry before app handlers', () 
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
   const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=4');
+  const startscreenPolishIndex = startup.indexOf('./gradecrew-auth-startscreen-polish.css?v=1');
   const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=4');
   const installIndex = startup.indexOf('installGradeCrewEntryFlow();');
   const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
   assert.ok(startscreenIndex > tokensIndex, 'startscreen stylesheet must follow shared tokens');
+  assert.ok(startscreenPolishIndex > startscreenIndex, 'polish layer must load after the stable startscreen stylesheet');
   assert.ok(entryIndex >= 0 && entryIndex < installIndex, 'public entry module must load before its installer runs');
   assert.ok(installIndex > entryIndex && installIndex < appIndex, 'public entry installer must run before app handlers bind');
 });
@@ -51,6 +54,7 @@ test('staging build packages focused design and entry files', () => {
   assert.match(build, /generated\/gradecrew-design-tokens\.css/);
   assert.match(build, /gradecrew-dashboard-foundation\.css/);
   assert.match(build, /gradecrew-auth-startscreen\.css/);
+  assert.match(build, /gradecrew-auth-startscreen-polish\.css/);
   assert.match(build, /gradecrew-entry-flow\.js/);
 });
 
@@ -62,6 +66,13 @@ test('dashboard foundation stays scoped away from student and secure assessment 
   assert.doesNotMatch(dashboardCss, /#studentView/);
   assert.doesNotMatch(dashboardCss, /#secure/);
   assert.doesNotMatch(dashboardCss, /\.studentQuestion/);
+});
+
+test('startscreen polish layer stays isolated from product screens', () => {
+  assert.match(startscreenPolishCss, /\.gcPublicEntryMode #authView/);
+  assert.doesNotMatch(startscreenPolishCss, /#dashboardView|#studentView|#secure/);
+  assert.equal(/content\s*:/.test(startscreenPolishCss), false, 'visible copy must stay in DOM/i18n, never CSS content');
+  assert.equal(startscreenPolishCss.includes('data:image'), false, 'polish layer must not hide language in data images');
 });
 
 test('public entry uses the canonical manifest and remains auth-scoped', () => {
