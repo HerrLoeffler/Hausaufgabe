@@ -1,0 +1,12 @@
+{
+  "id": "startscreen-after-pilot-20261004",
+  "taskId": "startscreen-masterpiece-v2-20261004",
+  "taskHash": "1d0552aeb6cd51c5a8f60891011a78c44bd722100903d7a1c6210f30d76bc688",
+  "prerequisiteTaskId": "pilot-tutorial-later-a11y-20261004",
+  "originalSource": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+  "selectedBlobs": {
+    "gradecrew-auth-startscreen.css": "8c05ff0d5cc02b254acc4554d59c46661dba6776",
+    "gradecrew-entry-flow.js": "9bc118b16be7ef42efb9d951328a1cabd6525274",
+    "startup.js": "111f890f32c90f2769e670589ea708ce410418f8"
+  }
+}

@@ -371,7 +371,7 @@
     {
       "id": "guardian-recovery-audit-20261004",
       "title": "Guardian permission recovery and current repository audit",
-      "primaryBranch": "fix/guardian-permission-recovery-20261004",
+      "primaryBranch": "fix/guardian-read-permission-homepage-admission-20261004",
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/guardian-recovery-audit-20261004.md"
