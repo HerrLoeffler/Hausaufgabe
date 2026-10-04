@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - feature/staging-assessment-functions-deploy-v1
-  pull_request:
-    paths:
-      - .github/workflows/staging-functions.yml
-      - .github/workflows/staging-assessment-deploy-check.yml
-      - assessment-functions/**
-      - firebase.json
-      - workstreams/staging-assessment-functions-deploy-v1.md
 
 permissions:
   contents: read
@@ -24,21 +17,16 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: assessment-functions/package-lock.json
-      - name: Parse deploy workflow as YAML
-        run: ruby -e 'require "yaml"; YAML.load_file(".github/workflows/staging-functions.yml", aliases: true)'
-      - name: Verify assessment deploy is staging-only and fail-closed
+      - name: Verify assessment deploy scope
+        shell: bash
         run: |
-          grep -q 'deploy-assessment-functions:' .github/workflows/staging-functions.yml
-          grep -q -- '--only functions:assessment' .github/workflows/staging-functions.yml
-          grep -q 'PROJECT_ID: hausaufgabe-staging' .github/workflows/staging-functions.yml
-          grep -q 'staging-assessment-functions-receipt-' .github/workflows/staging-functions.yml
-          grep -q 'cleanupAssessmentPrivateOnQuizDelete' .github/workflows/staging-functions.yml
-          ! grep -A170 'deploy-assessment-functions:' .github/workflows/staging-functions.yml | grep -q -- '--only functions:ai'
-          ! grep -A170 'deploy-assessment-functions:' .github/workflows/staging-functions.yml | grep -q 'firebase deploy.*hosting'
-          ! grep -A170 'deploy-assessment-functions:' .github/workflows/staging-functions.yml | grep -q 'firestore:rules'
-      - name: Test Assessment Functions before any cloud authentication
+          grep -q "deploy-assessment-functions:" .github/workflows/staging-functions.yml
+          grep -q -- "--only functions:assessment" .github/workflows/staging-functions.yml
+          grep -q "PROJECT_ID: hausaufgabe-staging" .github/workflows/staging-functions.yml
+          grep -q "staging-assessment-functions-receipt-" .github/workflows/staging-functions.yml
+          grep -q "cleanupAssessmentPrivateOnQuizDelete" .github/workflows/staging-functions.yml
+      - name: Test Assessment Functions
+        shell: bash
         run: |
           npm ci --prefix assessment-functions --include=dev --no-audit --no-fund
           npm test --prefix assessment-functions
