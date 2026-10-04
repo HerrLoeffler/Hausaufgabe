@@ -74,3 +74,17 @@ und entfernt die inzwischen widersprüchliche doppelte Kosten-Task-Zeile.
 Frische CI für den kombinierten Recovery-Head vor Integration erforderlich.
 Keine Paid-Workflow-Reruns: nach Integration nur den normalen einmaligen
 Recovery-/Guardian-Pfad beobachten. Budget/History/Production-Grenzen erhalten.
+
+
+## Tatsächlicher Quellenblocker nach paralleler Entwicklung
+
+PR #91 auf main afc6524 erhalten: Startscreen-Basis b5d456e und neue Übergabe.
+Der originale Pilot bleibt absichtlich auf eb80c5e6 gepinnt; Web ist nach #90
+f30fa44. recovery.apply_request verlangt explizit identischen aktuellen Ziel-SHA
+und Originalparent des Candidates. Deshalb darf die bloße PR-Lesereparatur den
+alten Paid-Versuch bei verändertem Ziel nicht freigeben. Homepage-Admission wartet
+weiter auf echten Pilot; dessen eigener Quellvertrag muss dann mit dem aktuellen
+Taskhash/ausgewählten Blobs neu geprüft werden. Keine heimliche Rebase-Freigabe
+oder neue Budgetreservierung durch die Dokumentation. Nächster separater Schritt:
+aktuellen source-bound Pilot-/Recovery-Vertrag unter Erhalt von History,
+verbrauchten Versuchen, Gesamtbudget und unabhängigen Reviews erstellen.

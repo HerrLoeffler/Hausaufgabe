@@ -4,7 +4,7 @@
 - Guardian queue id: `startscreen-masterpiece-v2-20261004`
 - Datum: 04.10.2026
 - Koordinationsbranch: `chore/guardian-startscreen-masterpiece-v2-task-20261004`
-- Produktbasis: `feature/gradecrew-app-integration@eb80c5e6a8b6c1ae13deba676709607bfccee208`
+- Produktbasis: `feature/gradecrew-app-integration@b5d456e377fc56701d2a89a83385a7d773773781`
 - Production: unverändert
 
 ## Nutzerauftrag
@@ -83,3 +83,9 @@ Die Multi-KI-Kette ist daher implementiert, aber noch nicht ausführbar. Keys d�
 - Integration: nein
 - neuer Preview: nein
 - Production: UNVERÄNDERT
+
+## Pilotbefund 04.10.2026
+
+Der erste echte Guardian-Pilot `37196835882` lief bis Build/Publish/Combined-Validation erfolgreich. Claude-Security-Review war ebenfalls erfolgreich. Zwei OpenAI-Reviews stoppten fail-closed mit HTTP 403 `provider/model permission denied` für `gpt-6-astra` und `gpt-6-sol`; keine Integration, kein Deploy. Nicht blind wiederholen. Vor dem Startscreen-Auftrag muss der dedizierte OpenAI-Review-Key Schreibzugriff auf Responses und Projekt-Modellnutzung für beide Review-Modelle besitzen. Der Worker-Key ist grundsätzlich funktionsfähig, da der GPT-6.1-Sol-Build erfolgreich war.
+
+Der Web-Integrationsbranch ist inzwischen auf `b5d456e3…` weitergelaufen. Vergleich gegen `eb80c5e6…`: keine Änderungen an `gradecrew-auth-startscreen.css` oder `gradecrew-entry-flow.js`; Task deshalb auf den aktuellen Web-Head neu gepinnt. Audio-/Assessment-/Backendänderungen bleiben außerhalb des erlaubten Dateiscopes.
