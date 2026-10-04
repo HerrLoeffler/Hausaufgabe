@@ -30,58 +30,89 @@ const CREW_MEMBERS = Object.freeze({
 });
 
 const SUBJECT_PATTERNS = [
-  [/\b(mathematik|mathe)(?:test|probe|prüfung|pruefung)?\b/i, "Mathematik"],
-  [/\bdeutsch(?:test|probe|prüfung|pruefung)?\b/i, "Deutsch"],
-  [/\b(englisch|english)(?:test|probe|prüfung|pruefung)?\b/i, "Englisch"],
-  [/\b(geschichte|gpg)(?:test|probe|prüfung|pruefung)?\b/i, "GPG"],
-  [/\bethik(?:test|probe|prüfung|pruefung)?\b/i, "Ethik"],
-  [/\b(informatik|it)(?:test|probe|prüfung|pruefung)?\b/i, "Informatik"],
-  [/\b(biologie|bio)(?:test|probe|prüfung|pruefung)?\b/i, "Biologie"],
-  [/\bphysik(?:test|probe|prüfung|pruefung)?\b/i, "Physik"],
-  [/\bchemie(?:test|probe|prüfung|pruefung)?\b/i, "Chemie"],
-  [/\bkunst(?:test|probe|prüfung|pruefung)?\b/i, "Kunst"],
-  [/\bmusik(?:test|probe|prüfung|pruefung)?\b/i, "Musik"],
-  [/\b(wib|wirtschaft und beruf)(?:test|probe|prüfung|pruefung)?\b/i, "WiB"]
+  [/\b(mathematik|mathe|mathematics|maths|math)(?:test|probe|prüfung|pruefung| test)?\b/i, "Mathematik"],
+  [/\b(deutsch|german)(?:test|probe|prüfung|pruefung| test)?\b/i, "Deutsch"],
+  [/\b(englisch|english)(?:test|probe|prüfung|pruefung| test)?\b/i, "Englisch"],
+  [/\b(geschichte|gpg|history)(?:test|probe|prüfung|pruefung| test)?\b/i, "GPG"],
+  [/\b(ethik|ethics)(?:test|probe|prüfung|pruefung| test)?\b/i, "Ethik"],
+  [/\b(informatik|it|computer science|computing)(?:test|probe|prüfung|pruefung| test)?\b/i, "Informatik"],
+  [/\b(biologie|bio|biology)(?:test|probe|prüfung|pruefung| test)?\b/i, "Biologie"],
+  [/\b(physik|physics)(?:test|probe|prüfung|pruefung| test)?\b/i, "Physik"],
+  [/\b(chemie|chemistry)(?:test|probe|prüfung|pruefung| test)?\b/i, "Chemie"],
+  [/\b(kunst|art)(?:test|probe|prüfung|pruefung| test)?\b/i, "Kunst"],
+  [/\b(musik|music)(?:test|probe|prüfung|pruefung| test)?\b/i, "Musik"],
+  [/\b(wib|wirtschaft und beruf|economics and careers)(?:test|probe|prüfung|pruefung| test)?\b/i, "WiB"]
 ];
 
 const SCHOOL_TYPE_PATTERNS = [
-  [/\bgrundschule\b/i, "Grundschule"],
-  [/\bmittelschule\b/i, "Mittelschule"],
-  [/\brealschule\b/i, "Realschule"],
-  [/\bgymnasium\b/i, "Gymnasium"],
-  [/\bberufsschule\b/i, "Berufsschule"]
+  [/\b(grundschule|primary school|elementary school)\b/i, "Grundschule"],
+  [/\b(mittelschule|middle school)\b/i, "Mittelschule"],
+  [/\b(realschule\b/i, "Realschule"],
+  [/\b(gymnasium|grammar school)\b/i, "Gymnasium"],
+  [/\b(berufsschule|vocational school)\b/i, "Berufsschule"]
 ];
 
 const TYPE_PATTERNS = [
   [/\b(single[ -]?choice|einfachauswahl)\b/i, "single"],
   [/\b(multiple[ -]?choice|mehrfachauswahl)\b/i, "multi"],
-  [/\b(freitext(?:aufgaben?|fragen?)?|offene[nr]? frage[n]?)\b/i, "text"],
+  [/\b(freitext(?:aufgaben?|fragen?)?|offene[nr]? frage[n]?|free[ -]?text|open questions?)\b/i, "text"],
   [/\b(dropdown|auswahlliste)\b/i, "dropdown"],
-  [/\b(richtig\s*\/\s*falsch|richtig oder falsch|true\s*\/\s*false)\b/i, "truefalse"],
-  [/\b(lückentext|lueckentext)\b/i, "gapfill"],
+  [/\b(richtig\s*\/\s*falsch|richtig oder falsch|true\s*\/\s*false|true or false)\b/i, "truefalse"],
+  [/\b(lückentext|lueckentext|gap[ -]?fill)\b/i, "gapfill"],
   [/\b(zuordnen|zuordnung|matching)\b/i, "matching"],
-  [/\b(sortieren|reihenfolge|ordering)\b/i, "ordering"],
-  [/\b(gruppieren|kategorien)\b/i, "grouping"],
-  [/\b(wörter markieren|woerter markieren|markieren)\b/i, "markwords"],
-  [/\b(rechenergebnis|zahl(?:en)?aufgabe[n]?)\b/i, "number"]
+  [/\b(sortieren|reihenfolge|ordering|put in order)\b/i, "ordering"],
+  [/\b(gruppieren|kategorien|grouping|categories)\b/i, "grouping"],
+  [/\b(wörter markieren|woerter markieren|markieren|mark words)\b/i, "markwords"],
+  [/\b(rechenergebnis|zahl(?:en)?aufgabe[n]?|numeric answer|calculation result)\b/i, "number"]
 ];
 
 const COMMON_RESPONSES = Object.freeze({
-  greeting: Object.freeze({
-    coco: "Hallo! Ich bin Coco. Frag mich einfach, wo du etwas findest oder was als Nächstes sinnvoll ist.",
-    remy: "Hallo! Ich bin Remy. Sag mir zum Beispiel: „Englisch, 4. Klasse, Farben, leicht, 10 Aufgaben.“",
-    emmi: "Hallo! Ich bin Emmi. Schick mir eine Aufgabe oder sag mir, was daran noch nicht passt.",
-    wilma: "Hallo! Ich bin Wilma. Ich helfe dir bei Bewertung, Ergebnissen und der Frage, wo eine Klasse noch Unterstützung braucht."
+  "de-DE": Object.freeze({
+    greeting: Object.freeze({
+      coco: "Hallo! Ich bin Coco. Frag mich einfach, wo du etwas findest oder was als Nächstes sinnvoll ist.",
+      remy: "Hallo! Ich bin Remy. Sag mir zum Beispiel: „Englisch, 4. Klasse, Farben, leicht, 10 Aufgaben.“",
+      emmi: "Hallo! Ich bin Emmi. Schick mir eine Aufgabe oder sag mir, was daran noch nicht passt.",
+      wilma: "Hallo! Ich bin Wilma. Ich helfe dir bei Bewertung, Ergebnissen und der Frage, wo eine Klasse noch Unterstützung braucht."
+    }),
+    privacy: "Für die Assistenz gilt: Bitte keine personenbezogenen Schülerdaten eingeben. Wiederkehrende Standardfragen kann GradeCrew direkt beantworten, ohne dafür jedes Mal eine KI-Anfrage zu senden.",
+    cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
+    capabilities: Object.freeze({
+      coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
+      remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Aufgabentypen und Zusatzwünsche.",
+      emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
+      wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
+    })
   }),
-  privacy: "Für die Assistenz gilt: Bitte keine personenbezogenen Schülerdaten eingeben. Wiederkehrende Standardfragen kann GradeCrew direkt beantworten, ohne dafür jedes Mal eine KI-Anfrage zu senden.",
-  cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
-  capabilities: Object.freeze({
-    coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
-    remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Aufgabentypen und Zusatzwünsche.",
-    emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
-    wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
+  "en-GB": Object.freeze({
+    greeting: Object.freeze({
+      coco: "Hi! I'm Coco. Ask me where to find something or what the next useful step is.",
+      remy: "Hi! I'm Remy. For example, say: ‘English, Year 4, colours, easy, 10 questions.’",
+      emmi: "Hi! I'm Emmi. Send me a question or tell me what still needs improving.",
+      wilma: "Hi! I'm Wilma. I help with grading, results and identifying where a class may need more support."
+    }),
+    privacy: "Please don't enter personal student data into the assistant. GradeCrew can answer recurring standard questions locally without sending an AI request every time.",
+    cost: "GradeCrew first tries to handle common questions and clear commands locally. The AI fallback is used only when genuine language understanding is needed. This saves API calls and keeps responses faster.",
+    capabilities: Object.freeze({
+      coco: "I help you find your way around GradeCrew. Create tests with Remy under ‘Create with AI’; Emmi works in the editor and Wilma helps with results.",
+      remy: "I can understand test requests and prepare the AI form: subject, year/class, school type, topic, difficulty, question count, points, listening questions, question types and additional requests.",
+      emmi: "I can review questions and help improve a test in the editor.",
+      wilma: "I can help with grading and interpreting results."
+    })
   })
 });
+
+const ENGLISH_SUBJECT_LABELS = Object.freeze({
+  Mathematik: "Mathematics", Deutsch: "German", Englisch: "English",
+  GPG: "History / Social Studies", Ethik: "Ethics", Informatik: "Computer Science",
+  Biologie: "Biology", Physik: "Physics", Chemie: "Chemistry",
+  Kunst: "Art", Musik: "Music", WiB: "Economics & Careers"
+});
+const ENGLISH_DIFFICULTY_LABELS = Object.freeze({
+  leicht: "easy", mittel: "medium", anspruchsvoll: "challenging", gemischt: "mixed"
+});
+function normalizeLocale(value = "de-DE") {
+  return /^en(?:-|$)/i.test(String(value || "")) ? "en-GB" : "de-DE";
+}
 
 const PARSER_VERSION = "remy-structure-v4-audio";
 const INITIAL_EASY = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)\b[^.!?]{0,50}?\b(?:leicht|einfach)\b/i;
