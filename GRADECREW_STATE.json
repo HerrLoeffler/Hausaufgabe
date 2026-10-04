@@ -103,8 +103,8 @@
       "database_backup": false,
       "production_backup": false
     },
-    "agent_dispatch": "activated_worker_verified_pilot_stopped_at_review_permissions",
-    "agent_dispatch_note": "Admission 37196805396 verifies keys/flags; real worker created PR 78, combined candidate CI passed. Both OpenAI reviewers returned 403; E2E/staging not yet verified.",
+    "agent_dispatch": "implemented_pending_credentials_and_e2e",
+    "agent_dispatch_note": "Credentials and activation verified by admission 37196805396; worker created PR 78 and combined candidate CI passed. Existing schema enum retained until a successful complete E2E; both OpenAI reviews failed with 403. Recovery prepared.",
     "release_control_audit": {
       "branch": "fix/release-control-evidence-v2",
       "pr": 50,
