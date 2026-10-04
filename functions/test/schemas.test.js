@@ -7,6 +7,7 @@ const { validateQuestion, normalizeQuestion } = require("../lib/validation");
 const { storedAiQuestion } = require("../lib/ai-job");
 const ajv = new Ajv({ allErrors: true });
 const mediaIntent = { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
+const audioIntent = { kind: "none", script: "", reason: "" };
 const samples = {
   single: { text: "Welches Wort ist ein Nomen?", options: [{ text: "Hund", correct: true }, { text: "laufen", correct: false }] },
   multi: { text: "Markiere die Nomen.", options: [{ text: "Haus", correct: true }, { text: "Baum", correct: true }, { text: "schnell", correct: false }] },
@@ -20,7 +21,7 @@ const samples = {
   grouping: { text: "Ordne nach Wortart.", groups: [{ name: "Nomen", items: ["Baum", "Haus"] }, { name: "Verben", items: ["laufen", "singen"] }] },
   markwords: { text: "Markiere die Nomen.", passage: "Der Hund spielt im Garten.", targetWords: ["Hund", "Garten"] }
 };
-function sample(type, extra = {}) { return { type, text: "", points: 1, ...samples[type], mediaIntent, ...extra }; }
+function sample(type, extra = {}) { return { type, text: "", points: 1, ...samples[type], mediaIntent, audioIntent, ...extra }; }
 
 test("every permitted type validates against its compact schema and application contract", () => {
   for (const type of Object.keys(samples)) {
