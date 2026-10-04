@@ -9,7 +9,7 @@ const { defineSecret } = require("firebase-functions/params");
 const { getStorage } = require("firebase-admin/storage");
 const { getFunctions } = require("firebase-admin/functions");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
-const { REGION, TEXT_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
+const { REGION, TEXT_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
 const { questionSchema, questionSchemaForType, testSchemaForRequest } = require("./lib/schemas");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const { generateTestInBatches } = require("./lib/test-batches");
@@ -23,9 +23,10 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
+const { createAudioAsset } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
-const { quizForGeneratedTest, storedAiQuestion, imageCount } = require("./lib/ai-job");
+const { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount } = require("./lib/ai-job");
 const { reserveJob, releaseJob } = require("./lib/job-slots");
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 
@@ -97,7 +98,8 @@ function cleanSourceTest(value) {
       targetWords: Array.isArray(q?.targetWords) ? q.targetWords.slice(0, 8).map(x => String(x).slice(0, 80)) : [],
       numericAnswer: Number.isFinite(Number(q?.numericAnswer)) ? Number(q.numericAnswer) : null,
       unit: String(q?.unit || "").slice(0, 30),
-      mediaIntent: { kind: q?.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" }
+      mediaIntent: { kind: q?.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" },
+      audioIntent: { kind: q?.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none", script: "" }
     }))
   };
 }
@@ -123,6 +125,12 @@ function cleanInput(data = {}) {
     throw new HttpsError("invalid-argument", "Die KI erstellt keine Bildantworten mehr. Bitte nur Aufgabenbilder wählen.");
   }
   const imageMode = exactImageCounts ? (imageQuestionCount ? "exact" : "none") : data.imageMode === "none" ? "none" : "sparse";
+  const exactAudioCounts = Object.hasOwn(data, "audioQuestionCount");
+  const audioQuestionCount = Number(data.audioQuestionCount ?? 0);
+  if (exactAudioCounts && (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > LIMITS.maxAudioQuestions || audioQuestionCount > count)) {
+    throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Höraufgaben wählen, höchstens eine Audiospur je Aufgabe.");
+  }
+  const audioMode = exactAudioCounts && audioQuestionCount > 0 ? "exact" : "none";
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
@@ -130,6 +138,7 @@ function cleanInput(data = {}) {
     allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
     allowImageChoices: false,
+    exactAudioCounts, audioMode, audioQuestionCount: exactAudioCounts ? audioQuestionCount : 0,
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
     sourceTest: cleanSourceTest(data.sourceTest)
@@ -198,7 +207,7 @@ async function reviewDraft(test, memory) {
 
 exports.getAiStatus = onCall(callableOpts, async request => {
   const { profile } = await requireAiUser(request);
-  return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, qualityMemoryVersion: MEMORY_VERSION };
+  return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL, audio: AUDIO_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, qualityMemoryVersion: MEMORY_VERSION };
 });
 
 async function generateTestForUser(uid, data, onProgress = async () => {}) {
@@ -224,11 +233,11 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
-      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none" }),
+      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
         schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${personalGuide}${priorContext}`, content: materialContent });
     });
     const usage = { ...first.usage };
@@ -239,15 +248,15 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const repairs = {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind }) => {
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none") }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
+          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind: original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }), schemaName: "testify_test_question_replacement_v2",
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind: original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
       },
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
-          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none" }), schemaName: "testify_test_repair_v2",
+          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
           userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });
@@ -359,7 +368,7 @@ exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async r
   const now = Timestamp.now();
   const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, jobData: {
       ownerId: uid, status: "queued", stage: "queued", progressMessage: "Erstellung wird gestartet …", percent: 0,
-      completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0,
+      completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0,
       subject: input.subject, grade: input.grade, topic: input.topic, requestId,
       input: { ...Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)), clientRequestId: requestId }, materials, sourceQuizId,
       createdAt: now, updatedAt: now
@@ -424,32 +433,51 @@ exports.processAiTestJob = onTaskDispatched({
     const response = await generateTestForUser(uid, { ...job.input, materials: job.materials }, progress);
     const questions = response.test.questions;
     const totalImages = imageCount(questions);
-    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Bilder werden gespeichert …", imageTotal: totalImages, updatedAt: Timestamp.now() });
+    const totalAudios = audioCount(questions);
+    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;
     await jobRef.update({ quizId: quiz.code, updatedAt: Timestamp.now() });
     let completedImages = 0;
+    let completedAudios = 0;
+    let audioReady = true;
     let totalPoints = 0;
     for (let index = 0; index < questions.length; index += 1) {
       const raw = questions[index];
       activeQuestion = raw;
       activePosition = index + 1;
-      await progress(raw.mediaIntent?.kind !== "none" ? "generate_media" : "prepare_question", 65 + Math.floor(30 * index / questions.length), `Aufgabe ${index + 1} von ${questions.length} wird vorbereitet …`);
+      await progress((raw.mediaIntent?.kind !== "none" || raw.audioIntent?.kind !== "none") ? "generate_media" : "prepare_question", 65 + Math.floor(30 * index / questions.length), `Aufgabe ${index + 1} von ${questions.length} wird vorbereitet …`);
       const q = await storedAiQuestion(raw, index, {
         model: response.meta.model, promptVersion: response.meta.promptVersion,
         kind: job.sourceQuizId ? "similar" : "generated",
         generateMedia: async options => (await createVerifiedMedia({ uid, ...options })).asset,
+        generateAudio: async options => (await createAudioAsset({ uid, ...options })),
         onImage: async () => {
           completedImages += 1;
           await jobRef.update({ imageCompleted: completedImages, updatedAt: Timestamp.now() });
-        }
+        },
+        onAudio: async () => {
+          completedAudios += 1;
+          await jobRef.update({ audioCompleted: completedAudios, updatedAt: Timestamp.now() });
+        },
+        onAudioFallback: async () => { audioReady = false; }
       });
-      await quizRef.collection("questions").doc(`q${String(index + 1).padStart(3, "0")}`).create({ ...q, updatedAt: Timestamp.now() });
+      const questionId = `q${String(index + 1).padStart(3, "0")}`;
+      const { audioScript = "", ...publicQuestion } = q;
+      await quizRef.collection("questions").doc(questionId).create({ ...publicQuestion, updatedAt: Timestamp.now() });
+      if (String(audioScript).trim()) {
+        await quizRef.collection("audioScripts").doc(questionId).set({
+          script: String(audioScript).trim().slice(0, LIMITS.maxAudioScriptChars),
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+      }
       totalPoints += q.points;
       await quizRef.update({ questionCount: index + 1, totalPoints, updatedAt: Timestamp.now() });
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
     }
     await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
+      audioQuestionCount: totalAudios, audioReady,
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [], updatedAt: Timestamp.now() });
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
@@ -523,7 +551,8 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
-  const basePrompt = questionUserPrompt({ mediaKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
+  const audioKind = question?.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none";
+  const basePrompt = questionUserPrompt({ mediaKind, audioKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
   const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
@@ -532,13 +561,13 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let normalized, errors;
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
   const variantSchema = request.data?.variant && QUESTION_TYPES.includes(question.type)
-    ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind })
+    ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind })
     : questionSchema;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
-    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind });
+    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
     } else if (request.data?.requireDifferent) {
@@ -569,6 +598,26 @@ exports.analyzeMaterial = onCall(callableOpts, async request => {
     return { summary: String(response.output_text || "").slice(0, 12000) };
   } finally {
     await deleteUploadedMaterials(materials);
+  }
+});
+
+exports.generateQuestionAudio = onCall(callableOpts, async request => {
+  const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "audio-access"); });
+  const quizId = String(request.data?.quizId || "");
+  const questionId = String(request.data?.questionId || "");
+  if (!/^[A-Z0-9_-]{4,40}$/i.test(quizId) || !/^[A-Z0-9_-]{2,80}$/i.test(questionId)) {
+    throw new HttpsError("invalid-argument", "Ungültige Test- oder Aufgaben-ID.");
+  }
+  const script = String(request.data?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
+  if (!script) throw new HttpsError("invalid-argument", "Hörtext fehlt.");
+  const quizSnap = await getFirestore().collection("quizzes").doc(quizId).get();
+  const quiz = quizSnap.data();
+  if (!quizSnap.exists || quiz?.ownerId !== uid || quiz?.rightsHold) throw new HttpsError("permission-denied", "Auf diesen Test kann nicht zugegriffen werden.");
+  if (quiz?.published === true && quiz?.ended !== true) throw new HttpsError("failed-precondition", "Audio kann während eines laufenden veröffentlichten Tests nicht verändert werden.");
+  try {
+    return { asset: await createAudioAsset({ uid, questionId, script }) };
+  } catch (err) {
+    throw reportAiError(err, "audio-generation");
   }
 });
 

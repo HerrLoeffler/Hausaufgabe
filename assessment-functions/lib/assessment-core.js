@@ -112,6 +112,15 @@ function safeImage(question) {
   };
 }
 
+function safeAudio(question) {
+  const src = clampString(question.audioDataUrl || "", 500000);
+  if (!src || !src.startsWith("data:audio/")) return null;
+  return {
+    src,
+    aiGenerated: question.audioAiGenerated !== false
+  };
+}
+
 function commonPublicQuestion(question) {
   const type = SUPPORTED_TYPES.has(question.type) ? question.type : "text";
   return {
@@ -120,7 +129,8 @@ function commonPublicQuestion(question) {
     type,
     text: type === "gapfill" ? "Lückentext" : clampString(question.text, 5000),
     points: round1(question.points),
-    image: safeImage(question)
+    image: safeImage(question),
+    audio: safeAudio(question)
   };
 }
 
@@ -253,6 +263,7 @@ function fingerprintQuestion(question) {
     id: String(question?.id || ""), position: Number(question?.position) || 0,
     type: String(question?.type || ""), text: String(question?.text || ""), points: Number(question?.points) || 0,
     imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
+    audioDataUrl: String(question?.audioDataUrl || ""), audioAiGenerated: question?.audioAiGenerated !== false, audioNeedsRegeneration: question?.audioNeedsRegeneration === true,
     options: Array.isArray(question?.options) ? question.options.map(option => ({
       text: String(option?.text || ""), correct: option?.correct === true,
       imageDataUrl: String(option?.imageDataUrl || ""), imageUrl: String(option?.imageUrl || ""), imageAlt: String(option?.imageAlt || "")
@@ -453,7 +464,8 @@ function publicQuizMetadata(quiz, quizId) {
 function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
     "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
-    "targetWords", "acceptedOrders", "gradingKey", "answerKey", "solutions"
+    "targetWords", "acceptedOrders", "gradingKey", "answerKey", "solutions",
+    "audioScript", "transcript", "audioTranscript"
   ]);
   const visit = value => {
     if (!value || typeof value !== "object") return;

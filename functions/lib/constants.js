@@ -3,6 +3,7 @@
 const REGION = "europe-west1";
 const TEXT_MODEL = "gpt-5.6-luna";
 const IMAGE_MODEL = "gpt-image-2";
+const AUDIO_MODEL = "gpt-4o-mini-tts";
 const PROMPT_VERSION = "testify-ai-v16";
 const AI_SCHEMA_VERSION = 5;
 const QUESTION_TYPES = Object.freeze([
@@ -22,12 +23,17 @@ const LIMITS = Object.freeze({
   maxMaterials: 5,
   maxMaterialBytes: 15 * 1024 * 1024,
   maxVisualQuestions: 5,
+  maxAudioQuestions: 5,
+  maxAudioScriptChars: 500,
+  maxAudioBytes: 320 * 1024,
   testPerMinute: 3,
   testPerDay: 40,
   questionPerMinute: 12,
   questionPerDay: 300,
   imagePerMinute: 28,
   imagePerDay: 80,
+  audioPerMinute: 20,
+  audioPerDay: 120,
   materialPerMinute: 6,
   materialPerDay: 100,
   assistantPerMinute: 20,
@@ -45,6 +51,6 @@ const RETENTION = Object.freeze({
 });
 
 module.exports = {
-  REGION, TEXT_MODEL, IMAGE_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION,
+  REGION, TEXT_MODEL, IMAGE_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION,
   QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS, RETENTION
 };

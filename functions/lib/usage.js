@@ -8,6 +8,7 @@ const map = {
   test: [LIMITS.testPerMinute, LIMITS.testPerDay],
   question: [LIMITS.questionPerMinute, LIMITS.questionPerDay],
   image: [LIMITS.imagePerMinute, LIMITS.imagePerDay],
+  audio: [LIMITS.audioPerMinute, LIMITS.audioPerDay],
   material: [LIMITS.materialPerMinute, LIMITS.materialPerDay],
   assistant: [LIMITS.assistantPerMinute, LIMITS.assistantPerDay]
 };

@@ -8,14 +8,19 @@ function planTestBatches(input, batchSize = 10) {
   const size = count > 20 ? batchSize : count;
   const imageCount = input.exactImageCounts ? input.imageQuestionCount : input.maxVisualQuestions || 0;
   const plannedImages = input.imageMode === "none" ? 0 : imageCount;
+  const audioCount = input.exactAudioCounts ? input.audioQuestionCount : 0;
+  const plannedAudio = input.audioMode === "none" ? 0 : audioCount;
   const batches = [];
   for (let offset = 0; offset < count; offset += size) {
     const end = Math.min(count, offset + size);
     const images = Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
+    const audios = Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
     batches.push({ ...input, count: end - offset,
       points: (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
       ...(input.exactImageCounts ? { imageQuestionCount: images, imageAnswerQuestionCount: 0 } : {}),
+      ...(input.exactAudioCounts ? { audioQuestionCount: audios } : {}),
       imageMode: images ? input.imageMode : "none", maxVisualQuestions: images,
+      audioMode: audios ? "exact" : "none",
       batchOffset: offset, totalCount: count
     });
   }

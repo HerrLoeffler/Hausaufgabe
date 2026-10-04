@@ -14,6 +14,7 @@ const FIELD_LABELS = Object.freeze({
   count: "Aufgabenanzahl",
   points: "Punkte",
   durationMinutes: "Dauer",
+  audioQuestionCount: "Höraufgaben",
   notes: "Eigene Wünsche",
   questionTypes: "Aufgabentypen"
 });

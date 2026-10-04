@@ -169,7 +169,7 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
     'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
-    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);
   const productionStyle = w.document.createElement('style');
@@ -458,7 +458,7 @@ test('Core persists tutorial questions with images and a one-minute test; no fak
     db: {}, doc: (...parts) => parts.join('/'), serverTimestamp: () => 123, round1: number => number,
     orderingNeedsReview: () => false, validOrder: () => true
   });
-  w.eval(fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
+  w.eval(fn('getQuestionAudioSrc') + '\n' + fn('questionAudioReady') + '\n' + fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
   assert.equal(await w.createTutorialQuiz(w.demo), 'DEMO');
   assert.equal(writes[0].timeLimitMinutes, 1);
   assert.equal(writes.length, 11);
@@ -491,7 +491,7 @@ test('Real student renderer uses ten widgets, four persisted images and a gated 
     escapeHtml: value => String(value).replaceAll('"', '&quot;'), round1: number => number, setupStudentProgress: () => {},
     crewTour: { notify: event => events.push(event) }, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
-  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   const questions = w.demo.questions.map((q, i) => ({ ...q, id: `q${i}` }));
   w.renderStudentQuiz({ ...w.demo, id: 'DEMO', startMode: 'student' }, questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);

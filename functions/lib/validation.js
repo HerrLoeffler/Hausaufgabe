@@ -93,7 +93,7 @@ function variantRepeats(a, b) {
   return contentA && contentB ? contentA === contentB : true;
 }
 
-function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind } = {}) {
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
   const errors = [];
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
@@ -179,6 +179,16 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
       return terms.length && terms.every(term => stemTerms.includes(term)) && (terms.length >= 2 || /\b(welche|welches|welcher)\b/.test(stem));
     })) errors.push("Die Lösung der Bildantwort steht bereits im Fragetext.");
   }
+  const audio = q.audioIntent || { kind: "none", script: "", reason: "" };
+  if (requiredAudioKind && audio.kind !== requiredAudioKind) errors.push(`Die gewählte Audioart muss eingehalten werden: audioIntent.kind=${requiredAudioKind}.`);
+  if (!["none", "ai_generated"].includes(audio.kind)) errors.push("Unbekannte Audioart.");
+  if (!allowAudio && audio.kind !== "none") errors.push("Höraufgaben sind für diesen Test deaktiviert.");
+  if (audio.kind === "ai_generated") {
+    const script = normalizeText(audio.script);
+    if (!script) errors.push("Hörtext fehlt.");
+    if (script.length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
+    if (/\b(?:lösung|richtige antwort|answer is)\s*:/i.test(script)) errors.push("Der Hörtext darf keine als Lösung markierte Antwort enthalten.");
+  }
   return errors;
 }
 
@@ -211,6 +221,10 @@ function normalizeQuestion(q) {
   copy.unit = normalizeText(copy.unit);
   copy.tolerance = Math.max(0, Number(copy.tolerance) || 0);
   copy.mediaIntent = (copy.mediaIntent && typeof copy.mediaIntent === "object" && !Array.isArray(copy.mediaIntent) ? copy.mediaIntent : null) || { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
+  copy.audioIntent = (copy.audioIntent && typeof copy.audioIntent === "object" && !Array.isArray(copy.audioIntent) ? copy.audioIntent : null) || { kind: "none", script: "", reason: "" };
+  copy.audioIntent.kind = copy.audioIntent.kind === "ai_generated" ? "ai_generated" : "none";
+  copy.audioIntent.script = normalizeText(copy.audioIntent.script).slice(0, LIMITS.maxAudioScriptChars);
+  copy.audioIntent.reason = normalizeText(copy.audioIntent.reason).slice(0, 300);
   return copy;
 }
 
@@ -246,6 +260,10 @@ function validateTest(test, opts = {}) {
   if (opts.imageAnswerQuestionCount != null) {
     const count = qs.filter(q => q.mediaIntent?.kind === "image_choices").length;
     if (count !== opts.imageAnswerQuestionCount) errors.push(`Erwartet ${opts.imageAnswerQuestionCount} Aufgaben mit Bildantworten, erhalten ${count}.`);
+  }
+  if (opts.audioQuestionCount != null) {
+    const count = qs.filter(q => q.audioIntent?.kind === "ai_generated").length;
+    if (count !== opts.audioQuestionCount) errors.push(`Erwartet ${opts.audioQuestionCount} Höraufgaben, erhalten ${count}.`);
   }
   return errors;
 }

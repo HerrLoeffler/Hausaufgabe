@@ -120,6 +120,12 @@ service cloud.firestore {
         allow create, update, delete: if ownsQuiz(quizId) || isAdmin();
       }
 
+      // Private Hörtext-Entwürfe: Der Audio-Player liegt an der Aufgabe, der
+      // Transcript darf aber niemals an Schüler ausgeliefert werden.
+      match /audioScripts/{questionId} {
+        allow read, create, update, delete: if ownsQuiz(quizId) || isAdmin();
+      }
+
       // Zeitversuche und Warteraum. Schüler dürfen nur ihren zufälligen Eintrag anlegen
       // und über dessen ID wieder lesen; eine Auflistung ist Eigentümer/Admin vorbehalten.
       match /attempts/{attemptId} {
