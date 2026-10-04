@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-04T10:13:48Z",
+  "observed_at": "2026-10-04T10:22:55.094Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -126,7 +126,7 @@
       "evidence_run": 37077976663,
       "max_attempts_per_stage": 3,
       "full_pipeline_active": false,
-      "next_action": "Securely configure three dedicated API secrets and activation flags; admit one current-SHA small web pilot and verify all three reviews plus same-SHA staging receipts.",
+      "next_action": "Owner-side hidden-key setup: bash tools/automation/setup-guardian.sh pilot-tutorial-later-a11y-20261004; admission verifies keys/flags/history/current source before any paid call. Read actual run results; no blind repeat.",
       "implementation_commit": "6a5c2d0da8f327f6808c30435aea3f52ba9b72a2",
       "independent_review_roles": [
         "correctness",
@@ -137,7 +137,27 @@
       "unprivileged_rehearsal_run": 37192179131,
       "activation_evidence_run": 37181171628,
       "review_keys_present_verified": false,
-      "max_total_build_attempts": 3
+      "max_total_build_attempts": 3,
+      "small_web_cost_profile": {
+        "id": "small-web-v1",
+        "reserved_usd_per_attempt": 0.85,
+        "max_cost_usd_per_task": 2.55,
+        "coding_model_and_three_reviewers_unchanged": true,
+        "pr": 71,
+        "implementation_commit": "6810e163f07c423510e32208562170105d0cdd83",
+        "candidate_ci_run": 37194975024,
+        "rehearsal_run": 37194975244
+      },
+      "prepared_pilot": {
+        "id": "pilot-tutorial-later-a11y-20261004",
+        "source_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+        "allowed_files": [
+          "tutorial-choice-v1.css"
+        ],
+        "cost_profile": "small-web-v1",
+        "status": "queued_not_admitted",
+        "paid_run_verified": false
+      }
     }
   },
   "workstreams": [
@@ -389,6 +409,17 @@
       "next_action": "Masterpiece-Startscreen auf Desktop/iPad/iPhone abnehmen: Header/Navigation, Hero/Crew, CTAs, Schülerzugang, Benefits und responsive Verhalten.",
       "masterpiece_branch": "feature/design-startscreen-masterpiece-v1",
       "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6"
+    },
+    {
+      "id": "guardian-budget-pilot-v1",
+      "branch": "fix/guardian-budget-pilot-v1",
+      "observed_head": "6810e163f07c423510e32208562170105d0cdd83",
+      "stage": "integrated",
+      "ci": "success_guardian_37194975024_rehearsal_37194975244",
+      "staging": "no_product_deploy_this_task",
+      "user_test": "not_performed",
+      "handoff": "workstreams/guardian-budget-pilot-v1.md",
+      "next_action": "Securely set three dedicated API keys and flags, then admit prepared small web pilot; E2E not yet verified."
     }
   ],
   "deployments": [
