@@ -218,10 +218,12 @@
         "taskId": "startscreen-masterpiece-v4-20261004",
         "taskHash": "14463a7d5a403b06f1c01bdc8872e9d7ce53abe53caa257c61db5c849da70010",
         "approvedSha": "578677633c1759e75fee6479f416fb64566f5c5c",
-        "state": "dispatched",
+        "state": "running",
         "controlSha": "c4df4b5bc2d478247f85af5858279ef116ed86cb",
         "controlHash": "b5e92b2dffcacb2e9ff0846eff46f0acf26487b637bcb8179edb08eb086022d6",
-        "reservedAt": "2026-10-04T19:53:46.505698+00:00"
+        "reservedAt": "2026-10-04T19:53:46.505698+00:00",
+        "runId": 37230004552,
+        "runAttempt": 1
       }
     ]
   },
