@@ -144,3 +144,14 @@ Aktueller öffentlicher GitHub-Status meldet Actions allgemein als operational; 
 - Post-merge integration gate on `63cbac307919c6488e33afa74f4e98b3fff8e92b`: **green** (AI Staging Checks run 37229329575). Admin test-account workflow on the same merge commit: **green** (run 37229329574).
 - Staging deployment is **not yet confirmed**. Audio V2 changes both Firebase function codebases (`ai` and `assessment`) plus the Hosting preview, so a Hosting-only preview deploy is insufficient.
 - Production remains unchanged. Do not deploy Audio V2 to Production without explicit approval after Staging verification.
+
+
+## Staging-Checkpoint 04.10.2026
+
+- Audio Masterpiece V2 ist im gemeinsamen Integrationszweig enthalten.
+- Integrationshead vor diesem Checkpoint: `578677633c1759e75fee6479f416fb64566f5c5c`.
+- Gemeinsamer AI-Staging-Gate dieses Integrationsstands: Run `37229676328` grün.
+- Hosting/AI wurden für vorherige Integrationsstände automatisch veröffentlicht.
+- Der neue staging-only Assessment-Functions-Deploypfad wurde separat in PR #117 geprüft und in `main` integriert.
+- Dieser Checkpoint ändert keinen Produktcode. Er erzwingt nach kontrollierter Integration einen frischen gemeinsamen CI-/Deploy-Zyklus, damit Hosting, AI Functions und Assessment Functions nachweislich denselben aktuellen Integrations-SHA verwenden.
+- Production bleibt unverändert.
