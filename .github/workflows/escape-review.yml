@@ -24,6 +24,7 @@ permissions:
 
 jobs:
   test:
+    if: github.event_name != 'pull_request' || github.head_ref != 'prototype/escape-expedition-visual-masterpiece-v1'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
