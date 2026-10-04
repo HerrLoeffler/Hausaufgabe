@@ -170,7 +170,7 @@ const crewAssistant = onCall(assistantOpts, async request => {
         store: false,
         reasoning: { effort: "low" },
         input: [
-          { role: "system", content: [{ type: "input_text", text: crewSystemPrompt(clean.crewId) }] },
+          { role: "system", content: [{ type: "input_text", text: crewSystemPrompt(clean.crewId, clean.uiLocale) }] },
           { role: "user", content: [{ type: "input_text", text: crewUserPrompt(clean) }] }
         ],
         text: {
@@ -183,13 +183,14 @@ const crewAssistant = onCall(assistantOpts, async request => {
         }
       }
     );
-    const result = normalizeCrewResult(data);
+    const result = normalizeCrewResult(data, clean.uiLocale);
     await recordUsage(uid, "assistant", usage, {
       crewId: clean.crewId,
       intent: result.intent,
       actionType: result.action.type,
       cacheCandidate: result.cacheCandidate,
-      assistantVersion: "crew-v1"
+      uiLocale: clean.uiLocale,
+      assistantVersion: "crew-v1-i18n"
     });
     await recordCrewMetricSafe(uid, {
       event: "ai_fallback_completed",
@@ -213,6 +214,7 @@ const crewAssistant = onCall(assistantOpts, async request => {
     console.warn("Crew Assistant fehlgeschlagen:", {
       code,
       crewId: clean.crewId,
+      uiLocale: clean.uiLocale,
       name: err?.name,
       status: err?.status
     });
