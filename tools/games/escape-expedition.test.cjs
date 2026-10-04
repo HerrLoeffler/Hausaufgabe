@@ -209,8 +209,8 @@ test('M1.5 exposes recovery controls for vehicles camera winch generator and rad
   for (const id of ['recoveryBtn', 'winchResetBtn', 'winchExitBtn', 'generatorResetBtn', 'generatorExitBtn']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
-  assert.match(html, /R = aktuelle Mechanik zurücksetzen/);
-  assert.match(html, /Esc = Kamera\/Funk verlassen/);
+  assert.match(html, /R: zurücksetzen/);
+  assert.match(html, /Esc: Kamera\/Funk verlassen/);
 });
 
 test('M1.5 central recovery router covers all six requested mechanics', () => {
