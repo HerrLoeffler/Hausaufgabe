@@ -13,7 +13,19 @@
         "controlHash": "1b81d70859536c2e7538ae52d44799843af71fda20e80af18a5d90bbc33e6079",
         "reservedAt": "2026-10-04T10:53:17.799227+00:00",
         "runId": 37196835882,
-        "runAttempt": 1
+        "runAttempt": 1,
+        "publication": {
+          "head": "bb8188f9dc1928e7ab9a956b952beabd4af5844b",
+          "base": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+          "tree": "f302b348eae2a8884d42fb353c4d0e3eb2653f21",
+          "branch": "automation/worker/pilot-tutorial-later-a11y-20261004/run-37196815805-1",
+          "pr": 78,
+          "candidateHash": "5f3ab219accb2c27c080c669f00d7777921113f57c9ad8d45a22392a798bc758",
+          "requestId": "run-37196815805-1",
+          "changedFiles": [
+            "tutorial-choice-v1.css"
+          ]
+        }
       }
     ]
   },
