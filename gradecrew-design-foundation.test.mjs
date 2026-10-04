@@ -71,6 +71,8 @@ test('dashboard foundation stays scoped away from student and secure assessment 
 test('startscreen polish layer stays isolated from product screens', () => {
   assert.match(startscreenPolishCss, /\.gcPublicEntryMode #authView/);
   assert.doesNotMatch(startscreenPolishCss, /#dashboardView|#studentView|#secure/);
+  assert.equal(/content\s*:/.test(startscreenPolishCss), false, 'visible copy must stay in DOM/i18n, never CSS content');
+  assert.equal(startscreenPolishCss.includes('data:image'), false, 'polish layer must not hide language in data images');
 });
 
 test('public entry uses the canonical manifest and remains auth-scoped', () => {
