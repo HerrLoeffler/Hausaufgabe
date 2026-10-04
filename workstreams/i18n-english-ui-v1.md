@@ -53,8 +53,10 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 ## Status
 
 - Entwicklung: in Arbeit auf `feature/i18n-bilingual-polish-20261004`.
-- CI: AI Staging Checks Lauf #630 / Run `37236172477` wurde angestoßen; Ergebnis noch offen.
-- Integration: PR #131 offen (Draft).
+- CI: AI Staging Checks `37236911229` auf Code-Head `dc90081832a497de601c7740714b8297a7a2cee7` vollständig erfolgreich.
+- Integration: PR #131 offen (Draft), mergebar gegen den aktuellen Integrationsstand.
 - Neuer Preview-Deploy nach Polish: offen.
 - Manueller DE/EN-Abnahmetest nach Polish: offen.
+- Zusätzlicher Auditfix: Legacy-Schüleransicht schützt nun Testtitel, Beschreibung, Fragen und interaktive Prüfungsinhalte vor UI-Übersetzung.
+- Follow-ups: CSV/Export-Lokalisierung, einzelne hart codierte Datumsformate und contentLocale-gerechte systemgenerierte Wahr/Falsch-/Bild-Labels.
 - Production: unverändert.
