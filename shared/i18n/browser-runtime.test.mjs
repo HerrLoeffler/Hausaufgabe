@@ -41,6 +41,8 @@ test("English translates real GradeCrew UI strings and dynamic UI patterns", () 
   assert.equal(translateSource("Speichern"), "Save");
   assert.equal(translateSource("Aufgabe 3"), "Question 3");
   assert.equal(translateSource("Antwort: London"), "Answer: London");
+  assert.equal(translateSource("Entwurf prüfen"), "Review draft");
+  assert.equal(translateSource("Vorschau auswerten"), "Evaluate preview");
   assert.equal(t("system.loading", {}, "fallback"), "GradeCrew is loading …");
   assert.equal(t("count", { count: 2 }), "2 questions");
 });
