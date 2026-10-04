@@ -523,6 +523,7 @@ export const enGBMessages = Object.freeze({
     "Möchtest du deinen Fortschritt speichern?": "Would you like to save your progress?",
     "Für eigene Tests, Klassen, Einstellungen und Ergebnisse brauchst du einen Account. Die Einführung selbst war ohne Registrierung.": "You need an account for your own tests, classes, settings and results. The introduction itself did not require registration.",
     "Willkommen": "Welcome",
+    "Coco begleitet dich durch GradeCrew. Du kannst dich hier erst einmal umsehen – ohne E-Mail, Passwort oder Registrierung.": "Coco guides you through GradeCrew. You can look around first – with no email, password or registration.",
     "Remy macht aus deiner Idee einen Testentwurf.": "Remy turns your idea into a test draft.",
     "Fach, Klasse und Thema reichen als Start. Der Entwurf bleibt deiner – du prüfst und änderst ihn, bevor etwas veröffentlicht wird.": "A subject, class and topic are enough to get started. The draft stays yours – you review and change it before anything is published.",
     "Emmi schaut mit dir über die Aufgaben.": "Emmi reviews the questions with you.",
@@ -548,6 +549,10 @@ export const enGBMessages = Object.freeze({
 });
 
 export const enGBSourcePatterns = Object.freeze([
+  { pattern: /^Schön, dass du da bist, (.+)\.$/, replacement: "Great to have you here, $1." },
+  { pattern: /^farben · keine Daten gespeichert$/, replacement: "colours · no data saved" },
+  { pattern: /^tiere · keine Daten gespeichert$/, replacement: "animals · no data saved" },
+  { pattern: /^schule · keine Daten gespeichert$/, replacement: "school items · no data saved" },
   { pattern: /^(\d+) Aufgaben$/, replacement: "$1 questions" },
   { pattern: /^(\d+) Aufgabe$/, replacement: "$1 question" },
   { pattern: /^(\d+) Punkte$/, replacement: "$1 points" },
