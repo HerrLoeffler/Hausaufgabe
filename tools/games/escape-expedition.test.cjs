@@ -266,3 +266,35 @@ test('M1.5 recovery controls cannot interrupt an already resolving mechanic succ
     assert.match(body, new RegExp(id));
   }
 });
+
+
+test('M2 student-facing copy uses short direct action language', () => {
+  for (const expected of [
+    'Finde die Route',
+    'Fahr durch den Dschungel',
+    'Finde die Tiere',
+    'Fahr zur Station',
+    'Bring den Strom zurück',
+    'Sende den Notruf',
+    'Finde Tukan und Capybara. Fotografiere beide.',
+    'Der Strom ist aus. Starte zuerst den Generator.',
+    'Richtig! Weiter geht’s.'
+  ]) assert.ok(js.includes(expected), \`missing simplified copy: \${expected}\`);
+
+  for (const oldCopy of [
+    'Dokumentiere die Tiere',
+    'Ortungssender auswerten',
+    'Fortschritt freigeschaltet',
+    'Die zwei Zielarten sind Tukan und Capybara',
+    'Die Piste übernimmt den Rest',
+    'Das Jeep-Terminal verlangt zuerst'
+  ]) assert.ok(!js.includes(oldCopy), \`old complex copy remains: \${oldCopy}\`);
+});
+
+test('M2 mechanic instructions are concise and student-friendly', () => {
+  assert.match(html, /LERN-AUFGABE/);
+  assert.match(html, /Triff 3-mal den grünen Bereich/);
+  assert.match(html, /Drück die Stromkreise in der Reihenfolge der Lampen/);
+  assert.match(html, /WASD\/Pfeile: bewegen · E\/Enter: Aktion/);
+  assert.match(html, /R: zurücksetzen · Esc: Kamera\/Funk verlassen/);
+});
