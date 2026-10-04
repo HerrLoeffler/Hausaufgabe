@@ -117,7 +117,7 @@ async function captureCrewMetricToPosthog(input = {}, options = {}) {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(timeoutMs)
+    signal: globalThis.AbortSignal.timeout(timeoutMs)
   });
 
   if (!response?.ok) {
