@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-04T10:22:55.094Z",
+  "observed_at": "2026-10-04",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -18,16 +18,17 @@
   },
   "release_train": {
     "id": "staging-batch-2026-10-04-b",
-    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v1, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität.",
+    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v1, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+    "observed_integration_head": "efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
       "remy-structured-telemetry-v1",
       "emmi-whole-test-revision",
       "tutorial-choice-replay-v1",
-      "design-startscreen-v1"
+      "design-startscreen-v1",
+      "audio-masterpiece-v2"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -36,22 +37,25 @@
       "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
       "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
       "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
-      "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten."
+      "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
+      "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe."
     ],
     "gates": {
-      "combined_ci": "success_run_37194222568",
+      "combined_ci": "success_run_37230351466_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "success_run_37194313727_commit_eb80c5e6a8b6c1ae13deba676709607bfccee208",
-      "staging_functions": "success_run_37194313703_commit_eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "hosting_preview": "success_run_37230439196_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "staging_functions": "success_run_37230439199_ai_and_assessment_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "staging_rules": "not_verified_no_rules_deploy_in_this_train",
       "desktop_ipad_iphone_test": "not_tested_for_eb80_masterpiece_candidate",
       "user_acceptance": "no_manual_acceptance_recorded_for_eb80_candidate",
-      "production": "not_requested"
+      "production": "not_requested",
+      "staging_assessment_functions": "success_run_37230439199_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 106,
-    "important": "Release Control Run 37194637453 bestätigt Integration, Combined CI, Hosting und AI Functions für eb80c5e6a8. Hosting Receipt Artifact 11299769344 verifiziert 106 Dateien; Functions Receipt Artifact 11300560359 bindet alle fünf AI-/Crew-Functions an denselben SHA. Firestore Rules, Geräte-/Fachabnahme und Production bleiben separate Gates.",
-    "next_action": "Abnahme gegen eb80c5e6a8 starten; Ergebnisse mit testedSha speichern. Startscreen/Zugang zuerst, danach Kernabläufe, Crew/Tutorial und Schüler-End-to-End. Keine Production-Freigabe."
+    "important": "Audio Masterpiece V2 ist technisch auf Staging deployed: exakter Integrationscommit efdc1a0212b1fa738917bf13a22ca0c3d9d1d408, gemeinsamer CI 37230351466, Hosting 37230439196 sowie AI- und Assessment-Functions 37230439199 erfolgreich. Browser-/Geräteabnahme bleibt offen; Production unverändert.",
+    "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -64,14 +68,14 @@
     "staging_ai_functions_deploy": "verified_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 37194313727,
-      "app_ci_run_id": 37194222568,
-      "commit": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "run_id": 37230439196,
+      "app_ci_run_id": 37230351466,
+      "commit": "efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
       "verified_files": 106,
       "receipt_artifact_id": 11299769344,
       "verification": "Source authority, stale-head, manifest and published file hashes verified; receipt content checked.",
-      "device_test": "not_performed",
+      "device_test": "not_performed_audio_v2",
       "date": "2026-10-04"
     },
     "functions_automation_evidence": {
@@ -224,19 +228,30 @@
         "attempts": 1,
         "reason": "Provider result unknown; automatic retry forbidden, 2.40 USD reservation retained"
       }
+    },
+    "assessment_functions_automation_evidence": {
+      "workflow": ".github/workflows/staging-functions.yml",
+      "automatic_run_id": 37230439199,
+      "upstream_ci_run_id": 37230351466,
+      "deployed_commit": "efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "deploy_scope": "functions:assessment",
+      "result": "success_deployed_and_verified",
+      "production_access": false,
+      "hosting_scope": false,
+      "firestore_rules_scope": false
     }
   },
   "workstreams": [
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "observed_head": "efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "stage": "staging_deployed",
-      "ci": "success_run_37194222568",
-      "staging": "hosting_preview_and_ai_functions_deployed_exact_sha",
-      "user_test": "not_tested_current_eb80_candidate",
+      "ci": "success_run_37230351466",
+      "staging": "hosting_preview_plus_ai_and_assessment_functions_deployed",
+      "user_test": "audio_v2_not_tested",
       "handoff": "workstreams/web-app.md",
-      "next_action": "Release-Control-Abnahme gegen eb80c5e6a8 durchführen.",
+      "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben.",
       "staging_preview_run": 37194313727,
       "staging_functions_run": 37194313703
     },
@@ -502,6 +517,20 @@
         "visual": "prototype/escape-expedition-visual-masterpiece-v1@e83fde3527297522889b32cacb65c924bc932873",
         "web": "feature/gradecrew-app-integration@f30fa44a383b279bcc49967d2ef0d1840243b27e"
       }
+    },
+    {
+      "id": "audio-masterpiece-v2",
+      "task_id": "GC-AUDIO-01_GC-AUDIO-02",
+      "branch": "feature/audio-masterpiece-v2",
+      "stage": "staging_deployed",
+      "integrated_into": "feature/gradecrew-app-integration@efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "combined_ci": "success_run_37230351466",
+      "staging_preview_run": 37230439196,
+      "staging_functions_run": 37230439199,
+      "staging": "hosting_hash_verified_plus_ai_and_assessment_functions_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/audio-masterpiece-v2.md",
+      "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
     }
   ],
   "deployments": [
