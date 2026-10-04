@@ -132,6 +132,18 @@
       ]
     },
     {
+      "id": "bug-ops-v1",
+      "title": "BugOps / Fehler-Inbox und sichere Reparaturautomatik",
+      "primaryBranch": "feature/bug-ops-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/bug-ops-v1.md",
+      "relatedBranches": [
+        "feature/telemetry-implementation",
+        "feature/guardian-execution-v2"
+      ]
+    },
+    {
       "id": "ios-teacher-app",
       "title": "iPad-Lehrerapp / Shared Design",
       "primaryBranch": "feature/shared-gradecrew-design-system",
