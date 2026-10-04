@@ -9,7 +9,7 @@ on:
       - 'tools/*release_control*.py'
       - '.github/workflows/release-control.yml'
   schedule:
-    - cron: '29 * * * *'
+    - cron: '29 */6 * * *'
   push:
     branches:
       - main
@@ -46,6 +46,9 @@ concurrency:
 jobs:
   board:
     name: Build release / acceptance board
+    # Skipped deploy/archive listeners have no new evidence. Real failures
+    # must still rebuild the board so stale successes cannot hide them.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -91,4 +94,3 @@ jobs:
           path: artifacts/release-control/
           if-no-files-found: warn
           retention-days: 30
-

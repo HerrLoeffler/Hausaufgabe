@@ -1,12 +1,17 @@
 name: Project handoff checks
 on:
   push:
+    # Feature branches are checked once through their PR merge result.
+    branches: [main, feature/gradecrew-app-integration, lab/games-structure, integration/ai-gateway-staging]
     paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   pull_request:
     paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: handoff-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   handoff:
     runs-on: ubuntu-latest
