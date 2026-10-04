@@ -223,7 +223,19 @@
         "controlHash": "b5e92b2dffcacb2e9ff0846eff46f0acf26487b637bcb8179edb08eb086022d6",
         "reservedAt": "2026-10-04T19:53:46.505698+00:00",
         "runId": 37230004552,
-        "runAttempt": 1
+        "runAttempt": 1,
+        "publication": {
+          "head": "961416cdcb3d71d5f45e1e416f6f50ae71a5b7c4",
+          "base": "578677633c1759e75fee6479f416fb64566f5c5c",
+          "tree": "7667738c245e88b206d03df7fd0dcd2d7c001379",
+          "branch": "automation/worker/startscreen-masterpiece-v4-20261004/run-37229978936-1",
+          "pr": 118,
+          "candidateHash": "2a69e02d58e30113fed9b169c457080523acf54a345435bb2e057f382e3e2dda",
+          "requestId": "run-37229978936-1",
+          "changedFiles": [
+            "gradecrew-auth-startscreen-polish.css"
+          ]
+        }
       }
     ]
   },
