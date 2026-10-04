@@ -7252,7 +7252,7 @@ function wholeTestRevisionFingerprint() {
 }
 
 function wholeTestRevisionLocked(question) {
-  return Boolean(question?.imageChoicesOnly || question?.options?.some(option => option?.imageDataUrl));
+  return Boolean(question?.imageChoicesOnly || question?.options?.some(option => option?.imageDataUrl) || question?.audioScript || getQuestionAudioSrc(question));
 }
 
 function wholeTestRevisionSource() {
@@ -7271,7 +7271,7 @@ function wholeTestRevisionSource() {
 }
 
 function restoreWholeRevisionMedia(sourceQuestion, nextQuestion) {
-  for (const key of ["imageDataUrl", "imageUrl", "imagePath", "imageByteSize", "imageAlt"]) {
+  for (const key of ["imageDataUrl", "imageUrl", "imagePath", "imageByteSize", "imageAlt", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration", "audioScript"]) {
     if (sourceQuestion?.[key] !== undefined) nextQuestion[key] = sourceQuestion[key];
   }
   return nextQuestion;
