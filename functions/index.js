@@ -614,8 +614,6 @@ exports.generateQuestionAudio = onCall(callableOpts, async request => {
   const quiz = quizSnap.data();
   if (!quizSnap.exists || quiz?.ownerId !== uid || quiz?.rightsHold) throw new HttpsError("permission-denied", "Auf diesen Test kann nicht zugegriffen werden.");
   if (quiz?.published === true && quiz?.ended !== true) throw new HttpsError("failed-precondition", "Audio kann während eines laufenden veröffentlichten Tests nicht verändert werden.");
-  const questionSnap = await getFirestore().collection("quizzes").doc(quizId).collection("questions").doc(questionId).get();
-  if (!questionSnap.exists) throw new HttpsError("not-found", "Aufgabe nicht gefunden.");
   try {
     return { asset: await createAudioAsset({ uid, questionId, script }) };
   } catch (err) {
