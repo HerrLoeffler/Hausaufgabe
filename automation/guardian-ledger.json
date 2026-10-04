@@ -180,7 +180,7 @@
         "taskId": "startscreen-masterpiece-v2-20261004",
         "taskHash": "59595a73b641e37e886515a819902d69792dff5471054feb2a8c93ce3cb96ea8",
         "approvedSha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
-        "state": "reserved",
+        "state": "dispatched",
         "controlSha": "1825bad155bbf754ece3aaa9a9c38ab66269dcca",
         "controlHash": "9e47248230f88e1e46cb06ab28b848b8d2afeeb8ec90352e67c39169d9329e0c",
         "reservedAt": "2026-10-04T17:20:32.967644+00:00"
