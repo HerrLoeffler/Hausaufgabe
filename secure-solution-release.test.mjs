@@ -28,3 +28,13 @@ test("server release requires snapshotted teacher opt-in and ended quiz", () => 
   assert.doesNotMatch(source, /showSolutionsAfterEnd/);
 });
 
+
+
+test("released solution audio stays behind the same server gate and never autoplays", () => {
+  assert.match(lifecycle, /async function attachReleasedSolutionAudio/);
+  assert.match(lifecycle, /!receipt\?\.solutionsReleased/);
+  assert.match(lifecycle, /solutionAudioDataUrl/);
+  assert.match(source, /solution\.audio\?\.src/);
+  assert.match(source, /audio\.controls = true/);
+  assert.doesNotMatch(source, /\.autoplay\s*=\s*true|autoplay=/);
+});
