@@ -21,10 +21,10 @@ KIND = 'confirmed-review-permission-403'
 
 
 def job_log(job_id):
-    result = subprocess.run(['gh', 'api', f'repos/{REPO}/actions/jobs/{job_id}/logs'],
+    result = subprocess.run(['gh', 'run', 'view', '--repo', REPO, '--job', str(job_id), '--log'],
                             capture_output=True, text=True, timeout=30)
     if result.returncode or len(result.stdout) > 2 * 1024 * 1024:
-        raise ValueError('Cannot qualify permission failure from trusted job log')
+        raise ValueError(f'Cannot qualify permission failure from trusted job log (CLI exit {result.returncode})')
     return result.stdout
 
 
