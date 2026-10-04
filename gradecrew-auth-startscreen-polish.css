@@ -1,0 +1,15 @@
+/* GradeCrew public entry – isolated visual polish layer.
+   Loaded after gradecrew-auth-startscreen.css.
+   This file is intentionally small so bounded design reviews can refine
+   composition, depth, spacing and responsive behavior without rewriting the
+   stable public-entry foundation.
+
+   Internationalization rule:
+   - no visible words in CSS content, data URIs or background images;
+   - all user-facing copy stays in the DOM/i18n catalogs;
+   - decorative symbols only.
+*/
+
+.gcPublicEntryMode #authView {
+  --gc-entry-polish-layer: 1;
+}
