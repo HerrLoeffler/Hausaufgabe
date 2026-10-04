@@ -20,6 +20,7 @@ function setup(t) {
       <label>Schwierigkeit<input id="aiDifficulty"></label>
       <label>Anzahl<input id="aiCount"></label>
       <label>Punkte<input id="aiPoints"></label>
+      <label>Höraufgaben<input id="aiAudioQuestionCount"></label>
       <details><div id="aiTypeChecks"><label><input type="checkbox" value="single" checked>Single</label><label><input type="checkbox" value="multi">Multiple</label><label><input type="checkbox" value="text">Freitext</label></div></details>
       <label>Wünsche<textarea id="aiCustomNotes"></textarea></label>
       <button id="generateAiTestBtn">Test erstellen</button>
@@ -80,4 +81,19 @@ test('Remy dictation is designed to survive short browser speech pauses', () => 
   assert.match(source, /active\.onend = \(\) =>/);
   assert.match(source, /setTimeout\(startRecognitionCycle, 180\)/);
   assert.doesNotMatch(source, /gcRemyHelpLauncher|createAiBtn/);
+});
+
+
+test('Remy fills an explicit listening-task count into the existing audio field', async t => {
+  const w = setup(t);
+  const input = w.document.getElementById('gcRemyCreateInput');
+  input.value = 'Englisch 6. Klasse Shopping, 12 Aufgaben, davon 3 Höraufgaben.';
+  w.document.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
+  await settle(w);
+  assert.equal(w.document.getElementById('aiSubject').value, 'Englisch');
+  assert.equal(w.document.getElementById('aiGrade').value, '6');
+  assert.equal(w.document.getElementById('aiTopic').value, 'Shopping');
+  assert.equal(w.document.getElementById('aiCount').value, '12');
+  assert.equal(w.document.getElementById('aiAudioQuestionCount').value, '3');
+  assert.match(w.document.getElementById('gcRemyCreateStatus').textContent, /3 Höraufgaben/);
 });
