@@ -16,6 +16,7 @@ on:
       - 'feature/brand-*'
       - 'feature/i18n-*'
       - 'feature/audio-*'
+      - 'fix/audio-*'
   workflow_dispatch:
 
 permissions:
