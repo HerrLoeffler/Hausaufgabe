@@ -28,5 +28,12 @@ Ein Arbeitsblock endet mit:
 
 Kann etwas mangels Zugriff nicht gespeichert werden, muss der Chat es ausdrücklich sagen und eine kopierbare Übergabe liefern. Nicht behaupten, andere Chats wüssten bereits Bescheid.
 
+## Wiederaufnahme und Zuständigkeit
+Bei Ersatzchats gilt zusätzlich [CHAT_RECOVERY.md](CHAT_RECOVERY.md). Jede Aufgabenübergabe nennt die ursprüngliche Task-ID, verantwortlichen Chat, bekannten Chat-Link oder „unbekannt“, Aufgabenbranch/PR, Zeitpunkt und letzten gesicherten Teilschritt. Bei Übernahme alten und neuen Verantwortlichen festhalten; andere aktive Baustellen nicht übernehmen.
+
+Vor einem längeren Arbeitsschritt oder externen Start den nächsten Schritt dokumentieren; nach dem Start dessen Run-/Request-ID zeitnah sichern. Auch „Ergebnis unbekannt“ und noch laufende Vorgänge gehören in die Übergabe. Keine automatischen KI-Aufrufe oder zusätzliche Actions pro Chatnachricht zur Fortschrittssicherung.
+
+Ein Ersatzchat prüft zuerst, ob die alte Arbeit noch läuft, ob Commit/PR/Run bereits existiert und welcher Schritt tatsächlich fehlt. Derselbe Auftrag erhält keine neue Task-ID, keinen zurückgesetzten Versuchszähler und keine neue Budgetreservierung allein wegen des Chatwechsels. Ein Chat-Link ist ein Suchhinweis, kein garantierter Zugriff.
+
 ## Grenzen
 Diese Regeln sind verbindliche Projektanweisungen, keine technische Kontrolle aller ChatGPT-Gespräche. Ein Chat, der weder Repo noch Anhang erhält, kann sie nicht automatisch kennen. START_HERE.md als Einstieg verwenden; bestehende Chats einmal zum Neulesen auffordern. Harte Abbrüche sind nicht zuverlässig vorhersehbar, deshalb früh und regelmäßig sichern.

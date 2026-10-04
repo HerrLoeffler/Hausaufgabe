@@ -48,3 +48,10 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 ## Pflicht zur Dokumentation aller Chats
 - docs/CHAT_CONTRACT.md gilt auch für reine Design-, Produkt- und Planungschats. Auftrag einer Task-ID zuordnen, neue Wünsche/Blocker erfassen, Entscheidungen und Gründe in der passenden Übergabe sichern.
 - Vor Abschluss oder Aufgabenwechsel TODO.md und Workstream aktualisieren; Commit, echte Prüfungen, offene Punkte und nächsten ausführbaren Schritt nennen. Ohne Schreibzugriff eine kopierbare Übergabe liefern und fehlende Speicherung ausdrücklich melden.
+
+## Wiederaufnahme nach Chat-Abbruch
+- Bei Unterbrechungen und Ersatzchats gilt zusätzlich docs/CHAT_RECOVERY.md. Dieselbe Task-ID fortführen und den bestehenden Branch/PR prüfen; keine zweite Implementierung beginnen.
+- Übergabe um Chat-Bezeichnung (Link nur wenn bekannt), aktive Zuständigkeit, letzten gesicherten Teilschritt, ungesicherte Änderungen, laufende Run-/Request-IDs und genau einen nächsten Schritt ergänzen. Fehlende Angaben als unbekannt markieren, niemals erfinden.
+- Vor längeren Tests/Wartephasen und externen Starts einen Checkpoint sichern. Nach einem externen Start dessen zurückgegebene ID zeitnah sichern. Kleine Zwischenstände gesammelt committen; keine Commit-/Actions-Schleife pro Toolaufruf.
+- Ein Verbindungsabbruch beweist weder Stop noch Erfolg. Vor Wiederholung Git-Refs, PRs, Actions, Deployment-Receipts und bei bezahlten Aufrufen Provider-Ergebnis/Kosten abgleichen. Unklares Ergebnis bleibt blockiert; Historie, Versuche und Budget erhalten.
+- Bei Übernahme aktive Schreibarbeit des alten Chats klären; auf gemeinsamem Branch nur einen schreibenden Chat. GitHub-Jobs können separat weiterlaufen und werden beobachtet statt neu gestartet.
