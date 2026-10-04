@@ -29,7 +29,7 @@ def derive_task(request, task, prerequisite, current_sha, selected_blobs):
         raise ValueError('Approved homepage source changed; review required')
     if prerequisite.get('state') != 'staging_deployed' or prerequisite.get('taskId') != request['prerequisiteTaskId']:
         raise ValueError('Real pilot staging receipts required')
-    if prerequisite.get('integratedSha') != current_sha:
+    if prerequisite.get('integratedSha') != current_sha or prerequisite.get('approvedSha') != request['originalSource']:
         raise ValueError('Target is not the exact verified pilot integration')
     return task_contract(task | {'base_sha': current_sha})
 

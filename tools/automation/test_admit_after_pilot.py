@@ -10,7 +10,7 @@ TASK = {'id': 'homepage-ui', 'base_sha': A, 'base_branch': WEB, 'risk': 'web-ui'
 BLOBS = {'homepage.css': 'c' * 40, 'entry.js': 'd' * 40}
 REQUEST = {'id': 'homepage-after-pilot', 'taskId': TASK['id'], 'taskHash': digest(TASK),
            'prerequisiteTaskId': 'pilot-ui', 'originalSource': A, 'selectedBlobs': BLOBS}
-PILOT = {'taskId': 'pilot-ui', 'state': 'staging_deployed', 'integratedSha': B}
+PILOT = {'taskId': 'pilot-ui', 'state': 'staging_deployed', 'integratedSha': B, 'approvedSha': A}
 
 
 class AdmissionAfterPilotTests(unittest.TestCase):
@@ -18,7 +18,7 @@ class AdmissionAfterPilotTests(unittest.TestCase):
         updated = derive_task(REQUEST, TASK, PILOT, B, BLOBS)
         self.assertEqual(updated, TASK | {'base_sha': B})
         self.assertEqual(updated['max_cost_usd'], 2.55)
-        for pilot in [PILOT | {'state': 'integrated'}, PILOT | {'integratedSha': A}, PILOT | {'taskId': 'other'}]:
+        for pilot in [PILOT | {'state': 'integrated'}, PILOT | {'integratedSha': A}, PILOT | {'taskId': 'other'}, PILOT | {'approvedSha': B}]:
             with self.subTest(pilot=pilot), self.assertRaises(ValueError):
                 derive_task(REQUEST, TASK, pilot, B, BLOBS)
         with self.assertRaises(ValueError): derive_task(REQUEST, TASK, PILOT, A, BLOBS)

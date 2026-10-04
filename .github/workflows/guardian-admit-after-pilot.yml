@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gradecrew-stage-guardian
+  group: gradecrew-homepage-admission
   cancel-in-progress: false
 jobs:
   admit:
