@@ -116,6 +116,20 @@ jobs:
           workload_identity_provider: ${{ vars.STAGING_FUNCTIONS_WIF_PROVIDER }}
           service_account: gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com
 
+      - name: Prepare staging PostHog runtime configuration
+        if: hashFiles('functions/lib/posthog-telemetry.js') != ''
+        shell: bash
+        env:
+          POSTHOG_PROJECT_TOKEN_STAGING: ${{ secrets.POSTHOG_PROJECT_TOKEN_STAGING }}
+        run: |
+          test -n "$POSTHOG_PROJECT_TOKEN_STAGING" || {
+            echo "Missing required staging PostHog token secret."
+            exit 1
+          }
+          umask 077
+          printf 'POSTHOG_PROJECT_TOKEN=%s\n' "$POSTHOG_PROJECT_TOKEN_STAGING" > functions/.env.hausaufgabe-staging
+          grep -q '^POSTHOG_PROJECT_TOKEN=' functions/.env.hausaufgabe-staging
+
       - name: Deploy only the AI Functions codebase to staging
         run: |
           "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
