@@ -488,6 +488,7 @@ exports.processAiTestJob = onTaskDispatched({
           privateAudio.solutionAudioVoice = asset.audioVoice;
           privateAudio.solutionAudioModel = asset.audioModel;
           privateAudio.solutionAudioAiGenerated = asset.audioAiGenerated !== false;
+          privateAudio.solutionNeedsRegeneration = false;
           completedSolutionAudios += 1;
           await jobRef.update({ solutionAudioCompleted: completedSolutionAudios, updatedAt: Timestamp.now() });
         } catch (err) {
