@@ -149,7 +149,7 @@
           }
         ],
         "estimatedUsd": 0.077048,
-        "deployReason": "hosting latest deployment is missing/pending/failed",
+        "deployReason": "hosting bounded failed-job rerun reserved; awaiting real receipt",
         "deploymentRetries": {
           "hosting": [
             {
