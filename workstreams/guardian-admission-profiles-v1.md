@@ -1,6 +1,6 @@
 # Aufgabe: GC-AUTOMATION-08
 
-- Aktualisiert (UTC): 2026-10-04 21:06
+- Aktualisiert (UTC): 2026-10-04 21:28
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.

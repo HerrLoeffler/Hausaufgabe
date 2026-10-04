@@ -1,7 +1,7 @@
 # GC-AUTOMATION-08 — feste Aufgabenprofile, erste Games-Preview-Kette
 
 Datum: 2026-10-04. Auftraggeber: Martin. Task-ID bleibt GC-AUTOMATION-08.
-Status: schriftliche Spezifikation zur Prüfung; kein Implementierungsplan, keine Aktivierung.
+Status: von Martin am 2026-10-04 ausdrücklich genehmigt; zugehöriger Implementierungsplan liegt zur Prüfung vor, keine Aktivierung.
 Bezug: [Bestandsaufnahme](../../STAGING_BACKLOG_2026-10-04.md), [Übergabe](../../../workstreams/guardian-admission-profiles-v1.md), [Ausführungsvertrag](../../../automation/EXECUTION.md).
 Basis: main ced8e6dbe1cec5215edeb88b551afc363fe634cc; bestehender Dokumentationsbranch/PR #126.
 
@@ -10,7 +10,7 @@ Basis: main ced8e6dbe1cec5215edeb88b551afc363fe634cc; bestehender Dokumentations
 Martin will weitere Themen mit derselben belegbaren Phasenkette bearbeiten lassen und den Staging-Rückstand abbauen. Erfolg heißt zugelassener Auftrag → gebundener Kandidat → passende Tests → drei unabhängige Reviews → sichere Integration → verifizierter Staging-Receipt. Menschliche Sicht-/Geräte-/Produktabnahme und Production bleiben eigene Gates.
 „Alles ready“ wird je bestehender Aufgabe anhand der tatsächlichen Stufe ausgewiesen; der Ausbau verleiht alten Branches keine pauschale Freigabe.
 
-Genehmigter Ausbau-Zuschnitt aus dem Folgeauftrag: feste Profile auf main, bestehende Web-Kette erhalten, zuerst isoliertes statisches Games-Preview. Noch nicht genehmigt: diese konkrete schriftliche Spezifikation oder ein noch nicht erstellter Implementierungsplan.
+Genehmigter Ausbau-Zuschnitt aus dem Folgeauftrag: feste Profile auf main, bestehende Web-Kette erhalten, zuerst isoliertes statisches Games-Preview. Diese konkrete schriftliche Spezifikation wurde anschließend ausdrücklich genehmigt. Der zugehörige schriftliche Implementierungsplan liegt vor; dessen Review und Ausführungsmethode sind noch offen.
 
 ## Architekturentscheidung und Grenzen
 
