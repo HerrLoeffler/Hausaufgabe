@@ -70,6 +70,9 @@ test('public entry uses the canonical manifest and remains auth-scoped', () => {
   assert.match(startscreenCss, /#authView \.gcEntryShell/);
   assert.match(startscreenCss, /#authView \.gcEntryWelcome/);
   assert.match(startscreenCss, /#authView \.gcEntryCharacterStage/);
+  assert.match(startscreenCss, /#authView \.gcEntryClassroom/);
+  assert.match(startscreenCss, /\.gcPublicEntryMode \.topbar/);
+  assert.match(startscreenCss, /\.gcPublicEntryMode \.shell/);
   assert.match(startscreenCss, /#authView \.gcEntryStudent/);
   assert.doesNotMatch(entryFlow, /falcon-create\.svg/);
   assert.doesNotMatch(startscreenCss, /#dashboardView/);
