@@ -5,6 +5,7 @@ import fs from "node:fs";
 const read = path => fs.readFileSync(new URL(path, import.meta.url), "utf8");
 
 const startup = read("./startup.js");
+const entryFlow = read("./gradecrew-entry-flow.js");
 const secureHtml = read("./secure-student.html");
 const build = read("./tools/build-staging.mjs");
 const browserRuntime = read("./shared/i18n/browser-runtime.mjs");
@@ -66,6 +67,32 @@ test("German and English are enabled browser UI locales", () => {
   assert.match(englishCrewExtension, /Ask Coco/);
 });
 
+test("public startscreen copy is covered by the English UI catalog without translating assessment content", () => {
+  for (const sourceText of [
+    "Funktionen",
+    "Die Crew",
+    "Hilfe",
+    "Hi! Ich bin Coco.",
+    "Willkommen bei GradeCrew.",
+    "Digitale Tests, schnell & einfach.",
+    "Crew kennenlernen",
+    "Direkt anmelden",
+    "Schüler? Testcode eingeben.",
+    "Schnell erstellt",
+    "Einfach durchgeführt",
+    "Direkt ausgewertet",
+    "Für Lehrkräfte gemacht",
+    "Wie dürfen wir dich nennen?",
+    "Tutorial beginnen",
+    "Möchtest du deinen Fortschritt speichern?",
+    "Mit GradeCrew loslegen",
+  ]) {
+    assert.ok(entryFlow.includes(sourceText), "entry source missing: " + sourceText);
+    assert.ok(englishCatalog.includes(sourceText), "English startscreen translation missing: " + sourceText);
+  }
+  assert.match(englishCatalog, /Schön, dass du da bist/);
+  assert.match(englishCatalog, /keine Daten gespeichert/);
+});
 test("English activation does not collapse UI, assessment content and grading language into one setting", () => {
   assert.match(core, /uiLocale:/);
   assert.match(core, /contentLocale:/);
