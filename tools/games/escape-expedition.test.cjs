@@ -123,3 +123,36 @@ test('M1.2 replaces state-changing delayed callbacks with guarded scheduling', (
   assert.match(js, /scheduleGuarded\(500/);
   assert.match(js, /scheduleGuarded\(700/);
 });
+
+
+test('M1.3 winch modal updates only its own mechanic state', () => {
+  const winchStart = js.indexOf('function updateWinch(dt)');
+  const winchEnd = js.indexOf('function update(now, dt)', winchStart);
+  const winchBody = js.slice(winchStart, winchEnd);
+  assert.ok(winchStart >= 0 && winchEnd > winchStart);
+  assert.match(winchBody, /state\.gameMode !== 'modal'/);
+  assert.match(winchBody, /winchDialog/);
+  assert.match(winchBody, /state\.winchValue/);
+  assert.match(winchBody, /winchNeedle/);
+  assert.doesNotMatch(winchBody, /updateGeneral|updateJeep|updateRiver|updateAnimals|updateHud|setScene/);
+
+  const updateStart = js.indexOf('function update(now, dt)');
+  const updateEnd = js.indexOf('function formatTime', updateStart);
+  const updateBody = js.slice(updateStart, updateEnd);
+  assert.doesNotMatch(updateBody, /winchDialog|winchNeedle|winchValue/);
+
+  const loopStart = js.indexOf('function loop(now)');
+  const loopEnd = js.indexOf('function canvasPoint', loopStart);
+  const loopBody = js.slice(loopStart, loopEnd);
+  assert.match(loopBody, /else if\(\$\('winchDialog'\)\.open\) updateWinch\(dt\)/);
+  assert.doesNotMatch(loopBody, /else if\(\$\('winchDialog'\)\.open\) update\(now,dt\)/);
+});
+
+test('M1.3 winch action is ignored outside its active modal', () => {
+  const start = js.indexOf('function pullWinch()');
+  const end = js.indexOf('function openGenerator', start);
+  const body = js.slice(start, end);
+  assert.match(body, /state\.gameMode !== 'modal'/);
+  assert.match(body, /state\.transitioning/);
+  assert.match(body, /!\$\('winchDialog'\)\.open/);
+});

@@ -346,6 +346,7 @@
     $('winchDialog').showModal();
   }
   function pullWinch() {
+    if (state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
     if (state.winchValue >= .38 && state.winchValue <= .62) {
       state.winchHits++; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Sauberer Zug! Der Stamm bewegt sich.');
       if (state.winchHits >= 3) scheduleGuarded(650, () => { setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.'); setScene('wildlife'); if ($('winchDialog').open) $('winchDialog').close(); });
@@ -485,6 +486,14 @@
     return true;
   }
 
+  function updateWinch(dt) {
+    if (state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
+    state.winchValue += state.winchDir * dt * .62;
+    if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; }
+    if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; }
+    $('winchNeedle').style.left = `${state.winchValue * 100}%`;
+  }
+
   function update(now, dt) {
     if (state.toastTimer > 0) { state.toastTimer -= dt; if (state.toastTimer <= 0) $('toast').hidden = true; }
     if (!state.transitioning) {
@@ -492,7 +501,6 @@
       else if (state.scene === 'river') updateRiver(dt);
       else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
     }
-    if ($('winchDialog').open) { state.winchValue += state.winchDir * dt * .62; if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; } if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; } $('winchNeedle').style.left = `${state.winchValue * 100}%`; }
     const timerSecond = Math.floor((now - state.startTime) / 1000);
     if (timerSecond !== lastTimerSecond) {
       lastTimerSecond = timerSecond;
@@ -590,7 +598,15 @@
   function drawBoat(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle='#a36f3c';ctx.beginPath();ctx.moveTo(-44,-20);ctx.lineTo(44,-20);ctx.lineTo(30,30);ctx.lineTo(-30,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2d170';ctx.fillRect(-5,-45,10,45);ctx.fillStyle='#f3eee0';ctx.beginPath();ctx.moveTo(5,-43);ctx.lineTo(40,-15);ctx.lineTo(5,-15);ctx.closePath();ctx.fill();ctx.font='22px system-ui';ctx.textAlign='center';ctx.fillText('🐧',0,16);ctx.restore()}
   function drawCameraOverlay(){ctx.save();ctx.fillStyle='rgba(0,0,0,.42)';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#f3f5e7';ctx.lineWidth=3;ctx.strokeRect(160,80,640,440);ctx.beginPath();ctx.arc(state.reticle.x,state.reticle.y,45,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(state.reticle.x-65,state.reticle.y);ctx.lineTo(state.reticle.x+65,state.reticle.y);ctx.moveTo(state.reticle.x,state.reticle.y-65);ctx.lineTo(state.reticle.x,state.reticle.y+65);ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('KAMERAMODUS · Sucher bewegen · Kamera = Auslösen',175,110);ctx.restore()}
 
-  function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);if(!anyDialog)update(now,dt);else if($('winchDialog').open)update(now,dt);draw();requestAnimationFrame(loop)}
+  function loop(now){
+    const dt=Math.min(.033,(now-last)/1000);
+    last=now;
+    const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);
+    if(!anyDialog) update(now,dt);
+    else if($('winchDialog').open) updateWinch(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
 
   function canvasPoint(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
   canvas.addEventListener('pointerdown',e=>{
