@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "phase-a-crew-intent-de-dev-v1",
+  "phaseId": "phase-a-fast-low-risk",
+  "job": "crew_intent",
+  "subject": "cross-subject",
+  "taskType": "form-patch",
+  "riskTier": "low",
+  "promptVersion": "crew-intent-phase-a-v1",
+  "system": "Interpret the teacher request as GradeCrew form changes. Extract only explicit changes. Preserve unspecified fields. Respect negations and corrections. Do not invent values. Return a concise structured result suitable for a form-patch validator.",
+  "maxTokens": 180,
+  "reviewStatus": "development",
+  "context": {
+    "uiLocale": "de-DE",
+    "inputLocale": "de-DE",
+    "contentLocale": "de-DE",
+    "gradingLocale": "de-DE",
+    "educationContextId": "mittelschule-bayern",
+    "curriculumVersion": "lehrplanplus-current",
+    "timeZone": "Europe/Berlin"
+  },
+  "providers": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "generator",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5",
+      "roles": [
+        "critic",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "roles": [
+        "interpreter",
+        "extractor"
+      ]
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603",
+      "roles": [
+        "interpreter",
+        "generator"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "ci-01",
+      "independenceUnit": "intent-count-difficulty",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Mach bitte 8 Aufgaben und stell die Schwierigkeit auf mittel."
+        }
+      ]
+    },
+    {
+      "id": "ci-02",
+      "independenceUnit": "intent-types-exclusion",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Keine Multiple-Choice-Aufgaben. Nimm stattdessen Lückentext und Zuordnung."
+        }
+      ]
+    },
+    {
+      "id": "ci-03",
+      "independenceUnit": "intent-full-basic",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Mathe, 9. Klasse, Prozentrechnung, 10 Aufgaben, insgesamt 20 Punkte."
+        }
+      ]
+    },
+    {
+      "id": "ci-04",
+      "independenceUnit": "intent-preserve-unspecified",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Lass die Anzahl so wie sie ist, aber mach die Schwierigkeit anspruchsvoll."
+        }
+      ]
+    },
+    {
+      "id": "ci-05",
+      "independenceUnit": "intent-negated-correction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Nicht 8, sondern 12 Aufgaben."
+        }
+      ]
+    },
+    {
+      "id": "ci-06",
+      "independenceUnit": "intent-duration-topic",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Deutsch, 7. Klasse, Kurzgeschichte, Dauer 45 Minuten."
+        }
+      ]
+    },
+    {
+      "id": "ci-07",
+      "independenceUnit": "intent-difficulty-exclusion",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Mach den Test leichter und streich Zuordnungsaufgaben."
+        }
+      ]
+    },
+    {
+      "id": "ci-08",
+      "independenceUnit": "intent-allowed-types",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Englisch Klasse 5, Thema Farben, nur Single Choice und True/False."
+        }
+      ]
+    },
+    {
+      "id": "ci-09",
+      "independenceUnit": "intent-only-two-fields",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Punkte bitte auf 15 und Dauer auf 30 Minuten, sonst nichts ändern."
+        }
+      ]
+    },
+    {
+      "id": "ci-10",
+      "independenceUnit": "intent-single-field",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Ändere nur das Fach auf GPG."
+        }
+      ]
+    },
+    {
+      "id": "ci-11",
+      "independenceUnit": "intent-self-correction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Ich will 6 Aufgaben. Nein, mach 7."
+        }
+      ]
+    },
+    {
+      "id": "ci-12",
+      "independenceUnit": "intent-mixed-negation",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Kein Lückentext. 9 Aufgaben. Schwierigkeit gemischt."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "phase-a-game-hint-de-dev-v1",
+  "phaseId": "phase-a-fast-low-risk",
+  "job": "game_hint",
+  "subject": "cross-subject",
+  "taskType": "scaffolded-hint",
+  "riskTier": "low",
+  "promptVersion": "game-hint-phase-a-v1",
+  "system": "Give exactly one short helpful hint in German. Guide the next thinking step but do not reveal the final answer, the exact result, or a full solution path. Keep it age-appropriate and encouraging. Return only the hint.",
+  "maxTokens": 120,
+  "reviewStatus": "development",
+  "context": {
+    "uiLocale": "de-DE",
+    "inputLocale": "de-DE",
+    "contentLocale": "de-DE",
+    "gradingLocale": "de-DE",
+    "educationContextId": "mittelschule-bayern",
+    "curriculumVersion": "lehrplanplus-current",
+    "timeZone": "Europe/Berlin"
+  },
+  "providers": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "generator",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5",
+      "roles": [
+        "critic",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "roles": [
+        "generator",
+        "tutor"
+      ]
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603",
+      "roles": [
+        "generator",
+        "tutor"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "gh-01",
+      "independenceUnit": "hint-percent",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Berechne 25 % von 80. Ich komme nicht weiter."
+        }
+      ]
+    },
+    {
+      "id": "gh-02",
+      "independenceUnit": "hint-pythagoras",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Ein rechtwinkliges Dreieck hat Katheten 6 cm und 8 cm. Gesucht ist die Hypotenuse."
+        }
+      ]
+    },
+    {
+      "id": "gh-03",
+      "independenceUnit": "hint-equation",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Löse 3x + 5 = 20. Ich weiß nicht, was ich zuerst machen soll."
+        }
+      ]
+    },
+    {
+      "id": "gh-04",
+      "independenceUnit": "hint-circle",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Berechne den Umfang eines Kreises mit Radius 4 cm."
+        }
+      ]
+    },
+    {
+      "id": "gh-05",
+      "independenceUnit": "hint-english",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Setze das Verb in die richtige Form: Yesterday I ___ (go) to school."
+        }
+      ]
+    },
+    {
+      "id": "gh-06",
+      "independenceUnit": "hint-german-grammar",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Bestimme das Subjekt im Satz: Morgen besucht meine Schwester ihre Freundin."
+        }
+      ]
+    },
+    {
+      "id": "gh-07",
+      "independenceUnit": "hint-history",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Nenne einen Grund für den Bau der Berliner Mauer. Ich brauche einen Hinweis."
+        }
+      ]
+    },
+    {
+      "id": "gh-08",
+      "independenceUnit": "hint-excel",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: In Excel soll die Summe der Zellen B2 bis B8 berechnet werden. Gib nur einen Hinweis, nicht die fertige Formel."
+        }
+      ]
+    },
+    {
+      "id": "gh-09",
+      "independenceUnit": "hint-interest",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: 500 € werden ein Jahr lang mit 3 % verzinst. Wie gehe ich vor?"
+        }
+      ]
+    },
+    {
+      "id": "gh-10",
+      "independenceUnit": "hint-reading",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Finde im Text ein sprachliches Mittel und erkläre seine Wirkung. Ich finde keins."
+        }
+      ]
+    },
+    {
+      "id": "gh-11",
+      "independenceUnit": "hint-fractions",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: Addiere 2/3 und 1/4. Ich weiß nicht, wie ich anfangen soll."
+        }
+      ]
+    },
+    {
+      "id": "gh-12",
+      "independenceUnit": "hint-percentage-base",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aufgabe: 18 Schüler sind 60 % der Klasse. Wie groß ist die Klasse?"
+        }
+      ]
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const require = createRequire(import.meta.url);
+const gatewayRequire = createRequire(new URL('../../ai-gateway/package.json', import.meta.url));
 const { priceUsage, reserveForRoute } = require('../../ai-gateway/lib/routing-cost.js');
 
 const PROVIDERS = Object.freeze(['openai', 'anthropic', 'gemini', 'mistral']);
@@ -293,8 +294,8 @@ async function main() {
     if (process.env.GC_EVALUATION_EXECUTE !== 'true') fail('EXECUTION_NOT_CONFIRMED');
     if (process.env.GCLOUD_PROJECT !== 'hausaufgabe-staging') fail('STAGING_PROJECT_REQUIRED');
 
-    const { initializeApp, getApps } = require('firebase-admin/app');
-    const { getFirestore } = require('firebase-admin/firestore');
+    const { initializeApp, getApps } = gatewayRequire('firebase-admin/app');
+    const { getFirestore } = gatewayRequire('firebase-admin/firestore');
     const { createRoutingStore } = require('../../ai-gateway/lib/routing-store.js');
     if (!getApps().length) initializeApp({ projectId: 'hausaufgabe-staging' });
     const budgetStore = createRoutingStore(getFirestore());
