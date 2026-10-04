@@ -53,18 +53,19 @@ Canva soll als **Art-Direction-/Prototyping-Werkzeug** verwendet werden:
 
 Canva ersetzt nicht die responsive Web-Implementierung. Die finale Website benötigt getrennte DOM/UI-Layer, i18n, Accessibility und Performance-Gates.
 
-## Brand-Entscheidung – geklärt
+## Brand-Entscheidung – GradeCrew Cinematic / Hero Crew
 
-Martin möchte **keine neue Cinematic-Variante der Figuren erzwingen**. Coco, Remy, Emmi und Wilma dürfen grundsätzlich so aussehen wie die bereits erstellten kanonischen GradeCrew-Figuren.
+Martin hat die Idee ausdrücklich freigegeben: Für Marketing-/Startseiten darf es eine **GradeCrew Cinematic / Hero Crew** geben.
 
-Damit gilt für den nächsten Hero-Pass:
-- Charakterdesigns, Gesichter und Grundlook bleiben kanonisch;
-- Schal, Rucksack, Hoodie, Brille oder andere neue Kleidung/Props sind **nicht erforderlich**;
-- die gewünschte Premium-Wirkung soll primär durch **Szene, Licht, Perspektive, Größenverhältnisse, Tiefenstaffelung, gemeinsame Komposition und Bewegung** entstehen;
-- vorhandene kanonische Varianten/Posen dürfen genutzt und als Scene-Layer animiert werden;
-- falls eine neue Pose technisch nötig wird, muss sie klar als derselbe kanonische Charakter erkennbar bleiben und separat freigegeben werden.
+Verbindliche Grenzen:
+- Coco, Remy, Emmi und Wilma bleiben eindeutig dieselben kanonischen GradeCrew-Charaktere;
+- Farben, Gesichter, Körpermerkmale und Persönlichkeit bleiben konsistent;
+- auf Marketing-/Startseiten dürfen sie zusätzliche **Props, Kleidung, Posen und gemeinsame Szenen** bekommen;
+- solche Varianten sind saisonal/austauschbar, z. B. Winter mit Schal oder Sommer mit Sonnenbrille;
+- im eigentlichen Produkt/App-UI bleiben die reduzierten kanonischen Assets Standard;
+- neue Hero-Varianten dürfen die Figuren nicht in ein anderes Character-Design umdeuten.
 
-Die frühere Idee einer eigenen "cinematic homepage crew" ist damit **kein notwendiger nächster Schritt**.
+Für den ersten Hero-Pass sind zusätzliche Accessoires nicht zwingend: Entscheidend sind zunächst Szene, Licht, Perspektive, Größenverhältnisse, Tiefenstaffelung, gemeinsame Komposition und Bewegung. Die Cinematic-Regel schafft aber bewusst Spielraum für spätere saisonale Szenen.
 
 ## Nächster ausführbarer Schritt
 
