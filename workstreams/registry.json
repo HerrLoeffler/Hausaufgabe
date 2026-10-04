@@ -392,6 +392,14 @@
         "fix/actions-manual-visual-20261004",
         "fix/actions-web-docs-20261004"
       ]
+    },
+    {
+      "id": "guardian-staging-handoff-20261004",
+      "title": "Guardian exact CI to verified Staging handoff",
+      "primaryBranch": "fix/guardian-deploy-handoff-20261004",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/guardian-staging-handoff-20261004.md"
     }
   ]
 }

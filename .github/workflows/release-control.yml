@@ -30,7 +30,9 @@ on:
       - 'Archive verified preview'
       - 'AI Staging Checks'
       - 'Guardian integrated checks'
+      - 'Guardian integrated *'
       - 'GradeCrew Guardian execution'
+      - 'Guardian task *'
       - 'Escape Room Dev Preview'
       - 'GradeCrew → TestFlight'
     types: [completed]

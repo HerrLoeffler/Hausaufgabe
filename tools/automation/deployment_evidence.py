@@ -12,6 +12,34 @@ import zipfile
 from .guardian import api, REPO
 from .pipeline import WEB, sha, identifier
 
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def committed_request():
+    if os.getenv('GITHUB_REPOSITORY') != REPO or os.getenv('GITHUB_REF') != 'refs/heads/main':
+        raise ValueError('Staging handoff requires trusted main')
+    paths = list((ROOT / 'automation/deployment-requests').glob('*.json'))
+    if len(paths) != 1:
+        raise ValueError('Exactly one committed staging handoff required')
+    request = json.loads(paths[0].read_text())
+    if paths[0].stem != identifier(request['id']):
+        raise ValueError('Staging request filename differs')
+    return request
+
+
+def verify_request(request, report, attempt):
+    if set(request) != {'id', 'requestId', 'upstreamRunId', 'commit'}:
+        raise ValueError('Explicit staging request binding required')
+    identifier(request['id']); identifier(request['requestId']); sha(request['commit'])
+    if (type(request['upstreamRunId']) is not int or request['upstreamRunId'] <= 0
+            or request['upstreamRunId'] != report['runId']
+            or request['upstreamRunId'] != attempt.get('ciRunId')
+            or request['requestId'] != report['requestId']
+            or request['requestId'] != attempt['requestId']
+            or request['commit'] != report['commit']
+            or request['commit'] != attempt['integratedSha']):
+        raise ValueError('Staging request differs from verified CI ownership')
+
 
 def artifact_document(run_id, name, filename):
     artifacts = api(f'actions/runs/{int(run_id)}/artifacts?per_page=100')['artifacts']
@@ -32,7 +60,7 @@ def artifact_document(run_id, name, filename):
 
 
 def verify_ci(run, report, attempt):
-    if run.get('name') != 'Guardian integrated checks' or run.get('path') != '.github/workflows/guardian-integrated-ci.yml' or run.get('event') != 'workflow_dispatch':
+    if run.get('name') not in {'Guardian integrated checks', 'Guardian integrated ' + attempt['requestId']} or run.get('path') != '.github/workflows/guardian-integrated-ci.yml' or run.get('event') != 'workflow_dispatch':
         raise ValueError('Wrong CI workflow')
     if run.get('conclusion') != 'success' or run.get('status') != 'completed' or run.get('run_attempt', 1) != 1:
         raise ValueError('Integrated CI not successful on first attempt')
@@ -47,11 +75,13 @@ def verify_ci(run, report, attempt):
     return report['commit']
 
 
-def ci_source(run_id):
+def ci_source(run_id, request=None):
     run = api('actions/runs/' + str(int(run_id)))
     if run.get('conclusion') != 'success' or run.get('status') != 'completed' or run.get('head_repository', {}).get('full_name') != REPO:
         raise ValueError('No trusted upstream CI')
     if run.get('name') == 'AI Staging Checks':
+        if request is not None:
+            raise ValueError('Committed recovery requires Guardian CI receipt')
         if run.get('event') != 'push' or run.get('head_branch') != WEB or run.get('path') != '.github/workflows/ai-staging-check.yml':
             raise ValueError('Unsupported ordinary CI origin')
         head = sha(run['head_sha'])
@@ -79,6 +109,8 @@ def ci_source(run_id):
         if digest(task) != attempt['taskHash'] or task['base_sha'] != rows[0]['approvedSha']:
             raise ValueError('Integrated task approval changed')
         head = verify_ci(run, report, attempt)
+        if request is not None:
+            verify_request(request, report, attempt)
     if api('git/ref/heads/' + WEB)['object']['sha'] != head:
         raise ValueError('Refusing stale deploy source')
     return head
@@ -118,13 +150,13 @@ def reconcile_deployment(attempt, persist=None):
         head = verify_ci(newest, artifact_document(newest['id'], 'guardian-integrated-evidence', 'integrated-ci.json'), attempt)
         if api('git/ref/heads/' + WEB)['object']['sha'] != head:
             raise ValueError('Candidate superseded; never claim current staging green')
-        all_runs = api('actions/runs?event=workflow_run&per_page=100')['workflow_runs']
+        all_runs = api('actions/runs?per_page=100')['workflow_runs']
         receipts = {}
         for kind, workflow, path, artifact, filename in [
             ('hosting', 'Automatic staging preview', '.github/workflows/staging-preview.yml', 'verified-preview-receipt', 'receipt.json'),
             ('functions', 'Automatic staging AI functions', '.github/workflows/staging-functions.yml', 'staging-functions-receipt-' + head, 'staging-functions-receipt.json')]:
             rows = [r for r in all_runs if r['name'] == workflow and r.get('head_branch') == 'main'
-                    and r.get('path') == path and r.get('event') == 'workflow_run'
+                    and r.get('path') == path and r.get('event') in {'workflow_run', 'push'}
                     and r.get('head_repository', {}).get('full_name') == REPO]
             # Every newer failed/pending run blocks. Do not cherry-pick an older
             # matching artifact when current deployment is incomplete.
@@ -148,9 +180,20 @@ def reconcile_deployment(attempt, persist=None):
         attempt['deployReason'] = str(exc)
 
 
-if __name__ == '__main__':
+def main():
     from .execution import output
-    head = ci_source(os.environ['UPSTREAM_RUN_ID'])
-    output(sha=head)
-    Path('deployment-source.json').write_text(json.dumps({'commit': head, 'upstreamCiRun': int(os.environ['UPSTREAM_RUN_ID']),
+    request = committed_request() if os.getenv('GITHUB_EVENT_NAME') == 'push' else None
+    supplied = os.getenv('UPSTREAM_RUN_ID', '')
+    run_id = int(supplied) if supplied else request['upstreamRunId']
+    if request is not None and request['upstreamRunId'] != run_id:
+        raise ValueError('Staging request changed after source qualification')
+    head = ci_source(run_id, request)
+    if os.getenv('EXPECTED_SHA') and os.environ['EXPECTED_SHA'] != head:
+        raise ValueError('Staging source differs from original build')
+    output(sha=head, upstream_ci=run_id)
+    Path('deployment-source.json').write_text(json.dumps({'commit': head, 'upstreamCiRun': run_id,
         'workflowRun': int(os.environ['GITHUB_RUN_ID']), 'project': 'hausaufgabe-staging'}) + '\n')
+
+
+if __name__ == '__main__':
+    main()
