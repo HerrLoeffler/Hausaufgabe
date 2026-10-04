@@ -266,13 +266,58 @@ Prüfgrenze:
 - echter iPhone-Test M1.5: offen
 - Production: unverändert
 
-## Nächster Mikro-Schritt
+## M2 — Schüler-Sprache und Bedienung kompakt
 
-**M1.6 — Bewegungs-/Kollisionslogik und Tap-to-Move härten.**
+Status: **erledigt und automatisiert geprüft**
 
-Ziel:
-- keine unerreichbaren Interaktionspunkte;
-- Tap-to-Move darf nicht dauerhaft gegen Grenzen/Props laufen;
-- Fahrzeugpositionen bleiben immer in sicheren Bereichen;
-- bei blockierter Bewegung automatisch zum letzten sicheren Punkt zurück;
-- danach wieder Regressionstest, Build, Preview und Handoff.
+Produktcommit:
+`ec91428eb8e75dc046133cff60cbb09ae62824a1`
+
+Änderungen:
+- Missionsziele und Schrittlisten auf kurze Handlungsanweisungen reduziert;
+- Coco-Texte deutlich verkürzt;
+- Interaktionslabels vereinfacht;
+- Lernfeedback und Transferhinweise in kurze Schülersprache umgebaut;
+- Winde, Generator, Kamera, Funk, Recovery und Fahrzeugfeedback vereinfacht;
+- Steuerungshinweise kompakter;
+- Begriffe wie „Lern-Gate“, „dokumentieren“, „Ortungssender auswerten“ und „Fortschritt freigeschaltet“ aus der sichtbaren Schülerführung entfernt;
+- zwei Regressionstests sichern die neue Sprachregel.
+
+## Verifikation M2
+
+GitHub Actions:
+- Masterpiece Preview Run: `37198350503`
+- Produktcommit: `ec91428eb8e75dc046133cff60cbb09ae62824a1`
+- JavaScript-Syntax: grün
+- Expedition-Verträge: **25/25 grün**
+- isolierter Build: grün
+- Firebase Staging Preview: grün
+- `Escape review gates` Run `37198353448`: grün
+- `Games Lab Checks` Run `37198353470`: grün, inklusive Browser-User-Flows
+
+Preview:
+`https://hausaufgabe-staging--gradecrew-escape-masterpiece-pmxjup1g.web.app`
+
+Prüfgrenze:
+- M2 ist automatisiert geprüft;
+- Sprache wird später zusätzlich mit realen Schülern gegen Klassenstufe/Leseniveau getestet;
+- Bewegung/Kollision wird ab jetzt nur noch gezielt bei tatsächlich sichtbaren Problemen korrigiert; kein eigener Technik-Umweg vor dem visuellen Ausbau.
+
+## Stabiler Sicherheitsstand
+
+Der Branch `prototype/escape-expedition-masterpiece-v1` bleibt ab jetzt als stabiler Stand für M1.1–M1.5 + M2 erhalten.
+
+## Nächster Schritt
+
+**Großer visueller Umbau auf eigenem Branch.**
+
+Reihenfolge:
+1. Visual Style Bible;
+2. Camp als Referenzszene auf Masterpiece-Niveau;
+3. Camp prüfen;
+4. Jeep;
+5. Wildlife;
+6. Fluss;
+7. Station;
+8. Funkmast/Finale;
+9. Audio und Gesamtpolish.
