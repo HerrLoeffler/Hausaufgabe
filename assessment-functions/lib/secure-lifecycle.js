@@ -366,6 +366,29 @@ function makeReceipt(submission, quiz = null, privateData = null) {
   return receipt;
 }
 
+async function attachReleasedSolutionAudio(quizId, receipt) {
+  if (!receipt?.solutionsReleased || !Array.isArray(receipt.solutions) || !receipt.solutions.length) return receipt;
+  const snap = await getFirestore().collection(`quizzes/${quizId}/audioScripts`).get();
+  const assets = new Map();
+  for (const item of snap.docs) {
+    const data = item.data() || {};
+    const src = String(data.solutionAudioDataUrl || "");
+    if (!src.startsWith("data:audio/")) continue;
+    assets.set(item.id, {
+      src,
+      aiGenerated: data.solutionAudioAiGenerated !== false
+    });
+  }
+  if (!assets.size) return receipt;
+  return {
+    ...receipt,
+    solutions: receipt.solutions.map(solution => {
+      const audio = assets.get(String(solution?.id || ""));
+      return audio ? { ...solution, audio } : solution;
+    })
+  };
+}
+
 function contractForQuestions(questions, privateData) {
   if (!privateData?.paperSecret) throw new HttpsError("data-loss", "Die sichere Aufgabenabbildung fehlt.");
   const options = {
@@ -685,11 +708,10 @@ exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentRecei
   if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
   assertAttemptToken(privateSnap.data(), token);
   if (!submissionSnap.exists) throw new HttpsError("failed-precondition", "Für diesen Versuch liegt noch keine Abgabe vor.");
-  return {
-    receipt: makeReceipt(
-      { id: submissionSnap.id, ...submissionSnap.data() },
-      quizSnap.exists ? quizSnap.data() : null,
-      privateSnap.data()
-    )
-  };
+  const receipt = makeReceipt(
+    { id: submissionSnap.id, ...submissionSnap.data() },
+    quizSnap.exists ? quizSnap.data() : null,
+    privateSnap.data()
+  );
+  return { receipt: await attachReleasedSolutionAudio(quizId, receipt) };
 }));
