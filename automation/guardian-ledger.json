@@ -113,7 +113,42 @@
         "integratedSha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
         "integratedAt": "2026-10-04T16:50:44.925092+00:00",
         "ciControlSha": "2a2a9912cc34c8afed19c3260f254d45ceb613b1",
-        "ciRunId": 37218270539
+        "ciRunId": 37218270539,
+        "usage": [
+          {
+            "provider": "openai",
+            "model": "gpt-6.1-sol",
+            "inputTokens": 2000,
+            "outputTokens": 946,
+            "estimatedUsd": 0.01346,
+            "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
+          },
+          {
+            "provider": "openai",
+            "model": "gpt-6-astra",
+            "inputTokens": 2163,
+            "outputTokens": 385,
+            "estimatedUsd": 0.04088,
+            "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
+          },
+          {
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "inputTokens": 3496,
+            "outputTokens": 432,
+            "estimatedUsd": 0.011312,
+            "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
+          },
+          {
+            "provider": "openai",
+            "model": "gpt-6-sol",
+            "inputTokens": 2183,
+            "outputTokens": 703,
+            "estimatedUsd": 0.011396,
+            "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
+          }
+        ],
+        "estimatedUsd": 0.077048
       }
     ]
   },
