@@ -6,6 +6,7 @@ const html = fs.readFileSync('lab/escape-expedition/index.html', 'utf8');
 const css = fs.readFileSync('lab/escape-expedition/styles.css', 'utf8');
 const js = fs.readFileSync('lab/escape-expedition/app.js', 'utf8');
 const concept = fs.readFileSync('docs/games/ESCAPE_GAMES_CONCEPT.md', 'utf8');
+const visualBible = fs.readFileSync('docs/games/ESCAPE_AMAZONAS_VISUAL_BIBLE.md', 'utf8');
 const oldAdventure = fs.readFileSync('lab/escape-room-adventure/index.html', 'utf8');
 
 test('prototype is isolated and does not replace the school adventure', () => {
@@ -297,4 +298,48 @@ test('M2 mechanic instructions are concise and student-friendly', () => {
   assert.match(html, /Drück die Stromkreise in der Reihenfolge der Lampen/);
   assert.match(html, /WASD\/Pfeile: bewegen · E\/Enter: Aktion/);
   assert.match(html, /R: zurücksetzen · Esc: Kamera\/Funk verlassen/);
+});
+
+
+test('V0.1 visual bible defines the Amazonas reference quality bar', () => {
+  for (const phrase of [
+    'Warm, abenteuerlich, lebendig',
+    'Tiefenaufbau pro Szene',
+    'Camp – Referenzstandard',
+    'Performance-Budget',
+    'Camp-Wow-Moment'
+  ]) assert.ok(visualBible.includes(phrase), 'missing visual rule: ' + phrase);
+  assert.match(html, /class="visual-masterpiece"/);
+  assert.match(html, /GRADECrew ESCAPE · EXPEDITION/);
+});
+
+test('V1 Camp is a layered scene rather than the old prototype canvas', () => {
+  for (const fn of [
+    'drawCampBackground',
+    'drawCampGround',
+    'drawCampTent',
+    'drawCampTable',
+    'drawCampSupplies',
+    'drawCampJeepDetailed',
+    'drawCampPollen',
+    'drawCampForeground'
+  ]) assert.ok(js.includes('function ' + fn), 'missing Camp layer: ' + fn);
+
+  const start = js.indexOf('function drawCamp(){');
+  const end = js.indexOf('function drawJeep()', start);
+  const body = js.slice(start, end);
+  for (const placeholder of ['🗺️', '🌴', '📡', '🦜', '🥭']) assert.ok(!body.includes(placeholder), 'Camp placeholder remains: ' + placeholder);
+  assert.match(js, /if \(state\.scene === 'camp'\) drawCampForeground\(performance\.now\(\)\)/);
+});
+
+test('V1 Camp Jeep start has a guarded visual beat before driving', () => {
+  assert.match(js, /campJeepStartAt: 0/);
+  const start = js.indexOf("if (state.scene === 'camp' && id === 'jeep')");
+  const end = js.indexOf("if (state.scene === 'blocked'", start);
+  const body = js.slice(start, end);
+  assert.match(body, /beginResolvingAction\('camp-jeep'\)/);
+  assert.match(body, /state\.campJeepStartAt = performance\.now\(\)/);
+  assert.match(body, /setGameMode\('transition'\)/);
+  assert.match(body, /scheduleGuarded\(620/);
+  assert.match(body, /setScene\('jeep'\)/);
 });
