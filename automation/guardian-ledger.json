@@ -149,7 +149,7 @@
           }
         ],
         "estimatedUsd": 0.077048,
-        "deployReason": "Hosting and AI Functions receipts verified; Martin device acceptance open. Rules unchanged by this task.",
+        "deployReason": "Candidate superseded; never claim current staging green",
         "deploymentRetries": {
           "hosting": [
             {
