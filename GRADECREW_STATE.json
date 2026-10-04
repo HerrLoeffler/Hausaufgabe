@@ -18,9 +18,9 @@
   },
   "release_train": {
     "id": "staging-batch-2026-10-04-b",
-    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v1, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
+    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+    "observed_integration_head": "fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -38,23 +38,24 @@
       "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
       "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
       "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
-      "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe."
+      "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe.",
+      "Startscreen Masterpiece v4: isolierter Premium-Polish-Layer auf fb88dfa7; DE/EN-Copy bleibt DOM/i18n-basiert, Hosting-Preview verifiziert."
     ],
     "gates": {
-      "combined_ci": "success_run_37230351466_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "combined_ci": "success_run_37231463662_commit_fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
       "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "success_run_37230439196_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
+      "hosting_preview": "success_run_37231545703_commit_fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
       "staging_functions": "success_run_37230439199_ai_and_assessment_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "staging_rules": "not_verified_no_rules_deploy_in_this_train",
-      "desktop_ipad_iphone_test": "not_tested_for_eb80_masterpiece_candidate",
-      "user_acceptance": "no_manual_acceptance_recorded_for_eb80_candidate",
+      "desktop_ipad_iphone_test": "not_tested_for_fb88_startscreen_v4_candidate",
+      "user_acceptance": "no_manual_acceptance_recorded_for_fb88_startscreen_v4_candidate",
       "production": "not_requested",
       "staging_assessment_functions": "success_run_37230439199_commit_efdc1a0212b1fa738917bf13a22ca0c3d9d1d408",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 106,
-    "important": "Audio Masterpiece V2 ist technisch auf Staging deployed: exakter Integrationscommit efdc1a0212b1fa738917bf13a22ca0c3d9d1d408, gemeinsamer CI 37230351466, Hosting 37230439196 sowie AI- und Assessment-Functions 37230439199 erfolgreich. Browser-/Geräteabnahme bleibt offen; Production unverändert.",
+    "preview_verified_files": 111,
+    "important": "Startscreen Masterpiece v4 ist als Hosting-Preview auf fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41 verifiziert (CI 37231463662, Hosting 37231545703, 111 Dateien). DE/EN-UI-Grenze ist integriert; Test-/Bewertungssprache bleiben unabhängig. AI-/Assessment-Functions bleiben vom CSS-only Startscreen-Pass unverändert auf dem zuvor verifizierten efdc1a02-Stand. Geräte-/Browserabnahme offen; Production unverändert.",
     "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
   },
   "production": {
@@ -481,15 +482,17 @@
       "activation_fix_head": "ae08595783901e32c657a80bd39b66d137991074",
       "stage": "staging_deployed",
       "feature_ci": "success_run_37079836962",
-      "integrated_into": "feature/gradecrew-app-integration@eb80c5e6a8b6c1ae13deba676709607bfccee208",
-      "combined_ci": "success_run_37194222568",
-      "staging_preview_run": 37194313727,
-      "staging": "hosting_hash_verified_106_files_exact_eb80_sha",
+      "integrated_into": "feature/gradecrew-app-integration@fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
+      "combined_ci": "success_run_37231463662",
+      "staging_preview_run": 37231545703,
+      "staging": "hosting_hash_verified_111_files_exact_fb88_sha",
       "user_test": "not_performed",
       "handoff": "workstreams/design-startscreen-v1.md",
-      "next_action": "Masterpiece-Startscreen auf Desktop/iPad/iPhone abnehmen: Header/Navigation, Hero/Crew, CTAs, Schülerzugang, Benefits und responsive Verhalten.",
+      "next_action": "Startscreen Masterpiece v4 im verifizierten Preview auf Desktop/iPad/iPhone sowie DE/EN visuell abnehmen; Production unverändert.",
       "masterpiece_branch": "feature/design-startscreen-masterpiece-v1",
-      "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6"
+      "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6",
+      "masterpiece_v4_merge": "fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
+      "masterpiece_v4_handoff": "workstreams/design-startscreen-multiai-v4.md"
     },
     {
       "id": "guardian-budget-pilot-v1",
