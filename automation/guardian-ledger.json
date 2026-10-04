@@ -218,7 +218,7 @@
         "taskId": "startscreen-masterpiece-v4-20261004",
         "taskHash": "14463a7d5a403b06f1c01bdc8872e9d7ce53abe53caa257c61db5c849da70010",
         "approvedSha": "578677633c1759e75fee6479f416fb64566f5c5c",
-        "state": "running",
+        "state": "repairable",
         "controlSha": "c4df4b5bc2d478247f85af5858279ef116ed86cb",
         "controlHash": "b5e92b2dffcacb2e9ff0846eff46f0acf26487b637bcb8179edb08eb086022d6",
         "reservedAt": "2026-10-04T19:53:46.505698+00:00",
@@ -235,7 +235,26 @@
           "changedFiles": [
             "gradecrew-auth-startscreen-polish.css"
           ]
-        }
+        },
+        "usage": [
+          {
+            "provider": "openai",
+            "model": "gpt-6.1-sol",
+            "inputTokens": 21139,
+            "outputTokens": 13232,
+            "estimatedUsd": 0.174598,
+            "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
+          }
+        ],
+        "estimatedUsd": 0.174598,
+        "feedback": [
+          {
+            "kind": "tests",
+            "message": "Combined CI failed; Actions run 37230004552",
+            "details": "test'\n      ...\n    1..10\nok 1 - secure assessment Firestore rules enforce the real access matrix\n  ---\n  duration_ms: 1375.536077\n  type: 'test'\n  ...\n1..1\n# tests 11\n# suites 0\n# pass 11\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 1389.064127\n\u2714  Script exited successfully (code 0)\ni  emulators: Shutting down emulators.\ni  firestore: Stopping Firestore Emulator\ni  hub: Stopping emulator hub\ni  logging: Stopping Logging Emulator\nTAP version 13\n# Subtest: Gate E runner is fail-closed to staging and bounded\nok 1 - Gate E runner is fail-closed to staging and bounded\n  ---\n  duration_ms: 0.943297\n  type: 'test'\n  ...\n# Subtest: Gate E verifies concurrency, idempotency and solution boundaries\nok 2 - Gate E verifies concurrency, idempotency and solution boundaries\n  ---\n  duration_ms: 0.344685\n  type: 'test'\n  ...\n# Subtest: Gate E report contains latency and payload evidence without participant secrets\nok 3 - Gate E report contains latency and payload evidence without participant secrets\n  ---\n  duration_ms: 0.278882\n  type: 'test'\n  ...\n# Subtest: iPad tutorial fallback waits, targets only the submitted practice result and never saves grading\nok 4 - iPad tutorial fallback waits, targets only the submitted practice result and never saves grading\n  ---\n  duration_ms: 0.171321\n  type: 'test'\n  ...\n1..4\n# tests 4\n# suites 0\n# pass 4\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 60.035134\nTAP version 13\n# Subtest: Gate E lab is staging-only and never targets production\nok 1 - Gate E lab is staging-only and never targets production\n  ---\n  duration_ms: 0.956371\n  type: 'test'\n  ...\n# Subtest: Gate E lab creates one 11-type system test for 30 participants\nok 2 - Gate E lab creates one 11-type system test for 30 participants\n  ---\n  duration_ms: 0.921225\n  type: 'test'\n  ...\n# Subtest: Gate E lab uses the logged-in teacher only for setup and a separate unauthenticated student app for load\nok 3 - Gate E lab uses the logged-in teacher only for setup and a separate unauthenticated student app for load\n  ---\n  duration_ms: 0.222527\n  type: 'test'\n  ...\n# Subtest: Gate E lab exercises concurrency, polling, idempotency and solution protection\nok 4 - Gate E lab exercises concurrency, polling, idempotency and solution protection\n  ---\n  duration_ms: 0.19196\n  type: 'test'\n  ...\n# Subtest: Gate E lab is reachable only through explicit staging debug URL and included in build\nok 5 - Gate E lab is reachable only through explicit staging debug URL and included in build\n  ---\n  duration_ms: 0.215153\n  type: 'test'\n  ...\n1..5\n# tests 5\n# suites 0\n# pass 5\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 58.405712\nTAP version 13\n# Subtest: shared tokens keep accessibility and canonical GradeCrew values\nok 1 - shared tokens keep accessibility and canonical GradeCrew values\n  ---\n  duration_ms: 1.001576\n  type: 'test'\n  ...\n# Subtest: canonical Crew manifest preserves established roles\nok 2 - canonical Crew manifest preserves established roles\n  ---\n  duration_ms: 0.748271\n  type: 'test'\n  ...\n# Subtest: teacher startup loads and activates public entry before app handlers\nok 3 - teacher startup loads and activates public entry before app handlers\n  ---\n  duration_ms: 0.226715\n  type: 'test'\n  ...\n# Subtest: staging build packages focused design and entry files\nok 4 - staging build packages focused design and entry files\n  ---\n  duration_ms: 0.163276\n  type: 'test'\n  ...\n# Subtest: dashboard foundation stays scoped away from student and secure assessment screens\nok 5 - dashboard foundation stays scoped away from student and secure assessment screens\n  ---\n  duration_ms: 0.255529\n  type: 'test'\n  ...\n# Subtest: startscreen polish layer stays isolated from product screens\nnot ok 6 - startscreen polish layer stays isolated from product screens\n  ---\n  duration_ms: 0.915986\n  type: 'test'\n  location: '/tmp/gradecrew-validator.LGzLXc/source/gradecrew-design-foundation.test.mjs:71:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    visible copy must stay in DOM/i18n, never CSS content\n    \n    true !== false\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: false\n  actual: true\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///tmp/gradecrew-validator.LGzLXc/source/gradecrew-design-foundation.test.mjs:74:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: public entry uses the canonical manifest and remains auth-scoped\nok 7 - public entry uses the canonical manifest and remains auth-scoped\n  ---\n  duration_ms: 0.288029\n  type: 'test'\n  ...\n1..7\n# tests 7\n# suites 0\n# pass 6\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 63.860259\n"
+          }
+        ],
+        "reason": "Actionable test/review feedback"
       }
     ]
   },
