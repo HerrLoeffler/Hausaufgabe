@@ -144,6 +144,17 @@
       ]
     },
     {
+      "id": "design-startscreen-v1",
+      "title": "Öffentlicher GradeCrew Startscreen",
+      "primaryBranch": "feature/design-startscreen-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/design-startscreen-v1.md",
+      "relatedBranches": [
+        "feature/design-startscreen-entry-activation-fix"
+      ]
+    },
+    {
       "id": "release-safety",
       "title": "Release-Sicherung",
       "primaryBranch": "feature/release-safety-snapshots",
