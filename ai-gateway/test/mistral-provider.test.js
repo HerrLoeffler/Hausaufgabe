@@ -49,7 +49,6 @@ test('Mistral uses chat completions, standard tier and normalizes response', asy
   assert.equal(body.model, 'mistral-small-2603');
   assert.equal(body.max_tokens, 32);
   assert.equal(body.stream, false);
-  assert.equal(body.service_tier, 'standard_only');
   assert.equal(body.reasoning_effort, 'minimal');
   assert.equal(body.temperature, 0.2);
   assert.deepEqual(body.messages, [
@@ -115,7 +114,7 @@ test('gateway registers Mistral only with runtime secret and smoke stays tiny', 
   const smoke = smokeRequestFor('/providers/mistral/test');
   assert.equal(smoke.provider, 'mistral');
   assert.equal(smoke.max_tokens, 32);
-  assert.equal(smoke.reasoning_effort, 'minimal');
+  assert.equal(smoke.reasoning_effort, undefined);
 });
 
 test('Mistral cached tokens are not double-counted in cost accounting', () => {

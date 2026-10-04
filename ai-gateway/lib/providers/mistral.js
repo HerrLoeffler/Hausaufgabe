@@ -82,7 +82,6 @@ function createMistralProvider({ fetchImpl = fetch, config }) {
       messages: normalizeMessages(request),
       max_tokens: maxTokens,
       stream: false,
-      service_tier: 'standard_only',
     };
     if (request.temperature !== undefined) body.temperature = Number(request.temperature);
     if (request.reasoning_effort !== undefined) body.reasoning_effort = request.reasoning_effort;

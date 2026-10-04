@@ -114,7 +114,7 @@ function smokeRequestFor(pathname) {
   }
   if (pathname === '/providers/mistral/test') {
     return {
-      provider: 'mistral', job: 'quality_control', max_tokens: 32, reasoning_effort: 'minimal',
+      provider: 'mistral', job: 'quality_control', max_tokens: 32,
       messages: [{ role: 'user', content: 'Reply with exactly: GATEWAY_OK' }],
     };
   }
