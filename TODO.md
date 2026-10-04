@@ -29,6 +29,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
+| GC-ACTIONS-COST-01 | Actions-Verbrauch reduzieren und Repo vorübergehend öffentlich nutzen | Implementiert auf drei eigenen Folgebranches; lokale Prüfungen grün, CI/Integration/Sichtbarkeit offen | Öffentlich autorisiert am 04.10.2026. Manuelle Amazonas-Meilensteine, weniger doppelte Handoff-Prüfungen und Polling, docs-only Web-Pushes überspringen. Quota-Reset 01.11.2026. PR #86/#51/#83 erhalten. [Übergabe](workstreams/actions-cost-policy-20261004.md) |
 | GC-TUTORIAL-02 | Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar | Stand prüfen | Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau. |
 | GC-TUTORIAL-03 | „Ich darf doch du sagen?“ bei der Namensfrage erhalten | Stand prüfen | Aktuellen Text und Regressionsschutz prüfen. |
 | GC-TUTORIAL-04 | Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start | Auf Staging integriert; aktuelle Geräteabnahme offen | Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe. |

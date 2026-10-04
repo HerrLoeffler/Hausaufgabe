@@ -3,7 +3,8 @@ name: GradeCrew Development Status
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 * * * *"
+    # Events keep the audit current; this is a fallback, not hourly polling.
+    - cron: "17 */6 * * *"
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, closed]
   push:
