@@ -111,6 +111,31 @@ function ensureEditorControl() {
   select.addEventListener("change", async () => {
     const next = normalizeAssessmentLocale(select.value);
     if (next === loadedEditorLocale) return;
+
+    let reference = null;
+    let persistedQuiz = null;
+    if (currentQuizCode) {
+      try {
+        const db = getFirestore(getApp());
+        reference = doc(db, "quizzes", currentQuizCode);
+        const snap = await getDoc(reference);
+        if (snap.exists()) persistedQuiz = snap.data() || {};
+      } catch (error) {
+        // A brand-new manual draft may not exist in Firestore yet. In that case
+        // keep the locale locally; app.js persists it with the first normal save.
+        console.debug("Testsprache wird mit dem nächsten Speichern übernommen:", error?.code || error);
+      }
+    }
+
+    if (persistedQuiz?.published === true && persistedQuiz?.ended !== true) {
+      select.value = loadedEditorLocale;
+      window.alert(uiText(
+        "Die Testsprache kann während eines veröffentlichten Tests nicht geändert werden. Beende den Test zuerst.",
+        "The test language cannot be changed while a published test is running. End the test first."
+      ));
+      return;
+    }
+
     const accepted = window.confirm(uiText(
       "Testsprache ändern? Vorhandene Aufgaben und Lösungen werden nicht übersetzt. Die neue Sprache gilt für künftige KI-Erstellungen und Überarbeitungen dieses Tests.",
       "Change test language? Existing questions and solutions will not be translated. The new language applies to future AI generation and revisions for this test."
@@ -119,12 +144,12 @@ function ensureEditorControl() {
       select.value = loadedEditorLocale;
       return;
     }
+
     loadedEditorLocale = next;
     pendingContentLocale = next;
-    if (!currentQuizCode) return;
+    if (!reference || !persistedQuiz) return;
     try {
-      const db = getFirestore(getApp());
-      await setDoc(doc(db, "quizzes", currentQuizCode), {
+      await setDoc(reference, {
         contentLocale: next,
         localeContractVersion: ASSESSMENT_LOCALE_SCHEMA_VERSION,
       }, { merge: true });
