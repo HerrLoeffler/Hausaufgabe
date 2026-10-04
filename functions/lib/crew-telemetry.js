@@ -4,6 +4,7 @@ const crypto = require("node:crypto");
 const { HttpsError } = require("firebase-functions/v2/https");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { RETENTION } = require("./constants");
+const { captureCrewMetricToPosthogSafe } = require("./posthog-telemetry");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_CLIENT_EVENTS_PER_DAY = 1200;
@@ -128,6 +129,18 @@ async function writeCrewMetric(uid, raw = {}, options = {}) {
     expiresAt: expiry(90, nowMs)
   }, { merge: true });
   await batch.commit();
+
+  // PostHog is a staging-only, best-effort projection of the already allowlisted
+  // GradeCrew metric. A PostHog outage must never block product behavior or the
+  // canonical Firestore telemetry write.
+  await captureCrewMetricToPosthogSafe({
+    uid,
+    day,
+    eventId: eventRef.id,
+    metric,
+    metricVersion: METRIC_VERSION
+  });
+
   return clean;
 }
 
