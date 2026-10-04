@@ -1,0 +1,86 @@
+name: Escape Expedition Visual Masterpiece Preview
+
+# Register the manual entry point on the default branch. Small prototype
+# commits do not start runners; one explicit dispatch selects the current source.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: escape-expedition-visual-manual
+  cancel-in-progress: false
+
+env:
+  SOURCE_BRANCH: prototype/escape-expedition-visual-masterpiece-v1
+
+jobs:
+  verify-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    name: Verify and deploy visual masterpiece expedition
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Pin the current approved prototype branch
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${SOURCE_BRANCH}" --jq '.object.sha')
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Source: ${SOURCE_BRANCH}@${sha}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Require staging hosting credential
+        env:
+          STAGING_HOSTING_CREDENTIAL: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}
+        run: |
+          if [ -z "$STAGING_HOSTING_CREDENTIAL" ]; then
+            echo "::error::Staging hosting credential is missing; no preview can be deployed."
+            exit 1
+          fi
+
+      - name: Checkout pinned prototype source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          persist-credentials: false
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify JavaScript syntax
+        run: node --check lab/escape-expedition/app.js
+
+      - name: Run expedition prototype contracts
+        run: node --test tools/games/escape-expedition.test.cjs
+
+      - name: Build isolated expedition preview
+        run: node tools/build-lab-escape-expedition.mjs .firebase-escape-expedition
+
+      - name: Reject an outdated preview candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${SOURCE_BRANCH}" --jq '.object.sha')
+          if [ "$current" != "$EXPECTED_SHA" ]; then
+            echo "::error::Prototype changed during validation; dispatch a fresh milestone."
+            exit 1
+          fi
+
+      - name: Deploy Expedition preview channel only
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING }}'
+          projectId: hausaufgabe-staging
+          channelId: gradecrew-escape-visual
+          expires: 30d
+          entryPoint: .firebase-escape-expedition

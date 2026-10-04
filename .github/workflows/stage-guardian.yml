@@ -3,7 +3,8 @@ name: GradeCrew Stage Guardian
 on:
   workflow_dispatch:
   schedule:
-    - cron: '13,43 * * * *'
+    # Completion events continue admitted tasks; cron only catches missed events.
+    - cron: '13 */6 * * *'
   push:
     branches: [main, feature/stage-guardian-v1, feature/guardian-execution-v2]
     paths:
@@ -34,6 +35,9 @@ concurrency:
 
 jobs:
   check:
+    # No execution/evidence changed when an upstream listener was skipped.
+    # Preserve failure/cancelled events and the existing bounded retry logic.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

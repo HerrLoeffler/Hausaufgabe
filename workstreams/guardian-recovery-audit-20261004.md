@@ -61,3 +61,16 @@ Aktuellen Code auf prototype/escape-expedition-visual-masterpiece-v1 gelesen: es
 Öffentliches Repo kann später privat gesetzt werden; öffentliche Forks bleiben öffentlich, Downloads können nicht zurückgeholt werden. Repo-Inhalte und Actions-Logs werden veröffentlicht, bestehende Commit-Historie ist Teil der Offenlegung. Nutzer kann diese bewusste Publikationsentscheidung treffen; vor Umsetzung komplette veröffentlichte History/Branches/Logs auf sensible Daten prüfen. Offizielle Sichtbarkeitsdoku erneut gelesen: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility .
 
 0-USD-Budget und bereits ausgeschöpfte private Actions-Quota erlauben auch keinen manuellen GitHub-hosted Preview-Lauf bis zum Reset oder passender Budget-/Runnerfreigabe. Weniger Trigger sparen künftige Nutzung, stellen keine bereits verbrauchten Minuten wieder her. Coding/lokale Checks und vorhandene Website können weiterlaufen. Keine unbelegte Größenordnungs-Ersparnis zusagen, nach tatsächlicher Umstellung messen. Keine Workflow-/Sichtbarkeits-/Budgetänderung, bezahlter Aufruf, manueller Rerun, Merge oder Deploy in diesem Austausch.
+
+
+## Wiederaufnahme nach öffentlicher Umstellung – 04.10.2026
+
+Martin hat public hergestellt und die ausstehenden Schritte freigegeben. Metadaten
+bestätigen public, Standardrunner starten wieder. PR #88 (17f4d4b) hat fünf
+erfolgreiche exakte PR-Workflows und ist als 3ae00f9 auf main integriert.
+Dieser Branch übernimmt den aktuellen main einschließlich Trigger-Optimierungen
+und Test-Isolation für GITHUB_RUN_ATTEMPT, erhält seine Recovery-/Admission-Logik
+und entfernt die inzwischen widersprüchliche doppelte Kosten-Task-Zeile.
+Frische CI für den kombinierten Recovery-Head vor Integration erforderlich.
+Keine Paid-Workflow-Reruns: nach Integration nur den normalen einmaligen
+Recovery-/Guardian-Pfad beobachten. Budget/History/Production-Grenzen erhalten.

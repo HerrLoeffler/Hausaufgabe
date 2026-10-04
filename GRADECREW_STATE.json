@@ -425,6 +425,17 @@
       "user_test": "not_performed",
       "handoff": "workstreams/guardian-budget-pilot-v1.md",
       "next_action": "Securely set three dedicated API keys and flags, then admit prepared small web pilot; E2E not yet verified."
+    },
+    {
+      "id": "actions-cost-policy-20261004",
+      "task_id": "GC-ACTIONS-COST-01",
+      "branch": "fix/actions-cost-policy-20261004",
+      "stage": "branch_only",
+      "ci": "local_90_automation_18_release_control_54_workflow_checks_passed_remote_pending",
+      "staging": "not_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/actions-cost-policy-20261004.md",
+      "next_action": "Publizierung über GitHub Settings; exakte CI der drei Folge-PRs prüfen und unter Erhalt von PR #86/#51 integrieren."
     }
   ],
   "deployments": [
