@@ -25,6 +25,11 @@
               "device": "desktop"
             },
             {
+              "id": "STARTSCREEN-NAV-01",
+              "title": "Öffentliche Navigation und Benefit-Leiste sind vollständig sichtbar und sinnvoll bedienbar",
+              "device": "desktop"
+            },
+            {
               "id": "STARTSCREEN-STUDENT-01",
               "title": "Schülerzugang per Testcode bleibt im öffentlichen Einstieg sichtbar und führt zum richtigen Test",
               "device": "desktop"

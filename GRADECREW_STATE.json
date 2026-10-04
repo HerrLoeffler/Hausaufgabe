@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-04T10:01:28Z",
+  "observed_at": "2026-10-04T10:13:48Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -17,10 +17,10 @@
     "production_requires_explicit_user_approval": true
   },
   "release_train": {
-    "id": "staging-batch-2026-10-04-a",
-    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit aktiviertem öffentlichem Crew-Startscreen, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2, AI-Kosten-/Memory- und de-DE-i18n-Ergänzungen.",
+    "id": "staging-batch-2026-10-04-b",
+    "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v1, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "e46b747188e82043787824b412b11922703d1f8d",
+    "observed_integration_head": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -35,22 +35,23 @@
       "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
       "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
       "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
-      "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten."
+      "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
+      "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten."
     ],
     "gates": {
-      "combined_ci": "success_run_37106491774_attempt_2",
+      "combined_ci": "success_run_37194222568",
       "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "success_run_37193867508_commit_e46b747188e82043787824b412b11922703d1f8d",
-      "staging_functions": "success_run_37193867443_commit_e46b747188e82043787824b412b11922703d1f8d",
+      "hosting_preview": "success_run_37194313727_commit_eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "staging_functions": "success_run_37194313703_commit_eb80c5e6a8b6c1ae13deba676709607bfccee208",
       "staging_rules": "not_verified_no_rules_deploy_in_this_train",
-      "desktop_ipad_iphone_test": "not_tested_for_e46b_startscreen_candidate",
-      "user_acceptance": "no_manual_acceptance_recorded_for_e46b_candidate",
+      "desktop_ipad_iphone_test": "not_tested_for_eb80_masterpiece_candidate",
+      "user_acceptance": "no_manual_acceptance_recorded_for_eb80_candidate",
       "production": "not_requested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 106,
-    "important": "Combined CI, Hosting und AI-Functions sind für e46b747 exakt nachgewiesen. Hosting Receipt Artifact 11299618749 verifiziert 106 Dateien; Functions Receipt Artifact 11299379629 bindet alle fünf AI-/Crew-Functions an denselben SHA. Firestore Rules, Geräte-/Fachabnahme und Production bleiben separate offene Gates.",
-    "next_action": "Release-Control-Abnahme für e46b747 in kurzen Blöcken durchführen; zuerst Startscreen/Zugang, dann Erstellung/Editor, Crew/Tutorial und End-to-End-Schülerablauf. Pass/Fail immer an den getesteten SHA binden. Keine Production-Freigabe."
+    "important": "Release Control Run 37194637453 bestätigt Integration, Combined CI, Hosting und AI Functions für eb80c5e6a8. Hosting Receipt Artifact 11299769344 verifiziert 106 Dateien; Functions Receipt Artifact 11300560359 bindet alle fünf AI-/Crew-Functions an denselben SHA. Firestore Rules, Geräte-/Fachabnahme und Production bleiben separate Gates.",
+    "next_action": "Abnahme gegen eb80c5e6a8 starten; Ergebnisse mit testedSha speichern. Startscreen/Zugang zuerst, danach Kernabläufe, Crew/Tutorial und Schüler-End-to-End. Keine Production-Freigabe."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -59,30 +60,28 @@
     "changed_by_current_release_train": false
   },
   "automation": {
-    "preview_deployment": "verified_hosting_current_e46b_candidate",
+    "preview_deployment": "verified_hosting_current_eb80_candidate",
     "staging_ai_functions_deploy": "verified_e2e",
     "handoff_ci": "coordination_validation_and_artifact_only",
     "preview_evidence": {
-      "run_id": 37193867508,
-      "app_ci_run_id": 37106491774,
-      "app_ci_attempt": 2,
-      "commit": "e46b747188e82043787824b412b11922703d1f8d",
+      "run_id": 37194313727,
+      "app_ci_run_id": 37194222568,
+      "commit": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
       "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
       "verified_files": 106,
-      "receipt_artifact_id": 11299618749,
-      "verification": "Automatic staging preview completed successfully after source authority, stale-head, manifest and published file-hash verification.",
+      "receipt_artifact_id": 11299769344,
+      "verification": "Source authority, stale-head, manifest and published file hashes verified; receipt content checked.",
       "device_test": "not_performed",
       "date": "2026-10-04"
     },
     "functions_automation_evidence": {
       "workflow": ".github/workflows/staging-functions.yml",
       "wif_setup": "completed",
-      "automatic_run_id": 37193867443,
+      "automatic_run_id": 37194313703,
       "automatic_run_result": "success_deployed",
-      "upstream_ci_run_id": 37106491774,
-      "upstream_ci_attempt": 2,
-      "deployed_commit": "e46b747188e82043787824b412b11922703d1f8d",
-      "receipt_artifact_id": 11299379629,
+      "upstream_ci_run_id": 37194222568,
+      "deployed_commit": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "receipt_artifact_id": 11300560359,
       "firebase_deploy_log_confirmed_functions": [
         "crewAssistant",
         "reviseWholeTest",
@@ -116,7 +115,7 @@
       "manual_acceptances": 0,
       "premerge_pr": 51,
       "production_approved": false,
-      "latest_candidate": "e46b747188e82043787824b412b11922703d1f8d"
+      "latest_candidate": "eb80c5e6a8b6c1ae13deba676709607bfccee208"
     },
     "stage_guardian": {
       "status": "implemented_integrated_disabled_pending_credentials_and_pilot",
@@ -145,15 +144,15 @@
     {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
-      "observed_head": "e46b747188e82043787824b412b11922703d1f8d",
+      "observed_head": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
       "stage": "staging_deployed",
-      "ci": "success_run_37106491774_attempt_2",
+      "ci": "success_run_37194222568",
       "staging": "hosting_preview_and_ai_functions_deployed_exact_sha",
-      "user_test": "not_tested_current_e46b_candidate",
+      "user_test": "not_tested_current_eb80_candidate",
       "handoff": "workstreams/web-app.md",
-      "next_action": "Release-Control-Abnahme auf Desktop/iPad/iPhone gegen e46b747 durchführen.",
-      "staging_preview_run": 37193867508,
-      "staging_functions_run": 37193867443
+      "next_action": "Release-Control-Abnahme gegen eb80c5e6a8 durchführen.",
+      "staging_preview_run": 37194313727,
+      "staging_functions_run": 37194313703
     },
     {
       "id": "crew-assistant",
@@ -381,13 +380,15 @@
       "activation_fix_head": "ae08595783901e32c657a80bd39b66d137991074",
       "stage": "staging_deployed",
       "feature_ci": "success_run_37079836962",
-      "integrated_into": "feature/gradecrew-app-integration@e46b747188e82043787824b412b11922703d1f8d",
-      "combined_ci": "success_run_37106491774_attempt_2",
-      "staging_preview_run": 37193867508,
-      "staging": "hosting_hash_verified_106_files_exact_e46b_sha",
+      "integrated_into": "feature/gradecrew-app-integration@eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "combined_ci": "success_run_37194222568",
+      "staging_preview_run": 37194313727,
+      "staging": "hosting_hash_verified_106_files_exact_eb80_sha",
       "user_test": "not_performed",
       "handoff": "workstreams/design-startscreen-v1.md",
-      "next_action": "Öffentlichen Startscreen auf Desktop und iPad/iPhone visuell und funktional abnehmen: Crew-Hierarchie, CTAs, Schülerzugang, Login/Register und Tutorial."
+      "next_action": "Masterpiece-Startscreen auf Desktop/iPad/iPhone abnehmen: Header/Navigation, Hero/Crew, CTAs, Schülerzugang, Benefits und responsive Verhalten.",
+      "masterpiece_branch": "feature/design-startscreen-masterpiece-v1",
+      "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6"
     }
   ],
   "deployments": [
