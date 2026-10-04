@@ -954,6 +954,46 @@ function setTeacherBar() {
   $("stagingBanner")?.classList.toggle("hidden", !staging);
 }
 
+function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
+  const button = $("adminTopBtn");
+  if (!button) return;
+  button.querySelector(".bugOpsAttentionBadge")?.remove();
+  const count = Math.max(0, Number(summary?.needsAttention) || 0);
+  button.removeAttribute("title");
+  if (!count) return;
+  const badge = document.createElement("span");
+  badge.className = "bugOpsAttentionBadge";
+  badge.textContent = count > 99 ? "99+" : String(count);
+  badge.setAttribute("aria-hidden", "true");
+  button.appendChild(badge);
+  button.title = "BugOps: Vorgänge brauchen Aufmerksamkeit.";
+}
+
+async function refreshBugOpsAttention({ notify = false } = {}) {
+  if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
+    state.bugOpsSummary = null;
+    renderBugOpsAttentionBadge(null);
+    return null;
+  }
+  const uid = state.user.uid;
+  try {
+    const summary = await aiApi.getBugOpsSummary({});
+    if (state.user?.uid !== uid || !isAdmin()) return null;
+    state.bugOpsSummary = summary || null;
+    renderBugOpsAttentionBadge(summary);
+    if (notify && Number(summary?.needsAttention || 0) > 0 && !state.shownThisLogin.has("bugops-attention")) {
+      state.shownThisLogin.add("bugops-attention");
+      const message = "BugOps: wichtige Fehler brauchen deine Aufmerksamkeit.";
+      if (Number(summary?.p0 || 0) > 0) toast(message, "error");
+      else toast(message);
+    }
+    return summary;
+  } catch (error) {
+    console.warn("BugOps-Zusammenfassung konnte nicht geladen werden:", error);
+    return null;
+  }
+}
+
 async function ensureProfileDefaults() {
   if (!state.user) return;
   const ref = doc(db, "users", state.user.uid);
@@ -1086,6 +1126,8 @@ onAuthStateChanged(auth, async (user) => {
     adminAuditCursor = null;
     state.adminAudit = [];
     state.adminFeedback = [];
+    state.bugOpsSummary = null;
+    renderBugOpsAttentionBadge(null);
     $("adminAuditList")?.replaceChildren();
     $("adminFeedbackList")?.replaceChildren();
     state.variantTask = null;
@@ -1118,6 +1160,7 @@ onAuthStateChanged(auth, async (user) => {
     state.shownThisLogin = new Set();
   }
   setTeacherBar();
+  if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
 
   const params = new URLSearchParams(location.search);
   const rawTemplateCode = params.get("template");
@@ -6808,7 +6851,7 @@ async function openAdmin() {
     return;
   }
   showView("adminView");
-  switchAdminTab("overview", false);
+  switchAdminTab(state.bugOpsSummary?.needsAttention ? "feedback" : "overview", false);
   await loadAdminData(true);
 }
 
@@ -6863,6 +6906,7 @@ async function loadAdminData(showToast = false) {
     renderAdminTeacherTour();
     renderAdminFeedback();
     renderAdminAudit();
+    await refreshBugOpsAttention({ notify: false });
     if (showToast) toast("Admin-Daten aktualisiert.");
   } catch (err) {
     console.error(err);
