@@ -231,7 +231,21 @@ test('M1.5 vehicle recovery uses safe checkpoints instead of full-run restart', 
   assert.match(js, /safeProgress: 0/);
   assert.match(js, /state\.jeep\.distance = state\.jeep\.safeDistance/);
   assert.match(js, /state\.river\.progress = state\.river\.safeProgress/);
-  assert.match(js, /jeepCheckpoint > state\.jeep\.safeDistance/);
+  // Execute the current Jeep update: its local `jeep` alias must still advance
+  // checkpoints monotonically and only in the safe window, even after resets.
+  const updateSource = js.slice(js.indexOf('  function updateJeep('), js.indexOf('  function updateAnimals('));
+  const update = new Function('state', 'jeepCourse', 'jeepHazardScreenY', 'updateHud',
+    updateSource + '\nreturn updateJeep;');
+  for (const [distance, saved, stuck, expected] of [
+    [179, 0, false, 0], [181, 0, false, 180], [223, 0, false, 0],
+    [361, 180, false, 360], [181, 360, false, 360], [361, 180, true, 180]
+  ]) {
+    const state = { keys: new Set(), jeep: { distance, safeDistance: saved,
+      stuck, stuckPower: 0, x: 480, speed: 64, shake: 0,
+      impactTimer: 0, roadblockTimer: 0, hitHazards: new Set() } };
+    update(state, [{ id: 'roadblock', story: true }], () => -1000, () => {})(0);
+    assert.equal(state.jeep.safeDistance, expected, `distance=${distance}, saved=${saved}, stuck=${stuck}`);
+  }
   assert.match(js, /riverCheckpoint > state\.river\.safeProgress/);
 });
 
@@ -301,13 +315,13 @@ test('M2 mechanic instructions are concise and student-friendly', () => {
 });
 
 
-test('V0.1 visual bible defines the Amazonas reference quality bar', () => {
+test('visual bible defines the current Amazonas Overworld quality bar', () => {
   for (const phrase of [
-    'Warm, abenteuerlich, lebendig',
-    'Tiefenaufbau pro Szene',
-    'Camp – Referenzstandard',
-    'Performance-Budget',
-    'Camp-Wow-Moment'
+    'originale Retro-Handheld-Top-Down-Adventure-Overworld',
+    'Gemeinsame Overworld-Regeln',
+    'Retro-Overworld-Feldstation',
+    '## Performance',
+    'ein echter manueller Geräte-/Screenshot-Test'
   ]) assert.ok(visualBible.includes(phrase), 'missing visual rule: ' + phrase);
   assert.match(html, /class="visual-masterpiece"/);
   assert.match(html, /GRADECrew ESCAPE · EXPEDITION/);

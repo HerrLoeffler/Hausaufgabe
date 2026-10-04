@@ -12,3 +12,12 @@
 - Überschneidung: PR #83 Workflow bereits mit Concurrency und anderen Workflow-Ausschlüssen; diese erhalten.
 - Nächster Schritt: nach öffentlicher Umstellung exakte CI prüfen und in den Visual-Branch integrieren. Kein Production-Deploy; ein manueller Preview-Start ist ein eigener bewusster Meilenstein.
 - Wiederaufnahme: Workflow im aktuellen PR-Head vergleichen; fehlender Remote-Test ist nicht durch lokale Strukturprüfung ersetzt.
+
+Fortsetzung nach public: vollständiger Checkout erlaubt erstmals lokale
+Syntax-/Test-/Build-Prüfung des Visual-Heads. 33/35 Tests bestanden zunächst;
+zwei ältere Quelltextverträge waren veraltet: Jeep nutzt jetzt einen lokalen
+Alias und die Visual Bible beschreibt die neue Retro-Overworld statt der alten
+Camp-Referenz. Jeep-Checkpoint wird jetzt an sechs echten Update-Szenarien
+geprüft; Dokumentationsvertrag folgt der vorhandenen aktuellen Bible.
+Produktdateien und freigegebene visuelle Richtung unverändert. Neuer exakter
+Remote-Nachweis nach diesem Folgecommit erforderlich.
