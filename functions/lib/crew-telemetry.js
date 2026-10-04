@@ -15,7 +15,7 @@ const EXPIRING_COLLECTIONS = Object.freeze([RAW_COLLECTION, USER_MARKER_COLLECTI
 const CREW_IDS = new Set(["coco", "remy", "emmi", "wilma"]);
 const FIELD_NAMES = new Set([
   "subject", "grade", "schoolType", "region", "topic", "difficulty",
-  "count", "points", "durationMinutes", "audioQuestionCount", "notes", "questionTypes"
+  "count", "points", "durationMinutes", "audioQuestionCount", "solutionAudioQuestionCount", "notes", "questionTypes"
 ]);
 const CLIENT_EVENTS = new Set([
   "input_submitted", "voice_started", "voice_stopped", "patch_applied",

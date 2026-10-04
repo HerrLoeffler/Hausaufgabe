@@ -48,6 +48,21 @@ function renderSolutions(receipt) {
     const answer = document.createElement("p");
     answer.textContent = solution.answer || "–";
     article.append(title, answer);
+    const src = String(solution.audio?.src || "");
+    if (src.startsWith("data:audio/")) {
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "metadata";
+      audio.src = src;
+      audio.setAttribute("aria-label", `Audio-Lösung zu Aufgabe ${Number(solution.position) || index + 1} anhören`);
+      article.appendChild(audio);
+      if (solution.audio?.aiGenerated !== false) {
+        const disclosure = document.createElement("small");
+        disclosure.className = "secureSolutionAudioDisclosure";
+        disclosure.textContent = "KI-generierte Stimme";
+        article.appendChild(disclosure);
+      }
+    }
     list.appendChild(article);
   });
   panel.appendChild(list);

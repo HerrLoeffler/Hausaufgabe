@@ -12,6 +12,7 @@ const FIELD_SELECTORS = Object.freeze({
   count: "#aiCount",
   points: "#aiPoints",
   audioQuestionCount: "#aiAudioQuestionCount",
+  solutionAudioQuestionCount: "#aiSolutionAudioQuestionCount",
   notes: "#aiCustomNotes"
 });
 
