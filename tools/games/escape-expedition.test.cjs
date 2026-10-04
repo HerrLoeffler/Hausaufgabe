@@ -279,7 +279,7 @@ test('M2 student-facing copy uses short direct action language', () => {
     'Finde Tukan und Capybara. Fotografiere beide.',
     'Der Strom ist aus. Starte zuerst den Generator.',
     'Richtig! Weiter geht’s.'
-  ]) assert.ok(js.includes(expected), \`missing simplified copy: \${expected}\`);
+  ]) assert.ok(js.includes(expected), 'missing simplified copy: ' + expected);
 
   for (const oldCopy of [
     'Dokumentiere die Tiere',
@@ -288,7 +288,7 @@ test('M2 student-facing copy uses short direct action language', () => {
     'Die zwei Zielarten sind Tukan und Capybara',
     'Die Piste übernimmt den Rest',
     'Das Jeep-Terminal verlangt zuerst'
-  ]) assert.ok(!js.includes(oldCopy), \`old complex copy remains: \${oldCopy}\`);
+  ]) assert.ok(!js.includes(oldCopy), 'old complex copy remains: ' + oldCopy);
 });
 
 test('M2 mechanic instructions are concise and student-friendly', () => {
