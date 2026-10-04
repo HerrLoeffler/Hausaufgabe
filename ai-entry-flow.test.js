@@ -41,9 +41,9 @@ test('public hero uses canonical current brand and crew assets', () => {
   const start = blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"');
   assert.match(start, /GRADECREW_ASSETS\.brand\.primary/);
   assert.match(start, /GRADECREW_ASSETS\.mascots\.coco\.welcome/);
-  assert.match(entry, /\["remy", "Remy", "Erstellen"\]/);
-  assert.match(entry, /\["emmi", "Emmi", "Verbessern"\]/);
-  assert.match(entry, /\["wilma", "Wilma", "Prüfen"\]/);
+  assert.match(entry, /\["remy", "Remy", "Erstellen", "edit"\]/);
+  assert.match(entry, /\["emmi", "Emmi", "Verbessern", "improve"\]/);
+  assert.match(entry, /\["wilma", "Wilma", "Prüfen", "check"\]/);
   assert.doesNotMatch(entry, /falcon-create|generic.*mascot/i);
 });
 
@@ -102,13 +102,13 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /grid-template-areas:\s*"lead" "crew" "actions" "student" "benefits"/);
 });
 
-test('new public styling cannot target secure student screens', () => {
+test('immersive homepage includes public navigation and classroom scene', () => {\n  assert.match(entry, /gcPublicNav/);\n  assert.match(entry, /Funktionen/);\n  assert.match(entry, /Die Crew/);\n  assert.match(entry, /Für Lehrkräfte/);\n  assert.match(entry, /gcEntryClassroom/);\n  assert.match(entry, /gcEntryDoorSign/);\n  assert.match(entry, /gcEntryBoard/);\n  assert.match(css, /\\.gcPublicEntryMode \\.shell/);\n  assert.match(css, /\\.gcEntryHero/);\n});\n\ntest('new public styling cannot target secure student screens', () => {
   assert.doesNotMatch(css, /secureStudent|secure-student|studentView/);
   assert.match(css, /#authView/);
 });
 
 test('startup actively installs entry before app handlers and staging packages it', () => {
-  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=3")');
+  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=4")');
   const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
   const appImport = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
@@ -116,5 +116,5 @@ test('startup actively installs entry before app handlers and staging packages i
   assert.ok(appImport > installerCall, 'entry must be installed before app handlers bind');
   assert.match(startup, /if \(!entryInstalled\) throw new Error/);
   assert.match(build, /gradecrew-entry-flow\.js/);
-  assert.match(startup, /auth-startscreen-v3/);
+  assert.match(startup, /auth-startscreen-v4/);
 });
