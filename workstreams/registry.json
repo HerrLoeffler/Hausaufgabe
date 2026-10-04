@@ -373,11 +373,12 @@
       "title": "Guardian permission recovery and current repository audit",
       "primaryBranch": "fix/guardian-recovery-queue-20261004",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/guardian-source-recovery-20261004.md",
       "relatedBranches": [
         "fix/guardian-read-permission-homepage-admission-20261004",
-        "fix/guardian-source-recovery-20261004"
+        "fix/guardian-source-recovery-20261004",
+        "docs/guardian-source-recovery-evidence-20261004"
       ]
     },
     {

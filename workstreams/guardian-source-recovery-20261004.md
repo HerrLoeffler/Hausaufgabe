@@ -28,3 +28,9 @@ Review und exakte PR-CI prüfen; Quell-/main-Stand vor Merge erneut abgleichen. 
 ## Parallele Web-Integration während der Queue-Prüfung
 
 PR #96 wurde inzwischen auf Web integriert: 256609f81f601896a9e683f67945743df6b2f29f. Pilot-CSS, Homepage-CSS und Entry-Kontext unverändert. startup.js hat ausschließlich aktualisierte i18n-Importversionen und den neuen assessment-locale-ui-Import nach app.js. Neuer vollständiger Auftrag/Policy/Recovery werden vor dem ersten neuen Versuch auf diesen aktuellen SHA gepinnt. Homepage-Quellvertrag ebenfalls explizit erneuert: ihr aktualisierter read-only Startup-Kontext wird frisch gelesen/geprüft und mit seinem neuen Blob-SHA gebunden; Produktbrief, zulässige CSS-Datei und Budget bleiben unverändert. Kein früherer Homepage-Versuch vorhanden.
+
+## Echter Recovery- und Ausführungsnachweis
+
+Queue-/Quellvertrag-Folgefix #97 integriert: 2a2a9912cc34c8afed19c3260f254d45ceb613b1. Finale CI am a6f50978: Guardian 37217907190, Handoff 37217907187, Development Status 37217907202 und vollständige isolierte Web-Rehearsal 37217907349 grün.
+
+Recovery 37218071013 / Job 111482576127 erfolgreich. Sein single-use Marker ist dispatched. Ursprüngliche taskHash/approvedSha/Publikation/Usage/Run-Daten und die erste Reservierung wurden mit dem vorigen Ledger feldweise identisch nachgewiesen. Genau ein neuer Versuch run-37218071006-1 wurde reserviert: Gesamthistorie 2/3, Reservierungen 1,70/2,55 USD. Ausführung 37218095594: prepare, build und publish erfolgreich; kombinierte CI läuft noch. Der ursprüngliche Kandidat ist Referenz, der neue Lauf benutzt den aktuellen 256609f-Quellvertrag. Production unverändert; E2E-/Staging-Abschluss noch nicht behauptet.
