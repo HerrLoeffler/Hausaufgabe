@@ -6,15 +6,14 @@ on:
       - prototype/escape-expedition-visual-masterpiece-v1
     paths:
       - 'lab/escape-expedition/**'
-      - 'docs/games/ESCAPE_GAMES_CONCEPT.md'
-      - 'docs/games/ESCAPE_MASTERPIECE_ROADMAP.md'
-      - 'docs/games/ESCAPE_MASTERPIECE_AUDIT.md'
-      - 'docs/games/ESCAPE_AMAZONAS_VISUAL_BIBLE.md'
-      - 'workstreams/escape-expedition-visual-v1.md'
       - 'tools/build-lab-escape-expedition.mjs'
       - 'tools/games/escape-expedition.test.cjs'
       - '.github/workflows/escape-expedition-preview.yml'
   workflow_dispatch:
+
+concurrency:
+  group: escape-expedition-visual-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
