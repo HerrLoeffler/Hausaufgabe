@@ -186,6 +186,151 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+
+  deploy-assessment-functions:
+    needs: source
+    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      PROJECT_ID: hausaufgabe-staging
+      INTEGRATION_BRANCH: feature/gradecrew-app-integration
+      EXPECTED_SHA: ${{ needs.source.outputs.sha }}
+      FIREBASE_TOOLS_VERSION: 15.32.0
+    steps:
+      - name: Checkout exactly the tested integration commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.source.outputs.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: assessment-functions/package-lock.json
+
+      - name: Refuse stale or unexpected assessment source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          current=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${INTEGRATION_BRANCH}" --jq .object.sha)
+          test "$current" = "$EXPECTED_SHA" || {
+            echo "A newer integration revision exists; refusing stale Assessment Functions deployment."
+            echo "Expected: $EXPECTED_SHA"
+            echo "Current:  $current"
+            exit 1
+          }
+          grep -q '"codebase": "assessment"' firebase.json
+          for required in getAssessmentInfo startAssessmentAttempt resumeAssessmentAttempt submitAssessmentAttempt getAssessmentReceipt cleanupAssessmentPrivateOnQuizDelete; do
+            grep -R -q "exports.$required" assessment-functions/lib || { echo "Missing required assessment export in source: $required"; exit 1; }
+          done
+          ! grep -q 'hausaufgabe-40294' firebase.json
+
+      - name: Re-run Assessment Functions tests before cloud authentication
+        run: |
+          npm ci --prefix assessment-functions --include=dev --no-audit --no-fund
+          npm test --prefix assessment-functions
+          npm run check --prefix assessment-functions
+
+      - name: Install pinned Firebase CLI before cloud authentication
+        run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund "firebase-tools@$FIREBASE_TOOLS_VERSION"
+
+      - name: Checkout trusted deploy control after unprivileged source tests
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: deploy-control
+          persist-credentials: false
+
+      - name: Recheck upstream authority immediately before cloud login
+        run: python3 -m tools.automation.deployment_evidence
+        working-directory: deploy-control
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN_ID: ${{ needs.source.outputs.ci_run }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+
+      - name: Authenticate only as the staging Functions deployer
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: hausaufgabe-staging
+          workload_identity_provider: ${{ vars.STAGING_FUNCTIONS_WIF_PROVIDER }}
+          service_account: gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com
+
+      - name: Deploy only the Assessment Functions codebase to staging
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
+            --project "$PROJECT_ID" \
+            --only functions:assessment \
+            --non-interactive
+
+      - name: Verify Assessment Functions are visible in staging
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" functions:list \
+            --project "$PROJECT_ID" --json > "$RUNNER_TEMP/functions.json"
+          node - "$RUNNER_TEMP/functions.json" <<'NODE'
+          const fs = require('node:fs');
+          const path = process.argv[2];
+          const payload = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const rows = Array.isArray(payload) ? payload : payload.result || payload.functions || [];
+          const text = JSON.stringify(rows);
+          const requiredFunctions = [
+            'getAssessmentInfo',
+            'startAssessmentAttempt',
+            'resumeAssessmentAttempt',
+            'submitAssessmentAttempt',
+            'getAssessmentReceipt',
+            'cleanupAssessmentPrivateOnQuizDelete'
+          ];
+          for (const required of requiredFunctions) {
+            if (!text.includes(required)) throw new Error(`Missing deployed staging assessment function: ${required}`);
+          }
+          NODE
+
+      - name: Write Assessment deployment receipt
+        env:
+          RUN_ID: ${{ github.run_id }}
+          UPSTREAM_RUN_ID: ${{ needs.source.outputs.ci_run }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const receipt = {
+            project: process.env.PROJECT_ID,
+            scope: 'functions:assessment',
+            commit: process.env.EXPECTED_SHA,
+            integrationBranch: process.env.INTEGRATION_BRANCH,
+            workflowRun: Number(process.env.RUN_ID),
+            upstreamCiRun: Number(process.env.UPSTREAM_RUN_ID),
+            verifiedFunctions: [
+              'getAssessmentInfo',
+              'startAssessmentAttempt',
+              'resumeAssessmentAttempt',
+              'submitAssessmentAttempt',
+              'getAssessmentReceipt',
+              'cleanupAssessmentPrivateOnQuizDelete'
+            ],
+            productionChanged: false,
+            firestoreRulesChanged: false,
+            hostingChanged: false,
+            aiFunctionsChanged: false,
+            createdAt: new Date().toISOString()
+          };
+          fs.writeFileSync('staging-assessment-functions-receipt.json', JSON.stringify(receipt, null, 2) + '\n');
+          NODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: staging-assessment-functions-receipt-${{ needs.source.outputs.sha }}
+          path: staging-assessment-functions-receipt.json
+          if-no-files-found: error
+          retention-days: 90
+
   setup-needed:
     needs: source
     if: vars.STAGING_FUNCTIONS_WIF_PROVIDER == ''
