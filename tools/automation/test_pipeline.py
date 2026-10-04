@@ -219,6 +219,20 @@ class ModelTests(unittest.TestCase):
                 m.call('correctness','Review',{},p.REVIEW_SCHEMA,lambda endpoint,body:calls.append(body) or (original|changes))
             self.assertEqual(len(calls),1)
 
+    def test_openai_terminal_status_reports_safe_reason_and_response_id(self):
+        payload = self.response('build', {'unused': True}) | {
+            'id': 'resp_safe_diagnostic',
+            'status': 'incomplete',
+            'incomplete_details': {'reason': 'max_output_tokens'},
+        }
+        with self.assertRaisesRegex(ValueError, r'OpenAI response incomplete: max_output_tokens; response resp_safe_diagnostic'):
+            m.call('build', 'Implement', {}, p.CANDIDATE_SCHEMA, lambda *_: payload)
+        payload['incomplete_details']['private'] = 'must-not-be-echoed'
+        try:
+            m.call('build', 'Implement', {}, p.CANDIDATE_SCHEMA, lambda *_: payload)
+        except ValueError as exc:
+            self.assertNotIn('must-not-be-echoed', str(exc))
+
     def test_input_budget_blocks_before_provider_call(self):
         calls=[]
         with self.assertRaises(ValueError):
