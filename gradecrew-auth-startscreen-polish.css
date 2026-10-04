@@ -1,15 +1,863 @@
 /* GradeCrew public entry – isolated visual polish layer.
    Loaded after gradecrew-auth-startscreen.css.
-   This file is intentionally small so bounded design reviews can refine
-   composition, depth, spacing and responsive behavior without rewriting the
-   stable public-entry foundation.
+   Only the public shell and auth entry are affected. Assets, DOM copy,
+   language selection and product state transitions remain unchanged.
+   Visible copy stays exclusively in the DOM/i18n catalogs; DE/EN remains runtime-driven. */
 
-   Internationalization rule:
-   - no visible words in CSS content, data URIs or background images;
-   - all user-facing copy stays in the DOM/i18n catalogs;
-   - decorative symbols only.
-*/
+.gcPublicEntryMode {
+  background: #f5f3ef;
+}
+
+.gcPublicEntryMode .topbar {
+  min-height: 78px;
+  height: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px clamp(22px, 3.2vw, 52px);
+  gap: 12px clamp(18px, 2.4vw, 36px);
+  border-bottom-color: rgba(205, 211, 216, .55);
+  background: rgba(255, 254, 251, .96);
+  box-shadow: 0 4px 22px rgba(46, 58, 73, .035);
+}
+
+.gcPublicEntryMode .topbar #userBar {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.gcPublicEntryMode .topbar #userBar button,
+.gcPublicEntryMode .topbar #userBar select {
+  min-height: 44px;
+}
+
+.gcPublicEntryMode .gcPublicNav {
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  gap: 8px clamp(18px, 2.6vw, 40px);
+}
+
+.gcPublicEntryMode .gcPublicNav button {
+  min-height: 44px;
+  padding: 10px 4px;
+  color: #42536d;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.gcPublicEntryMode .gcPublicNav button:hover {
+  color: #285ac9;
+  transform: none;
+}
 
 .gcPublicEntryMode #authView {
   --gc-entry-polish-layer: 1;
+  --gc-entry-bg: #f5f3ef;
+  --gc-entry-text: #203149;
+  --gc-entry-muted: #627086;
+  padding: clamp(14px, 1.5vw, 24px) clamp(12px, 1.5vw, 24px) 32px;
+  background:
+    radial-gradient(ellipse at 8% 15%, rgba(255, 239, 215, .48), transparent 45%),
+    linear-gradient(180deg, #f8f7f4, #f0f3f5);
+}
+
+.gcPublicEntryMode #authView .gcEntryShell {
+  width: min(1540px, 100%);
+  min-width: 0;
+}
+
+.gcPublicEntryMode #authView .gcEntryWelcome,
+.gcPublicEntryMode #authView .gcEntryWelcome * {
+  box-sizing: border-box;
+}
+
+.gcPublicEntryMode #authView .gcEntryWelcome {
+  border: 1px solid rgba(204, 212, 218, .65);
+  border-radius: 28px;
+  background: #fffefa;
+  box-shadow: 0 24px 68px rgba(46, 60, 79, .085), 0 3px 12px rgba(46, 60, 79, .035);
+}
+
+/* Flow-based rows reserve real space for both languages and every control.
+   The crew never shares an absolute positioning band with the headline or CTAs. */
+.gcPublicEntryMode #authView .gcEntryHero {
+  min-height: 0;
+  padding: clamp(30px, 2.4vw, 40px) clamp(24px, 3.4vw, 54px) 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "lead" "crew" "actions" "student";
+  gap: 20px;
+  background:
+    radial-gradient(ellipse at 42% 12%, rgba(255, 255, 255, .98), transparent 56%),
+    radial-gradient(ellipse at 33% 72%, rgba(247, 225, 195, .35), transparent 48%),
+    linear-gradient(115deg, #f7ecdc 0%, #fffaf2 28%, #f8fbfd 66%, #edf4f8 100%);
+}
+
+.gcPublicEntryMode #authView .gcEntryClassroom {
+  opacity: 1;
+  background:
+    linear-gradient(125deg, transparent 12%, rgba(255, 252, 231, .42) 24%, transparent 42%),
+    radial-gradient(ellipse at 50% 26%, rgba(255, 255, 255, .44), transparent 64%),
+    radial-gradient(ellipse at 50% 94%, rgba(203, 180, 151, .10), transparent 58%),
+    linear-gradient(180deg, rgba(255, 254, 249, .10), transparent 60%, rgba(255, 253, 247, .22));
+}
+
+.gcPublicEntryMode #authView .gcEntrySunGlow {
+  left: -3%;
+  top: -20%;
+  width: 76%;
+  opacity: .8;
+  filter: blur(22px);
+  background: radial-gradient(circle, rgba(255, 255, 249, .95), rgba(255, 241, 205, .42) 38%, transparent 70%);
+}
+
+.gcPublicEntryMode #authView .gcEntryDoor {
+  left: -24px;
+  top: 3%;
+  bottom: 6%;
+  width: clamp(140px, 12vw, 190px);
+  border-right: 1px solid rgba(149, 116, 77, .12);
+  border-radius: 12px;
+  opacity: .28;
+  filter: blur(1.8px);
+  background:
+    linear-gradient(90deg, rgba(133, 93, 56, .12), transparent 20%, rgba(255, 247, 226, .22) 78%, rgba(146, 103, 60, .12)),
+    linear-gradient(110deg, #ddba91, #ead4b6);
+  box-shadow: inset -12px 0 28px rgba(127, 93, 55, .08), 18px 0 42px rgba(153, 119, 78, .07);
+}
+
+.gcPublicEntryMode #authView .gcEntryDoor::before,
+.gcPublicEntryMode #authView .gcEntryDoor::after {
+  border-color: rgba(140, 102, 65, .12);
+  border-radius: 8px;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, .18);
+}
+
+.gcPublicEntryMode #authView .gcEntryDoorSign {
+  width: 112px;
+  top: 15%;
+  border-color: rgba(142, 104, 65, .14);
+  background: linear-gradient(150deg, #f9e7c9, #ead1aa);
+  box-shadow: 0 6px 18px rgba(112, 83, 49, .08);
+}
+
+.gcPublicEntryMode #authView .gcEntryDoorKnob {
+  opacity: .45;
+  box-shadow: 0 3px 12px rgba(112, 83, 49, .12);
+}
+
+.gcPublicEntryMode #authView .gcEntryWindow {
+  left: 10%;
+  top: -3%;
+  width: 28%;
+  height: 46%;
+  opacity: .45;
+  filter: blur(2px);
+  border-right: 3px solid rgba(201, 185, 158, .18);
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(192, 183, 165, .16) 49% 50%, transparent 51%),
+    linear-gradient(0deg, transparent 48%, rgba(192, 183, 165, .13) 49% 50%, transparent 51%),
+    linear-gradient(150deg, #fffefa, rgba(213, 233, 241, .24));
+  box-shadow: 28px 24px 65px rgba(255, 250, 226, .62);
+}
+
+.gcPublicEntryMode #authView .gcEntryWindow span {
+  opacity: .6;
+  filter: blur(5px);
+}
+
+.gcPublicEntryMode #authView .gcEntryBoard {
+  top: 23%;
+  right: 2%;
+  width: clamp(145px, 13vw, 205px);
+  min-height: 140px;
+  padding: 26px 16px 18px;
+  border: 5px solid rgba(192, 161, 123, .7);
+  border-radius: 12px;
+  opacity: .22;
+  filter: blur(1.2px);
+  background: radial-gradient(ellipse at 25% 15%, #91a8a0, #667e77);
+  box-shadow: 0 14px 32px rgba(53, 75, 65, .1);
+  transform: rotate(-2deg);
+}
+
+.gcPublicEntryMode #authView .gcEntryShelf {
+  right: -28px;
+  top: 22%;
+  width: clamp(145px, 13vw, 205px);
+  height: 55%;
+  border-color: rgba(194, 165, 128, .7);
+  opacity: .18;
+  filter: blur(3px);
+  background: linear-gradient(180deg, transparent 0 18%, rgba(181, 147, 109, .6) 18% 20%, transparent 20% 43%, rgba(181, 147, 109, .6) 43% 45%, transparent 45% 69%, rgba(181, 147, 109, .6) 69% 71%, transparent 71%);
+}
+
+.gcPublicEntryMode #authView .gcEntryPlant {
+  opacity: .65;
+  filter: blur(2px);
+}
+
+.gcPublicEntryMode #authView .gcEntryDeskDecor {
+  left: 7%;
+  right: -8%;
+  bottom: 22%;
+  height: 110px;
+  border: 0;
+  border-radius: 50%;
+  opacity: .4;
+  filter: blur(8px);
+  transform: perspective(720px) rotateX(62deg);
+  background: linear-gradient(180deg, rgba(222, 193, 155, .48), rgba(255, 248, 232, .06));
+  box-shadow: 0 -18px 40px rgba(151, 118, 77, .07);
+}
+
+.gcPublicEntryMode #authView .gcEntryLead {
+  grid-area: lead;
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 0;
+}
+
+.gcPublicEntryMode #authView .gcEntryLead h1 {
+  font-size: clamp(44px, 4vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+  color: #18315b;
+  text-shadow: none;
+  overflow-wrap: break-word;
+}
+
+.gcPublicEntryMode #authView .gcEntryLead h1 strong {
+  color: #285ac9;
+}
+
+.gcPublicEntryMode #authView .gcEntryLead > p {
+  margin: 14px 0 0;
+  color: #586b82;
+  font-size: clamp(18px, 1.45vw, 23px);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.gcPublicEntryMode #authView .gcEntryCharacterStage {
+  grid-area: crew;
+  position: relative;
+  inset: auto;
+  width: min(1280px, 100%);
+  min-width: 0;
+  margin: 4px auto 0;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.55fr);
+  align-items: end;
+  gap: clamp(28px, 3vw, 48px);
+}
+
+.gcPublicEntryMode #authView .gcEntryCoco {
+  min-height: 0;
+  align-self: end;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.gcPublicEntryMode #authView .gcEntryCoco::before {
+  left: -12%;
+  bottom: -3%;
+  width: 124%;
+  height: 92%;
+  background: radial-gradient(ellipse, rgba(255, 255, 253, .85), transparent 70%);
+}
+
+.gcPublicEntryMode #authView .gcEntryCoco img {
+  grid-row: 2;
+  width: min(100%, 465px);
+  height: clamp(350px, 27vw, 430px);
+  object-fit: contain;
+  object-position: center bottom;
+  transform: none;
+  filter: drop-shadow(0 22px 20px rgba(55, 66, 82, .18));
+}
+
+.gcPublicEntryMode #authView .gcEntryCocoNote {
+  grid-row: 1;
+  position: relative;
+  inset: auto;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding-right: 8px;
+  color: #47668e;
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: left;
+  transform: rotate(-3deg);
+  text-shadow: none;
+}
+
+.gcPublicEntryMode #authView .gcEntryCocoNote::after {
+  flex: 0 0 28px;
+  margin: 0;
+  font-size: 27px;
+}
+
+.gcPublicEntryMode #authView .gcEntrySupportCrew {
+  position: relative;
+  isolation: isolate;
+  padding: 0;
+  gap: clamp(12px, 1.7vw, 26px);
+  align-items: stretch;
+}
+
+.gcPublicEntryMode #authView .gcEntrySupportCrew {
+  background: radial-gradient(ellipse at 50% 65%, rgba(255, 255, 255, .54), transparent 72%);
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewMember {
+  grid-template-rows: clamp(230px, 18vw, 280px) 1fr;
+  gap: 12px;
+  align-items: end;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewMember > img {
+  width: min(100%, 245px);
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 12px 14px rgba(49, 63, 80, .11));
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRole {
+  width: 100%;
+  min-height: 78px;
+  margin: 0;
+  padding: 12px;
+  align-self: stretch;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  border-color: rgba(192, 208, 224, .7);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 8px 22px rgba(51, 67, 89, .055), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRoleIcon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRoleIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRoleCopy {
+  justify-items: start;
+  gap: 3px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRoleCopy strong {
+  font-size: 15px;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewRoleCopy small {
+  color: #5e6f85;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewMember-emmi .gcEntryCrewRole {
+  border-color: rgba(217, 174, 146, .55);
+  background: rgba(255, 250, 246, .92);
+}
+
+.gcPublicEntryMode #authView .gcEntryCrewMember-wilma .gcEntryCrewRole {
+  border-color: rgba(147, 190, 168, .55);
+  background: rgba(249, 255, 251, .92);
+}
+
+.gcPublicEntryMode #authView .gcEntryActions {
+  grid-area: actions;
+  position: relative;
+  inset: auto;
+  width: min(660px, 100%);
+  margin: 8px auto 0;
+  transform: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.gcPublicEntryMode #authView .gcEntryTutorialStart,
+.gcPublicEntryMode #authView .gcEntryLoginOpen {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  line-height: 1.3;
+  white-space: normal;
+  text-align: center;
+}
+
+.gcPublicEntryMode #authView .gcEntryTutorialStart {
+  box-shadow: 0 9px 22px rgba(40, 90, 201, .2);
+}
+
+.gcPublicEntryMode #authView .gcEntryLoginOpen {
+  border-color: #9fb7dc;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 4px 12px rgba(55, 77, 107, .045);
+}
+
+.gcPublicEntryMode #authView .gcEntryStudent {
+  grid-area: student;
+  position: relative;
+  inset: auto;
+  width: min(780px, 100%);
+  min-width: 0;
+  min-height: 64px;
+  margin: 0 auto;
+  transform: none;
+  padding: 9px 12px;
+  grid-template-columns: 36px minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 12px;
+  border-color: rgba(192, 207, 222, .65);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .68);
+  box-shadow: 0 3px 12px rgba(46, 65, 87, .035);
+}
+
+.gcPublicEntryMode #authView .gcEntryStudentIcon {
+  width: 36px;
+  height: 36px;
+  grid-row: auto;
+  color: #6081aa;
+}
+
+.gcPublicEntryMode #authView .gcEntryStudentIcon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.gcPublicEntryMode #authView .gcEntryStudent h2 {
+  font-size: 14px;
+  line-height: 1.35;
+  color: #40546f;
+}
+
+.gcPublicEntryMode #authView .gcEntryStudent p {
+  color: #63738a;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.gcPublicEntryMode #authView #gcEntryJoinHost,
+.gcPublicEntryMode #authView #joinForm,
+.gcPublicEntryMode #authView #joinForm > label {
+  min-width: 0;
+}
+
+.gcPublicEntryMode #authView #joinForm {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.gcPublicEntryMode #authView #joinForm input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border-color: #c8d5e3;
+  border-radius: 10px;
+  font-weight: 550;
+}
+
+.gcPublicEntryMode #authView #joinForm .button {
+  min-width: 48px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefits {
+  min-height: 102px;
+  padding: 18px clamp(16px, 2.8vw, 44px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-top-color: rgba(204, 214, 222, .55);
+  background: rgba(255, 254, 251, .98);
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefits > span {
+  padding: 4px clamp(10px, 1.5vw, 22px);
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  border: 0;
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefits > span + span {
+  border-left: 1px solid rgba(204, 214, 222, .5);
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefitIcon {
+  width: 34px;
+  height: 34px;
+  color: #6482ab;
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefitIcon svg {
+  width: 27px;
+  height: 27px;
+  stroke-width: 1.7;
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefits strong {
+  color: #425774;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.gcPublicEntryMode #authView .gcEntryBenefits small {
+  color: #6b798c;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Tablet: retain a single crew composition without rigid minimum columns.
+   Cards and controls get their own space rather than shrinking into artwork. */
+@media (max-width: 1100px) {
+  .gcPublicEntryMode .topbar {
+    padding-inline: 22px;
+    gap: 12px 20px;
+  }
+
+  .gcPublicEntryMode .gcPublicNav {
+    gap: 8px 16px;
+  }
+
+  .gcPublicEntryMode .gcPublicNav button {
+    font-size: 13px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryHero {
+    padding: 30px 24px 22px;
+    gap: 22px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryLead h1 {
+    font-size: clamp(40px, 5vw, 54px);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCharacterStage {
+    grid-template-columns: minmax(0, .82fr) minmax(0, 1.4fr);
+    gap: 24px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCoco img {
+    height: clamp(285px, 34vw, 370px);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCocoNote {
+    font-size: 14px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntrySupportCrew {
+    gap: 12px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewMember {
+    grid-template-rows: clamp(170px, 21vw, 225px) 1fr;
+    gap: 10px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRole {
+    min-height: 78px;
+    padding: 10px 8px;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleIcon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy strong {
+    font-size: 14px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px 20px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits > span {
+    padding: 14px 16px;
+    border: 0;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits > span:nth-child(even) {
+    border-left: 1px solid rgba(204, 214, 222, .5);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits > span:nth-child(n + 3) {
+    border-top: 1px solid rgba(204, 214, 222, .5);
+  }
+}
+
+@media (max-width: 900px) {
+  .gcPublicEntryMode .topbar {
+    min-height: 72px;
+    padding: 10px 18px;
+    gap: 10px 16px;
+  }
+
+  .gcPublicEntryMode .gcPublicNav {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryHero {
+    padding-inline: 20px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRole {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleIcon {
+    display: none;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy {
+    justify-items: center;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryStudent {
+    width: min(580px, 100%);
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 8px 10px;
+    padding: 12px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryStudentIcon {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryStudentCopy {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .gcPublicEntryMode #authView #gcEntryJoinHost {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* Narrow screens: host first, then all three supporting mascots together.
+   No member is hidden, cropped, or tucked behind a role card. */
+@media (max-width: 760px) {
+  .gcPublicEntryMode .topbar {
+    min-height: 66px;
+    padding: 8px 12px;
+    gap: 8px 12px;
+  }
+
+  .gcPublicEntryMode .gcPublicNav button[data-entry-nav="teacher"] {
+    display: none;
+  }
+
+  .gcPublicEntryMode #authView {
+    padding: 12px 10px 24px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryWelcome {
+    border-radius: 22px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryHero {
+    padding: 28px 18px 20px;
+    gap: 22px;
+    background:
+      radial-gradient(ellipse at 24% 8%, rgba(255, 244, 218, .65), transparent 42%),
+      linear-gradient(160deg, #fffaf1, #f7fbfd 65%, #f0f5f8);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryClassroom {
+    opacity: .48;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryDoor {
+    left: -48px;
+    width: 130px;
+    height: 48%;
+    bottom: auto;
+    opacity: .2;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryDoorSign,
+  .gcPublicEntryMode #authView .gcEntryDoorKnob,
+  .gcPublicEntryMode #authView .gcEntryBoard,
+  .gcPublicEntryMode #authView .gcEntryShelf,
+  .gcPublicEntryMode #authView .gcEntryDeskDecor {
+    display: none;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryWindow {
+    display: block;
+    left: -10%;
+    width: 62%;
+    height: 30%;
+    opacity: .22;
+    filter: blur(6px);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryLead h1 {
+    font-size: clamp(32px, 7.8vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -.04em;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryLead > p {
+    margin-top: 12px;
+    font-size: 17px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCharacterStage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin: 0 auto;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCoco {
+    width: min(360px, 100%);
+    margin: 0 auto;
+    gap: 6px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCoco img {
+    width: min(100%, 340px);
+    height: clamp(235px, 48vw, 310px);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCocoNote {
+    font-size: 14px;
+    padding-right: 4px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntrySupportCrew {
+    width: min(620px, 100%);
+    margin: 0 auto;
+    gap: clamp(6px, 2vw, 14px);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewMember {
+    grid-template-rows: clamp(125px, 25vw, 190px) 1fr;
+    gap: 10px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRole {
+    min-height: 68px;
+    padding: 10px 5px;
+    gap: 0;
+    border-radius: 12px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy strong {
+    font-size: 14px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy small {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryActions {
+    width: min(520px, 100%);
+    margin: 2px auto 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryTutorialStart,
+  .gcPublicEntryMode #authView .gcEntryLoginOpen {
+    min-height: 52px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryStudent {
+    width: min(520px, 100%);
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 8px 18px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits > span,
+  .gcPublicEntryMode #authView .gcEntryBenefits > span:nth-child(even),
+  .gcPublicEntryMode #authView .gcEntryBenefits > span:nth-child(n + 3) {
+    padding: 12px 4px;
+    border: 0;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryBenefits > span + span {
+    border-top: 1px solid rgba(204, 214, 222, .5);
+  }
+}
+
+@media (max-width: 430px) {
+  .gcPublicEntryMode #authView .gcEntryHero {
+    padding-inline: 12px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCoco img {
+    height: 235px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewMember {
+    grid-template-rows: 125px 1fr;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy strong {
+    font-size: 13px;
+  }
+
+  .gcPublicEntryMode #authView .gcEntryCrewRoleCopy small {
+    font-size: 11px;
+  }
+}
+
+/* Keep the foundation's focus-visible and reduced-motion behavior intact.
+   This layer adds no movement; its room lighting and shadows are static. */
+.gcPublicEntryMode .gcPublicNav button:focus-visible,
+.gcPublicEntryMode #authView button:focus-visible,
+.gcPublicEntryMode #authView input:focus-visible,
+.gcPublicEntryMode #authView a:focus-visible {
+  outline: 3px solid #285ac9;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gcPublicEntryMode .gcPublicNav button {
+    transition: none !important;
+    transform: none;
+  }
 }
