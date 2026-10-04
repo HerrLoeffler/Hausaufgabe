@@ -5036,7 +5036,7 @@ async function saveCurrentQuiz(showMessage = true) {
       const audioScript = String(q.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
       if (audioScript) audioDrafts.push({ questionId: q.id, script: audioScript });
       const solutionAudioScript = String(q.solutionAudioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
-      if (solutionAudioScript) solutionAudioDrafts.push({ questionId: q.id, script: solutionAudioScript });
+      if (solutionAudioScript) solutionAudioDrafts.push({ questionId: q.id, script: solutionAudioScript, stale: q.solutionAudioNeedsRegeneration === true });
     }
     for (const oldId of state.loadedQuestionIds) {
       if (!currentIds.has(oldId)) {
