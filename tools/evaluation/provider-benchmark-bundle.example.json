@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "crew-intent-development-example-v1",
+  "phaseId": "phase-a-fast-low-risk",
+  "job": "crew_intent",
+  "subject": "cross-subject",
+  "taskType": "form-patch",
+  "riskTier": "low",
+  "promptVersion": "crew-intent-v1",
+  "system": "Extract only explicit GradeCrew form changes. Do not invent fields. Return the requested structured result.",
+  "maxTokens": 128,
+  "reviewStatus": "development",
+  "context": {
+    "uiLocale": "de-DE",
+    "inputLocale": "de-DE",
+    "contentLocale": "de-DE",
+    "gradingLocale": "de-DE",
+    "educationContextId": "mittelschule-bayern",
+    "curriculumVersion": "lehrplanplus-current",
+    "timeZone": "Europe/Berlin"
+  },
+  "providers": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "generator",
+        "interpreter"
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5",
+      "roles": [
+        "critic",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "roles": [
+        "interpreter",
+        "extractor"
+      ]
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603",
+      "roles": [
+        "generator",
+        "interpreter"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "example-1",
+      "independenceUnit": "synthetic-example-1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Mach daraus bitte 8 Aufgaben und Schwierigkeit mittel."
+        }
+      ]
+    }
+  ]
+}
