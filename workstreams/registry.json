@@ -415,6 +415,14 @@
         "feature/audio-v2-staging-checkpoint",
         "fix/audio-private-drafts-staging-v1"
       ]
+    },
+    {
+      "id": "guardian-admission-profiles-v1",
+      "title": "GC-AUTOMATION-08 / weitere Aufgabenprofile und Staging-Rückstand",
+      "primaryBranch": "docs/guardian-admission-profiles-20261004",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/guardian-admission-profiles-v1.md"
     }
   ]
 }

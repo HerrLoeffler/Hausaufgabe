@@ -141,7 +141,7 @@ Der Auftrag ist nicht nur eine Statusanzeige: freigegebene Funktionen sollen von
 | GC-AUTOMATION-07 | Vollständigen Pilot von Auftrag bis verifiziertem Staging durchführen | **Begrenzter Web-Pilot E2E bestätigt:** Run 37218095594 mit Bau/CI/drei Reviews/Integration grün; integrierte CI 37218270539 grün. Hosting 37219916184 (zweiter begrenzter Deployversuch; 110 Dateien) und AI Functions 37219916242 mit digest-geprüften Receipts für denselben 2436a432-SHA bestätigt. Historie/Budget erhalten, 2/3 Versuche und 1,70/2,55 USD reserviert. Geräteabnahme offen. |
 
 
-GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Games und native Apps sowie explizite Konflikt-Rebase-Aufträge sind weiter offen. V2 darf diese Workstreams nicht über die Web-Allowlist übernehmen. Hauptpriorität zuerst GC-AUTOMATION-07: einen echten kleineren Pilot nach sicherer Einrichtung bestätigen.
+GC-AUTOMATION-08: Weiterarbeit von Martin beauftragt. Aktuelle Aufgaben-/Staging-Bestandsaufnahme und empfohlener Zuschnitt gesichert: feste main-Profile, bestehende Web-Kette erhalten, zuerst isoliertes statisches Games-Preview; Backend/Security/Rules/Gateway/Native erst mit eigenen vollständigen Gates. Designreview steht aus, noch keine neue Zulassung oder Ausführung. GC-AUTOMATION-07-Pilot ist inzwischen belegt erfolgreich; alte Prioritäts-/Setup-Aussage überholt. [Audit](docs/STAGING_BACKLOG_2026-10-04.md), [Übergabe](workstreams/guardian-admission-profiles-v1.md).
 
 
 ## Guardian-Aktivierung und günstigere kleine Aufträge – 04.10.2026
