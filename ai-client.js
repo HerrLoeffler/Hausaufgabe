@@ -32,7 +32,8 @@ export function createAiClient(app, getUid) {
     regenerateQuestion,
     reviseWholeTest: call("reviseWholeTest", 360000),
     analyzeMaterial: call("analyzeMaterial", 300000),
-    generateQuestionMedia: call("generateQuestionMedia", 300000)
+    generateQuestionMedia: call("generateQuestionMedia", 300000),
+    generateQuestionAudio: call("generateQuestionAudio", 180000)
   };
   async function uploadMaterial(file, onProgress = () => {}) {
     const uid = getUid();
