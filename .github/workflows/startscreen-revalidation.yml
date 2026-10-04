@@ -1,0 +1,86 @@
+name: Startscreen candidate revalidation
+on:
+  pull_request:
+    branches: [main]
+    paths: ['tools/automation/candidate_revalidation.py', 'tools/automation/test_candidate_revalidation.py', '.github/workflows/startscreen-revalidation.yml', 'automation/candidate-revalidation/*.json']
+  push:
+    branches: [main]
+    paths: ['automation/candidate-revalidation/*.json']
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-startscreen-revalidation
+  cancel-in-progress: false
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest tools.automation.test_candidate_revalidation -v
+  prepare:
+    needs: unit
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GRADECREW_GUARDIAN_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    outputs:
+      head: ${{ steps.prepare.outputs.head }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: prepare
+        run: python3 -m tools.automation.candidate_revalidation prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recovered-candidate
+          path: evidence/
+          if-no-files-found: error
+  validate:
+    needs: prepare
+    uses: ./.github/workflows/guardian-web-validation.yml
+    with:
+      head: ${{ needs.prepare.outputs.head }}
+      control_sha: ${{ github.sha }}
+  reviews:
+    needs: [prepare, validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: recovered-candidate
+          path: evidence
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-tests
+          path: evidence
+      - name: Three single-use independent reviews, original reservation, no builder
+        run: python3 -m tools.automation.candidate_revalidation reviews
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          GUARDIAN_OPENAI_REVIEW_KEY: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY }}
+          GUARDIAN_ANTHROPIC_REVIEW_KEY: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: startscreen-revalidation-reviews
+          path: evidence/
+          if-no-files-found: error

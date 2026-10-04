@@ -166,3 +166,8 @@ GC-AUTOMATION-01/07/12: frühere Setup-/403-Aussagen sind überholt. Zweiter ech
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
 | GC-HANDOFF-03 | Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen | Wiederaufnahmeregel und Vorlage ergänzt; Integration/CI frisch prüfen | [Anleitung](docs/CHAT_RECOVERY.md), [Übergabe](workstreams/chat-recovery-20261004.md). Dieselbe Task-ID, Chat-Zuordnung, gesicherter Schritt, laufende IDs und Budget erhalten. Martin kann den Einstieg einmal in GradeCrew-Projektanweisungen übernehmen; diese Repo-Änderung setzt keine ChatGPT-Einstellung. |
+
+
+## Design GC recovery checkpoint 04.10.2026
+
+GC-DESIGN-03/04 / startscreen-masterpiece-v4-20261004: original builder succeeded; PR118 validation false-positive, reviews skipped. Test guard fixPR121 integrated after full CI37231113004. During recovery, another active design writer created/merged PR123 (fb88dfa7); CI/deploy receipts and the required three independent reviews remain to reconcile. This isolated checkpoint does not change the authoritative main task state or any budget. Proposed revalidation implementation is not activated and has open reviewer findings; no request file exists. Next: resolve single-writer ownership and inspect live evidence. See workstreams/design-startscreen-multiai-v4.md.
