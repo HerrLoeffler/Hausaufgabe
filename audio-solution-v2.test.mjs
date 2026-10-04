@@ -57,8 +57,12 @@ test("integrated V2 keeps all audio authoring data browser-private and release-g
   for (const source of [rules, secureRules]) {
     assert.match(source, /match \/audioScripts\/\{questionId\}[\s\S]*?allow read, write: if false/);
   }
-  const releaseGate = lifecycle.indexOf("if (!receipt?.solutionsReleased");
-  const audioRead = lifecycle.indexOf('collection("audioScripts")', releaseGate);
+  const helperStart = lifecycle.indexOf("async function attachReleasedSolutionAudio");
+  const helperEnd = lifecycle.indexOf("\n}", helperStart);
+  const helper = lifecycle.slice(helperStart, helperEnd);
+  const releaseGate = helper.indexOf("if (!receipt?.solutionsReleased");
+  const audioRead = helper.indexOf('collection(`quizzes/${quizId}/audioScripts`)');
+  assert.ok(helperStart >= 0, "solution-audio release helper missing");
   assert.ok(releaseGate >= 0, "solution release gate missing");
   assert.ok(audioRead > releaseGate, "private solution audio must only be read after the solution-release gate");
   assert.match(solutionUi, /audio\.controls = true/);
