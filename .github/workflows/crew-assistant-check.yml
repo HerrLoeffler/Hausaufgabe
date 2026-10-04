@@ -83,6 +83,11 @@ jobs:
         working-directory: functions
         run: node --test test/posthog-telemetry.test.js
 
+      - name: Run full Functions suite for PostHog integration
+        if: github.ref_name == 'feature/posthog-staging-telemetry-v1'
+        working-directory: functions
+        run: npm test
+
       - name: Test Emmi whole-test safeguards
         if: github.ref_name == 'feature/emmi-whole-test-revision-v1' || github.ref_name == 'fix/contextual-crew-assistants-v2' || github.ref_name == 'feature/remy-structured-telemetry-v1' || github.ref_name == 'fix/crew-telemetry-retention-v1' || github.ref_name == 'fix/remy-parser-review-v1' || github.ref_name == 'feature/posthog-staging-telemetry-v1'
         working-directory: functions
