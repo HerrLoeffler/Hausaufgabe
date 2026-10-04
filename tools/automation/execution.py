@@ -105,12 +105,15 @@ def prepare(request_id):
     feedback = []
     previous = ledger['attempts'][key][:-1]
     previous_source = {}
+    recovery_base = None
     if previous:
+        from .recovery import permission_recovery
+        recovery_base = permission_recovery(previous[-1], task)
         feedback = previous[-1].get('feedback', [])
         publication = previous[-1].get('publication')
         if publication:
             commit = api('git/commits/' + publication['head'])
-            if commit['tree']['sha'] != publication['tree'] or [p['sha'] for p in commit['parents']] != [task['base_sha']]:
+            if commit['tree']['sha'] != publication['tree'] or [p['sha'] for p in commit['parents']] != [recovery_base or task['base_sha']]:
                 raise ValueError('Previous repair candidate changed')
             entries = api('git/trees/' + publication['head'] + '?recursive=1')
             if entries.get('truncated'):
@@ -123,10 +126,7 @@ def prepare(request_id):
                     if SECRET.search(text):
                         raise ValueError('Credential in previous source')
                     previous_source[entry['path']] = text
-    recovery = previous[-1].get('manualRecovery', {}) if previous else {}
-    allow_same_candidate = (recovery.get('kind') == 'confirmed-review-permission-403'
-                            and recovery.get('taskHash') == digest(task)
-                            and recovery.get('previousRequestId') == previous[-1]['requestId'])
+    allow_same_candidate = recovery_base is not None
     save('contract', {'requestId': request_id, 'task': task, 'source': source, 'feedback': feedback,
                       'allowSameCandidateAfterPermissionRecovery': allow_same_candidate,
                       'previousCandidate': previous_source, 'controlSha': attempt['controlSha'], 'taskHash': digest(task)})

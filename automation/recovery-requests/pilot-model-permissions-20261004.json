@@ -7,5 +7,28 @@
   "head": "bb8188f9dc1928e7ab9a956b952beabd4af5844b",
   "kind": "confirmed-review-permission-403",
   "permissionFixConfirmed": true,
-  "reason": "Martin confirmed unblocking gpt-6-astra and gpt-6-sol at 13:03 Europe/Berlin and explicitly requested continuation at 13:08. Both original review jobs returned definite HTTP 403; worker, combined validation and Claude review completed. Permit one new normal attempt within the unchanged 3-attempt / 2.55 USD task limit; do not rerun paid jobs or reset history."
+  "reason": "Martin confirmed unblocking gpt-6-astra and gpt-6-sol at 13:03 Europe/Berlin and explicitly requested continuation at 13:08. Both original review jobs returned definite HTTP 403; worker, combined validation and Claude review completed. Permit one new normal attempt within the unchanged 3-attempt / 2.55 USD task limit; do not rerun paid jobs or reset history. Martin explicitly requested resolving the stale-source blocker on 2026-10-04. Renew only the base to the current Web SHA after proving the selected blobs unchanged; retain original attempt, publication, usage and all reservations.",
+  "sourceUpdate": {
+    "previousTask": {
+      "id": "pilot-tutorial-later-a11y-20261004",
+      "base_branch": "feature/gradecrew-app-integration",
+      "base_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "risk": "web-ui",
+      "goal": "Improve the existing tutorial offer Later button (.gcTutorialOfferLater): provide a comfortable minimum 44 by 44 CSS-pixel pointer target and a clearly visible keyboard-only focus ring. This is the user-authorized bounded Guardian E2E pilot.",
+      "acceptance": "The existing .gcTutorialOfferLater control has min-height and min-width of at least 44px and a scoped :focus-visible outline of at least 2px with positive outline-offset. Preserve existing tutorial offer labels, layout breakpoints, start/later actions and all current style rules. No generic button/body selectors, animations or external dependencies. Existing combined CI and packaging proof must pass. Physical device acceptance remains manual.",
+      "constraints": "Modify only tutorial-choice-v1.css. Make the smallest additive scoped CSS change. Preserve existing rules and behavior; no changes to tests, authentication, exam logic, shared design tokens or infrastructure. If source context is insufficient, refuse. This task may proceed only via explicit admission with current source and keys; Production stays locked.",
+      "allowed_files": [
+        "tutorial-choice-v1.css"
+      ],
+      "context_files": [],
+      "validation_profile": "web-combined-v1",
+      "cost_profile": "small-web-v1",
+      "max_cost_usd": 2.55
+    },
+    "approvedSha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
+    "taskHash": "06012cf72e6bcd0747b53702a874ed615bec6b3eaa056caa45fb621e605dfe07",
+    "selectedBlobs": {
+      "tutorial-choice-v1.css": "22bfd82f60b451f53008ceef201b6c0861e8e307"
+    }
+  }
 }

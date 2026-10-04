@@ -1,7 +1,7 @@
 {
   "id": "pilot-tutorial-later-a11y-20261004",
   "base_branch": "feature/gradecrew-app-integration",
-  "base_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+  "base_sha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
   "risk": "web-ui",
   "goal": "Improve the existing tutorial offer Later button (.gcTutorialOfferLater): provide a comfortable minimum 44 by 44 CSS-pixel pointer target and a clearly visible keyboard-only focus ring. This is the user-authorized bounded Guardian E2E pilot.",
   "acceptance": "The existing .gcTutorialOfferLater control has min-height and min-width of at least 44px and a scoped :focus-visible outline of at least 2px with positive outline-offset. Preserve existing tutorial offer labels, layout breakpoints, start/later actions and all current style rules. No generic button/body selectors, animations or external dependencies. Existing combined CI and packaging proof must pass. Physical device acceptance remains manual.",

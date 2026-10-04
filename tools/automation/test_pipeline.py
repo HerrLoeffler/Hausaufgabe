@@ -367,6 +367,38 @@ class ExecutionTests(unittest.TestCase):
                 else:
                     with self.assertRaisesRegex(ValueError,'repeats rejected'): e.build()
 
+    def test_prepare_uses_old_candidate_only_with_exact_source_recovery_binding(self):
+        prior_task = TASK | {'base_sha': 'd' * 40}
+        prior = copy.deepcopy(ATTEMPT) | {'requestId': 'old-run', 'state': 'repairable',
+            'approvedSha': prior_task['base_sha'], 'taskHash': p.digest(prior_task),
+            'publication': PUB | {'base': prior_task['base_sha']},
+            'manualRecovery': {'kind': 'confirmed-review-permission-403',
+                'previousRequestId': 'old-run', 'taskHash': p.digest(prior_task),
+                'sourceUpdate': {'previousTask': prior_task, 'approvedSha': A,
+                    'taskHash': p.digest(TASK), 'selectedBlobs': {'coach.js': C, 'coach.css': C}}}}
+        current = copy.deepcopy(ATTEMPT) | {'state': 'reserved'}
+        current.pop('runId', None)
+        def api(path, method='GET', body=None):
+            if path == 'git/commits/' + B:
+                return {'tree': {'sha': C}, 'parents': [{'sha': prior_task['base_sha']}]}
+            if path.startswith('git/trees/'):
+                return {'tree': [{'path': name, 'sha': C, 'mode': '100644', 'type': 'blob', 'size': 3}
+                    for name in ['coach.js', 'coach.css']]}
+            if path == 'git/blobs/' + C:
+                return {'content': base64.b64encode(b'old').decode()}
+            return self.api(path, method, body)
+        self.ledger['attempts']['pilot:pipeline-v2'] = [copy.deepcopy(prior), current]
+        with patch.object(e, 'api', side_effect=api): e.prepare('run-1')
+        self.assertTrue(e.load('contract')['allowSameCandidateAfterPermissionRecovery'])
+        self.assertEqual(e.load('contract')['task']['base_sha'], A)
+        self.assertEqual(self.ledger['attempts']['pilot:pipeline-v2'][0], prior)
+        for field, wrong in [('taskHash', 'wrong'), ('approvedSha', B)]:
+            broken = copy.deepcopy(prior)
+            broken['manualRecovery']['sourceUpdate'][field] = wrong
+            self.ledger['attempts']['pilot:pipeline-v2'] = [broken, copy.deepcopy(current)]
+            with patch.object(e, 'api', side_effect=api), self.assertRaises(ValueError):
+                e.prepare('run-1')
+
     def test_rerun_failed_jobs_cannot_repeat_any_paid_call(self):
         e.save('candidate',p.candidate_contract({'summary':'test','files':[{'path':'coach.js','content':'new'}]},TASK,'run-1'))
         with patch.dict(os.environ,{'GITHUB_RUN_ATTEMPT':'2'}),patch.object(e,'call') as provider:

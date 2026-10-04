@@ -1,4 +1,5 @@
 import copy
+import base64
 import json
 import os
 from pathlib import Path
@@ -10,6 +11,7 @@ from unittest.mock import patch
 from tools.automation import recovery as r, pipeline as p
 
 A, B, C = 'a' * 40, 'b' * 40, 'c' * 40
+D = 'd' * 40
 TASK = {'id': 'pilot-ui', 'base_sha': A, 'base_branch': p.WEB, 'risk': 'web-ui',
         'goal': 'Fix button', 'acceptance': '44px and visible focus', 'constraints': 'Only CSS',
         'allowed_files': ['coach.css'], 'context_files': [], 'validation_profile': 'web-combined-v1',
@@ -90,6 +92,9 @@ class RecoveryApplicationTests(unittest.TestCase):
         self.ledger = {'attempts': {'pilot-ui:pipeline-v2': [copy.deepcopy(OLD)]},
                        'budgetReservations': [{'taskId': 'pilot-ui', 'day': '2026-10-03', 'reservedUsd': .85}]}
         self.events = []; self.source = A
+        self.source_blob = C
+        self.ancestry = 'ahead'
+        self.remote_revoked = False
         patches = [patch.object(r, 'ROOT', root), patch.object(r, 'read_ledger', return_value=(self.ledger, 'blob')),
                    patch.object(r, 'api', side_effect=self.api), patch.object(r, 'write_ledger', side_effect=self.write),
                    patch.object(r, 'job_log', side_effect=lambda i: LOGS[i]),
@@ -112,7 +117,89 @@ class RecoveryApplicationTests(unittest.TestCase):
         if path == 'git/commits/' + B: return {'tree': {'sha': C}, 'parents': [{'sha': A}]}
         if path == 'git/ref/heads/' + p.WEB: return {'object': {'sha': self.source}}
         if path == 'git/ref/heads/' + PUB['branch']: return {'object': {'sha': B}}
+        if path == 'compare/' + A + '...' + D:
+            return {'status': self.ancestry, 'merge_base_commit': {'sha': A}}
+        if path == 'contents/coach.css?ref=' + A: return {'sha': C, 'type': 'file'}
+        if path == 'contents/coach.css?ref=' + D: return {'sha': self.source_blob, 'type': 'file'}
+        if path == 'git/ref/heads/main': return {'object': {'sha': C}}
+        if path.startswith('contents/') and path.endswith('?ref=' + C):
+            value = json.loads((r.ROOT / path[len('contents/'):].split('?')[0]).read_text())
+            if self.remote_revoked and 'guardian-policy' in path: value['enabled'] = False
+            return {'content': base64.b64encode(json.dumps(value).encode()).decode()}
         raise AssertionError(path)
+
+    def source_update(self):
+        task = TASK | {'base_sha': D}
+        root = r.ROOT
+        policy_path = root / 'automation/guardian-policy.json'
+        policy = json.loads(policy_path.read_text())
+        policy['workstreams'][0]['approvedSha'] = D
+        policy_path.write_text(json.dumps(policy))
+        (root / 'agent-queue/pilot-ui.json').write_text(json.dumps(task))
+        self.source = D
+        request = REQUEST | {'sourceUpdate': {'previousTask': copy.deepcopy(TASK),
+            'approvedSha': D, 'taskHash': p.digest(task), 'selectedBlobs': {'coach.css': C}}}
+        (root / 'automation/recovery-requests').mkdir(exist_ok=True)
+        (root / 'automation/recovery-requests/permission-fix.json').write_text(json.dumps(request))
+        return request
+
+    def test_explicit_unchanged_source_update_retains_original_attempt_and_reservation(self):
+        request = self.source_update()
+        r.apply(request)
+        attempt = self.ledger['attempts']['pilot-ui:pipeline-v2'][0]
+        for key, value in OLD.items():
+            if key not in {'state', 'reason'}:
+                self.assertEqual(attempt[key], value)
+        self.assertEqual(attempt['state'], 'repairable')
+        self.assertEqual(self.ledger['budgetReservations'],
+                         [{'taskId': 'pilot-ui', 'day': '2026-10-03', 'reservedUsd': .85}])
+        self.assertEqual(self.events[1][0], 'dispatch')
+        count = len(self.events)
+        r.apply(request)
+        self.assertEqual(len(self.events), count)
+
+    def test_source_update_rejects_changed_context_non_descendant_or_expanded_task(self):
+        request = self.source_update()
+        for blob, ancestry in [(B, 'ahead'), (C, 'diverged')]:
+            self.source_blob, self.ancestry = blob, ancestry
+            with self.subTest(blob=blob, ancestry=ancestry), self.assertRaises(ValueError):
+                r.apply(request)
+            self.assertEqual(self.events, [])
+        self.source_blob, self.ancestry = C, 'ahead'
+        task_path = r.ROOT / 'agent-queue/pilot-ui.json'
+        task = json.loads(task_path.read_text())
+        for change in [{'goal': 'different goal'}, {'max_cost_usd': 16.50},
+                       {'cost_profile': 'standard-v1'}, {'context_files': ['new.js']}]:
+            task_path.write_text(json.dumps(task | change))
+            with self.subTest(change=change), self.assertRaises(ValueError): r.apply(request)
+            self.assertEqual(self.events, [])
+
+    def test_source_update_cannot_reset_attempt_limit_or_spent_reservations(self):
+        request = self.source_update()
+        self.ledger['budgetReservations'] *= 3
+        with self.assertRaises(ValueError): r.apply(request)
+        self.assertEqual(self.events, [])
+        self.ledger['budgetReservations'] = self.ledger['budgetReservations'][:1]
+        self.ledger['attempts']['pilot-ui:pipeline-v2'] *= 3
+        with self.assertRaises(ValueError): r.apply(request)
+        self.assertEqual(self.events, [])
+
+    def test_revoked_remote_approval_or_target_race_never_dispatches(self):
+        request = self.source_update()
+        self.remote_revoked = True
+        with self.assertRaises(ValueError): r.apply(request)
+        self.assertEqual(self.events, [])
+        self.remote_revoked = False
+        original = self.api
+        reads = 0
+        def raced(path, method='GET', body=None):
+            nonlocal reads
+            if path == 'git/ref/heads/' + p.WEB:
+                reads += 1
+                if reads > 1: return {'object': {'sha': B}}
+            return original(path, method, body)
+        with patch.object(r, 'api', side_effect=raced), self.assertRaises(ValueError): r.apply(request)
+        self.assertEqual(self.events, [])
 
     def test_history_and_budget_retained_before_dispatch_and_request_single_use(self):
         r.apply(REQUEST)
