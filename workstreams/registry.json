@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-03",
+  "updatedAt": "2026-10-04",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -341,7 +341,8 @@
       "handoff": "workstreams/guardian-execution-v2.md",
       "relatedBranches": [
         "feature/stage-guardian-v1",
-        "fix/guardian-delivery-proof-v1"
+        "fix/guardian-delivery-proof-v1",
+        "fix/guardian-three-reviewers-v1"
       ]
     }
   ]

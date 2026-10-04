@@ -98,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        role: [correctness, security]
+        role: [correctness, security, qa]
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -126,6 +126,12 @@ jobs:
         env:
           GUARDIAN_ANTHROPIC_REVIEW_KEY: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY }}
           GH_TOKEN: ${{ github.token }}
+      - name: Independent QA and acceptance review
+        if: matrix.role == 'qa'
+        run: python3 -m tools.automation.execution qa
+        env:
+          GUARDIAN_OPENAI_REVIEW_KEY: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY }}
+          GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -151,7 +157,7 @@ jobs:
           pattern: guardian-*
           path: evidence
           merge-multiple: true
-      - name: Exact-tree, two-review, current-branch integration gate
+      - name: Exact-tree, three-review, current-branch integration gate
         run: python3 -m tools.automation.execution integrate
         env:
           GH_TOKEN: ${{ github.token }}

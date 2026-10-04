@@ -77,7 +77,7 @@ Unter https://github.com/HerrLoeffler/Hausaufgabe/settings/secrets/actions drei 
 | Secret | Zweck |
 |---|---|
 | `CODEX_WORKER_API_KEY` | OpenAI-Projekt-Key für den begrenzten Bau-Aufruf |
-| `GUARDIAN_OPENAI_REVIEW_KEY` | Separater OpenAI-Review-Key; GPT-6 Astra muss freigeschaltet sein |
+| `GUARDIAN_OPENAI_REVIEW_KEY` | Separater OpenAI-Review-Key; GPT-6 Astra und GPT-6 Sol müssen freigeschaltet sein |
 | `GUARDIAN_ANTHROPIC_REVIEW_KEY` | Anthropic-Review-Key für Claude Sonnet 5.5 |
 
 Keine bestehenden Generator-/Production-Schlüssel wiederverwenden oder in Chat/Repo/Cloud-Shell-Befehle einkopieren. Eigene Projekt-/Provider-Ausgabenlimits und Modellzugriff prüfen. Die Engine reserviert konservativ maximal $5.50 pro Versuch, $16.50 pro Auftrag und $33 pro UTC-Tag; Cloud-/Actions-Kosten separat.
@@ -97,7 +97,7 @@ Das Script fragt die drei Geheimwerte verdeckt über `gh secret set` ab, aktivie
 1. Betreuender Repo-Agent prüft frisch main, Development Status, Zielbranch, parallele Änderungen und die vollständige Task-Vorlage. Er erstellt aus einem konkreten Nutzerauftrag `agent-queue/<id>.json` mit exakten Dateien/Akzeptanzkriterien und aktuellem Integrations-SHA. Datei auf main mit CI sichern.
 2. https://github.com/HerrLoeffler/Hausaufgabe/actions/workflows/guardian-admit.yml → Run workflow → Branch main → Task-ID ohne `.json`. Das ist die ausdrückliche Aufnahme dieses begrenzten Auftrags; vorhandene Historie kann nicht durch Neuaufnahme gelöscht werden.
 3. Guardian reserviert Budget/Versuch und startet den Ausführungsworkflow. Fortschritt unter `stage-guardian.yml` und `guardian-execution.yml`; Release Control zeigt Modelle, Versuche, bekannte Nutzungsschätzung, Reservierungen und den tatsächlich bestätigten Stand.
-4. Erst **Code → PR → exakte CI → zwei unabhängige Reviews → Integration → integrierte CI → Hosting/Functions-Receipts desselben SHA** ist ein technisch vollständiger Pilot. Noch offene Rules-/Produkt-/Gerätegates bleiben sichtbar.
+4. Erst **Code → PR → exakte CI → drei unabhängige Reviews → Integration → integrierte CI → Hosting/Functions-Receipts desselben SHA** ist ein technisch vollständiger Pilot. Noch offene Rules-/Produkt-/Gerätegates bleiben sichtbar.
 
 Wenn PR-Erstellung, Provider-Modellzugriff oder WIF-Setup fehlt, ist das ein konkreter Setup-Blocker. Nicht einfach denselben bezahlten Worker-Run über GitHub „Re-run“ starten. Unklare Ergebnisse stoppen; actionable Tests/Reviews dürfen höchstens drei begrenzte Bauversuche auslösen.
 
@@ -118,3 +118,4 @@ Wenn PR-Erstellung, Provider-Modellzugriff oder WIF-Setup fehlt, ist das ein kon
 - https://firebase.google.com/docs/hosting/test-preview-deploy
 - https://firebase.google.com/docs/functions/manage-functions
 - https://firebase.google.com/docs/projects/iam/permissions
+
