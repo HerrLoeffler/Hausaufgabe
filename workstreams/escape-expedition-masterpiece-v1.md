@@ -115,12 +115,58 @@ Prüfgrenze:
 - echter iPhone-Test M1.2: offen
 - Production: unverändert
 
+## M1.3 — Seilwinden-Minispiel vom normalen World-Update getrennt
+
+Status: **erledigt und automatisiert geprüft**
+
+Produktcommit:
+`5c079cc83293a49a14f1379e3ffd60c0a956d6b1`
+
+Änderungen:
+- eigene `updateWinch(dt)`-Funktion eingeführt;
+- bei geöffnetem Winch-Dialog ruft der Mainloop ausschließlich `updateWinch(dt)` statt `update(now, dt)` auf;
+- dadurch laufen während der Seilwinde keine Spielerbewegung, Hotspot-Suche, Tierbewegung, Fahrzeuglogik oder sonstige World-State-Updates im Hintergrund;
+- normale `update(now, dt)` enthält keine Winch-Logik mehr;
+- `pullWinch()` reagiert nur noch bei offenem Winch-Dialog, aktivem `modal`-Modus und ohne laufenden Szenenübergang;
+- zwei neue Regressionstests sichern die vollständige Trennung von World- und Winch-Update.
+
+## Verifikation M1.3
+
+GitHub Actions:
+- Masterpiece Preview Run: `37195599753`
+- Produktcommit: `5c079cc83293a49a14f1379e3ffd60c0a956d6b1`
+- JavaScript-Syntax: grün
+- Expedition-Verträge: **13/13 grün**
+- isolierter Build: grün
+- Firebase Staging Preview: grün
+- `Escape review gates` Run `37195602946`: grün
+- `Games Lab Checks` Run `37195602947`: grün
+
+Preview:
+`https://hausaufgabe-staging--gradecrew-escape-masterpiece-pmxjup1g.web.app`
+
+Prüfgrenze:
+- automatisierte Tests/Build/Deploy sind grün;
+- echter manueller M1.3-Durchspieltest auf Desktop/iPad/iPhone ist noch offen;
+- M1.3 behebt gezielt die Hintergrund-World-Updates während der Seilwinde; Mehrfachaktionen/Erfolgszustände werden als eigener nächster Mikro-Schritt weiter gehärtet.
+
+## Status getrennt
+
+- auf GitHub gesichert: ja
+- automatisiert getestet: ja, 13/13 + Syntax + Games Lab Checks + Escape review gates
+- isolierter Build: ja
+- Staging deployed: ja
+- echter Desktop-Test M1.3: offen
+- echter iPad-Test M1.3: offen
+- echter iPhone-Test M1.3: offen
+- Production: unverändert
+
 ## Nächster Mikro-Schritt
 
-**M1.3 — Seilwinden-Minispiel vollständig vom normalen World-Update trennen.**
+**M1.4 — Mehrfachaktionen und Erfolgszustände härten.**
 
 Ziel:
-- bei geöffnetem Winch-Modal nur die Winch-Nadel aktualisieren;
-- keine Hotspot-/World-State-Arbeit im Hintergrund;
-- Dialogzustand sauber verlassen;
+- Erfolgsaktionen nur einmal auslösen;
+- Buttons während Erfolgs-/Übergangsphase sofort sperren;
+- kein mehrfaches Rewarding/kein zweiter Szenenwechsel durch hektisches Klicken oder Tippen;
 - danach wieder Regressionstest, Build, Preview und Handoff.
