@@ -572,7 +572,7 @@ export const enGBMessages = Object.freeze({
     "Diese Vorschau speichert keine Abgabe.": "This preview does not save a submission.",
     "Prüfe deine Antworten und teste anschließend die Auswertung. Es wird keine Abgabe gespeichert.": "Check your answers, then test the results. No submission will be saved.",
     "Abgabe gespeichert ✓": "Submission saved ✓",
-    "Deine Antworten wurden erfolgreich gespeichert.": "Your answers were saved successfully."
+    "Deine Antworten wurden erfolgreich gespeichert.": "Your answers were saved successfully.",
     "Verbleibende Zeit": "Time remaining",
     "Prüfe offene Aufgaben noch einmal, bevor du endgültig abgibst.": "Check unanswered questions before submitting.",
     "Aufgabennavigation": "Question navigation",
