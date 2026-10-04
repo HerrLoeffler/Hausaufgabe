@@ -27,6 +27,13 @@
   const q2Answer = q2Base * 0.3;
   const q3Base = pick([150, 200, 250, 300]);
   const q3Answer = q3Base * 0.4;
+  const q4Base = pick([200, 300, 400, 500]);
+  const q4Answer = q4Base * 0.2;
+  const q5Base = pick([400, 600, 800, 1000]);
+  const q5Answer = q5Base * 0.75;
+  const q6Base = pick([80, 120, 160, 200]);
+  const q6Increase = q6Base * 0.25;
+  const q6Answer = q6Base + q6Increase;
   const radioChannel = 42 + (seed % 17);
 
   function mc(correct, candidates) {
@@ -38,13 +45,17 @@
   const q1Mc = mc(q1Answer, [q1Answer - 5, q1Answer + 10, q1Answer * 2]);
   const q2Mc = mc(q2Answer, [q2Answer - 6, q2Answer + 7, q2Base * 0.03]);
   const q3Mc = mc(q3Answer, [q3Answer - 20, q3Answer + 30, q3Base * 0.04]);
+  const q4Mc = mc(q4Answer, [q4Answer - 20, q4Answer + 20, q4Base * 0.02]);
+  const q5Mc = mc(q5Answer, [q5Base / 4, q5Base / 2, q5Answer + 50]);
+  const q6Mc = mc(q6Answer, [q6Increase, q6Base - q6Increase, q6Base * 1.5]);
   const questions = {
     q1: {
       title: 'Route prüfen',
       prompt: `Der Jeep-Tank fasst ${q1Base} l. 25 % bleiben als Reserve. Wie viele Liter sind das?`,
       options: q1Mc.options, correct: q1Mc.correct,
-      hint: '25 % sind genau ein Viertel.',
-      explanation: `${q1Base} ÷ 4 = ${q1Answer}.`,
+      hint: '25 % sind ein Viertel. Teile die Literzahl durch 4.',
+      explanation: `${q1Base} ÷ 4 = ${q1Answer}. Das sind 25 %.`,
+      workedExample: 'Beispiel: 25 % von 80 l sind 20 l, weil 80 ÷ 4 = 20.',
       transfer: makeTransfer(25, pick([40, 60, 100, 140])),
       reward: 'jeepKey'
     },
@@ -52,8 +63,9 @@
       title: 'Sender prüfen',
       prompt: `Der Sender hat ${q2Base} Wh. 30 % sind für die Nacht reserviert. Wie viele Wh sind das?`,
       options: q2Mc.options, correct: q2Mc.correct,
-      hint: `10 % von ${q2Base} sind ${q2Base / 10}.`,
-      explanation: `30 % sind drei 10-%-Schritte: 3 × ${q2Base / 10} = ${q2Answer}.`,
+      hint: `Rechne zuerst 10 %: ${q2Base} ÷ 10 = ${q2Base / 10}. Für 30 % brauchst du das Dreifache.`,
+      explanation: `10 % sind ${q2Base / 10} Wh. Also sind 30 % = 3 × ${q2Base / 10} = ${q2Answer} Wh.`,
+      workedExample: 'Beispiel: 30 % von 60 sind 18. Erst 10 % = 6, dann 3 × 6.',
       transfer: makeTransfer(30, pick([20, 40, 60, 80])),
       reward: 'riverMap'
     },
@@ -61,34 +73,82 @@
       title: 'Terminal starten',
       prompt: `Der Generator liefert ${q3Base} W. Das Terminal braucht 40 %. Wie viele Watt sind das?`,
       options: q3Mc.options, correct: q3Mc.correct,
-      hint: `10 % von ${q3Base} sind ${q3Base / 10}.`,
-      explanation: `40 % sind vier 10-%-Schritte: 4 × ${q3Base / 10} = ${q3Answer} W.`,
+      hint: `Rechne zuerst 10 %: ${q3Base} ÷ 10 = ${q3Base / 10}. Für 40 % brauchst du vier solche Teile.`,
+      explanation: `40 % sind 4 × ${q3Base / 10} = ${q3Answer} W.`,
+      workedExample: 'Beispiel: 40 % von 200 W sind 80 W. 10 % = 20, also 4 × 20.',
       transfer: makeTransfer(40, pick([50, 100, 150, 250])),
       reward: 'radio'
+    },
+    q4: {
+      title: 'Winde kalibrieren',
+      prompt: `Die Winde hält ${q4Base} N. 20 % sollen Sicherheitsreserve bleiben. Wie viele Newton sind Reserve?`,
+      options: q4Mc.options, correct: q4Mc.correct,
+      hint: '20 % sind ein Fünftel. Teile die Zugkraft durch 5.',
+      explanation: `${q4Base} ÷ 5 = ${q4Answer} N. Das sind 20 %.`,
+      workedExample: 'Beispiel: 20 % von 300 N sind 60 N, weil 300 ÷ 5 = 60.',
+      transfer: makeTransfer(20, pick([100, 200, 300, 400]))
+    },
+    q5: {
+      title: 'Flussroute berechnen',
+      prompt: `Die Route ist ${q5Base} m lang. Nach 75 % kommt die sichere Zwischenboje. Nach wie vielen Metern?`,
+      options: q5Mc.options, correct: q5Mc.correct,
+      hint: '75 % sind drei Viertel. Teile zuerst durch 4 und nimm das Ergebnis dreimal.',
+      explanation: `${q5Base} ÷ 4 = ${q5Base / 4}; 3 × ${q5Base / 4} = ${q5Answer} m.`,
+      workedExample: 'Beispiel: 75 % von 400 m sind 300 m: 400 ÷ 4 = 100, dann 3 × 100.',
+      transfer: makeTransfer(75, pick([200, 400, 600, 800]))
+    },
+    q6: {
+      title: 'Signal verstärken',
+      prompt: `Das Funksignal hat Stärke ${q6Base}. Der Verstärker erhöht sie um 25 %. Wie stark ist das Signal danach?`,
+      options: q6Mc.options, correct: q6Mc.correct,
+      hint: 'Berechne zuerst 25 % als Zuwachs. 25 % sind ein Viertel. Addiere den Zuwachs danach zum Ausgangswert.',
+      explanation: `25 % von ${q6Base} sind ${q6Increase}. Also ${q6Base} + ${q6Increase} = ${q6Answer}.`,
+      workedExample: 'Beispiel: 25 % mehr als 80 sind 100. Ein Viertel von 80 ist 20; 80 + 20 = 100.',
+      transfer: makeIncreaseTransfer(25, pick([40, 80, 120, 160]))
     }
   };
 
   function makeTransfer(percent, base) {
     const ans = base * percent / 100;
     const choices = mc(ans, [ans + 5, Math.max(1, ans - 5), base - ans]);
-    return { prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`, options: choices.options, correct: choices.correct, hint: `Rechne zuerst 10 % oder nutze einen passenden Bruch.` };
+    return {
+      prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`,
+      options: choices.options,
+      correct: choices.correct,
+      hint: percent === 25 ? '25 % = 1/4.' : percent === 75 ? '75 % = 3/4.' : `Starte mit 10 % oder einem passenden Bruch.`,
+      solution: `${percent} % von ${base} sind ${ans}.`
+    };
+  }
+
+  function makeIncreaseTransfer(percent, base) {
+    const increase = base * percent / 100;
+    const ans = base + increase;
+    const choices = mc(ans, [increase, base - increase, base + percent]);
+    return {
+      prompt: `Neue Aufgabe: ${base} wird um ${percent} % erhöht. Welcher Wert entsteht?`,
+      options: choices.options,
+      correct: choices.correct,
+      hint: `Berechne zuerst ${percent} % von ${base} und addiere diesen Zuwachs.`,
+      solution: `${percent} % von ${base} sind ${increase}. Also ${base} + ${increase} = ${ans}.`
+    };
   }
 
   const SCENES = {
     camp: { stage: 1, title: 'Expeditionscamp', mission: 'Finde die Route', steps: ['Tablet prüfen', 'Schlüssel holen', 'Jeep starten'] },
     jeep: { stage: 2, title: 'Dschungelpiste', mission: 'Fahr durch den Dschungel', steps: ['Auf der Piste bleiben', 'Hindernissen ausweichen', 'Bis zum Baum fahren'] },
-    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Räume den Weg frei', steps: ['Zum Baum', 'Winde starten', '3 gute Züge'] },
-    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Finde die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Sender prüfen', 'Zum Boot'] },
+    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Räume den Weg frei', steps: ['Zum Baum', 'Winde kalibrieren', '3 gute Züge'] },
+    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Finde die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Sender prüfen', 'Flussroute berechnen', 'Zum Boot'] },
     river: { stage: 4, title: 'Rio Verde', mission: 'Fahr zur Station', steps: ['Boot steuern', 'Felsen ausweichen', 'Station erreichen'] },
     station: { stage: 5, title: 'Forschungsstation', mission: 'Bring den Strom zurück', steps: ['Generator starten', 'Terminal starten', 'Funkkanal finden', 'Zum Funkmast'] },
-    tower: { stage: 6, title: 'Funkmast', mission: 'Sende den Notruf', steps: ['Konsole starten', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
+    tower: { stage: 6, title: 'Funkmast', mission: 'Sende den Notruf', steps: ['Signal verstärken', 'Konsole starten', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
   };
 
   const state = {
     scene: 'camp',
     player: { x: 470, y: 470, r: 16, speed: 215, facing: -Math.PI / 2 },
     keys: new Set(), target: null, near: null,
-    items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0 },
+    items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: 0 },
+    transferAttempts: { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: 0 },
     activeQuestion: null, learningMode: 'main', selectedAnswer: null,
     winchHits: 0, winchValue: 0.08, winchDir: 1, winchTimer: 0,
     jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0, speed: 64, stuck: false, stuckPower: 0, impactTimer: 0, shake: 0, hitHazards: new Set(), roadblockTimer: 0 },
@@ -311,7 +371,7 @@
   function updateHud() {
     const meta = SCENES[state.scene];
     $('levelBadge').textContent = `LEVEL ${meta.stage}/6`;
-    $('learningBadge').textContent = `🧠 ${state.solved.size}/3`;
+    $('learningBadge').textContent = `🧠 ${state.solved.size}/6`;
     $('sceneTitle').textContent = `${meta.stage}/6 · ${meta.title}`;
     $('missionTitle').textContent = meta.mission;
     $('missionText').textContent = missionText();
@@ -349,11 +409,11 @@
   function currentStepStates() {
     if (state.scene === 'camp') return [state.solved.has('q1') ? 'done' : 'active', state.items.has('jeepKey') ? 'done' : '', state.solved.has('q1') ? 'active' : ''];
     if (state.scene === 'jeep') return [state.jeep.distance > 80 ? 'done' : 'active', state.jeep.distance >= 850 ? 'done' : 'active', ''];
-    if (state.scene === 'blocked') return [state.near?.id === 'tree' ? 'done' : 'active', state.winchHits ? 'done' : 'active', state.winchHits >= 3 ? 'done' : 'active'];
-    if (state.scene === 'wildlife') return [state.photos.has('toucan') ? 'done' : 'active', state.photos.has('capybara') ? 'done' : '', state.solved.has('q2') ? 'done' : '', state.solved.has('q2') ? 'active' : ''];
+    if (state.scene === 'blocked') return [state.near?.id === 'tree' ? 'done' : 'active', state.solved.has('q4') ? 'done' : state.near?.id === 'tree' ? 'active' : '', state.winchHits >= 3 ? 'done' : state.solved.has('q4') ? 'active' : ''];
+    if (state.scene === 'wildlife') return [state.photos.has('toucan') ? 'done' : 'active', state.photos.has('capybara') ? 'done' : '', state.solved.has('q2') ? 'done' : '', state.solved.has('q5') ? 'done' : state.solved.has('q2') ? 'active' : '', state.solved.has('q5') ? 'active' : ''];
     if (state.scene === 'river') return [state.river.progress > 50 ? 'done' : 'active', state.river.hits < 3 ? 'active' : '', state.river.progress >= 950 ? 'done' : ''];
     if (state.scene === 'station') return [state.generator.done ? 'done' : 'active', state.solved.has('q3') ? 'done' : '', state.items.has('radio') ? 'done' : '', state.solved.has('q3') ? 'active' : ''];
-    if (state.scene === 'tower') return [state.radioMode ? 'done' : 'active', state.tuned === radioChannel ? 'done' : state.radioMode ? 'active' : '', state.won ? 'done' : ''];
+    if (state.scene === 'tower') return [state.solved.has('q6') ? 'done' : 'active', state.radioMode ? 'done' : state.solved.has('q6') ? 'active' : '', state.tuned === radioChannel ? 'done' : state.radioMode ? 'active' : '', state.won ? 'done' : ''];
     return [];
   }
 
@@ -430,13 +490,17 @@
       });
       return;
     }
-    if (state.scene === 'blocked' && id === 'tree') return openWinch();
+    if (state.scene === 'blocked' && id === 'tree') {
+      if (!state.solved.has('q4')) return openLearning('q4');
+      return openWinch();
+    }
     if (state.scene === 'wildlife' && id === 'sender') {
       if (state.photos.size < 2) return toast('Fotografiere zuerst Tukan und Capybara.');
       return openLearning('q2');
     }
     if (state.scene === 'wildlife' && id === 'dock') {
       if (!state.solved.has('q2')) return toast('Löse zuerst den Sender.');
+      if (!state.solved.has('q5')) return openLearning('q5');
       return setScene('river');
     }
     if (state.scene === 'station' && id === 'generator') return openGenerator();
@@ -449,6 +513,7 @@
       return setScene('tower');
     }
     if (state.scene === 'tower' && id === 'radioConsole') {
+      if (!state.solved.has('q6')) return openLearning('q6');
       invalidateDelayedActions();
       state.radioMode = true; state.tuned = 35;
       setGameMode('radio');
@@ -463,6 +528,9 @@
     if (id === 'q1') { state.items.add('jeepKey'); setCoco('Route stimmt', 'Der Jeep wartet rechts im Camp.'); }
     if (id === 'q2') { state.items.add('riverMap'); setCoco('Route gefunden', 'Geh rechts zum Boot.'); }
     if (id === 'q3') { state.items.add('radio'); setCoco('Kanal gefunden', `Kanal ${radioChannel}. Geh zum Funkmast.`); }
+    if (id === 'q4') setCoco('Winde kalibriert', 'Jetzt drei sichere Züge im grünen Bereich.');
+    if (id === 'q5') setCoco('Flussroute klar', 'Steig jetzt ins Boot.');
+    if (id === 'q6') setCoco('Signal vorbereitet', 'Starte jetzt die Funkkonsole.');
     updateHud();
     return true;
   }
@@ -481,7 +549,7 @@
   function renderLearning() {
     const q = questions[state.activeQuestion];
     const data = state.learningMode === 'main' ? q : q.transfer;
-    $('learningTitle').textContent = state.learningMode === 'main' ? q.title : 'Neue Aufgabe';
+    $('learningTitle').textContent = state.learningMode === 'main' ? `${q.title} · Lerncheck` : 'Lernweg · Anwenden';
     $('learningPrompt').textContent = data.prompt;
     $('learningOptions').innerHTML = '';
     data.options.forEach((opt, i) => {
@@ -491,7 +559,9 @@
       $('learningOptions').append(label);
     });
     $('learningFeedback').className = 'feedback';
-    $('learningFeedback').textContent = state.learningMode === 'main' ? 'Wähle eine Antwort.' : 'Löse auch diese neue Aufgabe.';
+    $('learningFeedback').textContent = state.learningMode === 'main'
+      ? 'Lerncheck: Löse die Aufgabe. Wenn etwas nicht klappt, hilft Coco Schritt für Schritt.'
+      : 'Lernweg 2/2: Wende die Idee jetzt mit neuen Zahlen an.';
   }
 
   function checkLearning(e) {
@@ -499,13 +569,32 @@
     if (state.resolvingAction) return;
     const id = state.activeQuestion; const q = questions[id]; const data = state.learningMode === 'main' ? q : q.transfer;
     if (state.selectedAnswer === null) { $('learningFeedback').textContent = 'Wähle zuerst eine Antwort.'; return; }
+
     if (state.selectedAnswer !== data.correct) {
       $('learningFeedback').className = 'feedback error';
-      if (state.learningMode === 'transfer') { $('learningFeedback').textContent = `Noch nicht. ${q.transfer.hint}`; return; }
+
+      if (state.learningMode === 'transfer') {
+        state.transferAttempts[id]++;
+        const tries = state.transferAttempts[id];
+        if (tries === 1) {
+          $('learningFeedback').textContent = `Noch nicht. Coco-Tipp: ${data.hint}`;
+        } else if (tries === 2) {
+          $('learningFeedback').textContent = `Noch nicht. Coco-Beispiel: ${q.workedExample} Versuch die neue Aufgabe noch einmal.`;
+        } else {
+          $('learningFeedback').textContent = `Wir lösen sie gemeinsam: ${data.solution} Wähle jetzt die passende Antwort.`;
+        }
+        return;
+      }
+
       state.attempts[id]++;
-      $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Tipp: ${q.hint}` : `Noch nicht. ${q.explanation} Jetzt probierst du eine ähnliche Aufgabe.`;
-      if (state.attempts[id] >= 2 && beginResolvingAction('learning')) {
-        scheduleGuarded(850, () => {
+      if (state.attempts[id] === 1) {
+        $('learningFeedback').textContent = `Noch nicht. Coco-Tipp: ${q.hint}`;
+        return;
+      }
+
+      $('learningFeedback').textContent = `Coco zeigt dir ein Beispiel: ${q.workedExample} Danach probierst du eine ähnliche Aufgabe.`;
+      if (beginResolvingAction('learning')) {
+        scheduleGuarded(1050, () => {
           endResolvingAction('learning');
           if (state.activeQuestion !== id) return;
           state.learningMode = 'transfer';
@@ -515,10 +604,12 @@
       }
       return;
     }
+
     if (state.learningMode === 'main' && state.attempts[id] > 0) {
-      $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Jetzt noch eine ähnliche Aufgabe.`;
+      $('learningFeedback').className = 'feedback success';
+      $('learningFeedback').textContent = 'Richtig. Jetzt zeigst du mit neuen Zahlen, dass du den Weg verstanden hast.';
       if (!beginResolvingAction('learning')) return;
-      return scheduleGuarded(650, () => {
+      return scheduleGuarded(700, () => {
         endResolvingAction('learning');
         if (state.activeQuestion !== id) return;
         state.learningMode = 'transfer';
@@ -526,9 +617,11 @@
         renderLearning();
       });
     }
-    $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig! Weiter geht’s.';
+
+    $('learningFeedback').className = 'feedback success';
+    $('learningFeedback').textContent = state.learningMode === 'transfer' ? 'Transfer geschafft! Weiter geht’s.' : 'Richtig! Weiter geht’s.';
     if (!beginResolvingAction('learning')) return;
-    scheduleGuarded(500, () => {
+    scheduleGuarded(550, () => {
       rewardQuestion(id);
       state.activeQuestion = null;
       endResolvingAction('learning');
@@ -629,7 +722,7 @@
     setCoco('Antwort!', 'Dr. Yara ist sicher. Ein Capybara hat wirklich den Schlüssel geklaut.');
     const sec = Math.round((performance.now() - state.startTime) / 1000);
     $('victoryText').textContent = 'Dr. Yara ist sicher. Der Funk läuft wieder. Und das Capybara behält den Schlüssel.';
-    $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/3 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
+    $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/6 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
     scheduleGuarded(700, () => {
       endResolvingAction('victory');
       if (!$('victoryDialog').open) $('victoryDialog').showModal();
@@ -1694,7 +1787,7 @@
   $('cameraBtn').addEventListener('click',takePhoto);
   $('recoveryBtn').addEventListener('click',()=>recoverMechanic());
   $('learningForm').addEventListener('submit',checkLearning);
-  $('hintBtn').addEventListener('click',()=>{const q=questions[state.activeQuestion];if(q){$('learningFeedback').className='feedback';$('learningFeedback').textContent=`Coco: ${state.learningMode==='transfer'?q.transfer.hint:q.hint}`}});
+  $('hintBtn').addEventListener('click',()=>{const id=state.activeQuestion;const q=questions[id];if(q){const transfer=state.learningMode==='transfer';const tries=transfer?state.transferAttempts[id]:state.attempts[id];const data=transfer?q.transfer:q;$('learningFeedback').className='feedback';$('learningFeedback').textContent=tries>=2&&transfer?`Coco: ${data.solution}`:tries>=1?`Coco-Beispiel: ${q.workedExample}`:`Coco-Tipp: ${data.hint}`}});
   $('winchPullBtn').addEventListener('click',pullWinch);
   $('winchResetBtn').addEventListener('click',()=>recoverMechanic('winch'));
   $('winchExitBtn').addEventListener('click',()=>exitMechanicDialog('winch','winchDialog'));
