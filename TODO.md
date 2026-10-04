@@ -167,3 +167,6 @@ GC-AUTOMATION-01/07/12: frühere Setup-/403-Aussagen sind überholt. Zweiter ech
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
 | GC-HANDOFF-03 | Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen | Wiederaufnahmeregel und Vorlage ergänzt; Integration/CI frisch prüfen | [Anleitung](docs/CHAT_RECOVERY.md), [Übergabe](workstreams/chat-recovery-20261004.md). Dieselbe Task-ID, Chat-Zuordnung, gesicherter Schritt, laufende IDs und Budget erhalten. Martin kann den Einstieg einmal in GradeCrew-Projektanweisungen übernehmen; diese Repo-Änderung setzt keine ChatGPT-Einstellung. |
+
+
+GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkreter Quellenvertragsauftrag anhand Chatverlauf, abgeschlossener Ausführung und aktuellem Ledger als erledigt verifiziert. Zwei Pilotversuche / 1,70 USD Reservierung erhalten; kein neuer Bau, Recovery oder Deploy. Aktuelle Web-/Hosting-/AI-/Assessment-Quelle fb88dfa7; Geräte-/Rules-Abnahme bleibt offen. Details und abweichende alte Chat-Anzeige in [bestehender Übergabe](workstreams/guardian-source-recovery-20261004.md).
