@@ -6,9 +6,20 @@ import unittest
 import zipfile
 import hashlib
 from archive import extract, package
+import archive
 
 
 class SnapshotTests(unittest.TestCase):
+    def test_snapshot_accepts_trusted_main_staging_push_and_rejects_other_origins(self):
+        run = {'name': 'Automatic staging preview', 'status': 'completed', 'conclusion': 'success',
+               'path': '.github/workflows/staging-preview.yml', 'event': 'push', 'head_branch': 'main',
+               'repository': {'full_name': archive.REPO}, 'head_repository': {'full_name': archive.REPO}}
+        archive.trusted_preview(run)
+        archive.trusted_preview(run | {'event': 'workflow_run'})
+        for change in [{'event': 'pull_request'}, {'head_branch': 'other'}, {'name': 'Fake preview'},
+                       {'head_repository': {'full_name': 'other/repo'}}, {'status': 'in_progress'}]:
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                archive.trusted_preview(run | change)
     def test_zip_rejects_path_escape(self):
         data = io.BytesIO()
         with zipfile.ZipFile(data, 'w') as z:

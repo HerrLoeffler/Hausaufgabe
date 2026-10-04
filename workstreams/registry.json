@@ -398,8 +398,11 @@
       "title": "Guardian exact CI to verified Staging handoff",
       "primaryBranch": "fix/guardian-deploy-handoff-20261004",
       "integrationTarget": "main",
-      "state": "active",
-      "handoff": "workstreams/guardian-staging-handoff-20261004.md"
+      "state": "integrated",
+      "handoff": "workstreams/guardian-staging-handoff-20261004.md",
+      "relatedBranches": [
+        "docs/guardian-verified-pilot-20261004"
+      ]
     }
   ]
 }
