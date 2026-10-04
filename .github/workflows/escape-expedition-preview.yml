@@ -1,14 +1,16 @@
-name: Escape Expedition Masterpiece Preview
+name: Escape Expedition Visual Masterpiece Preview
 
 on:
   push:
     branches:
-      - prototype/escape-expedition-masterpiece-v1
+      - prototype/escape-expedition-visual-masterpiece-v1
     paths:
       - 'lab/escape-expedition/**'
       - 'docs/games/ESCAPE_GAMES_CONCEPT.md'
       - 'docs/games/ESCAPE_MASTERPIECE_ROADMAP.md'
       - 'docs/games/ESCAPE_MASTERPIECE_AUDIT.md'
+      - 'docs/games/ESCAPE_AMAZONAS_VISUAL_BIBLE.md'
+      - 'workstreams/escape-expedition-visual-v1.md'
       - 'tools/build-lab-escape-expedition.mjs'
       - 'tools/games/escape-expedition.test.cjs'
       - '.github/workflows/escape-expedition-preview.yml'
@@ -23,7 +25,7 @@ env:
 
 jobs:
   verify-and-deploy:
-    name: Verify and deploy masterpiece expedition prototype
+    name: Verify and deploy visual masterpiece expedition
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -62,6 +64,6 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ env.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: hausaufgabe-staging
-          channelId: gradecrew-escape-masterpiece
+          channelId: gradecrew-escape-visual
           expires: 30d
           entryPoint: .firebase-escape-expedition
