@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "phase-a-question-rewriting-de-dev-v1",
+  "phaseId": "phase-a-fast-low-risk",
+  "job": "question_rewriting",
+  "subject": "cross-subject",
+  "taskType": "assessment-wording",
+  "riskTier": "low",
+  "promptVersion": "question-rewrite-phase-a-v1",
+  "system": "Rewrite the assessment question so it is clear, age-appropriate and grammatically correct. Preserve the exact task, facts, numbers, units, answer conditions and difficulty. Do not add hints, explanations or the answer. Return only the rewritten question.",
+  "maxTokens": 220,
+  "reviewStatus": "development",
+  "context": {
+    "uiLocale": "de-DE",
+    "inputLocale": "de-DE",
+    "contentLocale": "de-DE",
+    "gradingLocale": "de-DE",
+    "educationContextId": "mittelschule-bayern",
+    "curriculumVersion": "lehrplanplus-current",
+    "timeZone": "Europe/Berlin"
+  },
+  "providers": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "generator",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5",
+      "roles": [
+        "critic",
+        "verifier"
+      ]
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "roles": [
+        "generator",
+        "rewriter"
+      ]
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603",
+      "roles": [
+        "generator",
+        "rewriter"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "qr-01",
+      "independenceUnit": "rewrite-clarity",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Wie viel sind denn eigentlich 25 Prozent von 80, rechne das mal aus?"
+        }
+      ]
+    },
+    {
+      "id": "qr-02",
+      "independenceUnit": "rewrite-grammar",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Erkläre warum die Mauer gebaut worden ist und was das für die Menschen bedeutet hat."
+        }
+      ]
+    },
+    {
+      "id": "qr-03",
+      "independenceUnit": "rewrite-values",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Ein Pullover kostet 64 €. Er wird um 12,5 % reduziert. Wie hoch ist der neue Preis?"
+        }
+      ]
+    },
+    {
+      "id": "qr-04",
+      "independenceUnit": "rewrite-negation",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Welche der folgenden Aussagen ist NICHT richtig? Begründe deine Auswahl kurz."
+        }
+      ]
+    },
+    {
+      "id": "qr-05",
+      "independenceUnit": "rewrite-age-appropriate",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Analysiere die narrative Perspektivierung der Kurzgeschichte und elaboriere deren Wirkung."
+        }
+      ]
+    },
+    {
+      "id": "qr-06",
+      "independenceUnit": "rewrite-grammar-only",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Nenne drei Gründe warum Menschen 1989 die DDR verlassen wollten"
+        }
+      ]
+    },
+    {
+      "id": "qr-07",
+      "independenceUnit": "rewrite-concise",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Berechne bitte im folgenden Beispiel, nachdem du dir alles genau angesehen hast, den Umfang von einem Kreis mit Radius 4 cm."
+        }
+      ]
+    },
+    {
+      "id": "qr-08",
+      "independenceUnit": "rewrite-no-answer-leak",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Warum ist 3² + 4² = 5² ein Beispiel für den Satz des Pythagoras?"
+        }
+      ]
+    },
+    {
+      "id": "qr-09",
+      "independenceUnit": "rewrite-units",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Ein Auto fährt 150 km in 2,5 Stunden. Berechne die Durchschnittsgeschwindigkeit in km/h."
+        }
+      ]
+    },
+    {
+      "id": "qr-10",
+      "independenceUnit": "rewrite-condition",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Kreuze genau zwei Antworten an, die zur sozialen Marktwirtschaft passen."
+        }
+      ]
+    },
+    {
+      "id": "qr-11",
+      "independenceUnit": "rewrite-informal",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Was war da eigentlich los beim Kalten Krieg? Schreib zwei wichtige Merkmale hin."
+        }
+      ]
+    },
+    {
+      "id": "qr-12",
+      "independenceUnit": "rewrite-multi-constraint",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Lies den Text und nenne zwei sprachliche Mittel. Erkläre bei jedem in einem Satz seine Wirkung."
+        }
+      ]
+    }
+  ]
+}
