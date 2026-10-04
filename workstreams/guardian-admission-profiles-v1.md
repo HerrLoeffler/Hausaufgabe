@@ -4,12 +4,12 @@
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
-- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec freigegeben, Implementierungsplan geschrieben, Review/Execution-Methode offen.
+- Arbeitszustand: aktiv; Spec freigegeben, Planreview/Execution-Methode offen; Escape-Deploy erfolgreich verifiziert.
 - Aufgabenbranch: docs/guardian-admission-profiles-20261004
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
 - PR: siehe PR dieses Aufgabenbranches; noch nicht integriert.
-- Betroffene Dateien: docs/STAGING_BACKLOG_2026-10-04.md, docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md, diese Übergabe, TODO.md, workstreams/registry.json.
+- Betroffene Dateien: Audit, genehmigte Spec, Implementierungsplan, diese Übergabe, TODO.md, Registry und GRADECREW_STATE.json (nur games-escape und zwei getrennte Preview-Komponenten).
 - Überschneidungen: zentrale TODO/Registry; PR #65 betrifft GC-AUTOMATION-09 bis -11, bleibt getrennt. Keine Controller-/Produktdatei geändert.
 
 ## Ziel und gewünschtes Verhalten
@@ -60,3 +60,10 @@ Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen.
 Secret-Viewer ausdrücklich freigegeben und gespeichert; Policy Troubleshooter bestätigt wirksames secrets.get. Aktueller Escape-Head a7ffc382 unverändert, Run 37021633218/Attempt1 completed failure, keine aktiven/queued Jobs. Geplant: nur fehlgeschlagenen Job dieses Runs unter dem bestehenden Weiterarbeitsauftrag fortsetzen; Ziel ausschließlich generateEscapePreview + gradecrew-escape-dev in Staging. Ergebnis/Attempt2 nach API-Aufruf sofort sichern, keinen unklaren Start wiederholen. Keine Provider-Testanfrage.
 
 Externer Start bestätigt: bestehender Run 37021633218, Attempt 2, Status in_progress, Quelle a7ffc382128c49b418a79c31812f88e7fe0fd3d2; GitHub-API success. Deployment-Ergebnis offen, nicht erneut starten.
+
+### Escape-Fortsetzung abgeschlossen — 2026-10-04 21:28 UTC
+
+[37021633218, Attempt 2](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37021633218) completed/success am unveränderten Source a7ffc382128c49b418a79c31812f88e7fe0fd3d2; Job 111534877678. Unter Node22: 41 Escape-Tests und 105 Functions-Tests bestanden. Secret-Metadatenblocker gelöst. CLI meldet Successful create operation für generateEscapePreview(europe-west1), danach Deploy complete; Hosting-Channel gradecrew-escape-dev erfolgreich, Ablauf 2026-11-03T21:25:55Z.
+Preview: https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app . Read-only Browser-DOM bestätigt „Die verriegelte Schule“, drei Räume/acht Lernfragen/vier Minirätsel und Einstieg. Keine Vorbereitung/Generierung gestartet. Die direkte Function-GET-Prüfung war im Browser durch ERR_BLOCKED_BY_CLIENT blockiert; dies ist kein Serverfehlernachweis und wurde nicht umgangen. Kein tatsächlicher Generator-/Provider-E2E-Test.
+CLI führt die übliche Runtime-Secret-Bindung für 950775032930-compute aus; dieselbe Secret-Accessor-Bindung war schon vor der Änderung sichtbar. Agent hat ausschließlich die ausdrücklich freigegebene direkte Viewer-Bindung ergänzt; kein Secret-Payload gelesen.
+GRADECREW_STATE.json wird in diesem PR für games-escape und zwei getrennte Preview-Komponenten aktualisiert. Kein Bestandteil des gemeinsamen Web-Release-Batches, keine Rules- oder Production-Änderung. Das Legacy-Workflowlog ist Deploynachweis, besitzt aber noch kein neues kryptografisches Guardian-Paket-/Receipt-Profil. Geräteabnahme und drei neue Profilreviews bleiben offen. Versuch 1 und ältere Läufe bleiben in previous_observation erhalten.
