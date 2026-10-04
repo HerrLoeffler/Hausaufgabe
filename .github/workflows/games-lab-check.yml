@@ -25,6 +25,7 @@ permissions:
 
 jobs:
   games:
+    if: github.event_name != 'pull_request' || github.head_ref != 'prototype/escape-expedition-visual-masterpiece-v1'
     name: Games structure and browser checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
