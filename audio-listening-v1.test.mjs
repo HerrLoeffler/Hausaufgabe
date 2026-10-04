@@ -21,9 +21,13 @@ test("teacher transcript is stored in a private subcollection, never in the publ
   const sanitize = app.slice(sanitizeStart, sanitizeEnd);
   assert.match(sanitize, /audioDataUrl/);
   assert.doesNotMatch(sanitize, /base\.audioScript|audioScript\s*:/);
-  assert.match(app, /"audioScripts", q\.id/);
-  assert.match(rules, /match \/audioScripts\/\{questionId\}/);
-  assert.match(secureRules, /match \/audioScripts\/\{questionId\}/);
+  assert.match(client, /getQuestionAudioDrafts: call\("getQuestionAudioDrafts"/);
+  assert.match(client, /syncQuestionAudioDrafts: call\("syncQuestionAudioDrafts"/);
+  assert.match(app, /aiApi\.getQuestionAudioDrafts/);
+  assert.match(app, /aiApi\.syncQuestionAudioDrafts/);
+  assert.doesNotMatch(app, /getDocs\(collection\(db, "quizzes", code, "audioScripts"\)\)/);
+  assert.match(rules, /match \/audioScripts\/\{questionId\}[\s\S]*?allow read, write: if false/);
+  assert.match(secureRules, /match \/audioScripts\/\{questionId\}[\s\S]*?allow read, write: if false/);
 });
 
 test("publication is fail-closed while listening audio is stale", () => {
