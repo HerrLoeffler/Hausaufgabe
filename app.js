@@ -6150,9 +6150,13 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   }
   if (!force) {
     const unanswered = getUnansweredQuestions(questions);
-    const message = unanswered.length
-      ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`
-      : "Alles bearbeitet. Test jetzt endgültig abgeben?";
+    const message = ownerPreview
+      ? unanswered.length
+        ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Vorschau trotzdem auswerten?`
+        : "Alles bearbeitet. Vorschau jetzt auswerten?"
+      : unanswered.length
+        ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`
+        : "Alles bearbeitet. Test jetzt endgültig abgeben?";
     if (!confirm(message)) return;
   }
 
