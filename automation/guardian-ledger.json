@@ -111,7 +111,9 @@
           ]
         },
         "integratedSha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
-        "integratedAt": "2026-10-04T16:50:44.925092+00:00"
+        "integratedAt": "2026-10-04T16:50:44.925092+00:00",
+        "ciControlSha": "2a2a9912cc34c8afed19c3260f254d45ceb613b1",
+        "ciRunId": 37218270539
       }
     ]
   },
