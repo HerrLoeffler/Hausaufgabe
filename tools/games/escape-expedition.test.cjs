@@ -231,7 +231,7 @@ test('M1.5 vehicle recovery uses safe checkpoints instead of full-run restart', 
   assert.match(js, /safeProgress: 0/);
   assert.match(js, /state\.jeep\.distance = state\.jeep\.safeDistance/);
   assert.match(js, /state\.river\.progress = state\.river\.safeProgress/);
-  assert.match(js, /jeepCheckpoint > state\.jeep\.safeDistance/);
+  assert.match(js, /jeepCheckpoint > (?:state\.jeep|jeep)\.safeDistance/);
   assert.match(js, /riverCheckpoint > state\.river\.safeProgress/);
 });
 
@@ -303,11 +303,12 @@ test('M2 mechanic instructions are concise and student-friendly', () => {
 
 test('V0.1 visual bible defines the Amazonas reference quality bar', () => {
   for (const phrase of [
-    'Warm, abenteuerlich, lebendig',
-    'Tiefenaufbau pro Szene',
-    'Camp – Referenzstandard',
-    'Performance-Budget',
-    'Camp-Wow-Moment'
+    'originale Retro-Handheld-Top-Down-Adventure-Overworld',
+    'Gemeinsame Overworld-Regeln',
+    'MANGO-1',
+    'Game-Feel',
+    'Performance',
+    'Verbindliches Abnahmekriterium'
   ]) assert.ok(visualBible.includes(phrase), 'missing visual rule: ' + phrase);
   assert.match(html, /class="visual-masterpiece"/);
   assert.match(html, /GRADECrew ESCAPE · EXPEDITION/);
