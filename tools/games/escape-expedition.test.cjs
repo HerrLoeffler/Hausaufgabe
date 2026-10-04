@@ -73,3 +73,16 @@ test('production is not referenced by the prototype files', () => {
   assert.doesNotMatch(all, /hausaufgabe-40294/);
   assert.doesNotMatch(all, /production/i);
 });
+
+
+test('M1.1 keeps full HUD rendering out of the animation update loop', () => {
+  const start = js.indexOf('function update(now, dt)');
+  const end = js.indexOf('function formatTime', start);
+  const body = js.slice(start, end);
+  assert.ok(start >= 0 && end > start);
+  assert.doesNotMatch(body, /updateHud\(\)/);
+  assert.match(js, /let lastTimerSecond = -1/);
+  assert.match(js, /previousNearId/);
+  assert.match(js, /previousDistance <= 80/);
+  assert.match(js, /previousProgress <= 50/);
+});

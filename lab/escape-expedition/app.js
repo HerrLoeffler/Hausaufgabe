@@ -112,6 +112,7 @@
 
   const sceneDecor = Array.from({ length: 42 }, () => ({ x: 40 + rnd() * 880, y: 60 + rnd() * 500, s: .6 + rnd() * .8, type: rnd() > .55 ? 'leaf' : 'tree' }));
   let last = performance.now();
+  let lastTimerSecond = -1;
 
   function setCoco(title, text) { $('cocoTitle').textContent = title; $('cocoText').textContent = text; }
   function toast(text, seconds = 2.1) { $('toast').textContent = text; $('toast').hidden = false; state.toastTimer = seconds; }
@@ -363,13 +364,18 @@
     }
     let nearest = null, nearestD = 9999;
     for (const h of generalHotspots()) { const d = Math.hypot(state.player.x - h.x, state.player.y - h.y); if (d < h.r && d < nearestD) { nearest = h; nearestD = d; } }
-    state.near = nearest; renderInteraction();
+    const previousNearId = state.near?.id || null;
+    state.near = nearest;
+    if (previousNearId !== (nearest?.id || null)) updateHud();
+    renderInteraction();
   }
 
   function updateJeep(dt) {
     let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    const previousDistance = state.jeep.distance;
     state.jeep.x = Math.max(320, Math.min(640, state.jeep.x + steer * 250 * dt));
     state.jeep.distance += 58 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.25 : 1);
+    if (previousDistance <= 80 && state.jeep.distance > 80) updateHud();
     const obstaclePhase = state.jeep.distance % 180;
     const obstacleX = 400 + Math.sin(Math.floor(state.jeep.distance / 180) * 2.7) * 140;
     if (obstaclePhase > 145 && obstaclePhase < 151 && Math.abs(state.jeep.x - obstacleX) < 58) { state.jeep.bumps++; state.jeep.distance -= 20; toast('💦 Matschloch! MANGO-1 nennt das „Geländekomfort“.', 1.1); }
@@ -386,10 +392,12 @@
 
   function updateRiver(dt) {
     let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    const previousProgress = state.river.progress;
     state.river.x = Math.max(270, Math.min(690, state.river.x + steer * 260 * dt));
     state.river.progress += 66 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.2 : 1);
+    if (previousProgress <= 50 && state.river.progress > 50) updateHud();
     const phase = state.river.progress % 160; const rockX = 480 + Math.sin(Math.floor(state.river.progress / 160) * 3.1) * 175;
-    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 BONK. Das war ein Felsen.', 1.0); }
+    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 BONK. Das war ein Felsen.', 1.0); updateHud(); }
     if (state.river.progress >= 950) { state.river.progress = 950; setScene('station'); }
   }
 
@@ -404,8 +412,11 @@
     else if (state.scene === 'river') updateRiver(dt);
     else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
     if ($('winchDialog').open) { state.winchValue += state.winchDir * dt * .62; if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; } if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; } $('winchNeedle').style.left = `${state.winchValue * 100}%`; }
-    $('timeBadge').textContent = formatTime((now - state.startTime) / 1000);
-    updateHud();
+    const timerSecond = Math.floor((now - state.startTime) / 1000);
+    if (timerSecond !== lastTimerSecond) {
+      lastTimerSecond = timerSecond;
+      $('timeBadge').textContent = formatTime(timerSecond);
+    }
   }
 
   function formatTime(sec) { sec = Math.floor(sec); return `⏱ ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
@@ -507,7 +518,7 @@
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
     if(document.querySelector('dialog[open]'))return;
-    if(state.radioMode){if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);e.preventDefault()}if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);e.preventDefault()}if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}return}
+    if(state.radioMode){if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);updateHud();e.preventDefault()}if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);updateHud();e.preventDefault()}if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}return}
     if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key)){state.keys.add(key);e.preventDefault()}
     if((key==='e'||key==='Enter')&&state.near){interact();e.preventDefault()}
     if(key==='c'&&state.scene==='wildlife'){takePhoto();e.preventDefault()}
@@ -517,7 +528,7 @@
 
   document.querySelectorAll('.dpad button').forEach(btn=>{
     const map={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};const key=map[btn.dataset.dir];
-    const down=e=>{e.preventDefault();if(state.radioMode){if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);return}state.keys.add(key)};
+    const down=e=>{e.preventDefault();if(state.radioMode){if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);updateHud();return}state.keys.add(key)};
     const up=e=>{e.preventDefault();state.keys.delete(key)};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);
   });
 
