@@ -1,0 +1,19 @@
+{
+  "id": "startscreen-masterpiece-v3-20261004",
+  "base_branch": "feature/gradecrew-app-integration",
+  "base_sha": "9559f7420aca9b62e45629e6bec02220006e6e88",
+  "risk": "web-ui",
+  "goal": "Create the next premium GradeCrew public startscreen design pass from the current verified Crew-first implementation. Martin's reference direction is emotionally warm, spacious and brand-led: Coco is the dominant welcoming foreground character; Remy, Emmi and Wilma form one cohesive working crew; the scene has convincing depth, light and calm school atmosphere rather than flat diagrammatic furniture. Preserve the current GradeCrew logo and canonical mascot assets. Keep the confirmed concise copy and product hierarchy. This pass must also preserve the now-integrated bilingual UI boundary: the public startscreen changes with de-DE/en-GB UI locale while test content and grading language remain separate.",
+  "acceptance": "Desktop at roughly 1440–1600px: the public entry reads as one coherent premium homepage stage, not a grey app card. Use the available viewport confidently without clipping important content. Coco is clearly larger and visually closer than Remy/Emmi/Wilma. The support crew reads as one group; their role cards are aligned and never collide with the CTA row. Replace or visually suppress the obvious flat CSS door/window/board/shelf geometry as the dominant impression; use fewer, softer environmental layers, stronger light, depth, foreground/background separation and whitespace. Headline, characters, CTA row, student utility and benefit strip have clear vertical rhythm with no overlap. 'Crew kennenlernen' remains the primary CTA and 'Direkt anmelden' secondary. Student test-code entry stays visible but quieter than teacher actions. Benefit strip remains calm and legible. Tablet/iPad and phone must recompose rather than merely shrink: no horizontal scroll, no clipped mascot faces/bodies, no CTA/role-card overlap, accessible touch targets and focus-visible remain. Reduced-motion remains respected. The public header remains calm and uses the current GradeCrew brand. Existing DE/EN UI switching must continue to translate all visible startscreen UI; do not introduce visible language-dependent text in CSS generated content or background imagery. Existing login/register/join form IDs, handlers, tutorial, auth flow, secure student routing and assessment behavior remain unchanged. Existing combined validation must pass.",
+  "constraints": "Edit only gradecrew-auth-startscreen.css. gradecrew-entry-flow.js and startup.js are read-only context and their current bilingual text flow must remain intact. Do not change messages/catalogs in this AI design task; i18n coverage was integrated separately at web SHA 9559f7420aca9b62e45629e6bec02220006e6e88. Do not add visible words via CSS content, data URIs, images or pseudo-elements; decorative symbols only. Do not change Firebase, backend, assessment/security logic, CI, deployment, credentials, shared canonical mascot assets, brand files or tests. Do not add or reinterpret mascots. Prefer fewer stronger visual layers and better composition over additional CSS-object clutter. The model does not see Martin's screenshots, so the detailed visual contract above is authoritative; final visual acceptance remains Martin's. Production is out of scope.",
+  "allowed_files": [
+    "gradecrew-auth-startscreen.css"
+  ],
+  "context_files": [
+    "gradecrew-entry-flow.js",
+    "startup.js"
+  ],
+  "validation_profile": "web-combined-v1",
+  "max_cost_usd": 2.55,
+  "cost_profile": "module-web-v1"
+}
