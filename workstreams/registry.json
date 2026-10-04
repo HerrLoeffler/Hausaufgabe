@@ -403,6 +403,18 @@
       "relatedBranches": [
         "docs/guardian-verified-pilot-20261004"
       ]
+    },
+    {
+      "id": "audio-masterpiece-v2",
+      "title": "Audio Masterpiece V2 / Hör- und Lösungsaudio",
+      "primaryBranch": "feature/audio-masterpiece-v2",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/audio-masterpiece-v2.md",
+      "relatedBranches": [
+        "feature/audio-v2-staging-checkpoint",
+        "fix/audio-private-drafts-staging-v1"
+      ]
     }
   ]
 }
