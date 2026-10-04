@@ -37,6 +37,12 @@
 .jsonFieldLabel { display: block; font-size: 13px; font-weight: 650; margin-top: 18px; }
 .userBar { min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .userBar #userLabel { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#adminTopBtn { position: relative; }
+.bugOpsAttentionBadge {
+  display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px;
+  padding: 0 5px; border-radius: 999px; font-size: 11px; line-height: 1; font-weight: 750;
+  background: var(--surface-error); color: var(--ink-error); border: 1px solid #e5b7b1;
+}
 .topbar .brand { flex-shrink: 0; }
 .topbar .brand small { white-space: nowrap; }
 .toast { top: calc(var(--topbar-offset) + 12px); max-width: min(430px, calc(100vw - 32px)); }
