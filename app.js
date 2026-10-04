@@ -5690,6 +5690,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       <p>${escapeHtml(quiz.description || "")}</p>
       <div class="studentMetaRow"><span>${questions.length} Aufgaben</span><span>${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte</span><span>Code ${quiz.id}</span></div>
     </div>
+    ${ownerPreview ? `<div class="studentPreviewNotice" role="note"><strong>Vorschau als Schüler</strong><span>In dieser Vorschau werden Antworten und Ergebnisse nicht gespeichert.</span></div>` : ""}
     <form id="studentForm">
       <div class="studentIdentityCard"><label class="studentNameLabel">Wie dürfen wir dich nennen?<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Name oder vereinbartes Kürzel" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel statt deines Namens verwenden.</small></div>
       ${gateHtml}
@@ -5700,7 +5701,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
         <div id="studentQuestionNav" class="studentQuestionNav" aria-label="Aufgabennavigation"></div>
       </div>
       <div id="studentQuestions" class="${gateRequired ? "hidden" : ""}"></div>
-      <div id="studentSubmitArea" class="studentSubmitArea ${gateRequired ? "hidden" : ""}"><div><strong>Fertig?</strong><small>Prüfe offene Aufgaben noch einmal, bevor du endgültig abgibst.</small></div><button id="studentSubmitBtn" class="button primary studentSubmit" type="submit">Antworten abgeben</button></div>
+      <div id="studentSubmitArea" class="studentSubmitArea ${gateRequired ? "hidden" : ""}"><div><strong>Fertig?</strong><small>${ownerPreview ? "Prüfe deine Antworten und teste anschließend die Auswertung. Es wird keine Abgabe gespeichert." : "Prüfe offene Aufgaben noch einmal, bevor du endgültig abgibst."}</small></div><button id="studentSubmitBtn" class="button primary studentSubmit" type="submit">${ownerPreview ? "Vorschau auswerten" : "Antworten abgeben"}</button></div>
     </form>
     <div id="studentResult" class="studentResult hidden"></div>`;
   const qRoot = $("studentQuestions");
@@ -5788,7 +5789,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
   });
 
   setupStudentProgress(questions);
-  $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions));
+  $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions, { ownerPreview }));
   $("studentName").addEventListener("keydown", (e) => {
     if (e.key !== "Enter" || e.isComposing) return;
     e.preventDefault();
@@ -6138,7 +6139,7 @@ function evaluateAnswer(q, given) {
   return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
 }
 
-async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null } = {}) {
+async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null, ownerPreview = false } = {}) {
   e?.preventDefault?.();
   const submissionKey = `${quiz.id}:${state.studentAttempt?.attemptId || "untimed"}`;
   if ($("studentForm")?.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
@@ -6182,6 +6183,13 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   const activeAttempt = state.studentAttempt?.startedAt ? state.studentAttempt : storedTimer;
   const effectiveStart = Number(startedAt || activeAttempt?.startedAt || 0) || null;
   const elapsedSeconds = effectiveStart ? Math.max(0, Math.round((Date.now() - effectiveStart) / 1000)) : null;
+
+  if (ownerPreview) {
+    stopStudentTimer();
+    renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview, { preview: true });
+    toast("Vorschau ausgewertet – keine Abgabe gespeichert.");
+    return;
+  }
 
   studentSubmissionBusy.add(submissionKey);
   try {
@@ -6274,7 +6282,7 @@ function correctDisplay(q) {
   return (q.options || []).filter((o) => o.correct).map((o) => o.text).join(", ");
 }
 
-function renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview) {
+function renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview, { preview = false } = {}) {
   $("studentForm").classList.add("hidden");
   const box = $("studentResult");
   box.classList.remove("hidden");
@@ -6282,9 +6290,11 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
   const showSolutions = Boolean(quiz.showSolutions);
   const scale = getQuizScale(quiz);
 
-  let summary = `<h2>Abgabe gespeichert ✓</h2>`;
+  let summary = `<h2>${preview ? "Vorschau ausgewertet ✓" : "Abgabe gespeichert ✓"}</h2>`;
   if (mode === "none") {
-    summary += `<p>Deine Antworten wurden erfolgreich gespeichert.</p>`;
+    summary += preview
+      ? `<p>Diese Vorschau speichert keine Abgabe.</p>`
+      : `<p>Deine Antworten wurden erfolgreich gespeichert.</p>`;
   } else {
     summary += `<div class="scoreBig">${round1(points)}/${round1(maxPoints)} Punkte</div>`;
     if (mode === "points_percent" || mode === "points_grade") summary += `<p>${percent}%${needsReview ? " · vorläufiges Ergebnis" : ""}</p>`;
