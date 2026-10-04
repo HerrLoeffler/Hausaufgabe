@@ -43,10 +43,13 @@ import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview 
 import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
+import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
 let adminAuditCursor = null;
+let adminFeedbackCursor = null;
+let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 
@@ -6782,6 +6785,7 @@ for (const id of ["adminFeedbackEnvironment", "adminFeedbackSeverity", "adminFee
 }
 for (const id of ["adminAuditSearch", "adminAuditAction", "adminAuditFrom", "adminAuditTo", "adminAuditSort"]) $(id)?.addEventListener("input", renderAdminAudit);
 $("adminAuditMore")?.addEventListener("click", loadMoreAdminAudit);
+$("adminFeedbackMore")?.addEventListener("click", loadMoreAdminFeedback);
 $("adminFeedbackReset")?.addEventListener("click", () => {
   document.querySelectorAll("#adminFeedbackAdvanced input").forEach(node => { node.value = ""; });
   document.querySelectorAll("#adminFeedbackAdvanced select").forEach(node => { node.selectedIndex = 0; });
@@ -6821,11 +6825,12 @@ async function loadAdminData(showToast = false) {
   const refresh = $("refreshAdminBtn");
   if (refresh) { refresh.disabled = true; refresh.textContent = "Lädt …"; }
   try {
-    const [usersSnap, quizzesSnap, announcementsSnap, feedbackSnap, auditSnap] = await Promise.all([
+    const [usersSnap, quizzesSnap, announcementsSnap, feedbackSnap, feedbackCountSnap, auditSnap] = await Promise.all([
       getDocs(collection(db, "users")),
       getDocs(collection(db, "quizzes")),
       getDocs(collection(db, "announcements")),
-      getDocs(collection(db, "feedback")),
+      getDocs(query(collection(db, "feedback"), orderBy("createdAt", "desc"), limit(200))),
+      getCountFromServer(collection(db, "feedback")),
       getDocs(query(collection(db, "adminAudit"), orderBy("createdAt", "desc"), limit(200)))
     ]);
     if (!isAdmin() || state.user?.uid !== requestingUid) return;
@@ -6833,6 +6838,10 @@ async function loadAdminData(showToast = false) {
     state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    state.adminFeedbackTotal = feedbackCountSnap.data().count;
+    adminFeedbackCursor = feedbackSnap.docs.at(-1) || null;
+    adminFeedbackHasMore = feedbackSnap.size === 200;
+    if ($("adminFeedbackMore")) $("adminFeedbackMore").disabled = !adminFeedbackHasMore;
     const openRightsCount = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
     const openErrorCount = state.adminFeedback.filter(f => f.category === "app_error" && f.status !== "done").length;
     const feedbackTab = document.querySelector('[data-admin-tab="feedback"]');
@@ -6863,6 +6872,28 @@ async function loadAdminData(showToast = false) {
   }
 }
 
+async function loadMoreAdminFeedback() {
+  if (!isAdmin() || !adminFeedbackCursor || !adminFeedbackHasMore) return;
+  const requestingUid = state.user.uid;
+  const button = $("adminFeedbackMore");
+  if (button) { button.disabled = true; button.textContent = "Lädt …"; }
+  try {
+    const snapshot = await getDocs(query(collection(db, "feedback"), orderBy("createdAt", "desc"), startAfter(adminFeedbackCursor), limit(200)));
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
+    const known = new Set(state.adminFeedback.map(row => row.id));
+    state.adminFeedback.push(...snapshot.docs.filter(d => !known.has(d.id)).map(d => ({ id: d.id, ...d.data() })));
+    state.adminFeedback.sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    adminFeedbackCursor = snapshot.docs.at(-1) || adminFeedbackCursor;
+    adminFeedbackHasMore = snapshot.size === 200;
+    renderAdminFeedback();
+  } catch (error) {
+    console.error(error);
+    toast("Ältere Feedback-Meldungen konnten nicht geladen werden.", "error");
+  } finally {
+    if (button) { button.disabled = !adminFeedbackHasMore; button.textContent = adminFeedbackHasMore ? "Ältere Meldungen laden" : "Alle geladen"; }
+  }
+}
+
 async function renderAdminOverview() {
   const period = state.adminOverviewPeriod || "7d";
   const since = adminPeriodStart(period);
@@ -6886,7 +6917,7 @@ async function renderAdminOverview() {
     ["Jemals veröffentlicht", state.adminQuizzes.filter((q) => q.publishedAt).length, "↗"],
     ["Tests beendet", state.adminQuizzes.filter((q) => q.endedAt).length, "✓"],
     ["Abgaben", submissions, "↓"],
-    ["Feedback erhalten", state.adminFeedback.length, "💬"]
+    ["Feedback erhalten", state.adminFeedbackTotal ?? state.adminFeedback.length, "💬"]
   ] : [
     ["Aktive Lehrkräfte", activeTeachers, "◎"],
     ["Neu registriert", newTeachers, "+"],
@@ -7371,6 +7402,29 @@ function formatTechnicalErrorReport(report) {
     .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
 }
 
+function renderBugOpsSummary() {
+  const incidents = buildBugIncidents(state.adminFeedback);
+  const overview = bugOpsOverview(incidents);
+  if (!incidents.length) return "";
+  const decisionCount = overview.immediate + overview.action_needed + overview.retest_ready;
+  const top = incidents.slice(0, 8);
+  const badge = (incident) => incident.priority === "P0" ? "🔴" : incident.priority === "P1" ? "🟠" : incident.priority === "P2" ? "🟡" : "⚪";
+  const notice = decisionCount
+    ? `<strong>${decisionCount} Vorgang${decisionCount === 1 ? "" : "e"} brauchen Aufmerksamkeit.</strong>`
+    : "<strong>Keine akute Entscheidung nötig.</strong>";
+  return `<section class="card bugOpsBoard">
+    <div class="sectionHead"><div><span class="eyebrow">BugOps · Decision Inbox</span><h2>Fehler statt Meldungen verwalten</h2><p>${notice} ${overview.total} Incident${overview.total === 1 ? "" : "s"} aus den ${state.adminFeedback.length} zuletzt geladenen Meldungen.</p></div></div>
+    <div class="adminStatsGrid">
+      <article class="card adminStatCard"><span>🔴</span><div><strong>${overview.P0 + overview.P1}</strong><small>P0/P1</small></div></article>
+      <article class="card adminStatCard"><span>👥</span><div><strong>${overview.affectedUsers}</strong><small>Betroffene Melder*</small></div></article>
+      <article class="card adminStatCard"><span>⚡</span><div><strong>${overview.immediate}</strong><small>Sofort ansehen</small></div></article>
+      <article class="card adminStatCard"><span>🔁</span><div><strong>${overview.retest_ready}</strong><small>Retest bereit</small></div></article>
+    </div>
+    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
+    <div class="bugOpsIncidentList">${top.map(incident => `<button type="button" class="button secondary bugOpsIncidentFilter" data-fingerprint="${escapeHtml(incident.fingerprint)}">${badge(incident)} ${escapeHtml(incident.priority)} · ${incident.uniqueReporters} Nutzer · ${incident.occurrences}× · ${incident.regressionAfterFix ? "Regression · " : ""}${incident.autopilot === "candidate" ? "Autopilot-Kandidat" : "menschliche Prüfung"}</button>`).join("")}</div>
+  </section>`;
+}
+
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -7382,7 +7436,7 @@ function renderAdminFeedback(){
     action: $("adminFeedbackAction")?.value, fingerprint: $("adminFeedbackFingerprint")?.value,
     from: $("adminFeedbackFrom")?.value, to: $("adminFeedbackTo")?.value, sort: $("adminFeedbackSort")?.value
   });
-  if ($("adminFeedbackCount")) $("adminFeedbackCount").textContent = `${list.length} von ${state.adminFeedback.length} geladenen Meldungen`;
+  if ($("adminFeedbackCount")) $("adminFeedbackCount").textContent = `${list.length} Treffer · ${state.adminFeedback.length} von ${state.adminFeedbackTotal ?? state.adminFeedback.length} Meldungen geladen`;
   if ($("adminFeedbackExport")) $("adminFeedbackExport").onclick = () => {
     const blob = new Blob([JSON.stringify(supportExport(list), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob); const link = document.createElement("a");
@@ -7404,7 +7458,7 @@ function renderAdminFeedback(){
   const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
   const grouped = groupErrors(list);
   const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
-  root.innerHTML = rightsSummary + errorSummary + summary + groupsHtml + (list.length ? list.map(f => {
+  root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
@@ -7413,7 +7467,7 @@ function renderAdminFeedback(){
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
     return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
-  root.querySelectorAll(".errorGroupFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
+  root.querySelectorAll(".errorGroupFilter, .bugOpsIncidentFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
   root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
   root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {
