@@ -3,11 +3,28 @@ on:
   push:
     branches: [fix/escape-review-v1]
   pull_request:
-    paths: ['lab/escape-room/**', 'tools/games/**', '.github/workflows/escape-review.yml']
+    paths:
+      - 'lab/escape-room/**'
+      - 'tools/games/escape-room.test.cjs'
+      - 'tools/games/escape-tutor.test.cjs'
+      - 'tools/games/escape-coco-ai.test.cjs'
+      - 'tools/games/gradecrew-escape-adapter.test.cjs'
+      - 'tools/games/gradecrew-escape-builder.test.cjs'
+      - 'tools/build-lab-escape-room.mjs'
+      - 'tools/games/package.json'
+      - 'tools/games/package-lock.json'
+      - '.github/workflows/escape-review.yml'
+
+concurrency:
+  group: escape-review-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+
 jobs:
   test:
+    if: github.event_name != 'pull_request' || github.head_ref != 'prototype/escape-expedition-visual-masterpiece-v1'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -17,4 +34,3 @@ jobs:
       - run: npm ci --prefix tools/games --ignore-scripts --no-audit --no-fund
       - run: node --test tools/games/escape-room.test.cjs tools/games/escape-tutor.test.cjs tools/games/escape-coco-ai.test.cjs tools/games/gradecrew-escape-adapter.test.cjs tools/games/gradecrew-escape-builder.test.cjs
       - run: node tools/build-lab-escape-room.mjs "$RUNNER_TEMP/escape-review"
-

@@ -27,6 +27,13 @@
   const q2Answer = q2Base * 0.3;
   const q3Base = pick([150, 200, 250, 300]);
   const q3Answer = q3Base * 0.4;
+  const q4Base = pick([200, 300, 400, 500]);
+  const q4Answer = q4Base * 0.2;
+  const q5Base = pick([400, 600, 800, 1000]);
+  const q5Answer = q5Base * 0.75;
+  const q6Base = pick([80, 120, 160, 200]);
+  const q6Increase = q6Base * 0.25;
+  const q6Answer = q6Base + q6Increase;
   const radioChannel = 42 + (seed % 17);
 
   function mc(correct, candidates) {
@@ -38,13 +45,17 @@
   const q1Mc = mc(q1Answer, [q1Answer - 5, q1Answer + 10, q1Answer * 2]);
   const q2Mc = mc(q2Answer, [q2Answer - 6, q2Answer + 7, q2Base * 0.03]);
   const q3Mc = mc(q3Answer, [q3Answer - 20, q3Answer + 30, q3Base * 0.04]);
+  const q4Mc = mc(q4Answer, [q4Answer - 20, q4Answer + 20, q4Base * 0.02]);
+  const q5Mc = mc(q5Answer, [q5Base / 4, q5Base / 2, q5Answer + 50]);
+  const q6Mc = mc(q6Answer, [q6Increase, q6Base - q6Increase, q6Base * 1.5]);
   const questions = {
     q1: {
       title: 'Route prüfen',
       prompt: `Der Jeep-Tank fasst ${q1Base} l. 25 % bleiben als Reserve. Wie viele Liter sind das?`,
       options: q1Mc.options, correct: q1Mc.correct,
-      hint: '25 % sind genau ein Viertel.',
-      explanation: `${q1Base} ÷ 4 = ${q1Answer}.`,
+      hint: '25 % sind ein Viertel. Teile die Literzahl durch 4.',
+      explanation: `${q1Base} ÷ 4 = ${q1Answer}. Das sind 25 %.`,
+      workedExample: 'Beispiel: 25 % von 80 l sind 20 l, weil 80 ÷ 4 = 20.',
       transfer: makeTransfer(25, pick([40, 60, 100, 140])),
       reward: 'jeepKey'
     },
@@ -52,8 +63,9 @@
       title: 'Sender prüfen',
       prompt: `Der Sender hat ${q2Base} Wh. 30 % sind für die Nacht reserviert. Wie viele Wh sind das?`,
       options: q2Mc.options, correct: q2Mc.correct,
-      hint: `10 % von ${q2Base} sind ${q2Base / 10}.`,
-      explanation: `30 % sind drei 10-%-Schritte: 3 × ${q2Base / 10} = ${q2Answer}.`,
+      hint: `Rechne zuerst 10 %: ${q2Base} ÷ 10 = ${q2Base / 10}. Für 30 % brauchst du das Dreifache.`,
+      explanation: `10 % sind ${q2Base / 10} Wh. Also sind 30 % = 3 × ${q2Base / 10} = ${q2Answer} Wh.`,
+      workedExample: 'Beispiel: 30 % von 60 sind 18. Erst 10 % = 6, dann 3 × 6.',
       transfer: makeTransfer(30, pick([20, 40, 60, 80])),
       reward: 'riverMap'
     },
@@ -61,50 +73,99 @@
       title: 'Terminal starten',
       prompt: `Der Generator liefert ${q3Base} W. Das Terminal braucht 40 %. Wie viele Watt sind das?`,
       options: q3Mc.options, correct: q3Mc.correct,
-      hint: `10 % von ${q3Base} sind ${q3Base / 10}.`,
-      explanation: `40 % sind vier 10-%-Schritte: 4 × ${q3Base / 10} = ${q3Answer} W.`,
+      hint: `Rechne zuerst 10 %: ${q3Base} ÷ 10 = ${q3Base / 10}. Für 40 % brauchst du vier solche Teile.`,
+      explanation: `40 % sind 4 × ${q3Base / 10} = ${q3Answer} W.`,
+      workedExample: 'Beispiel: 40 % von 200 W sind 80 W. 10 % = 20, also 4 × 20.',
       transfer: makeTransfer(40, pick([50, 100, 150, 250])),
       reward: 'radio'
+    },
+    q4: {
+      title: 'Winde kalibrieren',
+      prompt: `Die Winde hält ${q4Base} N. 20 % sollen Sicherheitsreserve bleiben. Wie viele Newton sind Reserve?`,
+      options: q4Mc.options, correct: q4Mc.correct,
+      hint: '20 % sind ein Fünftel. Teile die Zugkraft durch 5.',
+      explanation: `${q4Base} ÷ 5 = ${q4Answer} N. Das sind 20 %.`,
+      workedExample: 'Beispiel: 20 % von 300 N sind 60 N, weil 300 ÷ 5 = 60.',
+      transfer: makeTransfer(20, pick([100, 200, 300, 400]))
+    },
+    q5: {
+      title: 'Flussroute berechnen',
+      prompt: `Die Route ist ${q5Base} m lang. Nach 75 % kommt die sichere Zwischenboje. Nach wie vielen Metern?`,
+      options: q5Mc.options, correct: q5Mc.correct,
+      hint: '75 % sind drei Viertel. Teile zuerst durch 4 und nimm das Ergebnis dreimal.',
+      explanation: `${q5Base} ÷ 4 = ${q5Base / 4}; 3 × ${q5Base / 4} = ${q5Answer} m.`,
+      workedExample: 'Beispiel: 75 % von 400 m sind 300 m: 400 ÷ 4 = 100, dann 3 × 100.',
+      transfer: makeTransfer(75, pick([200, 400, 600, 800]))
+    },
+    q6: {
+      title: 'Signal verstärken',
+      prompt: `Das Funksignal hat Stärke ${q6Base}. Der Verstärker erhöht sie um 25 %. Wie stark ist das Signal danach?`,
+      options: q6Mc.options, correct: q6Mc.correct,
+      hint: 'Berechne zuerst 25 % als Zuwachs. 25 % sind ein Viertel. Addiere den Zuwachs danach zum Ausgangswert.',
+      explanation: `25 % von ${q6Base} sind ${q6Increase}. Also ${q6Base} + ${q6Increase} = ${q6Answer}.`,
+      workedExample: 'Beispiel: 25 % mehr als 80 sind 100. Ein Viertel von 80 ist 20; 80 + 20 = 100.',
+      transfer: makeIncreaseTransfer(25, pick([40, 80, 120, 160]))
     }
   };
 
   function makeTransfer(percent, base) {
     const ans = base * percent / 100;
     const choices = mc(ans, [ans + 5, Math.max(1, ans - 5), base - ans]);
-    return { prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`, options: choices.options, correct: choices.correct, hint: `Rechne zuerst 10 % oder nutze einen passenden Bruch.` };
+    return {
+      prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`,
+      options: choices.options,
+      correct: choices.correct,
+      hint: percent === 25 ? '25 % = 1/4.' : percent === 75 ? '75 % = 3/4.' : `Starte mit 10 % oder einem passenden Bruch.`,
+      solution: `${percent} % von ${base} sind ${ans}.`
+    };
+  }
+
+  function makeIncreaseTransfer(percent, base) {
+    const increase = base * percent / 100;
+    const ans = base + increase;
+    const choices = mc(ans, [increase, base - increase, base + percent]);
+    return {
+      prompt: `Neue Aufgabe: ${base} wird um ${percent} % erhöht. Welcher Wert entsteht?`,
+      options: choices.options,
+      correct: choices.correct,
+      hint: `Berechne zuerst ${percent} % von ${base} und addiere diesen Zuwachs.`,
+      solution: `${percent} % von ${base} sind ${increase}. Also ${base} + ${increase} = ${ans}.`
+    };
   }
 
   const SCENES = {
     camp: { stage: 1, title: 'Expeditionscamp', mission: 'Finde die Route', steps: ['Tablet prüfen', 'Schlüssel holen', 'Jeep starten'] },
     jeep: { stage: 2, title: 'Dschungelpiste', mission: 'Fahr durch den Dschungel', steps: ['Auf der Piste bleiben', 'Hindernissen ausweichen', 'Bis zum Baum fahren'] },
-    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Räume den Weg frei', steps: ['Zum Baum', 'Winde starten', '3 gute Züge'] },
-    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Finde die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Sender prüfen', 'Zum Boot'] },
+    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Räume den Weg frei', steps: ['Zum Baum', 'Winde kalibrieren', '3 gute Züge'] },
+    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Finde die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Sender prüfen', 'Flussroute berechnen', 'Zum Boot'] },
     river: { stage: 4, title: 'Rio Verde', mission: 'Fahr zur Station', steps: ['Boot steuern', 'Felsen ausweichen', 'Station erreichen'] },
     station: { stage: 5, title: 'Forschungsstation', mission: 'Bring den Strom zurück', steps: ['Generator starten', 'Terminal starten', 'Funkkanal finden', 'Zum Funkmast'] },
-    tower: { stage: 6, title: 'Funkmast', mission: 'Sende den Notruf', steps: ['Konsole starten', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
+    tower: { stage: 6, title: 'Funkmast', mission: 'Sende den Notruf', steps: ['Signal verstärken', 'Konsole starten', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
   };
 
   const state = {
     scene: 'camp',
     player: { x: 470, y: 470, r: 16, speed: 215, facing: -Math.PI / 2 },
     keys: new Set(), target: null, near: null,
-    items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0 },
+    items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: 0 },
+    transferAttempts: { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: 0 },
     activeQuestion: null, learningMode: 'main', selectedAnswer: null,
     winchHits: 0, winchValue: 0.08, winchDir: 1, winchTimer: 0,
-    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0 },
+    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0, speed: 64, stuck: false, stuckPower: 0, impactTimer: 0, shake: 0, hitHazards: new Set(), roadblockTimer: 0 },
     photos: new Set(), cameraMode: false, reticle: { x: 480, y: 300 },
     animals: [
       { id: 'toucan', emoji: '🦜', x: 700, y: 170, vx: 38, vy: 0, target: true },
       { id: 'capybara', emoji: '🦫', x: 280, y: 420, vx: 25, vy: -12, target: true },
       { id: 'monkey', emoji: '🐒', x: 520, y: 215, vx: -30, vy: 8, target: false }
     ],
-    river: { x: 480, progress: 0, hits: 0, safeProgress: 0 },
+    river: { x: 480, progress: 0, hits: 0, safeProgress: 0, lastRockCycle: -1, speed: 66 },
     generator: { seq: [], done: false },
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
     sceneEntered: performance.now(),
     gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0,
-    resolvingAction: null
+    resolvingAction: null,
+    campJeepStartAt: 0
   };
 
   const inventoryInfo = {
@@ -113,6 +174,23 @@
   };
 
   const sceneDecor = Array.from({ length: 42 }, () => ({ x: 40 + rnd() * 880, y: 60 + rnd() * 500, s: .6 + rnd() * .8, type: rnd() > .55 ? 'leaf' : 'tree' }));
+  const JEEP_SCREEN_Y = 452;
+  const JEEP_PX_PER_M = 2.45;
+  const JEEP_LANES = [374, 480, 586];
+  const jeepCourse = [
+    { id: 'rock-a', type: 'rock', at: 145, lane: 0 },
+    { id: 'mud-a', type: 'mud', at: 255, lane: 2 },
+    { id: 'branch-a', type: 'branch', at: 355, lane: 1 },
+    { id: 'rock-b', type: 'rock', at: 470, lane: 2 },
+    { id: 'mud-b', type: 'mud', at: 585, lane: 0 },
+    { id: 'rock-c', type: 'rock', at: 695, lane: 1 },
+    { id: 'roadblock', type: 'tree', at: 832, lane: 1, story: true }
+  ];
+
+  function jeepHazardScreenY(hazard) {
+    return JEEP_SCREEN_Y - (hazard.at - state.jeep.distance) * JEEP_PX_PER_M;
+  }
+
   let last = performance.now();
   let lastTimerSecond = -1;
 
@@ -168,7 +246,7 @@
   }
 
   function recoveryKind() {
-    if (state.won || state.transitioning) return null;
+    if (state.won || state.transitioning || state.jeep.roadblockTimer > 0) return null;
     if ($('winchDialog').open) return 'winch';
     if ($('generatorDialog').open) return 'generator';
     if (state.gameMode === 'camera' && state.scene === 'wildlife') return 'camera';
@@ -200,6 +278,14 @@
     if (kind === 'jeep') {
       state.jeep.x = 480;
       state.jeep.distance = state.jeep.safeDistance;
+      state.jeep.speed = 56;
+      state.jeep.stuck = false;
+      state.jeep.stuckPower = 0;
+      state.jeep.impactTimer = 0;
+      state.jeep.shake = 0;
+      state.jeep.roadblockTimer = 0;
+      for (const hazard of jeepCourse) if (hazard.at >= state.jeep.safeDistance - 10) state.jeep.hitHazards.delete(hazard.id);
+      restoreSceneMode();
       toast('Jeep zurück am sicheren Punkt.');
       updateHud();
       return true;
@@ -285,7 +371,7 @@
   function updateHud() {
     const meta = SCENES[state.scene];
     $('levelBadge').textContent = `LEVEL ${meta.stage}/6`;
-    $('learningBadge').textContent = `🧠 ${state.solved.size}/3`;
+    $('learningBadge').textContent = `🧠 ${state.solved.size}/6`;
     $('sceneTitle').textContent = `${meta.stage}/6 · ${meta.title}`;
     $('missionTitle').textContent = meta.mission;
     $('missionText').textContent = missionText();
@@ -323,11 +409,11 @@
   function currentStepStates() {
     if (state.scene === 'camp') return [state.solved.has('q1') ? 'done' : 'active', state.items.has('jeepKey') ? 'done' : '', state.solved.has('q1') ? 'active' : ''];
     if (state.scene === 'jeep') return [state.jeep.distance > 80 ? 'done' : 'active', state.jeep.distance >= 850 ? 'done' : 'active', ''];
-    if (state.scene === 'blocked') return [state.near?.id === 'tree' ? 'done' : 'active', state.winchHits ? 'done' : 'active', state.winchHits >= 3 ? 'done' : 'active'];
-    if (state.scene === 'wildlife') return [state.photos.has('toucan') ? 'done' : 'active', state.photos.has('capybara') ? 'done' : '', state.solved.has('q2') ? 'done' : '', state.solved.has('q2') ? 'active' : ''];
+    if (state.scene === 'blocked') return [state.near?.id === 'tree' ? 'done' : 'active', state.solved.has('q4') ? 'done' : state.near?.id === 'tree' ? 'active' : '', state.winchHits >= 3 ? 'done' : state.solved.has('q4') ? 'active' : ''];
+    if (state.scene === 'wildlife') return [state.photos.has('toucan') ? 'done' : 'active', state.photos.has('capybara') ? 'done' : '', state.solved.has('q2') ? 'done' : '', state.solved.has('q5') ? 'done' : state.solved.has('q2') ? 'active' : '', state.solved.has('q5') ? 'active' : ''];
     if (state.scene === 'river') return [state.river.progress > 50 ? 'done' : 'active', state.river.hits < 3 ? 'active' : '', state.river.progress >= 950 ? 'done' : ''];
     if (state.scene === 'station') return [state.generator.done ? 'done' : 'active', state.solved.has('q3') ? 'done' : '', state.items.has('radio') ? 'done' : '', state.solved.has('q3') ? 'active' : ''];
-    if (state.scene === 'tower') return [state.radioMode ? 'done' : 'active', state.tuned === radioChannel ? 'done' : state.radioMode ? 'active' : '', state.won ? 'done' : ''];
+    if (state.scene === 'tower') return [state.solved.has('q6') ? 'done' : 'active', state.radioMode ? 'done' : state.solved.has('q6') ? 'active' : '', state.tuned === radioChannel ? 'done' : state.radioMode ? 'active' : '', state.won ? 'done' : ''];
     return [];
   }
 
@@ -392,16 +478,29 @@
     if (state.scene === 'camp' && id === 'tablet') return openLearning('q1');
     if (state.scene === 'camp' && id === 'jeep') {
       if (!state.solved.has('q1')) return toast('Prüfe zuerst die Route am Tablet.');
-      setCoco('MANGO-1 startet!', 'Lenke links oder rechts. Der Jeep fährt automatisch.');
-      return setScene('jeep');
+      if (!beginResolvingAction('camp-jeep')) return;
+      state.campJeepStartAt = performance.now();
+      setGameMode('transition');
+      state.near = null;
+      renderInteraction();
+      setCoco('MANGO-1 startet!', 'Lenke links/rechts. Halte ↑ für mehr Tempo. Matsch kann dich festsetzen.');
+      scheduleGuarded(620, () => {
+        endResolvingAction('camp-jeep');
+        setScene('jeep');
+      });
+      return;
     }
-    if (state.scene === 'blocked' && id === 'tree') return openWinch();
+    if (state.scene === 'blocked' && id === 'tree') {
+      if (!state.solved.has('q4')) return openLearning('q4');
+      return openWinch();
+    }
     if (state.scene === 'wildlife' && id === 'sender') {
       if (state.photos.size < 2) return toast('Fotografiere zuerst Tukan und Capybara.');
       return openLearning('q2');
     }
     if (state.scene === 'wildlife' && id === 'dock') {
       if (!state.solved.has('q2')) return toast('Löse zuerst den Sender.');
+      if (!state.solved.has('q5')) return openLearning('q5');
       return setScene('river');
     }
     if (state.scene === 'station' && id === 'generator') return openGenerator();
@@ -414,6 +513,7 @@
       return setScene('tower');
     }
     if (state.scene === 'tower' && id === 'radioConsole') {
+      if (!state.solved.has('q6')) return openLearning('q6');
       invalidateDelayedActions();
       state.radioMode = true; state.tuned = 35;
       setGameMode('radio');
@@ -428,6 +528,9 @@
     if (id === 'q1') { state.items.add('jeepKey'); setCoco('Route stimmt', 'Der Jeep wartet rechts im Camp.'); }
     if (id === 'q2') { state.items.add('riverMap'); setCoco('Route gefunden', 'Geh rechts zum Boot.'); }
     if (id === 'q3') { state.items.add('radio'); setCoco('Kanal gefunden', `Kanal ${radioChannel}. Geh zum Funkmast.`); }
+    if (id === 'q4') setCoco('Winde kalibriert', 'Jetzt drei sichere Züge im grünen Bereich.');
+    if (id === 'q5') setCoco('Flussroute klar', 'Steig jetzt ins Boot.');
+    if (id === 'q6') setCoco('Signal vorbereitet', 'Starte jetzt die Funkkonsole.');
     updateHud();
     return true;
   }
@@ -446,7 +549,7 @@
   function renderLearning() {
     const q = questions[state.activeQuestion];
     const data = state.learningMode === 'main' ? q : q.transfer;
-    $('learningTitle').textContent = state.learningMode === 'main' ? q.title : 'Neue Aufgabe';
+    $('learningTitle').textContent = state.learningMode === 'main' ? `${q.title} · Lerncheck` : 'Lernweg · Anwenden';
     $('learningPrompt').textContent = data.prompt;
     $('learningOptions').innerHTML = '';
     data.options.forEach((opt, i) => {
@@ -456,7 +559,9 @@
       $('learningOptions').append(label);
     });
     $('learningFeedback').className = 'feedback';
-    $('learningFeedback').textContent = state.learningMode === 'main' ? 'Wähle eine Antwort.' : 'Löse auch diese neue Aufgabe.';
+    $('learningFeedback').textContent = state.learningMode === 'main'
+      ? 'Lerncheck: Löse die Aufgabe. Wenn etwas nicht klappt, hilft Coco Schritt für Schritt.'
+      : 'Lernweg 2/2: Wende die Idee jetzt mit neuen Zahlen an.';
   }
 
   function checkLearning(e) {
@@ -464,13 +569,32 @@
     if (state.resolvingAction) return;
     const id = state.activeQuestion; const q = questions[id]; const data = state.learningMode === 'main' ? q : q.transfer;
     if (state.selectedAnswer === null) { $('learningFeedback').textContent = 'Wähle zuerst eine Antwort.'; return; }
+
     if (state.selectedAnswer !== data.correct) {
       $('learningFeedback').className = 'feedback error';
-      if (state.learningMode === 'transfer') { $('learningFeedback').textContent = `Noch nicht. ${q.transfer.hint}`; return; }
+
+      if (state.learningMode === 'transfer') {
+        state.transferAttempts[id]++;
+        const tries = state.transferAttempts[id];
+        if (tries === 1) {
+          $('learningFeedback').textContent = `Noch nicht. Coco-Tipp: ${data.hint}`;
+        } else if (tries === 2) {
+          $('learningFeedback').textContent = `Noch nicht. Coco-Beispiel: ${q.workedExample} Versuch die neue Aufgabe noch einmal.`;
+        } else {
+          $('learningFeedback').textContent = `Wir lösen sie gemeinsam: ${data.solution} Wähle jetzt die passende Antwort.`;
+        }
+        return;
+      }
+
       state.attempts[id]++;
-      $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Tipp: ${q.hint}` : `Noch nicht. ${q.explanation} Jetzt probierst du eine ähnliche Aufgabe.`;
-      if (state.attempts[id] >= 2 && beginResolvingAction('learning')) {
-        scheduleGuarded(850, () => {
+      if (state.attempts[id] === 1) {
+        $('learningFeedback').textContent = `Noch nicht. Coco-Tipp: ${q.hint}`;
+        return;
+      }
+
+      $('learningFeedback').textContent = `Coco zeigt dir ein Beispiel: ${q.workedExample} Danach probierst du eine ähnliche Aufgabe.`;
+      if (beginResolvingAction('learning')) {
+        scheduleGuarded(1050, () => {
           endResolvingAction('learning');
           if (state.activeQuestion !== id) return;
           state.learningMode = 'transfer';
@@ -480,10 +604,12 @@
       }
       return;
     }
+
     if (state.learningMode === 'main' && state.attempts[id] > 0) {
-      $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Jetzt noch eine ähnliche Aufgabe.`;
+      $('learningFeedback').className = 'feedback success';
+      $('learningFeedback').textContent = 'Richtig. Jetzt zeigst du mit neuen Zahlen, dass du den Weg verstanden hast.';
       if (!beginResolvingAction('learning')) return;
-      return scheduleGuarded(650, () => {
+      return scheduleGuarded(700, () => {
         endResolvingAction('learning');
         if (state.activeQuestion !== id) return;
         state.learningMode = 'transfer';
@@ -491,9 +617,11 @@
         renderLearning();
       });
     }
-    $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig! Weiter geht’s.';
+
+    $('learningFeedback').className = 'feedback success';
+    $('learningFeedback').textContent = state.learningMode === 'transfer' ? 'Transfer geschafft! Weiter geht’s.' : 'Richtig! Weiter geht’s.';
     if (!beginResolvingAction('learning')) return;
-    scheduleGuarded(500, () => {
+    scheduleGuarded(550, () => {
       rewardQuestion(id);
       state.activeQuestion = null;
       endResolvingAction('learning');
@@ -594,7 +722,7 @@
     setCoco('Antwort!', 'Dr. Yara ist sicher. Ein Capybara hat wirklich den Schlüssel geklaut.');
     const sec = Math.round((performance.now() - state.startTime) / 1000);
     $('victoryText').textContent = 'Dr. Yara ist sicher. Der Funk läuft wieder. Und das Capybara behält den Schlüssel.';
-    $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/3 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
+    $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/6 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
     scheduleGuarded(700, () => {
       endResolvingAction('victory');
       if (!$('victoryDialog').open) $('victoryDialog').showModal();
@@ -630,17 +758,101 @@
   }
 
   function updateJeep(dt) {
-    let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
-    const previousDistance = state.jeep.distance;
-    state.jeep.x = Math.max(320, Math.min(640, state.jeep.x + steer * 250 * dt));
-    state.jeep.distance += 58 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.25 : 1);
-    const jeepCheckpoint = Math.floor(state.jeep.distance / 180) * 180;
-    if (jeepCheckpoint > state.jeep.safeDistance && state.jeep.distance % 180 < 40) state.jeep.safeDistance = jeepCheckpoint;
-    if (previousDistance <= 80 && state.jeep.distance > 80) updateHud();
-    const obstaclePhase = state.jeep.distance % 180;
-    const obstacleX = 400 + Math.sin(Math.floor(state.jeep.distance / 180) * 2.7) * 140;
-    if (obstaclePhase > 145 && obstaclePhase < 151 && Math.abs(state.jeep.x - obstacleX) < 58) { state.jeep.bumps++; state.jeep.distance -= 20; toast('💦 Matschloch! Weiter geht’s.', 1.1); }
-    if (state.jeep.distance >= 850) { state.jeep.distance = 850; setScene('blocked', { x: 300, y: 430 }); setCoco('Baum im Weg', 'Geh zur Seilwinde.'); }
+    const jeep = state.jeep;
+
+    if (jeep.roadblockTimer > 0) {
+      jeep.roadblockTimer -= dt;
+      jeep.speed = Math.max(0, jeep.speed - 160 * dt);
+      jeep.shake = Math.max(0, jeep.shake - dt);
+      if (jeep.roadblockTimer <= 0) {
+        jeep.roadblockTimer = 0;
+        setScene('blocked', { x: 300, y: 430 });
+        setCoco('Baum im Weg', 'MANGO-1 kommt hier nicht weiter. Geh zur Seilwinde.');
+      }
+      return;
+    }
+
+    let steer = 0;
+    if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--;
+    if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+
+    if (jeep.stuck) {
+      jeep.speed = 0;
+      jeep.shake = Math.max(0, jeep.shake - dt * .8);
+      const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+      jeep.stuckPower = Math.max(0, Math.min(1, jeep.stuckPower + (throttle ? dt * 1.45 : -dt * .25)));
+      jeep.x = Math.max(330, Math.min(630, jeep.x + steer * 90 * dt));
+      if (jeep.stuckPower >= 1) {
+        jeep.stuck = false;
+        jeep.stuckPower = 0;
+        jeep.speed = 40;
+        toast('Frei! Weiter geht’s.', 1.0);
+        setCoco('Wieder frei', 'Weiterfahren. Weiche dem nächsten Hindernis aus.');
+      }
+      return;
+    }
+
+    if (jeep.impactTimer > 0) jeep.impactTimer = Math.max(0, jeep.impactTimer - dt);
+    jeep.shake = Math.max(0, jeep.shake - dt * 1.8);
+
+    const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+    const targetSpeed = jeep.impactTimer > 0 ? 24 : (throttle ? 86 : 64);
+    jeep.speed += (targetSpeed - jeep.speed) * Math.min(1, dt * 3.8);
+
+    const previousDistance = jeep.distance;
+    jeep.x = Math.max(330, Math.min(630, jeep.x + steer * 238 * dt));
+    jeep.distance += jeep.speed * dt;
+
+    const jeepCheckpoint = Math.floor(jeep.distance / 180) * 180;
+    if (jeepCheckpoint > jeep.safeDistance && jeep.distance % 180 < 42) jeep.safeDistance = jeepCheckpoint;
+    if (previousDistance <= 80 && jeep.distance > 80) updateHud();
+
+    for (const hazard of jeepCourse) {
+      if (hazard.story || jeep.hitHazards.has(hazard.id)) continue;
+      const y = jeepHazardScreenY(hazard);
+      if (y < JEEP_SCREEN_Y - 42 || y > JEEP_SCREEN_Y + 26) continue;
+
+      const x = JEEP_LANES[hazard.lane];
+      const halfWidth = hazard.type === 'mud' ? 54 : hazard.type === 'branch' ? 50 : 34;
+      if (Math.abs(jeep.x - x) > halfWidth) continue;
+
+      jeep.hitHazards.add(hazard.id);
+      jeep.bumps++;
+      jeep.shake = .34;
+
+      if (hazard.type === 'mud') {
+        jeep.stuck = true;
+        jeep.stuckPower = 0;
+        jeep.speed = 0;
+        setCoco('Festgefahren!', 'Halte ↑ / W gedrückt. Auf dem Handy: Pfeil nach oben.');
+        toast('Matsch! MANGO-1 steckt fest.', 1.4);
+      } else {
+        jeep.impactTimer = .72;
+        jeep.speed = 18;
+        jeep.distance = Math.max(0, jeep.distance - 7);
+        jeep.x += jeep.x <= x ? -18 : 18;
+        jeep.x = Math.max(330, Math.min(630, jeep.x));
+        toast(hazard.type === 'rock' ? 'Stein erwischt! Tempo weg.' : 'Ast erwischt! Kurz abbremsen.', 1.1);
+      }
+      updateHud();
+      break;
+    }
+
+    const roadblock = jeepCourse[jeepCourse.length - 1];
+    const roadblockY = jeepHazardScreenY(roadblock);
+    if (roadblockY >= 337 && !jeep.hitHazards.has(roadblock.id)) {
+      jeep.hitHazards.add(roadblock.id);
+      jeep.roadblockTimer = .82;
+      jeep.speed = 0;
+      jeep.shake = .22;
+      setGameMode('transition');
+      clearMovement();
+      setCoco('Vollbremsung!', 'Ein Baum blockiert die ganze Piste.');
+      toast('Weg blockiert!', 1.0);
+      updateHud();
+    }
+
+    if (jeep.distance > 820) jeep.distance = 820;
   }
 
   function updateAnimals(dt) {
@@ -652,15 +864,35 @@
   }
 
   function updateRiver(dt) {
-    let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    let steer = 0;
+    if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--;
+    if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+
     const previousProgress = state.river.progress;
-    state.river.x = Math.max(270, Math.min(690, state.river.x + steer * 260 * dt));
-    state.river.progress += 66 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.2 : 1);
+    const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+    const targetSpeed = throttle ? 82 : 66;
+    state.river.speed += (targetSpeed - state.river.speed) * Math.min(1, dt * 3.4);
+    state.river.x = Math.max(330, Math.min(630, state.river.x + steer * 245 * dt));
+    state.river.progress += state.river.speed * dt;
+
     const riverCheckpoint = Math.floor(state.river.progress / 180) * 180;
     if (riverCheckpoint > state.river.safeProgress && state.river.progress % 180 < 40) state.river.safeProgress = riverCheckpoint;
     if (previousProgress <= 50 && state.river.progress > 50) updateHud();
-    const phase = state.river.progress % 160; const rockX = 480 + Math.sin(Math.floor(state.river.progress / 160) * 3.1) * 175;
-    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 Felsen getroffen!', 1.0); updateHud(); }
+
+    const cycle = Math.floor(state.river.progress / 160);
+    const phase = state.river.progress % 160;
+    const rockY = -45 + (phase / 160) * (H + 110);
+    const rockX = 480 + Math.sin(cycle * 3.1) * 142;
+
+    if (rockY > 398 && rockY < 492 && Math.abs(state.river.x - rockX) < 48 && state.river.lastRockCycle !== cycle) {
+      state.river.lastRockCycle = cycle;
+      state.river.hits++;
+      state.river.progress = Math.max(0,state.river.progress - 16);
+      state.river.speed = 28;
+      toast('Felsen getroffen! Tempo weg.',1.0);
+      updateHud();
+    }
+
     if (state.river.progress >= 950) { state.river.progress = 950; setScene('station'); }
   }
 
@@ -709,6 +941,7 @@
     else if (state.scene === 'station') drawStation();
     else if (state.scene === 'tower') drawTower();
     if (!['jeep', 'river'].includes(state.scene)) drawExplorer();
+    if (state.scene === 'camp') drawCampForeground(performance.now());
     if (state.cameraMode) drawCameraOverlay();
   }
 
@@ -719,67 +952,772 @@
   function drawJungleDecor(alpha=1){ctx.save();ctx.globalAlpha=alpha;for(const d of sceneDecor){if(d.type==='tree')drawTree(d.x,d.y,d.s);else drawBush(d.x,d.y,d.s)}ctx.restore()}
   function marker(x,y,label){const pulse=.6+Math.sin(performance.now()/300+x)*.15;ctx.beginPath();ctx.arc(x,y,15,0,Math.PI*2);ctx.fillStyle=`rgba(115,229,139,${pulse})`;ctx.fill();ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#07160e';ctx.fillText(label,x,y+4)}
 
+  function drawLeafShape(x,y,angle,s,fill,vein='rgba(235,255,220,.18)'){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(s,s);
+    ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(18,-19,44,-15,58,0);ctx.bezierCurveTo(39,17,17,18,0,0);ctx.closePath();
+    ctx.fillStyle=fill;ctx.fill();
+    ctx.strokeStyle=vein;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(4,0);ctx.lineTo(48,0);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCampBackground(t){
+    const sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#a8c8a1');sky.addColorStop(.28,'#5f936e');sky.addColorStop(.72,'#1e563a');sky.addColorStop(1,'#123c2a');
+    ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+
+    const sun=ctx.createRadialGradient(815,78,8,815,78,230);
+    sun.addColorStop(0,'rgba(255,239,174,.92)');sun.addColorStop(.2,'rgba(255,214,125,.48)');sun.addColorStop(1,'rgba(255,203,96,0)');
+    ctx.fillStyle=sun;ctx.fillRect(570,0,390,310);
+
+    ctx.save();ctx.fillStyle='rgba(12,54,36,.58)';
+    for(let i=0;i<15;i++){
+      const x=20+i*70+(i%3)*11;const h=95+(i%5)*18;
+      ctx.fillRect(x-7,108,14,h);
+      for(const [dx,dy,r] of [[0,100,44],[-28,112,30],[31,116,34],[5,82,28]]){
+        ctx.beginPath();ctx.arc(x+dx,dy,r,0,Math.PI*2);ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    ctx.fillStyle='rgba(207,226,192,.09)';
+    ctx.fillRect(0,185,W,48);
+    ctx.fillStyle='rgba(226,235,210,.055)';
+    ctx.fillRect(0,245,W,36);
+
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let i=0;i<4;i++){
+      const wobble=Math.sin(t/1700+i)*12;
+      const g=ctx.createLinearGradient(760+i*42,0,420+i*20,540);
+      g.addColorStop(0,'rgba(255,226,151,.16)');
+      g.addColorStop(1,'rgba(255,226,151,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();
+      ctx.moveTo(745+i*48+wobble,0);ctx.lineTo(825+i*36+wobble,0);ctx.lineTo(560+i*18,560);ctx.lineTo(470+i*15,560);ctx.closePath();ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawCampGround(){
+    const soil=ctx.createLinearGradient(0,300,0,600);
+    soil.addColorStop(0,'#8b6a43');soil.addColorStop(.48,'#735034');soil.addColorStop(1,'#563824');
+    ctx.fillStyle=soil;
+    ctx.beginPath();ctx.moveTo(50,430);ctx.bezierCurveTo(110,310,300,284,485,325);ctx.bezierCurveTo(655,280,858,320,930,420);ctx.lineTo(960,600);ctx.lineTo(0,600);ctx.closePath();ctx.fill();
+
+    ctx.fillStyle='rgba(213,170,98,.15)';
+    ctx.beginPath();ctx.moveTo(370,600);ctx.bezierCurveTo(390,520,470,455,580,405);ctx.bezierCurveTo(680,360,760,350,930,360);ctx.lineTo(960,455);ctx.bezierCurveTo(750,430,590,485,520,600);ctx.closePath();ctx.fill();
+
+    ctx.fillStyle='rgba(36,78,44,.38)';
+    for(const [x,y,w] of [[70,485,115],[245,515,85],[600,530,120],[830,500,90]]){
+      ctx.beginPath();ctx.ellipse(x,y,w,24,0,0,Math.PI*2);ctx.fill();
+    }
+
+    ctx.fillStyle='rgba(255,223,151,.12)';
+    for(const [x,y,r] of [[410,455,4],[466,402,3],[525,480,5],[615,420,3],[690,505,4],[300,455,3],[760,447,3]]){
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  function drawCampTent(t){
+    const sway=Math.sin(t/850)*3;
+    ctx.save();ctx.translate(318,315);
+    ctx.fillStyle='rgba(8,26,17,.32)';ctx.beginPath();ctx.ellipse(0,76,142,30,0,0,Math.PI*2);ctx.fill();
+
+    ctx.strokeStyle='#9b7a4c';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(-104,48);ctx.lineTo(-142,102);ctx.moveTo(104,48);ctx.lineTo(142,102);ctx.stroke();
+
+    const canvasGrad=ctx.createLinearGradient(-110,-70,120,100);
+    canvasGrad.addColorStop(0,'#e3d39c');canvasGrad.addColorStop(.52,'#c4a86d');canvasGrad.addColorStop(1,'#8d7048');
+    ctx.fillStyle=canvasGrad;
+    ctx.beginPath();ctx.moveTo(-126,76);ctx.lineTo(-58,-58);ctx.lineTo(72,-58);ctx.lineTo(128,76);ctx.closePath();ctx.fill();
+
+    ctx.fillStyle='#b9975f';
+    ctx.beginPath();ctx.moveTo(-126,76);ctx.lineTo(-58,-58);ctx.lineTo(4,8);ctx.lineTo(-10,76);ctx.closePath();ctx.fill();
+
+    ctx.fillStyle='#243c2d';
+    ctx.beginPath();ctx.moveTo(4,8);ctx.lineTo(70,-52);ctx.lineTo(88,76);ctx.lineTo(-10,76);ctx.closePath();ctx.fill();
+
+    ctx.strokeStyle='rgba(78,57,35,.65)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-58,-58);ctx.lineTo(72,-58);ctx.stroke();
+    ctx.fillStyle='#694d31';ctx.fillRect(-64,-65,140,8);
+
+    ctx.save();ctx.translate(13,-72);ctx.rotate(sway*.01);
+    ctx.fillStyle='#d8b457';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(58,10);ctx.lineTo(0,24);ctx.closePath();ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle='rgba(255,235,177,.7)';
+    ctx.fillRect(-102,55,38,4);ctx.fillRect(72,55,28,4);
+    ctx.restore();
+  }
+
+  function drawCampTable(){
+    ctx.save();ctx.translate(150,150);
+    ctx.fillStyle='rgba(7,24,15,.34)';ctx.beginPath();ctx.ellipse(0,66,92,22,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#4f3825';ctx.fillRect(-68,14,10,66);ctx.fillRect(58,14,10,66);
+    const wood=ctx.createLinearGradient(-80,0,80,0);wood.addColorStop(0,'#6f4d31');wood.addColorStop(.5,'#9b6e43');wood.addColorStop(1,'#5f4029');
+    roundRect(-82,-6,164,32,7,wood,'#3d2a1f');
+
+    ctx.save();ctx.rotate(-.06);
+    roundRect(-49,-40,98,58,8,'#17291f','#6b8d72');
+    ctx.fillStyle='#b8d6a3';ctx.fillRect(-40,-31,80,40);
+    ctx.strokeStyle='#496b4f';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-31,1);ctx.lineTo(-6,-12);ctx.lineTo(14,-4);ctx.lineTo(34,-24);ctx.stroke();
+    for(const [x,y,c] of [[-31,1,'#d79e45'],[-6,-12,'#e6c662'],[14,-4,'#6d9e62'],[34,-24,'#d46f55']]){
+      ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle='#d9e9cf';ctx.font='700 7px system-ui';ctx.textAlign='center';ctx.fillText('ROUTE 07',0,-17);
+    ctx.restore();
+
+    ctx.fillStyle='#d7c18a';ctx.fillRect(-74,29,28,18);
+    ctx.strokeStyle='#705b39';ctx.beginPath();ctx.moveTo(-70,34);ctx.lineTo(-52,42);ctx.moveTo(-66,43);ctx.lineTo(-51,33);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCampSupplies(){
+    ctx.save();
+    ctx.fillStyle='rgba(7,24,15,.28)';ctx.beginPath();ctx.ellipse(470,455,104,26,0,0,Math.PI*2);ctx.fill();
+    roundRect(412,395,82,52,5,'#6c4e2f','#3e2a1b');
+    ctx.strokeStyle='#a38051';ctx.lineWidth=3;ctx.strokeRect(424,405,58,30);
+    ctx.fillStyle='#263d2e';roundRect(506,404,35,50,7,'#31513a','#182b20');ctx.fillStyle='#d9b95c';ctx.fillRect(516,397,14,10);
+    ctx.strokeStyle='#c0a36c';ctx.lineWidth=5;
+    for(let r=9;r<=23;r+=7){ctx.beginPath();ctx.arc(568,431,r,0,Math.PI*1.7);ctx.stroke();}
+    ctx.fillStyle='#b34f3d';roundRect(365,420,30,37,5,'#a64f3d','#583024');ctx.fillStyle='#e3c06a';ctx.fillRect(373,414,14,7);
+    ctx.restore();
+  }
+
+  function drawCampJeepDetailed(t){
+    const age=state.campJeepStartAt ? Math.max(0,t-state.campJeepStartAt) : -1;
+    const active=age>=0 && age<760;
+    const fade=active ? Math.max(0,1-age/760) : 0;
+    const bounce=active ? Math.sin(age/36)*4*fade : 0;
+
+    ctx.save();ctx.translate(760,365+bounce);
+    ctx.fillStyle='rgba(5,20,13,.34)';ctx.beginPath();ctx.ellipse(0,54,84,23,0,0,Math.PI*2);ctx.fill();
+
+    if(active){
+      for(let i=0;i<8;i++){
+        const p=Math.min(1,Math.max(0,(age-i*38)/500));
+        if(p<=0)continue;
+        ctx.fillStyle=`rgba(206,166,98,${(1-p)*.2})`;
+        ctx.beginPath();ctx.arc(-60-i*8-p*40,37+(i%2)*8,7+p*13,0,Math.PI*2);ctx.fill();
+      }
+    }
+
+    ctx.fillStyle='#17201b';
+    for(const x of[-53,53]){ctx.beginPath();ctx.arc(x,36,19,0,Math.PI*2);ctx.fill();ctx.fillStyle='#566052';ctx.beginPath();ctx.arc(x,36,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17201b';}
+
+    const body=ctx.createLinearGradient(0,-28,0,34);body.addColorStop(0,'#e0ad42');body.addColorStop(.55,'#c88728');body.addColorStop(1,'#8c561e');
+    roundRect(-76,-18,152,52,14,body,'#6e461f');
+    ctx.fillStyle='#b87424';ctx.beginPath();ctx.moveTo(-42,-18);ctx.lineTo(-19,-50);ctx.lineTo(42,-50);ctx.lineTo(61,-18);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#263d35';ctx.beginPath();ctx.moveTo(-12,-43);ctx.lineTo(11,-43);ctx.lineTo(11,-22);ctx.lineTo(-27,-22);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#35534a';ctx.beginPath();ctx.moveTo(16,-43);ctx.lineTo(36,-43);ctx.lineTo(52,-22);ctx.lineTo(16,-22);ctx.closePath();ctx.fill();
+
+    ctx.strokeStyle='#3e3325';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-25,-54);ctx.lineTo(38,-54);ctx.moveTo(-33,-57);ctx.lineTo(-33,-47);ctx.moveTo(46,-57);ctx.lineTo(46,-47);ctx.stroke();
+    ctx.fillStyle='#6d4b2a';ctx.fillRect(-22,-62,48,7);
+
+    ctx.strokeStyle='#6b451e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-17);ctx.lineTo(0,32);ctx.moveTo(40,-17);ctx.lineTo(40,31);ctx.stroke();
+    ctx.fillStyle='#302d24';ctx.beginPath();ctx.arc(72,4,15,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#6c725f';ctx.lineWidth=3;ctx.stroke();
+
+    const lights=state.solved.has('q1') || active;
+    ctx.fillStyle=lights?'#f4df8d':'#7c683d';
+    for(const x of[-66,-48]){ctx.beginPath();ctx.arc(x,7,6,0,Math.PI*2);ctx.fill();}
+    if(active){
+      const glow=ctx.createRadialGradient(-70,7,4,-70,7,45);glow.addColorStop(0,'rgba(255,231,151,.25)');glow.addColorStop(1,'rgba(255,231,151,0)');ctx.fillStyle=glow;ctx.fillRect(-115,-38,90,90);
+    }
+
+    ctx.fillStyle='#f2dfab';roundRect(-15,14,51,14,5,'#ead79d','#644820');ctx.fillStyle='#342a1e';ctx.font='800 8px system-ui';ctx.textAlign='center';ctx.fillText('MANGO-1',10,24);
+    ctx.fillStyle=state.solved.has('q1')?'#6ee48d':'#6d3f2e';ctx.beginPath();ctx.arc(52,-8,4,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+
+  function drawCampPollen(t){
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let i=0;i<18;i++){
+      const x=(90+i*71+(t*.012*(1+i%3)))%980;
+      const y=80+((i*47+t*.008*(2+i%2))%390);
+      const a=.08+(i%4)*.025;
+      ctx.fillStyle=`rgba(255,231,166,${a})`;
+      ctx.beginPath();ctx.arc(x,y,1.3+(i%3)*.5,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawRetroTent(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-76,-54,152,108,'#b89862');
+    pixelRect(-69,-47,138,94,'#d2bd84');
+    pixelRect(-6,-47,12,94,'#9d7c4e');
+    pixelRect(-53,-31,47,62,'#c2a46e');
+    pixelRect(6,-31,47,62,'#e0cb91');
+    pixelRect(-19,14,38,33,'#263d2e');
+    pixelRect(-13,19,26,28,'#1d3024');
+    pixelRect(-83,-61,166,8,'#59412a');
+    pixelRect(-84,54,8,18,'#59412a');pixelRect(76,54,8,18,'#59412a');
+    ctx.restore();
+  }
+
+  function drawRetroCampTable(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-64,9,128,16,'#61452d');
+    pixelRect(-56,25,10,38,'#4b3424');pixelRect(46,25,10,38,'#4b3424');
+    pixelRect(-47,-29,94,42,'#1f3429');
+    pixelRect(-41,-23,82,30,'#9db98b');
+    pixelRect(-32,-15,12,5,'#d5a94f');pixelRect(-15,-8,18,5,'#4d744f');pixelRect(6,-17,25,5,'#c7694c');
+    pixelRect(-5,-3,17,4,'#6b815d');
+    ctx.fillStyle='#e4edd6';ctx.font='800 8px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('ROUTE',0,-8);
+    ctx.restore();
+  }
+
+  function drawRetroSupplies(x,y){
+    pixelRect(x,y,56,38,'#684b30');pixelRect(x+7,y+7,42,24,'#8a653d');
+    pixelRect(x+70,y+4,25,39,'#2d5038');pixelRect(x+77,y-2,11,8,'#d3b256');
+    ctx.strokeStyle='#c5a56a';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x+120,y+24,18,0,Math.PI*1.75);ctx.stroke();
+    pixelRect(x-36,y+10,25,30,'#9f4e3b');pixelRect(x-29,y+5,11,7,'#d3b256');
+  }
+
   function drawCamp(){
-    fillGradient('#4a9561','#204e35'); drawJungleDecor(.55); ctx.fillStyle='#8d6338';ctx.beginPath();ctx.ellipse(480,420,390,145,0,0,Math.PI*2);ctx.fill();
-    roundRect(70,80,230,145,18,'#d9c58a','#6c5730');ctx.fillStyle='#395b43';ctx.fillRect(85,100,200,85);ctx.font='900 18px system-ui';ctx.fillStyle='#f5ebcc';ctx.textAlign='center';ctx.fillText('EXPEDITIONSKARTE',185,128);ctx.font='24px system-ui';ctx.fillText('🗺️  →  🌴  →  📡',185,175);marker(150,150,'?');
-    drawJeepSprite(760,365,0); marker(760,330,'E');
-    ctx.font='900 18px system-ui';ctx.fillStyle='#f7edcf';ctx.fillText('MANGO-1',760,430);
-    ctx.fillStyle='#f0d56d';ctx.beginPath();ctx.arc(635,115,42,0,Math.PI*2);ctx.fill();ctx.font='28px system-ui';ctx.fillText('🦜',635,124);
+    const t=performance.now();
+    drawRetroField(0);
+
+    // Blocky dirt clearing + two paths.
+    pixelRect(86,260,788,250,'#8f6a42');
+    pixelRect(118,228,724,32,'#987149');
+    pixelRect(404,508,152,92,'#8f6a42');
+    for(let x=118;x<842;x+=32){
+      const h=roadHash(x,7);
+      if(h%3===0) pixelRect(x,278+(h%160),6,4,'#6f5034');
+      if(h%5===0) pixelRect(x+12,300+(h%130),5,3,'#ad8554');
+    }
+
+    // Jungle wall.
+    for(let x=36;x<930;x+=82){
+      if(x>100&&x<845) drawRetroTree(x,220-(x%3)*9,.96,x);
+    }
+
+    drawRetroTent(318,360);
+    drawRetroCampTable(150,150);
+    drawRetroSupplies(440,405);
+
+    const age=state.campJeepStartAt ? Math.max(0,t-state.campJeepStartAt) : -1;
+    const active=age>=0&&age<760;
+    const bounce=active?Math.sin(age/34)*4*(1-age/760):0;
+    ctx.save();ctx.translate(0,bounce);drawRetroJeep(760,365,t);ctx.restore();
+
+    if(active){
+      for(let i=0;i<8;i++){
+        const p=Math.max(0,Math.min(1,(age-i*35)/520));
+        if(p<=0)continue;
+        pixelRect(698-i*9-p*34,407+(i%2)*7,8+p*14,5+p*8,`rgba(128,88,48,${.28*(1-p)})`);
+      }
+    }
+
+    marker(150,92,'E');
+    marker(760,292,'E');
+
+    drawRetroPanel(240,18,280,46,'EXPEDITIONS-CAMP A-07');
+    ctx.fillStyle='#cfe0c5';ctx.font='700 10px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText('TABLET  ←   START   →  MANGO-1',255,49);
+  }
+
+  function drawCampForeground(){
+    pixelRect(0,556,960,44,'#123e28');
+    for(let x=0;x<960;x+=64){
+      pixelRect(x,568-(x%17),18,32,'#1d5834');
+      pixelRect(x+15,575-(x%11),24,25,'#286a3d');
+    }
+    drawRetroTree(28,545,1.08,2);
+    drawRetroTree(925,544,1.05,3);
+  }
+
+  function pixelRect(x,y,w,h,fill){
+    ctx.fillStyle=fill;
+    ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  }
+
+  function drawRetroField(offsetY=0){
+    const tile=32;
+    let row=0;
+    for(let y=-tile+(offsetY%tile);y<H+tile;y+=tile,row++){
+      for(let x=0;x<W;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+    }
+  }
+
+  function drawRetroPanel(x,y,w,h,title){
+    pixelRect(x,y,w,h,'rgba(10,27,18,.92)');
+    pixelRect(x+6,y+6,w-12,h-12,'#173d29');
+    pixelRect(x+6,y+6,w-12,3,'#5f8b62');
+    if(title){
+      ctx.fillStyle='#f2ecd7';
+      ctx.font='800 12px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.textAlign='left';
+      ctx.fillText(title,x+14,y+25);
+    }
+  }
+
+  function roadHash(a,b){
+    let n=(a*374761393+b*668265263)>>>0;
+    n=(n^(n>>>13))*1274126177>>>0;
+    return (n^(n>>>16))>>>0;
+  }
+
+  function drawRetroTree(x,y,scale=1,variant=0){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
+    pixelRect(-8,18,16,31,'#4a3224');
+    pixelRect(-12,17,24,8,'#6a4930');
+    const dark=variant%2?'#123d29':'#17462d';
+    const mid=variant%2?'#1c5a35':'#21633a';
+    const light=variant%2?'#357b46':'#3c854a';
+    pixelRect(-31,-18,62,34,dark);
+    pixelRect(-24,-27,48,15,mid);
+    pixelRect(-37,-8,22,20,mid);
+    pixelRect(15,-7,22,19,mid);
+    pixelRect(-14,-34,28,12,light);
+    pixelRect(-25,-17,16,8,light);
+    ctx.restore();
+  }
+
+  function drawRetroGrassTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#28633a':'#2d6b3d');
+    if((h%5)===0){pixelRect(x+6,y+8,3,10,'#43834e');pixelRect(x+10,y+5,3,13,'#4d9158');}
+    if((h%7)===0){pixelRect(x+21,y+19,3,7,'#163f2a');pixelRect(x+25,y+16,3,10,'#1d4b2f');}
+    pixelRect(x,y+29,32,3,'rgba(11,45,27,.17)');
+  }
+
+  function drawRetroRoadTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#9a7348':'#a07a4d');
+    if(h%4===0) pixelRect(x+5+(h%16),y+8,5,3,'#805b39');
+    if(h%6===0) pixelRect(x+20,y+22,4,3,'#b58b58');
+    pixelRect(x,y,32,2,'rgba(76,51,31,.10)');
+  }
+
+  function drawRetroJungleEdge(y,row){
+    for(let x=0;x<288;x+=32) drawRetroGrassTile(x,y,row,x/32);
+    for(let x=672;x<W;x+=32) drawRetroGrassTile(x,y,row,x/32);
+    if(row%3===0){
+      drawRetroTree(44+(row%4)*45,y+20,1.0,row);
+      drawRetroTree(895-(row%5)*38,y+15,.95,row+1);
+    }
+    if(row%4===1){
+      pixelRect(238,y+8,34,24,'#1b5232');
+      pixelRect(688,y+5,34,27,'#1e5b35');
+    }
+  }
+
+  function drawRetroRoad(){
+    const tile=32;
+    const scroll=(state.jeep.distance*JEEP_PX_PER_M)%tile;
+    let rowIndex=Math.floor((state.jeep.distance*JEEP_PX_PER_M)/tile);
+    for(let y=-tile+scroll;y<H+tile;y+=tile,rowIndex--){
+      for(let x=288;x<672;x+=tile) drawRetroRoadTile(x,y,rowIndex,x/tile);
+      drawRetroJungleEdge(y,rowIndex);
+      pixelRect(280,y,8,tile,'#1b4b2f');
+      pixelRect(672,y,8,tile,'#1b4b2f');
+      if(rowIndex%5===0){
+        pixelRect(300,y+9,5,8,'#c3a167');
+        pixelRect(655,y+18,4,6,'#785b38');
+      }
+    }
+    ctx.fillStyle='rgba(92,59,35,.14)';
+    ctx.fillRect(400,0,18,H);
+    ctx.fillRect(542,0,18,H);
+  }
+
+  function drawRetroRock(x,y,variant=0){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-24,-13,48,30,'#4f514a');
+    pixelRect(-18,-22,30,10,'#686b61');
+    pixelRect(-25,-7,9,17,'#363a34');
+    pixelRect(12,-10,14,21,'#3d403a');
+    pixelRect(-11,-18,18,5,'#85877c');
+    if(variant%2) pixelRect(2,-4,13,7,'#5f6259');
+    ctx.restore();
+  }
+
+  function drawRetroMud(x,y,t){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-50,-18,100,36,'#664228');
+    pixelRect(-43,-25,67,8,'#765034');
+    pixelRect(-32,18,62,7,'#4f3423');
+    pixelRect(-36,-11,21,10,'#402a1d');
+    pixelRect(8,2,30,11,'#4a3020');
+    pixelRect(-3,-16,24,8,'#896044');
+    const glint=(Math.sin(t/260)+1)*4;
+    pixelRect(-20+glint,-7,20,3,'rgba(218,174,111,.25)');
+    ctx.restore();
+  }
+
+  function drawRetroBranch(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-49,-7,98,14,'#65452a');
+    pixelRect(-37,-11,32,5,'#8a633a');
+    pixelRect(18,-20,9,18,'#5b3c25');
+    pixelRect(26,-22,24,6,'#365f32');
+    pixelRect(37,-30,18,8,'#3f7139');
+    ctx.restore();
+  }
+
+  function drawRetroRoadblock(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-205,-16,410,32,'#5b3d25');
+    pixelRect(-186,-23,105,8,'#7d5b36');
+    pixelRect(86,-24,74,9,'#7d5b36');
+    for(const xx of[-165,-110,-45,28,93,155]){
+      pixelRect(xx,-40,24,23,'#17472d');
+      pixelRect(xx-9,-31,42,18,'#225f36');
+      pixelRect(xx+4,-48,27,15,'#327845');
+    }
+    pixelRect(-210,-10,9,18,'#3b291d');
+    pixelRect(201,-9,9,18,'#3b291d');
+    ctx.restore();
+  }
+
+  function drawRetroJeep(x,y,t){
+    const jeep=state.jeep;
+    const bounce=jeep.stuck ? Math.sin(t/55)*2 : Math.sin(t/115)*1.2;
+    ctx.save();ctx.translate(Math.round(x),Math.round(y+bounce));
+
+    pixelRect(-42,43,84,14,'rgba(13,25,18,.27)');
+
+    pixelRect(-46,-21,12,27,'#17211b');pixelRect(34,-21,12,27,'#17211b');
+    pixelRect(-46,19,12,27,'#17211b');pixelRect(34,19,12,27,'#17211b');
+    pixelRect(-43,-15,7,15,'#495247');pixelRect(36,-15,7,15,'#495247');
+    pixelRect(-43,24,7,15,'#495247');pixelRect(36,24,7,15,'#495247');
+
+    pixelRect(-36,-39,72,82,'#c98524');
+    pixelRect(-31,-34,62,23,'#e2aa38');
+    pixelRect(-31,19,62,18,'#a9661f');
+    pixelRect(-39,-8,78,28,'#d99629');
+    pixelRect(-31,-5,62,22,'#244338');
+
+    // Visible driver face through windshield.
+    pixelRect(-10,-2,20,17,'#d8a57c');
+    pixelRect(-12,-7,24,8,'#315239');
+    pixelRect(-6,5,4,4,'#1c241d');
+    pixelRect(3,5,4,4,'#1c241d');
+    pixelRect(-2,11,5,2,'#7e4d3b');
+
+    pixelRect(-27,-46,54,5,'#4a3a27');
+    pixelRect(-30,-48,5,12,'#4a3a27');pixelRect(25,-48,5,12,'#4a3a27');
+    pixelRect(-20,-54,18,8,'#6e5130');pixelRect(3,-54,17,8,'#37553a');
+
+    pixelRect(-29,-40,12,6,'#f2db83');pixelRect(17,-40,12,6,'#f2db83');
+    pixelRect(-29,38,58,5,'#66441f');
+    pixelRect(-8,29,16,7,'#eed79d');
+
+    if(jeep.stuck){
+      pixelRect(-56,37,19,8,'#5d3b25');pixelRect(37,35,22,10,'#5d3b25');
+      pixelRect(-62,43,10,7,'#765038');pixelRect(51,42,12,7,'#765038');
+    }
+    ctx.restore();
+  }
+
+  function drawRetroHazards(t){
+    for(const hazard of jeepCourse){
+      const y=jeepHazardScreenY(hazard);
+      if(y<-90||y>H+80) continue;
+      const x=JEEP_LANES[hazard.lane];
+      if(hazard.type==='rock') drawRetroRock(x,y,roadHash(Math.round(hazard.at),hazard.lane));
+      else if(hazard.type==='mud') drawRetroMud(x,y,t);
+      else if(hazard.type==='branch') drawRetroBranch(x,y);
+      else if(hazard.type==='tree') drawRetroRoadblock(480,y);
+    }
+  }
+
+  function drawJeepHud(){
+    const progress=Math.max(0,Math.min(1,state.jeep.distance/850));
+    pixelRect(24,22,212,48,'rgba(10,27,18,.88)');
+    pixelRect(31,29,198,34,'#173d29');
+    pixelRect(38,48,184,7,'#294d36');
+    pixelRect(38,48,184*progress,7,'#e0ad42');
+    ctx.fillStyle='#f4efd9';ctx.font='800 14px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='left';
+    ctx.fillText(`ROUTE ${Math.floor(state.jeep.distance)} / 850 m`,38,43);
+
+    pixelRect(W-191,22,167,48,'rgba(10,27,18,.88)');
+    pixelRect(W-184,29,153,34,'#173d29');
+    ctx.fillStyle='#f4efd9';ctx.font='800 13px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='center';
+    ctx.fillText(state.jeep.stuck?'FESTGEFAHREN':'MANGO-1',W-108,43);
+    ctx.fillStyle=state.jeep.stuck?'#e8bd4e':'#72d991';
+    ctx.fillText(state.jeep.stuck?`↑ ${Math.round(state.jeep.stuckPower*100)}%`:`${Math.round(state.jeep.speed)} km/h`,W-108,57);
   }
 
   function drawJeep(){
-    fillGradient('#2f7044','#163b27');
-    ctx.fillStyle='#a87943';ctx.fillRect(285,0,390,H);ctx.fillStyle='#7c5b36';for(let y=(state.jeep.distance*2)%80-80;y<H;y+=80)ctx.fillRect(470,y,20,42);
-    for(let y=50;y<H;y+=115){drawBush(245,y,1.1);drawBush(715,y+35,.9)}
-    const phase=state.jeep.distance%180;const obstacleY=H-(phase/180)*H;const obstacleX=400+Math.sin(Math.floor(state.jeep.distance/180)*2.7)*140;ctx.font='42px system-ui';ctx.textAlign='center';ctx.fillText('🪨',obstacleX,obstacleY);
-    drawJeepSprite(state.jeep.x,430,-Math.PI/2);
-    ctx.fillStyle='rgba(5,18,10,.75)';roundRect(350,20,260,48,16,'rgba(5,18,10,.78)','#508461');ctx.fillStyle='#e9f5e9';ctx.font='900 16px system-ui';ctx.fillText(`Piste ${Math.floor(state.jeep.distance)} / 850 m`,480,50);
+    const t=performance.now();
+    const shake=state.jeep.shake>0 ? Math.sin(t/19)*5*(state.jeep.shake/.34) : 0;
+    ctx.save();ctx.translate(shake,0);
+    drawRetroRoad();
+    drawRetroHazards(t);
+    drawRetroJeep(state.jeep.x,JEEP_SCREEN_Y,t);
+
+    const fg=(state.jeep.distance*4)%140;
+    drawLeafShape(-20,115+fg*.18,.42,1.55,'#103a26');
+    drawLeafShape(905,365-fg*.2,2.7,1.45,'#123e28');
+    ctx.restore();
+
+    drawJeepHud();
+
+    if(state.jeep.stuck){
+      pixelRect(304,500,352,58,'rgba(8,23,15,.93)');
+      pixelRect(313,509,334,40,'#173d29');
+      ctx.fillStyle='#f3edd8';ctx.font='900 16px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='center';
+      ctx.fillText('FESTGEFAHREN · ↑ / W HALTEN',480,532);
+    }
   }
 
   function drawBlocked(){
-    fillGradient('#3c8650','#1d4a30');drawJungleDecor(.55);ctx.fillStyle='#8a6037';ctx.beginPath();ctx.ellipse(480,430,390,120,0,0,Math.PI*2);ctx.fill();
-    ctx.save();ctx.translate(690,270);ctx.rotate(-.22);ctx.fillStyle='#6c4324';roundRect(-145,-20,290,40,18,'#6c4324');for(let x=-125;x<130;x+=42){ctx.fillStyle='#245e32';ctx.beginPath();ctx.arc(x,-28,25,0,Math.PI*2);ctx.fill()}ctx.restore();marker(690,340,'E');
-    drawJeepSprite(190,400,0);ctx.strokeStyle='#d7b77a';ctx.lineWidth=4;ctx.setLineDash([8,7]);ctx.beginPath();ctx.moveTo(255,390);ctx.lineTo(610,320);ctx.stroke();ctx.setLineDash([]);
+    const t=performance.now();
+    const savedDistance=state.jeep.distance;
+    state.jeep.distance=812;
+    drawRetroRoad();
+    state.jeep.distance=savedDistance;
+
+    drawRetroRoadblock(480,250);
+    drawRetroJeep(300,438,t);
+
+    pixelRect(655,280,64,42,'#6c4d2d');
+    pixelRect(665,288,44,25,'#2d4233');
+    pixelRect(676,279,22,7,'#9b7747');
+    ctx.strokeStyle='#c4a46c';ctx.lineWidth=4;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(332,414);ctx.lineTo(670,302);ctx.stroke();ctx.setLineDash([]);
+    marker(690,270,'E');
+
+    pixelRect(22,22,252,44,'rgba(10,27,18,.88)');
+    pixelRect(29,29,238,30,'#173d29');
+    ctx.fillStyle='#f3edd8';ctx.font='800 13px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='left';
+    ctx.fillText('WEG BLOCKIERT · WINDE SUCHEN',39,49);
+  }
+
+  function drawRetroAnimal(animal){
+    const x=Math.round(animal.x), y=Math.round(animal.y);
+    ctx.save();ctx.translate(x,y);
+    if(animal.id==='toucan'){
+      pixelRect(-14,-5,28,20,'#1c2520');
+      pixelRect(-8,-12,17,13,'#f0e6c9');
+      pixelRect(8,-10,26,10,'#e9a631');
+      pixelRect(22,-8,11,6,'#c76632');
+      pixelRect(-6,-9,4,4,'#151d18');
+      pixelRect(-4,15,4,10,'#78512e');pixelRect(5,15,4,10,'#78512e');
+    } else if(animal.id==='capybara'){
+      pixelRect(-26,-7,50,26,'#8a613d');
+      pixelRect(15,-15,25,25,'#9b7048');
+      pixelRect(20,-20,7,8,'#6f4b32');pixelRect(32,-19,7,8,'#6f4b32');
+      pixelRect(30,-8,4,4,'#141b17');
+      pixelRect(39,-2,5,3,'#4f3527');
+      pixelRect(-20,18,8,10,'#5d412e');pixelRect(10,18,8,10,'#5d412e');
+    } else {
+      pixelRect(-16,-8,32,27,'#73503a');
+      pixelRect(-11,-20,22,18,'#8b6547');
+      pixelRect(-6,-14,4,4,'#171e19');pixelRect(4,-14,4,4,'#171e19');
+      ctx.strokeStyle='#68442f';ctx.lineWidth=5;ctx.beginPath();ctx.arc(20,2,15,-1.2,1.4);ctx.stroke();
+    }
+    if(state.photos.has(animal.id)&&animal.target){
+      pixelRect(18,-30,18,18,'#1c4d31');ctx.fillStyle='#8bea9f';ctx.font='900 14px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('✓',27,-17);
+    }
+    ctx.restore();
   }
 
   function drawWildlife(){
-    fillGradient('#3f9456','#183f2b');drawJungleDecor(.78);ctx.fillStyle='#9a7245';ctx.beginPath();ctx.moveTo(60,520);ctx.quadraticCurveTo(400,350,900,500);ctx.lineTo(900,590);ctx.lineTo(60,590);ctx.closePath();ctx.fill();
-    roundRect(520,70,110,92,14,'#33423a','#7da88b');ctx.fillStyle='#9ee8ad';ctx.fillRect(540,88,70,42);ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText('📡',575,118);marker(575,175,state.photos.size>=2?'E':'🔒');
-    roundRect(830,410,100,120,10,'#6a4a2d','#c3925c');ctx.fillStyle='#6ec4d9';ctx.fillRect(838,435,84,80);marker(875,390,'E');
-    for(const a of state.animals){ctx.font=`${a.id==='capybara'?44:38}px system-ui`;ctx.textAlign='center';ctx.fillText(a.emoji,a.x,a.y);if(state.photos.has(a.id)&&a.target){ctx.font='18px system-ui';ctx.fillText('✓',a.x+25,a.y-25)}}
+    drawRetroField(0);
+    pixelRect(78,314,806,220,'#8e6a43');
+    pixelRect(110,282,742,32,'#967249');
+    pixelRect(770,420,190,180,'#327f8c');
+    pixelRect(800,420,8,180,'#d0b37b');
+    pixelRect(848,420,8,180,'#d0b37b');
+    pixelRect(806,454,94,9,'#8a633d');
+    pixelRect(806,490,94,9,'#8a633d');
+
+    // Sender station.
+    pixelRect(524,72,104,86,'#243a31');
+    pixelRect(532,80,88,70,'#385246');
+    pixelRect(546,94,60,30,state.photos.size>=2?'#75d98b':'#243229');
+    pixelRect(568,66,16,12,'#8c7148');
+    pixelRect(573,45,5,24,'#b1b9aa');
+    pixelRect(566,43,19,4,'#b1b9aa');
+    ctx.fillStyle=state.photos.size>=2?'#d7efd8':'#64786b';ctx.font='800 10px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(state.photos.size>=2?'READY':'LOCK',576,114);
+    marker(575,175,state.photos.size>=2?'E':'🔒');
+
+    // Dock + boat.
+    pixelRect(830,398,110,26,'#65482f');
+    pixelRect(839,424,12,87,'#4b3526');pixelRect(910,424,12,87,'#4b3526');
+    drawRetroBoat(875,470,performance.now());
+    marker(875,390,'E');
+
+    for(const a of state.animals) drawRetroAnimal(a);
+    drawRetroPanel(22,22,252,44,'WILDTIER-GEBIET');
+  }
+
+  function drawRetroWaterTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#2c8194':'#2f899c');
+    if(h%3===0) pixelRect(x+4,y+9,17,3,'rgba(194,234,226,.22)');
+    if(h%5===0) pixelRect(x+15,y+23,12,2,'rgba(216,246,237,.16)');
   }
 
   function drawRiver(){
-    fillGradient('#245b38','#123523');ctx.fillStyle='#2e8cab';ctx.beginPath();ctx.moveTo(230,0);ctx.bezierCurveTo(370,170,210,330,280,600);ctx.lineTo(710,600);ctx.bezierCurveTo(790,360,620,170,730,0);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(210,245,255,.22)';ctx.lineWidth=3;for(let y=((state.river.progress*2)%95)-95;y<H;y+=95){ctx.beginPath();ctx.moveTo(330,y);ctx.quadraticCurveTo(470,y+20,630,y);ctx.stroke()}
-    for(let y=60;y<H;y+=110){drawBush(170,y,.9);drawBush(800,y+40,1.0)}
-    const phase=state.river.progress%160;const rockY=H-(phase/160)*H;const rockX=480+Math.sin(Math.floor(state.river.progress/160)*3.1)*175;ctx.font='44px system-ui';ctx.textAlign='center';ctx.fillText('🪨',rockX,rockY);
-    drawBoat(state.river.x,455);roundRect(350,20,260,48,16,'rgba(5,18,10,.78)','#69b2c0');ctx.fillStyle='#e9f7f7';ctx.font='900 16px system-ui';ctx.fillText(`Fluss ${Math.floor(state.river.progress)} / 950 m`,480,50);
+    const tile=32;
+    const scroll=(state.river.progress*2.2)%tile;
+    let row=Math.floor((state.river.progress*2.2)/tile);
+
+    for(let y=-tile+scroll;y<H+tile;y+=tile,row--){
+      for(let x=0;x<288;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+      for(let x=672;x<W;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+      for(let x=288;x<672;x+=tile) drawRetroWaterTile(x,y,row,x/tile);
+      pixelRect(280,y,8,tile,'#234f37');pixelRect(672,y,8,tile,'#234f37');
+      if(row%3===0){drawRetroTree(88+(row%4)*30,y+18,.88,row);drawRetroTree(860-(row%4)*33,y+16,.9,row+1);}
+    }
+
+    const cycle=Math.floor(state.river.progress/160);
+    const phase=state.river.progress%160;
+    const rockY=-45+(phase/160)*(H+110);
+    const rockX=480+Math.sin(cycle*3.1)*142;
+    drawRetroRock(rockX,rockY,cycle);
+
+    // Wake.
+    pixelRect(state.river.x-31,493,62,4,'rgba(210,243,234,.26)');
+    pixelRect(state.river.x-42,506,84,3,'rgba(210,243,234,.16)');
+    drawRetroBoat(state.river.x,455,performance.now());
+
+    drawRetroPanel(22,22,230,48,'RIO VERDE');
+    ctx.fillStyle='#d9eee7';ctx.font='800 10px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText(`${Math.floor(state.river.progress)} / 950 m · ${Math.round(state.river.speed)} km/h`,36,54);
   }
 
   function drawStation(){
-    fillGradient(state.generator.done?'#497b5d':'#22382b',state.generator.done?'#213f2f':'#101c15');drawJungleDecor(.35);
-    roundRect(310,75,500,350,24,state.generator.done?'#c3b58d':'#5c5a4d','#e1d3a7');ctx.fillStyle=state.generator.done?'#8bc8a0':'#273329';ctx.fillRect(345,110,190,100);ctx.fillRect(575,110,190,100);ctx.fillStyle='#294034';ctx.fillRect(515,335,90,90);
-    roundRect(95,290,160,150,18,'#5e5138','#ad9a69');ctx.font='40px system-ui';ctx.textAlign='center';ctx.fillText('⚡',175,360);marker(175,455,'E');
-    roundRect(650,110,120,80,12,state.generator.done?'#173a2a':'#151a17',state.generator.done?'#7bd78f':'#444');ctx.font='32px system-ui';ctx.fillText(state.generator.done?'💻':'⬛',710,160);marker(710,220,state.generator.done?'E':'🔒');
-    ctx.fillStyle='#bd3d36';ctx.beginPath();ctx.arc(430,300,15,0,Math.PI*2);ctx.fill();ctx.font='900 12px system-ui';ctx.fillStyle='#efe2c4';ctx.fillText('NICHT DRÜCKEN',430,330);
-    roundRect(830,355,80,150,10,'#33483b','#738e7a');marker(870,335,state.solved.has('q3')?'E':'🔒');
+    drawRetroField(0);
+    pixelRect(64,346,830,210,'#82623f');
+    pixelRect(86,320,786,26,'#8f6b44');
+
+    // Research cabin.
+    pixelRect(304,72,506,278,state.generator.done?'#bba878':'#6f6a57');
+    pixelRect(316,84,482,254,state.generator.done?'#d1c291':'#777362');
+    pixelRect(316,84,482,24,'#57452f');
+    pixelRect(502,260,110,78,'#24382d');
+    pixelRect(516,274,82,64,'#182a21');
+
+    // Windows.
+    const windowColor=state.generator.done?'#91d9a1':'#29352e';
+    pixelRect(350,130,150,82,'#514735');pixelRect(360,140,130,62,windowColor);
+    pixelRect(620,130,130,82,'#514735');pixelRect(630,140,110,62,windowColor);
+    if(state.generator.done){
+      pixelRect(366,146,118,5,'rgba(236,235,167,.35)');
+      pixelRect(636,146,98,5,'rgba(236,235,167,.35)');
+    }
+
+    // Generator at exact hotspot.
+    pixelRect(116,317,118,86,'#4e4b38');
+    pixelRect(126,327,98,66,'#665f43');
+    pixelRect(138,339,28,28,'#21362b');
+    pixelRect(176,341,36,7,state.generator.done?'#76df8c':'#7d4d36');
+    pixelRect(176,354,28,7,'#c4a65e');
+    pixelRect(135,404,80,12,'#36362d');
+    marker(175,455,'E');
+
+    // Terminal.
+    pixelRect(650,116,120,82,'#29352e');
+    pixelRect(660,126,100,56,state.generator.done?'#386f4a':'#121b16');
+    if(state.generator.done){
+      pixelRect(671,138,78,6,'#8be7a0');
+      pixelRect(671,152,52,5,'#6fbd81');
+      pixelRect(671,164,66,5,'#78c989');
+    }
+    marker(710,220,state.generator.done?'E':'🔒');
+
+    // Exit gate.
+    pixelRect(836,345,70,150,'#354b3e');
+    pixelRect(844,353,54,134,'#26382f');
+    pixelRect(862,369,18,102,state.solved.has('q3')?'#7b9a7e':'#51645a');
+    marker(870,335,state.solved.has('q3')?'E':'🔒');
+
+    drawRetroPanel(22,22,270,44,state.generator.done?'STATION · STROM AN':'STATION · STROM AUS');
   }
 
   function drawTower(){
-    fillGradient('#172b27','#071713');ctx.fillStyle='#14351f';for(let x=0;x<W;x+=90)drawTree(x+30,470+(x%180?20:0),.9);
-    ctx.strokeStyle='#8ba69a';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(480,440);ctx.lineTo(480,80);ctx.stroke();ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(480,80);ctx.lineTo(360,440);ctx.moveTo(480,80);ctx.lineTo(600,440);ctx.moveTo(390,340);ctx.lineTo(570,340);ctx.moveTo(420,250);ctx.lineTo(540,250);ctx.moveTo(450,160);ctx.lineTo(510,160);ctx.stroke();
-    ctx.fillStyle='#db5647';ctx.beginPath();ctx.arc(480,68,10,0,Math.PI*2);ctx.fill();
-    roundRect(390,110,180,100,16,'#1e332c','#7fa694');ctx.fillStyle='#89e4a0';ctx.font='900 30px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(`CH ${state.tuned}`,480,164);marker(480,225,'E');
-    if(state.radioMode){roundRect(260,470,440,82,18,'rgba(4,15,10,.88)','#5b8b6c');ctx.fillStyle='#dcecdf';ctx.font='800 15px system-ui';ctx.fillText('← / → Kanal ändern · E / Enter Signal senden',480,500);ctx.font='900 22px system-ui';ctx.fillStyle=state.tuned===radioChannel?'#78e293':'#f0d271';ctx.fillText(`Aktuell ${state.tuned} · Ziel ${radioChannel}`,480,532)}
+    drawRetroField(0);
+    pixelRect(96,330,768,226,'#76583a');
+    pixelRect(128,300,704,30,'#82613d');
+
+    // Mast.
+    pixelRect(474,78,12,314,'#75867c');
+    for(let y=110;y<380;y+=44){
+      pixelRect(405,y,150,7,'#65766d');
+      ctx.strokeStyle='#65766d';ctx.lineWidth=5;
+      ctx.beginPath();ctx.moveTo(411,y+2);ctx.lineTo(480,y+40);ctx.moveTo(549,y+2);ctx.lineTo(480,y+40);ctx.stroke();
+    }
+    pixelRect(459,62,42,16,'#b04e3e');
+    pixelRect(470,47,20,15,'#dc6c55');
+
+    // Console.
+    pixelRect(410,116,140,92,'#263c32');
+    pixelRect(420,126,120,66,'#355345');
+    pixelRect(432,138,96,30,'#1b2a22');
+    ctx.fillStyle=state.tuned===radioChannel?'#8ce89e':'#e2c261';
+    ctx.font='900 18px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(`CH ${state.tuned}`,480,159);
+    marker(480,225,'E');
+
+    if(state.radioMode){
+      drawRetroPanel(270,470,420,82,'FUNK');
+      ctx.fillStyle='#d8e7d7';ctx.font='800 12px ui-monospace,monospace';ctx.textAlign='center';
+      ctx.fillText('← / → KANAL     E / ENTER SENDEN',480,516);
+      ctx.fillStyle=state.tuned===radioChannel?'#82e89a':'#e4c665';
+      ctx.fillText(`AKTUELL ${state.tuned} · ZIEL ${radioChannel}`,480,540);
+    }
   }
 
   function drawExplorer(){
-    const p=state.player;ctx.save();ctx.translate(p.x,p.y);ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=10;ctx.shadowOffsetY=5;ctx.beginPath();ctx.ellipse(0,8,15,20,0,0,Math.PI*2);ctx.fillStyle='#e6a938';ctx.fill();ctx.shadowColor='transparent';ctx.beginPath();ctx.arc(0,-12,12,0,Math.PI*2);ctx.fillStyle='#f0c5a0';ctx.fill();ctx.fillStyle='#315a3f';ctx.beginPath();ctx.arc(0,-17,13,Math.PI,0);ctx.fill();ctx.rotate(p.facing);ctx.fillStyle='#f7e5a9';ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(7,-4);ctx.lineTo(7,4);ctx.closePath();ctx.fill();ctx.restore();
+    const p=state.player;
+    const walking=state.target || state.keys.has('ArrowLeft') || state.keys.has('ArrowRight') || state.keys.has('ArrowUp') || state.keys.has('ArrowDown') || state.keys.has('w') || state.keys.has('a') || state.keys.has('s') || state.keys.has('d');
+    const step=walking ? Math.sin(performance.now()/90)*2 : 0;
+
+    ctx.save();ctx.translate(Math.round(p.x),Math.round(p.y));
+    pixelRect(-15,24,30,8,'rgba(9,26,17,.24)');
+    pixelRect(-12,10+step,9,15,'#3a3026');
+    pixelRect(3,10-step,9,15,'#3a3026');
+    pixelRect(-15,-14,30,29,'#d69a31');
+    pixelRect(-18,-11,7,22,'#9b6c28');
+    pixelRect(11,-11,7,22,'#9b6c28');
+    pixelRect(-20,-10,5,18,'#31543b');
+
+    // Clear face in the handheld-style explorer sprite.
+    pixelRect(-10,-31,20,18,'#d7a47e');
+    pixelRect(-12,-37,24,9,'#31523a');
+    pixelRect(-8,-40,16,5,'#3d6143');
+    pixelRect(-6,-24,4,4,'#18231c');
+    pixelRect(3,-24,4,4,'#18231c');
+    pixelRect(-2,-18,5,2,'#7a4939');
+
+    pixelRect(-7,-13,14,4,'#e7c15a');
+    pixelRect(9,-7,4,4,'#edf0d7');
+    ctx.restore();
   }
-  function drawJeepSprite(x,y,angle){ctx.save();ctx.translate(x,y);ctx.rotate(angle);roundRect(-54,-28,108,56,17,'#e0a52e','#5b4a28');ctx.fillStyle='#315b42';ctx.fillRect(-24,-24,48,48);ctx.fillStyle='#17241d';for(const yy of[-31,31])for(const xx of[-36,36]){ctx.beginPath();ctx.arc(xx,yy,9,0,Math.PI*2);ctx.fill()}ctx.font='20px system-ui';ctx.textAlign='center';ctx.fillText('🥭',0,7);ctx.restore()}
-  function drawBoat(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle='#a36f3c';ctx.beginPath();ctx.moveTo(-44,-20);ctx.lineTo(44,-20);ctx.lineTo(30,30);ctx.lineTo(-30,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2d170';ctx.fillRect(-5,-45,10,45);ctx.fillStyle='#f3eee0';ctx.beginPath();ctx.moveTo(5,-43);ctx.lineTo(40,-15);ctx.lineTo(5,-15);ctx.closePath();ctx.fill();ctx.font='22px system-ui';ctx.textAlign='center';ctx.fillText('🐧',0,16);ctx.restore()}
-  function drawCameraOverlay(){ctx.save();ctx.fillStyle='rgba(0,0,0,.42)';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#f3f5e7';ctx.lineWidth=3;ctx.strokeRect(160,80,640,440);ctx.beginPath();ctx.arc(state.reticle.x,state.reticle.y,45,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(state.reticle.x-65,state.reticle.y);ctx.lineTo(state.reticle.x+65,state.reticle.y);ctx.moveTo(state.reticle.x,state.reticle.y-65);ctx.lineTo(state.reticle.x,state.reticle.y+65);ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('KAMERAMODUS · Sucher bewegen · Kamera = Auslösen',175,110);ctx.restore()}
+  function drawJeepSprite(x,y,angle){ctx.save();ctx.translate(x,y);ctx.rotate(angle);roundRect(-54,-28,108,56,17,'#e0a52e','#5b4a28');ctx.fillStyle='#315b42';ctx.fillRect(-24,-24,48,48);ctx.fillStyle='#17241d';for(const yy of[-31,31])for(const xx of[-36,36]){ctx.beginPath();ctx.arc(xx,yy,9,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#f1d47b';ctx.fillRect(-9,-8,18,16);ctx.fillStyle='#17241d';ctx.fillRect(-5,-3,3,3);ctx.fillRect(2,-3,3,3);ctx.restore()}
+  function drawRetroBoat(x,y,t){
+    const bob=Math.sin(t/120)*1.5;
+    ctx.save();ctx.translate(Math.round(x),Math.round(y+bob));
+    pixelRect(-35,-33,70,68,'#8a5f37');
+    pixelRect(-29,-39,58,14,'#b07c42');
+    pixelRect(-29,21,58,14,'#65452e');
+    pixelRect(-24,-21,48,40,'#d1b166');
+    pixelRect(-17,-14,34,28,'#2b4639');
+    // Explorer face visible in boat.
+    pixelRect(-8,-9,16,14,'#d7a47e');
+    pixelRect(-10,-14,20,7,'#31523a');
+    pixelRect(-5,-2,3,3,'#18231c');pixelRect(3,-2,3,3,'#18231c');
+    ctx.restore();
+  }
+
+  function drawBoat(x,y){ drawRetroBoat(x,y,performance.now()); }
+
+  function drawCameraOverlay(){
+    ctx.save();
+    ctx.fillStyle='rgba(4,12,8,.54)';ctx.fillRect(0,0,W,H);
+    pixelRect(126,58,708,8,'#e7ead8');pixelRect(126,534,708,8,'#e7ead8');
+    pixelRect(126,58,8,484,'#e7ead8');pixelRect(826,58,8,484,'#e7ead8');
+
+    const rx=Math.round(state.reticle.x), ry=Math.round(state.reticle.y);
+    ctx.strokeStyle='#f1edd6';ctx.lineWidth=3;ctx.strokeRect(rx-44,ry-34,88,68);
+    pixelRect(rx-65,ry-2,42,4,'#f1edd6');pixelRect(rx+23,ry-2,42,4,'#f1edd6');
+    pixelRect(rx-2,ry-55,4,34,'#f1edd6');pixelRect(rx-2,ry+21,4,34,'#f1edd6');
+
+    drawRetroPanel(146,76,312,40,'KAMERA · SUCHER AUFS TIER');
+    ctx.restore();
+  }
 
   function loop(now){
     const dt=Math.min(.033,(now-last)/1000);
@@ -849,7 +1787,7 @@
   $('cameraBtn').addEventListener('click',takePhoto);
   $('recoveryBtn').addEventListener('click',()=>recoverMechanic());
   $('learningForm').addEventListener('submit',checkLearning);
-  $('hintBtn').addEventListener('click',()=>{const q=questions[state.activeQuestion];if(q){$('learningFeedback').className='feedback';$('learningFeedback').textContent=`Coco: ${state.learningMode==='transfer'?q.transfer.hint:q.hint}`}});
+  $('hintBtn').addEventListener('click',()=>{const id=state.activeQuestion;const q=questions[id];if(q){const transfer=state.learningMode==='transfer';const tries=transfer?state.transferAttempts[id]:state.attempts[id];const data=transfer?q.transfer:q;$('learningFeedback').className='feedback';$('learningFeedback').textContent=tries>=2&&transfer?`Coco: ${data.solution}`:tries>=1?`Coco-Beispiel: ${q.workedExample}`:`Coco-Tipp: ${data.hint}`}});
   $('winchPullBtn').addEventListener('click',pullWinch);
   $('winchResetBtn').addEventListener('click',()=>recoverMechanic('winch'));
   $('winchExitBtn').addEventListener('click',()=>exitMechanicDialog('winch','winchDialog'));

@@ -6,6 +6,7 @@ const html = fs.readFileSync('lab/escape-expedition/index.html', 'utf8');
 const css = fs.readFileSync('lab/escape-expedition/styles.css', 'utf8');
 const js = fs.readFileSync('lab/escape-expedition/app.js', 'utf8');
 const concept = fs.readFileSync('docs/games/ESCAPE_GAMES_CONCEPT.md', 'utf8');
+const visualBible = fs.readFileSync('docs/games/ESCAPE_AMAZONAS_VISUAL_BIBLE.md', 'utf8');
 const oldAdventure = fs.readFileSync('lab/escape-room-adventure/index.html', 'utf8');
 
 test('prototype is isolated and does not replace the school adventure', () => {
@@ -46,8 +47,12 @@ test('learning content is seeded and can vary without per-student AI calls', () 
   assert.match(js, /q1Base = pick/);
   assert.match(js, /q2Base = pick/);
   assert.match(js, /q3Base = pick/);
+  assert.match(js, /q4Base = pick/);
+  assert.match(js, /q5Base = pick/);
+  assert.match(js, /q6Base = pick/);
   assert.match(js, /radioChannel = 42 \+ \(seed % 17\)/);
   assert.match(js, /makeTransfer/);
+  assert.match(js, /makeIncreaseTransfer/);
 });
 
 test('wrong answers never directly grant learning progress', () => {
@@ -55,11 +60,32 @@ test('wrong answers never directly grant learning progress', () => {
   const end = js.indexOf('function openWinch', start);
   const body = js.slice(start, end);
   assert.match(body, /state\.attempts\[id\]\+\+/);
+  assert.match(body, /state\.transferAttempts\[id\]\+\+/);
   assert.match(body, /state\.learningMode = 'transfer'/);
+  assert.match(body, /Coco-Tipp/);
+  assert.match(body, /Coco-Beispiel/);
+  assert.match(body, /data\.solution/);
   assert.match(body, /rewardQuestion\(id\)/);
   const wrong = body.indexOf('state.selectedAnswer !== data.correct');
   const reward = body.indexOf('rewardQuestion(id)');
   assert.ok(wrong >= 0 && reward > wrong);
+});
+
+
+test('L3 adaptive learning path spans six story gates', () => {
+  for (const id of ['q1', 'q2', 'q3', 'q4', 'q5', 'q6']) {
+    assert.match(js, new RegExp(`${id}: \\\{`));
+  }
+  assert.match(js, /state\.solved\.size\}\/6/);
+  assert.match(js, /Winde kalibrieren/);
+  assert.match(js, /Flussroute berechnen/);
+  assert.match(js, /Signal verstärken/);
+  assert.match(js, /openLearning\('q4'\)/);
+  assert.match(js, /openLearning\('q5'\)/);
+  assert.match(js, /openLearning\('q6'\)/);
+  assert.match(js, /Lernweg · Anwenden/);
+  assert.match(js, /Wenn etwas nicht klappt, hilft Coco Schritt für Schritt/);
+  assert.match(js, /Transfer geschafft/);
 });
 
 test('teacher-independent gameplay uses no external runtime assets or APIs', () => {
@@ -118,10 +144,10 @@ test('M1.2 replaces state-changing delayed callbacks with guarded scheduling', (
   assert.doesNotMatch(js, /setTimeout\(\(\) => \{ \$\('winchDialog'\)\.close\(\)/);
   assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('generatorDialog'\)\.close\(\)/);
   assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('victoryDialog'\)\.showModal\(\)/);
-  assert.match(js, /scheduleGuarded\(850/);
-  assert.match(js, /scheduleGuarded\(650/);
-  assert.match(js, /scheduleGuarded\(500/);
+  assert.match(js, /scheduleGuarded\(1050/);
   assert.match(js, /scheduleGuarded\(700/);
+  assert.match(js, /scheduleGuarded\(550/);
+  assert.match(js, /scheduleGuarded\(650/);
 });
 
 
@@ -230,7 +256,22 @@ test('M1.5 vehicle recovery uses safe checkpoints instead of full-run restart', 
   assert.match(js, /safeProgress: 0/);
   assert.match(js, /state\.jeep\.distance = state\.jeep\.safeDistance/);
   assert.match(js, /state\.river\.progress = state\.river\.safeProgress/);
-  assert.match(js, /jeepCheckpoint > state\.jeep\.safeDistance/);
+  assert.match(js, /jeepCheckpoint > (?:state\.jeep|jeep)\.safeDistance/);
+  // Execute the current Jeep update: its local `jeep` alias must still advance
+  // checkpoints monotonically and only in the safe window, even after resets.
+  const updateSource = js.slice(js.indexOf('  function updateJeep('), js.indexOf('  function updateAnimals('));
+  const update = new Function('state', 'jeepCourse', 'jeepHazardScreenY', 'updateHud',
+    updateSource + '\nreturn updateJeep;');
+  for (const [distance, saved, stuck, expected] of [
+    [179, 0, false, 0], [181, 0, false, 180], [223, 0, false, 0],
+    [361, 180, false, 360], [181, 360, false, 360], [361, 180, true, 180]
+  ]) {
+    const state = { keys: new Set(), jeep: { distance, safeDistance: saved,
+      stuck, stuckPower: 0, x: 480, speed: 64, shake: 0,
+      impactTimer: 0, roadblockTimer: 0, hitHazards: new Set() } };
+    update(state, [{ id: 'roadblock', story: true }], () => -1000, () => {})(0);
+    assert.equal(state.jeep.safeDistance, expected, `distance=${distance}, saved=${saved}, stuck=${stuck}`);
+  }
   assert.match(js, /riverCheckpoint > state\.river\.safeProgress/);
 });
 
@@ -297,4 +338,169 @@ test('M2 mechanic instructions are concise and student-friendly', () => {
   assert.match(html, /Drück die Stromkreise in der Reihenfolge der Lampen/);
   assert.match(html, /WASD\/Pfeile: bewegen · E\/Enter: Aktion/);
   assert.match(html, /R: zurücksetzen · Esc: Kamera\/Funk verlassen/);
+});
+
+
+test('V0.1 visual bible defines the Amazonas reference quality bar', () => {
+  for (const phrase of [
+    'originale Retro-Handheld-Top-Down-Adventure-Overworld',
+    'Gemeinsame Overworld-Regeln',
+    'MANGO-1',
+    'Game-Feel',
+    'Performance',
+    'Verbindliches Abnahmekriterium'
+  ]) assert.ok(visualBible.includes(phrase), 'missing visual rule: ' + phrase);
+  assert.match(html, /class="visual-masterpiece"/);
+  assert.match(html, /GRADECrew ESCAPE · EXPEDITION/);
+});
+
+test('V1 Camp is a layered scene rather than the old prototype canvas', () => {
+  for (const fn of [
+    'drawCampBackground',
+    'drawCampGround',
+    'drawCampTent',
+    'drawCampTable',
+    'drawCampSupplies',
+    'drawCampJeepDetailed',
+    'drawCampPollen',
+    'drawCampForeground'
+  ]) assert.ok(js.includes('function ' + fn), 'missing Camp layer: ' + fn);
+
+  const start = js.indexOf('function drawCamp(){');
+  const end = js.indexOf('function drawJeep()', start);
+  const body = js.slice(start, end);
+  for (const placeholder of ['🗺️', '🌴', '📡', '🦜', '🥭']) assert.ok(!body.includes(placeholder), 'Camp placeholder remains: ' + placeholder);
+  assert.match(js, /if \(state\.scene === 'camp'\) drawCampForeground\(performance\.now\(\)\)/);
+});
+
+test('V1 Camp Jeep start has a guarded visual beat before driving', () => {
+  assert.match(js, /campJeepStartAt: 0/);
+  const start = js.indexOf("if (state.scene === 'camp' && id === 'jeep')");
+  const end = js.indexOf("if (state.scene === 'blocked'", start);
+  const body = js.slice(start, end);
+  assert.match(body, /beginResolvingAction\('camp-jeep'\)/);
+  assert.match(body, /state\.campJeepStartAt = performance\.now\(\)/);
+  assert.match(body, /setGameMode\('transition'\)/);
+  assert.match(body, /scheduleGuarded\(620/);
+  assert.match(body, /setScene\('jeep'\)/);
+});
+
+
+test('V2 Jeep uses an original retro top-down course with approaching hazards', () => {
+  for (const token of [
+    'const jeepCourse = [',
+    "type: 'rock'",
+    "type: 'mud'",
+    "type: 'branch'",
+    "type: 'tree'",
+    'function jeepHazardScreenY',
+    'JEEP_SCREEN_Y - (hazard.at - state.jeep.distance) * JEEP_PX_PER_M',
+    'function drawRetroRoad',
+    'function drawRetroHazards',
+    'function drawRetroJeep'
+  ]) assert.ok(js.includes(token), 'missing V2 Jeep token: ' + token);
+
+  const start = js.indexOf('function drawJeep(){');
+  const end = js.indexOf('function drawWildlife(){', start);
+  const body = js.slice(start, end);
+  assert.ok(!body.includes("fillText('🪨'"), 'emoji rock must not drive the new Jeep level');
+  assert.ok(!body.includes("fillText('🥭'"), 'mango emoji must not be the Jeep identity');
+  assert.ok(!body.includes('Piste '), 'old giant prototype HUD must be gone');
+});
+
+test('V2 Jeep collisions create impact and a real mud-stuck recovery mechanic', () => {
+  const start = js.indexOf('function updateJeep(dt)');
+  const end = js.indexOf('function updateAnimals(dt)', start);
+  const body = js.slice(start, end);
+  assert.match(body, /if \(jeep\.stuck\)/);
+  assert.match(body, /jeep\.stuckPower/);
+  assert.match(body, /Halte ↑ \/ W gedrückt/);
+  assert.match(body, /hazard\.type === 'mud'/);
+  assert.match(body, /jeep\.impactTimer = \.72/);
+  assert.match(body, /jeep\.speed = 18/);
+});
+
+test('V2 story roadblock approaches from ahead and becomes the winch scene', () => {
+  const start = js.indexOf('function updateJeep(dt)');
+  const end = js.indexOf('function updateAnimals(dt)', start);
+  const body = js.slice(start, end);
+  assert.match(body, /const roadblockY = jeepHazardScreenY\(roadblock\)/);
+  assert.match(body, /roadblockY >= 337/);
+  assert.match(body, /jeep\.roadblockTimer = \.82/);
+  assert.match(body, /setGameMode\('transition'\)/);
+  assert.match(body, /setScene\('blocked'/);
+
+  const drawStart = js.indexOf('function drawBlocked(){');
+  const drawEnd = js.indexOf('function drawWildlife(){', drawStart);
+  const drawBody = js.slice(drawStart, drawEnd);
+  assert.match(drawBody, /drawRetroRoadblock/);
+  assert.match(drawBody, /drawRetroJeep/);
+  assert.match(drawBody, /WEG BLOCKIERT · WINDE SUCHEN/);
+});
+
+test('V2 Jeep sprite and explorer have readable original pixel faces', () => {
+  const jeepStart = js.indexOf('function drawRetroJeep');
+  const jeepEnd = js.indexOf('function drawRetroHazards', jeepStart);
+  const jeepBody = js.slice(jeepStart, jeepEnd);
+  assert.match(jeepBody, /Visible driver face/);
+  assert.match(jeepBody, /pixelRect\(-6,5,4,4/);
+  assert.match(jeepBody, /pixelRect\(3,5,4,4/);
+
+  const explorerStart = js.indexOf('function drawExplorer');
+  const explorerEnd = js.indexOf('function drawJeepSprite', explorerStart);
+  const explorerBody = js.slice(explorerStart, explorerEnd);
+  assert.match(explorerBody, /Clear face/);
+  assert.match(explorerBody, /pixelRect\(-6,-24,4,4/);
+  assert.match(explorerBody, /pixelRect\(3,-24,4,4/);
+});
+
+test('V2 Jeep recovery restores a complete safe driving state', () => {
+  const start = js.indexOf("if (kind === 'jeep')");
+  const end = js.indexOf("if (kind === 'river')", start);
+  const body = js.slice(start, end);
+  assert.match(body, /state\.jeep\.speed = 56/);
+  assert.match(body, /state\.jeep\.stuck = false/);
+  assert.match(body, /state\.jeep\.stuckPower = 0/);
+  assert.match(body, /state\.jeep\.impactTimer = 0/);
+  assert.match(body, /state\.jeep\.hitHazards\.delete/);
+});
+
+
+test('V2 world pivot renders all Amazonas scenes in one retro top-down language', () => {
+  for (const token of [
+    'function drawRetroTent',
+    'function drawRetroCampTable',
+    'function drawRetroAnimal',
+    'function drawRetroWaterTile',
+    'function drawRetroBoat',
+    "STATION · STROM AUS",
+    'WEG BLOCKIERT · WINDE SUCHEN',
+    "drawRetroPanel(270,470,420,82,'FUNK')"
+  ]) assert.ok(js.includes(token), 'missing retro world token: ' + token);
+
+  const wildlife = js.slice(js.indexOf('function drawWildlife(){'), js.indexOf('function drawRiver(){'));
+  assert.ok(!wildlife.includes('fillText(a.emoji'), 'wildlife must not render emoji animals');
+  assert.ok(!wildlife.includes("fillText('📡'"), 'sender must not be an emoji');
+
+  const station = js.slice(js.indexOf('function drawStation(){'), js.indexOf('function drawTower(){'));
+  assert.ok(!station.includes("fillText('⚡'"), 'generator must be drawn as a game object');
+  assert.ok(!station.includes("'💻'"), 'terminal must not be an emoji');
+
+  const boat = js.slice(js.indexOf('function drawRetroBoat'), js.indexOf('function loop(now)'));
+  assert.ok(!boat.includes("fillText('🐧'"), 'boat driver must not be an emoji');
+});
+
+test('V2 River hazards now approach the boat from the top and collide once per cycle', () => {
+  const updateStart = js.indexOf('function updateRiver(dt)');
+  const updateEnd = js.indexOf('function updateRadioControls', updateStart);
+  const updateBody = js.slice(updateStart, updateEnd);
+  assert.match(updateBody, /const rockY = -45 \+ \(phase \/ 160\) \* \(H \+ 110\)/);
+  assert.match(updateBody, /state\.river\.lastRockCycle !== cycle/);
+  assert.match(updateBody, /state\.river\.lastRockCycle = cycle/);
+
+  const drawStart = js.indexOf('function drawRiver(){');
+  const drawEnd = js.indexOf('function drawStation(){', drawStart);
+  const drawBody = js.slice(drawStart, drawEnd);
+  assert.match(drawBody, /rockY=-45\+\(phase\/160\)\*\(H\+110\)/);
+  assert.ok(!drawBody.includes("fillText('🪨'"), 'river rock must be an original pixel object');
 });
