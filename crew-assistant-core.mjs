@@ -227,46 +227,48 @@ function parseTestRequest(input = "") {
   const schoolType = firstMatch(text, SCHOOL_TYPE_PATTERNS);
   if (schoolType) patch.schoolType = schoolType;
 
-  if (/\bbayern\b/i.test(text)) patch.region = "Bayern";
+  if (/\b(bayern|bavaria)\b/i.test(text)) patch.region = "Bayern";
 
   const grade = extractNumber(text, [
-    /\b(?:klasse|jahrgang(?:sstufe)?)\s*(\d{1,2})\b/i,
-    /\b(\d{1,2})\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b/i,
-    /\b(?:für|fuer)\s+(?:die\s+)?(\d{1,2})\.?\b/i
+    /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*(\d{1,2})\b/i,
+    /\b(\d{1,2})\.?\s*(?:klasse|jahrgang(?:sstufe)?|year|grade)\b/i,
+    /\b(?:für|fuer|for)\s+(?:die\s+)?(?:year\s*)?(\d{1,2})\.?\b/i
   ], 1, 13);
   if (grade !== undefined) patch.grade = String(grade);
 
   const topic = extractTopic(text);
   if (topic) patch.topic = topic;
 
-  const progressiveDifficulty = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
+  const progressiveDifficulty = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst).*?(?:leicht|einfach).*?(?:danach|später|spaeter|anschließend|anschliessend).*?(?:schwer|schwieriger|anspruchsvoll)|(?:start|begin|first).*?(?:easy|simple).*?(?:then|later|afterwards).*?(?:harder|challenging|difficult))\b/i.test(text);
   const difficultyText = text.replace(INITIAL_EASY, " ").replace(NEGATED_DIFFICULTY, " ");
   if (!progressiveDifficulty) {
-    if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes)\b/i.test(difficultyText)) patch.difficulty = "leicht";
-    else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle)\b/i.test(difficultyText)) patch.difficulty = "anspruchsvoll";
-    else if (/\bgemischt|unterschiedliche\s+schwierigkeitsgrade\b/i.test(difficultyText)) patch.difficulty = "gemischt";
-    else if (/\bmittel|mittlere[mnr]?\b/i.test(difficultyText)) patch.difficulty = "mittel";
+    if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes|easy|simple)\b/i.test(difficultyText)) patch.difficulty = "leicht";
+    else if (/\b(anspruchsvoll|schwer|schwieriger|schwere|anspruchsvolle|challenging|hard|difficult)\b/i.test(difficultyText)) patch.difficulty = "anspruchsvoll";
+    else if (/\b(gemischt|unterschiedliche\s+schwierigkeitsgrade|mixed|varied difficulty)\b/i.test(difficultyText)) patch.difficulty = "gemischt";
+    else if (/\b(mittel|mittlere[mnr]?|medium)\b/i.test(difficultyText)) patch.difficulty = "mittel";
   }
 
-  const count = extractNumber(text, [/\b(\d{1,3})\s*(?:aufgaben?|fragen?)\b/i], 1, 100);
+  const count = extractNumber(text, [/\b(\d{1,3})\s*(?:aufgaben?|fragen?|questions?|tasks?)\b/i], 1, 100);
   if (count !== undefined) patch.count = count;
 
-  const points = extractNumber(text, [/\b(\d{1,3}(?:[.,]5)?)\s*(?:punkte?|pkt\.?|p\.)\b/i], 0.5, 500);
+  const points = extractNumber(text, [/\b(\d{1,3}(?:[.,]5)?)\s*(?:punkte?|points?|pkt\.?|p\.)\b/i], 0.5, 500);
   if (points !== undefined) patch.points = points;
 
-  const duration = extractNumber(text, [/\b(\d{1,3})\s*(?:minuten?|min\.?)(?:\s|$)/i], 1, 300);
+  const duration = extractNumber(text, [/\b(\d{1,3})\s*(?:minuten?|minutes?|mins?|min\.?)(?:\s|$)/i], 1, 300);
   if (duration !== undefined) patch.durationMinutes = duration;
 
   const audioQuestionCount = extractNumber(text, [
     /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b/i,
-    /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio|hörtext|hoertext)\b/i
+    /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio|hörtext|hoertext)\b/i,
+    /\b(?:of\s+those\s+)?(\d{1,2})\s*(?:listening|audio)\s+(?:questions?|tasks?)\b/i,
+    /\b(\d{1,2})\s+(?:questions?|tasks?)\s+(?:with\s+audio|using\s+audio)\b/i
   ], 0, 5);
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
   const allowedTypes = [];
   const excludedTypes = [];
   for (const [pattern, value] of TYPE_PATTERNS) {
-    const excluded = new RegExp('\\b(?:keine?|ohne|nicht)\\s+(?:' + pattern.source + ')', 'i').test(text);
+    const excluded = new RegExp('\\b(?:keine?|ohne|nicht|no|without|not)\\s+(?:' + pattern.source + ')', 'i').test(text);
     if (excluded) excludedTypes.push(value);
     else if (pattern.test(text)) allowedTypes.push(value);
   }
@@ -280,56 +282,68 @@ function parseTestRequest(input = "") {
 }
 
 function looksLikeTestCommand(text) {
-  return /\b(test|probe|prüfung|pruefung|lernzielkontrolle)\b/i.test(text) ||
-    /\b(?:klasse|jahrgang|punkte?|multiple[ -]?choice|freitext|zuordnung|lückentext)\b/i.test(text);
+  return /\b(test|probe|prüfung|pruefung|lernzielkontrolle|assessment|quiz)\b/i.test(text) ||
+    /\b(?:klasse|jahrgang|year|grade|punkte?|points?|questions?|tasks?|multiple[ -]?choice|freitext|free[ -]?text|zuordnung|matching|lückentext|gap[ -]?fill|listening|audio)\b/i.test(text);
 }
 
-function patchSummary(patch = {}) {
+function patchSummary(patch = {}, locale = "de-DE") {
+  const english = normalizeLocale(locale) === "en-GB";
   const parts = [];
-  if (patch.subject) parts.push(patch.subject);
-  if (patch.grade) parts.push(`Klasse ${patch.grade}`);
+  if (patch.subject) parts.push(english ? (ENGLISH_SUBJECT_LABELS[patch.subject] || patch.subject) : patch.subject);
+  if (patch.grade) parts.push(english ? `Year ${patch.grade}` : `Klasse ${patch.grade}`);
   if (patch.topic) parts.push(patch.topic);
-  if (patch.difficulty) parts.push(patch.difficulty);
-  if (patch.count) parts.push(`${patch.count} Aufgaben`);
-  if (patch.points) parts.push(`${patch.points} Punkte`);
-  if (patch.durationMinutes) parts.push(`${patch.durationMinutes} Min.`);
-  if (patch.audioQuestionCount !== undefined) parts.push(`${patch.audioQuestionCount} Höraufgaben`);
-  if (patch.notes) parts.push("Wünsche übernommen");
+  if (patch.difficulty) parts.push(english ? (ENGLISH_DIFFICULTY_LABELS[patch.difficulty] || patch.difficulty) : patch.difficulty);
+  if (patch.count) parts.push(english ? `${patch.count} questions` : `${patch.count} Aufgaben`);
+  if (patch.points) parts.push(english ? `${patch.points} points` : `${patch.points} Punkte`);
+  if (patch.durationMinutes) parts.push(english ? `${patch.durationMinutes} min.` : `${patch.durationMinutes} Min.`);
+  if (patch.audioQuestionCount !== undefined) parts.push(english ? `${patch.audioQuestionCount} listening questions` : `${patch.audioQuestionCount} Höraufgaben`);
+  if (patch.notes) parts.push(english ? "Additional requests added" : "Wünsche übernommen");
   return parts.join(" · ");
 }
 
-function resolveCommonResponse(crewId, text) {
-  if (/^(hi|hallo|hey|servus|moin|guten (morgen|tag|abend))[!. ]*$/i.test(text)) {
-    return { intent: "greeting", reply: COMMON_RESPONSES.greeting[crewId] || COMMON_RESPONSES.greeting.coco };
+function resolveCommonResponse(crewId, text, locale = "de-DE") {
+  const normalizedLocale = normalizeLocale(locale);
+  const copy = COMMON_RESPONSES[normalizedLocale] || COMMON_RESPONSES["de-DE"];
+  if (/^(hi|hello|hey|hallo|servus|moin|good (morning|afternoon|evening)|guten (morgen|tag|abend))[!. ]*$/i.test(text)) {
+    return { intent: "greeting", reply: copy.greeting[crewId] || copy.greeting.coco };
   }
-  if (/\b(was kannst du|wobei hilfst du|was machst du|deine aufgabe)\b/i.test(text)) {
-    return { intent: "capabilities", reply: COMMON_RESPONSES.capabilities[crewId] || COMMON_RESPONSES.capabilities.coco };
+  if (/\b(was kannst du|wobei hilfst du|was machst du|deine aufgabe|what can you do|how can you help|what do you do|your role)\b/i.test(text)) {
+    return { intent: "capabilities", reply: copy.capabilities[crewId] || copy.capabilities.coco };
   }
-  if (/\b(datenschutz|personenbezogen|schülerdaten|schuelerdaten|privat)\b/i.test(text)) {
-    return { intent: "privacy", reply: COMMON_RESPONSES.privacy };
+  if (/\b(datenschutz|personenbezogen|schülerdaten|schuelerdaten|privat|privacy|personal data|student data)\b/i.test(text)) {
+    return { intent: "privacy", reply: copy.privacy };
   }
-  if (/\b(kosten|api|token|punkte sparen|günstig|guenstig)\b/i.test(text)) {
-    return { intent: "cost", reply: COMMON_RESPONSES.cost };
+  if (/\b(kosten|api|token|punkte sparen|günstig|guenstig|costs?|tokens?|save api|cheaper)\b/i.test(text)) {
+    return { intent: "cost", reply: copy.cost };
   }
   return null;
 }
 
-function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {} } = {}) {
+function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, locale = "de-DE" } = {}) {
   const member = CREW_MEMBERS[crewId] || CREW_MEMBERS.coco;
+  const normalizedLocale = normalizeLocale(locale);
+  const english = normalizedLocale === "en-GB";
   const normalized = normalizeText(text);
-  if (!normalized) return { handled: true, source: "local", intent: "empty", reply: "Sag mir einfach, wobei ich dir helfen soll." };
+  if (!normalized) return {
+    handled: true,
+    source: "local",
+    intent: "empty",
+    reply: english ? "Just tell me what you'd like help with." : "Sag mir einfach, wobei ich dir helfen soll."
+  };
 
-  const common = resolveCommonResponse(member.id, normalized);
+  const common = resolveCommonResponse(member.id, normalized, normalizedLocale);
   if (common) return { handled: true, source: "local", ...common };
 
   const patch = parseTestRequest(normalized);
   if (member.id === "remy" && Object.keys(patch).length) {
-    const summary = patchSummary(patch);
+    const summary = patchSummary(patch, normalizedLocale);
     return {
       handled: true,
       source: "local",
       intent: "patch_ai_form",
-      reply: summary ? `Klar. Ich habe verstanden: ${summary}.` : "Klar. Ich übernehme die erkannten Angaben ins Testformular.",
+      reply: english
+        ? (summary ? `Got it. I understood: ${summary}.` : "Got it. I'll apply the recognised details to the test form.")
+        : (summary ? `Klar. Ich habe verstanden: ${summary}.` : "Klar. Ich übernehme die erkannten Angaben ins Testformular."),
       action: { type: "patch_ai_form", patch },
       contextUsed: Boolean(context && Object.keys(context).length)
     };
@@ -340,11 +354,17 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {} } = 
       handled: true,
       source: "local",
       intent: "route_remy",
-      reply: "Für das Erstellen von Tests ist Remy da. Öffne „Neuer Test“ → „Mit KI erstellen“ – dort kannst du Remy direkt sagen oder diktieren, was du brauchst."
+      reply: english
+        ? "Remy handles test creation. Open ‘New test’ → ‘Create with AI’ and tell or dictate what you need there."
+        : "Für das Erstellen von Tests ist Remy da. Öffne „Neuer Test“ → „Mit KI erstellen“ – dort kannst du Remy direkt sagen oder diktieren, was du brauchst."
     };
   }
 
-  if (/\b(wer bist du|wie heißt du|wie heisst du)\b/i.test(normalized)) {
+  if (/\b(wer bist du|wie heißt du|wie heisst du|who are you|what is your name|what's your name)\b/i.test(normalized)) {
+    if (english) {
+      const roles = { coco: "guidance & navigation", remy: "creating tests & ideas", emmi: "improving & reviewing", wilma: "grading & results" };
+      return { handled: true, source: "local", intent: "identity", reply: `I'm ${member.name}. My role here is ${roles[member.id] || "helping in GradeCrew"}.` };
+    }
     return { handled: true, source: "local", intent: "identity", reply: `${member.greeting} Meine Rolle hier ist: ${member.role}.` };
   }
 
@@ -361,6 +381,7 @@ export {
   CREW_MEMBERS,
   COMMON_RESPONSES,
   PARSER_VERSION,
+  normalizeLocale,
   normalizeText,
   parseTestRequest,
   patchSummary,
