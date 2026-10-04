@@ -1,44 +1,48 @@
-# GradeCrew i18n – Nicht-DOM-Inventar vor Sprache 2
+# GradeCrew i18n – Nicht-DOM- und Sprachabhängigkeits-Inventar
 
-Stand: 2026-10-02. Die sichtbare Web-Oberfläche besitzt ab `feature/i18n-core-v1` eine gemeinsame Browser-i18n-Grenze. Dieses Inventar hält absichtlich die Bereiche fest, die **nicht** durch DOM-/Attribut-Lokalisierung gelöst werden und deshalb vor Aktivierung einer zweiten Sprache explizit angepasst werden müssen.
+Stand: 2026-10-04. Deutsch (`de-DE`) und Englisch (`en-GB`) sind als Browser-UI-Sprachen aktiv. Dieses Inventar dokumentiert die Bereiche, die nicht durch DOM-/Attribut-Lokalisierung gelöst werden.
 
-## Bereits vorbereitet, weiterhin nur Deutsch
+## Bereits aktiv / abgesichert
 
-- Browser-UI: gemeinsamer Bootstrap vor Lehrer-App und Secure-Student-Runtime; `de-DE` ist die einzige aktivierbare UI-Locale.
-- System-/Startmeldungen: erster semantischer `de-DE`-Katalog.
-- Locale-Verträge: UI-, Inhalts- und Bewertungssprache getrennt; Assessment-Snapshot; `Intl`-Formatter; striktes Zahlenparsing.
-- Staging-Build: i18n-Module sind Teil der expliziten Build-Allowlist und werden im Build auf fehlende Referenzen geprüft.
+- Browser-UI: gemeinsamer Bootstrap vor Lehrer-App und Secure-Student-Runtime; `de-DE` und `en-GB` sind aktivierbar.
+- Sprachumschaltung: persistent und reversibel; geschützte Test-/Nutzerinhalte werden nicht durch den UI-Wechsel verändert.
+- Locale-Verträge: UI-, Inhalts- und Bewertungssprache sind getrennt.
+- Testsprache: pro Test auswählbar; bestehende Aufgaben/Lösungen werden beim Wechsel nicht automatisch übersetzt.
+- KI-Erstellung/-Überarbeitung: ausgewählte Testsprache wird explizit als Inhaltslocale übergeben.
+- Normaler Test-Lifecycle: `contentLocale`, `gradingLocale` und Vertragsversion werden beim regulären Speichern mitgeführt.
+- Aktive veröffentlichte Tests: die Testsprache darf clientseitig nicht still während der Durchführung geändert werden.
+- Staging-Build: i18n-Module und Regressionstests sind Teil des geprüften Builds.
 
-## Vor Sprache 2 zwingend separat bearbeiten
+## Weiterhin separat zu bearbeiten
 
-### 1. CSV-/Datei-Exporte
+### 1. CSV-/Datei-/PDF-Exporte
 
-`app.js` erzeugt Ergebnis-CSV und weitere Downloads außerhalb des DOM. Spaltenbezeichnungen wie Name/Aufgabe/Punkte/Prozent/Note/Status/Bearbeitungszeit sowie Ja/Nein müssen später über einen Export-Katalog laufen. Dateiformat und interne Statuswerte dürfen nicht anhand sichtbarer Übersetzungen geändert werden.
+Exporte entstehen außerhalb des DOM. Spaltenbezeichnungen, Metadaten und Datums-/Zahlendarstellung benötigen explizite Locale-Behandlung. Interne Statuswerte dürfen niemals anhand sichtbarer Übersetzungen geändert werden.
 
-### 2. KI-Prompts und KI-Eingaben
+### 2. Sprachabhängige Qualitätsvalidatoren
 
-`functions/lib/prompts.js` enthält derzeit deutsche System- und Qualitätsregeln. Das ist für den heutigen deutschen Produktstand korrekt und bleibt in Stufe 1 unverändert. Vor Sprache 2 müssen Prompt-Grundregeln, Inhaltssprache, Feedbacksprache und Bildungsregion getrennte strukturierte Parameter erhalten. Ein UI-Sprachwechsel darf niemals die Test-/Bewertungssprache implizit ändern.
+`functions/lib/validation.js` enthält bewusst sprachspezifische Heuristiken. Deutsche Satzbau-/Komma-/Stopwortlogik darf nicht mechanisch ins Englische übersetzt werden. Für jede Inhaltssprache braucht die jeweilige Heuristik eine geprüfte Strategie oder eine Eskalation zur Lehrkraft.
 
-### 3. Sprachabhängige Qualitätsvalidatoren
+### 3. Persistierte fachliche Inhalte
 
-`functions/lib/validation.js` enthält bewusst deutsche Sprachlogik, unter anderem deutsche Kleinschreibung/Stopwörter, Satzbau-Erkennung, Komma-Fragen und sprachspezifische Heuristiken. Diese Regeln dürfen nicht generisch übersetzt werden. Vor Freigabe einer neuen Inhaltssprache braucht jede relevante Heuristik eine locale-/fachspezifische Strategie oder muss für diese Locale deaktiviert und zur Lehrerprüfung eskaliert werden.
+Titel, Aufgaben, Lösungen, Rubriken, Lehrerhinweise und Testbeschreibung sind Prüfungsinhalt, keine UI-Texte. Ein UI-Sprachwechsel verändert sie niemals. Eine spätere Funktion „bestehenden Test übersetzen“ darf nur als explizite Lehreraktion umgesetzt werden, mit Vorschau/Bestätigung und ohne Kopplung an den normalen UI-Sprachschalter.
 
-### 4. Persistierte fachliche Inhalte
+### 4. Backend-Fehler und Diagnose
 
-Titel, Aufgaben, Lösungen, Rubriken, Lehrerhinweise und Testbeschreibung sind Nutzer-/Prüfungsinhalt, keine UI-Texte. Sie werden nie automatisch durch einen UI-Sprachwechsel übersetzt. Vor Sprache 2 erhalten neue/veröffentlichte Tests explizite `contentLocale`-/`gradingLocale`-Metadaten und einen unveränderlichen Locale-/Policy-Snapshot.
+Maschinenlogik braucht stabile Fehlercodes. Sichtbare Meldungen werden clientseitig lokalisiert; Diagnose-/Supportdaten behalten stabile technische Felder und IDs. Geschäftslogik darf keine übersetzten Fehlermeldungen parsen.
 
-### 5. Backend-Fehler und Diagnose
+### 5. Native Apps
 
-Maschinenlogik muss stabile Fehlercodes verwenden; sichtbare Texte werden am Client lokalisiert. Diagnose-/Support-JSON behält stabile technische Felder und IDs. Keine Geschäftslogik darf übersetzte Fehlermeldungen parsen.
+Native Swift-/Android-Texte gehören nicht zur Browser-i18n. Sie benötigen systemeigene String-Kataloge. Eine hybride Shell darf die Web-UI-Locale übernehmen, muss native Texte aber separat lokalisieren und testen.
 
-### 6. Native Apps
+### 6. Spiele
 
-Native Swift-Texte gehören nicht zum Web-Staging-Build. Sie erhalten separat String Catalogs/`Localizable.xcstrings` bzw. systemeigene Lokalisierung. Die hybride WebView darf die Web-UI-Locale verwenden, native Shell-Texte müssen jedoch separat geprüft werden.
+Normale Spiel-UI kann denselben UI-Locale-Kontext verwenden. Sprachabhängige Rätsel, Wortspiele, Buchstabenanzahlen, Reime und Unterrichtsinhalte benötigen eigene validierte Varianten und dürfen nicht automatisch übersetzt werden.
 
-### 7. Spiele
+### 7. Dynamische Legacy-UI
 
-Spieltexte können später über dieselbe UI-Schicht laufen; sprachabhängige Rätsel, Wortspiele, Buchstabenanzahlen und Reime benötigen eigene validierte Varianten und dürfen nicht automatisch übersetzt werden.
+`app.js` und Erweiterungsmodule erzeugen weiterhin viele sichtbare Texte zur Laufzeit. Die zweite Sprache ist deshalb nicht mit einem einmaligen statischen Katalog fertig. Neue dynamische Lehrer-/Schüler-Flows brauchen Source-Catalog-/Pattern-Abdeckung und Regressionstests; langfristig sollten semantische Keys die Source-String-Migration ersetzen.
 
-## Freigabe-Gate für Sprache 2
+## Gate für weitere Sprachen
 
-Eine zweite UI-Locale darf erst aktiviert werden, wenn mindestens Browser-UI, Secure-Student, Exporte, KI-Promptvertrag, relevante Validatoren, Assessment-Locale-Snapshot, Accessibility, PDF/CSV und die tatsächlich angebotenen Spiele/Native-Flächen in einer Capability-Matrix geprüft sind. Bis dahin muss `SUPPORTED_BROWSER_UI_LOCALES` exakt nur `de-DE` enthalten.
+Vor einer dritten UI-Sprache müssen mindestens Browser-UI, Secure Student, Exporte, relevante Validatoren, Assessment-Locale-Lifecycle, Accessibility sowie angebotene Spiele/native Flächen in einer Capability-Matrix geprüft werden. Eine neue UI-Sprache darf weiterhin nicht automatisch zur Test- oder Bewertungssprache werden.
