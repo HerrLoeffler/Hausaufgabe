@@ -236,6 +236,18 @@ service cloud.firestore {
         );
     }
 
+    // BugOps-Incidents werden ausschließlich durch vertrauenswürdige Serverfunktionen
+    // aus technischen feedback/app_error-Meldungen aggregiert. Admins dürfen nur die
+    // zusammengefassten Incident-Dokumente lesen; Marker/Subcollections bleiben server-only.
+    match /bugIncidents/{incidentId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+
+      match /{serverMarker=**} {
+        allow read, write: if false;
+      }
+    }
+
     // Unveränderliches Protokoll wichtiger Adminaktionen.
     match /adminAudit/{auditId} {
       allow create: if isAdmin();

@@ -1,0 +1,53 @@
+name: BugOps Server Checks
+
+on:
+  pull_request:
+    branches:
+      - feature/gradecrew-app-integration
+    paths:
+      - 'functions/**'
+      - 'firestore.rules'
+      - 'firebase.bug-ops-emulator.json'
+      - 'tools/rules/**'
+      - '.github/workflows/bug-ops-server-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: BugOps server and rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Use Java 21 for Firestore emulator
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install function dependencies
+        run: npm ci --prefix functions --include=dev
+
+      - name: Test and lint functions
+        run: |
+          npm test --prefix functions
+          npm run check --prefix functions
+
+      - name: Install Firestore rules test dependencies
+        run: npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
+
+      - name: Test BugOps Firestore rules
+        run: npm run test:bugops --prefix tools/rules

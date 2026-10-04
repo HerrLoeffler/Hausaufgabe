@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:secure": "firebase emulators:exec --project demo-gradecrew-secure --config ../../firebase.secure-assessment-emulator.json --only firestore \"node secure-assessment-rules.emulator.test.mjs\""
+    "test:secure": "firebase emulators:exec --project demo-gradecrew-secure --config ../../firebase.secure-assessment-emulator.json --only firestore \"node secure-assessment-rules.emulator.test.mjs\"",
+    "test:bugops": "firebase emulators:exec --project demo-gradecrew-bugops --config ../../firebase.bug-ops-emulator.json --only firestore \"node bug-ops-rules.emulator.test.mjs\""
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "5.0.2",
