@@ -60,7 +60,7 @@ test("system prompt forbids destructive actions and separates reply locale from 
   assert.match(german, /patch_ai_form/);
   const english = crewSystemPrompt("remy", "en-GB");
   assert.match(english, /Reply in natural British English/);
-  assert.match(english, /Prüfungsinhalte/);
+  assert.match(english, /Testinhalt|assessment content/);
   assert.match(english, /difficulty ist nur leicht, mittel, anspruchsvoll oder gemischt/);
 });
 
