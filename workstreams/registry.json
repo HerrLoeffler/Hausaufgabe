@@ -356,6 +356,17 @@
         "fix/guardian-delivery-proof-v1",
         "fix/guardian-three-reviewers-v1"
       ]
+    },
+    {
+      "id": "guardian-budget-pilot-v1",
+      "title": "Kleines Guardian-Kostenprofil und vorbereiteter E2E-Pilot",
+      "primaryBranch": "fix/guardian-budget-pilot-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/guardian-budget-pilot-v1.md",
+      "relatedBranches": [
+        "feature/guardian-execution-v2"
+      ]
     }
   ]
 }

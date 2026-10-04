@@ -7,14 +7,14 @@ import datetime as dt
 import urllib.error
 import urllib.request
 
-from .pipeline import MODELS, MAX_CONTEXT, MAX_REVIEW_CONTEXT
+from .pipeline import model_limits
 
 
-def call(role, instructions, context, schema, transport=None):
+def call(role, instructions, context, schema, transport=None, *, task=None):
     if transport is None and dt.date.today() > dt.date(2026, 11, 2):
         raise ValueError('Pricing qualification expired; verify model/pricing policy before another paid call')
-    spec = MODELS[role]
-    limit = MAX_CONTEXT if role == 'build' else MAX_REVIEW_CONTEXT
+    spec = model_limits(role, task)
+    limit = spec['max_input']
     # Includes schema/instructions overhead; generous byte upper bound is priced
     # as tokens. No tools, automatic tier upgrade, long context or cache writes.
     input_bytes = len(json.dumps([instructions, context, schema], ensure_ascii=False).encode()) + 4096
@@ -82,4 +82,4 @@ def call(role, instructions, context, schema, transport=None):
         raise ValueError('Missing or out-of-budget token accounting')
     return result, {'provider': spec['provider'], 'model': spec['model'], 'inputTokens': used_in,
                     'outputTokens': used_out, 'estimatedUsd': round((used_in * spec['input'] + used_out * spec['output']) / 1e6, 6),
-                    'pricing': 'conservative ceiling, verified 2026-10-03; not an invoice'}
+                    'pricing': 'standard rates verified 2026-10-04; no cache discount; not an invoice'}

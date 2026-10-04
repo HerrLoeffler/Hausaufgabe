@@ -14,8 +14,8 @@ from pathlib import Path
 
 WEB = 'feature/gradecrew-app-integration'
 MODELS = {
-    'build': {'provider': 'openai', 'model': 'gpt-6.1-sol', 'input': 4, 'output': 15, 'max_output': 24000},
-    'correctness': {'provider': 'openai', 'model': 'gpt-6-astra', 'input': 20, 'output': 75, 'max_output': 6000},
+    'build': {'provider': 'openai', 'model': 'gpt-6.1-sol', 'input': 2, 'output': 10, 'max_output': 24000},
+    'correctness': {'provider': 'openai', 'model': 'gpt-6-astra', 'input': 10, 'output': 50, 'max_output': 6000},
     'security': {'provider': 'anthropic', 'model': 'claude-sonnet-5-5', 'input': 2, 'output': 10, 'max_output': 6000},
     'qa': {'provider': 'openai', 'model': 'gpt-6-sol', 'input': 2, 'output': 10, 'max_output': 6000},
 }
@@ -26,6 +26,32 @@ MAX_CANDIDATE = 160000
 ATTEMPT_RESERVATION_USD = 5.5  # conservative full input/output ceiling, no cache discounts
 MAX_TASK_USD = 16.5
 MAX_DAILY_USD = 33
+# Immutable cost profiles: smaller context/output, same models and review gates.
+# Byte limits include prompt/schema overhead and are conservatively priced as
+# tokens. No silent promotion if a task does not fit the selected profile.
+COST_PROFILES = {
+    'standard-v1': {'build_input': MAX_CONTEXT, 'review_input': MAX_REVIEW_CONTEXT,
+                    'build_output': 24000, 'review_output': 6000,
+                    'attempt_usd': ATTEMPT_RESERVATION_USD, 'task_usd': MAX_TASK_USD},
+    'small-web-v1': {'build_input': 12000, 'review_input': 24000,
+                     'build_output': 6000, 'review_output': 2400,
+                     'attempt_usd': 0.85, 'task_usd': 2.55},
+}
+
+
+def cost_limits(task=None):
+    name = (task or {}).get('cost_profile', 'standard-v1')
+    if not isinstance(name, str) or name not in COST_PROFILES:
+        raise ValueError('Unknown cost profile; no automatic upgrade')
+    return dict(COST_PROFILES[name])
+
+
+def model_limits(role, task=None):
+    spec = dict(MODELS[role])
+    limits = cost_limits(task)
+    kind = 'build' if role == 'build' else 'review'
+    spec.update(max_input=limits[kind + '_input'], max_output=limits[kind + '_output'])
+    return spec
 DENIED_PARTS = {'.github', '.git', 'automation', 'agent-queue', 'functions', 'assessment-functions',
                 'native', 'tools', 'release-control', 'workstreams', 'node_modules', 'vendor'}
 DENIED_FILES = {'firebase.json', 'firebase-config.js', 'firestore.rules', 'storage.rules',
@@ -90,7 +116,8 @@ def task_contract(task):
         raise ValueError('Invalid context paths')
     for name in files + context:
         path_allowed(name)
-    if task.get('validation_profile') != 'web-combined-v1' or task.get('max_cost_usd') != MAX_TASK_USD:
+    limits = cost_limits(task)
+    if task.get('validation_profile') != 'web-combined-v1' or type(task.get('max_cost_usd')) not in {int, float} or task['max_cost_usd'] != limits['task_usd']:
         raise ValueError('Explicit validation and reserved task budget required')
     return task
 
@@ -165,12 +192,18 @@ def integration_gate(task, publication, tests, reviews, current_base, current_he
     return publication['head']
 
 
-def reserve_budget(history, task_id, day):
-    if sum(r['reservedUsd'] for r in history if r['taskId'] == task_id) + ATTEMPT_RESERVATION_USD > MAX_TASK_USD + 1e-9:
+def reserve_budget(history, task_id, day, task=None):
+    if task is not None:
+        task_contract(task)
+        if task['id'] != task_id:
+            raise ValueError('Budget task identity differs')
+    limits = cost_limits(task)
+    amount = limits['attempt_usd']
+    if sum(r['reservedUsd'] for r in history if r['taskId'] == task_id) + amount > limits['task_usd'] + 1e-9:
         raise ValueError('Task cost budget exhausted')
-    if sum(r['reservedUsd'] for r in history if r['day'] == day) + ATTEMPT_RESERVATION_USD > MAX_DAILY_USD + 1e-9:
+    if sum(r['reservedUsd'] for r in history if r['day'] == day) + amount > MAX_DAILY_USD + 1e-9:
         raise ValueError('Daily cost budget exhausted')
-    return {'taskId': task_id, 'day': day, 'reservedUsd': ATTEMPT_RESERVATION_USD}
+    return {'taskId': task_id, 'day': day, 'reservedUsd': amount}
 
 
 def object_schema(properties):
