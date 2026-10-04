@@ -6,8 +6,11 @@
   "goal": "Concrete user-authorized problem and desired behavior",
   "acceptance": "Observable behavior and existing regressions that must pass",
   "constraints": "Preserve other features; no infrastructure, credentials, exam or backend changes",
-  "allowed_files": ["REPLACE_WITH_ONE_EXACT_ADMITTED_WEB_FILE.js"],
+  "allowed_files": [
+    "REPLACE_WITH_ONE_EXACT_ADMITTED_WEB_FILE.js"
+  ],
   "context_files": [],
   "validation_profile": "web-combined-v1",
-  "max_cost_usd": 16.5
+  "max_cost_usd": 2.55,
+  "cost_profile": "small-web-v1"
 }
