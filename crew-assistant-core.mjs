@@ -47,7 +47,7 @@ const SUBJECT_PATTERNS = [
 const SCHOOL_TYPE_PATTERNS = [
   [/\b(grundschule|primary school|elementary school)\b/i, "Grundschule"],
   [/\b(mittelschule|middle school)\b/i, "Mittelschule"],
-  [/\b(realschule\b/i, "Realschule"],
+  [/\b(realschule)\b/i, "Realschule"],
   [/\b(gymnasium|grammar school)\b/i, "Gymnasium"],
   [/\b(berufsschule|vocational school)\b/i, "Berufsschule"]
 ];
