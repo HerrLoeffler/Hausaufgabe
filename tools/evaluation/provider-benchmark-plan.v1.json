@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "status": "benchmark_plan_only",
+  "runtimeAuthorized": false,
+  "createdAt": "2026-10-04",
+  "environment": "hausaufgabe-staging",
+  "providers": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603"
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-a-fast-low-risk",
+      "jobs": [
+        {
+          "job": "crew_intent",
+          "riskTier": "low",
+          "minimumReviewedCases": 40,
+          "goal": "classification-and-slot-accuracy"
+        },
+        {
+          "job": "question_rewriting",
+          "riskTier": "low",
+          "minimumReviewedCases": 40,
+          "goal": "meaning-preserving-clear-rewrite"
+        },
+        {
+          "job": "game_hint",
+          "riskTier": "low",
+          "minimumReviewedCases": 40,
+          "goal": "helpful-without-solution-leak"
+        }
+      ]
+    },
+    {
+      "id": "phase-b-core-generation",
+      "jobs": [
+        {
+          "job": "multiple_choice_generation",
+          "riskTier": "medium",
+          "minimumReviewedCases": 60,
+          "goal": "correct-unique-answer-and-distractors"
+        },
+        {
+          "job": "distractor_generation",
+          "riskTier": "medium",
+          "minimumReviewedCases": 60,
+          "goal": "plausible-no-answer-leak"
+        },
+        {
+          "job": "test_generation",
+          "riskTier": "medium",
+          "minimumReviewedCases": 80,
+          "goal": "subject-correct-schema-valid-curriculum-fit"
+        },
+        {
+          "job": "game_content_generation",
+          "riskTier": "medium",
+          "minimumReviewedCases": 50,
+          "goal": "playable-correct-age-appropriate"
+        }
+      ]
+    },
+    {
+      "id": "phase-c-verification",
+      "jobs": [
+        {
+          "job": "solution_verification",
+          "riskTier": "high",
+          "minimumReviewedCases": 80,
+          "goal": "detect-wrong-solution-and-logic-errors"
+        },
+        {
+          "job": "quality_control",
+          "riskTier": "high",
+          "minimumReviewedCases": 80,
+          "goal": "detect-ambiguity-answer-leaks-and-content-errors"
+        },
+        {
+          "job": "curriculum_matching",
+          "riskTier": "medium",
+          "minimumReviewedCases": 60,
+          "goal": "correct-scope-and-curriculum-match"
+        }
+      ]
+    },
+    {
+      "id": "phase-d-high-risk",
+      "jobs": [
+        {
+          "job": "free_text_grading",
+          "riskTier": "high",
+          "minimumReviewedCases": 120,
+          "goal": "rubric-consistent-points-and-rationale"
+        },
+        {
+          "job": "student_tutoring",
+          "riskTier": "medium",
+          "minimumReviewedCases": 80,
+          "goal": "correct-scaffolded-help-without-assessment-leak"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Counts are planning targets, not claims of statistical sufficiency.",
+    "Reference and sampling review IDs must be supplied by trusted human review before evidence can pass the quality gate.",
+    "Synthetic or model-authored cases alone cannot authorize routing.",
+    "Image generation, speech recognition and text-to-speech are excluded from this text benchmark."
+  ]
+}
