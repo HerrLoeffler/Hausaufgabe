@@ -47,6 +47,10 @@ def validate_policy(policy):
         raise ValueError("Attempts must be between 1 and 3")
     if policy.get("automaticProduction") is not False:
         raise ValueError("Automatic Production is forbidden")
+    from .profiles import CATALOG, WEB, GAMES
+    enabled_profiles = policy.get('enabledExecutionProfiles', [WEB.id])
+    if not isinstance(enabled_profiles,list) or any(not isinstance(x,str) or x not in CATALOG for x in enabled_profiles) or len(set(enabled_profiles)) != len(enabled_profiles):
+        raise ValueError('Unknown or duplicate enabled execution profiles')
     rows = policy.get("workstreams")
     if not isinstance(rows, list):
         raise ValueError("workstreams must be a list")
@@ -55,7 +59,7 @@ def validate_policy(policy):
         if not isinstance(row, dict) or not ID.fullmatch(str(row.get("id", ""))) or row["id"] in seen:
             raise ValueError("Invalid or duplicate workstream")
         seen.add(row["id"])
-        if type(row.get("enabled")) is not bool or row.get("baseBranch") not in ALLOWED_BASES:
+        if type(row.get("enabled")) is not bool or row.get("baseBranch") not in ALLOWED_BASES | set(GAMES.allowed_targets):
             raise ValueError("Invalid workstream permission")
         if not SHA.fullmatch(str(row.get("approvedSha", ""))) or not ID.fullmatch(str(row.get("taskId", ""))):
             raise ValueError("Exact approved SHA and task ID required")
@@ -63,8 +67,10 @@ def validate_policy(policy):
             raise ValueError("Automatic continuation stops at technical staging")
         if row.get("execution", "legacy-worker") not in {"legacy-worker", "pipeline-v2"}:
             raise ValueError("Unknown execution engine")
-        if row.get("execution") == "pipeline-v2" and row["baseBranch"] != "feature/gradecrew-app-integration":
-            raise ValueError("Pipeline v2 currently admits only the gated web integration target")
+        if row.get("execution") == "pipeline-v2":
+            name = row.get('executionProfile', WEB.id)
+            if name not in enabled_profiles or row['baseBranch'] not in CATALOG[name].allowed_targets:
+                raise ValueError('Pipeline execution profile disabled or target differs')
     return policy
 
 

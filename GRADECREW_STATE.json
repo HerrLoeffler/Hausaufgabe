@@ -555,6 +555,23 @@
       "user_test": "not_performed",
       "handoff": "workstreams/audio-masterpiece-v2.md",
       "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
+    },
+    {
+      "id": "posthog-staging-telemetry-v1",
+      "task_id": "GC-TELEMETRY-POSTHOG-01",
+      "branch": "feature/posthog-staging-telemetry-v1",
+      "observed_head": "f319759f35ad2c83d0b9a3959584021e8baec07a",
+      "stage": "staging_deployed",
+      "integrated_into": "feature/gradecrew-app-integration@461da164aaf6469da999f8fe3f5f2210036a6ebf",
+      "combined_ci": "success_run_37235725698",
+      "dedicated_ci": "success_run_37235599673",
+      "staging_functions_run": 37235811020,
+      "staging": "ai_functions_deployed_with_posthog_token_injection_and_receipt",
+      "posthog_project": "GradeCrew Staging / EU Cloud / project 293682",
+      "posthog_privacy": "ip_anonymization_on_session_replay_off_console_capture_off_performance_capture_off_person_profiles_disabled_in_export",
+      "user_test": "real_event_not_yet_triggered",
+      "handoff": "workstreams/posthog-staging-telemetry-v1.md",
+      "next_action": "In Staging eine normale Remy-Aktion auslösen und anschließend in PostHog das eingegangene gradecrew.crew.* Event samt erlaubten Properties prüfen. Danach datensparsames Error Tracking V1 umsetzen."
     }
   ],
   "deployments": [

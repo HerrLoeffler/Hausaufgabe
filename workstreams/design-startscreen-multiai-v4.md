@@ -97,3 +97,9 @@ Martin öffnet den verifizierten Preview und prüft:
 4. Erst aus diesen echten visuellen Befunden wird der nächste Design-Pass abgeleitet.
 
 Production bleibt bis zur ausdrücklichen Freigabe gesperrt.
+
+## Nutzerabnahme 04.10.2026 – visuell nicht akzeptiert
+
+Martin bewertet den verifizierten v4-Preview als technisch verbessert, aber weiterhin **meilenweit** vom gewünschten Referenzbild entfernt. Das ist kein kleiner Spacing-/Polish-Fehler mehr. Der nächste Design-Pass soll deshalb nicht erneut nur CSS-Geometrie verfeinern.
+
+Neuer Folgeauftrag: [GC-DESIGN-05](startscreen-hero-animation-20261004.md). Dort wird eine echte art-directed Hero-Szene inklusive optionaler First-Visit-Animation geprüft. Die bestehende DE/EN-i18n-Grenze bleibt verbindlich.

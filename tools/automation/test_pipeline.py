@@ -99,7 +99,7 @@ class ContractTests(unittest.TestCase):
             mirror=Path(directory)
             for subpath in ['tools/automation', '.github/workflows']:
                 (mirror/subpath).mkdir(parents=True,exist_ok=True)
-            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','recovery.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh']
+            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','recovery.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh','profiles.py']
             for name in names:(mirror/'tools/automation'/name).write_text((root/'tools/automation'/name).read_text())
             for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml','guardian-recovery.yml']:
                 (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())

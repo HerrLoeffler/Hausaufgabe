@@ -4,7 +4,7 @@
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
-- Arbeitszustand: aktiv; Spec freigegeben, Planreview/Execution-Methode offen; Escape-Deploy erfolgreich verifiziert.
+- Arbeitszustand: aktiv; Spec und Plan freigegeben; Inline-Implementation aktiv; Escape-Deploy erfolgreich verifiziert.
 - Aufgabenbranch: docs/guardian-admission-profiles-20261004
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
@@ -67,3 +67,7 @@ Externer Start bestätigt: bestehender Run 37021633218, Attempt 2, Status in_pro
 Preview: https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app . Read-only Browser-DOM bestätigt „Die verriegelte Schule“, drei Räume/acht Lernfragen/vier Minirätsel und Einstieg. Keine Vorbereitung/Generierung gestartet. Die direkte Function-GET-Prüfung war im Browser durch ERR_BLOCKED_BY_CLIENT blockiert; dies ist kein Serverfehlernachweis und wurde nicht umgangen. Kein tatsächlicher Generator-/Provider-E2E-Test.
 CLI führt die übliche Runtime-Secret-Bindung für 950775032930-compute aus; dieselbe Secret-Accessor-Bindung war schon vor der Änderung sichtbar. Agent hat ausschließlich die ausdrücklich freigegebene direkte Viewer-Bindung ergänzt; kein Secret-Payload gelesen.
 GRADECREW_STATE.json wird in diesem PR für games-escape und zwei getrennte Preview-Komponenten aktualisiert. Kein Bestandteil des gemeinsamen Web-Release-Batches, keine Rules- oder Production-Änderung. Das Legacy-Workflowlog ist Deploynachweis, besitzt aber noch kein neues kryptografisches Guardian-Paket-/Receipt-Profil. Geräteabnahme und drei neue Profilreviews bleiben offen. Versuch 1 und ältere Läufe bleiben in previous_observation erhalten.
+
+## Implementation checkpoint — Task 1
+
+Martin hat Plan/Inline-Umsetzung freigegeben. Games bleiben getrennt von Haupt-App/Seite; separate Games-Testseite darf weiter genutzt werden. Keine Zusammenführung autorisiert. Eigener lokaler Checkout des bestehenden PR126-Branches, aktuelles main 7b5b322 normal zusammengeführt (PostHog/BugOps erhalten). Live Development Status 37237576635 geprüft: 19 aktive Workstreams, 12 Überschneidungen; keine andere GC08-Implementation gefunden. Profilresolver und explizite Admission-Grenze implementiert, Games weiterhin standardmäßig aus. RED: drei neue Profiltests fehlten. GREEN: 108 Automation-Tests bestanden; Node24 lokal, kein Node22-/Deploy-/Human-Nachweis. Keine Queue-/Ledger-/Budget-/Provider-/Cloud-Aktion. Nächster Schritt: Lifecycle/CI-Profilbindung.

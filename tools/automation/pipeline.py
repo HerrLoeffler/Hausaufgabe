@@ -70,7 +70,7 @@ def digest(value):
 def control_hash(root):
     """Documentation-only main commits do not invalidate an in-flight task."""
     names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py', 'recovery.py',
-             'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh']
+             'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh', 'profiles.py']
     files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
     for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml', 'guardian-recovery.yml']:
         files[name] = (Path(root)/'.github/workflows'/name).read_text()
@@ -89,7 +89,7 @@ def identifier(value):
     return value
 
 
-def path_allowed(name):
+def path_allowed(name, profile=None):
     if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_-][A-Za-z0-9_./-]{0,179}', name):
         raise ValueError('Unsafe file path')
     path = PurePosixPath(name)
@@ -101,13 +101,15 @@ def path_allowed(name):
         raise ValueError('Existing tests cannot be weakened by the coding model')
     if any(p.startswith(('deploy-', 'secure-', 'admin-', 'ai-', 'student-')) for p in path.parts):
         raise ValueError('Sensitive source needs separate admission')
+    if profile is not None and profile.writable_paths and name not in profile.writable_paths:
+        raise ValueError('Path outside execution profile')
     return name
 
 
 def task_contract(task):
     identifier(task.get('id')); sha(task.get('base_sha'))
-    if task.get('base_branch') != WEB or task.get('risk') != 'web-ui':
-        raise ValueError('Only explicit web-ui admission supported')
+    from .profiles import validate_profile_task
+    profile = validate_profile_task(task)
     for name in ('goal', 'acceptance', 'constraints'):
         if not isinstance(task.get(name), str) or not 1 <= len(task[name].encode()) <= 16000:
             raise ValueError('Incomplete task contract')
@@ -118,15 +120,17 @@ def task_contract(task):
     if not isinstance(context, list) or len(context) > 12 or len(set(context)) != len(context):
         raise ValueError('Invalid context paths')
     for name in files + context:
-        path_allowed(name)
+        path_allowed(name, profile)
     limits = cost_limits(task)
-    if task.get('validation_profile') != 'web-combined-v1' or type(task.get('max_cost_usd')) not in {int, float} or task['max_cost_usd'] != limits['task_usd']:
+    if task.get('validation_profile') != profile.validation_profile or type(task.get('max_cost_usd')) not in {int, float} or task['max_cost_usd'] != limits['task_usd']:
         raise ValueError('Explicit validation and reserved task budget required')
     return task
 
 
 def candidate_contract(candidate, task, request_id):
     task_contract(task); identifier(request_id)
+    from .profiles import resolve_profile
+    profile = resolve_profile(task)
     if not isinstance(candidate, dict) or set(candidate) != {'files', 'summary'}:
         raise ValueError('Unexpected candidate schema')
     files = candidate['files']
@@ -138,7 +142,7 @@ def candidate_contract(candidate, task, request_id):
     for item in files:
         if not isinstance(item, dict) or set(item) != {'path', 'content'}:
             raise ValueError('Files must be plain text replacements')
-        name = path_allowed(item['path'])
+        name = path_allowed(item['path'], profile)
         if name not in task['allowed_files'] or name in seen:
             raise ValueError('Out-of-scope or duplicate file')
         seen.add(name)
