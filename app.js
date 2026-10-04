@@ -6875,7 +6875,7 @@ async function renderAdminOverview() {
     ["Jemals veröffentlicht", state.adminQuizzes.filter((q) => q.publishedAt).length, "↗"],
     ["Tests beendet", state.adminQuizzes.filter((q) => q.endedAt).length, "✓"],
     ["Abgaben", submissions, "↓"],
-    ["Feedback erhalten", state.adminFeedback.length, "💬"]
+    ["Feedback erhalten", state.adminFeedbackTotal ?? state.adminFeedback.length, "💬"]
   ] : [
     ["Aktive Lehrkräfte", activeTeachers, "◎"],
     ["Neu registriert", newTeachers, "+"],
