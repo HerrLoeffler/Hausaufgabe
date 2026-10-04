@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { mkdir, readFile, writeFile, chmod } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const { priceUsage, reserveForRoute } = require('../../ai-gateway/lib/routing-cost.js');
@@ -321,4 +322,4 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) await main();
