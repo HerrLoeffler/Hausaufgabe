@@ -47,8 +47,12 @@ test('learning content is seeded and can vary without per-student AI calls', () 
   assert.match(js, /q1Base = pick/);
   assert.match(js, /q2Base = pick/);
   assert.match(js, /q3Base = pick/);
+  assert.match(js, /q4Base = pick/);
+  assert.match(js, /q5Base = pick/);
+  assert.match(js, /q6Base = pick/);
   assert.match(js, /radioChannel = 42 \+ \(seed % 17\)/);
   assert.match(js, /makeTransfer/);
+  assert.match(js, /makeIncreaseTransfer/);
 });
 
 test('wrong answers never directly grant learning progress', () => {
@@ -56,11 +60,32 @@ test('wrong answers never directly grant learning progress', () => {
   const end = js.indexOf('function openWinch', start);
   const body = js.slice(start, end);
   assert.match(body, /state\.attempts\[id\]\+\+/);
+  assert.match(body, /state\.transferAttempts\[id\]\+\+/);
   assert.match(body, /state\.learningMode = 'transfer'/);
+  assert.match(body, /Coco-Tipp/);
+  assert.match(body, /Coco-Beispiel/);
+  assert.match(body, /data\.solution/);
   assert.match(body, /rewardQuestion\(id\)/);
   const wrong = body.indexOf('state.selectedAnswer !== data.correct');
   const reward = body.indexOf('rewardQuestion(id)');
   assert.ok(wrong >= 0 && reward > wrong);
+});
+
+
+test('L3 adaptive learning path spans six story gates', () => {
+  for (const id of ['q1', 'q2', 'q3', 'q4', 'q5', 'q6']) {
+    assert.match(js, new RegExp(`${id}: \\\{`));
+  }
+  assert.match(js, /state\.solved\.size\}\/6/);
+  assert.match(js, /Winde kalibrieren/);
+  assert.match(js, /Flussroute berechnen/);
+  assert.match(js, /Signal verstärken/);
+  assert.match(js, /openLearning\('q4'\)/);
+  assert.match(js, /openLearning\('q5'\)/);
+  assert.match(js, /openLearning\('q6'\)/);
+  assert.match(js, /Lernweg · Anwenden/);
+  assert.match(js, /Wenn etwas nicht klappt, hilft Coco Schritt für Schritt/);
+  assert.match(js, /Transfer geschafft/);
 });
 
 test('teacher-independent gameplay uses no external runtime assets or APIs', () => {
@@ -119,10 +144,10 @@ test('M1.2 replaces state-changing delayed callbacks with guarded scheduling', (
   assert.doesNotMatch(js, /setTimeout\(\(\) => \{ \$\('winchDialog'\)\.close\(\)/);
   assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('generatorDialog'\)\.close\(\)/);
   assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('victoryDialog'\)\.showModal\(\)/);
-  assert.match(js, /scheduleGuarded\(850/);
-  assert.match(js, /scheduleGuarded\(650/);
-  assert.match(js, /scheduleGuarded\(500/);
+  assert.match(js, /scheduleGuarded\(1050/);
   assert.match(js, /scheduleGuarded\(700/);
+  assert.match(js, /scheduleGuarded\(550/);
+  assert.match(js, /scheduleGuarded\(650/);
 });
 
 
