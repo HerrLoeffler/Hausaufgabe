@@ -204,6 +204,24 @@ function questionShell(question, index) {
     figure.appendChild(image);
     section.appendChild(figure);
   }
+  if (question.audio?.src) {
+    const audioBox = document.createElement("div");
+    audioBox.className = "secureQuestionAudio";
+    const label = document.createElement("strong");
+    label.textContent = "🔊 Höraufgabe";
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.preload = "metadata";
+    audio.src = question.audio.src;
+    audio.setAttribute("aria-label", `Audio zu Aufgabe ${index + 1} anhören`);
+    audioBox.append(label, audio);
+    if (question.audio.aiGenerated !== false) {
+      const disclosure = document.createElement("small");
+      disclosure.textContent = "KI-generierte Stimme";
+      audioBox.appendChild(disclosure);
+    }
+    section.appendChild(audioBox);
+  }
   return section;
 }
 
