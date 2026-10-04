@@ -149,7 +149,16 @@
           }
         ],
         "estimatedUsd": 0.077048,
-        "deployReason": "hosting latest deployment is missing/pending/failed"
+        "deployReason": "hosting latest deployment is missing/pending/failed",
+        "deploymentRetries": {
+          "hosting": [
+            {
+              "runId": 37219916184,
+              "runAttempt": 1,
+              "state": "reserved"
+            }
+          ]
+        }
       }
     ]
   },
