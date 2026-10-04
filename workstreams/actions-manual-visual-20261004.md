@@ -21,3 +21,9 @@ Camp-Referenz. Jeep-Checkpoint wird jetzt an sechs echten Update-Szenarien
 geprüft; Dokumentationsvertrag folgt der vorhandenen aktuellen Bible.
 Produktdateien und freigegebene visuelle Richtung unverändert. Neuer exakter
 Remote-Nachweis nach diesem Folgecommit erforderlich.
+
+
+Parallelstand erhalten: Zielbranch inzwischen 9cc4028 mit eigenem Test-Fix und
+erfolgreichem V2-Preview. Dessen komplette aktuelle Tests und Preview-Übergabe
+bleiben erhalten; ergänzt nur Jeep-Verhaltensszenarien und manueller Push-Stop.
+Kein erneuter Deploy durch diese Zusammenführung.

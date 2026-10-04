@@ -231,6 +231,7 @@ test('M1.5 vehicle recovery uses safe checkpoints instead of full-run restart', 
   assert.match(js, /safeProgress: 0/);
   assert.match(js, /state\.jeep\.distance = state\.jeep\.safeDistance/);
   assert.match(js, /state\.river\.progress = state\.river\.safeProgress/);
+  assert.match(js, /jeepCheckpoint > (?:state\.jeep|jeep)\.safeDistance/);
   // Execute the current Jeep update: its local `jeep` alias must still advance
   // checkpoints monotonically and only in the safe window, even after resets.
   const updateSource = js.slice(js.indexOf('  function updateJeep('), js.indexOf('  function updateAnimals('));
@@ -315,13 +316,14 @@ test('M2 mechanic instructions are concise and student-friendly', () => {
 });
 
 
-test('visual bible defines the current Amazonas Overworld quality bar', () => {
+test('V0.1 visual bible defines the Amazonas reference quality bar', () => {
   for (const phrase of [
     'originale Retro-Handheld-Top-Down-Adventure-Overworld',
     'Gemeinsame Overworld-Regeln',
-    'Retro-Overworld-Feldstation',
-    '## Performance',
-    'ein echter manueller Geräte-/Screenshot-Test'
+    'MANGO-1',
+    'Game-Feel',
+    'Performance',
+    'Verbindliches Abnahmekriterium'
   ]) assert.ok(visualBible.includes(phrase), 'missing visual rule: ' + phrase);
   assert.match(html, /class="visual-masterpiece"/);
   assert.match(html, /GRADECrew ESCAPE · EXPEDITION/);
