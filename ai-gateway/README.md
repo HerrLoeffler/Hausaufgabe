@@ -2,7 +2,7 @@
 
 Status: **staging-only multi-provider gateway**. Production and GradeCrew's current direct OpenAI generation path are not changed by this work.
 
-This service is the isolated server-side entry point for multiple AI providers. Anthropic/Claude authenticates through Google Cloud -> Anthropic Workload Identity Federation (WIF), so no long-lived Anthropic key is stored. OpenAI uses GradeCrew's existing staging Secret Manager secret and the Responses API. Gemini uses Vertex AI with the existing Cloud Run runtime service account, so no Gemini API key or additional secret is created.
+This service is the isolated server-side entry point for multiple AI providers. Anthropic/Claude authenticates through Google Cloud -> Anthropic Workload Identity Federation (WIF), so no long-lived Anthropic key is stored. OpenAI uses GradeCrew's existing staging Secret Manager secret and the Responses API. Gemini uses Vertex AI with the existing Cloud Run runtime service account, so no Gemini API key or additional secret is created. Mistral uses its dedicated staging API key mounted from Google Secret Manager.
 
 ## Current endpoints
 
@@ -11,6 +11,7 @@ This service is the isolated server-side entry point for multiple AI providers. 
 - `POST /providers/anthropic/test` — tiny Claude smoke request (`GATEWAY_OK`).
 - `POST /providers/openai/test` — tiny OpenAI smoke request (`GATEWAY_OK`).
 - `POST /providers/gemini/test` — tiny Gemini smoke request (`GATEWAY_OK`).
+- `POST /providers/mistral/test` — tiny Mistral smoke request (`GATEWAY_OK`).
 - `POST /v1/generate` — explicit provider text generation while automatic routing is disabled.
 - `POST /v1/route` — signed quality/budget router; it remains unusable until the required policy/runtime dependencies are deliberately configured.
 
@@ -33,10 +34,11 @@ Provider choice and model choice are separate controls. Every runtime provider h
 - Anthropic: `claude-haiku-4-5`
 - OpenAI: `gpt-5.6-luna`
 - Gemini: `gemini-3.5-flash-lite`
+- Mistral: `mistral-small-2603`
 
 A caller cannot request a more expensive model unless an operator first expands the relevant environment allowlist. Automatic routing still requires signed, scope-bound quality evidence and its own budget policy; adding a model to an allowlist does **not** qualify it for routing.
 
-OpenAI and Gemini are text-only in their first gateway adapters. Image/audio capability is intentionally fail-closed until its own request contract, privacy boundary and tests exist.
+OpenAI, Gemini and Mistral are text-only in their first gateway adapters. Image/audio capability is intentionally fail-closed until its own request contract, privacy boundary and tests exist.
 
 ## Anthropic WIF configuration
 
@@ -95,6 +97,16 @@ Runtime variables:
 
 The adapter obtains short-lived OAuth access tokens from the Google metadata server using the Cloud Run runtime service account. It calls Vertex AI `generateContent` through the EU multi-region endpoint, maps the shared `reasoning_effort` contract to Gemini `thinkingLevel`, normalizes usage including cached/thinking tokens, and never logs provider payloads or access tokens. Gemini 3.x manages sampling automatically, so custom temperature values are validated for the shared contract but are not forwarded to Vertex AI.
 
+## Mistral configuration
+
+Mistral uses `MISTRAL_API_KEY` from Google Secret Manager. The key is never committed or logged. Runtime model controls:
+
+- `MISTRAL_DEFAULT_MODEL=mistral-small-2603`
+- `MISTRAL_ALLOWED_MODELS=mistral-small-2603`
+- `MISTRAL_BASE_URL=https://api.mistral.ai` (optional override)
+
+The adapter calls `POST /v1/chat/completions`, uses the standard service tier, supports the shared text/reasoning contract, normalizes cached token usage, and rejects non-text inputs before an external call. Prompt caching remains disabled for the initial four-provider baseline so latency/cost comparisons are interpretable.
+
 ## Cloud Run target
 
 Staging target:
@@ -108,7 +120,7 @@ Staging target:
 - max instances: `2`
 - concurrency: `5`
 
-The automatic staging workflow deploys a candidate revision with zero normal traffic. It promotes only after `/health`, provider listing, and real Claude/OpenAI/Gemini smoke calls all pass. The existing rollback and stale-source guards remain active.
+The automatic staging workflow deploys a candidate revision with zero normal traffic. It promotes only after `/health`, provider listing, and real Claude/OpenAI/Gemini/Mistral smoke calls all pass. The existing rollback and stale-source guards remain active.
 
 ## Local checks
 
@@ -129,4 +141,4 @@ Cached input tokens are normalized where providers expose them so later cost acc
 
 ## Next provider work
 
-Mistral can implement the same normalized provider interface. Provider quality is never guessed in code. Controlled benchmark evidence per job/model/scope must exist before the automatic router can select any candidate. Prompt-caching optimization should be benchmarked after the provider baseline is stable so cost/latency comparisons remain interpretable.
+The initial four-provider baseline is now represented in the gateway code: OpenAI, Claude, Gemini and Mistral. Provider quality is never guessed in code. Controlled benchmark evidence per job/model/scope must exist before the automatic router can select any candidate. Prompt-caching optimization should be benchmarked after the provider baseline is stable so cost/latency comparisons remain interpretable.
