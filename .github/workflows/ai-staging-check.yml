@@ -15,6 +15,7 @@ on:
       - 'feature/design-*'
       - 'feature/brand-*'
       - 'feature/i18n-*'
+      - 'feature/audio-*'
   workflow_dispatch:
 
 permissions:
@@ -187,7 +188,9 @@ jobs:
           node --test crew-tour-gc25-final-polish.test.mjs
           node --test crew-tour-gc26-story-polish.test.mjs
           node --test student-attempt-guard.test.mjs
+          node --test crew-assistant-core.test.mjs
           node --test remy-ai-help.test.mjs
+          node --test audio-listening-v1.test.mjs
           test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
