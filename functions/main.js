@@ -56,7 +56,7 @@ function cleanAudioQuizId(value) {
   return quizId;
 }
 
-function cleanAudioDrafts(value) {
+function cleanAudioDrafts(value, { includeStale = false } = {}) {
   if (!Array.isArray(value) || value.length > 100) throw new HttpsError("invalid-argument", "Ungültige Hörtext-Liste.");
   const seen = new Set();
   return value.map(item => {
@@ -67,7 +67,7 @@ function cleanAudioDrafts(value) {
     seen.add(questionId);
     const script = String(item?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
     if (script.length > 500) throw new HttpsError("invalid-argument", "Ein Hörtext ist länger als 500 Zeichen.");
-    return { questionId, script };
+    return { questionId, script, ...(includeStale ? { stale: item?.stale === true } : {}) };
   });
 }
 
@@ -100,8 +100,9 @@ const getQuestionAudioDrafts = onCall(telemetryOpts, async request => {
     const solutionScript = String(data.solutionScript || "").normalize("NFKC").replace(/\s+/g, " ").trim().slice(0, 500);
     if (script) drafts[item.id] = script;
     if (solutionScript) solutionDrafts[item.id] = solutionScript;
+    const solutionStale = data.solutionNeedsRegeneration === true;
     const audioDataUrl = String(data.solutionAudioDataUrl || "");
-    if (audioDataUrl.startsWith("data:audio/")) {
+    if (!solutionStale && audioDataUrl.startsWith("data:audio/")) {
       solutionAssets[item.id] = {
         audioDataUrl,
         audioByteSize: Number(data.solutionAudioByteSize || 0),
@@ -117,12 +118,12 @@ const getQuestionAudioDrafts = onCall(telemetryOpts, async request => {
 const syncQuestionAudioDrafts = onCall(telemetryOpts, async request => {
   const quizId = cleanAudioQuizId(request.data?.quizId);
   const drafts = cleanAudioDrafts(request.data?.drafts || []);
-  const solutionDrafts = cleanAudioDrafts(request.data?.solutionDrafts || []);
+  const solutionDrafts = cleanAudioDrafts(request.data?.solutionDrafts || [], { includeStale: true });
   const { db, quizRef } = await requireAudioQuizAccess(request, quizId, { write: true });
   const collectionRef = quizRef.collection("audioScripts");
   const existing = await collectionRef.get();
   const listening = new Map(drafts.filter(item => item.script).map(item => [item.questionId, item.script]));
-  const solutions = new Map(solutionDrafts.filter(item => item.script).map(item => [item.questionId, item.script]));
+  const solutions = new Map(solutionDrafts.filter(item => item.script).map(item => [item.questionId, { script: item.script, stale: item.stale === true }]));
   const existingById = new Map(existing.docs.map(item => [item.id, item]));
   const ids = new Set([...existingById.keys(), ...listening.keys(), ...solutions.keys()]);
   const batch = db.batch();
@@ -130,7 +131,8 @@ const syncQuestionAudioDrafts = onCall(telemetryOpts, async request => {
     const oldDoc = existingById.get(questionId);
     const oldData = oldDoc?.data() || {};
     const script = listening.get(questionId) || "";
-    const solutionScript = solutions.get(questionId) || "";
+    const solutionDraft = solutions.get(questionId) || { script: "", stale: false };
+    const solutionScript = solutionDraft.script;
     const ref = collectionRef.doc(questionId);
     if (!script && !solutionScript) {
       if (oldDoc) batch.delete(ref);
@@ -139,9 +141,10 @@ const syncQuestionAudioDrafts = onCall(telemetryOpts, async request => {
     const patch = {
       script: script || FieldValue.delete(),
       solutionScript: solutionScript || FieldValue.delete(),
+      solutionNeedsRegeneration: solutionScript ? solutionDraft.stale === true : FieldValue.delete(),
       updatedAt: new Date()
     };
-    if (String(oldData.solutionScript || "") !== solutionScript) {
+    if (solutionDraft.stale === true || String(oldData.solutionScript || "") !== solutionScript) {
       patch.solutionAudioDataUrl = FieldValue.delete();
       patch.solutionAudioByteSize = FieldValue.delete();
       patch.solutionAudioVoice = FieldValue.delete();
@@ -172,6 +175,7 @@ const generateQuestionSolutionAudio = onCall(assistantOpts, async request => {
     solutionAudioVoice: asset.audioVoice,
     solutionAudioModel: asset.audioModel,
     solutionAudioAiGenerated: asset.audioAiGenerated !== false,
+    solutionNeedsRegeneration: false,
     updatedAt: new Date()
   }, { merge: true });
   return { asset };
