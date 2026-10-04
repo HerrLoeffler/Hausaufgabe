@@ -328,6 +328,7 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .questionAudioPreview audio{width:100%;max-width:620px}
 .questionAudioActions{display:flex;gap:8px;flex-wrap:wrap}
 .questionAudioDisclosure{color:#667085;font-size:12px;line-height:1.4}
+.solutionAudioPanel{border-color:#cfe5d8;background:#fbfefc}.solutionAudioPanel>summary{color:#245d3b}.solutionAudioPanel .questionAudioState{color:#245d3b}
 .studentQuestionAudio{
   display:grid;
   gap:8px;
