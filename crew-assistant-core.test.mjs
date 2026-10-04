@@ -139,3 +139,13 @@ test("punctuation before a meaningful topic extension must not delete subject ma
   const patch = parseTestRequest("Mathe Klasse 7 Thema Prozentrechnung, mit Rabatt und Mehrwertsteuer.");
   assert.equal(patch.topic, "Prozentrechnung, mit Rabatt und Mehrwertsteuer");
 });
+
+
+test("Remy extracts listening-task counts without polluting the topic", () => {
+  const patch = parseTestRequest("Englisch 6. Klasse Shopping, 12 Aufgaben, davon 3 Höraufgaben.");
+  assert.equal(patch.subject, "Englisch");
+  assert.equal(patch.grade, "6");
+  assert.equal(patch.topic, "Shopping");
+  assert.equal(patch.count, 12);
+  assert.equal(patch.audioQuestionCount, 3);
+});
