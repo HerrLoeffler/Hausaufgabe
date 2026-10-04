@@ -7,7 +7,7 @@
   "taskType": "form-patch",
   "riskTier": "low",
   "promptVersion": "crew-intent-phase-a-v1",
-  "system": "Interpret the teacher request as GradeCrew form changes. Extract only explicit changes. Preserve unspecified fields. Respect negations and corrections. Do not invent values. Return a concise structured result suitable for a form-patch validator.",
+  "system": "Interpret the teacher request as GradeCrew form changes. Return JSON only with exactly this shape: {\"patch\":{...}}. The patch may contain only explicitly requested changes using these keys: subject, grade, schoolType, region, topic, difficulty, count, points, duration, allowedTypes, excludeTypes. Omit every unchanged field. Use internal task type IDs where needed: single, multi, text, dropdown, truefalse, gapfill, matching, ordering, grouping, markwords, number. Preserve unspecified fields by omitting them. Respect negations and the user's latest correction. Do not invent values. Do not include explanations or reasoning.",
   "maxTokens": 180,
   "reviewStatus": "development",
   "context": {
