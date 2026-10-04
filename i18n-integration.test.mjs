@@ -25,6 +25,8 @@ const crewUi = read("./crew-assistant-ui.js");
 const crewWrapper = read("./crew-assistant-core.js");
 const crewServer = read("./functions/lib/crew-assistant.js");
 const crewMain = read("./functions/main.js");
+const app = read("./app.js");
+const workspaceCss = read("./workspace.css");
 
 test("teacher app installs shared i18n before importing the core app", () => {
   const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=2"');
@@ -141,6 +143,48 @@ test("assessment language remains fixed per test and is not coupled to UI or gra
   assert.match(aiJob, /gradingLocale,/);
 });
 
+
+
+
+test("bilingual header gives the language selector a stable layout slot", () => {
+  assert.match(browserRuntime, /gradecrewLanguageReady/);
+  assert.match(browserRuntime, /grid-template-areas:"brand nav language" "user user user"/);
+  assert.match(browserRuntime, />#gradecrewLanguageControl\{grid-area:language;justify-self:end\}/);
+  assert.doesNotMatch(browserRuntime, /gradecrewLanguageControl\{[^}]*margin-left:8px/);
+});
+
+test("dynamic AI review and student-preview copy is covered in English", () => {
+  for (const sourceText of [
+    "Entwurf prüfen",
+    "Teilentwurf öffnen",
+    "KI-Entwurf prüfen",
+    "Prüfung abgeschlossen",
+    "Vorschau als Schüler",
+    "Vorschau auswerten",
+    "Vorschau ausgewertet – keine Abgabe gespeichert.",
+  ]) {
+    assert.ok(englishCatalog.includes(sourceText), "English dynamic translation missing: " + sourceText);
+  }
+});
+
+test("teacher student preview evaluates locally and never creates a real submission", () => {
+  assert.match(app, /submitStudentQuiz\(e, quiz, questions, \{ ownerPreview \}\)/);
+  assert.match(app, /if \(ownerPreview\) \{[\s\S]*renderStudentResult\([\s\S]*preview: true[\s\S]*Vorschau ausgewertet – keine Abgabe gespeichert\.[\s\S]*return;/);
+  const previewBranch = app.indexOf("if (ownerPreview) {", app.indexOf("async function submitStudentQuiz"));
+  const submissionWrite = app.indexOf('addDoc(collection(db, "quizzes", quiz.id, "submissions")', previewBranch);
+  assert.ok(previewBranch >= 0 && submissionWrite > previewBranch, "preview branch must exit before a submission write");
+  assert.match(app, /studentPreviewNotice/);
+  assert.match(workspaceCss, /\.studentPreviewNotice/);
+});
+
+test("assessment locale survives normal saves and cannot silently change during an active published test", () => {
+  assert.match(app, /contentLocale,\s*gradingLocale,\s*localeContractVersion:/);
+  assert.match(app, /contentLocale: source\.contentLocale/);
+  assert.match(app, /contentLocale: quiz\.contentLocale/);
+  assert.match(assessmentLocaleUi, /persistedQuiz\?\.published === true && persistedQuiz\?\.ended !== true/);
+  assert.match(assessmentLocaleUi, /The test language cannot be changed while a published test is running/);
+  assert.match(assessmentLocaleUi, /brand-new manual draft may not exist in Firestore yet/);
+});
 
 test("bilingual browser module graph is cache-busted consistently", () => {
   assert.match(startup, /bootstrap\.mjs\?v=2/);
