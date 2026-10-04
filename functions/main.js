@@ -6,6 +6,7 @@ const existing = require("./index");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
+const { getFirestore } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
@@ -47,6 +48,76 @@ const telemetryOpts = {
   memory: "256MiB",
   enforceAppCheck: false
 };
+
+function cleanAudioQuizId(value) {
+  const quizId = String(value || "").trim();
+  if (!/^[A-Z0-9_-]{4,40}$/i.test(quizId)) throw new HttpsError("invalid-argument", "Ungültige Test-ID.");
+  return quizId;
+}
+
+function cleanAudioDrafts(value) {
+  if (!Array.isArray(value) || value.length > 100) throw new HttpsError("invalid-argument", "Ungültige Hörtext-Liste.");
+  const seen = new Set();
+  return value.map(item => {
+    const questionId = String(item?.questionId || "").trim();
+    if (!/^[A-Z0-9_-]{2,80}$/i.test(questionId) || seen.has(questionId)) {
+      throw new HttpsError("invalid-argument", "Ungültige oder doppelte Aufgaben-ID.");
+    }
+    seen.add(questionId);
+    const script = String(item?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
+    if (script.length > 500) throw new HttpsError("invalid-argument", "Ein Hörtext ist länger als 500 Zeichen.");
+    return { questionId, script };
+  });
+}
+
+async function requireAudioQuizAccess(request, quizId, { write = false } = {}) {
+  const { uid, profile } = await requireAiUser(request);
+  const db = getFirestore();
+  const quizRef = db.doc(`quizzes/${quizId}`);
+  const snap = await quizRef.get();
+  if (!snap.exists) throw new HttpsError("not-found", "Test nicht gefunden.");
+  const quiz = snap.data() || {};
+  const admin = profile.role === "admin";
+  if (!admin && quiz.ownerId !== uid) throw new HttpsError("permission-denied", "Kein Zugriff auf diesen Test.");
+  if (write && quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Der Test ist wegen eines Rechtehinweises gesperrt.");
+  if (write && quiz.published === true && quiz.ended !== true) {
+    throw new HttpsError("failed-precondition", "Hörtexte können während eines laufenden veröffentlichten Tests nicht verändert werden.");
+  }
+  return { db, quizRef, quiz, uid, profile };
+}
+
+const getQuestionAudioDrafts = onCall(telemetryOpts, async request => {
+  const quizId = cleanAudioQuizId(request.data?.quizId);
+  const { quizRef } = await requireAudioQuizAccess(request, quizId);
+  const snap = await quizRef.collection("audioScripts").get();
+  const drafts = {};
+  for (const doc of snap.docs.slice(0, 100)) {
+    const script = String(doc.data()?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim().slice(0, 500);
+    if (script) drafts[doc.id] = script;
+  }
+  return { drafts };
+});
+
+const syncQuestionAudioDrafts = onCall(telemetryOpts, async request => {
+  const quizId = cleanAudioQuizId(request.data?.quizId);
+  const drafts = cleanAudioDrafts(request.data?.drafts || []);
+  const { db, quizRef } = await requireAudioQuizAccess(request, quizId, { write: true });
+  const collectionRef = quizRef.collection("audioScripts");
+  const existing = await collectionRef.get();
+  const keep = new Map(drafts.filter(item => item.script).map(item => [item.questionId, item.script]));
+  const batch = db.batch();
+  for (const doc of existing.docs) {
+    if (!keep.has(doc.id)) batch.delete(doc.ref);
+  }
+  for (const [questionId, script] of keep) {
+    batch.set(collectionRef.doc(questionId), {
+      script,
+      updatedAt: new Date()
+    }, { merge: true });
+  }
+  await batch.commit();
+  return { ok: true, count: keep.size };
+});
 
 function patchMetricFields(patch = {}) {
   const fields = [];
@@ -218,6 +289,8 @@ module.exports = {
   recordCrewTelemetry,
   getCrewTelemetrySummary,
   cleanupCrewTelemetry,
+  getQuestionAudioDrafts,
+  syncQuestionAudioDrafts,
   crewAssistant,
   reviseWholeTest
 };
