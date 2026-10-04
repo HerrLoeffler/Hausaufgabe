@@ -1,0 +1,30 @@
+name: Recover diagnosed Guardian permissions
+on:
+  push:
+    branches: [main]
+    paths: ['automation/recovery-requests/*.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-stage-guardian
+  cancel-in-progress: false
+jobs:
+  recover:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact 403 evidence and preserve history before new attempt
+        run: python3 -m tools.automation.recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}

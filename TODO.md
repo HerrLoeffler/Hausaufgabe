@@ -145,3 +145,12 @@ GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Game
 | ID | Aufgabe | Status / nächster Schritt |
 |---|---|---|
 | GC-AUTOMATION-12 | Kleines Kostenprofil und konkreten E2E-Pilot fertig vorbereiten | Über PR #71 auf main integriert (6810e163). 91 lokale Tests sowie Guardian-CI 37194975024, Handoff 37194975026, Development Status 37194975086 und isolierte Gesamt-Rehearsal 37194975244 grün. Gleiche vier Modelle, engere Eingabe-/Ausgabegrenzen, max. 0,85 USD/Versuch und 2,55 USD/Auftrag; Standardprofil bleibt kompatibel. Aktuelle offizielle Standardpreise geprüft. Secrets/Flags fehlen, kein bezahlter Pilot. [Übergabe](workstreams/guardian-budget-pilot-v1.md) |
+
+## Guardian-Aktivierung und Gesamtprüfung 04.10.2026
+
+| ID | Aufgabe | Aktueller Nachweis / nächster Schritt |
+|---|---|---|
+| GC-AUTOMATION-13 | Diagnostizierten Review-403-Pilot sicher fortsetzen | Neuer einmaliger main-Auftrag prüft echte Run-/Job-/403-Nachweise, aktuellen Quell-SHA, PR und verbleibendes Budget; alte Historie und 0,85-USD-Reservierung bleiben erhalten. Danach neuer normaler Versuch mit allen Gates, kein Workflow-Rerun. 99 lokale Tests grün; Remote-CI und Paid-Fortsetzung separat prüfen. [Übergabe](workstreams/guardian-recovery-audit-20261004.md) |
+| GC-ARCH-AUDIT-02 | Gesamten aktuellen Code und automatische Zulassung aller Baustellen prüfen | Martin hat den vollständigen Audit und die Weiterbearbeitung geeigneter Aufträge freigegeben. Frisches Branch-/PR-Inventar: mehrere parallele Workstreams. Pilot zuerst; vorbereiteter Startscreen-Task derzeit wegen Context-Allowlist und Größe nicht ausführbar. Backend/Rules/Games/iOS brauchen weiterhin eigene Profile. Keine automatische Geräte-/Production-Abnahme. [Übergabe](workstreams/guardian-recovery-audit-20261004.md) |
+
+GC-AUTOMATION-01/07/12: frühere Aussage „Keys/Flags fehlen“ ist überholt. Admission 37196805396 belegt beide Flags und alle drei Schlüssel; Worker/PR #78/Combined-CI und Claude auf echtem Pilot erfolgreich. Run 37196835882 scheitert allein an OpenAI-Review-403; keine Integration oder Guardian-Staging-Receipts. Gemessene Tokenkosten bisher geschätzt 0,023296 USD.

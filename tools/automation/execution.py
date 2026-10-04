@@ -123,7 +123,12 @@ def prepare(request_id):
                     if SECRET.search(text):
                         raise ValueError('Credential in previous source')
                     previous_source[entry['path']] = text
+    recovery = previous[-1].get('manualRecovery', {}) if previous else {}
+    allow_same_candidate = (recovery.get('kind') == 'confirmed-review-permission-403'
+                            and recovery.get('taskHash') == digest(task)
+                            and recovery.get('previousRequestId') == previous[-1]['requestId'])
     save('contract', {'requestId': request_id, 'task': task, 'source': source, 'feedback': feedback,
+                      'allowSameCandidateAfterPermissionRecovery': allow_same_candidate,
                       'previousCandidate': previous_source, 'controlSha': attempt['controlSha'], 'taskHash': digest(task)})
     if SECRET.search(json.dumps(load('contract'), ensure_ascii=False)):
         raise ValueError('Credential pattern in task/context/feedback; never send to provider')
@@ -150,7 +155,8 @@ def build():
     if not changed:
         raise ValueError('No actual change to publish')
     candidate = candidate_contract({'summary': result['summary'], 'files': changed}, contract['task'], contract['requestId'])
-    if contract.get('previousCandidate') and all(contract['previousCandidate'].get(f['path']) == f['content'] for f in candidate['candidate']['files']):
+    if (contract.get('previousCandidate') and not contract.get('allowSameCandidateAfterPermissionRecovery')
+            and all(contract['previousCandidate'].get(f['path']) == f['content'] for f in candidate['candidate']['files'])):
         raise ValueError('Repair repeats rejected code; do not pay for duplicate reviews')
     save('candidate', candidate)
 

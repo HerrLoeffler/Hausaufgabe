@@ -1,0 +1,11 @@
+{
+  "id": "pilot-model-permissions-20261004",
+  "taskId": "pilot-tutorial-later-a11y-20261004",
+  "previousRequestId": "run-37196815805-1",
+  "runId": 37196835882,
+  "taskHash": "f45f99aa8e7cef93cdb640fc9e23008c97a0222038baf484fe940bc5b7b7f4f8",
+  "head": "bb8188f9dc1928e7ab9a956b952beabd4af5844b",
+  "kind": "confirmed-review-permission-403",
+  "permissionFixConfirmed": true,
+  "reason": "Martin confirmed unblocking gpt-6-astra and gpt-6-sol at 13:03 Europe/Berlin and explicitly requested continuation at 13:08. Both original review jobs returned definite HTTP 403; worker, combined validation and Claude review completed. Permit one new normal attempt within the unchanged 3-attempt / 2.55 USD task limit; do not rerun paid jobs or reset history."
+}

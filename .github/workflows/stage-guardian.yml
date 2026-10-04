@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
       - name: Verify bounded continuation logic
         run: |
-          python3 -m unittest tools.automation.test_guardian tools.automation.test_pipeline -v
+          python3 -m unittest tools.automation.test_guardian tools.automation.test_pipeline tools.automation.test_recovery -v
           bash -n tools/automation/validate-web.sh
       - name: Describe next automatic steps and missing setup
         env:
