@@ -100,3 +100,12 @@ Er soll vor dem Staging-Deploy das GitHub-Secret `POSTHOG_PROJECT_TOKEN_STAGING`
 ## Recovery/Reconciliation 2026-10-04
 
 Der Integrationsbranch war nach dem ersten PostHog-Pilot weitergelaufen. Die PostHog-Arbeit wurde deshalb nicht blind gemergt, sondern auf `fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41` neu aufgebaut. Dabei wurden insbesondere die neu hinzugekommenen Crew-Telemetrie-Felder (u. a. `solutionAudioQuestionCount`) aus dem aktuellen Integrationsstand erhalten. Die PostHog-Grenze bleibt unverändert staging-only und allowlisted.
+
+
+## Fresh CI after reconciliation
+
+- Volltest gestartet: GitHub Actions Run `37235599673`
+- Getesteter Commit: `9c35e6ee77e16207d98245e0d20a220a30c0917d`
+- Status beim Checkpoint: `queued`
+- Der temporäre Branch-CI-Haken wird in diesem Checkpoint wieder entfernt; Produkt-/Adaptercode bleibt unverändert.
+- Nächster Schritt: Ergebnis von Run `37235599673` prüfen; nur bei grünem Lauf Integration fortsetzen.
