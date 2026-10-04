@@ -11,6 +11,7 @@ const FIELD_SELECTORS = Object.freeze({
   difficulty: "#aiDifficulty",
   count: "#aiCount",
   points: "#aiPoints",
+  audioQuestionCount: "#aiAudioQuestionCount",
   notes: "#aiCustomNotes"
 });
 
