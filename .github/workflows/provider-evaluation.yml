@@ -1,0 +1,170 @@
+name: Manual staging provider evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      bundle:
+        description: Phase-A development bundle
+        required: true
+        type: choice
+        options:
+          - crew_intent
+          - question_rewriting
+          - game_hint
+      confirmation:
+        description: Type RUN_PHASE_A_MICROPILOT
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-provider-evaluation-staging
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: hausaufgabe-staging
+  REGION: europe-west1
+  SERVICE: gradecrew-ai-gateway-staging
+  EVALUATOR_SERVICE_ACCOUNT: gradecrew-ai-evaluator-staging@hausaufgabe-staging.iam.gserviceaccount.com
+  INTEGRATION_BRANCH: integration/ai-gateway-staging
+  EVALUATION_MAX_CALLS: '8'
+  EVALUATION_MAX_MICRO_USD: '500000'
+  EVALUATION_DAILY_MICROS: '1000000'
+  EVALUATION_MONTHLY_MICROS: '5000000'
+  EVALUATION_DAILY_CALLS: '40'
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Refuse wrong source, project or confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/$INTEGRATION_BRANCH"
+          test "$CONFIRMATION" = 'RUN_PHASE_A_MICROPILOT'
+          test "$PROJECT_ID" = 'hausaufgabe-staging'
+          test "$PROJECT_ID" != 'hausaufgabe-40294'
+          test "$SERVICE" = 'gradecrew-ai-gateway-staging'
+          current="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${INTEGRATION_BRANCH}" --jq .object.sha)"
+          test "$current" = "$GITHUB_SHA" || {
+            echo 'A newer integration revision exists; refusing stale evaluation.'
+            exit 1
+          }
+
+      - name: Select allowlisted synthetic bundle
+        id: bundle
+        env:
+          CHOICE: ${{ inputs.bundle }}
+        run: |
+          set -euo pipefail
+          case "$CHOICE" in
+            crew_intent)
+              path='tools/evaluation/cases/phase-a-crew-intent.de.dev.v1.json'
+              ;;
+            question_rewriting)
+              path='tools/evaluation/cases/phase-a-question-rewriting.de.dev.v1.json'
+              ;;
+            game_hint)
+              path='tools/evaluation/cases/phase-a-game-hint.de.dev.v1.json'
+              ;;
+            *)
+              echo 'Unsupported bundle.'
+              exit 1
+              ;;
+          esac
+          jq -e '.reviewStatus == "development" and (.cases | length) == 12' "$path" >/dev/null
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
+      - name: Install evaluator runtime dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: ai-gateway
+
+      - name: Offline evaluator safety tests
+        run: node --test tools/evaluation/provider-benchmark-worker.test.mjs tools/evaluation/cases/phase-a-bundles.test.mjs
+
+      - name: Authenticate as staging-only evaluator
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ vars.STAGING_EVALUATOR_WIF_PROVIDER }}
+          service_account: ${{ env.EVALUATOR_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      - name: Resolve and verify private staging gateway
+        id: gateway
+        run: |
+          set -euo pipefail
+          url="$(gcloud run services describe "$SERVICE"             --project "$PROJECT_ID"             --region "$REGION"             --format='value(status.url)')"
+          test -n "$url"
+          case "$url" in
+            https://gradecrew-ai-gateway-staging-*.a.run.app) ;;
+            *) echo 'Unexpected Cloud Run target.'; exit 1 ;;
+          esac
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Mint short-lived gateway identity token
+        id: token
+        env:
+          GATEWAY_URL: ${{ steps.gateway.outputs.url }}
+        run: |
+          set -euo pipefail
+          token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
+          test -n "$token"
+          echo "::add-mask::$token"
+          echo "value=$token" >> "$GITHUB_OUTPUT"
+
+      - name: Dry-run exact paid-call and reservation plan
+        env:
+          GC_EVALUATION_MAX_CALLS: ${{ env.EVALUATION_MAX_CALLS }}
+          GC_EVALUATION_MAX_MICRO_USD: ${{ env.EVALUATION_MAX_MICRO_USD }}
+        run: |
+          node tools/evaluation/run-provider-benchmark.mjs             "${{ steps.bundle.outputs.path }}"             tools/evaluation/provider-benchmark-plan.v1.json             tools/evaluation/provider-price-snapshot.2026-10-04.json
+
+      - name: Execute bounded Phase-A micro-pilot
+        env:
+          GCLOUD_PROJECT: ${{ env.PROJECT_ID }}
+          GC_GATEWAY_URL: ${{ steps.gateway.outputs.url }}
+          GC_GATEWAY_ID_TOKEN: ${{ steps.token.outputs.value }}
+          GC_EVALUATION_EXECUTE: 'true'
+          GC_EVALUATION_MAX_CALLS: ${{ env.EVALUATION_MAX_CALLS }}
+          GC_EVALUATION_MAX_MICRO_USD: ${{ env.EVALUATION_MAX_MICRO_USD }}
+          GC_EVALUATION_DAILY_MICROS: ${{ env.EVALUATION_DAILY_MICROS }}
+          GC_EVALUATION_MONTHLY_MICROS: ${{ env.EVALUATION_MONTHLY_MICROS }}
+          GC_EVALUATION_DAILY_CALLS: ${{ env.EVALUATION_DAILY_CALLS }}
+          GC_EVALUATION_OUTPUT_DIR: ${{ runner.temp }}/provider-evaluation
+        run: |
+          node tools/evaluation/run-provider-benchmark.mjs             "${{ steps.bundle.outputs.path }}"             tools/evaluation/provider-benchmark-plan.v1.json             tools/evaluation/provider-price-snapshot.2026-10-04.json             --execute
+
+      - name: Upload content-free metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-evaluation-metrics-${{ github.run_id }}
+          path: ${{ runner.temp }}/provider-evaluation/benchmark-metrics.json
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload private synthetic review packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-evaluation-private-review-${{ github.run_id }}
+          path: ${{ runner.temp }}/provider-evaluation/benchmark-private-review.json
+          retention-days: 7
+          if-no-files-found: error
