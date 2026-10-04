@@ -1,6 +1,6 @@
 import unittest
-from .admit_after_pilot import derive_task
-from .pipeline import digest, WEB
+from tools.automation.admit_after_pilot import derive_task
+from tools.automation.pipeline import digest, WEB
 
 A, B = 'a' * 40, 'b' * 40
 TASK = {'id': 'homepage-ui', 'base_sha': A, 'base_branch': WEB, 'risk': 'web-ui', 'goal': 'Polish homepage',
