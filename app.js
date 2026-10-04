@@ -1346,7 +1346,7 @@ function renderAiJobs() {
     card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}${finished ? " aiJobReady" : ""}`;
     card.innerHTML = `<div class="aiJobStatusIcon" aria-hidden="true">${failed ? "!" : finished ? "✓" : "⋯"}</div>
       <div class="aiJobBody"><strong>${escapeHtml(job.sourceQuizId ? "Ähnlicher Test" : "KI-Test")} · ${escapeHtml(job.subject || job.topic || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
-      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}`}</small></div>
+      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}${job.audioTotal ? ` · ${Number(job.audioCompleted || 0)} von ${Number(job.audioTotal)} Höraudios` : ""}${job.solutionAudioTotal ? ` · ${Number(job.solutionAudioCompleted || 0)} von ${Number(job.solutionAudioTotal)} Audio-Lösungen` : ""}`}</small></div>
       ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
       <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
       ${finished && job.quizId ? '<button class="button ghost completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}
@@ -1362,7 +1362,7 @@ function renderAiJobs() {
       action: job.sourceQuizId ? "background_similar_test" : "background_ai_test",
       details: { jobId: job.id, requestId: job.requestId, quizId: job.quizId || "",
         requestedCount: job.requestedCount, completedCount: job.completedCount,
-        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted }
+        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted, audioTotal: job.audioTotal, audioCompleted: job.audioCompleted, solutionAudioTotal: job.solutionAudioTotal, solutionAudioCompleted: job.solutionAudioCompleted }
     }));
     host.appendChild(card);
   }
@@ -7302,7 +7302,7 @@ function formatTechnicalErrorReport(report) {
     ["Server-Referenz", t.serverReference], ["Server-Phase", t.serverPhase],
     ["Ablehnungsgrund", t.serverReason], ["KI-Diagnose (Aufgabe, Bildversuche und Prüfgründe)", t.aiDiagnostic],
     ["Hintergrundauftrag", t.jobId], ["Gespeicherte Aufgaben", t.completedCount],
-    ["Geplante Bilder", t.imageTotal], ["Gespeicherte Bilder", t.imageCompleted],
+    ["Geplante Bilder", t.imageTotal], ["Gespeicherte Bilder", t.imageCompleted],\n    ["Geplante Höraudios", t.audioTotal], ["Gespeicherte Höraudios", t.audioCompleted],\n    ["Geplante Audio-Lösungen", t.solutionAudioTotal], ["Gespeicherte Audio-Lösungen", t.solutionAudioCompleted],
     ["Anfragenkennung", t.clientRequestId], ["Erstellungsdauer (ms)", t.generationDurationMs],
     ["Ansicht", t.view], ["Client-Phase", t.stage], ["Aufgabe", t.questionPosition],
     ["Aufgabentyp", t.questionType], ["Bildart", t.mediaKind],
