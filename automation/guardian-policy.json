@@ -30,7 +30,16 @@
       "baseBranch": "feature/gradecrew-app-integration",
       "approvedSha": "9559f7420aca9b62e45629e6bec02220006e6e88",
       "maxAutomaticStage": "staging_deployed"
+    },
+    {
+      "id": "startscreen-masterpiece-v4-20261004",
+      "taskId": "startscreen-masterpiece-v4-20261004",
+      "enabled": true,
+      "execution": "pipeline-v2",
+      "baseBranch": "feature/gradecrew-app-integration",
+      "approvedSha": "578677633c1759e75fee6479f416fb64566f5c5c",
+      "maxAutomaticStage": "staging_deployed"
     }
   ],
-  "note": "Dedicated keys and flags verified. Pilot reached verified staging. Masterpiece v2 stopped before candidate on a diagnosed synchronous timeout; v3 is explicitly repinned to the bilingual startscreen and uses background Responses. Production and device acceptance remain manual."
+  "note": "Dedicated keys and flags verified. Pilot reached verified staging. Large-file startscreen v2/v3 attempts remain stopped and preserved. v4 uses the isolated polish layer on the current bilingual web SHA. Production and device acceptance remain manual."
 }

@@ -1,0 +1,19 @@
+{
+  "id": "startscreen-masterpiece-v4-20261004",
+  "base_branch": "feature/gradecrew-app-integration",
+  "base_sha": "578677633c1759e75fee6479f416fb64566f5c5c",
+  "risk": "web-ui",
+  "goal": "Polish the current GradeCrew public entry into a premium, warm, spacious brand homepage. Keep the current GradeCrew logo, canonical Coco/Remy/Emmi/Wilma assets, working markup, bilingual UI runtime and all product logic. Coco should feel like the foreground host; Remy, Emmi and Wilma should read as one crew; the environment should gain depth, light and calm school atmosphere without looking like flat CSS furniture.",
+  "acceptance": "Desktop 1440-1600: broad premium stage with little dead grey margin; calm website-like header; strong readable headline; Coco clearly larger and visually closer; support crew grouped with aligned role cards; no character/card/CTA overlap. Soften the existing door, window, board, shelf and desk into atmospheric layers using opacity, blur, gradients, light and shadow rather than hard geometry. Keep teacher CTAs balanced below the crew, student code bar compact and secondary, and benefits calm. No clipping or horizontal scroll. Tablet/iPad and phone must recompose deliberately, keep all four mascots recognizable and preserve >=44px touch targets. Preserve focus-visible and reduced-motion. German and English UI must both fit. Do not add visible language text in CSS or imagery. All existing auth, tutorial, routing, test-code and assessment behavior stays unchanged.",
+  "constraints": "Modify only gradecrew-auth-startscreen-polish.css. The stable startscreen CSS, JavaScript, markup, i18n catalogs, tests, assets, backend, Firebase, CI and deploy files are read-only. Do not add assets, fonts, libraries or redraw mascots. Do not add visible CSS generated copy or embedded image data. Scope selectors to public entry/auth only; never target dashboard, student or secure assessment surfaces. Visible copy remains in DOM/i18n catalogs so UI language stays separate from test content and grading language. Production is out of scope.",
+  "allowed_files": [
+    "gradecrew-auth-startscreen-polish.css"
+  ],
+  "context_files": [
+    "gradecrew-auth-startscreen.css",
+    "gradecrew-entry-flow.js"
+  ],
+  "validation_profile": "web-combined-v1",
+  "max_cost_usd": 2.55,
+  "cost_profile": "module-web-v1"
+}
