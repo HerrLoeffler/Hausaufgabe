@@ -1,7 +1,7 @@
 export const I18N_SCHEMA_VERSION = 1;
 export const DEFAULT_LOCALE = "de-DE";
 export const DEFAULT_TIME_ZONE = "Europe/Berlin";
-export const SUPPORTED_UI_LOCALES = Object.freeze([DEFAULT_LOCALE]);
+export const SUPPORTED_UI_LOCALES = Object.freeze([DEFAULT_LOCALE, "en-GB"]);
 
 export function canonicalizeLocale(value) {
   if (typeof value !== "string" || !value.trim()) return null;
@@ -84,7 +84,7 @@ export function createLocaleContext({
 
 export function createAssessmentLocaleSnapshot({
   localeContext,
-  messagesVersion = "de-DE@1",
+  messagesVersion = null,
   gradingPolicyVersion = null,
   curriculumVersion = null,
   createdAt = new Date().toISOString(),
@@ -97,7 +97,7 @@ export function createAssessmentLocaleSnapshot({
     gradingLocale: context.gradingLocale,
     educationContextId: context.educationContextId,
     timeZone: context.timeZone,
-    messagesVersion: String(messagesVersion || "").trim() || null,
+    messagesVersion: String(messagesVersion || `${context.uiLocale}@1`).trim() || null,
     gradingPolicyVersion: gradingPolicyVersion == null ? null : String(gradingPolicyVersion),
     curriculumVersion: curriculumVersion == null ? null : String(curriculumVersion),
     createdAt: String(createdAt),
