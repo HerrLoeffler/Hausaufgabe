@@ -32,6 +32,15 @@ const mediaIntentSchema = {
   },
   required: ["kind", "prompt", "altText", "count", "sourceMaterialId", "reason"]
 };
+const audioIntentSchema = {
+  type: "object", additionalProperties: false,
+  properties: {
+    kind: { type: "string", enum: ["none", "ai_generated"] },
+    script: { type: "string" },
+    reason: { type: "string" }
+  },
+  required: ["kind", "script", "reason"]
+};
 const questionSchema = {
   type: "object", additionalProperties: false,
   properties: {
@@ -51,9 +60,10 @@ const questionSchema = {
     numericAnswer: { type: "number", description: "Für number die richtige Zahl; bei anderen Typen 0." },
     tolerance: { type: "number", minimum: 0 },
     unit: { type: "string" },
-    mediaIntent: mediaIntentSchema
+    mediaIntent: mediaIntentSchema,
+    audioIntent: audioIntentSchema
   },
-  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit", "mediaIntent"]
+  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit", "mediaIntent", "audioIntent"]
 };
 // Compact per-type schemas prevent irrelevant nullable fields from being used as
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
@@ -64,15 +74,18 @@ const TYPE_FIELDS = {
   gapfill: [], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
   markwords: ["passage", "targetWords"], number: ["numericAnswer", "tolerance", "unit"]
 };
-function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
+function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind } = {}) {
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");
-  const fields = ["type", "text", "points", ...TYPE_FIELDS[type], "mediaIntent"];
+  const fields = ["type", "text", "points", ...TYPE_FIELDS[type], "mediaIntent", "audioIntent"];
   const properties = Object.fromEntries(fields.map(key => [key, JSON.parse(JSON.stringify(questionSchema.properties[key]))]));
   properties.type = { type: "string", enum: [type] };
   properties.text = { ...properties.text, ...NONEMPTY };
   const media = properties.mediaIntent;
   media.properties.kind.enum = mediaKind ? [mediaKind] : allowImages ? ["none", "ai_generated"] : ["none"];
   if (mediaKind === "ai_generated") media.properties.prompt = { ...NONEMPTY };
+  const audio = properties.audioIntent;
+  audio.properties.kind.enum = audioKind ? [audioKind] : allowAudio ? ["none", "ai_generated"] : ["none"];
+  if (audioKind === "ai_generated") audio.properties.script = { ...NONEMPTY, maxLength: 500 };
   if (["single", "multi", "dropdown"].includes(type)) {
     properties.options.minItems = 2;
     properties.options.maxItems = 8;
@@ -99,7 +112,7 @@ function questionSchemaForType(type, { allowImages = true, mediaKind } = {}) {
   }
   return { type: "object", additionalProperties: false, properties, required: fields };
 }
-function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true } = {}) {
+function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true, allowAudio = true } = {}) {
   const types = [...new Set(allowedTypes)].filter(type => QUESTION_TYPES.includes(type));
   if (!types.length) throw new TypeError("Mindestens ein Aufgabentyp ist erforderlich");
   if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 100)) throw new RangeError("Ungültige Aufgabenanzahl");
@@ -108,7 +121,7 @@ function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImage
     properties: {
       title: { ...NONEMPTY }, subject: { type: "string" }, grade: { type: "string" }, description: { type: "string" },
       questions: { type: "array", minItems: count || 1, maxItems: count || 100,
-        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages })) } }
+        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages, allowAudio })) } }
     },
     required: ["title", "subject", "grade", "description", "questions"]
   };
