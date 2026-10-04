@@ -190,3 +190,26 @@ Folge:
 3. Visual Preview deployen;
 4. echten manuellen Jeep-/Gesamtwelt-Test durchführen;
 5. danach gezielt sichtbare Schwächen polieren statt wieder die Art Direction zu wechseln.
+
+
+## CI-Fix nach V2 — unnötige Runner-Verbraucher entfernt
+
+Commits:
+- `b0dad59f404f433a226484c4b6cfa269161a8ba0` — Visual-Preview nur noch bei echten Expedition-Code/Test/Build-Änderungen; Doku/Handoff lösen keinen Deploy mehr aus; concurrency aktiviert.
+- `36343f93452745245cf1d3198fa94c4f3df1379f` — Expedition aus dem allgemeinen schweren Games-Lab-Workflow ausgeschlossen; concurrency aktiviert.
+- `d1f089e0ab329501ec5d22fa10db5d6d6dc8d156` — Escape-Room-Review auf seine tatsächlichen Dateien eingegrenzt.
+- `064777d20ff6b8dee40be1888badae3bc87a9b48` — general Games CI auf dem Visual-Branch zusätzlich vor Runner-Start skippen.
+- `0d10ea1263cebbc7e73ae69d8102d9d81ee524d2` — Escape-Room CI auf dem Visual-Branch zusätzlich vor Runner-Start skippen.
+
+Verifiziert:
+- Games Lab Checks auf aktuellem Visual-Branch: **skipped**, kein Runner.
+- Escape review gates auf aktuellem Visual-Branch: **skipped**, kein Runner.
+- Damit bleibt für Expedition-Produktänderungen nur der gezielte Visual Preview Workflow als tatsächlicher Runner-Verbrauch.
+
+Der verbleibende Visual-Preview-Fehler tritt weiterhin **vor Step 1** auf (`steps: null`, keine Joblogs). GitHub Status meldet Actions gleichzeitig operational. Das Muster ist damit account-/billingseitig (Actions-Kontingent/Budget/Payment) und nicht durch den Expedition-Workflow oder V2-JavaScript verursacht.
+
+Nächste Freigabe:
+- GitHub persönliches Billing prüfen;
+- Actions usage/budget/payment unblocken;
+- danach genau einen Visual Preview Run starten;
+- erst nach grünem Test/Build/Deploy den neuen Preview als verfügbar markieren.
