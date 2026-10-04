@@ -103,8 +103,8 @@
       "database_backup": false,
       "production_backup": false
     },
-    "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "agent_dispatch_note": "Worker-Dateien vorhanden; Aktivierung und erfolgreicher echter Worker-Lauf nicht verifiziert. Beim Aktualisieren von Teilbereichen Pflichtfelder erhalten.",
+    "agent_dispatch": "activated_worker_verified_pilot_stopped_at_review_permissions",
+    "agent_dispatch_note": "Admission 37196805396 verifies keys/flags; real worker created PR 78, combined candidate CI passed. Both OpenAI reviewers returned 403; E2E/staging not yet verified.",
     "release_control_audit": {
       "branch": "fix/release-control-evidence-v2",
       "pr": 50,
@@ -118,15 +118,15 @@
       "latest_candidate": "eb80c5e6a8b6c1ae13deba676709607bfccee208"
     },
     "stage_guardian": {
-      "status": "implemented_integrated_disabled_pending_credentials_and_pilot",
+      "status": "activated_pilot_stopped_at_review_permissions",
       "branch": "fix/guardian-three-reviewers-v1",
       "pr": 62,
-      "worker_enabled_verified": false,
-      "worker_key_present_verified": false,
+      "worker_enabled_verified": true,
+      "worker_key_present_verified": true,
       "evidence_run": 37077976663,
       "max_attempts_per_stage": 3,
-      "full_pipeline_active": false,
-      "next_action": "Owner-side hidden-key setup: bash tools/automation/setup-guardian.sh pilot-tutorial-later-a11y-20261004; admission verifies keys/flags/history/current source before any paid call. Read actual run results; no blind repeat.",
+      "full_pipeline_active": true,
+      "next_action": "One explicit diagnosed permission recovery; preserve history/budget and run all gates again. Then source-bound follow-up admission.",
       "implementation_commit": "6a5c2d0da8f327f6808c30435aea3f52ba9b72a2",
       "independent_review_roles": [
         "correctness",
@@ -135,8 +135,8 @@
       ],
       "candidate_ci_run": 37192179040,
       "unprivileged_rehearsal_run": 37192179131,
-      "activation_evidence_run": 37181171628,
-      "review_keys_present_verified": false,
+      "activation_evidence_run": 37196805396,
+      "review_keys_present_verified": true,
       "max_total_build_attempts": 3,
       "small_web_cost_profile": {
         "id": "small-web-v1",
@@ -155,9 +155,14 @@
           "tutorial-choice-v1.css"
         ],
         "cost_profile": "small-web-v1",
-        "status": "queued_not_admitted",
-        "paid_run_verified": false
-      }
+        "status": "admitted_first_attempt_stopped",
+        "paid_run_verified": true,
+        "run_id": 37196835882,
+        "pull_request": 78,
+        "estimated_usd_so_far": 0.023296,
+        "staging_verified": false
+      },
+      "e2e_verified": false
     }
   },
   "workstreams": [

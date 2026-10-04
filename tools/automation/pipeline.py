@@ -66,10 +66,10 @@ def digest(value):
 
 def control_hash(root):
     """Documentation-only main commits do not invalidate an in-flight task."""
-    names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py',
+    names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py', 'recovery.py',
              'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh']
     files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
-    for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml']:
+    for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml', 'guardian-recovery.yml']:
         files[name] = (Path(root)/'.github/workflows'/name).read_text()
     return digest(files)
 

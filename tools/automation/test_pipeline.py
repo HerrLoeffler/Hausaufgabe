@@ -88,9 +88,9 @@ class ContractTests(unittest.TestCase):
             mirror=Path(directory)
             for subpath in ['tools/automation', '.github/workflows']:
                 (mirror/subpath).mkdir(parents=True,exist_ok=True)
-            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh']
+            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','recovery.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh']
             for name in names:(mirror/'tools/automation'/name).write_text((root/'tools/automation'/name).read_text())
-            for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml']:
+            for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml','guardian-recovery.yml']:
                 (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())
             (mirror/'TODO.md').write_text('New parallel chat notes')
             self.assertEqual(p.control_hash(mirror),original)
@@ -339,6 +339,19 @@ class ExecutionTests(unittest.TestCase):
 
     def test_workflow_rerun_cannot_repeat_build_ownership(self):
         with self.assertRaisesRegex(ValueError,'already owned'):e.prepare('run-1')
+
+    def test_permission_recovery_can_repeat_candidate_but_rejected_code_cannot(self):
+        result = {'summary':'same valid fix','files':[{'path':'coach.js','content':'new'}]}
+        for allowed in (False, True):
+            contract = e.load('contract') | {'previousCandidate': {'coach.js':'new'},
+                'allowSameCandidateAfterPermissionRecovery': allowed}
+            e.save('contract', contract)
+            with patch.object(e,'api',side_effect=self.api), patch.object(e,'call',return_value=(result, {'estimatedUsd':.01})):
+                if allowed:
+                    e.build()
+                    self.assertEqual(e.load('candidate')['candidate'], result)
+                else:
+                    with self.assertRaisesRegex(ValueError,'repeats rejected'): e.build()
 
     def test_rerun_failed_jobs_cannot_repeat_any_paid_call(self):
         e.save('candidate',p.candidate_contract({'summary':'test','files':[{'path':'coach.js','content':'new'}]},TASK,'run-1'))
