@@ -98,7 +98,7 @@
       { id: 'capybara', emoji: '🦫', x: 280, y: 420, vx: 25, vy: -12, target: true },
       { id: 'monkey', emoji: '🐒', x: 520, y: 215, vx: -30, vy: 8, target: false }
     ],
-    river: { x: 480, progress: 0, hits: 0, safeProgress: 0 },
+    river: { x: 480, progress: 0, hits: 0, safeProgress: 0, lastRockCycle: -1, speed: 66 },
     generator: { seq: [], done: false },
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
@@ -771,15 +771,35 @@
   }
 
   function updateRiver(dt) {
-    let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    let steer = 0;
+    if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--;
+    if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+
     const previousProgress = state.river.progress;
-    state.river.x = Math.max(270, Math.min(690, state.river.x + steer * 260 * dt));
-    state.river.progress += 66 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.2 : 1);
+    const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+    const targetSpeed = throttle ? 82 : 66;
+    state.river.speed += (targetSpeed - state.river.speed) * Math.min(1, dt * 3.4);
+    state.river.x = Math.max(330, Math.min(630, state.river.x + steer * 245 * dt));
+    state.river.progress += state.river.speed * dt;
+
     const riverCheckpoint = Math.floor(state.river.progress / 180) * 180;
     if (riverCheckpoint > state.river.safeProgress && state.river.progress % 180 < 40) state.river.safeProgress = riverCheckpoint;
     if (previousProgress <= 50 && state.river.progress > 50) updateHud();
-    const phase = state.river.progress % 160; const rockX = 480 + Math.sin(Math.floor(state.river.progress / 160) * 3.1) * 175;
-    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 Felsen getroffen!', 1.0); updateHud(); }
+
+    const cycle = Math.floor(state.river.progress / 160);
+    const phase = state.river.progress % 160;
+    const rockY = -45 + (phase / 160) * (H + 110);
+    const rockX = 480 + Math.sin(cycle * 3.1) * 142;
+
+    if (rockY > 398 && rockY < 492 && Math.abs(state.river.x - rockX) < 48 && state.river.lastRockCycle !== cycle) {
+      state.river.lastRockCycle = cycle;
+      state.river.hits++;
+      state.river.progress = Math.max(0,state.river.progress - 16);
+      state.river.speed = 28;
+      toast('Felsen getroffen! Tempo weg.',1.0);
+      updateHud();
+    }
+
     if (state.river.progress >= 950) { state.river.progress = 950; setScene('station'); }
   }
 
@@ -1026,41 +1046,116 @@
     ctx.restore();
   }
 
-  function drawCamp(){
-    const t=performance.now();
-    drawCampBackground(t);
-    drawCampGround();
-    drawCampTent(t);
-    drawCampTable();
-    drawCampSupplies();
-    drawCampJeepDetailed(t);
-    drawCampPollen(t);
-
-    marker(150,92,'E');
-    marker(760,300,'E');
-
-    ctx.fillStyle='rgba(255,244,215,.9)';ctx.font='800 13px system-ui';ctx.textAlign='center';ctx.fillText('MANGO-1',760,442);
-    ctx.fillStyle='rgba(232,244,221,.74)';ctx.font='700 11px system-ui';ctx.fillText('FELDSTATION A-07',318,250);
+  function drawRetroTent(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-76,-54,152,108,'#b89862');
+    pixelRect(-69,-47,138,94,'#d2bd84');
+    pixelRect(-6,-47,12,94,'#9d7c4e');
+    pixelRect(-53,-31,47,62,'#c2a46e');
+    pixelRect(6,-31,47,62,'#e0cb91');
+    pixelRect(-19,14,38,33,'#263d2e');
+    pixelRect(-13,19,26,28,'#1d3024');
+    pixelRect(-83,-61,166,8,'#59412a');
+    pixelRect(-84,54,8,18,'#59412a');pixelRect(76,54,8,18,'#59412a');
+    ctx.restore();
   }
 
-  function drawCampForeground(t){
-    const sway=Math.sin(t/900)*.06;
-    ctx.save();
-    ctx.globalAlpha=.92;
-    drawLeafShape(-8,65,.45+sway,1.55,'#103d28');
-    drawLeafShape(22,108,.74-sway,1.25,'#174c30');
-    drawLeafShape(8,505,-.45+sway,1.55,'#113f29');
-    drawLeafShape(865,545,-2.55-sway,1.7,'#0d3623');
-    drawLeafShape(910,500,-2.2+sway,1.35,'#174a2e');
-    drawLeafShape(882,72,2.55+sway,1.1,'#184a2f');
-    ctx.fillStyle='rgba(13,50,31,.82)';
-    for(let x=20;x<940;x+=73){const h=12+(x%29);ctx.fillRect(x,590-h,3,h);}
+  function drawRetroCampTable(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-64,9,128,16,'#61452d');
+    pixelRect(-56,25,10,38,'#4b3424');pixelRect(46,25,10,38,'#4b3424');
+    pixelRect(-47,-29,94,42,'#1f3429');
+    pixelRect(-41,-23,82,30,'#9db98b');
+    pixelRect(-32,-15,12,5,'#d5a94f');pixelRect(-15,-8,18,5,'#4d744f');pixelRect(6,-17,25,5,'#c7694c');
+    pixelRect(-5,-3,17,4,'#6b815d');
+    ctx.fillStyle='#e4edd6';ctx.font='800 8px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('ROUTE',0,-8);
     ctx.restore();
+  }
+
+  function drawRetroSupplies(x,y){
+    pixelRect(x,y,56,38,'#684b30');pixelRect(x+7,y+7,42,24,'#8a653d');
+    pixelRect(x+70,y+4,25,39,'#2d5038');pixelRect(x+77,y-2,11,8,'#d3b256');
+    ctx.strokeStyle='#c5a56a';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x+120,y+24,18,0,Math.PI*1.75);ctx.stroke();
+    pixelRect(x-36,y+10,25,30,'#9f4e3b');pixelRect(x-29,y+5,11,7,'#d3b256');
+  }
+
+  function drawCamp(){
+    const t=performance.now();
+    drawRetroField(0);
+
+    // Blocky dirt clearing + two paths.
+    pixelRect(86,260,788,250,'#8f6a42');
+    pixelRect(118,228,724,32,'#987149');
+    pixelRect(404,508,152,92,'#8f6a42');
+    for(let x=118;x<842;x+=32){
+      const h=roadHash(x,7);
+      if(h%3===0) pixelRect(x,278+(h%160),6,4,'#6f5034');
+      if(h%5===0) pixelRect(x+12,300+(h%130),5,3,'#ad8554');
+    }
+
+    // Jungle wall.
+    for(let x=36;x<930;x+=82){
+      if(x>100&&x<845) drawRetroTree(x,220-(x%3)*9,.96,x);
+    }
+
+    drawRetroTent(318,360);
+    drawRetroCampTable(150,150);
+    drawRetroSupplies(440,405);
+
+    const age=state.campJeepStartAt ? Math.max(0,t-state.campJeepStartAt) : -1;
+    const active=age>=0&&age<760;
+    const bounce=active?Math.sin(age/34)*4*(1-age/760):0;
+    ctx.save();ctx.translate(0,bounce);drawRetroJeep(760,365,t);ctx.restore();
+
+    if(active){
+      for(let i=0;i<8;i++){
+        const p=Math.max(0,Math.min(1,(age-i*35)/520));
+        if(p<=0)continue;
+        pixelRect(698-i*9-p*34,407+(i%2)*7,8+p*14,5+p*8,`rgba(128,88,48,${.28*(1-p)})`);
+      }
+    }
+
+    marker(150,92,'E');
+    marker(760,292,'E');
+
+    drawRetroPanel(240,18,280,46,'EXPEDITIONS-CAMP A-07');
+    ctx.fillStyle='#cfe0c5';ctx.font='700 10px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText('TABLET  ←   START   →  MANGO-1',255,49);
+  }
+
+  function drawCampForeground(){
+    pixelRect(0,556,960,44,'#123e28');
+    for(let x=0;x<960;x+=64){
+      pixelRect(x,568-(x%17),18,32,'#1d5834');
+      pixelRect(x+15,575-(x%11),24,25,'#286a3d');
+    }
+    drawRetroTree(28,545,1.08,2);
+    drawRetroTree(925,544,1.05,3);
   }
 
   function pixelRect(x,y,w,h,fill){
     ctx.fillStyle=fill;
     ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  }
+
+  function drawRetroField(offsetY=0){
+    const tile=32;
+    let row=0;
+    for(let y=-tile+(offsetY%tile);y<H+tile;y+=tile,row++){
+      for(let x=0;x<W;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+    }
+  }
+
+  function drawRetroPanel(x,y,w,h,title){
+    pixelRect(x,y,w,h,'rgba(10,27,18,.92)');
+    pixelRect(x+6,y+6,w-12,h-12,'#173d29');
+    pixelRect(x+6,y+6,w-12,3,'#5f8b62');
+    if(title){
+      ctx.fillStyle='#f2ecd7';
+      ctx.font='800 12px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.textAlign='left';
+      ctx.fillText(title,x+14,y+25);
+    }
   }
 
   function roadHash(a,b){
@@ -1296,36 +1391,180 @@
     ctx.fillText('WEG BLOCKIERT · WINDE SUCHEN',39,49);
   }
 
+  function drawRetroAnimal(animal){
+    const x=Math.round(animal.x), y=Math.round(animal.y);
+    ctx.save();ctx.translate(x,y);
+    if(animal.id==='toucan'){
+      pixelRect(-14,-5,28,20,'#1c2520');
+      pixelRect(-8,-12,17,13,'#f0e6c9');
+      pixelRect(8,-10,26,10,'#e9a631');
+      pixelRect(22,-8,11,6,'#c76632');
+      pixelRect(-6,-9,4,4,'#151d18');
+      pixelRect(-4,15,4,10,'#78512e');pixelRect(5,15,4,10,'#78512e');
+    } else if(animal.id==='capybara'){
+      pixelRect(-26,-7,50,26,'#8a613d');
+      pixelRect(15,-15,25,25,'#9b7048');
+      pixelRect(20,-20,7,8,'#6f4b32');pixelRect(32,-19,7,8,'#6f4b32');
+      pixelRect(30,-8,4,4,'#141b17');
+      pixelRect(39,-2,5,3,'#4f3527');
+      pixelRect(-20,18,8,10,'#5d412e');pixelRect(10,18,8,10,'#5d412e');
+    } else {
+      pixelRect(-16,-8,32,27,'#73503a');
+      pixelRect(-11,-20,22,18,'#8b6547');
+      pixelRect(-6,-14,4,4,'#171e19');pixelRect(4,-14,4,4,'#171e19');
+      ctx.strokeStyle='#68442f';ctx.lineWidth=5;ctx.beginPath();ctx.arc(20,2,15,-1.2,1.4);ctx.stroke();
+    }
+    if(state.photos.has(animal.id)&&animal.target){
+      pixelRect(18,-30,18,18,'#1c4d31');ctx.fillStyle='#8bea9f';ctx.font='900 14px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('✓',27,-17);
+    }
+    ctx.restore();
+  }
+
   function drawWildlife(){
-    fillGradient('#3f9456','#183f2b');drawJungleDecor(.78);ctx.fillStyle='#9a7245';ctx.beginPath();ctx.moveTo(60,520);ctx.quadraticCurveTo(400,350,900,500);ctx.lineTo(900,590);ctx.lineTo(60,590);ctx.closePath();ctx.fill();
-    roundRect(520,70,110,92,14,'#33423a','#7da88b');ctx.fillStyle='#9ee8ad';ctx.fillRect(540,88,70,42);ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText('📡',575,118);marker(575,175,state.photos.size>=2?'E':'🔒');
-    roundRect(830,410,100,120,10,'#6a4a2d','#c3925c');ctx.fillStyle='#6ec4d9';ctx.fillRect(838,435,84,80);marker(875,390,'E');
-    for(const a of state.animals){ctx.font=`${a.id==='capybara'?44:38}px system-ui`;ctx.textAlign='center';ctx.fillText(a.emoji,a.x,a.y);if(state.photos.has(a.id)&&a.target){ctx.font='18px system-ui';ctx.fillText('✓',a.x+25,a.y-25)}}
+    drawRetroField(0);
+    pixelRect(78,314,806,220,'#8e6a43');
+    pixelRect(110,282,742,32,'#967249');
+    pixelRect(770,420,190,180,'#327f8c');
+    pixelRect(800,420,8,180,'#d0b37b');
+    pixelRect(848,420,8,180,'#d0b37b');
+    pixelRect(806,454,94,9,'#8a633d');
+    pixelRect(806,490,94,9,'#8a633d');
+
+    // Sender station.
+    pixelRect(524,72,104,86,'#243a31');
+    pixelRect(532,80,88,70,'#385246');
+    pixelRect(546,94,60,30,state.photos.size>=2?'#75d98b':'#243229');
+    pixelRect(568,66,16,12,'#8c7148');
+    pixelRect(573,45,5,24,'#b1b9aa');
+    pixelRect(566,43,19,4,'#b1b9aa');
+    ctx.fillStyle=state.photos.size>=2?'#d7efd8':'#64786b';ctx.font='800 10px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(state.photos.size>=2?'READY':'LOCK',576,114);
+    marker(575,175,state.photos.size>=2?'E':'🔒');
+
+    // Dock + boat.
+    pixelRect(830,398,110,26,'#65482f');
+    pixelRect(839,424,12,87,'#4b3526');pixelRect(910,424,12,87,'#4b3526');
+    drawRetroBoat(875,470,performance.now());
+    marker(875,390,'E');
+
+    for(const a of state.animals) drawRetroAnimal(a);
+    drawRetroPanel(22,22,252,44,'WILDTIER-GEBIET');
+  }
+
+  function drawRetroWaterTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#2c8194':'#2f899c');
+    if(h%3===0) pixelRect(x+4,y+9,17,3,'rgba(194,234,226,.22)');
+    if(h%5===0) pixelRect(x+15,y+23,12,2,'rgba(216,246,237,.16)');
   }
 
   function drawRiver(){
-    fillGradient('#245b38','#123523');ctx.fillStyle='#2e8cab';ctx.beginPath();ctx.moveTo(230,0);ctx.bezierCurveTo(370,170,210,330,280,600);ctx.lineTo(710,600);ctx.bezierCurveTo(790,360,620,170,730,0);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(210,245,255,.22)';ctx.lineWidth=3;for(let y=((state.river.progress*2)%95)-95;y<H;y+=95){ctx.beginPath();ctx.moveTo(330,y);ctx.quadraticCurveTo(470,y+20,630,y);ctx.stroke()}
-    for(let y=60;y<H;y+=110){drawBush(170,y,.9);drawBush(800,y+40,1.0)}
-    const phase=state.river.progress%160;const rockY=H-(phase/160)*H;const rockX=480+Math.sin(Math.floor(state.river.progress/160)*3.1)*175;ctx.font='44px system-ui';ctx.textAlign='center';ctx.fillText('🪨',rockX,rockY);
-    drawBoat(state.river.x,455);roundRect(350,20,260,48,16,'rgba(5,18,10,.78)','#69b2c0');ctx.fillStyle='#e9f7f7';ctx.font='900 16px system-ui';ctx.fillText(`Fluss ${Math.floor(state.river.progress)} / 950 m`,480,50);
+    const tile=32;
+    const scroll=(state.river.progress*2.2)%tile;
+    let row=Math.floor((state.river.progress*2.2)/tile);
+
+    for(let y=-tile+scroll;y<H+tile;y+=tile,row--){
+      for(let x=0;x<288;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+      for(let x=672;x<W;x+=tile) drawRetroGrassTile(x,y,row,x/tile);
+      for(let x=288;x<672;x+=tile) drawRetroWaterTile(x,y,row,x/tile);
+      pixelRect(280,y,8,tile,'#234f37');pixelRect(672,y,8,tile,'#234f37');
+      if(row%3===0){drawRetroTree(88+(row%4)*30,y+18,.88,row);drawRetroTree(860-(row%4)*33,y+16,.9,row+1);}
+    }
+
+    const cycle=Math.floor(state.river.progress/160);
+    const phase=state.river.progress%160;
+    const rockY=-45+(phase/160)*(H+110);
+    const rockX=480+Math.sin(cycle*3.1)*142;
+    drawRetroRock(rockX,rockY,cycle);
+
+    // Wake.
+    pixelRect(state.river.x-31,493,62,4,'rgba(210,243,234,.26)');
+    pixelRect(state.river.x-42,506,84,3,'rgba(210,243,234,.16)');
+    drawRetroBoat(state.river.x,455,performance.now());
+
+    drawRetroPanel(22,22,230,48,'RIO VERDE');
+    ctx.fillStyle='#d9eee7';ctx.font='800 10px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText(`${Math.floor(state.river.progress)} / 950 m · ${Math.round(state.river.speed)} km/h`,36,54);
   }
 
   function drawStation(){
-    fillGradient(state.generator.done?'#497b5d':'#22382b',state.generator.done?'#213f2f':'#101c15');drawJungleDecor(.35);
-    roundRect(310,75,500,350,24,state.generator.done?'#c3b58d':'#5c5a4d','#e1d3a7');ctx.fillStyle=state.generator.done?'#8bc8a0':'#273329';ctx.fillRect(345,110,190,100);ctx.fillRect(575,110,190,100);ctx.fillStyle='#294034';ctx.fillRect(515,335,90,90);
-    roundRect(95,290,160,150,18,'#5e5138','#ad9a69');ctx.font='40px system-ui';ctx.textAlign='center';ctx.fillText('⚡',175,360);marker(175,455,'E');
-    roundRect(650,110,120,80,12,state.generator.done?'#173a2a':'#151a17',state.generator.done?'#7bd78f':'#444');ctx.font='32px system-ui';ctx.fillText(state.generator.done?'💻':'⬛',710,160);marker(710,220,state.generator.done?'E':'🔒');
-    ctx.fillStyle='#bd3d36';ctx.beginPath();ctx.arc(430,300,15,0,Math.PI*2);ctx.fill();ctx.font='900 12px system-ui';ctx.fillStyle='#efe2c4';ctx.fillText('NICHT DRÜCKEN',430,330);
-    roundRect(830,355,80,150,10,'#33483b','#738e7a');marker(870,335,state.solved.has('q3')?'E':'🔒');
+    drawRetroField(0);
+    pixelRect(64,346,830,210,'#82623f');
+    pixelRect(86,320,786,26,'#8f6b44');
+
+    // Research cabin.
+    pixelRect(304,72,506,278,state.generator.done?'#bba878':'#6f6a57');
+    pixelRect(316,84,482,254,state.generator.done?'#d1c291':'#777362');
+    pixelRect(316,84,482,24,'#57452f');
+    pixelRect(502,260,110,78,'#24382d');
+    pixelRect(516,274,82,64,'#182a21');
+
+    // Windows.
+    const windowColor=state.generator.done?'#91d9a1':'#29352e';
+    pixelRect(350,130,150,82,'#514735');pixelRect(360,140,130,62,windowColor);
+    pixelRect(620,130,130,82,'#514735');pixelRect(630,140,110,62,windowColor);
+    if(state.generator.done){
+      pixelRect(366,146,118,5,'rgba(236,235,167,.35)');
+      pixelRect(636,146,98,5,'rgba(236,235,167,.35)');
+    }
+
+    // Generator at exact hotspot.
+    pixelRect(116,317,118,86,'#4e4b38');
+    pixelRect(126,327,98,66,'#665f43');
+    pixelRect(138,339,28,28,'#21362b');
+    pixelRect(176,341,36,7,state.generator.done?'#76df8c':'#7d4d36');
+    pixelRect(176,354,28,7,'#c4a65e');
+    pixelRect(135,404,80,12,'#36362d');
+    marker(175,455,'E');
+
+    // Terminal.
+    pixelRect(650,116,120,82,'#29352e');
+    pixelRect(660,126,100,56,state.generator.done?'#386f4a':'#121b16');
+    if(state.generator.done){
+      pixelRect(671,138,78,6,'#8be7a0');
+      pixelRect(671,152,52,5,'#6fbd81');
+      pixelRect(671,164,66,5,'#78c989');
+    }
+    marker(710,220,state.generator.done?'E':'🔒');
+
+    // Exit gate.
+    pixelRect(836,345,70,150,'#354b3e');
+    pixelRect(844,353,54,134,'#26382f');
+    pixelRect(862,369,18,102,state.solved.has('q3')?'#7b9a7e':'#51645a');
+    marker(870,335,state.solved.has('q3')?'E':'🔒');
+
+    drawRetroPanel(22,22,270,44,state.generator.done?'STATION · STROM AN':'STATION · STROM AUS');
   }
 
   function drawTower(){
-    fillGradient('#172b27','#071713');ctx.fillStyle='#14351f';for(let x=0;x<W;x+=90)drawTree(x+30,470+(x%180?20:0),.9);
-    ctx.strokeStyle='#8ba69a';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(480,440);ctx.lineTo(480,80);ctx.stroke();ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(480,80);ctx.lineTo(360,440);ctx.moveTo(480,80);ctx.lineTo(600,440);ctx.moveTo(390,340);ctx.lineTo(570,340);ctx.moveTo(420,250);ctx.lineTo(540,250);ctx.moveTo(450,160);ctx.lineTo(510,160);ctx.stroke();
-    ctx.fillStyle='#db5647';ctx.beginPath();ctx.arc(480,68,10,0,Math.PI*2);ctx.fill();
-    roundRect(390,110,180,100,16,'#1e332c','#7fa694');ctx.fillStyle='#89e4a0';ctx.font='900 30px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(`CH ${state.tuned}`,480,164);marker(480,225,'E');
-    if(state.radioMode){roundRect(260,470,440,82,18,'rgba(4,15,10,.88)','#5b8b6c');ctx.fillStyle='#dcecdf';ctx.font='800 15px system-ui';ctx.fillText('← / → Kanal ändern · E / Enter Signal senden',480,500);ctx.font='900 22px system-ui';ctx.fillStyle=state.tuned===radioChannel?'#78e293':'#f0d271';ctx.fillText(`Aktuell ${state.tuned} · Ziel ${radioChannel}`,480,532)}
+    drawRetroField(0);
+    pixelRect(96,330,768,226,'#76583a');
+    pixelRect(128,300,704,30,'#82613d');
+
+    // Mast.
+    pixelRect(474,78,12,314,'#75867c');
+    for(let y=110;y<380;y+=44){
+      pixelRect(405,y,150,7,'#65766d');
+      ctx.strokeStyle='#65766d';ctx.lineWidth=5;
+      ctx.beginPath();ctx.moveTo(411,y+2);ctx.lineTo(480,y+40);ctx.moveTo(549,y+2);ctx.lineTo(480,y+40);ctx.stroke();
+    }
+    pixelRect(459,62,42,16,'#b04e3e');
+    pixelRect(470,47,20,15,'#dc6c55');
+
+    // Console.
+    pixelRect(410,116,140,92,'#263c32');
+    pixelRect(420,126,120,66,'#355345');
+    pixelRect(432,138,96,30,'#1b2a22');
+    ctx.fillStyle=state.tuned===radioChannel?'#8ce89e':'#e2c261';
+    ctx.font='900 18px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(`CH ${state.tuned}`,480,159);
+    marker(480,225,'E');
+
+    if(state.radioMode){
+      drawRetroPanel(270,470,420,82,'FUNK');
+      ctx.fillStyle='#d8e7d7';ctx.font='800 12px ui-monospace,monospace';ctx.textAlign='center';
+      ctx.fillText('← / → KANAL     E / ENTER SENDEN',480,516);
+      ctx.fillStyle=state.tuned===radioChannel?'#82e89a':'#e4c665';
+      ctx.fillText(`AKTUELL ${state.tuned} · ZIEL ${radioChannel}`,480,540);
+    }
   }
 
   function drawExplorer(){
@@ -1355,10 +1594,39 @@
     ctx.restore();
   }
   function drawJeepSprite(x,y,angle){ctx.save();ctx.translate(x,y);ctx.rotate(angle);roundRect(-54,-28,108,56,17,'#e0a52e','#5b4a28');ctx.fillStyle='#315b42';ctx.fillRect(-24,-24,48,48);ctx.fillStyle='#17241d';for(const yy of[-31,31])for(const xx of[-36,36]){ctx.beginPath();ctx.arc(xx,yy,9,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#f1d47b';ctx.fillRect(-9,-8,18,16);ctx.fillStyle='#17241d';ctx.fillRect(-5,-3,3,3);ctx.fillRect(2,-3,3,3);ctx.restore()}
-  function drawBoat(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle='#a36f3c';ctx.beginPath();ctx.moveTo(-44,-20);ctx.lineTo(44,-20);ctx.lineTo(30,30);ctx.lineTo(-30,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2d170';ctx.fillRect(-5,-45,10,45);ctx.fillStyle='#f3eee0';ctx.beginPath();ctx.moveTo(5,-43);ctx.lineTo(40,-15);ctx.lineTo(5,-15);ctx.closePath();ctx.fill();ctx.font='22px system-ui';ctx.textAlign='center';ctx.fillText('🐧',0,16);ctx.restore()}
-  function drawCameraOverlay(){ctx.save();ctx.fillStyle='rgba(0,0,0,.42)';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#f3f5e7';ctx.lineWidth=3;ctx.strokeRect(160,80,640,440);ctx.beginPath();ctx.arc(state.reticle.x,state.reticle.y,45,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(state.reticle.x-65,state.reticle.y);ctx.lineTo(state.reticle.x+65,state.reticle.y);ctx.moveTo(state.reticle.x,state.reticle.y-65);ctx.lineTo(state.reticle.x,state.reticle.y+65);ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('KAMERAMODUS · Sucher bewegen · Kamera = Auslösen',175,110);ctx.restore()}
+  function drawRetroBoat(x,y,t){
+    const bob=Math.sin(t/120)*1.5;
+    ctx.save();ctx.translate(Math.round(x),Math.round(y+bob));
+    pixelRect(-35,-33,70,68,'#8a5f37');
+    pixelRect(-29,-39,58,14,'#b07c42');
+    pixelRect(-29,21,58,14,'#65452e');
+    pixelRect(-24,-21,48,40,'#d1b166');
+    pixelRect(-17,-14,34,28,'#2b4639');
+    // Explorer face visible in boat.
+    pixelRect(-8,-9,16,14,'#d7a47e');
+    pixelRect(-10,-14,20,7,'#31523a');
+    pixelRect(-5,-2,3,3,'#18231c');pixelRect(3,-2,3,3,'#18231c');
+    ctx.restore();
+  }
 
-  function loop(now){
+  function drawBoat(x,y){ drawRetroBoat(x,y,performance.now()); }
+
+  function drawCameraOverlay(){
+    ctx.save();
+    ctx.fillStyle='rgba(4,12,8,.54)';ctx.fillRect(0,0,W,H);
+    pixelRect(126,58,708,8,'#e7ead8');pixelRect(126,534,708,8,'#e7ead8');
+    pixelRect(126,58,8,484,'#e7ead8');pixelRect(826,58,8,484,'#e7ead8');
+
+    const rx=Math.round(state.reticle.x), ry=Math.round(state.reticle.y);
+    ctx.strokeStyle='#f1edd6';ctx.lineWidth=3;ctx.strokeRect(rx-44,ry-34,88,68);
+    pixelRect(rx-65,ry-2,42,4,'#f1edd6');pixelRect(rx+23,ry-2,42,4,'#f1edd6');
+    pixelRect(rx-2,ry-55,4,34,'#f1edd6');pixelRect(rx-2,ry+21,4,34,'#f1edd6');
+
+    drawRetroPanel(146,76,312,40,'KAMERA · SUCHER AUFS TIER');
+    ctx.restore();
+  }
+
+  function loop(now)  function loop(now){
     const dt=Math.min(.033,(now-last)/1000);
     last=now;
     const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);

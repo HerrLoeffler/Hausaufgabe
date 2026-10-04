@@ -423,3 +423,43 @@ test('V2 Jeep recovery restores a complete safe driving state', () => {
   assert.match(body, /state\.jeep\.impactTimer = 0/);
   assert.match(body, /state\.jeep\.hitHazards\.delete/);
 });
+
+
+test('V2 world pivot renders all Amazonas scenes in one retro top-down language', () => {
+  for (const token of [
+    'function drawRetroTent',
+    'function drawRetroCampTable',
+    'function drawRetroAnimal',
+    'function drawRetroWaterTile',
+    'function drawRetroBoat',
+    "STATION · STROM AUS",
+    'WEG BLOCKIERT · WINDE SUCHEN',
+    "drawRetroPanel(270,470,420,82,'FUNK')"
+  ]) assert.ok(js.includes(token), 'missing retro world token: ' + token);
+
+  const wildlife = js.slice(js.indexOf('function drawWildlife(){'), js.indexOf('function drawRiver(){'));
+  assert.ok(!wildlife.includes('fillText(a.emoji'), 'wildlife must not render emoji animals');
+  assert.ok(!wildlife.includes("fillText('📡'"), 'sender must not be an emoji');
+
+  const station = js.slice(js.indexOf('function drawStation(){'), js.indexOf('function drawTower(){'));
+  assert.ok(!station.includes("fillText('⚡'"), 'generator must be drawn as a game object');
+  assert.ok(!station.includes("'💻'"), 'terminal must not be an emoji');
+
+  const boat = js.slice(js.indexOf('function drawRetroBoat'), js.indexOf('function loop(now)'));
+  assert.ok(!boat.includes("fillText('🐧'"), 'boat driver must not be an emoji');
+});
+
+test('V2 River hazards now approach the boat from the top and collide once per cycle', () => {
+  const updateStart = js.indexOf('function updateRiver(dt)');
+  const updateEnd = js.indexOf('function updateRadioControls', updateStart);
+  const updateBody = js.slice(updateStart, updateEnd);
+  assert.match(updateBody, /const rockY = -45 \+ \(phase \/ 160\) \* \(H \+ 110\)/);
+  assert.match(updateBody, /state\.river\.lastRockCycle !== cycle/);
+  assert.match(updateBody, /state\.river\.lastRockCycle = cycle/);
+
+  const drawStart = js.indexOf('function drawRiver(){');
+  const drawEnd = js.indexOf('function drawStation(){', drawStart);
+  const drawBody = js.slice(drawStart, drawEnd);
+  assert.match(drawBody, /rockY=-45\+\(phase\/160\)\*\(H\+110\)/);
+  assert.ok(!drawBody.includes("fillText('🪨'"), 'river rock must be an original pixel object');
+});
