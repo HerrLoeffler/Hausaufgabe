@@ -10,6 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
+      - feature/bug-ops-v1
       - 'fix/remy-*'
       - 'fix/tutorial-*'
       - 'feature/design-*'
@@ -188,6 +189,7 @@ jobs:
           node --test gradecrew-brand-assets.test.mjs
           node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs
           node --test diagnostics.test.mjs
+          node --test bug-ops.test.mjs
           node --test crew-art.test.mjs
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
@@ -237,6 +239,7 @@ jobs:
           test -f "$BUILD_DIR/public/secure-solution-release.js"
           test -f "$BUILD_DIR/public/secure-assessment-teacher-polish.js"
           test -f "$BUILD_DIR/public/gate-e-lab.js"
+          test -f "$BUILD_DIR/public/bug-ops.mjs"
           grep -q 'shared/i18n/bootstrap.mjs' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-draft-persistence.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
