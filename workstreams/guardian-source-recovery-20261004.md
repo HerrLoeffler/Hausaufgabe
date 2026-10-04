@@ -18,7 +18,7 @@ Die Homepage-Nachfolge enthält durch PR #91 einen anderen Basis-SHA als ihr alt
 - Lokal: 97 Automation-Verhaltenstests grün; neuer Quellvertrag/Budget-/Kontext-/Abstammungs-/Widerrufs-/Race-/Prepare-Test enthalten.
 - Ursprünglicher bezahlter Run: 37196835882; ein Versuch, 0,85 USD konservativ reserviert, 0,023296 USD bekannte Nutzungsschätzung. Gesamtgrenze weiterhin drei Versuche / 2,55 USD.
 - Quellenfix integriert: PR #95, Merge b49793cd9ae0073024f5a17191dd8d623ab523cb. Vier finale Checks grün: Guardian 37217124832, Handoff 37217124802, Development Status 37217124823, vollständige isolierte Web-Rehearsal 37217125121.
-- Recovery 37217267732 wurde in der gemeinsamen Status-Warteschlange vor jedem Job abgebrochen (Jobs leer). Guardian 37217267635 bestätigt weiterhin ursprünglichen Stopp / 1 von 3 Versuchen; Ledger und Reservierung unverändert. Folgefix fix/guardian-recovery-queue-20261004 gibt Recovery eine eigene Warteschlange. CAS und dauerhafte Ledger-Reservierungen bleiben das Schreib-/Versuchs-Gate; keine bezahlten Jobs erneut gestartet.
+- Recovery 37217267732 wurde in der gemeinsamen Status-Warteschlange vor jedem Job abgebrochen (Jobs leer). Guardian 37217267635 bestätigt weiterhin ursprünglichen Stopp / 1 von 3 Versuchen; Ledger und Reservierung unverändert. Folgefix fix/guardian-recovery-queue-20261004 gibt Recovery eine eigene Warteschlange. Übersprungene upstream-Ereignisse erhalten im Stage Guardian ebenfalls eine getrennte Warteschlange, damit sie keinen wartenden regulären Dispatch verdrängen. CAS und dauerhafte Ledger-Reservierungen bleiben das Schreib-/Versuchs-Gate; keine bezahlten Jobs erneut gestartet.
 - Production und Geräteabnahme unverändert offen.
 
 ## Nächster Schritt / Wiederaufnahme
