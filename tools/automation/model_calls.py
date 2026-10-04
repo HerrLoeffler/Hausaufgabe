@@ -93,7 +93,12 @@ def call(role, instructions, context, schema, transport=None, *, task=None):
         raise ValueError('Returned model differs; no implicit downgrade or upgrade')
     if spec['provider'] == 'openai':
         if payload.get('status') != 'completed':
-            raise ValueError('Incomplete/refused model response')
+            status = str(payload.get('status') or 'unknown')
+            response_id = payload.get('id') if isinstance(payload.get('id'), str) and payload.get('id').startswith('resp_') else 'unknown'
+            incomplete = payload.get('incomplete_details') if isinstance(payload.get('incomplete_details'), dict) else {}
+            error = payload.get('error') if isinstance(payload.get('error'), dict) else {}
+            detail = incomplete.get('reason') or error.get('code') or error.get('type') or 'unspecified'
+            raise ValueError(f'OpenAI response {status}: {detail}; response {response_id}')
         content = [item for message in payload.get('output', []) if message.get('type') == 'message' for item in message.get('content', [])]
         if not content or any(c.get('type') != 'output_text' for c in content):
             raise ValueError('Refused or unexpected model output')
