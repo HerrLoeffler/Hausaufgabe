@@ -50,7 +50,7 @@ const telemetryOpts = {
 
 function patchMetricFields(patch = {}) {
   const fields = [];
-  for (const key of ["subject", "grade", "schoolType", "region", "topic", "difficulty", "count", "points", "durationMinutes", "notes"]) {
+  for (const key of ["subject", "grade", "schoolType", "region", "topic", "difficulty", "count", "points", "durationMinutes", "audioQuestionCount", "notes"]) {
     if (patch[key] !== undefined && patch[key] !== null && patch[key] !== "") fields.push(key);
   }
   if ((Array.isArray(patch.allowedTypes) && patch.allowedTypes.length) || (Array.isArray(patch.excludeTypes) && patch.excludeTypes.length)) fields.push("questionTypes");
