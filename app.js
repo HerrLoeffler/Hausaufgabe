@@ -1562,13 +1562,22 @@ async function toggleDashboardPublished(q, toggle) {
     if (wantsPublished) {
       const teacherMode = q.startMode === "teacher";
       const runId = teacherMode ? randomId("run") : null;
+      const contentLocale = q.contentLocale || "de-DE";
+      const gradingLocale = q.gradingLocale || contentLocale;
+      const localeContractVersion = Number(q.localeContractVersion) || 1;
       await updateDoc(doc(db, "quizzes", q.id), {
         published: true, ended: false,
+        contentLocale, gradingLocale, localeContractVersion,
         sessionState: teacherMode ? "waiting" : "open",
         sessionRunId: runId, sessionStartedAt: null,
         publishedAt: serverTimestamp(), updatedAt: serverTimestamp()
       });
-      Object.assign(q, { published: true, ended: false, sessionState: teacherMode ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null });
+      Object.assign(q, {
+        published: true, ended: false,
+        contentLocale, gradingLocale, localeContractVersion,
+        sessionState: teacherMode ? "waiting" : "open",
+        sessionRunId: runId, sessionStartedAt: null
+      });
       toast("Test veröffentlicht.");
     } else {
       await updateDoc(doc(db, "quizzes", q.id), {
