@@ -4,7 +4,7 @@
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
-- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec freigegeben, Implementierungsplan in Vorbereitung.
+- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec freigegeben, Implementierungsplan geschrieben, Review/Execution-Methode offen.
 - Aufgabenbranch: docs/guardian-admission-profiles-20261004
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
@@ -40,7 +40,7 @@ Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secur
 
 ## Nächster konkreter Schritt
 
-[Schriftliche Spezifikation](../docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) ist von Martin freigegeben; Implementierungsplan für den ersten Profilblock erstellen. Unabhängige Fehlerdiagnosen sind im Audit gesichert.
+[Schriftliche Spezifikation](../docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) ist von Martin freigegeben; [Implementierungsplan](../docs/superpowers/plans/2026-10-04-guardian-admission-profiles.md) prüfen und Execution-Methode wählen. Unabhängige Fehlerdiagnosen sind im Audit gesichert.
 
 ## Wiederaufnahme nach Abbruch
 
@@ -51,6 +51,10 @@ Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secur
 - Bereits ausgeführte externe Aktionen / Kostenreservationen: nur GitHub-Reads und dieser Dokumentationscheckpoint; keine neue API-Kostenreservation.
 - Was darf noch nicht als erledigt gelten? GC-AUTOMATION-08, Zulassung neuer Aufgabenprofile, neue L3-/PostHog-/Security-Deployments und menschliche Abnahmen.
 - Was vor Wiederholung prüfen? Aktuelles main, Branch/PR dieses Checkpoints, aktuelle Ledger/Actions und Kandidaten; identischen Audit/Branch nicht neu erzeugen.
-- Genau ein nächster ausführbarer Schritt: Implementierungsplan für die genehmigte Spec erstellen.
+- Genau ein nächster ausführbarer Schritt: den schriftlichen Implementierungsplan prüfen und Execution-Methode auswählen.
 
 Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen.
+
+## Externe Fortsetzung vorab gesichert
+
+Secret-Viewer ausdrücklich freigegeben und gespeichert; Policy Troubleshooter bestätigt wirksames secrets.get. Aktueller Escape-Head a7ffc382 unverändert, Run 37021633218/Attempt1 completed failure, keine aktiven/queued Jobs. Geplant: nur fehlgeschlagenen Job dieses Runs unter dem bestehenden Weiterarbeitsauftrag fortsetzen; Ziel ausschließlich generateEscapePreview + gradecrew-escape-dev in Staging. Ergebnis/Attempt2 nach API-Aufruf sofort sichern, keinen unklaren Start wiederholen. Keine Provider-Testanfrage.
