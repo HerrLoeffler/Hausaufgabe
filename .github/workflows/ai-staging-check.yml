@@ -100,9 +100,14 @@ jobs:
           node --check shared/i18n/i18n-core.mjs
           node --check shared/i18n/browser-runtime.mjs
           node --check shared/i18n/messages-de-DE.mjs
+          node --check shared/i18n/messages-en-GB.mjs
+          node --check shared/i18n/extensions-en-GB-crew.mjs
+          node --check shared/i18n/assessment-locale.mjs
+          node --check shared/i18n/assessment-locale-ui.mjs
           node --check shared/i18n/bootstrap.mjs
           node --test shared/i18n/i18n-core.test.mjs
           node --test shared/i18n/browser-runtime.test.mjs
+          node --test shared/i18n/assessment-locale.test.mjs
           node --test i18n-integration.test.mjs
 
       - name: Test secure client boundary
@@ -217,6 +222,10 @@ jobs:
           test -f "$BUILD_DIR/public/shared/i18n/i18n-core.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/browser-runtime.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/messages-de-DE.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/messages-en-GB.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/extensions-en-GB-crew.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/assessment-locale.mjs"
+          test -f "$BUILD_DIR/public/shared/i18n/assessment-locale-ui.mjs"
           test -f "$BUILD_DIR/public/shared/i18n/bootstrap.mjs"
           test -f "$BUILD_DIR/public/tutorial-ordering-guard.js"
           test -f "$BUILD_DIR/public/secure-student.html"
