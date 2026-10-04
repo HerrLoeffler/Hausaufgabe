@@ -21,8 +21,10 @@ test("private draft writes are bounded and blocked during active published asses
   assert.match(main, /quiz\.rightsHold === true/);
 });
 
-test("server sync deletes stale drafts and never logs transcript contents", () => {
-  assert.match(main, /if \(!keep\.has\(doc\.id\)\) batch\.delete\(doc\.ref\)/);
-  assert.match(main, /batch\.set\(collectionRef\.doc\(questionId\)/);
+test("server sync deletes private audio drafts only when neither listening nor solution content remains", () => {
+  assert.match(main, /const ids = new Set\(\[\.\.\.existingById\.keys\(\), \.\.\.listening\.keys\(\), \.\.\.solutions\.keys\(\)\]\)/);
+  assert.match(main, /if \(!script && !solutionScript\)/);
+  assert.match(main, /if \(oldDoc\) batch\.delete\(ref\)/);
+  assert.match(main, /batch\.set\(ref, patch, \{ merge: true \}\)/);
   assert.doesNotMatch(main, /console\.(?:log|warn|error)[^\n]*script/);
 });
