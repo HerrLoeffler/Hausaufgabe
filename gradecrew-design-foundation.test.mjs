@@ -68,10 +68,20 @@ test('dashboard foundation stays scoped away from student and secure assessment 
   assert.doesNotMatch(dashboardCss, /\.studentQuestion/);
 });
 
+const hasGeneratedCopy = css => {
+  const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(?:^|[;{])\s*content\s*:\s*([^;}]*)(?=[;}])/gi);
+  return [...declarations].some(([, value]) => !/^(?:""|''|none|normal)\s*(?:!important)?$/i.test(value.trim()));
+};
+
+test('generated-copy guard permits decoration and rejects untranslated CSS text', () => {
+  for (const css of ['.a{content:"";}', ".a{content:'';}", '.a{justify-content:flex-end;}', '.a{content:none;}', '.a{content:normal;}']) assert.equal(hasGeneratedCopy(css), false, css);
+  for (const css of ['.a{content:"Welcome";}', '.a{content:attr(title);}', '.a{content:var(--copy);}', '.a{content:url(image.svg);}']) assert.equal(hasGeneratedCopy(css), true, css);
+});
+
 test('startscreen polish layer stays isolated from product screens', () => {
   assert.match(startscreenPolishCss, /\.gcPublicEntryMode #authView/);
   assert.doesNotMatch(startscreenPolishCss, /#dashboardView|#studentView|#secure/);
-  assert.equal(/content\s*:/.test(startscreenPolishCss), false, 'visible copy must stay in DOM/i18n, never CSS content');
+  assert.equal(hasGeneratedCopy(startscreenPolishCss), false, 'visible copy must stay in DOM/i18n, never CSS content');
   assert.equal(startscreenPolishCss.includes('data:image'), false, 'polish layer must not hide language in data images');
 });
 
