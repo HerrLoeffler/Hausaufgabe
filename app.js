@@ -1659,8 +1659,12 @@ async function duplicateQuiz(code) {
   if (!source) return;
   if (source.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   try {
-    const qSnap = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
-    const questions = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const [qSnap, audioSnap] = await Promise.all([
+      getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
+      getDocs(collection(db, "quizzes", code, "audioScripts"))
+    ]);
+    const audioScripts = new Map(audioSnap.docs.map(d => [d.id, String(d.data()?.script || "")]));
+    const questions = qSnap.docs.map((d) => ({ id: d.id, ...d.data(), audioScript: audioScripts.get(d.id) || "" }));
     const base = {
       title: `${source.title || "Test"} – Kopie`,
       subject: source.subject || "",
@@ -1681,13 +1685,20 @@ async function duplicateQuiz(code) {
       ended: false,
       shareEnabled: false,
       questionCount: questions.length,
-      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
+      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioQuestionCount: questions.filter(q => Boolean(q.audioScript || getQuestionAudioSrc(q))).length,
+      audioReady: questions.every(questionAudioReady)
     };
     const { code: newCode } = await createQuizDocument(base);
     for (let i = 0; i < questions.length; i += 1) {
-      const copy = sanitizeQuestionForSave({ ...deepClone(questions[i]), id: randomId("q"), position: i + 1 });
+      const sourceQuestion = questions[i];
       const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const copy = sanitizeQuestionForSave({ ...deepClone(sourceQuestion), id: ref.id, position: i + 1 });
       await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
+      const script = String(sourceQuestion.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (script) {
+        await setDoc(doc(db, "quizzes", newCode, "audioScripts", ref.id), { script, updatedAt: serverTimestamp() });
+      }
     }
     toast("Test dupliziert.");
     await openEditor(newCode);
@@ -1787,6 +1798,8 @@ async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
     for (const d of sSnap.docs) await deleteDoc(d.ref);
     const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
     for (const d of aSnap.docs) await deleteDoc(d.ref);
+    const audioSnap = await getDocs(collection(db, "quizzes", code, "audioScripts"));
+    for (const d of audioSnap.docs) await deleteDoc(d.ref);
     await deleteDoc(doc(db, "quizzes", code));
     if (admin) await writeAdminAudit("quiz_deleted_permanently", { quizId: code, title: q?.title || "" });
     state.quizzes = state.quizzes.filter((x) => x.id !== code);
@@ -1995,7 +2008,9 @@ async function importSharedTemplate() {
       ended: false,
       shareEnabled: false,
       questionCount: source.questions.length,
-      totalPoints: round1(source.questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
+      totalPoints: round1(source.questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioQuestionCount: source.questions.filter(q => Boolean(q.audioDataUrl)).length,
+      audioReady: !source.questions.some(q => Boolean(q.audioDataUrl))
     };
     const { code: newCode } = await createQuizDocument(base);
     for (let i = 0; i < source.questions.length; i += 1) {
@@ -4006,7 +4021,7 @@ function renderQuestionAudioEditor(container, q) {
   const details = document.createElement("details");
   details.className = "questionAudioPanel";
   details.open = hasAudio || hasScript;
-  details.innerHTML = `<summary><span>🔊 Audio / Höraufgabe <small>(optional)</small></span><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></summary>
+  details.innerHTML = `<summary><span>🔊 Audio / Höraufgabe <small>(optional)</small></span><span class="questionAudioState">${hasAudio && hasScript && !q.audioNeedsRegeneration ? "bereit" : hasAudio && !hasScript ? "Hörtext fehlt" : hasScript ? "Audio erzeugen" : ""}</span></summary>
     <div class="questionAudioBody">
       <label class="stack compact"><span>Hörtext <small>nur für Lehrkraft/Admin · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="z. B. The train to London leaves from platform four at half past eight."></textarea></label>
       <div class="questionAudioPreview"></div>
@@ -4028,6 +4043,12 @@ function renderQuestionAudioEditor(container, q) {
   });
 
   const preview = details.querySelector(".questionAudioPreview");
+  if (hasAudio && !hasScript) {
+    const warning = document.createElement("small");
+    warning.className = "aiInputError";
+    warning.textContent = "Der private Hörtext ist hier nicht verfügbar, z. B. bei einer geteilten Vorlage. Bitte Hörtext eintragen und Audio neu erzeugen oder Audio entfernen.";
+    preview.appendChild(warning);
+  }
   if (hasAudio) {
     const audio = document.createElement("audio");
     audio.controls = true;
@@ -4832,7 +4853,10 @@ async function saveCurrentQuiz(showMessage = true) {
       }
     }
     for (const oldId of state.loadedQuestionIds) {
-      if (!currentIds.has(oldId)) await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
+      if (!currentIds.has(oldId)) {
+        await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
+        await deleteDoc(doc(db, "quizzes", code, "audioScripts", oldId)).catch(() => {});
+      }
     }
     state.loadedQuestionIds = currentIds;
     state.currentQuiz = { ...state.currentQuiz, ...patch };
