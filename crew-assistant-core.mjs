@@ -77,13 +77,13 @@ const COMMON_RESPONSES = Object.freeze({
   cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
   capabilities: Object.freeze({
     coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
-    remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Aufgabentypen und Zusatzwünsche.",
+    remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Aufgabentypen und Zusatzwünsche.",
     emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
     wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
   })
 });
 
-const PARSER_VERSION = "remy-structure-v3";
+const PARSER_VERSION = "remy-structure-v4-audio";
 const INITIAL_EASY = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)\b[^.!?]{0,50}?\b(?:leicht|einfach)\b/i;
 const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?)\s+(?:(?:zu|so)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt)\b/gi;
 
@@ -121,6 +121,7 @@ function cleanTopic(value = "") {
     .replace(/[,;\s]+(?:keine?|ohne)\s+(?:freitext(?:aufgaben?|fragen?)?|offene[nr]?\s+fragen?)\b.*$/i, "")
     .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?)\s+(?:text|texte|aufgaben?|fragen?)\b).*$/i, "")
     .replace(/\s+(?=(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b).*$/i, "")
+    .replace(/\s+(?=(?:davon\s+)?\d+\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b).*$/i, "")
     .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
     .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)\s*$/i, "")
     .replace(/[\s,;]+$/g, "")
@@ -226,6 +227,12 @@ function parseTestRequest(input = "") {
   const duration = extractNumber(text, [/\b(\d{1,3})\s*(?:minuten?|min\.?)(?:\s|$)/i], 1, 300);
   if (duration !== undefined) patch.durationMinutes = duration;
 
+  const audioQuestionCount = extractNumber(text, [
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b/i,
+    /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio|hörtext|hoertext)\b/i
+  ], 0, 5);
+  if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
+
   const allowedTypes = [];
   const excludedTypes = [];
   for (const [pattern, value] of TYPE_PATTERNS) {
@@ -256,6 +263,7 @@ function patchSummary(patch = {}) {
   if (patch.count) parts.push(`${patch.count} Aufgaben`);
   if (patch.points) parts.push(`${patch.points} Punkte`);
   if (patch.durationMinutes) parts.push(`${patch.durationMinutes} Min.`);
+  if (patch.audioQuestionCount !== undefined) parts.push(`${patch.audioQuestionCount} Höraufgaben`);
   if (patch.notes) parts.push("Wünsche übernommen");
   return parts.join(" · ");
 }
