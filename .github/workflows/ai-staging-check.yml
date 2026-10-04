@@ -10,7 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
-      - feature/bug-ops-v1
+      - 'feature/bug-ops-*'
       - 'fix/remy-*'
       - 'fix/tutorial-*'
       - 'feature/design-*'
