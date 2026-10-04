@@ -4341,14 +4341,6 @@ function renderGapfillEditor(container, q) {
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
 
-  if (getQuestionAudioSrc(q)) {
-    base.audioDataUrl = getQuestionAudioSrc(q);
-    base.audioByteSize = Number(q.audioByteSize || 0);
-    base.audioVoice = String(q.audioVoice || "").slice(0, 40);
-    base.audioModel = String(q.audioModel || "").slice(0, 80);
-    base.audioAiGenerated = q.audioAiGenerated !== false;
-  }
-  if (q.audioScript || getQuestionAudioSrc(q)) base.audioNeedsRegeneration = !questionAudioReady(q);
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
     info.className = "hint";
@@ -4757,6 +4749,15 @@ function sanitizeQuestionForSave(q) {
     base.imagePath = String(q.imagePath || "");
     base.imageAlt = String(q.imageAlt || "").trim();
   }
+  const audioSrc = getQuestionAudioSrc(q);
+  if (audioSrc) {
+    base.audioDataUrl = audioSrc;
+    base.audioByteSize = Number(q.audioByteSize || 0);
+    base.audioVoice = String(q.audioVoice || "").slice(0, 40);
+    base.audioModel = String(q.audioModel || "").slice(0, 80);
+    base.audioAiGenerated = q.audioAiGenerated !== false;
+  }
+  if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
   if (["single", "multi", "dropdown"].includes(q.type)) {
     base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}) }));
     if (q.imageChoicesOnly) base.imageChoicesOnly = true;
