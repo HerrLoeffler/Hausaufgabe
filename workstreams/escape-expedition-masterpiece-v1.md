@@ -65,12 +65,62 @@ Prüfgrenze:
 - echter iPhone-Test M1.1: offen
 - Production: unverändert
 
+## M1.2 — zentraler Spielmodus / Transition-Lock
+
+Status: **erledigt und automatisiert geprüft**
+
+Produktcommit:
+`5c65038b2bdcdfef004ab8de2c686973f03cd282`
+
+Änderungen:
+- zentraler `gameMode` als gemeinsame Eingabe-Autorität eingeführt: `world / vehicle / camera / modal / radio / transition / won`;
+- zentraler `transitioning`-Lock verhindert parallele/doppelte Szenenwechsel;
+- `sceneEpoch` und `actionEpoch` machen verzögerte Aktionen ungültig, sobald Szene oder Interaktionsfluss gewechselt haben;
+- neue `scheduleGuarded()`-Hülle ersetzt zustandsverändernde ungeschützte Timeouts bei Lerntransfer, Lernbelohnung, Seilwinde, Generator und Victory;
+- `setScene()` sperrt Eingaben während des Übergangs und gibt den passenden Szenenmodus erst danach wieder frei;
+- Welt-/Touch-/Keyboard-Eingaben werden zentral nach Spielmodus gefiltert;
+- Kamera und Funk besitzen nun explizite Modi statt nur lose Flags;
+- Dialog-Schließen stellt den passenden Szenenmodus wieder her und invalidiert alte verzögerte Aktionen;
+- Updates werden während eines aktiven Szenenübergangs nicht weitergeführt;
+- zwei neue Regressionstests sichern Transition-Lock und guarded callbacks.
+
+## Verifikation M1.2
+
+GitHub Actions:
+- Masterpiece Preview Run: `37195010845`
+- Produktcommit: `5c65038b2bdcdfef004ab8de2c686973f03cd282`
+- JavaScript-Syntax: grün
+- Expedition-Verträge: **11/11 grün**
+- isolierter Build: grün
+- Firebase Staging Preview: grün
+- zusätzlicher Workflow `Games Lab Checks`: grün
+- zusätzlicher Workflow `Escape review gates`: grün
+
+Preview:
+`https://hausaufgabe-staging--gradecrew-escape-masterpiece-pmxjup1g.web.app`
+
+Prüfgrenze:
+- automatisierte Tests/Build/Deploy sind grün;
+- echter manueller M1.2-Durchspieltest auf Desktop/iPad/iPhone ist noch offen;
+- M1.2 verhindert Transition-/Callback-Rennen, trennt aber das Seilwinden-Modal noch nicht vollständig vom normalen World-Updatepfad; das bleibt bewusst M1.3.
+
+## Status getrennt
+
+- auf GitHub gesichert: ja
+- automatisiert getestet: ja, 11/11 + Syntax + Games Lab Checks + Escape review gates
+- isolierter Build: ja
+- Staging deployed: ja
+- echter Desktop-Test M1.2: offen
+- echter iPad-Test M1.2: offen
+- echter iPhone-Test M1.2: offen
+- Production: unverändert
+
 ## Nächster Mikro-Schritt
 
-**M1.2 — zentraler Spielmodus / Transition-Lock.**
+**M1.3 — Seilwinden-Minispiel vollständig vom normalen World-Update trennen.**
 
 Ziel:
-- Szenenwechsel nur einmal auslösen;
-- Eingaben während Übergängen sperren;
-- alte verzögerte Callbacks dürfen keinen späteren Zustand überschreiben;
-- danach wieder eigener Regressionstest, Build, Preview und Handoff.
+- bei geöffnetem Winch-Modal nur die Winch-Nadel aktualisieren;
+- keine Hotspot-/World-State-Arbeit im Hintergrund;
+- Dialogzustand sauber verlassen;
+- danach wieder Regressionstest, Build, Preview und Handoff.
