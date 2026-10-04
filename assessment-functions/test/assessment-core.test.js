@@ -218,3 +218,27 @@ test("grade thresholds preserve GradeCrew's six-grade scale", () => {
   assert.equal(gradeFromPercent(90, thresholds), 2);
   assert.equal(gradeFromPercent(24, thresholds), 6);
 });
+
+
+test("listening audio reaches the student paper without leaking its transcript", () => {
+  const listening = {
+    id: "listen", position: 1, type: "single", text: "Wann fährt der Zug?", points: 1,
+    options: [{ text: "8 Uhr", correct: true }, { text: "9 Uhr", correct: false }],
+    audioDataUrl: "data:audio/mpeg;base64,QUJDRA==",
+    audioAiGenerated: true,
+    audioScript: "Der Zug fährt um acht Uhr."
+  };
+  const { paper } = buildAssessmentContract([listening], PAPER_SECRET);
+  assert.equal(paper[0].audio.src, listening.audioDataUrl);
+  assert.equal(paper[0].audio.aiGenerated, true);
+  assert.equal(Object.hasOwn(paper[0], "audioScript"), false);
+  assert.doesNotMatch(JSON.stringify(paper), /Der Zug fährt um acht Uhr/);
+  assert.equal(assertNoSolutionLeak(paper), true);
+});
+
+test("solution-leak guard rejects transcripts if they are ever added to a public paper", () => {
+  assert.throws(
+    () => assertNoSolutionLeak([{ id: "q1", audioScript: "geheimer Hörtext" }]),
+    /forbidden field: audioScript/
+  );
+});
