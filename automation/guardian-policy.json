@@ -21,7 +21,16 @@
       "baseBranch": "feature/gradecrew-app-integration",
       "approvedSha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
       "maxAutomaticStage": "staging_deployed"
+    },
+    {
+      "id": "startscreen-masterpiece-v3-20261004",
+      "taskId": "startscreen-masterpiece-v3-20261004",
+      "enabled": true,
+      "execution": "pipeline-v2",
+      "baseBranch": "feature/gradecrew-app-integration",
+      "approvedSha": "9559f7420aca9b62e45629e6bec02220006e6e88",
+      "maxAutomaticStage": "staging_deployed"
     }
   ],
-  "note": "Dedicated keys and flags verified. Pilot reached verified staging; explicitly bounded homepage admitted. Production and device acceptance remain manual."
+  "note": "Dedicated keys and flags verified. Pilot reached verified staging. Masterpiece v2 stopped before candidate on a diagnosed synchronous timeout; v3 is explicitly repinned to the bilingual startscreen and uses background Responses. Production and device acceptance remain manual."
 }
