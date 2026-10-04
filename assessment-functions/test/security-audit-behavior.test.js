@@ -16,7 +16,10 @@ function fixture() {
   const snap = path => ({ exists: docs.has(path), id: path.split('/').pop(), ref: ref(path), data: () => docs.get(path) });
   const db = {
     doc: ref,
-    collection: path => ({ orderBy: () => ({ get: async () => ({ docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) }) }) }),
+    collection: path => {
+      const read = async () => ({ docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) });
+      return { get: read, orderBy: () => ({ get: read }) };
+    },
     runTransaction: async callback => callback({
       get: async r => snap(r.path),
       create: (r, value) => { assert.equal(docs.has(r.path), false); docs.set(r.path, value); },

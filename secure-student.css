@@ -13,3 +13,5 @@
 .secureQuestionAudio strong{font-size:14px}
 .secureQuestionAudio audio{width:100%;max-width:560px}
 .secureQuestionAudio small{color:#667085;font-size:12px}
+
+.secureSolutionItem audio{display:block;width:100%;max-width:560px;margin-top:10px}.secureSolutionAudioDisclosure{display:block;margin-top:5px;color:#667085;font-size:12px}
