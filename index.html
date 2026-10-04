@@ -269,8 +269,8 @@
           <label>Von<input id="adminFeedbackFrom" type="date"></label><label>Bis<input id="adminFeedbackTo" type="date"></label>
           <label>Sortieren<select id="adminFeedbackSort"><option value="newest">Neueste zuerst</option><option value="oldest">Älteste zuerst</option><option value="frequent">Häufigste zuerst</option><option value="priority">Priorität</option></select></label>
         </div><button class="button secondary" id="adminFeedbackReset" type="button">Zusatzfilter zurücksetzen</button></details>
-        <div class="actions"><span id="adminFeedbackCount" role="status"></span><button type="button" id="adminFeedbackExport" class="button secondary">Gefilterte Diagnose exportieren</button></div>
-        <p class="hint">Der Diagnoseexport enthält technische Abläufe und Untersuchungsnotizen. Kontaktdaten und Aufgabeninhalte werden ausgelassen. Freitextnotizen vor dem Weitergeben prüfen.</p>
+        <div class="actions"><span id="adminFeedbackCount" role="status"></span><button type="button" id="adminFeedbackExport" class="button secondary">Gefilterte Diagnose exportieren</button><button type="button" id="adminFeedbackMore" class="button secondary">Ältere Meldungen laden</button></div>
+        <p class="hint">BugOps bündelt gleiche technische Meldungen zu Incidents. Der Diagnoseexport enthält technische Abläufe und Untersuchungsnotizen; Kontaktdaten und Aufgabeninhalte werden ausgelassen. Freitextnotizen vor dem Weitergeben prüfen.</p>
         <div id="adminFeedbackList" class="feedbackList"></div>
       </section>
 
