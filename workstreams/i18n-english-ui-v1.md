@@ -2,10 +2,12 @@
 
 - Aktualisiert (UTC): 2026-10-04
 - Auftrag: Englisch als zweite UI-Sprache einführen und nach dem ersten realen Preview-Test fachlich/visuell härten.
-- Aktueller Polish-Branch: `feature/i18n-bilingual-polish-20261004`
+- Integrierter Polish-Branch: `feature/i18n-bilingual-polish-20261004` (PR #131 gemergt)
+- Aktueller Cache-/Header-Reconcile-Branch: `feature/i18n-cache-v3-reconcile-20261004`
 - Polish-Basis: `feature/gradecrew-app-integration@fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41`
 - Frühe Implementierung: `feature/i18n-english-ui-v2`, über PR #96 in die App-Integration übernommen.
-- Aktueller Polish-PR: #131 gegen `feature/gradecrew-app-integration`.
+- Polish-PR #131: gemergt in `feature/gradecrew-app-integration`.
+- Veralteter Cache-PR #135: wegen Divergenz/Konflikten ohne Merge geschlossen; Änderungen werden auf aktuellem Integrationsstand reconciled.
 - Production: ausdrücklich unverändert lassen.
 
 ## Produktregel
@@ -52,11 +54,23 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 
 ## Status
 
-- Entwicklung: in Arbeit auf `feature/i18n-bilingual-polish-20261004`.
-- CI: AI Staging Checks `37236911229` auf Code-Head `dc90081832a497de601c7740714b8297a7a2cee7` vollständig erfolgreich.
-- Integration: PR #131 offen (Draft), mergebar gegen den aktuellen Integrationsstand.
-- Neuer Preview-Deploy nach Polish: offen.
-- Manueller DE/EN-Abnahmetest nach Polish: offen.
-- Zusätzlicher Auditfix: Legacy-Schüleransicht schützt nun Testtitel, Beschreibung, Fragen und interaktive Prüfungsinhalte vor UI-Übersetzung.
-- Follow-ups: CSV/Export-Lokalisierung, einzelne hart codierte Datumsformate und contentLocale-gerechte systemgenerierte Wahr/Falsch-/Bild-Labels.
+- Polish: PR #131 gemergt; Header-Slot, dynamische EN-Copy, nicht-persistente Lehrer-Vorschau und Assessment-Locale-Lifecycle sind im Integrationsbranch.
+- Aktueller Reconcile: `feature/i18n-cache-v3-reconcile-20261004`.
+- Reconcile-Inhalt: kompletter i18n-Modulgraph auf Cache-Version 3, Public Entry v5, Secure-Student ebenfalls auf Bootstrap v3, semantische Header-Navigationskeys statt reinem Source-Text-Matching.
+- Veralteter Branch `feature/i18n-cache-v3-header-20261004` war 19 Commits hinter Integration; PR #135 wurde deshalb ohne Merge geschlossen statt fremde Arbeit zu überschreiben.
+- CI für Reconcile: noch offen.
+- Neuer Preview-Deploy nach Reconcile: offen.
+- Manueller DE/EN-Abnahmetest nach Reconcile: offen.
+- Audit-Follow-ups: CSV/Export-Lokalisierung, zwei hart codierte `de-DE`-Datumsformate in `app.js` und contentLocale-gerechte systemgenerierte Wahr/Falsch-/Bild-Labels in beiden Schüler-Runtimes.
+- Architektur-Follow-up: kritische dynamische UI schrittweise von Source-Text-Matching auf semantische `data-i18n-key`-Keys migrieren.
 - Production: unverändert.
+
+
+## Checkpoint 2026-10-04 – Cache/Header-Reconcile
+
+- Task-ID: GC-I18N-03
+- Ausgangspunkt: aktueller `feature/gradecrew-app-integration` statt des divergierten Cache-Branches.
+- Gesichert: Cache-Bust auch für Secure-Student ergänzt; öffentliche Hauptnavigation verwendet jetzt semantische Locale-Keys mit deutschem Fallback.
+- Nicht verändert: Firestore-Regeln, Assessment-Functions, Production.
+- Offene Codebefunde: harte `de-DE`-Datumsformatierung; systemgenerierte Wahr/Falsch-/Bild-Labels folgen noch nicht konsequent `contentLocale`; Exporte/CSV noch nicht vollständig lokalisiert.
+- Nächster Schritt: Reconcile-PR öffnen, CI prüfen und erst danach über Integration/Preview entscheiden.
