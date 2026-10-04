@@ -161,12 +161,63 @@ Prüfgrenze:
 - echter iPhone-Test M1.3: offen
 - Production: unverändert
 
+## M1.4 — Mehrfachklicks und mehrfache Erfolgs-Timeouts verhindert
+
+Status: **erledigt und automatisiert geprüft**
+
+Produktcommit:
+`e4196699019022425152384b56319e2cf67ebf7a`
+
+Änderungen:
+- zentraler `resolvingAction`-Lock eingeführt;
+- `beginResolvingAction()` lässt pro Erfolgs-/Übergangsphase nur genau einen ausstehenden Ablauf zu;
+- `endResolvingAction()` gibt die Mechanik erst nach Abschluss oder Dialogabbruch wieder frei;
+- Lern-Gate sperrt während Transfer-/Erfolgs-Timeouts Antwortbutton, Coco-Hinweis und Antwortoptionen;
+- mehrfaches Submitten kann keine parallelen Transfer- oder Reward-Timeouts mehr erzeugen;
+- `rewardQuestion()` ist zusätzlich idempotent und belohnt eine bereits gelöste Aufgabe kein zweites Mal;
+- Seilwinden-Ziehen wird beim dritten sicheren Zug sofort gesperrt;
+- Generatorbuttons werden beim erfolgreichen dritten Stromkreis sofort gesperrt;
+- Funkfinale besitzt ebenfalls einen Erfolgs-Lock zusätzlich zum bereits vorhandenen `won`-Zustand;
+- Dialog-Close räumt zugehörige Resolving-Locks zuverlässig auf;
+- vier neue Regressionstests sichern Lock, Lernpfade, Mechanik-Erfolg und idempotente Rewards.
+
+## Verifikation M1.4
+
+GitHub Actions:
+- Masterpiece Preview Run: `37196600456`
+- Produktcommit: `e4196699019022425152384b56319e2cf67ebf7a`
+- JavaScript-Syntax: grün
+- Expedition-Verträge: **17/17 grün**
+- isolierter Build: grün
+- Firebase Staging Preview: grün
+- `Escape review gates` Run `37196602967`: grün
+- `Games Lab Checks` Run `37196602944`: grün, inklusive Browser-User-Flows
+
+Preview:
+`https://hausaufgabe-staging--gradecrew-escape-masterpiece-pmxjup1g.web.app`
+
+Prüfgrenze:
+- automatisierte Tests/Build/Deploy sind grün;
+- echter manueller M1.4-Durchspieltest auf Desktop/iPad/iPhone ist noch offen;
+- M1.4 verhindert Doppelaktionen/Mehrfach-Timeouts, ersetzt aber noch nicht die geplanten expliziten Recovery-/Reset-Pfade jeder Mechanik.
+
+## Status getrennt
+
+- auf GitHub gesichert: ja
+- automatisiert getestet: ja, 17/17 + Syntax + Games Lab Browser-Flows + Escape review gates
+- isolierter Build: ja
+- Staging deployed: ja
+- echter Desktop-Test M1.4: offen
+- echter iPad-Test M1.4: offen
+- echter iPhone-Test M1.4: offen
+- Production: unverändert
+
 ## Nächster Mikro-Schritt
 
-**M1.4 — Mehrfachaktionen und Erfolgszustände härten.**
+**M1.5 — sichere Recovery-/Reset-Pfade pro Mechanik.**
 
 Ziel:
-- Erfolgsaktionen nur einmal auslösen;
-- Buttons während Erfolgs-/Übergangsphase sofort sperren;
-- kein mehrfaches Rewarding/kein zweiter Szenenwechsel durch hektisches Klicken oder Tippen;
+- Jeep, Boot, Kamera, Seilwinde, Generator und Funk aus ungültigen/abgebrochenen Zuständen sicher zurückholen;
+- kein Reload als Rettung nötig;
+- letzte sichere Position bzw. Mechanik-Neustart klar definieren;
 - danach wieder Regressionstest, Build, Preview und Handoff.
