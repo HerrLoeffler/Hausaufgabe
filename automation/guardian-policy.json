@@ -12,7 +12,16 @@
       "baseBranch": "feature/gradecrew-app-integration",
       "approvedSha": "256609f81f601896a9e683f67945743df6b2f29f",
       "maxAutomaticStage": "staging_deployed"
+    },
+    {
+      "id": "startscreen-masterpiece-v2-20261004",
+      "taskId": "startscreen-masterpiece-v2-20261004",
+      "enabled": true,
+      "execution": "pipeline-v2",
+      "baseBranch": "feature/gradecrew-app-integration",
+      "approvedSha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
+      "maxAutomaticStage": "staging_deployed"
     }
   ],
-  "note": "Active admitted pilot: explicit source renewal after diagnosed reviewer permission denials. Same task, three total attempts and USD 2.55 cap; original history and reservations retained. All fresh CI and reviews required; Production remains locked."
+  "note": "Dedicated keys and flags verified. Pilot reached verified staging; explicitly bounded homepage admitted. Production and device acceptance remain manual."
 }
