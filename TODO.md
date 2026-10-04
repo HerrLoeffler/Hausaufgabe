@@ -160,3 +160,9 @@ GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Game
 GC-AUTOMATION-01/07/12: frühere Setup-/403-Aussagen sind überholt. Zweiter echter Pilot 37218095594 hat alle vier Modellaufrufe, exakte CI, drei Reviews und Integration bestanden; beide Staging-Receipts für 2436a432 sind verifiziert. Erster Versuch und seine 0,85-USD-Reservierung bleiben erhalten. Bekannte Pilot-API-Nutzungsschätzung insgesamt 0,100344 USD, keine Rechnung. Neuer Homepage-Auftrag 37220142576 ist nach unbekanntem Provider-Ergebnis gestoppt; separate 2,40-USD-Reservierung innerhalb seines 2,55-USD-Limits bleibt erhalten. Kein automatischer Retry.
 
 | GC-GAMES-INTEGRITY-01 | Fehlerjagd-Highscores serverseitig validieren und atomar abschließen | Auditbefund, eigener Games-Folgeauftrag | Client-Summary wird nur begrenzt; Attempt-Status außerhalb der Finalisierungstransaktion gelesen. Antwort-/Scorebeleg und konkurrierende Finalisierung testen. Keine automatische Änderung fremder Games-Branches. [Audit](docs/REPOSITORY_AUDIT_2026-10-04.md) |
+
+## Chat-Wiederaufnahme 04.10.2026
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-HANDOFF-03 | Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen | Wiederaufnahmeregel und Vorlage ergänzt; Integration/CI frisch prüfen | [Anleitung](docs/CHAT_RECOVERY.md), [Übergabe](workstreams/chat-recovery-20261004.md). Dieselbe Task-ID, Chat-Zuordnung, gesicherter Schritt, laufende IDs und Budget erhalten. Martin kann den Einstieg einmal in GradeCrew-Projektanweisungen übernehmen; diese Repo-Änderung setzt keine ChatGPT-Einstellung. |

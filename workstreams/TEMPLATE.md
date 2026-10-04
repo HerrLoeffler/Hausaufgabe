@@ -2,8 +2,13 @@
 
 - Aktualisiert (UTC):
 - Verantwortlicher Chat / Auftrag:
+- Chat-Bezeichnung / Link (falls bekannt, sonst unbekannt):
+- Vorheriger Chat / Übernahmezeitpunkt (UTC, falls übernommen):
+- Arbeitszustand (aktiv / pausiert / blockiert / zur Übernahme bereit / abgeschlossen):
 - Aufgabenbranch:
 - Basiscommit:
+- Integrationsziel:
+- PR (URL / Nummer oder keiner):
 - Betroffene Dateien:
 - Überschneidungen mit anderen Aufgaben:
 
@@ -27,4 +32,13 @@
 
 ## Wiederaufnahme nach Abbruch
 
-Wo liegt ungesicherter Code? Gibt es einen gepushten Zwischencommit? Was darf ausdrücklich noch nicht als erledigt gelten?
+- Letzter gesicherter Teilschritt / Zeitpunkt (UTC):
+- Gepushter Codecommit / Remote-Branch:
+- Ungesicherte Änderungen / Checkout-Pfad (oder keine / unbekannt):
+- Laufende oder unklare Vorgänge (Run-/Request-ID, URL, Ergebnis; oder keine / unbekannt):
+- Bereits ausgeführte externe Aktionen / Kostenreservierungen:
+- Was darf noch nicht als erledigt gelten?
+- Was muss vor Wiederholung geprüft werden?
+- Genau ein nächster ausführbarer Schritt:
+
+Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen. Chatwechsel ersetzt keine Commit-/CI-/Deploy-Prüfung.

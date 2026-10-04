@@ -60,6 +60,10 @@ Das Audit ist **read-only**. Es sperrt, merged, löscht und deployt nichts autom
 - `.github/workflows/handoff-check.yml`: prüft die Koordinationsdateien und liefert einen Bericht im jeweiligen Actions-Lauf. Führt keine App-Tests oder Deployments aus.
 - `GRADECREW_STATUS.md`: ältere Übergabe; historische Aussagen anhand der jeweiligen Baustelle prüfen.
 
+## Verbindungsabbruch oder neuer Ersatzchat
+
+Bei „Connection interrupted“, einem festhängenden Chat oder einer Übergabe zusätzlich [docs/CHAT_RECOVERY.md](docs/CHAT_RECOVERY.md) lesen. Die ursprüngliche Task-ID bleibt erhalten. Vor einer Übernahme den letzten gesicherten Schritt und mögliche noch laufende Vorgänge prüfen; ein Verbindungsabbruch beweist keinen Ausführungsabbruch. Neue Chats kennen fremde Chatverläufe und ungesicherten lokalen Code nicht automatisch.
+
 ## Starttext zum Kopieren
 
 > Weiter mit GradeCrew, Baustelle: … . Lies auf main START_HERE.md, GRADECREW_STATE.json und die passende Übergabe. Prüfe zuerst Zugriff, Live Development Status, tatsächlichen Branch/Commit, Release-Train-Stufe und ungesicherte Änderungen. Setze beim nächsten belegten offenen Schritt fort.
