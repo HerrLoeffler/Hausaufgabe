@@ -95,6 +95,9 @@ test("assessment language remains fixed per test and is not coupled to UI or gra
   assert.match(assessmentLocale, /assessmentLocaleSnapshot\(locale = DEFAULT_CONTENT_LOCALE, gradingLocale = locale\)/);
   assert.doesNotMatch(assessmentLocaleUi, /contentLocale: next,\s*gradingLocale: next/);
   assert.match(assessmentLocaleUi, /Vorhandene Aufgaben und Lösungen werden nicht übersetzt/);
+  assert.match(assessmentLocaleUi, /Change test language\?/);
+  assert.match(assessmentLocaleUi, /Test language/);
+  assert.match(assessmentLocaleUi, /gradecrew:ui-locale-changed/);
   assert.match(aiClient, /withContentLocaleMarker/);
   assert.match(aiClient, /generateTest.*withGenerationLocale/);
   assert.match(aiPrompts, /contentLanguageInstruction\(contentLocale\)/);
