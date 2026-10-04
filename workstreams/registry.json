@@ -151,7 +151,8 @@
       "state": "integrated",
       "handoff": "workstreams/design-startscreen-v1.md",
       "relatedBranches": [
-        "feature/design-startscreen-entry-activation-fix"
+        "feature/design-startscreen-entry-activation-fix",
+        "feature/design-startscreen-masterpiece-v1"
       ]
     },
     {
