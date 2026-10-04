@@ -2,7 +2,7 @@
    Loaded after gradecrew-auth-startscreen.css.
    Only the public shell and auth entry are affected. Assets, DOM copy,
    language selection and product state transitions remain unchanged.
-   Visible copy stays exclusively in the DOM/i18n catalogs. */
+   Visible copy stays exclusively in the DOM/i18n catalogs; DE/EN remains runtime-driven. */
 
 .gcPublicEntryMode {
   background: #f5f3ef;
