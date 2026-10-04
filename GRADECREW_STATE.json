@@ -207,7 +207,11 @@
         "hosting_run_attempt": 2,
         "hosting_verified_files": 110,
         "functions_run": 37219916242,
-        "known_pilot_usage_estimate_usd_total": 0.100344
+        "known_pilot_usage_estimate_usd_total": 0.100344,
+        "archive_run": 37220092242,
+        "archive_run_attempt": 2,
+        "archive_verified": true,
+        "archive_tag": "preview-snapshot-2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47"
       },
       "homepage_followup": {
         "task_id": "startscreen-masterpiece-v2-20261004",
