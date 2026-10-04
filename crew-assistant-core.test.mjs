@@ -149,3 +149,42 @@ test("Remy extracts listening-task counts without polluting the topic", () => {
   assert.equal(patch.count, 12);
   assert.equal(patch.audioQuestionCount, 3);
 });
+
+
+test("English Remy request maps to canonical form values without losing audio or exclusions", () => {
+  const patch = parseTestRequest("Create a mathematics test for Year 7 about percentages, easy, 12 questions, 20 points, of those 2 listening questions, without free text.");
+  assert.equal(patch.subject, "Mathematik");
+  assert.equal(patch.grade, "7");
+  assert.equal(patch.topic, "percentages");
+  assert.equal(patch.difficulty, "leicht");
+  assert.equal(patch.count, 12);
+  assert.equal(patch.points, 20);
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.deepEqual(patch.excludeTypes, ["text"]);
+});
+
+test("English local Crew responses use English UI copy while canonical patch values stay stable", () => {
+  const greeting = resolveLocalCrewRequest({ crewId: "coco", text: "Hello", locale: "en-GB" });
+  assert.equal(greeting.handled, true);
+  assert.match(greeting.reply, /I'm Coco/);
+
+  const result = resolveLocalCrewRequest({
+    crewId: "remy",
+    locale: "en-GB",
+    text: "English Year 4 topic colours, medium, 10 questions, 2 listening questions"
+  });
+  assert.equal(result.action.type, "patch_ai_form");
+  assert.equal(result.action.patch.subject, "Englisch");
+  assert.equal(result.action.patch.grade, "4");
+  assert.equal(result.action.patch.difficulty, "mittel");
+  assert.equal(result.action.patch.audioQuestionCount, 2);
+  assert.match(result.reply, /English/);
+  assert.match(result.reply, /10 questions/);
+  assert.match(result.reply, /2 listening questions/);
+});
+
+test("English difficulty progression remains a pedagogical note rather than a false global difficulty", () => {
+  const patch = parseTestRequest("Math Year 7 topic fractions. Start with easy questions, then make them more challenging.");
+  assert.equal(patch.difficulty, undefined);
+  assert.match(patch.notes, /Zuerst leichte Aufgaben/);
+});

@@ -30,6 +30,7 @@ function setup(t) {
   t.after(() => w.close());
   w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = '1'; };
 
+  w.GradeCrewI18n = { locale: 'de-DE' };
   w.CREW_MEMBERS = CREW_MEMBERS;
   w.patchSummary = patchSummary;
   w.resolveLocalCrewRequest = resolveLocalCrewRequest;
@@ -96,4 +97,30 @@ test('Remy fills an explicit listening-task count into the existing audio field'
   assert.equal(w.document.getElementById('aiCount').value, '12');
   assert.equal(w.document.getElementById('aiAudioQuestionCount').value, '3');
   assert.match(w.document.getElementById('gcRemyCreateStatus').textContent, /3 Höraufgaben/);
+});
+
+
+test('English UI sends an explicit assistant locale and keeps current Remy form behaviour', async t => {
+  const w = setup(t);
+  w.GradeCrewI18n.locale = 'en-GB';
+  const input = w.document.getElementById('gcRemyCreateInput');
+  input.value = 'English Year 4 topic colours, medium, 10 questions, 2 listening questions';
+  w.document.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
+  await settle(w);
+
+  assert.equal(w.document.getElementById('aiSubject').value, 'Englisch');
+  assert.equal(w.document.getElementById('aiGrade').value, '4');
+  assert.equal(w.document.getElementById('aiTopic').value, 'colours');
+  assert.equal(w.document.getElementById('aiDifficulty').value, 'mittel');
+  assert.equal(w.document.getElementById('aiCount').value, '10');
+  assert.equal(w.document.getElementById('aiAudioQuestionCount').value, '2');
+  assert.match(w.document.getElementById('gcRemyCreateStatus').textContent, /Added/);
+  assert.match(w.document.getElementById('gcRemyCreateStatus').textContent, /2 listening questions/);
+});
+
+test('Remy dictation follows an explicit voice locale instead of hard-coding German', () => {
+  assert.match(source, /gradecrew\.voiceInputLocale/);
+  assert.match(source, /active\.lang = currentVoiceInputLocale\(\)/);
+  assert.match(source, /gradecrew:ui-locale-changed/);
+  assert.doesNotMatch(source, /active\.lang = "de-DE"/);
 });

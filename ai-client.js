@@ -1,5 +1,10 @@
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { getStorage, ref, uploadBytesResumable, deleteObject } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
+import {
+  DEFAULT_CONTENT_LOCALE,
+  normalizeAssessmentLocale,
+  withContentLocaleMarker,
+} from "./shared/i18n/assessment-locale.mjs?v=2";
 
 const REGION = "europe-west1";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
@@ -15,22 +20,45 @@ function safeName(name) {
 }
 function randomId(prefix = "m") { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`; }
 
+function activeContentLocale() {
+  try {
+    return normalizeAssessmentLocale(window.GradeCrewAssessmentLocale?.getContentLocale?.(), DEFAULT_CONTENT_LOCALE);
+  } catch (_) {
+    return DEFAULT_CONTENT_LOCALE;
+  }
+}
+
+function markPendingLocale(locale) {
+  try { window.GradeCrewAssessmentLocale?.setPendingContentLocale?.(locale); } catch (_) {}
+}
+
+function withGenerationLocale(payload = {}) {
+  const locale = activeContentLocale();
+  markPendingLocale(locale);
+  return { ...payload, notes: withContentLocaleMarker(payload?.notes || "", locale) };
+}
+
+function withInstructionLocale(payload = {}) {
+  const locale = activeContentLocale();
+  return { ...payload, instruction: withContentLocaleMarker(payload?.instruction || "", locale) };
+}
+
 export function createAiClient(app, getUid) {
   const functions = getFunctions(app, REGION);
   const storage = getStorage(app);
-  const call = (name, timeoutMs = 180000) => async (payload) => {
+  const call = (name, timeoutMs = 180000, transform = payload => payload) => async (payload) => {
     const fn = httpsCallable(functions, name, { timeout: timeoutMs });
-    const result = await fn(payload);
+    const result = await fn(transform(payload || {}));
     return result.data;
   };
-  const regenerateQuestion = call("regenerateQuestion", 180000);
+  const regenerateQuestion = call("regenerateQuestion", 180000, withInstructionLocale);
   const api = {
     status: call("getAiStatus", 30000),
     reportRightsIssue: call("reportRightsIssue", 30000),
-    generateTest: call("generateTest", 540000),
-    startAiTestJob: call("startAiTestJob", 60000),
+    generateTest: call("generateTest", 540000, withGenerationLocale),
+    startAiTestJob: call("startAiTestJob", 60000, withGenerationLocale),
     regenerateQuestion,
-    reviseWholeTest: call("reviseWholeTest", 360000),
+    reviseWholeTest: call("reviseWholeTest", 360000, withInstructionLocale),
     analyzeMaterial: call("analyzeMaterial", 300000),
     generateQuestionMedia: call("generateQuestionMedia", 300000),
     generateQuestionAudio: call("generateQuestionAudio", 180000),
