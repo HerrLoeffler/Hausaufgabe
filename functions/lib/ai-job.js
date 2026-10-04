@@ -1,6 +1,7 @@
 "use strict";
 
 const { questionSnapshot } = require("./diagnostics");
+const { extractContentLocale } = require("./content-locale");
 
 const DEFAULT_SCALE = { id: "standard", name: "Standard", thresholds: [91, 77, 57, 39, 25, 0] };
 
@@ -10,10 +11,15 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   const selectedScale = scales.find(scale => scale?.id === settings.defaultGradeScaleId) || scales[0] || DEFAULT_SCALE;
   const inheritedScale = sourceQuiz?.gradeScaleSnapshot?.thresholds?.length === 6
     ? sourceQuiz.gradeScaleSnapshot : selectedScale;
+  const contentLocale = sourceQuiz?.contentLocale || extractContentLocale(input?.notes);
+  const gradingLocale = sourceQuiz?.gradingLocale || contentLocale;
   return {
     title: String(test.title || "KI-Test"), subject: String(test.subject || input.subject || ""),
     grade: String(test.grade || input.grade || ""),
     description: String(settings.defaultDescription || "Viel Erfolg beim Test!"),
+    contentLocale,
+    gradingLocale,
+    localeContractVersion: 1,
     gradeScaleId: sourceQuiz?.gradeScaleId || inheritedScale.id,
     gradeScaleSnapshot: inheritedScale,
     resultMode: sourceQuiz?.resultMode || settings.defaultResultMode || "points_grade",
