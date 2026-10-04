@@ -4,7 +4,7 @@
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
-- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec-Review offen.
+- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec freigegeben, Implementierungsplan in Vorbereitung.
 - Aufgabenbranch: docs/guardian-admission-profiles-20261004
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
@@ -34,13 +34,13 @@ Bestandsaufnahme trennt deployed/CI/Review/Geräteabnahme. GC-AUTOMATION-08 blei
 
 ## Offene Probleme und Unsicherheiten
 
-Martin hat die Weiterarbeit „alles ready“ beauftragt; vorgeschlagener Zuschnitt zur schriftlichen Ausarbeitung übernommen. Konkrete Spec liegt jetzt vor, schriftlicher Review und Implementation noch offen. Freitext-Klassifizierer 9/9 lokal grün (Node24); keine Browser-/Emulatorfreigabe. Escape secrets.get bestätigt, tatsächliche Deploy-SA via read-only Cloud-Troubleshooter bestätigt: gradecrew-github-staging@hausaufgabe-staging.iam.gserviceaccount.com; Allow-Bindung secrets.get fehlt am existierenden OPENAI_API_KEY. Browser-Zugriff vorhanden; konkrete Secret-Viewer-Bindung noch nicht freigegeben/vorgenommen.
+Martin hat die Weiterarbeit „alles ready“ beauftragt; vorgeschlagener Zuschnitt zur schriftlichen Ausarbeitung übernommen. Konkrete Spec von Martin ausdrücklich freigegeben; Implementierungsplan/Implementation noch offen. Freitext-Klassifizierer 9/9 lokal grün (Node24); keine Browser-/Emulatorfreigabe. Escape secrets.get bestätigt, tatsächliche Deploy-SA via read-only Cloud-Troubleshooter bestätigt: gradecrew-github-staging@hausaufgabe-staging.iam.gserviceaccount.com; Allow-Bindung secrets.get fehlt am existierenden OPENAI_API_KEY. Browser-Zugriff vorhanden; konkrete Secret-Viewer-Bindung von Martin freigegeben und am einzelnen Secret gespeichert (Cloud: Richtlinie aktualisiert, Keine Übernahme). Noch kein Deploy; Propagation-/Kandidaten-/Workflowcheck offen.
 Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secure-Preview scheitert in 36870114409 an integrierten DOM-Verträgen; Escape-MVP in 37021633218 an Secret-Manager-403. Diese Blocker nicht blind wiederholen.
 18 aktive Workstreams/neun mögliche Dateiüberschneidungen; einzelne historische Branches sind weit hinter Zielständen. Keine pauschale Integration.
 
 ## Nächster konkreter Schritt
 
-[Schriftliche Spezifikation](../docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) mit Martin prüfen; danach Implementierungsplan für den ersten Profilblock erstellen. Unabhängige Fehlerdiagnosen sind im Audit gesichert.
+[Schriftliche Spezifikation](../docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) ist von Martin freigegeben; Implementierungsplan für den ersten Profilblock erstellen. Unabhängige Fehlerdiagnosen sind im Audit gesichert.
 
 ## Wiederaufnahme nach Abbruch
 
@@ -51,6 +51,6 @@ Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secur
 - Bereits ausgeführte externe Aktionen / Kostenreservationen: nur GitHub-Reads und dieser Dokumentationscheckpoint; keine neue API-Kostenreservation.
 - Was darf noch nicht als erledigt gelten? GC-AUTOMATION-08, Zulassung neuer Aufgabenprofile, neue L3-/PostHog-/Security-Deployments und menschliche Abnahmen.
 - Was vor Wiederholung prüfen? Aktuelles main, Branch/PR dieses Checkpoints, aktuelle Ledger/Actions und Kandidaten; identischen Audit/Branch nicht neu erzeugen.
-- Genau ein nächster ausführbarer Schritt: schriftliche Spec prüfen; bei Freigabe Implementierungsplan erstellen.
+- Genau ein nächster ausführbarer Schritt: Implementierungsplan für die genehmigte Spec erstellen.
 
 Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen.
