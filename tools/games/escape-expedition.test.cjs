@@ -156,3 +156,50 @@ test('M1.3 winch action is ignored outside its active modal', () => {
   assert.match(body, /state\.transitioning/);
   assert.match(body, /!\$\('winchDialog'\)\.open/);
 });
+
+
+test('M1.4 uses a single resolving-action lock for delayed success paths', () => {
+  assert.match(js, /resolvingAction: null/);
+  assert.match(js, /function beginResolvingAction\(kind\)/);
+  assert.match(js, /if \(state\.resolvingAction\) return false/);
+  assert.match(js, /function endResolvingAction\(kind\)/);
+  assert.match(js, /setResolvingControls\(kind, true\)/);
+  assert.match(js, /setResolvingControls\(kind, false\)/);
+});
+
+test('M1.4 learning success and transfer schedules cannot be queued repeatedly', () => {
+  const start = js.indexOf('function checkLearning');
+  const end = js.indexOf('function openWinch', start);
+  const body = js.slice(start, end);
+  assert.match(body, /if \(state\.resolvingAction\) return/);
+  assert.match(body, /beginResolvingAction\('learning'\)/);
+  assert.match(body, /endResolvingAction\('learning'\)/);
+  assert.match(body, /scheduleGuarded\(850/);
+  assert.match(body, /scheduleGuarded\(650/);
+  assert.match(body, /scheduleGuarded\(500/);
+});
+
+test('M1.4 winch generator and victory lock immediately on success', () => {
+  const winch = js.slice(js.indexOf('function pullWinch'), js.indexOf('function openGenerator'));
+  assert.match(winch, /state\.resolvingAction/);
+  assert.match(winch, /beginResolvingAction\('winch'\)/);
+  assert.match(winch, /endResolvingAction\('winch'\)/);
+
+  const generator = js.slice(js.indexOf('function chooseCircuit'), js.indexOf('function takePhoto'));
+  assert.match(generator, /state\.resolvingAction/);
+  assert.match(generator, /beginResolvingAction\('generator'\)/);
+  assert.match(generator, /endResolvingAction\('generator'\)/);
+
+  const radio = js.slice(js.indexOf('function sendRadio'), js.indexOf('function movePlayer'));
+  assert.match(radio, /state\.resolvingAction/);
+  assert.match(radio, /beginResolvingAction\('victory'\)/);
+  assert.match(radio, /endResolvingAction\('victory'\)/);
+});
+
+test('M1.4 rewards are idempotent and success controls are disabled', () => {
+  const reward = js.slice(js.indexOf('function rewardQuestion'), js.indexOf('function openLearning'));
+  assert.match(reward, /if \(state\.solved\.has\(id\)\) return false/);
+  assert.match(js, /winchPullBtn'\)\.disabled = disabled/);
+  assert.match(js, /#generatorButtons button/);
+  assert.match(js, /learningForm'\)\.querySelector\('button\[type="submit"\]'\)/);
+});

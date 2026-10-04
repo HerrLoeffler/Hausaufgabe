@@ -103,7 +103,8 @@
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
     sceneEntered: performance.now(),
-    gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0
+    gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0,
+    resolvingAction: null
   };
 
   const inventoryInfo = {
@@ -125,6 +126,30 @@
 
   function invalidateDelayedActions() {
     state.actionEpoch++;
+  }
+
+  function setResolvingControls(kind, disabled) {
+    if (kind === 'learning') {
+      const submit = $('learningForm').querySelector('button[type="submit"]');
+      if (submit) submit.disabled = disabled;
+      $('hintBtn').disabled = disabled;
+      $('learningOptions').querySelectorAll('input').forEach(input => { input.disabled = disabled; });
+    }
+    if (kind === 'winch') $('winchPullBtn').disabled = disabled;
+    if (kind === 'generator') document.querySelectorAll('#generatorButtons button').forEach(button => { button.disabled = disabled; });
+  }
+
+  function beginResolvingAction(kind) {
+    if (state.resolvingAction) return false;
+    state.resolvingAction = kind;
+    setResolvingControls(kind, true);
+    return true;
+  }
+
+  function endResolvingAction(kind) {
+    if (state.resolvingAction !== kind) return;
+    state.resolvingAction = null;
+    setResolvingControls(kind, false);
   }
 
   function setGameMode(mode) {
@@ -284,11 +309,13 @@
   }
 
   function rewardQuestion(id) {
+    if (state.solved.has(id)) return false;
     state.solved.add(id);
     if (id === 'q1') { state.items.add('jeepKey'); setCoco('Route bestätigt', 'Schlüssel akzeptiert. MANGO-1 wartet rechts im Camp.'); }
     if (id === 'q2') { state.items.add('riverMap'); setCoco('Flusskarte gefunden', 'Der Sender enthält Dr. Yaras letzte Route. Das Boot liegt am rechten Rand.'); }
     if (id === 'q3') { state.items.add('radio'); setCoco('Funkkanal entschlüsselt', `Stationslog: Rettungskanal ${radioChannel}. Ab zum Sendemast!`); }
     updateHud();
+    return true;
   }
 
   function openLearning(id) {
@@ -320,6 +347,7 @@
 
   function checkLearning(e) {
     e.preventDefault();
+    if (state.resolvingAction) return;
     const id = state.activeQuestion; const q = questions[id]; const data = state.learningMode === 'main' ? q : q.transfer;
     if (state.selectedAnswer === null) { $('learningFeedback').textContent = 'Wähle zuerst eine Antwort.'; return; }
     if (state.selectedAnswer !== data.correct) {
@@ -327,15 +355,36 @@
       if (state.learningMode === 'transfer') { $('learningFeedback').textContent = `Noch nicht. ${q.transfer.hint}`; return; }
       state.attempts[id]++;
       $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Coco: ${q.hint}` : `Noch nicht sicher. ${q.explanation} Jetzt folgt eine neue Aufgabe zum selben Prinzip.`;
-      if (state.attempts[id] >= 2) scheduleGuarded(850, () => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); });
+      if (state.attempts[id] >= 2 && beginResolvingAction('learning')) {
+        scheduleGuarded(850, () => {
+          endResolvingAction('learning');
+          if (state.activeQuestion !== id) return;
+          state.learningMode = 'transfer';
+          state.selectedAnswer = null;
+          renderLearning();
+        });
+      }
       return;
     }
     if (state.learningMode === 'main' && state.attempts[id] > 0) {
       $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Weil du vorher einen Fehlversuch hattest, folgt noch ein Transfercheck.`;
-      return scheduleGuarded(650, () => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); });
+      if (!beginResolvingAction('learning')) return;
+      return scheduleGuarded(650, () => {
+        endResolvingAction('learning');
+        if (state.activeQuestion !== id) return;
+        state.learningMode = 'transfer';
+        state.selectedAnswer = null;
+        renderLearning();
+      });
     }
     $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig – Fortschritt freigeschaltet.';
-    scheduleGuarded(500, () => { rewardQuestion(id); state.activeQuestion = null; if ($('learningDialog').open) $('learningDialog').close(); });
+    if (!beginResolvingAction('learning')) return;
+    scheduleGuarded(500, () => {
+      rewardQuestion(id);
+      state.activeQuestion = null;
+      endResolvingAction('learning');
+      if ($('learningDialog').open) $('learningDialog').close();
+    });
   }
 
   function openWinch() {
@@ -346,10 +395,17 @@
     $('winchDialog').showModal();
   }
   function pullWinch() {
-    if (state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
+    if (state.resolvingAction || state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
     if (state.winchValue >= .38 && state.winchValue <= .62) {
       state.winchHits++; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Sauberer Zug! Der Stamm bewegt sich.');
-      if (state.winchHits >= 3) scheduleGuarded(650, () => { setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.'); setScene('wildlife'); if ($('winchDialog').open) $('winchDialog').close(); });
+      if (state.winchHits >= 3 && beginResolvingAction('winch')) {
+        scheduleGuarded(650, () => {
+          setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.');
+          setScene('wildlife');
+          endResolvingAction('winch');
+          if ($('winchDialog').open) $('winchDialog').close();
+        });
+      }
     } else {
       state.winchHits = Math.max(0, state.winchHits - 1); $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Zu viel oder zu wenig Spannung. Versuch den grünen Bereich.');
     }
@@ -362,15 +418,20 @@
     $('generatorDialog').showModal();
   }
   function chooseCircuit(name, button) {
-    if (state.generator.done) return;
+    if (state.resolvingAction || state.generator.done) return;
     const order = ['leaf', 'sun', 'river'];
     const expected = order[state.generator.seq.length];
     if (name === expected) {
       state.generator.seq.push(name); button.classList.add('active');
       $('generatorFeedback').className = 'feedback success'; $('generatorFeedback').textContent = `Kreis ${state.generator.seq.length}/3 aktiv.`;
       if (state.generator.seq.length === 3) {
+        if (!beginResolvingAction('generator')) return;
         state.generator.done = true; setCoco('Strom ist da!', 'Die Station erwacht. Das Terminal rechts oben sollte jetzt reagieren.');
-        scheduleGuarded(650, () => { if ($('generatorDialog').open) $('generatorDialog').close(); }); updateHud();
+        scheduleGuarded(650, () => {
+          endResolvingAction('generator');
+          if ($('generatorDialog').open) $('generatorDialog').close();
+        });
+        updateHud();
       }
     } else {
       state.generator.seq = []; document.querySelectorAll('#generatorButtons button').forEach(b => b.classList.remove('active'));
@@ -411,15 +472,19 @@
   }
 
   function sendRadio() {
-    if (state.gameMode !== 'radio' || state.transitioning || !state.radioMode || state.won) return;
+    if (state.resolvingAction || state.gameMode !== 'radio' || state.transitioning || !state.radioMode || state.won) return;
     if (state.tuned !== radioChannel) { toast(`Nur Rauschen auf Kanal ${state.tuned}.`); return; }
+    if (!beginResolvingAction('victory')) return;
     invalidateDelayedActions();
     state.won = true; state.radioMode = false; setGameMode('won'); updateHud();
     setCoco('Antwort!', 'Dr. Yara meldet sich: „Mir geht’s gut! Ein Capybara hat den Stationsschlüssel geklaut. Lange Geschichte.“');
     const sec = Math.round((performance.now() - state.startTime) / 1000);
     $('victoryText').textContent = 'Dr. Yara ist sicher, der Funk läuft wieder und das Capybara behält den Schlüssel vorerst. Forschungsergebnis: Tiere lesen keine Hausordnung.';
     $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/3 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
-    scheduleGuarded(700, () => { if (!$('victoryDialog').open) $('victoryDialog').showModal(); });
+    scheduleGuarded(700, () => {
+      endResolvingAction('victory');
+      if (!$('victoryDialog').open) $('victoryDialog').showModal();
+    });
   }
 
   function movePlayer(dx, dy, dt) {
@@ -669,7 +734,13 @@
   document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',()=>{
     if(dialog.id==='victoryDialog')return;
     invalidateDelayedActions();
-    if(dialog.id==='learningDialog'){state.activeQuestion=null;state.selectedAnswer=null}
+    if(dialog.id==='learningDialog'){
+      endResolvingAction('learning');
+      state.activeQuestion=null;
+      state.selectedAnswer=null;
+    }
+    if(dialog.id==='winchDialog')endResolvingAction('winch');
+    if(dialog.id==='generatorDialog')endResolvingAction('generator');
     if(state.gameMode==='modal')restoreSceneMode();
   }));
   $('restartBtn').addEventListener('click',()=>{const next=(Date.now()^Math.floor(Math.random()*0xffffffff))>>>0;location.href=`?seed=${next}`});
