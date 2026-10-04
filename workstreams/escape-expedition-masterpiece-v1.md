@@ -212,12 +212,67 @@ Prüfgrenze:
 - echter iPhone-Test M1.4: offen
 - Production: unverändert
 
+## M1.5 — sichere Recovery-/Reset-Pfade pro Mechanik
+
+Status: **erledigt und automatisiert geprüft**
+
+Produktcommits:
+- `11b3e06e85bbc893594afb8f951a93c09f47dea1` — zentrale Recovery-Pfade und UI
+- `5e21c80b2eb4c6ef62813cf015e59d66595f9c04` — Recovery-Buttons während erfolgreicher Auflösung zusätzlich gehärtet
+
+Änderungen:
+- zentrale `recoveryKind()`-/`recoverMechanic()`-Schicht für alle sechs angeforderten Mechaniken;
+- gemeinsamer sichtbarer Recovery-Button im Hauptspiel, kontextabhängig beschriftet;
+- Tastatur: `R` setzt die aktuelle Mechanik sicher zurück; `Esc` verlässt Kamera/Funk;
+- Jeep speichert sichere Strecken-Checkpoints und setzt Fahrzeugposition + Strecke auf den letzten sicheren Punkt zurück;
+- Boot speichert sichere Fluss-Checkpoints und setzt Boot + Fortschritt auf den letzten sicheren Punkt zurück;
+- Kamera-Recovery verlässt den Kameramodus sauber, ohne bereits gespeicherte Fotos zu löschen;
+- Seilwinde besitzt im Dialog `Neu starten` und `Zurück`; Neustart setzt nur die Windenmechanik zurück;
+- Generator besitzt im Dialog `Neu starten` und `Zurück`; Neustart leert nur die laufende Schaltfolge;
+- Funk-Recovery setzt den Kanal auf 35 zurück und verlässt die Konsole sauber;
+- Recovery invalidiert ausstehende verzögerte Aktionen und räumt einen hängen gebliebenen Resolving-Lock auf;
+- fachlicher Fortschritt bleibt erhalten: gelöste Lernaufgaben, Items und Tierfotos werden nicht zurückgesetzt;
+- während eines bereits korrekt aufgelösten Winden-/Generator-Erfolgs sind Reset/Zurück kurz gesperrt, damit der Erfolg nicht versehentlich abgebrochen wird;
+- sechs neue M1.5-Regressionstests sichern UI, Routing, Checkpoints, Fortschrittserhalt, Modal-Recovery und Erfolgsphase.
+
+## Verifikation M1.5
+
+GitHub Actions:
+- finaler Masterpiece Preview Run: `37197348800`
+- finaler Produktcommit: `5e21c80b2eb4c6ef62813cf015e59d66595f9c04`
+- JavaScript-Syntax: grün
+- Expedition-Verträge: **23/23 grün**
+- isolierter Build: grün
+- Firebase Staging Preview: grün
+- `Escape review gates` Run `37197351752`: grün
+- `Games Lab Checks` Run `37197351754`: grün, inklusive Browser-User-Flows
+
+Preview:
+`https://hausaufgabe-staging--gradecrew-escape-masterpiece-pmxjup1g.web.app`
+
+Prüfgrenze:
+- automatisierte Tests/Build/Browser-Flows/Deploy sind grün;
+- echter manueller M1.5-Durchspieltest auf Desktop/iPad/iPhone ist noch offen;
+- Phase-1-Gate mit 10 kompletten manuellen Desktop-Durchläufen ist noch nicht erfüllt.
+
+## Status getrennt
+
+- auf GitHub gesichert: ja
+- automatisiert getestet: ja, 23/23 + Syntax + Games Lab Browser-Flows + Escape review gates
+- isolierter Build: ja
+- Staging deployed: ja
+- echter Desktop-Test M1.5: offen
+- echter iPad-Test M1.5: offen
+- echter iPhone-Test M1.5: offen
+- Production: unverändert
+
 ## Nächster Mikro-Schritt
 
-**M1.5 — sichere Recovery-/Reset-Pfade pro Mechanik.**
+**M1.6 — Bewegungs-/Kollisionslogik und Tap-to-Move härten.**
 
 Ziel:
-- Jeep, Boot, Kamera, Seilwinde, Generator und Funk aus ungültigen/abgebrochenen Zuständen sicher zurückholen;
-- kein Reload als Rettung nötig;
-- letzte sichere Position bzw. Mechanik-Neustart klar definieren;
+- keine unerreichbaren Interaktionspunkte;
+- Tap-to-Move darf nicht dauerhaft gegen Grenzen/Props laufen;
+- Fahrzeugpositionen bleiben immer in sicheren Bereichen;
+- bei blockierter Bewegung automatisch zum letzten sicheren Punkt zurück;
 - danach wieder Regressionstest, Build, Preview und Handoff.
