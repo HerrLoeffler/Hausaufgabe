@@ -1,197 +1,767 @@
-/* GradeCrew public entry v3 – scoped to #authView. Secure/student surfaces stay untouched. */
+/* GradeCrew public entry v4 – immersive Crew-first brand homepage.
+   Public-shell selectors are active only while body.gcPublicEntryMode is present.
+   Secure student, dashboard and assessment surfaces remain untouched. */
+
+.gcPublicEntryMode {
+  background: #edf2f7;
+}
+
+.gcPublicEntryMode .topbar {
+  min-height: 78px;
+  height: 78px;
+  padding: 0 clamp(24px, 6.5vw, 118px);
+  gap: 28px;
+  border-bottom: 1px solid rgba(208, 218, 231, .82);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 8px 28px rgba(30, 49, 78, .055);
+  backdrop-filter: blur(18px);
+}
+
+.gcPublicEntryMode .topbar .brand {
+  flex: 0 0 auto;
+  gap: 13px;
+}
+
+.gcPublicEntryMode .topbar .brandMark[data-gradecrew-brand-ready="1"] {
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+}
+
+.gcPublicEntryMode .topbar .brandCopy strong {
+  font-size: 22px;
+  letter-spacing: -.035em;
+  font-weight: 850;
+}
+
+.gcPublicEntryMode .topbar .brandCopy small {
+  display: none;
+}
+
+.gcPublicEntryMode .topbar #userBar {
+  margin-left: auto;
+}
+
+.gcPublicEntryMode .shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gcPublicEntryMode .rightsFooter {
+  display: none;
+}
+
+.gcPublicNav {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 2.8vw, 44px);
+}
+
+.gcPublicNav button {
+  min-height: 44px;
+  padding: 8px 2px;
+  border: 0;
+  background: transparent;
+  color: #233b6b;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 720;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  transition: color .16s ease, transform .16s ease;
+}
+
+.gcPublicNav button:hover {
+  color: #285ac9;
+  transform: translateY(-1px);
+}
+
+.gcPublicNav .gcPublicNavHelp {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.gcPublicNav .gcPublicNavHelp > span {
+  width: 23px;
+  height: 23px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
 #authView {
-  --gc-entry-bg: var(--gc-color-background, #f6f7f9);
-  --gc-entry-surface: var(--gc-color-surface, #fff);
-  --gc-entry-text: var(--gc-color-text, #202b3c);
-  --gc-entry-muted: var(--gc-color-muted, #5e6b7b);
-  --gc-entry-border: var(--gc-color-border, #dfe5ec);
+  --gc-entry-bg: #eef3f8;
+  --gc-entry-surface: #fff;
+  --gc-entry-text: #18263a;
+  --gc-entry-muted: #607189;
+  --gc-entry-border: #dbe5f0;
   --gc-entry-primary: var(--gc-color-primary, #285ac9);
-  min-height: calc(100dvh - 76px);
-  padding: 0 24px 28px;
+  min-height: calc(100dvh - 78px);
+  padding: clamp(20px, 2.6vw, 34px) clamp(18px, 3vw, 48px) 42px;
   color: var(--gc-entry-text);
   background:
-    radial-gradient(circle at 12% 34%, rgba(255, 238, 216, .72), transparent 29%),
-    radial-gradient(circle at 86% 24%, rgba(229, 240, 255, .84), transparent 30%),
-    linear-gradient(180deg, #fff 0%, #f8fafc 70%, #f3f7fc 100%);
+    radial-gradient(circle at 8% 12%, rgba(216, 229, 249, .62), transparent 30%),
+    radial-gradient(circle at 92% 18%, rgba(255, 235, 210, .56), transparent 24%),
+    linear-gradient(180deg, #f3f7fb 0%, #eaf0f6 100%);
   overflow-x: clip;
 }
 
 #authView .gcEntryShell {
-  width: min(1180px, 100%);
+  width: min(1540px, 100%);
   margin: 0 auto;
 }
 
-#authView .gcEntryState { animation: gcEntryIn 220ms ease both; }
-#authView .gcEntryState.hidden { display: none !important; }
+#authView .gcEntryState {
+  animation: gcEntryIn 260ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+#authView .gcEntryState.hidden {
+  display: none !important;
+}
+
 #authView .gcEntryEyebrow {
   display: inline-block;
   color: var(--gc-entry-primary);
   font-size: 12px;
-  font-weight: 760;
+  font-weight: 780;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
-/* The real current GradeCrew logo remains in the application topbar. */
-#authView .gcEntryStart .gcEntryBrand { display: none; }
-#authView .gcEntryBrand { min-height: 58px; display: flex; align-items: center; }
-#authView .gcEntryLogo { display: block; width: clamp(178px, 17vw, 226px); height: auto; max-height: 54px; object-fit: contain; object-position: left center; }
-
 #authView .gcEntryWelcome {
-  width: min(1120px, 100%);
-  margin: 0 auto;
-  padding: clamp(28px, 4vw, 54px) 0 0;
-  display: grid;
-  grid-template-areas:
-    "lead"
-    "crew"
-    "actions"
-    "student"
-    "benefits";
-  gap: 22px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(198, 211, 228, .72);
+  border-radius: 30px;
+  background: #fff;
+  box-shadow:
+    0 28px 80px rgba(40, 63, 96, .13),
+    0 4px 12px rgba(40, 63, 96, .06);
+}
+
+#authView .gcEntryHero {
+  position: relative;
+  min-height: clamp(650px, calc(100dvh - 205px), 770px);
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 53% 19%, rgba(255,255,255,.98), rgba(255,255,255,.58) 30%, transparent 52%),
+    linear-gradient(120deg, #f8ead8 0%, #fffaf2 22%, #f9fcff 56%, #eef5fd 100%);
+}
+
+#authView .gcEntryClassroom,
+#authView .gcEntryClassroom > * {
+  pointer-events: none;
+}
+
+#authView .gcEntryClassroom {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+#authView .gcEntrySunGlow {
+  position: absolute;
+  left: 31%;
+  top: -12%;
+  width: 42%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.98) 0%, rgba(255,248,224,.72) 28%, rgba(255,248,224,0) 70%);
+  filter: blur(3px);
+}
+
+#authView .gcEntryDoor {
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: clamp(180px, 17vw, 260px);
+  border-right: 1px solid rgba(139, 91, 49, .22);
+  background:
+    linear-gradient(90deg, rgba(126,77,36,.12), transparent 18%),
+    linear-gradient(90deg, #c98f54 0 8%, #e0ad75 8% 88%, #bc7d43 88% 100%);
+  box-shadow: inset -18px 0 35px rgba(107, 63, 26, .14);
+}
+
+#authView .gcEntryDoor::before,
+#authView .gcEntryDoor::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  border: 2px solid rgba(119, 74, 37, .24);
+  box-shadow: inset 0 0 0 8px rgba(255,255,255,.045);
+}
+
+#authView .gcEntryDoor::before {
+  top: 10%;
+  height: 32%;
+}
+
+#authView .gcEntryDoor::after {
+  bottom: 8%;
+  height: 40%;
+}
+
+#authView .gcEntryDoorSign {
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  z-index: 2;
+  width: 126px;
+  padding: 17px 10px 13px;
+  transform: translateX(-50%) rotate(-1.5deg);
+  border: 1px solid rgba(120,76,36,.25);
+  border-radius: 8px;
+  background: linear-gradient(160deg, #f4d4a5, #e7b779);
+  box-shadow: 0 5px 13px rgba(88,51,21,.16);
+  color: #6f4726;
+  text-align: center;
+  font-family: "Bradley Hand", "Segoe Print", cursive;
+  font-size: 16px;
+  line-height: 1.42;
+}
+
+#authView .gcEntryDoorSign::before,
+#authView .gcEntryDoorSign::after {
+  content: "";
+  position: absolute;
+  top: -18px;
+  width: 1px;
+  height: 20px;
+  background: #72553e;
+}
+
+#authView .gcEntryDoorSign::before { left: 22px; transform: rotate(12deg); }
+#authView .gcEntryDoorSign::after { right: 22px; transform: rotate(-12deg); }
+
+#authView .gcEntryDoorSign b {
+  display: block;
+  margin-top: 3px;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+#authView .gcEntryDoorKnob {
+  position: absolute;
+  right: 22px;
+  top: 49%;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe1a2 0 8%, #b77a24 38%, #70420f 76%);
+  box-shadow: 0 2px 8px rgba(76,43,12,.32);
+}
+
+#authView .gcEntryWindow {
+  position: absolute;
+  left: clamp(180px, 17vw, 260px);
+  top: 0;
+  width: 22%;
+  height: 48%;
+  opacity: .92;
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(192,173,142,.34) 49% 51%, transparent 51%),
+    linear-gradient(0deg, transparent 48%, rgba(192,173,142,.28) 48% 51%, transparent 51%),
+    linear-gradient(160deg, rgba(255,255,255,.96), rgba(225,242,255,.55));
+  border-right: 9px solid rgba(214, 190, 154, .34);
+  box-shadow: 16px 12px 40px rgba(255,255,255,.48);
+}
+
+#authView .gcEntryWindow span {
+  position: absolute;
+  bottom: -84px;
+  width: 48px;
+  height: 110px;
+  border-radius: 60% 60% 20% 20%;
+  background: rgba(93, 157, 80, .17);
+  filter: blur(.5px);
+}
+
+#authView .gcEntryWindow span:first-child { left: 18%; transform: rotate(-14deg); }
+#authView .gcEntryWindow span:last-child { right: 10%; height: 92px; transform: rotate(17deg); }
+
+#authView .gcEntryBoard {
+  position: absolute;
+  right: 3.8%;
+  top: 14%;
+  width: clamp(145px, 13vw, 205px);
+  min-height: 146px;
+  padding: 34px 18px 18px;
+  border: 8px solid #c59058;
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.035), transparent 32%),
+    #405b58;
+  box-shadow: 0 8px 24px rgba(58, 59, 50, .16);
+  color: rgba(255,255,255,.78);
+  text-align: center;
+  font-family: "Bradley Hand", "Segoe Print", cursive;
+  font-size: clamp(15px, 1.35vw, 20px);
+  line-height: 1.3;
+  transform: rotate(-1deg);
+}
+
+#authView .gcEntryBoard span {
+  display: block;
+  margin-top: 5px;
+  font-size: 25px;
+}
+
+#authView .gcEntryShelf {
+  position: absolute;
+  right: -3px;
+  top: 8%;
+  width: clamp(145px, 13vw, 205px);
+  height: 78%;
+  border-left: 12px solid #d7a36e;
+  border-right: 12px solid #d7a36e;
+  background:
+    linear-gradient(180deg,
+      transparent 0 18%,
+      #c58d57 18% 21%,
+      transparent 21% 43%,
+      #c58d57 43% 46%,
+      transparent 46% 69%,
+      #c58d57 69% 72%,
+      transparent 72%);
+  opacity: .46;
+}
+
+#authView .gcEntryShelf i {
+  position: absolute;
+  bottom: 30%;
+  width: 18px;
+  border-radius: 3px 3px 0 0;
+  background: #6e91bf;
+}
+
+#authView .gcEntryShelf i:nth-child(1) { left: 24px; height: 62px; }
+#authView .gcEntryShelf i:nth-child(2) { left: 45px; height: 50px; background: #d4865b; }
+#authView .gcEntryShelf i:nth-child(3) { left: 67px; height: 69px; background: #7ca26f; }
+#authView .gcEntryShelf i:nth-child(4) { left: 91px; height: 56px; background: #d3a15e; }
+
+#authView .gcEntryPlant {
+  position: absolute;
+  right: 21px;
+  top: 25%;
+  width: 46px;
+  height: 44px;
+  border-radius: 48% 52% 42% 58%;
+  background: rgba(92, 153, 87, .55);
+  box-shadow:
+    -18px 8px 0 rgba(83,145,79,.42),
+    -6px -16px 0 rgba(106,165,97,.38);
+}
+
+#authView .gcEntryDeskDecor {
+  position: absolute;
+  left: 16%;
+  right: -3%;
+  bottom: 18%;
+  height: 118px;
+  transform: perspective(520px) rotateX(4deg);
+  transform-origin: center bottom;
+  border-top: 1px solid rgba(150, 104, 62, .18);
+  background:
+    linear-gradient(180deg, rgba(246, 218, 183, .80), rgba(225, 181, 134, .78));
+  box-shadow: 0 -12px 36px rgba(141, 97, 52, .06);
 }
 
 #authView .gcEntryLead {
-  grid-area: lead;
-  text-align: center;
-  max-width: 900px;
+  position: relative;
+  z-index: 7;
+  width: min(930px, 72%);
   margin: 0 auto;
+  padding-top: clamp(40px, 4vw, 64px);
+  text-align: center;
 }
+
 #authView .gcEntryLead h1 {
   margin: 0;
   display: grid;
-  gap: 2px;
-  font-size: clamp(38px, 4.5vw, 64px);
-  line-height: 1.01;
-  letter-spacing: -.045em;
-  font-weight: 790;
+  gap: 0;
+  color: #10255d;
+  font-size: clamp(44px, 4.35vw, 69px);
+  line-height: .99;
+  letter-spacing: -.052em;
+  font-weight: 860;
   text-wrap: balance;
+  text-shadow: 0 2px 0 rgba(255,255,255,.6);
 }
+
 #authView .gcEntryLead h1 span,
-#authView .gcEntryLead h1 strong { font: inherit; }
-#authView .gcEntryLead h1 strong { color: var(--gc-entry-primary); }
+#authView .gcEntryLead h1 strong {
+  font: inherit;
+}
+
+#authView .gcEntryLead h1 strong {
+  color: #285ac9;
+}
+
 #authView .gcEntryLead > p {
-  margin: 15px 0 0;
-  color: #4f6481;
-  font-size: clamp(18px, 1.65vw, 23px);
-  font-weight: 650;
+  margin: 17px 0 0;
+  color: #466083;
+  font-size: clamp(18px, 1.6vw, 24px);
+  font-weight: 720;
+  letter-spacing: -.018em;
 }
 
 #authView .gcEntryCharacterStage {
-  grid-area: crew;
-  min-height: 330px;
+  position: absolute;
+  z-index: 5;
+  left: 5%;
+  right: 6.5%;
+  top: clamp(180px, 22%, 205px);
+  bottom: 180px;
   display: grid;
-  grid-template-columns: minmax(260px, .72fr) minmax(520px, 1.28fr);
+  grid-template-columns: minmax(315px, .88fr) minmax(600px, 1.52fr);
   align-items: end;
-  gap: clamp(16px, 3vw, 42px);
-  padding: 4px clamp(12px, 2vw, 26px) 0;
+  gap: clamp(20px, 2.8vw, 46px);
 }
 
 #authView .gcEntryCoco {
   position: relative;
+  align-self: stretch;
   min-width: 0;
   display: grid;
-  justify-items: center;
-  align-self: stretch;
   align-content: end;
+  justify-items: center;
 }
+
 #authView .gcEntryCoco::before {
   content: "";
   position: absolute;
-  width: 86%;
-  aspect-ratio: 1;
-  left: 1%;
-  bottom: 5%;
+  left: -11%;
+  bottom: -8%;
+  width: 112%;
+  height: 84%;
   z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(219, 232, 250, .7), rgba(219, 232, 250, 0) 70%);
+  border-radius: 48%;
+  background: radial-gradient(ellipse, rgba(255,255,255,.72), rgba(255,255,255,0) 68%);
 }
+
 #authView .gcEntryCoco img {
-  width: min(100%, 330px);
-  height: 300px;
+  width: min(100%, 445px);
+  height: clamp(350px, 37vw, 455px);
   object-fit: contain;
   object-position: center bottom;
-  filter: drop-shadow(0 18px 26px rgba(32, 43, 60, .10));
+  transform: translate(-5%, 3%);
+  filter: drop-shadow(0 22px 28px rgba(40, 55, 76, .16));
 }
+
 #authView .gcEntryCocoNote {
   position: absolute;
-  top: 3%;
   right: -3%;
-  max-width: 145px;
-  color: #315790;
-  font-size: 15px;
-  font-weight: 720;
-  line-height: 1.25;
-  transform: rotate(-4deg);
+  top: 6%;
+  color: #22549e;
+  font-family: "Bradley Hand", "Segoe Print", cursive;
+  font-size: clamp(15px, 1.2vw, 19px);
+  font-weight: 700;
+  line-height: 1.12;
+  transform: rotate(-5deg);
+  text-align: center;
+  text-shadow: 0 1px rgba(255,255,255,.8);
 }
+
 #authView .gcEntryCocoNote::after {
   content: "↙";
   display: block;
-  margin: -1px 0 0 20px;
-  font-size: 24px;
-  font-weight: 500;
+  margin: -2px 0 0 13px;
+  font-family: system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  transform: rotate(4deg);
 }
 
 #authView .gcEntrySupportCrew {
   min-width: 0;
+  padding-right: clamp(30px, 7vw, 100px);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: clamp(8px, 1.4vw, 18px);
   align-items: end;
 }
+
 #authView .gcEntryCrewMember {
   min-width: 0;
+  position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
   justify-items: center;
   align-items: end;
 }
+
 #authView .gcEntryCrewMember > img {
-  width: min(100%, 180px);
-  height: 220px;
+  width: min(100%, 245px);
+  height: clamp(205px, 20vw, 285px);
   object-fit: contain;
   object-position: center bottom;
-  filter: drop-shadow(0 16px 22px rgba(32, 43, 60, .08));
+  filter: drop-shadow(0 15px 20px rgba(31, 44, 63, .13));
 }
-#authView .gcEntryCrewMember > span {
+
+#authView .gcEntryCrewRole {
   position: relative;
-  z-index: 1;
-  width: min(164px, 96%);
-  min-height: 62px;
-  margin-top: -16px;
-  padding: 10px 12px;
+  z-index: 2;
+  width: min(188px, 94%);
+  min-height: 70px;
+  margin-top: -18px;
+  padding: 10px 13px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(197, 211, 229, .92);
+  border-radius: 15px;
+  background: rgba(255,255,255,.94);
+  box-shadow:
+    0 10px 28px rgba(33, 51, 80, .10),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter: blur(8px);
+}
+
+#authView .gcEntryCrewRoleIcon,
+#authView .gcEntryBenefitIcon,
+#authView .gcEntryStudentIcon {
   display: grid;
   place-items: center;
-  border: 1px solid rgba(202, 214, 230, .88);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, .94);
-  box-shadow: 0 9px 24px rgba(32, 43, 60, .07);
-  text-align: center;
+  color: var(--gc-entry-primary);
 }
-#authView .gcEntryCrewMember strong { font-size: 15px; }
-#authView .gcEntryCrewMember small { margin-top: 2px; color: var(--gc-entry-muted); font-size: 12px; font-weight: 650; }
-#authView .gcEntryCrewMember-remy > span { border-color: rgba(105, 144, 211, .34); }
-#authView .gcEntryCrewMember-emmi > span { border-color: rgba(224, 138, 86, .34); }
-#authView .gcEntryCrewMember-wilma > span { border-color: rgba(68, 151, 111, .30); }
+
+#authView .gcEntryCrewRoleIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: #edf4ff;
+}
+
+#authView .gcEntryCrewRoleIcon svg,
+#authView .gcEntryBenefitIcon svg,
+#authView .gcEntryStudentIcon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#authView .gcEntryCrewRoleCopy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+#authView .gcEntryCrewRoleCopy strong {
+  color: #17316d;
+  font-size: 15px;
+  letter-spacing: -.015em;
+}
+
+#authView .gcEntryCrewRoleCopy small {
+  color: #657690;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+#authView .gcEntryCrewMember-emmi .gcEntryCrewRole {
+  border-color: rgba(224, 140, 87, .42);
+  background: rgba(255, 250, 247, .96);
+}
+
+#authView .gcEntryCrewMember-emmi .gcEntryCrewRoleIcon {
+  color: #e46933;
+  background: #fff0e8;
+}
+
+#authView .gcEntryCrewMember-wilma .gcEntryCrewRole {
+  border-color: rgba(76, 157, 118, .38);
+  background: rgba(247, 255, 250, .96);
+}
+
+#authView .gcEntryCrewMember-wilma .gcEntryCrewRoleIcon {
+  color: #249566;
+  background: #eaf9f1;
+}
 
 #authView .gcEntryActions {
-  grid-area: actions;
-  width: min(670px, 100%);
-  margin: -2px auto 0;
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  bottom: 108px;
+  width: min(690px, 56%);
+  transform: translateX(-50%);
   display: grid;
-  grid-template-columns: 1.15fr .95fr;
+  grid-template-columns: 1.16fr .96fr;
   gap: 14px;
 }
+
 #authView .gcEntryTutorialStart,
 #authView .gcEntryLoginOpen {
-  min-height: 54px;
-  border-radius: 13px;
-  font-size: 15px;
-  font-weight: 740;
+  min-height: 58px;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 790;
   justify-content: center;
 }
-#authView .gcEntryTutorialStart { box-shadow: 0 12px 28px rgba(40, 90, 201, .18); }
-#authView .gcEntryTutorialStart span { margin-left: 8px; }
+
+#authView .gcEntryTutorialStart {
+  box-shadow: 0 14px 30px rgba(40, 90, 201, .27);
+}
+
+#authView .gcEntryTutorialStart span {
+  margin-left: 9px;
+  font-size: 20px;
+}
+
+#authView .gcEntryLoginOpen {
+  background: rgba(255,255,255,.86);
+  border-color: #8db2ef;
+  color: #1f54b7;
+  box-shadow: 0 8px 18px rgba(55, 91, 148, .08);
+  backdrop-filter: blur(8px);
+}
+
+#authView .gcEntryStudent {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 20px;
+  width: min(800px, 66%);
+  min-height: 68px;
+  transform: translateX(-50%);
+  padding: 10px 12px 10px 16px;
+  display: grid;
+  grid-template-columns: 44px minmax(200px, .8fr) minmax(320px, 1.25fr);
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(188, 210, 239, .9);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(235, 244, 255, .96), rgba(245, 249, 255, .95));
+  box-shadow:
+    0 12px 32px rgba(44, 77, 127, .12),
+    inset 0 1px 0 rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
+}
+
+#authView .gcEntryStudentIcon {
+  width: 42px;
+  height: 42px;
+  color: #1769e0;
+}
+
+#authView .gcEntryStudentIcon svg {
+  width: 31px;
+  height: 31px;
+}
+
+#authView .gcEntryStudent h2 {
+  margin: 0;
+  color: #162a51;
+  font-size: 16px;
+  letter-spacing: -.018em;
+}
+
+#authView .gcEntryStudent p {
+  margin: 3px 0 0;
+  color: #718198;
+  font-size: 11.5px;
+}
+
+#authView #joinForm {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px;
+  align-items: end;
+}
+
+#authView #joinForm > label {
+  margin: 0;
+  color: transparent;
+  font-size: 0;
+}
+
+#authView #joinForm input {
+  min-height: 46px;
+  padding-inline: 14px;
+  border-color: #bfd2eb;
+  border-radius: 12px;
+  background: rgba(255,255,255,.97);
+  color: var(--gc-entry-text);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+#authView #joinForm .button {
+  min-width: 52px;
+  min-height: 46px;
+  border-radius: 12px;
+}
+
+#authView .gcEntryBenefits {
+  position: relative;
+  z-index: 11;
+  min-height: 92px;
+  padding: 13px clamp(16px, 3vw, 44px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  background: rgba(255,255,255,.98);
+  border-top: 1px solid rgba(204, 216, 231, .72);
+}
+
+#authView .gcEntryBenefits > span {
+  min-width: 0;
+  padding: 2px clamp(10px, 1.8vw, 25px);
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+#authView .gcEntryBenefits > span + span {
+  border-left: 1px solid rgba(190, 205, 223, .62);
+}
+
+#authView .gcEntryBenefitIcon {
+  width: 42px;
+  height: 42px;
+  color: #1769e0;
+}
+
+#authView .gcEntryBenefitIcon svg {
+  width: 31px;
+  height: 31px;
+  stroke-width: 1.8;
+}
+
+#authView .gcEntryBenefits > span > span {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+#authView .gcEntryBenefits strong {
+  color: #18346f;
+  font-size: 13px;
+  line-height: 1.18;
+}
+
+#authView .gcEntryBenefits small {
+  color: #71819b;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
 #authView .gcEntryTextAction {
   min-height: 44px;
   border: 0;
@@ -204,174 +774,914 @@
   font-weight: 650;
   padding: 8px 6px;
 }
-#authView .gcEntryTextAction:hover { color: var(--gc-entry-text); }
 
-#authView .gcEntryStudent {
-  grid-area: student;
-  width: min(760px, 100%);
-  margin: 4px auto 0;
-  padding: 14px 16px;
-  display: grid;
-  grid-template-columns: minmax(210px, .72fr) minmax(340px, 1.28fr);
-  align-items: center;
-  gap: 18px;
-  border: 1px solid #d7e4f7;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #edf4ff 0%, #f5f8fd 100%);
-  box-shadow: 0 8px 24px rgba(42, 76, 129, .045);
-}
-#authView .gcEntryStudent h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
-#authView .gcEntryStudent p { margin: 3px 0 0; color: var(--gc-entry-muted); font-size: 12px; }
-#authView #joinForm { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 9px; align-items: end; }
-#authView #joinForm > label { margin: 0; color: transparent; font-size: 0; }
-#authView #joinForm input {
-  min-height: 46px;
-  border-color: #c8d7ea;
-  background: rgba(255, 255, 255, .96);
+#authView .gcEntryTextAction:hover {
   color: var(--gc-entry-text);
-  font-size: 15px;
 }
-#authView #joinForm .button { min-height: 46px; min-width: 48px; }
 
-#authView .gcEntryBenefits {
-  grid-area: benefits;
-  width: min(900px, 100%);
-  margin: 2px auto 0;
-  padding: 16px 0 0;
+/* Existing login, registration and tutorial states – polished but functionally unchanged. */
+#authView .gcEntryAuth {
+  min-height: calc(100dvh - 150px);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid rgba(32, 43, 60, .10);
+  align-content: start;
+  justify-items: center;
+  padding: 8px 0 42px;
 }
-#authView .gcEntryBenefits > span {
-  min-width: 0;
-  padding: 0 20px;
-  display: grid;
-  gap: 2px;
-  text-align: center;
-}
-#authView .gcEntryBenefits > span + span { border-left: 1px solid rgba(32, 43, 60, .10); }
-#authView .gcEntryBenefits strong { font-size: 13px; }
-#authView .gcEntryBenefits small { color: var(--gc-entry-muted); font-size: 11px; }
 
-/* Existing login, registration and tutorial states stay functionally unchanged. */
-#authView .gcEntryAuth { min-height: calc(100dvh - 150px); display: grid; align-content: start; justify-items: center; padding: 8px 0 42px; }
-#authView .gcEntryBack { justify-self: start; min-height: 44px; border: 0; background: transparent; color: var(--gc-entry-muted); font: inherit; font-weight: 650; cursor: pointer; padding: 8px 0; }
-#authView .gcEntryAuthPanel { width: min(500px, 100%); margin-top: clamp(26px, 7vh, 72px); padding: clamp(26px, 4vw, 42px); border: 1px solid rgba(223, 229, 236, .9); border-radius: 22px; background: rgba(255, 255, 255, .86); box-shadow: 0 18px 60px rgba(32, 43, 60, .07); backdrop-filter: blur(18px); }
-#authView .gcEntryAuthPanel > img:not(.gcEntryNameCoco):not(.gcEntryGateArt) { display: block; margin-bottom: 20px; }
-#authView .gcEntryAuthPanel h1 { margin: 7px 0 9px; font-size: clamp(30px, 4vw, 40px); letter-spacing: -.035em; }
-#authView .gcEntryAuthPanel > p { color: var(--gc-entry-muted); line-height: 1.55; }
+#authView .gcEntryBack {
+  justify-self: start;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--gc-entry-muted);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+#authView .gcEntryAuthPanel {
+  width: min(500px, 100%);
+  margin-top: clamp(26px, 7vh, 72px);
+  padding: clamp(26px, 4vw, 42px);
+  border: 1px solid rgba(211, 221, 233, .92);
+  border-radius: 24px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 24px 70px rgba(31, 49, 76, .11);
+  backdrop-filter: blur(18px);
+}
+
+#authView .gcEntryAuthPanel > img:not(.gcEntryNameCoco):not(.gcEntryGateArt) {
+  display: block;
+  margin-bottom: 20px;
+}
+
+#authView .gcEntryAuthPanel h1 {
+  margin: 7px 0 9px;
+  font-size: clamp(30px, 4vw, 40px);
+  letter-spacing: -.035em;
+}
+
+#authView .gcEntryAuthPanel > p {
+  color: var(--gc-entry-muted);
+  line-height: 1.55;
+}
+
 #authView .gcEntryAuthPanel form { margin-top: 22px; }
 #authView .gcEntryAuthPanel input { min-height: 44px; }
-#authView .gcEntryCompatTabs { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-#authView .gcEntryCompatTab { width: 1px !important; height: 1px !important; padding: 0 !important; border: 0 !important; }
-#authView .gcEntrySwitch { margin: 20px 0 0 !important; padding-top: 18px; border-top: 1px solid var(--gc-entry-border); font-size: 13px; }
-#authView .gcEntrySwitch button { min-height: 44px; border: 0; background: transparent; color: var(--gc-entry-primary); font: inherit; font-weight: 720; cursor: pointer; padding: 8px 2px; }
-#authView #sharedLoginNotice { position: relative; z-index: 3; width: min(1180px, 100%); margin: 0 auto 12px; }
+
+#authView .gcEntryCompatTabs {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+#authView .gcEntryCompatTab {
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+#authView .gcEntrySwitch {
+  margin: 20px 0 0 !important;
+  padding-top: 18px;
+  border-top: 1px solid var(--gc-entry-border);
+  font-size: 13px;
+}
+
+#authView .gcEntrySwitch button {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--gc-entry-primary);
+  font: inherit;
+  font-weight: 720;
+  cursor: pointer;
+  padding: 8px 2px;
+}
+
+#authView #sharedLoginNotice {
+  position: relative;
+  z-index: 30;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto 12px;
+}
 
 #authView .gcEntryNamePanel { text-align: center; }
-#authView .gcEntryNameCoco { display: block; width: min(230px, 60%); height: 165px; object-fit: contain; margin: -12px auto 10px; }
-#authView .gcEntryNamePanel label { display: block; text-align: left; margin-top: 24px; }
-#authView .gcEntryNamePanel input { width: 100%; margin-top: 7px; }
-#authView .gcEntryNamePanel .button { width: 100%; min-height: 48px; margin-top: 16px; }
 
-#authView .gcEntryTutorial { min-height: calc(100dvh - 144px); display: grid; grid-template-rows: auto 1fr auto; gap: 18px; }
-#authView .gcEntryTutorialTop { display: flex; justify-content: space-between; align-items: center; min-height: 44px; }
-#authView .gcEntryTutorialTop > span { color: var(--gc-entry-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-#authView .gcEntryTutorialBody { display: grid; grid-template-columns: minmax(300px, .9fr) minmax(380px, 1.1fr); gap: clamp(30px, 6vw, 86px); align-items: center; width: min(1040px, 100%); margin: 0 auto; }
-#authView .gcEntryTutorialVisual { min-width: 0; display: grid; place-items: center; }
-#authView .gcEntryTutorialVisual img { width: 100%; max-height: 430px; object-fit: contain; filter: drop-shadow(0 18px 30px rgba(32, 43, 60, .08)); }
-#authView .gcEntryTutorialCopy h2 { margin: 8px 0 13px; font-size: clamp(30px, 3.8vw, 48px); line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
-#authView .gcEntryTutorialCopy > p { color: var(--gc-entry-muted); font-size: 17px; line-height: 1.6; }
-#authView .gcEntryTutorialNav { display: flex; justify-content: flex-end; gap: 10px; min-height: 50px; }
-#authView .gcEntryTutorialNav .button { min-height: 44px; min-width: 112px; }
-#authView .gcEntryTry { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
-#authView .gcEntryChoice { min-height: 44px; border: 1px solid var(--gc-entry-border); border-radius: 10px; background: rgba(255,255,255,.78); color: var(--gc-entry-text); font: inherit; font-weight: 650; padding: 9px 13px; cursor: pointer; }
+#authView .gcEntryNameCoco {
+  display: block;
+  width: min(230px, 60%);
+  height: 165px;
+  object-fit: contain;
+  margin: -12px auto 10px;
+}
+
+#authView .gcEntryNamePanel label {
+  display: block;
+  text-align: left;
+  margin-top: 24px;
+}
+
+#authView .gcEntryNamePanel input {
+  width: 100%;
+  margin-top: 7px;
+}
+
+#authView .gcEntryNamePanel .button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 16px;
+}
+
+#authView .gcEntryTutorial {
+  min-height: calc(100dvh - 144px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+}
+
+#authView .gcEntryTutorialTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+}
+
+#authView .gcEntryTutorialTop > span {
+  color: var(--gc-entry-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+#authView .gcEntryTutorialBody {
+  display: grid;
+  grid-template-columns: minmax(300px, .9fr) minmax(380px, 1.1fr);
+  gap: clamp(30px, 6vw, 86px);
+  align-items: center;
+  width: min(1040px, 100%);
+  margin: 0 auto;
+}
+
+#authView .gcEntryTutorialVisual {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+
+#authView .gcEntryTutorialVisual img {
+  width: 100%;
+  max-height: 430px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(32, 43, 60, .08));
+}
+
+#authView .gcEntryTutorialCopy h2 {
+  margin: 8px 0 13px;
+  font-size: clamp(30px, 3.8vw, 48px);
+  line-height: 1.04;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+#authView .gcEntryTutorialCopy > p {
+  color: var(--gc-entry-muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+#authView .gcEntryTutorialNav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 50px;
+}
+
+#authView .gcEntryTutorialNav .button {
+  min-height: 44px;
+  min-width: 112px;
+}
+
+#authView .gcEntryTry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 24px;
+}
+
+#authView .gcEntryChoice {
+  min-height: 44px;
+  border: 1px solid var(--gc-entry-border);
+  border-radius: 10px;
+  background: rgba(255,255,255,.78);
+  color: var(--gc-entry-text);
+  font: inherit;
+  font-weight: 650;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
 #authView .gcEntryChoice:hover,
-#authView .gcEntryChoice.selected { border-color: var(--gc-entry-primary); background: var(--gc-color-soft, #edf3fd); }
-#authView .gcEntryPrepared { margin-top: 18px; padding: 17px; border: 1px solid var(--gc-entry-border); border-radius: 14px; background: rgba(255,255,255,.84); display: grid; gap: 7px; }
-#authView .gcEntryPrepared > span { color: var(--gc-entry-primary); font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .06em; }
+#authView .gcEntryChoice.selected {
+  border-color: var(--gc-entry-primary);
+  background: var(--gc-color-soft, #edf3fd);
+}
+
+#authView .gcEntryPrepared {
+  margin-top: 18px;
+  padding: 17px;
+  border: 1px solid var(--gc-entry-border);
+  border-radius: 14px;
+  background: rgba(255,255,255,.84);
+  display: grid;
+  gap: 7px;
+}
+
+#authView .gcEntryPrepared > span {
+  color: var(--gc-entry-primary);
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
 #authView .gcEntryPrepared > small { color: var(--gc-entry-muted); }
-#authView .gcEntryPrepared .button { margin-top: 8px; justify-self: start; min-height: 44px; }
-#authView .gcEntryResult { padding: 13px 14px; border-left: 3px solid var(--gc-color-positive, #267049); background: rgba(38,112,73,.06); border-radius: 0 10px 10px 0; }
+
+#authView .gcEntryPrepared .button {
+  margin-top: 8px;
+  justify-self: start;
+  min-height: 44px;
+}
+
+#authView .gcEntryResult {
+  padding: 13px 14px;
+  border-left: 3px solid var(--gc-color-positive, #267049);
+  background: rgba(38,112,73,.06);
+  border-radius: 0 10px 10px 0;
+}
 
 #authView .gcEntryGatePanel { text-align: center; }
-#authView .gcEntryGateArt { display: block; width: min(310px, 76%); height: 190px; object-fit: contain; margin: -12px auto 5px; }
-#authView .gcEntryGateActions { display: grid; gap: 10px; margin-top: 24px; }
+
+#authView .gcEntryGateArt {
+  display: block;
+  width: min(310px, 76%);
+  height: 190px;
+  object-fit: contain;
+  margin: -12px auto 5px;
+}
+
+#authView .gcEntryGateActions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
 #authView .gcEntryGateActions .button { min-height: 48px; }
 
+.gcPublicEntryMode .gcPublicNav button:focus-visible,
 #authView button:focus-visible,
 #authView input:focus-visible,
-#authView a:focus-visible { outline: 3px solid color-mix(in srgb, var(--gc-entry-primary) 72%, white); outline-offset: 3px; }
+#authView a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--gc-entry-primary, #285ac9) 72%, white);
+  outline-offset: 3px;
+}
 
 @keyframes gcEntryIn {
-  from { opacity: 0; transform: translateY(7px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 900px) {
-  #authView { padding-inline: 20px; }
-  #authView .gcEntryWelcome {
-    grid-template-areas: "lead" "crew" "actions" "student" "benefits";
-    gap: 20px;
-    padding-top: 30px;
+@media (max-width: 1240px) {
+  .gcPublicEntryMode .topbar {
+    padding-inline: 28px;
   }
-  #authView .gcEntryCharacterStage { grid-template-columns: minmax(210px, .7fr) minmax(420px, 1.3fr); min-height: 290px; }
-  #authView .gcEntryCoco img { height: 260px; }
-  #authView .gcEntryCrewMember > img { height: 190px; }
-  #authView .gcEntryCocoNote { font-size: 13px; right: -8%; }
-  #authView .gcEntryTutorialBody { grid-template-columns: 1fr; gap: 16px; align-content: center; }
-  #authView .gcEntryTutorialVisual img { max-height: 280px; }
-  #authView .gcEntryTutorialCopy { width: min(650px, 100%); margin: 0 auto; }
+
+  .gcPublicNav {
+    gap: 20px;
+  }
+
+  #authView .gcEntryCharacterStage {
+    left: 3.5%;
+    right: 3%;
+    grid-template-columns: minmax(280px, .78fr) minmax(520px, 1.42fr);
+    gap: 18px;
+  }
+
+  #authView .gcEntrySupportCrew {
+    padding-right: 80px;
+  }
+
+  #authView .gcEntryBoard {
+    right: 2.5%;
+  }
+
+  #authView .gcEntryShelf {
+    opacity: .35;
+  }
+}
+
+@media (max-width: 1020px) {
+  .gcPublicEntryMode .topbar {
+    padding-inline: 20px;
+  }
+
+  .gcPublicNav {
+    gap: 14px;
+  }
+
+  .gcPublicNav button {
+    font-size: 13px;
+  }
+
+  #authView {
+    padding-inline: 20px;
+  }
+
+  #authView .gcEntryHero {
+    min-height: 720px;
+  }
+
+  #authView .gcEntryLead {
+    width: min(850px, 82%);
+  }
+
+  #authView .gcEntryCharacterStage {
+    left: 2%;
+    right: 2%;
+    top: 190px;
+    bottom: 185px;
+    grid-template-columns: minmax(250px, .72fr) minmax(470px, 1.28fr);
+    gap: 12px;
+  }
+
+  #authView .gcEntryCoco img {
+    height: 360px;
+  }
+
+  #authView .gcEntrySupportCrew {
+    padding-right: 58px;
+  }
+
+  #authView .gcEntryCrewMember > img {
+    height: 225px;
+  }
+
+  #authView .gcEntryCrewRole {
+    grid-template-columns: 32px 1fr;
+    width: min(170px, 96%);
+    padding-inline: 9px;
+  }
+
+  #authView .gcEntryCrewRoleIcon {
+    width: 31px;
+    height: 31px;
+  }
+
+  #authView .gcEntryActions {
+    width: min(650px, 68%);
+  }
+
+  #authView .gcEntryStudent {
+    width: min(750px, 80%);
+  }
+
+  #authView .gcEntryBoard {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .gcPublicEntryMode .topbar {
+    min-height: 70px;
+    height: 70px;
+  }
+
+  .gcPublicEntryMode .topbar .brandMark[data-gradecrew-brand-ready="1"] {
+    width: 43px;
+    height: 43px;
+    flex-basis: 43px;
+  }
+
+  .gcPublicEntryMode .topbar .brandCopy strong {
+    font-size: 20px;
+  }
+
+  .gcPublicNav button[data-entry-nav="features"],
+  .gcPublicNav button[data-entry-nav="crew"] {
+    display: none;
+  }
+
+  .gcPublicNav {
+    margin-left: auto;
+    margin-right: 0;
+    gap: 16px;
+  }
+
+  #authView {
+    min-height: calc(100dvh - 70px);
+    padding: 18px 16px 34px;
+  }
+
+  #authView .gcEntryWelcome {
+    border-radius: 24px;
+  }
+
+  #authView .gcEntryHero {
+    min-height: 760px;
+  }
+
+  #authView .gcEntryDoor {
+    width: 150px;
+    opacity: .86;
+  }
+
+  #authView .gcEntryDoorSign {
+    width: 108px;
+    font-size: 13px;
+  }
+
+  #authView .gcEntryWindow {
+    left: 150px;
+    width: 26%;
+  }
+
+  #authView .gcEntryShelf {
+    width: 130px;
+  }
+
+  #authView .gcEntryLead {
+    width: 86%;
+    padding-top: 36px;
+  }
+
+  #authView .gcEntryLead h1 {
+    font-size: clamp(40px, 6.6vw, 56px);
+  }
+
+  #authView .gcEntryLead > p {
+    font-size: 19px;
+  }
+
+  #authView .gcEntryCharacterStage {
+    left: 3%;
+    right: 3%;
+    top: 180px;
+    bottom: 195px;
+    grid-template-columns: minmax(220px, .74fr) minmax(420px, 1.26fr);
+    gap: 8px;
+  }
+
+  #authView .gcEntryCoco img {
+    height: 345px;
+    transform: translate(-3%, 2%);
+  }
+
+  #authView .gcEntryCocoNote {
+    right: -8%;
+    font-size: 14px;
+  }
+
+  #authView .gcEntrySupportCrew {
+    padding-right: 30px;
+    gap: 5px;
+  }
+
+  #authView .gcEntryCrewMember > img {
+    height: 205px;
+  }
+
+  #authView .gcEntryCrewRole {
+    width: 96%;
+    min-height: 62px;
+    grid-template-columns: 29px 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  #authView .gcEntryCrewRoleIcon {
+    width: 29px;
+    height: 29px;
+  }
+
+  #authView .gcEntryCrewRoleIcon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  #authView .gcEntryCrewRoleCopy strong {
+    font-size: 13px;
+  }
+
+  #authView .gcEntryCrewRoleCopy small {
+    font-size: 10px;
+  }
+
+  #authView .gcEntryActions {
+    bottom: 112px;
+    width: min(620px, 78%);
+  }
+
+  #authView .gcEntryStudent {
+    width: min(720px, 88%);
+    grid-template-columns: 38px minmax(165px, .72fr) minmax(290px, 1.28fr);
+  }
+
+  #authView .gcEntryBenefits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    padding-block: 8px;
+  }
+
+  #authView .gcEntryBenefits > span {
+    padding-block: 10px;
+  }
+
+  #authView .gcEntryBenefits > span:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid rgba(190, 205, 223, .52);
+  }
+
+  #authView .gcEntryBenefits > span:nth-child(4) {
+    border-top: 1px solid rgba(190, 205, 223, .52);
+  }
+
+  #authView .gcEntryTutorialBody {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-content: center;
+  }
+
+  #authView .gcEntryTutorialVisual img {
+    max-height: 280px;
+  }
+
+  #authView .gcEntryTutorialCopy {
+    width: min(650px, 100%);
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 720px) {
-  #authView { min-height: calc(100dvh - 60px); padding: 0 16px 26px; }
-  #authView .gcEntryWelcome { padding-top: 22px; }
-  #authView .gcEntryLead h1 { font-size: clamp(35px, 10.5vw, 48px); }
-  #authView .gcEntryLead > p { margin-top: 10px; font-size: 17px; }
-  #authView .gcEntryCharacterStage { grid-template-columns: 1fr; gap: 4px; min-height: auto; }
-  #authView .gcEntryCoco { align-content: center; }
-  #authView .gcEntryCoco img { width: min(70vw, 270px); height: 235px; }
-  #authView .gcEntryCocoNote { top: 2%; right: 4%; max-width: 126px; }
-  #authView .gcEntrySupportCrew { gap: 6px; }
-  #authView .gcEntryCrewMember > img { height: 145px; }
-  #authView .gcEntryCrewMember > span { min-height: 55px; margin-top: -12px; padding: 8px 7px; }
-  #authView .gcEntryCrewMember strong { font-size: 13px; }
-  #authView .gcEntryCrewMember small { font-size: 10px; }
-  #authView .gcEntryActions { grid-template-columns: 1fr; gap: 9px; }
+  .gcPublicEntryMode .topbar {
+    min-height: 66px;
+    height: 66px;
+    padding: 0 14px;
+  }
+
+  .gcPublicEntryMode .topbar .brand {
+    gap: 9px;
+  }
+
+  .gcPublicEntryMode .topbar .brandMark[data-gradecrew-brand-ready="1"] {
+    width: 39px;
+    height: 39px;
+    flex-basis: 39px;
+  }
+
+  .gcPublicEntryMode .topbar .brandCopy strong {
+    font-size: 18px;
+  }
+
+  .gcPublicNav button[data-entry-nav="teacher"] {
+    display: none;
+  }
+
+  .gcPublicNav .gcPublicNavHelp {
+    font-size: 12px;
+  }
+
+  #authView {
+    padding: 12px 10px 28px;
+  }
+
+  #authView .gcEntryWelcome {
+    border-radius: 20px;
+  }
+
+  #authView .gcEntryHero {
+    min-height: 0;
+    padding: 28px 16px 18px;
+    display: grid;
+    grid-template-areas:
+      "lead"
+      "crew"
+      "actions"
+      "student";
+    gap: 15px;
+    background:
+      radial-gradient(circle at 50% 5%, rgba(255,255,255,.98), transparent 38%),
+      linear-gradient(180deg, #fff9ef 0%, #f4f9ff 62%, #eef5ff 100%);
+  }
+
+  #authView .gcEntryClassroom {
+    opacity: .38;
+  }
+
+  #authView .gcEntryDoor {
+    left: -38px;
+    width: 120px;
+    height: 66%;
+    bottom: auto;
+    opacity: .32;
+  }
+
+  #authView .gcEntryDoorSign,
+  #authView .gcEntryDoorKnob,
+  #authView .gcEntryWindow,
+  #authView .gcEntryShelf,
+  #authView .gcEntryDeskDecor {
+    display: none;
+  }
+
+  #authView .gcEntryLead {
+    grid-area: lead;
+    width: 100%;
+    padding: 0;
+  }
+
+  #authView .gcEntryLead h1 {
+    font-size: clamp(34px, 10.8vw, 48px);
+    line-height: 1.02;
+  }
+
+  #authView .gcEntryLead > p {
+    margin-top: 10px;
+    font-size: 17px;
+  }
+
+  #authView .gcEntryCharacterStage {
+    grid-area: crew;
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #authView .gcEntryCoco {
+    min-height: 240px;
+  }
+
+  #authView .gcEntryCoco img {
+    width: min(74vw, 290px);
+    height: 245px;
+    transform: none;
+  }
+
+  #authView .gcEntryCocoNote {
+    top: 8%;
+    right: 7%;
+    font-size: 13px;
+  }
+
+  #authView .gcEntrySupportCrew {
+    padding: 0;
+    gap: 5px;
+  }
+
+  #authView .gcEntryCrewMember > img {
+    height: 138px;
+  }
+
+  #authView .gcEntryCrewRole {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 2px;
+    min-height: 52px;
+    margin-top: -10px;
+    padding: 7px 5px;
+    text-align: center;
+  }
+
+  #authView .gcEntryCrewRoleIcon {
+    display: none;
+  }
+
+  #authView .gcEntryCrewRoleCopy {
+    justify-items: center;
+  }
+
+  #authView .gcEntryActions {
+    grid-area: actions;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    transform: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
   #authView .gcEntryTutorialStart,
-  #authView .gcEntryLoginOpen { width: 100%; min-height: 50px; }
-  #authView .gcEntryStudent { grid-template-columns: 1fr; gap: 10px; padding: 13px; }
-  #authView #joinForm { grid-template-columns: 1fr auto; }
-  #authView .gcEntryBenefits { grid-template-columns: 1fr; padding-top: 10px; }
-  #authView .gcEntryBenefits > span { padding: 8px 0; }
-  #authView .gcEntryBenefits > span + span { border-left: 0; border-top: 1px solid rgba(32, 43, 60, .08); }
-  #authView .gcEntryAuth { min-height: calc(100dvh - 98px); }
-  #authView .gcEntryAuthPanel { margin-top: 14px; padding: 24px 20px; border-radius: 18px; }
-  #authView .gcEntryNameCoco { height: 140px; }
-  #authView .gcEntryTutorial { min-height: calc(100dvh - 92px); }
-  #authView .gcEntryTutorialBody { display: flex; flex-direction: column; justify-content: center; }
-  #authView .gcEntryTutorialVisual img { max-height: 215px; }
-  #authView .gcEntryTutorialCopy h2 { font-size: 31px; }
-  #authView .gcEntryTutorialCopy > p { font-size: 15px; }
-  #authView .gcEntryTutorialNav { position: sticky; bottom: 0; padding: 10px 0 max(10px, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--gc-entry-bg) 32%); }
-  #authView .gcEntryTutorialNav .button { flex: 1; }
-  #authView .gcEntryTry { display: grid; }
-  #authView .gcEntryChoice { width: 100%; text-align: left; }
+  #authView .gcEntryLoginOpen {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  #authView .gcEntryStudent {
+    grid-area: student;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: 0;
+    transform: none;
+    grid-template-columns: 38px 1fr;
+    padding: 12px;
+    gap: 8px 10px;
+  }
+
+  #authView .gcEntryStudentIcon {
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+
+  #authView .gcEntryStudentCopy {
+    align-self: center;
+  }
+
+  #authView #gcEntryJoinHost {
+    grid-column: 1 / -1;
+  }
+
+  #authView #joinForm {
+    grid-template-columns: 1fr auto;
+  }
+
+  #authView .gcEntryBenefits {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 8px 14px;
+  }
+
+  #authView .gcEntryBenefits > span {
+    padding: 10px 4px;
+    grid-template-columns: 38px 1fr;
+  }
+
+  #authView .gcEntryBenefits > span + span,
+  #authView .gcEntryBenefits > span:nth-child(3),
+  #authView .gcEntryBenefits > span:nth-child(4) {
+    border-left: 0;
+    border-top: 1px solid rgba(190,205,223,.48);
+  }
+
+  #authView .gcEntryBenefitIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  #authView .gcEntryBenefitIcon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  #authView .gcEntryAuth {
+    min-height: calc(100dvh - 98px);
+  }
+
+  #authView .gcEntryAuthPanel {
+    margin-top: 14px;
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+
+  #authView .gcEntryNameCoco {
+    height: 140px;
+  }
+
+  #authView .gcEntryTutorial {
+    min-height: calc(100dvh - 92px);
+  }
+
+  #authView .gcEntryTutorialBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #authView .gcEntryTutorialVisual img {
+    max-height: 215px;
+  }
+
+  #authView .gcEntryTutorialCopy h2 {
+    font-size: 31px;
+  }
+
+  #authView .gcEntryTutorialCopy > p {
+    font-size: 15px;
+  }
+
+  #authView .gcEntryTutorialNav {
+    position: sticky;
+    bottom: 0;
+    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    background: linear-gradient(transparent, var(--gc-entry-bg) 32%);
+  }
+
+  #authView .gcEntryTutorialNav .button {
+    flex: 1;
+  }
+
+  #authView .gcEntryTry {
+    display: grid;
+  }
+
+  #authView .gcEntryChoice {
+    width: 100%;
+    text-align: left;
+  }
 }
 
-@media (max-height: 760px) and (min-width: 901px) {
-  #authView .gcEntryWelcome { padding-top: 18px; gap: 14px; }
-  #authView .gcEntryLead h1 { font-size: 48px; }
-  #authView .gcEntryCharacterStage { min-height: 270px; }
-  #authView .gcEntryCoco img { height: 250px; }
-  #authView .gcEntryCrewMember > img { height: 180px; }
-  #authView .gcEntryBenefits { padding-top: 10px; }
+@media (max-width: 430px) {
+  #authView .gcEntryHero {
+    padding-inline: 12px;
+  }
+
+  #authView .gcEntryLead h1 {
+    font-size: 36px;
+  }
+
+  #authView .gcEntryCoco {
+    min-height: 220px;
+  }
+
+  #authView .gcEntryCoco img {
+    height: 220px;
+  }
+
+  #authView .gcEntryCrewMember > img {
+    height: 118px;
+  }
+
+  #authView .gcEntryCrewRoleCopy strong {
+    font-size: 12px;
+  }
+
+  #authView .gcEntryCrewRoleCopy small {
+    font-size: 9px;
+  }
+
+  #authView .gcEntryStudent h2 {
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 1021px) {
+  #authView {
+    padding-top: 16px;
+  }
+
+  #authView .gcEntryHero {
+    min-height: 640px;
+  }
+
+  #authView .gcEntryLead {
+    padding-top: 30px;
+  }
+
+  #authView .gcEntryLead h1 {
+    font-size: 52px;
+  }
+
+  #authView .gcEntryLead > p {
+    margin-top: 10px;
+    font-size: 19px;
+  }
+
+  #authView .gcEntryCharacterStage {
+    top: 150px;
+    bottom: 175px;
+  }
+
+  #authView .gcEntryCoco img {
+    height: 340px;
+  }
+
+  #authView .gcEntryCrewMember > img {
+    height: 205px;
+  }
+
+  #authView .gcEntryActions {
+    bottom: 102px;
+  }
+
+  #authView .gcEntryStudent {
+    bottom: 15px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #authView .gcEntryState { animation: none !important; }
-  #authView *, #authView *::before, #authView *::after {
+  .gcPublicEntryMode .gcPublicNav button,
+  #authView .gcEntryState {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  #authView *,
+  #authView *::before,
+  #authView *::after {
     scroll-behavior: auto !important;
     transition-duration: .001ms !important;
     animation-duration: .001ms !important;
