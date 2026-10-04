@@ -106,6 +106,8 @@ Der Integrationsbranch war nach dem ersten PostHog-Pilot weitergelaufen. Die Pos
 
 - Volltest gestartet: GitHub Actions Run `37235599673`
 - Getesteter Commit: `9c35e6ee77e16207d98245e0d20a220a30c0917d`
-- Status beim Checkpoint: `queued`
+- Status: `success`
 - Der temporäre Branch-CI-Haken wird in diesem Checkpoint wieder entfernt; Produkt-/Adaptercode bleibt unverändert.
-- Nächster Schritt: Ergebnis von Run `37235599673` prüfen; nur bei grünem Lauf Integration fortsetzen.
+- Ergebnis: Browser-Core, Crew-Serververtrag, Crew-Telemetry-Privacy, PostHog-Privacy-Adapter, vollständige Functions-Suite, Emmi-Safeguards sowie Syntax/Lint grün.
+- Deploy-Control PR #100 wurde nach frischem Stale-Head-Abgleich als Merge `fbdd795b70e18ba56aa3d2cd22a66f2830ddc8bb` in `main` integriert.
+- Nächster Schritt: PR #99 in den aktuellen `feature/gradecrew-app-integration` integrieren und dessen Integrations-CI/automatischen Staging-Deploy prüfen.
