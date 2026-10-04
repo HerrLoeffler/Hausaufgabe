@@ -148,7 +148,8 @@
             "pricing": "standard rates verified 2026-10-04; no cache discount; not an invoice"
           }
         ],
-        "estimatedUsd": 0.077048
+        "estimatedUsd": 0.077048,
+        "deployReason": "hosting latest deployment is missing/pending/failed"
       }
     ]
   },
