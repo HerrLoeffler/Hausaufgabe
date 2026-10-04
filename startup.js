@@ -1,4 +1,4 @@
-import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=2";
+import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=3";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.2.0";
 import { installStagingShortLogin } from "./staging-short-login.mjs?v=1";
 
@@ -111,12 +111,12 @@ if (publicTestCode && !teacherPreview) {
   try {
     // Recompose the public entry before app.js binds the existing auth/test-code
     // handlers. The original forms and IDs are moved, not cloned or replaced.
-    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=4");
+    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=5");
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
     await import("./app.js?v=2.3.1-gc28");
-    await import("./shared/i18n/assessment-locale-ui.mjs?v=2");
+    await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
