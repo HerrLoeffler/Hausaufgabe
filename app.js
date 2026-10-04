@@ -1659,12 +1659,12 @@ async function duplicateQuiz(code) {
   if (!source) return;
   if (source.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   try {
-    const [qSnap, audioSnap] = await Promise.all([
+    const [qSnap, audioDraftResult] = await Promise.all([
       getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
-      getDocs(collection(db, "quizzes", code, "audioScripts"))
+      aiApi.getQuestionAudioDrafts({ quizId: code })
     ]);
-    const audioScripts = new Map(audioSnap.docs.map(d => [d.id, String(d.data()?.script || "")]));
-    const questions = qSnap.docs.map((d) => ({ id: d.id, ...d.data(), audioScript: audioScripts.get(d.id) || "" }));
+    const audioScripts = new Map(Object.entries(audioDraftResult?.drafts || {}));
+    const questions = qSnap.docs.map((d) => ({ id: d.id, ...d.data(), audioScript: String(audioScripts.get(d.id) || "") }));
     const base = {
       title: `${source.title || "Test"} – Kopie`,
       subject: source.subject || "",
@@ -1690,16 +1690,16 @@ async function duplicateQuiz(code) {
       audioReady: questions.every(questionAudioReady)
     };
     const { code: newCode } = await createQuizDocument(base);
+    const copiedAudioDrafts = [];
     for (let i = 0; i < questions.length; i += 1) {
       const sourceQuestion = questions[i];
       const ref = doc(collection(db, "quizzes", newCode, "questions"));
       const copy = sanitizeQuestionForSave({ ...deepClone(sourceQuestion), id: ref.id, position: i + 1 });
       await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
       const script = String(sourceQuestion.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
-      if (script) {
-        await setDoc(doc(db, "quizzes", newCode, "audioScripts", ref.id), { script, updatedAt: serverTimestamp() });
-      }
+      if (script) copiedAudioDrafts.push({ questionId: ref.id, script });
     }
+    await aiApi.syncQuestionAudioDrafts({ quizId: newCode, drafts: copiedAudioDrafts });
     toast("Test dupliziert.");
     await openEditor(newCode);
   } catch (err) {
@@ -1798,8 +1798,7 @@ async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
     for (const d of sSnap.docs) await deleteDoc(d.ref);
     const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
     for (const d of aSnap.docs) await deleteDoc(d.ref);
-    const audioSnap = await getDocs(collection(db, "quizzes", code, "audioScripts"));
-    for (const d of audioSnap.docs) await deleteDoc(d.ref);
+    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: [] });
     await deleteDoc(doc(db, "quizzes", code));
     if (admin) await writeAdminAudit("quiz_deleted_permanently", { quizId: code, title: q?.title || "" });
     state.quizzes = state.quizzes.filter((x) => x.id !== code);
@@ -3093,11 +3092,11 @@ async function openEditor(code) {
     state.draftBaseUpdatedAt = toMillis(q.updatedAt);
     state.currentQuiz = q;
     state.reviewBannerDismissedFor = null;
-    const [qs, audioSecrets] = await Promise.all([
+    const [qs, audioDraftResult] = await Promise.all([
       getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
-      getDocs(collection(db, "quizzes", code, "audioScripts"))
+      aiApi.getQuestionAudioDrafts({ quizId: code })
     ]);
-    const audioByQuestion = new Map(audioSecrets.docs.map(d => [d.id, String(d.data()?.script || "")]));
+    const audioByQuestion = new Map(Object.entries(audioDraftResult?.drafts || {}));
     state.questions = qs.docs.map((d) => {
       const item = { id: d.id, ...d.data(), audioScript: audioByQuestion.get(d.id) || "" };
       initializeTypeData(item, item.type || "single");
@@ -4836,6 +4835,7 @@ async function saveCurrentQuiz(showMessage = true) {
     } else await updateDoc(doc(db, "quizzes", code), patch);
 
     const currentIds = new Set();
+    const audioDrafts = [];
     for (let i = 0; i < state.questions.length; i += 1) {
       const q = state.questions[i];
       q.position = i + 1;
@@ -4845,22 +4845,15 @@ async function saveCurrentQuiz(showMessage = true) {
         position: q.position,
         updatedAt: serverTimestamp()
       });
-      const audioSecretRef = doc(db, "quizzes", code, "audioScripts", q.id);
       const audioScript = String(q.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
-      if (audioScript) {
-        await setDoc(audioSecretRef, { script: audioScript, updatedAt: serverTimestamp() });
-      } else {
-        await deleteDoc(audioSecretRef).catch(err => {
-          if (err?.code !== "not-found") console.debug("Audio-Entwurf war bereits leer:", err?.code || err?.message || err);
-        });
-      }
+      if (audioScript) audioDrafts.push({ questionId: q.id, script: audioScript });
     }
     for (const oldId of state.loadedQuestionIds) {
       if (!currentIds.has(oldId)) {
         await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
-        await deleteDoc(doc(db, "quizzes", code, "audioScripts", oldId)).catch(() => {});
       }
     }
+    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: audioDrafts });
     state.loadedQuestionIds = currentIds;
     state.currentQuiz = { ...state.currentQuiz, ...patch };
     $("editorHeading").textContent = patch.title;
