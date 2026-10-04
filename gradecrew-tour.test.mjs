@@ -169,7 +169,7 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
     'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
-    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);
   const productionStyle = w.document.createElement('style');
