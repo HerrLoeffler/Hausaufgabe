@@ -316,6 +316,12 @@ function buildEntrySurface() {
   installPublicHeader();
 
   $("gcEntryJoinHost").append(joinForm);
+  const joinSubmit = joinForm.querySelector('button[type="submit"]');
+  if (joinSubmit) {
+    joinSubmit.textContent = "→";
+    joinSubmit.setAttribute("aria-label", "Test öffnen");
+    joinSubmit.classList.add("gcEntryJoinSubmit");
+  }
   $("gcEntryLoginTabHost").append(loginTab);
   $("gcEntryLoginFormHost").append(loginForm);
   $("gcEntryRegisterTabHost").append(registerTab);
