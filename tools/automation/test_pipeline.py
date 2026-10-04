@@ -36,8 +36,21 @@ def review(role, verdict='approve'):
 
 
 class ContractTests(unittest.TestCase):
+    def test_each_of_three_reviews_is_required_and_can_veto(self):
+        reviews = {role: review(role) for role in p.REVIEW_ROLES}
+        for role in p.REVIEW_ROLES:
+            with self.subTest(missing=role), self.assertRaises(ValueError):
+                p.integration_gate(TASK, PUB, TESTS, {r:v for r,v in reviews.items() if r != role}, A, B)
+            with self.subTest(rejected=role), self.assertRaises(ValueError):
+                p.integration_gate(TASK, PUB, TESTS, reviews | {role:review(role,'changes_requested')}, A, B)
+
+    def test_four_model_call_ceilings_fit_existing_reservation(self):
+        ceiling = sum(((p.MAX_CONTEXT if role == 'build' else p.MAX_REVIEW_CONTEXT) * spec['input']
+                       + spec['max_output'] * spec['output']) / 1e6 for role,spec in p.MODELS.items())
+        self.assertLessEqual(ceiling, p.ATTEMPT_RESERVATION_USD)
+
     def test_old_or_incomplete_package_proof_cannot_authorize_integration(self):
-        reviews={role:review(role) for role in ('correctness','security')}
+        reviews={role:review(role) for role in p.REVIEW_ROLES}
         for proof in [[],['other.js']]:
             with self.assertRaises(ValueError):p.integration_gate(TASK,PUB,TESTS|{'packagedFiles':proof},reviews,A,B)
         old={k:v for k,v in TESTS.items() if k!='packagedFiles'}
@@ -84,7 +97,7 @@ class ContractTests(unittest.TestCase):
                 p.candidate_contract(valid | {'files':files},TASK,'run-1')
 
     def test_missing_reviewer_disagreement_and_stale_review_block_integration(self):
-        reviews = {role: review(role) for role in ('correctness','security')}
+        reviews = {role: review(role) for role in p.REVIEW_ROLES}
         self.assertEqual(p.integration_gate(TASK,PUB,TESTS,reviews,A,B),B)
         for base, head, tests, evidence in [
             (C,B,TESTS,reviews),(A,C,TESTS,reviews),(A,B,TESTS|{'head':C},reviews),
@@ -211,7 +224,7 @@ class ExecutionTests(unittest.TestCase):
         writer=patch.object(e,'write_ledger',side_effect=write);writer.start();self.addCleanup(writer.stop)
         e.save('contract',{'requestId':'run-1','task':TASK,'source':{'coach.js':'old','coach.css':'small'},'taskHash':p.digest(TASK)})
         e.save('publication',PUB);e.save('tests',TESTS)
-        for role in ('correctness','security'):e.save(role,review(role))
+        for role in p.REVIEW_ROLES:e.save(role,review(role))
 
     def api(self,path,method='GET',body=None):
         self.events.append((path,method,body))
@@ -288,6 +301,27 @@ class ExecutionTests(unittest.TestCase):
         with patch.dict(os.environ,{'VALIDATION_RESULT':'success','REVIEW_RESULT':'failure'}):e.finalize('run-1')
         self.assertEqual(self.ledger['attempts']['pilot:pipeline-v2'][0]['state'],'stopped')
 
+    def test_qa_veto_blocks_writes_and_becomes_actionable_feedback(self):
+        e.save('qa',review('qa','changes_requested'))
+        with patch.object(e,'api',side_effect=self.api),self.assertRaises(ValueError):e.integrate()
+        self.assertFalse(any(isinstance(i,tuple) and i[1]!='GET' for i in self.events))
+        with patch.dict(os.environ,{'VALIDATION_RESULT':'success','REVIEW_RESULT':'success'}):e.finalize('run-1')
+        latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
+        self.assertEqual(latest['state'],'repairable')
+        self.assertEqual(latest['feedback'][0]['message'],'Next button not reachable')
+
+    def test_qa_sees_original_candidate_and_tests_but_no_other_reviewer_answers(self):
+        e.save('candidate',p.candidate_contract({'summary':'test','files':[{'path':'coach.js','content':'new'}]},TASK,'run-1'))
+        def model(role,instructions,context,schema):
+            self.assertEqual(role,'qa')
+            self.assertIn('observable user flows',instructions)
+            self.assertEqual(set(context),{'task','originalSource','proposedFiles','binding','tests'})
+            self.assertEqual(context['tests'],TESTS)
+            self.assertNotIn('reviews',context)
+            return review('qa')['review'],review('qa')['usage']
+        with patch.object(e,'api',side_effect=self.api),patch.object(e,'call',side_effect=model):e.review('qa')
+        self.assertEqual(e.load('qa')['model'],'gpt-6-sol')
+
     def test_dependency_failure_does_not_claim_actionable_test_failure(self):
         e.save('tests',TESTS|{'result':'blocked'})
         with patch.dict(os.environ,{'VALIDATION_RESULT':'failure','REVIEW_RESULT':'skipped'}):e.finalize('run-1')
@@ -350,11 +384,11 @@ class ExecutionTests(unittest.TestCase):
             e.prepare('run-1');e.build();e.publish()
             publication=e.load('publication')
             e.save('tests',{'profile':'web-combined-v1','head':B,'base':A,'result':'success','packagedFiles':['coach.js']})
-            e.review('correctness');e.review('security');e.integrate();e.finalize('run-1')
-        self.assertEqual(roles,['build','correctness','security'])
+            e.review('correctness');e.review('security');e.review('qa');e.integrate();e.finalize('run-1')
+        self.assertEqual(roles,['build',*p.REVIEW_ROLES])
         self.assertEqual(current,B)
         latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
-        self.assertEqual(latest['state'],'integrated');self.assertEqual(latest['estimatedUsd'],0.06)
+        self.assertEqual(latest['state'],'integrated');self.assertEqual(latest['estimatedUsd'],0.08)
         self.assertEqual(publication['candidateHash'],e.load('candidate')['candidateHash'])
 
 

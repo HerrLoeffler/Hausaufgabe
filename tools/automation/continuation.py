@@ -97,7 +97,7 @@ def main():
         else:
             action, reason = select(row, task, history, current, enabled, policy['maxAttemptsPerStage'])
         if action == 'dispatch' and not ready:
-            action, reason = 'setup_needed', 'Dedicated worker and both independent review credentials/activation missing'
+            action, reason = 'setup_needed', 'Dedicated worker and OpenAI/Anthropic review credentials/activation missing'
         if action == 'dispatch' and args.execute and not dispatched:
             day = dt.datetime.now(dt.timezone.utc).date().isoformat()
             try:
@@ -130,7 +130,7 @@ def main():
     folder = Path('artifacts/guardian')
     folder.mkdir(parents=True, exist_ok=True)
     (folder / 'execution.json').write_text(json.dumps(report, indent=2) + '\n')
-    lines = ['# GradeCrew Ausführung', '', 'Auftrag → Änderungsvorschlag → Tests → zwei unabhängige Reviews → Integration → verifizierte Staging-Receipts → Martin.', '',
+    lines = ['# GradeCrew Ausführung', '', 'Auftrag → Änderungsvorschlag → Tests → drei unabhängige Reviews → Integration → verifizierte Staging-Receipts → Martin.', '',
              f'Aktiviert: {enabled}; Credentials vollständig: {ready}. Production bleibt gesperrt.', '',
              '| Aufgabe | Schritt | Versuche | Grund |', '|---|---|---|---|']
     lines += [f"| {r['taskId']} | {r['action']} | {r['attempts']}/3 | {r['reason']} |" for r in report['tasks']]
@@ -142,3 +142,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

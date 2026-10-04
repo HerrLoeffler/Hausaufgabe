@@ -17,7 +17,9 @@ MODELS = {
     'build': {'provider': 'openai', 'model': 'gpt-6.1-sol', 'input': 4, 'output': 15, 'max_output': 24000},
     'correctness': {'provider': 'openai', 'model': 'gpt-6-astra', 'input': 20, 'output': 75, 'max_output': 6000},
     'security': {'provider': 'anthropic', 'model': 'claude-sonnet-5-5', 'input': 2, 'output': 10, 'max_output': 6000},
+    'qa': {'provider': 'openai', 'model': 'gpt-6-sol', 'input': 2, 'output': 10, 'max_output': 6000},
 }
+REVIEW_ROLES = ('correctness', 'security', 'qa')
 MAX_CONTEXT = 80000
 MAX_REVIEW_CONTEXT = 160000
 MAX_CANDIDATE = 160000
@@ -122,7 +124,7 @@ def validate_review(review, role, binding):
     expected = {'verdict', 'head', 'base', 'candidateHash', 'findings'}
     if not isinstance(review, dict) or set(review) != expected:
         raise ValueError('Unexpected review schema')
-    if role not in {'correctness', 'security'}:
+    if role not in REVIEW_ROLES:
         raise ValueError('Unknown independent review role')
     for key in ('head', 'base', 'candidateHash'):
         if review[key] != binding[key]:
@@ -153,8 +155,8 @@ def integration_gate(task, publication, tests, reviews, current_base, current_he
     if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': task['base_sha'], 'result': 'success',
                  'packagedFiles': sorted(publication['changedFiles'])}:
         raise ValueError('Exact candidate validation required')
-    if set(reviews) != {'correctness', 'security'}:
-        raise ValueError('Both independent reviewers required')
+    if set(reviews) != set(REVIEW_ROLES):
+        raise ValueError('All three independent reviewers required')
     for role, evidence in reviews.items():
         if evidence.get('provider') != MODELS[role]['provider'] or evidence.get('model') != MODELS[role]['model']:
             raise ValueError('Reviewer identity differs')

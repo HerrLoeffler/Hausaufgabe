@@ -12,8 +12,8 @@ Der separate Execution-Controller ergänzt den read-only Development-/Release-St
 6. Eine zusätzliche Lieferprüfung bindet jeden geänderten Pfad an das physische Hosting-Paket: Projekt/Commit, Manifest-Eintrag, Datei und Hash sowie Syntax aller geänderten JS/MJS. Eine nur auf GitHub liegende, vom Builder ignorierte Datei qualifiziert nicht für Reviews oder Integration. Neue Module brauchen zuerst eine ausdrücklich geprüfte Build-Anbindung.
 
 Die feste Combined-Prüfung läuft auf genau diesem direkten Nachfolger des freigegebenen Zielstands. Ein eigener Linux-Nutzer ohne sudo/GitHub-Schreib-/Provider-/Cloud-Credentials führt Produktcode aus und kann die außerhalb seiner Quellkopie liegende Prüflogik/Nachweise nicht überschreiben. Dependencies, Functions, Assessment, Firestore-Emulator, UI-/Crew-/Emmi-/Tutorial-Regressionen und Staging-Build werden geprüft.
-7. Erst danach prüfen zwei unabhängige Modellaufrufe: GPT-6 Astra für Korrektheit/Regressionen und Claude Sonnet 5.5 für Sicherheit/Auftragserfüllung. Beide sehen Ausgangsquellen, Änderungen und genaue SHA-/Digest-Bindung. Refusal, unvollständige Ausgabe, falsches Modell, fehlende Usage, widersprüchliches Urteil oder Budgetüberschreitung blockieren.
-8. Integration nur bei zwei Freigaben, erfolgreicher exakter Prüfung und unverändertem Ziel-/PR-Head. Gewöhnlicher Fast-forward, niemals Force-Push oder ungeprüfter Konfliktmerge. Ein zwischenzeitlich fortgeschriebener Branch wird erhalten. Der PR wird mit dem Integrationsnachweis kommentiert/geschlossen; GitHub zeigt diese direkte Ref-Integration nicht als normalen PR-Merge.
+7. Erst danach prüfen drei unabhängige Modellaufrufe: GPT-6 Astra für Korrektheit, Claude Sonnet 5.5 für Sicherheit/Auftragserfüllung und GPT-6 Sol für QA, Nutzerabläufe, Regressionen und Akzeptanzkriterien. Alle drei sehen Ausgangsquellen, Änderungen und genaue SHA-/Digest-Bindung. Refusal, unvollständige Ausgabe, falsches Modell, fehlende Usage, widersprüchliches Urteil oder Budgetüberschreitung blockieren.
+8. Integration nur bei drei Freigaben, erfolgreicher exakter Prüfung und unverändertem Ziel-/PR-Head. Gewöhnlicher Fast-forward, niemals Force-Push oder ungeprüfter Konfliktmerge. Ein zwischenzeitlich fortgeschriebener Branch wird erhalten. Der PR wird mit dem Integrationsnachweis kommentiert/geschlossen; GitHub zeigt diese direkte Ref-Integration nicht als normalen PR-Merge.
 9. Explizite `Guardian integrated checks` schließen die GitHub-Token-Lücke: Bot-Pushes lösen andere Actions nicht automatisch aus. Der Dispatch erhält nur eine Reservation-ID; Quelle wird aus dem Ledger abgeleitet. Erfolgreiche feste CI erzeugt einen gebundenen Nachweis.
 10. Bestehende Hosting-/AI-Functions-Workflows akzeptieren ihren bisherigen push-basierten CI-Pfad und diesen nachgewiesenen Guardian-Pfad. Quelle, Policy und aktueller Branch werden vor Cloud-Login erneut geprüft; WIF-/Projekt-/Codebase-/Hosting-Scope bleiben auf Staging begrenzt.
 11. Guardian und Release Control lesen echte, digestgeprüfte CI-/Deploy-Receipts. Hosting und Functions müssen denselben aktuellen SHA haben. Neuere Fehler oder fehlende Nachweise bleiben sichtbar. Erst dann `staging_deployed`; Geräteabnahme und Production-Freigabe werden nicht erfunden.
@@ -25,7 +25,7 @@ Die feste Combined-Prüfung läuft auf genau diesem direkten Nachfolger des frei
 - Provider-/Dispatch-/Schreib-Ambiguität, fehlende Einrichtung, Dependencies-Ausfall, Kontrollcode-Wechsel oder Zielbranch-Konflikt stoppen zur Diagnose. Keine automatischen Rechteerweiterungen oder API-Retries.
 - Ein qualifizierter fehlgeschlagener Deploy desselben Stands darf zwei begrenzte `rerun-failed-jobs` erhalten; Reservierung vor API-Aufruf. Keine Wiederholung unbekannter Rerun-Rückmeldungen. Dauerhafte IAM-/Deploy-Fehler bleiben nach drei Deployversuchen Blocker.
 - Pro Versuch konservativ $5.50 reserviert, Auftrag maximal $16.50, UTC-Tag maximal $33.00. Input-/Output-Grenzen pro Modellaufruf; keine Tools, API-Fallbacks, Tier-Upgrades oder ungeprüften Modellwechsel. Vollständige Reservierung bleibt auch bei unklarer Abrechnung bestehen.
-- GPT-6.1 Sol baut; Astra/Claude prüfen. Preise als konservative Obergrenzen auf Basis offiziell geprüfter Preislisten vom 03.10.2026; vor 03.11.2026 neu qualifizieren. Usage-Schätzung ist keine Rechnung. Zusätzliche Cloud-/Actions-Kosten sind nicht Teil des API-Budgets.
+- GPT-6.1 Sol baut; Astra/Claude/Sol prüfen. Preise als konservative Obergrenzen auf Basis offiziell geprüfter Preislisten vom 03.10.2026; vor 03.11.2026 neu qualifizieren. Usage-Schätzung ist keine Rechnung. Zusätzliche Cloud-/Actions-Kosten sind nicht Teil des API-Budgets.
 - Release-Control-Bericht zeigt Aufgabe, Versuch, Stufe, Run, Modelle, bekannte Nutzungsschätzung und Reservierungen. Keine erfundenen Einsparungen oder Qualitätsprozente.
 
 ## Zulassung V2 und Grenzen
@@ -36,6 +36,8 @@ Dies bestätigt technische Hosting-/AI-Functions-Synchronisation für einen unve
 
 Ohne dedizierte Secrets, aktivierte Flags, konkreten aufgenommenen Auftrag und realen Pilotlauf ist die Kette implementiert, aber nicht als aktiv oder Ende-zu-Ende verifiziert zu melden. Anleitung: `docs/AUTOMATION_SETUP.md`.
 
+Die zusätzliche QA verwendet den vorhandenen dedizierten OpenAI-Review-Key. Vier getrennte Aufrufe mit vier Modell-IDs; Prüfer erhalten keine Antworten der anderen Prüfer. Aus den konservativen vollständigen Kontext-/Output-Grenzen ergibt sich eine API-Obergrenze von $5.09 je Versuch; die unveränderte Reservierung von $5.50 deckt diese ab. Quelle für GPT-6 Sol: https://developers.openai.com/api/docs/models/gpt-6-sol (04.10.2026, $2/$10 je Million Input-/Output-Tokens). Account-/Modellzugriff bleibt erst im echten Pilot bestätigt.
+
 ## Quellen
 
 - https://developers.openai.com/api/docs/guides/structured-outputs
@@ -45,3 +47,4 @@ Ohne dedizierte Secrets, aktivierte Flags, konkreten aufgenommenen Auftrag und r
 - https://platform.claude.com/docs/en/models/overview
 - https://platform.claude.com/docs/en/api/messages/create
 - https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow
+
