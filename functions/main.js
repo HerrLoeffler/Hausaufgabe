@@ -5,6 +5,7 @@
 const existing = require("./index");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
@@ -12,6 +13,7 @@ const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
 const { getOpenAI } = require("./lib/openai-client");
+const { syncBugFeedback } = require("./lib/bug-ops");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const {
   crewAssistantSchema,
@@ -190,6 +192,27 @@ function patchMetricFields(patch = {}) {
   return fields;
 }
 
+const aggregateBugFeedback = onDocumentWritten({
+  document: "feedback/{feedbackId}",
+  region: REGION,
+  timeoutSeconds: 60,
+  memory: "256MiB"
+}, async event => {
+  const after = event.data?.after;
+  if (!after?.exists) return;
+  const data = after.data() || {};
+  if (data.category !== "app_error") return;
+  const result = await syncBugFeedback(getFirestore(), event.params.feedbackId, data);
+  if (!result?.ignored && !result?.deduplicated) {
+    console.log("BugOps-Incident aktualisiert.", {
+      incidentId: result.incidentId,
+      priority: result.priority,
+      notification: result.notification,
+      risk: result.risk
+    });
+  }
+});
+
 const recordCrewTelemetry = onCall(telemetryOpts, async request => {
   const { uid } = await requireAiUser(request);
   await writeCrewMetric(uid, request.data || {}, { server: false });
@@ -350,6 +373,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 
 module.exports = {
   ...existing,
+  aggregateBugFeedback,
   recordCrewTelemetry,
   getCrewTelemetrySummary,
   cleanupCrewTelemetry,
