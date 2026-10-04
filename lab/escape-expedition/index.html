@@ -34,6 +34,7 @@
       <div class="mobile-action-row">
         <button id="touchInteractBtn" type="button" class="big-action">✋ Interagieren</button>
         <button id="cameraBtn" type="button" class="big-action secondary">📷 Kamera</button>
+        <button id="recoveryBtn" type="button" class="big-action secondary" disabled>↺ Zurücksetzen</button>
       </div>
 
       <div class="touch-controls" aria-label="Touch-Steuerung">
@@ -72,7 +73,7 @@
       <section class="controls-card">
         <strong>Steuerung</strong>
         <p>WASD / Pfeile · E / Enter · Klick/Tap</p>
-        <p>Minispiele erklären sich direkt im Spiel.</p>
+        <p>R = aktuelle Mechanik zurücksetzen · Esc = Kamera/Funk verlassen</p>
       </section>
     </aside>
   </main>
@@ -100,6 +101,8 @@
       <div class="meter"><div id="winchNeedle" class="meter-needle"></div><div class="meter-green"></div></div>
       <div class="mechanic-status" id="winchStatus">0 / 3 sichere Züge</div>
       <div class="dialog-actions">
+        <button id="winchExitBtn" type="button" class="secondary">← Zurück</button>
+        <button id="winchResetBtn" type="button" class="secondary">↺ Neu starten</button>
         <button id="winchPullBtn" type="button" class="primary">🪝 Ziehen</button>
       </div>
     </form>
@@ -116,6 +119,10 @@
         <button type="button" data-circuit="river">🔵 Fluss</button>
       </div>
       <div id="generatorFeedback" class="feedback">Hinweis an der Wand: 🌿 → ☀️ → 🌊</div>
+      <div class="dialog-actions">
+        <button id="generatorExitBtn" type="button" class="secondary">← Zurück</button>
+        <button id="generatorResetBtn" type="button" class="secondary">↺ Neu starten</button>
+      </div>
     </form>
   </dialog>
 

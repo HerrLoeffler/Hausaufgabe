@@ -203,3 +203,56 @@ test('M1.4 rewards are idempotent and success controls are disabled', () => {
   assert.match(js, /#generatorButtons button/);
   assert.match(js, /learningForm'\)\.querySelector\('button\[type="submit"\]'\)/);
 });
+
+
+test('M1.5 exposes recovery controls for vehicles camera winch generator and radio', () => {
+  for (const id of ['recoveryBtn', 'winchResetBtn', 'winchExitBtn', 'generatorResetBtn', 'generatorExitBtn']) {
+    assert.match(html, new RegExp(`id="${id}"`));
+  }
+  assert.match(html, /R = aktuelle Mechanik zurücksetzen/);
+  assert.match(html, /Esc = Kamera\/Funk verlassen/);
+});
+
+test('M1.5 central recovery router covers all six requested mechanics', () => {
+  assert.match(js, /function recoveryKind\(\)/);
+  assert.match(js, /function recoverMechanic\(kind = recoveryKind\(\)\)/);
+  for (const kind of ['jeep', 'river', 'camera', 'winch', 'generator', 'radio']) {
+    assert.match(js, new RegExp(`kind === '${kind}'`));
+  }
+  assert.match(js, /function exitMechanicDialog/);
+  assert.match(js, /key==='r' && recoverMechanic\(\)/);
+  assert.match(js, /recoverMechanic\('camera'\)/);
+  assert.match(js, /recoverMechanic\('radio'\)/);
+});
+
+test('M1.5 vehicle recovery uses safe checkpoints instead of full-run restart', () => {
+  assert.match(js, /safeDistance: 0/);
+  assert.match(js, /safeProgress: 0/);
+  assert.match(js, /state\.jeep\.distance = state\.jeep\.safeDistance/);
+  assert.match(js, /state\.river\.progress = state\.river\.safeProgress/);
+  assert.match(js, /jeepCheckpoint > state\.jeep\.safeDistance/);
+  assert.match(js, /riverCheckpoint > state\.river\.safeProgress/);
+});
+
+test('M1.5 mechanic recovery preserves earned learning and collected progress', () => {
+  const start = js.indexOf('function recoverMechanic');
+  const end = js.indexOf('function exitMechanicDialog', start);
+  const body = js.slice(start, end);
+  assert.doesNotMatch(body, /state\.solved\.clear|state\.items\.clear|state\.photos\.clear/);
+  assert.match(body, /state\.cameraMode = false/);
+  assert.match(body, /state\.winchHits = 0/);
+  assert.match(body, /state\.generator\.seq = \[\]/);
+  assert.match(body, /state\.tuned = 35/);
+});
+
+test('M1.5 modal recovery invalidates pending actions and can safely exit', () => {
+  const start = js.indexOf('function recoverMechanic');
+  const end = js.indexOf('function setGameMode', start);
+  const body = js.slice(start, end);
+  assert.match(body, /invalidateDelayedActions\(\)/);
+  assert.match(body, /clearResolvingAction\(\)/);
+  assert.match(js, /winchResetBtn/);
+  assert.match(js, /winchExitBtn/);
+  assert.match(js, /generatorResetBtn/);
+  assert.match(js, /generatorExitBtn/);
+});

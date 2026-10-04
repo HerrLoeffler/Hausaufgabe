@@ -91,14 +91,14 @@
     items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0 },
     activeQuestion: null, learningMode: 'main', selectedAnswer: null,
     winchHits: 0, winchValue: 0.08, winchDir: 1, winchTimer: 0,
-    jeep: { x: 480, distance: 0, bumps: 0 },
+    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0 },
     photos: new Set(), cameraMode: false, reticle: { x: 480, y: 300 },
     animals: [
       { id: 'toucan', emoji: '🦜', x: 700, y: 170, vx: 38, vy: 0, target: true },
       { id: 'capybara', emoji: '🦫', x: 280, y: 420, vx: 25, vy: -12, target: true },
       { id: 'monkey', emoji: '🐒', x: 520, y: 215, vx: -30, vy: 8, target: false }
     ],
-    river: { x: 480, progress: 0, hits: 0 },
+    river: { x: 480, progress: 0, hits: 0, safeProgress: 0 },
     generator: { seq: [], done: false },
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
@@ -152,6 +152,108 @@
     setResolvingControls(kind, false);
   }
 
+  function clearResolvingAction() {
+    const kind = state.resolvingAction;
+    if (!kind) return;
+    state.resolvingAction = null;
+    setResolvingControls(kind, false);
+  }
+
+  function recoveryKind() {
+    if (state.won || state.transitioning) return null;
+    if ($('winchDialog').open) return 'winch';
+    if ($('generatorDialog').open) return 'generator';
+    if (state.gameMode === 'camera' && state.scene === 'wildlife') return 'camera';
+    if (state.gameMode === 'radio' && state.scene === 'tower') return 'radio';
+    if (state.scene === 'jeep') return 'jeep';
+    if (state.scene === 'river') return 'river';
+    return null;
+  }
+
+  function recoveryLabel(kind = recoveryKind()) {
+    const labels = {
+      jeep: '↺ Jeep zurücksetzen',
+      river: '↺ Boot zurücksetzen',
+      camera: '↺ Kamera verlassen',
+      winch: '↺ Winde neu starten',
+      generator: '↺ Generator neu starten',
+      radio: '↺ Funk zurücksetzen'
+    };
+    return labels[kind] || '↺ Zurücksetzen';
+  }
+
+  function recoverMechanic(kind = recoveryKind()) {
+    if (!kind || state.transitioning || state.won) return false;
+
+    invalidateDelayedActions();
+    clearResolvingAction();
+    clearMovement();
+
+    if (kind === 'jeep') {
+      state.jeep.x = 480;
+      state.jeep.distance = state.jeep.safeDistance;
+      toast('Jeep zurück am letzten sicheren Punkt.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'river') {
+      state.river.x = 480;
+      state.river.progress = state.river.safeProgress;
+      toast('Boot zurück am letzten sicheren Punkt.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'camera') {
+      state.cameraMode = false;
+      state.reticle = { x: state.player.x + 110, y: state.player.y - 40 };
+      restoreSceneMode();
+      setCoco('Kamera beendet', 'Deine Fotos bleiben gespeichert. Du kannst die Kamera jederzeit wieder öffnen.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'winch') {
+      state.winchHits = 0;
+      state.winchValue = .08;
+      state.winchDir = 1;
+      $('winchNeedle').style.left = '8%';
+      $('winchStatus').textContent = '0 / 3 sichere Züge';
+      $('winchPullBtn').disabled = false;
+      return true;
+    }
+
+    if (kind === 'generator') {
+      if (state.generator.done) return false;
+      state.generator.seq = [];
+      document.querySelectorAll('#generatorButtons button').forEach(button => {
+        button.classList.remove('active');
+        button.disabled = false;
+      });
+      $('generatorFeedback').className = 'feedback';
+      $('generatorFeedback').textContent = 'Hinweis an der Wand: 🌿 → ☀️ → 🌊';
+      return true;
+    }
+
+    if (kind === 'radio') {
+      state.radioMode = false;
+      state.tuned = 35;
+      restoreSceneMode();
+      setCoco('Funk zurückgesetzt', 'Die Konsole ist geschlossen. Geh wieder hin, wenn du neu starten willst.');
+      updateHud();
+      return true;
+    }
+
+    return false;
+  }
+
+  function exitMechanicDialog(kind, dialogId) {
+    recoverMechanic(kind);
+    const dialog = $(dialogId);
+    if (dialog.open) dialog.close();
+  }
+
   function setGameMode(mode) {
     state.gameMode = mode;
     if (!['world', 'vehicle'].includes(mode)) clearMovement();
@@ -191,6 +293,10 @@
     }).join('');
     $('cameraBtn').disabled = state.scene !== 'wildlife';
     $('cameraBtn').textContent = state.cameraMode ? '📸 Foto machen' : '📷 Kamera';
+
+    const recovery = recoveryKind();
+    $('recoveryBtn').disabled = !recovery;
+    $('recoveryBtn').textContent = recoveryLabel(recovery);
   }
 
   function missionText() {
@@ -520,6 +626,8 @@
     const previousDistance = state.jeep.distance;
     state.jeep.x = Math.max(320, Math.min(640, state.jeep.x + steer * 250 * dt));
     state.jeep.distance += 58 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.25 : 1);
+    const jeepCheckpoint = Math.floor(state.jeep.distance / 180) * 180;
+    if (jeepCheckpoint > state.jeep.safeDistance && state.jeep.distance % 180 < 40) state.jeep.safeDistance = jeepCheckpoint;
     if (previousDistance <= 80 && state.jeep.distance > 80) updateHud();
     const obstaclePhase = state.jeep.distance % 180;
     const obstacleX = 400 + Math.sin(Math.floor(state.jeep.distance / 180) * 2.7) * 140;
@@ -540,6 +648,8 @@
     const previousProgress = state.river.progress;
     state.river.x = Math.max(270, Math.min(690, state.river.x + steer * 260 * dt));
     state.river.progress += 66 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.2 : 1);
+    const riverCheckpoint = Math.floor(state.river.progress / 180) * 180;
+    if (riverCheckpoint > state.river.safeProgress && state.river.progress % 180 < 40) state.river.safeProgress = riverCheckpoint;
     if (previousProgress <= 50 && state.river.progress > 50) updateHud();
     const phase = state.river.progress % 160; const rockX = 480 + Math.sin(Math.floor(state.river.progress / 160) * 3.1) * 175;
     if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 BONK. Das war ein Felsen.', 1.0); updateHud(); }
@@ -688,7 +798,10 @@
     if(document.querySelector('dialog[open]'))return;
     if(state.transitioning || state.gameMode==='transition' || state.gameMode==='modal' || state.gameMode==='won')return;
 
+    if(key==='r' && recoverMechanic()){e.preventDefault();return}
+
     if(state.gameMode==='radio'){
+      if(key==='Escape'){recoverMechanic('radio');e.preventDefault();return}
       if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);updateHud();e.preventDefault()}
       if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);updateHud();e.preventDefault()}
       if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}
@@ -696,7 +809,7 @@
     }
 
     if(state.gameMode==='camera'){
-      if(key==='Escape'){state.cameraMode=false;invalidateDelayedActions();restoreSceneMode();updateHud();e.preventDefault()}
+      if(key==='Escape'){recoverMechanic('camera');e.preventDefault();return}
       if(key==='c'){takePhoto();e.preventDefault()}
       return;
     }
@@ -726,10 +839,15 @@
 
   $('touchInteractBtn').addEventListener('click',()=>{if(state.gameMode==='radio')sendRadio();else if(state.gameMode==='world')interact()});
   $('cameraBtn').addEventListener('click',takePhoto);
+  $('recoveryBtn').addEventListener('click',()=>recoverMechanic());
   $('learningForm').addEventListener('submit',checkLearning);
   $('hintBtn').addEventListener('click',()=>{const q=questions[state.activeQuestion];if(q){$('learningFeedback').className='feedback';$('learningFeedback').textContent=`Coco: ${state.learningMode==='transfer'?q.transfer.hint:q.hint}`}});
   $('winchPullBtn').addEventListener('click',pullWinch);
+  $('winchResetBtn').addEventListener('click',()=>recoverMechanic('winch'));
+  $('winchExitBtn').addEventListener('click',()=>exitMechanicDialog('winch','winchDialog'));
   $('generatorButtons').addEventListener('click',e=>{const b=e.target.closest('button[data-circuit]');if(b)chooseCircuit(b.dataset.circuit,b)});
+  $('generatorResetBtn').addEventListener('click',()=>recoverMechanic('generator'));
+  $('generatorExitBtn').addEventListener('click',()=>exitMechanicDialog('generator','generatorDialog'));
   document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',()=>$(btn.dataset.close).close()));
   document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',()=>{
     if(dialog.id==='victoryDialog')return;
