@@ -145,7 +145,7 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
-    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?)|(?:mit|ohne|with|without)\b).*$/i, "")
+    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?)).*$/i, "")
     .replace(/\s+(?:mit|ohne|with|without)\s+(?=(?:single|multiple|freitext|offene|free|open|dropdown|richtig|true|lücken|luecken|gap|zuord|matching|sortier|ordering|reihenfolge|gruppier|grouping|kategorien|categories|wörter|woerter|markier|mark words|rechen|numeric|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?))).*$/i, "")
     .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst|mainly|mostly|please)\s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?|easy|simple|medium|challenging|hard|mixed)\s+(?:aufgaben?|fragen?|questions?|tasks?)\b).*$/i, "")
     .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?|many|several|few)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?|aufgaben?|fragen?|real[- ]life examples?|examples?|texts?|questions?|tasks?)\b).*$/i, "")
@@ -195,12 +195,12 @@ function extractNotes(text) {
     if (!notes.some(existing => existing.toLocaleLowerCase() === sentence.toLocaleLowerCase())) notes.push(sentence);
   };
 
-  const progression = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst).*?(?:leicht|einfach).*?(?:danach|später|spaeter|anschließend|anschliessend).*?(?:schwer|schwieriger|anspruchsvoll)|(?:start|begin|first).*?(?:easy|simple).*?(?:then|later|afterwards).*?(?:harder|challenging|difficult))\b/i.test(text);
+  const progression = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwerer|schwieriger|anspruchsvoll)|(?:start|begin|first)\b[^.!?]{0,80}\b(?:easy|simple)\b[^.!?]{0,100}\b(?:then|later|afterwards)\b[^.!?]{0,80}\b(?:hard|harder|challenging|difficult))\b/i.test(text);
   if (progression) add("Zuerst leichte Aufgaben, danach anspruchsvollere Aufgaben");
   else if (INITIAL_EASY.test(text)) add("Die ersten Aufgaben leicht gestalten");
   for (const match of text.matchAll(NEGATED_DIFFICULTY)) add(match[0]);
 
-  if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|mainly|mostly)\s+(?:einfache|leichte|easy|simple)\s+(?:aufgaben|questions|tasks)\b/i.test(text)) add("Vor allem einfache Aufgaben");
+  if (/\b(?:(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+)?(?:einfache|leichte)\s+aufgaben\b[^.!?]{0,35}\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\b|(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+(?:einfache|leichte)\s+aufgaben\b|(?:(?:mainly|mostly)\s+)?(?:easy|simple)\s+(?:questions|tasks)\b[^.!?]{0,35}\b(?:mainly|mostly)\b|(?:mainly|mostly)\s+(?:easy|simple)\s+(?:questions|tasks)\b)/i.test(text)) add("Vor allem einfache Aufgaben");
   if (/\b(?:(?:viele|mehrere)\s+alltagsbeispiele|(?:many|several)\s+real[- ]life examples?)\b/i.test(text)) add("Viele Alltagsbeispiele");
   if (/\b(?:(?:wenig|möglichst\s+wenig|moeglichst\s+wenig)\s+text|(?:little|minimal)\s+text)\b/i.test(text)) add("Wenig Text");
   if (/\b(?:(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)|(?:no|without)\s+trick questions?)\b/i.test(text)) add("Keine Fangfragen");
@@ -239,7 +239,7 @@ function parseTestRequest(input = "") {
   const topic = extractTopic(text);
   if (topic) patch.topic = topic;
 
-  const progressiveDifficulty = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst).*?(?:leicht|einfach).*?(?:danach|später|spaeter|anschließend|anschliessend).*?(?:schwer|schwieriger|anspruchsvoll)|(?:start|begin|first).*?(?:easy|simple).*?(?:then|later|afterwards).*?(?:harder|challenging|difficult))\b/i.test(text);
+  const progressiveDifficulty = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwerer|schwieriger|anspruchsvoll)|(?:start|begin|first)\b[^.!?]{0,80}\b(?:easy|simple)\b[^.!?]{0,100}\b(?:then|later|afterwards)\b[^.!?]{0,80}\b(?:hard|harder|challenging|difficult))\b/i.test(text);
   const difficultyText = text.replace(INITIAL_EASY, " ").replace(NEGATED_DIFFICULTY, " ");
   if (!progressiveDifficulty) {
     if (/\b(sehr\s+)?(leicht|einfach|einfache|leichte|leichtes|easy|simple)\b/i.test(difficultyText)) patch.difficulty = "leicht";
