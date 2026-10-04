@@ -89,7 +89,10 @@ test("public startscreen copy is covered by the English UI catalog without trans
     "Coco, dein GradeCrew-Guide",
     "Praxisnah. Sicher. Zuverlässig.",
   ]) {
-    assert.ok(entryFlow.includes(sourceText), "entry source missing: " + sourceText);
+    const entrySourceText = sourceText === "Digitale Tests, schnell & einfach."
+      ? "Digitale Tests, schnell &amp; einfach."
+      : sourceText;
+    assert.ok(entryFlow.includes(entrySourceText), "entry source missing: " + sourceText);
     assert.ok(englishCatalog.includes(sourceText), "English startscreen translation missing: " + sourceText);
   }
   assert.match(englishCatalog, /Schön, dass du da bist/);
