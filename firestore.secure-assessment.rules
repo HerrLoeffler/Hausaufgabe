@@ -147,8 +147,7 @@ service cloud.firestore {
       // Hörtexte bleiben private Autorendaten. Der Schüler erhält Audio nur
       // über den serverseitig gebauten Assessment-Contract.
       match /audioScripts/{questionId} {
-        allow read: if ownsQuiz(quizId) || isAdmin();
-        allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
+        allow read, write: if false;
       }
 
       match /attempts/{attemptId} {
