@@ -458,7 +458,7 @@ test('Core persists tutorial questions with images and a one-minute test; no fak
     db: {}, doc: (...parts) => parts.join('/'), serverTimestamp: () => 123, round1: number => number,
     orderingNeedsReview: () => false, validOrder: () => true
   });
-  w.eval(fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
+  w.eval(fn('getQuestionAudioSrc') + '\n' + fn('questionAudioReady') + '\n' + fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
   assert.equal(await w.createTutorialQuiz(w.demo), 'DEMO');
   assert.equal(writes[0].timeLimitMinutes, 1);
   assert.equal(writes.length, 11);
