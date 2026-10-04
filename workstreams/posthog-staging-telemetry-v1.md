@@ -111,3 +111,13 @@ Der Integrationsbranch war nach dem ersten PostHog-Pilot weitergelaufen. Die Pos
 - Ergebnis: Browser-Core, Crew-Serververtrag, Crew-Telemetry-Privacy, PostHog-Privacy-Adapter, vollständige Functions-Suite, Emmi-Safeguards sowie Syntax/Lint grün.
 - Deploy-Control PR #100 wurde nach frischem Stale-Head-Abgleich als Merge `fbdd795b70e18ba56aa3d2cd22a66f2830ddc8bb` in `main` integriert.
 - Nächster Schritt: PR #99 in den aktuellen `feature/gradecrew-app-integration` integrieren und dessen Integrations-CI/automatischen Staging-Deploy prüfen.
+
+
+## Integration checkpoint
+
+- PR #99 merged into `feature/gradecrew-app-integration`
+- Integration commit: `461da164aaf6469da999f8fe3f5f2210036a6ebf`
+- Upstream AI Staging Checks: Run `37235725698` (in_progress at checkpoint)
+- Parallel Admin test-account controls: Run `37235725678` (in_progress at checkpoint)
+- Production: unchanged
+- Next step: wait for AI Staging Checks; then inspect the automatically triggered staging Functions workflow and deployment receipt before sending any real test event.
