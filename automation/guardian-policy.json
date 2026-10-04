@@ -10,7 +10,7 @@
       "enabled": true,
       "execution": "pipeline-v2",
       "baseBranch": "feature/gradecrew-app-integration",
-      "approvedSha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
+      "approvedSha": "256609f81f601896a9e683f67945743df6b2f29f",
       "maxAutomaticStage": "staging_deployed"
     }
   ],

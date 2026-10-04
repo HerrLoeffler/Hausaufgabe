@@ -1,12 +1,12 @@
 {
   "id": "startscreen-after-pilot-20261004",
   "taskId": "startscreen-masterpiece-v2-20261004",
-  "taskHash": "818e26efa623610b38750f1655f027e3b1d3741bf5415a2ae49f0c8a3586198e",
+  "taskHash": "d4b8480d9e28702d38a0b32bc0c334fe4ad982c69c5f920338182ff90d81aefc",
   "prerequisiteTaskId": "pilot-tutorial-later-a11y-20261004",
-  "originalSource": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
+  "originalSource": "256609f81f601896a9e683f67945743df6b2f29f",
   "selectedBlobs": {
     "gradecrew-auth-startscreen.css": "8c05ff0d5cc02b254acc4554d59c46661dba6776",
     "gradecrew-entry-flow.js": "9bc118b16be7ef42efb9d951328a1cabd6525274",
-    "startup.js": "111f890f32c90f2769e670589ea708ce410418f8"
+    "startup.js": "183e65cdef0a4999c5c23c767da81a906d56a4e9"
   }
 }

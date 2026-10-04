@@ -30,7 +30,9 @@ permissions:
   actions: read
 
 concurrency:
-  group: gradecrew-stage-guardian
+  # A skipped upstream has no execution work; it must not replace a pending
+  # admission/recovery dispatch in GitHub's one-pending-run queue.
+  group: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'skipped' && 'gradecrew-stage-guardian-skipped' || 'gradecrew-stage-guardian' }}
   cancel-in-progress: false
 
 jobs:

@@ -17,9 +17,14 @@ Die Homepage-Nachfolge enthält durch PR #91 einen anderen Basis-SHA als ihr alt
 - Regressionen zuerst rot: bestehende Recovery verweigerte `sourceUpdate`; Prepare verweigerte den historischen Kandidatenelternteil.
 - Lokal: 97 Automation-Verhaltenstests grün; neuer Quellvertrag/Budget-/Kontext-/Abstammungs-/Widerrufs-/Race-/Prepare-Test enthalten.
 - Ursprünglicher bezahlter Run: 37196835882; ein Versuch, 0,85 USD konservativ reserviert, 0,023296 USD bekannte Nutzungsschätzung. Gesamtgrenze weiterhin drei Versuche / 2,55 USD.
-- Codezustand: lokal; CI, Integration und echter Fortsetzungslauf noch offen.
+- Quellenfix integriert: PR #95, Merge b49793cd9ae0073024f5a17191dd8d623ab523cb. Vier finale Checks grün: Guardian 37217124832, Handoff 37217124802, Development Status 37217124823, vollständige isolierte Web-Rehearsal 37217125121.
+- Recovery 37217267732 wurde in der gemeinsamen Status-Warteschlange vor jedem Job abgebrochen (Jobs leer). Guardian 37217267635 bestätigt weiterhin ursprünglichen Stopp / 1 von 3 Versuchen; Ledger und Reservierung unverändert. Folgefix fix/guardian-recovery-queue-20261004 gibt Recovery eine eigene Warteschlange. Übersprungene upstream-Ereignisse erhalten im Stage Guardian ebenfalls eine getrennte Warteschlange, damit sie keinen wartenden regulären Dispatch verdrängen. CAS und dauerhafte Ledger-Reservierungen bleiben das Schreib-/Versuchs-Gate; keine bezahlten Jobs erneut gestartet.
 - Production und Geräteabnahme unverändert offen.
 
 ## Nächster Schritt / Wiederaufnahme
 
 Review und exakte PR-CI prüfen; Quell-/main-Stand vor Merge erneut abgleichen. Danach automatischen einmaligen Recovery- und regulären Guardian-Lauf anhand Ledger, Jobs und Receipts verfolgen. Bei unbekannten Ergebnissen oder neuem Quellwechsel stoppen und Diagnose festhalten; keine Versuche zurücksetzen.
+
+## Parallele Web-Integration während der Queue-Prüfung
+
+PR #96 wurde inzwischen auf Web integriert: 256609f81f601896a9e683f67945743df6b2f29f. Pilot-CSS, Homepage-CSS und Entry-Kontext unverändert. startup.js hat ausschließlich aktualisierte i18n-Importversionen und den neuen assessment-locale-ui-Import nach app.js. Neuer vollständiger Auftrag/Policy/Recovery werden vor dem ersten neuen Versuch auf diesen aktuellen SHA gepinnt. Homepage-Quellvertrag ebenfalls explizit erneuert: ihr aktualisierter read-only Startup-Kontext wird frisch gelesen/geprüft und mit seinem neuen Blob-SHA gebunden; Produktbrief, zulässige CSS-Datei und Budget bleiben unverändert. Kein früherer Homepage-Versuch vorhanden.

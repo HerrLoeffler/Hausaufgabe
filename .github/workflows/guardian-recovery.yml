@@ -7,7 +7,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gradecrew-stage-guardian
+  # Status completion events may replace pending runs even with cancellation
+  # disabled. Give this single-use command its own queue; ledger CAS and
+  # durable reservations still protect controller ownership and budget.
+  group: gradecrew-guardian-permission-recovery
   cancel-in-progress: false
 jobs:
   recover:
