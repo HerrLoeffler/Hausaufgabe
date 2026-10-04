@@ -7,6 +7,8 @@ const DEFAULT_OPENAI_BASE_URL = 'https://api.openai.com';
 // Keep first gateway comparison aligned with GradeCrew's current text model.
 const DEFAULT_OPENAI_MODEL = 'gpt-5.6-luna';
 const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
+const DEFAULT_MISTRAL_BASE_URL = 'https://api.mistral.ai';
+const DEFAULT_MISTRAL_MODEL = 'mistral-small-2603';
 const DEFAULT_GEMINI_LOCATION = 'eu';
 const DEFAULT_GOOGLE_METADATA_TOKEN_URL = 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token';
 
@@ -91,6 +93,20 @@ function geminiConfigured(env = process.env) {
   return enabled && Boolean(projectId);
 }
 
+function readMistralConfig(env = process.env) {
+  const defaultModel = String(env.MISTRAL_DEFAULT_MODEL || DEFAULT_MISTRAL_MODEL).trim();
+  return {
+    apiKey: readRequiredEnv(env, 'MISTRAL_API_KEY'),
+    baseUrl: String(env.MISTRAL_BASE_URL || DEFAULT_MISTRAL_BASE_URL).replace(/\/$/, ''),
+    defaultModel,
+    allowedModels: readAllowedModels(env.MISTRAL_ALLOWED_MODELS, defaultModel),
+  };
+}
+
+function mistralConfigured(env = process.env) {
+  return Boolean(String(env.MISTRAL_API_KEY || '').trim());
+}
+
 module.exports = {
   DEFAULT_AUDIENCE,
   DEFAULT_BASE_URL,
@@ -98,6 +114,8 @@ module.exports = {
   DEFAULT_OPENAI_BASE_URL,
   DEFAULT_OPENAI_MODEL,
   DEFAULT_GEMINI_MODEL,
+  DEFAULT_MISTRAL_BASE_URL,
+  DEFAULT_MISTRAL_MODEL,
   DEFAULT_GEMINI_LOCATION,
   DEFAULT_GOOGLE_METADATA_TOKEN_URL,
   readAllowedModels,
@@ -108,4 +126,6 @@ module.exports = {
   googleVertexBaseUrl,
   readGeminiConfig,
   geminiConfigured,
+  readMistralConfig,
+  mistralConfigured,
 };
