@@ -44,7 +44,7 @@ function fallbackQuestionText(text, intent = {}) {
   return `Beschreibung statt Bild: ${description}\n\n${sentence}`.trim();
 }
 
-async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, onImage = async () => {}, onImageFallback = async () => {} }) {
+async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, generateAudio, onImage = async () => {}, onImageFallback = async () => {}, onAudio = async () => {}, onAudioFallback = async () => {} }) {
   const q = {
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
     aiOrigin: { kind, model, promptVersion }
@@ -79,6 +79,28 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
       await onImageFallback({ index, reason, diagnostic: err?.diagnostic || null });
     }
   }
+  const audioIntent = raw.audioIntent || { kind: "none", script: "", reason: "" };
+  if (audioIntent.kind === "ai_generated") {
+    q.audioScript = String(audioIntent.script || "").trim();
+    q.audioAiGenerated = true;
+    try {
+      if (typeof generateAudio !== "function") throw new Error("Audiogenerator fehlt.");
+      const asset = await generateAudio({ questionId: `q${index + 1}`, script: q.audioScript });
+      if (!asset?.audioDataUrl) throw new Error(`Audio zu Aufgabe ${index + 1} fehlt.`);
+      Object.assign(q, asset);
+      q.audioNeedsRegeneration = false;
+      q.aiOrigin.audioStatus = "ready";
+      await onAudio();
+    } catch (err) {
+      if (isProgrammingMediaError(err)) throw err;
+      const reason = String(err?.message || "Audio konnte nicht erzeugt werden.").slice(0, 500);
+      q.audioNeedsRegeneration = true;
+      q.aiOrigin.audioStatus = "omitted";
+      q.aiOrigin.audioReason = reason;
+      q.aiMediaWarning = [q.aiMediaWarning, "Das vorgesehene KI-Audio konnte nicht erzeugt werden. Bitte im Editor neu erzeugen, bevor du den Test veröffentlichst."].filter(Boolean).join(" ");
+      await onAudioFallback({ index, reason, diagnostic: err?.diagnostic || null });
+    }
+  }
   if (q.type === "text") { q.acceptedAnswers = raw.acceptedAnswers; q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "truefalse") q.correctBoolean = raw.correctBoolean;
   if (q.type === "matching") q.pairs = raw.pairs;
@@ -92,5 +114,8 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
 function imageCount(questions) {
   return questions.filter(q => q.mediaIntent?.kind === "ai_generated").length;
 }
+function audioCount(questions) {
+  return questions.filter(q => q.audioIntent?.kind === "ai_generated").length;
+}
 
-module.exports = { quizForGeneratedTest, storedAiQuestion, imageCount, fallbackQuestionText };
+module.exports = { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount, fallbackQuestionText };
