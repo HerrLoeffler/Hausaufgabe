@@ -1,62 +1,99 @@
 # GradeCrew – Startscreen Masterpiece v4
 
 Stand: 2026-10-04
-Basis: feature/gradecrew-app-integration@578677633c1759e75fee6479f416fb64566f5c5c
+Basis des Guardian-Laufs: `feature/gradecrew-app-integration@578677633c1759e75fee6479f416fb64566f5c5c`
+Aktuell integrierter Web-Stand: `feature/gradecrew-app-integration@fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41`
 Production: unverändert
 
-## Warum v4
+## Ziel
 
-v2 verlor den alten synchronen Provider-Aufruf am HTTP-Timeout. PR #105 stellte OpenAI Guardian auf Background Responses um.
-v3 kam dadurch kontrolliert zurück, endete aber ohne fertigen Kandidaten. Die große Basis-CSS musste vollständig neu ausgegeben werden; Publish, Tests und Reviews liefen deshalb nicht.
+Den bisherigen funktionalen Crew-first Startscreen zu einer deutlich hochwertigeren, wärmeren und räumlicheren GradeCrew-Markenhomepage veredeln:
+- Coco als klarer Gastgeber im Vordergrund;
+- Remy, Emmi und Wilma als zusammenhängende Crew;
+- weniger flache/geometrische Klassenzimmerobjekte;
+- mehr Licht, Tiefe, Ruhe und Premium-Hierarchie;
+- saubere CTA-, Schülercode- und Benefit-Zone;
+- echte Neukomposition auf Tablet/iPad und Smartphone.
 
-PR #114 hat die Design-Architektur daraufhin geändert:
-- gradecrew-auth-startscreen.css bleibt stabile Basis.
-- gradecrew-auth-startscreen-polish.css ist ein kleiner nachgelagerter visueller Layer.
-- Staging-Build und Regressionstests kennen diesen Layer.
-- DE/EN-UI-Abdeckung aus PR #108 bleibt erhalten.
+## Internationalisierung – verbindliche Produktregel
 
-## v4 Scope
+PR #108 / Web-SHA `9559f742…` hat den vollständigen Crew-first Public Entry für DE/EN an die vorhandene Browser-i18n-Grenze angeschlossen.
 
-Writable:
-- gradecrew-auth-startscreen-polish.css
+Geschützt:
+- alle sichtbaren Startscreen-Texte wechseln mit der UI-Sprache;
+- Test-/Aufgabensprache bleibt davon unabhängig;
+- Bewertungssprache bleibt davon unabhängig;
+- keine sichtbaren Wörter in CSS `content`, Hintergrundbildern oder Data-URIs;
+- sichtbare Copy bleibt im DOM/i18n-Katalog.
 
-Read-only Kontext:
-- gradecrew-auth-startscreen.css
-- gradecrew-entry-flow.js
+Die i18n-Integrationstests liefen auch im aktuellen Post-Merge-CI erfolgreich.
 
-Ziel: Premium-Polish für Komposition, Licht, Tiefe, Spacing und Responsive – ohne Produktlogik oder Texte umzubauen.
+## Guardian-/Multi-KI-Verlauf
 
-## i18n-Regel
+### v2
+Run `37220142576` stoppte beim früheren synchronen 240-Sekunden-OpenAI-Aufruf mit unbekanntem Provider-Ergebnis. Historie und 2,40-USD-Reservierung blieben erhalten; kein Blind-Retry.
 
-Der Startscreen muss bei DE/EN vollständig mitwechseln.
-Deshalb:
-- keine sichtbaren Wörter per CSS content;
-- keine eingebrannten Texte in Bildern/Data-URIs;
-- sichtbare Copy bleibt im DOM/i18n-Katalog;
-- Test-/Inhaltssprache und Bewertungssprache bleiben unabhängig von der UI-Sprache.
+### Background-Responses-Fix
+PR #105 stellte OpenAI Guardian auf Background Responses mit derselben Response-ID um. Der echte kleine Pilot bewies danach GPT-6.1 Sol + GPT-6 Astra + Claude Sonnet 5.5 + GPT-6 Sol, Combined CI, Integration und Staging.
 
-## Multi-KI-Gate
+### v3
+Die große monolithische Startscreens-CSS war für einen vollständigen strukturierten Neu-Output zu groß/ungünstig. Deshalb wurde mit PR #114 ein kleiner isolierter Polish-Layer eingeführt.
 
-1. GPT-6.1 Sol baut ausschließlich den kleinen Polish-Layer.
-2. Exact Combined Web Validation.
-3. GPT-6 Astra: Korrektheit/Auftragstreue.
-4. Claude Sonnet 5.5: Produkt-/Sicherheitsgrenzen.
-5. GPT-6 Sol: QA/Nutzerfluss.
-6. Nur bei drei Freigaben Integration in feature/gradecrew-app-integration.
-7. Technischer Staging-Preview.
-8. Martin prüft Desktop, iPad, Phone sowie DE/EN.
-9. Production bleibt gesperrt.
+### v4
+Guardian-Run `37230004552`:
+- GPT-6.1 Sol Build: SUCCESS;
+- Kandidat: `961416cdcb3d71d5f45e1e416f6f50ae71a5b7c4`;
+- API-Nutzungsschätzung Builder: 0,174598 USD;
+- Publish: SUCCESS;
+- Exact Combined Validation: FAIL;
+- drei KI-Reviews: dadurch SKIPPED;
+- Integration: SKIPPED.
 
-## Budget
+Die eigentliche App-/Security-Testlandschaft war grün. Ein Startscreendesign-Test stoppte den Kandidaten, weil der Polish-Layer dekoratives `content: ""` enthielt; der damalige Regex traf zusätzlich sogar `justify-content`.
 
-module-web-v1: maximal 2,40 USD Reservat für diesen einen Task; Task-Cap 2,55 USD.
-Alte v2/v3 Historie und Reservate bleiben unverändert.
+PR #121 korrigierte den Test so, dass er echte CSS-`content`-Deklarationen prüft und sichtbare/variable Inhalte weiterhin verbietet.
+
+## Deterministische Rettung des v4-Designs
+
+Der bereits bezahlte GPT-6.1-Sol-Kandidat wurde **nicht erneut erzeugt**. Stattdessen wurde ausschließlich die konkrete i18n-Verletzung deterministisch entfernt:
+- keine CSS-`content`-Deklarationen mehr;
+- die Licht-/Atmosphäre-Ebenen liegen direkt auf bestehenden Elementen;
+- keine neue sichtbare Copy;
+- keine Änderung an Entry-Markup, i18n-Katalogen, Auth, Routing, Assessment oder Backend.
+
+PR #123 integrierte diesen Polish-Layer:
+- Integrationscommit: `fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41`
+- Branch-CI: `37231329034` SUCCESS
+- Post-Merge AI Staging Checks: `37231463662` SUCCESS
+- Admin Controls: `37231463639` SUCCESS
+- automatisches Hosting-Preview: `37231545703` SUCCESS
+- verifizierte Dateien: 111
+- Preview: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app`
+
+Wichtig: Dieser salvagierte Kandidat hat **keine drei Guardian-Reviewer-Freigaben**, weil die ursprüngliche v4-Validation vor den Review-Jobs stoppte. Das darf nicht als vollständiger Multi-KI-Gate-Erfolg bezeichnet werden. Es wurde aber kein zusätzlicher bezahlter Build gestartet und die ursprüngliche Versuchshistorie/Budgetreservierung wurde nicht zurückgesetzt.
 
 ## Status
 
-- isolierter Polish-Layer: integriert, Post-Merge AI Staging Checks grün
-- Background Responses: auf main integriert
-- sichere Terminaldiagnostik: auf main integriert
-- v4 Task/Policy: auf diesem Branch
-- v4 Provider-Aufruf: noch nicht
+- GPT-6.1-Sol-Designkandidat gebaut: ja
+- ursprünglicher Guardian v4 Run: repairable nach Testfeedback
+- deterministische i18n-Reparatur: ja
+- auf GitHub gesichert: ja
+- in `feature/gradecrew-app-integration` integriert: ja, `fb88dfa7…`
+- Post-Merge CI: grün
+- Hosting-Preview: verifiziert deployed
+- DE/EN Startscreen-Abdeckung: vorhanden und getestet
+- Desktop visuell von Martin bestätigt: noch nein
+- iPad bestätigt: noch nein
+- Smartphone bestätigt: noch nein
+- vollständige drei KI-Reviewer auf dem salvagierten Kandidaten: nein
 - Production: UNVERÄNDERT
+
+## Nächster Schritt
+
+Martin öffnet den verifizierten Preview und prüft:
+1. Desktop 1440–1600px: Coco-Größe, Crew-Gruppierung, Raumtiefe, CTA-Abstände, Schülerleiste, Benefit-Bar.
+2. UI-Sprache DE → EN: Header, Hero, Rollen, CTA, Schülerbereich, Benefits und Tutorial müssen vollständig wechseln.
+3. iPad quer/hoch und Smartphone: keine abgeschnittenen Figuren, keine Überlagerungen, kein Horizontal-Scroll.
+4. Erst aus diesen echten visuellen Befunden wird der nächste Design-Pass abgeleitet.
+
+Production bleibt bis zur ausdrücklichen Freigabe gesperrt.
