@@ -62,3 +62,21 @@ Quota-Reset laut Kontoseite 01.11.2026; Sichtbarkeit später nach Nutzerentschei
 Code auf `fix/actions-cost-policy-20261004`, `fix/actions-manual-visual-20261004`
 und `fix/actions-web-docs-20261004` sichern/prüfen. Kein Deployment oder erfolgreicher
 Remote-Test aus dem lokalen Testresultat ableiten.
+
+
+## Verifizierte Integration nach public
+
+#88 → main 3ae00f9 nach fünf grünen exakten PR-Checks am Head 17f4d4b.
+#89 → Visual e83fde3 unter Erhalt paralleler V2-Änderungen (9cc4028); 35 lokale
+Vertragstests einschließlich tatsächlicher Jeep-Update-Szenarien und Build grün.
+#90 → Web f30fa44; AI Staging 37213496846 und Admin-Checks 37213496845 erfolgreich.
+Automatisches Hosting 37213580812 einschließlich Manifest-/Dateihashprüfung und
+AI-Functions 37213580828 einschließlich Tests, Staging-Scope und Receipt erfolgreich.
+Keine neue Amazonas-Preview gestartet, kein Gerätetest und keine Production.
+Neue manuelle Startpolitik ist in main und Visual aktiv; doc-only Filter im Webziel.
+
+Parallel PR #91 repinnt den noch nicht zugelassenen Startscreen auf b5d456e und
+wurde in main afc6524 integriert. Diese Arbeit bleibt erhalten. Originaler
+Guardian-Pilot erwartet weiter eb80c5e6; aktueller Web-Head f30fa44 passt nicht
+zum alten Recovery-Vertrag. Bestehende Grenzen nicht durch stilles Umpinnen,
+Ledger-Reset oder Rerun eines Paid-Jobs umgehen. Das ist ein eigener Quellenblocker.

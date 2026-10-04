@@ -430,12 +430,17 @@
       "id": "actions-cost-policy-20261004",
       "task_id": "GC-ACTIONS-COST-01",
       "branch": "fix/actions-cost-policy-20261004",
-      "stage": "branch_only",
-      "ci": "local_90_automation_18_release_control_54_workflow_checks_passed_remote_pending",
-      "staging": "not_deployed",
+      "stage": "integrated",
+      "ci": "five_PR88_checks_success_at_17f4d4b_web_CI_37213496846_success_35_local_visual_tests_passed",
+      "staging": "web_auto_hosting_37213580812_hash_verification_success_and_ai_functions_37213580828_success_no_new_Amazonas_deploy_this_chat",
       "user_test": "not_performed",
       "handoff": "workstreams/actions-cost-policy-20261004.md",
-      "next_action": "Publizierung über GitHub Settings; exakte CI der drei Folge-PRs prüfen und unter Erhalt von PR #86/#51 integrieren."
+      "next_action": "Manuellen Amazonas-Preview nur beim nächsten angeforderten Meilenstein; neue Minuten messen. Guardian-Pilot erfordert gesonderten aktuellen Quellvertrag.",
+      "integrated_into": {
+        "control": "main@3ae00f91cf9588f091f4c5316ceeb6fb110a8286",
+        "visual": "prototype/escape-expedition-visual-masterpiece-v1@e83fde3527297522889b32cacb65c924bc932873",
+        "web": "feature/gradecrew-app-integration@f30fa44a383b279bcc49967d2ef0d1840243b27e"
+      }
     }
   ],
   "deployments": [

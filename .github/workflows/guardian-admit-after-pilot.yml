@@ -1,0 +1,35 @@
+name: Admit unchanged homepage after verified pilot
+on:
+  push:
+    branches: [main]
+    paths: ['automation/admission-requests/*.json', '.github/workflows/guardian-admit-after-pilot.yml']
+  workflow_run:
+    workflows: ['GradeCrew Stage Guardian']
+    types: [completed]
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-homepage-admission
+  cancel-in-progress: false
+jobs:
+  admit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Verify receipts, exact source blobs and fixed budget before admission
+        run: python3 -m tools.automation.admit_after_pilot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+          WORKER_ENABLED: ${{ vars.CODEX_WORKER_ENABLED }}
+          WORKER_KEY_PRESENT: ${{ secrets.CODEX_WORKER_API_KEY != '' }}
+          OPENAI_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_OPENAI_REVIEW_KEY != '' }}
+          ANTHROPIC_REVIEW_KEY_PRESENT: ${{ secrets.GUARDIAN_ANTHROPIC_REVIEW_KEY != '' }}

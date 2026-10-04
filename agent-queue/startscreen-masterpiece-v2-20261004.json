@@ -5,19 +5,15 @@
   "risk": "web-ui",
   "goal": "Polish the current GradeCrew public startscreen from Masterpiece v1 into a premium brand homepage matching Martin's approved visual direction. The current deployed screenshot has the right structure but still looks flat, CSS-drawn, sterile and app-like. Preserve the current GradeCrew logo and canonical Coco/Remy/Emmi/Wilma assets. Make Coco the dominant welcoming foreground character; place Remy, Emmi and Wilma as a cohesive crew on the same visual stage; create stronger depth, warmth, lighting and spatial hierarchy without inventing alternate mascots. Keep the copy concise: 'Hi! Ich bin Coco.', 'Willkommen bei GradeCrew.', 'Digitale Tests, schnell & einfach.'. The target feeling is a polished, emotional, school-adjacent premium homepage rather than a grey app shell or a diagrammatic classroom.",
   "acceptance": "Desktop: the public entry should read as one coherent full-width hero stage, not a centered app card. Header/navigation must feel integrated and calm. Coco must be clearly larger and more foregrounded than the support crew. Remy/Emmi/Wilma must sit visually together without CTA overlap; their role cards remain legible and aligned. The hero background must create convincing depth/light/warmth and must not depend on obvious flat geometric door/shelf/board blocks as the dominant scene. If existing assets cannot support the desired environmental richness, create a clean dedicated background-layer hook and simplify the fake furniture rather than adding more CSS-object clutter. CTAs 'Crew kennenlernen' and 'Direkt anmelden' must be centered, balanced, and never cover characters or role cards. Student test-code utility must be compact, clearly separated and secondary. Four benefits remain visible and calm. No horizontal clipping at common desktop widths around 1440–1600px; no important content cut off. Tablet/iPad and phone must recompose rather than merely shrink: characters stay visible, CTAs remain reachable, no overlap, no horizontal scroll. Keep existing login/register/join forms, IDs, handlers, tutorial, auth and secure-student routing unchanged. Preserve reduced-motion and focus-visible behavior. Existing relevant tests and staging build must pass.",
-  "constraints": "Only edit the two admitted public-entry files. Do not change Firebase, backend, assessment/security logic, CI, deployment, credentials, shared canonical mascot assets, brand files, or tests. Do not add new mascots or reinterpret Coco/Remy/Emmi/Wilma. Do not claim screenshot/image verification: Guardian V2 receives text context only, so treat the observable visual brief above as the contract and leave final visual acceptance to Martin. Do not weaken existing tests. Prefer fewer stronger layers and better composition over more decorative CSS objects. Production is out of scope.",
+  "constraints": "Only edit gradecrew-auth-startscreen.css; gradecrew-entry-flow.js and startup.js are read-only context. Compose the existing markup with CSS only. Do not change Firebase, backend, assessment/security logic, CI, deployment, credentials, shared canonical mascot assets, brand files, or tests. Do not add new mascots or reinterpret Coco/Remy/Emmi/Wilma. Do not claim screenshot/image verification: Guardian V2 receives text context only, so treat the observable visual brief above as the contract and leave final visual acceptance to Martin. Do not weaken existing tests. Prefer fewer stronger layers and better composition over more decorative CSS objects. Production is out of scope.",
   "allowed_files": [
-    "gradecrew-auth-startscreen.css",
-    "gradecrew-entry-flow.js"
+    "gradecrew-auth-startscreen.css"
   ],
   "context_files": [
-    "shared/gradecrew-design/assets.json",
-    "GRADECREW_BRAND_SYSTEM.md",
-    "CREW_ART.md",
-    "workstreams/design-startscreen-masterpiece-v1.md",
+    "gradecrew-entry-flow.js",
     "startup.js"
   ],
   "validation_profile": "web-combined-v1",
   "max_cost_usd": 2.55,
-  "cost_profile": "small-web-v1"
+  "cost_profile": "module-web-v1"
 }
