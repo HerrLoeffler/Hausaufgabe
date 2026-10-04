@@ -462,7 +462,16 @@ exports.processAiTestJob = onTaskDispatched({
         },
         onAudioFallback: async () => { audioReady = false; }
       });
-      await quizRef.collection("questions").doc(`q${String(index + 1).padStart(3, "0")}`).create({ ...q, updatedAt: Timestamp.now() });
+      const questionId = `q${String(index + 1).padStart(3, "0")}`;
+      const { audioScript = "", ...publicQuestion } = q;
+      await quizRef.collection("questions").doc(questionId).create({ ...publicQuestion, updatedAt: Timestamp.now() });
+      if (String(audioScript).trim()) {
+        await quizRef.collection("audioScripts").doc(questionId).set({
+          script: String(audioScript).trim().slice(0, LIMITS.maxAudioScriptChars),
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+      }
       totalPoints += q.points;
       await quizRef.update({ questionCount: index + 1, totalPoints, updatedAt: Timestamp.now() });
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
