@@ -15,7 +15,9 @@ Production and the current GradeCrew generation path remain unchanged. Automatic
 
 ## Product principle
 
-Do not choose a single "best AI". Choose the cheapest qualified model for each GradeCrew job, and escalate only when the job or validator says the cheap path is not sufficient.
+This is **not a winner-takes-all model tournament**. GradeCrew should build a competency map and use complementary roles: interpreter, generator, critic, verifier and hard-case escalator. A provider can be excellent in one role and intentionally paired with another provider in a second role.
+
+For simple low-risk work, one qualified model should usually be enough. For complex or high-risk work, the product may deliberately use two different qualified systems in sequence — for example one generates and another independently critiques or verifies. Cost still matters, but only after the required role quality is met.
 
 Provider strengths below are hypotheses to test against GradeCrew's own held-out cases. No provider receives a runtime route from this document alone.
 
@@ -71,16 +73,25 @@ Phase D — high-risk:
 
 Each scope must use the existing quality gate with held-out reviewed cases, critical-failure blocking, latency, and complete cost per accepted result.
 
-## What we expect to learn
+## What we expect to learn: a competency map, not a leaderboard
 
-The benchmark should answer, per job and scope:
+The benchmark should answer, per job, scope and role:
 
-- Which model has the best accepted-result rate?
-- Which model introduces critical subject-matter or grading errors?
-- Which model follows GradeCrew JSON/schema constraints most reliably?
-- Which model creates the fewest repair/retry calls?
-- Which model is fastest at p95?
-- Which model is cheapest per accepted result, not per raw token?
-- When does a stronger second call actually improve quality enough to justify the cost?
+- Which models are qualified as **interpreters/extractors**?
+- Which models are qualified as **generators**?
+- Which models are qualified as **critics/verifiers** and catch errors from a different provider?
+- Which models introduce critical subject-matter or grading errors?
+- Which models follow GradeCrew JSON/schema constraints reliably?
+- Which combinations reduce repair/retry calls rather than merely duplicating work?
+- What is p95 latency and complete cost per accepted result for each role and useful combination?
+- At which difficulty/risk boundary does a second independent provider measurably improve quality?
 
-Only after those results exist should the signed router publish an active route.
+The output is therefore a **role/capability matrix**. The runtime may select one model or a qualified collaboration pattern; there is no global winner. Only reviewed evidence may later authorize a signed route or collaboration profile.
+
+## Evaluation worker
+
+`tools/evaluation/run-provider-benchmark.mjs` now implements the guarded research worker. It is dry-run by default. Paid execution requires all of the following: explicit `--execute`, `GC_EVALUATION_EXECUTE=true`, the staging project, a private Cloud Run identity token, a deterministic call/cost cap, and a **durable evaluation budget store**. There is no provider retry.
+
+Every paid call is reserved before contacting the gateway and settled afterward. Raw prompts/model outputs are written only to a private review packet with restrictive file permissions; the metrics file is content-free. Neither file can authorize runtime routing by itself.
+
+The current reviewed price snapshot is `tools/evaluation/provider-price-snapshot.2026-10-04.json`. `provider-benchmark-bundle.example.json` is deliberately synthetic and only documents the input contract.
