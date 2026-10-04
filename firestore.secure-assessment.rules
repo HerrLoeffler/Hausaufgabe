@@ -144,6 +144,13 @@ service cloud.firestore {
         allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
       }
 
+      // Hörtexte bleiben private Autorendaten. Der Schüler erhält Audio nur
+      // über den serverseitig gebauten Assessment-Contract.
+      match /audioScripts/{questionId} {
+        allow read: if ownsQuiz(quizId) || isAdmin();
+        allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
+      }
+
       match /attempts/{attemptId} {
         // Öffentliche Schüler-Attempts werden ausschließlich durch Admin SDK /
         // Callables angelegt. Die einzige Client-Ausnahme ist der eingeloggte
