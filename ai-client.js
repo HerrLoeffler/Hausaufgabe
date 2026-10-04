@@ -4,7 +4,7 @@ import {
   DEFAULT_CONTENT_LOCALE,
   normalizeAssessmentLocale,
   withContentLocaleMarker,
-} from "./shared/i18n/assessment-locale.mjs";
+} from "./shared/i18n/assessment-locale.mjs?v=2";
 
 const REGION = "europe-west1";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
