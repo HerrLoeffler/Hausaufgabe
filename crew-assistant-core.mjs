@@ -134,6 +134,8 @@ function extractTopic(text) {
     /\b(?:über|ueber)\s+([^.!?]+)/i,
     /\b(?:klasse|jahrgang(?:sstufe)?)\s*\d{1,2}\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
     /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
+    /\b(?:klasse|jahrgang(?:sstufe)?)\s*\d{1,2}\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|punkte?)\b|$)/i,
+    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|punkte?)\b|$)/i,
     /\bzu\s+(?!der\s+\d|den\s+\d|einer?\s+\d)([^.!?]+)/i
   ];
   for (const pattern of candidates) {
