@@ -20,7 +20,7 @@ function setup() {
     normalizeImportedQuestion: q => ({ ...q }),
     doc: () => ({ id: `new-${++id}` }), collection: () => ({}),
     aiApi: { regenerateQuestion: () => request.promise },
-    applyGeneratedMedia: async () => {},
+    applyGeneratedMedia: async () => {}, applyGeneratedAudio: async () => {}, getQuestionAudioSrc: () => "",
     renderQuestions: () => { renders++; }, markDirty: () => { dirty++; }, resolveQualityIssues() {},
     toast: (...args) => notices.push(args), showReportableError: error => reports.push(error),
     escapeHtml: value => String(value), aiFriendlyError: error => error.message,
