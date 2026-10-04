@@ -17,6 +17,11 @@ on:
       - 'feature/i18n-*'
       - 'feature/audio-*'
       - 'fix/audio-*'
+    # Documentation changes do not change the app/runtime candidate.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'workstreams/**'
   workflow_dispatch:
 
 permissions:
