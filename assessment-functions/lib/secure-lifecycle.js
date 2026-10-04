@@ -372,6 +372,7 @@ async function attachReleasedSolutionAudio(quizId, receipt) {
   const assets = new Map();
   for (const item of snap.docs) {
     const data = item.data() || {};
+    if (data.solutionNeedsRegeneration === true) continue;
     const src = String(data.solutionAudioDataUrl || "");
     if (!src.startsWith("data:audio/")) continue;
     assets.set(item.id, {
