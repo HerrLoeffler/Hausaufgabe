@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "api-prices-2026-10-04",
+  "currency": "USD",
+  "reviewedAt": "2026-10-04T10:15:00Z",
+  "models": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "scope": "standard-short-context",
+      "input": 200000,
+      "output": 1200000,
+      "cacheRead": 20000,
+      "cacheWrite": 250000
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5",
+      "scope": "global-standard-200k",
+      "input": 1000000,
+      "output": 5000000,
+      "cacheRead": 100000,
+      "cacheWrite": 1250000
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "scope": "vertex-eu-non-global",
+      "input": 165000,
+      "output": 1375000,
+      "cacheRead": 16500,
+      "cacheWrite": 165000
+    },
+    {
+      "provider": "mistral",
+      "model": "mistral-small-2603",
+      "scope": "global-standard",
+      "input": 150000,
+      "output": 600000,
+      "cacheRead": 15000,
+      "cacheWrite": 150000
+    }
+  ],
+  "sources": [
+    "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+    "https://www.anthropic.com/claude/haiku",
+    "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing",
+    "https://docs.mistral.ai/inference/pricing"
+  ]
+}
