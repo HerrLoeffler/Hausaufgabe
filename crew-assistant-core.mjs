@@ -78,7 +78,7 @@ const COMMON_RESPONSES = Object.freeze({
     cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
     capabilities: Object.freeze({
       coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
-      remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Aufgabentypen und Zusatzwünsche.",
+      remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Audio-Lösungen, Aufgabentypen und Zusatzwünsche.",
       emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
       wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
     })
@@ -94,7 +94,7 @@ const COMMON_RESPONSES = Object.freeze({
     cost: "GradeCrew first tries to handle common questions and clear commands locally. The AI fallback is used only when genuine language understanding is needed. This saves API calls and keeps responses faster.",
     capabilities: Object.freeze({
       coco: "I help you find your way around GradeCrew. Create tests with Remy under ‘Create with AI’; Emmi works in the editor and Wilma helps with results.",
-      remy: "I can understand test requests and prepare the AI form: subject, year/class, school type, topic, difficulty, question count, points, listening questions, question types and additional requests.",
+      remy: "I can understand test requests and prepare the AI form: subject, year/class, school type, topic, difficulty, question count, points, listening questions, audio solutions, question types and additional requests.",
       emmi: "I can review questions and help improve a test in the editor.",
       wilma: "I can help with grading and interpreting results."
     })
@@ -114,7 +114,7 @@ function normalizeLocale(value = "de-DE") {
   return /^en(?:-|$)/i.test(String(value || "")) ? "en-GB" : "de-DE";
 }
 
-const PARSER_VERSION = "remy-structure-v4-audio";
+const PARSER_VERSION = "remy-structure-v5-audio-solutions-i18n";
 const INITIAL_EASY = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)|(?:the\s+)?(?:first\s+(?:questions?|tasks?)|at\s+the\s+beginning|initially))\b[^.!?]{0,50}?\b(?:leicht|einfach|easy|simple)\b/i;
 const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?|not|no)\s+(?:(?:zu|so|too)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt|easy|simple|hard|difficult|challenging|medium|mixed)\b/gi;
 
@@ -153,6 +153,7 @@ function cleanTopic(value = "") {
     .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?|little|short|clear)\s+(?:text|texte|aufgaben?|fragen?|questions?|tasks?)\b).*$/i, "")
     .replace(/\s+(?=(?:(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)|(?:no|without)\s+trick questions?)\b).*$/i, "")
     .replace(/\s+(?=(?:(?:davon\s+)?\d+\s*(?:hör|hoer)(?:aufgaben?|fragen?)|\d+\s*(?:listening|audio)\s+(?:questions?|tasks?))\b).*$/i, "")
+    .replace(/\s+(?=(?:(?:davon\s+|of\s+those\s+)?\d+\s*(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\s+(?:als|mit|as|with)\s+audio|\d+\s*audio[- ]?(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?))\b).*$/i, "")
     .replace(/\b(?:mit|und|with|and)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|points?|aufgaben?|questions?|tasks?|minuten?|minutes?).*$/i, "")
     .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)\s*$/i, "")
     .replace(/[\s,;]+$/g, "")
@@ -265,6 +266,12 @@ function parseTestRequest(input = "") {
   ], 0, 5);
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
+  const solutionAudioQuestionCount = extractNumber(text, [
+    /\b(?:davon\s+|of\s+those\s+)?(\d{1,2})\s*(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\s+(?:als|mit|as|with)\s+audio\b/i,
+    /\b(\d{1,2})\s*audio[- ]?(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\b/i
+  ], 0, 5);
+  if (solutionAudioQuestionCount !== undefined) patch.solutionAudioQuestionCount = solutionAudioQuestionCount;
+
   const allowedTypes = [];
   const excludedTypes = [];
   for (const [pattern, value] of TYPE_PATTERNS) {
@@ -297,6 +304,7 @@ function patchSummary(patch = {}, locale = "de-DE") {
   if (patch.points) parts.push(english ? `${patch.points} points` : `${patch.points} Punkte`);
   if (patch.durationMinutes) parts.push(english ? `${patch.durationMinutes} min.` : `${patch.durationMinutes} Min.`);
   if (patch.audioQuestionCount !== undefined) parts.push(english ? `${patch.audioQuestionCount} listening questions` : `${patch.audioQuestionCount} Höraufgaben`);
+  if (patch.solutionAudioQuestionCount !== undefined) parts.push(english ? `${patch.solutionAudioQuestionCount} audio solutions` : `${patch.solutionAudioQuestionCount} Audio-Lösungen`);
   if (patch.notes) parts.push(english ? "Additional requests added" : "Wünsche übernommen");
   return parts.join(" · ");
 }

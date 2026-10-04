@@ -103,7 +103,8 @@ function currentContext() {
       difficulty: $("#aiDifficulty")?.value || "",
       count: Number($("#aiCount")?.value) || null,
       points: Number($("#aiPoints")?.value) || null,
-      audioQuestionCount: Number($("#aiAudioQuestionCount")?.value) || 0
+      audioQuestionCount: Number($("#aiAudioQuestionCount")?.value) || 0,
+      solutionAudioQuestionCount: Number($("#aiSolutionAudioQuestionCount")?.value) || 0
     }
   };
 }
@@ -194,6 +195,7 @@ function applyPatch(patch = {}) {
   setField("#aiCount", patch.count);
   setField("#aiPoints", patch.points);
   if (patch.audioQuestionCount !== undefined && patch.audioQuestionCount !== null) setField("#aiAudioQuestionCount", patch.audioQuestionCount);
+  if (patch.solutionAudioQuestionCount !== undefined && patch.solutionAudioQuestionCount !== null) setField("#aiSolutionAudioQuestionCount", patch.solutionAudioQuestionCount);
   applyTypePatch(patch);
   if (patch.notes) appendNote(String(patch.notes).slice(0, 1500));
   if (patch.durationMinutes) appendNote(uiText(
