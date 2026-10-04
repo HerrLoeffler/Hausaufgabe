@@ -6,8 +6,9 @@ const existing = require("./index");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
-const { getFirestore } = require("firebase-admin/firestore");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
+const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
 const { getOpenAI } = require("./lib/openai-client");
@@ -91,32 +92,89 @@ const getQuestionAudioDrafts = onCall(telemetryOpts, async request => {
   const { quizRef } = await requireAudioQuizAccess(request, quizId);
   const snap = await quizRef.collection("audioScripts").get();
   const drafts = {};
-  for (const doc of snap.docs.slice(0, 100)) {
-    const script = String(doc.data()?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim().slice(0, 500);
-    if (script) drafts[doc.id] = script;
+  const solutionDrafts = {};
+  const solutionAssets = {};
+  for (const item of snap.docs.slice(0, 100)) {
+    const data = item.data() || {};
+    const script = String(data.script || "").normalize("NFKC").replace(/\s+/g, " ").trim().slice(0, 500);
+    const solutionScript = String(data.solutionScript || "").normalize("NFKC").replace(/\s+/g, " ").trim().slice(0, 500);
+    if (script) drafts[item.id] = script;
+    if (solutionScript) solutionDrafts[item.id] = solutionScript;
+    const audioDataUrl = String(data.solutionAudioDataUrl || "");
+    if (audioDataUrl.startsWith("data:audio/")) {
+      solutionAssets[item.id] = {
+        audioDataUrl,
+        audioByteSize: Number(data.solutionAudioByteSize || 0),
+        audioVoice: String(data.solutionAudioVoice || "").slice(0, 40),
+        audioModel: String(data.solutionAudioModel || "").slice(0, 80),
+        audioAiGenerated: data.solutionAudioAiGenerated !== false
+      };
+    }
   }
-  return { drafts };
+  return { drafts, solutionDrafts, solutionAssets };
 });
 
 const syncQuestionAudioDrafts = onCall(telemetryOpts, async request => {
   const quizId = cleanAudioQuizId(request.data?.quizId);
   const drafts = cleanAudioDrafts(request.data?.drafts || []);
+  const solutionDrafts = cleanAudioDrafts(request.data?.solutionDrafts || []);
   const { db, quizRef } = await requireAudioQuizAccess(request, quizId, { write: true });
   const collectionRef = quizRef.collection("audioScripts");
   const existing = await collectionRef.get();
-  const keep = new Map(drafts.filter(item => item.script).map(item => [item.questionId, item.script]));
+  const listening = new Map(drafts.filter(item => item.script).map(item => [item.questionId, item.script]));
+  const solutions = new Map(solutionDrafts.filter(item => item.script).map(item => [item.questionId, item.script]));
+  const existingById = new Map(existing.docs.map(item => [item.id, item]));
+  const ids = new Set([...existingById.keys(), ...listening.keys(), ...solutions.keys()]);
   const batch = db.batch();
-  for (const doc of existing.docs) {
-    if (!keep.has(doc.id)) batch.delete(doc.ref);
-  }
-  for (const [questionId, script] of keep) {
-    batch.set(collectionRef.doc(questionId), {
-      script,
+  for (const questionId of ids) {
+    const oldDoc = existingById.get(questionId);
+    const oldData = oldDoc?.data() || {};
+    const script = listening.get(questionId) || "";
+    const solutionScript = solutions.get(questionId) || "";
+    const ref = collectionRef.doc(questionId);
+    if (!script && !solutionScript) {
+      if (oldDoc) batch.delete(ref);
+      continue;
+    }
+    const patch = {
+      script: script || FieldValue.delete(),
+      solutionScript: solutionScript || FieldValue.delete(),
       updatedAt: new Date()
-    }, { merge: true });
+    };
+    if (String(oldData.solutionScript || "") !== solutionScript) {
+      patch.solutionAudioDataUrl = FieldValue.delete();
+      patch.solutionAudioByteSize = FieldValue.delete();
+      patch.solutionAudioVoice = FieldValue.delete();
+      patch.solutionAudioModel = FieldValue.delete();
+      patch.solutionAudioAiGenerated = FieldValue.delete();
+    }
+    batch.set(ref, patch, { merge: true });
   }
   await batch.commit();
-  return { ok: true, count: keep.size };
+  return { ok: true, count: listening.size, solutionCount: solutions.size };
+});
+
+const generateQuestionSolutionAudio = onCall(assistantOpts, async request => {
+  const quizId = cleanAudioQuizId(request.data?.quizId);
+  const questionId = String(request.data?.questionId || "").trim();
+  if (!/^[A-Z0-9_-]{2,80}$/i.test(questionId)) throw new HttpsError("invalid-argument", "Ungültige Aufgaben-ID.");
+  const script = String(request.data?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
+  if (!script) throw new HttpsError("invalid-argument", "Lösungstext fehlt.");
+  if (script.length > 500) throw new HttpsError("invalid-argument", "Lösungstext ist zu lang. Maximal 500 Zeichen.");
+  const { quizRef, uid } = await requireAudioQuizAccess(request, quizId, { write: true });
+  const questionSnap = await quizRef.collection("questions").doc(questionId).get();
+  if (!questionSnap.exists) throw new HttpsError("not-found", "Aufgabe nicht gefunden.");
+  const asset = await createAudioAsset({ uid, questionId: `solution-${questionId}`, script });
+  await quizRef.collection("audioScripts").doc(questionId).set({
+    solutionScript: script,
+    solutionAudioDataUrl: asset.audioDataUrl,
+    solutionAudioByteSize: asset.audioByteSize,
+    solutionAudioVoice: asset.audioVoice,
+    solutionAudioModel: asset.audioModel,
+    solutionAudioAiGenerated: asset.audioAiGenerated !== false,
+    updatedAt: new Date()
+  }, { merge: true });
+  return { asset };
 });
 
 function patchMetricFields(patch = {}) {
@@ -291,6 +349,7 @@ module.exports = {
   cleanupCrewTelemetry,
   getQuestionAudioDrafts,
   syncQuestionAudioDrafts,
+  generateQuestionSolutionAudio,
   crewAssistant,
   reviseWholeTest
 };
