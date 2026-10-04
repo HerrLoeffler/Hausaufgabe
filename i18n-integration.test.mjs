@@ -18,11 +18,15 @@ const assessmentLocaleUi = read("./shared/i18n/assessment-locale-ui.mjs");
 const aiClient = read("./ai-client.js");
 const aiPrompts = read("./functions/lib/prompts.js");
 const aiJob = read("./functions/lib/ai-job.js");
+const visualEnhancements = read("./visual-enhancements.js");
+const remyHelp = read("./remy-ai-help.js");
+const crewUi = read("./crew-assistant-ui.js");
+const crewWrapper = read("./crew-assistant-core.js");
 const crewServer = read("./functions/lib/crew-assistant.js");
 const crewMain = read("./functions/main.js");
 
 test("teacher app installs shared i18n before importing the core app", () => {
-  const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=1"');
+  const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=2"');
   const appIndex = startup.indexOf('await import("./app.js?v=2.3.1-gc28")');
   assert.ok(i18nIndex >= 0, "startup must import the shared i18n bootstrap");
   assert.ok(appIndex > i18nIndex, "i18n must be ready before app.js starts");
@@ -103,4 +107,16 @@ test("assessment language remains fixed per test and is not coupled to UI or gra
   assert.match(aiPrompts, /contentLanguageInstruction\(contentLocale\)/);
   assert.match(aiJob, /contentLocale,/);
   assert.match(aiJob, /gradingLocale,/);
+});
+
+
+test("bilingual browser module graph is cache-busted consistently", () => {
+  assert.match(startup, /bootstrap\.mjs\?v=2/);
+  assert.match(startup, /assessment-locale-ui\.mjs\?v=2/);
+  assert.match(secureHtml, /bootstrap\.mjs\?v=2/);
+  assert.match(visualEnhancements, /remy-ai-help\.js\?v=4/);
+  assert.match(visualEnhancements, /crew-assistant-ui\.js\?v=4/);
+  assert.match(remyHelp, /crew-assistant-core\.js\?v=4/);
+  assert.match(crewUi, /crew-assistant-core\.js\?v=4/);
+  assert.match(crewWrapper, /crew-assistant-core\.mjs\?v=4/);
 });
