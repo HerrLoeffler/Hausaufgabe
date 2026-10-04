@@ -300,7 +300,10 @@ class ExecutionTests(unittest.TestCase):
         hashing=patch.object(e,'control_hash',return_value='h'*64);hashing.start();self.addCleanup(hashing.stop)
         for name,value in [('ROOT',self.root),('DATA',self.data)]:
             patcher=patch.object(e,name,value);patcher.start();self.addCleanup(patcher.stop)
-        env=patch.dict(os.environ,{'GITHUB_REPOSITORY':g.REPO,'GUARDIAN_ENABLED':'true','CONTROL_SHA':C,'GITHUB_RUN_ID':'9','GITHUB_OUTPUT':str(self.root/'outputs')});env.start();self.addCleanup(env.stop)
+        # Offline execution fixtures model an original attempt. A retry of this
+        # test workflow must not turn every fixture into a paid-workflow rerun;
+        # the dedicated rerun test below explicitly overrides this to attempt 2.
+        env=patch.dict(os.environ,{'GITHUB_REPOSITORY':g.REPO,'GUARDIAN_ENABLED':'true','CONTROL_SHA':C,'GITHUB_RUN_ID':'9','GITHUB_RUN_ATTEMPT':'1','GITHUB_OUTPUT':str(self.root/'outputs')});env.start();self.addCleanup(env.stop)
         reader=patch.object(e,'read_ledger',side_effect=lambda:(copy.deepcopy(self.ledger),'blob'));reader.start();self.addCleanup(reader.stop)
         def write(value,blob):
             self.events.append('persist');self.ledger=copy.deepcopy(value);return 'blob-next'

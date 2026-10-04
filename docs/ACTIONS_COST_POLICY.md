@@ -5,6 +5,11 @@ Repositories und die folgenden Workflow-Optimierungen freigegeben. Die
 Sichtbarkeit wird über GitHub Settings geändert; dieser Code ändert sie nicht.
 Der angezeigte Kontingent-Reset ist 01.11.2026, nicht Montag, 05.10.2026.
 
+Fortsetzung: Martin hat das Repository am 04.10.2026 tatsächlich auf public
+gestellt; frische GitHub-Metadaten bestätigen dies und Standardrunner starten.
+Die Optimierungen liegen in PR #88 (Kontrollplane), #89 (Visual-Branch) und
+#90 (Web-Integration). Neue Remote-Nachweise nach Integration separat lesen.
+
 ## Implementierte Regeln
 
 | Bereich | Verhalten nach Integration |

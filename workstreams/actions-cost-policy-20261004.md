@@ -37,6 +37,14 @@ Web-Codeänderungen müssen weiter die unveränderte volle Testsuite starten.
 
 ## Offene Probleme und Unsicherheiten
 
+Fortsetzung 04.10.2026, 15:27 UTC: Repo-Metadaten bestätigen public. Standardrunner
+starten wieder; Development Status 37212837719 attempt 2 erfolgreich. Handoff
+37212837742 und Guardian 37212837739 laufen erstmals wirklich und zeigen einen
+Test-Isolationsfehler: ExecutionTests erbt GITHUB_RUN_ATTEMPT=2 vom CI-Rerun.
+Fixture pinnt jetzt attempt 1; dedizierter Paid-Rerun-Test setzt weiterhin 2.
+Runtime-/Budgetschutz unverändert. Vollständiger öffentlicher Git-Checkout
+verfügbar; frische exakte CI nach dem Folgecommit erforderlich.
+
 Remote-CI, Merge und aktive neue Startpolitik stehen aus. Fremde Workflow-Kopien
 auf alten Branches ändern sich nicht automatisch. Hauptbranch-, Visual- und
 Web-Änderung werden getrennt geprüft und integriert. Ein vollständiger Scan aller
