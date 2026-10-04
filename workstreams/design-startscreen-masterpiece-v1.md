@@ -1,8 +1,10 @@
 # GradeCrew – Startscreen Masterpiece v1
 
 Stand: 2026-10-04
-Basis: `feature/gradecrew-app-integration` @ `e46b747188e82043787824b412b11922703d1f8d`
+Ausgangsbasis: `feature/gradecrew-app-integration` @ `e46b747188e82043787824b412b11922703d1f8d`
 Aufgabenbranch: `feature/design-startscreen-masterpiece-v1`
+PR: `#68`
+Integrations-Merge: `7f464085e89bdb3ea331dfbc988decfa83bc59f6`
 Production: unverändert
 
 ## Ziel
@@ -55,10 +57,14 @@ Die bestätigte Kernbotschaft bleibt bewusst kurz:
 - Smartphone: Hero wird kontrolliert in Flow-Layout umgebaut; keine absolute Positionierung der CTAs/Schülerleiste.
 - Reduced Motion und sichtbare Focus-Zustände bleiben geschützt.
 
-### 7. Regression
+### 7. Regression / Integration
 - Design-/Entry-Tests auf neue Struktur angepasst und erweitert.
 - Cache-Bust auf `auth-startscreen-v4` / `gradecrew-entry-flow.js?v=4`.
-- CI läuft; nach grünem Gate PR gegen `feature/gradecrew-app-integration`, danach Preview-Deploy.
+- Feature-CI #501: SUCCESS.
+- PR #68 nach grünem Gate in `feature/gradecrew-app-integration` gemergt.
+- Integrations-Merge `7f464085e89bdb3ea331dfbc988decfa83bc59f6`.
+- Post-Merge AI Staging Checks #502: SUCCESS.
+- Post-Merge Admin Test-Account Controls #31: SUCCESS.
 
 ## Geschützte Funktionen
 
@@ -77,22 +83,25 @@ Nicht verändert:
 
 - lokal geändert: nein
 - auf GitHub gesichert: ja
-- Branch: `feature/design-startscreen-masterpiece-v1`
-- Codepass 1–5: erledigt
-- Responsive-Pass: erledigt
-- Regressionstests aktualisiert: ja
-- CI: läuft
-- PR: noch nicht geöffnet
-- in Integrationsbranch: nein
-- Preview deployed: nein
-- Desktop/iPad/Smartphone visuell im echten Hosting-Preview bestätigt: nein
+- Aufgabenbranch: `feature/design-startscreen-masterpiece-v1`
+- Feature-CI getestet: ja, #501 SUCCESS
+- PR: #68 gemergt
+- in `feature/gradecrew-app-integration` integriert: ja
+- Integrationscommit: `7f464085e89bdb3ea331dfbc988decfa83bc59f6`
+- Post-Merge CI: ja, #502 SUCCESS
+- Admin Controls Check: ja, #31 SUCCESS
+- Hosting Preview mit diesem Merge neu deployed: nein
+- Desktop Preview mit diesem Merge visuell bestätigt: nein
+- iPad bestätigt: nein
+- Smartphone bestätigt: nein
 - Production: UNVERÄNDERT
 
 ## Nächster Schritt
 
-1. Aktuellsten AI-Staging-Check vollständig grün abwarten.
-2. Bei Fehlern ausschließlich auf diesem Branch korrigieren.
-3. PR gegen `feature/gradecrew-app-integration` öffnen und nach grünem Gate integrieren.
-4. Hosting Preview `gradecrew-app-integration` neu deployen.
-5. Desktop, iPad und Smartphone mit dem echten ausgelieferten Build visuell prüfen.
-6. Nur echte Preview-Befunde in einen weiteren Feinschliff übernehmen.
+1. Cloud Shell auf `feature/gradecrew-app-integration` aktualisieren.
+2. vorhandenen Hosting-Preview-Channel neu deployen:
+   `bash deploy-app-integration-preview.sh --deploy`
+3. ausschließlich die ausgegebene Preview-Channel-URL öffnen.
+4. Desktop-Screenshot prüfen: Bühne, Header, Coco-Größe, Crew-Komposition, CTAs, Schülerleiste und Benefit-Bar.
+5. anschließend iPad und Smartphone prüfen.
+6. weitere Änderungen nur anhand echter Preview-Befunde; Production bleibt bis zur ausdrücklichen Freigabe unverändert.
