@@ -551,7 +551,8 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
-  const basePrompt = questionUserPrompt({ mediaKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
+  const audioKind = question?.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none";
+  const basePrompt = questionUserPrompt({ mediaKind, audioKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
   const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
@@ -560,13 +561,13 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let normalized, errors;
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
   const variantSchema = request.data?.variant && QUESTION_TYPES.includes(question.type)
-    ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind })
+    ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind })
     : questionSchema;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
-    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind });
+    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
     } else if (request.data?.requireDifferent) {
@@ -609,6 +610,12 @@ exports.generateQuestionAudio = onCall(callableOpts, async request => {
   }
   const script = String(request.data?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
   if (!script) throw new HttpsError("invalid-argument", "Hörtext fehlt.");
+  const quizSnap = await getFirestore().collection("quizzes").doc(quizId).get();
+  const quiz = quizSnap.data();
+  if (!quizSnap.exists || quiz?.ownerId !== uid || quiz?.rightsHold) throw new HttpsError("permission-denied", "Auf diesen Test kann nicht zugegriffen werden.");
+  if (quiz?.published === true && quiz?.ended !== true) throw new HttpsError("failed-precondition", "Audio kann während eines laufenden veröffentlichten Tests nicht verändert werden.");
+  const questionSnap = await getFirestore().collection("quizzes").doc(quizId).collection("questions").doc(questionId).get();
+  if (!questionSnap.exists) throw new HttpsError("not-found", "Aufgabe nicht gefunden.");
   try {
     return { asset: await createAudioAsset({ uid, questionId, script }) };
   } catch (err) {
