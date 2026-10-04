@@ -4,7 +4,7 @@
 - Datum: 04.10.2026.
 - Branch: fix/guardian-budget-pilot-v1 → main.
 - Geprüfte Controllerbasis: 14795f7a02aa797ea02854e077b7129340c9cdda.
-- Geprüfte Pilotquelle: feature/gradecrew-app-integration@7f464085e89bdb3ea331dfbc988decfa83bc59f6. Paralleler Startscreen-PR #68 ist bereits integriert; dieser Pilot verändert ausschließlich tutorial-choice-v1.css.
+- Geprüfte Pilotquelle: feature/gradecrew-app-integration@eb80c5e6a8b6c1ae13deba676709607bfccee208. Paralleler Startscreen-PR #68 ist bereits integriert; dieser Pilot verändert ausschließlich tutorial-choice-v1.css.
 - Überschneidungen: eigener Controller-Workstream; keine parallele offene Guardian-Code-PR gefunden. PR #65 dokumentiert künftige komplexe Planung/visuelle Audits und bleibt davon getrennt. Development Status 37193300739/Jobbericht gelesen; bestehende Branch-/Dateiüberschneidungen erhalten. Main-PR #67 betrifft getrennte Staging-Receipt-Rechte.
 
 ## Erledigt
@@ -28,3 +28,7 @@ Diese Sitzung besitzt kein gh/GitHub-Token und keinen der drei Providerkeys. Der
 
 Nach grüner CI Controller und Pilot auf main integrieren. Dann Eigentümer setzt die drei dedizierten Secrets über das verdeckte Setup und aktiviert Flags; das optionale Pilotargument fordert Aufnahme an. Admission muss aktuellen Quell-SHA bestätigen, andernfalls gezielt nachprüfen und neu pinnen, ohne alte Versuchshistorie zu löschen. Erst echte Provider/PR/CI/Reviews/Integration/Hosting-/Functions-Receipts bestätigen GC-AUTOMATION-07.
 Production nicht angefordert oder verändert. Kein API-Key oder Provider-/Cloud-Aufruf durch diesen Arbeitsblock.
+
+## Remote-Zwischenstand
+
+PR #71: erster Produktcode-Head bb7bf90998b49485bdb25b551e19f3a3f2583aa9. Guardian-CI 37194754582, Handoff 37194754569 und Development Status 37194754600 erfolgreich. Isolierte Gesamt-Rehearsal 37194754805 läuft noch; kein bezahlter E2E-Lauf. Nach parallelem Dokumentationsfortschritt des Web-Ziels wurde der Pilot auf eb80c5e6a8b6c1ae13deba676709607bfccee208 neu gepinnt; CSS-Blob unverändert 22bfd82f60b451f53008ceef201b6c0861e8e307. Neue Runs des finalen Heads separat prüfen.
