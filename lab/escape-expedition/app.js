@@ -135,8 +135,16 @@
       $('hintBtn').disabled = disabled;
       $('learningOptions').querySelectorAll('input').forEach(input => { input.disabled = disabled; });
     }
-    if (kind === 'winch') $('winchPullBtn').disabled = disabled;
-    if (kind === 'generator') document.querySelectorAll('#generatorButtons button').forEach(button => { button.disabled = disabled; });
+    if (kind === 'winch') {
+      $('winchPullBtn').disabled = disabled;
+      $('winchResetBtn').disabled = disabled;
+      $('winchExitBtn').disabled = disabled;
+    }
+    if (kind === 'generator') {
+      document.querySelectorAll('#generatorButtons button').forEach(button => { button.disabled = disabled; });
+      $('generatorResetBtn').disabled = disabled;
+      $('generatorExitBtn').disabled = disabled;
+    }
   }
 
   function beginResolvingAction(kind) {

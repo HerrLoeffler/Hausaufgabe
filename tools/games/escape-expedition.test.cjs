@@ -256,3 +256,13 @@ test('M1.5 modal recovery invalidates pending actions and can safely exit', () =
   assert.match(js, /generatorResetBtn/);
   assert.match(js, /generatorExitBtn/);
 });
+
+
+test('M1.5 recovery controls cannot interrupt an already resolving mechanic success', () => {
+  const start = js.indexOf('function setResolvingControls');
+  const end = js.indexOf('function beginResolvingAction', start);
+  const body = js.slice(start, end);
+  for (const id of ['winchResetBtn', 'winchExitBtn', 'generatorResetBtn', 'generatorExitBtn']) {
+    assert.match(body, new RegExp(id));
+  }
+});
