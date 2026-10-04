@@ -354,14 +354,23 @@ function injectLanguageControlStyles() {
   const style = document.createElement("style");
   style.dataset.gradecrewLanguageControl = "1";
   style.textContent = `
-    .gradecrewLanguageControl{display:inline-flex;align-items:center;gap:6px;margin-left:8px;white-space:nowrap}
+    .gradecrewLanguageControl{display:inline-flex;align-items:center;gap:6px;margin-left:0;white-space:nowrap;flex:0 0 auto}
     .gradecrewLanguageControl select{min-height:34px;border:1px solid rgba(100,116,139,.35);border-radius:10px;background:var(--gc-surface,#fff);color:inherit;padding:5px 8px;font:inherit;font-size:13px}
     .gradecrewLanguageControl .gcLanguageIcon{font-size:15px;line-height:1}
+    .topbar.gradecrewLanguageReady{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"brand nav language" "user user user";align-items:center}
+    .topbar.gradecrewLanguageReady>.brand{grid-area:brand}
+    .topbar.gradecrewLanguageReady>#gcPublicNav{grid-area:nav;min-width:0;justify-self:center;margin-inline:auto}
+    .topbar.gradecrewLanguageReady>#userBar{grid-area:user;justify-self:start;margin-left:0;max-width:100%}
+    .topbar.gradecrewLanguageReady>#gradecrewLanguageControl{grid-area:language;justify-self:end}
     .gcLanguageSettingsCard{grid-column:1/-1}
     .gcLanguageSettingsRow{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
     .gcLanguageSettingsRow p{margin:.35rem 0 0;max-width:680px}
     .gcLanguageSettingsRow label{min-width:180px}
-    @media(max-width:720px){.gradecrewLanguageControl{margin-left:4px}.gradecrewLanguageControl .gcLanguageIcon{display:none}.gradecrewLanguageControl select{max-width:92px;padding-inline:6px}}
+    @media(max-width:900px){
+      .topbar.gradecrewLanguageReady{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand language" "nav nav" "user user"}
+      .topbar.gradecrewLanguageReady>#gcPublicNav{justify-self:stretch;margin-inline:0}
+    }
+    @media(max-width:720px){.gradecrewLanguageControl .gcLanguageIcon{display:none}.gradecrewLanguageControl select{max-width:108px;padding-inline:6px}}
   `;
   document.head.appendChild(style);
 }
@@ -400,6 +409,7 @@ function ensureLanguageControls() {
   if (!globalThis.document) return;
   injectLanguageControlStyles();
   const header = document.querySelector(".topbar,.secureTopbar");
+  if (header) header.classList.add("gradecrewLanguageReady");
   if (header && !document.getElementById("gradecrewLanguageControl")) {
     const wrap = document.createElement("div");
     wrap.id = "gradecrewLanguageControl";
