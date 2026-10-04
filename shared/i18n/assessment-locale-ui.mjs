@@ -15,17 +15,62 @@ let editorLoadToken = 0;
 
 const $ = selector => document.querySelector(selector);
 
-function optionMarkup() {
-  return '<option value="de-DE">Deutsch (Deutschland)</option><option value="en-GB">English (UK)</option>';
+function currentUiLocale() {
+  return /^en(?:-|$)/i.test(String(window.GradeCrewI18n?.locale || "")) ? "en-GB" : "de-DE";
+}
+
+function uiText(german, english) {
+  return currentUiLocale() === "en-GB" ? english : german;
+}
+
+function localeFieldCopy() {
+  return currentUiLocale() === "en-GB"
+    ? {
+        label: "Test language",
+        german: "German (Germany)",
+        english: "English (UK)",
+        hint: "Sets the language of questions and solutions. The GradeCrew interface can independently be German or English.",
+      }
+    : {
+        label: "Testsprache",
+        german: "Deutsch (Deutschland)",
+        english: "English (UK)",
+        hint: "Legt die Sprache der Aufgaben und Lösungen fest. Die GradeCrew-Oberfläche kann unabhängig davon Deutsch oder Englisch sein.",
+      };
+}
+
+function optionMarkup(copy = localeFieldCopy()) {
+  return `<option value="de-DE">${copy.german}</option><option value="en-GB">${copy.english}</option>`;
 }
 
 function createLocaleField(id, hintId) {
+  const copy = localeFieldCopy();
   const label = document.createElement("label");
   label.className = "gradecrewAssessmentLocaleField span2";
-  label.innerHTML = `Testsprache
-    <select id="${id}" aria-describedby="${hintId}">${optionMarkup()}</select>
-    <small id="${hintId}" class="hint">Legt die Sprache der Aufgaben und Lösungen fest. Die GradeCrew-Oberfläche kann unabhängig davon Deutsch oder Englisch sein.</small>`;
+  label.dataset.gradecrewLocaleField = "1";
+  label.innerHTML = `<span class="gradecrewAssessmentLocaleLabel">${copy.label}</span>
+    <select id="${id}" aria-describedby="${hintId}">${optionMarkup(copy)}</select>
+    <small id="${hintId}" class="hint">${copy.hint}</small>`;
   return label;
+}
+
+function refreshLocaleFieldCopy() {
+  const copy = localeFieldCopy();
+  for (const field of document.querySelectorAll("[data-gradecrew-locale-field]")) {
+    const select = field.querySelector("select");
+    const value = select?.value;
+    const label = field.querySelector(".gradecrewAssessmentLocaleLabel");
+    const hint = field.querySelector(".hint");
+    if (label) label.textContent = copy.label;
+    if (select) {
+      const de = select.querySelector('option[value="de-DE"]');
+      const en = select.querySelector('option[value="en-GB"]');
+      if (de) de.textContent = copy.german;
+      if (en) en.textContent = copy.english;
+      if (value) select.value = value;
+    }
+    if (hint) hint.textContent = copy.hint;
+  }
 }
 
 function installStyles() {
@@ -66,9 +111,10 @@ function ensureEditorControl() {
   select.addEventListener("change", async () => {
     const next = normalizeAssessmentLocale(select.value);
     if (next === loadedEditorLocale) return;
-    const accepted = window.confirm(
-      "Testsprache ändern? Vorhandene Aufgaben und Lösungen werden nicht übersetzt. Die neue Sprache gilt für künftige KI-Erstellungen und Überarbeitungen dieses Tests."
-    );
+    const accepted = window.confirm(uiText(
+      "Testsprache ändern? Vorhandene Aufgaben und Lösungen werden nicht übersetzt. Die neue Sprache gilt für künftige KI-Erstellungen und Überarbeitungen dieses Tests.",
+      "Change test language? Existing questions and solutions will not be translated. The new language applies to future AI generation and revisions for this test."
+    ));
     if (!accepted) {
       select.value = loadedEditorLocale;
       return;
@@ -84,7 +130,10 @@ function ensureEditorControl() {
       }, { merge: true });
     } catch (error) {
       console.warn("Testsprache konnte nicht gespeichert werden:", error);
-      window.alert("Die Testsprache konnte nicht gespeichert werden. Bitte erneut versuchen.");
+      window.alert(uiText(
+        "Die Testsprache konnte nicht gespeichert werden. Bitte erneut versuchen.",
+        "The test language could not be saved. Please try again."
+      ));
     }
   });
 }
@@ -165,6 +214,8 @@ function install() {
   ensureAiControl();
   ensureEditorControl();
   observeEditorQuiz();
+  window.addEventListener("gradecrew:ui-locale-changed", refreshLocaleFieldCopy);
+  refreshLocaleFieldCopy();
   window.GradeCrewAssessmentLocale = Object.freeze({
     defaultContentLocale: DEFAULT_CONTENT_LOCALE,
     supportedContentLocales: [...SUPPORTED_CONTENT_LOCALES],
