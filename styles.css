@@ -301,3 +301,45 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 
 
 .adminDiagnosticFilters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}.errorResolution label{display:grid;gap:6px;margin:12px 0}.errorResolution textarea{min-height:80px}.errorResolution code{overflow-wrap:anywhere}.supportStack{white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto}
+
+
+/* Listening tasks / Audio V1 */
+.questionAudioEditor{margin:12px 0 16px}
+.questionAudioPanel{
+  border:1px solid #dbe4f2;
+  border-radius:14px;
+  background:#fbfdff;
+  overflow:hidden;
+}
+.questionAudioPanel>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 13px;
+  cursor:pointer;
+  font-weight:750;
+}
+.questionAudioPanel>summary small{font-weight:500;color:#667085}
+.questionAudioState{font-size:12px;color:#2457bd}
+.questionAudioBody{display:grid;gap:10px;padding:0 13px 13px}
+.questionAudioBody textarea{width:100%;resize:vertical}
+.questionAudioPreview{display:grid;gap:6px}
+.questionAudioPreview audio{width:100%;max-width:620px}
+.questionAudioActions{display:flex;gap:8px;flex-wrap:wrap}
+.questionAudioDisclosure{color:#667085;font-size:12px;line-height:1.4}
+.studentQuestionAudio{
+  display:grid;
+  gap:8px;
+  margin:14px 0 18px;
+  padding:12px 14px;
+  border:1px solid #d9e2f2;
+  border-radius:14px;
+  background:#f8fbff;
+}
+.studentQuestionAudio audio{width:100%;max-width:560px}
+.studentQuestionAudio small{font-size:12px;color:#667085}
+@media (max-width:640px){
+  .questionAudioPanel>summary{align-items:flex-start}
+  .questionAudioBody{padding-inline:10px}
+}
