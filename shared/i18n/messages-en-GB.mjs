@@ -563,6 +563,7 @@ export const enGBMessages = Object.freeze({
     "Abgabe nicht gespeichert": "Submission not saved",
     "Antworten erneut abgeben": "Submit answers again",
     "Alles bearbeitet. Test jetzt endgültig abgeben?": "Everything is complete. Submit the test now?",
+    "Alles bearbeitet. Vorschau jetzt auswerten?": "Everything is complete. Evaluate the preview now?",
     "Vorschau als Schüler": "Student preview",
     "In dieser Vorschau werden Antworten und Ergebnisse nicht gespeichert.": "Answers and results are not saved in this preview.",
     "Vorschau auswerten": "Evaluate preview",
@@ -608,5 +609,7 @@ export const enGBSourcePatterns = Object.freeze([
   { pattern: /^(\d+) von (\d+)$/, replacement: "$1 of $2" },
   { pattern: /^(\d+) Aufgabe ist noch offen\. Trotzdem endgültig abgeben\?$/, replacement: "$1 question is still unanswered. Submit anyway?" },
   { pattern: /^(\d+) Aufgaben sind noch offen\. Trotzdem endgültig abgeben\?$/, replacement: "$1 questions are still unanswered. Submit anyway?" },
+  { pattern: /^(\d+) Aufgabe ist noch offen\. Vorschau trotzdem auswerten\?$/, replacement: "$1 question is still unanswered. Evaluate the preview anyway?" },
+  { pattern: /^(\d+) Aufgaben sind noch offen\. Vorschau trotzdem auswerten\?$/, replacement: "$1 questions are still unanswered. Evaluate the preview anyway?" },
   { pattern: /^Fehlerkennung: (.+)$/, replacement: "Error reference: $1" },
 ]);
