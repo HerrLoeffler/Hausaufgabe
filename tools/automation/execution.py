@@ -96,10 +96,7 @@ def prepare(request_id):
     for name in list(dict.fromkeys(task['allowed_files'] + task.get('context_files', []))):
         entry = paths.get(name)
         if entry is None:
-            if name in task.get('context_files', []):
-                raise ValueError('Context file missing')
-            source[name] = None
-            continue
+            raise ValueError('V2 admits existing delivered modules only; new module needs explicit build integration: ' + name)
         if entry['mode'] != '100644' or entry['type'] != 'blob' or entry.get('size', 0) > 80000:
             raise ValueError('Non-text or oversized source')
         source[name] = base64.b64decode(api('git/blobs/' + entry['sha'])['content']).decode('utf-8')
@@ -152,6 +149,7 @@ def build():
     changed = [f for f in candidate['candidate']['files'] if contract['source'].get(f['path']) != f['content']]
     if not changed:
         raise ValueError('No actual change to publish')
+    candidate = candidate_contract({'summary': result['summary'], 'files': changed}, contract['task'], contract['requestId'])
     if contract.get('previousCandidate') and all(contract['previousCandidate'].get(f['path']) == f['content'] for f in candidate['candidate']['files']):
         raise ValueError('Repair repeats rejected code; do not pay for duplicate reviews')
     save('candidate', candidate)
@@ -182,7 +180,8 @@ def publish():
                 'Request: `' + contract['requestId'] + '`\nBase: `' + task['base_sha'] + '`\n'
                 'Task hash: `' + digest(task) + '`\nNo Production authority.'})
     publication = {'head': commit['sha'], 'base': task['base_sha'], 'tree': tree['sha'], 'branch': branch,
-                   'pr': pr['number'], 'candidateHash': candidate['candidateHash'], 'requestId': contract['requestId']}
+                   'pr': pr['number'], 'candidateHash': candidate['candidateHash'], 'requestId': contract['requestId'],
+                   'changedFiles': sorted(f['path'] for f in candidate['candidate']['files'])}
     save('publication', publication)
     ledger, blob, _, attempt = active_attempt(contract['requestId'])
     attempt['publication'] = publication
@@ -201,7 +200,8 @@ def review(role):
         raise ValueError('Review contract permission changed before paid call')
     if api('git/ref/heads/' + WEB)['object']['sha'] != task['base_sha'] or api('git/ref/heads/' + publication['branch'])['object']['sha'] != publication['head']:
         raise ValueError('Target or candidate moved before paid review')
-    if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': publication['base'], 'result': 'success'}:
+    if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': publication['base'], 'result': 'success',
+                 'packagedFiles': sorted(publication['changedFiles'])}:
         raise ValueError('No paid review before passing tests')
     binding = {**publication, 'allowed_files': contract['task']['allowed_files']}
     context = {'task': contract['task'], 'originalSource': contract['source'], 'proposedFiles': candidate['candidate']['files'],
@@ -265,7 +265,7 @@ def finalize(request_id):
     if validation == 'failure' and tests.get('result') == 'failure':
         details = load('test-feedback') if (DATA / 'test-feedback.json').exists() else {}
         feedback.append({'kind': 'tests', 'message': 'Combined CI failed; Actions run ' + str(attempt['runId']),
-                         'details': str(details.get('tail', ''))[-6000:]})
+                         'details': '\n'.join(part for part in (str(details.get('packaging', ''))[:1000], str(details.get('tail', ''))[-5000:]) if part)})
     for role in ('correctness', 'security'):
         if (DATA / (role + '.json')).exists():
             evidence = load(role)

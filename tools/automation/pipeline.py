@@ -39,7 +39,7 @@ def digest(value):
 def control_hash(root):
     """Documentation-only main commits do not invalidate an in-flight task."""
     names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py',
-             'deployment_evidence.py', 'validation_report.py', 'validate-web.sh']
+             'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh']
     files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
     for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml']:
         files[name] = (Path(root)/'.github/workflows'/name).read_text()
@@ -150,7 +150,8 @@ def integration_gate(task, publication, tests, reviews, current_base, current_he
     if current_base != task['base_sha'] or current_head != publication['head']:
         raise ValueError('Branch moved; never overwrite parallel work')
     binding = {**publication, 'allowed_files': task['allowed_files']}
-    if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': task['base_sha'], 'result': 'success'}:
+    if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': task['base_sha'], 'result': 'success',
+                 'packagedFiles': sorted(publication['changedFiles'])}:
         raise ValueError('Exact candidate validation required')
     if set(reviews) != {'correctness', 'security'}:
         raise ValueError('Both independent reviewers required')

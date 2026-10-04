@@ -57,12 +57,17 @@ jobs:
           sudo chmod 0755 "$validation_root"
           sudo -u gradecrew-validator env -i PATH="$PATH" HOME="$validation_root/home" JAVA_HOME="$JAVA_HOME" CI=true \
             /usr/bin/bash -c 'cd "$1"; exec /usr/bin/bash "$2"' validator "$validation_root/source" "$validation_root/validate-web.sh" > ../validation.log 2>&1
+      - name: Build original immutable candidate for changed-file delivery proof
+        id: package
+        run: node source/tools/build-staging.mjs "$RUNNER_TEMP/guardian-package"
       - name: Bind actual result to candidate commit and direct parent
         if: always()
         env:
           TEST_RESULT: ${{ steps.tests.outcome }}
           EXPECTED_HEAD: ${{ inputs.head }}
           REHEARSAL: ${{ inputs.rehearsal }}
+          PACKAGE_RESULT: ${{ steps.package.outcome }}
+          PACKAGED_PUBLIC: ${{ runner.temp }}/guardian-package/public
         run: |
           mkdir -p evidence
           python3 control/tools/automation/validation_report.py

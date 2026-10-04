@@ -12,6 +12,7 @@ from unittest.mock import patch
 from tools.automation import pipeline as p, execution as e, continuation as c, model_calls as m, deployment_evidence as d
 from tools.automation import guardian as g
 from tools.automation import admit as admission
+from tools.automation import delivery
 FRESH_DOCUMENTS = e.fresh_documents
 
 A, B, C = 'a'*40, 'b'*40, 'c'*40
@@ -20,8 +21,8 @@ TASK = {'id': 'pilot-ui', 'base_sha': A, 'base_branch': p.WEB, 'risk': 'web-ui',
         'allowed_files': ['coach.js'], 'context_files': ['coach.css'], 'validation_profile': 'web-combined-v1', 'max_cost_usd': 16.5}
 ROW = {'id': 'pilot', 'enabled': True, 'baseBranch': p.WEB, 'approvedSha': A, 'taskId': TASK['id'],
        'maxAutomaticStage': 'staging_deployed', 'execution': 'pipeline-v2'}
-PUB = {'head': B, 'base': A, 'tree': C, 'candidateHash': 'd'*64, 'branch': 'automation/worker/pilot-ui/run-1', 'pr': 55, 'requestId': 'run-1'}
-TESTS = {'profile': 'web-combined-v1', 'head': B, 'base': A, 'result': 'success'}
+PUB = {'head': B, 'base': A, 'tree': C, 'candidateHash': 'd'*64, 'branch': 'automation/worker/pilot-ui/run-1', 'pr': 55, 'requestId': 'run-1', 'changedFiles':['coach.js']}
+TESTS = {'profile': 'web-combined-v1', 'head': B, 'base': A, 'result': 'success', 'packagedFiles':['coach.js']}
 ATTEMPT = {'requestId': 'run-1', 'execution': 'pipeline-v2', 'taskId': TASK['id'], 'taskHash': p.digest(TASK),
            'approvedSha': A, 'controlSha': C, 'controlHash': 'h'*64, 'state': 'running', 'runId': 9, 'publication': PUB}
 
@@ -35,6 +36,13 @@ def review(role, verdict='approve'):
 
 
 class ContractTests(unittest.TestCase):
+    def test_old_or_incomplete_package_proof_cannot_authorize_integration(self):
+        reviews={role:review(role) for role in ('correctness','security')}
+        for proof in [[],['other.js']]:
+            with self.assertRaises(ValueError):p.integration_gate(TASK,PUB,TESTS|{'packagedFiles':proof},reviews,A,B)
+        old={k:v for k,v in TESTS.items() if k!='packagedFiles'}
+        with self.assertRaises(ValueError):p.integration_gate(TASK,PUB,old,reviews,A,B)
+
     def test_documentation_changes_preserve_control_version_but_code_changes_do_not(self):
         root=Path(__file__).resolve().parents[2]
         original=p.control_hash(root)
@@ -42,7 +50,7 @@ class ContractTests(unittest.TestCase):
             mirror=Path(directory)
             for subpath in ['tools/automation', '.github/workflows']:
                 (mirror/subpath).mkdir(parents=True,exist_ok=True)
-            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','deployment_evidence.py','validation_report.py','validate-web.sh']
+            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh']
             for name in names:(mirror/'tools/automation'/name).write_text((root/'tools/automation'/name).read_text())
             for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml']:
                 (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())
@@ -291,6 +299,15 @@ class ExecutionTests(unittest.TestCase):
         latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
         self.assertEqual(latest['state'],'repairable');self.assertEqual(latest['feedback'][0]['details'],'assertion failed')
 
+    def test_syntax_failure_diagnostic_survives_a_long_green_validation_log(self):
+        e.save('tests',TESTS|{'result':'failure'})
+        e.save('test-feedback',{'packaging':'Changed JavaScript syntax invalid: coach.js','tail':'green tests '*1000})
+        with patch.dict(os.environ,{'VALIDATION_RESULT':'failure','REVIEW_RESULT':'skipped'}):e.finalize('run-1')
+        latest=self.ledger['attempts']['pilot:pipeline-v2'][0]
+        self.assertEqual(latest['state'],'repairable')
+        self.assertTrue(latest['feedback'][0]['details'].startswith('Changed JavaScript syntax invalid: coach.js'))
+        self.assertLessEqual(len(latest['feedback'][0]['details']),6001)
+
     def test_ledger_is_reserved_before_source_or_paid_call(self):
         self.ledger['attempts']['pilot:pipeline-v2'][0].update(state='dispatched',runId=None)
         def api(path,method='GET',body=None):
@@ -332,7 +349,7 @@ class ExecutionTests(unittest.TestCase):
         with patch.object(e,'api',side_effect=api),patch.object(e,'call',side_effect=model):
             e.prepare('run-1');e.build();e.publish()
             publication=e.load('publication')
-            e.save('tests',{'profile':'web-combined-v1','head':B,'base':A,'result':'success'})
+            e.save('tests',{'profile':'web-combined-v1','head':B,'base':A,'result':'success','packagedFiles':['coach.js']})
             e.review('correctness');e.review('security');e.integrate();e.finalize('run-1')
         self.assertEqual(roles,['build','correctness','security'])
         self.assertEqual(current,B)
@@ -413,6 +430,83 @@ class AdmissionTests(unittest.TestCase):
         with patch.dict(os.environ,{'GITHUB_REPOSITORY':g.REPO,'GITHUB_REF':'refs/heads/main','WORKER_KEY_PRESENT':'false'}),patch.object(admission,'api') as api:
             with self.assertRaisesRegex(ValueError,'credentials'):admission.main()
             self.assertFalse(api.called)
+
+
+class DeliveryTests(unittest.TestCase):
+    def setUp(self):
+        import hashlib
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.public=Path(self.temp.name)/'public';self.public.mkdir()
+        (self.public/'coach.js').write_text('export const next = true;')
+        self.release={'project':'hausaufgabe-staging','commit':B,'files':{'coach.js':hashlib.sha256((self.public/'coach.js').read_bytes()).hexdigest()}}
+
+    def test_changed_file_is_physically_present_and_hash_bound_to_package(self):
+        self.assertEqual(delivery.verify_packaging(self.release,B,['coach.js'],self.public),['coach.js'])
+
+    def test_git_file_omitted_by_hosting_builder_cannot_count_as_delivered(self):
+        (self.public/'ignored.js').write_text('source exists somewhere')
+        with self.assertRaisesRegex(ValueError,'not published'):delivery.verify_packaging(self.release,B,['ignored.js'],self.public)
+
+    def test_manifest_entry_without_actual_file_or_with_bad_bytes_blocks(self):
+        with self.assertRaises(ValueError):delivery.verify_packaging(self.release|{'files':{'missing.js':'a'*64}},B,['missing.js'],self.public)
+        with self.assertRaises(ValueError):delivery.verify_packaging(self.release|{'files':{'coach.js':'a'*64}},B,['coach.js'],self.public)
+
+    def test_other_commit_or_project_or_empty_proof_cannot_be_reused(self):
+        for update in [{'commit':A},{'project':'hausaufgabe-40294'}]:
+            with self.assertRaises(ValueError):delivery.verify_packaging(self.release|update,B,['coach.js'],self.public)
+        with self.assertRaises(ValueError):delivery.verify_packaging(self.release,B,[],self.public)
+
+    def test_symlink_or_traversal_never_qualifies_as_packaged_file(self):
+        outside=Path(self.temp.name)/'outside.js';outside.write_text('outside')
+        (self.public/'link.js').symlink_to(outside)
+        with self.assertRaises(ValueError):delivery.verify_packaging(self.release|{'files':{'link.js':'a'*64}},B,['link.js'],self.public)
+        with self.assertRaises(ValueError):delivery.verify_packaging(self.release,B,['../outside.js'],self.public)
+
+
+class ValidationReportTests(unittest.TestCase):
+    def run_report(self, *, packaged=True, package_result='success', code='export const next = true;', rehearsal=False):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'source';source.mkdir();(root/'evidence').mkdir()
+            def git(*args):
+                return subprocess.check_output(['git',*args],cwd=source,stderr=subprocess.DEVNULL,text=True).strip()
+            git('init');git('config','user.name','Test');git('config','user.email','test@example.invalid')
+            (source/'coach.js').write_text('export const next = false;');git('add','.');git('commit','-m','base')
+            base=git('rev-parse','HEAD')
+            (source/'coach.js').write_text(code);git('commit','-am','candidate');head=git('rev-parse','HEAD')
+            public=root/'public';public.mkdir();(public/'coach.js').write_text(code)
+            files={'coach.js':hashlib.sha256(code.encode()).hexdigest()} if packaged else {}
+            (public/'release.json').write_text(json.dumps({'project':'hausaufgabe-staging','commit':head,'files':files}))
+            env=os.environ|{'EXPECTED_HEAD':head,'TEST_RESULT':'success','PACKAGE_RESULT':package_result,
+                            'PACKAGED_PUBLIC':str(public),'REHEARSAL':str(rehearsal).lower()}
+            proc=subprocess.run(['python3',str(Path(__file__).with_name('validation_report.py'))],cwd=root,env=env,capture_output=True,text=True)
+            return proc.returncode,json.loads((root/'evidence/tests.json').read_text()),json.loads((root/'evidence/test-feedback.json').read_text()),base,head
+
+    def test_real_git_candidate_and_physical_package_create_exact_bound_report(self):
+        status,report,feedback,base,head=self.run_report()
+        self.assertEqual(status,0)
+        self.assertEqual(report,{'profile':'web-combined-v1','head':head,'base':base,'result':'success','packagedFiles':['coach.js']})
+        self.assertEqual(feedback['packaging'],'')
+
+    def test_actual_report_blocks_phantom_file_despite_successful_tests(self):
+        status,report,feedback,_,_=self.run_report(packaged=False)
+        self.assertNotEqual(status,0);self.assertEqual(report['result'],'blocked')
+        self.assertIn('not published',feedback['packaging'])
+
+    def test_missing_packaging_step_is_not_silently_accepted(self):
+        status,report,feedback,_,_=self.run_report(package_result='skipped')
+        self.assertNotEqual(status,0);self.assertEqual(report['packagedFiles'],[])
+        self.assertIn('did not complete',feedback['packaging'])
+
+    def test_invalid_changed_javascript_cannot_use_other_green_tests(self):
+        status,report,feedback,_,_=self.run_report(code='export const next = ;')
+        self.assertNotEqual(status,0);self.assertEqual(report['result'],'failure')
+        self.assertIn('syntax invalid',feedback['packaging'])
+
+    def test_rehearsal_never_creates_task_promotion_proof(self):
+        status,report,_,_,_=self.run_report(rehearsal=True)
+        self.assertEqual(status,0);self.assertEqual(report['profile'],'web-rehearsal-v1')
+        self.assertEqual(report['packagedFiles'],[])
 
 
 if __name__=='__main__':unittest.main()
