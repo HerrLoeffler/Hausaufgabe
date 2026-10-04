@@ -115,8 +115,8 @@ function normalizeLocale(value = "de-DE") {
 }
 
 const PARSER_VERSION = "remy-structure-v4-audio";
-const INITIAL_EASY = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)\b[^.!?]{0,50}?\b(?:leicht|einfach)\b/i;
-const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?)\s+(?:(?:zu|so)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt)\b/gi;
+const INITIAL_EASY = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)|(?:the\s+)?(?:first\s+(?:questions?|tasks?)|at\s+the\s+beginning|initially))\b[^.!?]{0,50}?\b(?:leicht|einfach|easy|simple)\b/i;
+const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?|not|no)\s+(?:(?:zu|so|too)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt|easy|simple|hard|difficult|challenging|medium|mixed)\b/gi;
 
 function normalizeText(value = "") {
   return String(value)
@@ -145,28 +145,28 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
-    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?)).*$/i, "")
-    .replace(/\s+(?:mit|ohne)\s+(?=(?:single|multiple|freitext|offene|dropdown|richtig|lücken|luecken|zuord|sortier|reihenfolge|gruppier|kategorien|wörter|woerter|markier|rechen|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)|\d+\s*(?:aufgaben?|fragen?|punkte?|minuten?))).*$/i, "")
-    .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst)\s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?)\s+(?:aufgaben?|fragen?)\b).*$/i, "")
-    .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?|aufgaben?|fragen?)\b).*$/i, "")
-    .replace(/[,;\s]+(?:keine?|ohne)\s+(?:freitext(?:aufgaben?|fragen?)?|offene[nr]?\s+fragen?)\b.*$/i, "")
-    .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?)\s+(?:text|texte|aufgaben?|fragen?)\b).*$/i, "")
-    .replace(/\s+(?=(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b).*$/i, "")
-    .replace(/\s+(?=(?:davon\s+)?\d+\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b).*$/i, "")
-    .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
-    .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)\s*$/i, "")
+    .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?)|(?:mit|ohne|with|without)\b).*$/i, "")
+    .replace(/\s+(?:mit|ohne|with|without)\s+(?=(?:single|multiple|freitext|offene|free|open|dropdown|richtig|true|lücken|luecken|gap|zuord|matching|sortier|ordering|reihenfolge|gruppier|grouping|kategorien|categories|wörter|woerter|markier|mark words|rechen|numeric|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?))).*$/i, "")
+    .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst|mainly|mostly|please)s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?|easy|simple|medium|challenging|hard|mixed)\s+(?:aufgaben?|fragen?|questions?|tasks?)\b).*$/i, "")
+    .replace(/\s+(?=(?:viele[nr]?|wenige[nr]?|many|several|few)\s+(?:alltagsbeispiele?|beispiele?|texte?|rechenaufgaben?|sachaufgaben?|aufgaben?|fragen?|real[- ]life examples?|examples?|texts?|questions?|tasks?)\b).*$/i, "")
+    .replace(/[,;\s]+(?:(?:keine?|ohne)\s+(?:freitext(?:aufgaben?|fragen?)?|offene[nr]?\s+fragen?)|(?:no|without)\s+(?:free[ -]?text|open questions?))\b.*$/i, "")
+    .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?|little|short|clear)\s+(?:text|texte|aufgaben?|fragen?|questions?|tasks?)\b).*$/i, "")
+    .replace(/\s+(?=(?:(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)|(?:no|without)\s+trick questions?)\b).*$/i, "")
+    .replace(/\s+(?=(?:(?:davon\s+)?\d+\s*(?:hör|hoer)(?:aufgaben?|fragen?)|\d+\s*(?:listening|audio)\s+(?:questions?|tasks?))\b).*$/i, "")
+    .replace(/\b(?:mit|und|with|and)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|points?|aufgaben?|questions?|tasks?|minuten?|minutes?).*$/i, "")
+    .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)\s*$/i, "")
     .replace(/[\s,;]+$/g, "")
     .slice(0, 220);
 }
 
 function extractTopic(text) {
   const candidates = [
-    /\bthema\s*[:=-]?\s*([^.!?]+)/i,
-    /\b(?:über|ueber)\s+([^.!?]+)/i,
-    /\b(?:klasse|jahrgang(?:sstufe)?)\s*\d{1,2}\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
-    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b[^.!?]*?\b(?:für|fuer)\s+([^.!?]+)/i,
-    /\b(?:klasse|jahrgang(?:sstufe)?)\s*\d{1,2}\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|punkte?)\b|$)/i,
-    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?)\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|punkte?)\b|$)/i,
+    /\b(?:thema|topic)\s*[:=-]?\s*([^.!?]+)/i,
+    /\b(?:über|ueber|about|on)\s+([^.!?]+)/i,
+    /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*\d{1,2}\b[^.!?]*?\b(?:für|fuer|about|on)\s+([^.!?]+)/i,
+    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?|year|grade)\b[^.!?]*?\b(?:für|fuer|about|on)\s+([^.!?]+)/i,
+    /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*\d{1,2}\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?)\b|$)/i,
+    /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?|year|grade)\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?)\b|$)/i,
     /\bzu\s+(?!der\s+\d|den\s+\d|einer?\s+\d)([^.!?]+)/i
   ];
   for (const pattern of candidates) {
@@ -176,12 +176,12 @@ function extractTopic(text) {
       if (topic) return topic;
     }
   }
-  const forMatches = [...text.matchAll(/\b(?:für|fuer)\s+([^.!?]+)/gi)];
+  const forMatches = [...text.matchAll(/\b(?:für|fuer|for)\s+([^.!?]+)/gi)];
   for (let index = forMatches.length - 1; index >= 0; index -= 1) {
     const raw = forMatches[index][1];
-    if (/^(?:die|den|der)?\s*\d+\.?\s*(?:klasse|jahrgang)/i.test(raw)) continue;
+    if (/^(?:die|den|der)?\s*(?:year\s*)?\d+\.?\s*(?:klasse|jahrgang|year|grade)?/i.test(raw)) continue;
     const topic = cleanTopic(raw);
-    if (topic && !/^(?:mich|uns|meine|einen?\s+test)/i.test(topic)) return topic;
+    if (topic && !/^(?:mich|uns|meine|einen?\s+test|me|us|my|a\s+test)/i.test(topic)) return topic;
   }
   return undefined;
 }
@@ -192,28 +192,25 @@ function extractNotes(text) {
     const value = normalizeText(note).replace(/[\s,;:.]+$/g, "");
     if (!value) return;
     const sentence = `${value.charAt(0).toUpperCase()}${value.slice(1)}.`;
-    if (!notes.some(existing => existing.toLocaleLowerCase("de-DE") === sentence.toLocaleLowerCase("de-DE"))) notes.push(sentence);
+    if (!notes.some(existing => existing.toLocaleLowerCase() === sentence.toLocaleLowerCase())) notes.push(sentence);
   };
 
-  const progression = /\b(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst)\b[^.!?]{0,80}\b(?:leicht|einfach)\b[^.!?]{0,100}\b(?:danach|später|spaeter|anschließend|anschliessend)\b[^.!?]{0,80}\b(?:schwer|schwieriger|anspruchsvoll)/i.test(text);
+  const progression = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|erst).*?(?:leicht|einfach).*?(?:danach|später|spaeter|anschließend|anschliessend).*?(?:schwer|schwieriger|anspruchsvoll)|(?:start|begin|first).*?(?:easy|simple).*?(?:then|later|afterwards).*?(?:harder|challenging|difficult))\b/i.test(text);
   if (progression) add("Zuerst leichte Aufgaben, danach anspruchsvollere Aufgaben");
   else if (INITIAL_EASY.test(text)) add("Die ersten Aufgaben leicht gestalten");
   for (const match of text.matchAll(NEGATED_DIFFICULTY)) add(match[0]);
 
-  if (/\b(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+)?(?:einfache|leichte)\s+aufgaben\b[^.!?]{0,35}\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\b/i.test(text) ||
-      /\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+(?:einfache|leichte)\s+aufgaben\b/i.test(text)) {
-    add("Vor allem einfache Aufgaben");
-  }
-  if (/\b(?:viele|mehrere)\s+alltagsbeispiele\b/i.test(text)) add("Viele Alltagsbeispiele");
-  if (/\b(?:wenig|möglichst\s+wenig|moeglichst\s+wenig)\s+text\b/i.test(text)) add("Wenig Text");
-  if (/\b(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b/i.test(text)) add("Keine Fangfragen");
-  if (/\b(?:kurze|knappe)\s+(?:aufgaben|fragen|texte)\b/i.test(text)) add("Kurze Aufgaben");
-  if (/\b(?:klare|eindeutige|verständliche|verstaendliche)\s+(?:aufgaben|fragen|sprache)\b/i.test(text)) add("Klare, verständliche Formulierungen");
-  if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich)\s+rechenaufgaben\b/i.test(text)) add("Vor allem Rechenaufgaben");
-  if (/\b(?:viele|mehr)\s+sachaufgaben\b/i.test(text)) add("Viele Sachaufgaben");
-  if (/\bviele\s+aufgaben\b/i.test(text) && !/\b\d{1,3}\s+aufgaben\b/i.test(text)) add("Viele Aufgaben");
+  if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|mainly|mostly)\s+(?:einfache|leichte|easy|simple)\s+(?:aufgaben|questions|tasks)\b/i.test(text)) add("Vor allem einfache Aufgaben");
+  if (/\b(?:(?:viele|mehrere)\s+alltagsbeispiele|(?:many|several)\s+real[- ]life examples?)\b/i.test(text)) add("Viele Alltagsbeispiele");
+  if (/\b(?:(?:wenig|möglichst\s+wenig|moeglichst\s+wenig)\s+text|(?:little|minimal)\s+text)\b/i.test(text)) add("Wenig Text");
+  if (/\b(?:(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)|(?:no|without)\s+trick questions?)\b/i.test(text)) add("Keine Fangfragen");
+  if (/\b(?:kurze|knappe|short|concise)\s+(?:aufgaben|fragen|texte|questions|tasks|texts)\b/i.test(text)) add("Kurze Aufgaben");
+  if (/\b(?:klare|eindeutige|verständliche|verstaendliche|clear|unambiguous)\s+(?:aufgaben|fragen|sprache|questions|tasks|language)\b/i.test(text)) add("Klare, verständliche Formulierungen");
+  if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|mainly|mostly)\s+(?:rechenaufgaben|calculation questions?|calculation tasks?)\b/i.test(text)) add("Vor allem Rechenaufgaben");
+  if (/\b(?:(?:viele|mehr)\s+sachaufgaben|(?:many|more)\s+word problems?)\b/i.test(text)) add("Viele Sachaufgaben");
+  if (/\b(?:viele\s+aufgaben|many\s+(?:questions|tasks))\b/i.test(text) && !/\b\d{1,3}\s+(?:aufgaben|questions|tasks)\b/i.test(text)) add("Viele Aufgaben");
 
-  const explicit = text.match(/\b(?:eigene\s+)?wünsche?\s*[:=-]\s*([^.!?]+)/i);
+  const explicit = text.match(/\b(?:(?:eigene\s+)?wünsche?|requests?|additional requests?|notes?)\s*[:=-]\s*([^.!?]+)/i);
   if (explicit?.[1]) add(explicit[1].slice(0, 500));
 
   return notes.join(" ").slice(0, 1000) || undefined;
