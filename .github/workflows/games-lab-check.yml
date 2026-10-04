@@ -6,12 +6,19 @@ on:
   pull_request:
     paths:
       - 'lab/**'
+      - '!lab/escape-expedition/**'
       - 'tools/build-lab-*.mjs'
+      - '!tools/build-lab-escape-expedition.mjs'
       - 'tools/games/**'
+      - '!tools/games/escape-expedition.test.cjs'
       - 'deploy-lab-games-hub.sh'
       - 'cloud-shell-bootstrap.sh'
       - '.github/workflows/games-lab-check.yml'
   workflow_dispatch:
+
+concurrency:
+  group: games-lab-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
