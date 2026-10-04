@@ -40,6 +40,12 @@ test("assessment and grading locale snapshots can intentionally diverge", () => 
   assert.equal(independent.gradingLocale, "de-DE");
 });
 
+test("unsupported grading locale falls back to the fixed assessment content locale, never the UI locale", () => {
+  const snapshot = assessmentLocaleSnapshot("en-GB", "fr-FR");
+  assert.equal(snapshot.contentLocale, "en-GB");
+  assert.equal(snapshot.gradingLocale, "en-GB");
+});
+
 test("content language instruction changes student-facing output language without changing enums", () => {
   const english = contentLanguageInstruction("en-GB");
   assert.match(english, /British English/);
