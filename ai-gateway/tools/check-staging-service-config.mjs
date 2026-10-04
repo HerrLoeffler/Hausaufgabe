@@ -49,10 +49,12 @@ export function inspectStagingServiceConfig(service, {
   if (!serviceUrl) errors.push('Cloud Run service URL is missing.');
 
   const traffic = Array.isArray(service?.status?.traffic) ? service.status.traffic : [];
-  const activeTraffic = traffic.find(item => Number(item?.percent || 0) === 100 && !String(item?.tag || ''));
-  const previousRevision = String(activeTraffic?.revisionName || '');
+  const routedTraffic = traffic.filter(item => Number(item?.percent || 0) > 0 && String(item?.revisionName || ''));
+  const routedRevisions = [...new Set(routedTraffic.map(item => String(item.revisionName)))];
+  const routedPercent = routedTraffic.reduce((sum, item) => sum + Number(item.percent || 0), 0);
+  const previousRevision = routedPercent === 100 && routedRevisions.length === 1 ? routedRevisions[0] : '';
   if (!previousRevision) {
-    errors.push('No untagged Cloud Run revision currently owns 100% of normal traffic.');
+    errors.push('Normal Cloud Run traffic must resolve 100% to exactly one revision.');
   }
 
   return {

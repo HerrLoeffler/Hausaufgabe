@@ -6,16 +6,18 @@ const {
   anthropicConfigured, readAnthropicConfig,
   openaiConfigured, readOpenAIConfig,
   geminiConfigured, readGeminiConfig,
+  mistralConfigured, readMistralConfig,
 } = require('./lib/config');
 const { createAnthropicWifTokenProvider } = require('./lib/anthropic-wif');
 const { createGoogleAccessTokenProvider } = require('./lib/google-access-token');
 const { createAnthropicProvider } = require('./lib/providers/anthropic');
 const { createOpenAIProvider } = require('./lib/providers/openai');
 const { createGeminiProvider } = require('./lib/providers/gemini');
+const { createMistralProvider } = require('./lib/providers/mistral');
 const { JOB_KINDS, createProviderRouter } = require('./lib/router');
 
 const SERVICE = 'gradecrew-ai-gateway';
-const VERSION = '0.3.0';
+const VERSION = '0.4.0';
 const MAX_BODY_BYTES = 256 * 1024;
 const REQUEST_TIMEOUT_MS = 60_000;
 
@@ -60,7 +62,7 @@ function safeErrorMessage(error) {
 
 function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
   const providers = [];
-  const status = { anthropic: 'unconfigured', openai: 'unconfigured', gemini: 'unconfigured' };
+  const status = { anthropic: 'unconfigured', openai: 'unconfigured', gemini: 'unconfigured', mistral: 'unconfigured' };
 
   if (anthropicConfigured(env)) {
     const config = readAnthropicConfig(env);
@@ -82,6 +84,12 @@ function buildGateway({ fetchImpl = fetch, env = process.env } = {}) {
     status.gemini = 'configured';
   }
 
+  if (mistralConfigured(env)) {
+    const config = readMistralConfig(env);
+    providers.push(createMistralProvider({ fetchImpl, config }));
+    status.mistral = 'configured';
+  }
+
   return { router: createProviderRouter({ providers }), providers, status };
 }
 
@@ -101,6 +109,12 @@ function smokeRequestFor(pathname) {
   if (pathname === '/providers/gemini/test') {
     return {
       provider: 'gemini', job: 'quality_control', max_tokens: 32, reasoning_effort: 'minimal',
+      messages: [{ role: 'user', content: 'Reply with exactly: GATEWAY_OK' }],
+    };
+  }
+  if (pathname === '/providers/mistral/test') {
+    return {
+      provider: 'mistral', job: 'quality_control', max_tokens: 32, reasoning_effort: 'minimal',
       messages: [{ role: 'user', content: 'Reply with exactly: GATEWAY_OK' }],
     };
   }
@@ -131,7 +145,7 @@ function createHandler({ fetchImpl = fetch, env = process.env, orchestrator = nu
 
     const generationPaths = [
       '/v1/generate', '/v1/route',
-      '/providers/anthropic/test', '/providers/openai/test', '/providers/gemini/test',
+      '/providers/anthropic/test', '/providers/openai/test', '/providers/gemini/test', '/providers/mistral/test',
     ];
     if (req.method === 'POST' && generationPaths.includes(url.pathname)) {
       const startedAt = Date.now();

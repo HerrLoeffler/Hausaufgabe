@@ -58,10 +58,21 @@ test('reports an unexpected OpenAI secret reference by name, never by secret val
   assert.equal(JSON.stringify(result).includes('redacted'), false);
 });
 
-test('fails closed when normal traffic is not owned by one untagged revision', () => {
+test('accepts a tagged revision when it still owns 100% of normal traffic', () => {
   const service = fixture();
   service.status.traffic = [{ revisionName: 'gateway-candidate', percent: 100, tag: 'candidate' }];
   const result = inspectStagingServiceConfig(service, { runtimeServiceAccount: EXPECTED_SA });
+  assert.equal(result.ok, true);
+  assert.equal(result.previousRevision, 'gateway-candidate');
+});
+
+test('fails closed when normal traffic is split across revisions', () => {
+  const service = fixture();
+  service.status.traffic = [
+    { revisionName: 'gateway-a', percent: 50 },
+    { revisionName: 'gateway-b', percent: 50, tag: 'candidate' },
+  ];
+  const result = inspectStagingServiceConfig(service, { runtimeServiceAccount: EXPECTED_SA });
   assert.equal(result.ok, false);
-  assert.equal(result.errors.includes('No untagged Cloud Run revision currently owns 100% of normal traffic.'), true);
+  assert.equal(result.errors.includes('Normal Cloud Run traffic must resolve 100% to exactly one revision.'), true);
 });

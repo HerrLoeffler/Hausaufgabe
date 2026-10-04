@@ -17,12 +17,12 @@ function normalizedUsage(provider, usage) {
     return { input, output, cacheRead, cacheWrite };
   }
 
-  if (provider === 'openai') {
+  if (['openai', 'gemini', 'mistral'].includes(provider)) {
     const totalInput = safeToken(usage.input_tokens), output = safeToken(usage.output_tokens);
     const cacheRead = usage.input_tokens_details?.cached_tokens === undefined
       ? 0 : safeToken(usage.input_tokens_details.cached_tokens);
     if ([totalInput, output, cacheRead].some(v => v === null) || cacheRead > totalInput) return null;
-    // OpenAI reports cached input as a subset of input_tokens. Remove it from regular input to avoid double billing.
+    // These adapters normalize cached input as a subset of input_tokens. Remove it from regular input to avoid double billing.
     return { input: totalInput - cacheRead, output, cacheRead, cacheWrite: 0 };
   }
 
