@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "id": "phase-a-development-reference-de-v1",
+  "status": "development_only",
+  "runtimeAuthorized": false,
+  "warning": "These references are synthetic development material. They require human review before any held-out evaluation or routing authorization.",
+  "rubrics": {
+    "crew_intent": {
+      "required": [
+        "extract only explicit changes",
+        "preserve unspecified fields",
+        "respect negation and latest correction",
+        "no invented form values"
+      ],
+      "critical": [
+        "changes an explicitly preserved field",
+        "reverses a negation",
+        "invents subject/grade/topic/count/points/duration"
+      ]
+    },
+    "question_rewriting": {
+      "required": [
+        "same task meaning",
+        "same numbers and units",
+        "same answer conditions",
+        "clear German",
+        "no added hint or answer"
+      ],
+      "critical": [
+        "changes mathematical/factual content",
+        "changes required number of answers",
+        "reveals answer",
+        "drops negation"
+      ]
+    },
+    "game_hint": {
+      "required": [
+        "one concise next-step hint",
+        "factually correct",
+        "age-appropriate",
+        "does not reveal final answer"
+      ],
+      "critical": [
+        "states final answer/result",
+        "gives full solution path",
+        "contains subject-matter error"
+      ]
+    }
+  },
+  "caseChecks": {
+    "ci-01": {
+      "expectedPatch": {
+        "count": 8,
+        "difficulty": "mittel"
+      }
+    },
+    "ci-02": {
+      "expectedMeaning": "exclude multiple choice; allow gapfill and matching/assignment-style tasks"
+    },
+    "ci-03": {
+      "expectedPatch": {
+        "subject": "Mathe",
+        "grade": "9",
+        "topic": "Prozentrechnung",
+        "count": 10,
+        "points": 20
+      }
+    },
+    "ci-04": {
+      "expectedPatch": {
+        "difficulty": "anspruchsvoll"
+      },
+      "mustNotChange": [
+        "count"
+      ]
+    },
+    "ci-05": {
+      "expectedPatch": {
+        "count": 12
+      },
+      "mustNotUse": [
+        8
+      ]
+    },
+    "ci-06": {
+      "expectedPatch": {
+        "subject": "Deutsch",
+        "grade": "7",
+        "topic": "Kurzgeschichte",
+        "duration": 45
+      }
+    },
+    "ci-07": {
+      "expectedMeaning": "difficulty easier; exclude matching/assignment tasks"
+    },
+    "ci-08": {
+      "expectedMeaning": "English grade 5 colors; only single-choice and true/false"
+    },
+    "ci-09": {
+      "expectedPatch": {
+        "points": 15,
+        "duration": 30
+      },
+      "mustNotChange": [
+        "subject",
+        "grade",
+        "topic",
+        "count",
+        "difficulty"
+      ]
+    },
+    "ci-10": {
+      "expectedPatch": {
+        "subject": "GPG"
+      },
+      "mustNotChange": [
+        "grade",
+        "topic",
+        "count",
+        "points",
+        "duration",
+        "difficulty"
+      ]
+    },
+    "ci-11": {
+      "expectedPatch": {
+        "count": 7
+      },
+      "mustNotUse": [
+        6
+      ]
+    },
+    "ci-12": {
+      "expectedMeaning": "exclude gapfill; count 9; difficulty mixed"
+    },
+    "qr-03": {
+      "mustPreserve": [
+        "64 €",
+        "12,5 %",
+        "neuer Preis"
+      ]
+    },
+    "qr-04": {
+      "mustPreserve": [
+        "NICHT",
+        "begründen"
+      ]
+    },
+    "qr-09": {
+      "mustPreserve": [
+        "150 km",
+        "2,5 Stunden",
+        "km/h"
+      ]
+    },
+    "qr-10": {
+      "mustPreserve": [
+        "genau zwei"
+      ]
+    },
+    "qr-12": {
+      "mustPreserve": [
+        "zwei sprachliche Mittel",
+        "bei jedem",
+        "einem Satz"
+      ]
+    },
+    "gh-01": {
+      "forbiddenFinalAnswers": [
+        "20"
+      ]
+    },
+    "gh-02": {
+      "forbiddenFinalAnswers": [
+        "10 cm",
+        "10"
+      ]
+    },
+    "gh-03": {
+      "forbiddenFinalAnswers": [
+        "x = 5",
+        "x=5"
+      ]
+    },
+    "gh-04": {
+      "forbiddenFinalAnswers": [
+        "8π",
+        "25,13",
+        "25.13"
+      ]
+    },
+    "gh-05": {
+      "forbiddenFinalAnswers": [
+        "went"
+      ]
+    },
+    "gh-06": {
+      "forbiddenFinalAnswers": [
+        "meine Schwester"
+      ]
+    },
+    "gh-07": {
+      "note": "A valid hint may point toward emigration/escape or political control but must not supply a complete final response."
+    },
+    "gh-08": {
+      "forbiddenFinalAnswers": [
+        "=SUMME(B2:B8)",
+        "=SUM(B2:B8)"
+      ]
+    },
+    "gh-09": {
+      "forbiddenFinalAnswers": [
+        "15 €",
+        "515 €",
+        "15",
+        "515"
+      ]
+    },
+    "gh-10": {
+      "note": "Hint should suggest what to look for (comparison, repetition, imagery, etc.) without naming a specific answer from an unseen text."
+    },
+    "gh-11": {
+      "forbiddenFinalAnswers": [
+        "11/12"
+      ]
+    },
+    "gh-12": {
+      "forbiddenFinalAnswers": [
+        "30"
+      ]
+    }
+  }
+}
