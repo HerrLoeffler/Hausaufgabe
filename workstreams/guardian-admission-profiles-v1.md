@@ -1,15 +1,15 @@
 # Aufgabe: GC-AUTOMATION-08
 
-- Aktualisiert (UTC): 2026-10-04 20:52
+- Aktualisiert (UTC): 2026-10-04 21:06
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
-- Arbeitszustand: aktiv, Bestandsaufnahme gesichert; Designentscheidung offen.
+- Arbeitszustand: aktiv, vertiefte Diagnose und schriftliche Spezifikation gesichert; Spec-Review offen.
 - Aufgabenbranch: docs/guardian-admission-profiles-20261004
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
 - PR: siehe PR dieses Aufgabenbranches; noch nicht integriert.
-- Betroffene Dateien: docs/STAGING_BACKLOG_2026-10-04.md, diese Übergabe, TODO.md, workstreams/registry.json.
+- Betroffene Dateien: docs/STAGING_BACKLOG_2026-10-04.md, docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md, diese Übergabe, TODO.md, workstreams/registry.json.
 - Überschneidungen: zentrale TODO/Registry; PR #65 betrifft GC-AUTOMATION-09 bis -11, bleibt getrennt. Keine Controller-/Produktdatei geändert.
 
 ## Ziel und gewünschtes Verhalten
@@ -34,23 +34,23 @@ Bestandsaufnahme trennt deployed/CI/Review/Geräteabnahme. GC-AUTOMATION-08 blei
 
 ## Offene Probleme und Unsicherheiten
 
-Empfohlener Zuschnitt: feste main-Profile, Web-Kompatibilität plus erster isolierter statischer Games-Preview. Schriftliches Design/Implementation noch nicht genehmigt.
+Martin hat die Weiterarbeit „alles ready“ beauftragt; vorgeschlagener Zuschnitt zur schriftlichen Ausarbeitung übernommen. Konkrete Spec liegt jetzt vor, schriftlicher Review und Implementation noch offen. Freitext-Klassifizierer 9/9 lokal grün (Node24); keine Browser-/Emulatorfreigabe. Escape secrets.get bestätigt, tatsächliche Deploy-SA und aktuelle IAM-Bindungen unbekannt; kein authentifizierter Cloud-IAM-Zugriff.
 Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secure-Preview scheitert in 36870114409 an integrierten DOM-Verträgen; Escape-MVP in 37021633218 an Secret-Manager-403. Diese Blocker nicht blind wiederholen.
 18 aktive Workstreams/neun mögliche Dateiüberschneidungen; einzelne historische Branches sind weit hinter Zielständen. Keine pauschale Integration.
 
 ## Nächster konkreter Schritt
 
-Empfohlenen Ausbau-Zuschnitt mit Martin prüfen und dann die konkrete schriftliche Spezifikation des ersten Profilpakets erstellen. Vor Code folgen schriftlicher Spezifikationsreview und Implementierungsplan.
+[Schriftliche Spezifikation](../docs/superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) mit Martin prüfen; danach Implementierungsplan für den ersten Profilblock erstellen. Unabhängige Fehlerdiagnosen sind im Audit gesichert.
 
 ## Wiederaufnahme nach Abbruch
 
-- Letzter gesicherter Teilschritt: Audit und empfohlener Zuschnitt, 2026-10-04 20:52 UTC.
+- Letzter gesicherter Teilschritt: Audit und empfohlener Zuschnitt, 2026-10-04 21:06 UTC.
 - Gepushter Codecommit / Remote-Branch: kein Produktcode; Dokumentationscommit dieses Branchs.
 - Ungesicherte Änderungen / Checkout: keine Produktänderungen; projektloser Chat, GitHub-Connector genutzt.
 - Laufende oder unklare Vorgänge: kein neuer Guardian-/Deploy-/Providerlauf gestartet. Bestehende v2/v3-Providerunklarheit im Audit erhalten.
 - Bereits ausgeführte externe Aktionen / Kostenreservationen: nur GitHub-Reads und dieser Dokumentationscheckpoint; keine neue API-Kostenreservation.
 - Was darf noch nicht als erledigt gelten? GC-AUTOMATION-08, Zulassung neuer Aufgabenprofile, neue L3-/PostHog-/Security-Deployments und menschliche Abnahmen.
 - Was vor Wiederholung prüfen? Aktuelles main, Branch/PR dieses Checkpoints, aktuelle Ledger/Actions und Kandidaten; identischen Audit/Branch nicht neu erzeugen.
-- Genau ein nächster ausführbarer Schritt: offene Designentscheidung prüfen; bei Freigabe schriftliche Spezifikation des ersten Profilpakets erstellen.
+- Genau ein nächster ausführbarer Schritt: schriftliche Spec prüfen; bei Freigabe Implementierungsplan erstellen.
 
 Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen.

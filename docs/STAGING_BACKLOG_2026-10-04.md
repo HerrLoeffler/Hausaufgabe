@@ -71,3 +71,42 @@ Akzeptanz für den ersten Ausbau: alle bisherigen Web-Verträge und Hashes kompa
 GC-AUTOMATION-08 ist derselbe bereits offene Auftrag. Kein neuer Guardian-Auftrag, kein Provider-Call, keine Budgetreservation und kein Workflow-Retry in diesem Teilschritt.
 Pilot: zwei Versuche und 1,70 USD Reservation erhalten. Startscreen v2/v3 haben weiterhin unbekannte Provider-Ergebnisse mit jeweils 2,40 USD Reservation. v4-Kandidat, bestehende 2,40 USD Reservation und unvollständige Reviews bleiben erhalten.
 Nächster Schritt: Martin prüft den empfohlenen Ausbau-Zuschnitt. Danach konkrete schriftliche Spezifikation für das erste Profilpaket; nach deren Review Implementierungsplan und Code. Aktuell weder neue Profile zugelassen noch neue Staging-Deployments gestartet.
+
+## Vertiefung nach Martins Auftrag „alles ready“ — 21:06 UTC
+
+Martin beauftragt die weitere technische Vorbereitung der offenen Themen. Der vorgeschlagene Zuschnitt für GC-AUTOMATION-08 wird als Freigabe zur konkreten Spezifikation übernommen. Die [schriftliche Spec](superpowers/specs/2026-10-04-guardian-admission-profiles-design.md) liegt nun zur Prüfung vor; keine neuen Profile aktiviert.
+
+### Freitext: tatsächlicher Integrationsrückstand
+
+PR #11 enthält neun Dateien: UI/Klassifizierer, Pflicht-Lösungs-Guard, Backend-Schema und Firestore-Regel. FREETEXT_REVIEW_STATUS.md hält ausdrücklich fest: kein Staging-Deploy, Browser- und Emulatorprüfungen offen. Auf Web fb88dfa7 existiert free-text-review.mjs nicht.
+Neun unveränderte Klassifizierer-Tests aus Feature 67dacb0 bestanden erneut lokal unter gebündeltem Node 24.19.0. Das ist kein Node-22-CI-/Browsernachweis.
+Read-only Kompatibilitätsprobe: alte zwei Schematests gegen das aktuelle unveränderte Web-Schema laufen an zwei Stellen rot: neues audioIntent fehlt in der alten vollständigen required-Erwartung; minItems für acceptedAnswers ist im aktuellen Web noch nicht eingeführt. Diese Probe transplantierte den Feature-Patch nicht und ist daher kein neuer Produktregressionsbefund. Sie belegt, dass der alte Test-/Schema-Vertrag nicht direkt als aktuelle Freigabe dienen kann.
+
+Sicherheitsgrenze: PR #11 lässt öffentliches Lesen veröffentlichter Fragen in firestore.rules bestehen; die neue Pflicht-Musterlösung behebt den Lösungsschutz nicht. Aktuelle firestore.secure-assessment.rules schließen diesen öffentlichen Autorendatenweg, müssen aber innerhalb des vorhandenen atomaren Security-Cutovers geprüft/deployed werden. Alten Rules-Block niemals über den aktuellen sicheren Entwurf kopieren.
+Weiterarbeit: bestehende UI gezielt gegen aktuelle DOM-/qid-/Save-/Refresh-Verträge integrieren, Schemaänderung mit Audio-Vertrag vereinigen, Emulator-Tests für private Lösungen und aktive Prüfungslifecycle sowie Browser-End-to-End für Priorität/Punktübernahme/Wechsel/Refresh/Mobile ergänzen. Keinen neuen parallelen Klassifizierer bauen. Rules-Cutover bleibt eigenes menschliches Gate.
+
+### Escape-MVP: welches Recht fehlt?
+
+Nachweis [Run 37021633218](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37021633218), Job 110885892947, Schritt „Deploy rate-limited Escape AI preview function only“:
+`secretmanager.secrets.get` verweigert auf `projects/hausaufgabe-staging/secrets/OPENAI_API_KEY` (403; Log lässt fehlendes oder verborgenes Secret ebenfalls offen).
+Workflow Source a7ffc382 nutzt `FIREBASE_SERVICE_ACCOUNT_HAUSAUFGABE_STAGING`, schreibt temporäre Credentials und deployt nur `functions:generateEscapePreview`. Builder bindet `secrets: [OPENAI_API_KEY]`. Damit ist die Metadatenprüfung tatsächlich notwendig.
+Die Service-Account-E-Mail im Secret ist maskiert und unbekannt; die Identität darf nicht aus dem erfolgreichen separaten WIF-Workflow geraten werden. Letzterer verwendet gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com, was keinen Nachweis für die alte Escape-Identität darstellt.
+
+Minimal bestätigter Bedarf: Metadaten-Leserecht für die tatsächliche Escape-Deploy-Identität ausschließlich am genannten Staging-Secret. Geeignete vordefinierte Rolle ist Secret Manager Viewer (`roles/secretmanager.viewer`) auf Secret-Ebene; noch enger wäre eine vorhandene geeignete Custom Role mit secrets.get. Secret Accessor (`secretmanager.versions.access`) ist der getrennte Payload-Zugriff und behebt allein den dokumentierten Metadatenfehler nicht. [Offizielle Rollen](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager), [Secret-Ebene/IAM](https://docs.cloud.google.com/secret-manager/docs/access-control).
+Keine Owner-/Editor-/projektweite Secret-Admin-Rolle beantragen. Runtime-Payloadrechte, Secret-Existenz und bereits gesetzte Bindungen zuerst prüfen; keine pauschale zusätzliche Runtime-Rechtevergabe aus einem Deploy-403 ableiten.
+
+Der aktuelle Chat hat GitHub-Code-/PR-Zugriff, aber keinen authentifizierten Google-Cloud-IAM-Connector/CLI-Zugriff. Für eine konkrete IAM-Änderung fehlen aktuelle nicht geheime Metadaten: tatsächliche Deploy-SA-E-Mail und Secret-Existenz/IAM-Bindungen oder Zugriff einer dafür autorisierten Cloud-Administration. Keine Schlüsselwerte oder Service-Account-JSON im Chat anfordern. Keine IAM-Änderung/Deploy/Retry ausgeführt.
+
+### Reihenfolge für den verbleibenden Rückstand
+
+1. GC-AUTOMATION-08: konkrete Spec prüfen, danach Implementierungsplan und erster Web-/Games-Profilblock. Keine vorzeitige Aufnahme alter Kandidaten.
+2. GC-SECURITY-02: neuere Integration/Hardening lesen, aktuelles DOM-/Preview-Gate herstellen, öffentliche Lösungsschutzlücke anhand Emulator/Client/Functions atomar schließen. Menschlicher Rules-Cutover bleibt bestehen.
+3. Freitext PR #11: bestehende UI/Schemapatches gezielt in aktuelle App übernehmen, mit Security-/Audio-Verträgen prüfen. Keine alten Rules ersetzen.
+4. GC-RELEASE-02: heutiges Merge-Result und gemeinsame Workflow-Konflikte abgleichen, Combined CI aktivieren; alter Run allein reicht nicht.
+5. GC-TELEMETRY-POSTHOG-01 und generische Telemetrie: vorhandene Adapter/Emulatorarbeit zusammenführen, Datenschutz-/Retention-/Token-/Ereignisgates erfüllen. Remy-Telemetrie bleibt davon getrennt.
+6. Games: bestehenden L3-Preview bewusst prüfen; Escape-AI-Identität minimal diagnostizieren; GC-GAMES-INTEGRITY-01 vor belastbarer Highscorefreigabe beantworten. Keine Doppelstarts der PR-Kette.
+7. Gateway: bestehende vier Provider nutzen; Evaluator-Setup und Routing gemäß vorhandenen Budget-/Datenfreigaben, keine neue Paid-Demonstration.
+8. Native: bestehendes TestFlight Build 17 tatsächlich testen; Share/Offline/Bridge danach im vorhandenen Workstream fortsetzen.
+9. Übergreifende offene Release-Gates: 30-Teilnehmer-Fehler ohne Fehlernachweis weiterhin unklar, Tutorialabgabe im Gerät und vollständiger Datenbank/Auth/Upload-Restore nicht bestätigt. Hosting-Archiv ist kein vollständiger Restore.
+
+Alle vorhandenen IDs, PRs, Kandidaten und Reservierungen bleiben erhalten. Die Liste ist Reihenfolge/Abhängigkeit, keine pauschale Merge-, IAM- oder Production-Freigabe.
