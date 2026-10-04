@@ -9,6 +9,7 @@ const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 
 const entry = read('gradecrew-entry-flow.js');
 const css = read('gradecrew-auth-startscreen.css');
+const polishCss = read('gradecrew-auth-startscreen-polish.css');
 const startup = read('startup.js');
 const build = read('tools/build-staging.mjs');
 const assets = JSON.parse(read('shared/gradecrew-design/assets.json'));
@@ -120,5 +121,8 @@ test('startup actively installs v4 entry before app handlers and staging package
   assert.ok(appImport > installerCall, 'entry must be installed before app handlers bind');
   assert.match(startup, /if \(!entryInstalled\) throw new Error/);
   assert.match(build, /gradecrew-entry-flow\.js/);
+  assert.match(build, /gradecrew-auth-startscreen-polish\.css/);
   assert.match(startup, /auth-startscreen-v4/);
+  assert.match(startup, /auth-startscreen-polish-v1/);
+  assert.match(polishCss, /gcPublicEntryMode/);
 });
