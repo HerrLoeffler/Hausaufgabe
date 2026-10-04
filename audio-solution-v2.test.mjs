@@ -9,6 +9,8 @@ const main = fs.readFileSync("functions/main.js", "utf8");
 const worker = fs.readFileSync("functions/index.js", "utf8");
 const lifecycle = fs.readFileSync("assessment-functions/lib/secure-lifecycle.js", "utf8");
 const solutionUi = fs.readFileSync("secure-solution-release.js", "utf8");
+const rules = fs.readFileSync("firestore.rules", "utf8");
+const secureRules = fs.readFileSync("firestore.secure-assessment.rules", "utf8");
 
 test("AI creation exposes exact 0-5 solution audio beside listening audio", () => {
   assert.match(html, /id="aiSolutionAudioQuestionCount"[^>]*max="5"/);
@@ -48,4 +50,17 @@ test("Remy can fill both listening and solution audio counts", () => {
   const remy = fs.readFileSync("remy-ai-help.js", "utf8");
   assert.match(core, /solutionAudioQuestionCount/);
   assert.match(remy, /#aiSolutionAudioQuestionCount/);
+});
+
+
+test("integrated V2 keeps all audio authoring data browser-private and release-gated", () => {
+  for (const source of [rules, secureRules]) {
+    assert.match(source, /match \/audioScripts\/\{questionId\}[\s\S]*?allow read, write: if false/);
+  }
+  const releaseGate = lifecycle.indexOf("if (!receipt?.solutionsReleased");
+  const audioRead = lifecycle.indexOf('collection("audioScripts")', releaseGate);
+  assert.ok(releaseGate >= 0, "solution release gate missing");
+  assert.ok(audioRead > releaseGate, "private solution audio must only be read after the solution-release gate");
+  assert.match(solutionUi, /audio\.controls = true/);
+  assert.doesNotMatch(solutionUi, /\.autoplay\s*=\s*true|autoplay=/);
 });
