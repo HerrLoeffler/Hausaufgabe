@@ -1,0 +1,41 @@
+name: Staging assessment deploy checks
+
+on:
+  push:
+    branches:
+      - feature/staging-assessment-functions-deploy-v1
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout deploy-control branch
+        uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Verify assessment deploy scope
+        shell: bash
+        run: |
+          grep -q "deploy-assessment-functions:" .github/workflows/staging-functions.yml
+          grep -q -- "--only functions:assessment" .github/workflows/staging-functions.yml
+          grep -q "PROJECT_ID: hausaufgabe-staging" .github/workflows/staging-functions.yml
+          grep -q "staging-assessment-functions-receipt-" .github/workflows/staging-functions.yml
+          grep -q "cleanupAssessmentPrivateOnQuizDelete" .github/workflows/staging-functions.yml
+      - name: Checkout current integration separately
+        uses: actions/checkout@v5
+        with:
+          ref: feature/gradecrew-app-integration
+          path: integration
+          persist-credentials: false
+      - name: Test Assessment Functions from current integration
+        shell: bash
+        run: |
+          test -f integration/assessment-functions/package.json
+          npm install --prefix integration/assessment-functions --no-package-lock --no-audit --no-fund
+          npm test --prefix integration/assessment-functions
+          npm run check --prefix integration/assessment-functions
