@@ -54,6 +54,8 @@
 }
 .gcTutorialOfferActions .button { justify-content: center; }
 .gcTutorialOfferLater {
+  min-height: 44px;
+  min-width: 44px;
   border: 0;
   background: transparent;
   color: #667085;
@@ -62,6 +64,10 @@
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.gcTutorialOfferLater:focus-visible {
+  outline: 2px solid #2f64d6;
+  outline-offset: 2px;
 }
 #gradecrewTourBtn { white-space: nowrap; }
 @media (max-width: 760px) {
