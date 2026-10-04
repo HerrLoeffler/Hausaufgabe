@@ -181,6 +181,8 @@ test("assessment locale survives normal saves and cannot silently change during 
   assert.match(app, /contentLocale,\s*gradingLocale,\s*localeContractVersion:/);
   assert.match(app, /contentLocale: source\.contentLocale/);
   assert.match(app, /contentLocale: quiz\.contentLocale/);
+  assert.match(app, /const contentLocale = q\.contentLocale \|\| "de-DE"/);
+  assert.match(app, /contentLocale, gradingLocale, localeContractVersion,/);
   assert.match(assessmentLocaleUi, /persistedQuiz\?\.published === true && persistedQuiz\?\.ended !== true/);
   assert.match(assessmentLocaleUi, /The test language cannot be changed while a published test is running/);
   assert.match(assessmentLocaleUi, /brand-new manual draft may not exist in Firestore yet/);
