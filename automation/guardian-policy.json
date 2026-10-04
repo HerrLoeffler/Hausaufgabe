@@ -1,8 +1,18 @@
 {
   "schemaVersion": 1,
-  "enabled": false,
+  "enabled": true,
   "maxAttemptsPerStage": 3,
   "automaticProduction": false,
-  "workstreams": [],
+  "workstreams": [
+    {
+      "id": "pilot-tutorial-later-a11y-20261004",
+      "taskId": "pilot-tutorial-later-a11y-20261004",
+      "enabled": true,
+      "execution": "pipeline-v2",
+      "baseBranch": "feature/gradecrew-app-integration",
+      "approvedSha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "maxAutomaticStage": "staging_deployed"
+    }
+  ],
   "note": "Execution V2 implemented and CI verified. Deliberately inactive: dedicated credentials, explicit task admission and a real paid API-to-Staging pilot still required; no automatic Production."
 }
