@@ -1,14 +1,6 @@
 name: Escape Expedition Visual Masterpiece Preview
 
 on:
-  push:
-    branches:
-      - prototype/escape-expedition-visual-masterpiece-v1
-    paths:
-      - 'lab/escape-expedition/**'
-      - 'tools/build-lab-escape-expedition.mjs'
-      - 'tools/games/escape-expedition.test.cjs'
-      - '.github/workflows/escape-expedition-preview.yml'
   workflow_dispatch:
 
 concurrency:
