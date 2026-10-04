@@ -122,6 +122,7 @@ function cleanTopic(value = "") {
     .replace(/\s+(?=(?:wenig|kurze[nr]?|klare[nr]?)\s+(?:text|texte|aufgaben?|fragen?)\b).*$/i, "")
     .replace(/\s+(?=(?:keine?|ohne)\s+(?:fangfragen?|trickfragen?)\b).*$/i, "")
     .replace(/\s+(?=(?:davon\s+)?\d+\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b).*$/i, "")
+    .replace(/\s+(?=(?:davon\s+)?\d+\s*(?:lösungen?|loesungen?|erklärungen?|erklaerungen?)\s+(?:als|mit)\s+audio\b).*$/i, "")
     .replace(/\b(?:mit|und)\s+\d+(?:[.,]\d+)?\s*(?:punkte?|aufgaben?|minuten?).*$/i, "")
     .replace(/\s+(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt)\s*$/i, "")
     .replace(/[\s,;]+$/g, "")
