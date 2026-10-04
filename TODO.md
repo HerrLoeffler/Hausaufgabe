@@ -138,3 +138,13 @@ Der Auftrag ist nicht nur eine Statusanzeige: freigegebene Funktionen sollen von
 
 GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Games und native Apps sowie explizite Konflikt-Rebase-Aufträge sind weiter offen. V2 darf diese Workstreams nicht über die Web-Allowlist übernehmen. Hauptpriorität zuerst GC-AUTOMATION-07: einen echten kleineren Pilot nach sicherer Einrichtung bestätigen.
 
+
+## Komplexe Aufgaben und visuelle Qualität – Nutzerwunsch 04.10.2026
+
+Zusätzliche API-Kosten sind für schwierige Aufgaben grundsätzlich akzeptiert; keine pauschale Budgeterhöhung oder automatische Aktivierung daraus ableiten. Bestehender realer Pilot GC-AUTOMATION-07 bleibt der nächste ausführbare Schritt.
+
+| ID | Aufgabe | Status / nächster Schritt |
+|---|---|---|
+| GC-AUTOMATION-09 | Andere KIs bei komplexen Aufgaben bereits zur Lösungsplanung hinzuziehen | Anforderung und Konzept dokumentiert; noch nicht implementiert. Einstufung, unabhängige Vorabkritik, ein verantwortlicher Umsetzer, begrenzte Teilaufträge und dauerhaftes Gesamtbudget ergänzen. [Übergabe](workstreams/guardian-complex-design-plan.md) |
+| GC-AUTOMATION-10 | Design anhand tatsächlicher Desktop-/Tablet-/Handy-Renderings unabhängig prüfen | Anforderung und Konzept dokumentiert; noch nicht implementiert. Bestehende Startscreen-Arbeit zuerst abgleichen; SHA-gebundene Screenshots, bildfähige Prüfer, Browserchecks und konkrete visuelle Kriterien ergänzen. Visuelle Endabnahme durch Martin erhalten. [Übergabe](workstreams/guardian-complex-design-plan.md) |
+| GC-AUTOMATION-11 | Gesamtcode von mehreren KIs strukturiert auditieren lassen | Gewünschter Anwendungsfall dokumentiert; Audit nicht ausgeführt. Exakten Snapshot in Module/Schnittstellen und durchgehende Nutzerabläufe zerlegen, Befunde reproduzieren und separate Reparaturaufträge ableiten. Eigenes Gesamtbudget und Bereichs-Gates erforderlich. [Übergabe](workstreams/guardian-complex-design-plan.md) |
