@@ -10,7 +10,7 @@
 ## Erledigt
 
 Optionales festes Kostenprofil small-web-v1 mit 12k/24k konservativen Kontextbytegrenzen, 6k/2,4k Ausgabetokens, 0,85 USD/Versuch und 2,55 USD/Auftrag. Taskvertrag, Budgetreservierung und alle vier Provideraufrufe verwenden dasselbe hashgebundene Profil. Standardvertrag kompatibel, Tagesbudget unverändert, keine stillen Upgrades oder Kürzungen. Gleiche Coding-KI und drei unabhängige Reviewer, High-Effort und alle bestehenden Gates erhalten.
-Aktuelle Standardpreise aus offiziellen OpenAI-/Anthropic-Dokumenten geprüft (Links in EXECUTION). Rechnerische volle kleine Grenze 0,688 USD; 0,85 USD Reserve deckt zusätzlich 10% Verarbeitungspremium. Kein gemessener Paid-Verbrauch.
+Aktuelle Standardpreise aus offiziellen OpenAI-/Anthropic-Dokumenten geprüft (Links in EXECUTION). Rechnerische volle kleine Grenze 0,588 USD; 0,85 USD Reserve deckt zusätzlich 10% Verarbeitungspremium. Kein gemessener Paid-Verbrauch.
 Konkreter Pilotauftrag: Später-Tutorialbutton bekommt 44px-Mindestklickfläche und fokussichtbaren Outline; exakte einzelne CSS-Datei, Akzeptanz/Constraints/Budget/Integrations-SHA festgelegt. Builder-Dateiliste bindet diese CSS physisch ein.
 Sicheres Eigentümer-Setup kann optional genau eine Aufnahme dieses main-Auftrags anfordern. Keine Schlüssel im Chat/Repo, keine automatische Neuerzeugung oder Wiederverwendung von Production-Keys.
 
