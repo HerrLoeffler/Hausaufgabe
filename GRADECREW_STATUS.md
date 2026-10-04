@@ -1,5 +1,56 @@
 # GradeCrew – aktueller Projektstatus
 
+## AI-Multi-Provider-Status – 04.10.2026
+
+Aktuelle Staging-Integrationsbasis: `362c735021479f8fa6bae5b3aaf8360757e506bd`.
+
+### Nachgewiesener Gateway-Stand
+
+- Private Cloud-Run-Staging-Gateway mit vier realen Textprovidern:
+  - OpenAI `gpt-5.6-luna`
+  - Anthropic `claude-haiku-4-5`
+  - Gemini `gemini-3.5-flash-lite`
+  - Mistral `mistral-small-2603`
+- Automatisches sicheres Staging-Deployment ist aktiv: immutable image, Candidate zunächst 0 % Traffic, echte Provider-Smokes, Promotion erst danach, finaler Base-Healthcheck und Rollbackpfad.
+- GitHub Actions Run `37197597670` auf `362c735`: **SUCCESS**.
+- Promotete Revision: `gradecrew-ai-gateway-staging-00018-pew`.
+- Echte Smoke-Latenzen dieses Runs: Claude 1307 ms, OpenAI 1850 ms, Gemini 402 ms, Mistral 360 ms.
+- Deployment-Receipt-Artefakt: `staging-ai-gateway-receipt-362c735021479f8fa6bae5b3aaf8360757e506bd`.
+- Production ist unverändert. Der bestehende zuverlässige GradeCrew-Testgenerierungsweg nutzt weiterhin den Legacy-/direkten OpenAI-Pfad und ist noch nicht auf den neuen Router umgestellt.
+
+### Neue Intelligence-Grundlage
+
+Gemergt und grün:
+- begrenzter Evaluationsworker mit eigenem Evaluation-Budget, ohne automatische Provider-Retries;
+- 36 synthetische Phase-A-Entwicklungsfälle für Crew-Intent, Question-Rewriting und Game-Hints;
+- rollenorientierte Kompetenzstrategie statt globalem Modell-Ranking;
+- Collaboration-Contract: Risiko und Komplexität getrennt, unabhängiger Critic bei Bedarf, maximal eine Reparatur, keine Endlosschleife, Human Review bei kritischer Benotung;
+- unabhängiger Critic erhält keine Generator-Reasoning-/Provider-Identität;
+- fail-closed Data-Policy-Contract pro `provider + job + data class + region`; noch keine echten Datenschutzfreigaben erfunden/eingetragen;
+- Development-Scorer für deterministische Checks plus manuelle semantische Prüfung;
+- Kompetenzmatrix ist rollenbezogen und setzt ausdrücklich `globalWinner: null`; Development-Ergebnisse können keine Runtime-Route autorisieren.
+
+### Bewusst noch NICHT aktiv
+
+- automatische Rollen-/Modellauswahl im echten GradeCrew-Nutzerfluss;
+- neue Gateway-Nutzung durch Remy/Testgenerierung;
+- Production-Routing;
+- Freitextbenotung über den neuen Multi-Provider-Pfad;
+- echte Provider-Datenschutzfreigaben;
+- Prompt-Caching-Optimierung;
+- automatische Übernahme von Nutzerfeedback als globale Routingregel.
+
+### Nächster Blocker / nächster Schritt
+
+Der Staging-Evaluator-Code und Workflow sind gemergt, aber die einmalige Google-Cloud-Evaluator-IAM/WIF-Einrichtung fehlt noch. Danach:
+1. genau 8 bezahlte Phase-A-Micro-Pilot-Calls;
+2. private synthetische Outputs manuell + deterministisch prüfen;
+3. erste rollenbezogene Kompetenzmatrix erstellen;
+4. Crew Intent als ersten risikoarmen realen Pfad hinter Feature Flag pilotieren;
+5. erst danach Question-Rewriting/Hints, später Testgenerierung; Benotung zuletzt.
+
+---
+
 Stand: 30.09.2026
 
 Diese Datei ist die kompakte Übergabe für neue GradeCrew-Chats. Für Security-Details zusätzlich `SECURE_ASSESSMENT_AUDIT_2026-09-30.md` lesen.
