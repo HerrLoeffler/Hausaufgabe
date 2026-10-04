@@ -5516,7 +5516,8 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       figure.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
       section.appendChild(figure);
     }
-    if (getQuestionAudioSrc(q)) {
+    const studentAudioSrc = String(q?.audioDataUrl || "");
+    if (studentAudioSrc.startsWith("data:audio/")) {
       const audioBox = document.createElement("div");
       audioBox.className = "studentQuestionAudio";
       const label = document.createElement("strong");
@@ -5524,7 +5525,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "metadata";
-      audio.src = getQuestionAudioSrc(q);
+      audio.src = studentAudioSrc;
       audio.setAttribute("aria-label", `Audio zu Aufgabe ${i + 1} anhören`);
       const disclosure = document.createElement("small");
       disclosure.textContent = "KI-generierte Stimme";
