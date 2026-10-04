@@ -177,8 +177,37 @@ class ModelTests(unittest.TestCase):
             self.assertEqual(len(calls),1)
             self.assertNotIn('tools',calls[0][1])
             self.assertEqual(calls[0][1]['model'],p.MODELS[role]['model'])
-            if role!='security': self.assertIs(calls[0][1]['store'],False)
+            if role!='security':
+                self.assertIs(calls[0][1]['store'],False)
+                self.assertIs(calls[0][1]['background'],True)
             self.assertEqual(result,{'ok':True}); self.assertGreater(usage['estimatedUsd'],0)
+
+    def test_openai_background_call_polls_same_response_instead_of_creating_duplicate(self):
+        class FakeResponse:
+            def __init__(self, payload):
+                self.payload = payload
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, _limit):
+                return json.dumps(self.payload).encode()
+
+        queued = {'id': 'resp_guardian_test', 'model': p.MODELS['build']['model'], 'status': 'queued'}
+        completed = self.response('build', {'ok': True}) | {'id': 'resp_guardian_test'}
+        with patch.dict(os.environ, {'CODEX_WORKER_API_KEY': 'test-only'}), \
+             patch.object(m.time, 'sleep', return_value=None), \
+             patch.object(m.urllib.request, 'urlopen',
+                          side_effect=[FakeResponse(queued), FakeResponse(completed)]) as send:
+            result, usage = m.call('build', 'Implement', {}, p.CANDIDATE_SCHEMA)
+        self.assertEqual(result, {'ok': True})
+        self.assertGreater(usage['estimatedUsd'], 0)
+        self.assertEqual(send.call_count, 2)
+        create_request = send.call_args_list[0].args[0]
+        retrieve_request = send.call_args_list[1].args[0]
+        self.assertEqual(create_request.get_method(), 'POST')
+        self.assertEqual(retrieve_request.get_method(), 'GET')
+        self.assertTrue(retrieve_request.full_url.endswith('/resp_guardian_test'))
 
     def test_refusal_partial_output_model_drift_and_missing_usage_fail_closed(self):
         original=self.response('correctness',{'ok':True})
