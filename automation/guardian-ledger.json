@@ -85,6 +85,17 @@
           "confirmedAt": "2026-10-04T16:47:52.455109+00:00",
           "dispatchState": "dispatched"
         }
+      },
+      {
+        "requestId": "run-37218071006-1",
+        "execution": "pipeline-v2",
+        "taskId": "pilot-tutorial-later-a11y-20261004",
+        "taskHash": "d56a6630eee78bed4d137601cfae6402d202d79b1735347e6f371a8cfe4fba9f",
+        "approvedSha": "256609f81f601896a9e683f67945743df6b2f29f",
+        "state": "reserved",
+        "controlSha": "2a2a9912cc34c8afed19c3260f254d45ceb613b1",
+        "controlHash": "b7a242a749df737d778189f4d4e8e4c3241976edd3d1778699a9c7d764e31d0e",
+        "reservedAt": "2026-10-04T16:47:57.239117+00:00"
       }
     ]
   },
@@ -94,6 +105,12 @@
       "day": "2026-10-04",
       "reservedUsd": 0.85,
       "requestId": "run-37196815805-1"
+    },
+    {
+      "taskId": "pilot-tutorial-later-a11y-20261004",
+      "day": "2026-10-04",
+      "reservedUsd": 0.85,
+      "requestId": "run-37218071006-1"
     }
   ]
 }
