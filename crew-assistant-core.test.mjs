@@ -149,3 +149,14 @@ test("Remy extracts listening-task counts without polluting the topic", () => {
   assert.equal(patch.count, 12);
   assert.equal(patch.audioQuestionCount, 3);
 });
+
+
+test("Remy separates listening audio and released solution audio counts", () => {
+  const patch = parseTestRequest("Englisch 6. Klasse Shopping, 12 Aufgaben, davon 3 Höraufgaben und 2 Lösungen als Audio.");
+  assert.equal(patch.subject, "Englisch");
+  assert.equal(patch.grade, "6");
+  assert.equal(patch.topic, "Shopping");
+  assert.equal(patch.count, 12);
+  assert.equal(patch.audioQuestionCount, 3);
+  assert.equal(patch.solutionAudioQuestionCount, 2);
+});
