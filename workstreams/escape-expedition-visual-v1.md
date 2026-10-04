@@ -114,3 +114,79 @@ Wenn der neue Qualitätsstandard trägt:
 
 Wenn das Camp noch nicht stark genug wirkt:
 erst Camp weiter polieren — nicht zum Jeep springen.
+
+
+## V2 — Retro-Handheld-Overworld Hard Rebuild
+
+Neue verbindliche Produktentscheidung:
+**Alle Amazonas-Szenen folgen ab jetzt einer originalen Retro-Handheld-Top-Down-Overworld-Sprache.**
+
+### Implementiert
+
+Produktcommits:
+- `1e6ad0dbb25ceafcbd560907f208f89acbf13d06` — Jeep-Hard-Rebuild
+- `be44681dfc593a28b01a315cebaa2e4d81c2f45d` — gesamte Amazonas-Welt auf gemeinsame Retro-Sprache umgestellt
+- `93552e6466e4907eaa4fed786c1f660b7d4b9645` — Syntaxkorrektur nach globalem Renderer-Umbau
+
+Jeep:
+- echte deterministic course map mit Stein/Matsch/Ast/finalem Baum;
+- Hindernisse bewegen sich aus Fahrtrichtung von oben auf MANGO-1 zu;
+- Matsch hält den Jeep tatsächlich an;
+- Befreiung aktiv über ↑/W bzw. Touch-Pfeil;
+- Stein/Ast erzeugen Impact + Tempoverlust;
+- finaler Baum nähert sich sichtbar und führt in dieselbe pixelige Blockade-/Winden-Szene;
+- großer alter `Piste ...`-Web-HUD entfernt;
+- eigener Retro-HUD;
+- komplett neuer MANGO-1 mit Fahrer-Gesicht;
+- Explorer besitzt nun ein klar lesbares Gesicht.
+
+Globale Welt:
+- Camp als Top-Down-Tile-Camp;
+- Wildlife mit gezeichneten Tier-Sprites statt Tier-Emojis;
+- Fluss als Wasser-/Ufer-Tile-Welt;
+- Flussfelsen bewegen sich jetzt ebenfalls aus Fahrtrichtung auf das Boot zu;
+- Boot mit sichtbarem Explorer;
+- Station als echte Retro-Forschungsstation mit Generator/Terminal;
+- Funkmast als Retro-Technikszene;
+- Kamera-Overlay in derselben visuellen Sprache;
+- Canvas auf pixelated scaling;
+- Game-Shell kantiger und kompakter.
+
+### Lokale statische Verifikation
+
+Der aktuelle Head wurde zusätzlich außerhalb von GitHub Actions geprüft:
+- `app.js` JavaScript-Syntax via V8-Parser: **grün**;
+- Testdatei-Syntax via V8-Parser: **grün**;
+- V2-Verträge für Course, Hindernisrichtung, Matsch-Recovery, Roadblock, Gesichter und globale Retro-Szenen: **vorhanden**.
+
+### GitHub-Actions-Blocker
+
+Aktueller Head:
+`93552e6466e4907eaa4fed786c1f660b7d4b9645`
+
+Die drei GitHub-Actions-Jobs starten derzeit nicht bis zum ersten Step:
+- Visual Preview;
+- Escape review gates;
+- Games Lab Checks.
+
+GitHub liefert für die Jobs:
+- `conclusion: failure`;
+- `steps: null`;
+- `logs_url: null`.
+
+Mehrfache Re-Runs zeigen dasselbe Verhalten. Damit gibt es aktuell **keinen ausgeführten roten Code-Test**, sondern einen CI-Startblocker vor Checkout/Tests.
+
+Folge:
+- V2 ist auf GitHub gesichert;
+- V2 ist lokal/statisch syntaktisch geprüft;
+- V2 ist **noch nicht als Staging deployed zu markieren**;
+- der bisherige Visual-Preview-Link zeigt bis zu einem erfolgreichen Deploy weiterhin den älteren V1-Stand;
+- Production unverändert.
+
+## Nächster Schritt
+
+1. CI/Actions wieder zum tatsächlichen Start bringen;
+2. komplette V2-Suite + Browser-Flows ausführen;
+3. Visual Preview deployen;
+4. echten manuellen Jeep-/Gesamtwelt-Test durchführen;
+5. danach gezielt sichtbare Schwächen polieren statt wieder die Art Direction zu wechseln.
