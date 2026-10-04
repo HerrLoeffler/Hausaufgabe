@@ -88,7 +88,6 @@ test("legacy top-level submissions stay closed", () => {
 
 test("private listening transcripts are never readable by students or shared-template viewers", () => {
   const audio = block("match /audioScripts/{questionId}", "match /attempts/{attemptId}");
-  assert.match(audio, /allow read: if ownsQuiz\(quizId\) \|\| isAdmin\(\)/);
-  assert.doesNotMatch(audio, /quizShared|quizPublished/);
-  assert.match(audio, /allow create, update, delete: if quizContentEditable\(quizId\) \|\| isAdmin\(\)/);
+  assert.match(audio, /allow read, write: if false/);
+  assert.doesNotMatch(audio, /quizShared|quizPublished|ownsQuiz|isAdmin/);
 });
