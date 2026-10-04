@@ -35,3 +35,9 @@ Additional snapshots contain 124 selected new/changed text files in total. Binar
 
 Starting the eligible queue is authorized. An old PR being open or a workstream being active is not evidence that its changes can safely be merged or that its device/Production gate has passed.
 
+
+## Verification update and current blocker
+
+After fetching three exact-source supporting fixtures, the focused Gateway/intelligence/evaluator suite passes all 85 tests. Controller/release targeted suite passes 103 tests; unittest discovery over automation passes 92 tests, including staging workflow permissions. iOS device and jsdom-dependent UI checks remain separate.
+
+PR #86 final code head feaf49ae085a9cd6f2ec39a4b7fd8e0c41fff5d6 could not run its final GitHub checks: all jobs failed before the first step with no runner logs. One unprivileged Handoff retry (run 37199887982 attempt 2, job 111429810018) also failed with zero steps at 11:50 UTC. Check runs expose two annotations each, but this connector cannot retrieve annotations. Cause (billing/runner availability/account restriction) is NOT established. Do not claim a code/test failure or raise a spending limit based on this evidence. PR #86 remains unmerged pending actual remote verification; pilot recovery and automatic homepage admission are therefore prepared but not yet executed. No new provider calls or budget reservations were made by these repairs.
