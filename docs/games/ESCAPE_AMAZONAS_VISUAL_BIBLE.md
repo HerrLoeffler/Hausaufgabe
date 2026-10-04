@@ -2,206 +2,177 @@
 
 Stand: 04.10.2026
 
-Diese Datei ist die verbindliche visuelle Leitlinie für **Expedition Amazonas**. Ziel ist kein dekorierter Prototyp, sondern ein eigenständiges kleines Adventure, das auf einem Schulgerät flüssig läuft und auf einem Screenshot wie ein richtiges Spiel wirkt.
+## Verbindlicher visueller Grundsatz
+
+> **Expedition Amazonas ist eine originale Retro-Handheld-Top-Down-Adventure-Overworld.**
+
+Referenzgefühl sind klassische Game-Boy-/GBA-Top-Down-Abenteuer: kleine klar lesbare Sprites, tile-artige Landschaft, eindeutige Wege, starke Silhouetten, sichtbare Gesichter und eine Welt, die wie ein richtiges Spiel zusammengehört.
+
+Wichtig:
+- keine kopierten Pokémon-/Nintendo-Assets;
+- keine nachgezeichneten Karten, Figuren oder UI-Elemente;
+- eigene GradeCrew-Welt, eigene Sprites, eigene Formen und Farben;
+- Inspiration ist die Spielsprache, nicht konkrete geschützte Gestaltung.
 
 ## Qualitätsziel
 
-> **Warm, abenteuerlich, lebendig, klar lesbar und leicht humorvoll – aber nicht kindisch.**
+Ein Screenshot muss ohne Erklärung wie ein echtes kleines Adventure wirken.
 
-Jede Szene muss gleichzeitig:
-- sofort spielbar und übersichtlich sein;
-- räumliche Tiefe besitzen;
-- mindestens einen erinnerungswürdigen visuellen Moment haben;
-- wichtige Interaktionen ohne lange Erklärung sichtbar machen;
-- auf iPad/Notebook stabil und flüssig bleiben.
+Nicht akzeptabel:
+- abstrakte Rennbahn;
+- Emoji als zentrales Spielobjekt;
+- zufällige Mischung aus realistischer Canvas-Grafik, Web-UI und Platzhaltern;
+- Objekte ohne klare Perspektive;
+- Spielfigur ohne lesbares Gesicht;
+- Hindernisse, die sich entgegen der Bewegungslogik bewegen.
 
-Kein Level darf wie eine Testfläche mit Rechtecken, Emojis oder Platzhalterobjekten wirken.
-
-## Bildsprache
+## Gemeinsame Overworld-Regeln
 
 ### Perspektive
-- leicht erhöhte 2D-/2.5D-Adventure-Perspektive;
-- Spielfigur und wichtige Objekte klar vor dem Boden lesbar;
-- Vordergrundelemente dürfen teilweise über Figur/Objekte laufen und erzeugen Tiefe;
-- keine harte isometrische Geometrie; organische Welt bleibt natürlicher.
+- konsequente Top-Down-/leicht erhöhte Overworld-Perspektive;
+- Spieler, Fahrzeuge, Tiere und Technik folgen derselben Blickrichtung;
+- Welt bewegt sich logisch relativ zur Figur/Fahrzeug;
+- fahrende Hindernisse kommen aus Fahrtrichtung auf den Spieler zu.
 
-### Formen
-- leicht stilisiert, klare Silhouetten, mittlere Detaildichte;
-- natürliche Objekte nicht aus perfekten Rechtecken/Kreisen zusammensetzen, wenn sie im Fokus stehen;
-- Technik darf kantiger und funktionaler sein;
-- wichtige Interaktionsobjekte erhalten stärkere Form- und Lichtkontraste.
+### Tiles und Welt
+- Basisraster aus klaren Gras-, Erde-, Wasser-, Weg- und Technikflächen;
+- sichtbare Kanten zwischen Weg, Vegetation und Wasser;
+- kleine zufällig wirkende Details innerhalb der Tiles;
+- keine sterile perfekte Geometrie, obwohl das technische Raster darunter wiederverwendbar ist.
 
-### Materialien
-Camp:
-- sonnengebleichter Stoff;
-- Holz;
-- lackiertes Metall;
-- Leder/Canvas;
-- feuchte Erde;
-- Blattwerk.
+### Figuren
+- kleine, klare Original-Sprites;
+- Gesicht muss auch in kleiner Darstellung lesbar sein;
+- Explorer besitzt Augen, Mund, Hut/Haare und Expeditionserkennungsmerkmale;
+- Fahrer im Jeep/Boot ist sichtbar;
+- Coco bleibt Guide und ist nicht Spielfigur.
 
-Technik:
-- mattes, leicht abgenutztes Metall;
-- kleine Statuslichter;
-- Gummi, Kabel, Schrauben;
-- keine sterile Sci-Fi-Optik.
+### Interaktionen
+- das Objekt selbst muss verständlich sein;
+- Marker unterstützt nur;
+- kein Marker darf ein nicht erkennbares Objekt ersetzen;
+- wichtige Hotspots müssen ohne lange Textanweisung auffindbar sein.
 
-## Licht
+## Fahrzeuge
 
-### Global
-- Licht ist Teil der Dramaturgie, nicht nur Dekoration;
-- weiche Schatten unter Figur/Objekten;
-- warme Highlights gegen kühleren grünen Dschungel;
-- keine permanente künstliche Leuchtaura um die Spielfigur.
+### MANGO-1
+- originaler top-down Pixel-/Tile-Sprite;
+- sichtbare Reifen, Karosserie, Fenster, Dachgepäck und Fahrer;
+- keine Mango-Emoji-Identität;
+- kleine Feder-/Impact-Reaktion;
+- Schatten unter dem Fahrzeug.
+
+### Fahrlogik
+- Jeep bleibt im unteren Spielbereich;
+- Welt scrollt entgegen der Fahrtrichtung;
+- Hindernisse entstehen vor dem Fahrzeug und bewegen sich sichtbar darauf zu;
+- Steine/Aste kosten Tempo;
+- Matsch ist eine echte Mechanik: Fahrzeug bleibt sichtbar stecken;
+- Befreiung erfolgt aktiv durch Gas/↑ statt automatischem Text-Feedback;
+- finaler umgestürzter Baum kommt sichtbar aus Fahrtrichtung und erzwingt die Story-Blockade.
+
+### Boot
+- dieselbe Bewegungslogik;
+- Fluss/Felsen bewegen sich logisch auf das Boot zu;
+- sichtbarer Fahrer;
+- Treffer kostet Tempo.
+
+## Szenen
 
 ### Camp
-- früher Morgen;
-- warmes Sonnenlicht von rechts oben;
-- sichtbare Lichtstrahlen durch das Blätterdach;
-- kühler Dschungel im Hintergrund, warmes Camp im Vordergrund;
-- kleine Staub-/Pollenpartikel im Licht.
+Retro-Overworld-Feldstation:
+- Gras-Tiles;
+- blockige Erdfläche/Pfade;
+- Expeditionszelt;
+- Feldtisch mit echtem Tablet;
+- Kisten, Kanister und Seil;
+- MANGO-1 als echter Sprite;
+- keine zentralen Emoji-Platzhalter.
 
-### Weitere Szenen
-- Jeep: dichter, schneller, wechselnde Schatten;
-- Wildlife: heller und luftiger;
-- Fluss: blaugrün, Reflexionen, leichter Dunst;
-- Station: kühl, feucht, zunächst dunkel;
-- Funkmast: weiter Blick, dramatischer Himmel, großes warmes Finale.
+### Dschungelpiste
+- klarer Weg zwischen dichter Vegetation;
+- keine Mittelstreifen-Autobahn;
+- Reifenrinnen und kleine Bodendetails;
+- Felsen, Äste und Matsch als eigene gezeichnete Objekte;
+- kompakte Retro-HUD-Anzeige statt großer Web-Pille.
 
-## Farblogik
+### Blockierter Pfad
+- gleiche Straße wie zuvor;
+- Jeep sichtbar zum Stillstand gekommen;
+- großer Baum quer über die gesamte Route;
+- Windenkiste/Kabel sichtbar;
+- Übergang fühlt sich wie derselbe Ort an.
 
-Die Welt darf farbig sein, aber wichtige Interaktionen müssen deutlich bleiben.
+### Wildlife
+- Overworld-Lichtung;
+- Tiere als eigene kleine Sprites;
+- Tukan, Capybara und Affe klar unterscheidbar;
+- Tiergesichter/Bewegung sichtbar;
+- Sender als echtes Gerät;
+- Dock/Boot als Weltobjekte;
+- keine Tier-Emojis.
 
-Camp:
-- tiefes Dschungelgrün;
-- warmes Ocker/Orange für Expedition und Jeep;
-- cremefarbener Canvas-Stoff;
-- dunkles Holz;
-- Signalgrün nur für echte Interaktion.
+### Fluss
+- Wasser-Tiles;
+- bewachsene Ufer;
+- Boot als Top-Down-Sprite;
+- Felsen kommen von oben/Fahrtrichtung;
+- Wellen/Heckspur mit begrenzten Effekten.
 
-Interaktionsmarker:
-- niemals größer/heller als das eigentliche Objekt;
-- Marker unterstützt, ersetzt aber nicht die visuelle Lesbarkeit des Objekts;
-- pulsieren dezent statt blinkend.
+### Forschungsstation
+- Pixel-/Tile-Forschungsgebäude;
+- dunkle Fenster ohne Strom;
+- sichtbarer Generator;
+- echtes Terminal statt Laptop-Emoji;
+- nach Stromversorgung Fenster/Displays sichtbar heller;
+- Ausgang zum Funkmast klar lesbar.
 
-## Tiefenaufbau pro Szene
-
-Mindestens vier visuelle Ebenen:
-
-1. **Fernhintergrund** – Himmel, Nebel, entfernte Baumkronen.
-2. **Mittelgrund** – große Stämme, Büsche, Zelte, Gebäude, Felsen.
-3. **Spielschicht** – Figur, Fahrzeuge, Hotspots, Mechanikobjekte.
-4. **Vordergrund** – Blätter, Gräser, kleine Äste, Lichtpartikel.
-5. **Effektlayer** optional – Staub, Wasser, Funken, Lichtstrahlen, Regen, Funkimpulse.
-
-## Bewegung / Game-Feel
-
-Camp:
-- Blätter schwingen minimal;
-- kleine Stoffbewegung am Zelt;
-- Sonnenstaub/Pollen;
-- dezente Jeep-Federung beim Start;
-- kleine Antenne/Flagge bewegt sich;
-- Schatten und Licht bleiben ruhig genug, um nicht abzulenken.
-
-Jeep:
-- Karosserie federt;
-- Schlamm/Spritzer;
-- Vegetation zieht vorbei;
-- leichte Kamera-Reaktion bei Treffer.
-
-Wildlife:
-- Tiere besitzen eigene Bewegungsmuster statt Emoji-Sprites;
-- kurze Reaktion auf Foto;
-- Pflanzen bewegen sich subtil.
-
-Fluss:
-- Wasserlinien/Wellen;
-- Heckwelle am Boot;
-- Spritzer bei Felskontakt.
-
-Station:
-- Generatorstart mit Vibration/Funken;
-- Licht geht sichtbar in mehreren Bereichen an.
-
-Finale:
-- Funkmast/Sendeanlage aktiviert sich sichtbar;
-- Signalimpuls;
-- Umgebung reagiert auf das wiederkehrende Signal.
+### Funkmast
+- Overworld-Lichtung;
+- Mast aus klaren Technikformen;
+- Funkkonsole als echtes Objekt;
+- Kanalstatus im Spielpanel;
+- Finale später mit Signalimpuls/Animation.
 
 ## UI
 
-- dunkles transparentes Material mit leichtem Grün-/Braunstich;
-- klare Hierarchie: Mission > aktueller Schritt > Hilfe;
-- große Touch-Ziele;
-- weniger Text, größere Lesbarkeit;
-- kein unnötiger Rahmen um jedes Element;
-- Buttons reagieren sichtbar auf Hover/Press/Disabled;
-- Dialoge wirken wie Teil des Spiels, nicht wie Standard-Webformular.
+- Spielwelt bleibt Schwerpunkt;
+- Panels kompakt;
+- klarer dunkler Rahmen, heller Innenrand;
+- weniger extreme Rundungen;
+- große Touch-Flächen außerhalb des Canvas bleiben erlaubt;
+- In-Canvas-HUD nutzt klare blockige Typografie;
+- Kamera-Sucher ebenfalls als Retro-Game-Overlay.
 
-## Figur
+## Game-Feel
 
-Coco bleibt Guide und ist **nicht** die Spielfigur.
+Spielobjekte brauchen Reaktion:
+- Treffer: kurzer Shake + Tempoverlust;
+- Matsch: sichtbares Einsinken/Feststecken;
+- Jeepstart: kurzer Bounce/Staub;
+- Kamera: später Fokus/Blitz/Fotovorschau;
+- Generator: später sichtbares Einschalten;
+- Funk: später Signal-/Finalmoment.
 
-Bis die gemeinsame GradeCrew-Games-Figur final entschieden ist:
-- neutraler Explorer bleibt funktional;
-- Silhouette wird hochwertiger gezeichnet;
-- keine dauerhafte neue Maskottchenrolle lokal erfinden;
-- spätere Games-Figur muss zentral austauschbar sein.
+## Performance
 
-## Asset-Regel
+Der Retro-Stil ist auch Performance-Strategie:
+- kleine Zeichenprimitive;
+- begrenzte Partikel;
+- wiederverwendbare Tile-/Sprite-Funktionen;
+- keine großen Echtzeit-Blur-Flächen;
+- kein unnötiger externer Runtime-Overhead;
+- Canvas erhält pixelated scaling;
+- auf Schul-iPads bleibt Flüssigkeit wichtiger als Effektmenge.
 
-- zentrale wiederverwendbare Zeichenfunktionen statt Kopien;
-- externe Rasterassets erst, wenn sie echten Mehrwert liefern;
-- Raster/Sprites später komprimiert und zentral verwaltet;
-- keine Emoji-Sprites für zentrale Spielobjekte in der finalen Referenzwelt.
+## Verbindliches Abnahmekriterium
 
-## Performance-Budget
-
-- keine großen Blur-Flächen pro Frame, wenn sie vorberechnet werden können;
-- Partikelzahl begrenzen;
-- dekorative Animationen pausieren, wenn Modal offen oder Tab verborgen;
-- keine unnötigen DOM-Reflows im Renderloop;
-- keine externe Runtime nur für einzelne Effekte;
-- große statische Bereiche nach Möglichkeit cachen/offscreen vorbereiten;
-- Canvas-Auflösung kontrolliert, CSS-Skalierung sauber;
-- später echtes iPad/älteres Notebook messen.
-
-## Camp – Referenzstandard
-
-Das Camp ist die erste Szene, die auf Masterpiece-Niveau gebracht wird.
-
-Es braucht:
-- dichten entfernten Dschungel;
-- warme Morgensonne;
-- sichtbare Lichtstrahlen;
-- Pfad/Campfläche mit organischer Kontur;
-- echtes Expeditionszelt;
-- Kisten, Kanister, Seil, Karte/Tablet und Kleinteile;
-- deutlich hochwertigeren MANGO-1;
-- Schatten;
-- Vordergrundblätter;
-- dezente Partikel;
-- kleine Umweltanimationen;
-- klare visuelle Führung zum Tablet und Jeep;
-- keine Emoji-Dekoration als zentraler Blickfang.
-
-### Camp-Wow-Moment
-Nach dem gelösten ersten Lern-Gate und beim Starten von MANGO-1:
-- Jeep reagiert sichtbar;
-- Statuslicht;
-- leichte Federung;
-- kurzer Staubstoß;
-- erst dann Übergang zur Fahrt.
-
-## Abnahmekriterium Camp
-
-Camp gilt erst als visuell fertig, wenn:
-- Screenshot ohne Erklärung als Spielszene lesbar ist;
-- Tablet und Jeep ohne Textwand auffindbar sind;
-- Hintergrund/Mittelgrund/Spielschicht/Vordergrund klar erkennbar sind;
-- keine zentrale Platzhalter-/Emoji-Optik mehr vorhanden ist;
-- Animationen die Bedienung nicht stören;
-- bestehende Lern-/Recovery-/Transition-Logik unverändert funktioniert;
-- Tests, Build und Browser-Flows grün sind;
-- echter manueller Desktop-Test folgt.
+Eine Szene ist erst fertig, wenn:
+1. sie wie Teil derselben Handheld-Overworld wirkt;
+2. zentrale Objekte keine Emojis/Platzhalter mehr sind;
+3. Figur/Fahrer ein lesbares Gesicht haben;
+4. Bewegungsrichtung logisch ist;
+5. Mechanik visuell verständlich ist;
+6. bestehende Lern-/Recovery-/Transition-Logik weiter funktioniert;
+7. Syntax/Tests/Build/Browser-Flows grün sind;
+8. ein echter manueller Geräte-/Screenshot-Test erfolgt ist.
