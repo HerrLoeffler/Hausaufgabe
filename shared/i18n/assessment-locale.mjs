@@ -39,11 +39,11 @@ export function contentLanguageInstruction(locale = DEFAULT_CONTENT_LOCALE) {
     : "Verfasse alle schülerseitigen Prüfungsinhalte in natürlichem Deutsch. Dazu gehören Testtitel, Fragetexte, Antwortoptionen, Lückentexte, Zuordnungen/Gruppen, Lösungstexte und Bild-Alternativtexte. Interne kanonische Enum-/Typwerte bleiben unverändert.";
 }
 
-export function assessmentLocaleSnapshot(locale = DEFAULT_CONTENT_LOCALE) {
+export function assessmentLocaleSnapshot(locale = DEFAULT_CONTENT_LOCALE, gradingLocale = locale) {
   const contentLocale = normalizeAssessmentLocale(locale);
   return Object.freeze({
     schemaVersion: ASSESSMENT_LOCALE_SCHEMA_VERSION,
     contentLocale,
-    gradingLocale: contentLocale,
+    gradingLocale: normalizeAssessmentLocale(gradingLocale, contentLocale),
   });
 }
