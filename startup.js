@@ -115,6 +115,7 @@ if (publicTestCode && !teacherPreview) {
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
     await import("./app.js?v=2.3.1-gc28");
+    await import("./shared/i18n/assessment-locale-ui.mjs?v=1");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
