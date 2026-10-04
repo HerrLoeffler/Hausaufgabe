@@ -273,3 +273,7 @@ dialog.shareDialog.gradecrewVariantDialog, dialog.shareDialog.variantRequestDial
 @media (prefers-reduced-motion: reduce) {
   .questionOutlineItem.variantWorkingOutline::after { animation: none; }
 }
+
+
+/* Teacher preview notice. */
+.studentPreviewNotice{margin:14px 0 0;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid #cfe2ff;border-radius:12px;background:#f7fbff;color:var(--ink-subtle);font-size:13px;line-height:1.45}.studentPreviewNotice strong{color:var(--primary);white-space:nowrap}@media(max-width:620px){.studentPreviewNotice{align-items:flex-start;flex-direction:column;gap:3px}}
