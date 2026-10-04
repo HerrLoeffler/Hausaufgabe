@@ -83,7 +83,7 @@
           "originalState": "stopped",
           "originalReason": "Incomplete/unknown execution; inspect run before retry",
           "confirmedAt": "2026-10-04T16:47:52.455109+00:00",
-          "dispatchState": "reserved"
+          "dispatchState": "dispatched"
         }
       }
     ]
