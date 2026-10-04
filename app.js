@@ -7446,6 +7446,16 @@ function formatTechnicalErrorReport(report) {
     .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
 }
 
+function bugOpsLifecycleLabel(value) {
+  return {
+    open: "Offen",
+    fix_recorded: "Fix dokumentiert",
+    monitoring: "Beobachtung",
+    regressed: "Erneut aufgetreten",
+    retest_required: "Staging-Fix erneut testen"
+  }[value] || "Offen";
+}
+
 function renderBugOpsSummary() {
   const incidents = buildBugIncidents(state.adminFeedback);
   const overview = bugOpsOverview(incidents);
@@ -7456,6 +7466,16 @@ function renderBugOpsSummary() {
   const notice = decisionCount
     ? `<strong>${decisionCount} Vorgang${decisionCount === 1 ? "" : "e"} brauchen Aufmerksamkeit.</strong>`
     : "<strong>Keine akute Entscheidung nötig.</strong>";
+  const canonical = Array.isArray(state.bugOpsSummary?.incidents) ? state.bugOpsSummary.incidents : [];
+  const canonicalHtml = canonical.length ? `<div class="bugOpsCanonicalList" aria-label="Wichtige BugOps-Vorgänge">
+    ${canonical.map(incident => `<div class="bugOpsCanonicalItem">
+      <strong>${escapeHtml(incident.priority || "P3")}</strong>
+      <span>${escapeHtml(bugOpsLifecycleLabel(incident.lifecycle))}</span>
+      <span><strong>${Number(incident.uniqueReporters || 0)}</strong> <span>Melder</span></span>
+      <span><strong>${Number(incident.occurrences || 0)}</strong> <span>Vorkommen</span></span>
+      ${incident.regressionAfterFix ? "<span>🔁 Erneut aufgetreten</span>" : ""}
+    </div>`).join("")}
+  </div>` : "";
   return `<section class="card bugOpsBoard">
     <div class="sectionHead"><div><span class="eyebrow">BugOps · Decision Inbox</span><h2>Fehler statt Meldungen verwalten</h2><p>${notice} ${overview.total} Incident${overview.total === 1 ? "" : "s"} aus den ${state.adminFeedback.length} zuletzt geladenen Meldungen.</p></div></div>
     <div class="adminStatsGrid">
@@ -7464,7 +7484,7 @@ function renderBugOpsSummary() {
       <article class="card adminStatCard"><span>⚡</span><div><strong>${overview.immediate}</strong><small>Sofort ansehen</small></div></article>
       <article class="card adminStatCard"><span>🔁</span><div><strong>${overview.retest_ready}</strong><small>Retest bereit</small></div></article>
     </div>
-    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
+    ${canonicalHtml}\n    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
     <div class="bugOpsIncidentList">${top.map(incident => `<button type="button" class="button secondary bugOpsIncidentFilter" data-fingerprint="${escapeHtml(incident.fingerprint)}">${badge(incident)} ${escapeHtml(incident.priority)} · ${incident.uniqueReporters} Nutzer · ${incident.occurrences}× · ${incident.regressionAfterFix ? "Regression · " : ""}${incident.autopilot === "candidate" ? "Autopilot-Kandidat" : "menschliche Prüfung"}</button>`).join("")}</div>
   </section>`;
 }
