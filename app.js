@@ -1592,11 +1592,15 @@ async function toggleDashboardPublished(q, toggle) {
 function quizDefaults() {
   const settings = getSettings();
   const scale = getScaleById(settings.defaultGradeScaleId);
+  const contentLocale = window.GradeCrewAssessmentLocale?.getContentLocale?.() || "de-DE";
   return {
     title: "Neuer Test",
     subject: settings.defaultSubject || "",
     grade: settings.defaultGrade || "",
     description: settings.defaultDescription || "Viel Erfolg beim Test!",
+    contentLocale,
+    gradingLocale: contentLocale,
+    localeContractVersion: 1,
     gradeScaleId: scale.id,
     gradeScaleSnapshot: deepClone(scale),
     resultMode: settings.defaultResultMode || "points_grade",
@@ -1680,6 +1684,9 @@ async function duplicateQuiz(code) {
       subject: source.subject || "",
       grade: source.grade || "",
       description: source.description || "",
+      contentLocale: source.contentLocale || "de-DE",
+      gradingLocale: source.gradingLocale || source.contentLocale || "de-DE",
+      localeContractVersion: Number(source.localeContractVersion) || 1,
       gradeScaleId: source.gradeScaleId || getSettings().defaultGradeScaleId,
       gradeScaleSnapshot: deepClone(getQuizScale(source)),
       resultMode: source.resultMode || getSettings().defaultResultMode,
@@ -2007,6 +2014,9 @@ async function importSharedTemplate() {
       subject: quiz.subject || "",
       grade: quiz.grade || "",
       description: quiz.description || "",
+      contentLocale: quiz.contentLocale || "de-DE",
+      gradingLocale: quiz.gradingLocale || quiz.contentLocale || "de-DE",
+      localeContractVersion: Number(quiz.localeContractVersion) || 1,
       gradeScaleId: quiz.gradeScaleId || "shared-scale",
       gradeScaleSnapshot: quiz.gradeScaleSnapshot?.thresholds?.length === 6
         ? deepClone(quiz.gradeScaleSnapshot)
@@ -4985,6 +4995,12 @@ async function saveCurrentQuiz(showMessage = true) {
     const selectedScaleId = $("quizGradeScale").value;
     const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
     const scaleSnapshot = scaleChanged ? getScaleById(selectedScaleId) : deepClone(getQuizScale(state.currentQuiz));
+    const contentLocale = window.GradeCrewAssessmentLocale?.getContentLocale?.()
+      || state.currentQuiz.contentLocale
+      || "de-DE";
+    const gradingLocale = state.newManualQuiz
+      ? contentLocale
+      : (state.currentQuiz.gradingLocale || contentLocale);
     syncQualityReport();
     const patch = {
       qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || [],
@@ -4992,6 +5008,9 @@ async function saveCurrentQuiz(showMessage = true) {
       subject: $("quizSubject").value.trim(),
       grade: $("quizGrade").value.trim(),
       description: $("quizDescription").value.trim(),
+      contentLocale,
+      gradingLocale,
+      localeContractVersion: Number(state.currentQuiz.localeContractVersion) || 1,
       gradeScaleId: selectedScaleId,
       gradeScaleSnapshot: scaleSnapshot,
       resultMode: $("quizResultMode").value,
