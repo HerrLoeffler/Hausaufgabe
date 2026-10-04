@@ -58,3 +58,5 @@ Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen.
 ## Externe Fortsetzung vorab gesichert
 
 Secret-Viewer ausdrücklich freigegeben und gespeichert; Policy Troubleshooter bestätigt wirksames secrets.get. Aktueller Escape-Head a7ffc382 unverändert, Run 37021633218/Attempt1 completed failure, keine aktiven/queued Jobs. Geplant: nur fehlgeschlagenen Job dieses Runs unter dem bestehenden Weiterarbeitsauftrag fortsetzen; Ziel ausschließlich generateEscapePreview + gradecrew-escape-dev in Staging. Ergebnis/Attempt2 nach API-Aufruf sofort sichern, keinen unklaren Start wiederholen. Keine Provider-Testanfrage.
+
+Externer Start bestätigt: bestehender Run 37021633218, Attempt 2, Status in_progress, Quelle a7ffc382128c49b418a79c31812f88e7fe0fd3d2; GitHub-API success. Deployment-Ergebnis offen, nicht erneut starten.
