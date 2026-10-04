@@ -142,7 +142,7 @@ test('gateway registers Gemini only when explicitly enabled and smoke endpoint s
     GEMINI_LOCATION: 'eu',
   };
   const gateway = buildGateway({ env, fetchImpl: async () => { throw new Error('no network in config test'); } });
-  assert.deepEqual(gateway.status, { anthropic: 'unconfigured', openai: 'unconfigured', gemini: 'configured' });
+  assert.deepEqual(gateway.status, { anthropic: 'unconfigured', openai: 'unconfigured', gemini: 'configured', mistral: 'unconfigured' });
   assert.deepEqual(gateway.router.listProviders(), [{ id: 'gemini', capabilities: ['text'] }]);
   const smoke = smokeRequestFor('/providers/gemini/test');
   assert.equal(smoke.provider, 'gemini');
