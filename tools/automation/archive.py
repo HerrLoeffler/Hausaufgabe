@@ -18,6 +18,17 @@ def api(path):
     return subprocess.check_output(['gh', 'api', 'repos/' + REPO + '/' + path])
 
 
+def trusted_preview(run):
+    if (run.get('status') != 'completed' or run.get('conclusion') != 'success'
+            or run.get('name') != 'Automatic staging preview'
+            or run.get('path') != '.github/workflows/staging-preview.yml'
+            or run.get('repository', {}).get('full_name') != REPO
+            or run.get('head_repository', {}).get('full_name') != REPO
+            or run.get('head_branch') != 'main'
+            or run.get('event') not in {'workflow_run', 'push'}):
+        raise ValueError('Not a successful trusted preview workflow')
+
+
 def extract(data, destination):
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         seen = set()
@@ -72,8 +83,7 @@ def main():
     if not re.fullmatch('[1-9][0-9]{0,19}', run_id):
         raise ValueError('Invalid run ID')
     run = json.loads(api('actions/runs/' + run_id))
-    if run.get('conclusion') != 'success' or run.get('path') != '.github/workflows/staging-preview.yml' or run.get('repository', {}).get('full_name') != REPO or run.get('event') != 'workflow_run':
-        raise ValueError('Not a successful trusted preview workflow')
+    trusted_preview(run)
     artifacts = json.loads(api('actions/runs/' + run_id + '/artifacts?per_page=100'))['artifacts']
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)

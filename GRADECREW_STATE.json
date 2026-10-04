@@ -103,8 +103,8 @@
       "database_backup": false,
       "production_backup": false
     },
-    "agent_dispatch": "implemented_pending_credentials_and_e2e",
-    "agent_dispatch_note": "Credentials and activation verified by admission 37196805396; worker created PR 78 and combined candidate CI passed. Existing schema enum retained until a successful complete E2E; both OpenAI reviews failed with 403. Recovery prepared.",
+    "agent_dispatch": "verified",
+    "agent_dispatch_note": "Real admitted pilot run 37218095594 passed build, exact combined CI, three independent reviews and fast-forward integration; integrated CI 37218270539 and digest-verified Hosting 37219916184 / AI Functions 37219916242 receipts for2436a432 confirm bounded Web pilot E2E. Complex workstream profiles, device acceptance and Production remain separate.",
     "release_control_audit": {
       "branch": "fix/release-control-evidence-v2",
       "pr": 50,
@@ -118,7 +118,7 @@
       "latest_candidate": "eb80c5e6a8b6c1ae13deba676709607bfccee208"
     },
     "stage_guardian": {
-      "status": "activated_pilot_integrated_staging_handoff_pending",
+      "status": "activated_pilot_staging_verified",
       "branch": "fix/guardian-three-reviewers-v1",
       "pr": 62,
       "worker_enabled_verified": true,
@@ -126,7 +126,7 @@
       "evidence_run": 37077976663,
       "max_attempts_per_stage": 3,
       "full_pipeline_active": true,
-      "next_action": "Verify source-bound staging handoff for existing successful CI37218270539; no new paid build or attempt. Hosting and AI Functions receipts required before E2E completion.",
+      "next_action": "Homepage run 37220142576 stopped after unknown provider result; inspect provider billing/result before any separately qualified retry. Reservation retained; no duplicate attempt. Pilot device acceptance remains open.",
       "implementation_commit": "6a5c2d0da8f327f6808c30435aea3f52ba9b72a2",
       "independent_review_roles": [
         "correctness",
@@ -150,21 +150,27 @@
       },
       "prepared_pilot": {
         "id": "pilot-tutorial-later-a11y-20261004",
-        "source_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+        "source_sha": "256609f81f601896a9e683f67945743df6b2f29f",
         "allowed_files": [
           "tutorial-choice-v1.css"
         ],
         "cost_profile": "small-web-v1",
-        "status": "admitted_first_attempt_stopped",
+        "status": "staging_deployed",
         "paid_run_verified": true,
-        "run_id": 37196835882,
-        "pull_request": 78,
-        "estimated_usd_so_far": 0.023296,
-        "staging_verified": false
+        "run_id": 37218095594,
+        "pull_request": 98,
+        "estimated_usd_so_far": 0.100344,
+        "staging_verified": true,
+        "original_source_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+        "original_run_id": 37196835882,
+        "original_pull_request": 78,
+        "integrated_sha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
+        "hosting_run": 37219916184,
+        "functions_run": 37219916242
       },
-      "e2e_verified": false,
+      "e2e_verified": true,
       "source_recovery": {
-        "status": "recovered_pilot_integrated",
+        "status": "pilot_staging_verified",
         "branch": "fix/guardian-recovery-queue-20261004",
         "source_fix_pr": 95,
         "source_fix_merge": "b49793cd9ae0073024f5a17191dd8d623ab523cb",
@@ -178,7 +184,7 @@
         "cancelled_before_jobs_run": 37217267732,
         "original_attempts_retained": 1,
         "original_reserved_usd_retained": 0.85,
-        "e2e_verified": false,
+        "e2e_verified": true,
         "queue_fix_pr": 97,
         "queue_fix_merge": "2a2a9912cc34c8afed19c3260f254d45ceb613b1",
         "queue_ci_runs": [
@@ -196,7 +202,23 @@
         "new_execution_result": "success",
         "integrated_sha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
         "integrated_ci_run": 37218270539,
-        "integrated_ci_result": "success"
+        "integrated_ci_result": "success",
+        "hosting_run": 37219916184,
+        "hosting_run_attempt": 2,
+        "hosting_verified_files": 110,
+        "functions_run": 37219916242,
+        "known_pilot_usage_estimate_usd_total": 0.100344
+      },
+      "homepage_followup": {
+        "task_id": "startscreen-masterpiece-v2-20261004",
+        "status": "stopped_provider_result_unknown",
+        "run_id": 37220142576,
+        "request_id": "run-37220092072-1",
+        "approved_source_sha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
+        "reserved_usd": 2.4,
+        "max_cost_usd": 2.55,
+        "attempts": 1,
+        "reason": "Provider result unknown; automatic retry forbidden, 2.40 USD reservation retained"
       }
     }
   },
