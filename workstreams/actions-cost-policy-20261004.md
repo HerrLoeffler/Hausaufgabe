@@ -80,3 +80,16 @@ wurde in main afc6524 integriert. Diese Arbeit bleibt erhalten. Originaler
 Guardian-Pilot erwartet weiter eb80c5e6; aktueller Web-Head f30fa44 passt nicht
 zum alten Recovery-Vertrag. Bestehende Grenzen nicht durch stilles Umpinnen,
 Ledger-Reset oder Rerun eines Paid-Jobs umgehen. Das ist ein eigener Quellenblocker.
+
+
+## Abschlussnachweise der öffentlichen Fortsetzung
+
+Guardian-Reparatur #86 → main a689d97 nach vier erfolgreichen finalen PR-Checks
+am Head 8432bdb (37214157548, 37214157496, 37214157513, 37214157945).
+Main-Handoff 37214298416, Development Status 37214298344, Release Control
+37214298356 und Guardian 37214298357 erfolgreich. Aktive YAML-Dateien frisch
+von GitHub gelesen: main/Visual Preview dispatch-only, Web docs-ignore,
+Handoff Branchliste/Concurrency, drei 6h-Crons und skipped-Filter bestätigt.
+Auch der neue Homepage-Listener überspringt künftig skipped-Guardian-Ereignisse.
+Der ursprüngliche Pilot bleibt als separater belegter Quellenblocker offen;
+keine neue Provider-Ausführung oder Budget-/History-Rücksetzung.
