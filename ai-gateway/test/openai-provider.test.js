@@ -112,6 +112,6 @@ test('gateway registers providers only when their runtime credentials or opt-in 
     OPENAI_API_KEY: 'sk-test-only',
   };
   const gateway = buildGateway({ env, fetchImpl: async () => { throw new Error('no network in config test'); } });
-  assert.deepEqual(gateway.status, { anthropic: 'configured', openai: 'configured', gemini: 'unconfigured' });
+  assert.deepEqual(gateway.status, { anthropic: 'configured', openai: 'configured', gemini: 'unconfigured', mistral: 'unconfigured' });
   assert.deepEqual(gateway.router.listProviders().map(p => p.id).sort(), ['anthropic', 'openai']);
 });
