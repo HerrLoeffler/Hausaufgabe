@@ -88,3 +88,20 @@ Taskhash/ausgewählten Blobs neu geprüft werden. Keine heimliche Rebase-Freigab
 oder neue Budgetreservierung durch die Dokumentation. Nächster separater Schritt:
 aktuellen source-bound Pilot-/Recovery-Vertrag unter Erhalt von History,
 verbrauchten Versuchen, Gesamtbudget und unabhängigen Reviews erstellen.
+
+
+## Tatsächlicher Recovery-Lauf nach Integration
+
+#86 integriert als a689d971938102b5c9a1defea14b429b840ea9f3 nach vier grünen
+finalen PR-Workflows am Head 8432bdb. Run 37214298339 / Job 111471573576 erreicht
+jetzt den historischen Evidenz-/PR-/Commit-Abgleich und stoppt mit
+`ValueError: Source, secured candidate or PR moved`. Damit ist der alte
+PR-Leseberechtigungsblocker überwunden; die geänderte Webquelle verhindert
+weiterhin die Freigabe. Der Fehler liegt vor `write_ledger` und Dispatch;
+kein neuer Paid-Call oder Versuchszähler-/Budgetreset durch diesen Lauf.
+
+Homepage-Run 37214298360 / Job 111471573606 meldet korrekt:
+Homepage waiting for verified real pilot staging receipts; no paid call.
+Keine Admission/Integration/Staging-Abnahme des Piloten oder der Homepage
+behaupten. Der aktuelle source-bound Pilot-/Recovery-Vertrag ist nächster
+eigener Schritt. Production und Gerätetest bleiben unverändert/offen.

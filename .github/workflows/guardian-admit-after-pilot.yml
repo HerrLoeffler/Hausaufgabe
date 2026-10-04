@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   admit:
-    if: github.ref == 'refs/heads/main'
+    # A skipped controller listener cannot provide a new pilot receipt.
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
