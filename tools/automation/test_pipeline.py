@@ -546,6 +546,76 @@ class DeploymentTests(unittest.TestCase):
             with self.subTest(changes=changes),self.assertRaises(ValueError):d.verify_ci(run|changes,report,attempt)
         with self.assertRaises(ValueError):d.verify_ci(run,report|{'commit':A},attempt)
 
+    def test_real_dynamic_ci_name_retains_exact_path_and_request_binding(self):
+        run = self.ci_run() | {'name': 'Guardian integrated run-1'}
+        attempt = ATTEMPT | {'state': 'integrated', 'integratedSha': B}
+        report = {'requestId': 'run-1', 'commit': B, 'branch': p.WEB, 'runId': 44,
+                  'result': 'success', 'profile': 'web-combined-v1'}
+        self.assertEqual(d.verify_ci(run, report, attempt), B)
+        for update in [{'name': 'Guardian integrated other'}, {'path': '.github/workflows/fake.yml'},
+                       {'head_sha': A}, {'run_attempt': 2}]:
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                d.verify_ci(run | update, report, attempt)
+
+    def test_committed_staging_request_cannot_substitute_ci_candidate_or_owner(self):
+        request = {'id': 'pilot-stage', 'requestId': 'run-1', 'upstreamRunId': 44, 'commit': B}
+        report = {'requestId': 'run-1', 'commit': B, 'branch': p.WEB, 'runId': 44,
+                  'result': 'success', 'profile': 'web-combined-v1'}
+        attempt = ATTEMPT | {'state': 'integrated', 'integratedSha': B, 'ciRunId': 44}
+        d.verify_request(request, report, attempt)
+        for update in [{'commit': A}, {'requestId': 'other'}, {'upstreamRunId': 45},
+                       {'upstreamRunId': True}, {'unexpected': 'ignored'}]:
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                d.verify_request(request | update, report, attempt)
+
+    def test_main_push_reuses_verified_ci_without_mutating_attempts_or_budget(self):
+        report = {'requestId': 'run-1', 'commit': B, 'branch': p.WEB, 'runId': 44,
+                  'result': 'success', 'profile': 'web-combined-v1'}
+        attempt = ATTEMPT | {'state': 'integrated', 'integratedSha': B, 'ciRunId': 44}
+        ledger = {'attempts': {'pilot:pipeline-v2': [attempt]},
+                  'budgetReservations': [{'taskId': 'pilot-ui', 'reservedUsd': .85}]}
+        original = copy.deepcopy(ledger)
+        policy = {'schemaVersion': 1, 'enabled': True, 'maxAttemptsPerStage': 3,
+                  'automaticProduction': False, 'workstreams': [ROW]}
+        def api(path, method='GET', body=None):
+            self.assertEqual(method, 'GET')
+            if path == 'actions/runs/44':
+                return self.ci_run() | {'name': 'Guardian integrated run-1'}
+            if path == 'git/ref/heads/' + p.WEB: return {'object': {'sha': B}}
+            raise AssertionError(path)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); folder = root / 'automation/deployment-requests'; folder.mkdir(parents=True)
+            request = {'id': 'pilot-stage', 'requestId': 'run-1', 'upstreamRunId': 44, 'commit': B}
+            (folder / 'pilot-stage.json').write_text(json.dumps(request))
+            previous_cwd = Path.cwd()
+            try:
+                os.chdir(root)
+                with patch.object(d, 'ROOT', root), patch.object(d, 'api', side_effect=api), \
+                     patch.object(d, 'artifact_document', return_value=report), \
+                     patch.object(g, 'read_ledger', return_value=(ledger, 'blob')), \
+                     patch.object(e, 'fresh_documents', return_value=[policy, TASK]), \
+                     patch.dict(os.environ, {'GITHUB_REPOSITORY': g.REPO, 'GITHUB_REF': 'refs/heads/main',
+                         'GITHUB_EVENT_NAME': 'push', 'GITHUB_RUN_ID': '66', 'UPSTREAM_RUN_ID': '',
+                         'GITHUB_OUTPUT': str(root / 'outputs'), 'GUARDIAN_ENABLED': 'true'}):
+                    d.main()
+                    self.assertEqual(json.loads((root / 'deployment-source.json').read_text()),
+                        {'commit': B, 'upstreamCiRun': 44, 'workflowRun': 66, 'project': 'hausaufgabe-staging'})
+                    self.assertEqual(ledger, original)
+                    with patch.dict(os.environ, {'UPSTREAM_RUN_ID': '44', 'EXPECTED_SHA': A}), self.assertRaises(ValueError):
+                        d.main()
+                    with patch.dict(os.environ, {'UPSTREAM_RUN_ID': '45', 'EXPECTED_SHA': B}), self.assertRaises(ValueError):
+                        d.main()
+                    (folder / 'pilot-stage.json').write_text(json.dumps(request | {'upstreamRunId': 45, 'commit': A}))
+                    with patch.dict(os.environ, {'UPSTREAM_RUN_ID': '44', 'EXPECTED_SHA': B}), self.assertRaises(ValueError):
+                        d.main()
+                    (folder / 'pilot-stage.json').write_text(json.dumps(request))
+                    with patch.dict(os.environ, {'GITHUB_REF': 'refs/heads/other'}), self.assertRaises(ValueError):
+                        d.committed_request()
+                    (folder / 'second.json').write_text(json.dumps(request))
+                    with self.assertRaises(ValueError): d.committed_request()
+            finally:
+                os.chdir(previous_cwd)
+
     def test_native_git_fast_forward_cannot_overwrite_parallel_commit(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);remote=root/'remote.git';source=root/'source'

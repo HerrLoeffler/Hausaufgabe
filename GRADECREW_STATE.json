@@ -118,7 +118,7 @@
       "latest_candidate": "eb80c5e6a8b6c1ae13deba676709607bfccee208"
     },
     "stage_guardian": {
-      "status": "activated_pilot_source_recovered_new_attempt_running",
+      "status": "activated_pilot_integrated_staging_handoff_pending",
       "branch": "fix/guardian-three-reviewers-v1",
       "pr": 62,
       "worker_enabled_verified": true,
@@ -126,7 +126,7 @@
       "evidence_run": 37077976663,
       "max_attempts_per_stage": 3,
       "full_pipeline_active": true,
-      "next_action": "Observe existing run37218095594 exact CI, three independent reviews and staging receipts; no duplicate attempt/dispatch or history/budget reset.",
+      "next_action": "Verify source-bound staging handoff for existing successful CI37218270539; no new paid build or attempt. Hosting and AI Functions receipts required before E2E completion.",
       "implementation_commit": "6a5c2d0da8f327f6808c30435aea3f52ba9b72a2",
       "independent_review_roles": [
         "correctness",
@@ -164,7 +164,7 @@
       },
       "e2e_verified": false,
       "source_recovery": {
-        "status": "recovered_new_attempt_running",
+        "status": "recovered_pilot_integrated",
         "branch": "fix/guardian-recovery-queue-20261004",
         "source_fix_pr": 95,
         "source_fix_merge": "b49793cd9ae0073024f5a17191dd8d623ab523cb",
@@ -192,7 +192,11 @@
         "new_execution_run": 37218095594,
         "new_request_id": "run-37218071006-1",
         "attempts_total": 2,
-        "reserved_usd_total": 1.7
+        "reserved_usd_total": 1.7,
+        "new_execution_result": "success",
+        "integrated_sha": "2436a432d9a4dc2840d4ba2c22a7b9c000cc2b47",
+        "integrated_ci_run": 37218270539,
+        "integrated_ci_result": "success"
       }
     }
   },

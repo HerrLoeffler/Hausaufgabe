@@ -1,8 +1,11 @@
 name: Automatic staging AI functions
 
 on:
+  push:
+    branches: [main]
+    paths: ['automation/deployment-requests/*.json']
   workflow_run:
-    workflows: ['AI Staging Checks', 'Guardian integrated checks']
+    workflows: ['AI Staging Checks', 'Guardian integrated checks', 'Guardian integrated *']
     types: [completed]
 
 permissions:
@@ -16,14 +19,16 @@ concurrency:
 jobs:
   source:
     if: >-
-      github.event.workflow_run.conclusion == 'success' &&
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
       ((github.event.workflow_run.name == 'AI Staging Checks' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'feature/gradecrew-app-integration') ||
-       (github.event.workflow_run.name == 'Guardian integrated checks' && github.event.workflow_run.event == 'workflow_dispatch' && github.event.workflow_run.head_branch == 'main'))
+       ((github.event.workflow_run.name == 'Guardian integrated checks' || startsWith(github.event.workflow_run.name, 'Guardian integrated ')) && github.event.workflow_run.event == 'workflow_dispatch' && github.event.workflow_run.head_branch == 'main')))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       sha: ${{ steps.source.outputs.sha }}
+      ci_run: ${{ steps.source.outputs.upstream_ci }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -107,7 +112,7 @@ jobs:
         working-directory: deploy-control
         env:
           GH_TOKEN: ${{ github.token }}
-          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          UPSTREAM_RUN_ID: ${{ needs.source.outputs.ci_run }}
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
       - name: Authenticate only as the staging Functions deployer
         uses: google-github-actions/auth@v3
@@ -148,7 +153,7 @@ jobs:
       - name: Write deployment receipt
         env:
           RUN_ID: ${{ github.run_id }}
-          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          UPSTREAM_RUN_ID: ${{ needs.source.outputs.ci_run }}
         run: |
           node - <<'NODE'
           const fs = require('node:fs');

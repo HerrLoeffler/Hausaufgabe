@@ -103,7 +103,7 @@ def find_ci_run(runs: list[dict[str, Any]], name: str, branch: str, sha: str | N
     if not sha:
         return None
     for run in runs:
-        if name == "AI Staging Checks" and branch == WEB_BRANCH and run.get("name") == "Guardian integrated checks":
+        if name == "AI Staging Checks" and branch == WEB_BRANCH and (run.get("name") == "Guardian integrated checks" or str(run.get("name", "")).startswith("Guardian integrated ")):
             # Explicit dispatch is necessary for GITHUB_TOKEN integrations.
             # Read the durable task binding and the real CI artifact; neither
             # run title nor an arbitrary workflow_dispatch SHA is sufficient.
@@ -225,7 +225,7 @@ def latest_deployment(runs: list[dict[str, Any]], kind: str, warnings: list[str]
     name, path, event, branch, prefix, filename = DEPLOYMENTS[kind]
     relevant = [r for r in runs if r.get("path") == ".github/workflows/" + path
                 and r.get("name") == name and r.get("head_branch") == branch
-                and r.get("event") in ({event} if event else {"push", "workflow_dispatch"})
+                and r.get("event") in ({event, "push"} if kind in {"hosting", "functions"} else {event} if event else {"push", "workflow_dispatch"})
                 and r.get("repository", {}).get("full_name") == REPO
                 and r.get("head_repository", {}).get("full_name") == REPO]
     if not relevant:

@@ -40,6 +40,25 @@ def receipt(kind="hosting"):
 
 
 class ReleaseControlTests(unittest.TestCase):
+    def test_dynamic_guardian_name_still_requires_bound_ci_artifact(self):
+        from tools.automation import guardian, deployment_evidence
+        attempt, ci, report = self.guardian_fixture()
+        ci['name'] = 'Guardian integrated run-pilot'
+        with patch.object(guardian, 'read_ledger', return_value=({'attempts': {'pilot': [attempt]}}, 'blob')), \
+             patch.object(deployment_evidence, 'artifact_document', return_value=report):
+            proof = rc.find_ci_run([ci], 'AI Staging Checks', rc.WEB_BRANCH, A)
+            self.assertEqual(proof['conclusion'], 'success')
+            self.assertEqual(proof['origin'], 'guardian_exact_tree')
+
+    def test_committed_main_staging_push_receipts_count_but_pr_receipts_do_not(self):
+        for kind in ['hosting', 'functions']:
+            prefix = rc.DEPLOYMENTS[kind][4]
+            artifact = {'id': 456, 'name': prefix if kind == 'hosting' else prefix + A}
+            with patch.object(rc, 'gh_request', return_value={'artifacts': [artifact]}), \
+                 patch.object(rc, 'receipt_document', return_value=receipt(kind)):
+                proof = rc.latest_deployment([run(kind, event='push')], kind, [])
+                self.assertEqual(proof['commit'], A)
+                self.assertIsNone(rc.latest_deployment([run(kind, event='pull_request')], kind, []))
     def test_direct_script_entry_can_import_execution_helpers_outside_repo_cwd(self):
         root=pathlib.Path(rc.__file__).resolve().parents[1]
         command="import runpy; ns=runpy.run_path("+repr(str(root/'tools/release_control.py'))+"); from tools.automation.guardian import validate_policy; print('importable')"

@@ -22,7 +22,7 @@ on:
       - '.github/workflows/guardian-*.yml'
       - '.github/workflows/stage-guardian.yml'
   workflow_run:
-    workflows: ['GradeCrew Codex worker', 'GradeCrew Guardian execution', 'Guardian integrated checks', 'Automatic staging preview', 'Automatic staging AI functions']
+    workflows: ['GradeCrew Codex worker', 'GradeCrew Guardian execution', 'Guardian task *', 'Guardian integrated checks', 'Guardian integrated *', 'Automatic staging preview', 'Automatic staging AI functions']
     types: [completed]
 
 permissions:
