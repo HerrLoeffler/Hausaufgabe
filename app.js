@@ -2356,6 +2356,18 @@ function collectAiRequest() {
   };
 }
 
+async function applyGeneratedAudio(rawQuestion, q, code, questionId) {
+  const intent = rawQuestion?.audioIntent;
+  if (!intent || intent.kind !== "ai_generated") return;
+  const script = String(intent.script || "").replace(/\s+/g, " ").trim().slice(0, 500);
+  if (!script) throw new Error("Die KI hat für die Höraufgabe keinen Hörtext geliefert.");
+  const result = await aiApi.generateQuestionAudio({ quizId: code, questionId, script });
+  if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat für die Höraufgabe kein Audio geliefert.");
+  Object.assign(q, result.asset);
+  q.audioScript = script;
+  q.audioNeedsRegeneration = false;
+}
+
 async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
   const intent = rawQuestion?.mediaIntent;
   if (!intent || intent.kind === "none") return;
@@ -3279,6 +3291,16 @@ function renderQuestions() {
     audioEditor.className = "questionAudioEditor";
     node.querySelector(".answerEditor").before(audioEditor);
     renderQuestionAudioEditor(audioEditor, q);
+    const markAudioStaleAfterContentEdit = event => {
+      if (!getQuestionAudioSrc(q) || event.target?.closest?.(".questionAudioEditor")) return;
+      if (q.audioNeedsRegeneration === true) return;
+      q.audioNeedsRegeneration = true;
+      window.setTimeout(() => {
+        if (audioEditor.isConnected) renderQuestionAudioEditor(audioEditor, q);
+      }, 0);
+    };
+    node.addEventListener("input", markAudioStaleAfterContentEdit, true);
+    node.addEventListener("change", markAudioStaleAfterContentEdit, true);
     renderAnswerEditor(node.querySelector(".answerEditor"), q);
     root.appendChild(node);
   });
@@ -3655,6 +3677,11 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
       await applyGeneratedMedia(response.question, next, target.quizId, next.id);
     } else if (!variant && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
+    if (response.question?.audioIntent?.kind === "ai_generated") {
+      await applyGeneratedAudio(response.question, next, target.quizId, next.id);
+    } else if (!variant && (q.audioScript || getQuestionAudioSrc(q))) {
+      for (const key of ["audioScript", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration"]) next[key] = q[key];
+    }
     index = editorQuestionIndex(state, target);
     if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     if (variant) state.questions.splice(index + 1, 0, next);
@@ -3673,6 +3700,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
         questionPosition: index + 1,
         questionType: String(q?.type || ""),
         mediaKind: String(q?.mediaIntent?.kind || "none"),
+        audioKind: q?.audioScript || getQuestionAudioSrc(q) ? "ai_generated" : "none",
         instructionLength: String(instruction || "").length,
         requireDifferent: Boolean(requireDifferent),
         testQuestionCount: Array.isArray(state.questions) ? state.questions.length : 0
