@@ -34,6 +34,7 @@ export function createAiClient(app, getUid) {
     analyzeMaterial: call("analyzeMaterial", 300000),
     generateQuestionMedia: call("generateQuestionMedia", 300000),
     generateQuestionAudio: call("generateQuestionAudio", 180000),
+    generateQuestionSolutionAudio: call("generateQuestionSolutionAudio", 180000),
     getQuestionAudioDrafts: call("getQuestionAudioDrafts", 60000),
     syncQuestionAudioDrafts: call("syncQuestionAudioDrafts", 60000)
   };
