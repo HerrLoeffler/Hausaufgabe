@@ -87,3 +87,37 @@ Keine automatische E-Mail/Push-Schleife pro Rohmeldung.
 
 ## Offene Punkte / nächster Schritt
 Produktbranch vom **frisch geprüften** Integrationshead erstellen und V1 implementieren. Danach PR gegen den Integrationsbranch, CI prüfen, erst anschließend Staging-Deploy durch die bestehende Pipeline.
+
+
+## Gesicherter Implementierungsstand – 2026-10-04 23:39 CEST
+
+- Produktbranch: `feature/bug-ops-v1`
+- Ausgangs-SHA Integrationsbranch: `461da164aaf6469da999f8fe3f5f2210036a6ebf`
+- aktueller Produkt-SHA: `d703abb7d7bb23ba82c7cca8e3dfd0e10aef799d`
+- PR: #133 → `feature/gradecrew-app-integration`
+- PR ist aktuell mergebar.
+- Vollständiger `AI Staging Checks` Run `37236813704`: **grün**, inklusive `bug-ops.test.mjs`, bestehender Web-/Security-/Emulator-Regressions und Staging-Build.
+- Zusätzlich Admin-Control/Staging-Build Run `37236761070` auf vorherigem Produktstand: grün.
+- Release-Stufe: **ci_green**; noch nicht integriert, nicht auf Staging deployed, nicht nutzergetestet.
+- Production unverändert und nicht freigegeben.
+
+### Bewusster Integrationsblocker
+Offener i18n-PR #131 verändert ebenfalls `app.js`. BugOps wird deshalb nicht blind in den Integrationsbranch gemergt. Beide Änderungen müssen auf demselben aktuellen Integrationsstand zusammengeführt und erneut durch Combined CI geprüft werden.
+
+### Was V1 bereits liefert
+- gleiche technische Meldungen → ein Incident per Fingerprint,
+- eindeutige Melder + Vorkommen statt Rohmeldungsflut,
+- deterministische P0–P3-Priorisierung,
+- Regression-nach-Fix-Erkennung,
+- Benachrichtigungsklassen `immediate`, `action_needed`, `retest_ready`, `digest`,
+- konservative Red-Flag-Sperre für Auth/Security/Rules/Zahlung/Prüfung/Datenschutz usw.,
+- Admin-Decision-Inbox,
+- Feedback-Pagination in 200er-Seiten statt Vollbestand,
+- sanitisiertes Guardian-Incident-Format ohne Identitäten, Nachrichten oder Schülerdaten.
+
+### Noch offen
+1. i18n-Überschneidung auflösen und BugOps gegen den dann aktuellen Integrationshead neu prüfen.
+2. Nach Integration Staging-Receipt abwarten und Admin-UI real testen.
+3. Kanonische serverseitige Incident-Aggregation für >1.000 Nutzer ergänzen; die aktuelle V1 gruppiert die geladenen Seiten im Adminclient.
+4. Sichere serverseitige Guardian-Brücke bauen. Browser erhält niemals GitHub-/Guardian-Schreibrechte.
+5. Admin-weite Entscheidungsbenachrichtigung und später optionaler Digest-Kanal auf denselben Incident-Ereignissen aufsetzen.
