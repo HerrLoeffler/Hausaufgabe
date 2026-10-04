@@ -237,3 +237,28 @@ Status:
 - Retro-/Handheld-V2 ist erstmals wirklich deployed und testbar.
 - Nächster Gate-Schritt: echter visueller/spielerischer Test des Camp-/Jeep-/Wildlife-/River-/Station-/Tower-Flows auf Desktop und anschließend Touch-Gerät.
 - Danach sichtbare Schwächen gezielt polieren; Art Direction bleibt originale Retro-Handheld-Top-Down-Overworld.
+
+
+## 2026-10-04 — L3 Lernweg auf Branch
+
+Commits:
+- `3b0aa25b233931a07dc6c80fb15eb415ccfab901` — sechs story-integrierte Lern-Gates und adaptive Hilfen.
+- `ea7eda47904cbcc1a1ae914dec369583df60a96a` — Testverträge für L3.
+
+Lern-Review:
+- statt 3 jetzt 6 Lern-Gates;
+- Fehler 1 → konkreter Coco-Tipp;
+- Fehler 2 → analoges Worked Example;
+- danach Transfer mit neuen Zahlen;
+- wiederholter Transferfehler → gestufte Hilfe bis zur gemeinsamen Lösung;
+- falsche Antworten geben weiterhin keinen Lernfortschritt;
+- zusätzliche Story-Gates: Winde kalibrieren, Flussroute berechnen, Signal verstärken;
+- HUD/Victory zeigen Lernfortschritt /6.
+
+Status ausdrücklich:
+- auf GitHub gesichert: **ja**;
+- aktueller Branch-Head nach L3: `ea7eda47904cbcc1a1ae914dec369583df60a96a`;
+- letzter verifizierter/deployter Preview bleibt der vorherige V2-Meilenstein;
+- L3 neuer manueller Workflow-Lauf: **noch offen**;
+- L3 am Gerät bestätigt: **noch offen**;
+- Production: **unverändert**.
