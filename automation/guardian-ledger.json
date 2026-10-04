@@ -8,7 +8,7 @@
         "taskId": "pilot-tutorial-later-a11y-20261004",
         "taskHash": "f45f99aa8e7cef93cdb640fc9e23008c97a0222038baf484fe940bc5b7b7f4f8",
         "approvedSha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
-        "state": "stopped",
+        "state": "repairable",
         "controlSha": "6e3b4051fcc560e99789a8567ba301466ea50a11",
         "controlHash": "1b81d70859536c2e7538ae52d44799843af71fda20e80af18a5d90bbc33e6079",
         "reservedAt": "2026-10-04T10:53:17.799227+00:00",
@@ -46,7 +46,45 @@
         ],
         "estimatedUsd": 0.023296,
         "feedback": [],
-        "reason": "Incomplete/unknown execution; inspect run before retry"
+        "reason": "Explicit diagnosis: reviewer model permissions corrected by Martin",
+        "manualRecovery": {
+          "id": "pilot-model-permissions-20261004",
+          "taskId": "pilot-tutorial-later-a11y-20261004",
+          "previousRequestId": "run-37196815805-1",
+          "runId": 37196835882,
+          "taskHash": "f45f99aa8e7cef93cdb640fc9e23008c97a0222038baf484fe940bc5b7b7f4f8",
+          "head": "bb8188f9dc1928e7ab9a956b952beabd4af5844b",
+          "kind": "confirmed-review-permission-403",
+          "permissionFixConfirmed": true,
+          "reason": "Martin confirmed unblocking gpt-6-astra and gpt-6-sol at 13:03 Europe/Berlin and explicitly requested continuation at 13:08. Both original review jobs returned definite HTTP 403; worker, combined validation and Claude review completed. Permit one new normal attempt within the unchanged 3-attempt / 2.55 USD task limit; do not rerun paid jobs or reset history. Martin explicitly requested resolving the stale-source blocker on 2026-10-04. Renew only the base to the current Web SHA after proving the selected blobs unchanged; retain original attempt, publication, usage and all reservations.",
+          "sourceUpdate": {
+            "previousTask": {
+              "id": "pilot-tutorial-later-a11y-20261004",
+              "base_branch": "feature/gradecrew-app-integration",
+              "base_sha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+              "risk": "web-ui",
+              "goal": "Improve the existing tutorial offer Later button (.gcTutorialOfferLater): provide a comfortable minimum 44 by 44 CSS-pixel pointer target and a clearly visible keyboard-only focus ring. This is the user-authorized bounded Guardian E2E pilot.",
+              "acceptance": "The existing .gcTutorialOfferLater control has min-height and min-width of at least 44px and a scoped :focus-visible outline of at least 2px with positive outline-offset. Preserve existing tutorial offer labels, layout breakpoints, start/later actions and all current style rules. No generic button/body selectors, animations or external dependencies. Existing combined CI and packaging proof must pass. Physical device acceptance remains manual.",
+              "constraints": "Modify only tutorial-choice-v1.css. Make the smallest additive scoped CSS change. Preserve existing rules and behavior; no changes to tests, authentication, exam logic, shared design tokens or infrastructure. If source context is insufficient, refuse. This task may proceed only via explicit admission with current source and keys; Production stays locked.",
+              "allowed_files": [
+                "tutorial-choice-v1.css"
+              ],
+              "context_files": [],
+              "validation_profile": "web-combined-v1",
+              "cost_profile": "small-web-v1",
+              "max_cost_usd": 2.55
+            },
+            "approvedSha": "256609f81f601896a9e683f67945743df6b2f29f",
+            "taskHash": "d56a6630eee78bed4d137601cfae6402d202d79b1735347e6f371a8cfe4fba9f",
+            "selectedBlobs": {
+              "tutorial-choice-v1.css": "22bfd82f60b451f53008ceef201b6c0861e8e307"
+            }
+          },
+          "originalState": "stopped",
+          "originalReason": "Incomplete/unknown execution; inspect run before retry",
+          "confirmedAt": "2026-10-04T16:47:52.455109+00:00",
+          "dispatchState": "reserved"
+        }
       }
     ]
   },
