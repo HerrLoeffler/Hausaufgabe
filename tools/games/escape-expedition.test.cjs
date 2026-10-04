@@ -86,3 +86,40 @@ test('M1.1 keeps full HUD rendering out of the animation update loop', () => {
   assert.match(js, /previousDistance <= 80/);
   assert.match(js, /previousProgress <= 50/);
 });
+
+
+test('M1.2 central game mode and transition lock guard scene changes', () => {
+  assert.match(js, /gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0/);
+  assert.match(js, /function modeForScene/);
+  assert.match(js, /function setGameMode/);
+  assert.match(js, /function scheduleGuarded/);
+  assert.match(js, /sceneEpoch !== state\.sceneEpoch \|\| actionEpoch !== state\.actionEpoch \|\| state\.transitioning/);
+
+  const start = js.indexOf('function setScene(name, spawn = null)');
+  const end = js.indexOf('function generalHotspots', start);
+  const body = js.slice(start, end);
+  assert.match(body, /if \(state\.transitioning \|\| state\.scene === name \|\| state\.won\) return false/);
+  assert.match(body, /state\.transitioning = true/);
+  assert.match(body, /setGameMode\('transition'\)/);
+  assert.match(body, /const transitionEpoch = \+\+state\.sceneEpoch/);
+  assert.match(body, /requestAnimationFrame/);
+  assert.match(body, /state\.transitioning = false/);
+
+  assert.match(js, /if \(state\.gameMode !== 'world' \|\| state\.transitioning \|\| !state\.near \|\| state\.won\) return/);
+  assert.match(js, /if \(!state\.transitioning\) \{/);
+  assert.match(js, /state\.gameMode==='radio'/);
+  assert.match(js, /state\.gameMode==='camera'/);
+  assert.match(js, /state\.gameMode==='modal'/);
+});
+
+test('M1.2 replaces state-changing delayed callbacks with guarded scheduling', () => {
+  assert.doesNotMatch(js, /setTimeout\(\(\) => \{ state\.learningMode = 'transfer'/);
+  assert.doesNotMatch(js, /setTimeout\(\(\) => \{ \$\('learningDialog'\)\.close\(\)/);
+  assert.doesNotMatch(js, /setTimeout\(\(\) => \{ \$\('winchDialog'\)\.close\(\)/);
+  assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('generatorDialog'\)\.close\(\)/);
+  assert.doesNotMatch(js, /setTimeout\(\(\) => \$\('victoryDialog'\)\.showModal\(\)/);
+  assert.match(js, /scheduleGuarded\(850/);
+  assert.match(js, /scheduleGuarded\(650/);
+  assert.match(js, /scheduleGuarded\(500/);
+  assert.match(js, /scheduleGuarded\(700/);
+});

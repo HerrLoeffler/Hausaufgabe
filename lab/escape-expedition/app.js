@@ -102,7 +102,8 @@
     generator: { seq: [], done: false },
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
-    sceneEntered: performance.now()
+    sceneEntered: performance.now(),
+    gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0
   };
 
   const inventoryInfo = {
@@ -117,6 +118,34 @@
   function setCoco(title, text) { $('cocoTitle').textContent = title; $('cocoText').textContent = text; }
   function toast(text, seconds = 2.1) { $('toast').textContent = text; $('toast').hidden = false; state.toastTimer = seconds; }
   function clearMovement() { state.target = null; state.keys.clear(); }
+
+  function modeForScene(name = state.scene) {
+    return ['jeep', 'river'].includes(name) ? 'vehicle' : 'world';
+  }
+
+  function invalidateDelayedActions() {
+    state.actionEpoch++;
+  }
+
+  function setGameMode(mode) {
+    state.gameMode = mode;
+    if (!['world', 'vehicle'].includes(mode)) clearMovement();
+    renderInteraction();
+  }
+
+  function restoreSceneMode() {
+    if (state.won) return setGameMode('won');
+    setGameMode(modeForScene());
+  }
+
+  function scheduleGuarded(delay, callback) {
+    const sceneEpoch = state.sceneEpoch;
+    const actionEpoch = state.actionEpoch;
+    return setTimeout(() => {
+      if (sceneEpoch !== state.sceneEpoch || actionEpoch !== state.actionEpoch || state.transitioning) return;
+      callback();
+    }, delay);
+  }
 
   function updateHud() {
     const meta = SCENES[state.scene];
@@ -164,15 +193,39 @@
   }
 
   function setScene(name, spawn = null) {
-    state.scene = name; state.sceneEntered = performance.now(); state.cameraMode = false; state.radioMode = false; clearMovement();
+    if (state.transitioning || state.scene === name || state.won) return false;
+
+    state.transitioning = true;
+    invalidateDelayedActions();
+    setGameMode('transition');
+    const transitionEpoch = ++state.sceneEpoch;
+
+    state.scene = name;
+    state.sceneEntered = performance.now();
+    state.cameraMode = false;
+    state.radioMode = false;
+    clearMovement();
+
     if (spawn) { state.player.x = spawn.x; state.player.y = spawn.y; }
     else { state.player.x = 480; state.player.y = 470; }
+
     if (name === 'blocked') state.items.add('winch');
     if (name === 'wildlife') { state.player.x = 120; state.player.y = 470; setCoco('Kamera bereit', 'Die zwei Zielarten sind Tukan und Capybara. Geh nah genug heran und nutze die Kamera.'); }
     if (name === 'river') setCoco('Boot los!', 'Links/rechts steuern. Die Strömung trägt dich automatisch flussaufwärts.');
     if (name === 'station') { state.player.x = 480; state.player.y = 500; setCoco('Kein Strom', 'Der Generator links sieht reparierbar aus. Und nein: den großen roten Knopf drücken wir nicht.'); }
     if (name === 'tower') { state.player.x = 500; state.player.y = 490; setCoco('Fast geschafft', `Am Funkmast muss Kanal ${radioChannel} eingestellt werden.`); }
+
     updateHud();
+    renderInteraction();
+
+    requestAnimationFrame(() => {
+      if (state.sceneEpoch !== transitionEpoch || state.scene !== name) return;
+      state.transitioning = false;
+      restoreSceneMode();
+      updateHud();
+    });
+
+    return true;
   }
 
   function generalHotspots() {
@@ -195,7 +248,7 @@
   }
 
   function interact() {
-    if (!state.near || state.won) return;
+    if (state.gameMode !== 'world' || state.transitioning || !state.near || state.won) return;
     const id = state.near.id;
     if (state.scene === 'camp' && id === 'tablet') return openLearning('q1');
     if (state.scene === 'camp' && id === 'jeep') {
@@ -222,7 +275,9 @@
       return setScene('tower');
     }
     if (state.scene === 'tower' && id === 'radioConsole') {
-      state.radioMode = true; state.tuned = 35; clearMovement();
+      invalidateDelayedActions();
+      state.radioMode = true; state.tuned = 35;
+      setGameMode('radio');
       setCoco('Funkkonsole aktiv', `Stelle mit ←/→ den Kanal ein. Ziel laut Logbuch: ${radioChannel}. Mit E/Enter sendest du.`);
       return updateHud();
     }
@@ -237,9 +292,14 @@
   }
 
   function openLearning(id) {
+    if (state.gameMode !== 'world' || state.transitioning) return;
     if (state.solved.has(id)) return toast('Dieses Lern-Gate ist bereits gelöst.');
+    invalidateDelayedActions();
     state.activeQuestion = id; state.learningMode = 'main'; state.selectedAnswer = null;
-    renderLearning(); $('learningDialog').showModal(); setTimeout(() => $('learningDialog').focus(), 50);
+    setGameMode('modal');
+    renderLearning();
+    $('learningDialog').showModal();
+    scheduleGuarded(50, () => { if ($('learningDialog').open) $('learningDialog').focus(); });
   }
 
   function renderLearning() {
@@ -267,31 +327,39 @@
       if (state.learningMode === 'transfer') { $('learningFeedback').textContent = `Noch nicht. ${q.transfer.hint}`; return; }
       state.attempts[id]++;
       $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Coco: ${q.hint}` : `Noch nicht sicher. ${q.explanation} Jetzt folgt eine neue Aufgabe zum selben Prinzip.`;
-      if (state.attempts[id] >= 2) setTimeout(() => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); }, 850);
+      if (state.attempts[id] >= 2) scheduleGuarded(850, () => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); });
       return;
     }
     if (state.learningMode === 'main' && state.attempts[id] > 0) {
       $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Weil du vorher einen Fehlversuch hattest, folgt noch ein Transfercheck.`;
-      return setTimeout(() => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); }, 650);
+      return scheduleGuarded(650, () => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); });
     }
     $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig – Fortschritt freigeschaltet.';
-    setTimeout(() => { $('learningDialog').close(); rewardQuestion(id); state.activeQuestion = null; }, 500);
+    scheduleGuarded(500, () => { rewardQuestion(id); state.activeQuestion = null; if ($('learningDialog').open) $('learningDialog').close(); });
   }
 
   function openWinch() {
+    if (state.gameMode !== 'world' || state.transitioning) return;
+    invalidateDelayedActions();
+    setGameMode('modal');
     state.winchValue = .08; state.winchDir = 1; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`;
     $('winchDialog').showModal();
   }
   function pullWinch() {
     if (state.winchValue >= .38 && state.winchValue <= .62) {
       state.winchHits++; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Sauberer Zug! Der Stamm bewegt sich.');
-      if (state.winchHits >= 3) setTimeout(() => { $('winchDialog').close(); setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.'); setScene('wildlife'); }, 650);
+      if (state.winchHits >= 3) scheduleGuarded(650, () => { setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.'); setScene('wildlife'); if ($('winchDialog').open) $('winchDialog').close(); });
     } else {
       state.winchHits = Math.max(0, state.winchHits - 1); $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Zu viel oder zu wenig Spannung. Versuch den grünen Bereich.');
     }
   }
 
-  function openGenerator() { $('generatorDialog').showModal(); }
+  function openGenerator() {
+    if (state.gameMode !== 'world' || state.transitioning) return;
+    invalidateDelayedActions();
+    setGameMode('modal');
+    $('generatorDialog').showModal();
+  }
   function chooseCircuit(name, button) {
     if (state.generator.done) return;
     const order = ['leaf', 'sun', 'river'];
@@ -301,7 +369,7 @@
       $('generatorFeedback').className = 'feedback success'; $('generatorFeedback').textContent = `Kreis ${state.generator.seq.length}/3 aktiv.`;
       if (state.generator.seq.length === 3) {
         state.generator.done = true; setCoco('Strom ist da!', 'Die Station erwacht. Das Terminal rechts oben sollte jetzt reagieren.');
-        setTimeout(() => $('generatorDialog').close(), 650); updateHud();
+        scheduleGuarded(650, () => { if ($('generatorDialog').open) $('generatorDialog').close(); }); updateHud();
       }
     } else {
       state.generator.seq = []; document.querySelectorAll('#generatorButtons button').forEach(b => b.classList.remove('active'));
@@ -310,8 +378,18 @@
   }
 
   function takePhoto() {
-    if (state.scene !== 'wildlife') return;
-    if (!state.cameraMode) { state.cameraMode = true; state.reticle = { x: state.player.x + 110, y: state.player.y - 40 }; clearMovement(); setCoco('Kameramodus', 'Bewege den Sucher mit Maus/Finger auf ein Tier und drücke nochmal auf Kamera.'); updateHud(); return; }
+    if (state.transitioning || state.scene !== 'wildlife') return;
+    if (!state.cameraMode) {
+      if (state.gameMode !== 'world') return;
+      invalidateDelayedActions();
+      state.cameraMode = true;
+      state.reticle = { x: state.player.x + 110, y: state.player.y - 40 };
+      setGameMode('camera');
+      setCoco('Kameramodus', 'Bewege den Sucher mit Maus/Finger auf ein Tier und drücke nochmal auf Kamera.');
+      updateHud();
+      return;
+    }
+    if (state.gameMode !== 'camera') return;
     let best = null; let dist = 999;
     for (const a of state.animals) {
       const d = Math.hypot(a.x - state.reticle.x, a.y - state.reticle.y);
@@ -332,14 +410,15 @@
   }
 
   function sendRadio() {
-    if (!state.radioMode) return;
+    if (state.gameMode !== 'radio' || state.transitioning || !state.radioMode || state.won) return;
     if (state.tuned !== radioChannel) { toast(`Nur Rauschen auf Kanal ${state.tuned}.`); return; }
-    state.won = true; updateHud();
+    invalidateDelayedActions();
+    state.won = true; state.radioMode = false; setGameMode('won'); updateHud();
     setCoco('Antwort!', 'Dr. Yara meldet sich: „Mir geht’s gut! Ein Capybara hat den Stationsschlüssel geklaut. Lange Geschichte.“');
     const sec = Math.round((performance.now() - state.startTime) / 1000);
     $('victoryText').textContent = 'Dr. Yara ist sicher, der Funk läuft wieder und das Capybara behält den Schlüssel vorerst. Forschungsergebnis: Tiere lesen keine Hausordnung.';
     $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/3 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
-    setTimeout(() => $('victoryDialog').showModal(), 700);
+    scheduleGuarded(700, () => { if (!$('victoryDialog').open) $('victoryDialog').showModal(); });
   }
 
   function movePlayer(dx, dy, dt) {
@@ -408,9 +487,11 @@
 
   function update(now, dt) {
     if (state.toastTimer > 0) { state.toastTimer -= dt; if (state.toastTimer <= 0) $('toast').hidden = true; }
-    if (state.scene === 'jeep') updateJeep(dt);
-    else if (state.scene === 'river') updateRiver(dt);
-    else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
+    if (!state.transitioning) {
+      if (state.scene === 'jeep') updateJeep(dt);
+      else if (state.scene === 'river') updateRiver(dt);
+      else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
+    }
     if ($('winchDialog').open) { state.winchValue += state.winchDir * dt * .62; if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; } if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; } $('winchNeedle').style.left = `${state.winchValue * 100}%`; }
     const timerSecond = Math.floor((now - state.startTime) / 1000);
     if (timerSecond !== lastTimerSecond) {
@@ -423,7 +504,7 @@
 
   function renderInteraction() {
     const p = $('interactionPrompt'), b = $('touchInteractBtn');
-    if (!state.near || state.cameraMode || state.radioMode || state.scene === 'jeep' || state.scene === 'river') { p.hidden = true; b.disabled = true; b.textContent = '✋ Interagieren'; return; }
+    if (!state.near || state.gameMode !== 'world' || state.transitioning) { p.hidden = true; b.disabled = true; b.textContent = '✋ Interagieren'; return; }
     p.hidden = false; $('interactionText').textContent = state.near.label; b.disabled = false; b.textContent = `✋ ${state.near.label}`;
   }
 
@@ -512,33 +593,69 @@
   function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);if(!anyDialog)update(now,dt);else if($('winchDialog').open)update(now,dt);draw();requestAnimationFrame(loop)}
 
   function canvasPoint(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
-  canvas.addEventListener('pointerdown',e=>{const p=canvasPoint(e);if(state.cameraMode){state.reticle=p;return}if(['jeep','river'].includes(state.scene)||state.radioMode)return;state.target=p});
-  canvas.addEventListener('pointermove',e=>{if(state.cameraMode&&e.buttons){state.reticle=canvasPoint(e)}});
+  canvas.addEventListener('pointerdown',e=>{
+    const p=canvasPoint(e);
+    if(state.transitioning)return;
+    if(state.gameMode==='camera'){state.reticle=p;return}
+    if(state.gameMode!=='world')return;
+    state.target=p;
+  });
+  canvas.addEventListener('pointermove',e=>{if(state.gameMode==='camera'&&e.buttons){state.reticle=canvasPoint(e)}});
 
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
     if(document.querySelector('dialog[open]'))return;
-    if(state.radioMode){if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);updateHud();e.preventDefault()}if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);updateHud();e.preventDefault()}if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}return}
-    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key)){state.keys.add(key);e.preventDefault()}
-    if((key==='e'||key==='Enter')&&state.near){interact();e.preventDefault()}
-    if(key==='c'&&state.scene==='wildlife'){takePhoto();e.preventDefault()}
-    if(key==='Escape'&&state.cameraMode){state.cameraMode=false;updateHud()}
+    if(state.transitioning || state.gameMode==='transition' || state.gameMode==='modal' || state.gameMode==='won')return;
+
+    if(state.gameMode==='radio'){
+      if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);updateHud();e.preventDefault()}
+      if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);updateHud();e.preventDefault()}
+      if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}
+      return;
+    }
+
+    if(state.gameMode==='camera'){
+      if(key==='Escape'){state.cameraMode=false;invalidateDelayedActions();restoreSceneMode();updateHud();e.preventDefault()}
+      if(key==='c'){takePhoto();e.preventDefault()}
+      return;
+    }
+
+    if(['world','vehicle'].includes(state.gameMode) && ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key)){state.keys.add(key);e.preventDefault()}
+    if(state.gameMode==='world' && (key==='e'||key==='Enter') && state.near){interact();e.preventDefault()}
+    if(state.gameMode==='world' && key==='c' && state.scene==='wildlife'){takePhoto();e.preventDefault()}
   });
   window.addEventListener('keyup',e=>state.keys.delete(e.key.length===1?e.key.toLowerCase():e.key));
 
   document.querySelectorAll('.dpad button').forEach(btn=>{
     const map={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};const key=map[btn.dataset.dir];
-    const down=e=>{e.preventDefault();if(state.radioMode){if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);updateHud();return}state.keys.add(key)};
-    const up=e=>{e.preventDefault();state.keys.delete(key)};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);
+    const down=e=>{
+      e.preventDefault();
+      if(state.transitioning || ['transition','modal','won','camera'].includes(state.gameMode))return;
+      if(state.gameMode==='radio'){
+        if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);
+        if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);
+        updateHud();
+        return;
+      }
+      if(['world','vehicle'].includes(state.gameMode))state.keys.add(key);
+    };
+    const up=e=>{e.preventDefault();state.keys.delete(key)};
+    btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);
   });
 
-  $('touchInteractBtn').addEventListener('click',()=>state.radioMode?sendRadio():interact());
+  $('touchInteractBtn').addEventListener('click',()=>{if(state.gameMode==='radio')sendRadio();else if(state.gameMode==='world')interact()});
   $('cameraBtn').addEventListener('click',takePhoto);
   $('learningForm').addEventListener('submit',checkLearning);
   $('hintBtn').addEventListener('click',()=>{const q=questions[state.activeQuestion];if(q){$('learningFeedback').className='feedback';$('learningFeedback').textContent=`Coco: ${state.learningMode==='transfer'?q.transfer.hint:q.hint}`}});
   $('winchPullBtn').addEventListener('click',pullWinch);
   $('generatorButtons').addEventListener('click',e=>{const b=e.target.closest('button[data-circuit]');if(b)chooseCircuit(b.dataset.circuit,b)});
   document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',()=>$(btn.dataset.close).close()));
+  document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',()=>{
+    if(dialog.id==='victoryDialog')return;
+    invalidateDelayedActions();
+    if(dialog.id==='learningDialog'){state.activeQuestion=null;state.selectedAnswer=null}
+    if(state.gameMode==='modal')restoreSceneMode();
+  }));
   $('restartBtn').addEventListener('click',()=>{const next=(Date.now()^Math.floor(Math.random()*0xffffffff))>>>0;location.href=`?seed=${next}`});
 
   setCoco('Notruf aus dem Dschungel', 'Dr. Yaras Forschungsstation ist seit dem Sturm offline. Prüfe zuerst das Routentablet links.');
