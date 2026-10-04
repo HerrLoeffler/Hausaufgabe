@@ -8,10 +8,12 @@
         "taskId": "pilot-tutorial-later-a11y-20261004",
         "taskHash": "f45f99aa8e7cef93cdb640fc9e23008c97a0222038baf484fe940bc5b7b7f4f8",
         "approvedSha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
-        "state": "dispatched",
+        "state": "running",
         "controlSha": "6e3b4051fcc560e99789a8567ba301466ea50a11",
         "controlHash": "1b81d70859536c2e7538ae52d44799843af71fda20e80af18a5d90bbc33e6079",
-        "reservedAt": "2026-10-04T10:53:17.799227+00:00"
+        "reservedAt": "2026-10-04T10:53:17.799227+00:00",
+        "runId": 37196835882,
+        "runAttempt": 1
       }
     ]
   },
