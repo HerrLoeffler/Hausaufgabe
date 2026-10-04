@@ -1864,6 +1864,7 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
     const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
     if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+    if (current.audioReady === false) return toast("Mindestens eine Höraufgabe braucht noch ein aktuelles Audio. Öffne den Test und erzeuge das Audio neu.", "error");
     const teacherMode = current.startMode === "teacher";
     const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", code), {
