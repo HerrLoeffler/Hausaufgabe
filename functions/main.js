@@ -13,7 +13,7 @@ const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
 const { getOpenAI } = require("./lib/openai-client");
-const { syncBugFeedback } = require("./lib/bug-ops");
+const { syncBugFeedback, bugOpsAttentionSummary } = require("./lib/bug-ops");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const {
   crewAssistantSchema,
@@ -213,6 +213,12 @@ const aggregateBugFeedback = onDocumentWritten({
   }
 });
 
+const getBugOpsSummary = onCall(telemetryOpts, async request => {
+  const { profile } = await requireAiUser(request);
+  if (profile.role !== "admin") throw new HttpsError("permission-denied", "Nur für Administratoren.");
+  return bugOpsAttentionSummary(getFirestore());
+});
+
 const recordCrewTelemetry = onCall(telemetryOpts, async request => {
   const { uid } = await requireAiUser(request);
   await writeCrewMetric(uid, request.data || {}, { server: false });
@@ -374,6 +380,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 module.exports = {
   ...existing,
   aggregateBugFeedback,
+  getBugOpsSummary,
   recordCrewTelemetry,
   getCrewTelemetrySummary,
   cleanupCrewTelemetry,

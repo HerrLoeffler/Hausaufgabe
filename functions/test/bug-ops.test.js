@@ -7,7 +7,8 @@ const {
   incidentIdForFingerprint,
   reporterMarkerId,
   classifyIncident,
-  sourceVersion
+  sourceVersion,
+  safeIncidentSummary
 } = require("../lib/bug-ops");
 
 function report(overrides = {}) {
@@ -80,4 +81,27 @@ test("sourceVersion changes only when incident-relevant report state changes", (
   assert.equal(sourceVersion(a), sourceVersion(b));
   const c = cleanBugReport(report({ status: "done" }));
   assert.notEqual(sourceVersion(a), sourceVersion(c));
+});
+
+
+test("safeIncidentSummary exposes only bounded technical incident fields", () => {
+  const summary = safeIncidentSummary("bug-1", {
+    priority: "P1",
+    notification: "action_needed",
+    lifecycle: "open",
+    risk: "red",
+    uniqueReporters: 7,
+    occurrences: 19,
+    lastSeenAtMs: 1234,
+    errorCodes: ["APP-UNEXPECTED-001"],
+    actions: ["render_card"],
+    message: "raw customer text",
+    email: "private@example.org",
+    userId: "teacher-1"
+  });
+  assert.equal(summary.priority, "P1");
+  assert.equal(summary.uniqueReporters, 7);
+  assert.equal("message" in summary, false);
+  assert.equal("email" in summary, false);
+  assert.equal("userId" in summary, false);
 });

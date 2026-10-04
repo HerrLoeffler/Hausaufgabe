@@ -64,6 +64,7 @@ export function createAiClient(app, getUid) {
     generateQuestionAudio: call("generateQuestionAudio", 180000),
     generateQuestionSolutionAudio: call("generateQuestionSolutionAudio", 180000),
     getQuestionAudioDrafts: call("getQuestionAudioDrafts", 60000),
+    getBugOpsSummary: call("getBugOpsSummary", 30000),
     syncQuestionAudioDrafts: call("syncQuestionAudioDrafts", 60000)
   };
   async function uploadMaterial(file, onProgress = () => {}) {

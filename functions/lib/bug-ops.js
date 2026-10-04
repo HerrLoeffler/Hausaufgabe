@@ -132,6 +132,47 @@ function sourceVersion(clean) {
   }), 40);
 }
 
+function safeIncidentSummary(id, data = {}) {
+  return {
+    id: String(id || "").slice(0, 80),
+    priority: ["P0", "P1", "P2", "P3"].includes(data.priority) ? data.priority : "P3",
+    notification: ["immediate", "action_needed", "retest_ready", "digest"].includes(data.notification) ? data.notification : "digest",
+    lifecycle: ["open", "fix_recorded", "monitoring", "regressed", "retest_required"].includes(data.lifecycle) ? data.lifecycle : "open",
+    risk: data.risk === "green_candidate" ? "green_candidate" : "red",
+    uniqueReporters: Math.max(0, Math.round(Number(data.uniqueReporters) || 0)),
+    occurrences: Math.max(0, Math.round(Number(data.occurrences) || 0)),
+    lastSeenAtMs: Math.max(0, Number(data.lastSeenAtMs) || 0),
+    regressionAfterFix: data.regressionAfterFix === true,
+    errorCodes: (Array.isArray(data.errorCodes) ? data.errorCodes : []).map(value => safeTag(value, 100)).filter(Boolean).slice(0, 5),
+    actions: (Array.isArray(data.actions) ? data.actions : []).map(value => safeTag(value, 100)).filter(Boolean).slice(0, 5)
+  };
+}
+
+async function bugOpsAttentionSummary(db, limit = 100) {
+  const safeLimit = Math.max(1, Math.min(100, Math.round(Number(limit) || 100)));
+  const snap = await db.collection(BUG_INCIDENT_COLLECTION)
+    .where("needsAttention", "==", true)
+    .limit(safeLimit)
+    .get();
+  const priorityRank = { P0: 0, P1: 1, P2: 2, P3: 3 };
+  const incidents = snap.docs
+    .map(doc => safeIncidentSummary(doc.id, doc.data()))
+    .sort((a, b) => priorityRank[a.priority] - priorityRank[b.priority]
+      || Number(b.regressionAfterFix) - Number(a.regressionAfterFix)
+      || b.lastSeenAtMs - a.lastSeenAtMs);
+  return {
+    schemaVersion: 1,
+    needsAttention: incidents.length,
+    capped: incidents.length === safeLimit,
+    immediate: incidents.filter(item => item.notification === "immediate").length,
+    actionNeeded: incidents.filter(item => item.notification === "action_needed").length,
+    retestReady: incidents.filter(item => item.notification === "retest_ready").length,
+    p0: incidents.filter(item => item.priority === "P0").length,
+    p1: incidents.filter(item => item.priority === "P1").length,
+    incidents: incidents.slice(0, 20)
+  };
+}
+
 async function syncBugFeedback(db, feedbackId, rawAfter) {
   const clean = cleanBugReport(rawAfter);
   if (!clean) return { ignored: true };
@@ -225,5 +266,7 @@ module.exports = {
   reporterMarkerId,
   classifyIncident,
   sourceVersion,
+  safeIncidentSummary,
+  bugOpsAttentionSummary,
   syncBugFeedback
 };

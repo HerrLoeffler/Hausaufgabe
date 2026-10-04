@@ -50,8 +50,8 @@ test("BugOps rules expose only incident summaries to admins", async t => {
   const teacher = env.authenticatedContext("teacher").firestore();
   const admin = env.authenticatedContext("admin").firestore();
 
-  await t.test("admin can read parent incident but normal teacher cannot", async () => {
-    await assertSucceeds(getDoc(doc(admin, "bugIncidents", "bug-abc")));
+  await t.test("incident summaries stay server-only even for admins", async () => {
+    await assertFails(getDoc(doc(admin, "bugIncidents", "bug-abc")));
     await assertFails(getDoc(doc(teacher, "bugIncidents", "bug-abc")));
   });
 

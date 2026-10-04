@@ -954,6 +954,46 @@ function setTeacherBar() {
   $("stagingBanner")?.classList.toggle("hidden", !staging);
 }
 
+function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
+  const button = $("adminTopBtn");
+  if (!button) return;
+  button.querySelector(".bugOpsAttentionBadge")?.remove();
+  const count = Math.max(0, Number(summary?.needsAttention) || 0);
+  button.removeAttribute("title");
+  if (!count) return;
+  const badge = document.createElement("span");
+  badge.className = "bugOpsAttentionBadge";
+  badge.textContent = count > 99 ? "99+" : String(count);
+  badge.setAttribute("aria-hidden", "true");
+  button.appendChild(badge);
+  button.title = "BugOps: Vorgänge brauchen Aufmerksamkeit.";
+}
+
+async function refreshBugOpsAttention({ notify = false } = {}) {
+  if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
+    state.bugOpsSummary = null;
+    renderBugOpsAttentionBadge(null);
+    return null;
+  }
+  const uid = state.user.uid;
+  try {
+    const summary = await aiApi.getBugOpsSummary({});
+    if (state.user?.uid !== uid || !isAdmin()) return null;
+    state.bugOpsSummary = summary || null;
+    renderBugOpsAttentionBadge(summary);
+    if (notify && Number(summary?.needsAttention || 0) > 0 && !state.shownThisLogin.has("bugops-attention")) {
+      state.shownThisLogin.add("bugops-attention");
+      const message = "BugOps: wichtige Fehler brauchen deine Aufmerksamkeit.";
+      if (Number(summary?.p0 || 0) > 0) toast(message, "error");
+      else toast(message);
+    }
+    return summary;
+  } catch (error) {
+    console.warn("BugOps-Zusammenfassung konnte nicht geladen werden:", error);
+    return null;
+  }
+}
+
 async function ensureProfileDefaults() {
   if (!state.user) return;
   const ref = doc(db, "users", state.user.uid);
@@ -1086,6 +1126,8 @@ onAuthStateChanged(auth, async (user) => {
     adminAuditCursor = null;
     state.adminAudit = [];
     state.adminFeedback = [];
+    state.bugOpsSummary = null;
+    renderBugOpsAttentionBadge(null);
     $("adminAuditList")?.replaceChildren();
     $("adminFeedbackList")?.replaceChildren();
     state.variantTask = null;
@@ -1118,6 +1160,7 @@ onAuthStateChanged(auth, async (user) => {
     state.shownThisLogin = new Set();
   }
   setTeacherBar();
+  if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
 
   const params = new URLSearchParams(location.search);
   const rawTemplateCode = params.get("template");
@@ -6808,7 +6851,7 @@ async function openAdmin() {
     return;
   }
   showView("adminView");
-  switchAdminTab("overview", false);
+  switchAdminTab(state.bugOpsSummary?.needsAttention ? "feedback" : "overview", false);
   await loadAdminData(true);
 }
 
@@ -6863,6 +6906,7 @@ async function loadAdminData(showToast = false) {
     renderAdminTeacherTour();
     renderAdminFeedback();
     renderAdminAudit();
+    await refreshBugOpsAttention({ notify: false });
     if (showToast) toast("Admin-Daten aktualisiert.");
   } catch (err) {
     console.error(err);
@@ -7402,6 +7446,16 @@ function formatTechnicalErrorReport(report) {
     .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
 }
 
+function bugOpsLifecycleLabel(value) {
+  return {
+    open: "Offen",
+    fix_recorded: "Fix dokumentiert",
+    monitoring: "Beobachtung",
+    regressed: "Erneut aufgetreten",
+    retest_required: "Staging-Fix erneut testen"
+  }[value] || "Offen";
+}
+
 function renderBugOpsSummary() {
   const incidents = buildBugIncidents(state.adminFeedback);
   const overview = bugOpsOverview(incidents);
@@ -7412,6 +7466,16 @@ function renderBugOpsSummary() {
   const notice = decisionCount
     ? `<strong>${decisionCount} Vorgang${decisionCount === 1 ? "" : "e"} brauchen Aufmerksamkeit.</strong>`
     : "<strong>Keine akute Entscheidung nötig.</strong>";
+  const canonical = Array.isArray(state.bugOpsSummary?.incidents) ? state.bugOpsSummary.incidents : [];
+  const canonicalHtml = canonical.length ? `<div class="bugOpsCanonicalList" aria-label="Wichtige BugOps-Vorgänge">
+    ${canonical.map(incident => `<div class="bugOpsCanonicalItem">
+      <strong>${escapeHtml(incident.priority || "P3")}</strong>
+      <span>${escapeHtml(bugOpsLifecycleLabel(incident.lifecycle))}</span>
+      <span><strong>${Number(incident.uniqueReporters || 0)}</strong> <span>Melder</span></span>
+      <span><strong>${Number(incident.occurrences || 0)}</strong> <span>Vorkommen</span></span>
+      ${incident.regressionAfterFix ? "<span>🔁 Erneut aufgetreten</span>" : ""}
+    </div>`).join("")}
+  </div>` : "";
   return `<section class="card bugOpsBoard">
     <div class="sectionHead"><div><span class="eyebrow">BugOps · Decision Inbox</span><h2>Fehler statt Meldungen verwalten</h2><p>${notice} ${overview.total} Incident${overview.total === 1 ? "" : "s"} aus den ${state.adminFeedback.length} zuletzt geladenen Meldungen.</p></div></div>
     <div class="adminStatsGrid">
@@ -7420,7 +7484,7 @@ function renderBugOpsSummary() {
       <article class="card adminStatCard"><span>⚡</span><div><strong>${overview.immediate}</strong><small>Sofort ansehen</small></div></article>
       <article class="card adminStatCard"><span>🔁</span><div><strong>${overview.retest_ready}</strong><small>Retest bereit</small></div></article>
     </div>
-    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
+    ${canonicalHtml}\n    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
     <div class="bugOpsIncidentList">${top.map(incident => `<button type="button" class="button secondary bugOpsIncidentFilter" data-fingerprint="${escapeHtml(incident.fingerprint)}">${badge(incident)} ${escapeHtml(incident.priority)} · ${incident.uniqueReporters} Nutzer · ${incident.occurrences}× · ${incident.regressionAfterFix ? "Regression · " : ""}${incident.autopilot === "candidate" ? "Autopilot-Kandidat" : "menschliche Prüfung"}</button>`).join("")}</div>
   </section>`;
 }
