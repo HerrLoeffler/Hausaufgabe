@@ -74,6 +74,17 @@ class ContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Daily'):
             p.reserve_budget(history, task['id'], '2026-10-04', task=task)
 
+    def test_module_profile_fits_larger_source_but_authorizes_only_one_attempt(self):
+        task = TASK | {'cost_profile': 'module-web-v1', 'max_cost_usd': 2.55}
+        p.task_contract(task)
+        specs = [p.model_limits(role, task) for role in p.MODELS]
+        ceiling = sum((s['max_input'] * s['input'] + s['max_output'] * s['output']) / 1e6 for s in specs)
+        self.assertLessEqual(ceiling * 1.1, p.cost_limits(task)['attempt_usd'])
+        history = [p.reserve_budget([], task['id'], '2026-10-04', task=task)]
+        self.assertEqual(history[0]['reservedUsd'], 2.4)
+        with self.assertRaisesRegex(ValueError, 'exhausted'):
+            p.reserve_budget(history, task['id'], '2026-10-05', task=task)
+
     def test_old_or_incomplete_package_proof_cannot_authorize_integration(self):
         reviews={role:review(role) for role in p.REVIEW_ROLES}
         for proof in [[],['other.js']]:

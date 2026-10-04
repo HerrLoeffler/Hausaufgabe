@@ -2,7 +2,7 @@ name: Recover diagnosed Guardian permissions
 on:
   push:
     branches: [main]
-    paths: ['automation/recovery-requests/*.json']
+    paths: ['automation/recovery-requests/*.json', 'tools/automation/recovery.py', '.github/workflows/guardian-recovery.yml']
   workflow_dispatch:
 permissions:
   contents: read

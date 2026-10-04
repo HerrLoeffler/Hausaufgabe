@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from tools.automation import recovery as r, pipeline as p
@@ -31,6 +32,14 @@ LOGS = {7: f"RuntimeError: correctness ({p.MODELS['correctness']['model']}): HTT
 
 
 class RecoveryQualificationTests(unittest.TestCase):
+    def test_job_log_uses_supported_job_log_cli_and_rejects_transport_failure(self):
+        with patch.object(r.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=LOGS[7])) as run:
+            self.assertEqual(r.job_log(7), LOGS[7])
+            self.assertEqual(run.call_args.args[0], ['gh', 'run', 'view', '--repo', r.REPO, '--job', '7', '--log'])
+        with patch.object(r.subprocess, 'run', return_value=SimpleNamespace(returncode=1, stdout='')):
+            with self.assertRaisesRegex(ValueError, 'CLI exit 1'):
+                r.job_log(7)
+
     def qualify(self, **changes):
         values = dict(request=copy.deepcopy(REQUEST), history=[copy.deepcopy(OLD)], task=copy.deepcopy(TASK),
                       run=copy.deepcopy(RUN), jobs=copy.deepcopy(JOBS), logs=copy.deepcopy(LOGS))

@@ -36,6 +36,9 @@ COST_PROFILES = {
     'small-web-v1': {'build_input': 12000, 'review_input': 24000,
                      'build_output': 6000, 'review_output': 2400,
                      'attempt_usd': 0.85, 'task_usd': 2.55},
+    'module-web-v1': {'build_input': 80000, 'review_input': 120000,
+                      'build_output': 14000, 'review_output': 2400,
+                      'attempt_usd': 2.40, 'task_usd': 2.55},
 }
 
 
