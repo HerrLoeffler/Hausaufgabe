@@ -362,7 +362,7 @@
       "title": "Kleines Guardian-Kostenprofil und vorbereiteter E2E-Pilot",
       "primaryBranch": "fix/guardian-budget-pilot-v1",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/guardian-budget-pilot-v1.md",
       "relatedBranches": [
         "feature/guardian-execution-v2"

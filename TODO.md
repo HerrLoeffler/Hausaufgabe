@@ -143,4 +143,4 @@ GC-AUTOMATION-08: Gesonderte Zulassungsprofile für Backend/Security/Rules, Game
 
 | ID | Aufgabe | Status / nächster Schritt |
 |---|---|---|
-| GC-AUTOMATION-12 | Kleines Kostenprofil und konkreten E2E-Pilot fertig vorbereiten | Implementiert auf `fix/guardian-budget-pilot-v1`; 91 lokale Tests grün, Remote-CI/Integration separat offen. Gleiche vier Modelle, engere Eingabe-/Ausgabegrenzen, max. 0,85 USD/Versuch und 2,55 USD/Auftrag; Standardprofil bleibt kompatibel. Aktuelle offizielle Standardpreise geprüft. Secrets/Flags fehlen, kein bezahlter Pilot. [Übergabe](workstreams/guardian-budget-pilot-v1.md) |
+| GC-AUTOMATION-12 | Kleines Kostenprofil und konkreten E2E-Pilot fertig vorbereiten | Über PR #71 auf main integriert (6810e163). 91 lokale Tests sowie Guardian-CI 37194975024, Handoff 37194975026, Development Status 37194975086 und isolierte Gesamt-Rehearsal 37194975244 grün. Gleiche vier Modelle, engere Eingabe-/Ausgabegrenzen, max. 0,85 USD/Versuch und 2,55 USD/Auftrag; Standardprofil bleibt kompatibel. Aktuelle offizielle Standardpreise geprüft. Secrets/Flags fehlen, kein bezahlter Pilot. [Übergabe](workstreams/guardian-budget-pilot-v1.md) |
