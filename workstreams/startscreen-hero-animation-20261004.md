@@ -53,11 +53,18 @@ Canva soll als **Art-Direction-/Prototyping-Werkzeug** verwendet werden:
 
 Canva ersetzt nicht die responsive Web-Implementierung. Die finale Website benötigt getrennte DOM/UI-Layer, i18n, Accessibility und Performance-Gates.
 
-## Offene Brand-Entscheidung
+## Brand-Entscheidung – geklärt
 
-Vor dem nächsten visuellen Build muss geklärt werden, wie stark die Homepage-Crew vom aktuellen kanonischen Einzelasset-Look abweichen darf:
-- nur vorhandene Crew-Assets neu inszenieren;
-- oder eine speziell freigegebene "cinematic homepage crew"-Variante mit Props/Kleidung/Interaktion erlauben, näher am Referenzbild.
+Martin möchte **keine neue Cinematic-Variante der Figuren erzwingen**. Coco, Remy, Emmi und Wilma dürfen grundsätzlich so aussehen wie die bereits erstellten kanonischen GradeCrew-Figuren.
+
+Damit gilt für den nächsten Hero-Pass:
+- Charakterdesigns, Gesichter und Grundlook bleiben kanonisch;
+- Schal, Rucksack, Hoodie, Brille oder andere neue Kleidung/Props sind **nicht erforderlich**;
+- die gewünschte Premium-Wirkung soll primär durch **Szene, Licht, Perspektive, Größenverhältnisse, Tiefenstaffelung, gemeinsame Komposition und Bewegung** entstehen;
+- vorhandene kanonische Varianten/Posen dürfen genutzt und als Scene-Layer animiert werden;
+- falls eine neue Pose technisch nötig wird, muss sie klar als derselbe kanonische Charakter erkennbar bleiben und separat freigegeben werden.
+
+Die frühere Idee einer eigenen "cinematic homepage crew" ist damit **kein notwendiger nächster Schritt**.
 
 ## Nächster ausführbarer Schritt
 
