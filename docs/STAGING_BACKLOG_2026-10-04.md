@@ -110,3 +110,16 @@ Der aktuelle Chat hat GitHub-Code-/PR-Zugriff, aber keinen authentifizierten Goo
 9. Übergreifende offene Release-Gates: 30-Teilnehmer-Fehler ohne Fehlernachweis weiterhin unklar, Tutorialabgabe im Gerät und vollständiger Datenbank/Auth/Upload-Restore nicht bestätigt. Hosting-Archiv ist kein vollständiger Restore.
 
 Alle vorhandenen IDs, PRs, Kandidaten und Reservierungen bleiben erhalten. Die Liste ist Reihenfolge/Abhängigkeit, keine pauschale Merge-, IAM- oder Production-Freigabe.
+
+### Cloud-Nachweis nach Browserprüfung — 2026-10-04 21:15 UTC
+
+Die zuvor unbekannten IAM-Metadaten wurden über Martins angemeldete Chrome-Konsole read-only geprüft. Secret OPENAI_API_KEY existiert unter projects/950775032930/secrets/OPENAI_API_KEY im ausgewählten Projekt Hausaufgabe Staging.
+Der exakt aus dem fehlgeschlagenen Deploy verlinkte [Policy Troubleshooter](https://console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWEwZmQxMS04NmZhLTc1ZTUtOWNkZi00ZTZmYTM4ZGE1N2ESAA%3D%3D) nennt eindeutig:
+- Principal: gradecrew-github-staging@hausaufgabe-staging.iam.gserviceaccount.com;
+- Permission: secretmanager.secrets.get;
+- Allow Policy: Berechtigung fehlt;
+- Deny Policy: keine zusätzliche Ablehnung;
+- Principal Access Boundary: Ressourcenzugriff erlaubt.
+Damit ist eine fehlende Zulassungsbindung belegt, nicht ein fehlendes Secret. Die vorhandene separate gradecrew-functions-Identität hat bereits Secret Manager Viewer aus dem Projekt geerbt; das ist nicht die Identität des alten Escape-Workflows.
+Vorbereitete minimale Korrektur: roles/secretmanager.viewer ausschließlich auf OPENAI_API_KEY für gradecrew-github-staging, keine Payload-/Projekt-Admin-Rechte. Noch nicht vorgenommen; initiale Nutzerregel verlangt Staging-Schritte innerhalb bestehender Freigaben/Gates. Die konkrete zusätzliche IAM-Bindung wird separat zur Entscheidung vorgelegt.
+Browserzugriff ist somit vorhanden, auch wenn kein Cloud-IAM-CLI/Connector eingerichtet ist. Keine Keys/Secret-Version-Payloads gelesen, kein IAM-Write und kein Deploy ausgeführt.

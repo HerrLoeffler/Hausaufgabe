@@ -34,7 +34,7 @@ Bestandsaufnahme trennt deployed/CI/Review/Geräteabnahme. GC-AUTOMATION-08 blei
 
 ## Offene Probleme und Unsicherheiten
 
-Martin hat die Weiterarbeit „alles ready“ beauftragt; vorgeschlagener Zuschnitt zur schriftlichen Ausarbeitung übernommen. Konkrete Spec liegt jetzt vor, schriftlicher Review und Implementation noch offen. Freitext-Klassifizierer 9/9 lokal grün (Node24); keine Browser-/Emulatorfreigabe. Escape secrets.get bestätigt, tatsächliche Deploy-SA und aktuelle IAM-Bindungen unbekannt; kein authentifizierter Cloud-IAM-Zugriff.
+Martin hat die Weiterarbeit „alles ready“ beauftragt; vorgeschlagener Zuschnitt zur schriftlichen Ausarbeitung übernommen. Konkrete Spec liegt jetzt vor, schriftlicher Review und Implementation noch offen. Freitext-Klassifizierer 9/9 lokal grün (Node24); keine Browser-/Emulatorfreigabe. Escape secrets.get bestätigt, tatsächliche Deploy-SA via read-only Cloud-Troubleshooter bestätigt: gradecrew-github-staging@hausaufgabe-staging.iam.gserviceaccount.com; Allow-Bindung secrets.get fehlt am existierenden OPENAI_API_KEY. Browser-Zugriff vorhanden; konkrete Secret-Viewer-Bindung noch nicht freigegeben/vorgenommen.
 Secrets/Token-Präsenz und Apple-Verarbeitung/Gerätestand nicht belegbar. Secure-Preview scheitert in 36870114409 an integrierten DOM-Verträgen; Escape-MVP in 37021633218 an Secret-Manager-403. Diese Blocker nicht blind wiederholen.
 18 aktive Workstreams/neun mögliche Dateiüberschneidungen; einzelne historische Branches sind weit hinter Zielständen. Keine pauschale Integration.
 
