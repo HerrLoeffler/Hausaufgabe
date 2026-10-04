@@ -19,6 +19,8 @@ export const enGBMessages = Object.freeze({
     "GradeCrew Startseite": "GradeCrew home",
     "Tests. Einfach digital.": "Tests. Simply digital.",
     "Administration": "Administration",
+    "BugOps: Vorgänge brauchen Aufmerksamkeit.": "BugOps: items need your attention.",
+    "BugOps: wichtige Fehler brauchen deine Aufmerksamkeit.": "BugOps: important issues need your attention.",
     "Einstellungen": "Settings",
     "Abmelden": "Sign out",
     "Geteilte Testvorlage": "Shared test template",
