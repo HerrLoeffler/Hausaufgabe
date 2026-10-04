@@ -213,3 +213,27 @@ Nächste Freigabe:
 - Actions usage/budget/payment unblocken;
 - danach genau einen Visual Preview Run starten;
 - erst nach grünem Test/Build/Deploy den neuen Preview als verfügbar markieren.
+
+
+## 2026-10-04 — CI wieder frei, V2 erstmals erfolgreich deployed
+
+Commit mit aktualisierten V2-Testverträgen:
+- `21986ac99140db74e69fffe0f8f606085c00afc6` — alte Regex-/Style-Bible-Erwartungen an den tatsächlich implementierten Retro-V2-Vertrag angepasst; keine Spiellogik zurückgedreht.
+
+Verifiziert im Workflow `Escape Expedition Visual Masterpiece Preview`, Run `37213145451`:
+- GitHub Hosted Runner startet wieder;
+- JavaScript-Syntax: **grün**;
+- Expedition-Verträge: **35/35 grün**;
+- isolierter Expedition-Build: **grün**;
+- Firebase-Staging-Credential: **grün**;
+- Deploy ausschließlich auf Preview-Channel: **grün**;
+- Production: **unverändert**.
+
+Aktueller spielbarer Visual-Preview:
+- https://hausaufgabe-staging--gradecrew-escape-visual-ouj8rvmh.web.app
+- Firebase Preview-Expiry laut Deploy: 03.11.2026.
+
+Status:
+- Retro-/Handheld-V2 ist erstmals wirklich deployed und testbar.
+- Nächster Gate-Schritt: echter visueller/spielerischer Test des Camp-/Jeep-/Wildlife-/River-/Station-/Tower-Flows auf Desktop und anschließend Touch-Gerät.
+- Danach sichtbare Schwächen gezielt polieren; Art Direction bleibt originale Retro-Handheld-Top-Down-Overworld.
