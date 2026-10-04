@@ -86,6 +86,8 @@ test("public startscreen copy is covered by the English UI catalog without trans
     "Tutorial beginnen",
     "Möchtest du deinen Fortschritt speichern?",
     "Mit GradeCrew loslegen",
+    "Coco, dein GradeCrew-Guide",
+    "Praxisnah. Sicher. Zuverlässig.",
   ]) {
     assert.ok(entryFlow.includes(sourceText), "entry source missing: " + sourceText);
     assert.ok(englishCatalog.includes(sourceText), "English startscreen translation missing: " + sourceText);
