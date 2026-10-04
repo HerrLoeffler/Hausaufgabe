@@ -40,8 +40,8 @@
   const q3Mc = mc(q3Answer, [q3Answer - 20, q3Answer + 30, q3Base * 0.04]);
   const questions = {
     q1: {
-      title: 'Route freischalten',
-      prompt: `Der Jeep-Tank fasst ${q1Base} l. Für die Expedition sind noch 25 % Reserve eingeplant. Wie viele Liter sind das?`,
+      title: 'Route prüfen',
+      prompt: `Der Jeep-Tank fasst ${q1Base} l. 25 % bleiben als Reserve. Wie viele Liter sind das?`,
       options: q1Mc.options, correct: q1Mc.correct,
       hint: '25 % sind genau ein Viertel.',
       explanation: `${q1Base} ÷ 4 = ${q1Answer}.`,
@@ -49,8 +49,8 @@
       reward: 'jeepKey'
     },
     q2: {
-      title: 'Wildtier-Sender prüfen',
-      prompt: `Der Ortungssender hat ${q2Base} Wh. 30 % davon sind für die Nacht reserviert. Wie viele Wh sind das?`,
+      title: 'Sender prüfen',
+      prompt: `Der Sender hat ${q2Base} Wh. 30 % sind für die Nacht reserviert. Wie viele Wh sind das?`,
       options: q2Mc.options, correct: q2Mc.correct,
       hint: `10 % von ${q2Base} sind ${q2Base / 10}.`,
       explanation: `30 % sind drei 10-%-Schritte: 3 × ${q2Base / 10} = ${q2Answer}.`,
@@ -58,8 +58,8 @@
       reward: 'riverMap'
     },
     q3: {
-      title: 'Stationscomputer starten',
-      prompt: `Der Generator liefert maximal ${q3Base} W. Das Terminal benötigt 40 %. Wie viel Leistung sind das?`,
+      title: 'Terminal starten',
+      prompt: `Der Generator liefert ${q3Base} W. Das Terminal braucht 40 %. Wie viele Watt sind das?`,
       options: q3Mc.options, correct: q3Mc.correct,
       hint: `10 % von ${q3Base} sind ${q3Base / 10}.`,
       explanation: `40 % sind vier 10-%-Schritte: 4 × ${q3Base / 10} = ${q3Answer} W.`,
@@ -71,17 +71,17 @@
   function makeTransfer(percent, base) {
     const ans = base * percent / 100;
     const choices = mc(ans, [ans + 5, Math.max(1, ans - 5), base - ans]);
-    return { prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`, options: choices.options, correct: choices.correct, hint: `${percent} % kannst du über 10-%-Schritte oder einen passenden Bruch berechnen.` };
+    return { prompt: `Neue Aufgabe: Wie viel sind ${percent} % von ${base}?`, options: choices.options, correct: choices.correct, hint: `Rechne zuerst 10 % oder nutze einen passenden Bruch.` };
   }
 
   const SCENES = {
-    camp: { stage: 1, title: 'Expeditionscamp', mission: 'Starte die Suche', steps: ['Route prüfen', 'Jeep-Schlüssel holen', 'Mit MANGO-1 losfahren'] },
-    jeep: { stage: 2, title: 'Dschungelpiste', mission: 'Durch den Dschungel', steps: ['Jeep auf der Piste halten', 'Bis zum Hindernis fahren', 'Weg freimachen'] },
-    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Der Baum muss weg', steps: ['Zum Baum gehen', 'Seilwinde ansetzen', 'Drei sichere Züge schaffen'] },
-    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Dokumentiere die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Ortungssender lösen', 'Boot erreichen'] },
-    river: { stage: 4, title: 'Rio Verde', mission: 'Fluss zur Station', steps: ['Boot steuern', 'Felsen ausweichen', 'Forschungsstation erreichen'] },
-    station: { stage: 5, title: 'Forschungsstation', mission: 'Strom und Funk reparieren', steps: ['Generator aktivieren', 'Stationscomputer starten', 'Funkkanal erhalten', 'Zum Sendemast'] },
-    tower: { stage: 6, title: 'Funkmast', mission: 'Rettungssignal senden', steps: ['Funkkonsole aktivieren', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
+    camp: { stage: 1, title: 'Expeditionscamp', mission: 'Finde die Route', steps: ['Tablet prüfen', 'Schlüssel holen', 'Jeep starten'] },
+    jeep: { stage: 2, title: 'Dschungelpiste', mission: 'Fahr durch den Dschungel', steps: ['Auf der Piste bleiben', 'Hindernissen ausweichen', 'Bis zum Baum fahren'] },
+    blocked: { stage: 2, title: 'Blockierter Pfad', mission: 'Räume den Weg frei', steps: ['Zum Baum', 'Winde starten', '3 gute Züge'] },
+    wildlife: { stage: 3, title: 'Wildtierzone', mission: 'Finde die Tiere', steps: ['Tukan fotografieren', 'Capybara fotografieren', 'Sender prüfen', 'Zum Boot'] },
+    river: { stage: 4, title: 'Rio Verde', mission: 'Fahr zur Station', steps: ['Boot steuern', 'Felsen ausweichen', 'Station erreichen'] },
+    station: { stage: 5, title: 'Forschungsstation', mission: 'Bring den Strom zurück', steps: ['Generator starten', 'Terminal starten', 'Funkkanal finden', 'Zum Funkmast'] },
+    tower: { stage: 6, title: 'Funkmast', mission: 'Sende den Notruf', steps: ['Konsole starten', `Kanal ${radioChannel} einstellen`, 'Signal senden'] }
   };
 
   const state = {
@@ -91,18 +91,20 @@
     items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0 },
     activeQuestion: null, learningMode: 'main', selectedAnswer: null,
     winchHits: 0, winchValue: 0.08, winchDir: 1, winchTimer: 0,
-    jeep: { x: 480, distance: 0, bumps: 0 },
+    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0 },
     photos: new Set(), cameraMode: false, reticle: { x: 480, y: 300 },
     animals: [
       { id: 'toucan', emoji: '🦜', x: 700, y: 170, vx: 38, vy: 0, target: true },
       { id: 'capybara', emoji: '🦫', x: 280, y: 420, vx: 25, vy: -12, target: true },
       { id: 'monkey', emoji: '🐒', x: 520, y: 215, vx: -30, vy: 8, target: false }
     ],
-    river: { x: 480, progress: 0, hits: 0 },
+    river: { x: 480, progress: 0, hits: 0, safeProgress: 0 },
     generator: { seq: [], done: false },
     radioMode: false, tuned: 35,
     startTime: performance.now(), won: false, toastTimer: 0,
-    sceneEntered: performance.now()
+    sceneEntered: performance.now(),
+    gameMode: 'world', transitioning: false, sceneEpoch: 0, actionEpoch: 0,
+    resolvingAction: null
   };
 
   const inventoryInfo = {
@@ -112,10 +114,173 @@
 
   const sceneDecor = Array.from({ length: 42 }, () => ({ x: 40 + rnd() * 880, y: 60 + rnd() * 500, s: .6 + rnd() * .8, type: rnd() > .55 ? 'leaf' : 'tree' }));
   let last = performance.now();
+  let lastTimerSecond = -1;
 
   function setCoco(title, text) { $('cocoTitle').textContent = title; $('cocoText').textContent = text; }
   function toast(text, seconds = 2.1) { $('toast').textContent = text; $('toast').hidden = false; state.toastTimer = seconds; }
   function clearMovement() { state.target = null; state.keys.clear(); }
+
+  function modeForScene(name = state.scene) {
+    return ['jeep', 'river'].includes(name) ? 'vehicle' : 'world';
+  }
+
+  function invalidateDelayedActions() {
+    state.actionEpoch++;
+  }
+
+  function setResolvingControls(kind, disabled) {
+    if (kind === 'learning') {
+      const submit = $('learningForm').querySelector('button[type="submit"]');
+      if (submit) submit.disabled = disabled;
+      $('hintBtn').disabled = disabled;
+      $('learningOptions').querySelectorAll('input').forEach(input => { input.disabled = disabled; });
+    }
+    if (kind === 'winch') {
+      $('winchPullBtn').disabled = disabled;
+      $('winchResetBtn').disabled = disabled;
+      $('winchExitBtn').disabled = disabled;
+    }
+    if (kind === 'generator') {
+      document.querySelectorAll('#generatorButtons button').forEach(button => { button.disabled = disabled; });
+      $('generatorResetBtn').disabled = disabled;
+      $('generatorExitBtn').disabled = disabled;
+    }
+  }
+
+  function beginResolvingAction(kind) {
+    if (state.resolvingAction) return false;
+    state.resolvingAction = kind;
+    setResolvingControls(kind, true);
+    return true;
+  }
+
+  function endResolvingAction(kind) {
+    if (state.resolvingAction !== kind) return;
+    state.resolvingAction = null;
+    setResolvingControls(kind, false);
+  }
+
+  function clearResolvingAction() {
+    const kind = state.resolvingAction;
+    if (!kind) return;
+    state.resolvingAction = null;
+    setResolvingControls(kind, false);
+  }
+
+  function recoveryKind() {
+    if (state.won || state.transitioning) return null;
+    if ($('winchDialog').open) return 'winch';
+    if ($('generatorDialog').open) return 'generator';
+    if (state.gameMode === 'camera' && state.scene === 'wildlife') return 'camera';
+    if (state.gameMode === 'radio' && state.scene === 'tower') return 'radio';
+    if (state.scene === 'jeep') return 'jeep';
+    if (state.scene === 'river') return 'river';
+    return null;
+  }
+
+  function recoveryLabel(kind = recoveryKind()) {
+    const labels = {
+      jeep: '↺ Jeep zurücksetzen',
+      river: '↺ Boot zurücksetzen',
+      camera: '↺ Kamera verlassen',
+      winch: '↺ Winde neu starten',
+      generator: '↺ Generator neu starten',
+      radio: '↺ Funk zurücksetzen'
+    };
+    return labels[kind] || '↺ Zurücksetzen';
+  }
+
+  function recoverMechanic(kind = recoveryKind()) {
+    if (!kind || state.transitioning || state.won) return false;
+
+    invalidateDelayedActions();
+    clearResolvingAction();
+    clearMovement();
+
+    if (kind === 'jeep') {
+      state.jeep.x = 480;
+      state.jeep.distance = state.jeep.safeDistance;
+      toast('Jeep zurück am sicheren Punkt.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'river') {
+      state.river.x = 480;
+      state.river.progress = state.river.safeProgress;
+      toast('Boot zurück am sicheren Punkt.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'camera') {
+      state.cameraMode = false;
+      state.reticle = { x: state.player.x + 110, y: state.player.y - 40 };
+      restoreSceneMode();
+      setCoco('Kamera zu', 'Deine Fotos bleiben gespeichert.');
+      updateHud();
+      return true;
+    }
+
+    if (kind === 'winch') {
+      state.winchHits = 0;
+      state.winchValue = .08;
+      state.winchDir = 1;
+      $('winchNeedle').style.left = '8%';
+      $('winchStatus').textContent = '0 / 3 sichere Züge';
+      $('winchPullBtn').disabled = false;
+      return true;
+    }
+
+    if (kind === 'generator') {
+      if (state.generator.done) return false;
+      state.generator.seq = [];
+      document.querySelectorAll('#generatorButtons button').forEach(button => {
+        button.classList.remove('active');
+        button.disabled = false;
+      });
+      $('generatorFeedback').className = 'feedback';
+      $('generatorFeedback').textContent = 'Hinweis an der Wand: 🌿 → ☀️ → 🌊';
+      return true;
+    }
+
+    if (kind === 'radio') {
+      state.radioMode = false;
+      state.tuned = 35;
+      restoreSceneMode();
+      setCoco('Funk zurückgesetzt', 'Du kannst die Konsole gleich neu starten.');
+      updateHud();
+      return true;
+    }
+
+    return false;
+  }
+
+  function exitMechanicDialog(kind, dialogId) {
+    recoverMechanic(kind);
+    const dialog = $(dialogId);
+    if (dialog.open) dialog.close();
+  }
+
+  function setGameMode(mode) {
+    state.gameMode = mode;
+    if (!['world', 'vehicle'].includes(mode)) clearMovement();
+    renderInteraction();
+  }
+
+  function restoreSceneMode() {
+    if (state.won) return setGameMode('won');
+    setGameMode(modeForScene());
+  }
+
+  function scheduleGuarded(delay, callback) {
+    const sceneEpoch = state.sceneEpoch;
+    const actionEpoch = state.actionEpoch;
+    return setTimeout(() => {
+      if (sceneEpoch !== state.sceneEpoch || actionEpoch !== state.actionEpoch || state.transitioning) return;
+      callback();
+    }, delay);
+  }
 
   function updateHud() {
     const meta = SCENES[state.scene];
@@ -136,17 +301,21 @@
     }).join('');
     $('cameraBtn').disabled = state.scene !== 'wildlife';
     $('cameraBtn').textContent = state.cameraMode ? '📸 Foto machen' : '📷 Kamera';
+
+    const recovery = recoveryKind();
+    $('recoveryBtn').disabled = !recovery;
+    $('recoveryBtn').textContent = recoveryLabel(recovery);
   }
 
   function missionText() {
     switch (state.scene) {
-      case 'camp': return 'Dr. Yaras Station ist seit dem Sturm stumm. Auf dem Routentablet liegt der Schlüsselcode.';
-      case 'jeep': return 'MANGO-1 läuft. Die Piste ist eng, matschig und erstaunlich voller Steine.';
-      case 'blocked': return 'Ein umgestürzter Baum versperrt den einzigen Weg. Gut, dass der Jeep eine Seilwinde hat.';
-      case 'wildlife': return 'Dr. Yara wollte zwei Arten dokumentieren. Vielleicht hat sie Hinweise bei den Senderdaten hinterlassen.';
-      case 'river': return 'Die Station liegt flussaufwärts. Nicht jeder Felsen möchte fotografiert werden.';
-      case 'station': return 'Alles dunkel. Erst Generator, dann Terminal. Der rote Knopf bleibt unangetastet.';
-      case 'tower': return `Der letzte Stationslog nennt Kanal ${radioChannel}. Stelle ihn ein und sende ein Signal.`;
+      case 'camp': return 'Dr. Yara meldet sich nicht. Prüfe das Tablet und finde die Route.';
+      case 'jeep': return 'Fahr bis zur Station. Weiche Matsch und Steinen aus.';
+      case 'blocked': return 'Ein Baum blockiert den Weg. Nutze die Seilwinde.';
+      case 'wildlife': return 'Dr. Yara sucht Tukan und Capybara. Fotografiere beide.';
+      case 'river': return 'Die Station liegt flussaufwärts. Weiche den Felsen aus.';
+      case 'station': return 'Der Strom ist aus. Starte zuerst den Generator.';
+      case 'tower': return `Stelle Kanal ${radioChannel} ein. Sende dann das Signal.`;
       default: return '';
     }
   }
@@ -163,88 +332,121 @@
   }
 
   function setScene(name, spawn = null) {
-    state.scene = name; state.sceneEntered = performance.now(); state.cameraMode = false; state.radioMode = false; clearMovement();
+    if (state.transitioning || state.scene === name || state.won) return false;
+
+    state.transitioning = true;
+    invalidateDelayedActions();
+    setGameMode('transition');
+    const transitionEpoch = ++state.sceneEpoch;
+
+    state.scene = name;
+    state.sceneEntered = performance.now();
+    state.cameraMode = false;
+    state.radioMode = false;
+    clearMovement();
+
     if (spawn) { state.player.x = spawn.x; state.player.y = spawn.y; }
     else { state.player.x = 480; state.player.y = 470; }
+
     if (name === 'blocked') state.items.add('winch');
-    if (name === 'wildlife') { state.player.x = 120; state.player.y = 470; setCoco('Kamera bereit', 'Die zwei Zielarten sind Tukan und Capybara. Geh nah genug heran und nutze die Kamera.'); }
-    if (name === 'river') setCoco('Boot los!', 'Links/rechts steuern. Die Strömung trägt dich automatisch flussaufwärts.');
-    if (name === 'station') { state.player.x = 480; state.player.y = 500; setCoco('Kein Strom', 'Der Generator links sieht reparierbar aus. Und nein: den großen roten Knopf drücken wir nicht.'); }
-    if (name === 'tower') { state.player.x = 500; state.player.y = 490; setCoco('Fast geschafft', `Am Funkmast muss Kanal ${radioChannel} eingestellt werden.`); }
+    if (name === 'wildlife') { state.player.x = 120; state.player.y = 470; setCoco('Kamera bereit', 'Finde Tukan und Capybara. Fotografiere beide.'); }
+    if (name === 'river') setCoco('Boot los!', 'Lenke links und rechts. Die Strömung bringt dich vorwärts.');
+    if (name === 'station') { state.player.x = 480; state.player.y = 500; setCoco('Kein Strom', 'Starte links den Generator.'); }
+    if (name === 'tower') { state.player.x = 500; state.player.y = 490; setCoco('Fast geschafft', `Stelle am Funkmast Kanal ${radioChannel} ein.`); }
+
     updateHud();
+    renderInteraction();
+
+    requestAnimationFrame(() => {
+      if (state.sceneEpoch !== transitionEpoch || state.scene !== name) return;
+      state.transitioning = false;
+      restoreSceneMode();
+      updateHud();
+    });
+
+    return true;
   }
 
   function generalHotspots() {
     if (state.scene === 'camp') return [
-      { id: 'tablet', x: 150, y: 150, r: 72, label: 'Routentablet prüfen' },
-      { id: 'jeep', x: 760, y: 365, r: 88, label: 'In MANGO-1 einsteigen' }
+      { id: 'tablet', x: 150, y: 150, r: 72, label: 'Tablet prüfen' },
+      { id: 'jeep', x: 760, y: 365, r: 88, label: 'Jeep starten' }
     ];
-    if (state.scene === 'blocked') return [{ id: 'tree', x: 690, y: 270, r: 105, label: 'Seilwinde ansetzen' }];
+    if (state.scene === 'blocked') return [{ id: 'tree', x: 690, y: 270, r: 105, label: 'Winde starten' }];
     if (state.scene === 'wildlife') return [
-      { id: 'sender', x: 570, y: 120, r: 76, label: state.photos.size >= 2 ? 'Ortungssender auswerten' : 'Sender ist noch gesperrt' },
+      { id: 'sender', x: 570, y: 120, r: 76, label: state.photos.size >= 2 ? 'Sender prüfen' : 'Erst beide Tiere fotografieren' },
       { id: 'dock', x: 875, y: 455, r: 85, label: 'Zum Boot' }
     ];
     if (state.scene === 'station') return [
       { id: 'generator', x: 175, y: 360, r: 86, label: 'Generator öffnen' },
-      { id: 'terminal', x: 710, y: 175, r: 78, label: state.generator.done ? 'Stationscomputer starten' : 'Terminal ohne Strom' },
+      { id: 'terminal', x: 710, y: 175, r: 78, label: state.generator.done ? 'Terminal starten' : 'Terminal ohne Strom' },
       { id: 'towerGate', x: 870, y: 430, r: 78, label: 'Zum Funkmast' }
     ];
-    if (state.scene === 'tower') return [{ id: 'radioConsole', x: 480, y: 160, r: 90, label: 'Funkkonsole bedienen' }];
+    if (state.scene === 'tower') return [{ id: 'radioConsole', x: 480, y: 160, r: 90, label: 'Funk starten' }];
     return [];
   }
 
   function interact() {
-    if (!state.near || state.won) return;
+    if (state.gameMode !== 'world' || state.transitioning || !state.near || state.won) return;
     const id = state.near.id;
     if (state.scene === 'camp' && id === 'tablet') return openLearning('q1');
     if (state.scene === 'camp' && id === 'jeep') {
-      if (!state.solved.has('q1')) return toast('Das Jeep-Terminal verlangt zuerst die freigeschaltete Route.');
-      setCoco('MANGO-1 startet!', 'Lenke mit links/rechts. Die Piste übernimmt den Rest. Fast wie Autopilot, nur mit mehr Matsch.');
+      if (!state.solved.has('q1')) return toast('Prüfe zuerst die Route am Tablet.');
+      setCoco('MANGO-1 startet!', 'Lenke links oder rechts. Der Jeep fährt automatisch.');
       return setScene('jeep');
     }
     if (state.scene === 'blocked' && id === 'tree') return openWinch();
     if (state.scene === 'wildlife' && id === 'sender') {
-      if (state.photos.size < 2) return toast('Erst Tukan und Capybara dokumentieren.');
+      if (state.photos.size < 2) return toast('Fotografiere zuerst Tukan und Capybara.');
       return openLearning('q2');
     }
     if (state.scene === 'wildlife' && id === 'dock') {
-      if (!state.solved.has('q2')) return toast('Die Flusskarte fehlt noch.');
+      if (!state.solved.has('q2')) return toast('Löse zuerst den Sender.');
       return setScene('river');
     }
     if (state.scene === 'station' && id === 'generator') return openGenerator();
     if (state.scene === 'station' && id === 'terminal') {
-      if (!state.generator.done) return toast('Ohne Generator bleibt das Terminal schwarz.');
+      if (!state.generator.done) return toast('Starte zuerst den Generator.');
       return openLearning('q3');
     }
     if (state.scene === 'station' && id === 'towerGate') {
-      if (!state.solved.has('q3')) return toast('Der Funkkanal fehlt noch.');
+      if (!state.solved.has('q3')) return toast('Starte zuerst das Terminal.');
       return setScene('tower');
     }
     if (state.scene === 'tower' && id === 'radioConsole') {
-      state.radioMode = true; state.tuned = 35; clearMovement();
-      setCoco('Funkkonsole aktiv', `Stelle mit ←/→ den Kanal ein. Ziel laut Logbuch: ${radioChannel}. Mit E/Enter sendest du.`);
+      invalidateDelayedActions();
+      state.radioMode = true; state.tuned = 35;
+      setGameMode('radio');
+      setCoco('Funk bereit', `Stelle Kanal ${radioChannel} ein. Sende mit E/Enter.`);
       return updateHud();
     }
   }
 
   function rewardQuestion(id) {
+    if (state.solved.has(id)) return false;
     state.solved.add(id);
-    if (id === 'q1') { state.items.add('jeepKey'); setCoco('Route bestätigt', 'Schlüssel akzeptiert. MANGO-1 wartet rechts im Camp.'); }
-    if (id === 'q2') { state.items.add('riverMap'); setCoco('Flusskarte gefunden', 'Der Sender enthält Dr. Yaras letzte Route. Das Boot liegt am rechten Rand.'); }
-    if (id === 'q3') { state.items.add('radio'); setCoco('Funkkanal entschlüsselt', `Stationslog: Rettungskanal ${radioChannel}. Ab zum Sendemast!`); }
+    if (id === 'q1') { state.items.add('jeepKey'); setCoco('Route stimmt', 'Der Jeep wartet rechts im Camp.'); }
+    if (id === 'q2') { state.items.add('riverMap'); setCoco('Route gefunden', 'Geh rechts zum Boot.'); }
+    if (id === 'q3') { state.items.add('radio'); setCoco('Kanal gefunden', `Kanal ${radioChannel}. Geh zum Funkmast.`); }
     updateHud();
+    return true;
   }
 
   function openLearning(id) {
-    if (state.solved.has(id)) return toast('Dieses Lern-Gate ist bereits gelöst.');
+    if (state.gameMode !== 'world' || state.transitioning) return;
+    if (state.solved.has(id)) return toast('Schon gelöst.');
+    invalidateDelayedActions();
     state.activeQuestion = id; state.learningMode = 'main'; state.selectedAnswer = null;
-    renderLearning(); $('learningDialog').showModal(); setTimeout(() => $('learningDialog').focus(), 50);
+    setGameMode('modal');
+    renderLearning();
+    $('learningDialog').showModal();
+    scheduleGuarded(50, () => { if ($('learningDialog').open) $('learningDialog').focus(); });
   }
 
   function renderLearning() {
     const q = questions[state.activeQuestion];
     const data = state.learningMode === 'main' ? q : q.transfer;
-    $('learningTitle').textContent = state.learningMode === 'main' ? q.title : 'Neue Aufgabe zum selben Prinzip';
+    $('learningTitle').textContent = state.learningMode === 'main' ? q.title : 'Neue Aufgabe';
     $('learningPrompt').textContent = data.prompt;
     $('learningOptions').innerHTML = '';
     data.options.forEach((opt, i) => {
@@ -254,63 +456,116 @@
       $('learningOptions').append(label);
     });
     $('learningFeedback').className = 'feedback';
-    $('learningFeedback').textContent = state.learningMode === 'main' ? 'Wähle eine Antwort.' : 'Transfercheck: Erst diese neue Aufgabe schaltet den Fortschritt frei.';
+    $('learningFeedback').textContent = state.learningMode === 'main' ? 'Wähle eine Antwort.' : 'Löse auch diese neue Aufgabe.';
   }
 
   function checkLearning(e) {
     e.preventDefault();
+    if (state.resolvingAction) return;
     const id = state.activeQuestion; const q = questions[id]; const data = state.learningMode === 'main' ? q : q.transfer;
     if (state.selectedAnswer === null) { $('learningFeedback').textContent = 'Wähle zuerst eine Antwort.'; return; }
     if (state.selectedAnswer !== data.correct) {
       $('learningFeedback').className = 'feedback error';
       if (state.learningMode === 'transfer') { $('learningFeedback').textContent = `Noch nicht. ${q.transfer.hint}`; return; }
       state.attempts[id]++;
-      $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Coco: ${q.hint}` : `Noch nicht sicher. ${q.explanation} Jetzt folgt eine neue Aufgabe zum selben Prinzip.`;
-      if (state.attempts[id] >= 2) setTimeout(() => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); }, 850);
+      $('learningFeedback').textContent = state.attempts[id] === 1 ? `Noch nicht. Tipp: ${q.hint}` : `Noch nicht. ${q.explanation} Jetzt probierst du eine ähnliche Aufgabe.`;
+      if (state.attempts[id] >= 2 && beginResolvingAction('learning')) {
+        scheduleGuarded(850, () => {
+          endResolvingAction('learning');
+          if (state.activeQuestion !== id) return;
+          state.learningMode = 'transfer';
+          state.selectedAnswer = null;
+          renderLearning();
+        });
+      }
       return;
     }
     if (state.learningMode === 'main' && state.attempts[id] > 0) {
-      $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Weil du vorher einen Fehlversuch hattest, folgt noch ein Transfercheck.`;
-      return setTimeout(() => { state.learningMode = 'transfer'; state.selectedAnswer = null; renderLearning(); }, 650);
+      $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = `Richtig. Jetzt noch eine ähnliche Aufgabe.`;
+      if (!beginResolvingAction('learning')) return;
+      return scheduleGuarded(650, () => {
+        endResolvingAction('learning');
+        if (state.activeQuestion !== id) return;
+        state.learningMode = 'transfer';
+        state.selectedAnswer = null;
+        renderLearning();
+      });
     }
-    $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig – Fortschritt freigeschaltet.';
-    setTimeout(() => { $('learningDialog').close(); rewardQuestion(id); state.activeQuestion = null; }, 500);
+    $('learningFeedback').className = 'feedback success'; $('learningFeedback').textContent = 'Richtig! Weiter geht’s.';
+    if (!beginResolvingAction('learning')) return;
+    scheduleGuarded(500, () => {
+      rewardQuestion(id);
+      state.activeQuestion = null;
+      endResolvingAction('learning');
+      if ($('learningDialog').open) $('learningDialog').close();
+    });
   }
 
   function openWinch() {
-    state.winchValue = .08; state.winchDir = 1; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`;
+    if (state.gameMode !== 'world' || state.transitioning) return;
+    invalidateDelayedActions();
+    setGameMode('modal');
+    state.winchValue = .08; state.winchDir = 1; $('winchStatus').textContent = `${state.winchHits} / 3 gute Züge`;
     $('winchDialog').showModal();
   }
   function pullWinch() {
+    if (state.resolvingAction || state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
     if (state.winchValue >= .38 && state.winchValue <= .62) {
-      state.winchHits++; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Sauberer Zug! Der Stamm bewegt sich.');
-      if (state.winchHits >= 3) setTimeout(() => { $('winchDialog').close(); setCoco('Weg frei!', 'Das war überraschend professionell. Weiter zu Fuß – hier wird die Piste zu eng.'); setScene('wildlife'); }, 650);
+      state.winchHits++; $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Gut! Der Baum bewegt sich.');
+      if (state.winchHits >= 3 && beginResolvingAction('winch')) {
+        scheduleGuarded(650, () => {
+          setCoco('Weg frei!', 'Weiter geht’s zu Fuß.');
+          setScene('wildlife');
+          endResolvingAction('winch');
+          if ($('winchDialog').open) $('winchDialog').close();
+        });
+      }
     } else {
-      state.winchHits = Math.max(0, state.winchHits - 1); $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Zu viel oder zu wenig Spannung. Versuch den grünen Bereich.');
+      state.winchHits = Math.max(0, state.winchHits - 1); $('winchStatus').textContent = `${state.winchHits} / 3 sichere Züge`; toast('Nicht im grünen Bereich. Versuch es nochmal.');
     }
   }
 
-  function openGenerator() { $('generatorDialog').showModal(); }
+  function openGenerator() {
+    if (state.gameMode !== 'world' || state.transitioning) return;
+    invalidateDelayedActions();
+    setGameMode('modal');
+    $('generatorDialog').showModal();
+  }
   function chooseCircuit(name, button) {
-    if (state.generator.done) return;
+    if (state.resolvingAction || state.generator.done) return;
     const order = ['leaf', 'sun', 'river'];
     const expected = order[state.generator.seq.length];
     if (name === expected) {
       state.generator.seq.push(name); button.classList.add('active');
-      $('generatorFeedback').className = 'feedback success'; $('generatorFeedback').textContent = `Kreis ${state.generator.seq.length}/3 aktiv.`;
+      $('generatorFeedback').className = 'feedback success'; $('generatorFeedback').textContent = `${state.generator.seq.length}/3 an.`;
       if (state.generator.seq.length === 3) {
-        state.generator.done = true; setCoco('Strom ist da!', 'Die Station erwacht. Das Terminal rechts oben sollte jetzt reagieren.');
-        setTimeout(() => $('generatorDialog').close(), 650); updateHud();
+        if (!beginResolvingAction('generator')) return;
+        state.generator.done = true; setCoco('Strom ist da!', 'Starte jetzt das Terminal rechts.');
+        scheduleGuarded(650, () => {
+          endResolvingAction('generator');
+          if ($('generatorDialog').open) $('generatorDialog').close();
+        });
+        updateHud();
       }
     } else {
       state.generator.seq = []; document.querySelectorAll('#generatorButtons button').forEach(b => b.classList.remove('active'));
-      $('generatorFeedback').className = 'feedback error'; $('generatorFeedback').textContent = 'Sicherung raus. Nochmal: 🌿 → ☀️ → 🌊';
+      $('generatorFeedback').className = 'feedback error'; $('generatorFeedback').textContent = 'Falsch. Neu: 🌿 → ☀️ → 🌊';
     }
   }
 
   function takePhoto() {
-    if (state.scene !== 'wildlife') return;
-    if (!state.cameraMode) { state.cameraMode = true; state.reticle = { x: state.player.x + 110, y: state.player.y - 40 }; clearMovement(); setCoco('Kameramodus', 'Bewege den Sucher mit Maus/Finger auf ein Tier und drücke nochmal auf Kamera.'); updateHud(); return; }
+    if (state.transitioning || state.scene !== 'wildlife') return;
+    if (!state.cameraMode) {
+      if (state.gameMode !== 'world') return;
+      invalidateDelayedActions();
+      state.cameraMode = true;
+      state.reticle = { x: state.player.x + 110, y: state.player.y - 40 };
+      setGameMode('camera');
+      setCoco('Kamera an', 'Zieh den Sucher aufs Tier. Drück dann wieder Kamera.');
+      updateHud();
+      return;
+    }
+    if (state.gameMode !== 'camera') return;
     let best = null; let dist = 999;
     for (const a of state.animals) {
       const d = Math.hypot(a.x - state.reticle.x, a.y - state.reticle.y);
@@ -318,11 +573,11 @@
     }
     flashScreen();
     if (best && dist < 58 && best.target) {
-      if (!state.photos.has(best.id)) { state.photos.add(best.id); toast(best.id === 'toucan' ? '🦜 Tukan dokumentiert!' : '🦫 Capybara dokumentiert!'); }
-      else toast('Dieses Tier hast du schon. Es posiert trotzdem gern.');
-      if (state.photos.size >= 2) { state.items.add('photos'); setCoco('Beide Fotos im Feldbuch', 'Jetzt kannst du den Ortungssender oben im Dschungel auswerten.'); }
-    } else if (best && dist < 58) toast('🐒 Tolles Foto – aber Dr. Yara sucht Tukan und Capybara.');
-    else toast('Nur Blätter. Sehr seltene Blätter, bestimmt.');
+      if (!state.photos.has(best.id)) { state.photos.add(best.id); toast(best.id === 'toucan' ? '🦜 Tukan fotografiert!' : '🦫 Capybara fotografiert!'); }
+      else toast('Das Tier hast du schon fotografiert.');
+      if (state.photos.size >= 2) { state.items.add('photos'); setCoco('Beide Fotos geschafft', 'Prüfe jetzt den Sender.'); }
+    } else if (best && dist < 58) toast('🐒 Gutes Foto. Gesucht sind Tukan und Capybara.');
+    else toast('Daneben! Versuch es nochmal.');
     updateHud();
   }
 
@@ -331,14 +586,19 @@
   }
 
   function sendRadio() {
-    if (!state.radioMode) return;
-    if (state.tuned !== radioChannel) { toast(`Nur Rauschen auf Kanal ${state.tuned}.`); return; }
-    state.won = true; updateHud();
-    setCoco('Antwort!', 'Dr. Yara meldet sich: „Mir geht’s gut! Ein Capybara hat den Stationsschlüssel geklaut. Lange Geschichte.“');
+    if (state.resolvingAction || state.gameMode !== 'radio' || state.transitioning || !state.radioMode || state.won) return;
+    if (state.tuned !== radioChannel) { toast(`Falscher Kanal: ${state.tuned}.`); return; }
+    if (!beginResolvingAction('victory')) return;
+    invalidateDelayedActions();
+    state.won = true; state.radioMode = false; setGameMode('won'); updateHud();
+    setCoco('Antwort!', 'Dr. Yara ist sicher. Ein Capybara hat wirklich den Schlüssel geklaut.');
     const sec = Math.round((performance.now() - state.startTime) / 1000);
-    $('victoryText').textContent = 'Dr. Yara ist sicher, der Funk läuft wieder und das Capybara behält den Schlüssel vorerst. Forschungsergebnis: Tiere lesen keine Hausordnung.';
+    $('victoryText').textContent = 'Dr. Yara ist sicher. Der Funk läuft wieder. Und das Capybara behält den Schlüssel.';
     $('victoryStats').innerHTML = `<span>🧠 ${state.solved.size}/3 Lern-Gates</span><span>📷 ${state.photos.size}/2 Zielfotos</span><span>🚙 ${state.jeep.bumps} Rempler</span><span>🚤 ${state.river.hits} Felskontakte</span><span>⏱ ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span>`;
-    setTimeout(() => $('victoryDialog').showModal(), 700);
+    scheduleGuarded(700, () => {
+      endResolvingAction('victory');
+      if (!$('victoryDialog').open) $('victoryDialog').showModal();
+    });
   }
 
   function movePlayer(dx, dy, dt) {
@@ -363,17 +623,24 @@
     }
     let nearest = null, nearestD = 9999;
     for (const h of generalHotspots()) { const d = Math.hypot(state.player.x - h.x, state.player.y - h.y); if (d < h.r && d < nearestD) { nearest = h; nearestD = d; } }
-    state.near = nearest; renderInteraction();
+    const previousNearId = state.near?.id || null;
+    state.near = nearest;
+    if (previousNearId !== (nearest?.id || null)) updateHud();
+    renderInteraction();
   }
 
   function updateJeep(dt) {
     let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    const previousDistance = state.jeep.distance;
     state.jeep.x = Math.max(320, Math.min(640, state.jeep.x + steer * 250 * dt));
     state.jeep.distance += 58 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.25 : 1);
+    const jeepCheckpoint = Math.floor(state.jeep.distance / 180) * 180;
+    if (jeepCheckpoint > state.jeep.safeDistance && state.jeep.distance % 180 < 40) state.jeep.safeDistance = jeepCheckpoint;
+    if (previousDistance <= 80 && state.jeep.distance > 80) updateHud();
     const obstaclePhase = state.jeep.distance % 180;
     const obstacleX = 400 + Math.sin(Math.floor(state.jeep.distance / 180) * 2.7) * 140;
-    if (obstaclePhase > 145 && obstaclePhase < 151 && Math.abs(state.jeep.x - obstacleX) < 58) { state.jeep.bumps++; state.jeep.distance -= 20; toast('💦 Matschloch! MANGO-1 nennt das „Geländekomfort“.', 1.1); }
-    if (state.jeep.distance >= 850) { state.jeep.distance = 850; setScene('blocked', { x: 300, y: 430 }); setCoco('Straße zu', 'Ein Baum liegt quer. Rechts daneben ist genug Platz für die Seilwinde.'); }
+    if (obstaclePhase > 145 && obstaclePhase < 151 && Math.abs(state.jeep.x - obstacleX) < 58) { state.jeep.bumps++; state.jeep.distance -= 20; toast('💦 Matschloch! Weiter geht’s.', 1.1); }
+    if (state.jeep.distance >= 850) { state.jeep.distance = 850; setScene('blocked', { x: 300, y: 430 }); setCoco('Baum im Weg', 'Geh zur Seilwinde.'); }
   }
 
   function updateAnimals(dt) {
@@ -386,10 +653,14 @@
 
   function updateRiver(dt) {
     let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+    const previousProgress = state.river.progress;
     state.river.x = Math.max(270, Math.min(690, state.river.x + steer * 260 * dt));
     state.river.progress += 66 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.2 : 1);
+    const riverCheckpoint = Math.floor(state.river.progress / 180) * 180;
+    if (riverCheckpoint > state.river.safeProgress && state.river.progress % 180 < 40) state.river.safeProgress = riverCheckpoint;
+    if (previousProgress <= 50 && state.river.progress > 50) updateHud();
     const phase = state.river.progress % 160; const rockX = 480 + Math.sin(Math.floor(state.river.progress / 160) * 3.1) * 175;
-    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 BONK. Das war ein Felsen.', 1.0); }
+    if (phase > 130 && phase < 136 && Math.abs(state.river.x - rockX) < 52) { state.river.hits++; state.river.progress -= 18; toast('🪨 Felsen getroffen!', 1.0); updateHud(); }
     if (state.river.progress >= 950) { state.river.progress = 950; setScene('station'); }
   }
 
@@ -398,21 +669,33 @@
     return true;
   }
 
+  function updateWinch(dt) {
+    if (state.gameMode !== 'modal' || state.transitioning || !$('winchDialog').open) return;
+    state.winchValue += state.winchDir * dt * .62;
+    if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; }
+    if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; }
+    $('winchNeedle').style.left = `${state.winchValue * 100}%`;
+  }
+
   function update(now, dt) {
     if (state.toastTimer > 0) { state.toastTimer -= dt; if (state.toastTimer <= 0) $('toast').hidden = true; }
-    if (state.scene === 'jeep') updateJeep(dt);
-    else if (state.scene === 'river') updateRiver(dt);
-    else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
-    if ($('winchDialog').open) { state.winchValue += state.winchDir * dt * .62; if (state.winchValue >= .94) { state.winchValue = .94; state.winchDir = -1; } if (state.winchValue <= .06) { state.winchValue = .06; state.winchDir = 1; } $('winchNeedle').style.left = `${state.winchValue * 100}%`; }
-    $('timeBadge').textContent = formatTime((now - state.startTime) / 1000);
-    updateHud();
+    if (!state.transitioning) {
+      if (state.scene === 'jeep') updateJeep(dt);
+      else if (state.scene === 'river') updateRiver(dt);
+      else { updateGeneral(dt); if (state.scene === 'wildlife') updateAnimals(dt); }
+    }
+    const timerSecond = Math.floor((now - state.startTime) / 1000);
+    if (timerSecond !== lastTimerSecond) {
+      lastTimerSecond = timerSecond;
+      $('timeBadge').textContent = formatTime(timerSecond);
+    }
   }
 
   function formatTime(sec) { sec = Math.floor(sec); return `⏱ ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
 
   function renderInteraction() {
     const p = $('interactionPrompt'), b = $('touchInteractBtn');
-    if (!state.near || state.cameraMode || state.radioMode || state.scene === 'jeep' || state.scene === 'river') { p.hidden = true; b.disabled = true; b.textContent = '✋ Interagieren'; return; }
+    if (!state.near || state.gameMode !== 'world' || state.transitioning) { p.hidden = true; b.disabled = true; b.textContent = '✋ Interagieren'; return; }
     p.hidden = false; $('interactionText').textContent = state.near.label; b.disabled = false; b.textContent = `✋ ${state.near.label}`;
   }
 
@@ -498,38 +781,96 @@
   function drawBoat(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle='#a36f3c';ctx.beginPath();ctx.moveTo(-44,-20);ctx.lineTo(44,-20);ctx.lineTo(30,30);ctx.lineTo(-30,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2d170';ctx.fillRect(-5,-45,10,45);ctx.fillStyle='#f3eee0';ctx.beginPath();ctx.moveTo(5,-43);ctx.lineTo(40,-15);ctx.lineTo(5,-15);ctx.closePath();ctx.fill();ctx.font='22px system-ui';ctx.textAlign='center';ctx.fillText('🐧',0,16);ctx.restore()}
   function drawCameraOverlay(){ctx.save();ctx.fillStyle='rgba(0,0,0,.42)';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#f3f5e7';ctx.lineWidth=3;ctx.strokeRect(160,80,640,440);ctx.beginPath();ctx.arc(state.reticle.x,state.reticle.y,45,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(state.reticle.x-65,state.reticle.y);ctx.lineTo(state.reticle.x+65,state.reticle.y);ctx.moveTo(state.reticle.x,state.reticle.y-65);ctx.lineTo(state.reticle.x,state.reticle.y+65);ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('KAMERAMODUS · Sucher bewegen · Kamera = Auslösen',175,110);ctx.restore()}
 
-  function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);if(!anyDialog)update(now,dt);else if($('winchDialog').open)update(now,dt);draw();requestAnimationFrame(loop)}
+  function loop(now){
+    const dt=Math.min(.033,(now-last)/1000);
+    last=now;
+    const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);
+    if(!anyDialog) update(now,dt);
+    else if($('winchDialog').open) updateWinch(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
 
   function canvasPoint(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
-  canvas.addEventListener('pointerdown',e=>{const p=canvasPoint(e);if(state.cameraMode){state.reticle=p;return}if(['jeep','river'].includes(state.scene)||state.radioMode)return;state.target=p});
-  canvas.addEventListener('pointermove',e=>{if(state.cameraMode&&e.buttons){state.reticle=canvasPoint(e)}});
+  canvas.addEventListener('pointerdown',e=>{
+    const p=canvasPoint(e);
+    if(state.transitioning)return;
+    if(state.gameMode==='camera'){state.reticle=p;return}
+    if(state.gameMode!=='world')return;
+    state.target=p;
+  });
+  canvas.addEventListener('pointermove',e=>{if(state.gameMode==='camera'&&e.buttons){state.reticle=canvasPoint(e)}});
 
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
     if(document.querySelector('dialog[open]'))return;
-    if(state.radioMode){if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);e.preventDefault()}if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);e.preventDefault()}if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}return}
-    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key)){state.keys.add(key);e.preventDefault()}
-    if((key==='e'||key==='Enter')&&state.near){interact();e.preventDefault()}
-    if(key==='c'&&state.scene==='wildlife'){takePhoto();e.preventDefault()}
-    if(key==='Escape'&&state.cameraMode){state.cameraMode=false;updateHud()}
+    if(state.transitioning || state.gameMode==='transition' || state.gameMode==='modal' || state.gameMode==='won')return;
+
+    if(key==='r' && recoverMechanic()){e.preventDefault();return}
+
+    if(state.gameMode==='radio'){
+      if(key==='Escape'){recoverMechanic('radio');e.preventDefault();return}
+      if(key==='ArrowLeft'||key==='a'){state.tuned=Math.max(1,state.tuned-1);updateHud();e.preventDefault()}
+      if(key==='ArrowRight'||key==='d'){state.tuned=Math.min(99,state.tuned+1);updateHud();e.preventDefault()}
+      if(key==='Enter'||key==='e'){sendRadio();e.preventDefault()}
+      return;
+    }
+
+    if(state.gameMode==='camera'){
+      if(key==='Escape'){recoverMechanic('camera');e.preventDefault();return}
+      if(key==='c'){takePhoto();e.preventDefault()}
+      return;
+    }
+
+    if(['world','vehicle'].includes(state.gameMode) && ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key)){state.keys.add(key);e.preventDefault()}
+    if(state.gameMode==='world' && (key==='e'||key==='Enter') && state.near){interact();e.preventDefault()}
+    if(state.gameMode==='world' && key==='c' && state.scene==='wildlife'){takePhoto();e.preventDefault()}
   });
   window.addEventListener('keyup',e=>state.keys.delete(e.key.length===1?e.key.toLowerCase():e.key));
 
   document.querySelectorAll('.dpad button').forEach(btn=>{
     const map={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};const key=map[btn.dataset.dir];
-    const down=e=>{e.preventDefault();if(state.radioMode){if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);return}state.keys.add(key)};
-    const up=e=>{e.preventDefault();state.keys.delete(key)};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);
+    const down=e=>{
+      e.preventDefault();
+      if(state.transitioning || ['transition','modal','won','camera'].includes(state.gameMode))return;
+      if(state.gameMode==='radio'){
+        if(key==='ArrowLeft')state.tuned=Math.max(1,state.tuned-1);
+        if(key==='ArrowRight')state.tuned=Math.min(99,state.tuned+1);
+        updateHud();
+        return;
+      }
+      if(['world','vehicle'].includes(state.gameMode))state.keys.add(key);
+    };
+    const up=e=>{e.preventDefault();state.keys.delete(key)};
+    btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);
   });
 
-  $('touchInteractBtn').addEventListener('click',()=>state.radioMode?sendRadio():interact());
+  $('touchInteractBtn').addEventListener('click',()=>{if(state.gameMode==='radio')sendRadio();else if(state.gameMode==='world')interact()});
   $('cameraBtn').addEventListener('click',takePhoto);
+  $('recoveryBtn').addEventListener('click',()=>recoverMechanic());
   $('learningForm').addEventListener('submit',checkLearning);
   $('hintBtn').addEventListener('click',()=>{const q=questions[state.activeQuestion];if(q){$('learningFeedback').className='feedback';$('learningFeedback').textContent=`Coco: ${state.learningMode==='transfer'?q.transfer.hint:q.hint}`}});
   $('winchPullBtn').addEventListener('click',pullWinch);
+  $('winchResetBtn').addEventListener('click',()=>recoverMechanic('winch'));
+  $('winchExitBtn').addEventListener('click',()=>exitMechanicDialog('winch','winchDialog'));
   $('generatorButtons').addEventListener('click',e=>{const b=e.target.closest('button[data-circuit]');if(b)chooseCircuit(b.dataset.circuit,b)});
+  $('generatorResetBtn').addEventListener('click',()=>recoverMechanic('generator'));
+  $('generatorExitBtn').addEventListener('click',()=>exitMechanicDialog('generator','generatorDialog'));
   document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',()=>$(btn.dataset.close).close()));
+  document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',()=>{
+    if(dialog.id==='victoryDialog')return;
+    invalidateDelayedActions();
+    if(dialog.id==='learningDialog'){
+      endResolvingAction('learning');
+      state.activeQuestion=null;
+      state.selectedAnswer=null;
+    }
+    if(dialog.id==='winchDialog')endResolvingAction('winch');
+    if(dialog.id==='generatorDialog')endResolvingAction('generator');
+    if(state.gameMode==='modal')restoreSceneMode();
+  }));
   $('restartBtn').addEventListener('click',()=>{const next=(Date.now()^Math.floor(Math.random()*0xffffffff))>>>0;location.href=`?seed=${next}`});
 
-  setCoco('Notruf aus dem Dschungel', 'Dr. Yaras Forschungsstation ist seit dem Sturm offline. Prüfe zuerst das Routentablet links.');
+  setCoco('Notruf aus dem Dschungel', 'Dr. Yara meldet sich nicht. Prüfe zuerst das Tablet links.');
   updateHud();requestAnimationFrame(loop);
 })();

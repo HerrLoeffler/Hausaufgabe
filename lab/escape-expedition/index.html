@@ -34,6 +34,7 @@
       <div class="mobile-action-row">
         <button id="touchInteractBtn" type="button" class="big-action">✋ Interagieren</button>
         <button id="cameraBtn" type="button" class="big-action secondary">📷 Kamera</button>
+        <button id="recoveryBtn" type="button" class="big-action secondary" disabled>↺ Zurücksetzen</button>
       </div>
 
       <div class="touch-controls" aria-label="Touch-Steuerung">
@@ -43,7 +44,7 @@
           <button type="button" data-dir="down" aria-label="runter">▼</button>
           <button type="button" data-dir="right" aria-label="rechts">▶</button>
         </div>
-        <div class="touch-hint">Tippen = laufen · Steuerkreuz = fein steuern</div>
+        <div class="touch-hint">Tippen: laufen · Steuerkreuz: steuern</div>
       </div>
     </section>
 
@@ -71,8 +72,8 @@
 
       <section class="controls-card">
         <strong>Steuerung</strong>
-        <p>WASD / Pfeile · E / Enter · Klick/Tap</p>
-        <p>Minispiele erklären sich direkt im Spiel.</p>
+        <p>WASD/Pfeile: bewegen · E/Enter: Aktion</p>
+        <p>R: zurücksetzen · Esc: Kamera/Funk verlassen</p>
       </section>
     </aside>
   </main>
@@ -80,7 +81,7 @@
   <dialog id="learningDialog" class="game-dialog">
     <form id="learningForm" class="dialog-card">
       <button class="dialog-close" type="button" data-close="learningDialog" aria-label="Schließen">×</button>
-      <span class="eyebrow">LERN-GATE</span>
+      <span class="eyebrow">LERN-AUFGABE</span>
       <h2 id="learningTitle"></h2>
       <p id="learningPrompt"></p>
       <div id="learningOptions" class="answer-grid"></div>
@@ -96,10 +97,12 @@
     <form id="winchForm" class="dialog-card">
       <span class="eyebrow">SEILWINDE</span>
       <h2>Zieh den Baum vom Weg</h2>
-      <p>Halte die Spannung im grünen Bereich. Drei saubere Züge reichen.</p>
+      <p>Triff 3-mal den grünen Bereich.</p>
       <div class="meter"><div id="winchNeedle" class="meter-needle"></div><div class="meter-green"></div></div>
-      <div class="mechanic-status" id="winchStatus">0 / 3 sichere Züge</div>
+      <div class="mechanic-status" id="winchStatus">0 / 3 gute Züge</div>
       <div class="dialog-actions">
+        <button id="winchExitBtn" type="button" class="secondary">← Zurück</button>
+        <button id="winchResetBtn" type="button" class="secondary">↺ Neu starten</button>
         <button id="winchPullBtn" type="button" class="primary">🪝 Ziehen</button>
       </div>
     </form>
@@ -109,13 +112,17 @@
     <form id="generatorForm" class="dialog-card">
       <span class="eyebrow">GENERATOR</span>
       <h2>Strom wiederherstellen</h2>
-      <p>Die drei Stromkreise müssen in der Reihenfolge der verblassten Kontrolllampen aktiviert werden.</p>
+      <p>Drück die Stromkreise in der Reihenfolge der Lampen.</p>
       <div id="generatorButtons" class="generator-buttons">
         <button type="button" data-circuit="leaf">🟢 Blatt</button>
         <button type="button" data-circuit="sun">🟡 Sonne</button>
         <button type="button" data-circuit="river">🔵 Fluss</button>
       </div>
       <div id="generatorFeedback" class="feedback">Hinweis an der Wand: 🌿 → ☀️ → 🌊</div>
+      <div class="dialog-actions">
+        <button id="generatorExitBtn" type="button" class="secondary">← Zurück</button>
+        <button id="generatorResetBtn" type="button" class="secondary">↺ Neu starten</button>
+      </div>
     </form>
   </dialog>
 
