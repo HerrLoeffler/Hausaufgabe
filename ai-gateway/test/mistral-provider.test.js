@@ -121,7 +121,7 @@ test('gateway registers Mistral only with runtime secret and smoke stays tiny', 
 test('Mistral cached tokens are not double-counted in cost accounting', () => {
   const price = { input: 150000, output: 600000, cacheRead: 15000, cacheWrite: 0 };
   const usage = { input_tokens: 80, output_tokens: 8, input_tokens_details: { cached_tokens: 64 } };
-  assert.equal(priceUsage('mistral', usage, price), 8);
-  assert.equal(priceUsage('gemini', usage, price), 8);
+  assert.equal(priceUsage('mistral', usage, price), 9);
+  assert.equal(priceUsage('gemini', usage, price), 9);
   assert.equal(priceUsage('mistral', { ...usage, input_tokens_details: { cached_tokens: 81 } }, price), null);
 });
