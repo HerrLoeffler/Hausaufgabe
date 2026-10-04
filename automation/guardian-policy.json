@@ -10,9 +10,9 @@
       "enabled": true,
       "execution": "pipeline-v2",
       "baseBranch": "feature/gradecrew-app-integration",
-      "approvedSha": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+      "approvedSha": "f30fa44a383b279bcc49967d2ef0d1840243b27e",
       "maxAutomaticStage": "staging_deployed"
     }
   ],
-  "note": "Execution V2 implemented and CI verified. Deliberately inactive: dedicated credentials, explicit task admission and a real paid API-to-Staging pilot still required; no automatic Production."
+  "note": "Active admitted pilot: explicit source renewal after diagnosed reviewer permission denials. Same task, three total attempts and USD 2.55 cap; original history and reservations retained. All fresh CI and reviews required; Production remains locked."
 }

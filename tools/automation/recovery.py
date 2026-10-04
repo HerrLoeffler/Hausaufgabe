@@ -7,6 +7,7 @@ No timeout, quota error, unknown response or rejected code can use this route.
 from __future__ import annotations
 
 import copy
+import base64
 import datetime as dt
 import json
 import os
@@ -20,6 +21,49 @@ ROOT = Path(__file__).resolve().parents[2]
 KIND = 'confirmed-review-permission-403'
 
 
+def previous_task(request, task):
+    """A source renewal may change only the base, never task scope or budget."""
+    update = request.get('sourceUpdate')
+    if update is None:
+        return task
+    if set(update) != {'previousTask', 'approvedSha', 'taskHash', 'selectedBlobs'}:
+        raise ValueError('Explicit source update binding required')
+    previous = task_contract(update['previousTask'])
+    if (previous['base_sha'] == task['base_sha']
+            or previous | {'base_sha': task['base_sha']} != task
+            or update['approvedSha'] != task['base_sha']
+            or update['taskHash'] != digest(task)
+            or request['taskHash'] != digest(previous)
+            or set(update['selectedBlobs']) != set(task['allowed_files'] + task.get('context_files', []))):
+        raise ValueError('Source renewal changes approved task or budget')
+    return previous
+
+
+def permission_recovery(previous, task):
+    """Return historical candidate base only for a bound permission recovery."""
+    request = previous.get('manualRecovery', {})
+    if (request.get('kind') != KIND or request.get('previousRequestId') != previous['requestId']
+            or request.get('taskHash') != previous.get('taskHash')):
+        return None
+    old_task = previous_task(request, task)
+    if digest(old_task) != previous.get('taskHash'):
+        raise ValueError('Historical permission recovery task changed')
+    if request.get('sourceUpdate') and previous.get('approvedSha') != old_task['base_sha']:
+        raise ValueError('Historical source approval differs')
+    return old_task['base_sha']
+
+
+def current_approval(request, policy, task):
+    """Queued runs must still have the same grant, task and source request."""
+    main = api('git/ref/heads/main')['object']['sha']
+    for path, expected in [('automation/guardian-policy.json', policy),
+                           ('agent-queue/' + task['id'] + '.json', task),
+                           ('automation/recovery-requests/' + request['id'] + '.json', request)]:
+        actual = json.loads(base64.b64decode(api('contents/' + path + '?ref=' + main)['content']))
+        if actual != expected:
+            raise ValueError('Current source recovery approval changed')
+
+
 def job_log(job_id):
     result = subprocess.run(['gh', 'run', 'view', '--repo', REPO, '--job', str(job_id), '--log'],
                             capture_output=True, text=True, timeout=30)
@@ -31,7 +75,7 @@ def job_log(job_id):
 def qualify(request, history, task, run, jobs, logs):
     expected = {'id', 'taskId', 'previousRequestId', 'runId', 'taskHash', 'head',
                 'kind', 'permissionFixConfirmed', 'reason'}
-    if set(request) != expected or request['kind'] != KIND or request['permissionFixConfirmed'] is not True:
+    if set(request) not in (expected, expected | {'sourceUpdate'}) or request['kind'] != KIND or request['permissionFixConfirmed'] is not True:
         raise ValueError('Explicit confirmed permission recovery required')
     identifier(request['id']); identifier(request['previousRequestId'])
     task_contract(task)
@@ -93,7 +137,10 @@ def apply(request):
     run = api('actions/runs/' + str(request['runId']))
     jobs = api('actions/runs/' + str(request['runId']) + '/jobs?per_page=100')['jobs']
     traces = {j['id']: job_log(j['id']) for j in jobs if j['name'] in {'reviews (correctness)', 'reviews (qa)'}}
-    old = qualify(request, history, task, run, jobs, traces)
+    original_task = previous_task(request, task)
+    if request.get('sourceUpdate'):
+        current_approval(request, policy, task)
+    old = qualify({k: v for k, v in request.items() if k != 'sourceUpdate'}, history, original_task, run, jobs, traces)
     if len(history) >= policy['maxAttemptsPerStage']:
         raise ValueError('Configured attempt limit exhausted')
     # Merely check remaining budget here. The ordinary controller still makes
@@ -106,8 +153,21 @@ def apply(request):
             or pr.get('state') != 'open' or pr['base']['ref'] != WEB or pr['head']['sha'] != pub['head']
             or pr['head']['repo']['full_name'] != REPO
             or api('git/ref/heads/' + pub['branch'])['object']['sha'] != pub['head']
-            or commit['tree']['sha'] != pub['tree'] or [p['sha'] for p in commit['parents']] != [task['base_sha']]):
+            or commit['tree']['sha'] != pub['tree'] or [p['sha'] for p in commit['parents']] != [original_task['base_sha']]
+            or pub['base'] != original_task['base_sha']):
         raise ValueError('Source, secured candidate or PR moved')
+    if request.get('sourceUpdate'):
+        comparison = api('compare/' + original_task['base_sha'] + '...' + task['base_sha'])
+        if comparison.get('status') != 'ahead' or comparison.get('merge_base_commit', {}).get('sha') != original_task['base_sha']:
+            raise ValueError('Renewed source must descend from original approval')
+        for path, expected_blob in request['sourceUpdate']['selectedBlobs'].items():
+            for base in (original_task['base_sha'], task['base_sha']):
+                item = api('contents/' + path + '?ref=' + base)
+                if item.get('type') != 'file' or item.get('sha') != expected_blob:
+                    raise ValueError('Approved source context changed; separate review required')
+        if api('git/ref/heads/' + WEB)['object']['sha'] != task['base_sha']:
+            raise ValueError('Renewed source moved before recovery')
+        current_approval(request, policy, task)
     old['manualRecovery'] = copy.deepcopy(request) | {'originalState': old['state'], 'originalReason': old.get('reason'),
         'confirmedAt': dt.datetime.now(dt.timezone.utc).isoformat(), 'dispatchState': 'reserved'}
     old.update(state='repairable', reason='Explicit diagnosis: reviewer model permissions corrected by Martin')

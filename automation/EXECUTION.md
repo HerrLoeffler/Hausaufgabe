@@ -20,6 +20,8 @@ Die feste Combined-Prüfung läuft auf genau diesem direkten Nachfolger des frei
 
 ## Reparaturen, Kosten und Stopps
 
+Eine ausdrücklich angeforderte Quellen-Erneuerung nach qualifizierten Review-403 darf ausschließlich den Basis-SHA desselben Auftrags wechseln. Der main-eigene Recovery-Auftrag bindet alten vollständigen Auftrag/Hash, neuen SHA/Hash und unveränderte ausgewählte Blob-SHAs; neue Quelle muss vom alten Stand abstammen. Aktuelle Freigabe und Zielbranch werden vor Ledger-Schreiben erneut geprüft. Historische Commit-/Hash-/Publikations-/Nutzungsdaten und sämtliche Reservierungen bleiben erhalten; ein neuer Versuch zählt weiter gegen dieselben Grenzen und durchläuft alle CI-/Review-Gates neu. Der ursprüngliche Kandidat bleibt unverändert an seine alte Eltern-/Baumbindung gebunden und dient nur als Kontext.
+
 - Maximal drei Bau-/Reparaturversuche insgesamt pro genehmigtem Auftrag, auch nach SHA-Wechsel kein stiller Reset. Das ist konservativer als drei neue Versuche auf jeder Teilstufe.
 - Nur tatsächlich ausgeführte fehlgeschlagene Tests oder vollständige Reviews mit konkreten Blockern lösen eine neue Bau-Runde aus. Vorherige Änderungen und begrenzte Test-/Review-Fehler werden mitgegeben. Identische erfolglose Reparaturen zahlen keine erneuten Reviews.
 - Provider-/Dispatch-/Schreib-Ambiguität, fehlende Einrichtung, Dependencies-Ausfall, Kontrollcode-Wechsel oder Zielbranch-Konflikt stoppen zur Diagnose. Keine automatischen Rechteerweiterungen oder API-Retries.
