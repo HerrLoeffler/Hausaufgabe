@@ -91,7 +91,7 @@
     items: new Set(['fieldBook']), solved: new Set(), attempts: { q1: 0, q2: 0, q3: 0 },
     activeQuestion: null, learningMode: 'main', selectedAnswer: null,
     winchHits: 0, winchValue: 0.08, winchDir: 1, winchTimer: 0,
-    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0 },
+    jeep: { x: 480, distance: 0, bumps: 0, safeDistance: 0, speed: 64, stuck: false, stuckPower: 0, impactTimer: 0, shake: 0, hitHazards: new Set(), roadblockTimer: 0 },
     photos: new Set(), cameraMode: false, reticle: { x: 480, y: 300 },
     animals: [
       { id: 'toucan', emoji: '🦜', x: 700, y: 170, vx: 38, vy: 0, target: true },
@@ -114,6 +114,23 @@
   };
 
   const sceneDecor = Array.from({ length: 42 }, () => ({ x: 40 + rnd() * 880, y: 60 + rnd() * 500, s: .6 + rnd() * .8, type: rnd() > .55 ? 'leaf' : 'tree' }));
+  const JEEP_SCREEN_Y = 452;
+  const JEEP_PX_PER_M = 2.45;
+  const JEEP_LANES = [374, 480, 586];
+  const jeepCourse = [
+    { id: 'rock-a', type: 'rock', at: 145, lane: 0 },
+    { id: 'mud-a', type: 'mud', at: 255, lane: 2 },
+    { id: 'branch-a', type: 'branch', at: 355, lane: 1 },
+    { id: 'rock-b', type: 'rock', at: 470, lane: 2 },
+    { id: 'mud-b', type: 'mud', at: 585, lane: 0 },
+    { id: 'rock-c', type: 'rock', at: 695, lane: 1 },
+    { id: 'roadblock', type: 'tree', at: 832, lane: 1, story: true }
+  ];
+
+  function jeepHazardScreenY(hazard) {
+    return JEEP_SCREEN_Y - (hazard.at - state.jeep.distance) * JEEP_PX_PER_M;
+  }
+
   let last = performance.now();
   let lastTimerSecond = -1;
 
@@ -169,7 +186,7 @@
   }
 
   function recoveryKind() {
-    if (state.won || state.transitioning) return null;
+    if (state.won || state.transitioning || state.jeep.roadblockTimer > 0) return null;
     if ($('winchDialog').open) return 'winch';
     if ($('generatorDialog').open) return 'generator';
     if (state.gameMode === 'camera' && state.scene === 'wildlife') return 'camera';
@@ -201,6 +218,14 @@
     if (kind === 'jeep') {
       state.jeep.x = 480;
       state.jeep.distance = state.jeep.safeDistance;
+      state.jeep.speed = 56;
+      state.jeep.stuck = false;
+      state.jeep.stuckPower = 0;
+      state.jeep.impactTimer = 0;
+      state.jeep.shake = 0;
+      state.jeep.roadblockTimer = 0;
+      for (const hazard of jeepCourse) if (hazard.at >= state.jeep.safeDistance - 10) state.jeep.hitHazards.delete(hazard.id);
+      restoreSceneMode();
       toast('Jeep zurück am sicheren Punkt.');
       updateHud();
       return true;
@@ -398,7 +423,7 @@
       setGameMode('transition');
       state.near = null;
       renderInteraction();
-      setCoco('MANGO-1 startet!', 'Lenke links oder rechts. Der Jeep fährt automatisch.');
+      setCoco('MANGO-1 startet!', 'Lenke links/rechts. Halte ↑ für mehr Tempo. Matsch kann dich festsetzen.');
       scheduleGuarded(620, () => {
         endResolvingAction('camp-jeep');
         setScene('jeep');
@@ -640,17 +665,101 @@
   }
 
   function updateJeep(dt) {
-    let steer = 0; if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--; if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
-    const previousDistance = state.jeep.distance;
-    state.jeep.x = Math.max(320, Math.min(640, state.jeep.x + steer * 250 * dt));
-    state.jeep.distance += 58 * dt * (state.keys.has('ArrowUp') || state.keys.has('w') ? 1.25 : 1);
-    const jeepCheckpoint = Math.floor(state.jeep.distance / 180) * 180;
-    if (jeepCheckpoint > state.jeep.safeDistance && state.jeep.distance % 180 < 40) state.jeep.safeDistance = jeepCheckpoint;
-    if (previousDistance <= 80 && state.jeep.distance > 80) updateHud();
-    const obstaclePhase = state.jeep.distance % 180;
-    const obstacleX = 400 + Math.sin(Math.floor(state.jeep.distance / 180) * 2.7) * 140;
-    if (obstaclePhase > 145 && obstaclePhase < 151 && Math.abs(state.jeep.x - obstacleX) < 58) { state.jeep.bumps++; state.jeep.distance -= 20; toast('💦 Matschloch! Weiter geht’s.', 1.1); }
-    if (state.jeep.distance >= 850) { state.jeep.distance = 850; setScene('blocked', { x: 300, y: 430 }); setCoco('Baum im Weg', 'Geh zur Seilwinde.'); }
+    const jeep = state.jeep;
+
+    if (jeep.roadblockTimer > 0) {
+      jeep.roadblockTimer -= dt;
+      jeep.speed = Math.max(0, jeep.speed - 160 * dt);
+      jeep.shake = Math.max(0, jeep.shake - dt);
+      if (jeep.roadblockTimer <= 0) {
+        jeep.roadblockTimer = 0;
+        setScene('blocked', { x: 300, y: 430 });
+        setCoco('Baum im Weg', 'MANGO-1 kommt hier nicht weiter. Geh zur Seilwinde.');
+      }
+      return;
+    }
+
+    let steer = 0;
+    if (state.keys.has('ArrowLeft') || state.keys.has('a')) steer--;
+    if (state.keys.has('ArrowRight') || state.keys.has('d')) steer++;
+
+    if (jeep.stuck) {
+      jeep.speed = 0;
+      jeep.shake = Math.max(0, jeep.shake - dt * .8);
+      const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+      jeep.stuckPower = Math.max(0, Math.min(1, jeep.stuckPower + (throttle ? dt * 1.45 : -dt * .25)));
+      jeep.x = Math.max(330, Math.min(630, jeep.x + steer * 90 * dt));
+      if (jeep.stuckPower >= 1) {
+        jeep.stuck = false;
+        jeep.stuckPower = 0;
+        jeep.speed = 40;
+        toast('Frei! Weiter geht’s.', 1.0);
+        setCoco('Wieder frei', 'Weiterfahren. Weiche dem nächsten Hindernis aus.');
+      }
+      return;
+    }
+
+    if (jeep.impactTimer > 0) jeep.impactTimer = Math.max(0, jeep.impactTimer - dt);
+    jeep.shake = Math.max(0, jeep.shake - dt * 1.8);
+
+    const throttle = state.keys.has('ArrowUp') || state.keys.has('w');
+    const targetSpeed = jeep.impactTimer > 0 ? 24 : (throttle ? 86 : 64);
+    jeep.speed += (targetSpeed - jeep.speed) * Math.min(1, dt * 3.8);
+
+    const previousDistance = jeep.distance;
+    jeep.x = Math.max(330, Math.min(630, jeep.x + steer * 238 * dt));
+    jeep.distance += jeep.speed * dt;
+
+    const jeepCheckpoint = Math.floor(jeep.distance / 180) * 180;
+    if (jeepCheckpoint > jeep.safeDistance && jeep.distance % 180 < 42) jeep.safeDistance = jeepCheckpoint;
+    if (previousDistance <= 80 && jeep.distance > 80) updateHud();
+
+    for (const hazard of jeepCourse) {
+      if (hazard.story || jeep.hitHazards.has(hazard.id)) continue;
+      const y = jeepHazardScreenY(hazard);
+      if (y < JEEP_SCREEN_Y - 42 || y > JEEP_SCREEN_Y + 26) continue;
+
+      const x = JEEP_LANES[hazard.lane];
+      const halfWidth = hazard.type === 'mud' ? 54 : hazard.type === 'branch' ? 50 : 34;
+      if (Math.abs(jeep.x - x) > halfWidth) continue;
+
+      jeep.hitHazards.add(hazard.id);
+      jeep.bumps++;
+      jeep.shake = .34;
+
+      if (hazard.type === 'mud') {
+        jeep.stuck = true;
+        jeep.stuckPower = 0;
+        jeep.speed = 0;
+        setCoco('Festgefahren!', 'Halte ↑ / W gedrückt. Auf dem Handy: Pfeil nach oben.');
+        toast('Matsch! MANGO-1 steckt fest.', 1.4);
+      } else {
+        jeep.impactTimer = .72;
+        jeep.speed = 18;
+        jeep.distance = Math.max(0, jeep.distance - 7);
+        jeep.x += jeep.x <= x ? -18 : 18;
+        jeep.x = Math.max(330, Math.min(630, jeep.x));
+        toast(hazard.type === 'rock' ? 'Stein erwischt! Tempo weg.' : 'Ast erwischt! Kurz abbremsen.', 1.1);
+      }
+      updateHud();
+      break;
+    }
+
+    const roadblock = jeepCourse[jeepCourse.length - 1];
+    const roadblockY = jeepHazardScreenY(roadblock);
+    if (roadblockY >= 337 && !jeep.hitHazards.has(roadblock.id)) {
+      jeep.hitHazards.add(roadblock.id);
+      jeep.roadblockTimer = .82;
+      jeep.speed = 0;
+      jeep.shake = .22;
+      setGameMode('transition');
+      clearMovement();
+      setCoco('Vollbremsung!', 'Ein Baum blockiert die ganze Piste.');
+      toast('Weg blockiert!', 1.0);
+      updateHud();
+    }
+
+    if (jeep.distance > 820) jeep.distance = 820;
   }
 
   function updateAnimals(dt) {
@@ -949,19 +1058,242 @@
     ctx.restore();
   }
 
+  function pixelRect(x,y,w,h,fill){
+    ctx.fillStyle=fill;
+    ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  }
+
+  function roadHash(a,b){
+    let n=(a*374761393+b*668265263)>>>0;
+    n=(n^(n>>>13))*1274126177>>>0;
+    return (n^(n>>>16))>>>0;
+  }
+
+  function drawRetroTree(x,y,scale=1,variant=0){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
+    pixelRect(-8,18,16,31,'#4a3224');
+    pixelRect(-12,17,24,8,'#6a4930');
+    const dark=variant%2?'#123d29':'#17462d';
+    const mid=variant%2?'#1c5a35':'#21633a';
+    const light=variant%2?'#357b46':'#3c854a';
+    pixelRect(-31,-18,62,34,dark);
+    pixelRect(-24,-27,48,15,mid);
+    pixelRect(-37,-8,22,20,mid);
+    pixelRect(15,-7,22,19,mid);
+    pixelRect(-14,-34,28,12,light);
+    pixelRect(-25,-17,16,8,light);
+    ctx.restore();
+  }
+
+  function drawRetroGrassTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#28633a':'#2d6b3d');
+    if((h%5)===0){pixelRect(x+6,y+8,3,10,'#43834e');pixelRect(x+10,y+5,3,13,'#4d9158');}
+    if((h%7)===0){pixelRect(x+21,y+19,3,7,'#163f2a');pixelRect(x+25,y+16,3,10,'#1d4b2f');}
+    pixelRect(x,y+29,32,3,'rgba(11,45,27,.17)');
+  }
+
+  function drawRetroRoadTile(x,y,row,col){
+    const h=roadHash(row,col);
+    pixelRect(x,y,32,32,(h&1)?'#9a7348':'#a07a4d');
+    if(h%4===0) pixelRect(x+5+(h%16),y+8,5,3,'#805b39');
+    if(h%6===0) pixelRect(x+20,y+22,4,3,'#b58b58');
+    pixelRect(x,y,32,2,'rgba(76,51,31,.10)');
+  }
+
+  function drawRetroJungleEdge(y,row){
+    for(let x=0;x<288;x+=32) drawRetroGrassTile(x,y,row,x/32);
+    for(let x=672;x<W;x+=32) drawRetroGrassTile(x,y,row,x/32);
+    if(row%3===0){
+      drawRetroTree(44+(row%4)*45,y+20,1.0,row);
+      drawRetroTree(895-(row%5)*38,y+15,.95,row+1);
+    }
+    if(row%4===1){
+      pixelRect(238,y+8,34,24,'#1b5232');
+      pixelRect(688,y+5,34,27,'#1e5b35');
+    }
+  }
+
+  function drawRetroRoad(){
+    const tile=32;
+    const scroll=(state.jeep.distance*JEEP_PX_PER_M)%tile;
+    let rowIndex=Math.floor((state.jeep.distance*JEEP_PX_PER_M)/tile);
+    for(let y=-tile+scroll;y<H+tile;y+=tile,rowIndex--){
+      for(let x=288;x<672;x+=tile) drawRetroRoadTile(x,y,rowIndex,x/tile);
+      drawRetroJungleEdge(y,rowIndex);
+      pixelRect(280,y,8,tile,'#1b4b2f');
+      pixelRect(672,y,8,tile,'#1b4b2f');
+      if(rowIndex%5===0){
+        pixelRect(300,y+9,5,8,'#c3a167');
+        pixelRect(655,y+18,4,6,'#785b38');
+      }
+    }
+    ctx.fillStyle='rgba(92,59,35,.14)';
+    ctx.fillRect(400,0,18,H);
+    ctx.fillRect(542,0,18,H);
+  }
+
+  function drawRetroRock(x,y,variant=0){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-24,-13,48,30,'#4f514a');
+    pixelRect(-18,-22,30,10,'#686b61');
+    pixelRect(-25,-7,9,17,'#363a34');
+    pixelRect(12,-10,14,21,'#3d403a');
+    pixelRect(-11,-18,18,5,'#85877c');
+    if(variant%2) pixelRect(2,-4,13,7,'#5f6259');
+    ctx.restore();
+  }
+
+  function drawRetroMud(x,y,t){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-50,-18,100,36,'#664228');
+    pixelRect(-43,-25,67,8,'#765034');
+    pixelRect(-32,18,62,7,'#4f3423');
+    pixelRect(-36,-11,21,10,'#402a1d');
+    pixelRect(8,2,30,11,'#4a3020');
+    pixelRect(-3,-16,24,8,'#896044');
+    const glint=(Math.sin(t/260)+1)*4;
+    pixelRect(-20+glint,-7,20,3,'rgba(218,174,111,.25)');
+    ctx.restore();
+  }
+
+  function drawRetroBranch(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-49,-7,98,14,'#65452a');
+    pixelRect(-37,-11,32,5,'#8a633a');
+    pixelRect(18,-20,9,18,'#5b3c25');
+    pixelRect(26,-22,24,6,'#365f32');
+    pixelRect(37,-30,18,8,'#3f7139');
+    ctx.restore();
+  }
+
+  function drawRetroRoadblock(x,y){
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));
+    pixelRect(-205,-16,410,32,'#5b3d25');
+    pixelRect(-186,-23,105,8,'#7d5b36');
+    pixelRect(86,-24,74,9,'#7d5b36');
+    for(const xx of[-165,-110,-45,28,93,155]){
+      pixelRect(xx,-40,24,23,'#17472d');
+      pixelRect(xx-9,-31,42,18,'#225f36');
+      pixelRect(xx+4,-48,27,15,'#327845');
+    }
+    pixelRect(-210,-10,9,18,'#3b291d');
+    pixelRect(201,-9,9,18,'#3b291d');
+    ctx.restore();
+  }
+
+  function drawRetroJeep(x,y,t){
+    const jeep=state.jeep;
+    const bounce=jeep.stuck ? Math.sin(t/55)*2 : Math.sin(t/115)*1.2;
+    ctx.save();ctx.translate(Math.round(x),Math.round(y+bounce));
+
+    pixelRect(-42,43,84,14,'rgba(13,25,18,.27)');
+
+    pixelRect(-46,-21,12,27,'#17211b');pixelRect(34,-21,12,27,'#17211b');
+    pixelRect(-46,19,12,27,'#17211b');pixelRect(34,19,12,27,'#17211b');
+    pixelRect(-43,-15,7,15,'#495247');pixelRect(36,-15,7,15,'#495247');
+    pixelRect(-43,24,7,15,'#495247');pixelRect(36,24,7,15,'#495247');
+
+    pixelRect(-36,-39,72,82,'#c98524');
+    pixelRect(-31,-34,62,23,'#e2aa38');
+    pixelRect(-31,19,62,18,'#a9661f');
+    pixelRect(-39,-8,78,28,'#d99629');
+    pixelRect(-31,-5,62,22,'#244338');
+
+    // Visible driver face through windshield.
+    pixelRect(-10,-2,20,17,'#d8a57c');
+    pixelRect(-12,-7,24,8,'#315239');
+    pixelRect(-6,5,4,4,'#1c241d');
+    pixelRect(3,5,4,4,'#1c241d');
+    pixelRect(-2,11,5,2,'#7e4d3b');
+
+    pixelRect(-27,-46,54,5,'#4a3a27');
+    pixelRect(-30,-48,5,12,'#4a3a27');pixelRect(25,-48,5,12,'#4a3a27');
+    pixelRect(-20,-54,18,8,'#6e5130');pixelRect(3,-54,17,8,'#37553a');
+
+    pixelRect(-29,-40,12,6,'#f2db83');pixelRect(17,-40,12,6,'#f2db83');
+    pixelRect(-29,38,58,5,'#66441f');
+    pixelRect(-8,29,16,7,'#eed79d');
+
+    if(jeep.stuck){
+      pixelRect(-56,37,19,8,'#5d3b25');pixelRect(37,35,22,10,'#5d3b25');
+      pixelRect(-62,43,10,7,'#765038');pixelRect(51,42,12,7,'#765038');
+    }
+    ctx.restore();
+  }
+
+  function drawRetroHazards(t){
+    for(const hazard of jeepCourse){
+      const y=jeepHazardScreenY(hazard);
+      if(y<-90||y>H+80) continue;
+      const x=JEEP_LANES[hazard.lane];
+      if(hazard.type==='rock') drawRetroRock(x,y,roadHash(Math.round(hazard.at),hazard.lane));
+      else if(hazard.type==='mud') drawRetroMud(x,y,t);
+      else if(hazard.type==='branch') drawRetroBranch(x,y);
+      else if(hazard.type==='tree') drawRetroRoadblock(480,y);
+    }
+  }
+
+  function drawJeepHud(){
+    const progress=Math.max(0,Math.min(1,state.jeep.distance/850));
+    pixelRect(24,22,212,48,'rgba(10,27,18,.88)');
+    pixelRect(31,29,198,34,'#173d29');
+    pixelRect(38,48,184,7,'#294d36');
+    pixelRect(38,48,184*progress,7,'#e0ad42');
+    ctx.fillStyle='#f4efd9';ctx.font='800 14px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='left';
+    ctx.fillText(`ROUTE ${Math.floor(state.jeep.distance)} / 850 m`,38,43);
+
+    pixelRect(W-191,22,167,48,'rgba(10,27,18,.88)');
+    pixelRect(W-184,29,153,34,'#173d29');
+    ctx.fillStyle='#f4efd9';ctx.font='800 13px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='center';
+    ctx.fillText(state.jeep.stuck?'FESTGEFAHREN':'MANGO-1',W-108,43);
+    ctx.fillStyle=state.jeep.stuck?'#e8bd4e':'#72d991';
+    ctx.fillText(state.jeep.stuck?`↑ ${Math.round(state.jeep.stuckPower*100)}%`:`${Math.round(state.jeep.speed)} km/h`,W-108,57);
+  }
+
   function drawJeep(){
-    fillGradient('#2f7044','#163b27');
-    ctx.fillStyle='#a87943';ctx.fillRect(285,0,390,H);ctx.fillStyle='#7c5b36';for(let y=(state.jeep.distance*2)%80-80;y<H;y+=80)ctx.fillRect(470,y,20,42);
-    for(let y=50;y<H;y+=115){drawBush(245,y,1.1);drawBush(715,y+35,.9)}
-    const phase=state.jeep.distance%180;const obstacleY=H-(phase/180)*H;const obstacleX=400+Math.sin(Math.floor(state.jeep.distance/180)*2.7)*140;ctx.font='42px system-ui';ctx.textAlign='center';ctx.fillText('🪨',obstacleX,obstacleY);
-    drawJeepSprite(state.jeep.x,430,-Math.PI/2);
-    ctx.fillStyle='rgba(5,18,10,.75)';roundRect(350,20,260,48,16,'rgba(5,18,10,.78)','#508461');ctx.fillStyle='#e9f5e9';ctx.font='900 16px system-ui';ctx.fillText(`Piste ${Math.floor(state.jeep.distance)} / 850 m`,480,50);
+    const t=performance.now();
+    const shake=state.jeep.shake>0 ? Math.sin(t/19)*5*(state.jeep.shake/.34) : 0;
+    ctx.save();ctx.translate(shake,0);
+    drawRetroRoad();
+    drawRetroHazards(t);
+    drawRetroJeep(state.jeep.x,JEEP_SCREEN_Y,t);
+
+    const fg=(state.jeep.distance*4)%140;
+    drawLeafShape(-20,115+fg*.18,.42,1.55,'#103a26');
+    drawLeafShape(905,365-fg*.2,2.7,1.45,'#123e28');
+    ctx.restore();
+
+    drawJeepHud();
+
+    if(state.jeep.stuck){
+      pixelRect(304,500,352,58,'rgba(8,23,15,.93)');
+      pixelRect(313,509,334,40,'#173d29');
+      ctx.fillStyle='#f3edd8';ctx.font='900 16px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='center';
+      ctx.fillText('FESTGEFAHREN · ↑ / W HALTEN',480,532);
+    }
   }
 
   function drawBlocked(){
-    fillGradient('#3c8650','#1d4a30');drawJungleDecor(.55);ctx.fillStyle='#8a6037';ctx.beginPath();ctx.ellipse(480,430,390,120,0,0,Math.PI*2);ctx.fill();
-    ctx.save();ctx.translate(690,270);ctx.rotate(-.22);ctx.fillStyle='#6c4324';roundRect(-145,-20,290,40,18,'#6c4324');for(let x=-125;x<130;x+=42){ctx.fillStyle='#245e32';ctx.beginPath();ctx.arc(x,-28,25,0,Math.PI*2);ctx.fill()}ctx.restore();marker(690,340,'E');
-    drawJeepSprite(190,400,0);ctx.strokeStyle='#d7b77a';ctx.lineWidth=4;ctx.setLineDash([8,7]);ctx.beginPath();ctx.moveTo(255,390);ctx.lineTo(610,320);ctx.stroke();ctx.setLineDash([]);
+    const t=performance.now();
+    const savedDistance=state.jeep.distance;
+    state.jeep.distance=812;
+    drawRetroRoad();
+    state.jeep.distance=savedDistance;
+
+    drawRetroRoadblock(480,250);
+    drawRetroJeep(300,438,t);
+
+    pixelRect(655,280,64,42,'#6c4d2d');
+    pixelRect(665,288,44,25,'#2d4233');
+    pixelRect(676,279,22,7,'#9b7747');
+    ctx.strokeStyle='#c4a46c';ctx.lineWidth=4;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(332,414);ctx.lineTo(670,302);ctx.stroke();ctx.setLineDash([]);
+    marker(690,270,'E');
+
+    pixelRect(22,22,252,44,'rgba(10,27,18,.88)');
+    pixelRect(29,29,238,30,'#173d29');
+    ctx.fillStyle='#f3edd8';ctx.font='800 13px ui-monospace, SFMono-Regular, Menlo, monospace';ctx.textAlign='left';
+    ctx.fillText('WEG BLOCKIERT · WINDE SUCHEN',39,49);
   }
 
   function drawWildlife(){
@@ -997,9 +1329,32 @@
   }
 
   function drawExplorer(){
-    const p=state.player;ctx.save();ctx.translate(p.x,p.y);ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=10;ctx.shadowOffsetY=5;ctx.beginPath();ctx.ellipse(0,8,15,20,0,0,Math.PI*2);ctx.fillStyle='#e6a938';ctx.fill();ctx.shadowColor='transparent';ctx.beginPath();ctx.arc(0,-12,12,0,Math.PI*2);ctx.fillStyle='#f0c5a0';ctx.fill();ctx.fillStyle='#315a3f';ctx.beginPath();ctx.arc(0,-17,13,Math.PI,0);ctx.fill();ctx.rotate(p.facing);ctx.fillStyle='#f7e5a9';ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(7,-4);ctx.lineTo(7,4);ctx.closePath();ctx.fill();ctx.restore();
+    const p=state.player;
+    const walking=state.target || state.keys.has('ArrowLeft') || state.keys.has('ArrowRight') || state.keys.has('ArrowUp') || state.keys.has('ArrowDown') || state.keys.has('w') || state.keys.has('a') || state.keys.has('s') || state.keys.has('d');
+    const step=walking ? Math.sin(performance.now()/90)*2 : 0;
+
+    ctx.save();ctx.translate(Math.round(p.x),Math.round(p.y));
+    pixelRect(-15,24,30,8,'rgba(9,26,17,.24)');
+    pixelRect(-12,10+step,9,15,'#3a3026');
+    pixelRect(3,10-step,9,15,'#3a3026');
+    pixelRect(-15,-14,30,29,'#d69a31');
+    pixelRect(-18,-11,7,22,'#9b6c28');
+    pixelRect(11,-11,7,22,'#9b6c28');
+    pixelRect(-20,-10,5,18,'#31543b');
+
+    // Clear face in the handheld-style explorer sprite.
+    pixelRect(-10,-31,20,18,'#d7a47e');
+    pixelRect(-12,-37,24,9,'#31523a');
+    pixelRect(-8,-40,16,5,'#3d6143');
+    pixelRect(-6,-24,4,4,'#18231c');
+    pixelRect(3,-24,4,4,'#18231c');
+    pixelRect(-2,-18,5,2,'#7a4939');
+
+    pixelRect(-7,-13,14,4,'#e7c15a');
+    pixelRect(9,-7,4,4,'#edf0d7');
+    ctx.restore();
   }
-  function drawJeepSprite(x,y,angle){ctx.save();ctx.translate(x,y);ctx.rotate(angle);roundRect(-54,-28,108,56,17,'#e0a52e','#5b4a28');ctx.fillStyle='#315b42';ctx.fillRect(-24,-24,48,48);ctx.fillStyle='#17241d';for(const yy of[-31,31])for(const xx of[-36,36]){ctx.beginPath();ctx.arc(xx,yy,9,0,Math.PI*2);ctx.fill()}ctx.font='20px system-ui';ctx.textAlign='center';ctx.fillText('🥭',0,7);ctx.restore()}
+  function drawJeepSprite(x,y,angle){ctx.save();ctx.translate(x,y);ctx.rotate(angle);roundRect(-54,-28,108,56,17,'#e0a52e','#5b4a28');ctx.fillStyle='#315b42';ctx.fillRect(-24,-24,48,48);ctx.fillStyle='#17241d';for(const yy of[-31,31])for(const xx of[-36,36]){ctx.beginPath();ctx.arc(xx,yy,9,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#f1d47b';ctx.fillRect(-9,-8,18,16);ctx.fillStyle='#17241d';ctx.fillRect(-5,-3,3,3);ctx.fillRect(2,-3,3,3);ctx.restore()}
   function drawBoat(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle='#a36f3c';ctx.beginPath();ctx.moveTo(-44,-20);ctx.lineTo(44,-20);ctx.lineTo(30,30);ctx.lineTo(-30,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2d170';ctx.fillRect(-5,-45,10,45);ctx.fillStyle='#f3eee0';ctx.beginPath();ctx.moveTo(5,-43);ctx.lineTo(40,-15);ctx.lineTo(5,-15);ctx.closePath();ctx.fill();ctx.font='22px system-ui';ctx.textAlign='center';ctx.fillText('🐧',0,16);ctx.restore()}
   function drawCameraOverlay(){ctx.save();ctx.fillStyle='rgba(0,0,0,.42)';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#f3f5e7';ctx.lineWidth=3;ctx.strokeRect(160,80,640,440);ctx.beginPath();ctx.arc(state.reticle.x,state.reticle.y,45,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(state.reticle.x-65,state.reticle.y);ctx.lineTo(state.reticle.x+65,state.reticle.y);ctx.moveTo(state.reticle.x,state.reticle.y-65);ctx.lineTo(state.reticle.x,state.reticle.y+65);ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('KAMERAMODUS · Sucher bewegen · Kamera = Auslösen',175,110);ctx.restore()}
 

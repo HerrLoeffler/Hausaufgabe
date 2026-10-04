@@ -343,3 +343,83 @@ test('V1 Camp Jeep start has a guarded visual beat before driving', () => {
   assert.match(body, /scheduleGuarded\(620/);
   assert.match(body, /setScene\('jeep'\)/);
 });
+
+
+test('V2 Jeep uses an original retro top-down course with approaching hazards', () => {
+  for (const token of [
+    'const jeepCourse = [',
+    "type: 'rock'",
+    "type: 'mud'",
+    "type: 'branch'",
+    "type: 'tree'",
+    'function jeepHazardScreenY',
+    'JEEP_SCREEN_Y - (hazard.at - state.jeep.distance) * JEEP_PX_PER_M',
+    'function drawRetroRoad',
+    'function drawRetroHazards',
+    'function drawRetroJeep'
+  ]) assert.ok(js.includes(token), 'missing V2 Jeep token: ' + token);
+
+  const start = js.indexOf('function drawJeep(){');
+  const end = js.indexOf('function drawWildlife(){', start);
+  const body = js.slice(start, end);
+  assert.ok(!body.includes("fillText('🪨'"), 'emoji rock must not drive the new Jeep level');
+  assert.ok(!body.includes("fillText('🥭'"), 'mango emoji must not be the Jeep identity');
+  assert.ok(!body.includes('Piste '), 'old giant prototype HUD must be gone');
+});
+
+test('V2 Jeep collisions create impact and a real mud-stuck recovery mechanic', () => {
+  const start = js.indexOf('function updateJeep(dt)');
+  const end = js.indexOf('function updateAnimals(dt)', start);
+  const body = js.slice(start, end);
+  assert.match(body, /if \(jeep\.stuck\)/);
+  assert.match(body, /jeep\.stuckPower/);
+  assert.match(body, /Halte ↑ \/ W gedrückt/);
+  assert.match(body, /hazard\.type === 'mud'/);
+  assert.match(body, /jeep\.impactTimer = \.72/);
+  assert.match(body, /jeep\.speed = 18/);
+});
+
+test('V2 story roadblock approaches from ahead and becomes the winch scene', () => {
+  const start = js.indexOf('function updateJeep(dt)');
+  const end = js.indexOf('function updateAnimals(dt)', start);
+  const body = js.slice(start, end);
+  assert.match(body, /const roadblockY = jeepHazardScreenY\(roadblock\)/);
+  assert.match(body, /roadblockY >= 337/);
+  assert.match(body, /jeep\.roadblockTimer = \.82/);
+  assert.match(body, /setGameMode\('transition'\)/);
+  assert.match(body, /setScene\('blocked'/);
+
+  const drawStart = js.indexOf('function drawBlocked(){');
+  const drawEnd = js.indexOf('function drawWildlife(){', drawStart);
+  const drawBody = js.slice(drawStart, drawEnd);
+  assert.match(drawBody, /drawRetroRoadblock/);
+  assert.match(drawBody, /drawRetroJeep/);
+  assert.match(drawBody, /WEG BLOCKIERT · WINDE SUCHEN/);
+});
+
+test('V2 Jeep sprite and explorer have readable original pixel faces', () => {
+  const jeepStart = js.indexOf('function drawRetroJeep');
+  const jeepEnd = js.indexOf('function drawRetroHazards', jeepStart);
+  const jeepBody = js.slice(jeepStart, jeepEnd);
+  assert.match(jeepBody, /Visible driver face/);
+  assert.match(jeepBody, /pixelRect\(-6,5,4,4/);
+  assert.match(jeepBody, /pixelRect\(3,5,4,4/);
+
+  const explorerStart = js.indexOf('function drawExplorer');
+  const explorerEnd = js.indexOf('function drawJeepSprite', explorerStart);
+  const explorerBody = js.slice(explorerStart, explorerEnd);
+  assert.match(explorerBody, /Clear face/);
+  assert.match(explorerBody, /pixelRect\(-6,-24,4,4/);
+  assert.match(explorerBody, /pixelRect\(3,-24,4,4/);
+});
+
+test('V2 Jeep recovery restores a complete safe driving state', () => {
+  const start = js.indexOf("if (kind === 'jeep')");
+  const end = js.indexOf("if (kind === 'river')", start);
+  const body = js.slice(start, end);
+  assert.match(body, /state\.jeep\.speed = 56/);
+  assert.match(body, /state\.jeep\.stuck = false/);
+  assert.match(body, /state\.jeep\.stuckPower = 0/);
+  assert.match(body, /state\.jeep\.impactTimer = 0/);
+  assert.match(body, /state\.jeep\.hitHazards\.delete/);
+});
