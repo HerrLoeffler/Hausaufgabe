@@ -4,7 +4,7 @@ import {
   resolveUiLocale,
   formatLocaleNumber,
   formatLocaleDate,
-} from "./i18n-core.mjs";
+} from "./i18n-core.mjs?v=2";
 
 const SOURCE_LOCALE = "de-DE";
 const ENGLISH_LOCALE = "en-GB";
