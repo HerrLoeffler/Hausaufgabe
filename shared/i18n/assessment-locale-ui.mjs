@@ -80,7 +80,6 @@ function ensureEditorControl() {
       const db = getFirestore(getApp());
       await setDoc(doc(db, "quizzes", currentQuizCode), {
         contentLocale: next,
-        gradingLocale: next,
         localeContractVersion: ASSESSMENT_LOCALE_SCHEMA_VERSION,
       }, { merge: true });
     } catch (error) {
