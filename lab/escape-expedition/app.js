@@ -1626,7 +1626,7 @@
     ctx.restore();
   }
 
-  function loop(now)  function loop(now){
+  function loop(now){
     const dt=Math.min(.033,(now-last)/1000);
     last=now;
     const anyDialog=[...document.querySelectorAll('dialog')].some(d=>d.open);
