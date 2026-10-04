@@ -5,6 +5,7 @@ on:
     types: [completed]
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: gradecrew-app-integration-preview
   cancel-in-progress: false
@@ -64,6 +65,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      actions: read
       id-token: write
     steps:
       - uses: actions/checkout@v5
