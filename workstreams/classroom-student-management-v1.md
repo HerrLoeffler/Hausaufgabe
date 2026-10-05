@@ -53,8 +53,8 @@ Spätere V1-Kriterien stehen im Masterdokument.
 ## Zwischenstand
 
 - Lokal geändert: keine
-- Auf GitHub gesichert: Masterplan auf main, Commit `8f4c96d2b76a4981b2c68e9ea06f9e9c1f276a70`; Aufgabenbranch angelegt
-- Geprüft: GitHub Live Development Status Run `37269176813` erfolgreich; Integrationshead `bb91ce3590...`; Secure-Branch `76417085...` +15/-504 zum Ziel; keine offenen Secure-Assessment-PRs
+- Auf GitHub gesichert: Masterplan `8f4c96d2...`; Handoff `100b3c50...`; TODO `07b9c1fe...`; Registry `a91eac54...`; zentraler State `31881dbe...`; Aufgabenbranch angelegt
+- Geprüft: nach Registrierung Development Status Run `37280715249` **SUCCESS**, Project handoff checks `37280715283` **SUCCESS**, Release Control `37280715268` **SUCCESS**. Workstream wird als `feature/classroom-student-management-v1` → `feature/gradecrew-app-integration`, `+0/-0`, `branch_only` erkannt. Integrationshead `bb91ce3590...`; Secure-Branch `76417085...` +15/-504 zum Ziel; keine offenen Secure-Assessment-PRs
 - Deployed: nein
 - Gerätetest: nein
 
@@ -91,7 +91,7 @@ Auf `feature/classroom-student-management-v1` ausschließlich eine statische, Fi
 
 ## Wiederaufnahme nach Abbruch
 
-- Letzter gesicherter Teilschritt / Zeitpunkt: 2026-10-05 UTC – Masterarchitektur auf main dokumentiert
+- Letzter gesicherter Teilschritt / Zeitpunkt: 2026-10-05 UTC – Masterarchitektur + Task/Registry/State auf main dokumentiert und Koordinations-CI grün
 - Gepushter Codecommit / Remote-Branch: Branch `feature/classroom-student-management-v1` existiert auf Basis `bb91ce3590...`, noch ohne eigenen Produktcommit
 - Ungesicherte Änderungen / Checkout-Pfad: keine / kein lokaler Checkout
 - Laufende oder unklare Vorgänge: keine
