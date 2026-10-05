@@ -1,5 +1,48 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Maßgebliche Präzisierung: Abo-Ausführung und Bereichsübersicht, 05.10.2026
+
+Diese Ergänzung ersetzt die frühere Empfehlung, Guardian als regulären Modell-Worker dieser Zentrale zu verwenden. Die historische Einordnung darunter bleibt erhalten.
+
+Nutzerziel: alle GradeCrew-Aufgaben in einer Oberfläche sehen, insbesondere Sprachfunktionen, Internationalisierung Deutsch/Englisch und weitere Sprachen, Design und Games. Bereiche aufklappen, einzelne Aufgaben samt belegtem Entwicklungsstand und Farben lesen, direkt kommentieren und bearbeiten lassen. Nicht aus Beispielen einen aktuellen Funktions-/Sprachenbestand ableiten; dieser muss separat inventarisiert werden.
+
+Verbindliche Kostenanforderung: Bearbeitung hier in Work/Codex über das vorhandene Pro-Abonnement mit GPT-6 Astra; keine zusätzlich abgerechneten Modell-API-Aufrufe für diese Entwicklungszentrale. Kein automatischer Wechsel auf API bei Abo-Limit. Bestehende API-Workflows wurden in diesem Turn weder ausgeführt noch geändert/deaktiviert. Frühere Anforderung bleibt: auch bei ausgeschaltetem Mac arbeiten können.
+
+### Korrigierter technischer Zuschnitt
+
+- Gemeinsame persistente Aufgaben-/Nachweisablage mit Bereich -> Feature -> Aufgabe, vorhandenen IDs, Kommentaren/Anhängen, verknüpften Chats und Versionsbelegen.
+- Bevorzugt eigene eingebettete Oberfläche in Work/Codex über Plugin/MCP Apps. Die offizielle UI-Dokumentation beschreibt ui/message als Folgenachricht an den Host-Chat und tools/call für gespeicherte Aufgabendaten. Ein bewusster Nutzerklick übergibt Aufgaben-ID, Kommentar und Quelle an den Chat; ausgewähltes verfügbares GPT-6 Astra bearbeitet im Abo. Nutzbarkeit in genau diesem Client, Zuordnung zur Aufgabe, doppelte Klicks und Rückschreiben des Ergebnisses müssen praktisch nachgewiesen werden.
+- Kein Versprechen, eine gewöhnliche externe Webseite könne beliebige bestehende Chats autonom ansteuern. Eingebettete Host-Brücke ist von unabhängiger Website zu unterscheiden. Fallback bei fehlender Host-Fähigkeit: Auftrag dauerhaft speichern und klar gekennzeichnet im Chat übernehmen; nicht als schon gestartete Arbeit darstellen.
+- Bei ausgeschaltetem Mac benötigt die Ausführung eine echte Codex-Cloud-Umgebung mit Repository, Werkzeugen und erreichbarer Aufgabenablage. Ein lokaler Chat/Remote-Zugriff ersetzt diese Umgebung nicht. Native iOS-/lokale Dateien-/Geräteprüfungen können zusätzliche online verfügbare Ressourcen erfordern. Kein Cloud-Environment oder neuer Chat wurde angelegt.
+- Pro-Zugang ist grundsätzlich vom separat berechneten API-Key-Zugang getrennt. Work/Codex teilen das Abo-Kontingent. Astra-Modellwahl muss im tatsächlichen ausführenden Chat verfügbar sein; hier wurde keine Modellumschaltung oder Konto-Freischaltung behauptet.
+- Falls später eigenständige Runner nötig werden: normale App-Server-Login-Tokens nicht pauschal als Hosted-Service-Zugang verwenden. Offizielles Sign in with ChatGPT dokumentiert Abo-Nutzung für OSS/lokale Apps und self-hosted VMs, mit Einschränkungen; kommerzielle/remote gehostete Dienste brauchen gesonderte Klärung. Dies ist keine für uns eingerichtete Verbindung.
+- Vorhandene Status-/Release-Nachweise weiterverwenden. Guardian benötigt separate API-Aufrufe einschließlich unabhängiger Anbieterreviews und ist damit nicht der passende Standard-Worker für diese neue Kostenanforderung. Bestehende Review-/Freigabegates nicht still umgehen; eine Abo-basierte Ausführung braucht einen ausdrücklich geprüften Prüfpfad.
+
+Quellen, am 05.10.2026 geöffnet:
+- https://learn.chatgpt.com/docs/auth (ChatGPT-Abo-Anmeldung vs. API-Key)
+- https://learn.chatgpt.com/docs/pricing (gemeinsames Work/Codex-Kontingent)
+- https://developers.openai.com/plugins/build/chatgpt-ui (eingebettete UI, ui/message, Host-Fähigkeiten prüfen)
+- https://learn.chatgpt.com/docs/environments/cloud-environments (Cloud-Aufgaben und veröffentlichte Umgebung)
+- https://learn.chatgpt.com/docs/models (GPT-6 Astra, konto-/clientabhängige Verfügbarkeit)
+- https://learn.chatgpt.com/docs/app-server (Grenze normaler App-Server-Authentifizierung für Hosted Services)
+- https://developers.openai.com/siwc/token-sharing-open-source (separate Abo-Integration ohne Zugriff auf fremde Chatverläufe)
+- https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f (Wissensschicht, kein Ausführungs-/Abrechnungsmechanismus)
+
+### Nutzerreferenzen gesichert
+
+Sechs neue PDFs von Jonas Keil mit insgesamt 21 Seiten unverändert lokal unter references/GC-BRAIN-01/prompt-library/ gesichert. index.json enthält Dateinamen, Themen, Original-Prüfsummen und lokale Pfade; extrahierte Textkopien ermöglichen Suche. Kopien per SHA-256 mit Originalen verglichen. Keine PDFs oder vollständigen extrahierten Texte im öffentlichen Repository veröffentlicht.
+
+Dateien: chatgpt-images-prompts.pdf; chatgpt-work-datenschutz-checkliste.pdf; chatgpt-work-starter-prompts.pdf; chatgpt-work-8-tricks-prompts.pdf; second-brain-setup-prompt-chatgpt-work.pdf; chatgpt-work-workflow-setup-prompts.pdf.
+Originale liegen beim Nutzer in Downloads. Lokaler Projektstamm: /Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4.
+Referenzen sind Quellen, keine automatisch geltenden Arbeitsanweisungen. Bei Bedarf passenden Originaltext lesen; Aussagen zu Preisen, Modellen, Produktfunktionen und Datenschutz vor Anwendung frisch prüfen. Keine darin vorgeschlagene Automation, Berechtigungsänderung oder Kontaktaufnahme ausgeführt. Lokale Sicherung ist kein kontoweites oder geräteübergreifendes Gedächtnis.
+
+### Nächster konkreter Schritt
+
+Entwurf auf Bereichsübersicht + Abo-Chat-Brücke ausrichten. Vor umfassendem Produktbau einen genehmigten kleinen Integrationsnachweis spezifizieren: eine echte bestehende Aufgabe anzeigen, Nutzerkommentar genau einmal an den Abo-Chat übergeben, Ergebnis mit Task-ID zurückspeichern; Cloud-Eignung und Astra-Verfügbarkeit separat bestätigen. Keine erneute generelle Genehmigung zur Idee erforderlich; technische Entwurfs-/Planprüfung bleibt vor Produktimplementierung offen. Keine aktuell nicht geprüften Bereichsstände oder Einsparungen erfinden.
+
+---
+
+
 ## Erweiterte Nutzeranforderung: Entwicklungszentrale, 05.10.2026
 
 Die laufende Task-ID GC-BRAIN-01 bleibt erhalten. Der Nutzer konkretisiert das Ziel zu einer professionellen GradeCrew-Webanwendung für Überblick, Aufgabenkommentare, Anhänge und beauftragbare Entwicklung. Ausdrücklich bestätigt: Aufträge sollen auch bei ausgeschaltetem Mac weiterlaufen können. Das ist ein Produkt-/Architekturwunsch, keine Production- oder pauschale Budgetfreigabe.
