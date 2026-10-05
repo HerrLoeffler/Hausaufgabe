@@ -620,11 +620,24 @@
       "task_id": "GC-AUTOMATION-08",
       "branch": "docs/guardian-admission-profiles-20261004",
       "stage": "branch_only",
-      "ci": "local_130_automation_tests_passed_Node22_qualification_35_of_36_red_current_PR_CI_pending",
+      "ci": "controller_136_actual_linux_uid_browser_negative_rehearsal_success_37372043510_handoff_success_37372043556_web_stage_runner_infrastructure_blocked",
       "staging": "no_new_deploy_profile_disabled",
       "user_test": "not_performed",
       "handoff": "workstreams/guardian-admission-profiles-v1.md",
-      "next_action": "Fresh whole-branch review and current PR CI; real Games activation blocked until fixed qualified fixtures, channel ownership and identity proof."
+      "next_action": "After GitHub hosted-runner incident resolves, inspect existing runs37372043963/37372043527 and qualify failed-job continuation; keep Games activation off until positive36-test fixture, identity/channel ownership and bound pilot gates.",
+      "observed_head": "c6ec05a85342771b50b113dd18f402a6fbda078a",
+      "verification": {
+        "controller_head": "c6ec05a85342771b50b113dd18f402a6fbda078a",
+        "games_rehearsal_run": 37372043510,
+        "controller_job": 111971342519,
+        "browser_job": 111971342309,
+        "known_blocker_job": 111971342507,
+        "handoff_run": 37372043556,
+        "web_run": 37372043963,
+        "stage_run": 37372043527,
+        "original_games_qualification": "blocked_35_of_36",
+        "github_incident": "https://www.githubstatus.com/incidents/3q1yb5m7ltvb"
+      }
     }
   ],
   "deployments": [
