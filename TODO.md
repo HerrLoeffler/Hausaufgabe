@@ -87,6 +87,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
+| GC-BRAIN-01 | Second Brain als internes GradeCrew-Projektgedächtnis bewerten | Idee / Erstbewertung dokumentiert; keine Umsetzung beschlossen | Bestehende Regeln, Übergaben, Entscheidungen und Live-Nachweise als Quellen nutzen. Nächster Schritt: interne Projektarbeit versus Lehrkräfte-Wissensfunktion als Ziel klären und zehn Pilotfragen festlegen. [Einordnung](workstreams/second-brain-assessment-20261005.md) |
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |

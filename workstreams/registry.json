@@ -451,6 +451,15 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "second-brain-assessment-20261005",
+      "title": "Second Brain / interne Wissensbasis – unverbindliche Erstbewertung",
+      "primaryBranch": "docs/second-brain-assessment-20261005",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/second-brain-assessment-20261005.md",
+      "relatedBranches": []
     }
   ]
 }
