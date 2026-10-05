@@ -10,6 +10,8 @@
 - Integrationsziel: `feature/gradecrew-app-integration`
 - Produkt-PR: keiner
 - Dokumentationsbranch: `docs/gc-classroom-01-identity-rollover-20261005` → `main`; separate Review-Änderung unter derselben Task-ID
+- Dokumentations-PR: [#141](https://github.com/HerrLoeffler/Hausaufgabe/pull/141), Draft; nicht auf main integriert
+- Gesicherter Architekturcommit: `5a4f6d94101ed09b654c356116112dc01d760142`; aktueller Folgecommit sichert ausschließlich diese PR-/Checkpoint-Zuordnung
 - Betroffene Dateien später: Classroom-/Student-Module, Secure-Assessment-Authorization-Adapter, Publish-/Student-/Results-UI, i18n, Rules und Tests; genaue Pfade vor Implementierung frisch bestimmen
 - Überschneidungen: `secure-assessment`, `telemetry`, Web-Integration, i18n/PR #137; keine parallele Lösung ohne erneuten Live Development Status
 
@@ -159,3 +161,5 @@ Offen: tatsächliche Exportspalten, Schulart/Trägerschaft, schulische Tresor-/R
 Genau ein nächster Schritt: konkretes ASV-Exportprofil ausschließlich anhand der Überschriften und synthetischer Beispiele bestätigen.
 
 Dokumentationsprüfung vor Commit: JSON lesbar; unveränderte fremde TODO-/Registry-/Release-Einträge; nur Classroom-next_action/Related-Branch angepasst; interne Verweise und Markdown-Codeblöcke geprüft. Keine Anwendungstests ausgeführt, da ausschließlich Dokumentation geändert wurde. Produkt-CI bleibt `not_run_no_product_code`.
+
+GitHub-Sicherung geprüft: Architekturdatei entspricht bytegenau dem Entwurf; Commit und PR ändern ausschließlich die sieben genannten Dokumentations-/Koordinationsdateien. Automatische Koordinationsprüfungen werden für den jeweils aktuellen PR-Head geprüft; deren Erfolg ist kein Produkt-CI-/Deploynachweis. PR bleibt Draft zur fachlichen Prüfung, main wurde durch diesen Auftrag nicht verändert.
