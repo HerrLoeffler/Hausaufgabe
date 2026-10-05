@@ -1,6 +1,6 @@
 {
   "transport": "stdio MCP to local Blender addon",
-  "port": 9877,
+  "port": 62024,
   "safe_mode": true,
   "server": {
     "name": "MCP for Blender",
@@ -25,16 +25,17 @@
     "content": [
       {
         "type": "text",
-        "text": "Scene 'Scene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)",
+        "text": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)",
         "annotations": null,
         "meta": null
       }
     ],
     "structuredContent": {
-      "result": "Scene 'Scene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)"
+      "result": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)"
     },
     "isError": false
   },
+  "wrong_session_rejected": true,
   "execution": {
     "meta": null,
     "content": [
@@ -55,13 +56,13 @@
     "content": [
       {
         "type": "text",
-        "text": "Scene 'Scene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)",
+        "text": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)",
         "annotations": null,
         "meta": null
       }
     ],
     "structuredContent": {
-      "result": "Scene 'Scene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)"
+      "result": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)"
     },
     "isError": false
   }

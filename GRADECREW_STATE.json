@@ -593,6 +593,20 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "design-hero-blender-v1",
+      "task_id": "GC-DESIGN-05",
+      "branch": "docs/gc-design-05-reference-plan-20261006",
+      "observed_head": "c9c9c5d40c24c838a2efaa0928753d589821e50a",
+      "stage": "branch_only",
+      "scope": "Blender production sources and local prototype; no web runtime changes",
+      "integration_target": "feature/gradecrew-app-integration",
+      "environment_evidence": "art/gradecrew-hero/environment/toolchain-proof.json",
+      "user_test": "not_performed",
+      "production_target_allowed": false,
+      "handoff": "workstreams/startscreen-hero-animation-20261004.md",
+      "next_action": "Inspect Sol Coco-and-door pilot against canonical identity; targeted correction before full visual master."
     }
   ],
   "deployments": [

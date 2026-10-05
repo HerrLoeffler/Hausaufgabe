@@ -259,3 +259,11 @@ Nächster Schritt: ausführbares Blender bestätigen, Testszene speichern/render
 Blender 5.2.2 LTS (Build d13f752e3b9c), MCP for Blender 2.1.8 am festgelegten Quellcommit und SDK1.30.0 praktisch eingesetzt. MCP-Szenenabfrage, Objektänderung, Rendern und Speichern bestanden; separater Prozess öffnete die .blend und bestätigte x=0.35. Nachweise unter art/gradecrew-hero/environment/. Lokaler Connector nur 127.0.0.1:9877, Safe Mode aktiv, Telemetrie deaktiviert; kein globales Codex-Setup geändert. Native Toolregistrierung ist nicht erfolgt; reale MCP-Verbindung per lokalem Python-Client getestet.
 
 Sol-Unteragent /root/sol_coco_pilot (gpt-6.1-sol, high) bearbeitet ausschließlich art/gradecrew-hero/coco-pilot/. Kanonischer Bildvertrag und Quellenhashes unter art/gradecrew-hero/spec/. Visuelle Abnahme steht aus. Standard-Sandbox blockierte lokale Sockets bzw. Blender-Dateiöffnung; eng genehmigte Ausführung bestand. Kein Modellwechsel deswegen. Git-Push per Terminal mangels dortiger Anmeldung nicht verfügbar; Sicherung erfolgt über den vorhandenen GitHub-Connector auf demselben Aufgabenbranch, ohne Credentials auszulesen.
+
+### Einrichtungsreview und isolierte Sitzungen
+
+Unabhängiger Sol-Review: ursprünglicher Nachweis SPEC PASS; P2 bei fester Portadresse erkannt. Behoben mit Betriebssystem-Port und zufälliger Sitzungskennung in Testszene/lokaler Receipt-Datei; vor jeder Mutation innerhalb desselben Blender-Aufrufs geprüft. Falsche Kennung wurde praktisch abgewiesen, korrekte Ausführung und neue unabhängige Wiederöffnung bestanden. Gezielter Re-Review: SPEC PASS, QUALITY PASS.
+
+Metal-Gerät Apple M5 Pro GPU (20 cores) tatsächlich erkannt. Alter eigener Testprozess nach erneuter Identitätsprüfung geschlossen. Automatische Freigabeprüfung hatte kombinierten Prüf-/Stopbefehl zunächst abgewiesen; Ursache war fehlende frische Prozessidentifikation, danach sicher aufgelöst. Keine offene Berechtigungssperre.
+
+Coco-Pilot: erste und zweite echte Renderfassung geprüft, noch kein visueller Master. Konkrete Korrekturen an Navy-Farbtreue, Gesichtsmaske, Schnabel, Augen und Fußkontakt an Sol gegeben. Keine hohe Qualitätsnote aus technischem Render-Erfolg abgeleitet.

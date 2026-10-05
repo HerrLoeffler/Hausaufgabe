@@ -12,11 +12,12 @@
     "package_version": "2.1.8",
     "sdk_version": "1.30.0",
     "source_commit": "34b7bd277fff75a693cde78930b4359478958a01",
-    "bind": "127.0.0.1:9877",
+    "bind": "127.0.0.1:62024",
     "safe_mode": true,
     "telemetry_disabled": true,
     "native_codex_tool_registration": false,
-    "tested_transport": "Python MCP client -> stdio server -> live Blender addon"
+    "tested_transport": "Python MCP client -> stdio server -> live Blender addon",
+    "port_policy": "OS-assigned per session; scene nonce required before mutation"
   },
   "checks": {
     "scene_read": true,
@@ -25,7 +26,9 @@
     "save": true,
     "fresh_process_reopen": true,
     "reopened_object": "GC_ConnectionProof",
-    "reopened_x": 0.3499999940395355
+    "reopened_x": 0.3499999940395355,
+    "metal_device_detected": true,
+    "wrong_session_mutation_rejected": true
   },
   "limitations": [
     "Default sandbox prevents local socket access and crashes Blender headless file-open; narrowly approved execution succeeds.",
@@ -34,20 +37,32 @@
   ],
   "files": {
     "connection-proof.blend": {
-      "sha256": "75dd7ef22962a4e917ee39a74338ab3599b9b7a0978037d6d96c613031c9f138",
-      "bytes": 97634
+      "sha256": "7f45d9f9d5bee02525912b6433abff68b1c12083a4c43631d6021edb74b5d59b",
+      "bytes": 97904
     },
     "connection-proof.png": {
-      "sha256": "e0f4bcf64eb0f19da9119f71c3f437057256a67ce3a2c6d2cbcf5755c15e3ee8",
-      "bytes": 56422
+      "sha256": "632d2fe711753ff66442272a9a50bf8c60466f291f734302bfb58d12868dfda0",
+      "bytes": 56440
     },
     "start_mcp_session.py": {
-      "sha256": "fc663e650560dc57f4af9964948110bb31a9a8e4d326c04bc210d52ee89af632",
-      "bytes": 872
+      "sha256": "a5d9076be0dd15aa7f0347bb19bdb233a39919b38dcc0848ce34074b6e62ae74",
+      "bytes": 1356
     },
     "verify_mcp.py": {
-      "sha256": "2d7d7ef1f9aef14952409a0effc5500f99a4216f3bdc430633758b198b940193",
-      "bytes": 2919
+      "sha256": "b5e032c8ef5c5fd3e233d436fbccc3a88d4baed8998d58b7597e37896875ee1c",
+      "bytes": 3851
     }
-  }
+  },
+  "render_devices": [
+    {
+      "name": "Apple M5 Pro",
+      "type": "CPU",
+      "enabled": false
+    },
+    {
+      "name": "Apple M5 Pro (GPU - 20 cores)",
+      "type": "METAL",
+      "enabled": true
+    }
+  ]
 }
