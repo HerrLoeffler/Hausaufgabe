@@ -1,5 +1,17 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Vertiefte Zentrale und fachliche Konsolidierung – 06.10.2026
+
+Nutzer möchte Vor-/Nachteile und bestmögliche einfache Zentrale sowie tiefere inhaltliche Chat-Bereinigung. Bestehende Task-ID GC-BRAIN-01, Budget-/Versuchshistorie unverändert; reine Dokumentations- und Organisationsrunde.
+
+- Empfehlung: integrierte App als Sidebar und Conversation-Panel mit gemeinsamem Aufgabenbestand, freie Eingabe im Zentralchat ebenfalls möglich. Drei Ebenen Funktion/Aufgabe/Ausführung; elf fachliche Zielbereiche, aber keine leeren neuen Chats angelegt. CENTRAL-STRATEGY.md enthält Vergleich, Bedienung, Datenquellen, Grenzen und Abnahme.
+- Drei vorhandene Chats umbenannt: GC · Internationalisierung, GC · Schüler, Klassen & ASV, GC · iPhone & iPad; Zuordnung in coordination.json aktualisiert.
+- Ältere Internationalisierungs- und Schülerkonzept-Gespräche in zwei begrenzten Nachrichten an jeweilige Fachchats zusammengefasst. Beide bestätigten Eingang und keine Widersprüche. ASV-Kennung und Lehrkraft-Vorschau bleiben ausdrücklich offen. Keine Produktarbeitsrunde ausgelöst.
+- Erst nach Empfang die ChatGPT-Quellchats Internationalisierung GC und Schülerintegration Codekonzept archiviert; beide Werkzeugantworten archived=true. Originale/Anhänge erhalten, keine technische Verschmelzung. CONSOLIDATION.md enthält Original-/Ziel-IDs und Empfangsrunden.
+- Gemischte offene Chats bleiben erhalten: Games enthält PostHog, MONEY enthält mehrere Bereiche, iOS-Native-Wunsch ist noch keine neue Architekturentscheidung. Design GC erneut beim Verschieben mit Ladezeitüberschreitung; unverändert.
+- Nur angemessene Dokumentationsprüfung: JSON gelesen, git diff --check. Keine Produktcode-, API-, Test-, Sicherheitsreview-, Merge- oder Deployrunde. Keine neue unabhängige Prüfung dieses vertieften Entwurfs behauptet.
+- Weiter branch_only. Native Plugin-Verbindung, tatsächlicher Modellwechsel und Abo-Cloud-Ausführung noch nicht nachgewiesen. Nächster Schritt: bestehende Plugin-Recherche abgleichen und genau eine lesende Aufgabenfrage mit bestätigtem Hin-/Rückweg testen, anschließend Wiederholungs-/Verbindungsfehler. Keine Production-Freigabe.
+
 ## Chat-Aufräumen, zwei Prüfer und Plugin-Oberflächen – 06.10.2026
 
 Nutzerauftrag: GradeCrew-Chats aufräumen, nach Funktionen organisieren, unabhängige Prüfer einrichten; Sidebar-Apps/Conversation-Panels gewinnbringend einbeziehen. GC-BRAIN-01 unverändert.

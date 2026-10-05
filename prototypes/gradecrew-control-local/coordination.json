@@ -11,20 +11,22 @@
     {
       "area": "Internationalisierung",
       "threadId": "01a10ac2-1486-7480-b644-f2fc953609de",
-      "title": "GC-I18N-03 fortsetzen",
+      "title": "GC · Internationalisierung",
       "kind": "codex",
       "hostId": "local",
       "role": "existing_implementation",
-      "checkBeforeDispatch": true
+      "checkBeforeDispatch": true,
+      "previousTitle": "GC-I18N-03 fortsetzen"
     },
     {
       "area": "Schülerverwaltung",
       "threadId": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
-      "title": "Präzisiere ASV-Importarchitektur",
+      "title": "GC · Schüler, Klassen & ASV",
       "kind": "codex",
       "hostId": "local",
       "role": "existing_architecture",
-      "checkBeforeDispatch": true
+      "checkBeforeDispatch": true,
+      "previousTitle": "Präzisiere ASV-Importarchitektur"
     },
     {
       "area": "Qualität & Betrieb",
@@ -39,11 +41,12 @@
     {
       "area": "App & Geräte",
       "threadId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
-      "title": "Prüfe GradeCrew iOS-Status",
+      "title": "GC · iPhone & iPad",
       "kind": "codex",
       "hostId": "local",
       "role": "existing_ios_work",
-      "checkBeforeDispatch": true
+      "checkBeforeDispatch": true,
+      "previousTitle": "Prüfe GradeCrew iOS-Status"
     },
     {
       "area": "Design & Crew",
@@ -118,5 +121,7 @@
     "silentModelSwitch": false,
     "additionalSubscriptionUsage": true,
     "globallyEnforced": false
-  }
+  },
+  "strategyDocument": "CENTRAL-STRATEGY.md",
+  "contextTransferDocument": "CONSOLIDATION.md"
 }

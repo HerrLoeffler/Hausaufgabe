@@ -95,3 +95,7 @@ Erster vertikaler Test: Eine Standfrage zu GC-I18N-03 auswählen, ausdrücklich 
 - Tatsächliche Sidebar-Ergebnisse und verbleibende Ausnahmen: chat-organization-20261006.json.
 
 Nächster Schritt: Registrierbare Plugin-Brücke für genau eine Aufgabenfrage konkretisieren und den tatsächlichen Eingang/Rückweg im verfügbaren Client testen. Vor Codearbeit den technischen Entwurf und die vorhandene Plugin-Recherche GC-PLUGINS-01 abgleichen.
+
+## Vertiefung nach erneuter Organisationsrunde, 06.10.2026
+
+CENTRAL-STRATEGY.md konkretisiert die gemeinsame App, die drei Ebenen Funktion/Aufgabe/Ausführung und elf fachliche Zielbereiche. Das ist eine Zielstruktur, keine Behauptung, dass schon elf Hauptchats eingerichtet oder Plugin-Aufträge ausführbar sind. CONSOLIDATION.md dokumentiert zwei tatsächlich versandte und bestätigte Kontextübernahmen und die anschließende Archivierung ihrer Quellchats. coordination.json enthält die aktuellen drei Hauptchat-Namen. Frühere Einträge bleiben als Historie erhalten. Sites ist dabei eine mögliche Hostingentscheidung für denselben Aufgabenbestand, keine zusätzliche Zentrale.
