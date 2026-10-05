@@ -102,7 +102,10 @@ class FailureEvidenceTests(unittest.TestCase):
         from tools.automation import games_static as g
         source,head,base=self.source_repo('const broken = ;')
         output=Path(self.tmp.name)/'evidence'
-        with self.assertRaises((ValueError,subprocess.CalledProcessError)):
+        # Trusted invalid syntax fixture only; generic coordination CI has no
+        # validator account. Actual Games CI still supplies the isolated UID.
+        from unittest.mock import patch
+        with patch.dict('os.environ',{'GITHUB_ACTIONS':'false'}),self.assertRaises((ValueError,subprocess.CalledProcessError)):
             g.validate_source(source,head,output,base)
         self.assertTrue((output/'tests.json').exists(),'Completed syntax failure must not become unknown')
         report=json.loads((output/'tests.json').read_text());feedback=json.loads((output/'test-feedback.json').read_text())
