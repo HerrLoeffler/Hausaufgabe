@@ -7,6 +7,12 @@ Aufgabenbranch: `feature/classroom-student-management-v1`
 Integrationsziel: `feature/gradecrew-app-integration`  
 Status: **Planung / branch_only – keine Produktimplementierung, kein Deploy**
 
+## Aktueller Auftrag: Identität und ASV-Wiederimport präzisieren
+
+Der [Schuljahreswechsel-Entwurf](privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) konkretisiert die Identität über Jahre: ASV-Differenzierungsmerkmal, lokal berechnetes schulbezogenes HMAC-Pseudonym, stabile StudentIdentity, schulischer Schlüsseltresor, Recovery und kontrollierter Jahresabgleich. Es ist ein Architekturvorschlag zur Prüfung; Umsetzung ist nicht freigegeben.
+
+Er präzisiert insbesondere die Abschnitte 3/5/13/21/26: „globale“ Identität bedeutet künftig innerhalb des Schulmandanten; `schoolId` und schulische Importadministration ergänzen das Einzel-Owner-Modell; Klassen/Memberships werden jährlich geführt; Mapping enthält keine dauerhaft gespeicherten Zugangscodes; individuelle Import-/Student-IDs sind auch keine Produkttelemetrie. HMAC ist empfohlener Abgleichmodus mit vollständigem Recovery-Konzept, verschlüsseltes schulisches Mapping bleibt Alternative. Alte allgemeine Schemata sind vor Implementierung an diesem Entwurf zu prüfen.
+
 ## 0. Verbindliche Ausgangslage
 
 Dieses Masterprojekt baut **nicht** einen zweiten Prüfungsserver parallel zu GradeCrew.
@@ -990,22 +996,9 @@ Immutable Run-Versionierung bleibt ein bewusstes späteres Architekturthema, nic
 
 # 25. Nächster ausführbarer Schritt
 
-**Noch kein Produktcode.**
+Das konkrete ASV-Exportprofil mit Spaltenüberschriften und ausschließlich synthetischen Beispielen bestätigen: dokumentiertes lokales Differenzierungsmerkmal, Stabilität zwischen Exporten, Quell-Namensraum sowie Schulart/Trägerschaft. Danach den [Identitäts-/Schuljahreswechsel-Entwurf](privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) fachlich prüfen.
 
-Als Nächstes auf dem Aufgabenbranch eine vollständig isolierte, statische Mock-Testseite bauen, die nur folgende UX zeigt:
-
-1. Klassenübersicht;
-2. Klasse 9b mit 24 Fake-Kürzeln;
-3. QR/Klassencode + Approval;
-4. persönliche Zugangscode-Karten;
-5. Test an Klasse freigeben;
-6. Schüler-Home mit zwei Fake-Tests;
-7. Lobby / Bereit / Geschlossen.
-
-Keine Firebase-Schreibzugriffe, keine echten Schülerdaten und kein Deploy auf normales Staging.
-
-Erst nach visueller Abnahme beginnt T1 mit Emulator und Backend.
-
+**Aktueller Auftrag: keine Implementierung und kein Deploy.** Die zuvor geplante Firebase-freie Mock-Testseite bleibt ein späterer Schritt nach Architekturklärung und gesondertem Umsetzungsauftrag.
 
 ---
 
@@ -1019,8 +1012,8 @@ Verbindliches V1-Zielbild:
 - keine aus Namen gebildeten Initialen/Akronyme als Standardalias;
 - GradeCrew erzeugt ein zufälliges klassenbezogenes Alias und einen davon unabhängigen persönlichen Zugangscode;
 - Server speichert nur pseudonyme StudentIdentity, Membership, Alias und technische Credential-/Assignment-Daten;
-- Lehrkraft erhält lokal eine Zuordnung Name ↔ Alias ↔ Zugangscode;
-- Wiederimport erfolgt privacy-first über eine lokale Mapping-Datei; rohe ASV-Referenzen bleiben außerhalb von GradeCrew;
+- Lehrkraft erhält eine schulisch kontrollierte, berechtigungsbegrenzte Zuordnung Name ↔ StudentIdentity/Alias; Zugangscodes werden separat einmalig ausgegeben und nicht im dauerhaften Mapping geführt;
+- Wiederimport: empfohlen ist der lokal berechnete schulbezogene HMAC-Abgleich mit geregeltem Schlüsseltresor/Recovery; verschlüsseltes schulisches Mapping bleibt Alternative. Rohe ASV-Referenzen bleiben außerhalb von GradeCrew;
 - formelle Leistungsnachweise verwenden von der Lehrkraft verifizierte/provisionierte Schüleridentitäten;
 - Selbstbeitritt bleibt ein separater, schwächerer Vertrauensmodus;
 - keine Schülernamen, ASV-Referenzen, Aliase oder Zugangscodes in Produkttelemetrie/AI-Prompts;
@@ -1034,3 +1027,11 @@ Rechtlicher Kern:
 - bei Auftragsverarbeitung bleibt die Schule verantwortlich und GradeCrew benötigt die Voraussetzungen des Art. 28 DSGVO;
 - digital gespeicherte Leistungsnachweise können Schülerunterlagen im Sinn von § 37 BaySchO sein; § 40 BaySchO ist bei der Aufbewahrung zu berücksichtigen.
 
+
+# 27. Lehrkraftwechsel / schulische Zuständigkeit – Entwurf
+
+Abschnitt 10a des [Identitäts-/Schuljahreswechsel-Entwurfs](privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) konkretisiert die Übernahme einer Klasse oder eines Fachkurses: persönliche Lehrkraftkonten, schulische Administration plus Stellvertretung, zeitlich/inhaltlich begrenzte Rechte und kontrollierte Übergabe der GradeCrew-Berechtigung sowie der schulischen Namenszuordnung.
+
+`ownerId` in älteren Schemata darf künftig nicht die einzige dauerhafte Kontrolle über schulische Klassen/Nachweise darstellen. Schüleridentitäten, Codes und Ergebnis-Snapshots bleiben bei Personalwechsel erhalten. Historische Einsicht, private Testentwürfe, Vertretung und Admin-Recovery werden gesondert begrenzt. Nur Architekturentwurf; noch keine Implementierung.
+
+Abschnitt 10b ergänzt den ASV-Lehrkräfte-/Unterrichtsimport und mehrere Fachlehrkräfte pro gemeinsamer Klasse. Personalimport, persönlicher Login und bestätigte Fach-/Klassenrechte sind getrennte Ebenen. Jede zugewiesene Lehrkraft kann in ihrem Bereich Prüfungen an denselben Schülerbestand freigeben; fremde Fachleistungen bleiben ohne zusätzliche Freigabe gesperrt. Ausdrückliches Co-Teaching und befristete Vertretung werden unterstützt. Keine Doppelklassen/-Schülerkonten pro Fach und keine automatische Adminvergabe aus ASV.

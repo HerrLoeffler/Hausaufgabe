@@ -592,7 +592,7 @@
       "staging": "not_deployed",
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+      "next_action": "Confirm the actual ASV export profile (stable local differentiation identifier, source namespace, school type) with synthetic examples and review the identity/rollover architecture draft. Current authorization is documentation only; no implementation or deployment."
     }
   ],
   "deployments": [

@@ -449,7 +449,8 @@
       "state": "active",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "relatedBranches": [
-        "feature/secure-assessment-v1"
+        "feature/secure-assessment-v1",
+        "docs/gc-classroom-01-identity-rollover-20261005"
       ]
     }
   ]

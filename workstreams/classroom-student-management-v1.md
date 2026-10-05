@@ -1,14 +1,17 @@
 # Aufgabe: GC-CLASSROOM-01
 
 - Aktualisiert (UTC): 2026-10-05
-- Verantwortlicher Chat / Auftrag: GradeCrew Schüler:innen-/Klassenverwaltung als Masterprojekt vorbereiten
-- Chat-Bezeichnung / Link: aktueller GradeCrew-Chat, Link unbekannt
-- Vorheriger Chat / Übernahmezeitpunkt: Fortführung der bereits besprochenen Schüler-/Klassenidee; kein anderer aktiver Implementierungschat nachgewiesen
-- Arbeitszustand: aktiv – Planung gesichert, Produktimplementierung noch nicht begonnen
+- Verantwortlicher Chat / Auftrag: Codex-Fortsetzung – Identitäts-/ASV-Architektur für Schuljahreswechsel präzisieren, ausschließlich Dokumentation
+- Chat-Bezeichnung / Link: aktuelle Codex-Fortsetzung, Link unbekannt; Referenzchat „Schülerintegration Codekonzept“, Gesprächs-ID `6abae2b9-f014-83eb-83af-ad9057cf7ba5`
+- Vorheriger Chat / Übernahmezeitpunkt: 05.10.2026 UTC; Referenzchat gelesen, gelesene Schritte abgeschlossen. Kein laufender Classroom-Implementierungsauftrag nachgewiesen; alter nicht zugänglicher Checkout unbekannt. Aktueller Auftrag ist dokumentarisch.
+- Arbeitszustand: aktiv – Identitäts-/Schuljahreswechsel-Entwurf gesichert, noch keine Produktimplementierung
 - Aufgabenbranch: `feature/classroom-student-management-v1`
 - Basiscommit: `feature/gradecrew-app-integration@bb91ce3590d773472ece60c4dd881da729bd32c1`
 - Integrationsziel: `feature/gradecrew-app-integration`
-- PR: keiner
+- Produkt-PR: keiner
+- Dokumentationsbranch: `docs/gc-classroom-01-identity-rollover-20261005` → `main`; separate Review-Änderung unter derselben Task-ID
+- Dokumentations-PR: [#141](https://github.com/HerrLoeffler/Hausaufgabe/pull/141), Draft; nicht auf main integriert
+- Gesicherter Architekturcommit: `5a4f6d94101ed09b654c356116112dc01d760142`; aktueller Folgecommit sichert ausschließlich diese PR-/Checkpoint-Zuordnung
 - Betroffene Dateien später: Classroom-/Student-Module, Secure-Assessment-Authorization-Adapter, Publish-/Student-/Results-UI, i18n, Rules und Tests; genaue Pfade vor Implementierung frisch bestimmen
 - Überschneidungen: `secure-assessment`, `telemetry`, Web-Integration, i18n/PR #137; keine parallele Lösung ohne erneuten Live Development Status
 
@@ -87,18 +90,18 @@ Classroom V1 ergänzt daher:
 
 ## Nächster konkreter Schritt
 
-Auf `feature/classroom-student-management-v1` ausschließlich eine statische, Firebase-freie Mock-Testseite für die UI-Abnahme bauen: Klassenübersicht, 9b/Fake-Kürzel, Klassencode/QR, Zugangscode-Karten, Klassenfreigabe und Schüler-Home/Lobby. Noch keine echten Daten und kein normales Staging.
+Konkretes ASV-Exportprofil anhand der Spaltenüberschriften und synthetischer Beispiele bestätigen: dokumentiertes lokales Differenzierungsmerkmal, Stabilität, Quell-Namensraum und Schulart/Trägerschaft. Danach den neuen Architekturentwurf fachlich prüfen. Die zuvor geplante Mock-Testseite ist in diesem Auftrag nicht freigegeben.
 
 ## Wiederaufnahme nach Abbruch
 
-- Letzter gesicherter Teilschritt / Zeitpunkt: 2026-10-05 UTC – Masterarchitektur + Task/Registry/State auf main dokumentiert und Koordinations-CI grün
+- Letzter gesicherter Teilschritt / Zeitpunkt: 2026-10-05 UTC – Identitäts-/ASV-Jahresabgleich im aktuellen Dokumentationscommit auf `docs/gc-classroom-01-identity-rollover-20261005`; frühere main-/CI-Belege bleiben im Verlauf erhalten
 - Gepushter Codecommit / Remote-Branch: Branch `feature/classroom-student-management-v1` existiert auf Basis `bb91ce3590...`, noch ohne eigenen Produktcommit
-- Ungesicherte Änderungen / Checkout-Pfad: keine / kein lokaler Checkout
-- Laufende oder unklare Vorgänge: keine
+- Ungesicherte Änderungen / Checkout-Pfad: keine Produktänderungen im zugänglichen i18n-Checkout; eigener Dokumentationsentwurf `classroom-identity-review`; früherer nicht zugänglicher Checkout unbekannt
+- Laufende oder unklare Vorgänge: kein Classroom-Produkt-/Deployauftrag nachgewiesen; Dokumentations-PR/Koordinations-CI anhand der aktuellen GitHub-Metadaten prüfen
 - Bereits ausgeführte externe Aktionen / Kostenreservierungen: keine bezahlten KI-/Provideraktionen; keine Deploymentkosten ausgelöst
 - Was darf noch nicht als erledigt gelten: UI-Prototyp, Backend, Rules, Emulator, CI, Preview, Gerätetest, Integration, Staging, Production
 - Was muss vor Wiederholung geprüft werden: aktuellen Integration-HEAD, Live Development Status, PR #137/i18n, Secure-Assessment-Dateien und offene PRs
-- Genau ein nächster ausführbarer Schritt: isolierte Mock-Testseite auf Aufgabenbranch bauen
+- Genau ein nächster ausführbarer Schritt: ASV-Exportprofil mit bestätigtem Differenzierungsmerkmal und synthetischen Beispielen prüfen
 
 Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen. Chatwechsel ersetzt keine Commit-/CI-/Deploy-Prüfung.
 
@@ -128,4 +131,49 @@ Auf GitHub gesichert:
 - Privacy-Review: `7800e882...`
 - Masterplan ergänzt: `305bf41e...`
 
-Nächster Schritt bleibt unverändert: zuerst statische Firebase-freie Mock-Testseite; ASV-Import darin nur als lokaler Fake-/Demo-Flow, noch ohne Backend.
+Damals geplanter Folgeschritt: statische Firebase-freie Mock-Testseite. Der aktuelle Nutzerauftrag priorisiert zunächst die nachstehende Identitäts-/Schuljahreswechsel-Architektur und erlaubt keine Implementierung.
+
+## Identität / Schuljahreswechsel – aktueller Architekturentwurf 05.10.2026
+
+Dokument: [CLASSROOM_IDENTITY_ASV_ROLLOVER.md](../docs/privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md).
+
+- Gesichert: schriftlicher Architekturvorschlag, kein Produktcode.
+- Belegte ASV-Grundlage: offizielles lokales Differenzierungsmerkmal ist innerhalb der ASV-Datenbasis eindeutig, bleibt beim Schuljahreswechsel erhalten und wird nicht wiedervergeben; konkrete CSV-Spalte noch unbekannt.
+- Empfehlung: lokal HMAC-SHA256 mit schulisch verwaltetem Schlüssel berechnen; GradeCrew speichert nur schulbezogenen matchKey → zufällige StudentIdentity. Verschlüsseltes schulisches Mapping bleibt alternative Betriebsart.
+- Schulmandant, Quell-Namensraum, Schlüsseltresor, Vertretung, Backup/Recovery und Schlüsselprüfung vor Import sind Voraussetzungen.
+- Account bleibt bei Klasse/Name/Jahr stabil; neue Jahresklassen/Memberships, historische Ergebnisse unverändert. Keine automatische schulübergreifende Verknüpfung.
+- Teilimporte lösen keine Abgänge aus. Fehlende Personen im vollständigen Bestand sind Prüfkandidaten; keine automatische Kontolöschung.
+- Klasse, Alias und persönlicher Zugangscode sind keine Wiedererkennungsschlüssel. Codes bleiben bei Jahreswechsel gültig; dauerhafte Zuordnung enthält keine Codes.
+- Idempotente Importvorgänge, Revision/Lease, Abbruchfortsetzung und kontrollierte Migration sind spezifiziert, noch nicht implementiert.
+- Pseudonyme Daten bleiben im Schulverfahren personenbezogen; Retention nach Datenkategorie und Verfahrensrahmen, kein unbegrenztes Jahresarchiv.
+
+Frisch geprüft:
+- Produkt-/Integrationsbranch beide `bb91ce3590d773472ece60c4dd881da729bd32c1`, `+0/-0`, kein Classroom-Produkt-PR.
+- Development Status [37326636949](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37326636949) erfolgreich, Warnungen anderer Workstreams erhalten; i18n-PRs #137/#139 betreffen spätere Web-/Assessment-Integration, keine Classroom-Dateiänderung.
+- Aktueller main vor Dokumentationsvorbereitung: `8360bc5f056837118ffd83138ffa2468ae42647e`; fremde Dokumentationsarbeit erhalten.
+- Bestehende Staging-Runs 37238585607/37238585657 erfolgreich; kein Classroom-Deploy. Workflow-head ist allein kein Beweis für deployten Produkt-SHA.
+- Letzter gesicherter Produktstand unverändert. Lokaler Dokumentationsentwurf in eigenem Verzeichnis `classroom-identity-review`; keine Änderungen im vorhandenen i18n-Checkout.
+- Keine neuen bezahlten Provider-Aufrufe, keine Budgetreservierung, kein Controller-/Deploy-Start. Vorherige Versuchshistorie bleibt erhalten.
+- Historische nächste Schritte und frühere Mapping-Entscheidungen sind durch den aktuellen dokumentarischen Auftrag präzisiert. Dieser Vorschlag ist noch keine Implementierungsfreigabe.
+
+Offen: tatsächliche Exportspalten, Schulart/Trägerschaft, schulische Tresor-/Recovery-Betriebsweise, endgültige Datenfristen und fachliche Entwurfsprüfung.
+
+Genau ein nächster Schritt: konkretes ASV-Exportprofil ausschließlich anhand der Überschriften und synthetischer Beispiele bestätigen.
+
+Dokumentationsprüfung vor Commit: JSON lesbar; unveränderte fremde TODO-/Registry-/Release-Einträge; nur Classroom-next_action/Related-Branch angepasst; interne Verweise und Markdown-Codeblöcke geprüft. Keine Anwendungstests ausgeführt, da ausschließlich Dokumentation geändert wurde. Produkt-CI bleibt `not_run_no_product_code`.
+
+GitHub-Sicherung geprüft: Architekturdatei entspricht bytegenau dem Entwurf; Commit und PR ändern ausschließlich die sieben genannten Dokumentations-/Koordinationsdateien. Automatische Koordinationsprüfungen werden für den jeweils aktuellen PR-Head geprüft; deren Erfolg ist kein Produkt-CI-/Deploynachweis. PR bleibt Draft zur fachlichen Prüfung, main wurde durch diesen Auftrag nicht verändert.
+
+## Lehrkraftwechsel – Ergänzung zum selben Entwurf
+
+Der aktuelle Nutzerwunsch „welche Lösung für den Lehrer, wenn der wechselt?“ ist in Abschnitt 10a des [Identitätsentwurfs](../docs/privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) konkretisiert.
+
+Empfehlung: Schulbereich mit persönlichen Lehrkraftkonten, verifizierter Administration und aktiver Stellvertretung; zuständigkeitsbezogene Rechte nach Klasse/Kurs/Fach/Zeitraum. Ersteller-UID ist Autorenschaft, keine dauerhafte alleinige Datenkontrolle. Kontrollierte Übergabe mit Wirksamkeitstermin betrifft GradeCrew-Rechte und schulische Namenszuordnung. Alte Rechte enden, Schülerkonten/Codes bleiben. Historische Leistungen und private Testentwürfe werden nicht pauschal weitergegeben.
+
+Zusätzlich präzisiert: Serverprüfung aktueller Rechte trotz bestehender Sessions; Vertretung, dringender Entzug, laufende Prüfungen, lokale Restkopien, Adminwechsel/Schlüsselrotation und verifizierte Recovery bei vollständigem Kontenausfall. Dies sind Entwurfsanforderungen, noch nicht implementiert.
+
+Frisch geprüft: Dokumentations-PR #141 offen/Draft, vorheriger Head `69a1db48471b351e3682375d9bedf235e3d62ff2`; Produkt- und Integrationsbranch weiterhin `bb91ce3590d773472ece60c4dd881da729bd32c1`. Development Status Run `37364135175` für den vorherigen Dokumentationshead erfolgreich; Handoff-Check `37364135244` bei Prüfung noch queued. Diese Belege gelten nicht automatisch für den Folgecommit.
+
+Task-ID, Budget-/Versuchshistorie und Release-Stufe bleiben erhalten. Keine Implementierung, Provideraktion oder Deployment. TODO-Zeile und Masterplan im bestehenden Dokumentations-PR ergänzt. Nächster Schritt bleibt: ASV-Exportprofil und schulische Betriebsweise mit synthetischen Beispielen bestätigen.
+
+Nutzerergänzungen derselben Runde: Lehrkräfte ebenfalls aus ASV übernehmen; mehrere Fachlehrkräfte pro Klasse mit eigenen Prüfungen. Abschnitt 10b präzisiert Personalbestand → verifizierter persönlicher Login → bestätigte Fach-/Klassenrechte; eigene HMAC-Domäne für Lehrkräfte, stabile schoolTeacherId, keine automatische Adminvergabe. Gemeinsame Klasse/Schüleridentitäten, unabhängige Deutsch-/Englischprüfungen, begrenzte Ergebnissicht und ausdrückliches Co-Teaching. Konkretes Personal-/Unterrichtsexportprofil noch offen; keine Implementierung.
