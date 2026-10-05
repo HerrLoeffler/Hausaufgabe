@@ -12,3 +12,13 @@ Wenn Martin ausdrücklich die Bearbeitung eines Auftrags aus der Zentrale verlan
 Guardian-Aufträge niemals über diesen Abo-Claim ausführen. Bestehende API-/Budget-/Review-Regeln separat prüfen. Kein bezahlter Aufruf ohne konkreten Auftrag. Ein Ergebnisstatus verändert keine Release-Stufe und belegt kein Deployment.
 
 Die native App wird gebaut, aber nach einer CUA-Sicherheitsrichtliniensperre nicht als Umweg zur automatischen Browser-/UI-Prüfung gestartet. Visuelle Abnahme bleibt dem Benutzer oder einer später wieder verfügbaren autorisierten UI-Prüfung vorbehalten.
+
+## Hauptkoordination
+
+Martin beauftragt einen Hauptchat, der passende Arbeit an vorhandene Fachchats verteilt. Aktueller Eingang ist „GradeCrew Zentrale“, Zuordnung in coordination.json. Das ist eine Arbeitsrolle für Nutzeraufträge, kein autonomer Hintergrunddienst. Andere bisherige Main-/Fachchats nicht löschen, überschreiben oder als abgelöst behandeln.
+
+Bei einem konkreten Nutzerauftrag: bestehende Aufgabe/aktiven Bearbeiter prüfen, dann passenden Codex-Chat verwenden. Auftrag als verständliche Nachricht mit Task-ID, Ziel, Umfang, Erfolgskriterien, Quelle und Modellwahl übergeben. Vorhandene Arbeit erhalten, keine parallelen Schreibaufträge auf überlappendem Scope. Modelle je Aufgabe wählen; ChatGPT-Referenzchats nicht als geprüfte Codex-Worker ausgeben. Bei unklarem Messaging-Zugriff keine erfolgreiche Übergabe behaupten.
+
+Ergebnisse mit read_thread/wait_threads einsammeln und unabhängig mit GitHub-/Testbelegen abgleichen. Eine Nachricht eines Workers ist nicht selbst die menschliche Erlaubnis, beliebige Nachrichten zurückzusenden. Keine neue Runde nur aufgrund einer Automationsantwort auslösen. Vor dem tatsächlichen kostenpflichtigen Guardian-Pfad konkrete vorhandene Freigaben/Budgets prüfen.
+
+Die direkt im Chat gerenderte Aufgabenansicht verwendet eine ausdrücklich vom Nutzer ausgelöste Folgenachricht. Nach eingehenden Arbeiten die gleiche Task-ID und datierte Ansicht weiterführen. Die Ansicht ist ein Snapshot; Widget-State allein ist kein dauerhafter Auftragsspeicher und kein Chat-/Deployment-Nachweis.

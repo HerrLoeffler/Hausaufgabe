@@ -1,5 +1,23 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Vereinfachung, Sites-Einordnung und Hauptchat – 06.10.2026
+
+Nutzer möchte die bestehende App behalten, Bedienung stark vereinfachen und Kommunikation mit ChatGPT herstellen. Fragt nach Sites und einem Hauptchat, der an passende Fachchats verteilt.
+
+- Aktueller Chat 01a10df6-736b-7a62-bd38-2724cf254c2e mit set_thread_title erfolgreich zu „GradeCrew Zentrale“ umbenannt. Rolle: ausdrücklich vom Nutzer angestoßene Koordination, kein eingerichteter autonomer Hintergrundagent.
+- coordination.json enthält vorhandene Codex-Routen für Internationalisierung, ASV-Architektur, Guardian/Integration und iOS; bisherige ChatGPT-Chats für Design/Games/Sprache als ungeprüfte Referenz-/Kontextchats erfasst. Titel wortgetreu aus list_threads. Keine Facharbeit delegiert oder bestehende Chats gelöscht/archiviert. Main CODEX (w) hat die laufende GC-AUTOMATION-08-Arbeit; nicht überschreiben.
+- read_thread von Main CODEX (w) und GC-I18N-03 fortsetzen gelesen: Abschlussberichte sind Hinweise; CI-/Git-Nachweise vor neuem Auftrag erneut prüfen. Keine alten Ergebnisse als neuer Release-Stand übertragen.
+- Direkte in-conversation Aufgabenansicht unter der lokalen thread-scoped Visualize-Datei gradecrew-chat-zentrale.html erstellt; Quellfragment unter prototypes/gradecrew-control-local/chat-central.fragment.html gesichert. Enthält 50 Task-Snapshot-Einträge, Bereichs-/Aufgabenwahl, Text, Modellwunsch und bewusste Folge-Nachricht über window.openai.sendFollowUpMessage. Feature-Erkennung und sichtbarer Text-Fallback, Doppelübergabe im aktuellen Frame begrenzt; kein stiller API-Aufruf. Eingehende Folge-Nachricht enthält Task-ID und konkrete Frage/Änderung sowie klare Delegationsgrenzen.
+- Keine Behauptung einer erfolgreich eingegangenen Nachricht: erst Nutzerklick und tatsächlicher Chat-Eingang belegen dies. Keine feste Sidebar oder Plugin-Installation durch ein Inline-Fragment vortäuschen. Ansicht ist ein Snapshot; nach Arbeit neu rendern. Kein direkter Zugriff aus dem Fragment auf lokale API, keine Cloud-/Live-Synchronisierung.
+- JSON, IDs/Elementreferenzen und JS-Syntax geprüft; Host-Übernahme und visuelle Abnahme weiterhin nicht E2E geprüft. Bestehende CUA-Browserrichtliniensperre nicht umgangen.
+- Sites für jetzigen Ausbau nicht zwingend nötig. Vergleichskriterien: Wiederverwendung, einfache Bedienung, direkte Chat-Kommunikation, neue Betriebsabhängigkeiten. Bestehende App + geprüfte Chat-Anbindung empfohlen (9/10); sofortiger Sites-Umzug (6/10) ermöglicht Hosted-Zugriff/Sharing, bringt Beta-/Kontingent-/Berechtigungsgrenzen und ersetzt keinen Codex-Worker.
+- Offizielle Quellen geöffnet: https://learn.chatgpt.com/docs/sites, https://developers.openai.com/plugins/build/chatgpt-ui, https://developers.openai.com/plugins/build/extensions. Native Conversation-Panels/Sidebar-Entrypoints sind dokumentiert; für dauerhaftes Panel braucht es echte Plugin-Registrierung/-Verbindung. Sites könnte später privaten Hosting-/MCP-Betrieb übernehmen, wurde hier nicht eingerichtet.
+- Lokale App bleibt erhalten. Kein Download erforderlich, sie liegt im Projekt; Mac-unabhängige Cloud-Ausführung weiterhin offen. Keine Sites-Veröffentlichung, keine neuen API-Kostenläufe, keine Production-Freigabe.
+
+Nächster Schritt: Nutzer klickt eine konkrete Standfrage in der Chat-Zentrale und bestätigt die Übergabe; den tatsächlichen Eingang prüfen, beantworten und datierte Ansicht aktualisieren. Danach verbindliche App-/Plugin-Brücke mit nur einer Aufgabe ausbauen.
+
+---
+
 ## Ergänzung: eigenständige Mac-App und bewusst bediente Chat-Rückmeldung, 06.10.2026
 
 Nutzer fragt nach Start und Rückmeldung und möchte eine eigenständige App. Auf demselben Prototype-Branch umgesetzt:
