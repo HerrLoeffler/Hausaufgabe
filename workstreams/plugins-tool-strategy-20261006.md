@@ -8,7 +8,7 @@
 - Aufgabenbranch: docs/gc-plugins-01-video-20261006.
 - Basiscommit: 8360bc5f056837118ffd83138ffa2468ae42647e.
 - Integrationsziel: main.
-- PR: nach Veröffentlichung anhand des Branches frisch prüfen.
+- PR: https://github.com/HerrLoeffler/Hausaufgabe/pull/142; bei Fortsetzung Status frisch prüfen.
 - Betroffene Dateien: AGENTS.md, TODO.md, workstreams/registry.json, diese Übergabe, docs/PLUGIN_TOOL_STRATEGY_2026-10-06.md.
 - Überschneidungen: gemeinsame Koordinationsdateien; frische main-Inhalte erhalten. Bestehende Planungs-PRs nicht ersetzt.
 
@@ -58,3 +58,11 @@ Context7 wurde vom Nutzer installiert; resolve_library_id und query_docs sind ve
 Nutzerfrage: Was sind Skills, und wie können wir sie nutzen? Skills sind wiederverwendbare Anweisungen mit Auslöser, Arbeitsschritten, Ergebnisformat und optionalen Vorlagen/Skripten. Plugins können Skills und Dienstwerkzeuge bündeln; Skills selbst erteilen keinen Kontozugriff. Offizielle Grundlage: https://developers.openai.com/plugins/concepts/skills und https://developers.openai.com/plugins/build/skills.
 
 Empfohlene kleine Auswahl, noch keine Umsetzung beauftragt: (1) GradeCrew-Werkzeugwahl, vorhandene native/verbundene Hilfe zuerst und gezielte fehlende Ergänzungen anbieten; (2) GradeCrew-Fehlerprüfung, aktuellen Stand lesen, kontrolliert reproduzieren, Belege und passende bestehende Diagnose-/Security-Fähigkeiten nutzen; (3) GradeCrew-Designabnahme, bestehende Designregeln/Komponenten lesen, konkrete Ansichten und Geräteabläufe prüfen. Allgemeine verbindliche Regeln bleiben zentral in START_HERE/AGENTS; Skills verweisen darauf statt sie zu kopieren. Vorhandene Dokument-, Design-, Recherche- und Security-Skills nutzen, nur GradeCrew-spezifische Abläufe ergänzen. Beschreibung so formulieren, dass passende Nutzerfragen die Anwendung auslösen; direkt und indirekt testen. Keine neuen Skills erstellt oder installiert, kein Deployment. Nächster Schritt bei Umsetzungsauftrag: einen häufigen Ablauf als kleinen Pilot erstellen und seine Auslösung an echten Beispielen prüfen.
+
+## Ausführliche Skills-Recherche und Sidebar-Verknüpfung
+
+Nutzerauftrag: grünen Punkt im Screenshot erklären, Skill-Ökosystem im Internet recherchieren und konkrete GradeCrew-Nutzung priorisieren. Chat-Anhang bestätigt PR #142; offen/nicht gemerged frisch geprüft. Der Marker gehört offenbar zum offenen PR, genaue UI-Farblogik nicht im Quellcode verifiziert. Keine neue Dienstverbindung durch diesen Anhang.
+
+Ergebnis in docs/SKILLS_RESEARCH_2026-10-06.md: offizielle Dokumentation/Standard/Anbieterquellen, Namenswahl, Aktivierung, Verteilung, Zählmethode, acht weitere Optionen und vier priorisierte Abläufe. Gezählt in openai/plugins am Baum 5fd93af4cd0c623e020d0cc7e9ce178b4ac1f70f: 502 direkte Skill-Ordner in 46 Paketen, 536 SKILL.md-Dateien einschließlich verschachtelter Varianten und Test-Fixtures; keine ChatGPT-Gesamtzahl. openai/skills kennzeichnet sich inzwischen als veraltet. Build iOS Apps als offizielles Paket mit neun Skills bestätigt, trotz weiter fehlendem exaktem Katalogtreffer. Codex Security und OpenAI Developers nun als installiert bestätigt; Context7 bereits bestätigt.
+
+Empfehlung: Werkzeugwahl, Fehlerprüfung, Kernablaufprüfung und Designabnahme. Bestehende Skills/Regeln verwenden; eigene Skills noch nicht erstellt oder installiert. Recherche allein startet keine Pilotumsetzung. GradeCrew-TODO auf main als Bedarfsbeleg gelesen, keine vollständige Produktabnahme behauptet. Auswertung und TODO derselben Task-ID aktualisiert; Quellenanweisungen nur als Referenzen behandelt. Nächster konkreter Umsetzungsschritt bei Auftrag: kleinen Werkzeugwahl-Pilot erstellen und seine direkten/indirekten Auslöser sowie unpassende Anfragen prüfen. Keine neuen Kostenreservierungen, Medienläufe oder Deployments.
