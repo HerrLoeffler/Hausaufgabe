@@ -86,6 +86,8 @@ struct GradeCrewWebView: UIViewRepresentable {
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
     var onShowDiagnostics: (() -> Void)? = nil
+    var onLoadedURLChanged: ((URL?) -> Void)? = nil
+    var onWebManifestCommitChanged: ((String?) -> Void)? = nil
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
         var parent: GradeCrewWebView
@@ -95,6 +97,9 @@ struct GradeCrewWebView: UIViewRepresentable {
         private var cancelDialog: (() -> Void)?
         private weak var hostWebView: WKWebView?
         private var downloadDestinations: [ObjectIdentifier: URL] = [:]
+        let nativeBridge = GradeCrewNativeBridge()
+        private var latestNavigation: WKNavigation?
+        private var requestedMainURL: URL?
 
         init(parent: GradeCrewWebView) {
             self.parent = parent
@@ -108,20 +113,44 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            latestNavigation = navigation
+            nativeBridge.beginNavigation()
             parent.isLoading = true
             parent.errorMessage = nil
+            parent.onLoadedURLChanged?(nil)
+            parent.onWebManifestCommitChanged?(nil)
+        }
+
+        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+            guard navigation === latestNavigation else { return }
+            nativeBridge.didCommitNavigation()
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            guard navigation === latestNavigation else { return }
             parent.isLoading = false
             parent.errorMessage = nil
+            parent.onLoadedURLChanged?(webView.url)
+            let loadedURL = webView.url
+            webView.callAsyncJavaScript("return await window.GradeCrewNative.diagnostics();", arguments: [:], in: nil, in: .page) { [weak self, weak webView] result in
+                guard let self, let webView, webView.url == loadedURL else { return }
+                if case let .success(value) = result, let diagnostics = value as? [String: Any] {
+                    self.parent.onWebManifestCommitChanged?(diagnostics["webManifestCommit"] as? String)
+                } else { self.parent.onWebManifestCommitChanged?(nil) }
+            }
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            guard navigation === latestNavigation else { return }
             finishWith(error: error)
         }
 
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            guard navigation === latestNavigation else { return }
+            if nativeBridge.restoreAfterFailedNavigation() {
+                parent.isLoading = false
+                parent.onLoadedURLChanged?(webView.url)
+            }
             finishWith(error: error)
         }
 
@@ -148,6 +177,9 @@ struct GradeCrewWebView: UIViewRepresentable {
             preferences: WKWebpagePreferences,
             decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void
         ) {
+            if navigationAction.targetFrame?.isMainFrame != false {
+                requestedMainURL = navigationAction.request.url
+            }
             if let requestURL = navigationAction.request.url,
                openExternallyIfNeeded(requestURL, navigationType: navigationAction.navigationType) {
                 decisionHandler(.cancel, preferences)
@@ -177,11 +209,15 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+            if navigationAction.request.url == requestedMainURL { nativeBridge.restoreAfterFailedNavigation() }
             hostWebView = webView
             download.delegate = self
         }
 
         func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
+            if navigationResponse.isForMainFrame && navigationResponse.response.url == requestedMainURL {
+                nativeBridge.restoreAfterFailedNavigation()
+            }
             hostWebView = webView
             download.delegate = self
         }
@@ -332,6 +368,9 @@ struct GradeCrewWebView: UIViewRepresentable {
 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             cancelActiveDialog()
+            nativeBridge.beginNavigation()
+            parent.onLoadedURLChanged?(nil)
+            parent.onWebManifestCommitChanged?(nil)
             parent.isLoading = false
             parent.errorMessage = "Die Webansicht wurde beendet. Bitte lade GradeCrew erneut."
         }
@@ -367,6 +406,7 @@ struct GradeCrewWebView: UIViewRepresentable {
         configuration.applicationNameForUserAgent = "GradeCrew-iOS/\(GradeCrewAppEnvironment.version)"
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        context.coordinator.nativeBridge.attach(to: webView, selectedBaseURL: url)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
@@ -390,6 +430,7 @@ struct GradeCrewWebView: UIViewRepresentable {
 
     static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
         coordinator.cancelActiveDialog()
+        coordinator.nativeBridge.detach()
         webView.stopLoading()
         webView.navigationDelegate = nil
         webView.uiDelegate = nil
@@ -408,6 +449,7 @@ struct GradeCrewWebView: UIViewRepresentable {
 
         if context.coordinator.lastReloadID != reloadID || context.coordinator.lastURL != url {
             context.coordinator.cancelActiveDialog()
+            context.coordinator.nativeBridge.attach(to: webView, selectedBaseURL: url)
             context.coordinator.lastURL = url
             context.coordinator.lastReloadID = reloadID
             isLoading = true

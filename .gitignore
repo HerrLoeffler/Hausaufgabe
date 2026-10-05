@@ -68,3 +68,7 @@ node_modules/
 # dataconnect generated files
 .dataconnect
 public/
+
+# Reproducible Teacher build outputs (the bridge JS remains a source resource).
+native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj/
+native/GradeCrewTeacher/Resources/Assets.xcassets/

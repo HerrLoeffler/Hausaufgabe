@@ -1,0 +1,48 @@
+name: GradeCrew Native Checks
+
+on:
+  pull_request:
+    branches: [feature/shared-gradecrew-design-system]
+    paths:
+      - native/GradeCrewTeacher/**
+      - native/Shared/**
+      - .github/workflows/gradecrew-native-check.yml
+  push:
+    branches: ['feature/ios-native-bridge-*']
+    paths:
+      - native/GradeCrewTeacher/**
+      - native/Shared/**
+      - .github/workflows/gradecrew-native-check.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gradecrew-native-check-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-check:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test routing, file contract and blob exports
+        run: |
+          python3 native/GradeCrewTeacher/test_beta_environment.py
+          python3 native/GradeCrewTeacher/test_navigation_policy.py
+          python3 native/GradeCrewTeacher/test_native_bridge.py
+          node --test native/GradeCrewTeacher/test_native_bridge_js.cjs
+      - name: Prepare canonical assets and project
+        run: |
+          python3 native/GradeCrewTeacher/prepare_testflight_assets.py
+          python3 native/GradeCrewTeacher/generate_project.py
+      - name: Build without signing or uploading
+        run: |
+          xcodebuild -project native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj \
+            -scheme GradeCrew -configuration Debug -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/GradeCrewDerivedData" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build

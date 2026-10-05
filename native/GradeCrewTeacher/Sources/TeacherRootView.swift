@@ -8,6 +8,8 @@ struct TeacherRootView: View {
     @State private var showBetaSettings = false
     @State private var pendingPreview = ""
     @State private var settingsError: String?
+    @State private var loadedHost: String?
+    @State private var webManifestCommit: String?
 
     private var homeURL: URL {
         GradeCrewBetaEnvironment.homeURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
@@ -28,7 +30,9 @@ struct TeacherRootView: View {
                 reloadID: reloadID,
                 isLoading: $isLoading,
                 errorMessage: $loadError,
-                onShowDiagnostics: openDiagnostics
+                onShowDiagnostics: openDiagnostics,
+                onLoadedURLChanged: { loadedHost = $0?.host },
+                onWebManifestCommitChanged: { webManifestCommit = $0 }
             )
 
             if isLoading {
@@ -82,9 +86,14 @@ struct TeacherRootView: View {
                         LabeledContent("Version", value: GradeCrewAppEnvironment.version)
                         LabeledContent("Build", value: buildNumber)
                         LabeledContent("Umgebung", value: environmentLabel)
+                        LabeledContent("Native Schnittstelle", value: "1")
                     }
                     Section("Aktuell geöffnet") {
-                        Text(homeURL.host ?? environmentLabel).textSelection(.enabled)
+                        Text(loadedHost ?? "Noch keine Seite vollständig geladen").textSelection(.enabled)
+                        Text("Web-Manifest: \(webManifestCommit ?? "noch nicht verifiziert")")
+                            .font(.footnote).foregroundStyle(.secondary).textSelection(.enabled)
+                        Text("Der Manifest-Commit beschreibt den ausgelieferten Webstand. Eine vollständige Prüfung aller geladenen Dateien und der Gerätetest sind separate Nachweise.")
+                            .font(.footnote).foregroundStyle(.secondary)
                         Text("Die Diagnose ist im normalen App-Alltag unsichtbar. In der Webansicht mit zwei Fingern etwa eine Sekunde gedrückt halten, um sie erneut zu öffnen.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)

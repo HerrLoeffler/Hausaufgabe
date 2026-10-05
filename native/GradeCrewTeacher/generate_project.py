@@ -47,6 +47,9 @@ asset_ref = obj(
     sourceTree='<group>',
 )
 asset_build = obj('build-Resources/Assets.xcassets', isa='PBXBuildFile', fileRef=asset_ref)
+bridge_ref = obj('Resources/gradecrew-native-bridge.js', isa='PBXFileReference',
+                 lastKnownFileType='sourcecode.javascript', path='Resources/gradecrew-native-bridge.js', sourceTree='<group>')
+bridge_build = obj('build-Resources/gradecrew-native-bridge.js', isa='PBXBuildFile', fileRef=bridge_ref)
 
 product = obj(
     'product',
@@ -56,10 +59,10 @@ product = obj(
     sourceTree='BUILT_PRODUCTS_DIR',
 )
 products = obj('products', isa='PBXGroup', children=[product], name='Products', sourceTree='<group>')
-main = obj('main', isa='PBXGroup', children=files + [asset_ref, products], sourceTree='<group>')
+main = obj('main', isa='PBXGroup', children=files + [asset_ref, bridge_ref, products], sourceTree='<group>')
 sources = obj('sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=builds, runOnlyForDeploymentPostprocessing='0')
 frameworks = obj('frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
-resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build], runOnlyForDeploymentPostprocessing='0')
+resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build, bridge_build], runOnlyForDeploymentPostprocessing='0')
 
 project_configs = []
 target_configs = []
@@ -176,6 +179,7 @@ assert source_paths
 assert all(source.is_file() for source in source_paths)
 assert ASSET_CATALOG.is_dir(), 'Run prepare_testflight_assets.py first.'
 assert (ASSET_CATALOG / 'AppIcon.appiconset' / 'AppIcon.png').is_file()
+assert (ROOT / 'Resources/gradecrew-native-bridge.js').is_file()
 assert any(source.name == 'GradeCrewTeacherApp.swift' for source in source_paths)
 assert any(source.name == 'GradeCrewDesignTokens.swift' for source in source_paths)
 print(f'GradeCrew Teacher Xcode project generated for {MARKETING_VERSION}: {len(source_paths)} shared/native Swift sources + AppIcon assets.')
