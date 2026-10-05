@@ -253,3 +253,9 @@ Eigener Checkout `gradecrew-hero-blender` am bestehenden Task-Branch/PR #143, Au
 Blender 5.2.2 Apple Silicon von offizieller Quelle heruntergeladen; SHA256 dc4125399b8bfefe283cc1624d6cfc7809d1cac20ace51072127eb371f31f210 stimmt mit Anbieterprüfsumme überein. Lokale Einrichtung wird jetzt praktisch geprüft. Kein Rendernachweis zu diesem Checkpoint. Keine neue bezahlte Provider-Nutzung; alte Budgethistorie erhalten.
 
 Nächster Schritt: ausführbares Blender bestätigen, Testszene speichern/rendern/wiederöffnen, dann Sol-Coco-Prototyp anhand kanonischer Referenzen.
+
+### Einrichtungsnachweis bestanden
+
+Blender 5.2.2 LTS (Build d13f752e3b9c), MCP for Blender 2.1.8 am festgelegten Quellcommit und SDK1.30.0 praktisch eingesetzt. MCP-Szenenabfrage, Objektänderung, Rendern und Speichern bestanden; separater Prozess öffnete die .blend und bestätigte x=0.35. Nachweise unter art/gradecrew-hero/environment/. Lokaler Connector nur 127.0.0.1:9877, Safe Mode aktiv, Telemetrie deaktiviert; kein globales Codex-Setup geändert. Native Toolregistrierung ist nicht erfolgt; reale MCP-Verbindung per lokalem Python-Client getestet.
+
+Sol-Unteragent /root/sol_coco_pilot (gpt-6.1-sol, high) bearbeitet ausschließlich art/gradecrew-hero/coco-pilot/. Kanonischer Bildvertrag und Quellenhashes unter art/gradecrew-hero/spec/. Visuelle Abnahme steht aus. Standard-Sandbox blockierte lokale Sockets bzw. Blender-Dateiöffnung; eng genehmigte Ausführung bestand. Kein Modellwechsel deswegen. Git-Push per Terminal mangels dortiger Anmeldung nicht verfügbar; Sicherung erfolgt über den vorhandenen GitHub-Connector auf demselben Aufgabenbranch, ohne Credentials auszulesen.

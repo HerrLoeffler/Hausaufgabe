@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-06",
+  "blender": {
+    "version": "5.2.2 LTS",
+    "build_hash": "d13f752e3b9c",
+    "platform": "macos-arm64",
+    "download": "https://download.blender.org/release/Blender5.2/blender-5.2.2-macos-arm64.dmg",
+    "sha256": "dc4125399b8bfefe283cc1624d6cfc7809d1cac20ace51072127eb371f31f210",
+    "official_checksum_match": true
+  },
+  "mcp": {
+    "package_version": "2.1.8",
+    "sdk_version": "1.30.0",
+    "source_commit": "34b7bd277fff75a693cde78930b4359478958a01",
+    "bind": "127.0.0.1:9877",
+    "safe_mode": true,
+    "telemetry_disabled": true,
+    "native_codex_tool_registration": false,
+    "tested_transport": "Python MCP client -> stdio server -> live Blender addon"
+  },
+  "checks": {
+    "scene_read": true,
+    "object_modified": true,
+    "render_created_and_visually_inspected": true,
+    "save": true,
+    "fresh_process_reopen": true,
+    "reopened_object": "GC_ConnectionProof",
+    "reopened_x": 0.3499999940395355
+  },
+  "limitations": [
+    "Default sandbox prevents local socket access and crashes Blender headless file-open; narrowly approved execution succeeds.",
+    "MCP integration is session-local; no global Codex configuration or Blender preferences changed.",
+    "Cube render is tooling proof only, not hero art."
+  ],
+  "files": {
+    "connection-proof.blend": {
+      "sha256": "75dd7ef22962a4e917ee39a74338ab3599b9b7a0978037d6d96c613031c9f138",
+      "bytes": 97634
+    },
+    "connection-proof.png": {
+      "sha256": "e0f4bcf64eb0f19da9119f71c3f437057256a67ce3a2c6d2cbcf5755c15e3ee8",
+      "bytes": 56422
+    },
+    "start_mcp_session.py": {
+      "sha256": "fc663e650560dc57f4af9964948110bb31a9a8e4d326c04bc210d52ee89af632",
+      "bytes": 872
+    },
+    "verify_mcp.py": {
+      "sha256": "2d7d7ef1f9aef14952409a0effc5500f99a4216f3bdc430633758b198b940193",
+      "bytes": 2919
+    }
+  }
+}
