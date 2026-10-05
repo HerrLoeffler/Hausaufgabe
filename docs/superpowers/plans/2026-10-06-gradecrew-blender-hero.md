@@ -1,8 +1,10 @@
 # GradeCrew: Produktionsplan für den filmischen Startscreen
 
-**Stand:** 6. Oktober 2026 · **Task:** GC-DESIGN-05 · **Status: ausschließlich Planung, Umsetzung nicht freigegeben.**
+**Stand:** 6. Oktober 2026 · **Task:** GC-DESIGN-05 · **Status: Umsetzung am 06.10.2026 durch Martin freigegeben; Coco-/Tür-Prototyp begonnen.**
 
-**Arbeitsanweisung für eine spätere Ausführung:** Dieser Plan ist kein Startauftrag. Erst nach Martins ausdrücklichem Auftrag die passenden Ausführungsregeln laden, aktuelle Repository-Regeln und Übergabe erneut lesen und die Aufgaben unten schrittweise abarbeiten. Keine Installation, Modellierung, Bildgenerierung, Animation, Website-Änderung oder Veröffentlichung aufgrund dieses Dokuments starten. Keine zusätzlichen Agenten automatisch beauftragen.
+**Aktuelle Freigabe:** Martin hat am 06.10.2026 den Start der Umsetzung mit Sol und einen begründeten Wechsel zu Astra freigegeben. Die folgende ursprüngliche Planungsgrenze ist damit für die Umsetzung aufgehoben; Production bleibt separat freigabepflichtig.
+
+**Ursprüngliche Arbeitsanweisung (historisch):** Dieser Plan ist kein Startauftrag. Erst nach Martins ausdrücklichem Auftrag die passenden Ausführungsregeln laden, aktuelle Repository-Regeln und Übergabe erneut lesen und die Aufgaben unten schrittweise abarbeiten. Keine Installation, Modellierung, Bildgenerierung, Animation, Website-Änderung oder Veröffentlichung aufgrund dieses Dokuments starten. Keine zusätzlichen Agenten automatisch beauftragen.
 
 **Ziel:** Eine räumlich zusammenhängende, hochwertige GradeCrew-Begrüßungsszene mit den kanonischen Figuren, die die Wirkung des Referenzbildes erreicht: Coco empfängt an der Tür, dahinter ein warmer Klassenraum mit Remy, Emmi und Wilma. Texte und Bedienelemente bleiben übersetzbar und bedienbar. Die Szene ist später saisonal veränderbar.
 

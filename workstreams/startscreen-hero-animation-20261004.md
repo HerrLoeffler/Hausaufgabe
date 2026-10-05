@@ -243,3 +243,13 @@ Keine Blender-Installation, MCP-Konfigurationsänderung, Modellumschaltung, Bild
 Validierung dieses Schritts: recherchierte Primär-/Anbieterquellen und tatsächlicher Repository-Bestand gelesen; Plan auf Anforderungen, offene Annahmen und Umsetzungssperre geprüft. Keine Blender-, Browser- oder Produktfunktion als praktisch getestet behaupten. CI dieses neuen Dokumentationscommits separat anhand des exakten Heads feststellen.
 
 **Genau ein nächster Schritt:** Plan vorlegen und auf Martins ausdrücklichen Startauftrag warten. Erst danach aktuelle Ausgangslage bestätigen und den begrenzten Einrichtungs-/Coco-Prototyp beginnen. Production bleibt separat freigabepflichtig.
+
+## 06.10.2026 – Umsetzung freigegeben, Sol zuerst
+
+Martin hat nach Vorlage des vollständigen Plans ausdrücklich den Start freigegeben, zunächst mit Sol und einem begründeten Wechsel zu Astra bei konkreten Grenzen. Umsetzungssperre des letzten Planungsnachtrags aufgehoben; Production bleibt gesperrt.
+
+Eigener Checkout `gradecrew-hero-blender` am bestehenden Task-Branch/PR #143, Ausgangscommit 5c80c87f48113aa4b14707be186eccb490fdbc0f. Native Worktree-Anlage war im projektlosen Spiegel nicht möglich; stattdessen eigener sauberer Clone. Letzter Development-Status-Lauf 37389295053 erfolgreich, Warnungen/Überschneidungen gelesen. Aktueller Scope ausschließlich `art/gradecrew-hero/` und eigene Koordination; keine Einstiegs-/i18n-/App-Dateien.
+
+Blender 5.2.2 Apple Silicon von offizieller Quelle heruntergeladen; SHA256 dc4125399b8bfefe283cc1624d6cfc7809d1cac20ace51072127eb371f31f210 stimmt mit Anbieterprüfsumme überein. Lokale Einrichtung wird jetzt praktisch geprüft. Kein Rendernachweis zu diesem Checkpoint. Keine neue bezahlte Provider-Nutzung; alte Budgethistorie erhalten.
+
+Nächster Schritt: ausführbares Blender bestätigen, Testszene speichern/rendern/wiederöffnen, dann Sol-Coco-Prototyp anhand kanonischer Referenzen.
