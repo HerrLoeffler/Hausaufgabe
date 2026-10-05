@@ -307,7 +307,18 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
   const naturalPaper = entries.map(entry => entry.paper);
   const paper = shuffleQuestions ? deterministicOrder(naturalPaper, secret, "questions") : naturalPaper;
   const gradingKey = entries.map(entry => entry.key);
-  const sourceFingerprint = sha256(JSON.stringify({ paper, gradingKey }));
+  // Existing attempts compare this fingerprint on resume/poll. Keep their v1
+  // presentation shape for hashing while returning locale-neutral image metadata.
+  const fingerprintPaper = paper.map(question => {
+    const { imageChoicesOnly, ...legacy } = question;
+    if (legacy.image) legacy.image = { ...legacy.image, alt: legacy.image.alt || "Abbildung zur Aufgabe" };
+    if (legacy.options) legacy.options = legacy.options.map(option => ({
+      ...option,
+      image: option.image ? { ...option.image, alt: option.image.alt || "Antwortabbildung" } : null
+    }));
+    return legacy;
+  });
+  const sourceFingerprint = sha256(JSON.stringify({ paper: fingerprintPaper, gradingKey }));
   return {
     paper,
     gradingKey,

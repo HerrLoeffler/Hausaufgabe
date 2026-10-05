@@ -108,3 +108,12 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 - Unabhängiges Review lokal läuft read-only (i18n_review); keine weiteren schreibenden Agenten. Originale Versuche und Budgets erhalten.
 - Release-Stufe bis zum bestätigten finalen Lauf: branch_only. Nicht integriert; kein neuer Preview-/Functions-/Rules-Nachweis, keine Geräteabnahme; Production unverändert.
 - Nächster Schritt: exakte CI des neuen Checkpoints prüfen und Review-Befunde abgleichen.
+
+## Review-Korrektur 2026-10-05 – Bestandsversuche
+
+- Fixture-Checkpoint 93a143f1f709a11dd3cc91a3296c9f2e3ba8f040: Combined CI 37324681191 erfolgreich.
+- Unabhängiges Review fand P1: neue Darstellungsfelder und leere Alttexte änderten den sourceFingerprint bestehender Versuche; Resume/Poll hätte unveränderte Tests abgewiesen. Direkte Abgabe war nicht betroffen.
+- Korrektur: nur die Hash-Ansicht behält den bisherigen Papiervertrag (ohne imageChoicesOnly, mit bisherigen Alt-Fallbacks); ausgeliefertes Paper bleibt locale-neutral. Bewertungskey bleibt im Hash, echte Lösungsänderungen werden weiterhin erkannt. Keine Migration aktiver Papers.
+- Vier eingefrorene Fingerprints aus bb91ce3 (mit/ohne Bilder und Answer-Shuffle) zuerst rot reproduziert, danach grün. 44/44 Backendtests erfolgreich. Zweites unabhängiges Review bestätigt Korrektur, keine weiteren wichtigen Befunde.
+- Korrektur wird als eigener Codecheckpoint veröffentlicht; dessen exakte CI noch prüfen. Release-Stufe für diesen neuen Code bis dahin branch_only. Kein Deploy, keine bezahlten Aufrufe; Versuchshistorie/Budget erhalten.
+- Genau ein nächster Schritt: Remote-CI des Kompatibilitätscheckpoints prüfen.

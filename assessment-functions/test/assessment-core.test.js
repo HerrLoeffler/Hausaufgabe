@@ -41,6 +41,29 @@ const CLIENT_TOKEN = "abcdefghijklmnopqrstuvwxyzABCDE_1234567890";
 const PAPER_SECRET = "server_only_paper_secret_ABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890";
 const OTHER_PAPER_SECRET = "another_server_secret_ZYXWVUTSRQPONMLKJIHGFEDCBA_9876543210";
 
+test("unchanged attempts retain their pre-i18n fingerprint when resumed", () => {
+  // Captured from integration bb91ce3, before presentation metadata was added.
+  const fingerprints = [
+    [false, false, "3561d9e2c08e9b4da75326742182d68e8359ef52d5e3115eb432ff168d163066"],
+    [false, true, "096b9e5f242b5b5d25e34567cfddb1a6e823ffc8b43d5a2cb4058748d2a5e306"],
+    [true, false, "538c72e6873fda8ec7abfc4172d24197b497b4c2f7adcaebc40fc1c6f19f10d0"],
+    [true, true, "88b17959b75fe4d48e356c13a53318329ef4adbacef77117007cfc59dae47fb4"]
+  ];
+  for (const [images, shuffleAnswers, savedFingerprint] of fingerprints) {
+    const question = { id: "compat", position: 1, type: "single", text: "Choose", points: 1,
+      options: [{ text: "A", correct: true }, { text: "B", correct: false }] };
+    if (images) {
+      question.imageUrl = "https://example.test/question.png";
+      question.imageChoicesOnly = true;
+      question.options.forEach((option, index) => { option.imageUrl = `https://example.test/${index}.png`; });
+    }
+    const contract = buildAssessmentContract([question], "a".repeat(48), { shuffleAnswers });
+    assert.equal(contract.sourceFingerprint, savedFingerprint);
+    question.options[0].correct = false;
+    assert.notEqual(buildAssessmentContract([question], "a".repeat(48), { shuffleAnswers }).sourceFingerprint, savedFingerprint);
+  }
+});
+
 function sampleQuestions() {
   return [
     {
