@@ -70,10 +70,18 @@ def digest(value):
 def control_hash(root):
     """Documentation-only main commits do not invalidate an in-flight task."""
     names = ['pipeline.py', 'guardian.py', 'execution.py', 'continuation.py', 'model_calls.py', 'recovery.py',
-             'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh']
+             'deployment_evidence.py', 'delivery.py', 'validation_report.py', 'validate-web.sh', 'profiles.py']
     files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
     for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml', 'guardian-recovery.yml']:
         files[name] = (Path(root)/'.github/workflows'/name).read_text()
+    extras = ['tools/automation/games_publication.py','tools/automation/games_static.py','tools/automation/validate-games-static.sh','tools/automation/games-static-smoke.cjs',
+              '.github/workflows/guardian-games-validation.yml','.github/workflows/guardian-games-staging.yml']
+    extras += [str(p.relative_to(Path(root))) for p in sorted((Path(root)/'tools/automation/fixtures/games-static-v1').rglob('*')) if p.is_file()]
+    for name in extras:
+        path = Path(root)/name
+        if path.exists():
+            if path.is_symlink(): raise ValueError('Symlink in trusted control')
+            files[name] = path.read_text()
     return digest(files)
 
 
@@ -89,7 +97,7 @@ def identifier(value):
     return value
 
 
-def path_allowed(name):
+def path_allowed(name, profile=None):
     if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_-][A-Za-z0-9_./-]{0,179}', name):
         raise ValueError('Unsafe file path')
     path = PurePosixPath(name)
@@ -101,13 +109,15 @@ def path_allowed(name):
         raise ValueError('Existing tests cannot be weakened by the coding model')
     if any(p.startswith(('deploy-', 'secure-', 'admin-', 'ai-', 'student-')) for p in path.parts):
         raise ValueError('Sensitive source needs separate admission')
+    if profile is not None and profile.writable_paths and name not in profile.writable_paths:
+        raise ValueError('Path outside execution profile')
     return name
 
 
 def task_contract(task):
     identifier(task.get('id')); sha(task.get('base_sha'))
-    if task.get('base_branch') != WEB or task.get('risk') != 'web-ui':
-        raise ValueError('Only explicit web-ui admission supported')
+    from .profiles import validate_profile_task
+    profile = validate_profile_task(task)
     for name in ('goal', 'acceptance', 'constraints'):
         if not isinstance(task.get(name), str) or not 1 <= len(task[name].encode()) <= 16000:
             raise ValueError('Incomplete task contract')
@@ -118,15 +128,17 @@ def task_contract(task):
     if not isinstance(context, list) or len(context) > 12 or len(set(context)) != len(context):
         raise ValueError('Invalid context paths')
     for name in files + context:
-        path_allowed(name)
+        path_allowed(name, profile)
     limits = cost_limits(task)
-    if task.get('validation_profile') != 'web-combined-v1' or type(task.get('max_cost_usd')) not in {int, float} or task['max_cost_usd'] != limits['task_usd']:
+    if task.get('validation_profile') != profile.validation_profile or type(task.get('max_cost_usd')) not in {int, float} or task['max_cost_usd'] != limits['task_usd']:
         raise ValueError('Explicit validation and reserved task budget required')
     return task
 
 
 def candidate_contract(candidate, task, request_id):
     task_contract(task); identifier(request_id)
+    from .profiles import resolve_profile
+    profile = resolve_profile(task)
     if not isinstance(candidate, dict) or set(candidate) != {'files', 'summary'}:
         raise ValueError('Unexpected candidate schema')
     files = candidate['files']
@@ -138,7 +150,7 @@ def candidate_contract(candidate, task, request_id):
     for item in files:
         if not isinstance(item, dict) or set(item) != {'path', 'content'}:
             raise ValueError('Files must be plain text replacements')
-        name = path_allowed(item['path'])
+        name = path_allowed(item['path'], profile)
         if name not in task['allowed_files'] or name in seen:
             raise ValueError('Out-of-scope or duplicate file')
         seen.add(name)
@@ -152,11 +164,14 @@ def candidate_contract(candidate, task, request_id):
 
 def validate_review(review, role, binding):
     expected = {'verdict', 'head', 'base', 'candidateHash', 'findings'}
+    if 'executionProfile' in binding:
+        expected |= {'executionProfile','profileDigest','packageDigest'}
     if not isinstance(review, dict) or set(review) != expected:
         raise ValueError('Unexpected review schema')
     if role not in REVIEW_ROLES:
         raise ValueError('Unknown independent review role')
-    for key in ('head', 'base', 'candidateHash'):
+    keys = ('head','base','candidateHash') + (('executionProfile','profileDigest','packageDigest') if 'executionProfile' in binding else ())
+    for key in keys:
         if review[key] != binding[key]:
             raise ValueError('Review belongs to different code')
     findings = review['findings']
@@ -177,20 +192,52 @@ def validate_review(review, role, binding):
     return review
 
 
+def profile_packaging_gate(profile, report, expected_head):
+    from .profiles import GAMES
+    if profile != GAMES:
+        if report.get('profile') != profile.validation_profile or report.get('head') != expected_head or report.get('result') != 'success':
+            raise ValueError('Exact candidate validation required')
+        return
+    expected_keys = {'profile','executionProfile','profileDigest','head','base','result','packagedFiles','packageDigest'}
+    if set(report) != expected_keys or report['profile'] != profile.validation_profile or report['executionProfile'] != profile.id or report['head'] != expected_head or report['result'] != 'success':
+        raise ValueError('Exact Games validation required')
+    if report['packagedFiles'] != ['app.js','index.html','styles.css'] or any(not isinstance(report[k],str) or not re.fullmatch('[a-f0-9]{64}',report[k]) for k in ('profileDigest','packageDigest')):
+        raise ValueError('Exact Games package digest required')
+
+
+def required_review_binding(task, publication, tests, profile):
+    from .profiles import GAMES
+    profile_packaging_gate(profile,tests,publication['head'])
+    binding = {**publication,'allowed_files':task['allowed_files']}
+    if profile == GAMES:
+        if tests['profileDigest'] != task['profile_digest'] or tests['base'] != task['base_sha']:
+            raise ValueError('Games source/profile differs')
+        binding.update(executionProfile=profile.id,profileDigest=task['profile_digest'],packageDigest=tests['packageDigest'])
+    elif tests != {'profile':'web-combined-v1','head':publication['head'],'base':task['base_sha'],'result':'success',
+                   'packagedFiles':sorted(publication['changedFiles'])}:
+        raise ValueError('Exact candidate validation required')
+    return binding
+
+
+def review_schema(profile):
+    from .profiles import GAMES
+    if profile != GAMES: return REVIEW_SCHEMA
+    return object_schema(REVIEW_SCHEMA['properties'] | {k:{'type':'string'} for k in ('executionProfile','profileDigest','packageDigest')})
+
+
 def integration_gate(task, publication, tests, reviews, current_base, current_head):
     task_contract(task)
+    from .profiles import resolve_profile
+    profile = resolve_profile(task)
     if current_base != task['base_sha'] or current_head != publication['head']:
         raise ValueError('Branch moved; never overwrite parallel work')
-    binding = {**publication, 'allowed_files': task['allowed_files']}
-    if tests != {'profile': 'web-combined-v1', 'head': publication['head'], 'base': task['base_sha'], 'result': 'success',
-                 'packagedFiles': sorted(publication['changedFiles'])}:
-        raise ValueError('Exact candidate validation required')
+    binding = required_review_binding(task,publication,tests,profile)
     if set(reviews) != set(REVIEW_ROLES):
         raise ValueError('All three independent reviewers required')
-    for role, evidence in reviews.items():
+    for role,evidence in reviews.items():
         if evidence.get('provider') != MODELS[role]['provider'] or evidence.get('model') != MODELS[role]['model']:
             raise ValueError('Reviewer identity differs')
-        if validate_review(evidence['review'], role, binding)['verdict'] != 'approve':
+        if validate_review(evidence['review'],role,binding)['verdict'] != 'approve':
             raise ValueError('Independent reviewer requested changes')
     return publication['head']
 

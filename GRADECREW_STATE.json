@@ -356,14 +356,35 @@
       "id": "games-escape",
       "branch": "feature/escape-room-mvp-v1",
       "observed_head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
-      "stage": "branch_only",
-      "staging": "latest_run_37021633218_failed_secret_metadata_access_hosting_skipped",
+      "stage": "staging_deployed",
+      "staging": "isolated_gradecrew_escape_dev_hosting_and_generateEscapePreview_deployed_at_a7ffc382_run37021633218_attempt2",
       "user_test": "physical_device_test_open",
-      "next_action": "Prüfen: Secret-Metadata-Zugriff des Escape-Deployers und Architektur des neuen Preview-Functions-Pfads; anschließend verifiziertes Receipt. Älterer Preview ist nicht automatisch dieser Head.",
+      "next_action": "Isolierten aktuellen Preview am Gerät und Generator innerhalb vorhandener Kosten-/Datengates prüfen; keine Geräteabnahme behaupten. Kryptografisches Guardian-Receipt fehlt im Legacy-Workflow, GC-AUTOMATION-08 bleibt separat.",
       "previous_observation": {
-        "head": "c904a67428e40f2e5257dad11a1895945f016aa7",
-        "stage": "staging_deployed",
-        "staging": "isolated_preview_only"
+        "id": "games-escape",
+        "branch": "feature/escape-room-mvp-v1",
+        "observed_head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+        "stage": "branch_only",
+        "staging": "latest_run_37021633218_failed_secret_metadata_access_hosting_skipped",
+        "user_test": "physical_device_test_open",
+        "next_action": "Prüfen: Secret-Metadata-Zugriff des Escape-Deployers und Architektur des neuen Preview-Functions-Pfads; anschließend verifiziertes Receipt. Älterer Preview ist nicht automatisch dieser Head.",
+        "previous_observation": {
+          "head": "c904a67428e40f2e5257dad11a1895945f016aa7",
+          "stage": "staging_deployed",
+          "staging": "isolated_preview_only"
+        }
+      },
+      "ci": "37021633218_attempt_2_success_41_escape_and_105_functions_tests_Node22",
+      "staging_evidence": {
+        "run_id": 37021633218,
+        "run_attempt": 2,
+        "job_id": 111534877678,
+        "source_commit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+        "hosting_url": "https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app",
+        "function_url": "https://europe-west1-hausaufgabe-staging.cloudfunctions.net/generateEscapePreview",
+        "hosting_dom_smoke": "entry_screen_loaded_without_generator_request",
+        "provider_generation_smoke": "not_performed",
+        "guardian_digest_receipt": "not_available_in_legacy_workflow"
       }
     },
     {
@@ -593,6 +614,30 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "guardian-admission-profiles-v1",
+      "task_id": "GC-AUTOMATION-08",
+      "branch": "docs/guardian-admission-profiles-20261004",
+      "stage": "branch_only",
+      "ci": "controller_136_actual_linux_uid_browser_negative_rehearsal_success_37372043510_handoff_success_37372043556_web_stage_runner_infrastructure_blocked",
+      "staging": "no_new_deploy_profile_disabled",
+      "user_test": "not_performed",
+      "handoff": "workstreams/guardian-admission-profiles-v1.md",
+      "next_action": "After GitHub hosted-runner incident resolves, inspect existing runs37372043963/37372043527 and qualify failed-job continuation; keep Games activation off until positive36-test fixture, identity/channel ownership and bound pilot gates.",
+      "observed_head": "c6ec05a85342771b50b113dd18f402a6fbda078a",
+      "verification": {
+        "controller_head": "c6ec05a85342771b50b113dd18f402a6fbda078a",
+        "games_rehearsal_run": 37372043510,
+        "controller_job": 111971342519,
+        "browser_job": 111971342309,
+        "known_blocker_job": 111971342507,
+        "handoff_run": 37372043556,
+        "web_run": 37372043963,
+        "stage_run": 37372043527,
+        "original_games_qualification": "blocked_35_of_36",
+        "github_incident": "https://www.githubstatus.com/incidents/3q1yb5m7ltvb"
+      }
     }
   ],
   "deployments": [
@@ -655,6 +700,32 @@
       "production_changed": false,
       "firestore_rules_changed": false,
       "hosting_changed_by_this_deploy": false
+    },
+    {
+      "environment": "staging-preview",
+      "type": "hosting_only",
+      "project": "hausaufgabe-staging",
+      "channel": "gradecrew-escape-dev",
+      "url": "https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app",
+      "evidence": "Escape Room Dev Preview run 37021633218 attempt 2, job 111534877678 successful deploy log; live entry screen read-only DOM smoke",
+      "source_commit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "run_attempt": 2,
+      "contains_current_release_train": false,
+      "device_test": "not_performed",
+      "hash_receipt": "not_available_in_legacy_workflow",
+      "production_changed": false
+    },
+    {
+      "environment": "staging-preview",
+      "type": "functions:generateEscapePreview",
+      "project": "hausaufgabe-staging",
+      "url": "https://europe-west1-hausaufgabe-staging.cloudfunctions.net/generateEscapePreview",
+      "evidence": "37021633218 attempt 2 job 111534877678: Successful create operation generateEscapePreview(europe-west1), Deploy complete",
+      "source_commit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "run_attempt": 2,
+      "provider_generation_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
     }
   ],
   "blockers": [

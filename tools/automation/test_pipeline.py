@@ -99,10 +99,16 @@ class ContractTests(unittest.TestCase):
             mirror=Path(directory)
             for subpath in ['tools/automation', '.github/workflows']:
                 (mirror/subpath).mkdir(parents=True,exist_ok=True)
-            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','recovery.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh']
+            names=['pipeline.py','guardian.py','execution.py','continuation.py','model_calls.py','recovery.py','deployment_evidence.py','delivery.py','validation_report.py','validate-web.sh','profiles.py']
             for name in names:(mirror/'tools/automation'/name).write_text((root/'tools/automation'/name).read_text())
             for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml','guardian-recovery.yml']:
                 (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())
+            import shutil
+            for name in ['games_publication.py','games_static.py','validate-games-static.sh','games-static-smoke.cjs']:
+                shutil.copyfile(root/'tools/automation'/name,mirror/'tools/automation'/name)
+            shutil.copytree(root/'tools/automation/fixtures',mirror/'tools/automation/fixtures')
+            for name in ['guardian-games-validation.yml','guardian-games-staging.yml']:
+                if (root/'.github/workflows'/name).exists(): shutil.copyfile(root/'.github/workflows'/name,mirror/'.github/workflows'/name)
             (mirror/'TODO.md').write_text('New parallel chat notes')
             self.assertEqual(p.control_hash(mirror),original)
             (mirror/'tools/automation/execution.py').write_text('Different controller')

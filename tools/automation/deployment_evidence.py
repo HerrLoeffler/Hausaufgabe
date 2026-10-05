@@ -68,6 +68,14 @@ def verify_ci(run, report, attempt):
         raise ValueError('Untrusted CI provenance')
     expected = {'requestId': attempt['requestId'], 'commit': attempt['integratedSha'], 'branch': WEB,
                 'runId': run['id'], 'result': 'success', 'profile': 'web-combined-v1'}
+    if attempt.get('executionProfile') == 'games-static-preview-v1':
+        from .profiles import GAMES
+        import re
+        package_digest=report.get('packageDigest')
+        if not isinstance(package_digest,str) or not re.fullmatch('[a-f0-9]{64}',package_digest):
+            raise ValueError('Games package digest missing')
+        expected.update(branch=GAMES.allowed_targets[0],profile=GAMES.validation_profile,runAttempt=1,
+                        executionProfile=GAMES.id,profileDigest=attempt['profileDigest'],packageDigest=package_digest)
     if report != expected or run.get('display_title') != 'Guardian integrated ' + attempt['requestId']:
         raise ValueError('Integrated validation binding differs')
     if attempt['state'] not in {'integrated', 'staging_deployed'} or attempt['publication']['head'] != report['commit']:
@@ -106,6 +114,9 @@ def ci_source(run_id, request=None):
         if not policy['enabled'] or os.getenv('GUARDIAN_ENABLED') != 'true' or len(rows) != 1:
             raise ValueError('Integration permission revoked')
         task = task_contract(raw_task)
+        from .profiles import resolve_profile,WEB as WEB_PROFILE
+        if resolve_profile(task)!=WEB_PROFILE:
+            raise ValueError('Games requires its separate Hosting-only handoff; Web deploy forbidden')
         if digest(task) != attempt['taskHash'] or task['base_sha'] != rows[0]['approvedSha']:
             raise ValueError('Integrated task approval changed')
         head = verify_ci(run, report, attempt)
@@ -178,6 +189,36 @@ def reconcile_deployment(attempt, persist=None):
                        deployReason='Hosting and AI Functions receipts verified; Martin device acceptance open. Rules unchanged by this task.')
     except (ValueError, RuntimeError, KeyError) as exc:
         attempt['deployReason'] = str(exc)
+
+
+def reconcile_profile_deployment(attempt,persist=None):
+    if attempt.get('executionProfile','web-ui-v1') == 'web-ui-v1':
+        reconcile_deployment(attempt,persist=persist)
+        return 'verified' if attempt.get('state')=='staging_deployed' else 'blocked'
+    if attempt.get('executionProfile') != 'games-static-preview-v1':
+        raise ValueError('Unknown deployment profile')
+    evidence=attempt.get('gamesEvidence')
+    if not evidence:
+        attempt['deployReason']='Games publication missing/unknown; verify existing run and setup/channel ownership before any dispatch'
+        return 'blocked'
+    try:
+        from .games_static import verify_games_receipt
+        from .profiles import GAMES
+        target=api('git/ref/heads/'+GAMES.allowed_targets[0])['object']['sha']
+        run=api('actions/runs/'+str(attempt['deploymentRequest']['runId']))
+        if (run.get('path')!='.github/workflows/guardian-games-staging.yml' or run.get('head_branch')!='main'
+                or run.get('status')!='completed' or run.get('conclusion')!='success' or run.get('run_attempt',1)!=1
+                or run.get('head_repository',{}).get('full_name')!=REPO):
+            raise ValueError('Trusted Games publication not completed')
+        receipt=artifact_document(run['id'],'guardian-games-receipt','receipt.json')
+        verify_games_receipt(receipt,attempt,evidence['ci'],evidence['manifest'],target)
+        attempt.update(state='staging_deployed',deploymentReceipts={'hosting':{'runId':run['id'],'commit':target,'version':receipt['version']}},
+                       deployReason='Separate Games Hosting verified; no Web/Functions/Rules deployment, human acceptance open')
+        if persist: persist()
+        return 'verified'
+    except (KeyError,ValueError,RuntimeError) as exc:
+        attempt['deployReason']=str(exc)
+        return 'blocked'
 
 
 def main():

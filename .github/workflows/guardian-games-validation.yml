@@ -1,0 +1,62 @@
+name: Guardian isolated Games validation
+on:
+  workflow_call:
+    inputs:
+      head:
+        required: true
+        type: string
+      control_sha:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  games:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.control_sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.head }}
+          path: source
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install fixed browser toolchain outside candidate
+        run: |
+          browser_tools=$(mktemp -d /tmp/gradecrew-games-browser.XXXXXX)
+          npm install --prefix "$browser_tools" --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          PLAYWRIGHT_BROWSERS_PATH="$browser_tools/browsers" "$browser_tools/node_modules/.bin/playwright" install --with-deps chromium
+          sudo chmod -R a+rX "$browser_tools"
+          echo "NODE_PATH=$browser_tools/node_modules" >> "$GITHUB_ENV"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$browser_tools/browsers" >> "$GITHUB_ENV"
+      - name: Protect trusted validators and create unprivileged candidate user
+        run: |
+          sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
+          sudo chown -R root:root tools/automation
+          sudo chmod -R a+rX tools/automation
+      - name: Credential-free fixed source validation and browser probe
+        run: bash tools/automation/validate-games-static.sh
+        env:
+          EXPECTED_HEAD: ${{ inputs.head }}
+          GC_GAMES_SANDBOX_USER: gradecrew-validator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-tests
+          path: evidence/tests.json
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-games-package
+          path: |
+            evidence/public/
+            evidence/package-manifest.json
+          if-no-files-found: error
+          retention-days: 30

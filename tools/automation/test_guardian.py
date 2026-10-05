@@ -147,3 +147,12 @@ class GuardianTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class EntrypointTests(unittest.TestCase):
+    def test_direct_guardian_script_imports_the_same_profile_contract_as_actions(self):
+        import subprocess,sys
+        script=Path(g.__file__).resolve()
+        root=script.parents[2]
+        program='import runpy; scope=runpy.run_path('+repr(str(script))+'); scope["validate_policy"]('+repr(POLICY)+')'
+        result=subprocess.run([sys.executable,'-I','-c',program],cwd=root,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)

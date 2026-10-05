@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def admission(policy, task, ledger, current_sha):
     validate_policy(policy); task_contract(task)
+    from .profiles import admitted_profile, WEB as WEB_PROFILE
+    profile = admitted_profile(task,policy)
     if current_sha != task['base_sha']:
         raise ValueError('Task base no longer current; inspect and update task, never silently rebase')
     if any(a.get('taskId') == task['id'] for rows in ledger['attempts'].values() for a in rows):
@@ -23,7 +25,9 @@ def admission(policy, task, ledger, current_sha):
         raise ValueError('Task already admitted; use controller status instead of duplicate admission')
     result['enabled'] = True
     result['workstreams'].append({'id': task['id'], 'taskId': task['id'], 'enabled': True, 'execution': 'pipeline-v2',
-        'baseBranch': WEB, 'approvedSha': task['base_sha'], 'maxAutomaticStage': 'staging_deployed'})
+        'baseBranch': task['base_branch'], 'approvedSha': task['base_sha'], 'maxAutomaticStage': 'staging_deployed'})
+    if profile != WEB_PROFILE:
+        result['workstreams'][-1].update(executionProfile=profile.id,profileDigest=task['profile_digest'],validationProfile=profile.validation_profile)
     return validate_policy(result)
 
 
@@ -40,9 +44,9 @@ def main():
     document = api('contents/'+path+'?ref=main')
     policy = json.loads(base64.b64decode(document['content']))
     ledger, _ = read_ledger()
-    current = api('git/ref/heads/'+WEB)['object']['sha']
+    current = api('git/ref/heads/'+task['base_branch'])['object']['sha']
     updated = admission(policy, task, ledger, current)
-    if api('git/ref/heads/'+WEB)['object']['sha'] != task['base_sha']:
+    if api('git/ref/heads/'+task['base_branch'])['object']['sha'] != task['base_sha']:
         raise ValueError('Target changed during admission')
     api('contents/'+path, 'PUT', {'branch':'main','sha':document['sha'],
         'message':'guardian: explicitly admit bounded task '+task_id,

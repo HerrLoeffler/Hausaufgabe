@@ -69,6 +69,7 @@ jobs:
       pull-requests: write
     outputs:
       head: ${{ steps.publish.outputs.head }}
+      profile: ${{ steps.publish.outputs.profile }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -89,12 +90,21 @@ jobs:
           if-no-files-found: error
   validate:
     needs: publish
+    if: needs.publish.outputs.profile == 'web-ui-v1'
     uses: ./.github/workflows/guardian-web-validation.yml
     with:
       head: ${{ needs.publish.outputs.head }}
       control_sha: ${{ github.sha }}
+  validate-games:
+    needs: publish
+    if: needs.publish.outputs.profile == 'games-static-preview-v1'
+    uses: ./.github/workflows/guardian-games-validation.yml
+    with:
+      head: ${{ needs.publish.outputs.head }}
+      control_sha: ${{ github.sha }}
   reviews:
-    needs: [publish, validate]
+    needs: [publish, validate, validate-games]
+    if: always() && needs.publish.result == 'success' && (needs.validate.result == 'success' || needs.validate-games.result == 'success')
     strategy:
       fail-fast: false
       matrix:
@@ -139,7 +149,8 @@ jobs:
           path: evidence/${{ matrix.role }}.json
           if-no-files-found: warn
   integrate:
-    needs: [publish, validate, reviews]
+    needs: [publish, validate, validate-games, reviews]
+    if: always() && needs.reviews.result == 'success' && (needs.validate.result == 'success' || needs.validate-games.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -168,7 +179,7 @@ jobs:
           path: evidence/integration.json
           if-no-files-found: warn
   finalize:
-    needs: [prepare, build, publish, validate, reviews, integrate]
+    needs: [prepare, build, publish, validate, validate-games, reviews, integrate]
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -188,7 +199,7 @@ jobs:
         run: python3 -m tools.automation.execution finalize
         env:
           GH_TOKEN: ${{ github.token }}
-          VALIDATION_RESULT: ${{ needs.validate.result }}
+          VALIDATION_RESULT: ${{ needs.validate.result == 'skipped' && needs.validate-games.result || needs.validate.result }}
           REVIEW_RESULT: ${{ needs.reviews.result }}
       - name: Explain saved result
         run: echo 'Result and blockers saved in automation/guardian-state. API ambiguity never triggers a blind retry. Production and Martin acceptance remain human gates.' >> "$GITHUB_STEP_SUMMARY"
