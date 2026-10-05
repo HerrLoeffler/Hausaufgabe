@@ -451,6 +451,18 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "i18n-content-labels-v1",
+      "title": "GC-I18N-03 / Prüfungslabels nach contentLocale",
+      "primaryBranch": "feature/i18n-content-labels-20261005",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/i18n-content-labels-gc-i18n-03.md",
+      "relatedBranches": [
+        "feature/i18n-cache-v3-reconcile-20261004",
+        "docs/gc-i18n-03-handoff-20261005"
+      ]
     }
   ]
 }

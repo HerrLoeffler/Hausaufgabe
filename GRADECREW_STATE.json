@@ -593,6 +593,24 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "i18n-content-labels-v1",
+      "task_id": "GC-I18N-03",
+      "branch": "feature/i18n-content-labels-20261005",
+      "related_branches": [
+        "feature/i18n-cache-v3-reconcile-20261004"
+      ],
+      "observed_head": "2d1339806d6eb4eaf289d1a8a4d55fe7df95739a",
+      "stage": "ci_green",
+      "pull_request": 139,
+      "combined_ci": "success_run_37325767018_commit_2d1339806d6eb4eaf289d1a8a4d55fe7df95739a",
+      "cache_header_ci": "success_run_37276016105_commit_fe5ed72f583cebfee8d3b4991b9438a5fa3aa841",
+      "integrated_into": null,
+      "staging": "not_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/i18n-content-labels-gc-i18n-03.md",
+      "next_action": "Vor Integration #137/#139-Reihenfolge und #51-Workflow-Overlap auf frischem Development Status prüfen; danach exakt geprüften Stand integrieren und getrennte Staging-Hosting/Assessment-Functions-Gates sowie DE/EN-Abnahme durchführen."
     }
   ],
   "deployments": [
