@@ -4,6 +4,12 @@ Stand: 05.10.2026
 Task: `GC-CLASSROOM-01`  
 Status: Rechts-/Architekturreview, keine Rechtsberatung, kein Produktcode, kein Deploy.
 
+## Aktuelle Präzisierung für Schuljahreswechsel
+
+Der neue [Identitäts-/ASV-Abgleichsentwurf](CLASSROOM_IDENTITY_ASV_ROLLOVER.md) präzisiert die frühere „lokale Mapping-Datei“: empfohlen werden ein schulisch verwalteter Schlüssel und lokal berechnete HMAC-Pseudonyme aus dem bestätigten ASV-Differenzierungsmerkmal. Ein verschlüsseltes schulisches Mapping bleibt Alternative. Die Rohdatei, Namen und rohe ASV-ID werden weiterhin nicht an GradeCrew übertragen.
+
+Das neue Dokument ist ein Architekturvorschlag zur Prüfung. Es enthält Schlüsselverwaltung/Recovery, schulspezifische Identität, Jahresmitgliedschaften, Importumfang, Abgänge und getrennte Aufbewahrung. Die ältere Aussage „Referenz optional“ gilt nur für eine Erstanlage: zuverlässig automatischer Wiederimport erfordert eine bestätigte stabile Kennung. Name, Alias und Zugangscode sind keine Ersatzschlüssel. Historische Leistungsnachweise brauchen eine erforderliche schulische Zuordnung; dauerhaftes Mapping und Codeausgabe werden getrennt. Noch kein Produktcode und kein Deploy.
+
 ## 1. Ergebnis in einem Satz
 
 Für GradeCrew V1 soll ein ASV-/CSV-Import **nur lokal im Browser** ausgewertet werden. Vorname, Nachname und eine etwaige ASV-Referenz werden ausschließlich zur lokalen Zuordnung verwendet und **nicht an GradeCrew-Server übertragen oder dort gespeichert**. GradeCrew erhält nur eine pseudonyme StudentIdentity, ein zufälliges klassenbezogenes Alias und die für Authentifizierung/Zuordnung nötigen technischen IDs. Die Lehrkraft erhält lokal eine Zuordnungsliste Name ↔ Alias ↔ persönlicher Zugangscode.
@@ -96,7 +102,7 @@ Davon werden benötigt:
 - Vorname: nur lokal für die Zuordnungsliste;
 - Nachname: nur lokal für die Zuordnungsliste;
 - Klasse: darf als organisatorische Gruppenzuordnung an GradeCrew übertragen werden;
-- Referenz: optional; nur lokal für einen späteren Abgleich, niemals roh an GradeCrew übertragen.
+- Referenz: für eine reine Erstanlage optional; für zuverlässigen automatischen Wiederimport ist eine bestätigte stabile Kennung erforderlich. Nur lokal verwenden, niemals roh an GradeCrew übertragen.
 
 Nicht importieren:
 - Geburtsdatum;
@@ -168,38 +174,38 @@ Eigenschaften:
 7. Die Rohdatei und Namensdaten werden nach Abschluss aus dem UI-/JS-Zustand entfernt.
 8. Lehrkraft erhält lokal eine Zuordnungsliste.
 
-## 7. Zuordnungsliste für die Lehrkraft
+## 7. Schulische Zuordnung und separate Codeausgabe
 
 Beispiel:
 
 ```csv
-Vorname;Nachname;Klasse;GradeCrew-Alias;Zugangscode
-Max;Mustermann;1a;M7Q4;7KPM-W4TX-N8QR
-Lisa;Straußenberg;3a;K2PX;5RZ8-PQ7M-X3KT
+Vorname;Nachname;Klasse;GradeCrew-StudentIdentity;GradeCrew-Alias
+Max;Mustermann;1a;stu_beispiel1;M7Q4
+Lisa;Straußenberg;3a;stu_beispiel2;K2PX
 ```
 
 Diese Datei wird **lokal erzeugt** und nicht zurück an GradeCrew hochgeladen.
 
-Sie ist personenbezogen und enthält zusätzlich Zugangsdaten. Deshalb:
+Die dauerhafte Zuordnung ist personenbezogen und enthält keine Zugangscodes. Neue Codes werden separat einmalig als Karten oder kontrollierte Ausgabe bereitgestellt. Deshalb:
 - deutlicher Sicherheitshinweis;
 - nur auf schulisch freigegebenem Speicher ablegen;
 - nicht über private Mail/Cloud versenden;
 - Ausdruck sicher verwahren;
 - nicht länger als nötig aufbewahren;
-- bei Code-Neugenerierung alte Liste aktualisieren/vernichten.
+- bei Code-Neugenerierung alte Codeausgaben ungültig machen und nicht mehr erforderliche Kopien vernichten; die dauerhafte Identitätszuordnung bleibt bestehen.
 
 V1 speichert die Zuordnung Name ↔ Alias bewusst nicht auf GradeCrew-Servern.
 
-## 8. Wiederholter ASV-Import / Schuljahreswechsel
+## 8. Wiederholter ASV-Import / Schuljahreswechsel (früherer Entwurf)
 
-Das schwierigste Datenschutz-/Usability-Thema ist das Wiedererkennen bestehender Schüler.
+Die folgende Mapping-Variante bleibt als Alternative dokumentiert. Der aktuelle, vollständigere Architekturvorschlag und die empfohlenen HMAC-/Recovery-Regeln stehen im [Schuljahreswechsel-Entwurf](CLASSROOM_IDENTITY_ASV_ROLLOVER.md).
 
 ### Privacy-first V1
 
 Beim ersten Import erzeugt GradeCrew zusätzlich eine lokale Mapping-Datei:
 
 ```
-ASV-Referenz -> GradeCrew membershipId/studentIdentityId
+Schule + ASV-Quell-Namensraum + ASV-Referenz -> GradeCrew studentIdentityId
 ```
 
 Die rohe ASV-Referenz bleibt ausschließlich in dieser lokalen Mapping-Datei.
@@ -304,5 +310,5 @@ GradeCrew soll vor produktiver Nutzung mit echten Schülerdaten mindestens berei
 - Persönlicher Zugangscode bleibt separate geheime Credential.
 - Verifizierte Accounts für Leistungsnachweise werden durch die Lehrkraft angelegt.
 - Selbstbeitritt ist ein eigener, schwächerer Vertrauensmodus.
-- Mapping Name ↔ Alias ↔ Code wird lokal erzeugt und von der Schule verwahrt.
+- Dauerhafte Zuordnung Name ↔ StudentIdentity/Alias wird schulisch verwahrt; einmalige Codeausgabe bleibt getrennt.
 - Production erst nach separatem Datenschutz-/Vertragsreview.
