@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-06",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -451,6 +451,15 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "plugins-tool-strategy-20261006",
+      "title": "Astra-Kurs / proaktive GradeCrew-Werkzeugwahl",
+      "primaryBranch": "docs/gc-plugins-01-video-20261006",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/plugins-tool-strategy-20261006.md",
+      "relatedBranches": []
     }
   ]
 }
