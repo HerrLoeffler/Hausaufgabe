@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-06",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -451,6 +451,14 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "ios-native-bridge-019",
+      "title": "GC-IOS-02 / Native Dateibrücke 0.1.9",
+      "primaryBranch": "feature/ios-native-bridge-019-20261005",
+      "integrationTarget": "feature/shared-gradecrew-design-system",
+      "state": "active",
+      "handoff": "workstreams/ios-native-bridge-019.md"
     }
   ]
 }
