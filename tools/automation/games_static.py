@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import sys
 from .pipeline import digest, sha
 from .profiles import GAMES, ROOT, profile_digest
 
@@ -64,10 +65,15 @@ def node_command(args,environ):
 
 
 def run_node(args,cwd=None):
-    subprocess.run(node_command(args,os.environ),cwd=cwd,env=node_environment(os.environ),check=True)
+    result=subprocess.run(node_command(args,os.environ),cwd=cwd,env=node_environment(os.environ),capture_output=True,text=True)
+    if result.stdout:sys.stdout.write(result.stdout)
+    if result.stderr:sys.stderr.write(result.stderr)
+    if result.returncode:
+        raise subprocess.CalledProcessError(result.returncode,['node',*args],output=result.stdout,stderr=result.stderr)
+    return result
 
 
-def validate_source(source,head,output,base=None):
+def _validate_source(source,head,output,base=None):
     source=Path(source).resolve(); output=Path(output).resolve(); output.mkdir(parents=True,exist_ok=True)
     actual=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
     if actual!=sha(head): raise ValueError('Games checkout differs')
@@ -92,21 +98,65 @@ def validate_source(source,head,output,base=None):
         build=Path(temp)/'build';build.mkdir()
         if os.environ.get('GC_GAMES_SANDBOX_USER'):
             subprocess.run(['sudo','chown','gradecrew-validator',str(build)],check=True)
-        run_node(['--check',str(scratch/'lab/escape-expedition/app.js')])
-        run_node(['--test',str(scratch/'tools/games/escape-expedition.test.cjs')],cwd=scratch)
-        package=build/'package'
-        run_node([str(fixtures/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch)
-        manifest=validate_games_package(package/'public',head,changes)
-        for name in NAMES:
-            if (package/'public'/name).read_bytes()!=(source/'lab/escape-expedition'/name).read_bytes(): raise ValueError('Builder changed candidate bytes')
-        shutil.copytree(package/'public',output/'public',dirs_exist_ok=True)
-        for path in scratch.rglob('*'):
-            if path.is_dir():path.chmod(0o755)
-        scratch.chmod(0o755)
+        try:
+            run_node(['--check',str(scratch/'lab/escape-expedition/app.js')])
+            run_node(['--test',str(scratch/'tools/games/escape-expedition.test.cjs')],cwd=scratch)
+            package=build/'package'
+            run_node([str(fixtures/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch)
+            manifest=validate_games_package(package/'public',head,changes)
+            for name in NAMES:
+                if (package/'public'/name).read_bytes()!=(source/'lab/escape-expedition'/name).read_bytes(): raise ValueError('Builder changed candidate bytes')
+            shutil.copytree(package/'public',output/'public',dirs_exist_ok=True)
+        finally:
+            # Only the fixed runner-created build root is reclaimed. -h and
+            # recursive chown do not follow candidate-created symlink targets.
+            if os.environ.get('GC_GAMES_SANDBOX_USER'):
+                owner=str(os.getuid())+':'+str(os.getgid())
+                subprocess.run(['sudo','chown','-R','-h',owner,str(build)],check=True)
+            for path in scratch.rglob('*'):
+                if path.is_dir():path.chmod(0o755)
+            scratch.chmod(0o755)
     report=games_test_report(head,base,profile_digest(GAMES,ROOT),manifest,'success')
     (output/'package-manifest.json').write_text(json.dumps(manifest,sort_keys=True)+'\n')
     (output/'tests.json').write_text(json.dumps(report,sort_keys=True)+'\n')
     return report
+
+
+def record_validation_failure(output,head,base,exc):
+    output=Path(output);output.mkdir(parents=True,exist_ok=True)
+    tail='\n'.join(str(x) for x in (getattr(exc,'output',''),getattr(exc,'stderr','')) if x)
+    infrastructure = isinstance(exc,(OSError,RuntimeError)) and not isinstance(exc,subprocess.CalledProcessError)
+    infrastructure = infrastructure or any(marker in tail for marker in ('EACCES','EPERM','ENOENT','Executable doesn','browserType.launch'))
+    completed = isinstance(exc,subprocess.CalledProcessError) and exc.returncode>0 and not infrastructure
+    result='failure' if completed else 'blocked'
+    report={'profile':GAMES.validation_profile,'executionProfile':GAMES.id,'profileDigest':profile_digest(GAMES,ROOT),
+            'head':sha(head),'base':sha(base) if base else None,'result':result,'packagedFiles':[]}
+    (output/'tests.json').write_text(json.dumps(report)+'\n')
+    feedback={'result':result,'tail':tail[-6000:],'packaging':str(exc)[:2000]}
+    (output/'test-feedback.json').write_text(json.dumps(feedback)+'\n')
+    return report
+
+
+def validate_source(source,head,output,base=None):
+    try:
+        return _validate_source(source,head,output,base)
+    except (ValueError,OSError,subprocess.CalledProcessError) as exc:
+        parent=base
+        if parent is None:
+            try:
+                parents=subprocess.check_output(['git','-C',str(source),'show','-s','--format=%P',head],text=True).split()
+                if len(parents)==1:parent=parents[0]
+            except (OSError,subprocess.CalledProcessError):pass
+        record_validation_failure(output,head,parent,exc)
+        raise
+
+
+def validate_browser(public,head,base,output):
+    try:
+        run_node(['tools/automation/games-static-smoke.cjs',str(public)])
+    except (ValueError,OSError,subprocess.CalledProcessError) as exc:
+        record_validation_failure(output,head,base,exc)
+        raise
 
 
 def main():

@@ -4,6 +4,9 @@ set -euo pipefail
 node -e 'if (process.versions.node.split(".")[0] !== "22") process.exit(1)'
 python3 -m tools.automation.games_static --source source --head "$EXPECTED_HEAD" --output evidence
 python3 - <<'PYRUN'
-from tools.automation.games_static import run_node
-run_node(['tools/automation/games-static-smoke.cjs','evidence/public'])
+import json
+from pathlib import Path
+from tools.automation.games_static import validate_browser
+report=json.loads(Path('evidence/tests.json').read_text())
+validate_browser('evidence/public',report['head'],report['base'],'evidence')
 PYRUN

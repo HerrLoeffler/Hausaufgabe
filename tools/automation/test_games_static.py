@@ -80,3 +80,138 @@ class RunnerIsolationTests(unittest.TestCase):
         command=g.node_command(['--test','/trusted/test.cjs'],{'GITHUB_ACTIONS':'true','GC_GAMES_SANDBOX_USER':'gradecrew-validator','PATH':'/trusted/bin'})
         self.assertEqual(command[:5],['sudo','-u','gradecrew-validator','env','-i'])
         self.assertEqual(command[-3:],['node','--test','/trusted/test.cjs'])
+
+class FailureEvidenceTests(unittest.TestCase):
+    def source_repo(self,app):
+        import subprocess
+        folder=Path(self.tmp.name)/'source';folder.mkdir()
+        files=folder/'lab/escape-expedition';files.mkdir(parents=True)
+        for name,text in {'index.html':'<!doctype html><script src="app.js"></script>',
+            'styles.css':'body{color:green}','app.js':'console.log("old");'}.items():(files/name).write_text(text)
+        def git(*args):return subprocess.check_output(['git','-C',str(folder),*args],text=True,stderr=subprocess.DEVNULL).strip()
+        git('init');git('config','user.name','Offline fixture');git('config','user.email','fixture@example.invalid')
+        git('add','.');git('commit','-m','base');base=git('rev-parse','HEAD')
+        (files/'app.js').write_text(app);git('add','.');git('commit','-m','synthetic candidate')
+        return folder,git('rev-parse','HEAD'),base
+
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
+
+    def test_syntax_failure_writes_bound_actionable_evidence(self):
+        import json,subprocess
+        from tools.automation import games_static as g
+        source,head,base=self.source_repo('const broken = ;')
+        output=Path(self.tmp.name)/'evidence'
+        with self.assertRaises((ValueError,subprocess.CalledProcessError)):
+            g.validate_source(source,head,output,base)
+        self.assertTrue((output/'tests.json').exists(),'Completed syntax failure must not become unknown')
+        report=json.loads((output/'tests.json').read_text());feedback=json.loads((output/'test-feedback.json').read_text())
+        self.assertEqual(report['head'],head);self.assertEqual(report['base'],base)
+        self.assertEqual(report['result'],'failure');self.assertIn('SyntaxError',feedback['tail'])
+        self.assertNotEqual(report['result'],'success')
+
+    def test_browser_failure_overwrites_success_without_claiming_package_validation(self):
+        import json,subprocess
+        from tools.automation import games_static as g
+        output=Path(self.tmp.name)/'evidence';output.mkdir()
+        (output/'tests.json').write_text(json.dumps({'head':'a'*40,'base':'b'*40,'result':'success'}))
+        if not hasattr(g,'record_validation_failure'):self.fail('Browser/deterministic failure evidence adapter missing')
+        failure=subprocess.CalledProcessError(1,['node','smoke'],output='AssertionError: learner dialog never opened')
+        g.record_validation_failure(output,'a'*40,'b'*40,failure)
+        report=json.loads((output/'tests.json').read_text())
+        self.assertEqual(report['result'],'failure');self.assertEqual(report['head'],'a'*40)
+        feedback=json.loads((output/'test-feedback.json').read_text())
+        self.assertIn('learner dialog',feedback['tail']);self.assertLessEqual(len(feedback['tail']),6000)
+        g.record_validation_failure(output,'a'*40,'b'*40,FileNotFoundError('browser unavailable'))
+        self.assertEqual(json.loads((output/'tests.json').read_text())['result'],'blocked')
+
+
+class RealUidValidationTests(unittest.TestCase):
+    def test_successful_package_is_reported_and_cleaned_with_the_actual_ci_user(self):
+        import os,subprocess,json,shutil
+        from tools.automation import games_static as g
+        if os.environ.get('GC_GAMES_SANDBOX_USER')!='gradecrew-validator':self.skipTest('Real separate-UID regression requires the Linux CI fixture')
+        original=Path(os.environ['GC_GAMES_REAL_UID_TEST_SOURCE'])/'lab/escape-expedition'
+        with tempfile.TemporaryDirectory() as temp:
+            source=Path(temp)/'source';files=source/'lab/escape-expedition';files.mkdir(parents=True)
+            for name in ('index.html','styles.css','app.js'):shutil.copyfile(original/name,files/name)
+            app=(files/'app.js').read_text()+'\n// Synthetic cleanup candidate only.\n'
+            def git(*args):return subprocess.check_output(['git','-C',str(source),*args],text=True,stderr=subprocess.DEVNULL).strip()
+            git('init');git('config','user.name','Synthetic UID fixture');git('config','user.email','fixture@example.invalid')
+            git('add','.');git('commit','-m','original fixture');base=git('rev-parse','HEAD')
+            (files/'app.js').write_text(app);git('add','.');git('commit','-m','synthetic compatible timings');head=git('rev-parse','HEAD')
+            output=Path(temp)/'evidence'
+            from unittest.mock import patch
+            control=synthetic_validation_root(Path(temp)/'control')
+            with patch.object(g,'ROOT',control):
+                report=g.validate_source(source,head,output,base)
+            self.assertEqual(report['result'],'success')
+            self.assertEqual(json.loads((output/'tests.json').read_text())['head'],head)
+            manifest=json.loads((output/'package-manifest.json').read_text())
+            self.assertEqual(manifest['sourceSha'],head)
+            self.assertEqual(set(manifest['files']),{'app.js','index.html','styles.css'})
+
+class OwnershipBoundaryTests(unittest.TestCase):
+    def test_builder_ownership_is_reclaimed_before_successful_temp_cleanup(self):
+        """Model unavailable sudo ownership boundary; run real Node/tests/files.
+
+        A separate Linux CI test below verifies this against the actual UID.
+        """
+        import os,subprocess,json
+        from unittest.mock import patch
+        from tools.automation import games_static as g
+        real_tempfile=tempfile.TemporaryDirectory;real_run=subprocess.run
+        real_source=Path(os.environ['GC_GAMES_REAL_UID_TEST_SOURCE'])/'lab/escape-expedition' if os.environ.get('GC_GAMES_REAL_UID_TEST_SOURCE') else Path(__file__).resolve().parents[3]/'games-snapshot-checkout/lab/escape-expedition'
+        if not real_source.is_dir():self.skipTest('Pinned local Games source fixture is unavailable; Linux real-UID test covers this boundary')
+        borrowed=set()
+        class OwnerContext:
+            def __init__(self,*args,**kwargs):self.inner=real_tempfile(*args,**kwargs)
+            def __enter__(self):return self.inner.__enter__()
+            def __exit__(self,*args):
+                try:
+                    if borrowed:raise PermissionError('Runner cannot delete validator-owned package/public')
+                finally:self.inner.__exit__(*args)
+        def boundary_run(command,**kwargs):
+            if command[:3]==['sudo','chown','gradecrew-validator']:
+                borrowed.add(command[-1]);return subprocess.CompletedProcess(command,0)
+            if command[:4]==['sudo','chown','-R','-h']:
+                self.assertEqual(command[4],str(os.getuid())+':'+str(os.getgid()))
+                borrowed.discard(command[-1]);return subprocess.CompletedProcess(command,0)
+            if command[:5]==['sudo','-u','gradecrew-validator','env','-i']:
+                at=command.index('node');env={item.split('=',1)[0]:item.split('=',1)[1] for item in command[5:at]}
+                return real_run(command[at:],**(kwargs|{'env':env}))
+            return real_run(command,**kwargs)
+        with real_tempfile() as temp:
+            fixture=FailureEvidenceTests();fixture.tmp=type('Tmp',(),{'name':temp})()
+            app=(real_source/'app.js').read_text()+'\n// Synthetic cleanup candidate only.\n'
+            source,head,base=fixture.source_repo(app)
+            for name in ('index.html','styles.css'):
+                (source/'lab/escape-expedition'/name).write_bytes((real_source/name).read_bytes())
+            # Include these copied source files in a local synthetic commit.
+            subprocess.run(['git','-C',str(source),'add','.'],check=True,capture_output=True)
+            subprocess.run(['git','-C',str(source),'commit','--amend','--no-edit'],check=True,capture_output=True)
+            head=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
+            control=synthetic_validation_root(Path(temp)/'control')
+            with patch.object(g,'ROOT',control),patch.object(g.tempfile,'TemporaryDirectory',OwnerContext),patch.object(g.subprocess,'run',side_effect=boundary_run), \
+                 patch.dict(os.environ,{'GC_GAMES_SANDBOX_USER':'gradecrew-validator'}):
+                try:report=g.validate_source(source,head,Path(temp)/'evidence',base)
+                except PermissionError as exc:self.fail(str(exc))
+            self.assertEqual(report['result'],'success');self.assertEqual(borrowed,set())
+
+
+def synthetic_validation_root(target):
+    """Ownership regression only; never qualifies the original Games suite."""
+    import shutil
+    from tools.automation import games_static as g
+    target.parent.chmod(0o755)
+    tools=target/'tools/automation';tools.mkdir(parents=True)
+    for name in ('profiles.py','pipeline.py'):shutil.copyfile(g.ROOT/'tools/automation'/name,tools/name)
+    fixtures=tools/'fixtures/games-static-v1'
+    shutil.copytree(g.ROOT/'tools/automation/fixtures/games-static-v1',fixtures)
+    (fixtures/'PROVENANCE.md').write_text('Synthetic ownership fixture only; does not qualify the actual Games source.\n')
+    (fixtures/'tools/games/escape-expedition.test.cjs').write_text(
+        "const test=require('node:test'); const fs=require('node:fs');\n"
+        "test('isolated user can read all three source files',()=> {\n"
+        "for(const name of ['index.html','styles.css','app.js']) fs.accessSync('lab/escape-expedition/'+name,fs.constants.R_OK);\n"
+        "});\n")
+    return target
