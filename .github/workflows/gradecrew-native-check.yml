@@ -7,13 +7,6 @@ on:
       - native/GradeCrewTeacher/**
       - native/Shared/**
       - .github/workflows/gradecrew-native-check.yml
-  push:
-    branches: ['feature/ios-native-bridge-*']
-    paths:
-      - native/GradeCrewTeacher/**
-      - native/Shared/**
-      - .github/workflows/gradecrew-native-check.yml
-
 permissions:
   contents: read
 

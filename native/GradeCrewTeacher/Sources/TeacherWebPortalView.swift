@@ -133,7 +133,7 @@ struct GradeCrewWebView: UIViewRepresentable {
             parent.onLoadedURLChanged?(webView.url)
             let loadedURL = webView.url
             webView.callAsyncJavaScript("return await window.GradeCrewNative.diagnostics();", arguments: [:], in: nil, in: .page) { [weak self, weak webView] result in
-                guard let self, let webView, webView.url == loadedURL else { return }
+                guard let self, let webView, navigation === self.latestNavigation, webView.url == loadedURL else { return }
                 if case let .success(value) = result, let diagnostics = value as? [String: Any] {
                     self.parent.onWebManifestCommitChanged?(diagnostics["webManifestCommit"] as? String)
                 } else { self.parent.onWebManifestCommitChanged?(nil) }
