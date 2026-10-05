@@ -71,3 +71,76 @@ Für den ersten Hero-Pass sind zusätzliche Accessoires nicht zwingend: Entschei
 
 Mit Canva und/oder Bildgenerierung 3 klar unterscheidbare Hero-Art-Directions aus dem bestätigten Referenzbild entwickeln, **noch ohne Web-Code umzubauen**. Martin wählt eine Richtung. Erst danach wird die responsive Scene-/Animation-Architektur umgesetzt.
 
+
+## Wiederaufnahme 06.10.2026 – Referenztreue vor weiterem Web-Polish
+
+### Auftrag und Zuständigkeit
+
+- Bestehende Task-ID: GC-DESIGN-05; keine neue Design-Aufgabe und kein Zurücksetzen früherer Versuche.
+- Nutzerauftrag: anhand des erneut angehängten Wunschbilds einen sauberen Weg zu einer hochwertigen Startseite beurteilen. Coco an der Tür, gemeinsame Crew im Klassenzimmer, spätere Türöffnung und saisonale Varianten.
+- Vorheriger Chat: Design GC (6ac039dc-174c-83ed-8b2b-244fc51e5a36); bei Prüfung idle.
+- Aktueller Planungs-Chat: Erstelle drei Hero-Art-Directions (01a10e51-7f71-7bb3-9390-d8637367bb66); keine fremde Code-Baustelle übernommen.
+- Prüfmoment: 2026-10-05 23:09 UTC / 06.10.2026 Europe/Berlin.
+- Dokumentationsbranch: docs/gc-design-05-reference-plan-20261006; Ziel main. Spätere Web-Umsetzung weiterhin nach feature/gradecrew-app-integration.
+- Folgende Gestaltung ist eine begründete Empfehlung, noch kein vom Nutzer ausgewählter visueller Master und keine freigegebene Implementierungsspezifikation.
+
+### Frisch geprüfte Belege und Grenzen
+
+- main steht auf 8360bc5f056837118ffd83138ffa2468ae42647e; PR #128 ist merged und enthält nur die Brand-/Dokumentationsentscheidung.
+- Jüngster gelesener Development-Status-Lauf 37385986317: success; Job 112019259840 samt Auditbericht gelesen. Das Audit enthält weiterhin Warnungen zu Branch-Zuordnung und Überschneidungen; Grün ist keine visuelle Abnahme.
+- Offene PRs frisch gelesen: #118 ist ein alter Guardian-v4-Draft, keine neue Hero-Szene. Keine neue bezahlte Bau-Runde oder Wiederholung gestartet.
+- Canva-Referenz tatsächlich gefunden und Metadaten abgerufen: DAHXHxRbcDg, „GradeCrew Startscreen v4 – Canva reference“, eine Seite. Die ältere Aussage oben „nicht gefunden“ ist damit überholt. Einzelne editierbare Szene-/Figurenebenen sind dadurch nicht nachgewiesen.
+- Die visuelle Analyse dieses Blocks bezieht sich auf den vom Nutzer angehängten Screenshot. Kein aktueller Staging-Browservergleich oder neuer Gerätetest in diesem Block.
+- Bestehende State-Datei nennt bb91ce3590d773472ece60c4dd881da729bd32c1 für den Release Train staging-batch-2026-10-04-b. Dessen Deploy-Receipts wurden in diesem Planungsblock nicht erneut unabhängig verifiziert.
+- Ungesicherte Änderungen des alten Chat-Checkouts: unbekannt. Dieser Block ändert ausschließlich Dokumentation über GitHub.
+- Frühere Provider-/Budgethistorie bleibt erhalten: GC-DESIGN-03 unbekanntes Ergebnis, 2,40 USD reserviert bei 2,55 USD Deckel laut TODO; keine neue Reservierung, kein Retry und kein Guardian-Dispatch.
+
+### Warum das Wunschbild funktioniert
+
+Coco ist groß und nah am Betrachter, links an einer geöffneten Holztür. Remy, Emmi und Wilma stehen kleiner weiter hinten. Überlappungen, gemeinsame Perspektive, weiches warmes Licht und Kontaktschatten verbinden Figuren und Raum. Der helle obere/mittlere Bereich trägt die Überschrift; Details konzentrieren sich an den Rändern. Diese Beziehungen sind die Qualitätsreferenz. Die abgebildete Browserleiste gehört nicht zur Website.
+
+Ein CSS-Polish kann weder einen fehlenden gemeinsamen Kamerawinkel noch falsch beleuchtete Einzelbilder reparieren. Der bestehende Handoff belegt zudem, dass das Referenzbild bisher kein verbindlicher visueller Input im Guardian-Gate war.
+
+### Empfohlener Aufbau
+
+1. Hochwertige, textfreie gemeinsame Raumszene produzieren; Kamera, Licht und Figurenproportionen zusammen festlegen. Kanonische Figurenreferenzen vor Produktion prüfen, nicht nur aus Tiernamen neue Figuren erzeugen.
+2. Für die Quelle bewegliche Teile von Beginn an getrennt anlegen: vollständiger Raum hinter der Tür, Tür/Rahmen, Coco, weitere Crew und notwendige Vordergrundmasken/Schatten. Gemeinsam komponieren; wahllos zusammengesetzte Cutouts vermeiden. Ein abgeflachter Screenshot liefert diese verdeckten Bildbereiche nicht.
+3. Statische Web-Ausgabe darf für Geschwindigkeit zu wenigen Bildern zusammengefasst werden. Bearbeitbare Quelldateien bleiben erhalten. Logo, Überschrift, Rollenbezeichnungen, Buttons, Testcode-Eingabe und auch Schrift auf Schild/Tafel als echte UI/übersetzbare Ebene; keine deutsche Copy ins Szenenbild einbrennen.
+4. Desktop und schmale Geräte erhalten bewusst angepasste Kompositionen. Mobile darf den Ablauf stapeln und soll Gesichter, Texte und Schülerzugang erhalten. Keine erzwungene identische Pixelanordnung auf allen Bildschirmformaten.
+5. Spätere Türöffnung als separat produzierte kurze Animation mit passendem statischem Endbild. Ein Standbild lässt sich nicht durch CSS allein glaubwürdig in eine greifende/öffnende Figur verwandeln. Für kontrollierte Gelenkbewegungen und wiederholbare Kamerafahrten geeignete Animationsquellen bzw. geriggte 3D-Modelle prüfen; aus vorhandenen PNG/SVG-Dateien kein vorhandenes Rig ableiten.
+6. Saisonale Motive als zusammengehörige Varianten mit festen Positionen/Freiraum für die UI: z. B. identische Grundszene mit passendem Coco-Schal. Schatten und Verdeckungen mitprüfen; Accessoire-Tausch ist nicht immer ein einzelnes Overlay.
+7. Bestehende Login-/Registrierungs-/Testcode-Abläufe weiterverwenden. Hero-Bild darf sofort erscheinen; optionale Bewegung lädt ergänzend. Vorgaben oben für Reduced Motion, Skip, Folgebesuche und fehlendes Audio bleiben bestehen.
+
+### Vergleich der Wege – Empfehlung, kein gemessener Qualitätswert
+
+Gleiche Kriterien: Nähe zum Wunschbild, verlässliche Wiederverwendung und angemessener Aufwand für den ersten überzeugenden Startscreen.
+
+| Weg | Eignung | Stärke / entscheidende Grenze |
+|---|---|---|
+| Weiterer CSS-Raum mit bestehenden Einzelbildern | 3/10 | Schnell anpassbar, löst gemeinsame Beleuchtung/Perspektive nur begrenzt. |
+| Gemeinsam gestaltete Szene + echte Web-UI | 9/10 | Beste Balance für den statischen Ziel-Look; benötigt hochwertige Bildquellen und eigene mobile Komposition. |
+| Vollständige 3D-Produktion mit geriggter Crew | 7/10 für den ersten Pass | Beste Kontrolle für komplexe spätere Bewegung; Modelle/Rigs sind nicht nachgewiesen, höherer Anfangsaufwand. Muss nicht als Echtzeit-3D im Browser laufen. |
+
+### Drei Bildrichtungen konkretisieren
+
+- A „Willkommen im Klassenzimmer“: verbindlich engster Referenzvergleich; Coco groß links mit Türkontakt, warme Klasse und Crew dahinter, helle Textzone oben/rechts. Empfohlener Ausgangspunkt.
+- B „Ruhiges Lernatelier“: gleiche Figurenidentität und einladende Grundidee, weniger Requisiten, ruhigere Farben/Flächen, stärkerer Fokus auf Lesbarkeit. Nicht als automatische Verbesserung gegenüber Martins Wunschbild behandeln.
+- C „GradeCrew World“: wiedererkennbare Tür als Portal zur eigenen Lernwelt, Raum und Crew als wiederverwendbare Basis für Jahreszeiten. Mehr Eigenständigkeit, daher größtes Risiko einer erneuten Entfernung von der Vorlage.
+- Vorschlag: A als verbindlichen Referenzentwurf zuerst ausarbeiten; B/C dienen einer bewussten Auswahl, nicht einer erneuten endlosen Stilfindung. Canva dient Vergleich/Komposition; reine Importbestätigung ersetzt weder Szenenproduktion noch Web-Umsetzung.
+
+### Abnahmekriterien vor Integration
+
+- Statischer Entwurf gegen das angehängte Zielbild bei gleichem Bildausschnitt vergleichen: Coco-Größe, Türkontakt, Tiefe, Blickführung, Licht und Materialwirkung einzeln beurteilen.
+- Alle vier Figuren an kanonischen Referenzen prüfen; keine unbemerkten Gesichts-/Farb-/Körperänderungen.
+- Keine schwebenden Füße, widersprüchlichen Schatten, fehlerhaften Hände/Flügel, weißen Freistellränder oder Textartefakte.
+- Gewählten Master in echten Browser-Screenshots auf Desktop, iPad und schmalem Phone prüfen; DE/EN, längere Texte, Tastatur, Fokus, Testcode und Login einschließen.
+- Ladeverhalten und Layoutsprünge auf langsamem Mobilnetz messen; Grafikqualität und Kompression gemeinsam abnehmen. Noch keine Leistungswerte behaupten.
+- Visuelle Abnahme separat von Code-/CI-Erfolg dokumentieren. Derselbe geprüfte Commit muss im Preview nachvollziehbar sein. Martin entscheidet über den visuellen Master und die spätere optische Abnahme.
+
+### Status und genau ein nächster ausführbarer Schritt
+
+Nur Planungs-/Übergabedokumentation; keine neuen Hero-Assets, kein Web-Code, keine Animation und kein Deploy erstellt. Release-Stufe der bestehenden Web-App unverändert; Production durch diesen Block nicht verändert. Neuer Dokumentationsstand branch_only bis separat geprüft/integriert.
+
+Nächster Schritt: mit Screenshot plus kanonischen Figurenreferenzen den statischen Entwurf A als ersten der drei vergleichbaren Hero-Entwürfe produzieren und bei gleicher Ansichtsgröße vorlegen; anschließend B/C im selben Vergleichsformat. Erst nach Auswahl des visuellen Masters Implementierung spezifizieren.
+
+Technische Referenzen: [responsive Bildkomposition](https://web.dev/articles/responsive-images), [Reduced Motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion).
