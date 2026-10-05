@@ -74,3 +74,13 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 - Nicht verändert: Firestore-Regeln, Assessment-Functions, Production.
 - Offene Codebefunde: harte `de-DE`-Datumsformatierung; systemgenerierte Wahr/Falsch-/Bild-Labels folgen noch nicht konsequent `contentLocale`; Exporte/CSV noch nicht vollständig lokalisiert.
 - Nächster Schritt: Reconcile-PR öffnen, CI prüfen und erst danach über Integration/Preview entscheiden.
+
+## Übernahme 2026-10-05 – GC-I18N-03
+
+- Neuer Verantwortlicher: Codex-Chat GC-I18N-03; vorheriger Chat „Internationalisierung GC“, chatgpt-conversation://6ac2748c-7cc4-83ed-ace7-4d42752ee7ad, laut read_thread idle. Alter lokaler ungesicherter Stand unbekannt.
+- Development Status 37269176813 geprüft: #137 unregistriert; #51 verändert CI, #25 ist separater Sprachvertrag. Kein konkurrierender contentLocale-Label-PR erkannt.
+- Historischer CI-Fehler 37238257051: Katalog erwartet en-GB@1 statt @2. Reparatur d3a7615; neuer Lauf 37275593066 erreicht Firestore-Emulator erfolgreich, scheitert anschließend an zweiter veralteter Cache-Erwartung (Entry v4 statt v5). Beide Ursachen reproduziert; kein blindes Retry.
+- Dieser Checkpoint korrigiert die zweite Erwartung. Neuer Lauf anhand Branch/Head prüfen. Kein Integration-/Deploy-Nachweis. Production unverändert.
+- Folgearbeit auf eigenem Checkout/Branch: contentLocale-Labels beider Schüler-Runtimes. Zusätzlich fehlt contentLocale in publicQuizMetadata und serverseitig werden deutsche Bild-Fallbacks fest eingebaut; minimale Vertragskorrektur erforderlich, ohne Functions-Deploy.
+- Keine neuen Provider-Aufrufe/Kostenreservierungen; historische Versuchszähler/Budgets unangetastet.
+- Genau ein nächster Schritt: CI dieses Cache/Header-Checkpoints prüfen.
