@@ -48,3 +48,7 @@ Die gewünschte semantische Einzelprüfung aller206388 Frames wurde nicht durchg
 - Genau ein nächster ausführbarer Schritt: Dokumentations-PR gegen aktuelles main und Koordinationsprüfungen prüfen, dann auf ausdrücklichen Integrationsauftrag fortführen.
 
 Vor Übernahme docs/CHAT_RECOVERY.md lesen.
+
+## Bestätigte Ergänzung nach der Plugin-Empfehlung
+
+Context7 wurde vom Nutzer installiert; resolve_library_id und query_docs sind verfügbar. Den bisherigen Hinweis „nicht installiert“ für Context7 nicht weiterverwenden. Konkreter Dokumentationsabruf in dieser Analyse nicht benötigt; Installation/Werkzeugverfügbarkeit ist bestätigt, die Qualität einzelner Abfragen nicht. Auswertung aktualisiert; andere Empfehlungen vor Nutzung erneut auf aktuellen Verbindungsstand prüfen. Medienverarbeitung nicht wiederholt, keine Kosten oder Deployments ausgelöst.
