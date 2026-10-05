@@ -85,7 +85,8 @@ def main():
             try:
                 selected_profile(history[-1],task,ROOT)
             except ValueError as exc:
-                report['tasks'].append({'id':row['id'],'action':'blocked','reason':str(exc)})
+                report['tasks'].append({'id':row['id'],'taskId':task['id'],'action':'blocked','reason':str(exc),
+                                        'attempts':len(history),'latest':history[-1]})
                 continue
             before = json.dumps(history[-1], sort_keys=True)
             reconcile(history[-1], runs)

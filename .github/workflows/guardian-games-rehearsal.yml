@@ -35,7 +35,7 @@ jobs:
           GC_GAMES_SANDBOX_USER: gradecrew-validator
           GC_GAMES_REAL_UID_TEST_SOURCE: ${{ github.workspace }}/source
         run: python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
-  qualification:
+  known-blocker:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -51,14 +51,22 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Original pinned Games suite; known failure stays visible and blocks qualification
+      - name: Verify documented fixture is rejected; real Games qualification stays blocked
         run: |
           sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
           sudo chown -R root:root tools/automation
           sudo chmod -R a+rX tools/automation
-          python3 -m tools.automation.games_static --source source --head 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45 --base 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45 --output evidence
+          python3 -m tools.automation.games_qualification_probe --source source --output evidence
         env:
           GC_GAMES_SANDBOX_USER: gradecrew-validator
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-games-qualification-blocker
+          path: |
+            evidence/tests.json
+            evidence/test-feedback.json
+            evidence/qualification-blocker.json
+          if-no-files-found: error
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -76,16 +84,17 @@ jobs:
           node-version: 22
       - name: Install fixed browser toolchain without deployment credentials
         run: |
-          npm install --prefix "$RUNNER_TEMP/games-browser" --ignore-scripts --no-audit --no-fund playwright@1.62.1
-          PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/games-browser/browsers" "$RUNNER_TEMP/games-browser/node_modules/.bin/playwright" install --with-deps chromium
+          browser_tools=$(mktemp -d /tmp/gradecrew-games-browser.XXXXXX)
+          npm install --prefix "$browser_tools" --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          PLAYWRIGHT_BROWSERS_PATH="$browser_tools/browsers" "$browser_tools/node_modules/.bin/playwright" install --with-deps chromium
           sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
-          sudo chmod -R a+rX "$RUNNER_TEMP/games-browser"
+          sudo chmod -R a+rX "$browser_tools"
+          echo "NODE_PATH=$browser_tools/node_modules" >> "$GITHUB_ENV"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$browser_tools/browsers" >> "$GITHUB_ENV"
       - name: Build only pinned three-file package; never publish or run a candidate npm script
         working-directory: source
         run: node ../tools/automation/fixtures/games-static-v1/tools/build-lab-escape-expedition.mjs ../browser-package
       - name: Isolated local-resource browser smoke; not human product acceptance
-        run: python3 -c "from tools.automation.games_static import run_node; run_node(['tools/automation/games-static-smoke.cjs','browser-package/public'])"
+        run: python3 -c "from tools.automation.games_static import validate_browser; validate_browser('browser-package/public','6434ddefb83cffca7bde5a7347ed6d2f56d5cb45','6434ddefb83cffca7bde5a7347ed6d2f56d5cb45','browser-evidence')"
         env:
           GC_GAMES_SANDBOX_USER: gradecrew-validator
-          NODE_PATH: ${{ runner.temp }}/games-browser/node_modules
-          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/games-browser/browsers

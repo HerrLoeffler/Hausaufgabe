@@ -102,7 +102,7 @@ def _validate_source(source,head,output,base=None):
             run_node(['--check',str(scratch/'lab/escape-expedition/app.js')])
             run_node(['--test',str(scratch/'tools/games/escape-expedition.test.cjs')],cwd=scratch)
             package=build/'package'
-            run_node([str(fixtures/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch)
+            run_node([str(scratch/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch)
             manifest=validate_games_package(package/'public',head,changes)
             for name in NAMES:
                 if (package/'public'/name).read_bytes()!=(source/'lab/escape-expedition'/name).read_bytes(): raise ValueError('Builder changed candidate bytes')
@@ -153,7 +153,15 @@ def validate_source(source,head,output,base=None):
 
 def validate_browser(public,head,base,output):
     try:
-        run_node(['tools/automation/games-static-smoke.cjs',str(public)])
+        public=Path(public).resolve()
+        validate_games_package(public,head,list(GAMES.writable_paths))
+        with tempfile.TemporaryDirectory(prefix='gc-games-browser-') as folder:
+            probe=Path(folder);probe.chmod(0o755)
+            script=probe/'games-static-smoke.cjs'
+            shutil.copyfile(ROOT/'tools/automation/games-static-smoke.cjs',script);script.chmod(0o444)
+            shutil.copytree(public,probe/'public')
+            for file in (probe/'public').iterdir():file.chmod(0o444)
+            run_node([str(script),str(probe/'public')],cwd=probe)
     except (ValueError,OSError,subprocess.CalledProcessError) as exc:
         record_validation_failure(output,head,base,exc)
         raise

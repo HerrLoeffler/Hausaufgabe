@@ -178,7 +178,10 @@ class OwnershipBoundaryTests(unittest.TestCase):
                 self.assertEqual(command[4],str(os.getuid())+':'+str(os.getgid()))
                 borrowed.discard(command[-1]);return subprocess.CompletedProcess(command,0)
             if command[:5]==['sudo','-u','gradecrew-validator','env','-i']:
-                at=command.index('node');env={item.split('=',1)[0]:item.split('=',1)[1] for item in command[5:at]}
+                at=command.index('node')
+                if command[at+1].endswith('build-lab-escape-expedition.mjs') and '/gc-games-static-' not in command[at+1]:
+                    return subprocess.CompletedProcess(command,1,stdout='',stderr='EACCES: private runner checkout inaccessible to validator')
+                env={item.split('=',1)[0]:item.split('=',1)[1] for item in command[5:at]}
                 return real_run(command[at:],**(kwargs|{'env':env}))
             return real_run(command,**kwargs)
         with real_tempfile() as temp:
@@ -195,7 +198,7 @@ class OwnershipBoundaryTests(unittest.TestCase):
             with patch.object(g,'ROOT',control),patch.object(g.tempfile,'TemporaryDirectory',OwnerContext),patch.object(g.subprocess,'run',side_effect=boundary_run), \
                  patch.dict(os.environ,{'GC_GAMES_SANDBOX_USER':'gradecrew-validator'}):
                 try:report=g.validate_source(source,head,Path(temp)/'evidence',base)
-                except PermissionError as exc:self.fail(str(exc))
+                except (PermissionError,subprocess.CalledProcessError) as exc:self.fail(str(exc))
             self.assertEqual(report['result'],'success');self.assertEqual(borrowed,set())
 
 

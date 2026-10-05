@@ -169,3 +169,36 @@ class IntegratedReceiptTests(unittest.TestCase):
         self.assertEqual(result['runAttempt'],1)
         self.assertEqual(result['commit'],B)
         with self.assertRaises(ValueError): e.integrated_report(task,pub,tests|{'profileDigest':'f'*64},'run-1',90)
+
+class StaleControlReportTests(unittest.TestCase):
+    def test_read_only_stale_attempt_is_rendered_without_rebinding_or_dispatch(self):
+        import contextlib,io,os,tempfile
+        from unittest.mock import patch
+        from tools.automation import continuation as c
+        from tools.automation.test_pipeline import ROW,TASK,ATTEMPT
+        from tools.automation.guardian import REPO
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'automation').mkdir();(root/'agent-queue').mkdir()
+            policy={'schemaVersion':1,'enabled':True,'maxAttemptsPerStage':3,'automaticProduction':False,'workstreams':[ROW]}
+            (root/'automation/guardian-policy.json').write_text(json.dumps(policy))
+            (root/'agent-queue/pilot-ui.json').write_text(json.dumps(TASK))
+            old=copy.deepcopy(ATTEMPT);old['controlHash']='old-controller'
+            ledger={'attempts':{'pilot:pipeline-v2':[old]},'budgetReservations':[{'taskId':TASK['id'],'reservedUsd':2.4}]}
+            before=copy.deepcopy(ledger);writes=[]
+            def api(path,method='GET',body=None):
+                self.assertEqual(method,'GET')
+                return {'workflow_runs':[]}
+            cwd=Path.cwd()
+            try:
+                os.chdir(root)
+                with patch.object(c,'ROOT',root),patch.object(c,'read_ledger',return_value=(ledger,'blob')), \
+                     patch.object(c,'api',side_effect=api),patch.object(c,'write_ledger',side_effect=lambda *a:writes.append(a)), \
+                     patch.object(p,'control_hash',return_value='current-controller'),patch('sys.argv',['continuation']), \
+                     patch.dict(os.environ,{'GITHUB_REPOSITORY':REPO,'GUARDIAN_ENABLED':'true'}),contextlib.redirect_stdout(io.StringIO()):
+                    try:c.main()
+                    except KeyError as exc:self.fail('Stale history must remain readable: '+str(exc))
+                report=json.loads((root/'artifacts/guardian/execution.json').read_text())
+                self.assertEqual(report['tasks'][0]['action'],'blocked')
+                self.assertEqual(report['tasks'][0]['taskId'],TASK['id']);self.assertEqual(report['tasks'][0]['attempts'],1)
+                self.assertEqual(ledger,before);self.assertEqual(writes,[])
+            finally:os.chdir(cwd)
