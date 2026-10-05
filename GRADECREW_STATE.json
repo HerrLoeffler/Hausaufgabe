@@ -581,6 +581,18 @@
       "user_test": "not_performed",
       "handoff": "workstreams/bug-ops-v1.md",
       "next_action": "BugOps im Staging als Admin praktisch abnehmen: technischen Testfehler melden bzw. vorhandenen Staging-Incident nutzen und Problem melden → Incident → Administration-Badge → BugOps-Ansicht → Lifecycle prüfen. Danach read-only Investigator und sichere Guardian-Brücke bauen."
+    },
+    {
+      "id": "classroom-student-management-v1",
+      "task_id": "GC-CLASSROOM-01",
+      "branch": "feature/classroom-student-management-v1",
+      "observed_head": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "stage": "branch_only",
+      "ci": "not_run_no_product_code",
+      "staging": "not_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/classroom-student-management-v1.md",
+      "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
     }
   ],
   "deployments": [
