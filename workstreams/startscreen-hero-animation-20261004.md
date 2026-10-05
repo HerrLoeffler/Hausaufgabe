@@ -217,3 +217,29 @@ Blender ist derzeit in dieser Umgebung nicht ausführbar nachgewiesen. Für den 
 - [Rendern ohne Bedienoberfläche](https://docs.blender.org/manual/en/dev/advanced/command_line/render.html)
 
 Offizielle Suchindex-Auszüge geprüft; direkte Abrufe einzelner latest-Dokumentationsseiten lieferten einen Abruffehler. Keine Laufzeit-/Versionskompatibilität praktisch getestet.
+
+## 06.10.2026 – Ausführlicher Produktionsplan, Ausführung gesperrt
+
+Martins jüngste Anweisung ist ausdrücklich **nur Recherche und vollständige Planung, noch keine Umsetzung**. Die Modellbezeichnung „Hull“ wurde durch seine Antwort als **Sol** geklärt. Die früher formulierte nächste Aktion „Blender bereitstellen/Pilot ausführen“ beschreibt jetzt ausschließlich eine spätere, noch nicht freigegebene Phase.
+
+Der vollständige Plan liegt unter [docs/superpowers/plans/2026-10-06-gradecrew-blender-hero.md](../docs/superpowers/plans/2026-10-06-gradecrew-blender-hero.md). Er umfasst Ausgangsnachweise, Produktionsentscheidung, Sol/Astra-Arbeitsteilung, Einrichtung, Figurenidentität, 3D-Quellen/Rigs, Bewegungsablauf, HTML/i18n, Desktop/Mobil, Lade-/Rückfallverhalten, Render-/Exportbudgets, Saisonvarianten, konkrete Repository-Eingriffe, acht Produktionspakete, Abnahme und Wiederaufnahme. Alle Produktions-Checkboxen bleiben offen.
+
+### Präzisierungen gegenüber den bisherigen Vorschlägen
+
+- Die wiederholte pauschale 9/10-Einstufung ist kein Qualitätsnachweis. Eine plausible Architektur und ein fertig geprüftes Ergebnis sind getrennt zu bewerten. Für den nicht gebauten Hero oder einen Sol/Astra-Blender-Vergleich fehlt eine belastbare Ergebnisnote.
+- Nichtauffinden eines Plugins im Katalog beweist keine fehlende technische Verbindung. Das Community-Projekt heißt aktuell `ahujasid/mcp-for-blender` (vormals `blender-mcp`). Lokale Codex-Nutzung ist dokumentiert; die aktuell geöffnete [Supportseite](https://www.mcp-for-blender.com/support) nennt die direkte ChatGPT-Verbindung ausdrücklich noch nicht verfügbar. Ältere Suchauszüge ersetzen diesen Live-Befund nicht.
+- Geprüfter Community-Quellstand: `34b7bd277fff75a693cde78930b4359478958a01`, Paketmetadaten `2.1.8`. Keine Installation oder Laufzeitkompatibilität nachgewiesen. Recherchierter Blender-Kandidat: 5.2.2 LTS; später praktisch prüfen und eine stabile Kombination festschreiben.
+- Lokal M5 Pro / 48 GB / arm64 festgestellt; keine Rendergeschwindigkeit behauptet.
+- `tools/build-staging.mjs` übernimmt aus dem Figurenordner bisher automatisch nur SVG; neue Poster/Videos benötigen explizite Integration. Der bestehende Designgenerator kennt begrenzte Gruppen und erzeugt native Ausgaben. Der Plan sieht deshalb ein getrenntes Web-Hero-Manifest vor.
+- Erstes Szenenbild zeigt bereits Coco an einer teilweise offenen Tür und die Crew. Die vorherige Idee „Tür fast geschlossen“ darf keine blockierende oder leere Ladeansicht verursachen. Anfangs- und Schlussbild sind beide eigenständig brauchbar.
+- Drei neue Canva-Welten sind nicht der nächste Produktionsschritt. Maßgeblich ist zunächst ein begrenzter Coco-/Tür-Nachweis unter endgültigem Licht. Der Blender-Master bleibt bearbeitbar; das Web erhält eine zusammenhängende textfreie Szene und unabhängige übersetzbare UI.
+
+### Sicherung und Grenzen dieses Schritts
+
+Bestehende Task-ID GC-DESIGN-05, Draft-PR #143 und Dokumentationsbranch `docs/gc-design-05-reference-plan-20261006` weiterverwendet. Nur Plan, TODO-Zeile und dieser Übergabenachtrag werden aktualisiert. Frühere Abschnitte bleiben als Historie erhalten.
+
+Keine Blender-Installation, MCP-Konfigurationsänderung, Modellumschaltung, Bildgenerierung, Modellierung, Animation, Rendering, Produktcodeänderung oder Veröffentlichung durchgeführt. Kein neuer Provider-Auftrag, keine Budgetrücksetzung, kein Retry des unbekannten GC-DESIGN-03-Ergebnisses. Dessen 2,40-USD-Reservierung innerhalb des 2,55-USD-Limits bleibt erhalten.
+
+Validierung dieses Schritts: recherchierte Primär-/Anbieterquellen und tatsächlicher Repository-Bestand gelesen; Plan auf Anforderungen, offene Annahmen und Umsetzungssperre geprüft. Keine Blender-, Browser- oder Produktfunktion als praktisch getestet behaupten. CI dieses neuen Dokumentationscommits separat anhand des exakten Heads feststellen.
+
+**Genau ein nächster Schritt:** Plan vorlegen und auf Martins ausdrücklichen Startauftrag warten. Erst danach aktuelle Ausgangslage bestätigen und den begrenzten Einrichtungs-/Coco-Prototyp beginnen. Production bleibt separat freigabepflichtig.
