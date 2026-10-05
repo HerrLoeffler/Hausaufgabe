@@ -12,6 +12,31 @@ const {
   assertNoSolutionLeak
 } = require("../lib/assessment-core");
 
+test("public metadata carries only the fixed assessment content locale", () => {
+  const { publicQuizMetadata } = require("../lib/assessment-core");
+  assert.equal(publicQuizMetadata({ contentLocale: "en-GB", gradingLocale: "de-DE" }, "Q").contentLocale, "en-GB");
+  assert.equal(publicQuizMetadata({ contentLocale: "de-DE", uiLocale: "en-GB" }, "Q").contentLocale, "de-DE");
+  assert.equal(publicQuizMetadata({ contentLocale: "en-US" }, "Q").contentLocale, "en-GB");
+  for (const contentLocale of [undefined, "", "fr-FR"]) {
+    assert.equal(publicQuizMetadata({ contentLocale, uiLocale: "en-GB" }, "Q").contentLocale, "de-DE");
+  }
+});
+
+test("public paper preserves authored image copy and leaves missing alt for content-locale rendering", () => {
+  const source = [{ id: "images", type: "single", text: "Choose", points: 1,
+    imageUrl: "https://example.test/question.png", imageChoicesOnly: true,
+    options: [{ text: "authored", imageUrl: "https://example.test/a.png", imageAlt: "Original description", correct: true },
+      { text: "other", imageUrl: "https://example.test/b.png" }] }];
+  const before = JSON.stringify(source);
+  const { paper } = buildAssessmentContract(source, PAPER_SECRET, { shuffleAnswers: true });
+  assert.equal(paper[0].image.alt, "");
+  assert.equal(paper[0].imageChoicesOnly, true);
+  assert.equal(paper[0].options.find(o => o.text === "authored").image.alt, "Original description");
+  assert.equal(paper[0].options.find(o => o.text === "other").image.alt, "");
+  assert.equal(assertNoSolutionLeak(paper), true);
+  assert.equal(JSON.stringify(source), before);
+});
+
 const CLIENT_TOKEN = "abcdefghijklmnopqrstuvwxyzABCDE_1234567890";
 const PAPER_SECRET = "server_only_paper_secret_ABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890";
 const OTHER_PAPER_SECRET = "another_server_secret_ZYXWVUTSRQPONMLKJIHGFEDCBA_9876543210";

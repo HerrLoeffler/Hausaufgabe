@@ -44,6 +44,7 @@ import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWo
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
+import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -4159,7 +4160,7 @@ function clearQuestionSolutionAudio(q) {
 }
 
 function defaultSolutionAudioScript(q) {
-  const answer = String(correctDisplay(q) || "").replace(/\s+/g, " ").trim();
+  const answer = String(correctDisplay(q, state.currentQuiz?.contentLocale) || "").replace(/\s+/g, " ").trim();
   return (`Die richtige Lösung ist: ${answer || "Diese Aufgabe wird von der Lehrkraft erklärt."}`).slice(0, 500);
 }
 
@@ -5760,6 +5761,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     </form>
     <div id="studentResult" class="studentResult hidden"></div>`;
   const qRoot = $("studentQuestions");
+  const contentLabels = assessmentContentLabels(quiz.contentLocale);
 
   questions.forEach((q, i) => {
     const section = document.createElement("section");
@@ -5773,7 +5775,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     if (getQuestionImageSrc(q)) {
       const figure = document.createElement("figure");
       figure.className = "studentQuestionImage";
-      figure.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+      figure.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || contentLabels.questionImage)}" data-i18n-content>`;
       section.appendChild(figure);
     }
     const studentAudioSrc = String(q?.audioDataUrl || "");
@@ -5816,8 +5818,8 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }, shownIndex) => {
         const label = document.createElement("label");
         label.className = "choice";
-        const text = imageOnly ? `Bild ${String.fromCharCode(65 + shownIndex)}` : option.text;
-        const alt = imageOnly ? "" : option.imageAlt || `Abbildung: ${option.text}`;
+        const text = imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
+        const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
         label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
         section.appendChild(label);
       });
@@ -5825,7 +5827,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       [true, false].forEach((value) => {
         const label = document.createElement("label");
         label.className = "choice";
-        label.innerHTML = `<input type="radio" name="${q.id}" value="${value}"><span>${value ? "Richtig" : "Falsch"}</span>`;
+        label.innerHTML = `<input type="radio" name="${q.id}" value="${value}"><span data-i18n-content>${value ? contentLabels.trueLabel : contentLabels.falseLabel}</span>`;
         section.appendChild(label);
       });
     } else if (q.type === "gapfill") {
@@ -6299,10 +6301,13 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   } finally { studentSubmissionBusy.delete(submissionKey); }
 }
 
-function answerDisplay(q, given) {
+function answerDisplay(q, given, contentLocale) {
   if (q.type === "text") return String(given || "(leer)");
   if (q.type === "number") return given === "" ? "(leer)" : `${given}${q.unit ? ` ${q.unit}` : ""}`;
-  if (q.type === "truefalse") return given === "true" ? "Richtig" : given === "false" ? "Falsch" : "(leer)";
+  if (q.type === "truefalse") {
+    const labels = assessmentContentLabels(contentLocale);
+    return given === "true" ? labels.trueLabel : given === "false" ? labels.falseLabel : "(leer)";
+  }
   if (q.type === "gapfill") return Array.isArray(given) ? given.map((x, i) => `Lücke ${i + 1}: ${x || "(leer)"}`).join("; ") : "(leer)";
   if (q.type === "matching") {
     return (q.pairs || []).map((p, i) => {
@@ -6329,10 +6334,13 @@ function answerDisplay(q, given) {
   return q.options?.[Number(given)]?.text || "(leer)";
 }
 
-function correctDisplay(q) {
+function correctDisplay(q, contentLocale) {
   if (q.type === "text") return q.manualReview ? "wird von der Lehrkraft geprüft" : (q.acceptedAnswers || []).join(", ");
   if (q.type === "number") return `${q.numericAnswer}${q.unit ? ` ${q.unit}` : ""}${Number(q.tolerance) ? ` (±${q.tolerance})` : ""}`;
-  if (q.type === "truefalse") return q.correctBoolean ? "Richtig" : "Falsch";
+  if (q.type === "truefalse") {
+    const labels = assessmentContentLabels(contentLocale);
+    return q.correctBoolean ? labels.trueLabel : labels.falseLabel;
+  }
   if (q.type === "gapfill") return parseGaps(q.text).map((g, i) => `Lücke ${i + 1}: ${g.answers.join(" / ")}`).join("; ");
   if (q.type === "matching") return (q.pairs || []).map((p) => `${p.left} → ${p.right}`).join("; ");
   if (q.type === "ordering") return acceptedOrderingOrders(q).map(order => order.map(index => q.items[index]).join(" → ")).join(" / ");
@@ -6371,7 +6379,7 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
     const g = grading[q.id];
     const div = document.createElement("div");
     div.className = "studentResultDetail";
-    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div>Deine Antwort: ${escapeHtml(answerDisplay(q, answers[q.id]))}</div><div>Lösung: ${escapeHtml(correctDisplay(q))}</div><div>Punkte: ${g.awardedPoints}/${g.maxPoints}${g.needsReview ? " · Prüfung ausstehend" : ""}</div>`;
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div>Deine Antwort: ${escapeHtml(answerDisplay(q, answers[q.id], quiz.contentLocale))}</div><div>Lösung: ${escapeHtml(correctDisplay(q, quiz.contentLocale))}</div><div>Punkte: ${g.awardedPoints}/${g.maxPoints}${g.needsReview ? " · Prüfung ausstehend" : ""}</div>`;
     details.appendChild(div);
   });
 }
@@ -6443,7 +6451,7 @@ function openReview(id) {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
-    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id]))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q))}</div><div class="reviewPoints"><label for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q, state.currentResultsQuiz?.contentLocale))}</div><div class="reviewPoints"><label for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
     const imageSrc = getQuestionImageSrc(q);
     if (imageSrc) {
       const figure = document.createElement("figure");
@@ -6565,7 +6573,7 @@ function exportResultsCsv() {
   const rows = [header];
   state.submissions.forEach((s) => {
     const r = [s.studentName];
-    state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id])));
+    state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale)));
     r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
     rows.push(r);
   });
@@ -7788,4 +7796,3 @@ async function createTutorialQuiz(payload) {
   await batch.commit();
   return code;
 }
-

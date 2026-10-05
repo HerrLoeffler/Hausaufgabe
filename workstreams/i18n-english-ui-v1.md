@@ -2,10 +2,12 @@
 
 - Aktualisiert (UTC): 2026-10-04
 - Auftrag: Englisch als zweite UI-Sprache einführen und nach dem ersten realen Preview-Test fachlich/visuell härten.
-- Aktueller Polish-Branch: `feature/i18n-bilingual-polish-20261004`
+- Integrierter Polish-Branch: `feature/i18n-bilingual-polish-20261004` (PR #131 gemergt)
+- Aktueller Cache-/Header-Reconcile-Branch: `feature/i18n-cache-v3-reconcile-20261004`
 - Polish-Basis: `feature/gradecrew-app-integration@fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41`
 - Frühe Implementierung: `feature/i18n-english-ui-v2`, über PR #96 in die App-Integration übernommen.
-- Aktueller Polish-PR: #131 gegen `feature/gradecrew-app-integration`.
+- Polish-PR #131: gemergt in `feature/gradecrew-app-integration`.
+- Veralteter Cache-PR #135: wegen Divergenz/Konflikten ohne Merge geschlossen; Änderungen werden auf aktuellem Integrationsstand reconciled.
 - Production: ausdrücklich unverändert lassen.
 
 ## Produktregel
@@ -52,11 +54,47 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 
 ## Status
 
-- Entwicklung: in Arbeit auf `feature/i18n-bilingual-polish-20261004`.
-- CI: AI Staging Checks `37236911229` auf Code-Head `dc90081832a497de601c7740714b8297a7a2cee7` vollständig erfolgreich.
-- Integration: PR #131 offen (Draft), mergebar gegen den aktuellen Integrationsstand.
-- Neuer Preview-Deploy nach Polish: offen.
-- Manueller DE/EN-Abnahmetest nach Polish: offen.
-- Zusätzlicher Auditfix: Legacy-Schüleransicht schützt nun Testtitel, Beschreibung, Fragen und interaktive Prüfungsinhalte vor UI-Übersetzung.
-- Follow-ups: CSV/Export-Lokalisierung, einzelne hart codierte Datumsformate und contentLocale-gerechte systemgenerierte Wahr/Falsch-/Bild-Labels.
+- Polish: PR #131 gemergt; Header-Slot, dynamische EN-Copy, nicht-persistente Lehrer-Vorschau und Assessment-Locale-Lifecycle sind im Integrationsbranch.
+- Aktueller Reconcile: `feature/i18n-cache-v3-reconcile-20261004`.
+- Reconcile-Inhalt: kompletter i18n-Modulgraph auf Cache-Version 3, Public Entry v5, Secure-Student ebenfalls auf Bootstrap v3, semantische Header-Navigationskeys statt reinem Source-Text-Matching.
+- Veralteter Branch `feature/i18n-cache-v3-header-20261004` war 19 Commits hinter Integration; PR #135 wurde deshalb ohne Merge geschlossen statt fremde Arbeit zu überschreiben.
+- CI für Reconcile: noch offen.
+- Neuer Preview-Deploy nach Reconcile: offen.
+- Manueller DE/EN-Abnahmetest nach Reconcile: offen.
+- Audit-Follow-ups: CSV/Export-Lokalisierung, zwei hart codierte `de-DE`-Datumsformate in `app.js` und contentLocale-gerechte systemgenerierte Wahr/Falsch-/Bild-Labels in beiden Schüler-Runtimes.
+- Architektur-Follow-up: kritische dynamische UI schrittweise von Source-Text-Matching auf semantische `data-i18n-key`-Keys migrieren.
 - Production: unverändert.
+
+
+## Checkpoint 2026-10-04 – Cache/Header-Reconcile
+
+- Task-ID: GC-I18N-03
+- Ausgangspunkt: aktueller `feature/gradecrew-app-integration` statt des divergierten Cache-Branches.
+- Gesichert: Cache-Bust auch für Secure-Student ergänzt; öffentliche Hauptnavigation verwendet jetzt semantische Locale-Keys mit deutschem Fallback.
+- Nicht verändert: Firestore-Regeln, Assessment-Functions, Production.
+- Offene Codebefunde: harte `de-DE`-Datumsformatierung; systemgenerierte Wahr/Falsch-/Bild-Labels folgen noch nicht konsequent `contentLocale`; Exporte/CSV noch nicht vollständig lokalisiert.
+- Nächster Schritt: Reconcile-PR öffnen, CI prüfen und erst danach über Integration/Preview entscheiden.
+
+## Übernahme 2026-10-05 – GC-I18N-03
+
+- Neuer Verantwortlicher: Codex-Chat GC-I18N-03; vorheriger Chat „Internationalisierung GC“, chatgpt-conversation://6ac2748c-7cc4-83ed-ace7-4d42752ee7ad, laut read_thread idle. Alter lokaler ungesicherter Stand unbekannt.
+- Development Status 37269176813 geprüft: #137 unregistriert; #51 verändert CI, #25 ist separater Sprachvertrag. Kein konkurrierender contentLocale-Label-PR erkannt.
+- Historischer CI-Fehler 37238257051: Katalog erwartet en-GB@1 statt @2. Reparatur d3a7615; neuer Lauf 37275593066 erreicht Firestore-Emulator erfolgreich, scheitert anschließend an zweiter veralteter Cache-Erwartung (Entry v4 statt v5). Beide Ursachen reproduziert; kein blindes Retry.
+- Dieser Checkpoint korrigiert die zweite Erwartung. Neuer Lauf anhand Branch/Head prüfen. Kein Integration-/Deploy-Nachweis. Production unverändert.
+- Folgearbeit auf eigenem Checkout/Branch: contentLocale-Labels beider Schüler-Runtimes. Zusätzlich fehlt contentLocale in publicQuizMetadata und serverseitig werden deutsche Bild-Fallbacks fest eingebaut; minimale Vertragskorrektur erforderlich, ohne Functions-Deploy.
+- Keine neuen Provider-Aufrufe/Kostenreservierungen; historische Versuchszähler/Budgets unangetastet.
+- Genau ein nächster Schritt: CI dieses Cache/Header-Checkpoints prüfen.
+
+## Checkpoint 2026-10-05 – Content-Locale-Folgearbeit
+
+- Task-ID GC-I18N-03; verantwortlicher Chat Codex GC-I18N-03 (aktiv), übernimmt nach idle-Vorgänger Internationalisierung GC. Alter ungesicherter Checkout unbekannt.
+- Eigener Checkout: gradecrew-gc-i18n-03; eigener Branch feature/i18n-content-labels-20261005, Ziel feature/gradecrew-app-integration. Basis bb91ce3590d773472ece60c4dd881da729bd32c1; #137 samt Reparaturen bewusst übernommen.
+- #137: aktueller Codehead fe5ed72f583cebfee8d3b4991b9438a5fa3aa841; AI Staging Checks 37276016105 erfolgreich. Frühere Fehlläufe 37238257051, 37275593066 und 37275857602 bleiben erhalten. Ursache: drei veraltete Versionserwartungen; kein App-Fehler als CI-grün versteckt.
+- Umsetzung: gemeinsame assessmentContentLabels(contentLocale), True/False und Image A/B in beiden Schüler-Runtimes; deutsche Defaults für alte Tests ohne Metadaten; authored Alttexte unverändert. Legacy-Ergebnisanzeige erhält dieselbe contentLocale.
+- Secure-Vertrag: publicQuizMetadata liefert contentLocale; fehlende Alttexte bleiben leer bis zum Client-Fallback; imageChoicesOnly wird als sicherer Darstellungswert übertragen. Keine Lösungsschlüssel im Client.
+- Cache: Legacy-App, Secure-Student und Assessment-Locale-Modul neu versioniert. Neuer Verhaltenstest in bestehender CI aufgenommen.
+- Tests: neue Tests zuerst rot beobachtet (DE statt EN, fehlende Metadaten und feste DE-Alts); 59 passende Tests lokal grün. Breitere Root-/Backend-/Build-Prüfung steht noch aus. Kein CI-Nachweis für diesen Folgebranch.
+- Grenzen: nicht integriert, kein neues Hosting/Functions/Rules-Deployment, keine Geräteabnahme. Functions-Vertragsänderung benötigt vor Nutzung eigenes Staging-Gate. Bereits veröffentlichte/aktive Prüfungs-Papers werden nicht clientseitig umgeschrieben; ältere Papers mit bereits eingebauten deutschen Alttexten bleiben authored/geschützt, bis ein neuer sicherer Paper-Vertrag genutzt wird.
+- Development Status 37269176813 gelesen; aktuelle Integrationsbasis bewusst zusammengeführt. #51 überlappt CI; nur neuer Testaufruf ergänzt, keine Trigger-/Deploy-Änderung. #25 Sprachvertrag bleibt isoliert. Vor Integration erneut Live-Status und aktuellen Zielhead prüfen.
+- Keine bezahlten KI-Aufrufe oder Budgetänderungen. Production unverändert.
+- Genau ein nächster Schritt: breitere lokale Regression und Staging-Build prüfen.

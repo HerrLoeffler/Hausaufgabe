@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
+import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 
 const app = initializeApp(firebaseConfig, "gradecrew-secure-student");
 const api = createSecureAssessmentClient(app);
@@ -200,7 +201,7 @@ function questionShell(question, index) {
     const image = document.createElement("img");
     image.className = "secureQuestionImage";
     image.src = question.image.src;
-    image.alt = question.image.alt || "Abbildung zur Aufgabe";
+    image.alt = question.image.alt || assessmentContentLabels(currentQuiz?.contentLocale).questionImage;
     figure.appendChild(image);
     section.appendChild(figure);
   }
@@ -226,7 +227,9 @@ function questionShell(question, index) {
 }
 
 function renderOptions(section, question, multiple = false) {
-  (question.options || []).forEach(option => {
+  const contentLabels = assessmentContentLabels(currentQuiz?.contentLocale);
+  const imageOnly = question.imageChoicesOnly === true && question.options?.length >= 2 && question.options.every(option => option.image?.src);
+  (question.options || []).forEach((option, shownIndex) => {
     const label = document.createElement("label");
     label.className = "secureChoice";
     const input = document.createElement("input");
@@ -235,13 +238,14 @@ function renderOptions(section, question, multiple = false) {
     input.value = option.id;
     const body = document.createElement("span");
     const text = document.createElement("span");
-    text.textContent = option.text || "Antwort";
+    text.dataset.i18nContent = "1";
+    text.textContent = imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer;
     body.appendChild(text);
     if (option.image?.src) {
       const image = document.createElement("img");
       image.className = "secureOptionImage";
       image.src = option.image.src;
-      image.alt = option.image.alt || "Antwortabbildung";
+      image.alt = option.image.alt || (imageOnly ? "" : contentLabels.answerImage);
       body.appendChild(image);
     }
     label.append(input, body);
@@ -404,7 +408,8 @@ function renderQuestion(question, index) {
   else if (question.type === "multi") renderOptions(section, question, true);
   else if (question.type === "dropdown") renderDropdown(section, question);
   else if (question.type === "truefalse") {
-    renderOptions(section, { ...question, options: [{ id: "true", text: "Richtig" }, { id: "false", text: "Falsch" }] }, false);
+    const contentLabels = assessmentContentLabels(currentQuiz?.contentLocale);
+    renderOptions(section, { ...question, options: [{ id: "true", text: contentLabels.trueLabel }, { id: "false", text: contentLabels.falseLabel }] }, false);
   } else if (question.type === "text") {
     const input = document.createElement("textarea");
     input.name = `q_${question.id}`;

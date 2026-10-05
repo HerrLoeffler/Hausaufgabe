@@ -110,6 +110,7 @@ jobs:
           node --test shared/i18n/browser-runtime.test.mjs
           node --test shared/i18n/assessment-locale.test.mjs
           node --test i18n-integration.test.mjs
+          node --test student-content-locale.test.mjs
 
       - name: Test secure client boundary
         run: node --test secure-assessment-client.test.mjs

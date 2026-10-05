@@ -53,3 +53,27 @@ test("content language instruction changes student-facing output language withou
   const german = contentLanguageInstruction("de-DE");
   assert.match(german, /natürlichem Deutsch/);
 });
+
+test("generated assessment labels use content locale even with opposite UI and grading locales", async () => {
+  const { assessmentContentLabels } = await import("./assessment-locale.mjs");
+  const { setActiveUiLocale } = await import("./browser-runtime.mjs");
+  setActiveUiLocale("de-DE");
+  const english = assessmentContentLabels("en-GB");
+  assert.equal(english.trueLabel, "True");
+  assert.equal(english.falseLabel, "False");
+  assert.equal(english.imageChoice(0), "Image A");
+  assert.equal(english.imageChoice(1), "Image B");
+  assert.equal(english.questionImage, "Image for the question");
+  assert.equal(english.answerImage, "Answer image");
+  setActiveUiLocale("en-GB");
+  const german = assessmentContentLabels("de-DE");
+  assert.equal(german.trueLabel, "Richtig");
+  assert.equal(german.falseLabel, "Falsch");
+  assert.equal(german.imageChoice(0), "Bild A");
+  assert.equal(german.questionImage, "Abbildung zur Aufgabe");
+  for (const missing of [undefined, null, "", "fr-FR"]) {
+    assert.equal(assessmentContentLabels(missing).trueLabel, "Richtig");
+  }
+  assert.equal(assessmentContentLabels("en-US").trueLabel, "True");
+  setActiveUiLocale("de-DE");
+});

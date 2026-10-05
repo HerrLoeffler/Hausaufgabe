@@ -1,4 +1,4 @@
-export const EN_GB_MESSAGES_VERSION = "en-GB@1";
+export const EN_GB_MESSAGES_VERSION = "en-GB@2";
 
 const source = entries => Object.fromEntries(
   Object.entries(entries).map(([german, english]) => [`source:${german}`, english])
@@ -13,6 +13,10 @@ export const enGBMessages = Object.freeze({
   "common.retry": "Try again",
   "common.cancel": "Cancel",
   "common.save": "Save",
+  "nav.features": "Features",
+  "nav.crew": "The Crew",
+  "nav.teachers": "For teachers",
+  "nav.help": "Help",
   ...source({
     "Zum Inhalt springen": "Skip to content",
     "STAGING · Testumgebung · Bitte nur Testdaten verwenden": "STAGING · Test environment · Please use test data only",
