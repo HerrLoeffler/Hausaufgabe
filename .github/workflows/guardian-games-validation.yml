@@ -23,6 +23,7 @@ jobs:
         with:
           ref: ${{ inputs.head }}
           path: source
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -30,12 +31,19 @@ jobs:
       - name: Install fixed browser toolchain outside candidate
         run: |
           npm install --prefix "$RUNNER_TEMP/games-browser" --ignore-scripts --no-audit --no-fund playwright@1.62.1
-          "$RUNNER_TEMP/games-browser/node_modules/.bin/playwright" install --with-deps chromium
+          PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/games-browser/browsers" "$RUNNER_TEMP/games-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Protect trusted validators and create unprivileged candidate user
+        run: |
+          sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
+          sudo chown -R root:root tools/automation
+          sudo chmod -R a+rX tools/automation "$RUNNER_TEMP/games-browser"
       - name: Credential-free fixed source validation and browser probe
         run: bash tools/automation/validate-games-static.sh
         env:
           EXPECTED_HEAD: ${{ inputs.head }}
           NODE_PATH: ${{ runner.temp }}/games-browser/node_modules
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/games-browser/browsers
+          GC_GAMES_SANDBOX_USER: gradecrew-validator
       - uses: actions/upload-artifact@v4
         if: always()
         with:

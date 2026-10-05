@@ -614,6 +614,17 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "guardian-admission-profiles-v1",
+      "task_id": "GC-AUTOMATION-08",
+      "branch": "docs/guardian-admission-profiles-20261004",
+      "stage": "branch_only",
+      "ci": "local_130_automation_tests_passed_Node22_qualification_35_of_36_red_current_PR_CI_pending",
+      "staging": "no_new_deploy_profile_disabled",
+      "user_test": "not_performed",
+      "handoff": "workstreams/guardian-admission-profiles-v1.md",
+      "next_action": "Fresh whole-branch review and current PR CI; real Games activation blocked until fixed qualified fixtures, channel ownership and identity proof."
     }
   ],
   "deployments": [

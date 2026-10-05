@@ -1,6 +1,6 @@
 # Aufgabe: GC-AUTOMATION-08
 
-- Aktualisiert (UTC): 2026-10-04 21:28
+- Aktualisiert (UTC): 2026-10-05 19:28
 - Verantwortlicher Chat / Auftrag: Weiter mit GradeCrew nach einem Chat-Abbruch; Martin: automatische Phasenkette auf weitere Aufgabenarten erweitern und Staging-Rückstand prüfen.
 - Chat-Bezeichnung / Link: aktueller Recovery-Chat; Link unbekannt.
 - Vorheriger Chat: Main GC (w); Quellenvertrags-Recovery separat über PR #125 gesichert.
@@ -9,8 +9,19 @@
 - Basiscommit: ced8e6dbe1cec5215edeb88b551afc363fe634cc
 - Integrationsziel: main
 - PR: siehe PR dieses Aufgabenbranches; noch nicht integriert.
-- Betroffene Dateien: Audit, genehmigte Spec, Implementierungsplan, diese Übergabe, TODO.md, Registry und GRADECREW_STATE.json (nur games-escape und zwei getrennte Preview-Komponenten).
-- Überschneidungen: zentrale TODO/Registry; PR #65 betrifft GC-AUTOMATION-09 bis -11, bleibt getrennt. Keine Controller-/Produktdatei geändert.
+- Betroffene Dateien: feste Controller-/Profil-/Validator-/Workflow-/Testdateien, Spec/Plan/Audit/Übergabe/TODO/Registry; Release-State nur eigene GC08-Stufe und belegte historische Escape-Komponenten.
+- Überschneidungen: zentrale TODO/Registry; PR #65 betrifft GC-AUTOMATION-09 bis -11, bleibt getrennt. Controller-Dateien geändert; keine Produktdatei oder andere Workstream-Implementation geändert.
+
+## Maßgeblicher aktueller Stand — 2026-10-05 19:28 UTC
+
+GC-AUTOMATION-08 bleibt derselbe Auftrag/PR126. Plan/Inline-Ausführung freigegeben, Games-Testseite für getrennte Tests/Veröffentlichungen erlaubt; Haupt-App-/Seiten-Zusammenführung zurückgestellt. Kein neuer Paid-Call, keine Queue-Zulassung/Reservation, kein Deploy/IAM-Eingriff in diesem Implementierungsblock.
+Tasks 1/2/4/5 implementiert und lokal getestet. Task3-Qualifikation bleibt offen: alle 36 Originaltests byte-identisch, 35 bestehen, M1.4-Timingtest rot; lokaler Browserstart sandboxbedingt blockiert. Rehearsal-CI prüft Games-Kontrakte und Browser getrennt und kaschiert den Fehler nicht. app.js 81,638 Bytes passt nicht in den unveränderten 80,000-Byte-Quellvertrag; enger CSS/HTML-Auftrag wäre erst nach übrigen Gates zu beurteilen. Kein Budget erhöht.
+130 Automation-Tests unter Node22.23.3/Python3.12 bestehen. Reale Controller-/Publisher-Funktionen liefen offline von Reservation über Fake-Build/alle drei Reviews/FF/CI/Fake-Hosting/Receipt; keine externen Provider-/Cloud-Mutationen. Erfolgs-Receipt erlaubt nur technischen separaten Hosting-Stand, nie menschliche Abnahme.
+Aktuelles main 8360bc5 normal zusammengeführt (Classroom/ASV-Privacy und Hero-Dokumentation erhalten). Ledger frisch gelesen: Pilot zwei alte Reservationen à0.85, v2/v3/v4 je2.40 unverändert, keine neue Reservation. v2/v3 gestoppt/unklar, v4 repairable bleibt unverändert.
+Remote vor nächstem Checkpoint 1f0883: Web-Rehearsal 37324017708 grün; Stage Guardian 37324017065 wegen neuer relativer Importstelle beim direkten Scriptaufruf rot. Reproduziert im neuen Test und behoben; erneute CI am neuen Controller nötig, alter Erfolg wird nicht übertragen. Code lokal bis 8559757 committed, anschließend neues Task6-Diff; letzter gesicherter lokaler Main-Merge a207325.
+Nächster Schritt: diesen Code/Übergabe committen/pushen, unabhängige gesamte Branch-Review und aktuelle CI auswerten. Games-Profil/Publisher standardmäßig aus; tatsächlicher manueller Publisher hat noch andere Concurrency und blockiert vor Cloud-Login. Hosting-Identität unverifiziert; Backend/Rules/Games-AI/Native weiterhin geschlossen.
+
+Die folgenden ursprünglichen Checkpoints sind historische Versuchshistorie; dieser aktuelle Abschnitt entscheidet bei abweichenden älteren Aussagen.
 
 ## Ziel und gewünschtes Verhalten
 
@@ -82,3 +93,7 @@ Task1/2 umgesetzt. Task3: credentialfreier Validator, unveränderte pinned Fixtu
 Games-Qualifikation bleibt ROT: tatsächlicher Snapshot hat 36 Tests, 35 bestehen, M1.4 learning timers erwartet alte 850/650/500 statt L3 1050/700/550. Kein Test geschwächt. Original Builder separat bestanden; Browserprozess lokal durch Sandbox SIGABRT/EPERM blockiert, kein Browser-Erfolg behauptet. Zusätzlich aktuelle app.js 81,638 Bytes > unverändertem 80,000-Byte-Kontextlimit: kein Pilotvertrag aufgenommen.
 Neue Profile/realer Publisher bleiben aus. Diese Blocker verhindern Aktivierung; die unabhängigen Controller-/Review-/Receipt-Adapter können weiter implementiert werden. Nächster Schritt: exakte Profil-/Paketbindung aller drei Reviews und integrierte Games-CI, danach Hosting-Receipt-Reconciliation ohne Veröffentlichung.
 Historische Escape-Preview-Fortsetzung vom 04.10. bleibt unverändert, keine Wiederholung. Neuere Web-/BugOps-Deployments gehören nicht zu diesem Auftrag.
+
+Task4 checkpoint: legacy Web review/report shapes remain compatible. Games now binds all three reviewer responses to profile+package digests, explicit target and exact candidate; integrated CI selects Web/Games and emits component-specific receipt. 116 automation tests passed; no paid review/FF/deploy run. Task5 receipt-verifier negative tests passed; live publisher/setup/channel ownership remain unwired/disabled. Existing Games qualification blockers retained.
+
+Task5 implementation: main-only trusted artifact extraction, setup/identity gate, actual legacy publisher concurrency check, before-login/before-publish rechecks, fixed Hosting-only CLI and REST Hosting version + downloaded raw-byte verification. Receipt ties task/profile/control/CI/deploy attempts/package; reconciliation reuses exact existing receipt and does no blind dispatch/retry. Common group uses cancel-in-progress=false. Existing legacy Visual publisher still differs and blocks BEFORE cloud login; WIF identity qualification also unverified. No IAM/policy changes or cloud operation. 124 automation tests passed before final resume test; targeted Task5 suite green (see current task ledger). Node validation now clears child credentials and requires a separate unprivileged CI user. No candidate script executes with cloud credentials.

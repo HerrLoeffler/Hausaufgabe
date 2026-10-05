@@ -1,6 +1,6 @@
 # GC-AUTOMATION-08: Aufgabenprofile und Staging-Rückstand
 
-Stand: 2026-10-04, 20:52 UTC. Read-only Bestandsaufnahme, keine neue Ausführung.
+Historische Bestandsaufnahme: 2026-10-04, 20:52 UTC. Aktuelle Fortsetzung/Implementierung siehe workstreams/guardian-admission-profiles-v1.md.
 Geprüftes main: `ced8e6dbe1cec5215edeb88b551afc363fe634cc`.
 Aktueller Web-Integrationsstand: `fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41`.
 
@@ -143,3 +143,7 @@ Fortsetzung bestätigt: GitHub rerun-failed-jobs meldet success; Run 37021633218
 Preview: https://hausaufgabe-staging--gradecrew-escape-dev-mpuh7wg1.web.app . Read-only Browser-DOM bestätigt „Die verriegelte Schule“, drei Räume/acht Lernfragen/vier Minirätsel und Einstieg. Keine Vorbereitung/Generierung gestartet. Die direkte Function-GET-Prüfung war im Browser durch ERR_BLOCKED_BY_CLIENT blockiert; dies ist kein Serverfehlernachweis und wurde nicht umgangen. Kein tatsächlicher Generator-/Provider-E2E-Test.
 CLI führt die übliche Runtime-Secret-Bindung für 950775032930-compute aus; dieselbe Secret-Accessor-Bindung war schon vor der Änderung sichtbar. Agent hat ausschließlich die ausdrücklich freigegebene direkte Viewer-Bindung ergänzt; kein Secret-Payload gelesen.
 GRADECREW_STATE.json wird in diesem PR für games-escape und zwei getrennte Preview-Komponenten aktualisiert. Kein Bestandteil des gemeinsamen Web-Release-Batches, keine Rules- oder Production-Änderung. Das Legacy-Workflowlog ist Deploynachweis, besitzt aber noch kein neues kryptografisches Guardian-Paket-/Receipt-Profil. Geräteabnahme und drei neue Profilreviews bleiben offen. Versuch 1 und ältere Läufe bleiben in previous_observation erhalten.
+
+## Fortschreibung 2026-10-05
+
+Aktuelles main 8360bc5 und Release-State enthalten inzwischen PostHog sowie BugOps auf getrennt belegtem Web-Staging. Alte „noch nicht deployed“-Aussagen oben sind der historische Stand vom 04.10., keine heutigen Blockerbehauptungen. Escape-MVP Run37021633218/Attempt2 erfolgreich am unveränderten a7ffc382 (siehe aktuelle Übergabe/Release-State dieses PR); kein neues Generator-/Geräte-E2E behauptet. GC08 implementiert zunächst deaktivierte Profile/Controller; Gaming bleibt eigene Test-/Preview-Seite, kein Merge in Haupt-App autorisiert. Neue Games-Qualifikation 35/36 Originaltests, nicht der alte 35/35-Nachweis.

@@ -1,0 +1,81 @@
+name: Guardian separate Games Hosting
+on:
+  workflow_run:
+    workflows: [Guardian integrated checks]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      upstream_ci:
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-games-channel-gradecrew-escape-visual
+  cancel-in-progress: false
+env:
+  CONTROL_SHA: ${{ github.sha }}
+  GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+  GAMES_IDENTITY_VERIFIED: ${{ vars.GRADECREW_GAMES_IDENTITY_VERIFIED }}
+  GAMES_CHANNEL_OWNERSHIP_VERIFIED: ${{ vars.GRADECREW_GAMES_CHANNEL_OWNERSHIP_VERIFIED }}
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main' && vars.GRADECREW_GAMES_PUBLISH_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Validate authority, immutable artifact and common manual-channel ownership before login
+        id: prepare
+        run: python3 -m tools.automation.games_publication prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN_ID: ${{ inputs.upstream_ci || github.event.workflow_run.id }}
+      - uses: actions/setup-node@v5
+        if: steps.prepare.outputs.games == 'true'
+        with:
+          node-version: 22
+      - uses: google-github-actions/setup-gcloud@v3
+        if: steps.prepare.outputs.games == 'true'
+      - name: Install fixed Firebase CLI before cloud login
+        if: steps.prepare.outputs.games == 'true'
+        run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund firebase-tools@14.17.0
+      - name: Recheck exact target/permission/package before cloud login
+        if: steps.prepare.outputs.games == 'true'
+        run: python3 -m tools.automation.games_publication recheck
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: google-github-actions/auth@v3
+        if: steps.prepare.outputs.games == 'true'
+        with:
+          project_id: hausaufgabe-staging
+          workload_identity_provider: ${{ vars.STAGING_WIF_PROVIDER }}
+          service_account: gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com
+      - name: Recheck authority immediately before publication
+        if: steps.prepare.outputs.games == 'true'
+        run: python3 -m tools.automation.games_publication recheck
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Publish only separate Games preview, never the main site
+        if: steps.prepare.outputs.games == 'true'
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" hosting:channel:deploy gradecrew-escape-visual --project hausaufgabe-staging --config games-package/firebase.json --expires 30d --non-interactive --json > "$RUNNER_TEMP/games-publish.json"
+      - name: Verify Hosting version and exact published bytes
+        if: steps.prepare.outputs.games == 'true'
+        run: python3 -m tools.automation.games_publication verify
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        if: steps.prepare.outputs.games == 'true'
+        with:
+          name: guardian-games-receipt
+          path: receipt.json
+          if-no-files-found: error
+          retention-days: 90

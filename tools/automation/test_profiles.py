@@ -85,14 +85,14 @@ class LifecycleTests(unittest.TestCase):
         task = game_task()
         attempt = copy.deepcopy(ATTEMPT) | {'taskHash':p.digest(task),'controlHash':p.control_hash(ROOT),
             'executionProfile':task['execution_profile'],'profileDigest':task['profile_digest'],
-            'validationProfile':task['validation_profile']}
+            'validationProfile':task['validation_profile'],'baseBranch':GAME_TARGET}
         try:
             checked = profiles.selected_profile(attempt,task,ROOT)
         except AttributeError:
             self.fail('Saved attempts do not yet bind the execution profile')
         self.assertEqual(checked.id,'games-static-preview-v1')
         for change in [{'controlHash':'0'*64},{'taskHash':'0'*64},{'executionProfile':'web-ui-v1'},
-                       {'profileDigest':'0'*64},{'validationProfile':'web-combined-v1'}, {'approvedSha':'c'*40}]:
+                       {'profileDigest':'0'*64},{'validationProfile':'web-combined-v1'}, {'approvedSha':'c'*40},{'baseBranch':p.WEB}]:
             with self.subTest(change=change), self.assertRaises(ValueError): profiles.selected_profile(attempt | change,task,ROOT)
         self.assertEqual(attempt['requestId'],'run-1')
         self.assertEqual(profiles.validation_workflow(checked),'guardian-games-validation.yml')
@@ -120,3 +120,52 @@ class LifecycleTests(unittest.TestCase):
             e.prepare('run-1')
         self.assertIn('git/ref/heads/'+GAME_TARGET,paths)
         self.assertNotIn('git/ref/heads/'+p.WEB,paths)
+
+class GamesIntegrationTests(unittest.TestCase):
+    def fixtures(self):
+        from tools.automation.test_pipeline import PUB, B, review
+        task=game_task()
+        tests={'profile':'games-static-v1','executionProfile':'games-static-preview-v1',
+            'profileDigest':task['profile_digest'],'head':B,'base':A,'result':'success',
+            'packagedFiles':['app.js','index.html','styles.css'],'packageDigest':'e'*64}
+        reviews={role:review(role) for role in p.REVIEW_ROLES}
+        for evidence in reviews.values(): evidence['review'].update(executionProfile=task['execution_profile'],
+            profileDigest=task['profile_digest'],packageDigest='e'*64)
+        return task,PUB|{'changedFiles':[GAME_FILES[2]]},tests,reviews
+
+    def test_three_reviews_bind_the_same_profile_and_package(self):
+        from tools.automation.test_pipeline import B
+        task,pub,tests,reviews=self.fixtures()
+        try:
+            integrated=p.integration_gate(task,pub,tests,reviews,A,B)
+        except ValueError as exc:
+            self.fail('Games package/review binding unavailable: '+str(exc))
+        self.assertEqual(integrated,B)
+        for role in p.REVIEW_ROLES:
+            with self.subTest(missing=role),self.assertRaises(ValueError):
+                p.integration_gate(task,pub,tests,{k:v for k,v in reviews.items() if k!=role},A,B)
+            wrong=copy.deepcopy(reviews);wrong[role]['review']['packageDigest']='f'*64
+            with self.assertRaises(ValueError):p.integration_gate(task,pub,tests,wrong,A,B)
+            wrong=copy.deepcopy(reviews);wrong[role]['review']['verdict']='changes_requested'
+            wrong[role]['review']['findings']=[{'severity':'blocking','path':GAME_FILES[2],'message':'State mismatch'}]
+            with self.assertRaises(ValueError):p.integration_gate(task,pub,tests,wrong,A,B)
+        for change in [{'head':'c'*40},{'profileDigest':'f'*64},{'packagedFiles':['app.js']},
+                       {'packageDigest':'garbage'},{'result':'skipped'}]:
+            with self.subTest(change=change),self.assertRaises(ValueError):
+                p.integration_gate(task,pub,tests|change,reviews,A,B)
+        with self.assertRaises(ValueError):p.integration_gate(task,pub,tests,reviews,'c'*40,B)
+        with self.assertRaises(ValueError):p.integration_gate(task,pub,tests,reviews,A,'c'*40)
+
+class IntegratedReceiptTests(unittest.TestCase):
+    def test_games_integrated_ci_receipt_requires_matching_profile_and_package(self):
+        from tools.automation import execution as e
+        from tools.automation.test_pipeline import B
+        task,pub,tests,_ = GamesIntegrationTests().fixtures()
+        try:
+            result = e.integrated_report(task,pub,tests,'run-1',90)
+        except AttributeError: self.fail('Integrated Games CI receipt adapter missing')
+        self.assertEqual(result['branch'],GAME_TARGET)
+        self.assertEqual(result['packageDigest'],'e'*64)
+        self.assertEqual(result['runAttempt'],1)
+        self.assertEqual(result['commit'],B)
+        with self.assertRaises(ValueError): e.integrated_report(task,pub,tests|{'profileDigest':'f'*64},'run-1',90)

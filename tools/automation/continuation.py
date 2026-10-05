@@ -93,12 +93,12 @@ def main():
                 blob = write_ledger(ledger, blob)
         current = api('git/ref/heads/' + task['base_branch'])['object']['sha']
         if history and history[-1]['state'] in {'integrated', 'staging_deployed'}:
-            from .deployment_evidence import reconcile_deployment
+            from .deployment_evidence import reconcile_profile_deployment
             if args.execute and enabled and row['enabled']:
                 def persist():
                     nonlocal blob
                     blob = write_ledger(ledger, blob)
-                reconcile_deployment(history[-1], persist=persist)
+                reconcile_profile_deployment(history[-1], persist=persist)
                 blob = write_ledger(ledger, blob)
             action, reason = 'await_acceptance' if history[-1]['state'] == 'staging_deployed' else 'await_receipts', history[-1].get('deployReason', 'Technical deployment receipts pending')
         else:

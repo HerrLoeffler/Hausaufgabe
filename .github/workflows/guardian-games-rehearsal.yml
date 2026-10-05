@@ -1,0 +1,78 @@
+name: Guardian Games qualification rehearsal
+on:
+  pull_request:
+    branches: [main]
+    paths: ['tools/automation/**', '.github/workflows/guardian-*.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: guardian-games-rehearsal-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  controller:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: All offline controller and budget/recovery probes
+        run: python3 -m unittest discover -s tools/automation -p 'test_*.py' -v
+  qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45
+          path: source
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Original pinned Games suite; known failure stays visible and blocks qualification
+        run: |
+          sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
+          sudo chown -R root:root tools/automation
+          sudo chmod -R a+rX tools/automation
+          python3 -m tools.automation.games_static --source source --head 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45 --base 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45 --output evidence
+        env:
+          GC_GAMES_SANDBOX_USER: gradecrew-validator
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: 6434ddefb83cffca7bde5a7347ed6d2f56d5cb45
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install fixed browser toolchain without deployment credentials
+        run: |
+          npm install --prefix "$RUNNER_TEMP/games-browser" --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/games-browser/browsers" "$RUNNER_TEMP/games-browser/node_modules/.bin/playwright" install --with-deps chromium
+          sudo useradd --system --no-create-home --shell /bin/bash gradecrew-validator
+          sudo chmod -R a+rX "$RUNNER_TEMP/games-browser"
+      - name: Build only pinned three-file package; never publish or run a candidate npm script
+        working-directory: source
+        run: node ../tools/automation/fixtures/games-static-v1/tools/build-lab-escape-expedition.mjs ../browser-package
+      - name: Isolated local-resource browser smoke; not human product acceptance
+        run: python3 -c "from tools.automation.games_static import run_node; run_node(['tools/automation/games-static-smoke.cjs','browser-package/public'])"
+        env:
+          GC_GAMES_SANDBOX_USER: gradecrew-validator
+          NODE_PATH: ${{ runner.temp }}/games-browser/node_modules
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/games-browser/browsers

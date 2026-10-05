@@ -104,7 +104,7 @@ class ContractTests(unittest.TestCase):
             for name in ['guardian-execution.yml','guardian-web-validation.yml','guardian-integrated-ci.yml','guardian-recovery.yml']:
                 (mirror/'.github/workflows'/name).write_text((root/'.github/workflows'/name).read_text())
             import shutil
-            for name in ['games_static.py','validate-games-static.sh','games-static-smoke.cjs']:
+            for name in ['games_publication.py','games_static.py','validate-games-static.sh','games-static-smoke.cjs']:
                 shutil.copyfile(root/'tools/automation'/name,mirror/'tools/automation'/name)
             shutil.copytree(root/'tools/automation/fixtures',mirror/'tools/automation/fixtures')
             for name in ['guardian-games-validation.yml','guardian-games-staging.yml']:

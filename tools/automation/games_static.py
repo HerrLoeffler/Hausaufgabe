@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -48,6 +49,24 @@ def games_test_report(head,base,profile_hash,package,test_result):
             'head':head,'base':base,'result':'success','packagedFiles':list(NAMES),'packageDigest':package['packageDigest']}
 
 
+def node_environment(environ):
+    return {k:environ[k] for k in ('PATH','NODE_PATH','PLAYWRIGHT_BROWSERS_PATH') if k in environ}
+
+
+def node_command(args,environ):
+    user=environ.get('GC_GAMES_SANDBOX_USER')
+    if environ.get('GITHUB_ACTIONS')=='true' and user!='gradecrew-validator':
+        raise ValueError('Games CI requires isolated unprivileged validator user')
+    if user:
+        if user!='gradecrew-validator':raise ValueError('Unknown validator identity')
+        return ['sudo','-u',user,'env','-i']+[k+'='+v for k,v in node_environment(environ).items()]+['node',*args]
+    return ['node',*args]
+
+
+def run_node(args,cwd=None):
+    subprocess.run(node_command(args,os.environ),cwd=cwd,env=node_environment(os.environ),check=True)
+
+
 def validate_source(source,head,output,base=None):
     source=Path(source).resolve(); output=Path(output).resolve(); output.mkdir(parents=True,exist_ok=True)
     actual=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
@@ -66,14 +85,24 @@ def validate_source(source,head,output,base=None):
             file=source/name
             if file.is_symlink() or not file.is_file(): raise ValueError('Candidate source is missing or symlink')
             target=scratch/name; target.parent.mkdir(parents=True,exist_ok=True); shutil.copyfile(file,target)
-        subprocess.run(['node','--check',str(scratch/'lab/escape-expedition/app.js')],check=True)
-        subprocess.run(['node','--test',str(scratch/'tools/games/escape-expedition.test.cjs')],cwd=scratch,check=True)
-        package=Path(temp)/'package'
-        subprocess.run(['node',str(fixtures/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch,check=True)
+        Path(temp).chmod(0o755)
+        for path in scratch.rglob('*'):
+            path.chmod(0o555 if path.is_dir() else 0o444)
+        scratch.chmod(0o555)
+        build=Path(temp)/'build';build.mkdir()
+        if os.environ.get('GC_GAMES_SANDBOX_USER'):
+            subprocess.run(['sudo','chown','gradecrew-validator',str(build)],check=True)
+        run_node(['--check',str(scratch/'lab/escape-expedition/app.js')])
+        run_node(['--test',str(scratch/'tools/games/escape-expedition.test.cjs')],cwd=scratch)
+        package=build/'package'
+        run_node([str(fixtures/'tools/build-lab-escape-expedition.mjs'),str(package)],cwd=scratch)
         manifest=validate_games_package(package/'public',head,changes)
         for name in NAMES:
             if (package/'public'/name).read_bytes()!=(source/'lab/escape-expedition'/name).read_bytes(): raise ValueError('Builder changed candidate bytes')
         shutil.copytree(package/'public',output/'public',dirs_exist_ok=True)
+        for path in scratch.rglob('*'):
+            if path.is_dir():path.chmod(0o755)
+        scratch.chmod(0o755)
     report=games_test_report(head,base,profile_digest(GAMES,ROOT),manifest,'success')
     (output/'package-manifest.json').write_text(json.dumps(manifest,sort_keys=True)+'\n')
     (output/'tests.json').write_text(json.dumps(report,sort_keys=True)+'\n')
@@ -87,3 +116,65 @@ def main():
     args=parser.parse_args();validate_source(args.source,args.head,args.output,args.base)
 
 if __name__=='__main__':main()
+
+
+def verify_games_receipt(receipt,attempt,ci,manifest,current_target):
+    """A successful workflow alone is insufficient; require exact publication."""
+    from .profiles import GAMES
+    content={k:manifest.get(k) for k in ('schemaVersion','sourceSha','files')}
+    files=content['files']
+    if content['schemaVersion']!=1 or not isinstance(files,dict) or set(files)!=set(NAMES) or any(not isinstance(x,str) or not re.fullmatch('[a-f0-9]{64}',x) for x in files.values()):
+        raise ValueError('Incomplete package manifest')
+    if manifest.get('packageDigest')!=digest(content): raise ValueError('Manifest changed')
+    head=sha(attempt['integratedSha'])
+    if current_target!=head or attempt['publication']['head']!=head or content['sourceSha']!=head:
+        raise ValueError('Target/package superseded')
+    required_ci={'requestId':attempt['requestId'],'commit':head,'branch':GAMES.allowed_targets[0],
+        'runId':attempt['ciRunId'],'runAttempt':1,'result':'success','profile':GAMES.validation_profile,
+        'executionProfile':GAMES.id,'profileDigest':attempt['profileDigest'],'packageDigest':manifest['packageDigest']}
+    if ci!=required_ci: raise ValueError('Exact Games CI ownership required')
+    request=attempt.get('deploymentRequest',{})
+    if request.get('state') not in {'running','completed'} or type(request.get('runId')) is not int or request.get('runAttempt')!=1:
+        raise ValueError('Missing publication ownership')
+    expected={'schemaVersion':1,'requestId':attempt['requestId'],'taskId':attempt['taskId'],'executionProfile':GAMES.id,
+        'profileDigest':attempt['profileDigest'],'controlHash':attempt['controlHash'],'controlSha':attempt['controlSha'],
+        'candidateSha':head,'integratedSha':head,'ciRunId':attempt['ciRunId'],'ciRunAttempt':1,
+        'deployRunId':request['runId'],'deployRunAttempt':1,'packageDigest':manifest['packageDigest'],
+        'project':'hausaufgabe-staging','site':'hausaufgabe-staging','channel':'gradecrew-escape-visual',
+        'result':'success','published':True,'verifiedHashes':files,'device_test':'not_performed','productionChanged':False,'expiresDays':30}
+    if any(type(receipt.get(k)) is not type(v) or receipt.get(k)!=v for k,v in expected.items()):
+        raise ValueError('Publication receipt binding differs')
+    if not isinstance(receipt.get('version'),str) or not re.fullmatch(r'sites/hausaufgabe-staging/versions/[A-Za-z0-9_-]+',receipt['version']):
+        raise ValueError('Published Hosting version missing')
+    return receipt
+
+
+def publication_setup_gate(flags,legacy_workflow):
+    if any(flags.get(name)!='true' for name in ('GAMES_IDENTITY_VERIFIED','GAMES_CHANNEL_OWNERSHIP_VERIFIED')):
+        raise ValueError('Games Hosting identity/channel setup unverified; no cloud login')
+    groups=re.findall(r'^\s*group:\s*([^\n]+)',legacy_workflow,re.M)
+    cancels=re.findall(r'^\s*cancel-in-progress:\s*([^\n]+)',legacy_workflow,re.M)
+    if groups!=['gradecrew-games-channel-gradecrew-escape-visual'] or cancels!=['false']:
+        raise ValueError('Existing manual Games publisher has not joined shared channel ownership')
+
+
+def extract_games_artifact(payload,artifact_digest,folder):
+    import io,stat,zipfile
+    if not 0<len(payload)<=1024*1024 or artifact_digest!='sha256:'+hashlib.sha256(payload).hexdigest():
+        raise ValueError('Immutable Games artifact digest differs')
+    expected={'public/'+x for x in NAMES}|{'package-manifest.json'}
+    folder=Path(folder);folder.mkdir(parents=True,exist_ok=True)
+    if folder.is_symlink():raise ValueError('Unsafe output folder')
+    folder=folder.resolve()
+    with zipfile.ZipFile(io.BytesIO(payload)) as z:
+        infos=z.infolist()
+        if len(infos)!=4 or {x.filename for x in infos}!=expected:raise ValueError('Artifact file scope differs')
+        for info in infos:
+            mode=info.external_attr>>16
+            if info.file_size>160000 or info.flag_bits&1 or stat.S_ISLNK(mode) or stat.S_IFMT(mode) not in (0,stat.S_IFREG):
+                raise ValueError('Unsafe artifact entry')
+        for info in infos:
+            target=folder/info.filename
+            if target.is_symlink() or any(p.is_symlink() for p in target.parents if p!=folder.parent):raise ValueError('Unsafe output alias')
+            target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(z.read(info))
+    return json.loads((folder/'package-manifest.json').read_text())

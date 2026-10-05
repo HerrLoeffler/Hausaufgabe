@@ -14,9 +14,12 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
+if not __package__:
+    sys.path.insert(0,str(ROOT))
 REPO = "HerrLoeffler/Hausaufgabe"
 LEDGER_BRANCH = "automation/guardian-state"
 LEDGER_PATH = "automation/guardian-ledger.json"
@@ -47,7 +50,7 @@ def validate_policy(policy):
         raise ValueError("Attempts must be between 1 and 3")
     if policy.get("automaticProduction") is not False:
         raise ValueError("Automatic Production is forbidden")
-    from .profiles import CATALOG, WEB, GAMES
+    from tools.automation.profiles import CATALOG, WEB, GAMES
     enabled_profiles = policy.get('enabledExecutionProfiles', [WEB.id])
     if not isinstance(enabled_profiles,list) or any(not isinstance(x,str) or x not in CATALOG for x in enabled_profiles) or len(set(enabled_profiles)) != len(enabled_profiles):
         raise ValueError('Unknown or duplicate enabled execution profiles')

@@ -63,3 +63,20 @@ class PackageTests(unittest.TestCase):
         report=self.g.games_test_report('a'*40,'b'*40,'c'*64,package,'success')
         self.assertEqual(report['packageDigest'],package['packageDigest'])
         with self.assertRaises(ValueError): self.g.games_test_report('d'*40,'b'*40,'c'*64,package,'success')
+
+class RunnerIsolationTests(unittest.TestCase):
+    def test_node_child_does_not_inherit_provider_cloud_or_github_credentials(self):
+        from tools.automation import games_static as g
+        if not hasattr(g,'node_environment'):self.fail('Credential-free child environment missing')
+        env=g.node_environment({'PATH':'/trusted/node/bin','NODE_PATH':'/trusted/browser',
+            'CODEX_WORKER_API_KEY':'fake-key','GH_TOKEN':'fake-token','GOOGLE_APPLICATION_CREDENTIALS':'/fake/key.json',
+            'ACTIONS_ID_TOKEN_REQUEST_TOKEN':'fake-id-token','HOME':'/personal/home'})
+        self.assertEqual(env,{'PATH':'/trusted/node/bin','NODE_PATH':'/trusted/browser'})
+
+    def test_actions_runner_refuses_candidate_execution_without_isolated_user(self):
+        from tools.automation import games_static as g
+        if not hasattr(g,'node_command'):self.fail('Isolated Games runner command missing')
+        with self.assertRaises(ValueError):g.node_command(['--test','/trusted/test.cjs'],{'GITHUB_ACTIONS':'true','PATH':'/trusted/bin'})
+        command=g.node_command(['--test','/trusted/test.cjs'],{'GITHUB_ACTIONS':'true','GC_GAMES_SANDBOX_USER':'gradecrew-validator','PATH':'/trusted/bin'})
+        self.assertEqual(command[:5],['sudo','-u','gradecrew-validator','env','-i'])
+        self.assertEqual(command[-3:],['node','--test','/trusted/test.cjs'])

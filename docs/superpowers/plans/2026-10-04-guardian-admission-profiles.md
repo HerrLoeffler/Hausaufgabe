@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3/unittest, Node 22/node:test, GitHub Actions, existing Firebase Hosting tooling. No new provider SDK or product dependency.
 
-**Spec:** [Approved design](../specs/2026-10-04-guardian-admission-profiles-design.md), explicitly approved by Martin on 2026-10-04. This plan awaits review and execution-method selection.
+**Spec:** [Approved design](../specs/2026-10-04-guardian-admission-profiles-design.md), explicitly approved by Martin on 2026-10-04. Martin approved this plan and inline execution on 2026-10-04; execution/checkpoints live in the workstream.
 
 ## Global Constraints
 
@@ -109,4 +109,4 @@ Escape-MVP's secret-scoped Viewer fix was explicitly approved and applied outsid
 ## Execution handoff
 
 Recommend Native execution in this chat: six tasks share tightly coupled profile/evidence interfaces and existing budgets; one implementation owner avoids concurrent controller edits. A fresh independent whole-branch reviewer follows, without starting the paid Guardian chain.
-Before implementation, Martin reviews this written plan and chooses Native or subagent-driven execution. In either case preserve existing task IDs, safeguards and checkpoints.
+Martin approved this written plan and chose Native inline execution; no repeated approval is required. In either case preserve existing task IDs, safeguards and checkpoints.

@@ -24,6 +24,7 @@ jobs:
       contents: write
     outputs:
       head: ${{ steps.source.outputs.head }}
+      profile: ${{ steps.source.outputs.profile }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -35,28 +36,35 @@ jobs:
           GH_TOKEN: ${{ github.token }}
   validate:
     needs: source
+    if: needs.source.outputs.profile == 'web-ui-v1'
     uses: ./.github/workflows/guardian-web-validation.yml
     with:
       head: ${{ needs.source.outputs.head }}
       control_sha: ${{ github.sha }}
+  validate-games:
+    needs: source
+    if: needs.source.outputs.profile == 'games-static-preview-v1'
+    uses: ./.github/workflows/guardian-games-validation.yml
+    with:
+      head: ${{ needs.source.outputs.head }}
+      control_sha: ${{ github.sha }}
   receipt:
-    needs: [source, validate]
+    needs: [source, validate, validate-games]
+    if: always() && needs.source.result == 'success' && (needs.validate.result == 'success' || needs.validate-games.result == 'success')
     runs-on: ubuntu-latest
     steps:
-      - name: Record exact successful integration validation
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: guardian-tests
+          path: evidence
+      - name: Record exact profile-bound successful integration validation
+        run: python3 -m tools.automation.execution ci-receipt
         env:
-          HEAD_SHA: ${{ needs.source.outputs.head }}
-        run: |
-          python3 - <<'PY'
-          import json, os, re
-          head = os.environ['HEAD_SHA']
-          assert re.fullmatch('[a-f0-9]{40}', head)
-          report = {'requestId': os.environ['REQUEST_ID'], 'commit': head,
-                    'branch': 'feature/gradecrew-app-integration',
-                    'runId': int(os.environ['GITHUB_RUN_ID']),
-                    'result': 'success', 'profile': 'web-combined-v1'}
-          open('integrated-ci.json', 'w').write(json.dumps(report) + '\n')
-          PY
+          GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@v4
         with:
           name: guardian-integrated-evidence
