@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
@@ -22,6 +23,7 @@ function fixture(t, { publicEntry = false } = {}) {
     url: 'https://example.test', runScripts: 'outside-only', pretendToBeVisual: true
   });
   const w = dom.window;
+  w.assessmentContentLabels = assessmentContentLabels;
   t.after(() => w.close());
   w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
   w.HTMLDialogElement.prototype.close = function () { this.open = false; };
@@ -526,4 +528,3 @@ test('Actual submission emits the tour transition only after Firestore confirms 
   assert.equal(writes[0].data.answers.q1, 'blue');
   assert.equal(events[0].data.submissionId, 'saved-submission');
 });
-

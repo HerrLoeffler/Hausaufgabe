@@ -98,3 +98,13 @@ Während dieses Passes ist `feature/gradecrew-app-integration` um PostHog-/Deplo
 - Development Status 37269176813 gelesen; aktuelle Integrationsbasis bewusst zusammengeführt. #51 überlappt CI; nur neuer Testaufruf ergänzt, keine Trigger-/Deploy-Änderung. #25 Sprachvertrag bleibt isoliert. Vor Integration erneut Live-Status und aktuellen Zielhead prüfen.
 - Keine bezahlten KI-Aufrufe oder Budgetänderungen. Production unverändert.
 - Genau ein nächster Schritt: breitere lokale Regression und Staging-Build prüfen.
+
+## Verifikation 2026-10-05 14:24 UTC
+
+- PR #139: https://github.com/HerrLoeffler/Hausaufgabe/pull/139, Branch feature/i18n-content-labels-20261005. Gepushter Zwischenstand 3c6f7206042363a9bd85a0a202321c9c277f5e13; veröffentlichter Tree 0006245194a2d11f775f118aecb022a40dddd701 stimmt exakt mit lokal getestetem Codebaum überein.
+- Breite Prüfung fand drei Tutorial-Fixture-Fehler: extrahierter renderStudentQuiz erhielt den neu importierten echten assessmentContentLabels-Helfer nicht. gradecrew-tour.test.mjs importiert ihn jetzt und stellt ihn allen Fixtures bereit; keine Produktumgehung.
+- Danach 266/266 Root-/Web-/i18n-Tests erfolgreich; 43/43 Assessment-Backend-Tests erfolgreich. app.js, secure-student.js und assessment-core.js Syntax grün. Staging-Build erfolgreich, 112 Dateien; kein Deploy. Lokale Node-Laufzeit gebündelt, Remote-CI verwendet Node 22.
+- Zwischenlauf 37324058268 auf 3c6f720 ist fehlgeschlagen; nicht als Erfolg verbuchen. Fixture-Reparatur folgt in diesem Checkpoint. Der finale Remote-Lauf muss dem neuen SHA zugeordnet werden.
+- Unabhängiges Review lokal läuft read-only (i18n_review); keine weiteren schreibenden Agenten. Originale Versuche und Budgets erhalten.
+- Release-Stufe bis zum bestätigten finalen Lauf: branch_only. Nicht integriert; kein neuer Preview-/Functions-/Rules-Nachweis, keine Geräteabnahme; Production unverändert.
+- Nächster Schritt: exakte CI des neuen Checkpoints prüfen und Review-Befunde abgleichen.
