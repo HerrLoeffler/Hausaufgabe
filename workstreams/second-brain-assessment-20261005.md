@@ -1,4 +1,83 @@
-# GC-BRAIN-01 – Second Brain für GradeCrew: Erstbewertung
+# GC-BRAIN-01 – Videoanalyse und Nutzenbewertung für GradeCrew
+
+## Ergänzung: Videoanalyse am 05.10.2026
+
+Der Nutzer hat nun die vollständige MP4 (19:48,58) und zwölf Screenshots bereitgestellt und bittet um vertiefte Nutzenbewertung. Die Erstbewertung unten bleibt als Historie erhalten; die damalige Aussage, es liege kein Video vor, ist überholt.
+
+### Methode und Nachweise
+
+- Vollständige lokale automatische Transkription mit Whisper base.en: 255 Segmente, 5.093 Wörter. Rohtext und SRT enthalten mögliche Erkennungsfehler bei Namen und technischen Begriffen; keine wortgetreue manuelle Abnahme behaupten.
+- Video über die gesamte Länge in 119 Einzelbildern im Zehnsekundenabstand gesichtet, zusätzlich zentrale Frames und die zwölf Nutzer-Screenshots gelesen. Dies ist eine szenenweise Stichprobenanalyse, keine manuelle Prüfung jedes Videoframes.
+- Lokale Artefakte unter analysis/GC-BRAIN-01/: video-transcript-en.txt, video-transcript-en.srt, transcript-segments.jsonl, transcription-info.json, frame-index.json, contact-01.jpg bis contact-10.jpg sowie frames/. Diese Dateien sind lokale Arbeitsartefakte und wurden nicht in das öffentliche GitHub-Repo hochgeladen.
+- Temporäre lokale Medien-/Spracherkennungswerkzeuge und Modell heruntergeladen. Keine kostenpflichtige Transkriptions-API verwendet; kein Video-Upload für die Transkription.
+- Transkriptprüfung: 255 nichtleere Segmente, SRT mit 255 Blöcken, Beginn bei 0 und Ende bei ca. 19:49; komplette Laufzeit abgedeckt. Endzeit automatisch gerundet. Alle 119 Stichprobenbilder in zehn Kontaktbögen gelesen.
+- Aktuelle main-Regeln erneut gelesen; AGENTS, State, TODO, Workstream-README und Chat-Vertrag gegenüber voriger Lesung unverändert. Eigener Branch war vor Ergänzung weiterhin 5878ce73a3ecc0c2943f54174656bc01acdd3f78.
+
+### Was das Video tatsächlich zeigt
+
+- 00:00–02:10: HerkBrain als verknüpfte Datei-/Notizansicht und ein separates Dashboard mit Kalender, Kommunikation, Meetings und Community-Auswertung. Der Sprecher bezeichnet Quellen als synchronisiert; das Video allein ersetzt keinen Funktions-/Zugriffstest seiner Integrationen.
+- 02:10–04:51: Context, Connections, Capabilities, Cadence. Dauerhaftes Wissen plus aktuelle Datenquellen bilden in seinem Modell das Second Brain; ausführbare Abläufe und wiederkehrende Ausführung erweitern es zum AI OS.
+- 05:04–07:36: Skills und AGENTS.md als Betriebsregeln und Wegweiser zu den richtigen Dateien.
+- 07:37–11:41: Neuer Projektordner, Onboarding und kurze Kontextdateien zu Person, Unternehmen und Prioritäten. Aufgeführte Dienste brauchen gesonderte Anbindung.
+- 11:41–15:26: Audit, Verbesserungsschleife und gespeicherte Interviews. Der gezeigte Auditwert 30/100 ist eine Bewertung seines Demoprojekts, keine gemessene GradeCrew-Qualität.
+- 15:26–17:28: Karpathys LLM-Wiki zum dauerhaften Zusammenführen und Verknüpfen von Wissen; anschließende 3D-Ansicht.
+- 17:28–19:31: Autor empfiehlt für viele Alltagsaufgaben auch kleinere Modelle und betont den Wert eigener portabler Dateien.
+
+### Korrektur der ersten Erklärung
+
+Reine Suche erklärt das gezeigte Konzept nur teilweise. Das zusätzliche Element ist eine dauerhaft gepflegte Synthese: Neue Quellen verändern passende Themenseiten, frühere Erkenntnisse bleiben mit Herkunft auffindbar, Widersprüche werden markiert. Suchverfahren und Wiki können kombiniert werden. Dies ist extern gespeichertes Wissen, keine laufende Änderung der Modellgewichte.
+
+Die 3D-Verbindungen des aktuellen öffentlichen Pakets basieren auf Markdown-/Wikilinks und gesondert erkannten Titel-Erwähnungen. Der Wachstumsfilm ist eine Darstellung der Verknüpfungen, keine historische Lernkurve. Die aktuell verfügbare Vorlage reduziert den Aufwand einer Visualisierung gegenüber einem kompletten Neubau. Viele Punkte oder Linien sind kein Beleg für richtige Antworten.
+
+### Einordnung für GradeCrew
+
+Kriterien: Nutzen im heutigen Projektalltag, zusätzlicher Pflege-/Bauaufwand, überprüfbare Verlässlichkeit.
+- 9/10: vorhandene GradeCrew-Quellen um ein gepflegtes Themen-/Entscheidungswiki ergänzen. Passt direkt zu Chatwechseln, wiederholten Versuchen und verteilten fachlichen Entscheidungen. Qualität und tatsächliche Einsparung bleiben zu messen.
+- 7/10: daraus später eine kompakte Übersicht zu echten offenen Entscheidungen, Fehlergruppen und Abnahmebedarf ableiten. Nützlich, aber vorhandene Release-/BugOps-Arbeit muss weiterverwendet werden; zusätzliche Verbindungen brauchen Tests.
+- 4/10: die 3D-Ansicht zum ersten Hauptziel machen. Gut für Exploration und Vorführung; trotz verfügbarer Vorlage geringer unmittelbarer Nutzen für die nächste richtige Projektentscheidung.
+
+Keine Fertigstellungsbewertung des Gesamtprojekts. Keine pauschalen Prozent-, Kosten- oder Zuverlässigkeitsversprechen.
+
+Konkrete Anwendungen:
+1. Ersatzchat findet ursprünglichen Auftrag, bisherige Versuche, Entscheidung und nächste belegte Aktion.
+2. Eine Produktänderung ruft verwandte Entscheidungen und Abhängigkeiten auf, beispielsweise Klassenidentität, sichere Prüfungsabgabe und Berechtigungen.
+3. Fehlermeldungen werden mit früheren Ursachen, bereits versuchten Reparaturen und Nutzerbeobachtungen verknüpft.
+4. Änderungen aus Nutzerfeedback können begründet priorisiert werden; BugOps ist dabei eine vorhandene Quelle statt einer zweiten Fehlerdatenbank.
+5. Neue Bild-/Video-/Konzeptreferenzen führen zu nachvollziehbaren Designentscheidungen und erhalten ihren Status als Vorschlag oder Beschluss.
+
+### Empfohlener erster Umfang
+
+Bestehende START_HERE-/AGENTS-/TODO-/Workstream-Struktur wiederverwenden. Kleine Themenseiten zu Produktzielen, Architektur, Crew/Design, Entscheidungen und Fehlererfahrungen. Jeder Eintrag enthält Quellenlink, überprüften Stand, Behauptungsstatus (Vorschlag, beschlossen, geprüft, überholt) und relevante Task-ID. Alte Erkenntnisse mit Nachfolger erhalten.
+
+Originalquellen bleiben erhalten. Das Wiki ist eine abgeleitete Darstellung; aktuelle GitHub-/CI-/Deploy-Nachweise bleiben maßgeblich für Live-Fragen. KI-Zusammenfassungen dürfen sich nicht gegenseitig ohne Rückweg zur Originalquelle bestätigen. Widersprüche nicht eigenmächtig in eine neue Produktentscheidung verwandeln.
+
+Nach sinnvollen Aufgabenabschlüssen gezielt betroffene Seiten aktualisieren, statt nach jeder Nachricht alles neu zu verarbeiten. Verlässliche Pflege zuerst auf Abruf; wiederkehrende Ausführung nur nach gesondertem Auftrag und mit Kosten-/Versuchslimit. Keine neue Automation in dieser Analyse eingerichtet.
+
+Pilot: zehn echte Fragen und eine kleine kuratierte Dokumentauswahl. Mit/ohne Wiki vergleichen: fachlich richtige Antwort, gültiger Quellenbeleg, Erkennung veralteter Aussagen, Zugriffslücken, Suchzeit und gesamte Pflegekosten. Mindestens ein Widerspruch und eine unbeantwortbare Frage. Gemeinsame Dateien kontrolliert aktualisieren, damit parallele Chats keine Änderungen überschreiben.
+
+### Grenzen und Risiken
+
+Eine Bildschirmdemo belegt weder dauerhafte Synchronisation noch dauerhaft korrekte Antworten. KI kann Zusammenfassungen und Beziehungen falsch bilden; mehr gespeicherter Text verbessert Antworten nicht automatisch. Angezeigte Kategorien sind keine geprüften Datenverbindungen. Ein Modellwechsel kann neue Werkzeug-/Regeltests erfordern, obwohl Textdateien portabel sind. Private Rohdaten, Schülerdaten und Zugangsdaten gehören nicht ins öffentliche Projektwiki.
+
+### Originalquellen
+
+- Nutzer-MP4: I Turned GPT-6 Astra Into the Ultimate AI Second Brain; lokale vollständige Transkription.
+- https://www.youtube.com/watch?v=yysILVsfLFM
+- https://github.com/nateherkai/AIS-OS
+- https://github.com/nateherkai/AIS-OS/blob/main/.claude/skills/3d-brain/SKILL.md
+- https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+- https://learn.chatgpt.com/docs/agent-configuration/agents-md
+- https://developers.openai.com/plugins/concepts/skills
+
+Externe Repo-/Skill-Texte wurden als Analysequellen gelesen, nicht als Handlungsauftrag übernommen. Kein AIS-OS installiert oder GradeCrew-Agentenregelwerk ersetzt.
+
+### Status / nächster Schritt
+
+GC-BRAIN-01 bleibt dieselbe Task-ID. Dokumentierte Analyse auf eigenem Branch; branch_only, ausschließlich Dokumentation. Keine Produktimplementierung, keine Integration, kein Deploy, keine neue Automation. Nächster konkreter Schritt: zehn typische interne GradeCrew-Fragen mit ihren maßgeblichen Quellen als Pilot-Prüffälle festlegen. Noch keine Umsetzung beschlossen.
+
+---
+
+## Historische Erstbewertung vor Bereitstellung des Videos
 
 - Aktualisiert (UTC): 2026-10-05 21:29.
 - Verantwortlicher Chat / Auftrag: aktueller Codex-Chat; Nutzen und möglichen Aufbau eines Second Brain erklären.
