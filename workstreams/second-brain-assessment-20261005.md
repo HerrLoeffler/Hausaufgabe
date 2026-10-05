@@ -1,5 +1,26 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Chat-Aufräumen, zwei Prüfer und Plugin-Oberflächen – 06.10.2026
+
+Nutzerauftrag: GradeCrew-Chats aufräumen, nach Funktionen organisieren, unabhängige Prüfer einrichten; Sidebar-Apps/Conversation-Panels gewinnbringend einbeziehen. GC-BRAIN-01 unverändert.
+
+- Maximal 50 jüngste nicht angeheftete Chats plus angeheftete Elemente inventarisiert. Ausgewählte GradeCrew-Inhalte gelesen; keine vollständige historische Kontoanalyse behaupten.
+- Drei native Sidebar-Bereiche angelegt: GC · Funktionen (5 Einträge), GC · Betrieb & Qualität (6), GC · Wissen & Planung (7). Alle 18 Einträge und angeheftete GradeCrew Zentrale über list_threads zurückgelesen. Teilweise Client-Aliasse in Section-Keys, erfolgreiche Einzel-Receipts vorhanden. Keine neuen Fachchats erstellt.
+- Vier Codex-Einzelfragen nach Abschlussprüfung archiviert und durch list_archived_threads bestätigt: Begründe ChatGPT Business, Ollama fürs Projekt bewerten, Antwortleitlinien in Gradecrew ergän, Zeichen identifizieren. Erkenntnisse und ursprüngliche IDs in ORGANIZATION.md/chat-organization-20261006.json gesichert; keine Daten-/Code-/PR-Löschung.
+- Vier Titel präzisiert: Main CODEX (w) -> GC · Automatisierung & Integration; Main GC (no w) -> GC · Fehler & Rückmeldungen; Spachfunktionen GC -> GC · Audio & Sprache; New Chat GC -> GC · Wiederaufnahme & Vorlagen. coordination.json aktualisiert, alte Titel dokumentiert.
+- Ausnahme: Design GC blieb nach zwei ChatGPT conversation load timed out in der bisherigen Ablage. Erster sequenzieller Verschiebeaufruf nach Timeout beendet, danach tatsächlichen Zustand abgeglichen. Kein Sicherheitsreview-Block, kein Grund für eine neue Nutzerfreigabe. Übrige Einträge erfolgreich einsortiert.
+- Offene Arbeiten erhalten: GC-AUTOMATION-08/PR126, i18n-Umsetzung, ASV-Entwurf, BugOps, fehlgeschlagener iOS-Statuscheck und offener Gesamtauditauftrag; keine automatische Wiederholung. Aktive Plugin-Recherche GC-PLUGINS-01 nur einsortiert, nicht neu gestartet/unterbrochen.
+- Zwei tatsächlich gestartete unabhängige, rein lesende Unteragenten prüften den Strukturentwurf und das Review-/Panelprotokoll anhand abgegrenzten Kontexts. Ergebnisse eingearbeitet: offene Audits sichtbar, klare aktive vs historische Zuständigkeit, gleiche unveränderliche Kandidaten, definierte persistente Versuchszählung, keine Mehrheit über einen Sicherheitsbefund, keine erfundene technische Rechteisolation.
+- ORGANIZATION.md und scoped AGENTS.md enthalten ab jetzt den Ablauf für zwei Reviewer bei substanzieller Arbeit: Funktion/Tests und Sicherheit/Randfälle. Höchstens drei Reparaturversuche, strengere vorhandene Gates gehen vor. Kein installierter Hook/Daemon, keine globale Erzwingung für alle Chats. Kleine Textarbeit angemessen normal prüfen; zusätzliche Abo-Nutzung transparent.
+- Bestehender Guardian mit seinen drei Reviews/Budgetprofilen bleibt unverändert. Keine bezahlten Modellaufrufe, keine neuen Automationen, keine Integration/Deploys.
+- Extension-Dokumentation bestätigt globales Sidebar-App-Entrypoint, Thread-Panel, Deep Links und Model-App Context. Empfehlung 9/10 nach Bedienbarkeit, Wiederverwendung, direkter Kommunikation und Betriebsaufwand. Tatsächliche registrierte Plugin-Anbindung weiter offen. Context-Auswahl ist keine Arbeitsautorisierung; gespeicherte Request-ID/Revision und belegte Statusübergänge erforderlich.
+- Geprüft: main-Regeln mit unveränderten bekannten Blob-SHAs, Development-Status-Run 37374686618 inkl. Joblog 111980194806; lokale JSON-Konsistenz, eindeutige Chat-Routen, Archiv-IDs, Bereichszahlen, Koordinator-Pin und git diff --check. Kein neuer Produktcode, daher keine Wiederholung der App-Tests oder Behauptung eines Code-Sicherheitsaudits.
+- Ausführlicher Entwurf: prototypes/gradecrew-control-local/ORGANIZATION.md. Reversibler Ablage-/Titel-/Archivnachweis: chat-organization-20261006.json. Scope lokal/Prototype-Branch, Release bleibt branch_only.
+
+Nächster konkreter Schritt: Für genau eine Standfrage (GC-I18N-03) die registrierbare Plugin-Brücke mit der laufenden Plugin-Recherche abgleichen und den tatsächlichen Eingang/Rückweg im vorhandenen Client testen. Mac-unabhängige Ausführung bleibt eigener offener Baustein.
+
+---
+
 ## Vereinfachung, Sites-Einordnung und Hauptchat – 06.10.2026
 
 Nutzer möchte die bestehende App behalten, Bedienung stark vereinfachen und Kommunikation mit ChatGPT herstellen. Fragt nach Sites und einem Hauptchat, der an passende Fachchats verteilt.

@@ -8,13 +8,81 @@
     "automaticBackgroundWorker": false
   },
   "routes": [
-    {"area": "Internationalisierung", "threadId": "01a10ac2-1486-7480-b644-f2fc953609de", "title": "GC-I18N-03 fortsetzen", "kind": "codex", "hostId": "local", "role": "existing_implementation", "checkBeforeDispatch": true},
-    {"area": "Schülerverwaltung", "threadId": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9", "title": "Präzisiere ASV-Importarchitektur", "kind": "codex", "hostId": "local", "role": "existing_architecture", "checkBeforeDispatch": true},
-    {"area": "Qualität & Betrieb", "threadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7", "title": "Main CODEX (w)", "kind": "codex", "hostId": "local", "role": "existing_guardian_and_integration_work", "checkBeforeDispatch": true},
-    {"area": "App & Geräte", "threadId": "01a10c75-8912-7a12-98f0-c9e78064aa2c", "title": "Prüfe GradeCrew iOS-Status", "kind": "codex", "hostId": "local", "role": "existing_ios_work", "checkBeforeDispatch": true},
-    {"area": "Design & Crew", "threadId": "6ac039dc-174c-83ed-8b2b-244fc51e5a36", "title": "Design GC", "kind": "chatgpt", "role": "reference_and_design", "executionVerified": false, "checkBeforeDispatch": true},
-    {"area": "Games", "threadId": "6ac26fb9-abb8-83eb-8f87-9d3a84a0acd2", "title": "Games GC", "kind": "chatgpt", "role": "reference_and_design", "executionVerified": false, "checkBeforeDispatch": true},
-    {"area": "Audio & Sprache", "threadId": "6ac2a8c6-165c-83eb-b0df-b3ce0d208dba", "title": "Spachfunktionen GC", "kind": "chatgpt", "role": "reference_and_design", "executionVerified": false, "checkBeforeDispatch": true}
+    {
+      "area": "Internationalisierung",
+      "threadId": "01a10ac2-1486-7480-b644-f2fc953609de",
+      "title": "GC-I18N-03 fortsetzen",
+      "kind": "codex",
+      "hostId": "local",
+      "role": "existing_implementation",
+      "checkBeforeDispatch": true
+    },
+    {
+      "area": "Schülerverwaltung",
+      "threadId": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
+      "title": "Präzisiere ASV-Importarchitektur",
+      "kind": "codex",
+      "hostId": "local",
+      "role": "existing_architecture",
+      "checkBeforeDispatch": true
+    },
+    {
+      "area": "Qualität & Betrieb",
+      "threadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+      "title": "GC · Automatisierung & Integration",
+      "kind": "codex",
+      "hostId": "local",
+      "role": "existing_guardian_and_integration_work",
+      "checkBeforeDispatch": true,
+      "previousTitle": "Main CODEX (w)"
+    },
+    {
+      "area": "App & Geräte",
+      "threadId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+      "title": "Prüfe GradeCrew iOS-Status",
+      "kind": "codex",
+      "hostId": "local",
+      "role": "existing_ios_work",
+      "checkBeforeDispatch": true
+    },
+    {
+      "area": "Design & Crew",
+      "threadId": "6ac039dc-174c-83ed-8b2b-244fc51e5a36",
+      "title": "Design GC",
+      "kind": "chatgpt",
+      "role": "reference_and_design",
+      "executionVerified": false,
+      "checkBeforeDispatch": true
+    },
+    {
+      "area": "Games",
+      "threadId": "6ac26fb9-abb8-83eb-8f87-9d3a84a0acd2",
+      "title": "Games GC",
+      "kind": "chatgpt",
+      "role": "reference_and_design",
+      "executionVerified": false,
+      "checkBeforeDispatch": true
+    },
+    {
+      "area": "Audio & Sprache",
+      "threadId": "6ac2a8c6-165c-83eb-b0df-b3ce0d208dba",
+      "title": "GC · Audio & Sprache",
+      "kind": "chatgpt",
+      "role": "reference_and_design",
+      "executionVerified": false,
+      "checkBeforeDispatch": true,
+      "previousTitle": "Spachfunktionen GC"
+    },
+    {
+      "area": "Fehler & Rückmeldungen",
+      "threadId": "6ac2706b-ebe4-83eb-8644-5cb35e721ef1",
+      "title": "GC · Fehler & Rückmeldungen",
+      "previousTitle": "Main GC (no w)",
+      "kind": "chatgpt",
+      "role": "existing_bugops_context",
+      "executionVerified": false,
+      "checkBeforeDispatch": true
+    }
   ],
   "policy": {
     "humanTaskRequired": true,
@@ -27,5 +95,28 @@
     "productionRequiresSeparateExplicitApproval": true,
     "resultsCollectedByCoordinatorViaReadTools": true,
     "automaticReplyFromWorkersNotAssumed": true
+  },
+  "reviewPolicy": {
+    "scope": "coordinator_and_this_prototype",
+    "type": "agent_instructions_not_background_service",
+    "document": "ORGANIZATION.md",
+    "substantialChanges": {
+      "reviewerCount": 2,
+      "roles": [
+        "correctness_and_tests",
+        "security_and_edge_cases"
+      ],
+      "separateContexts": true,
+      "sameImmutableCandidate": true,
+      "readOnlyInstructions": true,
+      "hardToolIsolationVerified": false,
+      "maxRepairAttemptsPerTask": 3,
+      "persistCountersInHandoff": true
+    },
+    "smallChanges": "appropriate_normal_verification",
+    "preserveStricterGuardianGates": true,
+    "silentModelSwitch": false,
+    "additionalSubscriptionUsage": true,
+    "globallyEnforced": false
   }
 }

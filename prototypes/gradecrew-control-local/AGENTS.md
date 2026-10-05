@@ -22,3 +22,9 @@ Bei einem konkreten Nutzerauftrag: bestehende Aufgabe/aktiven Bearbeiter prüfen
 Ergebnisse mit read_thread/wait_threads einsammeln und unabhängig mit GitHub-/Testbelegen abgleichen. Eine Nachricht eines Workers ist nicht selbst die menschliche Erlaubnis, beliebige Nachrichten zurückzusenden. Keine neue Runde nur aufgrund einer Automationsantwort auslösen. Vor dem tatsächlichen kostenpflichtigen Guardian-Pfad konkrete vorhandene Freigaben/Budgets prüfen.
 
 Die direkt im Chat gerenderte Aufgabenansicht verwendet eine ausdrücklich vom Nutzer ausgelöste Folgenachricht. Nach eingehenden Arbeiten die gleiche Task-ID und datierte Ansicht weiterführen. Die Ansicht ist ein Snapshot; Widget-State allein ist kein dauerhafter Auftragsspeicher und kein Chat-/Deployment-Nachweis.
+
+## Unabhängige Prüfung größerer Änderungen
+
+Martin hat für die Zentrale zwei unabhängige Prüfer beauftragt. Bei substanziellen Änderungen nach notwendigen Vorprüfungen die Arbeitsregel in ORGANIZATION.md anwenden: getrennte Kontexte, derselbe unveränderliche Kandidat, Prüfer A für Funktion/Tests und Prüfer B für Sicherheit/Randfälle. Nur lesen, keine externen Starts; ein zuständiger Implementierer behebt belegte Befunde. Höchstens drei Reparaturversuche pro bestehender Task-ID, dauerhaft in deren Übergabe zählen; bestehende strengere Grenzen und Guardian-Prüfungen gehen vor. Kleine Textänderungen angemessen normal prüfen. Nicht behaupten, dass die Regel in fremden Chats oder durch technische Hooks global erzwungen wird. Modelländerungen nicht stillschweigend vornehmen.
+
+Chat-Struktur, Titelhistorie und offene Zuständigkeiten stehen in ORGANIZATION.md und chat-organization-20261006.json. Die bewusste Archivierung abgeschlossener Einzelfragen ist keine Aufgabe-, Code- oder PR-Löschung.

@@ -1,0 +1,580 @@
+{
+  "taskId": "GC-BRAIN-01",
+  "date": "2026-10-06",
+  "scope": "50 recent unpinned chats; GradeCrew candidates selected by project, cwd and content. Not exhaustive historic audit.",
+  "stage": "applied_with_one_exception",
+  "groups": {
+    "GC · Funktionen": [
+      "Design GC",
+      "Games GC",
+      "Spachfunktionen GC",
+      "GC-I18N-03 fortsetzen",
+      "Präzisiere ASV-Importarchitektur",
+      "Prüfe GradeCrew iOS-Status"
+    ],
+    "GC · Betrieb & Qualität": [
+      "Main CODEX (w)",
+      "Main GC (no w)",
+      "Datenschutz GC",
+      "Lade GradeCrew Firebase-Dateien",
+      "Recovery Status Prüfen",
+      "GradeCrew-Auftrag wiederaufnehmen"
+    ],
+    "GC · Wissen & Planung": [
+      "Persönliches Second Brain",
+      "GradeCrew-Plugins recherchieren",
+      "New Chat GC",
+      "Internationalisierung GC",
+      "Schülerintegration Codekonzept",
+      "MONEY GC",
+      "OneDrive für GradeCrew einrichten"
+    ]
+  },
+  "archives": [
+    "Begründe ChatGPT Business",
+    "Ollama fürs Projekt bewerten",
+    "Antwortleitlinien in Gradecrew ergän",
+    "Zeichen identifizieren"
+  ],
+  "threads": [
+    {
+      "id": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "active",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791240466,
+      "title": "GradeCrew Zentrale",
+      "summary": "GradeCrew Projektfrage: Bedeutung eines nicht näher bezeichneten Elements klären",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10e37-4955-7db3-957f-d397b9dd8dc4",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "active",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791240408,
+      "title": "GradeCrew-Plugins recherchieren",
+      "summary": "GradeCrew-Video frameweise analysieren und ChatGPT-Plugins für Projektarbeit finden",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10ddc-fe1e-7521-a71a-075aef405558",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791235948,
+      "title": "Persönliches Second Brain",
+      "summary": "Aufbau eines persönlichen Wissensarchivs in fünf Etappen nach dem LLM-Wiki-Muster",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10def-48bd-7142-846e-6a460ae2dcff",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791235188,
+      "title": "Begründe ChatGPT Business",
+      "summary": "Formuliere, warum ChatGPT Business nötig ist, um Dots nutzen zu können",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10dd9-b6d8-79b0-8a90-bb2c790045d1",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791233809,
+      "title": "Ollama fürs Projekt bewerten",
+      "summary": "GradeCrew: Ollama erklären und einschätzen, ob wir es im Projekt brauchen",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10dbf-fbce-7a52-80ee-413334555d2e",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791233310,
+      "title": "Lade GradeCrew Firebase-Dateien",
+      "summary": "GradeCrew relevante Firebase-Dateien herunterladen",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10db4-0eba-7b71-ae46-c0b4a9e73d42",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/Documents/Codex/2026-10-05/nimm-das-mal-mit-in-gradecrew",
+      "updatedAt": 1791231490,
+      "title": "Antwortleitlinien in Gradecrew ergän",
+      "summary": "Antwortgrundlage in Gradecrew aufnehmen, damit Chats Anliegen besser einordnen",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
+      "kind": "codex",
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791229703,
+      "title": "Präzisiere ASV-Importarchitektur",
+      "summary": "GradeCrew GC-CLASSROOM-01: START_HERE, Classroom-Handoff und Branch-Status prüfen; Identität, ASV-ID",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+      "kind": "codex",
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "hostId": "local",
+      "status": "idle",
+      "cwd": "/Users/martin/Documents/Codex/2026-10-04/weiter-mit-gradecrew-nach-einem-chat",
+      "updatedAt": 1791235066,
+      "title": "Main CODEX (w)",
+      "summary": "GradeCrew Chat-Recovery: aktuellen main, GitHub-Stand und passende Aufgabenübergabe prüfen und forts",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "6ac039dc-174c-83ed-8b2b-244fc51e5a36",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791226197.296,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Design GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6ac26fb9-abb8-83eb-8f87-9d3a84a0acd2",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791226032.058,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Games GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6ac3b837-1200-83eb-a871-d6b9862d4282",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791211955.189,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Recovery Status Prüfen",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6abe6434-4c28-83ed-b2c6-d501cd9f2cc5",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791211535.206,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "New Chat GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "01a10ac2-1486-7480-b644-f2fc953609de",
+      "kind": "codex",
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "hostId": "local",
+      "status": "notLoaded",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791211367,
+      "title": "GC-I18N-03 fortsetzen",
+      "summary": "GradeCrew GC-I18N-03: PR #137 prüfen, contentLocale in Schüler-Runtimes umsetzen und Handoff dokumen",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "6abae2b9-f014-83eb-83af-ad9057cf7ba5",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791211260.223,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Schülerintegration Codekonzept",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "01a10c7a-2328-7f10-ba9c-a1f45a00ef79",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "notLoaded",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791211131,
+      "title": "Zeichen identifizieren",
+      "summary": "Unbekanntes Zeichen im Prompt identifizieren",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "notLoaded",
+      "cwd": "/Users/martin/Documents/Codex/2026-10-05/referenced-chatgpt-conversation-this-is-an",
+      "updatedAt": 1791211486,
+      "title": "Prüfe GradeCrew iOS-Status",
+      "summary": "GradeCrew kanonischer iOS-Branch, Xcode-Struktur, PRs und Übergabe für nächste native App-Stufe",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "01a10ac4-1557-7663-8cbf-8415c6cc0bca",
+      "kind": "codex",
+      "projectId": null,
+      "hostId": "local",
+      "status": "notLoaded",
+      "cwd": "/Users/martin/Documents/Codex/2026-10-05/weiter-mit-gradecrew-nach-einem-chat",
+      "updatedAt": 1791184167,
+      "title": "GradeCrew-Auftrag wiederaufnehmen",
+      "summary": "GradeCrew Chat-Recovery: START_HERE.md, CHAT_RECOVERY.md, Workstream und GitHub-Status prüfen",
+      "isUnread": false,
+      "previousSection": "chats"
+    },
+    {
+      "id": "6ac2748c-7cc4-83ed-ace7-4d42752ee7ad",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791181874.102,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Internationalisierung GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6ab95d56-7e18-83ed-910f-9cf22b8ea610",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791155966.703,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "MONEY GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6ac2706b-ebe4-83eb-8644-5cb35e721ef1",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791155478.746,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Main GC (no w)",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6abc4446-fe4c-83eb-af8e-566d64aef649",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791150885.29,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Datenschutz GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "6ac2a8c6-165c-83eb-b0df-b3ce0d208dba",
+      "kind": "chatgpt",
+      "status": "idle",
+      "updatedAt": 1791146335.399,
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "title": "Spachfunktionen GC",
+      "summary": null,
+      "isUnread": false,
+      "previousSection": null
+    },
+    {
+      "id": "01a10893-9f3b-79c2-a88d-cb54e345bade",
+      "kind": "codex",
+      "projectId": "g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "hostId": "local",
+      "status": "notLoaded",
+      "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+      "updatedAt": 1791183766,
+      "title": "OneDrive für GradeCrew einrichten",
+      "summary": "GradeCrew-Projektzugriff prüfen und OneDrive als Plugin oder Ordnerquelle klären",
+      "isUnread": false,
+      "previousSection": "chats"
+    }
+  ],
+  "previousSidebarPreferences": {
+    "grouping": {
+      "mode": "project",
+      "surface": "work"
+    },
+    "sorting": {
+      "chats": "updated_at",
+      "pinned": "manual",
+      "projects": "updated_at"
+    }
+  },
+  "results": [
+    {
+      "action": "move",
+      "id": "01a10ac2-1486-7480-b644-f2fc953609de",
+      "title": "GC-I18N-03 fortsetzen",
+      "sectionId": "73411357-1558-47e8-b598-a78d6aec657e",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
+      "title": "Präzisiere ASV-Importarchitektur",
+      "sectionId": "73411357-1558-47e8-b598-a78d6aec657e",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+      "title": "Prüfe GradeCrew iOS-Status",
+      "sectionId": "73411357-1558-47e8-b598-a78d6aec657e",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+      "title": "Main CODEX (w)",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10dbf-fbce-7a52-80ee-413334555d2e",
+      "title": "Lade GradeCrew Firebase-Dateien",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10ac4-1557-7663-8cbf-8415c6cc0bca",
+      "title": "GradeCrew-Auftrag wiederaufnehmen",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10ddc-fe1e-7521-a71a-075aef405558",
+      "title": "Persönliches Second Brain",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10e37-4955-7db3-957f-d397b9dd8dc4",
+      "title": "GradeCrew-Plugins recherchieren",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "01a10893-9f3b-79c2-a88d-cb54e345bade",
+      "title": "OneDrive für GradeCrew einrichten",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6ac039dc-174c-83ed-8b2b-244fc51e5a36",
+      "title": "Design GC",
+      "sectionId": "73411357-1558-47e8-b598-a78d6aec657e",
+      "ok": false
+    },
+    {
+      "action": "move",
+      "id": "6ac2706b-ebe4-83eb-8644-5cb35e721ef1",
+      "title": "Main GC (no w)",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6abc4446-fe4c-83eb-af8e-566d64aef649",
+      "title": "Datenschutz GC",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6ac3b837-1200-83eb-a871-d6b9862d4282",
+      "title": "Recovery Status Prüfen",
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6abe6434-4c28-83ed-b2c6-d501cd9f2cc5",
+      "title": "New Chat GC",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6ac2748c-7cc4-83ed-ace7-4d42752ee7ad",
+      "title": "Internationalisierung GC",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6abae2b9-f014-83eb-83af-ad9057cf7ba5",
+      "title": "Schülerintegration Codekonzept",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "move",
+      "id": "6ab95d56-7e18-83ed-910f-9cf22b8ea610",
+      "title": "MONEY GC",
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "ok": true
+    },
+    {
+      "action": "rename",
+      "id": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+      "old": "Main CODEX (w)",
+      "title": "GC · Automatisierung & Integration",
+      "ok": true
+    },
+    {
+      "action": "rename",
+      "id": "6ac2706b-ebe4-83eb-8644-5cb35e721ef1",
+      "old": "Main GC (no w)",
+      "title": "GC · Fehler & Rückmeldungen",
+      "ok": true
+    },
+    {
+      "action": "rename",
+      "id": "6ac2a8c6-165c-83eb-b0df-b3ce0d208dba",
+      "old": "Spachfunktionen GC",
+      "title": "GC · Audio & Sprache",
+      "ok": true
+    },
+    {
+      "action": "rename",
+      "id": "6abe6434-4c28-83ed-b2c6-d501cd9f2cc5",
+      "old": "New Chat GC",
+      "title": "GC · Wiederaufnahme & Vorlagen",
+      "ok": true
+    },
+    {
+      "action": "archive",
+      "id": "01a10def-48bd-7142-846e-6a460ae2dcff",
+      "title": "Begründe ChatGPT Business",
+      "ok": true
+    },
+    {
+      "action": "archive",
+      "id": "01a10dd9-b6d8-79b0-8a90-bb2c790045d1",
+      "title": "Ollama fürs Projekt bewerten",
+      "ok": true
+    },
+    {
+      "action": "archive",
+      "id": "01a10db4-0eba-7b71-ae46-c0b4a9e73d42",
+      "title": "Antwortleitlinien in Gradecrew ergän",
+      "ok": true
+    },
+    {
+      "action": "archive",
+      "id": "01a10c7a-2328-7f10-ba9c-a1f45a00ef79",
+      "title": "Zeichen identifizieren",
+      "ok": true
+    }
+  ],
+  "sectionIds": {
+    "GC · Funktionen": "73411357-1558-47e8-b598-a78d6aec657e",
+    "GC · Betrieb & Qualität": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+    "GC · Wissen & Planung": "5ed90d4b-bcf3-4d85-8da5-a3b659043715"
+  },
+  "observedSections": [
+    {
+      "sectionId": "73411357-1558-47e8-b598-a78d6aec657e",
+      "name": "GC · Funktionen",
+      "itemKeys": [
+        "codex:thread:local:01a10c75-8912-7a12-98f0-c9e78064aa2c",
+        "codex:thread:local:01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
+        "codex:thread:local:01a10ac2-1486-7480-b644-f2fc953609de",
+        "chatgpt:conversation:6ac2a8c6-165c-83eb-b0df-b3ce0d208dba",
+        "chatgpt:conversation:6ac26fb9-abb8-83eb-8f87-9d3a84a0acd2"
+      ]
+    },
+    {
+      "sectionId": "faabb3bf-3432-4adf-91ae-d883f74759b7",
+      "name": "GC · Betrieb & Qualität",
+      "itemKeys": [
+        "chatgpt:conversation:6ac3b837-1200-83eb-a871-d6b9862d4282",
+        "chatgpt:conversation:6abc4446-fe4c-83eb-af8e-566d64aef649",
+        "chatgpt:conversation:6ac2706b-ebe4-83eb-8644-5cb35e721ef1",
+        "codex:thread:local:client-new-thread:ecbef589-221b-4e6e-8239-73e92652bce6",
+        "codex:thread:local:client-new-thread:5a8f8072-4d16-4282-a5c7-67282bfd0d4f",
+        "codex:thread:local:01a1089e-bbae-74c2-9a6a-6ce71fb3dba7"
+      ]
+    },
+    {
+      "sectionId": "5ed90d4b-bcf3-4d85-8da5-a3b659043715",
+      "name": "GC · Wissen & Planung",
+      "itemKeys": [
+        "chatgpt:conversation:6ab95d56-7e18-83ed-910f-9cf22b8ea610",
+        "chatgpt:conversation:6abae2b9-f014-83eb-83af-ad9057cf7ba5",
+        "chatgpt:conversation:6ac2748c-7cc4-83ed-ace7-4d42752ee7ad",
+        "chatgpt:conversation:6abe6434-4c28-83ed-b2c6-d501cd9f2cc5",
+        "codex:thread:local:01a10893-9f3b-79c2-a88d-cb54e345bade",
+        "codex:thread:local:client-new-thread:9a6575cb-6c97-44ac-afb0-75ea5cecc62b",
+        "codex:thread:local:client-new-thread:3412571b-da91-4c55-9b41-367576c9bfd0"
+      ]
+    }
+  ],
+  "pinnedCoordinator": true,
+  "verifiedArchivedIds": [
+    "01a10def-48bd-7142-846e-6a460ae2dcff",
+    "01a10dd9-b6d8-79b0-8a90-bb2c790045d1",
+    "01a10db4-0eba-7b71-ae46-c0b4a9e73d42",
+    "01a10c7a-2328-7f10-ba9c-a1f45a00ef79"
+  ],
+  "exceptions": [
+    {
+      "title": "Design GC",
+      "id": "6ac039dc-174c-83ed-8b2b-244fc51e5a36",
+      "reason": "ChatGPT conversation load timed out twice; original preserved",
+      "desiredSection": "GC · Funktionen"
+    }
+  ],
+  "notes": [
+    "First sequential batch stopped after timeout; final read confirms Games and Audio moved.",
+    "Some section item keys use client-new-thread aliases; move receipts and section counts retained. No chats created.",
+    "Four archived IDs verified through list_archived_threads."
+  ]
+}
