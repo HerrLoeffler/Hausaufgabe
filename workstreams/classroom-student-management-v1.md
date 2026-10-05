@@ -101,3 +101,31 @@ Auf `feature/classroom-student-management-v1` ausschließlich eine statische, Fi
 - Genau ein nächster ausführbarer Schritt: isolierte Mock-Testseite auf Aufgabenbranch bauen
 
 Vor Übernahme [../docs/CHAT_RECOVERY.md](../docs/CHAT_RECOVERY.md) lesen. Chatwechsel ersetzt keine Commit-/CI-/Deploy-Prüfung.
+
+
+## ASV-/CSV-Import und Datenschutzreview – 05.10.2026
+
+Rechts-/Architekturprüfung gesichert: [CLASSROOM_ASV_IMPORT_PRIVACY.md](../docs/privacy/CLASSROOM_ASV_IMPORT_PRIVACY.md).
+
+Entscheidung:
+- ASV-/CSV-Import wird für V1 privacy-first clientseitig geplant.
+- Rohdatei, Vorname, Nachname und rohe ASV-Referenz verlassen den Browser nicht.
+- Kein namensbasiertes Akronym/Initialenstandard; stattdessen zufälliges Alias.
+- Persönlicher Zugangscode ist eine separate geheime Credential und nicht aus Name/Alias abgeleitet.
+- Die Lehrkraft bekommt lokal eine Mapping-Datei Name ↔ Alias ↔ Code.
+- Formelle Prüfungen nutzen von der Lehrkraft provisionierte/verifizierte Identitäten; Self-Join bleibt separater schwächerer Modus.
+- GradeCrew bleibt bei Schüleridentitäten datensparsam; keine Namen/Aliase/ASV-Referenzen in Telemetrie oder AI-Prompts.
+- Vor echtem Schuleinsatz sind AVV, TOMs, Unterauftragsverarbeiter, Art.-13-Information, Lösch-/Retentionkonzept und DSFA-Erforderlichkeitsprüfung notwendig.
+- Digital gespeicherte Leistungsnachweise und technische Accountdaten bekommen getrennte Aufbewahrungsregeln.
+
+Rechtlicher Ausgangspunkt:
+- Art. 85 Abs. 1 BayEUG: Erforderlichkeit;
+- § 46/Anlage 1 BaySchO: Verfahrensrahmen digitaler Anwendungen;
+- Art. 5, 25, 28, 32 DSGVO: Datenminimierung, Privacy by Design, Auftragsverarbeitung, Sicherheit;
+- § 37/40 BaySchO: digitale Leistungsnachweise / Aufbewahrung.
+
+Auf GitHub gesichert:
+- Privacy-Review: `7800e882...`
+- Masterplan ergänzt: `305bf41e...`
+
+Nächster Schritt bleibt unverändert: zuerst statische Firebase-freie Mock-Testseite; ASV-Import darin nur als lokaler Fake-/Demo-Flow, noch ohne Backend.
