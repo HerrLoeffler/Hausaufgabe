@@ -1,5 +1,22 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Plugin umgesetzt und lokal installiert – 06.10.2026
+
+Martin hat den Bau der integrierten Zentrale ausdrücklich beauftragt. GC-BRAIN-01, bestehender Branch und Aufgabenhistorie erhalten. Ausführung im isolierten lokalen Prototyp; keine Änderungen an Schüler-/Produktcode.
+
+- Version0.2.2: portables plugin.json/mcp.json, stdio-MCP-Adapter, global/thread UI-Ressource und vier Werkzeuge für Übersicht, Aufgabe, Standfrage und Antwort. Bestehender lokaler Dienst bleibt alleiniger Dateischreiber.50 bestehende Snapshot-Aufgaben, Funktionen/Anwendungen/Zuständigkeit unabhängig gefiltert.
+- Protokollweg: Frage mit Request-ID und Quellenrevision speichern, explizit ui/message an aktiven Chat, Antwort per model-only gradecrew_answer zurück. Keine Modell-API, kein automatischer Modellwechsel, keine Codebearbeitung aus Standfragen. Antworten ändern keinen Release-Status.
+- Installierte Quelle gradecrew-local, Paket gradecrew-central@gradecrew-local0.2.2; CLI list bestätigt installed=true/enabled=true. Tatsächlicher installierter Launcher geprüft: initialize/tools/list/gradecrew_open/resources/read erfolgreich,50 Aufgaben,0 echte Testfragen, UI-Ressource geladen.
+- Alte lokale Daten vor Dienstneustart gesichert. Alter PID27261 via Kommando+cwd geprüft, nur dieser Dienst beendet. Auto-Start des kompatiblen Dienstes aus installiertem Paket nachgewiesen.
+- Baseline3/3, final8/8 Node-Tests und8/8 simulierte DOM/Host-Regressionen bestanden. Beide getrennten Reviewer haben finalen Code0897050384769162db4e9bcc2e46a0704f58c87d ohne weitere Befunde bewertet. Kein Browser-/Gerätetest oder gesamter Security-Audit behauptet.
+- Reparaturzähler dieser Plugin-Umsetzung2/3: zuerst Formularverlust/unklareDoppelsendung/Verbindungscache; danach bekannteSpeicherablehnung von unbekanntemÜbertragungsresultat getrennt. Frühere Task-/Budgethistorie bleibt erhalten, keine Provider-Aufrufe oder neue Kostenreservierungen.
+- Frische Main-Regeln gelesen. Aktueller Development-Audit37387706779/job112025093083 erfolgreich; bekannte Warnungen über unklassifizierte Branches/abweichende Ziele, keine Produktdateien in diesem Scope übernommen.
+- Release weiterhin branch_only; keine CI-/Integration-/Staging-/Production-Stufe neu behauptet. Neue private Daten und installierter Cache bleiben außerhalb Git. Ausführliche Dateien PLUGIN-PLAN.md und PLUGIN-VERIFICATION.md.
+- Offene Abnahme: im echten Client Plugin neu laden/gegebenenfalls Desktop-App neu öffnen, GradeCrew Central öffnen, eine Standfrage tatsächlich aus dem Panel senden und gespeicherte Modellantwort dort bestätigen. Neu installierte Werkzeuge stehen diesem bereits laufenden Turn noch nicht als native Tools zur Verfügung. UI-Sperre nicht durch Alternativautomation umgangen.
+- Cloud-Arbeit bei ausgeschaltetem Mac, automatische GitHub-Synchronisierung und Implementierungsaufträge direkt aus dem Panel bleiben Folgeumfang. Der Katalog ist ausdrücklich datiert; Aktualisieren lädt denselben lokalen Bestand und neue Fragen/Antworten.
+
+Genau nächster Schritt: reale Host-Panel-Abnahme nach Plugin-Neuladen; vorhandenen Code/Installation verwenden, keine erneute Plugin-Implementierung.
+
 ## Vertiefte Zentrale und fachliche Konsolidierung – 06.10.2026
 
 Nutzer möchte Vor-/Nachteile und bestmögliche einfache Zentrale sowie tiefere inhaltliche Chat-Bereinigung. Bestehende Task-ID GC-BRAIN-01, Budget-/Versuchshistorie unverändert; reine Dokumentations- und Organisationsrunde.

@@ -42,3 +42,7 @@ Eine echte Abo-Chat-Brücke im konkreten Client prüfen: Nutzerklick -> exakt ei
 4. Ansicht lädt lokale Änderungen spätestens alle fünf Sekunden nach, sofern kein Dialog/Formular bearbeitet wird. Release-Farben ändern sich dabei nicht ohne Nachweise.
 
 Mac-Paket neu bauen: zsh native/build.sh. Lokaler Build und Signaturprüfung bestanden; native Fenster-/Geräteprüfung noch offen. Keine Browserrichtlinie umgangen.
+
+## GradeCrew Central als Plugin
+
+Version0.2.2 ist als lokales Plugin paketiert. Sidebar-/Gesprächs-Entrypoints, gemeinsame Aufgabenanzeige und dauerhafte Standfragen mit Chat-Rückmeldung sind implementiert. Installation und Protokolltests bestätigt; reale Panel-/Chat-Abnahme noch offen. Details, Einrichtung und Grenzen: [PLUGIN-VERIFICATION.md](PLUGIN-VERIFICATION.md).

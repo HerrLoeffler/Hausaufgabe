@@ -10,6 +10,8 @@ export async function createApp({stateDir=process.env.GC_CONTROL_STATE_DIR??join
  const file=join(stateDir,'state.json');
  let state={version:1,comments:[],drafts:[],tasks:[]};
  try{state=JSON.parse(await readFile(file,'utf8'));if(state.version!==1||!['comments','drafts','tasks'].every(k=>Array.isArray(state[k])))throw Error('Unbekanntes Datenformat');}catch(e){if(e.code!=='ENOENT')throw Error('Lokale Daten konnten nicht gelesen werden. Sie wurden nicht überschrieben.',{cause:e});}
+ state.questions??=[];
+ if(!Array.isArray(state.questions))throw Error('Fragenbestand beschädigt; keine Überschreibung.');
  const token=randomBytes(32).toString('hex');let writes=Promise.resolve();
  const bad=(message,status=400)=>Object.assign(Error(message),{status});
  const validText=(s,max=10000)=>typeof s==='string'&&s.trim().length>0&&s.length<=max;
@@ -22,18 +24,37 @@ export async function createApp({stateDir=process.env.GC_CONTROL_STATE_DIR??join
   if(req.headers.host!==expected){send(403,{error:'Nur der lokale Zugriff ist erlaubt.'});return;}
   try{
    const url=new URL(req.url,`http://${expected}`);
-   if(req.method==='GET'&&url.pathname==='/api/bootstrap'){send(200,{service:'gradecrew-control',catalog,state,token});return;}
+   if(req.method==='GET'&&url.pathname==='/api/bootstrap'){send(200,{service:'gradecrew-control',bridgeVersion:1,catalog,state,token});return;}
    if(req.method==='GET'&&url.pathname==='/api/export'){res.writeHead(200,{'content-type':'application/json','content-disposition':'attachment; filename="gradecrew-local-backup.json"','cache-control':'no-store'});res.end(JSON.stringify({exportedAt:new Date().toISOString(),sourceCommit:catalog.sourceCommit,state},null,2));return;}
    if(req.method==='GET'&&assets[url.pathname]){
     const name=assets[url.pathname];const ext=name.split('.').pop();
     res.writeHead(200,{'content-type':({html:'text/html',css:'text/css',mjs:'text/javascript'})[ext]+'; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"});res.end(await readFile(join(root,'public',name)));return;
    }
-   if(req.method!=='POST'||!['/api/comments','/api/tasks','/api/drafts','/api/drafts/update'].includes(url.pathname)){send(404,{error:'Nicht vorhanden. Der Prototyp startet keine Aufträge.'});return;}
+   if(req.method!=='POST'||!['/api/comments','/api/tasks','/api/drafts','/api/drafts/update','/api/questions','/api/questions/answer'].includes(url.pathname)){send(404,{error:'Nicht vorhanden. Der Prototyp startet keine Aufträge.'});return;}
    if(req.headers.origin!==`http://${expected}`||req.headers['x-gc-token']!==token)throw bad('Lokale Sitzung fehlt oder ist abgelaufen. Bitte neu laden.',403);
    if(!req.headers['content-type']?.startsWith('application/json'))throw bad('JSON erforderlich.');
    let raw='';for await(const chunk of req){raw+=chunk;if(Buffer.byteLength(raw)>32000)throw bad('Eingabe ist zu groß.',413);}
    let b;try{b=JSON.parse(raw);}catch{throw bad('Ungültige Eingabe.');}if(!b||typeof b!=='object')throw bad('Ungültige Eingabe.');
    const out=await mutate(next=>{
+    if(url.pathname==='/api/questions'){
+     if(!taskExists(b.taskId)||!validText(b.text)||typeof b.requestId!=='string'||!/^[a-zA-Z0-9-]{8,80}$/.test(b.requestId))throw bad('Aufgabe, Frage oder eindeutige Anfrage-ID fehlt.');
+     if(b.sourceCommit!==catalog.sourceCommit)throw bad('Der Aufgabenstand hat sich geändert. Bitte aktualisieren.',409);
+     const payload={taskId:b.taskId,text:b.text.trim(),sourceCommit:b.sourceCommit};
+     const prior=next.questions.find(q=>q.requestId===b.requestId);
+     if(prior){if(Object.keys(payload).some(k=>prior[k]!==payload[k]))throw bad('Anfrage-ID bereits anders verwendet.',409);return {status:200,question:prior};}
+     const question={...payload,requestId:b.requestId,id:randomUUID(),status:'awaiting_chat',createdAt:new Date().toISOString()};
+     next.questions.push(question);return {status:201,question};
+    }
+    if(url.pathname==='/api/questions/answer'){
+     const question=next.questions.find(q=>q.id===b.id);
+     if(!question||!validText(b.text,20000)||!validText(b.actor,100)||!validText(b.sourceCommit,100))throw bad('Frage, Antwort, Bearbeiter oder Quellenstand fehlt.');
+     if(question.status==='answered'){
+      if(question.answer!==b.text.trim()||question.actor!==b.actor||question.answerSource!==b.sourceCommit)throw bad('Eine abweichende Antwort liegt bereits vor.',409);
+      return {status:200,question};
+     }
+     Object.assign(question,{status:'answered',answer:b.text.trim(),actor:b.actor,answerSource:b.sourceCommit,answeredAt:new Date().toISOString()});
+     return {status:200,question};
+    }
     if(url.pathname==='/api/drafts/update'){
      const draft=next.drafts.find(d=>d.id===b.id);
      if(!draft||!validText(b.actor,100)||!['running','completed','blocked'].includes(b.status))throw bad('Auftrag, Bearbeiter oder Status fehlt.');

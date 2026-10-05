@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gradecrew-central",
+  "version": "0.2.2",
+  "description": "GradeCrew-Aufgabenübersicht mit dauerhaften Standfragen und Rückmeldungen im Chat. Lokaler, datierter Projektbestand.",
+  "author": {
+    "name": "GradeCrew"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "GradeCrew Central",
+        "shortDescription": "Aufgaben, nächste Schritte und Antworten",
+        "longDescription": "Deine lokale Entwicklungszentrale: Aufgaben nach Funktionen, Anwendungen und Zuständigkeit filtern. Standfragen im Chat klären und Antworten bei der Aufgabe speichern. Kein eigener Modell-API-Aufruf. Lokaler Mac erforderlich.",
+        "developerName": "GradeCrew",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Öffne GradeCrew Central und zeige die offenen Aufgaben."
+        ],
+        "brandColor": "#1b5749"
+      }
+    }
+  }
+}
