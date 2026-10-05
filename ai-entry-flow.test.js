@@ -112,8 +112,8 @@ test('public design stays away from dashboard and secure student selectors', () 
   assert.match(css, /\.gcPublicEntryMode/);
 });
 
-test('startup actively installs v4 entry before app handlers and staging packages it', () => {
-  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=4")');
+test('startup actively installs v5 entry before app handlers and staging packages it', () => {
+  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=5")');
   const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
   const appImport = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
