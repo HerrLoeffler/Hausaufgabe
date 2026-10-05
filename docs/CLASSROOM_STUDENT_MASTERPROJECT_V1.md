@@ -1027,3 +1027,11 @@ Rechtlicher Kern:
 - bei Auftragsverarbeitung bleibt die Schule verantwortlich und GradeCrew benötigt die Voraussetzungen des Art. 28 DSGVO;
 - digital gespeicherte Leistungsnachweise können Schülerunterlagen im Sinn von § 37 BaySchO sein; § 40 BaySchO ist bei der Aufbewahrung zu berücksichtigen.
 
+
+# 27. Lehrkraftwechsel / schulische Zuständigkeit – Entwurf
+
+Abschnitt 10a des [Identitäts-/Schuljahreswechsel-Entwurfs](privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) konkretisiert die Übernahme einer Klasse oder eines Fachkurses: persönliche Lehrkraftkonten, schulische Administration plus Stellvertretung, zeitlich/inhaltlich begrenzte Rechte und kontrollierte Übergabe der GradeCrew-Berechtigung sowie der schulischen Namenszuordnung.
+
+`ownerId` in älteren Schemata darf künftig nicht die einzige dauerhafte Kontrolle über schulische Klassen/Nachweise darstellen. Schüleridentitäten, Codes und Ergebnis-Snapshots bleiben bei Personalwechsel erhalten. Historische Einsicht, private Testentwürfe, Vertretung und Admin-Recovery werden gesondert begrenzt. Nur Architekturentwurf; noch keine Implementierung.
+
+Abschnitt 10b ergänzt den ASV-Lehrkräfte-/Unterrichtsimport und mehrere Fachlehrkräfte pro gemeinsamer Klasse. Personalimport, persönlicher Login und bestätigte Fach-/Klassenrechte sind getrennte Ebenen. Jede zugewiesene Lehrkraft kann in ihrem Bereich Prüfungen an denselben Schülerbestand freigeben; fremde Fachleistungen bleiben ohne zusätzliche Freigabe gesperrt. Ausdrückliches Co-Teaching und befristete Vertretung werden unterstützt. Keine Doppelklassen/-Schülerkonten pro Fach und keine automatische Adminvergabe aus ASV.

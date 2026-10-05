@@ -181,6 +181,116 @@ Bestehende Ergebnisse behalten `studentIdentityId`, damalige `classId`, `members
 
 Ein minimaler Schulmandant mit Importadministration, Stellvertretung und class-bezogener Berechtigung ist dafür Voraussetzung. Das bisherige ausschließlich an eine einzelne `ownerId` gebundene Klassenmodell reicht für schulweite Importe und Personalwechsel nicht. Dies ist ein begrenzter architektonischer Erweiterungsbedarf; kein Auftrag für ein öffentliches Schulverzeichnis, Elternkonten oder Schulchat.
 
+## 10a. Lehrkraftwechsel und schulische Übergabe
+
+**Empfehlung:** Schulische Klassen, Mitgliedschaften, Prüfungsdurchläufe und aufzubewahrende Nachweise werden im Schulmandanten verwaltet. Jede Lehrkraft meldet sich mit ihrem eigenen persönlichen Konto an und bekommt eine begrenzte Zuständigkeit. `createdBy` dokumentiert die Autorenschaft; dieser Verweis ist keine dauerhafte alleinige Zugriffsberechtigung. Ein Erstellerkonto darf durch sein Ausscheiden keine schulischen Bestände unzugänglich machen.
+
+### Rollen und Zuständigkeitsumfang
+
+| Rolle | Empfohlene Befugnis |
+|---|---|
+| Schuladministration und benannte Stellvertretung | Personen verifiziert aufnehmen, Schulmitgliedschaften/Zuständigkeiten verwalten, Importbetrieb und Recovery organisieren |
+| Lehrkraft | Zugewiesene Klassen bzw. Kurse und Fächer im festgelegten Schuljahr/Zeitraum bearbeiten; erforderliche Ergebnisse lesen |
+| Vertretung / Co-Teacher | Ausdrücklich erteilte, begrenzte Berechtigung mit Enddatum; kein pauschaler Schulzugriff |
+| Berechtigte Archiv-/Schulleitungsrolle | Zweckgebundener Zugriff auf erforderliche historische Unterlagen im Einzelfall |
+
+Technische Administration erhält nicht automatisch Leserechte für sämtliche Leistungen. Die [KM-Vorgaben zu digitalen Leistungsnachweisen](https://www.km.bayern.de/gestalten/digitalisierung/durchfuehrung-und-speicherung-von-digitalen-leistungsnachweisen) verlangen einen auf aktuelle Zuständigkeit und Erforderlichkeit begrenzten Zugriff. Alte Leistungen einer Klasse werden deshalb nicht pauschal an jede Nachfolgeperson freigegeben.
+
+Ein Zuordnungsdatensatz umfasst `schoolId`, `teacherUid`, Klasse/Kurs, Fach bzw. konkreten Assignment-Umfang, Rechte, Beginn/Ende und Berechtigungsrevision. Lehrkraftkonten werden nicht allein anhand gleicher Namen oder E-Mail-Domänen zusammengeführt. Die Schuladministration bestätigt Person und Zuständigkeit. Ein bloßer E-Mail-Wechsel ändert die Schülerkonten nicht.
+
+### Bedienablauf bei einer neuen Lehrkraft
+
+1. Schuladministration oder Stellvertretung lädt die verifizierte neue Lehrkraft in den Schulbereich ein; die Lehrkraft verwendet ihren eigenen Login.
+2. Die Administration wählt „Zuständigkeit übergeben“, etwa „10b – Mathematik“, und einen Wirksamkeitstermin.
+3. Eine Vorschau zeigt aktive Tests/Aufträge, erforderliche Ergebnisse, befristete Übergaberechte und laufende Prüfungen. Private Testentwürfe der alten Lehrkraft sind davon ausgenommen. Wiederverwendbare Vorlagen werden nur bei entsprechender schulischer Freigabe geteilt.
+4. Die neue Lehrkraft erhält die zugewiesenen GradeCrew-Berechtigungen **und** Zugriff auf die erforderliche schulische Namenszuordnung. Bei der üblichen Fachlehrkraft ist hierfür kein schulweiter HMAC-Schlüssel nötig.
+5. Zum Termin enden die bisherigen Rechte für diesen Zuständigkeitsbereich. Bei endgültigem Schulaustritt wird zusätzlich die Schulmitgliedschaft geschlossen. Eine notwendige Übergabe-/Korrekturphase wird ausdrücklich befristet, nicht stillschweigend verlängert.
+6. Die Administration prüft den neuen Zugang und den Zugriffsentzug. Der Vorgang protokolliert Akteure, Umfang, Termin und Ergebnis; keine Schülernamen, Antworten oder Codes in der technischen Historie.
+
+Die GradeCrew-Berechtigung und die Berechtigung zum schulischen Namensspeicher sind zwei getrennte Systeme. Die Übergabe führt beide als kontrollierte Schritte und gilt erst als abgeschlossen, wenn beide bestätigt sind. Ein Fehler in einem Schritt wird sichtbar nachbearbeitet; die alte Berechtigung darf dadurch nicht unbemerkt unbegrenzt weiterlaufen.
+
+Beispiel: Frau A unterrichtet 9b in Mathematik, Herr B übernimmt im nächsten Jahr 10b. Die Schüler behalten ihre StudentIdentity und Zugangscodes. Herr B erhält die Zuständigkeit für 10b/Mathematik und die zugehörige Namenszuordnung. Frau A verliert den betreffenden Zugriff. Alte Ergebnisse behalten damalige Klasse, Run, Alias und Autorenschaft; historische Einsicht für Herrn B wird nur im erforderlichen Umfang erteilt.
+
+### Zugriffsentzug und Prüfungen
+
+Der Server prüft aktuelle Schulmitgliedschaft und Berechtigungsrevision bei geschützten Zugriffen. Ein vorhandener Login oder veraltete Claims dürfen ausgeschiedenen Lehrkräften keinen Zugriff erhalten. Bei Entzug werden betroffene Berechtigungen und gegebenenfalls Sitzungen widerrufen; private Bereiche bzw. andere Schulmandanten desselben Kontos bleiben eigenständig.
+
+Bereits heruntergeladene Daten lassen sich durch einen Server-Klick nicht zurückholen. Die Schule muss nicht mehr erforderliche lokale Kopien, Gerätezugriffe und Freigaben im Rahmen ihres Ausscheidensprozesses bereinigen.
+
+Laufende Prüfungen werden vor einem geplanten Wechsel geprüft und kontrolliert abgeschlossen oder unter bewusster Zuständigkeit weitergeführt. Ein dringender Zugriffsentzug kann die alte Lehrkraft sofort sperren; die Administration bestimmt eine berechtigte Nachfolge. Attempts, Bewertungen und Prüfungsinhalte werden dabei nicht automatisch umgeschrieben.
+
+### Wechsel der Administration oder vollständiger Ausfall
+
+Für den Schulbetrieb sind eine bestätigte Administration und mindestens eine aktive Stellvertretung mit eigenem Konto und geregelter Recovery vorzusehen. Die letzte aktive Administration wird nicht ohne gesicherte Nachfolge aus dem normalen Verwaltungsablauf entfernt.
+
+Scheidet eine Administration aus, übernimmt die Stellvertretung. Wenn die ausscheidende Person den Schulschlüssel kennen konnte, reicht das Entfernen ihres Cloudzugangs nicht zum Widerruf dieses Wissens. Die Schule prüft dann Schlüsselwechsel und führt gegebenenfalls die in Abschnitt 11 beschriebene Migration aus; bestehende Schülerkonten bleiben erhalten. Beim normalen Fachlehrkraftwechsel ist keine HMAC-Rotation nötig.
+
+Sind alle administrativen Konten unzugänglich, erfolgt die Wiederaufnahme nur durch eine verifizierte schulische Stelle mit dokumentiertem Recovery-Verfahren. Der Support darf keine Schule aufgrund einer bloßen Behauptung übertragen. Zugriffswiederherstellung im Schulmandanten ersetzt nicht die Wiederherstellung eines verlorenen HMAC-Schlüssels; dieser benötigt das schulische Backup.
+
+Für eine zunächst allein nutzende Lehrkraft muss spätestens vor schulweiter Nutzung oder einem Personalwechsel ein verifizierter Schulbereich mit Administration/Stellvertretung eingerichtet sein. Eine automatische Zuordnung zur Schule allein über einen Namen oder eine Maildomain ist nicht ausreichend.
+
+### Noch nicht implementierte Akzeptanzfälle
+
+- Eine neue Lehrkraft übernimmt genau den ausgewählten Bereich; Schülerkonten/Codes bleiben gleich.
+- Alte Lehrkraft kann nach Ablauf auch mit vorhandenem Login keine weiteren Daten dieses Bereichs lesen.
+- Vertretungsrechte enden zum Termin; Archivzugriff bleibt eigenständig begrenzt.
+- Die Löschung/Deaktivierung eines Lehrkraftkontos löscht keine schulischen Schülerkonten oder Nachweise.
+- Der Wechsel funktioniert ohne Mitwirkung der ausgeschiedenen Lehrkraft über die verifizierte Administration/Stellvertretung.
+- Namensspeicher und GradeCrew-Zugriff werden gemeinsam geprüft; unvollständige Übergaben bleiben sichtbar.
+- Adminwechsel/Recovery und nötige Schlüsselrotation erzeugen keine neuen Schülerkonten.
+
+## 10b. ASV-Lehrkräfteimport und mehrere Lehrkräfte in derselben Klasse
+
+Der Nutzer hat Lehrkräfteimport und mehrere Fachlehrkräfte je Klasse als gewünschte Erweiterung der Architektur benannt. Beides wird im selben Schulmodell geplant; Produktcode bleibt außerhalb des Auftrags.
+
+### ASV als Quelle für Personal und Unterricht
+
+Die [ASV-Schnittstelle für Notenverwaltung](https://doku.asv.bayern.de/alle/schnittstellen/xml_sst/xmlexportnotenverwaltung/start) kann Schul-, Schüler-, Lehrer- und Unterrichtsdaten exportieren. Das [lokale Differenzierungsmerkmal](https://doku.asv.bayern.de/alle/schnittstellen/xml_sst/xmlexport) ist auch für Lehrkräfte dokumentiert. Die konkrete CSV-/XML-Vorlage der Schule und ihre Unterrichtszuordnungen sind noch zu bestätigen.
+
+Ein Lehrkräfteimport erzeugt bzw. aktualisiert zunächst einen schulischen Personalbestand. Minimal erforderlich sind die bestätigte stabile Lehrkraftkennung und, sofern für Einladung/Verwaltung notwendig, der Name bzw. eine dienstliche Kontaktadresse. Fach-/Klassen-/Kurszuordnungen werden nur aus einem dafür geeigneten Exportprofil übernommen. ASV-Passwörter, Initialpasswörter anderer Dienste und sonstige Personalaktenfelder werden nicht übernommen.
+
+Für den pseudonymen technischen Abgleich wird lokal eine **eigene Lehrkraft-Domäne** verwendet:
+
+`teacherMatchKey = HMAC-SHA256(Kschool, UTF8(JSON.stringify(["gradecrew-asv-teacher-match-v1", schoolId, sourceNamespace, teacherLocalDM])))`
+
+Der Index verweist auf eine stabile schulische `schoolTeacherId`, die separat mit dem verifizierten persönlichen `teacherUid` verbunden wird. Lehrkraft und Schülerperson mit eventuell gleichem numerischem DM werden durch die verschiedenen Domänen niemals zusammengeführt. Der ASV-Abgleich ist keine Anmeldung und kein Berechtigungsnachweis.
+
+Neue Personalzeilen bleiben `pending`, bis die Schuladministration Person und persönlichen Login verifiziert zugeordnet hat. Ein vorhandenes GradeCrew-Konto wird kontrolliert verbunden; Namens- oder Mailänderung erzeugt kein neues schulisches Personalprofil. Der normale persönliche Lehrkraftlogin bleibt erhalten. Kein geteilter Schul-Login und keine Weitergabe des Logins der Vorgängerperson.
+
+Schuladministration wird nicht allein durch einen ASV-Personaleintrag vergeben. Unterrichtszuordnungen werden als Änderungsvorschlag angezeigt und durch eine autorisierte Administration bestätigt. Importquelle, Schuljahr, Umfang, Revision und manuelle Ausnahmen sind nachweisbar; ein Wiederimport überschreibt keine ausdrückliche Vertretungs- oder Sonderfreigabe ohne Abgleich. Ein Teilimport bewirkt keinen Personalaustritt; ein möglicher Abgang wird geprüft und beendet nur die betroffene Schulmitgliedschaft/Zuständigkeit.
+
+Die besonders strenge Vorgabe zur serverseitigen Vermeidung von Schülerklarnamen bedeutet kein pauschales Verbot erforderlicher Lehrkraftnamen im Dienstprofil. Lehrerprofil, Kontakt-/Login-Daten und schulischer Personalabgleich sind getrennte Zwecke mit eigener Erforderlichkeits- und Aufbewahrungsprüfung.
+
+### Eine Klasse, mehrere Zuständigkeiten
+
+Eine Klasse wie `9b, 2026/27` existiert einmal im Schulmandanten und enthält einen gemeinsamen Schülerbestand. Sie wird nicht pro Fachlehrkraft dupliziert.
+
+| Klasse | Lehrkraft | Zuständigkeitsbereich |
+|---|---|---|
+| 9b, 2026/27 | Lehrkraft A | Deutsch |
+| 9b, 2026/27 | Lehrkraft B | Englisch |
+| 9b, 2026/27 | Lehrkraft C | Mathematik |
+| 9b, 2026/27 | Lehrkraft D | Befristete Vertretung in Englisch |
+
+Jede zugewiesene Lehrkraft kann eigene Prüfungen in ihrem Bereich erstellen und an dieselben Schüleridentitäten der Klasse freigeben. Der persönliche Schülerzugang bleibt derselbe. Das Schüler-Home zeigt die aktuell autorisierten Tests dieser verschiedenen Lehrkräfte/Fächer.
+
+Ein `teacherAssignment` bindet Lehrkraft, Klasse/Kurs, Fach, Schuljahr, Rechte und Gültigkeitszeitraum. Ein Prüfungsassignment verweist zusätzlich auf die verantwortliche Lehrkraft bzw. autorisierte Co-Teacher-Gruppe und den zugehörigen Unterrichtsbereich. Bestehender `quizId + sessionRunId`-Lifecycle bleibt maßgeblich.
+
+Standardmäßig sieht die Deutschlehrkraft die für ihren Unterricht notwendigen Schülerzuordnungen und ihre eigenen bzw. ausdrücklich gemeinsam verantworteten Deutschprüfungen. Englischresultate sind nicht automatisch freigegeben. Eine erforderliche zusätzliche Zuständigkeit, etwa Klassenleitung, wird ausdrücklich und begrenzt vergeben. Gemeinsamer Unterricht kann mehreren Lehrkräften Rechte auf dieselbe Prüfung geben; Änderung/Bewertung bleibt nachvollziehbar.
+
+Das Veröffentlichen einer Prüfung ist eine eigene Berechtigung. Änderung des Klassenbestands, personalweiter ASV-Import, Verwaltung des Schulschlüssels und Zurücksetzen persönlicher Schülercodes werden nicht automatisch jeder Fachlehrkraft erlaubt.
+
+Ein Lehrkraftwechsel ersetzt nur die betreffende Zuständigkeit, etwa `9b/Englisch`. Andere Fachlehrkräfte und ihre Prüfungen bleiben bestehen. Bei Schuljahreswechsel werden die Zuständigkeiten für den neuen Jahresbestand bestätigt, statt sämtliche alten Fachrechte unbegrenzt fortzuführen.
+
+### Noch nicht implementierte Akzeptanzfälle
+
+- Mehrere Lehrkräfte veröffentlichen unabhängig Deutsch-/Englischtests an dieselbe Klasse ohne doppelte Schülerkonten.
+- Schüler sehen beide freigegebenen Tests über denselben persönlichen Zugang.
+- Eine Fachlehrkraft kann keine fremden Fachleistungen lesen oder bearbeiten, sofern keine ausdrückliche zusätzliche Freigabe besteht.
+- ASV-Personalimport erkennt bestehende Lehrkräfte wieder, erzeugt aber weder automatisch Adminrechte noch doppelte persönliche Logins.
+- Gleichlautende Schüler-/Lehrkraft-DMs kollidieren nicht.
+- Lehrkraftwechsel und Teilimporte erhalten fremde Fachzuständigkeiten und manuelle Vertretungsfreigaben.
+
 ## 11. Schlüsselverlust, Rotation und Quellenwechsel
 
 **Gerätewechsel:** Derselbe gesicherte Schultresor wird auf einem freigegebenen Ersatzgerät genutzt. Konten und Abgleich bleiben erhalten.

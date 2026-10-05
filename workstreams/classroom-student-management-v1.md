@@ -163,3 +163,17 @@ Genau ein nächster Schritt: konkretes ASV-Exportprofil ausschließlich anhand d
 Dokumentationsprüfung vor Commit: JSON lesbar; unveränderte fremde TODO-/Registry-/Release-Einträge; nur Classroom-next_action/Related-Branch angepasst; interne Verweise und Markdown-Codeblöcke geprüft. Keine Anwendungstests ausgeführt, da ausschließlich Dokumentation geändert wurde. Produkt-CI bleibt `not_run_no_product_code`.
 
 GitHub-Sicherung geprüft: Architekturdatei entspricht bytegenau dem Entwurf; Commit und PR ändern ausschließlich die sieben genannten Dokumentations-/Koordinationsdateien. Automatische Koordinationsprüfungen werden für den jeweils aktuellen PR-Head geprüft; deren Erfolg ist kein Produkt-CI-/Deploynachweis. PR bleibt Draft zur fachlichen Prüfung, main wurde durch diesen Auftrag nicht verändert.
+
+## Lehrkraftwechsel – Ergänzung zum selben Entwurf
+
+Der aktuelle Nutzerwunsch „welche Lösung für den Lehrer, wenn der wechselt?“ ist in Abschnitt 10a des [Identitätsentwurfs](../docs/privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md) konkretisiert.
+
+Empfehlung: Schulbereich mit persönlichen Lehrkraftkonten, verifizierter Administration und aktiver Stellvertretung; zuständigkeitsbezogene Rechte nach Klasse/Kurs/Fach/Zeitraum. Ersteller-UID ist Autorenschaft, keine dauerhafte alleinige Datenkontrolle. Kontrollierte Übergabe mit Wirksamkeitstermin betrifft GradeCrew-Rechte und schulische Namenszuordnung. Alte Rechte enden, Schülerkonten/Codes bleiben. Historische Leistungen und private Testentwürfe werden nicht pauschal weitergegeben.
+
+Zusätzlich präzisiert: Serverprüfung aktueller Rechte trotz bestehender Sessions; Vertretung, dringender Entzug, laufende Prüfungen, lokale Restkopien, Adminwechsel/Schlüsselrotation und verifizierte Recovery bei vollständigem Kontenausfall. Dies sind Entwurfsanforderungen, noch nicht implementiert.
+
+Frisch geprüft: Dokumentations-PR #141 offen/Draft, vorheriger Head `69a1db48471b351e3682375d9bedf235e3d62ff2`; Produkt- und Integrationsbranch weiterhin `bb91ce3590d773472ece60c4dd881da729bd32c1`. Development Status Run `37364135175` für den vorherigen Dokumentationshead erfolgreich; Handoff-Check `37364135244` bei Prüfung noch queued. Diese Belege gelten nicht automatisch für den Folgecommit.
+
+Task-ID, Budget-/Versuchshistorie und Release-Stufe bleiben erhalten. Keine Implementierung, Provideraktion oder Deployment. TODO-Zeile und Masterplan im bestehenden Dokumentations-PR ergänzt. Nächster Schritt bleibt: ASV-Exportprofil und schulische Betriebsweise mit synthetischen Beispielen bestätigen.
+
+Nutzerergänzungen derselben Runde: Lehrkräfte ebenfalls aus ASV übernehmen; mehrere Fachlehrkräfte pro Klasse mit eigenen Prüfungen. Abschnitt 10b präzisiert Personalbestand → verifizierter persönlicher Login → bestätigte Fach-/Klassenrechte; eigene HMAC-Domäne für Lehrkräfte, stabile schoolTeacherId, keine automatische Adminvergabe. Gemeinsame Klasse/Schüleridentitäten, unabhängige Deutsch-/Englischprüfungen, begrenzte Ergebnissicht und ausdrückliches Co-Teaching. Konkretes Personal-/Unterrichtsexportprofil noch offen; keine Implementierung.
