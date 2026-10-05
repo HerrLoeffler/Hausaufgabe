@@ -1005,3 +1005,32 @@ Als Nächstes auf dem Aufgabenbranch eine vollständig isolierte, statische Mock
 Keine Firebase-Schreibzugriffe, keine echten Schülerdaten und kein Deploy auf normales Staging.
 
 Erst nach visueller Abnahme beginnt T1 mit Emulator und Backend.
+
+
+---
+
+# 26. ASV-/CSV-Import und Privacy-by-Default
+
+Die ausführliche Rechts-/Architekturprüfung liegt in [privacy/CLASSROOM_ASV_IMPORT_PRIVACY.md](privacy/CLASSROOM_ASV_IMPORT_PRIVACY.md).
+
+Verbindliches V1-Zielbild:
+- ASV-/CSV-Rohdatei wird ausschließlich lokal im Browser gelesen;
+- Vorname, Nachname und rohe ASV-Referenz werden nicht an GradeCrew übertragen;
+- keine aus Namen gebildeten Initialen/Akronyme als Standardalias;
+- GradeCrew erzeugt ein zufälliges klassenbezogenes Alias und einen davon unabhängigen persönlichen Zugangscode;
+- Server speichert nur pseudonyme StudentIdentity, Membership, Alias und technische Credential-/Assignment-Daten;
+- Lehrkraft erhält lokal eine Zuordnung Name ↔ Alias ↔ Zugangscode;
+- Wiederimport erfolgt privacy-first über eine lokale Mapping-Datei; rohe ASV-Referenzen bleiben außerhalb von GradeCrew;
+- formelle Leistungsnachweise verwenden von der Lehrkraft verifizierte/provisionierte Schüleridentitäten;
+- Selbstbeitritt bleibt ein separater, schwächerer Vertrauensmodus;
+- keine Schülernamen, ASV-Referenzen, Aliase oder Zugangscodes in Produkttelemetrie/AI-Prompts;
+- vor echtem Schuleinsatz: AVV, TOMs, Unterauftragsverarbeiter, Art.-13-Baustein, Retention-/Löschkonzept und DSFA-Erforderlichkeitsprüfung.
+
+Rechtlicher Kern:
+- Art. 85 Abs. 1 BayEUG erlaubt nur erforderliche schulische Datenverarbeitung;
+- § 46 i. V. m. Anlage 1 BaySchO begrenzt den zulässigen Verfahrensrahmen;
+- Art. 5 und 25 DSGVO sprechen für Datenminimierung und Privacy by Design;
+- Pseudonymisierung beseitigt den Personenbezug nicht;
+- bei Auftragsverarbeitung bleibt die Schule verantwortlich und GradeCrew benötigt die Voraussetzungen des Art. 28 DSGVO;
+- digital gespeicherte Leistungsnachweise können Schülerunterlagen im Sinn von § 37 BaySchO sein; § 40 BaySchO ist bei der Aufbewahrung zu berücksichtigen.
+
