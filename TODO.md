@@ -87,7 +87,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
-| GC-BRAIN-01 | Second Brain / LLM-Wiki für GradeCrew bewerten | Video vollständig automatisch transkribiert; 119 Bildstichproben und Originalquellen analysiert; Idee, keine Umsetzung beschlossen | Gepflegtes Themen-/Entscheidungswiki auf vorhandenen Quellen empfohlen. Nächster Schritt: zehn interne Pilotfragen samt maßgeblicher Quellen festlegen. [Einordnung](workstreams/second-brain-assessment-20261005.md) |
+| GC-BRAIN-01 | Second Brain und GradeCrew-Entwicklungszentrale einordnen | Video analysiert; Nutzer konkretisiert klickbare Aufgaben-/Ausführungszentrale und bestätigt Cloud-Betrieb ohne laufenden Mac. Architekturentwurf zur Diskussion, noch kein Produktcode | Bestehende GC-ACCEPTANCE-/GC-RELEASE-/GC-AUTOMATION-Arbeit wiederverwenden. Nächster Schritt: Oberflächen- und Auftragszuschnitt abstimmen, danach prüfbarer Entwurf. [Einordnung](workstreams/second-brain-assessment-20261005.md) |
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |

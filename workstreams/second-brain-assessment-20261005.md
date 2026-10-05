@@ -1,4 +1,47 @@
-# GC-BRAIN-01 – Videoanalyse und Nutzenbewertung für GradeCrew
+# GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
+
+## Erweiterte Nutzeranforderung: Entwicklungszentrale, 05.10.2026
+
+Die laufende Task-ID GC-BRAIN-01 bleibt erhalten. Der Nutzer konkretisiert das Ziel zu einer professionellen GradeCrew-Webanwendung für Überblick, Aufgabenkommentare, Anhänge und beauftragbare Entwicklung. Ausdrücklich bestätigt: Aufträge sollen auch bei ausgeschaltetem Mac weiterlaufen können. Das ist ein Produkt-/Architekturwunsch, keine Production- oder pauschale Budgetfreigabe.
+
+### Frisch geprüfte Grundlage
+
+- main unverändert bei 8360bc5f056837118ffd83138ffa2468ae42647e; START_HERE und verlinkte Pflichtregeln erneut gelesen.
+- release-control/README.md: vorhandenes Board erzeugt Actions-Berichte; interaktive Abnahme, Fehlerhistorie und Fix/Retest-Zuordnung ausdrücklich noch offen. Anschluss an GC-ACCEPTANCE-01/02 und GC-RELEASE-07; keine konkurrierende Statuslogik bauen.
+- automation/EXECUTION.md: begrenzte Cloud-Ausführung mit dauerhaft reservierten Versuchen/Budgets, exakten Quellen, CI, unabhängigen Reviews und Staging-Nachweisen. Aktuell nur eng zugelassene kleine Web-Änderungen. Der alte agent-queue/README beschreibt einen separaten älteren Worker und darf nicht als vollständige aktuelle Kette gelesen werden.
+- Offene PR #126 zu GC-AUTOMATION-08 frisch gesehen, Head 65a480962f573e0c41998faedaf444e8fe00df9b; passende Development-Status-Ausführung 37374686618 und Qualifikationsläufe erfolgreich. Das bestätigt die Ausführung dieser Prüfungen, weder Integration des PR noch universelle Ausführungsfreigabe.
+- Offener PR #65 plant komplexe Aufgaben/visuelle Prüfung/Gesamtaudits; berücksichtigen statt erneut parallel bauen.
+- Kein vollständiger neuer Production-/Cloud-Drift-Audit durchgeführt. Begrenzte Actions-Abfrage und offene PRs frisch geprüft; daraus keinen Gesamtreifegrad ableiten.
+
+### Empfohlener Diskussionsentwurf, noch nicht zur Umsetzung freigegeben
+
+Eigene private GradeCrew-Entwicklungszentrale als Webanwendung. Gemeinsames Aufgabenregister mit stabilen vorhandenen IDs, Unteraufgaben, Abhängigkeiten, Kommentaren, Anhängen und Entscheidungsverlauf. Bestehende Chats werden verknüpfte Arbeitskontexte; keine stillschweigende Löschung, Verschiebung oder vollständige Importfähigkeit behaupten.
+
+Oberfläche:
+1. Übersicht nach Bereichen, Reife, Priorität, Blockern und letztem Beleg.
+2. Aufgabendetail mit Ziel, aktuellem Stand, nächsten Schritten, Vorschau, Prüfungen und Verlauf. Text/Anhänge können als Kommentar gespeichert oder bewusst als neuer Änderungsauftrag beauftragt werden.
+3. Arbeitszentrale für aktive Läufe, Rückfragen, notwendige Entscheidungen, Budgets und dokumentierte Fehler.
+4. Abnahme am konkreten Teststand, mit Fehlermeldung/Fix/Retest-Beziehung.
+5. Projektwissen und Entscheidungen mit Originalquellen; Second Brain als Wissensschicht dieser Zentrale.
+
+Fünf UI-Reifestufen als Vorschlag: Rot offen/in Entwicklung; Orange technisch geprüft und integriert; Gelb auf Testumgebung; Blau am konkreten Stand abgenommen; Grün nachweislich veröffentlicht. Intern die sechs kanonischen Zustände branch_only, ci_green, integrated, staging_deployed, user_tested, production unverändert erhalten. ci_green ohne Integration bleibt als Zwischenfortschritt sichtbar. Unbekannte/veraltete Nachweise grau und ausdrücklich unbestätigt; Farbe nie ohne Text. Arbeitsstatus unabhängig davon. Aktuell veröffentlichte Version und laufende nächste Änderung separat zeigen.
+
+Cloud-Ausführung: private Weboberfläche -> authentifizierter Auftragsdienst mit dauerhafter Warteschlange -> zugelassener Worker/Controller -> Repository, Prüfungen und Staging -> belegte Rückmeldung am ursprünglichen Auftrag. Kein Browser-Secret, kein direktes ungeschütztes Modellwerkzeug. Wiederholtes Klicken oder Verbindungsabbruch darf keinen zweiten Auftrag auslösen; eindeutige Request-ID und Konfliktsperre für überschneidende Änderungen. Vorhandene Kosten-/Versuchshistorie erhalten, unbekannte Providerresultate zur Klärung stoppen. Production separat ausdrücklich freigeben.
+
+Codex App Server dokumentiert eigene Clients mit thread/start, turn/start, turn/steer und Ereignissen/Rückfragen. Das ist eine mögliche spätere Worker-Anbindung; es belegt nicht die Fernsteuerung aller bestehenden Work-/ChatGPT-/Desktop-Chats. Ein Cloud-Runner braucht eigene qualifizierte Authentifizierung, Persistenz und Betrieb. Bestehende Guardian-Ausführung zuerst wiederverwenden. Quelle: https://learn.chatgpt.com/docs/app-server
+
+### Vergleich und Nutzenhypothese
+
+Gemeinsame Kriterien: verlässliche Übersicht, direkte Ausführung, Anschluss an vorhandene Nachweise, Wartungsaufwand. Eigene Zentrale auf vorhandener Steuerung 9/10; fertiges Aufgabenboard mit Sonderintegration 6/10; Weiterführung vieler Chats 3/10. Begründete Eignungseinschätzungen, keine gemessene Einsparung und keine Fertigstellungswerte. Nutzen: weniger Kontextrekonstruktion und Doppelarbeit, sichtbarere Blocker/Abhängigkeiten, nachvollziehbare Abnahme, klare Verbindung jeder Arbeit mit Auftrag und Beleg.
+
+Ersten nutzbaren Umfang auf vollständigen Weg einer kleinen erlaubten Web-Aufgabe begrenzen: Auftrag/Anhang -> Cloud-Lauf -> Prüfungen -> Testvorschau -> Feedback -> Abnahme. Gleichzeitig alle anderen Bereiche sichtbar inventarisieren, aber automatische Ausführung nur nach jeweils qualifizierten Profilen anbieten. Professionelle Mindestabnahme: keine verlorenen/doppelten Aufträge, Wiederaufnahme nach Ausfall, echte Statusnachweise, Autorisierung, Budgetgrenzen, Rückfragen und wiederherstellbare Historie.
+
+### Offene Architekturentscheidung und nächster Schritt
+
+Cloud-Betrieb ist vom Nutzer entschieden. Empfohlenen Oberflächen-/Auftragszuschnitt jetzt zur Diskussion stellen; danach separaten prüfbaren Entwurf und Implementierungsplan mit vorhandenen Workstreams abstimmen. Hosting, Datenbank, Zugangsmodell, Cloud-Runner-Betrieb und Abrechnungsweg müssen in diesem Entwurf konkret qualifiziert werden. Noch kein externer Dienst angelegt, kein Produktcode, kein bezahlter Worker gestartet, keine Chats angesteuert und keine Deploymentfreigabe erteilt. Die Videoanalyse und bisherige Historie bleiben unten vollständig erhalten.
+
+---
+
 
 ## Ergänzung: Videoanalyse am 05.10.2026
 
