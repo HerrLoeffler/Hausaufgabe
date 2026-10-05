@@ -1,5 +1,23 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Ergänzung: eigenständige Mac-App und bewusst bediente Chat-Rückmeldung, 06.10.2026
+
+Nutzer fragt nach Start und Rückmeldung und möchte eine eigenständige App. Auf demselben Prototype-Branch umgesetzt:
+- Native AppKit/WKWebView-Fensterhülle als GradeCrew Control.app, startet einen gebündelten lokalen Dienst oder verwendet den geprüften bereits laufenden Dienst. Alle Fenster-/UI-Prüfungen bleiben offen; nicht als Umweg um die CUA-Richtliniensperre gestartet.
+- Native Quelltexte/build.sh gepusht; lokal gebautes .app-Paket bleibt außerhalb Git. Vorhandene Codex-Node-Laufzeit wird benötigt. Kommentar-/Auftragsdaten bleiben in derselben .local-Ablage im Projekt.
+- Compiler fehlte zunächst der ausdrückliche SDK-Pfad; mit -sdk des vorhandenen Xcode-SDK erfolgreich kompiliert und lokal ad-hoc signiert. codesign --verify --deep --strict erfolgreich; kein notarisiertes Distributionspaket behaupten.
+- agent.mjs list/show/claim/complete/block für explizit im Chat beauftragte Abo-Arbeit. Claim prüft gewähltes Modell und Ausführungsweg, verhindert erneute Übernahme; Ergebnis nur vom übernommenen Bearbeiter, keine Release-Stufenänderung.
+- Lokale Auftragsansicht zeigt übernommenen Status und Resultat; Polling alle fünf Sekunden außerhalb offener Dialoge oder Formulare. Kein automatischer Chatstart/Modellwechsel. Vor jeder realen Bearbeitung tatsächliche Modellauswahl prüfen.
+- Nutzerablauf: Aufgabe -> Text + Modell/Weg -> lokal vorbereiten -> hier sagen „Bearbeite den nächsten Abo-Auftrag aus der GradeCrew-Zentrale.“ Bei mehreren Aufträgen die konkrete ID nennen.
+- Auftragsablage im aktuellen laufenden Dienst geprüft: leer. Kein Nutzerauftrag ausgeführt oder als abgeschlossen erfunden.
+- Drei vorhandene Tests um Zustandsübergänge/Claim-Konflikt/Resultat-Persistenz erweitert; zuerst echte 404-vs-409-Assertion fehlgeschlagen, nach Implementierung 3/3 grün. Native Build und JS-Syntaxprüfungen erfolgreich.
+- Lokaler Commit 7e4fb63; neue Server-Session 86969, vorherige eigene Session17237 kontrolliert beendet. Vor Neustart laufenden Dienst prüfen.
+- Keine separat berechneten Modell-API-Aufrufe, keine Änderung bestehender Guardian-Kette, kein Cloud-/Production-Deploy. Abo-Chat-Anbindung bleibt bewusst vom hier direkt im Chat autorisierten Agenten bedient, nicht autonom.
+
+Nächster Schritt: Martin öffnet das native Fenster und bereitet eine konkrete Aufgabe vor; danach genau diesen Auftrag mit passender realer Modellauswahl übernehmen und den Resultat-Rückweg prüfen.
+
+---
+
 ## Lokaler Prototyp und Modellentscheidung – 06.10.2026
 
 Task-ID GC-BRAIN-01 bleibt erhalten. Der Nutzer hat ausdrücklich den Bau eines ersten kurzen lokalen Prototyps beauftragt. Er präzisiert außerdem: Guardian mit verschiedenen API-Modellen wird weiterhin für passende Prüfungen bzw. Online-/Produktaufgaben benötigt. Die frühere Abo-Präzisierung darf nicht als Auftrag zum Abschalten der Guardian-/Produkt-API-Ketten gelesen werden. Entwicklungsaufträge im persönlichen Work/Codex sollen vorab eine begründete Modellwahl erhalten, statt grundsätzlich Astra zu verwenden.

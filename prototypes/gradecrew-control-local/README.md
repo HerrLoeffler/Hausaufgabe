@@ -4,7 +4,7 @@ Task GC-BRAIN-01, Stand 06.10.2026. Lokale Bedienoberfläche ohne Modell-API-Auf
 
 ## Start
 
-`Start GradeCrew.command` auf dem Mac doppelklicken (Terminal darf offen bleiben). Alternativ Node.js 22+ verwenden: `node server.mjs`, dann http://127.0.0.1:4318 öffnen. Der beigefügte Starter nutzt bevorzugt die vorhandene Codex-Node-Laufzeit, sonst installiertes Node. Keine Installation von Paketen erforderlich.
+Die gebaute `GradeCrew Control.app` doppelklicken: eigenes Mac-Fenster, kein Browser-Tab. Die App nutzt die vorhandene Codex-Node-Laufzeit und dieselbe lokale Datenablage. Alternativ `Start GradeCrew.command` doppelklicken (Terminal darf offen bleiben). Alternativ Node.js 22+ verwenden: `node server.mjs`, dann http://127.0.0.1:4318 öffnen. Der beigefügte Starter nutzt bevorzugt die vorhandene Codex-Node-Laufzeit, sonst installiertes Node. Keine Installation von Paketen erforderlich.
 
 ## Was funktioniert
 
@@ -18,7 +18,7 @@ Task GC-BRAIN-01, Stand 06.10.2026. Lokale Bedienoberfläche ohne Modell-API-Auf
 
 ## Bewusste Grenze
 
-Kein automatischer Chatstart, Modellwechsel, KI-Aufruf, Ergebnisrückkanal, Live-Import, Screenshot-Upload oder Deployment. Der Status einer gespeicherten Aufgabe lautet „vorbereitet“, niemals „läuft“. Die Übergabe wird im gewünschten Work-/Codex-Chat verwendet. Eine Auswahl in dieser App verändert dessen Modell nicht. Mac-unabhängige Arbeit braucht eine spätere Cloud-/Chat-Anbindung.
+Kein automatischer Chatstart, Modellwechsel, KI-Aufruf, Live-Import, Screenshot-Upload oder Deployment. Eine gespeicherte Aufgabe ist zuerst „vorbereitet“. Nach ausdrücklicher Übernahme im Chat kann Codex per agent.mjs „in Bearbeitung“, „blockiert“ oder „Ergebnis liegt vor“ samt Rückmeldung speichern. Das ist ein bewusst bedienter Rückkanal, kein autonomer Worker. Die Übergabe wird im gewünschten Work-/Codex-Chat verwendet. Eine Auswahl in dieser App verändert dessen Modell nicht. Mac-unabhängige Arbeit braucht eine spätere Cloud-/Chat-Anbindung.
 
 Keine Kostenvorhersage aus Benchmark-Dollarwerten: diese sind keine Pro-Abrechnung. Die Empfehlung ist eine transparente Heuristik, kein gemessener GradeCrew-Modellvergleich. Neuere/veränderte Quellen werden noch nicht automatisch geladen. Acht Themenbereiche sind redaktionelle Zuordnungen und noch kein vollwertiges Projektinventar aller Chats.
 
@@ -33,3 +33,12 @@ Bindet nur an 127.0.0.1. Host-, Origin- und Sitzungstokenprüfung für Schreibzu
 ## Nächster Schritt
 
 Eine echte Abo-Chat-Brücke im konkreten Client prüfen: Nutzerklick -> exakt ein Auftrag mit gewähltem Modell -> tatsächlicher Startnachweis -> Ergebnis zur selben Task-ID. Bestehende Prüf-/Review-Gates erhalten. Vorher keine automatische Ausführung behaupten.
+
+## Auftrag starten
+
+1. Aufgabe öffnen, Arbeitsauftrag eingeben, Modell/Weg wählen und bestätigen, lokal vorbereiten.
+2. Hier im passenden Codex-Chat sagen: „Bearbeite den nächsten Abo-Auftrag aus der GradeCrew-Zentrale.“ Bei mehreren offenen Aufträgen die Task-ID nennen.
+3. Codex liest agent.mjs list/show, prüft tatsächliches Modell und übernimmt die ID. Ergebnis zurückschreiben per agent.mjs complete/block; AGENTS.md beschreibt den Ablauf.
+4. Ansicht lädt lokale Änderungen spätestens alle fünf Sekunden nach, sofern kein Dialog/Formular bearbeitet wird. Release-Farben ändern sich dabei nicht ohne Nachweise.
+
+Mac-Paket neu bauen: zsh native/build.sh. Lokaler Build und Signaturprüfung bestanden; native Fenster-/Geräteprüfung noch offen. Keine Browserrichtlinie umgangen.

@@ -33,10 +33,16 @@ test('Local server persists comments and idempotent drafts, rejects forged write
   r=await request('/api/drafts',draft);assert.equal(r.status,200);
   r=await request('/api/drafts',{...draft,text:'different'});assert.equal(r.status,409);
   r=await request('/api/drafts',{...draft,requestId:'test-request-002',confirmed:false});assert.equal(r.status,400);
+  const saved=(await fetch(base+'/api/bootstrap').then(r=>r.json())).state.drafts[0];
+  r=await request('/api/drafts/update',{id:saved.id,status:'completed',actor:'Codex',result:'done'});assert.equal(r.status,409);
+  r=await request('/api/drafts/update',{id:saved.id,status:'running',actor:'Codex',model:'gpt-6.1-sol'});assert.equal(r.status,200);
+  r=await request('/api/drafts/update',{id:saved.id,status:'running',actor:'Other',model:'gpt-6.1-sol'});assert.equal(r.status,409);
+  r=await request('/api/drafts/update',{id:saved.id,status:'completed',actor:'Codex',result:'Geprüft; Nutzerabnahme offen.'});assert.equal(r.status,200);
   r=await request('/api/dispatch',draft);assert.equal(r.status,404);
   await new Promise(r=>server.close(r));server=await createApp({stateDir:dir,catalog});base=await start();
   const body=await fetch(base+'/api/bootstrap').then(r=>r.json());
   assert.equal(body.state.comments.length,1);assert.equal(body.state.drafts.length,1);assert.equal(body.state.drafts[0].model,'gpt-6.1-sol');
+  assert.equal(body.state.drafts[0].status,'completed');assert.equal(body.state.drafts[0].result,'Geprüft; Nutzerabnahme offen.');
   assert.equal((await fetch(base+'/.local/state.json')).status,404);
   r=await request('/api/tasks',{title:'Neue Idee',area:'Games',priority:'P2'});assert.equal(r.status,201);
  }finally{await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true});}
