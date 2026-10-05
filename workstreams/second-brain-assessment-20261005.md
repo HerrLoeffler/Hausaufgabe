@@ -1,5 +1,46 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Lokaler Prototyp und Modellentscheidung – 06.10.2026
+
+Task-ID GC-BRAIN-01 bleibt erhalten. Der Nutzer hat ausdrücklich den Bau eines ersten kurzen lokalen Prototyps beauftragt. Er präzisiert außerdem: Guardian mit verschiedenen API-Modellen wird weiterhin für passende Prüfungen bzw. Online-/Produktaufgaben benötigt. Die frühere Abo-Präzisierung darf nicht als Auftrag zum Abschalten der Guardian-/Produkt-API-Ketten gelesen werden. Entwicklungsaufträge im persönlichen Work/Codex sollen vorab eine begründete Modellwahl erhalten, statt grundsätzlich Astra zu verwenden.
+
+### Gesicherter Stand
+
+- Code: 352aa46508f95deed5b480c302e79bed571b6a24, Branch prototype/gradecrew-control-local-v1, Pfad prototypes/gradecrew-control-local/. Lokaler separater Projektordner gradecrew-control-prototype; lokaler Code-Commit 142b0c4. Lokales Git enthält nur den Prototyp, kein vollständiger Hausaufgabe-Checkout.
+- Browseradresse nach Start: http://127.0.0.1:4318. Start GradeCrew.command oder node server.mjs. Aktuelle lokale Server-Session: 17237; ein Abbruch des Chats beweist keinen Serverstopp. Vor erneutem Start Port/Prozess prüfen.
+- 50 echte Aufgaben aus TODO.md@8360bc5, acht Themenbereiche; zwölf Aufgaben exakt mit task_id/task_ids aus dem Release-State verbunden, 38 ohne eindeutige Stufenzuordnung. Kein erfundener Live-Status. Kommentare, neue lokale Aufgaben und bestätigte Auftragsentwürfe werden getrennt in .local/state.json gespeichert. Keine privaten Laufzeitdaten im Git.
+- Suche/Filter, Aufgabendetail, Quellenlinks, lokale Modell-Empfehlung, ausdrückliche Wahl von Modell/Aufwand/Weg, Auftragsablage, Übergabetext und JSON-Export implementiert. Keine automatische KI-/Chat-Ausführung: vorbereitet heißt vorbereitet.
+- Modellberater ist eine lokale Heuristik: risikoarme begrenzte Arbeit -> GPT-6 Luna, normale Entwicklung -> GPT-6.1 Sol, Architektur/hohe Tragweite -> GPT-6 Astra. Auswahl ist kein tatsächlicher Modellwechsel; Verfügbarkeit vor Übernahme im Chat prüfen. Keine aktuellen Einstellungen anderer Chats geändert.
+- Guardian/API als eigener Vorbereitungsweg; Modellwunsch verändert nicht dessen qualifizierte Profile, Budgets oder Review-Gates. Kein API-Auftrag gestartet.
+- Arbeitsräume sind thematische Ansichten, keine neu angelegten/umbenannten/archivierten Codex-Chats. Die Frage nach späterer Chat-Organisation bleibt von dieser lokalen Umsetzung getrennt.
+
+### Referenzen und Kosten
+
+DeepSWE und Artificial Analysis am 06.10.2026 geöffnet, offizielle Modellwahl gegengeprüft. DeepSWE enthält 113 Engineering-Aufgaben mit mini-swe-agent und Datenstand 22.09.2026. Drei exakt benannte Modell-/Effort-Messungen als Quellenbeispiele eingebunden; keine Übertragung von GPT-5.6 Luna auf GPT-6 Luna. Artificial Analysis als Quelle eingebunden, ohne unlesbare dynamische Diagrammwerte zu erfinden. API-Preise, Benchmark-Tokens und Pro-Kontingent sind unterschiedliche Größen. Keine exakte Vorhersage oder garantierte Einsparung behauptet. Vor Auftragsvorbereitung wählt und bestätigt der Nutzer das Modell. Kein automatischer kostenpflichtiger Fallback.
+
+- https://deepswe.datacurve.ai/
+- https://artificialanalysis.ai/
+- https://learn.chatgpt.com/docs/model-selection
+
+Für diese Umsetzung keine separat berechneten Modell-API-Aufrufe oder Produktabhängigkeits-Installationen. Die laufende Codex-Arbeit nutzt das Konto-Kontingent. Kein monetärer Gesamtpreis behauptet; GitHub-/Infrastrukturkosten nicht durch fehlende Modell-API-Aufrufe ausgeschlossen.
+
+### Tatsächlich geprüft
+
+- Tests vor Implementierung gestartet, zunächst am fehlenden Modul gescheitert; anschließend umgesetzt und vollständig bestanden. Kein perfekter assertion-first-TDD-Nachweis behaupten.
+- node --test test/*.test.mjs: 3/3 bestanden. Enthält echte HTTP-/Dateisystem-Integration: Kommentar-Persistenz, Neustart, genau ein Entwurf bei doppelter Request-ID, 409 bei geändertem Inhalt unter derselben ID, ungültige Eingaben, fehlende Bestätigung, fremder Origin, fehlende Task-ID, private Datei nicht öffentlich, kein Dispatch-Endpunkt.
+- node --check für server.mjs, public/app.mjs und public/shared.mjs erfolgreich. Lokaler Git-Arbeitsstand sauber beim Prüfschritt.
+- Loopback-Port zunächst sandboxseitig blockiert; separat genehmigte lokale Test-/Serverausführung erfolgreich.
+- Visuelle Browser-/Geräteprüfung NICHT erfolgt: zwei cua-Versuche lehnen http://127.0.0.1:4318 ab, weil die admin-enforced policy nicht verifiziert werden konnte. Sperre nicht umgangen. Deshalb keine Behauptung einer bestandenen visuellen oder Browser-End-to-End-Abnahme.
+- Development-Status-Lauf 37374686618 und Joblog 111980194806 gelesen: Registry-Zielabweichung bei freetext-review, offene PR trotz integriertem escape-tutor-cost-guards und 73 unklassifizierte Branches. Offene PR-Liste frisch gelesen, insbesondere #25/#26 vorhandene Modell-/Routingarbeit, #65 komplexe Guardian-Arbeit, #126 Zulassungsprofile; kein konkurrierender Control-App-PR identifiziert. Prototyp berührt keine dieser Produktdateien.
+
+### Release-Stufe / Grenzen / nächster Schritt
+
+branch_only: eigener Branch gepusht, lokale Tests bestanden; keine exakte Repo-CI, Integration, Staging, Geräteabnahme oder Production-Veröffentlichung behauptet. Ohne Mac läuft dieser lokale Prototyp nicht. Noch offen: visuelle Abnahme, Screenshot-Anhänge, vollständige Chat-/Aufgabeninventarisierung, automatische Quellaktualisierung, echte Modell-/Abo-Chat-Brücke und Ergebnisrückkanal, Cloudbetrieb, zugelassene Guardian-Anbindung. Statusdaten sind Snapshots und können gegenüber paralleler Arbeit veraltet sein.
+
+Nächster konkreter Schritt: lokale Oberfläche im Browser abnehmen, sobald die Browserrichtlinie wieder geprüft werden kann bzw. durch Martin öffnen lassen; danach genau eine bestätigte Abo-Übergabe mit tatsächlichem Start-/Ergebnisnachweis integrieren. Keine Reaktivierung unbekannter alter API-Aufträge, kein Budgetreset, keine automatische Production.
+
+---
+
 ## Maßgebliche Präzisierung: Abo-Ausführung und Bereichsübersicht, 05.10.2026
 
 Diese Ergänzung ersetzt die frühere Empfehlung, Guardian als regulären Modell-Worker dieser Zentrale zu verwenden. Die historische Einordnung darunter bleibt erhalten.

@@ -1,0 +1,8 @@
+GC-BRAIN-01 – 06.10.2026
+Code remote: 352aa46508f95deed5b480c302e79bed571b6a24
+Branch: prototype/gradecrew-control-local-v1
+Local tests: 3/3 passed; real local HTTP and filesystem persistence covered.
+Syntax checks: server.mjs, public/app.mjs, public/shared.mjs passed.
+Browser visual QA: blocked twice; admin-enforced policy could not be verified by cua. No bypass attempted.
+Deployment: none. Local server only, http://127.0.0.1:4318.
+Boundary: saved drafts do not start Codex or Guardian and do not switch models.

@@ -593,6 +593,18 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "development-control-local-v1",
+      "task_id": "GC-BRAIN-01",
+      "branch": "prototype/gradecrew-control-local-v1",
+      "observed_head": "352aa46508f95deed5b480c302e79bed571b6a24",
+      "stage": "branch_only",
+      "ci": "not_run_for_this_commit; 3_local_tests_passed",
+      "staging": "not_deployed_local_only",
+      "user_test": "not_performed_browser_policy_check_unavailable",
+      "handoff": "workstreams/second-brain-assessment-20261005.md",
+      "next_action": "Open local prototype, verify UI, then integrate one subscription-backed chat handoff; Guardian remains separate."
     }
   ],
   "deployments": [
