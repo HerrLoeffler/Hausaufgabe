@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-05",
+  "observed_at": "2026-10-06",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -380,16 +380,28 @@
       "task_id": "GC-IOS-02",
       "branch": "feature/shared-gradecrew-design-system",
       "implementation_branch": "feature/shared-gradecrew-design-system",
-      "observed_head": "899bc3632b657d004ea3771418bb0c22a9a72ab5",
+      "observed_head": "79598be8a68d26319e5e9711d0df7c73e119684d",
       "stage": "ci_green",
-      "ci": "success_testflight_run_37024529022",
-      "testflight_version": "0.1.6",
+      "ci": "success_testflight_run_37076301215",
+      "testflight_version": "0.1.8",
       "default_web_source": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/",
       "stable_staging_fallback": "https://hausaufgabe-staging.web.app/",
       "production_target_allowed": false,
-      "user_test": "installed_build_and_loaded_web_sha_not_verified",
+      "user_test": "apple_processing_installation_and_physical_device_acceptance_not_verified",
       "handoff": "workstreams/ios-app-v2.md",
-      "next_action": "0.1.6 nach Apple-Verarbeitung am iPad bestätigen; nativen Build und geladenen Web-SHA gemeinsam für Abnahme erfassen."
+      "next_action": "CI-grünen isolierten 0.1.9-Kandidaten in PR #144 für bewusste TestFlight-/Geräteabnahme reviewen.",
+      "testflight_build": 18,
+      "candidate": {
+        "branch": "feature/ios-native-bridge-019-20261005",
+        "commit": "4d778ef469b37729a4b1ea9c097a970a43da34c9",
+        "stage": "ci_green",
+        "pull_request": 144,
+        "local_verification": "Xcode 27 unsigned build, routing/navigation, Foundation file/lifecycle and 12 JS tests pass; identical source tree d0c07db2e27d8c3cd668862b02a9aba6404dbd80",
+        "ci": "success_run_37389818307_commit_4d778ef469b37729a4b1ea9c097a970a43da34c9",
+        "testflight_upload": "not_started",
+        "device_test": "not_performed",
+        "handoff": "workstreams/ios-native-bridge-019.md"
+      }
     },
     {
       "id": "design-dashboard-v1",

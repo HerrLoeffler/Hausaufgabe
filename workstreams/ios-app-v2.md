@@ -111,3 +111,8 @@ Erst nach diesem Test sind 0.1.7/0.1.8 `user_tested`.
 ## Danach
 
 Nächster sinnvoller Native-Block ist die schmale Web↔Native-Bridge (Share/Export, externe Links, Diagnose, später Scanner/Haptik) plus Offline-/Recovery-Härtung. Keine vollständige native Doppelimplementierung von Editor/KI/Dashboard beginnen, solange die Webplattform dort die aktiv weiterentwickelte Single Source of Truth bleibt.
+
+
+## Frischer Abgleich / Xcode-Fortsetzung 06.10.2026
+
+Der neueste bestätigte Upload ist **0.1.8 (18)**, Run `37076301215`, auf demselben kanonischen Commit `79598be8`. Die Build-17-Angabe oben bleibt historisch. Apple-Verarbeitung/Installation/Geräteabnahme nicht bestätigt. Neue native Dateibrücke 0.1.9 lokal umgesetzt und als [Draft-PR #144](https://github.com/HerrLoeffler/Hausaufgabe/pull/144) isoliert gesichert. Status, Review-Korrekturen und exakte CI: [Fortsetzungsübergabe](ios-native-bridge-019.md). Kanonischer App-Branch, Web-Integration und Production wurden durch diese Fortsetzung nicht geändert.
