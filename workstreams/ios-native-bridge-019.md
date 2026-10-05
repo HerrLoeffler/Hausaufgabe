@@ -25,6 +25,6 @@ Nächster Schritt: Foundation-Dateivertrag mit zuerst fehlschlagenden Verhaltens
 
 ## GitHub-Sicherung
 
-Lokaler finaler Codecommit `69f19d9`; GitHub-Snapshot `4d778ef469b37729a4b1ea9c097a970a43da34c9`, Draft-PR #144 gegen kanonischen App-Branch. Vollständige Git-Bäume stimmen exakt überein (`d0c07db2e27d8c3cd668862b02a9aba6404dbd80`). Native Checks Run `37389818307` läuft; noch kein CI-Erfolg behauptet. Keine Änderung an kanonischem App-Branch/Web-Integration und kein 0.1.9-Upload. Main-Korrektur dieses Dokuments ist ein separater Vorschlag.
+Lokaler finaler Codecommit `69f19d9`; GitHub-Snapshot `4d778ef469b37729a4b1ea9c097a970a43da34c9`, Draft-PR #144 gegen kanonischen App-Branch. Vollständige Git-Bäume stimmen exakt überein (`d0c07db2e27d8c3cd668862b02a9aba6404dbd80`). Native Checks Run `37389818307` auf finalem `4d778ef4` vollständig erfolgreich: Routing/Navigation, Foundation-Verträge/Dokumentzustand, 12 JS-Tests und unsigned Xcode-Build. Stufe: ci_green, isoliert, nicht integriert. Keine Änderung an kanonischem App-Branch/Web-Integration und kein 0.1.9-Upload. Main-Korrektur dieses Dokuments ist ein separater Vorschlag.
 
-Nächster konkreter Schritt: Ergebnis der exakten Native Checks für `4d778ef469b37729a4b1ea9c097a970a43da34c9` prüfen und anschließend den isolierten Kandidaten für TestFlight-/Geräteabnahme reviewen.
+Nächster konkreter Schritt: PR #144 mit dem CI-grünen Commit `4d778ef469b37729a4b1ea9c097a970a43da34c9` für einen bewussten TestFlight-/Geräteschritt reviewen.

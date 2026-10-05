@@ -389,15 +389,15 @@
       "production_target_allowed": false,
       "user_test": "apple_processing_installation_and_physical_device_acceptance_not_verified",
       "handoff": "workstreams/ios-app-v2.md",
-      "next_action": "PR #144: exact Native Checks CI prüfen, danach isolierten 0.1.9-Kandidaten für Gerätetest/TestFlight-Release reviewen.",
+      "next_action": "CI-grünen isolierten 0.1.9-Kandidaten in PR #144 für bewusste TestFlight-/Geräteabnahme reviewen.",
       "testflight_build": 18,
       "candidate": {
         "branch": "feature/ios-native-bridge-019-20261005",
         "commit": "4d778ef469b37729a4b1ea9c097a970a43da34c9",
-        "stage": "branch_only",
+        "stage": "ci_green",
         "pull_request": 144,
         "local_verification": "Xcode 27 unsigned build, routing/navigation, Foundation file/lifecycle and 12 JS tests pass; identical source tree d0c07db2e27d8c3cd668862b02a9aba6404dbd80",
-        "ci": "in_progress_run_37389818307",
+        "ci": "success_run_37389818307_commit_4d778ef469b37729a4b1ea9c097a970a43da34c9",
         "testflight_upload": "not_started",
         "device_test": "not_performed",
         "handoff": "workstreams/ios-native-bridge-019.md"
