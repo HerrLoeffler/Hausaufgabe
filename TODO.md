@@ -174,3 +174,9 @@ GC-AUTOMATION-01/07/12: frühere Setup-/403-Aussagen sind überholt. Zweiter ech
 
 
 GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkreter Quellenvertragsauftrag anhand Chatverlauf, abgeschlossener Ausführung und aktuellem Ledger als erledigt verifiziert. Zwei Pilotversuche / 1,70 USD Reservierung erhalten; kein neuer Bau, Recovery oder Deploy. Aktuelle Web-/Hosting-/AI-/Assessment-Quelle fb88dfa7; Geräte-/Rules-Abnahme bleibt offen. Details und abweichende alte Chat-Anzeige in [bestehender Übergabe](workstreams/guardian-source-recovery-20261004.md).
+
+## Ergänzung 06.10.2026 – Video und proaktive Werkzeugwahl
+
+| ID | Aufgabe | Status | Nachweis / nächster Schritt |
+|---|---|---|---|
+| GC-PLUGINS-01 | Ganzen Astra-Kurs transkribieren, Bildfolge analysieren und hilfreiche GradeCrew-Werkzeuge recherchieren; künftig proaktiv anbieten | Analyse abgeschlossen; Dokumentationsregel branch_only, Integration offen | Vollständige lokale Tonspur, 206388 Frames technisch erfasst, 462 Bilder visuell gesichtet; keine semantische Prüfung jedes Frames. [Auswertung](docs/PLUGIN_TOOL_STRATEGY_2026-10-06.md) · [Übergabe](workstreams/plugins-tool-strategy-20261006.md). Regel in AGENTS vorbereitet; neue Plugins noch nicht eingerichtet. Nächster Schritt: Dokumentations-PR prüfen/integrationsbeauftragen. |
