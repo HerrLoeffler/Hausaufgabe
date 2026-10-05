@@ -74,6 +74,8 @@ Mit Canva und/oder Bildgenerierung 3 klar unterscheidbare Hero-Art-Directions au
 
 ## Wiederaufnahme 06.10.2026 – Referenztreue vor weiterem Web-Polish
 
+> Historischer erster Vorschlag. Produktionsweg und nächster Schritt werden durch die nachfolgende Korrektur „Blender als Szenenquelle“ präzisiert. Die frühere 7/10-Bewertung gewichtete den ersten statischen Pass; sie ist keine Bewertung des langfristigen Animations-/Saisonziels.
+
 ### Auftrag und Zuständigkeit
 
 - Bestehende Task-ID: GC-DESIGN-05; keine neue Design-Aufgabe und kein Zurücksetzen früherer Versuche.
@@ -144,3 +146,74 @@ Nur Planungs-/Übergabedokumentation; keine neuen Hero-Assets, kein Web-Code, ke
 Nächster Schritt: mit Screenshot plus kanonischen Figurenreferenzen den statischen Entwurf A als ersten der drei vergleichbaren Hero-Entwürfe produzieren und bei gleicher Ansichtsgröße vorlegen; anschließend B/C im selben Vergleichsformat. Erst nach Auswahl des visuellen Masters Implementierung spezifizieren.
 
 Technische Referenzen: [responsive Bildkomposition](https://web.dev/articles/responsive-images), [Reduced Motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion).
+
+## Korrektur 06.10.2026 – Blender als Szenenquelle
+
+**Priorität nach Nutzerfeedback:** Nicht weiter Canva-zentriert planen. Die Produktionsgrundlage für bewegliche, saisonal veränderbare Figuren konkret prüfen. Sämtliche Texte bleiben übersetzbare Web-Bausteine. Die frühere Empfehlung ist in diesem Punkt unvollständig gewesen; diese Ergänzung ist die aktuelle Planungsempfehlung.
+
+### Geprüfter Istbestand
+
+- Vollständiger, nicht abgeschnittener GitHub-Dateibaum des Integrationscommits bb91ce3590d773472ece60c4dd881da729bd32c1: keine Dateien mit .blend, .glb, .gltf, .fbx, .obj, .usd oder .usdz. Das beweist keine Abwesenheit von Modellen außerhalb dieses Branches/Projekts.
+- Lokale Projektdateien ebenfalls ohne diese Modellformate. Keine Blender-Anwendung im PATH, in /Applications, ~/Applications oder beim Spotlight-Aufruf für org.blenderfoundation.blender gefunden; keine Installation vorgenommen.
+- Plugin-Suche „Blender“ ohne Treffer. Breitere 3D-/Meshy-/Tripo-Suche liefert keinen eindeutig geeigneten Modellierungs-/Rigging-Connector. Keine ungeprüfte Drittanbieter-Integration vorgeschlagen. Katalogsuche ist nicht vollständig.
+- Vier kanonische Figuren visuell geprüft: SVGs enthalten jeweils einen WebP-Bildatlas mit sechs Posen. Es sind Rasterbilder, keine 3D-Geometrie oder beweglichen Skelette. Lokale Quelldateien stimmen über Git-Blob-Hashes exakt mit dem Integrationsstand überein:
+  - Coco / penguin-guide.svg: 0afd5518acb78faa4de6c4f60b6bf58373c445c0
+  - Remy / elephant-create.svg: 0931ddbf4fd1f19dc1d676810eee037264a58eb3
+  - Emmi / fox-improve.svg: ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69
+  - Wilma / owl-grade.svg: f6ac88af08d9a110abb80c995c6a5901b2068127
+- Referenzkopien ohne Bildbearbeitung aus diesen Dateien extrahiert: analysis/GC-DESIGN-05/reference-assets/ im lokalen Projektspiegel. Das sind vorhandene Bilddaten, keine neuen Entwürfe.
+- Kanonischer Coco ist dunkelblau/creme mit dunklen Augen; Wunschbild liefert Raum-/Lichtregie, nicht automatisch neue Augenfarbe oder Figurenproportionen.
+- Prüfergebnisse für früheren Dokumentationscommit 1bcf514: handoff und Live branch / PR audit success. Kein Blender-Render und keine App-Prüfung daraus ableiten.
+
+### Produktionsentscheidung: Quelle und Browserausgabe getrennt bewerten
+
+**Empfehlung: bearbeitbare Blender-Masterszene mit echten Figurenmodellen; zunächst offline gerenderte Web-Ausgabe plus HTML/i18n.** Nicht „Screenshot als Website“, nicht „PNG in Blender importieren und als echtes 3D ausgeben“.
+
+Blender wird Quelle für Geometrie, Materialien, Kamera, Licht, Figuren-Rigs, Türbewegung und saisonale Objekte. Raster-Bildgenerierung ist für Lookentwicklung, Modellreferenzen und gegebenenfalls Texturen hilfreich; sie liefert allein weder ein konsistentes Rundum-Modell noch ein Rig. Ein automatisch erzeugtes Modell wäre ein Kandidat und müsste auf Silhouette, Rückseite, Topologie, Materialien und Verformung geprüft werden.
+
+Gleiche Kriterien für das jetzt ausdrücklich betonte Langfristziel: Referenztreue, glaubwürdige Bewegung, saisonale Wiederverwendung und stabile Browserbedienung.
+
+| Weg | Einschätzung | Grenze |
+|---|---|---|
+| 2D-Bildteile bewegen, ohne echte Figurenmodelle | 5/10 | Für Winken/leichte Verschiebungen brauchbar; Greifen, Drehen und Gehen bleiben eingeschränkt. |
+| Blender-Masterszene → vorberechnete Bilder/Animation + HTML | 9/10 | Hohe Kontrolle über Fell/Licht und reproduzierbare Varianten; Modellierung und Rigging nötig, neue Bewegungen müssen gerendert werden. |
+| Blender-Masterszene → optimiertes Echtzeit-3D + HTML | 8/10 | Interaktive Figuren/Kamera möglich; zusätzliche Material-, Export-, Leistungs- und Geräteprüfung. Blender-Renderqualität nicht automatisch durch glTF-Export erhalten. |
+
+Diese Bewertungen sind begründete Empfehlungen, keine gemessenen Qualitätswerte oder Vollständigkeitsangaben. Blender als Produktionswerkzeug und Echtzeit-3D als Browsertechnik sind keine identische Entscheidung.
+
+### Lieferbare Bausteine und Verantwortung
+
+| Baustein | Bearbeitbare Quelle | Browser |
+|---|---|---|
+| Raum, Tür, Licht, Crew | .blend mit benannten Objekten, Materialien und Kameras | Textfreies Poster und gerenderte Sequenz; bei später bewiesenem Bedarf glTF/WebGL |
+| Figurenbewegung | Rigs für Körper, Flügel/Pfoten, Kopf; Gesichtssteuerung nach Bedarf | Exportierter Clip; stabile Endpose/Fallback |
+| Sommer/Winter | Separate Props/Collections am selben Modell, definierte Kameras | Zusammengehörige versionierte Szenenvariante |
+| Logo, Überschrift, Rollen, CTAs, Schülercode | Zentrales Brand-Manifest und HTML/i18n | Semantische, bedienbare Web-Elemente |
+| Tafeln, Türschild, Papierbeschriftung | Unbeschriftete Flächen im Render; Text in i18n | Web-Text an definierten Ankern; Text auf bewegter Tür vermeiden oder erst nach deren Stillstand einblenden |
+
+Die Szene wird als Ganzes physikalisch zusammenhängend beleuchtet. Getrennte Render-Layer sind für Nachbearbeitung sinnvoll, aber Schatten/Verdeckungen müssen gemeinsam stimmen. Nicht jede Figur braucht einen separaten transparenten Video-Player: unkoordiniertes Abspielen mehrerer Ebenen erzeugt Synchronisations-, Alpha- und Ladeprobleme. Ein textfreier gemeinsamer Szenenclip kann die Bewegung kohärent zeigen, während alle Texte unabhängig bleiben. Die Blender-Quelle bleibt vollständig editierbar.
+
+### Nächster Qualitätsnachweis: Coco-und-Tür-Pilot
+
+Empfohlener erster Produktionsschritt statt drei unverbindlicher Canva-Stilbilder: eine einzige Referenzeinstellung in Blender mit Coco, Tür, Raumlicht und einer Platzhalterposition für die spätere Crew.
+
+1. Kanonische Coco-Ansichten als verbindliche Modellvorlage verwenden. Neue Seiten-/Rückansichten sind Entwurfsannahmen und müssen zur Front passen.
+2. Coco modellieren, texturieren und riggen. Flügelkontakt an Tür/Klinke, Kopfwendung und zwei Schritte prüfen; keine durchdringenden Körperteile, schwebenden Füße oder Gesichtsdrifts.
+3. Drei überprüfbare Zustände liefern: Tür fast geschlossen, Türöffnung, endgültige Begrüßungspose. Dazu ein kurzer gerenderter Bewegungsclip und die echte .blend-Quelle.
+4. Licht-/Materialtest im Ausschnitt neben dem Wunschbild prüfen. Erst wenn dieser Ausschnitt trägt, die restliche Crew und den vollständigen Raum ausarbeiten. Platzhalter sind keine finale Markenqualität.
+5. Gleiche Szene in Desktop- und schmaler Kameraansicht planen. Web-Textzonen von Anfang an freihalten. Die Website darf jederzeit übersprungen, bedient oder ohne Bewegung genutzt werden.
+6. Nach dem Pilot die Browserausgabe anhand echter Qualität und Lade-/Gerätemessungen festlegen. Startpräferenz: gerenderte Szene für den filmischen Look, Echtzeit nur bei zusätzlichem belegtem Interaktionsbedarf.
+
+Blender ist derzeit in dieser Umgebung nicht ausführbar nachgewiesen. Für den Produktionspilot braucht es eine ausführbare Blender-Installation oder einen ausdrücklich gewählten Renderzugang. Es wurde kein Installations-/Renderauftrag ausgelöst und kein fertiges 3D-Modell behauptet. Das aktuelle Ergebnis ist die überprüfte Produktionsentscheidung mit Asset-Inventar und Pilot-Abnahmekriterien. Kein neues Nutzungsbudget, kein Guardian-Retry, keine Website-Änderung und kein Deploy.
+
+**Genau ein nächster ausführbarer Schritt:** Blender als ausführbare Produktionsumgebung bereitstellen/verifizieren; danach den oben begrenzten Coco-und-Tür-Pilot auf derselben GC-DESIGN-05-Aufgabe ausführen. Die früher vorgeschlagenen drei Stilrichtungen sind gegenüber diesem technischen/visuellen Qualitätsnachweis nachrangig.
+
+### Offizielle technische Belege
+
+- [Blender Animation & Rigging](https://docs.blender.org/manual/en/5.2/animation/index.html)
+- [Render-Layer und Compositing](https://docs.blender.org/manual/en/latest/compositing/types/input/scene/render_layers.html)
+- [glTF-Export und abweichendes Materialsystem](https://docs.blender.org/manual/en/4.3/addons/import_export/scene_gltf2.html)
+- [Blender Python-Steuerung](https://docs.blender.org/api/main/info_quickstart.html)
+- [Rendern ohne Bedienoberfläche](https://docs.blender.org/manual/en/dev/advanced/command_line/render.html)
+
+Offizielle Suchindex-Auszüge geprüft; direkte Abrufe einzelner latest-Dokumentationsseiten lieferten einen Abruffehler. Keine Laufzeit-/Versionskompatibilität praktisch getestet.
