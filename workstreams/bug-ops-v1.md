@@ -121,3 +121,49 @@ Offener i18n-PR #131 verändert ebenfalls `app.js`. BugOps wird deshalb nicht bl
 3. Kanonische serverseitige Incident-Aggregation für >1.000 Nutzer ergänzen; die aktuelle V1 gruppiert die geladenen Seiten im Adminclient.
 4. Sichere serverseitige Guardian-Brücke bauen. Browser erhält niemals GitHub-/Guardian-Schreibrechte.
 5. Admin-weite Entscheidungsbenachrichtigung und später optionaler Digest-Kanal auf denselben Incident-Ereignissen aufsetzen.
+
+
+## Verifizierter Staging-Stand – 2026-10-05 00:06 CEST
+
+Der frühere i18n-Integrationsblocker ist erledigt. BugOps wurde bewusst mit dem aktuellen i18n-Stand zusammengeführt und anschließend in getrennten Schritten erweitert.
+
+### Integriert
+- PR #133: Web-Decision-Inbox, P0–P3, Regressionserkennung, 200er-Feedback-Pagination.
+- PR #134: serverseitige, idempotente Incident-Aggregation aus `feedback/app_error`.
+- PR #136: admin-only Attention-Summary, Badge an „Administration“, höchstens ein Hinweis pro Login und kanonische Incident-Lebenszyklen.
+
+Aktueller gemeinsamer Integrations-SHA: `bb91ce3590d773472ece60c4dd881da729bd32c1`.
+
+### Nachweise
+- Combined CI: Run `37238513381` **success** auf exakt `bb91ce3…`.
+- Admin-Control/Staging-Build: Run `37238513389` **success**.
+- Hosting-Preview: Run `37238585607` **success**, Manifest/Dateihashes geprüft, Receipt Artifact `11316079411`, exakt `bb91ce3…`.
+- AI Functions: Run `37238585657` **success**, Receipt Artifact `11316084527`, exakt `bb91ce3…`.
+- Deploylog bestätigt `aggregateBugFeedback` und `getBugOpsSummary` in `europe-west1`.
+- Assessment Functions desselben Zugs ebenfalls erfolgreich; BugOps verändert deren Logik nicht.
+- Firestore Rules wurden **nicht** als eigene Stufe deployed. Das ist für BugOps V1 absichtlich nicht erforderlich: `bugIncidents` bleibt clientseitig server-only; Admin-UI liest nur die sanitiserte Callable-Summary.
+- Production wurde nicht verändert.
+
+Release-Stufe: **staging_deployed**. Nutzer-/Geräteabnahme: **offen**.
+
+### Verhalten bei großer Nutzung
+- Rohmeldungen erzeugen keinen Alarmsturm.
+- Gleicher technischer Fingerprint wird serverseitig zu einem Incident gebündelt.
+- Eindeutige Melder werden incident-lokal gehasht gezählt; Namen/E-Mails/Freitexte/Schülerantworten landen nicht im Incident.
+- Admin erhält nur für `immediate`, `action_needed` oder `retest_ready` einen Attention-Zähler.
+- Pro Login höchstens ein BugOps-Hinweis statt einer Meldung je Nutzerfehler.
+- Öffnen der Administration führt bei Attention direkt in die BugOps-/Feedback-Ansicht.
+- Incident-Lifecycle: `open` → `fix_recorded`/`monitoring` → `retest_required`; erneutes Auftreten nach Fix wird `regressed`.
+
+### Noch **nicht** aktiv
+Die automatische Reparatur aus echten Kundenmeldungen ist noch nicht freigeschaltet. Der nächste sichere Ausbau ist:
+1. read-only Investigator untersucht reproduzierbare, sanitiserte Incident-Daten;
+2. ermittelt Ursache, betroffene Dateien, Regressionstest und Risikoklasse;
+3. nur eindeutig grüne Web-Fälle innerhalb der Guardian-Allowlist dürfen einen begrenzten Guardian-Auftrag vorbereiten;
+4. gelbe/rote Fälle bleiben menschliche Entscheidung;
+5. Guardian maximal bis verifiziertes Staging; Production weiterhin ausschließlich nach Martins ausdrücklicher Freigabe.
+
+### Nächster ausführbarer Schritt
+Auf dem verifizierten Staging als Admin einen technischen Testfehler melden bzw. einen vorhandenen Staging-Incident nutzen und prüfen:
+`Problem melden → Incident entsteht/steigt → Administration-Badge → BugOps-Ansicht → Lifecycle`.
+Erst danach den read-only Investigator und die Guardian-Brücke implementieren.

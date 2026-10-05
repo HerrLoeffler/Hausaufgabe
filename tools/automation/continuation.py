@@ -77,14 +77,21 @@ def main():
         task = task_contract(json.loads((ROOT / 'agent-queue' / (row['taskId'] + '.json')).read_text()))
         if task['base_sha'] != row['approvedSha'] or task['base_branch'] != row['baseBranch']:
             raise ValueError('Policy and task differ')
+        from .profiles import admitted_profile, selected_profile, profile_record
+        admitted_profile(task,policy,ROOT)
         key = row['id'] + ':pipeline-v2'
         history = ledger['attempts'].setdefault(key, [])
         if history:
+            try:
+                selected_profile(history[-1],task,ROOT)
+            except ValueError as exc:
+                report['tasks'].append({'id':row['id'],'action':'blocked','reason':str(exc)})
+                continue
             before = json.dumps(history[-1], sort_keys=True)
             reconcile(history[-1], runs)
             if args.execute and before != json.dumps(history[-1], sort_keys=True):
                 blob = write_ledger(ledger, blob)
-        current = api('git/ref/heads/' + WEB)['object']['sha']
+        current = api('git/ref/heads/' + task['base_branch'])['object']['sha']
         if history and history[-1]['state'] in {'integrated', 'staging_deployed'}:
             from .deployment_evidence import reconcile_deployment
             if args.execute and enabled and row['enabled']:
@@ -105,7 +112,7 @@ def main():
             except ValueError as exc:
                 action, reason = 'stopped', str(exc)
             else:
-                if api('git/ref/heads/' + WEB)['object']['sha'] != row['approvedSha']:
+                if api('git/ref/heads/' + task['base_branch'])['object']['sha'] != row['approvedSha']:
                     action, reason = 'blocked', 'Parallel source changed before reservation'
                 else:
                     request_id = 'run-' + os.environ['GITHUB_RUN_ID'] + '-' + os.environ.get('GITHUB_RUN_ATTEMPT', '1')
@@ -113,7 +120,7 @@ def main():
                     # dispatch or provider failure never refunds this reservation.
                     history.append({'requestId': request_id, 'execution': 'pipeline-v2', 'taskId': task['id'], 'taskHash': digest(task),
                         'approvedSha': task['base_sha'], 'state': 'reserved', 'controlSha': os.environ['CONTROL_SHA'], 'controlHash': control_hash(ROOT),
-                        'reservedAt': dt.datetime.now(dt.timezone.utc).isoformat()})
+                        'reservedAt': dt.datetime.now(dt.timezone.utc).isoformat(), **profile_record(task)})
                     ledger['budgetReservations'].append({**budget, 'requestId': request_id})
                     blob = write_ledger(ledger, blob)
                     try:

@@ -41,7 +41,7 @@ def profile_digest(profile,root):
     # revision. Adding any of them changes both profile and control authority.
     if profile == GAMES:
         names += [str(p.relative_to(root)) for p in sorted((root/'tools/automation/fixtures/games-static-v1').rglob('*')) if p.is_file()]
-        names += [name for name in ('tools/automation/games_static.py','tools/automation/validate-games-static.sh',
+        names += [name for name in ('tools/automation/games_static.py','tools/automation/validate-games-static.sh','tools/automation/games-static-smoke.cjs',
                   '.github/workflows/guardian-games-validation.yml','.github/workflows/guardian-games-staging.yml') if (root/name).exists()]
     files = {}
     for name in names:
@@ -73,3 +73,22 @@ def admitted_profile(task,policy,root=ROOT):
 
 def validation_workflow(profile):
     return 'guardian-games-validation.yml' if profile == GAMES else 'guardian-web-validation.yml'
+
+
+def selected_profile(attempt,task,root=ROOT):
+    """No mutation: old records remain inspectable, never silently upgraded."""
+    from .pipeline import digest, control_hash
+    profile = validate_profile_task(task,root)
+    if attempt.get('controlHash') != control_hash(root):
+        raise ValueError('Controller code changed; old run needs reconciliation')
+    if attempt.get('taskHash') != digest(task) or attempt.get('approvedSha') != task['base_sha']:
+        raise ValueError('Attempt task binding differs')
+    if profile == GAMES:
+        expected = {'executionProfile':profile.id,'profileDigest':task['profile_digest'],'validationProfile':profile.validation_profile}
+        if any(attempt.get(k)!=v for k,v in expected.items()): raise ValueError('Attempt profile binding differs')
+    return profile
+
+
+def profile_record(task):
+    profile = resolve_profile(task)
+    return {} if profile == WEB else {'executionProfile':profile.id,'profileDigest':task['profile_digest'],'validationProfile':profile.validation_profile}

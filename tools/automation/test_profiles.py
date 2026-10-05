@@ -77,3 +77,46 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(grant['workstreams'][-1]['executionProfile'],'games-static-preview-v1')
         with self.assertRaises(ValueError): admit.admission(policy,task,ledger,'b'*40)
         with self.assertRaises(ValueError): guardian.validate_policy(policy | {'enabledExecutionProfiles':['backend-v1']})
+
+class LifecycleTests(unittest.TestCase):
+    def test_profile_control_and_task_bindings_fail_before_authority(self):
+        from tools.automation import profiles
+        from tools.automation.test_pipeline import ATTEMPT
+        task = game_task()
+        attempt = copy.deepcopy(ATTEMPT) | {'taskHash':p.digest(task),'controlHash':p.control_hash(ROOT),
+            'executionProfile':task['execution_profile'],'profileDigest':task['profile_digest'],
+            'validationProfile':task['validation_profile']}
+        try:
+            checked = profiles.selected_profile(attempt,task,ROOT)
+        except AttributeError:
+            self.fail('Saved attempts do not yet bind the execution profile')
+        self.assertEqual(checked.id,'games-static-preview-v1')
+        for change in [{'controlHash':'0'*64},{'taskHash':'0'*64},{'executionProfile':'web-ui-v1'},
+                       {'profileDigest':'0'*64},{'validationProfile':'web-combined-v1'}, {'approvedSha':'c'*40}]:
+            with self.subTest(change=change), self.assertRaises(ValueError): profiles.selected_profile(attempt | change,task,ROOT)
+        self.assertEqual(attempt['requestId'],'run-1')
+        self.assertEqual(profiles.validation_workflow(checked),'guardian-games-validation.yml')
+
+    def test_games_prepare_reads_only_its_approved_separate_target(self):
+        from unittest.mock import patch
+        from tools.automation import execution as e
+        from tools.automation.test_pipeline import ATTEMPT
+        task = game_task(); attempt = copy.deepcopy(ATTEMPT) | {'state':'reserved','runId':None}
+        ledger = {'attempts':{'key':[attempt]}}
+        paths = []
+        def api(path,*args):
+            paths.append(path)
+            if path.startswith('git/ref/heads/'):
+                return {'object':{'sha':A}}
+            if path.startswith('git/trees/'):
+                return {'tree':[{'path':f,'mode':'100644','type':'blob','sha':'b'*40,'size':20} for f in GAME_FILES]}
+            if path.startswith('git/blobs/'):
+                import base64
+                return {'content':base64.b64encode(b'/* safe */').decode()}
+            self.fail('Unexpected operation '+path)
+        with patch.object(e,'approved',return_value=(ledger,'blob','key',attempt,task)), patch.object(e,'api',side_effect=api), \
+             patch.object(e,'write_ledger'),patch.object(e,'save'),patch.object(e,'load',return_value={}),patch.object(e,'output'), \
+             patch.dict('os.environ',{'GITHUB_RUN_ID':'9','CONTROL_SHA':'c'*40}):
+            e.prepare('run-1')
+        self.assertIn('git/ref/heads/'+GAME_TARGET,paths)
+        self.assertNotIn('git/ref/heads/'+p.WEB,paths)

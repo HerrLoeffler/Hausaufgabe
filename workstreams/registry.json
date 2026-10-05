@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-04",
+  "updatedAt": "2026-10-05",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -136,11 +136,13 @@
       "title": "BugOps / Fehler-Inbox und sichere Reparaturautomatik",
       "primaryBranch": "feature/bug-ops-v1",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/bug-ops-v1.md",
       "relatedBranches": [
         "feature/telemetry-implementation",
-        "feature/guardian-execution-v2"
+        "feature/guardian-execution-v2",
+        "feature/bug-ops-server-v1",
+        "feature/bug-ops-attention-v1"
       ]
     },
     {
@@ -437,6 +439,17 @@
       "relatedBranches": [
         "feature/audio-v2-staging-checkpoint",
         "fix/audio-private-drafts-staging-v1"
+      ]
+    },
+    {
+      "id": "classroom-student-management-v1",
+      "title": "Schüler:innen-/Klassenverwaltung / Classroom Masterprojekt",
+      "primaryBranch": "feature/classroom-student-management-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/classroom-student-management-v1.md",
+      "relatedBranches": [
+        "feature/secure-assessment-v1"
       ]
     },
     {

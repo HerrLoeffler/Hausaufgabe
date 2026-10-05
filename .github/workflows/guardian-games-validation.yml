@@ -1,0 +1,52 @@
+name: Guardian isolated Games validation
+on:
+  workflow_call:
+    inputs:
+      head:
+        required: true
+        type: string
+      control_sha:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  games:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.control_sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.head }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install fixed browser toolchain outside candidate
+        run: |
+          npm install --prefix "$RUNNER_TEMP/games-browser" --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/games-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Credential-free fixed source validation and browser probe
+        run: bash tools/automation/validate-games-static.sh
+        env:
+          EXPECTED_HEAD: ${{ inputs.head }}
+          NODE_PATH: ${{ runner.temp }}/games-browser/node_modules
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guardian-tests
+          path: evidence/tests.json
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guardian-games-package
+          path: |
+            evidence/public/
+            evidence/package-manifest.json
+          if-no-files-found: error
+          retention-days: 30

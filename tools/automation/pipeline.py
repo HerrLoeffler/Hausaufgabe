@@ -74,6 +74,14 @@ def control_hash(root):
     files = {name: (Path(root)/'tools/automation'/name).read_text() for name in names}
     for name in ['guardian-execution.yml', 'guardian-web-validation.yml', 'guardian-integrated-ci.yml', 'guardian-recovery.yml']:
         files[name] = (Path(root)/'.github/workflows'/name).read_text()
+    extras = ['tools/automation/games_static.py','tools/automation/validate-games-static.sh','tools/automation/games-static-smoke.cjs',
+              '.github/workflows/guardian-games-validation.yml','.github/workflows/guardian-games-staging.yml']
+    extras += [str(p.relative_to(Path(root))) for p in sorted((Path(root)/'tools/automation/fixtures/games-static-v1').rglob('*')) if p.is_file()]
+    for name in extras:
+        path = Path(root)/name
+        if path.exists():
+            if path.is_symlink(): raise ValueError('Symlink in trusted control')
+            files[name] = path.read_text()
     return digest(files)
 
 
