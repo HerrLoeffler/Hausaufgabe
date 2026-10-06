@@ -26,7 +26,7 @@ const de = {
   'hero.remyRole': 'Erstellen', 'hero.emmiRole': 'Verbessern', 'hero.wilmaRole': 'Prüfen',
   'hero.remyAction': 'Remys Beispiel ansehen', 'hero.emmiAction': 'Emmis Beispiel ansehen', 'hero.wilmaAction': 'Wilmas Beispiel ansehen',
   'hero.meetCrew': 'Crew kennenlernen', 'hero.tutorialDuration': 'Tutorial · ca. 6–7 Minuten',
-  'hero.login': 'Direkt anmelden', 'hero.student': 'Schüler? Testcode eingeben.',
+  'hero.login': 'Anmelden', 'hero.student': 'Schüler? Testcode eingeben.',
   'hero.noAccount': 'Kein Account nötig.', 'hero.openTest': 'Test öffnen',
   'hero.close': 'Schließen', 'hero.example': 'Ein kurzer Einblick', 'hero.tutorialStep': 'Schritt {step} von 3',
   'hero.pause': 'Anhalten', 'hero.resume': 'Fortsetzen', 'hero.replay': 'Nochmal ansehen',

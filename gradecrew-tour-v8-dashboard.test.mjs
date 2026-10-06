@@ -46,10 +46,11 @@ test('completed onboarding keeps the small replay launcher instead of forcing an
   const tour = w.installV8(adapter());
 
   tour.dashboard({ uid: 'teacher-a', firstVisit: false, completed: false });
-  assert.equal(w.document.getElementById('gradecrewTourBtn')?.textContent, '? Tutorial');
+  assert.match(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /Crew kennenlernen/);
+  assert.match(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /Tutorial/);
 
   tour.dashboard({ uid: 'teacher-a', firstVisit: true, completed: true });
-  assert.equal(w.document.getElementById('gradecrewTourBtn')?.textContent, '? Tutorial');
+  assert.match(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /Crew kennenlernen/);
   assert.equal(tour.active, false);
 });
 
@@ -59,6 +60,10 @@ test('admin gets a manual Tutorial testen launcher without an automatic start', 
 
   tour.dashboard({ uid: 'teacher-a', firstVisit: true, completed: false, offerHandled: false, isAdmin: true });
 
-  assert.equal(w.document.getElementById('gradecrewTourBtn')?.textContent, '? Tutorial testen');
+  assert.match(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /Crew kennenlernen/);
+  assert.doesNotMatch(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /\?|testen/i);
+  w.document.documentElement.lang = 'en-GB';
+  w.dispatchEvent(new w.CustomEvent('gradecrew:ui-locale-changed'));
+  assert.equal(w.document.getElementById('gradecrewTourBtn')?.title, 'Try onboarding as an admin');
   assert.equal(tour.active, false);
 });

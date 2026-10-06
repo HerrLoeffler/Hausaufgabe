@@ -37,9 +37,10 @@ const audioIntentSchema = {
   properties: {
     kind: { type: "string", enum: ["none", "ai_generated"] },
     script: { type: "string" },
+    presentation: { type: "string", enum: ["supplement", "listening-only"] },
     reason: { type: "string" }
   },
-  required: ["kind", "script", "reason"]
+  required: ["kind", "script", "presentation", "reason"]
 };
 const questionSchema = {
   type: "object", additionalProperties: false,

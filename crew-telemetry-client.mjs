@@ -1,7 +1,7 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
-import { PARSER_VERSION } from "./crew-assistant-core.mjs?v=3";
+import { PARSER_VERSION } from "./crew-assistant-core.mjs?v=5";
 const FIELD_SELECTORS = Object.freeze({
   subject: "#aiSubject",
   grade: "#aiGrade",
@@ -11,7 +11,9 @@ const FIELD_SELECTORS = Object.freeze({
   difficulty: "#aiDifficulty",
   count: "#aiCount",
   points: "#aiPoints",
+  imageQuestionCount: "#aiImageQuestionCount",
   audioQuestionCount: "#aiAudioQuestionCount",
+  audioAnswerQuestionCount: "#aiAudioAnswerQuestionCount",
   solutionAudioQuestionCount: "#aiSolutionAudioQuestionCount",
   notes: "#aiCustomNotes"
 });

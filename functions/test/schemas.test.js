@@ -7,7 +7,7 @@ const { validateQuestion, normalizeQuestion } = require("../lib/validation");
 const { storedAiQuestion } = require("../lib/ai-job");
 const ajv = new Ajv({ allErrors: true });
 const mediaIntent = { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
-const audioIntent = { kind: "none", script: "", reason: "" };
+const audioIntent = { kind: "none", script: "", presentation: "supplement", reason: "" };
 const samples = {
   single: { text: "Welches Wort ist ein Nomen?", options: [{ text: "Hund", correct: true }, { text: "laufen", correct: false }] },
   multi: { text: "Markiere die Nomen.", options: [{ text: "Haus", correct: true }, { text: "Baum", correct: true }, { text: "schnell", correct: false }] },

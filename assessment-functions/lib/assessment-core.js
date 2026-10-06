@@ -123,11 +123,16 @@ function safeAudio(question) {
 
 function commonPublicQuestion(question) {
   const type = SUPPORTED_TYPES.has(question.type) ? question.type : "text";
+  if (question.audioPresentation === "listening-only" && ["gapfill", "markwords"].includes(type)) throw new Error("Listening-only mode is unsupported for text-dependent questions");
+  const audio = safeAudio(question);
+  if (question.audioPresentation === "listening-only" && !audio) throw new Error("Listening-only question has no playable audio");
+  const listeningOnly = question.audioPresentation === "listening-only" && Boolean(audio);
   return {
     id: clampString(question.id, 120),
     position: Number(question.position) || 0,
     type,
-    text: type === "gapfill" ? "Lückentext" : clampString(question.text, 5000),
+    text: type === "gapfill" ? "Lückentext" : listeningOnly ? "" : clampString(question.text, 5000),
+    ...(listeningOnly ? { audioPresentation: "listening-only" } : {}),
     points: round1(question.points),
     image: safeImage(question),
     audio: safeAudio(question)
@@ -139,15 +144,23 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
   const type = q.type;
 
   if (["single", "multi", "dropdown"].includes(type)) {
+    const sourceOptions = (Array.isArray(question.options) ? question.options : []).slice(0, 20);
+    const audioAnswers = ["single", "multi"].includes(type) && question.audioAnswerMode === "audio-only" &&
+      sourceOptions.length >= 2 && sourceOptions.length <= 4 &&
+      sourceOptions.every(option => !option?.imageDataUrl && !option?.imageUrl && String(option?.text || "").trim() && option.audioNeedsRegeneration !== true && safeAudio(option)) &&
+      sourceOptions.reduce((size, option) => size + String(option.audioDataUrl || "").length, String(question.audioDataUrl || "").length) <= 700000;
+    if (question.audioAnswerMode === "audio-only" && !audioAnswers) throw new Error("Audio answer choices are incomplete");
     const options = (Array.isArray(question.options) ? question.options : []).slice(0, 20).map((option, index) => ({
       id: opaqueId(secret, question.id, "option", index),
-      text: clampString(option?.text, 1000),
+      text: audioAnswers ? "" : clampString(option?.text, 1000),
+      ...(audioAnswers ? { audio: safeAudio(option) } : {}),
       image: option?.imageDataUrl || option?.imageUrl ? {
         src: clampString(option.imageDataUrl || option.imageUrl, 750000),
         alt: clampString(option.imageAlt, 300)
       } : null
     }));
     q.options = shuffleAnswers ? deterministicOrder(options, secret, `${question.id}:options`) : options;
+    if (audioAnswers) q.audioAnswerMode = "audio-only";
     q.imageChoicesOnly = options.length >= 2 && options.every(option => option.image?.src) &&
       (question.imageChoicesOnly === true || (question.options || []).every(option => /^Abbildung:\s*/i.test(option.imageAlt || "")));
   } else if (type === "number") {
@@ -266,8 +279,12 @@ function fingerprintQuestion(question) {
     type: String(question?.type || ""), text: String(question?.text || ""), points: Number(question?.points) || 0,
     imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
     audioDataUrl: String(question?.audioDataUrl || ""), audioAiGenerated: question?.audioAiGenerated !== false, audioNeedsRegeneration: question?.audioNeedsRegeneration === true,
+    ...(question?.audioPresentation === "listening-only" ? { audioPresentation: "listening-only" } : {}),
+    ...(question?.audioAnswerMode === "audio-only" ? { audioAnswerMode: "audio-only" } : {}),
     options: Array.isArray(question?.options) ? question.options.map(option => ({
       text: String(option?.text || ""), correct: option?.correct === true,
+      ...(option?.audioDataUrl ? { audioDataUrl: String(option.audioDataUrl) } : {}),
+      ...(option?.audioNeedsRegeneration === true ? { audioNeedsRegeneration: true } : {}),
       imageDataUrl: String(option?.imageDataUrl || ""), imageUrl: String(option?.imageUrl || ""), imageAlt: String(option?.imageAlt || "")
     })) : [],
     acceptedAnswers: Array.isArray(question?.acceptedAnswers) ? question.acceptedAnswers.map(String) : [],
@@ -479,7 +496,7 @@ function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
     "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
     "targetWords", "acceptedOrders", "gradingKey", "answerKey", "solutions",
-    "audioScript", "transcript", "audioTranscript"
+    "audioScript", "transcript", "audioTranscript", "solutionAudioDataUrl", "solutionScript", "solutionAudioScript", "optionAudioScript"
   ]);
   const visit = value => {
     if (!value || typeof value !== "object") return;

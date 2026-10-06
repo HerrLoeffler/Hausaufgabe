@@ -466,10 +466,10 @@ test('Variant tutorial uses one modal layer, shows a picture choice and blocks p
   assert.doesNotMatch(variantEnhancements, /observer\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
 });
 
-test('Teacher polish attaches the privacy note to colleague import and renames AI editing without removing AI', () => {
+test('Teacher polish keeps the privacy note while using shorter editor action labels', () => {
   assert.match(copyPolish, /Keine Schülerdaten – nur Testinhalte werden kopiert/);
   assert.match(copyPolish, /\.privacyStrip/);
-  assert.match(copyPolish, /Mit KI überarbeiten/);
+  assert.match(copyPolish, /Aufgabe überarbeiten/);
   assert.match(copyPolish, /Überarbeitung erstellen/);
   assert.doesNotMatch(copyPolish, /KI bearbeiten/);
 });

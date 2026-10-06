@@ -12,8 +12,9 @@ const solutionUi = fs.readFileSync("secure-solution-release.js", "utf8");
 const rules = fs.readFileSync("firestore.rules", "utf8");
 const secureRules = fs.readFileSync("firestore.secure-assessment.rules", "utf8");
 
-test("AI creation exposes exact 0-5 solution audio beside listening audio", () => {
-  assert.match(html, /id="aiSolutionAudioQuestionCount"[^>]*max="5"/);
+test("creation offers audio choices and retains hidden legacy solution data", () => {
+  assert.match(html, /id="aiAudioAnswerQuestionCount"[^>]*max="5"/);
+  assert.match(html, /<label hidden>[^<]*<input id="aiSolutionAudioQuestionCount"/);
   assert.match(app, /solutionAudioQuestionCount/);
   assert.match(worker, /solutionAudioQuestionCount/);
   assert.match(worker, /planSolutionAudioIndexes/);

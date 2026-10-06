@@ -28,6 +28,7 @@ const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
 const { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount } = require("./lib/ai-job");
 const { solutionAudioScript, planSolutionAudioIndexes } = require("./lib/solution-audio");
+const { answerAudioIndexes, generateAnswerAudios } = require("./lib/audio-answers");
 const { reserveJob, releaseJob } = require("./lib/job-slots");
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 
@@ -136,6 +137,11 @@ function cleanInput(data = {}) {
   if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > LIMITS.maxAudioQuestions || solutionAudioQuestionCount > count) {
     throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audio-Lösungen wählen, höchstens eine je Aufgabe.");
   }
+  const audioAnswerQuestionCount = Number(data.audioAnswerQuestionCount ?? 0);
+  if (!Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > LIMITS.maxAudioQuestions || audioAnswerQuestionCount > count ||
+      (audioAnswerQuestionCount > 0 && !allowedTypes.some(type => ["single", "multi"].includes(type)))) {
+    throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audioantwort-Aufgaben und einen Auswahltyp wählen.");
+  }
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
@@ -144,7 +150,7 @@ function cleanInput(data = {}) {
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
     allowImageChoices: false,
     exactAudioCounts, audioMode, audioQuestionCount: exactAudioCounts ? audioQuestionCount : 0,
-    solutionAudioQuestionCount,
+    solutionAudioQuestionCount, audioAnswerQuestionCount,
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
     sourceTest: cleanSourceTest(data.sourceTest)
@@ -239,7 +245,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
@@ -374,7 +380,7 @@ exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async r
   const now = Timestamp.now();
   const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, jobData: {
       ownerId: uid, status: "queued", stage: "queued", progressMessage: "Erstellung wird gestartet …", percent: 0,
-      completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
+      completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, answerAudioCompleted: 0, answerAudioTotal: input.audioAnswerQuestionCount || 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
       subject: input.subject, grade: input.grade, topic: input.topic, requestId,
       input: { ...Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)), clientRequestId: requestId }, materials, sourceQuizId,
       createdAt: now, updatedAt: now
@@ -442,12 +448,15 @@ exports.processAiTestJob = onTaskDispatched({
     const totalAudios = audioCount(questions);
     const totalSolutionAudios = Math.min(questions.length, Number(job.input?.solutionAudioQuestionCount || 0));
     const solutionAudioIndexes = new Set(planSolutionAudioIndexes(questions.length, totalSolutionAudios));
-    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
+    const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
+    const answerAudioPositions = new Set(answerAudioIndexes(questions, totalAnswerAudios));
+    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;
     await jobRef.update({ quizId: quiz.code, updatedAt: Timestamp.now() });
     let completedImages = 0;
     let completedAudios = 0;
+    let completedAnswerAudios = 0;
     let completedSolutionAudios = 0;
     let audioReady = true;
     let solutionAudioReady = true;
@@ -473,6 +482,20 @@ exports.processAiTestJob = onTaskDispatched({
         onAudioFallback: async () => { audioReady = false; }
       });
       const questionId = `q${String(index + 1).padStart(3, "0")}`;
+      if (answerAudioPositions.has(index)) {
+        q.audioAnswerMode = "audio-only";
+        try {
+          const assets = await generateAnswerAudios({ ...q, id: questionId }, options => createAudioAsset({ uid, ...options }));
+          q.options = q.options.map((option, optionIndex) => ({ ...option, ...assets[optionIndex], audioNeedsRegeneration: false }));
+          completedAnswerAudios += 1;
+          await jobRef.update({ answerAudioCompleted: completedAnswerAudios, updatedAt: Timestamp.now() });
+        } catch (err) {
+          if (["ReferenceError", "TypeError", "SyntaxError"].includes(String(err?.name || ""))) throw err;
+          q.options = q.options.map(option => ({ ...option, audioNeedsRegeneration: true }));
+          audioReady = false;
+          console.warn("Antwortaudio konnte nicht erzeugt werden:", { questionId, code: err?.code || err?.name || "unknown" });
+        }
+      }
       const { audioScript = "", ...publicQuestion } = q;
       await quizRef.collection("questions").doc(questionId).create({ ...publicQuestion, updatedAt: Timestamp.now() });
 
@@ -508,7 +531,9 @@ exports.processAiTestJob = onTaskDispatched({
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
     }
     await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
-      audioQuestionCount: totalAudios, audioReady,
+      audioQuestionCount: totalAudios, audioAnswerQuestionCount: totalAnswerAudios, audioReady,
+      listeningOnlyQuestionCount: questions.filter(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only").length,
+      requiresSecureAssessmentRules: totalAnswerAudios > 0 || questions.some(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only"),
       solutionAudioQuestionCount: totalSolutionAudios, solutionAudioReady,
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [], updatedAt: Timestamp.now() });
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,

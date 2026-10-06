@@ -193,7 +193,7 @@ function questionShell(question, index) {
   section.appendChild(head);
 
   const title = document.createElement("h2");
-  title.textContent = question.type === "gapfill" ? "Lückentext" : question.text || "Aufgabe";
+  title.textContent = question.type === "gapfill" ? "Lückentext" : question.audioPresentation === "listening-only" ? "Nur hören" : question.text || "Aufgabe";
   section.appendChild(title);
 
   if (question.image?.src) {
@@ -239,8 +239,17 @@ function renderOptions(section, question, multiple = false) {
     const body = document.createElement("span");
     const text = document.createElement("span");
     text.dataset.i18nContent = "1";
-    text.textContent = imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer;
+    text.textContent = question.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer;
     body.appendChild(text);
+    if (question.audioAnswerMode === "audio-only" && option.audio?.src) {
+      const player = document.createElement("audio");
+      player.controls = true;
+      player.preload = "metadata";
+      player.src = option.audio.src;
+      player.setAttribute("aria-label", `${contentLabels.answer} ${shownIndex + 1}`);
+      player.addEventListener("click", event => event.stopPropagation());
+      body.appendChild(player);
+    }
     if (option.image?.src) {
       const image = document.createElement("img");
       image.className = "secureOptionImage";

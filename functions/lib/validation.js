@@ -188,6 +188,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (!script) errors.push("Hörtext fehlt.");
     if (script.length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
     if (/\b(?:lösung|richtige antwort|answer is)\s*:/i.test(script)) errors.push("Der Hörtext darf keine als Lösung markierte Antwort enthalten.");
+    if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
   }
   return errors;
 }
@@ -224,6 +225,9 @@ function normalizeQuestion(q) {
   copy.audioIntent = (copy.audioIntent && typeof copy.audioIntent === "object" && !Array.isArray(copy.audioIntent) ? copy.audioIntent : null) || { kind: "none", script: "", reason: "" };
   copy.audioIntent.kind = copy.audioIntent.kind === "ai_generated" ? "ai_generated" : "none";
   copy.audioIntent.script = normalizeText(copy.audioIntent.script).slice(0, LIMITS.maxAudioScriptChars);
+  if (copy.audioIntent.presentation !== undefined) {
+    copy.audioIntent.presentation = copy.audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
+  }
   copy.audioIntent.reason = normalizeText(copy.audioIntent.reason).slice(0, 300);
   return copy;
 }
@@ -264,6 +268,10 @@ function validateTest(test, opts = {}) {
   if (opts.audioQuestionCount != null) {
     const count = qs.filter(q => q.audioIntent?.kind === "ai_generated").length;
     if (count !== opts.audioQuestionCount) errors.push(`Erwartet ${opts.audioQuestionCount} Höraufgaben, erhalten ${count}.`);
+  }
+  if (opts.audioAnswerQuestionCount != null) {
+    const eligible = qs.filter(q => ["single", "multi"].includes(q.type) && Array.isArray(q.options) && q.options.length >= 2 && q.options.length <= 4).length;
+    if (eligible < opts.audioAnswerQuestionCount) errors.push(`Für ${opts.audioAnswerQuestionCount} Audioantworten fehlen geeignete Auswahlaufgaben.`);
   }
   return errors;
 }

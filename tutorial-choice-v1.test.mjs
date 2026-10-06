@@ -98,7 +98,8 @@ test("admins are never auto-invited but can explicitly test the tutorial", async
   assert.equal(w.document.getElementById("gradecrewTutorialOffer"), null);
   const button = w.document.getElementById("gradecrewTourBtn");
   assert.ok(button);
-  assert.match(button.textContent, /Tutorial testen/);
+  assert.match(button.textContent, /Crew kennenlernen/);
+  assert.match(button.textContent, /Tutorial · ca\. 6–7 Minuten/);
   button.click();
   assert.equal(tour.active, true);
 });

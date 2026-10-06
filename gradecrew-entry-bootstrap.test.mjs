@@ -36,6 +36,8 @@ test('public entry installs on the real app document and preserves auth controls
     }
     assert.equal(w.document.getElementById('gcPublicNav'), null);
     assert.equal(w.document.querySelectorAll('#gcEntryBenefits li').length, 4);
+    assert.ok(w.document.querySelector('.topbar #gcEntryLoginOpen'), 'public sign-in belongs in the header');
+    assert.equal(w.document.querySelector('#gcHeroActions #gcEntryLoginOpen'), null, 'the hero keeps one central crew action');
     assert.match(w.document.getElementById('gcHeroHint').textContent, /Remy, Emmi oder Wilma/);
     assert.match(w.document.querySelector('#joinForm label').textContent, /Testcode/);
     assert.match(w.document.querySelector('#joinForm button[type="submit"]').textContent, /Test öffnen/);
@@ -45,6 +47,19 @@ test('public entry installs on the real app document and preserves auth controls
     w.document.getElementById('gcHeroDemoNext').click();
     assert.equal(w.document.getElementById('gcHeroDialog').dataset.phase, '1');
     w.document.getElementById('gcHeroDialog').close();
+    const remyButton = w.document.querySelector('.gcHeroHit-remy');
+    remyButton.focus();
+    remyButton.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true }));
+    remyButton.click();
+    w.document.getElementById('gcHeroDialog').close();
+    await Promise.resolve();
+    assert.notEqual(w.document.activeElement, remyButton, 'pointer-opened crew dialog must not leave a blue oval focus ring');
+    remyButton.focus();
+    remyButton.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    remyButton.click();
+    w.document.getElementById('gcHeroDialog').close();
+    await Promise.resolve();
+    assert.equal(w.document.activeElement, remyButton, 'keyboard-opened crew dialog must restore focus for accessibility');
     let guestStarts = 0;
     w.document.addEventListener('gradecrew:start-guest-tour', () => { guestStarts += 1; });
     w.document.getElementById('gcEntryTutorialStart').click();
