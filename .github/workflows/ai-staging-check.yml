@@ -156,6 +156,7 @@ jobs:
             exit 1
           fi
           node --check app.js
+          node --check student-submit-confirm.mjs
           node --check ai-client.js
           node --check ui-enhancements.js
           node --check visual-enhancements.js
@@ -195,6 +196,7 @@ jobs:
           node --test ai-*.test.js
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
+          node --test student-submit-confirm.test.mjs
           node --test gradecrew-tour-v8-dashboard.test.mjs
           node --test tutorial-ordering-guard.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
