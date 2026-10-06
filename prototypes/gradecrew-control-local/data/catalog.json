@@ -354,19 +354,19 @@
       "title": "Startscreen Hero Scene + First-Visit-Animation",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Integriert · neuer Startbildschirm; Staging-Prüfung läuft",
-      "next": "Kombinierte CI, Mobile-Prüfung und danach Deployment-Nachweise abholen. Browser-/Geräteabnahme offen.",
-      "stage": "integrated",
-      "stageSource": "PR149 merged after green exact feature CI and review",
-      "branch": "feature/gc-design-05-web-integration",
+      "statusText": "Auf Staging · neuer Startbildschirm; dein Gerätetest ist offen",
+      "next": "Staging öffnen: DE/EN, Anmeldung/Registrierung, Schülercode, Tutorial-Einstieg und Remy/Emmi/Wilma-Demos testen.",
+      "stage": "staging_deployed",
+      "stageSource": "Exact merge CI + verified Hosting/AI/Assessment receipts",
+      "branch": "feature/gradecrew-app-integration",
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
-      "evidence": "PR149@2c8a733, CI37466936870 success; Mergef97841b82291d879cd9f4a9bccce0ee2c2cf3641; Combined37467220757 und Mobile37467220869 laufen.",
+      "evidence": "Mergef97841b; Combined37467220757/Mobile37467220869 grün; Hosting37467324361 hashverified; AI/Assessment37467324128 erfolgreich.",
       "triage": {
-        "category": "needs_verification",
+        "category": "acceptance_pending",
         "package": "design-and-crew",
-        "checkedAt": "2026-10-06T12:59:47.373312+00:00",
-        "reason": "Hero-Integration vorhanden und seriell zusammengeführt; kein erneuter Gestaltungsauftrag.",
-        "evidence": "PR149@2c8a733, CI37466936870 success; Mergef97841b82291d879cd9f4a9bccce0ee2c2cf3641; Combined37467220757 und Mobile37467220869 laufen."
+        "checkedAt": "2026-10-06T13:04:46.695650+00:00",
+        "reason": "Technische Integration und Staging nachgewiesen; reale Geräteabnahme offen.",
+        "evidence": "Mergef97841b; Combined37467220757/Mobile37467220869 grün; Hosting37467324361 hashverified; AI/Assessment37467324128 erfolgreich."
       }
     },
     {
@@ -1780,13 +1780,13 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T12:59:47.373312+00:00",
+  "reconciledAt": "2026-10-06T13:04:46.695650+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 4,
     "later": 6,
-    "acceptancePending": 13,
-    "remainingInvestigationOrImplementation": 27,
+    "acceptancePending": 14,
+    "remainingInvestigationOrImplementation": 26,
     "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }
