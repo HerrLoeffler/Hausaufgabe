@@ -45,12 +45,14 @@ function setState(next, { focus = true } = {}) {
 }
 
 function showLogin() {
-  $("loginTab")?.click();
+  $("loginForm")?.classList.remove("hidden");
+  $("registerForm")?.classList.add("hidden");
   setState("login");
 }
 
 function showRegister() {
-  $("registerTab")?.click();
+  $("registerForm")?.classList.remove("hidden");
+  $("loginForm")?.classList.add("hidden");
   setState("register");
 }
 
