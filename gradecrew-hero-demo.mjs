@@ -120,6 +120,8 @@ export function installHeroDemo(root) {
     $('gcHeroDemoStatus').textContent = t(`${name}Phase${phase}`);
     $('gcHeroDemoPause').textContent = t(paused ? 'resume' : 'pause');
     $('gcHeroDemoPause').hidden = !running;
+    $('gcHeroDemoNext').textContent = t('next');
+    $('gcHeroDemoNext').hidden = phase >= 2;
     $('gcHeroDemoReplay').textContent = t('replay');
     const sheet = make('div', 'gcHeroSheet');
     if (name === 'remy') renderRemy(sheet, phase);
@@ -136,6 +138,7 @@ export function installHeroDemo(root) {
   $('gcHeroDialogClose').addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => { flow.stop(); state = null; });
   $('gcHeroDemoPause').addEventListener('click', () => flow.togglePause());
+  $('gcHeroDemoNext').addEventListener('click', () => flow.nextPhase());
   $('gcHeroDemoReplay').addEventListener('click', () => flow.replay());
   motion.addEventListener('change', () => { const previous = state; resetFlow(); if (previous) flow.start(previous.name); });
   window.addEventListener('gradecrew:ui-locale-changed', syncLabels);

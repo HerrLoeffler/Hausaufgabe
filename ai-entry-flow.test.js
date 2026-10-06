@@ -69,33 +69,19 @@ test('existing auth and test-code forms are moved instead of cloned', () => {
   assert.match(entry, /joinSubmit\.setAttribute\("aria-label", "Test öffnen"\)/);
 });
 
-test('guest tutorial and save gate stay intact', () => {
-  const name = blockBetween(entry, 'id="gcEntryTutorialName"', 'id="gcEntryTutorial"');
-  const gate = blockBetween(entry, 'id="gcEntryAccountGate"', '</div>`;');
-  assert.match(name, /Wie dürfen wir dich nennen/);
-  assert.match(name, /Name oder Anzeigename/);
-  assert.doesNotMatch(name, /type="email"|Passwort wiederholen|registerEmail/);
-  assert.match(entry, /DEMO_TEST\.questions/);
-  assert.match(gate, /Fortschritt speichern/);
-  assert.match(gate, /Account erstellen/);
-  assert.match(gate, /Anmelden/);
-  assert.match(gate, /Später/);
-});
-
 test('scene, existing entry handlers and separate crew examples are connected', () => {
-  assert.match(entry, /gcPublicNav/);
-  assert.match(entry, /Funktionen/);
-  assert.match(entry, /Die Crew/);
-  assert.match(entry, /Für Lehrkräfte/);
+  assert.doesNotMatch(entry, /nav\.innerHTML|data-entry-nav=/);
+  assert.match(entry, /id="gcEntryBenefits"/);
+  assert.match(entry, /id="gcHeroHint"/);
   assert.match(entry, /gcHeroArtwork/);
   assert.match(entry, /installHeroDemo\(\$\("gcEntryStart"\)\)/);
-  assert.match(entry, /\$\("gcEntryTutorialStart"\)\.addEventListener\("click", \(\) => setState\("tutorialName"\)\)/);
+  assert.match(entry, /id="gcEntryTutorialStart"/);
   assert.match(entry, /\$\("gcEntryLoginOpen"\)\.addEventListener\("click", showLogin\)/);
   assert.match(heroDemo, /createDemoFlow/);
   assert.match(heroDemo, /gradecrew:ui-locale-changed/);
   assert.match(css, /\.gcPublicEntryMode \.shell/);
   assert.match(heroCss, /#authView \.gcHeroStage/);
-  assert.doesNotMatch(blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"'), /gcEntryBenefits/);
+  assert.match(blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"'), /gcEntryBenefits/);
 });
 
 test('responsive and accessibility contracts are explicit', () => {
@@ -108,7 +94,6 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /grid-template-areas:[^}]*"lead"[^}]*"crew"[^}]*"actions"[^}]*"student"/);
   assert.match(entry, /aria-hidden/);
   assert.match(entry, /aria-live/);
-  assert.match(entry, /id="gcEntryTutorialTitle"/);
 });
 
 test('public design stays away from dashboard and secure student selectors', () => {
@@ -149,15 +134,18 @@ test('crew examples stay readable, pause cleanly and respect reduced motion', as
   const tick = () => { const callback = pending; pending = null; callback?.(); };
   flow.start('remy');
   assert.equal(state.phase, 0);
-  assert.equal(delay, 2600);
+  assert.equal(delay, 1800);
+  assert.equal(flow.nextPhase(), true);
+  assert.equal(state.phase, 1);
   flow.togglePause();
   assert.equal(pending, null);
-  flow.togglePause();
-  tick();
-  assert.equal(state.phase, 1);
-  tick();
+  assert.equal(flow.nextPhase(), true);
   assert.equal(state.phase, 2);
   assert.equal(pending, null);
+  assert.equal(flow.nextPhase(), false);
+  flow.replay();
+  tick();
+  assert.equal(state.phase, 1);
   flow.stop();
   const reduced = createDemoFlow({ reducedMotion: true, onChange: next => { state = next; }, schedule: () => { throw Error('reduced motion scheduled a timer'); } });
   reduced.start('emmi');

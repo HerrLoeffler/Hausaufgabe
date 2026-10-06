@@ -1,7 +1,7 @@
 /* GC-DESIGN-05: public entry only. Existing auth, tutorial and assessment views keep their styles. */
 #authView[data-entry-state="start"]{padding:0;background:#fff}
 #authView[data-entry-state="start"] .gcEntryShell{width:min(1536px,100%);max-width:1536px}
-#authView .gcHeroPage{background:#fff;overflow:clip}
+#authView .gcHeroPage{width:min(100%,calc(150svh - 240px));min-width:0;margin-inline:auto;background:#fff;overflow:visible}
 #authView .gcHeroStage{position:relative;aspect-ratio:3/2;isolation:isolate;container-type:inline-size}
 #authView .gcHeroVisual{position:absolute;inset:0}
 #authView .gcHeroArtwork{display:block;width:100%;height:100%;object-fit:cover}
@@ -18,24 +18,29 @@
 #authView .gcHeroLead h1 strong{font-weight:800}
 #authView .gcHeroLead h1 strong span{color:#0664ff}
 #authView .gcHeroLead p{margin:15px 0 0;font-size:clamp(18px,2.3cqw,35px);line-height:1.3;color:#415981;font-weight:600}
-#authView .gcHeroRoles{position:absolute;left:45.3%;right:7%;top:67%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.3cqw}
-#authView .gcHeroRoles button{border:0;border-radius:10px;background:transparent;padding:8px 12px;min-height:62px;text-align:center;cursor:pointer;color:#07164d}
-#authView .gcHeroRoles button:hover{background:#ffffff8c}
+#authView .gcHeroLead .gcHeroHint{margin-top:7px;font-size:clamp(13px,1.25cqw,18px);font-weight:700;color:#174a8d}
+#authView .gcHeroRoles{position:absolute;left:45.3%;right:7%;top:61%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.3cqw}
+#authView .gcHeroRoles button{border:1px solid #abcaf0;border-radius:11px;background:#ffffffdc;padding:7px 9px;min-height:58px;text-align:center;cursor:pointer;color:#07164d;box-shadow:0 3px 12px #1835531c}
+#authView .gcHeroRoles button:hover{background:#fff;border-color:#0664ff;transform:translateY(-2px)}
 #authView .gcHeroRoles button:focus-visible,#authView .gcHeroLogin:focus-visible,#authView .gcHeroJoin button:focus-visible{outline:3px solid #075de7;outline-offset:2px}
 #authView .gcHeroRoles strong{display:block;font-size:clamp(16px,1.45cqw,22px);line-height:1.2}
 #authView .gcHeroRoles small{display:block;margin-top:4px;font-size:clamp(13px,1.1cqw,17px);color:#364b77}
-#authView .gcHeroActions{position:absolute;top:75.8%;left:43%;right:8%;display:flex;align-items:center;gap:18px}
+#authView .gcHeroActions{position:absolute;top:72%;left:43%;right:8%;display:flex;align-items:center;gap:18px}
 #authView .gcHeroTutorialEntry{flex:1.2;display:flex;flex-direction:column;gap:7px;text-align:center}
 #authView .gcHeroTutorialEntry .button{width:100%;min-height:58px;border-radius:14px;background:#0664ff;box-shadow:none;font-size:clamp(15px,1.7cqw,25px);font-weight:600}
 #authView .gcHeroTutorialEntry small{font-size:12px;line-height:1.3;color:#496381}
 #authView .gcHeroLogin{flex:1;border:0;background:transparent;font:inherit;font-size:clamp(15px,1.7cqw,25px);font-weight:600;color:#0657e6;min-height:58px;cursor:pointer}
-#authView .gcHeroJoin{position:absolute;top:87.5%;left:43%;right:8%;display:flex;align-items:center;gap:15px;border-top:1px solid #516e9c26;padding:18px 0}
-#authView .gcHeroJoin>label{flex:1;min-width:0;font-size:clamp(14px,1.3cqw,20px);line-height:1.35;color:#07164d}
-#authView .gcHeroJoin #gcEntryJoinHost{flex:1.05;min-width:0}
+#authView .gcHeroJoin{position:absolute;top:85%;left:43%;right:8%;display:flex;align-items:center;gap:12px;border-top:1px solid #516e9c45;padding:10px 0}
+#authView .gcHeroJoin>label{flex:1;min-width:0;font-size:clamp(15px,1.35cqw,20px);font-weight:750;line-height:1.3;color:#07164d}
+#authView .gcHeroJoin #gcEntryJoinHost{flex:1.4;min-width:0}
 #authView .gcHeroJoin #joinForm{display:flex;flex-direction:row;align-items:center;gap:8px;margin:0}
-#authView .gcHeroJoin #joinForm label{min-width:0;flex:1;font-size:0;line-height:0}
+#authView .gcHeroJoin #joinForm label{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;font-size:12px;font-weight:700;line-height:1.2;color:#315075}
 #authView .gcHeroJoin #joinCode{width:100%;min-width:0;min-height:52px;border:1px solid #b0c9ed;border-radius:10px;background:#ffffffe8;padding:12px;font-size:16px;line-height:1.2;color:#12234d}
-#authView .gcHeroJoin .gcEntryJoinSubmit{flex:0 0 52px;min-width:52px;min-height:52px;border:1px solid #b0c9ed;border-radius:10px;background:#ffffffe8;box-shadow:none;font-size:25px;color:#075adc}
+#authView .gcHeroJoin .gcEntryJoinSubmit{flex:0 0 auto;min-width:98px;min-height:52px;border:1px solid #0959d2;border-radius:10px;background:#0959d2;box-shadow:none;font-size:14px;font-weight:750;color:#fff}
+#authView .gcEntryBenefitsCompact{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:9px 14px 12px;border-top:1px solid #dce7f4;background:#f8fbff}
+#authView .gcEntryBenefitsCompact li{min-width:0;text-align:center;line-height:1.2}
+#authView .gcEntryBenefitsCompact strong{display:block;font-size:13px;color:#183b6f}
+#authView .gcEntryBenefitsCompact small{display:block;margin-top:2px;font-size:11px;color:#61748d}
 
 #authView .gcHeroDialog{border:0;border-radius:24px;width:min(640px,calc(100% - 32px));max-height:calc(100svh - 32px);overflow:auto;padding:32px;background:white;color:#172b4b;box-shadow:0 20px 80px #051c4b33;--hero-color:#0764ed;--hero-tint:#edf5ff}
 #authView .gcHeroDialog[data-crew="emmi"]{--hero-color:#b94d18;--hero-tint:#fff4ed}
@@ -94,25 +99,27 @@
 #authView .gcHeroPoints small{font-size:12px;color:#687b8f}
 #authView .gcHeroDemoControls{display:flex;gap:10px;margin-top:18px}
 #authView .gcHeroDemoControls button{border:0;border-radius:8px;background:#f1f5f9;padding:11px 13px;font-size:13px;min-height:40px;color:#344f71;cursor:pointer}
+#authView .gcHeroDemoControls #gcHeroDemoNext{background:#e5f0ff;color:#0754bd;font-weight:700}
 #authView .gcHeroDialog.is-paused *{animation-play-state:paused!important}
 @keyframes gcHeroIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes gcHeroSweep{to{background-position:-200% 0}}
 
 @media(max-width:1100px) and (min-width:901px){
-  #authView .gcHeroActions{gap:8px;top:75%}
+  #authView .gcHeroActions{gap:8px;top:72%}
   #authView .gcHeroTutorialEntry .button{min-height:48px}
   #authView .gcHeroTutorialEntry small{font-size:10px}
   #authView .gcHeroJoin{gap:9px;padding:13px 0}
   #authView .gcHeroJoin>label{font-size:13px}
   #authView .gcHeroJoin #joinCode{font-size:13px;min-height:44px}
-  #authView .gcHeroJoin .gcEntryJoinSubmit{flex-basis:44px;min-width:44px;min-height:44px}
+  #authView .gcHeroJoin .gcEntryJoinSubmit{min-height:44px}
 }
-@media(max-width:900px){
+@media(max-width:780px){
+  #authView .gcHeroPage{width:100%}
   #authView .gcHeroStage{display:flex;flex-direction:column;aspect-ratio:auto;padding-bottom:12px;background:#fffaf3}
   #authView .gcHeroLead{position:relative;inset:auto;order:0;width:auto;padding:22px 18px 0}
   #authView .gcHeroLead h1{font-size:clamp(27px,6.8vw,44px)}
   #authView .gcHeroLead p{font-size:clamp(16px,3.9vw,23px);margin-top:12px}
-  #authView .gcHeroVisual{position:relative;inset:auto;order:1;margin-top:-25px;mask-image:linear-gradient(to bottom,transparent,#000 19%)}
+  #authView .gcHeroVisual{position:relative;inset:auto;order:1;width:min(100%,640px);margin:0 auto;mask-image:none}
   #authView .gcHeroArtwork{height:auto}
   #authView .gcHeroRoles{position:relative;inset:auto;order:2;margin:-4% 5% 0;gap:8px}
   #authView .gcHeroRoles button{padding:10px 3px;min-height:60px}
@@ -123,6 +130,7 @@
   #authView .gcHeroLogin{min-height:45px;font-size:15px}
   #authView .gcHeroJoin{position:relative;inset:auto;order:4;margin:10px 5% 0;padding:20px 0 12px;display:block}
   #authView .gcHeroJoin>label{display:block;margin-bottom:10px;font-size:15px}
+  #authView .gcEntryBenefitsCompact{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 5px;padding:10px 8px}
 }
 @media(max-width:480px){
   #authView .gcHeroDialog{padding:24px 18px}
