@@ -61,3 +61,7 @@ Eine Übergabe beantwortet kompakt:
 Ein Integrationsauftrag nennt Quellbranch und Zielbranch ausdrücklich. Direkt vor dem Merge erneut den Live Development Status und den Zielbranch prüfen. Überschneidungen sind Warnsignale, keine automatische Sperre; gemeinsame Dateien werden bewusst zusammengeführt.
 
 Production bleibt von dieser Koordinationsschicht vollständig getrennt und benötigt weiterhin ausdrückliche Freigabe.
+
+## Games: Produktionsstandard
+
+Vor jeder neuen Games-Planung und Spieleänderung [Great Games Workflow](../docs/games/GREAT_GAMES_WORKFLOW.md) und [Blender/Unreal-Pipeline](../docs/games/UNREAL_BLENDER_PIPELINE.md) lesen. Spielcode und Deployment bleiben eigene, ausdrücklich beauftragte Arbeitspakete.

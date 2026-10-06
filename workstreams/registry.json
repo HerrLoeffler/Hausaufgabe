@@ -451,6 +451,17 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "great-games-production",
+      "title": "Great Games Produktionsregeln / Unreal + Blender",
+      "primaryBranch": "docs/great-games-production-20261006",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/great-games-production-20261006.md",
+      "relatedBranches": [
+        "prototype/escape-expedition-visual-masterpiece-v1"
+      ]
     }
   ]
 }
