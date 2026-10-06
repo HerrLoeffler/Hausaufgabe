@@ -163,6 +163,14 @@ test('app bootstrap binds its real auth controls after public entry installation
     await guestApi.createDemo(DEMO_TEST);
     await guestApi.openEditor(demoCode);
     assert.equal(w.document.querySelectorAll('#questionList .questionCard').length, 10);
+    const faultyCard = w.document.querySelector('#questionList .questionCard[data-id="tutorial-9"]');
+    assert.match(faultyCard.querySelector('.qText').value, /gelb/);
+    const badFeedback = faultyCard.querySelector('.aiFeedbackBad');
+    assert.equal(badFeedback.classList.contains('hidden'), false, 'the real guest editor must show the red smiley for the faulty tutorial question');
+    badFeedback.click();
+    assert.ok(faultyCard.querySelector('.aiQualityPanel'), 'the real red smiley must open its feedback panel');
+    assert.equal(faultyCard.querySelector('.aiQualityReplace'), null, 'the tutorial must not offer a replacement it cannot create');
+    faultyCard.querySelector('.aiQualityCancel').click();
     w.document.getElementById('publishBtn').click();
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(w.document.getElementById('publishView').classList.contains('hidden'), false);

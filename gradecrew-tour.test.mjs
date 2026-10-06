@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
+import { createLocalTourRepository } from './guest-tour-port.mjs';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
@@ -122,6 +123,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   api.isGuest = () => finishAction === 'guest';
   api.exitTour = () => { guestExits++; };
   let nextId = 0, providers = 0, persistedDraft;
+  const guestRepo = finishAction === 'guest' ? createLocalTourRepository() : null;
   const state = { user: { uid: api.uid() }, currentQuiz: { id: 'DEMO1', published: false, tutorialVersion: 'v8' }, questions: [] };
   const feedbackWrites = [];
   api.checkDemo = () => state.questions.length === 10 ? null : 'Expected ten questions';
@@ -133,21 +135,28 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
       const card = w.document.createElement('article');
       card.className = 'questionCard'; card.dataset.id = q.id; card.dataset.index = String(index);
       card.innerHTML = '<div class="questionTop"></div><div class="questionGrid"><textarea class="qText"></textarea></div><button class="aiEditQuestion">Edit</button><button class="aiVariantQuestion">Variant</button><button class="aiFeedbackGood">Good</button><button class="aiFeedbackBad">Bad</button><button class="deleteQuestion">Delete</button>';
+      for (const verdict of ['Good', 'Bad']) card.querySelector(`.aiFeedback${verdict}`).classList.toggle('hidden', !q.aiOrigin);
       card.querySelector('.qText').value = q.text;
       if (q.imageUrl) { const img = w.document.createElement('img'); img.src = q.imageUrl; card.append(img); }
       card.querySelector('.deleteQuestion').onclick = () => {
         state.questions = state.questions.filter(item => item.id !== q.id); render();
         tour.notify('question-deleted', { quizId: 'DEMO1', questionId: q.id });
       };
-      card.querySelector('.aiFeedbackGood').onclick = () => w.submitAiQuestionFeedback(q, index, { verdict:'good' });
-      card.querySelector('.aiFeedbackBad').onclick = () => w.toggleAiQualityPanel(card, q, index);
+      if (q.aiOrigin) {
+        card.querySelector('.aiFeedbackGood').onclick = () => w.submitAiQuestionFeedback(q, index, { verdict:'good' });
+        card.querySelector('.aiFeedbackBad').onclick = () => w.toggleAiQualityPanel(card, q, index);
+      }
       host.append(card);
       const button = w.document.createElement('button'); button.className = 'questionOutlineItem'; button.dataset.position = String(index + 1); outline.append(button);
     });
   };
   api.createDemo = async payload => {
     persistedDraft = payload;
-    state.questions = payload.questions.map((q, i) => ({ ...q, id: `tutorial-${i + 1}` }));
+    if (guestRepo) {
+      guestRepo.create(payload);
+      state.questions = guestRepo.getQuestions(guestRepo.code);
+    } else state.questions = payload.questions.map((q, i) => ({ ...q, id: `tutorial-${i + 1}`,
+      aiOrigin: { kind: 'tutorial', model: 'prepared-tutorial', promptVersion: 'gradecrew-live-tour-v8' } }));
     return 'DEMO1';
   };
   api.openEditor = async () => {
@@ -244,7 +253,9 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   assert.equal(feedbackWrites.length, 0, 'practice rating does not write data');
   next();w.document.querySelector('.questionOutlineItem.gcTourTarget').click();
   await until(() => w.document.querySelector('.aiFeedbackBad.gcTourTarget'), 'second flagged question');
-  w.document.querySelector('.aiFeedbackBad.gcTourTarget').click();
+  const badFeedback = w.document.querySelector('.aiFeedbackBad.gcTourTarget');
+  assert.equal(badFeedback.classList.contains('hidden'), false, 'the guest tour must expose the actual red feedback control');
+  badFeedback.click();
   await until(() => w.document.querySelector('.aiQualityRemove.gcTourTarget'), 'real negative-feedback panel');
   assert.equal(w.document.querySelector('.aiQualityReason').value, 'incorrect');
   w.document.querySelector('.aiQualityRemove.gcTourTarget').click();
