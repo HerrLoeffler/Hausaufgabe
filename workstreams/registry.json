@@ -457,7 +457,7 @@
       "title": "Startbühne und Lehrer-UI-Polish nach Staging-Screenshots",
       "primaryBranch": "feature/gc-web-polish-20261007",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/gc-web-polish-20261007.md",
       "relatedBranches": []
     },
