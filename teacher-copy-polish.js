@@ -1,5 +1,20 @@
 let scheduled = 0;
 
+// Only clean the visible title of a markwords card. The authored question and
+// answer data stay untouched; U+FFFC renders as the small foreign glyph seen in previews.
+export function cleanMarkwordsTitle(text) {
+  const original = String(text ?? "");
+  if (!original.includes("\uFFFC")) return original;
+  return original.replace(/\s*\uFFFC\s*/gu, " ").replace(/ ([.,!?;:])/g, "$1");
+}
+
+export function polishMarkwordsTitles(root = document) {
+  root.querySelectorAll?.('.studentQuestion[data-type="markwords"] h3').forEach(title => {
+    const clean = cleanMarkwordsTitle(title.textContent);
+    if (clean !== title.textContent) title.textContent = clean;
+  });
+}
+
 function cleanAiStatus() {
   const notice = document.getElementById("aiBetaNotice");
   if (!notice) return;
@@ -53,12 +68,13 @@ function compactTemplatePrivacyNote() {
 }
 
 function polishAiEditLabels(root = document) {
+  const english = document.documentElement.lang.toLowerCase().startsWith("en");
   root.querySelectorAll?.(".aiEditQuestion").forEach(button => {
-    button.textContent = "✨ Mit KI überarbeiten";
-    button.title = "Aufgabe mit KI überarbeiten";
+    button.textContent = english ? "✨ Improve" : "✨ Überarbeiten";
+    button.title = english ? "Improve question" : "Aufgabe überarbeiten";
   });
   root.querySelectorAll?.(".questionAiPanel > strong").forEach(label => {
-    label.textContent = "✨ Aufgabe mit KI überarbeiten";
+    label.textContent = english ? "✨ Improve question" : "✨ Aufgabe überarbeiten";
   });
   root.querySelectorAll?.(".questionAiPanel .aiApply").forEach(button => {
     button.textContent = "Überarbeitung erstellen";
@@ -82,6 +98,7 @@ function polishTeacherCopy() {
   removeRedundantDraftAside();
   compactTemplatePrivacyNote();
   polishAiEditLabels();
+  polishMarkwordsTitles();
 }
 
 function schedulePolish() {
@@ -109,6 +126,11 @@ function installTeacherCopyPolish() {
       }));
     }).observe(questionList, { childList: true, subtree: true });
   }
+  const studentQuizCard = document.getElementById("studentQuizCard");
+  if (studentQuizCard) {
+    new MutationObserver(() => polishMarkwordsTitles(studentQuizCard)).observe(studentQuizCard, { childList: true, subtree: true });
+  }
+  window.addEventListener("gradecrew:ui-locale-changed", schedulePolish);
 }
 
 if (document.body) installTeacherCopyPolish();

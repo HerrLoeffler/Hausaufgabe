@@ -31,6 +31,7 @@
       <button id="settingsTopBtn" class="button ghost" type="button">Einstellungen</button>
       <button id="logoutBtn" class="button ghost" type="button">Abmelden</button>
     </div>
+    <button id="gcEntryLoginOpen" class="gcHeroLogin hidden" type="button" data-i18n-key="hero.login" data-i18n-fallback="Anmelden">Anmelden</button>
   </header>
 
   <main id="mainContent" class="shell" tabindex="-1">
@@ -465,7 +466,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben" aria-label="Aufgabe nach oben verschieben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten" aria-label="Aufgabe nach unten verschieben">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen" aria-label="Aufgabe einklappen" aria-expanded="true">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren" aria-label="Aufgabe duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen" aria-label="Aufgabe löschen">×</button></div></details></div></div>
+      <div class="questionTop"><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe überarbeiten">✨ Überarbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben" aria-label="Aufgabe nach oben verschieben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten" aria-label="Aufgabe nach unten verschieben">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen" aria-label="Aufgabe einklappen" aria-expanded="true">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren" aria-label="Aufgabe duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen" aria-label="Löschen">×</button></div></details></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -563,5 +564,3 @@
   <script type="module" src="startup.js?v=2.3.1-gc28-i18n2"></script>
 </body>
 </html>
-
-

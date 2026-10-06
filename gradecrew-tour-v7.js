@@ -788,7 +788,7 @@ export function installCrewTour(api) {
       button.className = "button ghost compactTutorialBtn";
       $(".dashboardActions")?.prepend(button);
     }
-    button.textContent = isAdmin ? "? Tutorial testen" : "? Tutorial";
+    button.innerHTML = '<span data-i18n-key="hero.meetCrew" data-i18n-fallback="Crew kennenlernen">Crew kennenlernen</span><small data-i18n-key="hero.tutorialDuration" data-i18n-fallback="Tutorial · ca. 6–7 Minuten">Tutorial · ca. 6–7 Minuten</small>';
     button.title = isAdmin ? "Onboarding aus Admin-Sicht testen" : "GradeCrew-Tutorial starten";
     button.onclick = start;
 

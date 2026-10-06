@@ -131,12 +131,25 @@ export function installHeroDemo(root) {
   }
 
   resetFlow();
-  root.querySelectorAll('[data-hero-crew]').forEach(button => button.addEventListener('click', () => {
-    flow.start(button.dataset.heroCrew);
-    dialog.showModal();
-  }));
+  let pointerOpener = null;
+  let lastPointerOpener = null;
+  root.querySelectorAll('[data-hero-crew]').forEach(button => {
+    button.addEventListener('pointerdown', () => { pointerOpener = button; });
+    button.addEventListener('keydown', () => { pointerOpener = null; });
+    button.addEventListener('click', () => {
+      lastPointerOpener = pointerOpener === button ? button : null;
+      pointerOpener = null;
+      flow.start(button.dataset.heroCrew);
+      dialog.showModal();
+    });
+  });
   $('gcHeroDialogClose').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('close', () => { flow.stop(); state = null; });
+  dialog.addEventListener('close', () => {
+    flow.stop(); state = null;
+    const opener = lastPointerOpener;
+    lastPointerOpener = null;
+    if (opener) queueMicrotask(() => { if (document.activeElement === opener) opener.blur(); });
+  });
   $('gcHeroDemoPause').addEventListener('click', () => flow.togglePause());
   $('gcHeroDemoNext').addEventListener('click', () => flow.nextPhase());
   $('gcHeroDemoReplay').addEventListener('click', () => flow.replay());
