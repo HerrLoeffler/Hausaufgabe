@@ -192,3 +192,10 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | --- | --- | --- |
 | GC-DESIGN-05B | Lokale Coco-Gasttour und kompakter Handy-Einstieg auf Staging; Emmis roter Feedback-Smiley in der Gasttour repariert, Nutzertest offen. PR154 und Reparatur-PR156 → `4d6ee69`; CI `37542394496`, Hosting-Receipt `11449022640`, AI/Assessment-Receipts `11448732514`/`11449512022`. | Auf [Staging](https://hausaufgabe-staging.web.app/) Gasttour bis Wilma, echten Login und das Erstellen/Speichern eines Tests prüfen; Desktop/Handy visuell abnehmen. Kein Production-Deploy. [Übergabe](workstreams/gc-design-05b-guest-tour-20261006.md) |
 | GC-STAGING-CANONICAL-01 | Controller PR152 und API-Pfad-Fix PR155 integriert; Canonical Staging Hosting `37493180662` mit Receipt `11427025542` für `c6eec209` verifiziert. | Martin prüft reale Anmeldung und Testanlage; frühere fehlgeschlagene Preview `37482339993` bleibt ohne Receipt. [Übergabe](workstreams/staging-canonical-20261006.md) |
+
+
+## Bruchpizzeria Browser Pilot — 7. Oktober 2026
+
+| Aufgabe | Stand | Nächster Schritt |
+| --- | --- | --- |
+| GC-GAMES-PIZZA-01 | Erster Browser-Pilot spielbar;17 Verhaltenstests und kompletter In-App-Spielablauf bestätigt, unabhängige Review korrigiert. Eigener Branch; kein Hosting-/Gerätenachweis. | Isolierte Spiel-CI abholen; Martin testet die lokale Schicht, danach echte iPad-/Spielabnahme. [Übergabe](workstreams/bruchpizzeria-browser-pilot-20261006.md) |

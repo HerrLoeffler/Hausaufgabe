@@ -51,7 +51,8 @@ function render(){
  });}
  state.orders.forEach(o=>{const card=$('order-'+o.id);card.disabled=!started||state.paused||state.help||state.complete;card.querySelector('.patience>span').style.width=(o.patience===null?100:o.patience)+'%';if(o.patience===0)card.querySelector('.order-status').textContent='Ich warte noch auf meine Portion';});
  $('pause').setAttribute('aria-pressed',String(state.paused));$('pause').textContent=state.paused?'Weiter':'Pause';
- $('pause-overlay').hidden=!state.paused||!started;
+ if(state.paused&&started&&!$('pause-overlay').open)$('pause-overlay').showModal();
+ else if((!state.paused||!started)&&$('pause-overlay').open)$('pause-overlay').close();
  $('station-oven').disabled=!started||state.paused||state.help||state.complete;
  $('station-board').disabled=!started||state.paused||state.help||state.complete;
  if($('cut-dialog').open){$('cut-order').textContent=state.orders.map(o=>`${o.name}: ${o.label}`).join(' · ');$('cut-message').textContent=state.feedback;renderPizza();}
@@ -88,7 +89,7 @@ $('undo').addEventListener('click',()=>update(undoCut(state)));
 $('fresh').addEventListener('click',()=>update(takePizza(state)));
 $('plate').addEventListener('click',()=>{update(platePizza(state));if(state.carry==='plate'){$('cut-dialog').close();render();tone();}});
 $('cut-close').addEventListener('click',()=>{$('cut-dialog').close();render();});
-$('cut-dialog').addEventListener('cancel',()=>{drag=null;});
+$('cut-dialog').addEventListener('cancel',()=>{drag=null;$('cut-preview')?.remove();});
 function begin(fresh){if(fresh)state=newShift();else state={...state,paused:false,help:false};started=true;$('welcome').close();update(state);if(!fresh&&state.carry==='pizza'&&state.pizza.length>1){$('cut-dialog').showModal();render();}}
 $('start').addEventListener('click',()=>begin(true));$('resume').addEventListener('click',()=>begin(false));
 $('welcome').addEventListener('cancel',e=>e.preventDefault());
@@ -98,6 +99,7 @@ function closeHelp(){state={...state,help:false};$('help-dialog').close();update
 $('help-close').addEventListener('click',closeHelp);$('help-dialog').addEventListener('cancel',e=>{e.preventDefault();closeHelp();});
 function pause(){update({...state,paused:!state.paused});}
 $('pause').addEventListener('click',pause);$('continue').addEventListener('click',pause);
+$('pause-overlay').addEventListener('cancel',e=>{e.preventDefault();pause();});
 $('sound').addEventListener('click',()=>{sound=!sound;$('sound').textContent=sound?'Ton an':'Ton aus';$('sound').setAttribute('aria-pressed',String(sound));tone(true);});
 $('restart').addEventListener('click',()=>{$('done-dialog').close();update(newShift());});
 $('done-dialog').addEventListener('cancel',e=>e.preventDefault());

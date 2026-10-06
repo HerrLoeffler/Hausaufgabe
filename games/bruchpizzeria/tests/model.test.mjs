@@ -77,3 +77,12 @@ test('four complete orders end the shift and cannot be served again',()=>{
  assert.deepEqual(takePizza(s),s);assert.deepEqual(serve(s,4),s);
  assert.deepEqual(restore(JSON.stringify(s)),s);
 });
+test('repeating an unchanged cut preserves selection and undo history',()=>{
+ const s=selectSlice(applyCut(takePizza(newShift()),...vertical),0);
+ const after=applyCut(s,...vertical);
+ assert.deepEqual(after.selected,[0]);assert.equal(after.history.length,1);
+});
+test('empty history polygons and unfinished shifts without guests reset safely',()=>{
+ const cut=applyCut(takePizza(newShift()),...vertical);
+ for(const s of [{...cut,history:[[]]},{...newShift(),served:1,nextId:2,orders:[]}])assert.deepEqual(restore(JSON.stringify(s)),newShift());
+});

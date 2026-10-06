@@ -451,6 +451,17 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "games-bruchpizzeria-pilot",
+      "title": "Bruchpizzeria Browser Pilot",
+      "primaryBranch": "feature/bruchpizzeria-browser-pilot-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/bruchpizzeria-browser-pilot-20261006.md",
+      "relatedBranches": [
+        "docs/bruchpizzeria-briefing-20261006"
+      ]
     }
   ]
 }

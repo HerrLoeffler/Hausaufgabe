@@ -712,6 +712,17 @@
       "repair_pr": 156,
       "repair_head": "4db28b0198004110c0e2940dc4426a0bb995443a",
       "preview_receipt": 11448542523
+    },
+    {
+      "id": "games-bruchpizzeria-pilot",
+      "task_id": "GC-GAMES-PIZZA-01",
+      "branch": "feature/bruchpizzeria-browser-pilot-v1",
+      "stage": "branch_only",
+      "ci": "pending_isolated_browser_pilot_ci",
+      "staging": "not_deployed_local_browser_preview_only",
+      "user_test": "not_performed",
+      "handoff": "workstreams/bruchpizzeria-browser-pilot-20261006.md",
+      "next_action": "Verify exact isolated game CI; Martin tests local pilot. No main web release or Production change."
     }
   ],
   "deployments": [

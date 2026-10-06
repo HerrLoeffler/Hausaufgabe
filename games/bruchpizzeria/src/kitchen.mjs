@@ -8,7 +8,8 @@ export function createKitchen({onStation,getState,onReady}){
    this.chef=this.add.image(496,443,'person-0').setScale(.54).setDepth(10);this.carried=this.add.image(496,453,'pizza').setScale(.55).setDepth(11).setVisible(false);
    this.guests=[this.add.image(658,210,'person-1').setScale(.51),this.add.image(796,210,'person-2').setScale(.51)];
    this.bubbles=this.guests.map(g=>this.add.text(g.x,g.y-62,'',{fontFamily:'Georgia',fontSize:18,color:'#37513b',backgroundColor:'#fff8dc',padding:{x:10,y:5}}).setOrigin(.5));
-   this.keys=this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E');
+   this.keys=this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E',false);
+   this.input.keyboard.on('keydown',event=>{if(this.allowed()&&document.getElementById('game').contains(document.activeElement)&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key))event.preventDefault();});
    this.input.on('pointerdown',p=>{
     if(!this.allowed())return;
     if(p.x<245&&p.y>290&&p.y<470)this.go('oven');

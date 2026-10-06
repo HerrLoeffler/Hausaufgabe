@@ -30,27 +30,27 @@ Same criteria: browser delivery, small scene, touch integration, testable learni
 Files: src/pizza.mjs, src/shift.mjs, tests/model.test.mjs.
 Interfaces: wholePizza(), cutPizza(polygons,start,end), portion(polygons,indices), evaluatePortion(polygons,indices,target); newShift(), takePizza(state), applyCut(state,start,end), selectSlice(state,index), platePizza(state), serve(state,orderId), tick(state,seconds), restore(raw).
 
-- [ ] Write behavioral tests for halves, quarters, unequal/off-centre cuts, equivalents, wrong guest, finite inputs, patience pauses, shift completion and restoration.
-- [ ] Run Node test suite and observe missing-feature failures.
-- [ ] Implement geometric clipping of a 96-sided circle against actual full stroke lines; preserve area, reject invalid/short strokes and more than four portions.
-- [ ] Implement pure state transitions, immutable inputs and versioned validated restoration. Record wrong servings as learning feedback, not progress.
-- [ ] Run complete scoped test suite; commit checkpoint.
+- [x] Write behavioral tests for halves, quarters, unequal/off-centre cuts, equivalents, wrong guest, finite inputs, patience pauses, shift completion and restoration.
+- [x] Run Node test suite and observe missing-feature failures.
+- [x] Implement geometric clipping of a 96-sided circle against actual full stroke lines; preserve area, reject invalid/short strokes and more than four portions.
+- [x] Implement pure state transitions, immutable inputs and versioned validated restoration. Record wrong servings as learning feedback, not progress.
+- [x] Run complete scoped test suite; commit checkpoint.
 
 ## Task 2: Complete kitchen and cutting interaction
 
 Files: index.html, styles.css, src/main.mjs, src/kitchen.mjs, src/art.mjs, tools/build.mjs, tools/server.mjs, tests/browser.cjs.
 Consumes Task 1 exports. Produces static dist and a playable ordinary start.
 
-- [ ] Write browser tests from normal start: take pizza, walk to board, drag two orthogonal cuts, select two quarters, plate, serve half order, receive next guests; pause/help, reload and narrow layout.
-- [ ] Run before UI exists and observe failure.
-- [ ] Build original vector kitchen, chef/guest sprites, movement with contextual stations, friendly reactions, animated oven, sound toggle and reduced-motion support.
-- [ ] Add touch/mouse SVG cutting with capture/cancellation, selectable wedges, undo/reset, keyboard cut-angle fallback and same actual geometry.
-- [ ] Preserve state locally after actions; visibly report unavailable storage; no fabricated server progress.
-- [ ] Run tests against built static artifact; inspect desktop and touch screenshots, correct concrete faults; checkpoint.
+- [x] Write browser tests from normal start: take pizza, walk to board, drag two orthogonal cuts, select two quarters, plate, serve half order, receive next guests; pause/help, reload and narrow layout.
+- [x] Run before UI exists and observe failure.
+- [x] Build original vector kitchen, chef/guest sprites, movement with contextual stations, friendly reactions, animated oven, sound toggle and reduced-motion support.
+- [x] Add touch/mouse SVG cutting with capture/cancellation, selectable wedges, undo/reset, keyboard cut-angle fallback and same actual geometry.
+- [x] Preserve state locally after actions; visibly report unavailable storage; no fabricated server progress.
+- [x] Run tests against built static artifact; inspect desktop and touch screenshots, correct concrete faults; checkpoint.
 
 ## Task 3: Review and delivery
 
-- [ ] One fresh reviewer checks geometry, lifecycle, browser behavior, scope and build reproducibility.
+- [x] One fresh reviewer checks geometry, lifecycle, browser behavior, scope and build reproducibility.
 - [ ] Fix important findings with tests and rerun affected checks.
 - [ ] Update TODO/registry/handoff and branch evidence; push own branch and open draft PR.
 - [ ] Open local build for Martin. State missing physical iPad, visual/user acceptance and remote deploy explicitly.

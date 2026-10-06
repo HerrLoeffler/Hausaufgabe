@@ -24,7 +24,7 @@ export function cutPizza(polygons,a,b){
   const left=clip(poly,a,b,1),right=clip(poly,a,b,-1);
   if(area(left)>.002&&area(right)>.002)result.push(left,right);else result.push(poly);
  }
- return result.length<=4?result:polygons;
+ return result.length<=4&&result.length>polygons.length?result:polygons;
 }
 function validSelection(polygons,ids){return Array.isArray(ids)&&ids.length>0&&new Set(ids).size===ids.length&&ids.every(i=>Number.isInteger(i)&&i>=0&&i<polygons.length);}
 export function portion(polygons,ids){return validSelection(polygons,ids)?ids.reduce((s,i)=>s+area(polygons[i])/WHOLE,0):0;}

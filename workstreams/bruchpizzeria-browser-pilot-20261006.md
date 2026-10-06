@@ -9,3 +9,6 @@ Plan, Bildstil, technische Entscheidungen und aktueller Fortschritt: [PLAN](../g
 Nachweis: 14 lokale Node-Verhaltenstests für echte Schnittflächen, Ungleichheit, äquivalente Portionen, falschen Gast, Timerpause und Save-Restore grün; erster Rotlauf 9 fehlende Verhaltensfälle. Keine Remote-CI, Integration, Hosting, Functions/Rules, Geräte- oder Nutzerabnahme. Aktuelle Stufe branch_only. Keine bezahlten APIs oder Budgetreservierungen.
 
 Nächster Schritt: spielbaren Browserablauf und Bildstil bauen, anschließend normalen gebauten Einstieg und Touch prüfen.
+
+
+07.10.2026: erster vollständiger Browser-Pilot gebaut.17 lokale Verhaltenstests, automatischer Chrome-Ablauf an a5d78a1 und finaler kompletter In-App-Spielablauf nach Korrekturen bestätigt. Unabhängige Nachprüfung an1da7e37 ohne wichtige Befunde. Lokaler Server4187; kein Hostingdeploy, kein echter iPad-/Nutzertest. Isolierte Spiel-CI und Draft-PR folgen; Details in HANDOFF.
