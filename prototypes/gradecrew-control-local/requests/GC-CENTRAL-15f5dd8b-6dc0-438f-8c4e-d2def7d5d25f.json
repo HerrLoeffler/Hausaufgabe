@@ -1,0 +1,18 @@
+{
+  "requestId": "GC-CENTRAL-15f5dd8b-6dc0-438f-8c4e-d2def7d5d25f",
+  "taskId": "GC-SECURITY-02",
+  "userText": "löse die aufgabe & verteile sie entsprechend an einen chat und wie gut der chat dafür benötigt wird.",
+  "status": "in_progress",
+  "workerThreadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+  "workerTitle": "GC · Automatisierung & Integration",
+  "requestedModel": "gpt-6-astra",
+  "requestedThinking": "high",
+  "reason": "Sicherheitskritische Abgabe-, Lösungsschutz- und Freigabe-Gates",
+  "sourceBranch": "feature/secure-assessment-v1",
+  "observedSourceSha": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
+  "productionAuthorized": false,
+  "paidModelApiAuthorized": false,
+  "existingGcAutomation08Preserved": true,
+  "workerTurnId": "01a10f95-cef8-77c1-801c-5e9ccc5be7f5",
+  "dispatchAccepted": true
+}
