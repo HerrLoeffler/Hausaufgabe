@@ -18,9 +18,9 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
-| GC-TUTORIAL-01 | Manuelle Tutorialabgabe in der iPad-App funktioniert nicht | Offen, Nutzerbericht | Web-App: vorhandenen gc29-Entwurf sichern und gegen aktuellen Designstand vergleichen; reproduzieren, gezielt beheben, am Gerät testen. [Übergabe](workstreams/web-app.md) |
+| GC-TUTORIAL-01 | Manuelle Tutorialabgabe in der iPad-App funktioniert nicht | Fix integriert; gemeinsame CI und Staging laufen | PR147 nach Security-Port PR148 in `2d2a776`; CI37459917759. Seitendialog statt nativer Bestätigung, Doppeltipp-/Timer-Schutz geprüft. Echter iPad-Test bleibt offen. [Übergabe](workstreams/staging-closeout-20261006.md) |
 | GC-SECURITY-01 | Fehlgeschlagenen 30-Teilnehmer-Test diagnostizieren | Blockiert durch fehlenden Fehlernachweis | Security: Serverfehler anhand Referenz/Logs zuordnen, Ursache beheben, Test wiederholen. Keine vermutete Ursache als bewiesen darstellen. |
-| GC-SECURITY-02 | Production-Security-Gates abschließen | Offen | Security-Branch: aktuellen Audit lesen; sichere Abgabe, Lösungsschutz und reale Freigaben belegen. |
+| GC-SECURITY-02 | Production-Security-Gates abschließen | Start-/Transaktionsfix integriert; weitere Gates offen | Geprüfter Port PR148 plus PR147 in `2d2a776`; gemeinsame CI37459917759 läuft. Rules-Cutover, Gates C–G und 30-Teilnehmer-Fehler nicht als erledigt werten. [Übergabe](workstreams/security-web-integration-20261006.md) |
 | GC-RESTORE-01 | Tatsächlichen Live-Stand und vollständige Wiederherstellung absichern | Offen | Hosting-Release, Functions, Regeln, Datenbank, Auth und Uploads inventarisieren; Sicherung und Restore-Test planen. [Umgebungen](docs/releases/ENVIRONMENTS.md) |
 | GC-REGRESSION-01 | PDF-, Bild- und Screenshot-Import sowie Kernabläufe erhalten | Stand prüfen, frühere Verlustmeldung | Aktuellen Integrationsstand prüfen: Import → KI → Editor → Veröffentlichung → Schülerabgabe → Auswertung. |
 | GC-DEVICE-01 | Aktuellen Design-/Tutorialstand auf echten Geräten abnehmen | Offen | Desktop, iPad und iPhone einschließlich Tastatur; derzeit technisch geprüfter Designstand 74eb2ec. [Übergabe](workstreams/design-dashboard-v1.md) |

@@ -17,10 +17,10 @@
     "production_requires_explicit_user_approval": true
   },
   "release_train": {
-    "id": "staging-batch-2026-10-06-i18n",
+    "id": "staging-batch-2026-10-06-tutorial-security",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+    "observed_integration_head": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -30,7 +30,9 @@
       "design-startscreen-v1",
       "audio-masterpiece-v2",
       "bug-ops-v1",
-      "i18n-content-labels-20261005"
+      "i18n-content-labels-20261005",
+      "web-staging-closeout-20261006",
+      "security-web-integration-20261006"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -47,21 +49,21 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37417856806_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "combined_ci": "in_progress_run_37459917759_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "success_run_37417963944_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
-      "staging_functions": "success_run_37417963972_ai_and_assessment_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "hosting_preview": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "staging_functions": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "not_performed_for_90b48d8",
-      "user_acceptance": "not_performed_for_90b48d8",
+      "user_acceptance": "not_performed_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37417963972_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "staging_assessment_functions": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": null,
-    "important": "PR139 integrated; exact CI and Hosting/AI/Assessment deploy jobs succeeded. No device/user acceptance; Security PR146 not included; no Rules or Production deployment.",
-    "next_action": "Verify DE/EN, warm browser cache and resuming pre-rollout attempts; integrate bounded tutorial/security patches serially after exact CI/reviews."
+    "important": "PR148 then PR147 merged serially. Both independently reviewed; code-equivalent exact source CI verified. Combined candidate awaiting CI and separate Hosting/AI/Assessment receipts. Previous deployed release remains 90b48d8 until new receipts. No Rules or Production.",
+    "next_action": "Verify combined CI37459917759 and mobile tutorial37459917770, then automatic staging receipts; give Martin test link and checklist."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -610,6 +612,32 @@
       "user_test": "not_performed",
       "handoff": "workstreams/staging-closeout-20261006.md",
       "next_action": "Verify DE/EN, warm browser cache and resuming pre-rollout attempts; integrate bounded tutorial/security patches serially after exact CI/reviews."
+    },
+    {
+      "id": "web-staging-closeout-20261006",
+      "task_id": "GC-TUTORIAL-01",
+      "branch": "fix/gc-staging-web-closeout-20261006",
+      "stage": "integrated",
+      "integrated_into": "feature/gradecrew-app-integration@2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "pr": 147,
+      "combined_ci": "pending_37459917759",
+      "staging": "not_yet_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/web-staging-closeout-20261006.md",
+      "next_action": "Verify exact combined CI and separate staging deploy receipts; human acceptance remains open."
+    },
+    {
+      "id": "security-web-integration-20261006",
+      "task_id": "GC-SECURITY-02",
+      "branch": "fix/gc-security-02-web-integration-20261006",
+      "stage": "integrated",
+      "integrated_into": "feature/gradecrew-app-integration@2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "pr": 148,
+      "combined_ci": "pending_37459917759",
+      "staging": "not_yet_deployed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/security-web-integration-20261006.md",
+      "next_action": "Verify exact combined CI and separate staging deploy receipts; human acceptance remains open."
     }
   ],
   "deployments": [
@@ -671,7 +699,8 @@
       "receipt_artifact_id": 11316084527,
       "production_changed": false,
       "firestore_rules_changed": false,
-      "hosting_changed_by_this_deploy": false
+      "hosting_changed_by_this_deploy": false,
+      "contains_current_release_train": false
     },
     {
       "environment": "staging-preview",
@@ -680,7 +709,7 @@
       "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "evidence": "Workflow 37417963944; exact SHA in deploy logs and successful verification/upload steps",
       "receipt_artifact_id": 11391527589,
-      "contains_current_release_train": true,
+      "contains_current_release_train": false,
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
@@ -692,7 +721,7 @@
       "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "evidence": "Workflow 37417963972; exact SHA in deploy logs and successful verification/upload steps",
       "receipt_artifact_id": 11391284298,
-      "contains_current_release_train": true,
+      "contains_current_release_train": false,
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
@@ -704,7 +733,7 @@
       "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "evidence": "Workflow 37417963972; exact SHA in deploy logs and successful verification/upload steps",
       "receipt_artifact_id": 11392063036,
-      "contains_current_release_train": true,
+      "contains_current_release_train": false,
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
@@ -763,6 +792,56 @@
         "preview_verified_files": null,
         "important": "BugOps V1 ist auf Staging für bb91ce3590d773472ece60c4dd881da729bd32c1 technisch verifiziert: Combined CI 37238513381, Hosting 37238585607 und AI/Assessment Functions 37238585657 grün. aggregateBugFeedback und getBugOpsSummary wurden erfolgreich veröffentlicht. Admin-/Browserabnahme ist offen; automatische Reparatur aus echten Kundenmeldungen bleibt deaktiviert; Production unverändert.",
         "next_action": "BugOps im Staging als Admin praktisch abnehmen: technischen Testfehler melden bzw. vorhandenen Staging-Incident nutzen und Problem melden → Incident → Administration-Badge → BugOps-Ansicht → Lifecycle prüfen. Danach read-only Investigator und sichere Guardian-Brücke bauen."
+      }
+    },
+    {
+      "recorded_at": "2026-10-06T11:58:42.948Z",
+      "release_train": {
+        "id": "staging-batch-2026-10-06-i18n",
+        "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "observed_integration_head": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+        "included_workstreams": [
+          "crew-assistant",
+          "contextual-crew-assistants-v2",
+          "remy-structured-telemetry-v1",
+          "emmi-whole-test-revision",
+          "tutorial-choice-replay-v1",
+          "design-startscreen-v1",
+          "audio-masterpiece-v2",
+          "bug-ops-v1",
+          "i18n-content-labels-20261005"
+        ],
+        "later_integrations_observed": [
+          "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
+          "German-only i18n boundary ist im aktuellen Integrationsstand enthalten.",
+          "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
+          "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
+          "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
+          "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
+          "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
+          "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe.",
+          "Startscreen Masterpiece v4: isolierter Premium-Polish-Layer auf fb88dfa7; DE/EN-Copy bleibt DOM/i18n-basiert, Hosting-Preview verifiziert.",
+          "BugOps V1 ist integriert: Web-Decision-Inbox, serverseitige Incident-Aggregation und admin-only Attention-Summary; Rohmeldungen werden zu Incidents gebündelt statt einzeln alarmiert.",
+          "BugOps speichert in Incidents keine Namen, E-Mails, Freitexte oder Schülerantworten; eindeutige Melder werden nur über incident-lokale Hashmarker gezählt.",
+          "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
+        ],
+        "gates": {
+          "combined_ci": "success_run_37417856806_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+          "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
+          "hosting_preview": "success_run_37417963944_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+          "staging_functions": "success_run_37417963972_ai_and_assessment_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+          "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
+          "desktop_ipad_iphone_test": "not_performed_for_90b48d8",
+          "user_acceptance": "not_performed_for_90b48d8",
+          "production": "not_requested",
+          "staging_assessment_functions": "success_run_37417963972_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+          "audio_v2_user_acceptance": "not_tested"
+        },
+        "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+        "preview_verified_files": null,
+        "important": "PR139 integrated; exact CI and Hosting/AI/Assessment deploy jobs succeeded. No device/user acceptance; Security PR146 not included; no Rules or Production deployment.",
+        "next_action": "Verify DE/EN, warm browser cache and resuming pre-rollout attempts; integrate bounded tutorial/security patches serially after exact CI/reviews."
       }
     }
   ]

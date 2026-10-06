@@ -16,3 +16,7 @@ Main coordinates serial integration. Staging authorized; Production and paid mod
 Hosting receipt11391527589; AI receipt11391284298; Assessment receipt11392063036. Exact SHA checked in deploy logs; all deployment/verification jobs succeeded. No Rules deployment or device acceptance. Prior release preserved in GRADECREW_STATE.release_history.
 
 Next: collect Web/Security once ready, check exact CI/reviews and current target before serial integration. Luna continues bounded read-only Games reconciliation. Heartbeat gradecrew-security-ergebnis-zur-ckholen collects. Central manifest records worker IDs and attempts; retain original workstream histories.
+
+
+## Autorisierter Staging-Nachtrag 2026-10-06T11:58:42.949Z
+Martin beauftragt Main ausdrücklich, fertige Änderungen auf Staging zu veröffentlichen; keine PR-Arbeit durch Martin nötig. PR148@717dff77 (nur Handoff-Unterschied zum CI-geprüften Code fa6b41) und PR147@1c994ecb wurden seriell übernommen. Kandidat 2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea, Security-Zwischenmerge 0becb39ffe31f594767ae01dca91c723ef3c4738. Diff-Überlappung ausschließlich ai-staging-check.yml; npm-ci-/Emulator- und Dialogprüfungen sind gemeinsam erhalten. Quell-CI37431017785 und37458063527 grün, unabhängige Reviews ohne wesentliche Findings. Combined CI37459917759 und mobile Tutorial37459917770 laufen. Keine Deploy-Behauptung bis zu separaten Receipts. Design-/neue Sprachänderungen bleiben bei ihren laufenden Fachchats. Keine Rules-/Production-Freigabe.
