@@ -1319,6 +1319,9 @@ document.addEventListener('gradecrew:start-guest-tour', () => {
   state.guestTourUid = 'local-tour';
   state.quizzes = [];
   state.aiJobs = [];
+  safeDialogClose($('announcementDialog'));
+  state.activeAnnouncementDialogId = null;
+  for (const id of ['announcementDialogTitle', 'announcementDialogText']) $(id).textContent = '';
   for (const id of ['quizList', 'aiJobsList', 'localDraftList', 'announcementHost', 'firstTestDashboard']) {
     $(id)?.replaceChildren();
   }
@@ -6971,14 +6974,16 @@ function announcementIcon(type) {
 
 async function loadAnnouncements() {
   if (!state.user || isSuspended()) return;
+  const announcementUid = state.user.uid;
   const host = $("announcementHost");
   if (!host) return;
   host.innerHTML = "";
   try {
     const [aSnap, seenSnap] = await Promise.all([
       getDocs(collection(db, "announcements")),
-      getDocs(collection(db, "users", state.user.uid, "announcementViews"))
+      getDocs(collection(db, "users", announcementUid, "announcementViews"))
     ]);
+    if (state.user?.uid !== announcementUid || guestTourRepo) return;
     const seen = new Map(seenSnap.docs.map((d) => [d.id, d.data()]));
     const announcements = aSnap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
@@ -6987,6 +6992,7 @@ async function loadAnnouncements() {
 
     let popup = null;
     for (const a of announcements) {
+      if (state.user?.uid !== announcementUid || guestTourRepo) return;
       const view = seen.get(a.id);
       const frequency = a.frequency || "once";
       if (frequency === "once" && view?.seenAt) continue;
@@ -7000,7 +7006,7 @@ async function loadAnnouncements() {
       if (frequency === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
       if (frequency === "every_login") state.shownThisLogin.add(a.id);
     }
-    if (popup) await showAnnouncementPopup(popup);
+    if (popup && state.user?.uid === announcementUid && !guestTourRepo) await showAnnouncementPopup(popup);
   } catch (err) {
     console.warn("Mitteilungen konnten nicht geladen werden:", err);
   }

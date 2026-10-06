@@ -85,6 +85,8 @@ test('app bootstrap binds its real auth controls after public entry installation
     let guestApi;
     let guestPort;
     let forbiddenCalls = 0;
+    let allowAnnouncementReads = false;
+    const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }),
@@ -98,9 +100,11 @@ test('app bootstrap binds its real auth controls after public entry installation
       AbortController,
       crypto: globalThis.crypto,
       isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex,
-      firestoreGetDoc: forbidden, firestoreGetDocs: forbidden, firestoreOnSnapshot: forbidden,
+      firestoreGetDoc: forbidden, firestoreGetDocs: () => allowAnnouncementReads
+        ? new Promise(resolve => announcementReads.push(resolve)) : forbidden(), firestoreOnSnapshot: forbidden,
       firestoreSetDoc: forbidden, firestoreAddDoc: forbidden, firestoreUpdateDoc: forbidden,
       firestoreDeleteDoc: forbidden, firestoreWriteBatch: forbidden,
+      collection: (...segments) => segments,
       createLocalTourRepository: () => { guestPort = createLocalTourRepository(); return guestPort; },
       installCrewTour: api => { guestApi = api; return {
         start() { guestStarts += 1; }, stop: noop, notify: noop,
@@ -119,6 +123,12 @@ test('app bootstrap binds its real auth controls after public entry installation
     };
     const appContext = vm.createContext(bindings);
     vm.runInContext(source, appContext, { filename: 'app.js', timeout: 2000 });
+    vm.runInContext("state.user = { uid: 'previous-teacher' }", appContext);
+    allowAnnouncementReads = true;
+    const pendingAnnouncements = vm.runInContext('loadAnnouncements()', appContext);
+    allowAnnouncementReads = false;
+    assert.equal(announcementReads.length, 2);
+    vm.runInContext('state.user = null', appContext);
     w.document.getElementById('quizList').innerHTML = '<article>Privater Test vom vorigen Konto</article>';
     w.document.getElementById('aiJobsList').innerHTML = '<article>Privater KI-Auftrag</article>';
     w.document.getElementById('localDraftList').innerHTML = '<article>Privater lokaler Entwurf</article>';
@@ -130,6 +140,10 @@ test('app bootstrap binds its real auth controls after public entry installation
     for (const id of ['quizList', 'aiJobsList', 'localDraftList', 'announcementHost', 'firstTestDashboard']) {
       assert.equal(w.document.getElementById(id).textContent.trim(), '', `${id} must not expose the previous account during a guest tour`);
     }
+    announcementReads[0]({ docs: [{ id: 'old', data: () => ({ title: 'Private alte Mitteilung', text: 'Vorheriges Konto', display: 'banner' }) }] });
+    announcementReads[1]({ docs: [] });
+    await pendingAnnouncements;
+    assert.equal(w.document.getElementById('announcementHost').textContent.trim(), '', 'a delayed account announcement must not appear in the guest tour');
     const demoCode = await guestApi.createDemo({ title: 'English 4', subject: 'Englisch', grade: '4',
       questions: [{ type: 'single', text: 'Dog?', points: 1, options: [{ text: 'dog', correct: true }, { text: 'cat', correct: false }] }] });
     await guestApi.openEditor(demoCode);
