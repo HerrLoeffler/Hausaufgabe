@@ -151,44 +151,9 @@ function startGuestTutorial() {
 }
 
 function installPublicHeader() {
-  const topbar = document.querySelector(".topbar");
   const authView = $("authView");
-  if (!topbar || !authView) return;
-
-  let nav = $("gcPublicNav");
-  if (!nav) {
-    nav = document.createElement("nav");
-    nav.id = "gcPublicNav";
-    nav.className = "gcPublicNav";
-    nav.setAttribute("aria-label", "GradeCrew Navigation");
-    nav.innerHTML = `
-      <button type="button" data-entry-nav="features"><span data-i18n-key="nav.features" data-i18n-fallback="Funktionen">Funktionen</span></button>
-      <button type="button" data-entry-nav="crew"><span data-i18n-key="nav.crew" data-i18n-fallback="Die Crew">Die Crew</span></button>
-      <button type="button" data-entry-nav="teacher"><span data-i18n-key="nav.teachers" data-i18n-fallback="Für Lehrkräfte">Für Lehrkräfte</span></button>
-      <button type="button" data-entry-nav="help" class="gcPublicNavHelp"><span aria-hidden="true">?</span> <span data-i18n-key="nav.help" data-i18n-fallback="Hilfe">Hilfe</span></button>
-    `;
-    topbar.insertBefore(nav, $("userBar") || null);
-
-    nav.addEventListener("click", event => {
-      const button = event.target.closest("[data-entry-nav]");
-      if (!button) return;
-      const target = button.dataset.entryNav;
-      if (target === "teacher") {
-        showLogin();
-        return;
-      }
-      if (target === "help") {
-        showStart();
-        requestAnimationFrame(() => $("gcEntryTutorialStart")?.click());
-        return;
-      }
-      showStart();
-      requestAnimationFrame(() => {
-        const node = $("gcEntryCrew");
-        node?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-      });
-    });
-  }
+  if (!authView) return;
+  $("gcPublicNav")?.remove();
 
   const syncMode = () => {
     document.body.classList.toggle("gcPublicEntryMode", !authView.classList.contains("hidden"));
@@ -229,6 +194,7 @@ function buildEntrySurface() {
           <div class="gcHeroLead">
             <h1 id="gcEntryHeadline"><span data-i18n-key="hero.greeting" data-i18n-fallback="Hi! Ich bin Coco.">Hi! Ich bin Coco.</span><strong><span data-i18n-key="hero.welcome" data-i18n-fallback="Willkommen bei">Willkommen bei</span> GradeCrew.</strong></h1>
             <p data-i18n-key="hero.subtitle" data-i18n-fallback="Digitale Tests. Schnell & einfach.">Digitale Tests. Schnell &amp; einfach.</p>
+            <p id="gcHeroHint" class="gcHeroHint" data-i18n-key="hero.tryCrew" data-i18n-fallback="Tippe auf Remy, Emmi oder Wilma und sieh, was sie tun.">Tippe auf Remy, Emmi oder Wilma und sieh, was sie tun.</p>
           </div>
           <div class="gcHeroRoles" aria-label="Deine Crew">
             <button type="button" data-hero-crew="remy"><strong>Remy</strong><small data-i18n-key="hero.remyRole" data-i18n-fallback="Erstellen">Erstellen</small></button>
@@ -241,13 +207,19 @@ function buildEntrySurface() {
           </div>
           <div class="gcHeroJoin"><label for="joinCode" data-i18n-key="hero.student" data-i18n-fallback="Schüler? Testcode eingeben.">Schüler? Testcode eingeben.</label><div id="gcEntryJoinHost"></div></div>
         </div>
+        <ul id="gcEntryBenefits" class="gcEntryBenefitsCompact">
+          <li><strong data-i18n-key="hero.benefitCreate" data-i18n-fallback="Schnell erstellt">Schnell erstellt</strong><small data-i18n-key="hero.benefitCreateDetail" data-i18n-fallback="In wenigen Minuten">In wenigen Minuten</small></li>
+          <li><strong data-i18n-key="hero.benefitRun" data-i18n-fallback="Einfach durchgeführt">Einfach durchgeführt</strong><small data-i18n-key="hero.benefitRunDetail" data-i18n-fallback="Für deine Klasse">Für deine Klasse</small></li>
+          <li><strong data-i18n-key="hero.benefitGrade" data-i18n-fallback="Direkt ausgewertet">Direkt ausgewertet</strong><small data-i18n-key="hero.benefitGradeDetail" data-i18n-fallback="Mit klaren Ergebnissen">Mit klaren Ergebnissen</small></li>
+          <li><strong data-i18n-key="hero.benefitTeacher" data-i18n-fallback="Für Lehrkräfte gemacht">Für Lehrkräfte gemacht</strong><small data-i18n-key="hero.benefitTeacherDetail" data-i18n-fallback="Praxisnah und zuverlässig">Praxisnah und zuverlässig</small></li>
+        </ul>
       </div>
       <dialog id="gcHeroDialog" class="gcHeroDialog" aria-labelledby="gcHeroDialogTitle">
         <button id="gcHeroDialogClose" class="gcHeroDialogClose" type="button" aria-label="Schließen">×</button>
         <p id="gcHeroDialogEyebrow" class="gcHeroDialogEyebrow"></p><h2 id="gcHeroDialogTitle"></h2>
         <p id="gcHeroDemoStatus" role="status" aria-live="polite"></p>
         <div id="gcHeroDemoWorkspace" class="gcHeroDemoWorkspace"></div>
-        <div class="gcHeroDemoControls"><button id="gcHeroDemoPause" type="button"></button><button id="gcHeroDemoReplay" type="button"></button></div>
+        <div class="gcHeroDemoControls"><button id="gcHeroDemoPause" type="button"></button><button id="gcHeroDemoNext" type="button"></button><button id="gcHeroDemoReplay" type="button"></button></div>
       </dialog>
     </section>
 
@@ -283,7 +255,7 @@ function buildEntrySurface() {
   $("gcEntryJoinHost").append(joinForm);
   const joinSubmit = joinForm.querySelector('button[type="submit"]');
   if (joinSubmit) {
-    joinSubmit.textContent = "→";
+    joinSubmit.textContent = "Test öffnen";
     joinSubmit.setAttribute("aria-label", "Test öffnen");
     joinSubmit.classList.add("gcEntryJoinSubmit");
   }

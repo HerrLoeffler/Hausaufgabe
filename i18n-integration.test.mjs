@@ -71,18 +71,16 @@ test("German and English are enabled browser UI locales", () => {
   assert.match(englishCrewExtension, /Ask Coco/);
 });
 
-test("public navigation uses semantic keys so rerenders do not depend on German source matching", () => {
-  for (const [key, fallback] of [
-    ["nav.features", "Funktionen"],
-    ["nav.crew", "Die Crew"],
-    ["nav.teachers", "Für Lehrkräfte"],
-    ["nav.help", "Hilfe"],
-  ]) {
-    assert.ok(entryFlow.includes(`data-i18n-key="${key}"`), "missing semantic nav key: " + key);
-    assert.ok(entryFlow.includes(`data-i18n-fallback="${fallback}"`), "missing German fallback: " + fallback);
-    assert.ok(germanCatalog.includes(`"${key}"`), "German semantic nav label missing: " + key);
-    assert.ok(englishCatalog.includes(`"${key}"`), "English semantic nav label missing: " + key);
+test("compact public benefits and Crew hint use semantic DE/EN keys", () => {
+  assert.doesNotMatch(entryFlow, /data-entry-nav=/);
+  for (const key of ["tryCrew", "benefitCreate", "benefitCreateDetail", "benefitRun", "benefitRunDetail", "benefitGrade", "benefitGradeDetail", "benefitTeacher", "benefitTeacherDetail"]) {
+    assert.ok(entryFlow.includes(`data-i18n-key="hero.${key}"`), `missing semantic hero key: ${key}`);
+    setActiveUiLocale("de-DE");
+    assert.ok(heroText(key), `German hero copy missing: ${key}`);
+    setActiveUiLocale("en-GB");
+    assert.ok(heroText(key), `English hero copy missing: ${key}`);
   }
+  setActiveUiLocale("de-DE");
 });
 
 test("new public hero and examples use the shared DE/EN UI catalog", () => {

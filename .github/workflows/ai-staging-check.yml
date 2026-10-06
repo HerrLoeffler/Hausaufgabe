@@ -156,7 +156,7 @@ jobs:
             echo 'Visual/admin enhancement modules must not be statically imported from ai-client.js'
             exit 1
           fi
-          node --check app.js
+          node --input-type=module --check < app.js
           node --check student-submit-confirm.mjs
           node --check ai-client.js
           node --check ui-enhancements.js
@@ -189,6 +189,7 @@ jobs:
           node --check mobile-viewport-polish.js
           node --check tools/generate-gradecrew-design.mjs
           node --test gradecrew-design-foundation.test.mjs
+          node --test gradecrew-entry-bootstrap.test.mjs
           node --test gradecrew-brand-assets.test.mjs
           node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs
           node --test diagnostics.test.mjs

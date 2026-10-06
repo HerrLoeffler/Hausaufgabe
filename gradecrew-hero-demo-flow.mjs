@@ -8,8 +8,17 @@ export function createDemoFlow({ onChange, reducedMotion = false, schedule = set
     clear();
     if (!state?.running || state.paused) return;
     if (state.phase < 2) {
-      timer = schedule(() => { timer = null; state.phase += 1; state.running = state.phase < 2; emit(); advance(); }, 2600);
+      timer = schedule(() => { timer = null; nextPhase(); }, 1800);
     }
+  }
+  function nextPhase() {
+    if (!state || state.phase >= 2) return false;
+    clear();
+    state.phase += 1;
+    state.running = state.phase < 2;
+    emit();
+    advance();
+    return true;
   }
   function start(name, tutorial = false) {
     if (!crew.includes(name)) return;
@@ -20,6 +29,7 @@ export function createDemoFlow({ onChange, reducedMotion = false, schedule = set
   return {
     start,
     replay() { if (state) start(state.name, state.tutorial); },
+    nextPhase,
     togglePause() {
       if (!state?.running) return;
       state.paused = !state.paused;
