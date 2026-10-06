@@ -51,8 +51,8 @@ Consumes Task 1 exports. Produces static dist and a playable ordinary start.
 ## Task 3: Review and delivery
 
 - [x] One fresh reviewer checks geometry, lifecycle, browser behavior, scope and build reproducibility.
-- [ ] Fix important findings with tests and rerun affected checks.
-- [ ] Update TODO/registry/handoff and branch evidence; push own branch and open draft PR.
-- [ ] Open local build for Martin. State missing physical iPad, visual/user acceptance and remote deploy explicitly.
+- [x] Fix important findings with tests and rerun affected checks.
+- [x] Update TODO/registry/handoff and branch evidence; save via GitHub connector (CLI lacks credentials) and open draft PR158.
+- [x] Open local build for Martin. State missing physical iPad, visual/user acceptance and remote deploy explicitly.
 
 Budgets: target 60 fps desktop and 30 fps weakest agreed tablet; initial build <3 MiB and no external assets. Device model remains unspecified; emulated touch is not physical-device acceptance. Curriculum-specific alignment is later, since Bundesland/Schulart are not given.

@@ -12,3 +12,5 @@ Nächster Schritt: spielbaren Browserablauf und Bildstil bauen, anschließend no
 
 
 07.10.2026: erster vollständiger Browser-Pilot gebaut.17 lokale Verhaltenstests, automatischer Chrome-Ablauf an a5d78a1 und finaler kompletter In-App-Spielablauf nach Korrekturen bestätigt. Unabhängige Nachprüfung an1da7e37 ohne wichtige Befunde. Lokaler Server4187; kein Hostingdeploy, kein echter iPad-/Nutzertest. Isolierte Spiel-CI und Draft-PR folgen; Details in HANDOFF.
+
+Abschluss: Draft-PR158, exakter Spielcode3e83a8e5bde4adcbe887939adfcadf85d10f30a8, isolierte CI37545574248 samt Build-/Browser-Artefakt11450736550 erfolgreich. Stufe ci_green, lokale Vorschauhttp://127.0.0.1:4187. Globaler Development-Status37545574184 meldet fehlende fremde Web-Übergabe; keine pauschale Gesamt-CI-Freigabe. Nutzer-/iPad-Abnahme und Remotehosting fehlen.

@@ -199,4 +199,4 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
-| GC-GAMES-PIZZA-01 | Erster Browser-Pilot spielbar;17 Verhaltenstests und kompletter In-App-Spielablauf bestätigt, unabhängige Review korrigiert. Eigener Branch; kein Hosting-/Gerätenachweis. | Isolierte Spiel-CI abholen; Martin testet die lokale Schicht, danach echte iPad-/Spielabnahme. [Übergabe](workstreams/bruchpizzeria-browser-pilot-20261006.md) |
+| GC-GAMES-PIZZA-01 | Erster Browser-Pilot ci_green:17 Tests, Build und Browser-CI37545574248 am3e83a8e5 erfolgreich; unabhängige Review korrigiert. Draft-PR158, lokale Testumgebung; kein Remotehosting-/Gerätenachweis. | Martin testet die lokale erste Schicht; konkrete Befunde sammeln, dann echte iPad-/Spielabnahme und separaten Hostingauftrag. [Übergabe](workstreams/bruchpizzeria-browser-pilot-20261006.md) |

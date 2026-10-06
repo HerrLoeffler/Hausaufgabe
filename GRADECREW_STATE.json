@@ -717,12 +717,15 @@
       "id": "games-bruchpizzeria-pilot",
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-browser-pilot-v1",
-      "stage": "branch_only",
-      "ci": "pending_isolated_browser_pilot_ci",
+      "stage": "ci_green",
+      "ci": "success_isolated_game_run_37545574248_17_model_tests_built_browser_flow",
       "staging": "not_deployed_local_browser_preview_only",
       "user_test": "not_performed",
       "handoff": "workstreams/bruchpizzeria-browser-pilot-20261006.md",
-      "next_action": "Verify exact isolated game CI; Martin tests local pilot. No main web release or Production change."
+      "next_action": "Martin tests local pilot, then physical iPad acceptance and separate Hosting request. Global Development Status has a foreign missing-handoff error; no main web release or Production change.",
+      "observed_head": "3e83a8e5bde4adcbe887939adfcadf85d10f30a8",
+      "pull_request": 158,
+      "artifact_id": 11450736550
     }
   ],
   "deployments": [
