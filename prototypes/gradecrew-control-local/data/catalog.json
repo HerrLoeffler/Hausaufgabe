@@ -353,19 +353,19 @@
       "id": "GC-DESIGN-05",
       "title": "Startscreen Hero Scene + First-Visit-Animation",
       "area": "Design & Crew",
-      "priority": "P1",
-      "statusText": "Auf Staging · neuer Startbildschirm; dein Gerätetest ist offen",
-      "next": "Staging öffnen: DE/EN, Anmeldung/Registrierung, Schülercode, Tutorial-Einstieg und Remy/Emmi/Wilma-Demos testen.",
+      "priority": "P0",
+      "statusText": "Abnahme fehlgeschlagen · Ladefehler/Anmeldung; Korrektur läuft",
+      "next": "Ladefehler reproduzieren und beheben, ursprüngliche Coco-Führung und kompakte Startansicht wiederherstellen. Kurze Staging-Adresse kontrolliert versorgen; fehlgeschlagenen Stand nicht weiterveröffentlichen.",
       "stage": "staging_deployed",
       "stageSource": "Exact merge CI + verified Hosting/AI/Assessment receipts",
       "branch": "feature/gradecrew-app-integration",
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
       "evidence": "Mergef97841b; Combined37467220757/Mobile37467220869 grün; Hosting37467324361 hashverified; AI/Assessment37467324128 erfolgreich.",
       "triage": {
-        "category": "acceptance_pending",
+        "category": "needs_implementation",
         "package": "design-and-crew",
-        "checkedAt": "2026-10-06T13:04:46.695650+00:00",
-        "reason": "Technische Integration und Staging nachgewiesen; reale Geräteabnahme offen.",
+        "checkedAt": "2026-10-06T14:16:17.200461+00:00",
+        "reason": "Martin meldet auf veröffentlichtem Stand Ladefehler, Loginblockade und Tutorial/Layout-Regressions.",
         "evidence": "Mergef97841b; Combined37467220757/Mobile37467220869 grün; Hosting37467324361 hashverified; AI/Assessment37467324128 erfolgreich."
       }
     },
@@ -1780,13 +1780,13 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T13:04:46.695650+00:00",
+  "reconciledAt": "2026-10-06T14:16:17.200461+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 4,
     "later": 6,
-    "acceptancePending": 14,
-    "remainingInvestigationOrImplementation": 26,
+    "acceptancePending": 13,
+    "remainingInvestigationOrImplementation": 27,
     "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }

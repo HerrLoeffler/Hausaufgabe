@@ -143,18 +143,18 @@
     },
     {
       "package": "design",
-      "status": "staging_deployed_device_acceptance_pending",
+      "status": "user_acceptance_failed_repair_active",
       "threadId": "01a10e98-1e57-7b40-af70-555fdfdae2e3",
       "goal": "Do not start duplicate art production; collect current author results before classifying",
-      "cursor": "8d5807aa-2d11-4b24-9b07-48031c3cb5de:13",
+      "cursor": "8d5807aa-2d11-4b24-9b07-48031c3cb5de:16",
       "pr": 143,
       "head": "a9e20860b838ee3348f9ddbdd0314fc1c599f405",
       "scope": "Finished isolated interactive preview; 4 controller tests locally repeated. Login/test access/full tutorial integration required. Latest browser revision unverified; no safety bypass. Main alone integrates/deploys.",
       "model": "gpt-6-sol",
       "thinking": "high",
       "turnId": "01a1111b-0047-7662-a58d-9accb3ba553f",
-      "lastStatusCheck": "2026-10-06T12:56:56.226656+00:00",
-      "lastObservedState": "Existing repair still active; author reproduced stale version assertion, no completed correction received.",
+      "lastStatusCheck": "2026-10-06T14:19:53.499798+00:00",
+      "lastObservedState": "Author reproduced bootstrap SyntaxError: two literal backslash-n sequences in app.js; repair and module/real HTML regression test in progress.",
       "reportedIntegrationPr": 149,
       "integrationPr": 149,
       "integrationHead": "2c8a73314cd00163bf18260571dd1321c9ccd4cb",
@@ -169,8 +169,8 @@
       "ciFailure": "gradecrew-design-foundation.test.mjs:49 checks import?v=5; startup uses?v=6. Review to confirm outdated assertion, not ordering regression. No retry.",
       "reviewReport": "reports/hero149-review-20261006.json",
       "repairDispatchAt": "2026-10-06T12:49:35.830215+00:00",
-      "repairScope": "Fix stale startup import assertion; no other changes; preserve attempts.",
-      "repairTurnId": "01a11142-d846-71c3-8691-37dddbab4c50",
+      "repairScope": "P0 startup/login; compact public layout; original Coco tutorial; user detailed feedback20261006",
+      "repairTurnId": "01a1118e-5c9d-7a72-bb8f-cb4757a4f0c2",
       "repairAttempt": 1,
       "repairDeltaReview": "Main verified only version-independent test regex + handoff; original product review retained; local foundation8/8 pass.",
       "mergeSha": "f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
@@ -181,12 +181,13 @@
       "hostingRun": 37467324361,
       "functionsRun": 37467324128,
       "deploymentReport": "reports/staging-hero-20261006.json",
-      "verifiedAt": "2026-10-06T13:04:46.695650+00:00"
+      "verifiedAt": "2026-10-06T13:04:46.695650+00:00",
+      "userAcceptance": "failed"
     }
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T13:04:46.695650+00:00",
+  "lastCheckpoint": "2026-10-06T14:19:53.499798+00:00",
   "deployment": {
     "taskId": "GC-DESIGN-05",
     "verifiedAt": "2026-10-06T13:04:46.695650+00:00",
@@ -204,7 +205,7 @@
     "assessmentJob": 112281634618,
     "assessmentReceipt": 11416070034,
     "status": "staging_deployed",
-    "deviceAcceptance": "pending",
+    "deviceAcceptance": "failed_user_report",
     "rulesChanged": false,
     "productionChanged": false,
     "gamesChanged": false,
@@ -212,10 +213,10 @@
     "mainCheckpoint": "3d78a0e54a31f02a970d965164c00894748f80e0",
     "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "ciConclusion": "success",
-    "manualAcceptance": "pending"
+    "manualAcceptance": "failed_user_report"
   },
-  "coordinationStatus": "authorized_package_deployed_awaiting_device_feedback",
-  "resumeNext": "Martin tests Hero/DE-EN/login/student-code/tutorial on staging. Collector paused; no automatic repeat deployment or additional scope. Other open project tasks remain.",
+  "coordinationStatus": "user_feedback_repair_active",
+  "resumeNext": "Collect existing Hero author repair; canonical_staging subagent prepares bounded hosting promotion PR only. Do NOT promote failedf97841b. Browsersecurityverification unavailable; no bypass.",
   "integrationPlan": {
     "target": "feature/gradecrew-app-integration",
     "base": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
@@ -267,8 +268,15 @@
   ],
   "resultCollector": {
     "automationId": "gradecrew-security-ergebnis-zur-ckholen",
-    "status": "PAUSED",
-    "intervalMinutes": 10,
-    "scope": "Authorized Hero package technically deployed; user device acceptance next."
+    "status": "ACTIVE",
+    "intervalMinutes": 5,
+    "scope": "GC-DESIGN-05 acceptance repair plus GC-STAGING-CANONICAL-01 control PR; collect/review/integrate proven candidate only"
+  },
+  "canonicalStaging": {
+    "agent": "/root/canonical_staging",
+    "model": "gpt-6-sol",
+    "status": "preparing_control_pr",
+    "scope": "Control-plane only, canonicalhausaufgabe-staging.web.app; no merge/deploy or permissionexpansion",
+    "taskId": "GC-STAGING-CANONICAL-01"
   }
 }
