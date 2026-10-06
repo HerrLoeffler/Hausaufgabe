@@ -21,3 +21,7 @@ UI-Code in diesem Worktree umgesetzt. Gezielte Tests wurden zunächst rot und na
 Nach dem Review bereinigter Code-Head auf GitHub: `c0750d2702adfde454d3f099e5766f155d92cfc0`, [PR #157](https://github.com/HerrLoeffler/Hausaufgabe/pull/157) gegen `feature/gradecrew-app-integration`. PR ist reviewbereit und mergebar; Release-Stufe weiterhin `branch_only`. Der Main-Chat integriert das gemeinsame UI-/Remy-/Audio-Batch als einziger Schreiber und führt die Staging-Veröffentlichung mit exaktem Commit und Receipts durch. Nächster Schritt: integrierten Staging-Commit und Browser-Akzeptanz für Login/Test-Erstellung nachweisen.
 
 Main-Integrationsnachweis: UI-Runtime über PR159/0931ade4e415690cc149c829c5f1a6703d085177 übernommen; Runtime-Dateien gegen isolierten UI-Checkout verglichen, identisch. PR157 alsersetztgeschlossen, letzteUI-BranchdifferenznurHandoff. Integrierte CI/Deployment und Geräteabnahme separat abholen. Kein eigenständiger erneuterUI-Merge/Deploy.
+
+## Staging-Nachweis 07.10.2026
+
+UI-Paket ist über PR159 in `0931ade4e415690cc149c829c5f1a6703d085177` integriert und auf kanonischem Staging veröffentlicht. Merge-CI `37547012003` und Mobile-Check `37547012032` grün; Hosting-Preview `37547126018`/Receipt `11450528574`, AI- und Assessment-Functions `37547126016`/Receipts `11451600189` und `11451256131`, kanonisches Hosting `37547422005`/Receipt `11450254448` grün. URL: https://hausaufgabe-staging.web.app/; 120 Dateien verifiziert. Persönlicher Login und Test-Erstellung/Speicherung sowie Desktop-/Mobilabnahme weiterhin offen. Production unverändert.
