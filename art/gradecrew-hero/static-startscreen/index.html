@@ -15,7 +15,7 @@
     <header class="header">
       <a class="brand" href="#welcome" aria-label="GradeCrew"><img src="assets/brand-primary-v1.svg" alt="" width="48" height="48"><span>Grade<span>Crew</span></span></a>
       <nav aria-label="Hauptnavigation" data-copy-aria="navigation">
-        <a href="#benefits" data-copy="features">Funktionen</a>
+        <button type="button" data-dialog="features" data-copy="features">Funktionen</button>
         <button type="button" data-dialog="crew" data-copy="crew">Die Crew</button>
         <button type="button" data-dialog="teachers" data-copy="teachers">Für Lehrkräfte</button>
       </nav>
@@ -26,15 +26,15 @@
     </header>
     <main id="welcome" tabindex="-1">
       <section class="hero" aria-labelledby="welcome-title">
-        <img class="scene" src="assets/crew-classroom.webp" width="1536" height="1024" alt="Coco öffnet die Klassenzimmertür. Remy, Emmi und Wilma begrüßen dich." data-copy-alt="sceneAlt" fetchpriority="high">
+        <img class="scene" src="assets/crew-classroom-v2.webp" width="1536" height="1024" alt="Coco öffnet die Klassenzimmertür. Remy, Emmi und Wilma begrüßen dich." data-copy-alt="sceneAlt" fetchpriority="high">
         <div class="welcome-copy">
           <h1 id="welcome-title"><span data-copy="greeting">Hi! Ich bin Coco.</span><span data-copy="welcome">Willkommen bei</span> <strong>GradeCrew.</strong></h1>
           <p data-copy="subtitle">Digitale Tests. Schnell & einfach.</p>
         </div>
         <div class="crew-roles" aria-label="Deine Crew" data-copy-aria="yourCrew">
-          <button class="role remy" data-dialog="remy"><span class="role-icon" aria-hidden="true">✎</span><span><strong data-copy="remyName">Remy</strong><small data-copy="remyRole">Erstellen</small></span></button>
-          <button class="role emmi" data-dialog="emmi"><span class="role-icon" aria-hidden="true">▤</span><span><strong data-copy="emmiName">Emmi</strong><small data-copy="emmiRole">Verbessern</small></span></button>
-          <button class="role wilma" data-dialog="wilma"><span class="role-icon check" aria-hidden="true">✓</span><span><strong data-copy="wilmaName">Wilma</strong><small data-copy="wilmaRole">Prüfen</small></span></button>
+          <button class="role remy" data-dialog="remy"><span><strong data-copy="remyName">Remy</strong><small data-copy="remyRole">Erstellen</small></span></button>
+          <button class="role emmi" data-dialog="emmi"><span><strong data-copy="emmiName">Emmi</strong><small data-copy="emmiRole">Verbessern</small></span></button>
+          <button class="role wilma" data-dialog="wilma"><span><strong data-copy="wilmaName">Wilma</strong><small data-copy="wilmaRole">Prüfen</small></span></button>
         </div>
         <div class="entry-actions">
           <button class="button primary" type="button" data-dialog="crew"><span data-copy="meetCrew">Crew kennenlernen</span><span aria-hidden="true">→</span></button>
@@ -44,12 +44,6 @@
           <label for="testCode"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="10" r="5"/><path d="M3 28v-4c0-8 18-8 18 0v4M22 6a5 5 0 0 1 0 10M25 20c4 1 4 4 4 8"/></svg><span><strong data-copy="student">Schüler?</strong> <span data-copy="enterCode">Testcode eingeben.</span></span></label>
           <div class="code-field"><input id="testCode" name="testCode" type="text" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Testcode eingeben" data-copy-placeholder="codePlaceholder" required><button class="button primary code-submit" type="submit" aria-label="Test öffnen" data-copy-aria="openTest">→</button></div>
         </form>
-      </section>
-      <section class="benefits" id="benefits" aria-label="Vorteile" data-copy-aria="benefits">
-        <article><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6V2Z"/></svg><div><h2 data-copy="benefit1">Schnell erstellt</h2><p data-copy="benefit1Detail">In wenigen Minuten</p></div></article>
-        <article><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 8 10-5 10 5-10 5L2 8Zm4 3v6c4 3 8 3 12 0v-6m4-3v10"/></svg><div><h2 data-copy="benefit2">Einfach durchgeführt</h2><p data-copy="benefit2Detail">Für deine Klasse</p></div></article>
-        <article><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V12m7 9V7m7 14V2"/></svg><div><h2 data-copy="benefit3">Direkt ausgewertet</h2><p data-copy="benefit3Detail">Mit klaren Ergebnissen</p></div></article>
-        <article><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><div><h2 data-copy="benefit4">Für Lehrkräfte gemacht</h2><p data-copy="benefit4Detail">Mehr Zeit fürs Wesentliche</p></div></article>
       </section>
     </main>
   </div>

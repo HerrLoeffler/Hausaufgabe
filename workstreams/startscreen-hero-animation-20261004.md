@@ -319,3 +319,14 @@ Offen: Bildabnahme einschließlich blauer Augenakzente gegenüber dunkleren kano
 Aktive Zuständigkeit: dieser Ersatz-/Fortsetzungschat 01a10e98-1e57-7b40-af70-555fdfdae2e3. Lokaler Vorschau-Server 127.0.0.1:8768 (exec session4464) bleibt für Martin geöffnet. Keine laufende Bild-/Rendergenerierung. Frühere Sol-/Astra-Quellen und Versuchshistorie unverändert. Sicherung dieser Lieferung gesammelt im selben PR; exakter neuer Commit wird im Abschluss genannt.
 
 Genau nächster Schritt: Martins visuelles Feedback zum jetzt vorliegenden statischen Startbildschirm einarbeiten; erst anschließend bestehende App-Handler/i18n anbinden, Animation nachrangig.
+
+
+## 06.10.2026 — Ruhigere Revision 2 nach positivem Nutzerfeedback
+
+Martin: erste statische Richtung gut; Coco ohne Schal, Rollen von Emmi/Wilma durch Zeichen verdeutlichen und überladenen unteren weißen Bereich vereinfachen. Rückfrage Remy ausdrücklich beantwortet: ohne Pulli, mit Tablet. Aktuelle Umsetzung: gezielter Bildedit mit diesen vier Änderungen, keine neue Komposition; neue Datei crew-classroom-v2.webp (187.680 Bytes), V1 erhalten. Sprachunabhängiges Bearbeitungssymbol auf Emmis Papier und grüne Prüfhaken auf Wilmas Klemmbrett, weiterhin keine eingebrannten Wörter. Ein zusätzlicher built-in image_gen-Aufruf; insgesamt zwei statische Bildaufrufe, keine bezahlte API-/Higgsfield-/Blender-Weiterarbeit und keine Budgetrücksetzung. Exakter Edit-Prompt IMAGE_PROMPT_V2.txt.
+
+Layout: weiße Vorteilsleiste entfernt, Inhalte jetzt über Funktionen-Dialog; Crew-Namen/Rollen ohne drei Karten und doppelte Symbole, Anmeldung als dezenter Textbutton, Codefeld ohne große Hintergrundkarte. HTML-Texte weiterhin DE/EN editierbar. Nur derselbe statische Preview-Unterordner plus TODO/Übergabe geändert. Ausgang remote91ab6db7; Development Status37416892343 erfolgreich. Integrations-/Production-Zustand unverändert branch_only; kein App-Anschluss/Deploy.
+
+Nachweise: aktuelle verify.cjs-Ausführung mit12 bestandenen Abschnitten und0 JS-Ausnahmen; DE/EN bei fünf Breiten, UI-Grenzen, Sprachwechsel, Funktionen-/Crew-Dialoge und Tastatur. Desktop DE/Mobil DE visuell geprüft; Screenshots und JSON aktualisiert. Original-V2-PNG lokal zusätzlich erhalten, veröffentlichungsfähiges WebP und Prompt im Repo gesichert. Nutzer hat die Richtung befürwortet, V2 noch nicht abgenommen. Auto-Reload des bestehenden IAB-Tabs durch nicht verfügbare Sicherheitsprüfung blockiert, keine Umgehung; zuvor erstellte isolierte Chrome-Prüfnachweise vorhanden. Lokaler Server8768 bleibt bestehen.
+
+Genau nächster Schritt: visuelles Feedback zu Revision2; danach bestehende App/i18n-Anbindung. Animation bleibt nachrangig.

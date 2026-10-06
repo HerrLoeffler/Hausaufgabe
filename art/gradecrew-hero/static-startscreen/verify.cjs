@@ -16,7 +16,7 @@ const fs = require('node:fs');
         assert.equal(await page.locator('html').getAttribute('lang'), lang);
         const layout = await page.evaluate(() => {
           const rect = selector => { const r = document.querySelector(selector).getBoundingClientRect(); return {top:r.top,bottom:r.bottom,left:r.left,right:r.right}; };
-          return { overflow: document.documentElement.scrollWidth > innerWidth, hero:rect('.hero'), title:rect('.welcome-copy'), roles:rect('.crew-roles'), actions:rect('.entry-actions'), join:rect('.join'), benefits:rect('.benefits'), images:[...document.images].every(i=>i.complete && i.naturalWidth>0), missing:[...document.querySelectorAll('[data-copy]')].filter(el=>!window.GRADECREW_COPY[document.documentElement.lang][el.dataset.copy]).length };
+          return { overflow: document.documentElement.scrollWidth > innerWidth, hero:rect('.hero'), title:rect('.welcome-copy'), roles:rect('.crew-roles'), actions:rect('.entry-actions'), join:rect('.join'), images:[...document.images].every(i=>i.complete && i.naturalWidth>0), missing:[...document.querySelectorAll('[data-copy]')].filter(el=>!window.GRADECREW_COPY[document.documentElement.lang][el.dataset.copy]).length };
         });
         assert.equal(layout.overflow, false, `${width}/${lang}: horizontal overflow`);
         assert.equal(layout.images, true);
@@ -24,7 +24,7 @@ const fs = require('node:fs');
         assert.ok(layout.title.bottom < layout.roles.top, `${width}/${lang}: title covers crew labels`);
         assert.ok(layout.roles.bottom <= layout.actions.top, `${width}/${lang}: labels overlap buttons`);
         assert.ok(layout.actions.bottom <= layout.join.top, `${width}/${lang}: buttons overlap code form`);
-        assert.ok(layout.join.bottom <= layout.benefits.top, `${width}/${lang}: form overlaps benefits`);
+        assert.ok(layout.join.bottom <= layout.hero.bottom, `${width}/${lang}: form extends beyond scene`);
         results.push(`${width}px ${lang}: translated DOM, loaded assets, no overflow or UI overlap`);
         if ([390,1440].includes(width)) await page.screenshot({ path:`evidence/${width===390?'mobile':'desktop'}-${lang}.png`, fullPage:true });
       }
@@ -35,6 +35,9 @@ const fs = require('node:fs');
     assert.equal(await page.locator('#testCode').getAttribute('placeholder'), 'Enter test code');
     await page.reload();
     assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    await page.locator('[data-dialog="features"]').click();
+    assert.equal(await page.locator('#detailTitle').innerText(), 'From first draft to clear results.');
+    await page.keyboard.press('Escape');
     await page.locator('.entry-actions [data-dialog="crew"]').click();
     assert.equal(await page.locator('#detailTitle').innerText(), 'Four friends. One shared goal.');
     await page.keyboard.press('Escape');

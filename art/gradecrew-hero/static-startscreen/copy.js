@@ -2,7 +2,7 @@
 window.GRADECREW_COPY = {
   de: {
     title: 'GradeCrew – Digitale Tests. Schnell & einfach.', skip: 'Zum Inhalt springen', navigation: 'Hauptnavigation',
-    features: 'Funktionen', crew: 'Die Crew', teachers: 'Für Lehrkräfte', help: 'Hilfe', language: 'Sprache',
+    featuresTitle: 'Einfach vom Entwurf zum Ergebnis.', featuresBody: 'Tests in wenigen Minuten erstellen, mit deiner Klasse durchführen und Ergebnisse übersichtlich auswerten. Deine Crew unterstützt dich bei jedem Schritt.', features: 'Funktionen', crew: 'Die Crew', teachers: 'Für Lehrkräfte', help: 'Hilfe', language: 'Sprache',
     greeting: 'Hi! Ich bin Coco.', welcome: 'Willkommen bei', subtitle: 'Digitale Tests. Schnell & einfach.',
     sceneAlt: 'Coco öffnet die Klassenzimmertür. Remy, Emmi und Wilma begrüßen dich.', yourCrew: 'Deine Crew',
     remyName: 'Remy', emmiName: 'Emmi', wilmaName: 'Wilma', remyRole: 'Erstellen', emmiRole: 'Verbessern', wilmaRole: 'Prüfen',
@@ -22,7 +22,7 @@ window.GRADECREW_COPY = {
   },
   en: {
     title: 'GradeCrew – Digital tests. Quick & easy.', skip: 'Skip to content', navigation: 'Main navigation',
-    features: 'Features', crew: 'The crew', teachers: 'For teachers', help: 'Help', language: 'Language',
+    featuresTitle: 'From first draft to clear results.', featuresBody: 'Create tests in minutes, run them with your class and review clear results. Your crew supports you every step of the way.', features: 'Features', crew: 'The crew', teachers: 'For teachers', help: 'Help', language: 'Language',
     greeting: 'Hi! I’m Coco.', welcome: 'Welcome to', subtitle: 'Digital tests. Quick & easy.',
     sceneAlt: 'Coco opens the classroom door. Remy, Emmi and Wilma welcome you.', yourCrew: 'Your crew',
     remyName: 'Remy', emmiName: 'Emmi', wilmaName: 'Wilma', remyRole: 'Create', emmiRole: 'Improve', wilmaRole: 'Review',

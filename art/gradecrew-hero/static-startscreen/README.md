@@ -27,4 +27,15 @@ Desktop DE und Mobil EN als WebP im Repository; vier PNG-Screenshots lokal erhal
 
 Reproduktion: Server auf `127.0.0.1:8768` in diesem Ordner starten, dann `PLAYWRIGHT_MODULE=<playwright-Modul> CHROME_PATH=<Chrome-Binary> node verify.cjs`.
 
-Nächster Schritt: Martins visuelles Feedback zu genau diesem Startbildschirm einarbeiten; danach denselben Text-/Bildaufbau in den vorhandenen App-Einstieg integrieren. Animation bleibt nachrangig.
+Nächster Schritt: visuelle Abnahme der überarbeiteten Fassung; danach vorhandene App-Handler/i18n anbinden. Animation bleibt nachrangig.
+
+
+## Revision 2 — Rückmeldung umgesetzt
+
+Martin bewertet die erste statische Richtung positiv und beauftragt eine ruhigere Fassung: Coco ohne Schal, Remy nach ausdrücklicher Auswahl ohne Pulli, mit Tablet. Emmis Papier trägt ein oranges Bearbeitungssymbol, Wilmas Klemmbrett grüne Prüfhaken. Diese sprachunabhängigen Zeichen sind Teil der Illustration; Wörter bleiben vollständig im HTML-Katalog.
+
+Aktives Bild: `assets/crew-classroom-v2.webp`, 187.680 Bytes. V1 bleibt erhalten. Ein zusätzlicher gezielter built-in image_gen-Edit, insgesamt zwei Bildaufrufe für die statische Szene, kein Retry; Prompt `IMAGE_PROMPT_V2.txt`. Original V2-PNG lokal erhalten.
+
+Weiße Vorteilsleiste entfernt, Funktionen über übersetzten Dialog zugänglich. Crew-Beschriftungen ohne Karten und doppelte Symbole, Anmeldung ohne umrandeten Button, Codefeld ohne große Hintergrundkarte. Bestehende DE/EN-Texte und zugängliche Bedienelemente bleiben separat. Die Bildkomposition und Identitäten sind weitgehend erhalten; keine neue 3D-/Animationsarbeit.
+
+Aktuelle Browserprüfung erneut 12 Abschnitte bestanden (DE/EN, fünf Breiten, Layout, Dialoge inkl. Funktionen, Tastatur); Desktop DE/Mobil DE visuell angesehen. Prüfbilder/JSON beziehen sich jetzt auf V2. Keine JS-Ausnahmen. Kein echter Gerätetest, App-Anschluss oder Deploy. Das automatische Aktualisieren des offenen In-App-Browser-Tabs war durch eine nicht verfügbare Browser-Sicherheitsprüfung blockiert; die Dateien und isolierten Chrome-Prüfnachweise wurden vorher erfolgreich erstellt. Martin kann die bestehende Vorschau selbst neu laden.
