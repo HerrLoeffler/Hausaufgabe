@@ -192,3 +192,10 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | --- | --- | --- |
 | GC-DESIGN-05B | Aktiver Sol-Auftrag im vorhandenen Hero-Chat; eigener Branch von PR151. | Originale Coco-Führung direkt in echter Oberfläche mit lokalem Gast-Datenadapter; kein Fake-Account/Serverwrite. Normales Handyhochformat ohne Seitenscroll. Name erst später. |
 | GC-STAGING-CANONICAL-01 | PR150 als6551091a auf main integriert; exakte Handoff-CI37481824301 und unabhängiges Review grün. Noch keine Promotion. | Neuen versiongebundenen Preview-Receipt für reparierte Produkt-SHA abholen, dann expliziten unveränderlichen Request für hausaufgabe-staging.web.app erstellen und Deploy prüfen. |
+
+
+## Erster Bruchpizzeria Spieltest — 6. Oktober 2026
+
+| Aufgabe | Stand | Nächster Schritt |
+| --- | --- | --- |
+| GC-GAMES-PIZZA-01 | Spielidee und Nutzerwünsche gesichert; Browser, selbst schneiden, freundliche Gäste und leichter Zeitdruck. Konkreter Spielentwurf vorgeschlagen; kein Spielcode/Deploy. | Eine kompakte Küche mit Hälften/Vierteln und zwei Bestellungen entwerfen; Werkzeug-/Gerätewahl und Schnittmechanik konkretisieren. [Übergabe](workstreams/bruchpizzeria-browser-pilot-20261006.md) |
