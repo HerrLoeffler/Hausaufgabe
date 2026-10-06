@@ -3,6 +3,7 @@
 - Parent: GC-STAGING-CLOSEOUT-20261006. Owner: canonical staging deploy-control workstream; chat link unknown.
 - Initial controller: PR #150, merged as 6551091a2c2a6e9a46715fa243bc2af127100879.
 - Repair branch: fix/gc-staging-canonical-direct-20261006, based on main 9c24523c701fc580a73b95b354ad0337d5bcbf22; target main.
+- Repair PR: #152 (draft). Last code commit before handoff refresh: 3a607f2d58f384cf084ddab51379b3583ad484d0; current branch head is the PR ref.
 - Scope: staging-preview.yml, preview.py, canonical_staging.py, targeted tests and this handoff. No product files, central state, TODO, IAM, secrets, Functions, Rules or Production project change.
 
 ## First real preview attempt and diagnosis
