@@ -185,6 +185,8 @@ jobs:
           run-id: ${{ steps.request.outputs.preview_run_id }}
           github-token: ${{ github.token }}
           path: promotion/public
+      - name: Validate the downloaded build and construct staging Hosting config
+        run: python3 tools/automation/preview.py prepare promotion
       - name: Install the existing pinned Firebase CLI before cloud login
         run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund firebase-tools@14.17.0
       - name: Require the existing staging Hosting identity
@@ -198,18 +200,16 @@ jobs:
           workload_identity_provider: ${{ vars.STAGING_WIF_PROVIDER }}
           service_account: gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com
           token_format: access_token
-          access_token_scopes: https://www.googleapis.com/auth/firebase.hosting
-      - name: Pin and verify the preview version; record previous live version
-        id: promotion
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - name: Recheck the verified preview and record previous staging live version
         env:
           GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: python3 -m tools.automation.canonical_staging prepare
-      - name: Clone only that exact version to the staging live channel
+      - name: Publish only the verified build to staging live Hosting
         run: |
-          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" hosting:clone \
-            "hausaufgabe-staging:@${{ steps.promotion.outputs.version }}" \
-            hausaufgabe-staging:live --project hausaufgabe-staging --non-interactive
-      - name: Verify canonical URL, version, manifest and all file hashes
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy --only hosting \
+            --project hausaufgabe-staging --config promotion/firebase.json --non-interactive
+      - name: Verify canonical URL, manifest and all file hashes
         env:
           GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: python3 -m tools.automation.canonical_staging verify

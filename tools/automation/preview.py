@@ -53,25 +53,6 @@ def preview_url(result):
     return valid[0]
 
 
-def deployed_version(result):
-    versions = []
-    def walk(value):
-        if isinstance(value, dict):
-            for key, item in value.items():
-                if key == 'version' and isinstance(item, str):
-                    versions.append(item)
-                else:
-                    walk(item)
-        elif isinstance(value, list):
-            for item in value:
-                walk(item)
-    walk(result)
-    ids = {v.removeprefix('sites/hausaufgabe-staging/versions/') for v in versions}
-    if len(ids) != 1 or not re.fullmatch(r'[A-Za-z0-9_-]+', next(iter(ids))):
-        raise ValueError('No unambiguous deployed Hosting version')
-    return 'sites/hausaufgabe-staging/versions/' + next(iter(ids))
-
-
 def main():
     mode, folder = sys.argv[1:]
     root = Path(folder)
@@ -89,7 +70,6 @@ def main():
         raise ValueError('Unknown mode')
     deploy_result = json.loads(Path(os.environ['DEPLOY_RESULT']).read_text())
     url = preview_url(deploy_result)
-    version = deployed_version(deploy_result)
     def get(name):
         request = urllib.request.Request(url + '/' + urllib.parse.quote(name, safe='/') + '?verify=' + expected, headers={'Cache-Control': 'no-cache'})
         with urllib.request.urlopen(request, timeout=30) as response:
@@ -101,7 +81,7 @@ def main():
     for name, digest in release['files'].items():
         if hashlib.sha256(get(name)).hexdigest() != digest:
             raise ValueError('Published bytes differ: ' + name)
-    receipt = {'project': 'hausaufgabe-staging', 'channel': 'gradecrew-app-integration', 'commit': expected, 'url': url, 'version': version, 'verified_files': len(release['files']), 'ci_run': os.environ.get('GITHUB_RUN_ID'), 'device_test': 'not_performed'}
+    receipt = {'project': 'hausaufgabe-staging', 'channel': 'gradecrew-app-integration', 'commit': expected, 'url': url, 'verified_files': len(release['files']), 'ci_run': os.environ.get('GITHUB_RUN_ID'), 'device_test': 'not_performed'}
     (root / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as output:
         output.write('Preview verified: ' + url + '\n\nCommit: `' + expected + '`\n\nAll manifest file hashes match. Device testing remains open.\n')

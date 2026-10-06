@@ -1,4 +1,4 @@
-"""Promote one verified integration preview version to the canonical staging URL."""
+"""Publish a verified integration preview build at the canonical staging URL."""
 from __future__ import annotations
 
 import hashlib
@@ -116,8 +116,6 @@ def qualify():
             or receipt.get("commit") != expected or receipt.get("ci_run") != str(run_id)
             or receipt.get("device_test") != "not_performed"
             or type(receipt.get("verified_files")) is not int or receipt["verified_files"] < 1
-            or not isinstance(receipt.get("version"), str)
-            or not re.fullmatch(r"sites/hausaufgabe-staging/versions/[A-Za-z0-9_-]+", receipt["version"])
             or not re.fullmatch(
                 r"https://hausaufgabe-staging--gradecrew-app-integration-[a-z0-9]+\.web\.app/?",
                 str(receipt.get("url", "")))):
@@ -168,10 +166,12 @@ def channel_version(channel, required):
             raise ValueError("Source channel has no current release")
         return None
     version = current.get("version", {}).get("name")
-    if not isinstance(version, str) or not re.fullmatch(
-            r"sites/hausaufgabe-staging/versions/[A-Za-z0-9_-]+", version):
+    match = re.fullmatch(
+        r"(?:projects/(?:950775032930|hausaufgabe-staging)/)?sites/hausaufgabe-staging/versions/([A-Za-z0-9_-]+)",
+        version or "") if isinstance(version, str) else None
+    if not match:
         raise ValueError("Unexpected Hosting version")
-    return version
+    return "sites/" + SITE + "/versions/" + match.group(1)
 
 
 def bundle(expected, receipt):
@@ -185,21 +185,14 @@ def prepare():
     source, receipt = qualify()
     release = bundle(source["commit"], receipt)
     before = channel_version("live", False)
-    version = channel_version(CHANNEL, True)
-    if version != receipt["version"]:
-        raise ValueError("Current preview version differs from verified deployment receipt")
     published_files(receipt["url"], release)
     STATE.write_text(json.dumps({"sourceRun": int(os.environ["PREVIEW_RUN_ID"]),
                                  "commit": source["commit"], "upstreamCiRun": source["upstreamCiRun"],
-                                 "previewVersion": version, "previousLiveVersion": before}) + "\n")
+                                 "previousLiveVersion": before}) + "\n")
     # Recheck GitHub authority immediately before the destructive Hosting operation.
     qualify()
-    if channel_version(CHANNEL, True) != version:
-        raise ValueError("Preview channel changed during verification")
     if channel_version("live", False) != before:
         raise ValueError("Staging live channel changed before promotion")
-    with open(os.environ["GITHUB_OUTPUT"], "a") as output:
-        output.write("version=" + version.rsplit("/", 1)[1] + "\n")
 
 
 def verify():
@@ -207,13 +200,14 @@ def verify():
     state = json.loads(STATE.read_text())
     if state["sourceRun"] != int(os.environ["PREVIEW_RUN_ID"]) or state["commit"] != source["commit"]:
         raise ValueError("Promotion state differs")
-    if channel_version("live", True) != state["previewVersion"]:
-        raise ValueError("Canonical live channel does not serve the pinned preview version")
+    version = channel_version("live", True)
     release = bundle(source["commit"], receipt)
     published_files(CANONICAL_URL, release)
+    if channel_version("live", True) != version:
+        raise ValueError("Staging live channel changed during verification")
     result = {"project": SITE, "channel": "live", "url": CANONICAL_URL + "/",
               "commit": source["commit"], "sourcePreviewRun": state["sourceRun"],
-              "upstreamCiRun": state["upstreamCiRun"], "version": state["previewVersion"],
+              "upstreamCiRun": state["upstreamCiRun"], "version": version,
               "previousLiveVersion": state["previousLiveVersion"],
               "verifiedFiles": len(release["files"]), "workflowRun": int(os.environ["GITHUB_RUN_ID"]),
               "functionsChanged": False, "rulesChanged": False, "productionChanged": False,
