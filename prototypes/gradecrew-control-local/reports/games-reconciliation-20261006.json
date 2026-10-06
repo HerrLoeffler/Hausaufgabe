@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "batch": "GC-STAGING-CLOSEOUT-20261006",
+  "createdAt": "2026-10-06",
+  "scope": "Read-only GitHub reconciliation of GC-GAMES-01, GC-GAMES-COST-01, GC-GAMES-INTEGRITY-01. No implementation, deploy, API call, branch cleanup, or PR mutation.",
+  "sourceAuthority": {
+    "repository": "HerrLoeffler/Hausaufgabe",
+    "startHere": {
+      "ref": "main",
+      "sha": "0dcc8914b2f89bf4e2a059e735490c996a3706ef",
+      "read": "official GitHub connector"
+    },
+    "workstreamsReadme": {
+      "ref": "main",
+      "sha": "c14206a7c09d9468a6b5317a94c65b1722a727d3",
+      "read": "official GitHub connector"
+    },
+    "mainInputCopies": {
+      "TODO.md": "022f7849bed0b541b9dc767abf2496ad162aa110",
+      "GRADECREW_STATE.json": "a311f46989084a66d185ab2904409fca6f3685ba",
+      "AGENTS.md": "96929006f8da3eaf5aeb2d1aa27221484e148abb",
+      "provenance": "fresh official GitHub connector reads provided in reports/main-input by coordinating chat"
+    },
+    "queryBudget": {
+      "limit": 10,
+      "used": 10,
+      "note": "Targeted official GitHub connector reads only; shell DNS was not retried."
+    },
+    "freshness": "Main state observed 2026-10-05. GitHub API PR/workflow reads performed 2026-10-06."
+  },
+  "findings": {
+    "PR10": {
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/10",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": false,
+      "base": "lab/games-structure",
+      "baseSha": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "head": "feature/escape-room-mvp-v1",
+      "headSha": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "evidence": "Current PR metadata. Draft is intentional until physical device acceptance and main-product/auth integration."
+    },
+    "latestEscapePreviewRun": {
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37021633218",
+      "workflow": "Escape Room Dev Preview",
+      "branch": "feature/escape-room-mvp-v1",
+      "headSha": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "runNumber": 33,
+      "attempt": 2,
+      "conclusion": "success",
+      "updatedAt": "2026-10-04T21:26:06Z",
+      "jobId": 111534877678,
+      "jobs": "latest-attempt job has all steps successful, including Escape tests, shared GradeCrew AI check, rate-limited preview function deploy, and isolated Hosting preview deploy"
+    },
+    "priorFailure": {
+      "runId": 37021633218,
+      "failedAttempt": 1,
+      "stateRecord": "GRADECREW_STATE.json says failed for missing Secret Manager metadata access and Hosting skipped. GitHub run API now reports attempt 2 success on the same SHA; this failure is superseded for a7ffc382… and is no longer the current gate. Earlier runs 37021161470 and 37020986468 also failed, but later successful preview runs supersede them."
+    },
+    "PR27": {
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/27",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": true,
+      "base": "feature/escape-room-mvp-v1",
+      "baseSha": "0f89995ce820db313e0eee88d316fbca6dd65b1f",
+      "head": "fix/escape-tutor-cost-guards",
+      "headSha": "a521ec905c09793441a301c0304881a2fe9ab27e",
+      "changedFiles": 4,
+      "bodyClaim": "adds in-flight deduplication, content/revision/locale cache scope, bounded cache, timeout/abort, local failure fallback, and session invalidation; five behavior tests; no provider activation/data collection/deploy.",
+      "contentPresenceInGamesTarget": "not proven by open/mergeable metadata. PR27 baseSha 0f89995… differs from PR10/latest preview head a7ffc382…, so compare its four-file patch against the exact a7ffc382… tree before calling the fix absent or present. Do not duplicate the implementation."
+    },
+    "currentReleaseContext": "Main GRADECREW_STATE identifies release train integration bb91ce3590d773472ece60c4dd881da729bd32c1; Escape remains a separate draft/lab workstream. PR10 latest test/preview is a7ffc382…, not the main release train. No GradeCrew product integration, physical device acceptance, or Production release is proven."
+  },
+  "tasks": [
+    {
+      "id": "GC-GAMES-01",
+      "category": "acceptance_pending",
+      "reason": "Latest preview workflow and all tests/deploy steps pass on the exact draft head, but PR remains intentionally draft; physical desktop/iPad acceptance, free-text/number answer paths and main-product/auth integration are still pending.",
+      "evidence": [
+        "PR #10 open draft, base lab/games-structure@55e58e4…, head feature/escape-room-mvp-v1@a7ffc382…",
+        "Escape Room Dev Preview run 37021633218, attempt 2, all steps successful; workflow job 111534877678.",
+        "Earlier attempt-1 secret-metadata failure was superseded by attempt 2 success on the same SHA."
+      ],
+      "package": "Escape preview acceptance"
+    },
+    {
+      "id": "GC-GAMES-COST-01",
+      "category": "needs_verification",
+      "reason": "The implementation and its four behavior tests are already equivalent in current Games target a7ffc382…; PR #27 being open does not mean the product fix is missing. The PR-only hardening workflow and handoff file are absent. Do not duplicate runtime changes; reconcile only CI/provenance and outstanding PR bookkeeping.",
+      "evidence": [
+        "PR #27 head a521ec905c09793441a301c0304881a2fe9ab27e; four-file patch reviewed.",
+        "At target a7ffc382128c49b418a79c31812f88e7fe0fd3d2, lab/escape-room/escape-tutor.js blob c7298aa0bc8ae63b4250feb972d74f3c994f6a21 contains the changed behavior; tools/games/escape-tutor.test.cjs blob ba8a3885861e998b5becc49afb9d3a5c294fbf92 contains the PR behavior tests.",
+        "Target returned 404 for .github/workflows/escape-tutor-hardening.yml and workstreams/escape-tutor-cost-guards.md.",
+        "Run 37021633218 attempt 2 on a7ffc succeeded, but its job summary does not specifically prove escape-tutor.test.cjs ran."
+      ],
+      "package": "Escape preview acceptance"
+    },
+    {
+      "id": "GC-GAMES-INTEGRITY-01",
+      "category": "needs_verification",
+      "reason": "Current task record is an audit finding, not a verified defect on the current Escape target. No source-level reproduction or commit/PR fix was in this bounded read-only scope.",
+      "evidence": [
+        "Current main TODO labels it an audit finding and points to docs/REPOSITORY_AUDIT_2026-10-04.md: client summary limited; attempt status read outside finalization transaction.",
+        "No GitHub PR/commit/CI evidence for this specific task was part of the 10-query budget."
+      ],
+      "package": "Escape preview acceptance"
+    }
+  ],
+  "nextAction": {
+    "status": "completed_read_only_comparison",
+    "result": "Core GC-GAMES-COST-01 implementation/test changes are already present in the Games target. The two ancillary PR-added files are absent. This read-only comparison is complete; no PR mutation or follow-up work was performed.",
+    "targetSha": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+    "prHeadSha": "a521ec905c09793441a301c0304881a2fe9ab27e"
+  },
+  "contentComparison": {
+    "comparedAt": "2026-10-06",
+    "repository": "HerrLoeffler/Hausaufgabe",
+    "pullRequest": 27,
+    "prHeadSha": "a521ec905c09793441a301c0304881a2fe9ab27e",
+    "targetCommit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+    "basis": "Fetched the PR patch and fetched each of its four target paths at the exact target commit. Missing paths returned GitHub Contents API 404. No inference from branch ancestry or PR-open status.",
+    "githubQueries": {
+      "limit": 8,
+      "used": 6
+    },
+    "files": [
+      {
+        "path": "lab/escape-room/escape-tutor.js",
+        "classification": "equivalent_present",
+        "targetBlobSha": "c7298aa0bc8ae63b4250feb972d74f3c994f6a21",
+        "details": "The a7ffc target contains the PR change set: same-content/revision/locale cache key preserving operators/case, 100-entry cache, in-flight request dedupe, bounded/abortable bridge call, fallback on rejection/timeout, stale-session cancellation, and empty-pattern guard. Classified equivalent_present because comparison used patch hunks against the target file, not PR-head blob SHA."
+      },
+      {
+        "path": "tools/games/escape-tutor.test.cjs",
+        "classification": "equivalent_present",
+        "targetBlobSha": "ba8a3885861e998b5becc49afb9d3a5c294fbf92",
+        "details": "The four PR-added behavior tests are present in the a7ffc target: concurrent dedupe + edited-question cache invalidation; rejected bridge fallback; operator/case-sensitive cache separation; cache reset cancelling stale pending work. The surrounding suite is present."
+      },
+      {
+        "path": ".github/workflows/escape-tutor-hardening.yml",
+        "classification": "absent",
+        "targetBlobSha": null,
+        "details": "Not present at target commit; GitHub Contents API returned 404. This PR-added dedicated CI workflow is not included in the compared Games tree."
+      },
+      {
+        "path": "workstreams/escape-tutor-cost-guards.md",
+        "classification": "absent",
+        "targetBlobSha": null,
+        "details": "Not present at target commit; GitHub Contents API returned 404. The PR handoff/evidence note is not included in the compared Games tree."
+      }
+    ],
+    "summary": "The cost-guard implementation and its four behavior tests are already equivalent in the Games target despite PR #27 remaining open. The full PR is not wholly present: its dedicated workflow and workstream handoff are absent. No files are divergent; the contents do not justify reimplementing the runtime fix.",
+    "limits": "No attempt was made to fetch the exact PR-head blobs or workflow-run checks for PR #27; exact whole-file identity and whether the copied test suite ran on a7ffc are not claimed."
+  },
+  "coordinatorVerification": {
+    "checkedAt": "2026-10-06T05:45:04.862276+00:00",
+    "runtimeBlob": "c7298aa0bc8ae63b4250feb972d74f3c994f6a21",
+    "testBlob": "ba8a3885861e998b5becc49afb9d3a5c294fbf92",
+    "run": 37021633218,
+    "attempt": 2,
+    "job": 111534877678,
+    "testCommandIncludes": "tools/games/escape-tutor.test.cjs",
+    "passedCases": [
+      29,
+      30,
+      31,
+      32
+    ],
+    "suiteTests": 41,
+    "suiteFailures": 0,
+    "conclusion": "Runtime scope of GC-GAMES-COST-01 already present and behavior-tested in isolated preview. Not whole PR integration, shared staging or device acceptance."
+  }
+}

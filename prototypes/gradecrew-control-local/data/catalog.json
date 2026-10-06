@@ -985,30 +985,35 @@
       "title": "Doppelte Tutoraufrufe, veralteten Cache und Fehlerbehandlung beheben",
       "area": "Games",
       "priority": "P1",
-      "statusText": "Stand abgleichen · ci_green, PR #27, nicht deployed",
-      "next": "6 Tests und Games-CI grün; gegen inzwischen v0.6 integrieren. [Übergabe](workstreams/escape-tutor-cost-guards.md)",
-      "stage": "ci_green",
-      "stageSource": "GRADECREW_STATE.json",
+      "statusText": "Runtime-Umfang abgeschlossen · im isolierten Games-Preview getestet",
+      "next": "Keine erneute Runtime-Implementierung nötig. PR27 bleibt für fehlenden separaten Workflow/Übergabe offen; Geräteabnahme unter GC-GAMES-01. Kein gemeinsames Web-Staging behauptet.",
+      "stage": "integrated",
+      "stageSource": "Code presence and run37021633218 attempt2, job111534877678 verified",
       "branch": "fix/escape-tutor-cost-guards",
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "evidence": {
-        "id": "escape-tutor-cost-guards",
-        "task_id": "GC-GAMES-COST-01",
-        "branch": "fix/escape-tutor-cost-guards",
-        "observed_head": "a521ec905c09793441a301c0304881a2fe9ab27e",
-        "stage": "ci_green",
-        "ci": "success_runs_36974981001_and_36974980982",
-        "pull_request": 27,
-        "staging": "not_deployed",
-        "user_test": "not_performed",
-        "handoff": "workstreams/escape-tutor-cost-guards.md",
-        "next_action": "Gegen aktuellen Escape-v0.6-Branch prüfen und Cache-/Kostenkorrekturen unter Erhalt der neuen Remy/Coco-Rollen übernehmen."
+        "checkedAt": "2026-10-06T05:45:04.862276+00:00",
+        "runtimeBlob": "c7298aa0bc8ae63b4250feb972d74f3c994f6a21",
+        "testBlob": "ba8a3885861e998b5becc49afb9d3a5c294fbf92",
+        "run": 37021633218,
+        "attempt": 2,
+        "job": 111534877678,
+        "testCommandIncludes": "tools/games/escape-tutor.test.cjs",
+        "passedCases": [
+          29,
+          30,
+          31,
+          32
+        ],
+        "suiteTests": 41,
+        "suiteFailures": 0,
+        "conclusion": "Runtime scope of GC-GAMES-COST-01 already present and behavior-tested in isolated preview. Not whole PR integration, shared staging or device acceptance."
       },
       "triage": {
-        "category": "needs_verification",
+        "category": "completed_with_evidence",
         "package": "games",
         "checkedAt": "2026-10-06",
-        "reason": "Historische PR #27/CI beweisen noch keinen Abschluss. Aktueller Development Status meldet ausdrücklich Warnung: PR #27 ist trotz integriertem Code weiterhin offen; zudem ist Cost-Guard-Branch nicht als deployed belegt. Erst PR-/SHA-Zuordnung bereinigen und gegen Escape v0.6 reconciliieren, ohne parallele Neuimplementierung.",
+        "reason": "Exact target contains runtime and four regression tests; deploy-job logs verify all cases passed (41 tests,0 failures).",
         "evidence": "Current main TODO says PR #27 ci_green/not deployed; GRADECREW_STATE observed head a521ec90…; DevelopmentStatus run 37416892343 success but specifically flags PR #27 open despite integration. Exact current PR head/state not independently queried."
       }
     },
@@ -1745,13 +1750,13 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T05:34:56.784328+00:00",
+  "reconciledAt": "2026-10-06T05:45:04.862276+00:00",
   "reconciliation": {
     "total": 50,
-    "completed": 3,
+    "completed": 4,
     "later": 6,
     "acceptancePending": 12,
-    "remainingInvestigationOrImplementation": 29,
+    "remainingInvestigationOrImplementation": 28,
     "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }
