@@ -12,7 +12,7 @@ on:
         type: string
   push:
     branches: [main]
-    paths: ['automation/deployment-requests/*.json']
+    paths: ['automation/deployment-requests/*.json', 'automation/canonical-staging-requests/*.json']
   workflow_run:
     workflows: ['AI Staging Checks', 'Guardian integrated checks', 'Guardian integrated *']
     types: [completed]
@@ -35,19 +35,30 @@ jobs:
     outputs:
       sha: ${{ steps.source.outputs.sha }}
       ci_run: ${{ steps.source.outputs.upstream_ci }}
+      mode: ${{ steps.route.outputs.mode }}
+      request_file: ${{ steps.route.outputs.request_file }}
     steps:
       - uses: actions/checkout@v5
         with:
           ref: main
           persist-credentials: false
+      - name: Route only an explicit changed request from this push
+        id: route
+        run: python3 -m tools.automation.canonical_staging route
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
       - name: Verify CI source, task authority, evidence and current branch
         id: source
+        if: steps.route.outputs.mode == 'preview'
         run: python3 -m tools.automation.deployment_evidence
         env:
           GH_TOKEN: ${{ github.token }}
           UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
       - uses: actions/upload-artifact@v4
+        if: steps.route.outputs.mode == 'preview'
         with:
           name: verified-deploy-source
           path: deployment-source.json
@@ -55,6 +66,7 @@ jobs:
           retention-days: 30
   build:
     needs: source
+    if: needs.source.outputs.mode == 'preview'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -75,7 +87,7 @@ jobs:
           retention-days: 7
   deploy:
     needs: [source, build]
-    if: vars.STAGING_WIF_PROVIDER != ''
+    if: needs.source.outputs.mode == 'preview' && vars.STAGING_WIF_PROVIDER != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -134,12 +146,16 @@ jobs:
           if-no-files-found: error
   setup-needed:
     needs: [source, build]
-    if: vars.STAGING_WIF_PROVIDER == ''
+    if: needs.source.outputs.mode == 'preview' && vars.STAGING_WIF_PROVIDER == ''
     runs-on: ubuntu-latest
     steps:
       - run: echo 'Build ready; no deployment. STAGING_WIF_PROVIDER is missing. Follow docs/AUTOMATION_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
   canonical:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: source
+    if: >-
+      always() && github.ref == 'refs/heads/main' &&
+      ((github.event_name == 'workflow_dispatch') ||
+       (github.event_name == 'push' && needs.source.result == 'success' && needs.source.outputs.mode == 'canonical'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -147,21 +163,26 @@ jobs:
       actions: read
       id-token: write
     env:
-      PREVIEW_RUN_ID: ${{ inputs.preview_run_id }}
-      EXPECTED_SHA: ${{ inputs.commit }}
       GH_TOKEN: ${{ github.token }}
       GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+      REQUEST_FILE: ${{ needs.source.outputs.request_file }}
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Read exact committed request or manual inputs
+        id: request
+        env:
+          MANUAL_RUN_ID: ${{ inputs.preview_run_id }}
+          MANUAL_COMMIT: ${{ inputs.commit }}
+        run: python3 -m tools.automation.canonical_staging resolve
       - name: Check exact preview receipt, original CI and current integration SHA
         run: python3 -m tools.automation.canonical_staging qualify
       - uses: actions/download-artifact@v4
         with:
           name: staging-preview-build
-          run-id: ${{ inputs.preview_run_id }}
+          run-id: ${{ steps.request.outputs.preview_run_id }}
           github-token: ${{ github.token }}
           path: promotion/public
       - name: Install the existing pinned Firebase CLI before cloud login
