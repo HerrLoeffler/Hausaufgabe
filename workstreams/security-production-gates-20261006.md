@@ -45,3 +45,33 @@ Keine externen laufenden Starts dieses Auftrags. Keine Budgetreservierung. Alte 
 - Assessment-/Rules-Abhängigkeiten jetzt mit Lockfiles; CI und guarded Assessment-Preview verwenden `npm ci`. Keine Paket-Versionssprünge der direkten Abhängigkeiten.
 - Vier zusätzliche echte Firestore-Emulatorfälle für konkurrierende gleiche/verschiedene Starts, erschöpftes Kontingent/Resume und Rollback vorbereitet. Lokal kein Java installiert; diese Prüfung wird in der bestehenden PR-CI mit Java 21 ausgeführt. Noch kein Ergebnis behauptet.
 - Unabhängige Vorprüfung bestätigte die Grenze und den Transaktions-Retry-Fehler. Unabhängige Patch-Prüfung und vollständige CI als nächster Schritt. Kein Deploy: Preview-Job läuft nur bei Push auf den unveränderten Primary-Security-Branch, nicht bei diesem PR.
+
+## Verifizierter Abschluss des technischen Patches
+
+- Gepushter Codecommit: [`20b70bef1c2126751a404a8520432181e5933585`](https://github.com/HerrLoeffler/Hausaufgabe/commit/20b70bef1c2126751a404a8520432181e5933585); identischer Baum wie lokaler Reviewcommit `ca33a696eb55b5fe37974d6db46ac82246f10441`.
+- [CI 37417450492, Versuch 1](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37417450492): **SUCCESS**, Testjob `112119100368`: 284 Tests, 0 Fehler/Skips; 46 Backend-Tests, 42 Secure-Browser-/Quellvertragstests, Rules-Emulator und vier neue echte Transaktionsfälle eingeschlossen. Build/Guardrails erfolgreich. Deployjob `112119286566` ausdrücklich **skipped**.
+- Echte Emulatorfälle bestätigen dieselbe gespeicherte Attempt-/Paper-Identität bei vier gleichzeitigen identischen Starts, höchstens eine neue Abgabeidentität beim letzten Kontingentplatz, gültiges Resume trotz verbrauchtem Kontingent sowie atomaren Rollback bei ungültigen Fragen. Kein realer 30-Teilnehmer-Last- oder Gerätetest.
+- Unabhängiges Read-only-Patch-Review auf `ca33a696`: kein konkreter verbleibender Bypass oder Rückschritt gefunden. Reviewer führte 46 Tests mit Node 24 aus; maßgeblicher Node-22-/Emulatornachweis ist obige CI, nicht das Review allein.
+- Beide Lockfiles mit `npm ci` lokal erfolgreich neu installiert. Upstream-Deprecation-Warnungen vorhanden (u.a. glob/uuid), kein pauschaler Dependency-Sicherheitsaudit oder beliebiges Upgrade dieses Auftrags.
+- Stufe des **isolierten technischen Patches**: `ci_green`. Gemeinsame Security-Release-Stufe und Gates C–G bleiben offen; insbesondere kein `STAGING SECURITY READY` und keine Production-Freigabe.
+
+## Koordinationsupdate: gemeinsame Staging-Integration
+
+Die Zentrale meldete die Freigabe zum schrittweisen gemeinsamen Staging-Abschluss und plant i18n PR #139 (`2d1339806d6eb4eaf289d1a8a4d55fe7df95739a`). Integration und Deploy führt ausschließlich die Zentrale aus.
+
+Zusätzlicher lokaler Kompatibilitätsnachweis: Security-Produktpatch auf unverändertem i18n-Kandidaten angewendet; **51/51 Assessment-Tests mit Node 22 erfolgreich**, einschließlich contentLocale, Bildlabeln, historischen Fingerprints und Audio-Geheimhaltung. `assessment-core.js` wurde durch den Security-Patch nicht verändert. Der produktive Lifecycle-Patch lässt sich direkt anwenden und erhält die neue Lösungsaudio-Ausgabe.
+
+Der ältere Unit-Testadapter überlappte mit dem bereits vorhandenen Lösungsaudio-Adapter. Bewusst aufgelöst: sowohl direkte Collection-Reads als auch geordnete Questions-Reads bleiben erhalten; nur Questions werden im Read-Zähler gezählt. Diese Testadapter-Ergänzung nach Review ändert keinen Runtime-Code. Die eigenständige PR-CI wird für diesen finalen Teststand erneut ausgelöst; Ergebnis vor Integration frisch prüfen.
+
+**Genau nächster Schritt für die Zentrale:** nach eigener i18n-Integration nur den kleinen geprüften Patch aus PR #146 auf den dann aktuellen Web-Head übernehmen und die kombinierte CI ausführen. Niemals den 504 Commits zurückliegenden gesamten Security-Branch als neuen Webstand einsetzen. Dabei `assessment-core.js`, die Lösungsaudio-Ausgabe sowie `tools/rules/package.json`-Ergänzungen (`test:bugops`, `overrides.ignore=7.0.10`) des Webstands erhalten; dessen Rules-Lockfile anschließend passend regenerieren. Workflow-/Deployskript-Änderungen sind für den alten Security-Branch dokumentiert und nicht pauschal über aktuelle Web-Workflows zu kopieren.
+
+## Verbleibende Release-Gates (nicht automatisch freigegeben)
+
+- C: aktueller, exakt belegter integrierter Preview/Functions-Stand. Der alte Security-Preview scheiterte am vollständigen UI-Check; die grüne Test-CI ist kein Preview-Nachweis. Ein neues gemeinsames Staging braucht seinen eigenen exakten Commit/Receipt.
+- D: reale Desktop/iPhone/iPad-Matrix inklusive Lehrer-Ende, Offline, Timer, manueller Bewertung, Lösungsschutz und Wiederaufnahme.
+- E / GC-SECURITY-01: ursprünglichen fehlgeschlagenen 30-Teilnehmer-Test mit ASM-Kennung, Zeitpunkt, Environment/Release und Logs/JSON-Bericht zuordnen; erst danach gezielt nachprüfen. Der neue Transaktions-Regressionstest beweist keine Ursache dieses unbekannten Vorfalls.
+- F: bewusster Rules-Cutover und echter adversarial SDK-/Direktzugriffs-Nachweis nach C–E; in diesem Auftrag weiterhin kein Cutover ausgeführt.
+- G: Production-Build-/Komponentenauswahl, Release-Hashprüfung, bestätigter Rollback und aktuelle Staging-Abnahme fehlen als Gesamtfreigabe. Reproduzierbare Assessment-/Rules-Dependencies sind technisch vorbereitet, schließen G allein nicht.
+- App Check erst nach realer Safari/iOS-Kompatibilitätsabnahme. Keine simulierte menschliche Freigabe.
+
+Request-ID und PR bleiben dieselben. Keine Provideraufrufe, Reservierungen, Cloud-/Rules-/Production-Mutationen oder konkurrierenden Deploys. GC08/PR126 und alle früheren Versuche unverändert.

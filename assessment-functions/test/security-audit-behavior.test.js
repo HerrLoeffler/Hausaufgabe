@@ -18,9 +18,14 @@ function fixture() {
   const snap = path => ({ exists: docs.has(path), id: path.split('/').pop(), ref: ref(path), data: () => docs.get(path) });
   const db = {
     doc: ref,
-    collection: path => ({ orderBy: () => ({
-      get: async () => { questionReads++; return { docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) }; }
-    }) }),
+    collection: path => {
+      const read = async () => {
+        if (path.endsWith('/questions')) questionReads++;
+        return { docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) };
+      };
+      // Preserve the direct collection reads used by the newer solution-audio path.
+      return { get: read, orderBy: () => ({ get: read }) };
+    },
     runTransaction: async callback => {
       const writes = [];
       const result = await callback({
