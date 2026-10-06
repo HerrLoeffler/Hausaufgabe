@@ -1,5 +1,9 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Sichtbare Rückantwort bestätigt und Videovergleich – 06.10.2026
+
+Martins Screenshot bestätigt die erneut eingeblendete Antwortkarte. Praktischer Kartentest abgeschlossen, jedoch keine native Plugin-/Liveupdate-/Fachchat-Ausführung daraus ableiten. Bestehende Videoanalyse und ausgewählte Originaltranskriptstellen erneut gelesen. CENTRAL-STRATEGY.md ergänzt Vergleich Context/Connections/Capabilities/Cadence und klar begrenzten nächsten Pilot: ein realer Auftrag → vorhandener ausführbarer Fachchat → unabhängige Prüfung → echte Nachweise → aktualisierte Aufgabe. Entwicklungszentrale insgesamt als begründete Einschätzung4/10, keine GradeCrew-Gesamtwertung. Dringlichkeit, Ausführungszustand und Release-Farben getrennt; Mac-off/Cloud und dauerhafte Panel-Verbindung weiterhin offen. Diese Runde nur Vergleich/Dokumentation, kein Fachchat-/API-/Automationsstart oder Deploy. Local5df0efe, Dokumentations-Diff geprüft, Release branch_only und Plugin-Reparaturhistorie2/3 unverändert.
+
 ## Chat-Testnachricht tatsächlich empfangen – 06.10.2026
 
 Der Nutzer hat den Test ausgelöst. Echte Folgenachricht aus visualization-7e2e54eb9210ded7 mit Anfrage GC-CONNECT-132eaaf2-85d5-4edd-a3e3-7a7ef63ab84f und Text „Hallo GradeCrew Central“ in der Zentrale empfangen. Empfang und Antwort in derselben Kartendatei gespeichert, Rückgabe als erneut eingeblendete Karte. Die Bestätigung der sichtbaren Rückantwort durch Martin bleibt offen. Kein Beweis einer Live-Aktualisierung des alten Frames oder der Plugin-Verbindung. Keine Analytics-Bearbeitung aus altem Widget-State. Lokaler Commit c4a8d12, Syntax und konkrete Antwortdaten frisch geprüft. Aufgaben-ID, Plugin-Versuchszähler2/3 und Budgets unverändert; kein Produktauftrag/Deployment. Eine zunächst zu breite Textprüfung fand einen unveränderten Pending-Text im nicht ausgeführten Sende-Code; gezielte Prüfung sichtbarer Ausgabe und JSON-Daten bestanden.
