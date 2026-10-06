@@ -443,13 +443,15 @@
       "task_id": "GC-GAMES-COST-01",
       "branch": "fix/escape-tutor-cost-guards",
       "observed_head": "a521ec905c09793441a301c0304881a2fe9ab27e",
-      "stage": "ci_green",
-      "ci": "success_runs_36974981001_and_36974980982",
+      "stage": "integrated",
+      "ci": "runtime_behavior_tests_verified_in_run_37021633218_attempt_2_job_111534877678",
       "pull_request": 27,
-      "staging": "not_deployed",
+      "staging": "isolated_escape_lab_preview_only_at_a7ffc382; not common web staging",
       "user_test": "not_performed",
       "handoff": "workstreams/escape-tutor-cost-guards.md",
-      "next_action": "Gegen aktuellen Escape-v0.6-Branch prüfen und Cache-/Kostenkorrekturen unter Erhalt der neuen Remy/Coco-Rollen übernehmen."
+      "next_action": "Runtime cost-guard scope already implemented and tested in successful Escape preview; no reimplementation. PR27 dedicated workflow/handoff not included, so do not claim whole PR merged. Games device acceptance remains under GC-GAMES-01.",
+      "previous_staging_record": "not_deployed",
+      "integrated_into": "feature/escape-room-mvp-v1@a7ffc382128c49b418a79c31812f88e7fe0fd3d2"
     },
     {
       "id": "ai-gateway-staging-cicd",
