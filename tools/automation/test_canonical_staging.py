@@ -1,6 +1,8 @@
 """Fail-closed checks for promoting one already verified preview."""
 import os
 import json
+import hashlib
+from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -15,7 +17,6 @@ SOURCE = {"commit": SHA, "upstreamCiRun": 456, "workflowRun": RUN_ID,
           "project": "hausaufgabe-staging"}
 RECEIPT = {"project": "hausaufgabe-staging", "channel": "gradecrew-app-integration",
            "commit": SHA, "url": "https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app",
-           "version": "sites/hausaufgabe-staging/versions/v1",
            "verified_files": 2, "ci_run": str(RUN_ID), "device_test": "not_performed"}
 RUN = {"name": "Automatic staging preview", "path": ".github/workflows/staging-preview.yml",
        "event": "workflow_run", "head_branch": "main",
@@ -131,16 +132,59 @@ class CanonicalStagingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "newer automatic preview"):
                 promotion.qualify()
 
-    def test_preview_receipt_version_is_unambiguous(self):
-        result = {"result": {"hausaufgabe-staging": {
-            "url": RECEIPT["url"], "version": "v1"}}}
-        self.assertEqual(preview.deployed_version(result), RECEIPT["version"])
-        with self.assertRaisesRegex(ValueError, "unambiguous"):
-            preview.deployed_version({"a": {"version": "v1"}, "b": {"version": "v2"}})
+    def test_preview_verifies_all_bytes_with_empty_cli_version(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            public = root / "public"
+            public.mkdir()
+            files = {"index.html": b"<h1>Test</h1>",
+                     "firebase-config.js": b'projectId: "hausaufgabe-staging"'}
+            for name, data in files.items():
+                (public / name).write_bytes(data)
+            release = {"project": "hausaufgabe-staging", "commit": SHA,
+                       "files": {name: hashlib.sha256(data).hexdigest()
+                                 for name, data in files.items()}}
+            (public / "release.json").write_text(json.dumps(release))
+            deploy = root / "deploy.json"
+            deploy.write_text(json.dumps({"status": "success", "result": {
+                "hausaufgabe-staging": {"url": RECEIPT["url"], "version": ""}}}))
+            summary = root / "summary"
 
-    def test_live_version_must_equal_pinned_preview_version(self):
+            def served(request, timeout):
+                name = request.full_url.split("?", 1)[0].rsplit("/", 1)[1]
+                response = BytesIO((public / name).read_bytes())
+                response.url = request.full_url
+                return response
+
+            with patch.dict(os.environ, {"EXPECTED_SHA": SHA, "DEPLOY_RESULT": str(deploy),
+                                          "GITHUB_RUN_ID": str(RUN_ID),
+                                          "GITHUB_STEP_SUMMARY": str(summary)}), \
+                    patch.object(preview.sys, "argv", ["preview.py", "verify", str(root)]), \
+                    patch.object(preview.urllib.request, "urlopen", side_effect=served):
+                preview.main()
+            receipt = json.loads((root / "receipt.json").read_text())
+            self.assertEqual(receipt["verified_files"], 2)
+            self.assertNotIn("version", receipt)
+            (root / "receipt.json").unlink()
+
+            def corrupt(request, timeout):
+                response = served(request, timeout)
+                if request.full_url.split("?", 1)[0].endswith("/index.html"):
+                    response = BytesIO(b"tampered")
+                    response.url = request.full_url
+                return response
+
+            with patch.dict(os.environ, {"EXPECTED_SHA": SHA, "DEPLOY_RESULT": str(deploy),
+                                          "GITHUB_RUN_ID": str(RUN_ID),
+                                          "GITHUB_STEP_SUMMARY": str(summary)}), \
+                    patch.object(preview.sys, "argv", ["preview.py", "verify", str(root)]), \
+                    patch.object(preview.urllib.request, "urlopen", side_effect=corrupt):
+                with self.assertRaisesRegex(ValueError, "Published bytes differ"):
+                    preview.main()
+            self.assertFalse((root / "receipt.json").exists())
+
+    def test_live_verification_requires_stable_version_and_exact_bytes(self):
         state = {"sourceRun": RUN_ID, "commit": SHA, "upstreamCiRun": 456,
-                 "previewVersion": "sites/hausaufgabe-staging/versions/v1",
                  "previousLiveVersion": "sites/hausaufgabe-staging/versions/v0"}
         with TemporaryDirectory() as folder:
             state_file = Path(folder) / "state.json"
@@ -148,18 +192,20 @@ class CanonicalStagingTests(unittest.TestCase):
             with patch.dict(os.environ, {**ENV, "GITHUB_RUN_ID": "789"}), \
                     patch.object(promotion, "qualify", return_value=(SOURCE, RECEIPT)), \
                     patch.object(promotion, "STATE", state_file), \
-                    patch.object(promotion, "channel_version", return_value="sites/hausaufgabe-staging/versions/other"):
-                with self.assertRaisesRegex(ValueError, "pinned preview version"):
+                    patch.object(promotion, "bundle", return_value={"files": {"index.html": "a"}}), \
+                    patch.object(promotion, "published_files"), \
+                    patch.object(promotion, "channel_version", side_effect=[
+                        "sites/hausaufgabe-staging/versions/v1",
+                        "sites/hausaufgabe-staging/versions/v2"]):
+                with self.assertRaisesRegex(ValueError, "live channel changed"):
                     promotion.verify()
 
-    def test_changed_live_version_blocks_clone_before_output(self):
+    def test_changed_live_version_blocks_deploy_preparation(self):
         with TemporaryDirectory() as folder:
             state_file = Path(folder) / "state.json"
-            output = Path(folder) / "output"
             versions = ["sites/hausaufgabe-staging/versions/v0",
-                        RECEIPT["version"], RECEIPT["version"],
                         "sites/hausaufgabe-staging/versions/v2"]
-            with patch.dict(os.environ, {**ENV, "GITHUB_OUTPUT": str(output)}), \
+            with patch.dict(os.environ, ENV), \
                     patch.object(promotion, "qualify", return_value=(SOURCE, RECEIPT)), \
                     patch.object(promotion, "bundle", return_value={"files": {"index.html": "a"}}), \
                     patch.object(promotion, "published_files"), \
@@ -167,7 +213,22 @@ class CanonicalStagingTests(unittest.TestCase):
                     patch.object(promotion, "STATE", state_file):
                 with self.assertRaisesRegex(ValueError, "live channel changed"):
                     promotion.prepare()
-            self.assertFalse(output.exists())
+
+    def test_project_qualified_hosting_version_is_normalized(self):
+        payload = {"release": {"version": {"name":
+            "projects/950775032930/sites/hausaufgabe-staging/versions/v1"}}}
+        with patch.dict(os.environ, {"GCP_ACCESS_TOKEN": "test"}), \
+                patch.object(promotion.urllib.request, "urlopen",
+                             return_value=BytesIO(json.dumps(payload).encode())):
+            self.assertEqual(promotion.channel_version("live", True),
+                             "sites/hausaufgabe-staging/versions/v1")
+        payload["release"]["version"]["name"] = (
+            "projects/other-project/sites/hausaufgabe-staging/versions/v1")
+        with patch.dict(os.environ, {"GCP_ACCESS_TOKEN": "test"}), \
+                patch.object(promotion.urllib.request, "urlopen",
+                             return_value=BytesIO(json.dumps(payload).encode())):
+            with self.assertRaisesRegex(ValueError, "Unexpected Hosting version"):
+                promotion.channel_version("live", True)
 
 
 if __name__ == "__main__":
