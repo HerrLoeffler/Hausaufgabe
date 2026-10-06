@@ -18,6 +18,14 @@ const files = [
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs', 'secure-assessment-teacher-polish.js',
   'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js'
 ];
+files.push(
+  'gradecrew-hero-copy.mjs',
+  'gradecrew-hero-demo.mjs',
+  'gradecrew-hero-demo-flow.mjs',
+  'gradecrew-hero-scene.css',
+  'assets/gradecrew/crew-classroom-v3.webp',
+  'assets/gradecrew/cuddly-hedgehog.webp'
+);
 for (const name of await fs.readdir(path.join(root, 'assets/gradecrew'))) {
   if (name.endsWith('.svg')) files.push(`assets/gradecrew/${name}`);
 }

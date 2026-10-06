@@ -1,5 +1,8 @@
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.2.0";
 import { CREW, DEMO_TEST } from "./gradecrew-tour.js?v=2.3.1-gc28-entry";
+import { translateTree } from "./shared/i18n/browser-runtime.mjs?v=3";
+import "./gradecrew-hero-copy.mjs?v=1";
+import { installHeroDemo } from "./gradecrew-hero-demo.mjs?v=1";
 
 const $ = id => document.getElementById(id);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -20,36 +23,10 @@ let guestName = "";
 let tutorialStep = 0;
 let tutorialChoice = "";
 
-function entryIcon(name) {
-  const icons = {
-    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>',
-    improve: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v12H7a2 2 0 0 1-2-2V4Z"/><path d="M8 8h7M8 12h5M8 16h4"/><path d="m17 14 1.2 2.2L21 17.5l-2.8 1.3L17 21l-1.2-2.2-2.8-1.3 2.8-1.3L17 14Z"/></svg>',
-    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16.5 9"/></svg>',
-    bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6l0-7Z"/></svg>',
-    class: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-5 9 5-9 5-9-5Z"/><path d="M7 12v4c3 2 7 2 10 0v-4M21 10v6"/></svg>',
-    chart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V5M19 20V2"/></svg>',
-    heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>'
-  };
-  return icons[name] || "";
-}
-
-function supportCrewCards() {
-  const roles = [
-    ["remy", "Remy", "Erstellen", "edit"],
-    ["emmi", "Emmi", "Verbessern", "improve"],
-    ["wilma", "Wilma", "Prüfen", "check"]
-  ];
-  return roles.map(([key, name, role, icon]) => {
-    const mascot = GRADECREW_ASSETS.mascots?.[key];
-    return `<article class="gcEntryCrewMember gcEntryCrewMember-${key}">
-      <img src="${escapeHtml(mascot?.welcome || mascot?.primary || "")}" alt="" width="190" height="220" decoding="async">
-      <span class="gcEntryCrewRole"><span class="gcEntryCrewRoleIcon">${entryIcon(icon)}</span><span class="gcEntryCrewRoleCopy"><strong>${name}</strong><small>${role}</small></span></span>
-    </article>`;
-  }).join("");
-}
-
 function setState(next, { focus = true } = {}) {
   if (!stateIds[next]) return;
+  const heroDialog = $("gcHeroDialog");
+  if (next !== "start" && heroDialog?.open) heroDialog.close();
   activeState = next;
   for (const [name, id] of Object.entries(stateIds)) {
     const section = $(id);
@@ -205,7 +182,7 @@ function installPublicHeader() {
       }
       showStart();
       requestAnimationFrame(() => {
-        const node = target === "crew" ? $("gcEntryCrew") : $("gcEntryBenefits");
+        const node = $("gcEntryCrew");
         node?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
       });
     });
@@ -238,52 +215,38 @@ function buildEntrySurface() {
 
   authView.innerHTML = `<div class="gcEntryShell">
     <section id="gcEntryStart" class="gcEntryState gcEntryStart" aria-labelledby="gcEntryHeadline">
-      <div class="gcEntryWelcome">
-        <div class="gcEntryHero">
-          <div class="gcEntryClassroom" aria-hidden="true">
-            <div class="gcEntrySunGlow"></div>
-            <div class="gcEntryDoor"><span class="gcEntryDoorSign">Schön,<br>dass du da bist!<b>♡</b></span><i class="gcEntryDoorKnob"></i></div>
-            <div class="gcEntryWindow"><span></span><span></span></div>
-            <div class="gcEntryBoard">Gemeinsam<br>bessere Tests! <span>♡</span></div>
-            <div class="gcEntryShelf">
-              <i></i><i></i><i></i><i></i>
-              <span class="gcEntryPlant"></span>
+      <div class="gcHeroPage">
+        <div class="gcHeroStage">
+          <div class="gcHeroVisual"><img class="gcHeroArtwork" src="./assets/gradecrew/crew-classroom-v3.webp" width="1536" height="1024" alt="" fetchpriority="high">
+            <div id="gcEntryCrew" class="gcHeroCrew" role="group" aria-label="Coco, Remy, Emmi und Wilma">
+              <button type="button" class="gcHeroHit gcHeroHit-remy" data-hero-crew="remy" aria-label="Remys Beispiel ansehen"></button>
+              <button type="button" class="gcHeroHit gcHeroHit-emmi" data-hero-crew="emmi" aria-label="Emmis Beispiel ansehen"></button>
+              <button type="button" class="gcHeroHit gcHeroHit-wilma" data-hero-crew="wilma" aria-label="Wilmas Beispiel ansehen"></button>
             </div>
-            <div class="gcEntryDeskDecor"></div>
           </div>
-
-          <div class="gcEntryLead">
-            <h1 id="gcEntryHeadline"><span>Hi! Ich bin Coco.</span><strong>Willkommen bei GradeCrew.</strong></h1>
-            <p>Digitale Tests, schnell &amp; einfach.</p>
+          <div class="gcHeroLead">
+            <h1 id="gcEntryHeadline"><span data-i18n-key="hero.greeting" data-i18n-fallback="Hi! Ich bin Coco.">Hi! Ich bin Coco.</span><strong><span data-i18n-key="hero.welcome" data-i18n-fallback="Willkommen bei">Willkommen bei</span> GradeCrew.</strong></h1>
+            <p data-i18n-key="hero.subtitle" data-i18n-fallback="Digitale Tests. Schnell & einfach.">Digitale Tests. Schnell &amp; einfach.</p>
           </div>
-
-          <div id="gcEntryCrew" class="gcEntryCharacterStage" aria-label="Coco, Remy, Emmi und Wilma – die GradeCrew">
-            <div class="gcEntryCoco">
-              <img src="${escapeHtml(GRADECREW_ASSETS.mascots.coco.welcome || GRADECREW_ASSETS.mascots.coco.primary)}" alt="Coco, dein GradeCrew-Guide" decoding="async">
-              <span class="gcEntryCocoNote">Ich zeige dir<br>mein Team!</span>
-            </div>
-            <div class="gcEntrySupportCrew">${supportCrewCards()}</div>
+          <div class="gcHeroRoles" aria-label="Deine Crew">
+            <button type="button" data-hero-crew="remy"><strong>Remy</strong><small data-i18n-key="hero.remyRole" data-i18n-fallback="Erstellen">Erstellen</small></button>
+            <button type="button" data-hero-crew="emmi"><strong>Emmi</strong><small data-i18n-key="hero.emmiRole" data-i18n-fallback="Verbessern">Verbessern</small></button>
+            <button type="button" data-hero-crew="wilma"><strong>Wilma</strong><small data-i18n-key="hero.wilmaRole" data-i18n-fallback="Prüfen">Prüfen</small></button>
           </div>
-
-          <div class="gcEntryActions">
-            <button type="button" class="button primary gcEntryTutorialStart" id="gcEntryTutorialStart" data-entry-autofocus>Crew kennenlernen <span aria-hidden="true">→</span></button>
-            <button type="button" class="button secondary gcEntryLoginOpen" id="gcEntryLoginOpen">Direkt anmelden</button>
+          <div class="gcHeroActions">
+            <div class="gcHeroTutorialEntry"><button type="button" class="button primary" id="gcEntryTutorialStart" data-entry-autofocus data-i18n-key="hero.meetCrew" data-i18n-fallback="Crew kennenlernen">Crew kennenlernen</button><small id="gcHeroTutorialDuration" data-i18n-key="hero.tutorialDuration" data-i18n-fallback="Tutorial · ca. 6–7 Minuten">Tutorial · ca. 6–7 Minuten</small></div>
+            <button type="button" class="gcHeroLogin" id="gcEntryLoginOpen" data-i18n-key="hero.login" data-i18n-fallback="Direkt anmelden">Direkt anmelden</button>
           </div>
-
-          <aside class="gcEntryStudent" aria-labelledby="gcEntryStudentTitle">
-            <span class="gcEntryStudentIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-2a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v2M15 14a4.5 4.5 0 0 1 6 4v2"/></svg></span>
-            <div class="gcEntryStudentCopy"><h2 id="gcEntryStudentTitle">Schüler? Testcode eingeben.</h2><p>Kein Account nötig.</p></div>
-            <div id="gcEntryJoinHost"></div>
-          </aside>
-        </div>
-
-        <div id="gcEntryBenefits" class="gcEntryBenefits" aria-label="GradeCrew Vorteile">
-          <span><i class="gcEntryBenefitIcon">${entryIcon("bolt")}</i><span><strong>Schnell erstellt</strong><small>In wenigen Minuten</small></span></span>
-          <span><i class="gcEntryBenefitIcon">${entryIcon("class")}</i><span><strong>Einfach durchgeführt</strong><small>Für deine Klasse</small></span></span>
-          <span><i class="gcEntryBenefitIcon">${entryIcon("chart")}</i><span><strong>Direkt ausgewertet</strong><small>Mit klaren Ergebnissen</small></span></span>
-          <span><i class="gcEntryBenefitIcon">${entryIcon("heart")}</i><span><strong>Für Lehrkräfte gemacht</strong><small>Praxisnah. Sicher. Zuverlässig.</small></span></span>
+          <div class="gcHeroJoin"><label for="joinCode" data-i18n-key="hero.student" data-i18n-fallback="Schüler? Testcode eingeben.">Schüler? Testcode eingeben.</label><div id="gcEntryJoinHost"></div></div>
         </div>
       </div>
+      <dialog id="gcHeroDialog" class="gcHeroDialog" aria-labelledby="gcHeroDialogTitle">
+        <button id="gcHeroDialogClose" class="gcHeroDialogClose" type="button" aria-label="Schließen">×</button>
+        <p id="gcHeroDialogEyebrow" class="gcHeroDialogEyebrow"></p><h2 id="gcHeroDialogTitle"></h2>
+        <p id="gcHeroDemoStatus" role="status" aria-live="polite"></p>
+        <div id="gcHeroDemoWorkspace" class="gcHeroDemoWorkspace"></div>
+        <div class="gcHeroDemoControls"><button id="gcHeroDemoPause" type="button"></button><button id="gcHeroDemoReplay" type="button"></button></div>
+      </dialog>
     </section>
 
     <section id="gcEntryLogin" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryLoginTitle">
@@ -354,6 +317,9 @@ function buildEntrySurface() {
   $("gcEntryGateRegister").addEventListener("click", showRegister);
   $("gcEntryGateLogin").addEventListener("click", showLogin);
   $("gcEntryGateLater").addEventListener("click", showStart);
+
+  installHeroDemo($("gcEntryStart"));
+  translateTree(authView);
 
   document.addEventListener("gradecrew:signed-out", () => {
     if (!$("authView")?.classList.contains("hidden")) showStart();

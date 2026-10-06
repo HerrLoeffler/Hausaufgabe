@@ -1,0 +1,141 @@
+/* GC-DESIGN-05: public entry only. Existing auth, tutorial and assessment views keep their styles. */
+#authView[data-entry-state="start"]{padding:0;background:#fff}
+#authView[data-entry-state="start"] .gcEntryShell{width:min(1536px,100%);max-width:1536px}
+#authView .gcHeroPage{background:#fff;overflow:clip}
+#authView .gcHeroStage{position:relative;aspect-ratio:3/2;isolation:isolate;container-type:inline-size}
+#authView .gcHeroVisual{position:absolute;inset:0}
+#authView .gcHeroArtwork{display:block;width:100%;height:100%;object-fit:cover}
+#authView .gcHeroCrew{position:absolute;inset:0;pointer-events:none}
+#authView .gcHeroHit{position:absolute;top:32%;height:34%;border:0;border-radius:35%;background:transparent;pointer-events:auto;cursor:pointer}
+#authView .gcHeroHit-remy{left:42%;width:18%}
+#authView .gcHeroHit-emmi{left:61%;width:16%}
+#authView .gcHeroHit-wilma{left:77%;width:18%}
+#authView .gcHeroHit:hover{background:#fff2}
+#authView .gcHeroHit:focus-visible{outline:3px solid #075de7;outline-offset:-4px;background:#fff3}
+#authView .gcHeroLead{position:absolute;top:4.5%;left:29%;width:65%;text-align:center;pointer-events:none}
+#authView .gcHeroLead h1{margin:0;font-size:clamp(30px,4.2cqw,66px);font-weight:800;line-height:1.12;letter-spacing:-.04em;color:#07164d}
+#authView .gcHeroLead h1>span{display:block}
+#authView .gcHeroLead h1 strong{font-weight:800}
+#authView .gcHeroLead h1 strong span{color:#0664ff}
+#authView .gcHeroLead p{margin:15px 0 0;font-size:clamp(18px,2.3cqw,35px);line-height:1.3;color:#415981;font-weight:600}
+#authView .gcHeroRoles{position:absolute;left:45.3%;right:7%;top:67%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.3cqw}
+#authView .gcHeroRoles button{border:0;border-radius:10px;background:transparent;padding:8px 12px;min-height:62px;text-align:center;cursor:pointer;color:#07164d}
+#authView .gcHeroRoles button:hover{background:#ffffff8c}
+#authView .gcHeroRoles button:focus-visible,#authView .gcHeroLogin:focus-visible,#authView .gcHeroJoin button:focus-visible{outline:3px solid #075de7;outline-offset:2px}
+#authView .gcHeroRoles strong{display:block;font-size:clamp(16px,1.45cqw,22px);line-height:1.2}
+#authView .gcHeroRoles small{display:block;margin-top:4px;font-size:clamp(13px,1.1cqw,17px);color:#364b77}
+#authView .gcHeroActions{position:absolute;top:75.8%;left:43%;right:8%;display:flex;align-items:center;gap:18px}
+#authView .gcHeroTutorialEntry{flex:1.2;display:flex;flex-direction:column;gap:7px;text-align:center}
+#authView .gcHeroTutorialEntry .button{width:100%;min-height:58px;border-radius:14px;background:#0664ff;box-shadow:none;font-size:clamp(15px,1.7cqw,25px);font-weight:600}
+#authView .gcHeroTutorialEntry small{font-size:12px;line-height:1.3;color:#496381}
+#authView .gcHeroLogin{flex:1;border:0;background:transparent;font:inherit;font-size:clamp(15px,1.7cqw,25px);font-weight:600;color:#0657e6;min-height:58px;cursor:pointer}
+#authView .gcHeroJoin{position:absolute;top:87.5%;left:43%;right:8%;display:flex;align-items:center;gap:15px;border-top:1px solid #516e9c26;padding:18px 0}
+#authView .gcHeroJoin>label{flex:1;min-width:0;font-size:clamp(14px,1.3cqw,20px);line-height:1.35;color:#07164d}
+#authView .gcHeroJoin #gcEntryJoinHost{flex:1.05;min-width:0}
+#authView .gcHeroJoin #joinForm{display:flex;flex-direction:row;align-items:center;gap:8px;margin:0}
+#authView .gcHeroJoin #joinForm label{min-width:0;flex:1;font-size:0;line-height:0}
+#authView .gcHeroJoin #joinCode{width:100%;min-width:0;min-height:52px;border:1px solid #b0c9ed;border-radius:10px;background:#ffffffe8;padding:12px;font-size:16px;line-height:1.2;color:#12234d}
+#authView .gcHeroJoin .gcEntryJoinSubmit{flex:0 0 52px;min-width:52px;min-height:52px;border:1px solid #b0c9ed;border-radius:10px;background:#ffffffe8;box-shadow:none;font-size:25px;color:#075adc}
+
+#authView .gcHeroDialog{border:0;border-radius:24px;width:min(640px,calc(100% - 32px));max-height:calc(100svh - 32px);overflow:auto;padding:32px;background:white;color:#172b4b;box-shadow:0 20px 80px #051c4b33;--hero-color:#0764ed;--hero-tint:#edf5ff}
+#authView .gcHeroDialog[data-crew="emmi"]{--hero-color:#b94d18;--hero-tint:#fff4ed}
+#authView .gcHeroDialog[data-crew="wilma"]{--hero-color:#147453;--hero-tint:#edf9f3}
+#authView .gcHeroDialog::backdrop{background:#10274870;backdrop-filter:blur(5px)}
+#authView .gcHeroDialogClose{position:absolute;top:15px;right:15px;width:36px;height:36px;border:0;border-radius:50%;background:#f0f5fc;font-size:25px;cursor:pointer}
+#authView .gcHeroDialogEyebrow{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--hero-color);margin:0 35px 8px 0}
+#authView .gcHeroDialog h2{font-size:27px;line-height:1.18;margin:0 35px 12px 0}
+#authView #gcHeroDemoStatus{font-size:15px;line-height:1.45;color:#50617a;min-height:43px;margin:0 0 10px}
+#authView .gcHeroDemoWorkspace{padding:22px;min-height:318px;border-radius:18px;background:var(--hero-tint)}
+#authView .gcHeroSheet{min-height:275px;padding:23px;border:1px solid #dde5ef;border-radius:11px;background:white;box-shadow:0 8px 24px #18355308}
+#authView .gcHeroSheetMeta{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#637187;margin:0 0 10px;line-height:1.3}
+#authView .gcHeroSheetTitle{font-size:23px;line-height:1.2;margin:0 0 17px;color:#172b4b}
+#authView .gcHeroVoiceNote{display:flex;align-items:center;gap:14px;padding:17px;border:1px solid #c5d9f7;border-radius:13px;background:#f3f8ff;animation:gcHeroIn .35s ease-out}
+#authView .gcHeroVoiceBars{width:42px;height:42px;flex:none;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:50%;background:#1164d9}
+#authView .gcHeroVoiceBars i{width:3px;height:10px;background:white;border-radius:4px}
+#authView .gcHeroVoiceBars i:nth-child(2),#authView .gcHeroVoiceBars i:nth-child(3){height:19px}
+#authView .gcHeroVoiceNote .gcHeroSheetMeta{margin-bottom:4px}
+#authView .gcHeroVoiceTranscript{font-size:15px;line-height:1.4;margin:0;color:#213b61}
+#authView .gcHeroSideNote{font-size:12px;line-height:1.45;color:#536d8b;margin:13px 0 0}
+#authView .gcHeroQuestionCard{border:1px solid #dce7f4;border-radius:12px;padding:15px;animation:gcHeroIn .35s ease-out}
+#authView .gcHeroQuestionPrompt{font-size:17px;font-weight:700;line-height:1.35;margin:0 0 12px;color:#17365d}
+#authView .gcHeroChoiceGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#authView .gcHeroChoice{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #dae5f2;border-radius:8px;background:#fcfdff;font-size:14px;color:#254062}
+#authView .gcHeroChoiceBox{width:15px;height:15px;flex:none;border:1.5px solid #6f90bd;border-radius:4px}
+#authView .gcHeroQuestionRow{display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7ecf1;padding:8px 0;font-size:13px;color:#263e5d}
+#authView .gcHeroQuestionNumber{display:grid;place-items:center;width:22px;height:22px;flex:none;border-radius:6px;background:#edf5ff;color:#155caf}
+#authView .gcHeroReady{font-size:14px;font-weight:600;color:#116f4b;margin:15px 0 0}
+#authView .gcHeroDraft{font-size:22px;color:#243b5b;margin:0 0 16px}
+#authView .gcHeroDraft.marked{text-decoration:line-through;text-decoration-color:#c56b38;text-decoration-thickness:2px;color:#8794a5}
+#authView .gcHeroEditing,#authView .gcHeroChecking{height:50px;border-radius:8px;background:linear-gradient(90deg,#ffe8d8,#fff7ee,#ffe8d8);background-size:200% 100%;animation:gcHeroSweep 1.2s linear infinite}
+#authView .gcHeroChecking{height:3px;background:linear-gradient(90deg,#72b494,#edf9f3,#72b494);margin-top:14px}
+#authView .gcHeroImproved{border-left:3px solid #bf591f;padding:9px 0 9px 14px;animation:gcHeroIn .35s ease-out}
+#authView .gcHeroClearQuestion{font-size:17px;line-height:1.5;color:#263e5d;margin:0}
+#authView .gcHeroIllustrated{display:grid;grid-template-columns:1fr 160px;align-items:center;gap:8px;margin-top:12px}
+#authView .gcHeroSentence{display:flex;flex-wrap:wrap;gap:5px;font-size:17px;line-height:1.5;margin:0 0 14px;color:#243b5b}
+#authView .gcHeroSentence>span,#authView .gcHeroLegend>span{padding:3px 5px;border-radius:6px}
+#authView .gcHeroSentence .noun,#authView .gcHeroLegend .noun{color:#155caf;background:#edf5ff}
+#authView .gcHeroSentence .adjective,#authView .gcHeroLegend .adjective{color:#a74715;background:#fff0e5}
+#authView .gcHeroSentence .verb,#authView .gcHeroLegend .verb{color:#177353;background:#eaf7f0}
+#authView .gcHeroLegend{display:flex;gap:7px;flex-wrap:wrap;font-size:11px}
+#authView .gcHeroHedgehog{width:160px;max-width:100%;height:auto;animation:gcHeroIn .55s ease-out}
+#authView .gcHeroCapabilities{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+#authView .gcHeroCapabilities span{padding:5px 8px;border-radius:7px;background:#fff4ed;color:#98501f;font-size:11px;line-height:1.3}
+#authView .gcHeroGradingSentence{font-size:17px;line-height:1.45;color:#536682;margin:0 0 17px}
+#authView .gcHeroStudentAnswer{position:relative;border:1px solid #e0e7ef;border-radius:12px;background:#f5f8fc;padding:13px 16px}
+#authView .gcHeroStudentAnswer.awarded{background:#eff9f3;border-color:#a5d1b6}
+#authView .gcHeroStudentAnswer strong{font-size:25px;color:#173e69}
+#authView .gcHeroAnswerMark{position:absolute;right:16px;top:25px;font-size:30px;color:#147453}
+#authView .gcHeroScore{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 16px;border:1px solid #e4e9ef;border-radius:12px;background:#f9fbfd;margin-top:12px;font-size:14px;color:#50637c}
+#authView .gcHeroScore.awarded{border-color:#a5d1b6;background:#f1faf5}
+#authView .gcHeroPoints{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+#authView .gcHeroPoints strong{font-size:37px;line-height:1.2;color:#6b7d93}
+#authView .gcHeroScore.awarded strong{color:#147453;animation:gcHeroIn .45s ease-out}
+#authView .gcHeroPrevious{font-size:20px;color:#82958a}
+#authView .gcHeroPoints small{font-size:12px;color:#687b8f}
+#authView .gcHeroDemoControls{display:flex;gap:10px;margin-top:18px}
+#authView .gcHeroDemoControls button{border:0;border-radius:8px;background:#f1f5f9;padding:11px 13px;font-size:13px;min-height:40px;color:#344f71;cursor:pointer}
+#authView .gcHeroDialog.is-paused *{animation-play-state:paused!important}
+@keyframes gcHeroIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gcHeroSweep{to{background-position:-200% 0}}
+
+@media(max-width:1100px) and (min-width:901px){
+  #authView .gcHeroActions{gap:8px;top:75%}
+  #authView .gcHeroTutorialEntry .button{min-height:48px}
+  #authView .gcHeroTutorialEntry small{font-size:10px}
+  #authView .gcHeroJoin{gap:9px;padding:13px 0}
+  #authView .gcHeroJoin>label{font-size:13px}
+  #authView .gcHeroJoin #joinCode{font-size:13px;min-height:44px}
+  #authView .gcHeroJoin .gcEntryJoinSubmit{flex-basis:44px;min-width:44px;min-height:44px}
+}
+@media(max-width:900px){
+  #authView .gcHeroStage{display:flex;flex-direction:column;aspect-ratio:auto;padding-bottom:12px;background:#fffaf3}
+  #authView .gcHeroLead{position:relative;inset:auto;order:0;width:auto;padding:22px 18px 0}
+  #authView .gcHeroLead h1{font-size:clamp(27px,6.8vw,44px)}
+  #authView .gcHeroLead p{font-size:clamp(16px,3.9vw,23px);margin-top:12px}
+  #authView .gcHeroVisual{position:relative;inset:auto;order:1;margin-top:-25px;mask-image:linear-gradient(to bottom,transparent,#000 19%)}
+  #authView .gcHeroArtwork{height:auto}
+  #authView .gcHeroRoles{position:relative;inset:auto;order:2;margin:-4% 5% 0;gap:8px}
+  #authView .gcHeroRoles button{padding:10px 3px;min-height:60px}
+  #authView .gcHeroRoles strong{font-size:17px}
+  #authView .gcHeroRoles small{font-size:13px}
+  #authView .gcHeroActions{position:relative;inset:auto;order:3;margin:14px 5% 0;gap:9px;align-items:stretch;flex-direction:column}
+  #authView .gcHeroTutorialEntry .button{min-height:53px;font-size:17px}
+  #authView .gcHeroLogin{min-height:45px;font-size:15px}
+  #authView .gcHeroJoin{position:relative;inset:auto;order:4;margin:10px 5% 0;padding:20px 0 12px;display:block}
+  #authView .gcHeroJoin>label{display:block;margin-bottom:10px;font-size:15px}
+}
+@media(max-width:480px){
+  #authView .gcHeroDialog{padding:24px 18px}
+  #authView .gcHeroDialog h2{font-size:22px}
+  #authView .gcHeroDemoWorkspace{padding:12px;min-height:300px}
+  #authView .gcHeroSheet{padding:18px;min-height:270px}
+  #authView .gcHeroSheetTitle{font-size:20px}
+  #authView .gcHeroIllustrated{grid-template-columns:1fr;gap:3px}
+  #authView .gcHeroHedgehog{width:145px;margin:0 auto}
+  #authView .gcHeroChoiceGrid{gap:5px}
+  #authView .gcHeroChoice{font-size:12px;padding:8px 7px}
+  #authView .gcHeroVoiceNote{padding:13px}
+  #authView .gcHeroVoiceBars{width:35px;height:35px}
+  #authView .gcHeroVoiceTranscript{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){#authView .gcHeroDialog *{animation:none!important;transition:none!important}}
