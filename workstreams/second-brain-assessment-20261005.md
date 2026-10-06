@@ -1,5 +1,9 @@
 # GC-BRAIN-01 – Videoanalyse und GradeCrew-Entwicklungszentrale
 
+## Echter Chat-Verbindungstest vorbereitet – 06.10.2026
+
+GC-BRAIN-01 bleibt bestehen. Lokales Plugin ist weiterhin nicht als nutzbarer Host-Panel-Weg nachgewiesen; aktuelle Werkzeugliste enthält dessen vier Werkzeuge nicht. Früheren Neuladehinweis nicht als bestätigte Lösung wiederholen. CUA verweigert die Bedienung von com.openai.codex, kein Umgehungsversuch. Stattdessen ein expliziter Test mit dem bereits vorhandenen Chat-Folgenachrichtweg: eine Karte, eine Request-ID, Empfang erst nach echter Nachricht bestätigen und Antwortkarte erneut anzeigen. Originalframe-Liveupdate und Plugin-Anbindung bleiben getrennt offen. Martin muss den Testknopf/Bestätigungsdialog bedienen. Syntax/Element-IDs und begrenzte simulierte Interaktionen geprüft; noch kein echter Empfang. Neuer Development-Audit 37391289398 / 112036708547 gelesen, Aufgabenbranch zuvor 2952717f. Lokaler Zwischencommit 0020306. Kein Produktcode, Modell-API, Deployment, neue Budgetrunde oder Zurücksetzen der Plugin-Reparaturhistorie2/3. Details und Wiederaufnahme: [CONNECTION-TEST.md](../prototypes/gradecrew-control-local/CONNECTION-TEST.md).
+
 ## Plugin umgesetzt und lokal installiert – 06.10.2026
 
 Martin hat den Bau der integrierten Zentrale ausdrücklich beauftragt. GC-BRAIN-01, bestehender Branch und Aufgabenhistorie erhalten. Ausführung im isolierten lokalen Prototyp; keine Änderungen an Schüler-/Produktcode.

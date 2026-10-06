@@ -1,0 +1,86 @@
+<section id="gc-connection-test" aria-label="GradeCrew Central Verbindungstest">
+  <div class="viz-row"><i data-lucide="panels-top-left" aria-hidden="true"></i><h2>GradeCrew Central</h2><span class="viz-badge">Verbindungstest</span></div>
+  <p class="text-small">GC-BRAIN-01 · Entwicklungszentrale</p>
+  <div class="viz-row gc-stages" aria-label="Entwicklungsstufen">
+    <span><b style="color:var(--red)">●</b> Entwicklung</span>
+    <span><b style="color:var(--orange)">●</b> Geprüft</span>
+    <span><b style="color:var(--yellow)">●</b> Testumgebung</span>
+    <span><b style="color:var(--blue)">●</b> Abgenommen</span>
+    <span><b style="color:var(--green)">●</b> Live</span>
+  </div>
+  <hr>
+  <div class="card">
+    <div class="viz-row"><i data-lucide="message-square" aria-hidden="true"></i><h3>Eine Nachricht hin und zurück</h3></div>
+    <p><span style="color:var(--red)">●</span> In Entwicklung · Empfang noch offen</p>
+    <form id="gct-form">
+      <label class="form-label" for="gct-message">Deine Testnachricht</label>
+      <input class="form-control" id="gct-message" maxlength="240" required value="Hallo GradeCrew Central" autocomplete="off">
+      <div class="viz-row gc-actions"><button class="btn btn-primary" id="gct-send" type="submit">Testnachricht an diesen Chat senden</button></div>
+    </form>
+    <p id="gct-status" role="status" aria-live="polite">Bereit für deinen Klick.</p>
+    <hr>
+    <div class="viz-row"><i data-lucide="corner-down-right" aria-hidden="true"></i><span>Antwort aus dem Main-Chat</span></div>
+    <p id="gct-answer">Noch keine Antwort empfangen.</p>
+    <p id="gct-receipt" class="text-small"></p>
+  </div>
+</section>
+<style>
+#gc-connection-test .gc-stages{gap:12px;margin-block:16px}
+#gc-connection-test .gc-actions{margin-block:16px}
+#gc-connection-test #gct-answer,#gc-connection-test #gct-receipt{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+<script id="gct-result" type="application/json">{"testId":"GC-BRAIN-01-CONNECTION-20261006-A","received":false,"requestId":null,"answer":null}</script>
+<script>
+(() => {
+  const root=document.getElementById('gc-connection-test');
+  const el=id=>root.querySelector('#'+id);
+  const result=JSON.parse(document.getElementById('gct-result').textContent);
+  const form=el('gct-form'), input=el('gct-message'), send=el('gct-send'), status=el('gct-status');
+  let requested=false, requestId=null;
+  function restore(state){
+    const s=state?.privateContent;
+    if(!s||s.testId!==result.testId)return;
+    if(typeof s.message==='string')input.value=s.message.slice(0,240);
+    if(s.requested){requested=true;requestId=s.requestId;send.disabled=true;input.disabled=true;status.textContent='Übergabe bereits angefragt. Empfang im Chat noch zu bestätigen.';}
+  }
+  restore(window.openai?.widgetState);
+  function save(){
+    const api=window.openai;
+    if(typeof api?.setWidgetState==='function'){
+      Promise.resolve(api.setWidgetState({modelContent:{taskId:'GC-BRAIN-01',testId:result.testId,requestId,requested},privateContent:{testId:result.testId,requestId,requested,message:input.value}})).catch(()=>{});
+    }
+  }
+  input.addEventListener('change',save);
+  if(result.received&&typeof result.answer==='string'){
+    requested=true;send.disabled=true;input.disabled=true;
+    status.textContent='Testnachricht im Main-Chat empfangen.';
+    el('gct-answer').textContent=result.answer;
+    el('gct-receipt').textContent='Empfangsbeleg: '+result.requestId;
+  }
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    if(requested||!input.value.trim())return;
+    const api=window.openai;
+    if(typeof api?.sendFollowUpMessage!=='function'){
+      status.textContent='Die direkte Nachrichtenübergabe ist in dieser Ansicht nicht verfügbar. Bitte diesen Fehler im Chat melden.';
+      return;
+    }
+    requestId='GC-CONNECT-'+(typeof crypto?.randomUUID==='function'?crypto.randomUUID():Date.now().toString(36));
+    const payload={testId:result.testId,taskId:'GC-BRAIN-01',requestId,message:input.value.trim()};
+    const prompt='GradeCrew-Verbindungstest aus der Aufgabenkarte. Bitte ausschließlich den Nachrichtenweg testen, keinen Produktauftrag starten.\n\n'+JSON.stringify(payload)+'\n\nBestätige den tatsächlichen Eingang dieser Testnachricht. Lies die vorhandene Datei /Users/martin/.codex/visualizations/2026/10/05/01a10df6-736b-7a62-bd38-2724cf254c2e/gradecrew-verbindungstest.html. Setze in gct-result received auf true, übernimm die requestId und speichere eine kurze Antwort samt meiner Testnachricht als sicheren JSON-Text (HTML-Zeichen escapen). Zeige dieselbe Aufgabenkarte mit der Antwort erneut hier im Chat. Eine erneut gerenderte Antwortkarte ist kein Beleg für Live-Aktualisierung der alten Karte oder für eine Plugin-Verbindung. Keine weiteren Chats, Modell-APIs oder Deployments starten.';
+    requested=true;send.disabled=true;input.disabled=true;
+    status.textContent='Übergabe geöffnet. Bitte den Sendedialog bestätigen; Empfang noch offen.';
+    try {save();} catch {}
+    try{
+      await api.sendFollowUpMessage({prompt,title:'GradeCrew: Testnachricht an diesen Chat senden'});
+      status.textContent='Übergabe angefragt. Der Main-Chat muss den Empfang noch bestätigen.';
+    }catch{
+      status.textContent='Übergabe nicht bestätigt. Bitte im Chat prüfen; diese Karte sendet nicht automatisch erneut.';
+    }
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    if(result.received||root.contains(document.activeElement))return;
+    restore(event.detail?.globals?.widgetState);
+  });
+})();
+</script>
