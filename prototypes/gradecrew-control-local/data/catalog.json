@@ -9,8 +9,8 @@
       "title": "Manuelle Tutorialabgabe in der iPad-App funktioniert nicht",
       "area": "Kernfunktionen",
       "priority": "P0",
-      "statusText": "In Bearbeitung · Bestätigungsdialog im WebView-Test als Fehler reproduziert",
-      "next": "Sol bearbeitet den Seitendialog und Timer-Randfall im Chat „GradeCrew-Auftrag wiederaufnehmen“. Danach CI und echter iPad-Test.",
+      "statusText": "Fix vorbereitet · PR147, 51 gezielte Tests bestanden; vollständige CI/Review offen",
+      "next": "Sol vervollständigt CI und unabhängige Prüfung für1c994ecb. Danach Main-Integration und Staging; echter iPad-Test bleibt offen.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
@@ -659,18 +659,25 @@
       "title": "Escape-Room-MVP mit Lehrerübersicht konkretisieren",
       "area": "Games",
       "priority": "P1",
-      "statusText": "Voraussetzungen offen · MVP + Hub-Integration implementiert, CI grün; Lab-/Geräteabnahme offen",
-      "next": "Branch `feature/escape-room-mvp-v1`, Draft-PR #10: „Die verriegelte Schule“ mit 3 Räumen, 8 Frage-Slots, 4 Rätseln, Preflight und Lehrerübersicht. Nächster Schritt: sicherer Lab-Preview-Deploy, echter iPad/Desktop-Test, danach GradeCrew-Test-/KI-Adapter. [Konzept](docs/games/ESCAPE_MVP.md)",
-      "stage": "unknown",
-      "stageSource": "Nicht eindeutig zugeordnet",
+      "statusText": "Isolierter Games-Preview verfügbar · Geräteabnahme und Produktintegration offen",
+      "next": "Alter Secret-Metadata-Deployfehler durch Versuch2 erfolgreich erledigt. Desktop/iPad-Preview abnehmen; PR27-Inhaltsvergleich läuft separat. Kein erneuter Deploy wegen der alten Fehlermeldung.",
+      "stage": "ci_green",
+      "stageSource": "Escape preview Run37021633218 attempt2 tests passed; isolated lab deployment, not common staging",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null,
+      "evidence": {
+        "commit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+        "run": 37021633218,
+        "attempt": 2,
+        "job": 111534877678,
+        "scope": "isolated Escape lab preview and preview function; not common GradeCrew staging",
+        "user_test": "not_performed"
+      },
       "triage": {
-        "category": "staging_blocker",
+        "category": "acceptance_pending",
         "package": "games",
         "checkedAt": "2026-10-06",
-        "reason": "Branch-MVP/CI ist berichtet, aber aktueller Live-Status ist ausdrücklich branch_only: neuester Lab-Deploy run 37021633218 scheiterte am Zugriff auf Secret-Metadaten und übersprang Hosting. Erst diesen separaten Game-Preview-Blocker lösen, dann Gerätetest; kein allgemeiner GradeCrew-Releaseblocker.",
+        "reason": "Exact Games head a7ffc382 verified in successful run37021633218 attempt2; no device acceptance or common staging integration.",
         "evidence": "Aktueller main GRADECREW_STATE workstream games-escape: feature/escape-room-mvp-v1 @ a7ffc382…, latest_run_37021633218_failed_secret_metadata_access_hosting_skipped; älterer Preview c904a674… war nur isolated_preview_only."
       }
     },
@@ -1738,13 +1745,13 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T05:25:42.989431+00:00",
+  "reconciledAt": "2026-10-06T05:34:56.784328+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 3,
     "later": 6,
-    "acceptancePending": 11,
-    "remainingInvestigationOrImplementation": 30,
+    "acceptancePending": 12,
+    "remainingInvestigationOrImplementation": 29,
     "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }
