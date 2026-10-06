@@ -23,5 +23,17 @@
   "reviewCapacityEvent": "Initial reviewer turn capacity error; bounded finish completed using already-read evidence, no repeated tests.",
   "ci": 37465637988,
   "ciJob": 112275827980,
-  "repair": "Dispatched once to original author with Sol/high; original history must be retained."
+  "repair": "Dispatched once to original author with Sol/high; original history must be retained.",
+  "deltaVerification": {
+    "head": "2c8a73314cd00163bf18260571dd1321c9ccd4cb",
+    "files": [
+      "gradecrew-design-foundation.test.mjs",
+      "workstreams/gc-design-05-web-integration-20261006.md"
+    ],
+    "review": "Main confirmed version-independent imports preserve order assertions; no product delta",
+    "foundationLocal": "8/8 pass",
+    "exactCi": 37466936870,
+    "ciConclusion": "success",
+    "repairAttempt": 1
+  }
 }

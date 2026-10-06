@@ -354,19 +354,19 @@
       "title": "Startscreen Hero Scene + First-Visit-Animation",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Entwicklung · CI meldet veraltete Import-Prüfung; unabhängiges Review läuft",
-      "next": "Review abschließen und belegte Befunde zusammen an zuständigen Autor geben; danach exakte CI. Noch kein neues Staging.",
-      "stage": "branch_only",
-      "stageSource": "PR149, noch nicht in den Release-Train übernommen",
+      "statusText": "Integriert · neuer Startbildschirm; Staging-Prüfung läuft",
+      "next": "Kombinierte CI, Mobile-Prüfung und danach Deployment-Nachweise abholen. Browser-/Geräteabnahme offen.",
+      "stage": "integrated",
+      "stageSource": "PR149 merged after green exact feature CI and review",
       "branch": "feature/gc-design-05-web-integration",
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
-      "evidence": "PR149@80cf066; CI37465637988 fehlgeschlagen in gradecrew-design-foundation.test.mjs:49; v5-Prüfung bei v6-Import. Review läuft.",
+      "evidence": "PR149@2c8a733, CI37466936870 success; Mergef97841b82291d879cd9f4a9bccce0ee2c2cf3641; Combined37467220757 und Mobile37467220869 laufen.",
       "triage": {
         "category": "needs_verification",
         "package": "design-and-crew",
-        "checkedAt": "2026-10-06T12:46:29.653186+00:00",
-        "reason": "Vorhandene neue Hero-Szene im separaten Integrationskandidaten; kein erneuter Gestaltungsauftrag nötig.",
-        "evidence": "PR149@80cf066; CI37465637988 fehlgeschlagen in gradecrew-design-foundation.test.mjs:49; v5-Prüfung bei v6-Import. Review läuft."
+        "checkedAt": "2026-10-06T12:59:47.373312+00:00",
+        "reason": "Hero-Integration vorhanden und seriell zusammengeführt; kein erneuter Gestaltungsauftrag.",
+        "evidence": "PR149@2c8a733, CI37466936870 success; Mergef97841b82291d879cd9f4a9bccce0ee2c2cf3641; Combined37467220757 und Mobile37467220869 laufen."
       }
     },
     {
@@ -1780,7 +1780,7 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T12:48:00.604552+00:00",
+  "reconciledAt": "2026-10-06T12:59:47.373312+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 4,
