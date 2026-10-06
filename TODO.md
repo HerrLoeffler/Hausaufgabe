@@ -191,6 +191,7 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
 | GC-DESIGN-05B | Lokale Coco-Gasttour und kompakter Handy-Einstieg auf Staging; Emmis roter Feedback-Smiley in der Gasttour repariert, Nutzertest offen. PR154 und Reparatur-PR156 → `4d6ee69`; CI `37542394496`, Hosting-Receipt `11449022640`, AI/Assessment-Receipts `11448732514`/`11449512022`. | Auf [Staging](https://hausaufgabe-staging.web.app/) Gasttour bis Wilma, echten Login und das Erstellen/Speichern eines Tests prüfen; Desktop/Handy visuell abnehmen. Kein Production-Deploy. [Übergabe](workstreams/gc-design-05b-guest-tour-20261006.md) |
+| GC-WEB-POLISH-20261007 | Öffentliche Startbühne und Lehreroberfläche gezielt nach Martins Staging-Screenshots glätten: Remy-Fokus, Crew-/Login-/Testcode-Hierarchie, Dashboard-Tutorial, Headerbreite/-aktionen, sparsame KI-Labels und Markwords-Titel. | **In Arbeit auf eigenem Branch**, noch nicht integriert oder deployed. Zuständig `feature/gc-web-polish-20261007`, Basis `4d6ee69`. Keine Änderungen an `app.js`, Functions oder shared/i18n; Main integriert später seriell. [Übergabe](workstreams/gc-web-polish-20261007.md) |
 | GC-STAGING-CANONICAL-01 | Controller PR152 und API-Pfad-Fix PR155 integriert; Canonical Staging Hosting `37493180662` mit Receipt `11427025542` für `c6eec209` verifiziert. | Martin prüft reale Anmeldung und Testanlage; frühere fehlgeschlagene Preview `37482339993` bleibt ohne Receipt. [Übergabe](workstreams/staging-canonical-20261006.md) |
 
 
