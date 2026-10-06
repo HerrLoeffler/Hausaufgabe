@@ -1,6 +1,6 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=4";
+import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=5";
 import {
   recordRemyMetric,
   recordRemySubmission,
@@ -103,7 +103,9 @@ function currentContext() {
       difficulty: $("#aiDifficulty")?.value || "",
       count: Number($("#aiCount")?.value) || null,
       points: Number($("#aiPoints")?.value) || null,
+      imageQuestionCount: Number($("#aiImageQuestionCount")?.value) || 0,
       audioQuestionCount: Number($("#aiAudioQuestionCount")?.value) || 0,
+      audioAnswerQuestionCount: Number($("#aiAudioAnswerQuestionCount")?.value) || 0,
       solutionAudioQuestionCount: Number($("#aiSolutionAudioQuestionCount")?.value) || 0
     }
   };
@@ -194,7 +196,9 @@ function applyPatch(patch = {}) {
   setField("#aiDifficulty", patch.difficulty);
   setField("#aiCount", patch.count);
   setField("#aiPoints", patch.points);
+  if (patch.imageQuestionCount !== undefined && patch.imageQuestionCount !== null) setField("#aiImageQuestionCount", patch.imageQuestionCount);
   if (patch.audioQuestionCount !== undefined && patch.audioQuestionCount !== null) setField("#aiAudioQuestionCount", patch.audioQuestionCount);
+  if (patch.audioAnswerQuestionCount !== undefined && patch.audioAnswerQuestionCount !== null) setField("#aiAudioAnswerQuestionCount", patch.audioAnswerQuestionCount);
   if (patch.solutionAudioQuestionCount !== undefined && patch.solutionAudioQuestionCount !== null) setField("#aiSolutionAudioQuestionCount", patch.solutionAudioQuestionCount);
   applyTypePatch(patch);
   if (patch.notes) appendNote(String(patch.notes).slice(0, 1500));

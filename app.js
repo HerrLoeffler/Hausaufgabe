@@ -56,6 +56,12 @@ let adminFeedbackCursor = null;
 let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
+// Enable only after the deployed Firestore rules are verified to hide authored questions.
+const SECURE_AUDIO_PUBLICATION_ENABLED = false;
+const secureAudioPublicationBlocked = quiz => !SECURE_AUDIO_PUBLICATION_ENABLED &&
+  (quiz?.requiresSecureAssessmentRules === true || Number(quiz?.audioAnswerQuestionCount || 0) > 0 ||
+    Number(quiz?.listeningOnlyQuestionCount || 0) > 0);
+const secureAudioPublicationMessage = "Audioantworten und Nur-Hören-Aufgaben bleiben bis zur Prüfung der sicheren Schülerfreigabe Entwürfe.";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -435,7 +441,7 @@ function renderFirstAiGuideStep(step) {
   } else if (step === "running") {
     card.innerHTML = firstAiGuideCardHtml({
       eyebrow: "Geschafft",
-      title: "Dein KI-Test wird erstellt",
+      title: "Dein Test wird erstellt",
       text: "Die Erstellung läuft im Hintergrund. Du kannst weiterarbeiten oder die Seite verlassen. Sobald der Test fertig ist, öffnest du hier „Entwurf prüfen“.",
       action: '<button class="button primary firstAiGuideFinish" type="button">Verstanden</button>',
       showLater: false
@@ -1505,8 +1511,8 @@ function renderAiJobs() {
     const percentage = Math.max(0, Math.min(100, Number(job.percent) || 0));
     card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}${finished ? " aiJobReady" : ""}`;
     card.innerHTML = `<div class="aiJobStatusIcon" aria-hidden="true">${failed ? "!" : finished ? "✓" : "⋯"}</div>
-      <div class="aiJobBody"><strong>${escapeHtml(job.sourceQuizId ? "Ähnlicher Test" : "KI-Test")} · ${escapeHtml(job.subject || job.topic || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
-      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}${job.audioTotal ? ` · ${Number(job.audioCompleted || 0)} von ${Number(job.audioTotal)} Höraudios` : ""}${job.solutionAudioTotal ? ` · ${Number(job.solutionAudioCompleted || 0)} von ${Number(job.solutionAudioTotal)} Audio-Lösungen` : ""}`}</small></div>
+      <div class="aiJobBody"><strong>${escapeHtml(job.sourceQuizId ? "Ähnlicher Test" : "Test")} · ${escapeHtml(job.topic || job.subject || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
+      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}${job.audioTotal ? ` · ${Number(job.audioCompleted || 0)} von ${Number(job.audioTotal)} Höraudios` : ""}${job.answerAudioTotal ? ` · ${Number(job.answerAudioCompleted || 0)} von ${Number(job.answerAudioTotal)} Audioantwort-Aufgaben` : ""}${job.solutionAudioTotal ? ` · ${Number(job.solutionAudioCompleted || 0)} von ${Number(job.solutionAudioTotal)} Audio-Lösungen` : ""}`}</small></div>
       ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
       <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
       ${finished && job.quizId ? '<button class="button ghost completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}
@@ -1522,7 +1528,7 @@ function renderAiJobs() {
       action: job.sourceQuizId ? "background_similar_test" : "background_ai_test",
       details: { jobId: job.id, requestId: job.requestId, quizId: job.quizId || "",
         requestedCount: job.requestedCount, completedCount: job.completedCount,
-        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted, audioTotal: job.audioTotal, audioCompleted: job.audioCompleted, solutionAudioTotal: job.solutionAudioTotal, solutionAudioCompleted: job.solutionAudioCompleted }
+        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted, audioTotal: job.audioTotal, audioCompleted: job.audioCompleted, answerAudioTotal: job.answerAudioTotal, answerAudioCompleted: job.answerAudioCompleted, solutionAudioTotal: job.solutionAudioTotal, solutionAudioCompleted: job.solutionAudioCompleted }
     }));
     host.appendChild(card);
   }
@@ -1697,9 +1703,13 @@ async function toggleDashboardPublished(q, toggle) {
     if (toggle) toggle.checked = false;
     return toast("Dieser Test ist wegen eines Rechtehinweises gesperrt.", "error");
   }
+  if (wantsPublished && secureAudioPublicationBlocked(q)) {
+    if (toggle) toggle.checked = false;
+    return toast(secureAudioPublicationMessage, "error");
+  }
   if (wantsPublished && q.audioReady === false) {
     if (toggle) toggle.checked = false;
-    return toast("Mindestens eine Höraufgabe braucht noch ein aktuelles Audio. Öffne den Test und erzeuge das Audio neu.", "error");
+    return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
   }
   if (wantsPublished && q.showSolutions && q.solutionAudioReady === false) {
     if (toggle) toggle.checked = false;
@@ -1873,7 +1883,10 @@ async function duplicateQuiz(code) {
       questionCount: questions.length,
       totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
       audioQuestionCount: questions.filter(q => Boolean(q.audioScript || getQuestionAudioSrc(q))).length,
-      audioReady: questions.every(questionAudioReady),
+      audioAnswerQuestionCount: questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: questions.every(questionAllAudioReady),
       solutionAudioQuestionCount: questions.filter(q => Boolean(q.solutionAudioScript)).length,
       solutionAudioReady: !questions.some(q => Boolean(q.solutionAudioScript))
     };
@@ -2054,7 +2067,8 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
     const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
     if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
-    if (current.audioReady === false) return toast("Mindestens eine Höraufgabe braucht noch ein aktuelles Audio. Öffne den Test und erzeuge das Audio neu.", "error");
+    if (secureAudioPublicationBlocked(current)) return toast(secureAudioPublicationMessage, "error");
+    if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
     if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
     const teacherMode = current.startMode === "teacher";
     const runId = teacherMode ? randomId("run") : null;
@@ -2205,7 +2219,10 @@ async function importSharedTemplate() {
       questionCount: source.questions.length,
       totalPoints: round1(source.questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
       audioQuestionCount: source.questions.filter(q => Boolean(q.audioDataUrl)).length,
-      audioReady: !source.questions.some(q => Boolean(q.audioDataUrl))
+      audioAnswerQuestionCount: source.questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: source.questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: source.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: source.questions.every(q => !Boolean(q.audioDataUrl) && questionAudioReady(q) && questionAnswerAudioReady(q))
     };
     const { code: newCode } = await createQuizDocument(base);
     for (let i = 0; i < source.questions.length; i += 1) {
@@ -2361,7 +2378,24 @@ $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("saveAiPreferencesBtn")?.addEventListener("click", () => saveAiPreferences());
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
-["aiImageQuestionCount", "aiAudioQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
+function installAiAnswerAudioField() {
+  if ($("aiAudioAnswerQuestionCount")) return;
+  const anchor = $("aiAudioCountHint");
+  if (!anchor) return;
+  const label = document.createElement("label");
+  label.textContent = "Antwortmöglichkeiten vorlesen (0–5)";
+  const input = document.createElement("input");
+  Object.assign(input, { id: "aiAudioAnswerQuestionCount", type: "number", min: "0", max: "5", step: "1", value: "0" });
+  input.setAttribute("aria-describedby", "aiAudioAnswerCountHint");
+  label.appendChild(input);
+  const hint = document.createElement("p");
+  hint.id = "aiAudioAnswerCountHint";
+  hint.className = "hint";
+  hint.textContent = "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
+  anchor.after(label, hint);
+}
+installAiAnswerAudioField();
+["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
 ["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
 
 function updateAiTypeCount() {
@@ -2390,6 +2424,7 @@ async function openAiView() {
   updateAiTypeCount();
   renderAiMaterials();
   if ($("aiAudioQuestionCount")) $("aiAudioQuestionCount").value = "0";
+  if ($("aiAudioAnswerQuestionCount")) $("aiAudioAnswerQuestionCount").value = "0";
   if ($("aiSolutionAudioQuestionCount")) $("aiSolutionAudioQuestionCount").value = "0";
   updateAiImageControls();
   updateAiAudioControls();
@@ -2467,6 +2502,7 @@ function updateAiImageControls() {
 
 function updateAiAudioControls() {
   const input = $("aiAudioQuestionCount");
+  const answerInput = $("aiAudioAnswerQuestionCount");
   const solutionInput = $("aiSolutionAudioQuestionCount");
   if (!input) return;
   const audio = Number(input.value);
@@ -2494,6 +2530,16 @@ function updateAiAudioControls() {
       if (solutionCombinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Audio-Lösungen möglich.`);
       solutionHint.textContent = errors.length ? errors.join(" ") : "Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.";
       solutionHint.classList.toggle("aiInputError", errors.length > 0);
+    }
+  }
+  if (answerInput) {
+    const answerCount = Number(answerInput.value);
+    const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answerCount) || answerCount < 0 || answerCount > 5 || answerCount > count;
+    answerInput.setAttribute("aria-invalid", String(answerInvalid));
+    const answerHint = $("aiAudioAnswerCountHint");
+    if (answerHint) {
+      answerHint.textContent = answerInvalid ? "Bitte 0 bis 5 Audioantwort-Aufgaben wählen, höchstens so viele wie Aufgaben." : "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
+      answerHint.classList.toggle("aiInputError", answerInvalid);
     }
   }
 }
@@ -2568,6 +2614,8 @@ function collectAiRequest() {
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
   const audioQuestionCount = Number($("aiAudioQuestionCount").value);
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
+  const answerInput = $("aiAudioAnswerQuestionCount");
+  const audioAnswerQuestionCount = Number(answerInput?.value || 0);
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
   if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
   if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
@@ -2577,12 +2625,14 @@ function collectAiRequest() {
   if (audioQuestionCount > count) throw new Error("Bitte nicht mehr Höraufgaben als Aufgaben wählen.");
   if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Audio-Lösungen wählen.");
   if (solutionAudioQuestionCount > count) throw new Error("Bitte nicht mehr Audio-Lösungen als Aufgaben wählen.");
+  if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > 5 || audioAnswerQuestionCount > count) throw new Error("Bitte 0 bis 5 Aufgaben mit Audioantworten wählen.");
+  if (audioAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Audioantworten bitte Einzel- oder Mehrfachauswahl erlauben.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
-    audioQuestionCount, solutionAudioQuestionCount
+    audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
   };
 }
 
@@ -2973,7 +3023,7 @@ function normalizeImportedPayload(data, parseInfo = {}) {
 
   const questions = questionsRaw.map((raw, index) => normalizeImportedQuestion(raw, index, report));
   const meta = {
-    title: String(looseField(root, ["title", "name", "testTitle", "titel"], "KI-Test") || "KI-Test").trim(),
+    title: String(looseField(root, ["title", "name", "testTitle", "titel"], "Test") || "Test").trim(),
     subject: String(looseField(root, ["subject", "fach"], "") || "").trim(),
     grade: String(looseField(root, ["grade", "class", "classLevel", "gradeLevel", "klasse", "klassenstufe"], "") || "").trim(),
     description: String(looseField(root, ["description", "instructions", "instruction", "hinweis", "beschreibung"], "") || "").trim()
@@ -3183,7 +3233,7 @@ async function importAiJson() {
   try {
     const base = {
       ...quizDefaults(),
-      title: meta.title || "KI-Test",
+      title: meta.title || "Test",
       subject: meta.subject || $("aiSubject").value || getSettings().defaultSubject || "",
       grade: meta.grade || $("aiGrade").value || getSettings().defaultGrade || "",
       description: meta.description || getSettings().defaultDescription,
@@ -3200,7 +3250,7 @@ async function importAiJson() {
     state.pendingImportReport = { ...report, quizId: code };
     if (report.warnings.length) toast(`Test importiert – ${report.warnings.length} Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
     else if (report.repairs.length) toast("Test importiert.");
-    else toast("KI-Test importiert.");
+    else toast("Test importiert.");
     await openEditor(code);
   } catch (err) {
     console.error(err);
@@ -4253,10 +4303,24 @@ function getQuestionAudioSrc(q) {
 }
 
 function questionAudioReady(q) {
+  if (q?.audioPresentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) return false;
   const hasScript = Boolean(String(q?.audioScript || "").trim());
   const hasAudio = Boolean(getQuestionAudioSrc(q));
-  if (!hasScript && !hasAudio) return true;
+  if (!hasScript && !hasAudio) return q?.audioPresentation !== "listening-only";
   return hasScript && hasAudio && q.audioNeedsRegeneration !== true;
+}
+
+function questionAllAudioReady(q) {
+  return questionAudioReady(q) && questionAnswerAudioReady(q);
+}
+
+function questionAnswerAudioReady(q) {
+  if (q?.audioAnswerMode !== "audio-only") return true;
+  return ["single", "multi"].includes(q.type) && Array.isArray(q.options) && q.options.length >= 2 && q.options.length <= 4 &&
+    q.options.every(option => !option?.imageDataUrl && !option?.imageUrl && String(option?.text || "").trim() &&
+      String(option?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") &&
+      option.audioNeedsRegeneration !== true) &&
+    q.options.reduce((size, option) => size + String(option.audioDataUrl || "").length, String(q.audioDataUrl || "").length) <= 700000;
 }
 
 function clearQuestionAudio(q) {
@@ -4305,6 +4369,7 @@ function renderQuestionAudioEditor(container, q) {
   details.open = hasAudio || hasScript;
   details.innerHTML = `<summary><span>🔊 Audio / Höraufgabe <small>(optional)</small></span><span class="questionAudioState">${hasAudio && hasScript && !q.audioNeedsRegeneration ? "bereit" : hasAudio && !hasScript ? "Hörtext fehlt" : hasScript ? "Audio erzeugen" : ""}</span></summary>
     <div class="questionAudioBody">
+      <label class="stack compact"><span>Anzeige für Schüler</span><select class="questionAudioPresentation"><option value="supplement">Text und Audio</option><option value="listening-only">Nur hören</option></select></label>
       <label class="stack compact"><span>Hörtext <small>nur für Lehrkraft/Admin · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="z. B. The train to London leaves from platform four at half past eight."></textarea></label>
       <div class="questionAudioPreview"></div>
       <div class="questionAudioActions"></div>
@@ -4312,6 +4377,11 @@ function renderQuestionAudioEditor(container, q) {
     </div>`;
   container.appendChild(details);
   const input = details.querySelector(".questionAudioScript");
+  const presentation = details.querySelector(".questionAudioPresentation");
+  presentation.value = q.audioPresentation === "listening-only" ? "listening-only" : "supplement";
+  presentation.querySelector('option[value="listening-only"]').disabled = ["gapfill", "markwords"].includes(q.type);
+  presentation.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  presentation.addEventListener("change", () => { q.audioPresentation = presentation.value; markDirty(); });
   input.value = String(q.audioScript || "");
   input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   input.addEventListener("input", event => {
@@ -4362,6 +4432,52 @@ function renderQuestionAudioEditor(container, q) {
     actions.appendChild(remove);
   }
 
+  if (["single", "multi"].includes(q.type)) {
+    const answerDetails = document.createElement("details");
+    answerDetails.className = "questionAudioPanel answerAudioPanel";
+    answerDetails.open = q.audioAnswerMode === "audio-only";
+    answerDetails.innerHTML = `<summary><span>🔊 Antwortmöglichkeiten vorlesen <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Die Antworttexte bleiben im Editor bearbeitbar. Schüler hören jede Auswahl einzeln; die richtigen Antworten bleiben verborgen.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    container.appendChild(answerDetails);
+    const answerPreview = answerDetails.querySelector(".answerAudioPreview");
+    (q.options || []).forEach((option, index) => {
+      const row = document.createElement("div");
+      row.className = "questionAudioPreview";
+      const label = document.createElement("span");
+      label.textContent = `Antwort ${index + 1}: ${option.text || "(leer)"}`;
+      row.appendChild(label);
+      if (String(option.audioDataUrl || "").startsWith("data:audio/")) {
+        const player = document.createElement("audio");
+        player.controls = true;
+        player.preload = "metadata";
+        player.src = option.audioDataUrl;
+        player.setAttribute("aria-label", `Antwort ${index + 1} anhören`);
+        row.appendChild(player);
+      }
+      if (q.audioAnswerMode === "audio-only" && (!option.audioDataUrl || option.audioNeedsRegeneration)) {
+        const warning = document.createElement("small");
+        warning.className = "aiInputError";
+        warning.textContent = "Audio fehlt oder ist nach Textänderung veraltet.";
+        row.appendChild(warning);
+      }
+      answerPreview.appendChild(row);
+    });
+    const answerActions = answerDetails.querySelector(".answerAudioActions");
+    const generateAnswers = makeMiniButton(q.audioAnswerMode === "audio-only" ? "Antwort-Audios neu erzeugen" : "Antwortmöglichkeiten vorlesen", () => generateAiAnswerAudioForQuestion(q, container));
+    generateAnswers.classList.add("generateQuestionAnswerAudio");
+    generateAnswers.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+    answerActions.appendChild(generateAnswers);
+    if (q.audioAnswerMode === "audio-only") {
+      const removeAnswers = makeMiniButton("Audioantworten entfernen", () => {
+        if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+        q.audioAnswerMode = "none";
+        q.options.forEach(option => { delete option.audioDataUrl; delete option.audioNeedsRegeneration; });
+        markDirty();
+        renderQuestionAudioEditor(container, q);
+      });
+      answerActions.appendChild(removeAnswers);
+    }
+  }
+
   const solutionHasAudio = Boolean(getQuestionSolutionAudioSrc(q));
   const solutionHasScript = Boolean(String(q.solutionAudioScript || "").trim());
   const solutionDetails = document.createElement("details");
@@ -4374,7 +4490,7 @@ function renderQuestionAudioEditor(container, q) {
       <div class="questionAudioActions solutionAudioActions"></div>
       <small class="questionAudioDisclosure">Dieses Audio wird Schülern erst nach Testende und nur bei freigegebenen Lösungen angezeigt.</small>
     </div>`;
-  container.appendChild(solutionDetails);
+  if (solutionHasAudio || solutionHasScript) container.appendChild(solutionDetails);
   const solutionInput = solutionDetails.querySelector(".solutionAudioScript");
   solutionInput.value = String(q.solutionAudioScript || "");
   solutionInput.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
@@ -4455,6 +4571,47 @@ async function generateAiAudioForQuestion(q, container) {
   } catch (err) {
     console.error(err);
     showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "KI-Audio konnte nicht erstellt werden."), error: err, action: "generate_editor_audio", details: { questionType: q.type, scriptLength: script.length } });
+  } finally {
+    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+  }
+}
+
+async function generateAiAnswerAudioForQuestion(q, container) {
+  if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du Antwortaudios erzeugen.", "error");
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
+  const options = q.options || [];
+  if (!["single", "multi"].includes(q.type) || options.length < 2 || options.length > 4 || options.some(option => !String(option.text || "").trim() || String(option.text).length > 500 || option.imageDataUrl || option.imageUrl)) {
+    return toast("Für Audioantworten sind zwei bis vier kurze Textoptionen ohne Antwortbilder nötig.", "error");
+  }
+  const button = container.querySelector(".generateQuestionAnswerAudio");
+  const previous = button?.textContent || "Antwortmöglichkeiten vorlesen";
+  const scripts = options.map(option => String(option.text).replace(/\s+/g, " ").trim());
+  if (button) { button.disabled = true; button.textContent = "Antwort-Audios werden erzeugt …"; }
+  q.audioAnswerMode = "audio-only";
+  q.options.forEach(option => { option.audioNeedsRegeneration = true; });
+  markDirty();
+  try {
+    const assets = [];
+    for (let index = 0; index < scripts.length; index += 1) {
+      const questionId = `${String(q.id).slice(0, 70)}-a${index + 1}`;
+      const result = await aiApi.generateQuestionAudio({ quizId: state.currentQuiz.id, questionId, script: scripts[index] });
+      if (!String(result?.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,")) throw new Error(`Audio zu Antwort ${index + 1} fehlt.`);
+      assets.push(result.asset);
+      if (assets.reduce((size, asset) => size + asset.audioDataUrl.length, String(q.audioDataUrl || "").length) > 700000) throw new Error("Die Audios sind für eine Aufgabe zu groß. Bitte Hör- oder Antworttexte kürzen.");
+    }
+    if (!state.questions.includes(q) || q.options.length !== scripts.length || q.options.some((option, index) => String(option.text).replace(/\s+/g, " ").trim() !== scripts[index])) {
+      throw new Error("Antworttexte wurden während der Audioerzeugung geändert. Bitte erneut erzeugen.");
+    }
+    q.options.forEach((option, index) => {
+      option.audioDataUrl = assets[index].audioDataUrl;
+      option.audioNeedsRegeneration = false;
+    });
+    markDirty();
+    renderQuestionAudioEditor(container, q);
+    toast("Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern.");
+  } catch (err) {
+    renderQuestionAudioEditor(container, q);
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Antwort-Audios konnten nicht vollständig erstellt werden."), error: err, action: "generate_answer_audio", details: { questionType: q.type, optionCount: scripts.length } });
   } finally {
     if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
   }
@@ -4747,6 +4904,7 @@ function renderAnswerEditor(container, q) {
       text.placeholder = `Antwort ${idx + 1}`;
       text.addEventListener("input", (e) => {
         opt.text = e.target.value;
+        if (q.audioAnswerMode === "audio-only") opt.audioNeedsRegeneration = true;
         markDirty();
       });
       const remove = document.createElement("button");
@@ -5148,8 +5306,10 @@ function sanitizeQuestionForSave(q) {
     base.audioAiGenerated = q.audioAiGenerated !== false;
   }
   if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
+  if (q.audioPresentation === "listening-only") base.audioPresentation = "listening-only";
+  if (q.audioAnswerMode === "audio-only") base.audioAnswerMode = "audio-only";
   if (["single", "multi", "dropdown"].includes(q.type)) {
-    base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}) }));
+    base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}), ...(q.audioAnswerMode === "audio-only" && String(o.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") ? { audioDataUrl: String(o.audioDataUrl), audioNeedsRegeneration: o.audioNeedsRegeneration === true } : {}) }));
     if (q.imageChoicesOnly) base.imageChoicesOnly = true;
   }
   if (q.type === "text") {
@@ -5241,7 +5401,10 @@ async function saveCurrentQuiz(showMessage = true) {
       questionCount: state.questions.length,
       totalPoints,
       audioQuestionCount: state.questions.filter(q => Boolean(q.audioScript || getQuestionAudioSrc(q))).length,
-      audioReady: state.questions.every(questionAudioReady),
+      audioAnswerQuestionCount: state.questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: state.questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: state.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: state.questions.every(questionAllAudioReady),
       solutionAudioQuestionCount: state.questions.filter(q => Boolean(q.solutionAudioScript || getQuestionSolutionAudioSrc(q))).length,
       solutionAudioReady: state.questions.every(questionSolutionAudioReady),
       updatedAt: serverTimestamp()
@@ -5314,7 +5477,8 @@ async function publishCurrentQuiz() {
     showPublish(state.currentQuiz.id);
     return;
   }
-  if (state.currentQuiz.audioReady === false) return toast("Mindestens eine Höraufgabe braucht noch ein aktuelles Audio. Erzeuge das Audio neu, bevor du veröffentlichst.", "error");
+  if (secureAudioPublicationBlocked(state.currentQuiz)) return toast(secureAudioPublicationMessage, "error");
+  if (state.currentQuiz.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Erzeuge es vor dem Veröffentlichen neu.", "error");
   if (state.currentQuiz.showSolutions && state.currentQuiz.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Erzeuge sie neu oder entferne sie, bevor du veröffentlichst.", "error");
   if (state.currentQuiz.published && !state.currentQuiz.ended) {
     showPublish(state.currentQuiz.id);
@@ -5965,7 +6129,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.qid = q.id;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${escapeHtml(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionAudioReady(q) ? "Nur hören" : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -6014,9 +6178,25 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }, shownIndex) => {
         const label = document.createElement("label");
         label.className = "choice";
-        const text = imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
+        const answerAudioOnly = q.audioAnswerMode === "audio-only";
+        const text = answerAudioOnly ? `Antwort ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
         const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
         label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
+        if (answerAudioOnly && String(option.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && option.audioNeedsRegeneration !== true) {
+          const player = document.createElement("audio");
+          player.controls = true;
+          player.preload = "metadata";
+          player.src = option.audioDataUrl;
+          player.setAttribute("aria-label", `Antwort ${shownIndex + 1} anhören`);
+          player.addEventListener("click", event => event.stopPropagation());
+          label.appendChild(player);
+        } else if (answerAudioOnly) {
+          label.querySelector("input").disabled = true;
+          const warning = document.createElement("small");
+          warning.className = "aiInputError";
+          warning.textContent = "Audio fehlt oder ist veraltet.";
+          label.appendChild(warning);
+        }
         section.appendChild(label);
       });
     } else if (q.type === "truefalse") {

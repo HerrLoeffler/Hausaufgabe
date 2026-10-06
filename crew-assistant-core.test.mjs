@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CREW_MEMBERS, parseTestRequest, resolveLocalCrewRequest } from "./crew-assistant-core.mjs";
+import { CREW_MEMBERS, parseTestRequest, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.mjs";
 
 test("all four GradeCrew members are addressable", () => {
   assert.deepEqual(Object.keys(CREW_MEMBERS), ["coco", "remy", "emmi", "wilma"]);
@@ -151,14 +151,15 @@ test("Remy extracts listening-task counts without polluting the topic", () => {
 });
 
 
-test("Remy separates listening audio and released solution audio counts", () => {
+test("Remy separates listening audio and spoken answer counts", () => {
   const patch = parseTestRequest("Englisch 6. Klasse Shopping, 12 Aufgaben, davon 3 Höraufgaben und 2 Lösungen als Audio.");
   assert.equal(patch.subject, "Englisch");
   assert.equal(patch.grade, "6");
   assert.equal(patch.topic, "Shopping");
   assert.equal(patch.count, 12);
   assert.equal(patch.audioQuestionCount, 3);
-  assert.equal(patch.solutionAudioQuestionCount, 2);
+  assert.equal(patch.audioAnswerQuestionCount, 2);
+  assert.equal(patch.solutionAudioQuestionCount, undefined);
 });
 
 
@@ -198,4 +199,91 @@ test("English difficulty progression remains a pedagogical note rather than a fa
   const patch = parseTestRequest("Math Year 7 topic fractions. Start with easy questions, then make them more challenging.");
   assert.equal(patch.difficulty, undefined);
   assert.match(patch.notes, /Zuerst leichte Aufgaben/);
+});
+
+test("spoken German request separates subject, topic, style and media quantities", () => {
+  const patch = parseTestRequest("Deutsch Wortart Test für die 5 Klasse Mittelschule Thema Wortarten und Satzglieder bitte lustige Sätze einbauen und auch zwei Bilder und auch zwei hör Aufgaben und auch zwei Aufgaben in den Lösungen sind");
+  assert.equal(patch.subject, "Deutsch");
+  assert.equal(patch.grade, "5");
+  assert.equal(patch.schoolType, "Mittelschule");
+  assert.equal(patch.topic, "Wortarten und Satzglieder");
+  assert.equal(patch.imageQuestionCount, 2);
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.equal(patch.count, undefined);
+  assert.equal(patch.audioAnswerQuestionCount, undefined);
+  assert.equal(patch.solutionAudioQuestionCount, undefined);
+  assert.match(patch.notes, /lustige Sätze/i);
+});
+
+test("subject is read from the request, independently of the UI locale", () => {
+  assert.equal(parseTestRequest("Deutschtest zum Thema Wortarten").subject, "Deutsch");
+  assert.equal(parseTestRequest("Wortart Test für die 5 Klasse Mittelschule Thema Wortarten").subject, undefined);
+  const result = resolveLocalCrewRequest({ crewId: "remy", locale: "de-DE", text: "Test für Klasse 5 zum Thema Wortarten" });
+  assert.equal(result.action.patch.subject, undefined);
+});
+
+test("spoken quantities keep total, pictures, listening and answer-option audio separate", () => {
+  const patch = parseTestRequest("Deutsch 5. Klasse Thema Wortarten, zwölf Aufgaben, zwei Bilder, zwei Hör Aufgaben und drei Aufgaben mit vorgelesenen Antwortmöglichkeiten.");
+  assert.equal(patch.topic, "Wortarten");
+  assert.equal(patch.count, 12);
+  assert.equal(patch.imageQuestionCount, 2);
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.equal(patch.audioAnswerQuestionCount, 3);
+  assert.equal(patch.solutionAudioQuestionCount, undefined);
+  assert.match(patchSummary(patch), /2 Aufgaben mit Bild/);
+  assert.match(patchSummary(patch), /3 Aufgaben mit vorgelesenen Antworten/);
+});
+
+test("spoken answer options do not become released solution audio", () => {
+  const patch = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben mit Sprachnotizen als Lösungen: alle Antwortoptionen vorlesen, daneben zwei Lösungen als Audio nach dem Test.");
+  assert.equal(patch.topic, "Wortarten");
+  assert.equal(patch.audioAnswerQuestionCount, 2);
+  assert.equal(patch.solutionAudioQuestionCount, 2);
+  assert.equal(patch.count, undefined);
+});
+
+test("plain answer text never requests spoken answer audio", () => {
+  const patch = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben mit Antworten.");
+  assert.equal(patch.audioAnswerQuestionCount, undefined);
+  assert.equal(patch.audioQuestionCount, undefined);
+});
+
+test("an audio task subset is not mistaken for the test's total count", () => {
+  const subset = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben mit Audio.");
+  assert.equal(subset.audioQuestionCount, 2);
+  assert.equal(subset.count, undefined);
+  const total = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwölf Aufgaben, davon zwei Aufgaben mit Audio.");
+  assert.equal(total.count, 12);
+  assert.equal(total.audioQuestionCount, 2);
+});
+
+test("audio answer options do not request listening questions", () => {
+  const patch = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben mit Audio-Antworten.");
+  assert.equal(patch.audioAnswerQuestionCount, 2);
+  assert.equal(patch.audioQuestionCount, undefined);
+  assert.equal(patch.count, undefined);
+});
+
+test("explicit total outranks spoken answer-option subset phrased with bei denen", () => {
+  const patch = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben, bei denen alle Antwortoptionen vorgelesen werden, insgesamt zwölf Aufgaben.");
+  assert.equal(patch.count, 12);
+  assert.equal(patch.audioAnswerQuestionCount, 2);
+  assert.equal(patch.audioQuestionCount, undefined);
+
+  const subsetOnly = parseTestRequest("Deutsch Klasse 5 Thema Wortarten, zwei Aufgaben, bei denen alle Antwortoptionen vorgelesen werden.");
+  assert.equal(subsetOnly.count, undefined);
+  assert.equal(subsetOnly.audioAnswerQuestionCount, 2);
+  for (const phrase of ["gesamt zwölf Aufgaben", "total twelve questions", "in total twelve questions"]) {
+    assert.equal(parseTestRequest(phrase).count, 12, phrase);
+  }
+});
+
+
+test("explicit post-test audio before the quantity stays protected", () => {
+  for (const request of ["Erstelle 5 Aufgaben, nach dem Test 2 Lösungen als Audio.", "Create 5 questions, after the test 2 audio solutions."]) {
+    const patch = parseTestRequest(request);
+    assert.equal(patch.solutionAudioQuestionCount, 2);
+    assert.equal(patch.audioAnswerQuestionCount, undefined);
+    assert.equal(patch.count, 5);
+  }
 });

@@ -208,7 +208,7 @@ jobs:
           node --test student-attempt-guard.test.mjs
           node --test crew-assistant-core.test.mjs
           node --test remy-ai-help.test.mjs
-          node --test audio-listening-v1.test.mjs audio-solution-v2.test.mjs
+          node --test audio-listening-v1.test.mjs audio-solution-v2.test.mjs audio-answer-renderer.test.mjs markwords-title-polish.test.mjs
           test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg

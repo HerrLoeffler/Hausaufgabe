@@ -57,6 +57,7 @@ function fixture() {
     Date: class extends Date { static now() { return now; } },
     require: name => {
       if (name === './observability') return require('../lib/observability');
+      if (name === './audio-release-gate') return require('../lib/audio-release-gate');
       if (name === 'firebase-functions/logger') return { info() {}, warn() {}, error() {} };
       if (name === 'node:crypto') return require(name);
       if (name === 'firebase-admin/app') return { getApps: () => [{}] };

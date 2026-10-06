@@ -31,6 +31,7 @@
       <button id="settingsTopBtn" class="button ghost" type="button">Einstellungen</button>
       <button id="logoutBtn" class="button ghost" type="button">Abmelden</button>
     </div>
+    <button id="gcEntryLoginOpen" class="gcHeroLogin hidden" type="button" data-i18n-key="hero.login" data-i18n-fallback="Anmelden">Anmelden</button>
   </header>
 
   <main id="mainContent" class="shell" tabindex="-1">
@@ -357,8 +358,10 @@
             <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
             <label>Höraufgaben mit Audio (0–5)<input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" /></label>
             <p id="aiAudioCountHint" class="hint">KI-generierte Stimme · kein Autoplay · Hörtext im Editor prüfbar.</p>
-            <label>Lösungen als Audio (0–5)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiSolutionAudioCountHint" /></label>
-            <p id="aiSolutionAudioCountHint" class="hint">Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
+            <label>Aufgaben mit vorgelesenen Antwortmöglichkeiten (0–5)<input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" /></label>
+            <p id="aiAudioAnswerCountHint" class="hint">Jede Antwortmöglichkeit ist einzeln anhörbar und auswählbar.</p>
+            <label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
+            <p id="aiSolutionAudioCountHint" class="hint" hidden>Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
           </div>
           <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
           <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
@@ -465,7 +468,7 @@
 
   <template id="questionTemplate">
     <article class="card questionCard">
-      <div class="questionTop"><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe mit KI bearbeiten">✨ KI bearbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben" aria-label="Aufgabe nach oben verschieben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten" aria-label="Aufgabe nach unten verschieben">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen" aria-label="Aufgabe einklappen" aria-expanded="true">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren" aria-label="Aufgabe duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen" aria-label="Aufgabe löschen">×</button></div></details></div></div>
+      <div class="questionTop"><strong class="questionNumber"></strong><div class="questionActions"><button class="iconButton aiFeedbackGood hidden" type="button" title="Gute Aufgabe melden; Frage und Antworttexte werden im Admin-Feedback gespeichert" aria-label="Aufgabe gut bewerten" aria-pressed="false">☺</button><button class="iconButton aiFeedbackBad hidden" type="button" title="Problem mit Aufgabe melden" aria-label="Aufgabe schlecht bewerten" aria-pressed="false">☹</button><button class="miniButton aiEditQuestion" type="button" title="Aufgabe überarbeiten">✨ Überarbeiten</button><button class="miniButton aiVariantQuestion" type="button" title="Zusätzliche Variante als neue Aufgabe erstellen">✨ Variante hinzufügen</button><details class="questionMore"><summary aria-label="Weitere Aktionen">•••</summary><div class="questionMoreMenu"><button class="iconButton moveUp" type="button" title="Nach oben" aria-label="Aufgabe nach oben verschieben">↑</button><button class="iconButton moveDown" type="button" title="Nach unten" aria-label="Aufgabe nach unten verschieben">↓</button><button class="iconButton collapseQuestion" type="button" title="Aufgabe einklappen" aria-label="Aufgabe einklappen" aria-expanded="true">⌃</button><button class="iconButton duplicateQuestion" type="button" title="Duplizieren" aria-label="Aufgabe duplizieren">⧉</button><button class="iconButton danger deleteQuestion" type="button" title="Löschen" aria-label="Löschen">×</button></div></details></div></div>
       <div class="questionGrid">
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
@@ -563,5 +566,3 @@
   <script type="module" src="startup.js?v=2.3.1-gc28-i18n2"></script>
 </body>
 </html>
-
-

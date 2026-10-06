@@ -78,7 +78,7 @@ const COMMON_RESPONSES = Object.freeze({
     cost: "GradeCrew versucht zuerst, häufige Fragen und klare Befehle direkt zu lösen. Nur wenn dafür wirklich KI-Verständnis nötig ist, wird der KI-Fallback verwendet. So sparen wir API-Aufrufe und halten Antworten schneller.",
     capabilities: Object.freeze({
       coco: "Ich helfe dir bei der Orientierung in GradeCrew. Tests erstellst du direkt mit Remy auf der Seite „Test mit KI erstellen“, Emmi arbeitet im Editor und Wilma später bei der Auswertung.",
-      remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Höraufgaben, Audio-Lösungen, Aufgabentypen und Zusatzwünsche.",
+      remy: "Ich kann Testwünsche verstehen und das KI-Formular vorbereiten: Fach, Klasse, Schulart, Thema, Schwierigkeit, Aufgabenanzahl, Punkte, Bildaufgaben, Höraufgaben, vorgelesene Antwortoptionen, Audio-Lösungen, Aufgabentypen und Zusatzwünsche.",
       emmi: "Ich kann Aufgaben prüfen und einen Test im Editor gezielt überarbeiten.",
       wilma: "Ich kann beim Bewerten und Interpretieren von Ergebnissen helfen."
     })
@@ -94,7 +94,7 @@ const COMMON_RESPONSES = Object.freeze({
     cost: "GradeCrew first tries to handle common questions and clear commands locally. The AI fallback is used only when genuine language understanding is needed. This saves API calls and keeps responses faster.",
     capabilities: Object.freeze({
       coco: "I help you find your way around GradeCrew. Create tests with Remy under ‘Create with AI’; Emmi works in the editor and Wilma helps with results.",
-      remy: "I can understand test requests and prepare the AI form: subject, year/class, school type, topic, difficulty, question count, points, listening questions, audio solutions, question types and additional requests.",
+      remy: "I can understand test requests and prepare the AI form: subject, year/class, school type, topic, difficulty, question count, points, picture questions, listening questions, spoken answer options, audio solutions, question types and additional requests.",
       emmi: "I can review questions and help improve a test in the editor.",
       wilma: "I can help with grading and interpreting results."
     })
@@ -114,9 +114,26 @@ function normalizeLocale(value = "de-DE") {
   return /^en(?:-|$)/i.test(String(value || "")) ? "en-GB" : "de-DE";
 }
 
-const PARSER_VERSION = "remy-structure-v5-audio-solutions-i18n";
+const PARSER_VERSION = "remy-structure-v7-audio-answer-semantics";
 const INITIAL_EASY = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)|(?:the\s+)?(?:first\s+(?:questions?|tasks?)|at\s+the\s+beginning|initially))\b[^.!?]{0,50}?\b(?:leicht|einfach|easy|simple)\b/i;
 const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?|not|no)\s+(?:(?:zu|so|too)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt|easy|simple|hard|difficult|challenging|medium|mixed)\b/gi;
+const NUMBER_WORDS = Object.freeze({
+  null: 0, ein: 1, eine: 1, einen: 1, einem: 1, einer: 1, eins: 1, one: 1,
+  zwei: 2, two: 2, drei: 3, three: 3, vier: 4, four: 4,
+  fünf: 5, fuenf: 5, five: 5, sechs: 6, six: 6, sieben: 7, seven: 7,
+  acht: 8, eight: 8, neun: 9, nine: 9, zehn: 10, ten: 10,
+  elf: 11, eleven: 11, zwölf: 12, zwoelf: 12, twelve: 12,
+  dreizehn: 13, thirteen: 13, vierzehn: 14, fourteen: 14,
+  fünfzehn: 15, fuenfzehn: 15, fifteen: 15, sechzehn: 16, sixteen: 16,
+  siebzehn: 17, seventeen: 17, achtzehn: 18, eighteen: 18,
+  neunzehn: 19, nineteen: 19, zwanzig: 20, twenty: 20
+});
+const NUMBER_WORD_SOURCE = Object.keys(NUMBER_WORDS).sort((a, b) => b.length - a.length).join("|");
+const QUANTITY_SOURCE = `(?:\\d{1,3}|${NUMBER_WORD_SOURCE})`;
+
+function normalizeSpokenNumbers(text) {
+  return text.replace(new RegExp(`\\b(${NUMBER_WORD_SOURCE})\\b`, "gi"), word => String(NUMBER_WORDS[word.toLocaleLowerCase()]));
+}
 
 function normalizeText(value = "") {
   return String(value)
@@ -145,6 +162,9 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
+    .replace(/\s+(?=\b(?:bitte|please)\b).*$/i, "")
+    .replace(new RegExp(`[,;\\s]+(?=(?:(?:und|and)\\s+)?(?:auch\\s+)?(?:davon\\s+)?${QUANTITY_SOURCE}\\s+(?:bilder?|pictures?|images?|(?:hör|hoer)\\s*(?:aufgaben?|fragen?)|(?:listening|audio)\\s+(?:questions?|tasks?)|aufgaben?|fragen?|questions?|tasks?)\\b).*`, "i"), "")
+    .replace(/\s+(?=(?:lustige[nr]?|witzige[nr]?|funny|humorous?)\s+(?:sätze|saetze|beispiele|sentences?|examples?)\b).*$/i, "")
     .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?)).*$/i, "")
     .replace(/\s+(?:mit|ohne|with|without)\s+(?=(?:single|multiple|freitext|offene|free|open|dropdown|richtig|true|lücken|luecken|gap|zuord|matching|sortier|ordering|reihenfolge|gruppier|grouping|kategorien|categories|wörter|woerter|markier|mark words|rechen|numeric|zahl|(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?))).*$/i, "")
     .replace(/\s+(?=(?:(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|bitte|möglichst|moeglichst|mainly|mostly|please)\s+)?(?:sehr\s+)?(?:leichte[nr]?|einfache[nr]?|mittlere[nr]?|anspruchsvolle[nr]?|schwere[nr]?|gemischte[nr]?|easy|simple|medium|challenging|hard|mixed)\s+(?:aufgaben?|fragen?|questions?|tasks?)\b).*$/i, "")
@@ -210,6 +230,7 @@ function extractNotes(text) {
   if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|mainly|mostly)\s+(?:rechenaufgaben|calculation questions?|calculation tasks?)\b/i.test(text)) add("Vor allem Rechenaufgaben");
   if (/\b(?:(?:viele|mehr)\s+sachaufgaben|(?:many|more)\s+word problems?)\b/i.test(text)) add("Viele Sachaufgaben");
   if (/\b(?:viele\s+aufgaben|many\s+(?:questions|tasks))\b/i.test(text) && !/\b\d{1,3}\s+(?:aufgaben|questions|tasks)\b/i.test(text)) add("Viele Aufgaben");
+  if (/\b(?:lustige[nr]?|witzige[nr]?|funny|humorous?)\s+(?:sätze|saetze|beispiele|sentences?|examples?)\b/i.test(text)) add("Lustige Sätze einbauen");
 
   const explicit = text.match(/\b(?:(?:eigene\s+)?wünsche?|requests?|additional requests?|notes?)\s*[:=-]\s*([^.!?]+)/i);
   if (explicit?.[1]) add(explicit[1].slice(0, 500));
@@ -219,6 +240,7 @@ function extractNotes(text) {
 
 function parseTestRequest(input = "") {
   const text = normalizeText(input);
+  const numericText = normalizeSpokenNumbers(text);
   const patch = {};
   if (!text) return patch;
 
@@ -230,7 +252,7 @@ function parseTestRequest(input = "") {
 
   if (/\b(bayern|bavaria)\b/i.test(text)) patch.region = "Bayern";
 
-  const grade = extractNumber(text, [
+  const grade = extractNumber(numericText, [
     /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*(\d{1,2})\b/i,
     /\b(\d{1,2})\.?\s*(?:klasse|jahrgang(?:sstufe)?|year|grade)\b/i,
     /\b(?:für|fuer|for)\s+(?:die\s+)?(?:year\s*)?(\d{1,2})\.?\b/i
@@ -249,28 +271,61 @@ function parseTestRequest(input = "") {
     else if (/\b(mittel|mittlere[mnr]?|medium)\b/i.test(difficultyText)) patch.difficulty = "mittel";
   }
 
-  const count = extractNumber(text, [/\b(\d{1,3})\s*(?:aufgaben?|fragen?|questions?|tasks?)\b/i], 1, 100);
-  if (count !== undefined) patch.count = count;
+  const explicitTotal = extractNumber(numericText, [
+    /\b(?:insgesamt|gesamt|in\s+total|total)\s*(\d{1,3})\s*(?:aufgaben?|fragen?|questions?|tasks?)\b/i,
+    /\b(\d{1,3})\s*(?:aufgaben?|fragen?|questions?|tasks?)\s+(?:insgesamt|gesamt|in\s+total|total)\b/i
+  ], 1, 100);
+  const countMatch = [...numericText.matchAll(/\b(\d{1,3})\s*(?:aufgaben?|fragen?|questions?|tasks?)\b/gi)].find(match => {
+    const before = numericText.slice(0, match.index);
+    const after = numericText.slice(match.index + match[0].length);
+    return !/\b(?:davon|auch|of those)\s*$/i.test(before) &&
+      !/^\s+(?:in\s+den\s+lösungen|mit\s+(?:sprachnotizen|vorgelesenen?|gesprochenen?|audio|hörtext|hoertext)|with\s+(?:spoken|read[- ]?out|audio)\b)/i.test(after) &&
+      !/^[,;\s]+bei\s+denen\b[^.!?]{0,80}\b(?:antwortoptionen|antwortmöglichkeiten|antworten)\b[^.!?]{0,40}\bvorgelesen\b/i.test(after);
+  });
+  const count = explicitTotal ?? (countMatch ? Number(countMatch[1]) : undefined);
+  if (count !== undefined && count >= 1 && count <= 100) patch.count = count;
 
-  const points = extractNumber(text, [/\b(\d{1,3}(?:[.,]5)?)\s*(?:punkte?|points?|pkt\.?|p\.)\b/i], 0.5, 500);
+  const points = extractNumber(numericText, [/\b(\d{1,3}(?:[.,]5)?)\s*(?:punkte?|points?|pkt\.?|p\.)\b/i], 0.5, 500);
   if (points !== undefined) patch.points = points;
 
-  const duration = extractNumber(text, [/\b(\d{1,3})\s*(?:minuten?|minutes?|mins?|min\.?)(?:\s|$)/i], 1, 300);
+  const duration = extractNumber(numericText, [/\b(\d{1,3})\s*(?:minuten?|minutes?|mins?|min\.?)(?:\s|$)/i], 1, 300);
   if (duration !== undefined) patch.durationMinutes = duration;
 
-  const audioQuestionCount = extractNumber(text, [
-    /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)(?:aufgaben?|fragen?)\b/i,
-    /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio|hörtext|hoertext)\b/i,
+  const imageQuestionCount = extractNumber(numericText, [
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:bilder?|pictures?|images?)\b/i,
+    /\b(\d{1,2})\s*(?:aufgaben?|fragen?|questions?|tasks?)\s+(?:mit|with)\s+(?:einem?\s+)?(?:bild|picture|image)\b/i
+  ], 0, 5);
+  if (imageQuestionCount !== undefined) patch.imageQuestionCount = imageQuestionCount;
+
+  const audioQuestionCount = extractNumber(numericText, [
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)\s*(?:aufgaben?|fragen?)\b/i,
+    /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio(?![-\s]?(?:antwort|option|lösun|loesun|answer|solution))|hörtext|hoertext)\b/i,
     /\b(?:of\s+those\s+)?(\d{1,2})\s*(?:listening|audio)\s+(?:questions?|tasks?)\b/i,
     /\b(\d{1,2})\s+(?:questions?|tasks?)\s+(?:with\s+audio|using\s+audio)\b/i
   ], 0, 5);
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
-  const solutionAudioQuestionCount = extractNumber(text, [
-    /\b(?:davon\s+|of\s+those\s+)?(\d{1,2})\s*(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\s+(?:als|mit|as|with)\s+audio\b/i,
-    /\b(\d{1,2})\s*audio[- ]?(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\b/i
+  const audioAnswerQuestionCount = extractNumber(numericText, [
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?|questions?|tasks?)\s+(?:mit|with)\s+(?:allen?\s+)?(?:vorgelesenen?|gesprochenen?|spoken|read[- ]?out|audio[- ]?)\s*(?:antwortmöglichkeiten|antwortoptionen|antworten|answer\s+options?|answers?)\b/i,
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+sprachnotizen\s+als\s+lösungen\b/i,
+    /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s*,?\s+bei\s+denen\s+(?:alle\s+)?(?:antwortmöglichkeiten|antwortoptionen|antworten)\s+vorgelesen\b/i
   ], 0, 5);
-  if (solutionAudioQuestionCount !== undefined) patch.solutionAudioQuestionCount = solutionAudioQuestionCount;
+  if (audioAnswerQuestionCount !== undefined) patch.audioAnswerQuestionCount = audioAnswerQuestionCount;
+
+  // In creation, “audio solutions” means selectable spoken answers unless
+  // the request explicitly describes a released explanation after the test.
+  const solutionRequests = [...numericText.matchAll(/\b(?:davon\s+|of\s+those\s+)?(\d{1,2})\s*(?:(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?)\s+(?:als|mit|as|with)\s+audio|audio[- ]?(?:lösungen?|loesungen?|erklärungen?|erklaerungen?|solutions?|explanations?))\b/gi)];
+  for (const match of solutionRequests) {
+    const quantity = Number(match[1]);
+    if (quantity < 0 || quantity > 5) continue;
+    const after = numericText.slice(match.index + match[0].length);
+    const before = numericText.slice(0, match.index);
+    const released = /^(?:[^,;.!?]{0,40})\b(?:nach\s+(?:dem\s+)?(?:test(?:ende)?|abgabe)|after\s+(?:the\s+)?(?:test|submission))\b/i.test(after) ||
+      /\b(?:nach\s+(?:dem\s+)?(?:test(?:ende)?|abgabe)|after\s+(?:the\s+)?(?:test|submission))[^,;.!?]{0,40}$/i.test(before);
+    if (released) patch.solutionAudioQuestionCount = quantity;
+    else if (patch.audioAnswerQuestionCount === undefined) patch.audioAnswerQuestionCount = quantity;
+  }
+
 
   const allowedTypes = [];
   const excludedTypes = [];
@@ -303,7 +358,9 @@ function patchSummary(patch = {}, locale = "de-DE") {
   if (patch.count) parts.push(english ? `${patch.count} questions` : `${patch.count} Aufgaben`);
   if (patch.points) parts.push(english ? `${patch.points} points` : `${patch.points} Punkte`);
   if (patch.durationMinutes) parts.push(english ? `${patch.durationMinutes} min.` : `${patch.durationMinutes} Min.`);
+  if (patch.imageQuestionCount !== undefined) parts.push(english ? `${patch.imageQuestionCount} questions with pictures` : `${patch.imageQuestionCount} Aufgaben mit Bild`);
   if (patch.audioQuestionCount !== undefined) parts.push(english ? `${patch.audioQuestionCount} listening questions` : `${patch.audioQuestionCount} Höraufgaben`);
+  if (patch.audioAnswerQuestionCount !== undefined) parts.push(english ? `${patch.audioAnswerQuestionCount} questions with spoken answers` : `${patch.audioAnswerQuestionCount} Aufgaben mit vorgelesenen Antworten`);
   if (patch.solutionAudioQuestionCount !== undefined) parts.push(english ? `${patch.solutionAudioQuestionCount} audio solutions` : `${patch.solutionAudioQuestionCount} Audio-Lösungen`);
   if (patch.notes) parts.push(english ? "Additional requests added" : "Wünsche übernommen");
   return parts.join(" · ");

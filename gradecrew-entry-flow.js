@@ -30,6 +30,7 @@ function setState(next, { focus = true } = {}) {
   }
   const authView = $("authView");
   if (authView) authView.dataset.entryState = next;
+  $("gcEntryLoginOpen")?.classList.toggle("hidden", next !== "start");
   if (!focus) return;
   requestAnimationFrame(() => {
     const root = $(stateIds[next]);
@@ -106,7 +107,6 @@ function buildEntrySurface() {
           </div>
           <div class="gcHeroActions">
             <div class="gcHeroTutorialEntry"><button type="button" class="button primary" id="gcEntryTutorialStart" data-entry-autofocus data-i18n-key="hero.meetCrew" data-i18n-fallback="Crew kennenlernen">Crew kennenlernen</button><small id="gcHeroTutorialDuration" data-i18n-key="hero.tutorialDuration" data-i18n-fallback="Tutorial · ca. 6–7 Minuten">Tutorial · ca. 6–7 Minuten</small></div>
-            <button type="button" class="gcHeroLogin" id="gcEntryLoginOpen" data-i18n-key="hero.login" data-i18n-fallback="Direkt anmelden">Direkt anmelden</button>
           </div>
           <div class="gcHeroJoin"><label for="joinCode" data-i18n-key="hero.student" data-i18n-fallback="Schüler? Testcode eingeben.">Schüler? Testcode eingeben.</label><div id="gcEntryJoinHost"></div></div>
         </div>

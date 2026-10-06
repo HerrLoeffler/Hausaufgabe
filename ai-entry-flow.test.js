@@ -34,7 +34,8 @@ test('public start is concise and keeps credentials out of the hero', () => {
   assert.match(start, /Willkommen bei<\/span> GradeCrew\./);
   assert.match(start, /Digitale Tests\. Schnell &amp; einfach\./);
   assert.match(start, /Crew kennenlernen/);
-  assert.match(start, /Direkt anmelden/);
+  assert.match(read('index.html'), /id="gcEntryLoginOpen"[^>]*data-i18n-key="hero.login"/);
+  assert.doesNotMatch(start, /id="gcEntryLoginOpen"/);
   assert.match(start, /Schüler\? Testcode eingeben\./);
   assert.doesNotMatch(start, /Account erstellen/);
   assert.doesNotMatch(start, /loginEmail|loginPassword|registerEmail|registerPassword/);

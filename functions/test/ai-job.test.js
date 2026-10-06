@@ -18,6 +18,12 @@ test("a background test starts unpublished and inherits a similar test's setting
   assert.equal(quiz.shuffleQuestions, true);
 });
 
+test("generic generated title uses the cleaned topic without replacing a meaningful title", () => {
+  const input = { topic: "Wortarten und Satzglieder", subject: "Deutsch" };
+  assert.equal(quizForGeneratedTest({ title: "KI-Test · Deutsch" }, input).title, "Wortarten und Satzglieder");
+  assert.equal(quizForGeneratedTest({ title: "Sprachdetektive" }, input).title, "Sprachdetektive");
+});
+
 test("AI never generates answer images, including from an older queued job", async () => {
   let generated = false;
   const raw = {

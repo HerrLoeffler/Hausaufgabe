@@ -37,6 +37,11 @@
 .jsonFieldLabel { display: block; font-size: 13px; font-weight: 650; margin-top: 18px; }
 .userBar { min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .userBar #userLabel { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body:not(.gcPublicEntryMode) .shell { max-width: 1680px; }
+body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady { grid-template-columns: auto minmax(0,1fr) auto; grid-template-areas: "brand user language"; min-height: 72px; height: auto; gap: 10px 18px; }
+body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady > #userBar { grid-area: user; justify-self: end; justify-content: flex-end; margin-left: 0; }
+body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady > #gradecrewLanguageControl { grid-area: language; justify-self: end; }
+@media (max-width: 900px) { body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady { grid-template-columns: minmax(0,1fr) auto; grid-template-areas: "brand language" "user user"; } }
 #adminTopBtn { position: relative; }
 .bugOpsAttentionBadge {
   display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px;

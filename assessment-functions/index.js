@@ -16,6 +16,7 @@ const {
   publicQuizMetadata,
   assertNoSolutionLeak
 } = require("./lib/assessment-core");
+const { audioReleaseBlockedByMetadata, audioReleaseBlockedByQuestions } = require("./lib/audio-release-gate");
 
 initializeApp();
 
@@ -75,6 +76,8 @@ function validateQuizOpen(quiz) {
   if (quiz.isDeleted === true) throw new HttpsError("not-found", "Dieser Test ist nicht verfügbar.");
   if (quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist vorübergehend gesperrt.");
   if (quiz.published !== true) throw new HttpsError("failed-precondition", "Dieser Test ist noch nicht veröffentlicht.");
+  if (audioReleaseBlockedByMetadata(quiz)) throw new HttpsError("failed-precondition", "Diese Audioaufgaben sind noch nicht für Schüler freigegeben.");
+  if (quiz.audioReady === false) throw new HttpsError("failed-precondition", "Audios dieses Tests müssen vor dem Start vervollständigt werden.");
   if (quiz.ended === true) throw new HttpsError("failed-precondition", "Dieser Test wurde beendet.");
 }
 
@@ -86,7 +89,9 @@ async function readQuiz(quizId) {
 
 async function readQuestions(quizId) {
   const snap = await getFirestore().collection(`quizzes/${quizId}/questions`).orderBy("position").get();
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const questions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  if (audioReleaseBlockedByQuestions(questions)) throw new HttpsError("failed-precondition", "Diese Audioaufgaben sind noch nicht für Schüler freigegeben.");
+  return questions;
 }
 
 function sessionMode(quiz) {

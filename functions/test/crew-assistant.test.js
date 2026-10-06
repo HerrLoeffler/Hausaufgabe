@@ -88,3 +88,19 @@ test("normalizer strips unsupported action types and localizes only its fallback
 test("strict schema exposes only safe V1 action types", () => {
   assert.deepEqual(crewAssistantSchema.properties.action.properties.type.enum, ["none", "patch_ai_form"]);
 });
+
+test("Remy fallback keeps image, listening and spoken-answer counts distinct", () => {
+  const properties = crewAssistantSchema.properties.action.properties.patch.properties;
+  for (const field of ["imageQuestionCount", "audioQuestionCount", "audioAnswerQuestionCount", "solutionAudioQuestionCount"]) {
+    assert.ok(Object.hasOwn(properties, field));
+  }
+  const cleaned = cleanCrewRequest({ text: "Drei Hörantworten", context: { aiForm: {
+    imageQuestionCount: 1, audioQuestionCount: 2, audioAnswerQuestionCount: 3, solutionAudioQuestionCount: 0
+  } } });
+  assert.equal(cleaned.context.aiForm.audioAnswerQuestionCount, 3);
+  assert.equal(cleaned.context.aiForm.solutionAudioQuestionCount, 0);
+  const patch = normalizeCrewResult({ action: { type: "patch_ai_form", patch: { audioAnswerQuestionCount: 4 } } }).action.patch;
+  assert.equal(patch.audioAnswerQuestionCount, 4);
+  assert.equal(patch.solutionAudioQuestionCount, null);
+  assert.match(crewSystemPrompt("remy"), /audioAnswerQuestionCount/);
+});

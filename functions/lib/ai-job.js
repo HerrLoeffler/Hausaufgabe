@@ -13,8 +13,12 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
     ? sourceQuiz.gradeScaleSnapshot : selectedScale;
   const contentLocale = sourceQuiz?.contentLocale || extractContentLocale(input?.notes);
   const gradingLocale = sourceQuiz?.gradingLocale || contentLocale;
+  const generatedTitle = String(test.title || "").trim();
+  const topicTitle = String(input.topic || "").replace(/\s+/g, " ").trim().slice(0, 150);
+  const title = /^(?:ki[- ]?test|testify|test zu|test über)(?:\s*[·:–-]\s*.*)?$/iu.test(generatedTitle)
+    ? (topicTitle || generatedTitle || "Test") : (generatedTitle || topicTitle || "Test");
   return {
-    title: String(test.title || "KI-Test"), subject: String(test.subject || input.subject || ""),
+    title, subject: String(test.subject || input.subject || ""),
     grade: String(test.grade || input.grade || ""),
     description: String(settings.defaultDescription || "Viel Erfolg beim Test!"),
     contentLocale,
@@ -88,6 +92,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   const audioIntent = raw.audioIntent || { kind: "none", script: "", reason: "" };
   if (audioIntent.kind === "ai_generated") {
     q.audioScript = String(audioIntent.script || "").trim();
+    q.audioPresentation = audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
     q.audioAiGenerated = true;
     try {
       if (typeof generateAudio !== "function") throw new Error("Audiogenerator fehlt.");
