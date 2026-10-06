@@ -1,0 +1,54 @@
+{
+  "task": "GC-DESIGN-05",
+  "characters": [
+    {
+      "name": "Coco",
+      "animal": "Pinguin",
+      "identity": "navyblau, warmes Creme, orange Schnabel/Füße, dunkle Augen",
+      "source_path": "assets/gradecrew/penguin-guide.svg",
+      "git_blob_sha1": "0afd5518acb78faa4de6c4f60b6bf58373c445c0",
+      "sha256": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1",
+      "source_revision": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "source_kind": "SVG wrapper with embedded WebP pose atlas",
+      "source_url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/bb91ce3590d773472ece60c4dd881da729bd32c1/assets/gradecrew/penguin-guide.svg"
+    },
+    {
+      "name": "Remy",
+      "animal": "Elefant",
+      "identity": "graublau, rosa Ohrinnenseiten, dunkle Augen",
+      "source_path": "assets/gradecrew/elephant-create.svg",
+      "git_blob_sha1": "0931ddbf4fd1f19dc1d676810eee037264a58eb3",
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a",
+      "source_revision": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "source_kind": "SVG wrapper with embedded WebP pose atlas",
+      "source_url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/bb91ce3590d773472ece60c4dd881da729bd32c1/assets/gradecrew/elephant-create.svg"
+    },
+    {
+      "name": "Emmi",
+      "animal": "Fuchs",
+      "identity": "orange, cremefarbene Gesichts-/Brustpartien, dunkle Pfoten",
+      "source_path": "assets/gradecrew/fox-improve.svg",
+      "git_blob_sha1": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69",
+      "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248",
+      "source_revision": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "source_kind": "SVG wrapper with embedded WebP pose atlas",
+      "source_url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/bb91ce3590d773472ece60c4dd881da729bd32c1/assets/gradecrew/fox-improve.svg"
+    },
+    {
+      "name": "Wilma",
+      "animal": "Eule",
+      "identity": "braun/creme, Federstruktur, dunkle Augen",
+      "source_path": "assets/gradecrew/owl-grade.svg",
+      "git_blob_sha1": "f6ac88af08d9a110abb80c995c6a5901b2068127",
+      "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c",
+      "source_revision": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "source_kind": "SVG wrapper with embedded WebP pose atlas",
+      "source_url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/bb91ce3590d773472ece60c4dd881da729bd32c1/assets/gradecrew/owl-grade.svg"
+    }
+  ],
+  "reference_screenshot": "User supplied codex-clipboard-87a54eab-2d9f-4c79-8080-38724de05717.png; composition only, not authoritative for character costume or eye color",
+  "unknowns": [
+    "Original 3D models outside checked repository not known",
+    "Side/back views are inferred until approved"
+  ]
+}

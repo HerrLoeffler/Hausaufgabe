@@ -593,6 +593,24 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "design-hero-blender-v1",
+      "task_id": "GC-DESIGN-05",
+      "branch": "docs/gc-design-05-reference-plan-20261006",
+      "observed_head": "f0195717beac6f48b2097de3f7ddf40b72b9d164",
+      "stage": "branch_only",
+      "scope": "Blender production sources and local prototype; no web runtime changes",
+      "integration_target": "main",
+      "environment_evidence": "art/gradecrew-hero/environment/toolchain-proof.json",
+      "user_test": "not_performed",
+      "production_target_allowed": false,
+      "handoff": "workstreams/startscreen-hero-animation-20261004.md",
+      "next_action": "Sculpt coherent canonical Coco face/neck/shoulders and real eyelid deformation from preserved Astra source; visual gate before full crew or web integration.",
+      "future_web_integration_target": "feature/gradecrew-app-integration",
+      "visual_acceptance": false,
+      "prototype_evidence": "art/gradecrew-hero/coco-astra/verification-evidence.json",
+      "independent_review": "art/gradecrew-hero/reviews/astra-pilot-review.md"
     }
   ],
   "deployments": [

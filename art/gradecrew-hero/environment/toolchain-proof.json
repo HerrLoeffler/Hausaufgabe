@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-06",
+  "blender": {
+    "version": "5.2.2 LTS",
+    "build_hash": "d13f752e3b9c",
+    "platform": "macos-arm64",
+    "download": "https://download.blender.org/release/Blender5.2/blender-5.2.2-macos-arm64.dmg",
+    "sha256": "dc4125399b8bfefe283cc1624d6cfc7809d1cac20ace51072127eb371f31f210",
+    "official_checksum_match": true
+  },
+  "mcp": {
+    "package_version": "2.1.8",
+    "sdk_version": "1.30.0",
+    "source_commit": "34b7bd277fff75a693cde78930b4359478958a01",
+    "bind": "127.0.0.1:62024",
+    "safe_mode": true,
+    "telemetry_disabled": true,
+    "native_codex_tool_registration": false,
+    "tested_transport": "Python MCP client -> stdio server -> live Blender addon",
+    "port_policy": "OS-assigned per session; scene nonce required before mutation"
+  },
+  "checks": {
+    "scene_read": true,
+    "object_modified": true,
+    "render_created_and_visually_inspected": true,
+    "save": true,
+    "fresh_process_reopen": true,
+    "reopened_object": "GC_ConnectionProof",
+    "reopened_x": 0.3499999940395355,
+    "metal_device_detected": true,
+    "wrong_session_mutation_rejected": true
+  },
+  "limitations": [
+    "Default sandbox prevents local socket access and crashes Blender headless file-open; narrowly approved execution succeeds.",
+    "MCP integration is session-local; no global Codex configuration or Blender preferences changed.",
+    "Cube render is tooling proof only, not hero art."
+  ],
+  "files": {
+    "connection-proof.blend": {
+      "sha256": "7f45d9f9d5bee02525912b6433abff68b1c12083a4c43631d6021edb74b5d59b",
+      "bytes": 97904
+    },
+    "connection-proof.png": {
+      "sha256": "632d2fe711753ff66442272a9a50bf8c60466f291f734302bfb58d12868dfda0",
+      "bytes": 56440
+    },
+    "start_mcp_session.py": {
+      "sha256": "a5d9076be0dd15aa7f0347bb19bdb233a39919b38dcc0848ce34074b6e62ae74",
+      "bytes": 1356
+    },
+    "verify_mcp.py": {
+      "sha256": "b5e032c8ef5c5fd3e233d436fbccc3a88d4baed8998d58b7597e37896875ee1c",
+      "bytes": 3851
+    }
+  },
+  "render_devices": [
+    {
+      "name": "Apple M5 Pro",
+      "type": "CPU",
+      "enabled": false
+    },
+    {
+      "name": "Apple M5 Pro (GPU - 20 cores)",
+      "type": "METAL",
+      "enabled": true
+    }
+  ]
+}

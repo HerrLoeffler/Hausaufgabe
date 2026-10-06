@@ -1,0 +1,69 @@
+{
+  "transport": "stdio MCP to local Blender addon",
+  "port": 62024,
+  "safe_mode": true,
+  "server": {
+    "name": "MCP for Blender",
+    "title": null,
+    "version": "1.30.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tools": [
+    "get_addon_status",
+    "disable_telemetry",
+    "get_scene_info",
+    "execute_blender_code",
+    "record_trajectory_feedback",
+    "look",
+    "generate_3d",
+    "search_assets",
+    "import_asset"
+  ],
+  "before": {
+    "meta": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)",
+        "annotations": null,
+        "meta": null
+      }
+    ],
+    "structuredContent": {
+      "result": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active Cube | selected Cube | mode OBJECT\n(unsaved) | engine BLENDER_EEVEE | frames 1-250 (now 1) at 24 fps | 1920x1080 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 3 of 3 (name | type | location):\nCube | mesh | at (0.0, 0.0, 0.0)\nLight | light | at (4.08, 1.01, 5.9)\nCamera | camera | at (7.36, -6.93, 4.96)"
+    },
+    "isError": false
+  },
+  "wrong_session_rejected": true,
+  "execution": {
+    "meta": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Code executed successfully: Info: Saved as \"connection-proof.blend\"\nGC_PROOF_OK {\"blender\": \"5.2.2 LTS\", \"object\": \"GC_ConnectionProof\", \"x\": 0.3499999940395355}\n",
+        "annotations": null,
+        "meta": null
+      }
+    ],
+    "structuredContent": {
+      "result": "Code executed successfully: Info: Saved as \"connection-proof.blend\"\nGC_PROOF_OK {\"blender\": \"5.2.2 LTS\", \"object\": \"GC_ConnectionProof\", \"x\": 0.3499999940395355}\n"
+    },
+    "isError": false
+  },
+  "after": {
+    "meta": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)",
+        "annotations": null,
+        "meta": null
+      }
+    ],
+    "structuredContent": {
+      "result": "Scene 'GC_ConnectionProofScene' | 1 camera, 1 light, 1 mesh | active GC_ConnectionProof | selected GC_ConnectionProof | mode OBJECT\n<project>/gradecrew-hero-blender/art/gradecrew-hero/environment/connection-proof.blend | engine CYCLES | frames 1-250 (now 1) at 24 fps | 256x256 | camera Camera | HDRI none | unit scale 1.0\n\nShowing 1 of 1 (name | type | location):\nGC_ConnectionProof | mesh | at (0.35, 0.0, 0.0)"
+    },
+    "isError": false
+  }
+}

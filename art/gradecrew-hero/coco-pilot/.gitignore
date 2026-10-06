@@ -1,0 +1,7 @@
+__pycache__/
+*.blend1
+_verification/
+# Local intermediate proofs remain available without multiplying Git binaries.
+renders/attempt-*.png
+renders/diagnostic-*.png
+renders/reopened-desktop.png

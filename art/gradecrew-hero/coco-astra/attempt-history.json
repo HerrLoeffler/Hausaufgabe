@@ -1,0 +1,59 @@
+{
+  "task": "GC-DESIGN-05",
+  "baseline_commit": "6f085c70a929156e4b0440f7ef2736ac0df28131",
+  "maximum_visual_rounds": 3,
+  "paid_calls": 0,
+  "budget_reset": false,
+  "rounds": [
+    {
+      "round": 1,
+      "session": 51202,
+      "samples": 40,
+      "views": [
+        "inspection"
+      ],
+      "changes": "Curved embedded eye patches, dark iris/pupil, tapered mask, dense laid fibers",
+      "verdict": "Improved but graphic eye outlines, raised white edge, neck junction and peach orange remain"
+    },
+    {
+      "round": 2,
+      "session": 87864,
+      "samples": 48,
+      "views": [
+        "desktop",
+        "inspection",
+        "mobile",
+        "pose01",
+        "pose12",
+        "pose24",
+        "side"
+      ],
+      "changes": "Shallower sclera, no lower rim, richer navy, tilted head, chest depth and chin groom",
+      "verdict": "Eye profile improved; neck and bare blink ovals fail, orange shifted coral"
+    },
+    {
+      "round": 3,
+      "session": 28566,
+      "samples": 64,
+      "views": [
+        "desktop",
+        "inspection",
+        "mobile",
+        "pose01",
+        "pose12",
+        "pose24",
+        "side"
+      ],
+      "changes": "Orange lower specular/yellower diffuse, finer sclera boundary, longer chin fibers",
+      "verdict": "Improved prototype; visual master NOT PASSED"
+    }
+  ],
+  "verification": {
+    "session": 29783,
+    "passed": 25,
+    "failed": 0,
+    "fresh_reopen": true,
+    "visual_gate_passed": false
+  },
+  "next_remedy": "Unified head-neck-shoulder sculpt/retopology and deforming lids with groom masks; preserve cameras, room, door and pipeline; no mandatory paid service implied"
+}
