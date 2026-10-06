@@ -88,7 +88,7 @@ class CanonicalStagingTests(unittest.TestCase):
             with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
                                           "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
                                           "GITHUB_OUTPUT": str(output)}), \
-                    patch.object(promotion, "api", return_value={"files": [row]}):
+                    patch.object(promotion, "api", return_value={"files": [row], "total_commits": 1}):
                 promotion.route()
             self.assertIn("mode=canonical", output.read_text())
             output.unlink()
@@ -97,16 +97,39 @@ class CanonicalStagingTests(unittest.TestCase):
             with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
                                           "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
                                           "GITHUB_OUTPUT": str(output)}), \
-                    patch.object(promotion, "api", return_value={"files": [ordinary]}):
+                    patch.object(promotion, "api", return_value={"files": [ordinary], "total_commits": 1}):
                 promotion.route()
             self.assertIn("mode=preview", output.read_text())
             row["status"] = "modified"
             with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
                                           "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
                                           "GITHUB_OUTPUT": str(output)}), \
-                    patch.object(promotion, "api", return_value={"files": [row]}):
+                    patch.object(promotion, "api", return_value={"files": [row], "total_commits": 1}):
                 with self.assertRaisesRegex(ValueError, "append-only"):
                     promotion.route()
+
+    def test_canonical_push_run_is_excluded_but_newer_preview_still_blocks(self):
+        canonical = {"id": 124, "event": "push", "head_sha": "c" * 40}
+        preview_run = {"id": RUN_ID, "event": "workflow_run"}
+
+        def github(path):
+            if path == f"actions/runs/{RUN_ID}":
+                return RUN
+            if path.startswith("commits/"):
+                return {"files": [{"filename": "automation/canonical-staging-requests/candidate-1.json",
+                                   "status": "added"}]}
+            return {"workflow_runs": [canonical, preview_run]}
+
+        def artifact(_run, name, _file):
+            return SOURCE if name == "verified-deploy-source" else RECEIPT
+
+        with patch.dict(os.environ, ENV), patch.object(promotion, "api", side_effect=github), \
+                patch.object(promotion, "artifact_document", side_effect=artifact), \
+                patch.object(promotion, "ci_source", return_value=SHA):
+            self.assertEqual(promotion.qualify(), (SOURCE, RECEIPT))
+            canonical["event"] = "workflow_run"
+            with self.assertRaisesRegex(ValueError, "newer automatic preview"):
+                promotion.qualify()
 
     def test_preview_receipt_version_is_unambiguous(self):
         result = {"result": {"hausaufgabe-staging": {
