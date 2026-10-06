@@ -341,3 +341,9 @@ Rückweg bei Problemen: neutraler freigegebener Postersatz, funktionsfähige HTM
 Ein Plan kann Perfektion nicht garantieren. Er kann verhindern, dass eine schwache Figur bis zur fertigen Website weitergetragen wird, dass Übersetzungen an Bildtexten scheitern oder dass ein schönes Video die Bedienung blockiert. Genau dafür sind die sichtbaren Prüfpunkte und die vollständigen Quellen vorgesehen.
 
 **Grenze dieses Ergebnisses:** Dieses Dokument ist der Produktionsplan. Es enthält keine fertig erstellten 3D-Modelle, keine neuen Renderings und keinen Nachweis einer umgesetzten Website. Die Umsetzung beginnt erst auf ausdrücklichen Auftrag.
+
+## Umsetzungsnachweis vom 06.10.2026
+
+Der frühere offene Aufgabenstand bleibt als Planhistorie erhalten. Umsetzung durch Martin inzwischen ausdrücklich freigegeben. Quellenvertrag und lokale Blender/MCP-Produktion sind praktisch nachgewiesen; Encoder/Web-Export folgen erst nach visuellem Master. Sol-Pilot:21 technische Prüfungen bestanden; anschließende autorisierte Astra-Verfeinerung:25 technische Prüfungen bestanden. Jeweils echte Geometrie, Speicher-/Wiederöffnungsnachweis und mehrere Perspektiven/Kontrollposen. Visuelle Abnahme bleibt false.
+
+Astra verbessert Augenreflexe/-einbettung, Fell, Stirnmaske und Orange. Grenzen bleiben kanonische ausdrucksstarke Gesichtsskulptur, zusammenhängender Hals-/Schulterübergang und deformierende Lider. Der nächste Produktionsschritt muss diese zusammenhängenden Formen und Lidbewegungen bearbeiten; weitere Dekoration, Crew-Modelle oder Website-Code würden auf einer noch ungeeigneten Figur aufbauen. Vorhandene Quellen, Kamera, Tür, Licht und Prüfwerkzeuge bleiben verwendbar. Aus dem Ergebnis folgt weder eine allgemeine Unmöglichkeit der KI-Modellierung noch ein zwingender bezahlter Dienst.

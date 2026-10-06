@@ -275,3 +275,15 @@ Sol-Baseline lokal6f085c70a929156e4b0440f7ef2736ac0df28131 und remote4b78cfa3304
 Visuelle Abnahme ausdrücklich false: eine graue Augenreflexion, aufgesetzte Augen-/Weißflächen, kantiges Ende der Stirnmaske und stacheliges Fell. Nach drei gezielten Sol-Durchgängen auf Martins autorisierte Astra-Eskalation gewechselt. Astra-Agent arbeitet nur in art/gradecrew-hero/coco-astra/ auf derselben Grundlage; Sol-Baseline bleibt unverändert. Keine vollständige Crew oder Webintegration vor bestandenem visuellen Prüfpunkt. Unabhängiger Pilotreview parallel, ohne doppelte Renderläufe.
 
 Nächster Schritt: Astra-Nahansicht prüfen, danach Seiten-/Desktop-/Mobilansichten und Quell-/Bewegungsnachweis. Kein fertiger Hero behauptet, keine Production-Änderung. Die alte Provider-Reservierung bleibt unverändert.
+
+### Astra-Pilot gesichert und unabhängig geprüft – visueller Prüfpunkt offen
+
+Lokaler Abschluss bc8505d48d38552ce56d6a5a91131ee9efa6fe88 und Remote-Sicherung f0195717beac6f48b2097de3f7ddf40b72b9d164 besitzen denselben Tree372954d1e26470e2c072313276bc3d46447f7a6d. Astra-Quelle art/gradecrew-hero/coco-astra/coco-door-astra.blend (10.187.239Bytes), Builder, acht finale PNGs, Versuchshistorie und Manifest gesichert. Alle hochgeladenen Git-Blob-Hashes gegen lokale Quellen geprüft. Sol-Baseline unverändert.
+
+25 technische Prüfungen bestanden,0 fehlgeschlagen: frische Wiederöffnung/Rendern, beide Blinzelkontrollen samt tatsächlicher Pupillengeometrie, Kopf-/Flügelbewegung, Kameragrenzen, Kontakte, wiederholter Aufbau mit Erhalt fremder Szene/Objekte/Material, stabiler World-Bestand. Unabhängiger gezielter Review: Integrität und technischer Prototyp PASS; alle16 Manifestdateien stimmen. Keine Testwiederholung im Review.
+
+Visueller Master NICHT bestanden. Astra hat graue Augenreflexion, stark aufgesetzte Augen, kantige Stirnmaske, stacheliges Fell und Pfirsichfarbe verbessert. Weiterhin unzureichend: kanonische Gesichtsform/Ausdruck, zusammenhängende Hals-/Schultermodellierung und tatsächliche Lider; beim bisherigen Skalier-Blinzeln werden kahle Augenovale sichtbar. Dunkle Enden der Türleisten bleiben sekundär offen. Nach drei Sol- und drei begrenzten Astra-Bildrunden keine weitere reine Parameter-Runde.
+
+Nächster konkreter Produktionsschritt: bestehende Astra-Szene weiterverwenden, Kopf/Hals/Schultern als zusammenhängende Form mit für Verformung geeigneter Topologie modellieren; echte Lidverformung und mitbewegte Fellmasken bauen. Danach kanonische Front-/Dreiviertel-/Seiten-/geschlossene-Augen-Abnahme. Raum, Kameras, Tür und Renderablauf behalten. Kein Nachweis, dass KI-Modellierung grundsätzlich unmöglich wäre; kein Zwang zu einem bezahlten Dienst. Keine Crew-/Website-Ausweitung vor diesem Prüfpunkt.
+
+DraftPR143 bleibt offen, unveröffentlicht und ungemergt. Art-/Dokumentationszielmain; spätere Webintegration separat gegen aktuellen App-Integrationszweig. Keine Production-Änderung, kein bezahlter Provider-Auftrag; alte2,40USD-Reservierung/2,55USD-Grenze erhalten. Eigene Test-/Renderprozesse beendet. Arbeitsstatusbranch_only, keine Nutzerabnahme.
