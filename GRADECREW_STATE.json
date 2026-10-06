@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-06T05:23:00Z",
+  "observed_at": "2026-10-06T12:58:24.513Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -638,6 +638,19 @@
       "user_test": "not_performed",
       "handoff": "workstreams/security-web-integration-20261006.md",
       "next_action": "Physical device acceptance pending; remaining Security C–G and 30-participant incident stay open."
+    },
+    {
+      "id": "hero-web-integration-20261006",
+      "task_id": "GC-DESIGN-05",
+      "branch": "feature/gc-design-05-web-integration",
+      "observed_head": "2c8a73314cd00163bf18260571dd1321c9ccd4cb",
+      "stage": "ci_green",
+      "pr": 149,
+      "ci": 37466936870,
+      "independent_review": "Sol reviewed immutable80cf066; no other Critical/Important issues. Main reviewed test-only delta to2c8a733; local foundation8/8. Browser/device unverified.",
+      "repair_attempt": 1,
+      "handoff": "workstreams/gc-design-05-web-integration-20261006.md",
+      "next_action": "Main serial integration into unchanged2d2a776; exact merge CI and deployment receipts required."
     }
   ],
   "deployments": [
