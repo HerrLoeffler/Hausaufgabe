@@ -18,22 +18,75 @@ SITE = "hausaufgabe-staging"
 CHANNEL = "gradecrew-app-integration"
 CANONICAL_URL = "https://hausaufgabe-staging.web.app"
 REJECTED_SHA = "f97841b82291d879cd9f4a9bccce0ee2c2cf3641"
+REQUEST = re.compile(r"automation/canonical-staging-requests/([a-z0-9][a-z0-9-]{0,79})\.json")
 ROOT = Path("promotion")
 STATE = ROOT / "promotion-state.json"
 
 
+def route():
+    if os.getenv("GITHUB_REPOSITORY") != REPO or os.getenv("GITHUB_REF") != "refs/heads/main":
+        raise ValueError("Only trusted main may route staging requests")
+    if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
+        mode, request_file = "preview", ""
+    elif os.environ["GITHUB_EVENT_NAME"] == "push":
+        before, after = os.environ["BEFORE_SHA"], os.environ["AFTER_SHA"]
+        if not all(re.fullmatch(r"[0-9a-f]{40}", value) for value in (before, after)):
+            raise ValueError("Push comparison requires exact commit SHAs")
+        files = api(f"compare/{before}...{after}")["files"]
+        if len(files) >= 300:
+            raise ValueError("Oversized push diff cannot be routed safely")
+        requests = [row for row in files if row["filename"].startswith(
+            ("automation/deployment-requests/", "automation/canonical-staging-requests/"))]
+        if len(requests) != 1:
+            raise ValueError("Exactly one changed staging request required")
+        row = requests[0]
+        request_file = row["filename"]
+        if REQUEST.fullmatch(request_file):
+            if row.get("status") != "added":
+                raise ValueError("Canonical staging requests are append-only")
+            mode = "canonical"
+        elif re.fullmatch(r"automation/deployment-requests/[a-z0-9][a-z0-9-]{0,79}\.json", request_file):
+            mode = "preview"
+        else:
+            raise ValueError("Unexpected staging request path")
+    else:
+        raise ValueError("Unsupported staging request event")
+    with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+        output.write("mode=" + mode + "\nrequest_file=" + request_file + "\n")
+
+
 def inputs():
-    if (os.getenv("GITHUB_REPOSITORY") != REPO
-            or os.getenv("GITHUB_REF") != "refs/heads/main"
-            or os.getenv("GITHUB_EVENT_NAME") != "workflow_dispatch"):
-        raise ValueError("Canonical staging promotion requires manual dispatch on main")
-    raw_run = os.environ["PREVIEW_RUN_ID"]
-    expected = os.environ["EXPECTED_SHA"]
+    if os.getenv("GITHUB_REPOSITORY") != REPO or os.getenv("GITHUB_REF") != "refs/heads/main":
+        raise ValueError("Canonical staging promotion requires trusted main")
+    if os.getenv("GITHUB_EVENT_NAME") == "workflow_dispatch":
+        raw_run = os.getenv("PREVIEW_RUN_ID") or os.environ["MANUAL_RUN_ID"]
+        expected = os.getenv("EXPECTED_SHA") or os.environ["MANUAL_COMMIT"]
+    elif os.getenv("GITHUB_EVENT_NAME") == "push":
+        path = os.environ["REQUEST_FILE"]
+        match = REQUEST.fullmatch(path)
+        if not match:
+            raise ValueError("Unexpected committed canonical request")
+        request = json.loads(Path(path).read_text())
+        if (set(request) != {"id", "previewRunId", "commit"}
+                or request["id"] != match.group(1)
+                or type(request["previewRunId"]) is not int):
+            raise ValueError("Canonical request schema or filename differs")
+        raw_run, expected = str(request["previewRunId"]), request["commit"]
+    else:
+        raise ValueError("Canonical staging requires explicit push request or manual dispatch")
     if not re.fullmatch(r"[1-9][0-9]*", raw_run) or not re.fullmatch(r"[0-9a-f]{40}", expected):
         raise ValueError("Explicit preview run ID and exact commit required")
     if expected == REJECTED_SHA:
         raise ValueError("The failed user-acceptance candidate is not eligible")
     return int(raw_run), expected
+
+
+def resolve():
+    run_id, expected = inputs()
+    with open(os.environ["GITHUB_ENV"], "a") as output:
+        output.write(f"PREVIEW_RUN_ID={run_id}\nEXPECTED_SHA={expected}\n")
+    with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+        output.write(f"preview_run_id={run_id}\ncommit={expected}\n")
 
 
 def qualify():
@@ -61,6 +114,8 @@ def qualify():
             or receipt.get("commit") != expected or receipt.get("ci_run") != str(run_id)
             or receipt.get("device_test") != "not_performed"
             or type(receipt.get("verified_files")) is not int or receipt["verified_files"] < 1
+            or not isinstance(receipt.get("version"), str)
+            or not re.fullmatch(r"sites/hausaufgabe-staging/versions/[A-Za-z0-9_-]+", receipt["version"])
             or not re.fullmatch(
                 r"https://hausaufgabe-staging--gradecrew-app-integration-[a-z0-9]+\.web\.app/?",
                 str(receipt.get("url", "")))):
@@ -117,14 +172,18 @@ def prepare():
     release = bundle(source["commit"], receipt)
     before = channel_version("live", False)
     version = channel_version(CHANNEL, True)
+    if version != receipt["version"]:
+        raise ValueError("Current preview version differs from verified deployment receipt")
     published_files(receipt["url"], release)
-    if channel_version(CHANNEL, True) != version:
-        raise ValueError("Preview channel changed during verification")
     STATE.write_text(json.dumps({"sourceRun": int(os.environ["PREVIEW_RUN_ID"]),
                                  "commit": source["commit"], "upstreamCiRun": source["upstreamCiRun"],
                                  "previewVersion": version, "previousLiveVersion": before}) + "\n")
     # Recheck GitHub authority immediately before the destructive Hosting operation.
     qualify()
+    if channel_version(CHANNEL, True) != version:
+        raise ValueError("Preview channel changed during verification")
+    if channel_version("live", False) != before:
+        raise ValueError("Staging live channel changed before promotion")
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         output.write("version=" + version.rsplit("/", 1)[1] + "\n")
 
@@ -154,4 +213,5 @@ def verify():
 
 
 if __name__ == "__main__":
-    {"qualify": qualify, "prepare": prepare, "verify": verify}[sys.argv[1]]()
+    {"route": route, "resolve": resolve, "qualify": qualify,
+     "prepare": prepare, "verify": verify}[sys.argv[1]]()
