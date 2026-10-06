@@ -1,5 +1,15 @@
 name: Automatic staging preview
 on:
+  workflow_dispatch:
+    inputs:
+      preview_run_id:
+        description: Successful verified Automatic staging preview run ID
+        required: true
+        type: string
+      commit:
+        description: Exact integration commit to publish at the canonical staging URL
+        required: true
+        type: string
   push:
     branches: [main]
     paths: ['automation/deployment-requests/*.json']
@@ -128,3 +138,71 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo 'Build ready; no deployment. STAGING_WIF_PROVIDER is missing. Follow docs/AUTOMATION_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
+  canonical:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      PREVIEW_RUN_ID: ${{ inputs.preview_run_id }}
+      EXPECTED_SHA: ${{ inputs.commit }}
+      GH_TOKEN: ${{ github.token }}
+      GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Check exact preview receipt, original CI and current integration SHA
+        run: python3 -m tools.automation.canonical_staging qualify
+      - uses: actions/download-artifact@v4
+        with:
+          name: staging-preview-build
+          run-id: ${{ inputs.preview_run_id }}
+          github-token: ${{ github.token }}
+          path: promotion/public
+      - name: Install the existing pinned Firebase CLI before cloud login
+        run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund firebase-tools@14.17.0
+      - name: Require the existing staging Hosting identity
+        env:
+          STAGING_WIF_PROVIDER: ${{ vars.STAGING_WIF_PROVIDER }}
+        run: test -n "$STAGING_WIF_PROVIDER"
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: hausaufgabe-staging
+          workload_identity_provider: ${{ vars.STAGING_WIF_PROVIDER }}
+          service_account: gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/firebase.hosting
+      - name: Pin and verify the preview version; record previous live version
+        id: promotion
+        env:
+          GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: python3 -m tools.automation.canonical_staging prepare
+      - name: Clone only that exact version to the staging live channel
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" hosting:clone \
+            "hausaufgabe-staging:@${{ steps.promotion.outputs.version }}" \
+            hausaufgabe-staging:live --project hausaufgabe-staging --non-interactive
+      - name: Verify canonical URL, version, manifest and all file hashes
+        env:
+          GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: python3 -m tools.automation.canonical_staging verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: canonical-staging-receipt
+          path: promotion/canonical-receipt.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Preserve prior live version if promotion fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-staging-recovery-state
+          path: promotion/promotion-state.json
+          if-no-files-found: warn
+          retention-days: 90
