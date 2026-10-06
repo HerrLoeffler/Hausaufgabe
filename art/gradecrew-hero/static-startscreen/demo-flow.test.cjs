@@ -5,14 +5,15 @@ try { ({ createDemoFlow } = require('./demo-flow.js')); } catch {}
 function harness(reducedMotion = false) {
   assert.equal(typeof createDemoFlow, 'function', 'Demo controller must exist');
   let pending = null;
+  let delay = null;
   let latest = null;
   const flow = createDemoFlow({ reducedMotion, onChange: state => latest = state,
-    schedule: fn => { pending = fn; return 1; }, cancel: () => { pending = null; } });
-  return { flow, state: () => latest, scheduled: () => !!pending, tick: () => { const fn = pending; pending = null; fn?.(); } };
+    schedule: (fn, ms) => { pending = fn; delay = ms; return 1; }, cancel: () => { pending = null; } });
+  return { flow, state: () => latest, scheduled: () => !!pending, delay: () => delay, tick: () => { const fn = pending; pending = null; fn?.(); } };
 }
 test('clicking a crew member reveals a finished example in three phases', () => {
   const h = harness(); h.flow.start('remy');
-  assert.equal(h.state().phase, 0); h.tick(); assert.equal(h.state().phase, 1);
+  assert.equal(h.state().phase, 0); assert.equal(h.delay(), 2600); h.tick(); assert.equal(h.state().phase, 1);
   h.tick(); assert.equal(h.state().phase, 2); assert.equal(h.state().running, false);
   assert.equal(h.scheduled(), false);
 });

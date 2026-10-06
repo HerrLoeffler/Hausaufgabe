@@ -37,15 +37,35 @@
     const sheet = node('div', `example-sheet sheet-${name}`);
     if (name === 'remy') {
       sheet.append(node('p', 'sheet-meta', 'demoTopic'), node('h3', 'sheet-title', 'demoTestTitle'));
-      if (phase === 0) sheet.append(node('div', 'topic-chip', 'topicLabel'));
-      for (let i = 1; i <= 3; i++) {
-        const visible = phase >= (i === 3 ? 2 : 1);
-        const row = node('div', `question-row ${visible ? 'revealed' : 'skeleton'}`);
-        if (visible) { const number = node('span', 'question-number'); number.textContent = i; row.append(number, node('span', '', `question${i}`)); }
-        else { row.setAttribute('aria-hidden', 'true'); row.append(node('span', 'placeholder-line')); }
-        sheet.append(row);
+      if (phase === 0) {
+        const note = node('div', 'voice-note');
+        const icon = node('span', 'voice-note-icon'); icon.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 4; i++) icon.append(node('span', 'voice-bar'));
+        const text = node('div', 'voice-note-text');
+        text.append(node('p', 'sheet-meta', 'voiceNoteLabel'), node('p', 'voice-note-transcript', 'voiceNoteTranscript'));
+        note.append(icon, text); sheet.append(note, node('p', 'voice-note-caption', 'voiceNoteCaption'));
+      } else {
+        const question = node('div', 'choice-question revealed');
+        question.append(node('p', 'sheet-meta', 'multipleChoice'), node('p', 'choice-prompt', 'multipleChoicePrompt'));
+        const choices = node('div', 'choice-options');
+        for (let i = 1; i <= 4; i++) {
+          const option = node('div', 'choice-option');
+          const box = node('span', 'choice-box'); box.setAttribute('aria-hidden', 'true');
+          option.append(box, node('span', '', `choice${i}`)); choices.append(option);
+        }
+        question.append(choices); sheet.append(question);
+        const formats = node('p', 'format-note', 'otherFormats');
+        sheet.append(formats);
+        if (phase === 2) {
+          const list = node('div', 'more-questions');
+          for (let i = 2; i <= 3; i++) {
+            const row = node('div', 'question-row revealed');
+            const number = node('span', 'question-number'); number.textContent = i;
+            row.append(number, node('span', '', `question${i}`)); list.append(row);
+          }
+          sheet.append(list, node('p', 'ready-stamp', 'ready'));
+        }
       }
-      if (phase === 2) sheet.append(node('p', 'ready-stamp', 'ready'));
     } else if (name === 'emmi') {
       sheet.append(node('p', 'sheet-meta', 'draftLabel'), node('p', `draft-question ${phase >= 1 ? 'marked' : ''}`, 'vagueQuestion'));
       if (phase === 1) sheet.append(node('div', 'editing-lines'));
@@ -62,7 +82,7 @@
         const picture = node('img', 'added-picture');
         picture.src = 'assets/cuddly-hedgehog.webp'; picture.alt = t('pictureAlt'); picture.width = 160; picture.height = 138;
         exercise.append(words, picture); improved.append(exercise);
-        sheet.append(improved, node('p', 'improvement-note', 'improvementReason'));
+        sheet.append(improved, node('p', 'improvement-note', 'improvementReason'), node('p', 'format-note', 'emmiOtherPossibilities'));
       }
     } else {
       sheet.append(node('p', 'sheet-meta', 'automaticReview'), node('h3', 'sheet-title', 'gradingQuestion'));

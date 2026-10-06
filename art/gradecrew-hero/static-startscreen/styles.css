@@ -105,3 +105,20 @@ dialog .feedback-note{font-size:13px;line-height:1.5;color:#71552f;margin:10px 0
 @media(max-width:1100px) and (min-width:901px){.tutorial-entry .button{min-height:48px}.tutorial-entry small{font-size:10px}.entry-actions{top:75%}}
 @media(max-width:900px){.entry-actions{top:auto}.tutorial-entry .button{min-height:53px}.tutorial-entry small{font-size:12px}.entry-actions{gap:9px}}
 @media(max-width:480px){.illustrated-question{grid-template-columns:1fr;gap:3px}.added-picture{width:145px;margin:0 auto}.word-sentence{font-size:15px!important;margin-bottom:10px!important}.word-legend{font-size:10px}.clear-question{font-size:15px!important}.point-count{gap:6px}.score-value{font-size:33px}.grading-score{padding:10px 12px}}
+
+/* A slower three-part example keeps each state readable. The voice note is a visual example. */
+dialog.is-demo{max-height:calc(100svh - 32px);overflow:auto}
+.voice-note{display:flex;align-items:center;gap:14px;padding:17px;border:1px solid #c5d9f7;border-radius:13px;background:#f3f8ff;animation:paper-in .35s ease-out}
+.voice-note-icon{width:42px;height:42px;flex:none;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:50%;background:#1164d9}
+.voice-bar{width:3px;height:10px;background:#fff;border-radius:4px}.voice-bar:nth-child(2),.voice-bar:nth-child(3){height:19px}
+.voice-note-text{min-width:0}.voice-note .sheet-meta{margin-bottom:4px}
+dialog .voice-note-transcript{font-size:15px;line-height:1.4;margin:0;color:#213b61}
+dialog .voice-note-caption{font-size:13px;line-height:1.45;margin:12px 0 0;color:#506887}
+.choice-question{border:1px solid #dce7f4;border-radius:12px;padding:15px}
+dialog .choice-prompt{font-size:17px;font-weight:700;line-height:1.35;margin:0 0 12px;color:#17365d}
+.choice-options{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.choice-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #dae5f2;border-radius:8px;background:#fcfdff;font-size:14px;line-height:1.3;color:#254062}
+.choice-box{width:15px;height:15px;flex:none;border:1.5px solid #6f90bd;border-radius:4px}
+dialog .format-note{font-size:12px;line-height:1.45;color:#536d8b;margin:13px 0 0}
+.more-questions{margin-top:12px}.more-questions .question-row{font-size:13px;padding:7px 0;min-height:34px}.more-questions .question-row:last-child{border-bottom:0}
+@media(max-width:480px){.choice-question{padding:12px}.choice-options{gap:5px}.choice-option{font-size:12px;padding:8px 7px}.voice-note{padding:13px}.voice-note-icon{width:35px;height:35px}dialog .voice-note-transcript{font-size:13px}}

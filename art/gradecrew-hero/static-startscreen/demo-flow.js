@@ -9,7 +9,7 @@
       clear();
       if (!state?.running || state.paused) return;
       if (state.phase < 2) {
-        timer = schedule(() => { timer = null; state.phase += 1; state.running = state.phase < 2; emit(); advance(); }, 1400);
+        timer = schedule(() => { timer = null; state.phase += 1; state.running = state.phase < 2; emit(); advance(); }, 2600);
       }
     }
     function start(name, tutorial = false) {
