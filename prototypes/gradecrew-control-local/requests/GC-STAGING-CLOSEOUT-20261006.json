@@ -38,7 +38,7 @@
         "GC-AI-01",
         "GC-ADMIN-SCALE-01"
       ],
-      "status": "integrated_combined_ci_running",
+      "status": "staging_deployed_device_acceptance_pending",
       "turnId": "01a10fb3-fb49-7a00-9921-91ac60faf922",
       "dispatchAccepted": true,
       "cursor": "0f4c33ce-4f08-4556-a5a3-b40e901db0f9:6",
@@ -77,7 +77,7 @@
   "security": {
     "threadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
     "requestId": "GC-CENTRAL-15f5dd8b-6dc0-438f-8c4e-d2def7d5d25f",
-    "status": "integrated_combined_ci_running",
+    "status": "partial_fix_staging_deployed",
     "model": "gpt-6-sol",
     "thinking": "high",
     "pr": 146,
@@ -143,10 +143,10 @@
     },
     {
       "package": "design",
-      "status": "isolated_revision_user_feedback_pending",
+      "status": "author_active_waiting_for_completion",
       "threadId": "01a10e98-1e57-7b40-af70-555fdfdae2e3",
       "goal": "Do not start duplicate art production; collect current author results before classifying",
-      "cursor": "21b925e0-c289-42a1-b120-2cd9d13d812f:1",
+      "cursor": "8d5807aa-2d11-4b24-9b07-48031c3cb5de:2",
       "pr": 143,
       "head": "cc53aa0be9a94eab3e1cfb85dda25ba8e0a2ba1e",
       "scope": "static preview revision3; no app integration, V2 browser checks cannot be attributed to V3"
@@ -154,27 +154,25 @@
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T11:59:01.199256+00:00",
+  "lastCheckpoint": "2026-10-06T12:03:22.282538+00:00",
   "deployment": {
-    "candidate": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
-    "combinedCi": 37417856806,
+    "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+    "combinedCi": 37459917759,
+    "mobileCi": 37459917770,
     "ciConclusion": "success",
-    "hostingRun": 37417963944,
-    "functionsRun": 37417963972,
+    "hostingRun": 37460057171,
+    "functionsRun": 37460057237,
     "status": "staging_deployed",
-    "requiredReceipts": [
-      "hosting",
-      "functions:ai",
-      "functions:assessment"
-    ],
+    "hostingReceipt": 11412745738,
+    "aiReceipt": 11412386188,
+    "assessmentReceipt": 11411312190,
+    "verifiedAt": "2026-10-06T12:03:22.282538+00:00",
     "manualAcceptance": "pending",
-    "hostingReceipt": 11391527589,
-    "aiReceipt": 11391284298,
-    "assessmentReceipt": 11392063036,
-    "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
+    "productionChanged": false,
+    "rulesChanged": false
   },
-  "coordinationStatus": "integrated_combined_ci_running",
-  "resumeNext": "Check existing Web/Security turns after their app approvals; do not redispatch or reset attempts. Then exact candidate CI/review and serial staging integration. Pause is polling only, not cancellation of user-owned chats.",
+  "coordinationStatus": "staging_deployed_waiting_design_result",
+  "resumeNext": "Wait for existing design chat result, inspect immutable candidate and author handoff before integration. No duplicate art work.",
   "integrationPlan": {
     "target": "feature/gradecrew-app-integration",
     "base": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
@@ -187,5 +185,25 @@
     "combinedCi": 37459917759,
     "mobileCi": 37459917770,
     "securityMerge": "0becb39ffe31f594767ae01dca91c723ef3c4738"
-  }
+  },
+  "deploymentHistory": [
+    {
+      "candidate": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "combinedCi": 37417856806,
+      "ciConclusion": "success",
+      "hostingRun": 37417963944,
+      "functionsRun": 37417963972,
+      "status": "staging_deployed",
+      "requiredReceipts": [
+        "hosting",
+        "functions:ai",
+        "functions:assessment"
+      ],
+      "manualAcceptance": "pending",
+      "hostingReceipt": 11391527589,
+      "aiReceipt": 11391284298,
+      "assessmentReceipt": 11392063036,
+      "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
+    }
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+  "combinedCi": 37459917759,
+  "mobileCi": 37459917770,
+  "ciConclusion": "success",
+  "hostingRun": 37460057171,
+  "functionsRun": 37460057237,
+  "status": "staging_deployed",
+  "hostingReceipt": 11412745738,
+  "aiReceipt": 11412386188,
+  "assessmentReceipt": 11411312190,
+  "verifiedAt": "2026-10-06T12:03:22.282538+00:00",
+  "manualAcceptance": "pending",
+  "productionChanged": false,
+  "rulesChanged": false
+}

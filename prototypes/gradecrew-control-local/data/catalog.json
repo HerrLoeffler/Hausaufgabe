@@ -9,19 +9,34 @@
       "title": "Manuelle Tutorialabgabe in der iPad-App funktioniert nicht",
       "area": "Kernfunktionen",
       "priority": "P0",
-      "statusText": "Fix vorbereitet · PR147, 51 gezielte Tests bestanden; vollständige CI/Review offen",
-      "next": "Sol vervollständigt CI und unabhängige Prüfung für1c994ecb. Danach Main-Integration und Staging; echter iPad-Test bleibt offen.",
-      "stage": "unknown",
-      "stageSource": "Nicht eindeutig zugeordnet",
-      "branch": null,
-      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null,
+      "statusText": "Auf Staging · Seitendialog, Doppeltipp- und Timer-Schutz; echter iPad-Test offen",
+      "next": "Staging öffnen: manuelle Abgabe, Abbrechen und Timer während offener Bestätigung auf echtem iPad prüfen.",
+      "stage": "staging_deployed",
+      "stageSource": "CI37459917759; Mobile37459917770; Hosting37460057171; AI/Assessment37460057237",
+      "branch": "feature/gradecrew-app-integration",
+      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/147",
+      "evidence": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "triage": {
-        "category": "staging_blocker",
+        "category": "acceptance_pending",
         "package": "release-readiness",
-        "checkedAt": "2026-10-06",
-        "reason": "P0-Nutzerbericht: manuelle Tutorialabgabe auf iPad ist nicht reproduziert oder behoben; Kernablauf muss vor Freigabe nachgewiesen werden.",
-        "evidence": "Lokaler TODO.md: offen, Nutzerbericht; GC-BRAIN-Katalog-Snapshot sourceCommit 8360bc5f056837118ffd83138ffa2468ae42647e (manuell, 2026-10-05)."
+        "checkedAt": "2026-10-06T12:03:22.282538+00:00",
+        "reason": "Fix deployed; tatsächliche iPad-Abnahme und vollständiger Kernablauf noch offen",
+        "evidence": {
+          "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+          "combinedCi": 37459917759,
+          "mobileCi": 37459917770,
+          "ciConclusion": "success",
+          "hostingRun": 37460057171,
+          "functionsRun": 37460057237,
+          "status": "staging_deployed",
+          "hostingReceipt": 11412745738,
+          "aiReceipt": 11412386188,
+          "assessmentReceipt": 11411312190,
+          "verifiedAt": "2026-10-06T12:03:22.282538+00:00",
+          "manualAcceptance": "pending",
+          "productionChanged": false,
+          "rulesChanged": false
+        }
       }
     },
     {
@@ -49,19 +64,34 @@
       "title": "Production-Security-Gates abschließen",
       "area": "Qualität & Betrieb",
       "priority": "P0",
-      "statusText": "Voraussetzungen offen · Offen",
-      "next": "Security-Branch: aktuellen Audit lesen; sichere Abgabe, Lösungsschutz und reale Freigaben belegen.",
+      "statusText": "Teilfix auf Staging · Start-/Transaktionsschutz veröffentlicht; übrige Security-Gates offen",
+      "next": "Gates C–G und 30-Teilnehmer-Vorfall separat prüfen. Keine Rules-/Production-Freigabe aus diesem Deploy ableiten.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
-      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null,
+      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/148",
+      "evidence": {
+        "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+        "combinedCi": 37459917759,
+        "mobileCi": 37459917770,
+        "ciConclusion": "success",
+        "hostingRun": 37460057171,
+        "functionsRun": 37460057237,
+        "status": "staging_deployed",
+        "hostingReceipt": 11412745738,
+        "aiReceipt": 11412386188,
+        "assessmentReceipt": 11411312190,
+        "verifiedAt": "2026-10-06T12:03:22.282538+00:00",
+        "manualAcceptance": "pending",
+        "productionChanged": false,
+        "rulesChanged": false
+      },
       "triage": {
         "category": "staging_blocker",
         "package": "release-readiness",
-        "checkedAt": "2026-10-06",
-        "reason": "Production-Security-Gates sind offen; sichere Abgabe, Lösungsschutz und reale Freigaben benötigen Belege.",
-        "evidence": "TODO.md: offen; GRADECREW_STATE.json Workstream security: branch_only und Gates offen (lokaler Snapshot)."
+        "checkedAt": "2026-10-06T12:00:39.573403+00:00",
+        "reason": "Geprüfter Teilpatch integriert; keine Gesamtfreigabe oder Production-Abnahme",
+        "evidence": "PR148; Combined CI37459917759"
       }
     },
     {
@@ -1750,13 +1780,13 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T05:45:04.862276+00:00",
+  "reconciledAt": "2026-10-06T12:03:22.282538+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 4,
     "later": 6,
-    "acceptancePending": 12,
-    "remainingInvestigationOrImplementation": 28,
+    "acceptancePending": 13,
+    "remainingInvestigationOrImplementation": 27,
     "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }
