@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from tools.automation import canonical_staging as promotion
+from tools.automation import preview
 
 SHA = "a" * 40
 RUN_ID = 123
@@ -14,6 +15,7 @@ SOURCE = {"commit": SHA, "upstreamCiRun": 456, "workflowRun": RUN_ID,
           "project": "hausaufgabe-staging"}
 RECEIPT = {"project": "hausaufgabe-staging", "channel": "gradecrew-app-integration",
            "commit": SHA, "url": "https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app",
+           "version": "sites/hausaufgabe-staging/versions/v1",
            "verified_files": 2, "ci_run": str(RUN_ID), "device_test": "not_performed"}
 RUN = {"name": "Automatic staging preview", "path": ".github/workflows/staging-preview.yml",
        "event": "workflow_run", "head_branch": "main",
@@ -21,7 +23,7 @@ RUN = {"name": "Automatic staging preview", "path": ".github/workflows/staging-p
        "status": "completed", "conclusion": "success"}
 ENV = {"GITHUB_REPOSITORY": "HerrLoeffler/Hausaufgabe", "GITHUB_REF": "refs/heads/main",
        "GITHUB_EVENT_NAME": "workflow_dispatch", "PREVIEW_RUN_ID": str(RUN_ID),
-       "EXPECTED_SHA": SHA}
+       "EXPECTED_SHA": SHA, "MANUAL_RUN_ID": str(RUN_ID), "MANUAL_COMMIT": SHA}
 
 
 class CanonicalStagingTests(unittest.TestCase):
@@ -44,7 +46,7 @@ class CanonicalStagingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "failed user-acceptance"):
                 promotion.inputs()
         with patch.dict(os.environ, {**ENV, "GITHUB_REF": "refs/heads/feature/other"}):
-            with self.assertRaisesRegex(ValueError, "on main"):
+            with self.assertRaisesRegex(ValueError, "trusted main"):
                 promotion.inputs()
 
     def test_newer_preview_attempt_blocks_older_success(self):
@@ -68,6 +70,51 @@ class CanonicalStagingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "receipt differs"):
                 promotion.qualify()
 
+    def test_push_request_is_immutable_and_exact(self):
+        with TemporaryDirectory() as folder:
+            request = Path(folder) / "canonical-request.json"
+            request.write_text(json.dumps({"id": "candidate-1", "previewRunId": RUN_ID,
+                                           "commit": SHA}))
+            with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
+                                          "REQUEST_FILE": "automation/canonical-staging-requests/candidate-1.json"}), \
+                    patch.object(promotion, "Path", return_value=request):
+                self.assertEqual(promotion.inputs(), (RUN_ID, SHA))
+
+    def test_push_router_separates_canonical_request_from_preview_deploy(self):
+        with TemporaryDirectory() as folder:
+            output = Path(folder) / "output"
+            row = {"filename": "automation/canonical-staging-requests/candidate-1.json",
+                   "status": "added"}
+            with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
+                                          "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
+                                          "GITHUB_OUTPUT": str(output)}), \
+                    patch.object(promotion, "api", return_value={"files": [row]}):
+                promotion.route()
+            self.assertIn("mode=canonical", output.read_text())
+            output.unlink()
+            ordinary = {"filename": "automation/deployment-requests/guardian-pilot.json",
+                        "status": "modified"}
+            with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
+                                          "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
+                                          "GITHUB_OUTPUT": str(output)}), \
+                    patch.object(promotion, "api", return_value={"files": [ordinary]}):
+                promotion.route()
+            self.assertIn("mode=preview", output.read_text())
+            row["status"] = "modified"
+            with patch.dict(os.environ, {**ENV, "GITHUB_EVENT_NAME": "push",
+                                          "BEFORE_SHA": "b" * 40, "AFTER_SHA": "c" * 40,
+                                          "GITHUB_OUTPUT": str(output)}), \
+                    patch.object(promotion, "api", return_value={"files": [row]}):
+                with self.assertRaisesRegex(ValueError, "append-only"):
+                    promotion.route()
+
+    def test_preview_receipt_version_is_unambiguous(self):
+        result = {"result": {"hausaufgabe-staging": {
+            "url": RECEIPT["url"], "version": "v1"}}}
+        self.assertEqual(preview.deployed_version(result), RECEIPT["version"])
+        with self.assertRaisesRegex(ValueError, "unambiguous"):
+            preview.deployed_version({"a": {"version": "v1"}, "b": {"version": "v2"}})
+
     def test_live_version_must_equal_pinned_preview_version(self):
         state = {"sourceRun": RUN_ID, "commit": SHA, "upstreamCiRun": 456,
                  "previewVersion": "sites/hausaufgabe-staging/versions/v1",
@@ -81,6 +128,23 @@ class CanonicalStagingTests(unittest.TestCase):
                     patch.object(promotion, "channel_version", return_value="sites/hausaufgabe-staging/versions/other"):
                 with self.assertRaisesRegex(ValueError, "pinned preview version"):
                     promotion.verify()
+
+    def test_changed_live_version_blocks_clone_before_output(self):
+        with TemporaryDirectory() as folder:
+            state_file = Path(folder) / "state.json"
+            output = Path(folder) / "output"
+            versions = ["sites/hausaufgabe-staging/versions/v0",
+                        RECEIPT["version"], RECEIPT["version"],
+                        "sites/hausaufgabe-staging/versions/v2"]
+            with patch.dict(os.environ, {**ENV, "GITHUB_OUTPUT": str(output)}), \
+                    patch.object(promotion, "qualify", return_value=(SOURCE, RECEIPT)), \
+                    patch.object(promotion, "bundle", return_value={"files": {"index.html": "a"}}), \
+                    patch.object(promotion, "published_files"), \
+                    patch.object(promotion, "channel_version", side_effect=versions), \
+                    patch.object(promotion, "STATE", state_file):
+                with self.assertRaisesRegex(ValueError, "live channel changed"):
+                    promotion.prepare()
+            self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":
