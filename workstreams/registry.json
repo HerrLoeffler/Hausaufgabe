@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-07",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -451,6 +451,15 @@
       "relatedBranches": [
         "feature/secure-assessment-v1"
       ]
+    },
+    {
+      "id": "gc-web-polish-20261007",
+      "title": "Startbühne und Lehrer-UI-Polish nach Staging-Screenshots",
+      "primaryBranch": "feature/gc-web-polish-20261007",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/gc-web-polish-20261007.md",
+      "relatedBranches": []
     }
   ]
 }
