@@ -1,0 +1,13 @@
+import {mkdir,cp,writeFile,readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'dist');
+await mkdir(path.join(out,'vendor'),{recursive:true});
+for(const file of ['index.html','styles.css','src'])await cp(path.join(root,file),path.join(out,file),{recursive:true});
+await cp(path.join(root,'node_modules/phaser/dist/phaser.min.js'),path.join(out,'vendor/phaser.min.js'));
+await cp(path.join(root,'node_modules/phaser/LICENSE.md'),path.join(out,'vendor/PHASER-LICENSE.md'));
+const files=['index.html','styles.css','src/main.mjs','src/kitchen.mjs','src/art.mjs','src/pizza.mjs','src/shift.mjs','vendor/phaser.min.js'];
+const manifest={game:'bruchpizzeria',version:'0.1.0',files:{}};
+for(const f of files)manifest.files[f]=createHash('sha256').update(await readFile(path.join(out,f))).digest('hex');
+await writeFile(path.join(out,'build-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+console.log('Static build ready: dist/; Phaser vendored, no runtime CDN.');

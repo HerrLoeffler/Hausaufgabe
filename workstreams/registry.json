@@ -460,6 +460,17 @@
       "state": "active",
       "handoff": "workstreams/gc-web-polish-20261007.md",
       "relatedBranches": []
+    },
+    {
+      "id": "games-bruchpizzeria-pilot",
+      "title": "Bruchpizzeria Browser Pilot",
+      "primaryBranch": "feature/bruchpizzeria-browser-pilot-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/bruchpizzeria-browser-pilot-20261006.md",
+      "relatedBranches": [
+        "docs/bruchpizzeria-briefing-20261006"
+      ]
     }
   ]
 }
