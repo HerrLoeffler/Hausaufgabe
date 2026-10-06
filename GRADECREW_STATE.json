@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-06T22:50:31.873Z",
+  "observed_at": "2026-10-06T23:36:24.245Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -17,10 +17,10 @@
     "production_requires_explicit_user_approval": true
   },
   "release_train": {
-    "id": "staging-batch-2026-10-06-hero-repair",
+    "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "4d6ee69a7bf0ff51e037dc69f651ca6237f5106c",
+    "observed_integration_head": "0931ade4e415690cc149c829c5f1a6703d085177",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -35,7 +35,8 @@
       "security-web-integration-20261006",
       "hero-web-integration-20261006",
       "hero-acceptance-repair-20261006",
-      "hero-guest-tour-20261006"
+      "hero-guest-tour-20261006",
+      "web-repair-20261007"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -52,21 +53,21 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "passed_run_37542394496_commit_4d6ee69a7bf0ff51e037dc69f651ca6237f5106c",
-      "mobile_tutorial": "not_separately_rerun_for_4d6ee69_full_frontend_261_passed_locally",
-      "hosting_preview": "verified_run_37542511207_receipt_11448542523",
-      "staging_functions": "verified_run_37542511122_ai_receipt_11448732514",
+      "combined_ci": "pending_run_37547012003_commit_0931ade4e415690cc149c829c5f1a6703d085177",
+      "mobile_tutorial": "pending_run_37547012032_commit_0931ade4e415690cc149c829c5f1a6703d085177",
+      "hosting_preview": "pending_for_0931ade4",
+      "staging_functions": "pending_for_0931ade4",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "not_performed_for_4d6ee69_browser_policy_unverified",
-      "user_acceptance": "pending_real_login_and_test_creation_on_canonical_staging_for_4d6ee69",
+      "desktop_ipad_iphone_test": "not_performed_for_0931ade4_browser_policy_unverified",
+      "user_acceptance": "not_performed_for_0931ade4",
       "production": "not_requested",
-      "staging_assessment_functions": "verified_run_37542511122_assessment_receipt_11449512022",
+      "staging_assessment_functions": "pending_for_0931ade4",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": null,
     "preview_verified_files": 120,
-    "important": "GC-DESIGN-05B repair PR #156 merged as 4d6ee69. CI 37542394496, preview 37542511207/receipt 11448542523, AI/Assessment Functions 37542511122/receipts 11448732514 and 11449512022, and canonical Hosting 37542720795/receipt 11449022640 succeeded. Guest Emmi red feedback and unavailable replacement action were corrected. Browser/device and real teacher login/test creation remain unverified; Production unchanged.",
-    "next_action": "Martin opens https://hausaufgabe-staging.web.app/, runs the guest tour past Emmi to Wilma, then signs in and creates/saves one real test. Report any blocker; separately review desktop/phone visuals and full EN tour text."
+    "important": "PR159 exact7a1fe906 passed CI37546526741 and was merged as0931ade4 with identical treeebeb8151. Integrated CI/Mobile and fresh deployment receipts pending. New listening-only/audio-answer modes stay draft-only until proven secure Rules cutover; legacy text-plus-audio and protected solution release remain compatible. Games/iOS/Production unchanged.",
+    "next_action": "Collect existing integration CI and fresh Hosting/AI/Assessment receipts; publish immutable verified artifact to canonical staging. No unchanged retry or audio release-gate opening."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -712,6 +713,16 @@
       "repair_pr": 156,
       "repair_head": "4db28b0198004110c0e2940dc4426a0bb995443a",
       "preview_receipt": 11448542523
+    },
+    {
+      "id": "web-repair-20261007",
+      "stage": "integrated",
+      "branch": "feature/audio-web-repair-20261007",
+      "integration_branch": "feature/gradecrew-app-integration",
+      "verified_commit": "0931ade4e415690cc149c829c5f1a6703d085177",
+      "candidate_ci": 37546526741,
+      "student_private_audio_release_enabled": false,
+      "next_action": "Collect existing integration CI and fresh Hosting/AI/Assessment receipts; publish immutable verified artifact to canonical staging. No unchanged retry or audio release-gate opening."
     }
   ],
   "deployments": [
@@ -1095,6 +1106,61 @@
         "preview_verified_files": null,
         "important": "PR148 and PR147 deployed together. Exact combined CI and mobile tutorial tests passed; Hosting hashes and separate AI/Assessment receipts verified. No Rules cutover, Production or physical device acceptance.",
         "next_action": "Martin tests manual submission/cancel/timer and existing DE/EN/audio flows on staging; Main waits for running Hero Art Directions chat and checks its final candidate."
+      }
+    },
+    {
+      "recorded_at": "2026-10-06T23:36:24.245Z",
+      "release_train": {
+        "id": "staging-batch-2026-10-06-hero-repair",
+        "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "observed_integration_head": "4d6ee69a7bf0ff51e037dc69f651ca6237f5106c",
+        "included_workstreams": [
+          "crew-assistant",
+          "contextual-crew-assistants-v2",
+          "remy-structured-telemetry-v1",
+          "emmi-whole-test-revision",
+          "tutorial-choice-replay-v1",
+          "design-startscreen-v1",
+          "audio-masterpiece-v2",
+          "bug-ops-v1",
+          "i18n-content-labels-20261005",
+          "web-staging-closeout-20261006",
+          "security-web-integration-20261006",
+          "hero-web-integration-20261006",
+          "hero-acceptance-repair-20261006",
+          "hero-guest-tour-20261006"
+        ],
+        "later_integrations_observed": [
+          "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
+          "German-only i18n boundary ist im aktuellen Integrationsstand enthalten.",
+          "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
+          "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
+          "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
+          "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
+          "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
+          "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe.",
+          "Startscreen Masterpiece v4: isolierter Premium-Polish-Layer auf fb88dfa7; DE/EN-Copy bleibt DOM/i18n-basiert, Hosting-Preview verifiziert.",
+          "BugOps V1 ist integriert: Web-Decision-Inbox, serverseitige Incident-Aggregation und admin-only Attention-Summary; Rohmeldungen werden zu Incidents gebündelt statt einzeln alarmiert.",
+          "BugOps speichert in Incidents keine Namen, E-Mails, Freitexte oder Schülerantworten; eindeutige Melder werden nur über incident-lokale Hashmarker gezählt.",
+          "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
+        ],
+        "gates": {
+          "combined_ci": "passed_run_37542394496_commit_4d6ee69a7bf0ff51e037dc69f651ca6237f5106c",
+          "mobile_tutorial": "not_separately_rerun_for_4d6ee69_full_frontend_261_passed_locally",
+          "hosting_preview": "verified_run_37542511207_receipt_11448542523",
+          "staging_functions": "verified_run_37542511122_ai_receipt_11448732514",
+          "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
+          "desktop_ipad_iphone_test": "not_performed_for_4d6ee69_browser_policy_unverified",
+          "user_acceptance": "pending_real_login_and_test_creation_on_canonical_staging_for_4d6ee69",
+          "production": "not_requested",
+          "staging_assessment_functions": "verified_run_37542511122_assessment_receipt_11449512022",
+          "audio_v2_user_acceptance": "not_tested"
+        },
+        "preview_url": null,
+        "preview_verified_files": 120,
+        "important": "GC-DESIGN-05B repair PR #156 merged as 4d6ee69. CI 37542394496, preview 37542511207/receipt 11448542523, AI/Assessment Functions 37542511122/receipts 11448732514 and 11449512022, and canonical Hosting 37542720795/receipt 11449022640 succeeded. Guest Emmi red feedback and unavailable replacement action were corrected. Browser/device and real teacher login/test creation remain unverified; Production unchanged.",
+        "next_action": "Martin opens https://hausaufgabe-staging.web.app/, runs the guest tour past Emmi to Wilma, then signs in and creates/saves one real test. Report any blocker; separately review desktop/phone visuals and full EN tour text."
       }
     }
   ]

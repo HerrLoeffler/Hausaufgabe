@@ -198,4 +198,4 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
-| GC-WEB-REPAIR-20261007 | UI/Remy/Audio in PR159@7a1fe906 vorbereitet und unabhängig geprüft; 273 Frontendtests, 58 Assessmenttests; vollständige CI37546526741 läuft nach begrenzter Fixture-Korrektur. Games/iOS ausgeschlossen. | Exakte CI, gemeinsame Integration und getrennte Hosting/Functions-Receipts; neue private Audio-Modi bis Rules-Nachweis nur als Entwurf. [Übergabe](workstreams/web-repair-batch-20261007.md) |
+| GC-WEB-REPAIR-20261007 | UI/Remy/Audio in PR159@7a1fe906 vorbereitet und unabhängig geprüft; 273 Frontendtests, 58 Assessmenttests; vollständige Kandidaten-CI37546526741 grün; PR159 als0931ade4 integriert, Merge-CI37547012003 und Mobile37547012032 laufen. Games/iOS ausgeschlossen. | Exakte CI, gemeinsame Integration und getrennte Hosting/Functions-Receipts; neue private Audio-Modi bis Rules-Nachweis nur als Entwurf. [Übergabe](workstreams/web-repair-batch-20261007.md) |
