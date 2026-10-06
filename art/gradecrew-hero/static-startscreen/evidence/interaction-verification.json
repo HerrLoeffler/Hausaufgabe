@@ -1,0 +1,17 @@
+{
+  "controllerTests": {
+    "passed": 4,
+    "failed": 0,
+    "redBeforeImplementation": true
+  },
+  "syntaxCheck": "passed",
+  "browserBeforeContentRevision": [
+    "EN guided tutorial Remy\u2192Emmi\u2192Wilma",
+    "DE Remy click, pause/resume/replay/close, focus return",
+    "390px mobile, no horizontal overflow, hotspots 62\u201370px wide and88px high, tutorial finish"
+  ],
+  "finalWordClassesBrowserChecked": false,
+  "browserBlocker": "Browser security policy verification unavailable on reload; two attempts, no bypass",
+  "screenshots": "Fractions example before the word-classes revision",
+  "noDeployment": true
+}

@@ -7,7 +7,8 @@
   <title>GradeCrew – Digitale Tests. Schnell & einfach.</title>
   <link rel="stylesheet" href="styles.css">
   <script src="copy.js" defer></script>
-  <script src="screen.js" defer></script>
+  <script src="demo-flow.js" defer></script>
+  <script src="interactive-screen.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#welcome" data-copy="skip">Zum Inhalt springen</a>
@@ -20,13 +21,18 @@
         <button type="button" data-dialog="teachers" data-copy="teachers">Für Lehrkräfte</button>
       </nav>
       <div class="header-tools">
-        <button class="help" type="button" data-dialog="help"><span class="question" aria-hidden="true">?</span><span data-copy="help">Hilfe</span></button>
+        <button class="help" type="button" data-dialog="help" data-copy-aria="help" aria-label="Hilfe"><span class="question" aria-hidden="true">?</span><span data-copy="help">Hilfe</span></button>
         <label class="language"><span class="sr-only" data-copy="language">Sprache</span><select id="language"><option value="de">DE</option><option value="en">EN</option></select></label>
       </div>
     </header>
     <main id="welcome" tabindex="-1">
       <section class="hero" aria-labelledby="welcome-title">
-        <img class="scene" src="assets/crew-classroom-v3.webp" width="1536" height="1024" alt="Coco öffnet die Klassenzimmertür. Remy, Emmi und Wilma begrüßen dich." data-copy-alt="sceneAlt" fetchpriority="high">
+        <div class="scene-stage">
+          <img class="scene" src="assets/crew-classroom-v3.webp" width="1536" height="1024" alt="Coco öffnet die Klassenzimmertür. Remy, Emmi und Wilma begrüßen dich." data-copy-alt="sceneAlt" fetchpriority="high">
+          <button class="character-hit remy-hit" type="button" data-dialog="remy" data-copy-aria="remyAction" aria-label="Remy: Test erstellen ansehen"><span class="character-play" aria-hidden="true">▶</span></button>
+          <button class="character-hit emmi-hit" type="button" data-dialog="emmi" data-copy-aria="emmiAction" aria-label="Emmi: Aufgabe verbessern ansehen"><span class="character-play" aria-hidden="true">▶</span></button>
+          <button class="character-hit wilma-hit" type="button" data-dialog="wilma" data-copy-aria="wilmaAction" aria-label="Wilma: Antworten prüfen ansehen"><span class="character-play" aria-hidden="true">▶</span></button>
+        </div>
         <div class="welcome-copy">
           <h1 id="welcome-title"><span data-copy="greeting">Hi! Ich bin Coco.</span><span data-copy="welcome">Willkommen bei</span> <strong>GradeCrew.</strong></h1>
           <p data-copy="subtitle">Digitale Tests. Schnell & einfach.</p>
@@ -37,7 +43,7 @@
           <button class="role wilma" data-dialog="wilma"><span><strong data-copy="wilmaName">Wilma</strong><small data-copy="wilmaRole">Prüfen</small></span></button>
         </div>
         <div class="entry-actions">
-          <button class="button primary" type="button" data-dialog="crew"><span data-copy="meetCrew">Crew kennenlernen</span><span aria-hidden="true">→</span></button>
+          <div class="tutorial-entry"><button class="button primary" type="button" data-dialog="tutorial" aria-describedby="tutorialDuration"><span data-copy="meetCrew">Crew kennenlernen</span><span aria-hidden="true">→</span></button><small id="tutorialDuration" data-copy="tutorialDuration">Tutorial · ca. 6–7 Minuten</small></div>
           <button class="button secondary" type="button" data-dialog="login" data-copy="login">Direkt anmelden</button>
         </div>
         <form class="join" id="joinForm">
@@ -47,6 +53,17 @@
       </section>
     </main>
   </div>
-  <dialog id="detail" aria-labelledby="detailTitle"><button class="close" type="button" aria-label="Schließen" data-copy-aria="close">×</button><p class="dialog-eyebrow">GradeCrew</p><h2 id="detailTitle"></h2><p id="detailBody"></p><a class="button primary" id="stagingLink" href="https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app" hidden data-copy="openPreview">Zur Testumgebung →</a></dialog>
+  <dialog id="detail" aria-labelledby="detailTitle">
+    <button class="close" type="button" aria-label="Schließen" data-copy-aria="close">×</button>
+    <div class="demo-heading"><span id="demoPortrait" class="demo-portrait" aria-hidden="true" hidden></span><div><p class="dialog-eyebrow" id="dialogEyebrow">GradeCrew</p><h2 id="detailTitle"></h2></div></div>
+    <p id="detailBody"></p>
+    <section id="crewDemo" class="crew-demo" hidden aria-label="Animiertes Beispiel" data-copy-aria="animatedExample">
+      <div class="demo-progress" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p id="demoStatus" class="demo-status" role="status" aria-live="polite"></p>
+      <div class="demo-workspace" id="demoWorkspace"></div>
+      <div class="demo-controls"><button type="button" id="demoPause"></button><button type="button" id="demoReplay" data-copy="replay">Nochmal ansehen</button><button type="button" id="tutorialNext" class="button primary" hidden></button></div>
+    </section>
+    <a class="button primary" id="stagingLink" href="https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app" hidden data-copy="openPreview">Zur Testumgebung →</a>
+  </dialog>
 </body>
 </html>
