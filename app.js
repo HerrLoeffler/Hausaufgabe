@@ -6201,7 +6201,8 @@ function evaluateAnswer(q, given) {
 async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null, ownerPreview = false } = {}) {
   e?.preventDefault?.();
   const submissionKey = `${quiz.id}:${state.studentAttempt?.attemptId || "untimed"}`;
-  if ($("studentForm")?.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
+  const studentForm = $("studentForm");
+  if (!studentForm || studentForm.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
   const name = $("studentName")?.value.trim() || readStoredTimer(quiz.id)?.name || "";
   if (!name) {
     toast("Bitte deinen Namen eingeben.", "error");
@@ -6226,7 +6227,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
     } finally {
       if (studentConfirmationPending.get(submissionKey) === confirmation) studentConfirmationPending.delete(submissionKey);
     }
-    if (!approved || $("studentForm")?.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
+    if (!approved || !studentForm.isConnected || $("studentForm") !== studentForm || studentForm.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
   }
 
   const answers = {};

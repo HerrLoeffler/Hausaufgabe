@@ -590,3 +590,28 @@ test('timer expiry can submit while a manual confirmation is still open', async 
   assert.equal(writes.length, 1, 'expired attempt is not written twice after late approval');
   assert.equal(writes[0].autoSubmitted, true);
 });
+
+test('manual confirmation cannot submit after its student form is replaced', async t => {
+  const w = fixture(t);
+  w.document.body.insertAdjacentHTML('beforeend', '<form id="studentForm"><input id="studentName" value="ML"></form>');
+  let approve;
+  let writes = 0;
+  Object.assign(w, {
+    $: id => w.document.getElementById(id),
+    requestStudentSubmitConfirmation: () => new Promise(resolve => { approve = resolve; }),
+    state: { studentAttempt: { attemptId: 'old-attempt', startedAt: 1000 } },
+    studentSubmissionBusy: new Set(), studentConfirmationPending: new Map(), completedStudentSubmissions: new Set(),
+    readStoredTimer: () => null, getUnansweredQuestions: () => [], round1: number => number,
+    deepClone: value => value, getQuizScale: () => ({}), gradeFromPercent: () => 1,
+    stopStudentTimer: () => {}, db: {}, collection: (...x) => x, serverTimestamp: () => 1,
+    addDoc: () => { writes++; return Promise.resolve({ id: 'stale' }); },
+    studentTimerKey: id => id, clearStudentSubscriptions: () => {}, renderStudentResult: () => {}, toast: () => {}, crewTour: null
+  });
+  w.eval(fn('submitStudentQuiz'));
+  const pending = w.submitStudentQuiz(null, { id: 'OLD' }, []);
+  w.$('studentForm').remove();
+  w.document.body.insertAdjacentHTML('beforeend', '<form id="studentForm"><input id="studentName" value="Other"></form>');
+  approve(true);
+  await pending;
+  assert.equal(writes, 0);
+});
