@@ -3,6 +3,16 @@ import { registerCatalog, t } from './shared/i18n/browser-runtime.mjs?v=3';
 // Public hero UI copy lives in the existing GradeCrew interface-language runtime.
 // Example questions are fixed demo content; actual assessment language is independent.
 const de = {
+  'guest.localQuiz': '✓ Lokaler Übungstest',
+  'guest.localSaved': 'Übungstest lokal gespeichert.',
+  'guest.localLink': 'Nur lokaler Übungstest – kein öffentlicher Link',
+  'guest.noQr': 'Lokales Tutorial ohne QR-Zugang',
+  'guest.localSubmission': 'Übungsabgabe nur lokal gespeichert.',
+  'guest.resultsMeta': '{count} Übungsabgabe · {points} Punkte maximal · nur lokal',
+  'guest.publishTitle': 'Dein lokaler Übungstest ist bereit.',
+  'guest.publishText': 'Hier üben wir die Freigabe ohne öffentlichen Link oder QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle.',
+  'guest.submittedTitle': 'Deine Übungsabgabe liegt nur hier im Speicher.',
+  'guest.finishSignIn': 'Zur Anmeldung',
   'hero.greeting': 'Hi! Ich bin Coco.',
   'hero.welcome': 'Willkommen bei',
   'hero.subtitle': 'Digitale Tests. Schnell & einfach.',
@@ -58,6 +68,16 @@ const de = {
 };
 
 const en = {
+  'guest.localQuiz': '✓ Local practice test',
+  'guest.localSaved': 'Practice test saved locally.',
+  'guest.localLink': 'Local practice test only – no public link',
+  'guest.noQr': 'Local tutorial without a QR code',
+  'guest.localSubmission': 'Practice submission saved locally only.',
+  'guest.resultsMeta': '{count} practice submission · {points} maximum points · local only',
+  'guest.publishTitle': 'Your local practice test is ready.',
+  'guest.publishText': 'This is a local publishing exercise without a public link or QR code. Select “Take the test yourself” to switch to the student view.',
+  'guest.submittedTitle': 'Your practice submission exists only in this session.',
+  'guest.finishSignIn': 'Go to sign in',
   'hero.greeting': 'Hi! I’m Coco.',
   'hero.welcome': 'Welcome to',
   'hero.subtitle': 'Digital tests. Quick & easy.',

@@ -121,5 +121,5 @@ test("hardening exposes close control instead of removing it and app persists of
   assert.match(hardeningSource, /Tutorial beenden/);
   assert.match(appSource, /crewTourOfferHandledAt/);
   assert.match(appSource, /isAdmin:\s*isAdmin\(\)/);
-  assert.match(appSource, /exitTour:\s*\(\)\s*=>\s*loadDashboard\(\)/);
+  assert.match(appSource, /exitTour:\s*\(\)\s*=>\s*guestTourRepo\s*\?\s*exitGuestTour\(\)\s*:\s*loadDashboard\(\)/);
 });

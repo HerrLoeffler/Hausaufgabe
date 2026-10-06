@@ -62,6 +62,6 @@ export function currentQualityIssues(issues, questions) {
 }
 
 export function editorQuestionIndex(state, { quizId, uid, questionId, reviewKey }) {
-  if (state.currentQuiz?.id !== quizId || state.user?.uid !== uid || (state.currentQuiz.published && !state.currentQuiz.ended)) return -1;
+  if (state.currentQuiz?.id !== quizId || (state.user?.uid || state.guestTourUid) !== uid || (state.currentQuiz.published && !state.currentQuiz.ended)) return -1;
   return state.questions.findIndex(q => q.id === questionId && (!reviewKey || questionReviewKey(q) === reviewKey));
 }

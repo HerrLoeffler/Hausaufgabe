@@ -87,7 +87,8 @@ test('startscreen polish layer stays isolated from product screens', () => {
 
 test('public entry uses the canonical manifest and remains auth-scoped', () => {
   assert.match(entryFlow, /GRADECREW_ASSETS/);
-  assert.match(entryFlow, /CREW, DEMO_TEST/);
+  assert.match(entryFlow, /gradecrew:start-guest-tour/);
+  assert.doesNotMatch(entryFlow, /gcEntryTutorialName|gcEntryTutorialBody/);
   assert.match(startscreenCss, /#authView \.gcEntryShell/);
   assert.match(startscreenCss, /#authView \.gcEntryWelcome/);
   assert.match(startscreenCss, /#authView \.gcEntryCharacterStage/);

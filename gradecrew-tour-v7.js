@@ -61,6 +61,7 @@ export function preparedResponse(_q, { variant = false } = {}) {
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 })[char]);
+const guestCopy = (key, fallback) => globalThis.GradeCrewI18n?.t?.(`guest.${key}`, {}, fallback) || fallback;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export function installCrewTour(api) {
@@ -188,7 +189,7 @@ export function installCrewTour(api) {
     document.querySelectorAll(".gcTourInlineHint, .gcTourVariantMentor").forEach(node => node.remove());
     document.body.classList.remove("gcRealTourActive", "gcTourAnswering");
     document.documentElement.classList.remove("gcTourScrollLocked");
-    if (done) {
+    if (done && !api.isGuest?.()) {
       try { localStorage.setItem(doneKey(), "done"); } catch {}
     }
   }
@@ -710,10 +711,10 @@ export function installCrewTour(api) {
     if(event==="edited"&&stage==="edit"){clearOutlineWarning(editSourceId);refreshWarnings({includeEdit:false});celebrateEdit();return;}
     if(event==="tutorial-feedback"&&stage==="feedback-good"&&data.questionId===variantQuestionId&&data.verdict==="good"){showSecondWarning();return;}
     if(event==="tutorial-feedback"&&stage==="feedback-panel"&&data.questionId===faultyId&&data.verdict==="bad"&&data.action==="remove"){thankEmmi();return;}
-    if(event==="published"&&stage==="publish"){stage="published";coach("guide","Das ist der echte Zugang für die Klasse.","Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle.",{target:"#openPublishedStudentBtn",interactiveTarget:true});return;}
+    if(event==="published"&&stage==="publish"){stage="published";coach("guide",api.isGuest?.()?guestCopy('publishTitle',"Dein lokaler Übungstest ist bereit."):"Das ist der echte Zugang für die Klasse.",api.isGuest?.()?guestCopy('publishText',"Hier üben wir die Freigabe ohne öffentlichen Link oder QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle."):"Hier stehen Testcode, Link und QR-Code. Klicke auf „Test selbst ausfüllen“ – jetzt wechselst du in die Schülerrolle.",{target:"#openPublishedStudentBtn",interactiveTarget:true});return;}
     if(event==="student-ready"&&stage==="published"){askName();return;}
     if(event==="student-started"&&["identity","identity-start"].includes(stage)){stage="answering";hideCoach();freeRegion=$("#studentForm");document.documentElement.classList.remove("gcTourScrollLocked");document.body.classList.add("gcTourAnswering");setTimeout(()=>{if(owned()&&stage==="answering")ensureOrderingStartsUnsorted();},100);return;}
-    if(event==="submitted"&&["answering","identity-start"].includes(stage)){submissionId=data.submissionId;freeRegion=null;document.body.classList.remove("gcTourAnswering");document.documentElement.classList.add("gcTourScrollLocked");stage="submitted";coach("guide","Deine Abgabe ist gespeichert.","Das waren echte Übungsantworten. Öffne jetzt die Lehrkraft-Auswertung – dort wartet Wilma auf dich.",{target:"#studentTeacherResultsBtn",interactiveTarget:true});return;}
+    if(event==="submitted"&&["answering","identity-start"].includes(stage)){submissionId=data.submissionId;freeRegion=null;document.body.classList.remove("gcTourAnswering");document.documentElement.classList.add("gcTourScrollLocked");stage="submitted";coach("guide",api.isGuest?.()?guestCopy('submittedTitle',"Deine Übungsabgabe liegt nur hier im Speicher."):"Deine Abgabe ist gespeichert.","Öffne jetzt die Lehrkraft-Auswertung – dort wartet Wilma auf dich.",{target:"#studentTeacherResultsBtn",interactiveTarget:true});return;}
     if(event==="results-ready"&&stage==="submitted"){
       stage="results";coach("grade","Da bin ich wieder!","Öffne jetzt deine Übungsabgabe über „Bewerten“. Wir schauen gemeinsam auf deine Antworten.",{target:`#resultsTableWrap .reviewBtn[data-id="${CSS.escape(submissionId)}"]`,interactiveTarget:true});return;
     }
@@ -727,6 +728,7 @@ export function installCrewTour(api) {
       await api.completeTour?.();
       if(!owned()||token!==run)return;
       stop({done:true});
+      if(api.isGuest?.()) { await api.exitTour?.(); return; }
       if(action==="create")api.startNewTest?.();
       if(action==="settings")await showExtraSettings();
     } catch(err) {busy=false;error("Der Abschluss konnte noch nicht gespeichert werden. Bitte versuche es erneut.",()=>finishTour(action));}
@@ -751,11 +753,12 @@ export function installCrewTour(api) {
     const seconds=Math.max(0,Math.floor((performance.now()-startedAt)/1000));
     const elapsed=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")} Minuten`;
     coach("guide","Super – du gehörst jetzt zur Crew!",`In ${elapsed} hast du deinen Übungstest erstellt, überarbeitet, selbst ausgefüllt und bewertet. Lust, gleich einen eigenen Test auszuprobieren?`,{
-      centered:true,button:"Eigenen Test erstellen",onButton:()=>{void finishTour("create");},
+      centered:true,button:api.isGuest?.()?guestCopy('finishSignIn',"Zur Anmeldung"):"Eigenen Test erstellen",onButton:()=>{void finishTour("create");},
       body:'<img class="gcFinishCrew" src="/assets/gradecrew/clay-finale.svg" alt="Coco, Remy, Emmi und Wilma feiern deinen Abschluss"><div class="gcCoachFinishFlow"><span>Erstellen</span><b>→</b><span>Überarbeiten</span><b>→</b><span>Durchführen</span><b>→</b><span>Bewerten</span></div>'
     });
     const choices=document.createElement("div");choices.className="gcFinishChoices";
-    for(const [label,action] of [["Einstellungen kurz kennenlernen","settings"],["Tour abschließen",""]]) {
+    const finishChoices = api.isGuest?.() ? [["Tour abschließen",""]] : [["Einstellungen kurz kennenlernen","settings"],["Tour abschließen",""]];
+    for(const [label,action] of finishChoices) {
       const button=document.createElement("button");button.type="button";button.className="button ghost";button.textContent=label;button.onclick=()=>{void finishTour(action);};choices.append(button);
     }
     root.append(choices);
@@ -815,5 +818,3 @@ export function installCrewTour(api) {
 
   return { start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&["form-intro","form-filling","image-choice","preferences","form","creating"].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse };
 }
-
-

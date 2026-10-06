@@ -14,7 +14,7 @@ function setup() {
   const state = { user: { uid: "teacher" }, currentQuiz: { id: "quiz" }, questions: [source] };
   const host = { dataset: {}, classList: { add() {}, remove() {} }, querySelector: () => ({ addEventListener() {} }) };
   const request = deferred();
-  const context = vm.createContext({ state, db: {}, $: () => host, QUESTION_TYPES: [["truefalse"]],
+  const context = vm.createContext({ state, db: {}, guestTourRepo: null, tourUid: () => state.user?.uid || "", $: () => host, QUESTION_TYPES: [["truefalse"]],
     questionReviewKey, editorQuestionIndex,
     questionForAi: q => ({ ...q }), questionContext: () => ({ existingQuestions: [] }),
     normalizeImportedQuestion: q => ({ ...q }),

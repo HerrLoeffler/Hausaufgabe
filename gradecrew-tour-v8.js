@@ -139,6 +139,12 @@ export function installCrewTour(api) {
     if (reviewFallbackTimer) clearTimeout(reviewFallbackTimer);
     reviewFallbackTimer = 0;
   };
+  const stop = base.stop.bind(base);
+  base.stop = (...args) => {
+    clearReviewFallback();
+    tutorialSubmissionId = "";
+    return stop(...args);
+  };
 
   const scheduleReviewFallback = () => {
     clearReviewFallback();
