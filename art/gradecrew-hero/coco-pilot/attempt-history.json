@@ -1,0 +1,39 @@
+{
+  "task": "GC-DESIGN-05",
+  "date": "2026-10-06",
+  "worker": "Sol-first delegated Coco pilot",
+  "paid_provider_calls": 0,
+  "old_provider_budget": "untouched; coordinator retains existing history",
+  "attempts": [
+    {
+      "id": "sol-01",
+      "samples": 24,
+      "render": "desktop-frame-01.png (subsequently replaced at canonical preview path)",
+      "observed": ["Factory cube contaminated right region", "Navy washed grey", "Angular face mask", "Raised blush discs", "Oval duck-like upper beak"],
+      "result": "Rejected as visual master; actual first preview sent to coordinator immediately"
+    },
+    {
+      "id": "sol-02",
+      "samples": 32,
+      "retained_local_images": ["renders/attempt-02-desktop.png", "renders/attempt-02-inspection.png"],
+      "changes": ["Dedicated own scene excluded factory objects", "Curved cream mask lobes", "Blush became shader color", "Short peaked beak", "Corrected main-surface winding and flipper cross-section orientation"],
+      "observed": ["Navy still grey despite darker base colors", "Eyes and mouth relief too protruding in side view", "Belly/feet gap", "Mobile top wall did not cover field"],
+      "result": "Rejected as visual master"
+    },
+    {
+      "id": "sheen-diagnostic",
+      "retained_local_image": "renders/diagnostic-no-sheen.png",
+      "test": "Only set surface/down sheen to 0 and specular IOR level to 0.15 in reopened source; do not save",
+      "observed": "Navy became dark blue; confirms velvet sheen/specular was the main color washout cause"
+    },
+    {
+      "id": "sol-03-baseline",
+      "samples": 48,
+      "render_batch_seconds_from_blender_log": 30.152,
+      "changes": ["Applied proven matte down settings", "Added shallow rotated ivory eye surrounds", "Replaced mouth sphere with concave mesh bowl", "Lowered/plumped body and added covered ankles", "Adjusted fixed handle contact", "Extended wall for mobile camera"],
+      "observed": ["Navy/contact improved", "Grey glazed reflection on one eye", "Layered eye/sclera relief", "Squared forehead-mask tip", "Sparse stiff fur"],
+      "result": "Technically inspectable baseline; visual acceptance false; no further Sol visual round requested"
+    }
+  ],
+  "next": "Focused Astra review on same source/reference/camera; no full crew production until visual gate passes"
+}

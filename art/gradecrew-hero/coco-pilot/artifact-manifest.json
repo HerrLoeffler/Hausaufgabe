@@ -1,0 +1,56 @@
+{
+  "task": "GC-DESIGN-05",
+  "visual_acceptance": false,
+  "files": [
+    {
+      "path": "coco-door-pilot.blend",
+      "bytes": 2057153,
+      "sha256": "925081e1aece33bfdc0c5b0ec81fdfd9a07f4f9dd0d60b219f36bcb59eae3b05"
+    },
+    {
+      "path": "build_coco_pilot.py",
+      "bytes": 29331,
+      "sha256": "5bb85f7e51549531a6372f260f813d9288caf3b8d658eb2491f36b7d22fd77d0"
+    },
+    {
+      "path": "verify_coco_pilot.py",
+      "bytes": 9328,
+      "sha256": "7b32681762234fd7998c60490c7c8f566ac33b3cee563d0d2fabe4f51fc9212e"
+    },
+    {
+      "path": "renders/desktop-frame-01.png",
+      "bytes": 951044,
+      "sha256": "9bb8635ea3d1cf00bc6bf73cf12303ec6c65a79c3b964dce8c3fc1026bfc6d1e"
+    },
+    {
+      "path": "renders/inspection-frame-01.png",
+      "bytes": 1001592,
+      "sha256": "2aecf92722af2eaa087f49f5f749824b6c73c10adc8ecd2926d560aaa911bfcb"
+    },
+    {
+      "path": "renders/mobile-frame-01.png",
+      "bytes": 776006,
+      "sha256": "3bd293eab10e4f4c777f178fec85db0629e1bbd7ab7746fcc794b0e8cc02ae88"
+    },
+    {
+      "path": "renders/pose-frame-01.png",
+      "bytes": 398380,
+      "sha256": "5073a99ac00708dbbc0bf59b748cb0252021f9522354142a469a60e181ec1430"
+    },
+    {
+      "path": "renders/pose-frame-12.png",
+      "bytes": 393504,
+      "sha256": "079b753323c936f06114ad3ce3bf4b9b7e7bafbf5b7783d8ffad948c15ec3f82"
+    },
+    {
+      "path": "renders/pose-frame-24.png",
+      "bytes": 398758,
+      "sha256": "9d49df784ab72732f42c856eec5e3e6b587ad7d4b174f1a0701cbb39582e6c71"
+    },
+    {
+      "path": "renders/side-frame-01.png",
+      "bytes": 780624,
+      "sha256": "13c46a0bcc5058a91eec777669d72faf54922bbe63f31b11d5ba196564aa2e1a"
+    }
+  ]
+}

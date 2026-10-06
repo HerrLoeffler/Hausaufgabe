@@ -1,0 +1,79 @@
+{
+  "task": "GC-DESIGN-05",
+  "blender": "5.2.2 LTS",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "samples": 48,
+  "seed": 20261006,
+  "blend": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/coco-door-pilot.blend",
+  "views": [
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/desktop-frame-01.png",
+      "camera": "GC_CAM_Desktop",
+      "frame": 1,
+      "dimensions": [
+        1200,
+        800
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/inspection-frame-01.png",
+      "camera": "GC_CAM_Inspection",
+      "frame": 1,
+      "dimensions": [
+        900,
+        1000
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/mobile-frame-01.png",
+      "camera": "GC_CAM_Mobile",
+      "frame": 1,
+      "dimensions": [
+        720,
+        1080
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/pose-frame-01.png",
+      "camera": "GC_CAM_Inspection",
+      "frame": 1,
+      "dimensions": [
+        540,
+        640
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/pose-frame-12.png",
+      "camera": "GC_CAM_Inspection",
+      "frame": 12,
+      "dimensions": [
+        540,
+        640
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/pose-frame-24.png",
+      "camera": "GC_CAM_Inspection",
+      "frame": 24,
+      "dimensions": [
+        540,
+        640
+      ]
+    },
+    {
+      "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-hero-blender/art/gradecrew-hero/coco-pilot/renders/side-frame-01.png",
+      "camera": "GC_CAM_Side",
+      "frame": 1,
+      "dimensions": [
+        800,
+        900
+      ]
+    }
+  ],
+  "scene_objects": 89,
+  "text_objects": [],
+  "paid_provider_calls": 0,
+  "reference_bitmap_materials": 0,
+  "status": "Built and rendered; separate reopen verification required"
+}
