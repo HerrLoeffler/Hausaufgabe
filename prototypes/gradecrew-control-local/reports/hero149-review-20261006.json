@@ -1,0 +1,27 @@
+{
+  "taskId": "GC-DESIGN-05",
+  "pr": 149,
+  "head": "80cf066436188c4340f8bef67d78c90e7b3ad63a",
+  "base": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+  "reviewer": "/root/hero149_review",
+  "model": "gpt-6-sol",
+  "checkedAt": "2026-10-06T12:49:35.830215+00:00",
+  "verdict": "not_ready_until_ci_test_fixed",
+  "findings": [
+    {
+      "severity": "important",
+      "file": "gradecrew-design-foundation.test.mjs",
+      "line": 42,
+      "detail": "Stale import?v=5 assertion fails for actual?v=6; startup ordering correct at115/116/119. Update preserving ordercontract."
+    }
+  ],
+  "otherCriticalOrImportant": "none evidenced",
+  "reviewed": "entry/demo/CSS/DE-EN and original form IDs/handlers; local diff byte-identical to GitHub PR diff",
+  "limitations": [
+    "Browser/device/visual acceptance not performed; image rendering/layout unverified."
+  ],
+  "reviewCapacityEvent": "Initial reviewer turn capacity error; bounded finish completed using already-read evidence, no repeated tests.",
+  "ci": 37465637988,
+  "ciJob": 112275827980,
+  "repair": "Dispatched once to original author with Sol/high; original history must be retained."
+}
