@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-05",
+  "observed_at": "2026-10-06T05:23:00Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -17,10 +17,10 @@
     "production_requires_explicit_user_approval": true
   },
   "release_train": {
-    "id": "staging-batch-2026-10-04-b",
+    "id": "staging-batch-2026-10-06-i18n",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+    "observed_integration_head": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -29,7 +29,8 @@
       "tutorial-choice-replay-v1",
       "design-startscreen-v1",
       "audio-masterpiece-v2",
-      "bug-ops-v1"
+      "bug-ops-v1",
+      "i18n-content-labels-20261005"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -46,21 +47,21 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37238513381_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "combined_ci": "success_run_37417856806_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "success_run_37238585607_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
-      "staging_functions": "success_run_37238585657_ai_and_assessment_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "hosting_preview": "success_run_37417963944_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "staging_functions": "success_run_37417963972_ai_and_assessment_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "not_tested_for_fb88_startscreen_v4_candidate",
-      "user_acceptance": "no_manual_acceptance_recorded_for_bb91_bugops_candidate",
+      "desktop_ipad_iphone_test": "not_performed_for_90b48d8",
+      "user_acceptance": "not_performed_for_90b48d8",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37238585657_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "staging_assessment_functions": "success_run_37417963972_commit_90b48d854e0deca87fbf33b376c76826c1fc2d60",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": null,
-    "important": "BugOps V1 ist auf Staging für bb91ce3590d773472ece60c4dd881da729bd32c1 technisch verifiziert: Combined CI 37238513381, Hosting 37238585607 und AI/Assessment Functions 37238585657 grün. aggregateBugFeedback und getBugOpsSummary wurden erfolgreich veröffentlicht. Admin-/Browserabnahme ist offen; automatische Reparatur aus echten Kundenmeldungen bleibt deaktiviert; Production unverändert.",
-    "next_action": "BugOps im Staging als Admin praktisch abnehmen: technischen Testfehler melden bzw. vorhandenen Staging-Incident nutzen und Problem melden → Incident → Administration-Badge → BugOps-Ansicht → Lifecycle prüfen. Danach read-only Investigator und sichere Guardian-Brücke bauen."
+    "important": "PR139 integrated; exact CI and Hosting/AI/Assessment deploy jobs succeeded. No device/user acceptance; Security PR146 not included; no Rules or Production deployment.",
+    "next_action": "Verify DE/EN, warm browser cache and resuming pre-rollout attempts; integrate bounded tutorial/security patches serially after exact CI/reviews."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -593,6 +594,18 @@
       "user_test": "not_performed",
       "handoff": "workstreams/classroom-student-management-v1.md",
       "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+    },
+    {
+      "id": "i18n-content-labels-20261005",
+      "task_id": "GC-I18N-03",
+      "branch": "feature/i18n-content-labels-20261005",
+      "stage": "staging_deployed",
+      "integrated_into": "feature/gradecrew-app-integration@90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "ci": "success_37417856806",
+      "staging": "hosting_37417963944_ai_and_assessment_37417963972",
+      "user_test": "not_performed",
+      "handoff": "workstreams/staging-closeout-20261006.md",
+      "next_action": "Verify DE/EN, warm browser cache and resuming pre-rollout attempts; integrate bounded tutorial/security patches serially after exact CI/reviews."
     }
   ],
   "deployments": [
@@ -636,7 +649,7 @@
       "verified_commit": "bb91ce3590d773472ece60c4dd881da729bd32c1",
       "verified_files": null,
       "receipt_artifact_id": 11316079411,
-      "contains_current_release_train": true,
+      "contains_current_release_train": false,
       "device_test": "not_performed"
     },
     {
@@ -655,11 +668,98 @@
       "production_changed": false,
       "firestore_rules_changed": false,
       "hosting_changed_by_this_deploy": false
+    },
+    {
+      "environment": "staging-preview",
+      "type": "hosting_only",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "evidence": "Workflow 37417963944; exact SHA in deploy logs and successful verification/upload steps",
+      "receipt_artifact_id": 11391527589,
+      "contains_current_release_train": true,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
+    },
+    {
+      "environment": "staging",
+      "type": "functions:ai",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "evidence": "Workflow 37417963972; exact SHA in deploy logs and successful verification/upload steps",
+      "receipt_artifact_id": 11391284298,
+      "contains_current_release_train": true,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
+    },
+    {
+      "environment": "staging",
+      "type": "functions:assessment",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "evidence": "Workflow 37417963972; exact SHA in deploy logs and successful verification/upload steps",
+      "receipt_artifact_id": 11392063036,
+      "contains_current_release_train": true,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
     }
   ],
   "blockers": [
     "Remy structure/telemetry has not yet been practically tested by Martin after the verified hosting + Functions deployment.",
     "30-user test failed; cause not confirmed.",
     "Production security gates are not all verified."
+  ],
+  "release_history": [
+    {
+      "recorded_at": "2026-10-06T05:23:00Z",
+      "release_train": {
+        "id": "staging-batch-2026-10-04-b",
+        "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio.",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "observed_integration_head": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+        "included_workstreams": [
+          "crew-assistant",
+          "contextual-crew-assistants-v2",
+          "remy-structured-telemetry-v1",
+          "emmi-whole-test-revision",
+          "tutorial-choice-replay-v1",
+          "design-startscreen-v1",
+          "audio-masterpiece-v2",
+          "bug-ops-v1"
+        ],
+        "later_integrations_observed": [
+          "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
+          "German-only i18n boundary ist im aktuellen Integrationsstand enthalten.",
+          "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
+          "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
+          "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
+          "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
+          "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
+          "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe.",
+          "Startscreen Masterpiece v4: isolierter Premium-Polish-Layer auf fb88dfa7; DE/EN-Copy bleibt DOM/i18n-basiert, Hosting-Preview verifiziert.",
+          "BugOps V1 ist integriert: Web-Decision-Inbox, serverseitige Incident-Aggregation und admin-only Attention-Summary; Rohmeldungen werden zu Incidents gebündelt statt einzeln alarmiert.",
+          "BugOps speichert in Incidents keine Namen, E-Mails, Freitexte oder Schülerantworten; eindeutige Melder werden nur über incident-lokale Hashmarker gezählt.",
+          "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
+        ],
+        "gates": {
+          "combined_ci": "success_run_37238513381_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+          "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
+          "hosting_preview": "success_run_37238585607_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+          "staging_functions": "success_run_37238585657_ai_and_assessment_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+          "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
+          "desktop_ipad_iphone_test": "not_tested_for_fb88_startscreen_v4_candidate",
+          "user_acceptance": "no_manual_acceptance_recorded_for_bb91_bugops_candidate",
+          "production": "not_requested",
+          "staging_assessment_functions": "success_run_37238585657_commit_bb91ce3590d773472ece60c4dd881da729bd32c1",
+          "audio_v2_user_acceptance": "not_tested"
+        },
+        "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+        "preview_verified_files": null,
+        "important": "BugOps V1 ist auf Staging für bb91ce3590d773472ece60c4dd881da729bd32c1 technisch verifiziert: Combined CI 37238513381, Hosting 37238585607 und AI/Assessment Functions 37238585657 grün. aggregateBugFeedback und getBugOpsSummary wurden erfolgreich veröffentlicht. Admin-/Browserabnahme ist offen; automatische Reparatur aus echten Kundenmeldungen bleibt deaktiviert; Production unverändert.",
+        "next_action": "BugOps im Staging als Admin praktisch abnehmen: technischen Testfehler melden bzw. vorhandenen Staging-Incident nutzen und Problem melden → Incident → Administration-Badge → BugOps-Ansicht → Lifecycle prüfen. Danach read-only Investigator und sichere Guardian-Brücke bauen."
+      }
+    }
   ]
 }
