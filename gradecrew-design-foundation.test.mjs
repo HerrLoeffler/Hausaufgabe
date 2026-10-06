@@ -39,9 +39,9 @@ test('teacher startup loads and activates public entry before app handlers', () 
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
   const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=4');
   const startscreenPolishIndex = startup.indexOf('./gradecrew-auth-startscreen-polish.css?v=1');
-  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=5');
+  const entryIndex = startup.search(/\bawait import\(["']\.\/gradecrew-entry-flow\.js(?:\?[^"']*)?["']\)/);
   const installIndex = startup.indexOf('installGradeCrewEntryFlow();');
-  const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
+  const appIndex = startup.search(/\bawait import\(["']\.\/app\.js(?:\?[^"']*)?["']\)/);
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
   assert.ok(dashboardIndex > tokensIndex, 'dashboard stylesheet must follow shared tokens');
   assert.ok(startscreenIndex > tokensIndex, 'startscreen stylesheet must follow shared tokens');

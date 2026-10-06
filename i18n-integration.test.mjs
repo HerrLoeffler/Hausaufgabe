@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { heroText } from "./gradecrew-hero-copy.mjs?v=1";
+import { setActiveUiLocale } from "./shared/i18n/browser-runtime.mjs?v=3";
 
 const read = path => fs.readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -83,36 +85,22 @@ test("public navigation uses semantic keys so rerenders do not depend on German 
   }
 });
 
-test("public startscreen copy is covered by the English UI catalog without translating assessment content", () => {
-  for (const sourceText of [
-    "Funktionen",
-    "Die Crew",
-    "Hilfe",
-    "Hi! Ich bin Coco.",
-    "Willkommen bei GradeCrew.",
-    "Digitale Tests, schnell & einfach.",
-    "Crew kennenlernen",
-    "Direkt anmelden",
-    "Schüler? Testcode eingeben.",
-    "Schnell erstellt",
-    "Einfach durchgeführt",
-    "Direkt ausgewertet",
-    "Für Lehrkräfte gemacht",
-    "Wie dürfen wir dich nennen?",
-    "Tutorial beginnen",
-    "Möchtest du deinen Fortschritt speichern?",
-    "Mit GradeCrew loslegen",
-    "Coco, dein GradeCrew-Guide",
-    "Praxisnah. Sicher. Zuverlässig.",
-  ]) {
-    const entrySourceText = sourceText === "Digitale Tests, schnell & einfach."
-      ? "Digitale Tests, schnell &amp; einfach."
-      : sourceText;
-    assert.ok(entryFlow.includes(entrySourceText), "entry source missing: " + sourceText);
-    assert.ok(englishCatalog.includes(sourceText), "English startscreen translation missing: " + sourceText);
+test("new public hero and examples use the shared DE/EN UI catalog", () => {
+  for (const key of ["greeting", "welcome", "subtitle", "meetCrew", "tutorialDuration", "student", "remyRole", "emmiRole", "wilmaRole"]) {
+    assert.ok(entryFlow.includes(`data-i18n-key="hero.${key}"`), `semantic hero key missing: ${key}`);
   }
-  assert.match(englishCatalog, /Schön, dass du da bist/);
-  assert.match(englishCatalog, /keine Daten gespeichert/);
+  setActiveUiLocale("de-DE");
+  assert.equal(heroText("meetCrew"), "Crew kennenlernen");
+  assert.equal(heroText("multipleChoicePrompt"), "Welche Wörter sind Nomen?");
+  setActiveUiLocale("en-GB");
+  assert.equal(heroText("meetCrew"), "Meet the crew");
+  assert.equal(heroText("multipleChoicePrompt"), "Which words are nouns?");
+  assert.equal(heroText("emmiOtherPossibilities"), "Emmi can also rephrase text, add pictures and revise a whole test.");
+  setActiveUiLocale("de-DE");
+  for (const text of ["Wie dürfen wir dich nennen?", "Tutorial beginnen", "Möchtest du deinen Fortschritt speichern?"]) {
+    assert.ok(entryFlow.includes(text), `existing tutorial text missing: ${text}`);
+    assert.ok(englishCatalog.includes(text), `existing tutorial translation missing: ${text}`);
+  }
 });
 test("English activation does not collapse UI, assessment content and grading language into one setting", () => {
   assert.match(core, /uiLocale:/);
@@ -204,7 +192,7 @@ test("assessment locale survives normal saves and cannot silently change during 
 
 test("bilingual browser module graph is cache-busted consistently", () => {
   assert.match(startup, /bootstrap\.mjs\?v=3/);
-  assert.match(startup, /gradecrew-entry-flow\.js\?v=5/);
+  assert.match(startup, /gradecrew-entry-flow\.js\?v=6/);
   assert.match(startup, /assessment-locale-ui\.mjs\?v=3/);
   assert.match(secureHtml, /bootstrap\.mjs\?v=3/);
   assert.match(bootstrap, /browser-runtime\.mjs\?v=3/);
