@@ -20,3 +20,7 @@ Request-ID `GC-CENTRAL-15f5dd8b-6dc0-438f-8c4e-d2def7d5d25f`. Auftrag und Versuc
 Dieser Port ist vor der neuen CI zunächst `branch_only`. Weder Integration noch Security-Preview, Rules-Cutover, Gerätetest oder Production-Freigabe durch diesen Branch. Die Gates C–G und der ungeklärte 30-Teilnehmer-Fehler bleiben wie in der Security-Übergabe offen.
 
 Nächster Schritt: denselben isolierten Kandidaten einmal vollständig in Node-22-/Java-21-CI auf dem aktuellen Webstand prüfen, unabhängiges Read-only-Review abgleichen, PR gegen `feature/gradecrew-app-integration` als Draft sichern. Main übernimmt erst danach seriell. Kein konkurrierender Deploy.
+
+## CI-Start auf isoliertem Branch
+
+Draft-[PR #148](https://github.com/HerrLoeffler/Hausaufgabe/pull/148) @ Remote-Checkpoint `f62ad1e8253e777feb202b4a72c5c109fa1e873c` angelegt. Der bestehende `AI Staging Checks`-Workflow prüft bislang nur bestimmte Push-Branches; neue PR-Zielbranches lösen ihn nicht aus. Für die geforderte vollständige Kombination wurde allein das Muster `fix/gc-security-*` in die bestehenden Push-Filter aufgenommen. Ein Suchlauf über `.github/workflows` zeigte keinen `workflow_run`-Folge-Deploy auf diese CI. Es ist ein Testworkflow; keine Cloud-Identität oder Deploy-Stufe hinzugefügt. Die CI-Run-ID wird nach dem Checkpoint in PR #148 gesichert.

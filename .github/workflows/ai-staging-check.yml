@@ -18,6 +18,7 @@ on:
       - 'feature/i18n-*'
       - 'feature/audio-*'
       - 'fix/audio-*'
+      - 'fix/gc-security-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
