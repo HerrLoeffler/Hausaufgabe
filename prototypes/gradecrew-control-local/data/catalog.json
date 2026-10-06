@@ -354,19 +354,19 @@
       "title": "Startscreen Hero Scene + First-Visit-Animation",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Stand abgleichen · Konzept / Art Direction offen",
-      "next": "Martin lehnt den v4-Preview visuell ab: technisch sauber, aber noch weit vom Referenzbild entfernt. Nächster Pass soll nicht wieder CSS-Möbel polieren, sondern eine echte art-directed Hero-Szene prüfen. Option: beim ersten Besuch öffnet Coco die Tür, begrüßt; Remy/Emmi/Wilma bewegen sich dezent im Hintergrund. Animation kurz, nicht blockierend, ohne Audio, mit Skip/Reduced-Motion und auf Folgebesuchen statisch. Canva ist verbunden und soll für visuelle Konzepte/Brand-Art-Direction geprüft werden; Web-Implementierung bleibt separat. Vollständige DE/EN-UI-Abdeckung bleibt Pflicht; sichtbare Texte nicht in Bild/Animation einbrennen. [Übergabe](workstreams/startscreen-hero-animation-20261004.md)",
-      "stage": "unknown",
-      "stageSource": "Nicht eindeutig zugeordnet",
-      "branch": null,
-      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null,
+      "statusText": "Entwicklung · CI meldet veraltete Import-Prüfung; unabhängiges Review läuft",
+      "next": "Review abschließen und belegte Befunde zusammen an zuständigen Autor geben; danach exakte CI. Noch kein neues Staging.",
+      "stage": "branch_only",
+      "stageSource": "PR149, noch nicht in den Release-Train übernommen",
+      "branch": "feature/gc-design-05-web-integration",
+      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
+      "evidence": "PR149@80cf066; CI37465637988 fehlgeschlagen in gradecrew-design-foundation.test.mjs:49; v5-Prüfung bei v6-Import. Review läuft.",
       "triage": {
         "category": "needs_verification",
         "package": "design-and-crew",
-        "checkedAt": "2026-10-06",
-        "reason": "Current main still describes concept/art direction as open. A separate local design branch contains a static hero preview, but it is not evidence of integration or user acceptance on main; do not import that checkout’s changes into this report as a completed task.",
-        "evidence": "Current main TODO GC-DESIGN-05: concept/art direction open; suggests Canva concept then separate web implementation and DE/EN accessibility. Local design branch is dirty and unrelated to permitted report scope."
+        "checkedAt": "2026-10-06T12:46:29.653186+00:00",
+        "reason": "Vorhandene neue Hero-Szene im separaten Integrationskandidaten; kein erneuter Gestaltungsauftrag nötig.",
+        "evidence": "PR149@80cf066; CI37465637988 fehlgeschlagen in gradecrew-design-foundation.test.mjs:49; v5-Prüfung bei v6-Import. Review läuft."
       }
     },
     {
@@ -1780,7 +1780,7 @@
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
   },
-  "reconciledAt": "2026-10-06T12:03:22.282538+00:00",
+  "reconciledAt": "2026-10-06T12:48:00.604552+00:00",
   "reconciliation": {
     "total": 50,
     "completed": 4,
