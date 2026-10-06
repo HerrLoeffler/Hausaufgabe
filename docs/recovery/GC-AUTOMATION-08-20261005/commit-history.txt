@@ -1,0 +1,53 @@
+commit 9a3d8396176245d30d75b71d182f61e6304eb201
+Author:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+AuthorDate: Mon Oct 5 00:00:16 2026 +0200
+Commit:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+CommitDate: Mon Oct 5 00:00:16 2026 +0200
+
+    GC-AUTOMATION-08: bind lifecycle to explicit task profile and target
+
+commit e9ee68cd480d8faac9715839729061b0ca54f5ce
+Merge: 00aa690 65a6496
+Author:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+AuthorDate: Sun Oct 4 23:57:54 2026 +0200
+Commit:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+CommitDate: Sun Oct 4 23:57:54 2026 +0200
+
+    Merge remote-tracking branch 'origin/docs/guardian-admission-profiles-20261004' into docs/guardian-admission-profiles-20261004
+
+commit 65a6496da56de01a491e46d44f8a60f821265509
+Merge: 6a366f7 7b5b322
+Author:     HerrLoeffler <martin.loeffler91@yahoo.de>
+AuthorDate: Sun Oct 4 23:57:31 2026 +0200
+Commit:     HerrLoeffler <martin.loeffler91@yahoo.de>
+CommitDate: Sun Oct 4 23:57:31 2026 +0200
+
+    GC-AUTOMATION-08: gated trusted profiles; reconcile current main and checkpoint inline execution
+
+commit 00aa690781f3d503b95ebdbacb9a799861ded768
+Author:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+AuthorDate: Sun Oct 4 23:55:24 2026 +0200
+Commit:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+CommitDate: Sun Oct 4 23:55:24 2026 +0200
+
+    GC-AUTOMATION-08: add gated trusted execution profiles
+
+commit 1c4a62b76186bf7d875b9818676cf0b6adf96060
+Merge: 6a366f7 7b5b322
+Author:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+AuthorDate: Sun Oct 4 23:50:25 2026 +0200
+Commit:     Martin Löffler <martin@MBP-von-Martin.fritz.box>
+CommitDate: Sun Oct 4 23:50:25 2026 +0200
+
+    Merge remote-tracking branch 'origin/main' into docs/guardian-admission-profiles-20261004
+
+commit 7b5b32205a0fe161358e71268ca2b9cdb6e19840
+Merge: 6a4b625 94dd0a6
+Author:     HerrLoeffler <martin.loeffler91@yahoo.de>
+AuthorDate: Sun Oct 4 23:48:35 2026 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Oct 4 23:48:35 2026 +0200
+
+    Merge GC-BUGOPS-01 coordination
+    
+    GC-BUGOPS-01: register scalable error triage and safe repair automation

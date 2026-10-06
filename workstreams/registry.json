@@ -315,11 +315,13 @@
     {
       "id": "system-review-2026-10-02",
       "title": "Gesamtprüfung / Integrationslücken",
-      "primaryBranch": "chore/resume-system-audit-20261002",
+      "primaryBranch": "docs/gradecrew-project-audit-20261005",
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/system-review-2026-10-02.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "chore/resume-system-audit-20261002"
+      ]
     },
     {
       "id": "dev-legacy-triage",
