@@ -60,13 +60,13 @@ jobs:
         run: npm ci --include=dev
 
       - name: Install secure assessment dependencies
-        run: npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
+        run: npm ci --prefix assessment-functions --no-audit --no-fund
 
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
       - name: Install security rules test dependencies
-        run: npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
+        run: npm ci --prefix tools/rules --no-audit --no-fund
 
       - name: Run unit tests
         working-directory: functions

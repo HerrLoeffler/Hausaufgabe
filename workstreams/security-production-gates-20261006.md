@@ -35,3 +35,13 @@ Zentrale Dateien auf main werden durch die Zentrale gepflegt; diese Übergabe is
 [Issue #6](https://github.com/HerrLoeffler/Hausaufgabe/issues/6) ist weiterhin offen und am realen Handler bestätigt: Questions-Reads/Contract-Bau erfolgen vor dem atomaren Start-Limit. Zuerst Verhaltenstest für abgewiesene Starts ohne Questions-Read sowie gültiges Resume und Tokenfehler; dann kleinste Korrektur mit Transaktions-/Parallelitätsnachweis und unabhängiger Prüfung. Baseline: lokal Node 22.23.3, 39/39 Assessment-Tests erfolgreich. Abhängigkeiten sind noch ohne committed Assessment-/Rules-Lockfiles.
 
 Keine externen laufenden Starts dieses Auftrags. Keine Budgetreservierung. Alte Versuchs- und Deploy-Historie bleibt erhalten.
+
+## Implementierungscheckpoint
+
+- Draft-PR [#146](https://github.com/HerrLoeffler/Hausaufgabe/pull/146), initialer Remote-Checkpoint `ca7a9a05c3162f6562646659e7ef8e4b8b94d7a3`.
+- Issue #6: bestehende Credentials werden vor Fragenzugriff geprüft; neue Starts prüfen das gemeinsame Kontingent vor Questions-Query/Contract. Quota und Attempt/Private-Dokumente werden in derselben Transaktion geschrieben. Alle Reads bleiben vor Writes.
+- Zusätzlich reproduzierter Fehler derselben Grenze: ein wiederholter Transaktionscallback konnte das zufällige Paper des verworfenen Versuchs statt des gespeicherten Gewinner-Versuchs zurückgeben. Nur das Resultat des erfolgreich committed Callbacks verlässt jetzt die Transaktion.
+- Roter Test vor Fix: fünf gezielte Regressionen scheiterten (Quota, Code-Alias, fremde Credentials, abgegebener Retry, konkurrierender Paper-Schlüssel). Nach Fix lokal 46/46 Assessment-Tests und 42/42 Secure-Client-/Rules-Quellvertragstests grün; Syntax und Diff-Whitespace grün.
+- Assessment-/Rules-Abhängigkeiten jetzt mit Lockfiles; CI und guarded Assessment-Preview verwenden `npm ci`. Keine Paket-Versionssprünge der direkten Abhängigkeiten.
+- Vier zusätzliche echte Firestore-Emulatorfälle für konkurrierende gleiche/verschiedene Starts, erschöpftes Kontingent/Resume und Rollback vorbereitet. Lokal kein Java installiert; diese Prüfung wird in der bestehenden PR-CI mit Java 21 ausgeführt. Noch kein Ergebnis behauptet.
+- Unabhängige Vorprüfung bestätigte die Grenze und den Transaktions-Retry-Fehler. Unabhängige Patch-Prüfung und vollständige CI als nächster Schritt. Kein Deploy: Preview-Job läuft nur bei Push auf den unveränderten Primary-Security-Branch, nicht bei diesem PR.
