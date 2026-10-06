@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "batch": "GC-STAGING-CLOSEOUT-20261006",
+  "createdAt": "2026-10-06",
+  "scope": "Read-only status reconciliation for GC-AUDIO-01, GC-AUDIO-02, GC-BUGOPS-01, GC-TELEMETRY-POSTHOG-01. No cloud/API event, browser test, deployment, or production action was performed.",
+  "sources": {
+    "repository": "HerrLoeffler/Hausaufgabe",
+    "currentMain": {
+      "startHere": {
+        "path": "START_HERE.md",
+        "sha": "0dcc8914b2f89bf4e2a059e735490c996a3706ef"
+      },
+      "todo": {
+        "path": "TODO.md",
+        "sha": "e5c02920dcb1ea1f507645094536ad59f74fd2d2"
+      },
+      "state": {
+        "path": "GRADECREW_STATE.json",
+        "sha": "a0c9e0858b04701683b0694a7a455bc56bde4811",
+        "observedAt": "2026-10-06T05:23:00Z"
+      },
+      "releaseTrain": "staging-batch-2026-10-06-i18n",
+      "releaseSha": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "combinedCI": {
+        "run": 37417856806,
+        "result": "success"
+      },
+      "hosting": {
+        "run": 37417963944,
+        "result": "success",
+        "receiptArtifact": 11391527589
+      },
+      "aiAndAssessmentFunctions": {
+        "run": 37417963972,
+        "result": "success",
+        "aiReceiptArtifact": 11391284298,
+        "assessmentReceiptArtifact": 11392063036
+      }
+    },
+    "handoffs": {
+      "audio-masterpiece-v2.md": "835230324ac1b081cd951408cf30714ec4fd4874",
+      "bug-ops-v1.md": "2449a659cf582ac4ee90d9947022065d257e9640",
+      "posthog-staging-telemetry-v1.md": "d80b0e5d6f063f2c7c0f0ded05864a65241fd9ae"
+    },
+    "targetShaSource": "The latest release SHA and run IDs were independently re-read from current-main GRADECREW_STATE; same IDs were also supplied by the coordinating main chat.",
+    "readBudget": {
+      "maximum": 8,
+      "used": 8,
+      "scope": "targeted GitHub connector reads only"
+    },
+    "nonActions": "No external event was triggered, no test data was created, no PostHog/GCP API was called, no secrets were read, and no workflow/deployment was started."
+  },
+  "releaseFinding": "Earlier feature-specific Staging run IDs in TODO/handoffs are historical, not evidence that the current release is undeployed. Current main records release SHA 90b48… with successful CI, Hosting, AI Functions and Assessment Functions deployments. This advances technical deployment evidence only; manual acceptance and telemetry receipt gates remain distinct.",
+  "tasks": [
+    {
+      "id": "GC-AUDIO-01",
+      "title": "KI-Höraufgaben: 0–5 Audio-Aufgaben, privater Hörtext, Editor- und Schülerplayer",
+      "technicalStage": "staging_deployed",
+      "acceptance": "pending_browser_and_device_acceptance",
+      "whatIsProven": "Audio Masterpiece V2 is included in current main release train 90b48d8…; combined CI 37417856806 passed and exact-SHA Hosting 37417963944 + AI/Assessment Functions 37417963972 passed. The old dedicated V2 receipts (efdc1a0…, runs 37230351466/37230439196/37230439199) are valid history but superseded as the current-release pointer.",
+      "whatIsStillMissing": "Current main explicitly says desktop/iPad/iPhone and user acceptance were not performed on 90b48d8; audio_v2_user_acceptance is not_tested. Successful deployment is not a browser/device result.",
+      "nextRequiredEvidence": "On the exact 90b48d8 Staging preview, create a test with 3 listening tasks; listen in the editor and student flow; confirm no transcript exposure to students and no autoplay. Record browser/device, URL, observed result and SHA.",
+      "sources": [
+        "GRADECREW_STATE.json release_train.gates: 37417856806, 37417963944, 37417963972; deployment receipts 11391527589, 11391284298, 11392063036.",
+        "GRADECREW_STATE.json audio-masterpiece-v2: earlier efdc1a0… deploy evidence and user_test not_performed.",
+        "workstreams/audio-masterpiece-v2.md: practical acceptance checklist."
+      ]
+    },
+    {
+      "id": "GC-AUDIO-02",
+      "title": "Audio-Lösungen/Erklärungen: 0–5, Remy-Steuerung, private TTS-Assets, Freigabe erst nach Testende",
+      "technicalStage": "staging_deployed",
+      "acceptance": "pending_browser_and_device_acceptance",
+      "whatIsProven": "Same current-release SHA and successful CI/Hosting/AI+Assessment deployment as GC-AUDIO-01; the V2 handoff describes private solution-audio storage and the server-side solutionsReleased gate. The older dedicated V2 deploy record is superseded by the 90b48d8 release receipt as the latest deployment reference.",
+      "whatIsStillMissing": "No manual validation on current SHA. In particular, main records audio_v2_user_acceptance not_tested; no evidence yet that edited answers stale/block publication, that solution audio is hidden before release, and that it appears after test end/release without autoplay.",
+      "nextRequiredEvidence": "In the same 90b48d8 Staging acceptance session, create 2 solution audios; edit a correct answer and verify the audio becomes stale and blocks publish until refreshed/removed; verify students cannot access it before test end/release; release solutions and verify manual playback with no autoplay. Record device/browser and exact SHA.",
+      "sources": [
+        "GRADECREW_STATE.json release_train gates and audio-masterpiece-v2 handoff.",
+        "workstreams/audio-masterpiece-v2.md practical acceptance steps 2–6."
+      ]
+    },
+    {
+      "id": "GC-BUGOPS-01",
+      "title": "Fehlerberichte skalierbar bündeln, priorisieren, gezielt melden und risikoarme Fälle bis Staging automatisiert beheben",
+      "technicalStage": "staging_deployed",
+      "acceptance": "pending_admin_browser_acceptance",
+      "whatIsProven": "BugOps is included in the current main release train; exact-SHA CI 37417856806, Hosting 37417963944 and AI/Assessment Functions 37417963972 succeeded for 90b48d8…. Staging Rules were not deployed and main explicitly says they are not required for server-only bug incidents. The older bb91ce3…/runs 37238513381, 37238585607, 37238585657 are historical and do not invalidate the newer deployment.",
+      "whatIsStillMissing": "Current main says no manual user acceptance on 90b48d8; task handoff says admin/browser acceptance not performed. Automated customer-report repair remains disabled pending read-only investigator and Guardian bridge; that is an intentional boundary, not a failure of the shipped BugOps inbox.",
+      "nextRequiredEvidence": "As an admin on the 90b48d8 Staging preview, use an existing technical test incident if available (otherwise a bounded staging-only test report when separately authorized) and record the flow: report → incident aggregation/count → Administration badge → BugOps view → lifecycle. Do not use Production data.",
+      "sources": [
+        "GRADECREW_STATE.json release_train included_workstreams includes bug-ops-v1; current gates and deployment receipts.",
+        "workstreams/bug-ops-v1.md verified staging section: prior exact bb91ce3 deploy, no Rules required, acceptance checklist, automation disabled."
+      ]
+    },
+    {
+      "id": "GC-TELEMETRY-POSTHOG-01",
+      "title": "PostHog EU als datensparsame Analyseprojektion hinter bestehende Crew-Telemetrie hängen",
+      "technicalStage": "current_release_deployment_proven; latest PostHog secret-injection/runtime wiring not independently proven",
+      "acceptance": "pending_live_event_and_property_audit",
+      "whatIsProven": "A PostHog adapter source file exists at the current deployed release SHA 90b48d8… (blob f73c55e6f80cd7330c1d5b1585ddf3cf584f8627); it enforces Staging project ID, EU endpoint, allowlisted crew events/properties and day-scoped pseudonymous IDs. Current main confirms exact-SHA AI Functions deployment run 37417963972 succeeded. Earlier PostHog-specific CI/deploy and token-preparation records (runs 37235599673, 37235725698, 37235811020, artifact 11315830771) are historical evidence, not the current-release deploy record.",
+      "whatIsStillMissing": "Fresh main still says real_event_not_yet_triggered. Code presence and generic successful Functions deployment do not prove the latest workflow injected its PostHog token, that the export call is active on this SHA, or that an event arrived in PostHog. No API event or secret was inspected in this task.",
+      "nextRequiredEvidence": "First inspect run 37417963972 metadata/log step summaries for successful PostHog staging-secret preparation without exposing any value. Then, as a separately authorized staging acceptance action, trigger one ordinary Remy action and verify a gradecrew.crew.* event and allowed properties in the GradeCrew Staging EU project; confirm no names, email, student text, topic/wish text, field values, UID/hash or session replay data.",
+      "sources": [
+        "GRADECREW_STATE.json posthog-staging-telemetry-v1: run 37235811020, artifact 11315830771, real event not yet triggered.",
+        "GRADECREW_STATE.json current release: AI Functions deployment run 37417963972 at 90b48d8….",
+        "GitHub file functions/lib/posthog-telemetry.js at 90b48d854e0deca87fbf33b376c76826c1fc2d60, blob f73c55e6f80cd7330c1d5b1585ddf3cf584f8627.",
+        "workstreams/posthog-staging-telemetry-v1.md: event audit requirements and privacy exclusions."
+      ]
+    }
+  ],
+  "crossTaskConclusion": "No stale feature-run number is treated as a current-deployment blocker: 90b48d8… is the latest exact-SHA staging release for the three deployed feature areas. The remaining work is acceptance evidence: audio/browser/device behavior, BugOps admin lifecycle, and a PostHog staging event audit. Generic telemetry was not activated or expanded.",
+  "coordinatorVerification": {
+    "checkedAt": "2026-10-06T05:53:56.637482+00:00",
+    "run": 37417963972,
+    "job": 112120753720,
+    "step": "Prepare staging PostHog runtime configuration",
+    "conclusion": "success",
+    "limit": "Configuration step proven; no secret value read, no actual event ingestion/property audit proven."
+  }
+}

@@ -127,23 +127,29 @@
     },
     {
       "package": "audio_telemetry",
-      "status": "read_only_reconciliation_dispatched",
+      "status": "reconciled_acceptance_pending",
       "goal": "Current deployed audio, BugOps and metrics evidence; small fixes only for current release",
       "threadId": "01a10e37-4955-7db3-957f-d397b9dd8dc4",
       "model": "gpt-6-luna",
       "thinking": "medium",
-      "report": "reports/audio-bugops-reconciliation-20261006.json"
+      "report": "reports/audio-bugops-reconciliation-20261006.json",
+      "cursor": "a629bf9e-b205-48ef-82e6-94b20c508764:18",
+      "posthogConfig": "success run37417963972 job112120753720 step10; real ingestion unverified"
     },
     {
       "package": "design",
-      "status": "existing_active_work",
+      "status": "isolated_revision_user_feedback_pending",
       "threadId": "01a10e98-1e57-7b40-af70-555fdfdae2e3",
-      "goal": "Do not start duplicate art production; collect current author results before classifying"
+      "goal": "Do not start duplicate art production; collect current author results before classifying",
+      "cursor": "21b925e0-c289-42a1-b120-2cd9d13d812f:1",
+      "pr": 143,
+      "head": "cc53aa0be9a94eab3e1cfb85dda25ba8e0a2ba1e",
+      "scope": "static preview revision3; no app integration, V2 browser checks cannot be attributed to V3"
     }
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T05:45:04.862276+00:00",
+  "lastCheckpoint": "2026-10-06T05:53:56.637482+00:00",
   "deployment": {
     "candidate": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
     "combinedCi": 37417856806,
@@ -161,5 +167,8 @@
     "aiReceipt": 11391284298,
     "assessmentReceipt": 11392063036,
     "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
-  }
+  },
+  "coordinationStatus": "waiting_on_approvals_and_acceptance",
+  "pauseReason": "Current implementation owners remain waitingOnApproval. Bounded inventory packages complete. Design revision needs user feedback; iOS/browser/device/PostHog acceptance lacks access or human evidence. No duplicate implementation or paid test events started.",
+  "resumeNext": "Check existing Web/Security turns after their app approvals; do not redispatch or reset attempts. Then exact candidate CI/review and serial staging integration. Pause is polling only, not cancellation of user-owned chats."
 }
