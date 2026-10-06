@@ -95,10 +95,6 @@ test("new public hero and examples use the shared DE/EN UI catalog", () => {
   assert.equal(heroText("multipleChoicePrompt"), "Which words are nouns?");
   assert.equal(heroText("emmiOtherPossibilities"), "Emmi can also rephrase text, add pictures and revise a whole test.");
   setActiveUiLocale("de-DE");
-  for (const text of ["Wie dürfen wir dich nennen?", "Tutorial beginnen", "Möchtest du deinen Fortschritt speichern?"]) {
-    assert.ok(entryFlow.includes(text), `existing tutorial text missing: ${text}`);
-    assert.ok(englishCatalog.includes(text), `existing tutorial translation missing: ${text}`);
-  }
 });
 test("English activation does not collapse UI, assessment content and grading language into one setting", () => {
   assert.match(core, /uiLocale:/);

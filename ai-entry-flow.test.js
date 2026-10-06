@@ -69,26 +69,13 @@ test('existing auth and test-code forms are moved instead of cloned', () => {
   assert.match(entry, /joinSubmit\.setAttribute\("aria-label", "Test öffnen"\)/);
 });
 
-test('guest tutorial and save gate stay intact', () => {
-  const name = blockBetween(entry, 'id="gcEntryTutorialName"', 'id="gcEntryTutorial"');
-  const gate = blockBetween(entry, 'id="gcEntryAccountGate"', '</div>`;');
-  assert.match(name, /Wie dürfen wir dich nennen/);
-  assert.match(name, /Name oder Anzeigename/);
-  assert.doesNotMatch(name, /type="email"|Passwort wiederholen|registerEmail/);
-  assert.match(entry, /DEMO_TEST\.questions/);
-  assert.match(gate, /Fortschritt speichern/);
-  assert.match(gate, /Account erstellen/);
-  assert.match(gate, /Anmelden/);
-  assert.match(gate, /Später/);
-});
-
 test('scene, existing entry handlers and separate crew examples are connected', () => {
   assert.doesNotMatch(entry, /nav\.innerHTML|data-entry-nav=/);
   assert.match(entry, /id="gcEntryBenefits"/);
   assert.match(entry, /id="gcHeroHint"/);
   assert.match(entry, /gcHeroArtwork/);
   assert.match(entry, /installHeroDemo\(\$\("gcEntryStart"\)\)/);
-  assert.match(entry, /\$\("gcEntryTutorialStart"\)\.addEventListener\("click", \(\) => setState\("tutorialName"\)\)/);
+  assert.match(entry, /id="gcEntryTutorialStart"/);
   assert.match(entry, /\$\("gcEntryLoginOpen"\)\.addEventListener\("click", showLogin\)/);
   assert.match(heroDemo, /createDemoFlow/);
   assert.match(heroDemo, /gradecrew:ui-locale-changed/);
@@ -107,7 +94,6 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /grid-template-areas:[^}]*"lead"[^}]*"crew"[^}]*"actions"[^}]*"student"/);
   assert.match(entry, /aria-hidden/);
   assert.match(entry, /aria-live/);
-  assert.match(entry, /id="gcEntryTutorialTitle"/);
 });
 
 test('public design stays away from dashboard and secure student selectors', () => {

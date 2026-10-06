@@ -12,6 +12,8 @@ test('app entry parses as the ES module used by the browser', () => {
 test('public entry installs on the real app document and preserves auth controls', async () => {
   const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), { url: 'https://gradecrew.example/' });
   const w = dom.window;
+  w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+  w.HTMLDialogElement.prototype.close = function () { this.open = false; this.dispatchEvent(new w.Event('close')); };
   const previous = Object.fromEntries(['window', 'document', 'MutationObserver', 'NodeFilter', 'HTMLImageElement', 'matchMedia', 'requestAnimationFrame'].map(key => [key, globalThis[key]]));
   Object.assign(globalThis, {
     window: w, document: w.document, MutationObserver: w.MutationObserver,
@@ -31,6 +33,11 @@ test('public entry installs on the real app document and preserves auth controls
     assert.match(w.document.querySelector('#joinForm label').textContent, /Testcode/);
     assert.match(w.document.querySelector('#joinForm button[type="submit"]').textContent, /Test öffnen/);
     assert.ok(w.document.getElementById('gcHeroDemoNext'));
+    w.document.querySelector('[data-hero-crew="remy"]').click();
+    assert.equal(w.document.getElementById('gcHeroDialog').dataset.phase, '0');
+    w.document.getElementById('gcHeroDemoNext').click();
+    assert.equal(w.document.getElementById('gcHeroDialog').dataset.phase, '1');
+    w.document.getElementById('gcHeroDialog').close();
     w.document.getElementById('gcEntryLoginOpen').click();
     assert.equal(w.document.getElementById('gcEntryLogin').classList.contains('hidden'), false);
     assert.equal(w.document.getElementById('loginForm').classList.contains('hidden'), false);
