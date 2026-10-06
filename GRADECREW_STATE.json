@@ -49,21 +49,21 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "in_progress_run_37459917759_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
-      "mobile_tutorial": "previous_success_run_37013936799_at_8aba2a7; not_rerun_for_e46b_startscreen_candidate",
-      "hosting_preview": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
-      "staging_functions": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "combined_ci": "success_run_37459917759_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "mobile_tutorial": "success_run_37459917770_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "hosting_preview": "success_run_37460057171_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "staging_functions": "success_run_37460057237_ai_and_assessment_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "not_performed_for_90b48d8",
       "user_acceptance": "not_performed_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "production": "not_requested",
-      "staging_assessment_functions": "pending_for_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "staging_assessment_functions": "success_run_37460057237_commit_2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": null,
-    "important": "PR148 then PR147 merged serially. Both independently reviewed; code-equivalent exact source CI verified. Combined candidate awaiting CI and separate Hosting/AI/Assessment receipts. Previous deployed release remains 90b48d8 until new receipts. No Rules or Production.",
-    "next_action": "Verify combined CI37459917759 and mobile tutorial37459917770, then automatic staging receipts; give Martin test link and checklist."
+    "important": "PR148 and PR147 deployed together. Exact combined CI and mobile tutorial tests passed; Hosting hashes and separate AI/Assessment receipts verified. No Rules cutover, Production or physical device acceptance.",
+    "next_action": "Martin tests manual submission/cancel/timer and existing DE/EN/audio flows on staging; Main waits for running Hero Art Directions chat and checks its final candidate."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -617,27 +617,27 @@
       "id": "web-staging-closeout-20261006",
       "task_id": "GC-TUTORIAL-01",
       "branch": "fix/gc-staging-web-closeout-20261006",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "integrated_into": "feature/gradecrew-app-integration@2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "pr": 147,
-      "combined_ci": "pending_37459917759",
-      "staging": "not_yet_deployed",
+      "combined_ci": "success_37459917759",
+      "staging": "hosting_37460057171_ai_and_assessment_37460057237",
       "user_test": "not_performed",
       "handoff": "workstreams/web-staging-closeout-20261006.md",
-      "next_action": "Verify exact combined CI and separate staging deploy receipts; human acceptance remains open."
+      "next_action": "Physical device acceptance pending; remaining Security C–G and 30-participant incident stay open."
     },
     {
       "id": "security-web-integration-20261006",
       "task_id": "GC-SECURITY-02",
       "branch": "fix/gc-security-02-web-integration-20261006",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "integrated_into": "feature/gradecrew-app-integration@2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
       "pr": 148,
-      "combined_ci": "pending_37459917759",
-      "staging": "not_yet_deployed",
+      "combined_ci": "success_37459917759",
+      "staging": "hosting_37460057171_ai_and_assessment_37460057237",
       "user_test": "not_performed",
       "handoff": "workstreams/security-web-integration-20261006.md",
-      "next_action": "Verify exact combined CI and separate staging deploy receipts; human acceptance remains open."
+      "next_action": "Physical device acceptance pending; remaining Security C–G and 30-participant incident stay open."
     }
   ],
   "deployments": [
@@ -734,6 +734,42 @@
       "evidence": "Workflow 37417963972; exact SHA in deploy logs and successful verification/upload steps",
       "receipt_artifact_id": 11392063036,
       "contains_current_release_train": false,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
+    },
+    {
+      "environment": "staging-preview",
+      "type": "hosting_only",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "evidence": "Workflow 37460057171; exact SHA in logs, deploy and verification steps successful",
+      "receipt_artifact_id": 11412745738,
+      "contains_current_release_train": true,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
+    },
+    {
+      "environment": "staging",
+      "type": "functions:ai",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "evidence": "Workflow 37460057237; exact SHA in logs, deploy and verification steps successful",
+      "receipt_artifact_id": 11412386188,
+      "contains_current_release_train": true,
+      "device_test": "not_performed",
+      "production_changed": false,
+      "firestore_rules_changed": false
+    },
+    {
+      "environment": "staging",
+      "type": "functions:assessment",
+      "project": "hausaufgabe-staging",
+      "verified_commit": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+      "evidence": "Workflow 37460057237; exact SHA in logs, deploy and verification steps successful",
+      "receipt_artifact_id": 11411312190,
+      "contains_current_release_train": true,
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
