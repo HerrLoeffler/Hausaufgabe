@@ -1,0 +1,92 @@
+{
+  "task_id": "GC-DESIGN-05",
+  "reviewed_at": "2026-10-06",
+  "scope": "Read-only review of immutable P0 bootstrap/auth commit and bounded final hero delta; uncommitted work and deferred tour/portrait requirements excluded",
+  "repository": "HerrLoeffler/Hausaufgabe",
+  "base_sha": "f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
+  "candidate_sha": "dff509409503c206462c2d639728dbd3ae38ae47",
+  "changed_files": [
+    "app.js",
+    "gradecrew-entry-flow.js",
+    "gradecrew-entry-bootstrap.test.mjs",
+    "workstreams/gc-design-05-web-integration-20261006.md"
+  ],
+  "evidence": [
+    {
+      "check": "ES-module syntax",
+      "result": "base fails at app.js:7443 on literal backslash-n tokens; candidate parses successfully",
+      "method": "git show <sha>:app.js | node --input-type=module --check",
+      "network_or_provider_calls": false
+    },
+    {
+      "check": "Committed DOM bootstrap test",
+      "result": "2 passed, 0 failed",
+      "method": "git archive candidate into temporary directory, link pinned tools/ui/node_modules, node --test gradecrew-entry-bootstrap.test.mjs",
+      "network_or_provider_calls": false
+    },
+    {
+      "check": "Independent login-submit probe",
+      "result": "After opening the login state, submitting the original loginForm called stubbed signInWithEmailAndPassword exactly once with trimmed email reviewer@example.com and supplied password; 2 tests passed",
+      "method": "Temporary-only extension of candidate bootstrap test in isolated archive; not committed to product checkout",
+      "network_or_provider_calls": false
+    }
+  ],
+  "code_observations": [
+    "gradecrew-entry-flow.js:47-56 now reveals the original login or registration form directly after the entry flow moves them out of the old tablist.",
+    "app.js:1031-1039 attaches submit to the original loginForm and calls signInWithEmailAndPassword."
+  ],
+  "finding": "No concrete blocking code regression found in this bounded commit.",
+  "limits": [
+    "The temporary VM probe stubs Firebase, network, and other imported modules; it does not test provider authentication.",
+    "No browser safety bypass, visual inspection, native device test, CI success, integration, deploy, or user acceptance is claimed.",
+    "This review excludes any uncommitted author work and any commit after dff509409503c206462c2d639728dbd3ae38ae47."
+  ],
+  "final_local_sha": "e4f3967c2b739659e0785b25b950a486c3073ad4",
+  "remote_pr": 151,
+  "remote_sha": "4ab1b798cd5dd5bc9fc340614e969ce0113a31e6",
+  "remote_parity": "Main agent reported matching Git blob SHAs for all 11 changed files between remote PR head and local final candidate; this reviewer tested the immutable local final SHA.",
+  "final_delta_from": "dff509409503c206462c2d639728dbd3ae38ae47",
+  "final_delta_review": {
+    "finding": "No concrete blocking regression found in the bounded final delta.",
+    "observations": [
+      "The removed gcPublicNav is separate from the language selector, which shared/i18n/browser-runtime.mjs installs into the topbar as gradecrewLanguageControl.",
+      "The real login and registration forms remain moved by identity; the candidate test asserts visibility, while the login-submit stub is called once by a submit event.",
+      "Four compact benefits and Crew click hint have semantic DE/EN copy keys; the original joinForm has a visible Testcode label and Test öffnen button.",
+      "Demo flow advances on a 1800 ms timer and exposes a manual Next control; DOM and flow tests exercise phase advancement, pause and replay.",
+      "The workflow now runs app.js through node --input-type=module --check and invokes gradecrew-entry-bootstrap.test.mjs."
+    ],
+    "local_checks": [
+      {
+        "check": "Focused candidate tests",
+        "result": "27 passed, 0 failed",
+        "command": "node --test gradecrew-entry-bootstrap.test.mjs ai-entry-flow.test.js i18n-integration.test.mjs",
+        "source": "git archive of exact final_local_sha plus pinned local jsdom"
+      },
+      {
+        "check": "Whitespace/conflict check",
+        "result": "passed",
+        "command": "git diff --check dff509409503c206462c2d639728dbd3ae38ae47 e4f3967c2b739659e0785b25b950a486c3073ad4"
+      }
+    ],
+    "open_requirements_excluded_from_this_review": [
+      "The original real guest tour without an account remains unproved and is explicitly deferred.",
+      "A scroll-free ordinary phone portrait remains unproved and is explicitly deferred."
+    ],
+    "limits": [
+      "No native browser safety bypass, visual or device acceptance, real Firebase authentication, provider request, or deploy was performed.",
+      "A staging-build attempt in the source archive stopped because git rev-parse HEAD requires .git; this is an archive-method limit, not a candidate failure. Main reports successful exact CI run 37480869311 for remote SHA 4ab1b798cd5dd5bc9fc340614e969ce0113a31e6.",
+      "Uncommitted author changes and later commits were excluded."
+    ]
+  },
+  "verification_gaps_at_initial_commit": [
+    "The committed bootstrap test only asserts loginForm existence after app evaluation; it does not assert that a submit reaches the auth stub.",
+    "This commit does not add an exact CI gate for ES-module parsing of app.js."
+  ],
+  "exact_ci_main_reported": {
+    "run_id": 37480869311,
+    "job_id": 112328325623,
+    "remote_sha": "4ab1b798cd5dd5bc9fc340614e969ce0113a31e6",
+    "result": "success, all steps green",
+    "source": "Main agent confirmation; reviewer did not rerun or inspect remote logs"
+  }
+}

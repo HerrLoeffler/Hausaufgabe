@@ -1,0 +1,17 @@
+{
+  "pr": 150,
+  "head": "dc9b4c48eafe659a8bb4b427bcf7be9620cd660f",
+  "reviewer": "/root/canonical_promotion_review",
+  "status": "pass",
+  "originalFindings": [
+    "receipt missing exact Hosting-version binding",
+    "live version not rechecked before clone"
+  ],
+  "originalReport": "../reports/canonical-promotion-review-20261006.json",
+  "followupFinding": "canonical push counted itself as latest automatic preview",
+  "resolved": true,
+  "tests": 10,
+  "ci": 37481824301,
+  "browserAcceptance": "not_performed",
+  "reviewedAt": "2026-10-06T14:51:55.549413+00:00"
+}
