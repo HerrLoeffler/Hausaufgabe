@@ -357,15 +357,17 @@
       "id": "games-escape",
       "branch": "feature/escape-room-mvp-v1",
       "observed_head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
-      "stage": "branch_only",
-      "staging": "latest_run_37021633218_failed_secret_metadata_access_hosting_skipped",
-      "user_test": "physical_device_test_open",
-      "next_action": "Prüfen: Secret-Metadata-Zugriff des Escape-Deployers und Architektur des neuen Preview-Functions-Pfads; anschließend verifiziertes Receipt. Älterer Preview ist nicht automatisch dieser Head.",
+      "stage": "ci_green",
+      "staging": "isolated_escape_lab_preview_only_success_run_37021633218_attempt_2_commit_a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "user_test": "not_performed",
+      "next_action": "Isolierten Preview auf Desktop/iPad abnehmen; PR27-Inhaltsvergleich separat abschließen. Kein neuer Deploy zur Wiederholung des bereits erfolgreichen Versuchs; kein normales Web-Staging oder Production belegt.",
       "previous_observation": {
         "head": "c904a67428e40f2e5257dad11a1895945f016aa7",
         "stage": "staging_deployed",
         "staging": "isolated_preview_only"
-      }
+      },
+      "previous_staging_record": "latest_run_37021633218_failed_secret_metadata_access_hosting_skipped",
+      "ci": "tests_success_run_37021633218_attempt_2"
     },
     {
       "id": "security",
