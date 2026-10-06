@@ -52,7 +52,7 @@ fi
 # validiert zusätzlich den vollständigen Browser-/Tutorial-/Diagnose-RC und den
 # tatsächlichen Hosting-Build. So kann der Security-Preview nicht versehentlich
 # einen älteren Mobile-/Tutorial-Stand ausliefern.
-npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
+npm ci --prefix assessment-functions --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
 

@@ -317,12 +317,13 @@ async function readQuiz(quizId) {
   return { ref: snap.ref, data: snap.data() };
 }
 
-async function readQuestions(quizId) {
-  const snap = await getFirestore().collection(`quizzes/${quizId}/questions`).orderBy("position").get();
+async function readQuestions(quizId, tx = null) {
+  const query = getFirestore().collection(`quizzes/${quizId}/questions`).orderBy("position");
+  const snap = await (tx ? tx.get(query) : query.get());
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-async function rateLimitStart(request, quizId, tx) {
+async function readStartQuota(request, quizId, tx) {
   const ip = String(request.rawRequest?.ip || "unknown");
   const day = new Date().toISOString().slice(0, 10);
   const rateId = sha256(`assessment-start:v1:${day}:${quizId}:${ip}`);
@@ -332,7 +333,9 @@ async function rateLimitStart(request, quizId, tx) {
   if (count >= START_RATE_LIMIT_PER_DAY) {
     throw new HttpsError("resource-exhausted", "Für diesen Test wurden von diesem Anschluss heute ungewöhnlich viele Starts angefordert.");
   }
-  tx.set(ref, { count: count + 1, quizId, day, updatedAt: Timestamp.now() }, { merge: true });
+  // Firestore requires every read before the first write. The caller writes this
+  // increment atomically with the new attempt after reading/building its paper.
+  return { ref, data: { count: count + 1, quizId, day, updatedAt: Timestamp.now() } };
 }
 
 function makeReceipt(submission, quiz = null, privateData = null) {
@@ -400,28 +403,16 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   validateQuizOpen(initialQuiz);
   const initialRunId = effectiveRunId(initialQuiz, quizId);
   const initialOptions = contractOptions(initialQuiz);
-  const questions = await readQuestions(quizId);
-  if (!questions.length) throw new HttpsError("failed-precondition", "Dieser Test enthält keine Aufgaben.");
-
   const id = deriveAttemptId(quizId, initialRunId, clientAttemptId);
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
-  const newPaperSecret = createPaperSecret();
-  const newContract = buildAssessmentContract(questions, newPaperSecret, initialOptions);
-  assertNoSolutionLeak(newContract.paper);
-  const newDecoderShape = buildTeacherDecoderShape(questions);
-  const newSolutionSnapshot = buildSolutionSnapshot(questions);
-  let storedAttempt;
-  let storedPrivate;
-  let currentQuiz;
-  let createdNew = false;
-
-  await db.runTransaction(async tx => {
+  // Only the final, committed callback result may escape a transaction retry.
+  const { storedAttempt, storedPrivate, currentQuiz, newContract } = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const existingAttempt = await tx.get(aRef);
     const existingPrivate = await tx.get(pRef);
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht.");
-    currentQuiz = quizSnap.data();
+    const currentQuiz = quizSnap.data();
     validateQuizOpen(currentQuiz);
     const currentRunId = effectiveRunId(currentQuiz, quizId);
     if (currentRunId !== initialRunId || !contractOptionsEqual(contractOptions(currentQuiz), initialOptions)) {
@@ -430,17 +421,25 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
 
     if (existingAttempt.exists || existingPrivate.exists) {
       if (!existingAttempt.exists || !existingPrivate.exists) throw new HttpsError("data-loss", "Der Bearbeitungsversuch ist unvollständig gespeichert.");
-      storedAttempt = existingAttempt.data();
-      storedPrivate = existingPrivate.data();
+      const storedAttempt = existingAttempt.data();
+      const storedPrivate = existingPrivate.data();
       assertAttemptToken(storedPrivate, attemptToken);
       if (String(storedAttempt.studentName || "") !== studentName) {
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
       assertSameRun(storedAttempt, currentQuiz, quizId);
-      return;
+      return { storedAttempt, storedPrivate, currentQuiz, newContract: null };
     }
 
-    await rateLimitStart(request, quizId, tx);
+    // Quota/authentication must precede the expensive author-question query.
+    const quota = await readStartQuota(request, quizId, tx);
+    const questions = await readQuestions(quizId, tx);
+    if (!questions.length) throw new HttpsError("failed-precondition", "Dieser Test enthält keine Aufgaben.");
+    const newPaperSecret = createPaperSecret();
+    const newContract = buildAssessmentContract(questions, newPaperSecret, initialOptions);
+    assertNoSolutionLeak(newContract.paper);
+    const newDecoderShape = buildTeacherDecoderShape(questions);
+    const newSolutionSnapshot = buildSolutionSnapshot(questions);
     const now = Date.now();
     const mode = sessionMode(currentQuiz);
     const status = attemptStatusForStart(currentQuiz);
@@ -487,11 +486,10 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       updatedAt: Timestamp.now()
     };
     assertPrivatePayloadSafe(privateData);
+    tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
-    storedAttempt = created;
-    storedPrivate = privateData;
-    createdNew = true;
+    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract };
   });
 
   if (storedAttempt.status === "submitted") {
@@ -502,7 +500,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       receipt: makeReceipt({ id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
     };
   }
-  const contract = createdNew ? newContract : contractForQuestions(questions, storedPrivate);
+  const contract = newContract || contractForQuestions(await readQuestions(quizId), storedPrivate);
   return attemptPublicState(storedAttempt, currentQuiz || initialQuiz, storedAttempt.status === "running" ? contract.paper : null);
 }));
 
