@@ -1,0 +1,86 @@
+{
+  "task": "GC-DESIGN-05",
+  "visual_gate_passed": false,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 32,
+      "sha256": "187f836fee82babccaea82b8f5725ba3348ba9350691bf3701bf50b3c49a5e7f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5575,
+      "sha256": "73ad488fb4ac321717ec64c47125bbdf7ec21ababb27c7be476bf55c2c8de7fb"
+    },
+    {
+      "path": "attempt-history.json",
+      "bytes": 1662,
+      "sha256": "9e745003f2567af1c7192521ea3615f7c46cbcad39082e85a1aed83431eb9b34"
+    },
+    {
+      "path": "build-evidence.json",
+      "bytes": 2564,
+      "sha256": "50c53882313ec19583070b84212ad66f6f206722be43b024e7814d36c7f80558"
+    },
+    {
+      "path": "build_coco_astra.py",
+      "bytes": 31433,
+      "sha256": "d2770eff1a7ef620eeb4d6acde1ac231fb21d9700e09b42cb447b27f68796f10"
+    },
+    {
+      "path": "coco-door-astra.blend",
+      "bytes": 10187239,
+      "sha256": "87e13420ec6e9a566b8026f2bd412a32d63ffd7af9e80fe601f892821d2ff7e2"
+    },
+    {
+      "path": "renders/desktop-frame-01.png",
+      "bytes": 931678,
+      "sha256": "99a021b92cc816df2642d38d464e85db3703d70f517e96959657f4f6707e0705"
+    },
+    {
+      "path": "renders/inspection-frame-01.png",
+      "bytes": 959190,
+      "sha256": "96ce6f5094e674e6104790feb0cdd3e74eb8a8c362250277414c61a577185457"
+    },
+    {
+      "path": "renders/mobile-frame-01.png",
+      "bytes": 761585,
+      "sha256": "b045b19b250fdff06cb1db239c4f644b36ec07e00bd7fd47c160a05b3b8f64d8"
+    },
+    {
+      "path": "renders/pose-frame-01.png",
+      "bytes": 385200,
+      "sha256": "3603e6e3fc99ca46800e7da8e11de68b5373552cf4b51e23a620d980f5ced398"
+    },
+    {
+      "path": "renders/pose-frame-12.png",
+      "bytes": 380266,
+      "sha256": "4587e59590215cc5f3a5fda014d5a1dd3530a64d99b35894034438938a45352f"
+    },
+    {
+      "path": "renders/pose-frame-24.png",
+      "bytes": 385188,
+      "sha256": "7a17a028347503b5940065502ed46d69fb35b4041e758a4277820a7708280cd5"
+    },
+    {
+      "path": "renders/reopened-desktop.png",
+      "bytes": 931678,
+      "sha256": "ee0e4cbd59a8ee503074a0fbfd4a7165e3d79f0590e22a3061331f085fe0d907"
+    },
+    {
+      "path": "renders/side-frame-01.png",
+      "bytes": 750981,
+      "sha256": "bd3a7b307c4fd7dba428235a743733416ef72dd15837d866172ece62dfec22af"
+    },
+    {
+      "path": "verification-evidence.json",
+      "bytes": 29041,
+      "sha256": "13d7381152d3de381a16bda2d285906783d55b0a000ed3ed64f4479b0ed9316c"
+    },
+    {
+      "path": "verify_coco_astra.py",
+      "bytes": 9895,
+      "sha256": "2bc0a318fdf8947954a731d514d6758b5a26733ef2ea9ca448fe4ae6be4b6d85"
+    }
+  ]
+}
