@@ -197,4 +197,4 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
-| GC-GAMES-PIPELINE-01 | Fragenkatalog, Enginewahl je Spiel, Referenzblatt, Fachaufträge und Videoauswertung dokumentiert. Kein Spielumbau. | Dokumentationsprüfung und Integration; späterer Spielpilot benötigt eigenen Auftrag. [Workflow](docs/games/GREAT_GAMES_WORKFLOW.md) · [Übergabe](workstreams/great-games-production-20261006.md) |
+| GC-GAMES-PIPELINE-01 | Fragenkatalog, Enginewahl je Spiel, Referenzblatt, Fachaufträge, Video-/Oldcraft-Auswertung und Rust-/Modding-Einordnung dokumentiert. Kein Spielumbau. | Dokumentationsprüfung und Integration; späterer Spielpilot benötigt eigenen Auftrag. [Workflow](docs/games/GREAT_GAMES_WORKFLOW.md) · [Übergabe](workstreams/great-games-production-20261006.md) |

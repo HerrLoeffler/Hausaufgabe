@@ -36,7 +36,7 @@ Kleine Spiele dürfen dies in einer Datei bündeln. Code, Assets und Tests bleib
 - Kleinster spielbarer Abschnitt; ausdrücklich später:
 - Vorhandene Lernverträge und erlaubte lokale Testdaten:
 - Budgets für Startzeit, Größe, Speicher und Frametimes auf benanntem Gerät:
-- Abnahmekriterien: konkrete beobachtbare Ergebnisse, keine bloße KI-Note:
+- Abnahmekriterien: konkrete beobachtbare Ergebnisse, keine bloße KI-Note; normalen Kaltstart und vollständigen Lernspielablauf getrennt erfassen:
 - Bekannte Fakten / Annahmen / offene Entscheidungen:
 - Aktueller Commit/Build und priorisierte Pakete mit Abhängigkeiten:
 

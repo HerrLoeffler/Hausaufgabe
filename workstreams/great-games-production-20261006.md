@@ -19,3 +19,9 @@ Nächster Schritt: Dokumentationsdiff prüfen und nach Repository-Regeln in main
 [Spielvorlage](../docs/games/GAME_PROJECT_TEMPLATE.md), [Teamablauf](../docs/games/GAME_TEAM_WORKFLOW.md), [Enginevergleich](../docs/games/ENGINE_SELECTION.md), [datierte Videoauswertung](../docs/games/VIDEO_LESSONS_20261006.md). 142 Stichprobenbilder und ausgewählte Einzelbilder plus elf Nutzer-Screenshots ausgewertet; keine Tonspur in den gelieferten Dateien, keine Audio-Transkription oder lückenlose Frameanalyse behauptet. Fremde Modellrollen, Verbrauchszahlen und KI-Noten sind keine eigenen Messungen.
 
 Dokumentationsprüfung: lokale Links und Registry-JSON prüfen, unabhängige fachliche Prüfung der Erweiterung; bestehende Runtime-/Releasezustände bleiben unverändert. PR153 ist der bestehende Kandidat, kein zweiter Dokumentations-PR nötig.
+
+## Erweiterung: Oldcraft und Modding (06.10.2026)
+
+Martins lokale Ordner World of Oldcraft - Game/Report, Build-Kit (224 Einträge), Bericht und Skills/Skripte statisch untersucht; elf sichtbare Stichproben aus drei lokalen Clips. Keine Ausführung des Windows-Builds, keine Dekompilierung, keine fremden Skills installiert. Der Game-Ordner enthält keinen C#-Quellcode; Build-Kit ist kein vollständiges Endprojekt. [Analyse](../docs/games/OLDCRAFT_LESSONS_20261006.md) und [Tool-/Rust-Einordnung](../docs/games/MODDING_AND_RUST_REFERENCE.md) unterscheiden Beobachtung, Autorbericht und eigene Empfehlung. YouTube-Inhalte nicht vollständig abspielbar, zweite Beschreibung nicht abrufbar; Ressourcen direkt geprüft. Abgeschnittene GitHub-Links über passende Suchtreffer aufgelöst und als solche markiert.
+
+Übernommene Regeln: kleine stilisierte Spiele statt maximaler Grafik, normaler Paketstart neben Testablauf, konkrete Zielerreichung, eigene temporäre Ordner, Editor-Eigentümer, Job-ID-Wiederaufnahme, begrenzte Belege und Abschluss statt Endlosschleife. Aktueller Dokumentationsauftrag weiterhin ohne Spielumbau oder Deployment.

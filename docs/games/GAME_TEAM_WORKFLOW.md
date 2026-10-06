@@ -30,7 +30,7 @@ Ein Auftrag darf mehrere Dateien einschließlich Tests benötigen. „Ein System
 
 ## Konflikte und Ressourcen vermeiden
 
-Ein Schreiber je Dateibereich; gemeinsame Verträge zuerst festlegen. Binäre `.blend`-/Engine-Szenen exklusiv bearbeiten, bei Bedarf in unabhängige Assets/Levels aufteilen. Auch textuelle Szenendateien können logische Konflikte haben. Kein blindes Zusammenführen allein aufgrund textuell konfliktfreier Diffs.
+Ein Eigentümer je interaktivem Editor und ein Schreiber je Dateibereich; gemeinsame Verträge zuerst festlegen. Binäre `.blend`-/Engine-Szenen exklusiv bearbeiten, bei Bedarf in unabhängige Assets/Levels aufteilen. Auch textuelle Szenendateien können logische Konflikte haben. Kein blindes Zusammenführen allein aufgrund textuell konfliktfreier Diffs.
 
 Luna für Inventar, Quellen-/Dokumentabgleich; Sol für normale Umsetzung und unabhängige technische Prüfung; Astra für begründet schwierige Architektur-/Securityfragen. Die Modellnamen aus dem Video sind keine Einkaufsliste und keine bewiesene Rangliste. Keine zusätzlichen bezahlten Modell-APIs. Neue dauerhafte Nutzerchats nur im autorisierten Rahmen, kurzlebige Fachaufträge können Unteragenten bleiben.
 
@@ -49,3 +49,9 @@ Ergebnisse ereignisbezogen abholen, wenn verfügbar. Automatisches Nachfragen be
 | 🟢 veröffentlicht | freigegebener veröffentlichter Build mit Nachweis |
 
 Daneben Arbeitszustand: geplant, läuft, wartet auf Abhängigkeit, blockiert oder abgeschlossen. Fehlerpriorität separat anzeigen. Farben nie allein zur Informationsvermittlung verwenden. Ein Webdeploy beweist weder iOS-/Android-Build noch erfolgreiche Spielabnahme. Die genaueren Repository-Stufen bleiben maßgeblich.
+
+## Schlanke Produktionskontrolle
+
+Jeder Bearbeiter verwendet einen eigenen temporären Ausgabeordner. Assetübergabe enthält ID, Ursprung/Lizenz, Quelle, Export, Hash und bestandene Prüfung. Ein externer Job behält seine Request-ID; bei unklarem Ausgang erst prüfen, niemals automatisch neu bezahlen. Bestehende Kostenfreigaben gelten unverändert.
+
+Nur relevante Meilensteine mit reproduzierbarer Ansicht oder kurzem Clip dokumentieren, kein pauschales Dauerrecording. Große Exporte benötigen freien Speicher; Diagnosemedien dürfen Quellen und letzten guten Build nicht verdrängen. Nach erfülltem Auftrag Ergebnis sichern und beenden. Keine Weiterarbeit-Hooks, die ohne konkreten Auftrag immer neue Aufgaben erzeugen. Prüflogik nicht während eines laufenden Tests verändern, um dessen Ergebnis zu beeinflussen.

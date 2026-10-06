@@ -35,3 +35,7 @@ Bewertung 1–10 = Eignung für **dieses** Ziel, gleiche Kriterien oben; gewicht
 Eine Hauptübergabe hält Task-ID, Spielziel, Geräte-/Browsermatrix, Engineentscheidung samt Belegen, Build-/Deploy-Stufe, Kostenrahmen und nächsten Schritt. Getrennte, versionierte Aufträge: (1) Spielkern und Lernadapter-Vertrag, (2) Level/Interaktionen, (3) Blender-Assetquellen und Exporte, (4) QA auf echtem Gerät. Szenen/Maps/Binärassets haben je Abschnitt **einen Schreiber**; andere Chats liefern getrennte Module/Assets und nachprüfbare Diffs. Skript-/CLI-Automation kann Routinearbeiten reproduzieren, ersetzt aber nicht visuelle Gestaltung, manuelle Spieltests, Geräteabnahme oder Git-/PR-Prüfung. Referenzbilder dienen einer Art-Bible mit Herkunft, Stilmerkmalen und zulässiger Abweichung; sie sind keine exakte Modellierungsanweisung.
 
 **Offene Nachweise:** konkrete Schulgeräte, Browser/OS-Versionen, Installationsrechte, Leistungsbudget, Asset-/Lizenzkosten, Apple-Verteilung und echte GradeCrew-Lernadapter. Ohne diese Daten ist eine endgültige Enginefestlegung oder allgemeine Qualitätsnote nicht belastbar. Diese Recherche verändert weder Spielcode noch Staging/Production. Preise, Lizenzen und Versionsgrenzen vor einem konkreten Produktionsentscheid erneut prüfen.
+
+## Weitere Referenz: Rust
+
+Rust/Bevy und die Grenzen von Modding-/Portierungswerkzeugen sind in [MODDING_AND_RUST_REFERENCE.md](MODDING_AND_RUST_REFERENCE.md) eingeordnet. Rust ist keine verpflichtende neue Produktionssprache.

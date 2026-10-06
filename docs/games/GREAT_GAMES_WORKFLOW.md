@@ -12,6 +12,10 @@ Einstieg: [Fragen und Vorlagen](GAME_PROJECT_TEMPLATE.md) → [Engineauswahl](EN
 
 Belegter Ausgangspunkt: Amazonas in PR83, Head `6434ddefb83cffca7bde5a7347ed6d2f56d5cb45`, verwendet in `lab/escape-expedition/app.js` `getContext('2d')`. PR83 zielt auf `prototype/escape-expedition-masterpiece-v1`, nicht auf den gemeinsamen Web-Release. Das erklärt die konkrete Technik; es belegt weder einen aktuellen Gerätefehler noch den damaligen Entscheidungsgrund. Dieser Auftrag enthält keine neue Spiel- oder Videoabnahme.
 
+## Maßstab und Wissensbibliothek
+
+Martin wünscht gut spielbare, stimmige Lernspiele, keine maximal aufwendige Grafik oder MMO-Größe. Die [Oldcraft-Auswertung](OLDCRAFT_LESSONS_20261006.md) ergänzt konkrete Fehler- und Produktionslektionen; [Modding und Rust](MODDING_AND_RUST_REFERENCE.md) ordnet Spezialwerkzeuge ein. Diese Dokumente sind bei passendem Anlass nachlesbares Wissen, keine automatische Installation fremder Skills.
+
 ## Vor Produktion: kleinster vollständiger Nachweis
 
 1. Die sechs Einstiegsfragen aus der Vorlage beantworten; vorhandene Antworten übernehmen. Annahmen und offene Entscheidungen sichtbar halten.
@@ -49,6 +53,8 @@ Geheimnisse, Lehrerlösungen und administrative Tokens gehören nicht in Spielpa
 ## Qualitäts- und Freigaberegeln
 
 Vor dem Ausbau pro Zielgerät numerische Budgets für Frametimes, Speicher, Download/Installation und Startzeit sichern. Ausgangsziel für den Pilot: stabile 30 fps auf dem vereinbarten schwächsten Mobilgerät, 60 fps am vereinbarten Desktop; Messszene, Auflösung und Qualitätsstufe protokollieren. Das sind Ziele, keine gemessenen Leistungen; Änderungen begründen, nicht nach einem schlechten Lauf still absenken.
+
+Normalen Kaltstart des ausgelieferten Builds und den automatisierten Lernspielablauf getrennt prüfen. Ein Debug-Einstieg oder Testbot darf den echten Einstieg nicht als einziger Nachweis ersetzen. Bei Wegfindung und Lernfortschritt das erreichte Ziel bzw. fachliche Ergebnis prüfen, nicht nur Aktivität.
 
 Pflichtprüfung im paketierten Build: Kamera/Kollisionen, Touch und Tastatur, lesbare DE/EN-Texte, Kontrast, Untertitel/Audio-Regler, reduzierte Bewegung, keine Softlocks, korrekte Hilfen/Transferaufgaben, Speichern/Fortsetzen, Netzfehler sowie zehn Minuten zusammenhängendes Spielen auf jedem zugesagten Geräteprofil. Langfristige Laufzeitstabilität bei längeren Spielsessions zusätzlich prüfen.
 
