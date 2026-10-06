@@ -62,5 +62,8 @@ test('admin gets a manual Tutorial testen launcher without an automatic start', 
 
   assert.match(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /Crew kennenlernen/);
   assert.doesNotMatch(w.document.getElementById('gradecrewTourBtn')?.textContent || '', /\?|testen/i);
+  w.document.documentElement.lang = 'en-GB';
+  w.dispatchEvent(new w.CustomEvent('gradecrew:ui-locale-changed'));
+  assert.equal(w.document.getElementById('gradecrewTourBtn')?.title, 'Try onboarding as an admin');
   assert.equal(tour.active, false);
 });

@@ -67,7 +67,7 @@ function compactTemplatePrivacyNote() {
   strip?.remove();
 }
 
-function polishAiEditLabels(root = document) {
+export function polishAiEditLabels(root = document) {
   const english = document.documentElement.lang.toLowerCase().startsWith("en");
   root.querySelectorAll?.(".aiEditQuestion").forEach(button => {
     button.textContent = english ? "✨ Improve" : "✨ Überarbeiten";
@@ -77,7 +77,7 @@ function polishAiEditLabels(root = document) {
     label.textContent = english ? "✨ Improve question" : "✨ Aufgabe überarbeiten";
   });
   root.querySelectorAll?.(".questionAiPanel .aiApply").forEach(button => {
-    button.textContent = "Überarbeitung erstellen";
+    button.textContent = english ? "Create revision" : "Überarbeitung erstellen";
   });
 }
 

@@ -789,7 +789,8 @@ export function installCrewTour(api) {
       $(".dashboardActions")?.prepend(button);
     }
     button.innerHTML = '<span data-i18n-key="hero.meetCrew" data-i18n-fallback="Crew kennenlernen">Crew kennenlernen</span><small data-i18n-key="hero.tutorialDuration" data-i18n-fallback="Tutorial · ca. 6–7 Minuten">Tutorial · ca. 6–7 Minuten</small>';
-    button.title = isAdmin ? "Onboarding aus Admin-Sicht testen" : "GradeCrew-Tutorial starten";
+    button.dataset.tourAdmin = isAdmin ? "1" : "0";
+    updateDashboardTourTitle();
     button.onclick = start;
 
     let done = completed;
@@ -800,6 +801,17 @@ export function installCrewTour(api) {
       setTimeout(() => { if (!active && api.isDashboard()) showOffer(); }, 250);
     }
   }
+
+  function updateDashboardTourTitle() {
+    const button = $("#gradecrewTourBtn");
+    if (!button) return;
+    const english = document.documentElement.lang.toLowerCase().startsWith("en");
+    button.title = button.dataset.tourAdmin === "1"
+      ? (english ? "Try onboarding as an admin" : "Onboarding aus Admin-Sicht testen")
+      : (english ? "Start the GradeCrew tutorial" : "GradeCrew-Tutorial starten");
+  }
+
+  window.addEventListener("gradecrew:ui-locale-changed", updateDashboardTourTitle);
 
   document.addEventListener("gradecrew:tutorial-abort-request", event => { if (owned()) abortTour(event.detail?.source || "button"); });
   document.addEventListener("gradecrew:variant-dialog-opened",event=>{if(!owned()||stage!=="variant")return;void prepareVariantDialog(event.detail?.dialog||null);});
