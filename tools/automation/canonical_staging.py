@@ -32,7 +32,8 @@ def route():
         before, after = os.environ["BEFORE_SHA"], os.environ["AFTER_SHA"]
         if not all(re.fullmatch(r"[0-9a-f]{40}", value) for value in (before, after)):
             raise ValueError("Push comparison requires exact commit SHAs")
-        files = api(f"compare/{before}...{after}")["files"]
+        comparison = api(f"compare/{before}...{after}")
+        files = comparison["files"]
         if len(files) >= 300:
             raise ValueError("Oversized push diff cannot be routed safely")
         requests = [row for row in files if row["filename"].startswith(
@@ -42,8 +43,8 @@ def route():
         row = requests[0]
         request_file = row["filename"]
         if REQUEST.fullmatch(request_file):
-            if row.get("status") != "added":
-                raise ValueError("Canonical staging requests are append-only")
+            if row.get("status") != "added" or comparison.get("total_commits") != 1:
+                raise ValueError("Canonical staging requests require one append-only commit")
             mode = "canonical"
         elif re.fullmatch(r"automation/deployment-requests/[a-z0-9][a-z0-9-]{0,79}\.json", request_file):
             mode = "preview"
@@ -100,7 +101,8 @@ def qualify():
             or run.get("status") != "completed" or run.get("conclusion") != "success"):
         raise ValueError("Source is not a successful trusted preview workflow")
     rows = api("actions/workflows/staging-preview.yml/runs?per_page=100")["workflow_runs"]
-    automatic = [row for row in rows if row.get("event") in {"push", "workflow_run"}]
+    automatic = [row for row in rows if row.get("event") in {"push", "workflow_run"}
+                 and not canonical_request_run(row)]
     if not automatic or automatic[0]["id"] != run_id:
         raise ValueError("A newer automatic preview attempt exists; inspect it first")
     source = artifact_document(run_id, "verified-deploy-source", "deployment-source.json")
@@ -121,6 +123,18 @@ def qualify():
                 str(receipt.get("url", "")))):
         raise ValueError("Preview verification receipt differs")
     return source, receipt
+
+
+def canonical_request_run(row):
+    if row.get("event") != "push":
+        return False
+    head = row.get("head_sha")
+    if not isinstance(head, str) or not re.fullmatch(r"[0-9a-f]{40}", head):
+        return False
+    files = api("commits/" + head)["files"]
+    requests = [item for item in files if item["filename"].startswith(
+        ("automation/deployment-requests/", "automation/canonical-staging-requests/"))]
+    return len(requests) == 1 and bool(REQUEST.fullmatch(requests[0]["filename"])) and requests[0].get("status") == "added"
 
 
 def published_files(url, release):
