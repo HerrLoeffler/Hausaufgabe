@@ -1280,6 +1280,19 @@ function exitGuestTour() {
   studentConfirmationPending.clear();
   studentSubmissionBusy.clear();
   completedStudentSubmissions.clear();
+  document.querySelectorAll('dialog.variantRequestDialog').forEach(dialog => dialog.remove());
+  for (const id of ['studentQuizCard', 'resultsTableWrap', 'reviewPanel', 'questionList', 'questionOutline', 'publishedCode', 'qrcode', 'teacherLivePanel', 'variantBackgroundProgress', 'similarTestProgress', 'importReviewBanner']) {
+    $(id)?.replaceChildren();
+  }
+  for (const id of ['quizTitle', 'quizSubject', 'quizGrade', 'quizDescription', 'publishedLink']) {
+    if ($(id)) $(id).value = '';
+  }
+  $('editorHeading').textContent = 'Test bearbeiten';
+  $('resultsHeading').textContent = 'Test';
+  $('resultsMeta').textContent = '';
+  $('editorView').removeAttribute('data-quiz-id');
+  $('editorView').removeAttribute('data-owner-id');
+  $('reviewPanel').classList.add('hidden');
   guestTourRepo?.clear();
   guestTourRepo = null;
   state.isDirty = false;
@@ -1287,6 +1300,8 @@ function exitGuestTour() {
   state.guestTourUid = null;
   state.currentQuiz = null;
   state.questions = [];
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
   state.currentResultsQuiz = null;
   state.resultQuestions = [];
   state.submissions = [];
@@ -1303,6 +1318,18 @@ document.addEventListener('gradecrew:start-guest-tour', () => {
   guestTourRepo = createLocalTourRepository();
   state.guestTourUid = 'local-tour';
   state.quizzes = [];
+  state.aiJobs = [];
+  for (const id of ['quizList', 'aiJobsList', 'localDraftList', 'announcementHost', 'firstTestDashboard']) {
+    $(id)?.replaceChildren();
+  }
+  for (const id of ['aiJobsList', 'localDraftList', 'firstTestDashboard', 'emptyQuizState', 'noFilterState']) {
+    $(id)?.classList.add('hidden');
+  }
+  for (const id of ['publishedQuizCount', 'draftQuizCount', 'endedQuizCount']) $(id).textContent = '0';
+  $('quizResultsCount').textContent = '';
+  $('quizSearch').value = '';
+  $('quizFilter').value = 'all';
+  $('quizSort').value = 'updated';
   showView('dashboardView');
   if (!crewTour) crewTour = installCrewTour(makeTourApi());
   crewTour.start();
@@ -1376,9 +1403,11 @@ async function loadDashboard() {
   showView("dashboardView");
   watchAiJobs();
   await renderLocalDraftList();
+  if (state.user?.uid !== dashboardUid || guestTourRepo) return;
   $("quizList").innerHTML = `<div class="card">Tests werden geladen …</div>`;
   try {
-    const snap = await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", state.user.uid)));
+    const snap = await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", dashboardUid)));
+    if (state.user?.uid !== dashboardUid || guestTourRepo) return;
     state.quizzes = snap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
@@ -1397,6 +1426,7 @@ async function loadDashboard() {
     if (!tourOpened) await loadAnnouncements();
     scheduleFirstAiGuideOffer();
   } catch (err) {
+    if (state.user?.uid !== dashboardUid || guestTourRepo) return;
     console.error(err);
     $("quizList").innerHTML = "";
     showReportableError({

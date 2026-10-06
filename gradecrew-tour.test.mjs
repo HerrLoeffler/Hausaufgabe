@@ -303,6 +303,10 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   assert.equal(w.document.body.classList.contains('gcTourInlineReview'), false);
   assert.ok(w.document.querySelector('.gcFinishCrew'));
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /\d+:\d{2} Minuten/);
+  if (finishAction === 'guest') {
+    assert.doesNotMatch(w.document.querySelector('.gcFinishChoices').textContent, /Einstellungen kurz kennenlernen/);
+    assert.match(w.document.querySelector('.gcRealCoach').textContent, /Zur Anmeldung/);
+  }
   if(finishAction==='create') {
     next();await until(()=>!tour.active,'finish');assert.equal(newTests,1);
   } else if (finishAction === 'settings') {

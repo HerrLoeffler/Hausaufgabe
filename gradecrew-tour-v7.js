@@ -753,11 +753,12 @@ export function installCrewTour(api) {
     const seconds=Math.max(0,Math.floor((performance.now()-startedAt)/1000));
     const elapsed=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")} Minuten`;
     coach("guide","Super – du gehörst jetzt zur Crew!",`In ${elapsed} hast du deinen Übungstest erstellt, überarbeitet, selbst ausgefüllt und bewertet. Lust, gleich einen eigenen Test auszuprobieren?`,{
-      centered:true,button:api.isGuest?.()?guestCopy('finishSignIn',"Anmelden und eigenen Test erstellen"):"Eigenen Test erstellen",onButton:()=>{void finishTour("create");},
+      centered:true,button:api.isGuest?.()?guestCopy('finishSignIn',"Zur Anmeldung"):"Eigenen Test erstellen",onButton:()=>{void finishTour("create");},
       body:'<img class="gcFinishCrew" src="/assets/gradecrew/clay-finale.svg" alt="Coco, Remy, Emmi und Wilma feiern deinen Abschluss"><div class="gcCoachFinishFlow"><span>Erstellen</span><b>→</b><span>Überarbeiten</span><b>→</b><span>Durchführen</span><b>→</b><span>Bewerten</span></div>'
     });
     const choices=document.createElement("div");choices.className="gcFinishChoices";
-    for(const [label,action] of [["Einstellungen kurz kennenlernen","settings"],["Tour abschließen",""]]) {
+    const finishChoices = api.isGuest?.() ? [["Tour abschließen",""]] : [["Einstellungen kurz kennenlernen","settings"],["Tour abschließen",""]];
+    for(const [label,action] of finishChoices) {
       const button=document.createElement("button");button.type="button";button.className="button ghost";button.textContent=label;button.onclick=()=>{void finishTour(action);};choices.append(button);
     }
     root.append(choices);

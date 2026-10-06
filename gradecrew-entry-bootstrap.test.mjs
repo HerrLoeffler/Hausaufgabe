@@ -117,10 +117,19 @@ test('app bootstrap binds its real auth controls after public entry installation
       setTimeout, clearTimeout, setInterval, clearInterval,
       requestAnimationFrame: callback => w.setTimeout(callback, 0)
     };
-    vm.runInNewContext(source, bindings, { filename: 'app.js', timeout: 2000 });
+    const appContext = vm.createContext(bindings);
+    vm.runInContext(source, appContext, { filename: 'app.js', timeout: 2000 });
+    w.document.getElementById('quizList').innerHTML = '<article>Privater Test vom vorigen Konto</article>';
+    w.document.getElementById('aiJobsList').innerHTML = '<article>Privater KI-Auftrag</article>';
+    w.document.getElementById('localDraftList').innerHTML = '<article>Privater lokaler Entwurf</article>';
+    w.document.getElementById('announcementHost').innerHTML = '<article>Private Mitteilung</article>';
+    w.document.getElementById('firstTestDashboard').innerHTML = '<article>Private Einführung</article>';
     w.document.getElementById('gcEntryTutorialStart').click();
     assert.equal(guestStarts, 1, 'the real tour controller must start from the public CTA');
     assert.equal(w.document.getElementById('dashboardView').classList.contains('hidden'), false);
+    for (const id of ['quizList', 'aiJobsList', 'localDraftList', 'announcementHost', 'firstTestDashboard']) {
+      assert.equal(w.document.getElementById(id).textContent.trim(), '', `${id} must not expose the previous account during a guest tour`);
+    }
     const demoCode = await guestApi.createDemo({ title: 'English 4', subject: 'Englisch', grade: '4',
       questions: [{ type: 'single', text: 'Dog?', points: 1, options: [{ text: 'dog', correct: true }, { text: 'cat', correct: false }] }] });
     await guestApi.openEditor(demoCode);
@@ -165,6 +174,11 @@ test('app bootstrap binds its real auth controls after public entry installation
     assert.equal(w.document.getElementById('authView').classList.contains('hidden'), false);
     assert.equal(w.document.getElementById('gcEntryLogin').classList.contains('hidden'), false);
     assert.equal(guestPort.getQuiz(demoCode), null, 'guest data must be erased on exit');
+    for (const id of ['studentQuizCard', 'resultsTableWrap', 'reviewPanel', 'questionList', 'questionOutline', 'publishedCode', 'qrcode', 'teacherLivePanel']) {
+      assert.equal(w.document.getElementById(id).textContent.trim(), '', `${id} must not retain guest data after exit`);
+    }
+    assert.equal(w.document.getElementById('publishedLink').value, '');
+    assert.equal(w.document.getElementById('quizTitle').value, '');
     w.document.getElementById('gcEntryLogin').querySelector('[data-entry-back]').click();
     w.document.getElementById('gcEntryTutorialStart').click();
     assert.equal(guestStarts, 2, 'a fresh guest run can start after cleanup');
@@ -178,6 +192,9 @@ test('app bootstrap binds its real auth controls after public entry installation
     assert.equal(loginCalls.length, 1);
     assert.equal(loginCalls[0][1], 'teacher@example.test');
     assert.equal(loginCalls[0][2], 'local-test-only');
+    vm.runInContext("state.user = { uid: 'teacher' }", appContext);
+    w.document.getElementById('newQuizBtn').click();
+    assert.equal(w.document.getElementById('createView').classList.contains('hidden'), false, 'an authenticated teacher can still open the real new-test view');
     await new Promise(resolve => setImmediate(resolve));
     await Promise.resolve();
   } finally {
