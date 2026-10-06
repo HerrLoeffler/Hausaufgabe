@@ -34,3 +34,7 @@ Next: independently review and merge this repair, then initiate one explicitly q
 - Last secured step: PR #150 merged; first corrected-product preview deploy succeeded but verification failed before receipt. This branch contains a proposed repair; no deployment was started here.
 - Uncommitted work: none after this repair branch is pushed. No paid model call or new provider reservation.
 - If a future deploy result is unclear, inspect exact Actions run, receipts/recovery artifact and current Hosting state before any repeat. Never treat failed 37482339993 as a verified source.
+
+## Unabhängiger Review-Fix: Firebase-Kanalpfad
+
+Der unabhängige Review zur Staging-Anforderung fand in PR #152 einen weiteren Vor-Deploy-Blocker: `sites.channels.get` wurde über einen projektqualifizierten Pfad aufgerufen, obwohl die offizielle v1beta1-Methode nur `/sites/<site>/channels/<channel>` dokumentiert. Ein neuer Test prüfte den tatsächlichen Request-URL und schlug vor der Korrektur fehl. Der isolierte Folgebranch `fix/gc-staging-canonical-channel-path-20261006` setzt den dokumentierten Pfad wieder ein; die strikte Prüfung des zurückgegebenen Staging-Site-/Projekt-Versionsnamens bleibt erhalten. Danach 11/11 gezielte Tests grün. Diese Änderung startet keinen Deploy und setzt weder den Preview-Versuchszähler noch dessen fehlenden Receipt zurück. Erst nach Integration dieses Fixes in PR #152 ist dessen Controller für einen neuen qualifizierten Preview-/Canonical-Versuch geeignet.

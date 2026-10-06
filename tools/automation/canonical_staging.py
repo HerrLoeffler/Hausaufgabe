@@ -156,8 +156,8 @@ def published_files(url, release):
 
 def channel_version(channel, required):
     token = os.environ["GCP_ACCESS_TOKEN"]
-    endpoint = ("https://firebasehosting.googleapis.com/v1beta1/projects/"
-                + SITE + "/sites/" + SITE + "/channels/" + channel)
+    endpoint = ("https://firebasehosting.googleapis.com/v1beta1/sites/"
+                + SITE + "/channels/" + channel)
     request = urllib.request.Request(endpoint, headers={"Authorization": "Bearer " + token})
     with urllib.request.urlopen(request, timeout=30) as response:
         current = json.load(response).get("release")
