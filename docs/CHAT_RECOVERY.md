@@ -47,3 +47,14 @@ Diese Projektanweisung muss tatsächlich in den Projekteinstellungen hinterlegt 
 Repo-Dateien liefern den gesicherten Projektstand. Projektanweisungen können den gemeinsamen Einstieg festlegen. Erinnerungen und alte Chatnachrichten helfen bei der Zuordnung, garantieren aber weder Vollständigkeit noch Aktualität. Nicht gespeicherte Arbeit ist ohne Zugriff auf den ursprünglichen Checkout möglicherweise nicht rekonstruierbar.
 
 Diese Regeln gelten nach dem Lesen der Anweisungen; sie können unbekannte Chats nicht technisch steuern. Neue Regeln sichern auch frühere ungesicherte Arbeit nicht rückwirkend.
+
+
+## Zentrale übernehmen (GC-BRAIN-01, 06.10.2026)
+
+Die Zentrale ist eine übertragbare Rolle; aktuell GradeCrew Zentrale (01a10df6-736b-7a62-bd38-2724cf254c2e). Bei Auftrag „Übernimm die Zentrale“ zusätzlich die Koordinationsdateien auf Branch `prototype/gradecrew-control-local-v1` unter `prototypes/gradecrew-control-local/` lesen: `coordination.json`, `ORGANIZATION.md`, `requests/GC-STAGING-CLOSEOUT-20261006.json` sowie relevante Request-Ledger. Lokal liegen dieselben Dateien unter `gradecrew-control-prototype/`. Originalquellen/Anhänge bleiben erhalten; kompakte Übergaben sind kein vollständiger Chatersatz.
+
+Nicht auf einen zuverlässig erkennbaren letzten Kontextmoment warten: Nach Meilensteinen und Entscheidungen sowie vor externen Starts/längeren Wartephasen den Arbeitsstand nach obiger Checkliste sichern. Zusätzlich aktive Fachchat-IDs, tatsächlich beauftragte Modelle, Nutzerpräferenzen und Ergebnis-Abholautomation notieren. Kontextverdichtung allein ist keine dauerhafte Sicherung.
+
+Geplante Übernahme erst auf Nutzerauftrag: Neuer GradeCrew-Projektchat oder ausdrücklich ausgewählter vorhandener Chat liest die Übergabe, prüft laufende Vorgänge und bestätigt Auftrag/Stand/nächsten Schritt. Erst dann alleinige zentrale Zuständigkeit, `coordination.json` und Ziel der bestehenden Automation `gradecrew-security-ergebnis-zur-ckholen` umstellen; doppelte zentrale Starts ausschließen. Fachchats, Task-/Request-IDs, Budgets und Versuchshistorie bleiben erhalten. Noch keine automatische Ersatzchat-Erstellung oder getestete vollständige Rollenübergabe vorhanden. Ein Nachfolgechat mit Repository-Zugriff soll die Einweisung aus diesen Dateien selbst übernehmen.
+
+Bestätigte Lernaufgaben-Präferenz von Martin: Farbig markierte Begriffe wie im Emmi-Wortarten-Beispiel beibehalten (Nomen blau, Adjektiv orange, Verb grün). Farbe mit Text/Legende und lesbarem Kontrast verbinden; keine pauschale Umgestaltung aller Aufgaben beauftragt. Details und Seiten-Einschätzung in der oben verlinkten ORGANIZATION.md.
