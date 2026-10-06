@@ -30,6 +30,8 @@ function fixture(t, { publicEntry = false } = {}) {
   w.HTMLElement.prototype.scrollIntoView = function () {};
   w.CSS = { escape: value => String(value) };
   w.scrollTo = () => {};
+  w.guestTourRepo = null;
+  w.tourUid = () => w.state?.user?.uid || '';
   w.eval(source.replace(/^export /gm, '') + '\nwindow.demo=DEMO_TEST;window.install=installCrewTour;window.response=preparedResponse;window.crew=CREW;window.tourVersion=TOUR_VERSION;');
   if (publicEntry) {
     // Follow the shipped public entry point, including its wrapper. Testing only
@@ -108,14 +110,17 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
   assert.equal(providerCalls, 1, 'ordinary creation still reaches its normal backend');
 });
 
-for (const finishAction of ['create', 'settings']) test(`Public journey: variant, practice feedback, assessment and ${finishAction} finish`, async t => {
+for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey: variant, practice feedback, assessment and ${finishAction} finish`, async t => {
   const w = fixture(t, { publicEntry: true });
   const nativeTimeout = w.setTimeout.bind(w);
   w.setTimeout = (callback, delay, ...args) => nativeTimeout(callback, Math.min(delay, 2), ...args);
   const api = adapter(w);
   let completions = 0, newTests = 0;
+  let guestExits = 0;
   api.completeTour = async () => { completions++; };
   api.startNewTest = () => { newTests++; };
+  api.isGuest = () => finishAction === 'guest';
+  api.exitTour = () => { guestExits++; };
   let nextId = 0, providers = 0, persistedDraft;
   const state = { user: { uid: api.uid() }, currentQuiz: { id: 'DEMO1', published: false, tutorialVersion: 'v8' }, questions: [] };
   const feedbackWrites = [];
@@ -251,6 +256,7 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   next();next();next(); // Coco thanks Emmi, introduces Wilma, Wilma explains settings.
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /Mischen/);
   next(); tour.notify('published', { quizId: 'DEMO1' });
+  if (finishAction === 'guest') assert.match(w.document.querySelector('.gcRealCoach').textContent, /ohne öffentlichen Link/);
   w.renderStudentQuiz({ ...persistedDraft, id: 'DEMO1', startMode: 'student' }, state.questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
   assert.equal(w.document.querySelectorAll('.studentQuestionImage img').length, 5);
@@ -299,11 +305,16 @@ for (const finishAction of ['create', 'settings']) test(`Public journey: variant
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /\d+:\d{2} Minuten/);
   if(finishAction==='create') {
     next();await until(()=>!tour.active,'finish');assert.equal(newTests,1);
-  } else {
+  } else if (finishAction === 'settings') {
     w.document.querySelector('.gcFinishChoices button').click();
     await until(()=>/Reihenfolge mischen/.test(w.document.querySelector('.gcRealCoach h2')?.textContent),'optional settings');
     next();assert.match(w.document.querySelector('.gcRealCoach h2').textContent,/Ergebnisse/);next();
     assert.equal(newTests,0);
+  } else {
+    next(); await until(() => !tour.active, 'guest finish');
+    assert.equal(guestExits, 1);
+    assert.equal(newTests, 0);
+    assert.equal(w.localStorage.getItem(`gradecrew-live-tour-v7:${api.uid()}`), null);
   }
   assert.equal(completions,1);
   assert.equal(tour.active, false);

@@ -333,12 +333,14 @@ document.addEventListener("click", event => {
   openRequestDialog(variantButton);
 }, true);
 
-document.addEventListener("gradecrew:account-changed", () => {
+function resetVariantQueue() {
   queue = [];
   currentItem = null;
   pendingReview.clear();
   scheduleSync();
-});
+}
+document.addEventListener("gradecrew:account-changed", resetVariantQueue);
+document.addEventListener("gradecrew:guest-tour-exited", resetVariantQueue);
 
 const observer = new MutationObserver(() => scheduleSync());
 function start() {

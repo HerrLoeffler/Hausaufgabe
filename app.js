@@ -5,30 +5,30 @@ console.info(`${BRAND.name} v${APP_VERSION}`);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
+  createUserWithEmailAndPassword as firebaseCreateUser,
+  signInWithEmailAndPassword as firebaseSignIn,
+  sendPasswordResetEmail as firebaseSendPasswordReset,
+  signOut as firebaseSignOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile as firebaseUpdateProfile
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
   getFirestore,
   doc,
-  getDoc,
-  setDoc,
-  addDoc,
-  updateDoc,
-  writeBatch,
-  deleteDoc,
+  getDoc as firestoreGetDoc,
+  setDoc as firestoreSetDoc,
+  addDoc as firestoreAddDoc,
+  updateDoc as firestoreUpdateDoc,
+  writeBatch as firestoreWriteBatch,
+  deleteDoc as firestoreDeleteDoc,
   collection,
-  getDocs,
+  getDocs as firestoreGetDocs,
   query,
   where,
   orderBy,
   limit,
   startAfter,
-  onSnapshot,
+  onSnapshot as firestoreOnSnapshot,
   serverTimestamp,
   getCountFromServer,
   collectionGroup,
@@ -46,6 +46,8 @@ import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { createLocalTourRepository } from "./guest-tour-port.mjs";
+import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -58,11 +60,39 @@ const appEnvironment = firebaseModule.appEnvironment || "production";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const aiApi = createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || "");
+const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || ""), {
+  get(target, key) {
+    const value = target[key];
+    if (typeof value !== "function") return value;
+    return (...args) => {
+      if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
+      return value.apply(target, args);
+    };
+  }
+});
 
 const $ = (id) => document.getElementById(id);
 let crewTour = null;
 let tutorialDraft = null;
+let guestTourRepo = null;
+const tourUid = () => guestTourRepo ? 'local-tour' : state.user?.uid || '';
+const guestCopy = (key, fallback, values = {}) => window.GradeCrewI18n?.t?.(`guest.${key}`, values, fallback) || fallback;
+function requireProductionData() {
+  if (guestTourRepo) throw new Error('Im lokalen Tutorial sind Firebase-Aufrufe gesperrt.');
+}
+const getDoc = (...args) => { requireProductionData(); return firestoreGetDoc(...args); };
+const getDocs = (...args) => { requireProductionData(); return firestoreGetDocs(...args); };
+const onSnapshot = (...args) => { requireProductionData(); return firestoreOnSnapshot(...args); };
+const setDoc = (...args) => { requireProductionData(); return firestoreSetDoc(...args); };
+const addDoc = (...args) => { requireProductionData(); return firestoreAddDoc(...args); };
+const updateDoc = (...args) => { requireProductionData(); return firestoreUpdateDoc(...args); };
+const deleteDoc = (...args) => { requireProductionData(); return firestoreDeleteDoc(...args); };
+const writeBatch = (...args) => { requireProductionData(); return firestoreWriteBatch(...args); };
+const createUserWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseCreateUser(...args); };
+const signInWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseSignIn(...args); };
+const sendPasswordResetEmail = (...args) => { requireProductionData(); return firebaseSendPasswordReset(...args); };
+const signOut = (...args) => { requireProductionData(); return firebaseSignOut(...args); };
+const updateProfile = (...args) => { requireProductionData(); return firebaseUpdateProfile(...args); };
 const studentSubmissionBusy = new Set();
 const studentConfirmationPending = new Map();
 const completedStudentSubmissions = new Set();
@@ -1124,6 +1154,8 @@ function authMessage(err) {
 }
 
 onAuthStateChanged(auth, async (user) => {
+  if (guestTourRepo && !user) return;
+  if (guestTourRepo && user) exitGuestTour();
   if (state.user?.uid !== user?.uid) {
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     adminAuditCursor = null;
@@ -1203,6 +1235,79 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ---------- Dashboard ----------
+function makeTourApi() {
+  return {
+    uid: tourUid,
+    isDashboard: () => !$("dashboardView").classList.contains("hidden"),
+    beginRun: () => { tutorialDraft = null; },
+    prefill: prefillTutorialRequest,
+    createDemo: payload => guestTourRepo ? guestTourRepo.create({ ...quizDefaults(), ...payload }) : createTutorialQuiz(payload),
+    isGuest: () => Boolean(guestTourRepo),
+    openEditor,
+    isEditor: code => state.currentQuiz?.id === code && !$("editorView").classList.contains("hidden"),
+    questionId: index => state.questions[index]?.id || "",
+    focusQuestion: id => focusEditorQuestion(state.questions.findIndex(q => q.id === id)),
+    showSettings: () => { const section = document.querySelector(".editorSettingsDisclosure"); if (section) section.open = true; },
+    checkDemo: () => state.questions.length !== 10 ? "Für die Tour brauchen wir genau zehn Aufgaben. Entferne die ursprüngliche Aufgabe nach dem Übernehmen der Variante."
+      : (!$("quizUseTimeLimit").checked || Number($("quizTimeLimitMinutes").value) !== 1 || $("quizStartMode").value !== "student") ? "Bitte eine Minute Zeitlimit und Start durch Schüler einstellen." : null,
+    focusReviewQuestion: id => { const input = document.querySelector(`#reviewQuestions .manualPoints[data-qid="${CSS.escape(id)}"]`); input?.scrollIntoView({block:"center"}); input?.focus(); },
+    startNewTest: () => guestTourRepo ? exitGuestTour() : openCreateView(),
+    exitTour: () => guestTourRepo ? exitGuestTour() : loadDashboard(),
+    completeTour: async () => {
+      if (guestTourRepo) return;
+      const uid=state.user?.uid;if(!uid)throw new Error("Bitte anmelden.");
+      await updateDoc(doc(db,"users",uid),{crewTourCompletedAt:serverTimestamp()});
+      if(state.user?.uid===uid)state.profile={...state.profile,crewTourCompletedAt:true};
+    },
+    handleTourOffer: async (choice = "later") => {
+      if (guestTourRepo) return;
+      const uid=state.user?.uid;if(!uid)return;
+      const normalized=choice === "start" ? "started" : "later";
+      await updateDoc(doc(db,"users",uid),{crewTourOfferHandledAt:serverTimestamp(),crewTourOfferChoice:normalized});
+      if(state.user?.uid===uid)state.profile={...state.profile,crewTourOfferHandledAt:true,crewTourOfferChoice:normalized};
+    }
+  };
+}
+
+function exitGuestTour() {
+  crewTour?.stop();
+  stopStudentTimer();
+  clearPublishSubscriptions();
+  clearStudentSubscriptions();
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  studentConfirmationPending.forEach(controller => controller.abort());
+  studentConfirmationPending.clear();
+  studentSubmissionBusy.clear();
+  completedStudentSubmissions.clear();
+  guestTourRepo?.clear();
+  guestTourRepo = null;
+  state.isDirty = false;
+  state.draftCheckpointSaved = false;
+  state.guestTourUid = null;
+  state.currentQuiz = null;
+  state.questions = [];
+  state.currentResultsQuiz = null;
+  state.resultQuestions = [];
+  state.submissions = [];
+  state.studentAttempt = null;
+  state.variantTask = null;
+  state.aiVariantsRunning = false;
+  document.dispatchEvent(new Event('gradecrew:guest-tour-exited'));
+  showView('authView');
+  document.getElementById('gcEntryLoginOpen')?.click();
+}
+
+document.addEventListener('gradecrew:start-guest-tour', () => {
+  if (state.user || guestTourRepo) return;
+  guestTourRepo = createLocalTourRepository();
+  state.guestTourUid = 'local-tour';
+  state.quizzes = [];
+  showView('dashboardView');
+  if (!crewTour) crewTour = installCrewTour(makeTourApi());
+  crewTour.start();
+});
+
 $("newQuizBtn").addEventListener("click", openCreateView);
 $("emptyNewQuizBtn").addEventListener("click", openCreateView);
 $("backFromCreate")?.addEventListener("click", loadDashboard);
@@ -1239,7 +1344,7 @@ $("backFromAdmin")?.addEventListener("click", loadDashboard);
 $("refreshAdminBtn")?.addEventListener("click", () => loadAdminData(true));
 
 function openCreateView() {
-  if (!state.user) {
+  if (!state.user && !guestTourRepo) {
     showView("authView");
     return;
   }
@@ -1284,34 +1389,7 @@ async function loadDashboard() {
     try {
       const module = await import("./gradecrew-tour.js?v=2.3.1-gc21");
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
-      if (!crewTour) crewTour = module.installCrewTour({
-        uid: () => state.user?.uid || "",
-        isDashboard: () => !$("dashboardView").classList.contains("hidden"),
-        beginRun: () => { tutorialDraft = null; },
-        prefill: prefillTutorialRequest,
-        createDemo: createTutorialQuiz,
-        openEditor,
-        isEditor: code => state.currentQuiz?.id === code && !$("editorView").classList.contains("hidden"),
-        questionId: index => state.questions[index]?.id || "",
-        focusQuestion: id => focusEditorQuestion(state.questions.findIndex(q => q.id === id)),
-        showSettings: () => { const section = document.querySelector(".editorSettingsDisclosure"); if (section) section.open = true; },
-        checkDemo: () => state.questions.length !== 10 ? "Für die Tour brauchen wir genau zehn Aufgaben. Entferne die ursprüngliche Aufgabe nach dem Übernehmen der Variante."
-          : (!$("quizUseTimeLimit").checked || Number($("quizTimeLimitMinutes").value) !== 1 || $("quizStartMode").value !== "student") ? "Bitte eine Minute Zeitlimit und Start durch Schüler einstellen." : null,
-        focusReviewQuestion: id => { const input = document.querySelector(`#reviewQuestions .manualPoints[data-qid="${CSS.escape(id)}"]`); input?.scrollIntoView({block:"center"}); input?.focus(); },
-        startNewTest: openCreateView,
-        exitTour: () => loadDashboard(),
-        completeTour: async () => {
-          const uid=state.user?.uid;if(!uid)throw new Error("Bitte anmelden.");
-          await updateDoc(doc(db,"users",uid),{crewTourCompletedAt:serverTimestamp()});
-          if(state.user?.uid===uid)state.profile={...state.profile,crewTourCompletedAt:true};
-        },
-        handleTourOffer: async (choice = "later") => {
-          const uid=state.user?.uid;if(!uid)return;
-          const normalized=choice === "start" ? "started" : "later";
-          await updateDoc(doc(db,"users",uid),{crewTourOfferHandledAt:serverTimestamp(),crewTourOfferChoice:normalized});
-          if(state.user?.uid===uid)state.profile={...state.profile,crewTourOfferHandledAt:true,crewTourOfferChoice:normalized};
-        }
-      });
+      if (!crewTour) crewTour = module.installCrewTour(makeTourApi());
       window.gradecrewPracticeReady = true;
       crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt), isAdmin: isAdmin()});
     } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
@@ -1670,7 +1748,7 @@ function quizDefaults() {
     sessionState: "open",
     sessionRunId: null,
     sessionStartedAt: null,
-    ownerId: state.user.uid,
+    ownerId: tourUid(),
     published: false,
     ended: false,
     isDeleted: false,
@@ -3186,6 +3264,23 @@ function initializeTypeData(q, type) {
 }
 
 async function openEditor(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) throw new Error('Lokaler Übungstest nicht gefunden.');
+    state.newManualQuiz = false;
+    state.draftBaseUpdatedAt = 0;
+    state.currentQuiz = quiz;
+    state.reviewBannerDismissedFor = null;
+    state.questions = guestTourRepo.getQuestions(code).map(item => {
+      initializeTypeData(item, item.type || 'single');
+      return item;
+    });
+    state.pendingImportReport = buildQualityReviewReport(quiz, code, state.questions);
+    syncQualityReport();
+    state.loadedQuestionIds = new Set(state.questions.map(item => item.id));
+    renderEditorState(quiz);
+    return;
+  }
   try {
     const quizSnap = await getDoc(doc(db, "quizzes", code));
     if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
@@ -3313,7 +3408,7 @@ $("quizStartMode")?.addEventListener("change", () => {
 
 function renderQuestions() {
   $("editorView").dataset.quizId = state.currentQuiz?.id || "";
-  $("editorView").dataset.ownerId = state.user?.uid || "";
+  $("editorView").dataset.ownerId = tourUid();
   $("editorView").dataset.variantAllowed = String(!state.newManualQuiz && !(state.currentQuiz?.published && !state.currentQuiz?.ended));
   const root = $("questionList");
   root.innerHTML = "";
@@ -3496,7 +3591,7 @@ function aiQuestionFeedbackSnapshot(q) {
 
 async function submitTutorialQuestionFeedback(q, { verdict, reason, comment, action }) {
   const quiz = state.currentQuiz;
-  if (!state.user || !quiz?.tutorialVersion || !crewTour?.ownsQuiz(quiz.id) || !state.questions.includes(q)) return false;
+  if ((!state.user && !guestTourRepo) || !quiz?.tutorialVersion || !crewTour?.ownsQuiz(quiz.id) || !state.questions.includes(q)) return false;
   // Demonstrate the real controls without storing ratings or preferences.
   q._aiFeedbackVerdict = verdict;
   if (action === "remove") {
@@ -3510,7 +3605,7 @@ async function submitTutorialQuestionFeedback(q, { verdict, reason, comment, act
 }
 
 async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep", reviewOutcome = "", reviewerReason = "" }) {
-  if (!state.user || !state.currentQuiz?.id) return;
+  if ((!state.user && !guestTourRepo) || !state.currentQuiz?.id) return;
   if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
     toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
     return false;
@@ -3670,7 +3765,7 @@ function renderVariantProgress() {
   const host = $("variantBackgroundProgress");
   const task = state.variantTask;
   if (!host) return;
-  if (!task || task.uid !== state.user?.uid) { host.classList.add("hidden"); host.innerHTML = ""; return; }
+  if (!task || task.uid !== tourUid()) { host.classList.add("hidden"); host.innerHTML = ""; return; }
   host.classList.remove("hidden");
   const ready = task.questions.length;
   host.dataset.running = String(task.running);
@@ -3689,7 +3784,7 @@ function renderVariantProgress() {
 
 function applyPendingVariants() {
   const task = state.variantTask;
-  if (!task || task.uid !== state.user?.uid || task.quizId !== state.currentQuiz?.id) return;
+  if (!task || task.uid !== tourUid() || task.quizId !== state.currentQuiz?.id) return;
   if (state.currentQuiz.published && !state.currentQuiz.ended) return toast("Bitte den veröffentlichten Test zuerst beenden.", "error");
   const available = Math.max(0, 100 - state.questions.length);
   if (!available) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
@@ -3712,7 +3807,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
     return toast("Bitte 1 bis 5 Varianten wählen; insgesamt sind höchstens 100 Aufgaben möglich.", "error");
   }
   const quizId = state.currentQuiz?.id;
-  const uid = state.user?.uid;
+  const uid = tourUid();
   if (!quizId || !uid) return;
   const source = questionForAi(q);
   const context = questionContext(state.questions.findIndex(item => item.id === q.id));
@@ -3720,7 +3815,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
   state.variantTask = task;
   state.aiVariantsRunning = true;
   const ensureOwner = () => {
-    if (state.user?.uid !== uid || state.variantTask !== task) throw new Error("Varianten nach dem Abmelden gestoppt.");
+    if (tourUid() !== uid || state.variantTask !== task) throw new Error("Varianten nach dem Abmelden gestoppt.");
   };
   renderVariantProgress();
   try {
@@ -3743,7 +3838,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
         next.imageAlt = "Eine freundliche orangefarbene Katze.";
       }
       next.aiOrigin = { kind: "variant", model: String(response.meta?.model || ""), promptVersion: String(response.meta?.promptVersion || "") };
-      next.id = doc(collection(db, "quizzes", quizId, "questions")).id;
+      next.id = guestTourRepo ? `tour-variant-${Date.now()}` : doc(collection(db, "quizzes", quizId, "questions")).id;
       if (!tutorialVariant && mediaKind !== "none") {
         task.message = `Bild für Variante ${i + 1} von ${count} wird geprüft …`;
         renderVariantProgress();
@@ -3757,17 +3852,18 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
     task.message = `${count} ${count === 1 ? "Variante ist" : "Varianten sind"} fertig.`;
   } catch (err) {
     task.message = `${task.questions.length} von ${count} Varianten bereit. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`;
-    if (state.user?.uid === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
+    if (guestTourRepo) console.warn('Lokale Tutorial-Variante:', err);
+    else if (tourUid() === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
       message: task.message, error: err, action: "add_ai_variants", details: { variantCount: count, variantsCreated: task.questions.length, mediaKind, questionType: q.type }
     });
   } finally {
     task.running = false;
     if (state.variantTask === task || !state.variantTask) state.aiVariantsRunning = false;
-    if (state.user?.uid !== uid && state.variantTask === task) state.variantTask = null;
+    if (tourUid() !== uid && state.variantTask === task) state.variantTask = null;
     renderVariantProgress();
   }
   // Notify after the final render; otherwise the coach targets a detached button.
-  if (state.user?.uid === uid && state.variantTask === task && task.questions.length) {
+  if (tourUid() === uid && state.variantTask === task && task.questions.length) {
     if (typeof crewTour !== "undefined") crewTour?.notify("variants-ready", {quizId});
   }
 }
@@ -3776,7 +3872,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
 // ordinary dialog. No hidden modal, simulated clicks or global prompt state.
 function handleVariantRequest(event) {
   const request = event.detail;
-  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== state.user?.uid) return;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== tourUid()) return;
   if (state.newManualQuiz || state.aiVariantsRunning || state.variantTask?.questions?.length) return;
   if (state.currentQuiz.published && !state.currentQuiz.ended) return;
   const question = state.questions.find(item => item.id === request.id);
@@ -3789,7 +3885,7 @@ function handleVariantRequest(event) {
 
 function handleVariantKept(event) {
   const request = event.detail;
-  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== state.user?.uid) return;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== tourUid()) return;
   const question = state.questions.find(item => item.id === request.id);
   if (!question || (state.currentQuiz.published && !state.currentQuiz.ended)) return;
   // Acceptance is a local, weaker signal; it is not an explicit quality rating.
@@ -3802,7 +3898,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 100) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
-  const target = { quizId: state.currentQuiz?.id, uid: state.user?.uid, questionId: q.id, reviewKey: questionReviewKey(q) };
+  const target = { quizId: state.currentQuiz?.id, uid: tourUid(), questionId: q.id, reviewKey: questionReviewKey(q) };
   if (editorQuestionIndex(state, target) < 0) return;
   const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
@@ -3811,7 +3907,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
-    next.id = variant ? doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
+    next.id = variant ? guestTourRepo ? `tour-edit-variant-${Date.now()}` : doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
     if (!variant) next._aiUndo = old;
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
@@ -4847,6 +4943,7 @@ function editorDraftSnapshot() {
 }
 
 async function persistEditorDraft() {
+  if (guestTourRepo) return;
   if (!state.isDirty) return;
   clearTimeout(draftTimer);
   draftTimer = null;
@@ -4875,7 +4972,8 @@ function markDirty() {
   draftRevision += 1;
   setSaveState($("saveState"), "saving", "Wird lokal gesichert …");
   clearTimeout(draftTimer);
-  draftTimer = setTimeout(persistEditorDraft, 180);
+  if (!guestTourRepo) draftTimer = setTimeout(persistEditorDraft, 180);
+  else setSaveState($("saveState"), "local", guestCopy('localQuiz', '✓ Lokaler Übungstest'));
 }
 
 function markSaved() {
@@ -4884,13 +4982,19 @@ function markSaved() {
   draftRevision += 1;
   state.isDirty = false;
   state.draftCheckpointSaved = true;
-  setSaveState($("saveState"), "saved", "✓ Auf dem Server gespeichert");
+  setSaveState($("saveState"), "saved", guestTourRepo ? guestCopy('localQuiz', '✓ Lokaler Übungstest') : "✓ Auf dem Server gespeichert");
   updateSummary();
   updateEditorPublishControls();
   renderVariantProgress();
 }
 
 async function leaveEditorToDashboard() {
+  if (guestTourRepo) {
+    state.isDirty = false;
+    state.currentQuiz = null;
+    showView('dashboardView');
+    return;
+  }
   if (state.isDirty && !state.draftCheckpointSaved) {
     await persistEditorDraft();
     if (!state.draftCheckpointSaved) return toast("Der Bearbeitungsstand konnte nicht gesichert werden. Bitte auf „Speichern“ klicken.", "error");
@@ -5044,6 +5148,29 @@ async function saveCurrentQuiz(showMessage = true) {
     toast(error, "error");
     return false;
   }
+  if (guestTourRepo) {
+    const code = state.currentQuiz?.id;
+    if (!guestTourRepo.getQuiz(code)) return false;
+    const scaleId = $("quizGradeScale").value;
+    const patch = {
+      title: $("quizTitle").value.trim(), subject: $("quizSubject").value.trim(),
+      grade: $("quizGrade").value.trim(), description: $("quizDescription").value.trim(),
+      gradeScaleId: scaleId, gradeScaleSnapshot: getScaleById(scaleId),
+      resultMode: $("quizResultMode").value, showSolutions: $("quizShowSolutions").checked,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked, questionCount: state.questions.length,
+      totalPoints: round1(state.questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioReady: true, solutionAudioReady: true
+    };
+    guestTourRepo.save(code, patch, state.questions);
+    state.currentQuiz = guestTourRepo.getQuiz(code);
+    state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
+    $("editorHeading").textContent = patch.title;
+    markSaved();
+    if (showMessage) toast(guestCopy('localSaved', 'Übungstest lokal gespeichert.'));
+    return true;
+  }
   let manualDraftId = null;
   try {
     let code = state.currentQuiz.id;
@@ -5147,6 +5274,12 @@ async function saveCurrentQuiz(showMessage = true) {
 async function publishCurrentQuiz() {
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
+  if (guestTourRepo) {
+    guestTourRepo.publish(state.currentQuiz.id);
+    state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
+    showPublish(state.currentQuiz.id);
+    return;
+  }
   if (state.currentQuiz.audioReady === false) return toast("Mindestens eine Höraufgabe braucht noch ein aktuelles Audio. Erzeuge das Audio neu, bevor du veröffentlichst.", "error");
   if (state.currentQuiz.showSolutions && state.currentQuiz.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Erzeuge sie neu oder entferne sie, bevor du veröffentlichst.", "error");
   if (state.currentQuiz.published && !state.currentQuiz.ended) {
@@ -5200,6 +5333,18 @@ async function copyText(text, message) {
 }
 
 async function showPublish(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) return;
+    state.currentQuiz = quiz;
+    $("publishedCode").textContent = code;
+    $("publishedLink").value = guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
+    $("qrcode").textContent = guestCopy('noQr', 'Lokales Tutorial ohne QR-Zugang');
+    $("teacherLivePanel")?.replaceChildren();
+    showView('publishView');
+    crewTour?.notify('published', { quizId: code });
+    return;
+  }
   try {
     clearPublishSubscriptions();
     const snap = await getDoc(doc(db, "quizzes", code));
@@ -5329,6 +5474,13 @@ async function loadStudentQuiz(code) {
   clearStudentSubscriptions();
   showView("studentView");
   $("studentQuizCard").innerHTML = `<div id="studentLoading" class="studentLoadingCard"><span class="loadingDot"></span><div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div></div>`;
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz?.published) throw new Error('Lokaler Übungstest nicht freigegeben.');
+    const questions = prepareStudentQuestions(quiz, guestTourRepo.getQuestions(code), false);
+    renderStudentQuiz(quiz, questions);
+    return;
+  }
   try {
     const quizSnap = await getDoc(doc(db, "quizzes", code));
     if (!quizSnap.exists()) throw new Error("Dieser Test existiert nicht.");
@@ -5582,6 +5734,7 @@ function studentTimerKey(quizId) {
 }
 
 function readStoredTimer(quizId) {
+  if (guestTourRepo) return state.studentAttempt?.quizId === quizId ? state.studentAttempt : null;
   try {
     const value = JSON.parse(localStorage.getItem(studentTimerKey(quizId)) || "null");
     return value && (value.attemptId || Number(value.startedAt) > 0) ? value : null;
@@ -5591,10 +5744,17 @@ function readStoredTimer(quizId) {
 }
 
 function saveStoredTimer(quizId, value) {
+  if (guestTourRepo) { state.studentAttempt = { ...value, quizId }; return; }
   localStorage.setItem(studentTimerKey(quizId), JSON.stringify(value));
 }
 
 async function resolveStudentAttempt(quiz, name) {
+  if (guestTourRepo) {
+    const attempt = { quizId: quiz.id, attemptId: 'local-attempt', startedAt: Date.now(), name,
+      timeLimitMinutes: Number(quiz.timeLimitMinutes), sessionRunId: null, mode: 'student' };
+    state.studentAttempt = attempt;
+    return attempt;
+  }
   const stored = readStoredTimer(quiz.id);
   if (stored?.attemptId) {
     try {
@@ -6265,6 +6425,23 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
     return;
   }
 
+  if (guestTourRepo) {
+    stopStudentTimer();
+    const submissionId = guestTourRepo.submit(quiz.id, {
+      studentName: name, isTutorial: true, answers, grading, autoPoints: points,
+      totalPoints: points, maxPoints, percent, grade, gradeScaleSnapshot: scale,
+      status: needsReview ? 'review' : 'graded', elapsedSeconds,
+      autoSubmitted: Boolean(autoSubmitted)
+    });
+    completedStudentSubmissions.add(submissionKey);
+    studentForm.dataset.submitted = 'true';
+    state.studentAttempt = null;
+    renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
+    toast(guestCopy('localSubmission', 'Übungsabgabe nur lokal gespeichert.'));
+    crewTour?.notify('submitted', { quizId: quiz.id, submissionId });
+    return;
+  }
+
   studentSubmissionBusy.add(submissionKey);
   try {
     stopStudentTimer();
@@ -6382,7 +6559,7 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
     if (needsReview) summary += `<p>Mindestens eine Antwort wird noch von der Lehrkraft geprüft.</p>`;
   }
   if (showSolutions && mode !== "none") summary += `<div id="studentResultDetails"></div>`;
-  if (state.user?.uid === quiz.ownerId) summary += '<button id="studentTeacherResultsBtn" class="button primary" type="button">Zur Lehrkraft-Auswertung</button>';
+  if (state.user?.uid === quiz.ownerId || (guestTourRepo && quiz.ownerId === 'local-tour')) summary += '<button id="studentTeacherResultsBtn" class="button primary" type="button">Zur Lehrkraft-Auswertung</button>';
   box.innerHTML = summary;
   $("studentTeacherResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
 
@@ -6402,6 +6579,20 @@ $("refreshResultsBtn").addEventListener("click", () => state.currentResultsQuiz 
 $("exportResultsBtn").addEventListener("click", exportResultsCsv);
 
 async function openResults(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) return;
+    state.currentResultsQuiz = quiz;
+    state.resultQuestions = guestTourRepo.getQuestions(code);
+    state.submissions = guestTourRepo.getSubmissions(code);
+    $("resultsHeading").textContent = quiz.title;
+    $("resultsMeta").textContent = guestCopy('resultsMeta', `${state.submissions.length} Übungsabgabe · ${quiz.totalPoints || 0} Punkte maximal · nur lokal`, { count: state.submissions.length, points: quiz.totalPoints || 0 });
+    showView('resultsView');
+    renderResultsTable();
+    $("reviewPanel").classList.add('hidden');
+    crewTour?.notify('results-ready', { quizId: code });
+    return;
+  }
   try {
     const quizSnap = await getDoc(doc(db, "quizzes", code));
     if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
@@ -6556,6 +6747,15 @@ async function saveReview(submissionId) {
   const percent = max ? Math.round((total / max) * 100) : 0;
   const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   const grade = gradeFromPercent(percent, scale);
+  if (guestTourRepo) {
+    guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
+      grading, totalPoints: total, maxPoints: max, percent, grade,
+      gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
+    });
+    await openResults(state.currentResultsQuiz.id);
+    crewTour?.notify('review-saved', { quizId: state.currentResultsQuiz.id, submissionId });
+    return;
+  }
   try {
     await updateDoc(doc(db, "quizzes", state.currentResultsQuiz.id, "submissions", submissionId), {
       grading,

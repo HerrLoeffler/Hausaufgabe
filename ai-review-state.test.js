@@ -37,6 +37,14 @@ test("an async AI result follows identity and rejects changed content, accounts,
   ]) assert.equal(editorQuestionIndex({ ...state, ...changed }, target), -1);
 });
 
+test("a local tour may edit its own prepared question without a Firebase user", () => {
+  const question = { id: 'tutorial-1', type: 'single', text: 'Dog?' };
+  const target = { quizId: 'TOURLOCAL', uid: 'local-tour', questionId: question.id, reviewKey: questionReviewKey(question) };
+  const state = { currentQuiz: { id: 'TOURLOCAL' }, user: null, guestTourUid: 'local-tour', questions: [question] };
+  assert.equal(editorQuestionIndex(state, target), 0);
+  assert.equal(editorQuestionIndex({ ...state, guestTourUid: null }, target), -1);
+});
+
 test("a new AI draft prompts for review", () => {
   assert.equal(isAiReviewPending(readyQuiz), true);
   assert.equal(shouldShowAiJob(readyJob, readyQuiz), true);
