@@ -40,7 +40,8 @@
       ],
       "status": "in_progress",
       "turnId": "01a10f9d-0299-7563-98be-7970011a705b",
-      "dispatchAccepted": true
+      "dispatchAccepted": true,
+      "cursor": "0f4c33ce-4f08-4556-a5a3-b40e901db0f9:4"
     },
     {
       "key": "i18n",
@@ -52,7 +53,7 @@
         "GC-I18N-02",
         "GC-I18N-03"
       ],
-      "status": "integrated_ci_green_staging_running",
+      "status": "staging_deployed_acceptance_pending",
       "turnId": "01a10f9c-f416-7760-a56c-a5acf320e54f",
       "dispatchAccepted": true,
       "pr": 139,
@@ -76,7 +77,9 @@
     "pr": 146,
     "head": "b1119cc3c58957f002e2310af60bad30801843b0",
     "ci": 37417782699,
-    "previousAnalysisModel": "gpt-6-astra"
+    "previousAnalysisModel": "gpt-6-astra",
+    "turnId": "01a10fa8-7be7-7f71-9fe9-b38c99a7d4d8",
+    "cursor": "a8e1b980-e38a-45f3-9f96-73ff6999c919:6"
   },
   "policy": "One writer per scope; only Main integrates/deploys staging after exact tests, reviews and scope receipts. Later ideas stay visible but are not silently promoted to release gates. Human acceptance cannot be fabricated.",
   "developmentStatus": {
@@ -90,19 +93,25 @@
       "threadId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
       "model": "gpt-6-sol",
       "thinking": "medium",
-      "status": "dispatched",
+      "status": "reconciled_device_acceptance_pending",
       "tasks": [
         "GC-IOS-01",
         "GC-IOS-02",
         "GC-DEVICE-01"
       ],
       "goal": "Reconcile actual 0.1.9 code/CI/TestFlight and device evidence; close only proven gates",
-      "turnId": "01a10fa6-3119-7781-b367-5af01e881504"
+      "turnId": "01a10fa6-3119-7781-b367-5af01e881504",
+      "cursor": "46e831a3-9caf-4853-88fb-7fb2b25b09d9:2",
+      "result": "PR144 source0.1.9 CI37389818307; last TestFlight0.1.8 Build18 run37076301215; no 0.1.9 upload/device acceptance"
     },
     {
       "package": "games",
-      "status": "await_reconciliation",
-      "goal": "Existing first-world defects, tutor duplicate calls, integrity and deployment evidence; no new second world or multiplayer for this release"
+      "status": "read_only_reconciliation_dispatched",
+      "goal": "Existing first-world defects, tutor duplicate calls, integrity and deployment evidence; no new second world or multiplayer for this release",
+      "threadId": "01a10e37-4955-7db3-957f-d397b9dd8dc4",
+      "model": "gpt-6-luna",
+      "thinking": "medium",
+      "report": "reports/games-reconciliation-20261006.json"
     },
     {
       "package": "audio_telemetry",
@@ -118,19 +127,23 @@
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T05:19:48.040234+00:00",
+  "lastCheckpoint": "2026-10-06T05:25:42.989431+00:00",
   "deployment": {
     "candidate": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
     "combinedCi": 37417856806,
     "ciConclusion": "success",
     "hostingRun": 37417963944,
     "functionsRun": 37417963972,
-    "status": "in_progress",
+    "status": "staging_deployed",
     "requiredReceipts": [
       "hosting",
       "functions:ai",
       "functions:assessment"
     ],
-    "manualAcceptance": "pending"
+    "manualAcceptance": "pending",
+    "hostingReceipt": 11391527589,
+    "aiReceipt": 11391284298,
+    "assessmentReceipt": 11392063036,
+    "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
   }
 }
