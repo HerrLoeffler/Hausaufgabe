@@ -38,4 +38,5 @@ Aufgaben: GC-GAMES-01 bis GC-GAMES-03 in TODO.md.
 
 ## Künftige hochwertige 3D-Spiele
 
-Für neue 3D-Abenteuer gelten der [Great-Games-Produktionsworkflow](GREAT_GAMES_WORKFLOW.md) und die [Unreal/Blender-Pipeline](UNREAL_BLENDER_PIPELINE.md). Die Lern- und Lehreranforderungen dieses Dokuments bleiben erhalten. Bestehende Escape-Prototypen werden durch den Workflow nicht automatisch ersetzt oder migriert.
+Für neue 3D-Abenteuer gelten der [Great-Games-Produktionsworkflow](GREAT_GAMES_WORKFLOW.md) mit [Enginewahl je Spiel](ENGINE_SELECTION.md); bei gewähltem Unreal zusätzlich die [Unreal/Blender-Pipeline](UNREAL_BLENDER_PIPELINE.md). Die Lern- und Lehreranforderungen dieses Dokuments bleiben erhalten. Bestehende Escape-Prototypen werden durch den Workflow nicht automatisch ersetzt oder migriert.
+

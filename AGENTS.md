@@ -57,4 +57,5 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 - Bei Übernahme aktive Schreibarbeit des alten Chats klären; auf gemeinsamem Branch nur einen schreibenden Chat. GitHub-Jobs können separat weiterlaufen und werden beobachtet statt neu gestartet.
 
 ## Games-Produktion
-- Vor Spieleplanung oder Änderungen an Games den aktuellen main `docs/games/GREAT_GAMES_WORKFLOW.md` und `docs/games/UNREAL_BLENDER_PIPELINE.md` lesen. Unreal + Blender ist die Richtung für anspruchsvolle neue 3D-Abenteuer; Geräte/Distribution zuerst belegen. Bestehende Webspiele nicht pauschal migrieren. Ein Workflow-Dokument ist kein Auftrag zum Spielumbau.
+- Vor Spieleplanung oder Änderungen an Games den aktuellen main `docs/games/GREAT_GAMES_WORKFLOW.md` und `docs/games/UNREAL_BLENDER_PIPELINE.md` lesen. Engine pro Spiel nach GAME_PROJECT_TEMPLATE.md, ENGINE_SELECTION.md und GAME_TEAM_WORKFLOW.md wählen; Unreal ist optional. Geräte/Distribution zuerst belegen. Bestehende Webspiele nicht pauschal migrieren. Ein Workflow-Dokument ist kein Auftrag zum Spielumbau.
+

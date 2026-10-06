@@ -193,4 +193,8 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | GC-DESIGN-05B | Aktiver Sol-Auftrag im vorhandenen Hero-Chat; eigener Branch von PR151. | Originale Coco-Führung direkt in echter Oberfläche mit lokalem Gast-Datenadapter; kein Fake-Account/Serverwrite. Normales Handyhochformat ohne Seitenscroll. Name erst später. |
 | GC-STAGING-CANONICAL-01 | PR150 als6551091a auf main integriert; exakte Handoff-CI37481824301 und unabhängiges Review grün. Noch keine Promotion. | Neuen versiongebundenen Preview-Receipt für reparierte Produkt-SHA abholen, dann expliziten unveränderlichen Request für hausaufgabe-staging.web.app erstellen und Deploy prüfen. |
 
-| GC-GAMES-PIPELINE-01 | Verbindliche Great-Games-Produktion mit Unreal + Blender | Produktionsregeln dokumentiert; Implementierung nicht beauftragt | Engine-/Distributionsentscheidung, Quellenpipeline und Qualitätsgates festgehalten. Bestehendes Amazonas-Spiel unverändert. [Workflow](docs/games/GREAT_GAMES_WORKFLOW.md) · [Übergabe](workstreams/great-games-production-20261006.md) |
+## Künftige Spieleproduktion (Dokumentation, kein Staging-Blocker)
+
+| Aufgabe | Stand | Nächster Schritt |
+| --- | --- | --- |
+| GC-GAMES-PIPELINE-01 | Fragenkatalog, Enginewahl je Spiel, Referenzblatt, Fachaufträge und Videoauswertung dokumentiert. Kein Spielumbau. | Dokumentationsprüfung und Integration; späterer Spielpilot benötigt eigenen Auftrag. [Workflow](docs/games/GREAT_GAMES_WORKFLOW.md) · [Übergabe](workstreams/great-games-production-20261006.md) |

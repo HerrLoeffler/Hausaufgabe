@@ -4,6 +4,8 @@ Stand: 06.10.2026 · GC-GAMES-PIPELINE-01 · Ergänzt [GREAT_GAMES_WORKFLOW.md](
 
 Übernommen aus dem vorhandenen [Blender-Hero-Plan in PR143](https://github.com/HerrLoeffler/Hausaufgabe/blob/docs/gc-design-05-reference-plan-20261006/docs/superpowers/plans/2026-10-06-gradecrew-blender-hero.md): bearbeitbare Quellen, feste Figurenidentität, versionierte Skripte, lokale Verbindung, ein Schreiber je Szene, Wiederöffnungsnachweis, begrenzte Korrekturrunden und getrennte Kosten. Hero-spezifische Video-, Kamera- und Layoutregeln gelten nicht automatisch für ein Echtzeitspiel.
 
+Dieses Rezept gilt nur, wenn die dokumentierte Engineentscheidung Unreal gewählt hat. Es verpflichtet weder andere Spiele auf Unreal noch auf den hier beschriebenen FBX-Weg.
+
 ## 1. Werkzeugnachweis vor dem ersten Asset
 
 Die im Games-Text behauptete Unreal-Installation ist in diesem Auftrag nicht lokal verifiziert. Vor Produktion tatsächliche Unreal-/Blender-Version, Betriebssystem, SDKs, Exporter, Plugins und Projektpfade erfassen. Keine alten Versionsvorschläge blind installieren. Versionen für einen Produktionsabschnitt fixieren; Upgrades separat prüfen.
@@ -45,7 +47,7 @@ Erst mit Martins ausdrücklichem Spiel-Umsetzungsauftrag:
 - [ ] Zielgeräte und native Verteilung/Browseranforderung entscheiden; Werkzeugnachweis sichern.
 - [ ] Kleinen Unreal-Build auf Mac und schwächstem vereinbartem Schulgerät starten; Eingaben und Frametimes messen.
 - [ ] Ein Blender-Asset inklusive Animation exportieren, importieren, ändern und reproduzierbar reimportieren.
-- [ ] Eine originale Amazonas-Interaktion inklusive Matsch-/Lernverhalten als Referenz auswählen und mit lokalen Testdaten umsetzen.
+- [ ] Eine repräsentative Interaktion des gewählten Spiels mit lokalen Testdaten umsetzen; Amazonas-Verhalten nur bei ausdrücklich beauftragter Migration als Referenz übernehmen.
 - [ ] Versionierten Lernadapter gegen bestehende Backend-Verträge spezifizieren und getrennt testen.
 - [ ] Paketierten Referenzabschnitt technisch, visuell und spielerisch abnehmen; erst danach Ausbau planen.
 

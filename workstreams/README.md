@@ -64,4 +64,5 @@ Production bleibt von dieser Koordinationsschicht vollst채ndig getrennt und ben�
 
 ## Games: Produktionsstandard
 
-Vor jeder neuen Games-Planung und Spiele채nderung [Great Games Workflow](../docs/games/GREAT_GAMES_WORKFLOW.md) und [Blender/Unreal-Pipeline](../docs/games/UNREAL_BLENDER_PIPELINE.md) lesen. Spielcode und Deployment bleiben eigene, ausdr체cklich beauftragte Arbeitspakete.
+Vor jeder neuen Games-Planung und Spiele채nderung [Great Games Workflow](../docs/games/GREAT_GAMES_WORKFLOW.md) mit [Spielvorlage](../docs/games/GAME_PROJECT_TEMPLATE.md), [Enginewahl](../docs/games/ENGINE_SELECTION.md) und [Teamablauf](../docs/games/GAME_TEAM_WORKFLOW.md) lesen. Spielcode und Deployment bleiben eigene, ausdr체cklich beauftragte Arbeitspakete.
+

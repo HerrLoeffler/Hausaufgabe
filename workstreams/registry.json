@@ -454,7 +454,7 @@
     },
     {
       "id": "great-games-production",
-      "title": "Great Games Produktionsregeln / Unreal + Blender",
+      "title": "Great Games / Enginewahl und Spieleproduktion",
       "primaryBranch": "docs/great-games-production-20261006",
       "integrationTarget": "main",
       "state": "active",

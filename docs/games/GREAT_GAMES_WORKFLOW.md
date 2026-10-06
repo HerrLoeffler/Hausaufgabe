@@ -4,41 +4,33 @@ Stand: 06.10.2026 · Task GC-GAMES-PIPELINE-01 · Dokumentationsauftrag, kein Au
 
 ## Entscheidung und Begriffe
 
-Für neue anspruchsvolle, räumliche Great-Games-Abenteuer ist **Unreal Engine die vorgesehene Spielengine; Blender liefert bearbeitbare 3D-Assets und Animationen**. GradeCrew bleibt die Lernplattform. Vor der eigentlichen Produktion muss der unten beschriebene Geräte-/Distributionsnachweis bestehen. Ein fehlgeschlagener Nachweis führt zu einer begründeten Entscheidung mit Martin, nicht zum stillen Rückfall auf den bisherigen Renderer.
+Die Engine wird **pro Spiel** anhand von Spielidee, Zielgeräten, Browserbedarf und Produktionsaufwand gewählt. Unreal ist eine Option, kein Standardzwang. Blender produziert bei Bedarf bearbeitbare 3D-Assets; es ersetzt keine Spielengine. Für kleine 2D-Spiele ist eine schwere 3D-Produktion nicht automatisch sinnvoll.
 
-HTML `<canvas>` ist eine programmierbare Browser-Zeichenfläche, weder Canva noch eine vollständige Engine. Sie kann hochwertige Spiele darstellen; das Qualitätsproblem eines konkreten Prototyps ist dadurch nicht allein erklärt. Für hochwertige neue 3D-Abenteuer wird aber **keine selbstgeschriebene Canvas-2D-Engine als bequemer Standard fortgeführt**. Bestehende kleine Webspiele bleiben erhalten. Eine abweichende Engine für ein neues Spiel braucht einen dokumentierten, zum Ziel passenden Entscheid. Kein pauschales Canvas-Verbot für bestehende Diagramme, UI oder WebGL-basierte Technik.
+HTML `<canvas>` ist eine programmierbare Browser-Zeichenfläche, nicht das Gestaltungsprogramm Canva. Auch Spieleframeworks können Canvas/WebGL als Ausgabe verwenden. Wir entscheiden nach Werkzeugen, Spielqualität und nachgewiesener Gerätefunktion, nicht nach dem Vorkommen des Wortes Canvas. Eine selbst gebaute Engine ist kein Standard, wenn ein passendes Framework die benötigten Systeme bereits liefert.
+
+Einstieg: [Fragen und Vorlagen](GAME_PROJECT_TEMPLATE.md) → [Engineauswahl](ENGINE_SELECTION.md) → [Team und Übergaben](GAME_TEAM_WORKFLOW.md). Die [Videoauswertung](VIDEO_LESSONS_20261006.md) erklärt, welche Anregungen wir übernehmen und welche Aussagen kein Nachweis sind.
 
 Belegter Ausgangspunkt: Amazonas in PR83, Head `6434ddefb83cffca7bde5a7347ed6d2f56d5cb45`, verwendet in `lab/escape-expedition/app.js` `getContext('2d')`. PR83 zielt auf `prototype/escape-expedition-masterpiece-v1`, nicht auf den gemeinsamen Web-Release. Das erklärt die konkrete Technik; es belegt weder einen aktuellen Gerätefehler noch den damaligen Entscheidungsgrund. Dieser Auftrag enthält keine neue Spiel- oder Videoabnahme.
 
-## Architekturentscheidung nach gleichen Kriterien
-
-Bewertung für hochwertige 3D-Lernabenteuer: visuelle Werkzeuge, Schulgeräte-Zugang, Wiederverwendung und Betriebsaufwand. Einschätzung, kein Benchmark und keine Fertigstellungsnote.
-
-| Ansatz | Eignung | Stärken | Grenze |
-| --- | --- | --- | --- |
-| Bisherigen Canvas-2D-Prototyp weiter ausbauen | 4/10 | Sofort im Browser, vorhandene Mechanik | Viele Produktionswerkzeuge müssten selbst gebaut werden; unpassender Ausgangspunkt für das gewünschte 3D-Ziel |
-| GradeCrew vollständig in Unreal ersetzen | 5/10 | Einheitliche Spielumgebung | Unnötiger Neubau der Lern-/Lehrerplattform; Distribution bleibt aufwendig |
-| GradeCrew-Plattform + Unreal-Spiele + Blender-Assets | 8/10, bedingt durch Geräteprüfung | Gute Spielewerkzeuge, klare Lernschnittstelle, wiederverwendbare Assets | Native Verteilung oder gesondertes Streaming nötig; Leistung und Kosten erst nachweisen |
-
-Empfehlung: dritter Ansatz. Eine Engine garantiert weder gute Art Direction noch gute Animationen, Levelgestaltung oder Spielgefühl.
-
 ## Vor Produktion: kleinster vollständiger Nachweis
 
-1. **Ziel festlegen:** Altersgruppe, Lernziel, Kernhandlung, gewünschte Perspektive, Referenzbilder mit Quellen, genaue unterstützte Geräte/OS sowie Verteilung. Kein Anspruch „läuft auf allen Geräten“ ohne Matrix.
-2. **Distribution prüfen:** Für den ersten technischen Nachweis eine kleine installierbare Unreal-Testanwendung auf dem vorhandenen Mac bauen. Das beweist noch kein iPad-, iPhone- oder Windows-Spiel. Danach zuerst das schwächste verbindliche Schulgerät prüfen. Installationsrechte, Signierung, benötigte SDKs, Updates und Rückkehr zur GradeCrew-App dokumentieren.
-3. **Browseranforderung klären:** Unreal-Packaging ist nicht automatisch ein HTML-Export. Pixel Streaming rendert auf einem entfernten Rechner und streamt Bild/Ton/Eingaben. Das erfordert separat geplante Infrastruktur, Bandbreite, Sitzungsverwaltung und Kosten pro gleichzeitigem Spieler. Kein Streaming-Abonnement oder Cloud-GPU-Auftrag aus diesem Dokument. Ist reiner Browserbetrieb ohne Installation zwingend und Streaming ungeeignet, Engineentscheidung mit Martin neu öffnen.
-4. **Eine spielbare Referenzszene:** Ein kleiner Abschnitt mit Bewegung/Kamera, einer Interaktion, einer Lernaufgabe, Fehler-/Hilfepfad, Belohnung, Speichern und Wiederaufnahme. Erst mit lokalen synthetischen Lerninhalten; danach gesondert den echten Lernadapter prüfen. Keine komplette Amazonas-Welt vor diesem Nachweis.
-5. **Qualitätsfreigabe:** Den tatsächlich paketierten Build visuell und spielerisch prüfen. Erst dann weitere Räume und Assets produzieren. Eine schöne Blender-Aufnahme oder ein Editor-Screenshot ersetzt den spielbaren Build nicht.
+1. Die sechs Einstiegsfragen aus der Vorlage beantworten; vorhandene Antworten übernehmen. Annahmen und offene Entscheidungen sichtbar halten.
+2. Zwei passende Engine-Kandidaten anhand derselben Anforderungen vergleichen und einen empfehlen. Keine Installation oder neue Dienste allein aufgrund eines Videos.
+3. Einen kleinen Build auf dem schwächsten verbindlichen Zielgerät starten. Browserexport, Touch, Audio, Speichern, Downloadgröße und Frametimes tatsächlich prüfen. Ein Mac-Editorlauf beweist keinen iPad-Browserbetrieb.
+4. Eine spielbare Referenzszene mit Bewegung/Kamera, Interaktion, einer Lernaufgabe, Hilfe, Belohnung und Wiederaufnahme bauen. Zunächst synthetische lokale Inhalte, danach den echten Lernadapter separat prüfen.
+5. Spielgefühl und Bildstil im ausgelieferten Build abnehmen, erst danach Umfang ausbauen. Eine schöne Blender-Aufnahme ersetzt diesen Nachweis nicht.
+
+Bei Unreal native Verteilung oder gesondertes Pixel Streaming planen: Packaging liefert nicht automatisch einen HTML-Export. Streaming benötigt Server, Bandbreite und Kostenplanung; es ist keine kostenlose Browserabkürzung. Bei zwingendem Browserbetrieb zuerst passende Weblösungen prüfen.
 
 ## Zuständigkeiten und wiederverwendbarer Kern
 
 **GradeCrew:** Lehrkraft wählt und prüft Lerninhalte; Lernziele, Inhaltsrevision, Schwierigkeit, Aufgabensprache, Berechtigungen, Freigaben und maßgeblicher Lernfortschritt. Vorhandene Learning Guardrails und geschützte Lehrerübersicht erhalten. Kein Durchspielen nötig, um Aufgaben/Ablauf zu prüfen.
 
-**Unreal:** Bewegung, Kamera, Interaktion, Inventar, Dialoge, Missionen, Weltzustand, Audio, VFX, UI und direktes Spielgefühl. Kernsysteme getrennt von Amazonas-Assets und weltbezogenen Daten halten. Weitere Welten verwenden denselben Kern; neue Abstraktionen erst bei realem Bedarf.
+**Gewählte Engine / Spielframework:** Bewegung, Kamera, Interaktion, Inventar, Dialoge, Missionen, Weltzustand, Audio, VFX, UI und direktes Spielgefühl. Kernsysteme getrennt von Amazonas-Assets und weltbezogenen Daten halten. Weitere Welten verwenden denselben Kern; neue Abstraktionen erst bei realem Bedarf.
 
-**Blender:** Geometrie, UVs, Rig, Animationen und bearbeitbare Quellen. Der genaue Ablauf steht in [UNREAL_BLENDER_PIPELINE.md](UNREAL_BLENDER_PIPELINE.md).
+**Blender:** Geometrie, UVs, Rig, Animationen und bearbeitbare Quellen. Referenz, Blockout, Export und Reimport im tatsächlichen Spiel prüfen. Für die Unreal-Variante gilt [UNREAL_BLENDER_PIPELINE.md](UNREAL_BLENDER_PIPELINE.md); Austauschformate anderer Engines stehen in der Engineauswahl.
 
-Für den ersten Adventure-Nachweis ist das Third-Person-Template ein Kandidat, kein verpflichtender Kamerastil. Perspektive anhand Lesbarkeit und Touchbedienung festlegen. Blueprints für Szeneninteraktionen und Ablauf; kleine C++-Module dort, wo stabile getestete Schnittstellen oder gemessene Leistungsprobleme es begründen. Keine riesigen Level-Blueprints und kein C++ allein wegen vermeintlicher Professionalität.
+Wenn Unreal gewählt wurde, ist für den ersten Adventure-Nachweis das Third-Person-Template ein Kandidat, kein verpflichtender Kamerastil. Perspektive anhand Lesbarkeit und Touchbedienung festlegen. Blueprints für Szeneninteraktionen und Ablauf; kleine C++-Module dort, wo stabile getestete Schnittstellen oder gemessene Leistungsprobleme es begründen. Keine riesigen Level-Blueprints und kein C++ allein wegen vermeintlicher Professionalität.
 
 ## Lernschnittstelle: Vertrag vor Netzwerkanbindung
 
