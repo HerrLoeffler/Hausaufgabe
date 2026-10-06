@@ -30,3 +30,9 @@ Der Fehler wurde lokal vor der Korrektur reproduziert (7/8 bestanden, genau dies
 ## Main integration checkpoint
 
 2026-10-06: Feature-CI37466936870 auf2c8a733 vollständig grün; unabhängiges Sol-Review des Produktstands80cf066 ohne weitere schwere Befunde. Main prüfte Test-/Doku-Differenz, Foundation8/8 bestanden. PR149 seriell gemergt als `f97841b82291d879cd9f4a9bccce0ee2c2cf3641`; Combined CI37467220757 und Mobile37467220869 laufen. Noch keine Hosting/Functions-Deploybelege für diesen Commit. Vorheriger verifizierter Staging-Stand2d2a776 bleibt historisch gesichert. Keine Rules-/Production-Freigabe, Browser-/Geräteabnahme offen. Nächster Schritt: laufende Prüfungen und anschließende Deploys abholen, nicht erneut starten.
+
+## Verifiziertes Staging — 2026-10-06T13:03:11.543Z
+
+Commit `f97841b82291d879cd9f4a9bccce0ee2c2cf3641` ist nachweislich deployed: Combined CI37467220757 und Mobile37467220869 erfolgreich. Hosting37467324361 (Deployjob112281739917) mit Manifest-/Dateihashprüfung und Receipt11414748011. AI Functions37467324128/Job112281634191/Receipt11415522373 sowie Assessment Functions37467324128/Job112281634618/Receipt11416070034 erfolgreich. EXPECTED_SHA und Quellschutz in den Logs entsprechen dem Mergecommit; Workflow-head0f3fd07 ist nur die vertrauenswürdige Steuerungsquelle. Keine Rules/Games/iOS/Production-Veröffentlichung in diesem Paket. Browser-/Geräteabnahme nicht durchgeführt. URL: https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/
+
+Nächster Schritt: Martin testet Login/Registrierung, Schülercode, vollständigen Tutorial-Einstieg, Remy/Emmi/Wilma-Demos und DE/EN auf Desktop/iPad/iPhone. Autorisiertes technisches Paket abgeschlossen, Collector wird pausiert. Keine weitere Gestaltung/Provider-Nutzung, kein erneutes Deploy ohne neuen Anlass.
