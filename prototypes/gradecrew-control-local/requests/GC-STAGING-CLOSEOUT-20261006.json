@@ -38,15 +38,16 @@
         "GC-AI-01",
         "GC-ADMIN-SCALE-01"
       ],
-      "status": "full_ci_review_waiting_on_approval",
+      "status": "integrated_combined_ci_running",
       "turnId": "01a10fb3-fb49-7a00-9921-91ac60faf922",
       "dispatchAccepted": true,
       "cursor": "0f4c33ce-4f08-4556-a5a3-b40e901db0f9:6",
       "pr": 147,
       "head": "1c994ecba37741eca81f256132efc721b4d42a6f",
       "localTests": 51,
-      "followup": "Same Sol chat dispatched to finish exact full CI and independent review; no merge yet",
-      "ciEvidence": "Only generic test check37418795725 verified; not full Combined CI"
+      "followup": "Main integrates serially",
+      "ciEvidence": "Exact head success, Node22 and staging build; independent review no Critical/Important issues",
+      "ci": 37458063527
     },
     {
       "key": "i18n",
@@ -76,7 +77,7 @@
   "security": {
     "threadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
     "requestId": "GC-CENTRAL-15f5dd8b-6dc0-438f-8c4e-d2def7d5d25f",
-    "status": "integration_port_waiting_on_approval",
+    "status": "integrated_combined_ci_running",
     "model": "gpt-6-sol",
     "thinking": "high",
     "pr": 146,
@@ -85,7 +86,11 @@
     "previousAnalysisModel": "gpt-6-astra",
     "turnId": "01a10fa8-7be7-7f71-9fe9-b38c99a7d4d8",
     "cursor": "a8e1b980-e38a-45f3-9f96-73ff6999c919:6",
-    "approvalDetail": "App reports waitingOnApproval; pending operation/reason not exposed in compact read. Asked worker to clarify, no approval bypass."
+    "integrationPr": 148,
+    "integrationHead": "717dff77c3bf9c06ab8bed5c286636a5d0976195",
+    "integrationCi": 37431017785,
+    "codeCiHead": "fa6b41b24790bf7865c48948af2374654d1a1673",
+    "headDifference": "handoff Markdown only; API compare verified"
   },
   "policy": "One writer per scope; only Main integrates/deploys staging after exact tests, reviews and scope receipts. Later ideas stay visible but are not silently promoted to release gates. Human acceptance cannot be fabricated.",
   "developmentStatus": {
@@ -149,7 +154,7 @@
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T05:53:56.637482+00:00",
+  "lastCheckpoint": "2026-10-06T11:59:01.199256+00:00",
   "deployment": {
     "candidate": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
     "combinedCi": 37417856806,
@@ -168,7 +173,19 @@
     "assessmentReceipt": 11392063036,
     "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
   },
-  "coordinationStatus": "waiting_on_approvals_and_acceptance",
-  "pauseReason": "Current implementation owners remain waitingOnApproval. Bounded inventory packages complete. Design revision needs user feedback; iOS/browser/device/PostHog acceptance lacks access or human evidence. No duplicate implementation or paid test events started.",
-  "resumeNext": "Check existing Web/Security turns after their app approvals; do not redispatch or reset attempts. Then exact candidate CI/review and serial staging integration. Pause is polling only, not cancellation of user-owned chats."
+  "coordinationStatus": "integrated_combined_ci_running",
+  "resumeNext": "Check existing Web/Security turns after their app approvals; do not redispatch or reset attempts. Then exact candidate CI/review and serial staging integration. Pause is polling only, not cancellation of user-owned chats.",
+  "integrationPlan": {
+    "target": "feature/gradecrew-app-integration",
+    "base": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+    "order": [
+      148,
+      147
+    ],
+    "scope": "Security start transaction + in-page tutorial submission; exact combined CI and Hosting/AI/Assessment receipts required; no Rules or Production",
+    "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
+    "combinedCi": 37459917759,
+    "mobileCi": 37459917770,
+    "securityMerge": "0becb39ffe31f594767ae01dca91c723ef3c4738"
+  }
 }
