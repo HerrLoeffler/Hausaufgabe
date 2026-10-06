@@ -9,86 +9,128 @@
       "title": "Manuelle Tutorialabgabe in der iPad-App funktioniert nicht",
       "area": "Kernfunktionen",
       "priority": "P0",
-      "statusText": "Offen, Nutzerbericht",
-      "next": "Web-App: vorhandenen gc29-Entwurf sichern und gegen aktuellen Designstand vergleichen; reproduzieren, gezielt beheben, am Gerät testen. [Übergabe](workstreams/web-app.md)",
+      "statusText": "In Bearbeitung · Bestätigungsdialog im WebView-Test als Fehler reproduziert",
+      "next": "Sol bearbeitet den Seitendialog und Timer-Randfall im Chat „GradeCrew-Auftrag wiederaufnehmen“. Danach CI und echter iPad-Test.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "P0-Nutzerbericht: manuelle Tutorialabgabe auf iPad ist nicht reproduziert oder behoben; Kernablauf muss vor Freigabe nachgewiesen werden.",
+        "evidence": "Lokaler TODO.md: offen, Nutzerbericht; GC-BRAIN-Katalog-Snapshot sourceCommit 8360bc5f056837118ffd83138ffa2468ae42647e (manuell, 2026-10-05)."
+      }
     },
     {
       "id": "GC-SECURITY-01",
       "title": "Fehlgeschlagenen 30-Teilnehmer-Test diagnostizieren",
       "area": "Qualität & Betrieb",
       "priority": "P0",
-      "statusText": "Blockiert durch fehlenden Fehlernachweis",
+      "statusText": "Voraussetzungen offen · Blockiert durch fehlenden Fehlernachweis",
       "next": "Security: Serverfehler anhand Referenz/Logs zuordnen, Ursache beheben, Test wiederholen. Keine vermutete Ursache als bewiesen darstellen.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "Der 30-Teilnehmer-Test ist ausdrücklich wegen fehlendem Fehlernachweis blockiert; Ursache und Wiederholung fehlen.",
+        "evidence": "TODO.md: blockiert; GRADECREW_STATE.json Workstream security: failure logs/zugeordneter Fehler offen (lokaler Snapshot)."
+      }
     },
     {
       "id": "GC-SECURITY-02",
       "title": "Production-Security-Gates abschließen",
       "area": "Qualität & Betrieb",
       "priority": "P0",
-      "statusText": "Offen",
+      "statusText": "Voraussetzungen offen · Offen",
       "next": "Security-Branch: aktuellen Audit lesen; sichere Abgabe, Lösungsschutz und reale Freigaben belegen.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "Production-Security-Gates sind offen; sichere Abgabe, Lösungsschutz und reale Freigaben benötigen Belege.",
+        "evidence": "TODO.md: offen; GRADECREW_STATE.json Workstream security: branch_only und Gates offen (lokaler Snapshot)."
+      }
     },
     {
       "id": "GC-RESTORE-01",
       "title": "Tatsächlichen Live-Stand und vollständige Wiederherstellung absichern",
       "area": "Qualität & Betrieb",
       "priority": "P0",
-      "statusText": "Offen",
+      "statusText": "Voraussetzungen offen · Offen",
       "next": "Hosting-Release, Functions, Regeln, Datenbank, Auth und Uploads inventarisieren; Sicherung und Restore-Test planen. [Umgebungen](docs/releases/ENVIRONMENTS.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "Kein vollständiges aktuelles Inventar und Restore-Beleg für Hosting, Functions, Rules, Daten, Auth und Uploads im geprüften Register.",
+        "evidence": "TODO.md: offen; docs/releases/ENVIRONMENTS.md als vorgesehene Quelle, im Rahmen dieses kompakten Abgleichs nicht live geprüft."
+      }
     },
     {
       "id": "GC-REGRESSION-01",
       "title": "PDF-, Bild- und Screenshot-Import sowie Kernabläufe erhalten",
       "area": "Kernfunktionen",
       "priority": "P0",
-      "statusText": "Stand prüfen, frühere Verlustmeldung",
+      "statusText": "Voraussetzungen offen · Stand prüfen, frühere Verlustmeldung",
       "next": "Aktuellen Integrationsstand prüfen: Import → KI → Editor → Veröffentlichung → Schülerabgabe → Auswertung.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "Frühere Verlustmeldung bleibt ohne frischen End-to-End-Regressionsnachweis für Import bis Auswertung offen.",
+        "evidence": "TODO.md: Stand prüfen; aktuelle Integration/Device-Ergebnisse fehlen in diesem read-only Abgleich."
+      }
     },
     {
       "id": "GC-DEVICE-01",
       "title": "Aktuellen Design-/Tutorialstand auf echten Geräten abnehmen",
       "area": "Design & Crew",
       "priority": "P0",
-      "statusText": "Offen",
+      "statusText": "Abnahme offen · Offen",
       "next": "Desktop, iPad und iPhone einschließlich Tastatur; derzeit technisch geprüfter Designstand 74eb2ec. [Übergabe](workstreams/design-dashboard-v1.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "release-readiness",
+        "checkedAt": "2026-10-06",
+        "reason": "Technische Umsetzung ist nicht gleich Geräteabnahme; Desktop, iPad, iPhone und Tastatur müssen praktisch geprüft werden.",
+        "evidence": "TODO.md: offen; Design-/Tutorial-Freigabe ist ausdrücklich manuell. Kein Gerätetestbeleg im Register."
+      }
     },
     {
       "id": "GC-ACTIONS-COST-01",
       "title": "Actions-Verbrauch reduzieren und Repo vorübergehend öffentlich nutzen",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Öffentlich und alle drei Optimierungen integriert; aktuelle Prüfungen grün",
-      "next": "#88 → main 3ae00f9; #89 → Visual e83fde3; #90 → Web f30fa44. Fünf Kontroll-PR-Checks, volle Web-CI 37213496846 und 35 lokale Amazonas-Tests grün. Web-Staging Hosting/AI-Functions erfolgreich. Quota-Reset 01.11.2026. [Übergabe](workstreams/actions-cost-policy-20261004.md)",
+      "statusText": "Abgeschlossen (belegter Umfang) · Öffentlich und alle drei Optimierungen integriert; aktuelle Prüfungen grün",
+      "next": "Im belegten Umfang abgeschlossen; keine erneute Einrichtung nötig. Fresh current main TODO confirms #88/#89/#90 integrated (control 3ae00f9, visual e83fde3, web f30fa44), five control-PR checks, web CI 37213496846 and Staging hosting/AI-functions successful; GRADECREW_STATE marks integrated; no user test needed for this infrastructure task. Current-main report checked 2026-10-06.",
       "stage": "integrated",
       "stageSource": "GRADECREW_STATE.json",
       "branch": "fix/actions-cost-policy-20261004",
@@ -108,6 +150,13 @@
           "visual": "prototype/escape-expedition-visual-masterpiece-v1@e83fde3527297522889b32cacb65c924bc932873",
           "web": "feature/gradecrew-app-integration@f30fa44a383b279bcc49967d2ef0d1840243b27e"
         }
+      },
+      "triage": {
+        "category": "completed_with_evidence",
+        "package": "automation-and-cost",
+        "checkedAt": "2026-10-06",
+        "reason": "Die drei Kosten-/Repository-Optimierungen werden als integriert berichtet; Kontroll-PRs und CI sind benannt. Abschluss hier nur mit historischem Snapshot belegt, kein aktueller-main-Abgleich.",
+        "evidence": "Fresh current main TODO confirms #88/#89/#90 integrated (control 3ae00f9, visual e83fde3, web f30fa44), five control-PR checks, web CI 37213496846 and Staging hosting/AI-functions successful; GRADECREW_STATE marks integrated; no user test needed for this infrastructure task. Current-main report checked 2026-10-06."
       }
     },
     {
@@ -115,137 +164,207 @@
       "title": "Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Stand prüfen",
+      "statusText": "Stand abgleichen · Stand prüfen",
       "next": "Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "tutorial-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Die gewünschte ruhigere Tour und manuelle Navigation sind noch nicht am aktuellen Staging-Stand gegen Nutzerwünsche geprüft.",
+        "evidence": "TODO.md: Stand prüfen; tutorial-choice-replay-v1 ist auf Staging, deckt diese UX-Akzeptanz aber nicht automatisch ab."
+      }
     },
     {
       "id": "GC-TUTORIAL-03",
       "title": "„Ich darf doch du sagen?“ bei der Namensfrage erhalten",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Stand prüfen",
+      "statusText": "Stand abgleichen · Stand prüfen",
       "next": "Aktuellen Text und Regressionsschutz prüfen.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "tutorial-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Der konkrete Namensfrage-Text und ein Regressionstest dafür sind nicht nachgewiesen.",
+        "evidence": "TODO.md: Stand prüfen; kein spezifischer Text-/Testbeleg im Register."
+      }
     },
     {
       "id": "GC-TUTORIAL-04",
       "title": "Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Auf Staging integriert; aktuelle Geräteabnahme offen",
+      "statusText": "Abnahme offen · Auf Staging integriert; aktuelle Geräteabnahme offen",
       "next": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "tutorial-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Staging-Integration ist historisch belegt, aber die neueren Branchspitzen und aktuelle manuelle Geräteabnahme sind offen.",
+        "evidence": "TODO.md nennt Batch 18e30d0d, Hosting 36991979723 und Functions 36991979742; State Workstream tutorial-choice-replay-v1 staging_deployed, Nutzerprüfung offen."
+      }
     },
     {
       "id": "GC-ART-01",
       "title": "Farbklekse und Randpixel an Figuren entfernen",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Stand prüfen",
+      "statusText": "Stand abgleichen · Stand prüfen",
       "next": "Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Nur eine visuelle Bitte liegt vor; welche Assets tatsächlich ausgeliefert werden und ob Randpixel sichtbar sind, ist offen.",
+        "evidence": "TODO.md: Stand prüfen; keine aktuelle Screenshot-/Asset-Inspektion in diesem Auftrag."
+      }
     },
     {
       "id": "GC-DESIGN-01",
       "title": "Dashboard und Testkarten visuell feinjustieren",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Implementiert, visuelle Abnahme offen",
+      "statusText": "Abnahme offen · Implementiert, visuelle Abnahme offen",
       "next": "Design-Chat: bestehende Umsetzung prüfen, keine konkurrierende CSS-Schicht.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Implementiert laut TODO, aber visuelle Abnahme ausdrücklich offen.",
+        "evidence": "TODO.md: visuelle Abnahme offen; design-dashboard-v1 in GRADECREW_STATE.json integrated mit gemeinsamer visueller Abnahme als nächstem Schritt."
+      }
     },
     {
       "id": "GC-DESIGN-02",
       "title": "Neuer Test, Editor und KI-Erstellung auf gemeinsame Komponenten umstellen",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Geplant",
-      "next": "Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten.",
+      "statusText": "Spätere Erweiterung · Geplant",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "later",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Das Refactoring ist nach Dashboard-Abnahme vorgesehen und hat keine belegte Staging-Pflicht.",
+        "evidence": "TODO.md: geplant nach Dashboard-Abnahme; keine aktuelle Arbeit/Abnahme als Staging gate."
+      }
     },
     {
       "id": "GC-DESIGN-03",
       "title": "Startscreen Masterpiece v2 mit Multi-KI-Guardian veredeln",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Automatisch aufgenommen, bei unklarem Provider-Ergebnis gestoppt",
+      "statusText": "Stand abgleichen · Automatisch aufgenommen, bei unklarem Provider-Ergebnis gestoppt",
       "next": "CSS-only, unveränderte Entry-/Startup-Blobs und module-web-v1; ein Versuch mit 2,40 USD Reservierung, Gesamtdeckel weiterhin 2,55 USD. Pilot-Staging bestätigt; Homepage-Run 37220142576 scheiterte beim Builder mit unbekanntem Provider-Ergebnis. Reservierung erhalten, kein automatischer neuer Versuch; Provider-Ergebnis/Kosten zuerst abgleichen. Alle drei KI-Reviews bleiben Pflicht. Finale visuelle Abnahme bleibt bei Martin. [Übergabe](workstreams/design-startscreen-multiai-v2.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Ein Provider-Run endete mit unbekanntem Ergebnis; vorhandene Reservierung und Kosten müssen abgeglichen werden, bevor erneut gebaut wird.",
+        "evidence": "TODO.md: Homepage run 37220142576 mit unknown provider outcome, Reservierung 2.40 USD erhalten; workstreams/design-startscreen-multiai-v2.md. Keine automatische Wiederholung."
+      }
     },
     {
       "id": "GC-DESIGN-04",
       "title": "Startscreen Masterpiece v4 / Premium-Polish mit i18n-Grenze",
       "area": "Internationalisierung",
       "priority": "P1",
-      "statusText": "Hosting-Preview deployed; visuelle Geräteabnahme offen",
+      "statusText": "Abnahme offen · Hosting-Preview deployed; visuelle Geräteabnahme offen",
       "next": "GPT-6.1-Sol-Kandidat aus Run 37230004552 deterministisch von CSS-content-Verstoß bereinigt, ohne neuen Provider-Build. PR #123 → Integrationscommit `fb88dfa7…`; CI 37231463662 und Preview 37231545703 grün, 111 Dateien verifiziert. DE/EN Startscreen bleibt vollständig über DOM/i18n umschaltbar; Test- und Bewertungssprache unabhängig. Drei Guardian-Reviews auf dem salvagierten Kandidaten wurden nicht nachgeholt und dürfen nicht als bestanden gelten. Jetzt Desktop/iPad/Phone + DE/EN im echten Preview abnehmen. [Übergabe](workstreams/design-startscreen-multiai-v4.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Preview ist als historisch verifiziert gemeldet; visuelle Geräteabnahme und drei nicht nachgeholte Guardian-Reviews bleiben offen.",
+        "evidence": "TODO.md: PR #123, integration fb88dfa7…, CI 37231463662, preview 37231545703 mit 111 Dateien; State verweist auf visuelle Abnahme offen. Kein aktuelles main- oder Live-Preview-Recheck."
+      }
     },
     {
       "id": "GC-DESIGN-05",
       "title": "Startscreen Hero Scene + First-Visit-Animation",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Konzept / Art Direction offen",
+      "statusText": "Stand abgleichen · Konzept / Art Direction offen",
       "next": "Martin lehnt den v4-Preview visuell ab: technisch sauber, aber noch weit vom Referenzbild entfernt. Nächster Pass soll nicht wieder CSS-Möbel polieren, sondern eine echte art-directed Hero-Szene prüfen. Option: beim ersten Besuch öffnet Coco die Tür, begrüßt; Remy/Emmi/Wilma bewegen sich dezent im Hintergrund. Animation kurz, nicht blockierend, ohne Audio, mit Skip/Reduced-Motion und auf Folgebesuchen statisch. Canva ist verbunden und soll für visuelle Konzepte/Brand-Art-Direction geprüft werden; Web-Implementierung bleibt separat. Vollständige DE/EN-UI-Abdeckung bleibt Pflicht; sichtbare Texte nicht in Bild/Animation einbrennen. [Übergabe](workstreams/startscreen-hero-animation-20261004.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "design-and-crew",
+        "checkedAt": "2026-10-06",
+        "reason": "Current main still describes concept/art direction as open. A separate local design branch contains a static hero preview, but it is not evidence of integration or user acceptance on main; do not import that checkout’s changes into this report as a completed task.",
+        "evidence": "Current main TODO GC-DESIGN-05: concept/art direction open; suggests Canva concept then separate web implementation and DE/EN accessibility. Local design branch is dirty and unrelated to permitted report scope."
+      }
     },
     {
       "id": "GC-DIAGNOSTICS-01",
       "title": "Fehler nachvollziehbar sammeln und Admin-Logs besser filtern",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Stand prüfen",
+      "statusText": "Stand abgleichen · Stand prüfen",
       "next": "Vorhandene Diagnostics/Log-Tools inventarisieren; Referenz-ID, Version, Ablauf, Filter und Sortierung prüfen; keine Antworten oder Zugangsdaten protokollieren.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Vorhandene Logs/Tools und erforderliche Filter sind nicht inventarisiert; kein Befund zur tatsächlichen Lücke.",
+        "evidence": "TODO.md: Stand prüfen; keine aktuelle Code-/Admin-Inspektion in diesem Aufgabenumfang."
+      }
     },
     {
       "id": "GC-BUGOPS-01",
       "title": "Fehlerberichte skalierbar bündeln, priorisieren, gezielt melden und risikoarme Fälle bis Staging automatisiert beheben",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Staging deployed; Admin-/Browserabnahme offen",
+      "statusText": "Abnahme offen · Staging deployed; Admin-/Browserabnahme offen",
       "next": "Web-Inbox, serverseitige Incident-Aggregation und Admin-Attention-Badge sind in `feature/gradecrew-app-integration@bb91ce3` integriert. Combined CI `37238513381`, Hosting `37238585607` und AI-Functions `37238585657` grün; `aggregateBugFeedback` + `getBugOpsSummary` auf Staging bestätigt. Production unverändert. Auto-Reparatur aus echten Kundenmeldungen bleibt noch gesperrt; nächster Schritt: Staging praktisch testen und danach read-only Investigator → sichere Guardian-Brücke bauen. [Übergabe](workstreams/bug-ops-v1.md)",
       "stage": "staging_deployed",
       "stageSource": "GRADECREW_STATE.json",
@@ -274,6 +393,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/bug-ops-v1.md",
         "next_action": "BugOps im Staging als Admin praktisch abnehmen: technischen Testfehler melden bzw. vorhandenen Staging-Incident nutzen und Problem melden → Incident → Administration-Badge → BugOps-Ansicht → Lifecycle prüfen. Danach read-only Investigator und sichere Guardian-Brücke bauen."
+      },
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Hosting und Functions werden für Integrations-SHA bb91ce3 als deployed berichtet; Admin-/Browserablauf ist explizit nicht abgenommen und Auto-Reparatur bleibt gesperrt.",
+        "evidence": "Fresh current main GRADECREW_STATE release_train bb91ce3590d773472ece60c4dd881da729bd32c1: CI 37238513381; hosting 37238585607 receipt 11316079411; functions 37238585657 receipt 11316084527. Manual admin/browser acceptance not performed; automated repair remains disabled."
       }
     },
     {
@@ -281,8 +407,8 @@
       "title": "Schüler:innen-/Klassenverwaltung mit pseudonymen Codes und Klassenfreigaben",
       "area": "Schülerverwaltung",
       "priority": "P1",
-      "statusText": "Masterprojekt gesichert; branch_only, noch kein Produktcode",
-      "next": "`feature/classroom-student-management-v1` wurde vom aktuellen Integrationshead `bb91ce3` angelegt. Architektur nutzt den bestehenden Secure-Assessment-Lifecycle statt einer zweiten Exam-Engine: StudentIdentity, Klassen/Memberships, persönliche Codes und `assessmentAssignments`. Nächster Schritt ausschließlich statische Firebase-freie Mock-Testseite auf dem Aufgabenbranch; kein normales Staging/Production. [Masterplan](docs/CLASSROOM_STUDENT_MASTERPROJECT_V1.md) · [Übergabe](workstreams/classroom-student-management-v1.md)",
+      "statusText": "Spätere Erweiterung · Masterprojekt gesichert; branch_only, noch kein Produktcode",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. `feature/classroom-student-management-v1` wurde vom aktuellen Integrationshead `bb91ce3` angelegt. Architektur nutzt den bestehenden Secure-Assessment-Lifecycle statt einer zweiten Exam-Engine: StudentIdentity, Klassen/Memberships, persönliche Codes und `assessmentAssignments`. Nächster Schritt ausschließlich statische Firebase-freie Mock-Testseite auf dem Aufgabenbranch; kein normales Staging/Production. [Masterplan](docs/CLASSROOM_STUDENT_MASTERPROJECT_V1.md) · [Übergabe](workstreams/classroom-student-management-v1.md)",
       "stage": "branch_only",
       "stageSource": "GRADECREW_STATE.json",
       "branch": "feature/classroom-student-management-v1",
@@ -298,6 +424,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/classroom-student-management-v1.md",
         "next_action": "Build only a static Firebase-free classroom/student UX mock on the feature branch, then review visually before any backend or staging work."
+      },
+      "triage": {
+        "category": "later",
+        "package": "classroom",
+        "checkedAt": "2026-10-06",
+        "reason": "Bewusst auf statischen Firebase-freien Mock begrenzt; noch branch_only ohne Produktcode. Keine Backend-/Staging-Pflicht erfinden.",
+        "evidence": "TODO.md und GRADECREW_STATE.json: feature/classroom-student-management-v1 @ bb91ce3, CI/deploy nicht erfolgt; Masterplan und Übergabe referenziert."
       }
     },
     {
@@ -305,46 +438,67 @@
       "title": "KI-Qualitätsprüfung, Variantenfehler und fehlerhafte Listeneinträge prüfen",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Stand prüfen, frühere Nutzerberichte",
+      "statusText": "Stand abgleichen · Stand prüfen, frühere Nutzerberichte",
       "next": "Reproduzierbare Fälle am aktuellen Stand sammeln, bestehende Fehlerbehebungen verifizieren.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "Alte Nutzerberichte benötigen aktuelle reproduzierbare Beispiele und Abgleich mit vorhandenen Fixes.",
+        "evidence": "TODO.md: Stand prüfen, frühere Nutzerberichte; kein reproduzierbarer Fall/aktueller Testbeleg im Katalog."
+      }
     },
     {
       "id": "GC-CREW-AI-01",
       "title": "Coco, Remy, Emmi und Wilma als gemeinsame KI-Assistenten mit Spracheingabe und API-sparenden Standardantworten",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Auf Staging integriert; aktuelle Geräteabnahme offen",
+      "statusText": "Abnahme offen · Auf Staging integriert; aktuelle Geräteabnahme offen",
       "next": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "staging-product-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Historischer gemeinsamer Staging-Batch belegt, doch aktuelle Geräte-/Nutzerabnahme ist nicht dokumentiert.",
+        "evidence": "TODO.md nennt batch 18e30d0d und Runs 36991979723/36991979742; State release_train bb91ce3 mit Crew-assistant staging_deployed, praktische Prüfung offen."
+      }
     },
     {
       "id": "GC-CREW-AI-02",
       "title": "Emmi direkt im Editor: ganzen Test per Freitext/Sprachwunsch überarbeiten",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Auf Staging integriert; aktuelle Geräteabnahme offen",
+      "statusText": "Abnahme offen · Auf Staging integriert; aktuelle Geräteabnahme offen",
       "next": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "staging-product-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Emmi-Gesamtüberarbeitung ist im historischen Staging-Batch enthalten; realer Editor-Nutzertest fehlt.",
+        "evidence": "TODO.md nennt batch 18e30d0d und Runs 36991979723/36991979742; State release_train bb91ce3, Emmi practical test offen."
+      }
     },
     {
       "id": "GC-AUDIO-01",
       "title": "KI-Höraufgaben: 0–5 Audio-Aufgaben, privater Hörtext, Editor- und Schülerplayer",
       "area": "Audio & Sprache",
       "priority": "P1",
-      "statusText": "Staging deployed; Browser-/Geräteabnahme offen",
+      "statusText": "Abnahme offen · Staging deployed; Browser-/Geräteabnahme offen",
       "next": "Audio Masterpiece V2 integriert in `efdc1a0`; CI `37230351466`, Hosting `37230439196`, AI + Assessment Functions `37230439199` grün. Hörtext bleibt privat, kein Autoplay, Stale-/Publish-Schutz aktiv. [V2-Übergabe](workstreams/audio-masterpiece-v2.md)",
       "stage": "staging_deployed",
       "stageSource": "GRADECREW_STATE.json",
@@ -363,6 +517,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/audio-masterpiece-v2.md",
         "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
+      },
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "staging-product-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Audio V2 ist mit gemeinsamem CI, Hosting und AI/Assessment-Functions-Deploy belegt; praktischer Hör-/Editor-/Schülerablauf fehlt.",
+        "evidence": "TODO.md / workstreams/audio-masterpiece-v2.md: integration efdc1a0, CI 37230351466, Hosting 37230439196, Functions 37230439199; user acceptance offen."
       }
     },
     {
@@ -370,7 +531,7 @@
       "title": "Audio-Lösungen/Erklärungen: 0–5, Remy-Steuerung, private TTS-Assets, Freigabe erst nach Testende",
       "area": "Audio & Sprache",
       "priority": "P1",
-      "statusText": "Staging deployed; Browser-/Geräteabnahme offen",
+      "statusText": "Abnahme offen · Staging deployed; Browser-/Geräteabnahme offen",
       "next": "Lösungsaudio ohne zusätzlichen Text-KI-Aufruf aus vorhandenem Lösungsschlüssel; private Speicherung und serverseitige Freigabe erst bei `solutionsReleased=true`. CI/Deploy-Nachweis wie GC-AUDIO-01. [Übergabe](workstreams/audio-masterpiece-v2.md)",
       "stage": "staging_deployed",
       "stageSource": "GRADECREW_STATE.json",
@@ -389,6 +550,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/audio-masterpiece-v2.md",
         "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
+      },
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "staging-product-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Private Lösungsaudio-Freigabe ist technisch im Audio-V2-Nachweis enthalten; kontrollierter Test nach Testende fehlt.",
+        "evidence": "workstreams/audio-masterpiece-v2.md: efdc1a0, CI 37230351466, Hosting 37230439196, Functions 37230439199; User-Test nicht erfolgt."
       }
     },
     {
@@ -396,21 +564,28 @@
       "title": "Installierten TestFlight-Build und verwendete Web-URL bestätigen",
       "area": "App & Geräte",
       "priority": "P1",
-      "statusText": "Offen",
-      "next": "0.1.5 ist erfolgreich zu TestFlight hochgeladen; nach Apple-Verarbeitung auf iPad installieren und sichtbaren Host/`Integration` bestätigen.",
+      "statusText": "Stand abgleichen · 0.1.9-Code/CI gemeldet, installierter TestFlight-Stand offen",
+      "next": "Sol gleicht PR144/145, Build0.1.9, TestFlight und geladene Web-Version im Chat „GC · iPhone & iPad“ ab. Historische 0.1.5/0.1.6-Angaben sind kein aktueller Gerätenachweis.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "ios-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "TestFlight-Upload ist kein installierter iPad-Test; Version und geladene Web-SHA müssen gemeinsam belegt werden.",
+        "evidence": "Catalog snapshot: TestFlight 0.1.6 / run 37024529022; lokales TODO.md widerspricht mit 0.1.5 / run 37015111963. Klare Versionskollision erfordert aktuellen Apple/App-Branch-Nachweis."
+      }
     },
     {
       "id": "GC-IOS-02",
       "title": "Hybride Lehrer-App 0.2 härten und App-Store-tauglich weiterentwickeln",
       "area": "App & Geräte",
       "priority": "P1",
-      "statusText": "ci_green / TestFlight-Upload 0.1.5 erfolgreich; Gerätetest offen",
-      "next": "Kanonischer App-Branch auf `8bdebaf1` fast-forwarded. 0.1.5 öffnet standardmäßig den automatisch verifizierten Integrations-Preview, normales Staging bleibt Fallback; Shared Tokens/Manifest synchronisiert. Run `37015111963` Routing/Archive/Upload grün. Als Nächstes physischer iPad-Test, danach Navigation/Downloads/Share/Uploads/Diagnose/AppIcon weiter härten. [Übergabe](workstreams/ios-app-v2.md)",
+      "statusText": "Stand abgleichen · 0.1.9-Code/CI gemeldet, installierter TestFlight-Stand offen",
+      "next": "Sol gleicht PR144/145, Build0.1.9, TestFlight und geladene Web-Version im Chat „GC · iPhone & iPad“ ab. Historische 0.1.5/0.1.6-Angaben sind kein aktueller Gerätenachweis.",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
       "branch": "feature/shared-gradecrew-design-system",
@@ -430,6 +605,13 @@
         "user_test": "installed_build_and_loaded_web_sha_not_verified",
         "handoff": "workstreams/ios-app-v2.md",
         "next_action": "0.1.6 nach Apple-Verarbeitung am iPad bestätigen; nativen Build und geladenen Web-SHA gemeinsam für Abnahme erfassen."
+      },
+      "triage": {
+        "category": "needs_verification",
+        "package": "ios-acceptance",
+        "checkedAt": "2026-10-06",
+        "reason": "Versionsstand im Katalog (0.1.6/run 37024529022) und lokaler TODO-Eintrag (0.1.5/run 37015111963) widersprechen einander; aktueller Installationsstand fehlt.",
+        "evidence": "Current main TODO reports TestFlight upload 0.1.5 / run 37015111963 / app commit 8bdebaf1; current main GRADECREW_STATE ios-design reports TestFlight 0.1.6 / run 37024529022 / observed head 899bc363…. Both say installed build/web SHA not verified; reconcile against actual TestFlight/App Store Connect before acceptance."
       }
     },
     {
@@ -437,85 +619,127 @@
       "title": "Codex-Worker aktivieren und einmal vollständig testen",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Blockiert durch Einrichtung",
-      "next": "Separater API-Key und Aktivierungsvariable fehlen laut letzter Übergabe; API-Abrechnung beachten. [Einrichtung](docs/AUTOMATION_SETUP.md)",
+      "statusText": "Abgeschlossen (belegter Umfang) · Blockiert durch Einrichtung",
+      "next": "Im belegten Umfang abgeschlossen; keine erneute Einrichtung nötig. Aktueller main TODO GC-AUTOMATION-01/07/12-Nachtrag und GC-AUTOMATION-13/14: echter Run 37218095594; CI 37218270539; Hosting 37219916184 und Functions 37219916242 für SHA 2436a432…; 3 unabhängige Reviews; 2/3 Bauversuche und $1.70/$2.55 reserviert. GRADECREW_STATE automation.agent_dispatch=verified, stage_guardian=activated_pilot_staging_verified; neuer Homepage-Run 37220142576 separat stopped_provider_result_unknown, $2.40 Reservierung erhalten, kein Retry.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "completed_with_evidence",
+        "package": "automation-and-cost",
+        "checkedAt": "2026-10-06",
+        "reason": "Die alte Zeile „separater API-Key und Aktivierungsvariable fehlen“ ist durch den späteren expliziten TODO-Nachtrag überholt: der begrenzte Web-Pilot wurde aufgenommen und als E2E erfolgreich mit echten CI-, Review-, Integrations- und Staging-Receipts dokumentiert. Der spätere Homepage-Folgeauftrag ist ein eigener gestoppter Vorgang und nicht automatisch ein Fehlschlag dieses abgeschlossenen Pilot-Auftrags.",
+        "evidence": "Aktueller main TODO GC-AUTOMATION-01/07/12-Nachtrag und GC-AUTOMATION-13/14: echter Run 37218095594; CI 37218270539; Hosting 37219916184 und Functions 37219916242 für SHA 2436a432…; 3 unabhängige Reviews; 2/3 Bauversuche und $1.70/$2.55 reserviert. GRADECREW_STATE automation.agent_dispatch=verified, stage_guardian=activated_pilot_staging_verified; neuer Homepage-Run 37220142576 separat stopped_provider_result_unknown, $2.40 Reservierung erhalten, kein Retry."
+      }
     },
     {
       "id": "GC-AUTOMATION-02",
       "title": "Automatische staging-only AI-Functions-WIF-Aktivierung abschließen",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Erledigt – WIF eingerichtet, automatischer Functions-E2E grün",
-      "next": "Setup am 02.10.2026 abgeschlossen. Automatischer Run `36943129026` deployte exakt Integrationscommit `a61759db…` mit Scope `functions:ai` nach `hausaufgabe-staging` und verifizierte `crewAssistant` + `reviseWholeTest`; Receipt Artifact `11200528486`. Production/Rules/Hosting wurden durch diesen Deploy nicht verändert. [Übergabe](workstreams/staging-functions-automation.md)",
+      "statusText": "Abgeschlossen (belegter Umfang) · Erledigt – WIF eingerichtet, automatischer Functions-E2E grün",
+      "next": "Im belegten Umfang abgeschlossen; keine erneute Einrichtung nötig. Aktueller main GRADECREW_STATE functions_automation_evidence: workflow .github/workflows/staging-functions.yml; WIF setup completed; automatic run 37238585657; upstream CI 37238513381; deployed commit bb91ce3590d773472ece60c4dd881da729bd32c1; Receipt Artifact 11316084527; functions:ai scope, kein Production/Hosting/Rules scope. Historischer run 36943129026 ist überholt.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "completed_with_evidence",
+        "package": "automation-and-cost",
+        "checkedAt": "2026-10-06",
+        "reason": "WIF-Einrichtung und echter staging-only functions:ai-E2E-Deploy sind mit Receipt belegt; historische Aufgabe technisch abgeschlossen.",
+        "evidence": "Aktueller main GRADECREW_STATE functions_automation_evidence: workflow .github/workflows/staging-functions.yml; WIF setup completed; automatic run 37238585657; upstream CI 37238513381; deployed commit bb91ce3590d773472ece60c4dd881da729bd32c1; Receipt Artifact 11316084527; functions:ai scope, kein Production/Hosting/Rules scope. Historischer run 36943129026 ist überholt."
+      }
     },
     {
       "id": "GC-GAMES-01",
       "title": "Escape-Room-MVP mit Lehrerübersicht konkretisieren",
       "area": "Games",
       "priority": "P1",
-      "statusText": "MVP + Hub-Integration implementiert, CI grün; Lab-/Geräteabnahme offen",
+      "statusText": "Voraussetzungen offen · MVP + Hub-Integration implementiert, CI grün; Lab-/Geräteabnahme offen",
       "next": "Branch `feature/escape-room-mvp-v1`, Draft-PR #10: „Die verriegelte Schule“ mit 3 Räumen, 8 Frage-Slots, 4 Rätseln, Preflight und Lehrerübersicht. Nächster Schritt: sicherer Lab-Preview-Deploy, echter iPad/Desktop-Test, danach GradeCrew-Test-/KI-Adapter. [Konzept](docs/games/ESCAPE_MVP.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "games",
+        "checkedAt": "2026-10-06",
+        "reason": "Branch-MVP/CI ist berichtet, aber aktueller Live-Status ist ausdrücklich branch_only: neuester Lab-Deploy run 37021633218 scheiterte am Zugriff auf Secret-Metadaten und übersprang Hosting. Erst diesen separaten Game-Preview-Blocker lösen, dann Gerätetest; kein allgemeiner GradeCrew-Releaseblocker.",
+        "evidence": "Aktueller main GRADECREW_STATE workstream games-escape: feature/escape-room-mvp-v1 @ a7ffc382…, latest_run_37021633218_failed_secret_metadata_access_hosting_skipped; älterer Preview c904a674… war nur isolated_preview_only."
+      }
     },
     {
       "id": "GC-TELEMETRY-01",
       "title": "Collector und Datenvertrag",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Implementiert auf isoliertem Branch; Aktivierung/CI/Deploy offen",
+      "statusText": "Voraussetzungen offen · Implementiert auf isoliertem Branch; Aktivierung/CI/Deploy offen",
       "next": "`feature/telemetry-implementation` @ `4e4f0ba`: strikter Vertrag, Auth, Deduplizierung, Limits, 30-Tage-Pilot-Retention und Cleanup. Vor Aktivierung vollständige CI/Emulator-Prüfung, Cloud-Inventar und Retention-Freigabe. [Übergabe](workstreams/telemetry-implementation.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Collector liegt nur isoliert vor; CI/Emulator, Cloud-Inventar und Retention-Freigabe müssen vor Aktivierung erfolgen.",
+        "evidence": "TODO.md: feature/telemetry-implementation @ 4e4f0ba, Aktivierung/CI/Deploy offen; GRADECREW_STATE.json generische Telemetrie separat von bereits deployed Remy-Metriken."
+      }
     },
     {
       "id": "GC-TELEMETRY-02",
       "title": "Beitritt/Abgabe als ersten Ablauf instrumentieren",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Teilweise implementiert, nicht aktiviert",
+      "statusText": "Voraussetzungen offen · Teilweise implementiert, nicht aktiviert",
       "next": "Secure-Client misst Join/Submit nach gültigem Attempt; zusätzliche inhaltsfreie Serveroperationen erfassen gültige Start-/Submit-/Receipt-Aufrufe und Fehler. Erwartete Teilnehmerzahl und unbekannte/nicht zuordenbare Joinfälle bleiben offen. [Übergabe](workstreams/telemetry-implementation.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Join/Submit-Messung ist nur teilweise implementiert; zusätzliche Serverereignisse und erwartete/unbekannte Teilnehmerfälle bleiben ungeklärt.",
+        "evidence": "TODO.md: teilweise implementiert, nicht aktiviert; workstreams/telemetry-implementation.md. Kein Aktivierungs-/Deploybeleg."
+      }
     },
     {
       "id": "GC-TELEMETRY-03",
       "title": "Release-/Rundenübersicht im Adminbereich",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "Technische Staging-Ansicht implementiert, nicht deployed",
+      "statusText": "Voraussetzungen offen · Technische Staging-Ansicht implementiert, nicht deployed",
       "next": "Clientmeldungen, Serveroperationen, gespeicherter Rundenzustand und KI-Bestandsdaten getrennt anzeigen; als Nächstes CI/Emulator und sichere Staging-Aktivierung, danach lesbare UI statt Roh-JSON. [Übergabe](workstreams/telemetry-implementation.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Admin-Ansicht ist nicht deployed; sichere CI/Emulator-Prüfung und lesbare Oberfläche stehen aus.",
+        "evidence": "TODO.md: technische Staging-Ansicht implementiert, nicht deployed; workstream telemetry-implementation."
+      }
     },
     {
       "id": "GC-TELEMETRY-POSTHOG-01",
       "title": "PostHog EU als datensparsame Analyseprojektion hinter bestehende Crew-Telemetrie hängen",
       "area": "Design & Crew",
       "priority": "P1",
-      "statusText": "Staging deployed; echtes Event-Audit offen",
+      "statusText": "Abnahme offen · Staging deployed; echtes Event-Audit offen",
       "next": "PR #100 Deploy-Control → main `fbdd795b`; PR #99 → Integration `461da164`; dedizierte CI `37235599673` und AI Staging Checks `37235725698` grün; AI Functions Run `37235811020` erfolgreich, Secret-Gate bestanden. Jetzt eine normale Remy-Aktion in Staging auslösen und eingegangene Properties in PostHog prüfen; danach Error Tracking V1. [Übergabe](workstreams/posthog-staging-telemetry-v1.md)",
       "stage": "staging_deployed",
       "stageSource": "GRADECREW_STATE.json",
@@ -537,6 +761,13 @@
         "user_test": "real_event_not_yet_triggered",
         "handoff": "workstreams/posthog-staging-telemetry-v1.md",
         "next_action": "In Staging eine normale Remy-Aktion auslösen und anschließend in PostHog das eingegangene gradecrew.crew.* Event samt erlaubten Properties prüfen. Danach datensparsames Error Tracking V1 umsetzen."
+      },
+      "triage": {
+        "category": "acceptance_pending",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Staging deploy has historical evidence, but PostHog ingestion is untested. Current Functions E2E on the newer release train only proves deployed GradeCrew functions and does not prove a real PostHog event.",
+        "evidence": "TODO.md and GRADECREW_STATE.json: PR #99/#100, integrationsha 461da164…, CI 37235599673/37235725698, Functions 37235811020; real event not triggered."
       }
     },
     {
@@ -544,7 +775,7 @@
       "title": "Gemeinsame Sprach-/Locale-Verträge und messbare KI-Freigabe",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "ci_green, isoliert, nicht integriert/deployed",
+      "statusText": "Stand abgleichen · ci_green, isoliert, nicht integriert/deployed",
       "next": "PR [#25](https://github.com/HerrLoeffler/Hausaufgabe/pull/25), Code `5af11ca`; 14 Tests und CLI-Syntax in CI grün. [Übergabe](workstreams/quality-routing-contract-v1.md)",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
@@ -565,6 +796,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/quality-routing-contract-v1.md",
         "next_action": "PR #25 prüfen; vorhandenen Crew-Patchpfad anbinden und fachlich geprüftes Pilot-Evaluationsset erstellen. Echte Runtime-Freigabe bleibt gesondert."
+      },
+      "triage": {
+        "category": "needs_verification",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "PR #25/CI belegt isolierten Vertrag, nicht Integration, Runtime oder Freigabe. Vor Reaktivierung gegen aktuellen main und Fachset abgleichen.",
+        "evidence": "TODO.md/catalog: PR #25, tested code 5af11ca…, CI 36948918111; State quality-routing-contract-v1 ci_green, not integrated/deployed."
       }
     },
     {
@@ -572,33 +810,47 @@
       "title": "Vorhandenen Crew-Diktierpfad härten",
       "area": "Audio & Sprache",
       "priority": "P1",
-      "statusText": "Vertrag vorbereitet; Anbindung/Gerätetest offen",
+      "statusText": "Stand abgleichen · Vertrag vorbereitet; Anbindung/Gerätetest offen",
       "next": "Formularrevision, Request-Deduplizierung, erlaubte Patches, Vorschau/Undo; Mikrofonabbruch, Negation, Lärm und Siri separat prüfen. Baut auf GC-CREW-AI-01 auf.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "Vertrag ist vorbereitet, aber tatsächliche Crew-Anbindung, Geräteverhalten und Abbruch/Negation/Lärmtests fehlen.",
+        "evidence": "TODO.md: integration/device test open; no current runtime/test receipt recorded."
+      }
     },
     {
       "id": "GC-AI-EVAL-02",
       "title": "Fachlich geprüftes Pilot-Referenzset pro Job/Sprache",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Offen",
+      "statusText": "Voraussetzungen offen · Offen",
       "next": "Referenzen und unabhängige Stichprobe prüfen, Qualitäts-/Regressionsgrenzen vorab festlegen; echte gepaarte Modellevaluation. Keine 99,99-%-Behauptung aus kleinen Testsets.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "staging_blocker",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "Fachlich geprüfte Referenzen und Qualitätsgrenzen sind Voraussetzung, bevor automatische Modellfreigabe belastbar aktiviert wird.",
+        "evidence": "TODO.md: offen; ai-orchestration-v1 state verlangt reales qualifiziertes Referenzset; kein Evaluationsergebnis vorgelegt."
+      }
     },
     {
       "id": "GC-AI-ROUTING-02",
       "title": "Automatische Modellwahl nur nach belegter Qualität",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "ci_green, PR #26; Runtime inaktiv",
+      "statusText": "Voraussetzungen offen · ci_green, PR #26; Runtime inaktiv",
       "next": "Signierte Auswahl, Budgetreservierung, Deduplizierung und qualifizierter Fallback implementiert; CI `36975168993` einschließlich Firestore-Emulator grün. Code im Gateway enthalten; echte Referenzdaten, Signierbetrieb und Functions-Pilot offen. [Übergabe](workstreams/ai-orchestration-v1.md)",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
@@ -622,6 +874,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/ai-orchestration-v1.md",
         "next_action": "Provider-/Kostenintegration prüfen; vorhandenen begrenzten Textjob mit fachlichem Referenzset anschließen. Admin-Proxy und Mount fehlen noch."
+      },
+      "triage": {
+        "category": "staging_blocker",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "Implementierung/CI vorhanden, aber Runtime ist ausdrücklich inaktiv bis echte Qualitätsdaten und Signierbetrieb vorliegen.",
+        "evidence": "PR #26; CI 36975168993; tested code c5dcc4dc…; Runtime not enabled in GRADECREW_STATE.json / workstreams/ai-orchestration-v1.md."
       }
     },
     {
@@ -629,20 +888,27 @@
       "title": "Vorhandenen i18n-Core fachlich und visuell absichern",
       "area": "Internationalisierung",
       "priority": "P1",
-      "statusText": "Kontext-/Capability-Vertrag vorbereitet; Migration offen",
-      "next": "Vier Sprachkontexte getrennt, Pseudolokalisierung, Nicht-DOM-Texte, Zahlen/Bewertung und sprachabhängige Spiele prüfen. Keine zusätzliche Sprache freigegeben.",
-      "stage": "unknown",
-      "stageSource": "Nicht eindeutig zugeordnet",
+      "statusText": "Integriert · DE/EN-Prüfungslabels und Cache-Korrektur aus PR139",
+      "next": "Integrations-CI37417856806 und getrennte Hosting-/Assessment-Functions-Nachweise für 90b48d854e0deca87fbf33b376c76826c1fc2d60 abwarten. Danach bestehende Versuche fortsetzen und DE/EN am Gerät prüfen. Datums-/CSV-Texte bleiben offen.",
+      "stage": "integrated",
+      "stageSource": "GitHub PR139 merged 2026-10-06",
       "branch": null,
-      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/pull/139",
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "i18n",
+        "checkedAt": "2026-10-06",
+        "reason": "Migration/Abdeckung des bestehenden i18n-Core ist offen; keine zusätzliche Sprache freigegeben. Need current DE/EN source/test comparison.",
+        "evidence": "TODO.md: context/capability contract prepared, migration open; relevant workstream i18n-core-v1 and i18n coverage refs not verified against main."
+      }
     },
     {
       "id": "GC-AI-OBS-02",
       "title": "Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Ledger/Statistik/isoliertes Admin-Widget ci_green",
+      "statusText": "Voraussetzungen offen · Ledger/Statistik/isoliertes Admin-Widget ci_green",
       "next": "PR #26: inhaltsfreie Entscheidungen, Kosten je Modell/Job, unbekannte Kosten und geschätzte API-Ersparnis getrennt. Rollenprüfender Admin-Proxy, Widget-Mount und bestehende Functions noch offen; Remy-Metriken separat bereits deployed.",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
@@ -666,6 +932,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/ai-orchestration-v1.md",
         "next_action": "Provider-/Kostenintegration prüfen; vorhandenen begrenzten Textjob mit fachlichem Referenzset anschließen. Admin-Proxy und Mount fehlen noch."
+      },
+      "triage": {
+        "category": "staging_blocker",
+        "package": "ai-quality",
+        "checkedAt": "2026-10-06",
+        "reason": "Isoliertes Ledger/Widget hat CI, aber Admin-Proxy, Mount und Integration in bestehende Functions fehlen laut Register; not ready for enabled runtime.",
+        "evidence": "PR #26, CI 36975168993; TODO.md and GRADECREW_STATE.json ai-orchestration-v1 state. Remy metrics are a separate deployed stream."
       }
     },
     {
@@ -673,20 +946,27 @@
       "title": "Übergabe-CI und veraltete Aufgabenstände reparieren",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Fehlendes Pflichtfeld `automation.agent_dispatch` wiederhergestellt",
+      "statusText": "Stand abgleichen · Fehlendes Pflichtfeld `automation.agent_dispatch` wiederhergestellt",
       "next": "Run `36994507849` scheiterte nachweislich an KeyError; nach diesem Commit CI erneut prüfen. Teilupdates müssen bestehende Schlüssel erhalten.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "project-governance",
+        "checkedAt": "2026-10-06",
+        "reason": "Pflichtfeld wurde laut TODO ergänzt, aber der danach nötige CI-Neulauf ist nicht nachgewiesen.",
+        "evidence": "TODO.md: prior run 36994507849 failed KeyError; post-fix validation absent in local evidence."
+      }
     },
     {
       "id": "GC-GAMES-COST-01",
       "title": "Doppelte Tutoraufrufe, veralteten Cache und Fehlerbehandlung beheben",
       "area": "Games",
       "priority": "P1",
-      "statusText": "ci_green, PR #27, nicht deployed",
+      "statusText": "Stand abgleichen · ci_green, PR #27, nicht deployed",
       "next": "6 Tests und Games-CI grün; gegen inzwischen v0.6 integrieren. [Übergabe](workstreams/escape-tutor-cost-guards.md)",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
@@ -704,6 +984,13 @@
         "user_test": "not_performed",
         "handoff": "workstreams/escape-tutor-cost-guards.md",
         "next_action": "Gegen aktuellen Escape-v0.6-Branch prüfen und Cache-/Kostenkorrekturen unter Erhalt der neuen Remy/Coco-Rollen übernehmen."
+      },
+      "triage": {
+        "category": "needs_verification",
+        "package": "games",
+        "checkedAt": "2026-10-06",
+        "reason": "Historische PR #27/CI beweisen noch keinen Abschluss. Aktueller Development Status meldet ausdrücklich Warnung: PR #27 ist trotz integriertem Code weiterhin offen; zudem ist Cost-Guard-Branch nicht als deployed belegt. Erst PR-/SHA-Zuordnung bereinigen und gegen Escape v0.6 reconciliieren, ohne parallele Neuimplementierung.",
+        "evidence": "Current main TODO says PR #27 ci_green/not deployed; GRADECREW_STATE observed head a521ec90…; DevelopmentStatus run 37416892343 success but specifically flags PR #27 open despite integration. Exact current PR head/state not independently queried."
       }
     },
     {
@@ -711,7 +998,7 @@
       "title": "Claude/OpenAI-Gateway automatisch auf Staging ausrollen",
       "area": "Qualität & Betrieb",
       "priority": "P1",
-      "statusText": "staging_deployed",
+      "statusText": "Voraussetzungen offen · staging_deployed",
       "next": "Run `36999999589` bestätigt Candidate, beide Provider-Smokes, Promotion und Receipt auf `46b21ff4`. Automatisches Routing bleibt gesondert inaktiv.",
       "stage": "ci_green",
       "stageSource": "GRADECREW_STATE.json",
@@ -737,6 +1024,13 @@
           "commit": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
           "run_id": 36999999589
         }
+      },
+      "triage": {
+        "category": "staging_blocker",
+        "package": "automation-and-cost",
+        "checkedAt": "2026-10-06",
+        "reason": "Catalog/state disagree: catalog calls it staging_deployed based on run 36999999589, while detailed evidence names later run 37010376603 as overall deploy failure before image/traffic change. Treat newer failure as blocker until Cloud Run traffic and current receipt are reconciled.",
+        "evidence": "Fresh current main TODO says earlier successful run 36999999589 on SHA 46b21ff4…. The detailed current GRADECREW_STATE row still identifies newer run 37010376603 as failed preflight before image/traffic change and asks to inspect Cloud Run traffic metadata. Preserve this contradiction; no new code/redeploy inferred."
       }
     },
     {
@@ -744,104 +1038,160 @@
       "title": "Gesamtaufbau auf Integrationslücken prüfen",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "In Arbeit; bisheriger Audit gesichert",
+      "statusText": "Stand abgleichen · In Arbeit; bisheriger Audit gesichert",
       "next": "Design/Sprachparser, Escape-Generator, Modellkosten und Deploy-Grenzen am aktuellen Code prüfen. [Fortsetzung](workstreams/system-review-2026-10-02.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "project-governance",
+        "checkedAt": "2026-10-06",
+        "reason": "A prior architecture audit exists, but its named areas must be refreshed against current integration; no current-main/live audit done.",
+        "evidence": "TODO.md says in progress; workstreams/system-review-2026-10-02.md. Latest main unavailable; avoid repeating full code audit."
+      }
     },
     {
       "id": "GC-ADMIN-SCALE-01",
       "title": "Admin-Bestandsabfragen begrenzen",
       "area": "Kernfunktionen",
       "priority": "P1",
-      "statusText": "Befund aus bisherigem Audit, Umsetzung offen",
+      "statusText": "Stand abgleichen · Befund aus bisherigem Audit, Umsetzung offen",
       "next": "Unbegrenzte users/quizzes/feedback-Abfragen prüfen und durch Pagination/Aggregate ersetzen.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Earlier audit alleges unbounded admin queries; verify exact current call sites and whether later pagination/aggregates superseded it before creating implementation work.",
+        "evidence": "TODO.md: prior audit finding, implementation open; no current code evidence in this bounded task."
+      }
     },
     {
       "id": "GC-REFERENCE-01",
       "title": "Eingefrorene Referenz-Seite mit isolierten Testdaten",
       "area": "Kernfunktionen",
       "priority": "P2",
-      "statusText": "Vorschlag",
-      "next": "Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup.",
+      "statusText": "Spätere Erweiterung · Vorschlag",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "later",
+        "package": "later-product",
+        "checkedAt": "2026-10-06",
+        "reason": "Explicit proposal pending restore design; no evidence it is a release requirement. Avoid creating another site as a backup substitute.",
+        "evidence": "TODO.md P2 proposal; resolve GC-RESTORE-01 first."
+      }
     },
     {
       "id": "GC-GAMES-02",
       "title": "Zweite Escape-Welt „Das verschwundene Prüfungsblatt“",
       "area": "Games",
       "priority": "P2",
-      "statusText": "Idee bestätigt",
-      "next": "Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden.",
+      "statusText": "Spätere Erweiterung · Idee bestätigt",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "later",
+        "package": "later-product",
+        "checkedAt": "2026-10-06",
+        "reason": "Idea is explicitly deferred until first digital Escape game and shared core are proven.",
+        "evidence": "TODO.md P2 idea confirmed; first game acceptance still pending."
+      }
     },
     {
       "id": "GC-GAMES-03",
       "title": "Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer",
       "area": "Games",
       "priority": "P2",
-      "statusText": "Später",
-      "next": "Erst nach funktionierendem digitalem Standardspiel bewerten.",
+      "statusText": "Spätere Erweiterung · Später",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Erst nach funktionierendem digitalem Standardspiel bewerten.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "later",
+        "package": "later-product",
+        "checkedAt": "2026-10-06",
+        "reason": "QR/team/multiplayer enhancements are explicitly postponed until standard digital gameplay works.",
+        "evidence": "TODO.md P2 later; no staging acceptance prerequisite."
+      }
     },
     {
       "id": "GC-ANALYTICS-01",
       "title": "Nutzungs- und Spielstatistiken",
       "area": "Kernfunktionen",
       "priority": "P2",
-      "statusText": "Teilimplementierung auf Telemetrie-Branch; Spiele/Aufgabenaggregate offen",
-      "next": "KI-Bestandsauswertung und aktiver Lehrerzeit-Tracker sind isoliert implementiert; Tracker noch nicht verdrahtet. Spiele und Aufgaben erst nach sicherem Collector-/Join-/Abgabe-Pilot anbinden. [Übergabe](workstreams/telemetry-implementation.md)",
+      "statusText": "Spätere Erweiterung · Teilimplementierung auf Telemetrie-Branch; Spiele/Aufgabenaggregate offen",
+      "next": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. KI-Bestandsauswertung und aktiver Lehrerzeit-Tracker sind isoliert implementiert; Tracker noch nicht verdrahtet. Spiele und Aufgaben erst nach sicherem Collector-/Join-/Abgabe-Pilot anbinden. [Übergabe](workstreams/telemetry-implementation.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "later",
+        "package": "observability",
+        "checkedAt": "2026-10-06",
+        "reason": "Broader game/task aggregates are deliberately downstream of the secure Collector/Join/Submit pilot; do not broaden telemetry scope now.",
+        "evidence": "TODO.md P2; workstreams/telemetry-implementation.md states isolated implementation and activation gates."
+      }
     },
     {
       "id": "GC-GAMES-INTEGRITY-01",
       "title": "Fehlerjagd-Highscores serverseitig validieren und atomar abschließen",
       "area": "Games",
       "priority": "P2",
-      "statusText": "Auditbefund, eigener Games-Folgeauftrag",
+      "statusText": "Stand abgleichen · Auditbefund, eigener Games-Folgeauftrag",
       "next": "Client-Summary wird nur begrenzt; Attempt-Status außerhalb der Finalisierungstransaktion gelesen. Antwort-/Scorebeleg und konkurrierende Finalisierung testen. Keine automatische Änderung fremder Games-Branches. [Audit](docs/REPOSITORY_AUDIT_2026-10-04.md)",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "games",
+        "checkedAt": "2026-10-06",
+        "reason": "An audit issue is recorded, but no current branch/commit-specific exploit reproduction or fix status is attached; verify against present Escape implementation before scheduling.",
+        "evidence": "TODO.md links docs/REPOSITORY_AUDIT_2026-10-04.md and labels as audit finding; current source/PR status not checked due bounded scope."
+      }
     },
     {
       "id": "GC-HANDOFF-03",
       "title": "Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen",
       "area": "Kernfunktionen",
       "priority": "P2",
-      "statusText": "Wiederaufnahmeregel und Vorlage ergänzt; Integration/CI frisch prüfen",
+      "statusText": "Stand abgleichen · Wiederaufnahmeregel und Vorlage ergänzt; Integration/CI frisch prüfen",
       "next": "[Anleitung](docs/CHAT_RECOVERY.md), [Übergabe](workstreams/chat-recovery-20261004.md). Dieselbe Task-ID, Chat-Zuordnung, gesicherter Schritt, laufende IDs und Budget erhalten. Martin kann den Einstieg einmal in GradeCrew-Projektanweisungen übernehmen; diese Repo-Änderung setzt keine ChatGPT-Einstellung.",
       "stage": "unknown",
       "stageSource": "Nicht eindeutig zugeordnet",
       "branch": null,
       "sourceUrl": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
-      "evidence": null
+      "evidence": null,
+      "triage": {
+        "category": "needs_verification",
+        "package": "project-governance",
+        "checkedAt": "2026-10-06",
+        "reason": "Recovery guidance exists, but integration and fresh CI are explicitly unverified; documentation presence alone does not prove current main has it.",
+        "evidence": "TODO.md: rules/template added; handoff and CI fresh check requested; docs/CHAT_RECOVERY.md local content read, GitHub main inaccessible."
+      }
     }
   ],
   "workstreams": [
@@ -1375,5 +1725,14 @@
       "note": "Qualität, Tempo und Kosten getrennt vergleichen. Kein numerischer Live-Import im Prototyp."
     },
     "official": "https://learn.chatgpt.com/docs/model-selection"
+  },
+  "reconciledAt": "2026-10-06T05:19:48.040234+00:00",
+  "reconciliation": {
+    "total": 50,
+    "completed": 3,
+    "later": 6,
+    "acceptancePending": 11,
+    "remainingInvestigationOrImplementation": 30,
+    "note": "Komponenten-Voraussetzungen nicht pauschal als Pflicht für bestehendes Web-Staging behandeln. Ursprünglicher Quellsnapshot bleibt erhalten."
   }
 }

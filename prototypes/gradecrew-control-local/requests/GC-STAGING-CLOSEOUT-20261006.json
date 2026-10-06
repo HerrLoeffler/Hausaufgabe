@@ -1,0 +1,116 @@
+{
+  "batchId": "GC-STAGING-CLOSEOUT-20261006",
+  "coordinationTaskIds": [
+    "GC-ARCH-AUDIT-01",
+    "GC-BRAIN-01"
+  ],
+  "sourceTaskCount": 50,
+  "objective": "Verify all catalogue tasks, remove evidence-backed stale work from open queue, fix release blockers, integrate through one staging release train",
+  "stagingAuthorized": true,
+  "productionAuthorized": false,
+  "paidModelApiAuthorized": false,
+  "workers": [
+    {
+      "key": "reconciliation",
+      "threadId": "01a10e37-4955-7db3-957f-d397b9dd8dc4",
+      "title": "GradeCrew-Plugins recherchieren",
+      "model": "gpt-6-luna",
+      "thinking": "medium",
+      "scope": "Read-only reconciliation of all 50 catalogue tasks; no product edits",
+      "status": "completed",
+      "turnId": "01a10f9c-e1a2-7e01-a414-87b02b573f83",
+      "dispatchAccepted": true,
+      "result": "reports/task-reconciliation-20261006.json",
+      "cursor": "a629bf9e-b205-48ef-82e6-94b20c508764:15"
+    },
+    {
+      "key": "web",
+      "threadId": "01a10ac4-1557-7663-8cbf-8415c6cc0bca",
+      "title": "GradeCrew-Auftrag wiederaufnehmen",
+      "model": "gpt-6-sol",
+      "thinking": "high",
+      "taskIds": [
+        "GC-TUTORIAL-01",
+        "GC-TUTORIAL-02",
+        "GC-TUTORIAL-03",
+        "GC-TUTORIAL-04",
+        "GC-REGRESSION-01",
+        "GC-AI-01",
+        "GC-ADMIN-SCALE-01"
+      ],
+      "status": "in_progress",
+      "turnId": "01a10f9d-0299-7563-98be-7970011a705b",
+      "dispatchAccepted": true
+    },
+    {
+      "key": "i18n",
+      "threadId": "01a10ac2-1486-7480-b644-f2fc953609de",
+      "title": "GC · Internationalisierung",
+      "model": "gpt-6-sol",
+      "thinking": "high",
+      "taskIds": [
+        "GC-I18N-02",
+        "GC-I18N-03"
+      ],
+      "status": "integrated_ci_running",
+      "turnId": "01a10f9c-f416-7760-a56c-a5acf320e54f",
+      "dispatchAccepted": true,
+      "pr": 139,
+      "head": "2d1339806d6eb4eaf289d1a8a4d55fe7df95739a",
+      "base": "bb91ce3590d773472ece60c4dd881da729bd32c1",
+      "ci": 37325767018,
+      "independentReviews": [
+        "protocol: pass",
+        "structure: conditional pass; paired Hosting/Assessment rollout and resume/browser checks still required"
+      ],
+      "mergeSha": "90b48d854e0deca87fbf33b376c76826c1fc2d60",
+      "integrationCi": 37417856806
+    }
+  ],
+  "security": {
+    "threadId": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
+    "requestId": "GC-CENTRAL-15f5dd8b-6dc0-438f-8c4e-d2def7d5d25f",
+    "status": "already_running",
+    "model": "gpt-6-astra"
+  },
+  "policy": "One writer per scope; only Main integrates/deploys staging after exact tests, reviews and scope receipts. Later ideas stay visible but are not silently promoted to release gates. Human acceptance cannot be fabricated.",
+  "developmentStatus": {
+    "run": 37416892343,
+    "conclusion": "success",
+    "head": "91ab6db7a7b4dd140b36c3c15da3ca76f6be9df5"
+  },
+  "laterBatches": [
+    {
+      "package": "ios_acceptance",
+      "threadId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+      "model": "gpt-6-sol",
+      "thinking": "medium",
+      "status": "dispatched",
+      "tasks": [
+        "GC-IOS-01",
+        "GC-IOS-02",
+        "GC-DEVICE-01"
+      ],
+      "goal": "Reconcile actual 0.1.9 code/CI/TestFlight and device evidence; close only proven gates"
+    },
+    {
+      "package": "games",
+      "status": "await_reconciliation",
+      "goal": "Existing first-world defects, tutor duplicate calls, integrity and deployment evidence; no new second world or multiplayer for this release"
+    },
+    {
+      "package": "audio_telemetry",
+      "status": "await_reconciliation",
+      "goal": "Current deployed audio, BugOps and metrics evidence; small fixes only for current release"
+    },
+    {
+      "package": "design",
+      "status": "existing_active_work",
+      "threadId": "01a10e98-1e57-7b40-af70-555fdfdae2e3",
+      "goal": "Do not start duplicate art production; collect current author results before classifying"
+    }
+  ],
+  "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
+  "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
+  "lastCheckpoint": "2026-10-06T05:19:48.040234+00:00"
+}

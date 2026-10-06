@@ -1,0 +1,591 @@
+{
+  "schemaVersion": 1,
+  "batch": "GC-STAGING-CLOSEOUT-20261006",
+  "coordinationTasks": [
+    "GC-ARCH-AUDIT-01",
+    "GC-BRAIN-01"
+  ],
+  "createdAt": "2026-10-06",
+  "scope": "Read-only reconciliation of exactly the 50 catalog task IDs; no code analysis, task closure, deploy, chat messages, or repository changes outside this report.",
+  "classificationRule": {
+    "staging_blocker": "Explicit open technical prerequisite before that task’s relevant staging/release gate, or a newer failed/stale gate; it does not imply a universal GradeCrew staging freeze.",
+    "acceptance_pending": "Implementation or deployment has evidence, but required browser/device/manual/user acceptance is still open.",
+    "completed_with_evidence": "The task outcome has concrete historical CI/integration/deploy evidence in the local records; current GitHub main could not be freshly confirmed.",
+    "later": "Explicitly deferred, proposal, or downstream enhancement with no evidence it blocks the active release.",
+    "needs_verification": "Conflicting, incomplete, or stale records need a targeted source check before closure or implementation."
+  },
+  "sourceAudit": {
+    "requestedCurrentMain": "HerrLoeffler/Hausaufgabe main; fresh content copies provided by main chat via official GitHub connector, read-only.",
+    "currentMainAccess": "Fresh main TODO/STATE/AGENTS copies received 2026-10-06 and used for this final reconciliation. A direct git ls-remote attempt from this shell remains blocked by DNS, so no fetch or PR API query was possible.",
+    "currentMainFileHashes": {
+      "TODO.md": "022f7849bed0b541b9dc767abf2496ad162aa110",
+      "GRADECREW_STATE.json": "a311f46989084a66d185ab2904409fca6f3685ba",
+      "AGENTS.md": "96929006f8da3eaf5aeb2d1aa27221484e148abb"
+    },
+    "developmentStatus": {
+      "run_id": 37416892343,
+      "result": "success",
+      "warnings": [
+        "PR #27 remains open despite code marked integrated",
+        "79 unregistered branches; do not delete or auto-close; assign only after bounded ownership/status follow-up"
+      ]
+    },
+    "catalogSource": {
+      "path": "gradecrew-control-prototype/data/catalog.json",
+      "sourceType": "Manuell importierter GitHub-Snapshot; keine Live-Synchronisierung",
+      "sourceObservedAt": "2026-10-05",
+      "capturedAt": "2026-10-05T22:07:11.655Z",
+      "sourceCommit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+      "taskCount": 50
+    },
+    "scopeSnapshot": "The local gradecrew-hero-blender checkout is on docs/gc-design-05-reference-plan-20261006 at d1bd76b, ahead 11 on that same-name branch, with unrelated uncommitted static-startscreen design changes. It was not treated as current main; left untouched.",
+    "limit": "Main TODO, state and AGENTS are freshly read; current PR #27 state and 79-branch identities are only covered by Development Status warning. No broad branch inspection, provider read, Apple portal read, or staging reread was performed."
+  },
+  "counts": {
+    "staging_blocker": 13,
+    "acceptance_pending": 11,
+    "completed_with_evidence": 3,
+    "later": 6,
+    "needs_verification": 17
+  },
+  "sharedPackages": [
+    {
+      "id": "release-readiness",
+      "tasks": [
+        "GC-TUTORIAL-01",
+        "GC-SECURITY-01",
+        "GC-SECURITY-02",
+        "GC-RESTORE-01",
+        "GC-REGRESSION-01",
+        "GC-DEVICE-01"
+      ],
+      "sequence": "Establish current integration/deploy source, restore and security evidence, then rerun the tutorial/regression/device acceptance gates."
+    },
+    {
+      "id": "tutorial-acceptance",
+      "tasks": [
+        "GC-TUTORIAL-02",
+        "GC-TUTORIAL-03",
+        "GC-TUTORIAL-04"
+      ],
+      "sequence": "One tutorial pass can verify pacing, name copy, persistence/replay and manual iPad submission; keep the first three issues distinct."
+    },
+    {
+      "id": "design-and-crew",
+      "tasks": [
+        "GC-ART-01",
+        "GC-DESIGN-01",
+        "GC-DESIGN-02",
+        "GC-DESIGN-03",
+        "GC-DESIGN-04",
+        "GC-DESIGN-05"
+      ],
+      "sequence": "First reconcile unknown provider run and current preview; obtain visual feedback on built screens; only then schedule component refactor or animation."
+    },
+    {
+      "id": "staging-product-acceptance",
+      "tasks": [
+        "GC-CREW-AI-01",
+        "GC-CREW-AI-02",
+        "GC-AUDIO-01",
+        "GC-AUDIO-02",
+        "GC-GAMES-01",
+        "GC-IOS-01",
+        "GC-IOS-02"
+      ],
+      "sequence": "Use one current staging SHA for browser journeys; TestFlight remains a separately verified native build and device path."
+    },
+    {
+      "id": "observability",
+      "tasks": [
+        "GC-DIAGNOSTICS-01",
+        "GC-BUGOPS-01",
+        "GC-TELEMETRY-01",
+        "GC-TELEMETRY-02",
+        "GC-TELEMETRY-03",
+        "GC-TELEMETRY-POSTHOG-01",
+        "GC-ADMIN-SCALE-01",
+        "GC-ANALYTICS-01"
+      ],
+      "sequence": "Keep BugOps (already staged, acceptance open) separate from generic telemetry (not activated); run narrow read-only inventory, then activate only after gates and privacy/retention evidence."
+    },
+    {
+      "id": "ai-quality",
+      "tasks": [
+        "GC-AI-01",
+        "GC-INTELLIGENCE-01",
+        "GC-VOICE-02",
+        "GC-AI-EVAL-02",
+        "GC-AI-ROUTING-02",
+        "GC-AI-OBS-02"
+      ],
+      "sequence": "Resolve current integrated status, prepare fachlich reviewed evaluation set, then consider a bounded runtime pilot; do not conflate Remy telemetry with gateway cost statistics."
+    },
+    {
+      "id": "automation-and-cost",
+      "tasks": [
+        "GC-ACTIONS-COST-01",
+        "GC-AUTOMATION-01",
+        "GC-AUTOMATION-02",
+        "GC-AI-GATEWAY-03"
+      ],
+      "sequence": "First refresh current main and exact workflow receipts; distinguish legacy isolated worker, Guardian paid pipeline and staging-only WIF functions deployment."
+    },
+    {
+      "id": "games",
+      "tasks": [
+        "GC-GAMES-01",
+        "GC-GAMES-COST-01",
+        "GC-GAMES-02",
+        "GC-GAMES-03",
+        "GC-GAMES-INTEGRITY-01"
+      ],
+      "sequence": "Verify one current Escape candidate and staging path; preserve cost guard changes; defer second world/QR multiplayer until standard game acceptance."
+    },
+    {
+      "id": "i18n",
+      "tasks": [
+        "GC-I18N-02"
+      ],
+      "sequence": "Verify coverage on existing DE/EN boundary; no additional language inferred."
+    },
+    {
+      "id": "project-governance",
+      "tasks": [
+        "GC-HANDOFF-02",
+        "GC-ARCH-AUDIT-01",
+        "GC-HANDOFF-03"
+      ],
+      "sequence": "Check current main handoff schema and CI once; use bounded recovery evidence and avoid repeating the full architecture audit."
+    },
+    {
+      "id": "later-product",
+      "tasks": [
+        "GC-REFERENCE-01",
+        "GC-GAMES-02",
+        "GC-GAMES-03"
+      ],
+      "sequence": "Reconsider only after restore architecture and first game acceptance."
+    },
+    {
+      "id": "classroom",
+      "tasks": [
+        "GC-CLASSROOM-01"
+      ],
+      "sequence": "Continue only the explicitly scoped static, Firebase-free UX mock; backend and normal staging remain out of scope."
+    }
+  ],
+  "openEvidence": [
+    "PR #27: reconcile open PR flag against integrated Escape cost-guard commit and current v0.6 target; no new implementation until ownership/head is known.",
+    "79 unregistered branches from Development Status run 37416892343: identify ownership/scope in a separate bounded inventory; do not delete or treat as product tasks.",
+    "GC-AI-GATEWAY-03: inspect exact current traffic metadata and identify whether successful 36999999589 receipt or later failed 37010376603 applies to current service/revision.",
+    "GC-IOS-01/02: reconcile 0.1.5 (TODO) versus 0.1.6 (STATE) with current processed TestFlight build and installed native build/web SHA.",
+    "GC-DESIGN-03: provider result/usage for run 37220142576 remains unknown; retain $2.40 reservation and do not retry until reconciled.",
+    "GC-GAMES-01: resolve secret-metadata preflight blocker on run 37021633218 and produce receipt for the exact current feature SHA; then device acceptance.",
+    "Current live staging preview receipt for Release Train bb91ce3 exists, but manual browser/device acceptance remains open across BugOps, audio, crew and tutorial flows.",
+    "GC-SECURITY-01, GC-SECURITY-02, GC-RESTORE-01 and GC-REGRESSION-01 still lack the specific test/log, gates, full service inventory/restore evidence, and current end-to-end regression receipt.",
+    "The 79 unregistered branches could affect future ownership/prioritization, but they are not inserted as new catalog tasks and are not presumed to block the current batch."
+  ],
+  "tasks": [
+    {
+      "id": "GC-TUTORIAL-01",
+      "title": "Manuelle Tutorialabgabe in der iPad-App funktioniert nicht",
+      "category": "staging_blocker",
+      "reason": "P0-Nutzerbericht: manuelle Tutorialabgabe auf iPad ist nicht reproduziert oder behoben; Kernablauf muss vor Freigabe nachgewiesen werden.",
+      "evidence": "Lokaler TODO.md: offen, Nutzerbericht; GC-BRAIN-Katalog-Snapshot sourceCommit 8360bc5f056837118ffd83138ffa2468ae42647e (manuell, 2026-10-05).",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-SECURITY-01",
+      "title": "Fehlgeschlagenen 30-Teilnehmer-Test diagnostizieren",
+      "category": "staging_blocker",
+      "reason": "Der 30-Teilnehmer-Test ist ausdrücklich wegen fehlendem Fehlernachweis blockiert; Ursache und Wiederholung fehlen.",
+      "evidence": "TODO.md: blockiert; GRADECREW_STATE.json Workstream security: failure logs/zugeordneter Fehler offen (lokaler Snapshot).",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-SECURITY-02",
+      "title": "Production-Security-Gates abschließen",
+      "category": "staging_blocker",
+      "reason": "Production-Security-Gates sind offen; sichere Abgabe, Lösungsschutz und reale Freigaben benötigen Belege.",
+      "evidence": "TODO.md: offen; GRADECREW_STATE.json Workstream security: branch_only und Gates offen (lokaler Snapshot).",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-RESTORE-01",
+      "title": "Tatsächlichen Live-Stand und vollständige Wiederherstellung absichern",
+      "category": "staging_blocker",
+      "reason": "Kein vollständiges aktuelles Inventar und Restore-Beleg für Hosting, Functions, Rules, Daten, Auth und Uploads im geprüften Register.",
+      "evidence": "TODO.md: offen; docs/releases/ENVIRONMENTS.md als vorgesehene Quelle, im Rahmen dieses kompakten Abgleichs nicht live geprüft.",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-REGRESSION-01",
+      "title": "PDF-, Bild- und Screenshot-Import sowie Kernabläufe erhalten",
+      "category": "staging_blocker",
+      "reason": "Frühere Verlustmeldung bleibt ohne frischen End-to-End-Regressionsnachweis für Import bis Auswertung offen.",
+      "evidence": "TODO.md: Stand prüfen; aktuelle Integration/Device-Ergebnisse fehlen in diesem read-only Abgleich.",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-DEVICE-01",
+      "title": "Aktuellen Design-/Tutorialstand auf echten Geräten abnehmen",
+      "category": "acceptance_pending",
+      "reason": "Technische Umsetzung ist nicht gleich Geräteabnahme; Desktop, iPad, iPhone und Tastatur müssen praktisch geprüft werden.",
+      "evidence": "TODO.md: offen; Design-/Tutorial-Freigabe ist ausdrücklich manuell. Kein Gerätetestbeleg im Register.",
+      "package": "release-readiness"
+    },
+    {
+      "id": "GC-ACTIONS-COST-01",
+      "title": "Actions-Verbrauch reduzieren und Repo vorübergehend öffentlich nutzen",
+      "category": "completed_with_evidence",
+      "reason": "Die drei Kosten-/Repository-Optimierungen werden als integriert berichtet; Kontroll-PRs und CI sind benannt. Abschluss hier nur mit historischem Snapshot belegt, kein aktueller-main-Abgleich.",
+      "evidence": "Fresh current main TODO confirms #88/#89/#90 integrated (control 3ae00f9, visual e83fde3, web f30fa44), five control-PR checks, web CI 37213496846 and Staging hosting/AI-functions successful; GRADECREW_STATE marks integrated; no user test needed for this infrastructure task. Current-main report checked 2026-10-06.",
+      "package": "automation-and-cost"
+    },
+    {
+      "id": "GC-TUTORIAL-02",
+      "title": "Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar",
+      "category": "needs_verification",
+      "reason": "Die gewünschte ruhigere Tour und manuelle Navigation sind noch nicht am aktuellen Staging-Stand gegen Nutzerwünsche geprüft.",
+      "evidence": "TODO.md: Stand prüfen; tutorial-choice-replay-v1 ist auf Staging, deckt diese UX-Akzeptanz aber nicht automatisch ab.",
+      "package": "tutorial-acceptance"
+    },
+    {
+      "id": "GC-TUTORIAL-03",
+      "title": "„Ich darf doch du sagen?“ bei der Namensfrage erhalten",
+      "category": "needs_verification",
+      "reason": "Der konkrete Namensfrage-Text und ein Regressionstest dafür sind nicht nachgewiesen.",
+      "evidence": "TODO.md: Stand prüfen; kein spezifischer Text-/Testbeleg im Register.",
+      "package": "tutorial-acceptance"
+    },
+    {
+      "id": "GC-TUTORIAL-04",
+      "title": "Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start",
+      "category": "acceptance_pending",
+      "reason": "Staging-Integration ist historisch belegt, aber die neueren Branchspitzen und aktuelle manuelle Geräteabnahme sind offen.",
+      "evidence": "TODO.md nennt Batch 18e30d0d, Hosting 36991979723 und Functions 36991979742; State Workstream tutorial-choice-replay-v1 staging_deployed, Nutzerprüfung offen.",
+      "package": "tutorial-acceptance"
+    },
+    {
+      "id": "GC-ART-01",
+      "title": "Farbklekse und Randpixel an Figuren entfernen",
+      "category": "needs_verification",
+      "reason": "Nur eine visuelle Bitte liegt vor; welche Assets tatsächlich ausgeliefert werden und ob Randpixel sichtbar sind, ist offen.",
+      "evidence": "TODO.md: Stand prüfen; keine aktuelle Screenshot-/Asset-Inspektion in diesem Auftrag.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DESIGN-01",
+      "title": "Dashboard und Testkarten visuell feinjustieren",
+      "category": "acceptance_pending",
+      "reason": "Implementiert laut TODO, aber visuelle Abnahme ausdrücklich offen.",
+      "evidence": "TODO.md: visuelle Abnahme offen; design-dashboard-v1 in GRADECREW_STATE.json integrated mit gemeinsamer visueller Abnahme als nächstem Schritt.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DESIGN-02",
+      "title": "Neuer Test, Editor und KI-Erstellung auf gemeinsame Komponenten umstellen",
+      "category": "later",
+      "reason": "Das Refactoring ist nach Dashboard-Abnahme vorgesehen und hat keine belegte Staging-Pflicht.",
+      "evidence": "TODO.md: geplant nach Dashboard-Abnahme; keine aktuelle Arbeit/Abnahme als Staging gate.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DESIGN-03",
+      "title": "Startscreen Masterpiece v2 mit Multi-KI-Guardian veredeln",
+      "category": "needs_verification",
+      "reason": "Ein Provider-Run endete mit unbekanntem Ergebnis; vorhandene Reservierung und Kosten müssen abgeglichen werden, bevor erneut gebaut wird.",
+      "evidence": "TODO.md: Homepage run 37220142576 mit unknown provider outcome, Reservierung 2.40 USD erhalten; workstreams/design-startscreen-multiai-v2.md. Keine automatische Wiederholung.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DESIGN-04",
+      "title": "Startscreen Masterpiece v4 / Premium-Polish mit i18n-Grenze",
+      "category": "acceptance_pending",
+      "reason": "Preview ist als historisch verifiziert gemeldet; visuelle Geräteabnahme und drei nicht nachgeholte Guardian-Reviews bleiben offen.",
+      "evidence": "TODO.md: PR #123, integration fb88dfa7…, CI 37231463662, preview 37231545703 mit 111 Dateien; State verweist auf visuelle Abnahme offen. Kein aktuelles main- oder Live-Preview-Recheck.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DESIGN-05",
+      "title": "Startscreen Hero Scene + First-Visit-Animation",
+      "category": "needs_verification",
+      "reason": "Current main still describes concept/art direction as open. A separate local design branch contains a static hero preview, but it is not evidence of integration or user acceptance on main; do not import that checkout’s changes into this report as a completed task.",
+      "evidence": "Current main TODO GC-DESIGN-05: concept/art direction open; suggests Canva concept then separate web implementation and DE/EN accessibility. Local design branch is dirty and unrelated to permitted report scope.",
+      "package": "design-and-crew"
+    },
+    {
+      "id": "GC-DIAGNOSTICS-01",
+      "title": "Fehler nachvollziehbar sammeln und Admin-Logs besser filtern",
+      "category": "needs_verification",
+      "reason": "Vorhandene Logs/Tools und erforderliche Filter sind nicht inventarisiert; kein Befund zur tatsächlichen Lücke.",
+      "evidence": "TODO.md: Stand prüfen; keine aktuelle Code-/Admin-Inspektion in diesem Aufgabenumfang.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-BUGOPS-01",
+      "title": "Fehlerberichte skalierbar bündeln, priorisieren, gezielt melden und risikoarme Fälle bis Staging automatisiert beheben",
+      "category": "acceptance_pending",
+      "reason": "Hosting und Functions werden für Integrations-SHA bb91ce3 als deployed berichtet; Admin-/Browserablauf ist explizit nicht abgenommen und Auto-Reparatur bleibt gesperrt.",
+      "evidence": "Fresh current main GRADECREW_STATE release_train bb91ce3590d773472ece60c4dd881da729bd32c1: CI 37238513381; hosting 37238585607 receipt 11316079411; functions 37238585657 receipt 11316084527. Manual admin/browser acceptance not performed; automated repair remains disabled.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-CLASSROOM-01",
+      "title": "Schüler:innen-/Klassenverwaltung mit pseudonymen Codes und Klassenfreigaben",
+      "category": "later",
+      "reason": "Bewusst auf statischen Firebase-freien Mock begrenzt; noch branch_only ohne Produktcode. Keine Backend-/Staging-Pflicht erfinden.",
+      "evidence": "TODO.md und GRADECREW_STATE.json: feature/classroom-student-management-v1 @ bb91ce3, CI/deploy nicht erfolgt; Masterplan und Übergabe referenziert.",
+      "package": "classroom"
+    },
+    {
+      "id": "GC-AI-01",
+      "title": "KI-Qualitätsprüfung, Variantenfehler und fehlerhafte Listeneinträge prüfen",
+      "category": "needs_verification",
+      "reason": "Alte Nutzerberichte benötigen aktuelle reproduzierbare Beispiele und Abgleich mit vorhandenen Fixes.",
+      "evidence": "TODO.md: Stand prüfen, frühere Nutzerberichte; kein reproduzierbarer Fall/aktueller Testbeleg im Katalog.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-CREW-AI-01",
+      "title": "Coco, Remy, Emmi und Wilma als gemeinsame KI-Assistenten mit Spracheingabe und API-sparenden Standardantworten",
+      "category": "acceptance_pending",
+      "reason": "Historischer gemeinsamer Staging-Batch belegt, doch aktuelle Geräte-/Nutzerabnahme ist nicht dokumentiert.",
+      "evidence": "TODO.md nennt batch 18e30d0d und Runs 36991979723/36991979742; State release_train bb91ce3 mit Crew-assistant staging_deployed, praktische Prüfung offen.",
+      "package": "staging-product-acceptance"
+    },
+    {
+      "id": "GC-CREW-AI-02",
+      "title": "Emmi direkt im Editor: ganzen Test per Freitext/Sprachwunsch überarbeiten",
+      "category": "acceptance_pending",
+      "reason": "Emmi-Gesamtüberarbeitung ist im historischen Staging-Batch enthalten; realer Editor-Nutzertest fehlt.",
+      "evidence": "TODO.md nennt batch 18e30d0d und Runs 36991979723/36991979742; State release_train bb91ce3, Emmi practical test offen.",
+      "package": "staging-product-acceptance"
+    },
+    {
+      "id": "GC-AUDIO-01",
+      "title": "KI-Höraufgaben: 0–5 Audio-Aufgaben, privater Hörtext, Editor- und Schülerplayer",
+      "category": "acceptance_pending",
+      "reason": "Audio V2 ist mit gemeinsamem CI, Hosting und AI/Assessment-Functions-Deploy belegt; praktischer Hör-/Editor-/Schülerablauf fehlt.",
+      "evidence": "TODO.md / workstreams/audio-masterpiece-v2.md: integration efdc1a0, CI 37230351466, Hosting 37230439196, Functions 37230439199; user acceptance offen.",
+      "package": "staging-product-acceptance"
+    },
+    {
+      "id": "GC-AUDIO-02",
+      "title": "Audio-Lösungen/Erklärungen: 0–5, Remy-Steuerung, private TTS-Assets, Freigabe erst nach Testende",
+      "category": "acceptance_pending",
+      "reason": "Private Lösungsaudio-Freigabe ist technisch im Audio-V2-Nachweis enthalten; kontrollierter Test nach Testende fehlt.",
+      "evidence": "workstreams/audio-masterpiece-v2.md: efdc1a0, CI 37230351466, Hosting 37230439196, Functions 37230439199; User-Test nicht erfolgt.",
+      "package": "staging-product-acceptance"
+    },
+    {
+      "id": "GC-IOS-01",
+      "title": "Installierten TestFlight-Build und verwendete Web-URL bestätigen",
+      "category": "acceptance_pending",
+      "reason": "TestFlight-Upload ist kein installierter iPad-Test; Version und geladene Web-SHA müssen gemeinsam belegt werden.",
+      "evidence": "Catalog snapshot: TestFlight 0.1.6 / run 37024529022; lokales TODO.md widerspricht mit 0.1.5 / run 37015111963. Klare Versionskollision erfordert aktuellen Apple/App-Branch-Nachweis.",
+      "package": "ios-acceptance"
+    },
+    {
+      "id": "GC-IOS-02",
+      "title": "Hybride Lehrer-App 0.2 härten und App-Store-tauglich weiterentwickeln",
+      "category": "needs_verification",
+      "reason": "Versionsstand im Katalog (0.1.6/run 37024529022) und lokaler TODO-Eintrag (0.1.5/run 37015111963) widersprechen einander; aktueller Installationsstand fehlt.",
+      "evidence": "Current main TODO reports TestFlight upload 0.1.5 / run 37015111963 / app commit 8bdebaf1; current main GRADECREW_STATE ios-design reports TestFlight 0.1.6 / run 37024529022 / observed head 899bc363…. Both say installed build/web SHA not verified; reconcile against actual TestFlight/App Store Connect before acceptance.",
+      "package": "ios-acceptance"
+    },
+    {
+      "id": "GC-AUTOMATION-01",
+      "title": "Codex-Worker aktivieren und einmal vollständig testen",
+      "category": "completed_with_evidence",
+      "reason": "Die alte Zeile „separater API-Key und Aktivierungsvariable fehlen“ ist durch den späteren expliziten TODO-Nachtrag überholt: der begrenzte Web-Pilot wurde aufgenommen und als E2E erfolgreich mit echten CI-, Review-, Integrations- und Staging-Receipts dokumentiert. Der spätere Homepage-Folgeauftrag ist ein eigener gestoppter Vorgang und nicht automatisch ein Fehlschlag dieses abgeschlossenen Pilot-Auftrags.",
+      "evidence": "Aktueller main TODO GC-AUTOMATION-01/07/12-Nachtrag und GC-AUTOMATION-13/14: echter Run 37218095594; CI 37218270539; Hosting 37219916184 und Functions 37219916242 für SHA 2436a432…; 3 unabhängige Reviews; 2/3 Bauversuche und $1.70/$2.55 reserviert. GRADECREW_STATE automation.agent_dispatch=verified, stage_guardian=activated_pilot_staging_verified; neuer Homepage-Run 37220142576 separat stopped_provider_result_unknown, $2.40 Reservierung erhalten, kein Retry.",
+      "package": "automation-and-cost"
+    },
+    {
+      "id": "GC-AUTOMATION-02",
+      "title": "Automatische staging-only AI-Functions-WIF-Aktivierung abschließen",
+      "category": "completed_with_evidence",
+      "reason": "WIF-Einrichtung und echter staging-only functions:ai-E2E-Deploy sind mit Receipt belegt; historische Aufgabe technisch abgeschlossen.",
+      "evidence": "Aktueller main GRADECREW_STATE functions_automation_evidence: workflow .github/workflows/staging-functions.yml; WIF setup completed; automatic run 37238585657; upstream CI 37238513381; deployed commit bb91ce3590d773472ece60c4dd881da729bd32c1; Receipt Artifact 11316084527; functions:ai scope, kein Production/Hosting/Rules scope. Historischer run 36943129026 ist überholt.",
+      "package": "automation-and-cost"
+    },
+    {
+      "id": "GC-GAMES-01",
+      "title": "Escape-Room-MVP mit Lehrerübersicht konkretisieren",
+      "category": "staging_blocker",
+      "reason": "Branch-MVP/CI ist berichtet, aber aktueller Live-Status ist ausdrücklich branch_only: neuester Lab-Deploy run 37021633218 scheiterte am Zugriff auf Secret-Metadaten und übersprang Hosting. Erst diesen separaten Game-Preview-Blocker lösen, dann Gerätetest; kein allgemeiner GradeCrew-Releaseblocker.",
+      "evidence": "Aktueller main GRADECREW_STATE workstream games-escape: feature/escape-room-mvp-v1 @ a7ffc382…, latest_run_37021633218_failed_secret_metadata_access_hosting_skipped; älterer Preview c904a674… war nur isolated_preview_only.",
+      "package": "games"
+    },
+    {
+      "id": "GC-TELEMETRY-01",
+      "title": "Collector und Datenvertrag",
+      "category": "staging_blocker",
+      "reason": "Collector liegt nur isoliert vor; CI/Emulator, Cloud-Inventar und Retention-Freigabe müssen vor Aktivierung erfolgen.",
+      "evidence": "TODO.md: feature/telemetry-implementation @ 4e4f0ba, Aktivierung/CI/Deploy offen; GRADECREW_STATE.json generische Telemetrie separat von bereits deployed Remy-Metriken.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-TELEMETRY-02",
+      "title": "Beitritt/Abgabe als ersten Ablauf instrumentieren",
+      "category": "staging_blocker",
+      "reason": "Join/Submit-Messung ist nur teilweise implementiert; zusätzliche Serverereignisse und erwartete/unbekannte Teilnehmerfälle bleiben ungeklärt.",
+      "evidence": "TODO.md: teilweise implementiert, nicht aktiviert; workstreams/telemetry-implementation.md. Kein Aktivierungs-/Deploybeleg.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-TELEMETRY-03",
+      "title": "Release-/Rundenübersicht im Adminbereich",
+      "category": "staging_blocker",
+      "reason": "Admin-Ansicht ist nicht deployed; sichere CI/Emulator-Prüfung und lesbare Oberfläche stehen aus.",
+      "evidence": "TODO.md: technische Staging-Ansicht implementiert, nicht deployed; workstream telemetry-implementation.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-TELEMETRY-POSTHOG-01",
+      "title": "PostHog EU als datensparsame Analyseprojektion hinter bestehende Crew-Telemetrie hängen",
+      "category": "acceptance_pending",
+      "reason": "Staging deploy has historical evidence, but PostHog ingestion is untested. Current Functions E2E on the newer release train only proves deployed GradeCrew functions and does not prove a real PostHog event.",
+      "evidence": "TODO.md and GRADECREW_STATE.json: PR #99/#100, integrationsha 461da164…, CI 37235599673/37235725698, Functions 37235811020; real event not triggered.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-INTELLIGENCE-01",
+      "title": "Gemeinsame Sprach-/Locale-Verträge und messbare KI-Freigabe",
+      "category": "needs_verification",
+      "reason": "PR #25/CI belegt isolierten Vertrag, nicht Integration, Runtime oder Freigabe. Vor Reaktivierung gegen aktuellen main und Fachset abgleichen.",
+      "evidence": "TODO.md/catalog: PR #25, tested code 5af11ca…, CI 36948918111; State quality-routing-contract-v1 ci_green, not integrated/deployed.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-VOICE-02",
+      "title": "Vorhandenen Crew-Diktierpfad härten",
+      "category": "needs_verification",
+      "reason": "Vertrag ist vorbereitet, aber tatsächliche Crew-Anbindung, Geräteverhalten und Abbruch/Negation/Lärmtests fehlen.",
+      "evidence": "TODO.md: integration/device test open; no current runtime/test receipt recorded.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-AI-EVAL-02",
+      "title": "Fachlich geprüftes Pilot-Referenzset pro Job/Sprache",
+      "category": "staging_blocker",
+      "reason": "Fachlich geprüfte Referenzen und Qualitätsgrenzen sind Voraussetzung, bevor automatische Modellfreigabe belastbar aktiviert wird.",
+      "evidence": "TODO.md: offen; ai-orchestration-v1 state verlangt reales qualifiziertes Referenzset; kein Evaluationsergebnis vorgelegt.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-AI-ROUTING-02",
+      "title": "Automatische Modellwahl nur nach belegter Qualität",
+      "category": "staging_blocker",
+      "reason": "Implementierung/CI vorhanden, aber Runtime ist ausdrücklich inaktiv bis echte Qualitätsdaten und Signierbetrieb vorliegen.",
+      "evidence": "PR #26; CI 36975168993; tested code c5dcc4dc…; Runtime not enabled in GRADECREW_STATE.json / workstreams/ai-orchestration-v1.md.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-I18N-02",
+      "title": "Vorhandenen i18n-Core fachlich und visuell absichern",
+      "category": "needs_verification",
+      "reason": "Migration/Abdeckung des bestehenden i18n-Core ist offen; keine zusätzliche Sprache freigegeben. Need current DE/EN source/test comparison.",
+      "evidence": "TODO.md: context/capability contract prepared, migration open; relevant workstream i18n-core-v1 and i18n coverage refs not verified against main.",
+      "package": "i18n"
+    },
+    {
+      "id": "GC-AI-OBS-02",
+      "title": "Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung",
+      "category": "staging_blocker",
+      "reason": "Isoliertes Ledger/Widget hat CI, aber Admin-Proxy, Mount und Integration in bestehende Functions fehlen laut Register; not ready for enabled runtime.",
+      "evidence": "PR #26, CI 36975168993; TODO.md and GRADECREW_STATE.json ai-orchestration-v1 state. Remy metrics are a separate deployed stream.",
+      "package": "ai-quality"
+    },
+    {
+      "id": "GC-HANDOFF-02",
+      "title": "Übergabe-CI und veraltete Aufgabenstände reparieren",
+      "category": "needs_verification",
+      "reason": "Pflichtfeld wurde laut TODO ergänzt, aber der danach nötige CI-Neulauf ist nicht nachgewiesen.",
+      "evidence": "TODO.md: prior run 36994507849 failed KeyError; post-fix validation absent in local evidence.",
+      "package": "project-governance"
+    },
+    {
+      "id": "GC-GAMES-COST-01",
+      "title": "Doppelte Tutoraufrufe, veralteten Cache und Fehlerbehandlung beheben",
+      "category": "needs_verification",
+      "reason": "Historische PR #27/CI beweisen noch keinen Abschluss. Aktueller Development Status meldet ausdrücklich Warnung: PR #27 ist trotz integriertem Code weiterhin offen; zudem ist Cost-Guard-Branch nicht als deployed belegt. Erst PR-/SHA-Zuordnung bereinigen und gegen Escape v0.6 reconciliieren, ohne parallele Neuimplementierung.",
+      "evidence": "Current main TODO says PR #27 ci_green/not deployed; GRADECREW_STATE observed head a521ec90…; DevelopmentStatus run 37416892343 success but specifically flags PR #27 open despite integration. Exact current PR head/state not independently queried.",
+      "package": "games"
+    },
+    {
+      "id": "GC-AI-GATEWAY-03",
+      "title": "Claude/OpenAI-Gateway automatisch auf Staging ausrollen",
+      "category": "staging_blocker",
+      "reason": "Catalog/state disagree: catalog calls it staging_deployed based on run 36999999589, while detailed evidence names later run 37010376603 as overall deploy failure before image/traffic change. Treat newer failure as blocker until Cloud Run traffic and current receipt are reconciled.",
+      "evidence": "Fresh current main TODO says earlier successful run 36999999589 on SHA 46b21ff4…. The detailed current GRADECREW_STATE row still identifies newer run 37010376603 as failed preflight before image/traffic change and asks to inspect Cloud Run traffic metadata. Preserve this contradiction; no new code/redeploy inferred.",
+      "package": "automation-and-cost"
+    },
+    {
+      "id": "GC-ARCH-AUDIT-01",
+      "title": "Gesamtaufbau auf Integrationslücken prüfen",
+      "category": "needs_verification",
+      "reason": "A prior architecture audit exists, but its named areas must be refreshed against current integration; no current-main/live audit done.",
+      "evidence": "TODO.md says in progress; workstreams/system-review-2026-10-02.md. Latest main unavailable; avoid repeating full code audit.",
+      "package": "project-governance"
+    },
+    {
+      "id": "GC-ADMIN-SCALE-01",
+      "title": "Admin-Bestandsabfragen begrenzen",
+      "category": "needs_verification",
+      "reason": "Earlier audit alleges unbounded admin queries; verify exact current call sites and whether later pagination/aggregates superseded it before creating implementation work.",
+      "evidence": "TODO.md: prior audit finding, implementation open; no current code evidence in this bounded task.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-REFERENCE-01",
+      "title": "Eingefrorene Referenz-Seite mit isolierten Testdaten",
+      "category": "later",
+      "reason": "Explicit proposal pending restore design; no evidence it is a release requirement. Avoid creating another site as a backup substitute.",
+      "evidence": "TODO.md P2 proposal; resolve GC-RESTORE-01 first.",
+      "package": "later-product"
+    },
+    {
+      "id": "GC-GAMES-02",
+      "title": "Zweite Escape-Welt „Das verschwundene Prüfungsblatt“",
+      "category": "later",
+      "reason": "Idea is explicitly deferred until first digital Escape game and shared core are proven.",
+      "evidence": "TODO.md P2 idea confirmed; first game acceptance still pending.",
+      "package": "later-product"
+    },
+    {
+      "id": "GC-GAMES-03",
+      "title": "Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer",
+      "category": "later",
+      "reason": "QR/team/multiplayer enhancements are explicitly postponed until standard digital gameplay works.",
+      "evidence": "TODO.md P2 later; no staging acceptance prerequisite.",
+      "package": "later-product"
+    },
+    {
+      "id": "GC-ANALYTICS-01",
+      "title": "Nutzungs- und Spielstatistiken",
+      "category": "later",
+      "reason": "Broader game/task aggregates are deliberately downstream of the secure Collector/Join/Submit pilot; do not broaden telemetry scope now.",
+      "evidence": "TODO.md P2; workstreams/telemetry-implementation.md states isolated implementation and activation gates.",
+      "package": "observability"
+    },
+    {
+      "id": "GC-GAMES-INTEGRITY-01",
+      "title": "Fehlerjagd-Highscores serverseitig validieren und atomar abschließen",
+      "category": "needs_verification",
+      "reason": "An audit issue is recorded, but no current branch/commit-specific exploit reproduction or fix status is attached; verify against present Escape implementation before scheduling.",
+      "evidence": "TODO.md links docs/REPOSITORY_AUDIT_2026-10-04.md and labels as audit finding; current source/PR status not checked due bounded scope.",
+      "package": "games"
+    },
+    {
+      "id": "GC-HANDOFF-03",
+      "title": "Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen",
+      "category": "needs_verification",
+      "reason": "Recovery guidance exists, but integration and fresh CI are explicitly unverified; documentation presence alone does not prove current main has it.",
+      "evidence": "TODO.md: rules/template added; handoff and CI fresh check requested; docs/CHAT_RECOVERY.md local content read, GitHub main inaccessible.",
+      "package": "project-governance"
+    }
+  ]
+}
