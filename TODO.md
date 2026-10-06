@@ -87,7 +87,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
-| GC-BRAIN-01 | GradeCrew Central: Chat-Verbindung und Fachchat-Struktur | 06.10.: Karte→Main-Chat→erneut eingeblendete Antwort praktisch bestätigt, einschließlich Nutzer-Screenshot. Videovergleich und nächste vollständige Auftragskette dokumentiert | branch_only. Nächster Pilot: ein begrenzter Auftrag mit Fachchat, Review und belegtem Statuswechsel. Native Plugin-Anbindung, Live-Aktualisierung und Mac-off-Betrieb offen. [Entwurf](prototypes/gradecrew-control-local/CENTRAL-STRATEGY.md), [Übergabe](workstreams/second-brain-assessment-20261005.md) |
+| GC-BRAIN-01 | GradeCrew Central: Chat-Verbindung und Fachchat-Struktur | 06.10.: begrenzter Auftrag an vorhandenen Fachchat gesendet, dort bearbeitet, Ergebnis automatisch abgeholt und Karte aktualisiert. Wiederholbare Folgeaufträge mit neuer ID, vier gezielte Prüfungen bestanden | branch_only. Nächster konkreter Auftrag aus aktualisierter Karte; native Plugin-/lokaleApp-Autostart-/Mac-off-Verbindung weiterhin offen. [Pilot](prototypes/gradecrew-control-local/DISPATCH-PILOT.md), [Übergabe](workstreams/second-brain-assessment-20261005.md) |
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |
