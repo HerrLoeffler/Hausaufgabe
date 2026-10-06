@@ -1,7 +1,7 @@
-// German is the source and only active UI locale in the first migration stage.
-// Keep semantic keys for system-level messages that are used before/during app bootstrap.
-// Existing UI copy can continue to use its German source text until a second locale is enabled.
-export const DE_DE_MESSAGES_VERSION = "de-DE@1";
+// German remains the source UI locale. Semantic keys are used for
+// bootstrap-critical and dynamically composed UI where source-text matching
+// would be brittle across rerenders or cache transitions.
+export const DE_DE_MESSAGES_VERSION = "de-DE@2";
 
 export const deDEMessages = Object.freeze({
   "system.loading": "GradeCrew wird geladen …",
@@ -12,4 +12,8 @@ export const deDEMessages = Object.freeze({
   "common.retry": "Erneut versuchen",
   "common.cancel": "Abbrechen",
   "common.save": "Speichern",
+  "nav.features": "Funktionen",
+  "nav.crew": "Die Crew",
+  "nav.teachers": "Für Lehrkräfte",
+  "nav.help": "Hilfe",
 });

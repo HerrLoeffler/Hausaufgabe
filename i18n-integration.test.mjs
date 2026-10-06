@@ -29,8 +29,8 @@ const app = read("./app.js");
 const workspaceCss = read("./workspace.css");
 
 test("teacher app installs shared i18n before importing the core app", () => {
-  const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=2"');
-  const appIndex = startup.indexOf('await import("./app.js?v=2.3.1-gc28")');
+  const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=3"');
+  const appIndex = startup.indexOf('await import("./app.js?v=2.3.1-gc28-i18n4")');
   assert.ok(i18nIndex >= 0, "startup must import the shared i18n bootstrap");
   assert.ok(appIndex > i18nIndex, "i18n must be ready before app.js starts");
 });
@@ -60,13 +60,27 @@ test("verified staging build ships both locale catalogs and every i18n runtime d
 test("German and English are enabled browser UI locales", () => {
   assert.match(core, /SUPPORTED_UI_LOCALES\s*=\s*Object\.freeze\(\[DEFAULT_LOCALE,\s*"en-GB"\]\)/);
   assert.match(browserRuntime, /SUPPORTED_BROWSER_UI_LOCALES\s*=\s*Object\.freeze\(\[SOURCE_LOCALE,\s*ENGLISH_LOCALE\]\)/);
-  assert.match(germanCatalog, /DE_DE_MESSAGES_VERSION\s*=\s*"de-DE@1"/);
-  assert.match(englishCatalog, /EN_GB_MESSAGES_VERSION\s*=\s*"en-GB@1"/);
+  assert.match(germanCatalog, /DE_DE_MESSAGES_VERSION\s*=\s*"de-DE@2"/);
+  assert.match(englishCatalog, /EN_GB_MESSAGES_VERSION\s*=\s*"en-GB@2"/);
   assert.match(bootstrap, /registerCatalog\("en-GB", enGBMessages\)/);
   assert.match(bootstrap, /registerCatalog\("en-GB", enGBCrewMessages\)/);
   assert.match(bootstrap, /registerSourcePatterns\("en-GB", enGBSourcePatterns\)/);
   assert.match(bootstrap, /registerSourcePatterns\("en-GB", enGBCrewSourcePatterns\)/);
   assert.match(englishCrewExtension, /Ask Coco/);
+});
+
+test("public navigation uses semantic keys so rerenders do not depend on German source matching", () => {
+  for (const [key, fallback] of [
+    ["nav.features", "Funktionen"],
+    ["nav.crew", "Die Crew"],
+    ["nav.teachers", "Für Lehrkräfte"],
+    ["nav.help", "Hilfe"],
+  ]) {
+    assert.ok(entryFlow.includes(`data-i18n-key="${key}"`), "missing semantic nav key: " + key);
+    assert.ok(entryFlow.includes(`data-i18n-fallback="${fallback}"`), "missing German fallback: " + fallback);
+    assert.ok(germanCatalog.includes(`"${key}"`), "German semantic nav label missing: " + key);
+    assert.ok(englishCatalog.includes(`"${key}"`), "English semantic nav label missing: " + key);
+  }
 });
 
 test("public startscreen copy is covered by the English UI catalog without translating assessment content", () => {
@@ -189,9 +203,13 @@ test("assessment locale survives normal saves and cannot silently change during 
 });
 
 test("bilingual browser module graph is cache-busted consistently", () => {
-  assert.match(startup, /bootstrap\.mjs\?v=2/);
-  assert.match(startup, /assessment-locale-ui\.mjs\?v=2/);
-  assert.match(secureHtml, /bootstrap\.mjs\?v=2/);
+  assert.match(startup, /bootstrap\.mjs\?v=3/);
+  assert.match(startup, /gradecrew-entry-flow\.js\?v=5/);
+  assert.match(startup, /assessment-locale-ui\.mjs\?v=3/);
+  assert.match(secureHtml, /bootstrap\.mjs\?v=3/);
+  assert.match(bootstrap, /browser-runtime\.mjs\?v=3/);
+  assert.match(bootstrap, /messages-de-DE\.mjs\?v=3/);
+  assert.match(bootstrap, /messages-en-GB\.mjs\?v=3/);
   assert.match(visualEnhancements, /remy-ai-help\.js\?v=4/);
   assert.match(visualEnhancements, /crew-assistant-ui\.js\?v=4/);
   assert.match(remyHelp, /crew-assistant-core\.js\?v=4/);

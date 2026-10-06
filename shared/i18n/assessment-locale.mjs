@@ -11,6 +11,16 @@ export function normalizeAssessmentLocale(value, fallback = DEFAULT_CONTENT_LOCA
   return SUPPORTED_CONTENT_LOCALES.includes(fallback) ? fallback : DEFAULT_CONTENT_LOCALE;
 }
 
+// These labels belong to the fixed assessment content, never to the UI catalog.
+const CONTENT_LABELS = Object.freeze({
+  "de-DE": Object.freeze({ trueLabel: "Richtig", falseLabel: "Falsch", questionImage: "Abbildung zur Aufgabe", answerImage: "Antwortabbildung", answer: "Antwort", imageChoice: index => `Bild ${String.fromCharCode(65 + index)}` }),
+  "en-GB": Object.freeze({ trueLabel: "True", falseLabel: "False", questionImage: "Image for the question", answerImage: "Answer image", answer: "Answer", imageChoice: index => `Image ${String.fromCharCode(65 + index)}` }),
+});
+
+export function assessmentContentLabels(contentLocale) {
+  return CONTENT_LABELS[normalizeAssessmentLocale(contentLocale)];
+}
+
 export function contentLocaleMarker(locale = DEFAULT_CONTENT_LOCALE) {
   return `${CONTENT_LOCALE_MARKER_PREFIX}${normalizeAssessmentLocale(locale)}]]`;
 }

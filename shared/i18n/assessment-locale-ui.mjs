@@ -5,7 +5,7 @@ import {
   DEFAULT_CONTENT_LOCALE,
   SUPPORTED_CONTENT_LOCALES,
   normalizeAssessmentLocale,
-} from "./assessment-locale.mjs?v=2";
+} from "./assessment-locale.mjs?v=3";
 
 let pendingContentLocale = DEFAULT_CONTENT_LOCALE;
 let currentQuizCode = "";

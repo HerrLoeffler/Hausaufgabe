@@ -108,7 +108,7 @@ function safeImage(question) {
   if (!src) return null;
   return {
     src,
-    alt: clampString(question.imageAlt || "Abbildung zur Aufgabe", 300)
+    alt: clampString(question.imageAlt, 300)
   };
 }
 
@@ -144,10 +144,12 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
       text: clampString(option?.text, 1000),
       image: option?.imageDataUrl || option?.imageUrl ? {
         src: clampString(option.imageDataUrl || option.imageUrl, 750000),
-        alt: clampString(option.imageAlt || "Antwortabbildung", 300)
+        alt: clampString(option.imageAlt, 300)
       } : null
     }));
     q.options = shuffleAnswers ? deterministicOrder(options, secret, `${question.id}:options`) : options;
+    q.imageChoicesOnly = options.length >= 2 && options.every(option => option.image?.src) &&
+      (question.imageChoicesOnly === true || (question.options || []).every(option => /^Abbildung:\s*/i.test(option.imageAlt || "")));
   } else if (type === "number") {
     q.unit = clampString(question.unit, 60);
   } else if (type === "gapfill") {
@@ -305,7 +307,18 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
   const naturalPaper = entries.map(entry => entry.paper);
   const paper = shuffleQuestions ? deterministicOrder(naturalPaper, secret, "questions") : naturalPaper;
   const gradingKey = entries.map(entry => entry.key);
-  const sourceFingerprint = sha256(JSON.stringify({ paper, gradingKey }));
+  // Existing attempts compare this fingerprint on resume/poll. Keep their v1
+  // presentation shape for hashing while returning locale-neutral image metadata.
+  const fingerprintPaper = paper.map(question => {
+    const { imageChoicesOnly, ...legacy } = question;
+    if (legacy.image) legacy.image = { ...legacy.image, alt: legacy.image.alt || "Abbildung zur Aufgabe" };
+    if (legacy.options) legacy.options = legacy.options.map(option => ({
+      ...option,
+      image: option.image ? { ...option.image, alt: option.image.alt || "Antwortabbildung" } : null
+    }));
+    return legacy;
+  });
+  const sourceFingerprint = sha256(JSON.stringify({ paper: fingerprintPaper, gradingKey }));
   return {
     paper,
     gradingKey,
@@ -445,6 +458,7 @@ function sanitizeAnswersForStorage(gradingKey, answers) {
 function publicQuizMetadata(quiz, quizId) {
   return {
     id: quizId,
+    contentLocale: /^en(?:-|$)/i.test(String(quiz?.contentLocale || "").trim()) ? "en-GB" : "de-DE",
     title: clampString(quiz?.title, 200),
     subject: clampString(quiz?.subject, 120),
     grade: clampString(quiz?.grade, 80),

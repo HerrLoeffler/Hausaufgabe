@@ -21,7 +21,7 @@ registerSourcePatterns("en-GB", enGBSourcePatterns);
 
 test("German and English are enabled UI locales", () => {
   assert.equal(SOURCE_LOCALE, "de-DE");
-  assert.equal(EN_GB_MESSAGES_VERSION, "en-GB@1");
+  assert.equal(EN_GB_MESSAGES_VERSION, "en-GB@2");
   assert.deepEqual(supportedUiLocales(), ["de-DE", "en-GB"]);
   assert.equal(isSupportedUiLocale("de-DE"), true);
   assert.equal(isSupportedUiLocale("en-GB"), true);

@@ -183,10 +183,10 @@ function installPublicHeader() {
     nav.className = "gcPublicNav";
     nav.setAttribute("aria-label", "GradeCrew Navigation");
     nav.innerHTML = `
-      <button type="button" data-entry-nav="features">Funktionen</button>
-      <button type="button" data-entry-nav="crew">Die Crew</button>
-      <button type="button" data-entry-nav="teacher">Für Lehrkräfte</button>
-      <button type="button" data-entry-nav="help" class="gcPublicNavHelp"><span aria-hidden="true">?</span> Hilfe</button>
+      <button type="button" data-entry-nav="features"><span data-i18n-key="nav.features" data-i18n-fallback="Funktionen">Funktionen</span></button>
+      <button type="button" data-entry-nav="crew"><span data-i18n-key="nav.crew" data-i18n-fallback="Die Crew">Die Crew</span></button>
+      <button type="button" data-entry-nav="teacher"><span data-i18n-key="nav.teachers" data-i18n-fallback="Für Lehrkräfte">Für Lehrkräfte</span></button>
+      <button type="button" data-entry-nav="help" class="gcPublicNavHelp"><span aria-hidden="true">?</span> <span data-i18n-key="nav.help" data-i18n-fallback="Hilfe">Hilfe</span></button>
     `;
     topbar.insertBefore(nav, $("userBar") || null);
 

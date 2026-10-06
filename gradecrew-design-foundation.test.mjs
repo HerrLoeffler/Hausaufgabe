@@ -39,7 +39,7 @@ test('teacher startup loads and activates public entry before app handlers', () 
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
   const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=4');
   const startscreenPolishIndex = startup.indexOf('./gradecrew-auth-startscreen-polish.css?v=1');
-  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=4');
+  const entryIndex = startup.indexOf('./gradecrew-entry-flow.js?v=5');
   const installIndex = startup.indexOf('installGradeCrewEntryFlow();');
   const appIndex = startup.indexOf('./app.js?v=2.3.1-gc28');
   assert.ok(tokensIndex >= 0, 'shared token stylesheet must be installed');
