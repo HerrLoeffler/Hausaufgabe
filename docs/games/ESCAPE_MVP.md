@@ -35,3 +35,8 @@ Nicht automatisch bewertbare Aufgabentypen dürfen den Spielfortschritt nicht un
 Vor Codeänderungen den tatsächlichen Games-Branch und seine Regeln lesen. Bestehende Spiele, Lobby und Lehrersteuerung weiterverwenden, soweit passend. Dieser Auftrag berechtigt nicht dazu, den Website-Branch durch einen älteren Spielebranch zu ersetzen.
 
 Aufgaben: GC-GAMES-01 bis GC-GAMES-03 in TODO.md.
+
+## Künftige hochwertige 3D-Spiele
+
+Für neue 3D-Abenteuer gelten der [Great-Games-Produktionsworkflow](GREAT_GAMES_WORKFLOW.md) mit [Enginewahl je Spiel](ENGINE_SELECTION.md); bei gewähltem Unreal zusätzlich die [Unreal/Blender-Pipeline](UNREAL_BLENDER_PIPELINE.md). Die Lern- und Lehreranforderungen dieses Dokuments bleiben erhalten. Bestehende Escape-Prototypen werden durch den Workflow nicht automatisch ersetzt oder migriert.
+
