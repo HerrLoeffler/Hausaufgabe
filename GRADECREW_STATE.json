@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-06T14:15:02.228Z",
+  "observed_at": "2026-10-06T14:51:01.084Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -17,10 +17,10 @@
     "production_requires_explicit_user_approval": true
   },
   "release_train": {
-    "id": "staging-batch-2026-10-06-hero",
+    "id": "staging-batch-2026-10-06-hero-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
+    "observed_integration_head": "77d9ee45fa0e3b8801e59fe7f2f5814557ec8849",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -33,7 +33,8 @@
       "i18n-content-labels-20261005",
       "web-staging-closeout-20261006",
       "security-web-integration-20261006",
-      "hero-web-integration-20261006"
+      "hero-web-integration-20261006",
+      "hero-acceptance-repair-20261006"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -50,21 +51,21 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37467220757_commit_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
-      "mobile_tutorial": "success_run_37467220869_commit_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
-      "hosting_preview": "success_run_37467324361_commit_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
-      "staging_functions": "success_run_37467324128_ai_and_assessment_commit_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
+      "combined_ci": "pending_commit_77d9ee45fa0e3b8801e59fe7f2f5814557ec8849",
+      "mobile_tutorial": "pending_new_candidate",
+      "hosting_preview": "pending_new_candidate",
+      "staging_functions": "pending_new_candidate",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "not_performed_for_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
-      "user_acceptance": "failed_user_report_startup_login_and_tutorial",
+      "desktop_ipad_iphone_test": "not_performed_for_new_candidate",
+      "user_acceptance": "pending_repair; previous_f97841b_failed",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37467324128_commit_f97841b82291d879cd9f4a9bccce0ee2c2cf3641",
+      "staging_assessment_functions": "pending_new_candidate",
       "audio_v2_user_acceptance": "not_tested"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": null,
-    "important": "Hero PR149 deployed asf97841b after exact feature/combinedCI, mobile tests and independent review; Hosting manifest/file hashes and separate AI/Assessment receipts verified. No Rules, Production or device acceptance. User acceptance failed: startup incomplete notice, login inaccessible, wrong tutorial entry and public layout regressions. Deployment evidence remains valid; feature is not accepted.",
-    "next_action": "GC-DESIGN-05 author repairs bootstrap/login first, then approved compact layout and original Coco tour; Main resolves canonical staging URL. Browser verification unavailable; no bypass."
+    "important": "PR151 fixes the reproduced bootstrap SyntaxError and registration visibility; exact feature CI37480869311 and independent Sol review passed. Merged77d9ee45, combined CI/deploy pending. Original accountless Coco tour and ordinary phone no-scroll remain in active GC-DESIGN-05B; no browser/device acceptance. PR150 canonical Hosting controller merged6551091a after exact checks and independent review; no promotion request yet.",
+    "next_action": "Verify exact77d9ee45 combined CI, new version-bound Hosting receipt and separate Functions receipts; then explicit canonical Staging promotion. Collect existing GC-DESIGN-05B author, no duplicate writer."
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -662,6 +663,30 @@
       "assessment_receipt": 11416070034,
       "user_test": "failed_user_report",
       "acceptance_report": "workstreams/gc-design-05-acceptance-20261006.md"
+    },
+    {
+      "id": "hero-acceptance-repair-20261006",
+      "task_id": "GC-DESIGN-05",
+      "branch": "fix/gc-design-05-staging-acceptance-20261006",
+      "observed_head": "4ab1b798cd5dd5bc9fc340614e969ce0113a31e6",
+      "stage": "integrated",
+      "pr": 151,
+      "ci": 37480869311,
+      "merge_sha": "77d9ee45fa0e3b8801e59fe7f2f5814557ec8849",
+      "integrated_into": "feature/gradecrew-app-integration",
+      "independent_review": "Sol immutable bootstrap and final delta; 27 targeted tests incl actual stubbed login submit passed, no remaining blocking regression. Main verified all11 remote/local blob identities.",
+      "repair_attempt": 2,
+      "handoff": "workstreams/gc-design-05-acceptance-20261006.md",
+      "next_action": "Verify exact77d9ee45 combined CI, new version-bound Hosting receipt and separate Functions receipts; then explicit canonical Staging promotion. Collect existing GC-DESIGN-05B author, no duplicate writer.",
+      "user_test": "not_performed"
+    },
+    {
+      "id": "hero-guest-tour-20261006",
+      "task_id": "GC-DESIGN-05B",
+      "branch": "feature/gc-design-05b-guest-tour-20261006",
+      "stage": "branch_only",
+      "handoff": "workstreams/gc-design-05b-guest-tour-20261006.md",
+      "next_action": "Existing author Sol implements local guest data adapter and normal phone viewport layout; keep real tour/renderers, no production API/auth/server writes."
     }
   ],
   "deployments": [
