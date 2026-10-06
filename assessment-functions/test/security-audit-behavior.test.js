@@ -12,24 +12,43 @@ function fixture() {
   const now = 1_800_000_000_000;
   const docs = new Map();
   const deleted = Symbol('deleted');
+  let questionReads = 0;
+  let retryBeforeCommit = null;
   const ref = path => ({ path, get: async () => snap(path) });
   const snap = path => ({ exists: docs.has(path), id: path.split('/').pop(), ref: ref(path), data: () => docs.get(path) });
   const db = {
     doc: ref,
     collection: path => {
-      const read = async () => ({ docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) });
+      const read = async () => {
+        if (path.endsWith('/questions')) questionReads++;
+        return { docs: [...docs.keys()].filter(k => k.startsWith(path + '/')).map(snap) };
+      };
+      // Preserve the direct collection reads used by the newer solution-audio path.
       return { get: read, orderBy: () => ({ get: read }) };
     },
-    runTransaction: async callback => callback({
-      get: async r => snap(r.path),
-      create: (r, value) => { assert.equal(docs.has(r.path), false); docs.set(r.path, value); },
-      set: (r, value) => docs.set(r.path, { ...docs.get(r.path), ...value }),
-      update: (r, value) => {
-        const next = { ...docs.get(r.path), ...value };
-        for (const key of Object.keys(next)) if (next[key] === deleted) delete next[key];
-        docs.set(r.path, next);
+    runTransaction: async callback => {
+      const writes = [];
+      const result = await callback({
+        get: async r => {
+          assert.equal(writes.length, 0, 'Firestore requires reads before writes');
+          return r.path ? snap(r.path) : r.get();
+        },
+        create: (r, value) => writes.push(() => { assert.equal(docs.has(r.path), false); docs.set(r.path, value); }),
+        set: (r, value) => writes.push(() => docs.set(r.path, { ...docs.get(r.path), ...value })),
+        update: (r, value) => writes.push(() => {
+          const next = { ...docs.get(r.path), ...value };
+          for (const key of Object.keys(next)) if (next[key] === deleted) delete next[key];
+          docs.set(r.path, next);
+        })
+      });
+      if (retryBeforeCommit) {
+        const winner = retryBeforeCommit; retryBeforeCommit = null;
+        await winner(); // Discard this transaction's staged writes, then replay.
+        return db.runTransaction(callback);
       }
-    })
+      writes.forEach(write => write());
+      return result;
+    }
   };
   class HttpsError extends Error { constructor(code, message) { super(message); this.code = code; } }
   const exports = {};
@@ -58,7 +77,9 @@ function fixture() {
   const start = name => exports.startAssessmentAttempt(request({ studentName: name, clientAttemptId: name.padEnd(20, '_'), attemptToken: token }));
   const submit = (id, answers = { q1: '4' }) => exports.submitAssessmentAttempt(request({ attemptId: id, attemptToken: token, answers }));
   const receipt = id => exports.getAssessmentReceipt(request({ attemptId: id, attemptToken: token }));
-  return { exports, docs, quizId, token, now, request, start, submit, receipt };
+  return { exports, docs, quizId, token, now, request, start, submit, receipt,
+    get questionReads() { return questionReads; },
+    retryNextTransaction(winner) { retryBeforeCommit = winner; } };
 }
 
 test('solutions stay private for the entire teacher-end submission grace, including its last millisecond', async () => {
@@ -169,4 +190,79 @@ test('authenticated running status delivers teacher-end signal without reading q
   await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({ attemptId: a.attemptId, attemptToken: 'B'.repeat(43), stateOnly: true })), { code: 'permission-denied' });
   // Normal resume cannot reopen the ended exam or return its questions.
   await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({ attemptId: a.attemptId, attemptToken: f.token })), { code: 'failed-precondition' });
+});
+
+
+// Regressions for Issue #6: rejected callers must never reach author questions.
+function quota(f) {
+  return [...f.docs.entries()].find(([path]) => path.startsWith('assessmentRateLimits/'))[1];
+}
+
+test('exhausted start quota rejects new identities before any question read', async () => {
+  const f = fixture(); await f.start('first'); quota(f).count = 250;
+  const before = f.questionReads;
+  await assert.rejects(f.start('new-student'), { code: 'resource-exhausted' });
+  assert.equal(f.questionReads, before);
+  assert.equal(quota(f).count, 250);
+});
+
+test('canonical quiz aliases share the exhausted start quota', async () => {
+  const f = fixture(); await f.start('first'); quota(f).count = 250;
+  const before = f.questionReads;
+  await assert.rejects(f.exports.startAssessmentAttempt(f.request({
+    quizId: ' a-u-d-i-t-1 ', studentName: 'new', clientAttemptId: 'N'.repeat(20), attemptToken: f.token
+  })), { code: 'resource-exhausted' });
+  assert.equal(f.questionReads, before);
+});
+
+test('existing start authenticates token and name before reading questions', async () => {
+  const f = fixture(); await f.start('first');
+  const before = f.questionReads;
+  for (const credentials of [{ studentName: 'first', attemptToken: 'B'.repeat(43) },
+    { studentName: 'someone-else', attemptToken: f.token }]) {
+    await assert.rejects(f.exports.startAssessmentAttempt(f.request({
+      clientAttemptId: 'first'.padEnd(20, '_'), ...credentials
+    })), { code: 'permission-denied' });
+    assert.equal(f.questionReads, before);
+  }
+});
+
+test('legitimate start retry preserves paper and bypasses exhausted new-start quota', async () => {
+  const f = fixture(); const first = await f.start('first'); quota(f).count = 250;
+  const again = await f.start('first');
+  assert.equal(again.attemptId, first.attemptId);
+  assert.deepEqual(again.paper, first.paper);
+  assert.equal(quota(f).count, 250);
+});
+
+test('submitted start retry returns saved receipt without question reads or quota charge', async () => {
+  const f = fixture(); const first = await f.start('first'); await f.submit(first.attemptId);
+  const before = f.questionReads;
+  const again = await f.start('first');
+  assert.equal(again.receipt.attemptId, first.attemptId);
+  assert.equal(f.questionReads, before);
+  assert.equal(quota(f).count, 1);
+});
+
+
+test('a retried start returns the committed winner paper, never a discarded random contract', async () => {
+  const f = fixture();
+  f.docs.set(`quizzes/${f.quizId}/questions/q1`, {
+    id: 'q1', position: 1, type: 'single', text: 'Pick', points: 1,
+    options: [{ text: 'A', correct: true }, { text: 'B', correct: false }]
+  });
+  let winner;
+  f.retryNextTransaction(async () => { winner = await f.start('first'); });
+  const retried = await f.start('first');
+  assert.deepEqual(retried.paper, winner.paper);
+  assert.equal(quota(f).count, 1);
+  assert.equal([...f.docs.keys()].filter(k => k.includes('/attempts/')).length, 1);
+});
+
+test('failed contract construction does not consume quota or store partial attempts', async () => {
+  const f = fixture(); await f.start('first');
+  f.docs.delete(`quizzes/${f.quizId}/questions/q1`);
+  await assert.rejects(f.start('second'), { code: 'failed-precondition' });
+  assert.equal(quota(f).count, 1);
+  assert.equal([...f.docs.keys()].filter(k => k.includes('/attempts/')).length, 1);
 });

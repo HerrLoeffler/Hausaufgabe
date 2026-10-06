@@ -47,7 +47,7 @@ jobs:
           npm run check --prefix functions
 
       - name: Install Firestore rules test dependencies
-        run: npm install --prefix tools/rules --no-package-lock --no-audit --no-fund
+        run: npm ci --prefix tools/rules --no-audit --no-fund
 
       - name: Test BugOps Firestore rules
         run: npm run test:bugops --prefix tools/rules

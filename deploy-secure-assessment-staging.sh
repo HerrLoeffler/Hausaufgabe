@@ -41,7 +41,7 @@ command -v firebase >/dev/null || {
   exit 1
 }
 
-npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
+npm ci --prefix assessment-functions --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
 node --test secure-assessment-client.test.mjs secure-student.test.mjs secure-student-route.test.mjs secure-firestore-rules.test.mjs

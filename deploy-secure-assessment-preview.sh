@@ -48,7 +48,7 @@ if ! grep -q '"codebase": "assessment"' firebase.json; then
   exit 1
 fi
 
-npm install --prefix assessment-functions --no-package-lock --no-audit --no-fund
+npm ci --prefix assessment-functions --no-audit --no-fund
 npm test --prefix assessment-functions
 npm run check --prefix assessment-functions
 
