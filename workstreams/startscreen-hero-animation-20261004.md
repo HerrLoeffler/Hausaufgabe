@@ -287,3 +287,18 @@ Visueller Master NICHT bestanden. Astra hat graue Augenreflexion, stark aufgeset
 Nächster konkreter Produktionsschritt: bestehende Astra-Szene weiterverwenden, Kopf/Hals/Schultern als zusammenhängende Form mit für Verformung geeigneter Topologie modellieren; echte Lidverformung und mitbewegte Fellmasken bauen. Danach kanonische Front-/Dreiviertel-/Seiten-/geschlossene-Augen-Abnahme. Raum, Kameras, Tür und Renderablauf behalten. Kein Nachweis, dass KI-Modellierung grundsätzlich unmöglich wäre; kein Zwang zu einem bezahlten Dienst. Keine Crew-/Website-Ausweitung vor diesem Prüfpunkt.
 
 DraftPR143 bleibt offen, unveröffentlicht und ungemergt. Art-/Dokumentationszielmain; spätere Webintegration separat gegen aktuellen App-Integrationszweig. Keine Production-Änderung, kein bezahlter Provider-Auftrag; alte2,40USD-Reservierung/2,55USD-Grenze erhalten. Eigene Test-/Renderprozesse beendet. Arbeitsstatusbranch_only, keine Nutzerabnahme.
+
+
+## 06.10.2026 – Videovergleich und Wiederaufnahme nach Modellfehler
+
+Vorheriger Chat „Erstelle drei Hero-Art-Directions“ (01a10e51-7f71-7bb3-9390-d8637367bb66) endet im Systemfehler. Neuer Diagnose-Chat 01a10e98-1e57-7b40-af70-555fdfdae2e3 übernimmt nur Recherche/Übergabe; keine parallele Modellierung. Bestehende Task-ID, PR143, Branch und Versuchshistorie bleiben erhalten.
+
+Ausgangshead9007b89f96c3640554dd427b2e82f2d605a8233a frisch geprüft; handoff37393123125 und Development37393123039 erfolgreich. Lokaler Blender-Checkout sauber. Kein erneuter Render-/Provider-Auftrag und kein Deploy. Release Train unverändert.
+
+[Produktionsvergleich](../docs/GC_DESIGN_05_VIDEO_REVIEW_2026-10-06.md): Video zeigt Blender-Bewegungsvorlage plus Seedance2.5/Higgsfield mit getrennten Designreferenzen. Die MP4 hat keine Tonspur;19.262 Frames technisch verarbeitet,180 ausgewählte Bilder visuell gesichtet, sichtbarer Prompt lokal transkribiert. Gesprochenes Transkript bleibt bis Audio/YouTube-Link offen. Kein Rohvideo/Chatprotokoll veröffentlicht.
+
+Die bisherige nächste Aktion „weitere zusammenhängende Modellierung“ ist durch die aktuelle Diagnose unterbrochen: erst Produktionsroute und einen kleinen bepreisten visuellen Nachweis festlegen. Empfehlung hybrider Coco-Mini-Pilot; hochwertige editierbare Figuren bleiben zusätzliche Anforderung. Keine neue pauschale Qualitätszusage und kein unfreigegebener Creditverbrauch. Higgsfield gefunden/angeboten, noch nicht verbunden bestätigt.
+
+Der neue Turn im alten Chat scheiterte vor Bearbeitung mit Modellfreischaltungsfehler in1555ms; nicht mit Blender-Fehler gleichsetzen. Kostenangabe des Nutzers nicht unabhängig prüfbar. paid_calls:0 nicht als null Modellkosten auslegen.
+
+Genau ein nächster Produktionsschritt: Verbindung bestätigen und exakt bepreisten3–4s-Coco-Pilot anhand vorhandener Referenzen vorbereiten; keine erneute vollständige Blender-Schleife. Production bleibt unverändert.
