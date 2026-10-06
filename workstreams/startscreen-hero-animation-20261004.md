@@ -302,3 +302,20 @@ Die bisherige nächste Aktion „weitere zusammenhängende Modellierung“ ist d
 Der neue Turn im alten Chat scheiterte vor Bearbeitung mit Modellfreischaltungsfehler in1555ms; nicht mit Blender-Fehler gleichsetzen. Kostenangabe des Nutzers nicht unabhängig prüfbar. paid_calls:0 nicht als null Modellkosten auslegen.
 
 Genau ein nächster Produktionsschritt: Verbindung bestätigen und exakt bepreisten3–4s-Coco-Pilot anhand vorhandener Referenzen vorbereiten; keine erneute vollständige Blender-Schleife. Production bleibt unverändert.
+
+
+## 06.10.2026 — Statischer Startbildschirm zuerst, HTML/i18n-Vorschau erstellt
+
+Martins neuer Auftrag ersetzt den nächsten Blender-/Animationsschritt: zuerst ein überzeugendes Endbild/Startbildschirm, alle Textbausteine austauschbar und internationalisierbar. Kein neues 3D-Modell und keine Animation in diesem Schritt.
+
+Bestehende Aufgabe GC-DESIGN-05 / Draft-PR #143 / Branch docs/gc-design-05-reference-plan-20261006 fortgesetzt. Ausgang remote bc10fad67f728daea99ad5720c0364153922cdf0. Development Status 37394390293 auf diesem Head erfolgreich; Warnungen zu unklassifizierten Branches, Zielabweichung freetext-review und offenen Alt-PRs gelesen. Scope nur neuer Unterordner art/gradecrew-hero/static-startscreen plus diese Übergabe/TODO; keine konkurrierenden App-/i18n-Dateien geändert. Art-PR bleibt gegen main; spätere App-Integration gegen feature/gradecrew-app-integration.
+
+Ergebnis: textfreie gemeinsame Klassenzimmerszene mit Coco, Remy, Emmi, Wilma; genau ein built-in image_gen-Aufruf anhand Nutzerreferenz und kanonischer Atlanten, keine Retries. Responsive echte HTML-Vorschau mit DE/EN-Schalter, zentral editierbarem copy.js und separaten zugänglichen Bedienelementen. WebP 1536x1024 / 201.798 Bytes; Original-PNG lokal erhalten. Prompt und Quellenhinweise gespeichert. Keine weiteren Provider-/Higgsfield-Aufträge und keine Zurücksetzung früherer Budgets; Tool weist Bildkosten nicht aus.
+
+Prüfung: 12 Browser-Prüfabschnitte bestanden, keine JS-Ausnahmen. DE/EN bei 320/390/768/1024/1440px, geladene Assets, vollständige Katalogschlüssel, kein horizontaler Überlauf/keine UI-Überlappungen, Sprachpersistenz, Dialoge, Escape/Fokusrückkehr und Vorschau-Codezugang. Screenshots Desktop DE/EN und Mobil DE/EN lokal; Desktop DE/Mobil EN im Repo. Desktop DE und Mobil DE visuell geprüft. Nachweise unter static-startscreen/evidence; README beschreibt genaue Grenzen. Browserprüfung ist kein echter Gerätetest und keine visuelle Nutzerabnahme.
+
+Offen: Bildabnahme einschließlich blauer Augenakzente gegenüber dunkleren kanonischen Augen; Login/Testzugang sind noch nicht in die App integriert. Prototyp zeigt bei diesen Aktionen eine klare Vorschau-Information und einen Link zur vorhandenen Testumgebung; keine Codes übertragen/gespeichert. Animation und saisonale Varianten nicht umgesetzt. Keine neue Staging-/Production-Veröffentlichung, Stufe branch_only.
+
+Aktive Zuständigkeit: dieser Ersatz-/Fortsetzungschat 01a10e98-1e57-7b40-af70-555fdfdae2e3. Lokaler Vorschau-Server 127.0.0.1:8768 (exec session4464) bleibt für Martin geöffnet. Keine laufende Bild-/Rendergenerierung. Frühere Sol-/Astra-Quellen und Versuchshistorie unverändert. Sicherung dieser Lieferung gesammelt im selben PR; exakter neuer Commit wird im Abschluss genannt.
+
+Genau nächster Schritt: Martins visuelles Feedback zum jetzt vorliegenden statischen Startbildschirm einarbeiten; erst anschließend bestehende App-Handler/i18n anbinden, Animation nachrangig.

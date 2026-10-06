@@ -1,0 +1,20 @@
+{
+  "testedAt": "2026-10-06T05:03:32.742Z",
+  "browser": "154.0.8037.98",
+  "results": [
+    "320px de: translated DOM, loaded assets, no overflow or UI overlap",
+    "320px en: translated DOM, loaded assets, no overflow or UI overlap",
+    "390px de: translated DOM, loaded assets, no overflow or UI overlap",
+    "390px en: translated DOM, loaded assets, no overflow or UI overlap",
+    "768px de: translated DOM, loaded assets, no overflow or UI overlap",
+    "768px en: translated DOM, loaded assets, no overflow or UI overlap",
+    "1024px de: translated DOM, loaded assets, no overflow or UI overlap",
+    "1024px en: translated DOM, loaded assets, no overflow or UI overlap",
+    "1440px de: translated DOM, loaded assets, no overflow or UI overlap",
+    "1440px en: translated DOM, loaded assets, no overflow or UI overlap",
+    "Locale switch + persistence, translated placeholder/dialogs, keyboard close + focus return, honest code-preview behaviour",
+    "Longer editable copy applied through catalog without image regeneration"
+  ],
+  "errors": [],
+  "scope": "Isolated static screen; no authentication, real test joining, device or deployment verification."
+}
