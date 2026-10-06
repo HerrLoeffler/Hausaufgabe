@@ -143,18 +143,21 @@
     },
     {
       "package": "design",
-      "status": "author_active_waiting_for_completion",
+      "status": "prototype_received_app_integration_dispatched",
       "threadId": "01a10e98-1e57-7b40-af70-555fdfdae2e3",
       "goal": "Do not start duplicate art production; collect current author results before classifying",
-      "cursor": "8d5807aa-2d11-4b24-9b07-48031c3cb5de:2",
+      "cursor": "8d5807aa-2d11-4b24-9b07-48031c3cb5de:4",
       "pr": 143,
-      "head": "cc53aa0be9a94eab3e1cfb85dda25ba8e0a2ba1e",
-      "scope": "static preview revision3; no app integration, V2 browser checks cannot be attributed to V3"
+      "head": "a9e20860b838ee3348f9ddbdd0314fc1c599f405",
+      "scope": "Finished isolated interactive preview; 4 controller tests locally repeated. Login/test access/full tutorial integration required. Latest browser revision unverified; no safety bypass. Main alone integrates/deploys.",
+      "model": "gpt-6-sol",
+      "thinking": "high",
+      "turnId": "01a1111b-0047-7662-a58d-9accb3ba553f"
     }
   ],
   "reconciliationCaveat": "13 component activation blockers are not 13 mandatory gates for the existing web staging release. Later features remain separate. iOS report uses stale main versions; current PR144/145 0.1.9 must be reconciled.",
   "pr137": "Worker reports semantic inclusion in PR139, but ancestry diverges (11 commits behind). Not closed without content verification.",
-  "lastCheckpoint": "2026-10-06T12:03:22.282538+00:00",
+  "lastCheckpoint": "2026-10-06T12:05:44.827116+00:00",
   "deployment": {
     "candidate": "2d2a7766d86ecc24b10493b9c7fb7b26e70e3fea",
     "combinedCi": 37459917759,
@@ -171,7 +174,7 @@
     "productionChanged": false,
     "rulesChanged": false
   },
-  "coordinationStatus": "staging_deployed_waiting_design_result",
+  "coordinationStatus": "design_integration_dispatched",
   "resumeNext": "Wait for existing design chat result, inspect immutable candidate and author handoff before integration. No duplicate art work.",
   "integrationPlan": {
     "target": "feature/gradecrew-app-integration",
@@ -205,5 +208,11 @@
       "assessmentReceipt": 11392063036,
       "verifiedAt": "2026-10-06T05:25:42.989431+00:00"
     }
-  ]
+  ],
+  "resultCollector": {
+    "automationId": "gradecrew-security-ergebnis-zur-ckholen",
+    "status": "ACTIVE",
+    "intervalMinutes": 10,
+    "scope": "collect existing hero integration; no duplicate work"
+  }
 }
