@@ -217,9 +217,12 @@ class CanonicalStagingTests(unittest.TestCase):
     def test_project_qualified_hosting_version_is_normalized(self):
         payload = {"release": {"version": {"name":
             "projects/950775032930/sites/hausaufgabe-staging/versions/v1"}}}
+        def served(request, timeout):
+            self.assertEqual(request.full_url,
+                             "https://firebasehosting.googleapis.com/v1beta1/sites/hausaufgabe-staging/channels/live")
+            return BytesIO(json.dumps(payload).encode())
         with patch.dict(os.environ, {"GCP_ACCESS_TOKEN": "test"}), \
-                patch.object(promotion.urllib.request, "urlopen",
-                             return_value=BytesIO(json.dumps(payload).encode())):
+                patch.object(promotion.urllib.request, "urlopen", side_effect=served):
             self.assertEqual(promotion.channel_version("live", True),
                              "sites/hausaufgabe-staging/versions/v1")
         payload["release"]["version"]["name"] = (
