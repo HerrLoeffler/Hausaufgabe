@@ -45,6 +45,7 @@ import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticS
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -63,6 +64,7 @@ const $ = (id) => document.getElementById(id);
 let crewTour = null;
 let tutorialDraft = null;
 const studentSubmissionBusy = new Set();
+const studentConfirmationPending = new Map();
 const completedStudentSubmissions = new Set();
 installWorkspaceInteractions();
 const views = [
@@ -6205,7 +6207,9 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
     toast("Bitte deinen Namen eingeben.", "error");
     return;
   }
+  if (force) studentConfirmationPending.get(submissionKey)?.abort();
   if (!force) {
+    if (studentConfirmationPending.has(submissionKey)) return;
     const unanswered = getUnansweredQuestions(questions);
     const message = ownerPreview
       ? unanswered.length
@@ -6214,7 +6218,15 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
       : unanswered.length
         ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`
         : "Alles bearbeitet. Test jetzt endgültig abgeben?";
-    if (!confirm(message)) return;
+    const confirmation = new AbortController();
+    studentConfirmationPending.set(submissionKey, confirmation);
+    let approved;
+    try {
+      approved = await requestStudentSubmitConfirmation(message, { signal: confirmation.signal, preview: ownerPreview });
+    } finally {
+      if (studentConfirmationPending.get(submissionKey) === confirmation) studentConfirmationPending.delete(submissionKey);
+    }
+    if (!approved || $("studentForm")?.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
   }
 
   const answers = {};

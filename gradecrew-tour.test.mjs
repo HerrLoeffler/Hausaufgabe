@@ -511,7 +511,7 @@ test('Actual submission emits the tour transition only after Firestore confirms 
   let finish;
   Object.assign(w, {
     $: id => w.document.getElementById(id), state: { studentAttempt: { attemptId: 'attempt-a', startedAt: 1000 } },
-    studentSubmissionBusy: new Set(), completedStudentSubmissions: new Set(), readStoredTimer: () => null, readStudentAnswer: () => 'blue',
+    studentSubmissionBusy: new Set(), studentConfirmationPending: new Map(), completedStudentSubmissions: new Set(), readStoredTimer: () => null, readStudentAnswer: () => 'blue',
     evaluateAnswer: () => ({ awarded: 1, max: 1, needsReview: false }), round1: number => number, deepClone: value => value,
     getQuizScale: () => ({ name: 'Standard' }), gradeFromPercent: () => 1, studentTimerKey: id => id, stopStudentTimer: () => {}, db: {}, collection: (...x) => x,
     serverTimestamp: () => 1, addDoc: (ref, data) => { writes.push({ ref, data }); return new Promise(resolve => { finish = resolve; }); },
@@ -527,4 +527,66 @@ test('Actual submission emits the tour transition only after Firestore confirms 
   assert.equal(writes.length, 1);
   assert.equal(writes[0].data.answers.q1, 'blue');
   assert.equal(events[0].data.submissionId, 'saved-submission');
+});
+
+test('manual tutorial submission waits for in-page approval and saves only once after repeated taps', async t => {
+  const w = fixture(t);
+  w.document.body.insertAdjacentHTML('beforeend', '<form id="studentForm"><input id="studentName" value="ML"><button id="studentSubmitBtn" type="submit">Antworten abgeben</button></form>');
+  const writes = [];
+  let approve;
+  let confirmations = 0;
+  Object.assign(w, {
+    $: id => w.document.getElementById(id),
+    confirm: () => { throw new Error('native confirm must not be called'); },
+    requestStudentSubmitConfirmation: () => { confirmations++; return new Promise(resolve => { approve = resolve; }); },
+    state: { studentAttempt: { attemptId: 'attempt-manual', startedAt: 1000 } },
+    studentSubmissionBusy: new Set(), studentConfirmationPending: new Map(), completedStudentSubmissions: new Set(),
+    readStoredTimer: () => null, getUnansweredQuestions: () => [], readStudentAnswer: () => 'blue',
+    evaluateAnswer: () => ({ awarded: 1, max: 1, needsReview: false }), round1: number => number,
+    deepClone: value => value, getQuizScale: () => ({ name: 'Standard' }), gradeFromPercent: () => 1,
+    studentTimerKey: id => id, stopStudentTimer: () => {}, db: {}, collection: (...x) => x,
+    serverTimestamp: () => 1, addDoc: async (_ref, data) => { writes.push(data); return { id: 'saved-manual' }; },
+    clearStudentSubscriptions: () => {}, renderStudentResult: () => {}, toast: () => {}, crewTour: { notify: () => {} }
+  });
+  w.eval(fn('submitStudentQuiz'));
+  const quiz = { id: 'DEMO', timeLimitMinutes: 0, tutorialVersion: 'v8' };
+  const questions = [{ id: 'q1' }];
+  const first = w.submitStudentQuiz(null, quiz, questions);
+  const second = w.submitStudentQuiz(null, quiz, questions);
+  assert.equal(confirmations, 1, 'repeated taps share one pending decision');
+  assert.equal(writes.length, 0, 'nothing is saved before approval');
+  approve(true);
+  await Promise.all([first, second]);
+  assert.equal(writes.length, 1);
+});
+
+test('timer expiry can submit while a manual confirmation is still open', async t => {
+  const w = fixture(t);
+  w.document.body.insertAdjacentHTML('beforeend', '<form id="studentForm"><input id="studentName" value="ML"><button id="studentSubmitBtn" type="submit">Antworten abgeben</button></form>');
+  const writes = [];
+  let approve;
+  let pendingSignal;
+  Object.assign(w, {
+    $: id => w.document.getElementById(id),
+    confirm: () => { throw new Error('native confirm must not be called'); },
+    requestStudentSubmitConfirmation: (_message, { signal }) => { pendingSignal = signal; return new Promise(resolve => { approve = resolve; }); },
+    state: { studentAttempt: { attemptId: 'attempt-timed', startedAt: 1000 } },
+    studentSubmissionBusy: new Set(), studentConfirmationPending: new Map(), completedStudentSubmissions: new Set(),
+    readStoredTimer: () => null, getUnansweredQuestions: () => [], readStudentAnswer: () => 'blue',
+    evaluateAnswer: () => ({ awarded: 1, max: 1, needsReview: false }), round1: number => number,
+    deepClone: value => value, getQuizScale: () => ({ name: 'Standard' }), gradeFromPercent: () => 1,
+    studentTimerKey: id => id, stopStudentTimer: () => {}, db: {}, collection: (...x) => x,
+    serverTimestamp: () => 1, addDoc: async (_ref, data) => { writes.push(data); return { id: 'saved-timed' }; },
+    clearStudentSubscriptions: () => {}, renderStudentResult: () => {}, toast: () => {}, crewTour: { notify: () => {} }
+  });
+  w.eval(fn('submitStudentQuiz'));
+  const quiz = { id: 'DEMO', timeLimitMinutes: 1, tutorialVersion: 'v8' };
+  const questions = [{ id: 'q1' }];
+  const manual = w.submitStudentQuiz(null, quiz, questions);
+  await w.submitStudentQuiz(null, quiz, questions, { force: true, autoSubmitted: true, startedAt: 1000 });
+  assert.equal(pendingSignal.aborted, true, 'timer expiry closes the pending decision');
+  approve(true);
+  await manual;
+  assert.equal(writes.length, 1, 'expired attempt is not written twice after late approval');
+  assert.equal(writes[0].autoSubmitted, true);
 });
