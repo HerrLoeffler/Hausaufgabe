@@ -19,3 +19,7 @@ Quelle: inline/gradecrew-verbindungstest.html, aktive Chat-Kopie unter /Users/ma
 Prüfung: JavaScript-Syntax, eindeutige Element-IDs und kleine simulierte Interaktionsprüfung: kein Start beim Laden, eine ausdrückliche Sendung, Doppelklickschutz, fehlende Host-Methode, Rückantwortanzeige. Kein echter Host-Empfang bisher. Keine globale UI-/Plugin-Abnahme.
 
 Nächster Schritt: Martin klickt den sichtbaren Testknopf und bestätigt den Host-Dialog. Empfangende Runde prüft Testkennung/Request-ID, schreibt eine echte Antwort in gct-result (JSON mit HTML-sicheren Zeichen), zeigt dieselbe Karte erneut und hält Nachrichteneingang getrennt von visueller Bestätigung fest. Erst danach Ausbau entscheiden. Release bleibt branch_only.
+
+## Tatsächlicher Nachrichteneingang
+
+Die Folgenachricht aus der Visualisierung ist in dieser Konversation eingegangen: GC-CONNECT-132eaaf2-85d5-4edd-a3e3-7a7ef63ab84f, Text „Hallo GradeCrew Central“, Test GC-BRAIN-01-CONNECTION-20261006-A. Quelle: visualization-7e2e54eb9210ded7. Dies ist ein echter Host-Nachrichteneingang, nicht bloß Widget-State oder simulierte Toolantwort. Antwort in dieselbe Kartendatei geschrieben und im Antwortturn erneut eingeblendet. Sichtbarkeit auf Martins Bildschirm noch nicht unabhängig bestätigt. Keine Live-Aktualisierung des ursprünglichen Frames, Plugin-Verbindung oder Skalierbarkeit dadurch bewiesen. Kein Analytics-Auftrag aus beiliegendem altem Widget-State gestartet.

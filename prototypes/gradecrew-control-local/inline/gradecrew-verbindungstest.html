@@ -11,17 +11,17 @@
   <hr>
   <div class="card">
     <div class="viz-row"><i data-lucide="message-square" aria-hidden="true"></i><h3>Eine Nachricht hin und zurück</h3></div>
-    <p><span style="color:var(--red)">●</span> In Entwicklung · Empfang noch offen</p>
+    <p><span style="color:var(--red)">●</span> In Entwicklung · Testnachricht empfangen</p>
     <form id="gct-form">
       <label class="form-label" for="gct-message">Deine Testnachricht</label>
-      <input class="form-control" id="gct-message" maxlength="240" required value="Hallo GradeCrew Central" autocomplete="off">
-      <div class="viz-row gc-actions"><button class="btn btn-primary" id="gct-send" type="submit">Testnachricht an diesen Chat senden</button></div>
+      <input class="form-control" id="gct-message" disabled maxlength="240" required value="Hallo GradeCrew Central" autocomplete="off">
+      <div class="viz-row gc-actions"><button class="btn btn-primary" id="gct-send" type="submit" disabled>Testnachricht an diesen Chat senden</button></div>
     </form>
-    <p id="gct-status" role="status" aria-live="polite">Bereit für deinen Klick.</p>
+    <p id="gct-status" role="status" aria-live="polite">Testnachricht im Main-Chat empfangen.</p>
     <hr>
     <div class="viz-row"><i data-lucide="corner-down-right" aria-hidden="true"></i><span>Antwort aus dem Main-Chat</span></div>
-    <p id="gct-answer">Noch keine Antwort empfangen.</p>
-    <p id="gct-receipt" class="text-small"></p>
+    <p id="gct-answer">Hallo Martin! Deine Nachricht „Hallo GradeCrew Central“ ist aus der Aufgabenkarte in diesem Main-Chat angekommen. Hier ist meine Antwort bei derselben Aufgabe. Der Hinweg ist bestätigt; diese Antwortkarte wird neu eingeblendet.</p>
+    <p id="gct-receipt" class="text-small">Empfangsbeleg: GC-CONNECT-132eaaf2-85d5-4edd-a3e3-7a7ef63ab84f</p>
   </div>
 </section>
 <style>
@@ -29,7 +29,7 @@
 #gc-connection-test .gc-actions{margin-block:16px}
 #gc-connection-test #gct-answer,#gc-connection-test #gct-receipt{white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
-<script id="gct-result" type="application/json">{"testId":"GC-BRAIN-01-CONNECTION-20261006-A","received":false,"requestId":null,"answer":null}</script>
+<script id="gct-result" type="application/json">{"testId": "GC-BRAIN-01-CONNECTION-20261006-A", "received": true, "requestId": "GC-CONNECT-132eaaf2-85d5-4edd-a3e3-7a7ef63ab84f", "answer": "Hallo Martin! Deine Nachricht „Hallo GradeCrew Central“ ist aus der Aufgabenkarte in diesem Main-Chat angekommen. Hier ist meine Antwort bei derselben Aufgabe. Der Hinweg ist bestätigt; diese Antwortkarte wird neu eingeblendet."}</script>
 <script>
 (() => {
   const root=document.getElementById('gc-connection-test');

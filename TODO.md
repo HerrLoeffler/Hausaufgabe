@@ -87,7 +87,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
-| GC-BRAIN-01 | GradeCrew Central: Chat-Verbindung und Fachchat-Struktur | 06.10.: lokale Plugin-Umsetzung vorhanden, echte Host-Einbindung unbewiesen. Einzelne Chat-Testkarte vorbereitet; tatsächlicher Nachrichteneingang und sichtbare Rückantwort noch offen | branch_only. Testknopf und Sendedialog durch Martin, dann echte Antwortkarte. Kein automatisches Neuladen als Lösung behaupten. Historie 2/3 und bestehende Aufgaben erhalten. [Verbindungstest](prototypes/gradecrew-control-local/CONNECTION-TEST.md), [Übergabe](workstreams/second-brain-assessment-20261005.md) |
+| GC-BRAIN-01 | GradeCrew Central: Chat-Verbindung und Fachchat-Struktur | 06.10.: Testnachricht aus Aufgabenkarte tatsächlich im Main-Chat empfangen; Antwort in Karte gespeichert und erneut ausgegeben. Sichtbare Rückantwort noch vom Nutzer zu bestätigen | branch_only. Plugin-Einbindung, Live-Aktualisierung alter Karte und skalierbarer Betrieb weiterhin offen. Historie 2/3 erhalten. [Verbindungstest](prototypes/gradecrew-control-local/CONNECTION-TEST.md), [Übergabe](workstreams/second-brain-assessment-20261005.md) |
 | GC-REFERENCE-01 | Eingefrorene Referenz-Seite mit isolierten Testdaten | Vorschlag | Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup. |
 | GC-GAMES-02 | Zweite Escape-Welt „Das verschwundene Prüfungsblatt“ | Idee bestätigt | Gemeinsamen Spielkern nach erstem Prototyp weiterverwenden. |
 | GC-GAMES-03 | Optionale echte QR-Hinweise, Teams und komplexerer Multiplayer | Später | Erst nach funktionierendem digitalem Standardspiel bewerten. |
