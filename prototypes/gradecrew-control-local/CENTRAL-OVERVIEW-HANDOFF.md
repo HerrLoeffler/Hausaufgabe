@@ -1,0 +1,11 @@
+# GC-BRAIN-01 – Aufgabenübersicht, 06.10.2026
+
+Auftrag: Vorhandene Zentrale in maximal fünf Minuten zu einer nutzbaren Übersicht erweitern. Bestehender Branch prototype/gradecrew-control-local-v1; Ausgang lokal 20a3179. Kein Deploy/Provider-Auftrag. Alle 50 Aufgaben aus data/catalog.json, Snapshot 05.10.2026 22:07 UTC, unveränderte dokumentierte Statuswerte.
+
+Plan vor Umsetzung im Chat: Dringlichkeit und Blockaden zuerst; Suche/Bereich/Stufenfilter; sechs Aufgaben je Seite; Detail mit Status, nächstem Schritt und Quelle; Entwurf je Aufgabe; explizite Übergabe an Main-Chat über vorhandene Host-Funktion. Ruhige responsive Oberfläche, Farben plus Text, unbekannte Nachweise grau.
+
+Umgesetzt: inline/gradecrew-central.html, keine zweite Serverarchitektur. Quellenlinks auf https://github.com beschränkt; Textausgabe escaped; JSON HTML-sicher. Kein Senden beim Laden, leere/fehlende Host-Verbindung ohne Start, Doppelklick und unklare Antwort gesperrt. Ergebnisse können taskbezogen in gcc-results aufgenommen und erneut eingeblendet werden. Widget-State ist nur best-effort; kein dauerhafter Auftragsspeicher. Entwürfe im Widget auf 9000 Zeichen insgesamt begrenzt; ältere können verdrängt werden. Keine automatische Live-Synchronisierung und keine native Plugin-Verbindung behaupten.
+
+Prüfung: drei Node-VM-Verhaltenstests (Anzeige/Suche; Entwurfwechsel/Einzelversand; Host fehlt/unklare Zustellung/Restore), zuerst 0/3 aufgrund DOM-Scope-Befund, nach Korrektur 3/3. Zwei unabhängige Prüfer fanden denselben Startblocker; document.getElementById korrigiert. Reparaturhistorie dieser Task-ID nun 3/3, keine weitere automatische Reparaturschleife. Frühere Plugin-Pakete bleiben unverändert. Keine visuelle Host-Abnahme oder neue E2E-Nutzersendung behauptet.
+
+Stand branch_only. Keine CI/Integration/Staging/Production für diese Oberfläche. Aktuelle main-Regeln und Register gelesen; vorhandene isolierte Umsetzung weitergeführt. Kein frischer vollständiger Development-Status-Audit in dieser Fünf-Minuten-Runde; vor Integration zwingend nachholen. Nächster Schritt: Nutzer öffnet eine Aufgabe in der eingeblendeten Übersicht und sendet einen konkreten Auftrag; Zentrale speichert Antwort und aktualisiert genau diese Ansicht mit belegtem Stand.
