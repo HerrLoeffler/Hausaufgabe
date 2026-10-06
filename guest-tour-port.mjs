@@ -17,7 +17,8 @@ export function createLocalTourRepository({ now = Date.now } = {}) {
         resultMode: 'points_grade', showSolutions: true, createdAt: now()
       };
       questions = (payload.questions || []).map((question, index) => ({
-        ...copy(question), id: `tutorial-${index + 1}`, position: index + 1
+        ...copy(question), id: `tutorial-${index + 1}`, position: index + 1,
+        aiOrigin: { kind: 'tutorial', model: 'prepared-tutorial', promptVersion: quiz.tutorialVersion }
       }));
       delete quiz.questions;
       submissions = [];
