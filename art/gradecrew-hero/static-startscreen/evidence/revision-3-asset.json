@@ -1,0 +1,18 @@
+{
+  "revision": 3,
+  "image": "assets/crew-classroom-v3.webp",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 254938,
+  "sha256": "fa907ee987c24844e0f3647b325122aaa8d3f7204385de452299bb5eb90dde4d",
+  "checks": [
+    "WebP decode/format valid",
+    "1536x1024 unchanged",
+    "index.html uses exactly one v3 image reference",
+    "generated result visually inspected"
+  ],
+  "browserRerun": false,
+  "priorBrowserEvidenceRevision": 2
+}

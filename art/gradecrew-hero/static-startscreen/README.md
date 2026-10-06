@@ -39,3 +39,10 @@ Aktives Bild: `assets/crew-classroom-v2.webp`, 187.680 Bytes. V1 bleibt erhalten
 Weiße Vorteilsleiste entfernt, Funktionen über übersetzten Dialog zugänglich. Crew-Beschriftungen ohne Karten und doppelte Symbole, Anmeldung ohne umrandeten Button, Codefeld ohne große Hintergrundkarte. Bestehende DE/EN-Texte und zugängliche Bedienelemente bleiben separat. Die Bildkomposition und Identitäten sind weitgehend erhalten; keine neue 3D-/Animationsarbeit.
 
 Aktuelle Browserprüfung erneut 12 Abschnitte bestanden (DE/EN, fünf Breiten, Layout, Dialoge inkl. Funktionen, Tastatur); Desktop DE/Mobil DE visuell angesehen. Prüfbilder/JSON beziehen sich jetzt auf V2. Keine JS-Ausnahmen. Kein echter Gerätetest, App-Anschluss oder Deploy. Das automatische Aktualisieren des offenen In-App-Browser-Tabs war durch eine nicht verfügbare Browser-Sicherheitsprüfung blockiert; die Dateien und isolierten Chrome-Prüfnachweise wurden vorher erfolgreich erstellt. Martin kann die bestehende Vorschau selbst neu laden.
+
+
+## Revision 3 — Dokumentgrafik verfeinert
+
+Martin bemängelt Emmis großes Symbol als pixelig/kindlich; Wilmas Checkliste gefällt grundsätzlich. Ein gezielter built-in image_gen-Edit ersetzt Emmis Stift-/Stern-Piktogramm durch zurückhaltende orange Korrekturmarkierungen auf einem strukturierten Arbeitsblatt. Wilmas Checkliste behält ihre Bedeutung, mit feineren dunkelgrünen Haken. Prompt: IMAGE_PROMPT_V3.txt. Insgesamt drei statische Bildaufrufe, kein Retry; frühere Fassungen bleiben erhalten.
+
+Aktives Bild: assets/crew-classroom-v3.webp, unveränderte 1536×1024-Auflösung, mit höherer WebP-Qualität95 gespeichert. Alle UI-Texte bleiben editierbares HTML; keine Wörter auf den Dokumenten. Codeänderung ausschließlich Bildpfad in index.html. Neue Bildausgabe visuell geprüft, Dateiformat/Abmessungen/Verknüpfung geprüft. Die vorhandenen Browser-Screenshots und 12 Browserprüfungen beziehen sich ausdrücklich auf Revision2; kein neuer Browserlauf behauptet. Das zuvor gemeldete IAB-Sicherheitsproblem wurde nicht umgangen. Nutzer lädt die lokale Vorschau selbst neu. Keine App-Integration oder Veröffentlichung.

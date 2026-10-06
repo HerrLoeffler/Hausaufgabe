@@ -330,3 +330,12 @@ Layout: weiße Vorteilsleiste entfernt, Inhalte jetzt über Funktionen-Dialog; C
 Nachweise: aktuelle verify.cjs-Ausführung mit12 bestandenen Abschnitten und0 JS-Ausnahmen; DE/EN bei fünf Breiten, UI-Grenzen, Sprachwechsel, Funktionen-/Crew-Dialoge und Tastatur. Desktop DE/Mobil DE visuell geprüft; Screenshots und JSON aktualisiert. Original-V2-PNG lokal zusätzlich erhalten, veröffentlichungsfähiges WebP und Prompt im Repo gesichert. Nutzer hat die Richtung befürwortet, V2 noch nicht abgenommen. Auto-Reload des bestehenden IAB-Tabs durch nicht verfügbare Sicherheitsprüfung blockiert, keine Umgehung; zuvor erstellte isolierte Chrome-Prüfnachweise vorhanden. Lokaler Server8768 bleibt bestehen.
 
 Genau nächster Schritt: visuelles Feedback zu Revision2; danach bestehende App/i18n-Anbindung. Animation bleibt nachrangig.
+
+
+## 06.10.2026 — Revision 3: professionellere Dokumentmarkierungen
+
+Nutzerfeedback: Emmis großes Zeichen wirkt pixelig und kindlich; Wilmas Checkliste grundsätzlich gut, etwas verfeinern. Genau ein gezielter built-in image_gen-Edit: riesiges oranges Stift-/Sternsymbol durch dünne orange Korrekturmarkierungen auf strukturiertem Papier ersetzt; Wilmas Haken feiner und dunkelgrün. Figuren, Kleidung und Layout im Auftrag erhalten. Keine Wörter im Bild; i18n unverändert. Aktives Asset crew-classroom-v3.webp,1536×1024,254.938Bytes,WebP-Qualität95. Drei statische Bildaufrufe insgesamt, keine Retries/Budgetrücksetzung. V1/V2 und lokale PNG-Quellen erhalten.
+
+Ausgang a92a71ce,Development Status37417345987 erfolgreich. Gleicher GC-DESIGN-05-Branch/PR143, keine fremden App-Dateien. Nur neuer Bildpfad in HTML plus Asset/Prompt/Asset-Prüfnachweis/Übergabe. Neue Bildausgabe visuell kontrolliert; WebP-Decodierung,Abmessungen und HTML-Verknüpfung geprüft. Alte zwölf Browserprüfungen/Screenshots gelten für V2, kein neuer Lauf für V3. IAB-Sicherheitsprüfung nicht umgangen; Nutzer lädt vorhandene Vorschau8768 selbst neu. Keine App-Integration/Animation/Deployment.
+
+Genau nächster Schritt: Nutzerabnahme der zurückhaltenderen Dokumentmarkierungen; danach vorhandene App-Anbindung. Noch keine Freigabe zur Animation oder Production aus diesem Feedback ableiten.
