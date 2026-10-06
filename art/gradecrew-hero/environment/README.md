@@ -19,3 +19,15 @@ Die Standard-Sandbox blockierte die lokale Socket-Verbindung und führte beim se
 ## Sitzungsisolation
 
 Der Bootstrap schreibt erst nach erfolgreichem Bind eine lokale Sitzungsdatei mit Port und zufälliger Kennung. Der Client liest sie und prüft die Kennung sowie den Namen der Testszene unmittelbar im selben Blender-Code vor jeder Änderung. Ein absichtlich falscher Wert wurde praktisch zurückgewiesen. So wird kein älterer Prozess auf einem festen Port verändert. Die lokale Sitzungsdatei wird nicht versioniert.
+
+## Geprüfte Aufrufe (vom Repository-Ordner aus)
+
+Die Werkzeuge werden mit eigenen Pfaden angesprochen; keine Abhängigkeit von einem globalen `blender`-Kommando:
+
+```sh
+../.gradecrew-tools/apps/Blender.app/Contents/MacOS/Blender --factory-startup --python art/gradecrew-hero/environment/start_mcp_session.py
+../.gradecrew-tools/mcp-venv/bin/python art/gradecrew-hero/environment/verify_mcp.py
+../.gradecrew-tools/apps/Blender.app/Contents/MacOS/Blender -b art/gradecrew-hero/environment/connection-proof.blend --python-expr "import bpy; o=bpy.data.objects['GC_ConnectionProof']; assert abs(o.location.x-0.35)<0.0001; assert bpy.context.scene.name=='GC_ConnectionProofScene'; print('GC_REOPEN_OK')"
+```
+
+Den ersten Aufruf als separate GUI-Sitzung laufen lassen, den zweiten aus einer anderen Ausführung starten. In der Codex-Sandbox sind für lokalen Socket/GPU-Zugriff eng begrenzte Freigaben nötig. Nicht einfach die Skripte auf eine fremde offene Szene anwenden. `reopen-proof.txt` enthält den tatsächlichen unabhängigen Wiederöffnungsnachweis.

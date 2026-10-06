@@ -267,3 +267,11 @@ Unabhängiger Sol-Review: ursprünglicher Nachweis SPEC PASS; P2 bei fester Port
 Metal-Gerät Apple M5 Pro GPU (20 cores) tatsächlich erkannt. Alter eigener Testprozess nach erneuter Identitätsprüfung geschlossen. Automatische Freigabeprüfung hatte kombinierten Prüf-/Stopbefehl zunächst abgewiesen; Ursache war fehlende frische Prozessidentifikation, danach sicher aufgelöst. Keine offene Berechtigungssperre.
 
 Coco-Pilot: erste und zweite echte Renderfassung geprüft, noch kein visueller Master. Konkrete Korrekturen an Navy-Farbtreue, Gesichtsmaske, Schnabel, Augen und Fußkontakt an Sol gegeben. Keine hohe Qualitätsnote aus technischem Render-Erfolg abgeleitet.
+
+### Sol-Pilot gesichert, gezielter Astra-Wechsel
+
+Sol-Baseline lokal6f085c70a929156e4b0440f7ef2736ac0df28131 und remote4b78cfa3304c069c76e30a0524589bea787e55e1 haben identischen Tree b005452b70d9b275f9a3e596f015d2ea8ded2899. 17 Dateien mit echter editierbarer .blend (ca.2MB), reproduzierbarem Builder, sieben Renderansichten, drei Kontrollposen, Versuchshistorie und Prüfnachweisen. Echte Wiederöffnung/erneutes Rendern, wiederholter szenenschonender Aufbau, Bildausschnitte und Kontakte: 21 bestanden, 0 fehlgeschlagen.
+
+Visuelle Abnahme ausdrücklich false: eine graue Augenreflexion, aufgesetzte Augen-/Weißflächen, kantiges Ende der Stirnmaske und stacheliges Fell. Nach drei gezielten Sol-Durchgängen auf Martins autorisierte Astra-Eskalation gewechselt. Astra-Agent arbeitet nur in art/gradecrew-hero/coco-astra/ auf derselben Grundlage; Sol-Baseline bleibt unverändert. Keine vollständige Crew oder Webintegration vor bestandenem visuellen Prüfpunkt. Unabhängiger Pilotreview parallel, ohne doppelte Renderläufe.
+
+Nächster Schritt: Astra-Nahansicht prüfen, danach Seiten-/Desktop-/Mobilansichten und Quell-/Bewegungsnachweis. Kein fertiger Hero behauptet, keine Production-Änderung. Die alte Provider-Reservierung bleibt unverändert.
