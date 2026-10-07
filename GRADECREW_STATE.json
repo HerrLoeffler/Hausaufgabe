@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
+    "observed_integration_head": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -1348,7 +1348,7 @@
   },
   "reviewModeImplementation": {
     "task": "GC-WEB-REPAIR-20261007",
-    "phase": "branch_only",
+    "phase": "integrated",
     "branch": "feature/review-mode-20261007",
     "head": "a82e035e42ae9be320f06032a7240dfc9e35bf98",
     "pr": 167,
@@ -1364,6 +1364,9 @@
     "deployment": "not_deployed",
     "automaticAI": false,
     "automaticChecks": "explicit_local_allowlist_only",
-    "next": "Verify exact CI then integrate and obtain staging receipts"
+    "next": "Verify merge CI37630241490 and separate Hosting/Functions receipts",
+    "integration": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
+    "candidateCIConclusion": "success",
+    "mergeCI": 37630241490
   }
 }
