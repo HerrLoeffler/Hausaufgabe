@@ -35,3 +35,10 @@ Vier kompakte Bereiche und zwölf Pflichtstationen, davon sieben schulisch. Ziel
 Genau nächster Schritt: Martin prüft die konkrete Bild- und Textgrundlage. Danach den neu erforderlichen Bauplan erstellen und zuerst den Dorf-Ausschnitt mit Figur/Mara/S1/Inventar und echter Maus-/Touchroute bauen. Die erneute schriftliche Entwurfsprüfung folgt dem Brainstorming-Skill; keine allgemeine Grundrichtungsfreigabe erneut anfordern. Vollziel, finale Art-/Maus-/Touch-/Mobile-/GradeCrew-Live-/Zeitabnahme bleiben offen.
 
 Bei Chatabbruch zusätzlich docs/CHAT_RECOVERY.md lesen. Task-ID, PR171, alle Originale und14 Bildaufrufe erhalten; nichts allein wegen Chatwechsel neu generieren. Witness-PR173 bleibt unverändert. Production und bestehende Web-Releases unverändert.
+
+## Vollständiger Sicherungsstand
+
+Lokaler vollständiger Quellencommit: `2aad1ecbd4a75c292982098f0b5f225d2e3276f9`.
+GitHub-Quellencommit: `5cb7b1713ab9e7e18df27a4896d85847c7d948fd`, Tree `90b1205b429e1778a05b5f56ae0aa07c679a2897`.
+Branch mit erwarteter vorheriger SHA und ohne Force aktualisiert; Spielbuch, Bildprüfung und Übergabe anschließend inhaltsgleich zurückgelesen. PR171 bleibt Entwurf/offen. Der lokale und der GitHub-Commit haben wegen der Connector-Sicherung verschiedene Historien; ihre Entwurfsdateien entsprechen demselben gesicherten Inhalt. Nicht blind Pull/Merge zwischen diesen Checkouts ausführen.
+Die erzeugte lokale PDF und der HTML-Leser bleiben über `build_book.py` aus diesen Quellen rekonstruierbar. Kein neuer Spielbuild oder Deployment-Nachweis.
