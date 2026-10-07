@@ -1,0 +1,239 @@
+{
+  "version": 1,
+  "sourceObservedAt": "2026-10-05",
+  "note": "Prüfkatalog aus bestehender Ampel. Historische Zustände werden nicht als aktuelle Ergebnisse übernommen.",
+  "checks": [
+    {
+      "id": "GC-TUTORIAL-01",
+      "title": "Manuelle Tutorialabgabe in der iPad-App funktioniert nicht",
+      "area": "Kernfunktionen",
+      "instruction": "Staging öffnen: manuelle Abgabe, Abbrechen und Timer während offener Bestätigung auf echtem iPad prüfen.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/pull/147",
+      "scene": "submit",
+      "method": "manual"
+    },
+    {
+      "id": "GC-REGRESSION-01",
+      "title": "PDF-, Bild- und Screenshot-Import sowie Kernabläufe erhalten",
+      "area": "Kernfunktionen",
+      "instruction": "Aktuellen Integrationsstand prüfen: Import → KI → Editor → Veröffentlichung → Schülerabgabe → Auswertung.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DEVICE-01",
+      "title": "Aktuellen Design-/Tutorialstand auf echten Geräten abnehmen",
+      "area": "Design & Crew",
+      "instruction": "Desktop, iPad und iPhone einschließlich Tastatur; derzeit technisch geprüfter Designstand 74eb2ec. [Übergabe](workstreams/design-dashboard-v1.md)",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-TUTORIAL-02",
+      "title": "Ruhigeres Tempo, Wünsche manuell weiter, Aufgabe und Hilfe zusammen sichtbar",
+      "area": "Kernfunktionen",
+      "instruction": "Web-App: aktuelle Tour gegen Nutzerwünsche prüfen; Katzenaufgabe vollständig sichtbar, gezieltes Scrollen, kein kompletter Neubau.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-TUTORIAL-03",
+      "title": "„Ich darf doch du sagen?“ bei der Namensfrage erhalten",
+      "area": "Kernfunktionen",
+      "instruction": "Aktuellen Text und Regressionsschutz prüfen.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-TUTORIAL-04",
+      "title": "Tutorial nur einmal deutlich anbieten, jederzeit abbrechbar und erneut aufrufbar; Admin ohne Auto-Start",
+      "area": "Kernfunktionen",
+      "instruction": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "finish",
+      "method": "manual"
+    },
+    {
+      "id": "GC-ART-01",
+      "title": "Farbklekse und Randpixel an Figuren entfernen",
+      "area": "Design & Crew",
+      "instruction": "Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DESIGN-01",
+      "title": "Dashboard und Testkarten visuell feinjustieren",
+      "area": "Design & Crew",
+      "instruction": "Design-Chat: bestehende Umsetzung prüfen, keine konkurrierende CSS-Schicht.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DESIGN-02",
+      "title": "Neuer Test, Editor und KI-Erstellung auf gemeinsame Komponenten umstellen",
+      "area": "Design & Crew",
+      "instruction": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DESIGN-03",
+      "title": "Startscreen Masterpiece v2 mit Multi-KI-Guardian veredeln",
+      "area": "Design & Crew",
+      "instruction": "CSS-only, unveränderte Entry-/Startup-Blobs und module-web-v1; ein Versuch mit 2,40 USD Reservierung, Gesamtdeckel weiterhin 2,55 USD. Pilot-Staging bestätigt; Homepage-Run 37220142576 scheiterte beim Builder mit unbekanntem Provider-Ergebnis. Reservierung erhalten, kein automatischer neuer Versuch; Provider-Ergebnis/Kosten zuerst abgleichen. Alle drei KI-Reviews bleiben Pflicht. Finale visuelle Abnahme bleibt bei Martin. [Übergabe](workstreams/design-startscreen-multiai-v2.md)",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DESIGN-05",
+      "title": "Startscreen Hero Scene + First-Visit-Animation",
+      "area": "Design & Crew",
+      "instruction": "Ladefehler reproduzieren und beheben, ursprüngliche Coco-Führung und kompakte Startansicht wiederherstellen. Kurze Staging-Adresse kontrolliert versorgen; fehlgeschlagenen Stand nicht weiterveröffentlichen.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-DIAGNOSTICS-01",
+      "title": "Fehler nachvollziehbar sammeln und Admin-Logs besser filtern",
+      "area": "Kernfunktionen",
+      "instruction": "Vorhandene Diagnostics/Log-Tools inventarisieren; Referenz-ID, Version, Ablauf, Filter und Sortierung prüfen; keine Antworten oder Zugangsdaten protokollieren.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-AI-01",
+      "title": "KI-Qualitätsprüfung, Variantenfehler und fehlerhafte Listeneinträge prüfen",
+      "area": "Kernfunktionen",
+      "instruction": "Reproduzierbare Fälle am aktuellen Stand sammeln, bestehende Fehlerbehebungen verifizieren.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "editor",
+      "method": "manual"
+    },
+    {
+      "id": "GC-CREW-AI-01",
+      "title": "Coco, Remy, Emmi und Wilma als gemeinsame KI-Assistenten mit Spracheingabe und API-sparenden Standardantworten",
+      "area": "Design & Crew",
+      "instruction": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "editor",
+      "method": "manual"
+    },
+    {
+      "id": "GC-CREW-AI-02",
+      "title": "Emmi direkt im Editor: ganzen Test per Freitext/Sprachwunsch überarbeiten",
+      "area": "Design & Crew",
+      "instruction": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "editor",
+      "method": "manual"
+    },
+    {
+      "id": "GC-TELEMETRY-POSTHOG-01",
+      "title": "PostHog EU als datensparsame Analyseprojektion hinter bestehende Crew-Telemetrie hängen",
+      "area": "Design & Crew",
+      "instruction": "PR #100 Deploy-Control → main `fbdd795b`; PR #99 → Integration `461da164`; dedizierte CI `37235599673` und AI Staging Checks `37235725698` grün; AI Functions Run `37235811020` erfolgreich, Secret-Gate bestanden. Jetzt eine normale Remy-Aktion in Staging auslösen und eingegangene Properties in PostHog prüfen; danach Error Tracking V1. [Übergabe](workstreams/posthog-staging-telemetry-v1.md)",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-AI-EVAL-02",
+      "title": "Fachlich geprüftes Pilot-Referenzset pro Job/Sprache",
+      "area": "Kernfunktionen",
+      "instruction": "Referenzen und unabhängige Stichprobe prüfen, Qualitäts-/Regressionsgrenzen vorab festlegen; echte gepaarte Modellevaluation. Keine 99,99-%-Behauptung aus kleinen Testsets.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "editor",
+      "method": "manual"
+    },
+    {
+      "id": "GC-AI-OBS-02",
+      "title": "Gemeinsame KI-/Sprachdiagnose und vollständige Kostenabdeckung",
+      "area": "Kernfunktionen",
+      "instruction": "PR #26: inhaltsfreie Entscheidungen, Kosten je Modell/Job, unbekannte Kosten und geschätzte API-Ersparnis getrennt. Rollenprüfender Admin-Proxy, Widget-Mount und bestehende Functions noch offen; Remy-Metriken separat bereits deployed.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "editor",
+      "method": "manual"
+    },
+    {
+      "id": "GC-HANDOFF-02",
+      "title": "Übergabe-CI und veraltete Aufgabenstände reparieren",
+      "area": "Kernfunktionen",
+      "instruction": "Run `36994507849` scheiterte nachweislich an KeyError; nach diesem Commit CI erneut prüfen. Teilupdates müssen bestehende Schlüssel erhalten.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-ARCH-AUDIT-01",
+      "title": "Gesamtaufbau auf Integrationslücken prüfen",
+      "area": "Kernfunktionen",
+      "instruction": "Design/Sprachparser, Escape-Generator, Modellkosten und Deploy-Grenzen am aktuellen Code prüfen. [Fortsetzung](workstreams/system-review-2026-10-02.md)",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-ADMIN-SCALE-01",
+      "title": "Admin-Bestandsabfragen begrenzen",
+      "area": "Kernfunktionen",
+      "instruction": "Unbegrenzte users/quizzes/feedback-Abfragen prüfen und durch Pagination/Aggregate ersetzen.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-REFERENCE-01",
+      "title": "Eingefrorene Referenz-Seite mit isolierten Testdaten",
+      "area": "Kernfunktionen",
+      "instruction": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Bedarf nach Restore-Konzept entscheiden; keine fünfte Site allein als vermeintliches Backup.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-ANALYTICS-01",
+      "title": "Nutzungs- und Spielstatistiken",
+      "area": "Kernfunktionen",
+      "instruction": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. KI-Bestandsauswertung und aktiver Lehrerzeit-Tracker sind isoliert implementiert; Tracker noch nicht verdrahtet. Spiele und Aufgaben erst nach sicherem Collector-/Join-/Abgabe-Pilot anbinden. [Übergabe](workstreams/telemetry-implementation.md)",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-HANDOFF-03",
+      "title": "Verbindungsabbrüche und Ersatzchats mit belegtem Arbeitsstand fortsetzen",
+      "area": "Kernfunktionen",
+      "instruction": "[Anleitung](docs/CHAT_RECOVERY.md), [Übergabe](workstreams/chat-recovery-20261004.md). Dieselbe Task-ID, Chat-Zuordnung, gesicherter Schritt, laufende IDs und Budget erhalten. Martin kann den Einstieg einmal in GradeCrew-Projektanweisungen übernehmen; diese Repo-Änderung setzt keine ChatGPT-Einstellung.",
+      "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
+      "scene": "welcome",
+      "method": "manual"
+    },
+    {
+      "id": "GC-AUDIO-PRESENCE",
+      "title": "Höraufgaben enthalten abspielbares Audio",
+      "area": "Aufgaben & Audio",
+      "instruction": "Höraufgabe und Audioantworten öffnen. Prüfen: Player vorhanden, Datei abspielbar, keine verratene Lösung. Fehlende Datei als Fehler erfassen.",
+      "scene": "student",
+      "method": "manual"
+    },
+    {
+      "id": "GC-REVIEW-AUTO",
+      "title": "Überarbeitungsmodus: automatische Regressionen",
+      "area": "Überarbeitungsmodus",
+      "instruction": "Lokale Vertrags-, Rechte- und UI-Tests ausführen. Dies ersetzt keine Geräteabnahme.",
+      "scene": "welcome",
+      "method": "automated"
+    }
+  ]
+}

@@ -53,6 +53,7 @@ export function createAiClient(app, getUid) {
   };
   const regenerateQuestion = call("regenerateQuestion", 180000, withInstructionLocale);
   const api = {
+    reviewMode: call("reviewMode", 30000),
     status: call("getAiStatus", 30000),
     reportRightsIssue: call("reportRightsIssue", 30000),
     generateTest: call("generateTest", 540000, withGenerationLocale),

@@ -202,6 +202,7 @@ export function installCrewTour(api) {
   function isAllowedNode(node) {
     if (!(node instanceof Node)) return false;
     if (isSubmitConfirmationNode(node)) return true;
+    if (api.reviewControlsAllowed?.() && node instanceof Element && node.closest("[data-review-panel], [data-review-toggle], [aria-label=\"Lokale Prüfszenen\"]")) return true;
     if (root?.contains(node)) return true;
     if (targetInteractive && target?.contains(node)) return true;
     if (freeRegion?.contains?.(node)) return true;
@@ -835,5 +836,10 @@ export function installCrewTour(api) {
   addEventListener("resize",schedulePlace,{passive:true});
   document.addEventListener("gradecrew:account-changed",()=>stop());
 
-  return { start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&["form-intro","form-filling","image-choice","preferences","form","creating"].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse };
+  function previewScene(scene, fixture) {
+    if (!api.reviewPreviewAllowed?.() || scene !== "finish" || !fixture?.quizId) throw new Error("Prüfszene nicht freigegeben.");
+    stop();owner=api.uid();quizId=fixture.quizId;active=true;busy=false;startedAt=performance.now();++run;
+    document.body.classList.add("gcRealTourActive");showFinish();
+  }
+  return { previewScene,start,dashboard,notify,stop,create,get active(){return owned();},get creating(){return owned()&&["form-intro","form-filling","image-choice","preferences","form","creating"].includes(stage);},ownsQuiz:id=>owned()&&quizId===id,preparedResponse };
 }
