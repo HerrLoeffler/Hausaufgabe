@@ -45,7 +45,7 @@ for (const type of ['grouping', 'matching', 'ordering', 'dropdown', 'single', 'm
       assert.equal(new Set(players.map(p => p.src)).size, players.length);
       assert.doesNotMatch(h.section.outerHTML, /PRIVATE_|sourceText|audioAnswerItems|correct/);
       const before = h.answers();
-      for (const player of players) { assert.equal(player.autoplay, false); assert.equal(player.controls, true); assert.ok(player.getAttribute('aria-label')); player.click(); player.dispatchEvent(new h.w.Event('play')); }
+      for (const player of players) { assert.equal(player.autoplay, false); assert.equal(player.controls, true); assert.equal(player.getAttribute("controlslist"), "nodownload noplaybackrate"); assert.ok(player.getAttribute('aria-label')); player.click(); player.dispatchEvent(new h.w.Event('play')); }
       assert.deepEqual(h.answers(), before);
       if (type === 'single' || type === 'multi') {
         h.section.querySelectorAll('input')[1].click();
@@ -76,4 +76,15 @@ for (const type of ['grouping', 'matching', 'ordering', 'dropdown', 'single', 'm
 test('German content uses neutral German memo labels', async () => {
   const h = await render(fixture('ordering'), 'de-DE');
   try { assert.equal(h.section.querySelector('audio').getAttribute('aria-label'), 'Antwort 1'); assert.equal(h.section.querySelector('button').getAttribute('aria-label'), 'Antwort 1 nach oben'); } finally { h.close(); }
+});
+
+for (const locale of ['de-DE', 'en-GB']) test(`${locale}: listening instructions guide students without exposing the transcript`, async () => {
+  const q={id:'listen',type:'single',text:'PRIVATE_TRANSCRIPT',points:1,audioPresentation:'listening-only',image:{src:'data:image/png;base64,AAAA'},audio:{src:audio(1)},options:[]};
+  const h=await render(q,locale);
+  try {
+    assert.match(h.section.querySelector('h2').textContent,locale==='de-DE'?/Aufnahme unter dem Bild/:/recording below the picture/);
+    assert.doesNotMatch(h.section.textContent,/PRIVATE_TRANSCRIPT|KI-generierte Stimme/);
+    assert.equal(h.section.querySelector('audio').controls,true);
+    assert.equal(h.section.querySelector('audio').getAttribute('controlslist'),'nodownload noplaybackrate');
+  } finally {h.close();}
 });

@@ -6006,6 +6006,7 @@ function makeAudioDragItem(label, key, src) {
   item.classList.add("audioDragItem");
   const player = document.createElement("audio");
   player.controls = true;
+  player.setAttribute("controlslist", "nodownload noplaybackrate");
   player.preload = "metadata";
   player.src = src;
   player.setAttribute("aria-label", `${label} anhören`);
@@ -6235,7 +6236,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.qid = q.id;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? "Höraufgabe" : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -6252,12 +6253,11 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       label.textContent = "🔊 Höraufgabe";
       const audio = document.createElement("audio");
       audio.controls = true;
+      audio.setAttribute("controlslist", "nodownload noplaybackrate");
       audio.preload = "metadata";
       audio.src = studentAudioSrc;
       audio.setAttribute("aria-label", `Audio zu Aufgabe ${i + 1} anhören`);
-      const disclosure = document.createElement("small");
-      disclosure.textContent = "KI-generierte Stimme";
-      audioBox.append(label, audio, disclosure);
+      audioBox.append(label, audio);
       section.appendChild(audioBox);
     }
 
@@ -6296,6 +6296,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
         if (answerAudioOnly && String(option.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && option.audioNeedsRegeneration !== true) {
           const player = document.createElement("audio");
           player.controls = true;
+          player.setAttribute("controlslist", "nodownload noplaybackrate");
           player.preload = "metadata";
           player.src = option.audioDataUrl;
           player.setAttribute("aria-label", `Antwort ${shownIndex + 1} anhören`);
