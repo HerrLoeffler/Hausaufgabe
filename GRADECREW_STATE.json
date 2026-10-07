@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+    "observed_integration_head": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -70,12 +70,12 @@
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 127,
     "important": "PR172 local design/compact annotation batch canonically deployed with exact Hosting hashes and both backend receipts. Own visual-feedback author-filtered backlog is separate from general notes and technical checks. Local-only standalone notes not silently imported. Browser visual acceptance pending. Production unchanged.",
-    "next_action": "Martin tests canonical Staging and records own visual-feedback notes; next deploy only on explicit user request",
+    "next_action": "Martin reloads canonical staging and opens Administration → Feedback → Screenshot-Fehler; confirm actual existing frame notes. Preview-page proposal remains idea only.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
       "stage": "staging_deployed",
-      "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+      "commit": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
       "included_prs": [
         164,
         165,
@@ -84,20 +84,21 @@
         168,
         169,
         170,
-        172
+        172,
+        174
       ],
       "combined_ci": 37687543142,
-      "preview_run": 37687715280,
-      "preview_receipt": 11510939538,
-      "functions_run": 37687715188,
-      "ai_receipt": 11511379079,
-      "assessment_receipt": 11511717783,
-      "canonical_run": 37688108976,
-      "canonical_receipt": 11511808010,
+      "preview_run": 37693855491,
+      "preview_receipt": 11514577306,
+      "functions_run": 37693855508,
+      "ai_receipt": 11515185528,
+      "assessment_receipt": 11514990841,
+      "canonical_run": 37694245235,
+      "canonical_receipt": 11515166129,
       "user_acceptance": "pending",
       "feedback_followup": {
         "task_id": "GC-WEB-REPAIR-20261007",
-        "stage": "integrated",
+        "stage": "staging_deployed",
         "pr": 174,
         "branch": "fix/visual-backlog-feedback-20261008",
         "head": "faca28bc254bc8402a6826baa95f286d4054edd3",
@@ -112,8 +113,21 @@
         "merge_ci_conclusion": "success",
         "preview_run": 37693855491,
         "preview_receipt": 11514577306,
-        "functions_run": 37693855508
-      }
+        "functions_run": 37693855508,
+        "commit": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
+        "ai_receipt": 11515185528,
+        "assessment_receipt": 11514990841,
+        "canonical_run": 37694245235,
+        "canonical_receipt": 11515166129,
+        "user_acceptance": "pending",
+        "nine_notes_recovery": "not_confirmed",
+        "production": "unchanged"
+      },
+      "pr": 174,
+      "candidate_ci": 37693545201,
+      "merge_ci": 37693716864,
+      "nine_notes_recovery": "not_confirmed",
+      "production": "unchanged"
     },
     "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
     "review_regions_followup": {
