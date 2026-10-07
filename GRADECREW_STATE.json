@@ -105,10 +105,14 @@
         "local_commit": "0847243",
         "tests": 25,
         "user_request": "Deployen 2026-10-08",
-        "next": "merge CI then preview/Functions and canonical promotion",
+        "next": "Functions receipts then canonical promotion",
         "integration": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
         "candidate_ci_conclusion": "success",
-        "merge_ci": 37693716864
+        "merge_ci": 37693716864,
+        "merge_ci_conclusion": "success",
+        "preview_run": 37693855491,
+        "preview_receipt": 11514577306,
+        "functions_run": 37693855508
       }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
