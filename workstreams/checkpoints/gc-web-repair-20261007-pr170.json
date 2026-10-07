@@ -1,0 +1,16 @@
+{
+  "taskId": "GC-WEB-REPAIR-20261007",
+  "pr": 170,
+  "head": "7e9e7922ace8bc56329a53ab9f9fd5f7265f1c6d",
+  "integrationCommit": "d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+  "candidateCI": 37679070729,
+  "stage": "integrated",
+  "staging": "pending exact merge CI and receipts",
+  "production": "not_requested",
+  "open": [
+    "DIN-A4 printing",
+    "colored marking",
+    "mathematical glyph source pending",
+    "other unfinished wishes remain in TODO"
+  ]
+}
