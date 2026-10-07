@@ -75,3 +75,25 @@ test('releasing a region over sidebar ends drag before later pointer movement',a
  view.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,clientX:100,clientY:100}));w.document.querySelector('[data-review-panel]').dispatchEvent(new w.MouseEvent('pointerup',{bubbles:true,clientX:300,clientY:300}));view.dispatchEvent(new w.MouseEvent('pointermove',{bubbles:true,clientX:500,clientY:500}));
  const input=w.document.querySelector('[data-review-text]');input.value='Area';await new Promise(r=>setTimeout(r,520));[...w.document.querySelectorAll('button')].find(x=>x.textContent==='Hinweis speichern').click();await settle();assert.equal(calls.find(x=>x.action==='create')?.region?.width,.2);
 });
+
+test('compact capture works without sidebar or layout changes and submits to the permission-checked backlog',async t=>{
+ const {w,calls}=await fixture(t,null,{compact:true});
+ w.document.body.getBoundingClientRect=()=>({left:0,top:0,width:1024,height:768});
+ w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
+ w.HTMLDialogElement.prototype.close=function(){this.dispatchEvent(new w.Event('close'));};
+ const icon=w.document.querySelector('button[aria-label="Bereich ausschneiden und Änderung beschreiben"]');assert.ok(icon);assert.equal(w.document.querySelector('[data-review-toggle]'),null);
+ icon.click();const overlay=w.document.querySelector('.gcLocalCapture');assert.ok(overlay);assert.equal(w.document.querySelector('[data-review-panel]'),null);assert.equal(w.document.documentElement.classList.contains('reviewPanelOpen'),false);
+ overlay.onpointermove({clientX:300,clientY:200});assert.equal(w.document.querySelector('dialog'),null);
+ overlay.onpointerdown({button:0,pointerId:1,clientX:100,clientY:100,preventDefault(){}});overlay.onpointerup({pointerId:1,clientX:200,clientY:200});
+ const dialog=w.document.querySelector('dialog');dialog.querySelector('textarea').value='Bitte Logo ändern';dialog.querySelector('form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();await settle();
+ const note=calls.find(c=>c.action==='create');assert.equal(note.text,'Bitte Logo ändern');assert.equal(note.target,'gradecrewPage');assert.equal(note.build,'test-build');assert.equal(note.region.width,100/1024);assert.equal(w.document.querySelector('dialog'),null);
+});
+test('compact note retries without editing and reconnect flushes its saved outbox',async t=>{
+ let offline=true;const {w,calls,records}=await fixture(t,async data=>{if(data.action==='create'&&offline)throw new Error('Offline');},{compact:true});
+ w.document.body.getBoundingClientRect=()=>({left:0,top:0,width:1024,height:768});w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(){this.dispatchEvent(new w.Event('close'));};await settle();
+ w.document.querySelector('button[aria-label]').click();const overlay=w.document.querySelector('.gcLocalCapture');overlay.onpointerdown({button:0,pointerId:1,clientX:100,clientY:100,preventDefault(){}});overlay.onpointerup({pointerId:1,clientX:200,clientY:200});const dialog=w.document.querySelector('dialog');const input=dialog.querySelector('textarea');input.value='Retry me';dialog.querySelector('button[type=submit]').click();await settle();await settle();assert.equal(input.validity.valid,true);assert.ok(dialog.isConnected);offline=false;w.dispatchEvent(new w.Event('online'));await settle();await settle();assert.ok(calls.filter(x=>x.action==='create').length>=2);assert.equal(records.get('staging:admin:outbox').length,0);
+ dialog.querySelector('button[type=submit]').click();await settle();await settle();assert.equal(w.document.querySelector('dialog'),null);
+});
+test('compact icon is available in modal dialogs and stable page target exists before saving',async t=>{
+ const {w,controller}=await fixture(t,null,{compact:true});assert.equal(w.document.body.id,'gradecrewPage');const modal=w.document.createElement('dialog');modal.setAttribute('open','');w.document.body.append(modal);await settle();assert.ok(modal.querySelector('button[aria-label]'));await controller.setSession(null);assert.equal(w.document.querySelector('button[aria-label]'),null);
+});

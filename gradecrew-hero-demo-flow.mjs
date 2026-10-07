@@ -1,12 +1,12 @@
 export function createDemoFlow({ onChange, reducedMotion = false, schedule = setTimeout, cancel = clearTimeout }) {
-  const crew = ['remy', 'emmi', 'wilma'];
+  const crew = ['coco', 'remy', 'emmi', 'wilma'];
   let state = null;
   let timer = null;
   function clear() { if (timer !== null) cancel(timer); timer = null; }
   function emit() { onChange({ ...state }); }
   function advance() {
     clear();
-    if (!state?.running || state.paused) return;
+    if (!state?.running || state.paused || state.name === 'coco') return;
     if (state.phase < 2) {
       timer = schedule(() => { timer = null; nextPhase(); }, 1800);
     }
@@ -23,7 +23,7 @@ export function createDemoFlow({ onChange, reducedMotion = false, schedule = set
   function start(name, tutorial = false) {
     if (!crew.includes(name)) return;
     clear();
-    state = { name, tutorial, index: crew.indexOf(name), phase: reducedMotion ? 2 : 0, running: !reducedMotion, paused: false };
+    state = { name, tutorial, index: crew.indexOf(name), phase: reducedMotion && name !== 'coco' ? 2 : 0, running: name === 'coco' || !reducedMotion, paused: false };
     emit(); advance();
   }
   return {

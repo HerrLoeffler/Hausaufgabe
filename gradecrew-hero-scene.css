@@ -192,15 +192,6 @@ body:not(.gcPublicEntryMode) #gcEntryLoginOpen{display:none}
 body.gcPublicHeroMode .appFooter,body.gcPublicHeroMode .rightsFooter{display:none!important}
 body.gcPublicHeroMode #authView .gcEntryShell{margin-block:0}
 body.gcPublicHeroMode #authView[data-entry-state="start"]{min-height:0!important}
-@media(min-width:721px) and (max-height:760px){
-  #authView .gcHeroRoles button{min-height:44px;padding:4px 7px}
-  #authView .gcHeroTutorialEntry .button{min-height:44px;font-size:16px;padding:7px}
-  #authView .gcHeroTutorialEntry{gap:3px}
-  #authView .gcHeroTutorialEntry small{font-size:10px;line-height:1.1}
-  #authView .gcHeroJoin{padding:8px;gap:7px}
-  #authView .gcHeroJoin>label{font-size:13px}
-  #authView .gcHeroJoin #joinCode,#authView .gcHeroJoin .gcEntryJoinSubmit{min-height:44px;padding:7px}
-}
 
 /* Full-width scene; viewport fitting must never create a narrow centred window. */
 body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
@@ -246,3 +237,34 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
  #authView .gcHeroVisual{position:relative;inset:auto;grid-column:1;grid-row:2;min-height:0;overflow:hidden}
  #authView .gcHeroArtwork{height:100%;object-fit:cover;object-position:50% 55%}
 }
+
+/* Full-bleed desktop classroom; names remain accessible HTML controls. */
+@media(min-width:781px){
+ #authView .gcHeroStage{display:block;height:var(--gc-stage-height,calc(100svh - 160px));min-height:0;padding:0;overflow:hidden;background:#fffaf3}
+ #authView .gcHeroVisual{position:absolute;inset:0;width:100%;height:100%}
+ #authView .gcHeroArtwork{height:100%;width:100%;object-fit:cover;object-position:center}
+ #authView .gcHeroCrew{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;margin:0}
+ #authView .gcHeroLead{position:absolute;inset:2% 0 auto;width:100%;padding:8px 20px;background:transparent;text-shadow:0 1px 8px #fff}
+ #authView .gcHeroLead h1{font-size:clamp(26px,3vw,46px)}
+ #authView .gcHeroLead p{font-size:clamp(17px,1.5vw,24px);margin-top:4px}
+ #authView .gcHeroRoles{position:absolute;inset:0;display:block;width:100%;pointer-events:none}
+ #authView .gcHeroRoles button{position:absolute;top:62%;width:clamp(100px,12vw,210px);transform:translate(-50%,-50%);padding:7px 10px;min-height:52px;pointer-events:auto;background:#fffffff0}
+ #authView .gcHeroRoles button:nth-child(1){left:29%;top:68%}
+ #authView .gcHeroRoles button:nth-child(2){left:49%}
+ #authView .gcHeroRoles button:nth-child(3){left:63%}
+ #authView .gcHeroRoles button:nth-child(4){left:75%}
+ #authView .gcHeroRoles button:hover{transform:translate(-50%,-50%) scale(1.02)}
+ #authView .gcHeroActions{position:absolute;top:auto;bottom:18%;left:62%;width:clamp(260px,27vw,420px);transform:translateX(-50%)}
+ #authView .gcHeroTutorialEntry{gap:3px}
+ #authView .gcHeroTutorialEntry .button{min-height:44px;font-size:18px;padding:8px 15px}
+ #authView .gcHeroJoin{position:absolute;inset:auto 6% 2% 42%;width:auto;padding:8px 12px}
+ #authView .gcHeroJoin #joinCode,#authView .gcHeroJoin .gcEntryJoinSubmit{min-height:44px}
+ #authView .gcHeroJoin>label{font-size:16px}
+}
+@media(max-width:780px){
+ #authView .gcHeroRoles{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #authView .gcHeroRoles strong{font-size:15px}
+ #authView .gcHeroRoles small{font-size:11px}
+}
+
+@media(min-width:781px){#authView .gcHeroHit{display:none}}

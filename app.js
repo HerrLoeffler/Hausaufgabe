@@ -8584,7 +8584,7 @@ if (["staging", "local-review"].includes(appEnvironment)) {
     }
   };
   reviewController = installReviewMode({
-    document, api: payload => reviewApi.reviewMode(payload), local: localReview, openScene, navigate:navigateReview,
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, openScene, navigate:navigateReview,
     getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
       scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
       quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : !$("resultsView")?.classList.contains("hidden") ? state.currentResultsQuiz?.id || "" : ""}),
