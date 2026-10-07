@@ -75,7 +75,7 @@ test("secure student renders listening audio as an explicit player without autop
   assert.match(js, /question\.audio\?\.src/);
   assert.match(js, /audio\.controls = true/);
   assert.match(js, /audio\.preload = "metadata"/);
-  assert.match(js, /KI-generierte Stimme/);
+  assert.doesNotMatch(js, /KI-generierte Stimme/);
   assert.doesNotMatch(js, /\.autoplay\s*=\s*true|autoplay=/);
   assert.doesNotMatch(js, /audioScript|audioTranscript/);
 });
