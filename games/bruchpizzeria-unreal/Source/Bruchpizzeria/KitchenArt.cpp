@@ -86,7 +86,11 @@ namespace
     {
         auto* Mesh=Component<UProceduralMeshComponent>(Owner,Parent,Name,Position);
         Mesh->bUseAsyncCooking=true;
-        Mesh->CreateMeshSection(0,Data.V,Data.I,Data.N,Data.UV,TArray<FColor>(),TArray<FProcMeshTangent>(),Collision);
+        // UE's front-face winding is opposite the mathematical outward cross product.
+        // Keep authored outward normals and reverse triangle indices for visible exterior faces.
+        TArray<int32> Exterior=Data.I;
+        for(int32 Triangle=0;Triangle+2<Exterior.Num();Triangle+=3)Swap(Exterior[Triangle+1],Exterior[Triangle+2]);
+        Mesh->CreateMeshSection(0,Data.V,Exterior,Data.N,Data.UV,TArray<FColor>(),TArray<FProcMeshTangent>(),Collision);
         Mesh->SetMaterial(0,Material(Owner,Color,.65f,Glow));
         Mesh->SetCollisionEnabled(Collision ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
         Mesh->SetCollisionResponseToAllChannels(ECR_Block);
