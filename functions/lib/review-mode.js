@@ -41,10 +41,12 @@ function createReviewService({store,projectId,now=Date.now}) {
    }
    if(action==='list'||action==='batch'){
     if(action==='batch')requireAdmin();
+    if(data.area && !['visual-feedback','general'].includes(data.area))fail('invalid-argument','Unbekannter Backlog-Bereich.');
+    const author=data.authorId?id(data.authorId):'';if(author&&!admin&&author!==uid)fail('permission-denied','Kein Zugriff auf fremde Hinweise.');
     const cursor=data.cursor?id(data.cursor):'';
     const notes=await tx.list('reviewNotes',{owner:admin?null:uid,cursor,limit:100});
-    const checks=action==='list'?await tx.list('reviewChecks',{owner:admin?null:uid,cursor:data.checkCursor?id(data.checkCursor):'',limit:100}):[];
-    const visible=[];for(const n of notes){try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
+    const checks=action==='list'&&data.area!=='visual-feedback'?await tx.list('reviewChecks',{owner:admin?null:uid,cursor:data.checkCursor?id(data.checkCursor):'',limit:100}):[];
+    const visible=[];for(const n of notes){if(data.area&&(n.area||'general')!==data.area)continue;if(author&&n.authorId!==author)continue;try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
     const eligible=n=>n.status!=='done'&&n.approval!=='rejected'&&(n.authorRole==='admin'||n.approvedContentRevision===n.contentRevision);
     return {notes:action==='batch'?visible.filter(eligible):visible,checks,nextCursor:notes.length===100?notes.at(-1).id:null,nextCheckCursor:checks.length===100?checks.at(-1).id:null};
    }
@@ -52,6 +54,7 @@ function createReviewService({store,projectId,now=Date.now}) {
     const clientRequestId=id(data.clientRequestId),noteId=hash(`${uid}:${clientRequestId}`);
     const scene=optional(data.scene,30);if(!SCENES.has(scene))fail('invalid-argument','Unbekannte Prüfszene.');
     const content={text:text(data.text,3000),target:id(data.target),view:id(data.view),build:text(data.build,100),locale:['en','de'].includes(data.locale)?data.locale:'de',scene,quizId:data.quizId?id(data.quizId):'',questionId:data.questionId?id(data.questionId):''};
+    if(data.area!=null){if(!['visual-feedback','general'].includes(data.area))fail('invalid-argument','Unbekannter Backlog-Bereich.');content.area=data.area;}
     if(data.region!=null)content.region=regionValue(data.region);
     await quizAccess(content.quizId);
     if(content.quizId&&content.questionId&&!await tx.get(`quizzes/${content.quizId}/questions/${content.questionId}`))fail('permission-denied','Aufgabe gehört nicht zu diesem Test.');

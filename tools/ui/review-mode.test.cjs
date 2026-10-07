@@ -86,7 +86,7 @@ test('compact capture works without sidebar or layout changes and submits to the
  overlay.onpointermove({clientX:300,clientY:200});assert.equal(w.document.querySelector('dialog'),null);
  overlay.onpointerdown({button:0,pointerId:1,clientX:100,clientY:100,preventDefault(){}});overlay.onpointerup({pointerId:1,clientX:200,clientY:200});
  const dialog=w.document.querySelector('dialog');dialog.querySelector('textarea').value='Bitte Logo ändern';dialog.querySelector('form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();await settle();
- const note=calls.find(c=>c.action==='create');assert.equal(note.text,'Bitte Logo ändern');assert.equal(note.target,'gradecrewPage');assert.equal(note.build,'test-build');assert.equal(note.region.width,100/1024);assert.equal(w.document.querySelector('dialog'),null);
+ const note=calls.find(c=>c.action==='create');assert.equal(note.text,'Bitte Logo ändern');assert.equal(note.area,'visual-feedback');assert.equal(note.target,'gradecrewPage');assert.equal(note.build,'test-build');assert.equal(note.region.width,100/1024);assert.equal(w.document.querySelector('dialog'),null);
 });
 test('compact note retries without editing and reconnect flushes its saved outbox',async t=>{
  let offline=true;const {w,calls,records}=await fixture(t,async data=>{if(data.action==='create'&&offline)throw new Error('Offline');},{compact:true});

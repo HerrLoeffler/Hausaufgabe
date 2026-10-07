@@ -30,7 +30,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   const x=clamp((region.x-r.left)/r.width),y=clamp((region.y-r.top)/r.height);
   const width=Math.min(region.width/r.width,1-x),height=Math.min(region.height/r.height,1-y);
   if(width<=0||height<=0)throw new Error('Bitte einen Bereich innerhalb der Seite markieren.');
-  const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:body.id,text:note.text,region:{x,y,width,height,sourceWidth:r.width,sourceHeight:r.height}};
+  const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:body.id,text:note.text,area:'visual-feedback',region:{x,y,width,height,sourceWidth:r.width,sourceHeight:r.height}};
   await updateQueue(k,current=>[...(current||[]).filter(n=>n.clientRequestId!==payload.clientRequestId),payload]);
   if(e!==epoch)throw new Error('Konto wurde gewechselt.');await sync();
   const remaining=(await storage.get(k)||[]).find(n=>n.clientRequestId===payload.clientRequestId);

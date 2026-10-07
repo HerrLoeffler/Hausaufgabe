@@ -72,3 +72,11 @@ test('region survives server persistence and malformed or changed replay is reje
  await assert.rejects(s.call('admin',{...note,region:{...region,width:.4}}),{code:'already-exists'});
  for(const bad of [{...region,x:-1},{...region,width:2},{...region,height:0},{...region,x:NaN}])await assert.rejects(s.call('admin',{...note,clientRequestId:'invalid-region',region:bad}),{code:'invalid-argument'});
 });
+
+test('visual feedback has its own batch and never mixes general notes or checks',async()=>{
+ const s=setup();await s.call('admin',note);const {note:visual}=await s.call('admin',{...note,clientRequestId:'visual-1',area:'visual-feedback'});await s.call('teacher',{...note,clientRequestId:'teacher-visual',area:'visual-feedback'});
+ const result=await s.call('admin',{action:'batch',area:'visual-feedback',authorId:'admin'});assert.deepEqual(result.notes.map(n=>n.id),[visual.id]);assert.deepEqual(result.checks,[]);
+ const listed=await s.call('admin',{action:'list',area:'visual-feedback',authorId:'admin'});assert.equal(listed.notes.length,1);assert.deepEqual(listed.checks,[]);
+ await assert.rejects(s.call('admin',{...note,clientRequestId:'bad-area',area:'technical-mix'}),{code:'invalid-argument'});
+ await assert.rejects(s.call('teacher',{action:'list',area:'visual-feedback',authorId:'admin'}),{code:'permission-denied'});
+});
