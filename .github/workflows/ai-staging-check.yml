@@ -17,6 +17,7 @@ on:
       - 'feature/brand-*'
       - 'feature/i18n-*'
       - 'feature/audio-*'
+      - 'feature/review-mode-*'
       - 'fix/audio-*'
       - 'fix/gc-security-*'
     # Documentation changes do not change the app/runtime candidate.
@@ -217,6 +218,9 @@ jobs:
           test -f assets/gradecrew/owl-grade.svg
           test -f assets/gradecrew/crew-lineup.svg
           test -f assets/gradecrew/demo-cat.svg
+
+      - name: Review mode rights, outbox and isolated scenes
+        run: node --experimental-vm-modules --test tools/ui/review-mode.test.cjs tools/ui/review-scenes.test.cjs tools/review-preview/server.test.mjs
 
       - name: Smoke test staging build
         run: |

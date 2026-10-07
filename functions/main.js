@@ -379,6 +379,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 
 module.exports = {
   ...existing,
+  ...require("./review-mode-callables"),
   aggregateBugFeedback,
   getBugOpsSummary,
   recordCrewTelemetry,

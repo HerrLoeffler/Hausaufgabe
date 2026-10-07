@@ -22,6 +22,9 @@ function fixture(t) {
   };
   t.after(() => { observers.forEach(observer => observer.disconnect()); dom.window.close(); });
   w.$ = id => w.document.getElementById(id);
+  w.tourUid = () => w.state?.user?.uid || '';
+  w.guestTourRepo = null;
+  w.diagnostics = { record() {} };
   w.escapeHtml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
   w.HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   w.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); this.dispatchEvent(new w.Event('close')); };
@@ -161,6 +164,7 @@ test('keeping a variant is persisted separately from an explicit positive rating
   w.renderQuestions = () => {};
   w.round1 = n => Math.round(n * 10) / 10;
   w.eval(fn('handleVariantKept'));
+  w.eval(fn('getQuestionAudioSrc'));
   w.eval(fn('sanitizeQuestionForSave'));
   w.handleVariantKept({ detail: { id: 'q1', quizId: 'test-a', ownerId: 'teacher-a' } });
   assert.equal(q.aiVariantKept, true);

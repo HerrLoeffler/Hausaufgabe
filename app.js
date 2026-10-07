@@ -46,6 +46,8 @@ import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { installReviewMode } from "./review-mode.mjs";
+import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 const diagnostics = createDiagnostics();
@@ -81,6 +83,9 @@ const $ = (id) => document.getElementById(id);
 let crewTour = null;
 let tutorialDraft = null;
 let guestTourRepo = null;
+let reviewController = null;
+let reviewBuild = "";
+let reviewScene = "welcome";
 const tourUid = () => guestTourRepo ? 'local-tour' : state.user?.uid || '';
 const guestCopy = (key, fallback, values = {}) => window.GradeCrewI18n?.t?.(`guest.${key}`, values, fallback) || fallback;
 function requireProductionData() {
@@ -1011,6 +1016,7 @@ function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
 async function refreshBugOpsAttention({ notify = false } = {}) {
   if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
     state.bugOpsSummary = null;
+    if (appEnvironment === "staging") void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     return null;
   }
@@ -1168,6 +1174,7 @@ onAuthStateChanged(auth, async (user) => {
     state.adminAudit = [];
     state.adminFeedback = [];
     state.bugOpsSummary = null;
+    if (appEnvironment === "staging") void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     $("adminAuditList")?.replaceChildren();
     $("adminFeedbackList")?.replaceChildren();
@@ -1201,6 +1208,7 @@ onAuthStateChanged(auth, async (user) => {
     state.shownThisLogin = new Set();
   }
   setTeacherBar();
+  if (appEnvironment === "staging") void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
 
   const params = new URLSearchParams(location.search);
@@ -1244,6 +1252,8 @@ onAuthStateChanged(auth, async (user) => {
 function makeTourApi() {
   return {
     uid: tourUid,
+    reviewPreviewAllowed: () => appEnvironment === "local-review" && Boolean(guestTourRepo),
+    reviewControlsAllowed: () => Boolean(document.querySelector("[data-review-toggle]")),
     isDashboard: () => !$("dashboardView").classList.contains("hidden"),
     beginRun: () => { tutorialDraft = null; },
     prefill: prefillTutorialRequest,
@@ -3510,6 +3520,7 @@ function renderQuestions() {
     q.position = index + 1;
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
+    node.dataset.reviewId = `editor-question-${q.id}`;
     node.dataset.index = String(index);
     node.setAttribute("aria-label", `Aufgabe ${index + 1}`);
     if (q._collapsed) {
@@ -6182,6 +6193,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
   stopStudentTimer();
   clearStudentSubscriptions();
   const root = $("studentQuizCard");
+  root.dataset.reviewQuizId = quiz.id;
   const minutes = Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : 0;
   const timed = minutes > 0 && !ownerPreview;
   const teacherControlled = quiz.startMode === "teacher" && !ownerPreview;
@@ -6234,6 +6246,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     const section = document.createElement("section");
     section.className = "studentQuestion";
     section.dataset.qid = q.id;
+    section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
     if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
@@ -8339,4 +8352,59 @@ async function createTutorialQuiz(payload) {
   batch.update(doc(db,"quizzes",code),{tutorialReady:true,updatedAt:serverTimestamp()});
   await batch.commit();
   return code;
+}
+
+
+// Review UI uses a separate callable; never the paid AI proxy or public feedback.
+if (["staging", "local-review"].includes(appEnvironment)) {
+  const reviewApi = createAiClient(app, () => state.user?.uid || "");
+  const localReview = appEnvironment === "local-review" && ["localhost", "127.0.0.1"].includes(location.hostname);
+  const openScene = localReview ? scene => {
+    localStorage.setItem("gradecrew-review-scene-v1", JSON.stringify({version:1,scene}));
+    document.dispatchEvent(new CustomEvent("gradecrew:review-scene", {detail:{scene}}));
+  } : null;
+  reviewController = installReviewMode({
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, openScene,
+    getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
+      scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
+      quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : ""}),
+    runChecks: localReview ? async checkId => {
+      const response = await fetch("/__review/run", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId})});
+      const result = await response.json();if(!response.ok)throw new Error(result.message);return result;
+    } : null
+  });
+  fetch("./release.json", {cache:"no-store"}).then(r => r.json()).then(r => { reviewBuild = r.commit || ""; }).catch(() => {});
+  if (localReview) {
+    let sceneWork = Promise.resolve();
+    document.addEventListener("gradecrew:review-scene", event => {
+      const scene = event.detail?.scene;
+      if (!["welcome","remy","editor","student","submit","results","finish"].includes(scene)) return;
+      sceneWork = sceneWork.catch(() => {}).then(async () => {
+        document.querySelectorAll("dialog.studentSubmitConfirm").forEach(dialog => dialog.dispatchEvent(new Event("cancel", {cancelable:true})));
+        crewTour?.stop(); stopStudentTimer(); clearStudentSubscriptions(); clearPublishSubscriptions();
+        studentConfirmationPending.forEach(controller => controller.abort());studentConfirmationPending.clear();
+        completedStudentSubmissions.clear();studentSubmissionBusy.clear();state.studentAttempt=null;
+        guestTourRepo = createLocalTourRepository();state.guestTourUid="local-tour";state.isDirty=false;reviewScene=scene;
+        const code=guestTourRepo.create({...quizDefaults(),...deepClone(REVIEW_DEMO_TEST)});
+        guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));
+        if (scene === "welcome") {showView("authView");return;}
+        if (scene === "remy") {openAiView();prefillTutorialRequest();return;}
+        await openEditor(code);
+        if (scene === "editor") return;
+        guestTourRepo.publish(code);
+        if (["student","submit"].includes(scene)) {
+          await loadStudentQuiz(code);if($("studentName"))$("studentName").value="Beispielkind";
+          if(scene==="submit") void requestStudentSubmitConfirmation("10 Aufgaben sind noch offen. Trotzdem endgültig abgeben?");
+          return;
+        }
+        guestTourRepo.submit(code,{studentName:"Beispielkind",isTutorial:true,answers:{},grading:{},autoPoints:0,totalPoints:0,maxPoints:10,percent:0,grade:6,status:"graded"});
+        await openResults(code);
+        if(scene==="finish") {
+          if(!crewTour)crewTour=installCrewTour(makeTourApi());
+          crewTour.previewScene("finish",{quizId:code});
+        }
+      }).catch(err => toast(err.message,"error"));
+    });
+    void reviewController.setSession({uid:"local-admin"}).then(() => document.dispatchEvent(new Event("gradecrew:review-ready")));
+  }
 }
