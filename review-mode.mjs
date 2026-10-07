@@ -35,7 +35,9 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   if(e!==epoch)throw new Error('Konto wurde gewechselt.');await sync();
   const remaining=(await storage.get(k)||[]).find(n=>n.clientRequestId===payload.clientRequestId);
   if(remaining)throw new Error(remaining._error||'Lokal gesichert; Übertragung fehlgeschlagen. Bitte erneut speichern.');
+  win.dispatchEvent(new win.CustomEvent('gradecrew:visual-note-saved'));
  }
+ async function syncVisualFeedback(){if(!uid||!admin)throw new Error('Bitte als Administrator anmelden.');let cursor='';do{const result=await call({action:'syncVisualFeedback',cursor});cursor=result.nextCursor||'';}while(cursor);}
  function clearRegion(){regionOverlay?.remove();regionOverlay=null;regionAnchor=null;regionBounds=null;}
  function paintRegion(){if(!regionAnchor?.isConnected||!regionBounds)return;const r=regionAnchor.getBoundingClientRect();const b=regionBounds;
   if(!regionOverlay){regionOverlay=el('div',null,{'data-review-region-overlay':'',class:'reviewRegionOverlay','aria-hidden':'true'});(regionAnchor.closest('dialog[open]')||document.body).append(regionOverlay);}
@@ -180,5 +182,5 @@ const targets=[...document.querySelectorAll('[data-review-id],[id]')].filter(x=>
  const portalObserver=new win.MutationObserver(portal);portalObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
  function online(){if(root||compactCapture)void sync();}
  document.addEventListener('click',capture,true);document.addEventListener('pointerdown',capture,true);document.addEventListener('pointermove',capture,true);document.addEventListener('pointerup',capture,true);document.addEventListener('pointercancel',capture,true);win.addEventListener('resize',paintRegion);win.addEventListener('scroll',paintRegion,true);document.addEventListener('keydown',capture,true);win.addEventListener('online',online);
- return {setSession,dispose,open,refresh};
+ return {setSession,dispose,open,refresh,syncVisualFeedback};
 }

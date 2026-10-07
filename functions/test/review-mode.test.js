@@ -80,3 +80,8 @@ test('visual feedback has its own batch and never mixes general notes or checks'
  await assert.rejects(s.call('admin',{...note,clientRequestId:'bad-area',area:'technical-mix'}),{code:'invalid-argument'});
  await assert.rejects(s.call('teacher',{action:'list',area:'visual-feedback',authorId:'admin'}),{code:'permission-denied'});
 });
+
+test('frame notes arrive in Feedback/Screenshot-Fehler exactly once and old online frames are restored',async()=>{
+ const s=setup();const {note:n}=await s.call('admin',{...note,area:'visual-feedback'});const path='feedback/visual-'+n.id;assert.equal(s.docs.get(path).category,'screenshot_error');assert.equal(s.docs.get(path).message,n.text);s.docs.delete(path);const r=await s.call('admin',{action:'syncVisualFeedback'});assert.equal(r.imported,1);s.docs.set(path,{...s.docs.get(path),status:'done'});await s.call('admin',{action:'syncVisualFeedback'});assert.equal(s.docs.get(path).status,'done');await assert.rejects(s.call('teacher',{action:'syncVisualFeedback'}),{code:'permission-denied'});
+ const generic=await s.call('admin',{...note,clientRequestId:'generic'});assert.equal(s.docs.has('feedback/visual-'+generic.note.id),false);
+});
