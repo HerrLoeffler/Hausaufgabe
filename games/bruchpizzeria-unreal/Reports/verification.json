@@ -2,13 +2,14 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "25a4ed5",
+  "native_source_commit": "f84ff0e78f9b29770951244414af7f2baa3aad07",
   "core_checks": {
-    "count": 182,
+    "fraction_geometry": 182,
+    "campaign_repair_layouts": 442,
     "failures": 0,
-    "sanitizers": "ASAN+UBSAN 182zero after inset/NaN guard"
+    "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained"
   },
-  "editor_build": "Succeeded final-desktop-input-build.log",
+  "editor_build": "Succeeded ten-level-corrected-build.log",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -190,9 +191,125 @@
           "warnings": 5
         }
       ]
+    },
+    "CampaignRed": {
+      "sha256": "50006a2929052c8ccff8db54ff2b4f696d9c6abe4fb5cc5ee8acefd97a82e5e6",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Fail",
+          "errors": 3,
+          "warnings": 1
+        }
+      ]
+    },
+    "CampaignGreen": {
+      "sha256": "c293ce8364f7473a76519efbb72f9fe236041d17fe305d717d69fd5e76770921",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "TenLevelFinal": {
+      "sha256": "26a8003b7e4c848d7146a527bbb33e072eaa676e9e09381ca01aac26750d0feb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "TenLevelCorrected": {
+      "sha256": "3cc6d5c81ae216f7719ac00f207e679d81a30182578c6072d479c210853d0d96",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
     }
   },
-  "visual_acceptance": "Actual latest kitchen, assisted eighths, learning and unequal-chord PNGs inspected. Sharp runtime fonts fit labels; stick removed. Physical user mouse acceptance pending; no finished-game or device-quality claim.",
+  "visual_acceptance": "Actual ten-level native learning and level3/10 kitchen PNGs inspected. Clear same-whole comparison and direct selectable slices. Actual rendered HUD-coordinate repair test passes. Physical user/playfeel/learning-transfer/mobile acceptance remains pending.",
   "physical_mobile_device": "not_tested",
   "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
@@ -206,8 +323,6 @@
       "sha256": "91234eb76b4d60d7fc04ab63edec05f4abeb9818d0854ad964d222afba2ef218"
     }
   },
-  "remote_source_commit": "331db91e791eccce75a344bc0d1acde04817356b",
-  "source_tree": "deb541c90ff566641432c1e710cd98d9018be1cd",
   "pull_request": "https://github.com/HerrLoeffler/Hausaufgabe/pull/160",
   "raw_input_acceptance": "NOT VERIFIED: CUA different virtual click points both yield constant Unreal hardware-cursor1438,710. Async real hardware user test requested. Native pointer/projection tests use explicit engine coordinates and cannot close this gap.",
   "environment_warnings": [
@@ -216,20 +331,28 @@
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1746733,
-      "sha256": "2f932858b116b3fdf3b6db63ff8a3bbeb211e561dc4e30ca6c2a276cde12808a"
+      "bytes": 1851290,
+      "sha256": "07fdf9ab568fad99a875064dabc04c13bb30af56bca4561e9ab2f74416265d9a"
     },
     "NativeCutting.png": {
-      "bytes": 1679060,
-      "sha256": "4b2a88728a3cce6cd6df9bd00e5c8140bc4a2a84cb4c09ce52ad9a07cb945653"
+      "bytes": 1753258,
+      "sha256": "46eb6c59e3045a4e0ed06fd4872cea7a8d1b4982f77e7c012d293dac9b58c0a4"
     },
     "NativeLearning.png": {
-      "bytes": 1098845,
-      "sha256": "a56fdad0991c324553c765a8e91db3b5b7ef313e1844faabe54aefc65562b6b3"
+      "bytes": 681309,
+      "sha256": "ce513079e7088c04fbd7b5174ea791978f40ea1f33b0eece3c8fa115dca7fd3f"
     },
     "NativeUnequal.png": {
-      "bytes": 1558142,
-      "sha256": "78beba9b5d65cd323dcfc1dead2e14cce29517ccede6c8877656ed1bd8842bcb"
+      "bytes": 1619799,
+      "sha256": "c44290899b61ddec9c75c3725eeb502c9ee9a25577692d80927ceb7a66ff5b51"
+    },
+    "NativeLevel3.png": {
+      "bytes": 1871241,
+      "sha256": "e6e26f929363011bb67b6ab3d006fd18650e43c9d449a7c02b2970e8eee440f6"
+    },
+    "NativeLevel10.png": {
+      "bytes": 1868328,
+      "sha256": "7e01ee0c7d29dfef6eb874a0cb2f803221ffc9d9f85a327eea965a9a47cf3e52"
     }
   },
   "mouse_corrections": [
@@ -237,5 +360,15 @@
     "Explicit visible-cursor GameAndUI viewport focus",
     "Cancel drag on invalid mouse position",
     "Fixed desktop window size; left mouse pressed reaches game instead of Mac resize-zone suppression"
-  ]
+  ],
+  "previous_published_source_commit": "93b2eab13156bc62e01f7985c5d054c5381a7868",
+  "campaign": {
+    "levels": 10,
+    "unique_station_layouts": 10,
+    "twenty_levels": "possible later, not implemented",
+    "one_hundred_levels": "superseded by user correction",
+    "learning_trigger": "wrong delivery only; no repeated mandatory quiz",
+    "local_progress": "Saved/CampaignProgress-v1.txt; PIE separate file",
+    "learning_transfer": "not empirically verified"
+  }
 }

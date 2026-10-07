@@ -4,12 +4,13 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "FractionRules.h"
+#include "LearningCampaign.h"
 #include "KitchenArt.h"
 #include "PizzaKitchen.generated.h"
 class UCapsuleComponent;class UFloatingPawnMovement;class ACameraActor;
 struct FKitchenPizza {int Ingredients=0;bool Baked=false;PizzaRules::PizzaCuts Cuts;uint32 Selection=0;bool Plated=false;};
 struct FKitchenOrder {FString Name;PizzaRules::Rational Amount;PizzaRules::Rational Left,Right;char Op=' ';int Ingredients=3;float Patience=110;};
-UCLASS() class BRUCHPIZZERIA_API APizzaArena:public AActor {GENERATED_BODY() public:APizzaArena();virtual void OnConstruction(const FTransform&)override;};
+UCLASS() class BRUCHPIZZERIA_API APizzaArena:public AActor {GENERATED_BODY() public:APizzaArena();virtual void OnConstruction(const FTransform&)override;void ApplyLevel(int);};
 UCLASS() class BRUCHPIZZERIA_API APizzaVisual:public AActor {GENERATED_BODY() public:APizzaVisual();void SetPizza(const FKitchenPizza&);};
 UCLASS() class BRUCHPIZZERIA_API AKitchenChef:public APawn {GENERATED_BODY() public:AKitchenChef();virtual void OnConstruction(const FTransform&)override;virtual void Tick(float)override;UPROPERTY() UCapsuleComponent* Body;UPROPERTY() UFloatingPawnMovement* Movement;KitchenArt::ChefParts Rig;float AnimationClock=0;};
 UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
@@ -17,6 +18,10 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  public:APizzaGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
  UPROPERTY() ACameraActor* Camera;UPROPERTY() APizzaVisual* CarryVisual;UPROPERTY() APizzaVisual* BoardVisual;UPROPERTY() APizzaVisual* OvenVisual;
  UPROPERTY() TArray<AActor*> Guests;
+ UPROPERTY() TArray<APizzaVisual*> TableVisuals;UPROPERTY() TArray<APizzaVisual*> ExtraOvenVisuals;UPROPERTY() TArray<AActor*> ExtraOvenArt;
+ TArray<TOptional<FKitchenPizza>> Tables,ExtraOvens;TArray<float> ExtraBakeTimes;
+ PizzaRules::CampaignProfile Level;PizzaRules::KitchenLayout Layout=PizzaRules::CampaignLayout(1);PizzaRules::PortionRepair Repair;FKitchenOrder RepairOrder;
+ int LevelNumber=1,UnlockedLevel=1;bool LevelWon=false;
  TArray<FKitchenOrder> Orders;TOptional<FKitchenPizza> Carry,Board,Oven;
  float BakeTime=0,RoundTime=240,FeedbackTime=0;int Score=0,Served=0,Difficulty=0,OrderSerial=0;
  bool Intro=true,Cutting=false,Learning=false,Paused=false,Finished=false,RecipeLesson=false;
@@ -26,8 +31,10 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  bool Frozen()const{return Intro||Learning||Paused||Finished;}
  AKitchenChef* Chef()const;int NearestStation()const;void Start();void TogglePause();void Use();void Drop();void Dash();void CycleDifficulty();
  void BeginCut();void FinishCut();void CutStroke(FVector2D,FVector2D);void CutAngle(float);void TogglePiece(FVector2D);void ResetCuts();
+ void UseTable(int);void UseOven(int);void ConfirmRepair();void ToggleRepairPiece(int);void ShowRepairStep();void SelectLevel(int);void SaveProgress();
  void TryServe(int);void BeginLesson(const FKitchenOrder&,PizzaRules::Rational);void Answer(int);void RefreshPizza();void MakeOrder();
- FVector CutLocation()const{return FVector(0,190,94);}FString OrderLabel(const FKitchenOrder&)const;
+ FVector StationLocation(int I)const{return FVector(Layout.Stations[I].X,Layout.Stations[I].Y,0);}
+ FVector CutLocation()const{return StationLocation(5)+FVector(0,0,94);}FString OrderLabel(const FKitchenOrder&)const;
 };
 UCLASS() class BRUCHPIZZERIA_API APizzaController:public APlayerController {
  GENERATED_BODY()

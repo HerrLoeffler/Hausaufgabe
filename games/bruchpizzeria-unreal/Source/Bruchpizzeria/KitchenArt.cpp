@@ -1,4 +1,5 @@
 #include "KitchenArt.h"
+#include "LearningCampaign.h"
 
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -282,7 +283,14 @@ ChefParts Chef(AActor* O,USceneComponent* P,FName Name,FVector Position,FLinearC
     return C;
 }
 
-void Room(AActor* O,USceneComponent* P)
+void ExtraOven(AActor* O,USceneComponent* P,FVector Pos){
+ Cabinet(O,P,Pos,FVector(130,110,80),Teal);
+ Box(O,P,TEXT("ExtraOvenBody"),Pos+FVector(0,12,125),FVector(116,92,86),FLinearColor(.64,.28,.13),18);
+ Box(O,P,TEXT("ExtraOvenMouth"),Pos+FVector(0,-36,119),FVector(85,7,52),Ink,18);
+ Box(O,P,TEXT("ExtraOvenFire"),Pos+FVector(0,-41,108),FVector(67,3,10),FLinearColor(.95,.43,.08),4);
+ Label(O,P,Pos+FVector(0,-62,55),TEXT("OFEN"),Ivory,18);
+}
+void Room(AActor* O,USceneComponent* P,int Level)
 {
     Box(O,P,TEXT("CourtyardBackdrop"),FVector(0,0,-70),FVector(3600,3000,20),FLinearColor(.22f,.34f,.25f),8,false);
     // 14 x 10 tiles are batched into three mesh sections/components, not
@@ -303,68 +311,64 @@ void Room(AActor* O,USceneComponent* P)
         Box(O,P,TEXT("WallSkirting"),FVector(X,20,13),FVector(12,960,26),Teal,3);
     }
     Box(O,P,TEXT("FrontCoping"),FVector(0,-470,35),FVector(1415,27,9),Ivory,3);
-    Cabinet(O,P,FVector(-610,-280,0));
-    Cabinet(O,P,FVector(-610,-30,0));
-    Cabinet(O,P,FVector(-610,220,0));
-    Cabinet(O,P,FVector(610,-280,0));
-    Cabinet(O,P,FVector(610,100,0),FVector(130,110,80),Teal);
-    Cabinet(O,P,FVector(0,190,0),FVector(180,120,80),Teal);
+    USceneComponent* StationRoots[6];for(int I=0;I<6;++I)StationRoots[I]=Component<USceneComponent>(O,P,*FString::Printf(TEXT("StationRoot%d"),I),FVector::ZeroVector);
+    Cabinet(O,StationRoots[0],FVector(-610,-280,0));Cabinet(O,StationRoots[1],FVector(-610,-30,0));Cabinet(O,StationRoots[2],FVector(-610,220,0));Cabinet(O,StationRoots[3],FVector(610,-280,0));Cabinet(O,StationRoots[4],FVector(610,100,0),FVector(130,110,80),Teal);Cabinet(O,StationRoots[5],FVector(0,190,0),FVector(180,120,80),Teal);
+    const auto Layout=PizzaRules::CampaignLayout(Level);for(int I=9;I<=10;++I){const auto Pos=Layout.Stations[I];const FVector C(Pos.X,Pos.Y,0);Cabinet(O,P,C,FVector(142,116,80),Sage);Box(O,P,TEXT("PreparationBoard"),C+FVector(0,0,85),FVector(120,98,7),Wood,7);Label(O,P,C+FVector(0,-64,53),TEXT("ABLAGE"),Ivory,20);}
     Cabinet(O,P,FVector(0,430,0),FVector(1110,106,80),Sage);
-
     // Dough station: dusted hardwood board, dough balls and wooden rolling pin.
-    Box(O,P,TEXT("DoughBoard"),FVector(-610,-280,84),FVector(105,84,8),Wood,6);
-    Cylinder(O,P,TEXT("FlourDust"),FVector(-612,-280,89),FVector(.67,.53,.012),Ivory);
-    Sphere(O,P,TEXT("DoughBall"),FVector(-623,-281,97),FVector(.36,.35,.19),Cream);
-    Sphere(O,P,TEXT("DoughBall"),FVector(-581,-268,94),FVector(.22,.24,.13),Ivory);
-    auto* Pin=Cylinder(O,P,TEXT("RollingPin"),FVector(-611,-312,96),FVector(.13,.13,.67),Wood*1.4f);
+    Box(O,StationRoots[0],TEXT("DoughBoard"),FVector(-610,-280,84),FVector(105,84,8),Wood,6);
+    Cylinder(O,StationRoots[0],TEXT("FlourDust"),FVector(-612,-280,89),FVector(.67,.53,.012),Ivory);
+    Sphere(O,StationRoots[0],TEXT("DoughBall"),FVector(-623,-281,97),FVector(.36,.35,.19),Cream);
+    Sphere(O,StationRoots[0],TEXT("DoughBall"),FVector(-581,-268,94),FVector(.22,.24,.13),Ivory);
+    auto* Pin=Cylinder(O,StationRoots[0],TEXT("RollingPin"),FVector(-611,-312,96),FVector(.13,.13,.67),Wood*1.4f);
     Pin->SetRelativeRotation(FRotator(0,0,90));
-    for (float X:{-652.f,-570.f}) Sphere(O,P,TEXT("PinHandle"),FVector(X,-312,96),FVector(.20,.095,.095),Wood);
-    Label(O,P,FVector(-610,-338,54),TEXT("TEIG"),Ivory,18);
+    for (float X:{-652.f,-570.f}) Sphere(O,StationRoots[0],TEXT("PinHandle"),FVector(X,-312,96),FVector(.20,.095,.095),Wood);
+    Label(O,StationRoots[0],FVector(-610,-338,54),TEXT("TEIG"),Ivory,18);
 
-    Tray(O,P,FVector(-610,-30,84),Tomato);
+    Tray(O,StationRoots[1],FVector(-610,-30,84),Tomato);
     for (int32 I=0;I<5;++I)
     {
         const FVector C(-635+(I%3)*24,-46+(I/3)*29,98);
-        Sphere(O,P,TEXT("Tomato"),C,FVector(.23,.23,.20),Tomato*(.87f+I*.035f));
-        Sphere(O,P,TEXT("TomatoStem"),C+FVector(0,0,10),FVector(.13,.13,.035),Leaf);
+        Sphere(O,StationRoots[1],TEXT("Tomato"),C,FVector(.23,.23,.20),Tomato*(.87f+I*.035f));
+        Sphere(O,StationRoots[1],TEXT("TomatoStem"),C+FVector(0,0,10),FVector(.13,.13,.035),Leaf);
     }
-    Label(O,P,FVector(-610,-88,54),TEXT("SOSSE"),Ivory,18);
-    Tray(O,P,FVector(-610,220,84),FLinearColor(.94,.65,.17));
+    Label(O,StationRoots[1],FVector(-610,-88,54),TEXT("SOSSE"),Ivory,18);
+    Tray(O,StationRoots[2],FVector(-610,220,84),FLinearColor(.94,.65,.17));
     for (int32 I=0;I<9;++I)
     {
-        auto* Cheese=Box(O,P,TEXT("CheeseShred"),FVector(-639+(I%3)*28,197+(I/3)*22,94+(I%2)*2),FVector(23,6,6),FLinearColor(1,.78,.28),2);
+        auto* Cheese=Box(O,StationRoots[2],TEXT("CheeseShred"),FVector(-639+(I%3)*28,197+(I/3)*22,94+(I%2)*2),FVector(23,6,6),FLinearColor(1,.78,.28),2);
         Cheese->SetRelativeRotation(FRotator(0,I*37,0));
     }
-    Label(O,P,FVector(-610,162,54),TEXT("KAESE"),Ivory,18);
-    Tray(O,P,FVector(610,-280,84),FLinearColor(.41,.27,.15));
+    Label(O,StationRoots[2],FVector(-610,162,54),TEXT("KAESE"),Ivory,18);
+    Tray(O,StationRoots[3],FVector(610,-280,84),FLinearColor(.41,.27,.15));
     for (int32 I=0;I<6;++I)
     {
         const FVector C(583+(I%3)*27,-296+(I/3)*30,99);
-        Cylinder(O,P,TEXT("MushroomStem"),C-FVector(0,0,4),FVector(.10,.10,.19),Cream);
-        Sphere(O,P,TEXT("MushroomCap"),C+FVector(0,0,4),FVector(.27,.27,.14),FLinearColor(.68,.43,.23));
+        Cylinder(O,StationRoots[3],TEXT("MushroomStem"),C-FVector(0,0,4),FVector(.10,.10,.19),Cream);
+        Sphere(O,StationRoots[3],TEXT("MushroomCap"),C+FVector(0,0,4),FVector(.27,.27,.14),FLinearColor(.68,.43,.23));
     }
-    Label(O,P,FVector(610,-338,54),TEXT("PILZE"),Ivory,18);
+    Label(O,StationRoots[3],FVector(610,-338,54),TEXT("PILZE"),Ivory,18);
 
     // Oven dome and an actual recessed opening bounded by a stone arch.
-    Sphere(O,P,TEXT("TerracottaOvenDome"),FVector(610,113,119),FVector(1.11,.89,1.0),Terra);
-    Box(O,P,TEXT("OvenHearth"),FVector(610,95,87),FVector(118,103,14),FLinearColor(.29,.24,.17),4);
-    Box(O,P,TEXT("OvenMouthDark"),FVector(610,65,105),FVector(58,6,51),Ink,18);
-    OvenArch(O,P,FVector(610,53,106));
-    Box(O,P,TEXT("OvenLanding"),FVector(610,39,86),FVector(81,39,8),Cream,4);
-    Cylinder(O,P,TEXT("Chimney"),FVector(610,133,184),FVector(.26,.26,.55),Terra*.8f);
-    Cylinder(O,P,TEXT("ChimneyRim"),FVector(610,133,211),FVector(.35,.35,.09),Cream);
+    Sphere(O,StationRoots[4],TEXT("TerracottaOvenDome"),FVector(610,113,119),FVector(1.11,.89,1.0),Terra);
+    Box(O,StationRoots[4],TEXT("OvenHearth"),FVector(610,95,87),FVector(118,103,14),FLinearColor(.29,.24,.17),4);
+    Box(O,StationRoots[4],TEXT("OvenMouthDark"),FVector(610,65,105),FVector(58,6,51),Ink,18);
+    OvenArch(O,StationRoots[4],FVector(610,53,106));
+    Box(O,StationRoots[4],TEXT("OvenLanding"),FVector(610,39,86),FVector(81,39,8),Cream,4);
+    Cylinder(O,StationRoots[4],TEXT("Chimney"),FVector(610,133,184),FVector(.26,.26,.55),Terra*.8f);
+    Cylinder(O,StationRoots[4],TEXT("ChimneyRim"),FVector(610,133,211),FVector(.35,.35,.09),Cream);
     for (int32 I=0;I<5;++I)
     {
-        auto* Flame=Sphere(O,P,TEXT("OvenFlame"),FVector(590+I*10,48,100+(I%2)*3),FVector(.10,.045,.23+I%2*.06),FLinearColor(1,.21,.01));
+        auto* Flame=Sphere(O,StationRoots[4],TEXT("OvenFlame"),FVector(590+I*10,48,100+(I%2)*3),FVector(.10,.045,.23+I%2*.06),FLinearColor(1,.21,.01));
         Flame->SetMaterial(0,Material(O,FLinearColor(1,.17,.006),.6f,3.5f));
-        auto* Core=Sphere(O,P,TEXT("FlameCore"),FVector(590+I*10,45,95),FVector(.065,.025,.12),FLinearColor(1,.65,.07));
+        auto* Core=Sphere(O,StationRoots[4],TEXT("FlameCore"),FVector(590+I*10,45,95),FVector(.065,.025,.12),FLinearColor(1,.65,.07));
         Core->SetMaterial(0,Material(O,FLinearColor(1,.62,.035),.5f,4));
     }
-    Label(O,P,FVector(610,42,53),TEXT("OFEN"),Ivory,18);
+    Label(O,StationRoots[4],FVector(610,42,53),TEXT("OFEN"),Ivory,18);
 
-    Box(O,P,TEXT("PizzaCuttingBoard"),FVector(0,190,85),FVector(154,99,10),Wood*1.3f,7);
-    for (float X:{-64.f,64.f}) Box(O,P,TEXT("BoardHandle"),FVector(X,190,84),FVector(11,115,7),Wood,3);
-    Label(O,P,FVector(0,126,52),TEXT("SCHNEIDEN"),Ivory,16);
+    Box(O,StationRoots[5],TEXT("PizzaCuttingBoard"),FVector(0,190,85),FVector(154,99,10),Wood*1.3f,7);
+    for (float X:{-64.f,64.f}) Box(O,StationRoots[5],TEXT("BoardHandle"),FVector(X,190,84),FVector(11,115,7),Wood,3);
+    Label(O,StationRoots[5],FVector(0,126,52),TEXT("SCHNEIDEN"),Ivory,16);
     // Three service bays match the gameplay's exact customer slots.
     for (float X:{-300.f,0.f,300.f})
     {
@@ -418,5 +422,7 @@ void Room(AActor* O,USceneComponent* P)
     Cylinder(O,P,TEXT("StockPot"),FVector(353,-382,99),FVector(.34,.34,.28),Steel);
     Cylinder(O,P,TEXT("StockPotLid"),FVector(353,-382,114),FVector(.36,.36,.045),Steel*1.3f);
     Sphere(O,P,TEXT("PotLidKnob"),FVector(353,-382,119),FVector(.09,.09,.07),Ink);
+    const auto Base=PizzaRules::CampaignLayout(1);for(int I=0;I<6;++I)StationRoots[I]->SetRelativeLocation(FVector(Layout.Stations[I].X-Base.Stations[I].X,Layout.Stations[I].Y-Base.Stations[I].Y,0));
+
 }
 }

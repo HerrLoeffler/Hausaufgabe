@@ -1,5 +1,15 @@
 # GC-GAMES-PIZZA-01: native Bruchpizzeria
 
+## Aktueller Stand nach Nutzerkorrektur
+
+Task/Zuständigkeit unverändert, eigener Branch feature/bruchpizzeria-unreal-v1, Entwurfs-PR160. main9d3b2a7 bewusst zusammengeführt; DevelopmentStatus37579479190 erfolgreich. Runtime f84ff0e:10 unterschiedliche Stationslayouts, lokale Freischaltung, ruhige Hälften/Viertel/Achtel-Einführungen, Gleichwertigkeit, gelegentlich Plus in8/9 und Minus in10. Zwei verlustfreie Ablagen und zweiter Ofen ab6. Visuelle gleiche-Pizza-Fehlerkorrektur bewahrt echten Teller; erneutes Servieren erforderlich, keine Quizkette oder Hilfe-Punkte. Konzept nicht lernempirisch validiert;20 später möglich,100 superseded, Ratten Idee.
+
+Belegt:182Geometrie+442Kampagnenchecks,442ASAN/UBSAN, finaler Build75818, TenLevelCorrected53904 alle5UnrealTestsSuccess0errors; Raum3/10 und Lernhilfe tatsächlich gerendert/geprüft. Vorherige Fehler inkl. verwirrendem Unterricht, Pizzaverlust, verspäteter Minusbestellung und falschem Test-Klickziel bleiben HANDOFF/run-history. Unabhängige begrenzte Reviews; letzter Important durch tatsächliche Erreichbarkeitstests korrigiert.
+
+Stufe branch_only; keine native CI/Integration/mobile/Production oder pädagogische/spielerische Abnahme. Nächster konkreter Schritt: Martin spielt Level1, legt Pizza auf einen Tisch und korrigiert eine absichtliche Falschlieferung; aus diesem Test Lernfluss/Level anpassen, erst dann erweitern. Kein zusätzlicher Provider-Aufruf/Budgetreset.
+
+## Frühere gesicherte Schritte (historisch, aktuelle Angaben oben)
+
 Verantwortlicher Chat: 01a111e6-c211-76a2-928e-8ed88a7b7bec (Games GC/Work), öffentlicher Chat-Link unbekannt. Auftrag vom 07.10.2026: Der Nutzer ersetzt den abgelehnten Browser-Piloten durch eine native Unreal-Küche für mobile Bedienung. Ursprüngliche Task-ID, Browser-PR158, Fehlversuche und Budgethistorie bleiben erhalten. Kein Production-Auftrag.
 
 Primary branch `feature/bruchpizzeria-unreal-v1`, eigener Checkout `gradecrew-bruchpizzeria-unreal`. Aktueller main `d789f5a` bewusst mit den fremden Web-Statuskorrekturen zusammengeführt; native Zuständigkeit nur `games/bruchpizzeria-unreal` plus eigener Koordinationseintrag. Andere Arbeit bleibt erhalten.

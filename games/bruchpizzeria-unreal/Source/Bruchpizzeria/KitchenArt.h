@@ -29,5 +29,6 @@ namespace KitchenArt
     };
 
     ChefParts Chef(AActor* Owner, USceneComponent* Parent, FName Name, FVector Position, FLinearColor Apron);
-    void Room(AActor* Owner, USceneComponent* Parent);
+    void Room(AActor* Owner, USceneComponent* Parent,int Level=1);
+    void ExtraOven(AActor*,USceneComponent*,FVector);
 }

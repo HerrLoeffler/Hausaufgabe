@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "094546a44131a671daede5131e29def0da116002",
+    "observed_integration_head": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -54,44 +54,57 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37558924609_commit_094546a44131a671daede5131e29def0da116002",
+      "combined_ci": "success37575725669_commit_12b54c2f9ee9761642c63378c724955c53b7d0c4",
       "mobile_tutorial": "prior_runtime_tour37558149323@7f91dea0_success; CSS-only094546a4_final_combinedCI_and_browser_layout_verified",
-      "hosting_preview": "success_run_37559039697_receipt_11455947421_commit_094546a44131a671daede5131e29def0da116002",
-      "staging_functions": "success_run_37559039672_receipt_11455703400_commit_094546a44131a671daede5131e29def0da116002",
+      "hosting_preview": "success37575854754_attempt2_receipt11462721822",
+      "staging_functions": "success37575854717_receipt11462362075",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
-      "user_acceptance": "pending_for_094546a4; previous0931ade4_failed_retained",
+      "user_acceptance": "pending_for_12b54c2f; failed094546a4_retained",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37559039672_receipt_11456380393_commit_094546a44131a671daede5131e29def0da116002",
+      "staging_assessment_functions": "success37575854717_receipt11463141295",
       "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
-      "canonical_hosting": "success_run_37559354641_receipt_11456410883_commit_094546a44131a671daede5131e29def0da116002"
+      "canonical_hosting": "success37576307264_receipt11463137102"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 123,
-    "important": "Final PR161/162 batch094546a44131a671daede5131e29def0da116002 is verified on canonical Staging: exactCI37558924609, preview37559039697/receipt11455947421, AI/Assessment37559039672/receipts11455703400,11456380393, canonical37559354641/receipt11456410883 with123files. Actual authenticated canonical dashboard loaded with0px horizontal overflow at1920 and1px publication checkbox, no new console errors. Local390px layout/Space/focus verified. Human/device and paid generation acceptance unperformed; old failed jobs/reports preserved. New private audio remains draft-only until proven live secure Rules/Gates C–F/30participants. No scroll story, Games/nativeiOS/Production; collector PAUSED.",
-    "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
+    "important": "PR163 12b54c2f9ee9761642c63378c724955c53b7d0c4 canonically deployed with exact CI/preview/functions/canonical receipts. Initial preview manifest mismatch retained; same-build bounded failed-job rerun passed all hashes. Actual canonical desktop: four original portraits, old vector absent, 0px overflow. Local390x844 hero fits, dashboard0px overflow. No paid generation acceptance or physical device acceptance. Static classroom painting has no new articulated wing/door animation; only finite portrait movement. Private audio draft-only until live secure Rules gates. Games/iOS/Production excluded; collector PAUSED.",
+    "next_action": "Martin tests new creation/editing, explicit test language and grammar alternatives; existing DYVCHDPV unchanged. Private audio gates remain open; collector PAUSED.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
       "stage": "staging_deployed",
-      "commit": "094546a44131a671daede5131e29def0da116002",
-      "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+      "commit": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
+      "tree": "0823b20e2ea2c6f7bdd1a5732d355d958a15e23e",
       "included_prs": [
-        161,
-        162
+        163
       ],
-      "combined_ci": 37558924609,
-      "preview_run": 37559039697,
-      "preview_receipt": 11455947421,
-      "functions_run": 37559039672,
-      "ai_receipt": 11455703400,
-      "assessment_receipt": 11456380393,
+      "combined_ci": 37575725669,
+      "preview_run": 37575854754,
+      "preview_receipt": 11462721822,
+      "functions_run": 37575854717,
+      "ai_receipt": 11462362075,
+      "assessment_receipt": 11463141295,
       "no_scroll_story": true,
-      "canonical_run": 37559354641,
-      "canonical_receipt": 11456410883,
-      "user_acceptance": "pending"
+      "canonical_run": 37576307264,
+      "canonical_receipt": 11463137102,
+      "user_acceptance": "pending",
+      "followup": {
+        "pr": 163,
+        "branch": "feature/audio-crew-visual-correction-20261007",
+        "head": "0b3b574b8add3fbb65ddbf288f668ae07158d038",
+        "stage": "staging_deployed",
+        "ci": 37575580701,
+        "review": "independent_delta_review_passed",
+        "next": "exact CI, serial integration, fresh deploy receipts",
+        "automation": "PAUSED"
+      },
+      "previousAcceptedCandidate": {
+        "commit": "094546a44131a671daede5131e29def0da116002",
+        "userAcceptance": "failed"
+      }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json"
+    "canonical_request": "automation/canonical-staging-requests/gc-web-crew-correction-20261007-12b54c2f.json"
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -849,15 +862,17 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "25a4ed5",
-      "ci": "not_run_for_native_engine; local182core/sanitizer + NativeDesktopFinal4testsSuccess0errors",
+      "local_code_commit": "f84ff0e78f9b29770951244414af7f2baa3aad07",
+      "ci": "not_run_for_native_engine; local182geometry+442campaign/sanitizer; TenLevelCorrected5testsSuccess0errors",
       "staging": "not_deployed",
-      "user_test": "initial_native_start_and_cut_failures_reported; revised_candidate_hardware_mouse_test_pending",
+      "user_test": "Initial start/cut failures and abstract learning pause rejected; revised ten-level visual-learning candidate acceptance pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Real user mouse start and cross-pizza drag in revised local window; synthetic CUA mouse position does not follow virtual pointer. Mobile IOS component/device/package gates remain open.",
-      "observed_head": "331db91e791eccce75a344bc0d1acde04817356b",
+      "next_action": "Martin plays first calm shift, safe preparation tables and concrete portion repair; refine ten levels from user/learner feedback before expanding to20. Mobile package/device gates separate.",
+      "observed_head": "93b2eab13156bc62e01f7985c5d054c5381a7868",
       "pull_request": 160,
-      "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files"
+      "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
+      "observed_head_scope": "previous published checkpoint; current local code f84ff0e, fresh publication receipt follows separately",
+      "campaign_levels": 10
     }
   ],
   "deployments": [

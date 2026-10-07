@@ -10,5 +10,6 @@ UCLASS() class BRUCHPIZZERIA_API APizzaHUD:public AHUD {
  UPROPERTY() UFont* TextFont=nullptr;
  FVector2D TextExtent(const FString&,float)const;void Wrapped(const FString&,float,float,float,float,FLinearColor,int MaxLines=2);
  FVector2D ViewOrigin=FVector2D::ZeroVector;float Scale=1,Height=720;TArray<FKitchenButton> Buttons;
+ void Portion(float,float,float,int,uint32);
  void Panel(float,float,float,float,FLinearColor);void Label(const FString&,float,float,float,FLinearColor=FLinearColor::White,bool Center=false);void Button(FName,const FString&,float,float,float,float,FLinearColor);void Circle(float,float,float,FLinearColor);
 };
