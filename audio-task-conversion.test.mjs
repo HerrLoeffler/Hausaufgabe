@@ -8,7 +8,7 @@ const {JSDOM}=require('./tools/ui/node_modules/jsdom');
 const app=fs.readFileSync('app.js','utf8');
 function runtime(q) {
   const messages=[],requests=[];
-  const context={state:{currentQuiz:{id:'TEST'},questions:[q]},toast:message=>messages.push(message),markDirty:()=>{},renderQuestionAudioEditor:()=>{},showReportableError:details=>{throw new Error(details.message);},aiFriendlyError:err=>err.message,REPORTABLE_ERROR_CODES:{aiEdit:'AI-EDIT'},console,aiApi:{generateQuestionAudio:async request=>{requests.push(request);return {asset:{audioDataUrl:`data:audio/mpeg;base64,QUJD${requests.length}`,audioByteSize:4}};}}};
+  const context={window:{AudioContext:class {async decodeAudioData(){return {duration:0.2,numberOfChannels:1,getChannelData:()=>new Float32Array([0.1])};}async close(){}}},atob:value=>Buffer.from(value,"base64").toString("binary"),Uint8Array,state:{currentQuiz:{id:'TEST'},questions:[q]},toast:message=>messages.push(message),markDirty:()=>{},renderQuestionAudioEditor:()=>{},showReportableError:details=>{throw new Error(details.message);},aiFriendlyError:err=>err.message,REPORTABLE_ERROR_CODES:{aiEdit:'AI-EDIT'},console,aiApi:{generateQuestionAudio:async request=>{requests.push(request);return {asset:{audioDataUrl:`data:audio/mpeg;base64,QUJD${requests.length}`,audioByteSize:4}};}}};
   const helpers=app.slice(app.indexOf('function getQuestionAudioSrc('),app.indexOf('function renderQuestionAudioEditor('));
   const generate=app.slice(app.indexOf('async function generateAiAudioForQuestion('),app.indexOf('async function generateAiSolutionAudioForQuestion('));
   vm.runInNewContext(helpers+generate,context);

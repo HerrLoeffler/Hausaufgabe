@@ -469,7 +469,7 @@ exports.processAiTestJob = onTaskDispatched({
       const q = await storedAiQuestion(raw, index, {
         model: response.meta.model, promptVersion: response.meta.promptVersion,
         kind: job.sourceQuizId ? "similar" : "generated",
-        generateMedia: async options => (await createVerifiedMedia({ uid, ...options })).asset,
+        generateMedia: async options => (await createVerifiedMedia({ uid, ...options, testContext: { title: response.test.title, subject: job.input?.subject, grade: job.input?.grade, topic: job.input?.topic, contentLocale: require("./lib/content-locale").extractContentLocale(job.input?.notes) } })).asset,
         generateAudio: async options => (await createAudioAsset({ uid, ...options })),
         onImage: async () => {
           completedImages += 1;
@@ -604,12 +604,14 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   try {
   const { uid } = await requireAiUser(request); await consumeQuota(uid, "question");
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
-  const allowedTypes = Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
+  const targetType = request.data?.targetType;
+  if (targetType != null && !QUESTION_TYPES.includes(targetType)) throw new HttpsError("invalid-argument", "Ungültiger Zieltyp.");
+  const allowedTypes = targetType ? [targetType] : Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
   const audioKind = question?.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none";
-  const basePrompt = questionUserPrompt({ mediaKind, audioKind, question, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
+  const basePrompt = questionUserPrompt({ mediaKind, audioKind, question, targetType, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
   const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
@@ -617,7 +619,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const usage = {};
   let normalized, errors;
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
-  const variantSchema = request.data?.variant && QUESTION_TYPES.includes(question.type)
+  const variantSchema = targetType ? questionSchemaForType(targetType, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind }) : request.data?.variant && QUESTION_TYPES.includes(question.type)
     ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind })
     : questionSchema;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
@@ -687,7 +689,7 @@ exports.generateQuestionMedia = onCall(callableOpts, async request => {
   const maxBytes = 280 * 1024;
   const expectedScene = String(request.data?.expectedScene || "").slice(0, 400);
   try {
-    return await createVerifiedMedia({ uid, questionId, prompt, expectedScene, altText: String(request.data?.altText || "").slice(0, 500), maxBytes });
+    return await createVerifiedMedia({ uid, questionId, prompt, expectedScene, question: request.data?.question || {}, testContext: request.data?.testContext || {}, questionText: String(request.data?.question?.text || ""), altText: String(request.data?.altText || "").slice(0, 500), maxBytes });
   } catch (err) {
     err.diagnostic = { ...err.diagnostic, question: questionSnapshot(request.data?.question || {}),
       optionPosition: Number(request.data?.optionPosition) || null };
