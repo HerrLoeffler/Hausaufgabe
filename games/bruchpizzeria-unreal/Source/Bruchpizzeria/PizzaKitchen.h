@@ -22,7 +22,7 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  UPROPERTY() TArray<APizzaVisual*> TableVisuals;UPROPERTY() TArray<APizzaVisual*> ExtraOvenVisuals;UPROPERTY() TArray<AActor*> ExtraOvenArt;
  TArray<TOptional<FKitchenPizza>> Tables,ExtraOvens;TArray<float> ExtraBakeTimes;
  PizzaRules::CampaignProfile Level;PizzaRules::KitchenLayout Layout=PizzaRules::CampaignLayout(1);PizzaRules::PortionRepair Repair;FKitchenOrder RepairOrder;
- PizzaRules::Bill LastBill;FString BillGuest,BillComplaint;PizzaRules::Rational BillPortion;int BillIngredients=0;bool BillVisible=false;int Cash=0,ShiftSales=0,ShiftTips=0;
+ PizzaRules::Bill LastBill;FString BillGuest,BillComplaint;PizzaRules::Rational BillPortion;int BillIngredients=0;bool BillVisible=false;float BillRemaining=0;int Cash=0,ShiftSales=0,ShiftTips=0,WrongDelivered=0;
  int LevelNumber=1,UnlockedLevel=1;bool LevelWon=false;
  TArray<FKitchenOrder> Orders;TOptional<FKitchenPizza> Carry,Board,Oven;
  float BakeTime=0,RoundTime=240,FeedbackTime=0;int Score=0,Served=0,Difficulty=0,OrderSerial=0;
@@ -33,7 +33,7 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  bool Frozen()const{return Intro||Learning||Paused||Finished;}
  AKitchenChef* Chef()const;int NearestStation()const;void Start();void ReturnToMenu();void TogglePause();void Use();void Drop();void Dash();void CycleDifficulty();
  void BeginCut();void FinishCut();void CutStroke(FVector2D,FVector2D);void CutAngle(float);void TogglePiece(FVector2D);void ResetCuts();
- void UseTable(int);void UseOven(int);void ConfirmRepair();void ToggleRepairPiece(int);void ShowRepairStep();void SelectLevel(int);void SaveProgress();
+ void UseTable(int);void UseOven(int);void ConfirmRepair();void ServeAnyway();void ToggleRepairPiece(int);void ShowRepairStep();void SelectLevel(int);void SaveProgress();
  void TryServe(int);void BeginLesson(const FKitchenOrder&,PizzaRules::Rational);void Answer(int);void RefreshPizza();void MakeOrder();
  FVector StationLocation(int I)const{return FVector(Layout.Stations[I].X,Layout.Stations[I].Y,0);}
  FVector CutLocation()const{return StationLocation(5)+FVector(0,0,94);}FString OrderLabel(const FKitchenOrder&)const;
@@ -43,6 +43,6 @@ UCLASS() class BRUCHPIZZERIA_API APizzaController:public APlayerController {
  public:APizzaController();virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
  FVector2D Stick=FVector2D::ZeroVector,DragStart=FVector2D::ZeroVector,DragEnd=FVector2D::ZeroVector;bool Dragging=false,Joystick=false;int ActiveTouch=-1;
  APizzaGameMode* Game()const;FVector MoveDirection(FVector2D ScreenAxes)const;void Use();void Drop();void Dash();void Escape();void DifficultyMode();void Cut0();void Cut45();void Cut90();void Cut135();
- void PointerDown();void PointerUp();void ClearInput();void ChooseAnswer(int);void PreviousAnswer();void NextAnswer();void TouchDown(ETouchIndex::Type,FVector);void TouchUp(ETouchIndex::Type,FVector);
+ void GiveAnyway();void PointerDown();void PointerUp();void ClearInput();void ChooseAnswer(int);void PreviousAnswer();void NextAnswer();void TouchDown(ETouchIndex::Type,FVector);void TouchUp(ETouchIndex::Type,FVector);
  void Press(FVector2D,int);void Release(FVector2D,int);FVector2D PizzaPoint(FVector2D)const;
 };

@@ -17,11 +17,11 @@ class FCheckCampaignRevision final:public IAutomationLatentCommand {
   G->Chef()->SetActorLocation(FVector(-205,-300,77));Test->TestEqual(TEXT("Preparation table has a reachable station"),G->NearestStation(),9);
   FKitchenOrder O;O.Name=TEXT("Lina");O.Amount=PizzaRules::Rational(3,8);G->Carry=FKitchenPizza();G->Carry->Baked=true;G->Carry->Ingredients=3;G->Carry->Cuts.AddDiameter(0);G->Carry->Selection=1;G->Carry->Plated=true;G->BeginLesson(O, PizzaRules::Rational(1,2));
   G->ToggleRepairPiece(3);G->ConfirmRepair();
-  Test->TestFalse(TEXT("One concrete correction resumes cooking without three quiz gates"),G->Learning);
-  Test->TestTrue(TEXT("Repair plate contains actual requested three eighths"),G->Carry.IsSet()&&PizzaRules::Equal(G->Carry->Cuts.Selected(G->Carry->Selection),PizzaRules::Rational(3,8)));
+  Test->TestFalse(TEXT("Acknowledging customer resumes cooking without editing"),G->Learning);
+  Test->TestTrue(TEXT("Customer reminder preserves actual wrong half"),G->Carry.IsSet()&&PizzaRules::Equal(G->Carry->Cuts.Selected(G->Carry->Selection),PizzaRules::Rational(1,2)));
   G->Learning=false;G->UseTable(0);Test->TestTrue(TEXT("Prepared plate stored without loss"),!G->Carry.IsSet()&&G->Tables[0].IsSet()&&G->Tables[0]->Baked&&G->Tables[0]->Plated);
   G->Carry=FKitchenPizza();G->Carry->Ingredients=7;G->UseTable(0);Test->TestTrue(TEXT("Occupied table and full hands preserve both pizzas"),G->Carry.IsSet()&&G->Carry->Ingredients==7&&G->Tables[0]->Selection!=0);
-  G->UseTable(1);G->UseTable(0);Test->TestTrue(TEXT("Original exact plate can be picked back up"),G->Carry.IsSet()&&PizzaRules::Equal(G->Carry->Cuts.Selected(G->Carry->Selection),PizzaRules::Rational(3,8)));
+  G->UseTable(1);G->UseTable(0);Test->TestTrue(TEXT("Original exact plate can be picked back up"),G->Carry.IsSet()&&PizzaRules::Equal(G->Carry->Cuts.Selected(G->Carry->Selection),PizzaRules::Rational(1,2)));
   G->LevelNumber=6;G->Start();G->Carry=FKitchenPizza();G->Carry->Ingredients=3;G->UseOven(0);G->Tick(2);G->Carry=FKitchenPizza();G->Carry->Ingredients=7;G->UseOven(1);G->Tick(3.1);Test->TestTrue(TEXT("Independent oven clocks keep newer pizza baking"),G->Oven->Baked&&!G->ExtraOvens[0]->Baked);
   G->Learning=true;const float ExtraClock=G->ExtraBakeTimes[0],RoundClock=G->RoundTime,GuestClock=G->Orders[0].Patience;G->Tick(10);Test->TestEqual(TEXT("Learning freezes extra oven too"),G->ExtraBakeTimes[0],ExtraClock);Test->TestEqual(TEXT("Learning freezes active challenge clock"),G->RoundTime,RoundClock);Test->TestEqual(TEXT("Learning freezes active guest patience"),G->Orders[0].Patience,GuestClock);G->Learning=false;G->Tick(2);Test->TestTrue(TEXT("Second oven completes after resume"),G->ExtraOvens[0]->Baked);
   G->LevelNumber=1;G->UnlockedLevel=1;G->Start();G->Tick(999);Test->TestFalse(TEXT("Early calm level cannot expire"),G->Finished);Test->TestEqual(TEXT("Early level has one concrete guest"),G->Orders.Num(),1);

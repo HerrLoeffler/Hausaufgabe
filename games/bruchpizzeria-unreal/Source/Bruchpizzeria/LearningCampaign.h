@@ -51,6 +51,7 @@ inline CampaignTicket CampaignOrder(int number,int serial){
  if(p.MaxDen==2)o.Amount=Rational(i%3==2?2:1,2);
  else if(p.MaxDen==4){const int values[]={1,3,2,4};o.Amount=Rational(values[i%4],4);}
  else {const int values[]={1,3,4,5,7,2,6,8};o.Amount=Rational(values[i%8],8);}
+ if(n==5&&i%3==2)o.Amount=Rational(7,8);
  if(n==7){const int values[]={2,4,6,4};o.Amount=Rational(values[i%4],8);}
  if(n>=4&&i%3==2)o.Ingredients=7;
  if(n>=8&&i%4==3){

@@ -2,16 +2,16 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
+  "native_source_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
   "core_checks": {
     "fraction_geometry": 182,
-    "campaign_repair_layouts": 442,
+    "campaign_repair_layouts": 443,
     "failures": 0,
     "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained",
     "billing": 223,
-    "evidence_scope": "Previous847 pure checks remain evidence for unchanged FractionRules/LearningCampaign/BillingRules; menu-only source uses actual native suite."
+    "evidence_scope": "Fresh182geometry+443campaign+223billing zero after correcting7/8 generation; final native source uses same unchanged cores."
   },
-  "editor_build": "Succeeded menu-final-build.log, session66854",
+  "editor_build": "Succeeded guest-feedback-final-build.log, session88907",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -489,9 +489,138 @@
           "warnings": 5
         }
       ]
+    },
+    "GuestFeedbackRed": {
+      "sha256": "5a5493e85c88af2141145a60eac3c292d15d92027328f8324514d213121479ce",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Fail",
+          "errors": 6,
+          "warnings": 1
+        }
+      ]
+    },
+    "GuestFeedbackFull": {
+      "sha256": "82a53c9c7cddbee02359110410cfe41756f34856b84c2fd90adacd49677a7cd7",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "GuestFeedbackFinal": {
+      "sha256": "a1a1cfe9164bff1f727562a6b89d589dbe989fc453cf2c93de02f0bdf2fb7cdb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
     }
   },
-  "visual_acceptance": "Actual native unpaid, paid and shift-total receipts inspected; final unpaid receipt rechecked for amount wording. Existing kitchen/learning rendering remains local evidence. Physical hardware/playfeel/mobile/learning-transfer acceptance pending.",
+  "visual_acceptance": "Actual immutable target-only customer window and compact right-side2second bill inspected. Real kitchen/menu/cutting render retained. No physical mobile/playfeel/learning-transfer acceptance inferred.",
   "physical_mobile_device": "not_tested",
   "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
@@ -513,44 +642,59 @@
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1851508,
-      "sha256": "6b1783c441cd61e48d7df0a86bc47d991faf3ccc281d198aa9743576bf03d3f3"
+      "bytes": 1837007,
+      "sha256": "0d152e78eb0d9839ebd5309031ecb255163071eed1e63d079f9351700ae47804",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeCutting.png": {
-      "bytes": 1731502,
-      "sha256": "89fe4a8cbb7b30ed35bae4b9aa842a2ae4d924a1e750b2599df5d7fddf95d931"
+      "bytes": 1728800,
+      "sha256": "994679c0f60fff4fe55bbe0a1051406fadf4fb90afd04830bb41401bbc518bf2",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeLearning.png": {
-      "bytes": 700825,
-      "sha256": "1cc47a26c4ce17f463e59d668e1764396ad91a4a876f14576d3cf2fe0ee7b97e"
+      "bytes": 875034,
+      "sha256": "f8da270e73e3aab9f807afb3c0384bafddc7e51d575c2d586251300259438c5c",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeUnequal.png": {
-      "bytes": 1581858,
-      "sha256": "46fe9c26ab3d44b64b804935f1dc4dff39acbb57fa3d50e043426f12f13c7797"
+      "bytes": 1604635,
+      "sha256": "a97207536b556cb9573d628150883d82a5f9a1f209114a26a4b04fb9e355d7fa",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeLevel3.png": {
-      "bytes": 1874856,
-      "sha256": "e106432ce4c6eab2e74fe5bc4d7fff23fdc5194fe22d127127775d06f3302067"
+      "bytes": 1862386,
+      "sha256": "8266f90f78cf1273ccbe49d8bf54b6d19a3b0267f72d2601694fe9f148a6f9d6",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeLevel10.png": {
-      "bytes": 1876735,
-      "sha256": "69ee8596697629f1f56dd54ad4711204d9eff5f6479abd5092d046aa1fdfe119"
+      "bytes": 1862500,
+      "sha256": "bc81614b140722f1e5c3d0c998452ccedc88a4884e2dc3f9da01c3a440dbfeaf",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeRejectedBill.png": {
       "bytes": 1600706,
-      "sha256": "2cbb7ede86885f6835a69fd163b7d4cab577997de36c43435d13f7c626247379"
+      "sha256": "2cbb7ede86885f6835a69fd163b7d4cab577997de36c43435d13f7c626247379",
+      "scope": "Historical invoice before target-only review; not current render"
     },
     "NativePaidBill.png": {
-      "bytes": 1670263,
-      "sha256": "588565df0050bd75a52a9d8992759643fe77790ecac6d6640008c48fc776f4b0"
+      "bytes": 1782340,
+      "sha256": "a68a242c6e0f9c0a6088d8bf3934f5859a5d2c35b055015b8f397f42cad96853",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeShiftBill.png": {
-      "bytes": 1304581,
-      "sha256": "619965fb2b46b12d5bea4395cdf77c69abc1167ff0835909ae7fee55b2058a63"
+      "bytes": 1476748,
+      "sha256": "0f543784ca1b739aabede5a3abc3a2e352e09540233b0447c692f1db1b0daa72",
+      "scope": "GuestFeedbackFinal native render"
     },
     "NativeMenu.png": {
-      "bytes": 1226150,
-      "sha256": "ce69151309e211accf42f7f5fc813f21e6227918c8551d30cb99dcad8c20d99a"
+      "bytes": 1219838,
+      "sha256": "8cc36c801409b3f9c3c31ee79103e9947b09099c28df94bcce1517cd0b5031df",
+      "scope": "GuestFeedbackFinal native render"
+    },
+    "NativeGuestReview.png": {
+      "bytes": 864478,
+      "sha256": "544552a63131f39d8dd9b4313b00a8b628683d4fb5016949c3d69bc50e082948",
+      "scope": "GuestFeedbackFinal native render"
     }
   },
   "mouse_corrections": [
@@ -582,7 +726,7 @@
     "mushrooms_from_level": 4,
     "review": "Bounded reviewer cleared ae3cc08 billing delta and47d22d9 reboard fix; no Important/Critical."
   },
-  "previous_native_source_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
+  "previous_native_source_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
   "menu": {
     "entry": "Esc or visible menu button from cooking/cutting/fraction help",
     "actions": [
@@ -592,5 +736,16 @@
     ],
     "verification": "MenuRed6 failures -> MenuFinal native UI press/restart/level selection/input guards pass; actual NativeMenu PNG inspected.",
     "review": "No Important/Critical. Minor: Q can change feedback while paused; ultrawide end-screen level button clips outside fixed desktop ratio, Esc route works."
+  },
+  "guest_feedback": {
+    "actions": {
+      "E": "Understood preserves exact dish; player returns to real kitchen stations",
+      "F": "Give actual wrong dish anyway0EUR; remove it, replace specific guest order, no pay/tip/success progress"
+    },
+    "receipt": "Compact right under cash,2active seconds; held in review/menu, expires even after Finished",
+    "recipes": "Decorative world recipe boards removed; actual tickets remain header",
+    "level5": "1/8,3/8,7/8 reachable within3correct-delivery shift",
+    "review": "No Important/Critical; recheck compactUI and second-guest/F-pause/finished-receipt/ticket-identity tests cleared",
+    "gameplay_depth_assessment": "5/10 for first10level gameplay/campaign scope, not measured or overallGradeCrew"
   }
 }

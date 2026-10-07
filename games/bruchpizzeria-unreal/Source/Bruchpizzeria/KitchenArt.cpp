@@ -389,22 +389,12 @@ void Room(AActor* O,USceneComponent* P,int Level)
         Box(O,P,TEXT("RearShelfPost"),FVector(X,502,128),FVector(15,20,146),Wood,3,true);
         Box(O,P,TEXT("ShelfBracket"),FVector(X,491,191),FVector(15,32,14),Wood,3);
     }
-    for (float X:{-647.f,647.f})
-        Box(O,P,TEXT("MenuBacking"),FVector(X,496,139),FVector(107,18,171),Sage,5,true);
     Box(O,P,TEXT("RearWoodShelf"),FVector(-350,497,198),FVector(249,32,10),Wood,3);
     Box(O,P,TEXT("RearWoodShelf"),FVector(350,497,198),FVector(249,32,10),Wood,3);
     for (float X:{-428.f,-382.f,-334.f,330.f,377.f,425.f})
     {
         Cylinder(O,P,TEXT("PantryJar"),FVector(X,496,218),FVector(.23,.23,.32),X<0?Terra:Ivory);
         Cylinder(O,P,TEXT("PantryJarLid"),FVector(X,496,236),FVector(.25,.25,.045),Wood);
-    }
-    for (float X:{-647.f,647.f})
-    {
-        Box(O,P,TEXT("MenuFrame"),FVector(X,463,172),FVector(91,11,94),Wood,6);
-        Box(O,P,TEXT("MenuSlate"),FVector(X,456,172),FVector(77,3,80),Ink,3);
-        Label(O,P,FVector(X,452,193),TEXT("PIZZA"),Ivory,17);
-        Label(O,P,FVector(X,452,171),TEXT("1/2   1/4"),Cream,12);
-        Label(O,P,FVector(X,452,150),TEXT("1/8"),Cream,13);
     }
     // Pendants: a warm bulb inside a sage shade, thin brass suspension.
     for (float X:{-335.f,335.f})

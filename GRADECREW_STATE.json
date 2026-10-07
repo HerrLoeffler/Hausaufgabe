@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
+    "observed_integration_head": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -862,16 +862,16 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
-      "ci": "not_run_for_native_engine; MenuFinal8nativeTestsSuccess0errors; previous847pure checks unchanged",
+      "local_code_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
+      "ci": "not_run_for_native_engine; GuestFeedbackFinal9nativeTestsSuccess0errors;848pureChecksZero",
       "staging": "not_deployed",
-      "user_test": "Initial/abstract learning and level1 mushroom correction rejected; free-kitchen customer bills/cash/tips candidate acceptance pending",
+      "user_test": "Previous abstract/editable popup rejected; current immutable target/Ephysical correction/Fzero-pay and2secondbill candidate acceptance pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Martin tests Esc menu, restart same shift and level selection; native window ready. Mobile/learning-transfer gates remain separate.",
-      "observed_head": "c369c9f8b6f399ff71d3193db57596e0e6f83f20",
+      "next_action": "Martin tests immutable guest target with E/Fchoices and briefbill; then expand actual guest/campaign gameplay from test feedback. Rats/device/learning-transfer gates separate.",
+      "observed_head": "dd7f37df3c835b7daeea5a6fc3da528323e5cca6",
       "pull_request": 160,
       "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
-      "observed_head_scope": "Previous verified guest-billing checkpoint; Menu source13b31f2 tested, new exact-tree publication receipt separately records final head.",
+      "observed_head_scope": "Previous verified menu checkpoint; new fbd1a9b source tested, final exact-tree publication receipt records new head separately",
       "campaign_levels": 10
     }
   ],
@@ -1362,5 +1362,48 @@
     "document": "docs/gradecrew-review-mode-concept-20261007.txt",
     "next": "Repo-specific implementation plan; not implemented",
     "automaticAI": false
+  },
+  "reviewModeImplementation": {
+    "task": "GC-WEB-REPAIR-20261007",
+    "phase": "integrated",
+    "branch": "feature/review-mode-20261007",
+    "head": "a82e035e42ae9be320f06032a7240dfc9e35bf98",
+    "pr": 167,
+    "candidateCI": 37629871764,
+    "localTests": {
+      "functions": 179,
+      "ui": 54,
+      "existingApp": 48,
+      "preview": 5,
+      "buildFiles": 127
+    },
+    "browserAcceptance": "blocked_browser_policy_verification_unavailable",
+    "deployment": "not_deployed",
+    "automaticAI": false,
+    "automaticChecks": "explicit_local_allowlist_only",
+    "next": "Verify canonical staging receipt, then user acceptance",
+    "integration": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
+    "candidateCIConclusion": "success",
+    "mergeCI": 37630241490,
+    "mergeCIConclusion": "success",
+    "previewRun": 37630432043,
+    "functionsRun": 37630432069,
+    "previewReceipt": 11485409743,
+    "assessmentReceipt": 11486302530,
+    "functionsAttemptHistory": [
+      {
+        "attempt": 1,
+        "job": 112823026088,
+        "result": "Failed to list functions for hausaufgabe-staging before creation/update; sibling assessment deploy succeeded"
+      },
+      {
+        "attempt": 2,
+        "result": "success; reviewMode created and explicitly verified; receipt11486900356"
+      }
+    ],
+    "functionsReceipt": 11486900356,
+    "functionsConclusion": "success_attempt2",
+    "reviewModeFunctionVerified": true,
+    "canonicalRequest": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json"
   }
 }

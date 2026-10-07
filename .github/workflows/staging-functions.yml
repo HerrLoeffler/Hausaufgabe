@@ -157,7 +157,8 @@ jobs:
             'reviseWholeTest',
             'recordCrewTelemetry',
             'getCrewTelemetrySummary',
-            'cleanupCrewTelemetry'
+            'cleanupCrewTelemetry',
+            'reviewMode'
           ];
           for (const required of requiredFunctions) {
             if (!text.includes(required)) throw new Error(`Missing deployed staging function: ${required}`);
@@ -183,7 +184,8 @@ jobs:
               'reviseWholeTest',
               'recordCrewTelemetry',
               'getCrewTelemetrySummary',
-              'cleanupCrewTelemetry'
+              'cleanupCrewTelemetry',
+            'reviewMode'
             ],
             productionChanged: false,
             firestoreRulesChanged: false,
