@@ -2,7 +2,9 @@
 
 ## Aktueller Stand nach Nutzerkorrektur
 
-Task/Zuständigkeit unverändert: GC-GAMES-PIZZA-01, eigener Branch feature/bruchpizzeria-unreal-v1, Entwurfs-PR160. Aktueller main7ef2915 bewusst zusammengeführt, DevelopmentStatus37586518216 erfolgreich. Runtime 47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3: zehn verschiedene Küchen und bisherige visuelle Bruchhilfe erhalten; neue freie Küchenhandlungen, konkrete Gastbeschwerden und Rechnungen umgesetzt.
+Task/Zuständigkeit unverändert: GC-GAMES-PIZZA-01, eigener Branch feature/bruchpizzeria-unreal-v1, Entwurfs-PR160. Aktueller maine6ee65e bewusst zusammengeführt, DevelopmentStatus37624618495 erfolgreich. Runtime 13b31f219d5929db837ee5e534341ef2f548d493: zehn verschiedene Küchen und bisherige visuelle Bruchhilfe erhalten; neue freie Küchenhandlungen, konkrete Gastbeschwerden und Rechnungen umgesetzt.
+
+Neues Spielmenü: Esc/»MENÜ · ESC« aus Kochen, Schneiden und Bruchhilfe. Weiter bewahrt Arbeit, Schicht neu starten setzt nur Schichtzustand zurück, Levelauswahl führt zu freigeschalteten Küchen. Kasse/Unlocks bleiben; alle Spieluhren halten. Eingaben wirken nicht auf die Portion unter dem Menü. Auch am Schichtende Levelauswahl. Native MenuRed6 → MenuFinal alle8UnrealTestsSuccess0errors, finaler Build66854; tatsächlicher Menü-Screenshot geprüft, begrenzter Review ohne wichtige Befunde. Minor: Q verändert Feedback bei Pause; ultrawide Abschlussbutton clippt, Esc funktioniert; aktuelle feste Desktopansicht passt.
 
 Alle Beläge in den Ofen, frühes rohes Abholen, rohes/ungleiches Schneiden, Ganzes oder beliebige Portion servieren. Prüfung erst beim Gast: roh, fehlende oder unerwünschte konkrete Zutaten, falsche Portion. Kein Geld/Fortschritt für falsche Lieferung. Echte Pizza bleibt erhalten; Zutaten an Station hinzufügen/entfernen, erneut backen/portionieren. Keine automatische Belagkorrektur oder Belag-Lernpause. Level1–3 ohne Champignons/Station, erst ab4. Falscher Bruch bei sonst richtiger Pizza öffnet bestehende konkrete Hilfe; erneute echte Lieferung nötig.
 
@@ -10,7 +12,7 @@ Bon pro Übergabe: tatsächliche Portion, Pizza + vorhandene Zutaten, Gesamtprei
 
 Belegt:182Geometrie+442Kampagnen+223Rechnungschecks0Fehler. Freiheit RED14, Rechnungskern RED132, Rückkehr zum Brett RED1 sichtbar fehlende Crust-Geometrie, danach letzte Build53821 Succeeded und FreedomBillingFinal21304 alle7UnrealTestsSuccess0errors. Warnungen nur bekannte AudioUnit/Epicidevice-CPU. Tatsächlich gerenderte unbezahlte/bezahlte Bons und Schichtabrechnung geprüft. Unabhängige begrenzte Reviews ohne offene Important/Critical; vorherige Fehlerhistorie erhalten. Aktuelle remote Veröffentlichung über normal-FF GitHub-Connector und exaktes Tree-Receipt separat gesichert, frühere d36b8e nicht als neuer Stand behauptet.
 
-Stufe branch_only; keine native CI/Integration/mobile/Production oder pädagogische/spielerische Abnahme. Zehn zuerst testen,20 später möglich,100 verworfen, Ratten Idee. Nächster Schritt: Martin spielt Level1 und liefert absichtlich rohe/falsch belegte Pizza, verbessert dieselbe Pizza und prüft Rechnung/Kasse/Trinkgeld. Kein neuer Provider-Aufruf oder Budgetreset. Chat-Link unbekannt, derselbe verantwortliche Games-GC/Work-Chat.
+Stufe branch_only; keine native CI/Integration/mobile/Production oder pädagogische/spielerische Abnahme. Zehn zuerst testen,20 später möglich,100 verworfen, Ratten Idee. Nächster Schritt: Martin nutzt Esc → Schicht neu starten und Levelauswahl; normales lokales Spielfenster mit offenem Menü bereitstellen. Kein neuer Provider-Aufruf oder Budgetreset. Chat-Link unbekannt, derselbe verantwortliche Games-GC/Work-Chat.
 
 ## Frühere gesicherte Schritte (historisch, aktuelle Angaben oben)
 

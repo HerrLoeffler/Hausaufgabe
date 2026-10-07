@@ -31,7 +31,7 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  std::vector<PizzaRules::LessonStep> Lesson;int LessonIndex=0;FString LessonContext;
  FVector NormalCamera=FVector(0,-1180,1470);FRotator NormalRotation=FRotator(-51,90,0);int SelectedGuest=0,AnswerChoice=0;
  bool Frozen()const{return Intro||Learning||Paused||Finished;}
- AKitchenChef* Chef()const;int NearestStation()const;void Start();void TogglePause();void Use();void Drop();void Dash();void CycleDifficulty();
+ AKitchenChef* Chef()const;int NearestStation()const;void Start();void ReturnToMenu();void TogglePause();void Use();void Drop();void Dash();void CycleDifficulty();
  void BeginCut();void FinishCut();void CutStroke(FVector2D,FVector2D);void CutAngle(float);void TogglePiece(FVector2D);void ResetCuts();
  void UseTable(int);void UseOven(int);void ConfirmRepair();void ToggleRepairPiece(int);void ShowRepairStep();void SelectLevel(int);void SaveProgress();
  void TryServe(int);void BeginLesson(const FKitchenOrder&,PizzaRules::Rational);void Answer(int);void RefreshPizza();void MakeOrder();

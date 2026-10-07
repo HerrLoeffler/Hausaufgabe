@@ -2,15 +2,16 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
+  "native_source_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
   "core_checks": {
     "fraction_geometry": 182,
     "campaign_repair_layouts": 442,
     "failures": 0,
     "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained",
-    "billing": 223
+    "billing": 223,
+    "evidence_scope": "Previous847 pure checks remain evidence for unchanged FractionRules/LearningCampaign/BillingRules; menu-only source uses actual native suite."
   },
-  "editor_build": "Succeeded freedom-billing-final-build.log; session53821",
+  "editor_build": "Succeeded menu-final-build.log, session66854",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -424,6 +425,70 @@
           "warnings": 7
         }
       ]
+    },
+    "MenuRed": {
+      "sha256": "1e1c21c0491e769bdbc315abd2ac15c80c6e9ef80a34a7c1e06f684581f15f55",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Fail",
+          "errors": 6,
+          "warnings": 1
+        }
+      ]
+    },
+    "MenuFinal": {
+      "sha256": "6174e25544664f717819daa07d7e84bf8eae667d6184b45ec7cc31e413ddbdad",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
     }
   },
   "visual_acceptance": "Actual native unpaid, paid and shift-total receipts inspected; final unpaid receipt rechecked for amount wording. Existing kitchen/learning rendering remains local evidence. Physical hardware/playfeel/mobile/learning-transfer acceptance pending.",
@@ -448,40 +513,44 @@
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1845115,
-      "sha256": "74f63f117456d061447084418660187f08b1cafeec0495ceaf2aa798eea55af3"
+      "bytes": 1851508,
+      "sha256": "6b1783c441cd61e48d7df0a86bc47d991faf3ccc281d198aa9743576bf03d3f3"
     },
     "NativeCutting.png": {
-      "bytes": 1751343,
-      "sha256": "1acdaa9fac9c791b94d1cae85b6c8fca6ccfe0ece5dc27618c9d0e0843427fbe"
+      "bytes": 1731502,
+      "sha256": "89fe4a8cbb7b30ed35bae4b9aa842a2ae4d924a1e750b2599df5d7fddf95d931"
     },
     "NativeLearning.png": {
-      "bytes": 695896,
-      "sha256": "a3676230d8031c43ef2a257acc6828206cee8694b78488135623c51c05a51947"
+      "bytes": 700825,
+      "sha256": "1cc47a26c4ce17f463e59d668e1764396ad91a4a876f14576d3cf2fe0ee7b97e"
     },
     "NativeUnequal.png": {
-      "bytes": 1593901,
-      "sha256": "0d7b7764ac6b140f4c32282f727b7e459d102cac2dfacb02a7894beecce990a5"
+      "bytes": 1581858,
+      "sha256": "46fe9c26ab3d44b64b804935f1dc4dff39acbb57fa3d50e043426f12f13c7797"
     },
     "NativeLevel3.png": {
-      "bytes": 1859213,
-      "sha256": "1e31239885162a4b65924fb193c2b8aa9f78bd79bab2cfb3387619f6ce329b41"
+      "bytes": 1874856,
+      "sha256": "e106432ce4c6eab2e74fe5bc4d7fff23fdc5194fe22d127127775d06f3302067"
     },
     "NativeLevel10.png": {
-      "bytes": 1865144,
-      "sha256": "1ae2ed5a944c3eefd2ed1841a7df7fe296beeba9a9acf7fdc84e8b4cb839ca71"
+      "bytes": 1876735,
+      "sha256": "69ee8596697629f1f56dd54ad4711204d9eff5f6479abd5092d046aa1fdfe119"
     },
     "NativeRejectedBill.png": {
-      "bytes": 1584496,
-      "sha256": "607a72d4fd6813d2b86b5f78d55040071bca6fbabbd6d860aca6f6630ca5d291"
+      "bytes": 1600706,
+      "sha256": "2cbb7ede86885f6835a69fd163b7d4cab577997de36c43435d13f7c626247379"
     },
     "NativePaidBill.png": {
-      "bytes": 1691222,
-      "sha256": "f7a3898b7a7566a2797b610328b20b72cecebea1b4593245052cbf9dc514cbd5"
+      "bytes": 1670263,
+      "sha256": "588565df0050bd75a52a9d8992759643fe77790ecac6d6640008c48fc776f4b0"
     },
     "NativeShiftBill.png": {
-      "bytes": 1373917,
-      "sha256": "feb6a66633993e077d4d66f875e3cd43b16fa8909b8404905d8cba68da15a3d7"
+      "bytes": 1304581,
+      "sha256": "619965fb2b46b12d5bea4395cdf77c69abc1167ff0835909ae7fee55b2058a63"
+    },
+    "NativeMenu.png": {
+      "bytes": 1226150,
+      "sha256": "ce69151309e211accf42f7f5fc813f21e6227918c8551d30cb99dcad8c20d99a"
     }
   },
   "mouse_corrections": [
@@ -512,5 +581,16 @@
     "wallet": "CashProgress-v1.txt local; separate PIE wallet; cumulative across shifts.",
     "mushrooms_from_level": 4,
     "review": "Bounded reviewer cleared ae3cc08 billing delta and47d22d9 reboard fix; no Important/Critical."
+  },
+  "previous_native_source_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
+  "menu": {
+    "entry": "Esc or visible menu button from cooking/cutting/fraction help",
+    "actions": [
+      "Continue exact state",
+      "Restart current shift preserving cash/unlocks",
+      "Level selection; unlocked only"
+    ],
+    "verification": "MenuRed6 failures -> MenuFinal native UI press/restart/level selection/input guards pass; actual NativeMenu PNG inspected.",
+    "review": "No Important/Critical. Minor: Q can change feedback while paused; ultrawide end-screen level button clips outside fixed desktop ratio, Esc route works."
   }
 }

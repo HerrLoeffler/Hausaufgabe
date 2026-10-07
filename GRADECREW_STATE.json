@@ -862,16 +862,16 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
-      "ci": "not_run_for_native_engine; local182geometry+442campaign+223billing zero; FreedomBillingFinal7testsSuccess0errors",
+      "local_code_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
+      "ci": "not_run_for_native_engine; MenuFinal8nativeTestsSuccess0errors; previous847pure checks unchanged",
       "staging": "not_deployed",
       "user_test": "Initial/abstract learning and level1 mushroom correction rejected; free-kitchen customer bills/cash/tips candidate acceptance pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Martin tests raw/wrong topping delivery, real repair, unpaid/paid receipt and accumulating tips in calm first shift. Mobile/learning-transfer gates separate.",
-      "observed_head": "d36b8e182d5c6b046b8957c375f183765075fa2d",
+      "next_action": "Martin tests Esc menu, restart same shift and level selection; native window ready. Mobile/learning-transfer gates remain separate.",
+      "observed_head": "c369c9f8b6f399ff71d3193db57596e0e6f83f20",
       "pull_request": 160,
       "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
-      "observed_head_scope": "Previous verified GitHub checkpoint. Current47d22d9 tested; new exact-tree publication receipt outside source records final head.",
+      "observed_head_scope": "Previous verified guest-billing checkpoint; Menu source13b31f2 tested, new exact-tree publication receipt separately records final head.",
       "campaign_levels": 10
     }
   ],
@@ -1355,5 +1355,12 @@
     "candidateCI": 37584648405,
     "next": "exact CI then integrate; canonical staging combines PR164/165/166",
     "tests": 25
+  },
+  "reviewModeConcept": {
+    "phase": "concept_only",
+    "date": "2026-10-07",
+    "document": "docs/gradecrew-review-mode-concept-20261007.txt",
+    "next": "Repo-specific implementation plan; not implemented",
+    "automaticAI": false
   }
 }

@@ -52,3 +52,8 @@ Jede Übergabe erzeugt einen schließbaren Bon: tatsächliche Pizzaportion, Pizz
 Erste Spielpreise pro Ganzem: Pizza8€, Tomate1€, Käse2€, Champignons1€. Die tatsächliche Portion skaliert jede Position; Cent-Rundung pro sichtbarer Position, anschließend Summe der Positionen. Für korrekte Lieferung: bis30 aktive Sekunden20% Trinkgeld, bis60 Sekunden10%, später kein Trinkgeld, aber weiter voller Speisepreis. Pause und Bruchhilfe halten die Serviceuhr an. Frühe Level behalten kein Zeitlimit und keinen Geldabzug; langsames korrektes Spielen bleibt erfolgreich.
 
 Kasse sammelt bezahlte Beträge inklusive Trinkgeld über Schichten und Neustarts lokal. Pro Schicht werden Speiseumsatz, Trinkgeld und deren Gesamtrechnung angezeigt. Falsche Versuche gehen nicht in den Umsatz ein. Normale und PIE-Testdateien für Kasse/Freischaltung sind getrennt. Dieses Geld ist lokale Spielwährung, keine echte Zahlung und kein bereits implementierter Upgrade-Shop.
+
+## Spielmenü und Neustart
+Esc oder der sichtbare »MENÜ · ESC«-Knopf öffnet die Pause auch beim Schneiden und in der Bruchhilfe. »Weiter«/Esc bewahrt Pizza, Schnittauswahl, aktuelle Hilfe und Bestellungen. Alle Küchen-/Gast-/Trinkgelduhren stehen; Eingaben verändern darunter keine Portion.
+
+»Schicht neu starten« startet dasselbe Level mit frischen Bestellungen und leerer Küche. Nur Schichtfortschritt/-umsatz wird zurückgesetzt; kumulative Kasse und freigeschaltete Level bleiben erhalten. »Levelauswahl« verlässt die laufende Schicht und führt zur bestehenden Auswahl freigeschalteter Küchen. Auch die Schichtabrechnung bietet Levelauswahl. Das Menü verlangt keine zweite Bestätigung für den bewusst gewählten Neustart.

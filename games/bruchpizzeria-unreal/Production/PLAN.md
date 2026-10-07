@@ -39,3 +39,5 @@ Superseding user correction07.10: see LEARNING_CAMPAIGN.md. Ten playable locally
 
 
 Customer/billing correction07.10: kitchen accepts incomplete/baked/plated pizza states and early oven pickup; raw/unequal/whole service reaches customer evaluation. Explicit ingredient complaints, no fabricated correction; mushroom station/orders start4. Nonblocking itemized bills, no pay for any rejected dish, persistent local cash, time-based20%/10% tips, shift total. Prices/rounding/timing in LEARNING_CAMPAIGN.md. Native behavior/red evidence and independent bounded review retained in HANDOFF; normal hardware acceptance remains separate.
+
+Menu follow-up: Esc/button from cooking/cutting/learning opens paused Continue/Restart current shift/Level selection. Continue preserves exact cutting/help state, restart resets transient kitchen but retains cash/unlocks, end screen also offers Level selection. Paused E/repair input guarded; menu buttons use same verified HUD view origin. MenuRed6 behavioral failures retained; new native Menu test plus existing full suite, actual NativeMenu screenshot and bounded review are the verification gate.
