@@ -97,7 +97,7 @@
       "user_acceptance": "pending",
       "feedback_followup": {
         "task_id": "GC-WEB-REPAIR-20261007",
-        "stage": "branch_only",
+        "stage": "integrated",
         "pr": 174,
         "branch": "fix/visual-backlog-feedback-20261008",
         "head": "faca28bc254bc8402a6826baa95f286d4054edd3",
@@ -105,7 +105,10 @@
         "local_commit": "0847243",
         "tests": 25,
         "user_request": "Deployen 2026-10-08",
-        "next": "candidate CI then integration, exact deploy receipts and canonical promotion"
+        "next": "merge CI then preview/Functions and canonical promotion",
+        "integration": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
+        "candidate_ci_conclusion": "success",
+        "merge_ci": 37693716864
       }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
