@@ -74,7 +74,7 @@ function makePanel() {
     <img class="emmiWholeTestMascot" src="assets/gradecrew/fox-improve.svg" alt="Emmi">
     <div class="emmiWholeTestCopy">
       <div class="emmiWholeTestHead">
-        <div><span class="eyebrow">Emmi · Überarbeiten</span><h2>Gesamten Test überarbeiten</h2><p>Sag Emmi einfach, was am ganzen Test anders werden soll.</p></div>
+        <div><span class="eyebrow">Emmi · Überarbeiten</span><h2>Emmi hilft dir beim Überarbeiten.</h2><p>Sag Emmi, was du an deinem Test ändern möchtest.</p></div>
         <span class="emmiWholeTestBadge">ganzer Test</span>
       </div>
       <div class="emmiWholeTestInputRow">
