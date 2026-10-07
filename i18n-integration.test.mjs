@@ -73,7 +73,7 @@ test("German and English are enabled browser UI locales", () => {
 
 test("compact public benefits and Crew hint use semantic DE/EN keys", () => {
   assert.doesNotMatch(entryFlow, /data-entry-nav=/);
-  for (const key of ["tryCrew", "benefitCreate", "benefitCreateDetail", "benefitRun", "benefitRunDetail", "benefitGrade", "benefitGradeDetail", "benefitTeacher", "benefitTeacherDetail"]) {
+  for (const key of ["tryCrew", "benefitCreate", "benefitCreateDetail", "benefitGuide", "benefitGuideDetail", "benefitGrade", "benefitGradeDetail", "benefitImprove", "benefitImproveDetail"]) {
     assert.ok(entryFlow.includes(`data-i18n-key="hero.${key}"`), `missing semantic hero key: ${key}`);
     setActiveUiLocale("de-DE");
     assert.ok(heroText(key), `German hero copy missing: ${key}`);
