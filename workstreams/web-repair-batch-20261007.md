@@ -69,3 +69,12 @@ Der tatsächliche kanonische Browser zeigt die neue Oberfläche mit bestehender 
 Auf Staging: gezielte Layout-/Tutorial-/Remy-/Reset- und Audio-Konvertierungs-/Quotenreparaturen, klarerer Arbeitsbereich, finite native Coco-Flügel-/Augenbewegung. Keine Scrollgeschichte. Bestehende fehlgeschlagene Aufträge und frühere Reports bleiben als Historie sichtbar; nicht pauschal erledigt markiert oder neu kostenpflichtig ausgeführt.
 
 Noch offen: neue Tests durch Martin praktisch erstellen und Audio-Konvertierung prüfen; neue private listening-only/audio-only Modi bleiben Lehrkraft-Entwürfe bis Live-Secure-Rules und Gates C–F einschließlich30Teilnehmer-Fall nachgewiesen sind. Games, native iOS und Production sind ausgeschlossen. Automatisches Chat-Abholen bleibt PAUSED; keine neue Automation oder bezahlten Provider-Tests. Das autorisierte Staging-Paket ist veröffentlicht, die offenen Freigaben bleiben sichtbar.
+
+
+## 2026-10-07 07:20 Europe/Berlin — gezielte Nutzertest-Nachkorrektur
+
+094546a4 hat Martins visuelle Abnahme nicht bestanden. PR163 auf feature/audio-crew-visual-correction-20261007, exact 0b3b574b8add3fbb65ddbf288f668ae07158d038, lokaler b4b8c4c / identischer Tree0823b20e2ea2c6f7bdd1a5732d355d958a15e23e. Vier Originalfiguren und blauer Crewbutton, Vorteilsbilder, Breite ohne Ganzseiten-Verkleinerung, finite Bewegung respektiert Reduced Motion. Keine echte neue Flügel-/Türanimation der statischen Szene. Linke Navigation nur Empfehlung für später.
+
+Zusätzliche Nutzermeldungen: AI-EDIT-001 RPT-MUXNE643-7B958 zeigt fehlenden Hörtext im Qualitätsreview. Reproduziert und korrigiert, Qualitätssperre unverändert. Explizite Testsprache füllt Formular und löst dessen change aus. Roter Smiley bietet fehlende Höraufgabe/falsche Sprache Rules-kompatibel. Antwort1–4 sichtbar ausgeblendet, Aria erhalten. KI-generierte Stimme bleibt. Grammatik-only Satzbau berücksichtigt auch Bedeutungsvarianten (purple/hungry); bestehende alternativeOrders-Bewertung geprüft, Prompts ergänzt. Konkreter vorhandener Test nicht verändert und keine vollständige KI-Ergebnisgarantie.
+
+Gezielte Tests und123Files-Build erfolgreich; unabhängige Delta-Reviews ohne wichtige Befunde. Lokale Heroansicht1920 breit und390×844 mit0pxHorizontalüberstand und exakt844pxDokumenthöhe visuell geprüft; Dashboard-Handyabschluss noch laufend. AktuelleCI37575580701 noch offen. Kein neuer Stagingdeploy. CollectorPAUSED; privateAudio-Gates/Rules/Production unverändert. Nächster Schritt: exakteCIundfrischeIntegration, danach verifiziertePreview-/FunctionsReceipts undCanonicalrequest.

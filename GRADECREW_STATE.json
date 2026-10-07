@@ -60,7 +60,7 @@
       "staging_functions": "success_run_37559039672_receipt_11455703400_commit_094546a44131a671daede5131e29def0da116002",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
-      "user_acceptance": "pending_for_094546a4; previous0931ade4_failed_retained",
+      "user_acceptance": "failed_for_094546a4_visual_and_audio_feedback_20261007",
       "production": "not_requested",
       "staging_assessment_functions": "success_run_37559039672_receipt_11456380393_commit_094546a44131a671daede5131e29def0da116002",
       "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
@@ -89,7 +89,17 @@
       "no_scroll_story": true,
       "canonical_run": 37559354641,
       "canonical_receipt": 11456410883,
-      "user_acceptance": "pending"
+      "user_acceptance": "failed",
+      "followup": {
+        "pr": 163,
+        "branch": "feature/audio-crew-visual-correction-20261007",
+        "head": "0b3b574b8add3fbb65ddbf288f668ae07158d038",
+        "stage": "branch_only",
+        "ci": 37575580701,
+        "review": "independent_delta_review_passed",
+        "next": "exact CI, serial integration, fresh deploy receipts",
+        "automation": "PAUSED"
+      }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json"
   },
