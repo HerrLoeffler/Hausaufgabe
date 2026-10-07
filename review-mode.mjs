@@ -10,7 +10,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function message(text,error=false){const n=root?.querySelector('[data-review-message]');if(n){n.textContent=text;n.classList.toggle('reviewError',error);}}
  function error(err){message(err?.message||'Aktion fehlgeschlagen. Bitte erneut versuchen.',true);}
  async function call(data){const e=epoch;const response=await api(data);if(e!==epoch)throw new Error('Konto wurde gewechselt.');return response;}
- function unmark(){marking=false;regionMode=false;drag=null;root?.querySelector('[data-review-region]')?.setAttribute('aria-pressed','false');root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
+ function unmark(){marking=false;regionMode=false;const oldDrag=drag;drag=null;if(oldDrag?.pointerId!=null&&oldDrag.anchor.hasPointerCapture?.(oldDrag.pointerId))oldDrag.anchor.releasePointerCapture(oldDrag.pointerId);root?.querySelector('[data-review-region]')?.setAttribute('aria-pressed','false');root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
  function close(){unmark();clearRegion();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
  function dispose(){portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
@@ -28,7 +28,8 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
 
   if(!root)return;
   if(event.type==='keydown'&&event.key==='Escape'){close();event.preventDefault();event.stopImmediatePropagation();return;}
-  if(!marking||root.contains(event.target)||toggle?.contains(event.target))return;
+  if(!marking||(!drag&&(root.contains(event.target)||toggle?.contains(event.target))))return;
+  if(drag?.pointerId!=null&&event.pointerId!=null&&drag.pointerId!==event.pointerId)return;
   if(event.type==='keydown'&&!['Enter',' '].includes(event.key))return;
   if(regionMode){
    event.preventDefault();event.stopImmediatePropagation();
@@ -37,7 +38,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
     if(event.button!==0)return;clearRegion();const anchor=event.target.closest('dialog[open]')||document.getElementById(getContext().view);
     if(!anchor?.id){message('Bitte eine Stelle innerhalb der aktuellen Ansicht wählen.',true);return;}
     const r=anchor.getBoundingClientRect();if(!r.width||!r.height)return;
-    drag={anchor,r,x:event.clientX,y:event.clientY};return;
+    drag={anchor,r,x:event.clientX,y:event.clientY,pointerId:event.pointerId};if(event.pointerId!=null)anchor.setPointerCapture?.(event.pointerId);return;
    }
    if(!drag)return;
    if(['pointermove','pointerup'].includes(event.type)){
@@ -101,7 +102,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  async function locate(n){try{const before=getContext();if(navigate&&(before.view!==n.view||(n.quizId&&before.quizId!==n.quizId)||(local&&n.scene&&before.scene!==n.scene)))await navigate(n);
 const targets=[...document.querySelectorAll('[data-review-id],[id]')].filter(x=>(x.dataset.reviewId||x.id)===n.target&&!root?.contains(x));
   const same=getContext();if(same.view!==n.view||(n.quizId&&same.quizId!==n.quizId)||targets.length!==1){message('Stelle in dieser Version nicht gefunden. Öffne die passende Ansicht oder Prüfszene.',true);return;}
-  highlight?.classList.remove('reviewSelected');highlight=targets[0];highlight.classList.add('reviewSelected');highlight.scrollIntoView?.({block:'center',behavior:'instant'});clearRegion();if(n.region){regionAnchor=highlight;regionBounds=n.region;paintRegion();}message(n.build&&n.build!==same.build?'Stelle geöffnet. Der Hinweis stammt aus einer älteren Version.':'Stelle geöffnet.');
+  highlight?.classList.remove('reviewSelected');highlight=targets[0];highlight.classList.add('reviewSelected');highlight.scrollIntoView?.({block:'center',behavior:'instant'});clearRegion();if(n.region){regionAnchor=highlight;regionBounds=n.region;const r=highlight.getBoundingClientRect();win.scrollTo({top:Math.max(0,win.scrollY+r.top+n.region.y*r.height-(win.innerHeight-n.region.height*r.height)/2),left:win.scrollX,behavior:'instant'});paintRegion();}message(n.build&&n.build!==same.build?'Stelle geöffnet. Der Hinweis stammt aus einer älteren Version.':'Stelle geöffnet.');
  }catch(err){error(err);}
  }
  function renderNotes(){const list=root?.querySelector('[data-review-notes]');if(!list)return;list.replaceChildren();

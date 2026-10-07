@@ -64,3 +64,14 @@ test('note destination is loaded before its exact target is highlighted',async t
  const {w}=await fixture(t,d=>d.action==='list'?{notes:[n],checks:[]}:null,{getContext:()=>({view:current,build:'new'}),navigate:async()=>{current='dashboardView';const x=w.document.createElement('div');x.id='new-target';w.document.body.append(x);}});
  w.document.querySelector('[data-review-toggle]').click();await settle();[...w.document.querySelectorAll('button')].find(x=>/Stelle (zeigen|öffnen)/.test(x.textContent)).click();await settle();assert.ok(w.document.querySelector('#new-target.reviewSelected'));
 });
+test('rectangle opening scrolls to the rectangle rather than the middle of a long view',async t=>{
+ const n={id:'n',view:'authView',target:'authView',build:'test-build',region:{x:.1,y:.8,width:.2,height:.1,sourceWidth:1000,sourceHeight:3000}};
+ const {w}=await fixture(t,d=>d.action==='list'?{notes:[n],checks:[]}:null);w.document.getElementById('authView').getBoundingClientRect=()=>({left:0,top:0,width:1000,height:3000});let top=0;w.scrollTo=options=>{top=options.top;};
+ w.document.querySelector('[data-review-toggle]').click();await settle();[...w.document.querySelectorAll('button')].find(x=>x.textContent==='Stelle öffnen').click();await settle();assert.ok(top>2000,'rectangle near bottom brought into viewport');
+});
+test('releasing a region over sidebar ends drag before later pointer movement',async t=>{
+ const {w,calls}=await fixture(t);const view=w.document.getElementById('authView');view.getBoundingClientRect=()=>({left:0,top:0,width:1000,height:1000});
+ w.document.querySelector('[data-review-toggle]').click();await settle();w.document.querySelector('[data-review-region]').click();
+ view.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,clientX:100,clientY:100}));w.document.querySelector('[data-review-panel]').dispatchEvent(new w.MouseEvent('pointerup',{bubbles:true,clientX:300,clientY:300}));view.dispatchEvent(new w.MouseEvent('pointermove',{bubbles:true,clientX:500,clientY:500}));
+ const input=w.document.querySelector('[data-review-text]');input.value='Area';await new Promise(r=>setTimeout(r,520));[...w.document.querySelectorAll('button')].find(x=>x.textContent==='Hinweis speichern').click();await settle();assert.equal(calls.find(x=>x.action==='create')?.region?.width,.2);
+});
