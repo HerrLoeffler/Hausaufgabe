@@ -78,3 +78,23 @@ Frisch geprüfter Visual-PR83 weiterhin offen @6434ddef. Development Status37640
 Sicherung: Spezifikation, diese Übergabe und betroffene TODO-Zeile in einem Dokumentationscommit auf main; tatsächlicher Commit aus Git lesen. Lokal nur docs/superpowers/specs/2026-10-07-expedition-amazonas-unreal-design.md erstellt und im Codex-Panel geöffnet (Tool meldet queued). Keine Tests/CI/Deploys für neue Spielimplementierung. Release-Stufe der bestehenden Browserquelle nicht geändert.
 
 Genau nächster Schritt: Martin prüft den schriftlichen Zehn-Minuten-Entwurf. Danach gemäß Brainstorming-Gate Implementierungsplan erstellen; dessen Prüfung/Ausführungswahl vor Produktcode. Die Grundrichtungsfreigabe wird nicht erneut verlangt.
+
+## 08.10.2026 — Beratung: Spiele grundsätzlich und mit KI überarbeiten
+
+Zuordnung: bestehende Task-ID GC-GAMES-ESCAPE-VISUAL-01. Nutzer fragt nach einem guten Überarbeitungsweg; kein neuer Implementierungs-, Engine-Wechsel-, Provider- oder Deployauftrag. Vorschläge sind nicht als beschlossen zu behandeln.
+
+Empfehlung: Spiel im Prüfbau durchspielen → Problem an Szene/Objekt/Spielzustand festhalten → wenige klare Änderungen bündeln → KI bzw. Entwickler bearbeiten gezielt → technische Prüfung und erneutes Durchspielen → bewusst freigeben. Beispiel: „Brücke: Befestigungspunkt schwer erkennbar; Hinweis am richtigen Objekt und sichtbare Reaktion ergänzen.“
+
+Drei getrennte Änderungsebenen: (1) Lerninhalte/Fragen/Hilfen über den vorhandenen GradeCrew-Entwurf mit Lehrkraftvorschau, (2) Rätselregeln/Inventar/Fortschritt über begrenzte Spielbausteine, (3) Welt/Modelle/Animation/Kamera im Unreal-Editor, eigene Assets gegebenenfalls in Blender. Neue Themen sollen ein geprüftes Inhaltspaket verwenden; die Welt muss dafür nicht jedes Mal neu programmiert werden. Laufende Runden bleiben auf einer unveränderlichen Inhaltsrevision.
+
+Als spätere Produktidee: pausierbarer Spiel-Reviewmodus mit Szene-/Objekt-ID, Build-Version, Screenshot und relevantem Spielzustand; Kommentare manuell gesammelt in überprüfbare Aufträge umwandeln. Keine KI pro Klick/Kommentar. Rückkehr zur vorherigen Fassung vorsehen. Vor der ersten spielbaren Unreal-Fassung keinen großen eigenen Editor bauen.
+
+Eignungseinschätzungen für GradeCrew nach Änderungstempo, Kontrolle und prüfbarer Spielqualität: direkte KI-Codeänderungen 6/10 (schnell für begrenzte Text-/Codeänderungen, sichtbarer Spielzustand und Assetprüfung fehlen leicht); klassische Editorarbeit 8/10 (präzise Szenen-/Assetkontrolle, mehr Handarbeit); Kombination aus Editor, strukturierten Inhalten und KI 9/10 (gezielte Iteration und prüfbare Ergebnisse, benötigt zunächst einen stabilen Prüfbau). Das sind begründete Empfehlungen, keine Messungen oder Projektfortschrittswerte. Hauptrisiken: unklare Änderungswünsche, beschädigte Spielstände, fachlich falsche Aufgaben und mobile Leistungsprobleme.
+
+Frisch gelesen: main START_HERE/AGENTS/STATE/TODO/Workstreams/CHAT_CONTRACT und vorhandene Unreal-Spezifikation/Übergabe; PR83 tatsächlich weiterhin offen und Draft. Keine aktuellen Unreal-Build-/CI-/Deploy-/Gerätenachweise erhoben. Bestehende Release-Stufen, Versuche und Budgets unverändert; keine externen Ausführungen gestartet. Chat-Link unbekannt; fremde aktive Zuständigkeiten nicht übernommen.
+
+Primärquellen: Epic beschreibt getrennt pflegbare Gameplay-Daten und editorseitigen Reimport sowie funktionale Tests/Screenshotvergleiche:
+- https://dev.epicgames.com/documentation/en-us/unreal-engine/data-driven-gameplay-elements-in-unreal-engine
+- https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-test-framework-in-unreal-engine
+
+Nächster ausführbarer Schritt bleibt die Prüfung des vorhandenen Zehn-Minuten-Entwurfs; anschließend beim ersten kleinen spielbaren Abschnitt den Überarbeitungsablauf ausprobieren. Ein Spiel-Reviewmodus bleibt bis zu einem konkreten Auftrag eine Idee.
