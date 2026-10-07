@@ -2,13 +2,13 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "6705901",
+  "native_source_commit": "a8ad958",
   "core_checks": {
     "count": 165,
     "failures": 0,
     "sanitizers": "ASAN and UBSAN verified by fraction-core reviewer"
   },
-  "editor_build": "Succeeded native-teaching-green-build.log",
+  "editor_build": "Succeeded native-projection-build-fixed.log",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -64,20 +64,70 @@
           "warnings": 1
         }
       ]
+    },
+    "NativeFinal": {
+      "sha256": "6b98655ddf3289eeb9612b449fd392538ea60ca4cec5b3d8bafa027b9325f22c",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeRenderedFinal": {
+      "sha256": "7528014612730b70c5b081d58eab587a77ad3686d3da8f387d2e2d3d8fedb94b",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
     }
   },
-  "visual_acceptance": "not_passed; actual game render not yet inspected; CUA Mac locked",
+  "visual_acceptance": "Actual rendered kitchen, cutting and coaching PNGs inspected. Camera exposure, exterior winding, complete-room framing, cut framing and portion label overlap corrected. User game-feel/graphic acceptance remains open.",
   "physical_mobile_device": "not_tested",
-  "signed_mobile_package": "not_created",
+  "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
   "content": {
     "Content/Maps/Pizzeria.umap": {
       "bytes": 38705978,
-      "sha256": "f3b6493f918aa19fdbb53ea17be93ec2b3397bf68c865263d919bf92ffa39d81"
+      "sha256": "be5170dc5f1eed02ad320c533845700f49e871ab14941c3363b2504ebadce850"
     },
     "Content/Materials/M_Kitchen.uasset": {
       "bytes": 6791,
       "sha256": "91234eb76b4d60d7fc04ab63edec05f4abeb9818d0854ad964d222afba2ef218"
+    }
+  },
+  "remote_source_commit": "331db91e791eccce75a344bc0d1acde04817356b",
+  "source_tree": "deb541c90ff566641432c1e710cd98d9018be1cd",
+  "pull_request": "https://github.com/HerrLoeffler/Hausaufgabe/pull/160",
+  "raw_input_acceptance": "Not performed: Mac locked. Native integration calls controller/station methods; movement directions separately verified by actual viewport projection.",
+  "environment_warnings": [
+    "AudioUnit sample-rate query",
+    "Epic bundled idevice_id executable wrongCPU architecture; official IOS component missing"
+  ],
+  "images": {
+    "NativeKitchen.png": {
+      "bytes": 1777859,
+      "sha256": "67c1f2e176e3a8d7eb60574a82321df200bcf82b04e4be90e76eef3311521fce"
+    },
+    "NativeCutting.png": {
+      "bytes": 1744212,
+      "sha256": "56eef0110634909afe89d0c11def552ac9187a6286d81fc158de773f0c6dbae3"
+    },
+    "NativeLearning.png": {
+      "bytes": 1073066,
+      "sha256": "de50fb85f98328bc89d799302d848ea97572fb08c748c6ca23b70437a425cc2f"
     }
   }
 }

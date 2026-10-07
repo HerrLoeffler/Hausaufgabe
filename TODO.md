@@ -205,5 +205,5 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 
 | Task | Stand | Nächster Schritt |
 | --- | --- | --- |
-| GC-GAMES-PIZZA-01 | Nutzer lehnt Browserlieferung ab; expliziter nativer Unreal5-Auftrag. Native Unreal-Küche implementiert: Belegen, Backen, Schneiden, Brüche bis Achtel, vier Rechenarten und pausierte Lernhilfe. Lokaler Editor-Build, 165 Kernprüfungen und nativer Ablauf mit Regressionen bestanden; branch_only. | Tatsächliche Spielansicht und direkte Eingabe prüfen (Mac aktuell gesperrt); mobile Geräte-/Grafikabnahme und signiertes Paket offen. [Übergabe](workstreams/bruchpizzeria-unreal-20261007.md) |
+| GC-GAMES-PIZZA-01 | Nutzer lehnt Browserlieferung ab; expliziter nativer Unreal5-Auftrag. Native Unreal-Küche implementiert: Belegen, Backen, Schneiden, Brüche bis Achtel, vier Rechenarten und pausierte Lernhilfe. Lokaler Editor-Build, 165 Kernprüfungen und tatsächlicher UE-Render-/Ablauftest samt Kamera-/Lernregressionen bestanden; branch_only, [Entwurfs-PR160](https://github.com/HerrLoeffler/Hausaufgabe/pull/160). | Tatsächliche Spielansicht und direkte Eingabe prüfen (Mac aktuell gesperrt); iOS-Builddateien in Unreal fehlen, mobile Geräte-/Grafik-/Spielgefühlabnahme und signiertes Paket offen. [Übergabe](workstreams/bruchpizzeria-unreal-20261007.md) |
 

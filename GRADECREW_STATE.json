@@ -755,12 +755,15 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "6705901",
-      "ci": "no Unreal CI runner; local editor build and native CookAndLearn verified",
+      "local_code_commit": "a8ad958",
+      "ci": "not_run_for_native_engine; local165core + actualUERenderedFinal CookAndLearn and VisualPreview pass",
       "staging": "not_deployed",
-      "user_test": "not_performed; prior browser rejected",
+      "user_test": "not_performed; locked Mac; prior browser rejected",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Inspect actual native rendered scene and direct inputs, then mobile device/package gates. No Production authorization."
+      "next_action": "Unlock Mac and verify normal native controls/cutting in this exact project, then official IOS component and physical-device/package gates.",
+      "observed_head": "331db91e791eccce75a344bc0d1acde04817356b",
+      "pull_request": 160,
+      "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files"
     }
   ],
   "deployments": [
