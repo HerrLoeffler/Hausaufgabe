@@ -19,3 +19,12 @@ Ruling: GradeCrew-Livebrücke bleibt eigener ungestarteter Plan; kein Anbieter-/
 Offen: grafische Endqualität, echte Live-Themenwahl/Auth/serverseitige Slotbewertung, Zahl-/Freitextwidgets, echte10Minuten/60–70%-Lernzeit, reales Touchgerät/Performance, vollständiger vertrauenswürdiger UI-Durchlauf und gepackte App. Keine neue CI/Integration/Staging/Production aus lokalen Tests ableiten.
 
 Nächster Schritt: Martin testet lokale Fassung und bewertet Steuerung, Rätsel und Optik; tatsächlichen Erstspielablauf/Zeit dokumentieren. Danach priorisierte Demo-UX/Art und Live-Brücke ausführen. Bestehende Task-ID, Budgets und Versuchshistorie erhalten. Vor Wiederholung Branch, lokale Prozesse und Reports prüfen.
+
+
+## Finale Quellsicherung und normale Fensterprüfung
+
+Lokaler Codecommit1be53c5d719d7889e6ff6380e11228fc2ddf46b5, RemoteSourceCommitcc725b2e8cc5cf37073bf7aedbb4d78776d00bdf, DraftPR171:https://github.com/HerrLoeffler/Hausaufgabe/pull/171. RemoteWorld.cpp/HUD.cpp/README/TODO perReadback bytegleich mitübergebenenQuelltexten. TerminalPush mangelsHTTPS-Anmeldungfehlgeschlagen; ConnectorTree/Commit/Branch/PR erfolgreich, keine Zugangsdaten angefordert. Lokal generierteBinary/Map/Material bleibenlokalreproduzierbar, Sourceonlinegesichert.
+
+FinaleWindow-Kontrolle pernativeCUA: Themenstart perTab/Enter, Wortartenstart, InventarI, Esc-Menü, RückkehrThemenstart bestätigt. Gamewindow„Expedition (64-bit Development SF_METAL_SM5)“ amThemenstartoffengelassen. Starttasten1(Prozent)/2(Wortarten), Antworttasten1–4, Tab/EnterfüralleDialogbuttons. NativeCUA-Mausclicks ändertenDialognoch nichtzuverlässig; MausbedienungNICHTalsbehoben melden, Tastaturtest verwenden. ZweiRender-Tests stammenvorderfinalenPointer-/Keyboardänderung; nachfinalerUIänderung nurBuild/pureChecks/echteFensterprüfung bestätigt. GanzeersteSpielzeit undkompletterTrustedUI-Durchlauf bleibenoffen.
+
+KeinCIgrün/Integration/OnlineSpieldeploy/Production/Mobilebeleg. NächsterSchrittbleibtMartinslokalerTastaturtest unddessenFeedback; maus/Touch-/Neustartbestätigung undArt weiterverbessern, danachLiveBrücke. BestehendeTask-ID, Budgets undAttemptgeschichte erhalten.
