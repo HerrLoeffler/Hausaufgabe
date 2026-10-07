@@ -28,7 +28,7 @@ test("client and visual loader expose Emmi in the editor surface", () => {
   assert.match(client, /reviseWholeTest:\s*call\("reviseWholeTest"/);
   assert.match(visual, /Emmi-Gesamttest/);
   assert.match(visual, /emmi-whole-test-revision\.mjs/);
-  assert.match(panel, /Gesamten Test überarbeiten/);
+  assert.match(panel, /Emmi hilft dir beim Überarbeiten\./);
   assert.match(panel, /Mit Emmi überarbeiten/);
   assert.match(panel, /Ganze Überarbeitung rückgängig/);
 });
