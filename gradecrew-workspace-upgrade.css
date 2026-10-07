@@ -38,7 +38,8 @@
 #dashboardView.gcWorkspace .quizCard h3 { font-size: 20px; line-height: 1.35; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCard .meta { font-size: 12px; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCardStatusGroup { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-#dashboardView.gcWorkspace .dashboardPublishControl { font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .dashboardPublishControl { position: relative; font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .dashboardPublishControl input { width: 1px; height: 1px; margin: 0; clip-path: inset(50%); }
 #dashboardView.gcWorkspace .quizStats { padding-block: 13px; }
 #dashboardView.gcWorkspace .quizStats strong { font-size: 18px; }
 #dashboardView.gcWorkspace .quizStats span { font-size: 11px; text-transform: none; letter-spacing: 0; }
