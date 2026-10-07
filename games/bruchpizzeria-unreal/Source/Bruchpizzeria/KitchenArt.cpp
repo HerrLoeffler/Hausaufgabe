@@ -340,6 +340,7 @@ void Room(AActor* O,USceneComponent* P,int Level)
         Cheese->SetRelativeRotation(FRotator(0,I*37,0));
     }
     Label(O,StationRoots[2],FVector(-610,162,54),TEXT("KAESE"),Ivory,18);
+    if(Level>=4){
     Tray(O,StationRoots[3],FVector(610,-280,84),FLinearColor(.41,.27,.15));
     for (int32 I=0;I<6;++I)
     {
@@ -348,6 +349,7 @@ void Room(AActor* O,USceneComponent* P,int Level)
         Sphere(O,StationRoots[3],TEXT("MushroomCap"),C+FVector(0,0,4),FVector(.27,.27,.14),FLinearColor(.68,.43,.23));
     }
     Label(O,StationRoots[3],FVector(610,-338,54),TEXT("PILZE"),Ivory,18);
+    }
 
     // Oven dome and an actual recessed opening bounded by a stone arch.
     Sphere(O,StationRoots[4],TEXT("TerracottaOvenDome"),FVector(610,113,119),FVector(1.11,.89,1.0),Terra);

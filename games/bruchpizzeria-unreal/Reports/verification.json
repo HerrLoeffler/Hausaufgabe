@@ -2,14 +2,15 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "f84ff0e78f9b29770951244414af7f2baa3aad07",
+  "native_source_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
   "core_checks": {
     "fraction_geometry": 182,
     "campaign_repair_layouts": 442,
     "failures": 0,
-    "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained"
+    "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained",
+    "billing": 223
   },
-  "editor_build": "Succeeded ten-level-corrected-build.log",
+  "editor_build": "Succeeded freedom-billing-final-build.log; session53821",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -307,9 +308,125 @@
           "warnings": 5
         }
       ]
+    },
+    "FreedomRed": {
+      "sha256": "0f460e9571aa6ef872e89d5eeb6fd5761f1e863c6852b787ac3be7f1af5d0789",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Fail",
+          "errors": 14,
+          "warnings": 1
+        }
+      ]
+    },
+    "FreedomBillingFull": {
+      "sha256": "f3a696cea384f7544db1bf21751cd8e426b09351c0a89b27cf94c36bc4d87c42",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
+    },
+    "ReboardRed": {
+      "sha256": "30b489c0a0b9e3f3e5fb7b5d1701b6396e8d67d73b338b7e7f77c878323803bd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "FreedomBillingFinal": {
+      "sha256": "1f904131f275afe73ff3cba87f28e3a1f42c8d2cade4a32402f784661b034a05",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
     }
   },
-  "visual_acceptance": "Actual ten-level native learning and level3/10 kitchen PNGs inspected. Clear same-whole comparison and direct selectable slices. Actual rendered HUD-coordinate repair test passes. Physical user/playfeel/learning-transfer/mobile acceptance remains pending.",
+  "visual_acceptance": "Actual native unpaid, paid and shift-total receipts inspected; final unpaid receipt rechecked for amount wording. Existing kitchen/learning rendering remains local evidence. Physical hardware/playfeel/mobile/learning-transfer acceptance pending.",
   "physical_mobile_device": "not_tested",
   "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
@@ -331,28 +448,40 @@
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1851290,
-      "sha256": "07fdf9ab568fad99a875064dabc04c13bb30af56bca4561e9ab2f74416265d9a"
+      "bytes": 1845115,
+      "sha256": "74f63f117456d061447084418660187f08b1cafeec0495ceaf2aa798eea55af3"
     },
     "NativeCutting.png": {
-      "bytes": 1753258,
-      "sha256": "46eb6c59e3045a4e0ed06fd4872cea7a8d1b4982f77e7c012d293dac9b58c0a4"
+      "bytes": 1751343,
+      "sha256": "1acdaa9fac9c791b94d1cae85b6c8fca6ccfe0ece5dc27618c9d0e0843427fbe"
     },
     "NativeLearning.png": {
-      "bytes": 681309,
-      "sha256": "ce513079e7088c04fbd7b5174ea791978f40ea1f33b0eece3c8fa115dca7fd3f"
+      "bytes": 695896,
+      "sha256": "a3676230d8031c43ef2a257acc6828206cee8694b78488135623c51c05a51947"
     },
     "NativeUnequal.png": {
-      "bytes": 1619799,
-      "sha256": "c44290899b61ddec9c75c3725eeb502c9ee9a25577692d80927ceb7a66ff5b51"
+      "bytes": 1593901,
+      "sha256": "0d7b7764ac6b140f4c32282f727b7e459d102cac2dfacb02a7894beecce990a5"
     },
     "NativeLevel3.png": {
-      "bytes": 1871241,
-      "sha256": "e6e26f929363011bb67b6ab3d006fd18650e43c9d449a7c02b2970e8eee440f6"
+      "bytes": 1859213,
+      "sha256": "1e31239885162a4b65924fb193c2b8aa9f78bd79bab2cfb3387619f6ce329b41"
     },
     "NativeLevel10.png": {
-      "bytes": 1868328,
-      "sha256": "7e01ee0c7d29dfef6eb874a0cb2f803221ffc9d9f85a327eea965a9a47cf3e52"
+      "bytes": 1865144,
+      "sha256": "1ae2ed5a944c3eefd2ed1841a7df7fe296beeba9a9acf7fdc84e8b4cb839ca71"
+    },
+    "NativeRejectedBill.png": {
+      "bytes": 1584496,
+      "sha256": "607a72d4fd6813d2b86b5f78d55040071bca6fbabbd6d860aca6f6630ca5d291"
+    },
+    "NativePaidBill.png": {
+      "bytes": 1691222,
+      "sha256": "f7a3898b7a7566a2797b610328b20b72cecebea1b4593245052cbf9dc514cbd5"
+    },
+    "NativeShiftBill.png": {
+      "bytes": 1373917,
+      "sha256": "feb6a66633993e077d4d66f875e3cd43b16fa8909b8404905d8cba68da15a3d7"
     }
   },
   "mouse_corrections": [
@@ -370,5 +499,18 @@
     "learning_trigger": "wrong delivery only; no repeated mandatory quiz",
     "local_progress": "Saved/CampaignProgress-v1.txt; PIE separate file",
     "learning_transfer": "not empirically verified"
+  },
+  "guest_billing": {
+    "whole_prices_cents": {
+      "pizza": 800,
+      "tomato": 100,
+      "cheese": 200,
+      "mushrooms": 100
+    },
+    "rounding": "Each delivered-fraction item rounds once to cents; visible line sum is subtotal.",
+    "tip": "20% through30active seconds;10% through60;0 later. Rejected dishes0 payment/tip.",
+    "wallet": "CashProgress-v1.txt local; separate PIE wallet; cumulative across shifts.",
+    "mushrooms_from_level": 4,
+    "review": "Bounded reviewer cleared ae3cc08 billing delta and47d22d9 reboard fix; no Important/Critical."
   }
 }

@@ -862,16 +862,16 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "f84ff0e78f9b29770951244414af7f2baa3aad07",
-      "ci": "not_run_for_native_engine; local182geometry+442campaign/sanitizer; TenLevelCorrected5testsSuccess0errors",
+      "local_code_commit": "47d22d9ca3ae3eadbc3ade6a2d666656569fbfa3",
+      "ci": "not_run_for_native_engine; local182geometry+442campaign+223billing zero; FreedomBillingFinal7testsSuccess0errors",
       "staging": "not_deployed",
-      "user_test": "Initial start/cut failures and abstract learning pause rejected; revised ten-level visual-learning candidate acceptance pending",
+      "user_test": "Initial/abstract learning and level1 mushroom correction rejected; free-kitchen customer bills/cash/tips candidate acceptance pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Martin plays first calm shift, safe preparation tables and concrete portion repair; refine ten levels from user/learner feedback before expanding to20. Mobile package/device gates separate.",
-      "observed_head": "93b2eab13156bc62e01f7985c5d054c5381a7868",
+      "next_action": "Martin tests raw/wrong topping delivery, real repair, unpaid/paid receipt and accumulating tips in calm first shift. Mobile/learning-transfer gates separate.",
+      "observed_head": "d36b8e182d5c6b046b8957c375f183765075fa2d",
       "pull_request": 160,
       "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
-      "observed_head_scope": "previous published checkpoint; current local code f84ff0e, fresh publication receipt follows separately",
+      "observed_head_scope": "Previous verified GitHub checkpoint. Current47d22d9 tested; new exact-tree publication receipt outside source records final head.",
       "campaign_levels": 10
     }
   ],
@@ -1337,5 +1337,23 @@
       "canonical_receipt": 11450254448,
       "user_test": "failed_20261007; preserved_reports14_incidents11"
     }
-  ]
+  ],
+  "tutorialAcceptanceFollowup": {
+    "task": "GC-WEB-REPAIR-20261007",
+    "phase": "merged_pending_ci_staging",
+    "pr": 164,
+    "commit": "be39294ab9e9f85bb90c52760be374c5fe3e5b06",
+    "candidateCI": 37583234472,
+    "mergeCI": 37583383799,
+    "verifiedTests": 25,
+    "pending": "Preview/Functions receipts then canonical request; image quality and review-mode implementation still open"
+  },
+  "studentNavigationAudioFollowup": {
+    "phase": "branch_only",
+    "pr": 166,
+    "head": "9749e2b950f763f527570928a21d2e7605a6db0a",
+    "candidateCI": 37584648405,
+    "next": "exact CI then integrate; canonical staging combines PR164/165/166",
+    "tests": 25
+  }
 }

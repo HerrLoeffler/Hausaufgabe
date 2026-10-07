@@ -5,11 +5,12 @@
 #include "GameFramework/PlayerController.h"
 #include "FractionRules.h"
 #include "LearningCampaign.h"
+#include "BillingRules.h"
 #include "KitchenArt.h"
 #include "PizzaKitchen.generated.h"
 class UCapsuleComponent;class UFloatingPawnMovement;class ACameraActor;
-struct FKitchenPizza {int Ingredients=0;bool Baked=false;PizzaRules::PizzaCuts Cuts;uint32 Selection=0;bool Plated=false;};
-struct FKitchenOrder {FString Name;PizzaRules::Rational Amount;PizzaRules::Rational Left,Right;char Op=' ';int Ingredients=3;float Patience=110;};
+struct FKitchenPizza {int Ingredients=0;bool Baked=false;PizzaRules::PizzaCuts Cuts;uint32 Selection=0;bool Plated=false;PizzaRules::Rational Portion()const{if(!Plated)return PizzaRules::Rational(1);if(Selection==0)return PizzaRules::Rational(0);if(Selection==((1u<<Cuts.Count())-1))return PizzaRules::Rational(1);return Cuts.Selected(Selection);}};
+struct FKitchenOrder {FString Name;PizzaRules::Rational Amount;PizzaRules::Rational Left,Right;char Op=' ';int Ingredients=3;float Patience=110,Age=0;};
 UCLASS() class BRUCHPIZZERIA_API APizzaArena:public AActor {GENERATED_BODY() public:APizzaArena();virtual void OnConstruction(const FTransform&)override;void ApplyLevel(int);};
 UCLASS() class BRUCHPIZZERIA_API APizzaVisual:public AActor {GENERATED_BODY() public:APizzaVisual();void SetPizza(const FKitchenPizza&);};
 UCLASS() class BRUCHPIZZERIA_API AKitchenChef:public APawn {GENERATED_BODY() public:AKitchenChef();virtual void OnConstruction(const FTransform&)override;virtual void Tick(float)override;UPROPERTY() UCapsuleComponent* Body;UPROPERTY() UFloatingPawnMovement* Movement;KitchenArt::ChefParts Rig;float AnimationClock=0;};
@@ -21,10 +22,11 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  UPROPERTY() TArray<APizzaVisual*> TableVisuals;UPROPERTY() TArray<APizzaVisual*> ExtraOvenVisuals;UPROPERTY() TArray<AActor*> ExtraOvenArt;
  TArray<TOptional<FKitchenPizza>> Tables,ExtraOvens;TArray<float> ExtraBakeTimes;
  PizzaRules::CampaignProfile Level;PizzaRules::KitchenLayout Layout=PizzaRules::CampaignLayout(1);PizzaRules::PortionRepair Repair;FKitchenOrder RepairOrder;
+ PizzaRules::Bill LastBill;FString BillGuest,BillComplaint;PizzaRules::Rational BillPortion;int BillIngredients=0;bool BillVisible=false;int Cash=0,ShiftSales=0,ShiftTips=0;
  int LevelNumber=1,UnlockedLevel=1;bool LevelWon=false;
  TArray<FKitchenOrder> Orders;TOptional<FKitchenPizza> Carry,Board,Oven;
  float BakeTime=0,RoundTime=240,FeedbackTime=0;int Score=0,Served=0,Difficulty=0,OrderSerial=0;
- bool Intro=true,Cutting=false,Learning=false,Paused=false,Finished=false,RecipeLesson=false;
+ bool Intro=true,Cutting=false,Learning=false,Paused=false,Finished=false,RepairNeedsNewCuts=false;
  FString Feedback=TEXT("Ciao! Eine echte Küche wartet auf dich.");
  std::vector<PizzaRules::LessonStep> Lesson;int LessonIndex=0;FString LessonContext;
  FVector NormalCamera=FVector(0,-1180,1470);FRotator NormalRotation=FRotator(-51,90,0);int SelectedGuest=0,AnswerChoice=0;

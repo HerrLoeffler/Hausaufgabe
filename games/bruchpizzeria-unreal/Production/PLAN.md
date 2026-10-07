@@ -26,7 +26,7 @@ Tools/create_level.py: deterministic Unreal editor asset/material/map recipe, en
 - [x] Create native project and compile installed Unreal toolchain; record exact errors and build ID before retry.
 - [ ] Original rounded 3D room and chef, PBR materials, warm lighting, station art; no raw blockout claimed final.
 - [x] Direct movement/collision, carry/drop, sauce/cheese/topping, timed oven, cutting2/4/8 and serving.
-- [x] Mistake freezes gameplay and order timers; contextual guided correction must finish before resume.
+- [x] Wrong fraction delivery freezes gameplay and order timers for visual portion help. Raw/wrong topping delivery produces ordinary guest complaint, no recipe modal.
 - [ ] Native HUD and touch controls; desktop normal start and visual/play validation in actual Unreal.
 - [ ] Independent review, save source/recipe/verification and draft PR; actual native device packaging only with verified platform/signing prerequisites.
 
@@ -36,3 +36,6 @@ User acceptance correction07.10: native start hit-test subtracts constrained sce
 
 
 Superseding user correction07.10: see LEARNING_CAMPAIGN.md. Ten playable locally saved profiles and ten distinct station arrangements;20 possible later,100 superseded. Abstract forced quiz chain removed. Visual same-whole plate repair on wrong delivery; no points for help alone, actual re-serving required. Two safe preparation tables; second oven from6. Calm topic introductions; sparse plus8/9 and reachable minus10. Multiply/divide postponed. Fresh native suite/hardware/learning-transfer acceptance separately recorded, no old tests attributed to new runtime.
+
+
+Customer/billing correction07.10: kitchen accepts incomplete/baked/plated pizza states and early oven pickup; raw/unequal/whole service reaches customer evaluation. Explicit ingredient complaints, no fabricated correction; mushroom station/orders start4. Nonblocking itemized bills, no pay for any rejected dish, persistent local cash, time-based20%/10% tips, shift total. Prices/rounding/timing in LEARNING_CAMPAIGN.md. Native behavior/red evidence and independent bounded review retained in HANDOFF; normal hardware acceptance remains separate.
