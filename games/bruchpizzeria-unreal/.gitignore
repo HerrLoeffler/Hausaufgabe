@@ -1,0 +1,15 @@
+Content/
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+.vs/
+*.xcodeproj/
+*.xcworkspace/
+Tests/fraction_tests
+Reports/*.log
+Reports/*.png
+Tests/build/
+Reports/*
+!Reports/verification.json
+!Reports/run-history.json

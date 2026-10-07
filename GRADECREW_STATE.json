@@ -749,6 +749,18 @@
       "user_test": "not_performed",
       "handoff": "workstreams/gc-web-polish-20261007.md",
       "next_action": "Martin checks actual login, normal test creation/saving, and desktop/mobile visuals."
+    },
+    {
+      "id": "games-bruchpizzeria-unreal",
+      "task_id": "GC-GAMES-PIZZA-01",
+      "branch": "feature/bruchpizzeria-unreal-v1",
+      "stage": "branch_only",
+      "local_code_commit": "6705901",
+      "ci": "no Unreal CI runner; local editor build and native CookAndLearn verified",
+      "staging": "not_deployed",
+      "user_test": "not_performed; prior browser rejected",
+      "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
+      "next_action": "Inspect actual native rendered scene and direct inputs, then mobile device/package gates. No Production authorization."
     }
   ],
   "deployments": [

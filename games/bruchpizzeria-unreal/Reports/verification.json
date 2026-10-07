@@ -1,0 +1,83 @@
+{
+  "task_id": "GC-GAMES-PIZZA-01",
+  "date": "2026-10-07",
+  "engine": "5.8.3",
+  "native_source_commit": "6705901",
+  "core_checks": {
+    "count": 165,
+    "failures": 0,
+    "sanitizers": "ASAN and UBSAN verified by fraction-core reviewer"
+  },
+  "editor_build": "Succeeded native-teaching-green-build.log",
+  "automation": {
+    "NativeAutomation": {
+      "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 28
+        }
+      ]
+    },
+    "NativeRegressionRed": {
+      "sha256": "463a562d0d97c76c8ee8f9a2f5809fe6bc69a74ad4e34fa7060213b09a1aa005",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 11,
+          "warnings": 28
+        }
+      ]
+    },
+    "NativeRegressionGreen": {
+      "sha256": "fb1a6c8e47bb68d7ac63614ca0334309f96901030e23688819c7c4c1ffff006d",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeTeachingRed": {
+      "sha256": "58690bf19931193e732820f0b2f5106d6bd6c4405b53bda7b874368f8a6ba78a",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeTeachingGreen": {
+      "sha256": "41124b123b97b68edeacbf96b1da4f48e5257e6fdb51c682538ceec58e2589c8",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        }
+      ]
+    }
+  },
+  "visual_acceptance": "not_passed; actual game render not yet inspected; CUA Mac locked",
+  "physical_mobile_device": "not_tested",
+  "signed_mobile_package": "not_created",
+  "production": "not_requested",
+  "content": {
+    "Content/Maps/Pizzeria.umap": {
+      "bytes": 38705978,
+      "sha256": "f3b6493f918aa19fdbb53ea17be93ec2b3397bf68c865263d919bf92ffa39d81"
+    },
+    "Content/Materials/M_Kitchen.uasset": {
+      "bytes": 6791,
+      "sha256": "91234eb76b4d60d7fc04ab63edec05f4abeb9818d0854ad964d222afba2ef218"
+    }
+  }
+}

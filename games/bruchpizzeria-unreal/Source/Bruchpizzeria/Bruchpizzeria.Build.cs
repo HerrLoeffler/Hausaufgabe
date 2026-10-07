@@ -1,0 +1,2 @@
+using UnrealBuildTool;
+public class Bruchpizzeria:ModuleRules {public Bruchpizzeria(ReadOnlyTargetRules Target):base(Target){PCHUsage=PCHUsageMode.UseExplicitOrSharedPCHs;PublicDependencyModuleNames.AddRange(new string[]{"Core","CoreUObject","Engine","InputCore","ProceduralMeshComponent","UMG","Slate","SlateCore","RenderCore","RHI"});if(Target.Type==TargetType.Editor)PrivateDependencyModuleNames.Add("UnrealEd");}}

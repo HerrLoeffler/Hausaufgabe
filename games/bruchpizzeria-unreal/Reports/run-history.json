@@ -1,0 +1,19 @@
+{
+  "task_id": "GC-GAMES-PIZZA-01",
+  "prior_browser": "PR158 preserved and rejected by user; never count native acceptance from browser tests",
+  "attempts": [
+    "UE V6 shared-build-settings failure; V7 correction",
+    "GWhiteTexture linker failure; RenderCore/RHI correction",
+    "NativeAutomation Success28warnings",
+    "First graphical start missing Metal compiler; official Apple component installed",
+    "NativeRegressionRed11failures; NativeRegressionGreen Success1warning",
+    "Preview Python auto-exit, no screenshot proof",
+    "Preview cpp TObjectPtr auto* compile failures; explicit UWorld correction",
+    "Preview46971 background-FPS wait while Mac locked; own PID4341 stopped",
+    "Build cache sandbox denied; native build with authorized cache access succeeded",
+    "NativeTeachingRed1failure; NativeTeachingGreen Success1warning",
+    "Rendered locked preview76602 started with preview-only minimum2fps; not a performance result"
+  ],
+  "paid_provider_calls": 0,
+  "new_budget_reservations": 0
+}

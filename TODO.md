@@ -199,3 +199,11 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
 | GC-WEB-REPAIR-20261007 | Gemeinsames UI-/Remy-/Audio-Paket aus PR159. | **Auf Staging; Nutzertest fehlgeschlagen, gezielte Korrektur läuft.** Merge `0931ade4`, CI `37547012003`, Hosting-Preview `37547126018`, kanonisches Hosting `37547422005` und AI/Assessment-Functions `37547126016` verifiziert. Martin belegt am 07.10. Layout-/Tour-, Remy-/Reset- und Audiofehler einschließlich RPT-MUXC8FM3-74721. Main korrigiert auf fix/web-acceptance-regressions-20261007; kein unveränderter Deploy. Neue private Audio-Modi bleiben bis Rules-Nachweis/Gates C–F Entwurf; Production unverändert. Automatisches Chat-Abholen auf Martins Wunsch pausiert; Ergebnisse künftig nur auf ausdrücklichen Auftrag sammeln. [Übergabe](workstreams/web-repair-batch-20261007.md) |
+
+
+## Bruchpizzeria Unreal-Neustart — 7. Oktober 2026
+
+| Task | Stand | Nächster Schritt |
+| --- | --- | --- |
+| GC-GAMES-PIZZA-01 | Nutzer lehnt Browserlieferung ab; expliziter nativer Unreal5-Auftrag. Native Unreal-Küche implementiert: Belegen, Backen, Schneiden, Brüche bis Achtel, vier Rechenarten und pausierte Lernhilfe. Lokaler Editor-Build, 165 Kernprüfungen und nativer Ablauf mit Regressionen bestanden; branch_only. | Tatsächliche Spielansicht und direkte Eingabe prüfen (Mac aktuell gesperrt); mobile Geräte-/Grafikabnahme und signiertes Paket offen. [Übergabe](workstreams/bruchpizzeria-unreal-20261007.md) |
+
