@@ -66,3 +66,9 @@ test('question references must belong to the accessible quiz',async()=>{
  const s=setup();await assert.rejects(s.call('teacher',{...note,quizId:'mine',questionId:'missing'}),{code:'permission-denied'});
  s.docs.set('quizzes/mine/questions/q1',{text:'question'});const r=await s.call('teacher',{...note,quizId:'mine',questionId:'q1'});assert.equal(r.note.questionId,'q1');
 });
+test('region survives server persistence and malformed or changed replay is rejected',async()=>{
+ const s=setup(),region={x:.1,y:.2,width:.3,height:.2,sourceWidth:1000,sourceHeight:800};
+ const a=await s.call('admin',{...note,region});assert.deepEqual(a.note.region,region);
+ await assert.rejects(s.call('admin',{...note,region:{...region,width:.4}}),{code:'already-exists'});
+ for(const bad of [{...region,x:-1},{...region,width:2},{...region,height:0},{...region,x:NaN}])await assert.rejects(s.call('admin',{...note,clientRequestId:'invalid-region',region:bad}),{code:'invalid-argument'});
+});

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "sourceObservedAt": "2026-10-05",
   "note": "Prüfkatalog aus bestehender Ampel. Historische Zustände werden nicht als aktuelle Ergebnisse übernommen.",
   "checks": [
@@ -19,7 +19,10 @@
       "instruction": "Aktuellen Integrationsstand prüfen: Import → KI → Editor → Veröffentlichung → Schülerabgabe → Auswertung.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "aiView"
+      }
     },
     {
       "id": "GC-DEVICE-01",
@@ -64,7 +67,10 @@
       "instruction": "Tatsächlich verwendete Assets visuell prüfen; zentrale Crew-Bibliothek erhalten.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "authView"
+      }
     },
     {
       "id": "GC-DESIGN-01",
@@ -73,7 +79,10 @@
       "instruction": "Design-Chat: bestehende Umsetzung prüfen, keine konkurrierende CSS-Schicht.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "dashboardView"
+      }
     },
     {
       "id": "GC-DESIGN-02",
@@ -82,7 +91,10 @@
       "instruction": "Für einen späteren Ausbau eingeordnet; kein automatisch verpflichtender Fehler im aktuellen Staging-Abschluss. Nach Dashboard-Abnahme schrittweise; Import- und Bewertungsfunktionen erhalten.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "aiView"
+      }
     },
     {
       "id": "GC-DESIGN-03",
@@ -91,7 +103,10 @@
       "instruction": "CSS-only, unveränderte Entry-/Startup-Blobs und module-web-v1; ein Versuch mit 2,40 USD Reservierung, Gesamtdeckel weiterhin 2,55 USD. Pilot-Staging bestätigt; Homepage-Run 37220142576 scheiterte beim Builder mit unbekanntem Provider-Ergebnis. Reservierung erhalten, kein automatischer neuer Versuch; Provider-Ergebnis/Kosten zuerst abgleichen. Alle drei KI-Reviews bleiben Pflicht. Finale visuelle Abnahme bleibt bei Martin. [Übergabe](workstreams/design-startscreen-multiai-v2.md)",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "authView"
+      }
     },
     {
       "id": "GC-DESIGN-05",
@@ -100,7 +115,10 @@
       "instruction": "Ladefehler reproduzieren und beheben, ursprüngliche Coco-Führung und kompakte Startansicht wiederherstellen. Kurze Staging-Adresse kontrolliert versorgen; fehlgeschlagenen Stand nicht weiterveröffentlichen.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/pull/149",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "authView"
+      }
     },
     {
       "id": "GC-DIAGNOSTICS-01",
@@ -109,7 +127,10 @@
       "instruction": "Vorhandene Diagnostics/Log-Tools inventarisieren; Referenz-ID, Version, Ablauf, Filter und Sortierung prüfen; keine Antworten oder Zugangsdaten protokollieren.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "adminView"
+      }
     },
     {
       "id": "GC-AI-01",
@@ -118,7 +139,10 @@
       "instruction": "Reproduzierbare Fälle am aktuellen Stand sammeln, bestehende Fehlerbehebungen verifizieren.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "editor",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "editorView"
+      }
     },
     {
       "id": "GC-CREW-AI-01",
@@ -127,7 +151,10 @@
       "instruction": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "editor",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "aiView"
+      }
     },
     {
       "id": "GC-CREW-AI-02",
@@ -136,7 +163,10 @@
       "instruction": "Gemeinsamer nachgewiesener Batch `18e30d0d`: Hosting `36991979723`, AI-Functions `36991979742`; neuere Branchspitzen separat prüfen. Verlauf siehe GRADECREW_STATE.json und vorhandene Workstream-Übergabe.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "editor",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "editorView"
+      }
     },
     {
       "id": "GC-TELEMETRY-POSTHOG-01",
@@ -145,7 +175,10 @@
       "instruction": "PR #100 Deploy-Control → main `fbdd795b`; PR #99 → Integration `461da164`; dedizierte CI `37235599673` und AI Staging Checks `37235725698` grün; AI Functions Run `37235811020` erfolgreich, Secret-Gate bestanden. Jetzt eine normale Remy-Aktion in Staging auslösen und eingegangene Properties in PostHog prüfen; danach Error Tracking V1. [Übergabe](workstreams/posthog-staging-telemetry-v1.md)",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "aiView"
+      }
     },
     {
       "id": "GC-AI-EVAL-02",
@@ -190,7 +223,10 @@
       "instruction": "Unbegrenzte users/quizzes/feedback-Abfragen prüfen und durch Pagination/Aggregate ersetzen.",
       "source": "https://github.com/HerrLoeffler/Hausaufgabe/blob/8360bc5f056837118ffd83138ffa2468ae42647e/TODO.md",
       "scene": "welcome",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "adminView"
+      }
     },
     {
       "id": "GC-REFERENCE-01",
@@ -225,7 +261,10 @@
       "area": "Aufgaben & Audio",
       "instruction": "Höraufgabe und Audioantworten öffnen. Prüfen: Player vorhanden, Datei abspielbar, keine verratene Lösung. Fehlende Datei als Fehler erfassen.",
       "scene": "student",
-      "method": "manual"
+      "method": "manual",
+      "destination": {
+        "view": "editorView"
+      }
     },
     {
       "id": "GC-REVIEW-AUTO",

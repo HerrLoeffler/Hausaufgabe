@@ -8359,15 +8359,40 @@ async function createTutorialQuiz(payload) {
 if (["staging", "local-review"].includes(appEnvironment)) {
   const reviewApi = createAiClient(app, () => state.user?.uid || "");
   const localReview = appEnvironment === "local-review" && ["localhost", "127.0.0.1"].includes(location.hostname);
-  const openScene = localReview ? scene => {
+  const openScene = localReview ? scene => new Promise((resolve,reject) => {
+    const done=event=>{if(event.detail?.scene!==scene)return;cleanup();event.detail.error?reject(new Error(event.detail.error)):resolve();};
+    const cleanup=()=>{clearTimeout(timeout);document.removeEventListener("gradecrew:review-scene-ready",done);};
+    const timeout=setTimeout(()=>{cleanup();reject(new Error("Prüfszene konnte nicht geöffnet werden."));},5000);document.addEventListener("gradecrew:review-scene-ready",done);
     localStorage.setItem("gradecrew-review-scene-v1", JSON.stringify({version:1,scene}));
     document.dispatchEvent(new CustomEvent("gradecrew:review-scene", {detail:{scene}}));
-  } : null;
+  }) : null;
+  const navigateReview = async destination => {
+    if(localReview && destination.scene){await openScene(destination.scene);return;}
+    const current=views.find(id=>!$(id)?.classList.contains("hidden"));
+    if(current===destination.view && (!destination.quizId||destination.quizId===(current==="resultsView"?state.currentResultsQuiz?.id:state.currentQuiz?.id)))return;
+    if(state.isDirty)throw new Error("Bitte zuerst deine Änderungen am Test speichern. Danach die Stelle erneut öffnen.");
+    if(crewTour?.active)throw new Error("Bitte die laufende Tour zuerst beenden. Dein Hinweis bleibt gespeichert.");
+    if(current==="studentView")throw new Error("Bitte den laufenden Schülertest zuerst abschließen oder selbst verlassen.");
+    const quizId=destination.quizId || (destination.check?state.currentQuiz?.id:"");
+    switch(destination.view){
+      case "authView":showView("authView");break;
+      case "dashboardView":await loadDashboard();showView("dashboardView");break;
+      case "aiView":await openAiView();break;
+      case "settingsView":openSettings();break;
+      case "adminView":if(state.profile?.role!=="admin")throw new Error("Diese Prüfung benötigt ein Admin-Konto.");await openAdmin();break;
+      case "editorView":case "resultsView":case "publishView":
+        if(!quizId)throw new Error("Öffne zuerst den Test, den du prüfen möchtest, und wähle den Prüfpunkt erneut.");
+        if(destination.view==="editorView")await openEditor(quizId);
+        else if(destination.view==="resultsView")await openResults(quizId);
+        else await showPublish(quizId);break;
+      default:throw new Error("Öffne die passende Testvorschau manuell. Anschließend kann die markierte Stelle angezeigt werden.");
+    }
+  };
   reviewController = installReviewMode({
-    document, api: payload => reviewApi.reviewMode(payload), local: localReview, openScene,
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, openScene, navigate:navigateReview,
     getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
       scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
-      quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : ""}),
+      quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : !$("resultsView")?.classList.contains("hidden") ? state.currentResultsQuiz?.id || "" : ""}),
     runChecks: localReview ? async checkId => {
       const response = await fetch("/__review/run", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId})});
       const result = await response.json();if(!response.ok)throw new Error(result.message);return result;
@@ -8403,7 +8428,7 @@ if (["staging", "local-review"].includes(appEnvironment)) {
           if(!crewTour)crewTour=installCrewTour(makeTourApi());
           crewTour.previewScene("finish",{quizId:code});
         }
-      }).catch(err => toast(err.message,"error"));
+      }).then(()=>document.dispatchEvent(new CustomEvent("gradecrew:review-scene-ready",{detail:{scene}}))).catch(err => {toast(err.message,"error");document.dispatchEvent(new CustomEvent("gradecrew:review-scene-ready",{detail:{scene,error:err.message}}));});
     });
     void reviewController.setSession({uid:"local-admin"}).then(() => document.dispatchEvent(new Event("gradecrew:review-ready")));
   }

@@ -236,3 +236,13 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
  #authView .gcHeroStage {min-height:var(--gc-stage-height,680px);justify-content:space-between}
  #authView .gcHeroVisual {width:min(100%,640px)}
 }
+
+/* Reserve a real text row: image cropping must never move faces behind the copy. */
+@media(min-width:781px){
+ #authView .gcHeroStage{display:grid;grid-template-rows:auto minmax(0,1fr)}
+ #authView .gcHeroLead{position:relative;inset:auto;grid-column:1;grid-row:1;width:auto;margin:0;padding:18px 24px 16px;background:#fffaf3;text-shadow:none}
+ #authView .gcHeroLead h1{font-size:clamp(28px,3.1vw,48px)}
+ #authView .gcHeroLead p{margin-top:8px;font-size:clamp(17px,1.7vw,25px)}
+ #authView .gcHeroVisual{position:relative;inset:auto;grid-column:1;grid-row:2;min-height:0;overflow:hidden}
+ #authView .gcHeroArtwork{height:100%;object-fit:cover;object-position:50% 55%}
+}

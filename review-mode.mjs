@@ -1,7 +1,8 @@
 import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
-export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,runChecks,local=false}) {
+export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false}) {
  const win=document.defaultView;let uid='',epoch=0,admin=false,catalog=[],root,toggle,marking=false,selected=null,highlight=null,notes=[],checks=[],syncing=false;
+ let regionMode=false,drag=null,regionOverlay=null,regionAnchor=null,regionBounds=null,suppressClick=false;
  let pendingWrites=Promise.resolve(),queueWrites=Promise.resolve();
  const updateQueue=(k,change)=>{const p=queueWrites.catch(()=>{}).then(async()=>storage.update?storage.update(k,change):storage.put(k,change(await storage.get(k))));queueWrites=p;return p;};const key=kind=>`staging:${uid}:${kind}`;
  const el=(tag,text,attrs={})=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;for(const [k,v] of Object.entries(attrs))node.setAttribute(k,v);return node;};
@@ -9,20 +10,51 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function message(text,error=false){const n=root?.querySelector('[data-review-message]');if(n){n.textContent=text;n.classList.toggle('reviewError',error);}}
  function error(err){message(err?.message||'Aktion fehlgeschlagen. Bitte erneut versuchen.',true);}
  async function call(data){const e=epoch;const response=await api(data);if(e!==epoch)throw new Error('Konto wurde gewechselt.');return response;}
- function unmark(){marking=false;root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
- function close(){unmark();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
- function dispose(){portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
+ function unmark(){marking=false;regionMode=false;drag=null;root?.querySelector('[data-review-region]')?.setAttribute('aria-pressed','false');root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
+ function close(){unmark();clearRegion();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
+ function dispose(){portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
  }
+ function clearRegion(){regionOverlay?.remove();regionOverlay=null;regionAnchor=null;regionBounds=null;}
+ function paintRegion(){if(!regionAnchor?.isConnected||!regionBounds)return;const r=regionAnchor.getBoundingClientRect();const b=regionBounds;
+  if(!regionOverlay){regionOverlay=el('div',null,{'data-review-region-overlay':'',class:'reviewRegionOverlay','aria-hidden':'true'});(regionAnchor.closest('dialog[open]')||document.body).append(regionOverlay);}
+  Object.assign(regionOverlay.style,{left:`${r.left+b.x*r.width}px`,top:`${r.top+b.y*r.height}px`,width:`${b.width*r.width}px`,height:`${b.height*r.height}px`});
+ }
  function capture(event){
+  if(event.type==='click'&&suppressClick){suppressClick=false;event.preventDefault();event.stopImmediatePropagation();return;}
+
   if(!root)return;
   if(event.type==='keydown'&&event.key==='Escape'){close();event.preventDefault();event.stopImmediatePropagation();return;}
   if(!marking||root.contains(event.target)||toggle?.contains(event.target))return;
   if(event.type==='keydown'&&!['Enter',' '].includes(event.key))return;
+  if(regionMode){
+   event.preventDefault();event.stopImmediatePropagation();
+   if(event.type==='pointercancel'){unmark();clearRegion();return;}
+   if(event.type==='pointerdown'){
+    if(event.button!==0)return;clearRegion();const anchor=event.target.closest('dialog[open]')||document.getElementById(getContext().view);
+    if(!anchor?.id){message('Bitte eine Stelle innerhalb der aktuellen Ansicht wählen.',true);return;}
+    const r=anchor.getBoundingClientRect();if(!r.width||!r.height)return;
+    drag={anchor,r,x:event.clientX,y:event.clientY};return;
+   }
+   if(!drag)return;
+   if(['pointermove','pointerup'].includes(event.type)){
+    const {anchor,r,x,y}=drag,clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+    const left=clamp(Math.min(x,event.clientX),r.left,r.left+r.width),top=clamp(Math.min(y,event.clientY),r.top,r.top+r.height);
+    const right=clamp(Math.max(x,event.clientX),r.left,r.left+r.width),bottom=clamp(Math.max(y,event.clientY),r.top,r.top+r.height);
+    regionAnchor=anchor;regionBounds={x:(left-r.left)/r.width,y:(top-r.top)/r.height,width:(right-left)/r.width,height:(bottom-top)/r.height,sourceWidth:r.width,sourceHeight:r.height};paintRegion();
+    if(event.type==='pointerup'){
+     suppressClick=true;win.setTimeout(()=>{suppressClick=false;},500);
+     if(right-left<8||bottom-top<8){clearRegion();drag=null;message('Ziehe bitte einen etwas größeren Bereich auf.',true);return;}
+     selected={...getContext(),target:anchor.id,region:{...regionBounds}};root.querySelector('[data-review-target]').textContent='Markiert: freier Bereich';unmark();root.querySelector('[data-review-text]').focus();void saveDraft();
+    }return;
+   }return;
+  }
+  if(['pointermove','pointerup','pointercancel'].includes(event.type))return;
   event.preventDefault();event.stopImmediatePropagation();if(event.type==='pointerdown')return;
+  clearRegion();
   const target=event.target.closest?.('[data-review-id],[id]');
   if(!target){message('Diese Stelle hat noch keine feste Kennung. Bitte den nächstgelegenen Bereich markieren.',true);return;}
   highlight?.classList.remove('reviewSelected');highlight=target;highlight.classList.add('reviewSelected');
@@ -66,15 +98,17 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   }
   notes=all;checks=allChecks;renderNotes();renderChecks();if(!doneNotes||!doneChecks)message('Mehr als 1.000 Einträge: Bitte den authentifizierten Export verwenden.',true);
  }catch(err){error(err);}}
- function locate(n){const targets=[...document.querySelectorAll('[data-review-id],[id]')].filter(x=>(x.dataset.reviewId||x.id)===n.target&&!root?.contains(x));
+ async function locate(n){try{const before=getContext();if(navigate&&(before.view!==n.view||(n.quizId&&before.quizId!==n.quizId)||(local&&n.scene&&before.scene!==n.scene)))await navigate(n);
+const targets=[...document.querySelectorAll('[data-review-id],[id]')].filter(x=>(x.dataset.reviewId||x.id)===n.target&&!root?.contains(x));
   const same=getContext();if(same.view!==n.view||(n.quizId&&same.quizId!==n.quizId)||targets.length!==1){message('Stelle in dieser Version nicht gefunden. Öffne die passende Ansicht oder Prüfszene.',true);return;}
-  highlight?.classList.remove('reviewSelected');highlight=targets[0];highlight.classList.add('reviewSelected');highlight.scrollIntoView?.({block:'center',behavior:'smooth'});
+  highlight?.classList.remove('reviewSelected');highlight=targets[0];highlight.classList.add('reviewSelected');highlight.scrollIntoView?.({block:'center',behavior:'instant'});clearRegion();if(n.region){regionAnchor=highlight;regionBounds=n.region;paintRegion();}message(n.build&&n.build!==same.build?'Stelle geöffnet. Der Hinweis stammt aus einer älteren Version.':'Stelle geöffnet.');
+ }catch(err){error(err);}
  }
  function renderNotes(){const list=root?.querySelector('[data-review-notes]');if(!list)return;list.replaceChildren();
   if(!notes.length)list.append(el('p','Noch keine Hinweise.'));
   notes.forEach((n,i)=>{const card=el('article',null,{class:'reviewCard'});card.append(el('strong',`${i+1} · ${labels[n.status]||n.status}`),el('small',`${labels[n.approval]||n.approval} · ${n.build}`),el('p',n.text));
-   const actions=el('div',null,{class:'reviewActions'});actions.append(button('Stelle zeigen',()=>locate(n)));
-   if(openScene&&n.scene)actions.append(button('An dieser Stelle prüfen',()=>openScene(n.scene)));
+   const actions=el('div',null,{class:'reviewActions'});actions.append(button('Stelle öffnen',()=>void locate(n)));
+   if(openScene&&n.scene)actions.append(button('An dieser Stelle prüfen',()=>openScene(n.scene).catch(error)));
    const edit=el('textarea',null,{'aria-label':'Hinweis bearbeiten',maxlength:'3000'});edit.value=n.text;edit.hidden=true;
    actions.append(button('Text bearbeiten',()=>{edit.hidden=!edit.hidden;if(!edit.hidden)edit.focus();}));
    const save=button('Änderung speichern',async()=>{try{await call({action:'edit',id:n.id,revision:n.revision,text:edit.value});await refresh();}catch(err){error(err);}});save.hidden=true;edit.addEventListener('input',()=>{save.hidden=false;});
@@ -93,7 +127,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   catalog.forEach(c=>{const current=checks.filter(x=>x.checkId===c.id&&x.build===build).sort((a,b)=>b.updatedAt-a.updatedAt);const bad=current.find(x=>x.result!=='passed'),result=bad||current[0];
    const card=el('article',null,{class:'reviewCard'});card.append(el('strong',`${result?(result.result==='passed'?'🟢':'🔴'):'🟡'} ${c.title}`),el('small',`${c.id} · ${c.area}`),el('p',c.instruction));
    if(result)card.append(el('p',`${labels[result.result]} · ${result.evidence}`));
-   if(openScene&&c.scene)card.append(button('Prüfstelle öffnen',()=>openScene(c.scene)));
+   if(c.destination&&navigate)card.append(button('Prüfstelle öffnen',async()=>{try{await navigate({...c.destination,scene:c.scene,check:true});message('Prüfansicht geöffnet. '+c.instruction);}catch(err){error(err);}}));else if(openScene&&c.scene)card.append(button('Prüfstelle öffnen',()=>openScene(c.scene).catch(error)));
    if(c.method==='automated'){
     if(runChecks){const run=button('Automatisch prüfen',async()=>{run.disabled=true;try{message('Automatische Prüfung läuft …');const r=await runChecks(c.id);message(`${r.result==='passed'?'Bestanden':'Fehler'} · ${r.summary}`);await refresh();}catch(err){error(err);}finally{run.disabled=false;}});card.append(run);}else card.append(el('small','Automatische Prüfung in der lokalen Vorschau starten.'));
    }else{const evidence=el('textarea',null,{'aria-label':`Ergebnis für ${c.title}`,placeholder:'Was hast du geprüft? Gerät/Browser und Beobachtung',maxlength:'1500'});const choices=el('div',null,{class:'reviewActions'});
@@ -107,7 +141,8 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  async function open(){if(root){close();return;}const e=epoch;root=el('aside',null,{'data-review-panel':'',class:'reviewPanel','aria-label':'Seite überarbeiten'});document.documentElement.classList.add('reviewPanelOpen');
   const header=el('header');header.append(el('h2','Seite überarbeiten'),button('Schließen',close,{'data-review-close':''}));
   const status=el('p','Hinweise sammeln. Gemeinsam prüfen.',{'data-review-message':'',role:'status','aria-live':'polite'});
-  const modes=el('div',null,{class:'reviewActions'});modes.append(button('Seite bedienen',unmark),button('Stelle markieren',()=>{marking=!marking;root.classList.toggle('reviewPicking',marking);document.documentElement.classList.toggle('reviewMarking',marking);root.querySelector('[data-review-mark]').setAttribute('aria-pressed',String(marking));},{'data-review-mark':'','aria-pressed':'false'}));
+  const modes=el('div',null,{class:'reviewActions'});modes.append(button('Seite bedienen',unmark),button('Stelle markieren',()=>{regionMode=false;drag=null;marking=!marking;root.classList.toggle('reviewPicking',marking);document.documentElement.classList.toggle('reviewMarking',marking);root.querySelector('[data-review-mark]').setAttribute('aria-pressed',String(marking));},{'data-review-mark':'','aria-pressed':'false'}));
+  modes.append(button('Bereich aufziehen',()=>{unmark();marking=true;regionMode=true;root.classList.add('reviewPicking');document.documentElement.classList.add('reviewMarking');root.querySelector('[data-review-region]').setAttribute('aria-pressed','true');message('Mit gedrückter Maustaste einen Bereich aufziehen. Escape bricht ab.');},{'data-review-region':'','aria-pressed':'false'}));
   const target=el('small',selected?`Markiert: ${selected.target}`:'Hinweis zur aktuellen Ansicht',{'data-review-target':''});
   const label=el('label','Dein Hinweis');const input=el('textarea',null,{'data-review-text':'',maxlength:'3000',placeholder:'Was soll hier anders werden?'});label.append(input);input.addEventListener('input',()=>void saveDraft());
   const send=button('Hinweis speichern',async()=>{send.disabled=true;try{await submit();}finally{send.disabled=false;}});
@@ -125,6 +160,6 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function portal(){const host=[...document.querySelectorAll('dialog[open]')].at(-1)||document.body;for(const node of [toggle,root])if(node&&node.parentElement!==host)host.append(node);}
  const portalObserver=new win.MutationObserver(portal);portalObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
  function online(){if(root)void sync();}
- document.addEventListener('click',capture,true);document.addEventListener('pointerdown',capture,true);document.addEventListener('keydown',capture,true);win.addEventListener('online',online);
+ document.addEventListener('click',capture,true);document.addEventListener('pointerdown',capture,true);document.addEventListener('pointermove',capture,true);document.addEventListener('pointerup',capture,true);document.addEventListener('pointercancel',capture,true);win.addEventListener('resize',paintRegion);win.addEventListener('scroll',paintRegion,true);document.addEventListener('keydown',capture,true);win.addEventListener('online',online);
  return {setSession,dispose,open,refresh};
 }
