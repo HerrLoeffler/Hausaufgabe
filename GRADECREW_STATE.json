@@ -92,7 +92,15 @@
       "canonical_receipt": 11486023795,
       "user_acceptance": "pending"
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json"
+    "canonical_request": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json",
+    "review_regions_followup": {
+      "stage": "integrated",
+      "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
+      "pr": 168,
+      "candidate_ci": 37638284400,
+      "deploy": "pending",
+      "user_acceptance": "pending"
+    }
   },
   "production": {
     "project": "hausaufgabe-40294",
