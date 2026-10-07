@@ -78,3 +78,10 @@ Frisch geprüfter Visual-PR83 weiterhin offen @6434ddef. Development Status37640
 Sicherung: Spezifikation, diese Übergabe und betroffene TODO-Zeile in einem Dokumentationscommit auf main; tatsächlicher Commit aus Git lesen. Lokal nur docs/superpowers/specs/2026-10-07-expedition-amazonas-unreal-design.md erstellt und im Codex-Panel geöffnet (Tool meldet queued). Keine Tests/CI/Deploys für neue Spielimplementierung. Release-Stufe der bestehenden Browserquelle nicht geändert.
 
 Genau nächster Schritt: Martin prüft den schriftlichen Zehn-Minuten-Entwurf. Danach gemäß Brainstorming-Gate Implementierungsplan erstellen; dessen Prüfung/Ausführungswahl vor Produktcode. Die Grundrichtungsfreigabe wird nicht erneut verlangt.
+
+
+## 07.10.2026 — lokale native Testfassung erzeugt
+
+Nutzer fordert online oder lokal zumTesten. NativeUmsetzung imChat; vorherigeSpec bestätigt, Bauplan alsGuide. EigenesRepo gradecrew-expedition-unreal, Branchfeature/escape-expedition-unreal-v1. LokaleRuntime1be53c5 mit25pureChecks; zweiUnreal-Tests(Finale/Smoke) nullFehler, AudioSampleRateWarning; letzterBuilderfolgreich. TatsächlichesGameFenster geöffnet, TastaturStart/Tab/Enter/Inventar/Menü bestätigt; amThemenstart fürNutzer bereit. QuellcodeGitPush blockiert durchfehlendeTerminalAuth; sourcebackup überbestehendenGitHubConnector aufeigenerBranch, keinForcePush. RemoteSHA kannwegenConnectorCommit vomlokalenSHAabweichen; Quellinhalte vergleichen.
+
+DetaillierteaktuelleÜbergabe untergames/escape-expedition-unreal/Production/HANDOFF.md. KeineLiveGenerator/Auth/Serverbewertung/CI/Hosting/Production/Mobileabnahme. Erstspieler10Minuten/60–70% nochunverifiziert. Mausroute implementiert, aberautomatischeNativeMausprüfung blieb ohneDialogänderung; keineZuverlässigkeitsbehauptung. Tastaturnavigation Tab/Enter undAntworten1–4 realgetestet. FrüheregraueMaterialdarstellung war geerbterLightingOnly-View; eigenerStart setztlit. UnabhängigerReviewImportant-Fälle korrigiertmitRED/GREEN; Touch-/NeustartbestätigungMinoroffen. KeineProviderkosten, Attemptgeschichteerhalten. NächsterkonkreterSchritt: Martin testetlokaleFassung, dannpriorisierteBedien-/Artkorrekturen undLiveBrücke.

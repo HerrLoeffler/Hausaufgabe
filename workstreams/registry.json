@@ -474,6 +474,18 @@
         "fix/web-acceptance-regressions-20261007",
         "feature/audio-web-acceptance-20261007"
       ]
+    },
+    {
+      "id": "games-expedition-unreal",
+      "title": "Expedition Amazonas Unreal",
+      "primaryBranch": "feature/escape-expedition-unreal-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "relatedBranches": [
+        "prototype/escape-expedition-visual-masterpiece-v1",
+        "docs/escape-expedition-unreal-plan-20261007"
+      ],
+      "handoff": "games/escape-expedition-unreal/Production/HANDOFF.md"
     }
   ]
 }
