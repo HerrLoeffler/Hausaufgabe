@@ -103,6 +103,14 @@ Normale Fachlehrkräfte erhalten nicht den schulweiten HMAC-Schlüssel. Für ihr
 
 Bei Modus B enthält der schulische Tresor zusätzlich die aktuelle Zuordnung aus Quellkennung und GradeCrew-ID sowie eine Revision. Auch B braucht Backup, Schreibkoordination und Recovery; eine Browserablage allein reicht nicht.
 
+### Von der Schule benannte Verwaltungspersonen
+
+Der Nutzer präzisiert die organisatorische Zuordnung: Im Schulbereich können eine oder mehrere Personen von der Schule als beauftragte Schuladministrator:innen benannt werden. Jede nutzt ein eigenes Konto; wir empfehlen mindestens eine zuständige Person und eine aktive Stellvertretung. Die schulisch legitimierte Benennung wird im verifizierten Schulbereich bestätigt. Ein ASV-Personaleintrag oder eine eigene Behauptung erzeugt keine Adminrolle.
+
+Diese Personen dürfen nach ihren vergebenen Rechten ASV-Importe organisieren, Lehrkräfte/Klassen/Fächer zuordnen und Übergaben sowie Recovery verwalten. Die Benennung ist eine betriebliche Rolle in GradeCrew; sie verleiht weder pauschalen Zugriff auf sämtliche Leistungen noch automatisch Zugriff auf den Schlüssel im getrennten schulischen Tresor. Beide Berechtigungsebenen werden bewusst eingerichtet.
+
+Damit ist das organisatorische Rollenmodell geklärt. Der konkrete schulisch freigegebene Speicherort, die Verschlüsselungs-/Entsperrlösung und das Backup bleiben gesondert festzulegen. Eine neue Adminzuordnung kann einen verlorenen kryptografischen Schlüssel allein nicht wiederherstellen.
+
 ## 7. So erkennt die Lehrkraft die reale Person
 
 ASV bleibt die maßgebliche Quelle der Klarnamen. Beim Import kann die berechtigte Administration lokal Namen, Klassen und GradeCrew-Konten zusammen anzeigen. Für die Ergebnisansicht kann eine berechtigte Lehrkraft ihre schulische Klassenzuordnung lokal öffnen; der Client verbindet sie über `studentIdentityId` mit den vom Server autorisierten Ergebnissen.

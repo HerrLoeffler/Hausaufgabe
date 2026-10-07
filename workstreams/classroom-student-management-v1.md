@@ -199,3 +199,13 @@ Frische Nachweise:
 - Diese Runde prüft und aktualisiert ausschließlich Konzeptstatus/Übergabe/TODO; keine Implementierung, Provideraktion, neue Budgetreservierung, Integration oder Deploy.
 
 Genau ein nächster ausführbarer Schritt: ASV-Exportprofil anhand von Spaltenüberschriften und ausschließlich synthetischen Beispielen bestätigen.
+
+## Schuladministration und ASV-Punkt verständlich geklärt – 07.10.2026
+
+Nutzerpräzisierung: Eine oder mehrere Personen können in der Schulverwaltung als beauftragte Verwaltungspersonen zugeordnet werden. Im Entwurf festgehalten: persönliche Konten, verifizierte schulische Benennung, begrenzte Adminrechte; mindestens eine zuständige Person plus aktive Stellvertretung empfohlen. Der ASV-Import allein vergibt keine Adminrolle. Das Rollenmodell beantwortet „wer verwaltet“, noch nicht den konkreten Tresor-/Backup-Betrieb.
+
+Punkt 1 „ASV-Export bestätigen“ bedeutet in Alltagssprache: Die exportierte Tabelle muss die dauerhaft gleiche Kennnummer einer Person enthalten. Beispiel mit synthetischen Daten: ID 4711 bleibt beim Wechsel von Klasse 9b/2026–27 nach 10b/2027–28 gleich. Eine Zeilennummer oder jährlich wechselnde Export-ID reicht nicht. Wir benötigen zur Bestätigung die Feldbezeichnung bzw. das Exportprofil, keine echten Schülerdaten.
+
+Weiterhin offen: tatsächliches Schüler-/Lehrkraft-/Unterrichtsexportprofil, konkrete schulische Schlüsselablage und Recovery, fachliche Prüfung von Zugriffs-/Datenfristen. Keine neue Abschlusswertung, keine Implementierung/Integration/Deployfreigabe; Release-Stufe bleibt branch_only. Historie/Budget bleiben erhalten.
+
+Genau ein nächster Schritt: tatsächliche ASV-Spaltenüberschriften für die stabilen Personenkennungen prüfen.
