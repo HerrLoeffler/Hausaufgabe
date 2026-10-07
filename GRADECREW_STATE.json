@@ -937,7 +937,7 @@
       "branch": "feature/lerninsel-ego-v1",
       "stage": "branch_only",
       "pr": 175,
-      "observed_head": "1fc4203a289bd9fe18edb5062925bff82091dbc1",
+      "observed_head": "c2c651b0d3be64f2279254c00d3b773f4f1b7da7",
       "local_reviewed_commit": "9a87e02",
       "handoff": "workstreams/lerninsel-layouts-20261007.md",
       "scope": "First playable UE5.8 ego arrival, verb probe/path and one-liter tenths bucket terrace",
@@ -948,9 +948,10 @@
         "ue_tests": 1,
         "errors": 0,
         "warnings": 0,
-        "report_utc": "2026-10-07 23:04:40",
+        "report_utc": "2026.10.07-23.13.10",
         "report": "games/lerninsel-unreal/Reports/Automation/index.json",
-        "independent_review": "3 important findings reproduced before fix, all corrected with engine regressions; 1 deferred minor floor error marker"
+        "independent_review": "3 important findings reproduced before fix, all corrected with engine regressions; 1 deferred minor floor error marker",
+        "real_game_images": 4
       },
       "ci": "not_performed",
       "integration": "not_performed",
@@ -958,7 +959,18 @@
       "browser_streaming": "not_implemented",
       "ipad_device_acceptance": "not_performed",
       "next_action": "User plays first section; then refine terrain/art and build remaining Satzweg/Felsfenster. Verify browser/mobile separately.",
-      "production": "not_authorized"
+      "production": "not_authorized",
+      "local_final_commit": "76b336e",
+      "runtime_tree": "4eec154b4fa13f0da504d21f9545ea76ccf4286d",
+      "remote_local_runtime_bytes": "identical",
+      "ci_checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37701231892/job/113064884742"
+        }
+      ]
     }
   ],
   "deployments": [
