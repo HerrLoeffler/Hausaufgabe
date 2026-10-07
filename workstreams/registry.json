@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-07",
+  "updatedAt": "2026-10-08",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -474,6 +474,15 @@
         "fix/web-acceptance-regressions-20261007",
         "feature/audio-web-acceptance-20261007"
       ]
+    },
+    {
+      "id": "lerninsel-layouts-20261007",
+      "title": "Ego-Lerninsel / Layouts und Spielbuch",
+      "primaryBranch": "docs/lerninsel-layouts-20261007",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/lerninsel-layouts-20261007.md",
+      "relatedBranches": []
     }
   ]
 }
