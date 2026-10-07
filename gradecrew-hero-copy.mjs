@@ -3,7 +3,7 @@ import { registerCatalog, t } from './shared/i18n/browser-runtime.mjs?v=3';
 // Public hero UI copy lives in the existing GradeCrew interface-language runtime.
 // Example questions are fixed demo content; actual assessment language is independent.
 const de = {
-  'hero.cocoAction': 'Coco kennenlernen', 'hero.cocoTitle': 'Coco hilft dir weiter.',
+  'hero.cocoRole': 'Dein Guide', 'hero.cocoAction': 'Coco kennenlernen', 'hero.cocoTitle': 'Coco hilft dir weiter.',
   'hero.cocoPhase0': 'Seite 1 von 3', 'hero.cocoPhase1': 'Seite 2 von 3', 'hero.cocoPhase2': 'Seite 3 von 3',
   'hero.cocoHeading0': 'Dein Ratgeber für GradeCrew',
   'hero.cocoBody0': 'Ich bin Coco. Wenn du eine Frage hast oder nicht weiterweißt, helfe ich dir, dich in GradeCrew zurechtzufinden.',
@@ -77,7 +77,7 @@ const de = {
 };
 
 const en = {
-  'hero.cocoAction': 'Meet Coco', 'hero.cocoTitle': 'Coco helps you along.',
+  'hero.cocoRole': 'Your guide', 'hero.cocoAction': 'Meet Coco', 'hero.cocoTitle': 'Coco helps you along.',
   'hero.cocoPhase0': 'Page 1 of 3', 'hero.cocoPhase1': 'Page 2 of 3', 'hero.cocoPhase2': 'Page 3 of 3',
   'hero.cocoHeading0': 'Your GradeCrew guide', 'hero.cocoBody0': 'I am Coco. Ask me when you have a question or need help finding your way around GradeCrew.',
   'hero.cocoHeading1': 'Find me at the bottom right', 'hero.cocoBody1': 'Inside the app, click Coco at the bottom right and write your question whenever you need help.',

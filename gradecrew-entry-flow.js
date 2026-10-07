@@ -149,7 +149,7 @@ function buildEntrySurface() {
 
           </div>
           <div class="gcHeroRoles" aria-label="Deine Crew">
-            <button type="button" id="gcHeroCocoTour" data-hero-crew="coco" aria-label="Coco kennenlernen"><strong>Coco</strong><small>Dein Guide</small></button>
+            <button type="button" id="gcHeroCocoTour" data-hero-crew="coco" aria-label="Coco kennenlernen"><strong>Coco</strong><small data-i18n-key="hero.cocoRole" data-i18n-fallback="Dein Guide">Dein Guide</small></button>
             <button type="button" data-hero-crew="remy"><strong>Remy</strong><small data-i18n-key="hero.remyRole" data-i18n-fallback="Erstellen">Erstellen</small></button>
             <button type="button" data-hero-crew="emmi"><strong>Emmi</strong><small data-i18n-key="hero.emmiRole" data-i18n-fallback="Verbessern">Verbessern</small></button>
             <button type="button" data-hero-crew="wilma"><strong>Wilma</strong><small data-i18n-key="hero.wilmaRole" data-i18n-fallback="Prüfen">Prüfen</small></button>
