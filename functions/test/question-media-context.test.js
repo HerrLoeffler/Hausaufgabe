@@ -7,7 +7,7 @@ const question={type:'matching',text:'Match each school item with its use.',pair
 test('image generation and review receive full task context, without binaries; context changes invalidate cache',async()=>{
  const generated=[],reviewed=[],keys=[];
  for(const right of ['remove pencil marks','erase a drawing']){
-  const q=structuredClone(question);q.pairs[1].right=right;
+  const q=JSON.parse(JSON.stringify(question));q.pairs[1].right=right;
   await createVerifiedMedia({uid:'teacher',questionId:'q1',prompt:'School objects',expectedScene:'School objects',question:q,testContext:{subject:'English',grade:'5',contentLocale:'en-GB'},altText:'ruler → measure a line'}, {
    consume:async()=>{},record:async()=>{},cacheLoad:async c=>{keys.push(imageCachePath(c));return null;},
    generate:async p=>{generated.push(p);return {imageDataUrl:'image'};},

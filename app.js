@@ -3464,7 +3464,7 @@ async function openEditor(code) {
     }
     state.draftBaseUpdatedAt = Number(draft.baseUpdatedAt || 0);
     state.currentQuiz = { ...q, ...draft.quiz };
-    state.questions = (draft.questions || []).map(item => { initializeTypeData(item, item.type || "single"); return item; });
+    state.questions = (draft.questions || []).map(item => { delete item._typeChanging; initializeTypeData(item, item.type || "single"); return item; });
     state.pendingImportReport = buildQualityReviewReport(state.currentQuiz, code, state.questions);
     renderEditorState(state.currentQuiz);
     markDirty();
@@ -3480,7 +3480,7 @@ function resumeManualDraft(draft) {
   state.newManualQuiz = true;
   state.draftBaseUpdatedAt = 0;
   state.currentQuiz = { ...quizDefaults(), ...draft.quiz, id: draft.quizId };
-  state.questions = (draft.questions || []).map(item => { initializeTypeData(item, item.type || "single"); return item; });
+  state.questions = (draft.questions || []).map(item => { delete item._typeChanging; initializeTypeData(item, item.type || "single"); return item; });
   state.loadedQuestionIds = new Set();
   state.pendingImportReport = null;
   renderEditorState(state.currentQuiz);
@@ -3555,11 +3555,6 @@ function renderQuestions() {
     node.dataset.index = String(index);
     node.setAttribute("aria-label", `Aufgabe ${index + 1}`);
     q._collapsed = false;
-    if (q._collapsed) {
-      node.classList.add("collapsed");
-      const collapse = node.querySelector(".collapseQuestion");
-      if (collapse) { collapse.textContent = "⌄"; collapse.title = "Aufgabe ausklappen"; collapse.setAttribute("aria-label", collapse.title); collapse.setAttribute("aria-expanded", "false"); }
-    }
     renderQualityIssue(node, q, index);
     const qualityIssue = activeQualityIssue(index);
     if (qualityIssue) {
@@ -3591,7 +3586,7 @@ function renderQuestions() {
       q.text = e.target.value;
       markDirty();
     });
-    type.disabled = Boolean(q._typeChanging || state.currentQuiz?.published && !state.currentQuiz?.ended);
+    type.disabled = Boolean(q._typeChanging || (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) || state.currentQuiz?.published && !state.currentQuiz?.ended);
     type.addEventListener("change", e => {
       const targetType = e.target.value;
       type.value = q.type;
@@ -3601,7 +3596,7 @@ function renderQuestions() {
       const hint = document.createElement("small"); hint.setAttribute("role", "status");
       hint.textContent = "Emmi erstellt mit KI eine passende Aufgabe für den neuen Typ …";
       type.after(hint);
-    } else type.title = "Emmi passt Inhalt und Lösungen mit KI an. Beim Zurückwechseln bleibt deine bisherige Fassung erhalten.";
+    } else type.title = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) ? "Die Einführung verwendet vorbereitete Aufgaben. Typwechsel ist in deinen eigenen Tests verfügbar." : "Emmi passt Inhalt und Lösungen mit KI an. Beim Zurückwechseln bleibt deine bisherige Fassung erhalten.";
     points.addEventListener("input", (e) => {
       q.points = Math.max(0.5, Number(e.target.value) || 1);
       updateSummary();
@@ -3683,11 +3678,13 @@ function questionContext(index) {
 
 function questionForAi(q) {
   const copy = sanitizeQuestionForSave(q);
+  copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
   copy.audioIntent = q.audioScript ? { kind: "ai_generated", script: String(q.audioScript).slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  delete copy.audioAnswerItems;
   delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
-  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, ...option }) => option);
+  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, audioDataUrl, audioNeedsRegeneration, ...option }) => option);
   return copy;
 }
 
@@ -3957,7 +3954,7 @@ async function createQuestionVariants(q, { count, mediaKind, instruction = "" })
       renderVariantProgress();
       const tutorialVariant = typeof crewTour !== "undefined" && crewTour?.ownsQuiz(quizId);
       const response = tutorialVariant ? crewTour.preparedResponse(q, {variant:true,mediaKind}) : await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
-        testContext: context, allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
+        testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
       ensureOwner();
       const rawQuestion = response.question;
       const preparedImage = tutorialVariant && rawQuestion?.tutorialImageUrl === "/assets/gradecrew/demo-cat.svg";
@@ -4027,6 +4024,7 @@ function handleVariantKept(event) {
 }
 
 async function changeQuestionType(q, index, targetType) {
+  if (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) return toast("Die Einführung nutzt vorbereitete Aufgaben. In deinen eigenen Tests passt Emmi den Typ mit KI an.");
   if (q._typeChanging || q.type === targetType || !QUESTION_TYPES.some(([type]) => type === targetType)) return;
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
   if (!state.questions.includes(q)) return;
@@ -4057,17 +4055,17 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
   const target = { quizId: state.currentQuiz?.id, uid: tourUid(), questionId: q.id, reviewKey: questionReviewKey(q) };
   if (editorQuestionIndex(state, target) < 0) return;
-  const old = deepClone(q); const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+  const old = deepClone(q); delete old._typeChanging; const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
     if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     if (targetType && next.type !== targetType) throw new Error("Die KI hat den gewünschten Aufgabentyp nicht erzeugt. Die bisherige Aufgabe bleibt erhalten.");
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
     next.id = variant ? guestTourRepo ? `tour-edit-variant-${Date.now()}` : doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
-    if (!variant) next._aiUndo = old;
+    if (!variant) { next._aiUndo = old; if (q._typeVersions) next._typeVersions = q._typeVersions; }
     if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
       await applyGeneratedMedia(response.question, next, target.quizId, next.id);
     } else if (!variant && !targetType && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
@@ -4790,13 +4788,12 @@ async function generateAiAnswerAudioForQuestion(q, container, entryKey = null) {
     });
     else q.audioAnswerItems = entries.map((entry, index) => !selected.some(item => item.index === index) ? entry.asset : ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: assets[index].audioDataUrl, audioNeedsRegeneration: false })).filter(Boolean);
     markDirty();
-    renderQuestionAudioEditor(container, q);
     toast(entryKey === null ? "Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern." : "Audiospur erneuert. Bitte kurz anhören und speichern.");
   } catch (err) {
-    renderQuestionAudioEditor(container, q);
     showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Antwort-Audios konnten nicht vollständig erstellt werden."), error: err, action: "generate_answer_audio", details: { questionType: q.type, optionCount: scripts.length } });
   } finally {
     if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    if (state.questions.includes(q) && state.currentQuiz?.id === quizId) renderQuestionAudioEditor(container, q);
     if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
   }
 }

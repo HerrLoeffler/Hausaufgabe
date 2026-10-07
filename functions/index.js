@@ -469,7 +469,7 @@ exports.processAiTestJob = onTaskDispatched({
       const q = await storedAiQuestion(raw, index, {
         model: response.meta.model, promptVersion: response.meta.promptVersion,
         kind: job.sourceQuizId ? "similar" : "generated",
-        generateMedia: async options => (await createVerifiedMedia({ uid, ...options })).asset,
+        generateMedia: async options => (await createVerifiedMedia({ uid, ...options, testContext: { title: response.test.title, subject: job.input?.subject, grade: job.input?.grade, topic: job.input?.topic, contentLocale: require("./lib/content-locale").extractContentLocale(job.input?.notes) } })).asset,
         generateAudio: async options => (await createAudioAsset({ uid, ...options })),
         onImage: async () => {
           completedImages += 1;

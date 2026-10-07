@@ -1,3 +1,4 @@
+const { taskContext } = require("./question-context");
 "use strict";
 
 const {
@@ -67,7 +68,7 @@ function questionUserPrompt({ question, instruction, testContext, variant, requi
         : question?.type === "markwords"
           ? "Bei markwords darf die allgemeine Arbeitsanweisung ähnlich bleiben, aber verwende einen neuen Markiertext und neue passende Zielwörter."
           : "Die neue Aufgabe muss dieselbe Kompetenz prüfen, aber konkrete Zahlen, Beispiele, Antwortinhalte oder den Kontext sichtbar verändern.";
-  return `${task}.\n${targetType ? `Verbindlicher Zieltyp: ${targetType}. Erstelle Arbeitsauftrag, Antwortmodell und Lösung vollständig passend zu diesem Typ.` : ""}\n${languageRule}\n${mediaRule}\n${audioRule}\n${variantRule}\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(question)}\nLehrerwunsch: ${teacherInstruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort. Antwortoptionen bestehen aus eindeutigem Text. Ein Bild ist nur in der Fragestellung erlaubt. Alle Medien müssen zum vollständigen neuen Aufgabeninhalt passen; keine Lösungsschlüssel, Zuordnungslinien oder bereits gelösten Antworten im Bild zeigen.`;
+  return `${task}.\n${targetType ? `Verbindlicher Zieltyp: ${targetType}. Erstelle Arbeitsauftrag, Antwortmodell und Lösung vollständig passend zu diesem Typ.` : ""}\n${languageRule}\n${mediaRule}\n${audioRule}\n${variantRule}\nTestkontext: ${JSON.stringify(testContext)}\nAktuelle Aufgabe: ${JSON.stringify(taskContext(question, testContext).question)}\nLehrerwunsch: ${teacherInstruction || "Anderes Beispiel, gleiche Kompetenz."}\nBehalte standardmäßig Punktwert und Aufgabentyp bei, außer der Lehrer verlangt ausdrücklich etwas anderes. Vermeide inhaltliche Dopplungen zu allen anderen Aufgaben. Prüfe die fachliche Richtigkeit der Antwort. Antwortoptionen bestehen aus eindeutigem Text. Ein Bild ist nur in der Fragestellung erlaubt. Alle Medien müssen zum vollständigen neuen Aufgabeninhalt passen; keine Lösungsschlüssel, Zuordnungslinien oder bereits gelösten Antworten im Bild zeigen.`;
 }
 function replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind = original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none", audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) {
   const contentLocale = extractContentLocale(input.notes);
