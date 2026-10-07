@@ -1,28 +1,37 @@
-# GC-GAMES-ESCAPE-VISUAL-01 — aktueller spielbarer Zwischenstand
+# GC-GAMES-ESCAPE-VISUAL-01 — spielbarer Zwischenstand
 
-Stand08.10.2026: eigener UE5.8-Ego-Abschnitt gebaut und lokal überprüft. Ankunft, begrenzte Verbprobe, drei Reihen Verbweg mit mittigem Fußkontakt/Rücknahme, Wasserterrasse mit1-Liter-Mess-Eimer undZehnteln. Ziele3/10=300ml;100ml pro bestätigtemHub. Eigene Geometrie, helle Garten-Farbwelt, drei physische Tore, Lösungen persistent.
+Am 08.10.2026 wurde der erste eigene Unreal-Abschnitt gebaut: Ankunftsgarten, kleine Verbprobe, drei Reihen Verbpfad und Wasserterrasse. Der Spieler erkundet die Welt aus der Ego-Perspektive. Er liest Wörter im Satzkontext, begrenzt seine Auswahl, bestätigt den Pfad und misst Wasser in einem 1-Liter-Eimer ab. Ziel: 3/10 Liter = 300 ml; jeder Füll- oder Ablasshub verändert die Menge um 100 ml.
 
-Branch feature/lerninsel-ego-v1; Checkout gradecrew-lerninsel-unreal. Lokale Quelle99adf6d plus anschließend drei Reviewfixes; Remote390f2db vor Reviewfixes. Finalen Remote-/PR-Nachweis unten nachtragen und vor Wiederaufnahme frisch prüfen. Kein Merge/Deploy. Draft173 für vorhandenes Design bleibt erhalten. START_HERE auf aktuellemmain lesen; nachAbbruch CHAT_RECOVERY. Andere Unreal-Expedition gehört einem anderen Chat.
+Arbeitsbranch: feature/lerninsel-ego-v1. Checkout: gradecrew-lerninsel-unreal. Entwurfs-PR175: https://github.com/HerrLoeffler/Hausaufgabe/pull/175. Geprüfter lokaler Reviewfix: 9a87e02. Remote-Nachweis: 1fc4203a289bd9fe18edb5062925bff82091dbc1; spätere Dokumentations-/Aufnahmeergänzungen unten. Status: branch_only, keine Integration und kein Deployment. Der vorherige Design-PR173 bleibt erhalten.
 
-## Belege
+## Tatsächliche Belege
 
-- DevelopmentEditor-Build aufMacM5Pro48GB/UE5.8.3 erfolgreich.
--59portable C++-Verhaltenschecks bestehen. UE-TestGradeCrew.Lerninsel.Play nach Reviewfixes:1erfolgreich,0Fehler,0Warnungen (23:04UTC). Report und tatsächliche Spielaufnahmen unterReports.
-- Eingabebelegung bisPawn geprüft; Fuß-Dwell/Reihenfolge/Duplikate; normale Eimer-Recovery bei2/10 und4/10, Korrektur zur erfolgreichen3/10; Tor-Sweeps vor/während/nachAnimation; Pause/Fokus/Touch-Besitz; gültige Speicherzustände und Transform-Recovery. Kein physischer iPad-/Browser-Test.
-- Unabhängiger read-only-Review:3wichtige Befunde, alle zuerst imEngine-Test reproduziert (8Fehler) undin einemFixdurchgang behoben. Ein kleiner Befund offen: Bodenmarkierung fürfalschesWort noch dieselbegrüneX; Pfadfehleranzeige bleibt sichtbar. Production/REVIEW.md enthält alle Entscheidungen/Grenzen.
-- Wortkontrast anhand echter2027×1090Spielaufnahmen verbessert; Preview-Schatten entfernt. Innenmaß Mess-Eimer Radius4.46cm/Höhe16cm≈1L, Wasser3/10höhengetreu4.8cm. Trageskala imHUD lesbarvergrößert. Noch ersterArtpass, keineFinal-Art- oderSpielspaßabnahme.
+- UE5.8.3 Development Editor auf Mac M5 Pro mit 48 GB erfolgreich kompiliert.
+- 59 portable Prüfungen des echten Regelkerns bestanden. Der Engine-Test GradeCrew.Lerninsel.Play bestand nach den Reviewkorrekturen mit 0 Fehlern und 0 Warnungen. Testberichte und tatsächliche Spielaufnahmen liegen unter Reports.
+- Tastaturbelegung bis zur Bewegungsfunktion geprüft; echter Fußkontakt mit Mindestdauer und Wiederholschutz; normale Eimeraufnahme nach 2/10 und 4/10, Mengenänderung um 100 ml und erfolgreiche Korrektur zu 3/10; echte Capsule-Sweeps vor, während und nach der Toröffnung; Pause, Fokus, Touch-Besitz und lokale Speicherung geprüft.
+- Ein unabhängiger Reviewer fand drei wichtige Fehler. Die Regressionen versagten vor der Korrektur mit acht Assertions und bestanden danach. Bericht und Entscheidungen: Production/REVIEW.md. Ein kleiner Befund bleibt offen: Eine falsche ausgewählte Bodenplatte trägt noch dieselbe grüne X-Markierung wie eine richtige. Die dauerhafte Pfadfehleranzeige fordert bereits die Rücknahme.
+- Drei Spielaufnahmen zeigen Ankunft, Verbpfad und Wasserterrasse; eine zusätzliche Aufnahme zeigt den getragenen Eimer und die vergrößerte Zehntelskala. Auflösung des tatsächlichen Spiel-Viewports: 2027×1090. Wortkontrast und Licht wurden anhand dieser Bilder korrigiert; störende Preview-Schatten sind entfernt.
+- Der zylindrische Messraum hat 4,46 cm Innenradius und 16 cm Höhe, entsprechend ungefähr 1 Liter. Zehn gleiche Höhenintervalle ergeben gleiche Volumenanteile. 3/10 erscheinen als 4,8 cm Wasserhöhe. Die zusätzliche Trageskala macht die kleinen Markierungen gut lesbar.
 
-## Start und Grenzen
+Dies ist ein erster Art-Durchgang, keine Abnahme der endgültigen Grafik oder des Spielspaßes. Browser- und physische iPad-Prüfungen wurden nicht durchgeführt. Eine Desktop-Simulation beweist keine mobile Bedienung.
 
-Lerninsel starten.command öffnet diesesProjekt mit vorhandenerUE5.8 imnormalenSpielmodus. AndererCheckout brauchtvorherTools/build_editor.sh; Binaries werden nicht eingecheckt. README enthältSteuerung. DieEditor-Karte enthältLicht/Start; Geometrie entsteht zurLaufzeit ausIslandArt.cpp. Browserstreaming, mobileRenderer/Signierung/Gerätetest, Satzweg/Felsfenster, vollständigeachtGebiete, Zusatzrätsel, Audio/Final-Art folgen. KeinPixelStreaming-Hosting oderWebintegration gebaut.
+## Start und nächster Schritt
 
-## Versuche/Budget/Wiederaufnahme
+Lerninsel starten.command öffnet dieses Projekt mit der vorhandenen UE5.8-Installation im normalen Spielmodus. Der eigene gestartete Prozess wurde beobachtet und anschließend beendet. Andere aktive Unreal-Projekte blieben unberührt. Auf einem neuen Checkout müssen zunächst die eigenen Editor-Binaries mit Tools/build_editor.sh gebaut werden. Der Starter prüft das vorhandene Mac-Modul. README erklärt die Steuerung und die Spielschritte.
 
-Task-ID, DesignPR173,7929-Wörter-Spielbuch/21Motive undsiebenBildaufrufe erhalten. ImBaublock keineweitereBildgenerierung/CloudGPU/Provider-/Deploymentkosten. Terminalpush ohneCredentials; Connector sicherttext/binaryOriginale, lokaleundRemoteCommit-IDsweichen ab. NieCredentials auslesen.
+Die gespeicherte Editor-Karte enthält Licht und Startpunkt; die Weltgeometrie entsteht beim Spielen aus IslandArt.cpp. Weitere Gebiete, Satzweg, Felsfenster, schwierigere Zusatzrätsel, endgültige Landschaft und Audio sind noch auszuarbeiten. Öffentliches Browserstreaming sowie mobile Renderqualität, Signierung und iPad-Gerätetest bleiben separate Aufgaben.
 
-EnginegeneratorAssets erfolgreichgespeichert, macOSShutdownhingzweimal; ThreadsamplebestätigtShutdown, nur eigeneProzesse beendet. ErneutesErzeugen nutztbestehendeKarte undlöschtMaterialausdrücke vordemNeubau. Assets inPIE geladen, beweglicheSonne explizitgeprüft. NichtalleEngine-Startup-Logs sindfehlerfrei: EpicinterneSelbstprüfungen meldenConditionfailedvorunseremTest; allein scopedGradeCrewReport dientalsNachweis. FrühereSave-/ideviceWarnungen inVersuchshistorie; finalerTestwarnungsfrei.
+Nächster konkreter Schritt: Nutzerdurchlauf dieses Abschnitts; danach Landschaft und Architektur ausarbeiten und die weiteren Mechaniken gemäß dem ausführlichen Spielbuch bauen. Production benötigt weiterhin eine ausdrückliche Freigabe.
 
-NächsterkonkreterSchritt: Nutzerdurchlauf diesesAbschnitts, anschließend räumlicheLandschaft/Architektur weiterausarbeiten undSatzweg/Felsfenster gemäßSpielbuch bauen. Browser-/iPad-Abnahme bleibt eigenesGate. Productionnurmit ausdrücklicherFreigabe.
+## Versuche, Budget und Wiederaufnahme
+
+Task-ID, Design-PR173, das Spielbuch mit 7929 Wörtern, 21 Layoutmotive und sieben bisherige Bildaufrufe bleiben erhalten. Im Baublock wurde keine weitere Bildgenerierung, Cloud-GPU, bezahlte Assetbeschaffung oder eigene Provider-API gestartet. Keine neue Kostenzahl ableiten.
+
+Terminal-Push war ohne GitHub-Credentials nicht möglich. Der Connector sichert Text und Binärdateien mit erwarteter Branch-Ref; lokale und Remote-Commit-IDs können voneinander abweichen. Inhalte wurden zurückgelesen, PNG-Blob-Identitäten mit den lokalen Originalen verglichen. Keine Schlüssel auslesen. Vor Wiederaufnahme START_HERE auf aktuellem main lesen; nach Chatabbruch zusätzlich CHAT_RECOVERY.
+
+Der eigene Python-Generator speicherte Materialien und Karte, hing jedoch zweimal beim macOS-Shutdown. Ein Threadsample bestätigte den Shutdown-Hänger. Nur diese eigenen Prozesse wurden gestoppt. Gespeicherte Assets und bewegliche Sonne wurden anschließend im Engine-Spieltest geprüft. Der Generator verwendet bei Wiederholung die eigene bestehende Karte und entfernt alte Materialausdrücke vor dem Neubau.
+
+Epic-interne Selbstprüfungen melden vor unserem Test teilweise Conditionfailed. Dies ist kein fehlerfreier Nachweis für sämtliche Engine-Startup-Logs; der abgegrenzte GradeCrew-Testbericht ist der Nachweis. Frühere fehlende Save-/idevice-Warnungen bleiben in der Versuchshistorie; der abschließende eigene Test ist warnungsfrei.
 
 ---
 ## Historische Zwischenstände (keine aktuellen Fertigmeldungen)
@@ -42,3 +51,7 @@ Plan docs/superpowers/plans/2026-10-08-lerninsel-first-section.md, Design docs/g
 Ziel ist Ankunft, Verbprobe/Hauptpfad und Eimerterrasse1L/3/10=300ml. Satzdorf, Bruchrouting, Felsfenster, vollständige Achtgebiets-Insel, Final-Art, Audio, öffentliches PixelStreaming und iPad-Export stehen noch aus. Keine CI-/Integration-/Deploy-/Geräte-/Productionbehauptung. Web-Release-Train unverändert. Keine weiteren Bild-/API-Kosten gestartet; sieben bisherige Bildaufrufe erhalten.
 
 Zwischenstand00:42 CEST: DevelopmentEditor erfolgreich (lokaler Runtimecommitb510b35, Map/Material7c153b0). Remote Assets13c48a1d1b29859569446736670275dbea3e673e gesichert. Erste UE-Automation bestand (1Test,0Fehler,3Warnungen: initialerSave fehlt, alterideviceTool aufARM). Screenshotprüfung zeigte jedoch Editoransicht stattPIE; keine Art-Abnahme daraus. Direkte ReadPixels-Aufnahme vomSpielViewport plus echteCapsule-Sweep-Torprüfung ergänzt, laufender neuerTest über Tools/test_editor.sh. Native iPadSDK lautEnginegültig, physischesToolwarnend; keinGerätetest behauptet.
+
+## Letzte Sicherung
+
+Abschließender erneuter Lauf einschließlich Tragebild: 2026.10.07-23.13.10 UTC, 59 Regelchecks und 1 Engine-Test bestanden, 0 Fehler, 0 Warnungen. Reports/verification.json enthält Bildgrößen und SHA256. Die zusätzliche Aufnahmeprüfung ändert keine Spiellogik. DraftPR175 und zentrale Übergabe sind angelegt. Endgültige Branch-Ref vor Wiederaufnahme frisch prüfen.

@@ -35,10 +35,10 @@
 
 **Interfaces:** Produces Island::State, Result, Apply(State&, Action, int), Serialize/Deserialize, PlateContact::Update(tile,dt,active), TouchOwnership. Uses integer tenths and validated IDs, no UE dependency.
 
-- [ ] Write portable tests that reject all-word selection, duplicates, wrong row, wrong bucket amount, filling without carrying, corrupt saves and contact under0.30s; prove confirmed gates remain open. Verify deserialize is atomic and format-versioned.
-- [ ] Run Tests/run.sh; Expected: absent/missing implementation, then behavioral failures against initial skeleton.
-- [ ] Implement tested state changes and serialization; run complete suite. Expected: all behavior cases pass.
-- [ ] Create UE project/config with own save/map/module names and ProceduralMeshComponent plugin; commit checkpoint.
+- [x] Write portable tests that reject all-word selection, duplicates, wrong row, wrong bucket amount, filling without carrying, corrupt saves and contact under0.30s; prove confirmed gates remain open. Verify deserialize is atomic and format-versioned.
+- [x] Run Tests/run.sh; Expected: absent/missing implementation, then behavioral failures against initial skeleton.
+- [x] Implement tested state changes and serialization; run complete suite. Expected: all behavior cases pass.
+- [x] Create UE project/config with own save/map/module names and ProceduralMeshComponent plugin; commit checkpoint.
 
 ### Task 2: Character, interaction and authored world
 
@@ -46,12 +46,12 @@
 
 **Interfaces:** Consumes Task1 rules. Produces AIslandGameMode with State, BuildWorld(), RefreshWorld(dt), Interact(id), Save(), Load(), Focus state; AIslandCharacter, AIslandController and AIslandHUD. World target IDs are bounded and proximity checked in Interact, regardless of caller. No UI answer from camera drag.
 
-- [ ] Write UE automation fixtures for eye height/collision, interaction distance, pause cancellation, closed gate blocking, contact, exact bucket visible levels and save roundtrip before runtime implementation.
-- [ ] Build to show fixtures fail to compile against absent runtime, then implement runtime/world/HUD using rule APIs.
-- [ ] Native movement uses ACharacter capsule; world paths/floors/walls have collision. Gates swing and disable collision only after1.4s. Bucket can be held/placed; fountain and drain operate one confirmed100ml stroke at a time. Gauge geometry exactly ten equal sections, labels1/10..10/10.
-- [ ] Original trees use irregular layered leaf geometry and visible branch structures, limestone terraces, iron gates, thin copper/mint cables, blue sea and tower with eight windows. First art pass must be screenshot-reviewed; keep word floors clear.
-- [ ] Generate map/materials via editor Python; build Development Editor. Expected: successful compile, valid /Game/Maps/Lerninsel map.
-- [ ] Commit/push functioning checkpoint before longer automation.
+- [x] Write UE automation fixtures for eye height/collision, interaction distance, pause cancellation, closed gate blocking, contact, exact bucket visible levels and save roundtrip before runtime implementation.
+- [x] Build to show fixtures fail to compile against absent runtime, then implement runtime/world/HUD using rule APIs.
+- [x] Native movement uses ACharacter capsule; world paths/floors/walls have collision. Gates swing and disable collision only after1.4s. Bucket can be held/placed; fountain and drain operate one confirmed100ml stroke at a time. Gauge geometry exactly ten equal sections, labels1/10..10/10.
+- [x] Original trees use irregular layered leaf geometry and visible branch structures, limestone terraces, iron gates, thin copper/mint cables, blue sea and tower with eight windows. First art pass must be screenshot-reviewed; keep word floors clear.
+- [x] Generate map/materials via editor Python; build Development Editor. Expected: successful compile, valid /Game/Maps/Lerninsel map.
+- [x] Commit/push functioning checkpoint before longer automation.
 
 ### Task 3: Play verification, review and delivery
 
@@ -59,11 +59,11 @@
 
 **Interfaces:** Exercises runtime from Task2 and real portable rules from Task1. Screenshots from actual UE world, distinct from concept boards. Tests reset their own slot and leave user's save intact.
 
-- [ ] Run portable suite and GradeCrew.Lerninsel automation in editor. Expected: no test failures; screenshots and report from this exact runtime.
-- [ ] Inspect arrival, verb room, fountain/gauge and opened gate screenshots. Fix material, readability or framing defects supported by evidence.
-- [ ] Verify controller focus/escape and touch ownership; document actual platform limits. A desktop synthetic test is not an iPad test.
-- [ ] Request one fresh whole-branch code review through executing-plans/requesting-code-review. Fix important findings with regression test, rerun relevant suite.
-- [ ] Commit source, map/material and concise handoff; push dedicated branch and attach draftPR to main. Record branch_only with actual local build/tests, not ci_green. Update central registry/TODO/state without changing web release train.
+- [x] Run portable suite and GradeCrew.Lerninsel automation in editor. Expected: no test failures; screenshots and report from this exact runtime.
+- [x] Inspect arrival, verb room, fountain/gauge and opened gate screenshots. Fix material, readability or framing defects supported by evidence.
+- [x] Verify controller focus/escape and touch ownership; document actual platform limits. A desktop synthetic test is not an iPad test.
+- [x] Request one fresh whole-branch code review through executing-plans/requesting-code-review. Fix important findings with regression test, rerun relevant suite.
+- [x] Commit source, map/material and concise handoff; push dedicated branch and attach draftPR to main. Record branch_only with actual local build/tests, not ci_green. Update central registry/TODO/state without changing web release train.
 
 ## Explicit implementation boundary
 

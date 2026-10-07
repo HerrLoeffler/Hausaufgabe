@@ -74,8 +74,8 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  P->SetActorLocation(FVector(50,0,88));C->SetControlRotation(FRotator(-25,0,0));Started=FPlatformTime::Seconds();Phase=2;return false;
  }
  if(Phase==2){Test->TestTrue(TEXT("Actual game viewport garden captured"),CaptureGame(W,TEXT("VerbGarden.png")));P->SetActorLocation(FVector(2150,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=3;return false;}
- Test->TestTrue(TEXT("Actual game viewport terrace captured"),CaptureGame(W,TEXT("BucketTerrace.png")));
- Test->TestEqual(TEXT("Three tenths visible water height"),G->BucketWaterHeight(),4.8f);
+ if(Phase==3){Test->TestTrue(TEXT("Actual game viewport terrace captured"),CaptureGame(W,TEXT("BucketTerrace.png")));Test->TestEqual(TEXT("Three tenths visible water height"),G->BucketWaterHeight(),4.8f);G->State.carrying=true;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=4;return false;}
+ Test->TestTrue(TEXT("Carried one-liter bucket and enlarged tenths scale captured"),CaptureGame(W,TEXT("CarriedBucket.png")));
  return true;
  }};
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FIslandSmoke,"GradeCrew.Lerninsel.Play",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)

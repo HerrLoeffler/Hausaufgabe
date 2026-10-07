@@ -1,0 +1,39 @@
+{
+  "task": "GC-GAMES-ESCAPE-VISUAL-01",
+  "runtime_review_fix_local": "9a87e02",
+  "engine_report": "2026.10.07-23.13.10",
+  "portable_checks": 59,
+  "ue_succeeded": 1,
+  "errors": 0,
+  "warnings": 0,
+  "actual_game_viewport": [
+    {
+      "path": "Reports/Arrival.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "21a18ceb0f3a08697661349a70ba264617136fdf418104df2beb5527e8758972"
+    },
+    {
+      "path": "Reports/BucketTerrace.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "48beb213e0eb431f4e70e572fe478bec1b3cfdc1d8c956b10c6a1656639a5ff3"
+    },
+    {
+      "path": "Reports/CarriedBucket.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "ebc776e9ddaa888a936ea52e2f1137d40f66a7380a18d2414f1d9f522fd5d7d2"
+    },
+    {
+      "path": "Reports/VerbGarden.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "c966a1b91b8349ce812eaeebcf64587385abde552c6472f066d2003c46819da6"
+    }
+  ],
+  "scope": "First native UE5.8 section only",
+  "ipad": "not_tested",
+  "browser_streaming": "not_implemented",
+  "production": "not_authorized"
+}
