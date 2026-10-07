@@ -1,6 +1,6 @@
 # Aufgabe: GC-CLASSROOM-01
 
-- Aktualisiert (UTC): 2026-10-05
+- Aktualisiert (UTC): 2026-10-07
 - Verantwortlicher Chat / Auftrag: Codex-Fortsetzung – Identitäts-/ASV-Architektur für Schuljahreswechsel präzisieren, ausschließlich Dokumentation
 - Chat-Bezeichnung / Link: aktuelle Codex-Fortsetzung, Link unbekannt; Referenzchat „Schülerintegration Codekonzept“, Gesprächs-ID `6abae2b9-f014-83eb-83af-ad9057cf7ba5`
 - Vorheriger Chat / Übernahmezeitpunkt: 05.10.2026 UTC; Referenzchat gelesen, gelesene Schritte abgeschlossen. Kein laufender Classroom-Implementierungsauftrag nachgewiesen; alter nicht zugänglicher Checkout unbekannt. Aktueller Auftrag ist dokumentarisch.
@@ -177,3 +177,25 @@ Frisch geprüft: Dokumentations-PR #141 offen/Draft, vorheriger Head `69a1db4847
 Task-ID, Budget-/Versuchshistorie und Release-Stufe bleiben erhalten. Keine Implementierung, Provideraktion oder Deployment. TODO-Zeile und Masterplan im bestehenden Dokumentations-PR ergänzt. Nächster Schritt bleibt: ASV-Exportprofil und schulische Betriebsweise mit synthetischen Beispielen bestätigen.
 
 Nutzerergänzungen derselben Runde: Lehrkräfte ebenfalls aus ASV übernehmen; mehrere Fachlehrkräfte pro Klasse mit eigenen Prüfungen. Abschnitt 10b präzisiert Personalbestand → verifizierter persönlicher Login → bestätigte Fach-/Klassenrechte; eigene HMAC-Domäne für Lehrkräfte, stabile schoolTeacherId, keine automatische Adminvergabe. Gemeinsame Klasse/Schüleridentitäten, unabhängige Deutsch-/Englischprüfungen, begrenzte Ergebnissicht und ausdrückliches Co-Teaching. Konkretes Personal-/Unterrichtsexportprofil noch offen; keine Implementierung.
+
+## Konzeptabschluss eingeordnet – 07.10.2026
+
+Nutzerfrage: „Sind wir mit dem Konzept fertig?“
+
+Bewertung **8/10 ausschließlich für den Konzeptabschluss von GC-CLASSROOM-01**, als begründete Einschätzung, kein Prozentwert und keine Bewertung des gesamten GradeCrew-Projekts. Identität/Jahreswechsel, Abgleichfälle, Schulmandant, Lehrerimport, mehrere Fachlehrkräfte, Zuständigkeitsübergabe und Recovery sind schriftlich ausgearbeitet. Ein vollständig bestätigter, fachlich geprüfter Konzeptabschluss ist noch nicht erreicht.
+
+Offene Abschlussfestlegungen:
+1. Konkretes ASV-Exportprofil für Schüler-/Lehrkraftkennung und Unterrichtszuordnung bestätigen.
+2. Schulisch freigegebenen Schlüsseltresor samt verantwortlicher Administration/Stellvertretung, Backup und Wiederherstellung konkret auswählen.
+3. Schulart/Trägerschaft, erforderliche Ergebnis-/Archivzugriffe und Datenfristen fachlich/datenschutzseitig abschließend prüfen; Entwurf als Ganzes bestätigen.
+
+Risiko: Das beschriebene HMAC-Verfahren hängt von verlässlicher schulischer Schlüsselverwahrung ab. Ohne Wiederherstellung oder verifizierte Zuordnung kann ein verlorener Schlüssel nicht aus den serverseitigen Pseudonymen rekonstruiert werden. Dokumentation allein bestätigt noch keinen sicheren Praxisbetrieb.
+
+Frische Nachweise:
+- PR [#141](https://github.com/HerrLoeffler/Hausaufgabe/pull/141) weiterhin offen/Draft, geprüfter Architekturhead `68f939a8dba8a54500bf754a3f2e8e3244e4e4cb`, nicht auf main integriert.
+- Handoff-Prüfung `37365665369` an diesem Head erfolgreich. Development-Status-Run `37365664901` wird als failure geführt; sein Job `111950064126` ist cancelled. Logabruf liefert BlobNotFound; daher keine fachliche Ursache ableiten und diesen Lauf nicht als grün melden.
+- Jüngster bei Prüfung sichtbarer main-Development-Status `37680310264` erfolgreich. Das ersetzt keine Prüfung des aktuellen PR-Folgecommits.
+- Aktuelles main führt GC-CLASSROOM-01 weiterhin `branch_only`, Produkt-CI `not_run_no_product_code`, Staging `not_deployed`, Nutzertest `not_performed`.
+- Diese Runde prüft und aktualisiert ausschließlich Konzeptstatus/Übergabe/TODO; keine Implementierung, Provideraktion, neue Budgetreservierung, Integration oder Deploy.
+
+Genau ein nächster ausführbarer Schritt: ASV-Exportprofil anhand von Spaltenüberschriften und ausschließlich synthetischen Beispielen bestätigen.
