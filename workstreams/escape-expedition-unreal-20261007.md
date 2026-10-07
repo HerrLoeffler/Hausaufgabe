@@ -3,7 +3,7 @@
 - Aktualisiert (UTC): 2026-10-07 13:18:30
 - Verantwortlicher Chat: Unreal-Lern-Escape-Auftrag vom 07.10.2026; Chat-Link unbekannt.
 - Task-ID: bestehende GC-GAMES-ESCAPE-VISUAL-01 erhalten; keine neue Versuchshistorie.
-- Zustand: Grundrichtung durch Martin bestätigt; Dauer auf circa zehn Minuten geändert; schriftliche Spezifikation zur Prüfung gesichert.
+- Zustand: Schriftliche Zehn-Minuten-Spezifikation durch Martin bestätigt; zwei konkrete Baupläne erstellt, Planprüfung/Ausführungswahl angefragt.
 - Dokumentationsort: main; eigener Unreal-Aufgabenbranch erst nach Design-/Planfreigabe.
 - Geprüfte bestehende Quelle: prototype/escape-expedition-visual-masterpiece-v1 @6434ddefb83cffca7bde5a7347ed6d2f56d5cb45, offener Draft-PR83.
 - Bestehendes Integrationsziel: prototype/escape-expedition-masterpiece-v1. Ein Unreal-Integrationsziel wird vor Produktänderungen ausdrücklich festgelegt.
@@ -78,3 +78,16 @@ Frisch geprüfter Visual-PR83 weiterhin offen @6434ddef. Development Status37640
 Sicherung: Spezifikation, diese Übergabe und betroffene TODO-Zeile in einem Dokumentationscommit auf main; tatsächlicher Commit aus Git lesen. Lokal nur docs/superpowers/specs/2026-10-07-expedition-amazonas-unreal-design.md erstellt und im Codex-Panel geöffnet (Tool meldet queued). Keine Tests/CI/Deploys für neue Spielimplementierung. Release-Stufe der bestehenden Browserquelle nicht geändert.
 
 Genau nächster Schritt: Martin prüft den schriftlichen Zehn-Minuten-Entwurf. Danach gemäß Brainstorming-Gate Implementierungsplan erstellen; dessen Prüfung/Ausführungswahl vor Produktcode. Die Grundrichtungsfreigabe wird nicht erneut verlangt.
+
+
+## 07.10.2026 — schriftliche Spezifikation bestätigt, Implementierungspläne erstellt
+
+Martin hat den schriftlichen Entwurf ausdrücklich bestätigt: „bestätigt !! los ab an die arbeit“. Das Spec-Gate ist abgeschlossen und darf bei Fortsetzung nicht erneut verlangt werden. Writing-Plans angewendet. [Native Bauplan](../docs/superpowers/plans/2026-10-07-expedition-amazonas-unreal.md), [GradeCrew-Brückenplan](../docs/superpowers/plans/2026-10-07-expedition-gradecrew-bridge.md). Vorgeschlagen: selbst in diesem Chat implementieren, mit unabhängiger Gesamtprüfung; Alternative taskweiseUnteragenten. Planprüfung/Ausführungswahl über UI-Frage angefragt; noch keine Antwort beobachtet.
+
+Pläne decken Zustandskern, normal startbares Unreal, eigene3D-Assets, alle dreiRätsel, achtDemo-Lernaufgaben, Save/Resume, echteDurchlauf-/Touchabnahme sowie getrennt autorisierteLehrkraft-Pakete, servergeprüfteSlots und NativeHTTP ab. Bestehender submitAssessmentAttempt finalisiert den gesamtenTest; daher separaterPracticeLifecycle mit wiederverwendetemassessment-core vorgesehen, kein achtmaligesTestsubmit. Quellen secure-lifecycle67b396cd/Browseradapterf87a5309 frisch gelesen; Plattform- und Native-Änderungen bekommen getrennteCheckouts/Branches. Integrationsziele ausdrücklich main(nativesSpiel) bzw.feature/gradecrew-app-integration(Plattform). Überschneidungen vor Code frisch abgleichen.
+
+Live-Audit37641587266/Job112861653354 gelesen; unverändert fehlendeExpeditionRegistryZuordnung und offeneBrowser-PR83. BruchpizzeriaCheckout nur read-only als Build-/Automation-Referenz gelesen. UnrealBuild.sh und UnrealEditor/UnrealEditor-Cmd nachgewiesen; BlenderExecutable imPATH/gezieltenAnwendungspfaden nicht gefunden, eigener Geometrieskriptweg vorgesehen. Kein Softwareinstallieren nötig.
+
+Selbstprüfung: alleSpecAnforderungen zugeordnet, beidePlan-Schnittstellen zusammengeführt, UnrealAutomationtests korrekt unterSource statt losemTestsOrdner, CredentialStore AppleSecurity.framework, Wortarten/Prozent-/Fehler-/Transfer- und SaveGrenzen erfasst. Pure-/Unreal-/EmulatorTests sind geplanteChecks, NICHT ausgeführt; keinSpielcode/UnrealProjekt/Build/Provider/Deployment. LokalePlanDateien imCodexPanel geöffnet (queued). BestehendeAttempt-/Budgethistorie erhalten.
+
+Genau nächster Schritt: Antwort zur Planprüfung/Ausführungswahl aufnehmen. BeiFreigabe isoliertenArbeitsraum nach using-git-worktrees anlegen und den gewählten Ausführungsworkflow benutzen; mitZustandskern/Verhaltenstests beginnen. Keine erneute Spec-Freigabe, keine parallelenEditorSchreiber.

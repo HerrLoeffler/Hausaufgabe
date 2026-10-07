@@ -1,7 +1,7 @@
 # Expedition Amazonas — zehnminütiges Unreal-Lern-Escape
 
 Task-ID: **GC-GAMES-ESCAPE-VISUAL-01**. Stand: 07.10.2026.
-Status: Schriftlicher Entwurf zur Prüfung. Martin hat die grundsätzliche Unreal-/Camp-Ufer-Station-Richtung bestätigt und die Dauer auf circa zehn Minuten begrenzt. Er erlaubt ausdrücklich, den bisherigen Rätselablauf neu zu gestalten; seine Bewertung des bisherigen Rätsellösfaktors ist circa 3/10. Diese Bewertung ist Nutzerfeedback, keine neue Messung.
+Status: Schriftliche Spezifikation durch Martin bestätigt („bestätigt !! los ab an die arbeit“). Martin hat die grundsätzliche Unreal-/Camp-Ufer-Station-Richtung bestätigt und die Dauer auf circa zehn Minuten begrenzt. Er erlaubt ausdrücklich, den bisherigen Rätselablauf neu zu gestalten; seine Bewertung des bisherigen Rätsellösfaktors ist circa 3/10. Diese Bewertung ist Nutzerfeedback, keine neue Messung.
 
 ## 1. Ziel und Grenzen
 
@@ -83,4 +83,4 @@ Bestehende Task-ID und Quellgeschichte erhalten. Referenz: prototype/escape-expe
 
 Die frühere Idee mit 20–30Minuten, zwölf Lernstationen und sechs Rätseln ist durch den Nutzerwunsch ersetzt. Die bisherige Folge Camp/Jeep/Wildlife/Fluss/Station/Funkmast wird nicht mechanisch nachgebaut. Der Umfang dieser Spezifikation ist ein kompakter vollständiger Escape-Ablauf.
 
-Spezifikation intern geprüft auf Scope, widersprüchliche Dauerangaben, fachliche Freischaltung, Lösungsschutz, Inventarverlust, Rückweg und Demo-/Live-Grenzen. Schriftliche Nutzerprüfung steht aus. Danach einen konkreten Implementierungsplan erstellen; Ausführungswahl und dessen Freigabe vor Produktcode nach dem angewendeten Brainstorming-Workflow. Keine Produkt-CI oder Deployment aus der Existenz dieses Dokuments ableiten.
+Spezifikation intern geprüft auf Scope, widersprüchliche Dauerangaben, fachliche Freischaltung, Lösungsschutz, Inventarverlust, Rückweg und Demo-/Live-Grenzen. Schriftliche Nutzerprüfung ist bestätigt. Konkrete Implementierungspläne sind erstellt; Ausführungswahl und Planfreigabe stehen vor Produktcode nach dem angewendeten Workflow aus. Keine Produkt-CI oder Deployment aus der Existenz dieses Dokuments ableiten.
