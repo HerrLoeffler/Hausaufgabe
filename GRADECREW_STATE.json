@@ -128,13 +128,15 @@
     },
     "local_design_batch": {
       "task_id": "GC-WEB-REPAIR-20261007",
-      "stage": "branch_only",
+      "stage": "integrated",
       "branch": "feature/local-staging-batch-20261007",
-      "commit": "565f0161916b0396b8531cddfd81db56dfa6fc1a",
+      "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "pr": 172,
       "policy": "explicit user batch deploy; subsequent notes collected without deploy",
       "visual_backlog": "area=visual-feedback + actual Martin authorId; checks excluded",
-      "browser_acceptance": "pending policy unavailable"
+      "browser_acceptance": "pending policy unavailable",
+      "candidate_ci": 37687206408,
+      "staging": "pending merge CI and exact deploy receipts"
     }
   },
   "production": {
