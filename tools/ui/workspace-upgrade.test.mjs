@@ -25,7 +25,7 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   assert.equal(installWorkspaceUpgrade(x.document),x.api);
   const nodes=[...x.$('dashboardView').children];
   assert.ok(nodes.indexOf(x.document.querySelector('.dashboardToolbar'))<nodes.indexOf(x.$('aiJobsList')));
-  assert.equal(x.document.querySelectorAll('.gcWorkspaceGreeting').length,1);
+  assert.equal(x.document.querySelectorAll('.gcWorkspaceGreeting').length,0);
   assert.equal(x.document.querySelectorAll('[data-filter="all"]').length,1);
   x.document.querySelector('.edit').click(); x.document.querySelector('.duplicate').click();
   x.document.querySelector('.results').click(); x.document.querySelector('.remove').click();
@@ -69,13 +69,19 @@ test('asynchronous job refresh preserves partial draft/report/dismiss actions an
   assert.deepEqual(seen,['openAiJob','reportAiJob','dismissAiJob']);assert.equal(card.querySelectorAll('button').length,3);
  }finally{x.close();}
 });
-test('greeting starts only on first visible dashboard, reduced motion stays static',async()=>{
- for(const reduced of [false,true]) {const x=setup({reduced});try {
-  assert.equal(x.$('dashboardView').classList.contains('gcWorkspaceGreetingOnce'),false);
-  x.$('dashboardView').classList.remove('hidden');await tick();
-  assert.equal(x.$('dashboardView').classList.contains('gcWorkspaceGreetingOnce'),!reduced);
-  const artwork=x.document.querySelector('.gcWorkspaceGreeting');x.api.refresh();assert.equal(x.document.querySelector('.gcWorkspaceGreeting'),artwork);
- }finally{x.close();}}
+test('late tutorial button keeps its handler, has four original portraits and one external duration after rerender',async()=>{
+ const x=setup();try {
+  const button=x.document.createElement('button');button.id='gradecrewTourBtn';
+  button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';
+  let started=0;button.onclick=()=>started++;
+  x.document.querySelector('.dashboardActions').prepend(button);await tick();
+  const entry=x.document.querySelector('.gcWorkspaceCrewEntry');
+  assert.equal(entry.querySelectorAll('img').length,4);assert.equal(entry.querySelector('button'),button);
+  button.click();assert.equal(started,1);assert.equal(button.querySelector('small'),null);
+  button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';await tick();
+  assert.equal(entry.querySelectorAll(':scope > small').length,1);assert.equal(x.document.querySelectorAll('.gcWorkspaceCrewEntry').length,1);
+  button.click();assert.equal(started,2);
+ }finally{x.close();}
 });
 test('new source labels translate while authored full text is protected',()=>{
  const x=setup();try {
@@ -106,12 +112,6 @@ test('no-result reset still calls the existing filtering and focuses the search'
   x.$('clearQuizFiltersBtn').click();await tick();
   assert.equal(x.document.querySelectorAll('.quizCard').length,2);assert.equal(x.document.activeElement,x.$('quizSearch'));
  }finally{x.close();}
-});
-test('Coco is independent vector geometry with finite motion and reduced-motion fallback',()=>{
- const svg=fs.readFileSync(new URL('../../assets/gradecrew/coco-workspace-greeting.svg',import.meta.url),'utf8');
- assert.match(svg,/<g class="coco-wing">/);assert.match(svg,/<g class="coco-eyes">/);
- assert.match(svg,/prefers-reduced-motion: no-preference/);assert.match(svg,/coco-wave 1500ms ease-in-out 1/);
- assert.doesNotMatch(svg,/<image|<script|infinite|<animate/);
 });
 test('job titles lose only the generated prefix and keep original full detail',async()=>{
  const x=setup();try {

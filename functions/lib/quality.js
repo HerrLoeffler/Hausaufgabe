@@ -359,6 +359,10 @@ function questionForReview(q, index) {
     studentView.items = sorted((q.groups || []).flatMap(group => group.items || []));
     answerKey.groups = q.groups || [];
   }
+  if (q.audioIntent?.kind === "ai_generated") {
+    studentView.audioTranscript = String(q.audioIntent.script || "");
+    if (q.audioIntent.presentation === "listening-only") studentView.text = "";
+  }
   return { index, type: q.type, studentView, answerKey, plannedImage: q.mediaIntent?.kind === "ai_generated" ? String(q.mediaIntent.prompt || "") : null };
 }
 
@@ -366,7 +370,7 @@ function reviewPrompt(test, memory = {}) {
   const memoryGuide = qualityMemoryPrompt(memory);
   const falseAlarms = (memory.reviewerFalsePositives || []).map(item => `${item.type}/${item.reason}: ${item.reports}`).join(", ");
   return `Prüfe JEDE Aufgabe auf fachliche Richtigkeit, Eindeutigkeit, passende Lösungen und Dopplungen.
-studentView enthält die sichtbare Schüleransicht. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
+studentView enthält die sichtbare Schüleransicht. audioTranscript ist der vollständige gesprochene Hörtext, den Lernende anhören können, kein sichtbarer Text und kein Lösungsschlüssel. Prüfe Hörverstehen anhand dieses Inhalts: grammatikalisch korrekte Ablenker sind nicht automatisch inhaltlich richtige Antworten. Ein fehlender oder nicht eindeutig lösbarer Hörtext bleibt ein Fehler. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
 Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.

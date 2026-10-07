@@ -240,6 +240,10 @@ function renderOptions(section, question, multiple = false) {
     const text = document.createElement("span");
     text.dataset.i18nContent = "1";
     text.textContent = question.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer;
+    if (question.audioAnswerMode === "audio-only") {
+      text.hidden = true;
+      input.setAttribute("aria-label", `${contentLabels.answer} ${shownIndex + 1}`);
+    }
     body.appendChild(text);
     if (question.audioAnswerMode === "audio-only" && option.audio?.src) {
       const player = document.createElement("audio");

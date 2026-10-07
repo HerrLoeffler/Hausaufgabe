@@ -41,3 +41,16 @@ Lokale Prüfungen: 310/310 Frontend inklusive echter DOM-Interaktionen, 60/60 vo
 Nächster Schritt: finaler Build, unabhängige Review des unveränderlichen neuen Commitranges, exakte CI; erst danach PR/Integration und ein neuer verifizierter kanonischer Staging-Deploy. Neue private Audio-Modi weiterhin Entwurf bis Live-Rules/GatesC-F; keine Rules-/Production-/Games-/iOS-Veröffentlichung. Automatisches Chat-Abholen bleibt PAUSED.
 
 Finale unabhängige Reviewkorrekturen (Historie erhalten): acd8512 behebt zwei Important-Befunde (persistierender Wartezustand durch serialisierte q-Eigenschaft; spätes Ergebnis überschreibt Entfernung/Transkriptänderung) mit transientem WeakMap-Operationstoken, Storno- und Sourceguards. Zusätzlich strukturierte Memo-Audios in authoringFingerprint aufgenommen. Alle vier neuen Regressionen zuerst rot. Korrektur2 ergänzt denselben Sourceguard für den leeren optionalen Hörtext-Fallback; auch dieser Fall zuerst rot. Anschließend38/38 Audio-/Assessment-/Tourprüfungen grün. Kein Budget-/Versuchsreset oder unveränderter Retry.
+
+
+## 2026-10-07 — Nutzerabnahme fehlgeschlagen, gezielte Nachkorrektur läuft
+
+Task GC-WEB-REPAIR-20261007, verantwortlicher bestehender Hauptchat. Staging094546a4 wurde von Martin visuell abgelehnt. Neuer Branch feature/audio-crew-visual-correction-20261007 basiert auf frischem094546a4; keine konkurrierende offene App-Reparatur gefunden, Development Status37559668957 erfolgreich. Kein neuer Deploy bisher.
+
+Lokale Korrektur: zusätzlich gezeichneter Pinguin wird nicht mehr eingebunden; vier vorhandene Originalfiguren über blauem Tutorialbutton, bestehender Handler bleibt erhalten. Vorteilsleiste bekommt Originalfiguren. Seitenbreite wird nicht mehr aus Bildhöhe verkleinert; Ausschnitt/kleine Viewports noch fertig prüfen. Dezente finite Bewegung vorhandener Figuren; keine neu gerenderte echte Tür-/Flügelanimation der statischen Klassenzimmerszene. Linke Navigation für spätere Klassen/Materialien ist Empfehlung, nicht implementierter Auftrag. Keine Scrollgeschichte.
+
+Neue Nutzermeldung AI-EDIT-001 RPT-MUXNE643-7B958: reproduzierbarer Projektionsfehler — questionForReview ließ audioIntent.script vollständig weg. Hörtext wird nun als hörbarer Kontext unabhängig vom sichtbaren Text an Review übergeben; Qualitätssperre bleibt bestehen. Test zunächst reproduzierbar rot, nach Fix15/15 bestanden. Echte Mehrdeutigkeit des konkreten Kandidaten ohne dessen Inhalt weiterhin unbewiesen. Kein kostenpflichtiger Wiederholungsaufruf.
+
+Weitere Wünsche: explizit auf Englisch/in English setzt Testsprache getrennt von UI/Fach; rote Smiley-Auswahl Hör­aufgabe fehlt/Falsche Sprache nutzt bestehendes Rules-kompatibles other mit automatisch ergänztem Hinweis. Sichtbare Antwort1–4 bei Audio-only entfernt, Aria-Beschriftung erhalten. 44 gezielte Remy/Renderer-Tests und14Workspace/Acceptance-Tests bestanden, Build123Files. End-to-end neue Testsprache/Formular sowie tatsächliche mobile Gestaltung, unabhängige Delta-Review und exakte CI/Deploys noch offen. PrivateAudio-Gates unverändert; AutomationPAUSED.
+
+Nächster Schritt: Browserdarstellung und neue Formular-/Feedbackpfade gezielt abschließen, dann unveränderlichen Kandidaten prüfen und bestehende Stagingkette nutzen.

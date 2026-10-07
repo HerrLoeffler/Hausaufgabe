@@ -245,6 +245,8 @@ function parseTestRequest(input = "") {
   const numericText = normalizeSpokenNumbers(text);
   const patch = {};
   if (!text) return patch;
+  if (/\b(?:auf\s+englisch|in\s+english|testsprache\s*:?\s*englisch)\b/i.test(text)) patch.contentLocale = "en-GB";
+  else if (/\b(?:auf\s+deutsch|in\s+german|testsprache\s*:?\s*deutsch)\b/i.test(text)) patch.contentLocale = "de-DE";
 
   const subject = firstMatch(text, SUBJECT_PATTERNS);
   if (subject) patch.subject = subject;
@@ -354,6 +356,7 @@ function looksLikeTestCommand(text) {
 function patchSummary(patch = {}, locale = "de-DE") {
   const english = normalizeLocale(locale) === "en-GB";
   const parts = [];
+  if (patch.contentLocale) parts.push(english ? `Test language: ${patch.contentLocale === "en-GB" ? "English" : "German"}` : `Testsprache: ${patch.contentLocale === "en-GB" ? "Englisch" : "Deutsch"}`);
   if (patch.subject) parts.push(english ? (ENGLISH_SUBJECT_LABELS[patch.subject] || patch.subject) : patch.subject);
   if (patch.grade) parts.push(english ? `Year ${patch.grade}` : `Klasse ${patch.grade}`);
   if (patch.topic) parts.push(patch.topic);

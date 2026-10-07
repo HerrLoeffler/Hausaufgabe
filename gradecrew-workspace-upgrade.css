@@ -13,7 +13,7 @@
   border-radius: 22px; background: linear-gradient(115deg, #f5f8ff, #fbf9ff 72%, #f0edfc);
   align-items: center; gap: 24px; box-shadow: 0 5px 20px #263c6210;
 }
-#dashboardView.gcWorkspace > .pageHead > div:first-child { position: relative; max-width: none; padding-inline-end: 108px; }
+#dashboardView.gcWorkspace > .pageHead > div:first-child { position: relative; max-width: none; padding-inline-end: 0; }
 #dashboardView.gcWorkspace > .pageHead h1 { font-size: clamp(30px,3.4vw,44px); letter-spacing: -.045em; }
 #dashboardView.gcWorkspace > .pageHead .eyebrow { color: var(--workspace-violet); letter-spacing: .12em; }
 #dashboardView.gcWorkspace > .pageHead p { font-size: 14px; line-height: 1.55; }
@@ -122,3 +122,19 @@
   #dashboardView .gcWorkspaceReviewNote summary { min-height: 44px; }
   #dashboardView.gcWorkspace .aiJobReady .aiJobActions .button { flex: 1 1 auto; }
 }
+
+/* The same crew and blue tutorial entry as the public landing. */
+#dashboardView.gcWorkspace .dashboardActions { max-width:none; display:grid; grid-template-columns:minmax(240px,320px) auto; gap:10px 24px; }
+#dashboardView .gcWorkspaceCrewEntry { grid-row:1 / 3; display:flex; flex-direction:column; align-items:center; gap:7px; }
+#dashboardView .gcWorkspaceCrewPortraits { display:flex; justify-content:center; width:100%; }
+#dashboardView .gcWorkspaceCrewPortraits img { width:25%; height:auto; max-height:88px; object-fit:contain; transform-origin:50% 90%; }
+#dashboardView #gradecrewTourBtn { width:100%; min-height:58px; border:0; border-radius:14px; background:#0664ff; color:white; font-size:18px; font-weight:600; padding:12px 20px; text-align:center; justify-content:center; }
+#dashboardView .gcWorkspaceCrewEntry > small { color:#496381; font-size:12px; text-align:center; }
+#dashboardView .gcWorkspaceCrewPortraits img { animation:gcCrewHello 1.8s ease-in-out 2; }
+#dashboardView .gcWorkspaceCrewPortraits img:nth-child(2) { animation-delay:.15s; }
+#dashboardView .gcWorkspaceCrewPortraits img:nth-child(3) { animation-delay:.3s; }
+#dashboardView .gcWorkspaceCrewPortraits img:nth-child(4) { animation-delay:.45s; }
+@keyframes gcCrewHello { 0%,100% {transform:translateY(0) rotate(0)} 25% {transform:translateY(-5px) rotate(-4deg)} 65% {transform:translateY(-2px) rotate(3deg)} }
+@media(max-width:1000px) { #dashboardView.gcWorkspace > .pageHead {align-items:stretch;flex-direction:column} #dashboardView.gcWorkspace .dashboardActions {align-self:stretch;grid-template-columns:minmax(200px,320px) auto;justify-content:space-between} }
+@media(max-width:480px) { #dashboardView.gcWorkspace .dashboardActions {grid-template-columns:minmax(0,1fr) auto;gap:10px} #dashboardView .gcWorkspaceCrewEntry {grid-column:1 / -1;grid-row:auto;width:min(100%,320px);justify-self:center} #dashboardView .gcWorkspaceCrewPortraits img {max-height:72px} }
+@media(prefers-reduced-motion:reduce) { #dashboardView .gcWorkspaceCrewPortraits img {animation:none} }

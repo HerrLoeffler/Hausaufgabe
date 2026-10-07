@@ -60,6 +60,9 @@ const { enGBCrewMessages,enGBCrewSourcePatterns } = await import('../../shared/i
 registerCatalog('en-GB',{...enGBMessages,...enGBCrewMessages});registerSourcePatterns('en-GB',[...enGBSourcePatterns,...enGBCrewSourcePatterns]);
 render.renderQuizList();render.renderAiJobs();
 const { installWorkspaceUpgrade } = await import('../../gradecrew-workspace-upgrade.mjs');
+const tutorial=document.createElement('button');tutorial.id='gradecrewTourBtn';tutorial.className='button';
+tutorial.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';
+tutorial.onclick=()=>log('Nur Testvorschau: Crew-Tutorial starten');document.querySelector('.dashboardActions').prepend(tutorial);
 const upgrade=installWorkspaceUpgrade(document);
 const scenario = () => {
  const selected=document.getElementById('previewScenario').value;
@@ -72,6 +75,6 @@ const scenario = () => {
 };
 document.getElementById('previewScenario').addEventListener('change',scenario);
 document.getElementById('previewLanguage').addEventListener('change',event=>{setActiveUiLocale(event.target.value);upgrade.refresh();});
-document.getElementById('previewReplay').addEventListener('click',()=>{const image=document.querySelector('.gcWorkspaceGreeting');image.src='assets/gradecrew/coco-workspace-greeting.svg?preview='+Date.now();});
+document.getElementById('previewReplay').hidden=true;
 for(const id of ['newQuizBtn','emptyNewQuizBtn','trashBtn'])document.getElementById(id)?.addEventListener('click',()=>log('Nur Testvorschau: '+id));
 scenario();
