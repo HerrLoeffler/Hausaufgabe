@@ -482,7 +482,9 @@
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/lerninsel-layouts-20261007.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "feature/lerninsel-ego-v1"
+      ]
     }
   ]
 }
