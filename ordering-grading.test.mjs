@@ -18,3 +18,10 @@ test("partial score uses the best valid order and rejects duplicated indexes", (
   assert.equal(orderingNeedsReview(question), false);
   assert.equal(orderingNeedsReview({ ...question, manualReview: true }), true);
 });
+
+test('grammar-only English sentence accepts adjective-swapped meaning as a listed solution', () => {
+  const question={text:'Bringe die englischen Wörter in die richtige Reihenfolge. Achte auf die Grammatik.',items:['The','purple','cars','are','not','hungry'],acceptedOrders:[[0,5,2,3,4,1]],manualReview:true};
+  assert.equal(gradeOrdering(question,[0,1,2,3,4,5]).correct,true);
+  assert.equal(gradeOrdering(question,[0,5,2,3,4,1]).correct,true);
+  assert.equal(gradeOrdering(question,[0,5,3,2,4,1]).correct,false);
+});

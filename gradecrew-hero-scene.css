@@ -232,3 +232,7 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
  #authView .gcEntryBenefitsCompact li:nth-child(4) img {animation-delay:.6s}
 }
 @keyframes gcBenefitHello {0%,100%{transform:rotate(0) translateY(0)}35%{transform:rotate(-6deg) translateY(-4px)}70%{transform:rotate(4deg) translateY(-2px)}}
+@media(max-width:780px) and (min-height:701px) {
+ #authView .gcHeroStage {min-height:var(--gc-stage-height,680px);justify-content:space-between}
+ #authView .gcHeroVisual {width:min(100%,640px)}
+}
