@@ -877,6 +877,18 @@
       "user_test": "not_performed",
       "handoff": "workstreams/gc-web-polish-20261007.md",
       "next_action": "Martin checks actual login, normal test creation/saving, and desktop/mobile visuals."
+    },
+    {
+      "id": "games-expedition-unreal",
+      "task_id": "GC-GAMES-ESCAPE-VISUAL-01",
+      "branch": "feature/escape-expedition-unreal-v1",
+      "stage": "branch_only",
+      "local_runtime_commit": "1be53c5d719d7889e6ff6380e11228fc2ddf46b5",
+      "ci": "not_run_native_local25_checks_and2_rendered_tests_only",
+      "staging": "not_deployed",
+      "user_test": "local_window_opened; keyboard_start_inventory_menu_verified; human_acceptance_pending",
+      "handoff": "games/escape-expedition-unreal/Production/HANDOFF.md",
+      "next_action": "Martin tests local keyboard demo; improve input/art then implement GradeCrew live bridge; physical mobile and ten-minute learning-share acceptance pending"
     }
   ],
   "deployments": [

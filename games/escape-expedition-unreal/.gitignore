@@ -1,0 +1,8 @@
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+Content/
+Tests/build/
+BuildOutput/
+*.xcodeproj/
