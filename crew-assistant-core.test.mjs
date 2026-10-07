@@ -307,3 +307,19 @@ test("explicit post-test audio before the quantity stays protected", () => {
   assert.equal(parseTestRequest("Englischtest, aber auf Deutsch erklären").contentLocale, "de-DE");
   assert.equal(parseTestRequest("Englisch Klasse 5 Farben").contentLocale, undefined);
 });
+
+test('Coco resolves a navigation pronoun from the prior Remy context', () => {
+  const result = resolveLocalCrewRequest({crewId:'coco',text:'Kannst du mich zu ihm bringen?',context:{lastCrew:'remy'}});
+  assert.equal(result.action?.type,'navigate_create');
+});
+test('Coco offers test selection for Emmi and never deletes from a chat request', () => {
+  const result = resolveLocalCrewRequest({crewId:'coco',text:'Bring mich zu Emmi'});
+  assert.equal(result.action?.type,'choose_editor');
+  const deletion = resolveLocalCrewRequest({crewId:'coco',text:'Wo kann ich eine Aufgabe löschen?'});
+  assert.equal(deletion.action?.type,'show_delete_question');
+});
+test('Coco routes a remembered cat image to evidence-based test search', () => {
+  const result = resolveLocalCrewRequest({crewId:'coco',text:'Ich suche den Test mit einem Katzenbild'});
+  assert.equal(result.action?.type,'find_test');
+  assert.match(result.action.query,/Katzenbild/);
+});

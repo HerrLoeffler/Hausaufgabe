@@ -3345,11 +3345,31 @@ $("quizUseTimeLimit")?.addEventListener("change", (e) => {
 });
 $("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
 $("previewBtn").addEventListener("click", async () => {
-  if (!state.currentQuiz) return;
-  if (!(await saveCurrentQuiz(false))) return;
-  window.open(baseStudentUrl(state.currentQuiz.id, true), "_blank", "noopener");
-  try { localStorage.setItem(`firstTestPreview:${state.user.uid}:${state.currentQuiz.id}`, "opened"); } catch (_) {}
-  renderFirstTestGuide();
+  const button = $("previewBtn");
+  if (!state.currentQuiz || button.disabled) return;
+  // Reserve the tab during the user gesture; a server save can outlive popup activation.
+  const preview = window.open("about:blank", "_blank");
+  if (!preview) {
+    toast("Die Schüleransicht wurde vom Browser blockiert. Erlaube Pop-ups für GradeCrew und klicke erneut auf Schüleransicht.", "error");
+    return;
+  }
+  preview.opener = null;
+  button.disabled = true;
+  const quizId = state.currentQuiz.id;
+  const wasNew = state.newManualQuiz;
+  const uid = state.user?.uid;
+  try {
+    if (!(await saveCurrentQuiz(false))) { preview.close(); return; }
+    if (!state.currentQuiz || (!wasNew && state.currentQuiz.id !== quizId) || state.user?.uid !== uid) { preview.close(); return; }
+    if (!preview.closed) preview.location.replace(baseStudentUrl(state.currentQuiz.id, true));
+    try { localStorage.setItem(`firstTestPreview:${uid}:${state.currentQuiz.id}`, "opened"); } catch (_) {}
+    renderFirstTestGuide();
+  } catch (error) {
+    preview.close();
+    toast("Die Schüleransicht konnte nicht geöffnet werden. Bitte speichere den Test und versuche es erneut.", "error");
+  } finally {
+    button.disabled = false;
+  }
 });
 
 function newQuestion(type = "single", needsFirestoreId = true) {
@@ -8443,6 +8463,89 @@ async function createTutorialQuiz(payload) {
   return code;
 }
 
+
+// Coco can request only named app actions. It cannot execute generated code,
+// submit, publish, delete, or choose arbitrary selectors/URLs.
+function highlightCocoTarget(element) {
+  if (!element) throw new Error("Diese Schaltfläche ist in der aktuellen Ansicht nicht verfügbar.");
+  element.scrollIntoView({behavior:scrollBehavior(),block:"center"});
+  element.classList.add("cocoGuideTarget");
+  element.focus?.({preventScroll:true});
+  setTimeout(() => element.classList.remove("cocoGuideTarget"), 6000);
+}
+function cocoSearchText(value) {
+  return String(value || "").normalize("NFKC").toLowerCase()
+    .replace(/katzen?(?:bild)?|kitten|cats?/g," cat ").replace(/hunde?(?:bild)?|dogs?/g," dog ")
+    .replace(/(?:bild|picture|image)/g," ").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+}
+async function handleCocoGuide(action = {}) {
+  const uid = state.user?.uid;
+  if (!uid || guestTourRepo) throw new Error("Bitte melde dich mit deinem Lehrkraftkonto an.");
+  if (crewTour?.active) throw new Error("Beende oder verlasse zuerst die Einführung.");
+  const screen = views.find(id => !$(id)?.classList.contains("hidden"));
+  if (screen === "studentView") throw new Error("Verlasse zuerst die Schüleransicht.");
+  const allowed = ["navigate_create","navigate_tests","navigate_settings","choose_editor","choose_results","show_delete_question","show_delete_test","find_test"];
+  if (!allowed.includes(action.type)) throw new Error("Diese Aktion kann Coco nicht ausführen.");
+  let quizzes = state.quizzes.filter(q => q.ownerId === uid && !q.isDeleted && !q.rightsHold);
+  if (!quizzes.length) {
+    const snap = await getDocs(query(collection(db,"quizzes"),where("ownerId","==",uid)));
+    if (state.user?.uid !== uid) throw new Error("Das Konto wurde gewechselt.");
+    quizzes = snap.docs.map(d => ({id:d.id,...d.data()})).filter(q => !q.isDeleted && !q.rightsHold);
+  }
+  const choices = list => list.map(q => ({id:q.id,title:q.title || "Unbenannter Test",subject:q.subject || "",grade:q.grade || "",evidence:q.evidence || ""}));
+  if (action.type === "find_test") {
+    const queryText = cocoSearchText(action.query);
+    const stop = new Set("ich suche such den der die das einen eine einem ein test tests mit und oder war drin in auf im dem mich an kann kannst du erinnere erinnern bitte welcher welches welcher es noch nicht mehr von zu für zum nach damals hatten wir finde find the a with remember quiz my me for".split(" "));
+    const terms = queryText.split(/\s+/).filter(t => t.length > 2 && !stop.has(t)).slice(-8);
+    if (!terms.length) return {message:"Woran erinnerst du dich? Du kannst auch direkt einen Test auswählen.",choices:choices(quizzes),nextAction:"choose_editor"};
+    const matches=[]; const checked=quizzes.slice(0,100); let failures=0;
+    for (let start=0;start<checked.length;start+=4) {
+      await Promise.all(checked.slice(start,start+4).map(async quiz => {
+        try {
+          const snap = await getDocs(collection(db,"quizzes",quiz.id,"questions"));
+          if (state.user?.uid !== uid) return;
+          const questions = screen === "editorView" && state.currentQuiz?.id === quiz.id ? state.questions : snap.docs.map(d=>d.data());
+          const title=cocoSearchText([quiz.title,quiz.subject,quiz.grade].join(" "));
+          const question = questions.find(q => terms.every(t => cocoSearchText([q.text,q.passage,q.imageAlt,...(q.options||[]).map(o=>o.text),...(q.pairs||[]).flatMap(p=>[p.left,p.right]),...(q.items||[])].join(" ")).includes(t)));
+          if (terms.every(t=>title.includes(t)) || question) matches.push({...quiz,evidence:question ? `Gefundene Begriffe: ${terms.join(", ")} · Aufgabe: ${String(question.text || question.passage || "").slice(0,150)}` : "Titel oder Fach passt zu deiner Suche."});
+        } catch (_) { failures++; }
+      }));
+      if (state.user?.uid !== uid) throw new Error("Das Konto wurde gewechselt.");
+    }
+    return {message:matches.length ? `Ich habe ${matches.length} mögliche Treffer in Titeln, Aufgaben und gespeicherten Bildbeschreibungen gefunden. Welchen möchtest du öffnen?` : `Kein eindeutiger Treffer. Ich kann vorhandene Beschreibungen durchsuchen, aber ältere Bilder ohne Beschreibung noch nicht am Motiv erkennen. Wähle einen Test oder nenne mir Fach oder Klasse.${failures ? " Einige Tests konnten gerade nicht gelesen werden." : ""}${quizzes.length>100 ? " Geprüft wurden die ersten 100 Tests." : ""}`,choices:choices(matches.length?matches:quizzes),nextAction:"choose_editor"};
+  }
+  let quizId=action.quizId;
+  if (["choose_editor","choose_results","show_delete_question","show_delete_test"].includes(action.type)) {
+    if (!quizId && screen === "editorView" && action.type !== "show_delete_test") quizId=state.currentQuiz?.id;
+    if (!quizId) return {message:"Um welchen Test geht es?",choices:choices(quizzes),nextAction:action.type};
+    if (!quizzes.some(q=>q.id===quizId)) throw new Error("Dieser Test ist in deinem Konto nicht verfügbar.");
+  }
+  const sameEditor = screen === "editorView" && state.currentQuiz?.id === quizId && ["choose_editor","show_delete_question"].includes(action.type);
+  if (state.isDirty && !sameEditor) throw new Error("Speichere zuerst deine Änderungen. Danach bringe ich dich dorthin.");
+  if (action.type === "navigate_create") { await openAiView(); return {message:"Na klar! Hier ist Remy. Beschreibe, welchen neuen Test du erstellen möchtest.",lastCrew:"remy"}; }
+  if (action.type === "navigate_settings") { openSettings(); return {message:"Hier sind deine Einstellungen."}; }
+  if (action.type === "navigate_tests") { await loadDashboard(); return {message:"Hier findest du deine Tests."}; }
+  if (action.type === "choose_results") { await openResults(quizId); if ($( "resultsView").classList.contains("hidden")) throw new Error("Die Ergebnisse konnten nicht geöffnet werden.");return {message:"Hier sind die Ergebnisse dieses Tests.",lastCrew:"wilma"}; }
+  if (action.type === "show_delete_test") {
+    await loadDashboard(); $("quizSearch").value=quizId; $("quizFilter").value="all";renderQuizList();
+    const button=$("quizList").querySelector(".remove");
+    button?.closest("details")?.setAttribute("open","");highlightCocoTarget(button);
+    return {message:"Hier kannst du diesen Test in den Papierkorb verschieben. Ich habe die Schaltfläche markiert; gelöscht wurde nichts."};
+  }
+  if (!sameEditor) await openEditor(quizId);
+  if (state.user?.uid !== uid || state.currentQuiz?.id !== quizId || $("editorView").classList.contains("hidden")) throw new Error("Der Test konnte nicht geöffnet werden.");
+  if (action.type === "show_delete_question") {
+    const selected=document.activeElement?.closest?.(".questionCard");
+    highlightCocoTarget((selected || $("questionList").querySelector(".questionCard"))?.querySelector(".deleteQuestion"));
+    return {message:"Der Papierkorb neben dem roten Smiley löscht die jeweilige Aufgabe nach deiner Bestätigung. Ich habe ihn an einer Aufgabe markiert."};
+  }
+  return {message:"Hier ist dein Test. Emmi hilft dir beim Überarbeiten.",lastCrew:"emmi"};
+}
+document.addEventListener("gradecrew:coco-guide", event => {
+  const {action,respond}=event.detail || {};
+  if (typeof respond !== "function") return;
+  handleCocoGuide(action).then(respond).catch(error=>respond({error:String(error.message || "Die Stelle konnte nicht geöffnet werden.")}));
+});
 
 // Review UI uses a separate callable; never the paid AI proxy or public feedback.
 if (["staging", "local-review"].includes(appEnvironment)) {

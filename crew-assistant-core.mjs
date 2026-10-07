@@ -402,6 +402,20 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
     reply: english ? "Just tell me what you'd like help with." : "Sag mir einfach, wobei ich dir helfen soll."
   };
 
+  if (member.id === "coco") {
+    const action = type => ({handled:true,source:"local",intent:type,reply:"",action:{type}});
+    if (/\b(?:such\w*|find|remember|erinner\w*)\b/i.test(normalized) && /\b(?:test|quiz|prüfung)\b/i.test(normalized)) return {...action("find_test"),action:{type:"find_test",query:normalized}};
+    if (/\b(?:lösch\w*|loesch\w*|delete|remove|papierkorb|trash)\b/i.test(normalized)) return action(/\b(?:aufgabe\w*|question)\b/i.test(normalized) ? "show_delete_question" : "show_delete_test");
+    if (/\b(?:einstellungen|settings)\b/i.test(normalized)) return action("navigate_settings");
+    if (/\b(?:meine tests|testübersicht|testuebersicht|my tests|dashboard)\b/i.test(normalized)) return action("navigate_tests");
+    const named = normalized.match(/\b(remy|emmi|wilma)\b/i)?.[1]?.toLowerCase();
+    const follow = /\b(?:ihm|ihr|dorthin|dahin|him|her|there)\b/i.test(normalized) && /\b(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized);
+    const crew = named || (follow ? context.lastCrew : "");
+    const navigating = follow || /\b(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized) || /^(?:remy|emmi|wilma)[.!? ]*$/i.test(normalized);
+    if (crew && navigating) return action({remy:"navigate_create",emmi:"choose_editor",wilma:"choose_results"}[crew] || "navigate_tests");
+    if (/\b(?:erstell\w*|anleg\w*|create|new test|neuen? test)\b/i.test(normalized)) return {...action("navigate_create"),reply:english ? "Remy creates tests. I'll open the form." : "Remy erstellt Tests. Ich öffne dir das Formular."};
+  }
+
   const common = resolveCommonResponse(member.id, normalized, normalizedLocale);
   if (common) return { handled: true, source: "local", ...common };
 
