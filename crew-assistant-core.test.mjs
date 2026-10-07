@@ -2,6 +2,19 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CREW_MEMBERS, parseTestRequest, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.mjs";
 
+test("staging dictation keeps school and funny-sentence wishes out of the English topic", () => {
+  const patch = parseTestRequest("9 Klasse großer Englischtest über alle Bereiche die in der Mittelschule vorkommen ich will vor allem witzige lustige Sätze Grammatik alles was eben im Lehrplan so Englisch irgendwie auch abgefragt wird mit einbauen 20 Fragen 10 Minuten Zeit drei Bilder zwei hör Aufgaben zwei mit vorgelesenen Antwortmöglichkeiten und zwei mit Lösungen als Audio");
+  assert.equal(patch.subject, "Englisch");
+  assert.equal(patch.grade, "9");
+  assert.equal(patch.schoolType, "Mittelschule");
+  assert.equal(patch.topic, "Alle Bereiche");
+  assert.match(patch.customNotes || patch.notes || "", /lustige Sätze/i);
+  assert.equal(patch.count, 20);
+  assert.equal(patch.imageQuestionCount, 3);
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.equal(patch.audioAnswerQuestionCount, 2);
+});
+
 test("all four GradeCrew members are addressable", () => {
   assert.deepEqual(Object.keys(CREW_MEMBERS), ["coco", "remy", "emmi", "wilma"]);
   for (const member of Object.values(CREW_MEMBERS)) {

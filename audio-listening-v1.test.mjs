@@ -43,8 +43,8 @@ test("secure assessment sends audio but explicitly rejects transcript fields", (
 });
 
 test("audio UI is teacher-reviewable and student playback never autostarts", () => {
-  assert.match(app, /Hörtext <small>nur für Lehrkraft\/Admin/);
-  assert.match(app, /Die erzeugte Stimme ist KI-generiert/);
+  assert.match(app, /Eigener Hörtext <small>optional · nur für Lehrkraft\/Admin/);
+  assert.match(app, /Der private Hörtext wird im Schülerbereich nicht als Transkript angezeigt/);
   assert.match(app, /audio\.controls = true/);
   assert.doesNotMatch(app, /\.autoplay\s*=\s*true|autoplay=/);
 });

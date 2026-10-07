@@ -14,7 +14,8 @@ function installGradeCrewDesignStyles() {
     ["./gradecrew-logo.css?v=1", "brand-logo-v1"],
     ["./gradecrew-auth-startscreen.css?v=4", "auth-startscreen-v4"],
     ["./gradecrew-auth-startscreen-polish.css?v=1", "auth-startscreen-polish-v1"],
-    ["./gradecrew-hero-scene.css?v=1", "hero-scene-v1"]
+    ["./gradecrew-hero-scene.css?v=2", "hero-scene-v2"],
+    ["./gradecrew-workspace-upgrade.css?v=1", "workspace-upgrade-v1"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
@@ -118,6 +119,7 @@ if (publicTestCode && !teacherPreview) {
 
     await import("./app.js?v=2.3.1-gc28-i18n4");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
+    await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {

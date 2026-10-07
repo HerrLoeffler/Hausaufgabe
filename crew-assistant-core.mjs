@@ -163,6 +163,8 @@ function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
     .replace(/\s+(?=\b(?:bitte|please)\b).*$/i, "")
+    .replace(/\s+(?=(?:ich\s+(?:will|möchte|moechte)|i\s+(?:want|would like))\b).*$/i, "")
+    .replace(/\s+(?:die|das)\s+(?:in|an)\s+(?:der|einer)\s+(?:mittelschule|grundschule|realschule|gymnasium|gesamtschule|berufsschule)\b.*$/i, "")
     .replace(new RegExp(`[,;\\s]+(?=(?:(?:und|and)\\s+)?(?:auch\\s+)?(?:davon\\s+)?${QUANTITY_SOURCE}\\s+(?:bilder?|pictures?|images?|(?:hör|hoer)\\s*(?:aufgaben?|fragen?)|(?:listening|audio)\\s+(?:questions?|tasks?)|aufgaben?|fragen?|questions?|tasks?)\\b).*`, "i"), "")
     .replace(/\s+(?=(?:lustige[nr]?|witzige[nr]?|funny|humorous?)\s+(?:sätze|saetze|beispiele|sentences?|examples?)\b).*$/i, "")
     .replace(/,\s*(?=(?:sehr\s+)?(?:leicht|einfach|mittel|anspruchsvoll|schwer|gemischt|easy|simple|medium|challenging|hard|difficult|mixed)|\d+\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?|minuten?|minutes?)).*$/i, "")
@@ -183,7 +185,7 @@ function cleanTopic(value = "") {
 function extractTopic(text) {
   const candidates = [
     /\b(?:thema|topic)\s*[:=-]?\s*([^.!?]+)/i,
-    /\b(?:über|ueber|about|on)\s+([^.!?]+)/i,
+    /(?:^|[\s,;])(?:über|ueber|about|on)\s+([^.!?]+)/i,
     /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*\d{1,2}\b[^.!?]*?\b(?:für|fuer|about|on)\s+([^.!?]+)/i,
     /\b\d{1,2}\.?\s*(?:klasse|jahrgang(?:sstufe)?|year|grade)\b[^.!?]*?\b(?:für|fuer|about|on)\s+([^.!?]+)/i,
     /\b(?:klasse|jahrgang(?:sstufe)?|year|grade)\s*\d{1,2}\b\s+([^,;.!?]+?)(?=\s*[,;]|\s+\d{1,3}\s*(?:aufgaben?|fragen?|questions?|tasks?|punkte?|points?)\b|$)/i,
@@ -194,7 +196,7 @@ function extractTopic(text) {
     const match = text.match(pattern);
     if (match) {
       const topic = cleanTopic(match[1]);
-      if (topic) return topic;
+      if (topic) return /^alle bereiche$/i.test(topic) ? "Alle Bereiche" : topic;
     }
   }
   const forMatches = [...text.matchAll(/\b(?:für|fuer|for)\s+([^.!?]+)/gi)];
@@ -230,7 +232,7 @@ function extractNotes(text) {
   if (/\b(?:vor allem|überwiegend|hauptsächlich|hauptsaechlich|mainly|mostly)\s+(?:rechenaufgaben|calculation questions?|calculation tasks?)\b/i.test(text)) add("Vor allem Rechenaufgaben");
   if (/\b(?:(?:viele|mehr)\s+sachaufgaben|(?:many|more)\s+word problems?)\b/i.test(text)) add("Viele Sachaufgaben");
   if (/\b(?:viele\s+aufgaben|many\s+(?:questions|tasks))\b/i.test(text) && !/\b\d{1,3}\s+(?:aufgaben|questions|tasks)\b/i.test(text)) add("Viele Aufgaben");
-  if (/\b(?:lustige[nr]?|witzige[nr]?|funny|humorous?)\s+(?:sätze|saetze|beispiele|sentences?|examples?)\b/i.test(text)) add("Lustige Sätze einbauen");
+  if (/\b(?:lustige[nr]?|witzige[nr]?|funny|humorous?)(?:\s+(?:lustige[nr]?|witzige[nr]?|funny|humorous?))*\s+(?:sätze|saetze|beispiele|sentences?|examples?)\b/i.test(text)) add("Lustige Sätze einbauen");
 
   const explicit = text.match(/\b(?:(?:eigene\s+)?wünsche?|requests?|additional requests?|notes?)\s*[:=-]\s*([^.!?]+)/i);
   if (explicit?.[1]) add(explicit[1].slice(0, 500));
@@ -306,6 +308,7 @@ function parseTestRequest(input = "") {
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
   const audioAnswerQuestionCount = extractNumber(numericText, [
+    /\b(\d{1,2})\s+(?:mit|with)\s+(?:vorgelesenen?|gesprochenen?|spoken|read[- ]?out)\s+(?:antwortmöglichkeiten|antwortoptionen|antworten|answer\s+options?|answers?)\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?|questions?|tasks?)\s+(?:mit|with)\s+(?:allen?\s+)?(?:vorgelesenen?|gesprochenen?|spoken|read[- ]?out|audio[- ]?)\s*(?:antwortmöglichkeiten|antwortoptionen|antworten|answer\s+options?|answers?)\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+sprachnotizen\s+als\s+lösungen\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s*,?\s+bei\s+denen\s+(?:alle\s+)?(?:antwortmöglichkeiten|antwortoptionen|antworten)\s+vorgelesen\b/i

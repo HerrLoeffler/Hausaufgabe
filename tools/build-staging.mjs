@@ -19,6 +19,8 @@ const files = [
   'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js'
 ];
 files.push(
+  'gradecrew-workspace-upgrade.mjs',
+  'gradecrew-workspace-upgrade.css',
   'gradecrew-hero-copy.mjs',
   'gradecrew-hero-demo.mjs',
   'gradecrew-hero-demo-flow.mjs',

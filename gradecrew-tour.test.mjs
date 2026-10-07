@@ -185,7 +185,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
     'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
-    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+    'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);
   const productionStyle = w.document.createElement('style');
@@ -519,7 +519,7 @@ test('Real student renderer uses ten widgets, four persisted images and a gated 
     escapeHtml: value => String(value).replaceAll('"', '&quot;'), round1: number => number, setupStudentProgress: () => {},
     crewTour: { notify: event => events.push(event) }, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
-  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'renderStudentQuiz'].map(fn).join('\n'));
+  w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));
   const questions = w.demo.questions.map((q, i) => ({ ...q, id: `q${i}` }));
   w.renderStudentQuiz({ ...w.demo, id: 'DEMO', startMode: 'student' }, questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);

@@ -1,0 +1,121 @@
+/* GC-WEB-REPAIR-20261007. Scoped presentation layer; existing brand tokens remain authoritative. */
+.shell:has(> #dashboardView:not(.hidden)) { max-width: 1600px; width: 100%; }
+#dashboardView.gcWorkspace {
+  --workspace-ink: var(--gc-colors-text, #182033);
+  --workspace-muted: var(--gc-colors-muted, #596579);
+  --workspace-blue: var(--gc-colors-primary, #285ac9);
+  --workspace-violet: #7040b5;
+  --workspace-line: var(--gc-colors-border, #dce3ef);
+  padding-bottom: 52px;
+}
+#dashboardView.gcWorkspace > .pageHead {
+  padding: 26px 28px 22px; margin-bottom: 22px; border: 1px solid var(--workspace-line);
+  border-radius: 22px; background: linear-gradient(115deg, #f5f8ff, #fbf9ff 72%, #f0edfc);
+  align-items: center; gap: 24px; box-shadow: 0 5px 20px #263c6210;
+}
+#dashboardView.gcWorkspace > .pageHead > div:first-child { position: relative; max-width: none; padding-inline-end: 108px; }
+#dashboardView.gcWorkspace > .pageHead h1 { font-size: clamp(30px,3.4vw,44px); letter-spacing: -.045em; }
+#dashboardView.gcWorkspace > .pageHead .eyebrow { color: var(--workspace-violet); letter-spacing: .12em; }
+#dashboardView.gcWorkspace > .pageHead p { font-size: 14px; line-height: 1.55; }
+#dashboardView .gcWorkspaceGreeting { position: absolute; right: 0; top: 4px; width: 96px; height: 96px; object-fit: contain; pointer-events: none; }
+#dashboardView.gcWorkspace .dashboardActions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; max-width: 420px; }
+#dashboardView.gcWorkspace #newQuizBtn { min-height: 48px; padding-inline: 22px; background: var(--workspace-blue); box-shadow: 0 4px 12px #285ac920; }
+#dashboardView.gcWorkspace #trashBtn { border-color: transparent; }
+#dashboardView.gcWorkspace .dashboardOverview { gap: 6px; margin-top: 20px; }
+#dashboardView.gcWorkspace .dashboardMetric { border-color: transparent; background: #ffffffb8; border-radius: 10px; padding: 10px 12px; min-height: 44px; }
+#dashboardView.gcWorkspace .dashboardMetric strong { border-radius: 6px; font-size: 14px; }
+#dashboardView.gcWorkspace .dashboardMetric span { color: var(--workspace-ink); font-size: 12px; }
+#dashboardView.gcWorkspace .dashboardMetric[aria-pressed="true"] { background: var(--workspace-blue); border-color: var(--workspace-blue); box-shadow: 0 3px 9px #285ac91a; }
+#dashboardView.gcWorkspace .dashboardMetric[aria-pressed="true"] :is(strong,span) { color: #fff; }
+#dashboardView.gcWorkspace .dashboardToolbar.card { padding: 18px 20px; margin: 0; border: 1px solid var(--workspace-line); border-radius: 16px; background: #fff; gap: 18px; grid-template-columns: minmax(220px,1fr) minmax(140px,190px) minmax(150px,210px); }
+#dashboardView.gcWorkspace .dashboardToolbar label { font-size: 12px; }
+#dashboardView.gcWorkspace .dashboardToolbar :is(input,select) { min-height: 46px; background: #f9faff; }
+#dashboardView .gcWorkspaceFilterNote { margin: 8px 4px 22px; font-size: 12px; color: var(--workspace-muted); }
+#dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+#dashboardView.gcWorkspace .quizCard { padding: 22px; border-radius: 18px; gap: 16px; box-shadow: 0 4px 18px #24396008; }
+#dashboardView.gcWorkspace .quizCardTop { flex-direction: column; gap: 14px; }
+#dashboardView.gcWorkspace .quizCardTop > div:first-child { width: 100%; }
+#dashboardView.gcWorkspace .quizCard h3 { font-size: 20px; line-height: 1.35; overflow-wrap: anywhere; }
+#dashboardView.gcWorkspace .quizCard .meta { font-size: 12px; overflow-wrap: anywhere; }
+#dashboardView.gcWorkspace .quizCardStatusGroup { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+#dashboardView.gcWorkspace .dashboardPublishControl { font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .quizStats { padding-block: 13px; }
+#dashboardView.gcWorkspace .quizStats strong { font-size: 18px; }
+#dashboardView.gcWorkspace .quizStats span { font-size: 11px; text-transform: none; letter-spacing: 0; }
+#dashboardView.gcWorkspace .status { font-size: 12px; padding: 5px 10px; }
+#dashboardView.gcWorkspace .status.draft { color: #61418c; background: #f4effc; border-color: #e5d9f8; }
+#dashboardView.gcWorkspace :is(.primaryQuizActions,.aiJobActions) { gap: 8px; display: flex; flex-wrap: wrap; }
+#dashboardView.gcWorkspace .primaryQuizActions .button { min-height: 44px; font-size: 13px; padding-inline: 13px; }
+#dashboardView.gcWorkspace .quizMore > summary { font-size: 12px; gap: 7px; min-height: 44px; }
+#dashboardView.gcWorkspace .secondaryQuizActions .button { min-height: 44px; font-size: 12px; }
+#dashboardView.gcWorkspace .button:has(> .gcWorkspaceIcon) { display: inline-flex; gap: 7px; align-items: center; justify-content: center; }
+#dashboardView .gcWorkspaceIcon { flex: 0 0 17px; width: 17px; height: 17px; vertical-align: middle; }
+#dashboardView.gcWorkspace .aiJobCard { position: relative; grid-template-columns: 34px minmax(0,1fr) auto; gap: 10px 16px; padding: 20px; border: 1px solid #ccd9ed; border-radius: 16px; background: #f9fbff; box-shadow: none; }
+#dashboardView.gcWorkspace .aiJobFailed { border-color: #ebcfc9; background: #fffcfb; }
+#dashboardView.gcWorkspace .aiJobReady { border-color: #c9dfd3; background: #fafdfb; }
+#dashboardView.gcWorkspace .aiJobStatusIcon { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: #eaf0fc; color: var(--workspace-blue); align-self: start; }
+#dashboardView.gcWorkspace .aiJobFailed .aiJobStatusIcon { color: #9b3b2d; background: #fae9e4; }
+#dashboardView.gcWorkspace .aiJobReady .aiJobStatusIcon { color: #25653e; background: #e8f4eb; }
+#dashboardView.gcWorkspace .aiJobBody { min-width: 0; }
+#dashboardView.gcWorkspace .aiJobBody > strong { font-size: 16px; line-height: 1.4; overflow-wrap: anywhere; }
+#dashboardView.gcWorkspace .aiJobBody > p { font-size: 13px; overflow-wrap: anywhere; }
+#dashboardView.gcWorkspace .aiJobBody > small { display: block; margin-top: 7px; font-size: 12px; overflow-wrap: anywhere; }
+#dashboardView .gcWorkspaceJobLabel { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 750; color: #9b3b2d; letter-spacing: .03em; }
+#dashboardView.gcWorkspace .aiJobActions { grid-column: 3; grid-row: 1; max-width: 320px; justify-content: flex-end; }
+#dashboardView.gcWorkspace .aiJobActions .button { min-height: 44px; font-size: 12px; }
+#dashboardView.gcWorkspace .aiProgressTrack { grid-column: 2 / -1; width: 100%; }
+#dashboardView.gcWorkspace .aiJobCard > small { grid-column: 2 / -1; }
+#dashboardView.gcWorkspace #localDraftList .aiJobCard { grid-template-columns: minmax(0,1fr) auto; }
+#dashboardView.gcWorkspace #localDraftList .aiJobCard p { font-size: 13px; }
+#dashboardView .gcWorkspaceBounded { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#dashboardView .gcWorkspaceDisclosure { margin-top: 4px; }
+#dashboardView .gcWorkspaceDisclosure summary { display: list-item; cursor: pointer; color: var(--workspace-blue); font-size: 12px; min-height: 32px; padding-block: 7px; }
+#dashboardView .gcWorkspaceDisclosure p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.55; padding: 12px; background: #fff; border: 1px solid var(--workspace-line); border-radius: 9px; }
+#dashboardView.gcWorkspace .empty { margin-top: 24px; padding: 40px 24px; background: linear-gradient(135deg,#fff,#f6f3ff); border: 1px solid var(--workspace-line); }
+#dashboardView.gcWorkspace .empty h2 { font-size: 24px; }
+#dashboardView.gcWorkspace .empty .button { min-height: 44px; }
+#dashboardView .gcWorkspaceLoading { grid-column: 1/-1; color: var(--workspace-muted); }
+#dashboardView .gcWorkspaceLoading::after { content: ''; display: block; height: 56px; margin-top: 18px; border-radius: 8px; background: linear-gradient(90deg,#f0f3fa 0 38%,transparent 38% 40%,#f0f3fa 40% 68%,transparent 68% 70%,#f0f3fa 70%); }
+#dashboardView.gcWorkspace :is(button,summary,input,select):focus-visible { outline: 3px solid #7040b5; outline-offset: 3px; }
+@media (min-width: 1500px) { #dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+@media (max-width: 1150px) {
+  #dashboardView.gcWorkspace > .pageHead { grid-template-columns: minmax(0,1fr); }
+  #dashboardView.gcWorkspace .dashboardActions { max-width: none; justify-content: flex-start; }
+  #dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #dashboardView.gcWorkspace .aiJobCard { grid-template-columns: 32px minmax(0,1fr); }
+  #dashboardView.gcWorkspace .aiJobActions { grid-column: 2; grid-row: auto; max-width: none; justify-content: flex-start; }
+}
+@media (max-width: 650px) {
+  #dashboardView.gcWorkspace > .pageHead { padding: 20px 16px; border-radius: 16px; gap: 18px; }
+  #dashboardView.gcWorkspace > .pageHead > div:first-child { padding-inline-end: 0; }
+  #dashboardView .gcWorkspaceGreeting { width: 60px; height: 60px; top: -4px; }
+  #dashboardView.gcWorkspace > .pageHead :is(h1,.eyebrow) { padding-inline-end: 66px; }
+  #dashboardView.gcWorkspace > .pageHead p { margin-top: 12px; }
+  #dashboardView.gcWorkspace .dashboardOverview { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  #dashboardView.gcWorkspace .dashboardMetric { min-width: 0; padding: 10px; justify-content: flex-start; }
+  #dashboardView.gcWorkspace .dashboardActions { display: flex; width: 100%; }
+  #dashboardView.gcWorkspace #newQuizBtn { flex: 1 1 100%; order: -1; }
+  #dashboardView.gcWorkspace .dashboardToolbar.card { grid-template-columns: 1fr 1fr; padding: 16px; gap: 12px; }
+  #dashboardView.gcWorkspace .dashboardToolbar .searchField { grid-column: 1/-1; }
+  #dashboardView.gcWorkspace .dashboardToolbar :is(input,select) { min-width: 0; font-size: 16px; }
+  #dashboardView.gcWorkspace .quizGrid { grid-template-columns: minmax(0,1fr); }
+  #dashboardView.gcWorkspace .quizCard { padding: 18px; }
+  #dashboardView.gcWorkspace .aiJobCard { padding: 16px; gap: 10px; }
+  #dashboardView.gcWorkspace .aiJobActions { grid-column: 1/-1; }
+  #dashboardView.gcWorkspace #localDraftList .aiJobCard { grid-template-columns: minmax(0,1fr); }
+  #dashboardView .gcWorkspaceDisclosure summary { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #dashboardView.gcWorkspace *, #dashboardView.gcWorkspace *::before, #dashboardView.gcWorkspace *::after { animation: none !important; transition: none !important; }
+}
+/* A ready job is a compact review reminder; its complete guidance remains available. */
+#dashboardView.gcWorkspace .aiJobReady { padding: 12px 16px; gap: 6px 14px; }
+#dashboardView.gcWorkspace .aiJobReady .aiJobActions { max-width: none; }
+#dashboardView.gcWorkspace .aiJobReady .aiJobBody > small { margin-top: 2px; color: #25653e; }
+#dashboardView .gcWorkspaceReviewNote { margin-top: 2px; }
+#dashboardView .gcWorkspaceReviewNote summary { color: var(--workspace-muted); font-size: 12px; cursor: pointer; min-height: 32px; padding-block: 7px; }
+#dashboardView .gcWorkspaceReviewNote p { font-size: 12px; margin: 4px 0 8px; }
+@media (max-width: 650px) {
+  #dashboardView .gcWorkspaceReviewNote summary { min-height: 44px; }
+  #dashboardView.gcWorkspace .aiJobReady .aiJobActions .button { flex: 1 1 auto; }
+}

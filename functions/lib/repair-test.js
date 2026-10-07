@@ -32,6 +32,16 @@ function isImageQuotaIssue(error) {
     || /^Zu viele visuelle Aufgaben \(\d+\/\d+\)\.$/.test(error);
 }
 
+function audioQuota(test, options) {
+  if (!Number.isInteger(options.audioQuestionCount)) return null;
+  const actual = test.questions.filter(q => q.audioIntent?.kind === "ai_generated").length;
+  return { actual, target: options.audioQuestionCount, distance: Math.abs(actual - options.audioQuestionCount) };
+}
+
+function isAudioQuotaIssue(error) {
+  return /^Erwartet \d+ Höraufgaben, erhalten \d+\.$/.test(error);
+}
+
 function balanceTestPoints(test, targetPoints) {
   if (!Number.isFinite(targetPoints) || targetPoints <= 0 || !test.questions?.length) return test;
   const targetUnits = Math.round(targetPoints * 2);
@@ -68,14 +78,17 @@ function trimSurplusQuestions(test, options) {
     const questions = draft.questions;
     const kinds = ["ai_generated", "image_choices"];
     const counts = Object.fromEntries(kinds.map(kind => [kind, questions.filter(q => q?.mediaIntent?.kind === kind).length]));
+    const audios = questions.filter(q => q.audioIntent?.kind === "ai_generated").length;
     const issues = new Map(questionIssues(draft, adjustedOptions).map(({ index, reasons }) => [index, reasons.length]));
     const candidates = questions.map((question, index) => {
       const kind = question?.mediaIntent?.kind;
       const required = kind === "ai_generated" ? adjustedOptions.imageQuestionCount
         : kind === "image_choices" ? adjustedOptions.imageAnswerQuestionCount : null;
       if (required != null && counts[kind] <= required) return null;
+      if (question.audioIntent?.kind === "ai_generated" && Number.isInteger(adjustedOptions.audioQuestionCount) && audios <= adjustedOptions.audioQuestionCount) return null;
       const extraVisual = required != null && counts[kind] > required;
-      return { index, score: (extraVisual ? 100 : 0) + (issues.get(index) || 0) * 10 };
+      const extraAudio = question.audioIntent?.kind === "ai_generated" && Number.isInteger(adjustedOptions.audioQuestionCount) && audios > adjustedOptions.audioQuestionCount;
+      return { index, score: (extraVisual ? 100 : 0) + (extraAudio ? 100 : 0) + (issues.get(index) || 0) * 10 };
     }).filter(Boolean).sort((a, b) => b.score - a.score || b.index - a.index);
     if (!candidates.length) return { test, options };
     const index = candidates[0].index;
@@ -96,14 +109,16 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
   const feedback = new Map();
   while (attempts < maxAttempts) {
     const quota = imageQuota(test, options);
+    const listeningQuota = audioQuota(test, options);
+    const activeQuota = quota?.distance ? { ...quota, field: "mediaIntent" } : listeningQuota?.distance ? { ...listeningQuota, field: "audioIntent" } : null;
     const issues = questionIssues(test, options);
     const candidates = issues
       .filter(({ index }) => (tried.get(index) || 0) < 3)
       .sort((a, b) => (tried.get(a.index) || 0) - (tried.get(b.index) || 0) || a.index - b.index);
-    const eligible = index => (tried.get(index) || 0) < 3 && (quota.actual < quota.target
-      ? test.questions[index].mediaIntent?.kind === "none"
-      : test.questions[index].mediaIntent?.kind === "ai_generated");
-    const quotaIssue = quota?.distance ? candidates.find(({ index }) => eligible(index))
+    const eligible = index => (tried.get(index) || 0) < 3 && (activeQuota.actual < activeQuota.target
+      ? test.questions[index][activeQuota.field]?.kind === "none"
+      : test.questions[index][activeQuota.field]?.kind === "ai_generated");
+    const quotaIssue = activeQuota ? candidates.find(({ index }) => eligible(index))
       || test.questions.map((_, index) => index).filter(eligible)
         .sort((a, b) => (tried.get(a) || 0) - (tried.get(b) || 0) || a - b)
         .map(index => ({ index, reasons: [] }))[0] : null;
@@ -111,15 +126,18 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     if (!issue) break;
     const { index } = issue;
     const original = test.questions[index];
-    const mediaKind = quotaIssue ? (quota.actual < quota.target ? "ai_generated" : "none") : (original.mediaIntent?.kind || "none");
+    const mediaKind = quotaIssue && activeQuota.field === "mediaIntent" ? (quota.actual < quota.target ? "ai_generated" : "none") : (original.mediaIntent?.kind || "none");
+    const audioKind = quotaIssue && activeQuota.field === "audioIntent" ? (listeningQuota.actual < listeningQuota.target ? "ai_generated" : "none") : (original.audioIntent?.kind || "none");
     const priorAttempts = tried.get(index) || 0;
     tried.set(index, priorAttempts + 1);
     attempts += 1;
-    const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaIssue ? [`Für diesen Test sind exakt ${quota.target} Bildaufgaben erforderlich; erstelle diese Aufgabe mit mediaIntent.kind=${mediaKind}.`] : [])], attempt: priorAttempts + 1 }));
+    const quotaReason = quotaIssue ? activeQuota.field === "audioIntent" ? `Für diesen Test sind exakt ${listeningQuota.target} Höraufgaben erforderlich; erstelle diese Aufgabe mit audioIntent.kind=${audioKind}.` : `Für diesen Test sind exakt ${quota.target} Bildaufgaben erforderlich; erstelle diese Aufgabe mit mediaIntent.kind=${mediaKind}.` : "";
+    const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, audioKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaReason ? [quotaReason] : [])], attempt: priorAttempts + 1 }));
     candidate.points = original.points;
 
     const reasons = validateQuestion(candidate, options);
     if (candidate.mediaIntent.kind !== mediaKind) reasons.push(`Die Bildart muss ${mediaKind} sein.`);
+    if (candidate.audioIntent.kind !== audioKind) reasons.push(`Die Audioart muss ${audioKind} sein.`);
     const sceneOnlyRepair = issue.reasons.length > 0 && issue.reasons.every(reason =>
       reason === "Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung." ||
       reason === "Die Szenen der Bildantworten müssen eindeutig verschieden sein."
@@ -136,7 +154,12 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     if (!reasons.length) {
       const next = { ...test, questions: test.questions.map((question, i) => i === index ? candidate : question) };
       const nextQuota = imageQuota(next, options);
-      reasons.push(...globalIssues(next, options).filter(error => !isImageQuotaIssue(error) || !quota?.distance || nextQuota.distance >= quota.distance));
+      const nextListeningQuota = audioQuota(next, options);
+      reasons.push(...globalIssues(next, options).filter(error => {
+        if (isImageQuotaIssue(error) && quota?.distance && nextQuota.distance <= quota.distance) return false;
+        if (isAudioQuotaIssue(error) && listeningQuota?.distance && nextListeningQuota.distance <= listeningQuota.distance) return false;
+        return true;
+      }));
       if (!reasons.length) {
         test = next;
         replaced += 1;
@@ -168,7 +191,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     const errors = validateTest(test, options);
     if (!errors.length) return { test, errors, questionAttempts, replaced, fullRepair };
 
-    if (globalIssues(test, options).every(isImageQuotaIssue) && questionAttempts < repairLimit) {
+    if (globalIssues(test, options).every(error => isImageQuotaIssue(error) || isAudioQuotaIssue(error)) && questionAttempts < repairLimit) {
       const remaining = repairLimit - questionAttempts;
       const passBudget = fullRepair ? remaining : Math.min(remaining, Math.max(questionIssues(test, options).length, Math.ceil(repairLimit / 2)));
       const result = await replaceInvalidQuestions(test, options, generateQuestion, passBudget);

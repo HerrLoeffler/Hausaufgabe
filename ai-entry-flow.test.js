@@ -118,7 +118,7 @@ test('startup installs v6 entry before app handlers and staging packages all sce
   }
   assert.match(startup, /auth-startscreen-v4/);
   assert.match(startup, /auth-startscreen-polish-v1/);
-  assert.match(startup, /hero-scene-v1/);
+  assert.match(startup, /hero-scene-v2/);
   assert.match(polishCss, /gcPublicEntryMode/);
 });
 

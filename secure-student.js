@@ -262,17 +262,53 @@ function renderOptions(section, question, multiple = false) {
   });
 }
 
+function memoLabel(index) {
+  return `${assessmentContentLabels(currentQuiz?.contentLocale).answer} ${index + 1}`;
+}
+
+function memoContent(item, index) {
+  const body = document.createElement("span");
+  body.className = "secureAudioMemo";
+  body.dataset.i18nContent = "1";
+  const label = document.createElement("strong");
+  label.textContent = memoLabel(index);
+  body.appendChild(label);
+  if (item.audio?.src) {
+    const player = document.createElement("audio");
+    player.controls = true;
+    player.preload = "metadata";
+    player.src = item.audio.src;
+    player.setAttribute("aria-label", memoLabel(index));
+    body.appendChild(player);
+  }
+  return body;
+}
+
+function renderMemoBank(section, question, items) {
+  if (question.audioAnswerMode !== "audio-only") return;
+  const bank = document.createElement("div");
+  bank.className = "secureMemoBank";
+  items.forEach((item, index) => bank.appendChild(memoContent(item, index)));
+  section.appendChild(bank);
+}
+
+function memoEnglish() {
+  return /^en(?:-|$)/i.test(currentQuiz?.contentLocale || "");
+}
+
 function renderDropdown(section, question) {
+  renderMemoBank(section, question, question.options || []);
   const select = document.createElement("select");
+  if (question.audioAnswerMode === "audio-only") select.setAttribute("aria-label", assessmentContentLabels(currentQuiz?.contentLocale).answer);
   select.name = `q_${question.id}`;
   const blank = document.createElement("option");
   blank.value = "";
-  blank.textContent = "Bitte auswählen …";
+  blank.textContent = memoEnglish() ? "Please choose …" : "Bitte auswählen …";
   select.appendChild(blank);
-  (question.options || []).forEach(option => {
+  (question.options || []).forEach((option, index) => {
     const node = document.createElement("option");
     node.value = option.id;
-    node.textContent = option.text || "Antwort";
+    node.textContent = question.audioAnswerMode === "audio-only" ? memoLabel(index) : option.text || "Antwort";
     select.appendChild(node);
   });
   section.appendChild(select);
@@ -300,6 +336,7 @@ function renderGapfill(section, question) {
 }
 
 function renderMatching(section, question) {
+  renderMemoBank(section, question, question.rightItems || []);
   (question.leftItems || []).forEach(left => {
     const row = document.createElement("div");
     row.className = "secureMatchingRow";
@@ -307,14 +344,15 @@ function renderMatching(section, question) {
     label.textContent = left.text;
     const select = document.createElement("select");
     select.dataset.leftId = left.id;
+    select.setAttribute("aria-label", left.text);
     const blank = document.createElement("option");
     blank.value = "";
-    blank.textContent = "Zuordnen …";
+    blank.textContent = memoEnglish() ? "Match …" : "Zuordnen …";
     select.appendChild(blank);
-    (question.rightItems || []).forEach(right => {
+    (question.rightItems || []).forEach((right, index) => {
       const option = document.createElement("option");
       option.value = right.id;
-      option.textContent = right.text;
+      option.textContent = question.audioAnswerMode === "audio-only" ? memoLabel(index) : right.text;
       select.appendChild(option);
     });
     row.append(label, select);
@@ -334,39 +372,41 @@ function moveOrderItem(button, direction) {
 function renderOrdering(section, question) {
   const list = document.createElement("div");
   list.className = "secureOrderList";
-  (question.items || []).forEach(item => {
+  (question.items || []).forEach((item, index) => {
     const row = document.createElement("div");
     row.className = "secureOrderItem";
     row.dataset.itemId = item.id;
     const text = document.createElement("span");
     text.textContent = item.text;
+    const itemLabel = question.audioAnswerMode === "audio-only" ? memoLabel(index) : item.text;
     const up = document.createElement("button");
     up.type = "button";
     up.textContent = "↑";
-    up.setAttribute("aria-label", `${item.text} nach oben`);
+    up.setAttribute("aria-label", `${itemLabel} ${memoEnglish() ? "up" : "nach oben"}`);
     up.addEventListener("click", () => moveOrderItem(up, -1));
     const down = document.createElement("button");
     down.type = "button";
     down.textContent = "↓";
-    down.setAttribute("aria-label", `${item.text} nach unten`);
+    down.setAttribute("aria-label", `${itemLabel} ${memoEnglish() ? "down" : "nach unten"}`);
     down.addEventListener("click", () => moveOrderItem(down, 1));
-    row.append(text, up, down);
+    row.append(question.audioAnswerMode === "audio-only" ? memoContent(item, index) : text, up, down);
     list.appendChild(row);
   });
   section.appendChild(list);
 }
 
 function renderGrouping(section, question) {
-  (question.items || []).forEach(item => {
+  (question.items || []).forEach((item, index) => {
     const row = document.createElement("div");
     row.className = "secureGroupingRow";
     const label = document.createElement("strong");
     label.textContent = item.text;
     const select = document.createElement("select");
     select.dataset.itemId = item.id;
+    select.setAttribute("aria-label", question.audioAnswerMode === "audio-only" ? memoLabel(index) : item.text);
     const blank = document.createElement("option");
     blank.value = "";
-    blank.textContent = "Gruppe wählen …";
+    blank.textContent = memoEnglish() ? "Choose group …" : "Gruppe wählen …";
     select.appendChild(blank);
     (question.groups || []).forEach(group => {
       const option = document.createElement("option");
@@ -374,7 +414,7 @@ function renderGrouping(section, question) {
       option.textContent = group.name;
       select.appendChild(option);
     });
-    row.append(label, select);
+    row.append(question.audioAnswerMode === "audio-only" ? memoContent(item, index) : label, select);
     section.appendChild(row);
   });
 }

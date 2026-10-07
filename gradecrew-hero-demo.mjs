@@ -131,6 +131,12 @@ export function installHeroDemo(root) {
   }
 
   resetFlow();
+  // The visible role buttons expose the same actions to keyboard/screen readers.
+  // Artwork hit regions are pointer shortcuts, not a second focus stop per animal.
+  root.querySelectorAll('.gcHeroHit').forEach(button => {
+    button.tabIndex = -1;
+    button.setAttribute('aria-hidden', 'true');
+  });
   let pointerOpener = null;
   let lastPointerOpener = null;
   root.querySelectorAll('[data-hero-crew]').forEach(button => {

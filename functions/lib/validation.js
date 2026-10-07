@@ -1,6 +1,7 @@
 "use strict";
 
 const { QUESTION_TYPES, LIMITS } = require("./constants");
+const { hasAudioAnswerEntries } = require("./audio-answers");
 
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
 function normalizeText(value) { return ["string", "number"].includes(typeof value) ? String(value).trim() : ""; }
@@ -270,7 +271,7 @@ function validateTest(test, opts = {}) {
     if (count !== opts.audioQuestionCount) errors.push(`Erwartet ${opts.audioQuestionCount} Höraufgaben, erhalten ${count}.`);
   }
   if (opts.audioAnswerQuestionCount != null) {
-    const eligible = qs.filter(q => ["single", "multi"].includes(q.type) && Array.isArray(q.options) && q.options.length >= 2 && q.options.length <= 4).length;
+    const eligible = qs.filter(hasAudioAnswerEntries).length;
     if (eligible < opts.audioAnswerQuestionCount) errors.push(`Für ${opts.audioAnswerQuestionCount} Audioantworten fehlen geeignete Auswahlaufgaben.`);
   }
   return errors;

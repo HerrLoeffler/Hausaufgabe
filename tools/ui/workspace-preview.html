@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="de-DE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>GradeCrew — lokale Arbeitsbereich-Vorschau</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'">
+<style>
+.previewControls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px 20px;background:#182033;color:white;font:13px system-ui}.previewControls label{display:flex;align-items:center;gap:8px}.previewControls select,.previewControls button{width:auto;min-height:40px;background:white;color:#182033;border:1px solid #b8c5dc;border-radius:8px;padding:8px}.previewControls small{flex-basis:100%;color:#dde6fa}.previewLog{margin:0;padding:10px 20px;font:13px system-ui;background:#fff4cf;color:#473d21}.previewControls strong{margin-right:auto}
+</style></head><body>
+<nav class="previewControls" aria-label="Lokale Testvorschau" data-i18n-content>
+<strong>TESTVORSCHAU · nur lokale Beispieldaten</strong>
+<label>Zustand <select id="previewScenario"><option value="mixed">Tests + Aufträge + Fehler</option><option value="empty">Keine Tests</option><option value="no-results">Keine Suchtreffer</option><option value="loading">Laden</option></select></label>
+<label>Sprache <select id="previewLanguage"><option value="de-DE">Deutsch</option><option value="en-GB">English</option></select></label>
+<button id="previewReplay" type="button">Coco erneut ansehen</button>
+<small>Keine Anmeldung, Firebase-Verbindung oder Provider-Aufrufe. Aktionen protokollieren nur hier. Mobil: Fensterbreite ändern. Bewegungsreduktion: Betriebssystem/Browser-Einstellung.</small>
+</nav><p class="previewLog" id="previewLog" role="status" data-i18n-content>Vorschau wird aus dem aktuellen lokalen Dashboard-Code geladen …</p>
+<main class="shell" id="previewHost"></main>
+<script type="module" src="tools/ui/workspace-preview.mjs"></script>
+</body></html>

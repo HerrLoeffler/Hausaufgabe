@@ -2403,7 +2403,17 @@ function updateAiTypeCount() {
   if ($("aiTypeCount")) $("aiTypeCount").textContent = `${selected} ausgewählt`;
 }
 
+function resetAiFormForNewTest() {
+  ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
+  ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
+  ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
+  const difficulty = $("aiDifficulty");
+  if (difficulty) difficulty.value = [...difficulty.options].find(option => option.defaultSelected)?.value || "mittel";
+  document.dispatchEvent(new CustomEvent("gradecrew:ai-form-reset"));
+}
+
 async function openAiView() {
+  resetAiFormForNewTest();
   const settings = getSettings();
   $("aiMaterialConfirmed").checked = false;
   $("aiSubject").value = settings.defaultSubject || "";
@@ -2437,10 +2447,10 @@ async function openAiView() {
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
-    notice.textContent = "KI-Verbindung wird geprüft …";
+    notice.textContent = "Verbindung wird geprüft …";
     notice.classList.remove("hidden");
     state.aiStatus = await aiApi.status({});
-    notice.textContent = "KI ist bereit.";
+    notice.textContent = "Erstellung ist bereit.";
   } catch (err) {
     console.warn("KI-Status nicht verfügbar:", err);
     state.aiStatus = null;
@@ -2516,7 +2526,7 @@ function updateAiAudioControls() {
     const errors = [];
     if (invalid) errors.push("Für Höraufgaben bitte eine ganze Zahl von 0 bis 5 eingeben.");
     if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Höraufgaben möglich.`);
-    hint.textContent = errors.length ? errors.join(" ") : "KI-generierte Stimme · kein Autoplay · Hörtext im Editor prüfbar.";
+    hint.textContent = errors.length ? errors.join(" ") : "Aufgaben werden vorgelesen · kein Autoplay · im Editor anhörbar.";
     hint.classList.toggle("aiInputError", errors.length > 0);
   }
   if (solutionInput) {
@@ -2703,6 +2713,7 @@ async function startAiCreationJob(request, { similar = false, sourceQuiz = null 
       const submitted = new Set((request.materials || []).map(material => material.id));
       state.aiMaterials = state.aiMaterials.filter(material => !submitted.has(material.id));
       renderAiMaterials();
+      resetAiFormForNewTest();
     }
     toast(response.resumed ? "Dein laufender KI-Auftrag ist unter „Meine Tests“ sichtbar." : "Erstellung gestartet. Den Fortschritt findest du unter „Meine Tests“.");
     await loadDashboard();
@@ -4302,7 +4313,41 @@ function getQuestionAudioSrc(q) {
   return src.startsWith("data:audio/") ? src : "";
 }
 
+function audioOperations() {
+  if (!audioOperations.records) audioOperations.records = new WeakMap();
+  return audioOperations.records;
+}
+
+function cancelQuestionAudioOperation(q) {
+  const operation = audioOperations().get(q);
+  if (operation) operation.cancelled = true;
+}
+
+function questionStudentAudioReady(q) {
+  return Boolean(getQuestionAudioSrc(q)) && q.audioNeedsRegeneration !== true;
+}
+
+function defaultQuestionAudioScript(q) {
+  return String(q.passage || q.text || "").replace(/\[[^\]]+\]/g, " … ").replace(/\s+/g, " ").trim();
+}
+
+function questionAnswerAudioEntries(q) {
+  let entries = [];
+  if (["single", "multi", "dropdown"].includes(q.type)) entries = (q.options || []).map((option, index) => ({ key: `o${index}`, sourceText: option.text, asset: option, image: option.imageDataUrl || option.imageUrl }));
+  if (q.type === "grouping") entries = (q.groups || []).flatMap((group, gi) => (group.items || []).map((text, ii) => ({ key: `g${gi}_i${ii}`, sourceText: text })));
+  if (q.type === "matching") entries = (q.pairs || []).map((pair, index) => ({ key: `p${index}`, sourceText: pair.right }));
+  if (q.type === "ordering") entries = (q.items || []).map((text, index) => ({ key: `i${index}`, sourceText: text }));
+  return entries.map(entry => ({ ...entry, sourceText: String(entry.sourceText || "").replace(/\s+/g, " ").trim(), asset: entry.asset || (q.audioAnswerItems || []).find(asset => asset.key === entry.key) }));
+}
+
+function questionHasAudioAnswerEntries(q) {
+  const entries = questionAnswerAudioEntries(q);
+  const max = ["single", "multi", "dropdown"].includes(q.type) ? 4 : 12;
+  return entries.length >= 2 && entries.length <= max && entries.every(entry => entry.sourceText && entry.sourceText.length <= 500 && !entry.image);
+}
+
 function questionAudioReady(q) {
+  if (audioOperations().has(q)) return false;
   if (q?.audioPresentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) return false;
   const hasScript = Boolean(String(q?.audioScript || "").trim());
   const hasAudio = Boolean(getQuestionAudioSrc(q));
@@ -4316,14 +4361,14 @@ function questionAllAudioReady(q) {
 
 function questionAnswerAudioReady(q) {
   if (q?.audioAnswerMode !== "audio-only") return true;
-  return ["single", "multi"].includes(q.type) && Array.isArray(q.options) && q.options.length >= 2 && q.options.length <= 4 &&
-    q.options.every(option => !option?.imageDataUrl && !option?.imageUrl && String(option?.text || "").trim() &&
-      String(option?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") &&
-      option.audioNeedsRegeneration !== true) &&
-    q.options.reduce((size, option) => size + String(option.audioDataUrl || "").length, String(q.audioDataUrl || "").length) <= 700000;
+  const entries = questionAnswerAudioEntries(q);
+  return questionHasAudioAnswerEntries(q) && entries.every(entry => String(entry.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
+    entries.reduce((size, entry) => size + String(entry.asset?.audioDataUrl || "").length, String(q.audioDataUrl || "").length) <= 700000;
 }
 
 function clearQuestionAudio(q) {
+  cancelQuestionAudioOperation(q);
+  q.audioPresentation = "supplement";
   q.audioScript = "";
   q.audioDataUrl = "";
   q.audioByteSize = 0;
@@ -4364,16 +4409,30 @@ function renderQuestionAudioEditor(container, q) {
   container.innerHTML = "";
   const hasAudio = Boolean(getQuestionAudioSrc(q));
   const hasScript = Boolean(String(q.audioScript || "").trim());
+  const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  const shortcuts = document.createElement("div");
+  shortcuts.className = "questionAudioQuickActions";
+  const speakTask = makeMiniButton("Aufgabe als Höraufgabe", () => generateAiAudioForQuestion(q, container, { fromTask: true }));
+  speakTask.classList.add("generateQuestionAudio");
+  speakTask.disabled = locked;
+  shortcuts.appendChild(speakTask);
+  if (questionHasAudioAnswerEntries(q)) {
+    const speakAnswers = makeMiniButton("Antworten als Höraufgabe", () => generateAiAnswerAudioForQuestion(q, container));
+    speakAnswers.classList.add("generateQuestionAnswerAudio");
+    speakAnswers.disabled = locked;
+    shortcuts.appendChild(speakAnswers);
+  }
+  container.appendChild(shortcuts);
   const details = document.createElement("details");
   details.className = "questionAudioPanel";
-  details.open = hasAudio || hasScript;
-  details.innerHTML = `<summary><span>🔊 Audio / Höraufgabe <small>(optional)</small></span><span class="questionAudioState">${hasAudio && hasScript && !q.audioNeedsRegeneration ? "bereit" : hasAudio && !hasScript ? "Hörtext fehlt" : hasScript ? "Audio erzeugen" : ""}</span></summary>
+  details.open = false;
+  details.innerHTML = `<summary><span>Audio anhören und anpassen</span><span class="questionAudioState">${hasAudio && hasScript && !q.audioNeedsRegeneration ? "bereit" : hasAudio && !hasScript ? "Hörtext fehlt" : hasScript ? "Audio erzeugen" : ""}</span></summary>
     <div class="questionAudioBody">
       <label class="stack compact"><span>Anzeige für Schüler</span><select class="questionAudioPresentation"><option value="supplement">Text und Audio</option><option value="listening-only">Nur hören</option></select></label>
-      <label class="stack compact"><span>Hörtext <small>nur für Lehrkraft/Admin · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="z. B. The train to London leaves from platform four at half past eight."></textarea></label>
+      <label class="stack compact"><span>Eigener Hörtext <small>optional · nur für Lehrkraft/Admin · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Nur ausfüllen, wenn du einen anderen Text oder einen eigenen Hördialog verwenden möchtest."></textarea></label>
       <div class="questionAudioPreview"></div>
       <div class="questionAudioActions"></div>
-      <small class="questionAudioDisclosure">Die erzeugte Stimme ist KI-generiert. Im Schülerbereich wird der Hörtext nicht angezeigt.</small>
+      <small class="questionAudioDisclosure">Der private Hörtext wird im Schülerbereich nicht als Transkript angezeigt.</small>
     </div>`;
   container.appendChild(details);
   const input = details.querySelector(".questionAudioScript");
@@ -4381,12 +4440,13 @@ function renderQuestionAudioEditor(container, q) {
   presentation.value = q.audioPresentation === "listening-only" ? "listening-only" : "supplement";
   presentation.querySelector('option[value="listening-only"]').disabled = ["gapfill", "markwords"].includes(q.type);
   presentation.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-  presentation.addEventListener("change", () => { q.audioPresentation = presentation.value; markDirty(); });
+  presentation.addEventListener("change", () => { cancelQuestionAudioOperation(q); q.audioPresentation = presentation.value; markDirty(); });
   input.value = String(q.audioScript || "");
   input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   input.addEventListener("input", event => {
     const next = String(event.target.value || "").slice(0, 500);
     if (next === String(q.audioScript || "")) return;
+    cancelQuestionAudioOperation(q);
     q.audioScript = next;
     q.audioNeedsRegeneration = Boolean(next);
     markDirty();
@@ -4417,7 +4477,7 @@ function renderQuestionAudioEditor(container, q) {
   }
 
   const actions = details.querySelector(".questionAudioActions");
-  const generate = makeMiniButton(hasAudio ? "Audio neu erzeugen" : "KI-Audio erzeugen", () => generateAiAudioForQuestion(q, container));
+  const generate = makeMiniButton("Eigenen Hörtext vorlesen", () => generateAiAudioForQuestion(q, container));
   generate.classList.add("generateQuestionAudio");
   generate.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   actions.appendChild(generate);
@@ -4432,18 +4492,19 @@ function renderQuestionAudioEditor(container, q) {
     actions.appendChild(remove);
   }
 
-  if (["single", "multi"].includes(q.type)) {
+  if (questionHasAudioAnswerEntries(q)) {
     const answerDetails = document.createElement("details");
     answerDetails.className = "questionAudioPanel answerAudioPanel";
     answerDetails.open = q.audioAnswerMode === "audio-only";
     answerDetails.innerHTML = `<summary><span>🔊 Antwortmöglichkeiten vorlesen <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Die Antworttexte bleiben im Editor bearbeitbar. Schüler hören jede Auswahl einzeln; die richtigen Antworten bleiben verborgen.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
     container.appendChild(answerDetails);
     const answerPreview = answerDetails.querySelector(".answerAudioPreview");
-    (q.options || []).forEach((option, index) => {
+    questionAnswerAudioEntries(q).forEach((entry, index) => {
+      const option = entry.asset || {};
       const row = document.createElement("div");
       row.className = "questionAudioPreview";
       const label = document.createElement("span");
-      label.textContent = `Antwort ${index + 1}: ${option.text || "(leer)"}`;
+      label.textContent = `Antwort ${index + 1}: ${entry.sourceText}`;
       row.appendChild(label);
       if (String(option.audioDataUrl || "").startsWith("data:audio/")) {
         const player = document.createElement("audio");
@@ -4469,8 +4530,10 @@ function renderQuestionAudioEditor(container, q) {
     if (q.audioAnswerMode === "audio-only") {
       const removeAnswers = makeMiniButton("Audioantworten entfernen", () => {
         if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+        cancelQuestionAudioOperation(q);
         q.audioAnswerMode = "none";
-        q.options.forEach(option => { delete option.audioDataUrl; delete option.audioNeedsRegeneration; });
+        (q.options || []).forEach(option => { delete option.audioDataUrl; delete option.audioNeedsRegeneration; });
+        delete q.audioAnswerItems;
         markDirty();
         renderQuestionAudioEditor(container, q);
       });
@@ -4482,8 +4545,8 @@ function renderQuestionAudioEditor(container, q) {
   const solutionHasScript = Boolean(String(q.solutionAudioScript || "").trim());
   const solutionDetails = document.createElement("details");
   solutionDetails.className = "questionAudioPanel solutionAudioPanel";
-  solutionDetails.open = solutionHasAudio || solutionHasScript;
-  solutionDetails.innerHTML = `<summary><span>✅ Lösung als Audio <small>(optional)</small></span><span class="questionAudioState">${solutionHasAudio && solutionHasScript && !q.solutionAudioNeedsRegeneration ? "bereit" : solutionHasScript ? "Audio erzeugen" : ""}</span></summary>
+  solutionDetails.open = false;
+  solutionDetails.innerHTML = `<summary><span>Vorhandene Erklärung nach Testende</span><span class="questionAudioState">${solutionHasAudio && solutionHasScript && !q.solutionAudioNeedsRegeneration ? "bereit" : solutionHasScript ? "Audio erzeugen" : ""}</span></summary>
     <div class="questionAudioBody">
       <label class="stack compact"><span>Lösungstext <small>privat · max. 500 Zeichen</small></span><textarea class="solutionAudioScript" rows="3" maxlength="500" placeholder="Die richtige Lösung ist …"></textarea></label>
       <div class="questionAudioPreview solutionAudioPreview"></div>
@@ -4548,47 +4611,61 @@ function renderQuestionAudioEditor(container, q) {
   }
 }
 
-async function generateAiAudioForQuestion(q, container) {
+async function generateAiAudioForQuestion(q, container, { fromTask = false } = {}) {
+  if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
   if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du KI-Audio erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
-  const script = String(q.audioScript || "").replace(/\s+/g, " ").trim();
-  if (!script) return toast("Bitte zuerst einen kurzen Hörtext eingeben.", "error");
+  const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
+  const usesTaskText = fromTask || !originalScript;
+  const script = usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
   if (script.length > 500) return toast("Der Hörtext darf höchstens 500 Zeichen lang sein.", "error");
   if (!state.currentQuiz?.id || !q?.id) return toast("Audio kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
+  const quizId = state.currentQuiz.id;
+  const questionType = q.type;
   const button = container.querySelector(".generateQuestionAudio");
   const previous = button?.textContent || "KI-Audio erzeugen";
   if (button) { button.disabled = true; button.textContent = "Audio wird erzeugt …"; }
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  q.audioNeedsRegeneration = true;
+  markDirty();
   try {
     const result = await aiApi.generateQuestionAudio({ quizId: state.currentQuiz.id, questionId: q.id, script });
     if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat keine Audiodatei zurückgegeben.");
-    if (!state.questions.includes(q)) return;
+    if (operation.cancelled || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || String(q.audioScript || "").replace(/\s+/g, " ").trim() !== originalScript || usesTaskText && defaultQuestionAudioScript(q) !== script) return toast("Die Aufgabe wurde geändert oder geschlossen. Das Audio wurde nicht eingefügt.");
     Object.assign(q, result.asset);
     q.audioScript = script;
+    if (fromTask) q.audioPresentation = q.passage || ["gapfill", "markwords"].includes(q.type) ? "supplement" : "listening-only";
     q.audioNeedsRegeneration = false;
     markDirty();
     renderQuestionAudioEditor(container, q);
-    toast("KI-Audio eingefügt. Bitte kurz anhören und den Test speichern.");
+    toast("Audio eingefügt. Bitte kurz anhören und den Test speichern.");
   } catch (err) {
     console.error(err);
     showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "KI-Audio konnte nicht erstellt werden."), error: err, action: "generate_editor_audio", details: { questionType: q.type, scriptLength: script.length } });
   } finally {
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
     if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
   }
 }
 
 async function generateAiAnswerAudioForQuestion(q, container) {
+  if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
   if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du Antwortaudios erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
-  const options = q.options || [];
-  if (!["single", "multi"].includes(q.type) || options.length < 2 || options.length > 4 || options.some(option => !String(option.text || "").trim() || String(option.text).length > 500 || option.imageDataUrl || option.imageUrl)) {
-    return toast("Für Audioantworten sind zwei bis vier kurze Textoptionen ohne Antwortbilder nötig.", "error");
-  }
+  const entries = questionAnswerAudioEntries(q);
+  if (!questionHasAudioAnswerEntries(q)) return toast("Für Sprachnotizen fehlen kurze Antwort- oder Zuordnungstexte ohne Antwortbilder.", "error");
   const button = container.querySelector(".generateQuestionAnswerAudio");
   const previous = button?.textContent || "Antwortmöglichkeiten vorlesen";
-  const scripts = options.map(option => String(option.text).replace(/\s+/g, " ").trim());
+  const scripts = entries.map(entry => entry.sourceText);
   if (button) { button.disabled = true; button.textContent = "Antwort-Audios werden erzeugt …"; }
   q.audioAnswerMode = "audio-only";
-  q.options.forEach(option => { option.audioNeedsRegeneration = true; });
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  const quizId = state.currentQuiz.id;
+  const questionType = q.type;
+  entries.forEach(entry => { if (entry.asset) entry.asset.audioNeedsRegeneration = true; });
   markDirty();
   try {
     const assets = [];
@@ -4599,13 +4676,13 @@ async function generateAiAnswerAudioForQuestion(q, container) {
       assets.push(result.asset);
       if (assets.reduce((size, asset) => size + asset.audioDataUrl.length, String(q.audioDataUrl || "").length) > 700000) throw new Error("Die Audios sind für eine Aufgabe zu groß. Bitte Hör- oder Antworttexte kürzen.");
     }
-    if (!state.questions.includes(q) || q.options.length !== scripts.length || q.options.some((option, index) => String(option.text).replace(/\s+/g, " ").trim() !== scripts[index])) {
-      throw new Error("Antworttexte wurden während der Audioerzeugung geändert. Bitte erneut erzeugen.");
-    }
-    q.options.forEach((option, index) => {
+    const current = questionAnswerAudioEntries(q);
+    if (operation.cancelled || q.audioAnswerMode !== "audio-only" || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || current.length !== scripts.length || current.some((entry, index) => entry.sourceText !== scripts[index] || entry.key !== entries[index].key)) return toast("Die Antworten wurden geändert oder geschlossen. Die Audios wurden nicht eingefügt.");
+    if (["single", "multi", "dropdown"].includes(q.type)) q.options.forEach((option, index) => {
       option.audioDataUrl = assets[index].audioDataUrl;
       option.audioNeedsRegeneration = false;
     });
+    else q.audioAnswerItems = entries.map((entry, index) => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: assets[index].audioDataUrl, audioNeedsRegeneration: false }));
     markDirty();
     renderQuestionAudioEditor(container, q);
     toast("Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern.");
@@ -4613,6 +4690,7 @@ async function generateAiAnswerAudioForQuestion(q, container) {
     renderQuestionAudioEditor(container, q);
     showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Antwort-Audios konnten nicht vollständig erstellt werden."), error: err, action: "generate_answer_audio", details: { questionType: q.type, optionCount: scripts.length } });
   } finally {
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
     if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
   }
 }
@@ -5308,6 +5386,7 @@ function sanitizeQuestionForSave(q) {
   if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
   if (q.audioPresentation === "listening-only") base.audioPresentation = "listening-only";
   if (q.audioAnswerMode === "audio-only") base.audioAnswerMode = "audio-only";
+  if (q.audioAnswerMode === "audio-only" && !["single", "multi", "dropdown"].includes(q.type)) base.audioAnswerItems = questionAnswerAudioEntries(q).map(entry => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: String(entry.asset?.audioDataUrl || ""), audioNeedsRegeneration: !entry.asset || entry.asset.audioNeedsRegeneration === true || entry.asset.sourceText !== entry.sourceText }));
   if (["single", "multi", "dropdown"].includes(q.type)) {
     base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}), ...(q.audioAnswerMode === "audio-only" && String(o.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") ? { audioDataUrl: String(o.audioDataUrl), audioNeedsRegeneration: o.audioNeedsRegeneration === true } : {}) }));
     if (q.imageChoicesOnly) base.imageChoicesOnly = true;
@@ -5836,7 +5915,9 @@ function renderMatchingStudent(section, q) {
   const bank = document.createElement("div");
   bank.className = "dragBank";
   bank.innerHTML = `<span class="dropHint">Zuordnungen</span>`;
-  shuffled(q.pairs.map((p, idx) => ({ ...p, idx }))).forEach((p) => bank.appendChild(makeDragItem(p.right, p.idx)));
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) { section.textContent = "Sprachnotizen fehlen oder sind veraltet."; return; }
+  shuffled(q.pairs.map((p, idx) => ({ ...p, idx }))).forEach((p, shownIndex) => bank.appendChild(q.audioAnswerMode === "audio-only" ? makeAudioDragItem(`Sprachnotiz ${shownIndex + 1}`, p.idx, audioItems.get(`p${p.idx}`).asset.audioDataUrl) : makeDragItem(p.right, p.idx)));
   root.appendChild(bank);
   q.pairs.forEach((p, idx) => {
     const row = document.createElement("div");
@@ -5851,12 +5932,15 @@ function renderMatchingStudent(section, q) {
 function renderOrderingStudent(section, q) {
   const list = document.createElement("div");
   list.className = "sortableList";
-  shuffled(q.items.map((text, idx) => ({ text, idx }))).forEach(({ text, idx }) => {
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) { section.textContent = "Sprachnotizen fehlen oder sind veraltet."; return; }
+  shuffled(q.items.map((text, idx) => ({ text, idx }))).forEach(({ text, idx }, shownIndex) => {
     const row = document.createElement("div");
     row.className = "sortItem";
     row.draggable = true;
     row.dataset.key = String(idx);
-    row.innerHTML = `<span class="sortGrip">⋮⋮</span><span class="sortText">${escapeHtml(text)}</span><div class="sortButtons"><button type="button" class="iconButton up">↑</button><button type="button" class="iconButton down">↓</button></div>`;
+    row.innerHTML = `<span class="sortGrip">⋮⋮</span><span class="sortText">${escapeHtml(q.audioAnswerMode === "audio-only" ? `Sprachnotiz ${shownIndex + 1}` : text)}</span><div class="sortButtons"><button type="button" class="iconButton up">↑</button><button type="button" class="iconButton down">↓</button></div>`;
+    if (q.audioAnswerMode === "audio-only") row.querySelector(".sortText").replaceChildren(makeAudioDragItem(`Sprachnotiz ${shownIndex + 1}`, String(idx), audioItems.get(`i${idx}`).asset.audioDataUrl));
     row.querySelector(".up").addEventListener("click", () => {
       const prev = row.previousElementSibling;
       if (prev) list.insertBefore(row, prev);
@@ -5892,7 +5976,13 @@ function renderGroupingStudent(section, q) {
   bank.innerHTML = `<span class="dropHint">Elemente</span>`;
   const items = [];
   q.groups.forEach((g, gi) => (g.items || []).forEach((text, ii) => items.push({ text, key: `g${gi}_i${ii}` })));
-  shuffled(items).forEach((item) => bank.appendChild(makeDragItem(item.text, item.key)));
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) {
+    root.textContent = "Sprachnotizen fehlen oder sind veraltet. Bitte vor dem Veröffentlichen neu erzeugen.";
+    section.appendChild(root);
+    return;
+  }
+  shuffled(items).forEach((item, index) => bank.appendChild(q.audioAnswerMode === "audio-only" ? makeAudioDragItem(`Sprachnotiz ${index + 1}`, item.key, audioItems.get(item.key).asset.audioDataUrl) : makeDragItem(item.text, item.key)));
   root.appendChild(bank);
   const grid = document.createElement("div");
   grid.className = "groupDropGrid";
@@ -5906,6 +5996,19 @@ function renderGroupingStudent(section, q) {
   root.appendChild(grid);
   section.appendChild(root);
   setupMoveableBank(root);
+}
+
+function makeAudioDragItem(label, key, src) {
+  const item = makeDragItem(label, key);
+  item.classList.add("audioDragItem");
+  const player = document.createElement("audio");
+  player.controls = true;
+  player.preload = "metadata";
+  player.src = src;
+  player.setAttribute("aria-label", `${label} anhören`);
+  ["click", "pointerdown", "keydown"].forEach(type => player.addEventListener(type, event => event.stopPropagation()));
+  item.appendChild(player);
+  return item;
 }
 
 function renderMarkwordsStudent(section, q) {
@@ -6129,7 +6232,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.qid = q.id;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionAudioReady(q) ? "Nur hören" : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? "Höraufgabe" : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -6170,7 +6273,8 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       const sel = document.createElement("select");
       sel.name = q.id;
       const entries = studentOptionEntries(quiz, q, ownerPreview);
-      sel.innerHTML = `<option value="">Bitte auswählen …</option>` + entries.map(({ option, originalIndex }) => `<option value="${originalIndex}">${escapeHtml(option.text)}</option>`).join("");
+      sel.innerHTML = `<option value="">Bitte auswählen …</option>` + entries.map(({ option, originalIndex }, shownIndex) => `<option value="${originalIndex}">${escapeHtml(q.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : option.text)}</option>`).join("");
+      if (q.audioAnswerMode === "audio-only") entries.forEach(({ option, originalIndex }, shownIndex) => section.appendChild(makeAudioDragItem(`${contentLabels.answer} ${shownIndex + 1}`, String(originalIndex), option.audioDataUrl)));
       section.appendChild(sel);
     } else if (q.type === "single" || q.type === "multi") {
       const imageOnly = q.options?.length >= 2 && q.options.every(o => o.imageDataUrl) &&

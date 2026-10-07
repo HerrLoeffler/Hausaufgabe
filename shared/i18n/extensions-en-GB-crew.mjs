@@ -4,6 +4,18 @@ const source = entries => Object.fromEntries(
 
 export const enGBCrewMessages = Object.freeze({
   ...source({
+    "Erstellung ist bereit.": "Creation is ready.",
+    "Verbindung wird geprüft …": "Checking connection …",
+    "Aufgabe als Höraufgabe": "Read question aloud",
+    "Antworten als Höraufgabe": "Read answers aloud",
+    "Audio anhören und anpassen": "Listen and adjust audio",
+    "Eigenen Hörtext vorlesen": "Read custom listening text",
+    "Eigener Hörtext": "Custom listening text",
+    "Audio wird bereits erzeugt.": "Audio is already being created.",
+    "Vorhandene Erklärung nach Testende": "Existing explanation after the test",
+    "Sprachnotizen fehlen oder sind veraltet.": "Audio memos are missing or outdated.",
+    "Aufgaben werden vorgelesen · kein Autoplay · im Editor anhörbar.": "Questions are read aloud · no autoplay · playable in the editor.",
+    "Das Erstellen von Tests, Bildern und Audio kann Kosten verursachen.": "Creating tests, images and audio may incur costs.",
     "Coco – Hilfe und Orientierung": "Coco – help and guidance",
     "Hilfe & Orientierung": "Help & guidance",
     "Coco schließen": "Close Coco",
@@ -56,6 +68,8 @@ export const enGBCrewMessages = Object.freeze({
 });
 
 export const enGBCrewSourcePatterns = Object.freeze([
+  { pattern: /^Sprachnotiz (\d+) anhören$/, replacement: "Play audio memo $1" },
+  { pattern: /^Sprachnotiz (\d+)$/, replacement: "Audio memo $1" },
   { pattern: /^Emmi hat (\d+) Aufgaben geändert\.$/, replacement: "Emmi changed $1 questions." },
   { pattern: /^Emmi hat (\d+) Aufgabe geändert\.$/, replacement: "Emmi changed $1 question." },
   { pattern: /^Remy hat (.*) übernommen\.$/, replacement: "Remy applied $1." },

@@ -17,6 +17,9 @@ function injectStyles(doc) {
   style.textContent = `
 body.${BODY_CLASS} .${ROW_CLASS}{cursor:default!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;-webkit-user-drag:none!important}
 body.${BODY_CLASS} .${ROW_CLASS} .sortGrip{display:none!important}
+body.${BODY_CLASS} .${ROW_CLASS}{grid-template-columns:minmax(0,1fr) auto!important}
+body.${BODY_CLASS} .${ROW_CLASS} .sortText{grid-column:1;min-width:0;overflow-wrap:anywhere}
+body.${BODY_CLASS} .${ROW_CLASS} .sortButtons{grid-column:2;justify-self:end}
 body.${BODY_CLASS} .${ROW_CLASS} .sortButtons,
 body.${BODY_CLASS} .${ROW_CLASS} .sortButtons button,
 body.${BODY_CLASS} .${ROW_CLASS} button.iconButton{touch-action:manipulation!important}
