@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07 01:53:52 UTC",
+  "observed_at": "2026-10-07 01:57:52 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -60,20 +60,20 @@
       "staging_functions": "success_run_37559039672_receipt_11455703400_commit_094546a44131a671daede5131e29def0da116002",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
-      "user_acceptance": "pending_for_094546a44131a671daede5131e29def0da116002; previous0931_failed_retained",
+      "user_acceptance": "pending_for_094546a4; previous0931ade4_failed_retained",
       "production": "not_requested",
       "staging_assessment_functions": "success_run_37559039672_receipt_11456380393_commit_094546a44131a671daede5131e29def0da116002",
       "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
-      "canonical_hosting": "requested_gc-web-acceptance-20261007-094546a4; previous0931ade4_remains_live_until_receipt"
+      "canonical_hosting": "success_run_37559354641_receipt_11456410883_commit_094546a44131a671daede5131e29def0da116002"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 123,
-    "important": "PR161/162 integrated as094546a44131a671daede5131e29def0da116002, exactCI37558924609 success, preview37559039697/receipt11455947421 verified123files, AI/Assessment37559039672/receipts11455703400,11456380393 success. Canonical request committed now; do not claim live main destination until successful receipt. Real authenticated Preview dashboard observed, current checkbox1px/side-overflow0; local phone390 side-overflow0 and keyboard switch event/focus verified. New private audio remains teacher drafts pending live secure Rules/Gates C–F; no paid provider tests. No scroll story/Games/iOS/Production. Collector PAUSED.",
-    "next_action": "Observe existing canonical Hosting request for094546a4; confirm receipt/hash/URL, then save closeout. Private audiomodes remain teacher drafts. No additional code or auto polling.",
+    "important": "Final PR161/162 batch094546a44131a671daede5131e29def0da116002 is verified on canonical Staging: exactCI37558924609, preview37559039697/receipt11455947421, AI/Assessment37559039672/receipts11455703400,11456380393, canonical37559354641/receipt11456410883 with123files. Actual authenticated canonical dashboard loaded with0px horizontal overflow at1920 and1px publication checkbox, no new console errors. Local390px layout/Space/focus verified. Human/device and paid generation acceptance unperformed; old failed jobs/reports preserved. New private audio remains draft-only until proven live secure Rules/Gates C–F/30participants. No scroll story, Games/nativeiOS/Production; collector PAUSED.",
+    "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
-      "stage": "integrated_preview_and_functions_deployed_canonical_requested",
+      "stage": "staging_deployed",
       "commit": "094546a44131a671daede5131e29def0da116002",
       "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
       "included_prs": [
@@ -86,7 +86,10 @@
       "functions_run": 37559039672,
       "ai_receipt": 11455703400,
       "assessment_receipt": 11456380393,
-      "no_scroll_story": true
+      "no_scroll_story": true,
+      "canonical_run": 37559354641,
+      "canonical_receipt": 11456410883,
+      "user_acceptance": "pending"
     },
     "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json"
   },
@@ -274,6 +277,12 @@
       "production_access": false,
       "hosting_scope": false,
       "firestore_rules_scope": false
+    },
+    "manual_chat_collection": {
+      "status": "PAUSED",
+      "id": "gradecrew-security-ergebnis-zur-ckholen",
+      "manual_only": true,
+      "observed_at": "2026-10-07 01:57:52 UTC"
     }
   },
   "workstreams": [
@@ -739,7 +748,7 @@
       "id": "web-repair-20261007",
       "integration_branch": "feature/gradecrew-app-integration",
       "student_private_audio_release_enabled": false,
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "branch": "feature/audio-switch-overflow-20261007",
       "pr": 162,
       "verified_commit": "094546a44131a671daede5131e29def0da116002",
@@ -749,7 +758,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Observe existing canonical Hosting request for094546a4; confirm receipt/hash/URL, then save closeout. Private audiomodes remain teacher drafts. No additional code or auto polling.",
+      "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -797,7 +806,30 @@
       "combined_ci_job": 112591523793,
       "mobile_ci_source_commit": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
       "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json",
-      "user_test": "pending_for_new_candidate"
+      "user_test": "pending_for_094546a4",
+      "canonical_hosting_run": 37559354641,
+      "canonical_hosting_receipt": 11456410883,
+      "canonical_url": "https://hausaufgabe-staging.web.app/",
+      "verified_files": 123,
+      "actual_browser_observation": {
+        "live_dashboard_loaded": true,
+        "live_desktop_viewport": [
+          1920,
+          902
+        ],
+        "live_desktop_overflow_px": 0,
+        "live_checkbox_width_px": 1,
+        "local_mobile_viewport": [
+          390,
+          844
+        ],
+        "local_mobile_overflow_px": 0,
+        "keyboard_switch": "native Space event and focus-visible outline verified locally",
+        "new_live_console_errors": 0,
+        "screenshot_local": "analysis/web-acceptance-20261007/staging-workspace-094546a4.jpg",
+        "physical_device_acceptance": "not_performed",
+        "paid_generation_test": "not_performed"
+      }
     },
     {
       "id": "gc-web-polish-20261007",
@@ -1037,6 +1069,22 @@
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
+    },
+    {
+      "date": "2026-10-07",
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "commit": "094546a44131a671daede5131e29def0da116002",
+      "project": "hausaufgabe-staging",
+      "canonical_run": 37559354641,
+      "canonical_receipt": 11456410883,
+      "preview_run": 37559039697,
+      "functions_run": 37559039672,
+      "ai_receipt": 11455703400,
+      "assessment_receipt": 11456380393,
+      "verified_files": 123,
+      "user_test": "pending",
+      "production": false,
+      "rules_deployed": false
     }
   ],
   "blockers": [

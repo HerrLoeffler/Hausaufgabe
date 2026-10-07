@@ -56,3 +56,16 @@ PR162 exactCI37558728031/Job112590895273 undAudit37558831068 erfolgreich; seriel
 TatsächlichgeladenerPreview-Dashboardbrowser zeigtneueOberfläche, bestehendeAnmeldung,1pxCheckbox,0pxSeitenüberstandamDesktop1920. Lokale390×844-Ansicht ebenfalls0px undnativeSpace-/Fokusfunktionbestätigt. KeinebezahlteGenerierungoderGeräteabnahme. MobileTourruntimevorCSSdelta37558149323@7f91dea0grün; finalerCSS-StandüberexakteCombinedCIundgezielteBrowserprüfunggeprüft, keineerfundeneMobileRunID.
 
 Append-onlyCanonicalrequest `automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json`: previewRunId37559039697, commit094546a4. KeinfrühererPreviewwirdpromotet. Canonical-ControllerprüftReceipt/OriginalCI/aktuellenBranch/Manifest/alleHashesundveröffentlichtausschließlichdasunveränderlicheBuildartefakt. NächstersichtbarerSchritt: existierendenRun+ReceiptfürHauptadresseabholenundCloseoutMain/Ledgersichern. NeueprivateAudiomodiweiterEntwurf; LiveRules/GatesC-F/30Teilnehmeroffen. KeineweitereCodearbeit,CollectorPAUSED.
+
+
+## 2026-10-07 01:57:52 UTC — kanonisches Staging veröffentlicht
+
+Der endgültige App-Commit ist `094546a44131a671daede5131e29def0da116002` (PR161 + CSS-Nachfolger PR162, Tree `d4649445e5b4e201c003baae1efd09d3fa7ca9e5`). Exakte Merge-CI `37558924609` ist erfolgreich. Preview `37559039697` liefert Buildartifact `11456161538` und Receipt `11455947421`; AI/Assessment-Run `37559039672` liefert getrennte Receipts `11455703400` und `11456380393`.
+
+Der append-only Request auf main `41b87d7cdad352942716654099e56765a08f53ad` hat kanonischen Run `37559354641` ausgelöst. Der kanonische Job `112592905637` hat Original-CI, aktuellen Integrationscommit, unveränderliches Preview-Buildartefakt, Manifest und sämtliche Dateihashes geprüft und nur Staging Hosting veröffentlicht. Receipt `11456410883` (Digest `sha256:c5a24d48e6b6f5be4136ee4df5feb0cec5b9f68f8c73f3d7f2b5df1ad62d8589`) bestätigt die Veröffentlichung auf https://hausaufgabe-staging.web.app/ mit123Dateien. Kein Rules- oder Production-Deploy.
+
+Der tatsächliche kanonische Browser zeigt die neue Oberfläche mit bestehender Anmeldung, 1px Veröffentlichungsschalter und0px horizontalem Überstand bei1920×902. Keine neuen Konsolenfehler. Die lokale tatsächliche390×844-Ansicht hat ebenfalls0px Überstand; native Space-Aktion und sichtbarer Tastaturfokus des Schalters sind geprüft. Screenshot lokal gesichert. Dies bestätigt die gezielten Browserabläufe, ersetzt weder echte Geräte-/Nutzerabnahme noch eine bezahlte Testgenerierung.
+
+Auf Staging: gezielte Layout-/Tutorial-/Remy-/Reset- und Audio-Konvertierungs-/Quotenreparaturen, klarerer Arbeitsbereich, finite native Coco-Flügel-/Augenbewegung. Keine Scrollgeschichte. Bestehende fehlgeschlagene Aufträge und frühere Reports bleiben als Historie sichtbar; nicht pauschal erledigt markiert oder neu kostenpflichtig ausgeführt.
+
+Noch offen: neue Tests durch Martin praktisch erstellen und Audio-Konvertierung prüfen; neue private listening-only/audio-only Modi bleiben Lehrkraft-Entwürfe bis Live-Secure-Rules und Gates C–F einschließlich30Teilnehmer-Fall nachgewiesen sind. Games, native iOS und Production sind ausgeschlossen. Automatisches Chat-Abholen bleibt PAUSED; keine neue Automation oder bezahlten Provider-Tests. Das autorisierte Staging-Paket ist veröffentlicht, die offenen Freigaben bleiben sichtbar.
