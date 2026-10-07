@@ -133,3 +133,7 @@ PR167 integriert als fa51e2781a8e00b219892fdceb2d25fb88203ff5. Kandidaten-CI3762
 MergeCI37630241490 bestanden. Exakte Preview37630432043 und Functions37630432069 gestartet, Sourcechecks erfolgreich; noch laufend. LokalerServer neu gestartet mit aktuellem Code auf127.0.0.1:8768. Nächster Schritt: die zwei bestehenden Läufe bis zu ihren Receipts prüfen, nicht erneut starten.
 
 Hostingpreview37630432043 bestätigt, Receipt11485409743 (127Dateien). AssessmentfunctionsReceipt11486302530. AIjob112823026088 scheiterte vorCreation/Update beimFirebaseList: Failed to list functions for hausaufgabe-staging. SchwesterjobmitgleicherIdentitybestand. GenaueinbegrenzterRetrydesfehlgeschlagenenAIjobs gestartet (Run37630432069 Versuch2), gleicherfa51e278Quellstand. KeineCanonicalpromotionbisreviewModeNachweis. Fehlerhistorieerhalten.
+
+
+## PR167 — Server bestätigt, kanonische Veröffentlichung angefordert
+Functions Run37630432069 Versuch2 bestanden, AI-Receipt11486900356; reviewMode(europe-west1) erfolgreich erstellt und explizit in der Funktionsliste verifiziert. Assessment-Receipt11486302530, Preview-Receipt11485409743 bleiben gültig für fa51e2781a8e00b219892fdceb2d25fb88203ff5. Fehlgeschlagener List-Versuch1 bleibt dokumentiert. Kanonischer Auftrag automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json verweist auf genau Preview37630432043. Nächster Schritt: dessen tatsächlichen kanonischen Run und Receipt prüfen. Keine Browserabnahme oder Production behauptet.

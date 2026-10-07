@@ -1364,7 +1364,7 @@
     "deployment": "not_deployed",
     "automaticAI": false,
     "automaticChecks": "explicit_local_allowlist_only",
-    "next": "Observe existing Functions retry37630432069; canonical promotion only after reviewMode function verified",
+    "next": "Verify canonical staging receipt, then user acceptance",
     "integration": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
     "candidateCIConclusion": "success",
     "mergeCI": 37630241490,
@@ -1381,8 +1381,12 @@
       },
       {
         "attempt": 2,
-        "result": "started bounded retry of failed AI job only; same immutable source fa51e278"
+        "result": "success; reviewMode created and explicitly verified; receipt11486900356"
       }
-    ]
+    ],
+    "functionsReceipt": 11486900356,
+    "functionsConclusion": "success_attempt2",
+    "reviewModeFunctionVerified": true,
+    "canonicalRequest": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json"
   }
 }
