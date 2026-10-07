@@ -1364,9 +1364,12 @@
     "deployment": "not_deployed",
     "automaticAI": false,
     "automaticChecks": "explicit_local_allowlist_only",
-    "next": "Verify merge CI37630241490 and separate Hosting/Functions receipts",
+    "next": "Verify running deployment receipts then promote exact preview at canonical staging URL",
     "integration": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
     "candidateCIConclusion": "success",
-    "mergeCI": 37630241490
+    "mergeCI": 37630241490,
+    "mergeCIConclusion": "success",
+    "previewRun": 37630432043,
+    "functionsRun": 37630432069
   }
 }

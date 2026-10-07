@@ -129,3 +129,5 @@ Nächster Schritt: CI37629871764 auswerten, bei Erfolg frischen Integrationsstan
 
 
 PR167 integriert als fa51e2781a8e00b219892fdceb2d25fb88203ff5. Kandidaten-CI37629871764 grün; frischer Development-Audit37630010213 geprüft, Integrationsbasis6390766 unverändert, keine fremden offenen PRs übernommen. MergeCI37630241490 läuft, Mobiletutorial37630241356 grün. Nächster Schritt: exakte MergeCI und getrennte Deployreceipts; Funktionsnachweis ausdrücklich um reviewMode ergänzt. Noch kein neuer Deploynachweis.
+
+MergeCI37630241490 bestanden. Exakte Preview37630432043 und Functions37630432069 gestartet, Sourcechecks erfolgreich; noch laufend. LokalerServer neu gestartet mit aktuellem Code auf127.0.0.1:8768. Nächster Schritt: die zwei bestehenden Läufe bis zu ihren Receipts prüfen, nicht erneut starten.
