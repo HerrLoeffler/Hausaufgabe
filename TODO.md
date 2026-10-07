@@ -302,3 +302,6 @@ GC-WEB-REPAIR-20261007 · Aktiver expliziter Reparaturauftrag: etwa9 Rahmenhinwe
 
 
 GC-WEB-REPAIR-20261007 · Korrektur des Rahmen-Backlogs: Martin verlangt Staging→Feedback→Screenshot-Fehler, keine separate lokale Übersicht. dd72b7cRecovery-UI entfernt. Fix lokal2cbb647 (fix/visual-backlog-recovery-20261007): atomare Spiegelung neuerRahmenmeldungen infeedback category screenshot_error, idempotenterAdminAbgleich bestehender eigenerOnlineRahmenmeldungen, keineStatusrücksetzung, keineKI/BugOpsTrigger;25Tests pass. Nicht deployed, Batchregel Deployen bleibtgültig. Tatsächliche neun Hinweise unbekannt;BrowserpolicyverhindertZugriff. LocalStorage-onlyHinweise nicht automatischimCloudAbgleich. Arbeitsauftrag Screenshot-Fehler nurcategory+authorId/userIdMartin, keine technischenChecks. NächsterSchritt explizitesDeployen und exakteCI/Receipts; dann tatsächlicheAnzahl aufStaging prüfen.
+
+### GC-WEB-REPAIR-20261007 – Idee zusätzliche Vorschauseite (2026-10-08)
+Martin erwägt eine zusätzliche Vorschauseite zwischen lokal und Staging, auf der gesammelte Änderungen ohne einzelne Deploy-Rückfragen bereitstehen. **Idee, kein Umsetzungsauftrag.** Bestehende Sammeln/Abarbeiten/Deployen-Regel bleibt gültig; aktuelle PR174-Staging-Freigabe bleibt separat. Technische Deploy-Zeit wird dadurch nicht automatisch verkürzt.
