@@ -193,7 +193,7 @@ function questionShell(question, index) {
   section.appendChild(head);
 
   const title = document.createElement("h2");
-  title.textContent = question.type === "gapfill" ? "Lückentext" : question.audioPresentation === "listening-only" ? "Nur hören" : question.text || "Aufgabe";
+  title.textContent = question.type === "gapfill" ? "Lückentext" : question.audioPresentation === "listening-only" ? assessmentContentLabels(currentQuiz?.contentLocale)[question.image?.src ? "listeningImageInstruction" : "listeningInstruction"] : question.text || "Aufgabe";
   section.appendChild(title);
 
   if (question.image?.src) {
@@ -212,15 +212,11 @@ function questionShell(question, index) {
     label.textContent = "🔊 Höraufgabe";
     const audio = document.createElement("audio");
     audio.controls = true;
+    audio.setAttribute("controlslist", "nodownload noplaybackrate");
     audio.preload = "metadata";
     audio.src = question.audio.src;
     audio.setAttribute("aria-label", `Audio zu Aufgabe ${index + 1} anhören`);
     audioBox.append(label, audio);
-    if (question.audio.aiGenerated !== false) {
-      const disclosure = document.createElement("small");
-      disclosure.textContent = "KI-generierte Stimme";
-      audioBox.appendChild(disclosure);
-    }
     section.appendChild(audioBox);
   }
   return section;
@@ -248,6 +244,7 @@ function renderOptions(section, question, multiple = false) {
     if (question.audioAnswerMode === "audio-only" && option.audio?.src) {
       const player = document.createElement("audio");
       player.controls = true;
+      player.setAttribute("controlslist", "nodownload noplaybackrate");
       player.preload = "metadata";
       player.src = option.audio.src;
       player.setAttribute("aria-label", `${contentLabels.answer} ${shownIndex + 1}`);
@@ -280,6 +277,7 @@ function memoContent(item, index) {
   if (item.audio?.src) {
     const player = document.createElement("audio");
     player.controls = true;
+    player.setAttribute("controlslist", "nodownload noplaybackrate");
     player.preload = "metadata";
     player.src = item.audio.src;
     player.setAttribute("aria-label", memoLabel(index));

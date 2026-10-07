@@ -13,8 +13,8 @@ export function normalizeAssessmentLocale(value, fallback = DEFAULT_CONTENT_LOCA
 
 // These labels belong to the fixed assessment content, never to the UI catalog.
 const CONTENT_LABELS = Object.freeze({
-  "de-DE": Object.freeze({ trueLabel: "Richtig", falseLabel: "Falsch", questionImage: "Abbildung zur Aufgabe", answerImage: "Antwortabbildung", answer: "Antwort", imageChoice: index => `Bild ${String.fromCharCode(65 + index)}` }),
-  "en-GB": Object.freeze({ trueLabel: "True", falseLabel: "False", questionImage: "Image for the question", answerImage: "Answer image", answer: "Answer", imageChoice: index => `Image ${String.fromCharCode(65 + index)}` }),
+  "de-DE": Object.freeze({ listeningInstruction: "Höre dir die Aufnahme an und beantworte die Frage.", listeningImageInstruction: "Höre dir die Aufnahme unter dem Bild an und beantworte die Frage.", trueLabel: "Richtig", falseLabel: "Falsch", questionImage: "Abbildung zur Aufgabe", answerImage: "Antwortabbildung", answer: "Antwort", imageChoice: index => `Bild ${String.fromCharCode(65 + index)}` }),
+  "en-GB": Object.freeze({ listeningInstruction: "Listen to the recording and answer the question.", listeningImageInstruction: "Listen to the recording below the picture and answer the question.", trueLabel: "True", falseLabel: "False", questionImage: "Image for the question", answerImage: "Answer image", answer: "Answer", imageChoice: index => `Image ${String.fromCharCode(65 + index)}` }),
 });
 
 export function assessmentContentLabels(contentLocale) {

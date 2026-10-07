@@ -68,6 +68,13 @@ function enhanceStudentProgress(progress) {
   const toggle = compact.querySelector(".studentOverviewToggle");
   let index = 0;
   let ticking = false;
+  let navigating = false;
+  let navigationTimer;
+  const releaseNavigation = () => { navigating = false; clearTimeout(navigationTimer); };
+  const settleNavigation = () => {
+    clearTimeout(navigationTimer);
+    navigationTimer = setTimeout(releaseNavigation, 180);
+  };
 
   const sections = () => Array.from(document.querySelectorAll(".studentQuestion[data-qid]"));
   const sync = () => {
@@ -76,7 +83,7 @@ function enhanceStudentProgress(progress) {
     const stickyBottom = Math.max(0, progress.getBoundingClientRect().bottom,
       document.querySelector(".topbar")?.getBoundingClientRect().bottom || 0,
       document.getElementById("studentTimerBar")?.getBoundingClientRect().bottom || 0) + 18;
-    index = closestQuestionIndex(items, stickyBottom);
+    if (!navigating) index = closestQuestionIndex(items, stickyBottom);
     if (current.textContent !== String(index + 1)) current.textContent = String(index + 1);
     if (total.textContent !== String(items.length)) total.textContent = String(items.length);
     previous.disabled = index <= 0;
@@ -88,14 +95,23 @@ function enhanceStudentProgress(progress) {
     });
   };
   const onScroll = () => {
+    if (navigating) settleNavigation();
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => { ticking = false; sync(); });
   };
   const go = delta => {
     const items = sections();
-    const target = items[Math.max(0, Math.min(items.length - 1, index + delta))];
-    if (target) { target.tabIndex = -1; target.focus({ preventScroll: true }); target.scrollIntoView({ behavior: scrollBehavior(), block: "start" }); }
+    index = Math.max(0, Math.min(items.length - 1, index + delta));
+    const target = items[index];
+    if (target) {
+      navigating = true;
+      settleNavigation();
+      sync();
+      target.tabIndex = -1;
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    }
   };
 
   previous.addEventListener("click", () => go(-1));
@@ -106,21 +122,40 @@ function enhanceStudentProgress(progress) {
     toggle.querySelector("span").textContent = open ? "⌃" : "⌄";
   });
   nav.addEventListener("click", event => {
-    if (!event.target.closest(".questionNavDot")) return;
+    const selected = event.target.closest(".questionNavDot");
+    if (!selected) return;
+    const selectedIndex = sections().findIndex(item => item.dataset.qid === selected.dataset.qid);
+    if (selectedIndex >= 0) {
+      index = selectedIndex;
+      navigating = true;
+      settleNavigation();
+      sync();
+    }
     progress.classList.remove("overviewOpen");
     toggle.setAttribute("aria-expanded", "false");
     toggle.querySelector("span").textContent = "⌄";
     // Apply the collapsed height before the core click handler scrolls a question.
     document.documentElement.style.setProperty("--student-progress-height", `${Math.ceil(progress.getBoundingClientRect().height)}px`);
-    setTimeout(sync, 350);
+
   }, true);
 
+  const releaseOnManualInput = event => {
+    if (event.type !== "wheel" && event.target instanceof Element &&
+        event.target.closest(".studentCompactNav, .questionNavDot")) return;
+    releaseNavigation();
+  };
+  // Manual scrolling takes over immediately from an explicit question jump.
+  for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])
+    window.addEventListener(type, releaseOnManualInput, { capture: true, passive: true });
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
   studentCleanup?.();
   const stopProgressHeight = watchStickyHeight(progress, "--student-progress-height");
   const stopTimerHeight = watchStickyHeight(document.getElementById("studentTimerBar"), "--student-timer-height");
   studentCleanup = () => {
+    releaseNavigation();
+    for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])
+      window.removeEventListener(type, releaseOnManualInput, true);
     stopProgressHeight();
     stopTimerHeight();
     window.removeEventListener("scroll", onScroll);

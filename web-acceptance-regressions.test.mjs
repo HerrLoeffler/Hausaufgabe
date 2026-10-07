@@ -55,3 +55,30 @@ test('opening a new creation form clears task-specific fields but restores saved
   assert.equal(doc.getElementById('aiPersonalPreferences').value,'Kurze Aufgaben');
   dom.window.close();
 });
+
+
+test('student arrows advance repeatedly despite scroll margins and smooth-scroll frames', async () => {
+  const dom = new JSDOM('<div id="studentProgressBar"><div id="studentQuestionNav">'+[1,2,3].map(i=>`<button class="questionNavDot" data-qid="q${i}">${i}</button>`).join('')+'</div></div>'+[1,2,3].map(i=>`<section class="studentQuestion" data-qid="q${i}"></section>`).join(''), {runScripts:'outside-only',pretendToBeVisual:true});
+  const w=dom.window, doc=w.document, calls=[];
+  const progress=doc.getElementById('studentProgressBar');
+  progress.getBoundingClientRect=()=>({bottom:200});
+  doc.querySelectorAll('.studentQuestion').forEach((node,i)=>{
+    node.getBoundingClientRect=()=>({top:220+i*400});
+    node.scrollIntoView=()=>calls.push(node.dataset.qid);
+  });
+  w.scrollBehavior=()=> 'smooth';w.watchStickyHeight=()=>()=>{};
+  const src=fs.readFileSync('ui-enhancements.js','utf8');
+  w.eval(src.slice(src.indexOf('let studentCleanup'),src.indexOf('function scan('))+'\nenhanceStudentProgress(document.getElementById("studentProgressBar"));window.cleanupProgress=studentCleanup;');
+  await new Promise(resolve=>w.setTimeout(resolve,5));
+  const next=doc.querySelector('.studentNextQuestion'), prev=doc.querySelector('.studentPrevQuestion');
+  next.click();next.dispatchEvent(new w.Event('pointerdown',{bubbles:true}));w.dispatchEvent(new w.Event('scroll'));
+  await new Promise(resolve=>w.requestAnimationFrame(resolve));
+  next.click();
+  assert.deepEqual(calls,['q2','q3']);
+  assert.equal(doc.querySelector('.studentCurrentNumber').textContent,'3');
+  assert.equal(next.disabled,true);
+  prev.click();prev.click();
+  assert.deepEqual(calls,['q2','q3','q2','q1']);
+  assert.equal(prev.disabled,true);
+  w.cleanupProgress();w.close();
+});
