@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+    "observed_integration_head": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -55,27 +55,27 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success37679341669_commit_d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+      "combined_ci": "success37687543142_commit_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success37679524303_receipt11508997430",
-      "staging_functions": "success37679524132_receipt11508227774",
+      "hosting_preview": "success37687715280_receipt_11510939538",
+      "staging_functions": "success37687715188_receipt_11511379079",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
-      "user_acceptance": "pending_for_d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+      "user_acceptance": "pending_for_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "production": "not_requested",
-      "staging_assessment_functions": "success37679524132_receipt11508073240",
+      "staging_assessment_functions": "success37687715188_receipt_11511717783",
       "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
-      "canonical_hosting": "success37679819532_receipt11508903261"
+      "canonical_hosting": "success37688108976_receipt_11511808010"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 127,
-    "important": "PR168/169/170 jointly canonically deployed; exact Hosting manifest/file hashes and both Functions receipts verified. Colored marking, A4 printing and mathematical glyph diagnosis remain open. No Production.",
-    "next_action": "Martin refreshes Staging and tests student preview/Coco/editor; source text needed for malformed vector glyphs",
+    "important": "PR172 local design/compact annotation batch canonically deployed with exact Hosting hashes and both backend receipts. Own visual-feedback author-filtered backlog is separate from general notes and technical checks. Local-only standalone notes not silently imported. Browser visual acceptance pending. Production unchanged.",
+    "next_action": "Martin tests canonical Staging and records own visual-feedback notes; next deploy only on explicit user request",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
       "stage": "staging_deployed",
-      "commit": "d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+      "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "included_prs": [
         164,
         165,
@@ -83,19 +83,20 @@
         167,
         168,
         169,
-        170
+        170,
+        172
       ],
-      "combined_ci": 37679341669,
-      "preview_run": 37679524303,
-      "preview_receipt": 11508997430,
-      "functions_run": 37679524132,
-      "ai_receipt": 11508227774,
-      "assessment_receipt": 11508073240,
-      "canonical_run": 37679819532,
-      "canonical_receipt": 11508903261,
+      "combined_ci": 37687543142,
+      "preview_run": 37687715280,
+      "preview_receipt": 11510939538,
+      "functions_run": 37687715188,
+      "ai_receipt": 11511379079,
+      "assessment_receipt": 11511717783,
+      "canonical_run": 37688108976,
+      "canonical_receipt": 11511808010,
       "user_acceptance": "pending"
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-coco-preview-20261007-d5e0f44f.json",
+    "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -128,7 +129,7 @@
     },
     "local_design_batch": {
       "task_id": "GC-WEB-REPAIR-20261007",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "branch": "feature/local-staging-batch-20261007",
       "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "pr": 172,
@@ -136,7 +137,14 @@
       "visual_backlog": "area=visual-feedback + actual Martin authorId; checks excluded",
       "browser_acceptance": "pending policy unavailable",
       "candidate_ci": 37687206408,
-      "staging": "pending merge CI and exact deploy receipts"
+      "staging": "pending merge CI and exact deploy receipts",
+      "merge_ci": 37687543142,
+      "preview_run": 37687715280,
+      "functions_run": 37687715188,
+      "canonical_run": 37688108976,
+      "canonical_receipt": 11511808010,
+      "user_acceptance": "pending",
+      "next_policy": "collect visual feedback; no new staging merge/deploy until explicit Deployen"
     }
   },
   "production": {
