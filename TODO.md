@@ -305,3 +305,6 @@ GC-WEB-REPAIR-20261007 · Korrektur des Rahmen-Backlogs: Martin verlangt Staging
 
 ### GC-WEB-REPAIR-20261007 – Idee zusätzliche Vorschauseite (2026-10-08)
 Martin erwägt eine zusätzliche Vorschauseite zwischen lokal und Staging, auf der gesammelte Änderungen ohne einzelne Deploy-Rückfragen bereitstehen. **Idee, kein Umsetzungsauftrag.** Bestehende Sammeln/Abarbeiten/Deployen-Regel bleibt gültig; aktuelle PR174-Staging-Freigabe bleibt separat. Technische Deploy-Zeit wird dadurch nicht automatisch verkürzt.
+
+
+GC-GAMES-ESCAPE-VISUAL-01 · Ego-Lerninsel Gestaltung: sechs Nutzerreferenzen geprüft, fünf Tafeln mit20 Motiven plus Einzelmotiv21; Spielbuch7929 Wörter, acht Gebiete, vier Hauptmechaniken und32Ideen. DraftPR173 https://github.com/HerrLoeffler/Hausaufgabe/pull/173, docs/lerninsel-layouts-20261007 Head a87abfe4d11b1223630aa2c6ecf2fca2326e2db7. Martins Korrektur verbindlich: 1-Liter-Eimer, Skala1/10..10/10, Ziel3/10=300ml; ursprünglicher8-Liter/Achtelentwurf verworfen. Bilder/Spielbuch sind Entwürfe, kein spielbarerBuild/CI-/Geräte-/Deploynachweis. Bestehende Amazonas-/Pizza-Stände unverändert. Übergabe workstreams/lerninsel-layouts-20261007.md; sieben Bildaufrufe erhalten. Nächster Schritt Gestaltungsprüfung, danach konkreterVier-Rätsel-Implementierungsplan. Productionunverändert.
