@@ -1320,5 +1320,15 @@
       "canonical_receipt": 11450254448,
       "user_test": "failed_20261007; preserved_reports14_incidents11"
     }
-  ]
+  ],
+  "tutorialAcceptanceFollowup": {
+    "task": "GC-WEB-REPAIR-20261007",
+    "phase": "merged_pending_ci_staging",
+    "pr": 164,
+    "commit": "be39294ab9e9f85bb90c52760be374c5fe3e5b06",
+    "candidateCI": 37583234472,
+    "mergeCI": 37583383799,
+    "verifiedTests": 25,
+    "pending": "Preview/Functions receipts then canonical request; image quality and review-mode implementation still open"
+  }
 }
