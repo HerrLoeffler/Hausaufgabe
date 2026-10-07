@@ -194,8 +194,14 @@ export function installCrewTour(api) {
     }
   }
 
+  function isSubmitConfirmationNode(node) {
+    return stage === "answering" && node instanceof Element &&
+      Boolean(node.closest("dialog.studentSubmitConfirm[open]"));
+  }
+
   function isAllowedNode(node) {
     if (!(node instanceof Node)) return false;
+    if (isSubmitConfirmationNode(node)) return true;
     if (root?.contains(node)) return true;
     if (targetInteractive && target?.contains(node)) return true;
     if (freeRegion?.contains?.(node)) return true;
@@ -224,6 +230,7 @@ export function installCrewTour(api) {
 
   function blockKeyboard(event) {
     if (!owned() || !event.isTrusted) return;
+    if (isSubmitConfirmationNode(event.target)) return;
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
@@ -317,7 +324,7 @@ export function installCrewTour(api) {
     root.className = `gcRealCoach${centered ? " gcCoachCentered" : ""}${className ? ` ${className}` : ""}`;
     root.setAttribute("aria-label", `${CREW[role].name} begleitet dich`);
     root.setAttribute("aria-live", "polite");
-    root.innerHTML = `<div class="gcCoachIdentity">${image(role)}<div><span>${escapeHtml(CREW[role].name)} · ${escapeHtml(CREW[role].role)}</span><h2>${escapeHtml(title)}</h2></div></div><p>${escapeHtml(text)}</p>${body}${button ? `<button type="button" class="button primary gcCoachNext">${escapeHtml(button)}</button>` : ""}<small>Nur der markierte Schritt ist während der Tour bedienbar.</small>`;
+    root.innerHTML = `<div class="gcCoachIdentity">${image(role)}<div><span>${escapeHtml(CREW[role].name)} · ${escapeHtml(CREW[role].role)}</span><h2>${escapeHtml(title)}</h2></div></div><p>${escapeHtml(text)}</p>${body}${button ? `<button type="button" class="button primary gcCoachNext">${escapeHtml(button)}</button>` : ""}${stage === "finish" ? "" : "<small>Nur der markierte Schritt ist während der Tour bedienbar.</small>"}`;
     if (button && onButton) root.querySelector(".gcCoachNext").addEventListener("click", () => { if (!busy) onButton(); });
     document.body.classList.add("gcCoachVisible");
     const startGate = stage === "identity-start" && selector === "#studentStartBtn" ? $("#studentStartGate") : null;

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { requestStudentSubmitConfirmation } from './student-submit-confirm.mjs';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { createLocalTourRepository } from './guest-tour-port.mjs';
 
@@ -25,7 +26,29 @@ function fixture(t, { publicEntry = false } = {}) {
   });
   const w = dom.window;
   w.assessmentContentLabels = assessmentContentLabels;
-  t.after(() => w.close());
+  // Synthetic DOM clicks have isTrusted=false. Exercise captured production
+  // guards explicitly as trusted input before dispatching the control action.
+  const captureListeners = [];
+  const add = w.document.addEventListener.bind(w.document);
+  w.document.addEventListener = (type, listener, options) => {
+    if (options === true || options?.capture) captureListeners.push({ type, listener });
+    return add(type, listener, options);
+  };
+  w.trustedInputBlocked = (type, target, key = '') => {
+    let blocked = false;
+    const event = { type, target, key, isTrusted: true,
+      preventDefault: () => { blocked = true; }, stopPropagation() {}, stopImmediatePropagation() {} };
+    for (const entry of captureListeners.filter(entry => entry.type === type)) entry.listener(event);
+    return blocked;
+  };
+
+  const observers = [];
+  const Observer = w.MutationObserver;
+  w.MutationObserver = class extends Observer {
+    constructor(callback) { super(callback); observers.push(this); }
+  };
+  t.after(() => { observers.forEach(observer => observer.disconnect()); w.close(); });
+  w.eval(fs.readFileSync('crew-tour-hardening.js', 'utf8').replace(/^export .*$/gm, ''));
   w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
   w.HTMLDialogElement.prototype.close = function () { this.open = false; };
   w.HTMLElement.prototype.scrollIntoView = function () {};
@@ -290,6 +313,18 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   assert.equal(w.document.body.classList.contains('gcTourAnswering'), true);
   assert.equal(w.document.querySelector('.gcCoachInlineStart'), null);
   assert.equal(w.document.body.classList.contains('gcTourInlineStart'), false);
+  for (const action of ['cancel', 'confirm']) {
+    const confirmation = requestStudentSubmitConfirmation('10 Aufgaben sind noch offen.', { doc: w.document });
+    const dialog = w.document.querySelector('dialog.studentSubmitConfirm[open]');
+    const button = dialog.querySelector(`[data-action="${action}"]`);
+    assert.equal(w.trustedInputBlocked('click', button), false, 'trusted confirmation click reaches the dialog');
+    assert.equal(w.trustedInputBlocked('keydown', button, 'Enter'), false);
+    assert.equal(w.trustedInputBlocked('keydown', button, 'Escape'), false, 'Escape cancels dialog, not tour');
+    assert.equal(tour.active, true);
+    assert.equal(w.trustedInputBlocked('click', w.document.body), true, 'outside controls stay blocked');
+    button.click();
+    assert.equal(await confirmation, action === 'confirm');
+  }
   tour.notify('submitted', { quizId: 'DEMO1', submissionId: 'saved-answer' });
   assert.equal(w.document.body.classList.contains('gcTourAnswering'), false);
   el('resultsTableWrap').innerHTML = '<button class="reviewBtn" data-id="saved-answer">Bewerten</button>';
@@ -313,6 +348,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   assert.equal(save.parentElement.id, 'saveOrigin', 'save button restored after review');
   assert.equal(w.document.body.classList.contains('gcTourInlineReview'), false);
   assert.ok(w.document.querySelector('.gcFinishCrew'));
+  assert.doesNotMatch(w.document.querySelector('.gcRealCoach').textContent, /Nur der markierte Schritt/);
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /\d+:\d{2} Minuten/);
   if (finishAction === 'guest') {
     assert.doesNotMatch(w.document.querySelector('.gcFinishChoices').textContent, /Einstellungen kurz kennenlernen/);

@@ -98,6 +98,10 @@ function installCrewTourHardening() {
 
   document.addEventListener("keydown", event => {
     if (!tourIsActive() || event.key !== "Escape") return;
+    // Let the active submission dialog cancel without ending the tutorial.
+    if (document.body.classList.contains("gcTourAnswering") &&
+        event.target instanceof Element &&
+        event.target.closest("dialog.studentSubmitConfirm[open]")) return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
