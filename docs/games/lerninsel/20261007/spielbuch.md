@@ -80,10 +80,11 @@ Worte dürfen in der normalen Spielansicht gelesen werden. Kleine Schrift soll n
 | 18 | Bambus mit drei Klangkörpern | Reihenfolge als spätere Hörmechanik |
 | 19 | Steinbruchstufen und Kabel | Nebenzone der Beobachtungsküste |
 | 20 | Leuchtturm mit vier aktiven Signalen | Abschluss des ersten vierteiligen Abschnitts |
+| 21 | 1-Liter-Mess-Eimer mit 3/10 und Druckplatte | Zusätzliche Bruchterrassen-Idee von Martin |
 
 [Bildtafel A mit Motiven 01–04](layout-a.png) · [Bildtafel B mit Motiven 05–08](layout-b.png) · [Bildtafel C mit Motiven 09–12](layout-c.png) · [Bildtafel D mit Motiven 13–16](layout-d.png) · [Bildtafel E mit Motiven 17–20](layout-e.png)
 
-Die Tafeln zeigen 20 Motive, nicht 20 separate fertige Leveldateien. Bei der Art-Abnahme wird jedes Motiv gegen die gewünschte Blickhöhe, Materialwirkung, räumliche Lesbarkeit und Aufgabe geprüft.
+Die fünf Tafeln zeigen 20 Motive; hinzu kommt [Einzelmotiv 21 mit dem 1-Liter-Eimer](layout-21-eimer.png). Dies sind 21 Entwurfsansichten, keine fertigen Leveldateien. Bei der Art-Abnahme wird jedes Motiv gegen die gewünschte Blickhöhe, Materialwirkung, räumliche Lesbarkeit und Aufgabe geprüft.
 
 ## Acht Gebiete und ihr Zusammenhang
 
@@ -345,6 +346,62 @@ Eine Zwölftelroute kombiniert 1/6, 1/4 und 7/12. Die Skala der Zusatzanlage ist
 
 Eine schwierigere Variation verwendet zwei Teilbecken und fordert gleiche Mengen bei verschieden unterteilten Ganzheiten. Gleiche Schreibweise bedeutet dann nur bei gleicher Einheit dieselbe Wassermenge; die Einheit muss ausdrücklich gezeigt werden.
 
+## Variante 3B Der Eimer mit drei Zehnteln
+
+Martins zusätzliche Anregung: Wasser in einen Eimer füllen, mit 3/10 auf eine Druckplatte gehen und dadurch das Tor öffnen. Diese Variante gehört zu den Bruchterrassen und nutzt dieselbe Lernidee mit einer körperlichen Handlung. Sie ist ein zusätzlicher Entwurf, keine bereits gebaute Mechanik.
+
+### Das Ganze und die Einheit
+
+Der Mess-Eimer fasst insgesamt 1 Liter. Ein vollständig gefüllter Eimer ist ein Ganzes. 3/10 dieses Eimers entsprechen 0,3 Litern, also 300 ml. Die Kapazitätsaufschrift lautet „1 L“. Martins Korrektur vom 08.10.2026 ersetzt den früheren 8-Liter-/Achtelentwurf vollständig. Die Aufgabe fordert ausdrücklich „Fülle den Eimer zu drei Zehnteln.“ und nicht „Fülle 3/10 Liter ein.“. Bei diesem 1-Liter-Ganzen stimmen beide Mengen überein; die Aufgabenformulierung bleibt ausdrücklich auf den Anteil des Eimers bezogen.
+
+Der Eimer besitzt einen geraden zylindrischen Messbereich. Zehn gleich große Volumenabschnitte werden durch elf kalibrierte Teilstriche einschließlich Null und Voll markiert. Daneben stehen von unten nach oben 1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10 und 10/10. Ein zusätzlicher Nullstrich bezeichnet den leeren Zustand. Die Zehntelskala ist eine dauerhaft sichtbare Orientierungshilfe; 10/10 entspricht 1 Liter, jeder Abschnitt 100 ml. Die reale Beschriftung wird aus Daten gesetzt; generierte Schrift und Strichanzahl sind keine Messgrundlage. Ein konischer Dekoeimer dürfte nicht gleich hohe Streifen als gleiche Volumen behandeln.
+
+### Raum und Gegenstände
+
+Ein Brunnen steht am Beginn der Terrasse, ein Ablassbecken daneben. Etwa 8 m weiter liegt eine bündige runde Druckplatte. Das geschlossene rote Tor und das angeschlossene Kabel sind von Brunnen und Platte aus sichtbar. Ein breiter ebener Weg verbindet sie.
+
+Es gibt genau einen Mess-Eimer mit einer festen Objekt-ID. Er steht anfangs auf einem niedrigen Sockel. Der Spieler kann ihn aufnehmen und an vorgesehenen Stellen absetzen. Die Einführung benötigt kein umfangreiches Inventar; der Eimer ist das eine getragene Werkzeug.
+
+Im Bildmotiv 21 stehen Eimer, Brunnen, Platte und Tor im gleichen Blick. Die Bildwirkung legt Materialien und Anordnung fest. Der tatsächliche Zehntelstand wird später mit kalibrierter Geometrie aufgebaut.
+
+### Ablauf im Detail
+
+1. Der Spieler betrachtet die Platte. Das Relief zeigt einen Eimer, die Zahl 3/10 und eine Torverbindung.
+2. Am Sockel wird die Kapazität 1 L sichtbar. Auf Wunsch erklärt die Kontextansicht, welches Ganze gemeint ist.
+3. Der Eimer wird aufgenommen; die Wasserfüllung beginnt bei Null.
+4. Am Brunnen füllt ein bestätigter Hebelhub genau 1/10 Eimer = 100 ml nach.
+5. Die Menge wächst sichtbar über etwa 0,6 Sekunden je Hub. Während einer Animation wird kein zweiter unbestätigter Hub gezählt.
+6. Nach drei Hüben ist der Zustand exakt 3/10. Eine weitere Füllung bleibt möglich, falls der Spieler sie bewusst wählt; das Rätsel verhindert nicht vorsorglich jeden Denkfehler.
+7. Der Spieler geht mit dem Eimer zur Druckplatte. Normales Gehen verliert kein Wasser.
+8. Die Platte prüft einmal nach dem gezielten Betreten: richtige Eimer-ID, getragener Eimer, 300 ml im 1-Liter-Ganzen, aktiver Versuch.
+9. Nur bei 3/10 folgt ein kurzes Absenken der Platte und danach das Aufleuchten des Kabels.
+10. Das Tor öffnet, wenn der Erfolg bestätigt und gespeichert ist. Erst nach abgeschlossener Bewegung wird der Durchgang frei.
+11. Ein weiterer Eintritt löst keinen zweiten Fortschritt aus.
+12. Der Eimer darf anschließend im Bereich abgelegt werden; das bestätigte Tor bleibt offen.
+
+### Zu viel zu wenig und Korrektur
+
+Bei 2/10 oder weniger zeigt ein niedriger Mengenbogen „Es fehlt Wasser.“. Bei 4/10 oder mehr zeigt er „Zu viel Wasser.“. Die falsche Menge bleibt im Eimer erhalten, damit die Korrektur eine nachvollziehbare Handlung bleibt.
+
+Am Brunnen kann 1/10 nachgefüllt werden. Am Ablassbecken kann 1/10 abgelassen werden. Bei leerem Eimer ist Ablassen gesperrt und erklärt; bei vollem Eimer ist Nachfüllen gesperrt. Eine mögliche spätere feinere Unterteilung braucht eigene kalibrierte Einheiten, keine frei laufende Physik als Antwortprüfer.
+
+Die eigene Masse des Eimers und das Körpergewicht der Figur zählen nicht als Wasser. Der Validator verwendet den gespeicherten Volumenzustand, nicht schwankende Physikgewichte. Die Druckplatte illustriert die Mengenvorgabe; sie ist keine unbelegte Aussage, dass jede Gewichtsplatte Bruchteile erkennen könnte.
+
+Absetzen außerhalb des vorgesehenen Bereichs legt den Eimer am letzten sicheren Ort ab. Er kann nicht im Meer verlorengehen, durch ein geschlossenes Tor fallen oder durch einen zweiten Klick kopiert werden. Kein Wasserverlust durch Kamerawischen oder Framerate.
+
+### Speicher und Übertragbarkeit
+
+Gespeichert werden Eimer-ID, Füllstand als Anzahl bestätigter Zehntelhübe, Aufnahmestatus, sicherer Absetzort und Torbestätigung. Beim Laden mitten in einer Füllanimation zählt nur der letzte bestätigte Hub. Browser-Wiederverbindung setzt keine Füllung ein zweites Mal fort.
+
+Für Hilfe 1 wird auf die zehn Teilbereiche verwiesen. Hilfe 2 erklärt 3 von 10. Hilfe 3 zeigt einen Füllhub. Eine Transferaufgabe verwendet danach etwa 5/10 oder einen anderen ausdrücklich benannten Kapazitätsbehälter.
+
+Zusatz für Erwachsene: ein 1-Liter- und ein 2-Liter-Messgefäß, beide in zehn gleiche Teile unterteilt. 3/10 des ersten sind 300 ml; 3/10 des zweiten sind 600 ml. Die Aufgabe benennt das Bezugsgefäß klar. Gleicher Bruch bedeutet bei verschiedenen Ganzen keine gleiche absolute Wassermenge. Diese Variante erscheint erst nach dem intuitiven 1-Liter-Einstieg. Ein weiterer Transfer verbindet 5/10 mit 1/2 und 500 ml.
+
+### Zusätzliche Abnahme
+
+2/10 und 4/10 öffnen nicht; 3/10 öffnet genau einmal. Nachfüllen und Ablassen verändern je ein Zehntel, Grenze Null/Voll bleibt sicher. Elf kalibrierte Striche erzeugen zehn Volumenabschnitte. Eimerleergewicht, Spielergewicht und unbestätigte Animation beeinflussen die Bewertung nicht. Abbruch, erneutes Aufnehmen, doppelte Hebeleingabe, Touchcancel und Save/Resume erhalten genau einen Eimer und den richtigen Wasserstand.
+
+
 ## Hauptbeispiel 4 Das Felsfenster
 
 ### Aufgabe und Auswahl
@@ -545,6 +602,8 @@ Assets erhalten nachvollziehbare Ursprungsdateien und Exporte. Bäume, Tore, Pla
 36. Kinder Klasse 5–6 und Erwachsene geben getrennt Rückmeldung zu Klarheit, Denken, Frustration und Lust auf Weitergehen.
 
 ## Bildprüfung und bekannte Abweichungen
+
+Für das zusätzliche Eimermotiv21 sind echte Messstriche und Wasserstand beim Bau kalibriert zu setzen. Die generierte Skala dient der Bildwirkung und nicht der fachlichen Volumenprüfung.
 
 Die fünf Tafeln dienen der Art Direction. Motiv 10 besitzt zusätzliche und teils wiederholte Wortplatten; seine Inhalte ersetzen nicht das geprüfte 3×3-Feld. Motiv 11 zeigt einen schon korrekt gelegten linearen Satz; das spielbare Satzfeld braucht eine echte Auswahlfläche und sichere Rückwege.
 

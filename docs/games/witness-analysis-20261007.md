@@ -147,3 +147,6 @@ Vorgeschlagene Leistungsziele: 60 fps lokal am Desktop, mindestens stabile 30 fp
 Spielerische Abnahme: Kinder Klasse 5–6 und Erwachsene müssen Erstspielroute, Regelverständnis, Frustration und Lust auf ein weiteres Rätsel beurteilen. Kein Spaßfaktor ist bereits gemessen. Jede Hauptaufgabe soll eine neue Erkenntnis tragen; Zusatzrätsel erhöhen die gedankliche Tiefe, ohne die Hauptroute zu sperren.
 
 Sechs Nutzerbilder wurden inzwischen geprüft; ihre Merkmale sind im Spielbuch ausgewertet. Fünf generierte Bildtafeln mit 20 Motiven ergänzen die Art Direction. Die genaue iPad-Generation und der zulässige Streaming-Betrieb sind weiterhin offen. Ein Gameplayvideo von PlayStation Access wurde als zusätzliche Beobachtungsquelle gefunden, nicht vollständig im Browser abgespielt: https://www.youtube.com/watch?v=gF9wRLzP1rw
+
+
+Aktualisierung 08.10.2026: Zusätzliches Einzelmotiv 21 visualisiert Martins Eimeridee. Seine Korrektur gilt verbindlich: 1-Liter-Ganzes, zehn Teilmengen, Ziel 3/10 = 300 ml; Skalenhilfe 1/10 bis 10/10. Der ursprüngliche 8-Liter-/Achtelentwurf ist verworfen. Die fünf Tafeln und das Einzelmotiv ergeben zusammen 21 Entwurfsansichten.

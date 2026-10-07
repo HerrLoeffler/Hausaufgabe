@@ -1,5 +1,5 @@
 {
-  "words": 7016,
+  "words": 7929,
   "concept_boards": [
     {
       "file": "layout-a.png",
@@ -34,5 +34,13 @@
   ],
   "math_review": "rational route and coastal sums verified",
   "sentence_review": "six structural V2 permutations; human linguistic acceptance still required",
-  "game_runtime_test": "not_performed_design_only"
+  "game_runtime_test": "not_performed_design_only",
+  "bucket_math_review": "1 L capacity, ten equal volume sections; 3/10 = 300 ml; 2 L transfer = 600 ml; exact Fraction arithmetic verified",
+  "concept_single_image": {
+    "file": "layout-21-eimer.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "dfe1095743941a826b1e94b2423a10bfacbc313a902b7742652979ce58c0fbfe"
+  },
+  "image_review": "All six final files visually reviewed. Bucket labels 1 L and 1/10..10/10 present; illustrative spacing and waterline require calibrated game geometry."
 }
