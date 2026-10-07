@@ -7,6 +7,14 @@ const id=v=>{const s=text(v,128);if(!/^[\w-]+$/.test(s))fail('invalid-argument',
 const hash=v=>createHash('sha256').update(v).digest('hex');
 const optional=(v,max)=>v==null?'':text(v,max,false);
 const SCENES=new Set(['','welcome','remy','editor','student','submit','results','finish']);
+function regionValue(value) {
+ if(value==null)return null;
+ const keys=['x','y','width','height','sourceWidth','sourceHeight'];
+ if(typeof value!=='object'||keys.some(k=>typeof value[k]!=='number'||!Number.isFinite(value[k])))fail('invalid-argument','Ungültige Bereichsmarkierung.');
+ const {x,y,width,height,sourceWidth,sourceHeight}=value;
+ if(x<0||y<0||width<=0||height<=0||x+width>1.000001||y+height>1.000001||sourceWidth<1||sourceHeight<1||sourceWidth>100000||sourceHeight>100000)fail('invalid-argument','Bereich liegt außerhalb der Seite.');
+ return {x,y,width,height,sourceWidth,sourceHeight};
+}
 function createReviewService({store,projectId,now=Date.now}) {
  async function execute({uid,data={}}) {
   if(projectId!=='hausaufgabe-staging')fail('failed-precondition','Überarbeitungsmodus nur auf Staging.');
@@ -44,6 +52,7 @@ function createReviewService({store,projectId,now=Date.now}) {
     const clientRequestId=id(data.clientRequestId),noteId=hash(`${uid}:${clientRequestId}`);
     const scene=optional(data.scene,30);if(!SCENES.has(scene))fail('invalid-argument','Unbekannte Prüfszene.');
     const content={text:text(data.text,3000),target:id(data.target),view:id(data.view),build:text(data.build,100),locale:['en','de'].includes(data.locale)?data.locale:'de',scene,quizId:data.quizId?id(data.quizId):'',questionId:data.questionId?id(data.questionId):''};
+    if(data.region!=null)content.region=regionValue(data.region);
     await quizAccess(content.quizId);
     if(content.quizId&&content.questionId&&!await tx.get(`quizzes/${content.quizId}/questions/${content.questionId}`))fail('permission-denied','Aufgabe gehört nicht zu diesem Test.');
     const fingerprint=hash(JSON.stringify(content)),old=await tx.get(`reviewNotes/${noteId}`);
