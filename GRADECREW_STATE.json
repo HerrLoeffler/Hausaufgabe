@@ -94,7 +94,19 @@
       "assessment_receipt": 11511717783,
       "canonical_run": 37688108976,
       "canonical_receipt": 11511808010,
-      "user_acceptance": "pending"
+      "user_acceptance": "pending",
+      "feedback_followup": {
+        "task_id": "GC-WEB-REPAIR-20261007",
+        "stage": "branch_only",
+        "pr": 174,
+        "branch": "fix/visual-backlog-feedback-20261008",
+        "head": "faca28bc254bc8402a6826baa95f286d4054edd3",
+        "candidate_ci": 37693545201,
+        "local_commit": "0847243",
+        "tests": 25,
+        "user_request": "Deployen 2026-10-08",
+        "next": "candidate CI then integration, exact deploy receipts and canonical promotion"
+      }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
     "review_regions_followup": {
