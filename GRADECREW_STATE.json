@@ -884,11 +884,13 @@
       "branch": "feature/escape-expedition-unreal-v1",
       "stage": "branch_only",
       "local_runtime_commit": "1be53c5d719d7889e6ff6380e11228fc2ddf46b5",
-      "ci": "not_run_native_local25_checks_and2_rendered_tests_only",
+      "ci": "no CI proof for redesign; older local native tests retained only for their tested commits",
       "staging": "not_deployed",
-      "user_test": "local_window_opened; keyboard_start_inventory_menu_verified; human_acceptance_pending",
+      "user_test": "2026-10-08: native prototype rejected by Martin for visuals, clarity, puzzle quality and unreliable interaction; no positive acceptance",
       "handoff": "games/escape-expedition-unreal/Production/HANDOFF.md",
-      "next_action": "Martin tests local keyboard demo; improve input/art then implement GradeCrew live bridge; physical mobile and ten-minute learning-share acceptance pending"
+      "next_action": "Review 244-motif/96-page redesign; then plan and build representative village slice with native widgets and real pointer input before expanding levels",
+      "design_handoff": "docs/games/expedition-masterproject-20261008/HANDOFF.md",
+      "design_status": "branch_only; 244 concept motifs; 96-page book; 7 of12 tasks school; no new runtime"
     }
   ],
   "deployments": [

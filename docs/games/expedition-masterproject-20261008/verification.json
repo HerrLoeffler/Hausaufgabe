@@ -1,0 +1,158 @@
+{
+  "scope": "Entwurfsdaten, keine Runtime-/Geräteprüfung",
+  "motifs": 244,
+  "boards": [
+    {
+      "path": "boards/00-master.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "60d7b0cc825765757337f2589f8690343c8ff735aebcbabd7db56e5e1752a850",
+      "gitBlob": "4fe13c56289052174c0d673dc267ff633451d24a"
+    },
+    {
+      "path": "boards/01.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "4e947a67013fc2490150b719ce88957c128dee2c88d439431e2e95d979d2b181",
+      "gitBlob": "4d11aab6f6972c586f30aa581ec1343b66d4ab92"
+    },
+    {
+      "path": "boards/02.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "f90c518419e3239c7d5ea0fc75dc66c5436c1ff6ffaf218d53382eb5fcc955d8",
+      "gitBlob": "a09949d58af0896a0abf8772c59395da62878620"
+    },
+    {
+      "path": "boards/03.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "d7cbcd5de8cae5e4a7e16b606871e960150d2c7a264f2a66a9dc40c6bfde0aae",
+      "gitBlob": "e98c30fd22cd651141d92bfad65f8a1fbb2ee12d"
+    },
+    {
+      "path": "boards/04.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "42361387f5998b43885f0966eecdf1ddf41e496b6abe2c82285ec66caebf709c",
+      "gitBlob": "8e1018bc657214fa4c7883e571cc113933c22a60"
+    },
+    {
+      "path": "boards/05.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "ff9871b097a6de6d501544ab40d6111b9cee37618761a3a333743419521cfd46",
+      "gitBlob": "df6d9f682454e50066f24eaa8f8827b3772cddb1"
+    },
+    {
+      "path": "boards/06.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "22db448cce670d916e92c4d94df3ed04cc5e206b7a3f4f4410805336edc5e8b0",
+      "gitBlob": "5119db8f7776e709a286c607d7be1396ca3fbfc3"
+    },
+    {
+      "path": "boards/07.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "d550fc059ec7113ecb7e4d4f52e863c04d24a0d84c644c573548eaa007dc65a1",
+      "gitBlob": "583784b6558f27274dd84c6e6b9695945cb9840d"
+    },
+    {
+      "path": "boards/08.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "eee6b8c2fc9a6c8a3eed3d8e5f8d9fdd7f6c004612e2ae13cb376ff61ac50d96",
+      "gitBlob": "42f7868ea17e6d186ed0ee73537b024b06e50c92"
+    },
+    {
+      "path": "boards/09.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "8defb01d171108d899f3a0dfa8a29d3ab7f4cf1efaf47fec983f2699edac133d",
+      "gitBlob": "e5a9449e12996fa57d6f5fca1df3d9de66260988"
+    },
+    {
+      "path": "boards/10.png",
+      "width": 1671,
+      "height": 941,
+      "sha256": "43d412df69af6c9cd5a5b60171658ebd43111a2145def50c20e35ac7fe51b8ef",
+      "gitBlob": "a7d94cd8b041738380f3d98facd64604441b05ee"
+    },
+    {
+      "path": "boards/11.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "6c49c3e442f6fe44ca3ab248e4f436da18a701e83d4a8fd8a017bb29c362b77c",
+      "gitBlob": "e84d04fd2da1536ad61a0a620f02dab509f8e07b"
+    },
+    {
+      "path": "boards/12.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "11c05810afda2f104b183dc100b3009133203ce4154f8894791d905001dcc72d",
+      "gitBlob": "97cc072c2a006b2a6bf18d92c0d8016947328a7a"
+    }
+  ],
+  "schoolTasks": 7,
+  "logicTasks": 5,
+  "schoolRatio": 0.5833333333333334,
+  "plannedActiveSeconds": 590,
+  "plannedSchoolSeconds": 330,
+  "plannedSchoolTimeRatio": 0.559322033898305,
+  "mathChecks": {
+    "S1": "5",
+    "S2": "1/4",
+    "S3": "6",
+    "S4": "75",
+    "S5": "3/4",
+    "S6": "4",
+    "S7": "True"
+  },
+  "transferChecks": [
+    "3",
+    "3/4",
+    "5",
+    "25",
+    "1/2",
+    "2",
+    "True"
+  ],
+  "validSymbolOrders": [
+    [
+      "Blatt",
+      "Welle",
+      "Sonne"
+    ]
+  ],
+  "mosaicConfigurationsChecked": 12,
+  "validMosaic": [
+    [
+      "C",
+      0
+    ]
+  ],
+  "readableWordCount": 15897,
+  "pdfPages": 96,
+  "pdfVisualReview": {
+    "pages": [
+      1,
+      8,
+      23,
+      43,
+      76,
+      77,
+      94,
+      96
+    ],
+    "result": "no observed clipping or overlap on these rendered pages",
+    "allPagesEmptyTextCheck": 0
+  },
+  "htmlChecks": {
+    "scriptSyntax": "passed",
+    "uniqueIds": 78,
+    "localResources": "present",
+    "liveBrowser": "blocked: browser security policy check unavailable; no workaround"
+  },
+  "runtimeChecks": "not run; no product source changed"
+}

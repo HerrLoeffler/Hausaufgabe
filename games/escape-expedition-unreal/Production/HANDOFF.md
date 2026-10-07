@@ -28,3 +28,11 @@ Lokaler Codecommit1be53c5d719d7889e6ff6380e11228fc2ddf46b5, RemoteSourceCommitcc
 FinaleWindow-Kontrolle pernativeCUA: Themenstart perTab/Enter, Wortartenstart, InventarI, Esc-Menü, RückkehrThemenstart bestätigt. Gamewindow„Expedition (64-bit Development SF_METAL_SM5)“ amThemenstartoffengelassen. Starttasten1(Prozent)/2(Wortarten), Antworttasten1–4, Tab/EnterfüralleDialogbuttons. NativeCUA-Mausclicks ändertenDialognoch nichtzuverlässig; MausbedienungNICHTalsbehoben melden, Tastaturtest verwenden. ZweiRender-Tests stammenvorderfinalenPointer-/Keyboardänderung; nachfinalerUIänderung nurBuild/pureChecks/echteFensterprüfung bestätigt. GanzeersteSpielzeit undkompletterTrustedUI-Durchlauf bleibenoffen.
 
 KeinCIgrün/Integration/OnlineSpieldeploy/Production/Mobilebeleg. NächsterSchrittbleibtMartinslokalerTastaturtest unddessenFeedback; maus/Touch-/Neustartbestätigung undArt weiterverbessern, danachLiveBrücke. BestehendeTask-ID, Budgets undAttemptgeschichte erhalten.
+
+## 08.10.2026 – Nutzerabnahme negativ, Neuentwurf gesichert
+
+Martin hat die Erstfassung getestet und ausdrücklich abgelehnt: unübersichtlich, schlechte Rätsel, unzuverlässige Bedienung und unpassende Optik. Die oben beschriebene Quelle bleibt Versuchshistorie. Keine positive Produktabnahme daraus ableiten.
+
+Aktuelle Aufgabe: Vogelperspektive nahe vier neuen Nutzerbildern,55–60 % Schulaufgaben, circa zehn Minuten und ausführliche Bild-/Textgrundlage vor neuen Levels. Aktuelle Übergabe unter docs/games/expedition-masterproject-20261008/HANDOFF.md:244Motive auf13Tafeln,96Seiten,15.897Wörter, zwölf Stationen davon sieben schulisch. Vierzehn erfolgreiche eingebaute Bildaufrufe einschließlich gezielter Korrektur. Texte, Quellen, Prompts und finale PNGs gesichert; HTML/PDF lokal erzeugte Exporte. Entwurfsdaten und acht PDFseiten geprüft. Browserprüfung durch nicht verfügbare Sicherheitsprüfung blockiert, keine Umgehung.
+
+Keine Runtime-Dateien verändert, kein neuer Unreal-/Maus-/Touch-/Mobile-/LiveGradeCrew-/Zeitnachweis und kein Deployment. Genau nächster Schritt: konkrete schriftliche Bild-/Textgrundlage prüfen, dann neuer Bauplan und repräsentativer Dorf-Ausschnitt mit Engine-Widgets und echter Pointerabnahme. Stufe branch_only. Production und bestehende Web-Releases unverändert.
