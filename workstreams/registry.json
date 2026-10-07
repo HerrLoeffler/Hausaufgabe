@@ -464,12 +464,13 @@
     {
       "id": "web-repair-20261007",
       "title": "Web UI / Remy / gated audio choices",
-      "primaryBranch": "feature/audio-web-repair-20261007",
+      "primaryBranch": "fix/web-acceptance-regressions-20261007",
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "handoff": "workstreams/web-repair-batch-20261007.md",
       "relatedBranches": [
-        "feature/gc-web-polish-20261007"
+        "feature/gc-web-polish-20261007",
+        "feature/audio-web-repair-20261007"
       ]
     }
   ]

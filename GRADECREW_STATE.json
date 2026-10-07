@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-06T23:36:24.245Z",
+  "observed_at": "2026-10-07T00:07:11.749Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -60,16 +60,16 @@
       "staging_functions": "success_run_37547126016_receipt_11451600189_commit_0931ade4e415690cc149c829c5f1a6703d085177",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
       "desktop_ipad_iphone_test": "not_performed_for_0931ade4e415690cc149c829c5f1a6703d085177_browser_policy_unverified",
-      "user_acceptance": "not_performed_for_0931ade4e415690cc149c829c5f1a6703d085177",
+      "user_acceptance": "failed_20261007_user_screenshots_commit_0931ade4",
       "production": "not_requested",
       "staging_assessment_functions": "success_run_37547126016_receipt_11451256131_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "audio_v2_user_acceptance": "not_tested",
+      "audio_v2_user_acceptance": "failed_20261007_status_conversion_and_grouping_audio",
       "canonical_hosting": "success_run_37547422005_receipt_11450254448_commit_0931ade4e415690cc149c829c5f1a6703d085177"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 120,
     "important": "PR159 merged as 0931ade4e415690cc149c829c5f1a6703d085177; merge CI 37547012003, mobile 37547012032, verified preview 37547126018, AI/Assessment Functions 37547126016, canonical Hosting 37547422005 all succeeded with receipts. Canonical Hosting verified 120 files. New private listening-only/audio-answer modes remain draft-only until live secure Rules cutover and Gates C–F are evidenced. Real login/test creation and device acceptance remain unverified; Production unchanged.",
-    "next_action": "Martin tests canonical Staging login and creating/saving a normal test; record actual result. Separately verify live secure Rules before enabling new private audio modes.",
+    "next_action": "Main repairs reported acceptance failures on fix/web-acceptance-regressions-20261007; no unchanged redeploy, no automatic chat polling.",
     "canonical_url": "https://hausaufgabe-staging.web.app/"
   },
   "production": {
@@ -734,7 +734,8 @@
       "canonical_hosting_receipt": 11450254448,
       "ai_functions_receipt": 11451600189,
       "assessment_functions_receipt": 11451256131,
-      "user_test": "not_performed"
+      "user_test": "failed_20261007",
+      "active_repair_branch": "fix/web-acceptance-regressions-20261007"
     },
     {
       "id": "gc-web-polish-20261007",
