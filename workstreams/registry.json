@@ -466,7 +466,7 @@
       "title": "Web UI / Remy / gated audio choices",
       "primaryBranch": "feature/audio-switch-overflow-20261007",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/web-repair-batch-20261007.md",
       "relatedBranches": [
         "feature/gc-web-polish-20261007",

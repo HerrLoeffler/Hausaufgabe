@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07 01:47:23 UTC",
+  "observed_at": "2026-10-07 01:53:52 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
+    "observed_integration_head": "094546a44131a671daede5131e29def0da116002",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -54,47 +54,41 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37547012003_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "mobile_tutorial": "success_run_37547012032_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "hosting_preview": "success_run_37547126018_receipt_11450528574_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "staging_functions": "success_run_37547126016_receipt_11451600189_commit_0931ade4e415690cc149c829c5f1a6703d085177",
+      "combined_ci": "success_run_37558924609_commit_094546a44131a671daede5131e29def0da116002",
+      "mobile_tutorial": "prior_runtime_tour37558149323@7f91dea0_success; CSS-only094546a4_final_combinedCI_and_browser_layout_verified",
+      "hosting_preview": "success_run_37559039697_receipt_11455947421_commit_094546a44131a671daede5131e29def0da116002",
+      "staging_functions": "success_run_37559039672_receipt_11455703400_commit_094546a44131a671daede5131e29def0da116002",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "not_performed_for_0931ade4e415690cc149c829c5f1a6703d085177_browser_policy_unverified",
-      "user_acceptance": "failed_20261007_user_screenshots_commit_0931ade4",
+      "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
+      "user_acceptance": "pending_for_094546a44131a671daede5131e29def0da116002; previous0931_failed_retained",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37547126016_receipt_11451256131_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "audio_v2_user_acceptance": "failed_20261007_status_conversion_and_grouping_audio",
-      "canonical_hosting": "success_run_37547422005_receipt_11450254448_commit_0931ade4e415690cc149c829c5f1a6703d085177"
+      "staging_assessment_functions": "success_run_37559039672_receipt_11456380393_commit_094546a44131a671daede5131e29def0da116002",
+      "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
+      "canonical_hosting": "requested_gc-web-acceptance-20261007-094546a4; previous0931ade4_remains_live_until_receipt"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 120,
-    "important": "PR159 merged as 0931ade4e415690cc149c829c5f1a6703d085177; merge CI 37547012003, mobile 37547012032, verified preview 37547126018, AI/Assessment Functions 37547126016, canonical Hosting 37547422005 all succeeded with receipts. Canonical Hosting verified 120 files. New private listening-only/audio-answer modes remain draft-only until live secure Rules cutover and Gates C–F are evidenced. Real login/test creation and device acceptance remain unverified; Production unchanged. Subsequent user screenshots failed acceptance. PR161 final repair + workspace upgrade candidate 23d8c97d (tree36a579e6, independently reviewed local6ac3adc) has exact CI37557641806 success; not merged or newly deployed yet. No scroll-story; collector PAUSED.",
-    "next_action": "Finish exact PR162 CSS CI; serially merge into7f91dea0, verify fresh preview and unchanged-function receipts; promote that final build canonically. Never promote earlier horizontal-overflow preview.",
+    "preview_verified_files": 123,
+    "important": "PR161/162 integrated as094546a44131a671daede5131e29def0da116002, exactCI37558924609 success, preview37559039697/receipt11455947421 verified123files, AI/Assessment37559039672/receipts11455703400,11456380393 success. Canonical request committed now; do not claim live main destination until successful receipt. Real authenticated Preview dashboard observed, current checkbox1px/side-overflow0; local phone390 side-overflow0 and keyboard switch event/focus verified. New private audio remains teacher drafts pending live secure Rules/Gates C–F; no paid provider tests. No scroll story/Games/iOS/Production. Collector PAUSED.",
+    "next_action": "Observe existing canonical Hosting request for094546a4; confirm receipt/hash/URL, then save closeout. Private audiomodes remain teacher drafts. No additional code or auto polling.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
-      "stage": "integrated_preview_deployed",
-      "pr": 161,
-      "head": "23d8c97d7bf69de43929122d55b8aded9a9c192b",
-      "tree": "36a579e672671d7cfd959b612a45d916cde0e34e",
-      "ci": 37557641806,
-      "review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
-      "no_scroll_story": true,
-      "previous_user_test": "failed_0931ade4",
-      "merge": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
-      "combined_ci": 37558149290,
-      "mobile_ci": 37558149323,
-      "preview_run": 37558247664,
-      "ai_assessment_run": 37558247462,
-      "pending_layout_followup": {
-        "pr": 162,
-        "head": "02ac020369807a3428aacfaa1a38703f683c0ffe",
-        "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
-        "candidate_ci": 37558728031,
-        "independent_review": "approved CSS-only delta",
-        "local_mobile_overflow_px": 0
-      }
-    }
+      "stage": "integrated_preview_and_functions_deployed_canonical_requested",
+      "commit": "094546a44131a671daede5131e29def0da116002",
+      "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+      "included_prs": [
+        161,
+        162
+      ],
+      "combined_ci": 37558924609,
+      "preview_run": 37559039697,
+      "preview_receipt": 11455947421,
+      "functions_run": 37559039672,
+      "ai_receipt": 11455703400,
+      "assessment_receipt": 11456380393,
+      "no_scroll_story": true
+    },
+    "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json"
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -746,16 +740,16 @@
       "integration_branch": "feature/gradecrew-app-integration",
       "student_private_audio_release_enabled": false,
       "stage": "integrated",
-      "branch": "feature/audio-web-acceptance-20261007",
-      "pr": 161,
-      "verified_commit": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
-      "verified_tree": "36a579e672671d7cfd959b612a45d916cde0e34e",
+      "branch": "feature/audio-switch-overflow-20261007",
+      "pr": 162,
+      "verified_commit": "094546a44131a671daede5131e29def0da116002",
+      "verified_tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
       "local_reviewed_commit": "6ac3adc2cb46362091787791048a641d00eaa293",
       "candidate_ci": 37557641806,
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Finish exact PR162 CSS CI; serially merge into7f91dea0, verify fresh preview and unchanged-function receipts; promote that final build canonically. Never promote earlier horizontal-overflow preview.",
+      "next_action": "Observe existing canonical Hosting request for094546a4; confirm receipt/hash/URL, then save closeout. Private audiomodes remain teacher drafts. No additional code or auto polling.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -776,13 +770,13 @@
         "user_test": "failed_20261007",
         "active_repair_branch": "fix/web-acceptance-regressions-20261007"
       },
-      "combined_ci": 37558149290,
+      "combined_ci": 37558924609,
       "mobile_ci": 37558149323,
-      "staging_preview_run": 37558247664,
-      "staging_preview_receipt": 11455751586,
-      "staging_functions_run": 37558247462,
-      "ai_functions_receipt": 11455707081,
-      "assessment_functions_receipt": 11454763986,
+      "staging_preview_run": 37559039697,
+      "staging_preview_receipt": 11455947421,
+      "staging_functions_run": 37559039672,
+      "ai_functions_receipt": 11455703400,
+      "assessment_functions_receipt": 11456380393,
       "active_repair_branch": "feature/audio-switch-overflow-20261007",
       "pending_layout_followup": {
         "pr": 162,
@@ -790,8 +784,20 @@
         "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
         "candidate_ci": 37558728031,
         "independent_review": "approved CSS-only delta",
-        "local_mobile_overflow_px": 0
-      }
+        "local_mobile_overflow_px": 0,
+        "merged_as": "094546a44131a671daede5131e29def0da116002",
+        "candidate_ci_result": "success",
+        "local_keyboard": "Space event + focus-visible switch outline",
+        "preview_desktop_overflow_px": 0
+      },
+      "included_prs": [
+        161,
+        162
+      ],
+      "combined_ci_job": 112591523793,
+      "mobile_ci_source_commit": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
+      "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json",
+      "user_test": "pending_for_new_candidate"
     },
     {
       "id": "gc-web-polish-20261007",
@@ -1244,6 +1250,14 @@
         "important": "GC-DESIGN-05B repair PR #156 merged as 4d6ee69. CI 37542394496, preview 37542511207/receipt 11448542523, AI/Assessment Functions 37542511122/receipts 11448732514 and 11449512022, and canonical Hosting 37542720795/receipt 11449022640 succeeded. Guest Emmi red feedback and unavailable replacement action were corrected. Browser/device and real teacher login/test creation remain unverified; Production unchanged.",
         "next_action": "Martin opens https://hausaufgabe-staging.web.app/, runs the guest tour past Emmi to Wilma, then signs in and creates/saves one real test. Report any blocker; separately review desktop/phone visuals and full EN tour text."
       }
+    },
+    {
+      "id": "web-repair-0931ade4-failed-user-acceptance",
+      "observed_at": "2026-10-07 01:53:52 UTC",
+      "commit": "0931ade4e415690cc149c829c5f1a6703d085177",
+      "canonical_run": 37547422005,
+      "canonical_receipt": 11450254448,
+      "user_test": "failed_20261007; preserved_reports14_incidents11"
     }
   ]
 }
