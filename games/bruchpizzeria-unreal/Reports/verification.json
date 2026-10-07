@@ -2,16 +2,17 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
+  "native_source_commit": "7d4dfc264efbe53171d0264ceb139f75aab88efe",
   "core_checks": {
     "fraction_geometry": 182,
     "campaign_repair_layouts": 443,
     "failures": 0,
     "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained",
     "billing": 223,
-    "evidence_scope": "Fresh182geometry+443campaign+223billing zero after correcting7/8 generation; final native source uses same unchanged cores."
+    "evidence_scope": "Final current cores182geometry+443campaign+223billing+42supplies zero. Physical11-native suite separately verified.",
+    "supplies": 42
   },
-  "editor_build": "Succeeded guest-feedback-final-build.log, session88907",
+  "editor_build": "Succeeded plates-route-build.log session97296",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -618,9 +619,189 @@
           "warnings": 5
         }
       ]
+    },
+    "InventoryRed": {
+      "sha256": "30ae80091bcdafc8dcafa89b811b50777871de8c68227904a802b19a051c7cdd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 4,
+          "warnings": 3
+        }
+      ]
+    },
+    "InventoryApiRed": {
+      "sha256": "53ba8c6e4c7f4c6df545adb86dde71dc234288801bfcf4ec095ee52dd229757f",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 13,
+          "warnings": 3
+        }
+      ]
+    },
+    "InventoryTiming": {
+      "sha256": "98185b189ded31715f06a5a583eb8f9b37e89f780ad515c65322a59814e8f640",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "InventoryFull": {
+      "sha256": "f2626b38fbab0451b3d6b7171532d992728fe747c220c82bf6d82ca5103661cd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
+    },
+    "PlateEdgeRed": {
+      "sha256": "4d86929cdbb273c8e2191f7ebc9c80e2880d0f4613510ef005384e3bf908e6a5",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.PlateEdges",
+          "state": "Fail",
+          "errors": 3,
+          "warnings": 1
+        }
+      ]
+    },
+    "PlatesFinal": {
+      "sha256": "d4d5ed397bfcdc3f70fc0e80450ea9d6e5f0021471f2aa7ea55b3a81e969799f",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.PlateEdges",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 9
+        }
+      ]
     }
   },
-  "visual_acceptance": "Actual immutable target-only customer window and compact right-side2second bill inspected. Real kitchen/menu/cutting render retained. No physical mobile/playfeel/learning-transfer acceptance inferred.",
+  "visual_acceptance": "Actual delivered/dirty/wash/intro7 scenes inspected, final native renderer captured all. Physical capsule sweep routes/station selection pass for all10kitchens. Human playfeel/device/learning-transfer remains separate.",
   "physical_mobile_device": "not_tested",
   "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
@@ -642,34 +823,34 @@
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1837007,
-      "sha256": "0d152e78eb0d9839ebd5309031ecb255163071eed1e63d079f9351700ae47804",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1846986,
+      "sha256": "cee1ce9f31b0d768634bb14503491fc7a9690d8ddd8091ce15e07fc166056ed0",
+      "scope": "PlatesFinal current native render"
     },
     "NativeCutting.png": {
-      "bytes": 1728800,
-      "sha256": "994679c0f60fff4fe55bbe0a1051406fadf4fb90afd04830bb41401bbc518bf2",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1686729,
+      "sha256": "3f266d3e70bb3dbe760386d2de7e27bb11870e0a0233e960edd9e3e5f3bc7316",
+      "scope": "PlatesFinal current native render"
     },
     "NativeLearning.png": {
-      "bytes": 875034,
-      "sha256": "f8da270e73e3aab9f807afb3c0384bafddc7e51d575c2d586251300259438c5c",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 888565,
+      "sha256": "a0b39b0df27286ce1f360d7ff88d1cc4f056d55f3003660d015de6a8e4d4e611",
+      "scope": "PlatesFinal current native render"
     },
     "NativeUnequal.png": {
-      "bytes": 1604635,
-      "sha256": "a97207536b556cb9573d628150883d82a5f9a1f209114a26a4b04fb9e355d7fa",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1537317,
+      "sha256": "ad9ca5fed57309951606dfac5989e103025662f0417a809335daac7f1fac6e54",
+      "scope": "PlatesFinal current native render"
     },
     "NativeLevel3.png": {
-      "bytes": 1862386,
-      "sha256": "8266f90f78cf1273ccbe49d8bf54b6d19a3b0267f72d2601694fe9f148a6f9d6",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1838061,
+      "sha256": "3ee97dfddb1d84912b21d70bdc1058ad961e94542751ffd043476382e4e4a050",
+      "scope": "PlatesFinal current native render"
     },
     "NativeLevel10.png": {
-      "bytes": 1862500,
-      "sha256": "bc81614b140722f1e5c3d0c998452ccedc88a4884e2dc3f9da01c3a440dbfeaf",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1852293,
+      "sha256": "f0001917229c011bce1734e04ace8acbdfa57fbc58abce4e360f01f9557565cc",
+      "scope": "PlatesFinal current native render"
     },
     "NativeRejectedBill.png": {
       "bytes": 1600706,
@@ -677,24 +858,49 @@
       "scope": "Historical invoice before target-only review; not current render"
     },
     "NativePaidBill.png": {
-      "bytes": 1782340,
-      "sha256": "a68a242c6e0f9c0a6088d8bf3934f5859a5d2c35b055015b8f397f42cad96853",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1809010,
+      "sha256": "b413d4c4a0c203a7f02ec8b7320959e835aa4ebc33dd8625a5e30610a380ae99",
+      "scope": "PlatesFinal current native render"
     },
     "NativeShiftBill.png": {
-      "bytes": 1476748,
-      "sha256": "0f543784ca1b739aabede5a3abc3a2e352e09540233b0447c692f1db1b0daa72",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1493249,
+      "sha256": "733cd2cf0ef510603d7dbad00b053443e6547b4f5da4aa544c91b00b2f863459",
+      "scope": "PlatesFinal current native render"
     },
     "NativeMenu.png": {
-      "bytes": 1219838,
-      "sha256": "8cc36c801409b3f9c3c31ee79103e9947b09099c28df94bcce1517cd0b5031df",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 1228881,
+      "sha256": "7771a4f1edbbc8a8d7889e8d6f7e45f7c2e620b48c180d74a0098a346d13ba25",
+      "scope": "PlatesFinal current native render"
     },
     "NativeGuestReview.png": {
-      "bytes": 864478,
-      "sha256": "544552a63131f39d8dd9b4313b00a8b628683d4fb5016949c3d69bc50e082948",
-      "scope": "GuestFeedbackFinal native render"
+      "bytes": 874985,
+      "sha256": "0a73264987ece5aaee9c70bb65c9db5f721b24a85e82f9a94d55557399ac54fc",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeWashing.png": {
+      "bytes": 1887188,
+      "sha256": "dd1c0a1d651883a044edf8390edd90641c5f38084779dbe75152f8b77cacc1df",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativePlateIntro.png": {
+      "bytes": 1187700,
+      "sha256": "d0ebb03a442c026c7588e534cde025f8b206464aae90750879594a581584e3e9",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeDirtyPlate.png": {
+      "bytes": 1854131,
+      "sha256": "6343f91a7bc5d5bdc110f5da5dfe70384c5eb89b604f4baa4a77d48c9ac9a138",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeWaste.png": {
+      "bytes": 1860403,
+      "sha256": "d21a65fca4b48db9986f35e14e79e385e3748a00e1cbaa3d250e87b219fbac46",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeDeliveredPlate.png": {
+      "bytes": 1772984,
+      "sha256": "f20819a48e4401e170ac24be9ead7ce84a94ee1643a1034de9fc33ee4c68d3b3",
+      "scope": "PlatesFinal current native render"
     }
   },
   "mouse_corrections": [
@@ -726,7 +932,7 @@
     "mushrooms_from_level": 4,
     "review": "Bounded reviewer cleared ae3cc08 billing delta and47d22d9 reboard fix; no Important/Critical."
   },
-  "previous_native_source_commit": "13b31f219d5929db837ee5e534341ef2f548d493",
+  "previous_native_source_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
   "menu": {
     "entry": "Esc or visible menu button from cooking/cutting/fraction help",
     "actions": [
@@ -747,5 +953,20 @@
     "level5": "1/8,3/8,7/8 reachable within3correct-delivery shift",
     "review": "No Important/Critical; recheck compactUI and second-guest/F-pause/finished-receipt/ticket-identity tests cleared",
     "gameplay_depth_assessment": "5/10 for first10level gameplay/campaign scope, not measured or overallGradeCrew"
+  },
+  "plates_supplies": {
+    "unlimited": "Existing ingredients and clean plates; pile beside sink. Not new infinite ingredient catalog.",
+    "toppings": "Additive, newest layer above older; no removal.",
+    "delivery": "Exact owned food/plate snapshot at stable customer bay,3active seconds then dirty7+; empty selection retains board food.",
+    "wash": "3active seconds, early pickup stays dirty; menus/guest reminder pause all processes; final7+cleanup gates win.",
+    "fees_cents": {
+      "dough": 100,
+      "raw_topped": 200,
+      "baked_portion": 300,
+      "emptyplate": 100
+    },
+    "bank": "Actual charge capped available balance, stored, never negative; food discard retains plate.",
+    "review": "3Important -> PlateEdgeRed3 -> PlatesFinal11success: forwarded cleanup mask, emptyboard plate pickup, nextlevelintro.",
+    "remaining_minor": "Internal unused excess topping wording says remove; not displayed. Early final snapshot held behind result under frozen active-time design."
   }
 }

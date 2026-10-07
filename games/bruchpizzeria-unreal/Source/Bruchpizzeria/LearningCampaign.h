@@ -30,10 +30,21 @@ inline CampaignProfile CampaignLevel(int number){
  return p;
 }
 inline const char* LevelObjective(int number){static const char* Text[]={"Ein Ganzes in zwei gleiche Hälften teilen.","Hälften für zwei Gäste vorbereiten.","Viertel schneiden und mehrere Stücke wählen.","Viertel sicher servieren und Beläge beachten.","Achtel: ein bis sieben Stücke auf den Teller.","Achtel mit zwei Öfen vorbereiten.","Gleiche Portion: 1/2 = 2/4 = 4/8.","Viertel zusammenlegen: 1/4 + 1/4.","Viertel und Achtel zusammenlegen.","Bekannte Brüche und eine erste Minusbestellung."};return Text[std::clamp(number,1,10)-1];}
-struct KitchenLayout {std::array<CutPoint,13> Stations;const char* Name;};
+inline const char* LevelChange(int n){static const char* Text[]={
+"Teller neben der Spüle holen, Teig dazu. Vorräte sind unbegrenzt. Zutaten bleiben auf der Pizza, die neueste liegt oben. Zu viel Belag? Mülleimer: Teig1€, rohe Pizza2€, gebackene Pizza3€, leerer Teller1€.",
+"Neu: Zwei Gäste gleichzeitig. Achte auf die Tischnummer der Bestellung; nutze beide Ablagen.",
+"Neu: Viertel schneiden. Ein Viertel ist eines von vier gleich großen Stücken; drei Viertel sind drei.",
+"Neu: Manche Gäste möchten Champignons. Zusätzlicher Belag lässt sich nicht entfernen; falsch belegte Pizza kann entsorgt werden.",
+"Neu: Achtel. Vier Schnitte durch die Mitte ergeben acht gleiche Stücke. Bestellungen enthalten jetzt auch7/8.",
+"Neu: Zweiter Ofen und fünf Minuten Schichtzeit. Parallel vorbereiten und auf beide Öfen achten.",
+"Neu: Teller spülen. Nach dem Essen leeren Teller holen und zur Spüle: E einlegen, drei Sekunden warten, abholen. Der Gastplatz wird erst danach frei. Einen Teller wegwerfen kostet1€.",
+"Neu: Gelegentlich zwei Viertel zusammenrechnen. Spülen und beide Öfen bleiben; die Schicht hat kein Zeitlimit.",
+"Neu: Gelegentlich Viertel und Achtel addieren. Stelle dir gleiche Achtel vor; der Gast zeigt bei Fehlern seine gewünschte Portion.",
+"Neu: Erste Minusbestellung und fünf Minuten Zeit. Beide Öfen, zwei Gäste und Teller spülen kombinieren."};return Text[std::clamp(n,1,10)-1];}
+struct KitchenLayout {std::array<CutPoint,16> Stations;const char* Name;};
 inline KitchenLayout CampaignLayout(int number){
  const int n=std::clamp(number,1,10);KitchenLayout l{{{{-610,-280},{-610,-30},{-610,220},{610,-280},{610,100},{0,190},{-300,430},{0,430},{300,430},{-205,-190},{205,-190},{-340,130},{340,130}}},"La Piccola"};
- static const char* Names[]={"La Piccola","Zwei Seiten","Viertelwerkstatt","Gartenterrasse","Achtelatelier","Doppio","Marktstand","Viertelrunde","Gemeinsam teilen","Die volle Pizzeria"};l.Name=Names[n-1];
+ static const char* Names[]={"La Piccola","Zwei Seiten","Viertelwerkstatt","Gartenterrasse","Achtelatelier","Doppio","Marktstand","Viertelrunde","Gemeinsam teilen","Die volle Pizzeria"};l.Name=Names[n-1];l.Stations[13]={220,-405};l.Stations[14]={404,-382};l.Stations[15]={-410,-390};
  if(n==2){std::swap(l.Stations[1],l.Stations[2]);l.Stations[9]={-220,-130};l.Stations[10]={220,-230};}
  if(n==3){std::swap(l.Stations[0],l.Stations[3]);l.Stations[5]={160,180};l.Stations[9]={-240,-150};l.Stations[10]={170,-170};}
  if(n==4){std::swap(l.Stations[1],l.Stations[3]);l.Stations[5]={-160,180};l.Stations[9]={-220,-150};l.Stations[10]={230,-150};}

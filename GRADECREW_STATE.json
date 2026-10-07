@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
+    "observed_integration_head": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -37,7 +37,8 @@
       "hero-acceptance-repair-20261006",
       "hero-guest-tour-20261006",
       "web-repair-20261007",
-      "gc-web-polish-20261007"
+      "gc-web-polish-20261007",
+      "review-mode-20261007"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -54,57 +55,97 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success37575725669_commit_12b54c2f9ee9761642c63378c724955c53b7d0c4",
-      "mobile_tutorial": "prior_runtime_tour37558149323@7f91dea0_success; CSS-only094546a4_final_combinedCI_and_browser_layout_verified",
-      "hosting_preview": "success37575854754_attempt2_receipt11462721822",
-      "staging_functions": "success37575854717_receipt11462362075",
+      "combined_ci": "success37687543142_commit_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+      "mobile_tutorial": "success37630241356",
+      "hosting_preview": "success37687715280_receipt_11510939538",
+      "staging_functions": "success37687715188_receipt_11511379079",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
-      "user_acceptance": "pending_for_12b54c2f; failed094546a4_retained",
+      "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
+      "user_acceptance": "pending_for_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "production": "not_requested",
-      "staging_assessment_functions": "success37575854717_receipt11463141295",
+      "staging_assessment_functions": "success37687715188_receipt_11511717783",
       "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
-      "canonical_hosting": "success37576307264_receipt11463137102"
+      "canonical_hosting": "success37688108976_receipt_11511808010"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 123,
-    "important": "PR163 12b54c2f9ee9761642c63378c724955c53b7d0c4 canonically deployed with exact CI/preview/functions/canonical receipts. Initial preview manifest mismatch retained; same-build bounded failed-job rerun passed all hashes. Actual canonical desktop: four original portraits, old vector absent, 0px overflow. Local390x844 hero fits, dashboard0px overflow. No paid generation acceptance or physical device acceptance. Static classroom painting has no new articulated wing/door animation; only finite portrait movement. Private audio draft-only until live secure Rules gates. Games/iOS/Production excluded; collector PAUSED.",
-    "next_action": "Martin tests new creation/editing, explicit test language and grammar alternatives; existing DYVCHDPV unchanged. Private audio gates remain open; collector PAUSED.",
+    "preview_verified_files": 127,
+    "important": "PR172 local design/compact annotation batch canonically deployed with exact Hosting hashes and both backend receipts. Own visual-feedback author-filtered backlog is separate from general notes and technical checks. Local-only standalone notes not silently imported. Browser visual acceptance pending. Production unchanged.",
+    "next_action": "Martin tests canonical Staging and records own visual-feedback notes; next deploy only on explicit user request",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
       "stage": "staging_deployed",
-      "commit": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
-      "tree": "0823b20e2ea2c6f7bdd1a5732d355d958a15e23e",
+      "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "included_prs": [
-        163
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        172
       ],
-      "combined_ci": 37575725669,
-      "preview_run": 37575854754,
-      "preview_receipt": 11462721822,
-      "functions_run": 37575854717,
-      "ai_receipt": 11462362075,
-      "assessment_receipt": 11463141295,
-      "no_scroll_story": true,
-      "canonical_run": 37576307264,
-      "canonical_receipt": 11463137102,
-      "user_acceptance": "pending",
-      "followup": {
-        "pr": 163,
-        "branch": "feature/audio-crew-visual-correction-20261007",
-        "head": "0b3b574b8add3fbb65ddbf288f668ae07158d038",
-        "stage": "staging_deployed",
-        "ci": 37575580701,
-        "review": "independent_delta_review_passed",
-        "next": "exact CI, serial integration, fresh deploy receipts",
-        "automation": "PAUSED"
-      },
-      "previousAcceptedCandidate": {
-        "commit": "094546a44131a671daede5131e29def0da116002",
-        "userAcceptance": "failed"
-      }
+      "combined_ci": 37687543142,
+      "preview_run": 37687715280,
+      "preview_receipt": 11510939538,
+      "functions_run": 37687715188,
+      "ai_receipt": 11511379079,
+      "assessment_receipt": 11511717783,
+      "canonical_run": 37688108976,
+      "canonical_receipt": 11511808010,
+      "user_acceptance": "pending"
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-web-crew-correction-20261007-12b54c2f.json"
+    "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
+    "review_regions_followup": {
+      "stage": "staging_deployed",
+      "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
+      "pr": 168,
+      "candidate_ci": 37638284400,
+      "merge_ci": 37639151101,
+      "preview": 37639362021,
+      "preview_receipt": 11490984119,
+      "functions": 37639361958,
+      "ai_receipt": 11491656204,
+      "assessment_receipt": 11491326494,
+      "canonical": "included_in_success37679819532",
+      "user_acceptance": "pending"
+    },
+    "editor_context_followup": {
+      "stage": "staging_deployed",
+      "pr": 169,
+      "commit": "cd039bcad3afca7af0dacd2bbfda56a3b67640db",
+      "merge_ci": 37642310329
+    },
+    "coco_preview_followup": {
+      "stage": "staging_deployed",
+      "pr": 170,
+      "commit": "d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+      "candidate_ci": 37679070729,
+      "merge_ci": 37679341669,
+      "staging": "waiting merge CI and exact deploy receipts",
+      "production": "not_requested",
+      "canonical_run": 37679819532
+    },
+    "local_design_batch": {
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "stage": "staging_deployed",
+      "branch": "feature/local-staging-batch-20261007",
+      "commit": "c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+      "pr": 172,
+      "policy": "explicit user batch deploy; subsequent notes collected without deploy",
+      "visual_backlog": "area=visual-feedback + actual Martin authorId; checks excluded",
+      "browser_acceptance": "pending policy unavailable",
+      "candidate_ci": 37687206408,
+      "staging": "pending merge CI and exact deploy receipts",
+      "merge_ci": 37687543142,
+      "preview_run": 37687715280,
+      "functions_run": 37687715188,
+      "canonical_run": 37688108976,
+      "canonical_receipt": 11511808010,
+      "user_acceptance": "pending",
+      "next_policy": "collect visual feedback; no new staging merge/deploy until explicit Deployen"
+    }
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -862,16 +903,16 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
-      "ci": "not_run_for_native_engine; GuestFeedbackFinal9nativeTestsSuccess0errors;848pureChecksZero",
+      "local_code_commit": "7d4dfc264efbe53171d0264ceb139f75aab88efe",
+      "ci": "not_run_native_github; PlatesFinal11nativeSuccess0errors;890purezero",
       "staging": "not_deployed",
-      "user_test": "Previous abstract/editable popup rejected; current immutable target/Ephysical correction/Fzero-pay and2secondbill candidate acceptance pending",
+      "user_test": "User rejected missing guest transfer/plate supply/removable toppings. Current explicitplate/wash/bin/intro candidate human acceptance pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Martin tests immutable guest target with E/Fchoices and briefbill; then expand actual guest/campaign gameplay from test feedback. Rats/device/learning-transfer gates separate.",
-      "observed_head": "dd7f37df3c835b7daeea5a6fc3da528323e5cca6",
+      "next_action": "Martin tests plate pickup, full customer transfer and calm level7washing; actual game/menu ready after local launch. Device/learning-transfer gates separate.",
+      "observed_head": "f7b4e9800c42747c4b72db92a4a8a0d495c2b5fb",
       "pull_request": 160,
       "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
-      "observed_head_scope": "Previous verified menu checkpoint; new fbd1a9b source tested, final exact-tree publication receipt records new head separately",
+      "observed_head_scope": "Previous verified guest-choice checkpoint; new7d4dfc2 tested, publication receipt records exact newhead externally.",
       "campaign_levels": 10
     }
   ],
@@ -1336,6 +1377,100 @@
       "canonical_run": 37547422005,
       "canonical_receipt": 11450254448,
       "user_test": "failed_20261007; preserved_reports14_incidents11"
+    },
+    {
+      "recorded_at": "2026-10-07T13:50:00Z",
+      "reason": "PR167 review mode canonical staging promotion",
+      "release_train": {
+        "id": "staging-batch-2026-10-07-web-repair",
+        "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "observed_integration_head": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
+        "included_workstreams": [
+          "crew-assistant",
+          "contextual-crew-assistants-v2",
+          "remy-structured-telemetry-v1",
+          "emmi-whole-test-revision",
+          "tutorial-choice-replay-v1",
+          "design-startscreen-v1",
+          "audio-masterpiece-v2",
+          "bug-ops-v1",
+          "i18n-content-labels-20261005",
+          "web-staging-closeout-20261006",
+          "security-web-integration-20261006",
+          "hero-web-integration-20261006",
+          "hero-acceptance-repair-20261006",
+          "hero-guest-tour-20261006",
+          "web-repair-20261007",
+          "gc-web-polish-20261007"
+        ],
+        "later_integrations_observed": [
+          "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
+          "German-only i18n boundary ist im aktuellen Integrationsstand enthalten.",
+          "Kontextbezogene Crew-Assistenten V2: Coco global, Remy in Test erstellen, Emmi im Editor.",
+          "Remy trennt Thema, feste Formularwerte und Eigene Wünsche strukturierter und misst nur technische Nutzungs-/Korrektursignale.",
+          "Crew-Rohmetriken werden pseudonymisiert gespeichert und serverseitig nach 30 Tagen gelöscht; Unique-User-Marker nach 90 Tagen. Inhaltsfreie Tagesaggregate bleiben für Trends.",
+          "Öffentlicher GradeCrew Startscreen v3 ist aktiviert: Coco-Welcome, Crew-Einstieg, Login/Register/Tutorial und Schülerzugang nutzen die bestehende Entry-Architektur; Aktivierungsfix aus PR #61 ist im Integrationshead enthalten.",
+          "Startscreen Masterpiece v1: breitere Markenbühne, öffentliche Navigation, Klassenzimmer-Komposition, Coco als Gastgeber, Crew-Rollenkarten, CTA-/Testcode-Zone und Benefit-Leiste; PR #68 im Integrationsstand enthalten.",
+          "Audio Masterpiece V2: 0–5 Höraufgaben + 0–5 Audio-Lösungen, Remy-Dual-Audio, private Audio-Entwürfe und serverseitig kontrollierte Lösungsaudio-Freigabe.",
+          "Startscreen Masterpiece v4: isolierter Premium-Polish-Layer auf fb88dfa7; DE/EN-Copy bleibt DOM/i18n-basiert, Hosting-Preview verifiziert.",
+          "BugOps V1 ist integriert: Web-Decision-Inbox, serverseitige Incident-Aggregation und admin-only Attention-Summary; Rohmeldungen werden zu Incidents gebündelt statt einzeln alarmiert.",
+          "BugOps speichert in Incidents keine Namen, E-Mails, Freitexte oder Schülerantworten; eindeutige Melder werden nur über incident-lokale Hashmarker gezählt.",
+          "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
+        ],
+        "gates": {
+          "combined_ci": "success37575725669_commit_12b54c2f9ee9761642c63378c724955c53b7d0c4",
+          "mobile_tutorial": "prior_runtime_tour37558149323@7f91dea0_success; CSS-only094546a4_final_combinedCI_and_browser_layout_verified",
+          "hosting_preview": "success37575854754_attempt2_receipt11462721822",
+          "staging_functions": "success37575854717_receipt11462362075",
+          "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
+          "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
+          "user_acceptance": "pending_for_12b54c2f; failed094546a4_retained",
+          "production": "not_requested",
+          "staging_assessment_functions": "success37575854717_receipt11463141295",
+          "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
+          "canonical_hosting": "success37576307264_receipt11463137102"
+        },
+        "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+        "preview_verified_files": 123,
+        "important": "PR163 12b54c2f9ee9761642c63378c724955c53b7d0c4 canonically deployed with exact CI/preview/functions/canonical receipts. Initial preview manifest mismatch retained; same-build bounded failed-job rerun passed all hashes. Actual canonical desktop: four original portraits, old vector absent, 0px overflow. Local390x844 hero fits, dashboard0px overflow. No paid generation acceptance or physical device acceptance. Static classroom painting has no new articulated wing/door animation; only finite portrait movement. Private audio draft-only until live secure Rules gates. Games/iOS/Production excluded; collector PAUSED.",
+        "next_action": "Martin tests new creation/editing, explicit test language and grammar alternatives; existing DYVCHDPV unchanged. Private audio gates remain open; collector PAUSED.",
+        "canonical_url": "https://hausaufgabe-staging.web.app/",
+        "active_repair": {
+          "task_id": "GC-WEB-REPAIR-20261007",
+          "stage": "staging_deployed",
+          "commit": "12b54c2f9ee9761642c63378c724955c53b7d0c4",
+          "tree": "0823b20e2ea2c6f7bdd1a5732d355d958a15e23e",
+          "included_prs": [
+            163
+          ],
+          "combined_ci": 37575725669,
+          "preview_run": 37575854754,
+          "preview_receipt": 11462721822,
+          "functions_run": 37575854717,
+          "ai_receipt": 11462362075,
+          "assessment_receipt": 11463141295,
+          "no_scroll_story": true,
+          "canonical_run": 37576307264,
+          "canonical_receipt": 11463137102,
+          "user_acceptance": "pending",
+          "followup": {
+            "pr": 163,
+            "branch": "feature/audio-crew-visual-correction-20261007",
+            "head": "0b3b574b8add3fbb65ddbf288f668ae07158d038",
+            "stage": "staging_deployed",
+            "ci": 37575580701,
+            "review": "independent_delta_review_passed",
+            "next": "exact CI, serial integration, fresh deploy receipts",
+            "automation": "PAUSED"
+          },
+          "previousAcceptedCandidate": {
+            "commit": "094546a44131a671daede5131e29def0da116002",
+            "userAcceptance": "failed"
+          }
+        },
+        "canonical_request": "automation/canonical-staging-requests/gc-web-crew-correction-20261007-12b54c2f.json"
+      }
     }
   ],
   "tutorialAcceptanceFollowup": {
@@ -1360,12 +1495,12 @@
     "phase": "concept_only",
     "date": "2026-10-07",
     "document": "docs/gradecrew-review-mode-concept-20261007.txt",
-    "next": "Repo-specific implementation plan; not implemented",
+    "next": "Implemented in PR167; see reviewModeImplementation for verified stage and limits",
     "automaticAI": false
   },
   "reviewModeImplementation": {
     "task": "GC-WEB-REPAIR-20261007",
-    "phase": "integrated",
+    "phase": "staging_deployed",
     "branch": "feature/review-mode-20261007",
     "head": "a82e035e42ae9be320f06032a7240dfc9e35bf98",
     "pr": 167,
@@ -1378,10 +1513,10 @@
       "buildFiles": 127
     },
     "browserAcceptance": "blocked_browser_policy_verification_unavailable",
-    "deployment": "not_deployed",
+    "deployment": "verified_canonical_hosting_and_ai_assessment_functions",
     "automaticAI": false,
     "automaticChecks": "explicit_local_allowlist_only",
-    "next": "Verify canonical staging receipt, then user acceptance",
+    "next": "Martin verifies admin note creation, manual check and optional teacher grant in browser",
     "integration": "fa51e2781a8e00b219892fdceb2d25fb88203ff5",
     "candidateCIConclusion": "success",
     "mergeCI": 37630241490,
@@ -1404,6 +1539,9 @@
     "functionsReceipt": 11486900356,
     "functionsConclusion": "success_attempt2",
     "reviewModeFunctionVerified": true,
-    "canonicalRequest": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json"
+    "canonicalRequest": "automation/canonical-staging-requests/gc-review-mode-20261007-fa51e278.json",
+    "canonicalRun": 37631350330,
+    "canonicalReceipt": 11486023795,
+    "userAcceptance": "pending"
   }
 }

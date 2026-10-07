@@ -58,7 +58,16 @@
     "fbd1a9b compact billright, expanded secondguest/Fpause/finishedtimer/ticketidentity coverage; final build88907 Succeeded",
     "GuestFeedbackFinal93682 all9Success0errors (warnings1/1/1/1/1/1/3/1/5knownAudioUnit/EpicideviceCPU); actual target-only review and compact bill inspected",
     "Bounded reviewer clears965eee7 andfbd1a9b, no Important/Critical; main343660f docs/workflow changes preserved, not executed for native branch",
-    "Gameplay/campaign depth5/10: fixed guest bays,3/4correct-delivery shifts, five-minute clock6/10, static ticket patterns; no rats/walkingguests/burntfood/shop/story"
+    "Gameplay/campaign depth5/10: fixed guest bays,3/4correct-delivery shifts, five-minute clock6/10, static ticket patterns; no rats/walkingguests/burntfood/shop/story",
+    "User supplies/plates/wash/intro/newesttopping/no-remove/bin-fee/actual guest transfer continuation; sameGC-GAMES-PIZZA-01",
+    "InventoryRed84031 Fail4 confirms XORremoval, layerdepth, missingguestgeometry, unselected-foodloss. Supplies42RED32 -> all890corezero",
+    "InventoryApiRed76482 Fail13 verifies missing new item/sink/fee/finalcleanup API behavior before implementation",
+    "aac99c5 first physical dish/wash/bin build18816 Succeeded; InventoryTiming28051 Fail1 new guest inherits3.1seconds of previouscleanup -> moved ages before serviceevents",
+    "f94e4e6 actual explicit plate fixtures/eating/wash; InventoryFull44360 all10Success0errors; actual delivered/dirty/wash/intro7 PNGs inspected",
+    "Fresh strongest-model bounded reviewer3Important: forwarded dirtyplate permanentbaylock; plate-onlyboard retrieval inaccessible; nextlevel bypassesIntro",
+    "PlateEdgeRed32471 Fail3 exactfindings ->5204d6d maskownership/boardpickup/introfix. Sink route fixture y0 north of all prep counters, geometry ruling retained",
+    "Final7d4dfc2 build97296Succeeded; PlatesFinal77263 all11Success0errors (knownAudioUnit/EpicideviceCPU warnings); actual capsule sweeps and nearest13/14/15 pass all10layouts",
+    "Currentmain12094d9 merged preserving independent Web/Escape/status/workflow additions; no integration/deploy/provider call"
   ],
   "paid_provider_calls": 0,
   "new_budget_reservations": 0

@@ -6,11 +6,12 @@
 #include "FractionRules.h"
 #include "LearningCampaign.h"
 #include "BillingRules.h"
+#include "KitchenSupplies.h"
 #include "KitchenArt.h"
 #include "PizzaKitchen.generated.h"
 class UCapsuleComponent;class UFloatingPawnMovement;class ACameraActor;
-struct FKitchenPizza {int Ingredients=0;bool Baked=false;PizzaRules::PizzaCuts Cuts;uint32 Selection=0;bool Plated=false;PizzaRules::Rational Portion()const{if(!Plated)return PizzaRules::Rational(1);if(Selection==0)return PizzaRules::Rational(0);if(Selection==((1u<<Cuts.Count())-1))return PizzaRules::Rational(1);return Cuts.Selected(Selection);}};
-struct FKitchenOrder {FString Name;PizzaRules::Rational Amount;PizzaRules::Rational Left,Right;char Op=' ';int Ingredients=3;float Patience=110,Age=0;};
+struct FKitchenPizza {bool HasPizza=true,HasPlate=false,DirtyPlate=false;int ReturnBay=-1;uint32 ReturnMask=0;uint32 CleanupMask()const{return (ReturnMask&7u)|(ReturnBay>=0&&ReturnBay<3?1u<<ReturnBay:0u);}std::vector<int> LayerOrder;void AddIngredient(int);int Ingredients=0;bool Baked=false;PizzaRules::PizzaCuts Cuts;uint32 Selection=0;bool Plated=false;PizzaRules::Rational Portion()const{if(!HasPizza)return PizzaRules::Rational(0);if(!Plated)return PizzaRules::Rational(1);if(Selection==0)return PizzaRules::Rational(0);if(Selection==((1u<<Cuts.Count())-1))return PizzaRules::Rational(1);return Cuts.Selected(Selection);}};
+struct FKitchenOrder {int Bay=-1;FString Name;PizzaRules::Rational Amount;PizzaRules::Rational Left,Right;char Op=' ';int Ingredients=3;float Patience=110,Age=0;};
 UCLASS() class BRUCHPIZZERIA_API APizzaArena:public AActor {GENERATED_BODY() public:APizzaArena();virtual void OnConstruction(const FTransform&)override;void ApplyLevel(int);};
 UCLASS() class BRUCHPIZZERIA_API APizzaVisual:public AActor {GENERATED_BODY() public:APizzaVisual();void SetPizza(const FKitchenPizza&);};
 UCLASS() class BRUCHPIZZERIA_API AKitchenChef:public APawn {GENERATED_BODY() public:AKitchenChef();virtual void OnConstruction(const FTransform&)override;virtual void Tick(float)override;UPROPERTY() UCapsuleComponent* Body;UPROPERTY() UFloatingPawnMovement* Movement;KitchenArt::ChefParts Rig;float AnimationClock=0;};
@@ -19,6 +20,8 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  public:APizzaGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
  UPROPERTY() ACameraActor* Camera;UPROPERTY() APizzaVisual* CarryVisual;UPROPERTY() APizzaVisual* BoardVisual;UPROPERTY() APizzaVisual* OvenVisual;
  UPROPERTY() TArray<AActor*> Guests;
+ UPROPERTY() TArray<APizzaVisual*> MealVisuals;UPROPERTY() APizzaVisual* SinkVisual=nullptr;
+ std::array<TOptional<FKitchenPizza>,3> GuestMeals;std::array<FString,3> GuestMealNames;std::array<float,3> EatTimes{};std::array<bool,3> NeedsWash{};TOptional<FKitchenPizza> Sink;float WashTime=0;int DisposalCosts=0;
  UPROPERTY() TArray<APizzaVisual*> TableVisuals;UPROPERTY() TArray<APizzaVisual*> ExtraOvenVisuals;UPROPERTY() TArray<AActor*> ExtraOvenArt;
  TArray<TOptional<FKitchenPizza>> Tables,ExtraOvens;TArray<float> ExtraBakeTimes;
  PizzaRules::CampaignProfile Level;PizzaRules::KitchenLayout Layout=PizzaRules::CampaignLayout(1);PizzaRules::PortionRepair Repair;FKitchenOrder RepairOrder;
@@ -33,6 +36,7 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
  bool Frozen()const{return Intro||Learning||Paused||Finished;}
  AKitchenChef* Chef()const;int NearestStation()const;void Start();void ReturnToMenu();void TogglePause();void Use();void Drop();void Dash();void CycleDifficulty();
  void BeginCut();void FinishCut();void CutStroke(FVector2D,FVector2D);void CutAngle(float);void TogglePiece(FVector2D);void ResetCuts();
+ void UseDough();void UseBoard();void TakeBoard();void LeaveBoard();void UsePlateStack();void UseSink();void UseTrash();void UseGuest(int);bool CompleteDelivery(int);void AdvanceService(float);void RefillOrders();void CheckShiftComplete();
  void UseTable(int);void UseOven(int);void ConfirmRepair();void ServeAnyway();void ToggleRepairPiece(int);void ShowRepairStep();void SelectLevel(int);void SaveProgress();
  void TryServe(int);void BeginLesson(const FKitchenOrder&,PizzaRules::Rational);void Answer(int);void RefreshPizza();void MakeOrder();
  FVector StationLocation(int I)const{return FVector(Layout.Stations[I].X,Layout.Stations[I].Y,0);}

@@ -27,7 +27,7 @@ Jedes Level hat eine eigene Stationsanordnung mit gemeinsam wiederverwendeten As
 | 4 Gartenterrasse | Viertel im laufenden Kochen | zwei Gäste, anderer Brett-/Zutatweg, Pilzbelag |
 | 5 Achtelatelier | Konkret1/8,3/8und7/8 | ein Gast, großzügige Hilfe, kein Zeitlimit |
 | 6 Doppio | Achtel parallel vorbereiten | zweiter Ofen, zwei Gäste, erste bekannte Aufgaben mit Uhr |
-| 7 Marktstand | 1/2=2/4=4/8 und 3/4=6/8 | ein Gast, neue Stationsanordnung, kein Zeitlimit |
+| 7 Marktstand | Gleiche Mengen und erster Tellerabwasch | ein Gast, ohne Zeitlimit; benutzte Teller holen und drei Sekunden spülen |
 | 8 Viertelrunde | Erstes Addieren gleicher Teile | ein Gast, nur jede vierte Bestellung als Rechnung |
 | 9 Gemeinsam teilen | Viertel und Achtel addieren | ein Gast, kein Zeitlimit, gemeinsame Achtel sichtbar |
 | 10 Die volle Pizzeria | Bekannte Brüche + erste Minusbestellung | zwei Gäste, zwei Öfen, Uhr für bekannten Stoff |
@@ -61,10 +61,24 @@ Esc oder der sichtbare »MENÜ · ESC«-Knopf öffnet die Pause auch beim Schnei
 »Schicht neu starten« startet dasselbe Level mit frischen Bestellungen und leerer Küche. Nur Schichtfortschritt/-umsatz wird zurückgesetzt; kumulative Kasse und freigeschaltete Level bleiben erhalten. »Levelauswahl« verlässt die laufende Schicht und führt zur bestehenden Auswahl freigeschalteter Küchen. Auch die Schichtabrechnung bietet Levelauswahl. Das Menü verlangt keine zweite Bestätigung für den bewusst gewählten Neustart.
 
 ## Tatsächlicher aktueller Spielaufbau
-Der Ablauf ist Teig holen → Zutaten auflegen →5Sekunden backen → am Brett schneiden/auswählen → Gast. Zwei Ablagen erlauben Parallelvorbereitung, ab6sind zwei Öfen nutzbar. Gäste sind feste Serviceplätze mit wechselnden Namen/Bestellungen; sie laufen nicht herein, setzen sich nicht und gehen nicht animiert. In6/10gibt es einen150Sekunden-Geduldsbalken, aber noch keinen echten Weggeh-/Wutablauf. Die Schichtzeit beträgt dort5Minuten; andere Level haben kein Zeitlimit. Ofenpizza verbrennt bisher nicht.
+Der Ablauf ist sauberen Teller holen → Teig und Belag → fünf Sekunden backen → am Brett schneiden/auswählen → Gast. Teller können nachträglich am Brett mit Pizza kombiniert werden. Zwei Ablagen erlauben Parallelvorbereitung, ab6sind zwei Öfen nutzbar. Gäste sind feste Serviceplätze mit wechselnden Namen/Bestellungen; sie laufen nicht herein, setzen sich nicht und gehen nicht animiert. In6/10gibt es einen150Sekunden-Geduldsbalken, aber noch keinen echten Weggeh-/Wutablauf. Die Schichtzeit beträgt dort5Minuten; andere Level haben kein Zeitlimit. Ofenpizza verbrennt bisher nicht.
 
 Pro Level werden3(runde1–5) bzw4(runde6–10)richtige Lieferungen benötigt. Muster sind fest, keine adaptive Schwierigkeit. Jede Küche verschiebt Stationen/Ablagen; es sind keine10völlig neuen Grafikwelten oder Storykapitel. Level7beruht auf gleicher Pizza-Menge trotz verschiedener zulässiger Teilungen; diese Gleichwertigkeit wird noch nicht als ausführliche eigene Spielmechanik erarbeitet. Plus/Minus erscheint nur jede vierte Bestellung in8–10. Multiplikation/Division sind im Rechenkern vorhanden, aber kein Kampagneninhalt dieser10Level.
 
 Ratten, Gästewanderung, verbrannte Pizza, Kauf-Upgrades, Sternebewertung und Story sind nicht implementiert. Geld ist aktuell Sammlung/Servicebelohnung, noch kein Kaufsystem. Neue Themen werden bewusst ruhig eingeführt, deshalb ist die Belastung nicht durchgehend steigend.
 
 Bewertung des Spielaufbaus/Kampagnentiefe dieser ersten10Level:5/10 als begründete Einschätzung. Funktionierende Küche, Coins, Auswahlmenü und unterschiedliche Lernschwerpunkte stehen festen kurzen Bestellungsmustern und einfachen Gästereaktionen gegenüber. Das ist keine Gesamtbewertung vonGradeCrew und kein gemessener Lerntransfer. Nächster sinnvoller Ausbau: echte Gästeabläufe und tragfähigere spielerische Unterschiede nach Martins Test; Ratten später als optionale bekannte Herausforderung.
+
+## Neuer autorisierter Teller-/Müllkreislauf (Umsetzung läuft)
+Unbegrenzte Vorräte der vorhandenen Zutaten und sauberen Teller, Stapel neben Spüle. Belag nur hinzufügen, zuletzt benutzt sichtbar oben. Zu viel Belag nur über Müll entsorgen. Pauschalen: Teig1€, rohe belegtePizza2€, gebackene/portioniertePizza3€, leererTeller1€; Abzug höchstens bestehende Kasse, kein negativer Betrag. Food-Entsorgung behält angehängten Teller; Teller-Entsorgung entfernt ihn.
+
+Echte Übergabe zeigt exakten Teller/Portion3Sekunden beim richtigen Gast. Ab ruhigem7danach schmutzigerTeller: mit freien Händen holen, SpüleE3aktiveSekunden, sauber abholen. Platz/finaleSchicht frei nach Reinigung. NeuerTellerstapel unbegrenzt; Gastplatzreinigung bleibt nötig, bewusste bezahlte Entsorgung ersetzt Teller alternativ. Alle Uhren frieren in Menü/Gastfenster. Neue Mechaniken in Levelintro erklärt. Ohne Stückauswahl bleibt Pizza amBrett, nur leererTeller wird genommen. Keine neuenIngredienttypen/Ratten/Production.
+
+## Teller und Entsorgung: aktueller Stand
+Teller sind eigene Gegenstände: leer/sauber, mit Pizza oder schmutzig. Der Stapel neben der Spüle ist unbegrenzt, ebenso der Vorrat vorhandener Zutaten. E legt leere Teller am Brett ab und nimmt sie mit freien Händen wieder auf. Ohne ausgewählte Stücke nimmt man nur den leeren Teller; die ganze Pizza bleibt am Brett. Mitnehmen/Brett verlassen machen auch unportionierte Pizza zugänglich.
+
+Richtige wie bewusst falsche0€-Übergabe zeigt das echte Objekt beim konkreten Gast drei aktive Sekunden. Tischnummern bleiben stabil. In1–6 wird der Platz danach frei; in7–10 bleibt ein schmutziger Teller. Mit freien Händen holen, E an der Spüle einlegen, drei aktive Sekunden warten, sauber abholen. Frühes Herausnehmen bleibt schmutzig. NeuerTellerstapel umgeht Gastplatzreinigung nicht. Bewusster Ersatz eines leeren Tellers kostet1€. Bei Weitergabe an anderen Gast bleiben alle betroffenen Reinigungspflichten am selben Teller; Waschen/Entsorgen löst alle diese Plätze.
+
+Müllkosten sofort von kumulierter Kasse: Teig100c, rohe belegtePizza200c, gebackene/portioniertePizza300c, leererTeller100c. Höchstens vorhandener Betrag wird abgezogen; Bank bleibt mindestens0. Food-Entsorgung behält angehängten Teller, Teller-Entsorgung entfernt ihn. Schichtrechnung zeigt Speisen+Trinkgeld−tatsächlicheMüllkosten.
+
+Jede Level-Einführung erklärt Änderungen. NächstesLevel führt zuerst dorthin; E/LosKochen startet anschließend. Gästeessen und Abwasch frieren mit allen anderen Spieluhren in Menü/Gastfenster. Finale7–10wartet auf letzte Tellerreinigung. Frühe1–6halten die letzte gelieferte Pizza hinter der Ergebnisanzeige, weil aktiveSpielzeit dort endet.

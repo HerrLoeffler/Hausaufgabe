@@ -10,3 +10,6 @@ xcrun clang++ -std=c++20 -fno-exceptions -Wall -Wextra -Werror -pedantic "$test_
 
 xcrun clang++ -std=c++20 -fno-exceptions -Wall -Wextra -Werror -pedantic "$test_dir/billing_rules_test.cpp" -o "$test_dir/build/billing_rules_test"
 "$test_dir/build/billing_rules_test"
+
+xcrun clang++ -std=c++20 -fno-exceptions -Wall -Wextra -Werror -pedantic "$test_dir/supplies_test.cpp" -o "$test_dir/build/supplies_test"
+"$test_dir/build/supplies_test"

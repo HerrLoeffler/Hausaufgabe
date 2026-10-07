@@ -375,8 +375,6 @@ void Room(AActor* O,USceneComponent* P,int Level)
     for (float X:{-300.f,0.f,300.f})
     {
         Box(O,P,TEXT("ServicePlacemat"),FVector(X,427,82),FVector(126,77,4),Terra*.78f,4);
-        Cylinder(O,P,TEXT("ServicePlate"),FVector(X,427,85),FVector(.78,.78,.035),Ivory);
-        Cylinder(O,P,TEXT("PlateWell"),FVector(X,427,87),FVector(.65,.65,.02),Cream);
         Box(O,P,TEXT("ServiceBayNumber"),FVector(X,374,53),FVector(43,4,26),Teal,3);
         Label(O,P,FVector(X,369,53),X<0?TEXT("1"):X>0?TEXT("3"):TEXT("2"),Ivory,20);
     }
@@ -414,6 +412,19 @@ void Room(AActor* O,USceneComponent* P,int Level)
     Cylinder(O,P,TEXT("StockPot"),FVector(353,-382,99),FVector(.34,.34,.28),Steel);
     Cylinder(O,P,TEXT("StockPotLid"),FVector(353,-382,114),FVector(.36,.36,.045),Steel*1.3f);
     Sphere(O,P,TEXT("PotLidKnob"),FVector(353,-382,119),FVector(.09,.09,.07),Ink);
+
+    // Unlimited plate source beside the real sink, and a reachable disposal bin.
+    const auto PlatePos=Layout.Stations[13];const FVector PlateCounter(PlatePos.X,PlatePos.Y,0);
+    Cabinet(O,P,PlateCounter,FVector(104,76,80),Sage);
+    for(int I=0;I<6;++I){Cylinder(O,P,TEXT("PlateStack"),PlateCounter+FVector(0,0,86+I*4),FVector(.69,.69,.035),Ivory);Cylinder(O,P,TEXT("PlateStackWell"),PlateCounter+FVector(0,0,88+I*4),FVector(.56,.56,.012),Cream);}
+    Label(O,P,PlateCounter+FVector(0,-42,52),TEXT("TELLER"),Ivory,19);
+    Label(O,P,FVector(404,-437,53),TEXT("SPUELE"),Ivory,19);
+    const auto BinPos=Layout.Stations[15];const FVector Bin(BinPos.X,BinPos.Y,0);
+    Box(O,P,TEXT("TrashBody"),Bin+FVector(0,0,39),FVector(82,72,78),Teal*.7f,8,true);
+    Box(O,P,TEXT("TrashOpening"),Bin+FVector(0,0,81),FVector(72,62,4),Ink,8);
+    Box(O,P,TEXT("TrashRim"),Bin+FVector(0,0,77),FVector(90,80,5),Steel,8);
+    Box(O,P,TEXT("TrashOpening"),Bin+FVector(0,0,81),FVector(70,60,4),Ink,6);
+    Label(O,P,Bin+FVector(0,-40,47),TEXT("MUELL"),Ivory,20);
     const auto Base=PizzaRules::CampaignLayout(1);for(int I=0;I<6;++I)StationRoots[I]->SetRelativeLocation(FVector(Layout.Stations[I].X-Base.Stations[I].X,Layout.Stations[I].Y-Base.Stations[I].Y,0));
 
 }
