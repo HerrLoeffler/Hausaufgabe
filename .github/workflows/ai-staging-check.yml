@@ -20,6 +20,7 @@ on:
       - 'feature/review-mode-*'
       - 'feature/local-staging-*'
       - 'fix/audio-*'
+      - 'fix/visual-backlog-*'
       - 'fix/gc-security-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:

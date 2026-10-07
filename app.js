@@ -7538,6 +7538,7 @@ function switchAdminTab(name, scroll = true) {
 async function loadAdminData(showToast = false) {
   if (!isAdmin()) return;
   const requestingUid = state.user.uid;
+  try { await reviewController?.syncVisualFeedback?.(); } catch (err) { console.error(err); toast("Screenshot-Hinweise konnten noch nicht übertragen werden.", "error"); }
   const refresh = $("refreshAdminBtn");
   if (refresh) { refresh.disabled = true; refresh.textContent = "Lädt …"; }
   try {
@@ -8081,7 +8082,7 @@ function showAdminTeacherTourPreview() {
   safeDialogOpen($("teacherTourDialog"));
 }
 
-function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",screenshot_error:"Screenshot-Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
 
 function formatTechnicalErrorReport(report) {
   const t = report.technicalDetails || {};
@@ -8628,3 +8629,5 @@ if (["staging", "local-review"].includes(appEnvironment)) {
     void reviewController.setSession({uid:"local-admin"}).then(() => document.dispatchEvent(new Event("gradecrew:review-ready")));
   }
 }
+
+window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));

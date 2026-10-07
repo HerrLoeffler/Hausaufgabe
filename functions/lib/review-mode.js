@@ -25,6 +25,8 @@ function createReviewService({store,projectId,now=Date.now}) {
    if(!profile||(profile.status&&profile.status!=='active')||(!admin&&!(profile.role==='teacher'&&member?.enabled===true)))fail('permission-denied','Keine Berechtigung für den Überarbeitungsmodus.');
    const requireAdmin=()=>{if(!admin)fail('permission-denied','Nur der Administrator darf diese Aktion ausführen.');};
    const quizAccess=async quizId=>{if(!quizId)return;const q=await tx.get(`quizzes/${id(quizId)}`);if(!q||(!admin&&q.ownerId!==uid))fail('permission-denied','Kein Zugriff auf diesen Test.');};
+   const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{})});
+   async function ensureFeedback(n){if(n.area!=='visual-feedback'&&!(n.region&&!n.area))return false;const path=`feedback/visual-${n.id}`;if(await tx.get(path))return false;tx.set(path,feedbackValue(n));return true;}
    const action=data.action;
    if(action==='access')return {uid,admin,catalog};
    if(action==='members'){
@@ -39,6 +41,11 @@ function createReviewService({store,projectId,now=Date.now}) {
     tx.set(`reviewMembers/${memberId}`,{enabled:data.enabled,revision,updatedBy:uid,updatedAt:now()});
     tx.set(`reviewMembers/${memberId}/history/${revision}`,{enabled:data.enabled,actor:uid,at:now()});return {ok:true};
    }
+   if(action==='syncVisualFeedback'){
+    requireAdmin();const notes=await tx.list('reviewNotes',{owner:uid,cursor:data.cursor?id(data.cursor):'',limit:100});let imported=0;
+    for(const n of notes){await quizAccess(n.quizId);if(await ensureFeedback(n))imported++;}
+    return {imported,nextCursor:notes.length===100?notes.at(-1).id:null};
+   }
    if(action==='list'||action==='batch'){
     if(action==='batch')requireAdmin();
     if(data.area && !['visual-feedback','general'].includes(data.area))fail('invalid-argument','Unbekannter Backlog-Bereich.');
@@ -46,7 +53,7 @@ function createReviewService({store,projectId,now=Date.now}) {
     const cursor=data.cursor?id(data.cursor):'';
     const notes=await tx.list('reviewNotes',{owner:admin?null:uid,cursor,limit:100});
     const checks=action==='list'&&data.area!=='visual-feedback'?await tx.list('reviewChecks',{owner:admin?null:uid,cursor:data.checkCursor?id(data.checkCursor):'',limit:100}):[];
-    const visible=[];for(const n of notes){if(data.area&&(n.area||'general')!==data.area)continue;if(author&&n.authorId!==author)continue;try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
+    const visible=[];for(const n of notes){if(data.area&&(n.area||'general')!==data.area)continue;if(author&&n.authorId!==author)continue;if(action==='batch'&&n.area==='visual-feedback'&&(await tx.get(`feedback/visual-${n.id}`))?.status==='done')continue;try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
     const eligible=n=>n.status!=='done'&&n.approval!=='rejected'&&(n.authorRole==='admin'||n.approvedContentRevision===n.contentRevision);
     return {notes:action==='batch'?visible.filter(eligible):visible,checks,nextCursor:notes.length===100?notes.at(-1).id:null,nextCheckCursor:checks.length===100?checks.at(-1).id:null};
    }
@@ -59,9 +66,9 @@ function createReviewService({store,projectId,now=Date.now}) {
     await quizAccess(content.quizId);
     if(content.quizId&&content.questionId&&!await tx.get(`quizzes/${content.quizId}/questions/${content.questionId}`))fail('permission-denied','Aufgabe gehört nicht zu diesem Test.');
     const fingerprint=hash(JSON.stringify(content)),old=await tx.get(`reviewNotes/${noteId}`);
-    if(old){if(old.createFingerprint!==fingerprint)fail('already-exists','Diese Übertragung wurde bereits mit anderem Inhalt gespeichert.');return {note:old};}
+    if(old){if(old.createFingerprint!==fingerprint)fail('already-exists','Diese Übertragung wurde bereits mit anderem Inhalt gespeichert.');await ensureFeedback(old);return {note:old};}
     const n={id:noteId,clientRequestId,createFingerprint:fingerprint,...content,authorId:uid,authorRole:admin?'admin':'teacher',revision:1,contentRevision:1,approval:admin?'not_required':'pending',approvedContentRevision:admin?1:0,status:'open',createdAt:now(),updatedAt:now(),previewEvidence:'',acceptanceEvidence:'',deployedBuild:''};
-    tx.set(`reviewNotes/${noteId}`,n);tx.set(`reviewNotes/${noteId}/history/1`,{action,actor:uid,at:now(),revision:1});return {note:n};
+    tx.set(`reviewNotes/${noteId}`,n);tx.set(`reviewNotes/${noteId}/history/1`,{action,actor:uid,at:now(),revision:1});await ensureFeedback(n);return {note:n};
    }
    if(action==='check'){
     const checkId=id(data.checkId),definition=catalog.checks.find(c=>c.id===checkId);
