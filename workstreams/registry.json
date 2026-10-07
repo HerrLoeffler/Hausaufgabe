@@ -485,6 +485,17 @@
       "relatedBranches": [
         "feature/lerninsel-ego-v1"
       ]
+    },
+    {
+      "id": "lerninsel-ego-v1",
+      "title": "Ego-Lerninsel / erster Unreal-Spielabschnitt",
+      "primaryBranch": "feature/lerninsel-ego-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/lerninsel-layouts-20261007.md",
+      "relatedBranches": [
+        "docs/lerninsel-layouts-20261007"
+      ]
     }
   ]
 }
