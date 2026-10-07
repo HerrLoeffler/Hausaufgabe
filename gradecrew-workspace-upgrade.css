@@ -38,7 +38,8 @@
 #dashboardView.gcWorkspace .quizCard h3 { font-size: 20px; line-height: 1.35; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCard .meta { font-size: 12px; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCardStatusGroup { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-#dashboardView.gcWorkspace .dashboardPublishControl { font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .dashboardPublishControl { position: relative; font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .dashboardPublishControl input { width: 1px; height: 1px; margin: 0; clip-path: inset(50%); }
 #dashboardView.gcWorkspace .quizStats { padding-block: 13px; }
 #dashboardView.gcWorkspace .quizStats strong { font-size: 18px; }
 #dashboardView.gcWorkspace .quizStats span { font-size: 11px; text-transform: none; letter-spacing: 0; }
@@ -100,6 +101,8 @@
   #dashboardView.gcWorkspace .dashboardToolbar :is(input,select) { min-width: 0; font-size: 16px; }
   #dashboardView.gcWorkspace .quizGrid { grid-template-columns: minmax(0,1fr); }
   #dashboardView.gcWorkspace .quizCard { padding: 18px; }
+  #dashboardView.gcWorkspace .primaryQuizActions { display: grid; grid-template-columns: minmax(0,1fr); }
+  #dashboardView.gcWorkspace .primaryQuizActions .button { min-width: 0; width: 100%; }
   #dashboardView.gcWorkspace .aiJobCard { padding: 16px; gap: 10px; }
   #dashboardView.gcWorkspace .aiJobActions { grid-column: 1/-1; }
   #dashboardView.gcWorkspace #localDraftList .aiJobCard { grid-template-columns: minmax(0,1fr); }
