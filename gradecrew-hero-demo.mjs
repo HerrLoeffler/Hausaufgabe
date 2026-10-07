@@ -21,7 +21,7 @@ export function installHeroDemo(root) {
     root.querySelector('.gcHeroArtwork').alt = t('sceneAlt');
     $('gcEntryCrew').setAttribute('aria-label', t('crewGroup'));
     root.querySelector('.gcHeroRoles').setAttribute('aria-label', t('yourCrew'));
-    for (const name of ['remy', 'emmi', 'wilma']) {
+    for (const name of ['coco', 'remy', 'emmi', 'wilma']) {
       root.querySelectorAll(`[data-hero-crew="${name}"]`).forEach(button => {
         button.setAttribute('aria-label', t(`${name}Action`));
       });
@@ -33,6 +33,13 @@ export function installHeroDemo(root) {
   function resetFlow() {
     flow?.stop();
     flow = createDemoFlow({ reducedMotion: motion.matches, onChange(next) { state = next; render(); } });
+  }
+
+  function renderCoco(sheet, phase) {
+    const portrait = document.createElement('img');
+    portrait.src = './assets/gradecrew/penguin-guide.svg'; portrait.alt = ''; portrait.width = 110; portrait.height = 110;
+    portrait.style.cssText = 'display:block;margin:0 auto 16px;object-fit:contain';
+    sheet.append(portrait, make('h3', 'gcHeroSheetTitle', `cocoHeading${phase}`), make('p', 'gcHeroClearQuestion', `cocoBody${phase}`));
   }
 
   function renderRemy(sheet, phase) {
@@ -119,12 +126,14 @@ export function installHeroDemo(root) {
     $('gcHeroDialogTitle').textContent = t(`${name}Title`);
     $('gcHeroDemoStatus').textContent = t(`${name}Phase${phase}`);
     $('gcHeroDemoPause').textContent = t(paused ? 'resume' : 'pause');
+    $('gcHeroDemoPause').hidden = name === 'coco';
     $('gcHeroDemoPause').hidden = !running;
     $('gcHeroDemoNext').textContent = t('next');
     $('gcHeroDemoNext').hidden = phase >= 2;
     $('gcHeroDemoReplay').textContent = t('replay');
     const sheet = make('div', 'gcHeroSheet');
-    if (name === 'remy') renderRemy(sheet, phase);
+    if (name === 'coco') renderCoco(sheet, phase);
+    else if (name === 'remy') renderRemy(sheet, phase);
     else if (name === 'emmi') renderEmmi(sheet, phase);
     else renderWilma(sheet, phase);
     $('gcHeroDemoWorkspace').replaceChildren(sheet);

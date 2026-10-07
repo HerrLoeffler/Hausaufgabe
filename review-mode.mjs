@@ -1,7 +1,10 @@
+import {installCompactCapture} from './review-capture.mjs';
 import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
-export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false}) {
+export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false,compact=false}) {
+ if(compact)document.body.id ||= 'gradecrewPage';
  const win=document.defaultView;let uid='',epoch=0,admin=false,catalog=[],root,toggle,marking=false,selected=null,highlight=null,notes=[],checks=[],syncing=false;
+ let compactCapture=null;
  let regionMode=false,drag=null,regionOverlay=null,regionAnchor=null,regionBounds=null,suppressClick=false;
  let pendingWrites=Promise.resolve(),queueWrites=Promise.resolve();
  const updateQueue=(k,change)=>{const p=queueWrites.catch(()=>{}).then(async()=>storage.update?storage.update(k,change):storage.put(k,change(await storage.get(k))));queueWrites=p;return p;};const key=kind=>`staging:${uid}:${kind}`;
@@ -12,11 +15,26 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  async function call(data){const e=epoch;const response=await api(data);if(e!==epoch)throw new Error('Konto wurde gewechselt.');return response;}
  function unmark(){marking=false;regionMode=false;const oldDrag=drag;drag=null;if(oldDrag?.pointerId!=null&&oldDrag.anchor.hasPointerCapture?.(oldDrag.pointerId))oldDrag.anchor.releasePointerCapture(oldDrag.pointerId);root?.querySelector('[data-review-region]')?.setAttribute('aria-pressed','false');root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
  function close(){unmark();clearRegion();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
- function dispose(){portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
- async function setSession(session){epoch++;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
+ function dispose(){compactCapture?.dispose();compactCapture=null;portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
+ async function setSession(session){epoch++;compactCapture?.dispose();compactCapture=null;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
+   if(compact){compactCapture=installCompactCapture({document,saveNote:recordCompactNote});void sync();return;}
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
+ }
+ async function recordCompactNote(note){
+  if(!uid)throw new Error('Bitte anmelden.');
+  const context=getContext();if(!context.build)throw new Error('Version wird geladen. Bitte kurz warten.');
+  const region=note.region;const body=document.body;body.id ||= 'gradecrewPage';const r=body.getBoundingClientRect();
+  const clamp=(n)=>Math.max(0,Math.min(1,n));
+  const x=clamp((region.x-r.left)/r.width),y=clamp((region.y-r.top)/r.height);
+  const width=Math.min(region.width/r.width,1-x),height=Math.min(region.height/r.height,1-y);
+  if(width<=0||height<=0)throw new Error('Bitte einen Bereich innerhalb der Seite markieren.');
+  const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:body.id,text:note.text,area:'visual-feedback',region:{x,y,width,height,sourceWidth:r.width,sourceHeight:r.height}};
+  await updateQueue(k,current=>[...(current||[]).filter(n=>n.clientRequestId!==payload.clientRequestId),payload]);
+  if(e!==epoch)throw new Error('Konto wurde gewechselt.');await sync();
+  const remaining=(await storage.get(k)||[]).find(n=>n.clientRequestId===payload.clientRequestId);
+  if(remaining)throw new Error(remaining._error||'Lokal gesichert; Übertragung fehlgeschlagen. Bitte erneut speichern.');
  }
  function clearRegion(){regionOverlay?.remove();regionOverlay=null;regionAnchor=null;regionBounds=null;}
  function paintRegion(){if(!regionAnchor?.isConnected||!regionBounds)return;const r=regionAnchor.getBoundingClientRect();const b=regionBounds;
@@ -160,7 +178,7 @@ const targets=[...document.querySelectorAll('[data-review-id],[id]')].filter(x=>
  }
  function portal(){const host=[...document.querySelectorAll('dialog[open]')].at(-1)||document.body;for(const node of [toggle,root])if(node&&node.parentElement!==host)host.append(node);}
  const portalObserver=new win.MutationObserver(portal);portalObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
- function online(){if(root)void sync();}
+ function online(){if(root||compactCapture)void sync();}
  document.addEventListener('click',capture,true);document.addEventListener('pointerdown',capture,true);document.addEventListener('pointermove',capture,true);document.addEventListener('pointerup',capture,true);document.addEventListener('pointercancel',capture,true);win.addEventListener('resize',paintRegion);win.addEventListener('scroll',paintRegion,true);document.addEventListener('keydown',capture,true);win.addEventListener('online',online);
  return {setSession,dispose,open,refresh};
 }

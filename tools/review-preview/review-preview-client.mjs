@@ -8,3 +8,17 @@ for(const scene of SCENES){const o=document.createElement('option');o.value=scen
 document.addEventListener('gradecrew:review-ready',()=>{ready=true;let saved;try{saved=JSON.parse(localStorage.getItem(key));}catch{}const scene=validScene(saved);if(saved&&!scene)title.textContent+=' · alter Prüfpunkt verworfen';active=scene||'welcome';select.value=active;openReviewScene(active);});
 document.addEventListener('gradecrew:review-scene',event=>{if(SCENES.includes(event.detail?.scene)){active=event.detail.scene;select.value=active;}});
 const events=new EventSource('/__review/events');events.onmessage=()=>{if(ready){localStorage.setItem(key,JSON.stringify({version:1,scene:active}));location.reload();}};
+
+// Local fixture access only: never authenticate or send credentials.
+function enterLocalWorkspace(event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  openReviewScene('editor');
+}
+document.addEventListener('click', event => {
+  const button = event.target.closest?.('#gcEntryLoginOpen, #loginTab, #loginForm button[type="submit"]');
+  if (button) enterLocalWorkspace(event);
+}, true);
+document.addEventListener('submit', event => {
+  if (event.target.id === 'loginForm') enterLocalWorkspace(event);
+}, true);

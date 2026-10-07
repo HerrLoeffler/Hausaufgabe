@@ -71,9 +71,9 @@ test("German and English are enabled browser UI locales", () => {
   assert.match(englishCrewExtension, /Ask Coco/);
 });
 
-test("compact public benefits and Crew hint use semantic DE/EN keys", () => {
+test("compact public benefits and Coco role use semantic DE/EN keys", () => {
   assert.doesNotMatch(entryFlow, /data-entry-nav=/);
-  for (const key of ["tryCrew", "benefitCreate", "benefitCreateDetail", "benefitGuide", "benefitGuideDetail", "benefitGrade", "benefitGradeDetail", "benefitImprove", "benefitImproveDetail"]) {
+  for (const key of ["cocoRole", "benefitCreate", "benefitCreateDetail", "benefitGuide", "benefitGuideDetail", "benefitGrade", "benefitGradeDetail", "benefitImprove", "benefitImproveDetail"]) {
     assert.ok(entryFlow.includes(`data-i18n-key="hero.${key}"`), `missing semantic hero key: ${key}`);
     setActiveUiLocale("de-DE");
     assert.ok(heroText(key), `German hero copy missing: ${key}`);
@@ -84,7 +84,7 @@ test("compact public benefits and Crew hint use semantic DE/EN keys", () => {
 });
 
 test("new public hero and examples use the shared DE/EN UI catalog", () => {
-  for (const key of ["greeting", "welcome", "subtitle", "meetCrew", "tutorialDuration", "student", "remyRole", "emmiRole", "wilmaRole"]) {
+  for (const key of ["cocoRole", "welcome", "subtitle", "meetCrew", "tutorialDuration", "student", "remyRole", "emmiRole", "wilmaRole"]) {
     assert.ok(entryFlow.includes(`data-i18n-key="hero.${key}"`), `semantic hero key missing: ${key}`);
   }
   setActiveUiLocale("de-DE");

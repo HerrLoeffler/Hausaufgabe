@@ -66,8 +66,25 @@ function installHeroViewportFit(authView) {
     if (!page || !visual || !stage || authView.classList.contains('hidden') || authView.dataset.entryState !== 'start') return;
     const top = page.getBoundingClientRect().top + window.scrollY;
     const benefits = authView.querySelector('.gcEntryBenefitsCompact')?.getBoundingClientRect().height || 0;
-    // Fit the stage height, never shrink the entire page to an image's aspect ratio.
-    stage.style.setProperty('--gc-stage-height', `${Math.max(580, window.innerHeight - top - benefits)}px`);
+    // Reserve the available window height; CSS gives controls their own rows.
+    const available = window.innerHeight - top - benefits;
+    stage.style.setProperty('--gc-stage-height', `${Math.max(window.innerWidth >= 781 ? 0 : 580, available)}px`);
+    if (window.innerWidth >= 781) {
+      const width = page.getBoundingClientRect().width;
+      const height = Math.max(0, available);
+      const scale = Math.max(width / 1774, height / 887);
+      const left = (width - 1774 * scale) / 2;
+      const top = (height - 887 * scale) / 2;
+      const anchors = [[0.29,0.68],[0.48,0.61],[0.62,0.62],[0.75,0.62]];
+      authView.querySelectorAll?.('.gcHeroRoles button').forEach((button,index) => {
+        const anchor = anchors[index]; if (!anchor) return;
+        button.style.left = `${left + anchor[0] * 1774 * scale}px`;
+        button.style.top = `${top + anchor[1] * 887 * scale}px`;
+      });
+    } else {
+      authView.querySelectorAll?.('.gcHeroRoles button').forEach(button => {button.style.removeProperty('left');button.style.removeProperty('top');});
+    }
+
 
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(fit); };
@@ -119,7 +136,7 @@ function buildEntrySurface() {
     <section id="gcEntryStart" class="gcEntryState gcEntryStart" aria-labelledby="gcEntryHeadline">
       <div class="gcHeroPage">
         <div class="gcHeroStage">
-          <div class="gcHeroVisual"><img class="gcHeroArtwork" src="./assets/gradecrew/crew-classroom-v3.webp" width="1536" height="1024" alt="" fetchpriority="high">
+          <div class="gcHeroVisual"><img class="gcHeroArtwork" src="./assets/gradecrew/crew-classroom-wide-v4.png" width="1774" height="887" alt="" fetchpriority="high">
             <div id="gcEntryCrew" class="gcHeroCrew" role="group" aria-label="Coco, Remy, Emmi und Wilma">
               <button type="button" class="gcHeroHit gcHeroHit-remy" data-hero-crew="remy" aria-label="Remys Beispiel ansehen"></button>
               <button type="button" class="gcHeroHit gcHeroHit-emmi" data-hero-crew="emmi" aria-label="Emmis Beispiel ansehen"></button>
@@ -127,11 +144,12 @@ function buildEntrySurface() {
             </div>
           </div>
           <div class="gcHeroLead">
-            <h1 id="gcEntryHeadline"><span data-i18n-key="hero.greeting" data-i18n-fallback="Hi! Ich bin Coco.">Hi! Ich bin Coco.</span><strong><span data-i18n-key="hero.welcome" data-i18n-fallback="Willkommen bei">Willkommen bei</span> GradeCrew.</strong></h1>
+            <h1 id="gcEntryHeadline"><strong><span data-i18n-key="hero.welcome" data-i18n-fallback="Willkommen bei">Willkommen bei</span> GradeCrew.</strong></h1>
             <p data-i18n-key="hero.subtitle" data-i18n-fallback="Digitale Tests. Schnell & einfach.">Digitale Tests. Schnell &amp; einfach.</p>
-            <p id="gcHeroHint" class="gcHeroHint" data-i18n-key="hero.tryCrew" data-i18n-fallback="Tippe auf Remy, Emmi oder Wilma und sieh, was sie tun.">Tippe auf Remy, Emmi oder Wilma und sieh, was sie tun.</p>
+
           </div>
           <div class="gcHeroRoles" aria-label="Deine Crew">
+            <button type="button" id="gcHeroCocoTour" data-hero-crew="coco" aria-label="Coco kennenlernen"><strong>Coco</strong><small data-i18n-key="hero.cocoRole" data-i18n-fallback="Dein Guide">Dein Guide</small></button>
             <button type="button" data-hero-crew="remy"><strong>Remy</strong><small data-i18n-key="hero.remyRole" data-i18n-fallback="Erstellen">Erstellen</small></button>
             <button type="button" data-hero-crew="emmi"><strong>Emmi</strong><small data-i18n-key="hero.emmiRole" data-i18n-fallback="Verbessern">Verbessern</small></button>
             <button type="button" data-hero-crew="wilma"><strong>Wilma</strong><small data-i18n-key="hero.wilmaRole" data-i18n-fallback="Prüfen">Prüfen</small></button>

@@ -3,6 +3,15 @@ import { registerCatalog, t } from './shared/i18n/browser-runtime.mjs?v=3';
 // Public hero UI copy lives in the existing GradeCrew interface-language runtime.
 // Example questions are fixed demo content; actual assessment language is independent.
 const de = {
+  'hero.cocoRole': 'Dein Guide', 'hero.cocoAction': 'Coco kennenlernen', 'hero.cocoTitle': 'Coco hilft dir weiter.',
+  'hero.cocoPhase0': 'Seite 1 von 3', 'hero.cocoPhase1': 'Seite 2 von 3', 'hero.cocoPhase2': 'Seite 3 von 3',
+  'hero.cocoHeading0': 'Dein Ratgeber für GradeCrew',
+  'hero.cocoBody0': 'Ich bin Coco. Wenn du eine Frage hast oder nicht weiterweißt, helfe ich dir, dich in GradeCrew zurechtzufinden.',
+  'hero.cocoHeading1': 'Du findest mich unten rechts',
+  'hero.cocoBody1': 'In der Anwendung bin ich unten rechts für dich da. Klicke auf Coco und schreibe deine Frage – genau dann, wenn du Hilfe brauchst.',
+  'hero.cocoHeading2': 'Frag mich einfach',
+  'hero.cocoBody2': 'Wie erstelle ich einen Test? Wo finde ich die Einstellungen? Welcher Test war das mit der Katze? Ich erkläre dir die nächsten Schritte und helfe dir, passende Seiten und Tests zu finden.',
+
   'guest.localQuiz': '✓ Lokaler Übungstest',
   'guest.localSaved': 'Übungstest lokal gespeichert.',
   'guest.localLink': 'Nur lokaler Übungstest – kein öffentlicher Link',
@@ -68,6 +77,12 @@ const de = {
 };
 
 const en = {
+  'hero.cocoRole': 'Your guide', 'hero.cocoAction': 'Meet Coco', 'hero.cocoTitle': 'Coco helps you along.',
+  'hero.cocoPhase0': 'Page 1 of 3', 'hero.cocoPhase1': 'Page 2 of 3', 'hero.cocoPhase2': 'Page 3 of 3',
+  'hero.cocoHeading0': 'Your GradeCrew guide', 'hero.cocoBody0': 'I am Coco. Ask me when you have a question or need help finding your way around GradeCrew.',
+  'hero.cocoHeading1': 'Find me at the bottom right', 'hero.cocoBody1': 'Inside the app, click Coco at the bottom right and write your question whenever you need help.',
+  'hero.cocoHeading2': 'Just ask me', 'hero.cocoBody2': 'How do I create a test? Where are the settings? Which test had the cat? I explain the next steps and help you find the right pages and tests.',
+
   'guest.localQuiz': '✓ Local practice test',
   'guest.localSaved': 'Practice test saved locally.',
   'guest.localLink': 'Local practice test only – no public link',

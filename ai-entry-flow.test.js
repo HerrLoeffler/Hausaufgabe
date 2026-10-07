@@ -30,7 +30,7 @@ test('entry module has valid JavaScript syntax', () => {
 
 test('public start is concise and keeps credentials out of the hero', () => {
   const start = blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"');
-  assert.match(start, /Hi! Ich bin Coco\./);
+  assert.doesNotMatch(start, /Hi! Ich bin Coco\./);
   assert.match(start, /Willkommen bei<\/span> GradeCrew\./);
   assert.match(start, /Digitale Tests\. Schnell &amp; einfach\./);
   assert.match(start, /Crew kennenlernen/);
@@ -43,14 +43,15 @@ test('public start is concise and keeps credentials out of the hero', () => {
 
 test('public hero uses the approved scene and keeps named, accessible crew controls', () => {
   const start = blockBetween(entry, 'id="gcEntryStart"', 'id="gcEntryLogin"');
-  assert.match(start, /crew-classroom-v3\.webp/);
+  assert.match(start, /crew-classroom-wide-v4\.png/);
   for (const name of ['remy', 'emmi', 'wilma']) {
     assert.match(start, new RegExp(`data-hero-crew="${name}"`));
     assert.match(start, new RegExp(`gcHeroHit-${name}`));
   }
   assert.match(start, /id="gcHeroDialog"/);
   assert.match(start, /role="status" aria-live="polite"/);
-  assert.ok(fs.statSync(path.join(root, 'assets/gradecrew/crew-classroom-v3.webp')).size < 300_000);
+  assert.ok(fs.statSync(path.join(root, 'assets/gradecrew/crew-classroom-wide-v4.png')).size < 3_000_000);
+  assert.match(start, /data-hero-crew="coco"/);
   assert.ok(fs.statSync(path.join(root, 'assets/gradecrew/cuddly-hedgehog.webp')).size < 150_000);
   assert.doesNotMatch(entry, /falcon-create|generic.*mascot/i);
   assert.equal(assets.mascots.coco.animal, 'penguin');
@@ -73,7 +74,8 @@ test('existing auth and test-code forms are moved instead of cloned', () => {
 test('scene, existing entry handlers and separate crew examples are connected', () => {
   assert.doesNotMatch(entry, /nav\.innerHTML|data-entry-nav=/);
   assert.match(entry, /id="gcEntryBenefits"/);
-  assert.match(entry, /id="gcHeroHint"/);
+  assert.doesNotMatch(entry, /id="gcHeroHint"/);
+  assert.match(entry, /id="gcHeroCocoTour" data-hero-crew="coco"/);
   assert.match(entry, /gcHeroArtwork/);
   assert.match(entry, /installHeroDemo\(\$\("gcEntryStart"\)\)/);
   assert.match(entry, /id="gcEntryTutorialStart"/);
