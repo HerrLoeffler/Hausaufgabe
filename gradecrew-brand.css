@@ -13,7 +13,7 @@
   --crew-rust: #a44d2d;
 }
 body { color: var(--text); -webkit-font-smoothing: antialiased; }
-.topbar { min-height: 76px; height: auto; padding: 12px max(24px, calc((100vw - 1180px) / 2)); gap: 12px; flex-wrap: wrap; }
+.topbar { min-height: 76px; height: auto; padding: 12px clamp(16px, 3vw, 56px); gap: 12px; flex-wrap: wrap; }
 .brand strong { font-size: 21px; font-weight: 800; letter-spacing: -.055em; }
 .brand small { font-size: 12px; letter-spacing: .01em; }
 .brandMark { width: 38px; height: 38px; border-radius: 12px; }

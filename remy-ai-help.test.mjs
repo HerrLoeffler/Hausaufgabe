@@ -56,6 +56,16 @@ async function settle(w, ms = 20) {
   await new Promise(resolve => w.setTimeout(resolve, ms));
 }
 
+test('a confirmed new-test reset clears Remy dictation and its old success summary', async t => {
+  const w = setup(t);
+  w.document.getElementById('gcRemyCreateInput').value = 'Englischtest von gerade';
+  const status = w.document.getElementById('gcRemyCreateStatus');
+  status.textContent = 'Eingetragen: Englisch';
+  w.document.dispatchEvent(new w.CustomEvent('gradecrew:ai-form-reset'));
+  assert.equal(w.document.getElementById('gcRemyCreateInput').value, '');
+  assert.equal(status.textContent, '');
+});
+
 test('Remy lives inside AI creation and fills the existing form without navigation', async t => {
   const w = setup(t);
   const panel = w.document.getElementById('gcRemyCreatePanel');

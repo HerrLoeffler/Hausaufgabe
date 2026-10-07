@@ -14,6 +14,35 @@ function question(n, kind = "none") {
 }
 const options = count => ({ allowedTypes: ["single", "text"], allowImages: true, allowImageChoices: false, expectedCount: count, targetPoints: count, imageQuestionCount: 0, imageAnswerQuestionCount: 0 });
 
+test("RPT-MUXC8FM3: replace duplicate 14 and keep exactly five listening tasks without full regeneration", async () => {
+  const questions = Array.from({ length: 20 }, (_, i) => question(i + 1));
+  for (const index of [0, 1, 2, 3, 4, 13]) questions[index].audioIntent = { kind: "ai_generated", script: `Listen to number ${index + 1}.`, reason: "Listening", presentation: "supplement" };
+  questions[13] = { ...questions[13], text: questions[2].text, options: questions[2].options };
+  const calls = [];
+  const result = await validateAndRepairTest({ title: "English", questions }, { ...options(20), allowAudio: true, audioQuestionCount: 5 }, {
+    generateQuestion: async ({ index, mediaKind, audioKind }) => {
+      calls.push({ index, mediaKind, audioKind });
+      return { ...question(101, mediaKind), audioIntent: { kind: audioKind, script: audioKind === "ai_generated" ? "Listen to one hundred and one." : "", reason: "", presentation: "supplement" } };
+    },
+    regenerateTest: async () => { throw new Error("A duplicate and surplus audio need only one targeted repair"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(calls, [{ index: 13, mediaKind: "none", audioKind: "none" }]);
+  assert.equal(result.test.questions.filter(q => q.audioIntent.kind === "ai_generated").length, 5);
+  assert.equal(result.test.questions[2], questions[2]);
+});
+
+test("missing listening task is repaired while preserving an existing picture quota", async () => {
+  const questions = [question(1, "ai_generated"), question(2), question(3)];
+  const result = await validateAndRepairTest({ title: "Listening", questions }, { ...options(3), imageQuestionCount: 1, allowAudio: true, audioQuestionCount: 1 }, {
+    generateQuestion: async ({ mediaKind, audioKind }) => ({ ...question(101, mediaKind), audioIntent: { kind: audioKind, script: "Listen to the new example.", reason: "Listening", presentation: "supplement" } }),
+    regenerateTest: async () => { throw new Error("One missing audio must not regenerate the whole test"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, 1);
+  assert.equal(result.test.questions.filter(q => q.audioIntent.kind === "ai_generated").length, 1);
+});
+
 test("screenshot case: replaces only task 20 with duplicate answers and duplicate content", async () => {
   const questions = Array.from({ length: 20 }, (_, i) => question(i + 1));
   questions[19] = { ...question(9), options: [{ text: "Schal", correct: true }, { text: "schal!", correct: false }] };

@@ -144,7 +144,7 @@ test("assessment language remains fixed per test and is not coupled to UI or gra
 
 test("bilingual header gives the language selector a stable layout slot", () => {
   assert.match(browserRuntime, /gradecrewLanguageReady/);
-  assert.match(browserRuntime, /grid-template-areas:"brand nav language" "user user user"/);
+  assert.match(browserRuntime, /grid-template-areas:"brand nav user language"/);
   assert.match(browserRuntime, />#gradecrewLanguageControl\{grid-area:language;justify-self:end\}/);
   assert.doesNotMatch(browserRuntime, /gradecrewLanguageControl\{[^}]*margin-left:8px/);
 });

@@ -141,11 +141,21 @@ function commonPublicQuestion(question) {
 
 function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) {
   const q = commonPublicQuestion(question);
+  const structuredAudio = question.audioAnswerMode === "audio-only" && ["matching", "ordering", "grouping"].includes(question.type);
+  const audioItems = structuredAudio ? question.audioAnswerItems || [] : [];
+  if (structuredAudio && (!Array.isArray(audioItems) || audioItems.length < 2 || audioItems.length > 12 || audioItems.reduce((size, item) => size + String(item.audioDataUrl || "").length, String(question.audioDataUrl || "").length) > 700000)) throw new Error("Audio answer items are incomplete");
+  const itemAudio = (key, text) => {
+    if (!structuredAudio) return null;
+    const item = audioItems.find(item => item.key === key);
+    if (!item || item.sourceText !== String(text || "").replace(/\s+/g, " ").trim() || item.audioNeedsRegeneration === true || !safeAudio(item)) throw new Error("Audio answer items are incomplete or stale");
+    return safeAudio(item);
+  };
+  if (structuredAudio) q.audioAnswerMode = "audio-only";
   const type = q.type;
 
   if (["single", "multi", "dropdown"].includes(type)) {
     const sourceOptions = (Array.isArray(question.options) ? question.options : []).slice(0, 20);
-    const audioAnswers = ["single", "multi"].includes(type) && question.audioAnswerMode === "audio-only" &&
+    const audioAnswers = ["single", "multi", "dropdown"].includes(type) && question.audioAnswerMode === "audio-only" &&
       sourceOptions.length >= 2 && sourceOptions.length <= 4 &&
       sourceOptions.every(option => !option?.imageDataUrl && !option?.imageUrl && String(option?.text || "").trim() && option.audioNeedsRegeneration !== true && safeAudio(option)) &&
       sourceOptions.reduce((size, option) => size + String(option.audioDataUrl || "").length, String(question.audioDataUrl || "").length) <= 700000;
@@ -175,13 +185,15 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
     }));
     q.rightItems = deterministicOrder(pairs.map((pair, index) => ({
       id: opaqueId(secret, question.id, "matching-right", index),
-      text: clampString(pair?.right, 1000)
+      text: structuredAudio ? "" : clampString(pair?.right, 1000),
+      ...(structuredAudio ? { audio: itemAudio(`p${index}`, pair?.right) } : {})
     })), secret, `${question.id}:matching-right`);
   } else if (type === "ordering") {
     const items = Array.isArray(question.items) ? question.items.slice(0, 40) : [];
     q.items = deterministicOrder(items.map((text, index) => ({
       id: opaqueId(secret, question.id, "ordering-item", index),
-      text: clampString(text, 1000)
+      text: structuredAudio ? "" : clampString(text, 1000),
+      ...(structuredAudio ? { audio: itemAudio(`i${index}`, text) } : {})
     })), secret, `${question.id}:ordering-items`);
   } else if (type === "grouping") {
     const groups = Array.isArray(question.groups) ? question.groups.slice(0, 20) : [];
@@ -194,7 +206,8 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
       (Array.isArray(group?.items) ? group.items : []).slice(0, 40).forEach((text, itemIndex) => {
         items.push({
           id: opaqueId(secret, question.id, `group-item-${groupIndex}`, itemIndex),
-          text: clampString(text, 1000)
+          text: structuredAudio ? "" : clampString(text, 1000),
+          ...(structuredAudio ? { audio: itemAudio(`g${groupIndex}_i${itemIndex}`, text) } : {})
         });
       });
     });
@@ -281,6 +294,7 @@ function fingerprintQuestion(question) {
     audioDataUrl: String(question?.audioDataUrl || ""), audioAiGenerated: question?.audioAiGenerated !== false, audioNeedsRegeneration: question?.audioNeedsRegeneration === true,
     ...(question?.audioPresentation === "listening-only" ? { audioPresentation: "listening-only" } : {}),
     ...(question?.audioAnswerMode === "audio-only" ? { audioAnswerMode: "audio-only" } : {}),
+    ...(question?.audioAnswerMode === "audio-only" && Array.isArray(question.audioAnswerItems) ? { audioAnswerItems: question.audioAnswerItems.map(item => ({ key: String(item.key || ""), sourceText: String(item.sourceText || ""), audioDataUrl: String(item.audioDataUrl || ""), audioNeedsRegeneration: item.audioNeedsRegeneration === true })) } : {}),
     options: Array.isArray(question?.options) ? question.options.map(option => ({
       text: String(option?.text || ""), correct: option?.correct === true,
       ...(option?.audioDataUrl ? { audioDataUrl: String(option.audioDataUrl) } : {}),

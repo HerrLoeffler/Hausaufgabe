@@ -34,7 +34,9 @@ function setState(next, { focus = true } = {}) {
   if (!focus) return;
   requestAnimationFrame(() => {
     const root = $(stateIds[next]);
-    root?.querySelector("[data-entry-autofocus], input:not([type=hidden]), button, a[href]")?.focus?.({ preventScroll: true });
+    const target = next === "start" ? root?.querySelector("h1") : root?.querySelector("[data-entry-autofocus], input:not([type=hidden]), button, a[href]");
+    if (target && next === "start") target.tabIndex = -1;
+    target?.focus?.({ preventScroll: true });
   });
 }
 
@@ -54,6 +56,43 @@ function showStart() {
   setState("start");
 }
 
+function installHeroViewportFit(authView) {
+  let frame = 0;
+  const fit = () => {
+    frame = 0;
+    const page = authView.querySelector('.gcHeroPage');
+    const visual = authView.querySelector('.gcHeroVisual');
+    const stage = authView.querySelector('.gcHeroStage');
+    if (!page || !visual || !stage || authView.classList.contains('hidden') || authView.dataset.entryState !== 'start') return;
+    page.style.width = '';
+    visual.style.width = '';
+    if ((window.visualViewport?.scale || 1) > 1 || /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName || '')) return;
+    const top = page.getBoundingClientRect().top + window.scrollY;
+    const height = window.visualViewport?.height || window.innerHeight;
+    const benefits = authView.querySelector('.gcEntryBenefitsCompact')?.getBoundingClientRect().height || 0;
+    if (getComputedStyle(visual).position === 'absolute') {
+      const available = height - top - benefits - 8;
+      if (available >= 440) page.style.width = `${Math.floor(Math.min(page.parentElement.clientWidth, available * 1.5))}px`;
+    } else {
+      const other = stage.getBoundingClientRect().height - visual.getBoundingClientRect().height;
+      const available = height - top - benefits - other - 8;
+      if (available >= 120) visual.style.width = `${Math.floor(Math.min(page.clientWidth, available * 1.5))}px`;
+    }
+  };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(fit); };
+  window.addEventListener('resize', schedule);
+  window.visualViewport?.addEventListener('resize', schedule);
+  new MutationObserver(schedule).observe(authView, { attributes: true, attributeFilter: ['class', 'data-entry-state'] });
+  if (window.ResizeObserver) {
+    const observer = new ResizeObserver(schedule);
+    const header = document.querySelector('.topbar');
+    if (header) observer.observe(header);
+    const benefits = authView.querySelector('.gcEntryBenefitsCompact');
+    if (benefits) observer.observe(benefits);
+  }
+  schedule();
+}
+
 function installPublicHeader() {
   const authView = $("authView");
   if (!authView) return;
@@ -61,11 +100,12 @@ function installPublicHeader() {
 
   const syncMode = () => {
     document.body.classList.toggle("gcPublicEntryMode", !authView.classList.contains("hidden"));
+    document.body.classList.toggle("gcPublicHeroMode", !authView.classList.contains("hidden") && authView.dataset.entryState === 'start');
   };
   syncMode();
   if (!authView.dataset.entryModeObserved) {
     const observer = new MutationObserver(syncMode);
-    observer.observe(authView, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(authView, { attributes: true, attributeFilter: ["class", "data-entry-state"] });
     authView.dataset.entryModeObserved = "1";
   }
 }
@@ -174,6 +214,7 @@ function buildEntrySurface() {
     if (!$("authView")?.classList.contains("hidden")) showStart();
   });
   setState("start", { focus: false });
+  installHeroViewportFit(authView);
   return true;
 }
 

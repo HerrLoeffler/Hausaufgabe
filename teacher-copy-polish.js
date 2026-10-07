@@ -19,10 +19,7 @@ function cleanAiStatus() {
   const notice = document.getElementById("aiBetaNotice");
   if (!notice) return;
   const text = notice.textContent || "";
-  if (/KI-Beta/i.test(text)) {
-    notice.textContent = "KI-Zugang ist aktiv.";
-    notice.classList.remove("error");
-  }
+  if (/^KI ist bereit\.?$/i.test(text.trim())) notice.textContent = "Erstellung ist bereit.";
 }
 
 function removeInternalCostCopy() {

@@ -344,3 +344,8 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
   .questionAudioPanel>summary{align-items:flex-start}
   .questionAudioBody{padding-inline:10px}
 }
+[hidden]{display:none!important}
+[data-entry-state="start"] .gcHeroLead h1[tabindex="-1"]:focus{outline:none}
+.questionAudioQuickActions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.audioDragItem{display:grid;gap:5px;max-width:100%;min-width:0;cursor:grab}
+.audioDragItem audio{width:220px;max-width:100%;height:36px}

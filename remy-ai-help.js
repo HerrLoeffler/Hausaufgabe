@@ -382,6 +382,15 @@ function installLifecycle() {
     if (input) input.value = "";
     setStatus("");
   });
+  document.addEventListener("gradecrew:ai-form-reset", () => {
+    stopDictation();
+    dictationBase = "";
+    dictationFinal = "";
+    currentInputMode = "text";
+    const input = $("#gcRemyCreateInput");
+    if (input) input.value = "";
+    setStatus("");
+  });
   window.addEventListener("gradecrew:ui-locale-changed", () => {
     if (keepListening) stopDictation();
   });

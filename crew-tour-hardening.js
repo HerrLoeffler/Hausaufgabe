@@ -43,7 +43,6 @@ function installStyles() {
   const style = document.createElement("style");
   style.dataset.gradecrewTourHardening = "1";
   style.textContent = `
-    .gcRealCoach { position: relative; }
     .gcCoachClose {
       position: absolute;
       top: 10px;

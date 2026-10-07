@@ -28,7 +28,7 @@ const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
 const { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount } = require("./lib/ai-job");
 const { solutionAudioScript, planSolutionAudioIndexes } = require("./lib/solution-audio");
-const { answerAudioIndexes, generateAnswerAudios } = require("./lib/audio-answers");
+const { answerAudioIndexes, generateAnswerAudios, setAnswerAudioAssets } = require("./lib/audio-answers");
 const { reserveJob, releaseJob } = require("./lib/job-slots");
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 
@@ -258,10 +258,10 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     };
     const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
     const repairs = {
-      generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind }) => {
+      generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind: original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind: original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
+          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
@@ -486,12 +486,12 @@ exports.processAiTestJob = onTaskDispatched({
         q.audioAnswerMode = "audio-only";
         try {
           const assets = await generateAnswerAudios({ ...q, id: questionId }, options => createAudioAsset({ uid, ...options }));
-          q.options = q.options.map((option, optionIndex) => ({ ...option, ...assets[optionIndex], audioNeedsRegeneration: false }));
+          setAnswerAudioAssets(q, assets);
           completedAnswerAudios += 1;
           await jobRef.update({ answerAudioCompleted: completedAnswerAudios, updatedAt: Timestamp.now() });
         } catch (err) {
           if (["ReferenceError", "TypeError", "SyntaxError"].includes(String(err?.name || ""))) throw err;
-          q.options = q.options.map(option => ({ ...option, audioNeedsRegeneration: true }));
+          setAnswerAudioAssets(q, [], { incomplete: true });
           audioReady = false;
           console.warn("Antwortaudio konnte nicht erzeugt werden:", { questionId, code: err?.code || err?.name || "unknown" });
         }

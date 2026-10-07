@@ -3,22 +3,32 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { answerAudioIndexes, answerAudioReady, generateAnswerAudios } = require("../lib/audio-answers");
+
+test("grouping voice memos use every existing word as a separate script", async () => {
+  const grouping = { id: "q-group", type: "grouping", groups: [{ name: "Nomen", items: ["Zauberhut", "Känguru"] }, { name: "Verben", items: ["schnarcht", "hüpft"] }, { name: "Adjektive", items: ["glitzernd", "mutig"] }] };
+  const scripts = [];
+  const assets = await generateAnswerAudios(grouping, async ({ script }) => { scripts.push(script); return { audioDataUrl: "data:audio/mpeg;base64,QUJD" }; });
+  assert.deepEqual(scripts, ["Zauberhut", "Känguru", "schnarcht", "hüpft", "glitzernd", "mutig"]);
+  assert.equal(assets.length, 6);
+  assert.deepEqual(answerAudioIndexes([grouping], 1), [0]);
+});
 const { planTestBatches } = require("../lib/test-batches");
 const { validateTest } = require("../lib/validation");
 const { questionSchemaForType } = require("../lib/schemas");
 
 const audioDataUrl = "data:audio/mpeg;base64,QUJD";
 
-test("exact answer-audio allocation uses eligible choice questions only", () => {
+test("exact answer-audio allocation uses complete short choices including dropdown", () => {
   const questions = [
     { type: "text" },
-    { type: "single", options: [{}, {}] },
+    { type: "single", options: [{ text: "A" }, { text: "B" }] },
     { type: "number" },
-    { type: "multi", options: [{}, {}, {}] },
-    { type: "dropdown", options: [{}, {}] }
+    { type: "multi", options: [{ text: "A" }, { text: "B" }, { text: "C" }] },
+    { type: "dropdown", options: [{ text: "A" }, { text: "B" }] }
   ];
-  assert.deepEqual(answerAudioIndexes(questions, 2), [1, 3]);
-  assert.throws(() => answerAudioIndexes(questions, 3), /fehlen geeignete/);
+  assert.deepEqual(answerAudioIndexes(questions, 2), [1, 4]);
+  assert.deepEqual(answerAudioIndexes(questions, 3), [1, 3, 4]);
+  assert.throws(() => answerAudioIndexes(questions, 4), /fehlen geeignete/);
   assert.deepEqual(answerAudioIndexes(questions, 0), []);
 });
 
