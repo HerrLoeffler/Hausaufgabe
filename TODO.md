@@ -296,3 +296,6 @@ GC-WEB-REPAIR-20261007 · PR172 Staging-Batch deployed c475d0e7c6feb14f3d62ba179
 
 
 GC-WEB-REPAIR-20261007 · Visuelle Hinweise — OFFEN, NUR ERFASSEN: Rahmensymbol auch auf dem Startbildschirm anzeigen. Martin hat ausdrücklich klargestellt: Testmeldungen jetzt nur sammeln, nicht automatisch implementieren. Umsetzung erst nach explizitem Arbeitsauftrag; Deployment separat nach Deployen. Die irrtümlich gestartete lokale Umsetzung wurde vollständig zurückgenommen; kein neuer Deploy.
+
+
+GC-WEB-REPAIR-20261007 · Aktiver expliziter Reparaturauftrag: etwa9 Rahmenhinweise nicht sichtbar. Tatsächliche Anzahl unbekannt, Browserpolicy blockiert. Lokaler Fix: Administration→Visuelle Hinweise getrennt online/pending/legacyLocalStorage, JSONSicherung, Retry nurvisual, OnlineSpeicherbestätigung, Accountwechselbereinigung;16Review/SceneTests pass. Code in fix/visual-backlog-recovery-20261007 lokal committed. KeinDeploy; Startseitenbutton bleibt nurgesammelterWunsch. Nächster Schritt Nutzer prüft im selben Browser localhost8771, ob vorhandene Hinweise erscheinen; nicht neu markieren/keinBrowserdatenlöschen.
