@@ -3,7 +3,7 @@
 - Aktualisiert (UTC): 2026-10-07 13:18:30
 - Verantwortlicher Chat: Unreal-Lern-Escape-Auftrag vom 07.10.2026; Chat-Link unbekannt.
 - Task-ID: bestehende GC-GAMES-ESCAPE-VISUAL-01 erhalten; keine neue Versuchshistorie.
-- Zustand: Kontext geprüft, konkrete Designrichtung vorgeschlagen; Designfreigabe offen.
+- Zustand: Grundrichtung durch Martin bestätigt; Dauer auf circa zehn Minuten geändert; schriftliche Spezifikation zur Prüfung gesichert.
 - Dokumentationsort: main; eigener Unreal-Aufgabenbranch erst nach Design-/Planfreigabe.
 - Geprüfte bestehende Quelle: prototype/escape-expedition-visual-masterpiece-v1 @6434ddefb83cffca7bde5a7347ed6d2f56d5cb45, offener Draft-PR83.
 - Bestehendes Integrationsziel: prototype/escape-expedition-masterpiece-v1. Ein Unreal-Integrationsziel wird vor Produktänderungen ausdrücklich festgelegt.
@@ -31,7 +31,7 @@ Unreal Editor tatsächlich vorhanden unter /Users/Shared/Epic Games/UE_5.8/Engin
 
 Alter Visual-Preview-Nachweis: V2@21986ac9, Run37213145451 laut bestehender Übergabe. Nicht als aktueller Head-/Deploybeleg ausgeben. PR126 berichtet aktuell 35/36 statt36/36 am6434ddef; keine bestehende Suite neu ausgeführt und keine grüne aktuelle Expedition-CI behauptet.
 
-## Konkreter vorgeschlagener Erstumfang — noch nicht freigegeben
+## Historischer Erstvorschlag — durch den Zehn-Minuten-Auftrag ersetzt
 
 Ein vollständiger, kompakter Spielabschnitt Camp → Ufer → Forschungsstation, ungefähr20–30Minuten als zu prüfendes Ziel. Zwölf Lernstationen und sechs Inventar-/Umgebungsrätsel. Die Anzahl ist nur ein Startentwurf; 60–70Prozent werden auf aktive Spielzeit bezogen und später durch Durchspielen geprüft, nicht aus der Anzahl als gemessen behauptet.
 
@@ -56,10 +56,25 @@ Dieser Arbeitsblock enthält ausschließlich recherchierte Grundlagen, Auftrag u
 
 Der angewendete superpowers:brainstorming-Skill klassifiziert dies als architectural und verlangt erst Designverständigung, anschließend eine schriftliche Spezifikation zur Prüfung und danach den geprüften Implementierungsplan samt Ausführungswahl. Noch keine Implementierung vor diesem Gate behaupten.
 
-## Nächster genau ein Schritt
+## Historischer nächster Schritt — Grundrichtung inzwischen bestätigt
 
 Martin prüft die vorgeschlagene Richtung A: kleine durchspielbare Unreal-Expedition mit3D-Miniaturoptik,65Prozent aktiver Lernzeit, Inventarrätseln und GradeCrew-Fragenvorschau. Danach schriftliche Spezifikation erstellen und zur Prüfung vorlegen.
 
 ## Wiederaufnahme
 
 Vor Übernahme docs/CHAT_RECOVERY.md lesen. Task-ID und alte Branch-/PR-/Versuchshistorie erhalten. Diese Dokumentation ist der letzte neue gesicherte Teilschritt; keine ungesicherten Produktänderungen. Kein gestarteter Unreal-/Deploy-/Provider-Vorgang in diesem Chat. Fremde aktive Chats unbekannt, ihre Checkouts und Editorprozesse nicht übernehmen. Vor Implementierung aktuelle Source-SHAs und Development Status erneut prüfen.
+
+
+## 07.10.2026 — bestätigte Grundrichtung, neue Dauer und schriftliche Spezifikation
+
+Martin: „klingt super“, Spiel circa zehn Minuten; bisherigen Rätsellösfaktor circa3/10, ausdrücklicher Auftrag zur Überarbeitung, „los gehts“. Die bisherige20–30-Minuten-Idee mit zwölf Lernstationen und sechs Rätseln ist ersetzt.
+
+Schriftlicher Entwurf: [Expedition Amazonas — zehnminütiges Unreal-Lern-Escape](../docs/superpowers/specs/2026-10-07-expedition-amazonas-unreal-design.md). Acht Lernaufgaben, drei zusammenhängende Rätsel: Karte/Umgebung vergleichen, Brücke korrekt mit Seil/Winde bewegen, knappe Energie für Funk umleiten. Camp→Ufer→Station; sichtbares Bootfinale. Normales Durchspielen8–12aktive Minuten, Sollwert zehn;60–70% aktive Lernzeit. Hilfen dürfen verlängern, kein Countdown. Die Quote und Spielzeit sind Ziele, noch keine gemessenen Ergebnisse.
+
+Spec selbst auf Dauer-/Scope-Widersprüche, fachliche Freischaltung, Lösungsschutz, Inventarverlust, Rückweg und Demo-/Live-Grenzen geprüft. Noch keine schriftliche Nutzerfreigabe, kein Implementierungsplan/Unreal-Projekt/Build. Keine zusätzliche Spielbibliothek, Provideraufrufe oder Budgetreservierung.
+
+Frisch geprüfter Visual-PR83 weiterhin offen @6434ddef. Development Status37640906261, Job112859297804, erfolgreich, Logs gelesen; Expedition weiterhin nicht zentral registriert. Fremde Web-/Guardian-/Release-Control-Vorgänge laufen und wurden nicht neu gestartet. Vor Produktänderungen erneut prüfen, kein Auftrag zur Übernahme dieser Vorgänge.
+
+Sicherung: Spezifikation, diese Übergabe und betroffene TODO-Zeile in einem Dokumentationscommit auf main; tatsächlicher Commit aus Git lesen. Lokal nur docs/superpowers/specs/2026-10-07-expedition-amazonas-unreal-design.md erstellt und im Codex-Panel geöffnet (Tool meldet queued). Keine Tests/CI/Deploys für neue Spielimplementierung. Release-Stufe der bestehenden Browserquelle nicht geändert.
+
+Genau nächster Schritt: Martin prüft den schriftlichen Zehn-Minuten-Entwurf. Danach gemäß Brainstorming-Gate Implementierungsplan erstellen; dessen Prüfung/Ausführungswahl vor Produktcode. Die Grundrichtungsfreigabe wird nicht erneut verlangt.
