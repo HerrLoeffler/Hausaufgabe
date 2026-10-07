@@ -64,20 +64,11 @@ function installHeroViewportFit(authView) {
     const visual = authView.querySelector('.gcHeroVisual');
     const stage = authView.querySelector('.gcHeroStage');
     if (!page || !visual || !stage || authView.classList.contains('hidden') || authView.dataset.entryState !== 'start') return;
-    page.style.width = '';
-    visual.style.width = '';
-    if ((window.visualViewport?.scale || 1) > 1 || /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName || '')) return;
     const top = page.getBoundingClientRect().top + window.scrollY;
-    const height = window.visualViewport?.height || window.innerHeight;
     const benefits = authView.querySelector('.gcEntryBenefitsCompact')?.getBoundingClientRect().height || 0;
-    if (getComputedStyle(visual).position === 'absolute') {
-      const available = height - top - benefits - 8;
-      if (available >= 440) page.style.width = `${Math.floor(Math.min(page.parentElement.clientWidth, available * 1.5))}px`;
-    } else {
-      const other = stage.getBoundingClientRect().height - visual.getBoundingClientRect().height;
-      const available = height - top - benefits - other - 8;
-      if (available >= 120) visual.style.width = `${Math.floor(Math.min(page.clientWidth, available * 1.5))}px`;
-    }
+    // Fit the stage height, never shrink the entire page to an image's aspect ratio.
+    stage.style.setProperty('--gc-stage-height', `${Math.max(580, window.innerHeight - top - benefits)}px`);
+
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(fit); };
   window.addEventListener('resize', schedule);
@@ -151,10 +142,10 @@ function buildEntrySurface() {
           <div class="gcHeroJoin"><label for="joinCode" data-i18n-key="hero.student" data-i18n-fallback="Schüler? Testcode eingeben.">Schüler? Testcode eingeben.</label><div id="gcEntryJoinHost"></div></div>
         </div>
         <ul id="gcEntryBenefits" class="gcEntryBenefitsCompact">
-          <li><strong data-i18n-key="hero.benefitCreate" data-i18n-fallback="Schnell erstellt">Schnell erstellt</strong><small data-i18n-key="hero.benefitCreateDetail" data-i18n-fallback="In wenigen Minuten">In wenigen Minuten</small></li>
-          <li><strong data-i18n-key="hero.benefitRun" data-i18n-fallback="Einfach durchgeführt">Einfach durchgeführt</strong><small data-i18n-key="hero.benefitRunDetail" data-i18n-fallback="Für deine Klasse">Für deine Klasse</small></li>
-          <li><strong data-i18n-key="hero.benefitGrade" data-i18n-fallback="Direkt ausgewertet">Direkt ausgewertet</strong><small data-i18n-key="hero.benefitGradeDetail" data-i18n-fallback="Mit klaren Ergebnissen">Mit klaren Ergebnissen</small></li>
-          <li><strong data-i18n-key="hero.benefitTeacher" data-i18n-fallback="Für Lehrkräfte gemacht">Für Lehrkräfte gemacht</strong><small data-i18n-key="hero.benefitTeacherDetail" data-i18n-fallback="Praxisnah und zuverlässig">Praxisnah und zuverlässig</small></li>
+          <li><img src="./assets/gradecrew/elephant-create.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitCreate" data-i18n-fallback="Schnell erstellt">Schnell erstellt</strong><small data-i18n-key="hero.benefitCreateDetail" data-i18n-fallback="In wenigen Minuten">In wenigen Minuten</small></li>
+          <li><img src="./assets/gradecrew/penguin-guide.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitRun" data-i18n-fallback="Einfach durchgeführt">Einfach durchgeführt</strong><small data-i18n-key="hero.benefitRunDetail" data-i18n-fallback="Für deine Klasse">Für deine Klasse</small></li>
+          <li><img src="./assets/gradecrew/owl-grade.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitGrade" data-i18n-fallback="Direkt ausgewertet">Direkt ausgewertet</strong><small data-i18n-key="hero.benefitGradeDetail" data-i18n-fallback="Mit klaren Ergebnissen">Mit klaren Ergebnissen</small></li>
+          <li><img src="./assets/gradecrew/fox-improve.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitTeacher" data-i18n-fallback="Für Lehrkräfte gemacht">Für Lehrkräfte gemacht</strong><small data-i18n-key="hero.benefitTeacherDetail" data-i18n-fallback="Praxisnah und zuverlässig">Praxisnah und zuverlässig</small></li>
         </ul>
       </div>
       <dialog id="gcHeroDialog" class="gcHeroDialog" aria-labelledby="gcHeroDialogTitle">

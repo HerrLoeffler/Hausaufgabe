@@ -300,3 +300,10 @@ test("explicit post-test audio before the quantity stays protected", () => {
     assert.equal(patch.count, 5);
   }
 });
+
+ test("explicit test language is independent of subject and interface language", () => {
+  assert.equal(parseTestRequest("Mathematik Klasse 5, Test auf Englisch").contentLocale, "en-GB");
+  assert.equal(parseTestRequest("Create a maths test in English").contentLocale, "en-GB");
+  assert.equal(parseTestRequest("Englischtest, aber auf Deutsch erklären").contentLocale, "de-DE");
+  assert.equal(parseTestRequest("Englisch Klasse 5 Farben").contentLocale, undefined);
+});

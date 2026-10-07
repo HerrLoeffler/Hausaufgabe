@@ -3658,10 +3658,10 @@ function questionForAi(q) {
 }
 
 const AI_QUALITY_REASONS = Object.freeze({
-  incorrect: "Fachlich falsch oder unsinnig",
-  ambiguous: "Mehrdeutig oder zu wenig Kontext",
+  incorrect: "Antwort stimmt nicht",
+  ambiguous: "Aufgabe ist unklar",
   answer_leak: "Lösung wird bereits verraten",
-  image_mismatch: "Bild oder Bildantwort passt nicht",
+  image_mismatch: "Bild passt nicht",
   duplicate: "Doppelt oder zu ähnlich",
   other: "Anderer Grund"
 });
@@ -3770,14 +3770,17 @@ function toggleAiQualityPanel(node, q, index) {
   panel.className = "aiQualityPanel";
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
   const canReplace = !live && !state.currentQuiz?.tutorialVersion;
-  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong>${live ? "<p>Ein veröffentlichter Test kann hier nur bewertet werden.</p>" : ""}<label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong>${live ? "<p>Ein veröffentlichter Test kann hier nur bewertet werden.</p>" : ""}<label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option><option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
   panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
     panel.querySelector(selector)?.addEventListener("click", async () => {
       const buttons = panel.querySelectorAll("button");
       buttons.forEach(button => { button.disabled = true; });
       try {
-        const saved = await submitAiQuestionFeedback(q, index, { verdict: "bad", reason: panel.querySelector(".aiQualityReason").value, comment: panel.querySelector(".aiQualityComment").value, action });
+        const selection = panel.querySelector(".aiQualityReason").value;
+        const preset = { missing_audio: "Höraufgabe fehlt", wrong_language: "Falsche Sprache" }[selection];
+        const comment = panel.querySelector(".aiQualityComment").value;
+        const saved = await submitAiQuestionFeedback(q, index, { verdict: "bad", reason: preset ? "other" : selection, comment: preset ? `${preset}${comment ? ": " + comment : ""}` : comment, action });
         if (saved) panel.remove();
       } finally { buttons.forEach(button => { button.disabled = false; }); }
     });
@@ -6286,6 +6289,10 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
         const text = answerAudioOnly ? `Antwort ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
         const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
         label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
+        if (answerAudioOnly) {
+          label.querySelector("span").hidden = true;
+          label.querySelector("input").setAttribute("aria-label", text);
+        }
         if (answerAudioOnly && String(option.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && option.audioNeedsRegeneration !== true) {
           const player = document.createElement("audio");
           player.controls = true;

@@ -21,6 +21,8 @@ test('four English spoken choices have separate players and selectable opaque ID
   assert.ok(players.every(p => p.controls && !p.autoplay && p.getAttribute('aria-label').startsWith('Answer ')));
   assert.doesNotMatch(section.textContent, /PRIVATE|Antwort|x=/);
   assert.match(section.textContent, /Answer 1/);
+  assert.equal(section.querySelectorAll('span[hidden]').length,4);
+  assert.equal(section.querySelector('input').getAttribute('aria-label'),'Answer 1');
   section.querySelector('input[value="opaque-1"]').click();
   assert.equal(section.querySelector('input:checked').value, 'opaque-1');
   dom.window.close();

@@ -359,6 +359,10 @@ function questionForReview(q, index) {
     studentView.items = sorted((q.groups || []).flatMap(group => group.items || []));
     answerKey.groups = q.groups || [];
   }
+  if (q.audioIntent?.kind === "ai_generated") {
+    studentView.audioTranscript = String(q.audioIntent.script || "");
+    if (q.audioIntent.presentation === "listening-only") studentView.text = "";
+  }
   return { index, type: q.type, studentView, answerKey, plannedImage: q.mediaIntent?.kind === "ai_generated" ? String(q.mediaIntent.prompt || "") : null };
 }
 
@@ -366,11 +370,11 @@ function reviewPrompt(test, memory = {}) {
   const memoryGuide = qualityMemoryPrompt(memory);
   const falseAlarms = (memory.reviewerFalsePositives || []).map(item => `${item.type}/${item.reason}: ${item.reports}`).join(", ");
   return `Prüfe JEDE Aufgabe auf fachliche Richtigkeit, Eindeutigkeit, passende Lösungen und Dopplungen.
-studentView enthält die sichtbare Schüleransicht. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
+studentView enthält die sichtbare Schüleransicht. audioTranscript ist der vollständige gesprochene Hörtext, den Lernende anhören können, kein sichtbarer Text und kein Lösungsschlüssel. Prüfe Hörverstehen anhand dieses Inhalts: grammatikalisch korrekte Ablenker sind nicht automatisch inhaltlich richtige Antworten. Ein fehlender oder nicht eindeutig lösbarer Hörtext bleibt ein Fehler. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
 Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
-Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
+Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn nur Grammatik verlangt ist, sind auch bedeutungsveränderte grammatikalisch richtige Sätze gültig. Prüfe vertauschbare attributive/prädikative Adjektive ausdrücklich: The purple cars are not hungry / The hungry cars are not purple. Melde fehlende acceptedOrders als konkrete unvollständige Lösung. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
 Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
 Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
 }

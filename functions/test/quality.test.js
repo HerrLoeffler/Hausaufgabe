@@ -193,3 +193,20 @@ test("rejecting a reviewer warning teaches reviewer caution without blacklisting
   assert.ok(prompt.includes("zurückgewiesene Prüferwarnungen"));
   assert.equal(prompt.includes("PRIVATE"), false);
 });
+
+test('listening review receives the complete audible context without treating it as visible text or an answer key', () => {
+  const q = question(3);
+  q.text = 'Which animal did Mia see?';
+  q.options = [{ text: 'A penguin', correct: true }, { text: 'An elephant', correct: false }];
+  q.audioIntent = { kind: 'ai_generated', script: 'Mia saw a penguin at the zoo.', presentation: 'supplement' };
+  const projected = questionForReview(q, 0);
+  assert.equal(projected.studentView.audioTranscript, q.audioIntent.script);
+  assert.equal(projected.studentView.text, q.text);
+  assert.deepEqual(projected.studentView.options, ['A penguin', 'An elephant']);
+  assert.equal(Object.hasOwn(projected.studentView, 'correctOptions'), false);
+  q.audioIntent.presentation = 'listening-only';
+  assert.equal(questionForReview(q, 0).studentView.text, '');
+  assert.equal(questionForReview(q, 0).studentView.audioTranscript, q.audioIntent.script);
+  q.audioIntent.kind = 'none';
+  assert.equal(Object.hasOwn(questionForReview(q, 0).studentView, 'audioTranscript'), false);
+});

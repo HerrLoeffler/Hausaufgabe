@@ -69,22 +69,25 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
     // Existing delegated dashboard handler also handles this native button.
   }
   const heading = dashboard.querySelector('.pageHead > div:first-child');
-  if (heading) {
-    const artwork = document.createElement('img');
-    artwork.className = 'gcWorkspaceGreeting';
-    artwork.width = 96; artwork.height = 96; artwork.alt = ''; artwork.setAttribute('aria-hidden','true');
-    heading.append(artwork);
-  }
   const subtitle = heading?.querySelector(':scope > p');
   const defaultSubtitle = 'Alles für deinen nächsten Leistungsnachweis an einem Ort.';
   let previousFailedCount = 0;
-  let greeted = false;
-  const greet = () => {
-    if (greeted || dashboard.classList.contains('hidden') || dashboard.hidden) return;
-    greeted = true;
-    const artwork = dashboard.querySelector('.gcWorkspaceGreeting');
-    if (artwork) artwork.src = 'assets/gradecrew/coco-workspace-greeting.svg';
-    if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) dashboard.classList.add('gcWorkspaceGreetingOnce');
+  const decorateCrew = () => {
+    const button = document.getElementById('gradecrewTourBtn');
+    if (!button) return;
+    let entry = dashboard.querySelector('.gcWorkspaceCrewEntry');
+    if (!entry) {
+      entry = document.createElement('div'); entry.className = 'gcWorkspaceCrewEntry';
+      const crew = document.createElement('div'); crew.className = 'gcWorkspaceCrewPortraits'; crew.setAttribute('aria-hidden', 'true');
+      for (const name of ['penguin-guide','elephant-create','fox-improve','owl-grade']) {
+        const portrait = document.createElement('img'); portrait.src = `assets/gradecrew/${name}.svg`; portrait.alt = ''; portrait.width = 88; portrait.height = 88;
+        crew.append(portrait);
+      }
+      entry.append(crew); button.before(entry); entry.append(button);
+    }
+    // Keep the original button and its tutorial handler; put the duration outside the CTA.
+    const duration = button.querySelector('small');
+    if (duration) { entry.querySelector(':scope > small')?.remove(); entry.append(duration); }
   };
   const refresh = () => {
     const failedCount = jobs?.querySelectorAll('.aiJobFailed').length || 0;
@@ -143,7 +146,7 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
     // The existing + label stays intact for its i18n source mapping.
     const loading = dashboard.querySelector('#quizList > .card:not(.quizCard)');
     if (loading && !loading.classList.contains('gcWorkspaceLoading')) { loading.classList.add('gcWorkspaceLoading'); loading.setAttribute('role','status'); }
-    greet();
+    decorateCrew();
   };
   // Observe only this view, not the entire application. Disconnect during own writes.
   const observer = new window.MutationObserver(() => { observer.disconnect(); refresh(); observe(); });

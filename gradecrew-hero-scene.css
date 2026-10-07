@@ -201,3 +201,38 @@ body.gcPublicHeroMode #authView[data-entry-state="start"]{min-height:0!important
   #authView .gcHeroJoin>label{font-size:13px}
   #authView .gcHeroJoin #joinCode,#authView .gcHeroJoin .gcEntryJoinSubmit{min-height:44px;padding:7px}
 }
+
+/* Full-width scene; viewport fitting must never create a narrow centred window. */
+body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
+#authView[data-entry-state="start"] .gcEntryShell {width:100%;max-width:none}
+#authView .gcHeroPage {width:100%;max-width:none}
+#authView .gcEntryBenefitsCompact li {display:grid;grid-template-columns:48px auto;grid-template-rows:auto auto;column-gap:10px;align-content:center;text-align:left;justify-content:center}
+#authView .gcEntryBenefitsCompact li img {grid-row:1 / 3;width:48px;height:48px;object-fit:contain}
+#authView .gcEntryBenefitsCompact li strong {align-self:end}
+#authView .gcEntryBenefitsCompact li small {align-self:start}
+@media(min-width:781px) {
+ #authView .gcHeroStage {height:var(--gc-stage-height,calc(100svh - 160px));min-height:580px;aspect-ratio:auto}
+ #authView .gcHeroArtwork {object-position:50% 44%}
+ #authView .gcHeroLead h1 {font-size:clamp(30px,3.3vw,58px)}
+ #authView .gcHeroLead p {font-size:clamp(18px,1.8vw,29px)}
+ #authView .gcHeroLead {top:4%;text-shadow:0 1px 12px #fff}
+ #authView .gcHeroRoles {top:65%}
+ #authView .gcHeroActions {top:76%}
+ #authView .gcHeroJoin {top:87%}
+}
+@media(max-width:780px) {
+ #authView .gcEntryBenefitsCompact li {grid-template-columns:34px auto;column-gap:5px}
+ #authView .gcEntryBenefitsCompact li img {width:34px;height:34px}
+}
+
+@media(prefers-reduced-motion:no-preference) {
+ #authView .gcEntryBenefitsCompact li img {transform-origin:50% 90%;animation:gcBenefitHello 1.6s ease-in-out 2}
+ #authView .gcEntryBenefitsCompact li:nth-child(2) img {animation-delay:.2s}
+ #authView .gcEntryBenefitsCompact li:nth-child(3) img {animation-delay:.4s}
+ #authView .gcEntryBenefitsCompact li:nth-child(4) img {animation-delay:.6s}
+}
+@keyframes gcBenefitHello {0%,100%{transform:rotate(0) translateY(0)}35%{transform:rotate(-6deg) translateY(-4px)}70%{transform:rotate(4deg) translateY(-2px)}}
+@media(max-width:780px) and (min-height:701px) {
+ #authView .gcHeroStage {min-height:var(--gc-stage-height,680px);justify-content:space-between}
+ #authView .gcHeroVisual {width:min(100%,640px)}
+}

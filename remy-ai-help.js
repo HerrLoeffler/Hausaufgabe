@@ -188,6 +188,7 @@ function applyTypePatch(patch) {
 }
 
 function applyPatch(patch = {}) {
+  if (["de-DE", "en-GB"].includes(patch.contentLocale)) setField("#aiContentLocale", patch.contentLocale);
   setField("#aiSubject", patch.subject);
   setField("#aiGrade", patch.grade);
   setField("#aiSchoolType", patch.schoolType);

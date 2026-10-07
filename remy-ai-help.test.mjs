@@ -12,7 +12,7 @@ function setup(t) {
   const dom = new JSDOM(`<!doctype html><html><head></head><body>
     <section id="aiView">
       <div class="pageHead"><h1>Test mit KI erstellen</h1></div>
-      <label>Fach<input id="aiSubject"></label>
+      <label>Testsprache<select id="aiContentLocale"><option value="de-DE">Deutsch</option><option value="en-GB">English</option></select></label><label>Fach<input id="aiSubject"></label>
       <label>Klasse<input id="aiGrade"></label>
       <label>Schulart<input id="aiSchoolType"></label>
       <label>Region<input id="aiRegion"></label>
@@ -163,4 +163,13 @@ test('Remy dictation follows an explicit voice locale instead of hard-coding Ger
   assert.match(source, /active\.lang = currentVoiceInputLocale\(\)/);
   assert.match(source, /gradecrew:ui-locale-changed/);
   assert.doesNotMatch(source, /active\.lang = "de-DE"/);
+});
+
+test('explicit English test language reaches the form and emits the locale change event', async t => {
+  const w=setup(t);const language=w.document.getElementById('aiContentLocale');let changed='';
+  language.addEventListener('change',()=>{changed=language.value;});
+  w.document.getElementById('gcRemyCreateInput').value='Mathematik Klasse 5 Test auf Englisch';
+  w.document.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await settle(w);assert.equal(language.value,'en-GB');assert.equal(changed,'en-GB');
+  assert.equal(w.GradeCrewI18n.locale,'de-DE');
 });
