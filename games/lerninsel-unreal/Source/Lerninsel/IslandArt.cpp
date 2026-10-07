@@ -13,7 +13,7 @@ UMaterialInstanceDynamic* Mat(AActor* A,FLinearColor C,bool Glow=false){auto* Ba
 UStaticMeshComponent* Shape(AActor* A,const TCHAR* Type,FVector Pos,FVector S,const TCHAR* H,FRotator R=FRotator::ZeroRotator,bool Collision=false,bool Relative=false,bool Glow=false){
  Root(A);auto* M=NewObject<UStaticMeshComponent>(A);M->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,*(FString(TEXT("/Engine/BasicShapes/"))+Type+TEXT(".")+Type)));M->SetMobility(EComponentMobility::Movable);M->SetupAttachment(A->GetRootComponent());M->RegisterComponent();M->SetRelativeScale3D(S);if(Relative){M->SetRelativeLocation(Pos);M->SetRelativeRotation(R);}else {M->SetWorldLocation(Pos);M->SetWorldRotation(R);}M->SetCollisionEnabled(Collision?ECollisionEnabled::QueryAndPhysics:ECollisionEnabled::NoCollision);M->SetCollisionResponseToAllChannels(ECR_Block);if(auto* T=Mat(A,Col(H),Glow))M->SetMaterial(0,T);return M;
 }
-UTextRenderComponent* Label(AActor* A,const FString& S,FVector P,float Size,FRotator R=FRotator(0,180,0),bool Relative=false,const TCHAR* H=TEXT("374336")){
+UTextRenderComponent* Label(AActor* A,const FString& S,FVector P,float Size,FRotator R=FRotator(0,180,0),bool Relative=false,const TCHAR* H=TEXT("060C07")){
  Root(A);auto* T=NewObject<UTextRenderComponent>(A);T->SetupAttachment(A->GetRootComponent());T->RegisterComponent();if(Relative){T->SetRelativeLocation(P);T->SetRelativeRotation(R);}else{T->SetWorldLocation(P);T->SetWorldRotation(R);}T->SetHorizontalAlignment(EHTA_Center);T->SetVerticalAlignment(EVRTA_TextCenter);T->SetWorldSize(Size);T->SetTextRenderColor(FColor::FromHex(H));T->SetText(FText::FromString(S));return T;
 }
 void Branch(AActor* A,FVector Start,FVector End,float Radius,const TCHAR* C){FVector D=End-Start;Shape(A,TEXT("Cylinder"),(Start+End)*.5,FVector(Radius/50,Radius/50,D.Size()/100),C,FRotationMatrix::MakeFromZ(D).Rotator());}
@@ -37,9 +37,9 @@ FIslandGate Gate(UWorld* W,float X){
  auto* A=W->SpawnActor<AActor>();Root(A);A->SetActorLocation(FVector(X,-120,0));
  for(int I=0;I<12;++I)Shape(A,TEXT("Cube"),FVector(0,I*21+4,140),FVector(.065,.055,2.65),TEXT("8F362A"),FRotator::ZeroRotator,true,true);
  for(int H:{25,90,250})Shape(A,TEXT("Cube"),FVector(0,120,H),FVector(.10,2.5,.075),TEXT("A74E35"),FRotator::ZeroRotator,true,true);
- Shape(A,TEXT("Cube"),FVector(-4,120,130),FVector(.12,.55,.55),TEXT("B2894D"),FRotator::ZeroRotator,false,true);Label(A,TEXT("○"),FVector(-11,120,130),32,FRotator(0,180,0),true,TEXT("EFE3C0"));return {A,0};
+ Shape(A,TEXT("Cube"),FVector(-4,120,130),FVector(.12,.55,.55),TEXT("B2894D"),FRotator::ZeroRotator,false,true);Label(A,TEXT("-"),FVector(-11,120,130),32,FRotator(0,180,0),true,TEXT("EFE3C0"));return {A,0};
 }
-void Terminal(AActor* A,FVector P,const FString& Text){Shape(A,TEXT("Cylinder"),P+FVector(0,0,42),FVector(.24,.24,.85),TEXT("B79C6F"));Shape(A,TEXT("Cube"),P+FVector(0,0,100),FVector(.15,1.22,.72),TEXT("9A4833"));Label(A,Text,P+FVector(-9,0,100),18);}
+void Terminal(AActor* A,FVector P,const FString& Text){Shape(A,TEXT("Cylinder"),P+FVector(0,0,42),FVector(.24,.24,.85),TEXT("B79C6F"));Shape(A,TEXT("Cube"),P+FVector(0,0,100),FVector(.15,1.22,.72),TEXT("9A4833"));Label(A,Text,P+FVector(-9,0,100),18,FRotator(0,180,0),false,TEXT("DAC89B"));}
 }
 void AIslandGameMode::BuildWorld(){
  auto* W=GetWorld();auto* A=W->SpawnActor<AActor>();
@@ -57,13 +57,13 @@ void AIslandGameMode::BuildWorld(){
  Gates.Add(Gate(W,-150));Gates.Add(Gate(W,1350));Gates.Add(Gate(W,3650));
  const TCHAR* IntroWords[]={TEXT("laufen"),TEXT("Baum"),TEXT("singen"),TEXT("blau")};
  const TCHAR* IntroContexts[]={TEXT("Wir laufen zum Tor."),TEXT("Der Baum wächst."),TEXT("Die Kinder singen."),TEXT("Das Tor ist blau.")};
- for(int I=0;I<4;++I){FVector P(-780+(I/2)*235,(I%2?1:-1)*180,8);IntroTiles.Add(Shape(A,TEXT("Cube"),P,FVector(1.3,1.3,.1),TEXT("F5E8C7")));Label(A,IntroWords[I],P+FVector(0,0,6),24,FRotator(90,180,0));IntroMarks.Add(Label(A,TEXT("○"),P+FVector(34,0,7),15,FRotator(90,180,0)));AddTarget(100+I,P,IntroWords[I],IntroContexts[I]);}
+ for(int I=0;I<4;++I){FVector P(-780+(I/2)*235,(I%2?1:-1)*180,8);IntroTiles.Add(Shape(A,TEXT("Cube"),P,FVector(1.3,1.3,.1),TEXT("F5E8C7")));Label(A,IntroWords[I],P+FVector(0,0,6),24,FRotator(90,180,0));IntroMarks.Add(Label(A,TEXT("-"),P+FVector(34,0,7),15,FRotator(90,180,0)));AddTarget(100+I,P,IntroWords[I],IntroContexts[I]);}
  Terminal(A,FVector(-1080,-270,0),TEXT("Finde zwei Verben"));AddTarget(10,FVector(-1080,-270,95),TEXT("Verbprobe"),TEXT("Wähle genau zwei Verben. Die Satzkontexte helfen dir. E oder Antippen zeigt das Wort; bestätige dann deine Auswahl. Am runden Schlussstein prüfst du beide."));
  Terminal(A,FVector(-330,0,0),TEXT("Auswahl prüfen"));AddTarget(11,FVector(-330,0,100),TEXT("Zwei Verben prüfen"));
  Terminal(A,FVector(50,-425,0),TEXT("Verbweg starten"));AddTarget(20,FVector(50,-425,100),TEXT("Verbweg starten"));
  const TCHAR* Words[]={TEXT("singt"),TEXT("Baum"),TEXT("blau"),TEXT("klein"),TEXT("sucht"),TEXT("Tor"),TEXT("Stein"),TEXT("laut"),TEXT("öffnet")};
  const TCHAR* Contexts[]={TEXT("Der Vogel singt."),TEXT("Der Baum steht am Weg."),TEXT("Das Tor ist blau."),TEXT("Die Hütte ist klein."),TEXT("Der Fuchs sucht den Eingang."),TEXT("Das Tor ist geschlossen."),TEXT("Der Stein liegt hier."),TEXT("Der Ton ist laut."),TEXT("Die Eule öffnet das Tor.")};
- for(int I=0;I<9;++I){FVector P(300+(I/3)*250,(I%3-1)*180,8);PathTiles.Add(Shape(A,TEXT("Cube"),P,FVector(1.2,1.2,.1),TEXT("F4E6C4")));Label(A,Words[I],P+FVector(0,0,6),26,FRotator(90,180,0));PathMarks.Add(Label(A,TEXT("○"),P+FVector(38,0,7),15,FRotator(90,180,0)));AddTarget(200+I,P,Words[I],Contexts[I]);}
+ for(int I=0;I<9;++I){FVector P(300+(I/3)*250,(I%3-1)*180,8);PathTiles.Add(Shape(A,TEXT("Cube"),P,FVector(1.2,1.2,.1),TEXT("F4E6C4")));Label(A,Words[I],P+FVector(0,0,6),26,FRotator(90,180,0));PathMarks.Add(Label(A,TEXT("-"),P+FVector(38,0,7),15,FRotator(90,180,0)));AddTarget(200+I,P,Words[I],Contexts[I]);}
  Terminal(A,FVector(1150,0,0),TEXT("Weg prüfen"));AddTarget(21,FVector(1150,0,100),TEXT("Drei Verbenschritte prüfen"));Terminal(A,FVector(600,-425,0),TEXT("Schritt zurück"));AddTarget(22,FVector(600,-425,100),TEXT("Letzten Schritt zurücknehmen"));
  // The fountain is visibly upstream of the pressure plate and its connected gate.
  Shape(A,TEXT("Cylinder"),FVector(2350,-480,25),FVector(2,2,.5),TEXT("D8C298"),FRotator::ZeroRotator,true);Shape(A,TEXT("Cylinder"),FVector(2350,-480,52),FVector(1.7,1.7,.035),TEXT("52A9B9"));
@@ -74,14 +74,20 @@ void AIslandGameMode::BuildWorld(){
  Shape(A,TEXT("Cylinder"),FVector(3350,0,5),FVector(1.6,1.6,.1),TEXT("A1844D"));Shape(A,TEXT("Cylinder"),FVector(3350,0,10),FVector(1.34,1.34,.015),TEXT("E6D5AE"));Label(A,TEXT("3/10"),FVector(3350,0,12),40,FRotator(90,180,0));AddTarget(403,FVector(3350,0,10),TEXT("Eimer auf 3/10-Platte stellen"));
  Terminal(A,FVector(3070,-350,0),TEXT("1 L · drei Zehntel"));
  Bucket=W->SpawnActor<AActor>();Root(Bucket);
- Shape(Bucket,TEXT("Cylinder"),FVector(0,0,2),FVector(.39,.39,.04),TEXT("AFA987"),FRotator::ZeroRotator,false,true);
- // Open measuring frame: geometry leaves the water unobscured; ten equal36/10cm sections.
- for(float H:{2.f,38.f}){for(int I=0;I<24;++I){float Ang=I*2*PI/24;Shape(Bucket,TEXT("Cube"),FVector(FMath::Cos(Ang)*19,FMath::Sin(Ang)*19,H),FVector(.055,.045,.025),TEXT("B9B092"),FRotator(0,I*15,0),false,true);}}
- for(int I=0;I<10;++I){float H=2+(I+1)*3.6f;Shape(Bucket,TEXT("Cube"),FVector(-19,0,H),FVector(.015,.13,.008),TEXT("454E3D"),FRotator::ZeroRotator,false,true);Label(Bucket,FString::Printf(TEXT("%d/10"),I+1),FVector(-20,10,H),2.4,FRotator(0,180,0),true);}
- for(int S:{-1,1})Shape(Bucket,TEXT("Cube"),FVector(0,S*19,23),FVector(.03,.03,.42),TEXT("B4A889"),FRotator::ZeroRotator,false,true);
- Label(Bucket,TEXT("1 L"),FVector(-20,0,43),7,FRotator(0,180,0),true);
- BucketAmount=Label(Bucket,TEXT("0/10"),FVector(-20,0,-7),4,FRotator(0,180,0),true);
- BucketWater=Shape(Bucket,TEXT("Cylinder"),FVector(0,0,2),FVector(.34,.34,.001),TEXT("56B9D1"),FRotator::ZeroRotator,false,true);
+ // Inner cylinder: radius4.46cm, calibrated height16cm => approximately1L.
+ Shape(Bucket,TEXT("Cylinder"),FVector(0,0,1),FVector(.104,.104,.02),TEXT("AFA987"),FRotator::ZeroRotator,false,true);
+ auto* Shell=NewObject<UProceduralMeshComponent>(Bucket);Shell->SetupAttachment(Bucket->GetRootComponent());Shell->RegisterComponent();Shell->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+ TArray<FVector> SV,SN;TArray<int32> SI;TArray<FVector2D> SU;TArray<FLinearColor> SC;TArray<FProcMeshTangent> ST;
+ for(int I=0;I<=32;++I){float Ang=I*2*PI/32;FVector N(FMath::Cos(Ang),FMath::Sin(Ang),0);for(float Z:{2.f,18.f}){SV.Add(N*4.46+FVector(0,0,Z));SN.Add(N);SU.Add(FVector2D(float(I)/32,(Z-2)/16));SC.Add(FLinearColor::White);}if(I<32){int B=I*2;SI.Append({B,B+2,B+1,B+1,B+2,B+3});}}
+ Shell->CreateMeshSection_LinearColor(0,SV,SI,SN,SU,SC,ST,false);
+ if(auto* Glass=LoadObject<UMaterial>(nullptr,TEXT("/Game/Materials/M_Glass.M_Glass")))Shell->SetMaterial(0,Glass);
+ for(float H:{2.f,18.f})for(int I=0;I<24;++I){float Ang=I*2*PI/24;Shape(Bucket,TEXT("Cube"),FVector(FMath::Cos(Ang)*4.9,FMath::Sin(Ang)*4.9,H),FVector(.012,.006,.008),TEXT("B9B092"),FRotator(0,I*15,0),false,true);}
+ for(int I=0;I<10;++I){float H=2+(I+1)*1.6f;Shape(Bucket,TEXT("Cube"),FVector(-4.6,0,H),FVector(.006,.027,.004),TEXT("374336"),FRotator::ZeroRotator,false,true);Label(Bucket,FString::Printf(TEXT("%d/10"),I+1),FVector(-4.8,2.5,H),.8,FRotator(0,180,0),true);}
+ for(int Sign:{-1,1})Shape(Bucket,TEXT("Cube"),FVector(0,Sign*5,20),FVector(.012,.012,.07),TEXT("B4A889"),FRotator::ZeroRotator,false,true);
+ Shape(Bucket,TEXT("Cube"),FVector(0,0,23.5),FVector(.012,.11,.012),TEXT("B4A889"),FRotator::ZeroRotator,false,true);
+ Label(Bucket,TEXT("1 L"),FVector(-5,0,20.8),2,FRotator(0,180,0),true);
+ BucketAmount=Label(Bucket,TEXT("0/10"),FVector(-5,0,-2),1.3,FRotator(0,180,0),true);
+ BucketWater=Shape(Bucket,TEXT("Cylinder"),FVector(0,0,2),FVector(.0892,.0892,.001),TEXT("56B9D1"),FRotator::ZeroRotator,false,true);
  // Thin solved connections sit within neutral channels rather than covering paths with neon.
  float Ends[3]={-150,1350,3650};float Begins[3]={-330,1150,3350};for(int I=0;I<3;++I){Shape(A,TEXT("Cube"),FVector((Begins[I]+Ends[I])*.5,120,7),FVector((Ends[I]-Begins[I])/100,.12,.025),TEXT("8C754D"));Cables.Add(Shape(A,TEXT("Cube"),FVector((Begins[I]+Ends[I])*.5,120,9),FVector((Ends[I]-Begins[I])/100,.035,.02),TEXT("62D6B4"),FRotator::ZeroRotator,false,false,true));}
  // Tower: exactly eight dark openings, first two receive area milestones.

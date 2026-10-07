@@ -1,0 +1,44 @@
+{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "3A2D5FAE714F7EA5ED2EAB85D9287BD2",
+			"instanceName": "Mac.fritz.box-73104",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.07-22.55.25",
+	"succeeded": 1,
+	"succeededWithWarnings": 0,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 6.7744369506835938,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "Play",
+			"fullTestPath": "GradeCrew.Lerninsel.Play",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"3A2D5FAE714F7EA5ED2EAB85D9287BD2"
+			],
+			"duration": 6.7744369506835938,
+			"dateTime": "2026.10.07-22.55.18",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

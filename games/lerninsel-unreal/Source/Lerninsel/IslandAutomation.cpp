@@ -10,39 +10,66 @@
 #include "Misc/Paths.h"
 #include "ShaderCompiler.h"
 #include "UnrealClient.h"
+#include "Engine/GameViewportClient.h"
+#include "ImageUtils.h"
+#include "Misc/FileHelper.h"
+#include "GameFramework/InputSettings.h"
+#include "GameFramework/PlayerInput.h"
+#include "InputKeyEventArgs.h"
+#include "EngineUtils.h"
+#include "Engine/DirectionalLight.h"
+#include "Components/DirectionalLightComponent.h"
+namespace {
+bool CaptureGame(UWorld* W,const TCHAR* Name){auto* Client=W?W->GetGameViewport():nullptr;auto* V=Client?Client->Viewport:nullptr;if(!V)return false;TArray<FColor> Pixels;if(!V->ReadPixels(Pixels))return false;FIntPoint Size=V->GetSizeXY();TArray64<uint8> Bytes;FImageUtils::PNGCompressImageArray(Size.X,Size.Y,Pixels,Bytes);return FFileHelper::SaveArrayToFile(Bytes,*(FPaths::ProjectDir()/TEXT("Reports")/Name));}
+}
 class FIslandPlayCheck:public IAutomationLatentCommand{
  FAutomationTestBase* Test;double Started=FPlatformTime::Seconds();int Phase=0;
  public:explicit FIslandPlayCheck(FAutomationTestBase* T):Test(T){} bool Update()override{
  UWorld* W=GEditor?GEditor->PlayWorld.Get():nullptr;auto* G=W?Cast<AIslandGameMode>(W->GetAuthGameMode()):nullptr;
  if(!G){if(FPlatformTime::Seconds()-Started<40)return false;Test->AddError(TEXT("Lerninsel did not enter PIE"));return true;}
- if(GShaderCompilingManager&&GShaderCompilingManager->IsCompiling())return false;
+ if(GShaderCompilingManager&&GShaderCompilingManager->IsCompiling()){if(FPlatformTime::Seconds()-Started<90)return false;Test->AddError(TEXT("Shader compilation timed out"));return true;}
  auto* P=Cast<AIslandCharacter>(UGameplayStatics::GetPlayerPawn(W,0));auto* C=P?Cast<AIslandController>(P->GetController()):nullptr;
  if(!P){Test->AddError(TEXT("Ego character missing"));return true;}
  if(Phase==0){
  G->SaveSlot=TEXT("LerninselAutomationOnly");G->ResetDemo();
+ for(TActorIterator<ADirectionalLight> Sun(W);Sun;++Sun)Test->TestEqual(TEXT("Authored sun is movable, no unbuilt lightmap preview"),Sun->GetComponentByClass<UDirectionalLightComponent>()->Mobility,EComponentMobility::Movable);
+ TArray<FInputAxisKeyMapping> ForwardKeys,RightKeys;GetDefault<UInputSettings>()->GetAxisMappingByName(TEXT("Forward"),ForwardKeys);GetDefault<UInputSettings>()->GetAxisMappingByName(TEXT("Right"),RightKeys);
+ Test->TestTrue(TEXT("W reaches forward axis"),ForwardKeys.ContainsByPredicate([](const FInputAxisKeyMapping& M){return M.Key==EKeys::W&&M.Scale==1;}));
+ Test->TestTrue(TEXT("D reaches right axis"),RightKeys.ContainsByPredicate([](const FInputAxisKeyMapping& M){return M.Key==EKeys::D&&M.Scale==1;}));
+ C->KeysArmed=true;P->ConsumeMovementInputVector();C->InputKey(FInputKeyEventArgs(nullptr,FInputDeviceId::CreateFromInternalId(0),EKeys::W,IE_Pressed,FPlatformTime::Cycles64()));
+ TArray<UInputComponent*> Stack={P->InputComponent};C->PlayerInput->ProcessInputStack(Stack,.1f,false);Test->TestTrue(TEXT("Keyboard W routes through binding into pawn movement"),P->GetPendingMovementInputVector().X>0);
+ C->InputKey(FInputKeyEventArgs(nullptr,FInputDeviceId::CreateFromInternalId(0),EKeys::W,IE_Released,FPlatformTime::Cycles64()));P->ConsumeMovementInputVector();
  Test->TestEqual(TEXT("Default FOV"),P->Camera->FieldOfView,75.f);
  Test->TestEqual(TEXT("Eyes160cm above floor"),double(P->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()+P->Camera->GetRelativeLocation().Z),160.0);
  Test->TestTrue(TEXT("Closed main gate has blocking collision"),G->GateBlocks(1));
+ P->SetActorLocation(FVector(1200,0,90));FHitResult GateHit;P->SetActorLocation(FVector(1450,0,90),true,&GateHit);Test->TestTrue(TEXT("Closed gate really blocks capsule sweep"),GateHit.bBlockingHit&&P->GetActorLocation().X<1350);
  G->Interact(400);Test->TestFalse(TEXT("Remote fountain cannot fill"),G->State.carrying);
  P->SetActorLocation(FVector(2350,-220,88));G->Interact(401);Test->TestTrue(TEXT("Nearby bucket pickup"),G->State.carrying);
  P->SetActorLocation(FVector(2350,-420,88));G->Interact(400);
  Test->TestEqual(TEXT("Stroke not committed early"),G->State.tenths,0);
  G->Interact(400);G->Tick(.7f);Test->TestEqual(TEXT("Double input during stroke counts once"),G->State.tenths,1);
+ G->Interact(400);C->Escape();C->Escape();G->Tick(.7f);Test->TestEqual(TEXT("Pause cancels unconfirmed fill, including after resume"),G->State.tenths,1);
  G->Save();const FString Saved=FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str()));G->State=Island::State();Test->TestTrue(TEXT("Saved snapshot loads"),G->Load());Test->TestEqual(TEXT("Exact saved rule state"),FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())),Saved);
  C->TouchMove=FVector2D(1,1);C->Ownership.Begin(0,.1,.7);C->CancelInput();Test->TestTrue(TEXT("Cancel clears motion and finger"),C->TouchMove.IsZero()&&C->Ownership.Role(0)==Island::TouchRole::None);
  G->Focus=100;C->Escape();Test->TestEqual(TEXT("Escape closes context first"),G->Focus,-1);Test->TestFalse(TEXT("First Escape does not pause"),G->Paused);
  C->Escape();Test->TestTrue(TEXT("Next Escape pauses"),G->Paused);G->Paused=false;
- G->ResetDemo();FScreenshotRequest::RequestScreenshot(FPaths::ProjectDir()/TEXT("Reports/Arrival.png"),true,false);Started=FPlatformTime::Seconds();Phase=1;return false;
+ G->ResetDemo();Started=FPlatformTime::Seconds();Phase=1;return false;
  }
  if(FPlatformTime::Seconds()-Started<2)return false;
  if(Phase==1){
- Island::Apply(G->State,Island::Action::IntroToggle,0);Island::Apply(G->State,Island::Action::IntroToggle,2);Island::Apply(G->State,Island::Action::IntroCheck);Island::Apply(G->State,Island::Action::PathStart);
- for(int id:{0,4,8})Island::Apply(G->State,Island::Action::PathStep,id);Island::Apply(G->State,Island::Action::PathCheck);
+ Test->TestTrue(TEXT("Actual game viewport arrival captured"),CaptureGame(W,TEXT("Arrival.png")));
+ for(int Id:{0,2}){P->SetActorLocation(G->Target(100+Id)->Pos+FVector(0,0,80));G->Interact(100+Id);G->SelectFocused();}
+ P->SetActorLocation(FVector(-330,0,88));G->Interact(11);Test->TestTrue(TEXT("Runtime probe opens intro milestone"),G->State.intro);
+ P->SetActorLocation(FVector(50,-425,88));G->Interact(20);
+ P->SetActorLocation(G->Target(200)->Pos+FVector(0,0,80));G->Tick(.15f);Test->TestEqual(TEXT("Foot contact under dwell does not select"),G->State.pathCount,0);G->Tick(.16f);Test->TestEqual(TEXT("Centered foot dwell selects first verb"),G->State.pathCount,1);G->Tick(.7f);Test->TestEqual(TEXT("Remaining on one tile never selects twice"),G->State.pathCount,1);
+ for(int Id:{4,8}){P->SetActorLocation(G->Target(200+Id)->Pos+FVector(0,0,80));G->Tick(.31f);}
+ P->SetActorLocation(FVector(1150,0,88));G->Interact(21);Test->TestTrue(TEXT("Runtime verb route confirms milestone"),G->State.verbs);
  Test->TestTrue(TEXT("Correct rules alone still await gate animation"),G->GateBlocks(1));G->RefreshWorld(1.5f);Test->TestFalse(TEXT("Open gate releases collision only after animation"),G->GateBlocks(1));
- P->SetActorLocation(FVector(50,0,88));C->SetControlRotation(FRotator(-25,0,0));FScreenshotRequest::RequestScreenshot(FPaths::ProjectDir()/TEXT("Reports/VerbGarden.png"),true,false);Started=FPlatformTime::Seconds();Phase=2;return false;
+ P->SetActorLocation(FVector(50,0,88));C->SetControlRotation(FRotator(-25,0,0));Started=FPlatformTime::Seconds();Phase=2;return false;
  }
- if(Phase==2){P->SetActorLocation(FVector(2150,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);FScreenshotRequest::RequestScreenshot(FPaths::ProjectDir()/TEXT("Reports/BucketTerrace.png"),true,false);Started=FPlatformTime::Seconds();Phase=3;return false;}
- Test->TestEqual(TEXT("Three tenths visible water height"),G->BucketWaterHeight(),10.8f);
+ if(Phase==2){Test->TestTrue(TEXT("Actual game viewport garden captured"),CaptureGame(W,TEXT("VerbGarden.png")));P->SetActorLocation(FVector(2150,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=3;return false;}
+ Test->TestTrue(TEXT("Actual game viewport terrace captured"),CaptureGame(W,TEXT("BucketTerrace.png")));
+ Test->TestEqual(TEXT("Three tenths visible water height"),G->BucketWaterHeight(),4.8f);
  return true;
  }};
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FIslandSmoke,"GradeCrew.Lerninsel.Play",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
