@@ -98,7 +98,13 @@
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
       "pr": 168,
       "candidate_ci": 37638284400,
-      "deploy": "pending",
+      "merge_ci": 37639151101,
+      "preview": 37639362021,
+      "preview_receipt": 11490984119,
+      "functions": 37639361958,
+      "ai_receipt": 11491656204,
+      "assessment_receipt": 11491326494,
+      "canonical": "requested",
       "user_acceptance": "pending"
     }
   },
