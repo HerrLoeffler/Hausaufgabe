@@ -354,3 +354,7 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .questionOutlineItem[draggable="true"]{cursor:grab;border-style:dashed}
 .questionOutlineItem.selectedForMove{background:#e7efff;border:2px solid #285bd4}
 #questionOrderHint:not(:empty){display:block;margin:8px 0;color:#52647a;line-height:1.4}
+
+.cocoGuideTarget{outline:3px solid #d73743!important;outline-offset:5px;box-shadow:0 0 0 8px #d737431c!important;animation:cocoGuideGlow 1.8s ease-in-out 3}
+@keyframes cocoGuideGlow{50%{outline-offset:9px}}
+@media(prefers-reduced-motion:reduce){.cocoGuideTarget{animation:none}}

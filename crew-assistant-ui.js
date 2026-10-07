@@ -2,6 +2,10 @@ import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.j
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=5";
 
+let conversation = [];
+let lastCrew = "";
+let requestEpoch = 0;
+let sending = false;
 let installed = false;
 let open = false;
 let recognition = null;
@@ -65,6 +69,14 @@ function addMessage(kind, text) {
   node.className = `gcCrewMsg ${kind}`;
   if (kind.split(/\s+/).includes("user")) node.dataset.i18nContent = "conversation";
   node.textContent = text;
+  if (kind === "user" || kind === "assistant") {
+    conversation.push({role:kind === "user" ? "user" : "assistant",text:String(text).slice(0,1400)});
+    conversation = conversation.slice(-8);
+    if (kind === "assistant") {
+      const names = [...new Set((String(text).match(/\b(?:Remy|Emmi|Wilma)\b/gi) || []).map(name=>name.toLowerCase()))];
+      if (names.length === 1) lastCrew = names[0];
+    }
+  }
   root.appendChild(node);
   root.scrollTop = root.scrollHeight;
   return node;
@@ -137,7 +149,7 @@ function createUi() {
 }
 
 function currentContext() {
-  return { screen: document.querySelector("main .view:not(.hidden)")?.id || "unknown" };
+  return { screen: document.querySelector("main .view:not(.hidden)")?.id || "unknown", lastCrew, history:conversation.slice(-6) };
 }
 
 async function callCrewAi(payload) {
@@ -147,30 +159,53 @@ async function callCrewAi(payload) {
   return result.data || {};
 }
 
+function requestGuideAction(action) {
+  return new Promise((resolve,reject) => {
+    const timer=window.setTimeout(()=>reject(new Error("Die Navigation braucht gerade zu lange. Bitte versuche es erneut.")),90000);
+    document.dispatchEvent(new CustomEvent("gradecrew:coco-guide",{detail:{action,respond:result=>{window.clearTimeout(timer);resolve(result);}}}));
+  });
+}
+async function applyGuideAction(action, epoch = requestEpoch) {
+  const result=await requestGuideAction(action);
+  if (epoch !== requestEpoch) return;
+  if (result.lastCrew) lastCrew=result.lastCrew;
+  addMessage("assistant",result.error || result.message);
+  if (!result.choices) return;
+  if (!result.choices.length) { addMessage("assistant","Du hast noch keinen passenden Test. Mit Remy kannst du einen neuen erstellen."); return; }
+  const holder=document.createElement("div");holder.className="gcCrewMsg assistant";
+  const label=document.createElement("label");label.textContent="Test auswählen";
+  const select=document.createElement("select"); select.setAttribute("aria-label","Test auswählen");select.style.maxWidth="100%";
+  for (const quiz of result.choices) {const option=document.createElement("option");option.value=quiz.id;option.textContent=[quiz.title,quiz.subject,quiz.grade].filter(Boolean).join(" · ");select.appendChild(option);}
+  const evidence=document.createElement("small");evidence.style.display="block";
+  const update=()=>{evidence.textContent=result.choices.find(q=>q.id===select.value)?.evidence || "";};select.addEventListener("change",update);update();
+  const button=document.createElement("button");button.type="button";button.textContent="Zum Test";button.className="miniButton";
+  button.addEventListener("click",async()=>{if(epoch!==requestEpoch)return;button.disabled=true;try{await applyGuideAction({type:result.nextAction,quizId:select.value},epoch);}catch(error){addMessage("assistant",error.message);}finally{button.disabled=false;}});
+  label.appendChild(select);holder.append(label,evidence,button);$("gcCrewMessages").appendChild(holder);holder.scrollIntoView({block:"nearest"});
+}
 async function sendCurrentMessage() {
   const input = $("gcCrewInput");
   const text = String(input?.value || "").trim();
-  if (!text) return;
-  stopDictation();
-  input.value = "";
-  addMessage("user", text);
-
-  const local = resolveLocalCrewRequest({ crewId: "coco", text, context: currentContext(), locale: currentUiLocale() });
-  if (local.handled) {
-    addMessage("assistant", local.reply);
-    return;
-  }
-
-  const pending = addMessage("assistant pending", "Coco denkt nach …");
+  if (!text || sending) return;
+  const epoch=requestEpoch; sending=true;
+  const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;
+  stopDictation();input.value="";addMessage("user",text);
+  let pending;
   try {
-    const result = await callCrewAi({ crewId: "coco", text, uiLocale: currentUiLocale(), context: currentContext() });
-    pending?.remove();
-    addMessage("assistant", result.reply || "Dazu habe ich gerade noch keine sichere Antwort.");
-  } catch (error) {
-    pending?.remove();
-    console.warn("Coco KI-Fallback nicht verfügbar:", error?.code || error?.message || error);
-    addMessage("assistant", "Das klappt gerade nicht. Versuch es bitte noch einmal.");
-  }
+    const context=currentContext();
+    const local=resolveLocalCrewRequest({crewId:"coco",text,context,locale:currentUiLocale()});
+    if (local.handled) {
+      if (local.intent === "route_remy") lastCrew="remy";
+      if (local.action && local.action.type !== "patch_ai_form") {pending=addMessage("assistant pending","Ich suche die passende Stelle …");await applyGuideAction(local.action,epoch);}
+      else addMessage("assistant",local.reply);
+      return;
+    }
+    pending=addMessage("assistant pending","Coco denkt mit KI nach …");
+    const result=await callCrewAi({crewId:"coco",text,uiLocale:currentUiLocale(),context});
+    if (epoch!==requestEpoch)return;
+    if (result.action?.type && !["none","patch_ai_form"].includes(result.action.type)) await applyGuideAction(result.action,epoch);
+    else addMessage("assistant",result.reply || "Dazu habe ich gerade noch keine sichere Antwort. Beschreibe bitte, was du erreichen möchtest.");
+  } catch(error) { if(epoch===requestEpoch)addMessage("assistant",error.message || "Das klappt gerade nicht. Versuch es bitte noch einmal."); }
+  finally {pending?.remove();if(epoch===requestEpoch){sending=false;if(send)send.disabled=false;}}
 }
 
 function speechConstructor() {
@@ -263,7 +298,10 @@ function installVisibilityWatcher() {
   const observer = new MutationObserver(updateLauncherVisibility);
   [$("userBar"), $("authView"), $("studentView")].filter(Boolean)
     .forEach(target => observer.observe(target, { attributes: true, attributeFilter: ["class"] }));
+  const resetConversation = () => {requestEpoch++;conversation=[];lastCrew="";sending=false;const root=$("gcCrewMessages");if(root)root.replaceChildren();const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;};
+  document.addEventListener("gradecrew:signed-out",resetConversation);
   document.addEventListener("gradecrew:account-changed", () => {
+    resetConversation();
     stopDictation();
     setOpen(false);
     updateLauncherVisibility();

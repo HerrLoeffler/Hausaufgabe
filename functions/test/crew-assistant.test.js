@@ -86,7 +86,7 @@ test("normalizer strips unsupported action types and localizes only its fallback
 });
 
 test("strict schema exposes only safe V1 action types", () => {
-  assert.deepEqual(crewAssistantSchema.properties.action.properties.type.enum, ["none", "patch_ai_form"]);
+  assert.deepEqual(crewAssistantSchema.properties.action.properties.type.enum, ["none", "patch_ai_form", "navigate_create", "navigate_tests", "navigate_settings", "choose_editor", "choose_results", "show_delete_question", "show_delete_test"]);
 });
 
 test("Remy fallback keeps image, listening and spoken-answer counts distinct", () => {
@@ -103,4 +103,11 @@ test("Remy fallback keeps image, listening and spoken-answer counts distinct", (
   assert.equal(patch.audioAnswerQuestionCount, 4);
   assert.equal(patch.solutionAudioQuestionCount, null);
   assert.match(crewSystemPrompt("remy"), /audioAnswerQuestionCount/);
+});
+
+test('Coco fallback retains bounded conversation context and only fixed navigation actions', () => {
+  const request = cleanCrewRequest({crewId:'coco',text:'Bring mich zu ihm',context:{lastCrew:'remy',history:Array.from({length:10},()=>({role:'assistant',text:'Remy '.repeat(1000)}))}});
+  assert.equal(request.context.lastCrew,'remy');assert.equal(request.context.history.length,6);assert.ok(request.context.history.every(m=>m.text.length<=1400));
+  assert.equal(normalizeCrewResult({action:{type:'navigate_create'}}).action.type,'navigate_create');
+  assert.equal(normalizeCrewResult({action:{type:'javascript:delete()'}}).action.type,'none');
 });
