@@ -19,7 +19,17 @@
     "Native IOS build -SkipDeploy missing optional Unreal IOS files; no compile/device result",
     "NativeFinal NullRHI: two projection assertions fail; other gameplay passes",
     "Projection build Wshadow failure; named flags corrected; initial missingmodule render not counted",
-    "NativeRenderedFinal session13128: CookAndLearn and VisualPreview both Success0errors3environmentwarnings; genuine viewport projection asserts pass; threeactual PNGs inspected"
+    "NativeRenderedFinal session13128: CookAndLearn and VisualPreview both Success0errors3environmentwarnings; genuine viewport projection asserts pass; threeactual PNGs inspected",
+    "User failed Los kochen: actual click fails, E starts; old HUD ignores letterbox origin",
+    "HudPointerRed expectedfailure, actual origin45,0; origin subtraction fix",
+    "User cuts/controller/font steering: tolerance red175checks11fail ->179zero; layer/NaN red182checks2fail ->182zero",
+    "Runtime font confirmed from real engine assets; protected measurement API then component API compile failures corrected from installed headers",
+    "NativeMouseAndHud and NativeMouseReviewed all4testsSuccess0errors; screenshots show real normal/gross polygons",
+    "Physical proxy clicks still fail; normal-player logger sees only Released; capture2 contradicts capture-gate theory",
+    "Explicit GameAndUI focus/capture3 alone does not close physical proxy issue",
+    "RightPressed0 arrives vs LeftReleasedonly; fixed-size window allows leftPressed0 too, consistent Mac resize-zone guard",
+    "Different proxy target720,666 and360,333 produce identical Unreal cursor1438,710; user hardware test requested, not counted accepted",
+    "Final noisy diagnostics removed; build41018Succeeded; NativeDesktopFinal52198 all4Success0errors"
   ],
   "paid_provider_calls": 0,
   "new_budget_reservations": 0

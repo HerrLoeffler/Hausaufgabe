@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07T00:07:11.749Z",
+  "observed_at": "2026-10-07 01:57:52 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "0931ade4e415690cc149c829c5f1a6703d085177",
+    "observed_integration_head": "094546a44131a671daede5131e29def0da116002",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -54,23 +54,44 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success_run_37547012003_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "mobile_tutorial": "success_run_37547012032_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "hosting_preview": "success_run_37547126018_receipt_11450528574_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "staging_functions": "success_run_37547126016_receipt_11451600189_commit_0931ade4e415690cc149c829c5f1a6703d085177",
+      "combined_ci": "success_run_37558924609_commit_094546a44131a671daede5131e29def0da116002",
+      "mobile_tutorial": "prior_runtime_tour37558149323@7f91dea0_success; CSS-only094546a4_final_combinedCI_and_browser_layout_verified",
+      "hosting_preview": "success_run_37559039697_receipt_11455947421_commit_094546a44131a671daede5131e29def0da116002",
+      "staging_functions": "success_run_37559039672_receipt_11455703400_commit_094546a44131a671daede5131e29def0da116002",
       "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
-      "desktop_ipad_iphone_test": "not_performed_for_0931ade4e415690cc149c829c5f1a6703d085177_browser_policy_unverified",
-      "user_acceptance": "failed_20261007_user_screenshots_commit_0931ade4",
+      "desktop_ipad_iphone_test": "browser_preview_desktop_and_local_phone_viewport_verified; physical_devices_unverified",
+      "user_acceptance": "pending_for_094546a4; previous0931ade4_failed_retained",
       "production": "not_requested",
-      "staging_assessment_functions": "success_run_37547126016_receipt_11451256131_commit_0931ade4e415690cc149c829c5f1a6703d085177",
-      "audio_v2_user_acceptance": "failed_20261007_status_conversion_and_grouping_audio",
-      "canonical_hosting": "success_run_37547422005_receipt_11450254448_commit_0931ade4e415690cc149c829c5f1a6703d085177"
+      "staging_assessment_functions": "success_run_37559039672_receipt_11456380393_commit_094546a44131a671daede5131e29def0da116002",
+      "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
+      "canonical_hosting": "success_run_37559354641_receipt_11456410883_commit_094546a44131a671daede5131e29def0da116002"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 120,
-    "important": "PR159 merged as 0931ade4e415690cc149c829c5f1a6703d085177; merge CI 37547012003, mobile 37547012032, verified preview 37547126018, AI/Assessment Functions 37547126016, canonical Hosting 37547422005 all succeeded with receipts. Canonical Hosting verified 120 files. New private listening-only/audio-answer modes remain draft-only until live secure Rules cutover and Gates C–F are evidenced. Real login/test creation and device acceptance remain unverified; Production unchanged.",
-    "next_action": "Main repairs reported acceptance failures on fix/web-acceptance-regressions-20261007; no unchanged redeploy, no automatic chat polling.",
-    "canonical_url": "https://hausaufgabe-staging.web.app/"
+    "preview_verified_files": 123,
+    "important": "Final PR161/162 batch094546a44131a671daede5131e29def0da116002 is verified on canonical Staging: exactCI37558924609, preview37559039697/receipt11455947421, AI/Assessment37559039672/receipts11455703400,11456380393, canonical37559354641/receipt11456410883 with123files. Actual authenticated canonical dashboard loaded with0px horizontal overflow at1920 and1px publication checkbox, no new console errors. Local390px layout/Space/focus verified. Human/device and paid generation acceptance unperformed; old failed jobs/reports preserved. New private audio remains draft-only until proven live secure Rules/Gates C–F/30participants. No scroll story, Games/nativeiOS/Production; collector PAUSED.",
+    "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
+    "canonical_url": "https://hausaufgabe-staging.web.app/",
+    "active_repair": {
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "stage": "staging_deployed",
+      "commit": "094546a44131a671daede5131e29def0da116002",
+      "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+      "included_prs": [
+        161,
+        162
+      ],
+      "combined_ci": 37558924609,
+      "preview_run": 37559039697,
+      "preview_receipt": 11455947421,
+      "functions_run": 37559039672,
+      "ai_receipt": 11455703400,
+      "assessment_receipt": 11456380393,
+      "no_scroll_story": true,
+      "canonical_run": 37559354641,
+      "canonical_receipt": 11456410883,
+      "user_acceptance": "pending"
+    },
+    "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json"
   },
   "production": {
     "project": "hausaufgabe-40294",
@@ -256,6 +277,12 @@
       "production_access": false,
       "hosting_scope": false,
       "firestore_rules_scope": false
+    },
+    "manual_chat_collection": {
+      "status": "PAUSED",
+      "id": "gradecrew-security-ergebnis-zur-ckholen",
+      "manual_only": true,
+      "observed_at": "2026-10-07 01:57:52 UTC"
     }
   },
   "workstreams": [
@@ -719,23 +746,90 @@
     },
     {
       "id": "web-repair-20261007",
-      "stage": "staging_deployed",
-      "branch": "feature/audio-web-repair-20261007",
       "integration_branch": "feature/gradecrew-app-integration",
-      "verified_commit": "0931ade4e415690cc149c829c5f1a6703d085177",
-      "candidate_ci": 37546526741,
       "student_private_audio_release_enabled": false,
-      "next_action": "Martin tests login and creating/saving a normal test on canonical Staging. New private audio modes remain draft-only until live secure Rules and Gates C–F are verified.",
-      "combined_ci": 37547012003,
-      "mobile_ci": 37547012032,
-      "staging_preview_run": 37547126018,
-      "staging_functions_run": 37547126016,
-      "canonical_hosting_run": 37547422005,
-      "canonical_hosting_receipt": 11450254448,
-      "ai_functions_receipt": 11451600189,
-      "assessment_functions_receipt": 11451256131,
-      "user_test": "failed_20261007",
-      "active_repair_branch": "fix/web-acceptance-regressions-20261007"
+      "stage": "staging_deployed",
+      "branch": "feature/audio-switch-overflow-20261007",
+      "pr": 162,
+      "verified_commit": "094546a44131a671daede5131e29def0da116002",
+      "verified_tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+      "local_reviewed_commit": "6ac3adc2cb46362091787791048a641d00eaa293",
+      "candidate_ci": 37557641806,
+      "candidate_ci_job": 112587453495,
+      "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
+      "no_scroll_story": true,
+      "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
+      "previous_release": {
+        "id": "web-repair-20261007",
+        "stage": "staging_deployed",
+        "branch": "feature/audio-web-repair-20261007",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "verified_commit": "0931ade4e415690cc149c829c5f1a6703d085177",
+        "candidate_ci": 37546526741,
+        "student_private_audio_release_enabled": false,
+        "next_action": "Martin tests login and creating/saving a normal test on canonical Staging. New private audio modes remain draft-only until live secure Rules and Gates C–F are verified.",
+        "combined_ci": 37547012003,
+        "mobile_ci": 37547012032,
+        "staging_preview_run": 37547126018,
+        "staging_functions_run": 37547126016,
+        "canonical_hosting_run": 37547422005,
+        "canonical_hosting_receipt": 11450254448,
+        "ai_functions_receipt": 11451600189,
+        "assessment_functions_receipt": 11451256131,
+        "user_test": "failed_20261007",
+        "active_repair_branch": "fix/web-acceptance-regressions-20261007"
+      },
+      "combined_ci": 37558924609,
+      "mobile_ci": 37558149323,
+      "staging_preview_run": 37559039697,
+      "staging_preview_receipt": 11455947421,
+      "staging_functions_run": 37559039672,
+      "ai_functions_receipt": 11455703400,
+      "assessment_functions_receipt": 11456380393,
+      "active_repair_branch": "feature/audio-switch-overflow-20261007",
+      "pending_layout_followup": {
+        "pr": 162,
+        "head": "02ac020369807a3428aacfaa1a38703f683c0ffe",
+        "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+        "candidate_ci": 37558728031,
+        "independent_review": "approved CSS-only delta",
+        "local_mobile_overflow_px": 0,
+        "merged_as": "094546a44131a671daede5131e29def0da116002",
+        "candidate_ci_result": "success",
+        "local_keyboard": "Space event + focus-visible switch outline",
+        "preview_desktop_overflow_px": 0
+      },
+      "included_prs": [
+        161,
+        162
+      ],
+      "combined_ci_job": 112591523793,
+      "mobile_ci_source_commit": "7f91dea01591bc760548f48cf9bdf802a1b6b8c1",
+      "canonical_request": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json",
+      "user_test": "pending_for_094546a4",
+      "canonical_hosting_run": 37559354641,
+      "canonical_hosting_receipt": 11456410883,
+      "canonical_url": "https://hausaufgabe-staging.web.app/",
+      "verified_files": 123,
+      "actual_browser_observation": {
+        "live_dashboard_loaded": true,
+        "live_desktop_viewport": [
+          1920,
+          902
+        ],
+        "live_desktop_overflow_px": 0,
+        "live_checkbox_width_px": 1,
+        "local_mobile_viewport": [
+          390,
+          844
+        ],
+        "local_mobile_overflow_px": 0,
+        "keyboard_switch": "native Space event and focus-visible outline verified locally",
+        "new_live_console_errors": 0,
+        "screenshot_local": "analysis/web-acceptance-20261007/staging-workspace-094546a4.jpg",
+        "physical_device_acceptance": "not_performed",
+        "paid_generation_test": "not_performed"
+      }
     },
     {
       "id": "gc-web-polish-20261007",
@@ -755,12 +849,12 @@
       "task_id": "GC-GAMES-PIZZA-01",
       "branch": "feature/bruchpizzeria-unreal-v1",
       "stage": "branch_only",
-      "local_code_commit": "a8ad958",
-      "ci": "not_run_for_native_engine; local165core + actualUERenderedFinal CookAndLearn and VisualPreview pass",
+      "local_code_commit": "25a4ed5",
+      "ci": "not_run_for_native_engine; local182core/sanitizer + NativeDesktopFinal4testsSuccess0errors",
       "staging": "not_deployed",
-      "user_test": "not_performed; locked Mac; prior browser rejected",
+      "user_test": "initial_native_start_and_cut_failures_reported; revised_candidate_hardware_mouse_test_pending",
       "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
-      "next_action": "Unlock Mac and verify normal native controls/cutting in this exact project, then official IOS component and physical-device/package gates.",
+      "next_action": "Real user mouse start and cross-pizza drag in revised local window; synthetic CUA mouse position does not follow virtual pointer. Mobile IOS component/device/package gates remain open.",
       "observed_head": "331db91e791eccce75a344bc0d1acde04817356b",
       "pull_request": 160,
       "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files"
@@ -990,6 +1084,22 @@
       "device_test": "not_performed",
       "production_changed": false,
       "firestore_rules_changed": false
+    },
+    {
+      "date": "2026-10-07",
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "commit": "094546a44131a671daede5131e29def0da116002",
+      "project": "hausaufgabe-staging",
+      "canonical_run": 37559354641,
+      "canonical_receipt": 11456410883,
+      "preview_run": 37559039697,
+      "functions_run": 37559039672,
+      "ai_receipt": 11455703400,
+      "assessment_receipt": 11456380393,
+      "verified_files": 123,
+      "user_test": "pending",
+      "production": false,
+      "rules_deployed": false
     }
   ],
   "blockers": [
@@ -1203,6 +1313,14 @@
         "important": "GC-DESIGN-05B repair PR #156 merged as 4d6ee69. CI 37542394496, preview 37542511207/receipt 11448542523, AI/Assessment Functions 37542511122/receipts 11448732514 and 11449512022, and canonical Hosting 37542720795/receipt 11449022640 succeeded. Guest Emmi red feedback and unavailable replacement action were corrected. Browser/device and real teacher login/test creation remain unverified; Production unchanged.",
         "next_action": "Martin opens https://hausaufgabe-staging.web.app/, runs the guest tour past Emmi to Wilma, then signs in and creates/saves one real test. Report any blocker; separately review desktop/phone visuals and full EN tour text."
       }
+    },
+    {
+      "id": "web-repair-0931ade4-failed-user-acceptance",
+      "observed_at": "2026-10-07 01:53:52 UTC",
+      "commit": "0931ade4e415690cc149c829c5f1a6703d085177",
+      "canonical_run": 37547422005,
+      "canonical_receipt": 11450254448,
+      "user_test": "failed_20261007; preserved_reports14_incidents11"
     }
   ]
 }

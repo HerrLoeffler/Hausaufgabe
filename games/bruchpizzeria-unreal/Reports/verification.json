@@ -2,13 +2,13 @@
   "task_id": "GC-GAMES-PIZZA-01",
   "date": "2026-10-07",
   "engine": "5.8.3",
-  "native_source_commit": "a8ad958",
+  "native_source_commit": "25a4ed5",
   "core_checks": {
-    "count": 165,
+    "count": 182,
     "failures": 0,
-    "sanitizers": "ASAN and UBSAN verified by fraction-core reviewer"
+    "sanitizers": "ASAN+UBSAN 182zero after inset/NaN guard"
   },
-  "editor_build": "Succeeded native-projection-build-fixed.log",
+  "editor_build": "Succeeded final-desktop-input-build.log",
   "automation": {
     "NativeAutomation": {
       "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
@@ -92,9 +92,107 @@
           "warnings": 3
         }
       ]
+    },
+    "HudPointerRed": {
+      "sha256": "24df349572d4f7ea185e37ce235b14da9cf0285c0c2d158856837e2bc77934c1",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeMouseAndHud": {
+      "sha256": "f417f0a683043e43e9967beaa0b0a346de14e2055e3227d54057e8e4790b3cc4",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "NativeMouseReviewed": {
+      "sha256": "a8c81d9f7bb61d67b24cc385a5da2205f74d5f8a4a4f8972bfb8ca4e9cde3c17",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "NativeDesktopFinal": {
+      "sha256": "6e9e30f45cb0c3727cb01423e22b298878a5661d6432713399707ad800faf0cb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
     }
   },
-  "visual_acceptance": "Actual rendered kitchen, cutting and coaching PNGs inspected. Camera exposure, exterior winding, complete-room framing, cut framing and portion label overlap corrected. User game-feel/graphic acceptance remains open.",
+  "visual_acceptance": "Actual latest kitchen, assisted eighths, learning and unequal-chord PNGs inspected. Sharp runtime fonts fit labels; stick removed. Physical user mouse acceptance pending; no finished-game or device-quality claim.",
   "physical_mobile_device": "not_tested",
   "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
   "production": "not_requested",
@@ -111,23 +209,33 @@
   "remote_source_commit": "331db91e791eccce75a344bc0d1acde04817356b",
   "source_tree": "deb541c90ff566641432c1e710cd98d9018be1cd",
   "pull_request": "https://github.com/HerrLoeffler/Hausaufgabe/pull/160",
-  "raw_input_acceptance": "Not performed: Mac locked. Native integration calls controller/station methods; movement directions separately verified by actual viewport projection.",
+  "raw_input_acceptance": "NOT VERIFIED: CUA different virtual click points both yield constant Unreal hardware-cursor1438,710. Async real hardware user test requested. Native pointer/projection tests use explicit engine coordinates and cannot close this gap.",
   "environment_warnings": [
     "AudioUnit sample-rate query",
     "Epic bundled idevice_id executable wrongCPU architecture; official IOS component missing"
   ],
   "images": {
     "NativeKitchen.png": {
-      "bytes": 1777859,
-      "sha256": "67c1f2e176e3a8d7eb60574a82321df200bcf82b04e4be90e76eef3311521fce"
+      "bytes": 1746733,
+      "sha256": "2f932858b116b3fdf3b6db63ff8a3bbeb211e561dc4e30ca6c2a276cde12808a"
     },
     "NativeCutting.png": {
-      "bytes": 1744212,
-      "sha256": "56eef0110634909afe89d0c11def552ac9187a6286d81fc158de773f0c6dbae3"
+      "bytes": 1679060,
+      "sha256": "4b2a88728a3cce6cd6df9bd00e5c8140bc4a2a84cb4c09ce52ad9a07cb945653"
     },
     "NativeLearning.png": {
-      "bytes": 1073066,
-      "sha256": "de50fb85f98328bc89d799302d848ea97572fb08c748c6ca23b70437a425cc2f"
+      "bytes": 1098845,
+      "sha256": "a56fdad0991c324553c765a8e91db3b5b7ef313e1844faabe54aefc65562b6b3"
+    },
+    "NativeUnequal.png": {
+      "bytes": 1558142,
+      "sha256": "78beba9b5d65cd323dcfc1dead2e14cce29517ccede6c8877656ed1bd8842bcb"
     }
-  }
+  },
+  "mouse_corrections": [
+    "Subtract constrained HUD view origin",
+    "Explicit visible-cursor GameAndUI viewport focus",
+    "Cancel drag on invalid mouse position",
+    "Fixed desktop window size; left mouse pressed reaches game instead of Mac resize-zone suppression"
+  ]
 }

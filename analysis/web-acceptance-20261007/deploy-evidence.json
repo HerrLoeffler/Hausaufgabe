@@ -1,0 +1,74 @@
+{
+  "task_id": "GC-WEB-REPAIR-20261007",
+  "observed_at": "2026-10-07 01:57:52 UTC",
+  "commit": "094546a44131a671daede5131e29def0da116002",
+  "tree": "d4649445e5b4e201c003baae1efd09d3fa7ca9e5",
+  "included_prs": [
+    161,
+    162
+  ],
+  "candidate_ci": {
+    "pr161": 37557641806,
+    "pr162": 37558728031
+  },
+  "combined_ci": 37558924609,
+  "combined_ci_job": 112591523793,
+  "preview": {
+    "run": 37559039697,
+    "receipt": 11455947421,
+    "build_artifact": 11456161538,
+    "build_digest": "sha256:0d8d41e2844d667a33f97e2c09c552cfab1eefae4ff9f02d0405a4f495debcb3",
+    "files": 123
+  },
+  "functions": {
+    "run": 37559039672,
+    "ai_receipt": 11455703400,
+    "assessment_receipt": 11456380393,
+    "project": "hausaufgabe-staging",
+    "rules": "not_deployed"
+  },
+  "canonical": {
+    "request": {
+      "id": "gc-web-acceptance-20261007-094546a4",
+      "path": "automation/canonical-staging-requests/gc-web-acceptance-20261007-094546a4.json",
+      "commit": "094546a44131a671daede5131e29def0da116002",
+      "previewRunId": 37559039697,
+      "requestCommit": "41b87d7cdad352942716654099e56765a08f53ad"
+    },
+    "run": 37559354641,
+    "receipt": 11456410883,
+    "receipt_digest": "sha256:c5a24d48e6b6f5be4136ee4df5feb0cec5b9f68f8c73f3d7f2b5df1ad62d8589",
+    "url": "https://hausaufgabe-staging.web.app/",
+    "result": "success",
+    "manifest_and_all_file_hashes": "verified_by_existing_trusted_controller"
+  },
+  "browser": {
+    "live_dashboard_loaded": true,
+    "live_desktop_viewport": [
+      1920,
+      902
+    ],
+    "live_desktop_overflow_px": 0,
+    "live_checkbox_width_px": 1,
+    "local_mobile_viewport": [
+      390,
+      844
+    ],
+    "local_mobile_overflow_px": 0,
+    "keyboard_switch": "native Space event and focus-visible outline verified locally",
+    "new_live_console_errors": 0,
+    "screenshot_local": "analysis/web-acceptance-20261007/staging-workspace-094546a4.jpg",
+    "physical_device_acceptance": "not_performed",
+    "paid_generation_test": "not_performed"
+  },
+  "limitations": {
+    "private_audio_student_publication": "draft-only pending secure Rules cutover and Gates C–F /30 participants",
+    "user_acceptance": "pending",
+    "historical_failures": "preserved",
+    "production": "unchanged",
+    "games": "excluded",
+    "native_ios": "excluded",
+    "scroll_story": "excluded",
+    "automatic_collector": "PAUSED"
+  }
+}

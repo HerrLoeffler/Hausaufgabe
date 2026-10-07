@@ -4,7 +4,7 @@ Task GC-GAMES-PIZZA-01, 07.10.2026. User replaces rejected browser pilot with Un
 
 ## Binding scope
 
-Native Unreal5.8.3 on installed Apple M5Pro/48GB, Xcode27. Mobile landscape with direct joystick/touch actions; desktop keys/gamepad for local verification. Fixed perspective camera, physical kitchen collisions, animated chef, carried items, ingredient stations, baking, actual fractional slicing down to1/8, serving and frozen guided tutoring after mistakes. Original stylized assets. No external/open-source gameplay library, no provider API, no Production. Unreal built-in modules only; Blender optional if its executable can be verified. Blender is not yet located despite filesystem checks; do not pretend an export occurred.
+Native Unreal5.8.3 on installed Apple M5Pro/48GB, Xcode27. Initial request mobile landscape; user07.10 follow-up removes controller/leftstick. Current desktop verification uses WASD and actual mouse cutting; mobile movement design/device gate remains open. Fixed perspective camera, physical kitchen collisions, animated chef, carried items, ingredient stations, baking, actual fractional slicing down to1/8, serving and frozen guided tutoring after mistakes. Original stylized assets. No external/open-source gameplay library, no provider API, no Production. Unreal built-in modules only; Blender optional if its executable can be verified. Blender is not yet located despite filesystem checks; do not pretend an export occurred.
 
 Browser-only requirement superseded by the explicit native Unreal request. Local Mac/editor verification first; signed iOS/Android device delivery remains a separate platform gate, not inferred from local play.
 
@@ -31,3 +31,5 @@ Tools/create_level.py: deterministic Unreal editor asset/material/map recipe, en
 - [ ] Independent review, save source/recipe/verification and draft PR; actual native device packaging only with verified platform/signing prerequisites.
 
 Review focus: no advancing order on wrong fraction; unequal cuts never labelled equal; arithmetic division by zero handled; pause really freezes kitchen/bake/customer clocks; touch and keyboard remain usable in learning; eight slices distinguishable; no input routed behind lesson. Minimum target30fps mobile,60fps Mac, unmeasured until native run. No invented graphic score or physical-device acceptance.
+
+User acceptance correction07.10: native start hit-test subtracts constrained scene origin; generous mouse gestures snap ordinary offsets and angles; extreme cuts use real convex-polygon clipping and preserved chord boundaries in all topping layers. Controller/leftstick removed. Runtime font and highDPI clarify text.182core/sanitizer checks; new native HudPointer/MouseCutting gates; actual hardware user check requested because CUA proxy pointer is constant in this UE/Mac setup.

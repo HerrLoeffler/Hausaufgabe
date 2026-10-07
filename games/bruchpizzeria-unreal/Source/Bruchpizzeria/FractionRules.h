@@ -46,58 +46,125 @@ inline std::string Format(Rational value) {
     if (value.Den==1) return std::to_string(value.Num);
     return std::to_string(value.Num)+"/"+std::to_string(value.Den);
 }
+struct CutPoint { double X=0,Y=0; };
+using CutPolygon=std::vector<CutPoint>;
 class PizzaCuts {
     static constexpr double Pi=3.14159265358979323846;
     static constexpr double EqualTolerance=2.0*Pi/180.0;
+    struct Line { CutPoint A,B; };
     std::vector<double> Diameters;
+    std::vector<Line> Lines;
+    bool GrossCut=false;
+    static double Difference(double a,double b) { const double d=std::abs(a-b);return std::min(d,Pi-d); }
+    static double Side(CutPoint p,Line l) { return (l.B.X-l.A.X)*(p.Y-l.A.Y)-(l.B.Y-l.A.Y)*(p.X-l.A.X); }
+    static CutPolygon Clip(const CutPolygon& polygon,Line line,double sign) {
+        CutPolygon out;
+        if(polygon.empty())return out;
+        CutPoint previous=polygon.back();double before=Side(previous,line)*sign;
+        for(CutPoint current:polygon) {
+            const double now=Side(current,line)*sign;
+            const bool inBefore=before>=-1e-9,inNow=now>=-1e-9;
+            if(inBefore!=inNow) {
+                const double t=before/(before-now);
+                out.push_back({previous.X+(current.X-previous.X)*t,previous.Y+(current.Y-previous.Y)*t});
+            }
+            if(inNow)out.push_back(current);
+            previous=current;before=now;
+        }
+        return out;
+    }
+    double AssistedAngle(double angle) const {
+        if(Diameters.empty())return angle;
+        const double anchor=Diameters.front();
+        double best=angle,distance=Pi;
+        const std::vector<double> offsets=Diameters.size()==1?std::vector<double>{Pi/2}:std::vector<double>{Pi/4,Pi/2,3*Pi/4};
+        for(double offset:offsets) {
+            const double candidate=std::fmod(anchor+offset,Pi);
+            bool occupied=false;
+            for(double existing:Diameters)if(Difference(candidate,existing)<2*Pi/180)occupied=true;
+            if(!occupied&&Difference(candidate,angle)<distance){best=candidate;distance=Difference(candidate,angle);}
+        }
+        return distance<=28*Pi/180?best:angle;
+    }
 public:
+    static CutPolygon Inset(const CutPolygon& polygon,double radius) {
+        if(!std::isfinite(radius)||radius<=0)return {};
+        CutPolygon result=polygon;
+        for(int i=0;i<96&&!result.empty();++i){const double a=2*Pi*i/96,b=2*Pi*(i+1)/96;result=Clip(result,{{radius*std::cos(a),radius*std::sin(a)},{radius*std::cos(b),radius*std::sin(b)}},1);}
+        return Area(result)>1e-8?result:CutPolygon{};
+    }
+    static double Area(const CutPolygon& polygon) {
+        double twice=0;for(std::size_t i=0;i<polygon.size();++i){const auto a=polygon[i],b=polygon[(i+1)%polygon.size()];twice+=a.X*b.Y-b.X*a.Y;}return std::abs(twice)*.5;
+    }
+    static bool Contains(const CutPolygon& polygon,CutPoint point) {
+        if(polygon.size()<3||!std::isfinite(point.X)||!std::isfinite(point.Y))return false;
+        for(std::size_t i=0;i<polygon.size();++i){const auto a=polygon[i],b=polygon[(i+1)%polygon.size()];if((b.X-a.X)*(point.Y-a.Y)-(b.Y-a.Y)*(point.X-a.X)<-1e-7)return false;}return true;
+    }
+    static CutPoint Center(const CutPolygon& polygon) {
+        CutPoint result;double twice=0;
+        for(std::size_t i=0;i<polygon.size();++i){const auto a=polygon[i],b=polygon[(i+1)%polygon.size()];const double cross=a.X*b.Y-b.X*a.Y;twice+=cross;result.X+=(a.X+b.X)*cross;result.Y+=(a.Y+b.Y)*cross;}
+        if(std::abs(twice)>1e-9){result.X/=3*twice;result.Y/=3*twice;}return result;
+    }
+    std::vector<CutPolygon> Pieces() const {
+        CutPolygon disk;for(int i=0;i<96;++i){const double a=2*Pi*i/96;disk.push_back({std::cos(a),std::sin(a)});}
+        std::vector<CutPolygon> pieces{disk};
+        for(Line line:Lines) {
+            std::vector<CutPolygon> next;
+            for(const auto& piece:pieces)for(double sign:{1.0,-1.0}){auto half=Clip(piece,line,sign);if(Area(half)>1e-8)next.push_back(std::move(half));}
+            pieces=std::move(next);
+        }
+        return pieces;
+    }
     bool AddDiameter(double degrees) {
-        if (!std::isfinite(degrees) || Diameters.size()>=4) return false;
+        if (!std::isfinite(degrees) || Lines.size()>=4) return false;
         double angle=std::fmod(degrees,180.0)*Pi/180.0;
         if (angle<0) angle+=Pi;
-        for (const double existing:Diameters) {
-            const double difference=std::abs(existing-angle);
-            if (std::min(difference,Pi-difference)<Pi/180.0) return false;
-        }
-        Diameters.push_back(angle);
-        return true;
+        for(double existing:Diameters)if(Difference(existing,angle)<Pi/180)return false;
+        Diameters.push_back(angle);const CutPoint v{std::cos(angle),std::sin(angle)};
+        Lines.push_back({{-v.X,-v.Y},v});return true;
     }
-    // Coordinates are normalized to pizza radius 1. Near-central long strokes
-    // snap to a radial diameter; off-pizza, tangential and short gestures fail.
+    // Mouse gestures get generous motor assistance. A clear crossing extends
+    // through the crust and ordinary offsets/angles snap to useful equal parts.
+    // A gross off-centre crossing remains a real chord with unequal geometry.
     bool AddStroke(double x0,double y0,double x1,double y1) {
-        if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1)) return false;
-        if (std::hypot(x0,y0)>1.0+1e-9 || std::hypot(x1,y1)>1.0+1e-9) return false;
+        if (!std::isfinite(x0)||!std::isfinite(y0)||!std::isfinite(x1)||!std::isfinite(y1)||Lines.size()>=4)return false;
         const double dx=x1-x0,dy=y1-y0,length=std::hypot(dx,dy);
-        if (length<1.6) return false;
+        if(!std::isfinite(length)||length<.6)return false;
         const double projection=-(x0*dx+y0*dy)/(length*length);
-        if (projection<=0 || projection>=1 || std::abs(x0*dy-y0*dx)/length>0.12) return false;
-        return AddDiameter(std::atan2(dy,dx)*180.0/Pi);
+        const double offset=std::abs(x0*dy-y0*dx)/length;
+        if(!std::isfinite(projection)||!std::isfinite(offset)||projection<=0||projection>=1||offset>.95)return false;
+        double angle=std::fmod(std::atan2(dy,dx)+Pi,Pi);
+        if(offset<=.55) {
+            for(double existing:Diameters)if(Difference(existing,angle)<12*Pi/180)return false;
+            if(!GrossCut)angle=AssistedAngle(angle);
+            bool severe=false;
+            if(Diameters.size()==1)severe=Difference(angle,std::fmod(Diameters.front()+Pi/2,Pi))>EqualTolerance;
+            else if(Diameters.size()>1){double nearest=Pi;for(int step=0;step<4;++step)nearest=std::min(nearest,Difference(angle,std::fmod(Diameters.front()+step*Pi/4,Pi)));severe=nearest>EqualTolerance;}
+            const bool added=AddDiameter(angle*180/Pi);if(added&&severe)GrossCut=true;return added;
+        }
+        const Line line{{x0,y0},{x1,y1}};
+        bool splits=false;
+        for(const auto& piece:Pieces())if(Area(Clip(piece,line,1))>1e-8&&Area(Clip(piece,line,-1))>1e-8)splits=true;
+        if(!splits)return false;
+        Diameters.push_back(angle);Lines.push_back(line);GrossCut=true;return true;
     }
-    int Count() const { return Diameters.empty() ? 1 : static_cast<int>(Diameters.size()*2); }
+    bool HasGrossCuts() const {return GrossCut;}
+    int Count() const { return static_cast<int>(Pieces().size()); }
     bool EqualParts() const {
         const int count=Count();
-        if (count==6) return false;
-        const auto boundaries=Boundaries();
-        const double expected=2.0*Pi/count;
-        for (int i=0;i<count;++i) {
-            if (std::abs(boundaries[i+1]-boundaries[i]-expected)>EqualTolerance+1e-10) return false;
-        }
+        if(GrossCut||count==6||(count!=1&&count!=2&&count!=4&&count!=8))return false;
+        const auto boundaries=Boundaries();const double expected=2.0*Pi/count;
+        for(int i=0;i<count;++i)if(std::abs(boundaries[i+1]-boundaries[i]-expected)>EqualTolerance+1e-10)return false;
         return true;
     }
-    // Actual radians, ascending; final endpoint wraps the first ray + 2pi.
-    // It may exceed 2pi, avoiding an artificial piece at the world-axis seam.
     std::vector<double> Boundaries() const {
         if (Diameters.empty()) return {0.0,2.0*Pi};
-        std::vector<double> result;
-        for (const double angle:Diameters) { result.push_back(angle); result.push_back(angle+Pi); }
-        std::sort(result.begin(),result.end());
-        result.push_back(result.front()+2.0*Pi);
-        return result;
+        std::vector<double> result;for(double angle:Diameters){result.push_back(angle);result.push_back(angle+Pi);}
+        std::sort(result.begin(),result.end());result.push_back(result.front()+2*Pi);return result;
     }
     Rational Selected(std::uint32_t mask) const {
-        const int count=Count();
-        const std::uint32_t allowed=(std::uint32_t(1)<<count)-1;
-        if (mask==0 || (mask & ~allowed)!=0 || !EqualParts()) return Rational(1,0);
+        const int count=Count();const std::uint32_t allowed=(std::uint32_t(1)<<count)-1;
+        if(mask==0||(mask&~allowed)!=0||!EqualParts())return Rational(1,0);
         return Rational(std::popcount(mask),count);
     }
 };

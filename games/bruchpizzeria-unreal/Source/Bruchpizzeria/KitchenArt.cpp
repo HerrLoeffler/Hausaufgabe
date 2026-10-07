@@ -224,6 +224,16 @@ UProceduralMeshComponent* Sector(AActor* O,USceneComponent* P,FName Name,FVector
     return MakeMesh(O,P,Name,Position,M,Color);
 }
 
+UProceduralMeshComponent* Polygon(AActor* O,USceneComponent* P,FName Name,FVector Position,const TArray<FVector2D>& Shape,float Radius,float Thickness,FLinearColor Color)
+{
+    MeshData M;const float Half=Thickness*.5f;const int32 Count=Shape.Num();
+    if(Count<3)return nullptr;
+    for(float Z:{Half,-Half})for(const auto& Point:Shape){M.V.Add(FVector(Point.X*Radius,Point.Y*Radius,Z));M.N.Add(Z>0?FVector::UpVector:-FVector::UpVector);M.UV.Add(FVector2D(.5+Point.X*.5,.5+Point.Y*.5));}
+    for(int32 I=1;I+1<Count;++I){M.I.Append({0,I,I+1,Count,Count+I+1,Count+I});}
+    for(int32 I=0;I<Count;++I){const auto A=Shape[I],B=Shape[(I+1)%Count];const FVector Normal=FVector(B.Y-A.Y,A.X-B.X,0).GetSafeNormal();M.Quad(FVector(A.X*Radius,A.Y*Radius,-Half),FVector(B.X*Radius,B.Y*Radius,-Half),FVector(B.X*Radius,B.Y*Radius,Half),FVector(A.X*Radius,A.Y*Radius,Half),Normal);}
+    return MakeMesh(O,P,Name,Position,M,Color);
+}
+
 ChefParts Chef(AActor* O,USceneComponent* P,FName Name,FVector Position,FLinearColor Apron)
 {
     ChefParts C;

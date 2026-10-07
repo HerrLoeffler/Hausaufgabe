@@ -31,7 +31,7 @@ UCLASS() class BRUCHPIZZERIA_API APizzaGameMode:public AGameModeBase {
 };
 UCLASS() class BRUCHPIZZERIA_API APizzaController:public APlayerController {
  GENERATED_BODY()
- public:APizzaController();virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
+ public:APizzaController();virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
  FVector2D Stick=FVector2D::ZeroVector,DragStart=FVector2D::ZeroVector,DragEnd=FVector2D::ZeroVector;bool Dragging=false,Joystick=false;int ActiveTouch=-1;
  APizzaGameMode* Game()const;FVector MoveDirection(FVector2D ScreenAxes)const;void Use();void Drop();void Dash();void Escape();void DifficultyMode();void Cut0();void Cut45();void Cut90();void Cut135();
  void PointerDown();void PointerUp();void ClearInput();void ChooseAnswer(int);void PreviousAnswer();void NextAnswer();void TouchDown(ETouchIndex::Type,FVector);void TouchUp(ETouchIndex::Type,FVector);

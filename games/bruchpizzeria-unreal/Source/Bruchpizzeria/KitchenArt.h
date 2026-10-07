@@ -17,6 +17,8 @@ namespace KitchenArt
     UStaticMeshComponent* Cylinder(AActor* Owner, USceneComponent* Parent, FName Name, FVector Position, FVector Scale, FLinearColor Color);
     UProceduralMeshComponent* Sector(AActor* Owner, USceneComponent* Parent, FName Name, FVector Position, float Radius, float Thickness, float StartRadians, float EndRadians, FLinearColor Color);
 
+    UProceduralMeshComponent* Polygon(AActor*,USceneComponent*,FName,FVector,const TArray<FVector2D>&,float,float,FLinearColor);
+
     struct ChefParts
     {
         USceneComponent* Root = nullptr;
