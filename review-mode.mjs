@@ -9,7 +9,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function message(text,error=false){const n=root?.querySelector('[data-review-message]');if(n){n.textContent=text;n.classList.toggle('reviewError',error);}}
  function error(err){message(err?.message||'Aktion fehlgeschlagen. Bitte erneut versuchen.',true);}
  async function call(data){const e=epoch;const response=await api(data);if(e!==epoch)throw new Error('Konto wurde gewechselt.');return response;}
- function unmark(){marking=false;document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
+ function unmark(){marking=false;root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
  function close(){unmark();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
  function dispose(){portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
@@ -107,7 +107,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  async function open(){if(root){close();return;}const e=epoch;root=el('aside',null,{'data-review-panel':'',class:'reviewPanel','aria-label':'Seite überarbeiten'});document.documentElement.classList.add('reviewPanelOpen');
   const header=el('header');header.append(el('h2','Seite überarbeiten'),button('Schließen',close,{'data-review-close':''}));
   const status=el('p','Hinweise sammeln. Gemeinsam prüfen.',{'data-review-message':'',role:'status','aria-live':'polite'});
-  const modes=el('div',null,{class:'reviewActions'});modes.append(button('Seite bedienen',unmark),button('Stelle markieren',()=>{marking=!marking;document.documentElement.classList.toggle('reviewMarking',marking);root.querySelector('[data-review-mark]').setAttribute('aria-pressed',String(marking));},{'data-review-mark':'','aria-pressed':'false'}));
+  const modes=el('div',null,{class:'reviewActions'});modes.append(button('Seite bedienen',unmark),button('Stelle markieren',()=>{marking=!marking;root.classList.toggle('reviewPicking',marking);document.documentElement.classList.toggle('reviewMarking',marking);root.querySelector('[data-review-mark]').setAttribute('aria-pressed',String(marking));},{'data-review-mark':'','aria-pressed':'false'}));
   const target=el('small',selected?`Markiert: ${selected.target}`:'Hinweis zur aktuellen Ansicht',{'data-review-target':''});
   const label=el('label','Dein Hinweis');const input=el('textarea',null,{'data-review-text':'',maxlength:'3000',placeholder:'Was soll hier anders werden?'});label.append(input);input.addEventListener('input',()=>void saveDraft());
   const send=button('Hinweis speichern',async()=>{send.disabled=true;try{await submit();}finally{send.disabled=false;}});

@@ -1,11 +1,10 @@
 import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';import {createHash,randomUUID} from 'node:crypto';import {createRequire} from 'node:module';import {spawn} from 'node:child_process';
+import {openReviewStore} from './data-store.mjs';
 import {sourceFingerprint,testResult} from './fingerprint.mjs';
 import {allowLocalRequest} from './policy.mjs';
 const require=createRequire(import.meta.url);const {createReviewService}=require('../../functions/lib/review-mode.js');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');const port=Number(process.env.REVIEW_PORT||8768);const folder=path.join(root,'.review-local');await fs.mkdir(folder,{recursive:true});
-const dataFile=path.join(folder,'notes.json');let docs;try{docs=new Map(JSON.parse(await fs.readFile(dataFile,'utf8')));}catch(e){if(e.code!=='ENOENT')throw e;docs=new Map();}
-docs.set('users/local-admin',{role:'admin',status:'active'});docs.set('users/local-teacher',{role:'teacher',status:'active'});
-let serial=Promise.resolve();const store={transaction:fn=>{const p=serial.catch(()=>{}).then(async()=>{const next=new Map(docs);const value=await fn({get:async key=>structuredClone(next.get(key)||null),set:(key,value)=>next.set(key,structuredClone(value)),list:async(collection,{owner,cursor='',limit=100}={})=>[...next].filter(([k,v])=>k.startsWith(collection+'/')&&k.split('/').length===2&&(!owner||v.authorId===owner)&&k.split('/')[1]>cursor).sort().slice(0,limit).map(([k,v])=>({...structuredClone(v),id:k.split('/')[1]}))});const temp=dataFile+'.tmp';await fs.writeFile(temp,JSON.stringify([...next]),{mode:0o600});await fs.rename(temp,dataFile);docs=next;return value;});serial=p;return p;}};
+const dataFile=path.join(folder,'notes.json');const store=await openReviewStore(dataFile);
 const service=createReviewService({store,projectId:'hausaufgabe-staging'});let build='',clients=new Set(),running=false;
 const fingerprint=()=>sourceFingerprint(root);
 build=await fingerprint();const timer=setInterval(async()=>{try{const next=await fingerprint();if(next!==build){build=next;for(const client of clients)client.write(`data: ${JSON.stringify({build})}\n\n`);}}catch{}},1200);

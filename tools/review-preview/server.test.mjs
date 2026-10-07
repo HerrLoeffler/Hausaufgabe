@@ -7,3 +7,10 @@ test('source fingerprint includes nested backend and fixture changes',async()=>{
  try{let sourceFingerprint;try{({sourceFingerprint}=await import('./fingerprint.mjs'));}catch{}assert.equal(typeof sourceFingerprint,'function');await fs.mkdir(path.join(temp,'functions/lib'),{recursive:true});await fs.writeFile(path.join(temp,'app.js'),'app');await fs.writeFile(path.join(temp,'functions/lib/review.js'),'one');const a=await sourceFingerprint(temp);await fs.writeFile(path.join(temp,'functions/lib/review.js'),'two');assert.notEqual(await sourceFingerprint(temp),a);}finally{await fs.rm(temp,{recursive:true,force:true});}
 });
 test('passing test on changing source is blocked, never green',async()=>{const {testResult}=await import('./fingerprint.mjs');assert.equal(testResult(0,'old','new'),'blocked');assert.equal(testResult(0,'same','same'),'passed');assert.equal(testResult(1,'same','same'),'failed');});
+test('synthetic review notes survive disk-store restart without duplicate replay',async()=>{
+ const fs=await import('node:fs/promises');const os=await import('node:os');const path=await import('node:path');const {createRequire}=await import('node:module');const {createReviewService}=createRequire(import.meta.url)('../../functions/lib/review-mode.js');
+ const temp=await fs.mkdtemp(path.join(os.tmpdir(),'review-restore-'));try{let openReviewStore;try{({openReviewStore}=await import('./data-store.mjs'));}catch{}assert.equal(typeof openReviewStore,'function');const file=path.join(temp,'notes.json');
+ const execute=async action=>createReviewService({store:await openReviewStore(file),projectId:'hausaufgabe-staging'}).execute({uid:'local-admin',data:action});
+ const payload={action:'create',clientRequestId:'restore-1234',text:'Synthetic restore note',target:'hero',view:'authView',build:'test',scene:'welcome'};const a=await execute(payload);const b=await execute(payload);assert.equal(a.note.id,b.note.id);assert.equal((await execute({action:'list'})).notes.length,1);
+ }finally{await fs.rm(temp,{recursive:true,force:true});}
+});
