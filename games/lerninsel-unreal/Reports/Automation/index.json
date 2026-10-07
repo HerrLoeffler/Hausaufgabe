@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "3A2D5FAE714F7EA5ED2EAB85D9287BD2",
-			"instanceName": "Mac.fritz.box-73104",
+			"instance": "BD09A67ED6497DF6376081B729A3E8F6",
+			"instanceName": "Mac.fritz.box-74258",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,13 +15,13 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.07-22.55.25",
+	"reportCreatedOn": "2026.10.07-23.04.40",
 	"succeeded": 1,
 	"succeededWithWarnings": 0,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 6.7744369506835938,
+	"totalDuration": 6.761509895324707,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
@@ -31,10 +31,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"3A2D5FAE714F7EA5ED2EAB85D9287BD2"
+				"BD09A67ED6497DF6376081B729A3E8F6"
 			],
-			"duration": 6.7744369506835938,
-			"dateTime": "2026.10.07-22.55.18",
+			"duration": 6.761509895324707,
+			"dateTime": "2026.10.07-23.04.33",
 			"entries": [],
 			"warnings": 0,
 			"errors": 0,

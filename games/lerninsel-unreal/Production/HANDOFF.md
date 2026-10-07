@@ -1,3 +1,32 @@
+# GC-GAMES-ESCAPE-VISUAL-01 — aktueller spielbarer Zwischenstand
+
+Stand08.10.2026: eigener UE5.8-Ego-Abschnitt gebaut und lokal überprüft. Ankunft, begrenzte Verbprobe, drei Reihen Verbweg mit mittigem Fußkontakt/Rücknahme, Wasserterrasse mit1-Liter-Mess-Eimer undZehnteln. Ziele3/10=300ml;100ml pro bestätigtemHub. Eigene Geometrie, helle Garten-Farbwelt, drei physische Tore, Lösungen persistent.
+
+Branch feature/lerninsel-ego-v1; Checkout gradecrew-lerninsel-unreal. Lokale Quelle99adf6d plus anschließend drei Reviewfixes; Remote390f2db vor Reviewfixes. Finalen Remote-/PR-Nachweis unten nachtragen und vor Wiederaufnahme frisch prüfen. Kein Merge/Deploy. Draft173 für vorhandenes Design bleibt erhalten. START_HERE auf aktuellemmain lesen; nachAbbruch CHAT_RECOVERY. Andere Unreal-Expedition gehört einem anderen Chat.
+
+## Belege
+
+- DevelopmentEditor-Build aufMacM5Pro48GB/UE5.8.3 erfolgreich.
+-59portable C++-Verhaltenschecks bestehen. UE-TestGradeCrew.Lerninsel.Play nach Reviewfixes:1erfolgreich,0Fehler,0Warnungen (23:04UTC). Report und tatsächliche Spielaufnahmen unterReports.
+- Eingabebelegung bisPawn geprüft; Fuß-Dwell/Reihenfolge/Duplikate; normale Eimer-Recovery bei2/10 und4/10, Korrektur zur erfolgreichen3/10; Tor-Sweeps vor/während/nachAnimation; Pause/Fokus/Touch-Besitz; gültige Speicherzustände und Transform-Recovery. Kein physischer iPad-/Browser-Test.
+- Unabhängiger read-only-Review:3wichtige Befunde, alle zuerst imEngine-Test reproduziert (8Fehler) undin einemFixdurchgang behoben. Ein kleiner Befund offen: Bodenmarkierung fürfalschesWort noch dieselbegrüneX; Pfadfehleranzeige bleibt sichtbar. Production/REVIEW.md enthält alle Entscheidungen/Grenzen.
+- Wortkontrast anhand echter2027×1090Spielaufnahmen verbessert; Preview-Schatten entfernt. Innenmaß Mess-Eimer Radius4.46cm/Höhe16cm≈1L, Wasser3/10höhengetreu4.8cm. Trageskala imHUD lesbarvergrößert. Noch ersterArtpass, keineFinal-Art- oderSpielspaßabnahme.
+
+## Start und Grenzen
+
+Lerninsel starten.command öffnet diesesProjekt mit vorhandenerUE5.8 imnormalenSpielmodus. AndererCheckout brauchtvorherTools/build_editor.sh; Binaries werden nicht eingecheckt. README enthältSteuerung. DieEditor-Karte enthältLicht/Start; Geometrie entsteht zurLaufzeit ausIslandArt.cpp. Browserstreaming, mobileRenderer/Signierung/Gerätetest, Satzweg/Felsfenster, vollständigeachtGebiete, Zusatzrätsel, Audio/Final-Art folgen. KeinPixelStreaming-Hosting oderWebintegration gebaut.
+
+## Versuche/Budget/Wiederaufnahme
+
+Task-ID, DesignPR173,7929-Wörter-Spielbuch/21Motive undsiebenBildaufrufe erhalten. ImBaublock keineweitereBildgenerierung/CloudGPU/Provider-/Deploymentkosten. Terminalpush ohneCredentials; Connector sicherttext/binaryOriginale, lokaleundRemoteCommit-IDsweichen ab. NieCredentials auslesen.
+
+EnginegeneratorAssets erfolgreichgespeichert, macOSShutdownhingzweimal; ThreadsamplebestätigtShutdown, nur eigeneProzesse beendet. ErneutesErzeugen nutztbestehendeKarte undlöschtMaterialausdrücke vordemNeubau. Assets inPIE geladen, beweglicheSonne explizitgeprüft. NichtalleEngine-Startup-Logs sindfehlerfrei: EpicinterneSelbstprüfungen meldenConditionfailedvorunseremTest; allein scopedGradeCrewReport dientalsNachweis. FrühereSave-/ideviceWarnungen inVersuchshistorie; finalerTestwarnungsfrei.
+
+NächsterkonkreterSchritt: Nutzerdurchlauf diesesAbschnitts, anschließend räumlicheLandschaft/Architektur weiterausarbeiten undSatzweg/Felsfenster gemäßSpielbuch bauen. Browser-/iPad-Abnahme bleibt eigenesGate. Productionnurmit ausdrücklicherFreigabe.
+
+---
+## Historische Zwischenstände (keine aktuellen Fertigmeldungen)
+
 # GC-GAMES-ESCAPE-VISUAL-01 — Lerninsel Bau
 
 Verantwortlicher Chat: Ego-Lerninsel 07./08.10.2026, Chat-Link unbekannt. Martin autorisiert selbstständige Prüfung und Levelbau während seiner Abwesenheit. Kein Productionauftrag.

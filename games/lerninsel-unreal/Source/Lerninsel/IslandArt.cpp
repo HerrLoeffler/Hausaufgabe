@@ -34,10 +34,11 @@ void StoneWall(AActor* A,float X,float Y,float Length,bool AlongX=false,float H=
 FIslandGate Gate(UWorld* W,float X){
  auto* Surround=W->SpawnActor<AActor>();StoneWall(Surround,X,-710,1140);StoneWall(Surround,X,710,1140);
  for(int S:{-1,1}){Shape(Surround,TEXT("Cube"),FVector(X,S*155,155),FVector(.7,.7,3.1),TEXT("E8D5AE"),FRotator::ZeroRotator,true);Shape(Surround,TEXT("Cube"),FVector(X,S*155,320),FVector(.88,.88,.22),TEXT("F4E3BC"));Shape(Surround,TEXT("Sphere"),FVector(X,S*155,350),FVector(.46,.46,.46),TEXT("B59964"));}
+ auto* Blocker=Shape(Surround,TEXT("Cube"),FVector(X,0,140),FVector(.08,2.5,2.8),TEXT("DCCBA6"),FRotator::ZeroRotator,true);Blocker->SetVisibility(false);Blocker->SetHiddenInGame(true);
  auto* A=W->SpawnActor<AActor>();Root(A);A->SetActorLocation(FVector(X,-120,0));
  for(int I=0;I<12;++I)Shape(A,TEXT("Cube"),FVector(0,I*21+4,140),FVector(.065,.055,2.65),TEXT("8F362A"),FRotator::ZeroRotator,true,true);
  for(int H:{25,90,250})Shape(A,TEXT("Cube"),FVector(0,120,H),FVector(.10,2.5,.075),TEXT("A74E35"),FRotator::ZeroRotator,true,true);
- Shape(A,TEXT("Cube"),FVector(-4,120,130),FVector(.12,.55,.55),TEXT("B2894D"),FRotator::ZeroRotator,false,true);Label(A,TEXT("-"),FVector(-11,120,130),32,FRotator(0,180,0),true,TEXT("EFE3C0"));return {A,0};
+ Shape(A,TEXT("Cube"),FVector(-4,120,130),FVector(.12,.55,.55),TEXT("B2894D"),FRotator::ZeroRotator,false,true);Label(A,TEXT("-"),FVector(-11,120,130),32,FRotator(0,180,0),true,TEXT("EFE3C0"));return {A,0,Blocker};
 }
 void Terminal(AActor* A,FVector P,const FString& Text){Shape(A,TEXT("Cylinder"),P+FVector(0,0,42),FVector(.24,.24,.85),TEXT("B79C6F"));Shape(A,TEXT("Cube"),P+FVector(0,0,100),FVector(.15,1.22,.72),TEXT("9A4833"));Label(A,Text,P+FVector(-9,0,100),18,FRotator(0,180,0),false,TEXT("DAC89B"));}
 }

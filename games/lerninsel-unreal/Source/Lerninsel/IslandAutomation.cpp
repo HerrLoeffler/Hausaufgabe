@@ -19,6 +19,7 @@
 #include "EngineUtils.h"
 #include "Engine/DirectionalLight.h"
 #include "Components/DirectionalLightComponent.h"
+#include <limits>
 namespace {
 bool CaptureGame(UWorld* W,const TCHAR* Name){auto* Client=W?W->GetGameViewport():nullptr;auto* V=Client?Client->Viewport:nullptr;if(!V)return false;TArray<FColor> Pixels;if(!V->ReadPixels(Pixels))return false;FIntPoint Size=V->GetSizeXY();TArray64<uint8> Bytes;FImageUtils::PNGCompressImageArray(Size.X,Size.Y,Pixels,Bytes);return FFileHelper::SaveArrayToFile(Bytes,*(FPaths::ProjectDir()/TEXT("Reports")/Name));}
 }
@@ -50,6 +51,8 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  G->Interact(400);G->Tick(.7f);Test->TestEqual(TEXT("Double input during stroke counts once"),G->State.tenths,1);
  G->Interact(400);C->Escape();C->Escape();G->Tick(.7f);Test->TestEqual(TEXT("Pause cancels unconfirmed fill, including after resume"),G->State.tenths,1);
  G->Save();const FString Saved=FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str()));G->State=Island::State();Test->TestTrue(TEXT("Saved snapshot loads"),G->Load());Test->TestEqual(TEXT("Exact saved rule state"),FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())),Saved);
+ for(int Wrong:{2,4}){G->State.water=false;P->SetActorLocation(FVector(3350,0,88));G->State.carrying=true;G->State.tenths=Wrong;G->Interact(403);Test->TestFalse(TEXT("Wrong amount never opens gate"),G->State.water);G->Tick(0);Test->TestEqual(TEXT("Wrong bucket on plate exposes pickup through nearest interaction"),G->Near,401);C->Interact();Test->TestTrue(TEXT("Normal E interaction recovers wrong bucket"),G->State.carrying);
+ if(G->State.carrying){P->SetActorLocation(Wrong==2?FVector(2350,-420,88):FVector(2650,-470,88));G->Tick(0);C->Interact();G->Tick(.7f);Test->TestEqual(TEXT("Normal correction produces3/10"),G->State.tenths,3);P->SetActorLocation(FVector(3350,0,88));G->Tick(0);C->Interact();Test->TestTrue(TEXT("Corrected bucket opens water gate"),G->State.water);}}
  C->TouchMove=FVector2D(1,1);C->Ownership.Begin(0,.1,.7);C->CancelInput();Test->TestTrue(TEXT("Cancel clears motion and finger"),C->TouchMove.IsZero()&&C->Ownership.Role(0)==Island::TouchRole::None);
  G->Focus=100;C->Escape();Test->TestEqual(TEXT("Escape closes context first"),G->Focus,-1);Test->TestFalse(TEXT("First Escape does not pause"),G->Paused);
  C->Escape();Test->TestTrue(TEXT("Next Escape pauses"),G->Paused);G->Paused=false;
@@ -64,7 +67,10 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  P->SetActorLocation(G->Target(200)->Pos+FVector(0,0,80));G->Tick(.15f);Test->TestEqual(TEXT("Foot contact under dwell does not select"),G->State.pathCount,0);G->Tick(.16f);Test->TestEqual(TEXT("Centered foot dwell selects first verb"),G->State.pathCount,1);G->Tick(.7f);Test->TestEqual(TEXT("Remaining on one tile never selects twice"),G->State.pathCount,1);
  for(int Id:{4,8}){P->SetActorLocation(G->Target(200+Id)->Pos+FVector(0,0,80));G->Tick(.31f);}
  P->SetActorLocation(FVector(1150,0,88));G->Interact(21);Test->TestTrue(TEXT("Runtime verb route confirms milestone"),G->State.verbs);
- Test->TestTrue(TEXT("Correct rules alone still await gate animation"),G->GateBlocks(1));G->RefreshWorld(1.5f);Test->TestFalse(TEXT("Open gate releases collision only after animation"),G->GateBlocks(1));
+ Test->TestTrue(TEXT("Correct rules alone still await gate animation"),G->GateBlocks(1));G->RefreshWorld(.94f);P->SetActorLocation(FVector(1200,75,90));FHitResult OpeningHit;P->SetActorLocation(FVector(1450,75,90),true,&OpeningHit);Test->TestTrue(TEXT("Part-open gate still physically blocks the clear side gap"),OpeningHit.bBlockingHit);G->RefreshWorld(1.5f);Test->TestFalse(TEXT("Open gate releases collision only after animation"),G->GateBlocks(1));
+ P->SetActorLocation(FVector(1200,75,90));FHitResult ReleasedHit;P->SetActorLocation(FVector(1450,75,90),true,&ReleasedHit);Test->TestFalse(TEXT("Fully open doorway permits actual capsule passage"),ReleasedHit.bBlockingHit);
+ G->Save();auto* Damaged=Cast<UIslandSave>(UGameplayStatics::LoadGameFromSlot(G->SaveSlot,0));Damaged->Position=FVector(99999,0,88);UGameplayStatics::SaveGameToSlot(Damaged,G->SaveSlot,0);G->State=Island::State();Test->TestTrue(TEXT("Valid milestones survive invalid saved transform"),G->Load());Test->TestTrue(TEXT("Recovered save keeps solved verb milestone"),G->State.verbs);Test->TestEqual(TEXT("Invalid saved transform falls back to safe arrival"),P->GetActorLocation().X,-1600.0);
+ Damaged->Position=FVector(-1600,0,88);Damaged->View=FRotator(std::numeric_limits<double>::quiet_NaN(),0,0);UGameplayStatics::SaveGameToSlot(Damaged,G->SaveSlot,0);G->State=Island::State();Test->TestTrue(TEXT("Valid milestones survive invalid saved view"),G->Load());Test->TestEqual(TEXT("Invalid view becomes safe default"),C->GetControlRotation().Pitch,-4.0);G->Save();G->State=Island::State();Test->TestTrue(TEXT("Recovered snapshot can save and load again"),G->Load());Test->TestTrue(TEXT("Recovery roundtrip retains solved milestone"),G->State.verbs);
  P->SetActorLocation(FVector(50,0,88));C->SetControlRotation(FRotator(-25,0,0));Started=FPlatformTime::Seconds();Phase=2;return false;
  }
  if(Phase==2){Test->TestTrue(TEXT("Actual game viewport garden captured"),CaptureGame(W,TEXT("VerbGarden.png")));P->SetActorLocation(FVector(2150,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=3;return false;}

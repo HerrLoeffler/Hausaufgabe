@@ -25,7 +25,7 @@ UCLASS() class UIslandSave:public USaveGame {
  public:UPROPERTY() FString Snapshot;UPROPERTY() FVector Position;UPROPERTY() FRotator View;
 };
 struct FIslandTarget{int Id;FVector Pos;FString Label,Context;};
-struct FIslandGate{AActor* Actor=nullptr;float Angle=0;};
+struct FIslandGate{AActor* Actor=nullptr;float Angle=0;UStaticMeshComponent* Barrier=nullptr;};
 UCLASS() class AIslandGameMode:public AGameModeBase {
  GENERATED_BODY()
  public:AIslandGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
