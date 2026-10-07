@@ -1,0 +1,158 @@
+#include "PizzaKitchen.h"
+#include "PizzaHUD.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SceneComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
+#include "Kismet/GameplayStatics.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
+#include "Engine/World.h"
+#include "Components/InputComponent.h"
+#include "Engine/GameViewportClient.h"
+#include "Widgets/SViewport.h"
+#include "GameFramework/PlayerInput.h"
+#include "EngineUtils.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
+#include "HAL/FileManager.h"
+namespace {void ClearArt(AActor* A){auto Components=A->GetInstanceComponents();for(auto* C:Components)if(C&&C!=A->GetRootComponent())C->DestroyComponent();}FString Frac(PizzaRules::Rational R){return FString(UTF8_TO_TCHAR(PizzaRules::Format(R).c_str()));}}
+APizzaArena::APizzaArena(){RootComponent=CreateDefaultSubobject<USceneComponent>(TEXT("KitchenRoot"));}
+void APizzaArena::OnConstruction(const FTransform& T){Super::OnConstruction(T);ClearArt(this);KitchenArt::Room(this,RootComponent);}
+void APizzaArena::ApplyLevel(int N){ClearArt(this);KitchenArt::Room(this,RootComponent,N);}
+APizzaVisual::APizzaVisual(){RootComponent=CreateDefaultSubobject<USceneComponent>(TEXT("PizzaRoot"));}
+void APizzaVisual::SetPizza(const FKitchenPizza& P){
+ ClearArt(this);
+ if(P.HasPlate){KitchenArt::Cylinder(this,RootComponent,TEXT("Plate"),FVector(0,0,-3),FVector(.96,.96,.045),P.DirtyPlate?FLinearColor(.61,.53,.38):FLinearColor(.94,.91,.77));if(P.DirtyPlate)for(int I=0;I<6;++I)KitchenArt::Cylinder(this,RootComponent,TEXT("DirtyMark"),FVector(FMath::Cos(I*2.4)*20,FMath::Sin(I*2.4)*20,0),FVector(.06,.09,.008),FLinearColor(.32,.22,.13));}
+ if(!P.HasPizza)return;
+ auto Layers=P.LayerOrder;for(int Bit:{1,2,4})if((P.Ingredients&Bit)&&std::find(Layers.begin(),Layers.end(),Bit)==Layers.end())Layers.push_back(Bit);
+ const auto Pieces=P.Cuts.Pieces();
+ for(int I=0;I<static_cast<int>(Pieces.size());++I){
+  if(P.Plated&&!(P.Selection&(1u<<I)))continue;
+  const auto& Piece=Pieces[I];const auto Center=PizzaRules::PizzaCuts::Center(Piece);
+  const FVector Direction=FVector(Center.X,Center.Y,0).GetSafeNormal();
+  FVector Offset=Pieces.size()>1?Direction*1.4f:FVector::ZeroVector;
+  if(!P.Plated&&(P.Selection&(1u<<I)))Offset+=Direction*7+FVector(0,0,4);
+  TArray<FVector2D> Shape,SauceShape,CheeseShape;for(const auto& Point:Piece)Shape.Add(FVector2D(Point.X,Point.Y));for(const auto& Point:PizzaRules::PizzaCuts::Inset(Piece,37./42))SauceShape.Add(FVector2D(Point.X,Point.Y));for(const auto& Point:PizzaRules::PizzaCuts::Inset(Piece,34./42))CheeseShape.Add(FVector2D(Point.X,Point.Y));
+  KitchenArt::Polygon(this,RootComponent,*FString::Printf(TEXT("Crust%d"),I),Offset,Shape,42,6,FLinearColor(P.Baked?.66:.84,P.Baked?.35:.64,.22));
+  for(int N=0;N<static_cast<int>(Layers.size());++N){const int Bit=Layers[N];if(!(P.Ingredients&Bit))continue;const float Z=6+N*6;
+   if(Bit==1)KitchenArt::Polygon(this,RootComponent,*FString::Printf(TEXT("Sauce%d"),I),Offset+FVector(0,0,Z),SauceShape,42,1,FLinearColor(.65,.12,.06));
+   if(Bit==2)KitchenArt::Polygon(this,RootComponent,*FString::Printf(TEXT("Cheese%d"),I),Offset+FVector(0,0,Z),CheeseShape,42,1,FLinearColor(.96,.73,.29));
+   if(Bit==4)for(int J=0;J<11;++J){const float Angle=J*2.39996f,Radius=12+(J%3)*8;const FVector Topping(FMath::Cos(Angle)*Radius,FMath::Sin(Angle)*Radius,Z+1.5f);if(!PizzaRules::PizzaCuts::Contains(Piece,{Topping.X/42,Topping.Y/42}))continue;const FVector Pos=Offset+Topping;KitchenArt::Cylinder(this,RootComponent,TEXT("MushroomStem"),Pos,FVector(.035,.035,.03),FLinearColor(.88,.8,.63));KitchenArt::Sphere(this,RootComponent,TEXT("MushroomCap"),Pos+FVector(0,0,1.5f),FVector(.12,.12,.04),FLinearColor(.55,.35,.18));}
+  }
+
+ }
+}
+
+AKitchenChef::AKitchenChef(){PrimaryActorTick.bCanEverTick=true;Body=CreateDefaultSubobject<UCapsuleComponent>(TEXT("ChefCollision"));Body->InitCapsuleSize(28,73);Body->SetCollisionProfileName(TEXT("Pawn"));RootComponent=Body;Movement=CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("ChefMovement"));Movement->UpdatedComponent=Body;Movement->MaxSpeed=410;Movement->Acceleration=2600;Movement->Deceleration=3200;}
+void AKitchenChef::OnConstruction(const FTransform& T){Super::OnConstruction(T);ClearArt(this);Rig=KitchenArt::Chef(this,RootComponent,TEXT("Chef"),FVector(0,0,-73),FLinearColor(.08,.37,.34));Rig.Root->SetRelativeRotation(FRotator(0,90,0));}
+void AKitchenChef::Tick(float D){Super::Tick(D);const FVector V=GetVelocity();if(V.SizeSquared2D()>100){AnimationClock+=D*11;SetActorRotation(FRotator(0,V.Rotation().Yaw,0));}const float Swing=FMath::Sin(AnimationClock)*FMath::Min(V.Size2D()/410.f,1.f)*30; if(Rig.LeftFoot)Rig.LeftFoot->SetRelativeRotation(FRotator(0,0,Swing));if(Rig.RightFoot)Rig.RightFoot->SetRelativeRotation(FRotator(0,0,-Swing));auto* G=Cast<APizzaGameMode>(GetWorld()->GetAuthGameMode());const bool Carrying=G&&G->Carry.IsSet();if(Rig.LeftArm)Rig.LeftArm->SetRelativeRotation(FRotator(Carrying?-35:0,0,Carrying?0:-Swing*.4));if(Rig.RightArm)Rig.RightArm->SetRelativeRotation(FRotator(Carrying?-35:0,0,Carrying?0:Swing*.4));}
+APizzaGameMode::APizzaGameMode(){PrimaryActorTick.bCanEverTick=true;DefaultPawnClass=AKitchenChef::StaticClass();PlayerControllerClass=APizzaController::StaticClass();HUDClass=APizzaHUD::StaticClass();}
+AKitchenChef* APizzaGameMode::Chef()const{return Cast<AKitchenChef>(UGameplayStatics::GetPlayerPawn(GetWorld(),0));}
+void APizzaGameMode::BeginPlay(){Super::BeginPlay();if(!UGameplayStatics::GetActorOfClass(GetWorld(),APizzaArena::StaticClass()))GetWorld()->SpawnActor<APizzaArena>();Camera=GetWorld()->SpawnActor<ACameraActor>(NormalCamera,NormalRotation);Camera->GetCameraComponent()->FieldOfView=58;Camera->GetCameraComponent()->PostProcessSettings.bOverride_AutoExposureMethod=true;Camera->GetCameraComponent()->PostProcessSettings.AutoExposureMethod=EAutoExposureMethod::AEM_Manual;Camera->GetCameraComponent()->PostProcessSettings.bOverride_AutoExposureApplyPhysicalCameraExposure=true;Camera->GetCameraComponent()->PostProcessSettings.AutoExposureApplyPhysicalCameraExposure=false;Camera->GetCameraComponent()->PostProcessSettings.bOverride_AutoExposureBias=true;Camera->GetCameraComponent()->PostProcessSettings.AutoExposureBias=-1.0;Camera->GetCameraComponent()->PostProcessSettings.bOverride_BloomIntensity=true;Camera->GetCameraComponent()->PostProcessSettings.BloomIntensity=.12;UGameplayStatics::GetPlayerController(GetWorld(),0)->SetViewTarget(Camera);CarryVisual=GetWorld()->SpawnActor<APizzaVisual>();CarryVisual->SetActorHiddenInGame(true);BoardVisual=GetWorld()->SpawnActor<APizzaVisual>(CutLocation(),FRotator::ZeroRotator);BoardVisual->SetActorHiddenInGame(true);OvenVisual=GetWorld()->SpawnActor<APizzaVisual>(FVector(610,100,97),FRotator::ZeroRotator);OvenVisual->SetActorHiddenInGame(true);for(int I=0;I<3;++I){auto* Guest=GetWorld()->SpawnActor<AActor>();auto* Root=NewObject<USceneComponent>(Guest,TEXT("GuestRoot"));Guest->SetRootComponent(Root);Root->RegisterComponent();Guest->SetActorLocation(FVector(-300+300*I,548,0));KitchenArt::Chef(Guest,Root,TEXT("Guest"),FVector::ZeroVector,FLinearColor(I==0?.7:.25,I==1?.6:.22,I==2?.7:.18));Guests.Add(Guest);}for(int I=0;I<2;++I){Tables.Add(TOptional<FKitchenPizza>());TableVisuals.Add(GetWorld()->SpawnActor<APizzaVisual>(FVector(I==0?-205:205,-190,96),FRotator::ZeroRotator));TableVisuals.Last()->SetActorHiddenInGame(true);ExtraOvens.Add(TOptional<FKitchenPizza>());ExtraBakeTimes.Add(0);ExtraOvenVisuals.Add(GetWorld()->SpawnActor<APizzaVisual>(FVector(I==0?-340:340,130,97),FRotator::ZeroRotator));ExtraOvenVisuals.Last()->SetActorHiddenInGame(true);auto* Art=GetWorld()->SpawnActor<AActor>();auto* Root=NewObject<USceneComponent>(Art);Art->SetRootComponent(Root);Root->RegisterComponent();KitchenArt::ExtraOven(Art,Root,FVector(I==0?-340:340,130,0));Art->SetActorHiddenInGame(true);Art->SetActorEnableCollision(false);ExtraOvenArt.Add(Art);}SinkVisual=GetWorld()->SpawnActor<APizzaVisual>(StationLocation(14)+FVector(0,0,94),FRotator::ZeroRotator);SinkVisual->SetActorHiddenInGame(true);SinkVisual->SetActorScale3D(FVector(.62,.62,1));for(int I=0;I<3;++I){auto* V=GetWorld()->SpawnActor<APizzaVisual>(StationLocation(6+I)+FVector(0,0,94),FRotator::ZeroRotator);V->SetActorHiddenInGame(true);MealVisuals.Add(V);}FString Saved;if(FFileHelper::LoadFileToString(Saved,*(FPaths::ProjectSavedDir()/(GetWorld()->WorldType==EWorldType::PIE?TEXT("CampaignProgress-v1-PIE.txt"):TEXT("CampaignProgress-v1.txt")))))UnlockedLevel=FMath::Clamp(FCString::Atoi(*Saved),1,10);FString Wallet;if(FFileHelper::LoadFileToString(Wallet,*(FPaths::ProjectSavedDir()/(GetWorld()->WorldType==EWorldType::PIE?TEXT("CashProgress-v1-PIE.txt"):TEXT("CashProgress-v1.txt")))))Cash=FMath::Max(0,FCString::Atoi(*Wallet));LevelNumber=UnlockedLevel;Level=PizzaRules::CampaignLevel(LevelNumber);UE_LOG(LogTemp,Display,TEXT("PIZZA_NATIVE_READY: room, chef, camera and station actors spawned"));}
+void APizzaGameMode::Start(){
+ Level=PizzaRules::CampaignLevel(LevelNumber);LevelNumber=Level.Number;Layout=PizzaRules::CampaignLayout(LevelNumber);if(auto* Arena=Cast<APizzaArena>(UGameplayStatics::GetActorOfClass(GetWorld(),APizzaArena::StaticClass())))Arena->ApplyLevel(LevelNumber);BoardVisual->SetActorLocation(CutLocation());OvenVisual->SetActorLocation(StationLocation(4)+FVector(0,0,97));for(int I=0;I<TableVisuals.Num();++I)TableVisuals[I]->SetActorLocation(StationLocation(9+I)+FVector(0,0,96));for(int I=0;I<ExtraOvenVisuals.Num();++I){ExtraOvenVisuals[I]->SetActorLocation(StationLocation(11+I)+FVector(0,0,97));ExtraOvenArt[I]->SetActorLocation(StationLocation(11+I)-FVector(I==0?-340:340,130,0));}Intro=false;Cutting=false;Learning=false;Paused=false;Finished=false;LevelWon=false;RepairNeedsNewCuts=false;BillVisible=false;BillRemaining=0;WrongDelivered=0;ShiftSales=0;ShiftTips=0;Lesson.clear();LessonIndex=0;AnswerChoice=0;FeedbackTime=0;
+ if(auto* C=Chef()){C->Movement->StopMovementImmediately();C->Movement->MaxSpeed=410;C->SetActorLocation(FVector(0,-350,77));}if(auto* P=Cast<APizzaController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))P->ClearInput();
+ RoundTime=Level.RoundSeconds;Score=0;Served=0;OrderSerial=0;Orders.Empty();Carry.Reset();Board.Reset();Oven.Reset();BakeTime=0;for(auto& T:Tables)T.Reset();for(auto& O:ExtraOvens)O.Reset();for(auto& T:ExtraBakeTimes)T=0;Sink.Reset();WashTime=0;DisposalCosts=0;for(int I=0;I<3;++I){GuestMeals[I].Reset();EatTimes[I]=0;NeedsWash[I]=false;}
+ for(int I=0;I<ExtraOvenArt.Num();++I){ExtraOvenArt[I]->SetActorHiddenInGame(I+1>=Level.Ovens);ExtraOvenArt[I]->SetActorEnableCollision(I+1<Level.Ovens);}
+ for(int I=0;I<Level.Guests;++I)MakeOrder();Feedback=TEXT("Teig → Tomate & Käse → Ofen → Schneiden → Gast. E benutzt, E/X am Tisch legt ab.");RefreshPizza();
+}
+void APizzaGameMode::SaveProgress(){
+ IFileManager::Get().MakeDirectory(*FPaths::ProjectSavedDir(),true);const bool Pie=GetWorld()->WorldType==EWorldType::PIE;
+ const bool LevelSaved=FFileHelper::SaveStringToFile(FString::FromInt(UnlockedLevel),*(FPaths::ProjectSavedDir()/(Pie?TEXT("CampaignProgress-v1-PIE.txt"):TEXT("CampaignProgress-v1.txt"))));
+ const bool CashSaved=FFileHelper::SaveStringToFile(FString::FromInt(Cash),*(FPaths::ProjectSavedDir()/(Pie?TEXT("CashProgress-v1-PIE.txt"):TEXT("CashProgress-v1.txt"))));
+ if(!LevelSaved||!CashSaved)Feedback=TEXT("Lokales Speichern ging nicht; bitte das Spiel offen lassen.");
+}
+void APizzaGameMode::SelectLevel(int N){if(!Intro&&!Finished)return;LevelNumber=FMath::Clamp(N,1,UnlockedLevel);Level=PizzaRules::CampaignLevel(LevelNumber);}
+
+void APizzaGameMode::MakeOrder(){
+ if(Orders.Num()>=Level.Guests||Served+Orders.Num()>=Level.Goal)return;int Bay=INDEX_NONE;
+ for(int I=0;I<Level.Guests;++I)if(!GuestMeals[I].IsSet()&&!NeedsWash[I]&&!Orders.ContainsByPredicate([I](const FKitchenOrder& O){return O.Bay==I;})){Bay=I;break;}if(Bay==INDEX_NONE)return;
+ static const char* Names[]={"Mila","Ben","Lina","Tom","Ava"};const auto T=PizzaRules::CampaignOrder(LevelNumber,OrderSerial);FKitchenOrder O;O.Bay=Bay;O.Name=UTF8_TO_TCHAR(Names[OrderSerial%5]);O.Amount=T.Amount;O.Ingredients=T.Ingredients;O.Op=T.Op;O.Left=T.Left;O.Right=T.Right;O.Patience=Level.Patience;Orders.Add(O);++OrderSerial;
+}
+FString APizzaGameMode::OrderLabel(const FKitchenOrder& O)const{return O.Op==' '?Frac(O.Amount)+TEXT(" Pizza"):Frac(O.Left)+TEXT(" ")+FString::Chr(O.Op=='*'?TEXT('×'):O.Op=='/'?TEXT('÷'):O.Op)+TEXT(" ")+Frac(O.Right)+TEXT(" = ?");}
+int APizzaGameMode::NearestStation()const{auto* C=Chef();if(!C)return -1;const FVector P=C->GetActorLocation();int Best=-1;float Dist=170;for(int I=0;I<16;++I){if(I==3&&LevelNumber<4)continue;if(I>=11&&I<=12&&I-10>=Level.Ovens)continue;if(I>=6&&I<=8&&!GuestMeals[I-6].IsSet()&&!NeedsWash[I-6]&&!Orders.ContainsByPredicate([I](const FKitchenOrder& O){return O.Bay==I-6;}))continue;const float D=FVector::Dist2D(P,StationLocation(I));if(D<Dist){Dist=D;Best=I;}}return Best;}
+void APizzaGameMode::UseTable(int I){if(Frozen()||Cutting||!Tables.IsValidIndex(I))return;auto& Table=Tables[I];if(Carry.IsSet()&&!Table.IsSet()){Table=Carry;Carry.Reset();Feedback=TEXT("Pizza sicher abgelegt. Du kannst die nächste vorbereiten.");}else if(!Carry.IsSet()&&Table.IsSet()){Carry=Table;Table.Reset();Feedback=TEXT("Pizza wieder aufgenommen. Belag und Portion bleiben erhalten.");}else if(Carry.IsSet())Feedback=TEXT("Dieser Tisch ist voll. Nutze die andere Ablage.");else Feedback=TEXT("Freie Ablage für rohe, gebackene oder geschnittene Pizza.");RefreshPizza();}
+void APizzaGameMode::UseOven(int I){
+ if(Frozen()||Cutting||I<0||I>=Level.Ovens)return;auto& Slot=I==0?Oven:ExtraOvens[I-1];auto& Time=I==0?BakeTime:ExtraBakeTimes[I-1];
+ if(Slot.IsSet()){
+  if(!Carry.IsSet()){Carry=Slot;Slot.Reset();Feedback=Carry->Baked?TEXT("Goldbraun! Zum Schneidebrett oder auf eine Ablage."):TEXT("Früh herausgenommen: Diese Pizza ist noch roh. Du kannst sie zurück in den Ofen legen.");Time=0;}
+  else Feedback=TEXT("Deine Hände sind voll. Lege deine Pizza auf einen Tisch.");
+ }else if(Carry.IsSet()&&Carry->HasPizza){Slot=Carry;Slot->Baked=false;Carry.Reset();Time=0;Feedback=TEXT("Pizza im Ofen. Der Belag bleibt so, wie du ihn gemacht hast.");}
+ else Feedback=TEXT("Bring eine Pizza zum Ofen. Du kannst sie jederzeit wieder herausnehmen.");RefreshPizza();
+}
+void APizzaGameMode::Use(){
+ if(Frozen())return;if(Cutting){FinishCut();return;}const int S=NearestStation();
+ if(S==0)UseDough();
+ else if(S>=1&&S<=3){if(!Carry.IsSet()||!Carry->HasPizza){Feedback=TEXT("Erst Teig holen, dann Zutaten auflegen.");return;}const int Bit=S==1?1:S==2?2:4;Carry->AddIngredient(Bit);Feedback=FString(S==1?TEXT("Tomate"):S==2?TEXT("Käse"):TEXT("Champignons"))+TEXT(" liegt jetzt oben. Vorhandener Belag bleibt.");}
+ else if(S==4)UseOven(0);else if(S==5)UseBoard();else if(S>=6&&S<=8)UseGuest(S-6);else if(S==9||S==10)UseTable(S-9);else if(S==11||S==12)UseOven(S-10);else if(S==13)UsePlateStack();else if(S==14)UseSink();else if(S==15)UseTrash();else Feedback=TEXT("Geh näher an eine Station.");RefreshPizza();
+}
+void APizzaGameMode::Drop(){if(Frozen()||Cutting)return;const int S=NearestStation();if(S==9||S==10)UseTable(S-9);else Feedback=TEXT("Zum Ablegen an einen freien Tisch gehen. Deine Pizza bleibt in deinen Händen.");}
+void APizzaGameMode::Dash(){if(Frozen()||Cutting)return;if(auto* C=Chef()){C->Movement->MaxSpeed=720;FeedbackTime=.32f;}}
+void APizzaGameMode::CycleDifficulty(){Feedback=TEXT("Die Kampagne führt neue Brüche und gelegentliche Rechenbestellungen schrittweise ein.");}
+void APizzaGameMode::BeginCut(){if(Board.IsSet())Board->Plated=false;Cutting=true;Feedback=TEXT("Ziehe von einer Pizzaseite zur anderen. Tippe danach deine Stücke an.");if(auto* C=Chef())C->Movement->StopMovementImmediately();}
+void APizzaGameMode::FinishCut(){
+ if(Frozen()||!Cutting||!Board.IsSet()||Carry.IsSet())return;
+ if(!Board->HasPlate){LeaveBoard();Feedback=TEXT("Pizza bleibt am Brett. Hole einen Teller neben der Spüle und bringe ihn zum Brett.");return;}
+ if(Board->Selection==0){FKitchenPizza Plate;Plate.HasPizza=false;Plate.HasPlate=true;Plate.DirtyPlate=Board->DirtyPlate;Plate.ReturnBay=Board->ReturnBay;Plate.ReturnMask=Board->CleanupMask();Carry=Plate;Board->HasPlate=false;Board->DirtyPlate=false;Board->ReturnBay=-1;Board->ReturnMask=0;Cutting=false;Feedback=TEXT("Leerer Teller: kein Stück ausgewählt. Die ganze Pizza bleibt am Brett.");RefreshPizza();return;}
+ Board->Plated=true;Carry=Board;Board.Reset();Cutting=false;Feedback=TEXT("Gewählte Portion auf dem Teller. Zum Gast bringen.");RefreshPizza();
+}
+void APizzaGameMode::CutStroke(FVector2D A,FVector2D B){if(!Cutting||!Board.IsSet()||Frozen())return;if(Board->Cuts.AddStroke(A.X,A.Y,B.X,B.Y)){Board->Selection=0;Feedback=Board->Cuts.EqualParts()?TEXT("Schnitt sitzt! Die Stücke sind gleich groß."):Board->Cuts.Count()==6&&!Board->Cuts.HasGrossCuts()?TEXT("Noch ein Schnitt: Dann kannst du acht gleich große Stücke wählen."):TEXT("Dieser Schnitt ist stark schief oder seitlich. Die Stücke sind ungleich. Nutze Neu teilen.");}else Feedback=TEXT("Ziehe deutlich quer über die Pizza. Kurze Tipps oder derselbe Schnitt teilen sie nicht erneut.");RefreshPizza();}
+void APizzaGameMode::CutAngle(float Angle){if(!Cutting||!Board.IsSet()||Frozen())return;if(Board->Cuts.AddDiameter(Angle))Board->Selection=0;RefreshPizza();}
+void APizzaGameMode::TogglePiece(FVector2D P){if(!Cutting||!Board.IsSet()||Frozen())return;const auto Pieces=Board->Cuts.Pieces();for(int I=0;I<static_cast<int>(Pieces.size());++I)if(PizzaRules::PizzaCuts::Contains(Pieces[I],{P.X,P.Y})){Board->Selection^=(1u<<I);break;}RefreshPizza();}
+void APizzaGameMode::ResetCuts(){if(!Board.IsSet()||Frozen())return;Board->Cuts=PizzaRules::PizzaCuts();Board->Selection=0;RefreshPizza();}
+void APizzaGameMode::TryServe(int I){
+ if(Frozen()||!Orders.IsValidIndex(I)||!Carry.IsSet()){if(!Frozen())Feedback=TEXT("Bring eine Pizza zum Gast.");return;}
+ const auto O=Orders[I];if(O.Bay<0||O.Bay>=Level.Guests||GuestMeals[O.Bay].IsSet()||NeedsWash[O.Bay]){Feedback=TEXT("Gastplatz ist noch belegt.");return;}const auto Delivered=Carry->Portion();TArray<FString> Problems;
+ if(!Carry->HasPizza)Problems.Add(TEXT("der Teller ist leer"));if(!Carry->HasPlate)Problems.Add(TEXT("bitte auf einem Teller servieren"));if(Carry->DirtyPlate)Problems.Add(TEXT("der Teller ist schmutzig – bitte abwaschen"));
+ if(Carry->HasPizza&&!Carry->Baked)Problems.Add(TEXT("die Pizza ist noch roh – bitte fertig backen"));
+ const int Missing=O.Ingredients&~Carry->Ingredients,Extra=Carry->Ingredients&~O.Ingredients;
+ const int Bits[]={1,2,4};const TCHAR* Names[]={TEXT("Tomate"),TEXT("Käse"),TEXT("Champignons")};
+ for(int J=0;J<3;++J){if(Missing&Bits[J])Problems.Add(FString(Names[J])+TEXT(" fehlt"));if(Extra&Bits[J])Problems.Add(FString(Names[J])+TEXT(" waren nicht bestellt – bitte entfernen"));}
+ const bool PortionWrong=!PizzaRules::Equal(Delivered,O.Amount);
+ if(PortionWrong)Problems.Add(!Delivered.Valid?TEXT("die Stücke sind ungleich groß – bitte neu teilen"):Delivered.Num==0?TEXT("der Teller ist leer"):TEXT("ich wollte ")+Frac(O.Amount)+TEXT(" Pizza, hier liegt ")+Frac(Delivered)+TEXT(" Pizza"));
+ const bool Accepted=Problems.Num()==0;LastBill=PizzaRules::MakeBill(Delivered,Carry->Ingredients,Accepted,O.Age);BillGuest=O.Name;BillPortion=Delivered;BillIngredients=Carry->Ingredients;BillComplaint=FString::Join(Problems,TEXT(". "));BillVisible=true;BillRemaining=2;
+ if(!Accepted){Feedback=O.Name+TEXT(": ")+BillComplaint+TEXT(". Dafür bezahle ich nichts.");SelectedGuest=I;BeginLesson(O,Delivered);return;}
+ if(!CompleteDelivery(I))return;Cash+=LastBill.Paid;ShiftSales+=LastBill.Subtotal;ShiftTips+=LastBill.Tip;Score+=Level.Patience==0||O.Patience>0?110:70;++Served;Feedback=O.Name+TEXT(": Grazie! Dein Teller ist bei mir angekommen.");CheckShiftComplete();SaveProgress();RefreshPizza();
+
+}
+void APizzaGameMode::BeginLesson(const FKitchenOrder& O,PizzaRules::Rational Delivered){
+ Learning=true;Cutting=false;RepairOrder=O;RepairNeedsNewCuts=!Delivered.Valid;Repair=PizzaRules::PortionRepair(O.Amount,Delivered);LessonContext=O.Name+TEXT(" möchte diese Pizza.");
+ if(auto* C=Chef())C->Movement->StopMovementImmediately();if(auto* P=Cast<APizzaController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))P->ClearInput();
+}
+// Customer feedback only shows the order. Preparation happens at real stations.
+void APizzaGameMode::ToggleRepairPiece(int){}
+void APizzaGameMode::ShowRepairStep(){}
+void APizzaGameMode::ConfirmRepair(){
+ if(!Learning||Paused||!Carry.IsSet())return;Learning=false;Cutting=false;BillVisible=true;BillRemaining=2;Feedback=TEXT("Okay! Dieselbe Pizza bleibt in deinen Händen. Schneide sie, ergänze fehlenden Belag oder backe sie. Zu viel Belag? Mülleimer und neue Pizza.");
+}
+void APizzaGameMode::ServeAnyway(){
+ if(!Learning||Paused||!Carry.IsSet()||!Orders.IsValidIndex(SelectedGuest))return;if(!CompleteDelivery(SelectedGuest))return;
+ Learning=false;Cutting=false;LastBill.Tip=0;LastBill.Paid=0;BillVisible=true;BillRemaining=2;++WrongDelivered;Feedback=RepairOrder.Name+TEXT(": Teller angekommen, aber falsch. Ich bezahle 0 €.");RefreshPizza();
+}
+void APizzaGameMode::Answer(int){ConfirmRepair();}
+void APizzaGameMode::RefreshPizza(){if(CarryVisual){CarryVisual->SetActorHiddenInGame(!Carry.IsSet());if(Carry.IsSet())CarryVisual->SetPizza(Carry.GetValue());}if(BoardVisual){BoardVisual->SetActorHiddenInGame(!Board.IsSet());if(Board.IsSet())BoardVisual->SetPizza(Board.GetValue());}if(OvenVisual){OvenVisual->SetActorHiddenInGame(!Oven.IsSet());if(Oven.IsSet())OvenVisual->SetPizza(Oven.GetValue());}for(int I=0;I<Tables.Num();++I){TableVisuals[I]->SetActorHiddenInGame(!Tables[I].IsSet());if(Tables[I].IsSet())TableVisuals[I]->SetPizza(Tables[I].GetValue());}for(int I=0;I<ExtraOvens.Num();++I){ExtraOvenVisuals[I]->SetActorHiddenInGame(!ExtraOvens[I].IsSet());if(ExtraOvens[I].IsSet())ExtraOvenVisuals[I]->SetPizza(ExtraOvens[I].GetValue());}if(SinkVisual){SinkVisual->SetActorHiddenInGame(!Sink.IsSet());if(Sink.IsSet())SinkVisual->SetPizza(Sink.GetValue());}for(int I=0;I<3&&I<MealVisuals.Num();++I){MealVisuals[I]->SetActorHiddenInGame(!GuestMeals[I].IsSet());if(GuestMeals[I].IsSet())MealVisuals[I]->SetPizza(GuestMeals[I].GetValue());}for(int I=0;I<Guests.Num();++I)Guests[I]->SetActorHiddenInGame(!Orders.ContainsByPredicate([I](const FKitchenOrder& O){return O.Bay==I;})&&!(GuestMeals[I].IsSet()&&EatTimes[I]>0));}
+void APizzaGameMode::Tick(float D){Super::Tick(D);if(!Camera)return;if(BillVisible&&!Learning&&!Paused&&!Intro){BillRemaining=FMath::Max(0.f,BillRemaining-D);if(BillRemaining<=0)BillVisible=false;}const bool Close=Cutting&&!Learning;const FVector Goal=Close?StationLocation(5)+FVector(0,-220,650):NormalCamera;const FRotator Rot=Close?FRotator(-69,90,0):NormalRotation;Camera->SetActorLocation(FMath::VInterpTo(Camera->GetActorLocation(),Goal,D,4));Camera->SetActorRotation(FMath::RInterpTo(Camera->GetActorRotation(),Rot,D,4));Camera->GetCameraComponent()->FieldOfView=FMath::FInterpTo(Camera->GetCameraComponent()->FieldOfView,Close?32.f:58.f,D,4);if(auto* C=Chef()){if(CarryVisual&&Carry.IsSet())CarryVisual->SetActorLocation(C->GetActorLocation()+C->GetActorForwardVector()*46+FVector(0,0,18));}if(Frozen()){if(auto* C=Chef())C->Movement->StopMovementImmediately();return;}if(Level.RoundSeconds>0)RoundTime=FMath::Max(0.f,RoundTime-D);if(Level.RoundSeconds>0&&RoundTime<=0){Finished=true;if(auto* C=Chef())C->Movement->StopMovementImmediately();if(auto* P=Cast<APizzaController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))P->ClearInput();return;}for(auto& O:Orders){O.Age+=D;if(Level.Patience>0)O.Patience=FMath::Max(0.f,O.Patience-D);}AdvanceService(D);if(Finished)return;for(int I=0;I<ExtraOvens.Num();++I)if(ExtraOvens[I].IsSet()&&!ExtraOvens[I]->Baked){ExtraBakeTimes[I]+=D;if(ExtraBakeTimes[I]>=5){ExtraOvens[I]->Baked=true;Feedback=TEXT("Ding! Eine weitere Pizza ist fertig.");RefreshPizza();}}if(Oven.IsSet()&&!Oven->Baked){BakeTime+=D;if(BakeTime>=5){Oven->Baked=true;Feedback=TEXT("Ding! Die Pizza ist goldbraun. E am Ofen zum Abholen.");RefreshPizza();}}if(FeedbackTime>0){FeedbackTime-=D;if(FeedbackTime<=0)if(auto* C=Chef())C->Movement->MaxSpeed=410;}}
+APizzaController::APizzaController(){bShowMouseCursor=true;bEnableClickEvents=true;bEnableTouchEvents=true;}
+void APizzaController::BeginPlay(){Super::BeginPlay();if(IsLocalController()){FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);if(auto* Viewport=GetWorld()->GetGameViewport())if(Viewport->GetGameViewportWidget().IsValid())Mode.SetWidgetToFocus(Viewport->GetGameViewportWidget());SetInputMode(Mode);bShowMouseCursor=true;}}
+APizzaGameMode* APizzaController::Game()const{return Cast<APizzaGameMode>(GetWorld()->GetAuthGameMode());}
+FVector APizzaController::MoveDirection(FVector2D Axes)const{const auto* G=Game();if(!G||!G->Camera)return FVector::ZeroVector;const FVector Right=FVector(G->Camera->GetActorRightVector().X,G->Camera->GetActorRightVector().Y,0).GetSafeNormal();const FVector Forward=FVector(G->Camera->GetActorForwardVector().X,G->Camera->GetActorForwardVector().Y,0).GetSafeNormal();return (Right*Axes.X+Forward*Axes.Y).GetClampedToMaxSize(1.f);}
+
+void APizzaController::SetupInputComponent(){Super::SetupInputComponent();InputComponent->BindKey(EKeys::E,IE_Pressed,this,&APizzaController::Use);InputComponent->BindKey(EKeys::SpaceBar,IE_Pressed,this,&APizzaController::Dash);InputComponent->BindKey(EKeys::X,IE_Pressed,this,&APizzaController::Drop);InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&APizzaController::Escape);InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&APizzaController::DifficultyMode);InputComponent->BindKey(EKeys::F,IE_Pressed,this,&APizzaController::GiveAnyway);InputComponent->BindKey(EKeys::One,IE_Pressed,this,&APizzaController::Cut0);InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&APizzaController::Cut45);InputComponent->BindKey(EKeys::Three,IE_Pressed,this,&APizzaController::Cut90);InputComponent->BindKey(EKeys::Four,IE_Pressed,this,&APizzaController::Cut135);InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&APizzaController::PointerDown);InputComponent->BindKey(EKeys::LeftMouseButton,IE_Released,this,&APizzaController::PointerUp);InputComponent->BindTouch(IE_Pressed,this,&APizzaController::TouchDown);InputComponent->BindTouch(IE_Released,this,&APizzaController::TouchUp);}
+void APizzaController::Use(){if(auto* G=Game()){if(G->Paused)return;if(G->Intro||G->Finished)G->Start();else if(G->Learning)G->ConfirmRepair();else G->Use();}}void APizzaController::GiveAnyway(){if(auto* G=Game())G->ServeAnyway();}void APizzaController::Drop(){if(auto* G=Game())G->Drop();}void APizzaController::Dash(){if(auto* G=Game())G->Dash();}void APizzaController::Escape(){if(auto* G=Game()){if(G->Finished)G->ReturnToMenu();else G->TogglePause();}}void APizzaController::DifficultyMode(){if(auto* G=Game())G->CycleDifficulty();}void APizzaController::Cut0(){if(auto* G=Game()){if(G->Learning)ChooseAnswer(0);else G->CutAngle(0);}}void APizzaController::Cut45(){if(auto* G=Game()){if(G->Learning)ChooseAnswer(1);else G->CutAngle(45);}}void APizzaController::Cut90(){if(auto* G=Game()){if(G->Learning)ChooseAnswer(2);else G->CutAngle(90);}}void APizzaController::Cut135(){if(auto* G=Game()){if(G->Learning)ChooseAnswer(3);else G->CutAngle(135);}}
+FVector2D APizzaController::PizzaPoint(FVector2D P)const{FVector O,V;if(!DeprojectScreenPositionToWorld(P.X,P.Y,O,V)||FMath::Abs(V.Z)<.0001)return FVector2D(10,10);const FVector Hit=O+V*((94-O.Z)/V.Z);const auto* G=Game();return G?FVector2D((Hit.X-G->CutLocation().X)/42.f,(Hit.Y-G->CutLocation().Y)/42.f):FVector2D(10,10);}
+void APizzaController::Press(FVector2D P,int Index){auto* G=Game();if(!G)return;if(auto* H=Cast<APizzaHUD>(GetHUD()))if(H->Press(P))return;if(G->Frozen())return;if((Dragging||Joystick)&&Index!=ActiveTouch)return;if(G->Cutting){DragStart=PizzaPoint(P);DragEnd=DragStart;Dragging=true;ActiveTouch=Index;}}
+void APizzaController::Release(FVector2D P,int Index){if(Index!=ActiveTouch)return;if(Dragging){auto* G=Game();const FVector2D End=PizzaPoint(P);if((End-DragStart).Size()<.15){if(G)G->TogglePiece(End);}else if(G)G->CutStroke(DragStart,End);}Dragging=false;Joystick=false;Stick=FVector2D::ZeroVector;ActiveTouch=-1;}
+void APizzaController::PointerDown(){float X,Y;if(GetMousePosition(X,Y))Press(FVector2D(X,Y),-2);}void APizzaController::PointerUp(){float X,Y;if(GetMousePosition(X,Y))Release(FVector2D(X,Y),-2);else ClearInput();}void APizzaController::TouchDown(ETouchIndex::Type I,FVector P){Press(FVector2D(P.X,P.Y),static_cast<int>(I));}void APizzaController::TouchUp(ETouchIndex::Type I,FVector P){Release(FVector2D(P.X,P.Y),static_cast<int>(I));}
+void APizzaController::PlayerTick(float D){Super::PlayerTick(D);auto* G=Game();if(!G)return;FVector2D Pointer;if(ActiveTouch==-2){float X,Y;if(GetMousePosition(X,Y))Pointer=FVector2D(X,Y);else {ClearInput();Pointer=FVector2D::ZeroVector;}}else if(ActiveTouch>=0){float X,Y;bool Pressed;GetInputTouchState(static_cast<ETouchIndex::Type>(ActiveTouch),X,Y,Pressed);Pointer=FVector2D(X,Y);if(!Pressed){Release(Pointer,ActiveTouch);}}if(Dragging)DragEnd=PizzaPoint(Pointer);if(Joystick){const FVector2D Diff=(Pointer-DragStart)/70.f;Stick=Diff.GetClampedToMaxSize(1.f);}if(G->Frozen()||G->Cutting)return;auto* C=G->Chef();if(!C)return;float X=Stick.X,Y=-Stick.Y;X+=(IsInputKeyDown(EKeys::D)||IsInputKeyDown(EKeys::Right))?1.f:0.f;X-=(IsInputKeyDown(EKeys::A)||IsInputKeyDown(EKeys::Left))?1.f:0.f;Y+=(IsInputKeyDown(EKeys::W)||IsInputKeyDown(EKeys::Up))?1.f:0.f;Y-=(IsInputKeyDown(EKeys::S)||IsInputKeyDown(EKeys::Down))?1.f:0.f;C->AddMovementInput(MoveDirection(FVector2D(X,Y)));}
+
+void APizzaGameMode::TogglePause(){if(Intro||Finished)return;Paused=!Paused;if(Paused){if(auto* C=Chef())C->Movement->StopMovementImmediately();if(auto* P=Cast<APizzaController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))P->ClearInput();}}
+void APizzaController::ClearInput(){Dragging=false;Joystick=false;Stick=FVector2D::ZeroVector;ActiveTouch=-1;}
+void APizzaController::ChooseAnswer(int I){if(auto* G=Game())if(G->Learning)G->ToggleRepairPiece(I);}
+void APizzaController::PreviousAnswer(){}
+void APizzaController::NextAnswer(){}
+
+void APizzaGameMode::ReturnToMenu(){
+ Intro=true;Paused=false;Learning=false;Cutting=false;Finished=false;LevelWon=false;Served=0;Score=0;BillVisible=false;BillRemaining=0;RepairNeedsNewCuts=false;
+ Carry.Reset();Board.Reset();Oven.Reset();BakeTime=0;Orders.Empty();for(auto& T:Tables)T.Reset();for(auto& O:ExtraOvens)O.Reset();for(auto& T:ExtraBakeTimes)T=0;Sink.Reset();WashTime=0;for(int I=0;I<3;++I){GuestMeals[I].Reset();EatTimes[I]=0;NeedsWash[I]=false;}
+ if(auto* C=Chef())C->Movement->StopMovementImmediately();if(auto* P=Cast<APizzaController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))P->ClearInput();RefreshPizza();
+}

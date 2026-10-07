@@ -201,6 +201,13 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 | GC-WEB-REPAIR-20261007 | Gemeldete Regressionen + „Meine Tests“-Layout und Coco-Bewegung; keine Scrollgeschichte. | **Final `094546a4` auf kanonischem Staging; Nutzertest offen.** Exakte CI `37558924609`, Preview `37559039697`, AI/Assessment `37559039672` und kanonisches Hosting `37559354641`/Receipt `11456410883` erfolgreich;123Dateien verifiziert. Reale Staging-Testliste1920px ohne Seitenscroll, lokale390px-Ansicht und Tastaturschalter geprüft. Alte Fehlerjobs bleiben Historie. Neue private Audiomodi sind Lehrkraft-Entwürfe bis Live-Rules/Gates C–F/30Teilnehmer belegt. Automatisches Chat-Abholen PAUSED; Games/iOS/Production ausgeschlossen. [Übergabe](workstreams/web-repair-batch-20261007.md) |
 
 
+## Bruchpizzeria Unreal-Neustart — 7. Oktober 2026
+
+| Task | Stand | Nächster Schritt |
+| --- | --- | --- |
+| GC-GAMES-PIZZA-01 | Native Unreal [DraftPR160](https://github.com/HerrLoeffler/Hausaufgabe/pull/160), **branch_only**. Neu: unbegrenzte Zutaten/Teller, Stapel nebenSpüle, sichtbare neueste Belagschicht ohne Entfernen, echter Gast-Tellertransfer, Spülen ab7, Intro vor jedem neuenLevel, Müllgebühren1/2/3€/Teller1€ ausBank. | Source7d4dfc2:890coreChecks und11tatsächlicheUnrealTests0Fehler. FrühereRED4/13/32/1undReviewRED3erhalten; weitergereichteTellerblockade/Brettpickup/Introübersprung korrigiert. Physische Wege aller10Küchen und echte Gast/Spül/Intro-PNGs geprüft. Next: Martin testet echten Tellerweg; Nutzer-/mobile-/Lerntransferabnahme offen. [Konzept](games/bruchpizzeria-unreal/Production/LEARNING_CAMPAIGN.md), [Übergabe](workstreams/bruchpizzeria-unreal-20261007.md) |
+
+
 ## 2026-10-07 07:20 Europe/Berlin — gezielte Nutzertest-Nachkorrektur
 
 094546a4 hat Martins visuelle Abnahme nicht bestanden. PR163 auf feature/audio-crew-visual-correction-20261007, exact 0b3b574b8add3fbb65ddbf288f668ae07158d038, lokaler b4b8c4c / identischer Tree0823b20e2ea2c6f7bdd1a5732d355d958a15e23e. Vier Originalfiguren und blauer Crewbutton, Vorteilsbilder, Breite ohne Ganzseiten-Verkleinerung, finite Bewegung respektiert Reduced Motion. Keine echte neue Flügel-/Türanimation der statischen Szene. Linke Navigation nur Empfehlung für später.

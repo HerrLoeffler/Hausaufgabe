@@ -1,0 +1,972 @@
+{
+  "task_id": "GC-GAMES-PIZZA-01",
+  "date": "2026-10-07",
+  "engine": "5.8.3",
+  "native_source_commit": "7d4dfc264efbe53171d0264ceb139f75aab88efe",
+  "core_checks": {
+    "fraction_geometry": 182,
+    "campaign_repair_layouts": 443,
+    "failures": 0,
+    "sanitizers": "442 campaign checks ASAN+UBSAN zero; earlier182 geometry sanitizer evidence retained",
+    "billing": 223,
+    "evidence_scope": "Final current cores182geometry+443campaign+223billing+42supplies zero. Physical11-native suite separately verified.",
+    "supplies": 42
+  },
+  "editor_build": "Succeeded plates-route-build.log session97296",
+  "automation": {
+    "NativeAutomation": {
+      "sha256": "d7c24d2031d20716dc86809b8e1c6c25f83682c8c5a389db67115d282ff44c59",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 28
+        }
+      ]
+    },
+    "NativeRegressionRed": {
+      "sha256": "463a562d0d97c76c8ee8f9a2f5809fe6bc69a74ad4e34fa7060213b09a1aa005",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 11,
+          "warnings": 28
+        }
+      ]
+    },
+    "NativeRegressionGreen": {
+      "sha256": "fb1a6c8e47bb68d7ac63614ca0334309f96901030e23688819c7c4c1ffff006d",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeTeachingRed": {
+      "sha256": "58690bf19931193e732820f0b2f5106d6bd6c4405b53bda7b874368f8a6ba78a",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeTeachingGreen": {
+      "sha256": "41124b123b97b68edeacbf96b1da4f48e5257e6fdb51c682538ceec58e2589c8",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeFinal": {
+      "sha256": "6b98655ddf3289eeb9612b449fd392538ea60ca4cec5b3d8bafa027b9325f22c",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeRenderedFinal": {
+      "sha256": "7528014612730b70c5b081d58eab587a77ad3686d3da8f387d2e2d3d8fedb94b",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "HudPointerRed": {
+      "sha256": "24df349572d4f7ea185e37ce235b14da9cf0285c0c2d158856837e2bc77934c1",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "NativeMouseAndHud": {
+      "sha256": "f417f0a683043e43e9967beaa0b0a346de14e2055e3227d54057e8e4790b3cc4",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "NativeMouseReviewed": {
+      "sha256": "a8c81d9f7bb61d67b24cc385a5da2205f74d5f8a4a4f8972bfb8ca4e9cde3c17",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "NativeDesktopFinal": {
+      "sha256": "6e9e30f45cb0c3727cb01423e22b298878a5661d6432713399707ad800faf0cb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "CampaignRed": {
+      "sha256": "50006a2929052c8ccff8db54ff2b4f696d9c6abe4fb5cc5ee8acefd97a82e5e6",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Fail",
+          "errors": 3,
+          "warnings": 1
+        }
+      ]
+    },
+    "CampaignGreen": {
+      "sha256": "c293ce8364f7473a76519efbb72f9fe236041d17fe305d717d69fd5e76770921",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        }
+      ]
+    },
+    "TenLevelFinal": {
+      "sha256": "26a8003b7e4c848d7146a527bbb33e072eaa676e9e09381ca01aac26750d0feb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "TenLevelCorrected": {
+      "sha256": "3cc6d5c81ae216f7719ac00f207e679d81a30182578c6072d479c210853d0d96",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "FreedomRed": {
+      "sha256": "0f460e9571aa6ef872e89d5eeb6fd5761f1e863c6852b787ac3be7f1af5d0789",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Fail",
+          "errors": 14,
+          "warnings": 1
+        }
+      ]
+    },
+    "FreedomBillingFull": {
+      "sha256": "f3a696cea384f7544db1bf21751cd8e426b09351c0a89b27cf94c36bc4d87c42",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
+    },
+    "ReboardRed": {
+      "sha256": "30b489c0a0b9e3f3e5fb7b5d1701b6396e8d67d73b338b7e7f77c878323803bd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "FreedomBillingFinal": {
+      "sha256": "1f904131f275afe73ff3cba87f28e3a1f42c8d2cade4a32402f784661b034a05",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
+    },
+    "MenuRed": {
+      "sha256": "1e1c21c0491e769bdbc315abd2ac15c80c6e9ef80a34a7c1e06f684581f15f55",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Fail",
+          "errors": 6,
+          "warnings": 1
+        }
+      ]
+    },
+    "MenuFinal": {
+      "sha256": "6174e25544664f717819daa07d7e84bf8eae667d6184b45ec7cc31e413ddbdad",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "GuestFeedbackRed": {
+      "sha256": "5a5493e85c88af2141145a60eac3c292d15d92027328f8324514d213121479ce",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Fail",
+          "errors": 6,
+          "warnings": 1
+        }
+      ]
+    },
+    "GuestFeedbackFull": {
+      "sha256": "82a53c9c7cddbee02359110410cfe41756f34856b84c2fd90adacd49677a7cd7",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Fail",
+          "errors": 2,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "GuestFeedbackFinal": {
+      "sha256": "a1a1cfe9164bff1f727562a6b89d589dbe989fc453cf2c93de02f0bdf2fb7cdb",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 5
+        }
+      ]
+    },
+    "InventoryRed": {
+      "sha256": "30ae80091bcdafc8dcafa89b811b50777871de8c68227904a802b19a051c7cdd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 4,
+          "warnings": 3
+        }
+      ]
+    },
+    "InventoryApiRed": {
+      "sha256": "53ba8c6e4c7f4c6df545adb86dde71dc234288801bfcf4ec095ee52dd229757f",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 13,
+          "warnings": 3
+        }
+      ]
+    },
+    "InventoryTiming": {
+      "sha256": "98185b189ded31715f06a5a583eb8f9b37e89f780ad515c65322a59814e8f640",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Fail",
+          "errors": 1,
+          "warnings": 1
+        }
+      ]
+    },
+    "InventoryFull": {
+      "sha256": "f2626b38fbab0451b3d6b7171532d992728fe747c220c82bf6d82ca5103661cd",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 7
+        }
+      ]
+    },
+    "PlateEdgeRed": {
+      "sha256": "4d86929cdbb273c8e2191f7ebc9c80e2880d0f4613510ef005384e3bf908e6a5",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.PlateEdges",
+          "state": "Fail",
+          "errors": 3,
+          "warnings": 1
+        }
+      ]
+    },
+    "PlatesFinal": {
+      "sha256": "d4d5ed397bfcdc3f70fc0e80450ea9d6e5f0021471f2aa7ea55b3a81e969799f",
+      "tests": [
+        {
+          "name": "GradeCrew.NativeKitchen.Billing",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CampaignAndStorage",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.CookAndLearn",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.GuestFeedback",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.HudPointer",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Inventory",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 3
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.KitchenFreedom",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.Menu",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.MouseCutting",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.PlateEdges",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        },
+        {
+          "name": "GradeCrew.NativeKitchen.VisualPreview",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 9
+        }
+      ]
+    }
+  },
+  "visual_acceptance": "Actual delivered/dirty/wash/intro7 scenes inspected, final native renderer captured all. Physical capsule sweep routes/station selection pass for all10kitchens. Human playfeel/device/learning-transfer remains separate.",
+  "physical_mobile_device": "not_tested",
+  "signed_mobile_package": "IOS target attempted -SkipDeploy: failed before compilation, optional Unreal IOS build files missing. Epic Launcher component needed; physical device/signing not attempted.",
+  "production": "not_requested",
+  "content": {
+    "Content/Maps/Pizzeria.umap": {
+      "bytes": 38705978,
+      "sha256": "be5170dc5f1eed02ad320c533845700f49e871ab14941c3363b2504ebadce850"
+    },
+    "Content/Materials/M_Kitchen.uasset": {
+      "bytes": 6791,
+      "sha256": "91234eb76b4d60d7fc04ab63edec05f4abeb9818d0854ad964d222afba2ef218"
+    }
+  },
+  "pull_request": "https://github.com/HerrLoeffler/Hausaufgabe/pull/160",
+  "raw_input_acceptance": "NOT VERIFIED: CUA different virtual click points both yield constant Unreal hardware-cursor1438,710. Async real hardware user test requested. Native pointer/projection tests use explicit engine coordinates and cannot close this gap.",
+  "environment_warnings": [
+    "AudioUnit sample-rate query",
+    "Epic bundled idevice_id executable wrongCPU architecture; official IOS component missing"
+  ],
+  "images": {
+    "NativeKitchen.png": {
+      "bytes": 1846986,
+      "sha256": "cee1ce9f31b0d768634bb14503491fc7a9690d8ddd8091ce15e07fc166056ed0",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeCutting.png": {
+      "bytes": 1686729,
+      "sha256": "3f266d3e70bb3dbe760386d2de7e27bb11870e0a0233e960edd9e3e5f3bc7316",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeLearning.png": {
+      "bytes": 888565,
+      "sha256": "a0b39b0df27286ce1f360d7ff88d1cc4f056d55f3003660d015de6a8e4d4e611",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeUnequal.png": {
+      "bytes": 1537317,
+      "sha256": "ad9ca5fed57309951606dfac5989e103025662f0417a809335daac7f1fac6e54",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeLevel3.png": {
+      "bytes": 1838061,
+      "sha256": "3ee97dfddb1d84912b21d70bdc1058ad961e94542751ffd043476382e4e4a050",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeLevel10.png": {
+      "bytes": 1852293,
+      "sha256": "f0001917229c011bce1734e04ace8acbdfa57fbc58abce4e360f01f9557565cc",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeRejectedBill.png": {
+      "bytes": 1600706,
+      "sha256": "2cbb7ede86885f6835a69fd163b7d4cab577997de36c43435d13f7c626247379",
+      "scope": "Historical invoice before target-only review; not current render"
+    },
+    "NativePaidBill.png": {
+      "bytes": 1809010,
+      "sha256": "b413d4c4a0c203a7f02ec8b7320959e835aa4ebc33dd8625a5e30610a380ae99",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeShiftBill.png": {
+      "bytes": 1493249,
+      "sha256": "733cd2cf0ef510603d7dbad00b053443e6547b4f5da4aa544c91b00b2f863459",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeMenu.png": {
+      "bytes": 1228881,
+      "sha256": "7771a4f1edbbc8a8d7889e8d6f7e45f7c2e620b48c180d74a0098a346d13ba25",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeGuestReview.png": {
+      "bytes": 874985,
+      "sha256": "0a73264987ece5aaee9c70bb65c9db5f721b24a85e82f9a94d55557399ac54fc",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeWashing.png": {
+      "bytes": 1887188,
+      "sha256": "dd1c0a1d651883a044edf8390edd90641c5f38084779dbe75152f8b77cacc1df",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativePlateIntro.png": {
+      "bytes": 1187700,
+      "sha256": "d0ebb03a442c026c7588e534cde025f8b206464aae90750879594a581584e3e9",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeDirtyPlate.png": {
+      "bytes": 1854131,
+      "sha256": "6343f91a7bc5d5bdc110f5da5dfe70384c5eb89b604f4baa4a77d48c9ac9a138",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeWaste.png": {
+      "bytes": 1860403,
+      "sha256": "d21a65fca4b48db9986f35e14e79e385e3748a00e1cbaa3d250e87b219fbac46",
+      "scope": "PlatesFinal current native render"
+    },
+    "NativeDeliveredPlate.png": {
+      "bytes": 1772984,
+      "sha256": "f20819a48e4401e170ac24be9ead7ce84a94ee1643a1034de9fc33ee4c68d3b3",
+      "scope": "PlatesFinal current native render"
+    }
+  },
+  "mouse_corrections": [
+    "Subtract constrained HUD view origin",
+    "Explicit visible-cursor GameAndUI viewport focus",
+    "Cancel drag on invalid mouse position",
+    "Fixed desktop window size; left mouse pressed reaches game instead of Mac resize-zone suppression"
+  ],
+  "previous_published_source_commit": "93b2eab13156bc62e01f7985c5d054c5381a7868",
+  "campaign": {
+    "levels": 10,
+    "unique_station_layouts": 10,
+    "twenty_levels": "possible later, not implemented",
+    "one_hundred_levels": "superseded by user correction",
+    "learning_trigger": "wrong delivery only; no repeated mandatory quiz",
+    "local_progress": "Saved/CampaignProgress-v1.txt; PIE separate file",
+    "learning_transfer": "not empirically verified"
+  },
+  "guest_billing": {
+    "whole_prices_cents": {
+      "pizza": 800,
+      "tomato": 100,
+      "cheese": 200,
+      "mushrooms": 100
+    },
+    "rounding": "Each delivered-fraction item rounds once to cents; visible line sum is subtotal.",
+    "tip": "20% through30active seconds;10% through60;0 later. Rejected dishes0 payment/tip.",
+    "wallet": "CashProgress-v1.txt local; separate PIE wallet; cumulative across shifts.",
+    "mushrooms_from_level": 4,
+    "review": "Bounded reviewer cleared ae3cc08 billing delta and47d22d9 reboard fix; no Important/Critical."
+  },
+  "previous_native_source_commit": "fbd1a9ba592b6a68675ccec5b4e1fc48c060afbb",
+  "menu": {
+    "entry": "Esc or visible menu button from cooking/cutting/fraction help",
+    "actions": [
+      "Continue exact state",
+      "Restart current shift preserving cash/unlocks",
+      "Level selection; unlocked only"
+    ],
+    "verification": "MenuRed6 failures -> MenuFinal native UI press/restart/level selection/input guards pass; actual NativeMenu PNG inspected.",
+    "review": "No Important/Critical. Minor: Q can change feedback while paused; ultrawide end-screen level button clips outside fixed desktop ratio, Esc route works."
+  },
+  "guest_feedback": {
+    "actions": {
+      "E": "Understood preserves exact dish; player returns to real kitchen stations",
+      "F": "Give actual wrong dish anyway0EUR; remove it, replace specific guest order, no pay/tip/success progress"
+    },
+    "receipt": "Compact right under cash,2active seconds; held in review/menu, expires even after Finished",
+    "recipes": "Decorative world recipe boards removed; actual tickets remain header",
+    "level5": "1/8,3/8,7/8 reachable within3correct-delivery shift",
+    "review": "No Important/Critical; recheck compactUI and second-guest/F-pause/finished-receipt/ticket-identity tests cleared",
+    "gameplay_depth_assessment": "5/10 for first10level gameplay/campaign scope, not measured or overallGradeCrew"
+  },
+  "plates_supplies": {
+    "unlimited": "Existing ingredients and clean plates; pile beside sink. Not new infinite ingredient catalog.",
+    "toppings": "Additive, newest layer above older; no removal.",
+    "delivery": "Exact owned food/plate snapshot at stable customer bay,3active seconds then dirty7+; empty selection retains board food.",
+    "wash": "3active seconds, early pickup stays dirty; menus/guest reminder pause all processes; final7+cleanup gates win.",
+    "fees_cents": {
+      "dough": 100,
+      "raw_topped": 200,
+      "baked_portion": 300,
+      "emptyplate": 100
+    },
+    "bank": "Actual charge capped available balance, stored, never negative; food discard retains plate.",
+    "review": "3Important -> PlateEdgeRed3 -> PlatesFinal11success: forwarded cleanup mask, emptyboard plate pickup, nextlevelintro.",
+    "remaining_minor": "Internal unused excess topping wording says remove; not displayed. Early final snapshot held behind result under frozen active-time design."
+  }
+}

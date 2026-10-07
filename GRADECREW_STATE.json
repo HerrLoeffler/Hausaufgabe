@@ -897,6 +897,23 @@
       "user_test": "not_performed",
       "handoff": "workstreams/gc-web-polish-20261007.md",
       "next_action": "Martin checks actual login, normal test creation/saving, and desktop/mobile visuals."
+    },
+    {
+      "id": "games-bruchpizzeria-unreal",
+      "task_id": "GC-GAMES-PIZZA-01",
+      "branch": "feature/bruchpizzeria-unreal-v1",
+      "stage": "branch_only",
+      "local_code_commit": "7d4dfc264efbe53171d0264ceb139f75aab88efe",
+      "ci": "not_run_native_github; PlatesFinal11nativeSuccess0errors;890purezero",
+      "staging": "not_deployed",
+      "user_test": "User rejected missing guest transfer/plate supply/removable toppings. Current explicitplate/wash/bin/intro candidate human acceptance pending",
+      "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
+      "next_action": "Martin tests plate pickup, full customer transfer and calm level7washing; actual game/menu ready after local launch. Device/learning-transfer gates separate.",
+      "observed_head": "f7b4e9800c42747c4b72db92a4a8a0d495c2b5fb",
+      "pull_request": 160,
+      "native_mobile": "IOS build blocked by missing optional installed Unreal IOS target files",
+      "observed_head_scope": "Previous verified guest-choice checkpoint; new7d4dfc2 tested, publication receipt records exact newhead externally.",
+      "campaign_levels": 10
     }
   ],
   "deployments": [

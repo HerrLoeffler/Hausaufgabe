@@ -474,6 +474,18 @@
         "fix/web-acceptance-regressions-20261007",
         "feature/audio-web-acceptance-20261007"
       ]
+    },
+    {
+      "id": "games-bruchpizzeria-unreal",
+      "title": "Bruchpizzeria Unreal Native",
+      "primaryBranch": "feature/bruchpizzeria-unreal-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/bruchpizzeria-unreal-20261007.md",
+      "relatedBranches": [
+        "feature/bruchpizzeria-browser-pilot-v1",
+        "docs/bruchpizzeria-briefing-20261006"
+      ]
     }
   ]
 }

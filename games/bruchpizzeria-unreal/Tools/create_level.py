@@ -1,0 +1,51 @@
+import unreal
+from pathlib import Path
+
+def material():
+    existing=unreal.load_asset('/Game/Materials/M_Kitchen')
+    if existing:return existing
+    tools=unreal.AssetToolsHelpers.get_asset_tools()
+    mat=tools.create_asset('M_Kitchen','/Game/Materials',unreal.Material,unreal.MaterialFactoryNew())
+    edit=unreal.MaterialEditingLibrary
+    tint=edit.create_material_expression(mat,unreal.MaterialExpressionVectorParameter,-420,0)
+    tint.set_editor_property('parameter_name','Tint');tint.set_editor_property('default_value',unreal.LinearColor(.8,.65,.3,1))
+    edit.connect_material_property(tint,'',unreal.MaterialProperty.MP_BASE_COLOR)
+    rough=edit.create_material_expression(mat,unreal.MaterialExpressionScalarParameter,-420,180)
+    rough.set_editor_property('parameter_name','Roughness');rough.set_editor_property('default_value',.6)
+    edit.connect_material_property(rough,'',unreal.MaterialProperty.MP_ROUGHNESS)
+    glow=edit.create_material_expression(mat,unreal.MaterialExpressionScalarParameter,-420,340)
+    glow.set_editor_property('parameter_name','Glow');glow.set_editor_property('default_value',0)
+    mul=edit.create_material_expression(mat,unreal.MaterialExpressionMultiply,-160,330)
+    edit.connect_material_expressions(tint,'',mul,'A');edit.connect_material_expressions(glow,'',mul,'B')
+    edit.connect_material_property(mul,'',unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    edit.recompile_material(mat);unreal.EditorAssetLibrary.save_loaded_asset(mat)
+    return mat
+
+material()
+maps=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+if not maps.new_level('/Game/Maps/Pizzeria'):raise RuntimeError('Could not create the kitchen map')
+actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+arena=actors.spawn_actor_from_class(unreal.load_class(None,'/Script/Bruchpizzeria.PizzaArena'),unreal.Vector(0,0,0))
+arena.set_actor_label('La Piccola - authored native kitchen')
+actors.spawn_actor_from_class(unreal.PlayerStart,unreal.Vector(0,-250,77))
+sun=actors.spawn_actor_from_class(unreal.DirectionalLight,unreal.Vector(0,0,900),unreal.Rotator(-55,-40,0))
+light=sun.get_component_by_class(unreal.DirectionalLightComponent)
+light.set_editor_property('intensity',2.2)
+light.set_editor_property('light_color',unreal.Color(255,234,205,255))
+light.set_editor_property('light_source_angle',5.0)
+sky=actors.spawn_actor_from_class(unreal.SkyLight,unreal.Vector(0,0,1000))
+skycomp=sky.get_component_by_class(unreal.SkyLightComponent)
+skycomp.set_editor_property('source_type',unreal.SkyLightSourceType.SLS_SPECIFIED_CUBEMAP)
+skycomp.set_editor_property('cubemap',unreal.load_asset('/Engine/MapTemplates/Sky/DaylightAmbientCubemap'))
+skycomp.set_editor_property('intensity',2.0)
+skycomp.set_editor_property('lower_hemisphere_is_black',False)
+for x in [-430,430]:
+    fill=actors.spawn_actor_from_class(unreal.PointLight,unreal.Vector(x,-150,520))
+    comp=fill.get_component_by_class(unreal.PointLightComponent)
+    comp.set_editor_property('intensity',80.0)
+    comp.set_editor_property('attenuation_radius',1500)
+    comp.set_editor_property('light_color',unreal.Color(242,248,255,255))
+    comp.set_editor_property('cast_shadows',False)
+maps.save_current_level()
+unreal.log('PIZZA_MAP_CREATED /Game/Maps/Pizzeria; original geometry and native PBR material')
+unreal.SystemLibrary.quit_editor()
