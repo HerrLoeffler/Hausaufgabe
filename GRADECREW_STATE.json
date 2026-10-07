@@ -106,6 +106,21 @@
       "assessment_receipt": 11491326494,
       "canonical": "requested",
       "user_acceptance": "pending"
+    },
+    "editor_context_followup": {
+      "stage": "integrated",
+      "pr": 169,
+      "commit": "cd039bcad3afca7af0dacd2bbfda56a3b67640db",
+      "merge_ci": 37642310329
+    },
+    "coco_preview_followup": {
+      "stage": "integrated",
+      "pr": 170,
+      "commit": "d5e0f44f7735c7edd011a2fa058a8fda185624e0",
+      "candidate_ci": 37679070729,
+      "merge_ci": 37679341669,
+      "staging": "waiting merge CI and exact deploy receipts",
+      "production": "not_requested"
     }
   },
   "production": {
