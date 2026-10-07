@@ -1338,5 +1338,12 @@
     "candidateCI": 37584648405,
     "next": "exact CI then integrate; canonical staging combines PR164/165/166",
     "tests": 25
+  },
+  "reviewModeConcept": {
+    "phase": "concept_only",
+    "date": "2026-10-07",
+    "document": "docs/gradecrew-review-mode-concept-20261007.txt",
+    "next": "Repo-specific implementation plan; not implemented",
+    "automaticAI": false
   }
 }
