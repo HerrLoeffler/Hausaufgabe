@@ -17,6 +17,7 @@ on:
       - 'feature/brand-*'
       - 'feature/i18n-*'
       - 'feature/audio-*'
+      - 'feature/review-mode-*'
       - 'fix/audio-*'
       - 'fix/gc-security-*'
     # Documentation changes do not change the app/runtime candidate.
