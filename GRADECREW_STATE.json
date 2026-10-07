@@ -1330,5 +1330,13 @@
     "mergeCI": 37583383799,
     "verifiedTests": 25,
     "pending": "Preview/Functions receipts then canonical request; image quality and review-mode implementation still open"
+  },
+  "studentNavigationAudioFollowup": {
+    "phase": "branch_only",
+    "pr": 166,
+    "head": "9749e2b950f763f527570928a21d2e7605a6db0a",
+    "candidateCI": 37584648405,
+    "next": "exact CI then integrate; canonical staging combines PR164/165/166",
+    "tests": 25
   }
 }
