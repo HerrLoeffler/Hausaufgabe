@@ -74,7 +74,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   }
   if (intent.kind === "ai_generated") {
     try {
-      const asset = await media({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), questionText: q.text, altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
+      const asset = await media({ questionId: `q${index + 1}`, prompt: String(intent.prompt), expectedScene: String(intent.prompt), questionText: q.text, question: raw, altText: String(intent.altText || "Abbildung zur Aufgabe"), maxBytes: 280 * 1024 });
       if (!asset?.imageDataUrl) throw new Error(`Bild zu Aufgabe ${index + 1} fehlt.`);
       Object.assign(q, asset);
       q.aiOrigin.mediaStatus = "ready";
