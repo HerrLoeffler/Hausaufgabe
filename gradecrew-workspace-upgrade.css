@@ -101,6 +101,8 @@
   #dashboardView.gcWorkspace .dashboardToolbar :is(input,select) { min-width: 0; font-size: 16px; }
   #dashboardView.gcWorkspace .quizGrid { grid-template-columns: minmax(0,1fr); }
   #dashboardView.gcWorkspace .quizCard { padding: 18px; }
+  #dashboardView.gcWorkspace .primaryQuizActions { display: grid; grid-template-columns: minmax(0,1fr); }
+  #dashboardView.gcWorkspace .primaryQuizActions .button { min-width: 0; width: 100%; }
   #dashboardView.gcWorkspace .aiJobCard { padding: 16px; gap: 10px; }
   #dashboardView.gcWorkspace .aiJobActions { grid-column: 1/-1; }
   #dashboardView.gcWorkspace #localDraftList .aiJobCard { grid-template-columns: minmax(0,1fr); }
