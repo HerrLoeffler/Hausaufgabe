@@ -409,9 +409,9 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
     if (/\b(?:einstellungen|settings)\b/i.test(normalized)) return action("navigate_settings");
     if (/\b(?:meine tests|testübersicht|testuebersicht|my tests|dashboard)\b/i.test(normalized)) return action("navigate_tests");
     const named = normalized.match(/\b(remy|emmi|wilma)\b/i)?.[1]?.toLowerCase();
-    const follow = /\b(?:ihm|ihr|dorthin|dahin|him|her|there)\b/i.test(normalized) && /\b(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized);
+    const follow = /\b(?:ihm|ihr|dorthin|dahin|him|her|there)\b/i.test(normalized) && /(?:^|\s)(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized);
     const crew = named || (follow ? context.lastCrew : "");
-    const navigating = follow || /\b(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized) || /^(?:remy|emmi|wilma)[.!? ]*$/i.test(normalized);
+    const navigating = follow || /(?:^|\s)(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized) || /^(?:remy|emmi|wilma)[.!? ]*$/i.test(normalized);
     if (crew && navigating) return action({remy:"navigate_create",emmi:"choose_editor",wilma:"choose_results"}[crew] || "navigate_tests");
     if (/\b(?:erstell\w*|anleg\w*|create|new test|neuen? test)\b/i.test(normalized)) return {...action("navigate_create"),reply:english ? "Remy creates tests. I'll open the form." : "Remy erstellt Tests. Ich öffne dir das Formular."};
   }

@@ -1660,6 +1660,7 @@ function renderQuizList() {
     const status = quizStatusMeta(q);
     const card = document.createElement("article");
     card.className = "card quizCard";
+    card.dataset.quizId = q.id;
     card.innerHTML = `
       <div class="quizCardTop">
         <div>
@@ -8492,6 +8493,7 @@ async function handleCocoGuide(action = {}) {
     if (state.user?.uid !== uid) throw new Error("Das Konto wurde gewechselt.");
     quizzes = snap.docs.map(d => ({id:d.id,...d.data()})).filter(q => !q.isDeleted && !q.rightsHold);
   }
+  if (state.currentQuiz?.ownerId === uid && !state.currentQuiz.isDeleted && !state.currentQuiz.rightsHold && !quizzes.some(q => q.id === state.currentQuiz.id)) quizzes.push(state.currentQuiz);
   const choices = list => list.map(q => ({id:q.id,title:q.title || "Unbenannter Test",subject:q.subject || "",grade:q.grade || "",evidence:q.evidence || ""}));
   if (action.type === "find_test") {
     const queryText = cocoSearchText(action.query);
@@ -8506,7 +8508,7 @@ async function handleCocoGuide(action = {}) {
           if (state.user?.uid !== uid) return;
           const questions = screen === "editorView" && state.currentQuiz?.id === quiz.id ? state.questions : snap.docs.map(d=>d.data());
           const title=cocoSearchText([quiz.title,quiz.subject,quiz.grade].join(" "));
-          const question = questions.find(q => terms.every(t => cocoSearchText([q.text,q.passage,q.imageAlt,...(q.options||[]).map(o=>o.text),...(q.pairs||[]).flatMap(p=>[p.left,p.right]),...(q.items||[])].join(" ")).includes(t)));
+          const question = questions.find(q => terms.every(t => cocoSearchText([q.text,q.passage,q.imageAlt,...(q.options||[]).flatMap(o=>[o.text,o.imageAlt]),...(q.pairs||[]).flatMap(p=>[p.left,p.right]),...(q.items||[])].join(" ")).includes(t)));
           if (terms.every(t=>title.includes(t)) || question) matches.push({...quiz,evidence:question ? `Gefundene Begriffe: ${terms.join(", ")} · Aufgabe: ${String(question.text || question.passage || "").slice(0,150)}` : "Titel oder Fach passt zu deiner Suche."});
         } catch (_) { failures++; }
       }));
@@ -8522,13 +8524,14 @@ async function handleCocoGuide(action = {}) {
   }
   const sameEditor = screen === "editorView" && state.currentQuiz?.id === quizId && ["choose_editor","show_delete_question"].includes(action.type);
   if (state.isDirty && !sameEditor) throw new Error("Speichere zuerst deine Änderungen. Danach bringe ich dich dorthin.");
-  if (action.type === "navigate_create") { await openAiView(); return {message:"Na klar! Hier ist Remy. Beschreibe, welchen neuen Test du erstellen möchtest.",lastCrew:"remy"}; }
+  if (action.type === "navigate_create") { await openAiView(); if (state.user?.uid !== uid || $("aiView").classList.contains("hidden")) throw new Error("Das Formular konnte nicht geöffnet werden."); return {message:"Na klar! Hier ist Remy. Beschreibe, welchen neuen Test du erstellen möchtest.",lastCrew:"remy"}; }
   if (action.type === "navigate_settings") { openSettings(); return {message:"Hier sind deine Einstellungen."}; }
   if (action.type === "navigate_tests") { await loadDashboard(); return {message:"Hier findest du deine Tests."}; }
   if (action.type === "choose_results") { await openResults(quizId); if ($( "resultsView").classList.contains("hidden")) throw new Error("Die Ergebnisse konnten nicht geöffnet werden.");return {message:"Hier sind die Ergebnisse dieses Tests.",lastCrew:"wilma"}; }
   if (action.type === "show_delete_test") {
     await loadDashboard(); $("quizSearch").value=quizId; $("quizFilter").value="all";renderQuizList();
-    const button=$("quizList").querySelector(".remove");
+    const button=[...$("quizList").querySelectorAll(".quizCard")].find(card => card.dataset.quizId === quizId)?.querySelector(".remove");
+    if (!button) throw new Error("Die Löschschaltfläche dieses Tests ist gerade nicht sichtbar.");
     button?.closest("details")?.setAttribute("open","");highlightCocoTarget(button);
     return {message:"Hier kannst du diesen Test in den Papierkorb verschieben. Ich habe die Schaltfläche markiert; gelöscht wurde nichts."};
   }
