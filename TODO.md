@@ -354,3 +354,10 @@ Frisch16:56:16UTC:195portableChecks,4UE-Suites,0Fehler/8Epicidevice-Umgebungswar
 
 
 08.10.2026 Nutzerfeedback nach lokalem Start: Martin bestätigt, dass die Fuchsaktion gut aussieht. Die zwischenzeitlich gewünschte frische Spielsitzung wurde mit „ist egal“ nicht weiterverfolgt; kein Spielstand zurückgesetzt, kein neuer Testslot erzeugt und keine laufende Sitzung beendet. Natürliche Auslösung durch richtige Satzlösung bleibt, optionale Wiederholung verfügbar. Positives visuelles Feedback ist keine vollständige Abnahme der neuen Wasser-/Steuerungsstrecke. Code/Build/Branchstufe unverändert. Nächster Schritt: regulären Verlauf samt zweiter1-Liter-Aufgabe testen.
+
+
+## 08.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: Fundbuch und Perspektividee
+
+Nutzer versteht „Drei Funde ordnen“ im aktuellen Durchlauf nicht. Aktueller Code geprüft: vier Reliefs mit E entdecken, im Fundbuch genau drei bekannte Bruchanteile auswählen, Summe1=10/10, Menge prüfen; Reihenfolge spielt keine Rolle. Die Benennung „ordnen“ ist irreführend und als offener Punkt der Aufgabenführung erfasst. Aktueller Runtimeblock unverändert; keine neuen Tests/Generation/Deploys.
+
+Verbindlich für den Ideenbestand merken: räumlich getrennte Ringteile durch den eigenen Standpunkt/Blick zu einem Ring ergänzen. Als kleines eigenständiges Logik-/Perspektivrätsel für eine spätere Aktivierung nutzen. Knapper Hinweis: „Alles eine Frage der Perspektive.“ Die Ausrichtung soll selbst entdeckt werden; die konkrete Aktivierung ist noch offen. Die Trennung vom mathematischen Fundbuch ist eine spätere Umsetzungsidee, keine heute gebaute Änderung. Nächster Schritt: Fundbuchauftrag verständlicher benennen und die zwei Teilaufgaben bei der nächsten Überarbeitung klar auseinanderhalten.
