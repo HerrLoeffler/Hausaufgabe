@@ -1087,7 +1087,16 @@
         "criteria": "operationcosts/scalability/iPad conditional on realtests",
         "sample_stream_8mbps": "1000streams=8Gbit/s,3.6TB/hour beforeoverhead",
         "sample_asset_100mb": "1000firstloads=100GB beforecache",
-        "not_measured": true
+        "not_measured": true,
+        "billing_clarification": {
+          "date": "2026-10-08",
+          "browser_rendering_not_automatically_free": true,
+          "costs": "asset transfer/storage/backend perprovider",
+          "firebase_hosting_blaze_example": "100GB/10GBunusedallowance=$13.50transfer only",
+          "price_verified": "$0.15/GBbeyond10GB/month",
+          "actual_project_billing_plan_checked": false,
+          "cdn_cache_transfer_billable": true
+        }
       }
     }
   ],
