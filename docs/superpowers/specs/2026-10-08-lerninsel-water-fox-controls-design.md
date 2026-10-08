@@ -23,3 +23,8 @@ Bei Erfolg schließt die Satzoberfläche und die Kamera zeigt zunächst auf den 
 ## Vorlagen und Prüfung
 
 Sechs Originaltafeln mit20Motiven=120Studien: Figur, Erwachen, Laufzyklus, Seil/Tor, Platzierung, Spielfolge. Prompts und Original-PNGs sichern. Generierte Figuren nicht automatisch als fertige3DAssets behaupten. Native Tests prüfen Steuerung, Einstellungen speichern/laden, gleiche Actoridentität der Kanne über beide Aufgaben, Mengen/Abbruch, Beckenanimation, gate sweeps und Foxzeiten/Bewegung/Seilpause. Reale Aufnahmen der Zustände und UI. Ein unabhängiger Schlussreview; wichtige Befunde ein Fixdurchgang mit Regressionen. Keine Production-, Browser- oder iPadfreigabe.
+
+
+## Prüfung mit bereits gelöstem Satz
+
+Bei vorhandenem Fortschritt startet der Fuchs nach Reload in der lebenden Endpose. Deshalb ergänzt das Pausenmenü nach gelöstem Satz „Fuchsaktion erneut ansehen“. Die Wiederholung versetzt den Spieler vor die Szene, setzt nur Fuchs-/Toranimation zurück und bewahrt alle Lernantworten, Mengen und Fortschrittsflags. Es wird kein zweiter Fuchs erzeugt. Nach der Toröffnung9,8ssetzt sich der Fuchs weich bis10,6s; im Lebendzustand bewegt er Schwanz/Ohren und atmet leicht.

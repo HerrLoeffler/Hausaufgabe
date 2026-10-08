@@ -7,7 +7,7 @@
 #include "GameFramework/SaveGame.h"
 #include "Core/IslandRules.h"
 #include "IslandWorld.generated.h"
-class UIslandFocusWidget;class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;
+class UProceduralMeshComponent;class UMaterialInstanceDynamic;class UIslandFocusWidget;class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;
 UCLASS() class AIslandCharacter:public ACharacter {
  GENERATED_BODY()
  public:AIslandCharacter();UPROPERTY() UCameraComponent* Camera;virtual void SetupPlayerInputComponent(UInputComponent*)override;virtual void Tick(float)override;
@@ -33,12 +33,15 @@ UCLASS() class UIslandPreferences:public USaveGame {
 };
 struct FIslandTarget{int Id;FVector Pos;FString Label,Context;};
 struct FIslandGate{AActor* Actor=nullptr;float Angle=0;UStaticMeshComponent* Barrier=nullptr;};
+struct FIslandFoxPart{UProceduralMeshComponent* Mesh=nullptr;UMaterialInstanceDynamic* Material=nullptr;FLinearColor Living;};
 UCLASS() class AIslandGameMode:public AGameModeBase {
  GENERATED_BODY()
  public:AIslandGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
  Island::State State;Island::PlateContact Contact;TArray<FIslandTarget> Targets;TArray<FIslandGate> Gates;
  TArray<UStaticMeshComponent*> IntroTiles,PathTiles,Cables,Signals;TArray<UTextRenderComponent*> IntroMarks,PathMarks;
  FVector ObservationStand=FVector(9400,-850,1088);FRotator ObservationView=FRotator(-12,-90,0);TArray<UTextRenderComponent*> SentenceSlots;UStaticMeshComponent* BasinWater=nullptr;float BasinHeight=0;
+ AActor* Fox=nullptr;AActor* FoxRope=nullptr;TArray<FIslandFoxPart> FoxParts;TArray<UProceduralMeshComponent*> FoxLegs,FoxFeet,FoxEyes,FoxEars,FoxInnerEars;UProceduralMeshComponent* FoxBody=nullptr;UProceduralMeshComponent* FoxHead=nullptr;UProceduralMeshComponent* FoxMuzzle=nullptr;UProceduralMeshComponent* FoxJaw=nullptr;UProceduralMeshComponent* FoxTail=nullptr;UProceduralMeshComponent* FoxTailTip=nullptr;UProceduralMeshComponent* FoxNose=nullptr;UProceduralMeshComponent* FoxChest=nullptr;UStaticMeshComponent* FoxLatch=nullptr;TArray<UStaticMeshComponent*> FoxRopeSegments;float FoxTime=0,FoxMotionTime=0;
+ void BuildFox();void RefreshFox(float);bool FoxRopeReleased()const;bool ReplayFox();
  AActor* Bucket=nullptr;UStaticMeshComponent* BucketWater=nullptr;UTextRenderComponent* BucketAmount=nullptr;
  int Focus=-1,Near=-1;bool Paused=false;float Clock=0,MessageTime=0,StrokeTime=0;int PendingStroke=0,StrokeTarget=-1;bool CupStroke=false;FString Feedback,SaveSlot=TEXT("LerninselV1");
  void BuildWorld();void BuildPuzzleWorld();void RefreshWorld(float);void RefreshPuzzleWorld(float);void PuzzleInteract(int);bool CanInspect(int)const;bool PreviewAligned()const;void ConfirmCoast();void UIAction(int);FString SentenceText()const;void Interact(int);void SelectFocused();void Apply(Island::Action,int=0);void Notify(const FString&);void Save();bool Load();void ResetDemo();

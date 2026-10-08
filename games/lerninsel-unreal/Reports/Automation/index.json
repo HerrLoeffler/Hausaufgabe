@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "A317C79ED247DE837B32928ACA711900",
-			"instanceName": "Mac.fritz.box-25665",
+			"instance": "A164E3189D41098FAB66DF9C31339971",
+			"instanceName": "Mac.fritz.box-34897",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,13 +15,13 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.08-14.47.00",
-	"succeeded": 0,
+	"reportCreatedOn": "2026.10.08-16.38.52",
+	"succeeded": 1,
 	"succeededWithWarnings": 3,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 29.130270004272461,
+	"totalDuration": 36.280971527099609,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
@@ -31,37 +31,12 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A317C79ED247DE837B32928ACA711900"
+				"A164E3189D41098FAB66DF9C31339971"
 			],
-			"duration": 2.2619795799255371,
-			"dateTime": "2026.10.08-14.46.31",
-			"entries": [
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.31"
-				},
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.31"
-				}
-			],
-			"warnings": 2,
+			"duration": 2.2756712436676025,
+			"dateTime": "2026.10.08-16.38.16",
+			"entries": [],
+			"warnings": 0,
 			"errors": 0,
 			"artifacts": []
 		},
@@ -71,10 +46,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A317C79ED247DE837B32928ACA711900"
+				"A164E3189D41098FAB66DF9C31339971"
 			],
-			"duration": 13.982639312744141,
-			"dateTime": "2026.10.08-14.46.33",
+			"duration": 13.998950958251953,
+			"dateTime": "2026.10.08-16.38.18",
 			"entries": [
 				{
 					"event":
@@ -86,7 +61,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.41"
+					"timestamp": "2026.10.08-16.38.26"
 				},
 				{
 					"event":
@@ -98,7 +73,47 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.41"
+					"timestamp": "2026.10.08-16.38.26"
+				}
+			],
+			"warnings": 2,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Fox",
+			"fullTestPath": "GradeCrew.Lerninsel.Fox",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A164E3189D41098FAB66DF9C31339971"
+			],
+			"duration": 7.0993571281433105,
+			"dateTime": "2026.10.08-16.38.32",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.38.36"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.38.36"
 				}
 			],
 			"warnings": 2,
@@ -111,10 +126,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A317C79ED247DE837B32928ACA711900"
+				"A164E3189D41098FAB66DF9C31339971"
 			],
-			"duration": 12.885650634765625,
-			"dateTime": "2026.10.08-14.46.47",
+			"duration": 12.90699291229248,
+			"dateTime": "2026.10.08-16.38.39",
 			"entries": [
 				{
 					"event":
@@ -126,7 +141,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.51"
+					"timestamp": "2026.10.08-16.38.46"
 				},
 				{
 					"event":
@@ -138,7 +153,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-14.46.51"
+					"timestamp": "2026.10.08-16.38.46"
 				}
 			],
 			"warnings": 2,

@@ -8,6 +8,7 @@ namespace {const TCHAR* Parts[]={TEXT("heute"),TEXT("öffnet"),TEXT("der Fuchs")
 bool AIslandGameMode::CanInspect(int Id)const{
  if(Id==401&&State.carrying)return false;if(Id==404&&!State.carrying)return false;
  if(Id>=200&&Id<=208)return State.intro;
+ if(Id==513)return State.verbs&&!State.sentence;
  if(Id>=500&&Id<=512)return State.verbs;
  if(Id>=400&&Id<=404)return State.sentence;
  if(Id>=600&&Id<=604)return State.sentence&&State.water;
@@ -23,6 +24,7 @@ void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("L�
  if(Id>=500&&Id<=503){Focus=Id;}
  else if(Id==510){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Focus=510;}
  else if(Id==511)Apply(Island::Action::SentenceUndo);else if(Id==512)Apply(Island::Action::SentenceCheck);
+ else if(Id==513){Focus=513;}
  else if(Id==600){Focus=600;}
  else if(Id>=601&&Id<=603){int Delta=Id==601?1:Id==602?2:-1;if(!State.carrying){Notify(TEXT("Hol denselben Messbecher zurück. Er steht noch bei der ersten Wasseraufgabe hinter dir."));return;}if(State.tenths+Delta>10){Notify(TEXT("Diese Portion passt nicht mehr hinein. Nimm den 100-ml-Hahn oder lasse 100 ml ab."));return;}if(State.tenths+Delta<0){Notify(TEXT("Der Messbecher ist leer. Es gibt nichts abzulassen."));return;}PendingStroke=Delta;StrokeTarget=Id;CupStroke=true;StrokeTime=.6f;Notify(Delta<0?TEXT("100 ml laufen aus dem Becher …"):Delta==2?TEXT("200 ml = 1/5 Liter fließen ein …"):TEXT("100 ml = 1/10 Liter fließen ein …"));}
  else if(Id==604){if(!State.carrying){Notify(TEXT("Nimm den Messbecher von der 3/10-Platte wieder auf und bringe ihn hierher."));return;}Apply(Island::Action::CupPour);}
@@ -33,6 +35,7 @@ void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("L�
  if(Focus>=0)if(auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0))){C->CancelInput();C->UpdateMode();}
 }
 void AIslandGameMode::UIAction(int Code){auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0));
+ if(Code==9005&&Paused){ReplayFox();return;}
  if(Code==9000&&Paused){Paused=false;if(C){C->CancelInput();C->UpdateMode();}return;}
  if(Paused&&Code>=9002&&Code<=9004&&C){C->SetMouseSensitivity(Code==9004?1.f:C->MouseSensitivity+(Code==9002?-.25f:.25f));if(C->FocusWidget)C->FocusWidget->Refresh();return;}
  if(Code==9001&&Paused){if(auto* P=Player())P->Camera->SetFieldOfView(P->Camera->FieldOfView<80?85:75);return;}

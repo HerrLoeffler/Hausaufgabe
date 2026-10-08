@@ -12,3 +12,6 @@ c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/controls_test.cpp" -o "$root/.
 
 c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/water_test.cpp" -o "$root/.build/water_test"
 "$root/.build/water_test"
+
+c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/fox_test.cpp" -o "$root/.build/fox_test"
+"$root/.build/fox_test"

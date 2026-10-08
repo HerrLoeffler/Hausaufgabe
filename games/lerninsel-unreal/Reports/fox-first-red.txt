@@ -1,0 +1,5 @@
+PASS 64 rule checks
+PASS 88 puzzle checks
+PASS 7 control checks
+PASS 24 water checks
+FAIL after 2: FoxCueAt(.8f,true).color>.49f&&FoxCueAt(.8f,true).color<.51f
