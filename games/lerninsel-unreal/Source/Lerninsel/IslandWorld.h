@@ -18,12 +18,18 @@ UCLASS() class AIslandController:public APlayerController {
  public:virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
  void Interact();void Escape();void PointerDown();void CancelInput();void UpdateMode();int PickWorldTarget(float,float)const;
  UPROPERTY() UIslandFocusWidget* FocusWidget=nullptr;
+ float MouseSensitivity=1.f;FString PreferencesSlot=TEXT("LerninselPreferencesV1");
+ void SetMouseSensitivity(float,bool=true);bool SavePreferences();bool LoadPreferences();
  void TouchPressed(ETouchIndex::Type,FVector);void TouchMoved(ETouchIndex::Type,FVector);void TouchReleased(ETouchIndex::Type,FVector);
  Island::TouchOwnership Ownership;FVector2D TouchMove=FVector2D::ZeroVector;FVector2D TouchOrigin[10],TouchLast[10];bool TouchUsed=false,KeysArmed=true;
 };
 UCLASS() class UIslandSave:public USaveGame {
  GENERATED_BODY()
  public:UPROPERTY() FString Snapshot;UPROPERTY() FVector Position;UPROPERTY() FRotator View;
+};
+UCLASS() class UIslandPreferences:public USaveGame {
+ GENERATED_BODY()
+ public:UPROPERTY() float MouseSensitivity=1.f;
 };
 struct FIslandTarget{int Id;FVector Pos;FString Label,Context;};
 struct FIslandGate{AActor* Actor=nullptr;float Angle=0;UStaticMeshComponent* Barrier=nullptr;};

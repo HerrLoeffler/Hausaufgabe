@@ -32,6 +32,7 @@ void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("LÃ
 }
 void AIslandGameMode::UIAction(int Code){auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0));
  if(Code==9000&&Paused){Paused=false;if(C){C->CancelInput();C->UpdateMode();}return;}
+ if(Paused&&Code>=9002&&Code<=9004&&C){C->SetMouseSensitivity(Code==9004?1.f:C->MouseSensitivity+(Code==9002?-.25f:.25f));if(C->FocusWidget)C->FocusWidget->Refresh();return;}
  if(Code==9001&&Paused){if(auto* P=Player())P->Camera->SetFieldOfView(P->Camera->FieldOfView<80?85:75);return;}
  if(Code==4000){Focus=-1;if(C){C->CancelInput();C->UpdateMode();}return;}
  if(Paused||Focus<0)return;

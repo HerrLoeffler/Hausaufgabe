@@ -1,4 +1,5 @@
 #include "IslandWorld.h"
+#include "Core/IslandControls.h"
 #include "IslandFocusWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
@@ -17,19 +18,22 @@ namespace{AIslandGameMode* Game(const AActor* A){return A&&A->GetWorld()?Cast<AI
 AIslandCharacter::AIslandCharacter(){
  PrimaryActorTick.bCanEverTick=true;GetCapsuleComponent()->InitCapsuleSize(30,88);
  Camera=CreateDefaultSubobject<UCameraComponent>(TEXT("EgoCamera"));Camera->SetupAttachment(GetCapsuleComponent());Camera->SetRelativeLocation(FVector(0,0,72));Camera->bUsePawnControlRotation=true;Camera->FieldOfView=75;
- GetCharacterMovement()->MaxWalkSpeed=230;GetCharacterMovement()->MaxStepHeight=30;GetCharacterMovement()->JumpZVelocity=0;GetCharacterMovement()->bOrientRotationToMovement=false;
+ GetCharacterMovement()->MaxWalkSpeed=420;GetCharacterMovement()->MaxStepHeight=30;GetCharacterMovement()->JumpZVelocity=0;GetCharacterMovement()->bOrientRotationToMovement=false;
  bUseControllerRotationYaw=true;
 }
 bool AIslandCharacter::CanMove()const{auto* G=Game(this);auto* C=Cast<AIslandController>(Controller);return G&&C&&!G->Paused&&G->Focus<0&&C->KeysArmed;}
 void AIslandCharacter::Forward(float V){if(CanMove())AddMovementInput(FRotator(0,GetControlRotation().Yaw,0).Vector(),V);}
 void AIslandCharacter::Right(float V){if(CanMove())AddMovementInput(FRotationMatrix(FRotator(0,GetControlRotation().Yaw,0)).GetUnitAxis(EAxis::Y),V);}
-void AIslandCharacter::Turn(float V){if(CanMove())AddControllerYawInput(V*.7f);}
-void AIslandCharacter::Look(float V){if(CanMove())AddControllerPitchInput(V*.7f);}
+void AIslandCharacter::Turn(float V){if(CanMove())AddControllerYawInput(V*.7f*CastChecked<AIslandController>(Controller)->MouseSensitivity);}
+void AIslandCharacter::Look(float V){if(CanMove())AddControllerPitchInput(V*.7f*CastChecked<AIslandController>(Controller)->MouseSensitivity);}
 void AIslandCharacter::SetupPlayerInputComponent(UInputComponent* I){Super::SetupPlayerInputComponent(I);I->BindAxis(TEXT("Forward"),this,&AIslandCharacter::Forward);I->BindAxis(TEXT("Right"),this,&AIslandCharacter::Right);I->BindAxis(TEXT("Turn"),this,&AIslandCharacter::Turn);I->BindAxis(TEXT("Look"),this,&AIslandCharacter::Look);}
 void AIslandCharacter::Tick(float Dt){Super::Tick(Dt);if(auto* C=Cast<AIslandController>(Controller)){auto* G=Game(this);if(G&&!G->Paused&&G->Focus<0){const FVector2D M=C->TouchMove.GetClampedToMaxSize(1);AddMovementInput(FRotator(0,GetControlRotation().Yaw,0).Vector(),M.Y);AddMovementInput(FRotationMatrix(FRotator(0,GetControlRotation().Yaw,0)).GetUnitAxis(EAxis::Y),M.X);}}
  if(GetActorLocation().Z<-150)SetActorLocation(FVector(-1600,0,88));
 }
-void AIslandController::BeginPlay(){Super::BeginPlay();PlayerCameraManager->ViewPitchMin=-75;PlayerCameraManager->ViewPitchMax=75;UpdateMode();}
+void AIslandController::BeginPlay(){Super::BeginPlay();LoadPreferences();PlayerCameraManager->ViewPitchMin=-75;PlayerCameraManager->ViewPitchMax=75;UpdateMode();}
+void AIslandController::SetMouseSensitivity(float V,bool Persist){MouseSensitivity=Island::NormalizeSensitivity(V);if(Persist)SavePreferences();}
+bool AIslandController::SavePreferences(){auto* S=Cast<UIslandPreferences>(UGameplayStatics::CreateSaveGameObject(UIslandPreferences::StaticClass()));S->MouseSensitivity=MouseSensitivity;bool Ok=UGameplayStatics::SaveGameToSlot(S,PreferencesSlot,0);if(!Ok)if(auto* G=Game(this))G->Notify(TEXT("Mauseinstellung gilt jetzt, konnte aber nicht gespeichert werden."));return Ok;}
+bool AIslandController::LoadPreferences(){if(!UGameplayStatics::DoesSaveGameExist(PreferencesSlot,0))return false;auto* S=Cast<UIslandPreferences>(UGameplayStatics::LoadGameFromSlot(PreferencesSlot,0));if(!S)return false;MouseSensitivity=Island::NormalizeSensitivity(S->MouseSensitivity);return true;}
 void AIslandController::SetupInputComponent(){Super::SetupInputComponent();InputComponent->BindKey(EKeys::E,IE_Pressed,this,&AIslandController::Interact);InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AIslandController::Escape);InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&AIslandController::PointerDown);InputComponent->BindTouch(IE_Pressed,this,&AIslandController::TouchPressed);InputComponent->BindTouch(IE_Repeat,this,&AIslandController::TouchMoved);InputComponent->BindTouch(IE_Released,this,&AIslandController::TouchReleased);}
 void AIslandController::UpdateMode(){auto* G=Game(this);bool UI=G&&(G->Focus>=0||G->Paused);bShowMouseCursor=UI;if(UI){if(!FocusWidget){FocusWidget=CreateWidget<UIslandFocusWidget>(this,UIslandFocusWidget::StaticClass());FocusWidget->AddToViewport(20);}FocusWidget->SetVisibility(ESlateVisibility::Visible);FocusWidget->Refresh();FInputModeGameAndUI M;M.SetHideCursorDuringCapture(false);M.SetWidgetToFocus(FocusWidget->TakeWidget());SetInputMode(M);}else {if(FocusWidget){FocusWidget->CancelPointer();FocusWidget->SetVisibility(ESlateVisibility::Collapsed);}SetInputMode(FInputModeGameOnly());}}
 void AIslandController::CancelInput(){if(FocusWidget)FocusWidget->CancelPointer();if(auto* G=Game(this)){G->PendingStroke=0;G->Contact.Reset();}Ownership.Cancel();TouchMove=FVector2D::ZeroVector;KeysArmed=false;if(auto* P=Cast<ACharacter>(GetPawn())){P->ConsumeMovementInputVector();P->GetCharacterMovement()->StopMovementImmediately();}}

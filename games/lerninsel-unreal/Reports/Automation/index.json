@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "BFE6A611DB4DC296315556B108F2C8F4",
-			"instanceName": "Mac.fritz.box-21534",
+			"instance": "022DBD298A4A154086F85D853B600E6B",
+			"instanceName": "Mac.fritz.box-25029",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,26 +15,26 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.08-13.48.57",
+	"reportCreatedOn": "2026.10.08-14.33.24",
 	"succeeded": 0,
-	"succeededWithWarnings": 2,
+	"succeededWithWarnings": 3,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 25.831287384033203,
+	"totalDuration": 28.010787963867188,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
 		{
-			"testDisplayName": "FourPuzzles",
-			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+			"testDisplayName": "Controls",
+			"fullTestPath": "GradeCrew.Lerninsel.Controls",
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"BFE6A611DB4DC296315556B108F2C8F4"
+				"022DBD298A4A154086F85D853B600E6B"
 			],
-			"duration": 12.938810348510742,
-			"dateTime": "2026.10.08-13.48.32",
+			"duration": 2.2849955558776855,
+			"dateTime": "2026.10.08-14.32.56",
 			"entries": [
 				{
 					"event":
@@ -46,7 +46,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.32"
+					"timestamp": "2026.10.08-14.32.57"
 				},
 				{
 					"event":
@@ -58,8 +58,24 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.32"
-				},
+					"timestamp": "2026.10.08-14.32.57"
+				}
+			],
+			"warnings": 2,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FourPuzzles",
+			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"022DBD298A4A154086F85D853B600E6B"
+			],
+			"duration": 12.840973854064941,
+			"dateTime": "2026.10.08-14.32.59",
+			"entries": [
 				{
 					"event":
 					{
@@ -70,7 +86,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.42"
+					"timestamp": "2026.10.08-14.33.07"
 				},
 				{
 					"event":
@@ -82,10 +98,10 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.42"
+					"timestamp": "2026.10.08-14.33.07"
 				}
 			],
-			"warnings": 4,
+			"warnings": 2,
 			"errors": 0,
 			"artifacts": []
 		},
@@ -95,10 +111,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"BFE6A611DB4DC296315556B108F2C8F4"
+				"022DBD298A4A154086F85D853B600E6B"
 			],
-			"duration": 12.892477035522461,
-			"dateTime": "2026.10.08-13.48.45",
+			"duration": 12.884819030761719,
+			"dateTime": "2026.10.08-14.33.12",
 			"entries": [
 				{
 					"event":
@@ -110,7 +126,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.52"
+					"timestamp": "2026.10.08-14.33.17"
 				},
 				{
 					"event":
@@ -122,7 +138,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-13.48.52"
+					"timestamp": "2026.10.08-14.33.17"
 				}
 			],
 			"warnings": 2,

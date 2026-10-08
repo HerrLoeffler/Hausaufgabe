@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "IslandFocusWidget.generated.h"
-class UButton;class UCanvasPanel;class UIslandFocusWidget;class AIslandGameMode;
+class USlider;class UTextBlock;class UButton;class UCanvasPanel;class UIslandFocusWidget;class AIslandGameMode;
 struct FIslandPaintEdge{int From,To;FVector2D Start,End;};
 UCLASS() class UIslandUICommand:public UObject{
  GENERATED_BODY()
@@ -15,6 +15,8 @@ UCLASS() class UIslandFocusWidget:public UUserWidget{
  virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent&)override;
  virtual FReply NativeOnTouchStarted(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnTouchMoved(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnTouchEnded(const FGeometry&,const FPointerEvent&)override;
  virtual int32 NativePaint(const FPaintArgs&,const FGeometry&,const FSlateRect&,FSlateWindowElementList&,int32,const FWidgetStyle&,bool)const override;
+ UPROPERTY() USlider* MouseSlider=nullptr;UPROPERTY() UTextBlock* MouseSpeedLabel=nullptr;
+ UFUNCTION() void MouseSensitivityChanged(float Value);UFUNCTION() void MouseSensitivityCommitted();
  UButton* ButtonFor(int)const;void CancelPointer();AIslandGameMode* Game()const;void Refresh();
  UPROPERTY() UCanvasPanel* Body;UPROPERTY() TArray<UIslandUICommand*> Commands;UPROPERTY() TMap<int,UButton*> Buttons;
  mutable TArray<FIslandPaintEdge> PaintedEdges;
