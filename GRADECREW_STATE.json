@@ -937,11 +937,46 @@
       "branch": "feature/lerninsel-ego-v1",
       "stage": "branch_only",
       "pr": 175,
-      "observed_head": "c2c651b0d3be64f2279254c00d3b773f4f1b7da7",
+      "observed_head": "dd374a0f4ec9c01e56c754b480e8865db2b26e92",
       "local_reviewed_commit": "9a87e02",
       "handoff": "workstreams/lerninsel-layouts-20261007.md",
-      "scope": "First playable UE5.8 ego arrival, verb probe/path and one-liter tenths bucket terrace",
+      "scope": "Four native ego puzzle mechanisms, one-liter bucket, two optional questions",
       "local_validation": {
+        "engine": "UE5.8.3 DevelopmentEditor Mac",
+        "build": "success",
+        "portable_checks": 147,
+        "rules": 59,
+        "puzzles": 88,
+        "ue_tests": 2,
+        "errors": 0,
+        "warnings": 4,
+        "warning_source": "Epicx86idevice_id helper onARM",
+        "report_utc": "2026.10.08-11.10.06",
+        "report": "games/lerninsel-unreal/Reports/Automation/index.json",
+        "pointer": "native SButton down/capture/up; full Slate captured route drag; no human OS hit-test acceptance",
+        "real_game_images": 10,
+        "independent_review": "3 important+3 effect-regraded control cases reproduced and fixed; no second review",
+        "review": "games/lerninsel-unreal/Production/REVIEW-FOUR.md"
+      },
+      "ci": "localUnrealVerification_only",
+      "integration": "not_performed",
+      "user_test": "not_performed",
+      "browser_streaming": "not_implemented",
+      "ipad_device_acceptance": "not_performed",
+      "next_action": "User plays four-mechanic prototype; then assess actual first-play usability and terrain/art refinement. Physical iPad and browser hosting need separate verification.",
+      "production": "not_authorized",
+      "local_final_commit": "da26552",
+      "runtime_tree": "6fa9add4bbed720f3441427552ad94363a0bcfda",
+      "remote_local_runtime_bytes": "identical",
+      "ci_checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37701231892/job/113064884742"
+        }
+      ],
+      "previous_local_validation": {
         "engine": "UE5.8.3 DevelopmentEditor Mac M5Pro",
         "build": "success",
         "portable_rules": 59,
@@ -953,24 +988,18 @@
         "independent_review": "3 important findings reproduced before fix, all corrected with engine regressions; 1 deferred minor floor error marker",
         "real_game_images": 4
       },
-      "ci": "not_performed",
-      "integration": "not_performed",
-      "user_test": "not_performed",
-      "browser_streaming": "not_implemented",
-      "ipad_device_acceptance": "not_performed",
-      "next_action": "User plays first section; then refine terrain/art and build remaining Satzweg/Felsfenster. Verify browser/mobile separately.",
-      "production": "not_authorized",
-      "local_final_commit": "76b336e",
-      "runtime_tree": "4eec154b4fa13f0da504d21f9545ea76ccf4286d",
-      "remote_local_runtime_bytes": "identical",
-      "ci_checks": [
-        {
-          "name": "Live branch / PR audit",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37701231892/job/113064884742"
-        }
-      ]
+      "art_reference": {
+        "new_boards": 12,
+        "new_motifs": 240,
+        "all_motifs": 261,
+        "illustrated_pdf_pages": 280,
+        "text_pages": 28,
+        "overview_pages": 12,
+        "study_pages": 240,
+        "not_assets": true,
+        "pdf_local_reproducible": true,
+        "builtin_image_calls_total": 19
+      }
     }
   ],
   "deployments": [
