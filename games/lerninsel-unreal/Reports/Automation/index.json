@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "2FD11D48144B4AFFC220FC8718CECEF9",
-			"instanceName": "Mac.fritz.box-15685",
+			"instance": "BFE6A611DB4DC296315556B108F2C8F4",
+			"instanceName": "Mac.fritz.box-21534",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,13 +15,13 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.08-11.10.06",
+	"reportCreatedOn": "2026.10.08-13.48.57",
 	"succeeded": 0,
 	"succeededWithWarnings": 2,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 21.893316268920898,
+	"totalDuration": 25.831287384033203,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
@@ -31,10 +31,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"2FD11D48144B4AFFC220FC8718CECEF9"
+				"BFE6A611DB4DC296315556B108F2C8F4"
 			],
-			"duration": 13.047892570495605,
-			"dateTime": "2026.10.08-11.09.44",
+			"duration": 12.938810348510742,
+			"dateTime": "2026.10.08-13.48.32",
 			"entries": [
 				{
 					"event":
@@ -46,7 +46,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-11.09.52"
+					"timestamp": "2026.10.08-13.48.32"
 				},
 				{
 					"event":
@@ -58,10 +58,34 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-11.09.52"
+					"timestamp": "2026.10.08-13.48.32"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.48.42"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.48.42"
 				}
 			],
-			"warnings": 2,
+			"warnings": 4,
 			"errors": 0,
 			"artifacts": []
 		},
@@ -71,10 +95,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"2FD11D48144B4AFFC220FC8718CECEF9"
+				"BFE6A611DB4DC296315556B108F2C8F4"
 			],
-			"duration": 8.845423698425293,
-			"dateTime": "2026.10.08-11.09.57",
+			"duration": 12.892477035522461,
+			"dateTime": "2026.10.08-13.48.45",
 			"entries": [
 				{
 					"event":
@@ -86,7 +110,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-11.10.02"
+					"timestamp": "2026.10.08-13.48.52"
 				},
 				{
 					"event":
@@ -98,7 +122,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-11.10.02"
+					"timestamp": "2026.10.08-13.48.52"
 				}
 			],
 			"warnings": 2,

@@ -33,3 +33,10 @@ Das native Programm ist ein Funktionsprototyp. Landschaft und Modelle sind deutl
 `docs/games/lerninsel/20261007/spielbuch.md` enthält den ursprünglichen umfangreichen Entwurf. `docs/games/lerninsel/20261008-production/` ergänzt Bauvertrag, Bildprüfung, zwölf neue 20-Motiv-Tafeln und den reproduzierbaren 280-seitigen illustrierten Atlas. Zusammen 261 Konzeptmotive, keine 261 fertigen 3 D-Assets. Das lokal erzeugte PDF ist wegen seiner Größe nicht eingecheckt; Quellen, Bilder und `build_handbook.py` sind gesichert. Mit Report Lab und pypdf reproduzierbar; die vorhandene Unreal-Installation liefert die Schriftdateien.
 
 Task GC-GAMES-ESCAPE-VISUAL-01, Branchfeature/lerninsel-ego-v1, Draft PR175. Aktueller Stand/Versuchshistorie: Production/HANDOFF.md. Prüfbefunde: Production/REVIEW.md.
+
+
+## Aufgabenführung – Überarbeitung vom 08.10.2026
+
+Bei der Verbprobe wählt ein Klick oder E das Wort unmittelbar aus. Der ganze Stein wird blau; es gibt kein Häkchen und kein zweites Auswahlfenster. Erneutes bewusstes Auswählen nimmt das Wort zurück. Zwei richtige Verben öffnen das Tor automatisch. Der Verbweg erklärt dauerhaft: vorne anfangen, in jeder der drei nummerierten Reihen ein Verb wählen. Ein erstes Wort startet den Weg ebenfalls direkt. Drei richtige Schritte öffnen das Tor automatisch; falsch gewählte Schritte am Stein Schritt zurück links verbessern. Der spätere Satzplatz zeigt ein Beispiel und die Regel Verb auf Platz 2.
+
+Die neue Version wird über denselben Starter geöffnet. Eine noch laufende alte Spielsitzung bitte schließen und Lerninsel starten.command erneut öffnen; Änderungen erscheinen nach Neustart. Vorhandener Fortschritt bleibt erhalten. Layoutvorlage und genaue Entscheidungen: docs/games/lerninsel/20261008-learning/README.md. Die Vorlage ist Konzeptkunst; tatsächliche Aufnahmen stehen in Reports/Learning-Selection.png und Reports/Learning-Verbweg.png. Neue Nutzerabnahme bleibt offen.

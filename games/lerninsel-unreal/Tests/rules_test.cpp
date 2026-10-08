@@ -5,6 +5,15 @@ using namespace Island;
 int checks=0;
 #define CHECK(x) do { ++checks; if(!(x)) throw std::runtime_error(#x); } while(0)
 int main(){try{
+ State prompt;prompt.intro=true;
+ CHECK(PathPromptRow(prompt)==1);
+ Apply(prompt,Action::PathStart);Apply(prompt,Action::PathStep,1);
+ CHECK(PathPromptRow(prompt)==1); // wrong first row stays the correction target
+ Apply(prompt,Action::PathUndo);Apply(prompt,Action::PathStep,0);
+ CHECK(PathPromptRow(prompt)==2);
+ Apply(prompt,Action::PathStep,3);CHECK(PathPromptRow(prompt)==2);
+ Apply(prompt,Action::PathUndo);Apply(prompt,Action::PathStep,4);Apply(prompt,Action::PathStep,8);
+ CHECK(PathPromptRow(prompt)==3);
  State s;
  CHECK(!s.intro && !s.verbs && !s.water && s.tenths==0);
  CHECK(Apply(s,Action::IntroToggle,0)==Result::Applied);

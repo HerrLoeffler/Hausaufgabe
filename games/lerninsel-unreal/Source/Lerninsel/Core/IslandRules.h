@@ -8,6 +8,7 @@ namespace Island {
 enum class Result{Applied,Already,Full,Empty,Wrong,WrongRow,Blocked,Incomplete,TooLow,TooHigh,WrongEdge,WrongView,Invalid};
 enum class Action{IntroToggle,IntroCheck,PathStart,PathStep,PathUndo,PathCheck,Pickup,Fill,Drain,PlacePlate,PlaceStand,SentenceStart,SentencePick,SentenceUndo,SentenceCheck,RouteStart,RouteNode,RouteUndo,RouteCheck,Find,CoastToggle,CoastCheck,CoastConfirm,FinaleCheck,BonusAnswer};
 struct State{bool intro=false,verbs=false,water=false,carrying=false,pathActive=false,pathFailed=false;int introMask=0,pathCount=0,tenths=0,bucketPlace=0;std::array<int,3> path{{-1,-1,-1}};bool sentence=false,fractions=false,coast=false,finale=false,coastReady=false,sentenceActive=false,routeActive=false;int sentenceCount=0,routeCount=0,foundMask=0,coastMask=0,bonusMask=0;std::array<int,4> sentenceParts{{-1,-1,-1,-1}};std::array<int,5> route{{-1,-1,-1,-1,-1}};};
+inline int PathPromptRow(const State& s){int Row=s.pathFailed?s.pathCount:s.pathCount+1;return Row<1?1:Row>3?3:Row;}
 inline int CountBits(int mask){int n=0;for(int i=0;i<4;++i)n+=(mask>>i)&1;return n;}
 inline Result ApplyPuzzle(State&,Action,int);
 inline Result Apply(State& s,Action a,int value=0){

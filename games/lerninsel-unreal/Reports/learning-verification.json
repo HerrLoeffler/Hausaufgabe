@@ -1,0 +1,29 @@
+{
+  "task_id": "GC-GAMES-ESCAPE-VISUAL-01",
+  "report_utc": "2026.10.08-13.48.57",
+  "engine": "UE5.8.3 DevelopmentEditor Mac",
+  "build": "success",
+  "portable_rules": 64,
+  "portable_puzzles": 88,
+  "ue_tests": 2,
+  "errors": 0,
+  "warnings": 6,
+  "warning_source": "Epic bundled x86 idevice_id cannot run on ARM; no product warnings in captured tests",
+  "new_actual_captures": [
+    "Reports/Learning-Selection.png",
+    "Reports/Learning-Verbweg.png"
+  ],
+  "pointer_scope": "attached native widget press/reply/capture plus captured Slate moves/up; no human OS hit-test or iPad acceptance",
+  "red_reports": [
+    "learning-first-red.json",
+    "learning-visual-first.json",
+    "learning-route-fixture-first.json",
+    "learning-resume-red.json",
+    "../learning-prompt-red.txt"
+  ],
+  "stage": "branch_only",
+  "new_user_acceptance": "pending",
+  "production": "unchanged",
+  "independent_review": "Two P2 task-guidance findings accepted and fixed; five pure row-guidance cases verified after red",
+  "native_runs_this_block": 8
+}

@@ -12,6 +12,8 @@
 #include "UnrealClient.h"
 #include "Engine/GameViewportClient.h"
 #include "ImageUtils.h"
+#include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Misc/FileHelper.h"
 #include "GameFramework/InputSettings.h"
 #include "GameFramework/PlayerInput.h"
@@ -33,6 +35,27 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  if(!P){Test->AddError(TEXT("Ego character missing"));return true;}
  if(Phase==0){
  G->SaveSlot=TEXT("LerninselAutomationOnly");G->ResetDemo();
+ // Regression: child-facing word interaction must select once without a modal confirmation.
+ P->SetActorLocation(G->Target(100)->Pos+FVector(0,0,80));G->Interact(100);
+ Test->TestEqual(TEXT("One word action immediately selects"),G->State.introMask,1);
+ Test->TestEqual(TEXT("Word selection stays in first person"),G->Focus,-1);
+ G->Interact(100);Test->TestEqual(TEXT("Second deliberate action removes selection"),G->State.introMask,0);
+ P->SetActorLocation(G->Target(101)->Pos+FVector(0,0,80));G->Interact(101);P->SetActorLocation(G->Target(100)->Pos+FVector(0,0,80));G->Interact(100);Test->TestFalse(TEXT("Wrong two-word pair never opens intro"),G->State.intro);
+ P->SetActorLocation(G->Target(101)->Pos+FVector(0,0,80));G->Interact(101);P->SetActorLocation(G->Target(102)->Pos+FVector(0,0,80));G->Interact(102);
+ Test->TestTrue(TEXT("Correct pair opens without visiting check terminal"),G->State.intro);
+ P->SetActorLocation(G->Target(200)->Pos+FVector(0,0,80));G->Interact(200);
+ Test->TestTrue(TEXT("First row word starts route and selects in one action"),G->State.pathActive&&G->State.pathCount==1&&G->Focus<0);
+ P->SetActorLocation(G->Target(208)->Pos+FVector(0,0,80));G->Interact(208);
+ Test->TestEqual(TEXT("Skipping a row cannot advance"),G->State.pathCount,1);
+ P->SetActorLocation(G->Target(204)->Pos+FVector(0,0,80));G->Interact(204);
+ P->SetActorLocation(G->Target(208)->Pos+FVector(0,0,80));G->Interact(208);
+ Test->TestTrue(TEXT("Third correct row opens garden without extra check"),G->State.verbs);
+ G->ResetDemo();G->State.introMask=5;G->Save();G->ResetDemo();G->Load();
+ Test->TestTrue(TEXT("Old unconfirmed correct intro resumes with automatic gate"),G->State.intro);
+ G->State.intro=true;G->State.introMask=5;G->State.pathActive=true;G->State.pathCount=3;G->State.path={{0,4,8}};G->Save();G->ResetDemo();G->Load();
+ Test->TestTrue(TEXT("Old unconfirmed correct path resumes with automatic gate"),G->State.verbs);
+ G->ResetDemo();
+
  for(TActorIterator<ADirectionalLight> Sun(W);Sun;++Sun)Test->TestEqual(TEXT("Authored sun is movable, no unbuilt lightmap preview"),Sun->GetComponentByClass<UDirectionalLightComponent>()->Mobility,EComponentMobility::Movable);
  TArray<FInputAxisKeyMapping> ForwardKeys,RightKeys;GetDefault<UInputSettings>()->GetAxisMappingByName(TEXT("Forward"),ForwardKeys);GetDefault<UInputSettings>()->GetAxisMappingByName(TEXT("Right"),RightKeys);
  Test->TestTrue(TEXT("W reaches forward axis"),ForwardKeys.ContainsByPredicate([](const FInputAxisKeyMapping& M){return M.Key==EKeys::W&&M.Scale==1;}));
@@ -62,9 +85,19 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  if(FPlatformTime::Seconds()-Started<2)return false;
  if(Phase==1){
  Test->TestTrue(TEXT("Actual game viewport arrival captured"),CaptureGame(W,TEXT("Arrival.png")));
- for(int Id:{0,2}){P->SetActorLocation(G->Target(100+Id)->Pos+FVector(0,0,80));G->Interact(100+Id);G->SelectFocused();}
+ P->SetActorLocation(FVector(-940,-180,88));G->Interact(100);C->SetControlRotation(FRotator(-44,0,0));
+ auto* Chosen=Cast<UMaterialInstanceDynamic>(G->IntroTiles[0]->GetMaterial(0));auto* Other=Cast<UMaterialInstanceDynamic>(G->IntroTiles[1]->GetMaterial(0));
+ Test->TestTrue(TEXT("Choice tints its full stone without tinting another"),Chosen&&Other&&Chosen!=Other&&Chosen->K2_GetVectorParameterValue(TEXT("Tint")).B>Chosen->K2_GetVectorParameterValue(TEXT("Tint")).R&&Other->K2_GetVectorParameterValue(TEXT("Tint")).R>Other->K2_GetVectorParameterValue(TEXT("Tint")).B);
+ Started=FPlatformTime::Seconds();Phase=10;return false;
+ }
+ if(Phase==10){
+ Test->TestTrue(TEXT("Actual full-stone selection captured"),CaptureGame(W,TEXT("Learning-Selection.png")));
+ for(int Id:{2}){P->SetActorLocation(G->Target(100+Id)->Pos+FVector(0,0,80));G->Interact(100+Id);G->SelectFocused();}
  P->SetActorLocation(FVector(-330,0,88));G->Interact(11);Test->TestTrue(TEXT("Runtime probe opens intro milestone"),G->State.intro);
- P->SetActorLocation(FVector(50,-425,88));G->Interact(20);
+ P->SetActorLocation(FVector(50,-425,88));G->Interact(20);P->SetActorLocation(FVector(60,0,88));C->SetControlRotation(FRotator(-24,0,0));Started=FPlatformTime::Seconds();Phase=11;return false;
+ }
+ if(Phase==11){
+ Test->TestTrue(TEXT("Actual unsolved second task and row instructions captured"),CaptureGame(W,TEXT("Learning-Verbweg.png")));
  P->SetActorLocation(G->Target(200)->Pos+FVector(0,0,80));G->Tick(.15f);Test->TestEqual(TEXT("Foot contact under dwell does not select"),G->State.pathCount,0);G->Tick(.16f);Test->TestEqual(TEXT("Centered foot dwell selects first verb"),G->State.pathCount,1);G->Tick(.7f);Test->TestEqual(TEXT("Remaining on one tile never selects twice"),G->State.pathCount,1);
  for(int Id:{4,8}){P->SetActorLocation(G->Target(200+Id)->Pos+FVector(0,0,80));G->Tick(.31f);}
  P->SetActorLocation(FVector(1150,0,88));G->Interact(21);Test->TestTrue(TEXT("Runtime verb route confirms milestone"),G->State.verbs);
