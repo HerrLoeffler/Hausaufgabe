@@ -937,7 +937,7 @@
       "branch": "feature/lerninsel-ego-v1",
       "stage": "branch_only",
       "pr": 175,
-      "observed_head": "c7653d9b25e0cc93ad95b61bb29f9f74a4077ae4",
+      "observed_head": "28a60a34695f6c147d9a3ee71633adb09414c32e",
       "local_reviewed_commit": "9a87e02",
       "handoff": "workstreams/lerninsel-layouts-20261007.md",
       "scope": "Verb route, sentence-triggered live fox and gate replay, reusable1L measuring cup, coast observation, native mouse controls",
@@ -967,7 +967,7 @@
       "user_test": "Previous usability revision and first3/10 confirmed by Martin; new water/fox/control extension pending actual test",
       "browser_streaming": "not_implemented",
       "ipad_device_acceptance": "not_performed",
-      "next_action": "Clarify Fundbuch task label and distinguish fraction selection from future small perspective activation puzzle.",
+      "next_action": "Produce actual3Dart for one fox/sentence/gate reference scene; redesign unaccepted coast guidance against early working levels. Use actualUnrealcaptures, no newimagebatchasassetreplacement.",
       "production": "not_authorized",
       "local_final_commit": "b817014d034856b60b24142380ef184832d6fe8c",
       "runtime_tree": "a84531f3580764f87cf6dc4cda03eae5ef644215",
@@ -1049,12 +1049,14 @@
         "date": "2026-10-08",
         "fox_action": "positive visual feedback: looks good",
         "fresh_reset": "request dropped; not executed",
-        "whole_extension_acceptance": "pending"
+        "whole_extension_acceptance": "pending",
+        "first_three_levels": "positive user test feedback"
       },
       "coast_feedback": {
         "date": "2026-10-08",
-        "issue": "Drei Funde ordnen task unclear; ordering label misleading, current mechanic is choose3fractions summing1",
-        "instruction_explained": "Find4reliefs withE, select3knownparts, sum10/10, Menge prüfen; order irrelevant"
+        "issue": "Not understandable during exploration; chat solution explanation does not fix in-game task design",
+        "instruction_explained": "Find4reliefs withE, select3knownparts, sum10/10, Menge prüfen; order irrelevant",
+        "status": "rejected_in_actual_walkthrough"
       },
       "perspective_ring_idea": {
         "status": "recorded_future_idea",
@@ -1063,6 +1065,17 @@
         "activation_target": "not_decided",
         "separate_from_fraction_selection": true,
         "runtime_changed": false
+      },
+      "last_documentation_commit": "7d44d20953cd5f081b5d9c353ce4ce2e0d6ce956",
+      "art_acceptance": {
+        "date": "2026-10-08",
+        "status": "reference_mismatch",
+        "assessment": 3,
+        "scope": "actual runtime visuals versus suppliedfoxconceptboard",
+        "cause": "actual3Dassets/materials not produced at referencequality",
+        "reference_scene": "fox/sentencecourtyard/gate",
+        "current_art_revision_built": false,
+        "audit": "docs/games/lerninsel/20261008-art-audit.md"
       }
     }
   ],
