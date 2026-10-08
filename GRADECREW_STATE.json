@@ -967,7 +967,7 @@
       "user_test": "Previous usability revision and first3/10 confirmed by Martin; new water/fox/control extension pending actual test",
       "browser_streaming": "not_implemented",
       "ipad_device_acceptance": "not_performed",
-      "next_action": "Produce actual3Dart for one fox/sentence/gate reference scene; redesign unaccepted coast guidance against early working levels. Use actualUnrealcaptures, no newimagebatchasassetreplacement.",
+      "next_action": "Before large artproduction, define browser/iPad assetbudget and benchmark one representative polishedfox/courtyard scene; no1000-player/device guarantee yet.",
       "production": "not_authorized",
       "local_final_commit": "b817014d034856b60b24142380ef184832d6fe8c",
       "runtime_tree": "a84531f3580764f87cf6dc4cda03eae5ef644215",
@@ -1076,6 +1076,18 @@
         "reference_scene": "fox/sentencecourtyard/gate",
         "current_art_revision_built": false,
         "audit": "docs/games/lerninsel/20261008-art-audit.md"
+      },
+      "web_scalability_assessment": {
+        "date": "2026-10-08",
+        "target": "1000concurrent independent players in website/iPad",
+        "current_runtime": "localnativeUE5.8 only",
+        "recommendation": "assess browser-local rendering before large artproduction; noenginechangeexecuted",
+        "browser_local_fit": 8,
+        "pixel_streaming_fit": 4,
+        "criteria": "operationcosts/scalability/iPad conditional on realtests",
+        "sample_stream_8mbps": "1000streams=8Gbit/s,3.6TB/hour beforeoverhead",
+        "sample_asset_100mb": "1000firstloads=100GB beforecache",
+        "not_measured": true
       }
     }
   ],
