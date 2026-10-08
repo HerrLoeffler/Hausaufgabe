@@ -341,3 +341,6 @@ Remote92b79334458ca3e1ee9daf116af85cde1b5117ed, lokal211fc303cad9e21e97dfd664d3d
 
 
 GC-FINANCE-BAYSTARTUP-20261008 · Nutzerfassung übernommen und Umsatzdarstellung vereinfacht: direkte Eurobeträge, keine Lizenzäquivalent-Rechnung; gewünschte Kosten für beide historischen Jahre ergänzt, Umsatz ausdrücklich vorläufig null. Neue Kontaktdaten und Teamtext lokal erhalten. Zwei Seiten gerendert/visuell geprüft, EBIT aller Jahre bestätigt. Geänderter Finanzierungsbedarf übernommen; widersprüchliche Mittelverteilung markiert, Nutzerklärung offen. Keine Einreichung oder App-/Release-/Productionänderung. Bestehende Übergabe aktualisiert. Nächster Schritt: Mittelverteilung klären und gezielt korrigieren.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · Finanzierungsrahmen auf Nutzerwunsch abgestimmt; Mittelverteilung rechnerisch korrigiert. Frühere unbelegte hohe Personalkosten durch vorläufiges Solo-Szenario ersetzt, positiver Planwert im Folgejahr nur bei bezahlten Aufträgen und schlankem Betrieb, ausdrücklich ohne Gründergehalt. Zwei Seiten und sechs EBIT-Rechnungen geprüft; Original/Kontakte/Team erhalten, Zahlen bleiben lokal. Tatsächlicher Bedarf weiter offen, keine garantierte Rentabilität oder Einreichung. Nächster Schritt: reale laufende Kosten, externe Leistungen und Gründervergütung erfassen. Kein App-/Release-/Productionwechsel; bestehende Übergabe aktualisiert.
