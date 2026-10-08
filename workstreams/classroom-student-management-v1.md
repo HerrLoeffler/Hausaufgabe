@@ -209,3 +209,14 @@ Punkt 1 „ASV-Export bestätigen“ bedeutet in Alltagssprache: Die exportierte
 Weiterhin offen: tatsächliches Schüler-/Lehrkraft-/Unterrichtsexportprofil, konkrete schulische Schlüsselablage und Recovery, fachliche Prüfung von Zugriffs-/Datenfristen. Keine neue Abschlusswertung, keine Implementierung/Integration/Deployfreigabe; Release-Stufe bleibt branch_only. Historie/Budget bleiben erhalten.
 
 Genau ein nächster Schritt: tatsächliche ASV-Spaltenüberschriften für die stabilen Personenkennungen prüfen.
+
+
+## Lehrer-/Schülernavigation und Testübersicht – 08.10.2026
+
+Der Nutzer beschreibt die Lehreransicht als überladen: beim Öffnen erscheinen rund 20–30 Tests ohne klare Ordnung. Für denselben Task wurde deshalb ein V1-Bedienkonzept ergänzt: [CLASSROOM_TEACHER_UX_V1.md](../docs/CLASSROOM_TEACHER_UX_V1.md).
+
+Kernausrichtung: Lehrkraft startet auf einer aufgabenorientierten Übersicht. Klassen sind der wichtigste fachliche Einstieg. Die zentrale Testübersicht gruppiert eindeutige Tests nach Klasse → Fach und bietet Status-Ansichten/Filter für Entwürfe, Geplantes, Aktives und Abgeschlossenes. In der Klassenseite sind Schüler:innen und Tests als getrennte Reiter erreichbar; mehrere Fachlehrkräfte teilen denselben Klassenbestand, sehen aber nur ihre erlaubten Fächer und Ergebnisse. Schüler:innen sehen eine kleine persönliche Liste mit anstehenden, aktiven und erledigten Tests.
+
+Das ist ein Konzeptvorschlag innerhalb GC-CLASSROOM-01, keine Umsetzung oder Freigabe. Die Ablage nach Klasse/Fach ist Navigation/Ansicht, keine Kopie von Tests und keine Änderung an Secure Assessment. Vor Implementierung noch an realer Oberfläche und Test-Erstellungsablauf prüfen.
+
+Nächster ausführbarer Schritt für diesen Teil: diesen Ablauf anhand eines klickbaren, nicht produktiven UI-Modells bzw. der bestehenden Oberfläche auf Verständlichkeit prüfen, nachdem die vorliegende Struktur fachlich abgestimmt ist. Unabhängig davon bleiben ASV-Spalten, Schlüsseltresor/Recovery sowie Zugriffs- und Aufbewahrungsprüfung aus dem Identitätskonzept offen.

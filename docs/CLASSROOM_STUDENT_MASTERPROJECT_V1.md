@@ -1035,3 +1035,8 @@ Abschnitt 10a des [Identitäts-/Schuljahreswechsel-Entwurfs](privacy/CLASSROOM_I
 `ownerId` in älteren Schemata darf künftig nicht die einzige dauerhafte Kontrolle über schulische Klassen/Nachweise darstellen. Schüleridentitäten, Codes und Ergebnis-Snapshots bleiben bei Personalwechsel erhalten. Historische Einsicht, private Testentwürfe, Vertretung und Admin-Recovery werden gesondert begrenzt. Nur Architekturentwurf; noch keine Implementierung.
 
 Abschnitt 10b ergänzt den ASV-Lehrkräfte-/Unterrichtsimport und mehrere Fachlehrkräfte pro gemeinsamer Klasse. Personalimport, persönlicher Login und bestätigte Fach-/Klassenrechte sind getrennte Ebenen. Jede zugewiesene Lehrkraft kann in ihrem Bereich Prüfungen an denselben Schülerbestand freigeben; fremde Fachleistungen bleiben ohne zusätzliche Freigabe gesperrt. Ausdrückliches Co-Teaching und befristete Vertretung werden unterstützt. Keine Doppelklassen/-Schülerkonten pro Fach und keine automatische Adminvergabe aus ASV.
+
+
+# 28. Lehrer- und Schülernavigation – V1-Konzept
+
+Die Lehreransicht und Testgruppierung sind in [CLASSROOM_TEACHER_UX_V1.md](CLASSROOM_TEACHER_UX_V1.md) festgehalten. Die Startseite ist eine Aufgabenübersicht, Klassen sind der Hauptkontext und Tests lassen sich global sowie innerhalb einer Klasse nach Fach und Status finden. Schüler:innen sehen eine vereinfachte persönliche Testliste. Mehrere Fachlehrkräfte arbeiten mit demselben Klassenbestand und getrennten Rechten. Das Konzept dupliziert keine Prüfungen und ersetzt nicht die bestehende Secure-Assessment-Engine. Es ist noch nicht implementiert.
