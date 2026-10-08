@@ -6,8 +6,8 @@
 #include "IslandPuzzles.h"
 namespace Island {
 enum class Result{Applied,Already,Full,Empty,Wrong,WrongRow,Blocked,Incomplete,TooLow,TooHigh,WrongEdge,WrongView,Invalid};
-enum class Action{IntroToggle,IntroCheck,PathStart,PathStep,PathUndo,PathCheck,Pickup,Fill,Drain,PlacePlate,PlaceStand,SentenceStart,SentencePick,SentenceUndo,SentenceCheck,RouteStart,RouteNode,RouteUndo,RouteCheck,Find,CoastToggle,CoastCheck,CoastConfirm,FinaleCheck,BonusAnswer};
-struct State{bool intro=false,verbs=false,water=false,carrying=false,pathActive=false,pathFailed=false;int introMask=0,pathCount=0,tenths=0,bucketPlace=0;std::array<int,3> path{{-1,-1,-1}};bool sentence=false,fractions=false,coast=false,finale=false,coastReady=false,sentenceActive=false,routeActive=false;int sentenceCount=0,routeCount=0,foundMask=0,coastMask=0,bonusMask=0;std::array<int,4> sentenceParts{{-1,-1,-1,-1}};std::array<int,5> route{{-1,-1,-1,-1,-1}};};
+enum class Action{IntroToggle,IntroCheck,PathStart,PathStep,PathUndo,PathCheck,Pickup,Fill,Drain,PlacePlate,PlaceStand,SentenceStart,SentencePick,SentenceUndo,SentenceCheck,RouteStart,RouteNode,RouteUndo,RouteCheck,Find,CoastToggle,CoastCheck,CoastConfirm,FinaleCheck,BonusAnswer,CupAdjust,CupPour};
+struct State{bool intro=false,verbs=false,water=false,carrying=false,pathActive=false,pathFailed=false;int introMask=0,pathCount=0,tenths=0,bucketPlace=0;std::array<int,3> path{{-1,-1,-1}};bool sentence=false,fractions=false,coast=false,finale=false,coastReady=false,wholePoured=false,sentenceActive=false,routeActive=false;int sentenceCount=0,routeCount=0,foundMask=0,coastMask=0,bonusMask=0;std::array<int,4> sentenceParts{{-1,-1,-1,-1}};std::array<int,5> route{{-1,-1,-1,-1,-1}};};
 inline int PathPromptRow(const State& s){int Row=s.pathFailed?s.pathCount:s.pathCount+1;return Row<1?1:Row>3?3:Row;}
 inline int CountBits(int mask){int n=0;for(int i=0;i<4;++i)n+=(mask>>i)&1;return n;}
 inline Result ApplyPuzzle(State&,Action,int);
@@ -74,6 +74,16 @@ inline Result Apply(State& s,Action a,int value=0){
 }
 inline Result ApplyPuzzle(State& s,Action a,int value){
  switch(a){
+ case Action::CupAdjust:
+  if(value!=1&&value!=2&&value!=-1)return Result::Invalid;
+  if(!s.carrying||!s.sentence||!s.water)return Result::Blocked;
+  if(s.tenths+value>10)return Result::Full;if(s.tenths+value<0)return Result::Empty;
+  s.tenths+=value;return Result::Applied;
+ case Action::CupPour:
+  if(s.fractions)return Result::Already;
+  if(!s.carrying||!s.sentence||!s.water)return Result::Blocked;
+  if(s.tenths!=10)return Result::TooLow;
+  s.tenths=0;s.wholePoured=true;s.fractions=true;s.routeCount=0;s.routeActive=false;s.route.fill(-1);return Result::Applied;
  case Action::SentenceStart:
   if(s.sentence)return Result::Already;
   if(!s.verbs)return Result::Blocked;
@@ -172,15 +182,15 @@ inline bool DeserializeLegacy(const std::string& text,State& out){
  out=s;return true;
 }
 inline std::string Serialize(const State& s){
- std::string base=SerializeLegacy(s);base.replace(0,3,"LI2");std::ostringstream o;o<<base<<' '<<s.sentence<<' '<<s.fractions<<' '<<s.coast<<' '<<s.finale<<' '<<s.coastReady<<' '<<s.sentenceActive<<' '<<s.routeActive<<' '<<s.sentenceCount<<' '<<s.routeCount<<' '<<s.foundMask<<' '<<s.coastMask<<' '<<s.bonusMask;
- for(int id:s.sentenceParts)o<<' '<<id;for(int id:s.route)o<<' '<<id;return o.str();
+ std::string base=SerializeLegacy(s);base.replace(0,3,"LI3");std::ostringstream o;o<<base<<' '<<s.sentence<<' '<<s.fractions<<' '<<s.coast<<' '<<s.finale<<' '<<s.coastReady<<' '<<s.sentenceActive<<' '<<s.routeActive<<' '<<s.sentenceCount<<' '<<s.routeCount<<' '<<s.foundMask<<' '<<s.coastMask<<' '<<s.bonusMask;
+ for(int id:s.sentenceParts)o<<' '<<id;for(int id:s.route)o<<' '<<id;o<<' '<<s.wholePoured;return o.str();
 }
 inline bool Deserialize(const std::string& text,State& out){
- std::istringstream in(text);std::string tag;if(!(in>>tag))return false;if(tag=="LI1")return DeserializeLegacy(text,out);if(tag!="LI2")return false;
+ std::istringstream in(text);std::string tag;if(!(in>>tag))return false;if(tag=="LI1")return DeserializeLegacy(text,out);if(tag!="LI2"&&tag!="LI3")return false;
  std::ostringstream old;old<<"LI1";for(int i=0;i<13;++i){std::string token;if(!(in>>token))return false;old<<' '<<token;}
  State s;if(!DeserializeLegacy(old.str(),s))return false;int flags[7];for(int& f:flags)if(!(in>>f)||f<0||f>1)return false;
  s.sentence=flags[0];s.fractions=flags[1];s.coast=flags[2];s.finale=flags[3];s.coastReady=flags[4];s.sentenceActive=flags[5];s.routeActive=flags[6];
- if(!(in>>s.sentenceCount>>s.routeCount>>s.foundMask>>s.coastMask>>s.bonusMask))return false;for(int& id:s.sentenceParts)if(!(in>>id))return false;for(int& id:s.route)if(!(in>>id))return false;std::string extra;if(in>>extra)return false;
+ if(!(in>>s.sentenceCount>>s.routeCount>>s.foundMask>>s.coastMask>>s.bonusMask))return false;for(int& id:s.sentenceParts)if(!(in>>id))return false;for(int& id:s.route)if(!(in>>id))return false;if(tag=="LI3"){int poured;if(!(in>>poured)||poured<0||poured>1)return false;s.wholePoured=poured;}std::string extra;if(in>>extra)return false;
  if(s.sentenceCount<0||s.sentenceCount>4||s.routeCount<0||s.routeCount>5||s.foundMask<0||s.foundMask>15||s.coastMask<0||s.coastMask>15||s.bonusMask<0||s.bonusMask>3)return false;
  int used=0;for(int i=0;i<4;++i){int id=s.sentenceParts[i];if(i>=s.sentenceCount){if(id!=-1)return false;}else{if(id<0||id>3||(used&(1<<id)))return false;used|=1<<id;}}
  if((s.sentenceActive||s.sentenceCount||s.sentence)&&!s.verbs)return false;
@@ -190,7 +200,8 @@ inline bool Deserialize(const std::string& text,State& out){
  if((s.routeCount||s.routeActive||s.fractions)&&(!s.sentence||!s.water))return false;
  if(s.routeActive&&s.routeCount<1)return false;
  if(s.routeCount&&!s.fractions&&!s.routeActive)return false;
- if(s.fractions&&(s.routeActive||RouteTenths(s.route,s.routeCount)!=10))return false;
+ if(s.wholePoured&&(!s.fractions||s.routeCount!=0||s.routeActive))return false;
+ if(s.fractions&&(s.routeActive||(!s.wholePoured&&RouteTenths(s.route,s.routeCount)!=10)))return false;
  if(s.foundMask&&!s.fractions)return false;if(s.coastMask&~s.foundMask)return false;if(CountBits(s.coastMask)>3)return false;
  if(s.coastReady&&(CountBits(s.coastMask)!=3||CoastTenths(s.coastMask)!=10))return false;
  if(s.coast&&!s.coastReady)return false;if(s.finale&&(!s.verbs||!s.sentence||!s.fractions||!s.coast))return false;

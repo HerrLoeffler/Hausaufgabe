@@ -22,6 +22,6 @@ int main(){try{
  CHECK(Apply(s,Action::BonusAnswer,0)==Result::Wrong);CHECK(Apply(s,Action::BonusAnswer,2)==Result::Applied);CHECK(Apply(s,Action::BonusAnswer,12)==Result::Applied&&s.bonusMask==3);CHECK(Apply(s,Action::BonusAnswer,99)==Result::Invalid);
  State out;CHECK(Deserialize(Serialize(s),out)&&out.finale&&out.coast&&out.bonusMask==3);const auto old=Serialize(out);CHECK(!Deserialize(Serialize(s)+" garbage",out)&&Serialize(out)==old);
  State corrupt=s;corrupt.coastMask=15;CHECK(!Deserialize(Serialize(corrupt),out)&&Serialize(out)==old);corrupt=s;corrupt.coastMask=15;corrupt.coastReady=false;corrupt.coast=false;corrupt.finale=false;CHECK(!Deserialize(Serialize(corrupt),out)&&Serialize(out)==old);corrupt=s;corrupt.route[2]=5;CHECK(!Deserialize(Serialize(corrupt),out));corrupt=s;corrupt.sentenceParts[1]=0;CHECK(!Deserialize(Serialize(corrupt),out));corrupt=s;corrupt.foundMask=1;CHECK(!Deserialize(Serialize(corrupt),out));
- CHECK(Deserialize("LI1 1 1 1 0 0 0 5 3 3 1 0 4 8",out)&&out.verbs&&out.water&&!out.sentence&&!out.fractions&&!out.coast);CHECK(Serialize(out).find("LI2 ")==0);CHECK(Apply(out,Action::FinaleCheck)==Result::Blocked);
+ CHECK(Deserialize("LI1 1 1 1 0 0 0 5 3 3 1 0 4 8",out)&&out.verbs&&out.water&&!out.sentence&&!out.fractions&&!out.coast);CHECK(Serialize(out).find("LI3 ")==0);CHECK(Apply(out,Action::FinaleCheck)==Result::Blocked);
  std::cout<<"PASS "<<n<<" puzzle checks\n";return 0;
 }catch(const std::exception& e){std::cerr<<"FAIL after "<<n<<": "<<e.what()<<"\n";return 1;}}

@@ -33,11 +33,11 @@
 ### Task 2: Gleiche Kanne am neuen Wasserast
 **Files:** Core/IslandRules.h, Tests/water_test.cpp/run.sh, IslandWorld.h/.cpp, IslandPuzzleWorld.cpp, IslandArt.cpp, IslandFocusWidget.cpp, IslandHUD.cpp, IslandFourAutomation.cpp.
 **Interfaces:** Action::CupAdjust(value−1/+1/+2), Action::CupPour; State.wholePoured; LI3 with previous fields plus explicit pour flag. GameMode.StrokeTarget tracks physical reach for pending action.
-- [ ] Tests zuerst: missing cup blocked, no earlygate,3→10 via fractional valves, capacity/emptybounds, wrong pour leaves state, whole pour empties same cup, serialization/migration atomically validates.
-- [ ] Rot bestätigen, dann Regeln und Saveversion implementieren.
-- [ ] Zwei reale Zuläufe, Ablauf, Becken und klare nativeAnleitung;0,6sHub mitPause/ReachCancel; alte Hauptgraphaktion entfernen.
-- [ ] FourPuzzles-Test auf reale Kannenaktion umstellen; same actor, retrieval300ml, partial/repeatedinput, full pour/wateranimation/gate sweep und Folgestationen.
-- [ ] Suite grün, echte Aufnahmen, Commit.
+- [x] Tests zuerst: missing cup blocked, no earlygate,3→10 via fractional valves, capacity/emptybounds, wrong pour leaves state, whole pour empties same cup, serialization/migration atomically validates.
+- [x] Rot bestätigen, dann Regeln und Saveversion implementieren.
+- [x] Zwei reale Zuläufe, Ablauf, Becken und klare nativeAnleitung;0,6sHub mitPause/ReachCancel; alte Hauptgraphaktion entfernen.
+- [x] FourPuzzles-Test auf reale Kannenaktion umstellen; same actor, retrieval300ml, partial/repeatedinput, full pour/wateranimation/gate sweep und Folgestationen.
+- [x] Suite grün, echte Aufnahmen, Commit.
 
 ### Task 3: Fuchsszene und Auslieferung
 **Files:** IslandFox.cpp, Core/IslandFoxCue.h, Tests/fox_test.cpp, IslandWorld.h/.cpp, IslandFoxAutomation.cpp, IslandArt.cpp, docs/games/lerninsel/20261008-fox-water.

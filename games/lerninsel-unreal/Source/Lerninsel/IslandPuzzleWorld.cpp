@@ -10,7 +10,7 @@ bool AIslandGameMode::CanInspect(int Id)const{
  if(Id>=200&&Id<=208)return State.intro;
  if(Id>=500&&Id<=512)return State.verbs;
  if(Id>=400&&Id<=404)return State.sentence;
- if(Id==600)return State.sentence&&State.water;
+ if(Id>=600&&Id<=604)return State.sentence&&State.water;
  if(Id>=700&&Id<=710)return State.fractions;
  if(Id==711)return State.fractions;
  if(Id==712)return State.coastReady;
@@ -24,6 +24,8 @@ void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("L�
  else if(Id==510){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Focus=510;}
  else if(Id==511)Apply(Island::Action::SentenceUndo);else if(Id==512)Apply(Island::Action::SentenceCheck);
  else if(Id==600){Focus=600;}
+ else if(Id>=601&&Id<=603){int Delta=Id==601?1:Id==602?2:-1;if(!State.carrying){Notify(TEXT("Hol denselben Messbecher zurück. Er steht noch bei der ersten Wasseraufgabe hinter dir."));return;}if(State.tenths+Delta>10){Notify(TEXT("Diese Portion passt nicht mehr hinein. Nimm den 100-ml-Hahn oder lasse 100 ml ab."));return;}if(State.tenths+Delta<0){Notify(TEXT("Der Messbecher ist leer. Es gibt nichts abzulassen."));return;}PendingStroke=Delta;StrokeTarget=Id;CupStroke=true;StrokeTime=.6f;Notify(Delta<0?TEXT("100 ml laufen aus dem Becher …"):Delta==2?TEXT("200 ml = 1/5 Liter fließen ein …"):TEXT("100 ml = 1/10 Liter fließen ein …"));}
+ else if(Id==604){if(!State.carrying){Notify(TEXT("Nimm den Messbecher von der 3/10-Platte wieder auf und bringe ihn hierher."));return;}Apply(Island::Action::CupPour);}
  else if(Id>=700&&Id<=703){Apply(Island::Action::Find,Id-700);Focus=Id;}
  else if(Id==710)Focus=710;
  else if(Id==711){if(auto* P=Player())if(P->Controller)P->Controller->SetControlRotation(ObservationView);Notify(TEXT("Die drei Formen liegen hinter dem Meerblick. Prüfe die Menge am Fundbuch und suche den markierten Standplatz."));}
@@ -39,7 +41,7 @@ void AIslandGameMode::UIAction(int Code){auto* C=Cast<AIslandController>(UGamepl
  if(Code==4001&&Focus>=100&&Focus<=208){SelectFocused();return;}
  const bool SentenceFocus=Focus==510||(Focus>=500&&Focus<=503);
  if(SentenceFocus){if(Code>=5000&&Code<=5003){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Apply(Island::Action::SentencePick,Code-5000);if(Focus!=510){Focus=-1;if(C)C->UpdateMode();}}else if(Code==5010)Apply(Island::Action::SentenceStart);else if(Code==5011)Apply(Island::Action::SentenceUndo);else if(Code==5012)Apply(Island::Action::SentenceCheck);return;}
- if(Focus==600){if(Code==6000)Apply(Island::Action::RouteStart);else if(Code>=6010&&Code<=6020){if(Code==6010&&!State.routeActive&&!State.fractions)Apply(Island::Action::RouteStart);else Apply(Island::Action::RouteNode,Code-6010);}else if(Code==6030)Apply(Island::Action::RouteUndo);else if(Code==6031)Apply(Island::Action::RouteCheck);return;}
+ if(Focus==600){if(Code==6100&&!State.carrying&&Bucket&&Player()){FVector Direction=Bucket->GetActorLocation()+FVector(0,0,40)-Player()->Camera->GetComponentLocation();if(C){C->SetControlRotation(Direction.Rotation());Focus=-1;C->CancelInput();C->UpdateMode();}Notify(TEXT("Blick zum Messbecher: Gehe zurück zur ersten Wasseraufgabe und nimm ihn mit E auf."));}return;}
  if(Focus==710){if(Code>=7000&&Code<=7003)Apply(Island::Action::CoastToggle,Code-7000);else if(Code==7010)Apply(Island::Action::CoastCheck);else if(Code==7011)Notify(TEXT("Vier Reliefs stehen am unteren Küstenweg. Danach führt die breite Treppe zur Steinbank mit dem runden Standzeichen. Von dort passen die Teile vor dem Meer zusammen."));else if(Code==7012)ConfirmCoast();return;}
  if(Focus==800&&Code==8000){Apply(Island::Action::FinaleCheck);return;}
  if(Focus==820&&Code>=8200&&Code<=8203)Apply(Island::Action::BonusAnswer,Code-8200);
@@ -53,4 +55,4 @@ bool AIslandGameMode::PreviewAligned()const{auto* P=Player();if(!P||!State.coast
 }
 void AIslandGameMode::ConfirmCoast(){Apply(Island::Action::CoastConfirm,PreviewAligned()?1:0);}
 void AIslandGameMode::RefreshPuzzleWorld(float Dt){for(int I=0;I<SentenceSlots.Num();++I){FString Label=I<State.sentenceCount?FString(Parts[State.sentenceParts[I]]):FString::Printf(TEXT("%d"),I+1);if(I==0&&!Label.IsEmpty())Label[0]=FChar::ToUpper(Label[0]);SentenceSlots[I]->SetText(FText::FromString(Label));}
- const int Sum=Island::RouteTenths(State.route,State.routeCount);float TargetHeight=State.fractions?10.f:Sum>=0?float(Sum):0.f;BasinHeight=FMath::FInterpConstantTo(BasinHeight,TargetHeight,Dt,5.f);if(BasinWater){BasinWater->SetVisibility(BasinHeight>0);BasinWater->SetRelativeScale3D(FVector(.1,.1,FMath::Max(.001f,BasinHeight/100)));BasinWater->SetRelativeLocation(FVector(0,0,2+BasinHeight*.5f));}}
+ float TargetHeight=State.fractions?10.f:0.f;BasinHeight=FMath::FInterpConstantTo(BasinHeight,TargetHeight,Dt,5.f);if(BasinWater){BasinWater->SetVisibility(BasinHeight>0);BasinWater->SetRelativeScale3D(FVector(.1,.1,FMath::Max(.001f,BasinHeight/100)));BasinWater->SetRelativeLocation(FVector(0,0,2+BasinHeight*.5f));}}
