@@ -1,159 +1,199 @@
 #include "ExpeditionWorld.h"
+#include "ExpeditionScreen.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/PlayerInput.h"
+#include "Engine/GameViewportClient.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
-#include "Engine/GameViewportClient.h"
-#include "Widgets/SViewport.h"
-#include "Components/InputComponent.h"
-#include "Widgets/Layout/SBorder.h"
-#include "Styling/CoreStyle.h"
-using namespace Expedition;
-AExpeditionGameMode::AExpeditionGameMode(){PrimaryActorTick.bCanEverTick=true;HUDClass=AExpeditionHUD::StaticClass();PlayerControllerClass=AExpeditionController::StaticClass();DefaultPawnClass=nullptr;}
-void AExpeditionController::BeginPlay(){Super::BeginPlay();FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);if(auto* V=GetWorld()->GetGameViewport()){
- if(V->GetGameViewportWidget().IsValid())Mode.SetWidgetToFocus(V->GetGameViewportWidget());
- TWeakObjectPtr<AExpeditionController> Weak(this);
- PointerOverlay=SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush(TEXT("NoBrush"))).OnMouseButtonDown_Lambda([Weak](const FGeometry& Geo,const FPointerEvent& Event){
- if(Event.GetEffectingButton()!=EKeys::LeftMouseButton||!Weak.IsValid())return FReply::Unhandled();
- auto* H=Cast<AExpeditionHUD>(Weak->GetHUD());if(!H)return FReply::Unhandled();
- FVector2D Size=Geo.GetLocalSize();if(Size.X<=0||Size.Y<=0)return FReply::Unhandled();
- FVector2D P=Geo.AbsoluteToLocal(Event.GetScreenSpacePosition());P.X=P.X/Size.X*H->DrawSize.X;P.Y=P.Y/Size.Y*H->DrawSize.Y;
- return H->ClickAt(P)?FReply::Handled():FReply::Unhandled();
- });V->AddViewportWidgetContent(PointerOverlay.ToSharedRef(),100);
- }SetInputMode(Mode);bShowMouseCursor=true;bEnableClickEvents=true;bEnableTouchEvents=true;}
-void AExpeditionController::EndPlay(const EEndPlayReason::Type Reason){if(PointerOverlay.IsValid())if(auto* V=GetWorld()->GetGameViewport())V->RemoveViewportWidgetContent(PointerOverlay.ToSharedRef());PointerOverlay.Reset();Super::EndPlay(Reason);}
-void AExpeditionController::SetupInputComponent(){Super::SetupInputComponent();InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&AExpeditionController::PointerDown);}
-void AExpeditionController::PointerDown(){float X,Y;if(GetMousePosition(X,Y))if(auto* H=Cast<AExpeditionHUD>(GetHUD())){bool Hit=H->ClickAt(FVector2D(X,Y));UE_LOG(LogTemp,Display,TEXT("EXPEDITION_POINTER %.0f %.0f hit=%d"),X,Y,Hit);}}
-void AExpeditionGameMode::BeginPlay(){Super::BeginPlay();BuildWorld();auto* P=UGameplayStatics::GetPlayerController(this,0);if(P){P->bShowMouseCursor=true;P->SetViewTarget(Camera);P->SetInputMode(FInputModeGameAndUI());P->ConsoleCommand(TEXT("viewmode lit"));}Dialog=8;RefreshWorld();}
-void AExpeditionGameMode::CancelInput(){MoveInput=FVector2D::ZeroVector;TouchMoving=false;}
-int AExpeditionGameMode::Solved()const{int N=0;for(int I=0;I<8;++I)N+=(State.slots>>I)&1;return N;}
-FString AExpeditionGameMode::Mission()const{
- if(State.finale)return TEXT("Signal angekommen · Expedition geschafft!");
- if(!State.mapJoined)return TEXT("CAMP · Feldnotizen lesen und beide Kartenhälften finden");
- if(State.path!=2)return TEXT("CAMP · Vergleiche die Karte mit den Landmarken");
- if(!State.bridge)return TEXT("UFER · Wartungsnotizen prüfen und Brücke sichern");
- if(!Has(State,255))return TEXT("STATION · Betriebsnotizen vervollständigen");
- return TEXT("STATION · Strom umleiten und Funkgerät benutzen");
+using namespace ExpeditionV2;
+namespace {
+constexpr float PlayerZ=70.f;
+bool Reachable(const State& S,const FVector& P){
+ if(!FMath::IsFinite(P.X)||!FMath::IsFinite(P.Y)||P.X<-680||P.X>6120||P.Y<-490||P.Y>490)return false;
+ if(P.X>950&&!HasSchool(S,1))return false;
+ if(P.X>2800&&!HasSchool(S,3))return false;
+ if(P.X>3500&&!HasLogic(S,2))return false;
+ if(P.X>4700&&!HasLogic(S,3))return false;
+ if(P.X>5900&&!HasLogic(S,4))return false;
+ return true;
 }
-void AExpeditionGameMode::Tick(float Dt){
- Super::Tick(Dt);Elapsed+=Dt;ToastTimer=FMath::Max(0.f,ToastTimer-Dt);
- if(Dialog==1)LearnTime+=Dt;else if(Dialog==0&&!State.finale)WorldTime+=Dt;
- auto* P=UGameplayStatics::GetPlayerController(this,0);if(!P||!Explorer)return;
- if(P->WasInputKeyJustPressed(EKeys::Escape)){Dialog=Dialog?0:7;CancelInput();}
- if(P->WasInputKeyJustPressed(EKeys::I)){Dialog=Dialog==5?0:5;CancelInput();}
- if(Dialog)if(auto* H=Cast<AExpeditionHUD>(P->GetHUD())){if(H->Buttons.Num()){
- if(P->WasInputKeyJustPressed(EKeys::Tab))FocusedButton=(FocusedButton+1)%H->Buttons.Num();
- if(P->WasInputKeyJustPressed(EKeys::Enter)){int Id=H->Buttons[FMath::Clamp(FocusedButton,0,H->Buttons.Num()-1)].Id;Click(Id);}
- }}
- if(Dialog==8&&P->WasInputKeyJustPressed(EKeys::One))NewGame(false);
- if(Dialog==8&&P->WasInputKeyJustPressed(EKeys::Two))NewGame(true);
- if(Dialog==1){const FKey Keys[]={EKeys::One,EKeys::Two,EKeys::Three,EKeys::Four};for(int I=0;I<4;++I)if(P->WasInputKeyJustPressed(Keys[I])){Answer(I);break;}}
- if(P->WasInputKeyJustPressed(EKeys::E)&&Dialog==0&&NearId>=0)Interact(NearId);
- float MX=0,MY=0;bool Mouse=P->GetMousePosition(MX,MY);
- (void)Mouse;
- float TX=0,TY=0;bool Down=false;P->GetInputTouchState(ETouchIndex::Touch1,TX,TY,Down);
- if(Down&&!TouchWasDown){int SX=0,SY=0;P->GetViewportSize(SX,SY);if(Dialog==0&&TX<SX*.28&&TY>SY*.65){TouchStart=FVector2D(TX,TY);TouchMoving=true;}else if(auto* H=Cast<AExpeditionHUD>(P->GetHUD()))H->ClickAt(FVector2D(TX,TY));}
- if(!Down)TouchMoving=false;TouchWasDown=Down;
- MoveInput=FVector2D(P->IsInputKeyDown(EKeys::D)||P->IsInputKeyDown(EKeys::Right)?1:0,P->IsInputKeyDown(EKeys::W)||P->IsInputKeyDown(EKeys::Up)?1:0);
- if(P->IsInputKeyDown(EKeys::A)||P->IsInputKeyDown(EKeys::Left))MoveInput.X-=1;
- if(P->IsInputKeyDown(EKeys::S)||P->IsInputKeyDown(EKeys::Down))MoveInput.Y-=1;
- if(TouchMoving)MoveInput=FVector2D(TX-TouchStart.X,TouchStart.Y-TY)/65.f;
- StepMovement(Dt);
- FVector Loc=Explorer->GetActorLocation();FVector CameraBase(FMath::Clamp(Loc.X,-650.f,650.f),FMath::Clamp(Loc.Y,-100.f,100.f),80);Camera->SetActorLocation(FMath::VInterpTo(Camera->GetActorLocation(),CameraBase+FVector(0,1350,1750),Dt,5));
- NearId=-1;float Dist=180;NearLabel.Empty();for(const auto& T:Targets){if(T.Id<5&&((State.inventory>>T.Id)&1))continue;float D=FVector::Dist2D(Loc,T.Pos);if(D<Dist){Dist=D;NearId=T.Id;NearLabel=T.Label;}}
- if(RadioLamp)RadioLamp->SetVisibility(State.finale||(State.fuse&&(State.consumers&4)&&Power(State)<=8));
- if(Legs.Num()>=4){float Walk=MoveInput.IsNearlyZero()||Dialog?0:FMath::Sin(Elapsed*12)*25;for(int I=0;I<4;++I)Legs[I]->SetRelativeRotation(FRotator((I%2?1:-1)*Walk,0,0));}
- if(State.finale)for(auto* M:BoatParts){FVector B=M->GetRelativeLocation();B.Y=FMath::Max(-500.f,B.Y-Dt*65);M->SetRelativeLocation(B);}
+FVector SafeAnchor(const State& S){if(HasLogic(S,4))return FVector(5800,170,PlayerZ);if(HasLogic(S,3))return FVector(4860,170,PlayerZ);if(HasLogic(S,2))return FVector(3730,170,PlayerZ);if(HasSchool(S,3))return FVector(3000,170,PlayerZ);if(HasSchool(S,1))return FVector(1250,170,PlayerZ);return FVector(-80,170,PlayerZ);}
+}
+AExpeditionGameMode::AExpeditionGameMode(){PrimaryActorTick.bCanEverTick=true;HUDClass=nullptr;PlayerControllerClass=AExpeditionController::StaticClass();DefaultPawnClass=nullptr;}
+void AExpeditionController::BeginPlay(){
+ Super::BeginPlay();auto* G=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode());if(!G)return;
+ Screen=SNew(SExpeditionScreen).Game(G);if(auto* V=GetWorld()->GetGameViewport())V->AddViewportWidgetContent(Screen.ToSharedRef(),30);
+ FInputModeGameAndUI Mode;Mode.SetWidgetToFocus(Screen);Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);
+ bShowMouseCursor=true;bEnableClickEvents=true;bEnableTouchEvents=true;
+}
+void AExpeditionController::EndPlay(const EEndPlayReason::Type Reason){if(Screen.IsValid())if(auto* V=GetWorld()->GetGameViewport())V->RemoveViewportWidgetContent(Screen.ToSharedRef());Screen.Reset();Super::EndPlay(Reason);}
+void AExpeditionController::SetupInputComponent(){Super::SetupInputComponent();
+ InputComponent->BindKey(EKeys::E,IE_Pressed,this,&AExpeditionController::InteractPressed);
+ InputComponent->BindKey(EKeys::I,IE_Pressed,this,&AExpeditionController::BagPressed);
+ InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AExpeditionController::PausePressed);
+ InputComponent->BindKey(EKeys::One,IE_Pressed,this,&AExpeditionController::NumberOne);
+ InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&AExpeditionController::NumberTwo);
+ InputComponent->BindKey(EKeys::Three,IE_Pressed,this,&AExpeditionController::NumberThree);
+ InputComponent->BindKey(EKeys::Four,IE_Pressed,this,&AExpeditionController::NumberFour);
+ InputComponent->BindKey(EKeys::Enter,IE_Pressed,this,&AExpeditionController::ConfirmPressed);
+}
+#define EXP_ACTION(Method,Code) void AExpeditionController::Method(){if(auto* G=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode()))G->Click(Code);}
+EXP_ACTION(InteractPressed,11) EXP_ACTION(BagPressed,4) EXP_ACTION(PausePressed,6)
+EXP_ACTION(NumberOne,100) EXP_ACTION(NumberTwo,101) EXP_ACTION(NumberThree,102) EXP_ACTION(NumberFour,103)
+void AExpeditionController::ConfirmPressed(){if(auto* G=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode())){if(G->Dialog==EExpDialog::Welcome)G->Click(1);else if(G->Dialog==EExpDialog::Question)G->Click(9);else if(G->Dialog==EExpDialog::Speech)G->Click(8);else if(G->Dialog==EExpDialog::Result)G->Click(10);else if(G->Dialog==EExpDialog::World)G->Click(11);}}
+#undef EXP_ACTION
+void AExpeditionGameMode::BeginPlay(){Super::BeginPlay();BuildWorld();if(auto* P=UGameplayStatics::GetPlayerController(this,0)){P->SetViewTarget(Camera);P->ConsoleCommand(TEXT("viewmode lit"));}RefreshWorld();UiDirty=true;}
+void AExpeditionGameMode::CancelInput(){MoveInput=FVector2D::ZeroVector;TouchInput=FVector2D::ZeroVector;NeedsRelease=true;if(auto* P=UGameplayStatics::GetPlayerController(this,0))if(P->PlayerInput)P->PlayerInput->FlushPressedKeys();}
+void AExpeditionGameMode::SetDialog(EExpDialog NewDialog){Dialog=NewDialog;CancelInput();UiDirty=true;}
+bool AExpeditionGameMode::CanWalk(const FVector& P)const{
+ if(!Reachable(State,P))return false;
+ for(const auto& T:Targets)if(T.Id!=1&&T.Id!=14&&TargetVisible(T.Id)&&FVector::Dist2D(P,T.Pos)<48)return false;
+ return true;
 }
 void AExpeditionGameMode::StepMovement(float Dt){
- if(Dialog||!Explorer){CancelInput();return;}FVector2D Input=MoveInput.GetClampedToMaxSize(1);FVector Pos=Explorer->GetActorLocation();FVector Next=Pos+FVector(Input.X,-Input.Y,0)*260*Dt;
- Next.X=FMath::Clamp(Next.X,-1460.f,1440.f);Next.Y=FMath::Clamp(Next.Y,-630.f,600.f);
- if(Next.X>-155&&Next.X<155&&(!State.bridge||FMath::Abs(Next.Y)>100))Next.X=Pos.X;
- if(Next.X>850&&Next.X<1350&&Next.Y>70&&Next.Y<430)Next.Y=Pos.Y;
- if(Next.X>-1330&&Next.X<-950&&Next.Y>290)Next.Y=Pos.Y;
- Explorer->SetActorLocation(Next);if(!Input.IsNearlyZero())Explorer->SetActorRotation(FRotator(0,FMath::RadiansToDegrees(FMath::Atan2(-Input.Y,Input.X))+90,0));
+ if(Dialog!=EExpDialog::World||NeedsRelease||!Explorer){MoveInput=FVector2D::ZeroVector;return;}
+ FVector2D V=MoveInput.GetClampedToMaxSize(1);auto P=Explorer->GetActorLocation();
+ FVector D(V.X*245*Dt,-V.Y*245*Dt,0);
+ FVector Next=P+FVector(D.X,0,0);if(CanWalk(Next))P=Next;
+ Next=P+FVector(0,D.Y,0);if(CanWalk(Next))P=Next;
+ Explorer->SetActorLocation(P);
+ if(V.SizeSquared()>.005){AnimationTime+=Dt;Explorer->SetActorRotation(FRotator(0,FMath::RadiansToDegrees(FMath::Atan2(-V.Y,V.X))+90,0));}
+ for(int I=0;I<Legs.Num();++I)if(Legs[I])Legs[I]->SetRelativeRotation(FRotator(V.SizeSquared()>.005?FMath::Sin(AnimationTime*12+(I%2)*PI)*19:0,0,0));
 }
-void AExpeditionGameMode::Notify(FString M){Toast=M;ToastTimer=5;}
-void AExpeditionGameMode::Dispatch(Action A,int V){
- Result R=Act(State,A,V);switch(R){case Result::Applied:Notify(TEXT("Das hat funktioniert. Die Welt verändert sich."));Save();break;case Result::Already:Notify(TEXT("Das ist bereits erledigt."));break;case Result::MissingItem:Notify(TEXT("Dir fehlt ein Teil. Schau in den Rucksack und untersuche die Umgebung."));break;case Result::Wrong:Notify(A==Action::Anchor?TEXT("Der Holzpfosten ist rissig. Suche einen stabilen Anker."):TEXT("Noch nicht passend. Vergleiche Karte und Hinweise genau."));break;case Result::Overload:Notify(TEXT("Überlastung! 8 Einheiten verfügbar. Schalte einen anderen Verbraucher ab."));Save();break;default:Notify(TEXT("Prüfe zuerst die Feldnotizen und die notwendigen Schritte."));break;}RefreshWorld();
+void AExpeditionGameMode::Tick(float Dt){
+ Super::Tick(Dt);ToastTimer=FMath::Max(0.f,ToastTimer-Dt);auto* P=UGameplayStatics::GetPlayerController(this,0);if(!P||!Explorer)return;
+ bool Focused=!FSlateApplication::IsInitialized()||FSlateApplication::Get().IsActive();
+ if(!Focused){if(WasFocused)CancelInput();WasFocused=false;}else{if(!WasFocused)CancelInput();WasFocused=true;}
+ if(Focused){
+ FVector2D Keys((P->IsInputKeyDown(EKeys::D)||P->IsInputKeyDown(EKeys::Right)?1:0)-(P->IsInputKeyDown(EKeys::A)||P->IsInputKeyDown(EKeys::Left)?1:0),(P->IsInputKeyDown(EKeys::W)||P->IsInputKeyDown(EKeys::Up)?1:0)-(P->IsInputKeyDown(EKeys::S)||P->IsInputKeyDown(EKeys::Down)?1:0));
+ if(Dialog==EExpDialog::World){if(NeedsRelease&&Keys.IsZero()&&TouchInput.IsZero())NeedsRelease=false;MoveInput=Keys.IsZero()?TouchInput:Keys;StepMovement(FMath::Min(Dt,.05f));}
+ if(Dialog!=EExpDialog::Welcome&&Dialog!=EExpDialog::Pause&&Dialog!=EExpDialog::Teacher&&Dialog!=EExpDialog::Inventory&&!State.finale){ActiveTime+=Dt;if(Dialog==EExpDialog::Question||(Dialog==EExpDialog::Speech&&CurrentSchool>=0))SchoolTime+=Dt;else if(Dialog==EExpDialog::Shell||Dialog==EExpDialog::Route||Dialog==EExpDialog::Rope||Dialog==EExpDialog::Mosaic||Dialog==EExpDialog::Symbols)LogicTime+=Dt;else TravelTime+=Dt;}
+ AutoSaveTime+=Dt;if(AutoSaveTime>8&&Dialog==EExpDialog::World){Save();AutoSaveTime=0;}
+ }
+ int Old=NearId;NearId=-1;float Distance=190;auto EP=Explorer->GetActorLocation();
+ for(const auto& T:Targets)if(TargetVisible(T.Id)){float D=FVector::Dist2D(EP,T.Pos);if(D<Distance){Distance=D;NearId=T.Id;NearLabel=T.Label;}}
+ if(NearId!=Old)UiDirty=true;
+ if(Camera){FVector Want=EP+FVector(0,950,1650);Camera->SetActorLocation(FMath::VInterpTo(Camera->GetActorLocation(),Want,Dt,6));}
+ if(NearMarker){NearMarker->SetVisibility(NearId>=0&&Dialog==EExpDialog::World);if(NearId>=0)for(const auto& T:Targets)if(T.Id==NearId)NearMarker->SetWorldLocation(T.Pos+FVector(0,0,4));}
+ if(UiDirty){RebuildUI();UiDirty=false;}
+}
+int AExpeditionGameMode::SchoolSolved()const{int N=0;for(int i=0;i<7;++i)N+=HasSchool(State,i)?1:0;return N;}
+int AExpeditionGameMode::Solved()const{int N=SchoolSolved();for(int i=0;i<5;++i)N+=HasLogic(State,i)?1:0;return N;}
+FString AExpeditionGameMode::AreaName()const{float X=Explorer?Explorer->GetActorLocation().X:0;return X<950?TEXT("Küstenort"):X<2800?TEXT("Garten & Wald"):X<4700?TEXT("Strand & Steg"):TEXT("Die Leuchtfeuerruine");}
+FString AExpeditionGameMode::Mission()const{
+ if(State.finale)return TEXT("Das Leuchtfeuer strahlt wieder. Danke für deine Hilfe!");
+ if(!HasSchool(State,0))return TEXT("Sprich mit Mara auf dem Dorfplatz.");
+ if(!HasSchool(State,1))return TEXT("Benutze die Messschale am Becken neben der Gartenpforte.");
+ if(!HasSchool(State,2))return TEXT("Gehe durch die Gartenpforte und untersuche das Saatbeet.");
+ if(!HasLogic(State,1))return TEXT("Hilf Jona beim Finden der richtigen Holzbrücke.");
+ if(!HasSchool(State,3))return TEXT("Sprich mit Elin an der Strandpforte.");
+ if(!HasLogic(State,0))return State.shell?TEXT("Setze die Muschel in die Werkstattkiste im Dorf ein."):TEXT("Hole die Spiralmuschel am Dorfstrand und öffne damit die Werkstattkiste.");
+ if(!HasLogic(State,2))return TEXT("Sprich mit Tilda und sichere den Steg mit dem Seil.");
+ if(!HasSchool(State,4))return TEXT("Untersuche das Wasseratelier hinter dem Steg.");
+ if(!HasLogic(State,3))return TEXT("Finde das passende Fragment auf dem Mosaiktisch.");
+ if(!HasSchool(State,5))return TEXT("Bereite die sechzehn Lampen in der Ruine vor.");
+ if(!HasSchool(State,6))return TEXT("Vergleiche die Brüche am Linsensockel.");
+ if(!HasLogic(State,4))return TEXT("Ordne Blatt, Welle und Sonne an der Ruinentür.");
+ return TEXT("Gehe zur Spitze und entzünde das Leuchtfeuer.");
+}
+bool AExpeditionGameMode::TargetVisible(int Id)const{if(Id==1)return !State.shell;if(Id>=4&&Id<=6)return HasSchool(State,1);if(Id==7)return HasSchool(State,3);if(Id==8||Id==9)return HasLogic(State,2);if(Id>=10&&Id<=12)return HasLogic(State,3);if(Id==13)return HasLogic(State,4);return true;}
+void AExpeditionGameMode::Notify(const FString& M){Toast=M;ToastTimer=4;UiDirty=true;}
+void AExpeditionGameMode::NewGame(){State={};CurrentSchool=-1;SelectedOption=-1;RoutePreview=-1;Feedback.Empty();DialogueText.Empty();ActiveTime=SchoolTime=LogicTime=TravelTime=0;AnimationTime=0;if(Explorer)Explorer->SetActorLocation(FVector(-80,170,PlayerZ));SetDialog(EExpDialog::World);RefreshWorld();Save();Notify(TEXT("Mara wartet auf dem Dorfplatz. Geh zu ihr und drücke E oder „Ansprechen“."));}
+void AExpeditionGameMode::OpenSchool(int Id){
+ CurrentSchool=Id;SelectedOption=-1;Feedback.Empty();
+ if(HasSchool(State,Id)){Notify(TEXT("Diese Aufgabe hast du bereits gelöst."));SetDialog(EExpDialog::World);return;}
+ if(!SchoolReady(State,Id)){Notify(Mission());SetDialog(EExpDialog::World);return;}
+ SetDialog(EExpDialog::Question);
 }
 void AExpeditionGameMode::Interact(int Id){
- if(Id<5){Dispatch(Action::Collect,Id);return;}
- if(Id>=10&&Id<=12){OpenLearning(Id-10);return;}
- if(Id==20){Dialog=2;Feedback.Empty();}
- if(Id==21){Dialog=3;Feedback.Empty();}
- if(Id==22)Dispatch(Action::Anchor,1);
- if(Id==23)Dispatch(Action::Anchor,2);
- if(Id==24)Dispatch(Action::Anchor,3);
- if(Id==25)Dispatch(Action::InstallCrank);
- if(Id==26)Dispatch(Action::Winch);
- if(Id==30)Dispatch(Action::InstallFuse);
- if(Id==31){Dialog=4;Feedback.Empty();}
- if(Id==32)Dispatch(Action::Signal);
- CancelInput();
+ ReturnDialog=EExpDialog::World;Feedback.Empty();SelectedOption=-1;CurrentSchool=-1;
+ const int SchoolTargets[]={0,3,4,6,8,10,11};for(int i=0;i<7;++i)if(Id==SchoolTargets[i]){
+ CurrentSchool=i;auto Q=QuestionFor(i);Speaker=Q.Speaker;
+ if(HasSchool(State,i)){DialogueText=Q.Explanation;CurrentSchool=-1;SetDialog(EExpDialog::Speech);return;}
+ if(!SchoolReady(State,i)){Notify(Mission());return;}
+ const TCHAR* Intro[]={TEXT("Unser Leuchtfeuer ist dunkel. Du kannst es mit Wissen und Köpfchen wieder entzünden. Für deinen Weg bekommst du meine Messschale — zuerst brauche ich deine Hilfe."),TEXT("Die Messschale zeigt dir die fehlende Menge. Drei der vier gleichen Bereiche sind bereits gefüllt. Mit der passenden Menge öffnet sich die Gartenpforte."),TEXT("Zwölf Samen warten im Beet. Die erste Hälfte soll wachsen. Löse die Mengenfrage und finde die Blattscheibe."),TEXT("Jona hat seine Tasche wieder. Ich öffne dir die Strandpforte, wenn du die Bruchnotiz in Prozent übersetzen kannst."),TEXT("Hier treffen zwei Wassermengen zusammen. Rechne sie zusammen, dann zeigt sich die Wellenscheibe."),TEXT("In der Ruine stehen sechzehn Lampen. Nur ein Viertel soll die Vorbereitung erhellen. Danach wartet die Linse."),TEXT("Die Linse verstärkt die größere Wassermenge. Vergleiche die beiden Brüche — die Zeichnungen dürfen dich nicht täuschen.")};
+ DialogueText=Intro[i];SetDialog(EExpDialog::Speech);return;
+ }
+ switch(Id){
+ case 1:ResultMessage(CollectShell(State),TEXT("Spiralmuschel gefunden. Die gleiche Spiralform ist an der Werkstattkiste."));break;
+ case 2:Speaker=TEXT("Werkstattkiste");DialogueText=TEXT("In der Kiste liegt ein Seil. Die Vertiefung im Deckel sieht aus wie eine kleine Spiralmuschel. Welchen Gegenstand setzt du ein?");SetDialog(EExpDialog::Shell);break;
+ case 5:Speaker=TEXT("Jona · Gärtner");DialogueText=TEXT("Ich habe meine Tasche bei einer Brücke liegen lassen. Sie ist aus Holz und liegt über fließendem Wasser. Schau auf Material UND Wasserbewegung.");SetDialog(EExpDialog::Route);break;
+ case 7:Speaker=TEXT("Tilda · Bootsbauerin");DialogueText=TEXT("Der Steg braucht zwei tragfähige Seilpunkte. Der Steinring und der Metallring sind stabil; der Holzpfosten ist morsch. Wähle beide Punkte und spanne das Seil erst danach.");if(!HasLogic(State,0))Feedback=TEXT("Dir fehlt das Seil aus der Werkstattkiste im Dorf. Der Rückweg bleibt offen.");SetDialog(EExpDialog::Rope);break;
+ case 9:Speaker=TEXT("Mosaiktisch");DialogueText=TEXT("Die Kontur UND die blaue Linie müssen an das leere Muster anschließen. Wähle ein Fragment, drehe es bei Bedarf und lege es bewusst ein.");SetDialog(EExpDialog::Mosaic);break;
+ case 12:Speaker=TEXT("Die drei Scheibensockel");DialogueText=TEXT("Blatt liegt vor Welle. Sonne liegt unmittelbar nach Welle. Setze die drei Scheiben und prüfe die Reihenfolge.");SetDialog(EExpDialog::Symbols);break;
+ case 13:Speaker=TEXT("Das Leuchtfeuer");DialogueText=TEXT("Alle Scheiben sitzen richtig. Die Linse ist bereit. Jetzt darfst du das Leuchtfeuer selbst entzünden.");SetDialog(EExpDialog::Finale);break;
+ case 14:Speaker=TEXT("Wegweiser");DialogueText=TEXT("Der Weg führt vom Dorf durch den Garten zum Strand und hinauf zur Ruine. Behalte die Dinge in deinem Rucksack — du brauchst sie später. WASD oder Pfeile bewegen dich; E untersucht das nahe Ziel.");SetDialog(EExpDialog::Speech);break;
+ default:break;
+ }
+}
+void AExpeditionGameMode::ResultMessage(Result R,const FString& Success){
+ switch(R){case Result::Applied:Feedback=Success;Notify(Success);Save();RefreshWorld();break;case Result::Already:Feedback=TEXT("Schon erledigt. Dein Fortschritt bleibt erhalten.");break;case Result::Wrong:Feedback=TEXT("Das passt noch nicht. Vergleiche den Hinweis mit deiner Auswahl; deine Gegenstände bleiben erhalten.");break;case Result::MissingItem:Feedback=TEXT("Dir fehlt noch der passende Gegenstand. Schau in den Rucksack oder hole das Seil aus der Werkstattkiste.");break;case Result::Blocked:Feedback=Mission();break;default:Feedback=TEXT("Diese Auswahl ist hier noch nicht möglich.");break;}UiDirty=true;
+}
+void AExpeditionGameMode::Answer(){
+ if(Dialog!=EExpDialog::Question)return;auto Q=Question();if(!Q.Codes.IsValidIndex(SelectedOption)){Feedback=TEXT("Wähle zuerst eine Antwort. Erst „Prüfen“ bestätigt sie.");UiDirty=true;return;}
+ auto R=School(State,CurrentSchool,TCHAR_TO_UTF8(*Q.Codes[SelectedOption]));
+ if(R==Result::Wrong){Feedback=TEXT("Versuch es noch einmal. ")+Q.Hint;SelectedOption=-1;Save();UiDirty=true;return;}
+ if(R==Result::Applied){DialogueText=Q.Explanation;if(State.pending[CurrentSchool])DialogueText+=TEXT(" Du hast den Weg gefunden. Zeige ihn jetzt noch einmal mit einer neuen Zahl.");else DialogueText+=TEXT(" Dein Fortschritt ist gespeichert.");Speaker=Q.Speaker;SetDialog(EExpDialog::Result);RefreshWorld();Save();return;}
+ ResultMessage(R,TEXT("Aufgabe gelöst."));
 }
 void AExpeditionGameMode::Click(int Id){
- if(Id==900){Dialog=0;CancelInput();return;}
- if(Id==901){Dialog=5;CancelInput();return;}if(Id==902){Dialog=6;CancelInput();return;}
- if(Id==903){Dialog=7;CancelInput();return;}if(Id==904){Dialog=0;Interact(NearId);return;}
- if(Id==905){if(Load()){Dialog=0;RefreshWorld();Notify(TEXT("Lokaler Spielstand fortgesetzt."));}else Notify(TEXT("Kein passender Spielstand vorhanden."));return;}
- if(Id==906){Dialog=8;return;}if(Id==910){NewGame(false);return;}if(Id==911){NewGame(true);return;}
- if(Id>=100&&Id<104){Answer(Id-100);return;}
- if(Id==200)Dispatch(Action::RotateMap,0);if(Id==201)Dispatch(Action::RotateMap,1);
- if(Id==202)Dispatch(Action::JoinMap);if(Id>=210&&Id<=212)Dispatch(Action::ChoosePath,Id-210);
- if(Id==330)Dispatch(Action::InstallCrank);if(Id==331)Dispatch(Action::Winch);
- if(Id>=400&&Id<403)Dispatch(Action::Consumer,Id-400);
- if(Id==420)Dispatch(Action::Signal);
- if(Id==500)Notify(TEXT("Karten: zwei Hälften am Camp. Seil + Kurbel: Ufer. Sicherung: Station."));
+ if(Id==1&&(Dialog==EExpDialog::Welcome||Dialog==EExpDialog::Pause)){NewGame();return;}
+ if(Id==2){if(Load()){SetDialog(State.finale?EExpDialog::Finale:EExpDialog::World);Notify(SaveMessage);}else{Feedback=SaveMessage;UiDirty=true;}return;}
+ if(Id==3){if(Dialog!=EExpDialog::Welcome)SetDialog(ReturnDialog);return;}
+ if(Id==4&&Dialog!=EExpDialog::Welcome){if(Dialog==EExpDialog::Inventory)SetDialog(ReturnDialog);else{ReturnDialog=Dialog;SetDialog(EExpDialog::Inventory);}return;}
+ if(Id==5){ReturnDialog=Dialog;SetDialog(EExpDialog::Teacher);return;}
+ if(Id==6){if(Dialog==EExpDialog::World){Save();ReturnDialog=EExpDialog::World;SetDialog(EExpDialog::Pause);}else if(Dialog==EExpDialog::Pause)SetDialog(EExpDialog::World);else if(Dialog!=EExpDialog::Welcome)SetDialog(EExpDialog::World);return;}
+ if(Id==7){if(Dialog==EExpDialog::Question)Feedback=Question().Hint;else Feedback=DialogueText;UiDirty=true;return;}
+ if(Id==8&&Dialog==EExpDialog::Speech){if(CurrentSchool>=0)OpenSchool(CurrentSchool);else SetDialog(EExpDialog::World);return;}
+ if(Id==9){Answer();return;}
+ if(Id==10&&Dialog==EExpDialog::Result){if(CurrentSchool>=0&&State.pending[CurrentSchool])OpenSchool(CurrentSchool);else{Notify(Mission());SetDialog(EExpDialog::World);}return;}
+ if(Id==11&&Dialog==EExpDialog::World&&NearId>=0){Interact(NearId);return;}
+ if(Id>=100&&Id<=103&&Dialog==EExpDialog::Question){if(Question().Options.IsValidIndex(Id-100)){SelectedOption=Id-100;Feedback.Empty();UiDirty=true;}return;}
+ if(Id>=200&&Id<=205&&Dialog==EExpDialog::Shell){ResultMessage(UseShell(State,Id-200),TEXT("Die Muschel passt! Das Fach öffnet sich und du nimmst das Seil mit."));return;}
+ if(Id>=300&&Id<=302&&Dialog==EExpDialog::Route){RoutePreview=Id-300;UiDirty=true;return;}
+ if(Id==310&&Dialog==EExpDialog::Route){ResultMessage(ChooseRoute(State,RoutePreview),TEXT("Holz und fließendes Wasser: Das ist Jonas Brücke. Seine Tasche ist gefunden."));return;}
+ if(Id>=400&&Id<=402&&Dialog==EExpDialog::Rope){ResultMessage(SelectAnchor(State,Id-400),TEXT("Seilpunkt geändert. Jetzt die beiden tragfähigen Punkte wählen und spannen."));return;}
+ if(Id==410&&Dialog==EExpDialog::Rope){ResultMessage(Tension(State),TEXT("Das Seil sitzt fest. Der Steg ist sicher und bleibt geöffnet."));return;}
+ if(Id>=500&&Id<=502&&Dialog==EExpDialog::Mosaic){ResultMessage(PickMosaic(State,Id-500),TEXT("Fragment ausgewählt. Prüfe Kontur und Linie."));return;}
+ if(Id==510&&Dialog==EExpDialog::Mosaic){ResultMessage(RotateMosaic(State),TEXT("Fragment gedreht."));return;}
+ if(Id==511&&Dialog==EExpDialog::Mosaic){ResultMessage(PlaceMosaic(State),TEXT("Kontur und Linie passen. Du bekommst die Sonnenscheibe und der Ruinenweg öffnet sich."));return;}
+ if(Id>=600&&Id<=602&&Dialog==EExpDialog::Symbols){ResultMessage(PutSymbol(State,Id-600),TEXT("Scheibe gesetzt oder zurückgenommen."));return;}
+ if(Id==610&&Dialog==EExpDialog::Symbols){ClearSymbols(State);Feedback.Empty();UiDirty=true;Save();return;}
+ if(Id==611&&Dialog==EExpDialog::Symbols){ResultMessage(ConfirmSymbols(State),TEXT("Blatt, Welle, Sonne — das Tor öffnet sich. Entzünde nun das Leuchtfeuer."));return;}
+ if(Id==620&&Dialog==EExpDialog::Finale){auto R=Ignite(State);ResultMessage(R,TEXT("Das Leuchtfeuer strahlt! Du hast dem Dorf geholfen."));RefreshWorld();return;}
 }
-void AExpeditionGameMode::OpenLearning(int Z){
- if(Z==1&&State.path!=2){Notify(TEXT("Entschlüssle zuerst die Wegekarte im Camp."));return;}
- if(Z==2&&!State.bridge){Notify(TEXT("Die Station liegt hinter der Brücke."));return;}
- const int Starts[]={0,2,5};const int Ends[]={2,5,8};Zone=Z;Slot=-1;
- for(int I=Starts[Z];I<Ends[Z];++I)if(!(State.slots&(1<<I))){Slot=I;break;}
- if(Slot<0){Notify(Z==0?TEXT("Karte: Wasser links, Mast rechts. Der Weg folgt dem Schilf."):Z==1?TEXT("Brücke: Steinanker → beweglicher Brückenring. Kurbel einsetzen und Winde drehen."):TEXT("Strom: Generator 8. Pumpe 4, Licht 2, Funk 6. Die Brücke rastet mechanisch ein."));return;}
- Dialog=1;Attempts=Failures[Slot];TransferAttempts=0;Transfer=TransferRequired[Slot];Feedback.Empty();CancelInput();
-}
-FExpQuestion AExpeditionGameMode::QuestionFor(int I,bool T)const{
- if(WordTopic){
- const TCHAR* P[]={TEXT("Welche Wortart hat „Expedition“?"),TEXT("Welches Wort ist ein Verb?"),TEXT("Welche Wortart hat „stabil“?"),TEXT("Welches Wort ist ein Nomen?"),TEXT("Welche Wortart hat „untersuchen“?"),TEXT("Welches Wort beschreibt eine Eigenschaft?"),TEXT("Welche Wortart hat „Brücke“?"),TEXT("Welches Wort ist ein Verb?")};
- const TCHAR* PT[]={TEXT("Welche Wortart hat „Landkarte“?"),TEXT("Welches Wort ist ein Verb?"),TEXT("Welche Wortart hat „leise“?"),TEXT("Welches Wort ist ein Nomen?"),TEXT("Welche Wortart hat „reparieren“?"),TEXT("Welches Wort beschreibt eine Eigenschaft?"),TEXT("Welche Wortart hat „Sicherung“?"),TEXT("Welches Wort ist ein Verb?")};
- TArray<TArray<FString>> O={{TEXT("Nomen"),TEXT("Verb"),TEXT("Adjektiv"),TEXT("Artikel")},{TEXT("Wald"),T?TEXT("schwimmen"):TEXT("erkunden"),TEXT("grün"),TEXT("die")},{TEXT("Nomen"),TEXT("Verb"),TEXT("Adjektiv"),TEXT("Artikel")},{TEXT("laufen"),TEXT("blau"),TEXT("ein"),T?TEXT("Boot"):TEXT("Seil")},{TEXT("Artikel"),TEXT("Verb"),TEXT("Nomen"),TEXT("Adjektiv")},{TEXT("Brücke"),TEXT("den"),T?TEXT("ruhig"):TEXT("fest"),TEXT("bauen")},{TEXT("Nomen"),TEXT("Adjektiv"),TEXT("Verb"),TEXT("Artikel")},{T?TEXT("senden"):TEXT("leuchten"),TEXT("Licht"),TEXT("hell"),TEXT("das")}};
- const int C[]={0,1,2,3,1,2,0,0};return {T?PT[I]:P[I],O[I],C[I],TEXT("Nomen benennen Dinge. Verben beschreiben, was geschieht. Adjektive beschreiben Eigenschaften.")};
- }
- const int Percent[]={25,20,50,10,75,40,30,60};const int Base[]={80,150,70,240,40,90,120,50};int B=T?Base[I]+20:Base[I];int V=Percent[I]*B/100;
- const int Correct[]={1,2,0,3,1,0,2,3};TArray<FString> O;for(int N=0;N<4;++N)O.Add(FString::FromInt(V+(N-Correct[I])*5));
- return {FString::Printf(TEXT("Wie viel sind %d %% von %d?"),Percent[I],B),O,Correct[I],FString::Printf(TEXT("1 %% entspricht %s. Multipliziere diesen Wert mit %d. Beispiel: 25 %% von 100 sind 25."),*FString::SanitizeFloat(B/100.f),Percent[I])};
-}
-FExpQuestion AExpeditionGameMode::Question()const{return QuestionFor(FMath::Clamp(Slot,0,7),Transfer);}
-void AExpeditionGameMode::Answer(int O){
- if(Dialog!=1||Slot<0)return;auto Q=Question();if(O!=Q.Correct){
- if(Transfer){++TransferAttempts;Feedback=Q.Hint;return;}
- ++Attempts;Failures[Slot]=Attempts;Feedback=Q.Hint;if(Attempts>=2){Transfer=true;TransferRequired[Slot]=true;Feedback=TEXT("Ein Beispiel hilft. Jetzt wende den Weg auf eine neue Aufgabe an. ")+Question().Hint;}Save();return;
- }
- if(!Transfer&&Attempts>0){Transfer=true;TransferRequired[Slot]=true;Feedback=TEXT("Richtig. Zeige den Weg jetzt an einem neuen Beispiel.");Save();return;}
- Learn(State,Slot,"demo-1",std::to_string(Slot));Save();Dialog=0;Notify(TEXT("Feldnotiz ergänzt. Nutze sie jetzt in der Welt."));OpenLearning(Zone);RefreshWorld();
-}
-void AExpeditionGameMode::NewGame(bool W){State=Expedition::State();WordTopic=W;LearnTime=0;WorldTime=0;for(int I=0;I<8;++I){Failures[I]=0;TransferRequired[I]=false;}Explorer->SetActorLocation(FVector(-1050,-350,80));Dialog=0;CancelInput();RefreshWorld();Save();Notify(TEXT("Finde die Feldnotizen und beide Kartenhälften. E untersucht ein Objekt."));}
 void AExpeditionGameMode::Save(){
- auto* S=Cast<UExpeditionSave>(UGameplayStatics::CreateSaveGameObject(UExpeditionSave::StaticClass()));TSharedRef<FJsonObject> J=MakeShared<FJsonObject>();
- J->SetStringField(TEXT("revision"),TEXT("demo-1"));J->SetNumberField(TEXT("schema"),2);J->SetNumberField(TEXT("slots"),State.slots);J->SetNumberField(TEXT("inventory"),State.inventory);J->SetNumberField(TEXT("r0"),State.rotation[0]);J->SetNumberField(TEXT("r1"),State.rotation[1]);J->SetNumberField(TEXT("path"),State.path);J->SetNumberField(TEXT("consumers"),State.consumers);
- TArray<TSharedPtr<FJsonValue>> Fail,Phases;for(int I=0;I<8;++I){Fail.Add(MakeShared<FJsonValueNumber>(Failures[I]));Phases.Add(MakeShared<FJsonValueBoolean>(TransferRequired[I]));}J->SetArrayField(TEXT("failures"),Fail);J->SetArrayField(TEXT("transfers"),Phases);
- J->SetBoolField(TEXT("map"),State.mapJoined);J->SetBoolField(TEXT("anchor"),State.anchor);J->SetBoolField(TEXT("end"),State.ropeEnd);J->SetBoolField(TEXT("crank"),State.crank);J->SetBoolField(TEXT("bridge"),State.bridge);J->SetBoolField(TEXT("fuse"),State.fuse);J->SetBoolField(TEXT("finale"),State.finale);J->SetBoolField(TEXT("word"),WordTopic);J->SetNumberField(TEXT("learnTime"),LearnTime);J->SetNumberField(TEXT("worldTime"),WorldTime);
- FVector P=Explorer->GetActorLocation();J->SetNumberField(TEXT("x"),P.X);J->SetNumberField(TEXT("y"),P.Y);FJsonSerializer::Serialize(J,TJsonWriterFactory<>::Create(&S->Snapshot));if(!UGameplayStatics::SaveGameToSlot(S,SaveSlot,0))Notify(TEXT("Spielstand konnte nicht gespeichert werden."));
+ if(!Validate(State)||!Explorer)return;
+ auto J=MakeShared<FJsonObject>();J->SetStringField(TEXT("episode"),TEXT("leuchtfeuer"));J->SetStringField(TEXT("revision"),UTF8_TO_TCHAR(State.revision.c_str()));
+ J->SetNumberField(TEXT("school"),State.school);J->SetNumberField(TEXT("logic"),State.logic);J->SetNumberField(TEXT("anchors"),State.anchors);J->SetNumberField(TEXT("mosaic"),State.mosaic);J->SetNumberField(TEXT("turn"),State.turn);J->SetBoolField(TEXT("shell"),State.shell);J->SetBoolField(TEXT("finale"),State.finale);
+ TArray<TSharedPtr<FJsonValue>> Symbols,Failures,Transfer,Pending;for(int V:State.symbols)Symbols.Add(MakeShared<FJsonValueNumber>(V));for(int i=0;i<7;++i){Failures.Add(MakeShared<FJsonValueNumber>(State.failures[i]));Transfer.Add(MakeShared<FJsonValueBoolean>(State.transfer[i]));Pending.Add(MakeShared<FJsonValueBoolean>(State.pending[i]));}
+ J->SetArrayField(TEXT("symbols"),Symbols);J->SetArrayField(TEXT("failures"),Failures);J->SetArrayField(TEXT("transfer"),Transfer);J->SetArrayField(TEXT("pending"),Pending);
+ auto P=Explorer->GetActorLocation();J->SetNumberField(TEXT("x"),P.X);J->SetNumberField(TEXT("y"),P.Y);J->SetNumberField(TEXT("activeTime"),ActiveTime);J->SetNumberField(TEXT("schoolTime"),SchoolTime);J->SetNumberField(TEXT("logicTime"),LogicTime);J->SetNumberField(TEXT("travelTime"),TravelTime);
+ FString Json;FJsonSerializer::Serialize(J,TJsonWriterFactory<>::Create(&Json));auto* Slot=Cast<UExpeditionSave>(UGameplayStatics::CreateSaveGameObject(UExpeditionSave::StaticClass()));Slot->Snapshot=Json;
+ if(!UGameplayStatics::SaveGameToSlot(Slot,SaveSlot,0)){SaveMessage=TEXT("Der lokale Spielstand konnte nicht gespeichert werden.");UE_LOG(LogTemp,Warning,TEXT("EXPEDITION_SAVE_FAILED %s"),*SaveSlot);}
 }
 bool AExpeditionGameMode::Load(){
- auto* S=Cast<UExpeditionSave>(UGameplayStatics::LoadGameFromSlot(SaveSlot,0));if(!S)return false;TSharedPtr<FJsonObject> J;if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S->Snapshot),J)||!J.IsValid())return false;
- FString Rev;double Schema;if(!J->TryGetStringField(TEXT("revision"),Rev)||Rev!=TEXT("demo-1")||!J->TryGetNumberField(TEXT("schema"),Schema)||Schema!=2)return false;
- Expedition::State New;const TCHAR* Numbers[]={TEXT("slots"),TEXT("inventory"),TEXT("r0"),TEXT("r1"),TEXT("path"),TEXT("consumers")};int* Dest[]={&New.slots,&New.inventory,&New.rotation[0],&New.rotation[1],&New.path,&New.consumers};
- for(int I=0;I<6;++I){double N;if(!J->TryGetNumberField(Numbers[I],N)||!FMath::IsFinite(N)||N!=FMath::TruncToDouble(N)||N<-1||N>255)return false;*Dest[I]=(int)N;}
- const TCHAR* Names[]={TEXT("map"),TEXT("anchor"),TEXT("end"),TEXT("crank"),TEXT("bridge"),TEXT("fuse"),TEXT("finale")};bool* B[]={&New.mapJoined,&New.anchor,&New.ropeEnd,&New.crank,&New.bridge,&New.fuse,&New.finale};for(int I=0;I<7;++I)if(!J->TryGetBoolField(Names[I],*B[I]))return false;
- double X,Y,L,W;bool Topic;if(!Valid(New)||!J->TryGetNumberField(TEXT("x"),X)||!J->TryGetNumberField(TEXT("y"),Y)||!J->TryGetNumberField(TEXT("learnTime"),L)||!J->TryGetNumberField(TEXT("worldTime"),W)||!J->TryGetBoolField(TEXT("word"),Topic)||!FMath::IsFinite(X)||!FMath::IsFinite(Y)||!FMath::IsFinite(L)||!FMath::IsFinite(W)||L<0||W<0)return false;
- const TArray<TSharedPtr<FJsonValue>> *FA,*TR;if(!J->TryGetArrayField(TEXT("failures"),FA)||!J->TryGetArrayField(TEXT("transfers"),TR)||FA->Num()!=8||TR->Num()!=8||(!New.bridge&&X>-155))return false;
- int RestoredF[8];bool RestoredT[8];for(int I=0;I<8;++I){double V;if(!(*FA)[I]->TryGetNumber(V)||V<0||V>100000||V!=FMath::TruncToDouble(V)||!(*TR)[I]->TryGetBool(RestoredT[I]))return false;RestoredF[I]=V;}
- State=New;WordTopic=Topic;LearnTime=L;WorldTime=W;for(int I=0;I<8;++I){Failures[I]=RestoredF[I];TransferRequired[I]=RestoredT[I];}Explorer->SetActorLocation(FVector(FMath::Clamp(X,-1460.,1440.),FMath::Clamp(Y,-630.,600.),80));CancelInput();return true;
+ auto* Slot=Cast<UExpeditionSave>(UGameplayStatics::LoadGameFromSlot(SaveSlot,0));if(!Slot){SaveMessage=TEXT("Noch kein Spielstand dieser neuen Expedition vorhanden.");return false;}
+ TSharedPtr<FJsonObject> J;if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Slot->Snapshot),J)||!J.IsValid()){SaveMessage=TEXT("Der Spielstand ist beschädigt. Bitte starte eine neue Expedition.");return false;}
+ FString Ep,Rev;if(!J->TryGetStringField(TEXT("episode"),Ep)||!J->TryGetStringField(TEXT("revision"),Rev)||Ep!=TEXT("leuchtfeuer")||Rev!=TEXT("master-1")){SaveMessage=TEXT("Dieser Spielstand gehört zu einer anderen Spielversion.");return false;}
+ ExpeditionV2::State Candidate;bool Good=true;
+ auto Integer=[&](const TCHAR* Name,int& Value){double N;if(!J->TryGetNumberField(Name,N)||!FMath::IsFinite(N)||N<-1||N>100000||N!=FMath::FloorToDouble(N)){Good=false;return;}Value=static_cast<int>(N);};
+ Integer(TEXT("school"),Candidate.school);Integer(TEXT("logic"),Candidate.logic);Integer(TEXT("anchors"),Candidate.anchors);Integer(TEXT("mosaic"),Candidate.mosaic);Integer(TEXT("turn"),Candidate.turn);
+ Good&=J->TryGetBoolField(TEXT("shell"),Candidate.shell);Good&=J->TryGetBoolField(TEXT("finale"),Candidate.finale);
+ const TArray<TSharedPtr<FJsonValue>> *A=nullptr;
+ auto IntArray=[&](const TCHAR* Name,int* Values,int Count){if(!J->TryGetArrayField(Name,A)||A->Num()!=Count){Good=false;return;}for(int i=0;i<Count;++i){double N;if(!(*A)[i]->TryGetNumber(N)||!FMath::IsFinite(N)||N<-1||N>100000||N!=FMath::FloorToDouble(N)){Good=false;return;}Values[i]=static_cast<int>(N);}};
+ auto BoolArray=[&](const TCHAR* Name,bool* Values,int Count){if(!J->TryGetArrayField(Name,A)||A->Num()!=Count){Good=false;return;}for(int i=0;i<Count;++i)if(!(*A)[i]->TryGetBool(Values[i]))Good=false;};
+ IntArray(TEXT("symbols"),Candidate.symbols,3);IntArray(TEXT("failures"),Candidate.failures,7);BoolArray(TEXT("transfer"),Candidate.transfer,7);BoolArray(TEXT("pending"),Candidate.pending,7);
+ double X=0,Y=0,At=0,St=0,Lt=0,Tt=0;auto Num=[&](const TCHAR* Name,double& V){if(!J->TryGetNumberField(Name,V)||!FMath::IsFinite(V)||FMath::Abs(V)>10000000)Good=false;};Num(TEXT("x"),X);Num(TEXT("y"),Y);Num(TEXT("activeTime"),At);Num(TEXT("schoolTime"),St);Num(TEXT("logicTime"),Lt);Num(TEXT("travelTime"),Tt);
+ if(!Good||!Validate(Candidate)||At<0||St<0||Lt<0||Tt<0){SaveMessage=TEXT("Der Spielstand enthält widersprüchliche Daten. Dein aktueller Fortschritt bleibt erhalten.");return false;}
+ State=Candidate;ActiveTime=At;SchoolTime=St;LogicTime=Lt;TravelTime=Tt;
+ FVector Pos(X,Y,PlayerZ);bool Repaired=!CanWalk(Pos);if(Repaired)Pos=SafeAnchor(State);
+ if(Explorer)Explorer->SetActorLocation(Pos);CurrentSchool=-1;SelectedOption=-1;RoutePreview=-1;Feedback.Empty();RefreshWorld();CancelInput();UiDirty=true;
+ SaveMessage=Repaired?TEXT("Spielstand geladen. Deine Position wurde auf einen sicheren Weg zurückgesetzt."):TEXT("Spielstand geladen. Willkommen zurück!");return true;
 }
