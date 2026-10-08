@@ -794,6 +794,20 @@ function escapeHtml(value) {
   }[c]));
 }
 
+function formatMathText(value) {
+  const text = String(value ?? "");
+  const pattern = /([\^_])\{([^{}]{1,80})\}/g;
+  let html = "";
+  let cursor = 0;
+  for (const match of text.matchAll(pattern)) {
+    html += escapeHtml(text.slice(cursor, match.index));
+    const tag = match[1] === "^" ? "sup" : "sub";
+    html += `<${tag}>${escapeHtml(match[2])}</${tag}>`;
+    cursor = match.index + match[0].length;
+  }
+  return html + escapeHtml(text.slice(cursor));
+}
+
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();
 }
@@ -5970,12 +5984,17 @@ function shuffled(array) {
 function renderGapfillStudent(section, q) {
   const wrap = document.createElement("div");
   wrap.className = "gapSentence";
+  const appendText = text => {
+    const span = document.createElement("span");
+    span.innerHTML = formatMathText(text);
+    wrap.appendChild(span);
+  };
   let last = 0;
   let gapIndex = 0;
   const regex = /\[([^\]]+)\]/g;
   let match;
   while ((match = regex.exec(q.text))) {
-    wrap.appendChild(document.createTextNode(q.text.slice(last, match.index)));
+    appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
     input.className = "inlineGap";
     input.dataset.gapIndex = String(gapIndex++);
@@ -5984,7 +6003,7 @@ function renderGapfillStudent(section, q) {
     wrap.appendChild(input);
     last = match.index + match[0].length;
   }
-  wrap.appendChild(document.createTextNode(q.text.slice(last)));
+  appendText(q.text.slice(last));
   section.appendChild(wrap);
 }
 
@@ -6373,7 +6392,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -6425,7 +6444,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
         const answerAudioOnly = q.audioAnswerMode === "audio-only";
         const text = answerAudioOnly ? `Antwort ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
         const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
-        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
+        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${formatMathText(text)}</span>`;
         if (answerAudioOnly) {
           label.querySelector("span").hidden = true;
           label.querySelector("input").setAttribute("aria-label", text);

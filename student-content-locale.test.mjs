@@ -25,6 +25,8 @@ function render(runtime, quiz, questions) {
     studentOptionEntries: (_, q) => q.options.map((option, originalIndex) => ({ option, originalIndex })).reverse(),
   });
   if (runtime === "legacy") {
+    const mathStart = legacy.indexOf("function formatMathText(");
+    vm.runInContext(legacy.slice(mathStart, legacy.indexOf("\nfunction ", mathStart + 1)), context);
     const start = legacy.indexOf('const qRoot = $("studentQuestions");', legacy.indexOf("function renderStudentQuiz"));
     const end = legacy.indexOf("  setupStudentProgress(questions);", start);
     vm.runInContext(`function renderQuestions() { ${legacy.slice(start, end)} }; renderQuestions();`, context);
