@@ -31,3 +31,5 @@ Portable Regression lehntvier Küstenantworten ohnecoast Ready noch nichtab (FAI
 Alle sechs angenommenen Fälle wurden zunächst reproduziert: portable FAILafter 82 fürvier Küstenantworten, Native 7 Assertions einschließlichseparatem Außenbereichsdrag. Korrekturen: ersterungelöster Gatebereichmit Kapselmarge; expliziter Native On Mouse Capture Lost samtgehaltenem Buttoncheck; Küstenauswahlmaximal 3 bits; korrektes Unterbrechenaußerhalbundnurbeim Loslassenderursprünglichen Taste; separate Blickhilfenpositionnach Mengenprüfungweiterhinerreichbar; Speichernnurbei tatsächlicher Zustandsänderung. Finale Regressionssuiteistvor Abschlusszuprüfen. Keinzweiter Reviewer.
 
 Letzter vollständiger Korrekturlauf: 2026.10.08-09.54.06 UTC; 59+88=147 portable Checks,2/2 Engine-Tests erfolgreich,0 Fehler. Warnungen: 2 des Epicidevice-Hilfsprogramms; kein Gerätetest. Alle sechs Reviewfälle sind mitvorheriger Fehlprüfungundnachfolgendemerfolgreichem Gesamtlauf belegt.
+
+FrischerTaskabschluss 2026.10.08-11.10.06 UTC:147+2Prüfungen bestanden. KeineweitereProduktänderung nachReviewfixes;Pointer-Fixture mitkanonischerCursor-ID undattachedWidgetCapturestabilisiert. KeinzweiterReviewer.

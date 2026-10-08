@@ -4,7 +4,7 @@
   "rules": 59,
   "puzzles": 88,
   "total_portable_checks": 147,
-  "engine_report": "2026.10.08-09.54.06",
+  "engine_report": "2026.10.08-11.10.06",
   "ue_tests": [
     {
       "name": "GradeCrew.Lerninsel.FourPuzzles",
@@ -16,7 +16,7 @@
       "name": "GradeCrew.Lerninsel.Play",
       "state": "Success",
       "errors": 0,
-      "warnings": 0
+      "warnings": 2
     }
   ],
   "new_concept_boards": 12,
@@ -33,61 +33,62 @@
       "path": "Reports/Arrival.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "c151ea5f799cc1c7bd5aaedb0110e680a417fa64e6be1eae52464b9e6b7a8dc8"
+      "sha256": "7e56272ab5df1467f4cb5592c9ec54aea8eb54251ac2a32a2818b796699f6ef3"
     },
     {
       "path": "Reports/BucketTerrace.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "e51ef01ff8a5efcbcbc27bf73f4993f93642a0eb58c6f20853783c2f1bb8b7b7"
+      "sha256": "3f3372c99e4f914f974c528ee1589053c533bd91b06e77a38711043559c7fde1"
     },
     {
       "path": "Reports/CarriedBucket.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "f9c6753d0500dfc2848b729d12869aa17fc3de72c3d9e0f3ca04ce0742ac94f3"
+      "sha256": "67b1689ab960fd8beec5e9bb6008e529d4b8beda397d17908577f69a406bdc5c"
     },
     {
       "path": "Reports/Four-CoastFinds.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "80170bc59448a691678e7a9ae6e6e8a17392375f039381ebb2f37c998b65785e"
+      "sha256": "91c073b7b08908b76ced9092aa55155e0ecfab88d5028499272ddc709a821ac9"
     },
     {
       "path": "Reports/Four-CoastWindow.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "500702d991ae1d05918afe0db05da2af20ea7e30064ac0b29a399cd7b1d94af5"
+      "sha256": "14aa90f538984c5135a2a230e3c5721acbe64f644bf6e827bb7a63a99ce9a222"
     },
     {
       "path": "Reports/Four-RouteUI.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "c4b8d1eab90eabd96690c6954b4b83a4f8896faa6c461a04c7d23cc8c92282f0"
+      "sha256": "f5ec0981c4b3750e27102df584c40b7cd688e458b65f77939ce59decb33b8da7"
     },
     {
       "path": "Reports/Four-SentenceUI.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "2ea66b8d3a8b59c5e373dd07df9f5c0b095835c2f311bf99529b9f770625f0d7"
+      "sha256": "6fa0947e31f0c29ae5247026d20f5642f6bed911ec3e1c838649594f19732a83"
     },
     {
       "path": "Reports/Four-SentenceWorld.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "2bd3ab3e07725b037355b558ee54e3e167cbde5daebd19d0d62103501797a1fd"
+      "sha256": "8cc609d2016a03f384d15a570a0d9d2795b847cef63a21947900030663b74b14"
     },
     {
       "path": "Reports/Four-Tower.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "a379c51e2c92812b91cc4e81b5659db3c8224b6a0b6563da53e62378726c5a03"
+      "sha256": "6332c67deb8f968f90d1a1cc062b680f7c9e851bc77c853cefb2ea9fd895e000"
     },
     {
       "path": "Reports/VerbGarden.png",
       "width": 2027,
       "height": 1090,
-      "sha256": "5424ddcb2f075f4ca83db55996cdbe5cb35462cb3f37ce10fde447529e35fab9"
+      "sha256": "6b02f2cdf5f41a1b1692bfafc7ad78078c2eea59acda92b72ca84ad8dd930840"
     }
-  ]
+  ],
+  "pointer_evidence": "attached native SButton pressure/capture/release; full Slate route drag; no human desktop hit-test acceptance"
 }

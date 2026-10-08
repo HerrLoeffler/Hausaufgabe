@@ -38,10 +38,10 @@
 
 **Interfaces:** Consumes Island::State/Result/Action. Produces bool SentenceValid(array<int,4>), RouteStepAllowed(int previous,int next), RouteTenths(array<int,5>,int count), CoastTenths(int mask), bool ViewAligned(float distance,float yawError,float pitchError). Extend state with sentence/fractions/coast/finale milestones, bounded selection arrays/counters/findMask/coastMask; Apply new named actions; Serialize LI2/Deserialize supports LI1.
 
-- [ ] Write tests for six V2 permutations and invalid/duplicate/incomplete sentences; route jumps, reverse, incomplete/end, exact A/B/C sums; known versus selected coast finds, all four triples; alignment boundary/NaN; LI1 migration and atomic malformedLI2 rejection.
-- [ ] Run `sh games/lerninsel-unreal/Tests/run.sh`; Expected: missing puzzle header/new actions, then behavioural failures against skeletal implementation.
-- [ ] Implement pure definitions and new state changes using those exact datasets. Expected: existing59checks plus new cases pass.
-- [ ] Save checkpoint and generation attempt history before native build.
+- [x] Write tests for six V2 permutations and invalid/duplicate/incomplete sentences; route jumps, reverse, incomplete/end, exact A/B/C sums; known versus selected coast finds, all four triples; alignment boundary/NaN; LI1 migration and atomic malformedLI2 rejection.
+- [x] Run `sh games/lerninsel-unreal/Tests/run.sh`; Expected: missing puzzle header/new actions, then behavioural failures against skeletal implementation.
+- [x] Implement pure definitions and new state changes using those exact datasets. Expected: existing59checks plus new cases pass.
+- [x] Save checkpoint and generation attempt history before native build.
 
 ### Task 2: Four-region world and reliable interaction
 
@@ -49,13 +49,13 @@
 
 **Interfaces:** Consumes Task1 named actions. Produces AIslandGameMode::PuzzleInteract(int), CanInspect(int), PreviewAligned(), ConfirmCoast(), UIAction(int), refresh for new gate/signal states; world target IDs: sentence500..503 and controls510..512; route600 and focus nodes610..620; coast700..703/finds,710selection,711alignment,712confirmation; finale800; bonus820. Gate/signal mapping must use milestones explicitly, not an index assuming only two regions.
 
-- [ ] Add native automation for action prerequisites, sentence through focus/controller, pointer hit routing, new physical gate colliders, route focus bounded nodes, coast discovery/select versus alignment, save migration and safe reload. Expected: missing runtime/new world targets fail before implementation.
-- [ ] Build authored rooms: garden, sentence courtyard, one-liter fountain/routing terrace, coastal observation frame and four-of-eight tower signal. Clear main/side paths; remove white corridor dominance through neutral dirt/grass/stone islands, house fronts, hedges and grounded silhouettes.
-- [ ] Add selectable sentence slots and explicit undo/check; route start/node/back/check UI; fund sketch-list and three-slot selection; stand/view confirmation requiring runtime pose. Keep clear UI errors and optional hints.
-- [ ] Add actual pointer target picking (camera ray/proximity) and UI pointer-down ownership. Esc first exits focus; focus loss/pause cancels motion and pending stroke/drag. Touch prep remains explicitly unverified on device.
-- [ ] Fix wrong-word persistent shape marker, portable capacity caption, sensible carried bucket framing and continuous rim.
-- [ ] Native Build Editor; Expected: successful DevelopmentEditor compile, actual game viewport renders all four rooms.
-- [ ] Commit/push partial source/art checkpoint with runtime stage and actual current failures.
+- [x] Add native automation for action prerequisites, sentence through focus/controller, pointer hit routing, new physical gate colliders, route focus bounded nodes, coast discovery/select versus alignment, save migration and safe reload. Expected: missing runtime/new world targets fail before implementation.
+- [x] Build authored rooms: garden, sentence courtyard, one-liter fountain/routing terrace, coastal observation frame and four-of-eight tower signal. Clear main/side paths; remove white corridor dominance through neutral dirt/grass/stone islands, house fronts, hedges and grounded silhouettes.
+- [x] Add selectable sentence slots and explicit undo/check; route start/node/back/check UI; fund sketch-list and three-slot selection; stand/view confirmation requiring runtime pose. Keep clear UI errors and optional hints.
+- [x] Add actual pointer target picking (camera ray/proximity) and UI pointer-down ownership. Esc first exits focus; focus loss/pause cancels motion and pending stroke/drag. Touch prep remains explicitly unverified on device.
+- [x] Fix wrong-word persistent shape marker, portable capacity caption, sensible carried bucket framing and continuous rim.
+- [x] Native Build Editor; Expected: successful DevelopmentEditor compile, actual game viewport renders all four rooms.
+- [x] Commit/push partial source/art checkpoint with runtime stage and actual current failures.
 
 ### Task 3: User-route evidence, independent review and delivery
 
@@ -63,8 +63,8 @@
 
 **Interfaces:** Exercises normal controller/focus/pointer route into Task2 and real Task1 rules. Separate automation slot; stable save migration and four-signal finale.
 
-- [ ] Run full pure rules/puzzles suite and UE GradeCrew.Lerninsel suite. Expected: all relevant checks pass, no errors. Inspect warnings and preserve trial history.
-- [ ] Capture real arrival, sentence, route/becken, coast alignment and carried bucket screenshots; inspect world readability, actual signal count and physical geometry. A teleported fixture proves integration, not first-play usability; document distinction.
-- [ ] Run one fresh full-range read-only reviewer using executing-plans/requesting-code-review. Fix important findings with reproducing regressions, then full suite.
-- [ ] Commit exact map/source/reports/artboards and complete handoff; synchronize using connector expected refs; read back whole runtime tree and image hashes. DraftPR175 updated/attached, central TODO/state/handoff reflect branch_only and current source/test evidence.
-- [ ] Final report states what is playable, exact validations and mobile/browser/art limits. Preserve worktree/starter for user play. No integration or deployment.
+- [x] Run full pure rules/puzzles suite and UE GradeCrew.Lerninsel suite. Expected: all relevant checks pass, no errors. Inspect warnings and preserve trial history.
+- [x] Capture real arrival, sentence, route/becken, coast alignment and carried bucket screenshots; inspect world readability, actual signal count and physical geometry. A teleported fixture proves integration, not first-play usability; document distinction.
+- [x] Run one fresh full-range read-only reviewer using executing-plans/requesting-code-review. Fix important findings with reproducing regressions, then full suite.
+- [x] Commit exact map/source/reports/artboards and complete handoff; synchronize using connector expected refs; read back whole runtime tree and image hashes. DraftPR175 updated/attached, central TODO/state/handoff reflect branch_only and current source/test evidence.
+- [x] Final report states what is playable, exact validations and mobile/browser/art limits. Preserve worktree/starter for user play. No integration or deployment.
