@@ -344,3 +344,10 @@ GC-FINANCE-BAYSTARTUP-20261008 · Nutzerfassung übernommen und Umsatzdarstellun
 
 
 GC-FINANCE-BAYSTARTUP-20261008 · Finanzierungsrahmen auf Nutzerwunsch abgestimmt; Mittelverteilung rechnerisch korrigiert. Frühere unbelegte hohe Personalkosten durch vorläufiges Solo-Szenario ersetzt, positiver Planwert im Folgejahr nur bei bezahlten Aufträgen und schlankem Betrieb, ausdrücklich ohne Gründergehalt. Zwei Seiten und sechs EBIT-Rechnungen geprüft; Original/Kontakte/Team erhalten, Zahlen bleiben lokal. Tatsächlicher Bedarf weiter offen, keine garantierte Rentabilität oder Einreichung. Nächster Schritt: reale laufende Kosten, externe Leistungen und Gründervergütung erfassen. Kein App-/Release-/Productionwechsel; bestehende Übergabe aktualisiert.
+
+
+## 08.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: Wasser, Fuchs und Steuerung testbereit
+
+Martin bestätigt verbesserte frühe Bedienung und3/10. Folgebereich ersetzt gezeichneten Hauptast durch denselbenMessbecher:100-/200-ml-Zuläufe,100-ml-Ablauf,genau1L eingießen. KeinzweiterBecher. LI3 liestLI1/LI2. VersteinerterFuchserwachtbeigültigemSatz,läuftzumTor,ziehtSeilschlaufe;ToröffnetnachRiegelfreigabe. Esc bietetWiederholungohneLernreset. Mausslider25–300%,Figur420cm/s. Sechs neueTafeln120Studien,gesamt385Konzeptmotive/26Bildaufrufe; NativeFigurdeutlichsimpleralsKonzepte.
+
+Frisch16:56:16UTC:195portableChecks,4UE-Suites,0Fehler/8Epicidevice-Umgebungswarnungen. Frischer unabhängigerReview: FokusverlustundPfosten imLaufwegrot→grün in einemFixpass.20aktuelleAufnahmen;keinOS-/Kinder-/iPadtest. Remotec7653d9b25e0cc93ad95b61bb29f9f74a4077ae4,lokalb817014d034856b60b24142380ef184832d6fe8c,RuntimeGitbauma84531f3580764f87cf6dc4cda03eae5ef644215 bytegleich. DraftPR175/branch_only. EigeneSpielsessionPID37899überStartergestartet. NächsterSchritt:MartinprüftEsc→Fuchsaktionerneutansehenundnachfolgende1L-Aufgabe. [Prüfung](games/lerninsel-unreal/Production/WATER-FOX-REVIEW.md), [Vorlagen/Ablauf](docs/games/lerninsel/20261008-fox-water/README.md). AltesBuch-/Budget-/Versuchsgedächtniserhalten;Production/Webreleaseunverändert.
