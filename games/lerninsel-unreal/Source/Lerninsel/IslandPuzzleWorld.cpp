@@ -12,7 +12,7 @@ bool AIslandGameMode::CanInspect(int Id)const{
  if(Id>=400&&Id<=404)return State.sentence;
  if(Id==600)return State.sentence&&State.water;
  if(Id>=700&&Id<=710)return State.fractions;
- if(Id==711)return State.fractions&&!State.coastReady;
+ if(Id==711)return State.fractions;
  if(Id==712)return State.coastReady;
  if(Id==800)return State.coast;
  if(Id==820)return State.verbs;if(Id==821)return State.fractions;
@@ -20,7 +20,7 @@ bool AIslandGameMode::CanInspect(int Id)const{
 }
 FString AIslandGameMode::SentenceText()const{FString Text;for(int I=0;I<State.sentenceCount;++I){int Id=State.sentenceParts[I];if(Id>=0&&Id<4)Text+=(Text.IsEmpty()?TEXT(""):TEXT(" "))+FString(Parts[Id]);}if(Text.IsEmpty())return TEXT("Vier Plätze warten auf deinen Satz.");Text[0]=FChar::ToUpper(Text[0]);return Text+(State.sentenceCount==4?TEXT("."):TEXT(" …"));}
 void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("Löse zuerst den vorherigen Raum. Der Weg und die Torleitung zeigen die Reihenfolge."));return;}
- if(Id>=500&&Id<=503){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Focus=Id;}
+ if(Id>=500&&Id<=503){Focus=Id;}
  else if(Id==510){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Focus=510;}
  else if(Id==511)Apply(Island::Action::SentenceUndo);else if(Id==512)Apply(Island::Action::SentenceCheck);
  else if(Id==600){Focus=600;}
@@ -37,7 +37,7 @@ void AIslandGameMode::UIAction(int Code){auto* C=Cast<AIslandController>(UGamepl
  if(Paused||Focus<0)return;
  if(Code==4001&&Focus>=100&&Focus<=208){SelectFocused();return;}
  const bool SentenceFocus=Focus==510||(Focus>=500&&Focus<=503);
- if(SentenceFocus){if(Code>=5000&&Code<=5003){Apply(Island::Action::SentencePick,Code-5000);if(Focus!=510){Focus=-1;if(C)C->UpdateMode();}}else if(Code==5010)Apply(Island::Action::SentenceStart);else if(Code==5011)Apply(Island::Action::SentenceUndo);else if(Code==5012)Apply(Island::Action::SentenceCheck);return;}
+ if(SentenceFocus){if(Code>=5000&&Code<=5003){if(!State.sentenceActive&&!State.sentence)Apply(Island::Action::SentenceStart);Apply(Island::Action::SentencePick,Code-5000);if(Focus!=510){Focus=-1;if(C)C->UpdateMode();}}else if(Code==5010)Apply(Island::Action::SentenceStart);else if(Code==5011)Apply(Island::Action::SentenceUndo);else if(Code==5012)Apply(Island::Action::SentenceCheck);return;}
  if(Focus==600){if(Code==6000)Apply(Island::Action::RouteStart);else if(Code>=6010&&Code<=6020){if(Code==6010&&!State.routeActive&&!State.fractions)Apply(Island::Action::RouteStart);else Apply(Island::Action::RouteNode,Code-6010);}else if(Code==6030)Apply(Island::Action::RouteUndo);else if(Code==6031)Apply(Island::Action::RouteCheck);return;}
  if(Focus==710){if(Code>=7000&&Code<=7003)Apply(Island::Action::CoastToggle,Code-7000);else if(Code==7010)Apply(Island::Action::CoastCheck);else if(Code==7011)Notify(TEXT("Vier Reliefs stehen am unteren Küstenweg. Danach führt die breite Treppe zur Steinbank mit dem runden Standzeichen. Von dort passen die Teile vor dem Meer zusammen."));else if(Code==7012)ConfirmCoast();return;}
  if(Focus==800&&Code==8000){Apply(Island::Action::FinaleCheck);return;}
@@ -51,5 +51,5 @@ bool AIslandGameMode::PreviewAligned()const{auto* P=Player();if(!P||!State.coast
  return true;
 }
 void AIslandGameMode::ConfirmCoast(){Apply(Island::Action::CoastConfirm,PreviewAligned()?1:0);}
-void AIslandGameMode::RefreshPuzzleWorld(float Dt){for(int I=0;I<SentenceSlots.Num();++I)SentenceSlots[I]->SetText(FText::FromString(I<State.sentenceCount?FString(Parts[State.sentenceParts[I]]):FString::Printf(TEXT("%d"),I+1)));
+void AIslandGameMode::RefreshPuzzleWorld(float Dt){for(int I=0;I<SentenceSlots.Num();++I){FString Label=I<State.sentenceCount?FString(Parts[State.sentenceParts[I]]):FString::Printf(TEXT("%d"),I+1);if(I==0&&!Label.IsEmpty())Label[0]=FChar::ToUpper(Label[0]);SentenceSlots[I]->SetText(FText::FromString(Label));}
  const int Sum=Island::RouteTenths(State.route,State.routeCount);float TargetHeight=State.fractions?10.f:Sum>=0?float(Sum):0.f;BasinHeight=FMath::FInterpConstantTo(BasinHeight,TargetHeight,Dt,5.f);if(BasinWater){BasinWater->SetVisibility(BasinHeight>0);BasinWater->SetRelativeScale3D(FVector(.1,.1,FMath::Max(.001f,BasinHeight/100)));BasinWater->SetRelativeLocation(FVector(0,0,2+BasinHeight*.5f));}}

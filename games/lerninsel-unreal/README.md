@@ -1,24 +1,35 @@
-# GradeCrew Lerninsel — erster Unreal-Abschnitt
+# Grade Crew Lerninsel — Vier-Rätsel-Prototyp
 
-Eigenständiger Ego-Prototyp für Klasse5–6. Startgarten, zwei Verbproben und Wasserterrasse sind gebaut. Gestaltung folgt dem vereinbarten Spielbuch: ruhige Erkundung, helle Natur, räumliche Lernrätsel und sichtbare Torverbindungen. Eigene Geometrie und Aufgaben; keine The-Witness-Assets.
+Ein eigenständiger Ego-Prototyp für Klasse 5–6 mit zwei freiwilligen Zusatzaufgaben. Vier Hauptmechaniken sind verbunden: Verbpfad, Satzweg, Bruchleitung und das räumliche Felsfenster. Die Einführung enthält eine kleine Verbprobe; die Wasserterrasse zusätzlich den lebensnahen 1-Liter-Mess-Eimer. Eigene Geometrie und Daten, keine importierten The-Witness-Assets.
 
 ## Lokal spielen
 
-Auf diesem Mac `Lerninsel starten.command` doppelklicken. Die Datei öffnet die vorhandene UE5.8-Installation mit diesem Projekt im Spielmodus. Beim ersten Start auf einem anderen Checkout vorher `Tools/build_editor.sh` ausführen. Alternativ `Lerninsel.uproject` im Unreal-Editor öffnen und Play drücken; die Weltgeometrie entsteht beim Spielstart aus `IslandArt.cpp`.
+Auf diesem Mac `Lerninsel starten.command` doppelklicken. Der Starter öffnet die installierte UE5.8 mit diesem Projekt im Spielmodus. Auf einem anderen Checkout zuerst `Tools/build_editor.sh` ausführen. Alternativ `Lerninsel.uproject` im Editor öffnen und Play drücken. Die Karte enthält Licht/Start; die Welt und ihre Objekte entstehen aus der eigenen C++-Quelle beim Spielstart.
 
-- WASD gehen, Maus schauen, E nahe Objekte untersuchen/bedienen.
-- Esc schließt zuerst die Wortansicht; ein weiteres Esc öffnet die Pause. Sichtfeld75/85° im Pausenmenü.
-- Zwei Verben in der kleinen Probe bestätigen und am Schlussstein prüfen. Nur zwei Auswahlen gleichzeitig.
-- Am Startstein den Verbweg aktivieren; pro Reihe mittig auf ein Verb gehen und kurz stehen bleiben. Kontext mit E lesen, falschen letzten Schritt am Randstein zurücknehmen. Drei richtige Schritte am Schlussstein prüfen.
-- 1-Liter-Eimer aufnehmen, am Brunnen jeweils100ml einfüllen, gegebenenfalls am Ablass100ml entfernen. 3/10=300ml auf der beschrifteten Platte absetzen. Der Eimer hat zehn gleiche Höhenabschnitte in einem zylindrischen Innenraum; die tragbare HUD-Skala vergrößert die Hilfe.
-- Bestätigte Lösungen bleiben erhalten. Speichern erfolgt lokal pro Interaktion in LerninselV1, keine Konten/Cloud. Tastatur und Berührung werden bei Fokuswechsel/Pause zurückgesetzt; abgebrochene Portionen zählen nicht.
+WASD geht, die Maus schaut, E untersucht/bedient das angezeigte nahe Objekt. Ein Weltklick untersucht das erreichbare Objekt im Blick. Esc schließt zuerst den Fokus und öffnet anschließend die Pause. In der Pause lässt sich FOV75/85 wählen. Native Widgets übernehmen Pflichtantworten, Fokus, Pointerdruck und Loslassen. Links bewegt ein Touchfinger, rechts schaut er; unten rechts liegt die Aktion. Touch ist vorbereitet, aber noch nicht auf einem physischen i Pad geprüft.
 
-## Umfang und Prüfbarkeit
+## Die zusammenhängende Spielfolge
 
-UE5.8.3 Development Editor auf Mac M5Pro. `Tests/run.sh` prüft den tatsächlichen Regelkern; `Tools/test_editor.sh` prüft die Engine-Integration, inklusive Eingaberouting, Kollision, Füllung, Pause und Speicherung. `Reports` enthält tatsächliche Spielaufnahmen, keine Konzeptbilder. `Tools/create_world.py` erzeugt wiederholbar nur die eigenen Materialien und die eigene Karte. Bei diesem macOS-Editor kann der Python-Lauf nach erfolgreichem Speichern im Shutdown hängen; gespeicherte Inhalte anschließend mit dem Engine-Spieltest prüfen, keine erfolgreiche Erzeugung nur aus dem Prozessstart ableiten.
+1. **Verbprobe:** Zwei Verben aus vier Kontextwörtern auswählen, höchstens zwei gleichzeitig. Am Schlussstein prüfen.
+2. **Verbpfad:** Den Weg am Startstein aktivieren. In jeder Reihe mittig auf ein Verb gehen und mindestens 0,30 s halten. Randkontakte zählen nicht. Ein falscher Schritt trägt ein eigenes !-Symbol; am Randstein zurücknehmen. Nach drei Reihen ausdrücklich prüfen.
+3. **Satzweg:** Vier verschiedene Satzglieder zu einem Aussagesatz ordnen. Auswählen per Bodenschritt nach Start, bewusster Wortinteraktion oder nativer Tafel. Das Verb steht an zweiter Satzgliedposition. Alle sechs gültigen Reihenfolgen sind erlaubt. Rücknahme und Prüfung bleiben getrennt.
+4. **Mess-Eimer:** Kapazität 1 Liter, Ziel3/10=300ml. Am Brunnen bestätigt jeder Hub 100 ml; Ablass entfernt 100 ml. Eimer bewusst auf die3/10-Platte setzen. Bei2/10 und4/10 lässt er sich mit der normalen Aktion wieder aufnehmen und korrigieren. Pause/Fokusverlust verwirft unbestätigte Portionen.
+5. **Bruchleitung:** Ein vollständiger Ast vom Start über drei Knoten zum Ziel muss ein Ganzes ergeben. Mausdruck kann die Linie halten und über Knoten ziehen; einzelne Knotenwahl ist ebenfalls möglich. Kanten und korrekte Abzweige sind sichtbar. A=1/2+3/10+1/5, B=1/2+1/5+1/10, C=3/10+1/5+1/5. Rückwärts beziehungsweise „Kante zurück“ nimmt den letzten Schritt zurück. Das Tor wartet auf vollständig gefülltes Messbecken und abgeschlossene Öffnung.
+6. **Felsfenster:** Vier Reliefs am unteren Küstenweg entdecken. Im Fundbuch genau drei bekannte Anteile auswählen. Richtige Summe allein öffnet nichts. Die breite Treppe führt zur erhöhten Steinbank; vom runden Standzeichen ergeben die räumlich getrennten Formen einen Ring. Passende Position und Blickrichtung sind nötig. E bestätigt die Verbindung bewusst. Die Blickhilfe ist freiwillig und teleportiert nicht.
+7. **Turm:** Vier Hauptsignale bestätigen den Prototypabschluss. Vier weitere Fenster bleiben dunkel, weil das spätere Achtgebiets-Spiel noch nicht vollständig gebaut ist.
 
-Dies ist der erste spielbare Abschnitt und ein erster Art-Durchgang. Keine endgültige grafische Abnahme, kein vollständiges Achtgebiets-Spiel. Satzweg, weitere Bruchrätsel, Felsfenster und schwierigere Zusatzrätsel stehen im ausführlichen Spielbuch unter `docs/games/lerninsel/20261007/spielbuch.md` im Repository und sind hier noch nicht implementiert. Audio, fertige Landschaftsformen und ausgearbeitete Assets folgen.
+Zusatzsteine bieten eine Kontextfrage zur Nominalisierung und eine anspruchsvollere Zwölftel-Ergänzung. Sie verändern die bereits geöffneten Haupttore nicht.
 
-Touch-Eingabe ist vorbereitet: linker Finger bewegt, rechter zieht die Ansicht, Aktion unten rechts. Desktop-Simulation ersetzt keine Prüfung auf einem iPad. Kein veröffentlichter Browserzugang, PixelStreaming-Server oder signierter iPad-Build. Der Webweg mit UE benötigt Streaming-Infrastruktur; ein nativer iPad-Build benötigt separate mobile Qualitätseinstellungen und Gerätetests.
+## Nachweise und Grenzen
 
-Task GC-GAMES-ESCAPE-VISUAL-01, Branch feature/lerninsel-ego-v1. Übergabe und Versuchshistorie: Production/HANDOFF.md. Kein Production-Deploy.
+`sh Tests/run.sh` prüft den echten portablen Regelkern und neue Puzzledefinitionen. `Tools/test_editor.sh` baut zuerst das aktuelle Modul, führt die native Engine-Automation aus und exportiert Berichte. Die native Tafelprüfung benutzt Slate-Pointerbewegung, Druck, gehaltenes Ziehen und Loslassen. Sie ist mehr als ein direkter Regelfunktionsaufruf; sie ersetzt jedoch keinen Erstspieldurchlauf eines Kindes.
+
+Reports enthalten echte Spiel-/Widgetaufnahmen. Tests versetzen den Actor gezielt zwischen Stationen, um Integration und Darstellung zu prüfen. Daraus wird keine gemessene Spieldauer, vollständiger Spaziergang oder Spaßabnahme abgeleitet. Saveformat LI2 übernimmt frühere LI1-Lösungen; bei geänderter Geografie beginnt die Migration sicher am Anfang. Der lokale Nutzerslot bleibt Lerninsel V1; Automationsslots sind separat.
+
+Das native Programm ist ein Funktionsprototyp. Landschaft und Modelle sind deutlich einfacher als die hochwertigen Konzeptbilder. Kein endgültiger Grafikvergleich, Audioausbau, öffentliches Pixel Streaming oder signierter/iPad-getesteter Build. Ein Browserzugang mit dieser Engine benötigt separate Streaming-Infrastruktur. Kein Production-Deploy.
+
+## Ausführliche Baugrundlage
+
+`docs/games/lerninsel/20261007/spielbuch.md` enthält den ursprünglichen umfangreichen Entwurf. `docs/games/lerninsel/20261008-production/` ergänzt Bauvertrag, Bildprüfung, zwölf neue 20-Motiv-Tafeln und den reproduzierbaren 280-seitigen illustrierten Atlas. Zusammen 261 Konzeptmotive, keine 261 fertigen 3 D-Assets. Das lokal erzeugte PDF ist wegen seiner Größe nicht eingecheckt; Quellen, Bilder und `build_handbook.py` sind gesichert. Mit Report Lab und pypdf reproduzierbar; die vorhandene Unreal-Installation liefert die Schriftdateien.
+
+Task GC-GAMES-ESCAPE-VISUAL-01, Branchfeature/lerninsel-ego-v1, Draft PR175. Aktueller Stand/Versuchshistorie: Production/HANDOFF.md. Prüfbefunde: Production/REVIEW.md.

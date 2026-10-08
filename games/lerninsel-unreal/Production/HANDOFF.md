@@ -59,3 +59,15 @@ Abschließender erneuter Lauf einschließlich Tragebild: 2026.10.07-23.13.10 UTC
 ## Erweiterung in Arbeit08.10.2026
 
 Martin verlangt Übernahme der ausführlichen Masterprojekt-Methode und anschließenden Prototypbau. Vorhandener Branch/PR175 wird weitergeführt. Native vierteilige Rätseldaten einschließlichLI1→LI2 sind implementiert:59bestehende+87neueportableChecks grün. NeueRuntime/UMG/Satzplatz/Bruchterrasse/Küstengeometrie in ersterFassung erfolgreichkompiliert, nativeBedienprüfungen laufen alsnächsterSchritt; bisher kein neuerEngine-Spieltest alsgrünbehauptet. Zwölf20-Motiv-Tafeln geplant;01..09erfolgreich erzeugt/gesichert,10..12laufen inCallCell30. Vorherige7Bildaufrufe erhalten; keinneuerProvider/CloudGPU/Deploy. MethodischePR171-Unterlagen gelesen, nichtübernommenodergeändert. Plan docs/superpowers/plans/2026-10-08-lerninsel-four-puzzles.md, Ergänzung docs/games/lerninsel/20261008-production/. Task1erledigt,Task2inArbeit,Task3offen. KeineerneuteFreigabepause lautNutzerauftrag.
+
+## Vier-Rätsel-Erweiterung: geprüftes Kandidatensystem
+
+Aktueller eigener Kandidat570fce3 umfasst alle vier Hauptmechaniken, Eimerprobe und zwei Zusatzfragen. NativeUMG-Pflichtantworten stattCanvas-Hitboxen; echte Slate-Move/Down/Drag/Up-Prüfung, physische Gateblocker und Wasser-vor-Tor-Sequenz. Regelprüfungen59+87=146bestehen. ZweiUE-Tests bestanden mit0Fehlern; imletztenLauf je2Warnungen desmitgeliefertenx86ideviceTools aufARM, keineProjekt-Material-/Widgetfehler. KeineiPadabnahme behauptet.
+
+Neue Referenzbibliothek:12PNG-Tafeln/240Motive, vorherige21Motiveerhalten; alle12Original-PNG-GitblobsbytegleichmitlokalenFiles, remotec968f807gesichert. Insgesamt19Bildaufrufe inklusivefrüherer7, keineweitereGenerierungzumPDF. Bauhandbuch280Seitenlokal, etwa58MB;Quellen/Generator eingecheckt,PDFabsichtlichlokalundreproduzierbar. Darin28Text-/Bau-/Prüfseiten,12Übersichten,240Studienseiten, nicht280Seiten einzigartigerSpieltext.
+
+ScopeStatusbranch_only/PR175; source/doc/report-Remoteaktualisierungfolgt. Frischer unabhängigerReviewerlerninsel_four_review liest76b336e..570fce3; keinezweiteImplementierung/Reviewrunde. NächsterSchritt: Befundeauswerten, WichtigesmitRegressionbeheben, finalegesamteTestsundReadback. KeinefinaleGrafik-/Erstspieler-/Spieldauer-/Browser-/Device-/Deploybehauptung. AndereExpeditionundWebreleaseunverändert.
+
+## Finaler Vier-Rätsel-Kandidat
+
+2026.10.08-09.54.06 UTC:147Regelchecks und2UE-Tests bestanden,0Fehler; 2 bekannteidevice-Warnungen. UnabhängigerReview:3wichtigeBefundeund3nachWirkunghochgestufteBedienbefunde,allemitRegressionbehoben. REVIEW-FOUR.md undReports/four-review-red.json erhalten. WeitereSatzvarianten/Hilfenhistorie bleiben reduziert; umgesetzt2Zusatzfragen. RealeGehroute/Erstspiel/Final-Art/Web/iPad nichtbehauptet. FinaleRemoteRef unten überzentraleÜbergabe undPR175 prüfen. EigenesWorktree/Startererhalten,keineIntegration/Production.

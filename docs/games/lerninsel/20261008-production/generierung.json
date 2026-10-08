@@ -60,8 +60,32 @@
       "tool": "built-in image_gen",
       "motifs": 20,
       "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-ada44131-a776-4b32-87bf-24818d0f851d.png"
+    },
+    {
+      "board": "10",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-2f0a1ff3-f0c4-4ffa-9b35-c6b62bd27fbd.png"
+    },
+    {
+      "board": "11",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-bb709d21-f0cf-4641-bf57-6e7f74e8ce4e.png"
+    },
+    {
+      "board": "12",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-9d4d2bc2-466a-44c3-8d0b-5c7edff02f3e.png"
     }
   ],
   "money": "not_provided",
-  "reference_role": "original screenshots for style only; no original game assets copied"
+  "reference_role": "original screenshots for style only; no original game assets copied",
+  "new_calls_total": 12,
+  "combined_calls": 19,
+  "new_motifs": 240
 }

@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "4ACBF183A245C49DF5791AA70E562EDA",
-			"instanceName": "Mac.fritz.box-74982",
+			"instance": "8CCE302C394746530E0F71A4392C1013",
+			"instanceName": "Mac.fritz.box-10863",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,26 +15,66 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.07-23.13.10",
+	"reportCreatedOn": "2026.10.08-09.54.06",
 	"succeeded": 1,
-	"succeededWithWarnings": 0,
+	"succeededWithWarnings": 1,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 8.9602136611938477,
+	"totalDuration": 17.841791152954102,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
+		{
+			"testDisplayName": "FourPuzzles",
+			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"8CCE302C394746530E0F71A4392C1013"
+			],
+			"duration": 9.0242977142333984,
+			"dateTime": "2026.10.08-09.53.48",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-09.53.56"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-09.53.56"
+				}
+			],
+			"warnings": 2,
+			"errors": 0,
+			"artifacts": []
+		},
 		{
 			"testDisplayName": "Play",
 			"fullTestPath": "GradeCrew.Lerninsel.Play",
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"4ACBF183A245C49DF5791AA70E562EDA"
+				"8CCE302C394746530E0F71A4392C1013"
 			],
-			"duration": 8.9602136611938477,
-			"dateTime": "2026.10.07-23.13.01",
+			"duration": 8.8174934387207031,
+			"dateTime": "2026.10.08-09.53.58",
 			"entries": [],
 			"warnings": 0,
 			"errors": 0,

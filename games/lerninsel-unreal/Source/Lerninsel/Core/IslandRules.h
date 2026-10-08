@@ -190,7 +190,7 @@ inline bool Deserialize(const std::string& text,State& out){
  if(s.routeActive&&s.routeCount<1)return false;
  if(s.routeCount&&!s.fractions&&!s.routeActive)return false;
  if(s.fractions&&(s.routeActive||RouteTenths(s.route,s.routeCount)!=10))return false;
- if(s.foundMask&&!s.fractions)return false;if(s.coastMask&~s.foundMask)return false;
+ if(s.foundMask&&!s.fractions)return false;if(s.coastMask&~s.foundMask)return false;if(CountBits(s.coastMask)>3)return false;
  if(s.coastReady&&(CountBits(s.coastMask)!=3||CoastTenths(s.coastMask)!=10))return false;
  if(s.coast&&!s.coastReady)return false;if(s.finale&&(!s.verbs||!s.sentence||!s.fractions||!s.coast))return false;
  if((s.bonusMask&1)&&!s.verbs)return false;if((s.bonusMask&2)&&!s.fractions)return false;

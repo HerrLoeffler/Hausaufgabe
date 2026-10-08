@@ -7,6 +7,7 @@ for name, glow in [('M_Island', False), ('M_Glow', True), ('M_Glass', False)]:
         mat = tools.create_asset(name, '/Game/Materials', unreal.Material, unreal.MaterialFactoryNew())
     edit.delete_all_material_expressions(mat)
     mat.set_editor_property('two_sided', True)
+    mat.set_editor_property('used_with_instanced_static_meshes', True)
     if name == 'M_Glass':
         mat.set_editor_property('blend_mode', unreal.BlendMode.BLEND_TRANSLUCENT)
         opacity = edit.create_material_expression(mat, unreal.MaterialExpressionConstant, -180, 250)
