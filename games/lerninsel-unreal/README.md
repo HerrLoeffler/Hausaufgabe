@@ -40,3 +40,10 @@ Task GC-GAMES-ESCAPE-VISUAL-01, Branchfeature/lerninsel-ego-v1, Draft PR175. Akt
 Bei der Verbprobe wählt ein Klick oder E das Wort unmittelbar aus. Der ganze Stein wird blau; es gibt kein Häkchen und kein zweites Auswahlfenster. Erneutes bewusstes Auswählen nimmt das Wort zurück. Zwei richtige Verben öffnen das Tor automatisch. Der Verbweg erklärt dauerhaft: vorne anfangen, in jeder der drei nummerierten Reihen ein Verb wählen. Ein erstes Wort startet den Weg ebenfalls direkt. Drei richtige Schritte öffnen das Tor automatisch; falsch gewählte Schritte am Stein Schritt zurück links verbessern. Der spätere Satzplatz zeigt ein Beispiel und die Regel Verb auf Platz 2.
 
 Die neue Version wird über denselben Starter geöffnet. Eine noch laufende alte Spielsitzung bitte schließen und Lerninsel starten.command erneut öffnen; Änderungen erscheinen nach Neustart. Vorhandener Fortschritt bleibt erhalten. Layoutvorlage und genaue Entscheidungen: docs/games/lerninsel/20261008-learning/README.md. Die Vorlage ist Konzeptkunst; tatsächliche Aufnahmen stehen in Reports/Learning-Selection.png und Reports/Learning-Verbweg.png. Neue Nutzerabnahme bleibt offen.
+
+
+## Erweiterung: Fuchs, zweite Wasseraufgabe und Einstellungen
+
+Nach dem Neustart öffnet Esc das Pausenmenü mit Mausgeschwindigkeit25–300Prozent. Die Figur läuft zügiger. Nach gelöstem Satz bietet Fuchsaktion erneut ansehen die Szene ohne Verlust des Lernfortschritts. Beim ersten richtigen Satz erwacht er automatisch und löst den Seilriegel am Tor.
+
+Nach der ersten3/10-Probe denselben Messbecher wieder von der Platte aufnehmen und mitnehmen. Im nächsten Bereich füllen100ml- und200ml-Hähne; am Ablauf lässt man100mlab. Ziel1000ml=1Liter, dann am Zielbecken E. Die alte gezeichnete Bruchroute ist keine Pflichtbedienung mehr. Details und120Konzeptstudien: docs/games/lerninsel/20261008-fox-water/README.md. Die Spielgrafik ist einfacher als dieVorlagen; echteAufnahmen inReports. Prüfnachweis Production/WATER-FOX-REVIEW.md.

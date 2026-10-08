@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "A164E3189D41098FAB66DF9C31339971",
-			"instanceName": "Mac.fritz.box-34897",
+			"instance": "B3B66B270F4FB7B2A4418381F813C7E8",
+			"instanceName": "Mac.fritz.box-36944",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,13 +15,13 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.08-16.38.52",
+	"reportCreatedOn": "2026.10.08-16.56.16",
 	"succeeded": 1,
 	"succeededWithWarnings": 3,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 36.280971527099609,
+	"totalDuration": 36.317020416259766,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
@@ -31,10 +31,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A164E3189D41098FAB66DF9C31339971"
+				"B3B66B270F4FB7B2A4418381F813C7E8"
 			],
-			"duration": 2.2756712436676025,
-			"dateTime": "2026.10.08-16.38.16",
+			"duration": 2.2613458633422852,
+			"dateTime": "2026.10.08-16.55.39",
 			"entries": [],
 			"warnings": 0,
 			"errors": 0,
@@ -46,10 +46,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A164E3189D41098FAB66DF9C31339971"
+				"B3B66B270F4FB7B2A4418381F813C7E8"
 			],
-			"duration": 13.998950958251953,
-			"dateTime": "2026.10.08-16.38.18",
+			"duration": 14.025272369384766,
+			"dateTime": "2026.10.08-16.55.42",
 			"entries": [
 				{
 					"event":
@@ -61,7 +61,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.26"
+					"timestamp": "2026.10.08-16.55.42"
 				},
 				{
 					"event":
@@ -73,10 +73,34 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.26"
+					"timestamp": "2026.10.08-16.55.42"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.55.52"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.55.52"
 				}
 			],
-			"warnings": 2,
+			"warnings": 4,
 			"errors": 0,
 			"artifacts": []
 		},
@@ -86,10 +110,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A164E3189D41098FAB66DF9C31339971"
+				"B3B66B270F4FB7B2A4418381F813C7E8"
 			],
-			"duration": 7.0993571281433105,
-			"dateTime": "2026.10.08-16.38.32",
+			"duration": 7.118929386138916,
+			"dateTime": "2026.10.08-16.55.56",
 			"entries": [
 				{
 					"event":
@@ -101,7 +125,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.36"
+					"timestamp": "2026.10.08-16.56.02"
 				},
 				{
 					"event":
@@ -113,7 +137,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.36"
+					"timestamp": "2026.10.08-16.56.02"
 				}
 			],
 			"warnings": 2,
@@ -126,10 +150,10 @@
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"A164E3189D41098FAB66DF9C31339971"
+				"B3B66B270F4FB7B2A4418381F813C7E8"
 			],
-			"duration": 12.90699291229248,
-			"dateTime": "2026.10.08-16.38.39",
+			"duration": 12.91147518157959,
+			"dateTime": "2026.10.08-16.56.03",
 			"entries": [
 				{
 					"event":
@@ -141,7 +165,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.46"
+					"timestamp": "2026.10.08-16.56.12"
 				},
 				{
 					"event":
@@ -153,7 +177,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.38.46"
+					"timestamp": "2026.10.08-16.56.12"
 				}
 			],
 			"warnings": 2,

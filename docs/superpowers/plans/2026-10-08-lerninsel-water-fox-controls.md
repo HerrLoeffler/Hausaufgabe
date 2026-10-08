@@ -42,9 +42,9 @@
 ### Task 3: Fuchsszene und Auslieferung
 **Files:** IslandFox.cpp, Core/IslandFoxCue.h, Tests/fox_test.cpp, IslandWorld.h/.cpp, IslandFoxAutomation.cpp, IslandArt.cpp, docs/games/lerninsel/20261008-fox-water.
 **Interfaces:** BuildFox(), RefreshFox(float), FoxTime, FoxRopeReleased(); Gate3 depends on8,4srelease. Portable FoxCueAt(float,bool) returns stone/wake/walk/grip/pull/open/end state.
-- [ ] Tests zuerst: unsolved statue, incomplete/wrongsentence no wake, release8,4s, pause freezes pose, repeatcheck doesn'trestart, reload solved ends alive.
-- [ ] Rot bestätigen; sichtbarer eigener Fuchs aus beweglichen Körperteilen, Farbblend, Pfoten/Schwanz, Weg und verknüpfter Seilriegel.
-- [ ] NativeSolvedUI dismiss +initiallook; gateblockeruntilrope+doorready; save/loadendpose.
-- [ ]120Konzeptstudien sichern und prüfen, tatsächlicheScenezustände aufnehmen.
-- [ ] AlleSuites frisch grün, ein unabhängiger ganzerBlockreview, wichtige Befunde RED→GREEN in einemFixpass.
-- [ ] Abschlusscommit/PR175/Koordination, nur branch_only; Nutzerstart über vorhandenenStarter.
+- [x] Tests zuerst: unsolved statue, incomplete/wrongsentence no wake, release8,4s, pause freezes pose, repeatcheck doesn'trestart, reload solved ends alive.
+- [x] Rot bestätigen; sichtbarer eigener Fuchs aus beweglichen Körperteilen, Farbblend, Pfoten/Schwanz, Weg und verknüpfter Seilriegel.
+- [x] NativeSolvedUI dismiss +initiallook; gateblockeruntilrope+doorready; save/loadendpose.
+- [x]120Konzeptstudien sichern und prüfen, tatsächlicheScenezustände aufnehmen.
+- [x] AlleSuites frisch grün, ein unabhängiger ganzerBlockreview, wichtige Befunde RED→GREEN in einemFixpass.
+- [x] Abschlusscommit/PR175/Koordination, nur branch_only; Nutzerstart über vorhandenenStarter.

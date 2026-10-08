@@ -16,7 +16,7 @@ UCLASS() class AIslandCharacter:public ACharacter {
 UCLASS() class AIslandController:public APlayerController {
  GENERATED_BODY()
  public:virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
- void Interact();void Escape();void PointerDown();void CancelInput();void UpdateMode();int PickWorldTarget(float,float)const;
+ void Interact();void Escape();void PointerDown();void CancelInput();void HandleWindowFocus(bool);void UpdateMode();int PickWorldTarget(float,float)const;
  UPROPERTY() UIslandFocusWidget* FocusWidget=nullptr;
  float MouseSensitivity=1.f;FString PreferencesSlot=TEXT("LerninselPreferencesV1");
  void SetMouseSensitivity(float,bool=true);bool SavePreferences();bool LoadPreferences();
