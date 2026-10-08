@@ -45,14 +45,15 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  Test->TestTrue(TEXT("Closed main gate has blocking collision"),G->GateBlocks(1));
  P->SetActorLocation(FVector(1200,0,90));FHitResult GateHit;P->SetActorLocation(FVector(1450,0,90),true,&GateHit);Test->TestTrue(TEXT("Closed gate really blocks capsule sweep"),GateHit.bBlockingHit&&P->GetActorLocation().X<1350);
  G->Interact(400);Test->TestFalse(TEXT("Remote fountain cannot fill"),G->State.carrying);
- P->SetActorLocation(FVector(2350,-220,88));G->Interact(401);Test->TestTrue(TEXT("Nearby bucket pickup"),G->State.carrying);
- P->SetActorLocation(FVector(2350,-420,88));G->Interact(400);
+ G->State.intro=G->State.verbs=G->State.sentence=true;G->State.introMask=5;G->State.pathCount=3;G->State.path={{0,4,8}};G->State.sentenceCount=4;G->State.sentenceParts={{0,1,2,3}};
+ P->SetActorLocation(G->Target(401)->Pos);G->Interact(401);Test->TestTrue(TEXT("Nearby bucket pickup"),G->State.carrying);
+ P->SetActorLocation(G->Target(400)->Pos);G->Interact(400);
  Test->TestEqual(TEXT("Stroke not committed early"),G->State.tenths,0);
  G->Interact(400);G->Tick(.7f);Test->TestEqual(TEXT("Double input during stroke counts once"),G->State.tenths,1);
  G->Interact(400);C->Escape();C->Escape();G->Tick(.7f);Test->TestEqual(TEXT("Pause cancels unconfirmed fill, including after resume"),G->State.tenths,1);
  G->Save();const FString Saved=FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str()));G->State=Island::State();Test->TestTrue(TEXT("Saved snapshot loads"),G->Load());Test->TestEqual(TEXT("Exact saved rule state"),FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())),Saved);
- for(int Wrong:{2,4}){G->State.water=false;P->SetActorLocation(FVector(3350,0,88));G->State.carrying=true;G->State.tenths=Wrong;G->Interact(403);Test->TestFalse(TEXT("Wrong amount never opens gate"),G->State.water);G->Tick(0);Test->TestEqual(TEXT("Wrong bucket on plate exposes pickup through nearest interaction"),G->Near,401);C->Interact();Test->TestTrue(TEXT("Normal E interaction recovers wrong bucket"),G->State.carrying);
- if(G->State.carrying){P->SetActorLocation(Wrong==2?FVector(2350,-420,88):FVector(2650,-470,88));G->Tick(0);C->Interact();G->Tick(.7f);Test->TestEqual(TEXT("Normal correction produces3/10"),G->State.tenths,3);P->SetActorLocation(FVector(3350,0,88));G->Tick(0);C->Interact();Test->TestTrue(TEXT("Corrected bucket opens water gate"),G->State.water);}}
+ for(int Wrong:{2,4}){G->State.water=false;P->SetActorLocation(G->Target(403)->Pos+FVector(0,0,80));G->State.carrying=true;G->State.tenths=Wrong;G->Interact(403);Test->TestFalse(TEXT("Wrong amount never opens gate"),G->State.water);G->Tick(0);Test->TestEqual(TEXT("Wrong bucket on plate exposes pickup through nearest interaction"),G->Near,401);C->Interact();Test->TestTrue(TEXT("Normal E interaction recovers wrong bucket"),G->State.carrying);
+ if(G->State.carrying){P->SetActorLocation(Wrong==2?G->Target(400)->Pos:G->Target(402)->Pos);G->Tick(0);C->Interact();G->Tick(.7f);Test->TestEqual(TEXT("Normal correction produces3/10"),G->State.tenths,3);P->SetActorLocation(G->Target(403)->Pos+FVector(0,0,80));G->Tick(0);C->Interact();Test->TestTrue(TEXT("Corrected bucket opens water gate"),G->State.water);}}
  C->TouchMove=FVector2D(1,1);C->Ownership.Begin(0,.1,.7);C->CancelInput();Test->TestTrue(TEXT("Cancel clears motion and finger"),C->TouchMove.IsZero()&&C->Ownership.Role(0)==Island::TouchRole::None);
  G->Focus=100;C->Escape();Test->TestEqual(TEXT("Escape closes context first"),G->Focus,-1);Test->TestFalse(TEXT("First Escape does not pause"),G->Paused);
  C->Escape();Test->TestTrue(TEXT("Next Escape pauses"),G->Paused);G->Paused=false;
@@ -73,7 +74,7 @@ class FIslandPlayCheck:public IAutomationLatentCommand{
  Damaged->Position=FVector(-1600,0,88);Damaged->View=FRotator(std::numeric_limits<double>::quiet_NaN(),0,0);UGameplayStatics::SaveGameToSlot(Damaged,G->SaveSlot,0);G->State=Island::State();Test->TestTrue(TEXT("Valid milestones survive invalid saved view"),G->Load());Test->TestEqual(TEXT("Invalid view becomes safe default"),C->GetControlRotation().Pitch,-4.0);G->Save();G->State=Island::State();Test->TestTrue(TEXT("Recovered snapshot can save and load again"),G->Load());Test->TestTrue(TEXT("Recovery roundtrip retains solved milestone"),G->State.verbs);
  P->SetActorLocation(FVector(50,0,88));C->SetControlRotation(FRotator(-25,0,0));Started=FPlatformTime::Seconds();Phase=2;return false;
  }
- if(Phase==2){Test->TestTrue(TEXT("Actual game viewport garden captured"),CaptureGame(W,TEXT("VerbGarden.png")));P->SetActorLocation(FVector(2150,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=3;return false;}
+ if(Phase==2){Test->TestTrue(TEXT("Actual game viewport garden captured"),CaptureGame(W,TEXT("VerbGarden.png")));P->SetActorLocation(FVector(3550,-20,88));C->SetControlRotation(FRotator(-12,-18,0));G->State.tenths=3;G->State.carrying=false;G->State.bucketPlace=0;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=3;return false;}
  if(Phase==3){Test->TestTrue(TEXT("Actual game viewport terrace captured"),CaptureGame(W,TEXT("BucketTerrace.png")));Test->TestEqual(TEXT("Three tenths visible water height"),G->BucketWaterHeight(),4.8f);G->State.carrying=true;G->RefreshWorld(0);Started=FPlatformTime::Seconds();Phase=4;return false;}
  Test->TestTrue(TEXT("Carried one-liter bucket and enlarged tenths scale captured"),CaptureGame(W,TEXT("CarriedBucket.png")));
  return true;

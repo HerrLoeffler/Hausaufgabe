@@ -7,7 +7,7 @@
 #include "GameFramework/SaveGame.h"
 #include "Core/IslandRules.h"
 #include "IslandWorld.generated.h"
-class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;
+class UIslandFocusWidget;class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;
 UCLASS() class AIslandCharacter:public ACharacter {
  GENERATED_BODY()
  public:AIslandCharacter();UPROPERTY() UCameraComponent* Camera;virtual void SetupPlayerInputComponent(UInputComponent*)override;virtual void Tick(float)override;
@@ -16,7 +16,8 @@ UCLASS() class AIslandCharacter:public ACharacter {
 UCLASS() class AIslandController:public APlayerController {
  GENERATED_BODY()
  public:virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
- void Interact();void Escape();void PointerDown();void CancelInput();void UpdateMode();
+ void Interact();void Escape();void PointerDown();void CancelInput();void UpdateMode();int PickWorldTarget(float,float)const;
+ UPROPERTY() UIslandFocusWidget* FocusWidget=nullptr;
  void TouchPressed(ETouchIndex::Type,FVector);void TouchMoved(ETouchIndex::Type,FVector);void TouchReleased(ETouchIndex::Type,FVector);
  Island::TouchOwnership Ownership;FVector2D TouchMove=FVector2D::ZeroVector;FVector2D TouchOrigin[10],TouchLast[10];bool TouchUsed=false,KeysArmed=true;
 };
@@ -31,9 +32,10 @@ UCLASS() class AIslandGameMode:public AGameModeBase {
  public:AIslandGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
  Island::State State;Island::PlateContact Contact;TArray<FIslandTarget> Targets;TArray<FIslandGate> Gates;
  TArray<UStaticMeshComponent*> IntroTiles,PathTiles,Cables,Signals;TArray<UTextRenderComponent*> IntroMarks,PathMarks;
+ FVector ObservationStand=FVector(9400,-850,1088);FRotator ObservationView=FRotator(-12,-90,0);TArray<UTextRenderComponent*> SentenceSlots;UStaticMeshComponent* BasinWater=nullptr;float BasinHeight=0;
  AActor* Bucket=nullptr;UStaticMeshComponent* BucketWater=nullptr;UTextRenderComponent* BucketAmount=nullptr;
  int Focus=-1,Near=-1;bool Paused=false;float Clock=0,MessageTime=0,StrokeTime=0;int PendingStroke=0;FString Feedback,SaveSlot=TEXT("LerninselV1");
- void BuildWorld();void RefreshWorld(float);void Interact(int);void SelectFocused();void Apply(Island::Action,int=0);void Notify(const FString&);void Save();bool Load();void ResetDemo();
+ void BuildWorld();void BuildPuzzleWorld();void RefreshWorld(float);void RefreshPuzzleWorld(float);void PuzzleInteract(int);bool CanInspect(int)const;bool PreviewAligned()const;void ConfirmCoast();void UIAction(int);FString SentenceText()const;void Interact(int);void SelectFocused();void Apply(Island::Action,int=0);void Notify(const FString&);void Save();bool Load();void ResetDemo();
  void AddTarget(int,FVector,const FString&,const FString& =TEXT(""));const FIslandTarget* Target(int)const;bool Reachable(int)const;bool GateBlocks(int)const;float BucketWaterHeight()const;
  FString ResultText(Island::Result)const;AIslandCharacter* Player()const;
 };

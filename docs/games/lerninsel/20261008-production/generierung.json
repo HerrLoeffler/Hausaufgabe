@@ -1,0 +1,67 @@
+{
+  "existing_calls": 7,
+  "new_attempts": [
+    {
+      "board": "01",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20
+    },
+    {
+      "board": "02",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20
+    },
+    {
+      "board": "03",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20
+    },
+    {
+      "board": "04",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-f4e2993c-37dc-4916-929d-1b4e993840a5.png"
+    },
+    {
+      "board": "05",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-d0ce23e6-344b-46c2-8fe9-6c646e49bfd4.png"
+    },
+    {
+      "board": "06",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-e2b6608d-3ede-4a24-94bb-7ecc75b8ac56.png"
+    },
+    {
+      "board": "07",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-68120abe-a600-4fe5-b985-c152d89bc459.png"
+    },
+    {
+      "board": "08",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-442beb25-3dea-45c2-9ec4-3994e999b656.png"
+    },
+    {
+      "board": "09",
+      "status": "success",
+      "tool": "built-in image_gen",
+      "motifs": 20,
+      "source": "/Users/martin/.codex/generated_images/01a1183f-dad9-7640-8a82-23107c980d6e/exec-ada44131-a776-4b32-87bf-24818d0f851d.png"
+    }
+  ],
+  "money": "not_provided",
+  "reference_role": "original screenshots for style only; no original game assets copied"
+}
