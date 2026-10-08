@@ -967,7 +967,7 @@
       "user_test": "Previous usability revision and first3/10 confirmed by Martin; new water/fox/control extension pending actual test",
       "browser_streaming": "not_implemented",
       "ipad_device_acceptance": "not_performed",
-      "next_action": "Martin tests normal progression and second1L cup task; fox remains triggered by correct sentence, replay optional.",
+      "next_action": "Clarify Fundbuch task label and distinguish fraction selection from future small perspective activation puzzle.",
       "production": "not_authorized",
       "local_final_commit": "b817014d034856b60b24142380ef184832d6fe8c",
       "runtime_tree": "a84531f3580764f87cf6dc4cda03eae5ef644215",
@@ -1050,6 +1050,19 @@
         "fox_action": "positive visual feedback: looks good",
         "fresh_reset": "request dropped; not executed",
         "whole_extension_acceptance": "pending"
+      },
+      "coast_feedback": {
+        "date": "2026-10-08",
+        "issue": "Drei Funde ordnen task unclear; ordering label misleading, current mechanic is choose3fractions summing1",
+        "instruction_explained": "Find4reliefs withE, select3knownparts, sum10/10, Menge prüfen; order irrelevant"
+      },
+      "perspective_ring_idea": {
+        "status": "recorded_future_idea",
+        "mechanic": "View/standpoint aligns separate world ring pieces into one ring; small activation puzzle",
+        "clue": "Alles eine Frage der Perspektive.",
+        "activation_target": "not_decided",
+        "separate_from_fraction_selection": true,
+        "runtime_changed": false
       }
     }
   ],
