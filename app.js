@@ -3716,7 +3716,7 @@ function questionForAi(q) {
   copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
-  copy.audioIntent = q.audioScript ? { kind: "ai_generated", script: String(q.audioScript).slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
   delete copy.audioAnswerItems;
   delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
   if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, audioDataUrl, audioNeedsRegeneration, ...option }) => option);
