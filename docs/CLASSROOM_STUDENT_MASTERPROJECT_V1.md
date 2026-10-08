@@ -1040,3 +1040,12 @@ Abschnitt 10b ergänzt den ASV-Lehrkräfte-/Unterrichtsimport und mehrere Fachle
 # 28. Lehrer- und Schülernavigation – V1-Konzept
 
 Die Lehreransicht und Testgruppierung sind in [CLASSROOM_TEACHER_UX_V1.md](CLASSROOM_TEACHER_UX_V1.md) festgehalten. Die Startseite ist eine Aufgabenübersicht, Klassen sind der Hauptkontext und Tests lassen sich global sowie innerhalb einer Klasse nach Fach und Status finden. Schüler:innen sehen eine vereinfachte persönliche Testliste. Mehrere Fachlehrkräfte arbeiten mit demselben Klassenbestand und getrennten Rechten. Das Konzept dupliziert keine Prüfungen und ersetzt nicht die bestehende Secure-Assessment-Engine. Es ist noch nicht implementiert.
+
+
+# 29. Eine Klassenprüfung wird für Schüler sichtbar
+
+Die Lehrkraft erstellt oder bearbeitet zunächst einen privaten Quiz-Entwurf. Bei „Zuweisen und veröffentlichen“ wählt sie einen bestätigten Klassenkurs (z. B. 9b · Technik), Zeitraum und bei Bedarf gezielte Nachschreiber. Der Server prüft ihre aktuelle Fach-/Klassenzuständigkeit und legt eine Freigabe an, die auf Quiz und bestehenden Secure Run verweist. Es entsteht keine zweite Prüfungsengine.
+
+Die Freigabe hält die Zielgruppe zum Veröffentlichungszeitpunkt fest. Wegen möglicher Klassengröße werden Schüler-Grant-Datensätze einzeln gespeichert, nicht als großes ID-Array in einem Dokument. Die Schüleransicht fragt serverseitig nur passende, aktuelle Freigaben für die angemeldete StudentIdentity ab. Ein neuer Import oder eine Klassenmitgliedschaft allein zeigt keine Prüfung; eine Freigabe allein reicht ebenfalls ohne aktive passende Mitgliedschaft nicht. Änderungen nach Freigabe benötigen eine nachvollziehbare Nachtragsaktion. Teilweise vorbereitete Freigaben bleiben unsichtbar.
+
+Status im Schülerkonto: geplant → anstehend, geöffnet → jetzt verfügbar, abgegeben/geschlossen → eigener Status; Noten und Rückmeldungen werden erst durch eine separate Ergebnisfreigabe sichtbar. Der Server autorisiert sowohl die Liste als auch den Startversuch. Ein direkter Quiz-Link überspringt keine Klassen-, Zeit- oder Rechteprüfung. Details des Bedienablaufs stehen in [CLASSROOM_TEACHER_UX_V1.md](CLASSROOM_TEACHER_UX_V1.md).

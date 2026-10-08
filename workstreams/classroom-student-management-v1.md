@@ -220,3 +220,11 @@ Kernausrichtung: Lehrkraft startet auf einer aufgabenorientierten Übersicht. Kl
 Das ist ein Konzeptvorschlag innerhalb GC-CLASSROOM-01, keine Umsetzung oder Freigabe. Die Ablage nach Klasse/Fach ist Navigation/Ansicht, keine Kopie von Tests und keine Änderung an Secure Assessment. Vor Implementierung noch an realer Oberfläche und Test-Erstellungsablauf prüfen.
 
 Nächster ausführbarer Schritt für diesen Teil: diesen Ablauf anhand eines klickbaren, nicht produktiven UI-Modells bzw. der bestehenden Oberfläche auf Verständlichkeit prüfen, nachdem die vorliegende Struktur fachlich abgestimmt ist. Unabhängig davon bleiben ASV-Spalten, Schlüsseltresor/Recovery sowie Zugriffs- und Aufbewahrungsprüfung aus dem Identitätskonzept offen.
+
+## Sichtbarkeit einer Klassenprüfung – Ablauf ergänzt, 08.10.2026
+
+Nutzerfrage: Was sieht ein Schüler, bevor Lehrkräfte etwas zuweisen, und wie erscheint z. B. eine Technikprüfung?
+
+Festgehalten: Ein Schülerkonto zeigt zunächst eine verständliche Leeransicht. Ein Quizentwurf ist privat. Die Techniklehrkraft wählt beim expliziten Veröffentlichen den bestätigten Kurs „Klasse · Fach“, Zeitraum und etwaige gezielte Schüler-Ausnahmen. Server prüft ihre Zuständigkeit, bereitet die feste Zielgruppe vollständig vor und gibt danach die Zuweisung frei. Der Schüler sieht den Test bei „Anstehend“ oder „Jetzt verfügbar“ mit Fachlabel Technik. Nachträge sind ausdrücklich; spätere Klassenaufnahmen fügen sich nicht heimlich in einen bereits veröffentlichten Test ein. Beendete Mitgliedschaft sperrt Zugriff. Ergebnis-/Notenfreigabe bleibt separat.
+
+Liste und Startversuch werden serverseitig anhand persönlicher StudentIdentity, aktiver Mitgliedschaft, Zielgruppenfreigabe, Zeitraum und Rechten geprüft. Testversuch/Bewertung bleiben bei Secure Assessment. Kein Code oder Deploy ausgeführt. Detaillierter Ablauf: [Lehrer-/Schüler-UX](../docs/CLASSROOM_TEACHER_UX_V1.md), besonders Abschnitt „Von der Lehrkraft bis zum Test auf dem Schülergerät“.

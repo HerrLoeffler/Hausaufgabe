@@ -99,3 +99,38 @@ Der wichtigste offene UX-Schritt ist ein kurzer Prototypentest mit Lehrkräften:
 Dies ist ein Bedienkonzept innerhalb GC-CLASSROOM-01, kein implementiertes UI. Es steht im selben Dokumentations-Draft PR wie der ASV-Identitätsentwurf. Produktstufe bleibt branch_only; Produkt-CI, Staging und Nutzertest für Classroom sind nicht erfolgt.
 
 Nächste inhaltliche Prüfung: zuerst UX-Prototyp gegen den bestehenden GradeCrew-Testeditor und echte Lehreraufgaben durchgehen; danach mit Identitäts-/Berechtigungsmodell zusammenführen. Separat bleiben ASV-Exportspalten, schulischer Schlüsseltresor/Recovery und schulische Prüfung von Aufbewahrung/Zugriff offen.
+
+
+## Von der Lehrkraft bis zum Test auf dem Schülergerät
+
+Ja: Ein neues Schülerkonto kann zunächst ohne freigegebene Tests starten. Die leere Ansicht erklärt den Zustand: „Noch keine Tests für dich freigegeben. Sobald deine Lehrkraft einen Test zuweist, erscheint er hier.“ Falls bereits eine Klasse zugeordnet ist, wird diese klein als Kontext angezeigt. Es wird kein zufälliger oder öffentlicher Test automatisch in das Konto gelegt.
+
+Damit ein Test bei einer Schülerin oder einem Schüler erscheint, müssen zwei Dinge eingerichtet sein:
+
+1. **Klassenmitgliedschaft:** Das Schülerkonto ist Mitglied der richtigen Klasse im aktuellen Schuljahr. Das entsteht durch bestätigten Import oder durch einen kontrollierten manuellen Beitritt. Eine Fachklasse/Kurszuordnung kann zusätzlich festlegen, welche Schüler:innen am Fach teilnehmen.
+2. **Testzuweisung:** Die Lehrkraft wählt beim Veröffentlichen den passenden Klassenkurs, zum Beispiel „9b · Technik“, plus Start-/Endzeit und gegebenenfalls einzelne Ausnahmen. Das Fach kommt aus dem Schul-/Kursverzeichnis, nicht aus einem frei geratenen Testtitel. Wenn Unterrichtsdaten aus ASV importiert wurden, schlägt die Schuladministration sie vor und bestätigt sie; sonst pflegt die Schule den Fachkurs einmalig.
+
+Ein Test im Editor bleibt zunächst ein privater Entwurf. Erst **„Zuweisen und veröffentlichen“** erstellt die Freigabe. Vorher zeigt GradeCrew die Zielklasse, das Fach, die Anzahl der ausgewählten Schülerkonten und den Zeitraum zur Kontrolle. Beim Veröffentlichen prüft der Server, dass die Lehrkraft genau für diese Klasse und dieses Fach zuständig ist.
+
+Die Freigabe verweist auf den vorhandenen Test und Secure-Assessment-Durchlauf. Sie speichert den gewählten Kurs und eine feste Zielgruppe zum Veröffentlichungszeitpunkt, ohne eine lange ID-Liste in ein einzelnes Dokument zu packen. Die Zielgruppen-Einträge werden einzeln und idempotent vorbereitet; erst wenn die Vorbereitung vollständig ist, wird die Freigabe für Schüler sichtbar. Eine später neu aufgenommene Person erhält einen bereits veröffentlichten Test nicht stillschweigend. Die Lehrkraft kann sie gezielt nachtragen oder neu zuweisen. Eine beendete Mitgliedschaft sperrt den Zugriff weiterhin, auch wenn die Person ursprünglich in der Zielgruppe war.
+
+Auf dem Schülerkonto läuft es dann so:
+
+- **Entwurf:** für Schüler unsichtbar.
+- **Geplant:** nach ausdrücklicher Freigabe sichtbar unter „Anstehend“, mit Fach und Startzeit.
+- **Offen:** unter „Jetzt verfügbar“, mit einer klaren Schaltfläche zum Starten/Fortsetzen.
+- **Abgegeben/geschlossen:** Status bleibt beim eigenen Test sichtbar. Punkte oder Rückmeldung erscheinen erst, wenn die Lehrkraft sie freigibt.
+
+Der Server liefert für „Meine Tests“ nur Zuweisungen zurück, die zum angemeldeten Schülerkonto gehören, für dessen aktive Mitgliedschaft gelten und deren Zeitraum/Status passt. Beim Start prüft die vorhandene Secure-Assessment-Logik dieselbe Berechtigung nochmals; die Browseroberfläche darf sich nicht selbst eine Klasse oder Freigabe aussuchen. Ein direkter Link allein verschafft keinen Zugang. Lehrer-Vorschau, Gastzugang und persönliche Klassenfreigabe bleiben getrennte Zugangsarten.
+
+**Beispiel:** Die Techniklehrkraft ist für Technik in 9b eingetragen. Sie erstellt „Stromkreis – Kurztest“, wählt „9b · Technik“, prüft die Zielgruppe und veröffentlicht mit Start morgen 08:00 Uhr. Die Schüler:innen aus dieser Klasse sehen ab dann „Stromkreis – Kurztest · Technik“ bei „Anstehend“. Ab 08:00 Uhr wandert er zu „Jetzt verfügbar“. Schüler:innen anderer Klassen oder ohne passende Mitgliedschaft sehen ihn nicht.
+
+## Veröffentlichungs- und Zugriffsregeln
+
+- Klasse und Fachkurs sind von der Lehrkraft gewählte, gültige Schulobjekte; Tippfehler im Testtitel ändern keine Zuordnung.
+- Ein Zuweisungseintrag verbindet bestehenden Quiz-/Run mit Klasse, Fachkurs, Zielgruppe und Zeitfenster; Prüfungsversuche und Bewertung bleiben in Secure Assessment.
+- Der Zielgruppenstand wird zum Freigabezeitpunkt festgehalten. Nachträge sind ausdrücklich sichtbar und protokolliert.
+- Server prüft bei Listenaufruf und Start aktive Identität, Mitgliedschaft, Zuweisung, Zeitfenster und Rechte erneut.
+- Fachlehrkräfte sehen nur die ihnen zugewiesenen Klassen/Fächer und dafür freigegebene Ergebnisse. Die Schuladministration vergibt diese Rechte; ASV-Import alleine schaltet nichts frei.
+- Lehrkraft legt separat fest, wann Ergebnisse sichtbar werden. Geschlossen bedeutet nicht automatisch „Noten veröffentlicht“.
+- Scheitert die Vorbereitung einer Freigabe, bleibt sie für Schüler unsichtbar und kann idempotent fortgesetzt werden; keine halbe Klassenfreigabe.
