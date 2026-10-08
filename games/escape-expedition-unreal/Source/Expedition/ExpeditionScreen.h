@@ -12,6 +12,7 @@ public:
  void Refresh();
  virtual bool SupportsKeyboardFocus() const override { return true; }
  virtual FReply OnPreviewKeyDown(const FGeometry& Geometry, const FKeyEvent& Event) override;
+ virtual FReply OnKeyUp(const FGeometry& Geometry, const FKeyEvent& Event) override;
 private:
  TWeakObjectPtr<AExpeditionGameMode> Game;
  int InspectItem = -1;

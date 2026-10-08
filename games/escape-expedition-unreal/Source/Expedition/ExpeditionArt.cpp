@@ -38,7 +38,8 @@ struct FIslandArt {
   UStaticMesh* Mesh=Existing?*Existing:LoadObject<UStaticMesh>(nullptr,*(TEXT("/Engine/BasicShapes/")+Key+TEXT(".")+Key));
   if(!Existing)Meshes.Add(Key,Mesh);
   M->SetStaticMesh(Mesh);M->SetMobility(EComponentMobility::Movable);
-  M->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+  M->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+  M->SetCollisionResponseToAllChannels(ECR_Block);
   M->SetupAttachment(Owner->GetRootComponent());M->RegisterComponent();
   M->SetRelativeLocation(P);M->SetRelativeRotation(R);M->SetRelativeScale3D(S);
   if(Base) {
@@ -488,17 +489,18 @@ void AExpeditionGameMode::BuildWorld() {
  Camera->SetActorRotation(FRotator(-60,-90,0));
  // A quiet ground halo; root positions it only for an actually reachable target.
  NearMarker=A.Disc(FVector(100,-150,31),112,3,TEXT("E1C886"));
+ NearMarker->SetCollisionEnabled(ECollisionEnabled::NoCollision);
  NearMarker->SetVisibility(false);
 }
 
 void AExpeditionGameMode::RefreshWorld() {
  for(auto& G:Gates) {
   const bool Open=(G.School<0||ExpeditionV2::HasSchool(State,G.School))&&(G.Logic<0||ExpeditionV2::HasLogic(State,G.Logic));
-  if(G.Mesh)G.Mesh->SetVisibility(!Open);
+  if(G.Mesh){G.Mesh->SetVisibility(!Open);G.Mesh->SetCollisionEnabled(Open?ECollisionEnabled::NoCollision:ECollisionEnabled::QueryOnly);}
  }
  if(RopeLine)RopeLine->SetVisibility(ExpeditionV2::HasLogic(State,2));
- for(auto* M:FinalLights)if(M)M->SetVisibility(State.finale);
- for(const auto& T:Targets)if(T.Actor)T.Actor->SetActorHiddenInGame(!TargetVisible(T.Id));
+ for(auto* M:FinalLights)if(M){M->SetVisibility(State.finale);M->SetCollisionEnabled(ECollisionEnabled::NoCollision);}
+ for(const auto& T:Targets)if(T.Actor){bool Visible=TargetVisible(T.Id);T.Actor->SetActorHiddenInGame(!Visible);TArray<UStaticMeshComponent*> Parts;T.Actor->GetComponents(Parts);for(auto* M:Parts)M->SetCollisionEnabled(Visible?ECollisionEnabled::QueryOnly:ECollisionEnabled::NoCollision);}
  // Tags keep stateful prop ownership local to this art file and survive loading.
  for(TActorIterator<AActor> It(GetWorld());It;++It)if(It->ActorHasTag(TEXT("ExpeditionIslandArt"))) {
   TArray<UStaticMeshComponent*> Parts;It->GetComponents(Parts);

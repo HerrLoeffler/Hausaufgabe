@@ -4,6 +4,7 @@
 #include "GameFramework/SaveGame.h"
 #include "GameFramework/PlayerController.h"
 #include "Core/ExpeditionEpisode.h"
+#include "Core/ExpeditionInput.h"
 #include "ExpeditionWorld.generated.h"
 class ACameraActor;
 class UStaticMeshComponent;
@@ -18,6 +19,7 @@ UCLASS() class AExpeditionController:public APlayerController {
  public:virtual void BeginPlay()override;virtual void EndPlay(const EEndPlayReason::Type Reason)override;virtual void SetupInputComponent()override;
  void InteractPressed();void BagPressed();void PausePressed();void NumberOne();void NumberTwo();void NumberThree();void NumberFour();void ConfirmPressed();
  TSharedPtr<SExpeditionScreen> Screen;
+ FDelegateHandle ActivationHandle;
 };
 UCLASS() class AExpeditionGameMode:public AGameModeBase {
  GENERATED_BODY()
@@ -28,6 +30,8 @@ UCLASS() class AExpeditionGameMode:public AGameModeBase {
  TArray<FExpTarget> Targets;TArray<FExpGate> Gates;TArray<UStaticMeshComponent*> Legs;TArray<UStaticMeshComponent*> FinalLights;
  UStaticMeshComponent* RopeLine=nullptr;UStaticMeshComponent* NearMarker=nullptr;
  EExpDialog Dialog=EExpDialog::Welcome;EExpDialog ReturnDialog=EExpDialog::World;
+ TArray<EExpDialog> DialogHistory;
+ ExpeditionV2::DirectionInput Directions;
  FVector2D MoveInput=FVector2D::ZeroVector;
  FVector2D TouchInput=FVector2D::ZeroVector;
  bool NeedsRelease=true,UiDirty=true,WasFocused=true;int CurrentSchool=-1,SelectedOption=-1,NearId=-1,RoutePreview=-1;
@@ -36,6 +40,7 @@ UCLASS() class AExpeditionGameMode:public AGameModeBase {
  FString SaveSlot=TEXT("ExpeditionMasterV1");
  void BuildWorld();void RefreshWorld();void RebuildUI();
  void NewGame();void SetDialog(EExpDialog NewDialog);void CancelInput();void StepMovement(float Delta);
+ bool MovementKey(const FKey& Key,bool Down,bool Repeat=false);
  void Interact(int Id);void Click(int Id);void OpenSchool(int Id);void Answer();void Save();bool Load();void Notify(const FString& Message);
  void ResultMessage(ExpeditionV2::Result Result,const FString& Success);
  FExpQuestion Question()const;FExpQuestion QuestionFor(int Id,bool Transfer=false)const;

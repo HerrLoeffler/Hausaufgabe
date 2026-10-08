@@ -1,4 +1,5 @@
 #include "../Source/Expedition/Core/ExpeditionEpisode.h"
+#include "../Source/Expedition/Core/ExpeditionInput.h"
 #include <iostream>
 #include <algorithm>
 using namespace ExpeditionV2;
@@ -49,5 +50,13 @@ int main(){
  Check(Validate(transfer),"transfer completion valid");
  Check(ParseFraction("1/0").second==0&&ParseFraction("junk").second==0,"invalid numeric input rejected");
  Check(ParseFraction("1/4 trailing").second==0,"trailing garbage rejected");
+ DirectionInput input;input.Down(0,false);Check(input.Vertical()==1,"fresh up moves");
+ input.Suspend();input.Down(0,true);Check(input.Vertical()==0,"held repeat after dialog remains blocked");
+ input.Up(0);input.Down(0,false);Check(input.Vertical()==1,"actual release and fresh press restore movement");
+ input.LoseFocus();input.Down(0,true);Check(input.Vertical()==0,"repeat after focus return never reconstructs movement");
+ input.Up(0);input.Down(4,false);Check(input.Vertical()==1,"fresh arrow up reaches central movement");
+ input.Down(0,false);Check(input.Vertical()==1,"same directions cannot double speed");
+ input.Up(4);input.Up(0);input.Down(7,false);Check(input.Horizontal()==1,"arrow right reaches movement");
+ input.Suspend();input.Down(2,false);Check(input.Horizontal()==0&&input.Vertical()==-1,"new independent press does not resurrect blocked right");
  std::cout<<Count<<" episode checks passed\n";
 }

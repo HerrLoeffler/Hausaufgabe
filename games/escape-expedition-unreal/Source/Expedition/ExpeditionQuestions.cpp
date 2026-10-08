@@ -33,6 +33,18 @@ FExpQuestion AExpeditionGameMode::QuestionFor(int Id,bool Transfer)const {
  Q.Codes=Transfer?TArray<FString>{TEXT("ja"),TEXT("nein")}:TArray<FString>{TEXT("2/3"),TEXT("gleich"),TEXT("3/4"),TEXT("unbekannt")};Q.Correct=Transfer?0:2;break;
  default:Q.Prompt=TEXT("Diese Station ist noch nicht verfügbar.");break;
  }
+ if(Transfer){
+ switch(Id){
+ case 0:Q.Hint=TEXT("25 % ist ein Viertel. Teile zwölf Lichter in vier gleich große Gruppen.");Q.Explanation=TEXT("12 : 4 = 3. Drei Lichter sind 25 % von zwölf.");break;
+ case 1:Q.Hint=TEXT("Das Ganze besteht aus vier Vierteln. Ein Viertel ist schon da, drei fehlen noch.");Q.Explanation=TEXT("1 - 1/4 = 3/4. Drei Viertel fehlen bis zum vollen Becken.");break;
+ case 2:Q.Hint=TEXT("Teile zehn Samen in zwei gleich große Gruppen.");Q.Explanation=TEXT("10 : 2 = 5. Fünf Samen sind die Hälfte von zehn.");break;
+ case 3:Q.Hint=TEXT("100 % verteilt auf vier gleiche Teile: Wie groß ist ein Teil?");Q.Explanation=TEXT("1/4 = 25 %. Ein Viertel von hundert Prozent sind fünfundzwanzig Prozent.");break;
+ case 4:Q.Hint=TEXT("Zwei Viertel sind so groß wie eine Hälfte.");Q.Explanation=TEXT("1/4 + 1/4 = 1/2. Die zwei gleichen Viertel ergeben zusammen einen halben Liter.");break;
+ case 5:Q.Hint=TEXT("Teile acht Lampen in vier gleich große Gruppen.");Q.Explanation=TEXT("8 : 4 = 2. Zwei Lampen sind 25 % von acht.");break;
+ case 6:Q.Hint=TEXT("Beide Brüche haben denselben Nenner. Vergleiche neun und acht.");Q.Explanation=TEXT("Ja. 9/12 ist größer als 8/12, denn bei gleich großen Teilen sind neun mehr als acht.");break;
+ default:break;
+ }
+ }
  return Q;
 }
 FExpQuestion AExpeditionGameMode::Question()const{return QuestionFor(CurrentSchool,CurrentSchool>=0&&CurrentSchool<7&&State.pending[CurrentSchool]);}

@@ -1,3 +1,19 @@
+# Aktuelle Fortsetzung: native Umsetzung gestartet und lokal geprüft
+
+## 08.10.2026 – Mastergame lokal gebaut und geprüft
+
+Martin bestätigt den vollständigen Neuentwurf mit „los baue das spiel“. Umsetzung im bestehenden Checkout/Branch/PR171. Vier Gebiete, eigene chibi Figur/NPCs,15Ziele,12Hauptstationen (7Schule/5Logik),6Inventarplätze, native Slate-Oberfläche, zentrale Press/Release-Eingabe, vollständige Speicher- und Weltfolgen. Keine externen Spielbibliotheken oder neuen Bildgenerierungen. Die14vorigen Bildaufrufe und alte negative Nutzerabnahme bleiben erhalten.
+
+Lokaler Quellenstand `6644679828c9fe449458dab241bf53df7238ae1e`. Regeln25+63Prüfungen erfolgreich. Native GradeCrew.Expedition.MasterRoute im Verified-Report erfolgreich,0Fehler/0Warnings; umfasst komplette Folge, Menürückkehr, vier synthetische native Pfeile, gehaltene Repeats, Transferfeedback, Save/ungültigen Save, sichere Anker, Kollision und verbundenes Raster zu allen Pflichtzielen. Gerenderte Dorf-/Ruinenbilder und vollständiger zweizeiliger Fragedialog gesehen. Compiler-/RED-Versuche und Reviewbefunde in Production/MASTER_REVIEW.md und Reports/Mastergame/ erhalten. Keine echte OS-Maus-/Touch-/Zeit-/Qualitätsabnahme daraus ableiten.
+
+Startdatei games/escape-expedition-unreal/Expedition starten.command, nutzt installiertesUE5.8. Neuer Standalone-Prozess10101 frisch gestartet; Startlog Engine initialized, Gameklasse und lit-View bestätigt. Das Werkzeug zur nativen Fensterauswahl konnte den neuen Prozess nicht zuverlässig binden; Dock-Versuch endete in langem CUA-Timeout. Kein Umgehen mit anderen OS-Eingabeautomationen. Der fremde Bruchpizzeria-Prozess62844 wurde nicht beendet. Alte eigene Testinstanz4456 beendet. Screenshot-PNGs und Buildprodukte bleiben lokal/reproduzierbar; Quellen/Generator/JSON-Prüfnachweise im Aufgabenbranch. SaveSlotExpeditionMasterV1; alteExpeditionDemo unangetastet, Automation eigenerSlot.
+
+Stufe branch_only. Keine exakte GitHub-Native-CI, Integration, Web-/Staging-/Production-Veröffentlichung oder positive neue Nutzerabnahme. Mobilepaket/physischesGerät/Mobileperformance, reale8–12Minuten und GradeCrew-Prompt-/Auth-/Übungslifecycle bleiben offen. Die lokalen sieben Beispielaufgaben und Lehrkraftvorschau funktionieren als Demo.
+
+Genau nächster Schritt: Martin testet die neue lokale Episode ab „Neue Expedition starten“, besonders Maus, Orientierung und Rätselgefühl. Danach konkrete Abnahmefehler bzw. Livebrücke bearbeiten. Keine weitere Entwurfs-Grundfreigabe verlangen. PR171 bleibt Draft; kein Merge-/Deployauftrag.
+
+---
+
 # GC-GAMES-ESCAPE-VISUAL-01 – Masterprojekt nach negativer Abnahme
 
 Stand 08.10.2026. Verantwortlicher Chat: bestehende native Expedition; Chatlink unbekannt. Eigener Checkout `gradecrew-expedition-unreal`, Branch `feature/escape-expedition-unreal-v1`, Draft-PR [171](https://github.com/HerrLoeffler/Hausaufgabe/pull/171). Integrationsziel main. Keine neue parallele Spielimplementierung.

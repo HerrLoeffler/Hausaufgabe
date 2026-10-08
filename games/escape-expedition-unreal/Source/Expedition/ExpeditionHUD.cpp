@@ -10,6 +10,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SWrapBox.h"
+#include "Widgets/Layout/SUniformGridPanel.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/SOverlay.h"
 #include "Widgets/Input/SButton.h"
@@ -91,14 +92,16 @@ private:bool Target=false;int Candidate=-1,Turn=0;
 
 void SExpeditionScreen::Construct(const FArguments& Args){Game=Args._Game;Refresh();}
 TSharedRef<SWidget> SExpeditionScreen::Text(const FString& Value,int Size,bool Quiet)const{
- return SNew(STextBlock).Text(FText::FromString(Value)).Font(FCoreStyle::GetDefaultFontStyle("Regular",Size)).ColorAndOpacity(Quiet?Muted:Ink).AutoWrapText(true);
+ return SNew(STextBlock).Text(FText::FromString(Value)).Font(FCoreStyle::GetDefaultFontStyle("Regular",Size)).ColorAndOpacity(Quiet?Muted:Ink).AutoWrapText(false).WrapTextAt_Lambda([this](){return FMath::Max(160.f,FMath::Min(840.f,GetCachedGeometry().GetLocalSize().X-112.f));});
 }
 FReply SExpeditionScreen::Activate(int Action){if(auto* G=Game.Get())G->Click(Action);return FReply::Handled().SetUserFocus(AsShared(),EFocusCause::SetDirectly);}
 TSharedRef<SWidget> SExpeditionScreen::Button(const FString& Label,int Action,bool Selected,bool Enabled){
  return SNew(SBox).MinDesiredHeight(48)[SNew(SButton).ButtonStyle(&ButtonStyle()).ContentPadding(FMargin(14,9)).IsEnabled(Enabled).ButtonColorAndOpacity(Selected?FLinearColor(.73f,.84f,.69f):FLinearColor::White).OnClicked_Lambda([this,Action](){return Activate(Action);})[Text((Selected?TEXT("●  "):TEXT(""))+Label,18)]];
 }
 FReply SExpeditionScreen::OnPreviewKeyDown(const FGeometry&,const FKeyEvent& Event){
- auto* G=Game.Get();if(!G||Event.IsRepeat())return FReply::Unhandled();const FKey K=Event.GetKey();
+ auto* G=Game.Get();if(!G)return FReply::Unhandled();const FKey K=Event.GetKey();
+ if(G->MovementKey(K,true,Event.IsRepeat()))return G->Dialog==EExpDialog::World?FReply::Handled():FReply::Unhandled();
+ if(Event.IsRepeat())return FReply::Handled();
  if(K==EKeys::Escape)return Activate(G->Dialog==EExpDialog::World?6:3);
  if(K==EKeys::I)return Activate(G->Dialog==EExpDialog::Inventory?3:4);
  if(K==EKeys::E&&G->Dialog==EExpDialog::World&&G->NearId>=0)return Activate(11);
@@ -107,6 +110,8 @@ FReply SExpeditionScreen::OnPreviewKeyDown(const FGeometry&,const FKeyEvent& Eve
  if(K==EKeys::Enter){switch(G->Dialog){case EExpDialog::Question:return G->SelectedOption>=0?Activate(9):FReply::Handled();case EExpDialog::Speech:return Activate(8);case EExpDialog::Result:return Activate(10);case EExpDialog::Route:return Activate(310);case EExpDialog::Rope:return Activate(410);case EExpDialog::Mosaic:return Activate(511);case EExpDialog::Symbols:return Activate(611);default:break;}}
  return FReply::Unhandled();
 }
+
+FReply SExpeditionScreen::OnKeyUp(const FGeometry&,const FKeyEvent& Event){if(auto* G=Game.Get())if(G->MovementKey(Event.GetKey(),false))return FReply::Handled();return FReply::Unhandled();}
 
 TSharedRef<SWidget> SExpeditionScreen::Inventory(bool Compact){
  auto* G=Game.Get();TSharedRef<SWrapBox> Slots=SNew(SWrapBox).UseAllottedSize(true).InnerSlotPadding(FVector2D(8,8));
@@ -122,7 +127,7 @@ TSharedRef<SWidget> SExpeditionScreen::Inventory(bool Compact){
 TSharedRef<SWidget> SExpeditionScreen::Content(){
  auto* G=Game.Get();auto V=SNew(SVerticalBox);
  auto Add=[&](TSharedRef<SWidget> W,int Pad=8){V->AddSlot().AutoHeight().Padding(0,Pad)[W];};
- auto Title=[&](const FString& S){Add(Text(S,26),4);};
+ auto Title=[&](const FString& S){Add(Text(S,26),4);if(!G->Feedback.IsEmpty())Add(SNew(SBorder).BorderImage(&SoftBrush).Padding(12)[Text(G->Feedback,18)]);};
  auto Pair=[&](TSharedRef<SWidget>A,TSharedRef<SWidget>B){return SNew(SHorizontalBox)+SHorizontalBox::Slot().FillWidth(1).Padding(0,0,6,0)[A]+SHorizontalBox::Slot().FillWidth(1).Padding(6,0,0,0)[B];};
  switch(G->Dialog){
  case EExpDialog::Welcome:
@@ -135,7 +140,7 @@ TSharedRef<SWidget> SExpeditionScreen::Content(){
  case EExpDialog::Question:{
   auto Q=G->Question();Title(Q.Speaker.IsEmpty()?G->Speaker:Q.Speaker);
   Add(Text(FString::Printf(TEXT("Lernstation %d / 7 · %s"),G->CurrentSchool+1,G->CurrentSchool>=0&&G->CurrentSchool<7&&G->State.pending[G->CurrentSchool]?TEXT("Neue Anwendung"):TEXT("Wähle eine Antwort")),14,true));
-  Add(Text(Q.Prompt,22));for(int I=0;I<Q.Options.Num();++I)Add(Button(FString::Printf(TEXT("%d.  %s"),I+1,*Q.Options[I]),100+I,G->SelectedOption==I),3);
+  Add(Text(Q.Prompt,22));auto Answers=SNew(SUniformGridPanel).SlotPadding(FMargin(4));for(int I=0;I<Q.Options.Num();++I)Answers->AddSlot(I%2,I/2)[Button(FString::Printf(TEXT("%d.  %s"),I+1,*Q.Options[I]),100+I,G->SelectedOption==I)];Add(Answers,3);
   Add(Pair(Button(TEXT("Prüfen · Enter"),9,false,G->SelectedOption>=0),Button(TEXT("Hinweis"),7)));break;}
  case EExpDialog::Result:Title(TEXT("Deine Lernnotiz"));Add(Text(G->DialogueText,21));Add(Button(TEXT("Weiter"),10));break;
  case EExpDialog::Shell:{
@@ -178,7 +183,6 @@ TSharedRef<SWidget> SExpeditionScreen::Content(){
   Title(TEXT("Das Leuchtfeuer brennt!"));Add(Text(TEXT("Du hast gerechnet, genau hingesehen und den Weg selbst wieder geöffnet. Die Küste hat ihr Licht zurück."),22));int Seconds=FMath::Max(0,FMath::RoundToInt(G->ActiveTime));Add(Text(FString::Printf(TEXT("Aktive Spielzeit %d:%02d · %d / 7 Lernstationen · %d / 12 Stationen"),Seconds/60,Seconds%60,G->SchoolSolved(),G->Solved()),18,true));Add(Button(TEXT("Die Welt weiter erkunden"),3));Add(Button(TEXT("Lernfragen ansehen"),5));Add(Text(TEXT("Hilfen unterstützen das Lernen. Diese lokale Demo vergibt keine Schulnote."),15,true));break;}
  default:break;
  }
- if(!G->Feedback.IsEmpty())Add(SNew(SBorder).BorderImage(&SoftBrush).Padding(12)[Text(G->Feedback,18)]);
  if(G->Dialog!=EExpDialog::Welcome&&G->Dialog!=EExpDialog::Pause&&G->Dialog!=EExpDialog::Inventory&&G->Dialog!=EExpDialog::Teacher&&G->Dialog!=EExpDialog::Finale)Add(Button(TEXT("Zurück · Esc"),3));
  return V;
 }
@@ -186,13 +190,13 @@ TSharedRef<SWidget> SExpeditionScreen::Content(){
 void SExpeditionScreen::Refresh(){
  auto* G=Game.Get();if(!G)return;
  auto Root=SNew(SOverlay).Visibility(EVisibility::SelfHitTestInvisible);
- auto Header=SNew(SHorizontalBox);Header->AddSlot().FillWidth(1)[SNew(SVerticalBox)+SVerticalBox::Slot().AutoHeight()[Text(G->AreaName(),14,true)]+SVerticalBox::Slot().AutoHeight().Padding(0,3)[Text(G->Mission(),20)]];
+ auto Header=SNew(SHorizontalBox);Header->AddSlot().FillWidth(1)[SNew(SVerticalBox)+SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text_Lambda([this](){return FText::FromString(Game.IsValid()?Game->AreaName():FString());}).Font(FCoreStyle::GetDefaultFontStyle("Regular",14)).ColorAndOpacity(Muted).AutoWrapText(true)]+SVerticalBox::Slot().AutoHeight().Padding(0,3)[SNew(STextBlock).Text_Lambda([this](){return FText::FromString(Game.IsValid()?Game->Mission():FString());}).Font(FCoreStyle::GetDefaultFontStyle("Regular",20)).ColorAndOpacity(Ink).AutoWrapText(false).WrapTextAt(480.f)]];
  Header->AddSlot().AutoWidth().VAlign(VAlign_Center).Padding(14,0,0,0)[Text(TEXT("Lokale Mathe-Demo"),13,true)];
- Root->AddSlot().HAlign(HAlign_Left).VAlign(VAlign_Top).Padding(20)[SNew(SBox).MaxDesiredWidth(740)[SNew(SBorder).BorderImage(&PaperBrush).Padding(14)[Header]]];
+ if(G->Dialog==EExpDialog::World)Root->AddSlot().HAlign(HAlign_Left).VAlign(VAlign_Top).Padding(20)[SNew(SBox).MaxDesiredWidth(740)[SNew(SBorder).BorderImage(&PaperBrush).Padding(14)[Header]]];
  if(G->Dialog==EExpDialog::World){
   auto Actions=SNew(SVerticalBox);Actions->AddSlot().AutoHeight().Padding(0,3)[Button(TEXT("Rucksack · I"),4)];Actions->AddSlot().AutoHeight().Padding(0,3)[Button(TEXT("Menü · Esc"),6)];
   Root->AddSlot().HAlign(HAlign_Right).VAlign(VAlign_Bottom).Padding(18)[Actions];
-  if(G->NearId>=0)Root->AddSlot().HAlign(HAlign_Right).VAlign(VAlign_Bottom).Padding(18,0,18,136)[SNew(SBox).MaxDesiredWidth(410)[Button(TEXT("E · ")+G->NearLabel,11)]];
+  Root->AddSlot().HAlign(HAlign_Right).VAlign(VAlign_Bottom).Padding(18,0,18,136)[SNew(SBox).MaxDesiredWidth(410).MinDesiredHeight(48).Visibility_Lambda([this](){return Game.IsValid()&&Game->NearId>=0?EVisibility::Visible:EVisibility::Collapsed;})[SNew(SButton).ButtonStyle(&ButtonStyle()).ContentPadding(FMargin(14,9)).OnClicked_Lambda([this](){return Activate(11);})[SNew(STextBlock).Text_Lambda([this](){return FText::FromString(Game.IsValid()?TEXT("E · ")+Game->NearLabel:FString());}).Font(FCoreStyle::GetDefaultFontStyle("Regular",18)).ColorAndOpacity(Ink).AutoWrapText(true)]]];
   auto Direction=[this](const FString& Label,FVector2D Input)->TSharedRef<SWidget>{
    const auto Weak=Game;
    auto Move=SNew(SExpeditionMoveButton).ButtonStyle(&ButtonStyle()).IsFocusable(false).ContentPadding(4)
@@ -208,15 +212,16 @@ void SExpeditionScreen::Refresh(){
   Root->AddSlot().HAlign(HAlign_Left).VAlign(VAlign_Bottom).Padding(20)[SNew(SBorder).BorderImage(&PaperBrush).Padding(8)[Pad]];
   Root->AddSlot().HAlign(HAlign_Left).VAlign(VAlign_Bottom).Padding(20,0,20,140)[SNew(SBorder).BorderImage(&PaperBrush).Padding(8)[Text(TEXT("WASD / Pfeile · E untersuchen"),14,true)]];
  }else{
+  const bool Puzzle=G->Dialog==EExpDialog::Mosaic||G->Dialog==EExpDialog::Rope||G->Dialog==EExpDialog::Route||G->Dialog==EExpDialog::Symbols;
   const bool Full=G->Dialog==EExpDialog::Welcome||G->Dialog==EExpDialog::Teacher||G->Dialog==EExpDialog::Pause||G->Dialog==EExpDialog::Finale;
   if(Full)Root->AddSlot()[SNew(SBorder).BorderImage(&ShadeBrush)];
   auto Panel=SNew(SBox)
    .WidthOverride_Lambda([this](){return FOptionalSize(FMath::Clamp(GetCachedGeometry().GetLocalSize().X-48.f,240.f,920.f));})
-   .MaxDesiredHeight_Lambda([this,Full](){return FOptionalSize(FMath::Max(100.f,FMath::Min(Full?680.f:510.f,GetCachedGeometry().GetLocalSize().Y-(Full?48.f:120.f))));})
+   .MaxDesiredHeight_Lambda([this,Full,Puzzle](){return FOptionalSize(FMath::Max(100.f,FMath::Min(Full?680.f:Puzzle?650.f:510.f,GetCachedGeometry().GetLocalSize().Y-(Full?48.f:120.f))));})
    [SNew(SBorder).BorderImage(&PaperBrush).Padding(22)[SNew(SScrollBox)+SScrollBox::Slot()[Content()]]];
   Root->AddSlot().HAlign(HAlign_Center).VAlign(Full?VAlign_Center:VAlign_Bottom).Padding(24,Full?24:100,24,20)[Panel];
  }
- if(G->ToastTimer>0&&!G->Toast.IsEmpty())Root->AddSlot().HAlign(HAlign_Center).VAlign(VAlign_Top).Padding(20,116,20,0)[SNew(SBox).MaxDesiredWidth(720)[SNew(SBorder).BorderImage(&PaperBrush).Padding(12)[Text(G->Toast,17)]]];
+ if(G->Dialog==EExpDialog::World&&!G->Toast.IsEmpty())Root->AddSlot().HAlign(HAlign_Center).VAlign(VAlign_Top).Padding(20,116,20,0)[SNew(SBox).MaxDesiredWidth(720).Visibility_Lambda([this](){return Game.IsValid()&&Game->ToastTimer>0?EVisibility::Visible:EVisibility::Collapsed;})[SNew(SBorder).BorderImage(&PaperBrush).Padding(12)[SNew(STextBlock).Text(FText::FromString(G->Toast)).Font(FCoreStyle::GetDefaultFontStyle("Regular",17)).ColorAndOpacity(Ink).AutoWrapText(false).WrapTextAt(660.f)]]];
  ChildSlot[Root];
 }
 

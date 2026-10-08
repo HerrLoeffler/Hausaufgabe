@@ -1,0 +1,51 @@
+{
+  "task": "GC-GAMES-ESCAPE-VISUAL-01",
+  "localSourceCommit": "6644679828c9fe449458dab241bf53df7238ae1e",
+  "scope": "local Mac Unreal editor-backed standalone; branch_only",
+  "rules": {
+    "legacyChecks": 25,
+    "masterChecks": 63
+  },
+  "native": {
+    "reportCreatedOn": "2026.10.08-09.33.46",
+    "succeeded": 1,
+    "failed": 0,
+    "succeededWithWarnings": 0,
+    "totalDuration": 6.531198501586914
+  },
+  "nativeScope": [
+    "complete12stationroute",
+    "nativeSlatearrowhandlers",
+    "heldrepeatneutrality",
+    "submenuhistory",
+    "transferfeedback",
+    "saverestoreandcorruptsave",
+    "safeanchor",
+    "solidpropandwatercollision",
+    "connectedgridtoallrequiredtargets"
+  ],
+  "actualOSMouse": "not verified; CUA window selection timed out; no alternative OS automation",
+  "mobile": "directionpad implemented; no physical device/package/performance test",
+  "firstPlayTiming": "unmeasured; approx10minutes remains target",
+  "GradeCrewLive": "not implemented; labelled local maths demo",
+  "binarySHA256": "1dafe4a59560af9ffda75d3e188973753c0fbb4c4850909ccf55e9a95a71f78c",
+  "localImages": {
+    "Question.png": "b2a72b3249bbf1829cec376226534cea95e8fd2e209192bad49ebb1d5678735f",
+    "Ruin.png": "80b52d663cedde8e124bc55a32cad21206fa543b51e921aa58d09ea198960ba6",
+    "Village.png": "fd329e55a402f1cf59ef6b4197678b889ad3afc10a419eaffb788a8931aee719"
+  },
+  "sourceHashes": {
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionWorld.h": "45161d22c9553b8934561ea6319e6ecd406f65b7ae1722396324f0eea30b5429",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionHUD.cpp": "2cfdbe776dee3ed10c7d14ec3c21c5138b17198c2e11291f34bf3d66d3a22334",
+    "games/escape-expedition-unreal/Source/Expedition/Expedition.cpp": "ac3423038dd08358a144d3441229cef77ffa47d8d6e74dce21971a889df81b18",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionQuestions.cpp": "4ba8466103bd5c7cf601dbc7bbcb81cb72282eb0f95830f25eaa937e07b91e79",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionScreen.h": "870540aae4cdf7b0c77c66a9b93e955ae54afc80bb8e487b0dfa1888e58269cc",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionWorld.cpp": "9ef97080be6fc966e1332e1c561067d90b6c495b74162a4e514b55354835d718",
+    "games/escape-expedition-unreal/Source/Expedition/Expedition.Build.cs": "3d41153b014b47fa7aad1f9e639a6fdc286bd8ba912f8cb7cd59bee28780414d",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionAutomation.cpp": "10cd2f5bc7244326520deec7e80ab448265319a640cec49223249536c2a4d8ea",
+    "games/escape-expedition-unreal/Source/Expedition/ExpeditionArt.cpp": "94e67726d4592333398b7e784762d873208d954d436deca5663dbbf13c83f95e",
+    "games/escape-expedition-unreal/Source/Expedition/Core/ExpeditionEpisode.h": "3f577024530fa62f9dda6fe91f1da900651d97594306fe98e6603c14e9014b51",
+    "games/escape-expedition-unreal/Source/Expedition/Core/ExpeditionRules.h": "01645045124f71b650da04a2702a31a56726e7a755dab7281fd3a889f954591d",
+    "games/escape-expedition-unreal/Source/Expedition/Core/ExpeditionInput.h": "7f2b4d2588fb42e816ad8c3e69a8e0e9aced77ab11c7d0e7569cebfdb3e2a0dd"
+  }
+}

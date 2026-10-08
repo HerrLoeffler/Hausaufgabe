@@ -1,0 +1,249 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "677F7588974DCE590D173792B64108D8",
+			"instanceName": "Mac.fritz.box-7522",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.08-08.54.10",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 4.4207706451416016,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "MasterRoute",
+			"fullTestPath": "GradeCrew.Expedition.MasterRoute",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"677F7588974DCE590D173792B64108D8"
+			],
+			"duration": 4.4207706451416016,
+			"dateTime": "2026.10.08-08.54.05",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(361): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.05"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogEditorAutomationTests: Amazonas took 0.074 to load.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.05"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, NoCapture -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.05"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Bag returns to question then world' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Transfer explanation 0 matches new values' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Transfer explanation 2 matches new values' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Transfer explanation 4 matches new values' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Transfer explanation 5 matches new values' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Cannot walk inside fountain' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogCore: Tracing Screenshot \"Village\" taken with size: 2027 x 1090",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Synchronously lazy loading font file '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' with subface index 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Took 0.001100 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K) on Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Freetype font face in memory successfully created with synchronously loaded raw font file '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' subface 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Font face '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' subface index 0 successfully added to font face map in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Water beside jetty remains unwalkable' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-08.54.08"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogCore: Tracing Screenshot \"Ruin\" taken with size: 2027 x 1090",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.10"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogPlayLevel: Shutting down PIE online subsystems",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-08.54.10"
+				}
+			],
+			"warnings": 0,
+			"errors": 7,
+			"artifacts": []
+		}
+	]
+}

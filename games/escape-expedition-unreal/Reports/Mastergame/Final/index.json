@@ -1,0 +1,44 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "2E232EB156455F9479AD13BF65EC0D95",
+			"instanceName": "Mac.fritz.box-8858",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.08-09.16.07",
+	"succeeded": 1,
+	"succeededWithWarnings": 0,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 5.5182514190673828,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "MasterRoute",
+			"fullTestPath": "GradeCrew.Expedition.MasterRoute",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"2E232EB156455F9479AD13BF65EC0D95"
+			],
+			"duration": 5.5182514190673828,
+			"dateTime": "2026.10.08-09.16.02",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

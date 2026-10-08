@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerInput.h"
+#include "GameFramework/HUD.h"
 #include "Engine/GameViewportClient.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Dom/JsonObject.h"
@@ -23,17 +24,25 @@ bool Reachable(const State& S,const FVector& P){
  if(P.X>5900&&!HasLogic(S,4))return false;
  return true;
 }
-FVector SafeAnchor(const State& S){if(HasLogic(S,4))return FVector(5800,170,PlayerZ);if(HasLogic(S,3))return FVector(4860,170,PlayerZ);if(HasLogic(S,2))return FVector(3730,170,PlayerZ);if(HasSchool(S,3))return FVector(3000,170,PlayerZ);if(HasSchool(S,1))return FVector(1250,170,PlayerZ);return FVector(-80,170,PlayerZ);}
+FVector SafeAnchor(const State& S){if(HasLogic(S,4))return FVector(5800,170,PlayerZ);if(HasLogic(S,3))return FVector(4860,170,PlayerZ);if(HasLogic(S,2))return FVector(3780,220,PlayerZ);if(HasSchool(S,3))return FVector(3000,170,PlayerZ);if(HasSchool(S,1))return FVector(1250,170,PlayerZ);return FVector(-80,170,PlayerZ);}
 }
-AExpeditionGameMode::AExpeditionGameMode(){PrimaryActorTick.bCanEverTick=true;HUDClass=nullptr;PlayerControllerClass=AExpeditionController::StaticClass();DefaultPawnClass=nullptr;}
+AExpeditionGameMode::AExpeditionGameMode(){PrimaryActorTick.bCanEverTick=true;HUDClass=AHUD::StaticClass();PlayerControllerClass=AExpeditionController::StaticClass();DefaultPawnClass=nullptr;}
 void AExpeditionController::BeginPlay(){
  Super::BeginPlay();auto* G=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode());if(!G)return;
  Screen=SNew(SExpeditionScreen).Game(G);if(auto* V=GetWorld()->GetGameViewport())V->AddViewportWidgetContent(Screen.ToSharedRef(),30);
  FInputModeGameAndUI Mode;Mode.SetWidgetToFocus(Screen);Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);
  bShowMouseCursor=true;bEnableClickEvents=true;bEnableTouchEvents=true;
+ TWeakObjectPtr<AExpeditionGameMode> Weak(G);
+ ActivationHandle=FSlateApplication::Get().OnApplicationActivationStateChanged().AddLambda([Weak](bool Active){if(auto* M=Weak.Get()){if(!Active)M->Directions.LoseFocus();M->CancelInput();M->WasFocused=Active;}});
 }
-void AExpeditionController::EndPlay(const EEndPlayReason::Type Reason){if(Screen.IsValid())if(auto* V=GetWorld()->GetGameViewport())V->RemoveViewportWidgetContent(Screen.ToSharedRef());Screen.Reset();Super::EndPlay(Reason);}
+void AExpeditionController::EndPlay(const EEndPlayReason::Type Reason){if(FSlateApplication::IsInitialized())FSlateApplication::Get().OnApplicationActivationStateChanged().Remove(ActivationHandle);if(Screen.IsValid())if(auto* V=GetWorld()->GetGameViewport())V->RemoveViewportWidgetContent(Screen.ToSharedRef());Screen.Reset();Super::EndPlay(Reason);}
 void AExpeditionController::SetupInputComponent(){Super::SetupInputComponent();
+ const FKey MovementKeys[]={EKeys::W,EKeys::A,EKeys::S,EKeys::D,EKeys::Up,EKeys::Left,EKeys::Down,EKeys::Right};
+ for(const FKey K:MovementKeys)for(const EInputEvent Event:{IE_Pressed,IE_Repeat,IE_Released}){
+  FInputKeyBinding Binding(FInputChord(K),Event);
+  Binding.KeyDelegate.GetDelegateForManualSet().BindLambda([this,K,Event](){if(auto* M=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode()))M->MovementKey(K,Event!=IE_Released,Event==IE_Repeat);});
+  InputComponent->KeyBindings.Add(MoveTemp(Binding));
+ }
  InputComponent->BindKey(EKeys::E,IE_Pressed,this,&AExpeditionController::InteractPressed);
  InputComponent->BindKey(EKeys::I,IE_Pressed,this,&AExpeditionController::BagPressed);
  InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AExpeditionController::PausePressed);
@@ -49,12 +58,29 @@ EXP_ACTION(NumberOne,100) EXP_ACTION(NumberTwo,101) EXP_ACTION(NumberThree,102) 
 void AExpeditionController::ConfirmPressed(){if(auto* G=Cast<AExpeditionGameMode>(GetWorld()->GetAuthGameMode())){if(G->Dialog==EExpDialog::Welcome)G->Click(1);else if(G->Dialog==EExpDialog::Question)G->Click(9);else if(G->Dialog==EExpDialog::Speech)G->Click(8);else if(G->Dialog==EExpDialog::Result)G->Click(10);else if(G->Dialog==EExpDialog::World)G->Click(11);}}
 #undef EXP_ACTION
 void AExpeditionGameMode::BeginPlay(){Super::BeginPlay();BuildWorld();if(auto* P=UGameplayStatics::GetPlayerController(this,0)){P->SetViewTarget(Camera);P->ConsoleCommand(TEXT("viewmode lit"));}RefreshWorld();UiDirty=true;}
-void AExpeditionGameMode::CancelInput(){MoveInput=FVector2D::ZeroVector;TouchInput=FVector2D::ZeroVector;NeedsRelease=true;if(auto* P=UGameplayStatics::GetPlayerController(this,0))if(P->PlayerInput)P->PlayerInput->FlushPressedKeys();}
+bool AExpeditionGameMode::MovementKey(const FKey& Key,bool Down,bool Repeat){
+ const FKey Keys[]={EKeys::W,EKeys::A,EKeys::S,EKeys::D,EKeys::Up,EKeys::Left,EKeys::Down,EKeys::Right};
+ for(int i=0;i<8;++i)if(Key==Keys[i]){if(Down)Directions.Down(i,Repeat);else Directions.Up(i);if(Dialog!=EExpDialog::World)Directions.Suspend();return true;}return false;
+}
+void AExpeditionGameMode::CancelInput(){Directions.Suspend();MoveInput=FVector2D::ZeroVector;TouchInput=FVector2D::ZeroVector;NeedsRelease=true;}
 void AExpeditionGameMode::SetDialog(EExpDialog NewDialog){Dialog=NewDialog;CancelInput();UiDirty=true;}
 bool AExpeditionGameMode::CanWalk(const FVector& P)const{
  if(!Reachable(State,P))return false;
- for(const auto& T:Targets)if(T.Id!=1&&T.Id!=14&&TargetVisible(T.Id)&&FVector::Dist2D(P,T.Pos)<48)return false;
- return true;
+ if(P.X>=3350&&P.X<=3650&&FMath::Abs(P.Y)>139)return false;
+ auto Box=[&](FVector2D C,FVector2D Half){return FMath::Abs(P.X-C.X)<=Half.X&&FMath::Abs(P.Y-C.Y)<=Half.Y;};
+ if(Box({700,-80},{145,145})||Box({1574,-210},{168,122})||Box({5086,-201.5},{145,148}))return false;
+ if(Box({-440,-270},{85,68})||Box({400,370},{110,52})||Box({5650,390},{110,52})||Box({5530,60},{102,85})||Box({5780,-80},{132,76}))return false;
+ const FVector2D Pots[]={{505,-340},{862,-285},{552,60},{843,63},{5310,350}};
+ for(auto C:Pots)if(Box(C,{55,55}))return false;
+ for(int i=0;i<4;++i)if(Box({150+(i%2)*110.,-350-(i/2)*95.},{70,64}))return false;
+ for(int i=0;i<6;++i)if(FVector2D(P.X-(4880+i*205),P.Y-(i%2?-455:-520)).Size()<72)return false;
+ for(const auto& T:Targets){
+  if(T.Id==1||T.Id==3||T.Id==4||T.Id==10||T.Id==14||!TargetVisible(T.Id))continue;
+  float Radius=T.Id==8?128:T.Id==9?128:T.Id==13?108:48;
+  if(FVector::Dist2D(P,T.Pos)<Radius)return false;
+ }
+ FCollisionQueryParams Query(SCENE_QUERY_STAT(ExpeditionWalk),false,Explorer);
+ return !GetWorld()->OverlapAnyTestByChannel(FVector(P.X,P.Y,70),FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(24),Query);
 }
 void AExpeditionGameMode::StepMovement(float Dt){
  if(Dialog!=EExpDialog::World||NeedsRelease||!Explorer){MoveInput=FVector2D::ZeroVector;return;}
@@ -69,18 +95,18 @@ void AExpeditionGameMode::StepMovement(float Dt){
 void AExpeditionGameMode::Tick(float Dt){
  Super::Tick(Dt);ToastTimer=FMath::Max(0.f,ToastTimer-Dt);auto* P=UGameplayStatics::GetPlayerController(this,0);if(!P||!Explorer)return;
  bool Focused=!FSlateApplication::IsInitialized()||FSlateApplication::Get().IsActive();
- if(!Focused){if(WasFocused)CancelInput();WasFocused=false;}else{if(!WasFocused)CancelInput();WasFocused=true;}
+ if(!Focused){if(WasFocused){Directions.LoseFocus();CancelInput();}WasFocused=false;}else{if(!WasFocused)CancelInput();WasFocused=true;}
  if(Focused){
- FVector2D Keys((P->IsInputKeyDown(EKeys::D)||P->IsInputKeyDown(EKeys::Right)?1:0)-(P->IsInputKeyDown(EKeys::A)||P->IsInputKeyDown(EKeys::Left)?1:0),(P->IsInputKeyDown(EKeys::W)||P->IsInputKeyDown(EKeys::Up)?1:0)-(P->IsInputKeyDown(EKeys::S)||P->IsInputKeyDown(EKeys::Down)?1:0));
- if(Dialog==EExpDialog::World){if(NeedsRelease&&Keys.IsZero()&&TouchInput.IsZero())NeedsRelease=false;MoveInput=Keys.IsZero()?TouchInput:Keys;StepMovement(FMath::Min(Dt,.05f));}
- if(Dialog!=EExpDialog::Welcome&&Dialog!=EExpDialog::Pause&&Dialog!=EExpDialog::Teacher&&Dialog!=EExpDialog::Inventory&&!State.finale){ActiveTime+=Dt;if(Dialog==EExpDialog::Question||(Dialog==EExpDialog::Speech&&CurrentSchool>=0))SchoolTime+=Dt;else if(Dialog==EExpDialog::Shell||Dialog==EExpDialog::Route||Dialog==EExpDialog::Rope||Dialog==EExpDialog::Mosaic||Dialog==EExpDialog::Symbols)LogicTime+=Dt;else TravelTime+=Dt;}
+ FVector2D Keys(Directions.Horizontal(),Directions.Vertical());
+ if(Dialog==EExpDialog::World){if(NeedsRelease&&(Directions.Held==0||Directions.Effective()!=0)&&TouchInput.IsZero())NeedsRelease=false;MoveInput=Keys.IsZero()?TouchInput:Keys;StepMovement(FMath::Min(Dt,.05f));}
+ if(Dialog!=EExpDialog::Welcome&&Dialog!=EExpDialog::Pause&&Dialog!=EExpDialog::Teacher&&Dialog!=EExpDialog::Inventory&&!State.finale){ActiveTime+=Dt;if(Dialog==EExpDialog::Question||((Dialog==EExpDialog::Speech||Dialog==EExpDialog::Result)&&CurrentSchool>=0))SchoolTime+=Dt;else if(Dialog==EExpDialog::Shell||Dialog==EExpDialog::Route||Dialog==EExpDialog::Rope||Dialog==EExpDialog::Mosaic||Dialog==EExpDialog::Symbols)LogicTime+=Dt;else TravelTime+=Dt;}
  AutoSaveTime+=Dt;if(AutoSaveTime>8&&Dialog==EExpDialog::World){Save();AutoSaveTime=0;}
  }
  int Old=NearId;NearId=-1;float Distance=190;auto EP=Explorer->GetActorLocation();
  for(const auto& T:Targets)if(TargetVisible(T.Id)){float D=FVector::Dist2D(EP,T.Pos);if(D<Distance){Distance=D;NearId=T.Id;NearLabel=T.Label;}}
- if(NearId!=Old)UiDirty=true;
+ if(NearId!=Old&&Dialog!=EExpDialog::World)UiDirty=true;
  if(Camera){FVector Want=EP+FVector(0,950,1650);Camera->SetActorLocation(FMath::VInterpTo(Camera->GetActorLocation(),Want,Dt,6));}
- if(NearMarker){NearMarker->SetVisibility(NearId>=0&&Dialog==EExpDialog::World);if(NearId>=0)for(const auto& T:Targets)if(T.Id==NearId)NearMarker->SetWorldLocation(T.Pos+FVector(0,0,4));}
+ if(NearMarker){NearMarker->SetVisibility(NearId>=0&&Dialog==EExpDialog::World);if(NearId>=0)for(const auto& T:Targets)if(T.Id==NearId)NearMarker->SetWorldLocation(FVector(T.Pos.X,T.Pos.Y,32));}
  if(UiDirty){RebuildUI();UiDirty=false;}
 }
 int AExpeditionGameMode::SchoolSolved()const{int N=0;for(int i=0;i<7;++i)N+=HasSchool(State,i)?1:0;return N;}
@@ -104,7 +130,7 @@ FString AExpeditionGameMode::Mission()const{
 }
 bool AExpeditionGameMode::TargetVisible(int Id)const{if(Id==1)return !State.shell;if(Id>=4&&Id<=6)return HasSchool(State,1);if(Id==7)return HasSchool(State,3);if(Id==8||Id==9)return HasLogic(State,2);if(Id>=10&&Id<=12)return HasLogic(State,3);if(Id==13)return HasLogic(State,4);return true;}
 void AExpeditionGameMode::Notify(const FString& M){Toast=M;ToastTimer=4;UiDirty=true;}
-void AExpeditionGameMode::NewGame(){State={};CurrentSchool=-1;SelectedOption=-1;RoutePreview=-1;Feedback.Empty();DialogueText.Empty();ActiveTime=SchoolTime=LogicTime=TravelTime=0;AnimationTime=0;if(Explorer)Explorer->SetActorLocation(FVector(-80,170,PlayerZ));SetDialog(EExpDialog::World);RefreshWorld();Save();Notify(TEXT("Mara wartet auf dem Dorfplatz. Geh zu ihr und drücke E oder „Ansprechen“."));}
+void AExpeditionGameMode::NewGame(){State={};Directions={};DialogHistory.Reset();ReturnDialog=EExpDialog::World;CurrentSchool=-1;SelectedOption=-1;RoutePreview=-1;Feedback.Empty();DialogueText.Empty();ActiveTime=SchoolTime=LogicTime=TravelTime=0;AnimationTime=0;if(Explorer)Explorer->SetActorLocation(FVector(-80,170,PlayerZ));SetDialog(EExpDialog::World);RefreshWorld();Save();Notify(TEXT("Mara wartet auf dem Dorfplatz. Geh zu ihr und drücke E oder „Ansprechen“."));}
 void AExpeditionGameMode::OpenSchool(int Id){
  CurrentSchool=Id;SelectedOption=-1;Feedback.Empty();
  if(HasSchool(State,Id)){Notify(TEXT("Diese Aufgabe hast du bereits gelöst."));SetDialog(EExpDialog::World);return;}
@@ -143,12 +169,16 @@ void AExpeditionGameMode::Answer(){
  ResultMessage(R,TEXT("Aufgabe gelöst."));
 }
 void AExpeditionGameMode::Click(int Id){
+ auto Close=[this](){
+  if((Dialog==EExpDialog::Inventory||Dialog==EExpDialog::Teacher)&&DialogHistory.Num()>0){auto Back=DialogHistory.Pop();SetDialog(Back);}
+  else if(Dialog!=EExpDialog::Welcome){DialogHistory.Reset();ReturnDialog=EExpDialog::World;SetDialog(EExpDialog::World);}
+ };
  if(Id==1&&(Dialog==EExpDialog::Welcome||Dialog==EExpDialog::Pause)){NewGame();return;}
- if(Id==2){if(Load()){SetDialog(State.finale?EExpDialog::Finale:EExpDialog::World);Notify(SaveMessage);}else{Feedback=SaveMessage;UiDirty=true;}return;}
- if(Id==3){if(Dialog!=EExpDialog::Welcome)SetDialog(ReturnDialog);return;}
- if(Id==4&&Dialog!=EExpDialog::Welcome){if(Dialog==EExpDialog::Inventory)SetDialog(ReturnDialog);else{ReturnDialog=Dialog;SetDialog(EExpDialog::Inventory);}return;}
- if(Id==5){ReturnDialog=Dialog;SetDialog(EExpDialog::Teacher);return;}
- if(Id==6){if(Dialog==EExpDialog::World){Save();ReturnDialog=EExpDialog::World;SetDialog(EExpDialog::Pause);}else if(Dialog==EExpDialog::Pause)SetDialog(EExpDialog::World);else if(Dialog!=EExpDialog::Welcome)SetDialog(EExpDialog::World);return;}
+ if(Id==2){if(Load()){DialogHistory.Reset();SetDialog(State.finale?EExpDialog::Finale:EExpDialog::World);Notify(SaveMessage);}else{Feedback=SaveMessage;UiDirty=true;}return;}
+ if(Id==3){Close();return;}
+ if(Id==4&&Dialog!=EExpDialog::Welcome){if(Dialog==EExpDialog::Inventory)Close();else{DialogHistory.Add(Dialog);SetDialog(EExpDialog::Inventory);}return;}
+ if(Id==5&&Dialog!=EExpDialog::Teacher){DialogHistory.Add(Dialog);SetDialog(EExpDialog::Teacher);return;}
+ if(Id==6){if(Dialog==EExpDialog::World){Save();SetDialog(EExpDialog::Pause);}else Close();return;}
  if(Id==7){if(Dialog==EExpDialog::Question)Feedback=Question().Hint;else Feedback=DialogueText;UiDirty=true;return;}
  if(Id==8&&Dialog==EExpDialog::Speech){if(CurrentSchool>=0)OpenSchool(CurrentSchool);else SetDialog(EExpDialog::World);return;}
  if(Id==9){Answer();return;}
@@ -192,7 +222,7 @@ bool AExpeditionGameMode::Load(){
  IntArray(TEXT("symbols"),Candidate.symbols,3);IntArray(TEXT("failures"),Candidate.failures,7);BoolArray(TEXT("transfer"),Candidate.transfer,7);BoolArray(TEXT("pending"),Candidate.pending,7);
  double X=0,Y=0,At=0,St=0,Lt=0,Tt=0;auto Num=[&](const TCHAR* Name,double& V){if(!J->TryGetNumberField(Name,V)||!FMath::IsFinite(V)||FMath::Abs(V)>10000000)Good=false;};Num(TEXT("x"),X);Num(TEXT("y"),Y);Num(TEXT("activeTime"),At);Num(TEXT("schoolTime"),St);Num(TEXT("logicTime"),Lt);Num(TEXT("travelTime"),Tt);
  if(!Good||!Validate(Candidate)||At<0||St<0||Lt<0||Tt<0){SaveMessage=TEXT("Der Spielstand enthält widersprüchliche Daten. Dein aktueller Fortschritt bleibt erhalten.");return false;}
- State=Candidate;ActiveTime=At;SchoolTime=St;LogicTime=Lt;TravelTime=Tt;
+ State=Candidate;RefreshWorld();ActiveTime=At;SchoolTime=St;LogicTime=Lt;TravelTime=Tt;
  FVector Pos(X,Y,PlayerZ);bool Repaired=!CanWalk(Pos);if(Repaired)Pos=SafeAnchor(State);
  if(Explorer)Explorer->SetActorLocation(Pos);CurrentSchool=-1;SelectedOption=-1;RoutePreview=-1;Feedback.Empty();RefreshWorld();CancelInput();UiDirty=true;
  SaveMessage=Repaired?TEXT("Spielstand geladen. Deine Position wurde auf einen sicheren Weg zurückgesetzt."):TEXT("Spielstand geladen. Willkommen zurück!");return true;
