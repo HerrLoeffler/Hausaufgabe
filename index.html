@@ -186,6 +186,7 @@
         <div class="card adminToolbar">
           <label class="searchField">Lehrkräfte durchsuchen<input id="adminTeacherSearch" type="search" placeholder="Name oder E-Mail …" /></label>
           <label>Status<select id="adminTeacherStatusFilter"><option value="all">Alle</option><option value="active">Aktiv</option><option value="admin">Admins</option><option value="suspended">Gesperrt</option></select></label>
+          <label>Sortieren<select id="adminTeacherSort"><option value="name">Name A–Z</option><option value="registered">Neu registriert</option><option value="activity">Zuletzt aktiv</option><option value="tests">Meiste Tests</option><option value="status">Status</option></select></label>
           <button id="exportAdminTeachersBtn" class="button secondary" type="button">CSV exportieren</button>
         </div>
         <div id="adminTeachersTable" class="card tableCard" tabindex="0" role="region" aria-label="Lehrkräfte – Tabelle horizontal scrollbar"></div>

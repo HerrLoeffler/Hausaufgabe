@@ -326,6 +326,14 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .questionAudioBody textarea{width:100%;resize:vertical}
 .questionAudioPreview{display:grid;gap:6px}
 .questionAudioPreview audio{width:100%;max-width:620px}
+.answerAudioPreview .questionAudioPreview{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 0;border-bottom:1px solid #e5eaf3}
+.answerAudioPreview .questionAudioPreview>span:first-child{flex-basis:100%}
+.answerAudioPreview .questionAudioPreview>audio{flex:1 1 220px;min-width:160px}
+.answerAudioPreview .questionAudioPreview>.aiInputError{flex-basis:100%}
+.answerAudioRetry{display:inline-grid;place-items:center;width:42px;height:42px;padding:4px;border:1px solid #d5deec;border-radius:10px;background:#fff}
+.answerAudioRetry img{display:block;width:30px;height:30px;object-fit:contain}
+.answerAudioHelp{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid #91a7c5;border-radius:50%;color:#2457bd;font-size:12px;font-weight:800;cursor:help}
+.answerAudioHelp:focus-visible{outline:2px solid #2457bd;outline-offset:2px}
 .questionAudioActions{display:flex;gap:8px;flex-wrap:wrap}
 .questionAudioDisclosure{color:#667085;font-size:12px;line-height:1.4}
 .solutionAudioPanel{border-color:#cfe5d8;background:#fbfefc}.solutionAudioPanel>summary{color:#245d3b}.solutionAudioPanel .questionAudioState{color:#245d3b}

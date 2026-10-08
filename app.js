@@ -2467,7 +2467,7 @@ async function openAiView() {
     state.aiStatus = null;
     const denied = String(err?.code || "").includes("permission-denied");
     notice.className = `aiStatusNotice${denied ? " error" : ""}`;
-    notice.textContent = denied ? "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet."
+    notice.textContent = denied ? "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist."
       : "Status gerade nicht verfügbar. Du kannst die Erstellung trotzdem versuchen.";
   }
 }
@@ -2480,7 +2480,7 @@ function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
   if (code.includes("internal") || String(err?.message || "").trim().toLowerCase() === "internal") {
     return `Bei der KI-Erstellung ist ein technischer Fehler aufgetreten. Bitte erneut versuchen${suffix}.`;
   }
-  if (code.includes("permission-denied")) return "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet.";
+  if (code.includes("permission-denied")) return "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist.";
   if (code.includes("resource-exhausted")) return `Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen${suffix}.`;
   if (code.includes("deadline-exceeded")) return `Die KI braucht gerade zu lange. Bitte erneut versuchen${suffix}.`;
   if (code.includes("unauthenticated")) return "Bitte neu anmelden und erneut versuchen.";
@@ -4605,10 +4605,24 @@ function renderQuestionAudioEditor(container, q) {
         row.appendChild(warning);
       }
       if (q.audioAnswerMode === "audio-only") {
-        const retry = makeMiniButton("🦊 Spur neu erzeugen", () => generateAiAnswerAudioForQuestion(q, container, entry.key));
+        const retry = makeMiniButton("", () => generateAiAnswerAudioForQuestion(q, container, entry.key));
+        retry.classList.add("answerAudioRetry");
+        const emmi = document.createElement("img");
+        emmi.src = "/assets/gradecrew/fox-improve.svg#pose-1";
+        emmi.alt = "";
+        emmi.width = 30;
+        emmi.height = 30;
+        retry.appendChild(emmi);
         retry.setAttribute("aria-label", `Emmi: Audiospur für Antwort ${index + 1} neu erzeugen`);
         retry.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended || audioOperations().has(q));
         row.appendChild(retry);
+        const help = document.createElement("span");
+        help.className = "answerAudioHelp";
+        help.textContent = "i";
+        help.tabIndex = 0;
+        help.title = `Emmi erzeugt nur die Audiospur für Antwort ${index + 1} neu. Der Antworttext bleibt unverändert.`;
+        help.setAttribute("aria-label", help.title);
+        row.appendChild(help);
         const player = row.querySelector("audio");
         const markBroken = () => {
           if (!state.questions.includes(q) || option.audioDataUrl !== player?.getAttribute("src")) return;
@@ -7487,6 +7501,7 @@ document.querySelectorAll(".adminPeriodBtn").forEach((btn) => btn.addEventListen
 }));
 $("adminTeacherSearch")?.addEventListener("input", renderAdminTeachers);
 $("adminTeacherStatusFilter")?.addEventListener("change", renderAdminTeachers);
+$("adminTeacherSort")?.addEventListener("change", renderAdminTeachers);
 $("exportAdminTeachersBtn")?.addEventListener("click", exportAdminTeachersCsv);
 $("adminTestSearch")?.addEventListener("input", renderAdminTests);
 $("adminTestStatusFilter")?.addEventListener("change", renderAdminTests);
@@ -7706,13 +7721,43 @@ function renderAdminTeachers() {
   if (!root) return;
   const term = normalize($("adminTeacherSearch")?.value || "");
   const status = $("adminTeacherStatusFilter")?.value || "all";
+  const sort = $("adminTeacherSort")?.value || "name";
   const users = state.adminUsers
     .filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term))
     .filter((u) => status === "all" || adminUserStatusKey(u) === status)
-    .sort((a,b)=>String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de"));
+    .sort((a,b)=>{
+      const difference = sort === "registered" ? toMillis(b.createdAt) - toMillis(a.createdAt)
+        : sort === "activity" ? toMillis(b.lastActiveAt) - toMillis(a.lastActiveAt)
+        : sort === "tests" ? teacherQuizCount(b.id) - teacherQuizCount(a.id)
+        : sort === "status" ? adminUserStatusKey(a).localeCompare(adminUserStatusKey(b), "de") : 0;
+      return difference || String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de");
+    });
   if (!users.length) { root.innerHTML = `<div class="emptyInline">Keine Lehrkräfte gefunden.</div>`; return; }
-  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : (u.role === "admin" ? "Admin" : "Aktiv")}</span></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
+  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Rolle</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : "Aktiv"}</span></td><td><select class="adminTeacherRole" data-id="${escapeHtml(u.id)}" aria-label="Rolle von ${escapeHtml(u.displayName || u.email || "Lehrkraft")}" ${u.id === state.user.uid ? "disabled" : ""}><option value="teacher" ${u.role === "admin" ? "" : "selected"}>Lehrkraft</option><option value="admin" ${u.role === "admin" ? "selected" : ""} ${u.isTestAccount === true ? "disabled" : ""}>Admin</option></select></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
   root.querySelectorAll(".adminTeacherOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTeacher(btn.dataset.id)));
+  root.querySelectorAll(".adminTeacherRole").forEach((select)=>select.addEventListener("change",()=>changeAdminTeacherRole(select)));
+}
+
+async function changeAdminTeacherRole(select) {
+  const user = state.adminUsers.find((item)=>item.id === select.dataset.id);
+  if (!user || user.id === state.user.uid) return;
+  const nextRole = select.value === "admin" ? "admin" : "teacher";
+  if (nextRole === user.role) return;
+  if (user.isTestAccount === true && nextRole === "admin") { select.value = user.role || "teacher"; return; }
+  if (!confirm(`${user.displayName || user.email || "Dieses Konto"} wirklich zu „${nextRole === "admin" ? "Admin" : "Lehrkraft"}“ ändern?`)) { select.value = user.role || "teacher"; return; }
+  select.disabled = true;
+  try {
+    await updateDoc(doc(db, "users", user.id), { role: nextRole, roleUpdatedAt: serverTimestamp(), roleUpdatedBy: state.user.uid });
+    await writeAdminAudit("user_role_changed", { userId: user.id, fromRole: user.role || "teacher", toRole: nextRole });
+    toast("Rolle geändert.");
+    await loadAdminData(false);
+  } catch (err) {
+    console.error(err);
+    select.value = user.role || "teacher";
+    toast("Rolle konnte nicht geändert werden.", "error");
+  } finally {
+    select.disabled = false;
+  }
 }
 
 function exportAdminTeachersCsv() {
