@@ -9,7 +9,7 @@
   },
   "firestore": {
     "database": "(default)",
-    "rules": "firestore.rules",
+    "rules": "firestore.secure-assessment.rules",
     "indexes": "firestore.indexes.json"
   },
   "functions": [
