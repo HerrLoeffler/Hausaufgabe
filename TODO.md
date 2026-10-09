@@ -411,3 +411,6 @@ PR176–178 integriert auf `6ee594b6e733720e21ed683f5f044d7354d63b3a`; exact CI3
 
 
 09.10.2026 · GC-WEB-REPAIR-20261007:20nummerierteCoco-Loginvorlagen erzeugt, lokaleÜbersicht gespeichert. Coco überKartenkante, vollständigerroterHerzballon mit „Schön, dass du da bist!“. Vorlagenauswahl offen; danach transparentesEinzelasset undlokalerEinbau. KeineCode-/Deployänderung. [Übergabe](workstreams/coco-login-poses-20261009.md).
+
+
+09.10.2026 · GC-CREW-AI-01: CocoSuche/Dauergedächtnis vomNutzerzurUmsetzungfreigegeben. DraftPR179, feature/coco-support-memory-20261009 (Relatedfix/staging-feedback-coco-memory-20261009fürvolleCI), Remote370e1e1,315Web/191FunctionsundReviewkorrekturengrün. Statusbranch_only,nochkeinDeploy/Kontolive-Test. PermanenteeditierbareVorlieben/letzte40GesprächsnachrichtenohneTTL,eigentumsgeprüfteTest-/Bildmetadatensuche,TreffermitÖffnen. [Übergabe](workstreams/coco-support-memory-20261009.md). Next exakteCIundStaging-/lokaleVerbindungverifizieren,Productionausgeschlossen;alteBildnachbeschreibungundFeedbackverfolgungoffen.
