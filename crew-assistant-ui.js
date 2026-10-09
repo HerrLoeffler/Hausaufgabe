@@ -170,7 +170,7 @@ async function support(operation,extra={},expectedUid=memoryUid) {
   const uid=getAuth(getApp()).currentUser?.uid;
   if(!uid)throw new Error("Bitte melde dich zuerst an.");
   if(expectedUid!==uid)throw new Error("Das Konto wurde gewechselt.");
-  const result=await httpsCallable(getFunctions(getApp(),"europe-west1"),"cocoSupport",{timeout:90000})({operation,...extra,accountId:expectedUid});
+  const result=await httpsCallable(getFunctions(getApp(),"europe-west1"),"cocoSupport",{timeout:180000})({operation,...extra,accountId:expectedUid});
   if(getAuth(getApp()).currentUser?.uid!==uid)throw new Error("Das Konto wurde gewechselt.");
   return result.data||{};
 }
@@ -189,12 +189,16 @@ async function showMemory() {
   const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
   const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
   const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{await support("preferences",{preferences:input.value},uid);info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
-  const clear=document.createElement("button");clear.type="button";clear.textContent="Alle Erinnerungen löschen";clear.onclick=async()=>{clear.disabled=true;const epoch=++requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{clear.disabled=true;const epoch=++requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
   holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
 }
 async function searchTests(query,epoch) {
   const r=await support("search",{query});if(epoch!==requestEpoch)return;
   addMessage("assistant",r.matches.length?`Ich habe ${r.matches.length} passende Tests gefunden.`:`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
+  if(!r.matches.length&&r.unindexedImages){const button=document.createElement("button");button.type="button";button.className="miniButton";button.textContent="Ältere Bilder einmalig beschreiben und erneut suchen";
+    button.onclick=async()=>{const uid=memoryUid;button.disabled=true;try{const result=await support("index_images",{},uid);if(epoch!==requestEpoch)return;addMessage("assistant",`${result.indexed} Bilder neu beschrieben und dauerhaft gespeichert.${result.remaining?` Weitere ${result.remaining} Bilder warten noch auf eine Beschreibung.`:""}${result.failed||result.pending?" Einige Bilder konnten nicht beschrieben werden; ich wiederhole diese Aufrufe nicht automatisch.":""}`);await searchTests(query,epoch);}catch(e){if(epoch===requestEpoch)addMessage("assistant",e.message);}finally{button.disabled=false;}};
+    $("gcCrewMessages").append(button);
+  }
   for(const q of r.matches){const card=document.createElement("div");card.className="gcCrewMsg assistant";const title=document.createElement("strong");title.textContent=q.title;const evidence=document.createElement("p");evidence.textContent=q.evidence;
     if(/^(?:https:\/\/|data:image\/(?:png|jpeg|webp);base64,)/.test(q.imageUrl)){const img=document.createElement("img");img.src=q.imageUrl;img.alt="Bild aus dem gefundenen Test";img.style.cssText="max-width:100%;max-height:100px;object-fit:contain";card.append(img);}
     const button=document.createElement("button");button.type="button";button.textContent="Test öffnen";button.onclick=()=>{if(epoch===requestEpoch)void applyGuideAction({type:"choose_editor",quizId:q.id},epoch);};card.append(title,evidence,button);$("gcCrewMessages").append(card);}

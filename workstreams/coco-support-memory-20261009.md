@@ -1,0 +1,9 @@
+# GC-CREW-AI-01 — current Coco support handoff
+
+User authorizes owned test/image metadata search, contextual help and durable account preferences/recent conversation. No Production. Primary feature/coco-support-memory-20261009; related fix/staging-feedback-coco-memory-20261009 only CI-qualified mirror. PR179 integrated e423887bf321ff19e7ac453b7c3bfa5bea8e2fe3; exact candidate CI37971445864 and merge CI37971670250 success. Preview37971840800 and AI/Assessment37971840835 success, but no canonical promotion yet.
+
+Source: memory Firestore cocoMemory/{authUid}, no TTL, editable/deletable preferences2000chars, last40messages persistent; model12recent plus authorized current test on editor/results. Search100ownedtests/250questions/12matches with alt/prompt/text and embedded image evidence; no answer keys. Old missing metadata cannot be visually recognized. Local UI focused copies preserve user design, syntax pass; backend live roundtrip still pending.315Web/191Functions passed before new ID regression.
+
+Independent review found wrong-account clear, deleted-turn resurrection and old-query contamination; corrected with expectedAccount client/server guard, epoch invalidation, no search writes and current query isolation. Three original regressions red, five behavior tests green. Narrow second review approved actualdocumentID fix (reviewer Node absent, root six focused tests pass).
+
+Root found owned query mapper allowed stored data.id to overwrite actual doc.id; fixed in local8dc7f69 Treeac3725f55e7c245fd178b48a1cd6a4bafee66770. New DraftPR180/remoteebae2adc8b3b8c6453dea3827010abdb876cbcf8. Exact CI37972241568 running. Do not promote older e423 build as final. Next: green exact fixCI → merge180 → actual replacement Functions/preview → live local own-account memory roundtrip/search and canonical. Production remains unchanged.
