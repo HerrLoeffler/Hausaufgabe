@@ -6,6 +6,7 @@ import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?
 let memoryUid = "";
 let memoryEpoch = 0;
 let memoryQueue = Promise.resolve();
+let clearingEpoch = 0;
 let conversation = [];
 let lastCrew = "";
 let requestEpoch = 0;
@@ -174,29 +175,32 @@ async function support(operation,extra={},expectedUid=memoryUid) {
   if(getAuth(getApp()).currentUser?.uid!==uid)throw new Error("Das Konto wurde gewechselt.");
   return result.data||{};
 }
+function queueMemoryWrite(operation,data,uid,epoch=requestEpoch) {
+  const result=memoryQueue.catch(()=>{}).then(()=>{
+    if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid||(clearingEpoch!==0&&clearingEpoch===epoch))return {cancelled:true};
+    return support(operation,data,uid);
+  });
+  memoryQueue=result.catch(()=>{});return result;
+}
 function rememberTurn(messages,uid) {
-  if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
-  const turnId=crypto.randomUUID();
-  memoryQueue=memoryQueue.catch(()=>{}).then(async()=>{
-    if(getAuth(getApp()).currentUser?.uid!==uid)return;
-    await support("remember",{messages,turnId},uid);
-  }).catch(()=>{if(getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Deine bisherigen Erinnerungen bleiben erhalten.");});
+  const epoch=requestEpoch;if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
+  void queueMemoryWrite("remember",{messages,turnId:crypto.randomUUID()},uid,epoch).catch(()=>{if(epoch===requestEpoch&&getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Deine bisherigen Erinnerungen bleiben erhalten.");});
 }
 async function showMemory() {
-  const uid=getAuth(getApp()).currentUser?.uid;const m=await support("read");if(uid!==getAuth(getApp()).currentUser?.uid)return;
+  const uid=getAuth(getApp()).currentUser?.uid;const editorEpoch=requestEpoch;const m=await support("read",{},uid);if(uid!==getAuth(getApp()).currentUser?.uid)return;
   const root=$("gcCrewMessages");const holder=document.createElement("div");holder.className="gcCrewMsg assistant";
   const label=document.createElement("label");label.textContent="Cocos dauerhaft gespeicherte Vorlieben";
   const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
   const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
-  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{await support("preferences",{preferences:input.value},uid);info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
-  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{clear.disabled=true;const epoch=++requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
+  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{const saved=await queueMemoryWrite("preferences",{preferences:input.value},uid,editorEpoch);if(saved?.cancelled||editorEpoch!==requestEpoch)return;info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{if(editorEpoch!==requestEpoch)return;clear.disabled=true;const epoch=++requestEpoch;memoryEpoch++;clearingEpoch=epoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}finally{if(clearingEpoch===epoch){clearingEpoch=0;if(send)send.disabled=false;}}};
   holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
 }
 async function searchTests(query,epoch) {
   const r=await support("search",{query});if(epoch!==requestEpoch)return;
   addMessage("assistant",r.matches.length?`Ich habe ${r.matches.length} passende Tests gefunden.`:`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
   if(!r.matches.length&&r.unindexedImages){const button=document.createElement("button");button.type="button";button.className="miniButton";button.textContent="Ältere Bilder einmalig beschreiben und erneut suchen";
-    button.onclick=async()=>{const uid=memoryUid;button.disabled=true;try{const result=await support("index_images",{},uid);if(epoch!==requestEpoch)return;addMessage("assistant",`${result.indexed} Bilder neu beschrieben und dauerhaft gespeichert.${result.remaining?` Weitere ${result.remaining} Bilder warten noch auf eine Beschreibung.`:""}${result.failed||result.pending?" Einige Bilder konnten nicht beschrieben werden; ich wiederhole diese Aufrufe nicht automatisch.":""}`);await searchTests(query,epoch);if(epoch===requestEpoch)rememberTurn(conversation.slice(-2).filter(m=>m.role==="assistant"),uid);}catch(e){if(epoch===requestEpoch)addMessage("assistant",e.message);}finally{button.disabled=false;}};
+    button.onclick=async()=>{if(epoch!==requestEpoch)return;const uid=memoryUid;button.disabled=true;try{const result=await support("index_images",{},uid);if(epoch!==requestEpoch)return;addMessage("assistant",`${result.indexed} Bilder neu beschrieben und dauerhaft gespeichert.${result.remaining?` Weitere ${result.remaining} Bilder warten noch auf eine Beschreibung.`:""}${result.failed||result.pending?" Einige Bilder konnten nicht beschrieben werden; ich wiederhole diese Aufrufe nicht automatisch.":""}`);await searchTests(query,epoch);if(epoch===requestEpoch)rememberTurn(conversation.slice(-2).filter(m=>m.role==="assistant"),uid);}catch(e){if(epoch===requestEpoch)addMessage("assistant",e.message);}finally{button.disabled=false;}};
     $("gcCrewMessages").append(button);
   }
   for(const q of r.matches){const card=document.createElement("div");card.className="gcCrewMsg assistant";const title=document.createElement("strong");title.textContent=q.title;const evidence=document.createElement("p");evidence.textContent=q.evidence;
@@ -238,14 +242,14 @@ async function applyGuideAction(action, epoch = requestEpoch) {
 async function sendCurrentMessage() {
   const input = $("gcCrewInput");
   const text = String(input?.value || "").trim();
-  if (!text || sending) return;
+  if (!text || sending || (clearingEpoch!==0&&clearingEpoch===requestEpoch)) return;
   const epoch=requestEpoch; const turnUid=memoryUid; let persistTurn=true; sending=true;
   const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;
   stopDictation();input.value="";addMessage("user",text);
   let pending;
   try {
     const context=currentContext();
-    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}await support("preferences",{preferences},turnUid);addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
+    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}const saved=await queueMemoryWrite("preferences",{preferences},turnUid,epoch);if(saved?.cancelled||epoch!==requestEpoch)return;addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
     if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {persistTurn=false;await showMemory();return;}
     const prior=conversation.filter(m=>m.role==="user").slice(-3).map(m=>m.text).join(" ");
     if(/(?:such|find|erinner|hatte|drache|bild|motiv)/i.test(text)&&/(?:test|quiz|drache|bild|motiv)/i.test(prior)) {pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(/(?:such|find|test|quiz|drache|dragon|katze|cat)/i.test(text)?text:prior,epoch);return;}
