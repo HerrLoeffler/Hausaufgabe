@@ -10,3 +10,6 @@ Promptkern: gleicher navy/ivory Coco, orange Schnabel/Füße; echter Kontakt zur
 
 
 Martin wählt17. TransparentesEinzelasset mitgeschlossenenAugen,rotemvollständigemHerzballon undexaktemText erzeugt (`assets/gradecrew/coco-login-heart-17.png`). Lokal in `gradecrew-web-repair-integration` eingebaut; alteOverlay-Schriftentfernt, Kantenkontaktz-index3/statischePose,150pxobererFreiraum stattnegativem190pxVersatz,kleineBildschirme ohneDeko/Reserve,Cacheversionenaktualisiert. JS-Syntax bestanden; lokaleDateien undAssetHTTP200. WiederaufnehmbareDateikopie unter `output/coco-login-20261009/selected-17`. Browser-LivebildnachReloadnichtbestätigt: InAppTimeout undneuerChrome-Tab wegeninaktiverExtensionverweigert; vorhandenesLoginformularenthältEingaben, nichtverworfen. NochkeinDeploy/CI/Integration. NächsterSchritt NutzerlädtlokaleSeite neu; Kartenkante/Ballonvisuellbestätigen undgegebenenfallsminimalnachjustieren. OriginalDesignarbeit erhalten.
+
+
+Nutzer-Screenshot zeigt17seitlichzuweitüberKartenkante. EngbegrenzterlokalerCSS-Fix:right−100px→−32px,68pxnachlinks; KörperliegtinnerhalbKarte,nurBandendeübersteht. CacheCSSv3/startupgc28-coco17-left. StartupSyntaxbestanden; NutzerscreenshotalsAusgangsbeleg,erneutevisuelleAbnahmeoffen. KeineBildneugeneration/Deploy.
