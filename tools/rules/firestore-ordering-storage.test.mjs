@@ -46,11 +46,13 @@ test('manual saves and feedback remain storable, and editor reload preserves alt
   const source = fs.readFileSync(new URL('../../app.js', import.meta.url), 'utf8');
   const extract = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
   const context = { orderingVariants, orderingVariantsForStorage, validOrder, orderingNeedsReview,
-    round1: value => Math.round(value * 2) / 2, getQuestionAudioSrc: () => '', getQuestionImageSrc: () => '' };
+    round1: value => Math.round(value * 2) / 2, getQuestionAudioSrc: () => '', getQuestionImageSrc: () => '',
+    deepClone: value => JSON.parse(JSON.stringify(value)) };
   vm.createContext(context);
   vm.runInContext(extract('function initializeTypeData(', 'async function openEditor(')
     + extract('function sanitizeQuestionForSave(', 'async function saveCurrentQuiz(')
-    + extract('function aiQuestionFeedbackSnapshot(', 'async function submitTutorialQuestionFeedback('), context);
+    + extract('function aiQuestionFeedbackSnapshot(', 'async function submitTutorialQuestionFeedback(')
+    + extract('function questionForAi(', 'const AI_QUALITY_REASONS'), context);
   const saved = context.sanitizeQuestionForSave(question);
   assertFirestoreAccepts(saved);
   assertFirestoreAccepts({ questionSnapshot: context.aiQuestionFeedbackSnapshot(question) });
@@ -58,4 +60,5 @@ test('manual saves and feedback remain storable, and editor reload preserves alt
   context.initializeTypeData(loaded, 'ordering');
   assert.equal(gradeOrdering(loaded, [2, 1, 0]).correct, true);
   assert.deepEqual(JSON.parse(JSON.stringify(loaded.acceptedOrders)), [[2, 1, 0]]);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.questionForAi(loaded).acceptedOrders)), [[2, 1, 0]], 'AI input keeps its transient array schema');
 });

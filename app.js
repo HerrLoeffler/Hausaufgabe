@@ -3726,6 +3726,7 @@ function questionContext(index) {
 
 function questionForAi(q) {
   const copy = sanitizeQuestionForSave(q);
+  if (copy.type === "ordering") copy.acceptedOrders = orderingVariants(copy.acceptedOrders);
   copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
