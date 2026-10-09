@@ -7,6 +7,7 @@ import * as assessmentLocale from "./shared/i18n/assessment-locale.mjs";
 import { setActiveUiLocale, registerCatalog } from "./shared/i18n/browser-runtime.mjs";
 import { enGBMessages, enGBSourcePatterns } from "./shared/i18n/messages-en-GB.mjs";
 import { registerSourcePatterns } from "./shared/i18n/browser-runtime.mjs";
+import { formatMathText } from "./shared/math-display.mjs";
 const require = createRequire(import.meta.url);
 const { JSDOM } = require("./tools/ui/node_modules/jsdom");
 const legacy = fs.readFileSync("app.js", "utf8");
@@ -18,15 +19,13 @@ function render(runtime, quiz, questions) {
   const dom = new JSDOM('<div id="studentQuestions"></div><div id="secureQuestions"></div>', { url: "https://example.test" });
   const document = dom.window.document;
   const context = vm.createContext({ document, currentQuiz: quiz, quiz, questions,
-    ownerPreview: true, ...assessmentLocale,
+    ownerPreview: true, ...assessmentLocale, formatMathText,
     $: id => document.getElementById(id),
     escapeHtml: value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]),
     getQuestionImageSrc: q => q.imageDataUrl || q.imageUrl,
     studentOptionEntries: (_, q) => q.options.map((option, originalIndex) => ({ option, originalIndex })).reverse(),
   });
   if (runtime === "legacy") {
-    const mathStart = legacy.indexOf("function formatMathText(");
-    vm.runInContext(legacy.slice(mathStart, legacy.indexOf("\nfunction ", mathStart + 1)), context);
     const start = legacy.indexOf('const qRoot = $("studentQuestions");', legacy.indexOf("function renderStudentQuiz"));
     const end = legacy.indexOf("  setupStudentProgress(questions);", start);
     vm.runInContext(`function renderQuestions() { ${legacy.slice(start, end)} }; renderQuestions();`, context);

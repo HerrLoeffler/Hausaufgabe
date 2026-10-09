@@ -45,6 +45,7 @@ import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticS
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
@@ -794,19 +795,6 @@ function escapeHtml(value) {
   }[c]));
 }
 
-function formatMathText(value) {
-  const text = String(value ?? "");
-  const pattern = /([\^_])\{([^{}]{1,80})\}/g;
-  let html = "";
-  let cursor = 0;
-  for (const match of text.matchAll(pattern)) {
-    html += escapeHtml(text.slice(cursor, match.index));
-    const tag = match[1] === "^" ? "sup" : "sub";
-    html += `<${tag}>${escapeHtml(match[2])}</${tag}>`;
-    cursor = match.index + match[0].length;
-  }
-  return html + escapeHtml(text.slice(cursor));
-}
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();

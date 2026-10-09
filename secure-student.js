@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebas
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { formatMathText } from "./shared/math-display.mjs?v=1";
 
 const app = initializeApp(firebaseConfig, "gradecrew-secure-student");
 const api = createSecureAssessmentClient(app);
@@ -193,7 +194,9 @@ function questionShell(question, index) {
   section.appendChild(head);
 
   const title = document.createElement("h2");
-  title.textContent = question.type === "gapfill" ? "Lückentext" : question.audioPresentation === "listening-only" ? assessmentContentLabels(currentQuiz?.contentLocale)[question.image?.src ? "listeningImageInstruction" : "listeningInstruction"] : question.text || "Aufgabe";
+  if (question.type === "gapfill") title.textContent = "Lückentext";
+  else if (question.audioPresentation === "listening-only") title.textContent = assessmentContentLabels(currentQuiz?.contentLocale)[question.image?.src ? "listeningImageInstruction" : "listeningInstruction"];
+  else title.innerHTML = formatMathText(question.text || "Aufgabe");
   section.appendChild(title);
 
   if (question.image?.src) {
@@ -235,7 +238,7 @@ function renderOptions(section, question, multiple = false) {
     const body = document.createElement("span");
     const text = document.createElement("span");
     text.dataset.i18nContent = "1";
-    text.textContent = question.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer;
+    text.innerHTML = formatMathText(question.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text || contentLabels.answer);
     if (question.audioAnswerMode === "audio-only") {
       text.hidden = true;
       input.setAttribute("aria-label", `${contentLabels.answer} ${shownIndex + 1}`);
@@ -322,7 +325,9 @@ function renderGapfill(section, question) {
   let gapIndex = 0;
   (question.segments || []).forEach(segment => {
     if (segment.type === "text") {
-      wrap.appendChild(document.createTextNode(segment.text || ""));
+      const text = document.createElement("span");
+      text.innerHTML = formatMathText(segment.text || "");
+      wrap.appendChild(text);
       return;
     }
     const input = document.createElement("input");
