@@ -32,7 +32,7 @@ const workspaceCss = read("./workspace.css");
 
 test("teacher app installs shared i18n before importing the core app", () => {
   const i18nIndex = startup.indexOf('from "./shared/i18n/bootstrap.mjs?v=3"');
-  const appIndex = startup.indexOf('await import("./app.js?v=2.3.1-gc28-i18n4")');
+  const appIndex = startup.indexOf('await import("./app.js?v=');
   assert.ok(i18nIndex >= 0, "startup must import the shared i18n bootstrap");
   assert.ok(appIndex > i18nIndex, "i18n must be ready before app.js starts");
 });

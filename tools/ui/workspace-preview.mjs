@@ -1,4 +1,5 @@
 /** LOCAL-ONLY inspection fixture. Never import this module from application code. */
+import { secureAudioPublicationBlocked } from '../../secure-audio-publication.mjs';
 if (!['localhost','127.0.0.1','[::1]'].includes(location.hostname)) throw new Error('Preview is localhost-only.');
 const log = message => { document.getElementById('previewLog').textContent = message; };
 const read = async path => {
@@ -36,7 +37,7 @@ const source = (start,end) => {
 };
 // Like the interaction tests, evaluate ONLY these actual local presentation functions.
 // No app imports, startup execution, SDK, authentication or data-writing functions run.
-const render = new Function('document','state','log', `
+const render = new Function('document','state','log','secureAudioPublicationBlocked', `
  const $=id=>document.getElementById(id);
  const normalize=value=>String(value).toLowerCase();
  const toMillis=value=>Number(value)||0;
@@ -53,7 +54,7 @@ const render = new Function('document','state','log', `
  ${source('function renderAiJobs()','async function renderLocalDraftList()')}
  ${source('$("quizSearch").addEventListener','$("backFromEditor").addEventListener')}
  return {renderQuizList,renderAiJobs};
-`)(document,state,log);
+`)(document,state,log,secureAudioPublicationBlocked);
 const { registerCatalog,registerSourcePatterns,setActiveUiLocale,translateTree } = await import('../../shared/i18n/browser-runtime.mjs?v=3');
 const { enGBMessages,enGBSourcePatterns } = await import('../../shared/i18n/messages-en-GB.mjs?v=3');
 const { enGBCrewMessages,enGBCrewSourcePatterns } = await import('../../shared/i18n/extensions-en-GB-crew.mjs?v=3');

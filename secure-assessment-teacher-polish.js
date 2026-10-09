@@ -58,9 +58,9 @@ function patchDashboardPublishToggles() {
       if (!Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
         toggle.dataset.secureWasDisabled = String(toggle.disabled);
       }
-      toggle.disabled = true;
-      toggle.title = "Ein laufender Test wird über „Beenden“ geschlossen – nicht wieder zum Entwurf gemacht.";
-      toggle.setAttribute("aria-label", "Veröffentlicht. Zum Schließen des laufenden Tests bitte „Beenden“ verwenden.");
+      toggle.disabled = toggle.dataset.secureWasDisabled === "true";
+      toggle.title = "Ausschalten beendet den Test sicher; Inhalte werden nicht zum Entwurf zurückgesetzt.";
+      toggle.setAttribute("aria-label", "Veröffentlicht. Ausschalten beendet den Test sicher.");
     } else if (Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
       toggle.disabled = toggle.dataset.secureWasDisabled === "true";
       delete toggle.dataset.secureWasDisabled;

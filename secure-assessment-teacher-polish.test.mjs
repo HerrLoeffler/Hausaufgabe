@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import vm from "node:vm";
 
 const source = fs.readFileSync("secure-assessment-teacher-polish.js", "utf8");
 const startup = fs.readFileSync("startup.js", "utf8");
@@ -20,12 +21,17 @@ test("active published editor becomes read-only until teacher ends test", () => 
   assert.match(source, /Beende den Test zuerst/);
 });
 
-test("dashboard cannot turn an active published test back into a draft", () => {
-  assert.match(source, /function patchDashboardPublishToggles/);
-  assert.match(source, /\.dashboardPublishToggle/);
-  assert.match(source, /const activePublished = toggle\.checked === true/);
-  assert.match(source, /toggle\.disabled = true/);
-  assert.match(source, /über „Beenden“ geschlossen/);
+test("dashboard publish switch stays operable and directs users to the safe end action", () => {
+  const start = source.indexOf("function patchDashboardPublishToggles()");
+  const end = source.indexOf("function patchAll()", start);
+  const toggle = { checked: true, disabled: false, dataset: {}, setAttribute(name, value) { this[name] = value; } };
+  const context = { document: { querySelectorAll: () => [toggle] }, Object };
+  vm.runInNewContext(source.slice(start, end), context);
+  context.patchDashboardPublishToggles();
+  assert.equal(toggle.disabled, false);
+  assert.match(toggle.title, /beendet den Test sicher/);
+  assert.match(toggle["aria-label"], /Ausschalten/);
+  assert.match(fs.readFileSync("app.js", "utf8"), /if \(action === "end"\)[\s\S]*?return endQuiz\(q\.id\)/);
 });
 
 test("secure teacher policy is loaded only on the normal teacher app path", () => {

@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc28";
+const APP_VERSION = "2.3.1-gc29";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -47,6 +47,7 @@ import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAudioPublicationBlocked } from "./secure-audio-publication.mjs?v=1";
 import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
@@ -61,10 +62,9 @@ const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 // Enable only after the deployed Firestore rules are verified to hide authored questions.
 const SECURE_AUDIO_PUBLICATION_ENABLED = false;
-const secureAudioPublicationBlocked = quiz => !SECURE_AUDIO_PUBLICATION_ENABLED &&
-  (quiz?.requiresSecureAssessmentRules === true || Number(quiz?.audioAnswerQuestionCount || 0) > 0 ||
-    Number(quiz?.listeningOnlyQuestionCount || 0) > 0);
-const secureAudioPublicationMessage = "Audioantworten und Nur-Hören-Aufgaben bleiben bis zur Prüfung der sicheren Schülerfreigabe Entwürfe.";
+const secureAudioPublicationBlocked = (quiz, questions = []) =>
+  isSecureAudioPublicationBlocked(quiz, questions, SECURE_AUDIO_PUBLICATION_ENABLED);
+const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder Nur-Hören-Aufgaben. Die sichere Schülerfreigabe ist noch nicht geprüft. Verwende vorerst ergänzendes Audio mit sichtbarem Fragetext.";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -1625,6 +1625,7 @@ function quizStatusMeta(q) {
   if (q.generationStatus === "failed") return { label: "KI-Teilentwurf", cls: "incomplete" };
   if (q.rightsHold) return { label: "Zugang gesperrt", cls: "rightsHold" };
   if (q.ended) return { label: "Beendet", cls: "ended" };
+  if (q.published && secureAudioPublicationBlocked(q)) return { label: "Audiofreigabe ausstehend", cls: "incomplete" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
   if (q.published) return { label: "Veröffentlicht", cls: "published" };
@@ -1671,7 +1672,7 @@ function renderQuizList() {
         </div>
         <div class="quizCardStatusGroup">
           <span class="status ${status.cls}">${status.label}</span>
-          <label class="dashboardPublishControl" title="Test direkt veröffentlichen oder zurück auf Entwurf setzen">
+          <label class="dashboardPublishControl" title="Test veröffentlichen oder sicher beenden">
             <span>Veröffentlicht</span>
             <input class="dashboardPublishToggle" type="checkbox" ${q.published && !q.ended && !q.rightsHold ? "checked" : ""} ${q.rightsHold ? "disabled" : ""} aria-label="Veröffentlichung umschalten">
             <span class="dashboardSwitch" aria-hidden="true"></span>
@@ -1687,7 +1688,7 @@ function renderQuizList() {
       <div class="quizActions primaryQuizActions">
         <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
         <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
-        ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+        ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
       </div>
       <details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
@@ -1712,13 +1713,37 @@ function renderQuizList() {
 
 async function toggleDashboardPublished(q, toggle) {
   const wantsPublished = Boolean(toggle?.checked);
+  const action = dashboardPublicationAction(q, wantsPublished);
   if (q.rightsHold) {
     if (toggle) toggle.checked = false;
     return toast("Dieser Test ist wegen eines Rechtehinweises gesperrt.", "error");
   }
+  if (action === "end") {
+    if (toggle) toggle.checked = true;
+    return endQuiz(q.id);
+  }
+  if (action === "noop") {
+    if (toggle) toggle.checked = false;
+    return;
+  }
   if (wantsPublished && secureAudioPublicationBlocked(q)) {
     if (toggle) toggle.checked = false;
     return toast(secureAudioPublicationMessage, "error");
+  }
+  if (wantsPublished) {
+    let questions;
+    try {
+      const questionSnapshot = await firestoreGetDocs(collection(db, "quizzes", q.id, "questions"));
+      questions = questionSnapshot.docs.map(question => question.data());
+    } catch (error) {
+      if (toggle) toggle.checked = false;
+      showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Der Testinhalt konnte nicht auf gesperrte Audioaufgaben geprüft werden. Die Veröffentlichung wurde nicht geändert.", error, action: "dashboard_audio_release_preflight", details: { quizId: q.id } });
+      return;
+    }
+    if (secureAudioPublicationBlocked(q, questions)) {
+      if (toggle) toggle.checked = false;
+      return toast(secureAudioPublicationMessage, "error");
+    }
   }
   if (wantsPublished && q.audioReady === false) {
     if (toggle) toggle.checked = false;
@@ -1734,10 +1759,6 @@ async function toggleDashboardPublished(q, toggle) {
   }
   if (wantsPublished && isAiReviewPending(q) && !confirm("Die KI-Prüfung dieses Entwurfs ist noch nicht abgeschlossen. Trotzdem veröffentlichen?")) {
     if (toggle) toggle.checked = false;
-    return;
-  }
-  if (!wantsPublished && q.published && q.startMode === "teacher" && q.sessionState === "running" && !confirm("Der Test läuft gerade. Veröffentlichung wirklich zurücknehmen?")) {
-    if (toggle) toggle.checked = true;
     return;
   }
   if (toggle) toggle.disabled = true;
@@ -1762,13 +1783,6 @@ async function toggleDashboardPublished(q, toggle) {
         sessionRunId: runId, sessionStartedAt: null
       });
       toast("Test veröffentlicht.");
-    } else {
-      await updateDoc(doc(db, "quizzes", q.id), {
-        published: false, ended: false, sessionState: "open",
-        sessionRunId: null, sessionStartedAt: null, updatedAt: serverTimestamp()
-      });
-      Object.assign(q, { published: false, ended: false, sessionState: "open", sessionRunId: null, sessionStartedAt: null });
-      toast("Veröffentlichung zurückgenommen. Der Test ist wieder ein Entwurf.");
     }
     renderQuizList();
     renderAiJobs();
