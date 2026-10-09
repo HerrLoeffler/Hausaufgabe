@@ -243,6 +243,33 @@ const cleanupCrewTelemetry = onSchedule({
   console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
+const { normalizeMemory, searchOwnedTests } = require("./lib/coco-support");
+const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, async request => {
+  const {uid}=await requireAiUser(request);
+  const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
+  const data=request.data||{}; const op=data.operation||"read";
+  if(op==="read") return normalizeMemory((await ref.get()).data());
+  if(op==="clear") {await ref.delete();return normalizeMemory();}
+  if(op==="preferences") {const preferences=normalizeMemory(data).preferences;await ref.set({preferences,updatedAt:FieldValue.serverTimestamp()},{merge:true});return {preferences};}
+  if(op==="remember") {
+    const messages=normalizeMemory({history:data.messages}).history.slice(-2);
+    const turnId=String(data.turnId||"").slice(0,100);
+    if(!/^[a-zA-Z0-9_-]{8,100}$/.test(turnId)) throw new HttpsError("invalid-argument","Ungültiger Gesprächsschritt.");
+    await db.runTransaction(async tx=>{const snap=await tx.get(ref);const old=snap.data()||{};const ids=Array.isArray(old.turnIds)?old.turnIds:[];if(ids.includes(turnId))return;
+      tx.set(ref,{...normalizeMemory({...old,history:[...(old.history||[]),...messages]}),turnIds:[...ids,turnId].slice(-80),updatedAt:FieldValue.serverTimestamp()});});
+    return {saved:true};
+  }
+  if(op!=="search") throw new HttpsError("invalid-argument","Unbekannte Coco-Aktion.");
+  await consumeQuota(uid,"assistant");
+  const query=String(data.query||"").slice(0,500);
+  const result=await searchOwnedTests({
+    listOwned:async owner=>(await db.collection("quizzes").where("ownerId","==",owner).limit(101).get()).docs.map(d=>({id:d.id,...d.data()})),
+    questions:async id=>(await db.collection("quizzes").doc(id).collection("questions").limit(250).get()).docs.map(d=>d.data())
+  },uid,query);
+  await ref.set({lastSearch:query,updatedAt:FieldValue.serverTimestamp()},{merge:true});
+  return result;
+});
+
 const crewAssistant = onCall(assistantOpts, async request => {
   const { uid } = await requireAiUser(request);
   let clean;
@@ -252,6 +279,13 @@ const crewAssistant = onCall(assistantOpts, async request => {
     throw new HttpsError("invalid-argument", String(err?.message || "Ungültige Anfrage.").slice(0, 240));
   }
 
+  const memory=normalizeMemory((await getFirestore().collection("cocoMemory").doc(uid).get()).data());
+  clean.context.memory={preferences:memory.preferences,lastSearch:memory.lastSearch,history:memory.history.slice(-12)};
+  const quizId=String(request.data?.context?.quizId||"").slice(0,40);
+  if(/^[a-zA-Z0-9_-]{4,40}$/.test(quizId)) {
+    const quiz=await getFirestore().collection("quizzes").doc(quizId).get();const q=quiz.data();
+    if(q?.ownerId===uid&&!q.isDeleted&&!q.rightsHold) clean.context.currentTest={id:quizId,title:q.title||"",questionCount:q.questionCount||0,published:q.published===true,ended:q.ended===true,audioReady:q.audioReady===true};
+  }
   await consumeQuota(uid, "assistant");
   try {
     const { data, usage } = await requestStructured(
@@ -389,5 +423,6 @@ module.exports = {
   syncQuestionAudioDrafts,
   generateQuestionSolutionAudio,
   crewAssistant,
+  cocoSupport,
   reviseWholeTest
 };

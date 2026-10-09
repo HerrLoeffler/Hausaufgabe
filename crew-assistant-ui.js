@@ -1,7 +1,11 @@
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=5";
+import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=6";
 
+let memoryUid = "";
+let memoryEpoch = 0;
+let memoryQueue = Promise.resolve();
 let conversation = [];
 let lastCrew = "";
 let requestEpoch = 0;
@@ -71,7 +75,7 @@ function addMessage(kind, text) {
   node.textContent = text;
   if (kind === "user" || kind === "assistant") {
     conversation.push({role:kind === "user" ? "user" : "assistant",text:String(text).slice(0,1400)});
-    conversation = conversation.slice(-8);
+    conversation = conversation.slice(-40);
     if (kind === "assistant") {
       const names = [...new Set((String(text).match(/\b(?:Remy|Emmi|Wilma)\b/gi) || []).map(name=>name.toLowerCase()))];
       if (names.length === 1) lastCrew = names[0];
@@ -119,6 +123,7 @@ function createUi() {
     <div class="gcCrewHead">
       <img src="${COCO.asset}" alt="">
       <div class="gcCrewHeadCopy"><strong>Coco</strong><span>Hilfe & Orientierung</span></div>
+      <button id="gcCrewMemory" type="button" class="miniButton">Erinnerungen</button>
       <button id="gcCrewClose" class="gcCrewClose" type="button" aria-label="Coco schließen">×</button>
     </div>
     <div id="gcCrewMessages" class="gcCrewMessages" aria-live="polite"></div>
@@ -132,6 +137,7 @@ function createUi() {
 
   document.body.append(launcher, panel);
   launcher.addEventListener("click", () => setOpen(!open));
+  $("gcCrewMemory")?.addEventListener("click",()=>{void showMemory().catch(e=>addMessage("assistant",e.message));});
   $("gcCrewClose")?.addEventListener("click", () => setOpen(false));
   $("gcCrewComposer")?.addEventListener("submit", event => {
     event.preventDefault();
@@ -149,7 +155,8 @@ function createUi() {
 }
 
 function currentContext() {
-  return { screen: document.querySelector("main .view:not(.hidden)")?.id || "unknown", lastCrew, history:conversation.slice(-6) };
+  let work={};document.dispatchEvent(new CustomEvent("gradecrew:coco-context",{detail:{respond:value=>{work=value||{};}}}));
+  return { ...work, screen: document.querySelector("main .view:not(.hidden)")?.id || "unknown", lastCrew, history:conversation.slice(-12) };
 }
 
 async function callCrewAi(payload) {
@@ -157,6 +164,47 @@ async function callCrewAi(payload) {
   const callable = httpsCallable(functions, "crewAssistant", { timeout: 90000 });
   const result = await callable(payload);
   return result.data || {};
+}
+
+async function support(operation,extra={}) {
+  const uid=getAuth(getApp()).currentUser?.uid;
+  if(!uid)throw new Error("Bitte melde dich zuerst an.");
+  const result=await httpsCallable(getFunctions(getApp(),"europe-west1"),"cocoSupport",{timeout:90000})({operation,...extra});
+  if(getAuth(getApp()).currentUser?.uid!==uid)throw new Error("Das Konto wurde gewechselt.");
+  return result.data||{};
+}
+function rememberTurn(messages,uid) {
+  if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
+  const turnId=crypto.randomUUID();
+  memoryQueue=memoryQueue.catch(()=>{}).then(async()=>{
+    if(getAuth(getApp()).currentUser?.uid!==uid)return;
+    await support("remember",{messages,turnId});
+  }).catch(()=>{if(getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Deine bisherigen Erinnerungen bleiben erhalten.");});
+}
+async function showMemory() {
+  const uid=getAuth(getApp()).currentUser?.uid;const m=await support("read");if(uid!==getAuth(getApp()).currentUser?.uid)return;
+  const root=$("gcCrewMessages");const holder=document.createElement("div");holder.className="gcCrewMsg assistant";
+  const label=document.createElement("label");label.textContent="Cocos dauerhaft gespeicherte Vorlieben";
+  const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
+  const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
+  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{await support("preferences",{preferences:input.value});info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Alle Erinnerungen löschen";clear.onclick=async()=>{clear.disabled=true;try{await memoryQueue;await support("clear");conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
+  holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
+}
+async function searchTests(query,epoch) {
+  const r=await support("search",{query});if(epoch!==requestEpoch)return;
+  addMessage("assistant",r.matches.length?`Ich habe ${r.matches.length} passende Tests gefunden.`:`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
+  for(const q of r.matches){const card=document.createElement("div");card.className="gcCrewMsg assistant";const title=document.createElement("strong");title.textContent=q.title;const evidence=document.createElement("p");evidence.textContent=q.evidence;
+    if(/^https:\/\//.test(q.imageUrl)){const img=document.createElement("img");img.src=q.imageUrl;img.alt="Bild aus dem gefundenen Test";img.style.cssText="max-width:100%;max-height:100px;object-fit:contain";card.append(img);}
+    const button=document.createElement("button");button.type="button";button.textContent="Test öffnen";button.onclick=()=>{if(epoch===requestEpoch)void applyGuideAction({type:"choose_editor",quizId:q.id},epoch);};card.append(title,evidence,button);$("gcCrewMessages").append(card);}
+}
+function installDurableMemory() {
+ onAuthStateChanged(getAuth(getApp()),async user=>{
+  const epoch=++memoryEpoch;memoryUid=user?.uid||"";conversation=[];requestEpoch++;
+  $("gcCrewMessages")?.replaceChildren();if(!user)return;
+  try{const m=await support("read");if(epoch!==memoryEpoch)return;for(const message of m.history||[])addMessage(message.role,message.text);if(!m.history?.length)addMessage("assistant","Hi, ich bin Coco. Ich kann deine Tests suchen und mir deine Vorlieben dauerhaft merken.");}
+  catch(_){if(epoch===memoryEpoch)addMessage("assistant","Cocos Kontogedächtnis ist gerade nicht erreichbar. Ich kann dir trotzdem helfen.");}
+ });
 }
 
 function requestGuideAction(action) {
@@ -186,12 +234,17 @@ async function sendCurrentMessage() {
   const input = $("gcCrewInput");
   const text = String(input?.value || "").trim();
   if (!text || sending) return;
-  const epoch=requestEpoch; sending=true;
+  const epoch=requestEpoch; const turnUid=memoryUid; let persistTurn=true; sending=true;
   const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;
   stopDictation();input.value="";addMessage("user",text);
   let pending;
   try {
     const context=currentContext();
+    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read");const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}await support("preferences",{preferences});addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
+    if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {persistTurn=false;await showMemory();return;}
+    const prior=conversation.filter(m=>m.role==="user").slice(-3).map(m=>m.text).join(" ");
+    if(/(?:such|find|erinner|hatte|drache|bild|motiv)/i.test(text)&&/(?:test|quiz|drache|bild|motiv)/i.test(prior)) {pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(/(?:drache|dragon)/i.test(text)?text:prior,epoch);return;}
+
     const local=resolveLocalCrewRequest({crewId:"coco",text,context,locale:currentUiLocale()});
     if (local.handled) {
       if (local.intent === "route_remy") lastCrew="remy";
@@ -205,7 +258,7 @@ async function sendCurrentMessage() {
     if (result.action?.type && !["none","patch_ai_form"].includes(result.action.type)) await applyGuideAction(result.action,epoch);
     else addMessage("assistant",result.reply || "Dazu habe ich gerade noch keine sichere Antwort. Beschreibe bitte, was du erreichen möchtest.");
   } catch(error) { if(epoch===requestEpoch)addMessage("assistant",error.message || "Das klappt gerade nicht. Versuch es bitte noch einmal."); }
-  finally {pending?.remove();if(epoch===requestEpoch){sending=false;if(send)send.disabled=false;}}
+  finally {pending?.remove();if(epoch===requestEpoch){if(persistTurn)rememberTurn([{role:"user",text},...conversation.slice(-1).filter(m=>m.role==="assistant")],turnUid);sending=false;if(send)send.disabled=false;}}
 }
 
 function speechConstructor() {
@@ -321,6 +374,7 @@ export function installCrewAssistant() {
   installed = true;
   installStyles();
   createUi();
+  installDurableMemory();
   installVisibilityWatcher();
 }
 
