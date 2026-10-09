@@ -16,3 +16,6 @@ test('account memory survives service reload, preserves preferences, deduplicate
  const restored=await memoryOperation(db,ref,{operation:'read'},stamp);assert.equal(restored.preferences,'Klasse 5');assert.equal(restored.history.length,2);assert.equal(restored.history[0].text,'Merke dir Drachen');
  await memoryOperation(db,ref,{operation:'clear'},stamp);assert.deepEqual(await memoryOperation(db,ref,{operation:'read'},stamp),normalizeMemory());
 });
+test('English motif and embedded generated image are found without leaking solutions',async()=>{
+ const image='data:image/webp;base64,YWJj';const r=await searchOwnedTests({listOwned:async()=>[{id:'Q',title:'Deutsch'}],questions:async()=>[{text:'Ein Tier',imageAlt:'Ein orangener Drache',imageDataUrl:image,correctBoolean:true}]},'u','orange dragon');assert.equal(r.matches[0].imageUrl,image);assert.ok(!JSON.stringify(r).includes('correctBoolean'));
+});

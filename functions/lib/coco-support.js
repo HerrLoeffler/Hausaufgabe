@@ -5,7 +5,7 @@ function normalizeMemory(raw={}) {
 }
 function words(text) {return clean(text,4000).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').match(/[a-z0-9]+/g)||[];}
 const stop=new Set('ich glaube hatte mal einen eine einem ein der die das den dem test tests quiz suche such finden finde erinnere erinnern mit und oder war drin als bild bilder ist es noch von zu fur bitte mein meine wir hatten'.split(' '));
-function stem(w){return w.length>5?w.replace(/(?:ern|en|er|es|e|n)$/,''):w;}
+function stem(w){if(/^orang/.test(w))return 'orange';if(/^(?:drach|dragon)/.test(w))return 'dragon';return w.length>5?w.replace(/(?:ern|en|er|es|e|n)$/,''):w;}
 function searchable(q){return [q.text,q.passage,q.imageAlt,q.imagePrompt,q.imageDescription,...(q.options||[]).flatMap(o=>[o.text,o.imageAlt,o.imagePrompt]),...(q.pairs||[]).flatMap(p=>[p.left,p.right])].filter(v=>typeof v==='string').join(' ');}
 async function searchOwnedTests(repo,uid,query) {
  const terms=[...new Set(words(query).filter(w=>w.length>2&&!stop.has(w)).map(stem))].slice(-8);
