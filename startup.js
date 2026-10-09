@@ -117,12 +117,12 @@ if (publicTestCode && !teacherPreview) {
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
-    await import("./app.js?v=2.3.1-gc28-i18n4");
+    await import("./app.js?v=2.3.1-gc29-audio-lifecycle1");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);
     notice.classList.add("hidden");
-    import("./secure-assessment-teacher-polish.js?v=2.3.1-sec1").catch(error => {
+    import("./secure-assessment-teacher-polish.js?v=2.3.1-sec2").catch(error => {
       console.warn(gradeCrewI18n.t("system.secure_assessment_notice_failed", {}, "Secure-Assessment-Hinweise konnten nicht geladen werden."), error);
     });
     import("./visual-enhancements.js?v=2.3.1-gc26-i18n2").catch(error => {

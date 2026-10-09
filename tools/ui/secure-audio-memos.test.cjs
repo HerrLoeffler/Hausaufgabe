@@ -30,6 +30,7 @@ async function render(q, locale = 'en-GB') {
   w.firebaseConfig = {};
   w.createSecureAssessmentClient = () => ({});
   w.assessmentContentLabels = (await import('../../shared/i18n/assessment-locale.mjs')).assessmentContentLabels;
+  w.formatMathText = (await import('../../shared/math-display.mjs')).formatMathText;
   w.CSS = { escape: value => value };
   const source = fs.readFileSync(path.join(root, 'secure-student.js'), 'utf8').replace(/^import .*;\n/gm, '').replace('void bootstrap();', '');
   w.eval(source + '\nwindow.harness = { mount(q, locale) { currentQuiz = {contentLocale: locale}; currentPaper = [q]; const s = renderQuestion(q, 0); document.body.append(s); return s; }, collectAnswers };');

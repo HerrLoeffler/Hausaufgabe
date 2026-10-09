@@ -7,6 +7,7 @@ import * as assessmentLocale from "./shared/i18n/assessment-locale.mjs";
 import { setActiveUiLocale, registerCatalog } from "./shared/i18n/browser-runtime.mjs";
 import { enGBMessages, enGBSourcePatterns } from "./shared/i18n/messages-en-GB.mjs";
 import { registerSourcePatterns } from "./shared/i18n/browser-runtime.mjs";
+import { formatMathText } from "./shared/math-display.mjs";
 const require = createRequire(import.meta.url);
 const { JSDOM } = require("./tools/ui/node_modules/jsdom");
 const legacy = fs.readFileSync("app.js", "utf8");
@@ -18,7 +19,7 @@ function render(runtime, quiz, questions) {
   const dom = new JSDOM('<div id="studentQuestions"></div><div id="secureQuestions"></div>', { url: "https://example.test" });
   const document = dom.window.document;
   const context = vm.createContext({ document, currentQuiz: quiz, quiz, questions,
-    ownerPreview: true, ...assessmentLocale,
+    ownerPreview: true, ...assessmentLocale, formatMathText,
     $: id => document.getElementById(id),
     escapeHtml: value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]),
     getQuestionImageSrc: q => q.imageDataUrl || q.imageUrl,

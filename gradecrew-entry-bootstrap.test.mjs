@@ -9,6 +9,7 @@ import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQuali
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { DEMO_TEST } from './gradecrew-tour.js?v=2.3.1-gc21';
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from './ordering-grading.mjs';
+import { formatMathText } from './shared/math-display.mjs';
 
 test('app entry parses as the ES module used by the browser', () => {
   execFileSync(process.execPath, ['--input-type=module', '--check'], { input: fs.readFileSync('app.js'), stdio: 'pipe' });
@@ -121,7 +122,7 @@ test('app bootstrap binds its real auth controls after public entry installation
       installWorkspaceInteractions: noop, bindTabs: noop, onAuthStateChanged: noop, focusView: noop, scrollBehavior: () => 'auto',
       setSaveState: noop, CSS: { escape: value => String(value) },
       requestStudentSubmitConfirmation: async () => true,
-      assessmentContentLabels,
+      assessmentContentLabels, formatMathText,
       validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview,
       AbortController,
       crypto: globalThis.crypto,

@@ -623,7 +623,16 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind })
     : questionSchema;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors.join(" ")} Erstelle eine neue, geprüfte Aufgabe.` : prompt });
+    const rejectedDraft = attempt && normalized ? JSON.stringify({
+      text: normalized.text,
+      options: normalized.options?.map(option => option.text),
+      items: normalized.items,
+      pairs: normalized.pairs,
+      groups: normalized.groups,
+      passage: normalized.passage
+    }).slice(0, 2500) : "";
+    const retryPrompt = `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors?.join(" ") || ""}${rejectedDraft ? `\nVerworfener Vorschlag (nicht wiederholen): ${rejectedDraft}` : ""}\nErstelle eine neue, geprüfte Aufgabe mit einem anderen Beispiel oder Kontext.`;
+    const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? retryPrompt : prompt });
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
     errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });

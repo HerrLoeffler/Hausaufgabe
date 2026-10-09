@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { requestStudentSubmitConfirmation } from './student-submit-confirm.mjs';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { createLocalTourRepository } from './guest-tour-port.mjs';
+import { formatMathText } from './shared/math-display.mjs';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
@@ -194,7 +195,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
     questionForAi: q => ({ ...q }), questionContext: () => ({ existingQuestions: [] }),
     // The import layer deliberately strips auxiliary metadata, as production does.
     normalizeImportedQuestion: q => ({ type: q.type, text: q.text, points: q.points, options: q.options }),
-    renderQuestions: render, markDirty: () => {}, toast: () => {}, escapeHtml: value => String(value), round1: n => n,
+    renderQuestions: render, markDirty: () => {}, toast: () => {}, escapeHtml: value => String(value), formatMathText, round1: n => n,
     updateDoc: async (ref, data) => feedbackWrites.push(data), serverTimestamp: () => 123,
     aiQuestionFeedbackSnapshot: q => ({ text:q.text, type:q.type }), AI_QUALITY_REASONS: { incorrect:'Falsche Lösung', other:'Anderer Grund' },
     aiFriendlyError: error => error.message, REPORTABLE_ERROR_CODES: { aiVariant: 'variant' },
@@ -552,7 +553,7 @@ test('Real student renderer uses ten widgets, four persisted images and a gated 
   const events = [];
   Object.assign(w, {
     $: id => w.document.getElementById(id), stopStudentTimer: () => {}, clearStudentSubscriptions: () => {}, readStoredTimer: () => null,
-    escapeHtml: value => String(value).replaceAll('"', '&quot;'), round1: number => number, setupStudentProgress: () => {},
+    escapeHtml: value => String(value).replaceAll('"', '&quot;'), formatMathText, round1: number => number, setupStudentProgress: () => {},
     crewTour: { notify: event => events.push(event) }, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
   w.eval(['studentOptionEntries', 'shuffled', 'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));

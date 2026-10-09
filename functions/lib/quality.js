@@ -22,9 +22,10 @@ const reviewSchema = {
         index: { type: "integer" },
         reason: { type: "string", enum: ["incorrect", "answer_leak", "image_mismatch", "ambiguous", "duplicate"] },
         detail: { type: "string" },
-        evidence: { type: "string", description: "Bei answer_leak: wörtlicher Lösungshinweis aus studentView.text oder studentView.passage, sonst leer." }
+        evidence: { type: "string", description: "Bei answer_leak: wörtlicher Lösungshinweis aus studentView.text oder studentView.passage, sonst leer." },
+        suggestedAcceptedOrder: { type: "array", items: { type: "integer", minimum: 0 }, description: "Nur bei ordering und einer sicher richtigen weiteren Reihenfolge: jeder nullbasierte Index genau einmal. Sonst []." }
       },
-      required: ["index", "reason", "detail", "evidence"]
+      required: ["index", "reason", "detail", "evidence", "suggestedAcceptedOrder"]
     } }
   },
   required: ["issues"]
@@ -374,7 +375,7 @@ studentView enthält die sichtbare Schüleransicht. audioTranscript ist der voll
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
 Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
-Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn nur Grammatik verlangt ist, sind auch bedeutungsveränderte grammatikalisch richtige Sätze gültig. Prüfe vertauschbare attributive/prädikative Adjektive ausdrücklich: The purple cars are not hungry / The hungry cars are not purple. Melde fehlende acceptedOrders als konkrete unvollständige Lösung. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
+Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn nur Grammatik verlangt ist, sind auch bedeutungsveränderte grammatikalisch richtige Sätze gültig. Prüfe vertauschbare attributive/prädikative Adjektive ausdrücklich: The purple cars are not hungry / The hungry cars are not purple. Melde fehlende acceptedOrders als konkrete unvollständige Lösung und gib bei einer sicher richtigen zusätzlichen Variante suggestedAcceptedOrder als nullbasierte Indizes aller Bausteine an. Bei jeder anderen Meldung oder Unsicherheit muss suggestedAcceptedOrder [] sein. Eine vorgeschlagene Variante wird der Lösung hinzugefügt und danach erneut unabhängig geprüft; sie ersetzt nicht die ganze Aufgabe. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
 Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
 Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
 }
@@ -393,11 +394,22 @@ function normalizeReviewIssues(response, test) {
       if (!evidence || ![view.text, view.passage].some(value => normalize(value).includes(evidence))) continue;
     }
     const rawDetail = String(issue?.detail || "").trim().slice(0, 900) || QUALITY_REASONS[reason] || "Qualitätsproblem";
+    const question = test.questions[index];
+    const proposed = issue.suggestedAcceptedOrder;
+    const length = question.items?.length || 0;
+    const suggestion = question.type === "ordering" && reason === "ambiguous" && length >= 2 && length <= 16
+      && Array.isArray(proposed) && proposed.length === length
+      && new Set(proposed).size === length
+      && proposed.every(number => Number.isInteger(number) && number >= 0 && number < length)
+      && proposed.some((number, position) => number !== position)
+      && !(question.acceptedOrders || []).some(order => JSON.stringify(order) === JSON.stringify(proposed))
+      ? proposed.slice() : undefined;
     const previous = byIndex.get(index);
-    if (!previous) byIndex.set(index, { index, text: test.questions[index].text, reason, detail: `${reason}: ${rawDetail}` });
+    if (!previous) byIndex.set(index, { index, text: question.text, reason, detail: `${reason}: ${rawDetail}`, ...(suggestion ? { suggestedAcceptedOrder: suggestion } : {}) });
     else if (previous.detail.length < 1800) {
       previous.detail += `; ${reason}: ${rawDetail}`;
       previous.reason = previous.reason === reason ? reason : "multiple";
+      if (suggestion && !previous.suggestedAcceptedOrder) previous.suggestedAcceptedOrder = suggestion;
     }
   }
   return [...byIndex.values()];
@@ -412,6 +424,14 @@ async function reviewAndRepairTest(test, options, { review, generateQuestion, re
     const issues = normalizeReviewIssues(await review(draft), draft);
     reviewPasses += 1;
     if (!issues.length) return { test: draft, errors: [], issues: [], reviewPasses, replaced, questionAttempts };
+    const suggested = issues.filter(issue => issue.suggestedAcceptedOrder);
+    if (suggested.length) {
+      const byIndex = new Map(suggested.map(issue => [issue.index, issue.suggestedAcceptedOrder]));
+      draft = { ...draft, questions: draft.questions.map((question, index) => byIndex.has(index)
+        ? { ...question, acceptedOrders: [...(question.acceptedOrders || []), byIndex.get(index)] }
+        : question) };
+      continue;
+    }
     const repaired = await validateAndRepairTest(draft, { ...options, reviewIssues: issues }, { generateQuestion, regenerateTest });
     draft = repaired.test;
     replaced += repaired.replaced;

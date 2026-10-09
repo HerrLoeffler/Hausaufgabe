@@ -109,6 +109,40 @@ test("independent review replaces a semantically wrong task and reviews the repa
   assert.equal(result.test.questions[0].text, question(7).text);
 });
 
+test("an independently reviewed ordering suggestion becomes an accepted answer without replacing the task", async () => {
+  const original = normalizeQuestion({ type: "ordering", text: "Baue einen grammatisch richtigen Satz.", points: 1,
+    items: ["The", "purple", "cars", "are", "not", "hungry"], acceptedOrders: [], manualReview: true });
+  let reviews = 0;
+  const result = await reviewAndRepairTest({ title: "English", questions: [original] },
+    { expectedCount: 1, targetPoints: 1, allowedTypes: ["ordering"], allowImages: false }, {
+      review: async draft => {
+        reviews += 1;
+        return { issues: draft.questions[0].acceptedOrders.length ? [] : [{
+          index: 0, reason: "ambiguous", detail: "Auch The hungry cars are not purple ist grammatisch richtig.",
+          suggestedAcceptedOrder: [0, 5, 2, 3, 4, 1]
+        }] };
+      },
+      generateQuestion: async () => { throw new Error("The original task should remain unchanged"); },
+      regenerateTest: async () => { throw new Error("A complete regeneration is unnecessary"); }
+    });
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.test.questions[0].acceptedOrders, [[0, 5, 2, 3, 4, 1]]);
+  assert.deepEqual(result.test.questions[0].items, original.items);
+  assert.equal(result.replaced, 0);
+  assert.equal(reviews, 2);
+});
+
+test("invalid or irrelevant ordering suggestions cannot change the answer key", () => {
+  const ordering = normalizeQuestion({ type: "ordering", text: "Baue einen Satz.", points: 1,
+    items: ["Mia", "spielt", "heute"], acceptedOrders: [], manualReview: true });
+  const draft = { questions: [ordering, question(2)] };
+  const issues = normalizeReviewIssues({ issues: [
+    { index: 0, reason: "ambiguous", detail: "Ungültige Reihenfolge", suggestedAcceptedOrder: [0, 0, 2] },
+    { index: 1, reason: "ambiguous", detail: "Keine Reihenfolge", suggestedAcceptedOrder: [2, 1, 0] }
+  ] }, draft);
+  assert.equal(issues.every(issue => !issue.suggestedAcceptedOrder), true);
+});
+
 test("a persistent review failure never releases the draft", async () => {
   let attempt = 0;
   const result = await reviewAndRepairTest({ title: "Mathe", questions: [question(2)] }, options, {

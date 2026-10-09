@@ -22,6 +22,7 @@ on:
       - 'fix/audio-*'
       - 'fix/visual-backlog-*'
       - 'fix/gc-security-*'
+      - 'fix/staging-feedback-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
@@ -130,7 +131,7 @@ jobs:
         run: node --test secure-solution-release.test.mjs
 
       - name: Test teacher assessment locks
-        run: node --test secure-assessment-teacher-polish.test.mjs
+        run: node --test secure-assessment-teacher-polish.test.mjs secure-audio-publication.test.mjs
 
       - name: Test secure routing and target rules source contracts
         run: |

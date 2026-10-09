@@ -108,7 +108,7 @@ test('public design stays away from dashboard and secure student selectors', () 
 test('startup installs v6 entry before app handlers and staging packages all scene assets', () => {
   const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=6")');
   const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
-  const appImport = startup.indexOf('./app.js?v=2.3.1-gc28');
+  const appImport = startup.indexOf('./app.js?v=');
   assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
   assert.ok(installerCall > entryImport, 'entry installer must actually be called');
   assert.ok(appImport > installerCall, 'entry must be installed before app handlers bind');

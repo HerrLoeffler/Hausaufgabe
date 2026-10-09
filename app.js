@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc28";
+const APP_VERSION = "2.3.1-gc29";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -45,7 +45,9 @@ import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticS
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAudioPublicationBlocked } from "./secure-audio-publication.mjs?v=1";
 import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
@@ -60,10 +62,9 @@ const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 // Enable only after the deployed Firestore rules are verified to hide authored questions.
 const SECURE_AUDIO_PUBLICATION_ENABLED = false;
-const secureAudioPublicationBlocked = quiz => !SECURE_AUDIO_PUBLICATION_ENABLED &&
-  (quiz?.requiresSecureAssessmentRules === true || Number(quiz?.audioAnswerQuestionCount || 0) > 0 ||
-    Number(quiz?.listeningOnlyQuestionCount || 0) > 0);
-const secureAudioPublicationMessage = "Audioantworten und Nur-Hören-Aufgaben bleiben bis zur Prüfung der sicheren Schülerfreigabe Entwürfe.";
+const secureAudioPublicationBlocked = (quiz, questions = []) =>
+  isSecureAudioPublicationBlocked(quiz, questions, SECURE_AUDIO_PUBLICATION_ENABLED);
+const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder Nur-Hören-Aufgaben. Die sichere Schülerfreigabe ist noch nicht geprüft. Verwende vorerst ergänzendes Audio mit sichtbarem Fragetext.";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -793,6 +794,7 @@ function escapeHtml(value) {
     "'": "&#39;"
   }[c]));
 }
+
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();
@@ -1623,6 +1625,7 @@ function quizStatusMeta(q) {
   if (q.generationStatus === "failed") return { label: "KI-Teilentwurf", cls: "incomplete" };
   if (q.rightsHold) return { label: "Zugang gesperrt", cls: "rightsHold" };
   if (q.ended) return { label: "Beendet", cls: "ended" };
+  if (q.published && secureAudioPublicationBlocked(q)) return { label: "Audiofreigabe ausstehend", cls: "incomplete" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
   if (q.published) return { label: "Veröffentlicht", cls: "published" };
@@ -1669,7 +1672,7 @@ function renderQuizList() {
         </div>
         <div class="quizCardStatusGroup">
           <span class="status ${status.cls}">${status.label}</span>
-          <label class="dashboardPublishControl" title="Test direkt veröffentlichen oder zurück auf Entwurf setzen">
+          <label class="dashboardPublishControl" title="Test veröffentlichen oder sicher beenden">
             <span>Veröffentlicht</span>
             <input class="dashboardPublishToggle" type="checkbox" ${q.published && !q.ended && !q.rightsHold ? "checked" : ""} ${q.rightsHold ? "disabled" : ""} aria-label="Veröffentlichung umschalten">
             <span class="dashboardSwitch" aria-hidden="true"></span>
@@ -1685,7 +1688,7 @@ function renderQuizList() {
       <div class="quizActions primaryQuizActions">
         <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
         <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
-        ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+        ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
       </div>
       <details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
@@ -1708,15 +1711,53 @@ function renderQuizList() {
   });
 }
 
+async function checkQuizAudioPublication(q) {
+  if (secureAudioPublicationBlocked(q)) {
+    toast(secureAudioPublicationMessage, "error");
+    return false;
+  }
+  try {
+    const snapshot = await firestoreGetDocs(collection(db, "quizzes", q.id, "questions"));
+    const questions = snapshot.docs.map(question => question.data());
+    if (secureAudioPublicationBlocked(q, questions)) {
+      toast(secureAudioPublicationMessage, "error");
+      return false;
+    }
+    return true;
+  } catch (error) {
+    showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Der Testinhalt konnte nicht auf gesperrte Audioaufgaben geprüft werden. Die Veröffentlichung wurde nicht geändert.", error, action: "dashboard_audio_release_preflight", details: { quizId: q.id } });
+    return false;
+  }
+}
+
 async function toggleDashboardPublished(q, toggle) {
+  if (toggle?.disabled) return;
+  if (toggle) toggle.disabled = true;
+  try {
+    return await applyDashboardPublication(q, toggle);
+  } finally {
+    if (toggle?.isConnected) toggle.disabled = false;
+  }
+}
+
+async function applyDashboardPublication(q, toggle) {
   const wantsPublished = Boolean(toggle?.checked);
+  const action = dashboardPublicationAction(q, wantsPublished);
   if (q.rightsHold) {
     if (toggle) toggle.checked = false;
     return toast("Dieser Test ist wegen eines Rechtehinweises gesperrt.", "error");
   }
-  if (wantsPublished && secureAudioPublicationBlocked(q)) {
+  if (action === "end") {
+    if (toggle) toggle.checked = true;
+    return endQuiz(q.id);
+  }
+  if (action === "noop") {
     if (toggle) toggle.checked = false;
-    return toast(secureAudioPublicationMessage, "error");
+    return;
+  }
+  if (wantsPublished && !await checkQuizAudioPublication(q)) {
+    if (toggle) toggle.checked = false;
+    return;
   }
   if (wantsPublished && q.audioReady === false) {
     if (toggle) toggle.checked = false;
@@ -1734,11 +1775,6 @@ async function toggleDashboardPublished(q, toggle) {
     if (toggle) toggle.checked = false;
     return;
   }
-  if (!wantsPublished && q.published && q.startMode === "teacher" && q.sessionState === "running" && !confirm("Der Test läuft gerade. Veröffentlichung wirklich zurücknehmen?")) {
-    if (toggle) toggle.checked = true;
-    return;
-  }
-  if (toggle) toggle.disabled = true;
   try {
     if (wantsPublished) {
       const teacherMode = q.startMode === "teacher";
@@ -1760,13 +1796,6 @@ async function toggleDashboardPublished(q, toggle) {
         sessionRunId: runId, sessionStartedAt: null
       });
       toast("Test veröffentlicht.");
-    } else {
-      await updateDoc(doc(db, "quizzes", q.id), {
-        published: false, ended: false, sessionState: "open",
-        sessionRunId: null, sessionStartedAt: null, updatedAt: serverTimestamp()
-      });
-      Object.assign(q, { published: false, ended: false, sessionState: "open", sessionRunId: null, sessionStartedAt: null });
-      toast("Veröffentlichung zurückgenommen. Der Test ist wieder ein Entwurf.");
     }
     renderQuizList();
     renderAiJobs();
@@ -1774,8 +1803,6 @@ async function toggleDashboardPublished(q, toggle) {
     console.error(err);
     if (toggle) toggle.checked = !wantsPublished;
     showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Veröffentlichungsstatus konnte nicht geändert werden.", error: err, action: "dashboard_publish_toggle", details: { quizId: q.id, wantsPublished } });
-  } finally {
-    if (toggle?.isConnected) toggle.disabled = false;
   }
 }
 
@@ -2078,7 +2105,7 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
     const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
     if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
-    if (secureAudioPublicationBlocked(current)) return toast(secureAudioPublicationMessage, "error");
+    if (!await checkQuizAudioPublication({ ...current, id: code })) return;
     if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
     if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
     const teacherMode = current.startMode === "teacher";
@@ -2467,7 +2494,7 @@ async function openAiView() {
     state.aiStatus = null;
     const denied = String(err?.code || "").includes("permission-denied");
     notice.className = `aiStatusNotice${denied ? " error" : ""}`;
-    notice.textContent = denied ? "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet."
+    notice.textContent = denied ? "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist."
       : "Status gerade nicht verfügbar. Du kannst die Erstellung trotzdem versuchen.";
   }
 }
@@ -2480,7 +2507,7 @@ function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
   if (code.includes("internal") || String(err?.message || "").trim().toLowerCase() === "internal") {
     return `Bei der KI-Erstellung ist ein technischer Fehler aufgetreten. Bitte erneut versuchen${suffix}.`;
   }
-  if (code.includes("permission-denied")) return "Die KI-Beta ist für dieses Konto noch nicht freigeschaltet.";
+  if (code.includes("permission-denied")) return "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist.";
   if (code.includes("resource-exhausted")) return `Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen${suffix}.`;
   if (code.includes("deadline-exceeded")) return `Die KI braucht gerade zu lange. Bitte erneut versuchen${suffix}.`;
   if (code.includes("unauthenticated")) return "Bitte neu anmelden und erneut versuchen.";
@@ -3702,7 +3729,7 @@ function questionForAi(q) {
   copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
-  copy.audioIntent = q.audioScript ? { kind: "ai_generated", script: String(q.audioScript).slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
   delete copy.audioAnswerItems;
   delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
   if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, audioDataUrl, audioNeedsRegeneration, ...option }) => option);
@@ -4605,10 +4632,24 @@ function renderQuestionAudioEditor(container, q) {
         row.appendChild(warning);
       }
       if (q.audioAnswerMode === "audio-only") {
-        const retry = makeMiniButton("🦊 Spur neu erzeugen", () => generateAiAnswerAudioForQuestion(q, container, entry.key));
+        const retry = makeMiniButton("", () => generateAiAnswerAudioForQuestion(q, container, entry.key));
+        retry.classList.add("answerAudioRetry");
+        const emmi = document.createElement("img");
+        emmi.src = "/assets/gradecrew/fox-improve.svg#pose-1";
+        emmi.alt = "";
+        emmi.width = 30;
+        emmi.height = 30;
+        retry.appendChild(emmi);
         retry.setAttribute("aria-label", `Emmi: Audiospur für Antwort ${index + 1} neu erzeugen`);
         retry.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended || audioOperations().has(q));
         row.appendChild(retry);
+        const help = document.createElement("span");
+        help.className = "answerAudioHelp";
+        help.textContent = "i";
+        help.tabIndex = 0;
+        help.title = `Emmi erzeugt nur die Audiospur für Antwort ${index + 1} neu. Der Antworttext bleibt unverändert.`;
+        help.setAttribute("aria-label", help.title);
+        row.appendChild(help);
         const player = row.querySelector("audio");
         const markBroken = () => {
           if (!state.questions.includes(q) || option.audioDataUrl !== player?.getAttribute("src")) return;
@@ -5956,12 +5997,17 @@ function shuffled(array) {
 function renderGapfillStudent(section, q) {
   const wrap = document.createElement("div");
   wrap.className = "gapSentence";
+  const appendText = text => {
+    const span = document.createElement("span");
+    span.innerHTML = formatMathText(text);
+    wrap.appendChild(span);
+  };
   let last = 0;
   let gapIndex = 0;
   const regex = /\[([^\]]+)\]/g;
   let match;
   while ((match = regex.exec(q.text))) {
-    wrap.appendChild(document.createTextNode(q.text.slice(last, match.index)));
+    appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
     input.className = "inlineGap";
     input.dataset.gapIndex = String(gapIndex++);
@@ -5970,7 +6016,7 @@ function renderGapfillStudent(section, q) {
     wrap.appendChild(input);
     last = match.index + match[0].length;
   }
-  wrap.appendChild(document.createTextNode(q.text.slice(last)));
+  appendText(q.text.slice(last));
   section.appendChild(wrap);
 }
 
@@ -6359,7 +6405,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : escapeHtml(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -6411,7 +6457,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
         const answerAudioOnly = q.audioAnswerMode === "audio-only";
         const text = answerAudioOnly ? `Antwort ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
         const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
-        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${escapeHtml(text)}</span>`;
+        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${formatMathText(text)}</span>`;
         if (answerAudioOnly) {
           label.querySelector("span").hidden = true;
           label.querySelector("input").setAttribute("aria-label", text);
@@ -7487,6 +7533,7 @@ document.querySelectorAll(".adminPeriodBtn").forEach((btn) => btn.addEventListen
 }));
 $("adminTeacherSearch")?.addEventListener("input", renderAdminTeachers);
 $("adminTeacherStatusFilter")?.addEventListener("change", renderAdminTeachers);
+$("adminTeacherSort")?.addEventListener("change", renderAdminTeachers);
 $("exportAdminTeachersBtn")?.addEventListener("click", exportAdminTeachersCsv);
 $("adminTestSearch")?.addEventListener("input", renderAdminTests);
 $("adminTestStatusFilter")?.addEventListener("change", renderAdminTests);
@@ -7706,13 +7753,43 @@ function renderAdminTeachers() {
   if (!root) return;
   const term = normalize($("adminTeacherSearch")?.value || "");
   const status = $("adminTeacherStatusFilter")?.value || "all";
+  const sort = $("adminTeacherSort")?.value || "name";
   const users = state.adminUsers
     .filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term))
     .filter((u) => status === "all" || adminUserStatusKey(u) === status)
-    .sort((a,b)=>String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de"));
+    .sort((a,b)=>{
+      const difference = sort === "registered" ? toMillis(b.createdAt) - toMillis(a.createdAt)
+        : sort === "activity" ? toMillis(b.lastActiveAt) - toMillis(a.lastActiveAt)
+        : sort === "tests" ? teacherQuizCount(b.id) - teacherQuizCount(a.id)
+        : sort === "status" ? adminUserStatusKey(a).localeCompare(adminUserStatusKey(b), "de") : 0;
+      return difference || String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de");
+    });
   if (!users.length) { root.innerHTML = `<div class="emptyInline">Keine Lehrkräfte gefunden.</div>`; return; }
-  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : (u.role === "admin" ? "Admin" : "Aktiv")}</span></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
+  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Rolle</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : "Aktiv"}</span></td><td><select class="adminTeacherRole" data-id="${escapeHtml(u.id)}" aria-label="Rolle von ${escapeHtml(u.displayName || u.email || "Lehrkraft")}" ${u.id === state.user.uid ? "disabled" : ""}><option value="teacher" ${u.role === "admin" ? "" : "selected"}>Lehrkraft</option><option value="admin" ${u.role === "admin" ? "selected" : ""} ${u.isTestAccount === true ? "disabled" : ""}>Admin</option></select></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
   root.querySelectorAll(".adminTeacherOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTeacher(btn.dataset.id)));
+  root.querySelectorAll(".adminTeacherRole").forEach((select)=>select.addEventListener("change",()=>changeAdminTeacherRole(select)));
+}
+
+async function changeAdminTeacherRole(select) {
+  const user = state.adminUsers.find((item)=>item.id === select.dataset.id);
+  if (!user || user.id === state.user.uid) return;
+  const nextRole = select.value === "admin" ? "admin" : "teacher";
+  if (nextRole === user.role) return;
+  if (user.isTestAccount === true && nextRole === "admin") { select.value = user.role || "teacher"; return; }
+  if (!confirm(`${user.displayName || user.email || "Dieses Konto"} wirklich zu „${nextRole === "admin" ? "Admin" : "Lehrkraft"}“ ändern?`)) { select.value = user.role || "teacher"; return; }
+  select.disabled = true;
+  try {
+    await updateDoc(doc(db, "users", user.id), { role: nextRole, roleUpdatedAt: serverTimestamp(), roleUpdatedBy: state.user.uid });
+    await writeAdminAudit("user_role_changed", { userId: user.id, fromRole: user.role || "teacher", toRole: nextRole });
+    toast("Rolle geändert.");
+    await loadAdminData(false);
+  } catch (err) {
+    console.error(err);
+    select.value = user.role || "teacher";
+    toast("Rolle konnte nicht geändert werden.", "error");
+  } finally {
+    select.disabled = false;
+  }
 }
 
 function exportAdminTeachersCsv() {

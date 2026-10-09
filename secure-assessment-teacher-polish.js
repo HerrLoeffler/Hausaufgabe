@@ -55,17 +55,13 @@ function patchDashboardPublishToggles() {
   document.querySelectorAll(".dashboardPublishToggle").forEach(toggle => {
     const activePublished = toggle.checked === true;
     if (activePublished) {
-      if (!Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
-        toggle.dataset.secureWasDisabled = String(toggle.disabled);
-      }
-      toggle.disabled = true;
-      toggle.title = "Ein laufender Test wird über „Beenden“ geschlossen – nicht wieder zum Entwurf gemacht.";
-      toggle.setAttribute("aria-label", "Veröffentlicht. Zum Schließen des laufenden Tests bitte „Beenden“ verwenden.");
-    } else if (Object.hasOwn(toggle.dataset, "secureWasDisabled")) {
-      toggle.disabled = toggle.dataset.secureWasDisabled === "true";
-      delete toggle.dataset.secureWasDisabled;
+      toggle.dataset.securePublicationLabel = "1";
+      toggle.title = "Ausschalten beendet den Test sicher; Inhalte werden nicht zum Entwurf zurückgesetzt.";
+      toggle.setAttribute("aria-label", "Veröffentlicht. Ausschalten beendet den Test sicher.");
+    } else if (toggle.dataset.securePublicationLabel === "1") {
+      delete toggle.dataset.securePublicationLabel;
       toggle.removeAttribute("title");
-      toggle.removeAttribute("aria-label");
+      toggle.setAttribute("aria-label", "Veröffentlichung umschalten");
     }
   });
 }

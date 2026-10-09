@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
+import { secureAudioPublicationBlocked } from '../../secure-audio-publication.mjs';
 import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
 import { setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
@@ -12,7 +13,7 @@ function setup({reduced=false}={}) {
   dom.window.matchMedia = () => ({matches:reduced});
   const document=dom.window.document, $=id=>document.getElementById(id), calls=[];
   const state={quizzes:[{id:'ONE',title:'Mathematik '.repeat(25),subject:'Mathematik',grade:'5',questionCount:6,totalPoints:12,published:false},{id:'TWO',title:'Deutsch',subject:'Deutsch',grade:'6',questionCount:4,totalPoints:8,published:true}],aiJobs:[]};
-  const context=vm.createContext({document,$,state,Intl,Number,Boolean,String,normalize:value=>String(value).toLowerCase(),toMillis:()=>0,activeQuizzes:()=>state.quizzes,escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;'),renderFirstTestGuide:()=>{},toggleDashboardPublished:(...args)=>calls.push(['publish',...args]),...Object.fromEntries(['openEditor','openResults','duplicateQuiz','showPublish','shareQuizTemplate','endQuiz','reopenQuiz','deleteQuiz'].map(name=>[name,id=>calls.push([name,id])]))});
+  const context=vm.createContext({document,$,state,Intl,Number,Boolean,String,secureAudioPublicationBlocked,normalize:value=>String(value).toLowerCase(),toMillis:()=>0,activeQuizzes:()=>state.quizzes,escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;'),renderFirstTestGuide:()=>{},toggleDashboardPublished:(...args)=>calls.push(['publish',...args]),...Object.fromEntries(['openEditor','openResults','duplicateQuiz','showPublish','shareQuizTemplate','endQuiz','reopenQuiz','deleteQuiz'].map(name=>[name,id=>calls.push([name,id])]))});
   vm.runInContext(app.slice(app.indexOf('function filteredQuizzes()'),app.indexOf('async function toggleDashboardPublished')),context);
   vm.runInContext(app.slice(app.indexOf('$("quizSearch").addEventListener'),app.indexOf('$("backFromEditor").addEventListener')),context);
   vm.runInContext('renderQuizList()',context);
