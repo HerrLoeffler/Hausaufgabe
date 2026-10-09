@@ -163,7 +163,7 @@ export function startVisualEnhancements() {
       ["Crew-Tour-Responsive", "./crew-tour-responsive.js?v=2.3.1-gc28-mobile"],
       ["Schüler-Abgabesperre", "./student-attempt-guard.js?v=2.3.1-gc27-security"],
       ["Remy-Erstellen", "./remy-ai-help.js?v=5"],
-      ["Coco-Hilfe", "./crew-assistant-ui.js?v=6"],
+      ["Coco-Hilfe", "./crew-assistant-ui.js?v=7"],
       ["Emmi-Gesamttest", "./emmi-whole-test-revision.mjs?v=2"],
       ["Crew-Statistik", "./crew-statistics-admin.mjs?v=1"],
       ["Admin-Testkonten", "./admin-test-account-bootstrap.mjs?v=2"],
