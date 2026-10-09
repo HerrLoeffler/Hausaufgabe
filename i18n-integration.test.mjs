@@ -193,8 +193,8 @@ test("bilingual browser module graph is cache-busted consistently", () => {
   assert.match(bootstrap, /messages-de-DE\.mjs\?v=3/);
   assert.match(bootstrap, /messages-en-GB\.mjs\?v=3/);
   assert.match(visualEnhancements, /remy-ai-help\.js\?v=5/);
-  assert.match(visualEnhancements, /crew-assistant-ui\.js\?v=7/);
-  assert.match(remyHelp, /crew-assistant-core\.js\?v=6/);
-  assert.match(crewUi, /crew-assistant-core\.js\?v=6/);
-  assert.match(crewWrapper, /crew-assistant-core\.mjs\?v=6/);
+  assert.match(visualEnhancements, /crew-assistant-ui\.js\?v=8/);
+  assert.match(remyHelp, /crew-assistant-core\.js\?v=7/);
+  assert.match(crewUi, /crew-assistant-core\.js\?v=7/);
+  assert.match(crewWrapper, /crew-assistant-core\.mjs\?v=7/);
 });

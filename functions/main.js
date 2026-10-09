@@ -243,7 +243,7 @@ const cleanupCrewTelemetry = onSchedule({
   console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
-const { normalizeMemory, searchOwnedTests, memoryOperation, ownedQuizRecord } = require("./lib/coco-support");
+const { normalizeMemory, searchOwnedTests, memoryOperation, ownedQuizRecord, quizSupportContext, supportReportRows } = require("./lib/coco-support");
 const { enrichImages, indexMissingImages } = require("./lib/coco-image-index");
 const cocoSupport = onCall({region:REGION,secrets:[OPENAI_API_KEY],timeoutSeconds:180,memory:"512MiB"}, async request => {
   const {uid}=await requireAiUser(request);
@@ -252,7 +252,13 @@ const cocoSupport = onCall({region:REGION,secrets:[OPENAI_API_KEY],timeoutSecond
   if(data.accountId!==uid)throw new HttpsError("permission-denied","Das Konto wurde gewechselt.");
   if(["read","clear","preferences","remember"].includes(op)) {
     try{return await memoryOperation(db,ref,data,()=>FieldValue.serverTimestamp());}
-    catch(error){throw new HttpsError("invalid-argument",op==="remember"?"Gespräch konnte nicht gespeichert werden.":"Cocos Gedächtnis ist gerade nicht erreichbar.");}
+    catch(error){if(error.code==="memory-reset")throw new HttpsError("failed-precondition","Die Erinnerungen wurden zurückgesetzt. Öffne Erinnerungen neu oder lade die Seite neu.");throw new HttpsError("invalid-argument",op==="remember"?"Gespräch konnte nicht gespeichert werden.":"Cocos Gedächtnis ist gerade nicht erreichbar.");}
+  }
+  if(op==="feedback_status") {
+    await consumeQuota(uid,"assistant");
+    const snapshots=await Promise.all(["userId","authorId"].map(field=>db.collection("feedback").where(field,"==",uid).limit(50).get()));
+    const rows=[...new Map(snapshots.flatMap(s=>s.docs).map(d=>[d.id,{...d.data(),id:d.id}])).values()];
+    return {reports:supportReportRows(uid,rows),limited:true};
   }
   const imageRows=db.collection("cocoImageIndex").doc(uid).collection("images");
   const imageCache=new Map();
@@ -287,6 +293,7 @@ const cocoSupport = onCall({region:REGION,secrets:[OPENAI_API_KEY],timeoutSecond
 
 const crewAssistant = onCall(assistantOpts, async request => {
   const { uid } = await requireAiUser(request);
+  if(request.data?.accountId!==undefined&&request.data.accountId!==uid)throw new HttpsError("permission-denied","Das Konto wurde gewechselt.");
   let clean;
   try {
     clean = cleanCrewRequest(request.data || {});
@@ -294,14 +301,21 @@ const crewAssistant = onCall(assistantOpts, async request => {
     throw new HttpsError("invalid-argument", String(err?.message || "Ungültige Anfrage.").slice(0, 240));
   }
 
+  await consumeQuota(uid,"assistant");
   const memory=normalizeMemory((await getFirestore().collection("cocoMemory").doc(uid).get()).data());
+  if(clean.crewId==="coco"&&(Number(request.data?.memoryGeneration)||0)!==memory.generation)throw new HttpsError("failed-precondition","Die Erinnerungen wurden zurückgesetzt. Lade die Seite neu.");
   clean.context.memory={preferences:memory.preferences,lastSearch:memory.lastSearch,history:memory.history.slice(-12)};
+  if(clean.crewId==="coco"&&/(?:meldung|rückmeldung|feedback|bug|fehler|problem)/i.test(clean.text)) {
+    const reports=await Promise.all(["userId","authorId"].map(field=>getFirestore().collection("feedback").where(field,"==",uid).limit(50).get()));
+    const rows=[...new Map(reports.flatMap(r=>r.docs).map(d=>[d.id,{...d.data(),id:d.id}])).values()];
+    clean.context.feedbackReports=supportReportRows(uid,rows);
+  }
+  clean.context.productGuide=["Neuer Test → Mit KI erstellen öffnet Remy; manuell ist ebenfalls möglich.","Bearbeiten öffnet den vorhandenen Test mit Emmi; ungespeicherte Änderungen müssen gespeichert werden.","Veröffentlichte Tests lassen sich über den Schalter sicher beenden; Ausschalten ist kein Zurücksetzen zum Entwurf.","Ergebnisse öffnet die Auswertung mit Wilma. Coco liest keine individuellen Schülerantworten oder Noten.","Coco sucht eigene Tests in Texten und Bildbeschreibungen; ältere Bilder können einmalig beschrieben werden.","Erinnerungen enthält dauerhaft gespeicherte Vorlieben; Merke dir speichert ausdrücklich genannte Wünsche.","Fehler melden öffnet ein Rückmeldungsfenster zur Prüfung; erst die Lehrkraft sendet es ab."];
   const quizId=String(request.data?.context?.quizId||"").slice(0,40);
   if(["editorView","resultsView"].includes(clean.context.screen)&&/^[a-zA-Z0-9_-]{4,40}$/.test(quizId)) {
     const quiz=await getFirestore().collection("quizzes").doc(quizId).get();const q=quiz.data();
-    if(q?.ownerId===uid&&!q.isDeleted&&!q.rightsHold) clean.context.currentTest={id:quizId,title:q.title||"",questionCount:q.questionCount||0,published:q.published===true,ended:q.ended===true,audioReady:q.audioReady===true};
+    if(q?.ownerId===uid&&!q.isDeleted&&!q.rightsHold) clean.context.currentTest=quizSupportContext(quizId,q);
   }
-  await consumeQuota(uid, "assistant");
   try {
     const { data, usage } = await requestStructured(
       params => getOpenAI().responses.create(params, { timeout: 90000, maxRetries: 2 }),
