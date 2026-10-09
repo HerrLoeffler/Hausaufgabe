@@ -8,7 +8,7 @@ import { createLocalTourRepository } from './guest-tour-port.mjs';
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from './ai-review-state.js';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { DEMO_TEST } from './gradecrew-tour.js?v=2.3.1-gc21';
-import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from './ordering-grading.mjs';
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from './ordering-grading.mjs';
 import { formatMathText } from './shared/math-display.mjs';
 
 test('app entry parses as the ES module used by the browser', () => {
@@ -123,7 +123,7 @@ test('app bootstrap binds its real auth controls after public entry installation
       setSaveState: noop, CSS: { escape: value => String(value) },
       requestStudentSubmitConfirmation: async () => true,
       assessmentContentLabels, formatMathText,
-      validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview,
+      validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage,
       AbortController,
       crypto: globalThis.crypto,
       isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex,

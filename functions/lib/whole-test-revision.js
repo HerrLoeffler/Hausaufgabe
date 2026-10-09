@@ -44,7 +44,7 @@ function cleanQuestion(raw = {}, index = 0) {
       correctBoolean: raw?.correctBoolean === true,
       pairs: Array.isArray(raw?.pairs) ? raw.pairs.slice(0, 14).map(pair => ({ left: cleanString(pair?.left, 180), right: cleanString(pair?.right, 180) })) : [],
       items: Array.isArray(raw?.items) ? raw.items.slice(0, 16).map(value => cleanString(value, 180)).filter(Boolean) : [],
-      acceptedOrders: Array.isArray(raw?.acceptedOrders) ? raw.acceptedOrders.slice(0, 12).map(order => Array.isArray(order) ? order.slice(0, 16).map(Number) : []) : [],
+      acceptedOrders: Array.isArray(raw?.acceptedOrders) ? raw.acceptedOrders.slice(0, 12).map(order => (Array.isArray(order) ? order : Array.isArray(order?.indices) ? order.indices : []).slice(0, 16).map(Number)) : [],
       groups: Array.isArray(raw?.groups) ? raw.groups.slice(0, 10).map(group => ({
         name: cleanString(group?.name, 140),
         items: Array.isArray(group?.items) ? group.items.slice(0, 14).map(value => cleanString(value, 160)).filter(Boolean) : []

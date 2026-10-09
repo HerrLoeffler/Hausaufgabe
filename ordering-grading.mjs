@@ -5,10 +5,18 @@ export function validOrder(order, length) {
     && order.every(index => Number.isInteger(index) && index >= 0 && index < length);
 }
 
+export function orderingVariants(value) {
+  return (Array.isArray(value) ? value : []).map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray);
+}
+
+export function orderingVariantsForStorage(value) {
+  return orderingVariants(value).map(indices => ({ indices: [...indices] }));
+}
+
 export function acceptedOrderingOrders(question) {
   const length = question.items?.length || 0;
   const primary = Array.from({ length }, (_, index) => index);
-  const extras = Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [];
+  const extras = orderingVariants(question.acceptedOrders);
   const unique = new Map();
   for (const order of [primary, ...extras]) {
     if (validOrder(order, length)) unique.set(order.join(","), order);

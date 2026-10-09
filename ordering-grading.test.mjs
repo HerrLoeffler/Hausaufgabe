@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, validOrder } from "./ordering-grading.mjs";
+import { acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, validOrder, orderingVariantsForStorage } from "./ordering-grading.mjs";
 
 test("Satzbau accepts each listed valid word order with full credit", () => {
   const question = { text: "Bringe die Satzbausteine in die richtige Reihenfolge.", items: ["Mia", "spielt", "am Nachmittag", "im Garten"], acceptedOrders: [[2, 1, 0, 3], [0, 1, 3, 2]] };
@@ -24,4 +24,11 @@ test('grammar-only English sentence accepts adjective-swapped meaning as a liste
   assert.equal(gradeOrdering(question,[0,1,2,3,4,5]).correct,true);
   assert.equal(gradeOrdering(question,[0,5,2,3,4,1]).correct,true);
   assert.equal(gradeOrdering(question,[0,5,3,2,4,1]).correct,false);
+});
+
+test('persisted alternative orders preserve complete and partial grading after reload', () => {
+  const question = { items: ['A', 'B', 'C'], acceptedOrders: orderingVariantsForStorage([[2, 1, 0]]) };
+  const loaded = JSON.parse(JSON.stringify(question));
+  assert.equal(gradeOrdering(loaded, [2, 1, 0]).correct, true);
+  assert.deepEqual(gradeOrdering(loaded, [2, 0, 1]), { good: 1, total: 3, correct: false });
 });

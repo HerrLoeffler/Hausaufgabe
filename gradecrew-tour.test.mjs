@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { orderingVariants, orderingVariantsForStorage } from './ordering-grading.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
@@ -521,7 +522,7 @@ test('Core persists tutorial questions with images and a one-minute test; no fak
     quizDefaults: () => ({ ownerId: 'a', published: false }), deepClone: value => JSON.parse(JSON.stringify(value)),
     writeBatch: () => ({ set: (_ref, data) => writes.push(data), update: () => {}, commit: async () => {} }),
     db: {}, doc: (...parts) => parts.join('/'), serverTimestamp: () => 123, round1: number => number,
-    orderingNeedsReview: () => false, validOrder: () => true
+    orderingNeedsReview: () => false, validOrder: () => true, orderingVariants, orderingVariantsForStorage
   });
   w.eval(fn('getQuestionAudioSrc') + '\n' + fn('questionAudioReady') + '\n' + fn('sanitizeQuestionForSave') + '\n' + fn('createTutorialQuiz'));
   assert.equal(await w.createTutorialQuiz(w.demo), 'DEMO');

@@ -258,6 +258,14 @@ service cloud.firestore {
         );
     }
 
+    // BugOps summaries and internal markers remain server-only after cutover.
+    match /bugIncidents/{incidentId} {
+      allow read, write: if false;
+      match /{serverMarker=**} {
+        allow read, write: if false;
+      }
+    }
+
     match /adminAudit/{auditId} {
       allow create: if isAdmin();
       allow read: if isAdmin();

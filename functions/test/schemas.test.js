@@ -52,7 +52,8 @@ test("AI ordering output requires explicit alternatives and a review flag", () =
 test("AI-generated sentence alternatives survive storage for teacher and pupil grading", async () => {
   const sentence = normalizeQuestion(sample("ordering", { text: "Baue einen Satz.", items: ["Mia", "spielt", "heute"], acceptedOrders: [[2, 1, 0]], manualReview: false }));
   const stored = await storedAiQuestion(sentence, 0, { model: "mock", promptVersion: "v16" });
-  assert.deepEqual(stored.acceptedOrders, [[2, 1, 0]]);
+  assert.deepEqual(stored.acceptedOrders, [{ indices: [2, 1, 0] }]);
+  assert.deepEqual(normalizeQuestion(stored).acceptedOrders, [[2, 1, 0]]);
   assert.equal(stored.manualReview, true);
 });
 test("request schema enforces exact count, permitted types and no image mode", () => {

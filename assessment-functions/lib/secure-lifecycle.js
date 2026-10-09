@@ -229,7 +229,9 @@ function buildSolutionSnapshot(questions) {
     } else if (type === "ordering") {
       const items = Array.isArray(question.items) ? question.items.map(value => cleanDisplay(value, 500)) : [];
       const primary = items.map((_, itemIndex) => itemIndex);
-      const alternatives = [primary, ...(Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [])]
+      const extras = (Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [])
+        .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray);
+      const alternatives = [primary, ...extras]
         .filter(order => Array.isArray(order) && order.length === items.length && new Set(order).size === items.length && order.every(itemIndex => Number.isInteger(itemIndex) && itemIndex >= 0 && itemIndex < items.length));
       const unique = [...new Map(alternatives.map(order => [order.join(","), order])).values()];
       answer = unique.map(order => order.map(itemIndex => items[itemIndex]).join(" → ")).join(" / ");
