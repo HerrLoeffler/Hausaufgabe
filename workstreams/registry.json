@@ -56,7 +56,11 @@
       "relatedBranches": [
         "fix/contextual-crew-assistants-v2",
         "feature/coco-support-memory-20261009",
-        "fix/staging-feedback-coco-memory-20261009"
+        "fix/staging-feedback-coco-memory-20261009",
+        "fix/gc-security-coco-owned-id-20261009",
+        "fix/staging-feedback-coco-images-20261009",
+        "fix/staging-feedback-coco-turn-20261009",
+        "fix/staging-feedback-coco-context-20261009"
       ]
     },
     {
