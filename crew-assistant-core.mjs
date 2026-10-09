@@ -3,28 +3,28 @@ const CREW_MEMBERS = Object.freeze({
     id: "coco",
     name: "Coco",
     role: "Begleitung & Orientierung",
-    asset: "assets/gradecrew/penguin-guide.svg",
+    asset: "assets/gradecrew/coco-help-phone.png",
     greeting: "Hi, ich bin Coco. Ich helfe dir, dich in GradeCrew zurechtzufinden und finde mit dir den nächsten sinnvollen Schritt."
   }),
   remy: Object.freeze({
     id: "remy",
     name: "Remy",
     role: "Erstellen & Ideen",
-    asset: "assets/gradecrew/elephant-create.svg",
+    asset: "assets/gradecrew/remy-new-test-tablet.png",
     greeting: "Hi, ich bin Remy. Sag mir einfach, welchen Test du brauchst – ich kann die Angaben für dich vorbereiten."
   }),
   emmi: Object.freeze({
     id: "emmi",
     name: "Emmi",
     role: "Verbessern & Prüfen",
-    asset: "assets/gradecrew/fox-improve.svg",
+    asset: "assets/gradecrew/emmi-colors.png",
     greeting: "Hi, ich bin Emmi. Ich schaue genau hin und helfe dir, Aufgaben verständlicher, passender und sauberer zu machen."
   }),
   wilma: Object.freeze({
     id: "wilma",
     name: "Wilma",
     role: "Bewerten & Auswerten",
-    asset: "assets/gradecrew/owl-grade.svg",
+    asset: "assets/gradecrew/wilma-grading.png",
     greeting: "Hi, ich bin Wilma. Ich helfe dir beim Bewerten, Auswerten und Einordnen von Ergebnissen."
   })
 });

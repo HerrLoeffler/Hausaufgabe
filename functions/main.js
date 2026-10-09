@@ -243,6 +243,26 @@ const cleanupCrewTelemetry = onSchedule({
   console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
+const { normalizeMemory, searchOwnedTests, memoryOperation } = require("./lib/coco-support");
+const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, async request => {
+  const {uid}=await requireAiUser(request);
+  const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
+  const data=request.data||{}; const op=data.operation||"read";
+  if(data.accountId!==uid)throw new HttpsError("permission-denied","Das Konto wurde gewechselt.");
+  if(["read","clear","preferences","remember"].includes(op)) {
+    try{return await memoryOperation(db,ref,data,()=>FieldValue.serverTimestamp());}
+    catch(error){throw new HttpsError("invalid-argument",op==="remember"?"Gespräch konnte nicht gespeichert werden.":"Cocos Gedächtnis ist gerade nicht erreichbar.");}
+  }
+  if(op!=="search") throw new HttpsError("invalid-argument","Unbekannte Coco-Aktion.");
+  await consumeQuota(uid,"assistant");
+  const query=String(data.query||"").slice(0,500);
+  const result=await searchOwnedTests({
+    listOwned:async owner=>(await db.collection("quizzes").where("ownerId","==",owner).limit(101).get()).docs.map(d=>({id:d.id,...d.data()})),
+    questions:async id=>(await db.collection("quizzes").doc(id).collection("questions").limit(250).get()).docs.map(d=>d.data())
+  },uid,query);
+  return result;
+});
+
 const crewAssistant = onCall(assistantOpts, async request => {
   const { uid } = await requireAiUser(request);
   let clean;
@@ -252,6 +272,13 @@ const crewAssistant = onCall(assistantOpts, async request => {
     throw new HttpsError("invalid-argument", String(err?.message || "Ungültige Anfrage.").slice(0, 240));
   }
 
+  const memory=normalizeMemory((await getFirestore().collection("cocoMemory").doc(uid).get()).data());
+  clean.context.memory={preferences:memory.preferences,lastSearch:memory.lastSearch,history:memory.history.slice(-12)};
+  const quizId=String(request.data?.context?.quizId||"").slice(0,40);
+  if(["editorView","resultsView"].includes(clean.context.screen)&&/^[a-zA-Z0-9_-]{4,40}$/.test(quizId)) {
+    const quiz=await getFirestore().collection("quizzes").doc(quizId).get();const q=quiz.data();
+    if(q?.ownerId===uid&&!q.isDeleted&&!q.rightsHold) clean.context.currentTest={id:quizId,title:q.title||"",questionCount:q.questionCount||0,published:q.published===true,ended:q.ended===true,audioReady:q.audioReady===true};
+  }
   await consumeQuota(uid, "assistant");
   try {
     const { data, usage } = await requestStructured(
@@ -389,5 +416,6 @@ module.exports = {
   syncQuestionAudioDrafts,
   generateQuestionSolutionAudio,
   crewAssistant,
+  cocoSupport,
   reviseWholeTest
 };

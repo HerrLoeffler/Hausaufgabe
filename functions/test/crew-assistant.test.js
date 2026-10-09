@@ -106,8 +106,8 @@ test("Remy fallback keeps image, listening and spoken-answer counts distinct", (
 });
 
 test('Coco fallback retains bounded conversation context and only fixed navigation actions', () => {
-  const request = cleanCrewRequest({crewId:'coco',text:'Bring mich zu ihm',context:{lastCrew:'remy',history:Array.from({length:10},()=>({role:'assistant',text:'Remy '.repeat(1000)}))}});
-  assert.equal(request.context.lastCrew,'remy');assert.equal(request.context.history.length,6);assert.ok(request.context.history.every(m=>m.text.length<=1400));
+  const request = cleanCrewRequest({crewId:'coco',text:'Bring mich zu ihm',context:{lastCrew:'remy',history:Array.from({length:14},()=>({role:'assistant',text:'Remy '.repeat(1000)}))}});
+  assert.equal(request.context.lastCrew,'remy');assert.equal(request.context.history.length,12);assert.ok(request.context.history.every(m=>m.text.length<=1400));
   assert.equal(normalizeCrewResult({action:{type:'navigate_create'}}).action.type,'navigate_create');
   assert.equal(normalizeCrewResult({action:{type:'javascript:delete()'}}).action.type,'none');
 });

@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc30";
+const APP_VERSION = "2.3.1-gc31";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -8623,6 +8623,11 @@ async function handleCocoGuide(action = {}) {
   }
   return {message:"Hier ist dein Test. Emmi hilft dir beim Überarbeiten.",lastCrew:"emmi"};
 }
+document.addEventListener("gradecrew:coco-context", event => {
+  const q=state.currentQuiz;
+  event.detail?.respond?.({quizId:q?.ownerId===state.user?.uid?q.id:""});
+});
+
 document.addEventListener("gradecrew:coco-guide", event => {
   const {action,respond}=event.detail || {};
   if (typeof respond !== "function") return;
