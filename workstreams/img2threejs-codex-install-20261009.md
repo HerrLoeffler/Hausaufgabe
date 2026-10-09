@@ -74,3 +74,5 @@ Ausgangsbefund laut main-Lerninsel-Übergabe: grober Fuchs und fehlende Rig-/Ass
 Status bei diesem Zwischencommit: Dokumentation branch_only, Integration auf main noch zu verifizieren. Geprüft werden Erhalt der bisherigen Inhalte/State-Felder, Verweise, JSON und exakte Remote-Rücklesung. Keine Produkt-, Engine-, Art-, Szenen- oder Deploymentänderungen. Keine bezahlten Aufrufe, keine neue Budgetreservierung oder neue Rekonstruktion. Chat-Link unbekannt. Kein laufender Installations-/Generierungsvorgang.
 
 Nächster konkreter Schritt: geprüfte Dokumentation nach frischem main-/DevelopmentStatus-Abgleich übernehmen und exakte main-Dateien zurücklesen; danach zuständiger Spielchat prüft einen hochwertigen repräsentativen Abschnitt.
+
+Vor Integration main erneut gelesen: dc52bf88bc9c4a161e1327e081698e7f6cf9f04a. Seit dem ersten Abgleich wurde nur eine fremde Canonical-Staging-Request-Datei ergänzt; diese bleibt vollständig erhalten. Neuer Development-Status-Run37919922565 erfolgreich am aktuellen main. Keine Überschneidung der sechs Dokumentationsdateien mit dieser Änderung.
