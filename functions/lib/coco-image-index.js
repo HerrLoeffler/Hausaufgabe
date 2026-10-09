@@ -2,7 +2,7 @@
 const {createHash}=require('node:crypto');
 function imageKey(value){return createHash('sha256').update(String(value||'')).digest('hex');}
 function imageSources(question){return [question,...(question.options||[])].filter(q=>typeof q.imageDataUrl==='string'&&/^data:image\/(?:png|jpeg|webp);base64,/.test(q.imageDataUrl)&&q.imageDataUrl.length<=1000000);}
-async function enrichImages(questions,lookup){return Promise.all(questions.map(async q=>{const sources=imageSources(q);const descriptions=await Promise.all(sources.map(s=>lookup(imageKey(s.imageDataUrl))));return {...q,unindexedImageCount:descriptions.filter(value=>!value).length,imageDescription:[q.imageDescription,...descriptions].filter(Boolean).join(' ')};}));}
+async function enrichImages(questions,lookup){return Promise.all(questions.map(async q=>{const sources=imageSources(q);const descriptions=await Promise.all(sources.map(s=>lookup(imageKey(s.imageDataUrl))));return {...q,searchImages:sources.map((source,index)=>({src:source.imageDataUrl,description:descriptions[index]||source.imageAlt||""})),unindexedImageCount:descriptions.filter(value=>!value).length,imageDescription:[q.imageDescription,...descriptions].filter(Boolean).join(' ')};}));}
 async function indexMissingImages({quizzes,questions,lookup,reserve,describe,finish},limit=6){
  let indexed=0,failed=0,pending=0,remaining=0;const seen=new Set();
  for(const quiz of quizzes){if(quiz.isDeleted||quiz.rightsHold)continue;
