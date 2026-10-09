@@ -13,3 +13,6 @@ Martin wählt17. TransparentesEinzelasset mitgeschlossenenAugen,rotemvollständi
 
 
 Nutzer-Screenshot zeigt17seitlichzuweitüberKartenkante. EngbegrenzterlokalerCSS-Fix:right−100px→−32px,68pxnachlinks; KörperliegtinnerhalbKarte,nurBandendeübersteht. CacheCSSv3/startupgc28-coco17-left. StartupSyntaxbestanden; NutzerscreenshotalsAusgangsbeleg,erneutevisuelleAbnahmeoffen. KeineBildneugeneration/Deploy.
+
+
+FolgefehlerDashboardscroll: html:has(#authView .gcEntryAuth:not(.hidden)) reagierteauchaufLogininnerhalbverstecktemauthView. AlleachtbetroffenenLogin-Layoutselektorenbeschränktauf #authView:not(.hidden). LokalCSSv4/startupgc28-coco17-scrollfix. EchterBrowsernachReload/Anmeldung:authHidden=true,dashboardVisible=true,htmlOverflowY=visible,Scrollhöhe3806/Viewport958; realerScroll vonobenauf958px. UrsachewarfehlendeÜberprüfungLogin→DashboardbeimLoginlayout. Syntaxbestanden,keinStagingdeploy. NächsterSchrittNutzerreloadimoffenenTab.
