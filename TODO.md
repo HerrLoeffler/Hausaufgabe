@@ -385,3 +385,14 @@ Quellen: https://dev.epicgames.com/documentation/en-us/unreal-engine/hosting-and
 
 
 09.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: Nutzer lehnt grobe Fuchsmodelle ab und fordert nachvollziehbare lokale Blender-MCP-Einrichtung sowie detailreiche Figuren. Diagnose: vorhandenerSTDIO-Eintraguvx/mcp-for-blender, Add-on1.8/Protokoll13 passend; echterPython-Zugriff undKamerabild erfolgreich. AktiverFuchs21Meshteile/1020Basispolygone, keinRig/Subdivision/Bildtexturen; Bibliotheken/Generatoren aus. Tutorial nenntMakeHuman-CC0-Grundkörper/109064Dreiecke. Qualitätslücke liegt belegt in derModell-/Assetproduktion; Unreal verwendet lautÜbergabe noch prozeduraleGeometrie statt importierterBlenderFBX. VisuelleNähe zumDetailziel ungefähr3/10, keineGesamtprojektbewertung. NächsterSchritt: hochwertigesFuchsbasismodell ausarbeiten, sichtbarabnehmen, riggen undinUnrealintegrieren; vorÄnderung aktiveArtarbeit/DevelopmentStatusprüfen. NurDiagnose/Einrichtungshinweise, keinPaketwechsel/Generatorauftrag/Deploy; Budget26/385erhalten. Details inworkstreams/lerninsel-layouts-20261007.md.
+
+
+## 09.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: Unity eingeordnet
+
+Nutzerfrage zu https://unity.com/: Brauchen wir Unity? Reine Beratung, kein Auftrag für Installation oder Enginewechsel. Aktuelles main und bestehende Lerninsel-Übergabe gelesen. Unity ist eine alternative Spiele-Engine mit 2D/3D-, Web- und mobilen Zielen. Offizielle Browserdokumentation nennt WebGL2/WebAssembly und Unterstützung mobiler Browser einschließlich iOS Safari15+. Daraus folgt keine geprüfte Eignung unserer Szene auf Ziel-iPads.
+
+Empfehlung dieses Chats: aktuell Unity nicht zusätzlich einführen. Nutzen eines sofortigen Wechsels für die gegenwärtige Grafikbaustelle etwa3/10, begründet durch zusätzlichen Portierungsaufwand und die bereits dokumentierte Modell-/Material-/Rig-Lücke. Unity erzeugt aus den groben Fuchsmodellen keine hochwertigen Figuren; hochwertige Assets werden unabhängig von der Laufzeit benötigt. Für die spätere browserlokale Lerninsel ist Unity ein ernsthafter Prüfkandidat. Entscheidung bleibt offen bis repräsentative Szene, Ladegröße, Speicher, FPS und Bedienung am ältesten Ziel-iPad geprüft sind. Keine neue Engineentscheidung als Nutzerbeschluss erfassen.
+
+Nächster Schritt: webtaugliche repräsentative Fuchs-/Hofszene mit hochwertigem Modell und klaren Geräte-/Assetbudgets für die Laufzeitentscheidung festlegen. Diese Beratung ersetzt keine laufende Artproduktion. Keine Codeänderung, Runtimeprüfung, neue Generation, Installation, bezahlte Provider-Anfrage oder Deployment; bestehende Task-ID, Runtime-/Release-Stufen, Budget26Bildaufrufe/385Motive und Versuchshistorie bleiben erhalten. Chat-Link unbekannt.
+
+Quellen: https://unity.com/ ; https://docs.unity.com/en-us/engine/6000.7/manual/platform-specific/webgl/intro/browsercompatibility (6.7Beta-Dokumentation, nur als Fähigkeitsbeleg, keine Beta-Einführung empfohlen).
