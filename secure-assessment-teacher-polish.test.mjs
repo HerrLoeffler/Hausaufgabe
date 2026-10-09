@@ -31,6 +31,9 @@ test("dashboard publish switch stays operable and directs users to the safe end 
   assert.equal(toggle.disabled, false);
   assert.match(toggle.title, /beendet den Test sicher/);
   assert.match(toggle["aria-label"], /Ausschalten/);
+  toggle.disabled = true;
+  context.patchDashboardPublishToggles();
+  assert.equal(toggle.disabled, true, "the UI patcher must preserve an in-flight or rights lock");
   assert.match(fs.readFileSync("app.js", "utf8"), /if \(action === "end"\)[\s\S]*?return endQuiz\(q\.id\)/);
 });
 

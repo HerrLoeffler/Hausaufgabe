@@ -33,6 +33,14 @@ Im Staging-Admin standen 41 Meldungen, davon 26 Status „Neu“. 13 Screenshot-
 
 ## Offene Ursachencluster
 
+## Veröffentlichungskorrektur und echte Serverprüfung 09.10.2026
+
+Staging ist ausdrücklich autorisiert. Kandidat PR176 `9d074959` hat Tree `8868caee` identisch zum lokalen `4e7c03d`; vollständige CI `37918155501` (Node22/Functions/Secure/Regel-Emulator/UI/Build) bestanden. Unabhängiger Delta-Review fand den Wiederöffnen-Pfad ohne Aufgabenprüfung und ein Überschreiben des Busy-Locks durch das UI-Modul. Beide gezielt korrigiert, einschließlich Tests: Wiederöffnen mit veralteten Metadaten blockiert private Modi; ergänzendes Audio bleibt erlaubt; Lesefehler ändern keine Freigabe; doppelte Interaktion während Preflight wird verhindert. Lokale Gesamtreihe jetzt 319/319 Web/UI und 62/62 Assessment.
+
+Realer Staging-Test `GENDF4YQQV` (synthetische Daten, 30 Teilnehmer) scheiterte am `startAssessmentAttempt` mit HTTP500. Logs vom 09.10.2026 10:33 UTC zeigen gRPC-Backendframes und `internal`, aber der vorhandene Privacy-Logger verwirft den numerischen Backendstatus. Eine Regression ergänzt ausschließlich den begrenzten Statuscode 0–16, keine Fehlermeldung, Antworten oder Tokens. Nach Deployment muss dieser Fehler mit demselben Systemtestablauf konkret eingeordnet/beheben werden; keine Schülerstartfreigabe behauptet.
+
+Firebase-Konsole auf Projekt `hausaufgabe-staging` erreicht, bestehende Anmeldung. Live-Regeln stehen nachweislich noch auf dem Legacy-Regelstand vom 26.09.2026; keine Regeln verändert. Nach serverseitigem Funktionsnachweis folgt die sichere Regelumstellung und ein echter anonymer Zugriffstest. Production ausgeschlossen. Lokale Design-/Mehrfarben-Arbeit im anderen Checkout erhalten.
+
 1. Audiobedienung: Die zwei Meldungen sind lokal adressiert; visuelle Abnahme auf Staging ausstehend. Nicht mit der bereits reparierten Hörfragen-Datenkorrektur verwechseln.
 2. `J76LTH9U`: „Aufgabe macht keinen Sinn“ und KI-Aufgabe 9 mit möglicherweise mehrdeutigem Regenschirmbild. Exakte Screenshots/Aufgabenstände prüfen, bevor eine Lehreraufgabe verändert wird. Die zurückgewiesene Prüferwarnung zur Kuchen-Hörfrage könnte nach der Textkorrektur entkräftet sein, bleibt bis zum Abgleich offen.
 3. `2U9XY2ZY`: mathematische Zeichen/Größen/Farben (zwei Meldungen), bestehende Reihenfolgen-Warnung an einer konkreten Aufgabe prüfen; die generelle Übernahme einer strukturiert vorgeschlagenen weiteren Lösung ist lokal umgesetzt. Symbol für Smiley/Papierkorb prüfen.

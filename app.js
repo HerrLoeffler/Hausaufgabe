@@ -1711,7 +1711,36 @@ function renderQuizList() {
   });
 }
 
+async function checkQuizAudioPublication(q) {
+  if (secureAudioPublicationBlocked(q)) {
+    toast(secureAudioPublicationMessage, "error");
+    return false;
+  }
+  try {
+    const snapshot = await firestoreGetDocs(collection(db, "quizzes", q.id, "questions"));
+    const questions = snapshot.docs.map(question => question.data());
+    if (secureAudioPublicationBlocked(q, questions)) {
+      toast(secureAudioPublicationMessage, "error");
+      return false;
+    }
+    return true;
+  } catch (error) {
+    showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Der Testinhalt konnte nicht auf gesperrte Audioaufgaben geprüft werden. Die Veröffentlichung wurde nicht geändert.", error, action: "dashboard_audio_release_preflight", details: { quizId: q.id } });
+    return false;
+  }
+}
+
 async function toggleDashboardPublished(q, toggle) {
+  if (toggle?.disabled) return;
+  if (toggle) toggle.disabled = true;
+  try {
+    return await applyDashboardPublication(q, toggle);
+  } finally {
+    if (toggle?.isConnected) toggle.disabled = false;
+  }
+}
+
+async function applyDashboardPublication(q, toggle) {
   const wantsPublished = Boolean(toggle?.checked);
   const action = dashboardPublicationAction(q, wantsPublished);
   if (q.rightsHold) {
@@ -1726,24 +1755,9 @@ async function toggleDashboardPublished(q, toggle) {
     if (toggle) toggle.checked = false;
     return;
   }
-  if (wantsPublished && secureAudioPublicationBlocked(q)) {
+  if (wantsPublished && !await checkQuizAudioPublication(q)) {
     if (toggle) toggle.checked = false;
-    return toast(secureAudioPublicationMessage, "error");
-  }
-  if (wantsPublished) {
-    let questions;
-    try {
-      const questionSnapshot = await firestoreGetDocs(collection(db, "quizzes", q.id, "questions"));
-      questions = questionSnapshot.docs.map(question => question.data());
-    } catch (error) {
-      if (toggle) toggle.checked = false;
-      showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Der Testinhalt konnte nicht auf gesperrte Audioaufgaben geprüft werden. Die Veröffentlichung wurde nicht geändert.", error, action: "dashboard_audio_release_preflight", details: { quizId: q.id } });
-      return;
-    }
-    if (secureAudioPublicationBlocked(q, questions)) {
-      if (toggle) toggle.checked = false;
-      return toast(secureAudioPublicationMessage, "error");
-    }
+    return;
   }
   if (wantsPublished && q.audioReady === false) {
     if (toggle) toggle.checked = false;
@@ -1761,7 +1775,6 @@ async function toggleDashboardPublished(q, toggle) {
     if (toggle) toggle.checked = false;
     return;
   }
-  if (toggle) toggle.disabled = true;
   try {
     if (wantsPublished) {
       const teacherMode = q.startMode === "teacher";
@@ -1790,8 +1803,6 @@ async function toggleDashboardPublished(q, toggle) {
     console.error(err);
     if (toggle) toggle.checked = !wantsPublished;
     showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Veröffentlichungsstatus konnte nicht geändert werden.", error: err, action: "dashboard_publish_toggle", details: { quizId: q.id, wantsPublished } });
-  } finally {
-    if (toggle?.isConnected) toggle.disabled = false;
   }
 }
 
@@ -2094,7 +2105,7 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
   try {
     const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
     if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
-    if (secureAudioPublicationBlocked(current)) return toast(secureAudioPublicationMessage, "error");
+    if (!await checkQuizAudioPublication({ ...current, id: code })) return;
     if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
     if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
     const teacherMode = current.startMode === "teacher";

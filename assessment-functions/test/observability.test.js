@@ -11,6 +11,15 @@ test('unexpected failures expose a reference but no private error message or req
  await assert.rejects(call({data:{studentName:'PRIVATE',answers:'PRIVATE'}}), e=>e.code==='internal'&&e.details.reference==='ASM-test'&&!e.message.includes('PRIVATE'));
  assert.equal(JSON.stringify(entries).includes('PRIVATE'),false); assert.equal(entries[0].level,'error');
 });
+test('backend failures retain only a bounded numeric status so live failures can be diagnosed safely', async()=>{
+ const {call,entries}=setup(async()=>{throw Object.assign(new Error('PRIVATE details and answer'),{code:9})},'startAssessmentAttempt');
+ await assert.rejects(call({}), e=>e.code==='internal');
+ assert.equal(entries[0].data.backendCode,9);
+ assert.equal(JSON.stringify(entries).includes('PRIVATE'),false);
+ const invalid=setup(async()=>{throw Object.assign(new Error('PRIVATE'),{code:'PRIVATE_TOKEN'})});
+ await assert.rejects(invalid.call({}));
+ assert.equal(Object.hasOwn(invalid.entries[0].data,'backendCode'),false);
+});
 test('expected failures preserve code and correlate server/client without tokens', async()=>{
  const {call,entries}=setup(async()=>{throw new HttpsError('deadline-exceeded','Zeit abgelaufen')});
  await assert.rejects(call({}), e=>e.code==='deadline-exceeded'&&e.details.phase==='submitAssessmentAttempt');
