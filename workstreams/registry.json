@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-09",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -496,6 +496,15 @@
       "relatedBranches": [
         "docs/lerninsel-layouts-20261007"
       ]
+    },
+    {
+      "id": "img2threejs-codex-install-20261009",
+      "title": "img2threejs als lokales Codex-Werkzeug",
+      "primaryBranch": "docs/img2threejs-codex-install-20261009",
+      "integrationTarget": "main",
+      "state": "integration_ready",
+      "handoff": "workstreams/img2threejs-codex-install-20261009.md",
+      "relatedBranches": []
     }
   ]
 }

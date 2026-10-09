@@ -385,3 +385,9 @@ Quellen: https://dev.epicgames.com/documentation/en-us/unreal-engine/hosting-and
 
 
 09.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: Nutzer lehnt grobe Fuchsmodelle ab und fordert nachvollziehbare lokale Blender-MCP-Einrichtung sowie detailreiche Figuren. Diagnose: vorhandenerSTDIO-Eintraguvx/mcp-for-blender, Add-on1.8/Protokoll13 passend; echterPython-Zugriff undKamerabild erfolgreich. AktiverFuchs21Meshteile/1020Basispolygone, keinRig/Subdivision/Bildtexturen; Bibliotheken/Generatoren aus. Tutorial nenntMakeHuman-CC0-Grundkörper/109064Dreiecke. Qualitätslücke liegt belegt in derModell-/Assetproduktion; Unreal verwendet lautÜbergabe noch prozeduraleGeometrie statt importierterBlenderFBX. VisuelleNähe zumDetailziel ungefähr3/10, keineGesamtprojektbewertung. NächsterSchritt: hochwertigesFuchsbasismodell ausarbeiten, sichtbarabnehmen, riggen undinUnrealintegrieren; vorÄnderung aktiveArtarbeit/DevelopmentStatusprüfen. NurDiagnose/Einrichtungshinweise, keinPaketwechsel/Generatorauftrag/Deploy; Budget26/385erhalten. Details inworkstreams/lerninsel-layouts-20261007.md.
+
+## Codex-Werkzeuge – 09.10.2026
+
+| ID | Aufgabe | Status | Nächster Schritt |
+|---|---|---|---|
+| GC-IMG2THREEJS-01 | img2threejs als Werkzeug in Codex installieren | Lokal installiert: v2.0.0, Bildprobe und 23 Workflow-Tests erfolgreich; 3D-Modell noch nicht geprüft. Dokumentation branch_only. | Ab nächster Nachricht mit geeignetem Objektbild verwenden. [Übergabe](workstreams/img2threejs-codex-install-20261009.md) |
