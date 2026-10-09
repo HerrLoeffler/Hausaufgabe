@@ -1,3 +1,5 @@
+let cocoLastError = {uid:"",text:"",at:0};
+let cocoFocusedQuestion = {quizId:"",id:""};
 const APP_VERSION = "2.3.1-gc32";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
@@ -560,6 +562,7 @@ function showView(id) {
 }
 
 function toast(message, type = "success") {
+  if(type==="error") cocoLastError={uid:state.user?.uid||"",text:String(message||"").slice(0,300),at:Date.now()};
   const el = $("toast");
   el.textContent = message;
   el.className = `toast show ${type}`;
@@ -8561,11 +8564,13 @@ function cocoSearchText(value) {
 async function handleCocoGuide(action = {}) {
   const uid = state.user?.uid;
   if (!uid || guestTourRepo) throw new Error("Bitte melde dich mit deinem Lehrkraftkonto an.");
+  if(action.requesterUid&&action.requesterUid!==uid)throw new Error("Das Konto wurde gewechselt.");
   if (crewTour?.active) throw new Error("Beende oder verlasse zuerst die Einführung.");
   const screen = views.find(id => !$(id)?.classList.contains("hidden"));
   if (screen === "studentView") throw new Error("Verlasse zuerst die Schüleransicht.");
-  const allowed = ["navigate_create","navigate_tests","navigate_settings","choose_editor","choose_results","show_delete_question","show_delete_test","find_test"];
+  const allowed = ["navigate_create","navigate_tests","navigate_settings","choose_editor","choose_results","show_delete_question","show_delete_test","find_test","show_feedback"];
   if (!allowed.includes(action.type)) throw new Error("Diese Aktion kann Coco nicht ausführen.");
+  if(action.type==="show_feedback"){openFeedbackDialog();if(typeof action.message==="string") $("feedbackMessage").value=action.message.slice(0,2000);return {message:"Das Rückmeldungsfenster ist geöffnet. Prüfe die Beschreibung und sende sie selbst ab."};}
   let quizzes = state.quizzes.filter(q => q.ownerId === uid && !q.isDeleted && !q.rightsHold);
   if (!quizzes.length) {
     const snap = await getDocs(query(collection(db,"quizzes"),where("ownerId","==",uid)));
@@ -8623,9 +8628,13 @@ async function handleCocoGuide(action = {}) {
   }
   return {message:"Hier ist dein Test. Emmi hilft dir beim Überarbeiten.",lastCrew:"emmi"};
 }
+document.addEventListener("focusin", event => {
+ const card=event.target?.closest?.(".questionCard[data-id]");if(card&&state.currentQuiz?.ownerId===state.user?.uid)cocoFocusedQuestion={quizId:state.currentQuiz.id,id:card.dataset.id};
+});
 document.addEventListener("gradecrew:coco-context", event => {
-  const q=state.currentQuiz;
-  event.detail?.respond?.({quizId:q?.ownerId===state.user?.uid?q.id:""});
+  const q=!$("resultsView")?.classList.contains("hidden")?state.currentResultsQuiz:state.currentQuiz;
+  const focused=!$("editorView")?.classList.contains("hidden")&&q?.id===cocoFocusedQuestion.quizId&&q?.ownerId===state.user?.uid?state.questions.find(item=>item.id===cocoFocusedQuestion.id):null;
+  event.detail?.respond?.({contextUid:state.user?.uid||"",questionContext:focused?{type:focused.type,text:String(focused.text||"").slice(0,1500)}:null,quizId:q?.ownerId===state.user?.uid?q.id:"",isDirty:!$("editorView")?.classList.contains("hidden")&&q?.ownerId===state.user?.uid?state.isDirty:null,lastError:cocoLastError.uid===state.user?.uid&&Date.now()-cocoLastError.at<300000?cocoLastError.text:""});
 });
 
 document.addEventListener("gradecrew:coco-guide", event => {

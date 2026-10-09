@@ -404,6 +404,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
 
   if (member.id === "coco") {
     const action = type => ({handled:true,source:"local",intent:type,reply:"",action:{type}});
+    if(/\b(?:fehler melden|problem melden|feedback geben|report (?:a )?(?:bug|problem))\b/i.test(normalized))return action("show_feedback");
     if (/\b(?:such\w*|find|remember|erinner\w*)\b/i.test(normalized) && /\b(?:test|quiz|prüfung)\b/i.test(normalized)) return {...action("find_test"),action:{type:"find_test",query:normalized}};
     if (/\b(?:lösch\w*|loesch\w*|delete|remove|papierkorb|trash)\b/i.test(normalized)) return action(/\b(?:aufgabe\w*|question)\b/i.test(normalized) ? "show_delete_question" : "show_delete_test");
     if (/\b(?:einstellungen|settings)\b/i.test(normalized)) return action("navigate_settings");
@@ -413,7 +414,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
     const crew = named || (follow ? context.lastCrew : "");
     const navigating = follow || /(?:^|\s)(?:bring\w*|führ\w*|fuehr\w*|geh\w*|öffn\w*|oeffn\w*|take|open|go)\b/i.test(normalized) || /^(?:remy|emmi|wilma)[.!? ]*$/i.test(normalized);
     if (crew && navigating) return action({remy:"navigate_create",emmi:"choose_editor",wilma:"choose_results"}[crew] || "navigate_tests");
-    if (/\b(?:erstell\w*|anleg\w*|create|new test|neuen? test)\b/i.test(normalized)) return {...action("navigate_create"),reply:english ? "Remy creates tests. I'll open the form." : "Remy erstellt Tests. Ich öffne dir das Formular."};
+    if (/\b(?:erstell\w*|anleg\w*|create|new test|neuen? test)\b/i.test(normalized) && !/\b(?:welch\w*|wer|wann|who|when|which|geöffnet|opened|aktuell|current|gerade)\b/i.test(normalized)) return {...action("navigate_create"),reply:english ? "Remy creates tests. I'll open the form." : "Remy erstellt Tests. Ich öffne dir das Formular."};
   }
 
   const common = resolveCommonResponse(member.id, normalized, normalizedLocale);
@@ -434,7 +435,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
     };
   }
 
-  if (member.id === "coco" && looksLikeTestCommand(normalized)) {
+  if (member.id === "coco" && looksLikeTestCommand(normalized) && !/(?:\b(?:welch\w*|what|which|warum|why|wie|how|was|where|wo|geöffnet|offen|opened|aktuell|current|gerade)\b|\?)/i.test(normalized)) {
     return {
       handled: true,
       source: "local",

@@ -323,3 +323,4 @@ test('Coco routes a remembered cat image to evidence-based test search', () => {
   assert.equal(result.action?.type,'find_test');
   assert.match(result.action.query,/Katzenbild/);
 });
+test('Coco sends questions about existing work to contextual help instead of generic Remy creation',()=>{for(const text of ['Welchen Test habe ich gerade geöffnet?','Wie viele Aufgaben hat mein Test?','Warum kann ich den Test nicht veröffentlichen?','Which test is currently open?']){const r=resolveLocalCrewRequest({crewId:'coco',text,context:{screen:'editorView'},locale:'de-DE'});assert.equal(r.handled,false,text);}});

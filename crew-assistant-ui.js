@@ -1,10 +1,11 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=6";
+import { CREW_MEMBERS, resolveLocalCrewRequest } from "./crew-assistant-core.js?v=7";
 
 let memoryUid = "";
 let memoryEpoch = 0;
+let memoryGeneration = 0;
 let memoryQueue = Promise.resolve();
 let clearingEpoch = 0;
 let conversation = [];
@@ -157,13 +158,16 @@ function createUi() {
 
 function currentContext() {
   let work={};document.dispatchEvent(new CustomEvent("gradecrew:coco-context",{detail:{respond:value=>{work=value||{};}}}));
+  if(work.contextUid!==memoryUid)work={};
   return { ...work, screen: document.querySelector("main .view:not(.hidden)")?.id || "unknown", lastCrew, history:conversation.slice(-12) };
 }
 
-async function callCrewAi(payload) {
+async function callCrewAi(payload,expectedUid=memoryUid) {
+  if(getAuth(getApp()).currentUser?.uid!==expectedUid)throw new Error("Das Konto wurde gewechselt.");
   const functions = getFunctions(getApp(), "europe-west1");
   const callable = httpsCallable(functions, "crewAssistant", { timeout: 90000 });
-  const result = await callable(payload);
+  const result = await callable({...payload,accountId:expectedUid,memoryGeneration});
+  if(getAuth(getApp()).currentUser?.uid!==expectedUid)throw new Error("Das Konto wurde gewechselt.");
   return result.data || {};
 }
 
@@ -175,30 +179,33 @@ async function support(operation,extra={},expectedUid=memoryUid) {
   if(getAuth(getApp()).currentUser?.uid!==uid)throw new Error("Das Konto wurde gewechselt.");
   return result.data||{};
 }
-function queueMemoryWrite(operation,data,uid,epoch=requestEpoch) {
+function queueMemoryWrite(operation,data,uid,epoch=requestEpoch,generation=memoryGeneration) {
   const result=memoryQueue.catch(()=>{}).then(()=>{
     if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid||(clearingEpoch!==0&&clearingEpoch===epoch))return {cancelled:true};
-    return support(operation,data,uid);
+    return support(operation,{...data,generation},uid);
   });
   memoryQueue=result.catch(()=>{});return result;
 }
-function rememberTurn(messages,uid) {
-  const epoch=requestEpoch;if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
-  void queueMemoryWrite("remember",{messages,turnId:crypto.randomUUID()},uid,epoch).catch(()=>{if(epoch===requestEpoch&&getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Deine bisherigen Erinnerungen bleiben erhalten.");});
+function rememberTurn(messages,uid,epoch=requestEpoch,generation=memoryGeneration) {
+  if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
+  void queueMemoryWrite("remember",{messages,turnId:crypto.randomUUID()},uid,epoch,generation).catch(()=>{if(epoch===requestEpoch&&getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Falls Erinnerungen auf einem anderen Gerät gelöscht wurden, lade die Seite neu.");});
 }
 async function showMemory() {
-  const uid=getAuth(getApp()).currentUser?.uid;const editorEpoch=requestEpoch;const m=await support("read",{},uid);if(uid!==getAuth(getApp()).currentUser?.uid)return;
+  const uid=getAuth(getApp()).currentUser?.uid;let editorEpoch=requestEpoch;const m=await support("read",{},uid);if(editorEpoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)return;
+  const freshGeneration=Number(m.generation)||0;
+  if(freshGeneration!==memoryGeneration){requestEpoch++;memoryEpoch++;editorEpoch=requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;conversation=[];$("gcCrewMessages")?.replaceChildren();}
+  memoryGeneration=freshGeneration;const editorGeneration=memoryGeneration;
   const root=$("gcCrewMessages");const holder=document.createElement("div");holder.className="gcCrewMsg assistant";
   const label=document.createElement("label");label.textContent="Cocos dauerhaft gespeicherte Vorlieben";
   const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
   const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
-  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{const saved=await queueMemoryWrite("preferences",{preferences:input.value},uid,editorEpoch);if(saved?.cancelled||editorEpoch!==requestEpoch)return;info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
-  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{if(editorEpoch!==requestEpoch)return;clear.disabled=true;const epoch=++requestEpoch;memoryEpoch++;clearingEpoch=epoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}finally{if(clearingEpoch===epoch){clearingEpoch=0;if(send)send.disabled=false;}}};
+  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{const saved=await queueMemoryWrite("preferences",{preferences:input.value},uid,editorEpoch,editorGeneration);if(saved?.cancelled||editorEpoch!==requestEpoch)return;info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{if(editorEpoch!==requestEpoch)return;clear.disabled=true;const epoch=++requestEpoch;memoryEpoch++;clearingEpoch=epoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");const cleared=await support("clear",{},uid);if(epoch!==requestEpoch)return;memoryGeneration=Number(cleared.generation)||0;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}finally{if(clearingEpoch===epoch){clearingEpoch=0;if(send)send.disabled=false;}}};
   holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
 }
 async function searchTests(query,epoch) {
   const r=await support("search",{query});if(epoch!==requestEpoch)return;
-  addMessage("assistant",r.matches.length?`Ich habe ${r.matches.length} passende Tests gefunden.`:`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
+  addMessage("assistant",r.matches.length?(r.matches.length===1?"Ich habe einen passenden Test gefunden.":`Ich habe ${r.matches.length} passende Tests gefunden.`):`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
   if(!r.matches.length&&r.unindexedImages){const button=document.createElement("button");button.type="button";button.className="miniButton";button.textContent="Ältere Bilder einmalig beschreiben und erneut suchen";
     button.onclick=async()=>{if(epoch!==requestEpoch)return;const uid=memoryUid;button.disabled=true;try{const result=await support("index_images",{},uid);if(epoch!==requestEpoch)return;addMessage("assistant",`${result.indexed} Bilder neu beschrieben und dauerhaft gespeichert.${result.remaining?` Weitere ${result.remaining} Bilder warten noch auf eine Beschreibung.`:""}${result.failed||result.pending?" Einige Bilder konnten nicht beschrieben werden; ich wiederhole diese Aufrufe nicht automatisch.":""}`);await searchTests(query,epoch);if(epoch===requestEpoch)rememberTurn(conversation.slice(-2).filter(m=>m.role==="assistant"),uid);}catch(e){if(epoch===requestEpoch)addMessage("assistant",e.message);}finally{button.disabled=false;}};
     $("gcCrewMessages").append(button);
@@ -209,17 +216,18 @@ async function searchTests(query,epoch) {
 }
 function installDurableMemory() {
  onAuthStateChanged(getAuth(getApp()),async user=>{
-  const epoch=++memoryEpoch;memoryUid=user?.uid||"";conversation=[];requestEpoch++;
+  const epoch=++memoryEpoch;memoryUid=user?.uid||"";memoryGeneration=0;conversation=[];requestEpoch++;
   $("gcCrewMessages")?.replaceChildren();if(!user)return;
-  try{const m=await support("read");if(epoch!==memoryEpoch)return;for(const message of m.history||[])addMessage(message.role,message.text);if(!m.history?.length)addMessage("assistant","Hi, ich bin Coco. Ich kann deine Tests suchen und mir deine Vorlieben dauerhaft merken.");}
+  try{const m=await support("read");if(epoch!==memoryEpoch)return;memoryGeneration=Number(m.generation)||0;for(const message of m.history||[])addMessage(message.role,message.text);if(!m.history?.length)addMessage("assistant","Hi, ich bin Coco. Ich kann deine Tests suchen und mir deine Vorlieben dauerhaft merken.");}
   catch(_){if(epoch===memoryEpoch)addMessage("assistant","Cocos Kontogedächtnis ist gerade nicht erreichbar. Ich kann dir trotzdem helfen.");}
  });
 }
 
 function requestGuideAction(action) {
+  if(getAuth(getApp()).currentUser?.uid!==memoryUid)return Promise.reject(new Error("Das Konto wurde gewechselt."));
   return new Promise((resolve,reject) => {
     const timer=window.setTimeout(()=>reject(new Error("Die Navigation braucht gerade zu lange. Bitte versuche es erneut.")),90000);
-    document.dispatchEvent(new CustomEvent("gradecrew:coco-guide",{detail:{action,respond:result=>{window.clearTimeout(timer);resolve(result);}}}));
+    document.dispatchEvent(new CustomEvent("gradecrew:coco-guide",{detail:{action:{...action,requesterUid:memoryUid},respond:result=>{window.clearTimeout(timer);resolve(result);}}}));
   });
 }
 async function applyGuideAction(action, epoch = requestEpoch) {
@@ -243,31 +251,41 @@ async function sendCurrentMessage() {
   const input = $("gcCrewInput");
   const text = String(input?.value || "").trim();
   if (!text || sending || (clearingEpoch!==0&&clearingEpoch===requestEpoch)) return;
-  const epoch=requestEpoch; const turnUid=memoryUid; let persistTurn=true; sending=true;
+  const epoch=requestEpoch; const turnUid=memoryUid; const turnGeneration=memoryGeneration; let persistTurn=true; sending=true;
   const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;
   stopDictation();input.value="";addMessage("user",text);
   let pending;
   try {
     const context=currentContext();
-    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}const saved=await queueMemoryWrite("preferences",{preferences},turnUid,epoch);if(saved?.cancelled||epoch!==requestEpoch)return;addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
+    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}const saved=await queueMemoryWrite("preferences",{preferences},turnUid,epoch,turnGeneration);if(saved?.cancelled||epoch!==requestEpoch)return;addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
     if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {persistTurn=false;await showMemory();return;}
+    if(/(?:meine meldungen|meine rückmeldungen|gemeldeten fehler|status meiner meldung|my reports)/i.test(text)) {
+      const result=await support("feedback_status",{},turnUid);if(epoch!==requestEpoch)return;
+      addMessage("assistant",result.reports.length?"Deine gespeicherten Rückmeldungen (bis zu 50):\n"+result.reports.map(r=>[r.category,r.status,r.testCode?"Test "+r.testCode:"",r.createdAt?new Date(r.createdAt).toLocaleDateString():""].filter(Boolean).join(" · ")).join("\n"):"Ich habe keine eigenen Rückmeldungen für dein Konto gefunden.");return;
+    }
+    const early=resolveLocalCrewRequest({crewId:"coco",text,context,locale:currentUiLocale()});
+    if(early.handled&&early.action?.type==="navigate_create"){await applyGuideAction(early.action,epoch);return;}
     const prior=conversation.filter(m=>m.role==="user").slice(-3).map(m=>m.text).join(" ");
     if(/(?:such|find|erinner|hatte|drache|bild|motiv)/i.test(text)&&/(?:test|quiz|drache|bild|motiv)/i.test(prior)) {pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(/(?:such|find|test|quiz|drache|dragon|katze|cat)/i.test(text)?text:prior,epoch);return;}
 
     const local=resolveLocalCrewRequest({crewId:"coco",text,context,locale:currentUiLocale()});
-    if (local.handled) {
+    if(local.handled&&local.action?.type==="find_test"){pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(local.action.query||text,epoch);return;}
+    if(local.action?.type==="show_feedback")local.action.message=text;
+    const repeated=Boolean(local.reply)&&conversation.slice(-4).some(m=>m.role==="assistant"&&m.text===local.reply);
+    if (local.handled && !repeated) {
       if (local.intent === "route_remy") lastCrew="remy";
       if (local.action && local.action.type !== "patch_ai_form") {pending=addMessage("assistant pending","Ich suche die passende Stelle …");await applyGuideAction(local.action,epoch);}
       else addMessage("assistant",local.reply);
       return;
     }
     pending=addMessage("assistant pending","Coco denkt mit KI nach …");
-    const result=await callCrewAi({crewId:"coco",text,uiLocale:currentUiLocale(),context});
+    const result=await callCrewAi({crewId:"coco",text,uiLocale:currentUiLocale(),context},turnUid);
     if (epoch!==requestEpoch)return;
+    if(result.action?.type==="show_feedback")result.action.message=text;
     if (result.action?.type && !["none","patch_ai_form"].includes(result.action.type)) await applyGuideAction(result.action,epoch);
     else addMessage("assistant",result.reply || "Dazu habe ich gerade noch keine sichere Antwort. Beschreibe bitte, was du erreichen möchtest.");
   } catch(error) { if(epoch===requestEpoch)addMessage("assistant",error.message || "Das klappt gerade nicht. Versuch es bitte noch einmal."); }
-  finally {pending?.remove();if(epoch===requestEpoch){if(persistTurn)rememberTurn([{role:"user",text},...conversation.slice(-1).filter(m=>m.role==="assistant")],turnUid);sending=false;if(send)send.disabled=false;}}
+  finally {pending?.remove();if(epoch===requestEpoch){if(persistTurn)rememberTurn([{role:"user",text},...conversation.slice(-1).filter(m=>m.role==="assistant")],turnUid,epoch,turnGeneration);sending=false;if(send)send.disabled=false;}}
 }
 
 function speechConstructor() {

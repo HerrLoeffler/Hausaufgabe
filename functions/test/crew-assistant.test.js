@@ -86,7 +86,7 @@ test("normalizer strips unsupported action types and localizes only its fallback
 });
 
 test("strict schema exposes only safe V1 action types", () => {
-  assert.deepEqual(crewAssistantSchema.properties.action.properties.type.enum, ["none", "patch_ai_form", "navigate_create", "navigate_tests", "navigate_settings", "choose_editor", "choose_results", "show_delete_question", "show_delete_test"]);
+  assert.deepEqual(crewAssistantSchema.properties.action.properties.type.enum, ["none", "patch_ai_form", "navigate_create", "navigate_tests", "navigate_settings", "choose_editor", "choose_results", "show_delete_question", "show_delete_test", "show_feedback"]);
 });
 
 test("Remy fallback keeps image, listening and spoken-answer counts distinct", () => {
@@ -111,3 +111,4 @@ test('Coco fallback retains bounded conversation context and only fixed navigati
   assert.equal(normalizeCrewResult({action:{type:'navigate_create'}}).action.type,'navigate_create');
   assert.equal(normalizeCrewResult({action:{type:'javascript:delete()'}}).action.type,'none');
 });
+test('Coco receives bounded observed UI state as data for contextual help',()=>{const r=cleanCrewRequest({text:'Warum klappt das nicht?',context:{screen:'editorView',isDirty:true,lastError:'Bitte erst speichern.'.repeat(100)}});assert.equal(r.context.localUnsaved,true);assert.ok(r.context.observedLastError.length<=300);});
