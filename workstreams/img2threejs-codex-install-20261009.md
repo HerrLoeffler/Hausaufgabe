@@ -60,3 +60,17 @@ Letzter gesicherter Schritt: lokale v2.0.0-Installation und 23 erfolgreiche Work
 Keine laufenden oder unklaren Installations-/Provider-Vorgänge.
 Vor Wiederholung zuerst den lokalen Skill-Pfad und diese Übergabe prüfen; nicht nochmals installieren.
 Dokumentationscommit separat über den Branch nachsehen. Lokale Installation ist maschinenspezifisch und wird nicht durch GitHub auf andere Rechner verteilt.
+
+## 09.10.2026 — Gemeinsamer Games-Zugriff und Qualitätsauftrag
+
+Martin beauftragt, img2threejs für Spielechats auffindbar zu verankern und bei Bedarf tatsächlichen Zugriff sicherzustellen. Rückmeldung: Qualität aktuell noch zu schlecht. Ursprüngliche Task-ID GC-IMG2THREEJS-01 fortgeführt; ein erfolgreicher Installationsversuch und 23 Workflow-Tests bleiben erhalten. Der Skill wird im aktuellen Sitzungskatalog angezeigt und SKILL.md v2.0.0 wurde tatsächlich gelesen.
+
+Geprüfter aktueller main: e50fc0cf6d9264da0857b40b2e82c726e9b55ef1. Bestehender Aufgabenbranch vor Fortsetzung: b5ea792215e7c76a57e9ffccbfea6e3dcff8ef11. Development Status 37919561488 / Job113783935001 erfolgreich; Logs gelesen. Allgemeine Warnungen zu Zielabweichungen, unregistrierten Branches und anderen PRs bleiben separate Aufgaben. PR153 ist offen/konfliktbehaftet; die ausführlichen Great-Games-Dokumente sind auf main noch nicht vorhanden. Kein pauschaler Merge dieses PRs.
+
+Gemeinsame AGENTS-Regel plus docs/games/IMG2THREEJS_AND_ASSET_QUALITY.md ergänzen den tatsächlich gelesenen main-Einstieg. Umfang: bedingte Skill-Nutzung mit Zugriffsnachweis, Hostgrenzen, eigener Assetzustand, Vorlagen-/Mehrwinkel-/Ingameprüfung, offene Qualitätsabnahme und klare Three.js/Unreal-Grenze. Fremde laufende Art-/Runtimearbeit wurde nicht übernommen. TODO, Registry und eigene State-Zeile ergänzt; Release Train unverändert.
+
+Ausgangsbefund laut main-Lerninsel-Übergabe: grober Fuchs und fehlende Rig-/Assetproduktion, frühere Figureneinschätzung ungefähr3/10. Keine neue Gesamtprojektzahl oder erneute visuelle Abnahme. Die allgemeine Qualitätsrückmeldung wird als offener Folgepunkt gespeichert, nicht als Verbesserung verbucht.
+
+Status bei diesem Zwischencommit: Dokumentation branch_only, Integration auf main noch zu verifizieren. Geprüft werden Erhalt der bisherigen Inhalte/State-Felder, Verweise, JSON und exakte Remote-Rücklesung. Keine Produkt-, Engine-, Art-, Szenen- oder Deploymentänderungen. Keine bezahlten Aufrufe, keine neue Budgetreservierung oder neue Rekonstruktion. Chat-Link unbekannt. Kein laufender Installations-/Generierungsvorgang.
+
+Nächster konkreter Schritt: geprüfte Dokumentation nach frischem main-/DevelopmentStatus-Abgleich übernehmen und exakte main-Dateien zurücklesen; danach zuständiger Spielchat prüft einen hochwertigen repräsentativen Abschnitt.

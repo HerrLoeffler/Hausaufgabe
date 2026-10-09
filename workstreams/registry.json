@@ -499,7 +499,7 @@
     },
     {
       "id": "img2threejs-codex-install-20261009",
-      "title": "img2threejs als lokales Codex-Werkzeug",
+      "title": "img2threejs: lokales Codex-Werkzeug, Games-Zugriff und Assetqualität",
       "primaryBranch": "docs/img2threejs-codex-install-20261009",
       "integrationTarget": "main",
       "state": "integration_ready",

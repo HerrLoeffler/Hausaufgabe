@@ -1098,6 +1098,24 @@
           "cdn_cache_transfer_billable": true
         }
       }
+    },
+    {
+      "id": "img2threejs-codex-install-20261009",
+      "task_id": "GC-IMG2THREEJS-01",
+      "branch": "docs/img2threejs-codex-install-20261009",
+      "stage": "branch_only",
+      "scope": "Documentation and local tool installation; mandatory conditional img2threejs access for games plus visual quality evidence",
+      "handoff": "workstreams/img2threejs-codex-install-20261009.md",
+      "local_installation": {
+        "version": "2.0.0",
+        "path": "/Users/martin/.codex/skills/img2threejs",
+        "upstream_commit": "a669e9a97cea4452b1c2310c5cca6aa0f6657c1f",
+        "workflow_tests": 23,
+        "model_visual_acceptance": "not_performed"
+      },
+      "user_feedback": "2026-10-09: current game quality insufficient; no visual approval",
+      "next_action": "Integrate documentation on main; game owner records suitable tool use and representative asset comparison",
+      "production": "not_requested"
     }
   ],
   "deployments": [

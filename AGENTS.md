@@ -55,3 +55,8 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 - Vor längeren Tests/Wartephasen und externen Starts einen Checkpoint sichern. Nach einem externen Start dessen zurückgegebene ID zeitnah sichern. Kleine Zwischenstände gesammelt committen; keine Commit-/Actions-Schleife pro Toolaufruf.
 - Ein Verbindungsabbruch beweist weder Stop noch Erfolg. Vor Wiederholung Git-Refs, PRs, Actions, Deployment-Receipts und bei bezahlten Aufrufen Provider-Ergebnis/Kosten abgleichen. Unklares Ergebnis bleibt blockiert; Historie, Versuche und Budget erhalten.
 - Bei Übernahme aktive Schreibarbeit des alten Chats klären; auf gemeinsamem Branch nur einen schreibenden Chat. GitHub-Jobs können separat weiterlaufen und werden beobachtet statt neu gestartet.
+
+## Spiele: verfügbare 3D-Werkzeuge und Qualitätsprüfung
+- Bei Spielearbeit [img2threejs und Assetqualität](docs/games/IMG2THREEJS_AND_ASSET_QUALITY.md) lesen. Bei passenden 3D-Objekt-/Figurenaufgaben den verfügbaren img2threejs-Skill tatsächlich lesen und verwenden; bei ungeeigneter Aufgabe den anderen Weg kurz begründen.
+- Zugriff und Nutzung mit gelesener Skill-Datei, Version, ausgeführten Schritten und Ergebnis-/Renderdateien in der Aufgabenübergabe belegen. Fehlende lokale Werkzeuge offen nennen; andere Rechner/Cloud-Chats erben Martins Installation nicht.
+- Martins Hinweis vom 09.10.2026 „Qualität aktuell noch zu schlecht“ bleibt offene Qualitätsarbeit. Technische Tests oder Werkzeuginstallation ersetzen weder Vorlagenvergleich noch Prüfung im tatsächlichen Spiel und visuelle Abnahme.
