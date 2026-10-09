@@ -4,7 +4,7 @@ function normalizeMemory(raw={}) {
  return {version:1,preferences:clean(raw.preferences),history:(Array.isArray(raw.history)?raw.history:[]).filter(m=>m&&['user','assistant'].includes(m.role)).slice(-40).map(m=>({role:m.role,text:clean(m.text,1400)})),lastSearch:clean(raw.lastSearch,500)};
 }
 function words(text) {return clean(text,4000).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').match(/[a-z0-9]+/g)||[];}
-const stop=new Set('ich glaube hatte mal einen eine einem ein der die das den dem test tests quiz suche such finden finde erinnere erinnern mit und oder war drin als bild bilder ist es noch von zu fur bitte mein meine wir hatten'.split(' '));
+const stop=new Set('ich glaube hatte mal einen eine einem ein der die das den dem test tests quiz suche such finden finde erinnere erinnern mit und oder war drin als bild bilder ist es noch von zu fur bitte mein meine meinen meinem meiner wieder fruher glaub schauen gezeigt bildmotiv wir hatten find search my the a an with remember had once in it was image picture show please'.split(' '));
 function stem(w){if(/^orang/.test(w))return 'orange';if(/^(?:drach|dragon)/.test(w))return 'dragon';return w.length>5?w.replace(/(?:ern|en|er|es|e|n)$/,''):w;}
 function searchable(q){return [q.text,q.passage,q.imageAlt,q.imagePrompt,q.imageDescription,...(q.options||[]).flatMap(o=>[o.text,o.imageAlt,o.imagePrompt]),...(q.pairs||[]).flatMap(p=>[p.left,p.right])].filter(v=>typeof v==='string').join(' ');}
 async function searchOwnedTests(repo,uid,query) {

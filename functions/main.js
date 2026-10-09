@@ -248,6 +248,7 @@ const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, as
   const {uid}=await requireAiUser(request);
   const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
   const data=request.data||{}; const op=data.operation||"read";
+  if(data.accountId!==uid)throw new HttpsError("permission-denied","Das Konto wurde gewechselt.");
   if(["read","clear","preferences","remember"].includes(op)) {
     try{return await memoryOperation(db,ref,data,()=>FieldValue.serverTimestamp());}
     catch(error){throw new HttpsError("invalid-argument",op==="remember"?"Gespräch konnte nicht gespeichert werden.":"Cocos Gedächtnis ist gerade nicht erreichbar.");}
@@ -259,7 +260,6 @@ const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, as
     listOwned:async owner=>(await db.collection("quizzes").where("ownerId","==",owner).limit(101).get()).docs.map(d=>({id:d.id,...d.data()})),
     questions:async id=>(await db.collection("quizzes").doc(id).collection("questions").limit(250).get()).docs.map(d=>d.data())
   },uid,query);
-  await ref.set({lastSearch:query,updatedAt:FieldValue.serverTimestamp()},{merge:true});
   return result;
 });
 

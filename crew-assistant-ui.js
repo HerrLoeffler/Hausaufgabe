@@ -166,10 +166,11 @@ async function callCrewAi(payload) {
   return result.data || {};
 }
 
-async function support(operation,extra={}) {
+async function support(operation,extra={},expectedUid=memoryUid) {
   const uid=getAuth(getApp()).currentUser?.uid;
   if(!uid)throw new Error("Bitte melde dich zuerst an.");
-  const result=await httpsCallable(getFunctions(getApp(),"europe-west1"),"cocoSupport",{timeout:90000})({operation,...extra});
+  if(expectedUid!==uid)throw new Error("Das Konto wurde gewechselt.");
+  const result=await httpsCallable(getFunctions(getApp(),"europe-west1"),"cocoSupport",{timeout:90000})({operation,...extra,accountId:expectedUid});
   if(getAuth(getApp()).currentUser?.uid!==uid)throw new Error("Das Konto wurde gewechselt.");
   return result.data||{};
 }
@@ -178,7 +179,7 @@ function rememberTurn(messages,uid) {
   const turnId=crypto.randomUUID();
   memoryQueue=memoryQueue.catch(()=>{}).then(async()=>{
     if(getAuth(getApp()).currentUser?.uid!==uid)return;
-    await support("remember",{messages,turnId});
+    await support("remember",{messages,turnId},uid);
   }).catch(()=>{if(getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Deine bisherigen Erinnerungen bleiben erhalten.");});
 }
 async function showMemory() {
@@ -187,8 +188,8 @@ async function showMemory() {
   const label=document.createElement("label");label.textContent="Cocos dauerhaft gespeicherte Vorlieben";
   const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
   const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
-  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{await support("preferences",{preferences:input.value});info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
-  const clear=document.createElement("button");clear.type="button";clear.textContent="Alle Erinnerungen löschen";clear.onclick=async()=>{clear.disabled=true;try{await memoryQueue;await support("clear");conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
+  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{await support("preferences",{preferences:input.value},uid);info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Alle Erinnerungen löschen";clear.onclick=async()=>{clear.disabled=true;const epoch=++requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");await support("clear",{},uid);if(epoch!==requestEpoch)return;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}};
   holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
 }
 async function searchTests(query,epoch) {
@@ -243,7 +244,7 @@ async function sendCurrentMessage() {
     if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read");const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}await support("preferences",{preferences});addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
     if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {persistTurn=false;await showMemory();return;}
     const prior=conversation.filter(m=>m.role==="user").slice(-3).map(m=>m.text).join(" ");
-    if(/(?:such|find|erinner|hatte|drache|bild|motiv)/i.test(text)&&/(?:test|quiz|drache|bild|motiv)/i.test(prior)) {pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(/(?:drache|dragon)/i.test(text)?text:prior,epoch);return;}
+    if(/(?:such|find|erinner|hatte|drache|bild|motiv)/i.test(text)&&/(?:test|quiz|drache|bild|motiv)/i.test(prior)) {pending=addMessage("assistant pending","Ich durchsuche deine Tests …");await searchTests(/(?:such|find|test|quiz|drache|dragon|katze|cat)/i.test(text)?text:prior,epoch);return;}
 
     const local=resolveLocalCrewRequest({crewId:"coco",text,context,locale:currentUiLocale()});
     if (local.handled) {
