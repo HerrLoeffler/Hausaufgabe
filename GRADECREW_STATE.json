@@ -1103,7 +1103,7 @@
       "id": "img2threejs-codex-install-20261009",
       "task_id": "GC-IMG2THREEJS-01",
       "branch": "docs/img2threejs-codex-install-20261009",
-      "stage": "branch_only",
+      "stage": "integrated",
       "scope": "Documentation and local tool installation; mandatory conditional img2threejs access for games plus visual quality evidence",
       "handoff": "workstreams/img2threejs-codex-install-20261009.md",
       "local_installation": {
@@ -1114,8 +1114,10 @@
         "model_visual_acceptance": "not_performed"
       },
       "user_feedback": "2026-10-09: current game quality insufficient; no visual approval",
-      "next_action": "Integrate documentation on main; game owner records suitable tool use and representative asset comparison",
-      "production": "not_requested"
+      "next_action": "Responsible game chat reads main guide and records actual skill access/use or justified alternative; asset visual acceptance remains open",
+      "production": "not_requested",
+      "integration": "Documentation verified on main",
+      "documentation_source_commit": "3ee4f71bcb970348fe410d98a4ba221f96226cd3"
     }
   ],
   "deployments": [

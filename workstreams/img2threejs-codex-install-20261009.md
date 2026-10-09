@@ -76,3 +76,5 @@ Status bei diesem Zwischencommit: Dokumentation branch_only, Integration auf mai
 Nächster konkreter Schritt: geprüfte Dokumentation nach frischem main-/DevelopmentStatus-Abgleich übernehmen und exakte main-Dateien zurücklesen; danach zuständiger Spielchat prüft einen hochwertigen repräsentativen Abschnitt.
 
 Vor Integration main erneut gelesen: dc52bf88bc9c4a161e1327e081698e7f6cf9f04a. Seit dem ersten Abgleich wurde nur eine fremde Canonical-Staging-Request-Datei ergänzt; diese bleibt vollständig erhalten. Neuer Development-Status-Run37919922565 erfolgreich am aktuellen main. Keine Überschneidung der sechs Dokumentationsdateien mit dieser Änderung.
+
+Integration belegt: main auf 3ee4f71bcb970348fe410d98a4ba221f96226cd3 normal fast-forward aktualisiert; AGENTS.md und Werkzeug-/Qualitätsregel exakt auf main zurückgelesen. Dokumentationsstufe integrated; keine visuelle Qualitätsfreigabe, kein Produktdeploy. Statusfelder werden mit diesem Nachweis aktualisiert. Nächster konkreter Schritt: zuständiger Spielechat liest die aktuelle main-Regel und prüft ein repräsentatives Asset mit Nutzungs- und Bildnachweisen.

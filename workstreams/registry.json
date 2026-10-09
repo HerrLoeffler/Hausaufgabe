@@ -502,7 +502,7 @@
       "title": "img2threejs: lokales Codex-Werkzeug, Games-Zugriff und Assetqualität",
       "primaryBranch": "docs/img2threejs-codex-install-20261009",
       "integrationTarget": "main",
-      "state": "integration_ready",
+      "state": "integrated",
       "handoff": "workstreams/img2threejs-codex-install-20261009.md",
       "relatedBranches": []
     }
