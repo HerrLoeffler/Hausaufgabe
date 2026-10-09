@@ -213,7 +213,8 @@ function normalizeQuestion(q) {
   copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p?.left), right: normalizeText(p?.right) })) : [];
   copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];
   if (copy.type === "ordering") {
-    copy.acceptedOrders = Array.isArray(copy.acceptedOrders) ? copy.acceptedOrders : [];
+    copy.acceptedOrders = (Array.isArray(copy.acceptedOrders) ? copy.acceptedOrders : [])
+      .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray);
     copy.manualReview = copy.manualReview === true || isSentenceOrder(copy.text);
   }
   copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g?.name), items: Array.isArray(g?.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];

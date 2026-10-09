@@ -17,3 +17,11 @@ Martins Folgeauftrag vom 09.10.2026 autorisiert Fehlerbehebung, technische Prüf
 4. Erst danach beide Audiofreigaben für das verifizierte Staging-Projekt öffnen. Production bleibt unabhängig geschlossen. Echte Nur-Hören-/Audioantwort-Teststarts und Lehrer-Veröffentlichen/Enden erneut prüfen.
 
 Lokale Design-/Mehrfarbenänderungen liegen separat in `gradecrew-web-repair-integration` und bleiben erhalten. Dort ist bereits der eng begrenzte Veröffentlichungsschalter-Fix aktiv; kein ganzer Staging-Checkout über das Design kopiert. Keine vollständige Geräte-, Last- oder Production-Abnahme aus Emulatorzahlen ableiten.
+
+## Reproduzierter Speicherfehler
+
+Backend-Deploy `37919465218` ist erfolgreich, AI-Receipt `11611441210`, Assessment-Receipt `11610054368` für `951e499`. Einzelner echter Schülerstart im synthetischen Test liefert Referenz `ASM-74d98788-80bd-4cda-a2c6-2fa315b93abb`, Logzeit 10:49:52 UTC, Revision `startassessmentattempt-00029-gag`, Backendcode **3 / INVALID_ARGUMENT**. Sicherer Logger funktioniert ohne privaten Fehlertext.
+
+Der echte Firestore-Web-SDK-Parser reproduziert die Ablehnung `Nested arrays are not supported`: `buildGradingKey` erzeugte für jede Reihenfolgeaufgabe (auch ohne Zusatzvarianten) eine Liste direkt verschachtelter Listen, die als privater Bewertungsdatensatz gespeichert wurde. Zusätzlich betroffen waren nichtleere Zusatzvarianten in KI-/manuellen Aufgabenspeicherungen und Feedback-Snapshots. Der neue Speichertest war hierfür vorher rot.
+
+Korrektur: private Lösungsschlüssel speichern Reihenfolgen in `{ids:[...]}`-Datensätzen, Autorenvarianten in `{indices:[...]}`. Alle betroffenen Lesewege normalisieren gespeicherte Datensätze und ältere Listen; transienter KI-Schema-/Promptvertrag bleibt unverändert. Bewertungsvarianten, Teilpunkte und Autor-Fingerprint bleiben erhalten. Der echte SDK-Parser akzeptiert nach der Änderung privaten Schlüssel, generierte/manuelle Aufgaben und Feedback. Ein zusätzlicher echter Emulatorfall startet und bewertet primäre und alternative Reihenfolgen; dessen exakte CI steht noch aus. Erst den gleichen Staging-Start nach neuem Backenddeploy erfolgreich belegen, bevor der ursprüngliche Livefehler als behoben gilt.

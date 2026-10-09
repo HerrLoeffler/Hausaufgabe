@@ -254,7 +254,8 @@ function buildGradingKey(question, secret) {
   } else if (type === "ordering") {
     const length = Array.isArray(question.items) ? question.items.length : 0;
     const primary = Array.from({ length }, (_, index) => index);
-    const extras = Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [];
+    const extras = (Array.isArray(question.acceptedOrders) ? question.acceptedOrders : [])
+      .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray);
     const seen = new Set();
     key.acceptedOrders = [primary, ...extras]
       .filter(order => Array.isArray(order) && order.length === length && new Set(order).size === length && order.every(index => Number.isInteger(index) && index >= 0 && index < length))
@@ -264,7 +265,7 @@ function buildGradingKey(question, secret) {
         seen.add(marker);
         return true;
       })
-      .map(order => order.map(index => opaqueId(secret, question.id, "ordering-item", index)));
+      .map(order => ({ ids: order.map(index => opaqueId(secret, question.id, "ordering-item", index)) }));
   } else if (type === "grouping") {
     const groups = Array.isArray(question.groups) ? question.groups.slice(0, 20) : [];
     key.assignments = [];
@@ -308,7 +309,8 @@ function fingerprintQuestion(question) {
     correctBoolean: question?.correctBoolean === true,
     pairs: Array.isArray(question?.pairs) ? question.pairs.map(pair => ({ left: String(pair?.left || ""), right: String(pair?.right || "") })) : [],
     items: Array.isArray(question?.items) ? question.items.map(String) : [],
-    acceptedOrders: Array.isArray(question?.acceptedOrders) ? question.acceptedOrders : [],
+    acceptedOrders: (Array.isArray(question?.acceptedOrders) ? question.acceptedOrders : [])
+      .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray),
     groups: Array.isArray(question?.groups) ? question.groups.map(group => ({ name: String(group?.name || ""), items: Array.isArray(group?.items) ? group.items.map(String) : [] })) : [],
     passage: String(question?.passage || ""),
     targetWords: Array.isArray(question?.targetWords) ? question.targetWords.map(String) : []
@@ -405,7 +407,8 @@ function gradeQuestion(key, given) {
   }
   if (type === "ordering") {
     const values = Array.isArray(given) ? given.map(String) : [];
-    const orders = Array.isArray(key.acceptedOrders) ? key.acceptedOrders : [];
+    const orders = (Array.isArray(key.acceptedOrders) ? key.acceptedOrders : [])
+      .map(order => Array.isArray(order) ? order : order?.ids).filter(Array.isArray);
     const length = orders[0]?.length || 0;
     const best = Math.max(0, ...orders.map(order => order.reduce((count, id, index) => count + (values[index] === id ? 1 : 0), 0)));
     const awarded = round1((length ? best / length : 0) * max);

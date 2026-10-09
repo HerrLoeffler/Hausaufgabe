@@ -13,7 +13,7 @@ const { initializeApp, deleteApp } = requireAssessment("firebase-admin/app");
 const { getFirestore } = requireAssessment("firebase-admin/firestore");
 const app = initializeApp({ projectId: "demo-gradecrew-secure" });
 const db = getFirestore(app);
-const { startAssessmentAttempt } = requireAssessment("./lib/secure-lifecycle");
+const { startAssessmentAttempt, submitAssessmentAttempt } = requireAssessment("./lib/secure-lifecycle");
 const token = "A".repeat(43);
 
 after(async () => { await db.terminate(); await deleteApp(app); });
@@ -80,4 +80,19 @@ test("failed question validation rolls back quota and both attempt documents", a
   assert.equal((await f.quota.get()).data().count, 249);
   assert.equal((await f.quiz.collection("attempts").get()).size, 0);
   assert.equal((await db.collection("assessmentPrivate").where("quizId", "==", "STARTEMPTY").get()).size, 0);
+});
+
+test("ordering assessments persist their grading key and award primary and alternative orders", async () => {
+  const f = await seed("STARTORDER");
+  await f.quiz.collection("questions").doc("q1").set({ id: "q1", position: 1, type: "ordering", text: "Order the steps",
+    points: 1, items: ["one", "two", "three"], acceptedOrders: [{ indices: [2, 1, 0] }] });
+  for (const [name, values] of [["primary", ["one", "two", "three"]], ["alternative", ["three", "two", "one"]]]) {
+    const started = await f.start(name);
+    const options = new Map(started.paper[0].items.map(item => [item.text, item.id]));
+    const submitted = await submitAssessmentAttempt.run({ data: { quizId: "STARTORDER", attemptId: started.attemptId,
+      attemptToken: token, answers: { q1: values.map(value => options.get(value)) } }, rawRequest: { ip: "127.0.0.1" } });
+    assert.equal(submitted.receipt.totalPoints, 1);
+    assert.equal(submitted.receipt.maxPoints, 1);
+    assert.doesNotMatch(JSON.stringify(started.paper), /acceptedOrders|gradingKey/);
+  }
 });

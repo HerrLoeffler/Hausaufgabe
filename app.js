@@ -39,7 +39,7 @@ import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
 import { createAiClient } from "./ai-client.js?v=2.3.1-gc2";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
-import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview } from "./ordering-grading.mjs?v=2.3.1-gc2";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
 import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
@@ -2994,7 +2994,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
     const items = looseField(raw, ["items", "steps", "order", "elements", "reihenfolge"], []);
     q.items = Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : q.items;
     const extraOrders = looseField(raw, ["acceptedOrders", "alternativeOrders"], []);
-    q.acceptedOrders = Array.isArray(extraOrders) ? extraOrders.filter(order => validOrder(order, q.items.length)) : [];
+    q.acceptedOrders = orderingVariants(extraOrders).filter(order => validOrder(order, q.items.length));
     q.manualReview = orderingNeedsReview({ ...q, manualReview: raw.manualReview === true });
     if (q.items.length < 2) pushUnique(report.warnings, `Aufgabe ${index + 1}: Für eine Reihenfolge werden mindestens zwei Elemente benötigt.`);
     if (q.manualReview) pushUnique(report.warnings, `Aufgabe ${index + 1}: Satzbau kann mehrere richtige Reihenfolgen haben. Ergänze Varianten und prüfe die Antworten manuell.`);
@@ -3432,7 +3432,7 @@ function initializeTypeData(q, type) {
   if (type === "matching") q.pairs = q.pairs?.length ? q.pairs : [{ left: "", right: "" }, { left: "", right: "" }];
   if (type === "ordering") {
     q.items = q.items?.length ? q.items : ["", ""];
-    q.acceptedOrders = Array.isArray(q.acceptedOrders) ? q.acceptedOrders : [];
+    q.acceptedOrders = orderingVariants(q.acceptedOrders);
   }
   if (type === "grouping") q.groups = q.groups?.length ? q.groups : [{ name: "Kategorie 1", items: [] }, { name: "Kategorie 2", items: [] }];
   if (type === "markwords") {
@@ -3753,7 +3753,7 @@ function aiQuestionFeedbackSnapshot(q) {
     correctBoolean: q.type === "truefalse" ? q.correctBoolean : null,
     pairs: (q.pairs || []).slice(0, 15).map(pair => ({ left: String(pair.left).slice(0, 180), right: String(pair.right).slice(0, 180) })),
     items: (q.items || []).slice(0, 20).map(item => String(item).slice(0, 180)),
-    acceptedOrders: (q.acceptedOrders || []).slice(0, 12).map(order => order.slice(0, 20)),
+    acceptedOrders: orderingVariantsForStorage(orderingVariants(q.acceptedOrders).slice(0, 12).map(order => order.slice(0, 20))),
     groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
     targetWords: (q.targetWords || []).slice(0, 30),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
@@ -5564,7 +5564,7 @@ function sanitizeQuestionForSave(q) {
   if (q.type === "matching") base.pairs = (q.pairs || []).map((p) => ({ left: String(p.left || "").trim(), right: String(p.right || "").trim() }));
   if (q.type === "ordering") {
     base.items = (q.items || []).map((x) => String(x).trim());
-    base.acceptedOrders = (q.acceptedOrders || []).filter(order => validOrder(order, base.items.length));
+    base.acceptedOrders = orderingVariantsForStorage(orderingVariants(q.acceptedOrders).filter(order => validOrder(order, base.items.length)));
     base.manualReview = orderingNeedsReview(q);
   }
   if (q.type === "grouping") base.groups = (q.groups || []).map((g) => ({ name: String(g.name || "").trim(), items: (g.items || []).map((x) => String(x).trim()).filter(Boolean) }));
