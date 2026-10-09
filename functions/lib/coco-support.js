@@ -14,10 +14,23 @@ async function searchOwnedTests(repo,uid,query) {
  const checked=quizzes.filter(q=>!q.isDeleted&&!q.rightsHold).slice(0,100);
  for(let i=0;i<checked.length;i+=4)await Promise.all(checked.slice(i,i+4).map(async q=>{
   try{const questions=await repo.questions(q.id);const title=[q.title,q.subject,q.grade].join(' ');let hit=null;
-   for(const item of questions){if((item.imageUrl||item.imageSrc)&&!item.imageAlt&&!item.imagePrompt&&!item.imageDescription)unindexedImages++;const text=searchable(item);const tokens=words(title+' '+text).map(stem);if(terms.every(t=>tokens.some(w=>w===t||w.startsWith(t)))){hit={text:clean(item.text||item.passage,180),imageUrl:clean(item.imageUrl||item.imageSrc,1800)};break;}}
+   for(const item of questions){if((item.imageUrl||item.imageSrc||item.imageDataUrl)&&(!item.imageAlt||item.imageAlt==="Abbildung zur Aufgabe")&&!item.imagePrompt&&!item.imageDescription)unindexedImages++;const text=searchable(item);const tokens=words(title+' '+text).map(stem);if(terms.every(t=>tokens.some(w=>w===t||w.startsWith(t)))){hit={text:clean([item.imageAlt,item.text||item.passage].filter(Boolean).join(" · "),220),imageUrl:(item.imageDataUrl&&item.imageDataUrl.length<=400000)?item.imageDataUrl:clean(item.imageUrl||item.imageSrc,1800)};break;}}
    if(hit||terms.every(t=>words(title).map(stem).includes(t)))matches.push({id:q.id,title:clean(q.title,200)||'Unbenannter Test',subject:clean(q.subject,80),grade:clean(q.grade,80),evidence:hit?.text||'Titel oder Fach passt.',imageUrl:hit?.imageUrl||''});
   }catch(_){failures++;}
  }));
  return {matches:matches.sort((a,b)=>a.title.localeCompare(b.title)).slice(0,12),unindexedImages,failures,checked:checked.length,truncated:quizzes.length>100};
 }
-module.exports={normalizeMemory,searchOwnedTests};
+async function memoryOperation(db,ref,data,stamp) {
+ const op=data.operation||"read";
+ if(op==="read")return normalizeMemory((await ref.get()).data());
+ if(op==="clear"){await ref.delete();return normalizeMemory();}
+ if(op==="preferences"){const preferences=normalizeMemory(data).preferences;await ref.set({preferences,updatedAt:stamp()},{merge:true});return {preferences};}
+ if(op!=="remember")throw new Error("Unbekannte Gedächtnisaktion.");
+ const turnId=String(data.turnId||"").slice(0,100);
+ if(!/^[a-zA-Z0-9_-]{8,100}$/.test(turnId))throw new Error("Ungültiger Gesprächsschritt.");
+ const messages=normalizeMemory({history:data.messages}).history.slice(-2);
+ await db.runTransaction(async tx=>{const old=(await tx.get(ref)).data()||{};const ids=Array.isArray(old.turnIds)?old.turnIds:[];if(ids.includes(turnId))return;
+ tx.set(ref,{...normalizeMemory({...old,history:[...(old.history||[]),...messages]}),turnIds:[...ids,turnId].slice(-80),updatedAt:stamp()});});
+ return {saved:true};
+}
+module.exports={normalizeMemory,searchOwnedTests,memoryOperation};

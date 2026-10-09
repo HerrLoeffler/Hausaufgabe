@@ -243,21 +243,14 @@ const cleanupCrewTelemetry = onSchedule({
   console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
-const { normalizeMemory, searchOwnedTests } = require("./lib/coco-support");
+const { normalizeMemory, searchOwnedTests, memoryOperation } = require("./lib/coco-support");
 const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, async request => {
   const {uid}=await requireAiUser(request);
   const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
   const data=request.data||{}; const op=data.operation||"read";
-  if(op==="read") return normalizeMemory((await ref.get()).data());
-  if(op==="clear") {await ref.delete();return normalizeMemory();}
-  if(op==="preferences") {const preferences=normalizeMemory(data).preferences;await ref.set({preferences,updatedAt:FieldValue.serverTimestamp()},{merge:true});return {preferences};}
-  if(op==="remember") {
-    const messages=normalizeMemory({history:data.messages}).history.slice(-2);
-    const turnId=String(data.turnId||"").slice(0,100);
-    if(!/^[a-zA-Z0-9_-]{8,100}$/.test(turnId)) throw new HttpsError("invalid-argument","Ungültiger Gesprächsschritt.");
-    await db.runTransaction(async tx=>{const snap=await tx.get(ref);const old=snap.data()||{};const ids=Array.isArray(old.turnIds)?old.turnIds:[];if(ids.includes(turnId))return;
-      tx.set(ref,{...normalizeMemory({...old,history:[...(old.history||[]),...messages]}),turnIds:[...ids,turnId].slice(-80),updatedAt:FieldValue.serverTimestamp()});});
-    return {saved:true};
+  if(["read","clear","preferences","remember"].includes(op)) {
+    try{return await memoryOperation(db,ref,data,()=>FieldValue.serverTimestamp());}
+    catch(error){throw new HttpsError("invalid-argument",op==="remember"?"Gespräch konnte nicht gespeichert werden.":"Cocos Gedächtnis ist gerade nicht erreichbar.");}
   }
   if(op!=="search") throw new HttpsError("invalid-argument","Unbekannte Coco-Aktion.");
   await consumeQuota(uid,"assistant");

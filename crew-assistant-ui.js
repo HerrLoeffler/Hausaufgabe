@@ -195,7 +195,7 @@ async function searchTests(query,epoch) {
   const r=await support("search",{query});if(epoch!==requestEpoch)return;
   addMessage("assistant",r.matches.length?`Ich habe ${r.matches.length} passende Tests gefunden.`:`Ich habe keinen passenden Treffer in den gespeicherten Texten und Bildbeschreibungen gefunden.${r.unindexedImages?" Einige ältere Bilder haben noch keine Motivbeschreibung.":""}${r.failures?" Einige Tests konnten gerade nicht geprüft werden.":""}${r.truncated?" Die Suche war auf die ersten 100 Tests begrenzt.":""}`);
   for(const q of r.matches){const card=document.createElement("div");card.className="gcCrewMsg assistant";const title=document.createElement("strong");title.textContent=q.title;const evidence=document.createElement("p");evidence.textContent=q.evidence;
-    if(/^https:\/\//.test(q.imageUrl)){const img=document.createElement("img");img.src=q.imageUrl;img.alt="Bild aus dem gefundenen Test";img.style.cssText="max-width:100%;max-height:100px;object-fit:contain";card.append(img);}
+    if(/^(?:https:\/\/|data:image\/(?:png|jpeg|webp);base64,)/.test(q.imageUrl)){const img=document.createElement("img");img.src=q.imageUrl;img.alt="Bild aus dem gefundenen Test";img.style.cssText="max-width:100%;max-height:100px;object-fit:contain";card.append(img);}
     const button=document.createElement("button");button.type="button";button.textContent="Test öffnen";button.onclick=()=>{if(epoch===requestEpoch)void applyGuideAction({type:"choose_editor",quizId:q.id},epoch);};card.append(title,evidence,button);$("gcCrewMessages").append(card);}
 }
 function installDurableMemory() {
