@@ -25,6 +25,15 @@ test("turning off an active publication uses the safe end lifecycle instead of r
 });
 
 const appSource = fs.readFileSync("app.js", "utf8");
+test("frontend audio publication opens for verified Staging, while other projects stay closed", () => {
+  const start = appSource.indexOf('const SECURE_AUDIO_PUBLICATION_ENABLED =');
+  const code = appSource.slice(start, appSource.indexOf('const app =', start));
+  for (const projectId of ['hausaufgabe-staging', 'hausaufgabe-40294', 'unknown']) {
+    const context = { firebaseConfig: { projectId }, isSecureAudioPublicationBlocked: secureAudioPublicationBlocked };
+    const blocked = vm.runInNewContext(code + '\nsecureAudioPublicationBlocked({requiresSecureAssessmentRules: true});', context);
+    assert.equal(blocked, projectId !== 'hausaufgabe-staging');
+  }
+});
 function publicationHarness(questions, { failRead = false } = {}) {
   const writes = [];
   const context = { state: { quizzes: [{ id: "TEST", published: false, ended: true }] }, db: {},

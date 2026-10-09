@@ -117,7 +117,7 @@ if (publicTestCode && !teacherPreview) {
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
-    await import("./app.js?v=2.3.1-gc29-audio-lifecycle1");
+    await import("./app.js?v=2.3.1-gc30-secure-audio1");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);
