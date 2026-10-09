@@ -19,3 +19,4 @@ test('account memory survives service reload, preserves preferences, deduplicate
 test('English motif and embedded generated image are found without leaking solutions',async()=>{
  const image='data:image/webp;base64,YWJj';const r=await searchOwnedTests({listOwned:async()=>[{id:'Q',title:'Deutsch'}],questions:async()=>[{text:'Ein Tier',imageAlt:'Ein orangener Drache',imageDataUrl:image,correctBoolean:true}]},'u','orange dragon');assert.equal(r.matches[0].imageUrl,image);assert.ok(!JSON.stringify(r).includes('correctBoolean'));
 });
+test('stored ID cannot redirect an owned quiz to another account document',()=>{const {ownedQuizRecord}=require('../lib/coco-support');const row=ownedQuizRecord({id:'owned-document',data:()=>({id:'foreign-document',ownerId:'alice',title:'My test'})});assert.equal(row.id,'owned-document');});

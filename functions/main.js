@@ -243,7 +243,7 @@ const cleanupCrewTelemetry = onSchedule({
   console.log("Crew-Telemetrie-Retention abgeschlossen.", result);
 });
 
-const { normalizeMemory, searchOwnedTests, memoryOperation } = require("./lib/coco-support");
+const { normalizeMemory, searchOwnedTests, memoryOperation, ownedQuizRecord } = require("./lib/coco-support");
 const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, async request => {
   const {uid}=await requireAiUser(request);
   const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
@@ -257,7 +257,7 @@ const cocoSupport = onCall({region:REGION,timeoutSeconds:90,memory:"256MiB"}, as
   await consumeQuota(uid,"assistant");
   const query=String(data.query||"").slice(0,500);
   const result=await searchOwnedTests({
-    listOwned:async owner=>(await db.collection("quizzes").where("ownerId","==",owner).limit(101).get()).docs.map(d=>({id:d.id,...d.data()})),
+    listOwned:async owner=>(await db.collection("quizzes").where("ownerId","==",owner).limit(101).get()).docs.map(ownedQuizRecord),
     questions:async id=>(await db.collection("quizzes").doc(id).collection("questions").limit(250).get()).docs.map(d=>d.data())
   },uid,query);
   return result;

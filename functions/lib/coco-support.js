@@ -33,4 +33,5 @@ async function memoryOperation(db,ref,data,stamp) {
  tx.set(ref,{...normalizeMemory({...old,history:[...(old.history||[]),...messages]}),turnIds:[...ids,turnId].slice(-80),updatedAt:stamp()});});
  return {saved:true};
 }
-module.exports={normalizeMemory,searchOwnedTests,memoryOperation};
+function ownedQuizRecord(snapshot){return {...snapshot.data(),id:snapshot.id};}
+module.exports={normalizeMemory,searchOwnedTests,memoryOperation,ownedQuizRecord};
