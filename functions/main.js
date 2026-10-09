@@ -275,7 +275,7 @@ const crewAssistant = onCall(assistantOpts, async request => {
   const memory=normalizeMemory((await getFirestore().collection("cocoMemory").doc(uid).get()).data());
   clean.context.memory={preferences:memory.preferences,lastSearch:memory.lastSearch,history:memory.history.slice(-12)};
   const quizId=String(request.data?.context?.quizId||"").slice(0,40);
-  if(/^[a-zA-Z0-9_-]{4,40}$/.test(quizId)) {
+  if(["editorView","resultsView"].includes(clean.context.screen)&&/^[a-zA-Z0-9_-]{4,40}$/.test(quizId)) {
     const quiz=await getFirestore().collection("quizzes").doc(quizId).get();const q=quiz.data();
     if(q?.ownerId===uid&&!q.isDeleted&&!q.rightsHold) clean.context.currentTest={id:quizId,title:q.title||"",questionCount:q.questionCount||0,published:q.published===true,ended:q.ended===true,audioReady:q.audioReady===true};
   }
