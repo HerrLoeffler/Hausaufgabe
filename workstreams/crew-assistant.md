@@ -47,3 +47,6 @@ V1 has push-to-dictate only where the browser exposes speech recognition. This i
 - Do not auto-cache AI replies containing user/test context.
 - Do not store raw audio by default.
 - Do not let assistant output directly publish, delete, share or grade real submissions without a separately designed confirmation/authorization flow.
+
+
+09.10.2026 · Nutzerfall: Coco findet früheren Test anhand „oranger Drache als Bild“ nicht und antwortet nurNavigation. Aktuellerlokalercrew-assistant.js sanitisiertnurScreen,AIForm,letzte6Nachrichten,lastCrew; Aktionsschema enthältNavigation/Editorwahl,keineTestinhalt-/Bildsuche. DasistbelegteFunktionslücke,keinBeweisfürschlechtesModelloderCachetreffer. EmpfohleneErweiterung zurEntscheidung: serverseitigberechtigteSucheineigenen/geteiltenzugänglichenTests überTitel,Aufgabentext,Bildprompt/Bildbeschreibung; aktuelleFehler/Bearbeitungsstände; editier-/löschbareNutzerpräferenzen; längererzielgerichteterGesprächskontext; echteTrefferkarten stattpauschalerNavigation. BestehendeBilderohneMetadaten brauchenBeschreibung/nachträglicheIndexierung. ErstSucheundNachweise,dannLangzeitgedächtnis; keinFineTuningalsVoraussetzung. KeineImplementierung/API-/Deploykosten gestartet. IndividuelleSchülerdatenundfremdeKonten nichtpauschaloffenlegen. NächsterSchritt Such-/KontextentwurfmitkonkretemDrachenfall abstimmen.
