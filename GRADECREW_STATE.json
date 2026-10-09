@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07 01:57:52 UTC",
+  "observed_at": "2026-10-09 15:10 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "ea7def2f691021fd06f99085a5de51c6a6b935e4",
+    "observed_integration_head": "6ee594b6e733720e21ed683f5f044d7354d63b3a",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -55,22 +55,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success37687543142_commit_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+      "combined_ci": "success37948062983_commit_6ee594b6e733720e21ed683f5f044d7354d63b3a",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success37687715280_receipt_11510939538",
-      "staging_functions": "success37687715188_receipt_11511379079",
-      "staging_rules": "not_deployed_for_bugops_v1_not_required_client_incidents_server_only",
+      "hosting_preview": "success37948212494_receipt_11624414211",
+      "staging_functions": "success37948212670_receipt_11623689674",
+      "staging_rules": "secure_rules_live_verified_8_anonymous_probes_HTTP403_20261009",
       "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
       "user_acceptance": "pending_for_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "production": "not_requested",
-      "staging_assessment_functions": "success37687715188_receipt_11511717783",
-      "audio_v2_user_acceptance": "not_verified; new_private_modes_draft_only",
-      "canonical_hosting": "success37688108976_receipt_11511808010"
+      "staging_assessment_functions": "success37948212670_receipt_11623909564",
+      "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
+      "canonical_hosting": "success37948608081_receipt_11624403965"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 127,
-    "important": "PR172 local design/compact annotation batch canonically deployed with exact Hosting hashes and both backend receipts. Own visual-feedback author-filtered backlog is separate from general notes and technical checks. Local-only standalone notes not silently imported. Browser visual acceptance pending. Production unchanged.",
-    "next_action": "Martin reloads canonical staging and opens Administration → Feedback → Screenshot-Fehler; confirm actual existing frame notes. Preview-page proposal remains idea only.",
+    "preview_verified_files": 131,
+    "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate.",
+    "next_action": "Specific publishing/audio defect repaired. User reloads existing page once; remaining physical-device and full Gate E acceptance stay in security workstream.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -127,9 +127,33 @@
       "candidate_ci": 37693545201,
       "merge_ci": 37693716864,
       "nine_notes_recovery": "not_confirmed",
-      "production": "unchanged"
+      "production": "unchanged",
+      "publication_audio_followup": {
+        "task_ids": [
+          "GC-WEB-REPAIR-20261007",
+          "GC-SECURITY-02"
+        ],
+        "stage": "staging_deployed",
+        "included_prs": [
+          176,
+          177,
+          178
+        ],
+        "commit": "6ee594b6e733720e21ed683f5f044d7354d63b3a",
+        "candidate_ci": 37947233778,
+        "merge_ci": 37948062983,
+        "preview_run": 37948212494,
+        "functions_run": 37948212670,
+        "canonical_run": 37948608081,
+        "canonical_receipt": 11624403965,
+        "verified": "Local publish; Staging off/on; synthetic 29-question private-audio start/resume; 30 participants 11 types; eight live access-denial probes",
+        "full_gate_e_verified": false,
+        "user_acceptance": "not_required_for_technical_repair; broader_device_acceptance_pending",
+        "production": "unchanged",
+        "handoff": "workstreams/security-audio-release-20261009.md"
+      }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-visual-backlog-20261007-c475d0e7.json",
+    "canonical_request": "automation/canonical-staging-requests/gc-audio-release-20261009-6ee594b6.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -496,10 +520,11 @@
       "id": "security",
       "branch": "feature/secure-assessment-v1",
       "observed_head": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
-      "stage": "branch_only",
-      "staging": "status_recheck_required",
-      "user_test": "30_participant_failure_unresolved",
-      "next_action": "Fehlernachweis/Logs des 30-Teilnehmer-Tests zuordnen und Security-Gates abschließen."
+      "stage": "staging_deployed",
+      "staging": "secure_rules_and_functions_active; narrow_private_audio_gate_enabled_only_staging",
+      "user_test": "30_participant_incident_resolved; full_gate_e_physical_device_maximum_payload_sustained_load_pending",
+      "next_action": "Broader security gates remain separate; publishing/audio-start defect resolved with live positive and negative checks.",
+      "handoff": "workstreams/security-audio-release-20261009.md"
     },
     {
       "id": "ios-design",
