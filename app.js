@@ -1,4 +1,4 @@
-const APP_VERSION = "2.3.1-gc29";
+const APP_VERSION = "2.3.1-gc30";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -60,8 +60,8 @@ let adminFeedbackCursor = null;
 let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
-// Enable only after the deployed Firestore rules are verified to hide authored questions.
-const SECURE_AUDIO_PUBLICATION_ENABLED = false;
+// Staging rules verified to deny authored/private reads and forged writes on 2026-10-09.
+const SECURE_AUDIO_PUBLICATION_ENABLED = firebaseConfig.projectId === "hausaufgabe-staging";
 const secureAudioPublicationBlocked = (quiz, questions = []) =>
   isSecureAudioPublicationBlocked(quiz, questions, SECURE_AUDIO_PUBLICATION_ENABLED);
 const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder Nur-Hören-Aufgaben. Die sichere Schülerfreigabe ist noch nicht geprüft. Verwende vorerst ergänzendes Audio mit sichtbarem Fragetext.";
