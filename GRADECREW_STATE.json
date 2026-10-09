@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-09 15:10 UTC",
+  "observed_at": "2026-10-09 20:24 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "6ee594b6e733720e21ed683f5f044d7354d63b3a",
+    "observed_integration_head": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -38,7 +38,8 @@
       "hero-guest-tour-20261006",
       "web-repair-20261007",
       "gc-web-polish-20261007",
-      "review-mode-20261007"
+      "review-mode-20261007",
+      "coco-support-memory-20261009"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -55,22 +56,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success37948062983_commit_6ee594b6e733720e21ed683f5f044d7354d63b3a",
+      "combined_ci": "success37985594616_commit_c3a5fdcfb949bc0de23295a549388c23cf7655e6",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success37948212494_receipt_11624414211",
-      "staging_functions": "success37948212670_receipt_11623689674",
+      "hosting_preview": "success37985751663_receipt_11643695405",
+      "staging_functions": "success37985751577_receipt_11642334706",
       "staging_rules": "secure_rules_live_verified_8_anonymous_probes_HTTP403_20261009",
       "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
       "user_acceptance": "pending_for_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
       "production": "not_requested",
-      "staging_assessment_functions": "success37948212670_receipt_11623909564",
+      "staging_assessment_functions": "success37985751577_receipt_11643610715",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success37948608081_receipt_11624403965"
+      "canonical_hosting": "success37986203915_attempt2_receipt_11643860414"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 131,
-    "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate.",
-    "next_action": "Specific publishing/audio defect repaired. User reloads existing page once; remaining physical-device and full Gate E acceptance stay in security workstream.",
+    "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
+    "next_action": "Martin can use Coco on local/Staging; review support behavior. Remaining old images get explicit bounded one-time descriptions when needed. No Production approval.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -153,7 +154,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-audio-release-20261009-6ee594b6.json",
+    "canonical_request": "automation/canonical-staging-requests/gc-coco-support-20261009-c3a5fdcf.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -202,6 +203,42 @@
       "canonical_receipt": 11511808010,
       "user_acceptance": "pending",
       "next_policy": "collect visual feedback; no new staging merge/deploy until explicit Deployen"
+    },
+    "coco_support_followup": {
+      "task_id": "GC-CREW-AI-01",
+      "stage": "staging_deployed",
+      "branch": "feature/coco-support-memory-20261009",
+      "final_branch": "fix/staging-feedback-coco-context-20261009",
+      "included_prs": [
+        179,
+        180,
+        181,
+        182,
+        183
+      ],
+      "commit": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+      "candidate_ci": 37985370499,
+      "merge_ci": 37985594616,
+      "preview_run": 37985751663,
+      "preview_receipt": 11643695405,
+      "functions_run": 37985751577,
+      "ai_receipt": 11642334706,
+      "assessment_receipt": 11643610715,
+      "canonical_run": 37986203915,
+      "canonical_attempt": 2,
+      "canonical_receipt": 11643860414,
+      "automated_tests": {
+        "functions": 200,
+        "root_web": 291,
+        "ui": 78
+      },
+      "live_verification": "Own-account preference save/reload/restore; anonymous foreign-account read rejected401; original orange dragon found/opened and cache-reused after reload; current29-question test title/status correct; own feedback statuses loaded; prepared feedback cancelled without submission",
+      "old_images_indexed": 30,
+      "old_images_remaining": 18,
+      "memory": "Firestore without TTL; editable preferences2000 chars; last40 conversation messages; model12 recent; transactional reset generation prevents cross-device resurrection",
+      "user_acceptance": "pending; agent live checks completed",
+      "production": "unchanged",
+      "handoff": "workstreams/coco-support-memory-20261009.md"
     }
   },
   "production": {
@@ -1143,6 +1180,44 @@
       "production": "not_requested",
       "integration": "Documentation verified on main",
       "documentation_source_commit": "3ee4f71bcb970348fe410d98a4ba221f96226cd3"
+    },
+    {
+      "id": "coco-support-memory-20261009",
+      "task_id": "GC-CREW-AI-01",
+      "stage": "staging_deployed",
+      "branch": "feature/coco-support-memory-20261009",
+      "final_branch": "fix/staging-feedback-coco-context-20261009",
+      "included_prs": [
+        179,
+        180,
+        181,
+        182,
+        183
+      ],
+      "commit": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+      "candidate_ci": 37985370499,
+      "merge_ci": 37985594616,
+      "preview_run": 37985751663,
+      "preview_receipt": 11643695405,
+      "functions_run": 37985751577,
+      "ai_receipt": 11642334706,
+      "assessment_receipt": 11643610715,
+      "canonical_run": 37986203915,
+      "canonical_attempt": 2,
+      "canonical_receipt": 11643860414,
+      "automated_tests": {
+        "functions": 200,
+        "root_web": 291,
+        "ui": 78
+      },
+      "live_verification": "Own-account preference save/reload/restore; anonymous foreign-account read rejected401; original orange dragon found/opened and cache-reused after reload; current29-question test title/status correct; own feedback statuses loaded; prepared feedback cancelled without submission",
+      "old_images_indexed": 30,
+      "old_images_remaining": 18,
+      "memory": "Firestore without TTL; editable preferences2000 chars; last40 conversation messages; model12 recent; transactional reset generation prevents cross-device resurrection",
+      "user_acceptance": "pending; agent live checks completed",
+      "production": "unchanged",
+      "handoff": "workstreams/coco-support-memory-20261009.md",
+      "next_action": "Martin can use Coco on local/Staging; review support behavior. Remaining old images get explicit bounded one-time descriptions when needed. No Production approval."
     }
   ],
   "deployments": [
