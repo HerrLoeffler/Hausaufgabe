@@ -156,4 +156,6 @@ Unveränderliche Codegrundlagen:
 
 Zusätzliche aktuelle Plattformquelle: [GRADECREW_STATE am geprüften main](https://github.com/HerrLoeffler/Hausaufgabe/blob/59dd0a501a28c04c36ee877450239bf1d64a3187/GRADECREW_STATE.json), reviewModeImplementation. Webpfade als Vertragsprüfkandidaten, nicht als fertige native Verbindung.
 
+
+Quellenmerker von Martin, 10.10.2026: [itch.io](https://itch.io/) für einfache Pixelspiele vormerken; für Spiele-/Mechanik-/Pixel-Art-Inspiration sowie Asset- und Toolsuche. Noch kein konkretes Spiel, Assetpaket, Download, Kauf oder Enginewechsel ausgewählt.
 Eigenprüfung des Entwurfs: beauftragte Nutzeranforderungen versus technische Vorschläge getrennt; Architektur/Komponenten, Datenfluss, Fehlerbehandlung, Abnahmematrix, Kosten und Zuständigkeiten beschrieben; PR153 unverändert, vorhandene Task-ID fortgeführt; historische Taskkollision markiert; keine fertige gemeinsame Runtime/Bridge, native CI, iPadfreigabe, Mac Live Coding oder deployte Umsetzung behauptet. Reine Dokumentation: keine neuen Runtime-/Asset-/Build-/Test-/Provider-/Deployvorgänge. Öffentlich lesbare Quellen enthalten keine Zugangsdaten/Schülerdaten in diesem Entwurf.
