@@ -81,3 +81,7 @@ Die Preview-Automatik ist für Hosting und die getrennte Staging-AI-Functions-Pi
 ## Verbindliche Arbeitsbedingung
 
 Alle GradeCrew-Chats – einschließlich Planung und Design – befolgen [docs/CHAT_CONTRACT.md](docs/CHAT_CONTRACT.md). Neue Wünsche bleiben nicht nur im Gespräch: Task-ID, TODO-Status, Release-Stufe und passende Übergabe vor Abschluss sichern. Bei fehlendem Zugriff die ungespeicherte Übergabe ausdrücklich nennen.
+
+## Zwei dauerhafte Fachrollen — GC-LAUNCH-CONTROLS-01
+
+[Assurance-Einstieg: Technische Sicherheit sowie Datenschutz, Recht & faire Bedienung](docs/assurance/README.md) verbindet20SEC- und20PRIV-Kontrollen, Rollenbriefs und bestehende Übergaben. Vor beauftrageten Änderungen relevante Kontrollen mit Owner, aktuellem Nachweis und Releasebezug auswählen; reine Standfragen starten keine Vollprüfung. NeueGames nutzen dieselben Einstiege. Kritische berechtigte Risiken blockieren betroffenen Scope, nicht pauschal jedes offene Kästchen. Rollen-/Katalogdokumentation ist kein Produkt-, Rechts-, Geräte- oder Deploynachweis und startet keine Agenten/Skills/Hooks. Beschlossene Zentralenrollen und adaptive Modellwahl stehen in AGENTS/CHAT_CONTRACT; alle Zentralen koordinieren ausschließlich.
