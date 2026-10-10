@@ -1289,7 +1289,7 @@
       "ci": {
         "handoff": 38081242296,
         "development_status": 38081242324,
-        "result": "success at source commit; integration CI separately recorded in handoff"
+        "result": "success at source commit; own predecessor 9574ed3d995c2653e7daa5e67c540e181a16f17c CI succeeded; final own head/main checks separately required"
       },
       "staging": "not_applicable_documentation_only",
       "production": "not_requested",
