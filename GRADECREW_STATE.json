@@ -1315,6 +1315,18 @@
       "user_test": "synthetic_desktop_report_only; real_account_device_acceptance_not_performed",
       "handoff": "workstreams/privacy-controls-integration-20261010.md",
       "next_action": "Authorize and qualify existing candidate through exact CombinedCI/peer/target gates; no workflow, runtime change, merge or deploy started in metadata-preparation task."
+    },
+    {
+      "id": "pocock-workflow-implementation-20261010",
+      "task_id": "GC-POCOCK-IMPLEMENT-01",
+      "parent_task_id": "GC-POCOCK-RESEARCH-01",
+      "branch": "feat/gc-pocock-workflow-20261010",
+      "stage": "branch_only",
+      "scope": "Deterministic local workflow tooling; external QA/Skills separately owned",
+      "handoff": "workstreams/pocock-workflow-implementation-20261010.md",
+      "next_action": "Implement read-only brief/frontier checker, own package pilot, exact independent review and CI before authorized main integration",
+      "production": "not_requested",
+      "staging": "not_applicable_tooling"
     }
   ],
   "deployments": [
