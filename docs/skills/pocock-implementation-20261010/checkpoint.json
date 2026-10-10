@@ -1,0 +1,166 @@
+{
+  "task": "GC-POCOCK-IMPLEMENT-01-SKILLS",
+  "parent": "GC-HOOKS-01-SKILLS",
+  "base_main": "91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9",
+  "matt_source": "49dd158d1076134a641b33efb035946536778336",
+  "license": "MIT, retained per skill",
+  "skills": [
+    {
+      "name": "gradecrew-learning-handoff",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-learning-handoff",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "37defb570959d21ff504690733c090911b762988a799404257b8874a4d8e0c47"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "7d32ecc2d271e514d71933c24dd81364a4ce87d660b1e5289cba189c468423c3"
+        },
+        {
+          "path": "references/learning-handoff.md",
+          "sha256": "bec29782e22d8cddd7b52b620068e915487548834da0fe02244e5ddad5345a4e"
+        }
+      ],
+      "source_bytes_equal": true
+    },
+    {
+      "name": "gradecrew-prototype",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-prototype",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "736e54e2e7f9b8e850d3c3f825e1a335e8f2e84e04ef30e1f7ab2911075ecc59"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "41fd46967107f5f2067c03758eeed2110d456127444ed07e0442efdeb9388771"
+        },
+        {
+          "path": "references/probe-contract.md",
+          "sha256": "8b2917d8c63f530368c598541a17af7bf41aa6fc8ea656c48e26da94b368b071"
+        }
+      ],
+      "source_bytes_equal": true
+    },
+    {
+      "name": "gradecrew-review-retro",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-review-retro",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "b556103620ae293302502b7c46cd70603f848c37180c142cffa174d563c0bd38"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "70fa1bb014e3fe2734ee85a2061f7f7942238a0571edd1f334f499cbc4ca96ce"
+        },
+        {
+          "path": "references/retro-shape.md",
+          "sha256": "399391705f9d3209d641a176729d25346b89cdff6b09c704f63c7668ad51db33"
+        },
+        {
+          "path": "references/review-record.md",
+          "sha256": "d9343a0f1c75e19a2efc9404501a0bac8cc493bb3826ee2a5ed37a430d278ac6"
+        }
+      ],
+      "source_bytes_equal": true
+    },
+    {
+      "name": "gradecrew-wayfinding",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-wayfinding",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "889f92fa493d3db1bf88343051b4341dd861b175cdda62f4d17b4553e56e55a6"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "3dfb79eb3da106cbf72289d9892508dd3c55549ff07a8603e89d83677c49aeac"
+        },
+        {
+          "path": "references/decision-shape.md",
+          "sha256": "171ed059f1f12baca7b452a0fe2c9692f18b3e712811ec4204fe555e1bf034ae"
+        }
+      ],
+      "source_bytes_equal": true
+    }
+  ],
+  "validator": {
+    "official_quick_validate": "4/4 passed with isolated PyYAML6.0.2",
+    "preflight_negative": "exit2 dependency_missing, validator_runs0",
+    "preflight_positive": "exit0, existing validator called, 4/4 valid"
+  },
+  "functional_evidence": [
+    "real Save/Load decision frontier, user vote pending",
+    "native probe contract; actual native QA owned separately by GamesQA",
+    "two independent static axes at actual PR191@bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
+    "bounded real-session retro; preflight guard implemented",
+    "primary-source Auth/Rules lesson with pending learner exercise"
+  ],
+  "selection_status": "descriptions/policy and non-trigger cases checked; actual automatic fresh-runtime selection not yet run",
+  "explicit_status": "all four SKILL.md + references actually read/applied in named probes; no actual desktop mention-picker test yet",
+  "model_requests": {
+    "baseline_wayfinding_prototype_reviews": "gpt-6.1-sol medium",
+    "learning": "gpt-6-luna medium"
+  },
+  "model_observed": "not independently captured, no self-knowledge inference",
+  "runtime_qa": "Root reported native/Web positive probes separately; their full receipts not copied/read here",
+  "save_preference": "pending, recommendation not resolution",
+  "externally_running_jobs": "none known; one ephemeral CLI turn completed; first initialization attempt stopped before model start",
+  "next": "reviewable PR receipt and exact integration-owner handoff; selector activation and observed runtime model remain unverified",
+  "ownership": "new docs/skills/pocock-implementation-20261010 and own workstreams handoff exclusive specialist until explicit checkpoint transfer; shared files integrationowner01a1089e...",
+  "scope": "no existing vendor edits, runtime/product/Hook/trust/Production changes; no paid external API/image/scan",
+  "selection_probe": {
+    "status": "behavioral_probe_completed_selector_receipt_unavailable",
+    "requested_model": "gpt-6-luna",
+    "requested_effort": "medium",
+    "attempts": 2,
+    "model_turns_started": 1,
+    "first_start": {
+      "status": "stopped_before_model_start",
+      "error": "failed to initialize in-process app-server client: Operation not permitted; diagnostics SQLite read-only"
+    },
+    "second_start": {
+      "status": "turn_completed",
+      "mode": "codex exec --ephemeral --json --sandbox read-only",
+      "auth": "existing ChatGPT login; no OPENAI_API_KEY used",
+      "runtime_usage_receipt": {
+        "input_tokens": 81023,
+        "cached_input_tokens": 58624,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 809,
+        "reasoning_output_tokens": 190
+      },
+      "runtime_observed_model": null,
+      "runtime_observed_effort": null,
+      "selector_event": null,
+      "output_evidence": {
+        "decision_case": "recommended obtaining the pending preference first; preserved GamesQA ownership and missing receipt boundary",
+        "routine_case": "answered task ID GC-POCOCK-IMPLEMENT-01-SKILLS only"
+      }
+    },
+    "interpretation": "Real fresh CLI turn exercised the no-skill-name task contexts and behaved consistently with the relevant boundaries. Runtime receipt exposes neither which skill, if any, was auto-selected nor observed model/effort; automatic selector itself therefore remains unverified.",
+    "follow_up": "Report behavioral evidence and metadata limit; do not claim a measured skill activation"
+  },
+  "publication": {
+    "path_representation": "$CODEX_HOME denotes original user Codex home; discovery cwd normalized for public copy; original private receipt retained by source owner",
+    "skill_bytes": "unchanged; source_bytes_equal refers to skill files only, not normalized discovery metadata"
+  }
+}

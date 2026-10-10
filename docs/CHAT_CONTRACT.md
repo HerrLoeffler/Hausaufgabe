@@ -38,6 +38,10 @@ Ein Ersatzchat prüft zuerst, ob die alte Arbeit noch läuft, ob Commit/PR/Run b
 ## Grenzen
 Diese Regeln sind verbindliche Projektanweisungen, keine technische Kontrolle aller ChatGPT-Gespräche. Ein Chat, der weder Repo noch Anhang erhält, kann sie nicht automatisch kennen. START_HERE.md als Einstieg verwenden; bestehende Chats einmal zum Neulesen auffordern. Harte Abbrüche sind nicht zuverlässig vorhersehbar, deshalb früh und regelmäßig sichern.
 
+## Modellwahl bei normalen GradeCrew-Codex-Chats — GC-MODEL-GOVERNOR-01
+
+Die adaptive Modell-/Aufwandswahl aus AGENTS.md gilt auch für direkt gestartete normale GradeCrew-Codex-Chats. Vor dem ersten neuen Arbeitsturn Schwierigkeit einordnen und für Routine Luna/medium, für komplexe Arbeit Sol/medium sowie `high` nur mit konkreter Begründung wählen. Modell/Aufwand und Grund in der bestehenden Übergabe als angefordert und – soweit beobachtbar – tatsächlich verwendet dokumentieren; unbekannte Laufzeitwerte bleiben `unknown`. Programmatische Starts setzen die tatsächlich unterstützten Felder je API: app-server `thread/start` nimmt `model`, `turn/start` `model` plus `effort`; Codex-App-Threadstarts `model` plus `thinking`. Eine globale Einstellung ist nur ein Default für neue/unüberschriebene Starts; vorhandene explizite Chat-Auswahlen können fortgelten. Der Desktop bietet eine manuelle Auswahl für den aktuellen Chat unter dem Composer sowie `/model` und `/reasoning`; bei einem bestehenden Chat den Wert vor der nächsten Aufgabe prüfen und nötigenfalls dort angleichen. Die Regeldatei kann diese Auswahl nicht erzwingen. Änderungen an einem Chat ändern keinen bereits laufenden Aufruf und es gibt daraus keinen Nachweis einer installierten Hook- oder Runtime-Sperre.
+
 ## Beschlossene Zentralenrollen — GC-HOOKS-01, 10.10.2026
 
 Martins feste Regel: Zentralen koordinieren ausschließlich. Die zunächst für die Hauptzentrale beschlossene Grenze wurde ausdrücklich auf die folgende Hierarchie erweitert: **GradeCrew-Zentrale → gemeinsame Games-Zentrale → Zentrale je Spiel → ausführende Fach-Chats**. Die fünf bestehenden Zentralenchats wurden konkret zugeordnet; keine neue Chat-Erstellung durch diese Regel.

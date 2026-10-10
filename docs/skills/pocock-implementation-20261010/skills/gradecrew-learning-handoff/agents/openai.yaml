@@ -1,0 +1,6 @@
+interface:
+  display_name: "GradeCrew · Persönliches Lernen"
+  short_description: "Kleines Unreal/Firebase-Onboarding mit Übergabe"
+  default_prompt: "Nutze $gradecrew-learning-handoff für ein kurzes persönliches Unreal- oder Firebase-Onboarding."
+policy:
+  allow_implicit_invocation: true

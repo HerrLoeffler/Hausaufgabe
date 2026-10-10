@@ -1,0 +1,6 @@
+interface:
+  display_name: "GradeCrew · Entscheidungsfrontier"
+  short_description: "Offene abhängige GradeCrew-Entscheidungen klären"
+  default_prompt: "Nutze $gradecrew-wayfinding für die offenen Entscheidungen meines bestehenden GradeCrew-Auftrags."
+policy:
+  allow_implicit_invocation: true

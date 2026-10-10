@@ -25,3 +25,11 @@ Recorded: 2026-10-10. This file records a local development-service activation o
 - The local patch bundle and complete baseline/final hash manifests are preserved in the task workspace evidence directory; backups of original source files remain outside the repository.
 
 The next step is for the source owner to identify a remote branch whose Workbench source baseline matches this local activation, then prepare a scoped code PR against that exact source lineage.
+
+## Folgebeleg — integrierte Quelllinie und lokaler Digest-Fix (11.10.2026)
+
+Die frühere Aussage, eine passende Remote-Quelllinie müsse erst noch identifiziert werden, beschreibt den Stand bei Erstellung dieses Receipts am 10.10.2026. Sie ist für die aktuelle Weiterarbeit überholt: PR [201](https://github.com/HerrLoeffler/Hausaufgabe/pull/201) integrierte den Workbench-CLI-Pfad auf `feature/gradecrew-app-integration` aus Quellhead `3a155f84bb3ec0428fa8ffb92ab94fdac8b99219` (Mergecommit `507a06008c7a9a95a9a84e8d3fdbb54fe9f08581`). Source-CI `38090177717` / Job `114324833180` und die gemeldeten Post-Merge-Checks `114325311748`, `114325311725` und `114325311535` completed/success; die unabhängige bestehende Review hat beide Achsen bestanden.
+
+Die bestehende lokale Aktivierung wurde anschließend mit dem Digest-Fix `bc999d6d4b612726c4468e94c227c4dd5e8d60c3` auf Basis `2062aaafdec172182088fea4a7b5381422e10559` aktualisiert; der Quellreceipt begrenzt ihn auf `codex-patch-provider.mjs` und `live-editor.mjs` und berichtet 7/7 Checks. Die vorhandene Site-8772-Aktivierung verwendete den bestehenden Startweg; beim dokumentierten Check war PID `57860` aktiv und es gab in beiden Projekten keine aktiven Jobs. Checks und Restart wurden für diese Dokumentationsfortsetzung nicht wiederholt.
+
+PR 200 hat den allgemeinen Native-Codex-Default Luna/medium auf main integriert. Manuelle Desktop-Overrides bleiben unberührt. Dieser Workbench-Pfad ist Tooling auf dem Integrationsbranch und kein Staging-/Production-Deploy. Tatsächliches Runtime-Modell/Effort, Tokens, Kosten und Einsparung bleiben unbekannt, bis ein gewöhnlicher CLI-Auftrag entsprechende Werte liefert. Keine Inferenz oder Deployaktion im Rahmen dieses Updates.

@@ -42,16 +42,27 @@ This code path does not control native Codex UI chats, already-running chats, ot
 
 The local source baseline commit and local branch are not available on GitHub. The remote branch lookup returned 404 and commit lookup returned 422. Current main is not known to be an equivalent Workbench source baseline. No matching task entry was found in the remote registry, TODO search or open-PR search. Shared TODO, release state and registry remain untouched by this evidence step.
 
+
+
+## Aktualisierter technischer Stand — 11.10.2026
+
+Dieser Abschnitt ersetzt nur den damaligen offenen nächsten Schritt; die folgenden Einträge vom 10.10.2026 bleiben als historische Aktivierungsbelege erhalten.
+
+- Remote-Quell-/Integrationsstand: PR [201](https://github.com/HerrLoeffler/Hausaufgabe/pull/201), Quellhead `3a155f84bb3ec0428fa8ffb92ab94fdac8b99219`, wurde in `feature/gradecrew-app-integration` mit Mergecommit `507a06008c7a9a95a9a84e8d3fdbb54fe9f08581` integriert. Der unabhängige bestehende Central-Reviewer hat beide Reviewachsen bestanden. Source-CI Run `38090177717` / Job `114324833180` ist erfolgreich. Die Post-Merge-Checks `114325311748` (test), `114325311725` (Node 22 tests) und `114325311535` (Dev Workbench) wurden als completed/success gemeldet.
+- Separater lokaler Digest-Fix laut bestehender Recovery-Übergabe: von `2062aaafdec172182088fea4a7b5381422e10559` zu `bc999d6d4b612726c4468e94c227c4dd5e8d60c3`, ausschließlich `tools/dev-workbench/codex-patch-provider.mjs` und `tools/dev-workbench/live-editor.mjs`; dort sind 7/7 gezielte Checks belegt. Diese Prüfungen und der Restart werden hier nicht wiederholt. Der bestehende Startweg meldete Site 8772 PID `57860`; der gespeicherte Check fand in beiden Projekten keine aktiven Jobs. Das ist ein damaliger lokaler Tooling-Receipt, kein aktueller Live-Health-Check.
+- PR 200 hat den globalen Native-Default Luna/medium auf main integriert. Manuelle Desktop-Auswahlen und bestehende Overrides bleiben manuell; nichts wurde erzwungen oder broadcastet. Das lokale Workbench-CLI ist ein separater Toolingpfad auf dem Integrationszweig; es ist weder ein Staging- noch ein Production-Deploy.
+- Tatsächliches Runtime-Modell/Effort, Tokenverbrauch, Kosten und Einsparung sind weiterhin `unknown` und können erst aus einem gewöhnlichen späteren CLI-Auftrag belegt werden. Inferenz, Deploy, Production und Nutzertest wurden für diesen Dokumentationsabschluss nicht ausgeführt.
+
 ## Nächster konkreter Schritt
 
-The Workbench source owner identifies the intended remote source branch/commit that matches the active local service; only then prepare a scoped code PR against that baseline.
+Unabhängige Prüfung dieses kleinen PR-199-Deltas und der frischen main-basierten Dokumentationschecks; danach kann der Sharedowner PR 199 normal in main integrieren. Reale Runtime-/Tokenwerte nur bei einem späteren regulären CLI-Auftrag dokumentieren.
 
 ## Wiederaufnahme nach Abbruch
 
-- Letzter gesicherter Teilschritt: local source commit 2062aaafdec172182088fea4a7b5381422e10559; local service PID 17646 verified on 127.0.0.1:8772.
-- Gepushter Codecommit / Remote-Branch: none; local source branch is not present remotely.
-- Laufende oder unklare Vorgänge: none observed; no live model request was started.
-- Bereits ausgeführte externe Aktionen / Kostenreservierungen: none for inference.
-- Was darf noch nicht als erledigt gelten? Remote code publication, CI/merge, user acceptance, and runtime model/usage observation.
-- Was muss vor Wiederholung geprüft werden? Exact intended remote source baseline and branch ownership.
-- Genau ein nächster ausführbarer Schritt: owner identifies the matching remote source lineage.
+- Letzter gesicherter Teilschritt: Die PR-201-Integration und der lokale Aktivierungsreceipt sind oben mit ihren getrennten Scopes und Nachweisen eingetragen.
+- Gepushter Codecommit / Remote-Branch: Workbench-Integration PR 201 auf `feature/gradecrew-app-integration` bei `507a06008c7a9a95a9a84e8d3fdbb54fe9f08581`; PR 199 bleibt eine Dokumentationsänderung für main.
+- Laufende oder unklare Vorgänge: keine neuen Vorgänge gestartet; Runtimewerte bleiben unbekannt.
+- Bereits ausgeführte externe Aktionen / Kostenreservierungen: keine Inferenz- oder Deployaktion durch diesen Dokumentationsabschluss.
+- Was darf noch nicht als erledigt gelten? PR-199-Delta-Review/Main-Integration und Runtime-/Tokenbeobachtung.
+- Was muss vor Wiederholung geprüft werden? PR-199-Head, frische Main-/CI-Checks und Reviewergebnis; keine Tests oder Services erneut starten.
+- Genau ein nächster ausführbarer Schritt: Sharedowner prüft den PR-199-Dokumentationsdelta.
