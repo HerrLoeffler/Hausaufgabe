@@ -249,5 +249,16 @@
     "scope": "fictitious rules + static HTML; no customer data/cloud/emulator/browser/render/device checks",
     "result": "update ownership gap correctly reported; existing design tokens preserved; coordinator scope held"
   },
-  "quick_validate": "not run successfully: PyYAML unavailable; real Codex parser discovery and file integrity used"
+  "quick_validate": "not run successfully: PyYAML unavailable; real Codex parser discovery and file integrity used",
+  "publication": {
+    "pr": "https://github.com/HerrLoeffler/Hausaufgabe/pull/193",
+    "first_remote_commit": "0cccc4986276b101abaeacd0017031b2b879896d",
+    "first_local_commit": "836ebd9ecc5c54772c9dfa1185e17181640fc117",
+    "first_equal_tree": "b38d62287a74326740acd280c023a4c6d2eac3fb",
+    "first_remote_files_readback": "6/6 exact",
+    "method": "GitHub connector; shell git HTTPS credentials absent",
+    "main_integration": "pending shared integration owner",
+    "desktop_next_turn_usage": "not yet observed",
+    "deployment": "none"
+  }
 }

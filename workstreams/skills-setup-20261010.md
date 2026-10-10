@@ -34,3 +34,13 @@ Die lokale Skillliste ist im frischen Discovery-Prozess sichtbar. Im bereits lau
 Dem Shared-Integrationowner über das Ergebnis/PR folgende gezielte Deltas zum Abholen bereitstellen: Link auf docs/skills/GRADECREW_EXECUTION_SKILLS.md im aktuellen Einstieg; vorhandene GC-HOOKS-01-TODO/Registry/State fachlich um lokale sechs-Skill-Installation plus tatsächliches Discovery ergänzen; Entwurf/Installation/main-Verlinkung getrennt halten. Kein paralleles Editieren dieser Dateien durch diesen Fachchat. Keine Nachricht ohne passende menschliche Autorisierung aus dem Delegationsauftrag selbst ableiten.
 
 Genau nächster Schritt: eigenen Dokumentations-PR mit exaktem Commit/Belegen bereitstellen; Sharedowner prüft und übernimmt ausschließlich die autorisierte Eintrittsverlinkung/Statusintegration. Kein Deploy. PR-Integration und Desktop-Nutzung im nächsten Turn nicht aus der lokalen Installation allein behaupten.
+
+## Veröffentlichungsreceipt
+
+[Draft-PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193) ist angelegt und an diesen Fachchat angehängt. Erster Remotecommit `0cccc4986276b101abaeacd0017031b2b879896d`; lokaler Zwischencommit `836ebd9ecc5c54772c9dfa1185e17181640fc117` bleibt erhalten. Beide besitzen denselben Gitbaum `b38d62287a74326740acd280c023a4c6d2eac3fb`. Alle sechs veröffentlichten Dateien am exakten Remotecommit via Connector zurückgelesen und bytegleich bestätigt.
+
+Shell-HTTPS-Push scheiterte eindeutig an fehlender Git-Anmeldung; keine Credentials angefordert. Branch/Tree/Commit/ref über den vorhandenen autorisierten GitHub-Connector veröffentlicht, ohne force. Eigener Fachbranch bleibt getrennt von main/PR184 und allen Shared-Dateien. Lokales Gitidentity-Autofallback meldete Martin Löffler/martin@Mac.fritz.box; kein globales Identitysetting verändert. Remotecommit stammt vom verbundenen Konto, identischer Datei-/Bauminhalt ist der Provenienznachweis.
+
+Erste Dokumentationschecks am ersten Remotecommit automatisch angelaufen: Handoff38081173904 und DevelopmentStatus38081173914; beim initialen Receipt in_progress. Dieser Receipt wird als eigener Folgecommit gesichert; dessen CI ist getrennt zu prüfen und erhält nicht blind die Ergebnisse des ersten Commits. Lokal Installations-/Discovery-/Offlinebelege bereits bestätigt; Setup bleibt Dokumentation branch_only bis Integration, unabhängig von den bereits tatsächlich installierten User-Skills.
+
+Genau nächster Schritt jetzt: exakten finalen PR-Head und dessen Dokumentationschecks zum Abholen bereitstellen; Sharedowner übernimmt nach Prüfung gezielt Link/Statusintegration. Kein Merge oder Deployment durch diesen Setupauftrag.
