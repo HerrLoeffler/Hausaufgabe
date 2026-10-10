@@ -49,7 +49,7 @@ Fuchs aktuell als abgelehnter/ungeprüfter Runtime-Prototyp führen, nicht als f
 
 Vorschlag: versioniertes engineunabhängiges Manifest mit gameId, buildSha, contentRevision, schemaVersion, Karten, Levels, sicheren Ankern, Rätseln, Testzuständen und Fähigkeiten. Kein Enginewechsel für die bestehenden UE5.8-Spiele. Ein Browseradapter kann später denselben Vertrag erfüllen, ohne native Actors nachzubauen.
 
-Kernbefehle: ListTargets, CaptureCheckpoint, RestoreCheckpoint, Teleport, StartPuzzleFixture, ReplayPresentation, ResetDebugSession und CaptureFeedbackContext. requestId verhindert doppelte Mutationen. Antworten: applied/already, unsupported, blocked mit Grund oder failed; keine leeren Erfolgsantworten. Anker-IDs bleiben stabil, Weltkoordinaten sind Implementierungsdetail. Capabilities zeigen tatsächlich verfügbare Funktionen; ungebautes Gebiet wird sichtbar als nicht gebaut markiert.
+Kernbefehle: ListTargets, CaptureCheckpoint, RestoreCheckpoint, Teleport, StartPuzzleFixture, ReplayPresentation, ResetDebugSession und CaptureFeedbackContext. requestId muss adapter-/serverseitig atomar mit dem Ergebnis dedupliziert werden; die ID allein verhindert keine Doppelmutation. Antworten: applied/already, unsupported, blocked mit Grund oder failed; keine leeren Erfolgsantworten. Anker-IDs bleiben stabil, Weltkoordinaten sind Implementierungsdetail. Capabilities zeigen tatsächlich verfügbare Funktionen; ungebautes Gebiet wird sichtbar als nicht gebaut markiert.
 
 Kleine gemeinsame UE-Anbindung: eigenes GradeCrew-Modul; GameInstance-Subsystem für Testsitzung/Ausgangsliste; pro Spiel Adapter für vorhandene Regeln und Wiederaufbau; gemeinsame Oberfläche über bestehende Slate-/UMG-Wege. Kein großflächiger Umbau auf zusätzliche Gameplaybibliotheken/CommonUI allein für Debug. Epic beschreibt Subsysteme als Erweiterungspunkte mit verwaltetem Lebenszyklus. [Epic: Subsystems](https://dev.epicgames.com/documentation/en-us/unreal-engine/programming-subsystems-in-unreal-engine)
 
@@ -75,7 +75,7 @@ Shipping entfernt bestimmte Engine-Diagnosewerkzeuge; eigene GradeCrew-Funktione
 
 ## 6. Meldungen direkt im Spiel
 
-Bei Öffnen sofort Kontext einfrieren: gameId, Build/SHA, Inhaltsrevision, Karte/Level/Rätsel, Position/Anker, Fixture, Debugmarkierung und begrenzte letzte semantische Aktionen. Nicht erst nach Texteingabe erfassen. Martin wählt Fehler oder Idee, ergänzt Beschreibung/erwartetes Verhalten. Screenshot optional aus dem Zustand vor Overlay; Bildvorschau/Löschen. Sprache optional mit bewusstem Start, sichtbarer Aufnahme, Abspielen, Löschen und Textalternative; keine Daueraufnahme. Browser braucht Berechtigung/sicheren Kontext, native Aufnahme eigenen Plattformadapter. [MDN: getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
+Bei Öffnen sofort Kontext einfrieren: gameId, ausgeführter Build, lokale Quellen-/Assetrevision und dirty-Kennzeichnung getrennt vom Remote-SHA, Inhaltsrevision, Karte/Level/Rätsel, Position/Anker, Fixture, Debugmarkierung und begrenzte letzte semantische Aktionen. Nicht erst nach Texteingabe erfassen. Martin wählt Fehler oder Idee, ergänzt Beschreibung/erwartetes Verhalten. Screenshot optional aus dem Zustand vor Overlay; Bildvorschau/Löschen. Sprache optional mit bewusstem Start, sichtbarer Aufnahme, Abspielen, Löschen und Textalternative; keine Daueraufnahme. Browser braucht Berechtigung/sicheren Kontext, native Aufnahme eigenen Plattformadapter. [MDN: getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
 
 Durable outbox: UUID, lokale Revision, createdAt, Payloadversion, Kontext, Anhangsgrößen/-typen/-hashes. Entwurf → lokal gesichert → läuft → angenommen mit Receipt; Fehler bleibt wiederholbar. „Angenommen“ ist nicht „umgesetzt/veröffentlicht“. Nach Timeout zuerst Status derselben UUID prüfen; Wiederholung verwendet dieselbe ID. Serverseitige Idempotenz und Receipt sollen Doppelmeldungen begrenzen; UUID/Receipt allein sind kein Exactly-once-Nachweis. Unbekannte Annahme sichtbar halten und vor Wiederholung abgleichen. Fingerprint gruppiert ähnliche Bugs, löscht aber keine unterschiedlichen Ideen. Anhänge resumierbar/atomar referenzieren; keine Meldung mit vermeintlich vorhandenem, fehlendem Anhang.
 
@@ -135,7 +135,7 @@ Technischer Erfolg ersetzt Martins Spiel-/Grafikabnahme nicht. Bewertung des gem
 | Bereich | Eigentümer/Grenze |
 | --- | --- |
 | Gemeinsamer Vertrag/Bibliothek/Design | Games-Zentrale koordiniert; dieser Dokumentations-Fachauftrag sichert Reviewdraft |
-| Pizza | Pizza Spiel Zentrale; nur sie vergibt/integratiert Umsetzung auf dem aktiven Spielebranch |
+| Pizza | Pizza Spiel Zentrale; nur sie vergibt/integriert Umsetzung auf dem aktiven Spielebranch |
 | Expedition | GC · Escape-Expedition-Zentrale |
 | Lerninsel | GC · Lerninsel-Zentrale; aktueller Fachowner GC · Lerninsel · Gameplay & Integration, GC-GAMES-LERNINSEL-L1 |
 | Hooks/Automatisierung/Integration | Exklusiv GC · Automatisierung & Integration, PR184 |
