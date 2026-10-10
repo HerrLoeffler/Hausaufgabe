@@ -233,3 +233,12 @@ PR197@5fdfc29012acf5163c4b400a617d7c245fdd7812, lokal3277e54, gleichesTreeca6fad
 BereitsvorbereiteterAbnahmeagent /root/pocock_implementation_acceptance gehört anderemRootchat; vonhiesigenCollaborationtools nichtansprechbar (notfound), keinneuerParallelreview gestartet. GradeCrewZentrale01a10df6 perReadThread aktuellunterbrochen/idle. GenaufehlenderGatebeleg: dieserbereitsbeauftragteReviewer erhältimmutable5fdfc290+Rezept, berichtetRequirementsundStandards getrenntundfährtneunCLItests/realenBrief einmalnach. KeineerneuteGrundsatzfreigabeoderSaveantwortfürdiesesToolingpaketnötig. Mergeweiterpending.
 
 Metadata-Folgecheckpoint hat eigeneCI; testedCode-/Workflowblobs unverändert gegenüber5fdfc290. Root/Reviewer erstBeleg/Headlesen, nichtaltenPlanreimplementieren. KeinePaid-/Production-/Web/nativeQA-/Security/npmAktion durchdieseÜbergabe.
+
+
+## Priorisierter Token-/Modellcheckpoint — GC-MODEL-GOVERNOR-01
+
+Nutzersteuerung10.10.2026 über Zentrale: Taskfortsetzung priorisiert, keine Cancellation. Aktueller PR197@c951bd676044a168ff4ce964db5f99a5d6c16d59 offen/Draft, nichtgemergt; lokaler1c03a0f, saubererCheckout. Codepaket5fdfc290/gleichesTreeca6fadeb; Metadata-CI Handoff38085005846 undDevelopmentStatus38085005842 frischcompleted/success. KeinebestehendenJobs abgebrochen/neu gestartet. UnabhängigeRequirements-/Standardsabnahme+Nachfahrt weiterhinpending; nichtüberspringen. Kein weiterer großerSol-/Review-/Metadatenloop in diesem langenKontext.
+
+Neue technischeFolgeaufgabe [GC-MODEL-GOVERNOR-01](model-governor-20261010.md): tatsächlicheDispatch-/turnStartwahl technischdurchsetzen, nichtnurMD/Hooktext. RootkoordiniertfrischenbegrenztenGovernorfachagenten undLunaRecovery; konkreteIDs nochüberRoot abzugleichen. Sharedmodel-/AGENTS-/STATE-Pfade bleiben hier bzw ausschließlichnachOwnerabgleich. AktuellerCheckpoint ändertkeinenModeldispatch/Trust/Budget/Productiongate.
+
+RequestedModel/Effort diesesPaket: Rootdispatch gpt-6.1-sol/medium laut vorhandenerDelegationsmetadaten; tatsächlichbeobachtetesRuntimeModel/Effort/Tokenverbrauch hiernichtverfügbar. Root meldet28%used/72%remaining im7Tagefenster, nicht hier erneutabgerufen; accountlimit istkeineTasktokenmessung. NächsterSchritt frischerRoot-koordiniertGovernor-/LunaRecoveryauftrag mit kurzemSourcebrief undunveränderlichenPaketrefs, keineerneuteVollkontextlektüre.

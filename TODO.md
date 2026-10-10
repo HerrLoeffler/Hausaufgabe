@@ -476,3 +476,6 @@ OriginalfamilieGC-POCOCK-RESEARCH-01. Alle32Videoempfehlungen6+ undunmittelbareS
 
 
 GC-POCOCK-IMPLEMENT-01 · umgesetzt undci_green amPR197@5fdfc290: read-onlyBrief/Graphprüfer,9CLIbehaviorTests RED→GREEN, existierendeHandoffCI mitrealemRegisteredBrief-ConsumerStep success38084724978 undLiveAudit38084724916. 32Video6+ mitvorhandenen7Abnahmepaketen gleich; Vorlagen/Review-/PR-/Retropilot angewandt. NochNICHTintegrated: bestehendeunabhängigeAbnahmeRequirements/Standards/Nachfahrtpending imunterbrochenenRootchat; genaueRefs/Recipe in eigenerÜbergabe. ExterneWeb/nativeQA/Plugin- undNutzerSavebelegegetrennt. KeinDeploy/paid/security/npmRetry.
+
+
+GC-MODEL-GOVERNOR-01 · priorisiertertechnischerFolgeauftrag: echteDispatch-/turnStartModellwahl, requested/observed/Tokenfelder undNativeManual/UI-Grenzen; frischerGovernor/LunaRecovery vonRootkoordiniert, IDs/Sharedpfadeabgleichen. [Übergabe](workstreams/model-governor-20261010.md). NochkeineImplementierung/Wirksamkeit. PR197c951CIgrün, unabhängigeAbnahme bleibt; keinweiterergroßerSolloop, keinBudgetreset/Limitbypass/APIwechsel/Production.
