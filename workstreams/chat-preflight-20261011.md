@@ -1,6 +1,6 @@
 # GC-CHAT-PREFLIGHT-01 — Chat Preflight and Rule Freshness
 
-Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Review branch: `feat/gc-chat-preflight-20261011`, based on current main `7eb49b50315b34e25e4af67a46c2addfa575febe`.
+Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Draft PR #203: `feat/gc-chat-preflight-20261011`; current candidate head is being extended from `d47297cc5b86390e16cadf2a092ae0556f82b511`. The PR base is `6833a1d93562a29199183dc90e59f8069286bf6e`; intervening main changes did not overlap candidate paths and GitHub reported mergeable.
 
 ## Request
 
@@ -8,7 +8,7 @@ Make policy/tool freshness visible in existing GradeCrew/Games chats before each
 
 ## Current evidence
 
-- GitHub current main observed at `7eb49b50315b34e25e4af67a46c2addfa575febe` (commit search, 2026-10-11).
+- Initial candidate parent was `7eb49b50315b34e25e4af67a46c2addfa575febe`; PR base later advanced to `6833a1d93562a29199183dc90e59f8069286bf6e`.
 - Current main `START_HERE.md` blob `85c5de38…`, `AGENTS.md` `e0866436…`, `docs/CHAT_CONTRACT.md` `22f9c252…`, `docs/CHAT_RECOVERY.md` `c2782f94…`, and skill map `4a95aebe…` fetched from the GitHub connector.
 - Open PR #184 is still open. Its lifecycle design is reference evidence only; this task does not install or trust it.
 - Official OpenAI documentation confirms Codex `UserPromptSubmit` supports context injection or blocking and requires trust for non-managed hooks. The hook input includes `model` but has no documented effort field.
@@ -20,16 +20,23 @@ Make policy/tool freshness visible in existing GradeCrew/Games chats before each
 - `docs/automation/chat-preflight-20261011/capability-matrix.md`
 - `docs/automation/chat-preflight-20261011/design.md`
 - `tools/chat-preflight/preflight.py`
+- `docs/automation/chat-preflight-20261011/hook-profile.template.json`
+- `docs/automation/chat-preflight-20261011/qualification-plan.md`
+- `.github/workflows/chat-preflight-check.yml`
+- `tools/chat-preflight/test_preflight.py`
+- `.github/workflows/chat-preflight-check.yml`
 
-The script is an uninstalled candidate and includes a deterministic fake-caller probe. It does not claim the ChatGPT desktop composer is an App Server caller. The Codex hook can inspect freshness and model when present, but effort remains unknown and the hook cannot change either setting. Role remains unresolved even when repository identity proves GradeCrew project scope.
+The script is an uninstalled candidate and includes a deterministic fake-caller probe. It does not claim the ChatGPT desktop composer is an App Server caller. The Codex hook can inspect freshness and model when present, but effort remains unknown and the hook cannot change either setting. Role remains unresolved even when repository identity proves GradeCrew project scope. A private local profile may allowlist an exact mirror root without `.git`; the committed profile template contains no machine path. A nested foreign checkout stays unknown.
 
 ## Local checkpoint
 
-- Offline probe: `python3 -B tools/chat-preflight/preflight.py --self-check` — PASS. It covers cached pointer reuse, changed main and bounded delta, unknown project/model/effort/role, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and missing advertised target model stopping before send. No inference.
-- Syntax: `PYTHONPYCACHEPREFIX=/tmp/gc-chat-preflight-pyc python3 -m py_compile tools/chat-preflight/preflight.py` — PASS.
-- Hygiene scan over the four candidate files: no trailing whitespace or conflict markers.
-- Freshness polling uses a shared private temp cache for five minutes to limit unauthenticated GitHub API traffic across existing chats. Reused pointers are labeled `cached-verified`; expired/offline/rate-limited checks report freshness as unverified. Risk blocking is limited to imperative explicit production/destructive requests, not plan discussion.
-- SHA-256 values are refreshed when the final four candidate files are assembled into the remote review commit.
+- Offline regression suite: `python3 -B tools/chat-preflight/test_preflight.py` — PASS. It covers per-Enter ETag polling, 304 freshness reset, explicit opt-in TTL, changed main and bounded delta, unknown project/model/effort/role, exact approved mirror and nested foreign checkout, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and missing advertised target model stopping before send. No inference.
+- Syntax: `PYTHONPYCACHEPREFIX=/tmp/chat-preflight-pycache python3 -m py_compile tools/chat-preflight/preflight.py tools/chat-preflight/test_preflight.py` — PASS.
+- Scoped PR CI in `.github/workflows/chat-preflight-check.yml` runs only the offline suite and syntax check with read-only repository access; it does not call GitHub API, models, MCP, or deployment.
+- Hygiene scan is rerun for all candidate files before updating the remote review branch.
+- Freshness polling defaults to no time-based cache; each covered Enter sends a conditional public pointer request. Positive TTL is opt-in in the private profile. Offline/403/429 checks report the last verification time and remain unverified; there are no retries. A 304 resets a previously cached marker to `current`.
+- The hook profile is a template only. The qualification plan uses an isolated block sentinel before model generation; neither the profile nor local root allowlist is installed. ChatGPT Work remains outside local-hook coverage.
+- Reviewer corrections: 0-second default TTL and ETag conditional request per Enter; cache freshness is reset after 304; an explicitly approved exact mirror root supports this `.git`-less project mirror, while nested foreign repositories remain unknown. The actual mirror path is private-profile-only and is not committed.
 
 ## Checkout boundary
 
@@ -37,4 +44,4 @@ The local Git transport could not resolve `github.com`; no local clone contains 
 
 ## Status and next action
 
-Candidate branch for independent review; CI/integration, desktop hook activation, staging and production are not claimed. The deterministic probe and syntax check pass locally. Before any future activation, the hook owner must review/trust the exact command in the UI and qualify it on an idle specialist chat; desktop coverage remains unverified and no model inference is needed for hook qualification.
+Candidate branch / draft PR #203 for independent review. The new offline CI workflow is scoped to these candidate paths, read-only, and has no live network, model, secret, MCP, or deploy step. CI/integration, desktop hook activation, staging and production are not claimed. Before future activation, the owner must review/trust the exact command in `/hooks` and qualify the lifecycle using the isolated no-paid sentinel plan. This covers Codex hooks only; ChatGPT Work remains outside local command-hook coverage.

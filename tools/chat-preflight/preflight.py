@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import difflib
 import base64
+import argparse
 import hashlib
 import json
 import os
@@ -16,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from datetime import datetime, timezone
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -34,7 +36,7 @@ POLICY_FILES = (
 CACHE_SCHEMA = 1
 MAX_POLICY_FILE_BYTES = 196_608
 MAX_DELTA_CHARS = 1800
-POINTER_CACHE_SECONDS = 300
+POINTER_CACHE_SECONDS = 0
 HIGH_IMPACT = re.compile(
     r"^\s*(?:(?:please|could you|can you)\s+)?(?:deploy|release|publish)\b.*\bproduction\b|"
     r"^\s*(?:(?:please|could you|can you)\s+)?(?:force[- ]push|delete|remove)\b.*"
@@ -63,24 +65,42 @@ def _run_git(args: list[str], cwd: str) -> str | None:
         return None
 
 
-def identify_project(cwd: str, git: Callable[[list[str], str], str | None] = _run_git) -> tuple[str | None, str | None]:
-    """Return (canonical repo identity, root) only for the exact GradeCrew origin."""
+def identify_project(
+    cwd: str,
+    git: Callable[[list[str], str], str | None] = _run_git,
+    approved_project_roots: tuple[str, ...] = (),
+) -> tuple[str | None, str | None]:
+    """Identify exact canonical repo roots or explicit local mirror roots."""
     root = git(["rev-parse", "--show-toplevel"], cwd)
-    if not root:
-        return None, None
-    root = str(Path(root).resolve())
-    origin = git(["remote", "get-url", "origin"], root)
-    if not origin:
-        return None, root
-    normalized = origin.strip().removesuffix(".git").rstrip("/")
-    accepted = {
-        "https://github.com/HerrLoeffler/Hausaufgabe",
-        "git@github.com:HerrLoeffler/Hausaufgabe",
-        "ssh://git@github.com/HerrLoeffler/Hausaufgabe",
-    }
-    if normalized not in accepted:
-        return None, root
-    return REPOSITORY, root
+    git_root = str(Path(root).resolve()) if root else None
+    if git_root:
+        origin = git(["remote", "get-url", "origin"], git_root)
+        if origin:
+            normalized = origin.strip().removesuffix(".git").rstrip("/")
+            accepted = {
+                "https://github.com/HerrLoeffler/Hausaufgabe",
+                "git@github.com:HerrLoeffler/Hausaufgabe",
+                "ssh://git@github.com/HerrLoeffler/Hausaufgabe",
+            }
+            if normalized in accepted:
+                return REPOSITORY, git_root
+    for root_entry in approved_project_roots:
+        try:
+            approved_root = str(Path(root_entry).resolve(strict=True))
+        except (OSError, RuntimeError):
+            continue
+        if not Path(approved_root).is_dir() or not is_within(cwd, approved_root):
+            continue
+        # A nested checkout (especially one with a different origin) does not
+        # inherit the mirror's GradeCrew identity.
+        if git_root and git_root != approved_root:
+            return None, git_root
+        # If the allowed root itself has Git metadata, require its canonical
+        # origin check above instead of allowing a mirror-path override.
+        if git_root == approved_root:
+            return None, git_root
+        return REPOSITORY, approved_root
+    return None, git_root
 
 
 def is_within(path: str, root: str) -> bool:
@@ -91,29 +111,53 @@ def is_within(path: str, root: str) -> bool:
         return False
 
 
-def fetch_json(url: str) -> Any:
+def fetch_json(url: str, headers: dict[str, str] | None = None) -> Any:
     request = urllib.request.Request(
         url,
-        headers={"Accept": "application/vnd.github+json", "User-Agent": "gradecrew-chat-preflight"},
+        headers={"Accept": "application/vnd.github+json", "User-Agent": "gradecrew-chat-preflight", **(headers or {})},
     )
-    with urllib.request.urlopen(request, timeout=2.5) as response:
-        return json.loads(response.read(256_000).decode("utf-8"))
+    try:
+        with urllib.request.urlopen(request, timeout=2.5) as response:
+            result = json.loads(response.read(256_000).decode("utf-8"))
+            if isinstance(result, dict):
+                etag = response.headers.get("ETag")
+                if etag:
+                    result["_http_etag"] = etag
+            return result
+    except urllib.error.HTTPError as exc:
+        if exc.code == 304:
+            return {"_not_modified": True, "_http_etag": exc.headers.get("ETag") if exc.headers else None}
+        raise
 
 
 def fetch_policy_snapshot(
     old: dict[str, Any] | None = None,
-    fetch: Callable[[str], Any] = fetch_json,
+    fetch: Callable[..., Any] = fetch_json,
+    pointer_cache_ttl_seconds: int = POINTER_CACHE_SECONDS,
 ) -> dict[str, Any]:
     now = time.time()
     checked_at = old.get("checked_at") if isinstance(old, dict) else None
-    if isinstance(checked_at, (int, float)) and 0 <= now - checked_at < POINTER_CACHE_SECONDS:
+    if pointer_cache_ttl_seconds > 0 and isinstance(checked_at, (int, float)) and 0 <= now - checked_at < pointer_cache_ttl_seconds:
         return {**old, "freshness": "cached-verified"}
-    commit_info = fetch(f"{API_ROOT}/commits/main")
+    request_headers = {"If-None-Match": old["etag"]} if old and isinstance(old.get("etag"), str) else None
+    commit_info = fetch(f"{API_ROOT}/commits/main", request_headers)
+    if isinstance(commit_info, dict) and commit_info.get("_not_modified") is True:
+        if not old or not isinstance(old.get("commit"), str) or not isinstance(old.get("files"), dict):
+            raise PreflightError("GitHub returned 304 without a usable cached policy snapshot")
+        fresh = {key: value for key, value in old.items() if key != "freshness"}
+        fresh.update({"checked_at": now, "freshness": "current"})
+        if commit_info.get("_http_etag"):
+            fresh["etag"] = commit_info["_http_etag"]
+        return fresh
     commit = commit_info.get("sha") if isinstance(commit_info, dict) else None
     if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise PreflightError("GitHub did not return a valid main commit SHA")
     if old and old.get("commit") == commit:
-        return {**old, "checked_at": now}
+        fresh = {key: value for key, value in old.items() if key != "freshness"}
+        fresh.update({"checked_at": now, "freshness": "current"})
+        if commit_info.get("_http_etag"):
+            fresh["etag"] = commit_info["_http_etag"]
+        return fresh
     files: dict[str, dict[str, str]] = {}
     for path in POLICY_FILES:
         from urllib.parse import quote
@@ -126,7 +170,10 @@ def fetch_policy_snapshot(
             raise PreflightError(f"Policy file exceeds the bounded read size: {path}")
         text = raw.decode("utf-8")
         files[path] = {"sha256": sha256_text(text), "text": text}
-    return {"schema": CACHE_SCHEMA, "repository": REPOSITORY, "commit": commit, "files": files, "checked_at": now}
+    snapshot = {"schema": CACHE_SCHEMA, "repository": REPOSITORY, "commit": commit, "files": files, "checked_at": now}
+    if commit_info.get("_http_etag"):
+        snapshot["etag"] = commit_info["_http_etag"]
+    return snapshot
 
 
 def load_cache(path: Path) -> dict[str, Any] | None:
@@ -137,6 +184,20 @@ def load_cache(path: Path) -> dict[str, Any] | None:
     except (OSError, ValueError, AttributeError):
         pass
     return None
+
+
+def load_runtime_profile(path: Path) -> dict[str, Any]:
+    """Read the explicit, local project-root allowlist; never inspect credentials."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("schema") != 1:
+        raise PreflightError("Preflight profile must be a JSON object with schema=1")
+    roots = data.get("approved_project_roots", [])
+    if not isinstance(roots, list) or any(not isinstance(item, str) or not Path(item).is_absolute() for item in roots):
+        raise PreflightError("approved_project_roots must contain only absolute local paths")
+    ttl = data.get("pointer_cache_ttl_seconds", 0)
+    if isinstance(ttl, bool) or not isinstance(ttl, int) or ttl < 0 or ttl > 3600:
+        raise PreflightError("pointer_cache_ttl_seconds must be an explicit integer from 0 to 3600")
+    return {"approved_project_roots": tuple(roots), "pointer_cache_ttl_seconds": ttl}
 
 
 def save_cache(path: Path, snapshot: dict[str, Any]) -> None:
@@ -174,11 +235,13 @@ def preflight_context(
     cache_path: Path,
     fetcher: Callable[[dict[str, Any] | None], dict[str, Any]] = fetch_policy_snapshot,
     git: Callable[[list[str], str], str | None] = _run_git,
+    approved_project_roots: tuple[str, ...] = (),
+    pointer_cache_ttl_seconds: int = POINTER_CACHE_SECONDS,
 ) -> dict[str, Any]:
     cwd = event.get("cwd")
     if not isinstance(cwd, str) or not cwd:
         return {"project": "unknown", "model": event.get("model") or "unknown", "effort": "unknown", "freshness": "unknown", "context": "Project identity is unknown; do not assume GradeCrew role or rules."}
-    project, root = identify_project(cwd, git)
+    project, root = identify_project(cwd, git, approved_project_roots)
     if project != REPOSITORY or root is None or not is_within(cwd, root):
         return {"project": "unknown", "model": event.get("model") or "unknown", "effort": "unknown", "freshness": "unknown", "context": "Project identity is unknown; do not infer GradeCrew scope or role from chat/session identity."}
 
@@ -186,13 +249,15 @@ def preflight_context(
     actual_model = event.get("model") if isinstance(event.get("model"), str) and event.get("model") else "unknown"
     effort = "unknown"  # UserPromptSubmit's documented input has no effort field.
     try:
-        latest = fetcher(old)
+        latest = fetcher(old, pointer_cache_ttl_seconds=pointer_cache_ttl_seconds) if fetcher is fetch_policy_snapshot else fetcher(old)
     except Exception as exc:  # Network/cache failures must be surfaced without broad blocking.
         freshness = "unverified"
         cached_commit = old.get("commit", "none") if old else "none"
+        checked_at = old.get("checked_at") if old else None
+        last_verified = datetime.fromtimestamp(checked_at, timezone.utc).isoformat() if isinstance(checked_at, (int, float)) else "unknown"
         prompt = event.get("prompt") if isinstance(event.get("prompt"), str) else ""
         blocked = bool(HIGH_IMPACT.search(prompt))
-        context = f"GradeCrew policy freshness unverified; cached main={cached_commit}. Model={actual_model}; effort=unknown. Role remains unresolved."
+        context = f"GradeCrew policy freshness unverified; cached main={cached_commit}, last verified={last_verified}. Model={actual_model}; effort=unknown. Role remains unresolved."
         error = type(exc).__name__
         if isinstance(exc, urllib.error.HTTPError):
             error = f"HTTP {exc.code}"
@@ -206,7 +271,12 @@ def preflight_context(
         return output
 
     freshness = latest.get("freshness") or ("current" if old and old.get("commit") == latest.get("commit") else "updated")
-    delta = "Rules checked against main within the last five minutes; no new network check was needed." if freshness == "cached-verified" else ("Rules checked against current main; no policy changes." if freshness == "current" else policy_delta(old, latest))
+    if freshness == "cached-verified":
+        checked_at = latest.get("checked_at")
+        verified = datetime.fromtimestamp(checked_at, timezone.utc).isoformat() if isinstance(checked_at, (int, float)) else "unknown"
+        delta = f"Main pointer last verified at {verified}; reused within the explicitly configured cache TTL."
+    else:
+        delta = "Rules checked against current main; no policy changes." if freshness == "current" else policy_delta(old, latest)
     save_cache(cache_path, latest)
     context = (
         f"GradeCrew rules checked at main {latest['commit'][:12]} ({freshness}). {delta}\n"
@@ -216,7 +286,15 @@ def preflight_context(
     return {"project": REPOSITORY, "model": actual_model, "effort": effort, "freshness": freshness, "context": context}
 
 
-def hook_main() -> int:
+def hook_main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--profile", type=Path)
+    args = parser.parse_args(argv)
+    try:
+        profile = load_runtime_profile(args.profile) if args.profile else {"approved_project_roots": (), "pointer_cache_ttl_seconds": 0}
+    except (OSError, ValueError, PreflightError) as exc:
+        print(json.dumps({"systemMessage": f"GradeCrew preflight profile unavailable; project scope is unknown ({type(exc).__name__})."}))
+        return 0
     try:
         event = json.load(sys.stdin)
     except (ValueError, OSError):
@@ -224,7 +302,10 @@ def hook_main() -> int:
         return 0
     cache_root = Path(os.environ.get("TMPDIR", tempfile.gettempdir())) / "gradecrew-chat-preflight"
     cache_path = cache_root / "policy.json"
-    result = preflight_context(event, cache_path)
+    result = preflight_context(
+        event, cache_path, approved_project_roots=profile["approved_project_roots"],
+        pointer_cache_ttl_seconds=profile["pointer_cache_ttl_seconds"],
+    )
     if result.get("decision") == "block":
         print(json.dumps({"decision": "block", "reason": result["reason"]}, ensure_ascii=False))
         return 0
@@ -269,115 +350,5 @@ class FakeAppServer:
         return {"turn": {"status": "inProgress", "model": None, "effort": None}}
 
 
-def self_check() -> None:
-    import tempfile as _tempfile
-
-    def identity_git(args: list[str], cwd: str) -> str | None:
-        if args == ["rev-parse", "--show-toplevel"]:
-            return "/work/Hausaufgabe"
-        if args == ["remote", "get-url", "origin"]:
-            return "https://github.com/HerrLoeffler/Hausaufgabe.git"
-        return None
-
-    with _tempfile.TemporaryDirectory() as temp:
-        # Exercise the real snapshot fetcher with an in-memory HTTP fake: a
-        # recent check reuses cache; an expired pointer costs one request; a
-        # changed pointer reads bounded files pinned to that exact commit.
-        unchanged_calls: list[str] = []
-
-        def unchanged_fetch(url: str) -> Any:
-            unchanged_calls.append(url)
-            return {"sha": "c" * 40}
-
-        cached = {"schema": 1, "repository": REPOSITORY, "commit": "c" * 40, "files": {}}
-        fetched = fetch_policy_snapshot(cached, unchanged_fetch)
-        assert fetched["commit"] == cached["commit"] and len(unchanged_calls) == 1
-        assert unchanged_calls == [f"{API_ROOT}/commits/main"]
-
-        recent = {**cached, "checked_at": time.time()}
-        rate_limited_calls: list[str] = []
-        reused = fetch_policy_snapshot(recent, lambda url: rate_limited_calls.append(url))
-        assert reused["freshness"] == "cached-verified" and reused["commit"] == "c" * 40
-        assert rate_limited_calls == []
-
-        changed_calls: list[str] = []
-        encoded_policy = base64.b64encode(b"# verified rule\n").decode("ascii")
-
-        def changed_fetch(url: str) -> Any:
-            changed_calls.append(url)
-            if url == f"{API_ROOT}/commits/main":
-                return {"sha": "d" * 40}
-            return {"encoding": "base64", "content": encoded_policy}
-
-        updated = fetch_policy_snapshot(cached, changed_fetch)
-        assert updated["commit"] == "d" * 40 and len(updated["files"]) == len(POLICY_FILES)
-        assert len(changed_calls) == 1 + len(POLICY_FILES)
-        assert all("ref=" + "d" * 40 in call for call in changed_calls[1:])
-
-        cache = Path(temp) / "cache.json"
-        snap1 = {"schema": 1, "repository": REPOSITORY, "commit": "a" * 40, "files": {p: {"sha256": sha256_text("stable"), "text": "stable\n"} for p in POLICY_FILES}}
-        snap2 = {"schema": 1, "repository": REPOSITORY, "commit": "b" * 40, "files": {p: {"sha256": sha256_text("stable\nupdated rule" if p == "AGENTS.md" else "stable"), "text": "stable\nupdated rule\n" if p == "AGENTS.md" else "stable\n"} for p in POLICY_FILES}}
-        fetch_counts = {"main": 0, "policy": 0}
-
-        def refresh(old: dict[str, Any] | None) -> dict[str, Any]:
-            fetch_counts["main"] += 1
-            latest = snap2 if fetch_counts["main"] >= 4 else snap1
-            if old and old.get("commit") == latest["commit"]:
-                return old
-            fetch_counts["policy"] += len(POLICY_FILES)
-            return latest
-
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "summarize this", "model": "gpt-6-luna"}, cache, refresh, identity_git)
-        assert result["freshness"] == "updated" and result["model"] == "gpt-6-luna" and result["effort"] == "unknown"
-        assert "Policy baseline initialized" in result["context"]
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "next step?", "model": "gpt-6.1-sol"}, cache, refresh, identity_git)
-        assert result["freshness"] == "current" and "no policy changes" in result["context"]
-        assert result["model"] == "gpt-6.1-sol" and result["effort"] == "unknown"
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "routine check", "model": None}, cache, refresh, identity_git)
-        assert result["model"] == "unknown" and result["effort"] == "unknown" and "role is unresolved" in result["context"]
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "continue authorized work", "model": "gpt-6.1-sol"}, cache, refresh, identity_git)
-        assert result["freshness"] == "updated" and "updated rule" in result["context"]
-        assert fetch_counts == {"main": 4, "policy": len(POLICY_FILES) * 2}
-        result = preflight_context({"cwd": "/other/project", "prompt": "anything", "model": None}, cache, lambda old: (_ for _ in ()).throw(AssertionError("must not fetch unknown project")), identity_git)
-        assert result["project"] == "unknown" and result["model"] == "unknown" and result["effort"] == "unknown"
-        def unavailable() -> dict[str, Any]:
-            raise urllib.error.URLError("offline")
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "Please deploy this to production", "model": None}, cache, lambda old: unavailable(), identity_git)
-        assert result["decision"] == "block" and result["model"] == "unknown" and result["effort"] == "unknown"
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "Can you explain the production deploy plan?", "model": None}, cache, lambda old: unavailable(), identity_git)
-        assert "decision" not in result and result["freshness"] == "unverified"
-        def rate_limited(old: dict[str, Any] | None) -> dict[str, Any]:
-            raise urllib.error.HTTPError("https://api.github.com", 429, "rate limited", {"Retry-After": "900"}, None)
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "status", "model": None}, cache, rate_limited, identity_git)
-        assert "HTTP 429" in result["error"] and "retry-after=300s" in result["error"] and "decision" not in result
-        result = preflight_context({"cwd": "/work/Hausaufgabe", "prompt": "status only", "model": None}, cache, lambda old: unavailable(), identity_git)
-        assert "decision" not in result and result["freshness"] == "unverified"
-
-    models = [
-        {"model": "gpt-6-luna", "supportedReasoningEfforts": [{"reasoningEffort": "medium"}]},
-        {"model": "gpt-6.1-sol", "supportedReasoningEfforts": [{"reasoningEffort": "medium"}, {"reasoningEffort": "high"}]},
-    ]
-    cases = [("routine", None, "gpt-6-luna", "medium"), ("cross_area", None, "gpt-6.1-sol", "medium"), ("difficult", "security conflict", "gpt-6.1-sol", "high"), ("difficult", None, "gpt-6.1-sol", "medium")]
-    for task_class, reason, expected_model, expected_effort in cases:
-        server = FakeAppServer(models)
-        available = server.model_list()
-        model, effort = choose_model(task_class, available, reason)
-        response = server.turn_start("thread-fake", model, effort, "synthetic input")
-        assert [call["method"] for call in server.calls] == ["model/list", "turn/start"]
-        assert server.calls[1]["model"] == expected_model and server.calls[1]["effort"] == expected_effort
-        assert response["turn"]["model"] is None and response["turn"]["effort"] is None
-    try:
-        choose_model("routine", models[1:], None)
-    except PreflightError:
-        pass
-    else:
-        raise AssertionError("missing selected model must stop before turn/start")
-
-    print("offline preflight probe: PASS (fresh/current/delta/unknown-scope/unknown-model/scoped-offline-block/model-list-before-explicit-turn-start; no inference)")
-
-
 if __name__ == "__main__":
-    if len(sys.argv) == 2 and sys.argv[1] == "--self-check":
-        self_check()
-    else:
-        hook_main()
+    hook_main()
