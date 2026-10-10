@@ -1,0 +1,2 @@
+reset_start phase=0 frames=0 position=X=-1600.000 Y=0.000 Z=88.000 near=-1 introMask=0 intro=0 paused=0 velocity=X=0.000 Y=0.000 Z=0.000
+walk_timeout phase=1 frames=1437 position=X=-1600.000 Y=0.000 Z=90.400 near=-1 introMask=0 intro=0 paused=0 velocity=X=0.000 Y=0.000 Z=0.000

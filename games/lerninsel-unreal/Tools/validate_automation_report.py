@@ -9,6 +9,7 @@ known_tests = {
     "GradeCrew.Lerninsel.FourPuzzles",
     "GradeCrew.Lerninsel.Fox",
     "GradeCrew.Lerninsel.Play",
+    "GradeCrew.Lerninsel.RuntimeSequence",
     "GradeCrew.Lerninsel.WorldPreview",
 }
 report_path, requested_prefix = sys.argv[1:]
