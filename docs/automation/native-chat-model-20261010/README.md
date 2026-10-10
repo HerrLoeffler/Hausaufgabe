@@ -4,10 +4,10 @@
 
 ## Supported controls and limits
 
-- Codex documents `model` and `model_reasoning_effort` in `config.toml`. The desktop app’s bundled Codex CLI uses the same local configuration; app-server `thread/start` and `turn/start` accept model/effort selection. New Codex app threads created through the app interface can also be assigned a model and thinking effort.
+- Codex documents `model` and `model_reasoning_effort` in `config.toml`. The desktop app’s bundled Codex CLI uses the same local configuration. App-server `thread/start` accepts `model`; `turn/start` accepts `model` and `effort`. Codex app thread creation accepts `model` and `thinking`; delegated agent starts accept `model` and `reasoning_effort`.
 - The desktop model/reasoning picker and `/model` and `/reasoning` commands change the selection for the current chat. Existing chats may therefore retain an explicit selection even after the global default changes. Check/adjust an existing idle GradeCrew chat before its next task when an older override is possible.
 - Configuration precedence permits project/profile/command/turn selections to override the user default. Project configuration is conditional on project trust. This work did not add project config or trust entries.
-- A repo instruction cannot force manual UI choices or rewrite an active model call. Start/delegation paths must pass the requested model and effort explicitly; record requested values separately from actual values. The current runtime model/effort is `unknown` when not observable. `turn/steer` does not change the model on an already-running call. No hooks or UI guard were installed; PR184 was not changed.
+- A repo instruction cannot force manual UI choices or rewrite an active model call. Start/delegation paths must pass the requested model and effort using the fields supported by that API; record requested values separately from actual values. The current runtime model/effort is `unknown` when not observable. `turn/steer` does not change the model on an already-running call. No hooks or UI guard were installed; PR184 was not changed.
 - A global configuration edit does not prove an already-running desktop process has reloaded it. Official troubleshooting guidance says restart the client after config changes. This task did not restart the desktop app, to avoid interrupting ongoing work; the next normal app restart is required before claiming the GUI process has reloaded this default.
 
 ## Default and policy receipt (2026-10-10)
