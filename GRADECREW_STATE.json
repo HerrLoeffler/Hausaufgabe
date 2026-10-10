@@ -1315,6 +1315,73 @@
       "user_test": "synthetic_desktop_report_only; real_account_device_acceptance_not_performed",
       "handoff": "workstreams/privacy-controls-integration-20261010.md",
       "next_action": "Authorize and qualify existing candidate through exact CombinedCI/peer/target gates; no workflow, runtime change, merge or deploy started in metadata-preparation task."
+    },
+    {
+      "id": "model-governor-cli-20261010",
+      "task_id": "GC-MODEL-GOVERNOR-01",
+      "branch": "codex/gc-model-governor-first-import-20261010",
+      "stage": "integrated",
+      "source": {
+        "pr": 201,
+        "commit": "3a155f84bb3ec0428fa8ffb92ab94fdac8b99219",
+        "ci": {
+          "run": 38090177717,
+          "job": 114324833180,
+          "result": "success"
+        },
+        "independent_review": "both_axes_passed_existing_central_reviewer"
+      },
+      "integration": {
+        "target": "feature/gradecrew-app-integration",
+        "commit": "507a06008c7a9a95a9a84e8d3fdbb54fe9f08581",
+        "post_merge_checks": {
+          "test": {
+            "id": 114325311748,
+            "result": "completed_success"
+          },
+          "node22_tests": {
+            "id": 114325311725,
+            "result": "completed_success"
+          },
+          "dev_workbench": {
+            "id": 114325311535,
+            "result": "completed_success"
+          }
+        }
+      },
+      "localActivation": {
+        "base_commit": "2062aaafdec172182088fea4a7b5381422e10559",
+        "digest_fix_commit": "bc999d6d4b612726c4468e94c227c4dd5e8d60c3",
+        "scope": [
+          "tools/dev-workbench/codex-patch-provider.mjs",
+          "tools/dev-workbench/live-editor.mjs"
+        ],
+        "checks": "7/7 per existing recovery receipt; not rerun here",
+        "site_8772": {
+          "start_path": "existing entrypoint",
+          "last_recorded_pid": 57860,
+          "jobs_at_recorded_check": "none active in both projects",
+          "current_health": "not rechecked"
+        }
+      },
+      "native_defaults": {
+        "pr": 200,
+        "integrated_on_main_by": "cc35dfbcd3688b9875f029c19e17c9223a85dfb8",
+        "default": "gpt-6-luna/medium",
+        "manual_desktop_overrides": "not forced"
+      },
+      "actual_runtime": {
+        "model": "unknown",
+        "effort": "unknown",
+        "tokens": "unknown",
+        "cost": "unknown",
+        "savings": "unknown",
+        "next_evidence": "ordinary later CLI job"
+      },
+      "staging": "not_deployed",
+      "production": "not_requested",
+      "user_test": "not_performed",
+      "next_action": "Independent review of PR 199 and green documentation CI; record runtime model/effort and tokens only from a later ordinary CLI job."
     }
   ],
   "deployments": [

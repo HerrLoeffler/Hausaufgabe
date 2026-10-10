@@ -571,7 +571,10 @@
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/native-chat-model-20261010.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "docs/gc-model-governor-evidence-20261010",
+        "codex/gc-model-governor-first-import-20261010"
+      ]
     }
   ]
 }
