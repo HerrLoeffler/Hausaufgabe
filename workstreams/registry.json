@@ -1,568 +1,1 @@
-{
-  "schemaVersion": 2,
-  "updatedAt": "2026-10-09",
-  "canonicalBaseBranch": "main",
-  "allowedStates": [
-    "active",
-    "integration_ready",
-    "blocked",
-    "integrated",
-    "archive_candidate"
-  ],
-  "staleAfterDays": 7,
-  "staleBehindThreshold": 1,
-  "ignoredBranches": [
-    "main",
-    "automation/guardian-state"
-  ],
-  "ignoredPrefixes": [
-    "preview-snapshot-",
-    "automation/worker/"
-  ],
-  "archivePrefixes": [
-    "backup/",
-    "v2."
-  ],
-  "workstreams": [
-    {
-      "id": "launch-controls-20261010",
-      "title": "GC-LAUNCH-CONTROLS-01: Technische Sicherheit + Datenschutz/Recht/faire Bedienung",
-      "primaryBranch": "docs/gc-launch-controls-integration-20261010",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/launch-controls-integration-20261010.md",
-      "relatedBranches": [
-        "docs/gc-launch-security-20261010",
-        "docs/gc-launch-privacy-20261010"
-      ]
-    },
-    {
-      "id": "development-status-v1",
-      "title": "Development Status / Mehr-Chat-Control-Plane",
-      "primaryBranch": "feature/development-status-v1",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/development-status-v1.md",
-      "relatedBranches": [
-        "feature/dev-governance-emulator"
-      ]
-    },
-    {
-      "id": "web-app",
-      "title": "Website / gemeinsamer App-Webstand",
-      "primaryBranch": "feature/gradecrew-app-integration",
-      "integrationTarget": "main",
-      "state": "active",
-      "relatedBranches": [
-        "fix/gradecrew-staging-polish",
-        "fix/gradecrew-staging-release-final",
-        "fix/admin-controls-auth-ready"
-      ]
-    },
-    {
-      "id": "crew-assistant",
-      "title": "Crew Assistant Core",
-      "primaryBranch": "feature/crew-assistant-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "relatedBranches": [
-        "fix/contextual-crew-assistants-v2",
-        "feature/coco-support-memory-20261009",
-        "fix/staging-feedback-coco-memory-20261009",
-        "fix/gc-security-coco-owned-id-20261009",
-        "fix/staging-feedback-coco-images-20261009",
-        "fix/staging-feedback-coco-turn-20261009",
-        "fix/staging-feedback-coco-context-20261009"
-      ]
-    },
-    {
-      "id": "remy-structured-telemetry-v1",
-      "title": "Remy Struktur / Telemetrie",
-      "primaryBranch": "feature/remy-structured-telemetry-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "relatedBranches": [
-        "fix/crew-telemetry-retention-v1",
-        "fix/remy-integration-test-loader",
-        "fix/remy-parser-review-v1"
-      ]
-    },
-    {
-      "id": "posthog-staging-telemetry-v1",
-      "title": "PostHog Staging Telemetrie / Privacy Projection",
-      "primaryBranch": "feature/posthog-staging-telemetry-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/posthog-staging-telemetry-v1.md",
-      "relatedBranches": [
-        "chore/posthog-staging-functions-config-v1"
-      ]
-    },
-    {
-      "id": "emmi-whole-test-revision",
-      "title": "Emmi / ganzen Test √ºberarbeiten",
-      "primaryBranch": "feature/emmi-whole-test-revision-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "relatedBranches": []
-    },
-    {
-      "id": "tutorial-choice-replay-v1",
-      "title": "Tutorial Choice / Replay",
-      "primaryBranch": "feature/tutorial-choice-replay-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "relatedBranches": [
-        "fix/tutorial-finale-arrow-only"
-      ]
-    },
-    {
-      "id": "freetext-review",
-      "title": "Freitext-Pr√ºfhilfe",
-      "primaryBranch": "feature/freetext-review-priority",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "blocked",
-      "relatedBranches": []
-    },
-    {
-      "id": "secure-assessment",
-      "title": "Pr√ºfungsserver / Security",
-      "primaryBranch": "feature/secure-assessment-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "relatedBranches": [
-        "feature/gate-e-load-test",
-        "hardening/secure-preview-full-rc-check",
-        "integration/secure-assessment-mobile-gc28",
-        "fix/mobile-review-release-audit"
-      ]
-    },
-    {
-      "id": "telemetry",
-      "title": "Generische Telemetrie / Produktdiagnose",
-      "primaryBranch": "feature/telemetry-implementation",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "relatedBranches": [
-        "feature/telemetry-contract-v1",
-        "feature/telemetry-measurement-design",
-        "integration/telemetry-emulator-gate"
-      ]
-    },
-    {
-      "id": "bug-ops-v1",
-      "title": "BugOps / Fehler-Inbox und sichere Reparaturautomatik",
-      "primaryBranch": "feature/bug-ops-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/bug-ops-v1.md",
-      "relatedBranches": [
-        "feature/telemetry-implementation",
-        "feature/guardian-execution-v2",
-        "feature/bug-ops-server-v1",
-        "feature/bug-ops-attention-v1"
-      ]
-    },
-    {
-      "id": "ios-teacher-app",
-      "title": "iPad-Lehrerapp / Shared Design",
-      "primaryBranch": "feature/shared-gradecrew-design-system",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "relatedBranches": [
-        "feature/gradecrew-secure-ios"
-      ]
-    },
-    {
-      "id": "design-foundation",
-      "title": "Design Foundation",
-      "primaryBranch": "feature/gradecrew-design-foundation-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "relatedBranches": [
-        "feature/design-dashboard-v1",
-        "feature/brand-logo-v1",
-        "feature/brand-core-v1",
-        "feature/games-brand-core-v1"
-      ]
-    },
-    {
-      "id": "design-startscreen-v1",
-      "title": "√ñffentlicher GradeCrew Startscreen",
-      "primaryBranch": "feature/design-startscreen-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/design-startscreen-v1.md",
-      "relatedBranches": [
-        "feature/design-startscreen-entry-activation-fix",
-        "feature/design-startscreen-masterpiece-v1"
-      ]
-    },
-    {
-      "id": "release-safety",
-      "title": "Release-Sicherung",
-      "primaryBranch": "feature/release-safety-snapshots",
-      "integrationTarget": "main",
-      "state": "active",
-      "relatedBranches": [
-        "chore/release-state-v2"
-      ]
-    },
-    {
-      "id": "staging-functions-automation-history",
-      "title": "Staging Functions Automatisierung / Nachweise",
-      "primaryBranch": "chore/staging-functions-automation",
-      "integrationTarget": "main",
-      "state": "archive_candidate",
-      "relatedBranches": [
-        "chore/record-staging-functions-e2e",
-        "chore/verify-crew-telemetry-staging-functions",
-        "fix/staging-functions-wif-display"
-      ]
-    },
-    {
-      "id": "games-structure",
-      "title": "Games Hub / Struktur",
-      "primaryBranch": "lab/games-structure",
-      "integrationTarget": "lab/vocab-rush",
-      "state": "active",
-      "relatedBranches": [
-        "lab/games-hub",
-        "lab/fast-quiz",
-        "lab/fast-quiz-v4-verified",
-        "lab/fehlerjagd-deutsch",
-        "lab/fehlerjagd-deutsch-v1-verified",
-        "lab/vocab-rush-v1-verified"
-      ]
-    },
-    {
-      "id": "games-escape",
-      "title": "Games / Escape Room",
-      "primaryBranch": "feature/escape-room-mvp-v1",
-      "integrationTarget": "lab/games-structure",
-      "state": "active",
-      "relatedBranches": [
-        "fix/escape-review-v1"
-      ]
-    },
-    {
-      "id": "games-design-system",
-      "title": "Games Design System",
-      "primaryBranch": "lab/games-design-system",
-      "integrationTarget": "lab/games-structure",
-      "state": "active",
-      "relatedBranches": []
-    },
-    {
-      "id": "escape-tutor-cost-guards",
-      "title": "Escape Tutor Kosten-/Fallback-Guards",
-      "primaryBranch": "fix/escape-tutor-cost-guards",
-      "integrationTarget": "feature/escape-room-mvp-v1",
-      "state": "integrated",
-      "relatedBranches": []
-    },
-    {
-      "id": "ai-gateway-foundation",
-      "title": "Multi-Provider AI Gateway",
-      "primaryBranch": "feature/multi-provider-ai-gateway-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "relatedBranches": []
-    },
-    {
-      "id": "quality-routing-contract-v1",
-      "title": "KI-Qualit√§ts-/Sprachvertrag",
-      "primaryBranch": "feature/quality-routing-contract-v1",
-      "integrationTarget": "feature/multi-provider-ai-gateway-v1",
-      "state": "active",
-      "relatedBranches": [
-        "fix/ai-review-workflow",
-        "fix/ai-format-reliability",
-        "feature/ai-integration"
-      ]
-    },
-    {
-      "id": "ai-orchestration-v1",
-      "title": "Automatische KI-Auswahl / Kosten",
-      "primaryBranch": "feature/ai-orchestration-v1",
-      "integrationTarget": "feature/quality-routing-contract-v1",
-      "state": "active",
-      "relatedBranches": [
-        "fix/ai-routing-review-v1"
-      ]
-    },
-    {
-      "id": "openai-gateway-provider-v1",
-      "title": "OpenAI im gemeinsamen Gateway",
-      "primaryBranch": "feature/openai-gateway-provider-v1",
-      "integrationTarget": "feature/ai-orchestration-v1",
-      "state": "active",
-      "relatedBranches": []
-    },
-    {
-      "id": "ai-gateway-staging-cicd-v1",
-      "title": "Automatisches AI-Gateway-Staging",
-      "primaryBranch": "feature/ai-gateway-staging-cicd-v1",
-      "integrationTarget": "feature/openai-gateway-provider-v1",
-      "state": "blocked",
-      "relatedBranches": [
-        "integration/ai-gateway-staging",
-        "fix/ai-gateway-preflight-diagnostics"
-      ]
-    },
-    {
-      "id": "gemini-gateway-provider-v1",
-      "title": "Gemini im Staging AI Gateway",
-      "primaryBranch": "feature/gemini-gateway-provider-v1",
-      "integrationTarget": "integration/ai-gateway-staging",
-      "state": "active",
-      "relatedBranches": []
-    },
-    {
-      "id": "i18n-foundation-plan",
-      "title": "Internationalisierungsplan",
-      "primaryBranch": "feature/i18n-foundation-plan",
-      "integrationTarget": "main",
-      "state": "archive_candidate",
-      "relatedBranches": [
-        "feature/i18n-core-v1",
-        "feature/i18n-english-ui-v1",
-        "feature/i18n-german-refactor-v1"
-      ]
-    },
-    {
-      "id": "system-review-2026-10-02",
-      "title": "Gesamtpr√ºfung / Integrationsl√ºcken",
-      "primaryBranch": "chore/resume-system-audit-20261002",
-      "integrationTarget": "main",
-      "state": "active",
-      "handoff": "workstreams/system-review-2026-10-02.md",
-      "relatedBranches": []
-    },
-    {
-      "id": "dev-legacy-triage",
-      "title": "Legacy dev Branch",
-      "primaryBranch": "dev",
-      "integrationTarget": "main",
-      "state": "archive_candidate",
-      "relatedBranches": [
-        "chore/shared-todo-and-games-scope"
-      ]
-    },
-    {
-      "id": "dev-governance-emulator",
-      "title": "Alte Governance-/Emulator-Arbeit",
-      "primaryBranch": "feature/dev-governance-emulator",
-      "integrationTarget": "main",
-      "state": "archive_candidate",
-      "relatedBranches": [
-        "chore/gradecrew-automation",
-        "chore/shared-agent-handoffs"
-      ]
-    },
-    {
-      "id": "release-control-evidence-v2",
-      "title": "Release Control: verifizierte Receipts und ehrliche Abnahme",
-      "primaryBranch": "fix/release-control-evidence-v2",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/release-control-evidence-v2.md",
-      "relatedBranches": [
-        "feature/release-control-acceptance-v1"
-      ]
-    },
-    {
-      "id": "web-premerge-combined-ci-v1",
-      "title": "Combined CI vor Web-Integration",
-      "primaryBranch": "fix/web-premerge-combined-ci-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integration_ready",
-      "handoff": "workstreams/web-premerge-combined-ci-v1.md"
-    },
-    {
-      "id": "stage-guardian-v1",
-      "title": "Automatische KI-Fortsetzung der Entwicklungsphasen",
-      "primaryBranch": "feature/stage-guardian-v1",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/stage-guardian-v1.md"
-    },
-    {
-      "id": "guardian-execution-v2",
-      "title": "Autonome Auftrag-PR-Review-Integration-Staging-Kette",
-      "primaryBranch": "feature/guardian-execution-v2",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/guardian-execution-v2.md",
-      "relatedBranches": [
-        "feature/stage-guardian-v1",
-        "fix/guardian-delivery-proof-v1",
-        "fix/guardian-three-reviewers-v1"
-      ]
-    },
-    {
-      "id": "guardian-budget-pilot-v1",
-      "title": "Kleines Guardian-Kostenprofil und vorbereiteter E2E-Pilot",
-      "primaryBranch": "fix/guardian-budget-pilot-v1",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/guardian-budget-pilot-v1.md",
-      "relatedBranches": [
-        "feature/guardian-execution-v2"
-      ]
-    },
-    {
-      "id": "guardian-recovery-audit-20261004",
-      "title": "Guardian permission recovery and current repository audit",
-      "primaryBranch": "fix/guardian-recovery-queue-20261004",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/guardian-source-recovery-20261004.md",
-      "relatedBranches": [
-        "fix/guardian-read-permission-homepage-admission-20261004",
-        "fix/guardian-source-recovery-20261004",
-        "docs/guardian-source-recovery-evidence-20261004"
-      ]
-    },
-    {
-      "id": "actions-cost-policy-20261004",
-      "title": "Actions-Kosten / bewusste Preview-Meilensteine",
-      "primaryBranch": "fix/actions-cost-policy-20261004",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/actions-cost-policy-20261004.md",
-      "relatedBranches": [
-        "fix/actions-manual-visual-20261004",
-        "fix/actions-web-docs-20261004"
-      ]
-    },
-    {
-      "id": "guardian-staging-handoff-20261004",
-      "title": "Guardian exact CI to verified Staging handoff",
-      "primaryBranch": "fix/guardian-deploy-handoff-20261004",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/guardian-staging-handoff-20261004.md",
-      "relatedBranches": [
-        "docs/guardian-verified-pilot-20261004"
-      ]
-    },
-    {
-      "id": "audio-masterpiece-v2",
-      "title": "Audio Masterpiece V2 / H√∂r- und L√∂sungsaudio",
-      "primaryBranch": "feature/audio-masterpiece-v2",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/audio-masterpiece-v2.md",
-      "relatedBranches": [
-        "feature/audio-v2-staging-checkpoint",
-        "fix/audio-private-drafts-staging-v1"
-      ]
-    },
-    {
-      "id": "classroom-student-management-v1",
-      "title": "Sch√ºler:innen-/Klassenverwaltung / Classroom Masterprojekt",
-      "primaryBranch": "feature/classroom-student-management-v1",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "handoff": "workstreams/classroom-student-management-v1.md",
-      "relatedBranches": [
-        "feature/secure-assessment-v1"
-      ]
-    },
-    {
-      "id": "gc-web-polish-20261007",
-      "title": "Startb√ºhne und Lehrer-UI-Polish nach Staging-Screenshots",
-      "primaryBranch": "feature/gc-web-polish-20261007",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/gc-web-polish-20261007.md",
-      "relatedBranches": []
-    },
-    {
-      "id": "web-repair-20261007",
-      "title": "Web UI / Remy / gated audio choices",
-      "primaryBranch": "feature/audio-switch-overflow-20261007",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integrated",
-      "handoff": "workstreams/web-repair-batch-20261007.md",
-      "relatedBranches": [
-        "feature/gc-web-polish-20261007",
-        "feature/audio-web-repair-20261007",
-        "fix/web-acceptance-regressions-20261007",
-        "feature/audio-web-acceptance-20261007"
-      ]
-    },
-    {
-      "id": "lerninsel-layouts-20261007",
-      "title": "Ego-Lerninsel / Layouts und Spielbuch",
-      "primaryBranch": "docs/lerninsel-layouts-20261007",
-      "integrationTarget": "main",
-      "state": "active",
-      "handoff": "workstreams/lerninsel-layouts-20261007.md",
-      "relatedBranches": [
-        "feature/lerninsel-ego-v1"
-      ]
-    },
-    {
-      "id": "lerninsel-ego-v1",
-      "title": "Ego-Lerninsel / erster Unreal-Spielabschnitt",
-      "primaryBranch": "feature/lerninsel-ego-v1",
-      "integrationTarget": "main",
-      "state": "active",
-      "handoff": "workstreams/lerninsel-layouts-20261007.md",
-      "relatedBranches": [
-        "docs/lerninsel-layouts-20261007"
-      ]
-    },
-    {
-      "id": "img2threejs-codex-install-20261009",
-      "title": "img2threejs: lokales Codex-Werkzeug, Games-Zugriff und Assetqualit√§t",
-      "primaryBranch": "docs/img2threejs-codex-install-20261009",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/img2threejs-codex-install-20261009.md",
-      "relatedBranches": []
-    },
-    {
-      "id": "codex-lifecycle-hooks-20261010",
-      "title": "GC-HOOKS-01: Lifecycle-Hook-Entwurf und zentrale Rollenabgrenzung",
-      "primaryBranch": "docs/gc-hooks-01-design-20261010",
-      "integrationTarget": "main",
-      "state": "active",
-      "handoff": "workstreams/skills-integration-20261010.md",
-      "relatedBranches": []
-    },
-    {
-      "id": "gc-hooks-skills-setup-20261010",
-      "title": "GC-HOOKS-01-SKILLS: gezielte lokale Skills und Fachrollen-Zuordnung",
-      "primaryBranch": "docs/gc-hooks-skills-setup-20261010",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/skills-integration-20261010.md",
-      "relatedBranches": [
-        "docs/gc-hooks-skills-integration-20261010"
-      ]
-    },
-    {
-      "id": "matt-pocock-research-20261010",
-      "title": "GC-POCOCK-RESEARCH-01: lokale Caption-/Prim√§rtextforschung, zentrale Metadaten",
-      "primaryBranch": "docs/gc-launch-blocked-checkpoints-20261010",
-      "integrationTarget": "main",
-      "state": "integrated",
-      "handoff": "workstreams/matt-pocock-research-20261010.md",
-      "relatedBranches": []
-    },
-    {
-      "id": "privacy-controls-integration-20261010",
-      "title": "GC-LAUNCH-CONTROLS-01-PRIVACY: Integration nach belegten Gates vorbereiten",
-      "primaryBranch": "fix/gc-privacy-controls-20261010",
-      "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "blocked",
-      "handoff": "workstreams/privacy-controls-integration-20261010.md",
-      "relatedBranches": [
-        "fix/coco-chat-ui-background-memory-20261010"
-      ]
-    }
-  ]
-}
+Y™Áäx-ÆÈ‹j◊ù¢Îi∫⁄+äßj[hëÈ‹¢ÈÌÎ≠<NãZñã≠¶Îeäw¨’Ï(ÄÄâÕç°ïµÖYï…Õ•Ω∏àËÄ»∞(ÄÄâ’¡ëÖ—ïë–àËÄà»¿»ÿ¥ƒ¿¥¿‰à∞(ÄÄâçÖπΩπ•çÖ±	ÖÕï	…Öπç†àËÄâµÖ•∏à∞(ÄÄâÖ±±Ω›ïëM—Ö—ïÃàËÅl(ÄÄÄÄâÖç—•Ÿîà∞(ÄÄÄÄâ•π—ïù…Ö—•Ωπ}…ïÖë‰à∞(ÄÄÄÄââ±Ωç≠ïêà∞(ÄÄÄÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄâÖ…ç°•Ÿï}çÖπë•ëÖ—îà(ÄÅt∞(ÄÄâÕ—Ö±ïô—ï…ÖÂÃàËÄ‹∞(ÄÄâÕ—Ö±ï	ï°•πëQ°…ïÕ°Ω±êàËÄƒ∞(ÄÄâ•ùπΩ…ïë	…Öπç°ïÃàËÅl(ÄÄÄÄâµÖ•∏à∞(ÄÄÄÄâÖ’—ΩµÖ—•Ω∏Ωù’Ö…ë•Ö∏µÕ—Ö—îà(ÄÅt∞(ÄÄâ•ùπΩ…ïëA…ïô•·ïÃàËÅl(ÄÄÄÄâ¡…ïŸ•ï‹µÕπÖ¡Õ°Ω–¥à∞(ÄÄÄÄâÖ’—ΩµÖ—•Ω∏Ω›Ω…≠ï»ºà(ÄÅt∞(ÄÄâÖ…ç°•ŸïA…ïô•·ïÃàËÅl(ÄÄÄÄââÖç≠’¿ºà∞(ÄÄÄÄâÿ»∏à(ÄÅt∞(ÄÄâ›Ω…≠Õ—…ïÖµÃàËÅl(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ±Ö’πç†µçΩπ—…Ω±Ã¥»¿»ÿƒ¿ƒ¿à∞(ÄÄÄÄÄÄâ—•—±îàËÄâµ1U9 µ=9QI=1L¥¿ƒËÅQïç°π•Õç°îÅM•ç°ï…°ï•–Ä¨ÅÖ—ïπÕç°’—ËΩIïç°–ΩôÖ•…îÅ	ïë•ïπ’πúà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâëΩçÃΩùåµ±Ö’πç†µçΩπ—…Ω±Ãµ•π—ïù…Ö—•Ω∏¥»¿»ÿƒ¿ƒ¿à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâµÖ•∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ°ÖπëΩôòàËÄâ›Ω…≠Õ—…ïÖµÃΩ±Ö’πç†µçΩπ—…Ω±Ãµ•π—ïù…Ö—•Ω∏¥»¿»ÿƒ¿ƒ¿πµêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâëΩçÃΩùåµ±Ö’πç†µÕïç’…•—‰¥»¿»ÿƒ¿ƒ¿à∞(ÄÄÄÄÄÄÄÄâëΩçÃΩùåµ±Ö’πç†µ¡…•ŸÖç‰¥»¿»ÿƒ¿ƒ¿à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâëïŸï±Ω¡µïπ–µÕ—Ö—’Ãµÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâïŸï±Ω¡µïπ–ÅM—Ö—’ÃÄºÅ5ï°»µ°Ö–µΩπ—…Ω∞µA±Öπîà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩëïŸï±Ω¡µïπ–µÕ—Ö—’Ãµÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâµÖ•∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ°ÖπëΩôòàËÄâ›Ω…≠Õ—…ïÖµÃΩëïŸï±Ω¡µïπ–µÕ—Ö—’Ãµÿƒπµêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩëïÿµùΩŸï…πÖπçîµïµ’±Ö—Ω»à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ›ïàµÖ¡¿à∞(ÄÄÄÄÄÄâ—•—±îàËÄâ]ïâÕ•—îÄºÅùïµï•πÕÖµï»Å¡¿µ]ïâÕ—Öπêà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâµÖ•∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâô•‡Ωù…Öëïç…ï‹µÕ—Öù•πúµ¡Ω±•Õ†à∞(ÄÄÄÄÄÄÄÄâô•‡Ωù…Öëïç…ï‹µÕ—Öù•πúµ…ï±ïÖÕîµô•πÖ∞à∞(ÄÄÄÄÄÄÄÄâô•‡ΩÖëµ•∏µçΩπ—…Ω±ÃµÖ’—†µ…ïÖë‰à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâç…ï‹µÖÕÕ•Õ—Öπ–à∞(ÄÄÄÄÄÄâ—•—±îàËÄâ…ï‹ÅÕÕ•Õ—Öπ–ÅΩ…îà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩç…ï‹µÖÕÕ•Õ—Öπ–µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâô•‡ΩçΩπ—ï·—’Ö∞µç…ï‹µÖÕÕ•Õ—Öπ—Ãµÿ»à∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩçΩçºµÕ’¡¡Ω…–µµïµΩ…‰¥»¿»ÿƒ¿¿‰à∞(ÄÄÄÄÄÄÄÄâô•‡ΩÕ—Öù•πúµôïïëâÖç¨µçΩçºµµïµΩ…‰¥»¿»ÿƒ¿¿‰à∞(ÄÄÄÄÄÄÄÄâô•‡ΩùåµÕïç’…•—‰µçΩçºµΩ›πïêµ•ê¥»¿»ÿƒ¿¿‰à∞(ÄÄÄÄÄÄÄÄâô•‡ΩÕ—Öù•πúµôïïëâÖç¨µçΩçºµ•µÖùïÃ¥»¿»ÿƒ¿¿‰à∞(ÄÄÄÄÄÄÄÄâô•‡ΩÕ—Öù•πúµôïïëâÖç¨µçΩçºµ—’…∏¥»¿»ÿƒ¿¿‰à∞(ÄÄÄÄÄÄÄÄâô•‡ΩÕ—Öù•πúµôïïëâÖç¨µçΩçºµçΩπ—ï·–¥»¿»ÿƒ¿¿‰à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ…ïµ‰µÕ—…’ç—’…ïêµ—ï±ïµï—…‰µÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâIïµ‰ÅM—…’≠—’»ÄºÅQï±ïµï—…•îà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ…ïµ‰µÕ—…’ç—’…ïêµ—ï±ïµï—…‰µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâô•‡Ωç…ï‹µ—ï±ïµï—…‰µ…ï—ïπ—•Ω∏µÿƒà∞(ÄÄÄÄÄÄÄÄâô•‡Ω…ïµ‰µ•π—ïù…Ö—•Ω∏µ—ïÕ–µ±ΩÖëï»à∞(ÄÄÄÄÄÄÄÄâô•‡Ω…ïµ‰µ¡Ö…Õï»µ…ïŸ•ï‹µÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ¡ΩÕ—°ΩúµÕ—Öù•πúµ—ï±ïµï—…‰µÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâAΩÕ—!ΩúÅM—Öù•πúÅQï±ïµï—…•îÄºÅA…•ŸÖç‰ÅA…Ω©ïç—•Ω∏à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ¡ΩÕ—°ΩúµÕ—Öù•πúµ—ï±ïµï—…‰µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ°ÖπëΩôòàËÄâ›Ω…≠Õ—…ïÖµÃΩ¡ΩÕ—°ΩúµÕ—Öù•πúµ—ï±ïµï—…‰µÿƒπµêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâç°Ω…îΩ¡ΩÕ—°ΩúµÕ—Öù•πúµô’πç—•ΩπÃµçΩπô•úµÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâïµµ§µ›°Ω±îµ—ïÕ–µ…ïŸ•Õ•Ω∏à∞(ÄÄÄÄÄÄâ—•—±îàËÄâµµ§ÄºÅùÖπÈï∏ÅQïÕ–ÉÒâï…Ö…âï•—ï∏à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩïµµ§µ›°Ω±îµ—ïÕ–µ…ïŸ•Õ•Ω∏µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅmt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ—’—Ω…•Ö∞µç°Ω•çîµ…ï¡±Ö‰µÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâQ’—Ω…•Ö∞Å°Ω•çîÄºÅIï¡±Ö‰à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ—’—Ω…•Ö∞µç°Ω•çîµ…ï¡±Ö‰µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâô•‡Ω—’—Ω…•Ö∞µô•πÖ±îµÖ……Ω‹µΩπ±‰à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâô…ïï—ï·–µ…ïŸ•ï‹à∞(ÄÄÄÄÄÄâ—•—±îàËÄâ…ï•—ï·–µAÀÒô°•±ôîà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩô…ïï—ï·–µ…ïŸ•ï‹µ¡…•Ω…•—‰à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄââ±Ωç≠ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅmt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâÕïç’…îµÖÕÕïÕÕµïπ–à∞(ÄÄÄÄÄÄâ—•—±îàËÄâAÀÒô’πùÕÕï…Ÿï»ÄºÅMïç’…•—‰à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩÕïç’…îµÖÕÕïÕÕµïπ–µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩùÖ—îµîµ±ΩÖêµ—ïÕ–à∞(ÄÄÄÄÄÄÄÄâ°Ö…ëïπ•πúΩÕïç’…îµ¡…ïŸ•ï‹µô’±∞µ…åµç°ïç¨à∞(ÄÄÄÄÄÄÄÄâ•π—ïù…Ö—•Ω∏ΩÕïç’…îµÖÕÕïÕÕµïπ–µµΩâ•±îµùå»‡à∞(ÄÄÄÄÄÄÄÄâô•‡ΩµΩâ•±îµ…ïŸ•ï‹µ…ï±ïÖÕîµÖ’ë•–à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ—ï±ïµï—…‰à∞(ÄÄÄÄÄÄâ—•—±îàËÄâïπï…•Õç°îÅQï±ïµï—…•îÄºÅA…Ωë’≠—ë•ÖùπΩÕîà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ—ï±ïµï—…‰µ•µ¡±ïµïπ—Ö—•Ω∏à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩ—ï±ïµï—…‰µçΩπ—…Öç–µÿƒà∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩ—ï±ïµï—…‰µµïÖÕ’…ïµïπ–µëïÕ•ù∏à∞(ÄÄÄÄÄÄÄÄâ•π—ïù…Ö—•Ω∏Ω—ï±ïµï—…‰µïµ’±Ö—Ω»µùÖ—îà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄââ’úµΩ¡Ãµÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâ	’ù=¡ÃÄºÅï°±ï»µ%πâΩ‡Å’πêÅÕ•ç°ï…îÅIï¡Ö…Ö—’…Ö’—ΩµÖ—•¨à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩâ’úµΩ¡Ãµÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ°ÖπëΩôòàËÄâ›Ω…≠Õ—…ïÖµÃΩâ’úµΩ¡Ãµÿƒπµêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩ—ï±ïµï—…‰µ•µ¡±ïµïπ—Ö—•Ω∏à∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩù’Ö…ë•Ö∏µï·ïç’—•Ω∏µÿ»à∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩâ’úµΩ¡ÃµÕï…Ÿï»µÿƒà∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩâ’úµΩ¡ÃµÖ——ïπ—•Ω∏µÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ•ΩÃµ—ïÖç°ï»µÖ¡¿à∞(ÄÄÄÄÄÄâ—•—±îàËÄâ•AÖêµ1ï°…ï…Ö¡¿ÄºÅM°Ö…ïêÅïÕ•ù∏à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩÕ°Ö…ïêµù…Öëïç…ï‹µëïÕ•ù∏µÕÂÕ—ï¥à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩù…Öëïç…ï‹µÕïç’…îµ•ΩÃà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâëïÕ•ù∏µôΩ’πëÖ—•Ω∏à∞(ÄÄÄÄÄÄâ—•—±îàËÄâïÕ•ù∏ÅΩ’πëÖ—•Ω∏à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩù…Öëïç…ï‹µëïÕ•ù∏µôΩ’πëÖ—•Ω∏µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩëïÕ•ù∏µëÖÕ°âΩÖ…êµÿƒà∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩâ…Öπêµ±Ωùºµÿƒà∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩâ…ÖπêµçΩ…îµÿƒà∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩùÖµïÃµâ…ÖπêµçΩ…îµÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâëïÕ•ù∏µÕ—Ö…—Õç…ïï∏µÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄãYôôïπ—±•ç°ï»Å…Öëï…ï‹ÅM—Ö…—Õç…ïï∏à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩëïÕ•ù∏µÕ—Ö…—Õç…ïï∏µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ°ÖπëΩôòàËÄâ›Ω…≠Õ—…ïÖµÃΩëïÕ•ù∏µÕ—Ö…—Õç…ïï∏µÿƒπµêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩëïÕ•ù∏µÕ—Ö…—Õç…ïï∏µïπ—…‰µÖç—•ŸÖ—•Ω∏µô•‡à∞(ÄÄÄÄÄÄÄÄâôïÖ—’…îΩëïÕ•ù∏µÕ—Ö…—Õç…ïï∏µµÖÕ—ï…¡•ïçîµÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ…ï±ïÖÕîµÕÖôï—‰à∞(ÄÄÄÄÄÄâ—•—±îàËÄâIï±ïÖÕîµM•ç°ï…’πúà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ…ï±ïÖÕîµÕÖôï—‰µÕπÖ¡Õ°Ω—Ãà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâµÖ•∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâç°Ω…îΩ…ï±ïÖÕîµÕ—Ö—îµÿ»à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâÕ—Öù•πúµô’πç—•ΩπÃµÖ’—ΩµÖ—•Ω∏µ°•Õ—Ω…‰à∞(ÄÄÄÄÄÄâ—•—±îàËÄâM—Öù•πúÅ’πç—•ΩπÃÅ’—ΩµÖ—•Õ•ï…’πúÄºÅ9Öç°›ï•Õîà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâç°Ω…îΩÕ—Öù•πúµô’πç—•ΩπÃµÖ’—ΩµÖ—•Ω∏à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâµÖ•∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖ…ç°•Ÿï}çÖπë•ëÖ—îà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâç°Ω…îΩ…ïçΩ…êµÕ—Öù•πúµô’πç—•ΩπÃµî…îà∞(ÄÄÄÄÄÄÄÄâç°Ω…îΩŸï…•ô‰µç…ï‹µ—ï±ïµï—…‰µÕ—Öù•πúµô’πç—•ΩπÃà∞(ÄÄÄÄÄÄÄÄâô•‡ΩÕ—Öù•πúµô’πç—•ΩπÃµ›•òµë•Õ¡±Ö‰à(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâùÖµïÃµÕ—…’ç—’…îà∞(ÄÄÄÄÄÄâ—•—±îàËÄâÖµïÃÅ!’àÄºÅM—…’≠—’»à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâ±ÖàΩùÖµïÃµÕ—…’ç—’…îà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâ±ÖàΩŸΩçÖàµ…’Õ†à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâ±ÖàΩùÖµïÃµ°’àà∞(ÄÄÄÄÄÄÄÄâ±ÖàΩôÖÕ–µ≈’•Ëà∞(ÄÄÄÄÄÄÄÄâ±ÖàΩôÖÕ–µ≈’•Ëµÿ–µŸï…•ô•ïêà∞(ÄÄÄÄÄÄÄÄâ±ÖàΩôï°±ï…©Öùêµëï’—Õç†à∞(ÄÄÄÄÄÄÄÄâ±ÖàΩôï°±ï…©Öùêµëï’—Õç†µÿƒµŸï…•ô•ïêà∞(ÄÄÄÄÄÄÄÄâ±ÖàΩŸΩçÖàµ…’Õ†µÿƒµŸï…•ô•ïêà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâùÖµïÃµïÕçÖ¡îà∞(ÄÄÄÄÄÄâ—•—±îàËÄâÖµïÃÄºÅÕçÖ¡îÅIΩΩ¥à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩïÕçÖ¡îµ…ΩΩ¥µµŸ¿µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâ±ÖàΩùÖµïÃµÕ—…’ç—’…îà∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅl(ÄÄÄÄÄÄÄÄâô•‡ΩïÕçÖ¡îµ…ïŸ•ï‹µÿƒà(ÄÄÄÄÄÅt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâùÖµïÃµëïÕ•ù∏µÕÂÕ—ï¥à∞(ÄÄÄÄÄÄâ—•—±îàËÄâÖµïÃÅïÕ•ù∏ÅMÂÕ—ï¥à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâ±ÖàΩùÖµïÃµëïÕ•ù∏µÕÂÕ—ï¥à∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâ±ÖàΩùÖµïÃµÕ—…’ç—’…îà∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅmt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâïÕçÖ¡îµ—’—Ω»µçΩÕ–µù’Ö…ëÃà∞(ÄÄÄÄÄÄâ—•—±îàËÄâÕçÖ¡îÅQ’—Ω»Å-ΩÕ—ï∏¥ΩÖ±±âÖç¨µ’Ö…ëÃà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâô•‡ΩïÕçÖ¡îµ—’—Ω»µçΩÕ–µù’Ö…ëÃà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩïÕçÖ¡îµ…ΩΩ¥µµŸ¿µÿƒà∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâ•π—ïù…Ö—ïêà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅmt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâÖ§µùÖ—ï›Ö‰µôΩ’πëÖ—•Ω∏à∞(ÄÄÄÄÄÄâ—•—±îàËÄâ5’±—§µA…ΩŸ•ëï»Å$ÅÖ—ï›Ö‰à∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩµ’±—§µ¡…ΩŸ•ëï»µÖ§µùÖ—ï›Ö‰µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩù…Öëïç…ï‹µÖ¡¿µ•π—ïù…Ö—•Ω∏à∞(ÄÄÄÄÄÄâÕ—Ö—îàËÄâÖç—•Ÿîà∞(ÄÄÄÄÄÄâ…ï±Ö—ïë	…Öπç°ïÃàËÅmt(ÄÄÄÅÙ∞(ÄÄÄÅÏ(ÄÄÄÄÄÄâ•êàËÄâ≈’Ö±•—‰µ…Ω’—•πúµçΩπ—…Öç–µÿƒà∞(ÄÄÄÄÄÄâ—•—±îàËÄâ-$µE’Ö±•”ë—Ã¥ΩM¡…Öç°Ÿï…—…Öúà∞(ÄÄÄÄÄÄâ¡…•µÖ…Â	…Öπç†àËÄâôïÖ—’…îΩ≈’Ö±•—‰µ…Ω’—•πúµçΩπ—…Öç–µÿƒà∞(ÄÄÄÄÄÄâ•π—ïù…Ö—•ΩπQÖ…ùï–àËÄâôïÖ—’…îΩµ’±—§µ¡…ΩŸ•ëï»µÖ§∑≠<∂âûÀk∫wµÁK\ô]öY]ÀLåçãLLLàãàù]HéàëŸ\ÿ[]∞Ôù[ô»»[ùY‹ò][€ú€0Ô⁄Ÿ[àãàúö[X\ûPúò[ò⁄éàò⁄‹ôK‹ô\›[YK\ﬁ\›[KX]Y]LåçåLàãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\À‹ﬁ\›[K\ô]öY]ÀLåçãLLLãõYãàúô[]Yúò[ò⁄\»éà◊BàKà¬àöYéàô]ã[YÿXﬁK]öXYŸHãàù]HéàìYÿXﬁH]àúò[ò⁄ãàúö[X\ûPúò[ò⁄éàô]àãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàò\ò⁄]ôWÿÿ[ôY]Hãàúô[]Yúò[ò⁄\»éà¬àò⁄‹ôK‹⁄\ôY]ŸÀX[ôYÿ[Y\À\ÿ€‹HÇàBàKà¬àöYéàô]ãY€›ô\õò[òŸKY[][]‹àãàù]Héàê[H€›ô\õò[òŸKK—[][]‹ãP\òôZ]ãàúö[X\ûPúò[ò⁄éàôôX]\ôKŸ]ãY€›ô\õò[òŸKY[][]‹àãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàò\ò⁄]ôWÿÿ[ôY]Hãàúô[]Yúò[ò⁄\»éà¬àò⁄‹ôKŸ‹òYX‹ô]ÀX]]€X][€àãàò⁄‹ôK‹⁄\ôYXYŸ[ùZ[ôŸôú»ÇàBàKà¬àöYéàúô[X\ŸKX€€ùõ€Y]öY[òŸK]åàãàù]Héàîô[X\ŸH€€ùõ€àô\öYö^öY\ùHôXŸZ\»[ôZõX⁄HXõòZYHãàúö[X\ûPúò[ò⁄éàôö^‹ô[X\ŸKX€€ùõ€Y]öY[òŸK]åàãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À‹ô[X\ŸKX€€ùõ€Y]öY[òŸK]åãõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôK‹ô[X\ŸKX€€ùõ€XXÿŸ\[òŸK]åHÇàBàKà¬àöYéàùŸXã\ô[Y\ôŸKX€€Xö[ôYX⁄K]åHãàù]Héàê€€Xö[ôY“Hõ‹àŸXãR[ùY‹ò][€àãàúö[X\ûPúò[ò⁄éàôö^›ŸXã\ô[Y\ôŸKX€€Xö[ôYX⁄K]åHãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]Héàö[ùY‹ò][€ó‹ôXYHãàö[ôŸôàéàù€‹ö‹›ôX[\À›ŸXã\ô[Y\ôŸKX€€Xö[ôYX⁄K]åKõYÇàKà¬àöYéàú›YŸKY›X\ôX[ã]åHãàù]Héàê]]€X]\ÿ⁄H“KQõ‹ùŸ]ù[ô»\à[ù⁄X⁄€[ô‹‹\Ÿ[àãàúö[X\ûPúò[ò⁄éàôôX]\ôK‹›YŸKY›X\ôX[ã]åHãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À‹›YŸKY›X\ôX[ã]åKõYÇàKà¬àöYéàô›X\ôX[ãY^X›][€ã]åàãàù]Héàê]]€õ€YH]YùòYÀTãTô]öY]ÀR[ùY‹ò][€ãT›Y⁄[ôÀRŸ]Hãàúö[X\ûPúò[ò⁄éàôôX]\ôKŸ›X\ôX[ãY^X›][€ã]åàãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀŸ›X\ôX[ãY^X›][€ã]åãõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôK‹›YŸKY›X\ôX[ã]åHãàôö^Ÿ›X\ôX[ãY[]ô\ûK\õ€Ÿã]åHãàôö^Ÿ›X\ôX[ã]ôYK\ô]öY]Ÿ\úÀ]åHÇàBàKà¬àöYéàô›X\ôX[ãXùYŸ]\[›]åHãàù]Héàí€Z[ô\»›X\ôX[ãR€‹›[úõŸö[[ôõ‹òô\ôZ]]\àLëKT[›ãàúö[X\ûPúò[ò⁄éàôö^Ÿ›X\ôX[ãXùYŸ]\[›]åHãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀŸ›X\ôX[ãXùYŸ]\[›]åKõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôKŸ›X\ôX[ãY^X›][€ã]åàÇàBàKà¬àöYéàô›X\ôX[ã\ôX€›ô\ûKX]Y]LåçåLãàù]Héàë›X\ôX[à\õZ\‹⁄[€àôX€›ô\ûH[ô›\úô[ùô\‹⁄]‹ûH]Y]ãàúö[X\ûPúò[ò⁄éàôö^Ÿ›X\ôX[ã\ôX€›ô\ûK\]Y]YKLåçåLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀŸ›X\ôX[ã\€›\òŸK\ôX€›ô\ûKLåçåLõYãàúô[]Yúò[ò⁄\»éà¬àôö^Ÿ›X\ôX[ã\ôXY\\õZ\‹⁄[€ãZ€Y\YŸKXYZ\‹⁄[€ãLåçåLãàôö^Ÿ›X\ôX[ã\€›\òŸK\ôX€›ô\ûKLåçåLãàôÿ‹ÀŸ›X\ôX[ã\€›\òŸK\ôX€›ô\ûKY]öY[òŸKLåçåLÇàBàKà¬àöYéàòX›[€úÀX€‹›\€XﬁKLåçåLãàù]HéàêX›[€úÀR€‹›[à»ô]›\‹›Hô]öY]ÀSYZ[[ú›Z[ôHãàúö[X\ûPúò[ò⁄éàôö^ÿX›[€úÀX€‹›\€XﬁKLåçåLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀÿX›[€úÀX€‹›\€XﬁKLåçåLõYãàúô[]Yúò[ò⁄\»éà¬àôö^ÿX›[€úÀ[X[ùX[]ö\›X[LåçåLãàôö^ÿX›[€úÀ]ŸXãYÿ‹ÀLåçåLÇàBàKà¬àöYéàô›X\ôX[ã\›Y⁄[ôÀZ[ôŸôãLåçåLãàù]Héàë›X\ôX[à^X›“H»ô\öYöYY›Y⁄[ô»[ôŸôàãàúö[X\ûPúò[ò⁄éàôö^Ÿ›X\ôX[ãY\ﬁKZ[ôŸôãLåçåLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀŸ›X\ôX[ã\›Y⁄[ôÀZ[ôŸôãLåçåLõYãàúô[]Yúò[ò⁄\»éà¬àôÿ‹ÀŸ›X\ôX[ã]ô\öYöYY\[›LåçåLÇàBàKà¬àöYéàò]Y[À[X\›\úYXŸK]åàãàù]Héàê]Y[»X\›\úYXŸHåà»0ÌúãH[ô0Ìú›[ô‹ÿ]Y[»ãàúö[X\ûPúò[ò⁄éàôôX]\ôKÿ]Y[À[X\›\úYXŸK]åàãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\Àÿ]Y[À[X\›\úYXŸK]åãõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôKÿ]Y[À]åã\›Y⁄[ôÀX⁄X⁄‹⁄[ùãàôö^ÿ]Y[À\ö]ò]KYòYùÀ\›Y⁄[ôÀ]åHÇàBàKà¬àöYéàò€\‹‹õ€€K\›Y[ù[X[òYŸ[Y[ù]åHãàù]Héàîÿ⁄0Ô\éö[õô[ãK“€\‹Ÿ[ùô\ùÿ[[ô»»€\‹‹õ€€HX\›\úõ⁄ôZ›ãàúö[X\ûPúò[ò⁄éàôôX]\ôKÿ€\‹‹õ€€K\›Y[ù[X[òYŸ[Y[ù]åHãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\Àÿ€\‹‹õ€€K\›Y[ù[X[òYŸ[Y[ù]åKõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôK‹ŸX›\ôKX\‹Ÿ\‹€Y[ù]åHÇàBàKà¬àöYéàôÿÀ]ŸXã\€\⁄LåçåL»ãàù]Héàî›\ù∞ÔôH[ôZô\ãURKT€\⁄òX⁄›Y⁄[ôÀTÿ‹ôY[ú⁄›»ãàúö[X\ûPúò[ò⁄éàôôX]\ôKŸÿÀ]ŸXã\€\⁄LåçåL»ãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\ÀŸÿÀ]ŸXã\€\⁄LåçåLÀõYãàúô[]Yúò[ò⁄\»éà◊BàKà¬àöYéàùŸXã\ô\Z\ãLåçåL»ãàù]HéàïŸXàRH»ô[^H»ÿ]Y]Y[»⁄⁄XŸ\»ãàúö[X\ûPúò[ò⁄éàôôX]\ôKÿ]Y[À\›⁄]⁄[›ô\ôõ›ÀLåçåL»ãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À›ŸXã\ô\Z\ãXò]⁄LåçåLÀõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôKŸÿÀ]ŸXã\€\⁄LåçåL»ãàôôX]\ôKÿ]Y[À]ŸXã\ô\Z\ãLåçåL»ãàôö^›ŸXãXXÿŸ\[òŸK\ôY‹ô\‹⁄[€úÀLåçåL»ãàôôX]\ôKÿ]Y[À]ŸXãXXÿŸ\[òŸKLåçåL»ÇàBàKà¬àöYéàõ\õö[úŸ[[^[›]ÀLåçåL»ãàù]HéàëY€ÀS\õö[úŸ[»^[›]»[ô‹Y[ùX⁄ãàúö[X\ûPúò[ò⁄éàôÿ‹À€\õö[úŸ[[^[›]ÀLåçåL»ãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\À€\õö[úŸ[[^[›]ÀLåçåLÀõYãàúô[]Yúò[ò⁄\»éà¬àôôX]\ôK€\õö[úŸ[YY€À]åHÇàBàKà¬àöYéàõ\õö[úŸ[YY€À]åHãàù]HéàëY€ÀS\õö[úŸ[»\ú›\à[úôX[T‹Y[Xúÿ⁄ö]ãàúö[X\ûPúò[ò⁄éàôôX]\ôK€\õö[úŸ[YY€À]åHãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\À€\õö[úŸ[[^[›]ÀLåçåLÀõYãàúô[]Yúò[ò⁄\»éà¬àôÿ‹À€\õö[úŸ[[^[›]ÀLåçåL»ÇàBàKà¬àöYéàö[YÃùôYZúÀX€Ÿ^Z[ú›[LåçåLHãàù]Héàö[YÃùôYZúŒà⁄ÿ[\»€Ÿ^UŸ\öﬁô]YÀÿ[Y\ÀVùY‹öYôà[ô\‹Ÿ]]X[]0Èãàúö[X\ûPúò[ò⁄éàôÿ‹À⁄[YÃùôYZúÀX€Ÿ^Z[ú›[LåçåLHãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À⁄[YÃùôYZúÀX€Ÿ^Z[ú›[LåçåLKõYãàúô[]Yúò[ò⁄\»éà◊BàKà¬àöYéàò€Ÿ^[YôXﬁX€KZ€⁄‹ÀLåçåLLãàù]Héàë–ÀR”“‘ÀLNàYôXﬁX€KR€⁄ÀQ[ù›\ôà[ôô[ùò[Hõ€[òXô‹ô[ûù[ô»ãàúö[X\ûPúò[ò⁄éàôÿ‹ÀŸÿÀZ€⁄‹ÀLKY\⁄Y€ãLåçåLLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\À‹⁄⁄[ÀZ[ùY‹ò][€ãLåçåLLõYãàúô[]Yúò[ò⁄\»éà◊BàKà¬àöYéàôÿÀZ€⁄‹À\⁄⁄[À\Ÿ]\LåçåLLãàù]Héàë–ÀR”“‘ÀLKT““SŒàŸ^öY[H⁄ÿ[H⁄⁄[»[ôòX⁄õ€[ãVù[‹ôù[ô»ãàúö[X\ûPúò[ò⁄éàôÿ‹ÀŸÿÀZ€⁄‹À\⁄⁄[À\Ÿ]\LåçåLLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À‹⁄⁄[ÀZ[ùY‹ò][€ãLåçåLLõYãàúô[]Yúò[ò⁄\»éà¬àôÿ‹ÀŸÿÀZ€⁄‹À\⁄⁄[ÀZ[ùY‹ò][€ãLåçåLLÇàBàKà¬àöYéàõX]\ÿ€ÿ⁄À\ô\ŸX\ò⁄LåçåLLãàù]Héàë–ÀT–”–“ÀTëT—PTê“LNà⁄ÿ[Hÿ\[€ãK‘ö[pÈù^õ‹úÿ⁄[ôÀô[ùò[HY]Y][àãàúö[X\ûPúò[ò⁄éàôÿ‹ÀŸÿÀ[][ò⁄Xõÿ⁄ŸYX⁄X⁄‹⁄[ùÀLåçåLLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]Héàö[ùY‹ò]Yãàö[ôŸôàéàù€‹ö‹›ôX[\À€X]\ÿ€ÿ⁄À\ô\ŸX\ò⁄LåçåLLõYãàúô[]Yúò[ò⁄\»éà◊BàKà¬àöYéàúö]òXﬁKX€€ùõ€ÀZ[ùY‹ò][€ãLåçåLLãàù]Héàë–ÀSUSê“P””ïì”ÀLKTíUêP÷Nà[ùY‹ò][€àòX⁄ô[Y›[àÿ]\»õ‹òô\ôZ][àãàúö[X\ûPúò[ò⁄éàôö^ŸÿÀ\ö]òXﬁKX€€ùõ€ÀLåçåLLãàö[ùY‹ò][€ï\ôŸ]éàôôX]\ôKŸ‹òYX‹ô]ÀX\Z[ùY‹ò][€àãàú›]Héàòõÿ⁄ŸYãàö[ôŸôàéàù€‹ö‹›ôX[\À‹ö]òXﬁKX€€ùõ€ÀZ[ùY‹ò][€ãLåçåLLõYãàúô[]Yúò[ò⁄\»éà¬àôö^ÿ€ÿ€ÀX⁄]]ZKXòX⁄Ÿ‹õ›[ô[Y[[‹ûKLåçåLLÇàBàKà¬àöYéàõò]]ôKX⁄][[Ÿ[LåçåLLãàù]Héàë–ÀSS—SQ”’ëTìì‘ãLNàò]]ôH€Ÿ^[Ÿ[Yò][»[ô‹òYP‹ô]»›\ù€XﬁHãàúö[X\ûPúò[ò⁄éàôôX]ŸÿÀ[ò]]ôKX⁄][[Ÿ[LåçåLLãàö[ùY‹ò][€ï\ôŸ]éàõXZ[àãàú›]HéàòX›]ôHãàö[ôŸôàéàù€‹ö‹›ôX[\À€ò]]ôKX⁄][[Ÿ[LåçåLLõYãàúô[]Yúò[ò⁄\»éà◊BàBàBüB
