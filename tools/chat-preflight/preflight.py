@@ -66,6 +66,23 @@ def _run_git(args: list[str], cwd: str) -> str | None:
         return None
 
 
+def _qualification_git_state(cwd: str) -> tuple[str, str | None]:
+    """Return repo/no-repo/unknown; only Git's explicit outside-repository result is no-repo."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"], cwd=cwd, check=False, text=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=2,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "unknown", None
+    root = result.stdout.strip()
+    if result.returncode == 0 and root:
+        return "repo", root
+    if result.returncode == 128 and "not a git repository" in result.stderr.lower():
+        return "no-repo", None
+    return "unknown", None
+
+
 def identify_project(
     cwd: str,
     git: Callable[[list[str], str], str | None] = _run_git,
@@ -341,7 +358,8 @@ def hook_main(argv: list[str] | None = None) -> int:
             )
         except (OSError, RuntimeError):
             exact_test_root = False
-        if not exact_test_root or _run_git(["rev-parse", "--show-toplevel"], cwd):
+        git_state, _git_root = _qualification_git_state(cwd)
+        if not exact_test_root or git_state != "no-repo":
             return 0
         print(json.dumps({"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"}, ensure_ascii=False))
         return 0

@@ -48,9 +48,36 @@ class PreflightRegressionTests(unittest.TestCase):
                 self.assertEqual(hook_main(["--profile", str(profile)]), 0)
             self.assertEqual(captured.getvalue(), "")
 
+    def test_qualification_git_probe_requires_confirmed_no_repository(self) -> None:
+        with _tempfile.TemporaryDirectory() as temp:
+            mirror = Path(temp) / "gradecrew-mirror"
+            mirror.mkdir()
+            profile = Path(temp) / "profile.json"
+            profile.write_text(json.dumps({"schema": 1, "approved_project_roots": [str(mirror)], "qualification_mode": "block"}), encoding="utf-8")
+            event = {"cwd": str(mirror), "prompt": "offline qualification sentinel"}
+
+            for failure in (OSError("git unavailable"), subprocess.TimeoutExpired(["git"], 2)):
+                captured = io.StringIO()
+                with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps(event))), patch("preflight.subprocess.run", side_effect=failure):
+                    self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+                self.assertEqual(captured.getvalue(), "")
+
+            captured = io.StringIO()
+            not_a_repo = subprocess.CompletedProcess(["git"], 128, stdout="", stderr="fatal: not a git repository")
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps(event))), patch("preflight.subprocess.run", return_value=not_a_repo):
+                self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+            self.assertEqual(json.loads(captured.getvalue()), {"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"})
+
+            captured = io.StringIO()
+            ambiguous_failure = subprocess.CompletedProcess(["git"], 128, stdout="", stderr="fatal: unable to access repository metadata")
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps(event))), patch("preflight.subprocess.run", return_value=ambiguous_failure):
+                self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+            self.assertEqual(captured.getvalue(), "")
+
             # A globally loaded test profile must never block a normal repo checkout.
             captured = io.StringIO()
-            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps({"cwd": str(mirror), "prompt": "ordinary project prompt"}))), patch("preflight.identify_project", return_value=(REPOSITORY, str(mirror))), patch("preflight._run_git", return_value=str(mirror)):
+            repo_result = subprocess.CompletedProcess(["git"], 0, stdout=str(mirror), stderr="")
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps({"cwd": str(mirror), "prompt": "ordinary project prompt"}))), patch("preflight.identify_project", return_value=(REPOSITORY, str(mirror))), patch("preflight._run_git", return_value=str(mirror)), patch("preflight.subprocess.run", return_value=repo_result):
                 self.assertEqual(hook_main(["--profile", str(profile)]), 0)
             self.assertEqual(captured.getvalue(), "")
 
