@@ -85,3 +85,7 @@ Alle GradeCrew-Chats – einschließlich Planung und Design – befolgen [docs/C
 ## Zwei dauerhafte Fachrollen — GC-LAUNCH-CONTROLS-01
 
 [Assurance-Einstieg: Technische Sicherheit sowie Datenschutz, Recht & faire Bedienung](docs/assurance/README.md) verbindet20SEC- und20PRIV-Kontrollen, Rollenbriefs und bestehende Übergaben. Vor beauftrageten Änderungen relevante Kontrollen mit Owner, aktuellem Nachweis und Releasebezug auswählen; reine Standfragen starten keine Vollprüfung. NeueGames nutzen dieselben Einstiege. Kritische berechtigte Risiken blockieren betroffenen Scope, nicht pauschal jedes offene Kästchen. Rollen-/Katalogdokumentation ist kein Produkt-, Rechts-, Geräte- oder Deploynachweis und startet keine Agenten/Skills/Hooks. Beschlossene Zentralenrollen und adaptive Modellwahl stehen in AGENTS/CHAT_CONTRACT; alle Zentralen koordinieren ausschließlich.
+
+## Skills für autorisierte Facharbeit — GC-HOOKS-01-SKILLS
+
+[Verbindliche Skill-Zuordnung](docs/skills/GRADECREW_EXECUTION_SKILLS.md) verbindet vorhandene Fähigkeiten mit konkreten Fachaufträgen und den bestehenden Rollen-/Releasegrenzen. Sechs ausgewählte standalone User-Skills sind auf Martins Mac installiert; andere Hosts und Nutzung in alten Desktopturns separat prüfen. Zentralen koordinieren weiterhin ausschließlich. [Integrationsnachweis und Grenzen](workstreams/skills-integration-20261010.md); Hook-Entwurf PR184 bleibt getrennt, keine Hooks installiert.
