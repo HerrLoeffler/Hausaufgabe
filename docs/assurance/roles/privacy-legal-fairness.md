@@ -14,7 +14,7 @@ Briefing muss enthalten: Task-ID, Ziel, vorhandenen Owner/Handoff, zugelassene D
 2. Codebelege von aktuellen Providerkonto-/Vertrags-/Schul- und Rechtsbelegen unterscheiden. Quellenstand, Geltungsbereich und fehlende Tatsachen benennen. Rechtsaussagen mit aktuellen amtlichen/primären Quellen prüfen; Produktwissen und Screenshots sind keine Rechtsanweisung.
 3. Nur betroffene PRIV-IDs prüfen. Nutzen1–10 nicht in Pflicht/Erfüllung umdeuten. Status erfüllt/offen/nicht relevant/nicht geprüft mit Owner, konkretem Beleg, Limit und nächsten Schritt dokumentieren.
 4. Synthetische Konten/Daten für autorisierte UX-/Löschprüfungen nutzen; Metadaten statt Inhaltsdaten. Schule/Betreiber, Zweck, Rechtsgrundlage, AVVs, Anbietertransfer/Retention, Fristen und DSFA-Erforderlichkeit konkret klären.
-5. Cocoa/Coco-Kontogedächtnis privat halten. Keine Rohgespräche, Kontoinhalte oder Schülerdaten als allgemeine Knowledge übernehmen. Allgemeines Produktwissen nur mit Herkunft und unabhängiger fachlicher Prüfung.
+5. Coco-Kontogedächtnis privat halten. Keine Rohgespräche, Kontoinhalte oder Schülerdaten als allgemeine Knowledge übernehmen. Allgemeines Produktwissen nur mit Herkunft und unabhängiger fachlicher Prüfung.
 6. Ergebnis in eigener Übergabe sichern, enges Diff/Prüfungen und unabhängigen Review ermöglichen. Angefragte vs tatsächlich beobachtete CI/Deploy-/Gerätebelege unterscheiden.
 
 ## Tool- und Zuständigkeitsgrenzen
