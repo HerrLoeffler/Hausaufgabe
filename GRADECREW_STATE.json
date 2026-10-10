@@ -435,6 +435,19 @@
   },
   "workstreams": [
     {
+      "id": "privacy-controls-integration-20261010",
+      "task_id": "GC-LAUNCH-CONTROLS-01-PRIVACY",
+      "branch": "fix/gc-privacy-controls-20261010",
+      "stage": "branch_only",
+      "pull_request": 191,
+      "observed_head": "bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
+      "ci": "admin_test_account_controls_success_38065021884; not_combined_ci",
+      "staging": "not_deployed_this_candidate",
+      "user_test": "synthetic_desktop_report_only; real_account_device_acceptance_not_performed",
+      "handoff": "workstreams/privacy-controls-integration-20261010.md",
+      "next_action": "Authorize and qualify existing candidate through exact CombinedCI/peer/target gates; no workflow, runtime change, merge or deploy started in metadata-preparation task."
+    },
+    {
       "id": "launch-controls-20261010",
       "task_id": "GC-LAUNCH-CONTROLS-01",
       "branch": "docs/gc-launch-controls-integration-20261010",
@@ -444,7 +457,7 @@
       "user_test": "not_performed",
       "owner": "GC · Automatisierung & Integration",
       "handoff": "workstreams/launch-controls-integration-20261010.md",
-      "next_action": "Give exact final main/PR receipt to already delegated security/privacy owners; each owns its catalogue/role/handoff for all20 scoped audits and separate reviewed fixes. Shared files remain with integration owner; no Production/competing staging.",
+      "next_action": "Security work preserved only as local checkpoint; platform/export stops retained. PrivacyPR191 checked; separate integration workstream awaits actual CombinedCI/qualified integration order, no merge/deploy here.",
       "execution_phase": {
         "status": "explicitly_delegated_by_coordinator; results_not_verified_here",
         "security_owner": "security_role_setup",
@@ -455,7 +468,14 @@
         "requested_privacy_model_effort": "Sol/medium",
         "catalog_write_transfer": "released_after_verified_main_setup_and_published_receipt; use_current_main",
         "product_fixes": "separate_reviewed_PRs_via_existing_release_train; no_competing_staging_or_production",
-        "results": "not_verified_here"
+        "results": "not_verified_here",
+        "security_status": "platform_stopped_and_recovery_stopped; preservation_only_no_retry",
+        "security_local_checkpoint": "778f88b017e75b3e868697966bf4faee6a8c2d9d",
+        "security_local_branch": "checkpoint/gc-launch-security-preserve-20261010",
+        "security_test_claims": "209+ESLint reported; existing SHA-bound logs unavailable; not credited to checkpoint",
+        "dependency_metadata_check": "public_npm_export_auto_review_rejected; no_request_reported; no_retry_or_alternate_target",
+        "privacy_status": "author_report_completed; PR191_branch_only; admin_check_verified; combined_ci_not_proven",
+        "preservation_handoff": "workstreams/launch-controls-preservation-20261010.md"
       },
       "integrated_into": "main@c567843590a950b7c5eca053f808bd9343e0c6e6",
       "documentation_pr": 190,

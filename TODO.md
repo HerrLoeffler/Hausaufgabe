@@ -432,3 +432,22 @@ PR179–183 in `c3a5fdcfb949bc0de23295a549388c23cf7655e6` integriert. Exakte Can
 
 
 GC-LAUNCH-CONTROLS-01 · Dokumentationssetup über [PR190](https://github.com/HerrLoeffler/Hausaufgabe/pull/190) auf main@c567843590a950b7c5eca053f808bd9343e0c6e6 integriert; zwei unabhängige Doku-Reviews ohne Findings, Kandidaten- und Main-Dokuchecks grün (Main38064714219/38064714229, ReleaseControl38064714222). Das erfüllt keine Produktkontrolle:31 nicht geprüft/9offen. Bereits beauftragte SECURITY-/PRIVACY-Fachagenten erhalten aktuelle Main-/PR-Receipts und ihre jeweiligen drei Katalog-/Rollen-/Quellübergabepfade; sechsSetupdateien danach nicht mehr beim Integrationsowner bearbeiten. Shared-Dateien bleiben exklusiv Integration. Gesamtprüfungen je20 Punkte/Fixes separat im vorhandenen Task-/Release-Train, keine Production-/konkurrierenden Stagingdeploys. Keine zweite Gesamtprüfung durch Setup-Owner.
+
+
+## 10.10.2026 — GC-LAUNCH-CONTROLS-01: vorhandene Arbeit erhalten, nächste Gates
+
+- SECURITY: lokaler Checkpoint 778f88b017e75b3e868697966bf4faee6a8c2d9d auf checkpoint/gc-launch-security-preserve-20261010 erhält acht unveränderte Dateien + Metadatenhandoff; sauberer Baum, kein Scan/Test/Codefix/Merge/Deploy. Plattformstop „possible cybersecurity risk“ und gestoppter Recoveryturn erhalten, Reviewbefunde offen.209Tests/ESLint ohne gefundenen SHA-gebundenen Log nur Agentenbericht; kein fertigerFix. [Erhaltungsübergabe](workstreams/launch-controls-preservation-20261010.md).
+- SEC20: öffentlicher npm-Abgleich durch Auto-Review wegen Export vollständiger Dependency-Namen/Versionen ohne Freigabe abgelehnt; laut Übergabe kein Request ausgeführt. Nicht wiederholen/kein anderes Ziel. Metadatenabgleich offen.
+- PRIVACY: PR191@bb1c6bee, ZielWebc3a5fdcf. Tatsächlicher Admincheck38065021884 grün:6Contracttests +132-DateienBuild; Source berichtet19lokaleTests/Peer/synthetischeKeyboardUI. Keine CombinedCI-/Merge-/Deployfreigabe. [Eigene Integrationsvorlage](workstreams/privacy-controls-integration-20261010.md), gleicheTaskfamilie.
+- Zusätzliche Screenshotmaßnahmen im bestehenden SEC09/11/12/20- und GC-RESTORE-01-Scope vormerken: technische Basis/gezielte autorisierte Fixes qualifizieren, Logredaktion/SessionShareddevice sowie Backup+synthetischenRestore belegen; kostenpflichtige Betriebsaktivierung erst mit geprüftem Paket. Keine neue Liste/Plattform, keine Durchschnitts-Sicherheitsnote oder pauschale Kostenabschaltung einer laufenden Schulprüfung. In dieser Übergabephase keine technische Umsetzung.
+
+
+## 10.10.2026 — GC-POCOCK-RESEARCH-01 / parallele Skillzuständigkeit
+
+| Task | Stand und Owner | Nächster Schritt |
+|---|---|---|
+| GC-POCOCK-RESEARCH-01 | Lokal beauftragte Caption-/Primärtextforschung des Originalkanals @mattpocockuk für10.04.–10.10.2026 inkl. Shorts/Livestream-Aufzeichnungen; Inventar laut Zentrale in Erweiterung. Exklusive Gruppen channel-inventory, wayfinder, v13/poteto, batch-a, kein zusätzlicher Scan durch Registrierung. V13/Wayfinder laut Koordinator captionbasiert vollständig, keine visuelle Vollvideoansicht behauptet. | Vorhandene Ergebnisse/Quellen-/Abdeckungsgrenzen abholen; nur eigene Zusammenfassung/Metadaten sichern, keine fremden Volltranskripte öffentlich. [Übergabe](workstreams/matt-pocock-research-20261010.md) |
+| GC-HOOKS-01-SKILLS | Autorisierte ausgewählte offizielle Firebase-/Frontend-Design-Skill-Einrichtung exklusiv bei GradeCrew-Plugins recherchieren01a10e37-4955-7db3-957f-d397b9dd8dc4; konkrete Installation/Versions-/Verhaltensbelege hier ungeprüft, keine Migration/Paid-Reviews. | Eigene Skillnachweise dort abholen; gemeinsame Regeln nur gezielt über Integrationsowner, kein Komplettpaket oder zweite Statusdatenbank. |
+
+
+Aktualisierung beim Wiederaufnehmen10.10.2026: [Draft-PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193) liegt offen auf docs/gc-hooks-skills-setup-20261010@16b3fe3006b3b07d4b8867cb861742fa8ea94a60, sechs ausschließlich eigene Dokumentations-/Evidencepfade ohne Überschneidung mit dieser Sicherung. PR-Autor berichtet sechs lokal installierte Skills, frische Discovery und grüne Dokuchecks; hier nur PR-Metadaten gelesen, keine Installation/Discovery/Verhaltensprüfung wiederholt. Shared-Einstieg/GC-HOOKS-Deltas als separaten qualifizierten Integrationsschritt behandeln, kein automatisches Mitintegrieren.
