@@ -1,0 +1,46 @@
+{
+  "words": 7929,
+  "concept_boards": [
+    {
+      "file": "layout-a.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "729351670429b73bb7807f31100ebf8c88318cbc2f85fa0bdebdb13703e2fe3e"
+    },
+    {
+      "file": "layout-b.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "eb1de484b3401889e1787feb843c09cde9bea9047d4cbe995b2294c2017fa660"
+    },
+    {
+      "file": "layout-c.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "516c9d20fa9203ec24a7aed0c63e577921da546e730c3cf7c70574846933c341"
+    },
+    {
+      "file": "layout-d.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "d2fecca0571a6bfade21c8219c52f2b12ba7eb378cc4afa2387dd414cb4f3e8e"
+    },
+    {
+      "file": "layout-e.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "3e06cd892012fd9f14702bb38599be1f39f64848fa9144ca564efd45a726fdc1"
+    }
+  ],
+  "math_review": "rational route and coastal sums verified",
+  "sentence_review": "six structural V2 permutations; human linguistic acceptance still required",
+  "game_runtime_test": "not_performed_design_only",
+  "bucket_math_review": "1 L capacity, ten equal volume sections; 3/10 = 300 ml; 2 L transfer = 600 ml; exact Fraction arithmetic verified",
+  "concept_single_image": {
+    "file": "layout-21-eimer.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "dfe1095743941a826b1e94b2423a10bfacbc313a902b7742652979ce58c0fbfe"
+  },
+  "image_review": "All six final files visually reviewed. Bucket labels 1 L and 1/10..10/10 present; illustrative spacing and waterline require calibrated game geometry."
+}
