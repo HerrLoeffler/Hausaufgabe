@@ -1,0 +1,6 @@
+interface:
+  display_name: "GradeCrew · Review und belegte Retro"
+  short_description: "Spec, Standards, PR-Belege und gezielte Retro"
+  default_prompt: "Nutze $gradecrew-review-retro für den konkreten GradeCrew-PR oder die beauftragte Session-Retro."
+policy:
+  allow_implicit_invocation: true
