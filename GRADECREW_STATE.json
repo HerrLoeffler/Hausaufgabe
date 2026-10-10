@@ -438,13 +438,13 @@
       "id": "launch-controls-20261010",
       "task_id": "GC-LAUNCH-CONTROLS-01",
       "branch": "docs/gc-launch-controls-integration-20261010",
-      "stage": "branch_only",
+      "stage": "integrated",
       "verification_scope": "documentation_setup_only; no_product_controls_passed_by_integration",
       "staging": "not_applicable_no_deploy",
       "user_test": "not_performed",
       "owner": "GC · Automatisierung & Integration",
       "handoff": "workstreams/launch-controls-integration-20261010.md",
-      "next_action": "Finish two independent documentation reviews and exact CI, integrate only this setup on main, then record actual integration receipt; control-specific product checks remain separate.",
+      "next_action": "Give exact final main/PR receipt to already delegated security/privacy owners; each owns its catalogue/role/handoff for all20 scoped audits and separate reviewed fixes. Shared files remain with integration owner; no Production/competing staging.",
       "execution_phase": {
         "status": "explicitly_delegated_by_coordinator; results_not_verified_here",
         "security_owner": "security_role_setup",
@@ -453,8 +453,18 @@
         "privacy_task": "GC-LAUNCH-CONTROLS-01-PRIVACY",
         "requested_security_model_effort": "Sol/high",
         "requested_privacy_model_effort": "Sol/medium",
-        "catalog_write_transfer": "only_after_verified_main_integration_receipt",
-        "product_fixes": "separate_reviewed_PRs_via_existing_release_train; no_competing_staging_or_production"
+        "catalog_write_transfer": "released_after_verified_main_setup_and_published_receipt; use_current_main",
+        "product_fixes": "separate_reviewed_PRs_via_existing_release_train; no_competing_staging_or_production",
+        "results": "not_verified_here"
+      },
+      "integrated_into": "main@c567843590a950b7c5eca053f808bd9343e0c6e6",
+      "documentation_pr": 190,
+      "documentation_ci": {
+        "candidate_handoff": 38064316103,
+        "candidate_development_status": 38064634198,
+        "main_handoff": 38064714219,
+        "main_development_status": 38064714229,
+        "main_release_control": 38064714222
       }
     },
     {
