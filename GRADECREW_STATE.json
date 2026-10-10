@@ -1859,7 +1859,10 @@
       "staging": "not_deployed_for_this_patch",
       "production": "unchanged",
       "handoff": "workstreams/coco-chat-ui-20261010.md",
-      "next": "scoped PR review"
+      "next": "scoped PR review",
+      "commit": "70f420498c26f26ad2920bc061cce78d9b0f75a2",
+      "pr": 186,
+      "status_pr": 187
     }
   }
 }
