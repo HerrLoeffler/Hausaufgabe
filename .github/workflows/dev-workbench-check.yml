@@ -1,0 +1,65 @@
+name: Dev Workbench Checks
+
+on:
+  pull_request:
+    branches:
+      - feature/gradecrew-app-integration
+    paths:
+      - 'tools/dev-workbench/**'
+      - 'tools/review-preview/data-store.mjs'
+      - 'tools/review-preview/fingerprint.mjs'
+      - 'tools/review-preview/visual-tasks.mjs'
+      - 'functions/lib/review-mode.js'
+      - 'functions/lib/review-checks.json'
+      - '.github/workflows/dev-workbench-check.yml'
+  push:
+    branches:
+      - feature/gradecrew-app-integration
+    paths:
+      - 'tools/dev-workbench/**'
+      - 'tools/review-preview/data-store.mjs'
+      - 'tools/review-preview/fingerprint.mjs'
+      - 'tools/review-preview/visual-tasks.mjs'
+      - 'functions/lib/review-mode.js'
+      - 'functions/lib/review-checks.json'
+      - '.github/workflows/dev-workbench-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  dev-workbench:
+    name: Dev Workbench unit and loopback contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/ui/package-lock.json
+
+      - name: Install existing UI test dependencies
+        run: npm ci --prefix tools/ui --no-audit --no-fund
+
+      - name: Test Workbench policy, provider, stores, toolbar, and bridge
+        env:
+          NODE_PATH: tools/ui/node_modules
+        run: >-
+          node --experimental-vm-modules --test
+          tools/dev-workbench/app-bridge.test.mjs
+          tools/dev-workbench/browser-toolbar.test.mjs
+          tools/dev-workbench/codex-model-policy.test.mjs
+          tools/dev-workbench/codex-patch-provider.test.mjs
+          tools/dev-workbench/live-edit.test.mjs
+          tools/dev-workbench/live-editor-governance.test.mjs
+          tools/dev-workbench/store.test.mjs
+          tools/dev-workbench/task-store-governance.test.mjs
+          tools/dev-workbench/watch.test.mjs
+
+      - name: Test isolated loopback HTTP contracts
+        run: node --test tools/dev-workbench/http.test.mjs
