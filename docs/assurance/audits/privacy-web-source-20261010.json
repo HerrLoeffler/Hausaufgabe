@@ -1,0 +1,258 @@
+{
+  "scope": "Static web source only; no runtime, account data or legal certification",
+  "missingLabels": [],
+  "missingImageAlt": [],
+  "emptyButtonNames": [],
+  "legalLinks": [],
+  "storageEvidence": [
+    {
+      "path": "app.js",
+      "line": 285,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 289,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 343,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 349,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 538,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 547,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 885,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 889,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 1065,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 1069,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 1223,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 3396,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 5959,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 5962,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 6215,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 6224,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 6976,
+      "kind": "localStorage"
+    },
+    {
+      "path": "app.js",
+      "line": 8654,
+      "kind": "localStorage"
+    },
+    {
+      "path": "crew-assistant-ui.js",
+      "line": 33,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-assessment-client.js",
+      "line": 24,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-assessment-client.js",
+      "line": 34,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-assessment-client.js",
+      "line": 50,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-student.js",
+      "line": 79,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-student.js",
+      "line": 85,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-student.js",
+      "line": 90,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 16,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 38,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 39,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 42,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 43,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 45,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 54,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 57,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 60,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 64,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 72,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 76,
+      "kind": "localStorage"
+    },
+    {
+      "path": "secure-draft-persistence.js",
+      "line": 87,
+      "kind": "localStorage"
+    },
+    {
+      "path": "editor-drafts.js",
+      "line": 9,
+      "kind": "IndexedDB"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 35,
+      "kind": "localStorage"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 39,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 42,
+      "kind": "sessionStorage"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 61,
+      "kind": "localStorage"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 64,
+      "kind": "localStorage"
+    },
+    {
+      "path": "student-attempt-guard.js",
+      "line": 78,
+      "kind": "localStorage"
+    },
+    {
+      "path": "review-store.mjs",
+      "line": 6,
+      "kind": "IndexedDB"
+    },
+    {
+      "path": "shared/i18n/browser-runtime.mjs",
+      "line": 154,
+      "kind": "localStorage"
+    },
+    {
+      "path": "shared/i18n/browser-runtime.mjs",
+      "line": 161,
+      "kind": "localStorage"
+    }
+  ],
+  "publicDependencies": {
+    "firebase-admin": "^14.4.0",
+    "firebase-functions": "^7.4.0",
+    "openai": "^7.20.0",
+    "sharp": "^0.35.4"
+  },
+  "assetRegistryHasLicenseMetadata": false,
+  "newMemoryPanelInSettings": true,
+  "noAutoBrowserAnalyticsInSelectedFiles": true
+}
