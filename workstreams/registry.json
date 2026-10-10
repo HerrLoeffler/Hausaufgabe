@@ -25,6 +25,15 @@
   ],
   "workstreams": [
     {
+      "id": "codex-lifecycle-hooks-20261010",
+      "title": "GC-HOOKS-01: Lifecycle-Hook-Entwurf und zentrale Rollenabgrenzung",
+      "primaryBranch": "docs/gc-hooks-01-design-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/codex-lifecycle-hooks-20261010.md",
+      "relatedBranches": []
+    },
+    {
       "id": "development-status-v1",
       "title": "Development Status / Mehr-Chat-Control-Plane",
       "primaryBranch": "feature/development-status-v1",
