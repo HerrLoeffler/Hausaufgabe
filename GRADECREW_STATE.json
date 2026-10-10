@@ -1320,7 +1320,7 @@
       "id": "model-governor-cli-20261010",
       "task_id": "GC-MODEL-GOVERNOR-01",
       "branch": "codex/gc-model-governor-first-import-20261010",
-      "stage": "integrated_to_feature_branch",
+      "stage": "integrated",
       "source": {
         "pr": 201,
         "commit": "3a155f84bb3ec0428fa8ffb92ab94fdac8b99219",
@@ -1380,7 +1380,8 @@
       },
       "staging": "not_deployed",
       "production": "not_requested",
-      "user_test": "not_performed"
+      "user_test": "not_performed",
+      "next_action": "Independent review of PR 199 and green documentation CI; record runtime model/effort and tokens only from a later ordinary CLI job."
     }
   ],
   "deployments": [
