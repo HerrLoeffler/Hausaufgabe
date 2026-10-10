@@ -1,6 +1,6 @@
 # GC-CHAT-PREFLIGHT-01 — Chat Preflight and Rule Freshness
 
-Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Draft PR #203: `feat/gc-chat-preflight-20261011`; this revision is being assembled from `39aa361f8187ef36aa002d0df39280e68f5e2a16`. The PR base is `6833a1d93562a29199183dc90e59f8069286bf6e`; GitHub reported mergeable at the previous head.
+Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Draft PR #203: `feat/gc-chat-preflight-20261011`; the latest previously published documentation head was `fc00c8516f68415c07eb2358aa2d64c051807acd`. The PR base is `6833a1d93562a29199183dc90e59f8069286bf6e`.
 
 ## Request
 
@@ -22,6 +22,7 @@ Make policy/tool freshness visible in existing GradeCrew/Games chats before each
 - `tools/chat-preflight/preflight.py`
 - `docs/automation/chat-preflight-20261011/hook-profile.template.json`
 - `docs/automation/chat-preflight-20261011/qualification-plan.md`
+- `docs/automation/chat-preflight-20261011/production-install-and-rollback.md`
 - `.github/workflows/chat-preflight-check.yml`
 - `tools/chat-preflight/test_preflight.py`
 - `.github/workflows/chat-preflight-check.yml`
@@ -30,7 +31,7 @@ The script is currently uninstalled and includes a deterministic fake-caller pro
 
 ## Local checkpoint
 
-- Offline regression suite: `python3 -B tools/chat-preflight/test_preflight.py` — PASS (5 test methods). It covers per-Enter ETag polling, 304 freshness reset, explicit opt-in TTL, changed main and bounded delta, unknown project/model/effort/role, exact approved mirror and nested foreign checkout, silent unknown/invalid-profile no-op, exact-root-only qualification block with no Git root and one-root/zero-TTL profile validation, concurrent unique atomic cache writes and private permissions, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and stopping when the exact target model/effort is unavailable. No inference.
+- Offline regression suite: `python3 -B tools/chat-preflight/test_preflight.py` — PASS (6 test methods, as reported for the latest code CI). It covers per-Enter ETag polling, 304 freshness reset, explicit opt-in TTL, changed main and bounded delta, unknown project/model/effort/role, exact approved mirror and nested foreign checkout, silent unknown/invalid-profile no-op, exact-root-only qualification block with no Git root and one-root/zero-TTL profile validation, concurrent unique atomic cache writes and private permissions, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and stopping when the exact target model/effort is unavailable. No inference.
 - Syntax: `PYTHONPYCACHEPREFIX=/tmp/chat-preflight-pycache python3 -m py_compile tools/chat-preflight/preflight.py tools/chat-preflight/test_preflight.py` — PASS.
 - Scoped PR CI in `.github/workflows/chat-preflight-check.yml` runs only the offline suite and syntax check with read-only repository access; it does not call GitHub API, models, MCP, or deployment.
 - Hygiene scan is rerun for all candidate files before updating the remote review branch.
@@ -48,4 +49,4 @@ The local Git transport could not resolve `github.com`; no local clone contains 
 
 ## Status and next action
 
-Candidate branch / draft PR #203 remains open for independent review. The offline CI workflow is scoped to these candidate paths, read-only, and has no live network, model, secret, MCP, or deploy step. Stage A has a narrow native Codex CLI lifecycle pass, while production freshness and all broader Desktop/Work surfaces remain unverified. The temporary source has been removed and production activation, merge, staging, and deployment have not occurred. Next step: review this documentation delta and then decide whether any production-source plan is wanted; no further runtime probe is needed for the narrow Stage A claim.
+Candidate branch / draft PR #203 remains open for independent review. The offline CI workflow is scoped to these candidate paths, read-only, and has no live network, model, secret, MCP, or deploy step. Stage A has a narrow native Codex CLI lifecycle pass, while production freshness and all broader Desktop/Work surfaces remain unverified. The temporary source has been removed and production activation, merge, staging, and deployment have not occurred. Next step: review the Stage A and inactive production-package documentation delta on PR #203. The production guide is a guarded procedure only; it does not install or trust a production hook. No further runtime probe is needed for the narrow Stage A claim.
