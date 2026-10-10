@@ -7,7 +7,6 @@ let memoryUid = "";
 let memoryEpoch = 0;
 let memoryGeneration = 0;
 let memoryQueue = Promise.resolve();
-let clearingEpoch = 0;
 let conversation = [];
 let lastCrew = "";
 let requestEpoch = 0;
@@ -125,7 +124,6 @@ function createUi() {
     <div class="gcCrewHead">
       <img src="${COCO.asset}" alt="">
       <div class="gcCrewHeadCopy"><strong>Coco</strong><span>Hilfe & Orientierung</span></div>
-      <button id="gcCrewMemory" type="button" class="miniButton">Erinnerungen</button>
       <button id="gcCrewClose" class="gcCrewClose" type="button" aria-label="Coco schließen">×</button>
     </div>
     <div id="gcCrewMessages" class="gcCrewMessages" aria-live="polite"></div>
@@ -139,7 +137,6 @@ function createUi() {
 
   document.body.append(launcher, panel);
   launcher.addEventListener("click", () => setOpen(!open));
-  $("gcCrewMemory")?.addEventListener("click",()=>{void showMemory().catch(e=>addMessage("assistant",e.message));});
   $("gcCrewClose")?.addEventListener("click", () => setOpen(false));
   $("gcCrewComposer")?.addEventListener("submit", event => {
     event.preventDefault();
@@ -181,7 +178,7 @@ async function support(operation,extra={},expectedUid=memoryUid) {
 }
 function queueMemoryWrite(operation,data,uid,epoch=requestEpoch,generation=memoryGeneration) {
   const result=memoryQueue.catch(()=>{}).then(()=>{
-    if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid||(clearingEpoch!==0&&clearingEpoch===epoch))return {cancelled:true};
+    if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)return {cancelled:true};
     return support(operation,{...data,generation},uid);
   });
   memoryQueue=result.catch(()=>{});return result;
@@ -189,19 +186,6 @@ function queueMemoryWrite(operation,data,uid,epoch=requestEpoch,generation=memor
 function rememberTurn(messages,uid,epoch=requestEpoch,generation=memoryGeneration) {
   if(!uid||getAuth(getApp()).currentUser?.uid!==uid)return;
   void queueMemoryWrite("remember",{messages,turnId:crypto.randomUUID()},uid,epoch,generation).catch(()=>{if(epoch===requestEpoch&&getAuth(getApp()).currentUser?.uid===uid)addMessage("assistant","Das Gespräch konnte gerade nicht dauerhaft gespeichert werden. Falls Erinnerungen auf einem anderen Gerät gelöscht wurden, lade die Seite neu.");});
-}
-async function showMemory() {
-  const uid=getAuth(getApp()).currentUser?.uid;let editorEpoch=requestEpoch;const m=await support("read",{},uid);if(editorEpoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)return;
-  const freshGeneration=Number(m.generation)||0;
-  if(freshGeneration!==memoryGeneration){requestEpoch++;memoryEpoch++;editorEpoch=requestEpoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=false;conversation=[];$("gcCrewMessages")?.replaceChildren();}
-  memoryGeneration=freshGeneration;const editorGeneration=memoryGeneration;
-  const root=$("gcCrewMessages");const holder=document.createElement("div");holder.className="gcCrewMsg assistant";
-  const label=document.createElement("label");label.textContent="Cocos dauerhaft gespeicherte Vorlieben";
-  const input=document.createElement("textarea");input.value=m.preferences||"";input.maxLength=2000;input.setAttribute("aria-label","Cocos Vorlieben");label.append(input);
-  const info=document.createElement("p");info.textContent=`${m.history?.length||0} gespeicherte Nachrichten. Bleibt nach Neustarts erhalten, bis du es löschst.`;
-  const save=document.createElement("button");save.type="button";save.textContent="Vorlieben speichern";save.onclick=async()=>{save.disabled=true;try{const saved=await queueMemoryWrite("preferences",{preferences:input.value},uid,editorEpoch,editorGeneration);if(saved?.cancelled||editorEpoch!==requestEpoch)return;info.textContent="Vorlieben dauerhaft gespeichert.";}catch(e){info.textContent=e.message;}finally{save.disabled=false;}};
-  const clear=document.createElement("button");clear.type="button";clear.textContent="Gespräch und Vorlieben löschen";clear.onclick=async()=>{if(editorEpoch!==requestEpoch)return;clear.disabled=true;const epoch=++requestEpoch;memoryEpoch++;clearingEpoch=epoch;sending=false;const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;try{await memoryQueue;if(epoch!==requestEpoch||uid!==getAuth(getApp()).currentUser?.uid)throw new Error("Das Konto wurde gewechselt.");const cleared=await support("clear",{},uid);if(epoch!==requestEpoch)return;memoryGeneration=Number(cleared.generation)||0;conversation=[];root.replaceChildren();addMessage("assistant","Deine gespeicherten Erinnerungen wurden gelöscht.");}catch(e){info.textContent=e.message;clear.disabled=false;}finally{if(clearingEpoch===epoch){clearingEpoch=0;if(send)send.disabled=false;}}};
-  holder.append(label,info,save,clear);root.append(holder);holder.scrollIntoView({block:"nearest"});
 }
 async function searchTests(query,epoch) {
   const r=await support("search",{query});if(epoch!==requestEpoch)return;
@@ -250,15 +234,15 @@ async function applyGuideAction(action, epoch = requestEpoch) {
 async function sendCurrentMessage() {
   const input = $("gcCrewInput");
   const text = String(input?.value || "").trim();
-  if (!text || sending || (clearingEpoch!==0&&clearingEpoch===requestEpoch)) return;
-  const epoch=requestEpoch; const turnUid=memoryUid; const turnGeneration=memoryGeneration; let persistTurn=true; sending=true;
+  if (!text || sending) return;
+  const epoch=requestEpoch; const turnUid=memoryUid; const turnGeneration=memoryGeneration; sending=true;
   const send=$("gcCrewComposer")?.querySelector(".gcCrewSend");if(send)send.disabled=true;
   stopDictation();input.value="";addMessage("user",text);
   let pending;
   try {
     const context=currentContext();
-    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Mein Vorliebenspeicher ist voll. Öffne „Erinnerungen“, um ihn zu bearbeiten.");return;}const saved=await queueMemoryWrite("preferences",{preferences},turnUid,epoch,turnGeneration);if(saved?.cancelled||epoch!==requestEpoch)return;addMessage("assistant","Das habe ich dauerhaft in deinen Vorlieben gespeichert. Du kannst es unter „Erinnerungen“ ändern oder löschen.");return;}
-    if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {persistTurn=false;await showMemory();return;}
+    if(/(?:merke dir|merk dir|remember that)/i.test(text)) {const m=await support("read",{},turnUid);const preferences=[m.preferences,text.replace(/^(?:merke dir|merk dir|remember that)[: ]*/i,"")].filter(Boolean).join("\n");if(preferences.length>2000){addMessage("assistant","Ich kann gerade keinen weiteren persönlichen Hinweis dauerhaft aufnehmen.");return;}const saved=await queueMemoryWrite("preferences",{preferences},turnUid,epoch,turnGeneration);if(saved?.cancelled||epoch!==requestEpoch)return;addMessage("assistant","Das merke ich mir dauerhaft für unsere Gespräche.");return;}
+    if(/(?:gedächtnis|gedaechtnis|erinnerungen|vorlieben|memory)/i.test(text)) {addMessage("assistant","Ich behalte die letzten 40 Nachrichten unseres Gesprächs und deine ausdrücklich genannten persönlichen Hinweise für dein Konto im Hintergrund. Mit „Merke dir …“ kannst du mir einen Hinweis geben.");return;}
     if(/(?:meine meldungen|meine rückmeldungen|gemeldeten fehler|status meiner meldung|my reports)/i.test(text)) {
       const result=await support("feedback_status",{},turnUid);if(epoch!==requestEpoch)return;
       addMessage("assistant",result.reports.length?"Deine gespeicherten Rückmeldungen (bis zu 50):\n"+result.reports.map(r=>[r.category,r.status,r.testCode?"Test "+r.testCode:"",r.createdAt?new Date(r.createdAt).toLocaleDateString():""].filter(Boolean).join(" · ")).join("\n"):"Ich habe keine eigenen Rückmeldungen für dein Konto gefunden.");return;
@@ -285,7 +269,7 @@ async function sendCurrentMessage() {
     if (result.action?.type && !["none","patch_ai_form"].includes(result.action.type)) await applyGuideAction(result.action,epoch);
     else addMessage("assistant",result.reply || "Dazu habe ich gerade noch keine sichere Antwort. Beschreibe bitte, was du erreichen möchtest.");
   } catch(error) { if(epoch===requestEpoch)addMessage("assistant",error.message || "Das klappt gerade nicht. Versuch es bitte noch einmal."); }
-  finally {pending?.remove();if(epoch===requestEpoch){if(persistTurn)rememberTurn([{role:"user",text},...conversation.slice(-1).filter(m=>m.role==="assistant")],turnUid,epoch,turnGeneration);sending=false;if(send)send.disabled=false;}}
+  finally {pending?.remove();if(epoch===requestEpoch){rememberTurn([{role:"user",text},...conversation.slice(-1).filter(m=>m.role==="assistant")],turnUid,epoch,turnGeneration);sending=false;if(send)send.disabled=false;}}
 }
 
 function speechConstructor() {
