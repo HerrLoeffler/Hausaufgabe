@@ -1,0 +1,6 @@
+interface:
+  display_name: "GradeCrew · Begrenzter Prototyp"
+  short_description: "Eine offene Frage im passenden Erlebnis prüfen"
+  default_prompt: "Nutze $gradecrew-prototype für eine begrenzte erlebbare Probe meines autorisierten GradeCrew-Auftrags."
+policy:
+  allow_implicit_invocation: true

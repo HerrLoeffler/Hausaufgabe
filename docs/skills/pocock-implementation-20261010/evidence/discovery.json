@@ -1,0 +1,87 @@
+{
+  "probe": "initialize + skills/list only; no thread/start or turn/start",
+  "client": {
+    "userAgent": "Codex Desktop/0.162.0-alpha.2 (Mac OS 27.0.1; arm64) dumb (gradecrew_skill_read; 1.0.0)",
+    "codexHome": "$CODEX_HOME",
+    "platformFamily": "unix",
+    "platformOs": "macos"
+  },
+  "data": [
+    {
+      "cwd": "<GRADECREW_PROJECT_ROOT>",
+      "skills": [
+        {
+          "name": "firebase-auth-basics",
+          "path": "$CODEX_HOME/skills/firebase-auth-basics/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "firebase-firestore",
+          "path": "$CODEX_HOME/skills/firebase-firestore/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "firebase-hosting-basics",
+          "path": "$CODEX_HOME/skills/firebase-hosting-basics/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "firebase-security-rules-auditor",
+          "path": "$CODEX_HOME/skills/firebase-security-rules-auditor/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "firestore-rules-creation",
+          "path": "$CODEX_HOME/skills/firestore-rules-creation/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "frontend-design",
+          "path": "$CODEX_HOME/skills/frontend-design/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "gradecrew-learning-handoff",
+          "path": "$CODEX_HOME/skills/gradecrew-learning-handoff/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "gradecrew-prototype",
+          "path": "$CODEX_HOME/skills/gradecrew-prototype/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "gradecrew-review-retro",
+          "path": "$CODEX_HOME/skills/gradecrew-review-retro/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "gradecrew-wayfinding",
+          "path": "$CODEX_HOME/skills/gradecrew-wayfinding/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        },
+        {
+          "name": "img2threejs",
+          "path": "$CODEX_HOME/skills/img2threejs/SKILL.md",
+          "enabled": true,
+          "scope": "user"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "publication": {
+    "representation": "normalized discovery evidence; original host receipt retained by source owner",
+    "normalization": "Codex home replaced by $CODEX_HOME; private project cwd replaced by <GRADECREW_PROJECT_ROOT>; skill names, enabled, scope and errors preserved"
+  }
+}
