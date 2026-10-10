@@ -7,7 +7,7 @@
   "skills": [
     {
       "name": "gradecrew-learning-handoff",
-      "installed_path": "/Users/martin/.codex/skills/gradecrew-learning-handoff",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-learning-handoff",
       "files": [
         {
           "path": "LICENSE",
@@ -30,7 +30,7 @@
     },
     {
       "name": "gradecrew-prototype",
-      "installed_path": "/Users/martin/.codex/skills/gradecrew-prototype",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-prototype",
       "files": [
         {
           "path": "LICENSE",
@@ -53,7 +53,7 @@
     },
     {
       "name": "gradecrew-review-retro",
-      "installed_path": "/Users/martin/.codex/skills/gradecrew-review-retro",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-review-retro",
       "files": [
         {
           "path": "LICENSE",
@@ -80,7 +80,7 @@
     },
     {
       "name": "gradecrew-wayfinding",
-      "installed_path": "/Users/martin/.codex/skills/gradecrew-wayfinding",
+      "installed_path": "$CODEX_HOME/skills/gradecrew-wayfinding",
       "files": [
         {
           "path": "LICENSE",
@@ -158,5 +158,9 @@
     },
     "interpretation": "Real fresh CLI turn exercised the no-skill-name task contexts and behaved consistently with the relevant boundaries. Runtime receipt exposes neither which skill, if any, was auto-selected nor observed model/effort; automatic selector itself therefore remains unverified.",
     "follow_up": "Report behavioral evidence and metadata limit; do not claim a measured skill activation"
+  },
+  "publication": {
+    "path_representation": "$CODEX_HOME denotes original user Codex home; discovery cwd normalized for public copy; original private receipt retained by source owner",
+    "skill_bytes": "unchanged; source_bytes_equal refers to skill files only, not normalized discovery metadata"
   }
 }
