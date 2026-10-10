@@ -8,7 +8,7 @@
 - Aufgabenbranch: local source work fix/visual-backlog-recovery-20261007; evidence branch docs/gc-model-governor-evidence-20261010
 - Basiscommit: local code baseline e9cc5ae5924bff21a8a7757a1bb9129de4976d55; documentation PR branch based on remote main 91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9
 - Integrationsziel: local Site 8772 only for the scoped code checkpoint; documentation-only PR targets remote main
-- PR: documentation-only; URL/number pending creation
+- PR: documentation-only, draft https://github.com/HerrLoeffler/Hausaufgabe/pull/199 (PR #199)
 - Betroffene Dateien: local code commit has nine tools/dev-workbench paths; remote docs only docs/automation/model-governor-20261010/activation-receipt.md and this handoff
 - Überschneidungen: none observed for these two new documentation paths
 
