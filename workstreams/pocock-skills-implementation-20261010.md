@@ -23,3 +23,14 @@ Eigene sechs alten installierten Skills bleiben bytegleich; neue lokale Pfade un
 ## Nächster gesicherter Schritt
 
 Baselinebericht abholen, nur belegte Lücken mit den autorisierten schlanken Skills schließen, pro Skill klein anwenden/überprüfen, danach gezielt installieren und Discovery/PRreceipt sichern. Unterbrechungen erhalten vorhandene Task-, Git-, Modell-, Versuchs- und Budgetnachweise; keine zweite Neuinstallation der sechs Vendor-Skills.
+
+
+## Kostengesteuerter gesicherter Checkpoint
+
+Alle vier eigenen Skills lokal installiert, 17 Quelldateien bytegleich; frisches skills/list meldet alle4 enabled/user/errors=[]. Eigene Sources unter docs/skills/pocock-implementation-20261010/skills, tatsächliche Hashes/Pfade/Prüfgrenzen in checkpoint.json. Die ursprünglichen sechs Vendor-Skills bleiben28/28 bytegleich. Quellenpins/License, vier gültige Frontmatterprüfungen, reale Karte, nativer Probevertrag, zwei unabhängige statische PR191-Achsen, Retro/Guard und Lernprobe gesichert. Evidence enthält Originalberichte; keine neue Produkt-/Runtime-/Deployfreigabe.
+
+Aktuelle Savekarte: Rootfrage gestellt, Antwort pending, Empfehlung nicht gewählt. Native Source bestätigt Apply/Save/Load; der WorldPreview-Start überspringt Load und darf nicht ungeprüft als Resumeprobe gelten. Technische Instanzbindung bleibt bei GamesQA; Root meldet externe positive native/WebQA separat, hier deren tatsächliche Artefaktreceipts noch nicht abgeholt. Keine weitere Recherche oder große Reviewrunde für den Routineabschluss.
+
+Kein tatsächlicher CLI-Auswahlturn gestartet; keine noch laufende Modell-/Engine-/Cloudarbeit dieses Fachauftrags. Sourcecheckpoint bereits remote gesichert; nachfolgender Belegcheckpoint hat eigene SHA. Eine tatsächliche automatische Auswahlprobe ist noch offen; explizite Source-Anwendung aller vier Skills und qualifizierte Nichtanlässe sind bereits belegt. Kein globaler Self-Rewrite, keine Voll-Mattinstallation, keine zweite StatusDB.
+
+Genau nächster kleiner Schritt für den ausdrücklich beauftragten frischen Luna-Recoverykontext: aktuellen Checkpoint/Branch/Installhashes lesen, einen begrenzten realen automatischen Skill-Auswahltest durchführen (bestehender ChatGPT-Login, keine paid API, kein Runtime/Deploy), daraus ehrlichen Selektionsstatus sichern, Draft-PR/attach samt konkretem Integrationowner-Linkdelta abschließen. Keine Neuinstallation/erneute PR191-Reviews/40Video-Recherche. Quellen- und Schreibzuständigkeit erst nach expliziter Übergabe übernehmen; Sharedowner bleibt01a1089e-bbae-74c2-9a6a-6ce71fb3dba7.
