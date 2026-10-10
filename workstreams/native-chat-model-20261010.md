@@ -1,6 +1,6 @@
 # GC-MODEL-GOVERNOR-01 — Native Codex model defaults and start policy
 
-**Owner:** native model policy / documentation. **Responsible chat:** unknown. **Date:** 2026-10-10. **Branch:** `feat/gc-native-chat-model-20261010`. **Base:** verified GitHub `main` `91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9`. **PR:** pending.
+**Owner:** native model policy / documentation. **Responsible chat:** unknown. **Date:** 2026-10-10. **Branch:** `feat/gc-native-chat-model-20261010`. **Base:** verified GitHub `main` `91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9`. **PR:** [#200](https://github.com/HerrLoeffler/Hausaufgabe/pull/200), draft and open. Remote branch head at first submission: `057d172fa51eac0696ffc3cafa01ec1bc61e763d`; corrected final policy tree is at `de6e6df275ef9d9e125251c39aa8a8e46eb729b3` (two commits; the second restored full original source files after the first upload was truncated). Final net comparison against main contains only six intended files with additions and no deletions.
 
 ## Purpose and current receipt
 
