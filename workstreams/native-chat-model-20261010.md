@@ -1,6 +1,6 @@
 # GC-MODEL-GOVERNOR-01 — Native Codex model defaults and start policy
 
-**Owner:** native model policy / documentation. **Responsible chat:** unknown. **Date:** 2026-10-10. **Branch:** `feat/gc-native-chat-model-20261010`. **Base:** verified GitHub `main` `91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9`. **PR:** [#200](https://github.com/HerrLoeffler/Hausaufgabe/pull/200), draft and open. Remote branch head at first submission: `057d172fa51eac0696ffc3cafa01ec1bc61e763d`; corrected final policy tree is at `de6e6df275ef9d9e125251c39aa8a8e46eb729b3` (two commits; the second restored full original source files after the first upload was truncated). Final net comparison against main contains only six intended files with additions and no deletions.
+**Owner:** native model policy / documentation. **Responsible chat:** unknown. **Date:** 2026-10-10. **Branch:** `feat/gc-native-chat-model-20261010`. **Base:** verified GitHub `main` `91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9`. **PR:** [#200](https://github.com/HerrLoeffler/Hausaufgabe/pull/200), draft and open. Current reviewed PR head: `837ec933796b1c5eaa5856b8690f79c411038911`. The first GitHub blob transfer exceeded the shell output limit; the complete files were restored additively, and the final comparison against main confirmed only six intended files, additions only. This receipt follow-up is a separate docs-only commit; do not treat earlier checks as checks on this new head.
 
 ## Purpose and current receipt
 
@@ -21,7 +21,8 @@ Continue task `GC-MODEL-GOVERNOR-01`; do not reset prior experiments, cost/budge
 - Native evidence: `docs/automation/native-chat-model-20261010/README.md`.
 - Shared policy deltas: `AGENTS.md`, `docs/CHAT_CONTRACT.md`, `TODO.md`, `workstreams/registry.json`.
 - Release file `GRADECREW_STATE.json` intentionally unchanged.
-- Local checks: config parser, bundled model catalog and safe-filtered config-load status; no inference. Documentation checks still pending.
+- At PR source head `837ec933796b1c5eaa5856b8690f79c411038911`, Project handoff checks run `38088997623`, job `114321368848`, and GradeCrew Development Status run `38088997529`, job `114321368593`, completed successfully. These checks are tied to that source/documentation head; this receipt-only follow-up creates a newer PR head.
+- Local checks for this receipt: `git diff --check`, new-document whitespace check, and `python3 -m json.tool workstreams/registry.json` passed. Local config checks were `codex --strict-config --help` (exit 0), `codex debug models --bundled` (exit 0; Luna/medium listed), and filtered `codex doctor --json` (`checks.config.load.status=ok`, model Luna; overall exit 1 for unrelated provider reachability/state-path checks). No inference. Command results were observed in the task transcript; no standalone logs or full config were saved. Safe config receipt: only the two top-level values moved from Sol/high to Luna/medium; all other bytes were verified unchanged. Exact backup remains outside the repository.
 
 ## Next step
 

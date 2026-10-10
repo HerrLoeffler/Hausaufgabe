@@ -20,7 +20,7 @@ GradeCrew routine work starts Luna/medium. `low` may be tried only after compara
 
 The bundled CLI was `codex-cli 0.162.0-alpha.17.2`. `codex --strict-config --help` exited 0. `codex debug models --bundled` exited 0 and listed `gpt-6-luna` with medium effort support. `codex doctor --json` reported `checks.config.load.status = ok` and model `gpt-6-luna`; the overall doctor command exited 1 because unrelated provider-reachability and state-path checks failed. No model call was made. The new desktop runtime value was not observed because the app was not restarted.
 
-The previous user defaults were Sol/high; after the update, only the two authorized top-level keys changed. No secret values or full configuration were copied into this repository. The exact prior values were preserved in the user’s local recovery notes, outside the repository.
+The previous user defaults were Sol/high; after the update, only the two authorized top-level keys changed. The safe receipt is limited to those key names and old/new model-effort values; all other bytes were verified unchanged. `codex --strict-config --help` and `codex debug models --bundled` exited 0. Filtered `codex doctor --json` showed `checks.config.load.status = ok` and effective `gpt-6-luna`; overall exit 1 reflects unrelated network reachability/state-path checks. No standalone command log was saved; these results were observed in the task transcript. No secret values or full configuration were copied into this repository. The exact prior values were preserved in the user’s local recovery notes, outside the repository.
 
 ## Official product references
 
