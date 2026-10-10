@@ -563,6 +563,15 @@
       "relatedBranches": [
         "fix/coco-chat-ui-background-memory-20261010"
       ]
+    },
+    {
+      "id": "native-chat-model-20261010",
+      "title": "GC-MODEL-GOVERNOR-01: native Codex model defaults and GradeCrew start policy",
+      "primaryBranch": "feat/gc-native-chat-model-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/native-chat-model-20261010.md",
+      "relatedBranches": []
     }
   ]
 }

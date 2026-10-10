@@ -442,6 +442,13 @@ GC-LAUNCH-CONTROLS-01 · Dokumentationssetup über [PR190](https://github.com/He
 | GC-HOOKS-01-SKILLS | Sechs ausgewählte standalone User-Skills auf Martins Mac installiert; Integrationowner hat28Manifesthashes tatsächlich erneut abgeglichen. Quellen-/Discovery-/Offlinebelege aus [PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193), begrenzter unabhängiger Dokureview ohne Findings und exakte Doku-CI grün. [Facharbeit-Einstieg](docs/skills/GRADECREW_EXECUTION_SKILLS.md), [eigene Integrationsübergabe](workstreams/skills-integration-20261010.md). | Innerhalb konkret autorisierter Facharbeit einsetzen; andere Hosts/alte Desktopturns separat prüfen. Kein Deploy, neue Cloudrechte, Migration oder pauschales Skillpaket. |
 
 
+## 10.10.2026 — GC-MODEL-GOVERNOR-01: native Codex-Defaults und GradeCrew-Starts
+
+| ID | Belegter Umfang | Nächster Schritt |
+|---|---|---|
+| GC-MODEL-GOVERNOR-01 | Luna/medium ist als allgemeiner Codex-Default gesetzt; nur die zwei Modell-/Effort-Keys, Parser und Modellkatalog geprüft, keine Inferenz. Neue/unüberschriebene Starts verwenden den Default; bestehende Chats können explizite Overrides behalten. Desktop-Picker für den aktuellen Chat ist offiziell belegt; Anpassung der GradeCrew-Zentralen-UI war durch die App-Sicherheitsgrenze blockiert. Keine UI-/Hook-Sperre behauptet. [Native Nachweise](docs/automation/native-chat-model-20261010/README.md), [Übergabe](workstreams/native-chat-model-20261010.md). | PR #200 wurde unabhängig ohne Blocker geprüft; Merge nur nach frischem main-/Overlap-/Head-Check. Separater CLI-Codepfad bleibt bei PR #199 / passender Remote-Basis offen. Kein Deploy. |
+
+
 ## 10.10.2026 — GC-LAUNCH-CONTROLS-01: vorhandene Arbeit erhalten, nächste Gates
 
 - SECURITY: lokaler Checkpoint 778f88b017e75b3e868697966bf4faee6a8c2d9d auf checkpoint/gc-launch-security-preserve-20261010 erhält acht unveränderte Dateien + Metadatenhandoff; sauberer Baum, kein Scan/Test/Codefix/Merge/Deploy. Plattformstop „possible cybersecurity risk“ und gestoppter Recoveryturn erhalten, Reviewbefunde offen.209Tests/ESLint ohne gefundenen SHA-gebundenen Log nur Agentenbericht; kein fertigerFix. [Erhaltungsübergabe](workstreams/launch-controls-preservation-20261010.md).
