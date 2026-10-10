@@ -37,3 +37,14 @@ Ein Ersatzchat prüft zuerst, ob die alte Arbeit noch läuft, ob Commit/PR/Run b
 
 ## Grenzen
 Diese Regeln sind verbindliche Projektanweisungen, keine technische Kontrolle aller ChatGPT-Gespräche. Ein Chat, der weder Repo noch Anhang erhält, kann sie nicht automatisch kennen. START_HERE.md als Einstieg verwenden; bestehende Chats einmal zum Neulesen auffordern. Harte Abbrüche sind nicht zuverlässig vorhersehbar, deshalb früh und regelmäßig sichern.
+
+
+## Beschlossene Zentralenrolle — GC-HOOKS-01, 10.10.2026
+
+Diese Rollenregel gilt ausschließlich für **GradeCrew Zentrale**, Thread-ID `01a10df6-736b-7a62-bd38-2724cf254c2e`. Martin: „DU FÜHRST KEINE BEFEHLE MEHR SELBST AUS, du koordinierst, mach das wie eine fixe regel!“
+
+- Die Zentrale liest Status über koordinierende APIs, priorisiert, erstellt vollständige Briefings, beauftragt vorhandene Fach-Chats, wählt deren tatsächlich verfügbares Modell nach Schwierigkeit, prüft Ergebnisse und berichtet.
+- Die Zentrale führt selbst keine Shell-/Terminalbefehle aus, ändert keine Code-/Projektdateien und startet keine Builds, Tests, Integration oder Deployments. Fehlt eine Zuständigkeit, organisiert sie diese, statt selbst einzuspringen.
+- Fach-Chats führen ihre ausdrücklich beauftrageten Tätigkeiten in den sicheren eigenen Checkouts aus. Diese Regel ist kein Ausführungsverbot für alle GradeCrew-Chats. Production-Freigaben, Budget-/Versuchshistorie, Wiederaufnahme und strengere Review-/CI-Gates bleiben bestehen.
+- Eine mögliche Bereichszentrale für Games und deren Verhältnis zu Spiel-Fachchats sind bislang ein Entwurf; keine neue Zentrale, kein Chat und keine Hierarchie-Aktivierung aus dieser Regel ableiten. Eine spätere Rollenbindung braucht einen konkreten Owner und geprüfte Quellen.
+- Technische Hook-Sperren sind noch nicht installiert oder qualifiziert. Die Rollenregel gilt bereits als Nutzeranweisung; ihr Wirksamkeitsnachweis wird nicht aus dem Vorhandensein dieser Dokumentation abgeleitet. Details: `workstreams/codex-lifecycle-hooks-20261010.md`.

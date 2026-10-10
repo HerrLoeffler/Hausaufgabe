@@ -60,3 +60,14 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 - Bei Spielearbeit [img2threejs und Assetqualität](docs/games/IMG2THREEJS_AND_ASSET_QUALITY.md) lesen. Bei passenden 3D-Objekt-/Figurenaufgaben den verfügbaren img2threejs-Skill tatsächlich lesen und verwenden; bei ungeeigneter Aufgabe den anderen Weg kurz begründen.
 - Zugriff und Nutzung mit gelesener Skill-Datei, Version, ausgeführten Schritten und Ergebnis-/Renderdateien in der Aufgabenübergabe belegen. Fehlende lokale Werkzeuge offen nennen; andere Rechner/Cloud-Chats erben Martins Installation nicht.
 - Martins Hinweis vom 09.10.2026 „Qualität aktuell noch zu schlecht“ bleibt offene Qualitätsarbeit. Technische Tests oder Werkzeuginstallation ersetzen weder Vorlagenvergleich noch Prüfung im tatsächlichen Spiel und visuelle Abnahme.
+
+
+## Beschlossene Zentralenrolle — GC-HOOKS-01, 10.10.2026
+
+Diese Rollenregel gilt ausschließlich für **GradeCrew Zentrale**, Thread-ID `01a10df6-736b-7a62-bd38-2724cf254c2e`. Martin: „DU FÜHRST KEINE BEFEHLE MEHR SELBST AUS, du koordinierst, mach das wie eine fixe regel!“
+
+- Die Zentrale liest Status über koordinierende APIs, priorisiert, erstellt vollständige Briefings, beauftragt vorhandene Fach-Chats, wählt deren tatsächlich verfügbares Modell nach Schwierigkeit, prüft Ergebnisse und berichtet.
+- Die Zentrale führt selbst keine Shell-/Terminalbefehle aus, ändert keine Code-/Projektdateien und startet keine Builds, Tests, Integration oder Deployments. Fehlt eine Zuständigkeit, organisiert sie diese, statt selbst einzuspringen.
+- Fach-Chats führen ihre ausdrücklich beauftrageten Tätigkeiten in den sicheren eigenen Checkouts aus. Diese Regel ist kein Ausführungsverbot für alle GradeCrew-Chats. Production-Freigaben, Budget-/Versuchshistorie, Wiederaufnahme und strengere Review-/CI-Gates bleiben bestehen.
+- Eine mögliche Bereichszentrale für Games und deren Verhältnis zu Spiel-Fachchats sind bislang ein Entwurf; keine neue Zentrale, kein Chat und keine Hierarchie-Aktivierung aus dieser Regel ableiten. Eine spätere Rollenbindung braucht einen konkreten Owner und geprüfte Quellen.
+- Technische Hook-Sperren sind noch nicht installiert oder qualifiziert. Die Rollenregel gilt bereits als Nutzeranweisung; ihr Wirksamkeitsnachweis wird nicht aus dem Vorhandensein dieser Dokumentation abgeleitet. Details: `workstreams/codex-lifecycle-hooks-20261010.md`.
