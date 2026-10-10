@@ -1,0 +1,253 @@
+{
+  "task_id": "GC-HOOKS-01-SKILLS",
+  "date": "2026-10-10",
+  "host": "Darwin arm64",
+  "codex_cli": "0.162.0-alpha.2",
+  "base_main": "cacf2337c002da285ebbc65ea7aef1d395fcb44a",
+  "installation": "selective standalone user skills via system skill-installer; upstream unchanged",
+  "plugin": "GradeCrew Central 0.4.0 retained; complete Firebase MCP/plugin not installed",
+  "skills": [
+    {
+      "name": "firebase-auth-basics",
+      "path": "/Users/martin/.codex/skills/firebase-auth-basics",
+      "source_repository": "firebase/agent-skills",
+      "source_commit": "b5735e5baa0d874cb97a23e26ebe93e4501797b9",
+      "source_folder": "skills/firebase-auth-basics",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "247aea2de7ef99b5fac1151082821bebee0b3153f385f640f28f09eba38c8c0b"
+        },
+        {
+          "path": "references/client_sdk_android.md",
+          "sha256": "90c13892ff7a11c09aa5bfd00e9466b5bf586e629c9bd278f9a4bf46faef7869"
+        },
+        {
+          "path": "references/client_sdk_web.md",
+          "sha256": "273387f012d9c3e7e30f401eb41240972b15043e6810c9c0e1641cf6e8f8ddcc"
+        },
+        {
+          "path": "references/flutter_setup.md",
+          "sha256": "7a99d1239cab551d97888640acb0868fd8993dfaadc49ba2af9f5e68e4e7494c"
+        },
+        {
+          "path": "references/ios_setup.md",
+          "sha256": "440e3788b85de59ef7274d7d5d19b2ea42431a07bc7fd54069b15e451cdce647"
+        },
+        {
+          "path": "references/security_rules.md",
+          "sha256": "a38d5d663169902035f5407f3efee20bc9a7087efce0a601f6f57cd5580d526f"
+        }
+      ],
+      "installed_files_match_source": true
+    },
+    {
+      "name": "firebase-firestore",
+      "path": "/Users/martin/.codex/skills/firebase-firestore",
+      "source_repository": "firebase/agent-skills",
+      "source_commit": "b5735e5baa0d874cb97a23e26ebe93e4501797b9",
+      "source_folder": "skills/firebase-firestore",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "ce09edc308e4ee0e4cf6db8d0cdc04c292a5b0534eb2320ad77a9599eb62c6d2"
+        },
+        {
+          "path": "references/enterprise/android_sdk_usage.md",
+          "sha256": "994585d99c147bced2c413a33579d09667c652dbe8a9b02d1ea91a6dfb31dca7"
+        },
+        {
+          "path": "references/enterprise/data_model.md",
+          "sha256": "3703a4a5671395d564cfa55b2127fdcdd05ba9c2d45d2e259beeeed5b9e5bb94"
+        },
+        {
+          "path": "references/enterprise/flutter_setup.md",
+          "sha256": "56915ee88796b65656e5dbbf2fce433615231b4705d07e41ebc998e19eef5e8d"
+        },
+        {
+          "path": "references/enterprise/indexes.md",
+          "sha256": "3de922b4c18a32a78f223367bb8da655272ab5012c0cb0e26363b2d460f0ba92"
+        },
+        {
+          "path": "references/enterprise/ios_setup.md",
+          "sha256": "9e6fc564e0e716aebf451845b1fe5bd64a7ad5348c9d1173c2290c0391268247"
+        },
+        {
+          "path": "references/enterprise/provisioning.md",
+          "sha256": "5f7554a797412fbc1f819aace51b5966c99253d63f608bcc4ddd910281a6fad5"
+        },
+        {
+          "path": "references/enterprise/python_sdk_usage.md",
+          "sha256": "cecb1efc10f2da5e603d15a36ee473e91f264d0efb68f94363063555a4376b0a"
+        },
+        {
+          "path": "references/enterprise/web_sdk_usage.md",
+          "sha256": "065370838a502d9c3a2df9d2d5b0e6c8b08671bc4c90f72084230cade7d9b981"
+        },
+        {
+          "path": "references/standard/android_sdk_usage.md",
+          "sha256": "4245b24574f5335a3b2e542388bb24bc8567353ef561381746b5998f36fbed90"
+        },
+        {
+          "path": "references/standard/flutter_setup.md",
+          "sha256": "cd990f1cb760d5b3b5cc5f627da478b4b7bbf0fd9011d126b9c70b3626dde50d"
+        },
+        {
+          "path": "references/standard/indexes.md",
+          "sha256": "6581183f1b4d2cadef81a600e192b346983c9a4bbc8ef3b806531907136025db"
+        },
+        {
+          "path": "references/standard/ios_setup.md",
+          "sha256": "0e327d20a725bfe2dc151b08182540b1f4b208e0119b44b85f680085d628a071"
+        },
+        {
+          "path": "references/standard/provisioning.md",
+          "sha256": "b953078ffeb93cc5a82aa8f1f95c49aab026e6d1dede9a25bc229a5110fc77cf"
+        },
+        {
+          "path": "references/standard/web_sdk_usage.md",
+          "sha256": "1cf1a78158a8be6e02bbf43d8f33bb4b15d88803924ba88e624e762f5e57e15a"
+        }
+      ],
+      "installed_files_match_source": true
+    },
+    {
+      "name": "firebase-hosting-basics",
+      "path": "/Users/martin/.codex/skills/firebase-hosting-basics",
+      "source_repository": "firebase/agent-skills",
+      "source_commit": "b5735e5baa0d874cb97a23e26ebe93e4501797b9",
+      "source_folder": "skills/firebase-hosting-basics",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "bb7b6c45f02ed3b9c2b5f942b8fa9c37d77ffdf5831d470c5155634afb717891"
+        },
+        {
+          "path": "references/configuration.md",
+          "sha256": "55bc220ac8c1ea3ea4dd08e1c5d45e18cb4305b9a6814b8873d0b58b2027d285"
+        },
+        {
+          "path": "references/deploying.md",
+          "sha256": "bcb931999d68ec3c5595de74035ac0784f6fd63bb73a39cd760a14b21ff39d08"
+        }
+      ],
+      "installed_files_match_source": true
+    },
+    {
+      "name": "firebase-security-rules-auditor",
+      "path": "/Users/martin/.codex/skills/firebase-security-rules-auditor",
+      "source_repository": "firebase/agent-skills",
+      "source_commit": "b5735e5baa0d874cb97a23e26ebe93e4501797b9",
+      "source_folder": "skills/firebase-security-rules-auditor",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "6522cd9e61ca577e80326b7204b69883822e1bdf1846b0c829c43993fdeb3b4a"
+        }
+      ],
+      "installed_files_match_source": true
+    },
+    {
+      "name": "firestore-rules-creation",
+      "path": "/Users/martin/.codex/skills/firestore-rules-creation",
+      "source_repository": "firebase/agent-skills",
+      "source_commit": "b5735e5baa0d874cb97a23e26ebe93e4501797b9",
+      "source_folder": "skills/firestore-rules-creation",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "26056872489c535ac58e35de52bf76b14a13607fa57d57f0e6e85f1b0be7e583"
+        }
+      ],
+      "installed_files_match_source": true
+    },
+    {
+      "name": "frontend-design",
+      "path": "/Users/martin/.codex/skills/frontend-design",
+      "source_repository": "anthropics/skills",
+      "source_commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "source_folder": "skills/frontend-design",
+      "files": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3"
+        }
+      ],
+      "installed_files_match_source": true
+    }
+  ],
+  "discovery": {
+    "probe": "initialize + skills/list only; no thread/start or turn/start",
+    "client": {
+      "userAgent": "Codex Desktop/0.162.0-alpha.2 (Mac OS 27.0.1; arm64) dumb (gradecrew_skill_read; 1.0.0)",
+      "codexHome": "/Users/martin/.codex",
+      "platformFamily": "unix",
+      "platformOs": "macos"
+    },
+    "data": [
+      {
+        "cwd": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4",
+        "skills": [
+          {
+            "name": "firebase-auth-basics",
+            "path": "/Users/martin/.codex/skills/firebase-auth-basics/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "firebase-firestore",
+            "path": "/Users/martin/.codex/skills/firebase-firestore/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "firebase-hosting-basics",
+            "path": "/Users/martin/.codex/skills/firebase-hosting-basics/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "firebase-security-rules-auditor",
+            "path": "/Users/martin/.codex/skills/firebase-security-rules-auditor/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "firestore-rules-creation",
+            "path": "/Users/martin/.codex/skills/firestore-rules-creation/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "frontend-design",
+            "path": "/Users/martin/.codex/skills/frontend-design/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          },
+          {
+            "name": "img2threejs",
+            "path": "/Users/martin/.codex/skills/img2threejs/SKILL.md",
+            "enabled": true,
+            "scope": "user"
+          }
+        ],
+        "errors": []
+      }
+    ]
+  },
+  "scope": "local install + metadata discovery; no Firebase customer data, cloud mutations, model turn via app-server, deployment or paid external API",
+  "model_probe_requested": "gpt-6.1-sol medium",
+  "model_probe_observed": "unknown; do not infer from self-knowledge",
+  "offline_probe": {
+    "agent": "skills_offline_probe",
+    "report_sha256": "e92d7d268afe406157625ff0d954d03e0800158890460de64af49fd2b75f2aae",
+    "html_sha256": "d666c0af2f6d115c8659cf561f1fb5af40f60df3ab8bcc95855c40d13e412022",
+    "scope": "fictitious rules + static HTML; no customer data/cloud/emulator/browser/render/device checks",
+    "result": "update ownership gap correctly reported; existing design tokens preserved; coordinator scope held"
+  },
+  "quick_validate": "not run successfully: PyYAML unavailable; real Codex parser discovery and file integrity used"
+}
