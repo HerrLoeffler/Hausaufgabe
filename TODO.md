@@ -432,3 +432,11 @@ PR179–183 in `c3a5fdcfb949bc0de23295a549388c23cf7655e6` integriert. Exakte Can
 
 
 GC-LAUNCH-CONTROLS-01 · Dokumentationssetup über [PR190](https://github.com/HerrLoeffler/Hausaufgabe/pull/190) auf main@c567843590a950b7c5eca053f808bd9343e0c6e6 integriert; zwei unabhängige Doku-Reviews ohne Findings, Kandidaten- und Main-Dokuchecks grün (Main38064714219/38064714229, ReleaseControl38064714222). Das erfüllt keine Produktkontrolle:31 nicht geprüft/9offen. Bereits beauftragte SECURITY-/PRIVACY-Fachagenten erhalten aktuelle Main-/PR-Receipts und ihre jeweiligen drei Katalog-/Rollen-/Quellübergabepfade; sechsSetupdateien danach nicht mehr beim Integrationsowner bearbeiten. Shared-Dateien bleiben exklusiv Integration. Gesamtprüfungen je20 Punkte/Fixes separat im vorhandenen Task-/Release-Train, keine Production-/konkurrierenden Stagingdeploys. Keine zweite Gesamtprüfung durch Setup-Owner.
+
+
+## 10.10.2026 — GC-HOOKS-01 / gezielte Skills
+
+| ID | Belegter Umfang | Nächster Schritt |
+|---|---|---|
+| GC-HOOKS-01 | Bestehende fünf Zentralenrollen und adaptive Modellregel sind auf main; Hook-Entwurf [PR184](https://github.com/HerrLoeffler/Hausaufgabe/pull/184) bleibt branch_only. Keine Hooks/Runtime-Sperren installiert. Ursprüngliche Task-/Versuchshistorie erhalten. | Zuverlässige Threadidentität und Hook-Trust/Umsetzung separat qualifizieren, keine Aktivierung aus Dokumentation ableiten. |
+| GC-HOOKS-01-SKILLS | Sechs ausgewählte standalone User-Skills auf Martins Mac installiert; Integrationowner hat28Manifesthashes tatsächlich erneut abgeglichen. Quellen-/Discovery-/Offlinebelege aus [PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193), begrenzter unabhängiger Dokureview ohne Findings und exakte Doku-CI grün. [Facharbeit-Einstieg](docs/skills/GRADECREW_EXECUTION_SKILLS.md), [eigene Integrationsübergabe](workstreams/skills-integration-20261010.md). | Innerhalb konkret autorisierter Facharbeit einsetzen; andere Hosts/alte Desktopturns separat prüfen. Kein Deploy, neue Cloudrechte, Migration oder pauschales Skillpaket. |

@@ -523,6 +523,26 @@
       "state": "integrated",
       "handoff": "workstreams/img2threejs-codex-install-20261009.md",
       "relatedBranches": []
+    },
+    {
+      "id": "codex-lifecycle-hooks-20261010",
+      "title": "GC-HOOKS-01: Lifecycle-Hook-Entwurf und zentrale Rollenabgrenzung",
+      "primaryBranch": "docs/gc-hooks-01-design-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "gc-hooks-skills-setup-20261010",
+      "title": "GC-HOOKS-01-SKILLS: gezielte lokale Skills und Fachrollen-Zuordnung",
+      "primaryBranch": "docs/gc-hooks-skills-setup-20261010",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "relatedBranches": [
+        "docs/gc-hooks-skills-integration-20261010"
+      ]
     }
   ]
 }
