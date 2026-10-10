@@ -34,3 +34,12 @@ Keine zweite Liste/Plattform, kein 24/7-Kostenmonitor, keine Durchschnitts-Siche
 [Eigene Integrationsübergabe](privacy-controls-integration-20261010.md) bindet PR191@bb1c6bee97ee42fe3981905d9c89123dc96d26bf und aktuellen Integrationshead c3a5fdcf. Bestehender Admincheck grün, keine Combined-CI-/Merge-/Deploybehauptung. Kein eigener neuer Privacy- oder Securityaudit.
 
 Genau nächster Schritt: Checkpoint/Blocker und fehlende Prüfgates der Zentrale zum Abholen melden; Security bleibt gestoppt, Privacyintegration benötigt ihren getrennten autorisierten Gateauftrag.
+
+
+## Verifizierter getrennter Skill-Integrationsreceipt
+
+PR193 tatsächlich auf main@cb6b37d0969bfb16d89ef99a54326250c66ddd0f integriert; Source-MainHandoff38081583757/DevelopmentStatus38081583756 grün. Eigener Einstiegs-/StatusPR195 tatsächlich auf main@c8ba1222a1266fa2241a6cd069a206036e1a7df3 integriert, finaler Kandidat5a6f07c93adb892e34edcc848088cac7f6c9571b mit Handoff38081695097/DevelopmentStatus38081695081 und ready-DevelopmentStatus38081724913 success. Mainchecks dieses letzten Merges separat prüfen; keine Übertragung alter CI auf den Merge. START_HERE→docs/skills/GRADECREW_EXECUTION_SKILLS.md→Setup/Installation auf exakt diesem Main gelesen. 28lokaleManifesthashes vom Integrationsowner erneut gleich; dokumentierte Discovery/Offlineprobe nicht wiederholt und keine anderen Hosts/alteDesktopturns als aktiviert behauptet. Zwei begrenzte unabhängige Doku-/Receiptreviews, nur kleiner korrigierter P3-Provenienzsatz, keine offenen actionable Findings. [Eigene Integrationsübergabe](skills-integration-20261010.md).
+
+Dieser ErhaltungsPR194 wurde anschließend ohne Force/Historyreset mit dem neuen Main abgeglichen: Skill-/Hook-Workstreamobjekte und bestehende Release_train/Production erhalten. PR194 bleibt Draft zur Abholung; Securitystopps/unbestätigte209Tests/Privacy-CombinedCI-Grenze und Forschungslokalität unverändert, keine technische Fortsetzung.
+
+Mainchecks des tatsächlichen PR195-Merges c8ba1222a1266fa2241a6cd069a206036e1a7df3 direkt gelesen: Handoff38081771472, DevelopmentStatus38081771437 und ReleaseControl38081771536 alle completed/success. Reine Koordinations-/Releaseboardbelege, kein App-/Deploy-/Gerätenachweis.

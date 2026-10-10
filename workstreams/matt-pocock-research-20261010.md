@@ -28,3 +28,6 @@ Genau nächster Schritt: Zentrale holt die vorhandenen Rechercheergebnisse/Inven
 
 
 Aktualisierung beim Wiederaufnehmen10.10.2026: [Draft-PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193) liegt offen auf docs/gc-hooks-skills-setup-20261010@16b3fe3006b3b07d4b8867cb861742fa8ea94a60, sechs ausschließlich eigene Dokumentations-/Evidencepfade ohne Überschneidung mit dieser Sicherung. PR-Autor berichtet sechs lokal installierte Skills, frische Discovery und grüne Dokuchecks; hier nur PR-Metadaten gelesen, keine Installation/Discovery/Verhaltensprüfung wiederholt. Shared-Einstieg/GC-HOOKS-Deltas als separaten qualifizierten Integrationsschritt behandeln, kein automatisches Mitintegrieren.
+
+
+Späterer belegter Skillstand: PR193 und gesonderter Einstiegs-/StatusPR195 sind nach begrenztem unabhängigem Review tatsächlich auf main integriert (cb6b37d / c8ba1222a1266fa2241a6cd069a206036e1a7df3). [Main-Skill-Einstieg](../docs/skills/GRADECREW_EXECUTION_SKILLS.md), [Integrationsbelege](skills-integration-20261010.md). Keine Änderung dieser Forschung oder ihres Inventar-/Captionstatus; keine automatische Skillinstallation auf anderen Hosts. Früherer oben erfasster PR-Kandidatenstand ist historische Evidenz.

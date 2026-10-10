@@ -435,19 +435,6 @@
   },
   "workstreams": [
     {
-      "id": "privacy-controls-integration-20261010",
-      "task_id": "GC-LAUNCH-CONTROLS-01-PRIVACY",
-      "branch": "fix/gc-privacy-controls-20261010",
-      "stage": "branch_only",
-      "pull_request": 191,
-      "observed_head": "bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
-      "ci": "admin_test_account_controls_success_38065021884; not_combined_ci",
-      "staging": "not_deployed_this_candidate",
-      "user_test": "synthetic_desktop_report_only; real_account_device_acceptance_not_performed",
-      "handoff": "workstreams/privacy-controls-integration-20261010.md",
-      "next_action": "Authorize and qualify existing candidate through exact CombinedCI/peer/target gates; no workflow, runtime change, merge or deploy started in metadata-preparation task."
-    },
-    {
       "id": "launch-controls-20261010",
       "task_id": "GC-LAUNCH-CONTROLS-01",
       "branch": "docs/gc-launch-controls-integration-20261010",
@@ -1271,6 +1258,63 @@
       "production": "unchanged",
       "handoff": "workstreams/coco-support-memory-20261009.md",
       "next_action": "Martin can use Coco on local/Staging; review support behavior. Remaining old images get explicit bounded one-time descriptions when needed. No Production approval."
+    },
+    {
+      "id": "codex-lifecycle-hooks-20261010",
+      "task_id": "GC-HOOKS-01",
+      "branch": "docs/gc-hooks-01-design-20261010",
+      "stage": "branch_only",
+      "staging": "not_applicable_design_only; hooks_not_installed",
+      "user_test": "not_performed",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "next_action": "GC-HOOKS-01 role/adaptive rules already on main; PR184 hook design remains branch_only, no hooks installed. Separate six-skill documentation integrated via PR193; actual runtime enforcement requires its own qualified task."
+    },
+    {
+      "id": "gc-hooks-skills-setup-20261010",
+      "task_id": "GC-HOOKS-01-SKILLS",
+      "branch": "docs/gc-hooks-skills-setup-20261010",
+      "stage": "integrated",
+      "scope": "Documentation and six local standalone user skills; no runtime hooks, MCP/cloud rights or deployment",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "source_pr": 193,
+      "documentation_source_commit": "16b3fe3006b3b07d4b8867cb861742fa8ea94a60",
+      "local_installation": {
+        "host": "Martins Darwin arm64 Mac",
+        "skills": [
+          "firebase-auth-basics",
+          "firebase-firestore",
+          "firebase-hosting-basics",
+          "firebase-security-rules-auditor",
+          "firestore-rules-creation",
+          "frontend-design"
+        ],
+        "integrity": "28/28 installed files re-read against pinned manifest by integration owner",
+        "discovery": "source recorded initialize + skills/list: six enabled=true/user, errors=[]; not repeated by integration owner",
+        "desktop_next_turn_usage": "not_observed",
+        "other_hosts": "not_verified"
+      },
+      "ci": {
+        "handoff": 38081242296,
+        "development_status": 38081242324,
+        "result": "success at source commit; own predecessor 9574ed3d995c2653e7daa5e67c540e181a16f17c CI succeeded; final own head/main checks separately required"
+      },
+      "staging": "not_applicable_documentation_only",
+      "production": "not_requested",
+      "user_test": "not_performed",
+      "next_action": "Use relevant installed skills within concrete authorized specialist tasks; verify discovery on other hosts separately. Hook design/activation remains independent and uninstalled."
+    },
+    {
+      "id": "privacy-controls-integration-20261010",
+      "task_id": "GC-LAUNCH-CONTROLS-01-PRIVACY",
+      "branch": "fix/gc-privacy-controls-20261010",
+      "stage": "branch_only",
+      "pull_request": 191,
+      "observed_head": "bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
+      "ci": "admin_test_account_controls_success_38065021884; not_combined_ci",
+      "staging": "not_deployed_this_candidate",
+      "user_test": "synthetic_desktop_report_only; real_account_device_acceptance_not_performed",
+      "handoff": "workstreams/privacy-controls-integration-20261010.md",
+      "next_action": "Authorize and qualify existing candidate through exact CombinedCI/peer/target gates; no workflow, runtime change, merge or deploy started in metadata-preparation task."
     }
   ],
   "deployments": [
