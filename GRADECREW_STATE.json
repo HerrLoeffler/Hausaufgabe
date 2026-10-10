@@ -1321,12 +1321,20 @@
       "task_id": "GC-POCOCK-IMPLEMENT-01",
       "parent_task_id": "GC-POCOCK-RESEARCH-01",
       "branch": "feat/gc-pocock-workflow-20261010",
-      "stage": "branch_only",
+      "stage": "ci_green",
       "scope": "Deterministic local workflow tooling; external QA/Skills separately owned",
       "handoff": "workstreams/pocock-workflow-implementation-20261010.md",
-      "next_action": "Implement read-only brief/frontier checker, own package pilot, exact independent review and CI before authorized main integration",
+      "next_action": "Existing independent acceptance reviewer checks immutable5fdfc290 and recipe; qualified merge only after review/exact final gates. No second review team or duplicate QA",
       "production": "not_requested",
-      "staging": "not_applicable_tooling"
+      "staging": "not_applicable_tooling",
+      "verified_candidate": "5fdfc29012acf5163c4b400a617d7c245fdd7812",
+      "ci": {
+        "handoff_run": 38084724978,
+        "handoff_job": 114308748780,
+        "development_status_run": 38084724916,
+        "result": "success at immutable tooling candidate; subsequent metadata/main checks separate"
+      },
+      "independent_review": "pending existing pocock_implementation_acceptance requirements + standards + once replay; root chat interrupted"
     }
   ],
   "deployments": [
