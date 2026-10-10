@@ -114,7 +114,7 @@ function safeImage(question) {
 
 function safeAudio(question) {
   const src = clampString(question.audioDataUrl || "", 500000);
-  if (!src || !src.startsWith("data:audio/")) return null;
+  if (question.audioNeedsRegeneration === true || !/^data:audio\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(src)) return null;
   return {
     src,
     aiGenerated: question.audioAiGenerated !== false

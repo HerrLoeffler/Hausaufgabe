@@ -39,7 +39,7 @@ function answerAudioIndexes(questions, count) {
 function answerAudioReady(question) {
   if (question?.audioAnswerMode !== "audio-only") return true;
   const entries = answerAudioEntries(question);
-  return hasAudioAnswerEntries(question) && entries.every(entry => String(entry.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
+  return hasAudioAnswerEntries(question) && entries.every(entry => /^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(String(entry.asset?.audioDataUrl || "")) && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
     entries.reduce((size, entry) => size + String(entry.asset?.audioDataUrl || "").length, String(question.audioDataUrl || "").length) <= MAX_ANSWER_AUDIO_DATA_CHARS;
 }
 
@@ -53,7 +53,7 @@ async function generateAnswerAudios(question, generateAudio) {
     const script = entries[index].sourceText;
     if (!script || script.length > MAX_ANSWER_AUDIO_CHARS) throw new RangeError("Antworttext fehlt oder ist zu lang.");
     const asset = await generateAudio({ questionId: `answer-${question.id || "question"}-${index + 1}`, script });
-    if (!String(asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,")) throw new Error("Antwortaudio fehlt.");
+    if (!/^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(String(asset?.audioDataUrl || ""))) throw new Error("Antwortaudio fehlt.");
     assets.push(asset);
     if (assets.reduce((total, entry) => total + entry.audioDataUrl.length, String(question.audioDataUrl || "").length) > MAX_ANSWER_AUDIO_DATA_CHARS) {
       throw new RangeError("Antwortaudios sind für eine Aufgabe zu groß. Bitte Antworttexte kürzen.");
