@@ -549,7 +549,7 @@
       "title": "GC-POCOCK-RESEARCH-01: lokale Caption-/Primärtextforschung, zentrale Metadaten",
       "primaryBranch": "docs/gc-launch-blocked-checkpoints-20261010",
       "integrationTarget": "main",
-      "state": "integration_ready",
+      "state": "integrated",
       "handoff": "workstreams/matt-pocock-research-20261010.md",
       "relatedBranches": []
     },

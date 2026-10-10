@@ -45,3 +45,9 @@ Dieser ErhaltungsPR194 wurde anschließend ohne Force/Historyreset mit dem neuen
 Mainchecks des tatsächlichen PR195-Merges c8ba1222a1266fa2241a6cd069a206036e1a7df3 direkt gelesen: Handoff38081771472, DevelopmentStatus38081771437 und ReleaseControl38081771536 alle completed/success. Reine Koordinations-/Releaseboardbelege, kein App-/Deploy-/Gerätenachweis.
 
 Weiterer Auftrag aus Zentrale: Forschungsregistrierung und eigene begrenzte Zusammenfassung nach aktuellen Gates tatsächlich in main integrieren. PR194 ist damit ein autorisierter reiner Dokumentationsintegrationskandidat. Lokaler textueller Forschungsabschluss siehe separate Forschungsübergabe; keine Aufhebung der Security-/npmstopps und kein Privacy-CombinedCI-/Merge-/Deployauftrag. Vorgänger31952ae6: Handoff38081839233 und DevelopmentStatus38081839239 success; neue Research-Delta-/Finalheadchecks separat.
+
+## Tatsächliche Erhaltungs-/Forschungsdokumentationsintegration
+
+PR194 finalab738f822b3b15c1d2ef18f75c762c1ef0d228b5 tatsächlich nach main@3142a6e42f2daca8d35b1b84b086a506a4b99a9b integriert; Source-Handoff38082215129/DevelopmentStatus38082215063 und ready38082255964 success. Unabhängiger begrenzter Metadaten- und Research-Deltareview ohne actionable Findings; keine Securitycodeprüfung/Scan. ErhaltenerCode nur lokal778f88b0, keine209Test-/Lintbestätigung, kein npmExport oder Retry, PrivacyCombinedCI/Integration/Deploy weiterhin offen. EigeneForschungstexte/Metadaten zulässig integriert, Vollcaptions lokal. ExakterMerge und separat geprüfteMainchecks sichern nur Dokumentation; keine Produktions-/Stagingänderung.
+
+Direkt gelesene tatsächliche Mainchecks3142a6e: Handoff38082306880, DevelopmentStatus38082306876 und ReleaseControl38082306898 alle completed/success. Koordinations-/Releaseboardbelege, keine App-/Deploy-/Geräteprüfung. Receipt-Folgehead besitzt eigene Checks.
