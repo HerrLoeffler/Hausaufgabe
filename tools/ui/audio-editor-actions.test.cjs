@@ -51,3 +51,24 @@ test('account change during decoder check cannot send feedback or replace a clip
   const h=harness();h.c.verifyGeneratedAudio=async()=>{h.c.state.user={uid:'other'};throw new Error('decode');};h.c.window={AudioContext:class{}};
   try{await h.c.repairAnswerAudioTrack(h.q,h.container,'o1','missing');assert.equal(h.calls.length,0);assert.equal(h.reports.length,0);}finally{h.close();}
 });
+function realGenerator(h) {
+ h.c.audioOperations = (()=>{const map=new WeakMap();return()=>map;})();
+ h.c.questionHasAudioAnswerEntries=()=>true;
+ h.c.aiApi={generateQuestionAudio:async()=>({asset:{audioDataUrl:'data:audio/mpeg;base64,TkVX'}})};
+ h.c.showReportableError=()=>{};h.c.REPORTABLE_ERROR_CODES={aiEdit:'test'};h.c.aiFriendlyError=()=>'';
+ const start=source.indexOf('async function generateAiAnswerAudioForQuestion(');
+ vm.runInContext(source.slice(start,source.indexOf('\nasync function generateAiSolutionAudioForQuestion(',start)),h.c);
+ return {querySelector:()=>null};
+}
+test('bulk repair clears prior playback defect and checks the actual replacement clip',async()=>{
+ const h=harness();try{const container=realGenerator(h);const entry=h.q.options[1];h.c.answerAudioRepairState(h.q).set('o1',{invalid:true,invalidSrc:entry.audioDataUrl,invalidText:entry.text});await h.c.generateAiAnswerAudioForQuestion(h.q,container);let decoded=0;h.c.verifyGeneratedAudio=async()=>decoded++;await h.c.repairAnswerAudioTrack(h.q,container,'o1','missing');assert.ok(decoded);assert.equal(h.reports.length,0);}finally{h.close();}
+});
+test('text changed during decode cannot report an obsolete clip defect',async()=>{
+ const h=harness();try{h.c.window={AudioContext:class{}};h.c.verifyGeneratedAudio=async()=>{h.q.options[1].text='NEW_TEXT';h.q.options[1].audioNeedsRegeneration=true;throw new Error('old decode');};await h.c.repairAnswerAudioTrack(h.q,h.container,'o1','missing');assert.equal(h.reports.length,0);assert.equal(h.calls.length,0);}finally{h.close();}
+});
+test('a new missing defect after successful repair receives a new incident',async()=>{
+ const h=harness();try{const container=realGenerator(h);await h.c.repairAnswerAudioTrack(h.q,container,'o0','missing');await new Promise(setImmediate);h.q.options[0].audioDataUrl='';await h.c.repairAnswerAudioTrack(h.q,container,'o0','missing');await new Promise(setImmediate);assert.equal(h.reports.length,2);assert.notEqual(h.reports[0][1].reportId,h.reports[1][1].reportId);}finally{h.close();}
+});
+test('late completion of an older report cannot suppress the next defect incident',async()=>{
+ const h=harness();try{const container=realGenerator(h);const ids=[];let release;h.c.setDoc=async(ref)=>{ids.push(ref[2]);if(ids.length===1)await new Promise(resolve=>release=resolve);};await h.c.repairAnswerAudioTrack(h.q,container,'o0','missing');h.q.options[0].audioDataUrl='';await h.c.repairAnswerAudioTrack(h.q,container,'o0','missing');release();await new Promise(setImmediate);assert.equal(ids.length,2);assert.notEqual(ids[0],ids[1]);}finally{h.close();}
+});

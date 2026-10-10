@@ -214,6 +214,7 @@ jobs:
           node --test remy-ai-help.test.mjs
           node --test audio-listening-v1.test.mjs audio-solution-v2.test.mjs audio-answer-renderer.test.mjs markwords-title-polish.test.mjs
           node --test web-acceptance-regressions.test.mjs audio-task-conversion.test.mjs tools/ui/workspace-upgrade.test.mjs tools/ui/secure-audio-memos.test.cjs tools/ui/editor-context.test.cjs tools/ui/coco-guide.test.cjs tools/ui/student-preview-start.test.cjs tools/ui/hero-window-height.test.cjs
+          node --test tools/ui/audio-editor-actions.test.cjs
           test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg

@@ -4564,24 +4564,30 @@ async function repairAnswerAudioTrack(q, container, entryKey, action) {
   if (audioOperations().has(q) || [...records.values()].some(item => item.busy)) return;
   const entry = questionAnswerAudioEntries(q).find(item => item.key === entryKey);
   if (!entry) return;
-  const record = records.get(entryKey) || {};
+  let record = records.get(entryKey) || {};
   records.set(entryKey, record);
   record.busy = true;
   const quizId = state.currentQuiz.id;
   const uid = state.user?.uid;
+  const clipSrc = entry.asset?.audioDataUrl;
   const operation = { cancelled: false };
   audioOperations().set(q, operation);
   record.quizId = quizId; record.uid = uid;
   renderQuestionAudioEditor(container, q);
   try {
     if (action === "missing") {
-      let reason = record.invalid ? "invalid" : answerAudioClipStatus(entry);
+      let reason = record.invalid && record.invalidSrc === entry.asset?.audioDataUrl && record.invalidText === entry.sourceText ? "invalid" : answerAudioClipStatus(entry);
       if (reason === "ready") {
         try { await verifyGeneratedAudio(entry.asset.audioDataUrl); }
         catch (_) { reason = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext) ? "invalid" : "unverified"; }
       }
       if (["missing", "invalid"].includes(reason)) {
-        if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q)) return;
+        const current = questionAnswerAudioEntries(q).find(item => item.key === entryKey);
+        if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || current?.sourceText !== entry.sourceText || current?.asset?.audioDataUrl !== clipSrc) return;
+        if (record.recovered) {
+          record = { busy: true, quizId, uid };
+          records.set(entryKey, record);
+        }
         if (entry.asset) entry.asset.audioNeedsRegeneration = true;
         markDirty(); record.reason = reason;
         void reportMissingAnswerAudio(q, entryKey, reason, record).catch(() => {
@@ -4596,7 +4602,7 @@ async function repairAnswerAudioTrack(q, container, entryKey, action) {
     if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || questionAnswerAudioEntries(q).find(item => item.key === entryKey)?.sourceText !== entry.sourceText) return;
     if (audioOperations().get(q) === operation) audioOperations().delete(q);
     await generateAiAnswerAudioForQuestion(q, container, entryKey);
-    if (answerAudioClipStatus(questionAnswerAudioEntries(q).find(item => item.key === entryKey)) === "ready") record.invalid = false;
+    if (answerAudioClipStatus(questionAnswerAudioEntries(q).find(item => item.key === entryKey)) === "ready") { record.invalid = false; record.recovered = true; }
   } finally {
     record.busy = false;
     if (audioOperations().get(q) === operation) audioOperations().delete(q);
@@ -4756,7 +4762,7 @@ function renderQuestionAudioEditor(container, q) {
           if (!state.questions.includes(q) || option.audioDataUrl !== player?.getAttribute("src")) return;
           if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
           const record = answerAudioRepairState(q).get(entry.key) || {};
-          record.invalid = true; answerAudioRepairState(q).set(entry.key, record);
+          record.invalid = true; record.invalidSrc = option.audioDataUrl; record.invalidText = entry.sourceText; answerAudioRepairState(q).set(entry.key, record);
           option.audioNeedsRegeneration = true; markDirty();
           if (!row.querySelector(".audioPlaybackError")) {
             const warning = document.createElement("small"); warning.className = "aiInputError audioPlaybackError";
@@ -4952,6 +4958,10 @@ async function generateAiAnswerAudioForQuestion(q, container, entryKey = null) {
       option.audioNeedsRegeneration = false;
     });
     else q.audioAnswerItems = entries.map((entry, index) => !selected.some(item => item.index === index) ? entry.asset : ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: assets[index].audioDataUrl, audioNeedsRegeneration: false })).filter(Boolean);
+    for (const {entry} of selected) {
+      const record = answerAudioRepairState(q).get(entry.key);
+      if (record) { record.invalid = false; record.recovered = true; }
+    }
     markDirty();
     toast(entryKey === null ? "Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern." : "Audiospur erneuert. Bitte kurz anhören und speichern.");
   } catch (err) {
