@@ -435,6 +435,29 @@
   },
   "workstreams": [
     {
+      "id": "launch-controls-20261010",
+      "task_id": "GC-LAUNCH-CONTROLS-01",
+      "branch": "docs/gc-launch-controls-integration-20261010",
+      "stage": "branch_only",
+      "verification_scope": "documentation_setup_only; no_product_controls_passed_by_integration",
+      "staging": "not_applicable_no_deploy",
+      "user_test": "not_performed",
+      "owner": "GC · Automatisierung & Integration",
+      "handoff": "workstreams/launch-controls-integration-20261010.md",
+      "next_action": "Finish two independent documentation reviews and exact CI, integrate only this setup on main, then record actual integration receipt; control-specific product checks remain separate.",
+      "execution_phase": {
+        "status": "explicitly_delegated_by_coordinator; results_not_verified_here",
+        "security_owner": "security_role_setup",
+        "privacy_owner": "privacy_fairness_role_setup",
+        "security_task": "GC-LAUNCH-CONTROLS-01-SECURITY",
+        "privacy_task": "GC-LAUNCH-CONTROLS-01-PRIVACY",
+        "requested_security_model_effort": "Sol/high",
+        "requested_privacy_model_effort": "Sol/medium",
+        "catalog_write_transfer": "only_after_verified_main_integration_receipt",
+        "product_fixes": "separate_reviewed_PRs_via_existing_release_train; no_competing_staging_or_production"
+      }
+    },
+    {
       "id": "web-app",
       "branch": "feature/gradecrew-app-integration",
       "observed_head": "bb91ce3590d773472ece60c4dd881da729bd32c1",

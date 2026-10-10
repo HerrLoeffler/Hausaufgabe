@@ -1,0 +1,17 @@
+# GC-LAUNCH-CONTROLS-01-PRIVACY — dauerhafte Fachrolle
+
+Integrationshinweis: Der unten erhaltene Stand dokumentiert den eigenen Quell-PR und seine Historie. Der aktuelle gemeinsame Dokumentationsstand wird in [GC-LAUNCH-CONTROLS-01 Integration](launch-controls-integration-20261010.md) und GRADECREW_STATE geführt; daraus folgt keine Produkt-/Kontrollfreigabe.
+
+- Datum:10.10.2026; ausführender Fach-Agent privacy_fairness_role_setup, Chatlink unbekannt; Hauptzentrale koordiniert.
+- Branch: docs/gc-launch-privacy-20261010; Basis main59dd0a501a28c04c36ee877450239bf1d64a3187; Zielmain.
+- Eigener Checkout: gradecrew-launch-privacy. Exklusive Dateien docs/assurance/privacy-legal-fairness.md, docs/assurance/roles/privacy-legal-fairness.md und diese Übergabe.
+- Scope: Rollenbrief,20Screenshotpunkte PRIV01–20, Quelle/Owner/Status/Prüfschritt, konkrete Folgeaufträge. Keine Produktänderung/Schülerdaten/Providerkosten/Merge/Deploy.
+- Stand: branch_only; Draft-PR [188](https://github.com/HerrLoeffler/Hausaufgabe/pull/188), Dokumentencommit remote5a341bfb2756cccb1d0c678e7679ca17e4e3eaad entspricht lokal359905793471a72535173ffe0bb1f49abc1e49b9 mit Tree691b8d763b5890655385cceb4ac70753beef5da3. Kein Skill installiert, kein dauerhafter Agent-/Hookaktivitätsnachweis.
+- Einstieg main START_HERE/AGENTS/STATE/TODO/Registry/Workstreams/CHATCONTRACT/CHATRECOVERY und LiveDevelopmentStatus38052529662 Job114214359532/Artifact11670280804 frisch gelesen; PR184/186 und Produktquellen Integrationc3a5fdcf frisch gelesen. Lokale gh fehlt, git-fetchDNS scheitert; GitHubconnector read/write verfügbar.
+- Alte Datenschutzberichte explizit historische Quellen, aktuelle Schularchitektur aufmain weiterverwendet; Coco40Nachrichten/2000Preferences ohneTTL, Backendclear erhalten; PR186Chat-UI separat branch_only.
+- Rechtsquellen DSGVO, KM Bayern, TDDDG25, UWG7, WCAG22 frisch gelesen/recherchiert. Keine Providerkontoeinstellungen/Verträge/Schulfreigaben oder breite Geräte-/Accessibilityprüfung.
+- Offene Tatsachen: Betreiberidentität, konkreteSchule/Land/Nutzungsmodus/Rechtsgrundlage, AVVs/Unterauftragnehmer, tatsächliche Standorte/Transfers/Providerretention, Fristen, Bezahl-/Mailumfang, vollständiges Asset-/Speicherinventar.
+- Integrationdelta nur anIntegrationsowner: gemeinsame40Punkt-Übersicht mitLinkaufdieseListe; START/AGENTS Rollenlink; TODO GC-LAUNCH-CONTROLS-01-PRIVACY docsbranch_only; RegistryBranch/Owner/Ziel/Übergabe; STATE nur tatsächlicheDoku-Stufe, keineProduktsicherheitsfreigabe. GemeinsameDateien nichtparallelgeändert; Securitypeer besitzt technischeDokumente/SECURITY.
+- Modell angefragt vomParent vererbt; tatsächlicheRuntime/Usage/Preise nicht als Toolbeleg verfügbar; keineModellwechsel oder bezahltenAufrufe. Versuch1lokalegh nichtverfügbar und gitfetchDNS; Connectorparameterfehler korrigiert, keineMutation blindwiederholt.
+- Keine laufenden/unklaren Provider-, Kunden-, Deploymentvorgänge. Automatische Dokuchecks am ersten SHA3a8147b5 gestartet: DevelopmentStatus38062748956/Handoff38062748980; neue Headchecks separat prüfen. Lokale20 eindeutige IDs, Statusvokabular und gitdiff--check bestanden; keine App-/Gerätetests. PR188 angehängt. Hauptzentrale erhält finalen Head/CI; Integrationowner aktualisiert gemeinsame Dateien.
+- Nächster konkreter Prüfschritt: reineMetadatenmatrixfürCoco(Speicherfelder/Zweck/Kontozugriff/Frist/Auskunft-/Löschweg) gegenIntegrationundPR186; keineInhalteauslesen/löschen.
