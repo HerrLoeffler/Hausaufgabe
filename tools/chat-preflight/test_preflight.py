@@ -40,6 +40,20 @@ class PreflightRegressionTests(unittest.TestCase):
                 self.assertEqual(hook_main(["--profile", str(profile)]), 0)
             self.assertEqual(json.loads(captured.getvalue()), {"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"})
 
+            # A nested directory is not the exact test mirror root.
+            nested = mirror / "nested"
+            nested.mkdir()
+            captured = io.StringIO()
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps({"cwd": str(nested), "prompt": "ordinary nested prompt"}))), patch("preflight.fetch_policy_snapshot", side_effect=AssertionError("qualification must not fetch")):
+                self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+            self.assertEqual(captured.getvalue(), "")
+
+            # A globally loaded test profile must never block a normal repo checkout.
+            captured = io.StringIO()
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps({"cwd": str(mirror), "prompt": "ordinary project prompt"}))), patch("preflight.identify_project", return_value=(REPOSITORY, str(mirror))), patch("preflight._run_git", return_value=str(mirror)):
+                self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+            self.assertEqual(captured.getvalue(), "")
+
     def test_concurrent_cache_writers_use_distinct_atomic_temporary_files(self) -> None:
         with _tempfile.TemporaryDirectory() as temp:
             cache = Path(temp) / "private" / "policy.json"
@@ -144,6 +158,13 @@ class PreflightRegressionTests(unittest.TestCase):
             profile_path.write_text(json.dumps({"schema": 1, "approved_project_roots": [str(mirror_root)], "pointer_cache_ttl_seconds": 0}), encoding="utf-8")
             profile = load_runtime_profile(profile_path)
             assert profile["approved_project_roots"] == (str(mirror_root),) and profile["pointer_cache_ttl_seconds"] == 0
+            profile_path.write_text(json.dumps({"schema": 1, "approved_project_roots": [str(mirror_root), str(nested_foreign)], "qualification_mode": "block"}), encoding="utf-8")
+            try:
+                load_runtime_profile(profile_path)
+            except PreflightError:
+                pass
+            else:
+                raise AssertionError("qualification mode must allow only one test mirror root")
             profile_path.write_text(json.dumps({"schema": 1, "approved_project_roots": ["relative/path"]}), encoding="utf-8")
             try:
                 load_runtime_profile(profile_path)

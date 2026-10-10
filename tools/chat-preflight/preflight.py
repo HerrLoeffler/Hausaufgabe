@@ -201,6 +201,8 @@ def load_runtime_profile(path: Path) -> dict[str, Any]:
     qualification_mode = data.get("qualification_mode")
     if qualification_mode not in (None, "block"):
         raise PreflightError("qualification_mode must be omitted or set to 'block'")
+    if qualification_mode == "block" and (len(roots) != 1 or ttl != 0):
+        raise PreflightError("qualification mode requires exactly one test root and a zero pointer TTL")
     return {
         "approved_project_roots": tuple(roots),
         "pointer_cache_ttl_seconds": ttl,
@@ -332,6 +334,15 @@ def hook_main(argv: list[str] | None = None) -> int:
     if project != REPOSITORY or root is None or not is_within(cwd, root):
         return 0
     if profile["qualification_mode"] == "block":
+        try:
+            exact_test_root = any(
+                Path(cwd).resolve(strict=True) == Path(approved).resolve(strict=True) == Path(root).resolve(strict=True)
+                for approved in profile["approved_project_roots"]
+            )
+        except (OSError, RuntimeError):
+            exact_test_root = False
+        if not exact_test_root or _run_git(["rev-parse", "--show-toplevel"], cwd):
+            return 0
         print(json.dumps({"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"}, ensure_ascii=False))
         return 0
     cache_root = Path(os.environ.get("TMPDIR", tempfile.gettempdir())) / "gradecrew-chat-preflight"

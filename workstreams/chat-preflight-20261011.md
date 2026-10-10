@@ -1,6 +1,6 @@
 # GC-CHAT-PREFLIGHT-01 — Chat Preflight and Rule Freshness
 
-Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Draft PR #203: `feat/gc-chat-preflight-20261011`; this revision is being assembled from `bfa8de0d223cf602b59e545f1b0a90be128627f9`. The PR base is `6833a1d93562a29199183dc90e59f8069286bf6e`; GitHub reported mergeable at the previous head.
+Owner: specialist execution (current task handoff; chat link not available). Linked tasks: GC-HOOKS-01 and GC-MODEL-GOVERNOR-01. Draft PR #203: `feat/gc-chat-preflight-20261011`; this revision is being assembled from `39aa361f8187ef36aa002d0df39280e68f5e2a16`. The PR base is `6833a1d93562a29199183dc90e59f8069286bf6e`; GitHub reported mergeable at the previous head.
 
 ## Request
 
@@ -30,14 +30,15 @@ The script is an uninstalled candidate and includes a deterministic fake-caller 
 
 ## Local checkpoint
 
-- Offline regression suite: `python3 -B tools/chat-preflight/test_preflight.py` — PASS (5 test methods). It covers per-Enter ETag polling, 304 freshness reset, explicit opt-in TTL, changed main and bounded delta, unknown project/model/effort/role, exact approved mirror and nested foreign checkout, silent unknown/invalid-profile no-op, exact-mirror qualification block without network, concurrent unique atomic cache writes and private permissions, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and stopping when the exact target model/effort is unavailable. No inference.
+- Offline regression suite: `python3 -B tools/chat-preflight/test_preflight.py` — PASS (5 test methods). It covers per-Enter ETag polling, 304 freshness reset, explicit opt-in TTL, changed main and bounded delta, unknown project/model/effort/role, exact approved mirror and nested foreign checkout, silent unknown/invalid-profile no-op, exact-root-only qualification block with no Git root and one-root/zero-TTL profile validation, concurrent unique atomic cache writes and private permissions, explicit risky action vs plan discussion while offline, explicit model/effort before fake `turn/start`, and stopping when the exact target model/effort is unavailable. No inference.
 - Syntax: `PYTHONPYCACHEPREFIX=/tmp/chat-preflight-pycache python3 -m py_compile tools/chat-preflight/preflight.py tools/chat-preflight/test_preflight.py` — PASS.
 - Scoped PR CI in `.github/workflows/chat-preflight-check.yml` runs only the offline suite and syntax check with read-only repository access; it does not call GitHub API, models, MCP, or deployment.
 - Hygiene scan is rerun for all candidate files before updating the remote review branch.
 - Freshness polling defaults to no time-based cache; each covered Enter sends a conditional public pointer request. Positive TTL is opt-in in the private profile. Offline/403/429 checks report the last verification time and remain unverified; there are no retries. A 304 resets a previously cached marker to `current`.
 - The hook profile is a template only. The qualification plan uses an isolated block sentinel before model generation; neither the profile nor local root allowlist is installed. ChatGPT Work remains outside local-hook coverage.
 - Reviewer corrections: 0-second default TTL and ETag conditional request per Enter; cache freshness is reset after 304; an explicitly approved exact mirror root supports this `.git`-less project mirror, while nested foreign repositories remain unknown. The actual mirror path is private-profile-only and is not committed.
-- Delta-review corrections: unknown/unrelated scope and missing/invalid profile produce no hook output; test-only `qualification_mode=block` validates the exact mirror scope and then blocks without cache/network access; concurrent cache writes use unique private temp files and atomic replace in a non-symlink `0700` directory with `0600` files. Model caller stops if its requested target model/effort is not advertised; it never silently uses another default.
+- Delta-review corrections: unknown/unrelated scope and missing/invalid profile produce no hook output; test-only `qualification_mode=block` validates exactly one `.git`-less mirror root at its root CWD and blocks only there, without cache/network access; concurrent cache writes use unique private temp files and atomic replace in a non-symlink `0700` directory with `0600` files. Model caller stops if its requested target model/effort is not advertised; it never silently uses another default.
+- Isolated runtime qualification uses a fresh temporary Codex state root for the child process only, the exact candidate command and test-only profile, supported hook hash review, and `--oss --local-provider ollama --no-daemon` with a loopback-only fake provider. It will qualify only the tested CLI hook source/output; no global hooks or Desktop/Work coverage.
 - Offline qualification unit tests do not prove Codex runtime loading. `qualification-plan.md` now requires the exact candidate command and source hash under an isolated supported Codex hook source, plus a verified local-only provider so a missed hook cannot reach OpenAI. Runtime qualification remains unperformed.
 
 ## Checkout boundary
@@ -46,4 +47,4 @@ The local Git transport could not resolve `github.com`; no local clone contains 
 
 ## Status and next action
 
-Candidate branch / draft PR #203 for independent review. The new offline CI workflow is scoped to these candidate paths, read-only, and has no live network, model, secret, MCP, or deploy step. CI/integration, desktop hook activation, staging and production are not claimed. Before future activation, the owner must review/trust the exact command in `/hooks` and qualify the lifecycle using the isolated no-paid sentinel plan. This covers Codex hooks only; ChatGPT Work remains outside local command-hook coverage.
+Candidate branch / draft PR #203 for independent review. The new offline CI workflow is scoped to these candidate paths, read-only, and has no live network, model, secret, MCP, or deploy step. Runtime qualification has not yet been performed. Next step is the isolated CLI-only, no-paid candidate-command test described above. No shared hook source, Desktop/Work activation, staging, or production is claimed.

@@ -1,41 +1,42 @@
 # Candidate hook lifecycle qualification (no paid inference)
 
-This is a recipe for a later, separately approved qualification. It does not authorize installation or activation. No test has been run in Codex with this candidate. The goal is to prove that the actual Codex runtime invokes this exact script and accepts its output schema while guaranteeing that a missed hook cannot reach an OpenAI provider.
+Qualification is limited to a separate Codex CLI process. It cannot establish that the Desktop composer uses the same caller or that every old chat loads this hook. No global hook source, shared `HOME`/Codex state, user auth, session, or trust record is reused.
 
-## Scope and prerequisites
+## Supported isolation and provider
 
-Official Codex hook docs list user-level `~/.codex/hooks.json` and `~/.codex/config.toml` sources; non-managed hooks require review/trust for the exact current definition hash through `/hooks`. Hook sources accumulate. Codex app agents share configuration with CLI and IDE. ChatGPT Work is managed and does not read local Codex hooks. This qualification can establish only the tested Codex runtime/surface, not every Desktop chat, historical chat, or Work conversation.
+The official Codex environment-variable documentation says `CODEX_HOME` selects the root for config and state and that the directory must exist. The official CLI documents `--oss`, `--local-provider ollama`, and `--no-daemon`; together these select a local provider and bypass the shared app-server daemon. Use a newly created empty temporary Codex root, never the existing user root; do not copy `config.toml`, `auth.json`, plugin data, trust state, or credentials into it. Set `CODEX_HOME` only in the isolated child process with a task-specific temporary path variable. Keep the current parent environment and shared Codex state unchanged.
 
-1. Review the exact candidate `preflight.py`, its SHA-256, the hook profile schema, and the local allowlist. Verify the script reads no credentials, browser store, transcript, or app database.
-2. Use an isolated Codex config root and isolated idle specialist test chat. Do not point the test at the shared Codex home or reuse global hook sources. Use only documented config fields and a supported hook trust UI. If an isolated configuration root or exact trust review cannot be established through supported Codex controls, stop without testing.
-3. Configure the isolated test session to use a verified local fake provider only. Confirm its provider name and endpoint are local, not OpenAI, before opening the composer. If that boundary cannot be proven, do not send any prompt.
-4. Install no normal refresh behavior for this test. The private test profile must contain the exact approved GradeCrew mirror root, `pointer_cache_ttl_seconds: 0`, and `qualification_mode: "block"`. This mode is accepted only by the candidate script; it validates the event's project identity and immediately emits a deterministic block without cache access, network, GitHub, MCP, or model calls.
+Run a fake Ollama-compatible HTTP stub bound only to `127.0.0.1:11434`. The stub returns fixed metadata and a fixed response and records only method/path counters, never the request body. The sole provider override is the documented local Ollama provider. Do not configure an OpenAI provider or API key. If the hook fails to load, times out, or emits invalid output, the only possible generation request must be to this loopback stub; any request to another host invalidates the qualification. A verified local-only endpoint is a hard prerequisite.
 
-## Exact command and test
+## Isolated hook source and exact test scope
 
-In the isolated hook source, use the candidate template's handler fields and point `command` to the reviewed candidate source and the dedicated local test profile. The command must resolve to the exact file whose SHA-256 was recorded in the receipt, for example:
+Place the candidate command in the new temporary Codex root's `hooks.json`, using the template's supported `UserPromptSubmit` handler fields. Point it to the exact reviewed candidate script and private profile. This is a separate temporary user-level source, not the user's active source. The profile must contain one exact, existing, `.git`-less test mirror root, `pointer_cache_ttl_seconds: 0`, and `qualification_mode: "block"`. The test mode blocks only when the prompt CWD resolves exactly to that one root and Git confirms that the directory has no repository root. A canonical checkout, nested directory, unrelated scope, malformed profile, or missing profile returns no hook output. It never reads the cache or contacts GitHub in qualification mode.
+
+The exact hook command is:
 
 ```text
 python3 /ABSOLUTE/CANDIDATE/PATH/tools/chat-preflight/preflight.py --profile /ABSOLUTE/PRIVATE/PATH/qualification-profile.json
 ```
 
-The local profile is equivalent to:
+Example child-process launch (all paths are private temporary paths):
 
-```json
-{
-  "schema": 1,
-  "approved_project_roots": ["/ABSOLUTE/EXACT/GRADECREW/MIRROR/ROOT"],
-  "pointer_cache_ttl_seconds": 0,
-  "qualification_mode": "block"
-}
+```text
+env CODEX_HOME="$gcProbeCodexRoot" codex --oss --local-provider ollama --no-daemon --model gc-preflight-fake -C "$gcProbeWorkspace"
 ```
 
-Review and trust the exact test hook definition hash in the supported `/hooks` UI. Send one synthetic, non-sensitive prompt from the isolated chat whose actual working directory is under the allowlisted mirror. Pass only if Codex reports the candidate's sentinel block, the candidate invocation is recorded exactly once by the supported runtime evidence, and there is no model/turn-start event or provider request. If the hook is not loaded, the preconfigured local fake provider remains the only possible provider. Never use an OpenAI provider as a fallback.
+The `$gcProbeCodexRoot` directory must be newly created and empty before the test; `hooks.json` is its only installed source. The workspace is the exact private test mirror root in the profile and contains no `.git`. Review and trust only the current exact hook definition in the supported `/hooks` UI. Never use `--dangerously-bypass-hook-trust`. If trust review cannot be completed in this isolated root, stop without sending a prompt.
 
-Also run the deterministic repository tests offline. They exercise the real candidate entrypoint with `qualification_mode`, assert that an unrelated CWD and an invalid profile produce no stdout, and verify normal hook refresh/cache/model-caller behavior with fake responses. These tests do not prove that Codex loaded the command.
+Send one synthetic prompt. Pass Stage A only if the actual candidate command is shown as loaded/invoked by Codex, Codex accepts its `UserPromptSubmit` block JSON, the candidate source/profile hashes match the receipt, and the loopback provider's inference endpoint counter remains zero. The hook event's `model` field may be recorded only if the runtime exposes it through supported output; `effort` remains unknown because the event schema does not document it. If no loaded/invoked receipt is available, report runtime qualification as unverified.
 
-## Boundaries and receipt
+## What this does not prove
 
-The exact candidate command test would prove only that the tested Codex version loaded this user-level `UserPromptSubmit` definition, launched the reviewed script, and accepted its block output. It would not prove native Desktop composer model switching, all-chat coverage, Work coverage, or production policy enforcement. The App Server fake caller is separate and proves only pre-call `model`/`effort` selection for a client that owns `turn/start`.
+Stage A proves hook source/command/schema behavior for this isolated Codex CLI version and exact test mirror. Because `qualification_mode` returns the block before cache reads, it does **not** qualify ordinary freshness context, changed-main deltas, GitHub failures, or per-Enter semantics through the live hook. Those behaviors remain covered only by deterministic fake-fetch offline tests. The App Server fake caller separately proves explicit model/effort ordering for a caller it owns; it is not evidence of native composer model switching.
 
-Record only the runtime surface/version, script SHA-256, hook definition hash, exact command/profile schema revision, allowlisted scope description (do not publish the host path), sentinel result, invocation count, and confirmation that no provider request occurred. Do not capture prompt text, transcripts, secrets, model responses, or provider credentials. Remove the isolated test configuration and trust only through supported UI controls. If any runtime receipt is missing or ambiguous, mark runtime qualification `unverified` and do not broaden activation.
+ChatGPT Work does not use local Codex hooks. No Desktop-wide or historical-chat guarantee follows from this test. Record only Codex CLI version/surface, script SHA-256, profile schema/hash, hook definition hash, test-root description without its host path, loaded/invoked result, output decision, provider endpoint counters, and the hook model slug if actually exposed. Do not retain prompt text, request body, transcript, secrets, response content, auth state, or model response. Remove only the temporary Codex root, fake server, profile, and test mirror after preserving the small redacted receipt; do not touch shared user state.
+
+## Official references
+
+- [Codex Hooks](https://learn.chatgpt.com/docs/hooks) — hook event schema and exact-definition trust review.
+- [Codex environment variables](https://learn.chatgpt.com/docs/config-file/environment-variables) — `CODEX_HOME` isolation.
+- [Codex developer commands](https://learn.chatgpt.com/docs/developer-commands) — `--oss`, `--local-provider`, and `--no-daemon` CLI options.
+- [Ollama chat API](https://docs.ollama.com/api/chat) — local stub request/response shape.
