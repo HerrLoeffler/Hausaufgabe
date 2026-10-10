@@ -80,18 +80,26 @@ All paths below were absent from target `c3a5fdc` before import. SHA-256 and byt
 
 ## Adapted import files
 
-- `tools/dev-workbench/server.mjs` is the standalone Workbench handler described above. Its current imported bytes differ from the original 96-byte source wrapper (source hash `34b6e4da843b7e7d93743fee7404ec65394235e032d91b9c3fad26e5a134ac07`) and from the earlier PR candidate; the final candidate commit records the actual imported hash.
-- `tools/dev-workbench/http.test.mjs` now starts that Workbench handler instead of the shared review-preview server. It verifies staging does not inject the fixture review client, fixture mode still does, the local UI, toolbar asset, project and live-state APIs, foreign-origin rejection, task-save deduplication, and path traversal. Its generated-handbook PDF assertion is omitted because `output/` artifacts are intentionally excluded; the final candidate commit records the actual imported hash.
-- Other source Workbench files remain byte-identical to their recorded source blobs.
+- These final-import SHA-256 values are distinct from source provenance hashes above and identify adapted candidate bytes:
+
+| Path | Final imported SHA-256 | Adaptation |
+|---|---|---|
+| `tools/dev-workbench/server.mjs` | `1d6a9e0abfe13dae9b635e0a7f3181d1924b3f723cad781e5efff1c9c198f7f2` | standalone loopback handler; staging now injects Workbench client only |
+| `tools/dev-workbench/http.test.mjs` | `d1bafd14b0df11add980968dae94061678dd95816c11d3f474755d4153abdfa6` | verifies staging/fixture homepage injection separately plus HTTP contracts |
+| `tools/dev-workbench/codex-patch-provider.mjs` | `355605f17856ff3d1e3eb66cbedcac3e362d451af989a6bdfcb0e0ba618889f3` | prepared receipt fails closed before spawn; acceptance digest is stored once |
+| `tools/dev-workbench/live-editor.mjs` | `9ee1287a7589306a7b542613bd7692bfa1c94819fb715382159c87cbf04221b0` | technical receipt metadata forwarded to the provider/job |
+| `tools/dev-workbench/app-bridge.test.mjs` | `992d30f4d6a9c0ca3956465769e11734125a9e4ceacd9989880c4278ca7a4d1b` | verifies the allowlisted served response bridge rather than a product-file edit |
+
+- Remaining Workbench paths retain their original source blobs where no adaptation is listed.
 
 ## Test evidence
 
 - Focused governor, policy, browser-toolbar, store, watch, live-edit, and bridge suite: 46 passed, 0 failed. It used the already-present `jsdom` from the source checkout; no dependency was installed or copied.
-- Isolated loopback HTTP contract tests: staging and fixture pages are checked separately on temporary storage and free ports; staging checks absence of the login-intercepting fixture client, fixture mode checks its presence, and only staging serves the app bridge. These checks do not submit a CLI job or read/write staging records.
+- Isolated loopback HTTP contract tests: 2 passed on temporary storage and free ports with the authorized local bind; staging checks absence of the login-intercepting fixture client, fixture mode checks its presence, and only staging serves the app bridge. The test also verifies API origin checks, dedupe persistence, permissions, and path traversal. It does not submit a CLI job or read/write staging records.
 - The original imported app-bridge test expected a bridge embedded in tracked `app.js`, which is absent on the remote target. It was replaced with tests for the equivalent allowlisted dev-only response tail and its semantics; no product `app.js` change was needed.
 - These tests used the bundled Node runtime. No model inference, staging record, or live service restart was performed.
 
 ## Workflow boundary
 
 - On this target snapshot, `.github/workflows/ai-staging-check.yml` runs on pushes to `feature/gradecrew-app-integration`; it has no path allowlist, but ignores Markdown and `docs/**` / `workstreams/**`. It is a test workflow and contains no deploy step. A dedicated `.github/workflows/dev-workbench-check.yml` now runs bounded Workbench tests for pull requests and pushes to that branch, filtered to Workbench runtime/dependency paths; it has no deploy or model-inference steps.
-- `.github/workflows/mobile-tutorial-check.yml` also lists the integration branch, but its paths filter excludes this Workbench scope. No workflow files were changed.
+- `.github/workflows/mobile-tutorial-check.yml` also lists the integration branch, but its paths filter excludes this Workbench scope.
