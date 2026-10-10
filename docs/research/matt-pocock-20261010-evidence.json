@@ -1,0 +1,56 @@
+{
+  "task_id": "GC-POCOCK-RESEARCH-01",
+  "date": "2026-10-10",
+  "window": [
+    "2026-04-10",
+    "2026-10-10"
+  ],
+  "channel_id": "UCswG6FSbgZjbWtdf_hMLaow",
+  "counts": {
+    "long_videos": 16,
+    "streams": 4,
+    "shorts": 20,
+    "total": 40
+  },
+  "local_artifacts": {
+    "REPORT.md": {
+      "path": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-RESEARCH-20261010/REPORT.md",
+      "bytes": 35804,
+      "sha256": "56e080d80d720e849fa2fea70ae774a7e1749d338a741cf7c685963587986d31"
+    },
+    "REVIEW.md": {
+      "path": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-RESEARCH-20261010/REVIEW.md",
+      "bytes": 9802,
+      "sha256": "43d0967f9d7f3905b288ce038439521d200a0d925019b9367d6d696f9e126ded"
+    },
+    "assessment-coverage.json": {
+      "path": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-RESEARCH-20261010/assessment-coverage.json",
+      "bytes": 33648,
+      "sha256": "bb400c6d969d70849ceab7ad45441d81f6d9eebf074e20ee411eca8cacc6ca26"
+    },
+    "channel-inventory/inventory.json": {
+      "path": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-RESEARCH-20261010/channel-inventory/inventory.json",
+      "bytes": 35022,
+      "sha256": "f2c7029f0d38fe2b1eff18fbcb6de9da308ad29085374b65df222681e8e85f78"
+    },
+    "channel-inventory/SOURCES.md": {
+      "path": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-RESEARCH-20261010/channel-inventory/SOURCES.md",
+      "bytes": 8684,
+      "sha256": "05e0c479ddb185cdb239657ecc605954de1af3e550c52811dddd9da9de97bd25"
+    }
+  },
+  "integration_owner_checks": {
+    "inventory_ids_unique": 40,
+    "caption_files_exist": 40,
+    "coverage_ids_match_inventory": true,
+    "analysis_paths_exist": 40,
+    "full_caption_reread_by_integration_owner": false
+  },
+  "source_method": "Full auto-caption reads reported by assigned analysts; independent synthesis reads analyses and selected original-caption claims",
+  "audio_visual_full_review": false,
+  "private_unlisted_deleted_member_content": "unknown",
+  "implementation_or_pilot": "not_started",
+  "source_documentation_limit": "Greenfield 2404/2405 line-count discrepancy noted in review; no established content omission",
+  "public_content": "own summary and metadata only; no full foreign captions",
+  "measured_savings": "unknown"
+}
