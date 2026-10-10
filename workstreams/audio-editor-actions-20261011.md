@@ -1,32 +1,46 @@
 # Audioeditor: Clipaktionen · 11.10.2026
 
-Taskfamilie GC-WEB-REPAIR-20261007 / GC-WEB-AUDIO-03, GC-AUDIO-01/02 und GC-BUGOPS-01. Ausführender Agent audio_editor_actions unter bestehendem Root; Chat-Link unbekannt. Requested Sol/medium, beobachtete Runtime/Effort/Usage unknown. Kein Modellwechsel, keine neuen Providerstarts oder Budgetreservierungen. Bestehende Versuchshistorie bleibt erhalten.
+Taskfamilie: GC-WEB-REPAIR-20261007 / GC-WEB-AUDIO-03, GC-AUDIO-01/02 und GC-BUGOPS-01. Ausführender Fachagent: audio_editor_actions unter bestehendem Root. Shared START/AGENTS/CONTRACT/TODO/STATE/Registry bleiben beim Integrationsowner 01a1089e-bbae-74c2-9a6a-6ce71fb3dba7.
 
-Quelle: aktuelles main6833a1d (START/AGENTS/STATE/TODO/README/CHAT_CONTRACT/CHAT_RECOVERY/Skills/Assurance-Rollen gelesen), Integration507a060. Eigener Branch fix/audio-editor-actions-20261011, eigener Checkout gradecrew-audio-editor-actions. Port8772 läuft im fremden ungesicherten gradecrew-web-repair-integration; ursprüngliche Dateien unangetastet. Keine shared START/AGENTS/CONTRACT/TODO/STATE/Registry-Edits: Owner01a1089e-bbae-74c2-9a6a-6ce71fb3dba7 erhält gezieltes Delta.
+## Quelle und gesicherter Code
+
+Aktuelles main 6833a1d93562a29199183dc90e59f8069286bf6e und Integrationsziel feature/gradecrew-app-integration @ 507a06008c7a9a95a9a84e8d3fdbb54fe9f08581 wurden am 11.10.2026 frisch gefetcht. START_HERE, AGENTS, STATE, TODO, Workstream-README, CHAT_CONTRACT und CHAT_RECOVERY gelesen. Fachskills und relevante Assurance-Rollen wurden im Implementierungslauf gelesen; zum CI-Abschluss verification-before-completion erneut gelesen.
+
+Branch fix/audio-editor-actions-20261011, PR205: https://github.com/HerrLoeffler/Hausaufgabe/pull/205. Lokaler getesteter Codecommit 3ab7565ef4d6f9aa145624ba8c91d46567fa8aec und Remote-Codecommit 8ebdd2d83fd6eef2f0b309731a49cd434bd6ef06 haben den identischen Tree 1b3f032841f56bb9c205fe176215954ffaf93825. Shellpush scheiterte an fehlenden Git-Credentials; GitDataAPI sicherte den identischen Tree. Erstcommit 6f6152d bleibt Teil der lokalen Versuchshistorie. Dieser anschließende Handoffcommit ändert ausschließlich Dokumentation, keinen Runtimecode.
+
+Angefordert: Sol/medium. Tatsächliches Runtime-Modell, Effort, Usage und Kosten unbekannt. Kein Modellwechsel, keine neuen Providerstarts, keine neue Budgetreservierung.
 
 ## Ursache und Umsetzung
 
-Aktuelle Integration hat bereits Emmi-SVG-Einzelbutton, lokaler8772Stand noch ältere Foxemoji-Aktion. Auswahl zwischen fehlend und subjektiv nicht gefallend fehlte in beiden. Kein Cloud-/Kundendaten-/TTS-Smoke zur konkreten gemeldeten Spur, deren eigentliche Entstehungsursache bleibt unbekannt. Codebelegt akzeptierten Readiness-Präfixchecks data:audio/mpeg;base64, ohne Nutzlast; Regression reproduziert. Echter TTS-Generator prüft bereits mindestens100Bytes, daher kein behaupteter Providerbug.
+Die Auswahl zwischen tatsächlich fehlendem Audio und subjektiver Neuerzeugung fehlte. Readiness-Präfixchecks akzeptierten data:audio/mpeg;base64, ohne Nutzlast; die Regression wurde reproduziert. Der echte TTS-Generator prüft bereits mindestens 100 Bytes. Die Entstehungsursache der konkret gemeldeten fehlenden Spur wurde ohne Cloud-/Kundendaten-/TTS-Test nicht nachgewiesen; kein behaupteter Providerbug.
 
-- Brandmanifest-Emmi, kompakte native Buttons mit44pxZiel, Fokus/Disclosure/Escape; pro Clip beide gewünschten Aktionen.
-- Missingstatus fehlend/ungültig gegenüber Textänderung/stale oder tatsächlich dekodierbarem Audio abgrenzen. Nur tatsächliches missing/invalid als app_error an bestehende feedback/BugOps-Pipeline; Metadaten Quelle/Task/Cliptyp/Position/Grund/Version, keine Antworttexte/Hörtexte/Audioinhalte/Schlüssel/Secrets. Auth-/Netzfehler des Meldens sind Retryzustände, kein zusätzlicher Missing-Serverbug.
-- Subjective erneute Erzeugung verwendet dieselbe bestehende Einzelspur-TTS-Funktion ohne technische Meldung. Bestehende Generierungssperre, Antwort-/Testwechselprüfung und Active-Exam-Schutz erhalten; Reporting nicht vor TTS blockierend, gleiche Feedback-ID für Meldungsretry.
-- Nichtleere syntaktische Audio-Nutzlast vor Ready und Secure-Paper prüfen. Keine behauptete vollständige MP3-Prüfung am Server; Browser decode prüft erzeugte Clips, Playbackerror markiert unready. Nicht angeforderte optionale Audios unverändert zulässig. Private Skripte/Lösungsschlüssel und Lösungsfreigabe bleiben erhalten.
+- Kompaktes Emmi-SVG aus dem Brandmanifest öffnet pro Clip beide gewünschten Aktionen. Native Buttons, 44px Ziele, Fokus, Disclosure und Escape unterstützen Tastatur und Touch.
+- Nur bestätigte missing/invalid Zustände werden als datensparsame app_error-Metadaten an bestehende feedback/BugOps gemeldet. Textänderung/stale, dekodierbares Audio sowie Auth-/Netzfehler beim Melden sind getrennte Zustände. Keine Antworttexte, Hörtexte, Audioinhalte, Schlüssel oder Secrets in Meldungen.
+- Subjektive Neuerzeugung nutzt dieselbe bestehende Einzelspur-TTS-Funktion ohne Missingmeldung. Bestehende Generierungssperre, Account-/Testwechselprüfung und Active-Exam-Schutz bleiben erhalten. Reporting blockiert Generation nicht; Meldungsretry verwendet dieselbe Feedback-ID und startet kein weiteres TTS.
+- Nichtleere syntaktische Audio-Nutzlast ist Voraussetzung für Ready und sichere Schülerprojektion. Nicht angeforderte optionale Audios dürfen weiterhin fehlen. Private Skripte, Lösungsschlüssel und kontrollierte Lösungsfreigabe bleiben erhalten. Die Serverprüfung behauptet keine vollständige MP3-Dekodierung.
 
-## Belege und Stand
+## Tatsächliche Prüfungen
 
-branch_only, noch keine CI/Integration/Staging/Nutzertest/Production. TDD: neue sechs UI-/Readiness-Verhaltenstests RED→GREEN;47gezielte Tests grün (Audioaktionen, existierender Editorcontext, sichere Audiomemos, Functions-Antwortaudio, Assessment-Antwortvertrag/Releasegate). Provider und Firestore nur Mocks, synthetische Daten. localhost8772HTTP200 außerhalb Sandbox. Noch kein sichtbarer Browsernachweis.
+Implementierungslauf: neue Verhaltenstests RED→GREEN, zuletzt 8 fokussierte Tests bestanden. 47 gezielte Regressionstests und 283 Tests im erweiterten Functions-/Assessment-/UI-Lauf bestanden, 0 Fehler/Skips. Diese Mengen überlappen und werden nicht addiert. Firestore und Provider wurden gemockt, Daten synthetisch. Stagingbuild mit 131 Dateien erfolgreich; erster Aufruf ohne Pflicht-Zielargument scheiterte, korrigierter Aufruf /tmp/gc-audio-editor-build-20261011 erfolgreich. Keine Deploymentausführung.
 
-Live-Development-Audit vom aktuellen Integrationscheckout ausgeführt, git-fetch aktuell.24aktiveWorkstreams/16Überschneidungen; mainHandoffdateien fehlen im älteren Integrationsbaum, PR-Abgleich mangelsAuditToken separat über GitHubConnector. OffenePRs191/186/182 können app.js berühren; keine Integration. ScopedDiff vor spätererÜbernahme frischabgleichen.
+Exakte Remote-Code-CI am 8ebdd2d:
+- AI Staging Checks: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38093831923, success. Job 114335515556 mit Node 22, Functions, Assessment, Browserregressionen, Firestore-Emulator und Build vollständig erfolgreich.
+- BugOps Server Checks: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38093833818, success.
 
-Assurance für diesen Diff: SEC04/06/07/14 (Identität, aktiveExam-/privateAudio-Grenze, sichereProjektion), SEC17 (Metadatendiagnose), PRIV07/08/20 (datensparsame Meldung) und PRIV13–15 (Tastatur/Touch/Fehlerstatus). OwnerImplementierung hiesigerFachagent; unabhängiger Review durch Integrationsowner noch offen. Belege nur lokale synthetische Tests; keine Cloud-/Rechts-/Gerätefreigabe.
+Die Connectorfunktion fetch_commit_workflow_runs filtert auf pull_request und zeigte nur BugOps. Die allgemeine actions/runs-Abfrage nach exact head belegt zusätzlich die erfolgreiche push-App-CI. AI Staging Checks reagiert auf fix/audio-* push und ignoriert reine Markdown-/Workstreamänderungen; draft verhindert diese push-CI nicht. Die 8 neuen Clipaktionstests sind lokal belegt, aber nicht explizit im bestehenden CI-Testkommando aufgelistet. Kein zusätzlicher Dispatch oder Guardian-/Providerlauf gestartet.
 
-Nächster Schritt: begrenzte lokale UI-Probe mit Fixture, danach exakten Diff/Commit an bestehenden Integrationsowner für unabhängigen Review und Aufnahme in ReleaseTrain übergeben. Ownerdelta: TODOGC-WEB-REPAIR-20261007 um branch_only Clipaktionsfix/Readiness+Tests ergänzen, STATE nur passendenUnterumfang aktualisieren; GC-BUGOPS-01 kein neuerDeploy. Production unverändert.
+## Sichtbare lokale Vorschau
 
-## Abschluss der lokalen Prüfung
+8772 wurde nach ausdrücklichem Auftrag mit ausschließlich eigenen UI-Deltas in app.js und styles.css aktualisiert. Vorherige vollständige Dateien und SHA256-Receipt: /tmp/gc-audio-8772-before-20261011/. Übernahme mit exakten Ankerprüfungen und Prüfung unveränderter Ausgangsbytes; fremde Bereiche und alle anderen Dateien erhalten. Keine Backenddateien in der fremden Vorschau ersetzt.
 
-Weitere vollständige Paket-/UI-Prüfung:283Tests aus functions/test/*.test.js, assessment-functions/test/*.test.js und tools/ui/regression.test.cjs bestanden,0Fehler/Skips. Neuer begrenzter Scope8Verhaltenstests bestanden (inkl. Reportnetzfehler mit idempotentemRetry ohne weiterenTTS und Accountwechsel währendDecodierung). Stagingbuild131Dateien geprüft; ersterAufruf ohne erforderlichesZielargument scheiterte, korrigierterAufruf auf /tmp/gc-audio-editor-build-20261011 erfolgreich. KeineDeploymentausführung.
+Echter Editor http://localhost:8772/ im bestehenden SYSTEMTEST – Audiofreigabe, Aufgabe 22: nativer Clipplayer, Emmi-SVG und beide Aktionen sichtbar. Nur Disclosure geöffnet; keine TTS-, Melde- oder Speicheraktion ausgelöst. Screenshot: /tmp/gc-audio-editor-8772-20261011.png. Die Anwendung verwendet Staging-Daten; diese Probe war eine begrenzte lesende UI-Prüfung, kein Cloud-/Kundendatentest. Die vorherige synthetische lokale Fixture prüfte zusätzlich Escape/Fokusrückkehr; Screenshot /tmp/gc-audio-editor-actions-20261011.png. Keine physische Geräteabnahme.
 
-Echte IAB-Browserprüfung einer explizit synthetischen lokalenFixture mit tatsächlichen Editor-/Clipfunktionen: EmmiSVG sichtbar, beideAktionen sichtbar, Escape schließt und gibt Fokus anEmmi zurück. Screenshot /tmp/gc-audio-editor-actions-20261011.png. Fixture http://localhost:8776/tmp/audio-editor-fixture.html, ServerPTY59521 bleibt lokal aktiv. KeinCloudaccount oder echterTTS, keineGeräteabnahme. Original8772Tree unverändert; keineüberprüfteÜbernahmeeigenerDeltas inFremdpreview.
+## Releasegrenze und Ownerübergabe
 
-Shellpush scheiterte wegen fehlenderGitCredentials; GitHubConnectorzugriff verfügbar, RemoteSicherung überGitDataAPI wird genutzt. Erstcommit6f6152d; finalerCommitnachBeleg-/Pfadkorrektur separatprüfen. SharedOwnerdelta wieoben. ExakterunabhängigerReview undCI/Integrationbleiben nächsteGates.
+Codecandidate ci_green; PR bleibt draft bis zum unabhängigen Rootreview. Kein Merge, kein Staging-Deploy, kein Backend-Deploy und keine Productionfreigabe. Frischer Abgleich: Integration weiterhin 507a060; Codebranch 0 behind / 1 ahead und PR mergeable. Ein neuer Dokumentationshead erhält eigene CI-Einordnung; alte Code-CI wird ihm nicht als neuer Lauf zugeschrieben.
+
+Assurance-Scope: SEC04/06/07/14 für Identität, Active-Exam/privateAudio und sichere Projektion; SEC17 für Metadatendiagnose; PRIV07/08/20 für datensparsame Meldungen; PRIV13–15 für Tastatur, Touch und Fehlerstatus. Unabhängiger Reviewer prüft 8ebdd2d separat. Keine neue Rechts-, Geräte- oder Deployfreigabe.
+
+Nächster ausführbarer Schritt beim bestehenden Integrationsowner: unabhängigen Review übernehmen, exakten PR-Head und aktuellen Zielbranch frisch prüfen, konkurrierende app.js-Änderungen erhalten und serial in feature/gradecrew-app-integration integrieren. Danach genaue Combined-CI des Integrationscommits und vorhandene getrennte Hosting-/AI-/Assessment-Staging-Pipelines samt Receipts prüfen. Erst bestätigte passende Backendreceipts belegen Readiness auf Staging. Aktive Prüfungsinhalte nicht austauschen, keine bezahlten TTS-Abnahmen und keine Productionaktion.
+
+Ownerdelta: passenden Unterumfang in TODO GC-WEB-REPAIR-20261007 und STATE als ci_green-Codecandidate mit PR205 und exakten Runs dokumentieren; örtliche 8772-UI-Probe separat, nicht als Staging-Deploy führen. Registry nur bei tatsächlichem Lifecyclewechsel aktualisieren. Dieser Fachagent verändert keine Sharedkoordination.
