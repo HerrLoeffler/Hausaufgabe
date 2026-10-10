@@ -62,3 +62,17 @@ Eine kleine Offlineprobe mit erfundenen Rules und einem lokalen Designbeispiel w
 Diese Datei liegt im eigenen Setup-PR. Gemeinsamer Integrationowner übernimmt nach Prüfung gezielt einen Link auf diesen Einstieg in die aktuellen Projektanweisungen und hält TODO/State/Registry bei GC-HOOKS-01 konsistent. Keine neue Taskfamilie oder Statusdatenbank. Die lokalen Skills sind bereits installiert; main-Verlinkung und PR-Integration separat belegen.
 
 Offizielle Quellen: [Firebase Skills und Codex](https://firebase.google.com/docs/ai-assistance/agent-skills), [fixierte Firebase-Quelle](https://github.com/firebase/agent-skills/tree/b5735e5baa0d874cb97a23e26ebe93e4501797b9/skills), [fixierter frontend-design-Skill](https://github.com/anthropics/skills/blob/dbd4588f9e1033efb41dad4bef2f7947c8993d44/skills/frontend-design/SKILL.md), [OpenAI: Skill-Erkennung](https://learn.chatgpt.com/docs/build-skills), [OpenAI: skills/list](https://learn.chatgpt.com/docs/app-server). Lizenzen in den heruntergeladenen offiziellen Quellen erhalten; keine Vendor-Skillkopien in diesem PR.
+
+
+## Vier gezielte GradeCrew-Fähigkeiten — GC-POCOCK-IMPLEMENT-01-SKILLS
+
+Die vier lokal installierten Ergänzungen sind mit ihren Quellen und Prüfnachweisen über [PR198](https://github.com/HerrLoeffler/Hausaufgabe/pull/198) auf main integriert; [Übergabe und tatsächlicher Integrationsnachweis](../../workstreams/pocock-skills-implementation-20261010.md), [fixierte Quellen und Datei-Hashes](pocock-implementation-20261010/checkpoint.json). Keine Neuinstallation der sechs Vendor-Skills und kein vollständiges Matt-Pocock-Paket.
+
+| Anlass | Skill | Grenze |
+| --- | --- | --- |
+| Mehrere abhängige offene Entscheidungen oder Wiederaufnahme einer Entscheidungsfront | `gradecrew-wayfinding` | Bestehende Task-ID/Owner und echtes ausstehendes Nutzervotum erhalten; nicht für klare Routinefragen. |
+| Kleine beauftragte Erfahrungsprobe für noch ungeklärte Interaktion oder Enginefrage | `gradecrew-prototype` | Frage und Probevertrag begrenzen; native Prüfung separat belegen, kein HTML-Bild als Enginebeweis. |
+| Konkreter PR-/Commitreview oder angeforderte Retrospektive | `gradecrew-review-retro` | Requirements und Standards am fixierten Scope getrennt belegen; kein automatischer Vollscan oder globale Skilländerung. |
+| Ausdrücklich gewünschte kurze Unreal-/Firebase-Lerneinheit | `gradecrew-learning-handoff` | Übung und tatsächliche Lernerantwort trennen; nicht für gewöhnliche Entwicklung oder ungefragtes Onboarding. |
+
+Installation auf Martins Mac: 17 Skilldateien bytegleich zu den Quellen, Discovery enabled/user ohne Fehler. Die echte begrenzte CLI-Verhaltensprobe lieferte kein Ereignis über automatische Auswahl eines konkreten SKILL.md und kein beobachtetes Runtime-Modell/Effort. Daher bleibt automatische Auswahl unverifiziert; angefordertes Luna/medium, Usage und frühere Startfehler stehen unverändert im Checkpoint. Andere Hosts/alte Turns separat prüfen. Save-Präferenz weiterhin pending, native GamesQA beim bestehenden Owner; keine neuen Runtime-, Cloud- oder Releasebefugnisse.
