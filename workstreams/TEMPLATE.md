@@ -18,6 +18,26 @@
 
 ## Akzeptanzkriterien
 
+## Kurzer Fachbrief / Entscheidungen (nur bei passendem Auftrag)
+
+- Ziel und Prioritäten / beobachtbare Abnahme:
+- Owner und aktueller Source-Branch / voller SHA:
+- Erlaubte Dateien / ausgeschlossene Aktionen:
+- Echte offene Frage, vorhandene Antwortquelle, Blocker und claimed Owner:
+- Bei strukturierter Opt-in-Arbeit: ein `gradecrew-brief`-Block in genau dieser
+  Übergabe; Profilzuordnung in vorhandener Registry. Kein separates Statussystem.
+
+[Kanonischer Vertrag und angewandtes Beispiel](../docs/workflow/EXECUTION_BRIEFS.md).
+Routine braucht keine künstliche Interview-/Entscheidungsrunde.
+
+## Unabhängige Reviewachsen / Rücknahme
+
+- Auftragserfüllung: Reviewer / exakter Kandidat / Ergebnis / Beleg oder offen:
+- Repo-Standards: Reviewer / exakter Kandidat / Ergebnis / Beleg oder offen:
+- Rückrollfolge / verbleibende laufende Vorgänge / Seiteneffekte:
+
+Ein Reviewer kann beide Achsen getrennt prüfen. Bestehende strengere Gates bleiben.
+
 ## Zwischenstand
 
 - Lokal geändert:

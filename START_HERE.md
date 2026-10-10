@@ -89,3 +89,10 @@ Alle GradeCrew-Chats – einschließlich Planung und Design – befolgen [docs/C
 ## Skills für autorisierte Facharbeit — GC-HOOKS-01-SKILLS
 
 [Verbindliche Skill-Zuordnung](docs/skills/GRADECREW_EXECUTION_SKILLS.md) verbindet vorhandene Fähigkeiten mit konkreten Fachaufträgen und den bestehenden Rollen-/Releasegrenzen. Sechs ausgewählte standalone User-Skills sind auf Martins Mac installiert; andere Hosts und Nutzung in alten Desktopturns separat prüfen. Zentralen koordinieren weiterhin ausschließlich. [Integrationsnachweis und Grenzen](workstreams/skills-integration-20261010.md); Hook-Entwurf PR184 bleibt getrennt, keine Hooks installiert.
+
+
+## Konkrete Fachbriefs und angewandte Reviews — GC-POCOCK-IMPLEMENT-01
+
+Der [kanonische Brief-/Entscheidungs-/Reviewvertrag](docs/workflow/EXECUTION_BRIEFS.md) ergänzt die vorhandene Übergabe. Bei einem tatsächlich strukturierten Fachauftrag ein opt-inBrief im bestehenden Handoff, Zuordnung in der bestehenden Registry; keine zweite Statusdatenbank. Der rein lesende Check erkennt fehlende Pflichtfelder, unklare Owner/Abhängigkeiten und deklarierte laufende oder unbekannte Vorgänge. Er erteilt keine Rechte, übernimmt keine atomaren Locks und startet weder Agenten, Retry noch Deploy.
+
+Auftragserfüllung und Repo-Standards am selben Kandidaten getrennt durch einen passenden unabhängigen Reviewer prüfen; ein Reviewer kann beide Achsen übernehmen. PRs nennen Trigger, Vorher/Nachher, eigenen geeigneten Realbeleg, Umfang und Rückrollfolge. Routine ohne echte Fragen erhält keine künstliche Interview-/Abnahmerunde. Retro nur nach belegtem auffälligem Ablauf, maximal drei Kandidaten gegen bestehende Checks; keine automatische globale Skilländerung oder pauschaler Refactor. Alle bisherigen Rollen-, Source-, Recovery-, Budget- und strengeren Release-/Security-/Productiongates bleiben bestehen.

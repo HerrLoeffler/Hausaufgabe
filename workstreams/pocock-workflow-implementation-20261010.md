@@ -59,12 +59,12 @@ VorhandeneHandoffs erhalten opt-inJSONbrief, registry bleibtZuordnung. Reinlesen
     },
     {
       "id": "implement",
-      "status": "open",
+      "status": "answered",
       "blocked_by": [
         "baseline"
       ],
       "claimed_owner": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
-      "answer": null
+      "answer": "9CLI behavior tests and29tools/114automation/5telemetry tests green; final remote CI still pending"
     },
     {
       "id": "review",
@@ -72,7 +72,7 @@ VorhandeneHandoffs erhalten opt-inJSONbrief, registry bleibtZuordnung. Reinlesen
       "blocked_by": [
         "implement"
       ],
-      "claimed_owner": null,
+      "claimed_owner": "pocock_implementation_acceptance",
       "answer": null
     },
     {
@@ -83,10 +83,26 @@ VorhandeneHandoffs erhalten opt-inJSONbrief, registry bleibtZuordnung. Reinlesen
       ],
       "claimed_owner": "01a1089e-bbae-74c2-9a6a-6ce71fb3dba7",
       "answer": null
+    },
+    {
+      "id": "save-preference",
+      "status": "open",
+      "blocked_by": [],
+      "claimed_owner": null,
+      "answer": null
+    },
+    {
+      "id": "save-variant",
+      "status": "open",
+      "blocked_by": [
+        "save-preference"
+      ],
+      "claimed_owner": "native-games-qa",
+      "answer": null
     }
   ],
   "recovery": {
-    "next_step": "Kontrakte und Prüfer umsetzen; exakten Review/CI prüfen",
+    "next_step": "Publish immutable tooling candidate and recipe; existing independent acceptance review plus exactCI; actual human Save answer remains pending",
     "operations": [],
     "budget": {
       "mode": "no_paid_calls",
@@ -105,60 +121,66 @@ VorhandeneHandoffs erhalten opt-inJSONbrief, registry bleibtZuordnung. Reinlesen
       "reviewer": null,
       "evidence": []
     }
-  }
+  },
+  "priorities": [
+    "Eigentum/History/Gates erhalten",
+    "Wirksamkeit am echten Toolingpaket belegen",
+    "Nur profilierte Briefs deterministisch prüfen"
+  ]
 }
 ```
 
-## Einmaliger Iststand / Delta / Owner / Abnahme
-| Cluster | Thema / Iststand | Deltaowner / konkreterTrigger | Abschlussbeleg |
-|---|---|---|---|
-| brief | Auftragsbrief, Prioritäten, abhängige Fragerunden: Handoff vorhanden, kein Briefvalidator | Hier: kanonischerBrief+Check; Fragen nur neue wesentliche ungeklärte Präferenzen | CLI negatives+Realpaket/PR |
-| frontier | Decisionfrontier/Prototyp: Kein prüfbarer claim-/dependencyIndex; vorhandene Prototypen separat | HierGraphcheck; Pluginschat Wayfinder/Prototype. Ungelöste Darstellung/Enginefrage→Game/Webowner, Nutzerverdict | RealCLI frontier/blocked/unknown; Plugin-/QAoriginalbelege ausstehend |
-| handoff | Handoff/Recovery/Context: CHAT_RECOVERY/Commits/Budgets vorhanden, Abbrüche mit unbestätigtenTests | HierSource/laufendeIDs/History/Budgetbrief+Checkpoint; keineMemoryDB | EigenerCommit/PR+read-onlyCLI;209Testbericht unbestätigt |
-| runtime | Runtime, NativeQA, Lern-/Gerätequalität: CI/isolierteQuellen vorhanden; kein pauschalerLive-/Gerätetest | ROOTWebQA remotec3a5fdcf vsfremdaktiv e9cc5ae; ROOTnativeQA PR175a5dc474 vsaktiv2496a85; aktiveCheckouts unberührt, GameET01a12571/Pizza separat | SourcegebundeneQAartefakte ausstehend; hier keineNativeQA |
-| review | Reviewachsen/PRerklärung: Reviews vorhanden, gemeinsamePRvorlage fehlt | HierTrigger/VorherNachher/Realbeleg/Scope/Rückrollfolge+Requirements/Standards; Pluginschat adaptedReview | EigenerPR+unabhängigeZweiAchsenbefunde |
-| retro | Retro→deduplizierteChecks: KeinBrief/Graphcheck; bestehendeAutomation-/Release-/Telemetriechecks | HierrealeSessionRetro maximal3Befunde→einenCheckanschließen; Plugin adaptedRetro | RED→GREEN CLI +HandoffCIstep; keinSelfrewrite |
-| domain | Domainbegriffe/ADR/Hotspots: BestehendeTask/Attempt-/Gameverträge; kein neu belegterHotspot | ZuständigerImplementer bei tatsächlichem Normal-/Randfall-Missverständnis oder überraschendemTradeoff; konkreteCaller/Testseams, keinePflichtADR/Großrefactor | Vertrags-/Caller-/Regressionsbeleg imbetroffenenFachauftrag; keineProduktlückeerfunden |
-| learning | Teach/Onboarding/Handoff+Teach: Fachrollen/Skills vorhanden; keine gemessene konkreteWissenslücke | Pluginschat schlankeAnleitung für wiederkehrende konkreteUnreal/Firebasewissenslücke; Lernziel+Anwendungsaufgabe, keinCocoMemoryumbau | Anleitung/Trigger verfügbar; Lernerfolg erst in echterLernaufgabe |
-| models | AdaptiveModel/Effort/Quellenkontrolle: AGENTS-Regel,28tatsächlicheSkillhashes; requested/observed getrennt | Hier Source/Review/Runtimeangaben; kleineresModel nur abgegrenzte risikoarmeAufgabe, keineToken-/Preisschwellen | NodePATHdiagnose; ReviewSolmedium requested/actualunknown; Einsparung unbekannt |
-| docs | Doku-Duplikate/geeigneteBibliotheken: STATE/registry/Handoff getrennt; historischeQuellenbewusst erhalten | Hier einGuide+thinLinks+stdlib/alteChecks. Nur bei belegtemDrift betroffeneErklärkopie konsolidieren; Audit/Recoveryhistorie erhalten | CanonicalGuide+stdlibPrüfer+unveränderteHistorie/Sourcepins |
+## Sieben vorhandene Abnahmepakete / Deltaowner / Abschlussbeleg
+
+Mit INITIAL_ACCEPTANCE.md und coverage.json des vorhandenenReviewers abgeglichen; keine zweite Mappingdatei. Originalpfade /Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-IMPLEMENT-20261010/acceptance/INITIAL_ACCEPTANCE.md und /Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/analysis/GC-POCOCK-IMPLEMENT-20261010/acceptance/coverage.json. 32unique6+IDs in vorhandenerAbnahme identisch zur integriertenBerichtsquelle; achtSyntheseabschnitte auf7Pakete ohneVerlust.
+
+| Paket | Thema / Iststand | KonkreterOwner/Trigger/Abnahme |
+|---|---|---|
+| A1 | Runtime/native input | ROOTWeb/nativeQA; exakteQuelle, echteEingabe/Folge undeinmaligeNachfahrt; bisherSourcequalifikation, Runtimeevidenceausstehend |
+| A2 | Frontier/Prototyp | HierGraph/CLI; PluginsangepassteFähigkeit. EchteSavecheckpointfrage beiMartin offen, abhängigGameplayauswahl nichttreffen; SourceRootQAa5dc |
+| A3 | Brief/Recovery | Hieropt-inBrief+Checkpoint+History/IDs/Budget; lokaleCommit1719 undremote9cc mitgleichemTree; echteCLIprobe |
+| A4 | PR/Review | HierPRtemplate+eigenerPR197; unabhängigeRequirements/Standards via vorhandenerpocock_implementation_acceptance, nochpending |
+| A5 | Retro/Guard | HierrealerfehlerhafterSessionablauf→max3Befunde; Fehlbrief-/Owner-/Abhängigkeitsguard RED→GREEN undHandoffCIanschließen |
+| A6 | Domain/Architektur | BestehendeAttempt/Result/Resetverträge; zuständigerFachowner nur tatsächlicherNormal-/Randfall-Drift oderCallerHotspot. Savefrage istkonkreterTrigger, Antwortoffen; keinPauschalrefactor |
+| A7 | Quelle/Model/Onboarding | HierQuellSHA undrequested/observed/Runtimefehlerbeleg; PluginsFachfähigkeiten bei konkreterWissenslücke mitLernziel+Anwendungsaufgabe. SourcePR193Hash/DiscoverykeinRuntimequalitätsbeleg |
 
 ## Alle32Videoempfehlungen6+
 Snapshot des integrierten40Video-Berichts, genau eine Zuordnung je6+-ID. Cluster oben enthält benanntenOwner/Trigger/Beleg; kein zweiterProjektstatusstore und keine pauschaleSpäterablage.
 | Video-ID / Wert | Konkrete berichtete Anwendung | Delta/Trigger/Ownercluster |
 |---|---|---|
-| BsJGo1wFTvQ · 9/10 · jetzt | Vorhandene PR-/Reviewvorlage schärfen; keine automatische Umweltänderung. | review/retro |
-| gaDdrDdczO4 · 8/10 · jetzt | Ein bestehendes Fachbriefing kürzen und echte Entscheidungen bündeln. | brief |
-| F3lL98Pj90o · 8/10 · gezielt | Eine tatsächlich offene Gamesfrage bis zur kurzen Spec klären. | frontier |
-| n0VhIVtviC0 · 9/10 · jetzt | Native Gameinteraktion oder 2–3 Webvarianten vergleichen; getrennt sichern. | frontier/runtime |
-| M6mYodf0dJM · 7/10 · gezielt | Fach-Onboarding; Superpowers und vorhandene Gates weiterführen. | learning/brief/review |
-| A8mokin_YOs · 8/10 · gezielt | Abhängigkeiten und zwei Reviewachsen im vorhandenen Auftrag sichtbar machen. | frontier/review |
-| s5T5oQJcJ6U · 7/10 · später | Optionales Unreal-/Firebase-Onboarding; kein direkter Coco-Umbau. | learning |
-| mh5XZ-L5SFQ · 7/10 · gezielt | Höchstens drei Kandidaten an aktivem Game-State-Hotspot mit Verhaltenstest. | domain |
-| UzMNBN6xLLA · 9/10 · jetzt | Spielgefühl prototypisieren; Fakten recherchieren, Präferenzen Martin überlassen. | brief/frontier |
-| dtAJ2dOd3ko · 8/10 · jetzt | Knappe Fachaufträge in dauerhafter bestehender Recoveryspur. | handoff |
-| 6BB6exR8Zd8 · 8/10 · gezielt | Attempt/Ergebnis/Reset an Normal- und Randfall klären; keine pauschale DDDpflicht. | domain |
-| DNqsMXH6Eog · 7/10 · gezielt | Knappe Übergabe mit Prototypverdict; dauerhafte Belege beibehalten. | handoff/frontier/review |
-| MzWIIlx0Gpc · 8/10 · gezielt | Bestehende BugOpsmeldungen bündeln; Auftragsreife von Freigabe unterscheiden. | brief/domain |
-| 3MP8D-mdheA · 8/10 · gezielt | Belegten häufig geänderten Hotspot vereinfachen; kein periodischer Großrefactor. | domain |
-| MN9dGgmLyso · 9/10 · jetzt | Ein vorhandenes Runtimeprüfrezept reproduzierbar machen; mechanische Fehler abfangen. | runtime |
-| zcLPGC-tvgk · 8/10 · gezielt | Eine echte Nutzersequenz; gegebenenfalls begrenzter Mutation-/Dependencycheck. | runtime/domain |
-| 251hsWgoTPM · 8/10 · gezielt | Entscheidungspilot eng halten; vorhandene Engine/UI nutzen und Restarbeit sichtbar lassen. | frontier/runtime |
-| K-mA3MZ_EzU · 7/10 · gezielt | Offene Begriffe mit zwei Fällen klären; Zeitgrenze vor weiterem Planpolieren. | domain/brief |
-| LGj1oUidC7Q · 8/10 · jetzt | Ziel, Grenzen und beobachtbare Abnahme kurz im Fachauftrag. | brief |
-| 0l7zOp260yc · 7/10 · gezielt | Neue Games an vorhandene Firebase-/Web-/Unrealverträge binden. | domain |
-| sOd7svdu_1I · 7/10 · gezielt | Relevante Quellen und kurze Fachpakete statt universeller Tokenzahl. | handoff |
-| Yn8h5Ip-L9c · 8/10 · jetzt | Bestehende unabhängige Gates erhalten, kleine Aufträge knapp halten. | review |
-| tLyfDIt9wHg · 7/10 · gezielt | Wenige echte Produktfragen pro Runde; keine neue Interviewpflicht. | brief |
-| 32LyZyFQhCQ · 8/10 · jetzt | Gezielte Fachskills auswählen; vorhandene Superpowers nicht doppeln. | docs |
-| A0scuiiGBC4 · 8/10 · gezielt | Kontrollierte Projektquellen erhalten; Coco-Memory daraus nicht abschaffen. | docs/handoff |
-| eEjBhVI9Qok · 8/10 · gezielt | Aktive Web-/Game-/Firebasegrenzen prüfen; kein Rewrite allein aus Prinzip. | domain |
-| Fj8DKMbdIzU · 8/10 · gezielt | Überholte Erklärkopien bereinigen; Tasks/Release-/Recoverybelege behalten. | docs |
-| e-pFrQ_Rh0s · 6/10 · gezielt | Martins Aufmerksamkeit auf wenige echte Entscheidungen bündeln. | brief |
-| SF1Ab0Y-9BY · 7/10 · gezielt | Adaptive verfügbare Modelle/Effort mit festen Abnahmen beobachten. | models |
-| H-JHumbpORI · 8/10 · jetzt | Zugriff/Fakten/Scope prüfen und Behauptungen an Originalbelege binden. | models |
-| iQb3F9UzBR4 · 8/10 · jetzt | Bestehende Schwierigkeitsregel anwenden, höchstens zwei begründete Wechsel. | models |
-| 8WLi98SEdeU · 6/10 · später | Unreal-/Firebase-Verständnis außerhalb aktiver Umsetzung lernen. | learning/handoff |
+| BsJGo1wFTvQ · 9/10 · jetzt | Vorhandene PR-/Reviewvorlage schärfen; keine automatische Umweltänderung. | A4/A5 |
+| gaDdrDdczO4 · 8/10 · jetzt | Ein bestehendes Fachbriefing kürzen und echte Entscheidungen bündeln. | A2 |
+| F3lL98Pj90o · 8/10 · gezielt | Eine tatsächlich offene Gamesfrage bis zur kurzen Spec klären. | A2 |
+| n0VhIVtviC0 · 9/10 · jetzt | Native Gameinteraktion oder 2–3 Webvarianten vergleichen; getrennt sichern. | A2 |
+| M6mYodf0dJM · 7/10 · gezielt | Fach-Onboarding; Superpowers und vorhandene Gates weiterführen. | A7 |
+| A8mokin_YOs · 8/10 · gezielt | Abhängigkeiten und zwei Reviewachsen im vorhandenen Auftrag sichtbar machen. | A4 |
+| s5T5oQJcJ6U · 7/10 · später | Optionales Unreal-/Firebase-Onboarding; kein direkter Coco-Umbau. | A7 |
+| mh5XZ-L5SFQ · 7/10 · gezielt | Höchstens drei Kandidaten an aktivem Game-State-Hotspot mit Verhaltenstest. | A6 |
+| UzMNBN6xLLA · 9/10 · jetzt | Spielgefühl prototypisieren; Fakten recherchieren, Präferenzen Martin überlassen. | A2 |
+| dtAJ2dOd3ko · 8/10 · jetzt | Knappe Fachaufträge in dauerhafter bestehender Recoveryspur. | A3 |
+| 6BB6exR8Zd8 · 8/10 · gezielt | Attempt/Ergebnis/Reset an Normal- und Randfall klären; keine pauschale DDDpflicht. | A6 |
+| DNqsMXH6Eog · 7/10 · gezielt | Knappe Übergabe mit Prototypverdict; dauerhafte Belege beibehalten. | A3 |
+| MzWIIlx0Gpc · 8/10 · gezielt | Bestehende BugOpsmeldungen bündeln; Auftragsreife von Freigabe unterscheiden. | A3 |
+| 3MP8D-mdheA · 8/10 · gezielt | Belegten häufig geänderten Hotspot vereinfachen; kein periodischer Großrefactor. | A6 |
+| MN9dGgmLyso · 9/10 · jetzt | Ein vorhandenes Runtimeprüfrezept reproduzierbar machen; mechanische Fehler abfangen. | A1/A5 |
+| zcLPGC-tvgk · 8/10 · gezielt | Eine echte Nutzersequenz; gegebenenfalls begrenzter Mutation-/Dependencycheck. | A1 |
+| 251hsWgoTPM · 8/10 · gezielt | Entscheidungspilot eng halten; vorhandene Engine/UI nutzen und Restarbeit sichtbar lassen. | A2 |
+| K-mA3MZ_EzU · 7/10 · gezielt | Offene Begriffe mit zwei Fällen klären; Zeitgrenze vor weiterem Planpolieren. | A6 |
+| LGj1oUidC7Q · 8/10 · jetzt | Ziel, Grenzen und beobachtbare Abnahme kurz im Fachauftrag. | A3 |
+| 0l7zOp260yc · 7/10 · gezielt | Neue Games an vorhandene Firebase-/Web-/Unrealverträge binden. | A6 |
+| sOd7svdu_1I · 7/10 · gezielt | Relevante Quellen und kurze Fachpakete statt universeller Tokenzahl. | A3 |
+| Yn8h5Ip-L9c · 8/10 · jetzt | Bestehende unabhängige Gates erhalten, kleine Aufträge knapp halten. | A4 |
+| tLyfDIt9wHg · 7/10 · gezielt | Wenige echte Produktfragen pro Runde; keine neue Interviewpflicht. | A2 |
+| 32LyZyFQhCQ · 8/10 · jetzt | Gezielte Fachskills auswählen; vorhandene Superpowers nicht doppeln. | A7 |
+| A0scuiiGBC4 · 8/10 · gezielt | Kontrollierte Projektquellen erhalten; Coco-Memory daraus nicht abschaffen. | A7 |
+| eEjBhVI9Qok · 8/10 · gezielt | Aktive Web-/Game-/Firebasegrenzen prüfen; kein Rewrite allein aus Prinzip. | A6 |
+| Fj8DKMbdIzU · 8/10 · gezielt | Überholte Erklärkopien bereinigen; Tasks/Release-/Recoverybelege behalten. | A7 |
+| e-pFrQ_Rh0s · 6/10 · gezielt | Martins Aufmerksamkeit auf wenige echte Entscheidungen bündeln. | A2 |
+| SF1Ab0Y-9BY · 7/10 · gezielt | Adaptive verfügbare Modelle/Effort mit festen Abnahmen beobachten. | A7 |
+| H-JHumbpORI · 8/10 · jetzt | Zugriff/Fakten/Scope prüfen und Behauptungen an Originalbelege binden. | A7 |
+| iQb3F9UzBR4 · 8/10 · jetzt | Bestehende Schwierigkeitsregel anwenden, höchstens zwei begründete Wechsel. | A7 |
+| 8WLi98SEdeU · 6/10 · später | Unreal-/Firebase-Verständnis außerhalb aktiver Umsetzung lernen. | A7 |
+
 
 ## Unmittelbare Skills-/Reel6+
 | Empfehlung | Iststand/Grund | Owner/Trigger/Abnahme |
@@ -178,3 +200,28 @@ ErsterBaseline114Tests/2Fehler (test_invalid_changed_javascript_cannot_use_other
 
 ## Wiederaufnahme / nächsterSchritt
 CheckpointPlan/Registrierung, nochkeinValidator-/QAerfolg. Eigene externeOperationen keine; ROOTQAgetrenntIDsnochunbekannt nichtneustarten. Paidbudget0/keineReservierungen; Security/npmstopps erhalten. NächsterSchritt TestsRED→PrüferGREEN→bestehendeCI/exakterunabhängigerReview→autorisierterMainmerge.
+
+Abgleich INITIAL_ACCEPTANCE/coverage.json:32IDs gleich; vorhandenerReviewer /root/pocock_implementation_acceptance erwartet unveränderlichenPR197/Head undCLIrecipe. Kein neuer parallelerReview-/Coverageagent. Pluginsrollen undROOTQA behaltenDateien; SourceSavepräferenz beimNutzer offen, keinneuesInterview oder Gameplayfix.
+
+
+## Angewandtes Paket und nächste Übergabe
+
+PR197 hält Registrierung/Plan: remote9ccab61 undlocal1719, identischerTree5b158096. CLI/9Verhaltenstests, vorhandeneHandoffCI, Vorlagen undGuide implementiert. 29ToolsTests (9CLI+20ReleaseControl),114Automationtests mitgebündeltemNode und5Telemetrietests grün. REDs für fehlendesCLI, fehlendePrioritäten und unnötigeRoutinefragen erhalten; gitdiffcheck sauber.
+
+Echte abhängigeGamesentscheidung lautROOT: Remotea5dcSavePosition nurbeiLernaktion. Savepräferenz bleibt beimNutzer offen/unclaimed, abhängigeSavevariante beimNativeQAowner gesperrt. Keine Antwort oder Gameplayänderung hier.
+
+UnabhängigeAbnahme: vorhandener /root/pocock_implementation_acceptance. Keine weitere Reviewflotte. Auftragserfüllung undStandards pending, nicht durchlokaleTests ersetzen. AktuellesModell/Effort nichtseparatbeobachtet/keineWechsel; Runtime/Auth/Netzprobleme durchvorhandeneWerkzeuge gelöst, nichtModelleskalation; Kostenersparnisunbekannt.
+
+### Reproduktion am unveränderlichen Kandidaten
+
+1. Exakten angegebenenPR197Head inisoliertemCheckout nutzen; fremdeNutzer-/Gamequellen nichtändern.
+
+2. `python3 -m unittest discover -s tools -p 'test_workstream_checks.py' -v`: neunTests der echtenCLI.
+
+3. `python3 tools/workstream_checks.py --registry workstreams/registry.json --require-task GC-POCOCK-IMPLEMENT-01`: read-onlyFrontier deklarierterMetadaten.
+
+4. `test_running_or_unknown_results_never_offer_resumption` zeigtready[]/resume_safe=false; `test_missing_deleted_or_ambiguous_brief_fails_opted_in_task` Exit1. TempFixtures/Hashvergleich beweisenkeineInputänderung.
+
+5. Auftragserfüllung gegenfreigegebenenScope/32Abdeckung undRepo-Standards gegenSource/Owner/CI/History getrenntprüfen. Kein AppQA/Paidscan/Provider/Deploy aus diesemRecipe.
+
+[RealeRetro](../docs/workflow/pocock-implementation-retro-20261010.md): dreiBefunde, einmechanischerGuard. Code-/RemoteTreebindung, finaleCI undReviewerbelege nachPublikation ergänzen; Wirkung desangeschlossenenCIsteps erstam tatsächlichenHead belegen.

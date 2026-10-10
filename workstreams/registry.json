@@ -571,7 +571,8 @@
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/pocock-workflow-implementation-20261010.md",
-      "relatedBranches": []
+      "relatedBranches": [],
+      "checkProfile": "workflow-brief-v1"
     }
   ]
 }

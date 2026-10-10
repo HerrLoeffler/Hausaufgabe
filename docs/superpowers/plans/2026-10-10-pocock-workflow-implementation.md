@@ -24,17 +24,17 @@
 ### Task 1: Contract integration
 **Files:** `.github/PULL_REQUEST_TEMPLATE.md`, `workstreams/TEMPLATE.md`, `docs/workflow/EXECUTION_BRIEFS.md`, own handoff, START/AGENTS/CHAT_CONTRACT/TODO/STATE/registry.
 **Interfaces:** existing registry handoff + optional `checkProfile: workflow-brief-v1`; one fenced `gradecrew-brief` JSON block is authoritative, no new status store.
-- [ ] Keep existing contracts and add concise brief, decision, review and retro fields; link canonical guide.
-- [ ] Register own subtask, recommendation/owner/evidence matrix, approved exclusions and live source.
-- [ ] Self-check source links and preserve all unrelated State/registry/release data; checkpoint.
+- [x] Keep existing contracts and add concise brief, decision, review and retro fields; link canonical guide.
+- [x] Register own subtask, recommendation/owner/evidence matrix, approved exclusions and live source.
+- [x] Self-check source links and preserve all unrelated State/registry/release data; checkpoint.
 
 ### Task 2: Read-only checker and CI
 **Files:** `tools/workstream_checks.py`, `tools/test_workstream_checks.py`, `.github/workflows/handoff-check.yml`.
 **Interfaces:** CLI `--registry PATH`, JSON stdout summary, exit0 valid / exit1 contract errors; root determined by registry `workstreams/` parent.
-- [ ] Write subprocess integration tests with hand-authored fixtures for the five review conditions; observe RED (CLI missing, no ready result).
-- [ ] Implement strict brief validation, bounded dependency graph and read-only frontier computation.
-- [ ] Run new suite GREEN, full existing automation and release-control suites, registry consumer on real handoff; retain logs/fixtures as local evidence.
-- [ ] Connect existing handoff CI and its path filters; no new workflow/controller. Commit tested implementation.
+- [x] Write subprocess integration tests with hand-authored fixtures for the five review conditions; observe RED (CLI missing, no ready result).
+- [x] Implement strict brief validation, bounded dependency graph and read-only frontier computation.
+- [x] Run new suite GREEN, full existing automation and release-control suites, registry consumer on real handoff; retain logs/fixtures as local evidence.
+- [x] Connect existing handoff CI and its path filters; no new workflow/controller. Commit tested implementation.
 
 ### Task 3: Real package pilot and integration
 **Files:** own handoff and `docs/workflow/pocock-implementation-retro-20261010.md`; no product files.
