@@ -1,6 +1,6 @@
 # Codex CLI hook qualification (no paid inference)
 
-Status: **Stage A passed narrowly for the frozen candidate on the installed Codex CLI.** This is a CLI lifecycle result, not activation of the GradeCrew production hook. The temporary source, script copy, qualification profile, and empty test mirror have been removed. See the current task receipt for the full attempt history.
+Status: **Stage A passed narrowly for the frozen candidate on the installed Codex CLI.** Normal `/hooks` UI trust and one synthetic `UserPromptSubmit` block were observed; the provider recorded zero generation requests. The temporary source, script copy, qualification profile, and empty test mirror have been removed. A dormant trust hash may remain because the follow-up revocation command was rejected by automatic review. Production remains inactive. See the task receipt for attempt history.
 
 ## Frozen artifacts
 
@@ -26,6 +26,10 @@ One non-personal synthetic prompt was sent from the exact empty, `.git`-less tes
 After the test, the CLI and provider were stopped. The temporary `hooks.json`, pinned script, qualification profile, and empty test mirror were removed after hash checks; the normal `hooks.json` source is absent again, and the existing hooks directory was preserved. No production hook, global feature flag, model configuration, auth state, or database was edited directly.
 
 The normal trust action wrote trust state for the exact temporary definition. A later attempt to reopen `/hooks` to disable/revoke it was rejected by automatic approval review because the approval was scoped to one synthetic prompt. No workaround was attempted. Since the source and referenced files are absent, any remaining trust hash is dormant and may persist; it was not edited outside the supported UI.
+
+## Production package (prepared only; inactive)
+
+The standalone [production install and rollback guide](production-install-and-rollback.md) is the reviewable procedure for a future, separately approved installation. It requires rechecking the currently reviewed source, script, profile, and hook-definition hashes immediately before any write; preserving any existing user hook source; merging only the named handler without dropping unrelated entries; verifying the result; and rolling back only bytes or entries still matching this task's recorded hashes. It does not authorize activation or trust. No production source, script, profile, feature flag, or model setting was installed or changed during Stage A.
 
 ## What this proves—and what it does not
 
