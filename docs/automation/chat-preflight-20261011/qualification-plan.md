@@ -1,26 +1,41 @@
-# Hook lifecycle qualification (no paid inference)
+# Candidate hook lifecycle qualification (no paid inference)
 
-This is a controlled test recipe, not permission to install or activate the hook. The reviewed source hash and the local approved-root profile must be fixed before qualification.
+This is a recipe for a later, separately approved qualification. It does not authorize installation or activation. No test has been run in Codex with this candidate. The goal is to prove that the actual Codex runtime invokes this exact script and accepts its output schema while guaranteeing that a missed hook cannot reach an OpenAI provider.
 
-## Coverage
+## Scope and prerequisites
 
-Official Codex documentation lists `~/.codex/hooks.json` and `~/.codex/config.toml` as user-level hook sources and says non-managed hooks require review/trust for the exact current definition hash through `/hooks`. Codex app agents share configuration with CLI and IDE. ChatGPT Work chats run managed and do not read local Codex configuration; local command hooks are unsupported with Work Cloud orchestration. The test can qualify a local Codex lifecycle only. It cannot claim every ChatGPT desktop/Work chat or historical chat is covered.
+Official Codex hook docs list user-level `~/.codex/hooks.json` and `~/.codex/config.toml` sources; non-managed hooks require review/trust for the exact current definition hash through `/hooks`. Hook sources accumulate. Codex app agents share configuration with CLI and IDE. ChatGPT Work is managed and does not read local Codex hooks. This qualification can establish only the tested Codex runtime/surface, not every Desktop chat, historical chat, or Work conversation.
 
-## Before testing
+1. Review the exact candidate `preflight.py`, its SHA-256, the hook profile schema, and the local allowlist. Verify the script reads no credentials, browser store, transcript, or app database.
+2. Use an isolated Codex config root and isolated idle specialist test chat. Do not point the test at the shared Codex home or reuse global hook sources. Use only documented config fields and a supported hook trust UI. If an isolated configuration root or exact trust review cannot be established through supported Codex controls, stop without testing.
+3. Configure the isolated test session to use a verified local fake provider only. Confirm its provider name and endpoint are local, not OpenAI, before opening the composer. If that boundary cannot be proven, do not send any prompt.
+4. Install no normal refresh behavior for this test. The private test profile must contain the exact approved GradeCrew mirror root, `pointer_cache_ttl_seconds: 0`, and `qualification_mode: "block"`. This mode is accepted only by the candidate script; it validates the event's project identity and immediately emits a deterministic block without cache access, network, GitHub, MCP, or model calls.
 
-1. Complete review of the exact script and `hook-profile.template.json`. Confirm no API token, secret store, browser store, transcript or credential is read. The public pointer request is unauthenticated and includes no prompt text.
-2. Prepare a separate local profile with `schema: 1`, an explicit `approved_project_roots` list, and `pointer_cache_ttl_seconds: 0`. For the project mirror without `.git`, list only its exact canonical absolute root locally; never put a host path in the repository. A path prefix such as `~/.codex/.chatgpt-projects` or a shared `session_id` is not a project allowlist.
-3. Inspect active sources for `~/.codex/hooks.json` and `~/.codex/config.toml`; hook sources accumulate. Do not overwrite an existing source or duplicate the same hook in both representations. Create a dedicated isolated test profile/workspace if there is any ambiguity.
-4. In the Codex hook review UI/`/hooks`, inspect and trust only the exact test hook command and current definition hash. Do not use `--dangerously-bypass-hook-trust`. If hook loading, trust, or workspace scope is unclear, stop; the test is not a runtime receipt.
+## Exact command and test
 
-## Zero-paid-call test
+In the isolated hook source, use the candidate template's handler fields and point `command` to the reviewed candidate source and the dedicated local test profile. The command must resolve to the exact file whose SHA-256 was recorded in the receipt, for example:
 
-Use an isolated idle specialist test chat and a test-only hook handler whose only behavior is to append a fixed invocation marker to a private temporary log and return `{"decision":"block","reason":"GC-CHAT-PREFLIGHT-01 qualification sentinel"}`. It must not call a model, network, API, MCP server, app database or credential store. Send one synthetic prompt. Pass only if the UI reports the sentinel block, the marker appears exactly once, and there is no model/turn-start event or provider request. The block occurs before generation, so this test does not require a local model and cannot silently fall through to a paid OpenAI call.
+```text
+python3 /ABSOLUTE/CANDIDATE/PATH/tools/chat-preflight/preflight.py --profile /ABSOLUTE/PRIVATE/PATH/qualification-profile.json
+```
 
-Then run the candidate script's deterministic offline probe with fake GitHub responses and fake App Server caller. That probe verifies current/stale/unknown/failure cases and `model/list` before explicit model/effort `turn/start` without making an inference. These two receipts prove different things: the sentinel proves Codex loaded and ran a trusted `UserPromptSubmit` hook; the offline probe proves candidate logic. Neither proves Desktop Work coverage nor native composer model switching.
+The local profile is equivalent to:
 
-If a future runtime test needs an allowed prompt to reach a model, first require a separate explicit authorization and pin a local-only provider with a verifiable local endpoint. Never use an OpenAI provider or assume that a hook will block if it fails to load. This PR does not perform that test.
+```json
+{
+  "schema": 1,
+  "approved_project_roots": ["/ABSOLUTE/EXACT/GRADECREW/MIRROR/ROOT"],
+  "pointer_cache_ttl_seconds": 0,
+  "qualification_mode": "block"
+}
+```
 
-## After test
+Review and trust the exact test hook definition hash in the supported `/hooks` UI. Send one synthetic, non-sensitive prompt from the isolated chat whose actual working directory is under the allowlisted mirror. Pass only if Codex reports the candidate's sentinel block, the candidate invocation is recorded exactly once by the supported runtime evidence, and there is no model/turn-start event or provider request. If the hook is not loaded, the preconfigured local fake provider remains the only possible provider. Never use an OpenAI provider as a fallback.
 
-Capture only the hook event name, test hook source hash, Codex CLI/app version, sentinel block result, invocation count, and absence of a provider call. Do not capture prompt contents, session transcripts, secrets, or model responses. Remove the isolated test config and trust only through the supported hook UI. Keep this as a local qualification receipt, not as proof of broad installation or all-chat coverage.
+Also run the deterministic repository tests offline. They exercise the real candidate entrypoint with `qualification_mode`, assert that an unrelated CWD and an invalid profile produce no stdout, and verify normal hook refresh/cache/model-caller behavior with fake responses. These tests do not prove that Codex loaded the command.
+
+## Boundaries and receipt
+
+The exact candidate command test would prove only that the tested Codex version loaded this user-level `UserPromptSubmit` definition, launched the reviewed script, and accepted its block output. It would not prove native Desktop composer model switching, all-chat coverage, Work coverage, or production policy enforcement. The App Server fake caller is separate and proves only pre-call `model`/`effort` selection for a client that owns `turn/start`.
+
+Record only the runtime surface/version, script SHA-256, hook definition hash, exact command/profile schema revision, allowlisted scope description (do not publish the host path), sentinel result, invocation count, and confirmation that no provider request occurred. Do not capture prompt text, transcripts, secrets, model responses, or provider credentials. Remove the isolated test configuration and trust only through supported UI controls. If any runtime receipt is missing or ambiguous, mark runtime qualification `unverified` and do not broaden activation.

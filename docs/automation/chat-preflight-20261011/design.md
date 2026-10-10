@@ -24,7 +24,7 @@ If one of the governing files changes, the hook injects a short reminder to relo
 
 ## Model preflight caller
 
-The separate deterministic fake caller models a client that owns the App Server request. It reads `model/list`, chooses an available model and supported effort from an explicit task class, and passes both in `turn/start`. Routine starts at Luna/medium; cross-area work at Sol/medium; difficult work at Sol/high only with a stated reason. If the needed combination is unavailable, it uses the catalog’s explicitly advertised default with a supported effort and labels it as a new requested choice, or it stops before `turn/start` when the catalog has no usable choice. It never calls a missing current model “default” or “observed.”
+The separate deterministic fake caller models a client that owns the App Server request. It reads `model/list`, chooses the exact model and supported effort for an explicit task class, and passes both in `turn/start`. Routine targets Luna/medium; cross-area targets Sol/medium; difficult work targets Sol/high only with a stated reason (otherwise Sol/medium). If the requested model or effort is not advertised, it stops before `turn/start`. It never silently substitutes a higher-cost model or calls a catalog default the current model.
 
 This proves ordering and schema behavior for a client under our control. It does not establish that the ChatGPT desktop composer uses the same App Server API or that a hook can alter that composer’s selection. Actual runtime model/effort remain unknown unless the response exposes telemetry that identifies the actual values.
 
@@ -34,4 +34,4 @@ Repository origin can establish GradeCrew project scope; it cannot establish whe
 
 ## Release boundary
 
-This is an implementation candidate only. No `~/.codex` hook/config file is changed, no hook trust is bypassed, no plugin is installed, and no app database or binary is accessed. ChatGPT Work does not read local Codex hooks. A qualified owner must review/trust the exact command in the Codex hook UI and perform an isolated no-paid-call lifecycle qualification before any wider activation. This qualification itself is not included in the PR.
+This is an implementation candidate only. No `~/.codex` hook/config file is changed, no hook trust is bypassed, no plugin is installed, and no app database or binary is accessed. ChatGPT Work does not read local Codex hooks. A qualified owner must review/trust the exact command in the Codex hook UI and perform an isolated no-paid-call lifecycle qualification before any wider activation. Unknown scope, invalid/missing profile, malformed event, or unrecognized CWD is a silent no-op; the user-level hook must not add GradeCrew context outside the explicit scope. Cache updates use a unique private temp file and atomic replacement to tolerate concurrent prompt hooks. This qualification itself is not included in the PR.

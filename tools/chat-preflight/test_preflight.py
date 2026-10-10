@@ -5,16 +5,76 @@ from __future__ import annotations
 
 import sys
 import unittest
+import contextlib
+import io
+import tempfile as _tempfile
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from preflight import *  # noqa: F401,F403 - test the real candidate functions
 
 
 class PreflightRegressionTests(unittest.TestCase):
-    def test_offline_regression_matrix(self) -> None:
-        import tempfile as _tempfile
+    def test_unknown_scope_and_invalid_profile_are_silent_noops(self) -> None:
+        with _tempfile.TemporaryDirectory() as temp:
+            profile = Path(temp) / "profile.json"
+            profile.write_text(json.dumps({"schema": 1, "approved_project_roots": [], "qualification_mode": "block"}), encoding="utf-8")
+            for profile_arg, cwd in ((str(profile), "/unrelated/worktree"), (str(Path(temp) / "missing.json"), "/unrelated/worktree")):
+                captured = io.StringIO()
+                with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps({"cwd": cwd, "prompt": "hello"}))), patch("preflight.fetch_policy_snapshot", side_effect=AssertionError("unknown scope must not fetch")), patch("preflight.save_cache", side_effect=AssertionError("unknown scope must not touch cache")):
+                    self.assertEqual(hook_main(["--profile", profile_arg]), 0)
+                self.assertEqual(captured.getvalue(), "")
 
+    def test_qualification_mode_runs_candidate_and_blocks_only_exact_mirror_without_network(self) -> None:
+        with _tempfile.TemporaryDirectory() as temp:
+            mirror = Path(temp) / "gradecrew-mirror"
+            mirror.mkdir()
+            profile = Path(temp) / "profile.json"
+            profile.write_text(json.dumps({"schema": 1, "approved_project_roots": [str(mirror)], "qualification_mode": "block"}), encoding="utf-8")
+            captured = io.StringIO()
+            event = {"cwd": str(mirror), "prompt": "offline qualification sentinel", "model": "unknown-test-model"}
+            with contextlib.redirect_stdout(captured), patch.object(sys, "stdin", io.StringIO(json.dumps(event))), patch("preflight.fetch_policy_snapshot", side_effect=AssertionError("qualification must not access network")):
+                self.assertEqual(hook_main(["--profile", str(profile)]), 0)
+            self.assertEqual(json.loads(captured.getvalue()), {"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"})
+
+    def test_concurrent_cache_writers_use_distinct_atomic_temporary_files(self) -> None:
+        with _tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / "private" / "policy.json"
+            barrier = threading.Barrier(2)
+            observed: list[str] = []
+            original = Path.write_text
+
+            def synchronized_write(path: Path, *args: Any, **kwargs: Any) -> int:
+                if path.parent == cache.parent:
+                    observed.append(path.name)
+                    barrier.wait(timeout=3)
+                return original(path, *args, **kwargs)
+
+            with patch.object(Path, "write_text", synchronized_write):
+                with ThreadPoolExecutor(max_workers=2) as pool:
+                    results = list(pool.map(lambda n: save_cache(cache, {"schema": 1, "repository": REPOSITORY, "commit": str(n) * 40}), (1, 2)))
+            self.assertEqual(results, [None, None])
+            self.assertEqual(len(observed), 2)
+            self.assertEqual(len(set(observed)), 2)
+            self.assertIn(json.loads(cache.read_text(encoding="utf-8"))["commit"], {"1" * 40, "2" * 40})
+            self.assertEqual(sorted(path.name for path in cache.parent.iterdir()), ["policy.json"])
+            self.assertEqual(cache.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(cache.parent.stat().st_mode & 0o777, 0o700)
+
+    def test_cache_refuses_symlink_directory(self) -> None:
+        with _tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "target"
+            target.mkdir()
+            link = root / "cache-link"
+            link.symlink_to(target, target_is_directory=True)
+            with self.assertRaises(PreflightError):
+                save_cache(link / "policy.json", {"schema": 1, "repository": REPOSITORY})
+
+    def test_offline_regression_matrix(self) -> None:
         def identity_git(args: list[str], cwd: str) -> str | None:
             if args == ["rev-parse", "--show-toplevel"]:
                 return "/work/Hausaufgabe"
@@ -165,6 +225,8 @@ class PreflightRegressionTests(unittest.TestCase):
             pass
         else:
             raise AssertionError("missing selected model must stop before turn/start")
+        with self.assertRaises(PreflightError):
+            choose_model("routine", [{"model": "gpt-6-luna", "supportedReasoningEfforts": [{"reasoningEffort": "low"}]}])
 
         print("offline preflight probe: PASS (fresh/current/delta/unknown-scope/unknown-model/scoped-offline-block/model-list-before-explicit-turn-start; no inference)")
 

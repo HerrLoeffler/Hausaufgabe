@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -197,16 +198,35 @@ def load_runtime_profile(path: Path) -> dict[str, Any]:
     ttl = data.get("pointer_cache_ttl_seconds", 0)
     if isinstance(ttl, bool) or not isinstance(ttl, int) or ttl < 0 or ttl > 3600:
         raise PreflightError("pointer_cache_ttl_seconds must be an explicit integer from 0 to 3600")
-    return {"approved_project_roots": tuple(roots), "pointer_cache_ttl_seconds": ttl}
+    qualification_mode = data.get("qualification_mode")
+    if qualification_mode not in (None, "block"):
+        raise PreflightError("qualification_mode must be omitted or set to 'block'")
+    return {
+        "approved_project_roots": tuple(roots),
+        "pointer_cache_ttl_seconds": ttl,
+        "qualification_mode": qualification_mode,
+    }
 
 
 def save_cache(path: Path, snapshot: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if path.parent.is_symlink() or not path.parent.is_dir():
+        raise PreflightError("Cache directory must be a real private directory")
     os.chmod(path.parent, 0o700)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(snapshot, ensure_ascii=False, sort_keys=True), encoding="utf-8")
-    os.chmod(tmp, 0o600)
-    tmp.replace(path)
+    if stat.S_IMODE(path.parent.stat().st_mode) != 0o700:
+        raise PreflightError("Cache directory permissions could not be restricted")
+    fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    os.close(fd)
+    tmp = Path(tmp_name)
+    try:
+        tmp.write_text(json.dumps(snapshot, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+        os.chmod(tmp, 0o600)
+        os.replace(tmp, path)
+    finally:
+        try:
+            tmp.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def policy_delta(old: dict[str, Any] | None, new: dict[str, Any]) -> str:
@@ -291,14 +311,28 @@ def hook_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", type=Path)
     args = parser.parse_args(argv)
     try:
-        profile = load_runtime_profile(args.profile) if args.profile else {"approved_project_roots": (), "pointer_cache_ttl_seconds": 0}
-    except (OSError, ValueError, PreflightError) as exc:
-        print(json.dumps({"systemMessage": f"GradeCrew preflight profile unavailable; project scope is unknown ({type(exc).__name__})."}))
-        return 0
-    try:
         event = json.load(sys.stdin)
     except (ValueError, OSError):
-        print(json.dumps({"systemMessage": "GradeCrew prompt preflight could not parse the hook event; current project/model are unknown."}))
+        return 0
+    if not isinstance(event, dict):
+        return 0
+    try:
+        profile = load_runtime_profile(args.profile) if args.profile else {
+            "approved_project_roots": (),
+            "pointer_cache_ttl_seconds": 0,
+            "qualification_mode": None,
+        }
+    except (OSError, ValueError, PreflightError):
+        # A user-level hook must fail silently when it cannot prove project scope.
+        return 0
+    cwd = event.get("cwd")
+    if not isinstance(cwd, str) or not cwd:
+        return 0
+    project, root = identify_project(cwd, approved_project_roots=profile["approved_project_roots"])
+    if project != REPOSITORY or root is None or not is_within(cwd, root):
+        return 0
+    if profile["qualification_mode"] == "block":
+        print(json.dumps({"decision": "block", "reason": "GC-CHAT-PREFLIGHT-01 local qualification sentinel"}, ensure_ascii=False))
         return 0
     cache_root = Path(os.environ.get("TMPDIR", tempfile.gettempdir())) / "gradecrew-chat-preflight"
     cache_path = cache_root / "policy.json"
@@ -306,6 +340,8 @@ def hook_main(argv: list[str] | None = None) -> int:
         event, cache_path, approved_project_roots=profile["approved_project_roots"],
         pointer_cache_ttl_seconds=profile["pointer_cache_ttl_seconds"],
     )
+    if result.get("project") != REPOSITORY:
+        return 0
     if result.get("decision") == "block":
         print(json.dumps({"decision": "block", "reason": result["reason"]}, ensure_ascii=False))
         return 0
