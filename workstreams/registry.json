@@ -563,6 +563,16 @@
       "relatedBranches": [
         "fix/coco-chat-ui-background-memory-20261010"
       ]
+    },
+    {
+      "id": "pocock-workflow-implementation-20261010",
+      "title": "GC-POCOCK-IMPLEMENT-01: prüfbare Arbeitsablaufverbesserungen",
+      "primaryBranch": "feat/gc-pocock-workflow-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/pocock-workflow-implementation-20261010.md",
+      "relatedBranches": [],
+      "checkProfile": "workflow-brief-v1"
     }
   ]
 }

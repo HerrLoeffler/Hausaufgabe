@@ -1,0 +1,11 @@
+# GC-MODEL-GOVERNOR-01 — technischer Folgeauftrag
+
+10.10.2026; Nutzerauftrag über GradeCrewZentrale01a10df6-736b-7a62-bd38-2724cf254c2e. Registrierung durchSharedowner01a1089e-bbae-74c2-9a6a-6ce71fb3dba7, UmsetzungdurchfrischenbegrenztenModellgovernor-Fachagenten/Rootkoordination; genaueAgent-/ThreadIDs nochabzugleichen. Kein zweiterController/Statusstore.
+
+Ziel: tatsächlicheDispatch-/turnStartentscheidung mitkleinemQuell-/Taskbrief technischbeeinflussen undbelegen. NichtalsbloßeMD-/Hookwiederholung erledigtmarkieren. RoutineLunaMedium/Low nachpassendemRisiko/Beleg, SolMedium für echteCrossareaReviews, Highnurkonkretbegründet. Requested-vsObservedRuntimeModel/Effort undTokenfelder soweit verfügbar; fehlendeWerte unbekannt. NativeManual/UI-Grenzen ausdrücklicherfassen, laufendeFremdturns nichtzwangsweisewechseln.
+
+Baseline: bestehendeadaptiveAGENTS-Regel; tatsächlicheGovernorimplementierung/Wirksamkeitnochungeprüft. BestehendeTask-/Versuchs-/Reservierungs-/Kostenhistorie erhalten. KeinBudget-/Limitbypass, pauschalerPayment/APIwechsel, neuerPaidCall/Scan/npmExport oderProductiondeploy. SharedAGENTS/STATE/modelDateien vorÄnderung mitbestehendemIntegrationowner abstimmen; keineparallelenWriter.
+
+ErhaltenerAuftragGC-POCOCK-IMPLEMENT-01: PR197Code5fdfc29012acf5163c4b400a617d7c245fdd7812, zuletztgeprüfterMetadataheadc951bd676044a168ff4ce964db5f99a5d6c16d59. CI38085005846/38085005842 completed/success; unabhängigeAbnahme weiterhinoffen. [VorhandeneÜbergabe](pocock-workflow-implementation-20261010.md). Kein neuer großerSol-Loop oderReviewteam ausdiesemKontext.
+
+Genau nächsterSchritt: RootkoordiniertfrischenGovernor-/LunaRecovery mitkurzenPaketrefs/Ownergrenzen; Fachagentprüftgezielt vorhandeneDispatchschnittstelle undlegt technischreviewbarebegrenzteÄnderung plus tatsächliche requested/observedNachweise vor. Registrierung istkeineImplementierung, Aktivierung oderErfolgsmessung.

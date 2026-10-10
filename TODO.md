@@ -468,3 +468,14 @@ GC-POCOCK-RESEARCH-01 · aktueller textueller Abschluss:40/40Inventar-IDs,16Lang
 
 
 GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://github.com/HerrLoeffler/Hausaufgabe/pull/194) finalab738f822b3b15c1d2ef18f75c762c1ef0d228b5 nach unabhängigem Doku-/Metadatenreview ohne Findings auf main@3142a6e42f2daca8d35b1b84b086a506a4b99a9b integriert. Kandidat-Handoff38082215129/DevelopmentStatus38082215063 und ready-DevelopmentStatus38082255964 success. EigenerBericht/Review, Zusammenfassung, kleineMetadaten, Registry und vorhandene Launch-/Privacyübergaben integriert; keineProdukt-/Deploystufe daraus. Researchregistrierung integrated; Folgeumsetzung/Pilot bleibt eigener Auftrag.
+
+
+## GC-POCOCK-IMPLEMENT-01 — autorisierte selektive Umsetzung
+
+OriginalfamilieGC-POCOCK-RESEARCH-01. Alle32Videoempfehlungen6+ undunmittelbareSkills/Reel6+-Punkte einmalDelta/Owner/Trigger/Abnahme in [eigenerÜbergabe](workstreams/pocock-workflow-implementation-20261010.md) zugeordnet. Shared/Tooling01a1089e, Plugins01a10e37, ROOTWeb/nativeQA getrennt; GameET/Pizza unberührt. Standbranch_only/Planregistriert. Next tatsächlicherBrief/Checker/CI/Review/PR/Retropilot; keinepaid/Production-/gestoppteSecurity/npmArbeit.
+
+
+GC-POCOCK-IMPLEMENT-01 · umgesetzt undci_green amPR197@5fdfc290: read-onlyBrief/Graphprüfer,9CLIbehaviorTests RED→GREEN, existierendeHandoffCI mitrealemRegisteredBrief-ConsumerStep success38084724978 undLiveAudit38084724916. 32Video6+ mitvorhandenen7Abnahmepaketen gleich; Vorlagen/Review-/PR-/Retropilot angewandt. NochNICHTintegrated: bestehendeunabhängigeAbnahmeRequirements/Standards/Nachfahrtpending imunterbrochenenRootchat; genaueRefs/Recipe in eigenerÜbergabe. ExterneWeb/nativeQA/Plugin- undNutzerSavebelegegetrennt. KeinDeploy/paid/security/npmRetry.
+
+
+GC-MODEL-GOVERNOR-01 · priorisiertertechnischerFolgeauftrag: echteDispatch-/turnStartModellwahl, requested/observed/Tokenfelder undNativeManual/UI-Grenzen; frischerGovernor/LunaRecovery vonRootkoordiniert, IDs/Sharedpfadeabgleichen. [Übergabe](workstreams/model-governor-20261010.md). NochkeineImplementierung/Wirksamkeit. PR197c951CIgrün, unabhängigeAbnahme bleibt; keinweiterergroßerSolloop, keinBudgetreset/Limitbypass/APIwechsel/Production.

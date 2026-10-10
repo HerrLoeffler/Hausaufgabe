@@ -3,9 +3,9 @@ on:
   push:
     # Feature branches are checked once through their PR merge result.
     branches: [main, feature/gradecrew-app-integration, lab/games-structure, integration/ai-gateway-staging]
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/workstream_checks.py', 'tools/test_workstream_checks.py', 'docs/workflow/**', '.github/PULL_REQUEST_TEMPLATE.md', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'shared/telemetry/**', 'docs/telemetry/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   pull_request:
-    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
+    paths: ['START_HERE.md', 'AGENTS.md', 'GRADECREW_STATE.json', 'workstreams/**', 'tools/checkpoint.py', 'tools/workstream_checks.py', 'tools/test_workstream_checks.py', 'docs/workflow/**', '.github/PULL_REQUEST_TEMPLATE.md', 'tools/release_status.py', '.github/workflows/*.yml', 'tools/automation/**', 'docs/AUTOMATION_SETUP.md', 'agent-queue/**', 'docs/CHAT_CONTRACT.md', 'TODO.md']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,6 +18,10 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v5
+      - name: Validate opted-in execution briefs and decision frontier
+        run: |
+          python3 -m unittest discover -s tools -p 'test_workstream_checks.py' -v
+          python3 tools/workstream_checks.py --registry workstreams/registry.json --require-task GC-POCOCK-IMPLEMENT-01
       - name: Validate project coordination
         run: |
           python3 - <<'PY'
