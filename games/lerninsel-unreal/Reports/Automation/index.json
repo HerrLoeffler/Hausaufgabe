@@ -2,8 +2,8 @@
 	"devices": [
 		{
 			"deviceName": "Mac.fritz.box",
-			"instance": "B3B66B270F4FB7B2A4418381F813C7E8",
-			"instanceName": "Mac.fritz.box-36944",
+			"instance": "75042DF2A14383C2BF376CA4C5CE0C46",
+			"instanceName": "Mac.fritz.box-23998",
 			"platform": "MacEditor",
 			"oSVersion": "macOS 27.0.1 26A434",
 			"model": "Default",
@@ -15,41 +15,26 @@
 			"appInstanceLog": ""
 		}
 	],
-	"reportCreatedOn": "2026.10.08-16.56.16",
-	"succeeded": 1,
-	"succeededWithWarnings": 3,
+	"reportCreatedOn": "2026.10.10-00.08.06",
+	"succeeded": 0,
+	"succeededWithWarnings": 1,
 	"failed": 0,
 	"notRun": 0,
 	"inProcess": 0,
-	"totalDuration": 36.317020416259766,
+	"totalDuration": 14.352228164672852,
 	"comparisonExported": false,
 	"comparisonExportDirectory": "",
 	"tests": [
-		{
-			"testDisplayName": "Controls",
-			"fullTestPath": "GradeCrew.Lerninsel.Controls",
-			"tags": [],
-			"state": "Success",
-			"deviceInstance": [
-				"B3B66B270F4FB7B2A4418381F813C7E8"
-			],
-			"duration": 2.2613458633422852,
-			"dateTime": "2026.10.08-16.55.39",
-			"entries": [],
-			"warnings": 0,
-			"errors": 0,
-			"artifacts": []
-		},
 		{
 			"testDisplayName": "FourPuzzles",
 			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
 			"tags": [],
 			"state": "Success",
 			"deviceInstance": [
-				"B3B66B270F4FB7B2A4418381F813C7E8"
+				"75042DF2A14383C2BF376CA4C5CE0C46"
 			],
-			"duration": 14.025272369384766,
-			"dateTime": "2026.10.08-16.55.42",
+			"duration": 14.352228164672852,
+			"dateTime": "2026.10.10-00.07.52",
 			"entries": [
 				{
 					"event":
@@ -61,7 +46,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.55.42"
+					"timestamp": "2026.10.10-00.08.01"
 				},
 				{
 					"event":
@@ -73,111 +58,7 @@
 					},
 					"filename": "",
 					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.55.42"
-				},
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.55.52"
-				},
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.55.52"
-				}
-			],
-			"warnings": 4,
-			"errors": 0,
-			"artifacts": []
-		},
-		{
-			"testDisplayName": "Fox",
-			"fullTestPath": "GradeCrew.Lerninsel.Fox",
-			"tags": [],
-			"state": "Success",
-			"deviceInstance": [
-				"B3B66B270F4FB7B2A4418381F813C7E8"
-			],
-			"duration": 7.118929386138916,
-			"dateTime": "2026.10.08-16.55.56",
-			"entries": [
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.56.02"
-				},
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.56.02"
-				}
-			],
-			"warnings": 2,
-			"errors": 0,
-			"artifacts": []
-		},
-		{
-			"testDisplayName": "Play",
-			"fullTestPath": "GradeCrew.Lerninsel.Play",
-			"tags": [],
-			"state": "Success",
-			"deviceInstance": [
-				"B3B66B270F4FB7B2A4418381F813C7E8"
-			],
-			"duration": 12.91147518157959,
-			"dateTime": "2026.10.08-16.56.03",
-			"entries": [
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.56.12"
-				},
-				{
-					"event":
-					{
-						"type": "Warning",
-						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
-						"context": "log",
-						"artifact": "00000000000000000000000000000000"
-					},
-					"filename": "",
-					"lineNumber": -1,
-					"timestamp": "2026.10.08-16.56.12"
+					"timestamp": "2026.10.10-00.08.01"
 				}
 			],
 			"warnings": 2,

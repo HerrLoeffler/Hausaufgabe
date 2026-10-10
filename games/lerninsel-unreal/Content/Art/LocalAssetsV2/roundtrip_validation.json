@@ -1,0 +1,40 @@
+{
+  "source_opened": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Lerninsel_LocalAssets_v2.blend",
+  "checks": [
+    {
+      "cup_capacity_litres": 0.9999999999999998
+    },
+    {
+      "nonempty_saved_scene_credential_fields": 0
+    },
+    {
+      "fbx": "Characters/SM_Fox_LOD0.fbx",
+      "mesh_objects": 1,
+      "triangles": 5992,
+      "height_m": 0.9283907983917743
+    },
+    {
+      "fbx": "Props/SM_Prop_MeasuringCup_1L.fbx",
+      "mesh_objects": 25,
+      "triangles": 5116,
+      "height_m": 0.1809999942779541
+    },
+    {
+      "fbx": "Props/SM_Gate_Arch.fbx",
+      "mesh_objects": 19,
+      "triangles": 2052,
+      "height_m": 2.6628192514181137
+    }
+  ],
+  "warnings": [
+    {
+      "asset": "Characters/SM_Fox_LOD0.fbx",
+      "source_triangles": 6000,
+      "roundtrip_triangles": 5992,
+      "exact_topology_preserved": false,
+      "status": "difference retained as open export limitation, not claimed lossless"
+    }
+  ],
+  "unreal_import_tested": false,
+  "passed": true
+}

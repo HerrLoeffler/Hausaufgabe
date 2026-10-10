@@ -8,6 +8,12 @@ Auf diesem Mac `Lerninsel starten.command` doppelklicken. Der Starter öffnet di
 
 WASD geht, die Maus schaut, E untersucht/bedient das angezeigte nahe Objekt. Ein Weltklick untersucht das erreichbare Objekt im Blick. Esc schließt zuerst den Fokus und öffnet anschließend die Pause. In der Pause lässt sich FOV75/85 wählen. Native Widgets übernehmen Pflichtantworten, Fokus, Pointerdruck und Loslassen. Links bewegt ein Touchfinger, rechts schaut er; unten rechts liegt die Aktion. Touch ist vorbereitet, aber noch nicht auf einem physischen i Pad geprüft.
 
+## Acht-Gebiete-Weltvorschau
+
+`Lerninsel Weltvorschau starten.command` öffnet die neue UE-Karte `/Game/Maps/Lerninsel_Weltvorschau` im Spielmodus. Die FBX-Insel ist als statisches, kollisionsfreies Weltmesh importiert; die bisherige interaktive Lerninsel mit ihren vier Haupt-Rätseln wird zusätzlich aufgebaut. Die Vorschau nutzt einen eigenen Fortschrittsspeicher und startet bei jedem Öffnen am Anfang. Steuerung: WASD, Maus, E, Esc wie oben.
+
+Die acht Gebiete sind aktuell als zusammenhängende Landschaftskulisse sichtbar. Interaktive Lernaufgaben sind in dieser Vorschau weiterhin die bereits getesteten ersten vier Haupt-Rätsel; für die Gebiete fünf bis acht, ihre Tore und Übergänge fehlen noch eigene Rätselmechaniken. Die neue Kulisse ist ein Blender-Blockout, keine finale hochauflösende Umgebung. Die Wege, Höhen, Kollisionsführung und Darstellung auf iPad sind noch nicht abgenommen.
+
 ## Die zusammenhängende Spielfolge
 
 1. **Verbprobe:** Zwei Verben aus vier Kontextwörtern auswählen, höchstens zwei gleichzeitig. Am Schlussstein prüfen.

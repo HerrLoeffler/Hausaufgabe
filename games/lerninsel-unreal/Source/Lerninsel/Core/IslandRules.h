@@ -144,7 +144,7 @@ inline Result ApplyPuzzle(State& s,Action a,int value){
   s.coastReady=true;return Result::Applied;}
  case Action::CoastConfirm:
   if(s.coast)return Result::Already;
-  if(!s.coastReady)return Result::Blocked;
+  if(!s.fractions)return Result::Blocked;
   if(value!=1)return Result::WrongView;
   s.coast=true;return Result::Applied;
  case Action::FinaleCheck:
@@ -182,15 +182,15 @@ inline bool DeserializeLegacy(const std::string& text,State& out){
  out=s;return true;
 }
 inline std::string Serialize(const State& s){
- std::string base=SerializeLegacy(s);base.replace(0,3,"LI3");std::ostringstream o;o<<base<<' '<<s.sentence<<' '<<s.fractions<<' '<<s.coast<<' '<<s.finale<<' '<<s.coastReady<<' '<<s.sentenceActive<<' '<<s.routeActive<<' '<<s.sentenceCount<<' '<<s.routeCount<<' '<<s.foundMask<<' '<<s.coastMask<<' '<<s.bonusMask;
+ std::string base=SerializeLegacy(s);base.replace(0,3,"LI4");std::ostringstream o;o<<base<<' '<<s.sentence<<' '<<s.fractions<<' '<<s.coast<<' '<<s.finale<<' '<<false<<' '<<s.sentenceActive<<' '<<s.routeActive<<' '<<s.sentenceCount<<' '<<s.routeCount<<' '<<0<<' '<<0<<' '<<s.bonusMask;
  for(int id:s.sentenceParts)o<<' '<<id;for(int id:s.route)o<<' '<<id;o<<' '<<s.wholePoured;return o.str();
 }
 inline bool Deserialize(const std::string& text,State& out){
- std::istringstream in(text);std::string tag;if(!(in>>tag))return false;if(tag=="LI1")return DeserializeLegacy(text,out);if(tag!="LI2"&&tag!="LI3")return false;
+ std::istringstream in(text);std::string tag;if(!(in>>tag))return false;if(tag=="LI1")return DeserializeLegacy(text,out);if(tag!="LI2"&&tag!="LI3"&&tag!="LI4")return false;
  std::ostringstream old;old<<"LI1";for(int i=0;i<13;++i){std::string token;if(!(in>>token))return false;old<<' '<<token;}
  State s;if(!DeserializeLegacy(old.str(),s))return false;int flags[7];for(int& f:flags)if(!(in>>f)||f<0||f>1)return false;
  s.sentence=flags[0];s.fractions=flags[1];s.coast=flags[2];s.finale=flags[3];s.coastReady=flags[4];s.sentenceActive=flags[5];s.routeActive=flags[6];
- if(!(in>>s.sentenceCount>>s.routeCount>>s.foundMask>>s.coastMask>>s.bonusMask))return false;for(int& id:s.sentenceParts)if(!(in>>id))return false;for(int& id:s.route)if(!(in>>id))return false;if(tag=="LI3"){int poured;if(!(in>>poured)||poured<0||poured>1)return false;s.wholePoured=poured;}std::string extra;if(in>>extra)return false;
+ if(!(in>>s.sentenceCount>>s.routeCount>>s.foundMask>>s.coastMask>>s.bonusMask))return false;for(int& id:s.sentenceParts)if(!(in>>id))return false;for(int& id:s.route)if(!(in>>id))return false;if(tag=="LI3"||tag=="LI4"){int poured;if(!(in>>poured)||poured<0||poured>1)return false;s.wholePoured=poured;}std::string extra;if(in>>extra)return false;
  if(s.sentenceCount<0||s.sentenceCount>4||s.routeCount<0||s.routeCount>5||s.foundMask<0||s.foundMask>15||s.coastMask<0||s.coastMask>15||s.bonusMask<0||s.bonusMask>3)return false;
  int used=0;for(int i=0;i<4;++i){int id=s.sentenceParts[i];if(i>=s.sentenceCount){if(id!=-1)return false;}else{if(id<0||id>3||(used&(1<<id)))return false;used|=1<<id;}}
  if((s.sentenceActive||s.sentenceCount||s.sentence)&&!s.verbs)return false;
@@ -202,9 +202,15 @@ inline bool Deserialize(const std::string& text,State& out){
  if(s.routeCount&&!s.fractions&&!s.routeActive)return false;
  if(s.wholePoured&&(!s.fractions||s.routeCount!=0||s.routeActive))return false;
  if(s.fractions&&(s.routeActive||(!s.wholePoured&&RouteTenths(s.route,s.routeCount)!=10)))return false;
- if(s.foundMask&&!s.fractions)return false;if(s.coastMask&~s.foundMask)return false;if(CountBits(s.coastMask)>3)return false;
- if(s.coastReady&&(CountBits(s.coastMask)!=3||CoastTenths(s.coastMask)!=10))return false;
- if(s.coast&&!s.coastReady)return false;if(s.finale&&(!s.verbs||!s.sentence||!s.fractions||!s.coast))return false;
+ if(tag=="LI4"){
+  if(s.coastReady||s.foundMask||s.coastMask)return false;
+  if(s.coast&&!s.fractions)return false;
+ }else{
+  if(s.foundMask&&!s.fractions)return false;if(s.coastMask&~s.foundMask)return false;if(CountBits(s.coastMask)>3)return false;
+  if(s.coastReady&&(CountBits(s.coastMask)!=3||CoastTenths(s.coastMask)!=10))return false;
+  if(s.coast&&!s.coastReady)return false;
+ }
+ if(s.finale&&(!s.verbs||!s.sentence||!s.fractions||!s.coast))return false;
  if((s.bonusMask&1)&&!s.verbs)return false;if((s.bonusMask&2)&&!s.fractions)return false;
  out=s;return true;
 }
@@ -216,13 +222,13 @@ struct PlateContact{int tile=-1;float dwell=0;bool sent=false;
   if(!sent&&dwell>=.30f){sent=true;return tile;}return -1;
  }
 };
-enum class TouchRole{None,Move,Look,Action};
+enum class TouchRole{None,Move,Look,Action,Hint};
 struct TouchOwnership{std::array<TouchRole,10> fingers{};
  TouchRole Role(int id)const{return id>=0&&id<10?fingers[id]:TouchRole::None;}
  TouchRole Begin(int id,float x,float y){
   if(id<0||id>=10||!std::isfinite(x)||!std::isfinite(y)||x<0||x>1||y<0||y>1)return TouchRole::None;
   if(Role(id)!=TouchRole::None)return Role(id);
-  TouchRole r=x<.35f?TouchRole::Move:(x>.8f&&y>.72f?TouchRole::Action:TouchRole::Look);
+  TouchRole r=x<.35f?TouchRole::Move:(x>.8f&&y>.86f?TouchRole::Action:x>.8f&&y>.72f?TouchRole::Hint:TouchRole::Look);
   for(TouchRole existing:fingers)if(existing==r&&r!=TouchRole::Action)return TouchRole::None;
   fingers[id]=r;return r;
  }

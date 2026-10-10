@@ -80,5 +80,7 @@ int main(){try{
  t.Cancel(); CHECK(t.Role(0)==TouchRole::None && t.Role(1)==TouchRole::None);
  CHECK(t.Begin(0,.9,.9)==TouchRole::Action);
  t.End(0); CHECK(t.Role(0)==TouchRole::None);
+ CHECK(t.Begin(0,.9,.8)==TouchRole::Hint);
+ t.End(0); CHECK(t.Role(0)==TouchRole::None);
  std::cout<<"PASS "<<checks<<" rule checks\n";return 0;
  }catch(const std::exception& e){std::cerr<<"FAIL after "<<checks<<" checks: "<<e.what()<<"\n";return 1;}}

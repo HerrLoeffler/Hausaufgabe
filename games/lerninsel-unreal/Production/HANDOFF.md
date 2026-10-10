@@ -6,6 +6,14 @@ Arbeitsbranch: feature/lerninsel-ego-v1. Checkout: gradecrew-lerninsel-unreal. E
 
 ## Tatsächliche Belege
 
+### Ergänzung vom 09.10.2026 – Aufgabenführung und Fuchs-Vertikalprobe
+
+- 231 portable Prüfungen über Regeln, Wasser, Steuerung, Fuchsablauf und Aufgaben-Katalog bestanden. UE5.8 Editor erneut erfolgreich gebaut. `GradeCrew.Lerninsel.FourPuzzles` lief erfolgreich mit null Fehlern; zwei Engine-Warnungen stammen vom nicht auf ARM ausführbaren `idevice_id`-Hilfsprogramm.
+- Alte Küsten-Fundsuche und Fundbuchbedienung sind aus der spielbaren Geometrie und Erklärung entfernt. Stattdessen bestätigt ein echter Blickwinkeltest den Ring. Der HUD-Text nennt den runden Bodenring, langsames Umschauen und E. Falscher Winkel bleibt ohne Fortschritt.
+- H zeigt die gestuften Aufgabenhinweise; Touch erhält eine separate Hinweisfläche neben der Aktion. Aufgaben, Voraussetzungen, Hinweise und Anschlussaktionen stehen prüfbar in `Content/Tasks/tasks.json`. LI1/LI2/LI3-Spielstände werden gezielt ins LI4-Format überführt; alte ungelöste Fundbuchauswahl wird verworfen und ein gelöster Ring bewahrt.
+- In `Content/Art/FoxVerticalSlice/` liegen eine neue Blender-Szene, zwei Vergleichsrenders und zwei FBX-Dateien für Fuchsbauteile und Umgebung. Es sind Arbeits- und Importquellen, noch nicht als Unreal-Meshes importiert. Die im Spiel erzeugten Fuchs-Ellipsoide verwenden nun glatte analytische Normalen und deutlich höhere Auflösung; Bewegung und Auslöser bleiben erhalten.
+- Qualitätsurteil: erst den Fuchshof vollständig ausarbeiten und im echten Ego-Spiel prüfen, dann die Bausteine auf weitere Gebiete übertragen. Die aktuelle Blender-Studie ist noch sichtbar zu kugelig und einfacher als die Referenz; sie belegt keinen Grund, schon alle Gebiete umzubauen. Der Reviewstand dazu steht in `Production/FOX-VERTICAL-SLICE.md`.
+
 - UE5.8.3 Development Editor auf Mac M5 Pro mit 48 GB erfolgreich kompiliert.
 - 59 portable Prüfungen des echten Regelkerns bestanden. Der Engine-Test GradeCrew.Lerninsel.Play bestand nach den Reviewkorrekturen mit 0 Fehlern und 0 Warnungen. Testberichte und tatsächliche Spielaufnahmen liegen unter Reports.
 - Tastaturbelegung bis zur Bewegungsfunktion geprüft; echter Fußkontakt mit Mindestdauer und Wiederholschutz; normale Eimeraufnahme nach 2/10 und 4/10, Mengenänderung um 100 ml und erfolgreiche Korrektur zu 3/10; echte Capsule-Sweeps vor, während und nach der Toröffnung; Pause, Fokus, Touch-Besitz und lokale Speicherung geprüft.
@@ -19,9 +27,9 @@ Dies ist ein erster Art-Durchgang, keine Abnahme der endgültigen Grafik oder de
 
 Lerninsel starten.command öffnet dieses Projekt mit der vorhandenen UE5.8-Installation im normalen Spielmodus. Der eigene gestartete Prozess wurde beobachtet und anschließend beendet. Andere aktive Unreal-Projekte blieben unberührt. Auf einem neuen Checkout müssen zunächst die eigenen Editor-Binaries mit Tools/build_editor.sh gebaut werden. Der Starter prüft das vorhandene Mac-Modul. README erklärt die Steuerung und die Spielschritte.
 
-Die gespeicherte Editor-Karte enthält Licht und Startpunkt; die Weltgeometrie entsteht beim Spielen aus IslandArt.cpp. Weitere Gebiete, Satzweg, Felsfenster, schwierigere Zusatzrätsel, endgültige Landschaft und Audio sind noch auszuarbeiten. Öffentliches Browserstreaming sowie mobile Renderqualität, Signierung und iPad-Gerätetest bleiben separate Aufgaben.
+Die gespeicherte Editor-Karte enthält Licht und Startpunkt; die Weltgeometrie entsteht beim Spielen aus IslandArt.cpp. Fuchshof-Meshes/Umgebung liegen als separate Blender-/FBX-Vertikalprobe vor, sind noch nicht in Unreal importiert. Weitere Gebiete, endgültige Landschaft und Audio sind noch auszuarbeiten. Öffentliches Browserstreaming sowie mobile Renderqualität, Signierung und iPad-Gerätetest bleiben separate Aufgaben.
 
-Nächster konkreter Schritt: Nutzerdurchlauf dieses Abschnitts; danach Landschaft und Architektur ausarbeiten und die weiteren Mechaniken gemäß dem ausführlichen Spielbuch bauen. Production benötigt weiterhin eine ausdrückliche Freigabe.
+Nächster konkreter Schritt: Nutzerdurchlauf des Ringrätsels und des Fuchshofs. Danach am Fuchshof Maßstab, Lesbarkeit und Materialstil im Spielbild verbessern und die Blender-Meshes bei bestandener Stilprüfung importieren. Erst danach die Umgebungsbausteine auf weitere Gebiete übertragen. Production benötigt weiterhin eine ausdrückliche Freigabe.
 
 ## Versuche, Budget und Wiederaufnahme
 
@@ -97,3 +105,6 @@ Task214:53:17UTCvollgrün:183Checks(64+88+7+24),3UE-Tests0Fehler/6EpicWarnungen.
 16:38:52UTC:195Checks+4UE-Testsvollgrün0Fehler/6EpicWarnungen. Replay9005fürbereitsgelöstenSatzfunktioniertohneFortschrittsreset/sameActor. OffenerTorsweepwarBodenkollisionbei88cm:NormalZ1,StartPenetrating,Actor_0;90cmGegenprobefrei. Fixturejetzt90cmundclosed/openSweepbelegt. Alle sechsFuchsposenundniedrigerWasserstandtatsächlichaufgenommen;NativeFigurdeutlichsimpleralsLayouts. GeprüfterCheckpointwirdgesichert, genau nächsteSchrittfrischerSchlussreviewganzerErweiterungsblock. KeineerneuteGeneration,nichtspublished.
 
 FinalerSchlussfix16:56:16UTC195Checks/4UE-Suites0Fehler8EpicWarnungen. Fokusverlust undRücknahmePfosten im selbenFixpassnativeRED2→GREEN. ReplayfürgespeichertenFortschritt funktioniert, keinezweiteFigur. RawReports und20aktuelleAufnahmen bewahrt. WATER-FOX-REVIEW.md dokumentiertRulings/Grenzen. AutorisationbestehenderBranch/PR175, keineMerge-/Deployfreigabe. NächsterSchritt: finalenCommit/Remote sichern, gemeinsameKoordinationaktualisieren undlokalenStarterfürMartinsTest öffnen.
+
+
+09.10.2026 — GC-GAMES-ESCAPE-VISUAL-01: neues Blender-Fuchsdesign tatsächlich als Unreal-StaticMesh eingebaut; dynamischer Stein/Fell-Farbwechsel und neuer Mundpunkt fürs Seil. Direkter Starter Neuen Fuchs ansehen.command mit eigener Vorschau-Speicherung. Editor-Build und Fox-Automation grün (0 Fehler/2 Engine-Warnungen); tatsächliche Designaufnahme Reports/Fox-DesignPreview.png geprüft. Neues Modell ist statische Sitzfigur mit Gesamtbewegung, keine fertige Bein-/Maulanimation. 44 übrige Blender-Assets noch nicht importiert. Details Production/FOX-DESIGN-IN-GAME.md. Lokal/branch_only; GitHub-Push weiterhin Anmeldeblocker. Nächster Schritt: echtes Rig und Bewegungsprüfung.

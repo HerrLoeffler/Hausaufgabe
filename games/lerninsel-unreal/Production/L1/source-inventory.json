@@ -1,0 +1,244 @@
+{
+  "task_id": "GC-GAMES-LERNINSEL-L1",
+  "parent_id": "GC-GAMES-ESCAPE-VISUAL-01",
+  "game": "Lerninsel",
+  "observed_utc": "2026-10-10T10:44:11.805767+00:00",
+  "source_checkout": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal",
+  "source_head": "2496a85f995549b2a48710b2f40c8b71f6a32b5a",
+  "source_status": " M games/lerninsel-unreal/Content/Art/LocalAssetsV2/Fox_Local_v2.png\n M games/lerninsel-unreal/README.md\n M games/lerninsel-unreal/Reports/Automation/index.json\n M games/lerninsel-unreal/Reports/Four-CoastWindow.png\n M games/lerninsel-unreal/Reports/Four-SentenceUI.png\n M games/lerninsel-unreal/Reports/Four-SentenceWorld.png\n M games/lerninsel-unreal/Reports/Four-Tower.png\n M games/lerninsel-unreal/Reports/New-WaterInstructions.png\n M games/lerninsel-unreal/Reports/New-WaterStation.png\n M games/lerninsel-unreal/Source/Lerninsel/IslandWorld.cpp\n?? games/.DS_Store\n?? games/lerninsel-unreal/Content/Art/LerninselWorldV1/\n?? games/lerninsel-unreal/Content/Maps/Lerninsel_Weltvorschau.umap\n?? games/lerninsel-unreal/Lerninsel Weltvorschau starten.command\n?? games/lerninsel-unreal/Reports/Four-RingApproach.png\n?? games/lerninsel-unreal/Tools/import_world_preview.py\n",
+  "snapshot_checkout": "/Users/martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-l1",
+  "copied_files": [
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LocalAssetsV2/Fox_Local_v2.png",
+      "bytes": 2034104,
+      "sha256": "6fda6cd253398e9c2f1434e807736da0af1afb8410a29fb4dff317aeeefc7b98",
+      "git_blob": "175e41ae483169871f89e53914c7295d81bb0966"
+    },
+    {
+      "path": "games/lerninsel-unreal/README.md",
+      "bytes": 8438,
+      "sha256": "2b41ec51037f914db53926f24fdc69ae36c8f55178444bbe1eab138ed3f8d780",
+      "git_blob": "c36bbbae03003aeef2908d901939677a7cad4223"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Automation/index.json",
+      "bytes": 1823,
+      "sha256": "075c7a98fc4d6d928a43dc3cb60c24add2ca8c80c453e59bebc8ec2ff7585855",
+      "git_blob": "60663c1c299c483a5e5b6517376543d2804ab48b"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Four-CoastWindow.png",
+      "bytes": 1164527,
+      "sha256": "23ac25bacace86949bb7106a896c9585cfed42944570c53a8a4dea6aea723975",
+      "git_blob": "4fbf04681ca93bbb149f5c6c86c89a2d2d608686"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Four-SentenceUI.png",
+      "bytes": 846033,
+      "sha256": "c239f1e8fd878c9a1437177528a4ef05da9be08ce47038818cfb68b205eebe29",
+      "git_blob": "8f1218750767e6dd29c25701b2cd109a96ca4e21"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Four-SentenceWorld.png",
+      "bytes": 1798822,
+      "sha256": "d132ab549af4a90cad38a8f3e7700f6a0c734ab421e7c2757082cf201d63057e",
+      "git_blob": "8ad5e679249e1e205bd5596df0f4ac5f4d71e764"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Four-Tower.png",
+      "bytes": 1096130,
+      "sha256": "a49843c705ab369f12947b1ed064e2a9aa827f6a240a92c2fa14e4c2617c7be7",
+      "git_blob": "48e142c76693da61de7b9322179c4ef7e95f9a5a"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/New-WaterInstructions.png",
+      "bytes": 831729,
+      "sha256": "f4e76afdf623bf0f7cb362f3be0a175f342e67bc510dde0e2fc586075e966630",
+      "git_blob": "aa93a4325e95ddb7822c03a9d016509c58bcf35c"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/New-WaterStation.png",
+      "bytes": 1732389,
+      "sha256": "8509c1c14af19124d64548801522343cc5b6afd36ccbbca9fb99d61457cbf6b9",
+      "git_blob": "dff1c2314f29983d8b02c95bb2af4af483fa86ca"
+    },
+    {
+      "path": "games/lerninsel-unreal/Source/Lerninsel/IslandWorld.cpp",
+      "bytes": 25353,
+      "sha256": "86f1e8d32f09e0fd80845e5067b808045b6f18da5b56ba0a1ab1442751622618",
+      "git_blob": "342a6278424f3d923ce99e84dca287fa320c9625"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/Export/Lerninsel_World_Prototype_V1.fbx",
+      "bytes": 12920828,
+      "sha256": "c4108fc0fc61729fbe0190c2319d8bba665db017bcd97e12ffbd68d44f64e14d",
+      "git_blob": "84652cd3aebdbd9a942bb59dea88e4ecb2f5a201"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_Grass.uasset",
+      "bytes": 60487,
+      "sha256": "b799782df2bed40b6375dcb8c25990a2e71fd8259d598b806f0788a8ae58eef0",
+      "git_blob": "8f0a2224f32fbe6d92813a4dcc60b1fe1db9cb04"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_Ivory.uasset",
+      "bytes": 60487,
+      "sha256": "b69f4dec3cc0d482258000963fab4ca9e73b24f18a77ba5e9a8e228c09b3b629",
+      "git_blob": "949f8542cd320780456d6d2b6b42c5882b40a4b8"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_LeafGold.uasset",
+      "bytes": 60538,
+      "sha256": "37034089c0d2de70b4acd231663e112a4f797c5e2f941041265584d45ba790d5",
+      "git_blob": "1bb379cd5f0cc8d00f06accb7a071f5cc1133c46"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_LeafGreen.uasset",
+      "bytes": 60555,
+      "sha256": "e540cc26c1bdb018503cee46094f57fd61dafd6ada6d6e6f5a76b893ca58f402",
+      "git_blob": "9bc9f9f621dc50c02d69183a0e68c50a22458db2"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_LeafOrange.uasset",
+      "bytes": 60572,
+      "sha256": "53a28e0f80c6a5ffc4fdc5f19f49da5b48fdd0095f8a3acba82be883e7a64b8e",
+      "git_blob": "236047ea0b2871584bda14ec74ac3933b7c86210"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_Stone.uasset",
+      "bytes": 60487,
+      "sha256": "6127b01bfbc54ac5850714fefc9bb4b8afde160f21ad61c18513286080578466",
+      "git_blob": "9a7f4ae912b91b51b5a77c3b14b59cfeaa090c84"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/LI_Wood.uasset",
+      "bytes": 60470,
+      "sha256": "fc40f7395d6230e04d54c9d0eed15ec9a4cadfe5db086c95e762457c1df1b3a9",
+      "git_blob": "32310f58e65acad8e191cc6fffaf988d93361157"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/Lerninsel_World_Prototype_V1.blend",
+      "bytes": 9315699,
+      "sha256": "ba7591a4cacda95314d76b07c37b6cb4898c3e209959abf62fc604ed796a94a1",
+      "git_blob": "1e68aa05849e1523a31958d68917a4e89abae276"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/Lerninsel_World_Prototype_V1.blend1",
+      "bytes": 9305109,
+      "sha256": "9b2e6d28f039464abc92923a7d62dafa1f5c3ed6605500058d501f8934855b89",
+      "git_blob": "b6382ac1cdc97c820b500f34037d1fc5d7dddde8"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/Previews/Lerninsel_World_Prototype_V1_Overview.png",
+      "bytes": 1061015,
+      "sha256": "53ed2de395daf679e7897254fe13ddfbfa623fd4b9e48516a2a899da32545afc",
+      "git_blob": "61ce9c6b87886f2baf8a3432a1e09ece08926fe5"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/SM_Lerninsel_World_Prototype_V1.uasset",
+      "bytes": 5308034,
+      "sha256": "79811398e96ef124eacb34ff60ed75434343240c922bb458d0e8c677c7736d22",
+      "git_blob": "00b811696b2676c4cab54eb6d4f41927ccd97ba7"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/WORLD-PROTOTYPE-README.md",
+      "bytes": 2656,
+      "sha256": "82a2e2da49859cb21fdb1d1b2a01818ce16763982dfb3e24e3c6921b5e94aa24",
+      "git_blob": "ecdb85f978aed9cd54d6745e3cb6bad1f56d9e39"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Deep_teal_water.uasset",
+      "bytes": 60742,
+      "sha256": "a84993d8f098a517888a5b5243403d00e6f1033e017286da83f41973adb1a6ed",
+      "git_blob": "b44c53c71504e7c4dd1d455ef049703c49a55291"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Fraction_water.uasset",
+      "bytes": 60725,
+      "sha256": "068241b8b483bdada1b11fd88b1e7099034fe38859d3412c859dd64a3256b4e5",
+      "git_blob": "830b634da4df33703b6c26eaa72810fd581f7c12"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Gate_brass.uasset",
+      "bytes": 60657,
+      "sha256": "24845f627bc60ee47d67721be7868eef907a193dbfacee353e86c9285d502824",
+      "git_blob": "c175e4d27d2fee4088838c0ce735ea130aa51955"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Gate_dark_wood.uasset",
+      "bytes": 60725,
+      "sha256": "95266d554500d06b4f8ec42ae2e1a9ae13ad94a62c7e1b843bdf48ba2088f572",
+      "git_blob": "a650e214a6e6381f28fcab0da082360621b3a125"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Gate_pale_stone.uasset",
+      "bytes": 60742,
+      "sha256": "613acd0077451c31e7afe1057d8fd5c22122ecc2045c5c9571355e8961782d63",
+      "git_blob": "5dc73ae21ddc9842a2a87c78b3324761c5668ee3"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Island_grass.uasset",
+      "bytes": 60691,
+      "sha256": "6eef0e11a5846cf7045921164b822835e25f4954bbbe44523bcfc214799a403c",
+      "git_blob": "0e3079bc5c42363627ba8f9b3d76628557bb50c1"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Pale_limestone_path.uasset",
+      "bytes": 60810,
+      "sha256": "ab9a0563e2c14a16a2dfcc0289b6fe7d9f549f085edcd5bb0c5b7404668ac678",
+      "git_blob": "a1ac7b093e64a739dee91b3400393a5b4119f819"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Rune_dark.uasset",
+      "bytes": 60640,
+      "sha256": "b9390bf923bb52731a8c4ce7a203f8aabb83ff36e62f197dc419d8dc91294226",
+      "git_blob": "4613681312a0df4bdefc61416d85d1244dd7912e"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Rune_light.uasset",
+      "bytes": 60657,
+      "sha256": "16e4383bfe077ff3702b21d255814e1c455c059fb99ebe3ab5d5b32e0cae014c",
+      "git_blob": "7e2d56454d1cbdc42b292287fb566050491a154f"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___Warm_sandstone.uasset",
+      "bytes": 60725,
+      "sha256": "fc52aa62ecce6ca206c1dcb63943382e620bcd3e6742903502fa515d81cdf28a",
+      "git_blob": "8fab1c867130500dfa2e42a0b3243400ab0633c2"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Art/LerninselWorldV1/World___clipped_dark_hedge.uasset",
+      "bytes": 60793,
+      "sha256": "a4d0a8dd61142b133bfc7bb6dccd75b326d04dbc5e02e54cb9d4a6d2f3cd0aa1",
+      "git_blob": "9d50cbcabea83fb918c60c51d962101f7598f2a5"
+    },
+    {
+      "path": "games/lerninsel-unreal/Content/Maps/Lerninsel_Weltvorschau.umap",
+      "bytes": 20997,
+      "sha256": "c26d5c9c5c504a9eb31a799b2f6216ab586518e2e196a56f8a1315adf8785800",
+      "git_blob": "883693006831f5a99011caf972c2b90188149a09"
+    },
+    {
+      "path": "games/lerninsel-unreal/Lerninsel Weltvorschau starten.command",
+      "bytes": 577,
+      "sha256": "1d38201c7117fcb6e0a96a46595f22bfa1e929d5aa525ea0a62da50063d9159e",
+      "git_blob": "d80fe69ccb15bb62c80d6a219d8549433f9b085b"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/Four-RingApproach.png",
+      "bytes": 1630686,
+      "sha256": "db9c29219151a0f0f09214d8e9e1ac46953e37a2a96e6082b7a94778ec416b14",
+      "git_blob": "bd8a414d8bf90f4c16cb2971f1f9d6c6ef9993d0"
+    },
+    {
+      "path": "games/lerninsel-unreal/Tools/import_world_preview.py",
+      "bytes": 4250,
+      "sha256": "98996993dddb171aca57241a9955f75da0fde60c905ff96223b4571dafa5fe71",
+      "git_blob": "6283065786446d9734bad73ae4f7ae082dc4f708"
+    }
+  ],
+  "not_copied": [
+    "games/.DS_Store"
+  ],
+  "note": "Source remains read-only; existing local commits cloned independently without hardlinks."
+}
