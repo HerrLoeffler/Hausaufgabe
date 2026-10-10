@@ -1,0 +1,26 @@
+{
+  "publicURL": "https://hausaufgabe-staging.web.app/",
+  "releaseCommit": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+  "releaseFiles": 131,
+  "htmlBytes": 55252,
+  "htmlSha256": "f76fda066876fd5ee5d47a246bb96cbf833cb75c65d8a778a0879b00d94ce88a",
+  "matchesReleaseManifest": true,
+  "matchesCheckedIntegrationSource": true,
+  "syntheticBrowser": "CUA Chrome2, ephemeral tab1780322602, http://127.0.0.1:8793",
+  "syntheticFlowsVerified": [
+    "explicit read",
+    "Tab/Return reset opening",
+    "Cancel retains synthetic content and returns focus",
+    "Tab/Return second confirmation",
+    "reset clears synthetic content and offers focused reload"
+  ],
+  "noRealAccountOrProvider": true,
+  "newPanelComputedContrast": {
+    "paragraphOnWhite": 4.759,
+    "enabledReloadButton": 4.749
+  },
+  "limits": [
+    "synthetic DOM source with injected fake endpoint; no real account/Auth roundtrip",
+    "normal desktop only; full iPad/ET/Games accessibility not claimed"
+  ]
+}

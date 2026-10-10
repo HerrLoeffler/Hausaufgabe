@@ -99,4 +99,12 @@ Sechs neue DOM-Verhaltenstests erst rot, dann grün: bewusstesRead/XSS-sichereTe
 - [FirebasePrivacy](https://firebase.google.com/support/privacy): AuthUS-only laut aktueller Dokumentation; Regionswahl ist dienstspezifisch. Reale Projektdaten/Verträge sind damit nicht ausgelesen.
 - [OpenAIAPI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data): standardmäßig keinTraining ohneOpt-in, separateMissbrauchs-/Zustandsretention. store:false ersetzt wederProviderkontoprüfungnochDPA/Transferkonzept.
 
-Nächster konkreter Schritt nach diesem Kandidaten: unabhängiger Securityreview des Settingsmoduls und exaktenBuilds; dann bestehenden Integrationsowner mit Diff/CI/Restfakten beauftragen, keinen parallelen Deploy starten.
+## Gesicherter Nachtrag: reale öffentliche Dateien und unabhängige Abnahme
+
+Draft-PR [191](https://github.com/HerrLoeffler/Hausaufgabe/pull/191), Dokumenten-/Codekandidat remote `e114cc56265d2f566b88b79db17dc857cb16fece`, lokal `563c7fd`. Stufe bleibt branch_only, kein Merge/Deploy. Buildwerkzeug erfolgreich:132Dateien, neueModuldatei vorhanden. Der öffentliche, cookie-freie HTTPS-Abruf gelang nach Netzwerkfreigabe: Release c3a5fdcf mit131Dateien; index55252Bytes/SHA256 f76fda066876fd5ee5d47a246bb96cbf833cb75c65d8a778a0879b00d94ce88a stimmt mit Manifest und geprüfter Integrationsquelle überein. [Maschinenlesbarer Nachweis](privacy-runtime-evidence-20261010.json).
+
+CUA Chrome2/Tab1780322602 prüfte ausschließlich eine separate synthetische lokale Seite ohne Firebasekonto/API: bewusstesRead, Tab/Return zurBestätigung, Cancel erhältInhalte/kehrtFokuszurück, zweiteBestätigung setztSimulationzurück und fokussiertReload. TatsächlicherScreenshot visuell geprüft. ComputedTextfarben auf weiß4.759:1; aktiverReloadbutton4.749:1. Diese Ergebnisse gelten für das neuePanel/Normaldesktop, keine vollständigeScreenreader-/Responsive-/Geräteabnahme. IAB/Webtoolblocker vonoben wurden durch diese zulässigen Prüfschritte teilweise aufgelöst.
+
+Securitypeer /root/security_role_setup prüfteDiff und app.js-account-changed-Emitter1177 unabhängig: keine konkreteOwner-/Race-/Resetregression;6UI+10Backendmemorytests erneut grün, keine skipped. Kein realesKontoroundtrip daraus ableiten. Automatischer Kandidatenrun38064866746 (Admin test-account controls) success; vollständige CombinedCI für diesenKandidaten ist damit nicht belegt.
+
+Nächster konkreter Schritt: bestehenden Integrationsowner mitPR191, unabhängigerAbnahme, Build-/CIgrenzen und Restfakten beauftragen; gemeinsameEntry/STATE/TODO/Indexpflege dort, keinen parallelenDeploy starten.
