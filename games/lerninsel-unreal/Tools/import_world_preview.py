@@ -51,7 +51,10 @@ actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
 existing = [a for a in actors.get_all_level_actors() if a.get_actor_label() == "Lerninsel World V1 (visual only)"]
 for actor in existing:
     actors.destroy_actor(actor)
-world = actors.spawn_actor_from_object(mesh, unreal.Vector(0, 0, 0))
+# The combined art island contains its own decorative gates and puzzle boards.
+# Until district-by-district gameplay alignment exists, keep it beside the
+# interactive corridor (Y +/-1350), rather than drawing two worlds on top.
+world = actors.spawn_actor_from_object(mesh, unreal.Vector(0, 14000, 0))
 if not world:
     raise RuntimeError("Could not place imported world mesh")
 world.set_actor_label("Lerninsel World V1 (visual only)")

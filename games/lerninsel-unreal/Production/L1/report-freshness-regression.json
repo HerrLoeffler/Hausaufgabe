@@ -1,0 +1,16 @@
+{
+  "task_id": "GC-GAMES-LERNINSEL-L1",
+  "before": {
+    "requested": "GradeCrew.Lerninsel.MissingTestForFreshnessRegression",
+    "engine_error": "No automation tests matched",
+    "old_report_still_at": "2026.10.10-11.01.54",
+    "old_assertions_accept": true
+  },
+  "after": {
+    "fresh_report_directory": true,
+    "negative_wrapper_exit": 1,
+    "error": "No readable fresh automation report",
+    "valid_5_test_report_accepted": true,
+    "valid_1_test_report_accepted": true
+  }
+}

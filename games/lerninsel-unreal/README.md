@@ -53,3 +53,9 @@ Die neue Version wird über denselben Starter geöffnet. Eine noch laufende alte
 Nach dem Neustart öffnet Esc das Pausenmenü mit Mausgeschwindigkeit25–300Prozent. Die Figur läuft zügiger. Nach gelöstem Satz bietet Fuchsaktion erneut ansehen die Szene ohne Verlust des Lernfortschritts. Beim ersten richtigen Satz erwacht er automatisch und löst den Seilriegel am Tor.
 
 Nach der ersten3/10-Probe denselben Messbecher wieder von der Platte aufnehmen und mitnehmen. Im nächsten Bereich füllen100ml- und200ml-Hähne; am Ablauf lässt man100mlab. Ziel1000ml=1Liter, dann am Zielbecken E. Die alte gezeichnete Bruchroute ist keine Pflichtbedienung mehr. Details und120Konzeptstudien: docs/games/lerninsel/20261008-fox-water/README.md. Die Spielgrafik ist einfacher als dieVorlagen; echteAufnahmen inReports. Prüfnachweis Production/WATER-FOX-REVIEW.md.
+
+## L1-Sicherung und Integration vom 10.10.2026
+
+Die ursprüngliche Weltüberlagerung wurde in echten Spielbildern bestätigt: Kulissentore, falsche Gebietsnummern und erhöhte Wegteile standen in den vier bisherigen Lernaufgaben. Als begrenzte Zwischenlösung steht der vorhandene importierte Actor jetzt bei (0, 14000, 0), seitlich außerhalb der interaktiven Route. Der unveränderte Blender-/FBX-Blockout bleibt gesichert. Die Kulisse ist somit **noch kein begehbarer Acht-Gebiete-Spiellevel**; eine gebietsweise Ausrichtung und eigene Kollision sind spätere Integrationsarbeit. Keine neue Art wurde hergestellt.
+
+`Tools/test_world_preview.sh` baut und prüft gezielt die gespeicherte Vorschaukarte. `Tools/check_all.sh` enthält die bisherigen Gameplay-Suites plus Vorschaucheck mit getrenntem Speichermodus. L1-Belege: `Production/L1/verification.json`, `Reports/L1/`, `workstreams/lerninsel-l1-20261010.md`. Die zehn Ansichten sind tatsächliche PIE-Spielkamerabilder, keine Blender-Renders. Geskriptete Kamerapositionen und Stichproben-Sweeps ersetzen keinen ununterbrochenen Lauf aller Wege.

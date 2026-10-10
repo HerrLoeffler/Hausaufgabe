@@ -22,3 +22,9 @@ Dies ist ein visueller Welt-Blockout zur Prüfung von Maßstab, Farbverteilung u
 ## Lokal öffnen
 
 In Blender **File → Open** wählen und `Lerninsel_World_Prototype_V1.blend` öffnen. Die ursprüngliche Datei `LocalAssetsV2/Lerninsel_LocalAssets_v2.blend` wurde nicht überschrieben. Für einen erneuten Import kann `Tools/import_world_preview.py` im Unreal-Editor Python-Umfeld ausgeführt werden. Der Import wird in `/Game/Art/LerninselWorldV1` abgelegt; die Vorschaukarte liegt getrennt unter `/Game/Maps/`.
+
+## L1-Sicherung und Integration vom 10.10.2026
+
+Die ursprüngliche Weltüberlagerung wurde in echten Spielbildern bestätigt: Kulissentore, falsche Gebietsnummern und erhöhte Wegteile standen in den vier bisherigen Lernaufgaben. Als begrenzte Zwischenlösung steht der vorhandene importierte Actor jetzt bei (0, 14000, 0), seitlich außerhalb der interaktiven Route. Der unveränderte Blender-/FBX-Blockout bleibt gesichert. Die Kulisse ist somit **noch kein begehbarer Acht-Gebiete-Spiellevel**; eine gebietsweise Ausrichtung und eigene Kollision sind spätere Integrationsarbeit. Keine neue Art wurde hergestellt.
+
+`Tools/test_world_preview.sh` baut und prüft gezielt die gespeicherte Vorschaukarte. `Tools/check_all.sh` enthält die bisherigen Gameplay-Suites plus Vorschaucheck mit getrenntem Speichermodus. L1-Belege: `Production/L1/verification.json`, `Reports/L1/`, `workstreams/lerninsel-l1-20261010.md`. Die zehn Ansichten sind tatsächliche PIE-Spielkamerabilder, keine Blender-Renders. Geskriptete Kamerapositionen und Stichproben-Sweeps ersetzen keinen ununterbrochenen Lauf aller Wege.

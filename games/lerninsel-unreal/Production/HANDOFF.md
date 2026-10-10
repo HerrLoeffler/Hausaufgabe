@@ -1,3 +1,5 @@
+> Aktueller L1-Nachtrag 10.10.2026: Spiel **Lerninsel**, Task GC-GAMES-LERNINSEL-L1, Parent GC-GAMES-ESCAPE-VISUAL-01. Gesicherter Ausgangsstand Remote218726f / lokal a390aa0, Runtimebaum bytegleich c6e3e91. Reproduzierbarer Vorschaucheck und Überlagerungsfix: [L1-Übergabe](../../../workstreams/lerninsel-l1-20261010.md), [Prüfnachweis](L1/verification.json). Historische Abschnitte unten bleiben erhalten. Kein Merge/Deploy/iPadnachweis.
+
 # GC-GAMES-ESCAPE-VISUAL-01 — spielbarer Zwischenstand
 
 Am 08.10.2026 wurde der erste eigene Unreal-Abschnitt gebaut: Ankunftsgarten, kleine Verbprobe, drei Reihen Verbpfad und Wasserterrasse. Der Spieler erkundet die Welt aus der Ego-Perspektive. Er liest Wörter im Satzkontext, begrenzt seine Auswahl, bestätigt den Pfad und misst Wasser in einem 1-Liter-Eimer ab. Ziel: 3/10 Liter = 300 ml; jeder Füll- oder Ablasshub verändert die Menge um 100 ml.

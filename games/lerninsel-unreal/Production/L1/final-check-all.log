@@ -1,0 +1,12 @@
+PASS 66 rule checks
+PASS 78 puzzle checks
+PASS 7 control checks
+PASS 24 water checks
+PASS 12 fox cue checks
+PASS 44 task catalog checks
+Fresh UE tests: 5 passed; warnings: 0
+GradeCrew.Lerninsel.Controls Success errors 0 warnings 0
+GradeCrew.Lerninsel.FourPuzzles Success errors 0 warnings 0
+GradeCrew.Lerninsel.Fox Success errors 0 warnings 0
+GradeCrew.Lerninsel.Play Success errors 0 warnings 0
+GradeCrew.Lerninsel.WorldPreview Success errors 0 warnings 0
