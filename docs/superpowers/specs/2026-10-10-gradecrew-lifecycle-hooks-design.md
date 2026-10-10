@@ -130,11 +130,32 @@ Beschlossene Hierarchie: Hauptzentrale bündelt Projektprioritäten; Games-Zentr
 
 Vollständiges Briefing: Task-ID/Request-ID und Originalhistorie; zuständiger Owner-Chat, Rolle und Bereich; Basis-/Zielbranch und Quellen; erlaubte Schreibpfade sowie ausdrücklich read-only Schnittstellen; Abnahmekriterien und passende Prüfungen; gewähltes verfügbares Modell/Denktiefe mit Grund; laufende/unklare Vorgänge und Budgets; genau nächstes Ziel. Kein Prompt-Keyword kann dieses Briefing oder menschliche Freigaben ersetzen.
 
+### Beschlossene adaptive Modell-/Aufwandswahl
+
+Für alle Zentralen und Fachaufträge gilt die neue Nutzerleitlinie aus AGENTS/CHAT_CONTRACT, ohne pauschales Sol/high:
+
+| Schritt | Startschema |
+|---|---|
+| Klare Standfrage, Zuordnung, kurzes Briefing | Verfügbares gpt-6-luna medium; nach stabilem belegtem risikoarmen Erfolg low erproben |
+| Bereichsübergreifende Koordination, Abhängigkeiten, Review | gpt-6.1-sol medium |
+| Schwierige Konflikte, Architektur, Sicherheit, Engine-Diagnose | gpt-6.1-sol high |
+| Konkret begründetes ungelöst schwieriges Problem | Erst dann verfügbares Astra erwägen |
+
+Zuerst Fakten/Werkzeuge prüfen; Netzwerk, Anmeldung, Limit oder fehlende Rechte sind kein Anlass für ein größeres Modell. Denkaufwand bevorzugt ändern. Kein Downgrade mitten in einer sicherheitskritischen Entscheidung. Nach stabilen vergleichbaren risikoarmen Schritten einen begrenzten niedrigeren Versuch mit gleichen Kriterien machen; bei Qualitätsverlust zurück. Höchstens zwei Modellwechsel pro zusammenhängender Teilaufgabe, keine Pingpong-Wechsel/Full-Kontext-Neustarts; Geschichte und Budgets erhalten. In der bestehenden Übergabe angefordert/beobachtet, Grund, Ergebnis, Nacharbeit und verfügbare Usage auseinanderhalten. Keine Gleichqualitäts- oder Preisbehauptung aus dem Startschema.
+
+Technischer Weg: Die [App-Server-Dokumentation](https://learn.chatgpt.com/docs/app-server) und lokale TurnStartParams-/TurnSteerParams-Schemata unterscheiden turn/start mit model/effort von turn/steer ohne solche Overrides. Vor Wechsel verfügbares Modell/Aufwand am aktuellen Host prüfen. Bestehende laufende fremde Turns nicht abbrechen oder einen Wechsel im laufenden Modellaufruf behaupten. Die derzeitige App-Schnittstelle send_message_to_thread nimmt model/thinking für eine Folgebeauftragung; sicherer qualifizierter Weg hier: vorhandenen ruhenden Fachchat wählen, denselben Task/Scope erhalten, neue Turn-Grenze benutzen und danach tatsächlichen Runtime-Kontext prüfen. Neue Defaults können für spätere Turns bestehen bleiben; bei deren Auftrag erneut bewusst wählen, nicht blind den letzten niedrigen Aufwand übernehmen.
+
+GradeCrew Central0.4.0 bietet derzeit keinen eigenen Modell-Umschaltendpoint. Seine vorhandenen Reads bleiben die Quellen; die tatsächliche Folgebeauftragung verwendet die App-Schnittstelle. Hooks können an dieses Briefing/Startschema erinnern oder Werkzeuge begrenzen, niemals selbst Modelle wechseln, neuen Turn erzeugen oder die laufende Anfrage umkonfigurieren. Der bestehende Produkt-AI-Router GC-AI-ROUTING-02 bleibt vollständig außerhalb dieses Auftrags.
+
+**Einziger autorisierter Lesetest:** bestehender Fachchat GradeCrew-Plugins recherchieren, Thread01a10e37-4955-7db3-957f-d397b9dd8dc4, vor Start read-only als idle geprüft. Voriger abgeschlossener Turn01a1256c-6201-79f0-a439-b27c3a61db32: Runtime gpt-6-luna/medium. Angeforderter neuer Turn über send_message_to_thread: gpt-6-luna/low. Neuer Turn01a12570-4161-7610-8c7e-b4ff43c081d5 am10.10.2026 10:51UTC completed, 3.307s; Runtime-turn_context bestätigt gpt-6-luna/low. Vier Kriterien erfüllt: reine Standfrage ohne Codeauftrag, Login403 zuerst Ursache/Rechte, keine Sicherheitsentscheidung mitten im Turn herabstufen, Grenze zwischen Turnstart und Hookautomatik. Keine Toolmarker, Dateiänderungen, neuen Chats/Forks oder Abbrüche in diesem Probe-Turn. Modellfamilie unverändert, genau eine Aufwandänderung; keine Wechsel-/Budgethistorie zurückgesetzt.
+
+Nur Modell-/Turn-/Usage-Metadaten wurden außerhalb der Hooks gelesen; kein Transkript in den Entwurf kopiert. Letzter Request laut Runtime:160256Input, davon3840cached, 163Output, davon60Reasoning, total160419Tokens. Das ist kein Rechnungs-/Preisbeleg; der lange vorhandene Kontext verhindert eine pauschale Sparbehauptung. Der kurze Kriteriencheck ist kein vollständiger Qualitätsvergleich und keine Sicherheits-/Hookabnahme. Kein zusätzlicher Paid-/Guardian-Provideraufruf oder Retry. Der aktuelle komplexe Hook-Entwurf bleibt beim beauftragten Sol/high; kein Downgrade seines laufenden Turns.
+
 ## Wiederverwendung von GradeCrew Central und Rollen-Skills
 
 GradeCrew Central 0.4.0 geprüft: lokales Manifest, vollständige Paketliste, MCP-Tooldefinitionen und project-reader gelesen; keine SKILL.md im Paket. `gradecrew_project_status` erfolgreich mit GitHub-main `59dd0a5` und explizit dokumentiertem Release-Stand. Das ist ein echter Plugin-Read, kein Live-Deploy-/Hook-/Skillnachweis. Der vorhandene Projektleser bindet Status/Registry/Übergabe an einen Main-SHA; kein zweiter Koordinator, MCP-Server oder Aufgabenbestand nötig.
 
-Die fertige separate Übergabe `analysis/GC-HOOKS-01-SKILLS/HANDOFF.md` in der bekannten GradeCrew-Mirrorwurzel wurde gelesen, SHA256 `a5ff9038fc11aeff4c5505bb2fd3f065de1e8fa4ea370ef72690aaa47f2e2e5d`. Sie ist lokal gesichert, keine bereits integrierte Repo-/Skilldatei. Ihr konkreter Rollenentwurf wird hier berücksichtigt:
+Die separate Übergabe `analysis/GC-HOOKS-01-SKILLS/HANDOFF.md` in der bekannten GradeCrew-Mirrorwurzel wurde gelesen: ursprünglicher SHA256 `a5ff9038fc11aeff4c5505bb2fd3f065de1e8fa4ea370ef72690aaa47f2e2e5d`; nach der ergänzten Modellvorgabe erneut gelesen, SHA256 `e1ae6a46810c0ee8342ab6c4dccc1b34e4038cd96b8ff5858eda5c74ccd16d9d`. Sie ist lokal gesichert, keine bereits integrierte Repo-/Skilldatei. Ihr konkreter Rollenentwurf wird hier berücksichtigt:
 
 | Vorgeschlagener Skill | Hook-Anschluss | Grenze |
 |---|---|---|
@@ -142,7 +163,7 @@ Die fertige separate Übergabe `analysis/GC-HOOKS-01-SKILLS/HANDOFF.md` in der b
 | gradecrew-implement-task | Fachchat erhält eindeutige Task, Scope und Übergabe; Hook verwechselt ihn nicht mit einer Zentrale | Eigener autorisierter Worktree, bestehende Fach-Skills und Prüfungen; kein zweiter Auftrag aus Fork-Historie. |
 | gradecrew-acceptance-review | Prüfer bekommt denselben unveränderlichen Kandidaten und Kriterien | Unabhängiger Fach-Prüfauftrag, keine Reparatur/Merge/Veröffentlichung ableiten; ein Zentralenchat bleibt auch bei Ergebnisbewertung koordinierend. |
 
-Diese drei Skills sind Entwürfe, nicht installiert oder verhaltensgetestet. Ein versionierter Repo-Pilot unter `.agents/skills/` und spätere Paketierung im bestehenden Plugin sollen dieselben Quellen verwenden. Das installierte 0.4.0-Paket wird nicht still bearbeitet. Skills-Inventar/Autoring und Hook-Konfiguration/Verhaltenstests bleiben getrennte Eigentümer; dieser Dokumentationsauftrag erzeugt keine Skilldateien.
+Diese drei Skills sind Entwürfe, nicht installiert oder verhaltensgetestet. Alle drei übernehmen die gemeinsame adaptive Auswahlregel: coordinate wählt pro Briefing, implement-task bindet den tatsächlichen Teilschritt, acceptance-review dokumentiert angefordert/beobachtet und gleiche Kriterien. Ein versionierter Repo-Pilot unter `.agents/skills/` und spätere Paketierung im bestehenden Plugin sollen dieselben Quellen verwenden. Das installierte 0.4.0-Paket wird nicht still bearbeitet. Skills-Inventar/Autoring und Hook-Konfiguration/Verhaltenstests bleiben getrennte Eigentümer; dieser Dokumentationsauftrag erzeugt keine Skilldateien.
 
 Konkrete Read-Allowlist-Kandidaten: `mcp__gradecrew_central__gradecrew_project_status`, `gradecrew_workstreams`, `gradecrew_handoff`, `gradecrew_task`, `gradecrew_staging_release` mit demselben Serverpräfix. Annotationen allein reichen nicht; die gelesene Implementierung der Status-/Registry-/Übergabe-Reads stimmt mit den Beschreibungen überein. `gradecrew_question`/`gradecrew_answer` schreiben Fragen-/Antwortzustand, Verbindungswerkzeuge ändern Login-/Connection-Zustand: nicht pauschal erlauben, weil der Pluginname „Central“ heißt. Private Staging-Reads bleiben an bestätigte Anmeldung/Rollen gebunden und werden niemals aus dem Hook zur Kontextsammlung gestartet.
 

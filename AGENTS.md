@@ -81,3 +81,22 @@ Martins feste Regel: Zentralen koordinieren ausschließlich. Die zunächst für 
 - Forks kopieren Historie, liefern keinen fortlaufenden Informationssync und erben keine neue Fachzuständigkeit allein dadurch. Gemeinsame aktuelle Projektdateien und explizite Owner-/Rollenbindung sind maßgeblich. Normale Forks können dieselbe Root-sessionId behalten; sessionId, Chatname oder Pfad allein identifizieren daher keine Zentralenrolle zuverlässig.
 - Bestehendes GradeCrew Central 0.4.0 wiederverwenden; die drei vorgeschlagenen Rollen-Skills koordinieren/umsetzen/unabhängig abnehmen sind noch nicht installiert. Keine pauschale Erlaubnis aller Plugin-Werkzeuge: lesende Statuszugriffe von schreibenden/Verbindungsaktionen unterscheiden.
 - Technische Hook-Sperren sind noch nicht installiert oder qualifiziert. Die Rollenregel gilt als beschlossene Nutzeranweisung; Dokumentation ist kein Runtime-Durchsetzungsnachweis. Details und nächster Schritt: `workstreams/codex-lifecycle-hooks-20261010.md`.
+
+
+## Adaptive Modell-/Aufwandswahl — GC-HOOKS-01, 10.10.2026
+
+Verbindliche Nutzerleitlinie für alle GradeCrew-/Games-Zentralen und ihre Fachaufträge: Modell und Denkaufwand pro Arbeitsschritt wählen, nicht pauschal `gpt-6.1-sol high`. Nur auf dem jeweiligen Host tatsächlich verfügbare Modelle/Aufwände verwenden. Dieses Startschema belegt weder gleiche Qualität noch konkrete Preise:
+
+| Arbeitsschritt | Startschema |
+|---|---|
+| Einfache Statusfrage, Zuordnung, kurzes klares Briefing | `gpt-6-luna medium`; nach belegtem stabilem Erfolg risikoarm `low` erproben |
+| Bereichsübergreifende Koordination, Abhängigkeiten, Review | `gpt-6.1-sol medium` |
+| Schwierige Konflikte, Architektur, Sicherheit, Engine-Diagnose | `gpt-6.1-sol high` |
+| Konkret begründetes ungelöstes schwieriges Problem | Erst dann verfügbares Astra prüfen; kein pauschaler Astra-Default |
+
+- Bei reproduzierbaren fachlichen Fehlern zuerst benötigte Fakten/Werkzeuge prüfen, dann gezielt Aufwand oder Modell erhöhen. Netz, Anmeldung, Nutzungslimit und fehlende Rechte werden nicht durch ein größeres Modell behoben.
+- Denkaufwand bevorzugt ändern, wenn das reicht. Kein Downgrade mitten in einer sicherheitskritischen Entscheidung. Nach stabil erfolgreichen vergleichbaren risikoarmen Teilschritten einen begrenzten niedrigeren Versuch mit denselben Akzeptanzkriterien machen; bei Qualitätsverlust zurück.
+- Maximal zwei Modellwechsel pro zusammenhängender Teilaufgabe; keine ständigen Pingpong-Wechsel oder Full-Kontext-Neustarts. Historie, Task-/Request-ID, Versuche und Budgets bleiben erhalten. Aufwandänderungen ebenfalls begründet dokumentieren.
+- Angefordertes Modell/Aufwand und beobachtetes tatsächliches Runtime-Modell/Aufwand unterscheiden. Grund, Ergebnis, Nacharbeit und verfügbare Nutzungsdaten knapp in der bestehenden Übergabe sichern; fehlende Usage/Preise als unbekannt markieren, keine Einsparung erfinden.
+- Wechsel nur an unterstützten Teilaufgaben-/Turn-Grenzen: App-Server `turn/start` unterstützt `model`/`effort`; `turn/steer` überschreibt keinen Modellaufruf im aktiven Turn. Auf bereits laufende fremde Turns keine erzwungenen Wechsel oder Abbrüche anwenden. Hooks liefern Kontext/Guards, sind keine Modell-Umschaltmaschine.
+- Die Wahl eines stärkeren Modells ändert keine Rollenrechte: Zentralen koordinieren ausschließlich, Fach-Chats führen ihren autorisierten Scope aus. Den bestehenden Produkt-AI-Router GC-AI-ROUTING-02 nicht aus dieser Codex-Arbeitsregel neu bauen oder aktivieren.
