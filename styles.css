@@ -330,6 +330,15 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .answerAudioPreview .questionAudioPreview>span:first-child{flex-basis:100%}
 .answerAudioPreview .questionAudioPreview>audio{flex:1 1 220px;min-width:160px}
 .answerAudioPreview .questionAudioPreview>.aiInputError{flex-basis:100%}
+.answerAudioRepair{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:100%}
+.answerAudioEmmiButton{display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:4px 10px 4px 5px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--primary2);font-weight:650;cursor:pointer}
+.answerAudioEmmiButton img{object-fit:contain}
+.answerAudioRepairChoices{flex-basis:100%;display:grid;gap:5px;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--card);max-width:100%}
+.answerAudioRepairChoices[hidden]{display:none}
+.answerAudioRepairChoices button,.answerAudioReportRetry{min-height:44px;padding:8px 10px;border:0;border-radius:8px;background:var(--soft);color:var(--primary2);text-align:left;white-space:normal;cursor:pointer}
+.answerAudioRepair button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.answerAudioRepair button:disabled{opacity:.55;cursor:wait}
+.answerAudioRepair small{color:var(--muted)}
 .answerAudioRetry{display:inline-grid;place-items:center;width:42px;height:42px;padding:4px;border:1px solid #d5deec;border-radius:10px;background:#fff}
 .answerAudioRetry img{display:block;width:30px;height:30px;object-fit:contain}
 .answerAudioHelp{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid #91a7c5;border-radius:50%;color:#2457bd;font-size:12px;font-weight:800;cursor:help}

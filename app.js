@@ -46,6 +46,7 @@ import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWo
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
+import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
@@ -4425,7 +4426,7 @@ async function generateAiImageForQuestion(q, panel) {
 
 function getQuestionAudioSrc(q) {
   const src = String(q?.audioDataUrl || "");
-  return src.startsWith("data:audio/") ? src : "";
+  return /^data:audio\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(src) ? src : "";
 }
 
 function audioOperations() {
@@ -4477,7 +4478,7 @@ function questionAllAudioReady(q) {
 function questionAnswerAudioReady(q) {
   if (q?.audioAnswerMode !== "audio-only") return true;
   const entries = questionAnswerAudioEntries(q);
-  return questionHasAudioAnswerEntries(q) && entries.every(entry => String(entry.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
+  return questionHasAudioAnswerEntries(q) && entries.every(entry => /^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(String(entry.asset?.audioDataUrl || "")) && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
     entries.reduce((size, entry) => size + String(entry.asset?.audioDataUrl || "").length, String(q.audioDataUrl || "").length) <= 700000;
 }
 
@@ -4518,6 +4519,119 @@ function clearQuestionSolutionAudio(q) {
 function defaultSolutionAudioScript(q) {
   const answer = String(correctDisplay(q, state.currentQuiz?.contentLocale) || "").replace(/\s+/g, " ").trim();
   return (`Die richtige Lösung ist: ${answer || "Diese Aufgabe wird von der Lehrkraft erklärt."}`).slice(0, 500);
+}
+
+function answerAudioClipStatus(entry) {
+  const src = String(entry?.asset?.audioDataUrl || "");
+  if (!src) return "missing";
+  if (!/^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(src)) return "invalid";
+  if (entry.asset.audioNeedsRegeneration || entry.asset.sourceText && entry.asset.sourceText !== entry.sourceText) return "stale";
+  return "ready";
+}
+
+function answerAudioRepairState(q) {
+  if (!answerAudioRepairState.records) answerAudioRepairState.records = new WeakMap();
+  if (!answerAudioRepairState.records.has(q)) answerAudioRepairState.records.set(q, new Map());
+  return answerAudioRepairState.records.get(q);
+}
+
+async function reportMissingAnswerAudio(q, entryKey, reason, record) {
+  if (!state.user || record.reported) return;
+  if (record.reporting) return record.reporting;
+  if (record.uid && (state.user.uid !== record.uid || state.currentQuiz?.id !== record.quizId || !state.questions.includes(q))) return;
+  record.reportId ||= `RPT-${crypto.randomUUID()}`;
+  const reporting = setDoc(doc(db, "feedback", `err-${record.reportId.toLowerCase()}`), {
+    userId: state.user.uid, category: "app_error", status: "new", createdAt: serverTimestamp(),
+    message: "Angeforderte Antwort-Audiospur fehlt oder lässt sich nicht abspielen.",
+    errorCode: "GC-AUDIO-ASSET-UNREADY", reportId: record.reportId,
+    fingerprint: `audio-answer-${q.type}-${reason}`, action: "repair_missing_answer_audio",
+    testCode: state.currentQuiz.id, feedbackSchemaVersion: 5, severity: "error",
+    appVersion: APP_VERSION, environment: appEnvironment || "production",
+    technicalDetails: { source: "audio_editor", taskId: "GC-WEB-REPAIR-20261007",
+      clipType: "answer", questionPosition: state.questions.indexOf(q) + 1, clipKey: entryKey, questionType: q.type,
+      reason, stage: "requested_asset_readiness", requested: true, occurrences: 1,
+      rawMessage: `requested_answer_audio_${reason}`, occurredAtClient: new Date().toISOString() }
+  });
+  record.reporting = reporting;
+  try { await reporting; record.reported = true; record.reportFailed = false; }
+  finally { if (record.reporting === reporting) record.reporting = null; }
+}
+
+async function repairAnswerAudioTrack(q, container, entryKey, action) {
+  if (!state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+  if (state.newManualQuiz || !state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
+  const records = answerAudioRepairState(q);
+  if (audioOperations().has(q) || [...records.values()].some(item => item.busy)) return;
+  const entry = questionAnswerAudioEntries(q).find(item => item.key === entryKey);
+  if (!entry) return;
+  const record = records.get(entryKey) || {};
+  records.set(entryKey, record);
+  record.busy = true;
+  const quizId = state.currentQuiz.id;
+  const uid = state.user?.uid;
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  record.quizId = quizId; record.uid = uid;
+  renderQuestionAudioEditor(container, q);
+  try {
+    if (action === "missing") {
+      let reason = record.invalid ? "invalid" : answerAudioClipStatus(entry);
+      if (reason === "ready") {
+        try { await verifyGeneratedAudio(entry.asset.audioDataUrl); }
+        catch (_) { reason = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext) ? "invalid" : "unverified"; }
+      }
+      if (["missing", "invalid"].includes(reason)) {
+        if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q)) return;
+        if (entry.asset) entry.asset.audioNeedsRegeneration = true;
+        markDirty(); record.reason = reason;
+        void reportMissingAnswerAudio(q, entryKey, reason, record).catch(() => {
+          record.reportFailed = true;
+          if (state.user?.uid === uid && state.currentQuiz?.id === quizId && state.questions.includes(q)) {
+            toast("Audiohinweis konnte nicht gemeldet werden. Im Editor erneut melden.", "error");
+            renderQuestionAudioEditor(container, q);
+          }
+        });
+      }
+    }
+    if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || questionAnswerAudioEntries(q).find(item => item.key === entryKey)?.sourceText !== entry.sourceText) return;
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    await generateAiAnswerAudioForQuestion(q, container, entryKey);
+    if (answerAudioClipStatus(questionAnswerAudioEntries(q).find(item => item.key === entryKey)) === "ready") record.invalid = false;
+  } finally {
+    record.busy = false;
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    if (state.currentQuiz?.id === quizId && state.questions.includes(q)) renderQuestionAudioEditor(container, q);
+  }
+}
+
+function createAnswerAudioRepairControl(q, container, entryKey, index) {
+  const records = answerAudioRepairState(q);
+  const record = records.get(entryKey) || {};
+  const busy = audioOperations().has(q) || [...records.values()].some(item => item.busy);
+  const locked = state.currentQuiz?.published && !state.currentQuiz?.ended;
+  const root = document.createElement("div"); root.className = "answerAudioRepair";
+  const toggle = document.createElement("button"); toggle.type = "button";
+  toggle.className = "answerAudioEmmiButton"; toggle.disabled = Boolean(locked || busy);
+  toggle.setAttribute("aria-label", `Emmi: Audio für Antwort ${index + 1} anpassen`);
+  toggle.setAttribute("aria-expanded", "false");
+  const icon = document.createElement("img"); icon.src = "/" + GRADECREW_ASSETS.mascots.emmi.primary; icon.alt = ""; icon.width = 32; icon.height = 32;
+  toggle.append(icon, document.createTextNode(record.busy ? "Wird erzeugt …" : "Emmi"));
+  const choices = document.createElement("div"); choices.className = "answerAudioRepairChoices"; choices.hidden = true;
+  choices.id = `audio-repair-${String(q.id).replace(/[^a-zA-Z0-9_-]/g, "")}-${entryKey}`;
+  toggle.setAttribute("aria-controls", choices.id);
+  for (const [action, text] of [["missing", "Audio fehlt – erzeugen"], ["regenerate", "Audio gefällt mir nicht – neu erzeugen"]]) {
+    const button = document.createElement("button"); button.type = "button"; button.textContent = text; button.disabled = Boolean(locked || busy);
+    button.addEventListener("click", () => { void repairAnswerAudioTrack(q, container, entryKey, action); }); choices.appendChild(button);
+  }
+  toggle.addEventListener("click", () => { choices.hidden = !choices.hidden; toggle.setAttribute("aria-expanded", String(!choices.hidden)); if (!choices.hidden) choices.querySelector("button").focus(); });
+  root.addEventListener("keydown", event => { if (event.key === "Escape") { choices.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.focus(); } });
+  root.append(toggle, choices);
+  if (record.reportFailed) {
+    const retry = document.createElement("button"); retry.type = "button"; retry.className = "answerAudioReportRetry"; retry.textContent = "Audiohinweis erneut melden"; retry.disabled = Boolean(busy || locked);
+    retry.addEventListener("click", async () => { retry.disabled = true; try { await reportMissingAnswerAudio(q, entryKey, record.reason, record); retry.textContent = "Audiohinweis gemeldet"; } catch (_) { retry.disabled = false; retry.textContent = "Melden fehlgeschlagen – erneut versuchen"; } }); root.appendChild(retry);
+  }
+  if (record.busy || record.reported) { const status = document.createElement("small"); status.setAttribute("role", "status"); status.textContent = record.busy ? "Diese Audiospur wird erzeugt …" : "Audiohinweis gemeldet"; root.appendChild(status); }
+  return root;
 }
 
 function renderQuestionAudioEditor(container, q) {
@@ -4636,28 +4750,13 @@ function renderQuestionAudioEditor(container, q) {
         row.appendChild(warning);
       }
       if (q.audioAnswerMode === "audio-only") {
-        const retry = makeMiniButton("", () => generateAiAnswerAudioForQuestion(q, container, entry.key));
-        retry.classList.add("answerAudioRetry");
-        const emmi = document.createElement("img");
-        emmi.src = "/assets/gradecrew/fox-improve.svg#pose-1";
-        emmi.alt = "";
-        emmi.width = 30;
-        emmi.height = 30;
-        retry.appendChild(emmi);
-        retry.setAttribute("aria-label", `Emmi: Audiospur für Antwort ${index + 1} neu erzeugen`);
-        retry.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended || audioOperations().has(q));
-        row.appendChild(retry);
-        const help = document.createElement("span");
-        help.className = "answerAudioHelp";
-        help.textContent = "i";
-        help.tabIndex = 0;
-        help.title = `Emmi erzeugt nur die Audiospur für Antwort ${index + 1} neu. Der Antworttext bleibt unverändert.`;
-        help.setAttribute("aria-label", help.title);
-        row.appendChild(help);
+        row.appendChild(createAnswerAudioRepairControl(q, container, entry.key, index));
         const player = row.querySelector("audio");
         const markBroken = () => {
           if (!state.questions.includes(q) || option.audioDataUrl !== player?.getAttribute("src")) return;
           if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+          const record = answerAudioRepairState(q).get(entry.key) || {};
+          record.invalid = true; answerAudioRepairState(q).set(entry.key, record);
           option.audioNeedsRegeneration = true; markDirty();
           if (!row.querySelector(".audioPlaybackError")) {
             const warning = document.createElement("small"); warning.className = "aiInputError audioPlaybackError";
