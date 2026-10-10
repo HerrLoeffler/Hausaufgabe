@@ -29,7 +29,7 @@
       "title": "GC-LAUNCH-CONTROLS-01: Technische Sicherheit + Datenschutz/Recht/faire Bedienung",
       "primaryBranch": "docs/gc-launch-controls-integration-20261010",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/launch-controls-integration-20261010.md",
       "relatedBranches": [
         "docs/gc-launch-security-20261010",
