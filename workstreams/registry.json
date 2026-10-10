@@ -543,6 +543,26 @@
       "relatedBranches": [
         "docs/gc-hooks-skills-integration-20261010"
       ]
+    },
+    {
+      "id": "matt-pocock-research-20261010",
+      "title": "GC-POCOCK-RESEARCH-01: lokale Caption-/Primärtextforschung, zentrale Metadaten",
+      "primaryBranch": "docs/gc-launch-blocked-checkpoints-20261010",
+      "integrationTarget": "main",
+      "state": "integration_ready",
+      "handoff": "workstreams/matt-pocock-research-20261010.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "privacy-controls-integration-20261010",
+      "title": "GC-LAUNCH-CONTROLS-01-PRIVACY: Integration nach belegten Gates vorbereiten",
+      "primaryBranch": "fix/gc-privacy-controls-20261010",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "blocked",
+      "handoff": "workstreams/privacy-controls-integration-20261010.md",
+      "relatedBranches": [
+        "fix/coco-chat-ui-background-memory-20261010"
+      ]
     }
   ]
 }

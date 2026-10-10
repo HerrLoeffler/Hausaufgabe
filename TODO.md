@@ -440,3 +440,28 @@ GC-LAUNCH-CONTROLS-01 · Dokumentationssetup über [PR190](https://github.com/He
 |---|---|---|
 | GC-HOOKS-01 | Bestehende fünf Zentralenrollen und adaptive Modellregel sind auf main; Hook-Entwurf [PR184](https://github.com/HerrLoeffler/Hausaufgabe/pull/184) bleibt branch_only. Keine Hooks/Runtime-Sperren installiert. Ursprüngliche Task-/Versuchshistorie erhalten. | Zuverlässige Threadidentität und Hook-Trust/Umsetzung separat qualifizieren, keine Aktivierung aus Dokumentation ableiten. |
 | GC-HOOKS-01-SKILLS | Sechs ausgewählte standalone User-Skills auf Martins Mac installiert; Integrationowner hat28Manifesthashes tatsächlich erneut abgeglichen. Quellen-/Discovery-/Offlinebelege aus [PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193), begrenzter unabhängiger Dokureview ohne Findings und exakte Doku-CI grün. [Facharbeit-Einstieg](docs/skills/GRADECREW_EXECUTION_SKILLS.md), [eigene Integrationsübergabe](workstreams/skills-integration-20261010.md). | Innerhalb konkret autorisierter Facharbeit einsetzen; andere Hosts/alte Desktopturns separat prüfen. Kein Deploy, neue Cloudrechte, Migration oder pauschales Skillpaket. |
+
+
+## 10.10.2026 — GC-LAUNCH-CONTROLS-01: vorhandene Arbeit erhalten, nächste Gates
+
+- SECURITY: lokaler Checkpoint 778f88b017e75b3e868697966bf4faee6a8c2d9d auf checkpoint/gc-launch-security-preserve-20261010 erhält acht unveränderte Dateien + Metadatenhandoff; sauberer Baum, kein Scan/Test/Codefix/Merge/Deploy. Plattformstop „possible cybersecurity risk“ und gestoppter Recoveryturn erhalten, Reviewbefunde offen.209Tests/ESLint ohne gefundenen SHA-gebundenen Log nur Agentenbericht; kein fertigerFix. [Erhaltungsübergabe](workstreams/launch-controls-preservation-20261010.md).
+- SEC20: öffentlicher npm-Abgleich durch Auto-Review wegen Export vollständiger Dependency-Namen/Versionen ohne Freigabe abgelehnt; laut Übergabe kein Request ausgeführt. Nicht wiederholen/kein anderes Ziel. Metadatenabgleich offen.
+- PRIVACY: PR191@bb1c6bee, ZielWebc3a5fdcf. Tatsächlicher Admincheck38065021884 grün:6Contracttests +132-DateienBuild; Source berichtet19lokaleTests/Peer/synthetischeKeyboardUI. Keine CombinedCI-/Merge-/Deployfreigabe. [Eigene Integrationsvorlage](workstreams/privacy-controls-integration-20261010.md), gleicheTaskfamilie.
+- Zusätzliche Screenshotmaßnahmen im bestehenden SEC09/11/12/20- und GC-RESTORE-01-Scope vormerken: technische Basis/gezielte autorisierte Fixes qualifizieren, Logredaktion/SessionShareddevice sowie Backup+synthetischenRestore belegen; kostenpflichtige Betriebsaktivierung erst mit geprüftem Paket. Keine neue Liste/Plattform, keine Durchschnitts-Sicherheitsnote oder pauschale Kostenabschaltung einer laufenden Schulprüfung. In dieser Übergabephase keine technische Umsetzung.
+
+
+## 10.10.2026 — GC-POCOCK-RESEARCH-01 / parallele Skillzuständigkeit
+
+| Task | Stand und Owner | Nächster Schritt |
+|---|---|---|
+| GC-POCOCK-RESEARCH-01 | Lokal beauftragte Caption-/Primärtextforschung des Originalkanals @mattpocockuk für10.04.–10.10.2026 inkl. Shorts/Livestream-Aufzeichnungen; Inventar laut Zentrale in Erweiterung. Exklusive Gruppen channel-inventory, wayfinder, v13/poteto, batch-a, kein zusätzlicher Scan durch Registrierung. V13/Wayfinder laut Koordinator captionbasiert vollständig, keine visuelle Vollvideoansicht behauptet. | Vorhandene Ergebnisse/Quellen-/Abdeckungsgrenzen abholen; nur eigene Zusammenfassung/Metadaten sichern, keine fremden Volltranskripte öffentlich. [Übergabe](workstreams/matt-pocock-research-20261010.md) |
+| GC-HOOKS-01-SKILLS | Autorisierte ausgewählte offizielle Firebase-/Frontend-Design-Skill-Einrichtung exklusiv bei GradeCrew-Plugins recherchieren01a10e37-4955-7db3-957f-d397b9dd8dc4; konkrete Installation/Versions-/Verhaltensbelege hier ungeprüft, keine Migration/Paid-Reviews. | Eigene Skillnachweise dort abholen; gemeinsame Regeln nur gezielt über Integrationsowner, kein Komplettpaket oder zweite Statusdatenbank. |
+
+
+Aktualisierung beim Wiederaufnehmen10.10.2026: [Draft-PR193](https://github.com/HerrLoeffler/Hausaufgabe/pull/193) liegt offen auf docs/gc-hooks-skills-setup-20261010@16b3fe3006b3b07d4b8867cb861742fa8ea94a60, sechs ausschließlich eigene Dokumentations-/Evidencepfade ohne Überschneidung mit dieser Sicherung. PR-Autor berichtet sechs lokal installierte Skills, frische Discovery und grüne Dokuchecks; hier nur PR-Metadaten gelesen, keine Installation/Discovery/Verhaltensprüfung wiederholt. Shared-Einstieg/GC-HOOKS-Deltas als separaten qualifizierten Integrationsschritt behandeln, kein automatisches Mitintegrieren.
+
+
+Aktueller Skillreceipt: PR193 und Einstiegs-/StatusPR195 tatsächlich nachmain@c8ba1222a1266fa2241a6cd069a206036e1a7df3 integriert; [Integrationsübergabe](workstreams/skills-integration-20261010.md). Vorheriger ungeprüfter Kandidatenstatus im historischen Forschungsabschnitt ist damit überholt. Kein Researchupload, Hookinstall oder Deploy.
+
+
+GC-POCOCK-RESEARCH-01 · aktueller textueller Abschluss:40/40Inventar-IDs,16Langvideos+4Streams+20Shorts,40lokaleCaptiondateien/Analysen und IDs durch Integrationsowner abgeglichen. Quellenagenten berichten volle Caption-Lektüre; unabhängiger Synthesereview prüfte Analysen/Schlüsselstellen. Audio/alle visuellen Demos nicht vollständig geprüft. [Eigene Zusammenfassung](docs/research/matt-pocock-20261010-summary.md), [Metadaten](docs/research/matt-pocock-20261010-evidence.json), [Übergabe](workstreams/matt-pocock-research-20261010.md). Historischer aktiver Inventarstand überholt; volle Captions lokal, keine neuen Piloten/Installationen/Deploys. Nächster Schritt: Zentrale wertet Bericht aus und wählt nur bei Bedarf einen bestehenden konkreten Fachauftrag.
