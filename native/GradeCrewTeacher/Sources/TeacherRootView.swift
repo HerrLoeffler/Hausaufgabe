@@ -49,10 +49,13 @@ struct TeacherRootView: View {
                 onAuthStateChanged: receiveAuthState,
                 onQuickRemyBridgeReady: { quickRemyCall = $0 }
             )
-            .opacity(route == .workspace || route == .signIn ? 1 : 0)
-            .allowsHitTesting(route == .workspace || route == .signIn)
+            .opacity(route == .workspace || route == .signIn || route == .quickRemy ? 1 : 0)
+            .allowsHitTesting(route == .workspace || route == .signIn || route == .quickRemy)
             .safeAreaInset(edge: .top, spacing: 0) {
-                if route == .workspace || route == .signIn {
+                if route == .quickRemy {
+                    QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                } else if route == .workspace || route == .signIn {
                     HStack {
                         Button {
                             homeNavigation.showHome()
@@ -73,9 +76,6 @@ struct TeacherRootView: View {
 
             if route == .home {
                 homeScreen
-                    .transition(.opacity)
-            } else if route == .quickRemy {
-                QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
                     .transition(.opacity)
             }
         }

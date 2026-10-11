@@ -6,6 +6,11 @@ import tempfile
 root = Path(__file__).parent
 source = root / "Sources/GradeCrewNativeBridgePolicy.swift"
 assert source.exists(), "Native bridge file contract is not implemented yet"
+web_portal = (root / "Sources/TeacherWebPortalView.swift").read_text()
+assert "action === 'openAiForm'" in web_portal
+assert "newQuizBtn" in web_portal and "createAiBtn" in web_portal
+assert "action === 'populateAiForm'" in web_portal
+assert "input.dispatchEvent(new Event('input'" in web_portal
 checks = r'''
 let selected = URL(string: "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/")!
 let body: [String: Any] = ["version": 1, "id": "request-1", "action": "shareFile", "payload": ["filename": "Ergebnisse.csv", "mimeType": "text/csv;charset=utf-8", "base64": "TmFtZTtQdW5rdGVcbsOEbm5lOzEw"]]

@@ -109,7 +109,44 @@ struct GradeCrewWebView: UIViewRepresentable {
                 completion(.failure(NSError(domain: "GradeCrewQuickRemy", code: 1, userInfo: [NSLocalizedDescriptionKey: "GradeCrew ist noch nicht bereit. Bitte erneut versuchen."])))
                 return
             }
-            webView.callAsyncJavaScript("const api = window.GradeCrewQuickRemy; const method = api?.[action]; if (typeof method !== 'function') throw new Error('Remy ist in GradeCrew noch nicht verfügbar.'); return await method(payload);",
+            webView.callAsyncJavaScript("""
+                                        if (action === 'openAiForm') {
+                                          const aiView = document.getElementById('aiView');
+                                          if (!aiView) throw new Error('Der GradeCrew-Testeditor ist nicht verfügbar.');
+                                          if (aiView.classList.contains('hidden')) {
+                                            const newTest = document.getElementById('newQuizBtn');
+                                            if (!newTest) throw new Error('Der Testeditor konnte nicht geöffnet werden.');
+                                            newTest.click();
+                                            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                                            const aiButton = document.getElementById('createAiBtn');
+                                            if (!aiButton) throw new Error('Die KI-Testmaske ist nicht verfügbar.');
+                                            aiButton.click();
+                                            for (let i = 0; i < 10 && aiView.classList.contains('hidden'); i++) {
+                                              await new Promise(resolve => requestAnimationFrame(resolve));
+                                            }
+                                          }
+                                          if (aiView.classList.contains('hidden')) throw new Error('Der Testeditor konnte nicht geöffnet werden.');
+                                          window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
+                                          return { status: 'ready' };
+                                        }
+                                        if (action === 'populateAiForm') {
+                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', topic: 'aiTopic', count: 'aiCount' };
+                                          for (const [key, id] of Object.entries(fields)) {
+                                            const value = payload?.draft?.[key];
+                                            const input = document.getElementById(id);
+                                            if (input && value !== undefined && value !== null && String(value).trim()) {
+                                              input.value = String(value);
+                                              input.dispatchEvent(new Event('input', { bubbles: true }));
+                                              input.dispatchEvent(new Event('change', { bubbles: true }));
+                                            }
+                                          }
+                                          return { status: 'ready' };
+                                        }
+                                        const api = window.GradeCrewQuickRemy;
+                                        const method = api?.[action];
+                                        if (typeof method !== 'function') throw new Error('Remy ist in GradeCrew noch nicht verfügbar.');
+                                        return await method(payload);
+                                        """,
                                         arguments: ["action": action, "payload": payload], in: nil, in: .page) { result in
                 switch result {
                 case let .success(value):
