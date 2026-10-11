@@ -1,5 +1,5 @@
 /* GENERATED FILE. Edit shared/gradecrew-design/tokens.json instead. */
-/* GradeCrew Design System 1.0.0 */
+/* GradeCrew Design System 1.1.0 */
 :root {
   --gc-colors-background: #f6f7f9;
   --gc-colors-surface: #ffffff;
@@ -12,6 +12,8 @@
   --gc-colors-crew-ice: #e8f0f7;
   --gc-colors-crew-rust: #a44d2d;
   --gc-colors-positive: #267049;
+  --gc-colors-warning: #8a5b05;
+  --gc-colors-danger: #a6261c;
   --gc-radius-control: 9px;
   --gc-radius-panel: 12px;
   --gc-radius-card: 16px;
@@ -28,6 +30,7 @@
   --gc-layout-compact-content-max: 1000px;
   --gc-layout-page-horizontal-padding: 24px;
   --gc-layout-minimum-touch-target: 44px;
+  --gc-layout-control-height: 44px;
   --gc-typography-family: system;
   --gc-typography-body: 15px;
   --gc-typography-small: 12px;

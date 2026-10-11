@@ -136,99 +136,140 @@ struct TeacherRootView: View {
         }
     }
 
+    @ViewBuilder
     private var homeScreen: some View {
-        VStack(spacing: GradeCrewDesignTokens.Spacing.xxl) {
-            VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 44, weight: .semibold))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-                    .frame(width: 76, height: 76)
-                    .accessibilityHidden(true)
-                Text("GradeCrew")
-                    .font(.system(size: GradeCrewDesignTokens.Typography.brand, weight: .bold, design: .rounded))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                accountStatus
-            }
-            .padding(.top, GradeCrewDesignTokens.Spacing.xxxl)
+        switch authState {
+        case .checking:
+            authRestoringScreen
+        case .signedOut:
+            GradeCrewSignInScreen(
+                loadError: loadError,
+                onSignIn: { homeNavigation.openSignIn() },
+                onRetry: retryWorkspace
+            )
+        case .signedIn(_, _):
+            homeMenuScreen
+        }
+    }
 
-            HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-                actionCard(
-                    title: "Remy fragen",
-                    subtitle: "Testwunsch kurz einsprechen",
-                    symbol: "mic.fill",
-                    tint: GradeCrewDesignTokens.Colors.crewRust,
-                    action: openRemy
-                )
-                actionCard(
-                    title: "GradeCrew öffnen",
-                    subtitle: "Tests ansehen und bearbeiten",
-                    symbol: "rectangle.grid.2x2.fill",
-                    tint: GradeCrewDesignTokens.Colors.primary,
-                    action: openWorkspace
-                )
-            }
-            .frame(maxWidth: 760)
-            .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-
-            if case .checking = authState {
-                Label("Anmeldung wird geprüft …", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.footnote)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    .accessibilityLabel("Gespeicherte Anmeldung wird geprüft. Aktionen sind noch gesperrt.")
-            }
-
-            if let loadError {
-                VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
-                    Text("GradeCrew ist gerade nicht erreichbar.")
-                        .font(.subheadline.weight(.semibold))
-                    Text(loadError)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                    Button("Erneut versuchen") {
-                        self.loadError = nil
-                        self.isLoading = true
-                        homeNavigation.beginAuthCheck()
-                        reloadID += 1
-                    }
-                    .buttonStyle(.bordered)
+    private var homeMenuScreen: some View {
+        ScrollView {
+            VStack(spacing: GradeCrewDesignTokens.Spacing.xxl) {
+                VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
+                    Image(GradeCrewAssets.NativeImage.brandIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 260, maxHeight: 72)
+                        .clipShape(Circle())
+                        .accessibilityLabel("GradeCrew")
+                    Text("Was möchtest du tun?")
+                        .font(.system(size: GradeCrewDesignTokens.Typography.pageTitle, weight: .semibold, design: .rounded))
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+                    accountStatus
                 }
-                .padding(GradeCrewDesignTokens.Spacing.lg)
-                .frame(maxWidth: 520)
-                .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+                .padding(.top, GradeCrewDesignTokens.Spacing.xxl)
+
+                HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
+                    actionCard(
+                        title: "Remy fragen",
+                        subtitle: "Testwunsch kurz einsprechen",
+                        symbol: "mic.fill",
+                        illustration: GradeCrewAssets.NativeImage.remyWelcome,
+                        tint: GradeCrewDesignTokens.Colors.crewRust,
+                        action: openRemy
+                    )
+                    actionCard(
+                        title: "GradeCrew öffnen",
+                        subtitle: "Tests ansehen und bearbeiten",
+                        symbol: "rectangle.grid.2x2.fill",
+                        tint: GradeCrewDesignTokens.Colors.primary,
+                        action: openWorkspace
+                    )
+                }
+                .frame(maxWidth: 760)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
+
+                if let loadError { connectionError(loadError) }
             }
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, GradeCrewDesignTokens.Spacing.xxl)
+        }
+        .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
+    }
+
+    private var authRestoringScreen: some View {
+        VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
+            Image(GradeCrewAssets.NativeImage.brandIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 260, maxHeight: 72)
+                .clipShape(Circle())
+                .accessibilityLabel("GradeCrew")
+            ProgressView("Anmeldung wird wiederhergestellt …")
+                .tint(GradeCrewDesignTokens.Colors.primary)
+                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                .accessibilityLabel("Gespeicherte GradeCrew-Anmeldung wird geprüft")
+            if let loadError { connectionError(loadError) }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(GradeCrewDesignTokens.Spacing.xl)
         .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
+    }
+
+    private func connectionError(_ message: String) -> some View {
+        VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
+            Text("GradeCrew ist gerade nicht erreichbar.")
+                .font(.subheadline.weight(.semibold))
+            Text(message)
+                .font(.footnote)
+                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                .multilineTextAlignment(.center)
+            Button("Erneut versuchen", action: retryWorkspace)
+                .buttonStyle(.bordered)
+        }
+        .padding(GradeCrewDesignTokens.Spacing.lg)
+        .frame(maxWidth: 520)
+        .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
     }
 
     @ViewBuilder
     private var accountStatus: some View {
         switch authState {
-        case .checking:
-            Text("Anmeldung wird wiederhergestellt")
-                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
         case let .signedIn(accountLabel, _):
             Label(accountLabel, systemImage: "person.crop.circle.fill")
                 .lineLimit(1)
                 .truncationMode(.middle)
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 .accessibilityLabel("Angemeldet als \(accountLabel)")
-        case .signedOut:
-            Text("Bitte anmelden, um GradeCrew zu verwenden")
-                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+        case .checking, .signedOut:
+            EmptyView()
         }
     }
 
-    private func actionCard(title: String, subtitle: String, symbol: String, tint: Color, action: @escaping () -> Void) -> some View {
+    private func actionCard(title: String, subtitle: String, symbol: String, illustration: String? = nil, tint: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                Image(systemName: symbol)
-                    .font(.system(size: 30, weight: .semibold))
-                    .foregroundStyle(tint)
-                    .frame(height: 38)
+                if let illustration {
+                    ZStack(alignment: .bottomTrailing) {
+                        Image(illustration)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 104, height: 78)
+                            .accessibilityHidden(true)
+                        Image(systemName: symbol)
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(tint)
+                            .padding(6)
+                            .background(GradeCrewDesignTokens.Colors.surface, in: Circle())
+                    }
+                    .frame(height: 78)
+                } else {
+                    Image(systemName: symbol)
+                        .font(.system(size: 30, weight: .semibold))
+                        .foregroundStyle(tint)
+                        .frame(height: 78)
+                }
                 Text(title)
                     .font(.system(size: GradeCrewDesignTokens.Typography.cardTitle, weight: .semibold))
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
@@ -239,7 +280,7 @@ struct TeacherRootView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity, minHeight: 176)
+            .frame(maxWidth: .infinity, minHeight: 196)
             .padding(GradeCrewDesignTokens.Spacing.lg)
             .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.largeCard))
             .overlay {
@@ -261,6 +302,13 @@ struct TeacherRootView: View {
 
     private func openWorkspace() { homeNavigation.openWorkspace() }
 
+    private func retryWorkspace() {
+        loadError = nil
+        isLoading = true
+        homeNavigation.beginAuthCheck()
+        reloadID += 1
+    }
+
     private func openDiagnostics() {
         pendingPreview = previewPreference == GradeCrewBetaEnvironment.stablePreference ? "" : previewPreference
         settingsError = nil
@@ -273,5 +321,138 @@ struct TeacherRootView: View {
         homeNavigation.beginAuthCheck()
         reloadID += 1
         showBetaSettings = false
+    }
+}
+
+private struct GradeCrewSignInScreen: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isSignInVisible = false
+    let loadError: String?
+    let onSignIn: () -> Void
+    let onRetry: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
+                Image(GradeCrewAssets.NativeImage.brandIcon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 52, height: 52)
+                    .clipShape(Circle())
+                    .accessibilityLabel("GradeCrew")
+                    .padding(.top, GradeCrewDesignTokens.Spacing.xl)
+
+                Text("Willkommen bei GradeCrew")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+                    .multilineTextAlignment(.center)
+
+                CocoOpeningDoor()
+                    .frame(height: 88)
+                    .accessibilityHidden(true)
+
+                VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
+                    Text("Melde dich mit deinem GradeCrew-Konto an.")
+                        .font(.system(size: GradeCrewDesignTokens.Typography.body))
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                        .multilineTextAlignment(.center)
+                    Button(action: onSignIn) {
+                        Label("Mit GradeCrew anmelden", systemImage: "person.crop.circle.fill")
+                            .font(.system(size: 17, weight: .semibold))
+                            .frame(maxWidth: .infinity, minHeight: 54)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(GradeCrewDesignTokens.Colors.primary)
+                    Text("Nach der Anmeldung bleibt dein Konto in der App gespeichert.")
+                        .font(.footnote)
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                        .multilineTextAlignment(.center)
+                    if let loadError {
+                        VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
+                            Text("GradeCrew ist gerade nicht erreichbar.")
+                                .font(.subheadline.weight(.semibold))
+                            Text(loadError)
+                                .font(.footnote)
+                                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                                .multilineTextAlignment(.center)
+                            Button("Erneut versuchen", action: onRetry).buttonStyle(.bordered)
+                        }
+                    }
+                }
+                .frame(maxWidth: 520)
+                .padding(GradeCrewDesignTokens.Spacing.lg)
+                .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+                .overlay {
+                    RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card)
+                        .stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1)
+                }
+                .opacity(isSignInVisible ? 1 : 0)
+                .offset(y: isSignInVisible ? 0 : 12)
+                .accessibilityHidden(!isSignInVisible)
+                .allowsHitTesting(isSignInVisible)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
+            .padding(.bottom, GradeCrewDesignTokens.Spacing.xxl)
+        }
+        .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
+        .task {
+            guard !isSignInVisible else { return }
+            guard !reduceMotion else {
+                isSignInVisible = true
+                return
+            }
+            try? await Task.sleep(nanoseconds: 750_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.28)) { isSignInVisible = true }
+        }
+    }
+}
+
+private struct CocoOpeningDoor: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isOpen = false
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 22)
+                .fill(GradeCrewDesignTokens.Colors.soft)
+                .frame(width: 102, height: 78)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 22)
+                        .stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1)
+                }
+            Image(GradeCrewAssets.NativeImage.cocoWelcome)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 78)
+                .offset(x: 26)
+            RoundedRectangle(cornerRadius: 14)
+                .fill(GradeCrewDesignTokens.Colors.primary)
+                .frame(width: 56, height: 76)
+                .overlay(alignment: .trailing) {
+                    Circle()
+                        .fill(GradeCrewDesignTokens.Colors.surface)
+                        .frame(width: 9, height: 9)
+                        .padding(.trailing, 9)
+                }
+                .rotation3DEffect(
+                    .degrees(isOpen ? -72 : 0),
+                    axis: (x: 0, y: 1, z: 0),
+                    anchor: .leading,
+                    perspective: 0.72
+                )
+        }
+        .frame(width: 130, height: 88)
+        .task {
+            guard !isOpen else { return }
+            guard !reduceMotion else {
+                isOpen = true
+                return
+            }
+            try? await Task.sleep(nanoseconds: 120_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.72)) { isOpen = true }
+        }
     }
 }

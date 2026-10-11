@@ -4,9 +4,9 @@ Die SwiftUI-/WKWebView-App nutzt die vorhandene GradeCrew-Webplattform mit persi
 
 ## Stand und lokale Entwicklung
 
-Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. Bestätigter bisheriger Upload: **0.1.8 (18)**, Commit `79598be8`, Run [37076301215](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37076301215). Apple-Verarbeitung und physischer Gerätetest sind separate Nachweise.
+Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. **0.1.9 (Build 19)** ist der zuletzt auf dem iPhone getestete Stand. Der Gerätetest fand die nicht ausreichend klare Anmeldung, die eingeklemmte Texteingabe und eine nicht abschließende Remy-Übermittlung. **0.1.10** ist der Kandidat für die Korrektur; ein neuer Upload wird erst nach erfolgreicher GitHub-Prüfung ausgelöst.
 
-0.1.9 ist der neue isolierte Entwicklungskandidat: versionierte Dateibrücke und genauere Diagnose. Seine lokale Buildnummer beweist keinen TestFlight-Upload.
+0.1.10 führt die Anmeldung vor den zwei Startaktionen zusammen, ergänzt die vorhandenen Coco-/Remy-Motive und hält die Remy-Zurücknavigation beim Tippen sichtbar. Remy darf alle fehlenden Pflichtangaben erfragen; die aktuelle Prüfung hat keinen fest codierten Dreierdeckel mehr. Tests, GitHub-CI, TestFlight-Upload und iPhone-Abnahme werden separat dokumentiert.
 
 ```bash
 python3 native/GradeCrewTeacher/prepare_testflight_assets.py
@@ -16,7 +16,7 @@ open native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj
 
 Xcode-Scheme `GradeCrew`, Bundle-ID `de.gradecrew`, iOS/iPadOS 16.0, Gerätfamilien iPhone und iPad. Generiertes Projekt und AppIcon sind lokale Build-Ausgaben. Das Icon stammt aus dem zentralen GradeCrew-SVG; Quick Look wird für die kanonische Build-Pipeline verwendet. Die Codex-Sandbox kann Quick Look und SwiftUI-Compiler-Erweiterungen blockieren; reguläre Xcode-Builds und CI getrennt prüfen.
 
-## Dateibrücke 0.1.9
+## Dateibrücke
 
 Nur die ausgewählte HTTPS-Staging-/Preview-Seite im Hauptframe erhält native Aktionen. Andere Webseiten, Firebase-Auth-Seiten, andere Preview-Ursprünge und Unterframes dürfen die Schnittstelle nicht verwenden.
 

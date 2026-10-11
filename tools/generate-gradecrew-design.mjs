@@ -130,6 +130,11 @@ for (const [name, mascot] of Object.entries(assetMap.mascots)) {
   for (const [key, value] of Object.entries(mascot)) swiftAssets.push(`        static let ${swiftName(key)} = "${value}"`);
   swiftAssets.push('    }', '');
 }
+swiftAssets.push('    enum NativeImage {');
+swiftAssets.push('        static let cocoWelcome = "GradeCrewCocoWelcome"');
+swiftAssets.push('        static let remyWelcome = "GradeCrewRemyWelcome"');
+swiftAssets.push('        static let brandIcon = "GradeCrewBrandIcon"');
+swiftAssets.push('    }', '');
 swiftAssets.push('}', '');
 fs.writeFileSync(path.join(nativeSharedDir, 'GradeCrewAssets.swift'), swiftAssets.join('\n'));
 

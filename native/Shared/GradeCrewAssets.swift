@@ -5,13 +5,6 @@ enum GradeCrewAssets {
     static let version = "1.2.0"
     static let sourceRoot = "assets/gradecrew"
 
-    enum Brand {
-        static let primary = "assets/gradecrew/brand-primary-v1.svg"
-        static let icon = "assets/gradecrew/brand-icon-v1.svg"
-        static let favicon = "assets/gradecrew/brand-icon-v1.svg"
-        static let crewLineup = "assets/gradecrew/crew-lineup.svg"
-    }
-
     enum Coco {
         static let role = "guide"
         static let animal = "penguin"
@@ -41,4 +34,11 @@ enum GradeCrewAssets {
         static let primary = "assets/gradecrew/owl-grade.svg"
         static let welcome = "assets/gradecrew/owl-grade-welcome.svg"
     }
+
+    enum NativeImage {
+        static let cocoWelcome = "GradeCrewCocoWelcome"
+        static let remyWelcome = "GradeCrewRemyWelcome"
+        static let brandIcon = "GradeCrewBrandIcon"
+    }
+
 }
