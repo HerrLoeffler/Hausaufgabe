@@ -36,7 +36,10 @@ test('public entry installs on the real app document and preserves auth controls
       assert.ok(w.document.getElementById(id), `${id} must survive entry installation`);
     }
     assert.equal(w.document.getElementById('gcPublicNav'), null);
-    assert.equal(w.document.querySelectorAll('#gcEntryBenefits li').length, 4);
+    assert.equal(w.document.querySelectorAll('#gcEntryBenefits > li:not([aria-hidden="true"])').length, 4);
+    const paperActors = [...w.document.querySelectorAll('#gcEntryBenefits > .gcCrewPaper')];
+    assert.equal(paperActors.length, 4);
+    assert.ok(paperActors.every(actor => actor.getAttribute('aria-hidden') === 'true'), 'animation paper is decorative, not an extra benefit');
     assert.ok(w.document.querySelector('.topbar #gcEntryLoginOpen'), 'public sign-in belongs in the header');
     assert.equal(w.document.querySelector('#gcHeroActions #gcEntryLoginOpen'), null, 'the hero keeps one central crew action');
     assert.equal(w.document.getElementById('gcHeroHint'), null);
