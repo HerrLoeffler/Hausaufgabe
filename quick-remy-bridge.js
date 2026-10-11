@@ -16,7 +16,7 @@ function preparedRequest(value) {
 
 function validatePrepareResult(value) {
   if (value?.status === "ready") return { status: "ready", preparedRequest: preparedRequest(value.preparedRequest) };
-  if (value?.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > 3 ||
+  if (value?.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > REQUIRED_FIELDS.size ||
       new Set(value.missingFields).size !== value.missingFields.length || value.missingFields.some(field => !REQUIRED_FIELDS.has(field)) ||
       typeof value.question !== "string" || !value.question.trim() || value.question.length > 280) throw new Error("Remys Rückfrage ist ungültig.");
   return { status: "needsInfo", missingFields: [...value.missingFields], question: value.question.trim() };
