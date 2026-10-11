@@ -45,3 +45,11 @@ test("source login markup remains email-native; only staging runtime relaxes it"
   const productionConfig = fs.readFileSync("firebase-config.production.js", "utf8");
   assert.match(productionConfig, /appEnvironment\s*=\s*["']production["']/);
 });
+
+ test("visible login and register help uses neutral product copy", () => {
+ const source = fs.readFileSync("staging-short-login.mjs", "utf8");
+ const hints = source.match(/hint\.textContent = mode === "register"[\s\S]*?;/)[0];
+ assert.doesNotMatch(hints, /STAGING|Testumgebung|Testkonten/);
+ assert.match(hints, /E-Mail oder Kurzname/);
+ assert.match(hints, /Passwort/);
+ });

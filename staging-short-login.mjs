@@ -30,8 +30,8 @@ function installHint(form, input, mode) {
   const hint = doc.createElement("p");
   hint.className = "hint stagingShortLoginHint";
   hint.textContent = mode === "register"
-    ? "STAGING: Für Testkonten reicht ein Kurzname wie „test“. Das Passwort legst du einmal selbst fest."
-    : "STAGING: E-Mail oder Kurzname wie „test“ eingeben.";
+    ? "E-Mail oder Kurzname eingeben. Dein Passwort legst du einmal selbst fest."
+    : "E-Mail oder Kurzname eingeben.";
   input.closest("label")?.insertAdjacentElement("afterend", hint);
 }
 
