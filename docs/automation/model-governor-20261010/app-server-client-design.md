@@ -18,6 +18,8 @@ Empfohlen ist der erste Ansatz als MVP, mit einer späteren ausdrücklich geprü
 
 Ziel für den MVP ist ein neuer Composer im vorhandenen lokalen GradeCrew Dev Workbench (`tools/dev-workbench`, derzeitiger Loopback-Port 8772), sofern der Implementierungsplan den konkreten UI-/HTTP-Anschluss bestätigt. Der Composer zeigt automatische oder ausdrücklich manuelle Modellwahl, Modell/Aufwand samt kurzem Grund, Task-/Phasenklasse, Status und Antwortstrom. Wiederverwendet wird die vorhandene Policy-Logik von `tools/dev-workbench/codex-model-policy.mjs`; der CLI-Provider bleibt unverändert. Der App-Server-Transport ist neu und darf nicht ungeprüft aus CLI-Verhalten abgeleitet werden. Kein Produkt-AI-Router, kein zweiter Modellklassifikationsaufruf.
 
+**Getrenntes lokales Profil ist eine MVP-Voraussetzung.** Der Broker startet den App Server mit einem eigenen `CODEX_HOME`, getrennt vom nativen Desktop-Profil. Die Anmeldung muss im neuen Profil über einen unterstützten Codex-Anmeldeweg erfolgen. Der Client liest oder kopiert weder `auth.json` noch Desktop-Datenbanken, Tokens oder Geheimnisse; Browsercode erhält keine Zugangsdaten. Wenn die Anmeldung im isolierten Profil ohne Credential-Kopie nicht unterstützt ist, wird der MVP an dieser Grenze gestoppt und ein Authentifizierungsentwurf benötigt Nutzerfreigabe.
+
 Ein lokaler Broker hält genau eine App-Server-Verbindung und stellt der Oberfläche nur die nötigen Aktionen bereit. Als erster Transport dient dokumentiertes stdio mit JSONL und initialize/initialized. Browsercode erhält keine Tokens und kann den CLI-Prozess nicht unmittelbar starten. Normale Codex-Anmeldung bleibt im unterstützten Profil; keine Authkopie, globale Modellkonfigurationsänderung oder Hookinstallation. Der Client zeigt Approval-Anfragen und wartet auf die Entscheidung, statt generell freizugeben. Das MVP umfasst Text, Antwortstream, Fehler und Approval-Zustand; fehlende Tool-/Elicitation-Unterstützung wird sichtbar abgelehnt. Kein stiller Wechsel zu einem anderen Provider.
 
 Vor einer späteren Umsetzung sind Endpoint-/Origin-Bindung, lokale Broker-Zugriffskontrolle und genaue ET-Einbindung zu bestimmen. Der App Server ist laut offizieller Dokumentation experimentell; dieser Vorschlag ist ein begrenzter lokaler Pilot.
@@ -44,6 +46,8 @@ Die geladenen Threadwerte `model`/`reasoningEffort` sind Konfiguration, kein Bew
 
 ## Vorhandene Chats: unterstützt und offen
 
+Der MVP liest oder resumiert keine bestehenden Desktop-Chat-IDs. Ein synthetischer Thread wird ausschließlich im isolierten Client-Profil angelegt und nach einem App-Server-Neustart per `thread/resume` wieder aufgenommen; das qualifiziert Persistenz innerhalb dieses Profils, nicht den Zugriff auf Native-Desktop- oder ChatGPT-Work-Threads. Die aktuell als aktiv oder unklar bekannte Unterhaltung „Main GC (w)“ ist ausdrücklich kein Testziel.
+
 Belegt im installierten Protokoll und exakten Quelltag: `thread/resume(threadId)` kann gespeicherte lokale Codex-Historie laden oder einen im **selben** Server geladenen Thread wieder verbinden. Für bereits geladene Threads können abweichende Resume-Overrides ignoriert werden, solange andere Subscriber/aktive Nutzung bestehen. `path`/`history` bleiben weg: sie sind instabil, können die ID-Auflösung ersetzen, und history ist ausdrücklich „FOR CODEX CLOUD — DO NOT USE“. Session-ID ist keine eindeutige Rollen-/Threadidentität.
 
 Besonders relevant: der exakte `turn_start_inner` ruft `start_or_steer_turn` auf und unterscheidet Started/Steered. Ein vorheriges idle-Lesen ist deshalb keine atomare Garantie eines neuen Turns. Exklusive Schreibzuständigkeit und serverseitige Einordnung sind nötig; der Client darf nicht behaupten, jedes `turn/start` starte immer einen frischen Modellaufruf. Im MVP gehören deshalb nur neu vom Client angelegte Threads dazu. Der Broker muss einen einzigen aktiven Writer je Thread erzwingen; bei aktivem oder unklarem Turn zeigt er `warten` und ruft weder `turn/start` noch `turn/steer`, Interrupt oder Retry auf.
@@ -54,7 +58,7 @@ Nicht nachgewiesen: Desktop-Endpoint und Serverzuordnung, private dynamische Des
 
 ## Nächster Schritt
 
-Dieses Dokument wird Martin jetzt zur Prüfung vorgelegt. Es empfiehlt einen lokalen Workbench-Composer mit zunächst ausschließlich client-eigenen Codex-Threads und expliziter Modell-/Aufwandswahl vor jedem Turn. Desktop-Chatübernahme, Implementierung und Runtime-Qualifikation bleiben getrennte Folgeentscheidungen. Nach Freigabe der Spezifikation wird ein fokussierter Implementierungsplan erstellt; bis dahin bleibt alles Entwurf.
+Dieses Dokument wird Martin jetzt zur Prüfung vorgelegt. Es empfiehlt einen lokalen Workbench-Composer, einen separaten `CODEX_HOME` und ausschließlich client-eigene Codex-Threads im MVP, mit expliziter Modell-/Aufwandswahl vor jedem Turn. Desktop-Chatübernahme, Implementierung und Runtime-Qualifikation bleiben getrennte Folgeentscheidungen. Nach Freigabe der Spezifikation wird ein fokussierter Implementierungsplan erstellt; bis dahin bleibt alles Entwurf.
 
 ## Aktueller Repo-Bezug und Selbstprüfung
 
