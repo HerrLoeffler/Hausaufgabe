@@ -53,7 +53,7 @@ Beide bereits zuständigen Fachchats sichern ihre eigenen Inventare und evidenzg
 
 - Letzter gesicherter Teilschritt / Zeitpunkt (UTC): Taskregistrierungsentwurf auf aktuellem `main`, 2026-10-11.
 - Gepushter Dokumentationscommit / Remote-Branch: `e12b951ae85bd4ddebcaae1ceb7cee04e446936b` / `docs/gc-video-insights-20261011`; Draft-PR #207 offen.
-- Ungesicherte Änderungen / Checkout-Pfad: Dokumentationsänderungen im lokalen Arbeitscheckout.
+- Ungesicherte Änderungen / Checkout-Pfad: keine; isolierter lokaler Arbeitscheckout, genauer Pfad hier nicht festgehalten.
 - Laufende oder unklare Vorgänge: Fachrecherchen laut Auftrag in Arbeit; deren externe Request-/Run-IDs unbekannt.
 - Bereits ausgeführte externe Aktionen / Kostenreservierungen: keine durch diesen Registrierungsschritt.
 - Was darf noch nicht als erledigt gelten? Kanalinventar, Caption-/Videoabdeckung, Analyse, Nutzenbewertung, Integration und jede Release-/Deploy-Stufe.
