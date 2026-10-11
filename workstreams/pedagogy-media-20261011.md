@@ -24,3 +24,16 @@ Aktueller main geprüft: `983136812777267e675c50b9a3a69ed91b00ca09`. Development
 
 ## Nächster Schritt
 Die Archivprüfung anhand ihrer 55 Seiten und 55 Folien abnehmen, neue Ergebnisse konsolidieren und danach die nächste offene Reader-Ressource seitenweise bearbeiten. Restseiten und Zugangslücken ausdrücklich offen halten. Production unverändert; CI/Integration dieser Dokumentation erst nach separatem Nachweis.
+
+
+## Lokales Originalarchiv und Audioblock — 11.10.2026
+
+Der Nutzer hat Archivierung, Arbeitskopien, lokale Whisper-Installation, Zeitsegmente, Aufgabenbezug und fachlichen PDF-Abgleich ausdrücklich beauftragt. Ausgeführt: 684 Quelldateien -> 662 unterschiedliche Originalinhalte; sämtliche Kopien per vollständigem SHA-256 geprüft. Das private lokale Archiv bleibt nach Löschen des ursprünglichen Downloads-Unterordners abrufbar. Originale, Audios und vollständige Transkripte wurden nicht auf GitHub hochgeladen.
+
+Sieben WAV-Arbeitskopien (mono, 16 kHz, PCM16) geprüft. faster-whisper 1.2.1, small-Modell und kompatibles PyAV16.1.0 lokal eingerichtet. Alle sieben Audios transkribiert; sieben private JSON/TXT/SRT-Exporte. 20 Hörtextinhalte, 40 Wiedergabe-Zeitbereiche, 38 Hör-Aufgabengruppen mit PDF-Aufgaben-/Transkript-/Lösungsbezug. Alle 214 ursprünglichen Kandidatenlinks geprüft: 20 belegt, 194 für Hörverstehen nicht freigegeben. Identische Audios in Deutsch/DaZ nur einmal transkribiert; fachliche Varianten sowie Musterprüfungen 1/2 erhalten.
+
+Konkrete Lernziele, eigene Lösungswege, Zahlen-/Negationsfallen und Unterschiede der Aufgabenformen stehen lokal in download-2-hoeraufgaben-geprueft.tsv. 38 erkannte ASR-Abweichungen mit offiziellen PDF-Texten korrigiert. Ein Datumsfehler der Astronautenbiografie, eine mehrdeutige Sprecher-/Vorschlagszuordnung in einer Druckeraufgabe und eine abweichende Figurenbenennung dokumentiert. 1.843 Sprechabschnitte / 338 kritische Stellen technisch indexiert; keine pauschale manuelle Wort-für-Wort-Zertifizierung. Zeitmarken sind Suchbereiche, keine samplegenauen Schnittmarken. Technische Endabnahme: alle Archive-/WAV-Hashes, sieben Exporte, 40 Zeitbereiche innerhalb Audiodauer, 38 eindeutige Quellen-/Lösungslinks und vollständige Kandidatenprüfung erfolgreich.
+
+Maßgeblicher lokaler Bericht: analysis/GC-PEDAGOGY-KB-01/media/download-2-audio-pruefbericht.md. Reproduzierbare lokale Programme: audio_pipeline.py, audio_source_linking.py, audio_alignment.py, audio_export.py; Versionsliste audio-requirements-lock.txt. Original-/Transkriptarchiv, Softwareumgebung und Modelle sind durch task-eigene .gitignore für Repo-Upload ausgeschlossen. Scripts und Detaildaten sind lokal erhalten, dieser Commit sichert die Übergabe. Scope bleibt fachliche Datenarbeit; keine Produktintegration, CI-/Deploy-/Productionfreigabe. Der gesamte restliche Aufgaben-/Diagrammbestand und 125 Regalmedien sind weiterhin unvollständig.
+
+Nächster Gesamtarbeitsschritt: übrige nicht-audiobezogene Aufgaben und Diagramme aus den archivierten Quellen konkret prüfen. Aktive lokale Transkriptionsprozesse sind beendet. Beobachtetes Modell, Kosten und Usage unbekannt.
