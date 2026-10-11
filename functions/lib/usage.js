@@ -10,7 +10,8 @@ const map = {
   image: [LIMITS.imagePerMinute, LIMITS.imagePerDay],
   audio: [LIMITS.audioPerMinute, LIMITS.audioPerDay],
   material: [LIMITS.materialPerMinute, LIMITS.materialPerDay],
-  assistant: [LIMITS.assistantPerMinute, LIMITS.assistantPerDay]
+  assistant: [LIMITS.assistantPerMinute, LIMITS.assistantPerDay],
+  quickRemy: [LIMITS.quickRemyPerMinute, LIMITS.quickRemyPerDay]
 };
 function dayKey(d = new Date()) { return d.toISOString().slice(0, 10); }
 function minuteKey(d = new Date()) { return d.toISOString().slice(0, 16); }
