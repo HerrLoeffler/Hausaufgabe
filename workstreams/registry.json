@@ -258,7 +258,7 @@
       "title": "GC-GAMES-PIPELINE-01: gemeinsamer Produktionsguide",
       "primaryBranch": "docs/games-guide-consolidation-20261011",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/great-games-production-20261006.md",
       "relatedBranches": [
         "docs/great-games-production-20261006",
