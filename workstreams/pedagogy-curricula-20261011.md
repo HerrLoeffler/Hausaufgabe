@@ -2,6 +2,8 @@
 
 **Stand:** 11.10.2026 · **Owner:** Chat `GC · Pädagogisches Konzept` · **Branch:** `docs/pedagogy-curricula-20261011` · **Ziel:** `main`
 
+**Sicherung:** Commit `485fdfce9614fa7386f82fc600bfd087d2ff5111` und [Draft-PR #208](https://github.com/HerrLoeffler/Hausaufgabe/pull/208). Die TODO-/Registry-Registrierung ist Teil dieses PR und noch nicht auf `main`.
+
 ## Umfang
 
 Alle geltenden amtlichen Lehrpläne aller Fächer für die Grundschule, Haupt-/Mittelschul- und Realschulbildungsgänge sowie das Gymnasium in 16 Ländern. Originalschularten und Vergleichswege bleiben getrennt. Medienauswertung ist nachgelagert.
