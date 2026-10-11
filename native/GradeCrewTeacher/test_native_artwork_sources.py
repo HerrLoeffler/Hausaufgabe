@@ -12,6 +12,7 @@ expected = {
     "cocoWelcome": "GradeCrewCocoWelcome",
     "remyWelcome": "GradeCrewRemyWelcome",
     "brandIcon": "GradeCrewBrandIcon",
+    "remyMicrophone": "GradeCrewRemyMicrophone",
 }
 for semantic_name, image_name in expected.items():
     assert f"static let {semantic_name} = \"{image_name}\"" in swift, f"Missing generated native image name: {semantic_name}"
@@ -20,5 +21,7 @@ for semantic_name, image_name in expected.items():
 
 assert manifest["mascots"]["coco"]["welcome"] == "penguin-guide-welcome.svg"
 assert manifest["mascots"]["remy"]["welcome"] == "elephant-create-welcome.svg"
+assert manifest["mascots"]["remy"]["microphone"] == "remy-microphone-v1.png"
+assert manifest["mascots"]["remy"]["microphone"] == "remy-microphone-v1.png"
 assert manifest["brand"]["icon"] == "brand-icon-v1.svg"
 print("GradeCrew native artwork sources: passed (Coco, Remy, and brand icon map to canonical manifest assets)")

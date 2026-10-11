@@ -133,6 +133,7 @@ for (const [name, mascot] of Object.entries(assetMap.mascots)) {
 swiftAssets.push('    enum NativeImage {');
 swiftAssets.push('        static let cocoWelcome = "GradeCrewCocoWelcome"');
 swiftAssets.push('        static let remyWelcome = "GradeCrewRemyWelcome"');
+swiftAssets.push('        static let remyMicrophone = "GradeCrewRemyMicrophone"');
 swiftAssets.push('        static let brandIcon = "GradeCrewBrandIcon"');
 swiftAssets.push('    }', '');
 swiftAssets.push('}', '');

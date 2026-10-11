@@ -33,7 +33,8 @@ export const GRADECREW_ASSETS = {
       "animal": "elephant",
       "primary": "assets/gradecrew/elephant-create.svg",
       "welcome": "assets/gradecrew/elephant-create-welcome.svg",
-      "writingScene": "assets/gradecrew/clay-remy-writing.svg"
+      "writingScene": "assets/gradecrew/clay-remy-writing.svg",
+      "microphone": "assets/gradecrew/remy-microphone-v1.png"
     },
     "emmi": {
       "role": "improve",

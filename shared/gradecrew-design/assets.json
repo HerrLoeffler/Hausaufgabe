@@ -21,7 +21,8 @@
       "animal": "elephant",
       "primary": "elephant-create.svg",
       "welcome": "elephant-create-welcome.svg",
-      "writingScene": "clay-remy-writing.svg"
+      "writingScene": "clay-remy-writing.svg",
+      "microphone": "remy-microphone-v1.png"
     },
     "emmi": {
       "role": "improve",
@@ -55,7 +56,13 @@
     "noProductSpecificCopies": true,
     "legacyAliasesMayExist": true,
     "newCodeMustUseManifestNames": true,
-    "brandCoreRequiredFor": ["web", "teacherApp", "games", "live", "student"],
+    "brandCoreRequiredFor": [
+      "web",
+      "teacherApp",
+      "games",
+      "live",
+      "student"
+    ],
     "secureUsesDedicatedVariant": true,
     "faviconMustUseIconAsset": true,
     "iconMustRemainVector": true

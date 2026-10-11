@@ -9,6 +9,7 @@ struct QuickRemyView: View {
 
     @StateObject private var capture = QuickRemySpeechCapture()
     @State private var typedText = ""
+    @State private var pendingTranscript: String?
     @State private var showingTextEntry = false
     @State private var workStatus: RemyWorkStatus = .idle
     @State private var conversationText = ""
@@ -36,11 +37,11 @@ struct QuickRemyView: View {
             ScrollView {
                 VStack(spacing: GradeCrewDesignTokens.Spacing.xl) {
 
-            Image(systemName: status == .recording ? "waveform" : "mic.fill")
-                .font(.system(size: 48, weight: .semibold))
-                .foregroundStyle(GradeCrewDesignTokens.Colors.crewRust)
-                .frame(height: 60)
-                .accessibilityHidden(true)
+            Image(GradeCrewAssets.NativeImage.remyMicrophone)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 104, height: 104)
+                .accessibilityLabel("Remy mit Mikrofon")
 
             Text("Was soll Remy für dich vorbereiten?")
                 .font(.system(size: 25, weight: .semibold, design: .rounded))
@@ -72,11 +73,14 @@ struct QuickRemyView: View {
             Button {
                 if status == .recording {
                     capture.stop()
+                } else if status == .transcribed {
+                    sendCapturedTranscript()
                 } else {
+                    pendingTranscript = nil
                     Task { await capture.start() }
                 }
             } label: {
-                Label(status == .recording ? "Aufnahme beenden" : "Mikrofon drücken", systemImage: status == .recording ? "stop.fill" : "mic.fill")
+                Label(microphoneActionTitle, systemImage: status == .recording ? "stop.fill" : "mic.fill")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(minWidth: 230, minHeight: 54)
             }
@@ -112,19 +116,24 @@ struct QuickRemyView: View {
                     .buttonStyle(.bordered)
             }
 
-            if !capture.flow.transcript.isEmpty {
+            if let visibleTranscript = pendingTranscript ?? (capture.flow.transcript.isEmpty ? nil : capture.flow.transcript) {
                 VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
                     Text("Erkannter Text")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    Text(capture.flow.transcript)
+                    Text(visibleTranscript)
                         .font(.body)
                         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                     if status == .transcribed {
-                        Text("Du kannst den erkannten Text kurz prüfen.")
+                        Text("Prüfe den Text und sende ihn anschließend an Remy.")
                             .font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                        Button(transcriptActionTitle, action: sendCapturedTranscript)
+                            .buttonStyle(.borderedProminent)
+                            .tint(GradeCrewDesignTokens.Colors.primary)
+                            .frame(maxWidth: .infinity)
+                            .disabled(workStatus == .preparing || workStatus == .submitting || workStatus == .accepted)
                     }
                 }
                 .padding(GradeCrewDesignTokens.Spacing.lg)
@@ -150,13 +159,12 @@ struct QuickRemyView: View {
                         .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.control))
                         .accessibilityLabel("Testwunsch als Text")
                         .focused($textEntryFocused)
-                    Button("Text übernehmen") {
-                        let entry = typedText
+                    Button(transcriptActionTitle) {
                         capture.useText(typedText)
-                        textEntryFocused = false
                         typedText = ""
+                        textEntryFocused = false
                         showingTextEntry = false
-                        Task { await prepareTranscript(entry) }
+                        sendCapturedTranscript()
                     }
                     .buttonStyle(.bordered)
                     .disabled(typedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -196,7 +204,7 @@ struct QuickRemyView: View {
             case .permissionDenied, .recognizerUnavailable, .onDeviceRecognitionUnavailable, .emptyTranscript, .failed:
                 showingTextEntry = true
             case .transcribed:
-                Task { await prepareTranscript(capture.flow.transcript) }
+                break
             default:
                 break
             }
@@ -224,7 +232,7 @@ struct QuickRemyView: View {
             .buttonStyle(.bordered)
             Spacer(minLength: GradeCrewDesignTokens.Spacing.sm)
             HStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
-                Image(GradeCrewAssets.NativeImage.remyWelcome)
+                Image(GradeCrewAssets.NativeImage.remyMicrophone)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 34, height: 34)
@@ -239,6 +247,25 @@ struct QuickRemyView: View {
         .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
         .padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
         .background(.regularMaterial)
+    }
+
+    private var microphoneActionTitle: String {
+        if status == .recording { return "Aufnahme beenden" }
+        if status == .transcribed { return transcriptActionTitle }
+        if workStatus == .needsInfo { return "Antwort sprechen" }
+        return "Mikrofon drücken"
+    }
+
+    private var transcriptActionTitle: String {
+        workStatus == .needsInfo ? "Antwort an Remy senden" : "Testwunsch an Remy senden"
+    }
+
+    private func sendCapturedTranscript() {
+        let transcript = capture.flow.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !transcript.isEmpty else { return }
+        pendingTranscript = transcript
+        capture.cancel()
+        Task { await prepareTranscript(transcript) }
     }
 
     private var statusMessage: String {
@@ -385,6 +412,7 @@ struct QuickRemyView: View {
         requestId = UUID().uuidString
         preparedRequest = nil
         workError = nil
+        pendingTranscript = nil
         workStatus = .idle
     }
 
