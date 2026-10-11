@@ -51,6 +51,8 @@ function cleanQuestion(raw = {}, index = 0) {
       })) : [],
       passage: cleanString(raw?.passage, 1800),
       targetWords: Array.isArray(raw?.targetWords) ? raw.targetWords.slice(0, 16).map(value => cleanString(value, 120)).filter(Boolean) : [],
+      markGroups: Array.isArray(raw?.markGroups) ? raw.markGroups.slice(0, 4).map(group => ({ name: cleanString(group?.name, 80), color: String(group?.color || "").slice(0, 12), words: Array.isArray(group?.words) ? group.words.slice(0, 16).map(value => cleanString(value, 120)).filter(Boolean) : [] })) : [],
+      gapColors: Array.isArray(raw?.gapColors) ? raw.gapColors.slice(0, 30).map(value => ["blue", "orange", "green", "purple"].includes(value) ? value : "") : [],
       numericAnswer: Number.isFinite(Number(raw?.numericAnswer)) ? Number(raw.numericAnswer) : 0,
       tolerance: Number.isFinite(Number(raw?.tolerance)) && Number(raw.tolerance) >= 0 ? Number(raw.tolerance) : 0,
       unit: cleanString(raw?.unit, 60),

@@ -92,15 +92,37 @@ function parseGapAuthoringText(text) {
 function publicGapSegments(question, secret) {
   const text = String(question.text || "");
   const gaps = parseGapAuthoringText(text);
+  const colors = Array.isArray(question.gapColors) ? question.gapColors : [];
+  if (colors.length && (colors.length !== gaps.length || colors.some(color => color && !QUESTION_COLORS.includes(color)))) throw new Error("Invalid gap color assignment");
   const segments = [];
   let cursor = 0;
   gaps.forEach((gap, index) => {
     if (gap.start > cursor) segments.push({ type: "text", text: text.slice(cursor, gap.start) });
-    segments.push({ type: "gap", id: opaqueId(secret, question.id, "gap", index) });
+    segments.push({ type: "gap", id: opaqueId(secret, question.id, "gap", index), ...(colors[index] ? { color: colors[index] } : {}) });
     cursor = gap.end;
   });
   if (cursor < text.length) segments.push({ type: "text", text: text.slice(cursor) });
   return segments;
+}
+
+const QUESTION_COLORS = ["blue", "orange", "green", "purple"];
+function colorGroups(question) {
+  const groups = Array.isArray(question.markGroups) ? question.markGroups : [];
+  if (!groups.length) return [];
+  if (groups.length < 2 || groups.length > QUESTION_COLORS.length) throw new Error("Invalid marking palette");
+  const palette = new Set(), assigned = new Set();
+  const passageWords = new Set(tokenizeWords(question.passage).filter(token => token.isWord).map(token => normalizeWord(token.text)));
+  return groups.map(group => {
+    const name = clampString(group?.name, 500).trim();
+    if (!name || !QUESTION_COLORS.includes(group?.color) || palette.has(group.color) || !Array.isArray(group.words) || !group.words.length) throw new Error("Invalid marking group");
+    palette.add(group.color);
+    const words = group.words.map(normalizeWord);
+    for (const word of words) {
+      if (!word || assigned.has(word) || !passageWords.has(word)) throw new Error("Invalid marking word assignment");
+      assigned.add(word);
+    }
+    return { name, color: group.color, words };
+  });
 }
 
 function safeImage(question) {
@@ -133,7 +155,7 @@ function commonPublicQuestion(question) {
     type,
     text: type === "gapfill" ? "Lückentext" : listeningOnly ? "" : clampString(question.text, 5000),
     ...(listeningOnly ? { audioPresentation: "listening-only" } : {}),
-    ...(listeningOnly && clampString(question.audioInstruction, 1000).trim() ? { audioInstruction: clampString(question.audioInstruction, 1000).trim() } : {}),
+    ...(listeningOnly && clampString(question.audioInstruction ?? question.audioIntent?.instruction, 1000).trim() ? { audioInstruction: clampString(question.audioInstruction ?? question.audioIntent?.instruction, 1000).trim() } : {}),
     points: round1(question.points),
     image: safeImage(question),
     audio: safeAudio(question)
@@ -215,6 +237,8 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
     q.items = deterministicOrder(items, secret, `${question.id}:grouping-items`);
   } else if (type === "markwords") {
     q.passage = clampString(question.passage, 12000);
+    const groups = colorGroups(question);
+    if (groups.length) q.markGroups = groups.map(({ name, color }) => ({ name, color }));
   }
 
   return q;
@@ -283,6 +307,13 @@ function buildGradingKey(question, secret) {
     key.correctWordIndexes = tokenizeWords(question.passage)
       .filter(tokenized => tokenized.isWord && targets.has(normalizeWord(tokenized.text)))
       .map(tokenized => String(tokenized.wordIndex));
+    const groups = colorGroups(question);
+    if (groups.length) {
+      const byWord = new Map(groups.flatMap(group => group.words.map(word => [word, group.color])));
+      key.correctWordColors = Object.fromEntries(tokenizeWords(question.passage)
+        .filter(token => token.isWord && byWord.has(normalizeWord(token.text)))
+        .map(token => [String(token.wordIndex), byWord.get(normalizeWord(token.text))]));
+    }
   }
 
   return key;
@@ -295,7 +326,7 @@ function fingerprintQuestion(question) {
     imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
     audioDataUrl: String(question?.audioDataUrl || ""), audioAiGenerated: question?.audioAiGenerated !== false, audioNeedsRegeneration: question?.audioNeedsRegeneration === true,
     ...(question?.audioPresentation === "listening-only" ? { audioPresentation: "listening-only" } : {}),
-    ...(String(question?.audioInstruction || "").trim() ? { audioInstruction: String(question.audioInstruction).trim().slice(0, 1000) } : {}),
+    ...(String(question?.audioInstruction ?? question?.audioIntent?.instruction ?? "").trim() ? { audioInstruction: String(question.audioInstruction ?? question.audioIntent?.instruction).trim().slice(0, 1000) } : {}),
     ...(question?.audioAnswerMode === "audio-only" ? { audioAnswerMode: "audio-only" } : {}),
     ...(question?.audioAnswerMode === "audio-only" && Array.isArray(question.audioAnswerItems) ? { audioAnswerItems: question.audioAnswerItems.map(item => ({ key: String(item.key || ""), sourceText: String(item.sourceText || ""), audioDataUrl: String(item.audioDataUrl || ""), audioNeedsRegeneration: item.audioNeedsRegeneration === true })) } : {}),
     options: Array.isArray(question?.options) ? question.options.map(option => ({
@@ -315,7 +346,9 @@ function fingerprintQuestion(question) {
       .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray),
     groups: Array.isArray(question?.groups) ? question.groups.map(group => ({ name: String(group?.name || ""), items: Array.isArray(group?.items) ? group.items.map(String) : [] })) : [],
     passage: String(question?.passage || ""),
-    targetWords: Array.isArray(question?.targetWords) ? question.targetWords.map(String) : []
+    targetWords: Array.isArray(question?.targetWords) ? question.targetWords.map(String) : [],
+    ...(Array.isArray(question?.markGroups) && question.markGroups.length ? { markGroups: colorGroups(question) } : {}),
+    ...(Array.isArray(question?.gapColors) && question.gapColors.length ? { gapColors: question.gapColors.map(String) } : {})
   };
 }
 
@@ -425,6 +458,14 @@ function gradeQuestion(key, given) {
     return resultShape(max, awarded, false, total > 0 && good === total);
   }
   if (type === "markwords") {
+    if (key.correctWordColors) {
+      const selected = given && typeof given === "object" && !Array.isArray(given) ? Object.entries(given) : [];
+      const total = Object.keys(key.correctWordColors).length;
+      const good = selected.filter(([index, color]) => Object.hasOwn(key.correctWordColors, index) && key.correctWordColors[index] === color).length;
+      const bad = selected.length - good;
+      const awarded = round1(Math.max(0, (good - bad) / Math.max(1, total)) * max);
+      return resultShape(max, awarded, false, total > 0 && good === total && bad === 0);
+    }
     const correct = new Set((key.correctWordIndexes || []).map(String));
     const selected = Array.isArray(given) ? [...new Set(given.map(String))] : [];
     const good = selected.filter(value => correct.has(value)).length;
@@ -481,6 +522,9 @@ function sanitizeAnswersForStorage(gradingKey, answers) {
     const value = source[questionId];
     if (["single", "dropdown", "truefalse", "text", "number"].includes(key.type)) {
       out[questionId] = clampString(value, 4000);
+    } else if (key.type === "markwords" && key.correctWordColors) {
+      const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+      out[questionId] = Object.fromEntries(Object.entries(map).slice(0, 100).map(([index, color]) => [clampString(index, 100), clampString(color, 100)]));
     } else if (["multi", "ordering", "markwords", "gapfill"].includes(key.type)) {
       out[questionId] = (Array.isArray(value) ? value : []).slice(0, 100).map(item => clampString(item, 1000));
     } else if (["matching", "grouping"].includes(key.type)) {
@@ -514,7 +558,7 @@ function publicQuizMetadata(quiz, quizId) {
 function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
     "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
-    "targetWords", "acceptedOrders", "gradingKey", "answerKey", "solutions",
+    "targetWords", "correctWordColors", "acceptedOrders", "gradingKey", "answerKey", "solutions",
     "audioScript", "transcript", "audioTranscript", "solutionAudioDataUrl", "solutionScript", "solutionAudioScript", "optionAudioScript"
   ]);
   const visit = value => {

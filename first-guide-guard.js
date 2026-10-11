@@ -23,6 +23,7 @@ function stopEvent(event) {
 }
 
 function blockOutsideGuide(event) {
+  if (["wheel", "touchstart", "touchmove"].includes(event.type)) return;
   const parts = activeGuideParts();
   if (!parts.active || isAllowedNode(event.target, parts)) return;
   stopEvent(event);
@@ -64,6 +65,7 @@ function keepKeyboardInsideGuide(event) {
   }
 
   if (isAllowedNode(event.target, parts)) return;
+  if (["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown", " "].includes(event.key)) return;
   if (event.metaKey || event.ctrlKey || event.altKey) return;
   if (["Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown"].includes(event.key)) {
     stopEvent(event);
@@ -134,7 +136,7 @@ function scheduleSpotlightSync() {
 function isElephantStep(card) {
   const eyebrow = card?.querySelector(".eyebrow")?.textContent || "";
   const title = card?.querySelector("h2")?.textContent || "";
-  return /Schritt\s+[234]\s+von\s+4/i.test(eyebrow) || /KI-Test wird erstellt/i.test(title) || /Test mit Remy erstellen/i.test(title);
+  return /Schritt\s+[234]\s+von\s+4/i.test(eyebrow) || /KI-Test wird erstellt/i.test(title) || /Jetzt mit KI erstellen/i.test(title);
 }
 
 function polishGuideCopy() {
@@ -152,12 +154,12 @@ function polishGuideCopy() {
   const header = card.querySelector(".gradecrewGuideHeader");
   const image = header?.querySelector("img");
   const label = header?.querySelector("span");
-  if (image) image.src = elephant ? "/assets/gradecrew/elephant-create.svg" : "/assets/gradecrew/penguin-guide.svg";
+  if (image) image.src = elephant ? "/assets/gradecrew/remy-new-test-tablet.png" : "/assets/gradecrew/coco-footer-guide.png";
   if (label) label.textContent = elephant ? "Elefant · Erstellen" : "Deine Starthilfe";
 
   const title = card.querySelector("h2")?.textContent || "";
   const paragraph = card.querySelector("h2 + p");
-  if (paragraph && /Wähle\s+[„\"]Test mit Remy erstellen/i.test(title)) {
+  if (paragraph && /Wähle\s+[„\"]Mit KI erstellen/i.test(title)) {
     paragraph.textContent = "Ab hier übernimmt unser Elefant. Er hilft dir, aus deinen Vorgaben einen passenden Test zu erstellen.";
   }
   scheduleSpotlightSync();

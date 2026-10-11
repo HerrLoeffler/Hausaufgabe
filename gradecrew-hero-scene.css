@@ -51,17 +51,44 @@ body:not(.gcPublicEntryMode) #gcEntryLoginOpen{display:none}
 @media(max-width:620px){.gcPublicEntryMode .topbar.gradecrewLanguageReady{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"brand login language";gap:8px}.gcPublicEntryMode .topbar.gradecrewLanguageReady>#gcEntryLoginOpen{min-height:44px;padding-inline:8px;font-size:13px}}
 
 #authView .gcHeroDialog{border:0;border-radius:24px;width:min(640px,calc(100% - 32px));max-height:calc(100svh - 32px);overflow:auto;padding:32px;background:white;color:#172b4b;box-shadow:0 20px 80px #051c4b33;--hero-color:#0764ed;--hero-tint:#edf5ff}
+#authView .gcHeroDialog[data-crew="coco"]{--hero-color:#243450;--hero-tint:#eef2f7}
+#authView .gcHeroDialog[data-crew="remy"]{--hero-color:#176bb9;--hero-tint:#eaf6ff}
 #authView .gcHeroDialog[data-crew="emmi"]{--hero-color:#b94d18;--hero-tint:#fff4ed}
-#authView .gcHeroDialog[data-crew="wilma"]{--hero-color:#147453;--hero-tint:#edf9f3}
+#authView .gcHeroDialog[data-crew="wilma"]{--hero-color:#78543e;--hero-tint:#f8f1eb}
 #authView .gcHeroDialog::backdrop{background:#10274870;backdrop-filter:blur(5px)}
 #authView .gcHeroDialogClose{position:absolute;top:15px;right:15px;width:36px;height:36px;border:0;border-radius:50%;background:#f0f5fc;font-size:25px;cursor:pointer}
 #authView .gcHeroDialogEyebrow{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--hero-color);margin:0 35px 8px 0}
 #authView .gcHeroDialog h2{font-size:27px;line-height:1.18;margin:0 35px 12px 0}
 #authView #gcHeroDemoStatus{font-size:15px;line-height:1.45;color:#50617a;min-height:43px;margin:0 0 10px}
 #authView .gcHeroDemoWorkspace{padding:22px;min-height:318px;border-radius:18px;background:var(--hero-tint)}
-#authView .gcHeroSheet{min-height:275px;padding:23px;border:1px solid #dde5ef;border-radius:11px;background:white;box-shadow:0 8px 24px #18355308}
+#authView .gcHeroSheet{position:relative;min-height:275px;padding:23px;border:1px solid #dde5ef;border-radius:11px;background:white;box-shadow:0 8px 24px #18355308}
+#authView .gcHeroContextMascot{position:absolute;right:16px;top:14px;display:block;width:72px;height:72px;object-fit:contain;pointer-events:none}
+#authView .gcHeroDialog[data-crew="emmi"] .gcHeroSheet>.gcHeroDraft,#authView .gcHeroDialog[data-crew="wilma"] .gcHeroSheet>.gcHeroSheetTitle{max-width:calc(100% - 78px)}
 #authView .gcHeroSheetMeta{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#637187;margin:0 0 10px;line-height:1.3}
 #authView .gcHeroSheetTitle{font-size:23px;line-height:1.2;margin:0 0 17px;color:#172b4b}
+#authView .gcHeroCocoScene{height:126px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+#authView .gcHeroCocoPortrait{display:block;width:110px;height:110px;object-fit:contain;transform-origin:50% 90%;animation:gcHeroCocoWave 1.8s ease-in-out both}
+#authView .gcHeroCocoCue{position:absolute;left:calc(50% + 32px);top:0;display:grid;place-items:center;min-width:43px;height:43px;padding:5px;border-radius:16px 16px 16px 4px;background:#e3ecfa;box-shadow:0 7px 18px #10284120;color:#243450;font-size:25px;font-weight:800;animation:gcHeroCocoCue .55s .2s ease-out both}
+#authView .gcHeroCocoHelpButton{left:auto;right:0;top:65px;min-width:76px;height:34px;border-radius:17px;background:#243450;color:white;font-size:14px}
+#authView .gcHeroCocoScene-1 .gcHeroCocoPortrait{animation-name:gcHeroCocoHop}
+#authView .gcHeroCocoScene-2 .gcHeroCocoPortrait{animation-name:gcHeroCocoWave}
+#authView .gcHeroCocoScene-2 .gcHeroCocoCue{display:flex;gap:3px;background:#e3ecfa}
+#authView .gcHeroCocoDot{width:5px;height:5px;border-radius:50%;background:#243450;animation:gcHeroCocoDot 1s ease-in-out infinite alternate}
+#authView .gcHeroCocoDot:nth-child(2){animation-delay:.15s}#authView .gcHeroCocoDot:nth-child(3){animation-delay:.3s}
+#authView .gcHeroRemyHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}
+#authView .gcHeroRemyHead .gcHeroSheetTitle{margin-bottom:0}
+#authView .gcHeroRemyMascot{width:78px;height:86px;object-fit:contain;flex:none;transform-origin:50% 90%;animation:gcHeroRemyBob 1.8s ease-in-out infinite alternate}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroSheet{border-color:#cce2f5}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroVoiceBars i{animation:gcHeroVoice 0.7s ease-in-out infinite alternate}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroVoiceBars i:nth-child(2){animation-delay:.12s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroVoiceBars i:nth-child(3){animation-delay:.24s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroVoiceBars i:nth-child(4){animation-delay:.36s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroChoice{animation:gcHeroIn .35s ease-out both}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroChoice:nth-child(2){animation-delay:.13s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroChoice:nth-child(3){animation-delay:.26s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroChoice:nth-child(4){animation-delay:.39s}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroQuestionRow{animation:gcHeroIn .4s ease-out both}
+#authView .gcHeroDialog[data-crew="remy"] .gcHeroQuestionRow:nth-of-type(3){animation-delay:.18s}
 #authView .gcHeroVoiceNote{display:flex;align-items:center;gap:14px;padding:17px;border:1px solid #c5d9f7;border-radius:13px;background:#f3f8ff;animation:gcHeroIn .35s ease-out}
 #authView .gcHeroVoiceBars{width:42px;height:42px;flex:none;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:50%;background:#1164d9}
 #authView .gcHeroVoiceBars i{width:3px;height:10px;background:white;border-radius:4px}
@@ -111,6 +138,12 @@ body:not(.gcPublicEntryMode) #gcEntryLoginOpen{display:none}
 #authView .gcHeroDialog.is-paused *{animation-play-state:paused!important}
 @keyframes gcHeroIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes gcHeroSweep{to{background-position:-200% 0}}
+@keyframes gcHeroCocoWave{0%{transform:rotate(-5deg) translateY(5px)}45%{transform:rotate(5deg) translateY(-4px)}100%{transform:rotate(0) translateY(0)}}
+@keyframes gcHeroCocoHop{0%{transform:translateY(7px) scale(.96)}50%{transform:translateY(-7px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+@keyframes gcHeroCocoCue{from{opacity:0;transform:translateY(10px) scale(.85)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes gcHeroCocoDot{to{transform:translateY(-5px)}}
+@keyframes gcHeroRemyBob{from{transform:translateY(1px) rotate(-3deg)}to{transform:translateY(-5px) rotate(3deg)}}
+@keyframes gcHeroVoice{to{height:24px}}
 
 @media(max-width:1100px) and (min-width:901px){
   #authView .gcHeroActions{top:72%}
@@ -198,9 +231,43 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
 #authView[data-entry-state="start"] .gcEntryShell {width:100%;max-width:none}
 #authView .gcHeroPage {width:100%;max-width:none}
 #authView .gcEntryBenefitsCompact li {display:grid;grid-template-columns:48px auto;grid-template-rows:auto auto;column-gap:10px;align-content:center;text-align:left;justify-content:center}
-#authView .gcEntryBenefitsCompact li img {grid-row:1 / 3;width:48px;height:48px;object-fit:contain}
+#authView .gcEntryBenefitsCompact {position:relative;isolation:isolate;overflow:hidden}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite {grid-row:1 / 3;position:relative;display:block;width:48px;height:48px;pointer-events:none}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite::before,#authView .gcEntryBenefitsCompact li .gcBenefitSprite::after {content:"";position:absolute;inset:0;background-repeat:no-repeat}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite::before {background-size:500% 200%;background-position:100% 100%;opacity:0}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite::after {z-index:5;background-size:500% 200%;background-position:100% 100%;opacity:0}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--coco::before {background-image:url('./assets/gradecrew/coco-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--remy::before {background-image:url('./assets/gradecrew/remy-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--emmi::before {background-image:url('./assets/gradecrew/emmi-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma {width:38px;justify-self:center}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma::before {background-image:url('./assets/gradecrew/wilma-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--coco::after {background-image:url('./assets/gradecrew/coco-footer-run-10.png');transform:scaleX(-1)}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--remy::after {background-image:url('./assets/gradecrew/remy-footer-run-10.png');transform:scaleX(-1)}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--emmi::after {background-image:url('./assets/gradecrew/emmi-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma::after {background-image:url('./assets/gradecrew/wilma-footer-run-10.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitLetter {position:absolute;z-index:1;inset:0;display:block;opacity:1}
+#authView .gcEntryBenefitsCompact li .gcBenefitLetterArt {position:absolute;inset:0;display:block;background-repeat:no-repeat;background-position:center;background-size:contain;opacity:0}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--coco .gcBenefitLetterArt {background-image:url('./assets/gradecrew/coco-footer-letter-c-v5.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--remy .gcBenefitLetterArt {background-image:url('./assets/gradecrew/remy-footer-letter-r-v4.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--emmi .gcBenefitLetterArt {background-image:url('./assets/gradecrew/emmi-footer-letter-e-v2.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma .gcBenefitLetterArt {background-image:url('./assets/gradecrew/wilma-footer-letter-w-v2.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitGlance {position:absolute;z-index:2;inset:0;display:block;background-repeat:no-repeat;background-position:center;background-size:contain;opacity:0}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--coco .gcBenefitGlance {background-image:url('./assets/gradecrew/coco-footer-glance-v4.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--remy .gcBenefitGlance {background-image:url('./assets/gradecrew/remy-footer-letter-r-v4.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--emmi .gcBenefitGlance {background-image:url('./assets/gradecrew/emmi-footer-glance.png')}
+#authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma .gcBenefitGlance {background-image:url('./assets/gradecrew/wilma-footer-glance.png')}
+#authView .gcEntryBenefitsCompact li.gcCrewPaper {position:absolute;z-index:4;top:calc(50% - 19px);left:calc(50% + var(--gc-paper-origin-x,123px));display:block;width:19px;height:25px;padding:0;margin:0;pointer-events:none;list-style:none;background:url('./assets/gradecrew/wilma-worksheet-flying.png') center/contain no-repeat;opacity:0;filter:drop-shadow(0 2px 2px #213c6170)}
+#authView .gcEntryBenefitsCompact li.gcCrewPaper--2 {width:16px;height:22px;--gc-paper-tilt:34deg;animation-delay:.2s}
+#authView .gcEntryBenefitsCompact li.gcCrewPaper--3 {width:20px;height:26px;--gc-paper-tilt:-25deg;animation-delay:.38s}
+#authView .gcEntryBenefitsCompact li.gcCrewPaper--4 {width:15px;height:21px;--gc-paper-tilt:19deg;animation-delay:.58s}
 #authView .gcEntryBenefitsCompact li strong {align-self:end}
 #authView .gcEntryBenefitsCompact li small {align-self:start}
+@media(min-width:781px) {
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact {min-height:96px;box-sizing:border-box;padding:8px 16px}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li {grid-template-columns:76px auto;column-gap:8px}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitSprite {width:76px;height:76px}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitSprite--wilma {width:61px}
+}
 @media(min-width:781px) {
  #authView .gcHeroStage {height:var(--gc-stage-height,calc(100svh - 160px));min-height:580px;aspect-ratio:auto}
  #authView .gcHeroArtwork {object-position:50% 44%}
@@ -213,16 +280,51 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
 }
 @media(max-width:780px) {
  #authView .gcEntryBenefitsCompact li {grid-template-columns:34px auto;column-gap:5px}
- #authView .gcEntryBenefitsCompact li img {width:34px;height:34px}
+ #authView .gcEntryBenefitsCompact li .gcBenefitSprite {width:34px;height:34px}
+ #authView .gcEntryBenefitsCompact li .gcBenefitSprite--wilma {width:27px}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact {padding-bottom:42px}
+ #authView .gcEntryBenefitsCompact li.gcCrewPaper {top:auto;bottom:36px}
 }
 
 @media(prefers-reduced-motion:no-preference) {
- #authView .gcEntryBenefitsCompact li img {transform-origin:50% 90%;animation:gcBenefitHello 1.6s ease-in-out 2}
- #authView .gcEntryBenefitsCompact li:nth-child(2) img {animation-delay:.2s}
- #authView .gcEntryBenefitsCompact li:nth-child(3) img {animation-delay:.4s}
- #authView .gcEntryBenefitsCompact li:nth-child(4) img {animation-delay:.6s}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitSprite {z-index:3;animation:gcBenefitJourney 8.8s ease-in-out both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li strong,#authView[data-entry-state="start"] .gcEntryBenefitsCompact li small {animation:gcBenefitTextPause 8.8s linear both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitSprite::before {animation:gcBenefitStride .6s steps(1,end) var(--gc-benefit-delay,0s) var(--gc-benefit-cycles,5) both,gcBenefitRunIn var(--gc-benefit-duration,3s) linear var(--gc-benefit-delay,0s) both,gcBenefitWalkVisible var(--gc-benefit-duration,3s) linear var(--gc-benefit-delay,0s) both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitSprite::after {animation:gcBenefitStride .6s steps(1,end) 7.2s 3 both,gcBenefitExitVisible 8.8s linear both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitLetter {animation:gcBenefitLetterContinuity 8.8s linear both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitLetterArt {animation:gcBenefitLetterReady var(--gc-benefit-duration,3s) ease-out var(--gc-benefit-delay,0s) both}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li .gcBenefitGlance {animation:gcBenefitGlanceVisible 8.8s linear both}
+ #authView .gcEntryBenefitsCompact li:nth-child(1) {--gc-benefit-delay:2.05s;--gc-benefit-duration:2.4s;--gc-benefit-cycles:4}
+ #authView .gcEntryBenefitsCompact li:nth-child(2) {--gc-benefit-delay:1.45s;--gc-benefit-duration:2.6s;--gc-benefit-cycles:5}
+ #authView .gcEntryBenefitsCompact li:nth-child(3) {--gc-benefit-delay:.85s;--gc-benefit-duration:2.8s;--gc-benefit-cycles:5}
+ #authView .gcEntryBenefitsCompact li:nth-child(4) {--gc-benefit-delay:.25s;--gc-benefit-duration:3s;--gc-benefit-cycles:5}
+ #authView[data-entry-state="start"] .gcEntryBenefitsCompact li.gcCrewPaper {animation-name:gcCrewPaperToss;animation-duration:7s;animation-timing-function:ease-in-out;animation-fill-mode:both}
 }
-@keyframes gcBenefitHello {0%,100%{transform:rotate(0) translateY(0)}35%{transform:rotate(-6deg) translateY(-4px)}70%{transform:rotate(4deg) translateY(-2px)}}
+@keyframes gcBenefitRunIn {0%{transform:translateX(var(--gc-run-from,-120vw))}82%{transform:translateX(-10px)}93%{transform:translateX(5px)}100%{transform:translateX(0)}}
+@keyframes gcBenefitWalkVisible {0%{opacity:0}8%,89%{opacity:1}100%{opacity:0}}
+@keyframes gcBenefitJourney {0%,81%{transform:translate(var(--gc-gather-x,0px),var(--gc-gather-y,0px)) scale(var(--gc-gather-scale,1.14))}100%{transform:translate(0,0) scale(1)}}
+@keyframes gcBenefitTextPause {0%,81%{opacity:0}100%{opacity:1}}
+@keyframes gcBenefitLetterReady {0%,89%{opacity:0;scale:.82}100%{opacity:1;scale:1}}
+@keyframes gcBenefitLetterContinuity {0%,82%{opacity:1}84%,98%{opacity:0}100%{opacity:1}}
+@keyframes gcBenefitGlanceVisible {0%,72%{opacity:0}74%,80%{opacity:1}82%,100%{opacity:0}}
+@keyframes gcBenefitExitVisible {0%,80%{opacity:0}82%,99%{opacity:1}100%{opacity:0}}
+@keyframes gcCrewPaperToss {0%,58%{opacity:0;transform:translate(0,0) rotate(12deg)}60%{opacity:1;transform:translate(0,0) rotate(12deg)}69%{opacity:1;transform:translate(var(--gc-paper-half-x,-40px),-37px) rotate(-42deg)}80%{opacity:1;transform:translate(var(--gc-paper-end-x,-90px),-20px) rotate(32deg)}94%,100%{opacity:.94;transform:translate(var(--gc-paper-end-x,-90px),35px) rotate(var(--gc-paper-tilt,-13deg))}}
+@keyframes gcBenefitStride {
+ 0%,16.66%{background-position:0 0}
+ 16.67%,33.33%{background-position:25% 0}
+ 33.34%,50%{background-position:50% 0}
+ 50.01%,66.66%{background-position:75% 0}
+ 66.67%,83.33%{background-position:100% 0}
+ 83.34%,100%{background-position:0 100%}
+}
+@media(max-width:780px) {
+ #authView .gcEntryBenefitsCompact {--gc-gather-scale:1.3}
+}
+@media(prefers-reduced-motion:reduce) {
+ #authView .gcEntryBenefitsCompact li .gcBenefitSprite::after {opacity:0}
+ #authView .gcEntryBenefitsCompact li .gcBenefitLetterArt {opacity:1}
+ #authView .gcEntryBenefitsCompact li.gcCrewPaper {opacity:.94;transform:translate(var(--gc-paper-end-x,-90px),35px) rotate(var(--gc-paper-tilt,-13deg))}
+}
 @media(max-width:780px) and (min-height:701px) {
  #authView .gcHeroStage {min-height:var(--gc-stage-height,680px);justify-content:space-between}
  #authView .gcHeroVisual {width:min(100%,640px)}

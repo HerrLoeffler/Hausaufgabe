@@ -8,6 +8,7 @@ import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
 import { setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const app = fs.readFileSync(new URL('../../app.js',import.meta.url),'utf8');
+const workspaceCss = fs.readFileSync(new URL('../../gradecrew-workspace-upgrade.css',import.meta.url),'utf8');
 function setup({reduced=false}={}) {
   const dom = new JSDOM(html,{url:'https://example.test'});
   dom.window.matchMedia = () => ({matches:reduced});
@@ -28,10 +29,18 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   assert.ok(nodes.indexOf(x.document.querySelector('.dashboardToolbar'))<nodes.indexOf(x.$('aiJobsList')));
   assert.equal(x.document.querySelectorAll('.gcWorkspaceGreeting').length,0);
   assert.equal(x.document.querySelectorAll('[data-filter="all"]').length,1);
+  assert.equal(x.$('trashBtn').querySelectorAll('img').length,1);
+  assert.equal(x.$('trashBtn').querySelectorAll('svg').length,0);
+  assert.match(x.$('trashBtn').querySelector('img').getAttribute('src'),/trash-bin-3d\.png$/);
   x.document.querySelector('.edit').click(); x.document.querySelector('.duplicate').click();
   x.document.querySelector('.results').click(); x.document.querySelector('.remove').click();
   assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicate-choice',true],['openResults','ONE'],['deleteQuiz','ONE']]);
  }finally{x.close();}
+});
+test('Remy action and recycling-bin positions remain in the desktop center and mobile first column',()=>{
+ assert.match(workspaceCss,/dashboardPrimaryActions\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1 \/ 3/s);
+ assert.match(workspaceCss,/\.dashboardPrimaryActions\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*2/s);
+ assert.match(workspaceCss,/#dashboardView\.gcWorkspace #trashBtn\s*\{[^}]*position:absolute;[^}]*right:14px/s);
 });
 test('all/status/search controls use real existing filtering and retain active counts after rerender',async()=>{
  const x=setup();try {

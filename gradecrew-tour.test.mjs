@@ -14,6 +14,11 @@ const source = fs.readFileSync('gradecrew-tour-v7.js', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 const copyPolish = fs.readFileSync('teacher-copy-polish.js', 'utf8');
 const variantEnhancements = fs.readFileSync('variant-enhancements.js', 'utf8');
+const tourCss = fs.readFileSync('gradecrew-tour.css', 'utf8');
+
+test('introductory Crew coach uses viewport-centered placement', () => {
+  assert.match(tourCss, /\.gcRealCoach\.gcCrewIntroCoach\s*\{[^}]*left:\s*50%[^}]*right:\s*auto[^}]*translate:\s*-50%\s+0/s);
+});
 
 function fn(name) {
   let start = app.indexOf(`function ${name}(`);

@@ -47,6 +47,7 @@ function solutionAnswerText(question = {}) {
       .filter(Boolean).join(". ");
   }
   if (type === "markwords") {
+    if (Array.isArray(question.markGroups) && question.markGroups.length) return question.markGroups.map(group => `${clean(group?.name, 80)}: ${(group?.words || []).map(value => clean(value, 120)).filter(Boolean).join(", ")}`).join(". ");
     return (Array.isArray(question.targetWords) ? question.targetWords : []).map(value => clean(value, 120)).filter(Boolean).join(", ");
   }
   if (type === "number") {

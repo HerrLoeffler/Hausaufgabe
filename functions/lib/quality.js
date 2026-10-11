@@ -100,6 +100,8 @@ function questionSnapshotForMemory(q = {}) {
     groups: q.groups || [],
     passage: q.passage || "",
     targetWords: q.targetWords || [],
+    markGroups: q.markGroups || [],
+    gapColors: q.gapColors || [],
     numericAnswer: q.numericAnswer,
     unit: q.unit || "",
     mediaIntent: { kind }
@@ -334,6 +336,7 @@ function questionForReview(q, index) {
   const answerKey = {};
   const sorted = values => [...values].sort((a, b) => String(a).localeCompare(String(b), "de"));
   if (q.type === "gapfill") {
+    studentView.gapColors = q.gapColors || [];
     answerKey.gaps = [];
     studentView.text = studentView.text.replace(/\[([^\]]+)\]/g, (_, solution) => {
       answerKey.gaps.push(solution.split("|").map(value => value.trim()));
@@ -347,7 +350,7 @@ function questionForReview(q, index) {
   if (q.type === "truefalse") { studentView.choices = ["Richtig", "Falsch"]; answerKey.correctBoolean = q.correctBoolean; }
   if (q.type === "text") { answerKey.acceptedAnswers = q.acceptedAnswers || []; answerKey.manualReview = Boolean(q.manualReview); }
   if (q.type === "number") { studentView.unit = q.unit || ""; answerKey.numericAnswer = q.numericAnswer; answerKey.tolerance = q.tolerance || 0; }
-  if (q.type === "markwords") { studentView.passage = q.passage || ""; answerKey.targetWords = q.targetWords || []; }
+  if (q.type === "markwords") { studentView.passage = q.passage || ""; studentView.markColors = (q.markGroups || []).map(({ name, color }) => ({ name, color })); answerKey.targetWords = q.targetWords || []; answerKey.markGroups = q.markGroups || []; }
   if (q.type === "ordering") { studentView.items = sorted(q.items || []); studentView.displayOrder = "shuffled"; answerKey.orderedItems = q.items || []; answerKey.acceptedOrders = q.acceptedOrders || []; answerKey.manualReview = Boolean(q.manualReview); }
   if (q.type === "matching") {
     studentView.left = (q.pairs || []).map(pair => pair.left);
