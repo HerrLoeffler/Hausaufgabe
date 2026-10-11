@@ -25,19 +25,29 @@ test("prepare result asks only for genuinely missing required values and uses ex
     status: "needsInfo", missingFields: ["grade", "count"], question: "Welche Klasse und wie viele Aufgaben soll ich verwenden?"
   });
   assert.match(buildPrepareResult({ subject: null, grade: null, topic: "Brüche" }, {}).question, /^Welches Fach, welche Klasse und wie viele Aufgaben/);
-  assert.match(buildPrepareResult({ subject: null, grade: null, topic: null }, {}).question, /Fach, welche Klasse und welches Thema/);
+  assert.match(buildPrepareResult({ subject: null, grade: null, topic: null }, {}).question, /Fach, welche Klasse, welches Thema und wie viele Aufgaben/);
   assert.deepEqual(buildPrepareResult({ subject: "Ma", grade: "6", topic: "Brüche", count: null }, {}), {
     status: "needsInfo", missingFields: ["count"], question: "Wie viele Aufgaben soll ich erstellen?"
   });
   assert.equal(buildPrepareResult({ subject: "Ma", grade: "6", topic: "Brüche", count: null }, { count: 12 }).preparedRequest.count, 12);
 });
 
-test("prepare results accept at most three known required fields and bounded questions", () => {
+test("prepare results accept every missing required field and bounded questions", () => {
   assert.deepEqual(normalizePrepareResult({ status: "needsInfo", missingFields: ["subject", "grade"], question: "Welches Fach und welche Klasse?" }), {
     status: "needsInfo", missingFields: ["subject", "grade"], question: "Welches Fach und welche Klasse?"
   });
-  assert.throws(() => normalizePrepareResult({ status: "needsInfo", missingFields: ["topic", "subject", "grade", "count"], question: "Bitte ergänzen." }), { code: "invalid-argument" });
+  assert.deepEqual(normalizePrepareResult({ status: "needsInfo", missingFields: ["subject", "grade", "topic", "count"], question: "Bitte ergänzen." }), {
+    status: "needsInfo", missingFields: ["subject", "grade", "topic", "count"], question: "Bitte ergänzen."
+  });
   assert.throws(() => normalizePrepareResult({ status: "needsInfo", missingFields: ["uid"], question: "Wer bist du?" }), { code: "invalid-argument" });
+});
+
+test("prepare asks for all four fields when no safe defaults or details are present", () => {
+  assert.deepEqual(buildPrepareResult({}, {}), {
+    status: "needsInfo",
+    missingFields: ["subject", "grade", "topic", "count"],
+    question: "Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben soll ich verwenden?"
+  });
 });
 
 test("submit request contains validated job inputs and never an owner UID", () => {

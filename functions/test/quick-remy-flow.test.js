@@ -38,11 +38,11 @@ test("prepare interprets authenticated text, uses only explicit safe defaults, a
   assert.equal(JSON.stringify(usage).includes("Mathe Klasse"), false);
 });
 
-test("prepare asks one combined question for up to three fields without starting a test job", async () => {
-  const { service, calls } = fixture({ interpret: async () => ({ data: { status: "needsInfo", missingFields: ["subject", "grade", "topic"], question: "Welches Fach, welche Klasse und welches Thema?" }, usage: {} }) });
+test("prepare asks one combined question for every missing field without starting a test job", async () => {
+  const { service, calls } = fixture({ interpret: async () => ({ data: { status: "needsInfo", missingFields: ["subject", "grade", "topic", "count"], question: "Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?" }, usage: {} }) });
   const result = await service.prepare(prepareRequest);
   assert.equal(result.status, "needsInfo");
-  assert.equal(result.missingFields.length, 3);
+  assert.equal(result.missingFields.length, 4);
   assert.equal(calls.some(call => call[0] === "startJob"), false);
   assert.equal(calls.some(call => call[0] === "quota" && call[2] === "test"), false);
 });

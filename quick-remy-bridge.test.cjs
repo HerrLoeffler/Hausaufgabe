@@ -37,6 +37,15 @@ test('bridge rejects unauthenticated, malformed, oversized, and invalid success 
   await assert.rejects(authenticated.submit({ requestId: 'voice-1', preparedRequest: { subject: 'Ma', grade: '6', topic: 'Brüche', count: 8 } }));
 });
 
+test('bridge accepts a follow-up covering all four required fields', async () => {
+  const bridge = createQuickRemyBridge({ auth: { currentUser: { uid: 'teacher-1' } }, api: {
+    prepareQuickRemy: async () => ({ status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?' })
+  } });
+  assert.equal(JSON.stringify(await bridge.prepare({ requestId: 'voice-1', conversationText: 'Ich möchte einen Test erstellen.' })), JSON.stringify({
+    status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?'
+  }));
+});
+
 test('duplicate taps share one in-flight callable and keep server request ID stable', async () => {
   let calls = 0;
   let release;

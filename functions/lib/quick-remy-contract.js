@@ -44,7 +44,7 @@ function normalizePrepareResult(value = {}) {
   if (value.status === "ready") {
     return { status: "ready", preparedRequest: normalizePreparedRequest(value.preparedRequest) };
   }
-  if (value.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > 3) {
+  if (value.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > REQUIRED_FIELDS.size) {
     throw invalid("Ungültige Remy-Rückfrage.");
   }
   const missingFields = [...new Set(value.missingFields)];
@@ -73,13 +73,12 @@ function buildPrepareResult(extracted = {}, defaults = {}) {
     ? !Number.isInteger(preparedRequest.count) : !preparedRequest[field]);
   if (!missingFields.length) return normalizePrepareResult({ status: "ready", preparedRequest });
   const prompts = { subject: "welches Fach", grade: "welche Klasse", topic: "welches Thema", count: "wie viele Aufgaben" };
-  const askedFields = missingFields.slice(0, 3);
-  const parts = askedFields.map(field => prompts[field]);
-  const prefix = parts.slice(0, -1).join(", ");
-  const question = askedFields.length === 1 && askedFields[0] === "count" ? "Wie viele Aufgaben soll ich erstellen?"
-    : parts.length === 1 ? `${parts[0][0].toLocaleUpperCase("de-DE")}${parts[0].slice(1)}?`
-      : `${prefix[0].toLocaleUpperCase("de-DE")}${prefix.slice(1)} und ${parts.at(-1)} soll ich verwenden?`;
-  return normalizePrepareResult({ status: "needsInfo", missingFields: askedFields, question });
+  const parts = missingFields.map(field => prompts[field]);
+  const question = missingFields.length === 1 && missingFields[0] === "count" ? "Wie viele Aufgaben soll ich erstellen?"
+    : missingFields.length === 1 ? `${parts[0][0].toLocaleUpperCase("de-DE")}${parts[0].slice(1)}?`
+      : `${parts.slice(0, -1).join(", ")} und ${parts.at(-1)}`;
+  const completeQuestion = missingFields.length === 1 ? question : `${question[0].toLocaleUpperCase("de-DE")}${question.slice(1)} soll ich verwenden?`;
+  return normalizePrepareResult({ status: "needsInfo", missingFields, question: completeQuestion });
 }
 
 function normalizeSubmitRequest(data = {}) {
