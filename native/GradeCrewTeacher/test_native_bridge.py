@@ -9,6 +9,12 @@ assert source.exists(), "Native bridge file contract is not implemented yet"
 web_portal = (root / "Sources/TeacherWebPortalView.swift").read_text()
 assert "action === 'openAiForm'" in web_portal
 assert "newQuizBtn" in web_portal and "createAiBtn" in web_portal
+assert "document.getElementById('createView')" in web_portal
+assert "createView?.classList.contains('hidden')" in web_portal
+assert "Sag mir, welchen Test du brauchst" in web_portal
+assert "nativeQuickRemyHidden" in web_portal
+assert "Erstellung ist bereit." in web_portal
+assert "setTimeout(resolve, 50)" in web_portal
 assert "action === 'populateAiForm'" in web_portal
 assert "input.dispatchEvent(new Event('input'" in web_portal
 checks = r'''

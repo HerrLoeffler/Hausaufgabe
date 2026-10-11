@@ -117,15 +117,48 @@ struct GradeCrewWebView: UIViewRepresentable {
                                             const newTest = document.getElementById('newQuizBtn');
                                             if (!newTest) throw new Error('Der Testeditor konnte nicht geöffnet werden.');
                                             newTest.click();
-                                            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                                            const createView = document.getElementById('createView');
+                                            for (let i = 0; i < 40 && createView?.classList.contains('hidden'); i++) {
+                                              await new Promise(resolve => setTimeout(resolve, 50));
+                                            }
                                             const aiButton = document.getElementById('createAiBtn');
-                                            if (!aiButton) throw new Error('Die KI-Testmaske ist nicht verfügbar.');
+                                            if (createView?.classList.contains('hidden') || !aiButton) throw new Error('Die KI-Testmaske ist nicht verfügbar.');
                                             aiButton.click();
-                                            for (let i = 0; i < 10 && aiView.classList.contains('hidden'); i++) {
-                                              await new Promise(resolve => requestAnimationFrame(resolve));
+                                            for (let i = 0; i < 100 && aiView.classList.contains('hidden'); i++) {
+                                              await new Promise(resolve => setTimeout(resolve, 50));
                                             }
                                           }
                                           if (aiView.classList.contains('hidden')) throw new Error('Der Testeditor konnte nicht geöffnet werden.');
+                                          const hideDuplicateRemy = () => {
+                                            const duplicateRemyLabel = Array.from(aiView.querySelectorAll('*')).find(element =>
+                                              (element.textContent || '').trim() === 'Sag mir, welchen Test du brauchst.'
+                                            );
+                                            let duplicateRemyCard = null;
+                                            for (let card = duplicateRemyLabel?.parentElement; card && card !== aiView; card = card.parentElement) {
+                                              const className = typeof card.className === 'string' ? card.className.toLowerCase() : '';
+                                              if (card.querySelector('textarea, input, button') && /(remy|assistant|chat)/.test(className)) duplicateRemyCard = card;
+                                            }
+                                            if (duplicateRemyCard) {
+                                              duplicateRemyCard.hidden = true;
+                                              duplicateRemyCard.dataset.nativeQuickRemyHidden = 'true';
+                                            }
+                                            const statusText = Array.from(aiView.querySelectorAll('*')).find(element =>
+                                              (element.textContent || '').trim() === 'Erstellung ist bereit.'
+                                            );
+                                            let statusCard = null;
+                                            for (let notice = statusText; notice && notice !== aiView; notice = notice.parentElement) {
+                                              if (notice.querySelector('textarea, input, button') || notice.getBoundingClientRect().height > 140) break;
+                                              statusCard = notice;
+                                            }
+                                            if (statusCard) {
+                                              statusCard.hidden = true;
+                                              statusCard.dataset.nativeQuickRemyHidden = 'true';
+                                            }
+                                          };
+                                          hideDuplicateRemy();
+                                          window.__gradeCrewQuickRemyObserver?.disconnect();
+                                          window.__gradeCrewQuickRemyObserver = new MutationObserver(hideDuplicateRemy);
+                                          window.__gradeCrewQuickRemyObserver.observe(aiView, { childList: true, subtree: true });
                                           window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
                                           return { status: 'ready' };
                                         }

@@ -18,23 +18,26 @@ assert "if route == .quickRemy {" in teacher and "QuickRemyView(onBack:" in teac
 
 body = remy.split("var body: some View {", 1)[1].split("private var navigationHeader", 1)[0]
 assert body.index("navigationHeader") < body.index("microphoneButton"), "The Remy controls remain pinned above the existing web form."
-assert "@FocusState private var textEntryFocused" in remy
-assert 'Button("Eingabe schließen")' in body
-assert 'Button("Text übernehmen")' not in body
+assert "@FocusState private var textEntryFocused" not in remy
+assert "textEntrySection" not in body, "The quick voice screen must not expand into a large typing panel."
+assert "Stattdessen tippen" not in remy
 assert "sendCapturedTranscript()" in body, "The prominent microphone action must still submit the captured text to Remy."
-assert 'workStatus == .needsInfo ? "Antwort an Remy senden" : "Testwunsch an Remy senden"' in remy
-assert 'Label(microphoneActionTitle, systemImage: status == .recording ? "stop.fill" : "mic.fill")' in remy
+assert 'if status == .transcribed { return "An Remy senden" }' in remy
+assert 'if workStatus == .needsInfo { return "Antwort sprechen" }' in remy
+assert 'return "Mikrofon"' in remy
+assert 'Mikrofon drücken' not in remy
 assert 'Image(GradeCrewAssets.NativeImage.remyMicrophone)' in remy
 header = remy.split("private var navigationHeader", 1)[1]
-assert "GradeCrewAssets.NativeImage.remyMicrophone" in header
+assert "GradeCrewAssets.NativeImage.remyMicrophone" not in header, "Keep the mascot once in the compact Remy panel."
+remy_card = teacher.split("private func actionCard", 1)[1].split("private func receiveAuthState", 1)[0]
+illustrated_card = remy_card.split("} else {", 1)[0]
+assert "Image(systemName: symbol)" not in illustrated_card, "The Remy illustration already includes its microphone."
 assert "GradeCrewAssets.NativeImage.remyWelcome" not in header
-assert 'pendingTranscript = transcript' in remy
 assert "QuickRemyDraft" in remy
 assert '"knownFields": draft.knownFieldsPayload' in remy
 assert "draftReviewCard" not in remy
 assert "submitPreparedRequest" not in remy
-assert ".frame(width: 52, height: 52)" in remy
-assert 'case .transcribed:\n                break' in remy
+assert ".frame(width: 76, height: 76)" in remy
 assert 'Task { await prepareTranscript(capture.flow.transcript) }' not in remy
 assert "remyMainArtwork" in body, "Remy needs the transparent illustration above the existing full form."
 assert 'Text("Dein Testentwurf")' not in remy, "The existing web form remains the single source of truth for test options."

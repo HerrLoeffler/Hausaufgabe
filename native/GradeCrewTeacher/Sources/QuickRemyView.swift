@@ -1,18 +1,14 @@
 import SwiftUI
-import UIKit
 
 struct QuickRemyView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @FocusState private var textEntryFocused: Bool
     let onBack: () -> Void
     let call: GradeCrewQuickRemyCall?
 
     @StateObject private var capture = QuickRemySpeechCapture()
-    @State private var typedText = ""
     @State private var pendingTranscript: String?
     @State private var draft = QuickRemyDraft()
     @State private var missingFields: [String] = []
-    @State private var showingTextEntry = false
     @State private var aiFormReady = false
     @State private var workStatus: RemyWorkStatus = .idle
     @State private var conversationText = ""
@@ -34,64 +30,56 @@ struct QuickRemyView: View {
     }
 
     var body: some View {
-        VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
+        VStack(spacing: 4) {
             navigationHeader
-            HStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                remyMainArtwork
-                    .frame(width: 84, height: 84)
-                VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.xs) {
-                    Text("Was soll Remy vorbereiten?")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                    Text(statusMessage)
-                        .font(.system(size: 15))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(statusMessage)
-                        .accessibilityAddTraits(.updatesFrequently)
-                }
-                .layoutPriority(1)
-            }
-            .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-
-            microphoneButton
-                .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-
-            if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
-                ProgressView()
-                    .tint(GradeCrewDesignTokens.Colors.primary)
-                    .accessibilityLabel(progressMessage)
-            }
-
-            followUpCard
-
-            if workStatus == .readyForReview {
-                Text("Deine Angaben stehen im Testeditor darunter. Ergänze dort Aufgaben, Bilder und weitere Wünsche und erstelle den Test.")
-                    .font(.footnote)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-            }
-
-            if workStatus == .accepted {
-                Label("Der vorherige Remy-Auftrag wurde bestätigt.", systemImage: "checkmark.circle.fill")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.positive)
-            }
-
-            if workStatus == .failed {
-                Button(recoveryNeedsRetry ? "Auftrag erneut abgleichen" : (conversationText.isEmpty ? "Testeditor erneut öffnen" : "Remy erneut fragen")) {
-                    Task {
-                        if recoveryNeedsRetry { await recoverPendingSubmission() }
-                        else if conversationText.isEmpty { await openAiForm() }
-                        else { await retryPreparation() }
+            VStack(spacing: 9) {
+                HStack(spacing: 12) {
+                    remyMainArtwork.frame(width: 76, height: 76)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Was brauchst du?")
+                            .font(.system(size: 19, weight: .bold, design: .rounded))
+                            .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+                        Text(statusMessage)
+                            .font(.system(size: 13))
+                            .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(statusMessage)
+                            .accessibilityAddTraits(.updatesFrequently)
                     }
+                    .layoutPriority(1)
                 }
-                .buttonStyle(.bordered)
-            }
 
-            textEntrySection
+                microphoneButton
+
+                if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(GradeCrewDesignTokens.Colors.primary)
+                        .accessibilityLabel(progressMessage)
+                }
+                followUpCard
+
+                if workStatus == .accepted {
+                    Label("Remy hat den Auftrag erhalten.", systemImage: "checkmark.circle.fill")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.positive)
+                }
+                if workStatus == .failed {
+                    Button(recoveryNeedsRetry ? "Auftrag erneut abgleichen" : (conversationText.isEmpty ? "Testeditor erneut öffnen" : "Remy erneut fragen")) {
+                        Task {
+                            if recoveryNeedsRetry { await recoverPendingSubmission() }
+                            else if conversationText.isEmpty { await openAiForm() }
+                            else { await retryPreparation() }
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: 560)
+            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
 
             if status == .permissionDenied, let settingsURL = URL(string: UIApplication.openSettingsURLString) {
                 Link("App-Einstellungen öffnen", destination: settingsURL)
@@ -99,25 +87,15 @@ struct QuickRemyView: View {
                     .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
             }
 
-            Text("Die Sprache wird auf diesem Gerät erkannt. Audio wird nicht an GradeCrew hochgeladen.")
+            Text("Sprache bleibt auf dem Gerät. Kein Audio-Upload.")
                 .font(.system(size: 12))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
         }
         .frame(maxWidth: .infinity)
-        .padding(.bottom, GradeCrewDesignTokens.Spacing.sm)
+        .padding(.bottom, 4)
         .background(GradeCrewDesignTokens.Colors.background)
-        .onChange(of: status) { newStatus in
-            switch newStatus {
-            case .permissionDenied, .recognizerUnavailable, .onDeviceRecognitionUnavailable, .emptyTranscript, .failed:
-                showingTextEntry = true
-            case .transcribed:
-                break
-            default:
-                break
-            }
-        }
         .onChange(of: scenePhase) { phase in
             if phase != .active {
                 recoveryChecking = true
@@ -139,7 +117,7 @@ struct QuickRemyView: View {
         Image(GradeCrewAssets.NativeImage.remyMicrophone)
             .resizable()
             .scaledToFit()
-            .frame(width: 84, height: 84)
+            .frame(width: 76, height: 76)
             .accessibilityLabel("Remy mit Mikrofon")
     }
 
@@ -179,7 +157,7 @@ struct QuickRemyView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                     if status == .transcribed {
-                        Text("Prüfe den Text und tippe oben auf „Testwunsch an Remy senden“.")
+                        Text("Prüfe den Text und tippe oben auf „An Remy senden“.")
                             .font(.footnote)
                             .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                     }
@@ -188,47 +166,6 @@ struct QuickRemyView: View {
                 .frame(maxWidth: 560, alignment: .leading)
                 .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
             }
-        }
-    }
-
-    @ViewBuilder
-    private var textEntrySection: some View {
-        if showingTextEntry {
-            VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
-                HStack {
-                    Text("Stattdessen tippen")
-                        .font(.footnote.weight(.semibold))
-                    Spacer()
-                    Button("Eingabe schließen") {
-                        textEntryFocused = false
-                        showingTextEntry = false
-                    }
-                    .font(.footnote)
-                }
-                TextEditor(text: $typedText)
-                    .frame(minHeight: 120, maxHeight: 180)
-                    .padding(GradeCrewDesignTokens.Spacing.xs)
-                    .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.control))
-                    .accessibilityLabel("Testwunsch als Text")
-                    .focused($textEntryFocused)
-                Button(transcriptActionTitle) {
-                    capture.useText(typedText)
-                    typedText = ""
-                    textEntryFocused = false
-                    showingTextEntry = false
-                    sendCapturedTranscript()
-                }
-                .buttonStyle(.bordered)
-                .disabled(typedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            }
-            .frame(maxWidth: 560)
-            .padding(GradeCrewDesignTokens.Spacing.lg)
-            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
-        } else {
-            Button("Stattdessen tippen") { showingTextEntry = true }
-                .buttonStyle(.plain)
-                .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-                .accessibilityHint("Öffnet eine Texteingabe, wenn du das Mikrofon nicht verwenden möchtest.")
         }
     }
 
@@ -244,11 +181,7 @@ struct QuickRemyView: View {
             }
             .buttonStyle(.plain)
             Spacer()
-            Image(GradeCrewAssets.NativeImage.remyMicrophone)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 52, height: 52)
-                .accessibilityHidden(true)
+            Color.clear.frame(width: 52, height: 52).accessibilityHidden(true)
         }
         .overlay {
             Text("Remy fragen")
@@ -263,14 +196,11 @@ struct QuickRemyView: View {
 
     private var microphoneActionTitle: String {
         if status == .recording { return "Aufnahme beenden" }
-        if status == .transcribed { return transcriptActionTitle }
+        if status == .transcribed { return "An Remy senden" }
         if workStatus == .needsInfo { return "Antwort sprechen" }
-        return "Mikrofon drücken"
+        return "Mikrofon"
     }
 
-    private var transcriptActionTitle: String {
-        workStatus == .needsInfo ? "Antwort an Remy senden" : "Testwunsch an Remy senden"
-    }
 
     private func sendCapturedTranscript() {
         let transcript = capture.flow.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -283,7 +213,7 @@ struct QuickRemyView: View {
     @ViewBuilder
     private var followUpCard: some View {
         if workStatus == .needsInfo {
-            VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Remy fragt kurz nach")
                     .font(.headline)
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
@@ -307,7 +237,7 @@ struct QuickRemyView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(GradeCrewDesignTokens.Spacing.lg)
+            .padding(12)
             .frame(maxWidth: 560, alignment: .leading)
             .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
         }
@@ -334,14 +264,14 @@ struct QuickRemyView: View {
         switch status {
         case .idle: return "Tippe auf das Mikrofon und sprich deinen Testwunsch."
         case .requestingPermission: return "Bitte erlaube Mikrofon und Spracheingabe."
-        case .permissionDenied: return "Mikrofon oder Spracheingabe ist nicht freigegeben. Du kannst deinen Wunsch eintippen."
-        case .recognizerUnavailable: return "Die deutsche Spracherkennung ist gerade nicht verfügbar. Du kannst deinen Wunsch eintippen."
-        case .onDeviceRecognitionUnavailable: return "Dieses Gerät unterstützt gerade keine lokale deutsche Erkennung. Du kannst deinen Wunsch eintippen."
+        case .permissionDenied: return "Mikrofon oder Spracheingabe ist nicht freigegeben."
+        case .recognizerUnavailable: return "Die deutsche Spracherkennung ist gerade nicht verfügbar."
+        case .onDeviceRecognitionUnavailable: return "Lokale deutsche Spracherkennung ist nicht verfügbar."
         case .recording: return "Remy hört zu. Tippe erneut, wenn du fertig bist."
         case .transcribing: return "Remy wandelt deine Spracheingabe auf diesem Gerät in Text um."
         case .transcribed: return "Prüfe kurz, ob der erkannte Testwunsch stimmt."
-        case .emptyTranscript: return "Es wurde kein Text erkannt. Sprich erneut oder tippe deinen Wunsch ein."
-        case .failed: return "Die lokale Erkennung ist fehlgeschlagen. Du kannst es erneut versuchen oder Text eingeben."
+        case .emptyTranscript: return "Es wurde kein Text erkannt. Sprich bitte erneut."
+        case .failed: return "Die lokale Erkennung ist fehlgeschlagen. Bitte versuche es erneut."
         }
     }
 
@@ -482,7 +412,6 @@ struct QuickRemyView: View {
     private func clearConversation() {
         workGeneration = UUID()
         capture.cancel()
-        typedText = ""
         conversationText = ""
         requestId = UUID().uuidString
         draft = QuickRemyDraft()

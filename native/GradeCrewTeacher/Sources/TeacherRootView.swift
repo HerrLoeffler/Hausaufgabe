@@ -257,18 +257,11 @@ struct TeacherRootView: View {
         Button(action: action) {
             VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
                 if let illustration {
-                    ZStack(alignment: .bottomTrailing) {
-                        Image(illustration)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 104, height: 78)
-                            .accessibilityHidden(true)
-                        Image(systemName: symbol)
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(tint)
-                            .padding(6)
-                            .background(GradeCrewDesignTokens.Colors.surface, in: Circle())
-                    }
+                    Image(illustration)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 104, height: 78)
+                        .accessibilityHidden(true)
                     .frame(height: 78)
                 } else {
                     Image(systemName: symbol)
