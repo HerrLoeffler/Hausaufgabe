@@ -263,6 +263,23 @@
       "device_test": "not_performed",
       "production": "unchanged",
       "handoff": "workstreams/feedback-release-20261011.md"
+    },
+    "feedback_followup_20261011": {
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "stage": "branch_only",
+      "last_verified_staging": "b1251b56200030190cb86c4b9b20c529a1bea05f",
+      "scope": "all local product improvements, not only gc34 component subset",
+      "source_inventory_paths": 337,
+      "source_equal_paths": 208,
+      "authors": {
+        "audio": "fix/audio-question-single-field-20261011",
+        "coco": "fix/coco-staging-ui-cleanup-20261011",
+        "color": "release_owner_isolated_reconstruction_pending"
+      },
+      "independent_review": "pending",
+      "deployment": "not_performed",
+      "production": "not_authorized",
+      "handoff": "workstreams/feedback-release-20261011.md"
     }
   },
   "production": {

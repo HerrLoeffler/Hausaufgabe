@@ -508,3 +508,8 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 ## 11.10.2026 — GC-WEB-REPAIR-20261007 Feedback auf kanonischem Staging
 
 PR221 integriert b1251b56200030190cb86c4b9b20c529a1bea05f, gc34/139Dateien. Node22CI38171575617+38171691368, AI/Assessment38171814538 (Receipts11714014948/11713429053), Preview38171814566 (11713154403), Canonical38172084789 (11714780489) erfolgreich. Sichere Rules exact195d40d6… veröffentlicht; echte authentifizierte lesende Browserprüfung von gespeichertem Entwurf, Audio-Modi/Locks und lokalem QR bestanden. Vorhandene Stagingdeltas durch Ancestry05306c→9363 erhalten; fremde lokale Dirtyarbeit bleibt unangetastet. Alte Höraufgaben ohne öffentlichen Arbeitsauftrag benötigen manuelle Lehrkraftprüfung; keine automatische Textmigration. Geräte-/Nutzerabnahme offen, Production unverändert. [Dauerhafte Übergabe](workstreams/feedback-release-20261011.md).
+
+
+## GC-WEB-REPAIR-20261007 — gc34-Nachbesserungen / vollständiger lokaler Stand
+
+**Aktiv, noch kein neuer Deploy.** Nutzer verlangt sämtliche lokalen Produktverbesserungen aufStaging: echte Höraufgabenfrage/ein öffentlicher Fragevertrag, Startanimation, ET, Coco-Erinnerungs-/Telefonbilder, Entfernung altesBereichtool, Remy nebenNeuerTest/blauerPapierkorb und bestehender Farbvertrag. Vollständiger337-Datei-Sourceabgleich gesichert; lokale Verbesserungen getrennt von alten Sicherheitsrückschritten rekonstruieren. Audio/Coco/Farbautoren getrennt, vorhandeneGuardserhalten, unabhängigerReview/Referenzvollständigkeit/echterlokal-vs-StagingAbgleich Pflicht. ETlocal-onlyEndpoints benötigen sicherenStagingvertrag, keineblindöffentlicheWorkbenchServerkopie. LetzterechterRelease bleibtb1251b/gc34. [Übergabe](workstreams/feedback-release-20261011.md).
