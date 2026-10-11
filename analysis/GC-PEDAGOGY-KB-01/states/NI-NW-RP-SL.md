@@ -151,7 +151,7 @@ Die Gemeinschaftsschulverordnung bestimmt: Gemeinschaftsschule 5–13, drei allg
 - Zuerst eine vergleichbare Kernmenge in Deutsch, Mathematik, Englisch/erste Fremdsprache und Sachunterricht/Naturwissenschaften quer über die vier Zielbereiche abschließen; anschließend Gesellschaftswissenschaften, Fremdsprachen, Religion/Ethik, musisch-kulturelle Fächer, Sport, Informatik und Wahlpflicht-/Profilbereiche ergänzen. Das ist ein Vorschlag für effiziente Reihenfolge, keine Aussage, dass Nebenfächer pädagogisch unwichtig seien.
 - Aktuelle Gültigkeit muss besonders für G8/G9, aufsteigende Einführungen, Abiturjahrgänge und nachträgliche Änderungen amtlich verifiziert werden. dynamische Portale sollten mit Abrufdatum und direkter Dokument-URL gesichert werden.
 - NI und SL vollständige Grundschul-Fachinventare, NI gültige Vollfachlisten je Schulform, NW aktuelle Gesamtinventare aller Kernlehrpläne, RP vollständige G8/G9- und Realschule-plus-Fachliste sowie die saarländische Zuordnung der Lehrpläne zu Bildungsgangniveaus sind offen.
-- Alle Aussagen sind auf diese vier Länder beschränkt; die übrigen zwölf Länder sowie die vollständige KMK-Standardsynopse sind noch nicht abgearbeitet.
+- Die Aussagen dieses Berichts betreffen diese vier Länder. Für die übrigen zwölf Länder liegen inzwischen eigene erste Landesberichte vor; der vollständige fachweise Abgleich aller 16 Länder steht weiterhin aus.
 
 ## Verwendete amtliche Referenzen
 
