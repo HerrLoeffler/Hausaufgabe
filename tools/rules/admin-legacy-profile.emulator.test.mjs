@@ -15,7 +15,7 @@ for(const file of ['firestore.rules','firestore.secure-assessment.rules'])test(`
   await env.withSecurityRulesDisabled(async c=>{for(const[id,p]of profiles)await setDoc(doc(c.firestore(),'users',id),{displayName:'Synthetic legacy',...p});await setDoc(doc(c.firestore(),'accountDeletions','deleted'),{operationId:'synthetic'});});
   for(const[id,p]of profiles.slice(0,4)){
    const db=env.authenticatedContext(id).firestore(),state={user:{uid:id},profile:{displayName:'Synthetic legacy',...p}};
-   const context=vm.createContext({...defaults,state,db,doc,deepClone:v=>JSON.parse(JSON.stringify(v)),setDoc:(ref,patch,options)=>setDoc(ref,JSON.parse(JSON.stringify(patch)),{...options})});vm.runInContext(code,context);await context.ensureProfileDefaults();
+   const context=vm.createContext({...defaults,state,db,doc,deepClone:v=>JSON.parse(JSON.stringify(v)),setDoc:(ref,patch,options)=>setDoc(ref,JSON.parse(JSON.stringify(patch)),{...options})});vm.runInContext(code,context);const repaired=await context.ensureProfileDefaults(state.user,state.profile);assert.equal(repaired.role,p.role||'teacher');assert.equal(repaired.status,'active');
    const actual=(await getDoc(doc(db,'users',id))).data();assert.equal(actual.role,p.role||'teacher');assert.equal(actual.status,'active');assert.equal(actual.settings.defaultResultMode,'points_grade');assert.deepEqual(actual.gradeScales[0].thresholds,[91,77,57,39,25,0]);
    await assertFails(updateDoc(doc(db,'users',id),{role:p.role==='admin'?'teacher':'admin'}));await assertFails(updateDoc(doc(db,'users',id),{status:'suspended'}));await assertFails(updateDoc(doc(db,'users',id),{role:deleteField()}));await assertFails(updateDoc(doc(db,'users',id),{status:deleteField()}));
   }

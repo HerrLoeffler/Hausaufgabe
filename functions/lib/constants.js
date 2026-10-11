@@ -36,6 +36,8 @@ const LIMITS = Object.freeze({
   audioPerDay: 120,
   materialPerMinute: 6,
   materialPerDay: 100,
+  quickRemyPerMinute: 4,
+  quickRemyPerDay: 40,
   assistantPerMinute: 20,
   assistantPerDay: 400
 });

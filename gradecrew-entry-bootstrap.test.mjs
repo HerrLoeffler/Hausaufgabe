@@ -119,6 +119,13 @@ test('app bootstrap binds its real auth controls after public entry installation
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }),
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,
+      createQuickRemyBridge: () => ({ authChanged: noop, prepare: async () => ({}), submit: async () => ({}), recoverPending: async () => ({ status: 'none' }) }),
+      publishAuthProfileForGeneration: async ({ readProfile, isCurrent, publishProfile }) => {
+        const profile = await readProfile();
+        if (!isCurrent()) return null;
+        publishProfile(profile);
+        return profile;
+      },
       installWorkspaceInteractions: noop, bindTabs: noop, onAuthStateChanged: noop, focusView: noop, scrollBehavior: () => 'auto',
       setSaveState: noop, CSS: { escape: value => String(value) },
       requestStudentSubmitConfirmation: async () => true,

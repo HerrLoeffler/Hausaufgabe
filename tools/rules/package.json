@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:secure": "node --test firestore-ordering-storage.test.mjs && firebase emulators:exec --project demo-gradecrew-secure --config ../../firebase.secure-assessment-emulator.json --only firestore \"node secure-assessment-rules.emulator.test.mjs && node --test secure-start.emulator.test.cjs && node --test admin-account-actions.emulator.test.cjs && node --test admin-account-rules.emulator.test.mjs && node --test admin-account-marking.emulator.test.mjs && node --test admin-usage-deletion.emulator.test.cjs && node --test admin-legacy-profile.emulator.test.mjs\"",
+    "test:secure": "node --test firestore-ordering-storage.test.mjs && firebase emulators:exec --project demo-gradecrew-secure --config ../../firebase.secure-assessment-emulator.json --only firestore \"node secure-assessment-rules.emulator.test.mjs && node --test secure-start.emulator.test.cjs && node --test admin-account-actions.emulator.test.cjs && node --test admin-account-rules.emulator.test.mjs && node --test admin-account-marking.emulator.test.mjs && node --test admin-usage-deletion.emulator.test.cjs && node --test admin-legacy-profile.emulator.test.mjs && node --test remy-account-guards.emulator.test.cjs\"",
     "test:bugops": "firebase emulators:exec --project demo-gradecrew-bugops --config ../../firebase.bug-ops-emulator.json --only firestore \"node bug-ops-rules.emulator.test.mjs\""
   },
   "dependencies": {
