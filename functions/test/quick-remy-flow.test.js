@@ -27,7 +27,7 @@ const submitRequest = { auth: { uid: "teacher-1" }, data: { requestId: "voice-1"
 test("prepare interprets authenticated text, uses only explicit safe defaults, and records no transcript", async () => {
   const { service, calls } = fixture();
   const result = await service.prepare(prepareRequest);
-  assert.deepEqual(result, { status: "ready", preparedRequest: { subject: "Mathematik", grade: "6", topic: "Brüche", count: 8 } });
+  assert.deepEqual(result, { status: "ready", preparedRequest: { subject: "Mathematik", grade: "6", topic: "Brüche", count: 8 }, draft: { subject: "Mathematik", grade: "6", topic: "Brüche", count: 8 } });
   assert.deepEqual(calls[0], ["quota", "teacher-1", "quickRemy"]);
   const args = calls.find(call => call[0] === "interpret")[1];
   assert.equal(args.uid, "teacher-1");
@@ -126,4 +126,21 @@ test("provider failures are recorded without transcript or generated content and
 test("a queue failure never returns an accepted status", async () => {
   const { service } = fixture({ startJob: async () => { throw Object.assign(new Error("queue down"), { code: "unavailable" }); } });
   await assert.rejects(service.submit(submitRequest), { code: "unavailable" });
+});
+
+
+test("prepare sends prior structured fields to the interpreter so a short follow-up cannot erase them", async () => {
+  const previousDraft = { subject: "Englisch", grade: "4", topic: "Farben und Schulsachen", count: null };
+  let interpreted;
+  const { service } = fixture({
+    interpret: async args => {
+      interpreted = args;
+      const { buildPrepareResult } = require("../lib/quick-remy-contract");
+      return { data: buildPrepareResult({ subject: null, grade: null, topic: null, count: 5 }, args.defaults, args.knownFields) };
+    }
+  });
+  const result = await service.prepare({ ...prepareRequest, data: { ...prepareRequest.data, conversationText: "Vierte Klasse Englisch Farben und Schulsachen\nErgänzung: 5", knownFields: previousDraft } });
+  assert.deepEqual(interpreted.knownFields, { subject: "Englisch", grade: "4", topic: "Farben und Schulsachen" });
+  assert.equal(result.status, "ready");
+  assert.deepEqual(result.preparedRequest, { subject: "Englisch", grade: "4", topic: "Farben und Schulsachen", count: 5 });
 });
