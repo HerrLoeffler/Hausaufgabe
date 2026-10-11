@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc32";
+const APP_VERSION = "2.3.1-gc33";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -38,7 +38,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc2";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc33";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc33";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc33";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -82,6 +84,10 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     };
   }
 });
+const quickRemyBridge = createQuickRemyBridge({ auth, api: aiApi, storage: window.localStorage });
+if (window.GradeCrewNative && window.top === window.self) {
+  Object.defineProperty(window, "GradeCrewQuickRemy", { configurable: false, writable: false, value: quickRemyBridge });
+}
 
 const $ = (id) => document.getElementById(id);
 let crewTour = null;
@@ -1045,10 +1051,10 @@ async function refreshBugOpsAttention({ notify = false } = {}) {
   }
 }
 
-async function ensureProfileDefaults() {
-  if (!state.user) return;
-  const ref = doc(db, "users", state.user.uid);
-  const current = state.profile || {};
+async function ensureProfileDefaults(user, profile) {
+  if (!user) return profile;
+  const ref = doc(db, "users", user.uid);
+  const current = profile || {};
   const patch = {};
   if (!current.settings) patch.settings = deepClone(DEFAULT_SETTINGS);
   if (!Array.isArray(current.gradeScales) || !current.gradeScales.length) patch.gradeScales = [deepClone(DEFAULT_SCALE)];
@@ -1056,17 +1062,18 @@ async function ensureProfileDefaults() {
   if (!current.status) patch.status = "active";
   if (Object.keys(patch).length) {
     await setDoc(ref, patch, { merge: true });
-    state.profile = { ...current, ...patch };
+    return { ...current, ...patch };
   }
+  return current;
 }
 
-async function touchLastActive() {
-  if (!state.user || isSuspended()) return;
-  const key = `lastActive:${state.user.uid}`;
+async function touchLastActive(user, profile) {
+  if (!user || isSuspended(profile)) return;
+  const key = `lastActive:${user.uid}`;
   const previous = Number(localStorage.getItem(key) || 0);
   if (Date.now() - previous < 15 * 60 * 1000) return;
   try {
-    await updateDoc(doc(db, "users", state.user.uid), { lastActiveAt: serverTimestamp(), appVersion: APP_VERSION });
+    await updateDoc(doc(db, "users", user.uid), { lastActiveAt: serverTimestamp(), appVersion: APP_VERSION });
     localStorage.setItem(key, String(Date.now()));
   } catch (err) {
     console.warn("Letzte Aktivität konnte nicht aktualisiert werden:", err);
@@ -1171,10 +1178,15 @@ function authMessage(err) {
   return map[err?.code] || `Fehler: ${err?.message || "unbekannt"}`;
 }
 
+let authStateGeneration = 0;
 onAuthStateChanged(auth, async (user) => {
+  const generation = ++authStateGeneration;
+  quickRemyBridge.authChanged(user);
   if (guestTourRepo && !user) return;
   if (guestTourRepo && user) exitGuestTour();
-  if (state.user?.uid !== user?.uid) {
+  const accountChanged = state.user?.uid !== user?.uid;
+  if (accountChanged) {
+    window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     adminAuditCursor = null;
     state.adminAudit = [];
@@ -1197,22 +1209,38 @@ onAuthStateChanged(auth, async (user) => {
   state.profile = null;
   if (user) {
     try {
-      const p = await getDoc(doc(db, "users", user.uid));
-      state.profile = p.exists() ? p.data() : { displayName: user.displayName || user.email };
-      await ensureProfileDefaults();
-      if (isSuspended()) {
+      let profile = await publishAuthProfileForGeneration({
+        readProfile: async () => {
+          const snapshot = await getDoc(doc(db, "users", user.uid));
+          return snapshot.exists() ? snapshot.data() : { displayName: user.displayName || user.email };
+        },
+        isCurrent: () => generation === authStateGeneration,
+        publishProfile: value => { state.profile = value; }
+      });
+      if (!profile) return;
+      profile = await ensureProfileDefaults(user, profile);
+      if (generation !== authStateGeneration) return;
+      state.profile = profile;
+      if (isSuspended(profile)) {
         toast("Dieser Account wurde vorübergehend gesperrt. Bitte wende dich an den Administrator.", "error");
-        await signOut(auth);
+        if (generation === authStateGeneration) await signOut(auth);
         return;
       }
       state.shownThisLogin = new Set();
-      await touchLastActive();
+      await touchLastActive(user, profile);
+      if (generation !== authStateGeneration) return;
     } catch (err) {
+      if (generation !== authStateGeneration) return;
       console.error(err);
     }
   } else {
     state.shownThisLogin = new Set();
   }
+  if (generation !== authStateGeneration) return;
+  const nativeAuthState = user
+    ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
+    : { state: "signedOut" };
+  window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
   setTeacherBar();
   if (appEnvironment === "staging") void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });

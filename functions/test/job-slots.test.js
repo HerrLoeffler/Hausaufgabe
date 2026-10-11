@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { reserveJob, releaseJob } = require("../lib/job-slots");
+const { reserveJob, releaseJob, markQueueDispatchEnqueued, markQueueDispatchFailed, isAlreadyEnqueuedTaskError } = require("../lib/job-slots");
 
 function firestore(initial = {}) {
   const documents = new Map(Object.entries(initial));
@@ -56,4 +56,87 @@ test("expired jobs free a slot and are recorded as failed", async () => {
   await reserveJob(db, { uid: "teacher", now, jobRef: ref("fresh"), lockRef: ref("current"), jobData: { ownerId: "teacher", status: "queued" } });
   assert.equal(documents.get("old").status, "failed");
   assert.deepEqual(documents.get("current").activeJobIds, ["fresh"]);
+});
+
+test("a failed queue dispatch can reacquire its slot and reuse the same job ID", async () => {
+  const now = { toMillis: () => 100000 };
+  const failed = { ownerId: "teacher", status: "failed", stage: "queue-failed", createdAt: now, input: { topic: "Brüche" } };
+  const { db, documents, ref } = firestore({ retry: failed });
+  const result = await reserveJob(db, {
+    uid: "teacher", now, jobRef: ref("retry"), lockRef: ref("current"),
+    jobData: { ownerId: "teacher", status: "queued", createdAt: now, input: { topic: "Different content must not replace the original" } }
+  });
+  assert.deepEqual(result, { jobId: "retry", resumed: true });
+  assert.equal(documents.get("retry").status, "queued");
+  assert.deepEqual(documents.get("retry").input, { topic: "Brüche" });
+  assert.deepEqual(documents.get("current").activeJobIds, ["retry"]);
+});
+
+test("concurrent queue failure cannot overwrite an already enqueued or running job", async () => {
+  const now = { toMillis: () => 100000 };
+  const { db, documents, ref } = firestore({ queued: { ownerId: "teacher", status: "queued", stage: "queued", dispatchState: "pending" } });
+  assert.equal(await markQueueDispatchEnqueued(db, ref("queued"), now), true);
+  assert.equal(await markQueueDispatchFailed(db, ref("queued"), now), false);
+  assert.equal(documents.get("queued").status, "queued");
+  assert.equal(documents.get("queued").dispatchState, "enqueued");
+  documents.set("queued", { ...documents.get("queued"), status: "running", stage: "starting" });
+  assert.equal(await markQueueDispatchFailed(db, ref("queued"), now), false);
+  assert.equal(documents.get("queued").status, "running");
+});
+
+test("an ambiguous enqueue failure leaves the reserved job claimable for worker or recovery retry", async () => {
+  const now = { toMillis: () => 100000 };
+  const { db, documents, ref } = firestore({ queued: { ownerId: "teacher", status: "queued", stage: "queued", dispatchState: "pending" } });
+  assert.equal(await markQueueDispatchFailed(db, ref("queued"), now), true);
+  assert.equal(documents.get("queued").status, "queued");
+  assert.equal(documents.get("queued").dispatchState, "pending");
+  assert.equal(documents.get("queued").dispatchError, "enqueue-unconfirmed");
+  assert.equal(await markQueueDispatchEnqueued(db, ref("queued"), now), true);
+  assert.equal(documents.get("queued").dispatchState, "enqueued");
+});
+
+test("a delayed enqueue acknowledgement cannot revive a terminal worker failure", async () => {
+  const now = { toMillis: () => 100000 };
+  const { db, documents, ref } = firestore({ queued: { ownerId: "teacher", status: "queued", stage: "queued", dispatchState: "pending" } });
+  documents.set("queued", { ...documents.get("queued"), status: "failed", stage: "failed", dispatchState: "pending" });
+  assert.equal(await markQueueDispatchEnqueued(db, ref("queued"), now), false);
+  assert.equal(documents.get("queued").status, "failed");
+  assert.equal(documents.get("queued").stage, "failed");
+});
+
+test("queue failure marking cannot overwrite a terminal worker failure", async () => {
+  const now = { toMillis: () => 100000 };
+  const { db, documents, ref } = firestore({ queued: { ownerId: "teacher", status: "failed", stage: "failed", dispatchState: "pending" } });
+  assert.equal(await markQueueDispatchFailed(db, ref("queued"), now), false);
+  assert.equal(documents.get("queued").stage, "failed");
+});
+
+test("Firebase task-already-exists is treated as an existing dispatch while the worker can claim the queued job", async () => {
+  const now = { toMillis: () => 100000 };
+  const { db, documents, ref } = firestore({ queued: { ownerId: "teacher", status: "queued", stage: "queued", dispatchState: "pending" } });
+  let releaseFirst;
+  const taskCreated = new Promise(resolve => { releaseFirst = resolve; });
+  let enqueues = 0;
+  const enqueue = async () => {
+    enqueues += 1;
+    if (enqueues === 1) return taskCreated;
+    const error = new Error("task exists");
+    error.code = "functions/task-already-exists";
+    throw error;
+  };
+  const first = enqueue();
+  const duplicate = enqueue().catch(async error => {
+    assert.equal(isAlreadyEnqueuedTaskError(error), true);
+    if (!isAlreadyEnqueuedTaskError(error)) await markQueueDispatchFailed(db, ref("queued"), now);
+    await markQueueDispatchEnqueued(db, ref("queued"), now);
+  });
+  await Promise.resolve();
+  const workerCanClaim = documents.get("queued").status === "queued";
+  assert.equal(workerCanClaim, true);
+  await duplicate;
+  documents.set("queued", { ...documents.get("queued"), status: "running", stage: "starting" });
+  releaseFirst();
+  await first;
+  assert.equal(await markQueueDispatchEnqueued(db, ref("queued"), now), true);
+  assert.equal(documents.get("queued").status, "running");
 });

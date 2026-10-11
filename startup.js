@@ -117,7 +117,7 @@ if (publicTestCode && !teacherPreview) {
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
-    await import("./app.js?v=2.3.1-gc32-coco-context1");
+    await import("./app.js?v=2.3.1-gc33-quick-remy1");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);
@@ -125,7 +125,7 @@ if (publicTestCode && !teacherPreview) {
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec2").catch(error => {
       console.warn(gradeCrewI18n.t("system.secure_assessment_notice_failed", {}, "Secure-Assessment-Hinweise konnten nicht geladen werden."), error);
     });
-    import("./visual-enhancements.js?v=2.3.1-gc32-coco-context1").catch(error => {
+    import("./visual-enhancements.js?v=2.3.1-gc33-quick-remy1").catch(error => {
       console.warn(gradeCrewI18n.t("system.extra_views_failed", {}, "Zusätzliche Ansichten konnten nicht geladen werden."), error);
     });
   } catch (error) {

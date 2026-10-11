@@ -10,6 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
+      - 'feature/quick-remy-*'
       - 'feature/bug-ops-*'
       - 'fix/remy-*'
       - 'fix/tutorial-*'
@@ -163,6 +164,9 @@ jobs:
           node --input-type=module --check < app.js
           node --check student-submit-confirm.mjs
           node --check ai-client.js
+          node --check quick-remy-bridge.js
+          node --input-type=module --check < auth-profile.js
+          node --test quick-remy-bridge.test.cjs auth-profile.test.cjs
           node --check ui-enhancements.js
           node --check visual-enhancements.js
           node --check first-guide-guard.js
@@ -232,6 +236,8 @@ jobs:
           node tools/build-staging.mjs "$BUILD_DIR"
           test -f "$BUILD_DIR/public/generated/gradecrew-design-tokens.css"
           test -f "$BUILD_DIR/public/generated/gradecrew-assets.js"
+          test -f "$BUILD_DIR/public/quick-remy-bridge.js"
+          test -f "$BUILD_DIR/public/auth-profile.js"
           test -f "$BUILD_DIR/public/gradecrew-logo.css"
           test -f "$BUILD_DIR/public/assets/gradecrew/brand-primary-v1.svg"
           test -f "$BUILD_DIR/public/gradecrew-dashboard-foundation.css"
