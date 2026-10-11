@@ -1,0 +1,40 @@
+{
+  "task_id": "GC-GAMES-LERNINSEL-LEVEL1-PLAN-20261011",
+  "game": "Lerninsel",
+  "game_basis": "a5dc474295dea4abda06c5be8923de1bc0206248",
+  "review_document_commit": "1caa38a5f2dfae437d5122bd59d4bfe29a88a53d",
+  "root": {
+    "requested": "Sol/medium",
+    "actual": "unknown",
+    "reason": "Bereits laufender ausführender Turn, keine beobachtete Runtime-Umschaltung",
+    "model_switches": 0
+  },
+  "reviewers": [
+    {
+      "agent": "/root/level1_tester_a",
+      "requested_model": "gpt-6.1-sol",
+      "requested_effort": "medium",
+      "dispatch_arguments_recorded": true,
+      "actual_model_effort": "unknown",
+      "method": "Independent read-only technical first review, then same-assignment counterpart check",
+      "model_switches": 0
+    },
+    {
+      "agent": "/root/level1_tester_b",
+      "requested_model": "gpt-6.1-sol",
+      "requested_effort": "medium",
+      "dispatch_arguments_recorded": true,
+      "actual_model_effort": "unknown",
+      "method": "Independent read-only product first review, then same-assignment counterpart check",
+      "model_switches": 0
+    }
+  ],
+  "independence": "Neither reviewer received the other report before their first response. Countercheck followed both first responses. Exactly2 reviewers, no third agent/full second round.",
+  "performed_runtime_tests": [],
+  "performed_builds": [],
+  "game_starts": [],
+  "os_captures": [],
+  "direct_paid_provider_calls": [],
+  "usage_prices": "unknown",
+  "user_approval": "open"
+}

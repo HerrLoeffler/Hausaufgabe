@@ -18,21 +18,21 @@ Pflichtzeile im Verbweg: „Wähle in jeder Reihe ein Verb.“ Hilfe erklärt E/
 
 ## S — bewusstes Schrittzentrum mit vorhandenen direkten Aktionen
 
-**Start:** Nach Intro zeigt der Vorplatz drei Reihen und seitlich den bekannten Startpunkt20. Eine bewusste E/Klick-Aktion auf „Verbweg starten“ aktiviert `PathStart`. Alternativ startet wie bisher eine erste direkte gültige Auswahl der Reihe1. Bloße Gartenbetretung aktiviert nichts. So wird langsames Betrachten nicht unbeabsichtigt zur Antwort.
+**Start:** Nach Intro zeigt der Vorplatz drei Reihen und seitlich den bekannten Startpunkt20. Eine bewusste E/Klick-Aktion auf „Verbweg starten“ aktiviert `PathStart`. Alternativ startet wie bisher eine erste direkte gültige Auswahl der Reihe 1. Bloße Gartenbetretung aktiviert nichts. Erneutes E/Klick auf Start20 während aktivem/fehlerhaftem Weg ist state-neutral („Der Weg läuft schon.“); `PathStart` darf vorhandene richtige Reihen nicht löschen. So wird langsames Betrachten nicht unbeabsichtigt zur Antwort.
 
 **Sichere Nebenlaufspur:** Gartenroute führt zunächst in eine140cm breite Spur bei Y−460 (Band etwa−530..−390), außerhalb der Wortzentren Y−180/0/+180. Die Hauptblickachse zeigt Reihen und Tor; kleine seitliche Verbindungen führen zu den Worten. Kein Zwang, auf dem mittleren falschen Wort zu laufen, um weiterzugehen. Rücknahme22 und Hilfe bleiben von der Spur aus erreichbar. Die Geometrie benötigt gleiche Bodenhöhe und klare Stein-/Spurkanten; keine unsichtbare Antwortgrenze.
 
-**Aktive Reihe:** Nur die aus `PathPromptRow` erwartete noch ungelöste Reihe nimmt einen Fußintent an. Bereits erledigte oder zukünftige Reihen erzeugen keine neue automatische Antwort. Bei `pathFailed` bleibt Schrittannahme gesperrt, bis der letzte Schritt bewusst zurückgenommen wurde. Ein kurzer Hinweis nennt die aktive Reihe; keine wiederholte Meldung bei jedemFrame auf einer falschen Reihe.
+**Aktive Reihe:** Nur die aus `PathPromptRow` erwartete noch ungelöste Reihe nimmt einen Fußintent an. Bereits erledigte oder zukünftige Reihen erzeugen keine neue automatische Antwort. Bei `pathFailed` bleibt Schrittannahme gesperrt, bis der letzte Schritt bewusst zurückgenommen wurde. Ein kurzer Hinweis nennt die aktive Reihe; keine wiederholte Meldung bei jedem Frame auf einer falschen Reihe.
 
-**Bewusstes Zentrum/Dwell:** Ein Wort bekommt seinen Fußintent nur, wenn die Capsule auf seiner tatsächlichen Oberseite steht, beide horizontalen Abweichungen vom Zentrum≤42cm sind und derselbe Besuch mindestens0,30s ununterbrochen dauert. Das ist der vorhandene Dwellwert als bewusst beibehaltene Grundlage. Eine kleine ruhige Rand-/Füllanzeige während dieses kurzen Stillstands erklärt die Wirkung; keine neue Timerpflicht. Am Rand oder auf der Nebenlaufspur bleibt der State unverändert. Contact muss Bodenhöhe/Komponente einschließen; reineX/Y-Nähe auf anderemTerrain/oberhalb desWortes reicht nicht.
+**Bewusstes Zentrum/Dwell:** Ein Wort bekommt seinen Fußintent nur, wenn die Capsule auf seiner tatsächlichen Oberseite steht, beide horizontalen Abweichungen vom Zentrum≤42cm sind und derselbe Besuch mindestens0,30s ununterbrochen dauert. Das ist der vorhandene Dwellwert als bewusst beibehaltene Grundlage. Das wirksame84×84cm-Zentrum erhält eine ruhige optisch eingelassene Innenkontur im Material (keine höhenändernde Mulde mit abweichendem Collider), die eindeutig zur ganzen Wortplatte gehört und die Schrift nicht verdeckt. Die gesamte ausgewählte Platte bleibt blau, ohne Häkchen. Eine kleine ruhige Rand-/Füllanzeige nur während des bewussten Aufenthalts in der Mitte erklärt den kurzen Dwell; keine neue Timerpflicht. Am Rand oder auf der Nebenlaufspur bleibt der State unverändert. Contact muss Bodenhöhe/Komponente einschließen; reineX/Y-Nähe auf anderemTerrain/oberhalb des Wortes reicht nicht.
 
-**Ein Besuch, ein Intent:** Fußauswahl wird höchstens einmal pro Besuch des Wortzentrums abgegeben. Nach Fehlwahl, Undo, Pause/Fokusverlust oder direkter E/Klick-Auswahl während eines Besuchs muss das Zentrum erst sichtbar verlassen werden, bevor ein weiterer Fußintent möglich ist. Reines `Contact.Reset()` beim Undo darf auf dem noch betretenen falschen Wort nicht nach0,30s denselben Fehler neu wählen. „Besuch konsumiert“ und „erneut außen gewesen“ sind explizite transient Runtimezustände, keine Saveflags.
+**Ein Besuch, ein Intent:** Fußauswahl wird höchstens einmal pro Besuch des Wortzentrums abgegeben. Nach Fehlwahl, Undo, Pause/Fokusverlust oder direkter E/Klick-Auswahl während eines Besuchs muss das Zentrum erst sichtbar verlassen werden, bevor ein weiterer Fußintent möglich ist. Reines `Contact.Reset()` beim Undo darf auf dem noch betretenen falschen Wort nicht nach0,30s denselben Fehler neu wählen. „Besuch konsumiert“ und „erneut außen gewesen“ sind explizite transient Runtimezustände, keine Saveflags. Wenn der Spieler in einem gesperrten Zentrum wartet, erscheint bei Bedarf einmal „Gehe kurz vom Stein.“ Die aktive Reihe bleibt durch ihre eigene Reihenmarke und den kurzen Fortschritt erkennbar. Beim Resume auf Wortmitte wird der aktuelle Besuch zunächst gesperrt; kein neuer Dwell aus verworfenem Contact.
 
-**E/Klick in S:** Bleibt für motorische/Bedienalternativen verfügbar und verwendet denselben Target-/Corepfad. Eine direkte Auswahl konsumiert zugleich den aktuellen Fußbesuch, damit ein späterer Dwell nicht ein zweites Wort auswählt. Footcommit und E/Klick auf dasselbe Ziel im selbenFrame zählen als ein Intent. Ein späterer neuer bewusster Press darf hingegen den letzten Schritt zurücknehmen. Keine pauschale Zeitdebounce und keine doppelte PathStep-Verarbeitung.
+**E/Klick in S:** Bleibt für motorische/Bedienalternativen verfügbar und verwendet denselben Target-/Corepfad. Eine direkte Auswahl konsumiert zugleich den aktuellen Fußbesuch, damit ein späterer Dwell nicht ein zweites Wort auswählt. Footcommit und E/Klick auf dasselbe Ziel im selben Frame zählen als ein Intent. Ein späterer neuer bewusster Press darf hingegen den letzten Schritt zurücknehmen. Keine pauschale Zeitdebounce und keine doppelte `PathStep`-Verarbeitung.
 
-**Rücknahme:** Wie D: Wiederaktivieren des letzten ausgewählten Wortes mit E/Klick oder Rücknahme22 ruft PathUndo auf; frühere richtige Reihen bleiben. Danach führt die sichere Spur zur korrigierten Auswahl. Stehenbleiben auf einem zurückgenommenen falschen Stein erzeugt keine sofortige Neuauswahl. Ein falsches Wort wird ruhig zusätzlich mit Text/Form kenntlich; Ganzsteinblau ohne Häkchen bleibt Auswahlgrundlage.
+**Rücknahme:** Wie D: Wiederaktivieren des letzten ausgewählten Wortes mit E/Klick oder Rücknahme22 ruft `PathUndo` auf; frühere richtige Reihen bleiben. Danach führt die sichere Spur zur korrigierten Auswahl. Stehenbleiben auf einem zurückgenommenen falschen Stein erzeugt keine sofortige Neuauswahl. Ein falsches Wort wird ruhig zusätzlich mit Text/Form kenntlich; Ganzsteinblau ohne Häkchen bleibt Auswahlgrundlage.
 
-Pflichtzeile in S: „Gehe auf ein Verb in jeder Reihe.“ Der knappe aktivitätsnahe Hinweis erklärt einmal: „Stehe kurz auf dem Wort. Du kannst auch E drücken oder klicken.“ Das ist keine zweite permanente HUDwand. Vorteile: ursprüngliche räumliche Antwortmechanik erhalten, Gehen ist Teil des Rätsels. Risiken: intentabhängige Geometrie, langsamere Bewegung/Spielertiming und Fuß-/Pointerkonkurrenz; diese werden ausdrücklich geprüft, nicht pauschal als unbrauchbar bewertet.
+Pflichtzeile in S: „Gehe auf ein Verb in jeder Reihe.“ Der knappe aktivitätsnahe Hinweis erklärt einmal: „Stehe kurz in der Mitte. Du kannst auch E drücken oder klicken.“ Das ist keine zweite permanente HUDwand. Vorteile: ursprüngliche räumliche Antwortmechanik erhalten, Gehen ist Teil des Rätsels. Risiken: intentabhängige Geometrie, langsamere Bewegung/Spielertiming und Fuß-/Pointerkonkurrenz; diese werden ausdrücklich geprüft, nicht pauschal als unbrauchbar bewertet.
 
 ## Zusätzlich erforderliche spätere Prüfungen
 
@@ -40,15 +40,15 @@ Alle **NICHTGEPRÜFT**, nur Plan. Für S werden dieselben Core-/Save-/Menü-/Gat
 
 | ID | Ablauf | PASS-Kriterium / Beleg |
 |---|---|---|
-| S-I01 | Vor PathStart alle Wortflächen betreten | Keine Fußantwort; N+State |
+| S-I01 | Vor `PathStart` alle Wortflächen betreten | Keine Fußantwort; N+State |
 | S-I02 | Sichere Spur langsam vor/zurück/quer laufen | Kein Antworttoggle, alle Reihen/Undo erreichbar; N+V |
-| S-I03 | Aktive Reihe: Rand, Zentrum0,29s und≥0,30s | Rand/kurzer Besuch keine Antwort; ununterbrochenes Zentrum genaueine; F+N getrennt |
-| S-I04 | Zukunftsreihe/fertigeReihe/andereHöhe betreten | Keine automatischeAntwort; richtige aktiveReihe bleibt; F+N |
-| S-I05 | Auf Wort bleiben, Pause/Resume oderUndo | Kein wiederholterDwell bis Zentrumverlassen; N+F |
+| S-I03 | Aktive Reihe: Rand, Zentrum0,29s und≥0,30s | Sichtbare Innenkontur und Mittehinweis nachvollziehbar; Rand/kurzer Besuch keine Antwort; ununterbrochenes Zentrum genaueine; F+N getrennt |
+| S-I04 | Zukunftsreihe/fertigeReihe/andereHöhe betreten | Keine automatische Antwort; richtige aktive Reihe bleibt; F+N |
+| S-I05 | Auf Wort bleiben, Pause/Resume oder Undo | Rearmhinweis sichtbar, kein wiederholter Dwell bis Zentrum verlassen; N+F |
 | S-I06 | Im Zentrum E/Klick vor/mit/nachDwell | Keine Doppelwahl; spätere bewusstneue Rücknahme funktioniert; N+F+Eventlog |
-| S-I07 | FalschesWort→Undo→aufgleichemSteinstehenbleiben→verlassen→neu wählen | Kein Wiederfehlertoggle durchReset; guteKorrektur ohneVerlust alterReihen; N+F |
-| S-I08 | Wortoberseite/Schriftkörper/Randnormal anCapsule prüfen | Fußhöhe tatsächlichSteinoberseite, keinDurchlaufen; N+F+M |
-| S-I09 | Langsam reagierende erwachsene Prüferperspektive, mehrminütige Pausen | Keine Strafe/ungewollte Antwort außerhalb bewussten Zentrums; qualitativeN-Notiz, keinKinder-/Lernwirknachweis |
+| S-I07 | Falsches Wort→Undo→aufgleichem Steinstehenbleiben→verlassen→neu wählen | Kein Wiederfehlertoggle durch Reset; gute Korrektur ohne Verlust alter Reihen; N+F |
+| S-I08 | Wortoberseite/Schriftkörper/Randnormal an Capsule prüfen | Fußhöhe tatsächlich Steinoberseite, kein Durchlaufen; N+F+M |
+| S-I09 | Langsam reagierende erwachsene Prüferperspektive, mehrminütige Pausen | Keine Strafe/ungewollte Antwort außerhalb bewussten Zentrums; qualitative N-Notiz, keinKinder-/Lernwirknachweis |
 
 ## Entscheidungsgate
 

@@ -33,7 +33,7 @@ Ausgeschlossen: neue verpflichtende Lerngebiete, Bonuszwang, Wasser-/Eimeraufgab
 | Bestehende UE5.8.3-Mac-Runtime | C++-Regeln, UMG/Slate, Ego-Figur, Material-/Torablauf und lokale Saves vorhanden; geringster Umbau | **Für den Referenzabschnitt gewählt.** Kein Browserexport-/iPadnachweis daraus. |
 | Browserlokale 3D-Runtime, etwa vorhandener Three.js-/Babylon-Ansatz als späterer Kandidat | Könnte später Assetladen statt Video-Streaming ermöglichen | Portierung von Runtime, UI, Saves und Aufgaben nötig; keine vorhandene Lerninsel-Browserfassung gelesen. **Keine Einführung in diesem Auftrag.** |
 
-Der Vergleich ist eine Planentscheidung anhand vorhandener Quellen, kein Benchmark. iPad, Smartphone und Browser bleiben Zielwünsche für eine spätere gesonderte Laufzeitentscheidung. Kein Enginewechsel ohne Folgeauftrag. Keine Aussage zu 1.000 Spielern, Streamingkosten oder konkreter Sitzungsdichte.
+Der Vergleich ist eine Planentscheidung anhand vorhandener Quellen, kein Benchmark. i Pad, Smartphone und Browser bleiben Zielwünsche für eine spätere gesonderte Laufzeitentscheidung. Kein Enginewechsel ohne Folgeauftrag. Keine Aussage zu 1.000 Spielern, Streamingkosten oder konkreter Sitzungsdichte.
 
 ## Stilreferenzen und Rechte
 
@@ -51,15 +51,15 @@ HUD: eine kurze aktuelle Anforderung plus diskreter Fortschritt. Satzkontext ers
 
 ## Wiederverwendete Verträge und tatsächliche Verfügbarkeit
 
-Vorhanden: `Island::State`, `IntroToggle/IntroCheck`, `PathStart/PathStep/PathUndo/PathCheck`, LI4 mit LI1–LI3-Lesepfad, Tasks 10/20, `AIslandController` und `UIslandFocusWidget`, getrennte Save-/Preferences-Slots im Konzept anschlussfähig. Gates werden erst nach voller Animation physisch passierbar. Diese Codeflächen werden im Plan konkret adressiert.
+Vorhanden: `Island::State`, `IntroToggle/IntroCheck`, `PathStart/PathStep/PathUndo/PathCheck`, LI4 mit LI1–LI3-Lesepfad, Lernaufgaben 100/200; Weltterminals 10/20 getrennt, `AIslandController` und `UIslandFocusWidget`, getrennte Save-/Preferences-Slots im Konzept anschlussfähig. Gates werden erst nach voller Animation physisch passierbar. Diese Codeflächen werden im Plan konkret adressiert.
 
-Nicht belegt im Lerninsel-Kandidaten: produktiver Assessment-/Noten-/Attemptadapter, gemeinsame native Feedback-/KI-Brücke oder eingebautes GameET-Plugin. Gelesene ET-Übergabe zeigt Shared-Plugin/Pizza-Belege; diese übertragen sich nicht auf Lerninsel. ET-Owner bleibt **GC · Games · ET & Live-Integration**. Es gibt hier weder einen konkurrierenden ET-Bau noch einen Menüknopf mit simuliertem Versand. Siehe Plan, Daten- und ET-Grenzen.
+Nicht belegt im Lerninsel-Kandidaten: produktiver Assessment-/Noten-/Attemptadapter, gemeinsame native Feedback-/KI-Brücke oder eingebautes Game ET-Plugin. Gelesene ET-Übergabe zeigt Shared-Plugin/Pizza-Belege; diese übertragen sich nicht auf Lerninsel. ET-Owner bleibt **GC · Games · ET & Live-Integration**. Es gibt hier weder einen konkurrierenden ET-Bau noch einen Menüknopf mit simuliertem Versand. Siehe Plan, Daten- und ET-Grenzen.
 
 ## Messziele und Abnahme
 
-Entwurfsziele, noch keine Messwerte: ruhiger 60-FPS-Betrieb am benannten Mac bei 1440×900, 95. Perzentil Framezeit ≤20 ms, 99. Perzentil ≤33 ms; warmer Spielstart ≤10 s, Kaltstart ≤30 s ohne Shadererstkompilierung. Vorläufige zusätzliche Level-Assets ≤100 MiB, maximaler zusätzlicher Prozessspeicher gegenüber gleichem Basisbuild ≤500 MiB. Initiale Shaderkompilierung, Editorstart und gepackter Start werden getrennt gemessen. Überschreitungen erzeugen einen Befund; Werte werden nicht still herabgesetzt. iPad-/Webbudgets stehen erst nach Geräte-/Laufzeitwahl an.
+Entwurfsziele, noch keine Messwerte: ruhiger 60-FPS-Betrieb am benannten Mac bei 1440×900, 95. Perzentil Framezeit ≤20 ms, 99. Perzentil ≤33 ms; warmer Spielstart ≤10 s, Kaltstart ≤30 s ohne Shadererstkompilierung. Vorläufige zusätzliche Level-Assets ≤100 Mi B, maximaler zusätzlicher Prozessspeicher gegenüber gleichem Basisbuild ≤500 Mi B. Initiale Shaderkompilierung, Editorstart und gepackter Start werden getrennt gemessen. Überschreitungen erzeugen einen Befund; Werte werden nicht still herabgesetzt. iPad-/Webbudgets stehen erst nach Geräte-/Laufzeitwahl an.
 
-Abnahme verlangt einen normalen vollständigen WASD/Maus/E-Durchlauf auf genau demselben gebundenen Build, richtige und falsche Eingaben, Hilfe, Pause, Wiederaufnahme, reale Hügel- und Torkollision sowie lesbare referenzvergleichbare Spielbilder. Keine Teleports, ForceComplete oder SetFlags als normaler Playtest. Automationsfixtures werden separat benannt. Für jede Zeile der Prüfmatrix steht zunächst **NICHTGEPRÜFT**; heutiger Planreview ist kein neuer Leveltest.
+Abnahme verlangt einen normalen vollständigen WASD/Maus/E-Durchlauf auf genau demselben gebundenen Build, richtige und falsche Eingaben, Hilfe, Pause, Wiederaufnahme, reale Hügel- und Torkollision sowie lesbare referenzvergleichbare Spielbilder. Keine Teleports, Force Complete oder Set Flags als normaler Playtest. Automationsfixtures werden separat benannt. Für jede Zeile der Prüfmatrix steht zunächst **NICHTGEPRÜFT**; heutiger Planreview ist kein neuer Leveltest.
 
 ## Annahmen, offene Entscheidungen und Budget
 

@@ -4,7 +4,7 @@ Task GC-GAMES-LERNINSEL-LEVEL1-PLAN-20261011. Basis PR175@a5dc474295dea4abda06c5
 
 ## Zuständigkeit, Sicherung und Reihenfolge
 
-Ein Gameplay-/Integrationsowner schreibt World/Art/HUD/Map in einem eigenen Umsetzungcheckout. Ein Artowner kann die begrenzten neuen Level1Reference-Assets produzieren, sobald seine separaten Assetdateien freigegeben sind; er verändert keine IslandWorld-Dateien. Der Integrationsowner importiert bestätigte Art in die Runtime. ET besitzt den bestehenden eigenen Fachowner. Tester A/B schreiben nicht am Produkt. Spiel-/Games-/Hauptzentralen koordinieren nur. Kein vorgeschlagener Owner wird durch diese Tabelle bereits gestartet.
+Ein Gameplay-/Integrationsowner schreibt World/Art/HUD/Map in einem eigenen Umsetzungcheckout. Ein Artowner kann die begrenzten neuen Level1Reference-Assets produzieren, sobald seine separaten Assetdateien freigegeben sind; er verändert keine Island World-Dateien. Der Integrationsowner importiert bestätigte Art in die Runtime. ET besitzt den bestehenden eigenen Fachowner. Tester A/B schreiben nicht am Produkt. Spiel-/Games-/Hauptzentralen koordinieren nur. Kein vorgeschlagener Owner wird durch diese Tabelle bereits gestartet.
 
 Jeder Meilenstein endet mit einem sinnvollen Commit, Push und Handoff. Ein Dokument berichtet zuletzt gesicherte Codequelle, ungesicherte Restdateien, tatsächlich ausgeführte Checks, Report-/Prozess-/Run-ID und genau nächsten Schritt. Ein fehlgeschlagener Test wird mit Ursache erhalten, nicht durch Löschen des alten Reports verborgen. Bei bezahlter Asset-/Provideraktion wäre vorher ein eigenständiger begrenzter Auftrag nötig; der aktuelle Plan enthält keine. Keine automatischen Builds/CI-/Merge-/Deploystarts aus Checkboxen.
 
@@ -39,35 +39,36 @@ Jeder Meilenstein endet mit einem sinnvollen Commit, Push und Handoff. Ein Dokum
 
 **Files:** geplant `Core/IslandLevelOneLayout.h`, `IslandLevelOneGameMode.h/.cpp`, `IslandWorld.h/.cpp`, scoped `IslandArt.cpp`, neue `Content/Maps/Lerninsel_Level1Ref.umap`, `Tools/create_level_one_reference.py`, separater Starter. Alte Maps nicht überschreiben. Testflächen: geplant `Tests/level_one_profile_test.cpp`, `IslandLevelOneAutomation.cpp`.
 
-**Interfaces:** Layout erzeugt `double Island::LevelOneGroundZ(double X, double Y)` in cm und konstante Level1-Zonen/Startpunkte. `AIslandLevelOneGameMode` setzt Referenzmode vor BeginPlay; `AIslandGameMode::IsLevelOneReferenceMode() const` liefert bool. `BuildLevelOneWorld()` erzeugt Boden, registrierte frühe Targets und Gateindices0/1. Späteres M3 nutzt Targetregistrierung, M5 SafePose nutzt dieselbe Oberfläche.
+**Interfaces:** Layout erzeugt `double Island::LevelOneGroundZ(double X, double Y)` in cm und konstante Level1-Zonen/Startpunkte. `AIslandLevelOneGameMode` setzt Referenzmode vor Begin Play; `AIslandGameMode::IsLevelOneReferenceMode() const` liefert bool. `BuildLevelOneWorld()` erzeugt Boden, registrierte frühe Targets und Gateindices0/1. Späteres M3 nutzt Targetregistrierung, M5 Safe Pose nutzt dieselbe Oberfläche.
 
-**Genaues Profil:** In |Y|≤160 ist Z von Y unabhängig. Aufstieg−2650..−2200: `90 * s(t)`, `t=(X+2650)/450`, `s(t)=3t²−2t³`; Abstieg−2200..−1650: `90*(1−s(t))`, `t=(X+2200)/550`. Außen auf dem ebenen HauptbandZ0. Maximaler theoretischer Längsgradient1,5×90/450=0,30, also≈16,70°; Triangle-/Schulter-/Cooked-Collisionwerte anschließend separat prüfen. Die Form ist eine **geplante 90-cm-Kuppe**, kein bereits gebauter Hügel.
+**Genaues Profil:** In |Y|≤160 ist Z von Y unabhängig. Aufstieg−2650..−2200: `90 * s(t)`, `t=(X+2650)/450`, `s(t)=3t²−2t³`; Plateau−2200..−2000: Z90 konstant. Abstieg−2000..−1450: `90*(1−s(t))`, `t=(X+2000)/550`. Außen auf dem ebenen Hauptband Z0. Maximaler theoretischer Längsgradient1,5×90/450=0,30, also≈16,70°; Triangle-/Schulter-/Cooked-Collisionwerte anschließend separat prüfen. Die Form ist eine **geplante 90-cm-Kuppe**, kein bereits gebauter Hügel.
 
-- [ ] Failing portable Tests `LevelOneHillEndpointsAndCrest`, `LevelOneSlopeMargin`, `LevelOneLayoutContainsSafeStart` schreiben. Assertions: Z(−2650,0)=0, Z(−2200,0)=90, Z(−1650,0)=0; Steigung im begehbaren Band≤18°, Start liegt in eigener Zone. Dies testet mathematische Layoutdaten, nicht Enginekollision.
+- [ ] Failing portable Tests `LevelOneHillEndpointsAndCrest`, `LevelOneSlopeMargin`, `LevelOneLayoutContainsSafeStart` schreiben. Assertions: Z(−2650,0)=0, Z(−2200,0)=90, Z(−1450,0)=0; Z(−2200..−2000,0)=90; Steigung im begehbaren Band≤18°, Start liegt in eigener Zone. Dies testet mathematische Layoutdaten, nicht Enginekollision.
 - [ ] Gezielten Test vor Umsetzung rot ausführen und fehlende Profilfunktion als erwartete Ursache protokollieren. Vorgesehener Befehl: `sh Tests/run.sh` nach bewusster Aufnahme dieses Tests in die vorhandene Liste; kein heute ausgeführter Befehl.
-- [ ] `LevelOneGroundZ`/Layoutkonstanten und schmalen GameMode ergänzen; `BuildWorld()` leitet nur im Referenzmodus an `BuildLevelOneWorld()` um. Der alte Pfad bleibt unverändert und als Kontrollfall verfügbar.
-- [ ] Map override auf den ReferenzgameMode setzen; Starter bindet konkrete Map/Version. Ein Editor-PIE ohne CLI-Flag darf dadurch nicht versehentlich Produktionssave laden. Vorhandene L1-Previewflag und Map werden nicht umgedeutet.
+- [ ] `LevelOneGroundZ`/Layoutkonstanten und schmalen Game Mode ergänzen; `BuildWorld()` leitet nur im Referenzmodus an `BuildLevelOneWorld()` um. Der alte Pfad bleibt unverändert und als Kontrollfall verfügbar.
+- [ ] Map override auf den Referenzgame Mode setzen; Starter bindet konkrete Map/Version. Ein Editor-PIE ohne CLI-Flag darf dadurch nicht versehentlich Produktionssave laden. Vorhandene L1-Previewflag und Map werden nicht umgedeutet.
 - [ ] Render- und Collideroberfläche aus demselben kleinen Höhenmesh erzeugen. Übergang in flache Probe höhengleich machen; altes Raster/Ankunftsbogen im Referenzbereich nicht doppelt erzeugen.
 - [ ] Native Fixtures `LevelOneTerrainMatchesVisibleSurface`, `LevelOneCapsuleHeadroom`, `LevelOneGateBlocksDuringAnimation` schreiben/ausführen. Erwartung: Floorhit innerhalb2 cm sichtbarer Zieloberfläche an allen Profilproben; echte geschlossene/partoffene Gate-Sweeps blockieren; offene Passage frei. Ein mathematischer Test ersetzt diese Enginechecks nicht.
 - [ ] Danach normal über W/S/seitliche Inputs bergauf, bergab, quer, an Rändern und unter Torbogen gehen. Kein Teleport für diesen Teil. Foot/Camera-Pose und Video/Screenshotfolgen mit Build binden.
-- [ ] Alle Terrainbefunde sichern, nur konkrete kleine Collider-/Meshfehler korrigieren, gezielte Prüfung wiederholen; Commit/Push und nächsteFläche M3 dokumentieren.
+- [ ] Alle Terrainbefunde sichern, nur konkrete kleine Collider-/Meshfehler korrigieren, gezielte Prüfung wiederholen; Commit/Push und nächste Fläche M3 dokumentieren.
 
 **PASS:** echte Route und sichtbare/physische Höhen stimmen, Kopf/Fuß bleiben frei, normales Gehen gelingt. **FAIL:** Dekohügel über planer Collision, Recovery im normalen Lauf, verborgene Wand oder Gatebypass. **Heute:** NICHTGEPRÜFT.
 
 ## M3 — einheitliche bewusste Aktion, Wörter und Lernregeln
 
-**Files:** `IslandWorld.h/.cpp`, scoped `IslandArt.cpp`, `Core/IslandRules.h` nur falls ein begründeter Adaptertest dort Änderung erfordert; vorhandene Regelsemantik ansonsten erhalten. Tasks10/20 in `Content/Tasks/tasks.json`/Generator; Tests `rules_test.cpp`, neue Level1Automation, ControlsAutomation. Keine ET-/späteren Puzzlefiles.
+**Files:** `IslandWorld.h/.cpp`, scoped `IslandArt.cpp`, `Core/IslandRules.h` nur falls ein begründeter Adaptertest dort Änderung erfordert; vorhandene Regelsemantik ansonsten erhalten. Lernaufgaben 100/200 (Terminaltargets 10/20) in `Content/Tasks/tasks.json`/Generator; Tests `rules_test.cpp`, neue Level1Automation, Controls Automation. Keine ET-/späteren Puzzlefiles.
 
 **Auswahlprofil:** M3 setzt ausschließlich das freigegebene Profil D oder S aus auswahlvarianten.md um. Für S kommen aktive Reihe, sichere Nebenlaufspur, tatsächlicher Stein-Floorhit, Besuchskonsumierung/Rearm nach Verlassen und S-I01–09 hinzu. Keine zusätzliche Kindermenüwahl.
 
-**Interfaces:** `PickLevelOneTarget(const FVector&, const FVector&) const -> int` liefert registrierten ID oder−1; `ActivateLevelOneTarget(int)` aktiviert nur ein gegen aktuellen State/Focus/Reachable validiertes Ziel. Registrierte `UPrimitiveComponent`-Fläche→TargetID ist laufzeitlokal. Beide World-Inputwege verwenden denselben Pick/Actionpfad. M4 liest gültigen Lernzustand/aktuelles Ziel, nicht freie Kamera-Zonen als alleinigen Auftrag.
+**Interfaces:** `PickLevelOneTarget(const FVector&, const FVector&) const -> int` liefert registrierten ID oder−1; `ActivateLevelOneTarget(int)` aktiviert nur ein gegen aktuellen State/Focus/Reachable validiertes Ziel. Registrierte `UPrimitiveComponent`-Fläche→Target ID ist laufzeitlokal. Beide World-Inputwege verwenden denselben Pick/Actionpfad. M4 liest gültigen Lernzustand/aktuelles Ziel, nicht freie Kamera-Zonen als alleinigen Auftrag.
 
-- [ ] Fixturetests `LevelOneESharesVisiblePick`, `LevelOneOcclusionBlocksBothInputs`, `LevelOneHeldPressDoesNotRepeat`, `LevelOneSameFrameDuplicateCoalesces`, `LevelOneSeparatePressesArePreserved` schreiben. Erwartet: E/Klick gleiche TargetID; verdeckter/zu ferner Target keine Stateänderung; Hold/Release/Doppelcallback exakt eine Aktion; zwei getrennte Press/Release-Zyklen zwei beabsichtigte Intro-Toggles.
+- [ ] Fixturetests `LevelOneESharesVisiblePick`, `LevelOneOcclusionBlocksBothInputs`, `LevelOneHeldPressDoesNotRepeat`, `LevelOneSameFrameDuplicateCoalesces`, `LevelOneSeparatePressesArePreserved` schreiben. Erwartet: E/Klick gleiche Target ID; verdeckter/zu ferner Target keine Stateänderung; Hold/Release/Doppelcallback exakt eine Aktion; zwei getrennte Press/Release-Zyklen zwei beabsichtigte Intro-Toggles.
 - [ ] Vor Umsetzung rot ausführen, konkrete Missstände im Adapterpfad erhalten. Keine neue Diagnose eines alten Bildes als Bugreport ohne Reproduktion.
 - [ ] Tatsächliche sichtbare Queryflächen der Wortobjekte registrieren, Pawnignore/Visibility-/Occlusionvertrag herstellen. Scoped E/Klick-Pick vereinheitlichen; normale Pointer-/Pressguards implementieren. Keine willkürliche200-ms-Debounce, kein globaler Spieleinputrouter.
-- [ ] Nur im freigegebenen Profil D automatische Foot-Dwell-Auswahl unterdrücken; Profil S setzt den vollständigen Schrittvertrag aus dem Variantenblatt um; alte Dwellmechanik im Normalkandidaten erhalten. Test `LevelOneWalkingAcrossWordDoesNotChoose`: State unverändert nach normalem Stehen/Gehen über jede Platte. Dies ist ein freizugebender Designvorschlag.
-- [ ] Richtige/wrong/full/undo-Tests für bestehende Kernaktionen pinnen: IntroMask5 öffnet nur nach2 richtigen; maximale2 Auswahl; Path0/4/8 setztverbs; WrongRow verändert Count nicht; falscher letzterSchritt blockiert neue Wahl bisUndo; Undo erhält frühereReihen. Direkter Re-Press des letzten gewählten Wortes mappt scoped auf vorhandenesPathUndo, ein früheres bleibt bestehen.
-- [ ] Wortkörper/Schriftflächen und Near-Kontexte so gestalten, dass Ganzsteinblau plus Text/Form ohneHäkchen funktioniert. Aufgaben-/Target-IDs und vorhandene Wörter bleiben unverändert. Copy im Taskkatalog ändern, Generator verwenden; `--check` später tatsächlich ausführen.
+- [ ] Nur im freigegebenen Profil D automatische Foot-Dwell-Auswahl unterdrücken; Profil S setzt den vollständigen Schrittvertrag aus dem Variantenblatt um; alte Dwellmechanik im Normalkandidaten erhalten. Test D-only `LevelOneWalkingAcrossWordDoesNotChoose`: State unverändert nach normalem Stehen/Gehen über jede Platte. Dies ist ein freizugebender Designvorschlag.
+- [ ] Zusätzlich `LevelOneRepeatedStartPreservesRows` pinnen: richtige Reihe 1 → Start20 erneut → Count/Array/Fehler unverändert; kein Reset außerhalb bestätigtem Neustart.
+- [ ] Richtige/wrong/full/undo-Tests für bestehende Kernaktionen pinnen: Intro Mask5 öffnet nur nach2 richtigen; maximale2 Auswahl; Path0/4/8 setztverbs; Wrong Row verändert Count nicht; falscher letzter Schritt blockiert neue Wahl bis Undo; Undo erhält frühere Reihen. Direkter Re-Press des letzten gewählten Wortes mappt scoped auf vorhandenes `PathUndo`, ein früheres bleibt bestehen.
+- [ ] Wortkörper/Schriftflächen und Near-Kontexte so gestalten, dass Ganzsteinblau plus Text/Form ohne Häkchen funktioniert. Aufgaben-/Target-IDs und vorhandene Wörter bleiben unverändert. Copy im Taskkatalog ändern, Generator verwenden; `--check` später tatsächlich ausführen.
 - [ ] Normale echte Maus-/E-Gegenproben I01–I14 durchlaufen, jeweils Statewirkung, Bild und Inputfolge sichern. Ein Fixture-PASS ist kein OS-Klick-PASS.
 - [ ] Commit/Push, Checkpoint mit bekannten Lesbarkeits-/Intentrisiken; M4 konsumiert erst diesen stabilen Vertrag.
 
@@ -75,74 +76,77 @@ Jeder Meilenstein endet mit einem sinnvollen Commit, Push und Handoff. Ein Dokum
 
 ## M4 — HUD, Menüs, Fokus und Einstellungen
 
-**Files:** `IslandHUD.cpp`, `IslandFocusWidget.h/.cpp`, scoped Controller/GameMode-UIzustand in `IslandWorld.h/.cpp`. Testflächen ControlsAutomation und Level1Automation. Wiederverwendete native Buttons/Slider, keine WebUI-Bibliothek installieren.
+**Files:** `IslandHUD.cpp`, `IslandFocusWidget.h/.cpp`, scoped Controller-/UIzustand in `IslandWorld.h/.cpp`; ControlsAutomation/Level1Automation. Vorhandene UMG-/Slate-Buttons und Slider weiterverwenden, keine neue Webbibliothek.
 
-**Interfaces:** Referenz-UIzustand `Start/Playing/Paused/Settings/RestartConfirm/Completed` blockiert Worldaktion; Lernstate bleibt separat. HUD konsumiert `State.intro/verbs`, `PathPromptRow`, gültigen Pick und kurze Taskcopy. Menuaufrufe verwenden vorhandene `CancelInput()/UpdateMode()`-Grenzen. Neustart ruft später M5 `ResetLevelOneAttempt()` auf, nicht allgemeinen Produktionsreset.
+**Interfaces:** UIzustände Start/Playing/Paused/Settings/RestartConfirm/Completed sind getrennt vom Lernstate. HUD liest gültigen Lernschritt und Profil D/S; `CancelInput()/UpdateMode()` begrenzen Worlddispatch. Neustart verwendet M5 `ResetLevelOneAttempt()`, keinen Produktionsreset.
 
-- [ ] Failing Tests `LevelOneMenuSuppressesWorldDispatch`, `LevelOneFocusReturnsWithNeutralKeys`, `LevelOneCurrentGoalTracksState`, `LevelOneControlsRemainFocusable` vorbereiten. Erwartung: Enter/Klick/Release ausPause verändertkeineWortwahl; Escape/Resume nur klarenStatewechsel; Auftrag bei ungelöstemIntro bleibtIntro, auch wenn eineFixtureKameraanderswo steht.
-- [ ] Erst rot prüfen, dann HUD auf eine kurze aktuelle Anforderung und diskretenFortschritt reduzieren. Near-/Feedbacktexte so platzieren, dass sie Wort-/Torbild nicht gleichzeitig verdecken. Kein großer dauerhafterControlsblock.
-- [ ] Start/Pause/Settings/RestartConfirm/Completed mit höchstens den imPlan genannten4/4/3/2/2Hauptelementen bauen. FOV75/85 undSlider25–300% unverändertklarbeschriften; kein gefälschter ET-Sendestatus.
-- [ ] Tastaturfokus sichtbarmachen: Tab/ShiftTab umlaufend, Enter/Space, Sliderpfeile, Escapezurück. Menuinput exklusiv konsumieren, danach neutralisieren und Spielviewport fokussieren.
-- [ ] Native Widget-/Statechecks grün ausführen; dann echterTastatur-/Mausdurchlauf, AltTabbeiW/HeldMouse, Escverschachtelt, Resize, sichtbarerFocus und Controls/Menüs vergleichen.
-- [ ] Kontrast und Textpixel an1440×900 und mindestens1280×800 messen, FOV75/85 getrenntprüfen. Kein automatischerPass ausHexwerten oder einemschönenRender.
-- [ ] Checkpoint mitUIbelegen undgenauemDialog-/Focusablauf sichern; nochkeinevollständigeScreenreader-/Kinderfreigabe.
+- [ ] Failing Tests `LevelOneMenuSuppressesWorldDispatch`, `LevelOneFocusReturnsWithNeutralKeys`, `LevelOneCurrentGoalTracksState`, `LevelOneControlsRemainFocusable` schreiben. Assertions: Enter/Klick/Release aus Pause ändern keine Wortauswahl; Resume erfordert neutrale alte Inputs; ungelöstes Intro bleibt aktueller Auftrag auch bei versetzter Fixturekamera.
+- [ ] Rot ausführen und konkreten Adapter-/UIfehler sichern. Anschließend kurze HUDzeile, diskreten Fortschritt und nicht überlagernde Near-/Feedbacktexte bauen.
+- [ ] D/S-Copy aus dem Variantenblatt einsetzen. D: „Wähle in jeder Reihe ein Verb.“ S: „Gehe auf ein Verb in jeder Reihe.“ S-Mitte und nötiges Verlassen lokal erklären; keine dauerhafte zweite Textwand.
+- [ ] Start/Pause/Settings/RestartConfirm/Completed mit den genannten maximal4/4/3/2/2 Elementen bauen. Slider25–300% und FOV75/85 unverändert verständlich beschriften; kein fingierter ET-Versand.
+- [ ] Sichtbaren logischen Tastaturfokus einrichten: Tab/Shift-Tab, Enter/Space, Sliderpfeile, Esc. Menuinput exklusiv konsumieren und vor Rückkehr in die Welt neutralisieren.
+- [ ] Native Widgetchecks grün ausführen; anschließend echte Tastatur-/Mauspfade, Alt-Tab bei gehaltener Taste, verschachteltes Esc, Fenstergröße und Fokuswirkung prüfen. Fixture-PASS ersetzt keine normale Eingabe.
+- [ ] Kontrast, Textgröße und Überdeckung bei1440×900/1280×800 und FOV75/85 tatsächlich messen. Keine Abnahme allein aus Hexwerten.
+- [ ] Mit UIbildern, Focusablauf und offenen Grenzen committen/pushen. Keine vollständige Screenreader-/Kinderfreigabe behaupten.
 
-**PASS:** kurze klare Anforderungen, ruhige lesbareMenüs, keineFocusfalle/ungewollteBewegung. **FAIL:** Pflichttextwand, HUDüberdecktAufgabe, WorldactionnachMenuklick oder SchließenlöschtfremdeSaves. **Heute:** NICHTGEPRÜFT.
+**PASS:** kurze klare Anforderung, lesbare Menüs, keine Fokusfalle oder ungewollte Bewegung. **FAIL:** Pflichttextwand, Worldaktion nach Menuklick oder fremder Saveverlust. **Heute: NICHTGEPRÜFT.**
 
 ## M5 — eigener Save, Neustart, Resume und Recovery
 
-**Files:** `IslandLevelOneGameMode.h/.cpp` enthält `UIslandLevelOneSave`; scoped `IslandWorld.h/.cpp`. `Core/IslandLevelOneLayout.h` bleibt Profilquelle. Tests neueProfile-/Engine-Savefixtures. Normaler LI4/LI1–3-Kern bleibt erhalten.
+**Files:** `IslandLevelOneGameMode.h/.cpp` mit Referenz-/Anschlussklassen und Saveobjekten, scoped `IslandWorld.h/.cpp`, `Core/IslandLevelOneLayout.h`; neue Profile-/Savefixtures. LI4/LI1–3-Kernsemantik erhalten.
 
-**Interfaces:** `SaveLevelOneAttempt()/LoadLevelOneAttempt() -> bool`, `ResetLevelOneAttempt() -> void`, `ResolveLevelOneSafePose(const FVector&,FVector&) const -> bool`. Slotnamen/ScenarioId/LayoutRevision exakt aus Hauptplan. M6 erhält nur validen Referenzsnapshot.
+**Interfaces:** `SaveLevelOneAttempt()/LoadLevelOneAttempt() -> bool`, `ResetLevelOneAttempt() -> void`, `ResolveLevelOneSafePose(const FVector&,FVector&) const -> bool`. Hauptplan8.4 definiert SessionProfile, Save-/Preferences-Slots und Konstruktion vor sämtlichen Loads. M6 konsumiert nur einen validen Snapshot mit zugehöriger lokaler AttemptId.
 
-- [ ] Failing Tests `LevelOneNeverWritesNormalSave`, `LevelOneResumeOnHill`, `LevelOneRejectsWrongScenarioOrLayout`, `LevelOneRecoveryPreservesValidFlags`, `LevelOneRestartPreservesPreferences` schreiben. Assertions: Produktionsslot-/Preference-Bytes identischvor/nachReferenzlauf; SavedKuppenposition brauchtpassendenFloorhit; NaN/falschesLayout/hinterungelöstemTorführtzuSafePosebeiunverändertenvalidenFlags.
-- [ ] VorUmsetzungrotnachweisen; keineechtenSchülerdaten/SavesausanderenChatsverwenden. Kontrollsavedaten synthetischundexplizitmarkieren.
-- [ ] ReferenzsavevorLoadisolieren undszenengebundenvalidieren. SavetimingnachregelwirksamerAktion, sicherenWaypoints undgeordnetemExit; keinSchreibendauerproFrame. Rückgabefehlerunterscheidbarzeigen.
-- [ ] `ResetLevelOneAttempt` überschreibt nur eigenenVersuchmiteinemgültigenLeersnapshot, hältMode/Preferences/Kontrollsaves. NormalesResetDemoignoriertdieseneuenSlots.
-- [ ] SafePosevalidierunganwirklichenFloor-/Capsuletraces undFortschrittszonenbinden; invalidesView/Positionbereinigen; ererbteRange−1900nichtfürneuenStartnutzen. UnzulässigesLayoutnichtalsLI4kompatibelausgeben.
-- [ ] BewusstungültigeFixturefälleisoliertprüfen, dannnormalesPause→Schließen→WeiteraufHügel,vorTor,nachFehler,nachrichtigerReihe,durchlaufen. Kopf/Fuß/GatewinkelundgenauesSnapshotprüfen.
-- [ ] GültigealteunbestätigteAntwortenweiterauto-checken; stateintegritäts-/Normalprototyp-Kontrollsuitenrun. SavefehleralsBefundbewahren. CheckpointmitScope/Slot-/Dateihashes.
+- [ ] Failing Tests `LevelOneNeverWritesNormalSave`, `LevelOneResumeOnHill`, `LevelOneRejectsWrongScenarioOrLayout`, `LevelOneRecoveryPreservesValidFlags`, `LevelOneRestartPreservesPreferences` schreiben. Normaldateien müssen bytegleich bleiben; Kuppenposition braucht echte Floor-/Capsulefreiheit; ungültiges Layout/View/Position wird sicher verworfen, valide Antworten bleiben erhalten.
+- [ ] Vor der Umsetzung rot prüfen. Nur ausdrücklich synthetische eigene Testslots verwenden, keine echten Schüler-/fremden Saveinhalte.
+- [ ] Referenz-/Continuationprofile und Slotabfragen bereits in GameModekonstruktion/Initialisierung etablieren. Controller wählt seinen profilgebundenen PreferencesSlot ausdrücklich vor `LoadPreferences()`. Spätere Save-/Preferencewrites bleiben im selben Profil.
+- [ ] Referenzobjektklasse/ScenarioId/LayoutRevision/AttemptId und LI4 validieren. Savepunkte nach regelwirksamer Aktion, sicheren Wegpunkten und geordnetem Exit; keine Schreibschleife pro Frame. Fehler ehrlich melden.
+- [ ] Neustart nur nach Bestätigung: eigener Referenzversuch neu, neue lokale AttemptId, Bedienpräferenzen und normaler Fortschritt erhalten. Alter Anschluss wird nicht als derselbe Versuch ausgegeben; ein noch gültiger Anschluss desselben Versuchs wird nicht unnötig überschrieben.
+- [ ] Savegeografie gegen das reale Profil prüfen. Die alte UntergrenzeX−1900 gilt nicht für den neuen Start−2800. Bodenhit, Capsulefreiheit und erlaubte Fortschrittszone bestimmen SafePose.
+- [ ] Alte Character-Tick-AbkürzungZ<−150 in nichtnormalen Profilen vor Reset an protokollierte sichere Recovery routen. Flags erhalten und Inputs stoppen; jede normale Recovery bleibt ein Gelände-FAIL. Auf S-Wortmitte nach Resume/Recovery gilt Besuch zunächst als konsumiert, Rearm erst nach Verlassen.
+- [ ] Isolierte ungültige Fixtures prüfen, danach normales Pause→Schließen→Weiter auf Kuppe, vor/nach Tor und nach Fehlwahl. Alte gültige unbestätigte Antworten weiterhin auto-checken; Kontrollprototyp separat gegenprüfen.
+- [ ] Save-/Slot-/Hashbelege sichern und committen/pushen. Unbelegte dauerhafte Speicherung nicht als erfolgreich ausgeben.
 
-**PASS:** tatsächlicherResumeohnePhantomfortschritt, fremdeSavesbytegleich, guterRecoveryohneStrafe. **FAIL:** normalerLaufbrauchtRecovery, Saveverschwindet, ungültigeFlagsöffnenTor, normalerSlotgeändert. **Heute:** NICHTGEPRÜFT.
+**PASS:** sichere tatsächliche Wiederaufnahme, keine Phantomflags, fremde Saves unverändert. **FAIL:** normaler Lauf braucht Recovery, Antworten verschwinden oder normaler Slot wird geändert. **Heute: NICHTGEPRÜFT.**
 
-## M6 — Abschluss, Anschluss und normaler Gesamtdurchlauf
+## M6 — Abschluss, isolierter Anschluss und normaler Durchlauf
 
-**Files:** scoped GameMode/World-Continuationpfad, `Lerninsel_Level1Ref.umap`, vorhandene `Lerninsel.umap` nur als Ziel lesen; etwa neue gebundene Launcheroption für Handoff. Reports/Level1Reference. Keine spätere Lernaufgabe umschreiben.
+**Files:** scoped World-/GameMode-Continuationpfad, neue Referenzmap, gebundener Starter; vorhandene normale Zielkarte nur als Ziel lesen. Reports unter `Reports/Level1Reference/<candidate-id>/`. Keine spätere Lernaufgabe neu produzieren.
 
-**Interfaces:** `OpenLevelOneContinuation() -> bool` exportiert ausschließlich tatsächlich gelöste frühe Flags in `LerninselLevel1HandoffV1`, bindet bestehenden Zielmapstart, normalerSlot bleibt unberührt. Der Zielstart entscheidet SlotvorLoad; Position1540/0/88nur nach realer Bodenfreiheit. Kein Debug-SetFlags als Ergebnisimport.
+**Interfaces:** `OpenLevelOneContinuation() -> bool` übergibt den tatsächlich erarbeiteten validen LI4-Zustand an `LerninselLevel1HandoffV1`. Geplante Traveloption `game=/Script/Lerninsel.IslandLevelOneContinuationGameMode` bindet die Zielsession ausdrücklich; normaler Starter bleibt Normal. Eigene Handoff-Preferences gelten bereits vor Controller-Load. Fehlender Handoff erzeugt keinen Produktionsfallback.
 
-- [ ] Fixturetest `LevelOneContinuationPreservesNormalSaveAndRequiresSolvedRoute`: ohneintro/verbskeinÜbergang; mitgültigererarbeiteterFolgeisolierterLI4Handoff, spätereFlagsfalse; normalerSave/Preferencesunverändert.
-- [ ] FailingtestvorImplementierungausführen, dannminimalenSnapshot-/Mapübergangbauen. FehlgeschlagenerMap-/SavewechselzeigtFehlerundlässtReferenzzustandsicher, keinenfalschen„Weiter“-Erfolg.
-- [ ] `Completed` erstbeimwirklichenDurchgangnachvollgeöffnetemToranzeigen, nichtbeimdrittenAuswahlklickvorAnimation. BewussterWeiteraufruföffnetvorhandenenSatzgarteneinstieg.
-- [ ] DurchlaufN1: frischerReferenzversuch, ausschließlichnormaleWASD/Maus/E-Events. Start→Hügel→beideProben→Tore→Exit→Anschluss. KeinTeleport/SetFlags/ForceComplete. Zeit-/Eventfolge/Video,Save-/Buildbindungprotokollieren.
-- [ ] DurchlaufN2: mindestens einefalscheIntroauswahl, volleAuswahl,Rücknahme,falscheReihe,Pause/ResumeundHilfe; schließlichkorrektlösen. KeineAutoheilungdurchFixture.
-- [ ] NormalesEundnormalerKlickjeweilsindermanuellenSessionbelegt; tatsächlicheFenster-/Devicebindungfesthalten. ToolaufruferfolgohneSpielwirkungbleibtNICHTGEPRÜFT.
-- [ ] Kandidatcommit/Binary-/Asset-/MaphashessichernundfürA/Bunverändertfrieren. NachFreeze keine Art- oder CodeänderungvorbeidenLäufen; jederneueHash istneuerKandidat.
+- [ ] Failing Test `LevelOneContinuationPreservesNormalSaveAndRequiresSolvedRoute` schreiben: ohne gelöste Intro-/Verbfolge kein Übergang; mit gültiger Folge eigener Snapshot, Normaldateien gleich. Zusätzlich Satzgartenaktion, Preferenceänderung und Anschluss-Resume prüfen.
+- [ ] Rot prüfen, dann minimalen Snapshot-/Travelvertrag bauen. Gültige Zugehörigkeit/AttemptId verlangt; wiederholtes Weiter desselben Versuchs nimmt vorhandenen Anschluss auf. Keine Debug-Fertigflags als Spielbeleg.
+- [ ] Fehlender/ungültiger Handoff oder Map-/Schreibfehler zeigt eine kurze ehrliche Meldung. Der Referenzversuch bleibt erhalten; Rückkehr/Weiter nur nach erneuter Validierung. Kein scheinbar erfolgreicher Anschluss.
+- [ ] Completed erst beim tatsächlichen Durchgang durch das vollständig geöffnete Tor. Danach klarer Abschluss und vorhandener Satzgarteneinstieg.
+- [ ] N1 mit frischem Referenzsave durchlaufen: Start→Hügel→Probe→Garten→Tore→Exit→Anschluss, ausschließlich echte qualifizierte WASD/Maus/E-Events. Kein Teleport/SetFlags/ForceComplete. Event-/Videofolge und Buildbindung sichern.
+- [ ] N2 mit falschem Paar, voller Auswahl, Rücknahme, falscher Reihe, Hilfe und Pause/Resume normal spielen und korrigieren. Für S zusätzlich sichere Spur, Zentrum, Rearm und Fuß-/Pointerkonkurrenz belegen.
+- [ ] Normales E und normaler Klick jeweils im tatsächlichen Viewport zeigen. Toolerfolg ohne sichtbare Wirkung bleibt NICHTGEPRÜFT. Bessere Fixturewerte ersetzen keine fehlende Hardware-/OS-Eingabe.
+- [ ] Exakten Kandidaten mit Source-/Module-/Map-/Assethashes committen/pushen und für A/B frieren. Keine stille Änderung zwischen Prüfläufen.
 
-**PASS:** vollständigerAbschnittmitnormalenInputsundechtemAnschluss; **FAIL:** totesEnde, TeleportbelegalsPlaytest, Produktionüberschrieben oder künstlichfertigeFlags. **Heute:** NICHTGEPRÜFT.
+**PASS:** normaler vollständiger Abschnitt mit ehrlichem Anschluss. **FAIL:** totes Ende, künstliche Lernflags, Produktion verändert oder Fixture als normaler Lauf. **Heute: NICHTGEPRÜFT.**
 
-## M7 — spätere unabhängige Runtimeprüfung und begrenzte Behebung
+## M7 — spätere unabhängige Runtimeprüfung und begrenzte Korrektur
 
-Erst nach M6, **nicht heute**. A: Technik/Input/Terrain; B: Bild/Handhabung/Verständlichkeit, mit denselben Vorgaben aber eigenen Beobachtungen. Zunächst unabhängig, dann Gegenprüfung der Befunde. SaveA/SaveB getrennt; A beendet eigene Session vor Bs exklusivemSlot. Ein offener Fokus-/OS-Adapterblocker verhindert diesen Test, nicht zwingend bereitsbelegteFixtures. B ist keine realeKinderstudie.
+Erst nach M6, nicht heute. A prüft Technik/Input/Gelände; B Bild/Handhabung/Verständlichkeit. Beide erhalten denselben unveränderten Build, aber eigene Saves und nacheinander exklusive Input-/Capturezeiten. B ist keine reale Kinderstudie. Ein unqualifizierter Nativeinputweg erzeugt NICHTGEPRÜFT, kein simuliertes PASS.
 
-- [ ] ExaktenKandidatenSHA,Mode,Module/Map/Assethashes,Viewport,DPI/FOV,Device,frischenSlotundfreigegebenenSlotterminanAgeben.
-- [ ] A führt normaleSequenzundtechnischeMatrixaus; Rohbelege/ungelösteGrenzenunverändertablegen, nichtanBvorabinterpretieren.
-- [ ] DasselbeManifestanBgeben; neuerSlot, eigeneSession, keineparallel laufendenCapture-/Inputversuche.
-- [ ] BeideBefundlisten danach gegeneinander aufQuelle,Reproduktion,ImpactundSpekulationprüfen; Vorschlagskonfliktebewusstentscheiden.
-- [ ] OwnerreproduziertwichtigeDefekte, beschreibtkleinstenFix/Regression, sichertCheckpointvorlängererArbeit. KeineArt-/MethodenänderungbeifreiemGeschmackswunsch ohneScopeentscheidung.
-- [ ] BetroffenePrüfungen nachFixerneut, unveränderteFlächennichtohneGrundwiederholen. SchwererSave-/Eingabe-/Gelände-/Lesbarkeitsdefekt blockiertbetroffeneAbnahme, nichtpauschalalleDokumentation.
-- [ ] EndkandidatgebundenmitReviewentscheidungenanM8geben. NeuerBuildnachFixerfordertaktualisierteBelege; alteA/B-BildernichtalsFinalBuildausgeben.
+- [ ] A bekommt Kandidaten-SHA, Binary-/Asset-/Maphashes, Viewport/DPI/FOV, Gerät, frischen Slot und exklusiven Termin. Rohbefunde ohne Interpretation an B sichern.
+- [ ] Nach As Sessionende B mit genau demselben Manifest und eigenem Slot prüfen lassen. Keine parallelen OS-/Editoraktionen.
+- [ ] Danach Befunde gegenseitig gegen Quellen, Reproduktion, Impact und Spekulation prüfen. Berechtigter Blocker wird nicht per Mehrheitswahl aufgehoben; Geschmackswünsche bleiben als solche benannt.
+- [ ] Owner reproduziert konkrete wichtige Defekte und legt kleinsten Fix plus Regression fest. Vor längeren Arbeitsschritten den Kandidaten sichern.
+- [ ] Nach Änderung betroffene Checks und erforderliche Regressionen erneut ausführen. Keine zweite vollständige Runde ohne neuen Defekt/Änderung; keine endlosen Vorschlagsvarianten.
+- [ ] Endkandidat mit Entscheidungen und neuen Hashbelegen an M8 geben. Alte Bilder/Berichte bleiben Historie und gelten nicht automatisch für neue Binaries.
 
-## M8 — lokale Übergabe und spätere Produktentscheidungen
+## M8 — lokale Nutzerübergabe und spätere Entscheidungen
 
-- [ ] Alle kritischenMatrixzeilen mitPASS/FAIL/NICHTGEPRÜFT undtatsächlichenBelegenfüllen. FehlendeNative-/Kinder-/iPad-Prüfungoffenlassen.
-- [ ] FinalenlokalenBuild mitQuell-/Binary-/Asset-/Maphashes,Starter,bedienbarerSaveisolationundgenauemKnownIssueszustandsichern.
-- [ ] Startzeit/Frametime/Speicher/LevelassetzuwachsaufbenanntemMacmessen; Kalt-/Warm-/Shader-/Editorfälleauseinanderhalten. Zielverfehlungbegründetmelden, keinFPS-/MB-Erfinden.
-- [ ] Martin kurzeStartanleitung,OriginalreferenzvergleichundwirklicheSpielbildergeben. Branch_only/CI/Integration/Staging/Usertest/Productiongetrenntmelden.
-- [ ] ErstnachkonkreterNutzerabnahmeeinenfolgendenGebiets-/Artauftragplanen. Browser/iPad/ET/1000Nutzerseparatentscheiden. KeinMerge/DeployineinerlokalenQualitätsübergabe.
+- [ ] Kritische Matrixzeilen mit tatsächlichem PASS/FAIL/NICHTGEPRÜFT und Beleg füllen. Fehlende Normal-/Kinder-/iPad-/Webprüfung offen lassen.
+- [ ] Lokalen Kandidaten mit Starter, Source-/Binary-/Map-/Assethashes, isoliertem Versuch und Known Issues sichern.
+- [ ] Startzeit, Framezeiten, Speicher und Assetzuwachs auf dem benannten Mac messen; Warm/Kalt/Shader/Editor getrennt. Zielverfehlung berichten, keine Messzahl erfinden.
+- [ ] Martin kurze Startanleitung, ehrlichen Originalreferenzvergleich und echte Spielbilder vorlegen. Branch_only/CI/Integration/Staging/Nutzertest/Production getrennt ausweisen.
+- [ ] Erst nach konkreter Referenzabnahme weitere Gebiets-/Artarbeit beauftragen. Browser/iPad/ET/1.000 Nutzer bleiben getrennte Entscheidungen. Kein Merge/Deploy aus lokalem Qualitätsziel.
 
-## Lauf-/Budgetledger für die spätere Ausführung
+## Ledger und Wiederaufnahme
 
-Pro Aktion: taskId, owner/chat, requestedModel/effort, tatsächlichesModel/effort oderunknown, KandidatSHA, Scope/Slot, StartUTC, Run-/Process-/Request-ID, erwarteterOutput, Ergebnis, Belegdateien/Hashes, Kosten/Usage soweitbeobachtbar, nächsterSchritt. Höchstens2ModellwechselproTeilaufgabe, keinAstraDefault, keineerfundenenPreise. VorWiederholungbeiAbbruchprüfen, obCommit/Report/Prozessbereitsvorliegt; Versuchshistorieerhalten.
+Pro spätere Aktion: Task-ID, Owner/Chat, requested Model/Effort, beobachtetes actual oder unknown, Kandidaten-SHA, Scope/Slot, UTC-Zeit, Run-/Prozess-/Request-ID, erwartete Ausgabe, echtes Ergebnis, Belegdateien/Hashes, bekannte Usage/Kosten und ein nächster Schritt. Maximal zwei Modellwechsel pro Teilaufgabe, kein Astra-Default und kein erfundener Preis. Nach Abbruch bereits vorhandene Commits/Reports/Prozesse prüfen; Versuchshistorie erhalten.
 
-Für **diesen Planauftrag**: requestedPlanowner Sol/medium; actual desbereitslaufendenRootturns nichtgesondertbeobachtbar. A/B werden als verfügbare Sol/medium-Reviewer angefragt und ihre zurückgegebene Konfiguration dokumentiert; keine Modell-/Usagegarantie aus Rollenname. Keine direkten bezahlten Provideraufrufe.
+Heute requested Planowner Sol/medium, tatsächlicher laufender Rootturn unbekannt. Die genau zwei unabhängigen Planprüfer wurden mit `gpt-6.1-sol / medium` dispatcht; ihre tatsächliche Runtimekonfiguration ist nicht separat beobachtbar und bleibt unknown. Keine direkten kostenpflichtigen Providerstarts. Dieser Plan startet weder Runtimeprüfung noch Umsetzung.
