@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>GradeCrew · Klassenraum-Prototyp</title>
+  <style>
+    :root {
+      --ink: #182c3d;
+      --muted: #667987;
+      --line: #dce5e9;
+      --paper: #ffffff;
+      --canvas: #f3f7f7;
+      --navy: #16394b;
+      --teal: #0e7d78;
+      --teal-soft: #e1f3f0;
+      --gold: #edb953;
+      --gold-soft: #fff4dd;
+      --red: #a8493f;
+      --shadow: 0 14px 35px rgba(24, 51, 68, .08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, select, input { font: inherit; }
+    button, select { cursor: pointer; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #71c6bd; outline-offset: 2px; }
+    .topline { height: 6px; background: linear-gradient(90deg, var(--teal) 0 36%, var(--gold) 36% 47%, #d9e5e7 47%); }
+    .shell { min-height: 100vh; display: grid; grid-template-columns: 224px minmax(0, 1fr); }
+    aside { padding: 25px 16px; background: var(--navy); color: white; display: flex; flex-direction: column; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; letter-spacing: -.04em; padding: 0 10px 34px; }
+    .brandmark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px 10px 10px 3px; background: var(--gold); color: var(--navy); font-weight: 900; }
+    .nav-label { color: #a9c0ca; padding: 0 12px 9px; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 750; }
+    .nav { display: grid; gap: 5px; }
+    .nav a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #d7e4e8; padding: 10px 12px; border-radius: 10px; font-weight: 600; }
+    .nav a.active { color: #fff; background: rgba(255,255,255,.13); }
+    .nav-icon { width: 18px; text-align: center; color: #a9c7cc; font-size: 16px; }
+    .aside-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,.15); padding: 18px 10px 0; color: #bad0d6; font-size: 12px; }
+    .aside-bottom strong { display: block; color: white; margin-bottom: 3px; }
+    main { min-width: 0; }
+    .header { padding: 23px clamp(20px, 5vw, 62px); min-height: 76px; background: var(--paper); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .crumb { color: var(--muted); font-size: 13px; }
+    .user-chip { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 650; font-size: 13px; }
+    .avatar { display: grid; place-items: center; background: #fcebc8; color: #76531c; border-radius: 50%; width: 31px; height: 31px; font-size: 12px; }
+    .content { width: min(100%, 1110px); padding: 30px clamp(20px, 5vw, 62px) 56px; margin: 0 auto; }
+    .lab-note { display: flex; align-items: flex-start; gap: 10px; background: #edf5f4; border: 1px solid #d5e9e5; color: #31575d; border-radius: 10px; padding: 10px 13px; font-size: 12px; margin-bottom: 24px; }
+    .lab-note b { color: #1e6865; }
+    .eyebrow { color: var(--teal); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 5px; }
+    h1 { margin: 0; font-size: clamp(25px, 3vw, 34px); line-height: 1.15; letter-spacing: -.04em; }
+    .intro { margin: 8px 0 21px; color: var(--muted); max-width: 690px; }
+    .rolebar { display: inline-flex; gap: 4px; background: #e8eef0; padding: 4px; border-radius: 12px; margin-bottom: 21px; }
+    .rolebar button { border: 0; background: transparent; color: #556975; padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; }
+    .rolebar button[aria-selected="true"] { color: var(--ink); background: white; box-shadow: 0 1px 4px rgba(0,0,0,.09); }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, .8fr); gap: 18px; align-items: start; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+    .card-head { padding: 19px 21px 14px; border-bottom: 1px solid #edf1f2; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .card-head h2 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+    .card-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 999px; padding: 5px 9px; color: #6b501c; background: var(--gold-soft); font-weight: 750; font-size: 11px; }
+    .badge::before { content: ""; width: 6px; height: 6px; background: #d99b2b; border-radius: 50%; }
+    .badge.live { background: var(--teal-soft); color: #176c67; }
+    .badge.live::before { background: var(--teal); }
+    .form { padding: 19px 21px 21px; }
+    .field { margin-bottom: 17px; }
+    .label-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 6px; }
+    label, .field-label { font-size: 12px; font-weight: 750; color: #374e5c; }
+    .hint { font-size: 11px; color: var(--muted); }
+    select, input[type="datetime-local"] { width: 100%; border: 1px solid #cbd8dd; border-radius: 9px; padding: 10px 11px; color: var(--ink); background: white; }
+    .test-name { display: flex; align-items: center; gap: 11px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #fbfcfc; }
+    .test-icon { flex: 0 0 37px; height: 37px; display: grid; place-items: center; color: #24615f; border-radius: 11px; background: #e3f1ef; font-size: 19px; }
+    .test-name strong { display: block; font-size: 14px; }
+    .test-name span { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .radio-stack { display: grid; gap: 8px; }
+    .radio-card { display: flex; gap: 10px; padding: 10px 11px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+    .radio-card:has(input:checked) { border-color: #67aaa5; background: #f2faf8; }
+    .radio-card input { margin: 3px 0 0; accent-color: var(--teal); }
+    .radio-card strong { display: block; font-size: 12px; }
+    .radio-card small { color: var(--muted); font-size: 11px; }
+    .people { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; display: grid; gap: 6px; }
+    .person { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 0; }
+    .person input { accent-color: var(--teal); }
+    .person em { margin-left: auto; font-style: normal; color: var(--muted); font-size: 10px; }
+    .audience-preview { display: flex; align-items: flex-start; gap: 9px; background: #f3f7f9; border-radius: 9px; padding: 10px 11px; color: #49616f; font-size: 11px; margin: 4px 0 16px; }
+    .audience-preview .shield { font-size: 15px; }
+    .audience-preview strong { display: block; color: #284454; font-size: 12px; margin-bottom: 2px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+    .primary, .secondary { border: 0; border-radius: 9px; padding: 10px 15px; font-weight: 750; font-size: 12px; }
+    .primary { background: var(--teal); color: white; box-shadow: 0 3px 9px rgba(14,125,120,.2); }
+    .primary:hover { background: #096b67; }
+    .primary:disabled { background: #9fb8b8; cursor: not-allowed; box-shadow: none; }
+    .secondary { background: #edf2f4; color: #405966; }
+    .action-note { color: var(--muted); font-size: 11px; }
+    .side-card { padding: 19px; }
+    .side-card h3 { margin: 0; font-size: 14px; }
+    .side-card > p { color: var(--muted); font-size: 12px; margin: 5px 0 17px; }
+    .steps { display: grid; gap: 14px; }
+    .step { display: grid; grid-template-columns: 25px 1fr; gap: 9px; align-items: start; }
+    .stepnum { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; color: #236a67; background: var(--teal-soft); font-size: 11px; font-weight: 800; }
+    .step strong { display: block; font-size: 12px; }
+    .step span { display: block; color: var(--muted); font-size: 11px; margin-top: 1px; }
+    .status-strip { border-top: 1px solid #edf1f2; margin-top: 18px; padding-top: 14px; display: flex; gap: 9px; align-items: center; color: #45616c; font-size: 11px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #dba33b; }
+    .status-dot.green { background: var(--teal); }
+    .student-toolbar { display: flex; justify-content: space-between; align-items: end; gap: 15px; margin-bottom: 17px; }
+    .student-toolbar label { display: block; margin-bottom: 5px; }
+    .student-toolbar select { min-width: 235px; }
+    .student-card { padding: 21px; }
+    .student-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+    .student-title h2 { margin: 0; font-size: 17px; }
+    .student-title p { color: var(--muted); margin: 3px 0 0; font-size: 12px; }
+    .empty { text-align: center; padding: 37px 20px 31px; }
+    .empty-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 18px; background: #edf4f5; color: #52818a; font-size: 23px; margin: 0 auto 12px; }
+    .empty h3 { margin: 0; font-size: 16px; }
+    .empty p { max-width: 420px; margin: 5px auto 0; color: var(--muted); font-size: 12px; }
+    .quiz-row { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 15px; border: 1px solid var(--line); border-radius: 12px; }
+    .quiz-main { display: flex; align-items: center; gap: 12px; }
+    .quiz-main strong { display: block; font-size: 14px; }
+    .quiz-main span { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .pill { display: inline-flex; padding: 4px 8px; border-radius: 999px; background: var(--gold-soft); color: #735619; font-size: 10px; font-weight: 750; white-space: nowrap; }
+    .pill.available { color: #176c67; background: var(--teal-soft); }
+    .quiz-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #edf1f2; padding-top: 14px; margin-top: 14px; color: var(--muted); font-size: 11px; }
+    .privacy-line { color: #55717a; }
+    [hidden] { display: none !important; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 30px); padding: 11px 16px; background: #183c4b; color: white; border-radius: 10px; box-shadow: 0 7px 24px rgba(0,0,0,.2); font-size: 12px; z-index: 5; }
+    @media (max-width: 800px) { .shell { grid-template-columns: 1fr; } aside { padding: 12px 16px; } .brand { padding: 0 4px 11px; } .nav-label, .aside-bottom { display: none; } .nav { display: flex; } .nav a { padding: 8px 11px; } .header { min-height: 60px; padding: 12px 20px; } .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .nav a { font-size: 12px; gap: 6px; } .nav-icon { display: none; } .content { padding-top: 20px; } .header .crumb { font-size: 11px; } .user-chip { font-size: 0; } .student-toolbar { align-items: stretch; flex-direction: column; } .student-toolbar select { width: 100%; } .quiz-row { align-items: flex-start; flex-direction: column; } .quiz-footer { align-items: flex-start; flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <div class="topline"></div>
+  <div class="shell">
+    <aside aria-label="Hauptnavigation">
+      <div class="brand"><span class="brandmark">g</span> gradecrew</div>
+      <div class="nav-label">Arbeitsbereich</div>
+      <nav class="nav">
+        <a href="#" aria-label="Übersicht"><span class="nav-icon">⌂</span>Übersicht</a>
+        <a href="#" aria-label="Klassen"><span class="nav-icon">▦</span>Klassen</a>
+        <a class="active" href="#tests" aria-current="page"><span class="nav-icon">◷</span>Tests</a>
+      </nav>
+      <div class="aside-bottom"><strong>9b · Schuljahr 2026/27</strong>Technik · 24 Schüler:innen</div>
+    </aside>
+    <main>
+      <header class="header">
+        <div class="crumb">Klassen / <strong>Tests</strong> / Freigabe</div>
+        <div class="user-chip"><span class="avatar">DL</span> Demo-Lehrkraft</div>
+      </header>
+      <div class="content">
+        <div class="lab-note"><span aria-hidden="true">ⓘ</span><span><b>Klickbarer Konzept-Prototyp mit Beispieldaten.</b> Es gibt keine echte Anmeldung und keine Verbindung zu GradeCrew, Firebase oder ASV. Änderungen gelten nur hier im Browser-Tab.</span></div>
+        <div class="eyebrow">Klassen · Tests</div>
+        <h1>Ein Test. Die richtige Klasse.</h1>
+        <p class="intro">Ein Entwurf bleibt bei der Lehrkraft. Erst wenn sie Klasse, Fach und Zielgruppe prüft und ausdrücklich freigibt, erscheint der Test bei den ausgewählten Schülerkonten.</p>
+
+        <div class="rolebar" role="tablist" aria-label="Ansicht wechseln">
+          <button id="teacher-tab" role="tab" aria-selected="true" aria-controls="teacher-view">Lehrkraft</button>
+          <button id="student-tab" role="tab" aria-selected="false" aria-controls="student-view">Schüleransicht</button>
+        </div>
+
+        <section id="teacher-view" role="tabpanel" aria-labelledby="teacher-tab">
+          <div class="grid">
+            <article class="card">
+              <div class="card-head">
+                <div><h2>Test freigeben</h2><p>Prüfe die Zielgruppe, bevor du veröffentlichst.</p></div>
+                <span id="teacher-status" class="badge">Privater Entwurf</span>
+              </div>
+              <form id="publish-form" class="form">
+                <div class="field">
+                  <div class="label-row"><span class="field-label">Dein Test</span><span class="hint">Entwurf · nur für dich sichtbar</span></div>
+                  <div class="test-name"><div class="test-icon" aria-hidden="true">ϟ</div><div><strong>Elektrische Schaltungen</strong><span>Reihen- und Parallelschaltung · 8 Aufgaben · ca. 20 Min.</span></div></div>
+                </div>
+                <div class="field">
+                  <div class="label-row"><label for="class-select">Klasse und Fach</label><span class="hint">Zielort des Tests</span></div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+                    <select id="class-select" aria-label="Klasse"><option value="9b">9b</option><option value="8a">8a</option></select>
+                    <select id="subject-select" aria-label="Fach"><option>Technik</option><option>Deutsch</option><option>Englisch</option></select>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="label-row"><span class="field-label">Wer darf den Test sehen?</span><span class="hint">Zugriff wird beim Freigeben festgehalten</span></div>
+                  <div class="radio-stack">
+                    <label class="radio-card"><input type="radio" name="audience" value="class" checked><span><strong>Alle Schüler:innen dieser Klasse</strong><small>Für die ausgewählte Klasse, hier als Beispiel 24 Personen.</small></span></label>
+                    <label class="radio-card"><input type="radio" name="audience" value="selected"><span><strong>Nur ausgewählte Schülerkonten</strong><small>Du entscheidest genau, welche Konten teilnehmen.</small></span></label>
+                  </div>
+                </div>
+                <div id="student-picker" class="field" hidden>
+                  <div class="label-row"><span class="field-label">Schülerkonten in <span id="picker-class">9b</span></span><span class="hint">Beispielkonten</span></div>
+                  <div class="people" id="people-list"></div>
+                </div>
+                <div class="field">
+                  <div class="label-row"><span class="field-label">Wann ist der Test sichtbar?</span><span class="hint">Die Lehrkraft bestimmt den Start.</span></div>
+                  <div class="radio-stack">
+                    <label class="radio-card"><input type="radio" name="release" value="now" checked><span><strong>Sofort nach der Freigabe</strong><small>Die ausgewählten Schülerkonten sehen „Jetzt verfügbar“.</small></span></label>
+                    <label class="radio-card"><input type="radio" name="release" value="scheduled"><span><strong>Zu einem späteren Zeitpunkt</strong><small>Vorher steht der Test als „Anstehend“ in der Liste.</small></span></label>
+                  </div>
+                  <div id="schedule-field" style="margin-top:9px" hidden>
+                    <label class="hint" for="release-at">Freigabe ab</label>
+                    <input type="datetime-local" id="release-at">
+                  </div>
+                </div>
+                <div class="audience-preview"><span class="shield" aria-hidden="true">◈</span><div><strong id="audience-summary">Sichtbar für die Schüler:innen der 9b · Technik</strong><span>Andere Klassen sehen diesen Test nicht. Ein Entwurf erscheint bei niemandem.</span></div></div>
+                <div class="button-row">
+                  <button class="primary" id="publish-button" type="submit">Test für 9b · Technik freigeben</button>
+                  <button class="secondary" id="reset-button" type="button" hidden>Demo zurücksetzen</button>
+                  <span class="action-note" id="teacher-hint">Noch nicht veröffentlicht.</span>
+                </div>
+                <p id="form-error" role="alert" style="color:var(--red);font-size:12px;margin:10px 0 0" hidden></p>
+              </form>
+            </article>
+            <aside class="card side-card" aria-label="Ablauf">
+              <h3>Was passiert bei der Freigabe?</h3>
+              <p>Ein klarer Schritt von der Lehrkraft bis zur Schüleransicht.</p>
+              <div class="steps">
+                <div class="step"><span class="stepnum">1</span><div><strong>Entwurf bleibt privat</strong><span>Nur die Lehrkraft bearbeitet den Test.</span></div></div>
+                <div class="step"><span class="stepnum">2</span><div><strong>Zielgruppe festlegen</strong><span>Klasse, Fach und alle oder einzelne Konten auswählen.</span></div></div>
+                <div class="step"><span class="stepnum">3</span><div><strong>Freigabe bewusst auslösen</strong><span>Erst der Klick schaltet den Test für die Zielgruppe frei.</span></div></div>
+                <div class="step"><span class="stepnum">4</span><div><strong>Schülerkonto prüfen</strong><span>Mit dem Ansichtswechsel kontrollieren, was jede Person sieht.</span></div></div>
+              </div>
+              <div class="status-strip"><span id="flow-dot" class="status-dot"></span><span id="flow-status">Aktueller Stand: Entwurf · für Schüler:innen unsichtbar</span></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="student-view" role="tabpanel" aria-labelledby="student-tab" hidden>
+          <div class="student-toolbar">
+            <div><div class="eyebrow">Mein Bereich</div><h1 style="font-size:25px">Meine Tests</h1></div>
+            <div><label for="account-select">Demo-Schülerkonto</label><select id="account-select"></select></div>
+          </div>
+          <article class="card student-card">
+            <div class="student-title"><div><h2 id="student-class">9b · Technik</h2><p>Deine freigegebenen Tests stehen hier.</p></div><span id="student-count" class="pill">0 Tests</span></div>
+            <div id="student-empty" class="empty"><div class="empty-icon" aria-hidden="true">◷</div><h3 id="empty-title">Noch keine Tests für dich freigegeben</h3><p id="empty-copy">Wenn deine Lehrkraft einen Test deiner Klasse zuweist, erscheint er hier. Private Entwürfe siehst nur du selbst.</p></div>
+            <div id="student-quiz" hidden></div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    (() => {
+      // Alle Konten und Zustände sind erfunden und bleiben ausschließlich im Arbeitsspeicher dieses Tabs.
+      const demoAccounts = [
+        { id: "9b-01", classId: "9b", label: "Testkonto 9b · 01" },
+        { id: "9b-02", classId: "9b", label: "Testkonto 9b · 02" },
+        { id: "9b-03", classId: "9b", label: "Testkonto 9b · 03" },
+        { id: "8a-01", classId: "8a", label: "Testkonto 8a · 01" }
+      ];
+      const $ = id => document.getElementById(id);
+      const tabs = [$("teacher-tab"), $("student-tab")];
+      let assignment = null;
+      let toastTimer;
+
+      function laterDate() {
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+        d.setHours(8, 0, 0, 0);
+        if (d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
+        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 16);
+      }
+      $("release-at").value = laterDate();
+
+      function selectedAudienceMode() { return document.querySelector('input[name="audience"]:checked').value; }
+      function selectedReleaseMode() { return document.querySelector('input[name="release"]:checked').value; }
+      function accountsInClass(classId) { return demoAccounts.filter(account => account.classId === classId); }
+      function chosenRecipientIds() {
+        const members = accountsInClass($("class-select").value);
+        if (selectedAudienceMode() === "class") return members.map(member => member.id);
+        return [...document.querySelectorAll('#people-list input[type="checkbox"]:checked')].map(box => box.value);
+      }
+      function updatePeople() {
+        const classId = $("class-select").value;
+        $("picker-class").textContent = classId;
+        const people = accountsInClass(classId);
+        $("people-list").innerHTML = people.map((person, index) => `<label class="person"><input type="checkbox" value="${person.id}" ${index < 2 ? "checked" : ""}><span>${person.label}</span><em>${index < 2 ? "ausgewählt" : "nicht ausgewählt"}</em></label>`).join("");
+        $("people-list").querySelectorAll("input").forEach(box => box.addEventListener("change", () => { box.parentElement.querySelector("em").textContent = box.checked ? "ausgewählt" : "nicht ausgewählt"; updateSummary(); }));
+        updateSummary();
+      }
+      function updateSummary() {
+        const classId = $("class-select").value;
+        const subject = $("subject-select").value;
+        const recipients = chosenRecipientIds();
+        const who = selectedAudienceMode() === "class" ? `der Klasse ${classId}` : `${recipients.length} ausgewählte${recipients.length === 1 ? "s" : " Schülerkonten"} in ${classId}`;
+        $("audience-summary").textContent = `Sichtbar für ${who} · ${subject}`;
+        $("publish-button").textContent = assignment ? "Freigabe aktualisieren" : `Test für ${classId} · ${subject} freigeben`;
+      }
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+      }
+      function showToast(message) {
+        $("toast").textContent = message;
+        $("toast").hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { $("toast").hidden = true; }, 3600);
+      }
+      function showTab(which) {
+        const teacher = which === "teacher";
+        $("teacher-view").hidden = !teacher;
+        $("student-view").hidden = teacher;
+        $("teacher-tab").setAttribute("aria-selected", String(teacher));
+        $("student-tab").setAttribute("aria-selected", String(!teacher));
+        renderStudent();
+      }
+      tabs[0].addEventListener("click", () => showTab("teacher"));
+      tabs[1].addEventListener("click", () => showTab("student"));
+      $("class-select").addEventListener("change", updatePeople);
+      $("subject-select").addEventListener("change", updateSummary);
+      document.querySelectorAll('input[name="audience"]').forEach(radio => radio.addEventListener("change", () => {
+        $("student-picker").hidden = selectedAudienceMode() !== "selected";
+        updateSummary();
+      }));
+      document.querySelectorAll('input[name="release"]').forEach(radio => radio.addEventListener("change", () => {
+        $("schedule-field").hidden = selectedReleaseMode() !== "scheduled";
+        $("release-at").required = selectedReleaseMode() === "scheduled";
+      }));
+      $("publish-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const classId = $("class-select").value;
+        const subject = $("subject-select").value;
+        const recipientIds = chosenRecipientIds();
+        const error = $("form-error");
+        error.hidden = true;
+        if (recipientIds.length === 0) {
+          error.textContent = "Bitte wähle mindestens ein Schülerkonto aus.";
+          error.hidden = false;
+          return;
+        }
+        const releaseAt = selectedReleaseMode() === "scheduled" ? new Date($("release-at").value).getTime() : Date.now();
+        if (selectedReleaseMode() === "scheduled" && (!Number.isFinite(releaseAt) || releaseAt <= Date.now())) {
+          error.textContent = "Bitte wähle einen Zeitpunkt in der Zukunft.";
+          error.hidden = false;
+          return;
+        }
+        // Empfänger werden hier im Demo-Zustand festgehalten: spätere Klassenänderungen fügen niemanden hinzu.
+        assignment = { classId, subject, recipientIds, releaseAt, isScheduled: selectedReleaseMode() === "scheduled" };
+        $("teacher-status").textContent = "Freigegeben";
+        $("teacher-status").classList.add("live");
+        $("teacher-hint").textContent = assignment.isScheduled ? `Geplant ab ${formatDate(assignment.releaseAt)}` : "Für die gewählte Zielgruppe freigegeben.";
+        $("flow-status").textContent = assignment.isScheduled ? `Aktueller Stand: geplant · ${formatDate(assignment.releaseAt)}` : "Aktueller Stand: freigegeben · nur für die gewählte Zielgruppe";
+        $("flow-dot").classList.add("green");
+        $("reset-button").hidden = false;
+        updateSummary();
+        renderStudent();
+        showToast(assignment.isScheduled ? "Test geplant. Er erscheint bei der Zielgruppe als „Anstehend“." : "Test freigegeben. Er ist jetzt für die Zielgruppe sichtbar.");
+      });
+      $("reset-button").addEventListener("click", () => {
+        assignment = null;
+        $("teacher-status").textContent = "Privater Entwurf";
+        $("teacher-status").classList.remove("live");
+        $("teacher-hint").textContent = "Noch nicht veröffentlicht.";
+        $("flow-status").textContent = "Aktueller Stand: Entwurf · für Schüler:innen unsichtbar";
+        $("flow-dot").classList.remove("green");
+        $("reset-button").hidden = true;
+        updateSummary();
+        renderStudent();
+        showToast("Demo zurückgesetzt. Der Entwurf ist wieder privat.");
+      });
+      $("account-select").innerHTML = demoAccounts.map(account => `<option value="${account.id}">${account.label} · ${account.classId}</option>`).join("");
+      $("account-select").addEventListener("change", renderStudent);
+      function renderStudent() {
+        const account = demoAccounts.find(item => item.id === $("account-select").value) || demoAccounts[0];
+        $("student-class").textContent = `${account.classId} · ${assignment?.classId === account.classId ? assignment.subject : "Klasse"}`;
+        const included = assignment && assignment.recipientIds.includes(account.id);
+        if (!included) {
+          $("student-empty").hidden = false;
+          $("student-quiz").hidden = true;
+          $("student-count").textContent = "0 Tests";
+          $("empty-title").textContent = assignment && assignment.classId === account.classId ? "Dieser Test ist nicht für dein Konto freigegeben" : "Noch keine Tests für dich freigegeben";
+          $("empty-copy").textContent = assignment && assignment.classId === account.classId ? "Die Lehrkraft hat diesen Test nur einer bestimmten Gruppe zugewiesen. Andere Tests deiner Klasse erscheinen hier, sobald sie für dich freigegeben sind." : "Wenn deine Lehrkraft einen Test deiner Klasse zuweist, erscheint er hier. Private Entwürfe siehst nur du selbst.";
+          return;
+        }
+        const available = !assignment.isScheduled || Date.now() >= assignment.releaseAt;
+        $("student-empty").hidden = true;
+        $("student-quiz").hidden = false;
+        $("student-count").textContent = "1 Test";
+        $("student-quiz").innerHTML = `<div class="quiz-row"><div class="quiz-main"><div class="test-icon" aria-hidden="true">ϟ</div><div><strong>Elektrische Schaltungen</strong><span>${assignment.subject} · 8 Aufgaben · ca. 20 Min.</span></div></div><span class="pill ${available ? "available" : ""}">${available ? "Jetzt verfügbar" : "Anstehend"}</span></div><div class="quiz-footer"><span>${available ? "Freigegeben für dein Konto." : `Verfügbar ab ${formatDate(assignment.releaseAt)}.`}</span><span class="privacy-line">Deine Klasse: ${account.classId} · kein anderes Konto sieht deinen Testbereich.</span></div>`;
+      }
+      updatePeople();
+      renderStudent();
+    })();
+  </script>
+</body>
+</html>
