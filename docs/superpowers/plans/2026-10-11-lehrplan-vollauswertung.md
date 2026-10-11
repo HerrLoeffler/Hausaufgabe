@@ -10,6 +10,8 @@
 
 **Spec:** [Pädagogische Wissensbasis – Lehrplanphase](../specs/2026-10-11-paedagogische-wissensbasis-konzept.md)
 
+**Operational references:** [Aufgabenübergabe](../handoffs/GC-PEDAGOGY-KB-01.md) · [Registerschema](../../../analysis/GC-PEDAGOGY-KB-01/register/README.md)
+
 ## Global Constraints
 
 - Alle 16 Länder und sämtliche amtlich geführten Fächer der vier Zielbereiche abdecken; Gymnasium Sek I und Oberstufe getrennt führen.
@@ -28,18 +30,6 @@
 - **Aufgaben/Prüfungen:** Beleg und Ableitung trennen; veröffentlichte Beispiele nie als vollständige Lehrplanabdeckung werten.
 
 ---
-
-> **Für die Ausführung:** Den vorhandenen Auftrag `GC-PEDAGOGY-KB-01` fortführen. Jeden Schritt im Register und in der Übergabe mit Quelle, Datum und Status belegen. Medienbestand, Bücher und Downloads bleiben bis nach Abschluss der Lehrplanphase ausgeklammert.
-
-**Ziel:** Alle geltenden amtlichen Lehrpläne aller Fächer für Grundschule, Haupt-/Mittelschulbildungsgang, Realschulbildungsgang und Gymnasium (Sek I und Oberstufe) in allen 16 Ländern vollständig inventarisieren, inhaltlich auswerten, gegenprüfen und anschließend mit amtlichen Aufgabenanforderungen und Abschlussprüfungen verknüpfen.
-
-**Arbeitsweise:** Zuerst wird für jedes Land ein vollständiges, versions- und jahrgangsbezogenes Dokumentinventar hergestellt. Danach werden Fächer innerhalb eines Zielwegs länderübergreifend abgearbeitet. Eine kleine Arbeitseinheit ist stets **Land × amtlicher Schulweg/Bildungsgang × Fach/Lernbereich × Stufen-/Kohortenbereich × geltende Dokumentfassung**. Keine Schulform wird bundesweit vorausgesetzt oder künstlich vereinheitlicht.
-
-**Arbeitsmittel:** KMK- und Landesportale als Einstieg; rechtsverbindliche Originalquellen und zuständige Landesportale als Beleg; TSV-Register als Statusquelle; Fachberichte in Markdown. Alle Zusammenfassungen sind eigene Paraphrasen mit Seiten-/Abschnittsangabe.
-
-**Konzept:** [Pädagogische Wissensbasis – Lehrplanphase](../specs/2026-10-11-paedagogische-wissensbasis-konzept.md)  
-**Aufgabenkennung/Übergabe:** [GC-PEDAGOGY-KB-01](../handoffs/GC-PEDAGOGY-KB-01.md)  
-**Registerregeln:** [Registerschema](../../../analysis/GC-PEDAGOGY-KB-01/register/README.md)
 
 ## Fester Umfang und Grenzen
 
