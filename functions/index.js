@@ -13,6 +13,7 @@ const { REGION, TEXT_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUES
 const { questionSchema, questionSchemaForType, testSchemaForRequest } = require("./lib/schemas");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const { generateTestInBatches } = require("./lib/test-batches");
+const { preparePedagogicalPool } = require("./lib/pedagogical-pool");
 const { validateTest, validateQuestion, normalizeQuestion, sameQuestion, variantRepeats } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
@@ -156,6 +157,11 @@ function cleanInput(data = {}) {
     solutionAudioQuestionCount, audioAnswerQuestionCount,
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
+    // A false marker survives queue normalization. A true marker cannot
+    // manufacture context when the original explicit values are absent.
+    pedagogicalContextKnown: data.pedagogicalContextKnown !== false &&
+      typeof data.schoolType === "string" && Boolean(data.schoolType.trim()) &&
+      typeof data.region === "string" && Boolean(data.region.trim()),
     sourceTest: cleanSourceTest(data.sourceTest)
   };
 }
@@ -295,12 +301,19 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     await onProgress("material", 5, "Material wird eingelesen …");
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
     const materialIds = materials.map(m => m.id);
+    // Generator defaults remain useful for legacy requests, but they are not
+    // evidence of a teacher-selected school/curriculum for pool retrieval.
+    const pedagogicalPool = preparePedagogicalPool({ ...input,
+      schoolType: input.pedagogicalContextKnown ? input.schoolType : "",
+      region: input.pedagogicalContextKnown ? input.region : ""
+    });
+    const poolGuide = pedagogicalPool.prompt ? `\n${pedagogicalPool.prompt}` : "";
     phase = "feedback";
     await onProgress("feedback", 10, "Aufgabenhinweise werden vorbereitet …");
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
     const memoryGuide = qualityMemoryPrompt(memory);
     const personalGuide = teacherQualityGuide(memory);
-    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}`;
+    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
@@ -308,7 +321,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${personalGuide}${priorContext}`, content: materialContent });
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
     });
     const usage = { ...first.usage };
     const addUsage = next => {
@@ -319,7 +332,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
         const replacement = await structuredResponse({
           schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}`, content: materialContent
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
@@ -384,7 +397,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       qualityMemoryUnavailable: Boolean(memory.unavailable),
       feedbackSignals: memory.stats?.total || 0,
       positivePatterns: memory.positivePatterns?.length || 0,
-      recurringRuleCandidates: memory.ruleCandidates?.length || 0
+      recurringRuleCandidates: memory.ruleCandidates?.length || 0,
+      pedagogicalPool: pedagogicalPool.meta
     });
     if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
     return {
@@ -397,7 +411,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         qualityReviewPasses: reviewed.reviewPasses,
         fullRepair: result.fullRepair,
         qualityWarnings,
-        qualityIssues
+        qualityIssues,
+        pedagogicalPool: pedagogicalPool.meta
       }
     };
   } catch (err) {
@@ -518,7 +533,10 @@ exports.processAiTestJob = onTaskDispatched({
       activeStage = stage;
       return jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
     };
-    const response = await generateTestForUser(uid, { ...job.input, materials: job.materials }, progress);
+    const response = await generateTestForUser(uid, { ...job.input, materials: job.materials,
+      // Old queued jobs have no reliable record of explicit school context.
+      pedagogicalContextKnown: job.input?.pedagogicalContextKnown === true
+    }, progress);
     const questions = response.test.questions;
     const totalImages = imageCount(questions);
     const totalAudios = audioCount(questions);
@@ -611,10 +629,12 @@ exports.processAiTestJob = onTaskDispatched({
       listeningOnlyQuestionCount: questions.filter(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only").length,
       requiresSecureAssessmentRules: totalAnswerAudios > 0 || questions.some(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only"),
       solutionAudioQuestionCount: totalSolutionAudios, solutionAudioReady,
-      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [], updatedAt: Timestamp.now() });
+      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
+      pedagogicalPool: response.meta.pedagogicalPool, updatedAt: Timestamp.now() });
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
-      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [] });
+      qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
+      pedagogicalPool: response.meta.pedagogicalPool });
     console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
   } catch (err) {
     err.diagnostic = { ...err.diagnostic, schemaVersion: 1, jobId, stage: activeStage,

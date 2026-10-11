@@ -11,6 +11,7 @@ const prompts = require("../lib/prompts");
 const { validateAndRepairTest } = require("../lib/repair-test");
 const { reviewAndRepairTest } = require("../lib/quality");
 const { generateTestInBatches } = require("../lib/test-batches");
+const { preparePedagogicalPool } = require("../lib/pedagogical-pool");
 const source = readFileSync(require.resolve("../index.js"), "utf8");
 const handler = source.slice(source.indexOf("async function generateTestForUser("), source.indexOf("\nexports.generateTest ="));
 
@@ -20,7 +21,7 @@ test("actual generation handler connects constrained batches, validation, review
     const usage = [], progress = [];
     const context = vm.createContext({
       ...constants, ...validation, ...schemas, ...prompts, HttpsError,
-      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest,
+      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
       consumeQuota: async () => {}, materialInputs: async () => [], qualityMemoryPrompt: () => "",
       teacherQualityGuide: () => "",
