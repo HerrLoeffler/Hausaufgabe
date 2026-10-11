@@ -2,3 +2,5 @@ weg_id	land	zielbereich	original_schulart	original_bildungsgang	abschluss	stufen
 SL-GS	Saarland	Grundschule	Grundschule	Grundschule	unbekannt	1-4	https://www.saarland.de/mbk/DE/portale/bildungsserver/unterricht-und-bildungsthemen/lehrplaenehandreichungen/lehrplaeneallgemeinbildende/grundschule/grundschule.lehrplaene_node	2026-10-11	metadaten_geprueft	Primarweg aus amtlicher Lehrplanübersicht; übrige Fächer noch nicht inventarisiert
 TH-GS	Thüringen	Grundschule	Grundschule	Grundschule	unbekannt	1-4	https://test.schulportal-thueringen.de/lehrplaene	2026-10-11	metadaten_geprueft	Geltungsübersicht 2025/26 nennt Mathematik Grundschule 1-4
 HB-GS	Bremen	Grundschule	Grundschule	Primarstufe	unbekannt	1-4	https://www.lis.bremen.de/schulqualitaet/bildungsplaene/primarstufe-elementarbereich-21952	2026-10-11	metadaten_geprueft	Amtliche LIS-Fachliste im Browser geprüft
+
+BW-GS	Baden-Württemberg	Grundschule	Grundschule	Grundschule	unbekannt	1-4	https://www.bildungsplaene-bw.de/30877175	2026-10-11	metadaten_geprueft	Amtlicher Index und Fächerverzeichnis geprüft; Einzelversionen und Geltung teilweise noch zuzuordnen
