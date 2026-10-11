@@ -13,6 +13,7 @@ Alle Dateien sind UTF-8-TSV mit Kopfzeile. Ein Feld enthält weder Tabulator noc
 | `zuordnungen.tsv` | Ein Dokument gilt für einen konkreten Schulweg, ein Fach und einen Stufen-/Kohortenbereich. | `zuordnung_id`, `dokument_id`, `weg_id`. Ein Dokument kann mehrere Zeilen haben. |
 | `kompetenzen.tsv` | Eine eigenständig nachprüfbare, paraphrasierte Anforderung des Lehrplans. | `kompetenz_id`, `zuordnung_id`, Fundstelle und Status. |
 | `aufgabenprofile.tsv` | Ein aus amtlicher Quelle belegtes oder ausdrücklich abgeleitetes Aufgabenprofil. | `profil_id`, `kompetenz_id`, Dokument/Quelle, Fundstelle, Evidenztyp. |
+| `pruefungen.tsv` | Eine amtliche Prüfungsanforderung oder veröffentlichte Abschlussprüfung für einen konkreten Abschluss, ein Fach und ein Prüfungsjahr. | `pruefung_plan_id`, `weg_id`, `kompetenz_id` oder `unbekannt`, offizielle Quelle und Fundstelle. |
 | `prueflog.tsv` | Eine dokumentierte erste oder zweite Prüfung samt Befund. | `pruefung_id`, Referenztyp/-ID, Datum und Ergebnis. |
 
 ## Pflichtlogik
@@ -24,7 +25,8 @@ Alle Dateien sind UTF-8-TSV mit Kopfzeile. Ein Feld enthält weder Tabulator noc
 5. `inhalt_ausgewertet` setzt eine tatsächlich geprüfte Originalquelle voraus. Bei amtlich indexierten Volltextabschnitten ohne PDF-Download wird die Methode im Fachbericht genannt. `zweitgeprueft` setzt einen positiven Eintrag in `prueflog.tsv` voraus.
 6. In `kompetenzen.tsv` werden Anforderungen in eigenen Worten und mit kurzer Fundstelle erfasst. Komplette Lehrplanseiten, Beispielaufgaben oder Lösungen werden nicht kopiert.
 7. `aufgabenprofile.tsv` unterscheidet `amtliches_beispiel` von `aus_lehrplan_abgeleitet`. Das ist keine Analyse von Bildungslogin oder anderen Medien.
-8. Der Fortschrittsindex ist ein datierter Bericht aus diesen Tabellen. Summen werden nicht unabhängig gepflegt. Für alle 16 Länder wird vor einer Abschlussbehauptung der aktuelle amtliche Fachbestand neu abgeglichen.
+8. `pruefungen.tsv` trennt verbindliche Prüfungsregelung, veröffentlichte Originalprüfung und Musteraufgabe. Ein Prüfungsjahr wird mit der für seine Kohorte geltenden Lehrplanfassung verbunden. Nichtöffentliches oder nicht erreichbares Material bleibt als Zugangslücke sichtbar; Prüfungen decken nie automatisch den gesamten Lehrplan ab.
+9. Der Fortschrittsindex ist ein datierter Bericht aus diesen Tabellen. Summen werden nicht unabhängig gepflegt. Für alle 16 Länder wird vor einer Abschlussbehauptung der aktuelle amtliche Fachbestand neu abgeglichen.
 
 ## Prüfeinheit
 
