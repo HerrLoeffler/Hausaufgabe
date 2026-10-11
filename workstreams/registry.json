@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-11",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -575,6 +575,15 @@
         "docs/gc-model-governor-evidence-20261010",
         "codex/gc-model-governor-first-import-20261010"
       ]
+    },
+    {
+      "id": "gc-video-insights-20261011",
+      "title": "GC-VIDEO-INSIGHTS-20261011: Julian-Ivanov- und StrategieNerd-Videorecherche",
+      "primaryBranch": "docs/gc-video-insights-20261011",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/research-videos-20261011.md",
+      "relatedBranches": []
     }
   ]
 }

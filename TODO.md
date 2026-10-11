@@ -14,6 +14,13 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 - Detailstatus steht in der verlinkten Übergabe. Bei Widerspruch tatsächliche Nachweise prüfen und Übersicht berichtigen.
 - Weitere Chats werden nicht automatisch ausgelesen: dort vereinbarte Aufgaben müssen ebenfalls hier eingetragen werden.
 
+
+## 11.10.2026 — neue Rechercheaufgabe
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-VIDEO-INSIGHTS-20261011 | Caption-/Videoanalyse aller Julian-Ivanov- und StrategieNerd-Videos vom 11.04. bis 11.10.2026, einschließlich regulärer Videos, Shorts und Streams; zusätzlich `jv5-Xhp5s_k` | **Recherche in Arbeit; Abdeckung noch unbekannt** | Fachchats erstellen getrennte Inventare und belegte Kurzanalysen lokal; danach Abdeckung und konkrete GradeCrew-/Games-Empfehlungen zentral prüfen. Keine Volltranskripte veröffentlichen. [Übergabe](workstreams/research-videos-20261011.md) |
+
 ## P0 – vor einem neuen öffentlichen Release
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
