@@ -22,6 +22,11 @@ BACKGROUND = TOKENS["colors"]["surface"].lstrip("#")
 SIZE = 1024
 INSET = 64
 PREVIEW_SIZE = SIZE - (2 * INSET)
+NATIVE_ILLUSTRATIONS = {
+    "GradeCrewCocoWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["coco"]["welcome"],
+    "GradeCrewRemyWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["welcome"],
+    "GradeCrewBrandIcon": BRAND_ICON,
+}
 
 resources = ROOT / "Resources" / "Assets.xcassets"
 appicon = resources / "AppIcon.appiconset"
@@ -149,19 +154,51 @@ def render_icon() -> None:
         flatten_with_core_graphics(previews[0], output_png)
 
 
-def verify_png(path: Path) -> None:
+def verify_png(path: Path, *, expected_size=(SIZE, SIZE), opaque=True) -> None:
     data = path.read_bytes()
     if data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
         raise SystemExit("Generated AppIcon is not a valid PNG.")
     width, height = struct.unpack(">II", data[16:24])
     color_type = data[25]
-    if (width, height) != (SIZE, SIZE):
+    if expected_size and (width, height) != expected_size:
         raise SystemExit(f"Generated AppIcon has wrong dimensions: {width}x{height}")
-    if color_type not in (2, 3):
+    if width < 1 or height < 1:
+        raise SystemExit("Generated GradeCrew image has invalid dimensions.")
+    if opaque and color_type not in (2, 3):
         raise SystemExit(f"Generated AppIcon unexpectedly contains an alpha-capable PNG color type: {color_type}")
 
 
+def render_native_illustrations() -> None:
+    if shutil.which("qlmanage") is None:
+        raise SystemExit("qlmanage is required to rasterize canonical GradeCrew SVG illustrations on macOS CI.")
+    for asset_name, source in NATIVE_ILLUSTRATIONS.items():
+        if not source.is_file():
+            raise SystemExit(f"Canonical GradeCrew illustration is missing: {source}")
+        imageset = resources / f"{asset_name}.imageset"
+        imageset.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="gradecrew-illustration-preview-") as temp:
+            temp_dir = Path(temp)
+            result = subprocess.run(
+                ["qlmanage", "-t", "-s", "900", "-o", str(temp_dir), str(source)],
+                text=True,
+                capture_output=True,
+            )
+            previews = sorted(temp_dir.glob("*.png"))
+            if result.returncode != 0 or not previews:
+                details = (result.stderr or result.stdout or "Quick Look produced no PNG preview").strip()
+                raise SystemExit(f"Could not rasterize GradeCrew illustration {source}: {details}")
+            image_path = imageset / f"{asset_name}.png"
+            shutil.copyfile(previews[0], image_path)
+        verify_png(image_path, expected_size=None, opaque=False)
+        (imageset / "Contents.json").write_text(json.dumps({
+            "images": [{"filename": image_path.name, "idiom": "universal"}],
+            "info": {"author": "xcode", "version": 1}
+        }, indent=2) + "\n")
+    print("Prepared native GradeCrew artwork from canonical Coco, Remy, and brand SVGs.")
+
+
 render_icon()
+render_native_illustrations()
 verify_png(output_png)
 
 (appicon / "Contents.json").write_text(json.dumps({

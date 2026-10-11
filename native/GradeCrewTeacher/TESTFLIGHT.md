@@ -1,26 +1,25 @@
 # GradeCrew auf iPhone/iPad – TestFlight und Abnahme
 
-Stand: 06.10.2026. Teacher Bundle-ID `de.gradecrew`; Secure bleibt separat (`de.gradecrew.secure`). Keine neuen App-IDs, Zertifikate oder Schlüssel für die Dateibrücke anlegen.
+Stand: 11.10.2026. Teacher Bundle-ID `de.gradecrew`; Secure bleibt separat (`de.gradecrew.secure`). Keine neuen App-IDs, Zertifikate oder Schlüssel für die Dateibrücke anlegen.
 
-Letzter bestätigter Upload: **0.1.8 (18)** @ `79598be8`, [Run 37076301215](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37076301215). Der vorherige Run 37075968920 lieferte Build 17. Apple-Verarbeitung, interne Testfreigabe, Installation und Gerätetest sind nicht aus einem grünen Upload ableitbar.
+Letzter auf einem iPhone getesteter Stand: **0.1.9 (Build 19)**. Der TestFlight-Test zeigte Probleme beim Anmelde-Einstieg, bei der Texteingabe-Navigation und beim Abschließen von Remys Rückfragen. **0.1.10 ist noch ein Entwicklungskandidat**; lokale Tests allein bedeuten weder GitHub-CI noch Upload oder Apple-Verarbeitung.
 
-**0.1.9 ist zunächst ein isolierter Entwicklungskandidat.** Native Checks bauen und testen ohne Signing/Upload. Ein Push dieses Aufgabenbranches löst den bestehenden TestFlight-Pushpfad nicht aus. Erst nach Review, exakter CI und bewusstem Release-Schritt darf der kanonische Branch bzw. der manuelle Upload verwendet werden.
+Der autorisierte Ablauf für 0.1.10 ist: PR-Prüfung gegen den kanonischen App-Branch, erfolgreiche native CI, Integration des Staging-Follow-ups und erfolgreicher Preview-/Functions-Deploy, anschließend TestFlight-Upload. Jeder dieser Schritte wird separat bestätigt; Production wird nicht verändert.
 
 Der bestehende Upload archiviert ohne Development-Signing und signiert erst beim App-Store-Connect-Export. Das bewährte Verhalten und vorhandene Apple-Secrets bleiben erhalten. Keine Zertifikate löschen oder widerrufen.
 
 Standard-Web-URL: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`. Normales Staging ist Fallback. Web-Hosting und native App sind zwei getrennte Updates; ein neuer App-Build veröffentlicht keine Web-Funktionen.
 
-## Physischer Gerätetest für 0.1.9
+## Physischer Gerätetest für 0.1.10
 
-1. Tatsächlich installierte Version/Build sowie geladene Domain und Web-Manifest-Commit gemeinsam dokumentieren.
-2. Login, Wiederöffnung und bestehende Sitzung prüfen.
-3. Ergebnis-CSV exportieren → native Teilen-Ansicht → „In Dateien sichern“; gespeicherte Inhalte/UTF-8 prüfen.
-4. Vorhandenen PDF-Download teilen; Druck-/Vorschaupfade separat testen.
-5. Teilen abbrechen → keine zweite Datei und kein zweites Menü.
-6. Auf iPad Hoch-/Querformat, Popover und wiederholtes Teilen prüfen.
-7. Datei zu groß/ungültiger Typ und gleichzeitig offenes Menü → verständliche Meldung.
-8. Reload/Seitenwechsel während Teilen → Abbruch und anschließend neuer Export möglich.
-9. Interne/externe Links, PDF/Bild-Upload, Kamera, Mikrofon und JS-Bestätigungen als Regression prüfen.
-10. Offline/Retry und Rückkehr ins normale Staging prüfen.
+1. Version/Build in TestFlight prüfen; die Diagnose zeigt die geladene Staging-Domain und den Web-Manifest-Commit.
+2. Abgemeldet starten: zuerst **„Mit GradeCrew anmelden“**; danach erscheinen **„Remy fragen“** und **„GradeCrew öffnen“**.
+3. Anmeldung schließen und App erneut öffnen: die gespeicherte Sitzung soll ohne tägliche Neuanmeldung erkannt werden.
+4. Remy mit nur „Erstelle einen Test“ starten; alle fehlenden Angaben nennen lassen, antworten und prüfen, dass nach angenommener Übergabe der Haken erscheint.
+5. Unter Remy **„Stattdessen tippen“** öffnen, Text eingeben und prüfen, dass **Start** und **Eingabe schließen** erreichbar bleiben.
+6. Auftrag absenden und über die Zurück-Schaltfläche wieder zur Startseite gehen; anschließend **„GradeCrew öffnen“** und den Entwurf prüfen.
+7. Remy-Fehler/Netzwerkfehler: konkrete Meldung und erneuter Versuch; keinen doppelten Auftrag bei wiederholtem Tippen erzeugen.
+8. Auf iPad Hoch-/Querformat und angepasste Karten prüfen.
+9. CSV/PDF-Teilen, Abbrechen, Upload, Kamera, externe Links und erneutes Öffnen als Regression testen.
 
-Gerätetest ist manuell; Production und externe TestFlight-Einladungen/App-Store-Veröffentlichung benötigen eigene Freigabe.
+Der Gerätetest beginnt erst nach Apple-Verarbeitung und interner TestFlight-Verfügbarkeit; ein grüner Upload allein bestätigt das nicht.

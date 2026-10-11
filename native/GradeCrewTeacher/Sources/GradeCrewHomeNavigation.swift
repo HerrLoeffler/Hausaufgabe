@@ -35,9 +35,14 @@ struct GradeCrewHomeNavigation {
         case .signedIn:
             route = .quickRemy
         case .signedOut:
-            shouldReturnHomeAfterLogin = true
-            route = .workspace
+            openSignIn()
         }
+    }
+
+    mutating func openSignIn() {
+        guard isAuthRestored else { return }
+        shouldReturnHomeAfterLogin = true
+        route = .workspace
     }
 
     mutating func openWorkspace() {
@@ -48,8 +53,7 @@ struct GradeCrewHomeNavigation {
             shouldReturnHomeAfterLogin = false
             route = .workspace
         case .signedOut:
-            shouldReturnHomeAfterLogin = true
-            route = .workspace
+            openSignIn()
         }
     }
 

@@ -75,6 +75,9 @@ jobs:
       - name: Test native home and Remy voice flow
         run: |
           python3 native/GradeCrewTeacher/test_home_navigation_policy.py
+          python3 native/GradeCrewTeacher/test_quick_remy_followup_policy.py
+          python3 native/GradeCrewTeacher/test_teacher_home_and_remy_layout.py
+          python3 native/GradeCrewTeacher/test_native_artwork_sources.py
           python3 native/GradeCrewTeacher/test_quick_remy_speech.py
           python3 native/GradeCrewTeacher/test_native_bridge.py
           node --test native/GradeCrewTeacher/test_quick_remy_auth_bridge.cjs

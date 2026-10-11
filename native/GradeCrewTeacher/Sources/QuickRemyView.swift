@@ -3,6 +3,7 @@ import UIKit
 
 struct QuickRemyView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @FocusState private var textEntryFocused: Bool
     let onBack: () -> Void
     let call: GradeCrewQuickRemyCall?
 
@@ -30,23 +31,10 @@ struct QuickRemyView: View {
     }
 
     var body: some View {
-        VStack(spacing: GradeCrewDesignTokens.Spacing.xl) {
-            HStack {
-                Button(action: onBack) {
-                    Label("Start", systemImage: "chevron.left")
-                }
-                .buttonStyle(.bordered)
-                Spacer()
-                Text("Remy fragen")
-                    .font(.headline)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                Spacer()
-                Color.clear.frame(width: 72, height: 1).accessibilityHidden(true)
-            }
-            .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-            .padding(.top, GradeCrewDesignTokens.Spacing.sm)
-
-            Spacer(minLength: GradeCrewDesignTokens.Spacing.sm)
+        VStack(spacing: 0) {
+            navigationHeader
+            ScrollView {
+                VStack(spacing: GradeCrewDesignTokens.Spacing.xl) {
 
             Image(systemName: status == .recording ? "waveform" : "mic.fill")
                 .font(.system(size: 48, weight: .semibold))
@@ -66,7 +54,7 @@ struct QuickRemyView: View {
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.xl)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(statusMessage)
+                .accessibilityLabel(workStatus == .needsInfo ? (workError ?? "Ergänze bitte noch die fehlenden Angaben.") : statusMessage)
                 .accessibilityAddTraits(.updatesFrequently)
 
             if status == .requestingPermission || status == .transcribing {
@@ -146,16 +134,26 @@ struct QuickRemyView: View {
 
             if showingTextEntry {
                 VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
-                    Text("Stattdessen tippen")
-                        .font(.footnote.weight(.semibold))
+                    HStack {
+                        Text("Stattdessen tippen")
+                            .font(.footnote.weight(.semibold))
+                        Spacer()
+                        Button("Eingabe schließen") {
+                            textEntryFocused = false
+                            showingTextEntry = false
+                        }
+                        .font(.footnote)
+                    }
                     TextEditor(text: $typedText)
                         .frame(minHeight: 120, maxHeight: 180)
                         .padding(GradeCrewDesignTokens.Spacing.xs)
                         .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.control))
                         .accessibilityLabel("Testwunsch als Text")
+                        .focused($textEntryFocused)
                     Button("Text übernehmen") {
                         let entry = typedText
                         capture.useText(typedText)
+                        textEntryFocused = false
                         typedText = ""
                         showingTextEntry = false
                         Task { await prepareTranscript(entry) }
@@ -184,8 +182,12 @@ struct QuickRemyView: View {
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.xl)
                 .padding(.bottom, GradeCrewDesignTokens.Spacing.xl)
-
-            Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, GradeCrewDesignTokens.Spacing.lg)
+                .padding(.bottom, GradeCrewDesignTokens.Spacing.xl)
+            }
+            .scrollDismissesKeyboard(.interactively)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
@@ -211,6 +213,32 @@ struct QuickRemyView: View {
         .onDisappear {
             clearConversation()
         }
+    }
+
+    private var navigationHeader: some View {
+        HStack {
+            Button(action: onBack) {
+                Label("Start", systemImage: "chevron.left")
+                    .frame(minHeight: GradeCrewDesignTokens.Layout.minimumTouchTarget)
+            }
+            .buttonStyle(.bordered)
+            Spacer(minLength: GradeCrewDesignTokens.Spacing.sm)
+            HStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
+                Image(GradeCrewAssets.NativeImage.remyWelcome)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 34, height: 34)
+                    .accessibilityHidden(true)
+                Text("Remy fragen")
+                    .font(.headline)
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+            }
+            Spacer(minLength: GradeCrewDesignTokens.Spacing.sm)
+            Color.clear.frame(width: 72, height: 1).accessibilityHidden(true)
+        }
+        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
+        .padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
+        .background(.regularMaterial)
     }
 
     private var statusMessage: String {
@@ -263,9 +291,11 @@ struct QuickRemyView: View {
         do {
             let result = try await invoke("prepare", payload: ["requestId": requestId, "conversationText": conversationText])
             guard workGeneration == token else { return }
-            if result["status"] as? String == "needsInfo",
-               let question = result["question"] as? String,
-               let missing = result["missingFields"] as? [String], (1...3).contains(missing.count) {
+            if let question = QuickRemyFollowUpPolicy.question(
+                status: result["status"] as? String,
+                missingFields: result["missingFields"] as? [String],
+                question: result["question"] as? String
+            ) {
                 workError = question
                 workStatus = .needsInfo
                 return

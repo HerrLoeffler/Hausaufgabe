@@ -19,6 +19,12 @@ home.receive(.signedIn(accountLabel: "Frau Beispiel", accountChanged: true))
 assert(home.route == .home)
 assert(home.isAuthRestored)
 
+home.receive(.signedOut)
+home.openSignIn()
+assert(home.route == .workspace)
+home.receive(.signedIn(accountLabel: "Frau Beispiel", accountChanged: true))
+assert(home.route == .home)
+
 home.openWorkspace()
 assert(home.route == .workspace)
 home.receive(.checking)
