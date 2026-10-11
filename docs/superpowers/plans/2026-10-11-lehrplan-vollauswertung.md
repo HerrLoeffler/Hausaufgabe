@@ -46,9 +46,9 @@
 
 ### 1. Arbeitsstand und Aufgabenkennung sichern
 
-- [ ] Auf aktuellem GitHub-`main` Task-ID, TODO, Registry, vorhandene Übergaben und parallele Arbeit prüfen. Am 11.10.2026 ist `GC-PEDAGOGY-KB-01` in `TODO.md` nicht registriert.
-- [ ] Die bisherigen lokalen Konzept-, Plan-, Landes- und Fachberichte über einen eigenen Aufgabenbranch mit Review in das Repository übernehmen; keine gemeinsame Datei unbesehen überschreiben.
-- [ ] `TODO.md` und die dauerhafte Workstream-Übergabe mit Umfang, Owner, Branch, Belegstand, Blockern und nächstem Schritt ergänzen.
+- [x] Auf aktuellem GitHub-`main` Task-ID, TODO, Registry, vorhandene Übergaben und parallele Arbeit prüfen. Am 11.10.2026 war `GC-PEDAGOGY-KB-01` dort nicht registriert.
+- [x] Die bisherigen lokalen Konzept-, Plan-, Landes- und Fachberichte auf dem eigenen Aufgabenbranch als [Draft-PR #208](https://github.com/HerrLoeffler/Hausaufgabe/pull/208) sichern.
+- [x] `TODO.md`, Registry und dauerhafte Workstream-Übergabe im PR mit Umfang, Owner, Branch, Belegstand, Blockern und nächstem Schritt ergänzen. Die Registrierung auf `main` steht bis zur Integration des PR aus.
 
 **Abnahme:** Branch/Commit und die Aufgabe sind auf GitHub auffindbar; lokale Dateien allein gelten nicht als gesichert. Kein Release-/Deploy-Status wird aus Dokumentation abgeleitet.
 
