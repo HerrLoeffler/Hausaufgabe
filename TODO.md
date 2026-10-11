@@ -53,6 +53,8 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 | GC-AUTOMATION-02 | Automatische staging-only AI-Functions-WIF-Aktivierung abschließen | **Erledigt – WIF eingerichtet, automatischer Functions-E2E grün** | Setup am 02.10.2026 abgeschlossen. Automatischer Run `36943129026` deployte exakt Integrationscommit `a61759db…` mit Scope `functions:ai` nach `hausaufgabe-staging` und verifizierte `crewAssistant` + `reviseWholeTest`; Receipt Artifact `11200528486`. Production/Rules/Hosting wurden durch diesen Deploy nicht verändert. [Übergabe](workstreams/staging-functions-automation.md) |
 | GC-GAMES-01 | Escape-Room-MVP mit Lehrerübersicht konkretisieren | MVP + Hub-Integration implementiert, CI grün; Lab-/Geräteabnahme offen | Branch `feature/escape-room-mvp-v1`, Draft-PR #10: „Die verriegelte Schule“ mit 3 Räumen, 8 Frage-Slots, 4 Rätseln, Preflight und Lehrerübersicht. Isolierter Lab-Preview bereits erfolgreich: Run37021633218 Versuch2 für a7ffc382, inklusive Tests und Preview-Function. Alter Secret-Metadata-Fehler überholt. Nächster Schritt: echter iPad/Desktop-Test, danach GradeCrew-Test-/KI-Adapter. [Konzept](docs/games/ESCAPE_MVP.md) |
 
+| GC-PEDAGOGY-KB-01 | Amtliche Lehrpläne aller Fächer für vier Zielbereiche in 16 Ländern vollständig inventarisieren, auswerten und zweitprüfen | **Aktiv auf Aufgabenbranch; Gesamtbestand offen** | [Arbeitsplan](docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Übergabe](workstreams/pedagogy-curricula-20261011.md). Mathematik Grundschule: 14 erstanalysiert, Thüringen teilweise, Saarland offen; übrige Fächer und Dokumentinventar ausstehend. Medien folgen später. |
+
 ## Telemetrie – neue konkrete Schritte
 
 | ID | Aufgabe | Status | Nächster Schritt |

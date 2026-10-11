@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-11",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -575,6 +575,15 @@
         "docs/gc-model-governor-evidence-20261010",
         "codex/gc-model-governor-first-import-20261010"
       ]
+    },
+    {
+      "id": "pedagogy-curricula-20261011",
+      "title": "GC-PEDAGOGY-KB-01: Lehrplan-Vollauswertung aller vier Zielwege",
+      "primaryBranch": "docs/pedagogy-curricula-20261011",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/pedagogy-curricula-20261011.md",
+      "relatedBranches": []
     }
   ]
 }

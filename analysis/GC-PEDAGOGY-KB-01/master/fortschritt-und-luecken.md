@@ -1,0 +1,82 @@
+# Lehrplan-Kompass Deutschland — Fortschritt und Lücken
+
+**Arbeitskennung:** `GC-PEDAGOGY-KB-01` (vorläufig; siehe Projektübergabe)  
+**Stichtag:** 11. Oktober 2026  
+**Erste Welle:** Grundschule, Haupt-/Mittelschulbildungsgang, Realschulbildungsgang, Gymnasium (Sek I und Sek II getrennt), alle Fächer und alle 16 Länder.  
+**Datenschutz:** Diese Auswertung speichert keine Buchtitel, Autor:innen, Verlage, Ausgaben, ISBNs, Cover, Produkt-/Plattformkennungen, Lizenzcodes oder Rückverknüpfungen. Sie behandelt ausschließlich amtliche Lehrplanquellen.
+
+## Status in Kürze
+
+Für **16 von 16 Ländern** liegt nun ein erster Länderbaustein mit offiziellen Einstiegen, Zuständigkeiten und einer vorläufigen Strukturübersicht vor. Die Erfassungstiefe ist ungleich: zwölf Länderbausteine enthalten detailliertere Portal- und Fachinventare; vier im zuletzt konsolidierten Paket bieten eine erste, noch stärker zu verifizierende Übersicht. Alle Berichte enthalten selektive oder noch sehr begrenzte Inhaltsprüfungen. **Kein Bericht belegt die vollständige fachweise Lektüre aller relevanten Lehrpläne.** Punkt 1 ist als erster Quellenkompass begonnen und für die 16 Länder mit amtlichen Einstiegen unterlegt; Punkt 2 ist als vorläufiges Struktur-/Fachinventar angelegt, aber noch nicht vollständig abgeglichen; Punkt 3 bleibt offen.
+
+| Land | Quellen-/Strukturbericht | Fach-/Jahrgangsinventar | Lehrplaninhalte geprüft | Wesentliche offene Punkte |
+|---|---|---|---|---|
+| Baden-Württemberg | teilweise erfasst | Portal-/Fachfamilien überblickt | Stichprobe (Planarchitektur, Grundschulindex, Geschichte) | Einzelpläne aller vier Zielbereiche, G8/G9, genaue gültige Fassungen |
+| Bayern | teilweise erfasst | LehrplanPLUS-Struktur und Fachfamilien skizziert | Stichprobe Grundschul-Deutsch, Mathematik, HSU und Querschnittsziele | alle Fächer/Jahrgänge der Mittelschule, Realschule, Gymnasium und GS |
+| Berlin | teilweise erfasst | Rahmenlehrplan 1–10 und Oberstufe überblickt | Architektur-/Versionsstichprobe | alle Fachpläne, Niveaustufen, Berliner Anlagen, Oberstufe |
+| Brandenburg | teilweise erfasst | Rahmenlehrplan 1–10 und Oberstufe überblickt | Architektur-/Versionsstichprobe | alle Fachpläne, Niveaustufen, brandenburgische Anlagen, Oberstufe |
+| Bremen | erster Länderbaustein | LIS-Fachportale und Bereiche erfasst | Portalstände/Implementierung geprüft; Fach-PDFs überwiegend ungeöffnet | Inhaltliche Dokumentprüfung, LIS-403-Zugangsproblem, Übergang 2026–2028 |
+| Hamburg | erster Länderbaustein | Bildungsplanportale und Fachlisten erfasst | selektiv: Mathematik Grundschule; weitere Stichtags-/Dokumentprüfungen | übrige Fachpläne, Stadtteilschule, Gymnasiumjahrgänge und Studienstufe |
+| Hessen | erster Länderbaustein | Fach-/Kerncurriculumstruktur erfasst | selektiv: Mathematik Primarstufe vollständig im definierten Umfang; Deutsch Primarstufe und weitere PDFs teilweise | weitere Fächer, parallele Fassungen, Oberstufe |
+| Mecklenburg-Vorpommern | erster Länderbaustein | Fachportale und laufende Stufenrevisionen erfasst | selektiv: Mathematik Grundschule; Deutsch GS strukturell; Mathe 5–6 geöffnet | alle Fächer, aufwachsende Revisionen und Zielbildungsgänge |
+| Niedersachsen | teilweise erfasst | Portal-/Fachfamilien überblickt | selektive Beispiele und Struktur | vollständige Fach-/Dokumentliste, Gültigkeit und Einzelpläne |
+| Nordrhein-Westfalen | teilweise erfasst | Portal-/Fachfamilien überblickt | selektive Beispiele und Struktur | vollständige Fach-/Dokumentliste, Schulform-/Bildungsgang-Mapping, Einzelpläne |
+| Rheinland-Pfalz | teilweise erfasst | Datenbank- und Fachfamilien überblickt | Grundlegung/Sachunterricht und Strukturstichprobe | Datenbankbestand, aktuelle G8/G9- und RS+-Pläne, Einzelpläne |
+| Saarland | teilweise erfasst | Schul-/Bildungsgangstruktur überblickt | Beispiele Gemeinschaftsschule/Gymnasium/Oberstufe | vollständige GS- und Fachlisten, Bildungsgangniveau, Einzelpläne |
+| Sachsen | erster Länderbaustein | Portal-/Fachfamilien überblickt | einzelne Dokument-/Versionsbeispiele | vollständige Fachinventare und Einzelpläne |
+| Sachsen-Anhalt | erster Länderbaustein | Fachlisten/Planarchitektur überblickt | Mathematik-Grundschulplan 2026 inhaltlich vollständig im definierten Umfang ausgewertet; Reform-/Implementationsstand dokumentiert | übrige Grundschulfächer, Sekundarschule, Gymnasium und vollständige Fachinventare |
+| Schleswig-Holstein | erster Länderbaustein | Fachportal-/Schulformstruktur überblickt | Rahmen-/Versionsstichprobe | vollständige Fachinventare und Einzelpläne; Entwürfe von geltenden Plänen trennen |
+| Thüringen | erster Länderbaustein | Portalstruktur eingeschränkt zugänglich | Regelschul-Dokument und Änderungsmitteilung | aktuelle Fachversionen, Jahrgangszuordnung und Vollinventar |
+
+**Statusdefinition:** „teilweise erfasst“ bedeutet, dass ein Länderbericht existiert. Ein sichtbarer Portalindex oder eine Fachliste beweist nicht, dass alle verlinkten Curricula gelesen wurden. „Stichprobe“ bezeichnet nur die im jeweiligen Länderbericht ausdrücklich genannten geprüften Quellen.
+
+## Laufende fachweise Auswertung
+
+Erster Fachblock ist [Mathematik Grundschule](../subjects/mathematik-grundschule.md). Der KMK-Standard 2022 ist ausgewertet; der Landesstand ist aktuell **14 Länder im definierten Primarstufen-Umfang ausgewertet, Thüringen teilweise ausgewertet, Saarland offen**. Neben den zuvor vertieften Ländern wurden die Fachtexte für Bremen (amtlich indexierter Volltext), Nordrhein-Westfalen, Rheinland-Pfalz und Schleswig-Holstein geprüft. Für Thüringen sind amtliche Implementationsmaterialien und Fachtextauszüge hinzugekommen; eine vollständige jahrgangsbezogene Auswertung verhindert der Zugang zum Haupttext. Beim Saarland ist der ab 01.08.2026 geltende neue Plan amtlich gelistet, aber sein PDF liefert 403. Die Zählung bezieht sich nur auf Mathematik Primarstufe, nicht auf die gesamte erste Lehrplanwelle.
+
+| Mathematik Grundschule | Länder |
+|---|---|
+| Inhaltlich ausgewertet im definierten Umfang | Baden-Württemberg, Bayern, Berlin, Brandenburg, Bremen, Hamburg, Hessen, Mecklenburg-Vorpommern, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Sachsen, Sachsen-Anhalt, Schleswig-Holstein |
+| Teilweise ausgewertet | Thüringen (Kompetenzarchitektur und Fachtextauszüge vertieft; jahrgangsbezogene Volltextauswertung offen) |
+| Noch offen | Saarland |
+
+## Verlässliche gemeinsame Bezugspunkte
+
+- [KMK-Übersicht Lehrpläne allgemeinbildender Schulen](https://www.kmk.org/downloads-dokumente/rechtsvorschriften-/-lehrplaene/uebersicht-lehrplaene.html) — Einstieg zu den Länderportalen; dynamischer Stand muss je Abruf festgehalten werden.
+- [KMK-Übersicht Lehrpläne beruflicher Schulen](https://www.kmk.org/downloads-dokumente/rechtsvorschriften-/-lehrplaene/uebersicht-lehrplaene-berufl.html) — getrennte Quelle; berufliche Schulen sind in dieser ersten Welle nicht systematisch ausgewertet.
+- [KMK-Bildungsstandards](https://www.kmk.org/bildungsministerkonferenz/bildungsthemen/bildungsstandards.html) — bundesweite Bezugsebene, getrennt von den verbindlichen Länderlehrplänen zu dokumentieren.
+- [KMK-Sekundarstufe I: Bildungswege und Schulabschlüsse](https://www.kmk.org/bildungsministerkonferenz/vertiefende-bildungsinhalte/bildungswege-und-schulabschluesse/sekundarstufe-i.html) — Vergleichsrahmen; die Länder verwenden unterschiedliche Schularten und integrierte Bildungsgänge.
+
+## Bereits vorliegende Länderberichte
+
+- [Baden-Württemberg, Bayern, Berlin und Brandenburg](../states/BW-BY-BE-BB.md)
+- [Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz und Saarland](../states/NI-NW-RP-SL.md)
+- [Sachsen, Sachsen-Anhalt, Schleswig-Holstein und Thüringen](../states/SN-ST-SH-TH.md)
+- [Bremen, Hamburg, Hessen und Mecklenburg-Vorpommern](../states/HB-HH-HE-MV.md)
+
+## Querschnittserkenntnisse aus den Länderberichten
+
+1. **Schulart und Bildungsgang getrennt erfassen.** Eine Haupt- oder Realschulabschlussroute kann eigene Schulart, integrierter Bildungsgang oder Niveau innerhalb einer Schulform sein. Landesbegriffe bleiben erhalten; Zuordnungen zum Vergleichsraster werden zusätzlich markiert.
+2. **Jahrgangsstruktur ist nicht überall gleich.** Grundschule endet meist nach Klasse 4, in Berlin und Brandenburg typischerweise nach Klasse 6. G8/G9, Einführungsstufen, Oberstufen und Übergangsjahrgänge brauchen eigene Gültigkeitsfelder.
+3. **Fächer können integriert oder getrennt geführt sein.** Beispielsweise Sachunterricht, Naturwissenschaften oder Gesellschaftswissenschaften dürfen nicht ohne Quellenbeleg als einzelne Fachpläne gezählt werden.
+4. **Portale sind dynamisch und versioniert.** Ein Fachlisten- oder Suchtrefferbestand belegt Auffindbarkeit, aber weder Aktualität noch Inhaltsprüfung. Dokumentfassung, Gültigkeitsbeginn und betroffene Jahrgänge sind pro Einzelquelle zu sichern.
+5. **Kompetenz-/Inhaltsstruktur ist mappingrelevant.** Länder verwenden Kompetenzbereiche, Inhaltsfelder, Lernbereiche, Niveaustufen und End-of-stage-Erwartungen unterschiedlich. Die Originalstruktur muss neben einer vereinheitlichten Vergleichskategorie gespeichert werden.
+6. **Querschnittsziele separat indizieren.** Sprachbildung, digitale Bildung, Demokratie, Nachhaltigkeit, Berufsorientierung und Inklusion stehen teils in Fachplänen, teils in fachübergreifenden Vorgaben.
+
+## Verbindliches Auswertungsraster pro Lehrplandokument
+
+Jedes Dokument erhält mindestens: Land; amtliche Zuständigkeit; Zielbereich/Originalschulform; Bildungsgang bzw. Abschlussniveau; Fach oder integrierter Lernbereich; Jahrgänge/Endpunkte; Dokumentart; Originalgliederung; offizielle URL; Version/Stand; Gültig-ab und Übergangshinweis; Abruf-/Prüfdatum; Zugänglichkeit; Sichtungsstatus; geprüfte Abschnitte; in eigenen Worten zusammengefasste Kompetenzen und Inhalte; Progressionsmerkmale; Aufgaben-/Leistungsbezug soweit ausdrücklich genannt; Querschnittsbezüge; offene Fragen; Quelle/Fundstelle.
+
+**Sichtungsstatuswerte:** `offen` → `Quelle erreichbar` → `Metadaten erfasst` → `Inhalt teilweise ausgewertet` → `Inhalt vollständig im definierten Umfang ausgewertet` → `Zweitprüfung` (optional). „Vollständig“ ist nur relativ zu einem ausdrücklich beschriebenen Umfang zulässig; keine pauschale Vollständigkeitsbehauptung für ein ganzes Fach oder Land ohne Inventarabgleich.
+
+## Nächste Ausführungsschritte
+
+1. Die 16 Länderbausteine gegen die amtlichen Landesportale systematisch nachprüfen und bei jedem Eintrag Schulart, Bildungsgang, Fach und Jahrgang belegen. Nicht vorhandene eigenständige Schularten ausdrücklich als integrierte Bildungsgänge abbilden.
+2. Ein vollständiges Dokumentregister je Land × Zielbereich × Fach erzeugen; Portalindex, Gesetz/Verordnung, Rahmenvorgabe, Fachlehrplan und Beispielaufgabe voneinander unterscheiden.
+3. Gültigkeitsstatus und Versionsübergänge aktuell verifizieren; Entwürfe und Anhörungen separat markieren und nicht als geltendes Curriculum ausgeben.
+4. Mathematik Grundschule abschließen: den ab 01.08.2026 geltenden Saarlandplan auswerten und die jahrgangsbezogenen Erwartungen des Thüringer Plans vollständig prüfen. Der Saarland-PDF-Endpunkt liefert aktuell 403; der Thüringer Haupttext ist auf angemeldete Portalnutzer beschränkt. Amtliche Thüringer Implementationsmaterialien wurden zusätzlich ausgewertet, reichen aber nicht zur Vollständigkeitsmarkierung. Keine älteren oder nichtamtlichen Texte als Ersatz verwenden. Danach Quellen, Versionen und Fortschritt über alle 16 Länder abgleichen; erst dann den Fachblock schließen und Deutsch Grundschule beginnen.
+5. Ergebnisse fachweise und landesweise gegenprüfen; dann mit dem getrennten Medien-/Aufgabenregister abgleichen. Die zugelassene Medienanalyse speichert keine Buchidentitäten und keine Codes.
+
+## Geltungsgrenze
+
+Dieser Kompass ist eine Arbeitsübersicht, keine Rechtsberatung, keine amtliche Bestätigung curricularer Vollständigkeit und keine Aussage über die Qualität eines einzelnen Unterrichtsmediums. Schulinterne Curricula, sonderpädagogische Förderschwerpunkte, berufliche Bildung sowie besondere Schul-/Sprachprofile bleiben als Folgeumfang gesondert zu kennzeichnen.
