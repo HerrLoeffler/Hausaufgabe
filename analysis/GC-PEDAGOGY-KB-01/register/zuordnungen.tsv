@@ -1,1 +1,3 @@
 zuordnung_id	dokument_id	weg_id	fach_original	fach_vergleich	stufe_von	stufe_bis	niveau	kohorte_uebergang	auswertungs_status	pruefdatum	next_action
+SL-GS-MA-2026-GS1-4	SL-GS-MA-2026	SL-GS	Mathematik	Mathematik	1	4	unbekannt	ab_2026-08-01	zugriff_blockiert	2026-10-11	Amtlichen Volltext über zugänglichen Endpunkt oder berechtigten Portalzugang beschaffen und lesen
+TH-GS-MA-2010-GS1-4	TH-GS-MA-2010	TH-GS	Mathematik	Mathematik	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Jahrgangsbezogene Erwartungen im amtlichen Haupttext prüfen; Portalzugang erforderlich
