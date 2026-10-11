@@ -12,7 +12,7 @@ Frischer Ausgangsstand: main f8d2c312105b708120cf87ff243a5ea6ef906bfa; Developme
 
 ## Gesicherter Zwischenschritt
 
-Neuer Konsolidierungsbranch docs/games-guide-consolidation-20261011, ab main. Geplant/geschrieben: kanonischer Workflow und Briefingvorlage; kurzer AGENTS-Einstieg; passende TODO-/Registryzuordnung; diese Übergabe. Gemeinsamer Kern und 2D-/3D-Abnahmen gleichen Qualitätsanspruchs dokumentieren. Skills nach aktuellem Katalog und Anlass verwenden; Repo-Regeln behaupten keine automatische Runtime-Aktivierung.
+Neuer Konsolidierungsbranch docs/games-guide-consolidation-20261011, ab main. Geschrieben auf diesem Branch: kanonischer Workflow und Briefingvorlage; kurzer AGENTS-Einstieg; passende TODO-/Registryzuordnung; diese Übergabe. Gemeinsame native Feedback-/KI-Brücke ist nicht belegt; PR185 bleibt ein nicht bindender Entwurf. Prototypfeedback bleibt bis zu einem freigegebenen Vertrag im autorisierten Arbeitskontext dokumentiert. Gemeinsamer Kern und 2D-/3D-Abnahmen gleichen Qualitätsanspruchs dokumentieren. Skills nach aktuellem Katalog und Anlass verwenden; Repo-Regeln behaupten keine automatische Runtime-Aktivierung.
 
 ## Status und nächster Schritt
 
