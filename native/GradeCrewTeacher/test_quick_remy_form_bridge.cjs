@@ -90,3 +90,20 @@ test('a callback from an old account cannot populate the new account form', asyn
   const f=fixture();
   await assert.rejects(f.run('populateAiForm',{ formSession:'old-session',draft:{ subject:'Deutsch' } }), /Konto wurde gewechselt/);
 });
+
+test('opening the workspace after Remy restores hidden form elements and returns to the dashboard', async () => {
+  const hidden = [{ hidden: true, dataset: { nativeQuickRemyHidden: 'true' } }, { hidden: true, dataset: { nativeQuickRemyHidden: 'true' } }];
+  let disconnected = false;
+  let clicked = false;
+  const dashboard = { classList: { contains: () => !clicked } };
+  const document = {
+    querySelectorAll: selector => selector === '[data-native-quick-remy-hidden]' ? hidden : [],
+    getElementById: id => id === 'dashboardView' ? dashboard : id === 'backFromAi' ? { click() { clicked = true; } } : null
+  };
+  const execute = new AsyncFunction('action', 'payload', 'document', 'window', 'Event', script);
+  const window = { __gradeCrewQuickRemyObserver: { disconnect() { disconnected = true; } }, scrollTo() {} };
+  assert.equal((await execute('openWorkspace', {}, document, window, Event)).status, 'ready');
+  assert.equal(clicked, true, 'Use the existing authenticated dashboard handler');
+  assert.equal(disconnected, true);
+  assert.equal(hidden.every(element => element.hidden === false && !element.dataset.nativeQuickRemyHidden), true);
+});

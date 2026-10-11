@@ -4,6 +4,7 @@ struct TeacherRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
+    @State private var workspaceOpening = false
     @State private var loadError: String?
     @State private var reloadID = 0
     @State private var showBetaSettings = false
@@ -216,6 +217,7 @@ struct TeacherRootView: View {
                         .frame(maxWidth: 480)
                         .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
                 }
+                if workspaceOpening { ProgressView("Deine Tests werden geöffnet …").font(.footnote) }
                 if let loadError { connectionError(loadError) }
             }
             .frame(maxWidth: .infinity)
@@ -309,7 +311,7 @@ struct TeacherRootView: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(!isAuthRestored)
+        .disabled(!isAuthRestored || workspaceOpening)
         .opacity(isAuthRestored ? 1 : 0.55)
         .accessibilityHint(isAuthRestored ? subtitle : "Aktionen verfügbar, sobald die Anmeldung geprüft wurde.")
     }
@@ -351,7 +353,30 @@ struct TeacherRootView: View {
 
     private func openRemy() { homeNavigation.openRemy() }
 
-    private func openWorkspace() { homeNavigation.openWorkspace() }
+    private func openWorkspace() {
+        guard case .signedIn = authState else { homeNavigation.openWorkspace(); return }
+        guard !workspaceOpening else { return }
+        workspaceOpening = true
+        loadError = nil
+        let generation = auditGeneration
+        Task { @MainActor in
+            defer { workspaceOpening = false }
+            do {
+                guard let call = quickRemyCall else {
+                    throw NSError(domain: "GradeCrewWorkspace", code: 1, userInfo: [NSLocalizedDescriptionKey: "GradeCrew ist noch nicht bereit. Bitte erneut versuchen."])
+                }
+                let result: [String: Any] = try await withCheckedThrowingContinuation { continuation in
+                    call("openWorkspace", [:]) { continuation.resume(with: $0) }
+                }
+                guard generation == auditGeneration, route == .home else { return }
+                guard result["status"] as? String == "ready" else { return }
+                homeNavigation.openWorkspace()
+            } catch {
+                guard generation == auditGeneration, route == .home else { return }
+                loadError = error.localizedDescription
+            }
+        }
+    }
 
     private func retryWorkspace() {
         loadError = nil

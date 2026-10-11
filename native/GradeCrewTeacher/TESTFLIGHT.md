@@ -10,16 +10,16 @@ Der bestehende Upload archiviert ohne Development-Signing und signiert erst beim
 
 Standard-Web-URL: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`. Normales Staging ist Fallback. Web-Hosting und native App sind zwei getrennte Updates; ein neuer App-Build veröffentlicht keine Web-Funktionen.
 
-## Physischer Gerätetest für 0.1.12
+## Physischer Gerätetest für 0.1.16
 
-1. Version/Build in TestFlight prüfen; die Diagnose zeigt die geladene Staging-Domain und den Web-Manifest-Commit.
-2. Abgemeldet starten und **„Mit GradeCrew anmelden“** einmal drücken: direkt die Anmeldeseite muss erscheinen; kein zweiter Klick über die Startseite.
-3. Anmeldung schließen und App erneut öffnen: die gespeicherte Sitzung soll ohne tägliche Neuanmeldung erkannt werden.
-4. Remy mit „Vierte Klasse Englisch, Farben und Schulsachen“ starten; den erkannten Text senden. Bei der Frage nach der Anzahl „5“ antworten. Prüfen, dass Englisch, Klasse 4 und „Farben und Schulsachen“ in der Übersicht erhalten bleiben. Fach, Klasse, Thema und Anzahl prüfen oder bearbeiten und **„Test erstellen“** drücken. Weitere fehlende Angaben beantworten; es dürfen mehr als drei Rückfragen kommen.
-5. Remys transparente, vollständig sichtbare Mikrofon-Grafik im vergrößerten Kopfbereich prüfen. Unter Remy **„Stattdessen tippen“** öffnen, Text eingeben und prüfen, dass **Start** und **Eingabe schließen** erreichbar bleiben.
-6. Auftrag absenden und über die Zurück-Schaltfläche wieder zur Startseite gehen; anschließend **„GradeCrew öffnen“** und den Entwurf prüfen.
-7. Remy-Fehler/Netzwerkfehler: konkrete Meldung und erneuter Versuch; keinen doppelten Auftrag bei wiederholtem Tippen erzeugen.
-8. Auf iPad Hoch-/Querformat und angepasste Karten prüfen.
-9. CSV/PDF-Teilen, Abbrechen, Upload, Kamera, externe Links und erneutes Öffnen als Regression testen.
+1. Version und Build in TestFlight prüfen. Upload, Apple-Verarbeitung und Installation sind getrennte Zustände.
+2. Beim ersten Aufnahmeversuch Remy antippen. „Vierte Klasse Englisch“ sagen, 3–5 Sekunden pausieren, dann „Farben und Schulsachen, fünf Aufgaben, zwei Bilder, zwei Höraufgaben“ ergänzen. Der gehörte Text muss unter Remy gesammelt stehen bleiben. Erst erneut Remy antippen, um die Aufnahme zu beenden und das Formular auszufüllen.
+3. Fach, Klasse, Thema, Aufgabenanzahl und Bilder/Audio prüfen. Bei einer Rückfrage weiter einsprechen: frühere Formularangaben müssen erhalten bleiben. Neben „Eigene Wünsche“ „Lustige Sätze“ einsprechen und die Zuordnung prüfen.
+4. Den ersten Start nach neuer Installation/erteilten Berechtigungen, mehrere neue Aufnahmen hintereinander und längere Pausen prüfen. Ein leerer Apple-Abschluss darf bereits gehörte Wörter nicht löschen oder als „nichts gehört“ melden.
+5. Bei Hintergrundwechsel/Handysperre wird die laufende Aufnahme mit bereits gehörtem Text beendet. Nach Rückkehr den Entwurf prüfen. Navigation weg von Remy oder Kontowechsel beendet und löscht die Aufnahme.
+6. Remy öffnen, ohne Absenden auf „Start“ gehen, anschließend „GradeCrew öffnen“: „Meine Tests“ muss erscheinen. Die ausgeblendete Web-Testmaske darf keinen leeren Arbeitsbereich hinterlassen. Der alte Staging-Markierungsbutton darf in der App nicht erscheinen.
+7. „Test erstellen“: erst nach bestätigter Übergabe zurück zur nativen Auswahl. In GradeCrew den gespeicherten Entwurf und die tatsächlichen Bild-/Audioaufgaben prüfen; die Medienprüfung meldet Abweichungen.
+8. Materialien aus Fotomediathek, Dateien und Kamera hinzufügen, entfernen und übernehmen. Rechtebestätigung, 5 Dateien und 15 MB pro Datei bleiben erhalten.
+9. Anmeldung, Upload, CSV/PDF-Teilen, externe Links und iPad-Hoch-/Querformat als Regression prüfen.
 
-Der Gerätetest beginnt erst nach Apple-Verarbeitung und interner TestFlight-Verfügbarkeit; ein grüner Upload allein bestätigt das nicht.
+Automatische Tests prüfen Start-Rennen, Pausenabschnitte, kumulative/korrigierte Hypothesen, fehlende Zeitstempel, leere Abschlüsse, begrenzte Wiederaufnahme, veraltete Rückmeldungen und den Abschluss ohne Apple-Final-Callback. Der lokale iOS-Archiv-Build bestätigt die Kompilierung. Diese Nachweise ersetzen keinen Mikrofontest auf dem physischen iPhone und liefern keine 100-Prozent-Garantie für Spracherkennung. Production wird nicht verändert.

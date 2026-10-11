@@ -91,7 +91,10 @@ struct QuickRemyView: View {
         }
         .onChange(of: scenePhase) { phase in
             // Permission sheets briefly make the app inactive. Preserve the request and draft.
-            if phase == .background { capture.cancel() }
+            if phase == .background {
+                if status == .recording { capture.stop() }
+                else if status == .requestingPermission { capture.cancel() }
+            }
         }
         .task {
             await recoverPendingSubmission()
@@ -110,7 +113,7 @@ struct QuickRemyView: View {
                         .scaledToFit()
                         .frame(width: 220, height: 220)
                         .contentShape(Rectangle())
-                    Text(status == .recording ? "Ich höre zu …" : "Sprich mir schnell ein, was du willst.")
+                    Text(status == .recording ? "Ich höre zu … Zum Beenden antippen." : "Sprich mir schnell ein, was du willst.")
                         .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                         .multilineTextAlignment(.center)
@@ -163,9 +166,6 @@ struct QuickRemyView: View {
             materialsSection
             DisclosureGroup("Persönliche KI-Vorgaben") {
                 TextEditor(text: $personalPreferences).frame(height: 70)
-            }
-            if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
-                Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
             }
             submitButton
             if workStatus == .failed, let workError { Text(workError).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
@@ -256,13 +256,21 @@ struct QuickRemyView: View {
 
     @ViewBuilder
     private var speechFeedback: some View {
-        if !capture.flow.transcript.isEmpty {
-            Text(capture.flow.transcript).font(.footnote).lineLimit(3).padding(.horizontal, 14)
+        if let text = heardText {
+            Text(text).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 14).padding(.bottom, 10)
+                .accessibilityLabel("Erkannter Text: \(text)")
         }
         if let message = speechFailureMessage {
             Text(message).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger)
                 .padding(.horizontal, 14).padding(.bottom, 10)
         }
+    }
+
+    private var heardText: String? {
+        if !capture.flow.transcript.isEmpty { return capture.flow.transcript }
+        return pendingTranscript
     }
 
     private var speechFailureMessage: String? {
@@ -453,7 +461,6 @@ struct QuickRemyView: View {
     private func toggleRemyRecording() {
         if status == .recording { capture.stop(); return }
         speechTarget = .remy
-        pendingTranscript = nil
         Task { await capture.start() }
     }
 

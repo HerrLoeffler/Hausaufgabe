@@ -29,6 +29,18 @@ final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
         controller.addScriptMessageHandler(self, contentWorld: .page, name: "gradecrewNative")
         controller.addUserScript(WKUserScript(source: source.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
                                              injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        // Older Staging previews still install the retired annotation tool.
+        // Its CSS is scoped to this app's selected origin and main frame.
+        let appPresentation = """
+        (() => {
+          if (window.top !== window.self || location.origin !== \(json).origin) return;
+          const style = document.createElement('style');
+          style.dataset.gradecrewNativePresentation = '1';
+          style.textContent = '.reviewToggle, button[aria-label="Bereich ausschneiden und Änderung beschreiben"] { display: none !important; }';
+          document.head.appendChild(style);
+        })();
+        """
+        controller.addUserScript(WKUserScript(source: appPresentation, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
         if let auditResource = Bundle.main.url(forResource: "gradecrew-remy-audit", withExtension: "js"),
            let auditSource = try? String(contentsOf: auditResource, encoding: .utf8) {
             controller.addUserScript(WKUserScript(source: auditSource.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),

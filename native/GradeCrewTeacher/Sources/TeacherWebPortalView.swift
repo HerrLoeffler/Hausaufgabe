@@ -112,6 +112,29 @@ struct GradeCrewWebView: UIViewRepresentable {
             webView.callAsyncJavaScript("""
                                         const aiFieldIds = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', audioQuestionCount: 'aiAudioQuestionCount', audioAnswerQuestionCount: 'aiAudioAnswerQuestionCount', materialMode: 'aiMaterialMode', customNotes: 'aiCustomNotes', personalPreferences: 'aiPersonalPreferences' };
                                         if (payload?.formSession && (!window.GradeCrewRemyAudit || await window.GradeCrewRemyAudit.session() !== payload.formSession)) throw new Error('Das GradeCrew-Konto wurde gewechselt. Bitte beginne die Anfrage erneut.');
+                                        if (action === 'openWorkspace') {
+                                          window.__gradeCrewQuickRemyObserver?.disconnect();
+                                          window.__gradeCrewQuickRemyObserver = null;
+                                          for (const element of document.querySelectorAll('[data-native-quick-remy-hidden]')) {
+                                            element.hidden = false;
+                                            delete element.dataset.nativeQuickRemyHidden;
+                                          }
+                                          const aiGrid = document.querySelector?.('#aiView .aiGrid');
+                                          if (aiGrid) aiGrid.hidden = false;
+                                          const dashboard = document.getElementById('dashboardView');
+                                          if (!dashboard) throw new Error('Deine Tests sind gerade nicht erreichbar. Bitte erneut versuchen.');
+                                          if (dashboard.classList.contains('hidden')) {
+                                            const back = document.getElementById('backFromAi');
+                                            if (!back) throw new Error('Deine Tests konnten nicht geöffnet werden.');
+                                            back.click();
+                                            for (let i = 0; i < 100 && dashboard.classList.contains('hidden'); i++) {
+                                              await new Promise(resolve => setTimeout(resolve, 50));
+                                            }
+                                          }
+                                          if (dashboard.classList.contains('hidden')) throw new Error('Deine Tests konnten noch nicht geöffnet werden. Bitte erneut versuchen.');
+                                          window.scrollTo({ top: 0, behavior: 'instant' });
+                                          return { status: 'ready' };
+                                        }
                                         if (action === 'verifyDraft') {
                                           let assistant = window.__gradeCrewRemyFieldVerifier;
                                           if (!assistant) {
@@ -198,7 +221,7 @@ struct GradeCrewWebView: UIViewRepresentable {
                                             }
                                           }
                                           const aiGrid = aiView.querySelector('.aiGrid');
-                                          if (aiGrid) aiGrid.hidden = true;
+                                          if (aiGrid) { aiGrid.hidden = true; aiGrid.dataset.nativeQuickRemyHidden = 'true'; }
                                           window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
                                           return { status: 'ready', formSession: await window.GradeCrewRemyAudit.session(), personalPreferences: document.getElementById('aiPersonalPreferences')?.value || '', materialNames: Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem strong')).map(item => item.textContent || '') };
                                         }
