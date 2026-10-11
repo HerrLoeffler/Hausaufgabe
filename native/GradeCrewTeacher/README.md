@@ -4,9 +4,9 @@ Die SwiftUI-/WKWebView-App nutzt die vorhandene GradeCrew-Webplattform mit persi
 
 ## Stand und lokale Entwicklung
 
-Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. **0.1.9 (Build 19)** ist der zuletzt auf dem iPhone getestete Stand. Der Gerätetest fand Probleme beim Anmelde-Einstieg und bei Remys Übermittlung. **0.1.11** ist der Kandidat zur Korrektur.
+Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. **0.1.9 (Build 19)** ist der zuletzt auf dem iPhone getestete Stand. Der Gerätetest fand Probleme beim Anmelde-Einstieg und bei Remys Übermittlung. **0.1.12** ist der Kandidat für die bearbeitbare Remy-Testübersicht.
 
-0.1.11 führt den Login-Einstieg direkt zur Anmeldeseite, zeigt einen ausdrücklichen Senden-Schritt für den erkannten Remy-Text und jede Rückfrage, und zeigt den Haken erst nach bestätigter Serverannahme. Die Rückfragen sind nicht auf drei begrenzt. Remy nutzt eine transparente Mikrofon-Illustration aus dem zentralen Design-Assetbestand. Der lokale Simulator-Build ist erfolgreich; GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und iPhone-Abnahme werden separat dokumentiert.
+0.1.12 hält Remys strukturierte Teilangaben über Rückfragen hinweg fest und zeigt Fach, Klasse, Thema und Aufgabenzahl in einer bearbeitbaren Übersicht. Erst nach Prüfung wird der Test erstellt. Die transparente Remy-Grafik wird im Kopfbereich vollständig und größer dargestellt. GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und iPhone-Abnahme werden separat dokumentiert.
 
 ```bash
 python3 native/GradeCrewTeacher/prepare_testflight_assets.py
