@@ -32,4 +32,4 @@ print("Beta environment routing: passed for {version}")
 with tempfile.TemporaryDirectory() as work:
     script = Path(work) / 'routing.swift'
     script.write_text(source + '\n' + checks)
-    subprocess.run(['swift', str(script)], check=True)
+    subprocess.run(['swift', '-module-cache-path', str(Path(work) / 'module-cache'), str(script)], check=True)

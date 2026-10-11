@@ -1,53 +1,26 @@
-# GradeCrew auf dem iPad – aktueller TestFlight-Weg
+# GradeCrew auf iPhone/iPad – TestFlight und Abnahme
 
-Stand: 30.09.2026. Haupt-App **GradeCrew**, Bundle-ID **de.gradecrew**.
-Secure bleibt eine eigene App: **de.gradecrew.secure**.
+Stand: 06.10.2026. Teacher Bundle-ID `de.gradecrew`; Secure bleibt separat (`de.gradecrew.secure`). Keine neuen App-IDs, Zertifikate oder Schlüssel für die Dateibrücke anlegen.
 
-## Bereits nachgewiesen
+Letzter bestätigter Upload: **0.1.8 (18)** @ `79598be8`, [Run 37076301215](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37076301215). Der vorherige Run 37075968920 lieferte Build 17. Apple-Verarbeitung, interne Testfreigabe, Installation und Gerätetest sind nicht aus einem grünen Upload ableitbar.
 
-GitHub-Lauf 36656798111 hat Version 0.1.2 kompiliert, signiert und erfolgreich
-zu App Store Connect hochgeladen. Apple-Konto, Signing und API-Key sind eingerichtet.
-Keine neue App-ID anlegen, keine Schlüssel in den Chat kopieren.
-Die frühere Demo mit erfundenen Tests wurde entfernt. Die App lädt die echte
-Webplattform samt Firebase-Weblogin aus der persistenten WKWebView-Sitzung.
+**0.1.9 ist zunächst ein isolierter Entwicklungskandidat.** Native Checks bauen und testen ohne Signing/Upload. Ein Push dieses Aufgabenbranches löst den bestehenden TestFlight-Pushpfad nicht aus. Erst nach Review, exakter CI und bewusstem Release-Schritt darf der kanonische Branch bzw. der manuelle Upload verwendet werden.
 
-## Schnellster Weg zum nächsten Build
+Der bestehende Upload archiviert ohne Development-Signing und signiert erst beim App-Store-Connect-Export. Das bewährte Verhalten und vorhandene Apple-Secrets bleiben erhalten. Keine Zertifikate löschen oder widerrufen.
 
-Änderungen unter native/GradeCrewTeacher, native/Shared oder am TestFlight-Workflow
-auf feature/shared-gradecrew-design-system lösen den vorhandenen Cloud-Build aus.
-Er archiviert zuerst mit Xcode und lädt nur bei Erfolg hoch. Version 0.1.3 ergänzt
-Web-Bestätigungen, Textdialoge, korrekte Browserkennung und Fehler bei Webprozess-Abbruch.
-Die Buildnummer stammt aus GITHUB_RUN_NUMBER.
-0.1.3 (6) wurde inzwischen durch Run 36712213667 erfolgreich hochgeladen.
-0.1.4 (7) wurde in Run 36723972615 erfolgreich gebaut/signiert und hochgeladen.
-0.1.4 ergänzt Beta-Einstellungen: Preview-Adresse einsetzen und die neue Webversion
-direkt in der App testen; der aktuell geladene Host bleibt sichtbar.
+Standard-Web-URL: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`. Normales Staging ist Fallback. Web-Hosting und native App sind zwei getrennte Updates; ein neuer App-Build veröffentlicht keine Web-Funktionen.
 
-Nach grünem Upload: App Store Connect verarbeitet den Build. Anschließend in
-TestFlight bei GradeCrew aktualisieren; falls nötig den Build der internen Testgruppe
-zuordnen. Erfolgreicher Upload allein beweist noch keine installierbare Freigabe.
-Keine externen Einladungen oder App-Store-Veröffentlichung automatisch ausführen.
+## Physischer Gerätetest für 0.1.9
 
-## Zwei getrennte Aktualisierungen
+1. Tatsächlich installierte Version/Build sowie geladene Domain und Web-Manifest-Commit gemeinsam dokumentieren.
+2. Login, Wiederöffnung und bestehende Sitzung prüfen.
+3. Ergebnis-CSV exportieren → native Teilen-Ansicht → „In Dateien sichern“; gespeicherte Inhalte/UTF-8 prüfen.
+4. Vorhandenen PDF-Download teilen; Druck-/Vorschaupfade separat testen.
+5. Teilen abbrechen → keine zweite Datei und kein zweites Menü.
+6. Auf iPad Hoch-/Querformat, Popover und wiederholtes Teilen prüfen.
+7. Datei zu groß/ungültiger Typ und gleichzeitig offenes Menü → verständliche Meldung.
+8. Reload/Seitenwechsel während Teilen → Abbruch und anschließend neuer Export möglich.
+9. Interne/externe Links, PDF/Bild-Upload, Kamera, Mikrofon und JS-Bestätigungen als Regression prüfen.
+10. Offline/Retry und Rückkehr ins normale Staging prüfen.
 
-- Swift-/WebView-Änderung: neuer TestFlight-Build.
-- Website/Tutorial/Editor: Hosting-Deploy auf die URL, welche die App tatsächlich lädt.
-
-Aktuelle App-URL: https://hausaufgabe-staging.web.app/
-Am 30.09.2026 erneut gelesen: release.json = gc21 / 4707c45.
-Die gc27-Security-Preview liegt auf einem anderen Hosting-Channel. Sie kommt nicht
-allein durch einen neuen App-Build in diese WebView. Preview-URL vor Verwendung
-explizit verifizieren; ablaufende Preview-URLs nicht fest in den App-Build schreiben.
-
-## Kurzer echter Gerätetest für 0.1.4
-
-1. Beta-Einstellungen öffnen, gültige Staging-Preview einsetzen, Host prüfen.
-2. Login und Wiederöffnung der App (Sitzung bleibt erhalten).
-2. Einen eigenen Wegwerf-Test löschen: Abbrechen erhält ihn, Bestätigen löscht ihn.
-3. Eine Testsitzung beenden: Bestätigung sichtbar, Abbrechen ohne Aktion.
-4. Tutorial mit Bildschirmtastatur, Hoch-/Querformat und kleiner Breite.
-5. Upload, CSV-Export, Zwischenablage und Links ausdrücklich auf dem iPad prüfen.
-6. Offline öffnen und Retry; dabei keinen laufenden echten Schüler-Test verwenden.
-
-Native Firebase-SDK-Anbindung ist eine spätere Ausbaustufe, keine Voraussetzung,
-um die schon funktionierende Webplattform jetzt über TestFlight zu testen.
+Gerätetest ist manuell; Production und externe TestFlight-Einladungen/App-Store-Veröffentlichung benötigen eigene Freigabe.

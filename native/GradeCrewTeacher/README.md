@@ -1,42 +1,48 @@
-# GradeCrew Teacher
+# GradeCrew Teacher – hybride iPhone-/iPad-App
 
-Native iPhone/iPad teacher application starter.
+Die SwiftUI-/WKWebView-App nutzt die vorhandene GradeCrew-Webplattform mit persistenter Web-Anmeldung. Dashboard, Tests, Editor, Remy, Emmi und Games bleiben dort gepflegt. Native Fähigkeiten ergänzen diese Abläufe.
 
-## Current state
+## Stand und lokale Entwicklung
 
-Implemented on `feature/shared-gradecrew-design-system`:
+Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. Bestätigter bisheriger Upload: **0.1.8 (18)**, Commit `79598be8`, Run [37076301215](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37076301215). Apple-Verarbeitung und physischer Gerätetest sind separate Nachweise.
 
-- native SwiftUI app entry point,
-- adaptive `NavigationSplitView`,
-- initial GradeCrew dashboard,
-- shared design tokens from `native/Shared/GradeCrewDesignTokens.swift`,
-- shared semantic asset manifest from `native/Shared/GradeCrewAssets.swift`,
-- dependency-free Xcode project generator,
-- iPhone and iPad target families,
-- iOS/iPadOS 16.0 deployment target.
-
-No production backend changes are required by this starter.
-
-## Generate Xcode project
-
-From the repository root on a Mac:
+0.1.9 ist der neue isolierte Entwicklungskandidat: versionierte Dateibrücke und genauere Diagnose. Seine lokale Buildnummer beweist keinen TestFlight-Upload.
 
 ```bash
+python3 native/GradeCrewTeacher/prepare_testflight_assets.py
 python3 native/GradeCrewTeacher/generate_project.py
 open native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj
 ```
 
-The generated project includes the Teacher source files and the shared GradeCrew Swift design files.
+Xcode-Scheme `GradeCrew`, Bundle-ID `de.gradecrew`, iOS/iPadOS 16.0, Gerätfamilien iPhone und iPad. Generiertes Projekt und AppIcon sind lokale Build-Ausgaben. Das Icon stammt aus dem zentralen GradeCrew-SVG; Quick Look wird für die kanonische Build-Pipeline verwendet. Die Codex-Sandbox kann Quick Look und SwiftUI-Compiler-Erweiterungen blockieren; reguläre Xcode-Builds und CI getrennt prüfen.
 
-## Next implementation slice
+## Dateibrücke 0.1.9
 
-1. verify the shell in iPhone + iPad simulators,
-2. add Firebase Apple SDK,
-3. connect existing teacher authentication,
-4. load the real teacher test list,
-5. implement native test details,
-6. add the app-specific bridge into the existing GradeCrew creation/editor flow.
+Nur die ausgewählte HTTPS-Staging-/Preview-Seite im Hauptframe erhält native Aktionen. Andere Webseiten, Firebase-Auth-Seiten, andere Preview-Ursprünge und Unterframes dürfen die Schnittstelle nicht verwenden.
 
-## Rule
+```javascript
+const capabilities = await window.GradeCrewNative.capabilities();
+const result = await window.GradeCrewNative.shareFile(
+  new Blob(['Name;Punkte\nBeispiel;10'], {type: 'text/csv'}),
+  'Ergebnisse.csv'
+);
+// result.status: 'completed' oder 'cancelled'
+const diagnostics = await window.GradeCrewNative.diagnostics();
+```
 
-Do not add Teacher-only hard-coded brand colors or duplicate mascot artwork. Change shared GradeCrew tokens/assets first and regenerate platform outputs.
+PDF, CSV, UTF-8-Text, JSON, PNG und JPEG bis 12 MiB; Endung und MIME müssen passen. Keine Datei- oder Remote-URL als native Dateiquelle. Die Datei landet temporär im App-Sandbox-Verzeichnis und wird nach Abschluss/Abbruch aufgeräumt. Eine Teilen-Aktion gleichzeitig, mit iPad-Popover. Fehler werden als Promise-Fehler zurückgegeben.
+
+Vorhandene gleichursprüngliche Blob-Download-Anker nutzen denselben Vertrag. Dateiinhalt und Web-Erzeugung bleiben erhalten. HTTP-Downloads verwenden weiterhin WKDownload, normale Browser bleiben unverändert. Nicht alle PDF-Exportarten sind Downloads: ein Druckdialog bleibt ein Druckdialog.
+
+Diagnose per Zwei-Finger-Langdruck: App-Version/Build, Umgebung, geladene Domain, Bridge-Version und gegebenenfalls Web-Manifest-Commit. Das Manifest ist ein Deployment-Hinweis; vollständige Datei- und Geräteabnahme sind gesondert zu bestätigen.
+
+## Verifikation
+
+```bash
+python3 native/GradeCrewTeacher/test_beta_environment.py
+python3 native/GradeCrewTeacher/test_navigation_policy.py
+python3 native/GradeCrewTeacher/test_native_bridge.py
+node --test native/GradeCrewTeacher/test_native_bridge_js.cjs
+```
+
+`GradeCrew Native Checks` prüft den isolierten Kandidaten ohne Signing/Upload. Der bestehende TestFlight-Workflow bleibt eine eigene Release-Stufe. Keine neue Firebase-Apple-SDK-Anmeldung oder native Kopie des Editors ist hierfür nötig.

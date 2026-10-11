@@ -72,6 +72,13 @@ jobs:
       - name: Test native navigation policy
         run: python3 native/GradeCrewTeacher/test_navigation_policy.py
 
+      - name: Test native home and Remy voice flow
+        run: |
+          python3 native/GradeCrewTeacher/test_home_navigation_policy.py
+          python3 native/GradeCrewTeacher/test_quick_remy_speech.py
+          python3 native/GradeCrewTeacher/test_native_bridge.py
+          node --test native/GradeCrewTeacher/test_quick_remy_auth_bridge.cjs
+
       - name: Prepare GradeCrew assets and Xcode project
         shell: bash
         run: |
