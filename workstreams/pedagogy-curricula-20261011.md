@@ -2,18 +2,24 @@
 
 **Stand:** 11.10.2026 · **Owner:** Chat `GC · Pädagogisches Konzept` · **Branch:** `docs/pedagogy-curricula-20261011` · **Ziel:** `main`
 
-**Sicherung:** Commit `485fdfce9614fa7386f82fc600bfd087d2ff5111` und [Draft-PR #208](https://github.com/HerrLoeffler/Hausaufgabe/pull/208). Die TODO-/Registry-Registrierung ist Teil dieses PR und noch nicht auf `main`.
+**Sicherung:** Aufgabe und Draft-PR #208; PR offen, nicht gemergt. Diese Übergabe wird mit jedem gesicherten Teilstand aktualisiert.
 
 ## Umfang
 
-Alle geltenden amtlichen Lehrpläne aller Fächer für die Grundschule, Haupt-/Mittelschul- und Realschulbildungsgänge sowie das Gymnasium in 16 Ländern. Originalschularten und Vergleichswege bleiben getrennt. Medienauswertung ist nachgelagert.
+Alle geltenden amtlichen Lehrpläne aller Fächer der Grundschule, Haupt-/Mittelschul- und Realschulbildungsgänge sowie des Gymnasiums (Sek I und Oberstufe) in allen 16 Ländern. Originalschularten, Bildungsgänge, Abschlussniveaus und Kohorten bleiben unterscheidbar. Medien/Lehrwerke folgen erst nach Abschluss der Lehrplanphase; keine Buchidentitäten speichern.
 
-## Nachweise und Status
+## Belegter Stand
 
-Vier Landesberichte decken die erste Quellenstruktur für alle 16 Länder ab. Mathematik Grundschule ist in 14 Ländern erstanalysiert, in Thüringen teilweise und im Saarland offen. Für Bremen Grundschule wurden 13 amtlich verlinkte PDFs inventarisiert und neun Fachpläne direkt geladen und fachlich erstgesichtet; [Fachbericht](../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md). Für Bremer Sek I/II sind 81 amtliche Portaleinträge mit 76 URLs und Übergangsregeln erfasst; [Inventar](../analysis/GC-PEDAGOGY-KB-01/states/bremen-sek-inventar-und-geltung.md). Das vollständige Dokumentinventar für alle Länder, die Einzelextraktion, die unabhängige Fachprüfung und der Aufgabenabgleich stehen aus.
+- Für alle 16 Länder gibt es erste Quellen-/Strukturberichte. Ein vollständiges Einzeldokumentinventar liegt noch nicht vor.
+- Mathematik Grundschule: 15 Länder im definierten Umfang erstgesichtet, Thüringen teilweise. Unabhängige Zweitprüfung und Gesamtabschluss sind nicht belegt.
+- Saarland Grundschule: 14 PDF-Einträge im amtlichen Portal inventarisiert; Deutsch und Mathematik 2026 fachlich erstgesichtet. Übergangszuordnung und Zweitsichtung offen.
+- Bremen Grundschule: 13 amtliche PDF-Einträge, neun Pläne erstgesichtet. Bremen Sek I/II: 81 Portaleinträge/76 URLs erfasst, Volltexte noch nicht geprüft.
+- Register: 101 Dokumentzeilen, 17 Zuordnungen, 21 Kompetenzanker; dieser Ausschnitt ist kein Vollständigkeitsnachweis.
 
-Der verbindliche [Arbeitsplan](../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md) definiert die acht Arbeitsschritte und die Abschlusskriterien. Die [Detailübergabe](../docs/superpowers/handoffs/GC-PEDAGOGY-KB-01.md) hält Blocker und den nächsten Schritt. Keine CI-, Deploy- oder Produktionsprüfung wird aus diesem Forschungsstand abgeleitet.
+## Verbindlicher Arbeitsplan
+
+[16-Länder-Plan mit Statusdefinitionen, Reihenfolge und Abnahmetoren](../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md). Der Plan führt erst Landesinventare 01–16, dann vollständige Fachblöcke je Zielweg durch; danach erfolgen Zweitprüfung, Aufgaben-/Prüfungsabgleich und Gesamtabschluss.
 
 ## Nächster Schritt
 
-Mathematik Grundschule mit amtlichem Volltext und Zweitsichtung abschließen, soweit der Zugang reicht; parallel das vollständige Land-/Schulweg-/Fach-/Jahrgang-Inventar aus amtlichen Portalen anlegen. Saarland und Thüringen bleiben ausdrücklich offene Zugangsbelege, bis die konkreten Volltexte vorliegen.
+Phase 0: Thüringer Mathematikzugang und Saarland-Kohortenregel prüfen; erreichbare Mathematik-Grundschulpläne zweitprüfen. Anschließend Landespaket 01 Baden-Württemberg mit vollständigem Dokumentinventar bearbeiten. Weiter nach Nummer 02 bis 16. Kein Planstatus wird als erledigte Analyse ausgegeben.

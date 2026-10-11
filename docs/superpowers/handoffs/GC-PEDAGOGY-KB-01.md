@@ -27,9 +27,10 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 
 ## Fortsetzung
 
-1. Bremen Grundschule: die direkt geladenen Fachpläne Deutsch und Mathematik vollständig bis auf Ebene der einzelnen Standards und Jahrgangsendpunkte auswerten; den früheren Mathematik-Bericht mit der PDF abgleichen.
-2. Mathematik Grundschule: amtlichen Volltext Thüringen erschließen, Saarländer Kohortenregeln prüfen und die 15 Landesauswertungen auf Geltung und Aussagen zweitprüfen. Zugangsblocker separat markieren.
-3. Vollständiges Dokumentinventar für 16 Länder und alle Zielwege aufbauen. Die Fächerzahl ergibt sich erst daraus. Danach Fachpakete, Zweitprüfung, amtliche Aufgabenprofile und Abschlusskontrolle gemäß Arbeitsplan.
-4. Nach jedem sinnvoll abgeschlossenen Fachpaket Register, Fortschrittsindex und diese Übergabe mit Quellen- und Prüfdatum aktualisieren.
+1. Den verbindlichen [16-Länder-Arbeitsplan](../plans/2026-10-11-lehrplan-vollauswertung.md) als Ausführungsreihenfolge verwenden; er ersetzt die unvollständige frühere Schrittfolge.
+2. Phase 0 fortsetzen: Thüringer Mathematikzugang und Saarland-Kohortenregel prüfen, vorhandene Mathematik-Grundschulpläne zweitprüfen, offene Stellen belegt lassen.
+3. Landespaket 01 Baden-Württemberg gemäß fester Prüffolge vollständig inventarisieren. Danach 02–16 der Reihe nach; ein erster Überblick zählt nicht als Vollinventar.
+4. Nach Tor 1/2 Fächer je Zielweg länderübergreifend vollständig auswerten, unabhängig zweitprüfen und im Anschluss Aufgaben- und Abschlussprüfungsanforderungen zuordnen.
+5. Nach jedem sinnvoll abgeschlossenen Fachpaket Register, Fortschrittsindex und diese Übergabe mit Quellen- und Prüfdatum aktualisieren.
 
 **Keine Abschlussbehauptung:** Der gesamte Lehrplanbestand ist bislang nicht vollständig inventarisiert oder ausgewertet. Der Arbeitsplan definiert die spätere Abnahme; er selbst erfüllt sie nicht.
