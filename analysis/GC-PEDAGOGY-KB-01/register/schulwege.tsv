@@ -1,1 +1,3 @@
 weg_id	land	zielbereich	original_schulart	original_bildungsgang	abschluss	stufen	offizielle_quelle	pruefdatum	status	bemerkung
+SL-GS	Saarland	Grundschule	Grundschule	Grundschule	unbekannt	1-4	https://www.saarland.de/mbk/DE/portale/bildungsserver/unterricht-und-bildungsthemen/lehrplaenehandreichungen/lehrplaeneallgemeinbildende/grundschule/grundschule.lehrplaene_node	2026-10-11	metadaten_geprueft	Primarweg aus amtlicher Lehrplanübersicht; übrige Fächer noch nicht inventarisiert
+TH-GS	Thüringen	Grundschule	Grundschule	Grundschule	unbekannt	1-4	https://test.schulportal-thueringen.de/lehrplaene	2026-10-11	metadaten_geprueft	Geltungsübersicht 2025/26 nennt Mathematik Grundschule 1-4
