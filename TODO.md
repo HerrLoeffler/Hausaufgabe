@@ -489,4 +489,4 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 | ID | Aufgabe | Status | Nächster Schritt |
 |---|---|---|---|
-| GC-PEDAGOGY-KB-01 | Downloads/ZIPs und alle 125 Bildungslogin-Medien mit sämtlichen Seiten und Ressourcen analysieren | In Arbeit; vollständige Medienprüfung offen | [Medien-Arbeitsplan](docs/superpowers/plans/2026-10-11-medien-vollanalyse.md), [Medien-Übergabe](workstreams/pedagogy-media-20261011.md). Originale und detaillierte anonyme Register lokal. Getrennter Lehrplanbestand bleibt in PR208. |
+| GC-PEDAGOGY-KB-01 | Downloads/ZIPs und alle 125 Bildungslogin-Medien mit sämtlichen Seiten und Ressourcen analysieren | In Arbeit; 662 Originalinhalte anonym archiviert, sieben Audios lokal transkribiert und 38 Hör-Aufgabengruppen quellenbezogen geprüft; übrige Vollanalyse offen | [Medien-Arbeitsplan](docs/superpowers/plans/2026-10-11-medien-vollanalyse.md), [Medien-Übergabe](workstreams/pedagogy-media-20261011.md). Originale und detaillierte anonyme Register lokal. Getrennter Lehrplanbestand bleibt in PR208. |
