@@ -11,7 +11,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - Erste Quellen- und Schulstrukturberichte für 16 Länder liegen in vier Landesdateien vor. Sie belegen noch kein vollständiges Fach- oder Dokumentinventar.
 - Mathematik Grundschule: 14 Länder im definierten Erstumfang ausgewertet, Thüringen teilweise, Saarland offen. Keines der 16 Länder ist als unabhängig zweitgeprüft belegt.
 - Saarland: neuer Plan ab 01.08.2026 amtlich gelistet, PDF-Endpunkt zuletzt HTTP 403. Thüringen: Geltung 2010 und Struktur belegt, Haupttext im Portal nur für angemeldete Nutzer erreichbar. Diese Fälle bleiben als Zugriffslücken offen; andere Fachpakete können weiterlaufen.
-- Die TSV-Register sind angelegt. Die zwei offenen Mathematik-Grundschulzugänge Saarland und Thüringen sind als erste Dokument- und Geltungszeilen erfasst; die übrigen Länder/Fächer müssen noch übertragen und aktuell geprüft werden. Das Register ist kein Vollständigkeitsbefund.
+- Die TSV-Register sind angelegt. Saarland und Thüringen Mathematik Grundschule sind als offene Zugänge erfasst. Zusätzlich wurde die amtliche Bremer Primarstufenseite im Browser mit 13 verlinkten PDF-Dokumenten inventarisiert; die neun Fachpläne wurden direkt geladen und fachlich erstgesichtet. Der Fachbericht `subjects/bremen-grundschule-fachplaene.md` nennt Standards, Fundstellen und die offenen Einzelextraktionen. Das Register ist kein Vollständigkeitsbefund.
 
 ## Artefakte
 
@@ -20,12 +20,14 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - [Registerschema](../../../analysis/GC-PEDAGOGY-KB-01/register/README.md)
 - [Fortschritts- und Lückenbericht](../../../analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md)
 - [Mathematik Grundschule](../../../analysis/GC-PEDAGOGY-KB-01/subjects/mathematik-grundschule.md)
+- [Bremen Grundschule: Fachpläne](../../../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md)
 - `analysis/GC-PEDAGOGY-KB-01/states/`: vier Landesberichte mit allen 16 Ländern.
 
 ## Fortsetzung
 
-1. Mathematik Grundschule: amtliche Volltexte Saarland und Thüringen weiter erschließen, 14 andere Landesauswertungen auf Geltung und Aussagen zweitprüfen. Zugangsblocker separat markieren.
-2. Vollständiges Dokumentinventar für 16 Länder und alle Zielwege aufbauen. Die Fächerzahl ergibt sich erst daraus. Danach Fachpakete, Zweitprüfung, amtliche Aufgabenprofile und Abschlusskontrolle gemäß Arbeitsplan.
-3. Nach jedem sinnvoll abgeschlossenen Fachpaket Register, Fortschrittsindex und diese Übergabe mit Quellen- und Prüfdatum aktualisieren.
+1. Bremen Grundschule: die direkt geladenen Fachpläne Deutsch und Mathematik vollständig bis auf Ebene der einzelnen Standards und Jahrgangsendpunkte auswerten; den früheren Mathematik-Bericht mit der PDF abgleichen.
+2. Mathematik Grundschule: amtliche Volltexte Saarland und Thüringen weiter erschließen, 14 andere Landesauswertungen auf Geltung und Aussagen zweitprüfen. Zugangsblocker separat markieren.
+3. Vollständiges Dokumentinventar für 16 Länder und alle Zielwege aufbauen. Die Fächerzahl ergibt sich erst daraus. Danach Fachpakete, Zweitprüfung, amtliche Aufgabenprofile und Abschlusskontrolle gemäß Arbeitsplan.
+4. Nach jedem sinnvoll abgeschlossenen Fachpaket Register, Fortschrittsindex und diese Übergabe mit Quellen- und Prüfdatum aktualisieren.
 
 **Keine Abschlussbehauptung:** Der gesamte Lehrplanbestand ist bislang nicht vollständig inventarisiert oder ausgewertet. Der Arbeitsplan definiert die spätere Abnahme; er selbst erfüllt sie nicht.

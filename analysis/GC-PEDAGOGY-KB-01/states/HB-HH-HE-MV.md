@@ -70,11 +70,11 @@ Die Sek II hat eine einjährige Einführungsphase und zweijährige Qualifikation
 
 ## Inhaltsprüfung und Status
 
-**Inhaltlich geöffnete aktuelle Fachpläne:** In dieser Recherche ließ sich die LIS-Fachseite samt amtlicher Jahres-/Gültigkeitsübersicht verifizieren. Die einzelnen LIS-Seiten gaben beim direkten Öffnen im Recherchezugriff 403 zurück; die Inhaltsprüfung aktueller Bremer 2025/26-Fach-PDFs konnte deshalb noch nicht zuverlässig abgeschlossen werden. Die Portalliste ist damit **kein Nachweis einer vollständigen fachlichen Analyse**.
+**Nachprüfung 11.10.2026:** Der direkte Web-Abruf meldete teils 403, aber der Browserzugang zur LIS-Primarstufenseite funktionierte. Die dortigen 13 PDFs konnten geladen werden; neun Fachpläne wurden nach Gliederung und zentralen Anforderungsabschnitten erstgesichtet. Der [neue Bremer Grundschul-Fachbericht](../subjects/bremen-grundschule-fachplaene.md) nennt Seiten und offene Einzelextraktionen. Die Primarstufen-Portalliste allein bleibt **kein Nachweis einer vollständigen fachlichen Analyse**. Die Sek-I- und Sek-II-Links sind im Browser sichtbar, ihre PDF-Inhalte hier noch nicht vollständig geprüft.
 
 **Amtlicher Kontext, aber kein Ersatz für die Fachanalyse:** Das LIS erklärt, dass es neue Bildungspläne für Primarstufe, Sek I und allgemeinbildende Sek II veröffentlicht hat und 2026/27 der Implementierung in schulinterne Curricula dient; die jahrgangsweise Umsetzung startet 2027/28. [LIS Startseite](https://www.lis.bremen.de/)
 
-**Prüfstatus:** Quellenindex: erstellt. Schularten/Jahrgänge: amtliche Einstiegsquellen erfasst. Fach-PDFs geöffnet und fachlich analysiert: **noch offen für alle Fächer**. Priorität für die nächste Runde: Deutsch und Mathematik Primarstufe 0–10; Deutsch/Mathematik/Naturwissenschaften Oberschule und Gymnasium 2026; danach Fremdsprachen und gesellschaftswissenschaftliche Fächer; Sek II separat.
+**Prüfstatus:** Quellenindex: erstellt. Schularten/Jahrgänge: amtliche Einstiegsquellen erfasst. Primarstufen-Fach-PDFs: neun Erstanalysen, keine vollständige Kompetenzextraktion oder Zweitsichtung. Sek I und Sek II: Fach-PDF-Inhalte weiter offen. Priorität: Deutsch und Mathematik Primarstufe vollständig extrahieren; danach übrige Primarstufe sowie Sek I/II fachweise bearbeiten.
 
 ---
 

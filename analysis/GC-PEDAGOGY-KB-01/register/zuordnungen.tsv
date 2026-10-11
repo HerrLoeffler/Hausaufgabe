@@ -1,3 +1,17 @@
 zuordnung_id	dokument_id	weg_id	fach_original	fach_vergleich	stufe_von	stufe_bis	niveau	kohorte_uebergang	auswertungs_status	pruefdatum	next_action
 SL-GS-MA-2026-GS1-4	SL-GS-MA-2026	SL-GS	Mathematik	Mathematik	1	4	unbekannt	ab_2026-08-01	zugriff_blockiert	2026-10-11	Amtlichen Volltext über zugänglichen Endpunkt oder berechtigten Portalzugang beschaffen und lesen
 TH-GS-MA-2010-GS1-4	TH-GS-MA-2010	TH-GS	Mathematik	Mathematik	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Jahrgangsbezogene Erwartungen im amtlichen Haupttext prüfen; Portalzugang erforderlich
+HB-SPR-2025-GS	HB-SPR-2025	HB-GS	Sprachliche Bildung / Deutsch	Deutsch	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-MA-2025-GS	HB-MA-2025	HB-GS	Mathematische Bildung / Mathematik	Mathematik	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-SACH-2025-GS	HB-SACH-2025	HB-GS	Sachbildung / Sachunterricht	Sachunterricht	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-SPORT-2025-GS	HB-SPORT-2025	HB-GS	Bewegung / Sport	Sport	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-EN-2013-GS	HB-EN-2013	HB-GS	Englisch	Englisch	3	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-REL-2014-GS	HB-REL-2014	HB-GS	Religion	Religion	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-HERK-2015-GS	HB-HERK-2015	HB-GS	Herkunftssprachen	Herkunftssprachen	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-DGS-2026-GS	HB-DGS-2026	HB-GS	Deutsche Gebärdensprache	Deutsche Gebärdensprache	1	4	unbekannt	ab_2026-27_nur_bei_Fachangebot	inhalt_teilweise	2026-10-11	Angebot prüfen und A1/A2/B1 nach Lernjahren statt festen Klassen zuordnen
+HB-LEIT-UNK-GS	HB-LEIT-UNK	HB-GS	fachübergreifend	fachübergreifend	1	4	unbekannt	unbekannt	version_unklar	2026-10-11	Fassung und Verbindlichkeit amtlich klären
+HB-MED-2012-GS	HB-MED-2012	HB-GS	Medienbildung	Medienbildung	1	4	unbekannt	unbekannt	version_unklar	2026-10-11	Fassung und Verbindlichkeit amtlich klären
+HB-DAZ-2002-GS	HB-DAZ-2002	HB-GS	Deutsch als Zweitsprache	Deutsch als Zweitsprache	1	4	unbekannt	unbekannt	metadaten_geprueft	2026-10-11	Fachinhalt und Geltung abschnittsweise auswerten
+HB-AESTH-2025-GS-MUS	HB-AESTH-2025	HB-GS	Musik	Musik	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-AESTH-2025-GS-KUNST	HB-AESTH-2025	HB-GS	Kunst	Kunst	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung
+HB-AESTH-2025-GS-DAR	HB-AESTH-2025	HB-GS	Darstellendes Spiel	Darstellendes Spiel	1	4	unbekannt	unbekannt	inhalt_teilweise	2026-10-11	Alle Einzelstandards und Geltung vollständig extrahieren; unabhängige Zweitsichtung

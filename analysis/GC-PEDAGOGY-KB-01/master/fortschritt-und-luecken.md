@@ -5,7 +5,7 @@
 **Erste Welle:** Grundschule, Haupt-/Mittelschulbildungsgang, Realschulbildungsgang, Gymnasium (Sek I und Sek II getrennt), alle Fächer und alle 16 Länder.  
 **Datenschutz:** Diese Auswertung speichert keine Buchtitel, Autor:innen, Verlage, Ausgaben, ISBNs, Cover, Produkt-/Plattformkennungen, Lizenzcodes oder Rückverknüpfungen. Sie behandelt ausschließlich amtliche Lehrplanquellen.
 
-**Aktuelle Arbeitsgrundlage:** [Lehrplan-Vollauswertung](../../../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Registerschema](../register/README.md) und [Pflege-/Abnahmeverfahren](pflege-und-abnahme.md). Die Register sind erst begonnen; bisher sind Saarland und Thüringen Mathematik Grundschule als offene Zugänge übertragen. Für den tatsächlichen Stand einzelner Quellen gelten die Register und Fachberichte, nicht ältere Kurzformulierungen in diesem Lagebild.
+**Aktuelle Arbeitsgrundlage:** [Lehrplan-Vollauswertung](../../../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Registerschema](../register/README.md) und [Pflege-/Abnahmeverfahren](pflege-und-abnahme.md). Die Register sind erst begonnen: Saarland und Thüringen Mathematik Grundschule stehen als offene Zugänge darin. Für Bremen Grundschule sind 13 amtlich verlinkte PDF-Dokumente und die tatsächliche [Fach-Erstsichtung](../subjects/bremen-grundschule-fachplaene.md) ergänzt. Für den Stand einzelner Quellen gelten Register und Fachberichte, nicht ältere Kurzformulierungen in diesem Lagebild.
 
 ## Status in Kürze
 
