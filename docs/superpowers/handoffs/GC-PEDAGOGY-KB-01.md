@@ -11,7 +11,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - Erste Quellen- und Schulstrukturberichte für 16 Länder liegen in vier Landesdateien vor. Sie belegen noch kein vollständiges Fach- oder Dokumentinventar.
 - Mathematik Grundschule: 14 Länder im definierten Erstumfang ausgewertet, Thüringen teilweise, Saarland offen. Keines der 16 Länder ist als unabhängig zweitgeprüft belegt.
 - Saarland: neuer Plan ab 01.08.2026 amtlich gelistet, PDF-Endpunkt zuletzt HTTP 403. Thüringen: Geltung 2010 und Struktur belegt, Haupttext im Portal nur für angemeldete Nutzer erreichbar. Diese Fälle bleiben als Zugriffslücken offen; andere Fachpakete können weiterlaufen.
-- Die TSV-Register sind angelegt, aber noch ohne Datensätze. Ihre Leere ist kein Vollständigkeitsbefund.
+- Die TSV-Register sind angelegt. Die zwei offenen Mathematik-Grundschulzugänge Saarland und Thüringen sind als erste Dokument- und Geltungszeilen erfasst; die übrigen Länder/Fächer müssen noch übertragen und aktuell geprüft werden. Das Register ist kein Vollständigkeitsbefund.
 
 ## Artefakte
 
