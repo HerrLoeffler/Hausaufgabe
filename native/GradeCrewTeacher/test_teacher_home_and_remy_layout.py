@@ -26,7 +26,17 @@ header = remy.split("private var navigationHeader", 1)[1]
 assert "GradeCrewAssets.NativeImage.remyMicrophone" in header
 assert "GradeCrewAssets.NativeImage.remyWelcome" not in header
 assert 'pendingTranscript = transcript' in remy
+assert "QuickRemyDraft" in remy
+assert '"knownFields": draft.knownFieldsPayload' in remy
+assert "draft.preparedRequest != nil" in remy
+assert "draftReviewCard" in remy
+assert 'TextField("Fach"' in remy
+assert 'TextField("Klasse"' in remy
+assert 'TextField("Thema"' in remy
+assert 'TextField("Aufgaben"' in remy
+assert 'Button("Test erstellen")' in remy
+assert ".frame(width: 56, height: 56)" in remy
 assert 'case .transcribed:\n                break' in remy
 assert 'Task { await prepareTranscript(capture.flow.transcript) }' not in remy
-assert ".accessibilityLabel(workStatus == .needsInfo ? (workError" in body
+assert ".accessibilityLabel(workStatus == .needsInfo && draft.preparedRequest == nil ? (workError" in body
 print("GradeCrew native screen layout: passed (direct auth route, explicit Remy send, transparent mascot, pinned back button)")

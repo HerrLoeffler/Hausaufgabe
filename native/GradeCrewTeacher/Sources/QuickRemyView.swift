@@ -10,6 +10,7 @@ struct QuickRemyView: View {
     @StateObject private var capture = QuickRemySpeechCapture()
     @State private var typedText = ""
     @State private var pendingTranscript: String?
+    @State private var draft = QuickRemyDraft()
     @State private var showingTextEntry = false
     @State private var workStatus: RemyWorkStatus = .idle
     @State private var conversationText = ""
@@ -21,7 +22,7 @@ struct QuickRemyView: View {
     @State private var unresolvedSubmission = false
     @State private var recoveryNeedsRetry = false
 
-    private enum RemyWorkStatus { case idle, recovering, preparing, needsInfo, submitting, accepted, failed }
+    private enum RemyWorkStatus { case idle, recovering, preparing, needsInfo, readyForReview, submitting, accepted, failed }
 
     private var status: QuickRemySpeechFlow.Status { capture.flow.status }
     private var canStartRecording: Bool {
@@ -49,13 +50,13 @@ struct QuickRemyView: View {
                 .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
 
-            Text(workStatus == .needsInfo ? (workError ?? "Ergänze bitte noch die fehlenden Angaben.") : statusMessage)
+            Text(workStatus == .needsInfo && draft.preparedRequest == nil ? (workError ?? "Ergänze bitte noch die fehlenden Angaben.") : statusMessage)
                 .font(.system(size: GradeCrewDesignTokens.Typography.body))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.xl)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(workStatus == .needsInfo ? (workError ?? "Ergänze bitte noch die fehlenden Angaben.") : statusMessage)
+                .accessibilityLabel(workStatus == .needsInfo && draft.preparedRequest == nil ? (workError ?? "Ergänze bitte noch die fehlenden Angaben.") : statusMessage)
                 .accessibilityAddTraits(.updatesFrequently)
 
             if status == .requestingPermission || status == .transcribing {
@@ -63,6 +64,8 @@ struct QuickRemyView: View {
                     .tint(GradeCrewDesignTokens.Colors.primary)
                     .accessibilityLabel(status == .requestingPermission ? "Mikrofon wird vorbereitet" : "Sprache wird lokal erkannt")
             }
+
+            draftReviewCard
 
             if workStatus == .recovering || workStatus == .preparing || workStatus == .submitting {
                 ProgressView()
@@ -87,6 +90,16 @@ struct QuickRemyView: View {
             .buttonStyle(.borderedProminent)
             .tint(status == .recording ? GradeCrewDesignTokens.Colors.crewRust : GradeCrewDesignTokens.Colors.primary)
             .disabled(recoveryChecking || unresolvedSubmission || (!canStartRecording && status != .recording) || workStatus == .preparing || workStatus == .submitting || workStatus == .accepted)
+
+            if workStatus == .readyForReview || (workStatus == .needsInfo && draft.preparedRequest != nil) {
+                Button("Test erstellen") {
+                    Task { await submitPreparedRequest() }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(GradeCrewDesignTokens.Colors.primary)
+                .frame(maxWidth: 560)
+                .disabled(draft.preparedRequest == nil)
+            }
 
             if workStatus == .accepted {
                 VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
@@ -235,7 +248,8 @@ struct QuickRemyView: View {
                 Image(GradeCrewAssets.NativeImage.remyMicrophone)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 34, height: 34)
+                    .frame(width: 56, height: 56)
+                    .layoutPriority(1)
                     .accessibilityHidden(true)
                 Text("Remy fragen")
                     .font(.headline)
@@ -268,10 +282,44 @@ struct QuickRemyView: View {
         Task { await prepareTranscript(transcript) }
     }
 
+    @ViewBuilder
+    private var draftReviewCard: some View {
+        if workStatus == .needsInfo || workStatus == .readyForReview || workStatus == .accepted || (workStatus == .failed && draft.hasValues) {
+            VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
+                Text("Das hat Remy verstanden")
+                    .font(.headline)
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
+                TextField("Fach", text: $draft.subject)
+                    .textContentType(.none)
+                    .textInputAutocapitalization(.sentences)
+                    .accessibilityLabel("Fach")
+                TextField("Klasse", text: $draft.grade)
+                    .textContentType(.none)
+                    .accessibilityLabel("Klasse")
+                TextField("Thema", text: $draft.topic, axis: .vertical)
+                    .lineLimit(1...3)
+                    .textInputAutocapitalization(.sentences)
+                    .accessibilityLabel("Thema")
+                TextField("Aufgaben", text: $draft.count)
+                    .keyboardType(.numberPad)
+                    .accessibilityLabel("Anzahl der Aufgaben")
+                Text(workStatus == .needsInfo ? "Du kannst Angaben hier direkt ergänzen oder korrigieren." : "Du kannst jede Angabe vor der Erstellung noch ändern.")
+                    .font(.footnote)
+                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+            }
+            .textFieldStyle(.roundedBorder)
+            .padding(GradeCrewDesignTokens.Spacing.lg)
+            .frame(maxWidth: 560)
+            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+            .disabled(workStatus == .accepted)
+        }
+    }
+
     private var statusMessage: String {
         if workStatus == .recovering { return "Ein offener Remy-Auftrag wird abgeglichen." }
         if workStatus == .preparing { return "Remy prüft den Wunsch und fragt nur bei fehlenden Pflichtangaben nach." }
         if workStatus == .submitting { return "Der Testauftrag wird sicher an GradeCrew übergeben." }
+        if workStatus == .readyForReview || (workStatus == .needsInfo && draft.preparedRequest != nil) { return "Prüfe die Angaben und tippe auf Test erstellen, wenn alles stimmt." }
         if workStatus == .accepted { return "" }
         if workStatus == .failed { return workError ?? "Remy konnte die Anfrage nicht senden. Bitte versuche es erneut." }
         if workStatus == .needsInfo { return "Sprich die fehlenden Angaben ein oder tippe sie." }
@@ -316,8 +364,15 @@ struct QuickRemyView: View {
         workError = nil
         workStatus = .preparing
         do {
-            let result = try await invoke("prepare", payload: ["requestId": requestId, "conversationText": conversationText])
+            let result = try await invoke("prepare", payload: [
+                "requestId": requestId,
+                "conversationText": conversationText,
+                "knownFields": draft.knownFieldsPayload
+            ])
             guard workGeneration == token else { return }
+            if let fields = result["draft"] as? [String: Any] {
+                draft = QuickRemyDraft(payload: fields)
+            }
             if let question = QuickRemyFollowUpPolicy.question(
                 status: result["status"] as? String,
                 missingFields: result["missingFields"] as? [String],
@@ -331,7 +386,8 @@ struct QuickRemyView: View {
                 throw quickRemyError("Remy hat eine ungültige Antwort zurückgegeben.")
             }
             preparedRequest = request
-            await submitPreparedRequest()
+            if result["draft"] == nil { draft = QuickRemyDraft(payload: request) }
+            workStatus = .readyForReview
         } catch {
             guard workGeneration == token else { return }
             workError = error.localizedDescription
@@ -376,13 +432,14 @@ struct QuickRemyView: View {
 
     @MainActor
     private func submitPreparedRequest() async {
-        guard let preparedRequest else { return }
+        guard let currentRequest = draft.preparedRequest else { return }
+        preparedRequest = currentRequest
         let token = UUID()
         workGeneration = token
         workStatus = .submitting
         workError = nil
         do {
-            let result = try await invoke("submit", payload: ["requestId": requestId, "preparedRequest": preparedRequest])
+            let result = try await invoke("submit", payload: ["requestId": requestId, "preparedRequest": currentRequest])
             guard workGeneration == token else { return }
             guard result["status"] as? String == "accepted",
                   let jobId = result["jobId"] as? String,
@@ -411,6 +468,7 @@ struct QuickRemyView: View {
         conversationText = ""
         requestId = UUID().uuidString
         preparedRequest = nil
+        draft = QuickRemyDraft()
         workError = nil
         pendingTranscript = nil
         workStatus = .idle
