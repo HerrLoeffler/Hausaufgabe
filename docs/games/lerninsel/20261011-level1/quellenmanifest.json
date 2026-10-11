@@ -1,0 +1,114 @@
+{
+  "task_id": "GC-GAMES-LERNINSEL-LEVEL1-PLAN-20261011",
+  "date": "2026-10-11",
+  "game_candidate": "a5dc474295dea4abda06c5be8923de1bc0206248",
+  "main_read_anchor": "30c0e8e111ac88398d1f85ff19574e87f47df732",
+  "main_files": [
+    {
+      "path": "START_HERE.md",
+      "ref": "main",
+      "file_blob_sha": "85c5de38da633c864c1452169c2140c63a78ac40",
+      "read": true
+    },
+    {
+      "path": "AGENTS.md",
+      "ref": "main",
+      "file_blob_sha": "c3d9bba8acd5dbe751d2cbc1fc4e8a635b2a8d55",
+      "read": true
+    },
+    {
+      "path": "GRADECREW_STATE.json",
+      "ref": "main",
+      "file_blob_sha": "a9b88f996416b77b716e9e6ed4be659462de60f5",
+      "read": true
+    },
+    {
+      "path": "TODO.md",
+      "ref": "main",
+      "file_blob_sha": "44c0d02e593933d8dda66756b42858dd5ac22ca2",
+      "read": true
+    },
+    {
+      "path": "workstreams/README.md",
+      "ref": "main",
+      "file_blob_sha": "c14206a7c09d9468a6b5317a94c65b1722a727d3",
+      "read": true
+    },
+    {
+      "path": "docs/CHAT_CONTRACT.md",
+      "ref": "main",
+      "file_blob_sha": "22f9c252c8f27156db5a9deaf74cbfc67a700444",
+      "read": true
+    },
+    {
+      "path": "docs/games/GREAT_GAMES_WORKFLOW.md",
+      "ref": "main",
+      "file_blob_sha": "7ce04926690d5faaeae37b87db86be51f1364966",
+      "read": true
+    },
+    {
+      "path": "docs/games/GAME_PROJECT_TEMPLATE.md",
+      "ref": "main",
+      "file_blob_sha": "044274414f716b9f238aa92a0de57d30c43e4d17",
+      "read": true
+    },
+    {
+      "path": "docs/assurance/README.md",
+      "ref": "main",
+      "file_blob_sha": "5d9eafcd19d63d4f42866b7871d155652c21c415",
+      "read": true
+    },
+    {
+      "path": "docs/research/video-insights-20261011-summary.md",
+      "ref": "main",
+      "file_blob_sha": "6e888790e8e6717003e354e057ba8423e5c9086a",
+      "read": true
+    },
+    {
+      "path": "docs/research/strategie-nerd-20261011-methods.md",
+      "ref": "main",
+      "file_blob_sha": "cf6b0a756fdf8e04e1df637d0412284cd09a7b6a",
+      "read": true
+    },
+    {
+      "path": "docs/assurance/technical-security.md",
+      "ref": "main",
+      "file_blob_sha": "9a0263412e2160dd84af862aaa5ad859d6adbbe0",
+      "read": true
+    },
+    {
+      "path": "docs/assurance/privacy-legal-fairness.md",
+      "ref": "main",
+      "file_blob_sha": "22e188a8f49f4b1d3361cfd787f97e0e8da83c18",
+      "read": true
+    },
+    {
+      "path": "docs/assurance/roles/technical-security.md",
+      "ref": "main",
+      "file_blob_sha": "fef2c87b22db41e2c754f837e576bd9ad5b8c227",
+      "read": true
+    },
+    {
+      "path": "docs/assurance/roles/privacy-legal-fairness.md",
+      "ref": "main",
+      "file_blob_sha": "40cb6ce5600d7b0a4d3653c2d4f1c973ef058cd8",
+      "read": true
+    }
+  ],
+  "development_status": {
+    "run": 38137351207,
+    "job": 114463831245,
+    "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38137351207",
+    "lerninsel_ahead": 19,
+    "lerninsel_behind": 127
+  },
+  "draft_local": "1caa38a5f2dfae437d5122bd59d4bfe29a88a53d",
+  "draft_remote": "d4ba1e7712acae29e10c60d41eaa568314d3a4bf",
+  "pr": "https://github.com/HerrLoeffler/Hausaufgabe/pull/219",
+  "product_tests_performed": [],
+  "builds_performed": [],
+  "runtime_starts": [],
+  "new_capture": [],
+  "original_reference_attachment_reaccess": "not independently reverified; stored author description and existing concept boards read",
+  "scope": "new documentation only; current main files read but not edited"
+}
