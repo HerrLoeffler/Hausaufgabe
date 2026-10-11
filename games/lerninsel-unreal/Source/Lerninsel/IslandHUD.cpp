@@ -11,6 +11,17 @@ void AIslandHUD::Wrap(const FString& S,float X,float Y,float Width,float Size){F
 void AIslandHUD::Button(const FString& S,float X,float Y,float W,float H,int Action){Panel(X,Y,W,H,FLinearColor(.17,.27,.23,.97));Text(S,X+20*Scale,Y+H*.25f,20*Scale,FLinearColor(.94,.93,.8));Buttons.Add({FBox2D(FVector2D(X,Y),FVector2D(X+W,Y+H)),Action});}
 bool AIslandHUD::ClickAt(FVector2D P){auto* G=Cast<AIslandGameMode>(UGameplayStatics::GetGameMode(this));if(!G)return false;for(const auto& B:Buttons)if(B.Bounds.IsInside(P)){switch(B.Action){case 800:G->Focus=-1;break;case 801:G->SelectFocused();break;case 900:G->Paused=false;break;case 901:if(auto* Char=G->Player())Char->Camera->SetFieldOfView(Char->Camera->FieldOfView<80?85:75);return true;case 910:if(G->Near>=0)G->Interact(G->Near);return true;case 911:G->ShowHint();return true;default:return false;}if(auto* C=Cast<AIslandController>(GetOwningPlayerController())){C->CancelInput();C->UpdateMode();}return true;}return false;}
 void AIslandHUD::DrawHUD(){Super::DrawHUD();if(!Canvas)return;auto* G=Cast<AIslandGameMode>(UGameplayStatics::GetGameMode(this));if(!G)return;Buttons.Reset();float W=Canvas->SizeX,H=Canvas->SizeY;Scale=FMath::Clamp(FMath::Min(W/1440.f,H/900.f),.65f,2.f);float S=Scale;
+ if(G->IsLevelOneReferenceMode()){
+  if(G->Paused)return;
+  const FString Goal=!G->State.intro?TEXT("Finde zwei Verben."):!G->State.verbs?TEXT("Gehe auf ein Verb in jeder Reihe."):TEXT("Verbengarten geschafft.");
+  Panel(24*S,22*S,480*S,45*S,FLinearColor(.04,.075,.09,.82));Text(Goal,40*S,32*S,22*S,FLinearColor(.98,.97,.91));
+  FString Progress=!G->State.intro?FString::Printf(TEXT("%d von 2 gewählt"),Island::CountBits(G->State.introMask)):G->State.verbs?TEXT("3 von 3 geschafft"):FString::Printf(TEXT("Reihe %d von 3"),Island::PathPromptRow(G->State));Text(Progress,28*S,78*S,16*S,FLinearColor(.13,.20,.14));
+  DrawRect(FLinearColor(.98,.98,.94,.92),W*.5f-2,H*.5f-2,4,4);
+  if(const auto* T=G->Target(G->Near)){Panel(W*.5f-250*S,H-106*S,500*S,80*S,FLinearColor(.04,.075,.09,.9));Text(TEXT("E / Klick · ")+T->Label,W*.5f-234*S,H-96*S,20*S,FLinearColor(.98,.97,.91));Text(T->Context,W*.5f-234*S,H-64*S,17*S,FLinearColor(.90,.94,.90));}
+  if(G->MessageTime>0){Panel(W*.5f-300*S,H-176*S,600*S,48*S,FLinearColor(.04,.075,.09,.82));Wrap(G->Feedback,W*.5f-282*S,H-166*S,565*S,18*S);}
+  if(G->State.pathActive&&!G->State.verbs){FString Step=G->LevelOneFoot.needsExit?TEXT("Gehe kurz vom Stein."):TEXT("Stehe kurz in der Mitte. E oder Klick geht auch.");Text(Step,28*S,103*S,15*S,FLinearColor(.13,.20,.14));}
+  return;
+ }
  if(!G->Paused&&G->Focus<0){
   FString Goal,Help;
   if(!G->State.intro){Goal=FString::Printf(TEXT("1 · Finde zwei Verben · %d von 2 gewählt"),Island::CountBits(G->State.introMask));Help=TEXT("Was tut jemand? Klicke ein Wort oder drücke E. Der ganze Stein wird blau. Erneut klicken nimmt es zurück.");}

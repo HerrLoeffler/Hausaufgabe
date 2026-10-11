@@ -1,5 +1,6 @@
 #include "IslandFocusWidget.h"
 #include "IslandWorld.h"
+#include "Camera/CameraComponent.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -14,13 +15,14 @@
 #include "Camera/CameraComponent.h"
 #include "Rendering/DrawElements.h"
 AIslandGameMode* UIslandFocusWidget::Game()const{return GetWorld()?Cast<AIslandGameMode>(GetWorld()->GetAuthGameMode()):nullptr;}
-void UIslandUICommand::Run(){auto* G=Owner?Owner->Game():nullptr;if(G&&G->Focus==ExpectedFocus&&G->Paused==ExpectedPause)G->UIAction(Command);}
-TSharedRef<SWidget> UIslandFocusWidget::RebuildWidget(){if(!WidgetTree)WidgetTree=NewObject<UWidgetTree>(this);auto* Scale=WidgetTree->ConstructWidget<UScaleBox>();Scale->SetStretch(EStretch::ScaleToFit);auto* Size=WidgetTree->ConstructWidget<USizeBox>();Size->SetWidthOverride(1040);Size->SetHeightOverride(740);auto* Border=WidgetTree->ConstructWidget<UBorder>();Border->SetBrushColor(FLinearColor(.022,.055,.04,.98));Border->SetPadding(FMargin(24));Body=WidgetTree->ConstructWidget<UCanvasPanel>();Border->SetContent(Body);Size->SetContent(Border);Scale->SetContent(Size);WidgetTree->RootWidget=Scale;SetIsFocusable(true);Refresh();return Super::RebuildWidget();}
+void UIslandUICommand::Run(){auto* G=Owner?Owner->Game():nullptr;if(G&&G->Focus==ExpectedFocus&&G->Paused==ExpectedPause&&(!G->IsLevelOneReferenceMode()||ExpectedLevelMenu==(int)G->LevelOneMenu))G->UIAction(Command);}
+TSharedRef<SWidget> UIslandFocusWidget::RebuildWidget(){if(!WidgetTree)WidgetTree=NewObject<UWidgetTree>(this);auto* Scale=WidgetTree->ConstructWidget<UScaleBox>();Scale->SetStretch(EStretch::ScaleToFit);auto* Size=WidgetTree->ConstructWidget<USizeBox>();bool Ref=Game()&&Game()->IsLevelOneReferenceMode();Size->SetWidthOverride(Ref?680:1040);Size->SetHeightOverride(Ref?520:740);auto* Border=WidgetTree->ConstructWidget<UBorder>();Border->SetBrushColor(FLinearColor(.022,.055,.04,.98));Border->SetPadding(FMargin(24));Body=WidgetTree->ConstructWidget<UCanvasPanel>();Border->SetContent(Body);Size->SetContent(Border);Scale->SetContent(Size);WidgetTree->RootWidget=Scale;SetIsFocusable(true);Refresh();return Super::RebuildWidget();}
 void UIslandFocusWidget::Text(const FString& S,float X,float Y,float Width,float FontSize){auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(S));T->SetColorAndOpacity(FSlateColor(FLinearColor(.94,.94,.84)));auto Font=T->GetFont();Font.Size=FontSize;T->SetFont(Font);T->SetAutoWrapText(true);auto* Slot=Body->AddChildToCanvas(T);Slot->SetPosition(FVector2D(X,Y));Slot->SetSize(FVector2D(Width,100));}
-void UIslandFocusWidget::Button(const FString& S,int Code,float X,float Y,float Width,float Height){auto* B=WidgetTree->ConstructWidget<UButton>();B->SetBackgroundColor(FLinearColor(.2,.34,.27));auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(S));auto F=T->GetFont();F.Size=22;T->SetFont(F);T->SetColorAndOpacity(FSlateColor(FLinearColor(.96,.95,.84)));T->SetJustification(ETextJustify::Center);B->SetContent(T);auto* Slot=Body->AddChildToCanvas(B);Slot->SetPosition(FVector2D(X,Y));Slot->SetSize(FVector2D(Width,Height));auto* C=NewObject<UIslandUICommand>(this);C->Owner=this;C->Command=Code;auto* G=Game();C->ExpectedFocus=G?G->Focus:-1;C->ExpectedPause=G&&G->Paused;Commands.Add(C);B->OnClicked.AddDynamic(C,&UIslandUICommand::Run);Buttons.Add(Code,B);}
+void UIslandFocusWidget::Button(const FString& S,int Code,float X,float Y,float Width,float Height){auto* B=WidgetTree->ConstructWidget<UButton>();B->SetBackgroundColor(FLinearColor(.2,.34,.27));auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(S));auto F=T->GetFont();F.Size=22;T->SetFont(F);T->SetColorAndOpacity(FSlateColor(FLinearColor(.96,.95,.84)));T->SetJustification(ETextJustify::Center);B->SetContent(T);auto* Slot=Body->AddChildToCanvas(B);Slot->SetPosition(FVector2D(X,Y));Slot->SetSize(FVector2D(Width,Height));auto* C=NewObject<UIslandUICommand>(this);C->Owner=this;C->Command=Code;auto* G=Game();C->ExpectedFocus=G?G->Focus:-1;C->ExpectedPause=G&&G->Paused;Commands.Add(C);C->ExpectedLevelMenu=G?(int)G->LevelOneMenu:-1;B->OnClicked.AddDynamic(C,&UIslandUICommand::Run);Buttons.Add(Code,B);if(G&&G->IsLevelOneReferenceMode())LevelOneFocusOrder.Add(B);}
 UButton* UIslandFocusWidget::ButtonFor(int Id)const{auto* Found=Buttons.Find(Id);return Found?*Found:nullptr;}
-void UIslandFocusWidget::NativeTick(const FGeometry& Geometry,float Dt){Super::NativeTick(Geometry,Dt);auto* G=Game();if(!G)return;FString Next=FString::Printf(TEXT("%d %d "),G->Focus,G->Paused)+UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())+G->Feedback;if(!PointerOwned&&Next!=Signature){Signature=Next;Refresh();}}
-void UIslandFocusWidget::Refresh(){if(!Body)return;auto* G=Game();if(!G)return;Body->ClearChildren();Buttons.Reset();Commands.Reset();MouseSlider=nullptr;MouseSpeedLabel=nullptr;
+void UIslandFocusWidget::NativeTick(const FGeometry& Geometry,float Dt){Super::NativeTick(Geometry,Dt);auto* G=Game();if(!G)return;FString Next=FString::Printf(TEXT("%d %d "),G->Focus,G->Paused)+FString::FromInt((int)G->LevelOneMenu)+UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())+G->Feedback;if(!PointerOwned&&Next!=Signature){Signature=Next;Refresh();}}
+void UIslandFocusWidget::Refresh(){if(!Body)return;auto* G=Game();if(!G)return;Body->ClearChildren();Buttons.Reset();Commands.Reset();LevelOneFocusOrder.Reset();MouseSlider=nullptr;MouseSpeedLabel=nullptr;
+ if(G->IsLevelOneReferenceMode()){RefreshLevelOneMenu();return;}
  if(G->Paused){Text(TEXT("Pause und Einstellungen"),40,35,900,34);Text(TEXT("Ziehe den Mausregler: links langsamer, rechts schneller. Beide Blickrichtungen ändern sich zusammen."),40,112,900);
  auto* C=Cast<AIslandController>(GetOwningPlayer());MouseSpeedLabel=WidgetTree->ConstructWidget<UTextBlock>();auto Font=MouseSpeedLabel->GetFont();Font.Size=24;MouseSpeedLabel->SetFont(Font);MouseSpeedLabel->SetText(FText::FromString(FString::Printf(TEXT("Mausgeschwindigkeit: %.0f %%"),(C?C->MouseSensitivity:1.f)*100)));auto* L=Body->AddChildToCanvas(MouseSpeedLabel);L->SetPosition(FVector2D(40,195));L->SetSize(FVector2D(900,44));
  MouseSlider=WidgetTree->ConstructWidget<USlider>();MouseSlider->SetMinValue(.25f);MouseSlider->SetMaxValue(3.f);MouseSlider->SetStepSize(.05f);MouseSlider->SetValue(C?C->MouseSensitivity:1.f);MouseSlider->SetSliderBarColor(FLinearColor(.38,.56,.52));MouseSlider->SetSliderHandleColor(FLinearColor(.64,.83,.94));auto* S=Body->AddChildToCanvas(MouseSlider);S->SetPosition(FVector2D(40,250));S->SetSize(FVector2D(900,46));MouseSlider->OnValueChanged.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityChanged);MouseSlider->OnMouseCaptureEnd.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityCommitted);MouseSlider->OnControllerCaptureEnd.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityCommitted);
@@ -43,7 +45,7 @@ FReply UIslandFocusWidget::EndRoutePointer(const FPointerEvent& E){if(!E.IsTouch
 void UIslandFocusWidget::CancelPointer(){PointerOwned=false;PointerId=-2;if(FSlateApplication::IsInitialized()&&HasMouseCapture())FSlateApplication::Get().ReleaseAllPointerCapture();}
 FReply UIslandFocusWidget::NativeOnPreviewMouseButtonDown(const FGeometry& G,const FPointerEvent& E){if(E.IsTouchEvent()&&PointerOwned&&E.GetPointerIndex()!=PointerId)return FReply::Handled();if(E.IsTouchEvent()||E.GetEffectingButton()==EKeys::LeftMouseButton){auto R=BeginRoutePointer(E);if(R.IsEventHandled())return R;}return Super::NativeOnPreviewMouseButtonDown(G,E);}
 FReply UIslandFocusWidget::NativeOnMouseMove(const FGeometry& G,const FPointerEvent& E){auto R=MoveRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnMouseMove(G,E);}
-FReply UIslandFocusWidget::NativeOnMouseButtonUp(const FGeometry& G,const FPointerEvent& E){auto R=EndRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnMouseButtonUp(G,E);}
+FReply UIslandFocusWidget::NativeOnMouseButtonUp(const FGeometry& G,const FPointerEvent& E){if(auto* C=Cast<AIslandController>(GetOwningPlayer()))C->LevelOneKeyReleased(E.GetEffectingButton());auto R=EndRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnMouseButtonUp(G,E);}
 FReply UIslandFocusWidget::NativeOnTouchStarted(const FGeometry& G,const FPointerEvent& E){auto R=BeginRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnTouchStarted(G,E);}
 FReply UIslandFocusWidget::NativeOnTouchMoved(const FGeometry& G,const FPointerEvent& E){auto R=MoveRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnTouchMoved(G,E);}
 FReply UIslandFocusWidget::NativeOnTouchEnded(const FGeometry& G,const FPointerEvent& E){auto R=EndRoutePointer(E);return R.IsEventHandled()?R:Super::NativeOnTouchEnded(G,E);}
@@ -51,3 +53,41 @@ FReply UIslandFocusWidget::NativeOnTouchEnded(const FGeometry& G,const FPointerE
 int32 UIslandFocusWidget::NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Cull,FSlateWindowElementList& Draw,int32 Layer,const FWidgetStyle& Style,bool Enabled)const{int32 Top=Super::NativePaint(Args,Geometry,Cull,Draw,Layer,Style,Enabled);auto* G=Game();PaintedEdges.Reset();if(!G||G->Focus!=600)return Top;for(int From=0;From<10;++From)for(int To=1;To<=10;++To){if(!Island::RouteStepAllowed(From,To))continue;auto* A=ButtonFor(6010+From);auto* B=ButtonFor(6010+To);if(!A||!B)continue;auto GA=A->GetPaintSpaceGeometry(),GB=B->GetPaintSpaceGeometry();FVector2D AP=GA.GetAbsolutePosition()+GA.GetAbsoluteSize()*.5,BP=GB.GetAbsolutePosition()+GB.GetAbsoluteSize()*.5,D=(BP-AP).GetSafeNormal();if(D.IsNearlyZero())continue;auto Edge=[&](FVector2D Size){return FMath::Min(FMath::Abs(D.X)>0.001?Size.X*.5/FMath::Abs(D.X):100000.f,FMath::Abs(D.Y)>0.001?Size.Y*.5/FMath::Abs(D.Y):100000.f);};AP+=D*(Edge(GA.GetAbsoluteSize())+3);BP-=D*(Edge(GB.GetAbsoluteSize())+3);bool Chosen=false;for(int I=1;I<G->State.routeCount;++I)Chosen|=G->State.route[I-1]==From&&G->State.route[I]==To;TArray<FVector2D> Points={Geometry.AbsoluteToLocal(AP),Geometry.AbsoluteToLocal(BP)};FLinearColor Color=Chosen?(G->State.fractions?FLinearColor(.35,.85,.7):FLinearColor(.86,.67,.3)):FLinearColor(.32,.42,.34);PaintedEdges.Add({From,To,Geometry.LocalToAbsolute(Points[0]),Geometry.LocalToAbsolute(Points[1])});FSlateDrawElement::MakeLines(Draw,Top+1,Geometry.ToPaintGeometry(),Points,ESlateDrawEffect::None,Color,true,Chosen?6.f:3.f);}return Top+1;}
 
 void UIslandFocusWidget::NativeOnMouseCaptureLost(const FCaptureLostEvent& E){bool Was=PointerOwned;PointerOwned=false;PointerId=-2;Super::NativeOnMouseCaptureLost(E);if(Was)if(auto* G=Game())G->Notify(TEXT("Linie unterbrochen. Der letzte bestätigte Knoten bleibt erhalten. Beginne einen neuen bewussten Druck."));}
+
+
+void UIslandFocusWidget::FocusLevelOneFirst(){if(LevelOneFocusOrder.Num())LevelOneFocusOrder[0]->SetKeyboardFocus();}
+FReply UIslandFocusWidget::NativeOnPreviewKeyDown(const FGeometry& Geo,const FKeyEvent& Event){
+ auto* G=Game();if(G&&G->IsLevelOneReferenceMode()){
+  if(Event.GetKey()==EKeys::Escape){G->LevelOneEscape();return FReply::Handled();}
+  if(Event.GetKey()==EKeys::Tab&&LevelOneFocusOrder.Num()){
+   int Index=-1;for(int I=0;I<LevelOneFocusOrder.Num();++I)if(LevelOneFocusOrder[I]->HasKeyboardFocus())Index=I;
+   Index=(Index+(Event.IsShiftDown()?-1:1)+LevelOneFocusOrder.Num())%LevelOneFocusOrder.Num();LevelOneFocusOrder[Index]->SetKeyboardFocus();return FReply::Handled();
+  }
+ }
+ return Super::NativeOnPreviewKeyDown(Geo,Event);
+}
+void UIslandFocusWidget::RefreshLevelOneMenu(){
+ auto* G=Game();if(!G)return;auto* C=Cast<AIslandController>(GetOwningPlayer());
+ auto MenuButton=[&](const FString& Label,int Id,float Y){Button(Label,Id,32,Y,570,62);};
+ switch(G->LevelOneMenu){
+ case ELevelOneMenu::Start:
+  Text(TEXT("Lerninsel"),32,24,570,38);Text(TEXT("Ein Weg. Zwei Verbproben."),32,85,570,22);
+  MenuButton(G->LevelOneHasSave?TEXT("Weiter"):TEXT("Start"),11000,154);
+  if(G->LevelOneHasSave)MenuButton(TEXT("Neu beginnen"),11001,228);
+  MenuButton(TEXT("Einstellungen"),11002,G->LevelOneHasSave?302:228);MenuButton(TEXT("Schließen"),11007,G->LevelOneHasSave?376:302);break;
+ case ELevelOneMenu::Pause:
+  Text(TEXT("Pause"),32,24,570,34);MenuButton(TEXT("Weiter"),11000,130);MenuButton(TEXT("Neu beginnen"),11001,204);MenuButton(TEXT("Einstellungen"),11002,278);MenuButton(TEXT("Zum Start"),11005,352);break;
+ case ELevelOneMenu::Settings:{
+  Text(TEXT("Einstellungen"),32,24,570,34);Text(TEXT("Mausgeschwindigkeit"),32,94,570,22);
+  MouseSpeedLabel=WidgetTree->ConstructWidget<UTextBlock>();MouseSpeedLabel->SetText(FText::FromString(FString::Printf(TEXT("%.0f %%"),C?C->MouseSensitivity*100:100)));MouseSpeedLabel->SetColorAndOpacity(FSlateColor(FLinearColor(.94,.94,.84)));auto* LabelSlot=Body->AddChildToCanvas(MouseSpeedLabel);LabelSlot->SetPosition(FVector2D(465,94));LabelSlot->SetSize(FVector2D(120,50));
+  MouseSlider=WidgetTree->ConstructWidget<USlider>();MouseSlider->IsFocusable=true;MouseSlider->SetMinValue(.25f);MouseSlider->SetMaxValue(3.f);MouseSlider->SetStepSize(.05f);MouseSlider->SetValue(C?C->MouseSensitivity:1);auto* Slot=Body->AddChildToCanvas(MouseSlider);Slot->SetPosition(FVector2D(32,160));Slot->SetSize(FVector2D(570,46));MouseSlider->OnValueChanged.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityChanged);MouseSlider->OnMouseCaptureEnd.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityCommitted);MouseSlider->OnControllerCaptureEnd.AddDynamic(this,&UIslandFocusWidget::MouseSensitivityCommitted);LevelOneFocusOrder.Add(MouseSlider);
+  MenuButton(TEXT("Maus: Standard 100 %"),11008,228);MenuButton(FString::Printf(TEXT("Sichtfeld: %.0f Grad"),G->Player()?G->Player()->Camera->FieldOfView:75),11009,302);MenuButton(TEXT("Zurück"),11003,376);break;}
+ case ELevelOneMenu::RestartConfirm:
+  Text(TEXT("Diesen Abschnitt neu beginnen?"),32,35,570,30);Text(TEXT("Nur dieser Versuch wird neu begonnen."),32,110,570,20);MenuButton(TEXT("Abbrechen"),11003,218);MenuButton(TEXT("Neu beginnen"),11004,292);break;
+ case ELevelOneMenu::Completed:
+  Text(TEXT("Verbengarten geschafft!"),32,32,570,34);Text(TEXT("Drei Verben gefunden. Der Satzgarten wartet."),32,110,570,21);MenuButton(TEXT("Weiter zum Satzgarten"),11006,218);MenuButton(TEXT("Zum Start"),11005,292);break;
+ default:break;
+ }
+}
+
+FReply UIslandFocusWidget::NativeOnKeyUp(const FGeometry& Geo,const FKeyEvent& Event){if(auto* C=Cast<AIslandController>(GetOwningPlayer()))C->LevelOneKeyReleased(Event.GetKey());return Super::NativeOnKeyUp(Geo,Event);}

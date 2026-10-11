@@ -14,3 +14,8 @@ M1/M2→M3 shared interface: terrain/physical word top and component-ID hitbindi
 Ruling: author small native Unreal terrain/vegetation/stone scene using existing project materials and Engine basic shapes, not reconstruct a particular proprietary object/figure through Three.js. img2threejs v2.0.0 SKILL.md read for suitability. No new downloaded assets/figures/paid images; source geometry will be inspectable and native. Cost if wrong: scene art may still require later manual polish, explicitly judged in real camera.
 Tasks M1/M2/M3/M4/M5/M6 active/pending; M7 A/B final once; M8 local reviewable delivery. Save old modes intact; no ET/shared/backends/normal map edits.
 Next: RED→GREEN profile/step guards, then native geometry and map binding.
+
+## Native scene checkpoint
+
+Local dff8179: reference/continuation classes, actual rendered/cooked90cm hill with200cm plateau, own original sky material/map creator, physical wordstones and component pick identities, S visit/intent rules, simple UMG menus, scoped save/preferences and starter. UE5.8 compile succeeded; new map/material saved with LERNINSEL_LEVEL1_MAP_READY. Creator returned1 due known engine bootstrap self-test messages; no Python error; actual map mode is being checked by fixtures rather than inferring success from marker alone.
+Native test first run session46939, isolated LevelOneSlotSuffix=EngineFixture; report .build/level1-fixture-report-first, log .build/level1-fixture-first.log. Current expanded regression source and saved map will be checkpointed together. No ordinary-WASD result yet. Normal maps/materials/source checkout unchanged.
