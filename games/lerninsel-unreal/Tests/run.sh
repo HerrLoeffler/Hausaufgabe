@@ -19,3 +19,6 @@ c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/fox_test.cpp" -o "$root/.build
 
 c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/tasks_test.cpp" -o "$root/.build/tasks_test"
 "$root/.build/tasks_test"
+
+c++ -std=c++17 -Wall -Wextra -Werror "$root/Tests/level_one_profile_test.cpp" -o "$root/.build/level_one_profile_test"
+"$root/.build/level_one_profile_test"
