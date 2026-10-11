@@ -1,6 +1,6 @@
 {
   "$schemaVersion": 1,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "root": "assets/gradecrew",
   "brand": {
     "primary": "brand-primary-v1.svg",
@@ -14,7 +14,8 @@
       "animal": "penguin",
       "primary": "penguin-guide.svg",
       "welcome": "penguin-guide-welcome.svg",
-      "nameScene": "clay-coco-name.svg"
+      "nameScene": "clay-coco-name.svg",
+      "runCuddle": "coco-run-cuddle-v1.png"
     },
     "remy": {
       "role": "create",
@@ -22,19 +23,23 @@
       "primary": "elephant-create.svg",
       "welcome": "elephant-create-welcome.svg",
       "writingScene": "clay-remy-writing.svg",
-      "microphone": "remy-microphone-v1.png"
+      "microphone": "remy-microphone-v1.png",
+      "runCuddle": "remy-run-cuddle-v1.png",
+      "microphoneForward": "remy-microphone-forward-v1.png"
     },
     "emmi": {
       "role": "improve",
       "animal": "fox",
       "primary": "fox-improve.svg",
-      "welcome": "fox-improve-welcome.svg"
+      "welcome": "fox-improve-welcome.svg",
+      "runCuddle": "emmi-run-cuddle-v1.png"
     },
     "wilma": {
       "role": "grade",
       "animal": "owl",
       "primary": "owl-grade.svg",
-      "welcome": "owl-grade-welcome.svg"
+      "welcome": "owl-grade-welcome.svg",
+      "runCuddle": "wilma-run-cuddle-v1.png"
     }
   },
   "scenes": {

@@ -4,11 +4,11 @@ Die SwiftUI-/WKWebView-App nutzt die vorhandene GradeCrew-Webplattform mit persi
 
 ## Stand und lokale Entwicklung
 
-Kanonischer App-Branch: feature/shared-gradecrew-design-system. **0.1.16 (Build 33)** wurde auf TestFlight hochgeladen. Die Rückmeldung vom 11.10.2026 bestätigt zwei schnelle, erfolgreiche Remy-Aufnahmen und Testübermittlungen auf dem iPhone. Dieser Aufnahme- und Formularablauf bleibt in 0.1.17 unverändert.
+Kanonischer App-Branch: feature/shared-gradecrew-design-system. 0.1.16 (Build33) wurde auf dem iPhone zweimal schnell und erfolgreich mit Remy verwendet. 0.1.17 (Build34) ergänzt Crew und Logo; die Geräte-Rückmeldung bestätigt den ersten Entwurf und fordert echte Laufbewegungen und engeres Anlehnen.
 
-**0.1.17** ergänzt das native Markenbild: Coco, Remy, Emmi und Wilma umgeben das GradeCrew-Logo auf dem Auswahlbildschirm und beim Wiederherstellen der Anmeldung. Beim Laden formiert sich die Crew einmal in weniger als 0,4 Sekunden; die Animation verzögert weder Anmeldung noch Navigation und entfällt bei „Bewegung reduzieren“. „GradeCrew öffnen“ trägt das GradeCrew-Zeichen. Alle Tierbilder kommen aus dem gemeinsamen Asset-Manifest; keine neue Kopie oder generierte Figur.
+**0.1.18** verwendet je20 erzeugte transparente Lauf-/Anlehnframes für Coco, Remy, Emmi und Wilma. Ein gemeinsamer Startzeitpunkt hält die gesamte dekorative Sequenz auf maximal einer Sekunde; Anmeldung und Navigation warten nicht darauf. Die Timeline hat keine weiteren Einträge nach dem Abschluss, die letzte Pose bleibt stehen. Bei „Bewegung reduzieren“ wird direkt die Endpose gezeigt. PNG-Atlanten werden vor der Nutzung in isolierte Zellen verpackt und auf Beschnitt, echte Transparenz und unterschiedliche Frames geprüft. Coco folgt der aktuellen plüschigen Staging-Referenz. Die Remy-Karte zeigt eine neue Pose mit zum Bildschirm gerichtetem Mikrofon und den Text „Test kurz einsprechen“.
 
-GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und Geräteabnahme werden separat dokumentiert. Die aktuelle Geräteprüfung steht in [TESTFLIGHT.md](TESTFLIGHT.md).
+Alle neuen Bilder liegen im gemeinsamen Asset-Manifest. Das bestehende GC-Logo sowie Sprachaufnahme, Testformular und Übermittlung bleiben unverändert. GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und Geräteabnahme werden separat dokumentiert; siehe [TESTFLIGHT.md](TESTFLIGHT.md).
 
 ```bash
 python3 native/GradeCrewTeacher/prepare_testflight_assets.py

@@ -1,51 +1,60 @@
 import SwiftUI
 
-/// Existing crew artwork surrounds the central GradeCrew mark.
-/// Entrance motion is decorative and never gates authentication or navigation.
+/// All four crew members run toward the existing GradeCrew mark in one second.
+/// The caller retains one start date across auth restoration and the home view.
 struct GradeCrewBrandSignature: View {
-    var animateEntrance = false
+    var animationStartedAt: Date = Date()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var formed = false
-
-    private var visible: Bool { !animateEntrance || reduceMotion || formed }
+    @Environment(\.scenePhase) private var scenePhase
+    private let atlases = GradeCrewMascotAtlasCache.crew
 
     var body: some View {
-        HStack(spacing: 16) {
-            VStack(spacing: 4) {
-                portrait(GradeCrewAssets.NativeImage.cocoWelcome, position: 0)
-                portrait(GradeCrewAssets.NativeImage.remyWelcome, position: 1)
-            }
-            Image(GradeCrewAssets.NativeImage.brandIcon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 84, height: 84)
-                .clipShape(Circle())
-            VStack(spacing: 4) {
-                portrait(GradeCrewAssets.NativeImage.emmiWelcome, position: 2)
-                portrait(GradeCrewAssets.NativeImage.wilmaWelcome, position: 3)
+        Group {
+            if scenePhase == .active && !reduceMotion && Date() < animationStartedAt.addingTimeInterval(GradeCrewBrandMotionPolicy.duration) {
+                TimelineView(GradeCrewBrandMotionSchedule(startedAt: animationStartedAt)) { context in
+                    formation(at: context.date)
+                }
+            } else {
+                formation(at: Date())
             }
         }
-        .frame(width: 260, height: 132)
+        .frame(width: 260, height: 160)
+        .clipped()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("GradeCrew mit Coco, Remy, Emmi und Wilma")
         .allowsHitTesting(false)
-        .onAppear { formed = true }
     }
 
-    private func portrait(_ image: String, position: Int) -> some View {
-        Image(image)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 64, height: 64)
-            .blendMode(.multiply)
-            .opacity(visible ? 1 : 0)
-            .offset(x: visible ? 0 : (position < 2 ? -24 : 24), y: visible ? 0 : 8)
-            .scaleEffect(visible ? 1 : 0.94)
-            .animation(
-                animateEntrance && !reduceMotion
-                    ? .easeOut(duration: 0.28).delay(Double(position) * 0.035)
-                    : nil,
-                value: formed
-            )
+    private func formation(at date: Date) -> some View {
+        let sample = GradeCrewBrandMotionPolicy.sample(startedAt: animationStartedAt, now: date, reduceMotion: reduceMotion)
+        return ZStack {
+            Image(GradeCrewAssets.NativeImage.brandIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 114, height: 114)
+                .clipShape(Circle())
+                .position(x: 130, y: 80)
+            ForEach(GradeCrewBrandMotionPolicy.Mascot.allCases, id: \.self) { mascot in
+                let center = sample.center(for: mascot)
+                if let image = atlases[mascot]?.image(at: sample.frameIndex) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 74, height: 74)
+                        .position(x: center.x, y: center.y)
+                }
+            }
+        }
+        .frame(width: 260, height: 160)
+    }
+}
+
+/// Unlike an animation timeline, this schedule has no entries after one second.
+/// Removing the TimelineView while inactive also stops all scheduled updates.
+private struct GradeCrewBrandMotionSchedule: TimelineSchedule {
+    let startedAt: Date
+
+    func entries(from startDate: Date, mode: TimelineScheduleMode) -> [Date] {
+        GradeCrewBrandMotionPolicy.refreshDates(startedAt: startedAt, from: startDate, reduceMotion: false, isActive: true)
     }
 }

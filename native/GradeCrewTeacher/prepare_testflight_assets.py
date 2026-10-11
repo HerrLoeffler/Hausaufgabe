@@ -29,6 +29,11 @@ NATIVE_ILLUSTRATIONS = {
     "GradeCrewEmmiWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["emmi"]["welcome"],
     "GradeCrewWilmaWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["wilma"]["welcome"],
     "GradeCrewRemyMicrophone": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["microphone"],
+    "GradeCrewCocoRunCuddle": REPO / MANIFEST["root"] / MANIFEST["mascots"]["coco"]["runCuddle"],
+    "GradeCrewRemyRunCuddle": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["runCuddle"],
+    "GradeCrewEmmiRunCuddle": REPO / MANIFEST["root"] / MANIFEST["mascots"]["emmi"]["runCuddle"],
+    "GradeCrewWilmaRunCuddle": REPO / MANIFEST["root"] / MANIFEST["mascots"]["wilma"]["runCuddle"],
+    "GradeCrewRemyMicrophoneForward": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["microphoneForward"],
     "GradeCrewBrandIcon": BRAND_ICON,
 }
 

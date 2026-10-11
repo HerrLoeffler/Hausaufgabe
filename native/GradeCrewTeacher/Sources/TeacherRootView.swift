@@ -5,6 +5,7 @@ struct TeacherRootView: View {
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
     @State private var workspaceOpening = false
+    @State private var brandAnimationStartedAt = Date()
     @State private var loadError: String?
     @State private var reloadID = 0
     @State private var showBetaSettings = false
@@ -176,7 +177,7 @@ struct TeacherRootView: View {
         ScrollView {
             VStack(spacing: GradeCrewDesignTokens.Spacing.xxl) {
                 VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                    GradeCrewBrandSignature()
+                    GradeCrewBrandSignature(animationStartedAt: brandAnimationStartedAt)
                     Text("Was möchtest du tun?")
                         .font(.system(size: GradeCrewDesignTokens.Typography.pageTitle, weight: .semibold, design: .rounded))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
@@ -187,9 +188,9 @@ struct TeacherRootView: View {
                 HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
                     actionCard(
                         title: "Remy fragen",
-                        subtitle: "Testwunsch kurz einsprechen",
+                        subtitle: "Test kurz einsprechen",
                         symbol: "mic.fill",
-                        illustration: GradeCrewAssets.NativeImage.remyWelcome,
+                        illustration: GradeCrewAssets.NativeImage.remyMicrophoneForward,
                         tint: GradeCrewDesignTokens.Colors.crewRust,
                         action: openRemy
                     )
@@ -224,7 +225,7 @@ struct TeacherRootView: View {
 
     private var authRestoringScreen: some View {
         VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-            GradeCrewBrandSignature(animateEntrance: true)
+            GradeCrewBrandSignature(animationStartedAt: brandAnimationStartedAt)
             ProgressView("Anmeldung wird wiederhergestellt …")
                 .tint(GradeCrewDesignTokens.Colors.primary)
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)

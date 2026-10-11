@@ -10,6 +10,16 @@ Der bestehende Upload archiviert ohne Development-Signing und signiert erst beim
 
 Standard-Web-URL: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`. Normales Staging ist Fallback. Web-Hosting und native App sind zwei getrennte Updates; ein neuer App-Build veröffentlicht keine Web-Funktionen.
 
+## Physischer Gerätetest für 0.1.18
+
+1. Version/Build prüfen. Beim Start müssen die vier Tiere mit tatsächlichen Fuß-/Flügelbewegungen innerhalb einer Sekunde eng ans Logo kommen und anschließend in der Anlehnpose stehen bleiben. Kein abgeschnittener Kopf, keine Nachbarreste oder weißen Bildrahmen.
+2. Schnelle Anmeldung: die Bewegung darf beim Übergang vom Laden zum Menü nicht von vorne beginnen. Langsame Anmeldung: Endpose bleibt stehen, keine Endlosschleife. Die Anmeldung darf sofort abschließen.
+3. „Bewegung reduzieren“: direkt vollständige Endpose, keine Laufanimation. Während der Bewegung App in den Hintergrund legen und später öffnen: keine nachträgliche Wiederholung.
+4. Die Remy-Karte zeigt Remy mit blauem Mikrofon Richtung Bildschirm und „Test kurz einsprechen“. Zweimal Aufnahme und Absenden testen; der bewährte Ablauf bleibt unverändert.
+5. „Remy → Start → GradeCrew öffnen“ öffnet weiterhin „Meine Tests“. Auf kleinem iPhone, großer Schrift und iPad Logo, Tiere und beide Karten prüfen.
+
+Die neuen Bilder und die Animation brauchen eine eigene Geräteabnahme. Ein grüner Upload bestätigt nicht allein die Installationsbereitschaft in TestFlight. Production wird nicht verändert.
+
 ## Physischer Gerätetest für 0.1.17
 
 1. Version/Build in TestFlight prüfen. Beim Wiederherstellen der Anmeldung müssen alle vier Tiere um das Logo erscheinen und sich kurz einordnen; eine schnelle Anmeldung darf sofort zum Menü wechseln.

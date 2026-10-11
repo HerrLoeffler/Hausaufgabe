@@ -81,6 +81,10 @@ jobs:
           python3 native/GradeCrewTeacher/test_native_artwork_integrity.py
           python3 native/GradeCrewTeacher/test_quick_remy_draft.py
           python3 native/GradeCrewTeacher/test_quick_remy_speech.py
+          python3 native/GradeCrewTeacher/test_brand_motion_policy.py
+          python3 native/GradeCrewTeacher/test_mascot_atlas_grid.py
+          python3 native/GradeCrewTeacher/test_crew_motion_artwork.py
+          swift -module-cache-path "$RUNNER_TEMP/GradeCrewMotionModules" tools/repack-gradecrew-motion.swift --self-test
           python3 native/GradeCrewTeacher/test_native_bridge.py
           node --test native/GradeCrewTeacher/test_quick_remy_auth_bridge.cjs
           node --test native/GradeCrewTeacher/test_quick_remy_form_bridge.cjs

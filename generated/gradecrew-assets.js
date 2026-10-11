@@ -26,7 +26,8 @@ export const GRADECREW_ASSETS = {
       "animal": "penguin",
       "primary": "assets/gradecrew/penguin-guide.svg",
       "welcome": "assets/gradecrew/penguin-guide-welcome.svg",
-      "nameScene": "assets/gradecrew/clay-coco-name.svg"
+      "nameScene": "assets/gradecrew/clay-coco-name.svg",
+      "runCuddle": "assets/gradecrew/coco-run-cuddle-v1.png"
     },
     "remy": {
       "role": "create",
@@ -34,19 +35,23 @@ export const GRADECREW_ASSETS = {
       "primary": "assets/gradecrew/elephant-create.svg",
       "welcome": "assets/gradecrew/elephant-create-welcome.svg",
       "writingScene": "assets/gradecrew/clay-remy-writing.svg",
-      "microphone": "assets/gradecrew/remy-microphone-v1.png"
+      "microphone": "assets/gradecrew/remy-microphone-v1.png",
+      "runCuddle": "assets/gradecrew/remy-run-cuddle-v1.png",
+      "microphoneForward": "assets/gradecrew/remy-microphone-forward-v1.png"
     },
     "emmi": {
       "role": "improve",
       "animal": "fox",
       "primary": "assets/gradecrew/fox-improve.svg",
-      "welcome": "assets/gradecrew/fox-improve-welcome.svg"
+      "welcome": "assets/gradecrew/fox-improve-welcome.svg",
+      "runCuddle": "assets/gradecrew/emmi-run-cuddle-v1.png"
     },
     "wilma": {
       "role": "grade",
       "animal": "owl",
       "primary": "assets/gradecrew/owl-grade.svg",
-      "welcome": "assets/gradecrew/owl-grade-welcome.svg"
+      "welcome": "assets/gradecrew/owl-grade-welcome.svg",
+      "runCuddle": "assets/gradecrew/wilma-run-cuddle-v1.png"
     }
   }
 };
