@@ -10,7 +10,7 @@ Alle geltenden amtlichen Lehrpläne aller Fächer für die Grundschule, Haupt-/M
 
 ## Nachweise und Status
 
-Vier Landesberichte decken die erste Quellenstruktur für alle 16 Länder ab. Mathematik Grundschule ist in 14 Ländern erstanalysiert, in Thüringen teilweise und im Saarland offen. Für Bremen Grundschule wurden 13 amtlich verlinkte PDFs inventarisiert und neun Fachpläne direkt geladen und fachlich erstgesichtet; [Fachbericht](../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md). Das vollständige Dokumentinventar für alle Länder, die Einzelextraktion, die unabhängige Fachprüfung und der Aufgabenabgleich stehen aus.
+Vier Landesberichte decken die erste Quellenstruktur für alle 16 Länder ab. Mathematik Grundschule ist in 14 Ländern erstanalysiert, in Thüringen teilweise und im Saarland offen. Für Bremen Grundschule wurden 13 amtlich verlinkte PDFs inventarisiert und neun Fachpläne direkt geladen und fachlich erstgesichtet; [Fachbericht](../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md). Für Bremer Sek I/II sind 81 amtliche Portaleinträge mit 76 URLs und Übergangsregeln erfasst; [Inventar](../analysis/GC-PEDAGOGY-KB-01/states/bremen-sek-inventar-und-geltung.md). Das vollständige Dokumentinventar für alle Länder, die Einzelextraktion, die unabhängige Fachprüfung und der Aufgabenabgleich stehen aus.
 
 Der verbindliche [Arbeitsplan](../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md) definiert die acht Arbeitsschritte und die Abschlusskriterien. Die [Detailübergabe](../docs/superpowers/handoffs/GC-PEDAGOGY-KB-01.md) hält Blocker und den nächsten Schritt. Keine CI-, Deploy- oder Produktionsprüfung wird aus diesem Forschungsstand abgeleitet.
 

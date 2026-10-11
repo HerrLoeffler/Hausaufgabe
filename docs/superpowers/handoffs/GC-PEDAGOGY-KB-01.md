@@ -11,7 +11,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - Erste Quellen- und Schulstrukturberichte für 16 Länder liegen in vier Landesdateien vor. Sie belegen noch kein vollständiges Fach- oder Dokumentinventar.
 - Mathematik Grundschule: 14 Länder im definierten Erstumfang ausgewertet, Thüringen teilweise, Saarland offen. Keines der 16 Länder ist als unabhängig zweitgeprüft belegt.
 - Saarland: neuer Plan ab 01.08.2026 amtlich gelistet, PDF-Endpunkt zuletzt HTTP 403. Thüringen: Geltung 2010 und Struktur belegt, Haupttext im Portal nur für angemeldete Nutzer erreichbar. Diese Fälle bleiben als Zugriffslücken offen; andere Fachpakete können weiterlaufen.
-- Die TSV-Register sind angelegt. Saarland und Thüringen Mathematik Grundschule sind als offene Zugänge erfasst. Zusätzlich wurde die amtliche Bremer Primarstufenseite im Browser mit 13 verlinkten PDF-Dokumenten inventarisiert; die neun Fachpläne wurden direkt geladen und fachlich erstgesichtet. Der Fachbericht `subjects/bremen-grundschule-fachplaene.md` nennt Standards, Fundstellen und die offenen Einzelextraktionen. Das Register ist kein Vollständigkeitsbefund.
+- Die TSV-Register sind angelegt. Saarland und Thüringen Mathematik Grundschule sind als offene Zugänge erfasst. Bremen: 13 Primarstufen-PDFs inventarisiert, neun Fachpläne direkt geladen und fachlich erstgesichtet. Hinzu kamen 81 Sek-I-/Sek-II-Portaleinträge zu 76 URLs; 73 zusätzliche Dokumentzeilen wurden erfasst, ihre Volltexte und Geltungen noch nicht geprüft. Das Register umfasst damit 88 Dokumentzeilen insgesamt, einschließlich Saarland/Thüringen und nicht verbindlicher Dokumentarten. Es ist kein Vollständigkeitsbefund.
 
 ## Artefakte
 
@@ -21,6 +21,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - [Fortschritts- und Lückenbericht](../../../analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md)
 - [Mathematik Grundschule](../../../analysis/GC-PEDAGOGY-KB-01/subjects/mathematik-grundschule.md)
 - [Bremen Grundschule: Fachpläne](../../../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md)
+- [Bremen Sekundarstufen: Portalinventar und Geltung](../../../analysis/GC-PEDAGOGY-KB-01/states/bremen-sek-inventar-und-geltung.md)
 - `analysis/GC-PEDAGOGY-KB-01/states/`: vier Landesberichte mit allen 16 Ländern.
 
 ## Fortsetzung
