@@ -13,13 +13,13 @@ const samples = {
   multi: { text: "Markiere die Nomen.", options: [{ text: "Haus", correct: true }, { text: "Baum", correct: true }, { text: "schnell", correct: false }] },
   dropdown: { text: "Welcher Artikel passt zu Haus?", options: [{ text: "das", correct: true }, { text: "die", correct: false }] },
   truefalse: { text: "Jeder Satz endet mit einem Fragezeichen.", correctBoolean: false },
-  gapfill: { text: "Der Hund [bellt]." },
+  gapfill: { text: "Der Hund [bellt].", gapColors: [] },
   number: { text: "Berechne 4 minus 4.", numericAnswer: 0, unit: "", tolerance: 0 },
   text: { text: "Nenne das Gegenteil von hell.", acceptedAnswers: ["dunkel"], manualReview: false },
   matching: { text: "Ordne die Artikel zu.", pairs: [{ left: "Haus", right: "das" }, { left: "Baum", right: "der" }] },
   ordering: { text: "Ordne die Zahlen aufsteigend.", items: ["1", "2", "3"], acceptedOrders: [], manualReview: false },
   grouping: { text: "Ordne nach Wortart.", groups: [{ name: "Nomen", items: ["Baum", "Haus"] }, { name: "Verben", items: ["laufen", "singen"] }] },
-  markwords: { text: "Markiere die Nomen.", passage: "Der Hund spielt im Garten.", targetWords: ["Hund", "Garten"] }
+  markwords: { text: "Markiere die Nomen.", passage: "Der Hund spielt im Garten.", targetWords: ["Hund", "Garten"], markGroups: [] }
 };
 function sample(type, extra = {}) { return { type, text: "", points: 1, ...samples[type], mediaIntent, audioIntent, ...extra }; }
 

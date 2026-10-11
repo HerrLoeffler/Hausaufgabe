@@ -36,14 +36,32 @@ export function installHeroDemo(root) {
   }
 
   function renderCoco(sheet, phase) {
+    const scene = make('div', `gcHeroCocoScene gcHeroCocoScene-${phase}`);
     const portrait = document.createElement('img');
-    portrait.src = './assets/gradecrew/penguin-guide.svg'; portrait.alt = ''; portrait.width = 110; portrait.height = 110;
-    portrait.style.cssText = 'display:block;margin:0 auto 16px;object-fit:contain';
-    sheet.append(portrait, make('h3', 'gcHeroSheetTitle', `cocoHeading${phase}`), make('p', 'gcHeroClearQuestion', `cocoBody${phase}`));
+    portrait.src = phase === 1 ? './assets/gradecrew/coco-help-phone.png' : './assets/gradecrew/coco-footer-guide.png';
+    portrait.alt = ''; portrait.width = 110; portrait.height = 110;
+    portrait.className = 'gcHeroCocoPortrait';
+    const cue = make('div', 'gcHeroCocoCue');
+    if (phase === 0) cue.textContent = '?';
+    else if (phase === 1) {
+      cue.classList.add('gcHeroCocoHelpButton');
+      cue.textContent = 'Coco';
+    } else {
+      for (let i = 0; i < 3; i++) cue.append(make('span', 'gcHeroCocoDot'));
+    }
+    scene.append(portrait, cue);
+    sheet.append(scene, make('h3', 'gcHeroSheetTitle', `cocoHeading${phase}`), make('p', 'gcHeroClearQuestion', `cocoBody${phase}`));
   }
 
   function renderRemy(sheet, phase) {
-    sheet.append(make('p', 'gcHeroSheetMeta', 'demoTopic'), make('h3', 'gcHeroSheetTitle', 'demoTestTitle'));
+    const head = make('div', 'gcHeroRemyHead');
+    const copy = make('div');
+    copy.append(make('p', 'gcHeroSheetMeta', 'demoTopic'), make('h3', 'gcHeroSheetTitle', 'demoTestTitle'));
+    const mascot = make('img', 'gcHeroRemyMascot');
+    mascot.src = phase === 0 ? './assets/gradecrew/remy-microphone.png' : './assets/gradecrew/remy-new-test-tablet.png';
+    mascot.alt = ''; mascot.width = 78; mascot.height = 86;
+    head.append(copy, mascot);
+    sheet.append(head);
     if (phase === 0) {
       const note = make('div', 'gcHeroVoiceNote');
       const icon = make('span', 'gcHeroVoiceBars'); icon.setAttribute('aria-hidden', 'true');
@@ -74,6 +92,9 @@ export function installHeroDemo(root) {
   }
 
   function renderEmmi(sheet, phase) {
+    const mascot = make('img', 'gcHeroContextMascot gcHeroContextMascot--emmi');
+    mascot.src = './assets/gradecrew/emmi-colors.png'; mascot.alt = ''; mascot.width = 88; mascot.height = 88;
+    sheet.append(mascot);
     sheet.append(make('p', 'gcHeroSheetMeta', 'draftLabel'), make('p', `gcHeroDraft ${phase ? 'marked' : ''}`, 'vagueQuestion'));
     if (phase === 1) sheet.append(make('div', 'gcHeroEditing'));
     if (phase !== 2) return;
@@ -99,6 +120,9 @@ export function installHeroDemo(root) {
   }
 
   function renderWilma(sheet, phase) {
+    const mascot = make('img', 'gcHeroContextMascot gcHeroContextMascot--wilma');
+    mascot.src = './assets/gradecrew/wilma-grading.png'; mascot.alt = ''; mascot.width = 88; mascot.height = 88;
+    sheet.append(mascot);
     sheet.append(make('p', 'gcHeroSheetMeta', 'automaticReview'), make('h3', 'gcHeroSheetTitle', 'gradingQuestion'));
     const sentence = make('p', 'gcHeroGradingSentence');
     sentence.textContent = ['sentenceLead', 'sentenceAdjective', 'sentenceNoun', 'sentenceVerb'].map(t).join(' ');
@@ -126,7 +150,6 @@ export function installHeroDemo(root) {
     $('gcHeroDialogTitle').textContent = t(`${name}Title`);
     $('gcHeroDemoStatus').textContent = t(`${name}Phase${phase}`);
     $('gcHeroDemoPause').textContent = t(paused ? 'resume' : 'pause');
-    $('gcHeroDemoPause').hidden = name === 'coco';
     $('gcHeroDemoPause').hidden = !running;
     $('gcHeroDemoNext').textContent = t('next');
     $('gcHeroDemoNext').hidden = phase >= 2;

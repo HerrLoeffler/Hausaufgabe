@@ -116,6 +116,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     const gaps = [...text.matchAll(/\[([^\[\]]*)\]/g)];
     if (!gaps.length) errors.push("Lückentext enthält keine [Lösung].");
     else if (gaps.some(gap => gap[1].split("|").some(answer => !answer.trim()))) errors.push("Jede Lücke braucht eine nicht leere Lösung.");
+    if (q.gapColors !== undefined && (!Array.isArray(q.gapColors) || (q.gapColors.length > 0 && q.gapColors.length !== gaps.length) || q.gapColors.some(color => !["", "blue", "orange", "green", "purple"].includes(color)))) errors.push("Lückenfarben müssen zur Anzahl der Lücken passen.");
     if (/[\[\]]/.test(text.replace(/\[[^\[\]]*\]/g, ""))) errors.push("Klammern im Lückentext sind nicht vollständig.");
   }
   if (q.type === "matching" && (!Array.isArray(q.pairs) || q.pairs.length < 2 || q.pairs.some(p => !normalizeText(p?.left) || !normalizeText(p?.right)))) errors.push("Zuordnung braucht mindestens zwei vollständige Paare.");
@@ -144,6 +145,24 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (!targets.length) errors.push("Zielwörter fehlen.");
     const words = new Set((normalizeText(q.passage).match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu) || []).map(word => word.toLocaleLowerCase("de")));
     if (targets.some(word => !words.has(normalizeText(word).toLocaleLowerCase("de")))) errors.push("Jedes Zielwort muss als ganzes Wort im Markiertext vorkommen.");
+    const marks = Array.isArray(q.markGroups) ? q.markGroups : [];
+    if (marks.length) {
+      const colors = new Set(), assigned = new Set();
+      if (marks.length < 2 || marks.length > 4) errors.push("Farbiges Markieren braucht zwei bis vier Gruppen.");
+      for (const group of marks) {
+        if (!normalizeText(group?.name) || !["blue", "orange", "green", "purple"].includes(group?.color) || !Array.isArray(group?.words) || !group.words.length) errors.push("Jede Farbgruppe braucht Namen, Farbe und Zielwörter.");
+        if (colors.has(group?.color)) errors.push("Jede Markierfarbe darf nur einmal verwendet werden.");
+        colors.add(group?.color);
+        for (const word of group?.words || []) {
+          const key = normalizeText(word).toLocaleLowerCase("de");
+          if (assigned.has(key)) errors.push("Ein Wort darf nicht mehreren Farbgruppen zugeordnet sein.");
+          assigned.add(key);
+          if (!words.has(key)) errors.push("Jedes Farbwort muss im Markiertext vorkommen.");
+        }
+      }
+      const targetSet = new Set(targets.map(word => normalizeText(word).toLocaleLowerCase("de")));
+      if (assigned.size !== targetSet.size || [...assigned].some(word => !targetSet.has(word))) errors.push("Zielwörter und Farbgruppen müssen übereinstimmen.");
+    }
   }
   if (q.type === "number" && (q.numericAnswer === null || q.numericAnswer === undefined || typeof q.numericAnswer === "boolean" || !String(q.numericAnswer).trim() || !Number.isFinite(Number(q.numericAnswer)))) errors.push("Numerische Lösung fehlt.");
   if (q.type === "number" && /\b(?:wie viele|anzahl der)\s+komma(?:s|ta)?\b/i.test(q.text || "")) {
@@ -221,6 +240,8 @@ function normalizeQuestion(q) {
   }
   copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g?.name), items: Array.isArray(g?.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];
   copy.targetWords = Array.isArray(copy.targetWords) ? copy.targetWords.map(normalizeText).filter(Boolean) : [];
+  copy.markGroups = Array.isArray(copy.markGroups) ? copy.markGroups.map(group => ({ name: normalizeText(group?.name), color: group?.color, words: Array.isArray(group?.words) ? group.words.map(normalizeText).filter(Boolean) : [] })) : [];
+  copy.gapColors = Array.isArray(copy.gapColors) ? copy.gapColors.filter(color => typeof color === "string") : [];
   copy.passage = normalizeText(copy.passage);
   if (copy.correctBoolean !== undefined) copy.correctBoolean = explicitBoolean(copy.correctBoolean);
   copy.unit = normalizeText(copy.unit);

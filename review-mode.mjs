@@ -18,7 +18,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function dispose(){compactCapture?.dispose();compactCapture=null;portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;compactCapture?.dispose();compactCapture=null;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
-   if(compact){compactCapture=installCompactCapture({document,saveNote:recordCompactNote});void sync();return;}
+   if(compact){void sync();return;}
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
  }

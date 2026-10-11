@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc34";
+const APP_VERSION = "2.3.1-gc35";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -40,9 +40,9 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { createAccountController } from "./admin-account-actions.mjs?v=1";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc34";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc34";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc34";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc35";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc35";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc35";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -999,9 +999,12 @@ function safeDialogClose(dialog) {
 
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
+  const hostname = String(location.hostname || "").replace(/^\[|\]$/g, "").toLowerCase();
+  const localWorkbenchHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
   $("userBar").classList.toggle("hidden", !loggedIn);
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
+  $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
 }
 
@@ -2984,7 +2987,7 @@ function generateAiPrompt() {
   }
   const customNotes = $("aiCustomNotes")?.value.trim() || "";
   const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
-  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]."\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren" und "targetWords": ["Zielwort1","Zielwort2"]. Jedes passende Wort im Text gilt als richtige Markierung.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]." Optional "gapColors": ["blue", "", "orange"] passend zu den Lücken in Reihenfolge; nur wenn Farben didaktisch helfen und keine Lösung verraten.\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren", "targetWords": ["Zielwort1","Zielwort2"] und optional "markGroups": [{"name":"Nomen","color":"blue","words":["Igel"]},{"name":"Adjektive","color":"orange","words":["kleine"]},{"name":"Verben","color":"green","words":["schläft"]}]. Bei Wortarten gern farbig markieren lassen; jedes Zielwort gehört genau zu einer Farbgruppe und kommt als ganzes Wort im Text vor.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
@@ -3111,7 +3114,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
   const audioIntent = raw.audioIntent;
   if (audioIntent?.kind === "ai_generated" || raw.audioPresentation === "listening-only") {
     q.audioPresentation = (audioIntent?.presentation || raw.audioPresentation) === "listening-only" ? "listening-only" : "supplement";
-    q.audioInstruction = String(audioIntent?.instruction || raw.audioInstruction || "").trim().slice(0, 1000);
+    q.audioInstruction = String(raw.audioInstruction ?? audioIntent?.instruction ?? "").trim().slice(0, 1000);
   }
   if (!q.text) {
     q.text = `Aufgabe ${index + 1}`;
@@ -3167,6 +3170,8 @@ function normalizeImportedQuestion(rawInput, index, report) {
   }
 
   if (type === "gapfill") {
+    const gapColors = looseField(raw, ["gapColors", "Lückenfarben"], []);
+    q.gapColors = Array.isArray(gapColors) ? gapColors.map(color => String(color || "")) : [];
     const hasGap = /\[[^\]]+\]/.test(q.text);
     if (!hasGap) {
       const answersRaw = looseField(raw, ["answers", "correctAnswers", "solutions", "acceptedAnswers", "gaps"], []);
@@ -3232,6 +3237,9 @@ function normalizeImportedQuestion(rawInput, index, report) {
     q.passage = String(looseField(raw, ["passage", "sourceText", "markText", "textToMark", "markiertext"], "") || "").trim();
     const targetWords = looseField(raw, ["targetWords", "words", "correctWords", "targets", "zielwoerter", "zielworter"], []);
     q.targetWords = Array.isArray(targetWords) ? targetWords.map(String).map((x) => x.trim()).filter(Boolean) : (targetWords ? [String(targetWords)] : []);
+    const groups = looseField(raw, ["markGroups", "colorGroups", "Farbgruppen"], []);
+    q.markGroups = Array.isArray(groups) ? groups.map(group => ({ name: String(group?.name || "").trim(), color: String(group?.color || "").trim(), words: Array.isArray(group?.words) ? group.words.map(String).map(word => word.trim()).filter(Boolean) : [] })).filter(group => group.name && group.words.length) : [];
+    if (q.markGroups.length) q.targetWords = [...new Set(q.markGroups.flatMap(group => group.words))];
     if (!q.passage) pushUnique(report.warnings, `Aufgabe ${index + 1}: Der Text zum Markieren fehlt.`);
     if (!q.targetWords.length) pushUnique(report.warnings, `Aufgabe ${index + 1}: Die Zielwörter fehlen.`);
     else {
@@ -3645,6 +3653,7 @@ function initializeTypeData(q, type) {
     q.manualReview = Boolean(q.manualReview);
   }
   if (type === "truefalse") q.correctBoolean = q.correctBoolean ?? true;
+  if (type === "gapfill") q.gapColors = Array.isArray(q.gapColors) ? q.gapColors : [];
   if (type === "matching") q.pairs = q.pairs?.length ? q.pairs : [{ left: "", right: "" }, { left: "", right: "" }];
   if (type === "ordering") {
     q.items = q.items?.length ? q.items : ["", ""];
@@ -3654,6 +3663,7 @@ function initializeTypeData(q, type) {
   if (type === "markwords") {
     q.passage = q.passage || "";
     q.targetWords = q.targetWords || [];
+    q.markGroups = Array.isArray(q.markGroups) ? q.markGroups : [];
   }
   if (type === "number") {
     q.numericAnswer = Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : 0;
@@ -3805,6 +3815,32 @@ $("quizStartMode")?.addEventListener("change", () => {
   markDirty();
 });
 
+function bindQuestionTextEditor(node, q) {
+  const text = node.querySelector(".qText");
+  const listening = q.audioPresentation === "listening-only";
+  node.querySelector(".questionTextCaption").textContent = q.type === "markwords" ? "Arbeitsauftrag" : "Frage";
+  text.placeholder = listening ? "Öffentliche Frage zur Höraufgabe – ohne Hörtext oder Lösung …" : "Frage eingeben …";
+  const typeInstruction = listening && q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : "";
+  text.value = listening ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || typeInstruction) : String(q.text || "");
+  text.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  if (listening) text.maxLength = 1000;
+  else text.removeAttribute("maxlength");
+  if (q.type === "gapfill") node.querySelector(".questionTextLabel").classList.add("hidden");
+  text.oninput = event => {
+    if (text.disabled) return;
+    if (q.audioPresentation === "listening-only") {
+      q.audioInstruction = String(event.target.value).slice(0, 1000);
+      if (q.audioIntent) q.audioIntent = { ...q.audioIntent, instruction: q.audioInstruction };
+    } else q.text = event.target.value;
+    if (q.audioPresentation === "listening-only" && String(q.audioInstruction || "").trim()) {
+      const warning = node.querySelector(".questionAudioInstructionWarning");
+      if (warning) warning.textContent = "";
+      node.querySelector(".questionAudioLegacyQuestion")?.remove();
+    }
+    markDirty();
+  };
+}
+
 function renderQuestions() {
   $("editorView").dataset.quizId = state.currentQuiz?.id || "";
   $("editorView").dataset.ownerId = tourUid();
@@ -3832,24 +3868,12 @@ function renderQuestions() {
       node.querySelector(".questionNumber").after(marker);
     }
     node.querySelector(".questionNumber").textContent = `Aufgabe ${index + 1}`;
-    const text = node.querySelector(".qText");
     const type = node.querySelector(".qType");
     const points = node.querySelector(".qPoints");
-    const caption = node.querySelector(".questionTextCaption");
-    const textLabel = node.querySelector(".questionTextLabel");
-
-    caption.textContent = q.type === "markwords" ? "Arbeitsauftrag" : "Frage";
-    text.placeholder = "Frage eingeben …";
-    text.value = q.text || "";
+    bindQuestionTextEditor(node, q);
     type.value = q.type;
     points.value = Math.max(0.5, round1(q.points || 1));
 
-    if (q.type === "gapfill") textLabel.classList.add("hidden");
-
-    text.addEventListener("input", (e) => {
-      q.text = e.target.value;
-      markDirty();
-    });
     type.disabled = Boolean(q._typeChanging || (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) || state.currentQuiz?.published && !state.currentQuiz?.ended);
     type.addEventListener("change", e => {
       const targetType = e.target.value;
@@ -3908,7 +3932,8 @@ function renderQuestions() {
     const markAudioStaleAfterContentEdit = event => {
       if (event.target?.closest?.(".questionAudioEditor")) return;
       let changed = false;
-      if (getQuestionAudioSrc(q) && q.audioNeedsRegeneration !== true) {
+      const publicInstructionEdit = q.audioPresentation === "listening-only" && event.target?.matches?.(".qText");
+      if (!publicInstructionEdit && getQuestionAudioSrc(q) && q.audioNeedsRegeneration !== true) {
         q.audioNeedsRegeneration = true;
         changed = true;
       }
@@ -3946,7 +3971,8 @@ function questionForAi(q) {
   copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
-  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), presentation: q.audioPresentation === "listening-only" ? "listening-only" : "supplement", instruction: String(q.audioInstruction || "").trim().slice(0, 1000), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  if (q.audioPresentation === "listening-only") copy.text = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "");
+  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), presentation: q.audioPresentation === "listening-only" ? "listening-only" : "supplement", instruction: String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim().slice(0, 1000), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
   delete copy.audioInstruction;
   delete copy.audioPresentation;
   delete copy.audioAnswerItems;
@@ -3975,6 +4001,7 @@ function aiQuestionFeedbackSnapshot(q) {
     acceptedOrders: orderingVariantsForStorage(orderingVariants(q.acceptedOrders).slice(0, 12).map(order => order.slice(0, 20))),
     groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
     targetWords: (q.targetWords || []).slice(0, 30),
+    markGroups: (q.markGroups || []).slice(0, 4),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
     passage: String(q.passage || "").slice(0, 600),
     imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
@@ -4698,6 +4725,8 @@ function questionAnswerAudioReady(q) {
 
 function clearQuestionAudio(q) {
   cancelQuestionAudioOperation(q);
+  // Removing audio must not turn a private legacy teacher text into a public question.
+  if (q.audioPresentation === "listening-only") q.text = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
   q.audioPresentation = "supplement";
   q.audioScript = "";
   q.audioDataUrl = "";
@@ -4861,7 +4890,7 @@ function renderQuestionAudioEditor(container, q) {
   const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   const shortcuts = document.createElement("div");
   shortcuts.className = "questionAudioQuickActions";
-  const speakTask = makeMiniButton("Aufgabe als Höraufgabe", () => generateAiAudioForQuestion(q, container, { fromTask: true }));
+  const speakTask = makeMiniButton("Frage vorlesen", () => generateAiAudioForQuestion(q, container, { fromTask: true }));
   speakTask.classList.add("generateQuestionAudio");
   speakTask.disabled = locked;
   shortcuts.appendChild(speakTask);
@@ -4876,13 +4905,8 @@ function renderQuestionAudioEditor(container, q) {
   details.setAttribute("aria-label", "Audio zur Aufgabe");
   details.innerHTML = `<div class="questionAudioHeading"><strong>Audio</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
     <div class="questionAudioBody">
-      <label class="stack compact"><span>Anzeige für Schüler</span><select class="questionAudioPresentation"><option value="supplement">Text und Audio</option><option value="listening-only">Nur Audio</option></select></label>
       <div class="questionAudioPreview"></div>
-      <div class="questionAudioInstructionGroup">
-      <label class="stack compact"><span>Sichtbarer Arbeitsauftrag <small>für Schüler · ohne Hörtext oder Lösungen</small></span><textarea class="questionAudioInstruction" rows="2" maxlength="1000" placeholder="z. B. Höre den Hörtext. Wähle genau zwei Antworten aus."></textarea></label>
-      <div class="questionAudioInstructionActions"></div>
       <small class="questionAudioInstructionWarning" role="status"></small>
-      </div>
       <details class="questionAudioEdit"><summary>Audio bearbeiten</summary><div class="questionAudioEditBody">
       <label class="stack compact"><span>Hörtext <small>privat · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
       <div class="questionAudioActions"></div>
@@ -4892,37 +4916,30 @@ function renderQuestionAudioEditor(container, q) {
   container.appendChild(details);
   details.querySelector(".questionAudioEditBody").prepend(shortcuts);
   const input = details.querySelector(".questionAudioScript");
-  const instruction = details.querySelector(".questionAudioInstruction");
   const instructionWarning = details.querySelector(".questionAudioInstructionWarning");
-  const updateInstructionWarning = () => {
-    details.querySelector(".questionAudioInstructionGroup").hidden = q.audioPresentation !== "listening-only";
-    instructionWarning.textContent = q.audioPresentation === "listening-only" && !String(q.audioInstruction || "").trim()
-      ? "Arbeitsauftrag fehlt. Trage nur den Auftrag ein – ohne Hörtext oder Lösungen." : "";
-  };
-  instruction.value = String(q.audioInstruction || "");
-  instruction.disabled = locked;
-  instruction.addEventListener("input", () => {
-    q.audioInstruction = instruction.value.slice(0, 1000);
-    updateInstructionWarning();
-    markDirty();
-  });
-  const copyInstruction = makeMiniButton("Frage übernehmen", () => {
-    if (locked) return;
-    q.audioInstruction = String(q.text || "").trim().slice(0, 1000);
-    instruction.value = q.audioInstruction;
-    updateInstructionWarning();
-    markDirty();
-  });
-  copyInstruction.classList.add("copyQuestionAudioInstruction");
-  copyInstruction.title = "Übernimmt den Fragetext als öffentlichen Auftrag. Prüfe vorher, dass er keine Hörtexte oder Lösungen enthält.";
-  copyInstruction.disabled = locked || !String(q.text || "").trim();
-  details.querySelector(".questionAudioInstructionActions").appendChild(copyInstruction);
-  updateInstructionWarning();
-  const presentation = details.querySelector(".questionAudioPresentation");
-  presentation.value = q.audioPresentation === "listening-only" ? "listening-only" : "supplement";
-  presentation.querySelector('option[value="listening-only"]').disabled = ["gapfill", "markwords"].includes(q.type);
-  presentation.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-  presentation.addEventListener("change", () => { cancelQuestionAudioOperation(q); q.audioPresentation = presentation.value; updateInstructionWarning(); markDirty(); });
+  const missingQuestion = q.audioPresentation === "listening-only" && !String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  if (missingQuestion) {
+    if (q.type !== "truefalse" || !questionStudentAudioReady(q)) instructionWarning.textContent = "In dieser älteren Aufgabe fehlt die getrennt gespeicherte öffentliche Frage. Prüfe die ältere Fassung unter Audio bearbeiten.";
+    const legacy = document.createElement("div");
+    legacy.className = "questionAudioLegacyQuestion";
+    const label = document.createElement("small");
+    label.textContent = "Ältere Lehrerfassung · vor Übernahme auf Hörtext und Lösungen prüfen";
+    const previous = document.createElement("p");
+    previous.textContent = String(q.text || "");
+    legacy.append(label, previous);
+    const copyInstruction = makeMiniButton("Geprüfte Fassung als Frage übernehmen", () => {
+      if (locked) return;
+      q.audioInstruction = String(q.text || "").trim().slice(0, 1000);
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
+      markDirty();
+      renderQuestionAudioEditor(container, q);
+    });
+    copyInstruction.classList.add("copyQuestionAudioInstruction");
+    copyInstruction.disabled = locked || !String(q.text || "").trim();
+    legacy.appendChild(copyInstruction);
+    details.querySelector(".questionAudioEditBody").appendChild(legacy);
+  }
   input.value = String(q.audioScript || "");
   input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   input.addEventListener("input", event => {
@@ -4967,6 +4984,8 @@ function renderQuestionAudioEditor(container, q) {
     const remove = makeMiniButton("Audio entfernen", () => {
       if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
       clearQuestionAudio(q);
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
       markDirty();
       renderQuestionAudioEditor(container, q);
     });
@@ -5115,9 +5134,13 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false } = {
   if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
   if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du KI-Audio erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
+  const originalPublicQuestion = q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() : String(q.text || "").trim();
+  const originalPresentation = q.audioPresentation;
+  const originalPassage = String(q.passage || "");
+  if (fromTask && !originalPublicQuestion) return toast("Die öffentliche Frage fehlt. Prüfe zuerst die ältere Fassung unter Audio bearbeiten.", "error");
   const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
   const usesTaskText = fromTask || !originalScript;
-  const script = usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  const script = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
   if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
   if (script.length > 500) return toast("Der Hörtext darf höchstens 500 Zeichen lang sein.", "error");
   if (!state.currentQuiz?.id || !q?.id) return toast("Audio kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
@@ -5133,10 +5156,15 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false } = {
   try {
     const result = await aiApi.generateQuestionAudio({ quizId: state.currentQuiz.id, questionId: q.id, script });
     if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat keine Audiodatei zurückgegeben.");
-    if (operation.cancelled || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || String(q.audioScript || "").replace(/\s+/g, " ").trim() !== originalScript || usesTaskText && defaultQuestionAudioScript(q) !== script) return toast("Die Aufgabe wurde geändert oder geschlossen. Das Audio wurde nicht eingefügt.");
+    if (operation.cancelled || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || String(q.audioScript || "").replace(/\s+/g, " ").trim() !== originalScript || q.audioPresentation !== originalPresentation || String(q.passage || "") !== originalPassage || (q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() : String(q.text || "").trim()) !== originalPublicQuestion || !fromTask && usesTaskText && defaultQuestionAudioScript(q) !== script) return toast("Die Aufgabe wurde geändert oder geschlossen. Das Audio wurde nicht eingefügt.");
     Object.assign(q, result.asset);
     q.audioScript = script;
-    if (fromTask) q.audioPresentation = q.passage || ["gapfill", "markwords"].includes(q.type) ? "supplement" : "listening-only";
+    if (fromTask) {
+      q.audioInstruction = originalPublicQuestion.slice(0, 1000);
+      q.audioPresentation = q.passage || originalPublicQuestion.length > 1000 || ["gapfill", "markwords"].includes(q.type) ? "supplement" : "listening-only";
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
+    }
     q.audioNeedsRegeneration = false;
     markDirty();
     renderQuestionAudioEditor(container, q);
@@ -5396,6 +5424,7 @@ function makeGapChip(answers, q, editor) {
     span.dataset.answers = JSON.stringify(next);
     label.textContent = next[0];
     q.text = serializeGapComposer(editor);
+    editor.dispatchEvent(new CustomEvent("gradecrew:gap-editor-changed"));
     markDirty();
   });
   const remove = document.createElement("button");
@@ -5404,10 +5433,13 @@ function makeGapChip(answers, q, editor) {
   remove.textContent = "×";
   remove.title = "Lücke entfernen";
   remove.addEventListener("click", () => {
+    const index = Array.from(editor.querySelectorAll(".gapChip")).indexOf(span);
+    if (Array.isArray(q.gapColors) && q.gapColors.length && index >= 0) q.gapColors.splice(index, 1);
     let current = [];
     try { current = JSON.parse(span.dataset.answers || "[]"); } catch (_) {}
     span.replaceWith(document.createTextNode(current[0] || ""));
     q.text = serializeGapComposer(editor);
+    editor.dispatchEvent(new CustomEvent("gradecrew:gap-editor-changed"));
     markDirty();
   });
   span.append(label, remove);
@@ -5437,7 +5469,18 @@ function renderGapfillEditor(container, q) {
   editor.contentEditable = "true";
   editor.dataset.placeholder = "z. B. Die Hauptstadt von Bayern ist München.";
   fillGapComposer(editor, q);
-  editor.addEventListener("input", () => { q.text = serializeGapComposer(editor); markDirty(); });
+  const syncTypedText = () => {
+    const before = JSON.stringify(parseGaps(q.text).map(gap => gap.answers));
+    q.text = serializeGapComposer(editor);
+    if (before !== JSON.stringify(parseGaps(q.text).map(gap => gap.answers))) {
+      q.gapColors = [];
+      fillGapComposer(editor, q);
+      renderGapColorEditor(container, q);
+    }
+    markDirty();
+  };
+  editor.addEventListener("input", syncTypedText);
+  editor.addEventListener("gradecrew:gap-editor-changed", () => renderGapColorEditor(container, q));
   editor.addEventListener("paste", (e) => {
     e.preventDefault();
     const text = e.clipboardData?.getData("text/plain") || "";
@@ -5451,8 +5494,7 @@ function renderGapfillEditor(container, q) {
     range.collapse(true);
     selection.removeAllRanges();
     selection.addRange(range);
-    q.text = serializeGapComposer(editor);
-    markDirty();
+    syncTypedText();
   });
   const actions = document.createElement("div");
   actions.className = "gapActions";
@@ -5463,6 +5505,8 @@ function renderGapfillEditor(container, q) {
     if (!editor.contains(range.commonAncestorContainer)) return toast("Die Markierung muss im Lückentext liegen.", "error");
     const selected = selection.toString().trim();
     if (!selected) return toast("Markiere zuerst einen Text für die Lücke.", "error");
+    const colors = new Map(Array.from(editor.querySelectorAll(".gapChip"), (chip, index) => [chip, q.gapColors?.[index] || ""]));
+    const hadColors = Boolean(q.gapColors?.length);
     range.deleteContents();
     const chip = makeGapChip([selected], q, editor);
     range.insertNode(chip);
@@ -5471,6 +5515,8 @@ function renderGapfillEditor(container, q) {
     selection.removeAllRanges();
     selection.addRange(range);
     q.text = serializeGapComposer(editor);
+    q.gapColors = hadColors ? Array.from(editor.querySelectorAll(".gapChip"), chip => colors.get(chip) || "") : [];
+    renderGapColorEditor(container, q);
     markDirty();
   });
   actions.appendChild(mark);
@@ -5478,6 +5524,31 @@ function renderGapfillEditor(container, q) {
   note.className = "hint";
   note.textContent = "Tipp: Klicke auf eine markierte Lücke, um alternative richtige Antworten einzutragen.";
   container.append(info, editor, actions, note);
+  renderGapColorEditor(container, q);
+}
+
+function renderGapColorEditor(container, q) {
+  container.querySelectorAll(".gapColorEditor").forEach(editor => editor.remove());
+  const gaps = parseGaps(q.text);
+  if (gaps.length) {
+    const colors = document.createElement("div");
+    colors.className = "gapColorEditor";
+    const title = document.createElement("strong");
+    title.textContent = "Farben für Lücken (optional)";
+    colors.appendChild(title);
+    gaps.forEach((gap, index) => {
+      const label = document.createElement("label");
+      label.textContent = `Lücke ${index + 1}: ${gap.answers[0]}`;
+      const select = document.createElement("select");
+      for (const [value, name] of [["", "Ohne Farbe"], ["blue", "Blau"], ["orange", "Orange"], ["green", "Grün"], ["purple", "Lila"]]) {
+        const option = document.createElement("option"); option.value = value; option.textContent = name; select.appendChild(option);
+      }
+      select.value = q.gapColors?.[index] || "";
+      select.addEventListener("change", () => { q.gapColors = gaps.map((_, i) => i === index ? select.value : q.gapColors?.[i] || ""); markDirty(); });
+      label.appendChild(select); colors.appendChild(label);
+    });
+    container.appendChild(colors);
+  }
 }
 
 function renderAnswerEditor(container, q) {
@@ -5678,6 +5749,41 @@ function renderAnswerEditor(container, q) {
       markDirty();
     });
     container.appendChild(targets);
+    const colorToggle = document.createElement("button");
+    colorToggle.type = "button";
+    colorToggle.className = "miniButton";
+    colorToggle.textContent = (q.markGroups || []).length ? "Ohne Farben markieren" : "Mit Farben markieren";
+    colorToggle.addEventListener("click", () => {
+      q.markGroups = (q.markGroups || []).length ? [] : [
+        { name: "Nomen", color: "blue", words: [] },
+        { name: "Adjektive", color: "orange", words: [] },
+        { name: "Verben", color: "green", words: [] }
+      ];
+      q.targetWords = q.markGroups.length ? [] : q.targetWords;
+      renderQuestions(); markDirty();
+    });
+    container.appendChild(colorToggle);
+    if ((q.markGroups || []).length) {
+      targets.hidden = true;
+      const groups = document.createElement("div");
+      groups.className = "markColorEditor";
+      const sync = () => { q.targetWords = [...new Set(q.markGroups.flatMap(group => group.words))]; markDirty(); };
+      q.markGroups.forEach(group => {
+        const row = document.createElement("div");
+        row.className = `markColorEditorRow markColor-${group.color}`;
+        const name = document.createElement("input");
+        name.setAttribute("aria-label", `Name der ${group.color}-Markierung`);
+        name.value = group.name;
+        name.addEventListener("input", () => { group.name = name.value.trim(); markDirty(); });
+        const words = document.createElement("input");
+        words.setAttribute("aria-label", `${group.name}: Wörter durch Kommas trennen`);
+        words.placeholder = "Wörter durch Kommas trennen";
+        words.value = group.words.join(", ");
+        words.addEventListener("input", () => { group.words = words.value.split(",").map(word => word.trim()).filter(Boolean); sync(); });
+        row.append(name, words); groups.appendChild(row);
+      });
+      container.appendChild(groups);
+    }
     return;
   }
 
@@ -5837,6 +5943,11 @@ function markwordCorrectIndexes(q) {
   return tokenizeWords(q.passage).filter((t) => t.isWord && targets.has(normalizeWord(t.text))).map((t) => String(t.wordIndex));
 }
 
+function markwordCorrectColors(q) {
+  const byWord = new Map((q.markGroups || []).flatMap(group => (group.words || []).map(word => [normalizeWord(word), group.color])));
+  return Object.fromEntries(tokenizeWords(q.passage).filter(token => token.isWord && byWord.has(normalizeWord(token.text))).map(token => [String(token.wordIndex), byWord.get(normalizeWord(token.text))]));
+}
+
 function validateQuiz() {
   if (!$("quizTitle").value.trim()) return "Bitte einen Titel eingeben.";
   if (!state.questions.length) return "Bitte mindestens eine Aufgabe hinzufügen.";
@@ -5846,7 +5957,10 @@ function validateQuiz() {
   }
   for (let i = 0; i < state.questions.length; i += 1) {
     const q = state.questions[i];
-    if (!q.text.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
+    const publicQuestion = q.audioPresentation === "listening-only"
+      ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : ""))
+      : String(q.text || "");
+    if (!publicQuestion.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
     if (!(Number(q.points) > 0)) return `Aufgabe ${i + 1}: Punkte müssen größer als 0 sein.`;
     if (q.type === "text" && !q.manualReview && !(q.acceptedAnswers || []).length) return `Aufgabe ${i + 1}: Hinterlege mindestens eine akzeptierte Antwort oder aktiviere die manuelle Prüfung.`;
     if (["single", "multi", "dropdown"].includes(q.type)) {
@@ -5857,6 +5971,7 @@ function validateQuiz() {
     if (q.type === "gapfill") {
       const gaps = parseGaps(q.text);
       if (!gaps.length || gaps.some((g) => !g.answers.length)) return `Aufgabe ${i + 1}: Markiere mindestens eine Stelle als Lücke.`;
+      if ((q.gapColors || []).some(color => color && !["blue", "orange", "green", "purple"].includes(color))) return `Aufgabe ${i + 1}: Eine Lückenfarbe ist ungültig.`;
     }
     if (q.type === "matching") {
       if ((q.pairs || []).length < 2 || q.pairs.some((p) => !p.left.trim() || !p.right.trim())) return `Aufgabe ${i + 1}: Mindestens zwei vollständige Zuordnungspaare erforderlich.`;
@@ -5875,6 +5990,13 @@ function validateQuiz() {
       if (!q.passage?.trim()) return `Aufgabe ${i + 1}: Der Text zum Markieren fehlt.`;
       if (!(q.targetWords || []).length) return `Aufgabe ${i + 1}: Mindestens ein Zielwort fehlt.`;
       if (!markwordCorrectIndexes(q).length) return `Aufgabe ${i + 1}: Keines der Zielwörter kommt im Text vor.`;
+      if ((q.markGroups || []).length) {
+        if (q.markGroups.length < 2 || q.markGroups.length > 4 || q.markGroups.some(group => !group.name?.trim() || !["blue", "orange", "green", "purple"].includes(group.color) || !group.words?.length)) return `Aufgabe ${i + 1}: Jede Farbgruppe braucht einen Namen und passende Wörter.`;
+        const colors = q.markGroups.map(group => group.color);
+        const words = q.markGroups.flatMap(group => group.words.map(normalizeWord));
+        if (new Set(colors).size !== colors.length || new Set(words).size !== words.length) return `Aufgabe ${i + 1}: Farben und Zielwörter dürfen nicht doppelt vorkommen.`;
+        if (q.markGroups.some(group => group.words.some(word => !tokenizeWords(q.passage).some(token => token.isWord && normalizeWord(token.text) === normalizeWord(word))))) return `Aufgabe ${i + 1}: Jedes Farbwort muss im Text vorkommen.`;
+      }
     }
     if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) return `Aufgabe ${i + 1}: Das richtige Rechenergebnis fehlt.`;
   }
@@ -5910,7 +6032,8 @@ function sanitizeQuestionForSave(q) {
   }
   if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
   if (q.audioPresentation === "listening-only") base.audioPresentation = "listening-only";
-  if (String(q.audioInstruction || "").trim()) base.audioInstruction = String(q.audioInstruction).trim().slice(0, 1000);
+  const publicAudioQuestion = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  if (q.audioInstruction != null || q.audioIntent?.instruction != null) base.audioInstruction = publicAudioQuestion.slice(0, 1000);
   if (q.audioAnswerMode === "audio-only") base.audioAnswerMode = "audio-only";
   if (q.audioAnswerMode === "audio-only" && !["single", "multi", "dropdown"].includes(q.type)) base.audioAnswerItems = questionAnswerAudioEntries(q).map(entry => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: String(entry.asset?.audioDataUrl || ""), audioNeedsRegeneration: !entry.asset || entry.asset.audioNeedsRegeneration === true || entry.asset.sourceText !== entry.sourceText }));
   if (["single", "multi", "dropdown"].includes(q.type)) {
@@ -5932,7 +6055,9 @@ function sanitizeQuestionForSave(q) {
   if (q.type === "markwords") {
     base.passage = String(q.passage || "").trim();
     base.targetWords = (q.targetWords || []).map((x) => String(x).trim()).filter(Boolean);
+    base.markGroups = (q.markGroups || []).map(group => ({ name: String(group.name || "").trim(), color: group.color, words: (group.words || []).map(word => String(word).trim()).filter(Boolean) }));
   }
+  if (q.type === "gapfill") base.gapColors = (q.gapColors || []).slice(0, parseGaps(q.text).length).map(color => ["blue", "orange", "green", "purple"].includes(color) ? color : "");
   if (q.type === "number") {
     base.numericAnswer = Number(q.numericAnswer);
     base.tolerance = Math.max(0, Number(q.tolerance) || 0);
@@ -6370,7 +6495,8 @@ function renderGapfillStudent(section, q) {
   while ((match = regex.exec(q.text))) {
     appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
-    input.className = "inlineGap";
+    const color = q.gapColors?.[gapIndex];
+    input.className = `inlineGap${["blue", "orange", "green", "purple"].includes(color) ? ` gapColor-${color}` : ""}`;
     input.dataset.gapIndex = String(gapIndex++);
     input.type = "text";
     input.placeholder = "…";
@@ -6546,6 +6672,22 @@ function makeAudioDragItem(label, key, src) {
 function renderMarkwordsStudent(section, q) {
   const wrap = document.createElement("div");
   wrap.className = "markWordsBox";
+  const groups = (q.markGroups || []).filter(group => group.name && ["blue", "orange", "green", "purple"].includes(group.color));
+  let activeColor = groups[0]?.color || "";
+  if (groups.length) {
+    const palette = document.createElement("div");
+    palette.className = "markColorPalette";
+    groups.forEach(group => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `markColorChoice markColor-${group.color}`;
+      button.textContent = group.name;
+      button.setAttribute("aria-pressed", String(activeColor === group.color));
+      button.addEventListener("click", () => { activeColor = group.color; palette.querySelectorAll("button").forEach(choice => choice.setAttribute("aria-pressed", String(choice === button))); });
+      palette.appendChild(button);
+    });
+    section.appendChild(palette);
+  }
   tokenizeWords(q.passage).forEach((token) => {
     if (!token.isWord) {
       wrap.appendChild(document.createTextNode(token.text));
@@ -6556,7 +6698,17 @@ function renderMarkwordsStudent(section, q) {
     btn.className = "wordToken";
     btn.dataset.wordIndex = String(token.wordIndex);
     btn.textContent = token.text;
-    btn.addEventListener("click", () => btn.classList.toggle("marked"));
+    btn.setAttribute("aria-pressed", "false");
+    btn.addEventListener("click", () => {
+      if (groups.length) {
+        btn.dataset.markColor = btn.dataset.markColor === activeColor ? "" : activeColor;
+        btn.classList.toggle("marked", Boolean(btn.dataset.markColor));
+        const name = groups.find(group => group.color === btn.dataset.markColor)?.name;
+        btn.textContent = token.text + (name ? ` (${name})` : "");
+        btn.setAttribute("aria-label", btn.textContent);
+      } else btn.classList.toggle("marked");
+      btn.setAttribute("aria-pressed", String(btn.classList.contains("marked")));
+    });
     wrap.appendChild(btn);
   });
   section.appendChild(wrap);
@@ -6766,7 +6918,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(String(q.audioInstruction || "").trim() || contentLabels.missingListeningInstruction) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" ? contentLabels.listeningTrueFalseInstruction : contentLabels.missingListeningInstruction)) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {
@@ -7066,7 +7218,9 @@ function studentAnswerIsComplete(q, given) {
     const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
     return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
   }
-  if (q.type === "markwords") return Array.isArray(given) && given.length > 0;
+  if (q.type === "markwords") return (q.markGroups || []).length
+    ? Boolean(given && typeof given === "object" && !Array.isArray(given) && Object.keys(given).length)
+    : Array.isArray(given) && given.length > 0;
   return false;
 }
 
@@ -7136,7 +7290,10 @@ function readStudentAnswer(q) {
     });
     return out;
   }
-  if (q.type === "markwords") return Array.from(section.querySelectorAll(".wordToken.marked")).map((x) => x.dataset.wordIndex);
+  if (q.type === "markwords") {
+    const marked = Array.from(section.querySelectorAll(".wordToken.marked"));
+    return (q.markGroups || []).length ? Object.fromEntries(marked.map(token => [token.dataset.wordIndex, token.dataset.markColor]).filter(([, color]) => color)) : marked.map(token => token.dataset.wordIndex);
+  }
   return "";
 }
 
@@ -7189,6 +7346,14 @@ function evaluateAnswer(q, given) {
     return { awarded: round1(ratio * max), max, needsReview: false, correct: good === total };
   }
   if (q.type === "markwords") {
+    if ((q.markGroups || []).length) {
+      const expected = markwordCorrectColors(q);
+      const selected = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+      const good = Object.entries(selected).filter(([index, color]) => expected[index] === color).length;
+      const bad = Object.entries(selected).length - good;
+      const total = Object.keys(expected).length;
+      return { awarded: round1(Math.max(0, Math.min(1, (good - bad) / Math.max(1, total))) * max), max, needsReview: false, correct: good === total && bad === 0 && Object.keys(selected).length === total };
+    }
     const correctIndexes = markwordCorrectIndexes(q);
     const selected = Array.isArray(given) ? given.map(String) : [];
     const good = selected.filter((v) => correctIndexes.includes(v)).length;
@@ -7372,6 +7537,10 @@ function answerDisplay(q, given, contentLocale) {
     }).join("; ");
   }
   if (q.type === "markwords") {
+    if ((q.markGroups || []).length) {
+      const selected = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+      return tokenizeWords(q.passage).filter(token => token.isWord && selected[String(token.wordIndex)]).map(token => `${token.text} (${q.markGroups.find(group => group.color === selected[String(token.wordIndex)])?.name || selected[String(token.wordIndex)]})`).join(", ") || "(leer)";
+    }
     const wanted = new Set((given || []).map(String));
     return tokenizeWords(q.passage).filter((t) => t.isWord && wanted.has(String(t.wordIndex))).map((t) => t.text).join(", ") || "(leer)";
   }
@@ -7391,7 +7560,7 @@ function correctDisplay(q, contentLocale) {
   if (q.type === "matching") return (q.pairs || []).map((p) => `${p.left} → ${p.right}`).join("; ");
   if (q.type === "ordering") return acceptedOrderingOrders(q).map(order => order.map(index => q.items[index]).join(" → ")).join(" / ");
   if (q.type === "grouping") return (q.groups || []).map((g) => `${g.name}: ${(g.items || []).join(", ")}`).join("; ");
-  if (q.type === "markwords") return tokenizeWords(q.passage).filter((t) => t.isWord && markwordCorrectIndexes(q).includes(String(t.wordIndex))).map((t) => t.text).join(", ");
+  if (q.type === "markwords") return (q.markGroups || []).length ? q.markGroups.map(group => `${group.name}: ${(group.words || []).join(", ")}`).join("; ") : tokenizeWords(q.passage).filter((t) => t.isWord && markwordCorrectIndexes(q).includes(String(t.wordIndex))).map((t) => t.text).join(", ");
   return (q.options || []).filter((o) => o.correct).map((o) => o.text).join(", ");
 }
 

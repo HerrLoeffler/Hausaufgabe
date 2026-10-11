@@ -117,3 +117,9 @@ test("changing the public listening selection criterion invalidates the variant 
   const changed = buildVariantInput({ title: "Hören" }, [{ ...question, audioInstruction: "Wähle genau drei Adjektive aus." }]);
   assert.notEqual(changed.variantSourceFingerprint, first.variantSourceFingerprint);
 });
+
+test('variant blueprint respects an explicitly cleared question over nested legacy instruction', () => {
+  const source = q(1, { audioPresentation: 'listening-only', audioDataUrl: 'old', audioInstruction: '', audioIntent: { instruction: 'Superseded legacy criterion' } });
+  const input = buildVariantInput({ title: 'Synthetic' }, [source], new Map());
+  assert.equal(input.sourceTest.questions[0].audioIntent.instruction, '');
+});

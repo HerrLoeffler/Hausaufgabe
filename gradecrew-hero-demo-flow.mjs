@@ -6,9 +6,9 @@ export function createDemoFlow({ onChange, reducedMotion = false, schedule = set
   function emit() { onChange({ ...state }); }
   function advance() {
     clear();
-    if (!state?.running || state.paused || state.name === 'coco') return;
+    if (!state?.running || state.paused) return;
     if (state.phase < 2) {
-      timer = schedule(() => { timer = null; nextPhase(); }, 1800);
+      timer = schedule(() => { timer = null; nextPhase(); }, state.name === 'coco' ? 4800 : 1800);
     }
   }
   function nextPhase() {
@@ -23,7 +23,7 @@ export function createDemoFlow({ onChange, reducedMotion = false, schedule = set
   function start(name, tutorial = false) {
     if (!crew.includes(name)) return;
     clear();
-    state = { name, tutorial, index: crew.indexOf(name), phase: reducedMotion && name !== 'coco' ? 2 : 0, running: name === 'coco' || !reducedMotion, paused: false };
+    state = { name, tutorial, index: crew.indexOf(name), phase: reducedMotion ? 2 : 0, running: !reducedMotion, paused: false };
     emit(); advance();
   }
   return {

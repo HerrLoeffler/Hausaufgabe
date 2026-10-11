@@ -82,6 +82,7 @@ test('gc24 finish highlights elapsed time, removes the redundant finish action a
   assert.equal(w.document.getElementById('settingsView').classList.contains('hidden'), false);
   const guide = w.document.querySelector('.gc24SettingsGuide');
   assert.ok(guide);
+  assert.match(guide.querySelector('.gc24GuideIdentity img').getAttribute('src'),/wilma-grading\.png$/);
   assert.match(guide.textContent, /Standardwerte/);
   assert.doesNotMatch(guide.textContent, /Einstellungen dieses Tests/);
 });

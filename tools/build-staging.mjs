@@ -29,7 +29,20 @@ files.push(
   'gradecrew-hero-scene.css',
   'assets/gradecrew/crew-classroom-v3.webp', 'assets/gradecrew/crew-classroom-wide-v4.png',
   'assets/gradecrew/remy-test-creation-typewriter.png', 'assets/gradecrew/remy-test-input-microphone.png',
-  'assets/gradecrew/cuddly-hedgehog.webp', 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png'
+  'assets/gradecrew/cuddly-hedgehog.webp', 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png',
+  'assets/gradecrew/coco-help-phone.png', 'assets/gradecrew/remy-new-test-button.png',
+  'assets/gradecrew/trash-bin-3d.png', 'assets/gradecrew/remy-new-test-tablet.png',
+  'assets/gradecrew/remy-create-choice.png', 'assets/gradecrew/remy-microphone.png',
+  'assets/gradecrew/emmi-colors.png', 'assets/gradecrew/wilma-grading.png',
+  'assets/gradecrew/coco-login-heart-17.png',
+  'assets/gradecrew/coco-footer-run-10.png', 'assets/gradecrew/remy-footer-run-10.png',
+  'assets/gradecrew/emmi-footer-run-10.png', 'assets/gradecrew/wilma-footer-run-10.png',
+  'assets/gradecrew/coco-footer-guide.png', 'assets/gradecrew/remy-footer-create.png',
+  'assets/gradecrew/emmi-footer-improve.png', 'assets/gradecrew/wilma-footer-grade.png',
+  'assets/gradecrew/coco-footer-letter-c-v5.png', 'assets/gradecrew/remy-footer-letter-r-v4.png',
+  'assets/gradecrew/emmi-footer-letter-e-v2.png', 'assets/gradecrew/wilma-footer-letter-w-v2.png',
+  'assets/gradecrew/coco-footer-glance-v4.png', 'assets/gradecrew/emmi-footer-glance.png',
+  'assets/gradecrew/wilma-footer-glance.png', 'assets/gradecrew/wilma-worksheet-flying.png'
 );
 for (const name of await fs.readdir(path.join(root, 'assets/gradecrew'))) {
   if (name.endsWith('.svg')) files.push(`assets/gradecrew/${name}`);
@@ -45,8 +58,8 @@ for (const name of files.filter(name => /\.(js|mjs|html|css)$/.test(name))) {
   const content = await fs.readFile(path.join(output, name), 'utf8');
   const references = [
     ...content.matchAll(/["'](\.\.?\/[^"'`\s]+\.(?:js|mjs)(?:\?[^"']*)?)["']/g),
-    ...content.matchAll(/(?:src|href)=["']([^"']+\.(?:js|css|svg)(?:\?[^"']*)?)["']/g),
-    ...content.matchAll(/url\(["']?([^\s)'"`]+\.svg)["']?\)/g)
+    ...content.matchAll(/(?:src|href)=["']([^"']+\.(?:js|mjs|css|svg|png|webp)(?:\?[^"']*)?)["']/g),
+    ...content.matchAll(/url\(["']?([^\s)'"`]+\.(?:svg|png|webp))["']?\)/g)
   ];
   for (const [, reference] of references) {
     if (/^https?:/.test(reference) || reference.includes('${')) continue;

@@ -24,12 +24,12 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     const privateAudio = privateAudios.get(q.id) || {};
     const projection = {};
     // Explicit authoring allowlist: never copy attempts, asset bytes, release state or IDs.
-    for (const key of ["type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit"]) {
+    for (const key of ["type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit"]) {
       if (q[key] !== undefined) projection[key] = JSON.parse(JSON.stringify(q[key]));
     }
     if (q.options) projection.options = q.options.map(o => ({ text: text(o.text, 500), correct: o.correct === true }));
     projection.mediaIntent = hasImage(q) ? { kind: "ai_generated", prompt: text(q.imageScene || q.mediaIntent?.prompt || q.imageAlt), altText: text(q.imageAlt, 700) } : { kind: "none" };
-    projection.audioIntent = hasAudio(q, privateAudio) ? { kind: "ai_generated", script: text(privateAudio.script || q.audioIntent?.script, LIMITS.maxAudioScriptChars), instruction: text(q.audioInstruction || q.audioIntent?.instruction, 1000).trim(), presentation: (q.audioPresentation || q.audioIntent?.presentation) === "listening-only" ? "listening-only" : "supplement" } : { kind: "none" };
+    projection.audioIntent = hasAudio(q, privateAudio) ? { kind: "ai_generated", script: text(privateAudio.script || q.audioIntent?.script, LIMITS.maxAudioScriptChars), instruction: text(q.audioInstruction ?? q.audioIntent?.instruction, 1000).trim(), presentation: (q.audioPresentation || q.audioIntent?.presentation) === "listening-only" ? "listening-only" : "supplement" } : { kind: "none" };
     return projection;
   });
   const variantSlots = sorted.map((q, i) => ({ type: q.type, points: Number(q.points), mediaKind: sourceQuestions[i].mediaIntent.kind,

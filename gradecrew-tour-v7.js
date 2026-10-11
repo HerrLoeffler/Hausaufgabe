@@ -201,6 +201,9 @@ export function installCrewTour(api) {
 
   function isAllowedNode(node) {
     if (!(node instanceof Node)) return false;
+    // The local developer tool is deliberately available at every tutorial step.
+    // Events from its shadow DOM are retargeted to this host at document level.
+    if (node instanceof Element && (node.id === "gc-review-tool" || node.closest("#gc-review-tool"))) return true;
     if (isSubmitConfirmationNode(node)) return true;
     if (api.reviewControlsAllowed?.() && node instanceof Element && node.closest("[data-review-panel], [data-review-toggle], [aria-label=\"Lokale Prüfszenen\"]")) return true;
     if (root?.contains(node)) return true;
@@ -710,7 +713,7 @@ export function installCrewTour(api) {
       if(allowed[stage]&&!allowed[stage].includes(data.id)){error("Die Tour ist aus dem vorgesehenen Schritt gesprungen. Lade die Seite neu; die Einführung startet anschließend wieder am Anfang.",()=>location.reload());return;}
     }
     if(event==="view"&&data.id==="createView"&&stage==="new"){
-      stage="handoff";handoff("guide","create","Das ist Remy!","Remy erstellt mit dir deinen ersten Test. Er zeigt dir gleich, welche Angaben er dafür braucht. Ich bin danach wieder für dich da.",()=>{stage="choice";coach("create","Test mit Remy erstellen","Remy hilft dir, passende Aufgaben zu deinem Thema und deiner Klasse zusammenzustellen. Die anderen Möglichkeiten bleiben verfügbar.",{target:"#createAiBtn",interactiveTarget:true});});return;
+      stage="handoff";handoff("guide","create","Das ist Remy!","Remy erstellt mit dir deinen ersten Test. Er zeigt dir gleich, welche Angaben er dafür braucht. Ich bin danach wieder für dich da.",()=>{stage="choice";coach("create","Wir starten mit Remy.","„Mit Remy einen Test erstellen“ ist der Hauptweg in GradeCrew. Die anderen Möglichkeiten bleiben verfügbar, stehen heute aber nicht im Mittelpunkt.",{target:"#createAiBtn",interactiveTarget:true});});return;
     }
     if(event==="view"&&data.id==="aiView"&&stage==="choice"){
       stage="form-intro";coach("create","Wir bauen einen Test für Klasse 4.","Englisch, Grundschule: Colours, animals & school things. Ich fülle die echten Felder gleich Schritt für Schritt aus.",{button:"Felder ausfüllen",onButton:ghostFillForm,centered:true});return;

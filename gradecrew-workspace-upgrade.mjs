@@ -139,7 +139,7 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
       addIcon(card.querySelector('.quizMore > summary'), 'more');
     }
     const trash = document.getElementById('trashBtn');
-    if (trash && !trash.querySelector('.gcWorkspaceIcon')) {
+    if (trash && !trash.querySelector('svg, img')) {
       for (const node of trash.childNodes) if (node.nodeType === 3) node.textContent = node.textContent.replace(/^\s*🗑\uFE0F?\s*/, '');
       addIcon(trash,'trash');
     }

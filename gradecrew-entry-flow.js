@@ -66,6 +66,34 @@ function installHeroViewportFit(authView) {
     if (!page || !visual || !stage || authView.classList.contains('hidden') || authView.dataset.entryState !== 'start') return;
     const top = page.getBoundingClientRect().top + window.scrollY;
     const benefits = authView.querySelector('.gcEntryBenefitsCompact')?.getBoundingClientRect().height || 0;
+    const strip = authView.querySelector('.gcEntryBenefitsCompact');
+    if (strip) {
+      const stripRect = strip.getBoundingClientRect();
+      const sprites = [...strip.querySelectorAll('.gcBenefitSprite')];
+      const spacing = Math.min(window.innerWidth >= 781 ? 82 : 58, (stripRect.width - 24) / 4);
+      strip.style.setProperty('--gc-paper-origin-x', `${1.5 * spacing}px`);
+      strip.querySelectorAll('.gcCrewPaper').forEach((paper, index) => {
+        const distance = -(0.9 + index * 0.9) * spacing;
+        paper.style.setProperty('--gc-paper-half-x', `${distance * 0.48}px`);
+        paper.style.setProperty('--gc-paper-end-x', `${distance}px`);
+      });
+      const layoutPosition = node => {
+        let left = 0, top = 0;
+        for (let current = node; current; current = current.offsetParent) {
+          left += current.offsetLeft;
+          top += current.offsetTop;
+        }
+        return { left: left - window.scrollX, top: top - window.scrollY };
+      };
+      sprites.forEach((sprite, index) => {
+        const origin = layoutPosition(sprite);
+        const targetX = stripRect.left + stripRect.width / 2 + (index - 1.5) * spacing;
+        const targetY = stripRect.top + stripRect.height / 2;
+        sprite.style.setProperty('--gc-gather-x', `${targetX - origin.left - sprite.offsetWidth / 2}px`);
+        sprite.style.setProperty('--gc-gather-y', `${targetY - origin.top - sprite.offsetHeight / 2}px`);
+        sprite.style.setProperty('--gc-run-from', `${-targetX - sprite.offsetWidth}px`);
+      });
+    }
     // Reserve the available window height; CSS gives controls their own rows.
     const available = window.innerHeight - top - benefits;
     stage.style.setProperty('--gc-stage-height', `${Math.max(window.innerWidth >= 781 ? 0 : 580, available)}px`);
@@ -160,10 +188,11 @@ function buildEntrySurface() {
           <div class="gcHeroJoin"><label for="joinCode" data-i18n-key="hero.student" data-i18n-fallback="Schüler? Testcode eingeben.">Schüler? Testcode eingeben.</label><div id="gcEntryJoinHost"></div></div>
         </div>
         <ul id="gcEntryBenefits" class="gcEntryBenefitsCompact">
-          <li><img src="./assets/gradecrew/penguin-guide.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitGuide" data-i18n-fallback="Dein Ratgeber">Dein Ratgeber</strong><small data-i18n-key="hero.benefitGuideDetail" data-i18n-fallback="Hilft dir weiter">Hilft dir weiter</small></li>
-          <li><img src="./assets/gradecrew/elephant-create.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitCreate" data-i18n-fallback="Schnell erstellt">Schnell erstellt</strong><small data-i18n-key="hero.benefitCreateDetail" data-i18n-fallback="In wenigen Minuten">In wenigen Minuten</small></li>
-          <li><img src="./assets/gradecrew/fox-improve.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitImprove" data-i18n-fallback="Frische Ideen">Frische Ideen</strong><small data-i18n-key="hero.benefitImproveDetail" data-i18n-fallback="Neue Aufgabenvarianten">Neue Aufgabenvarianten</small></li>
-          <li><img src="./assets/gradecrew/owl-grade.svg" width="48" height="48" alt="" aria-hidden="true"><strong data-i18n-key="hero.benefitGrade" data-i18n-fallback="Direkt ausgewertet">Direkt ausgewertet</strong><small data-i18n-key="hero.benefitGradeDetail" data-i18n-fallback="Ergebnisse im Überblick">Ergebnisse im Überblick</small></li>
+          <li><span class="gcBenefitSprite gcBenefitSprite--coco" aria-hidden="true"><i class="gcBenefitLetter"><i class="gcBenefitLetterArt"></i></i><i class="gcBenefitGlance"></i></span><strong data-i18n-key="hero.benefitGuide" data-i18n-fallback="Dein Ratgeber">Dein Ratgeber</strong><small data-i18n-key="hero.benefitGuideDetail" data-i18n-fallback="Hilft dir weiter">Hilft dir weiter</small></li>
+          <li><span class="gcBenefitSprite gcBenefitSprite--remy" aria-hidden="true"><i class="gcBenefitLetter"><i class="gcBenefitLetterArt"></i></i><i class="gcBenefitGlance"></i></span><strong data-i18n-key="hero.benefitCreate" data-i18n-fallback="Schnell erstellt">Schnell erstellt</strong><small data-i18n-key="hero.benefitCreateDetail" data-i18n-fallback="In wenigen Minuten">In wenigen Minuten</small></li>
+          <li><span class="gcBenefitSprite gcBenefitSprite--emmi" aria-hidden="true"><i class="gcBenefitLetter"><i class="gcBenefitLetterArt"></i></i><i class="gcBenefitGlance"></i></span><strong data-i18n-key="hero.benefitImprove" data-i18n-fallback="Frische Ideen">Frische Ideen</strong><small data-i18n-key="hero.benefitImproveDetail" data-i18n-fallback="Neue Aufgabenvarianten">Neue Aufgabenvarianten</small></li>
+          <li><span class="gcBenefitSprite gcBenefitSprite--wilma" aria-hidden="true"><i class="gcBenefitLetter"><i class="gcBenefitLetterArt"></i></i><i class="gcBenefitGlance"></i></span><strong data-i18n-key="hero.benefitGrade" data-i18n-fallback="Direkt ausgewertet">Direkt ausgewertet</strong><small data-i18n-key="hero.benefitGradeDetail" data-i18n-fallback="Ergebnisse im Überblick">Ergebnisse im Überblick</small></li>
+          <li class="gcCrewPaper gcCrewPaper--1" aria-hidden="true"></li><li class="gcCrewPaper gcCrewPaper--2" aria-hidden="true"></li><li class="gcCrewPaper gcCrewPaper--3" aria-hidden="true"></li><li class="gcCrewPaper gcCrewPaper--4" aria-hidden="true"></li>
         </ul>
       </div>
       <dialog id="gcHeroDialog" class="gcHeroDialog" aria-labelledby="gcHeroDialogTitle">
@@ -177,7 +206,10 @@ function buildEntrySurface() {
 
     <section id="gcEntryLogin" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryLoginTitle">
       <button type="button" class="gcEntryBack" data-entry-back>← Zurück</button>
-      <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryLoginTitle">Willkommen zurück</h1><p>Melde dich an und mach dort weiter, wo du aufgehört hast.</p><div id="gcEntryLoginTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryLoginFormHost"></div><p class="gcEntrySwitch">Noch kein Account? <button type="button" id="gcEntrySwitchRegister">Account erstellen</button></p></div>
+      <div class="gcEntryLoginScene">
+        <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryLoginTitle">Willkommen zurück</h1><p>Melde dich an und mach dort weiter, wo du aufgehört hast.</p><div id="gcEntryLoginTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryLoginFormHost"></div><p class="gcEntrySwitch">Noch kein Account? <button type="button" id="gcEntrySwitchRegister">Account erstellen</button></p></div>
+        <div class="gcEntryLoginCoco"><img src="./assets/gradecrew/coco-login-heart-17.png" alt="Coco begrüßt dich mit einem Herzballon: Schön, dass du da bist!" width="210" height="180"></div>
+      </div>
     </section>
 
     <section id="gcEntryRegister" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryRegisterTitle">

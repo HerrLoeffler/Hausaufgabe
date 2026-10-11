@@ -125,7 +125,6 @@ function createUi() {
     <div class="gcCrewHead">
       <img src="${COCO.asset}" alt="">
       <div class="gcCrewHeadCopy"><strong>Coco</strong><span>Hilfe & Orientierung</span></div>
-      <button id="gcCrewMemory" type="button" class="miniButton">Erinnerungen</button>
       <button id="gcCrewClose" class="gcCrewClose" type="button" aria-label="Coco schließen">×</button>
     </div>
     <div id="gcCrewMessages" class="gcCrewMessages" aria-live="polite"></div>
@@ -139,7 +138,6 @@ function createUi() {
 
   document.body.append(launcher, panel);
   launcher.addEventListener("click", () => setOpen(!open));
-  $("gcCrewMemory")?.addEventListener("click",()=>{void showMemory().catch(e=>addMessage("assistant",e.message));});
   $("gcCrewClose")?.addEventListener("click", () => setOpen(false));
   $("gcCrewComposer")?.addEventListener("submit", event => {
     event.preventDefault();
