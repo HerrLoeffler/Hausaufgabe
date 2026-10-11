@@ -1,0 +1,2266 @@
+{
+  "version": "gc-pedagogy-pool-v1",
+  "profiles": [
+    {
+      "id": "pp-1059d7ffe3782e86",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "praktikumserfahrungen",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Sprecher unterscheiden, Erfahrungen zuordnen und Informationen in Stichpunkten sichern",
+      "taskPattern": "Eine neue kurze Erzählung mit klar unterscheidbaren Personen oder Kategorien erstellen. Aussagen den passenden Kategorien zuordnen; ohne Sprecherwechsel vorlesen lassen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "64b35f503cf79976",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-74070be12850e73b",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "wertschätzung bei einer kunstaktion",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Explizite Zahlen und die Absicht einer Erzählung erfassen",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "64b35f503cf79976",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-029d68e5ed50e097",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "respekt und selbstwert",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Begründungen und Voraussetzungen aus einem Interview herausarbeiten",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "64b35f503cf79976",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-27acbc641e65984b",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "vorbereitung eines bewerbungsgesprächs",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Ratschläge, Zwecke und Sprecherabsichten unterscheiden",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "70e5ea161790a68e",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-1f39df462cc576d7",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "biografische chronologie",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Jahreszahlen, Orte und Ereignisse gezielt entnehmen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "70e5ea161790a68e",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-b61b9f6ab57e61ec",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "kleidung und gesellschaftliche regeln",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Sinngemäße Aussagen von Übertreibungen und nicht belegten Aussagen unterscheiden",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "70e5ea161790a68e",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-21d6355cf2f9bb12",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "jugendfeuerwehr",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Angebote, Ausbildungsinhalte und Altersgrenzen auseinanderhalten",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "848c0af240b474c5",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-22ed06ea46aeaf72",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "freizeit, sport und nebenarbeit",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Aussagen zu Personen zuordnen und nicht Gesagtes erkennen",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "848c0af240b474c5",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-419c7bce030bf328",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "ungewöhnliche hobbys und umweltschutz",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Detailinformationen in einer zweispaltigen Notizstruktur sichern",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "848c0af240b474c5",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-7930bf5c10d3b697",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "überleben auf einem fremden planeten",
+        "mars",
+        "weltraum",
+        "reise",
+        "planeten"
+      ],
+      "learningGoal": "Korrekturen im Dialog und Ursache-Wirkung-Beziehungen erkennen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "63a8dab5e64089cc",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-c9cd35bd40588af6",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "entfernungen und reisebedingungen zum mars",
+        "mars",
+        "weltraum",
+        "reise",
+        "planeten"
+      ],
+      "learningGoal": "Zahlen mit Einheit, Sprecher und Aussagekontext verbinden",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "63a8dab5e64089cc",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-1428bf6b6a3abb73",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "kulturelle glückssymbole",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Personen, Symbole und Merkmale aus einem Gespräch zuordnen",
+      "taskPattern": "Eine neue kurze Erzählung mit klar unterscheidbaren Personen oder Kategorien erstellen. Aussagen den passenden Kategorien zuordnen; ohne Sprecherwechsel vorlesen lassen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "4020f8b92066b2de",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-2436a9dfe11bb0b9",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "glücksgefühl und zufall",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Kernaussagen eines Sachvortrags geordnet zusammenfassen",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "4020f8b92066b2de",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-f2dedda6c58f7d00",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "selbsterkenntnis und lernen aus fehlern",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Begründungen erkennen und passende Schlussfolgerungen ableiten",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "4020f8b92066b2de",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-a3051602720eb6ae",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "reparaturwerkstatt und leistungsangebot",
+        "reparatur",
+        "recycling",
+        "rohstoffe",
+        "öffnungszeiten"
+      ],
+      "learningGoal": "Öffnungszeiten, Preise und inbegriffene Leistungen gezielt entnehmen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ed81688687aee313",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-fda30255eb491768",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "druckerfehler und müllvermeidung",
+        "reparatur",
+        "recycling",
+        "rohstoffe",
+        "öffnungszeiten"
+      ],
+      "learningGoal": "Sprecher, Vorschläge und bereits ausgeführte Handlungen unterscheiden",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ed81688687aee313",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-4e850752ad5a2729",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "rohstoffe in elektroschrott",
+        "reparatur",
+        "recycling",
+        "rohstoffe",
+        "öffnungszeiten"
+      ],
+      "learningGoal": "Zahlen und Stoffe entnehmen sowie Anlass und Ziel eines Projekts gliedern",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ed81688687aee313",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-7fb030ffdb4f0c38",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "praktikumserfahrungen",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Sprecher unterscheiden, Erfahrungen zuordnen und Informationen in Stichpunkten sichern",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "6d07f486b19f48e6",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-a5e1a5f962028db5",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "wertschätzung bei einer kunstaktion",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Explizite Zahlen und die Absicht einer Erzählung erfassen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "6d07f486b19f48e6",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-bee44ac476f5ac2b",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "respekt und selbstwert",
+        "praktikum",
+        "beruf",
+        "wertschätzung",
+        "respekt"
+      ],
+      "learningGoal": "Begründungen und Voraussetzungen aus einem Interview herausarbeiten",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "6d07f486b19f48e6",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-ea7330fec8aa0ce1",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "vorbereitung eines bewerbungsgesprächs",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Ratschläge, Zwecke und Sprecherabsichten unterscheiden",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "d486db3d2200caa5",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-9c723d1dffcf02c8",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "biografische chronologie",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Jahreszahlen, Orte und Ereignisse gezielt entnehmen",
+      "taskPattern": "Eine neue kurze Erzählung mit klar unterscheidbaren Personen oder Kategorien erstellen. Aussagen den passenden Kategorien zuordnen; ohne Sprecherwechsel vorlesen lassen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "d486db3d2200caa5",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-744411b01c1ff924",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "kleidung und gesellschaftliche regeln",
+        "bewerbung",
+        "vorstellungsgespräch",
+        "chronologie",
+        "biografie",
+        "kleidung"
+      ],
+      "learningGoal": "Sinngemäße Aussagen von Übertreibungen und nicht belegten Aussagen unterscheiden",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "d486db3d2200caa5",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-e4eba32a60f36dcb",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "fahrradreparatur und terminplanung",
+        "fahrrad",
+        "formular",
+        "recycling",
+        "verpackung"
+      ],
+      "learningGoal": "Eine Unterhaltung in ein Formular und eine Bildauswahl übertragen",
+      "taskPattern": "Eine neue kurze, von einer Stimme erzählte Alltagssituation mit Termin und Sachangaben entwickeln. Hörinformationen in ein übersichtliches Formular übertragen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-a7fed544b45babe4",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "verpackungsmüll früher und heute",
+        "fahrrad",
+        "formular",
+        "recycling",
+        "verpackung"
+      ],
+      "learningGoal": "Fünf ausdrücklich gehörte Aussagen von plausiblen Zusätzen trennen",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-28df0a6e21db1ee9",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "jugendfeuerwehr",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Angebote, Ausbildungsinhalte und Altersgrenzen auseinanderhalten",
+      "taskPattern": "Eine neue kurze Nachricht oder einen Sachtext für eine Stimme erstellen. Passende Aussagen von plausiblen, aber nicht belegten Ablenkantworten unterscheiden.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "118335a0c0f07c9c",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-5573f6299222b464",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "freizeit, sport und nebenarbeit",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Aussagen zu Personen zuordnen und nicht Gesagtes erkennen",
+      "taskPattern": "Eine neue kurze Erzählung mit klar unterscheidbaren Personen oder Kategorien erstellen. Aussagen den passenden Kategorien zuordnen; ohne Sprecherwechsel vorlesen lassen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "118335a0c0f07c9c",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-926cf39b5f8832f1",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "ungewöhnliche hobbys und umweltschutz",
+        "feuerwehr",
+        "freizeit",
+        "hobbys",
+        "umweltschutz"
+      ],
+      "learningGoal": "Detailinformationen in einer zweispaltigen Notizstruktur sichern",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "118335a0c0f07c9c",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-acc464fcf557c2d7",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "überleben auf einem fremden planeten",
+        "mars",
+        "weltraum",
+        "reise",
+        "planeten"
+      ],
+      "learningGoal": "Korrekturen im Dialog und Ursache-Wirkung-Beziehungen erkennen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "e6044df7ee4ce92c",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-a220374f56f34758",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "entfernungen und reisebedingungen zum mars",
+        "mars",
+        "weltraum",
+        "reise",
+        "planeten"
+      ],
+      "learningGoal": "Zahlen mit Einheit, Sprecher und Aussagekontext verbinden",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "e6044df7ee4ce92c",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-40bdd4c09418b987",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "kulturelle glückssymbole",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Personen, Symbole und Merkmale aus einem Gespräch zuordnen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ebb983edaf243d9b",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-897a4779e8e81d1e",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "glücksgefühl und zufall",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Kernaussagen eines Sachvortrags geordnet zusammenfassen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ebb983edaf243d9b",
+        "page": 3
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-6bbaabea3f86e33b",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "selbsterkenntnis und lernen aus fehlern",
+        "glück",
+        "selbstreflexion",
+        "symbole",
+        "glücksgefühl"
+      ],
+      "learningGoal": "Begründungen erkennen und passende Schlussfolgerungen ableiten",
+      "taskPattern": "Eine neue kurze Erzählung mit klar unterscheidbaren Personen oder Kategorien erstellen. Aussagen den passenden Kategorien zuordnen; ohne Sprecherwechsel vorlesen lassen.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "ebb983edaf243d9b",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-65705a3ada33d962",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "reparaturwerkstatt und leistungsangebot",
+        "reparatur",
+        "recycling",
+        "rohstoffe",
+        "öffnungszeiten"
+      ],
+      "learningGoal": "Öffnungszeiten, Preise und inbegriffene Leistungen gezielt entnehmen",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "83f218bea1b02b5b",
+        "page": 2
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-7cfc054b977a86c6",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "hörverstehen",
+        "zuhören",
+        "hören",
+        "rohstoffe in elektroschrott",
+        "reparatur",
+        "recycling",
+        "rohstoffe",
+        "öffnungszeiten"
+      ],
+      "learningGoal": "Zahlen und Stoffe entnehmen sowie Anlass und Ziel eines Projekts gliedern",
+      "taskPattern": "Eine neue kurze Nachricht mit lösungsentscheidenden Angaben erstellen. Informationen gezielt entnehmen und als Kurzantwort oder übersichtliche Notiz festhalten.",
+      "qualityHints": [
+        "Neue Lösungen allein aus dem neu erzeugten Hörtext ableiten; keine alten Antwortschlüssel übernehmen.",
+        "Zahlen, Einheiten, Verneinungen und zeitliche Änderungen getrennt prüfen.",
+        "Wiederholtes Hören darf keine unterschiedlichen Informationen liefern; eine Stimme und höchstens 500 Zeichen beibehalten."
+      ],
+      "modalities": [
+        "audio"
+      ],
+      "source": {
+        "contentId": "83f218bea1b02b5b",
+        "page": 4
+      },
+      "supportedTypes": [
+        "single",
+        "multi",
+        "text",
+        "dropdown",
+        "truefalse",
+        "gapfill",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-3f9fadea4a621f82",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "lesen",
+        "leseverstehen",
+        "textverständnis",
+        "sachtext",
+        "absätze",
+        "überschriften",
+        "recycling"
+      ],
+      "learningGoal": "Kernaussagen einzelner Textabschnitte erkennen.",
+      "taskPattern": "Einen eigenen kurzen Sachtext mit unterscheidbaren Absätzen erstellen und passende Überschriften zuordnen lassen.",
+      "qualityHints": [
+        "Jede Überschrift muss genau einen Absatz treffen.",
+        "Antworten aus dem selbst verfassten Text herleiten."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 5
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "dropdown",
+        "matching"
+      ]
+    },
+    {
+      "id": "pp-be167c0988773ed8",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "lesen",
+        "textverständnis",
+        "begriffe",
+        "erklären",
+        "recycling",
+        "kreislauf"
+      ],
+      "learningGoal": "Eine Sachtextidee auf ein eigenes Beispiel übertragen.",
+      "taskPattern": "Einen Begriff im neu verfassten Text erläutern lassen und ein anderes passendes Alltagsbeispiel verlangen.",
+      "qualityHints": [
+        "Für offene Beispiele Kriterien nennen und manualReview verwenden.",
+        "Ein Beispiel allein ersetzt keine Erklärung."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 6
+      },
+      "supportedTypes": [
+        "text"
+      ]
+    },
+    {
+      "id": "pp-7361b94ea884f9f9",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "schreiben",
+        "email",
+        "e-mail",
+        "brief",
+        "anrede",
+        "betreff",
+        "grußformel"
+      ],
+      "learningGoal": "Adressatengerechte Bestandteile einer E-Mail erkennen.",
+      "taskPattern": "Eine eigene kurze Nachricht mit gezielt fehlendem Bestandteil erstellen; Aufbau beurteilen und einen passenden Betreff ergänzen.",
+      "qualityHints": [
+        "Neue fiktive Daten verwenden.",
+        "Mehrere sinnvolle Betreffzeilen akzeptieren oder manuell bewerten."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 8
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-b07d0f3ac9b8a6bb",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "schreiben",
+        "erzählen",
+        "erzählung",
+        "geschichte",
+        "präteritum",
+        "perspektive"
+      ],
+      "learningGoal": "Eine Erzählung kohärent aus einer vorgegebenen Perspektive fortsetzen.",
+      "taskPattern": "Einen eigenen Erzählanfang verfassen; Fortsetzung mit klarer Perspektive, Zeitform, Spannungsbogen und Schluss verlangen.",
+      "qualityHints": [
+        "Offene Textproduktion mit nachvollziehbaren Kriterien und manualReview bewerten.",
+        "Originalgeschichte nicht übernehmen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 9
+      },
+      "supportedTypes": [
+        "text"
+      ]
+    },
+    {
+      "id": "pp-c28bc6a93f0962e5",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "wortarten",
+        "nomen",
+        "adjektive",
+        "wortbildung",
+        "grammatik",
+        "nominalisierung"
+      ],
+      "learningGoal": "Wortformen und passende Wortarten in einem eindeutigen Kontext bilden.",
+      "taskPattern": "Neue Adjektive mit klar passender Nomenbildung im Satzkontext verwenden und den passenden Artikel ergänzen lassen.",
+      "qualityHints": [
+        "Mehrdeutige Substantivierungen vermeiden.",
+        "Alle akzeptierten sprachlichen Formen prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 10
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-979a6ba62773adc8",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "grammatik",
+        "kasus",
+        "fälle",
+        "präpositionen",
+        "satz",
+        "sprachgebrauch"
+      ],
+      "learningGoal": "Gezielte grammatische Fehler erkennen und berichtigen.",
+      "taskPattern": "Einen eigenen Satz mit genau zwei klar belegbaren Grammatikfehlern verfassen und nur die fehlerhaften Stellen berichtigen lassen.",
+      "qualityHints": [
+        "Keine stilistischen Vorlieben als Fehler bewerten.",
+        "Anzahl der tatsächlichen Fehler vorab prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 10
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-8d5fcb4b8ac16566",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "wortschatz",
+        "nomen",
+        "plural",
+        "artikel",
+        "wörterbuch",
+        "sprachgebrauch"
+      ],
+      "learningGoal": "Grundform, Artikel und Plural eines Nomens bestimmen.",
+      "taskPattern": "Neue eindeutige Nomen im Satz verwenden und Artikel sowie Plural in getrennten Teilfragen bestimmen lassen.",
+      "qualityHints": [
+        "Regionale oder mehrere gültige Pluralformen berücksichtigen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 10
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-b63f9a19ad97640d",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        6
+      ],
+      "topics": [
+        "rechtschreibung",
+        "schreibstrategien",
+        "wortstamm",
+        "großschreibung",
+        "artikelprobe",
+        "silben"
+      ],
+      "learningGoal": "Eine passende Rechtschreibstrategie anwenden und erläutern.",
+      "taskPattern": "Neue Wörter wählen, bei denen Artikelprobe, Verlängern oder verwandte Wörter die fragliche Stelle tatsächlich begründen.",
+      "qualityHints": [
+        "Strategie muss zur geprüften Stelle passen.",
+        "Keine Rechtschreibregel ohne nachvollziehbaren Wortbezug abfragen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "67adec4fa237bc7f",
+        "page": 11
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-0b77ee85e20c7254",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Mathematik",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "dezimalzahlen",
+        "dezimalbrüche",
+        "subtraktion",
+        "division",
+        "rechnen",
+        "rationale zahlen"
+      ],
+      "learningGoal": "Mit Dezimalzahlen sicher rechnen.",
+      "taskPattern": "Neue Subtraktions- und Divisionsaufgaben mit Dezimalzahlen erstellen; Stellenwerte und Rechenergebnis kontrollieren.",
+      "qualityHints": [
+        "Zahlen so wählen, dass die geforderte Rundung eindeutig ist.",
+        "Ergebnis durch Umkehroperation prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "75dcf27d2e4a29f0",
+        "page": 2
+      },
+      "supportedTypes": [
+        "number",
+        "text",
+        "single",
+        "dropdown",
+        "truefalse",
+        "gapfill"
+      ]
+    },
+    {
+      "id": "pp-6d7eb505fbd196a7",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Mathematik",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "proportionalität",
+        "proportionale zuordnung",
+        "dreisatz",
+        "verhältnisse",
+        "masse",
+        "gewichte"
+      ],
+      "learningGoal": "Eine direkt proportionale Beziehung modellieren.",
+      "taskPattern": "Einen eigenen Materialkontext mit gleichbleibender Dichte und Fläche wählen; Masse aus veränderter Dicke berechnen lassen.",
+      "qualityHints": [
+        "Konstante Größen ausdrücklich nennen.",
+        "Verhältnis in richtiger Richtung bilden und mit Einheit prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "75dcf27d2e4a29f0",
+        "page": 3
+      },
+      "supportedTypes": [
+        "number",
+        "text",
+        "single",
+        "dropdown",
+        "truefalse",
+        "gapfill"
+      ]
+    },
+    {
+      "id": "pp-3436a2bda3ccb27f",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Mathematik",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "prozent",
+        "prozentrechnung",
+        "zinsen",
+        "zinsrechnung",
+        "kapital",
+        "zinssatz"
+      ],
+      "learningGoal": "Zinsangebote vergleichen und eine Behauptung rechnerisch prüfen.",
+      "taskPattern": "Zwei eigene Jahreszinssätze auf dasselbe Kapital anwenden und eine neue Differenzbehauptung überprüfen lassen.",
+      "qualityHints": [
+        "Prozentpunkte nicht mit relativem Prozentunterschied verwechseln.",
+        "Zinssatzdifferenz mal Kapital ergibt die Eurodifferenz bei gleicher Laufzeit."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "75dcf27d2e4a29f0",
+        "page": 4
+      },
+      "supportedTypes": [
+        "number",
+        "text",
+        "single",
+        "dropdown",
+        "truefalse",
+        "gapfill"
+      ]
+    },
+    {
+      "id": "pp-ca60cad0eefc3207",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Mathematik",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "gleichung",
+        "gleichungen",
+        "äquivalenzumformung",
+        "vorzeichen",
+        "algebra",
+        "fehleranalyse"
+      ],
+      "learningGoal": "Den ersten fehlerhaften Schritt einer Gleichungsumformung erkennen.",
+      "taskPattern": "Eine eigene lineare Gleichung mit Klammern und genau einem absichtlichen Vorzeichenfehler im Rechenweg erstellen.",
+      "qualityHints": [
+        "Gleichung zunächst korrekt unabhängig lösen und durch Einsetzen prüfen.",
+        "Ersten Fehler von Folgefehlern unterscheiden; beide Seiten gleich verändern."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "75dcf27d2e4a29f0",
+        "page": 4
+      },
+      "supportedTypes": [
+        "number",
+        "text",
+        "single",
+        "dropdown",
+        "truefalse",
+        "gapfill"
+      ]
+    },
+    {
+      "id": "pp-f9b717c3a7b067fd",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Mathematik",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "zahlenrätsel",
+        "magisches quadrat",
+        "gleichungen",
+        "dezimalzahlen",
+        "mathematisches modellieren"
+      ],
+      "learningGoal": "Unbekannte Werte aus mehreren Summenbedingungen bestimmen.",
+      "taskPattern": "Ein neues kleines Zahlenraster mit eindeutigem gemeinsamen Zeilen-, Spalten- und Diagonalwert konstruieren und zwei Werte bestimmen lassen.",
+      "qualityHints": [
+        "Alle Zeilen, Spalten und beide Diagonalen nach Einsetzen kontrollieren.",
+        "Aufgabe so als Text darstellen, dass kein generatives Diagramm mit exakten Zahlen nötig ist."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "75dcf27d2e4a29f0",
+        "page": 5
+      },
+      "supportedTypes": [
+        "number",
+        "text",
+        "single",
+        "dropdown",
+        "truefalse",
+        "gapfill"
+      ]
+    },
+    {
+      "id": "pp-587feee89b19034d",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "wortfamilie",
+        "wortbildung",
+        "wortarten",
+        "nomen",
+        "verben",
+        "adjektive",
+        "sprachgebrauch"
+      ],
+      "learningGoal": "Zusammengehörige Nomen, Verben und Adjektive erkennen.",
+      "taskPattern": "Neue klar verwandte Wörter in einer Wortfamilientabelle ergänzen lassen.",
+      "qualityHints": [
+        "Flektierte Formen nicht mit verschiedenen Wortarten verwechseln.",
+        "Mehrere korrekte Ableitungen berücksichtigen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "5eb90b3cd994d692",
+        "page": 2
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-ecb1c76b8460d2bc",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "satzbau",
+        "konjunktionen",
+        "weil",
+        "dass",
+        "deshalb",
+        "nebensatz",
+        "grammatik"
+      ],
+      "learningGoal": "Sätze grammatisch und inhaltlich passend verbinden.",
+      "taskPattern": "Eigene Satzanfänge mit weil, dass oder deshalb anbieten und passende Fortsetzungen verlangen.",
+      "qualityHints": [
+        "Verbposition für Nebensatz und Hauptsatz unterscheiden.",
+        "Offene sinnvolle Fortsetzungen akzeptieren oder manuell prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "5eb90b3cd994d692",
+        "page": 3
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-2a7d55c8bffc3f53",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "rechtschreibung",
+        "großschreibung",
+        "kleinschreibung",
+        "nomen",
+        "nominalisierung"
+      ],
+      "learningGoal": "Groß- und Kleinschreibung im Satz anwenden.",
+      "taskPattern": "Neue kurze Sätze mit eindeutigem Nomen- und Nominalisierungsgebrauch zur Korrektur erstellen.",
+      "qualityHints": [
+        "Keine komplette Lösung im Fragetext zeigen.",
+        "Lösung auf sämtliche tatsächlich geänderten Stellen prüfen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "5eb90b3cd994d692",
+        "page": 4
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-4419b2084353d9ba",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "satzzeichen",
+        "zeichensetzung",
+        "kommas",
+        "direkte rede",
+        "anführungszeichen"
+      ],
+      "learningGoal": "Satzzeichen im Kontext sicher setzen.",
+      "taskPattern": "Eigene Sätze mit Nebensatz oder direkter Rede ohne vorweggenommene Satzzeichen erstellen.",
+      "qualityHints": [
+        "Beide Anführungszeichen und Satzschluss mitprüfen.",
+        "Bei mehreren korrekten Varianten nicht künstlich auf einen Wortlaut einschränken."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "5eb90b3cd994d692",
+        "page": 4
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    },
+    {
+      "id": "pp-7e22b24d7c2bbac7",
+      "reviewStatus": "verified",
+      "mappingStatus": "confirmed",
+      "subject": "Deutsch als Zweitsprache",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "grades": [
+        9
+      ],
+      "topics": [
+        "silben",
+        "silbentrennung",
+        "worttrennung",
+        "rechtschreibung"
+      ],
+      "learningGoal": "Wörter regelgerecht in Silben trennen.",
+      "taskPattern": "Neue häufige mehrsilbige Wörter auswählen und alle Trennstellen bestimmen lassen.",
+      "qualityHints": [
+        "Zulässige Varianten prüfen und einfache eindeutige Beispiele bevorzugen."
+      ],
+      "modalities": [
+        "text"
+      ],
+      "source": {
+        "contentId": "5eb90b3cd994d692",
+        "page": 4
+      },
+      "supportedTypes": [
+        "text",
+        "single",
+        "multi",
+        "dropdown",
+        "gapfill",
+        "matching",
+        "markwords"
+      ]
+    }
+  ]
+}
