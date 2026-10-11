@@ -250,7 +250,7 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .aiUploadBox:hover{border-color:var(--accent,#315efb)} .aiUploadBox input{margin-top:8px}
 .aiUploadNotice{margin:12px 0;padding:12px 14px;border:1px solid #cfe2ff;border-radius:11px;background:#f7fbff;color:#344054;font-size:13px;line-height:1.5}.aiUploadNotice p{margin:8px 0 10px}.aiUploadNotice small{display:block;margin-top:8px;color:#596579;line-height:1.45}.aiUploadConfirm{display:flex;align-items:flex-start;gap:9px;font-weight:650;cursor:pointer}.aiUploadConfirm input{width:18px;height:18px;flex:0 0 18px;margin-top:3px;padding:0}.aiUploadLegalDetails{margin-top:9px;border-top:1px solid #dce9fb;padding-top:8px}.aiUploadLegalDetails summary{cursor:pointer;color:#52657d;font-weight:650;list-style-position:outside}.aiUploadLegalDetails[open] summary{margin-bottom:4px}
 .aiMaterialList{display:grid;gap:8px;margin:12px 0}.aiMaterialItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line,#dde1e6);border-radius:10px}.aiMaterialItem small{display:block;opacity:.7}.aiMaterialItem .progress{font-variant-numeric:tabular-nums}
-.aiOptionsBlock{margin-top:16px}.aiGenerateButton{width:100%;margin-top:16px}.aiProgress{margin-top:12px;padding:12px;border-radius:10px;background:var(--surface-2,#f6f7f9);font-weight:600}
+.aiOptionsBlock{margin-top:12px}.aiMaterialOptions,.aiAudioOptions{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.aiMaterialOptions h3,.aiAudioOptions h3{margin:0 0 8px;font-size:14px}.aiAudioOption{display:grid;gap:5px}.aiAudioOptionLabel{display:flex;align-items:center;gap:7px}.aiAudioOptionLabel>label{font-weight:650}.aiAudioOption>.hint{margin:0}.aiFieldInfo{position:relative;display:inline-flex;flex:0 0 auto}.aiFieldInfo>summary{display:grid;place-items:center;width:24px;height:24px;border:1px solid #b8c7dc;border-radius:50%;background:#fff;color:#2f64d6;font-size:14px;font-weight:750;cursor:pointer;list-style:none}.aiFieldInfo>summary::-webkit-details-marker{display:none}.aiFieldInfo>summary:focus-visible{outline:3px solid var(--primary);outline-offset:2px}.aiFieldInfo>span{position:absolute;z-index:8;top:calc(100% + 6px);left:0;width:min(300px,calc(100vw - 48px));padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#344054;box-shadow:0 8px 24px #18243a24;font-size:12px;font-weight:450;line-height:1.45}.aiFieldInfo:not(.aiInfoDismissed)[open]>span,.aiFieldInfo:not(.aiInfoDismissed):hover>span,.aiFieldInfo:not(.aiInfoDismissed):focus-within>span{display:block}.aiGenerateButton{width:100%;margin-top:16px}.aiProgress{margin-top:12px;padding:12px;border-radius:10px;background:var(--surface-2,#f6f7f9);font-weight:600}
 .aiInputError{color:#b42318!important;font-weight:650}.aiOptionsBlock input[aria-invalid="true"],#aiPoints[aria-invalid="true"]{border-color:#b42318}
 .aiTypePicker{margin:16px 0;border:1px solid var(--line,#dde1e6);border-radius:11px;padding:11px 13px}.aiTypePicker summary{cursor:pointer;font-size:13px;font-weight:700;color:#344054}.aiTypePicker summary span{float:right;color:#667085;font-weight:500}.aiTypePicker .typeCheckGrid{margin:14px 0 0}
 .aiProgressHeading{display:flex;justify-content:space-between;gap:12px;align-items:center}.aiProgressHeading strong{font-size:13px}.aiProgressHeading span{font-variant-numeric:tabular-nums;white-space:nowrap}.aiProgressTrack{height:9px;border-radius:999px;background:#dae3f1;margin-top:10px;overflow:hidden}.aiProgressFill{height:100%;background:#3466ce;border-radius:999px;transition:width .45s ease}.aiProgress small{display:block;color:#596579;font-weight:400;line-height:1.4;margin-top:8px}.aiProgress.error{background:#fff1f0;color:#b42318}#similarTestProgress{min-width:min(340px,100%);max-width:460px}
@@ -363,6 +363,18 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 }
 [hidden]{display:none!important}
 [data-entry-state="start"] .gcHeroLead h1[tabindex="-1"]:focus{outline:none}
+#dashboardView .pageHead h1[tabindex="-1"]:focus{outline:none}
+.quizDuplicateDialog{width:min(560px,calc(100vw - 28px));max-width:min(560px,calc(100vw - 28px))}
+.quizDuplicateChoices{display:grid;gap:10px}
+.quizDuplicateChoice{width:100%;min-height:72px;padding:13px 15px;text-align:left}
+.quizDuplicateChoice span{display:grid;gap:4px}
+.quizDuplicateChoice strong{font-size:14px}
+.quizDuplicateChoice small{color:#53627a;font-size:12px;font-weight:500;line-height:1.45;white-space:normal}
+.quizDuplicateDialog .quizDuplicateChoice:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.quizDuplicateStatus{min-height:20px;margin:12px 0 0;font-size:13px}
+.quizDuplicateStatus:empty{display:none}
+.quizDuplicateStatus[role="alert"]{color:var(--danger)}
+.quizDuplicateFoot{justify-content:flex-end;margin-top:12px;padding-top:12px}
 .questionAudioQuickActions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .audioDragItem{display:grid;gap:5px;max-width:100%;min-width:0;cursor:grab}
 .audioDragItem audio{width:220px;max-width:100%;height:36px}
@@ -385,3 +397,11 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .adminAccountDialog::backdrop{background:rgba(24,32,51,.45)}.adminAccountDialog li{margin:8px 0}.adminAccountDialog h2{margin-top:0}.adminAccountDialog p{line-height:1.5}.adminAccountDialog .actions{justify-content:flex-end;flex-wrap:wrap}
 #adminTeachersTable [data-action-result]:not(:empty){white-space:pre-line;padding:10px 0;color:var(--text)}
 @media(max-width:640px){.adminAccountToolbar{align-items:stretch}.adminAccountToolbar strong{flex-basis:100%}.adminAccountRowActions{flex-wrap:wrap;min-width:190px}.adminAccountDialog{padding:18px}}
+
+/* Direct playback; private authoring stays behind a native disclosure. */
+.questionAudioHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px}
+.questionAudioInstructionGroup{display:grid;gap:8px}
+.questionAudioInstructionGroup[hidden]{display:none}
+.questionAudioEdit>summary{cursor:pointer;font-weight:650;padding:8px 0}
+.questionAudioEditBody{display:grid;gap:10px}
+.questionAudioEditBody .questionAudioQuickActions{margin:0}

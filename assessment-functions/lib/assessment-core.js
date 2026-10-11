@@ -133,6 +133,7 @@ function commonPublicQuestion(question) {
     type,
     text: type === "gapfill" ? "Lückentext" : listeningOnly ? "" : clampString(question.text, 5000),
     ...(listeningOnly ? { audioPresentation: "listening-only" } : {}),
+    ...(listeningOnly && clampString(question.audioInstruction, 1000).trim() ? { audioInstruction: clampString(question.audioInstruction, 1000).trim() } : {}),
     points: round1(question.points),
     image: safeImage(question),
     audio: safeAudio(question)
@@ -294,6 +295,7 @@ function fingerprintQuestion(question) {
     imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
     audioDataUrl: String(question?.audioDataUrl || ""), audioAiGenerated: question?.audioAiGenerated !== false, audioNeedsRegeneration: question?.audioNeedsRegeneration === true,
     ...(question?.audioPresentation === "listening-only" ? { audioPresentation: "listening-only" } : {}),
+    ...(String(question?.audioInstruction || "").trim() ? { audioInstruction: String(question.audioInstruction).trim().slice(0, 1000) } : {}),
     ...(question?.audioAnswerMode === "audio-only" ? { audioAnswerMode: "audio-only" } : {}),
     ...(question?.audioAnswerMode === "audio-only" && Array.isArray(question.audioAnswerItems) ? { audioAnswerItems: question.audioAnswerItems.map(item => ({ key: String(item.key || ""), sourceText: String(item.sourceText || ""), audioDataUrl: String(item.audioDataUrl || ""), audioNeedsRegeneration: item.audioNeedsRegeneration === true })) } : {}),
     options: Array.isArray(question?.options) ? question.options.map(option => ({

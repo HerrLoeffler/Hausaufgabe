@@ -6,11 +6,14 @@ const { extractContentLocale } = require("./content-locale");
 const DEFAULT_SCALE = { id: "standard", name: "Standard", thresholds: [91, 77, 57, 39, 25, 0] };
 
 function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
+  const isVariant = input.generationMode === "variant";
+  // A later source read only authorizes access; metadata comes from the queued snapshot.
+  if (isVariant) sourceQuiz = input.variantQuizSettings || {};
   const settings = profile.settings || {};
   const scales = Array.isArray(profile.gradeScales) ? profile.gradeScales : [];
   const selectedScale = scales.find(scale => scale?.id === settings.defaultGradeScaleId) || scales[0] || DEFAULT_SCALE;
   const inheritedScale = sourceQuiz?.gradeScaleSnapshot?.thresholds?.length === 6
-    ? sourceQuiz.gradeScaleSnapshot : selectedScale;
+    ? sourceQuiz.gradeScaleSnapshot : isVariant ? DEFAULT_SCALE : selectedScale;
   const contentLocale = sourceQuiz?.contentLocale || extractContentLocale(input?.notes);
   const gradingLocale = sourceQuiz?.gradingLocale || contentLocale;
   const generatedTitle = String(test.title || "").trim();
@@ -18,9 +21,10 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   const title = /^(?:ki[- ]?test|testify|test zu|test über)(?:\s*[·:–-]\s*.*)?$/iu.test(generatedTitle)
     ? (topicTitle || generatedTitle || "Test") : (generatedTitle || topicTitle || "Test");
   return {
-    title, subject: String(test.subject || input.subject || ""),
-    grade: String(test.grade || input.grade || ""),
-    description: String(settings.defaultDescription || "Viel Erfolg beim Test!"),
+    title, subject: String(input.generationMode === "variant" ? input.subject : test.subject || input.subject || ""),
+    grade: String(input.generationMode === "variant" ? input.grade : test.grade || input.grade || ""),
+    creationContext: { schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
+    description: String(isVariant ? sourceQuiz.description || "Viel Erfolg beim Test!" : settings.defaultDescription || "Viel Erfolg beim Test!"),
     contentLocale,
     gradingLocale,
     localeContractVersion: 1,
@@ -93,6 +97,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   if (audioIntent.kind === "ai_generated") {
     q.audioScript = String(audioIntent.script || "").trim();
     q.audioPresentation = audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
+    if (String(audioIntent.instruction || "").trim()) q.audioInstruction = String(audioIntent.instruction).trim().slice(0, 1000);
     q.audioAiGenerated = true;
     try {
       if (typeof generateAudio !== "function") throw new Error("Audiogenerator fehlt.");

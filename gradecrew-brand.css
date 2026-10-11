@@ -82,8 +82,12 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
 #createAiBtn { border-color: #adbfde; background: #f9fbff; }
 .choiceText strong { letter-spacing: -.025em; }
 .pageCrewArtwork { position: absolute; top: 22px; right: 8px; object-fit: contain; }
-#aiView > .pageHead { position: relative; padding-right: 110px; }
-#aiView > .pageHead p { max-width: 58ch; }
+#aiView > .pageHead { position: relative; padding-right: 0; }
+#aiView .aiPageHeadContent { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+#aiView .aiPageHeadText { min-width: 0; flex: 1 1 auto; }
+#aiView .aiPageHeadText h1 { max-width: 28ch; }
+#aiView .aiPageHeadText p { max-width: 58ch; }
+#aiView .aiPageRemyHero { display: block; flex: 0 0 112px; width: 112px; height: 114px; object-fit: contain; }
 .aiDataNote { margin: -6px 0 20px; font-size: 12px; max-width: 92ch; line-height: 1.5; }
 .aiGrid > .card { box-shadow: none; }
 .aiStatusNotice { border-radius: 9px; font-size: 12px; }

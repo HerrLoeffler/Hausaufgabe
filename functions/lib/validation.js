@@ -189,6 +189,8 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (!script) errors.push("Hörtext fehlt.");
     if (script.length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
     if (/\b(?:lösung|richtige antwort|answer is)\s*:/i.test(script)) errors.push("Der Hörtext darf keine als Lösung markierte Antwort enthalten.");
+    if (audio.presentation === "listening-only" && !normalizeText(audio.instruction)) errors.push("Sichtbarer Arbeitsauftrag für die Höraufgabe fehlt.");
+    if (normalizeText(audio.instruction).length > 1000) errors.push("Der sichtbare Arbeitsauftrag ist zu lang (maximal 1000 Zeichen).");
     if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
   }
   return errors;
@@ -230,6 +232,7 @@ function normalizeQuestion(q) {
   if (copy.audioIntent.presentation !== undefined) {
     copy.audioIntent.presentation = copy.audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
   }
+  if (copy.audioIntent.instruction !== undefined) copy.audioIntent.instruction = normalizeText(copy.audioIntent.instruction).slice(0, 1000);
   copy.audioIntent.reason = normalizeText(copy.audioIntent.reason).slice(0, 300);
   return copy;
 }
@@ -242,9 +245,10 @@ function validateTest(test, opts = {}) {
   if (!qs.length || qs.length > LIMITS.maxQuestions) errors.push("Ungültige Aufgabenanzahl.");
   qs.forEach((q, i) => validateQuestion(q, opts).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`)));
   for (let i = 0; i < qs.length; i += 1) {
-    const prior = qs.findIndex((q, j) => j < i && sameQuestion(q, qs[i]));
+    const prior = qs.findIndex((q, j) => j < i && (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]));
     if (prior >= 0) errors.push(`Aufgabe ${i + 1} wiederholt inhaltlich Aufgabe ${prior + 1}.`);
-    if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
+    if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
+    if (opts.requireFreshVariant) require("./test-variant").variantQuestionErrors(qs[i], i, opts.variantInput).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`));
     if (opts.negativeQuestions?.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1}: Eine ähnliche Aufgabe wurde zuvor als fehlerhaft bewertet.`);
     for (const issue of opts.reviewIssues || []) {
       if (issue.index === i && comparable(issue.text) === comparable(qs[i].text)) errors.push(`Aufgabe ${i + 1}: Qualitätsprüfung: ${issue.detail}`);

@@ -1,14 +1,14 @@
 const escape = value => String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 const reasons = {
   'self-protected':'Das eigene Konto ist geschützt.', 'last-admin':'Letzter aktiver Admin – mindestens ein Admin muss aktiv bleiben.',
-  'active-exam':'Konto hat einen laufenden veröffentlichten Test. Test zuerst beenden.', 'test-account':'Testkonten können keine Admins sein.',
+  'active-exam':'Konto hat einen laufenden veröffentlichten Test, der noch nicht zur Beendigung bestätigt wurde.', 'test-account':'Testkonten können keine Admins sein.',
   'archived-account':'Archiviertes Testkonto zuerst wieder aktivieren.', 'missing':'Konto nicht mehr vorhanden.',
   'deletion-pending':'Löschung läuft bereits. Die ursprüngliche Aktion erneut prüfen.', 'scope-too-large':'Zu viele Tests für diese begrenzte Aktion.',
   'not-recoverable':'Keine bestätigte unvollständige Löschung für dieses Konto.', 'deletion-running':'Löschung läuft noch. Bitte warten und erneut prüfen.', 'identity-changed':'Anmeldeidentität geändert – aus Sicherheitsgründen nicht gelöscht.', 'transferred':'Löschung wird nach erneuter Bestätigung separat fortgesetzt.',
   'active-job':'KI-Erstellung läuft. Bitte zuerst abschließen lassen.'
 };
-const destructive = action => ['delete','recover-delete'].includes(action);
-const actionTitle = (action,value) => action === 'recover-delete' ? 'Unvollständige Kontolöschung fortsetzen' : action === 'delete' ? 'Konten endgültig löschen' : action === 'role' ? `Rolle auf ${value === 'admin'?'Admin':'Lehrkraft'} ändern` : action === 'archive' ? (value?'Testkonto archivieren':'Testkonto wieder aktivieren') : (value === 'suspended'?'Konten sperren':'Konten entsperren');
+const destructive = action => ['delete','end-tests-delete','recover-delete'].includes(action);
+const actionTitle = (action,value) => action === 'recover-delete' ? 'Unvollständige Kontolöschung fortsetzen' : ['delete','end-tests-delete'].includes(action) ? 'Konten endgültig löschen' : action === 'role' ? `Rolle auf ${value === 'admin'?'Admin':'Lehrkraft'} ändern` : action === 'archive' ? (value?'Testkonto archivieren':'Testkonto wieder aktivieren') : (value === 'suspended'?'Konten sperren':'Konten entsperren');
 export function createAccountController({root,getSession,call,refresh,open,formatDate=()=> '–'}) {
   const document=root.ownerDocument;
   let selected=new Set(),rows=[],allUsers=[],session=getSession(),epoch=0,busy=false,pending=null,summary='';
@@ -38,14 +38,17 @@ export function createAccountController({root,getSession,call,refresh,open,forma
     updateSelection();
   }
   async function start(action,targets,value) {
+    // A distinct server action keeps older clients/previews from authorizing test closure.
+    if(action==='delete')action='end-tests-delete';
     if(busy||pending||!targets.length)return;
     if(getSession()!==session){reset();return;}
     const currentEpoch=epoch;busy=true;summary='Aktion wird geprüft …';render(rows,{allUsers});
     try {
       const preview=await call('previewAdminAccountAction',{action,targets,value});
       if(currentEpoch!==epoch||getSession()!==session)return;
+      const endsTests=destructive(action)&&preview.targets.some(t=>t.code==='allowed'&&t.testsToEnd?.length);
       const dialog=document.createElement('dialog');dialog.className='adminAccountDialog';
-      dialog.innerHTML=`<h2>${escape(actionTitle(action,value))}</h2><p>Betroffene Konten:</p><ul>${preview.targets.map(t=>`<li><strong>${escape(t.label||t.id)}</strong>${t.email?` (${escape(t.email)})`:''}${t.code==='allowed'?'':` – ${escape(reasons[t.code]||t.code)}`}</li>`).join('')}</ul>${destructive(action)?`<p>${escape(preview.extent)}</p><p><strong>Die Löschung ist endgültig.</strong> Geschützte Einträge werden nicht geändert. Bei Fehlern bleibt die Löschung ausdrücklich unvollständig.</p>`:''}<div class="actions"><button class="button secondary" type="button" data-cancel>Abbrechen</button><button class="button ${destructive(action)?'danger':'primary'}" type="button" data-confirm ${preview.targets.some(t=>t.code==='allowed')?'':'disabled'}>${action==='recover-delete'?'Löschung fortsetzen':destructive(action)?'Endgültig löschen':'Änderung bestätigen'}</button></div>`;
+      dialog.innerHTML=`<h2>${escape(endsTests?'Tests beenden und Konten löschen':actionTitle(action,value))}</h2><p>Betroffene Konten:</p><ul>${preview.targets.map(t=>`<li><strong>${escape(t.label||t.id)}</strong>${t.email?` (${escape(t.email)})`:''}${t.code==='allowed'?'':` – ${escape(reasons[t.code]||t.code)}`}</li>`).join('')}</ul>${endsTests?`<p>Diese veröffentlichten Tests werden zuerst beendet und unveröffentlicht. Ergebnisse bleiben erhalten; die bestehende kurze Abgabe-Nachfrist gilt weiter.</p><ul>${preview.targets.filter(t=>t.code==='allowed').flatMap(t=>(t.testsToEnd||[]).map(q=>`<li>${escape(q.title||q.id)} (Code: ${escape(q.id)})</li>`)).join('')}</ul>`:''}${destructive(action)?`<p>${escape(preview.extent)}</p><p><strong>Die Löschung ist endgültig.</strong> Geschützte Einträge werden nicht geändert. Bei Fehlern bleibt die Löschung ausdrücklich unvollständig.</p>`:''}<div class="actions"><button class="button secondary" type="button" data-cancel>Abbrechen</button><button class="button ${destructive(action)?'danger':'primary'}" type="button" data-confirm ${preview.targets.some(t=>t.code==='allowed')?'':'disabled'}>${endsTests?'Tests beenden und Konten löschen':action==='recover-delete'?'Löschung fortsetzen':destructive(action)?'Endgültig löschen':'Änderung bestätigen'}</button></div>`;
       root.append(dialog);summary='';root.querySelector('[data-action-result]').textContent='';
       const cancel=()=>{if(dialog.querySelector('[data-confirm]').dataset.started)return;pending=null;busy=false;dialog.remove();render(rows,{allUsers});};
       dialog.querySelector('[data-cancel]').addEventListener('click',cancel);
@@ -66,7 +69,7 @@ export function createAccountController({root,getSession,call,refresh,open,forma
       summary=failed?`${completed} abgeschlossen; ${failed} nicht vollständig gelöscht/geändert. Aktion erneut prüfen / fortsetzen.`:destructive(operation.action)?`${completed} ${completed===1?'Konto gelöscht':'Konten gelöscht'}${blocked?`; ${blocked} geschützt / übersprungen`:''}.`:`${completed} ${completed===1?'Konto geändert':'Konten geändert'}${blocked?`; ${blocked} geschützt / übersprungen`:''}.`;
       summary += '\n' + result.outcomes.map(outcome=>{
         const target=operation.targets.find(t=>t.id===outcome.id),label=target?.label||outcome.id;
-        const resultLabel=outcome.reason==='identity-changed'?'Anmeldeidentität geändert – aus Sicherheitsgründen nicht gelöscht.':outcome.code==='complete'?(destructive(operation.action)?'gelöscht':'geändert'):outcome.code==='failed'?'nicht vollständig abgeschlossen':reasons[outcome.code]||outcome.code;
+        const resultLabel=outcome.reason==='tests-not-ended'?'Tests noch nicht sicher beendet – Konto nicht gelöscht. Bitte Administration prüfen.':outcome.reason==='identity-changed'?'Anmeldeidentität geändert – aus Sicherheitsgründen nicht gelöscht.':outcome.code==='complete'?(destructive(operation.action)?'gelöscht':'geändert'):outcome.code==='failed'?'nicht vollständig abgeschlossen':reasons[outcome.code]||outcome.code;
         return `${label}: ${resultLabel}`;
       }).join('\n');
       if(result.status==='complete')pending=null;

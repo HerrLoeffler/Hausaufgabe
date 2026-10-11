@@ -362,7 +362,7 @@ function questionForReview(q, index) {
   }
   if (q.audioIntent?.kind === "ai_generated") {
     studentView.audioTranscript = String(q.audioIntent.script || "");
-    if (q.audioIntent.presentation === "listening-only") studentView.text = "";
+    if (q.audioIntent.presentation === "listening-only") studentView.text = String(q.audioIntent.instruction || "");
   }
   return { index, type: q.type, studentView, answerKey, plannedImage: q.mediaIntent?.kind === "ai_generated" ? String(q.mediaIntent.prompt || "") : null };
 }
