@@ -33,6 +33,7 @@
 | `analysis/GC-PEDAGOGY-KB-01/subjects/` | Lesbare Fachpakete je Zielweg und Fach; bestehendes Paket Mathematik Grundschule wird fortgeführt. |
 | `analysis/GC-PEDAGOGY-KB-01/states/` | Amtliche Landesportale, Zuständigkeiten und Originalstruktur. |
 | `analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md` | Datiertes Lagebild aus den Registern; kein eigener Wahrheitsstand für Dokumentstatus. |
+| `analysis/GC-PEDAGOGY-KB-01/master/pflege-und-abnahme.md` | Rollen, Prüfrhythmus, Versionswechsel und tatsächliche Abschlusskontrolle. |
 | `docs/superpowers/handoffs/GC-PEDAGOGY-KB-01.md` | Wiederaufnahme, letzter gesicherter Schritt, offene Zugänge und genau ein nächster Schritt. |
 
 **Registerregeln:** IDs sind stabile interne Kürzel für *Lehrplandokumente* und Geltungszeilen. Amtliche Lehrplantitel sind erlaubt; das frühere Verbot von Buchtiteln betrifft Medien. TSV-Freitext enthält keine Tabulatoren oder Zeilenumbrüche. Ein fehlender Wert heißt `unbekannt`, nie stillschweigend leer. Die Definitionen und Statuswerte stehen in [`register/README.md`](../../../analysis/GC-PEDAGOGY-KB-01/register/README.md).
@@ -108,7 +109,7 @@
 
 ### 8. Pflege und Wiederaufnahme einrichten
 
-- [ ] Verantwortliche Rolle, Prüfrhythmus und Auslöser (neue Fassung, Kohortenwechsel, geänderter Landeslink) je Registerfamilie festhalten.
+- [x] Verantwortliche Rollen, Prüfrhythmus und Auslöser (neue Fassung, Kohortenwechsel, geänderter Landeslink) in [`pflege-und-abnahme.md`](../../../analysis/GC-PEDAGOGY-KB-01/master/pflege-und-abnahme.md) festhalten. Personelle Besetzung und technische Erinnerung sind noch offen.
 - [ ] Frühere Fassungen historisieren, neue Versionen mit neuer Dokument-ID aufnehmen und betroffene Geltungs-/Kompetenzzeilen zur erneuten Prüfung markieren.
 - [ ] Nach jedem Fachpaket TODO, Fachbericht, Register, Fortschrittsindex und Übergabe mit Commit/Prüfdatum/Blocker/nächstem Schritt sichern.
 
