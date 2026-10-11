@@ -489,3 +489,10 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
 | GC-WEB-REPAIR-20261007-ADMIN | Kontoauswahl, Rollen, Sperren und bestätigte Löschung in der bestehenden Administration | **Lokale UI auf 8772 geprüft; Staging-Freigabe erteilt, Zusammenführung läuft** | [PR209](https://github.com/HerrLoeffler/Hausaufgabe/pull/209); geprüfte ursprüngliche Produktquelle33cdb56 mit CI38101819504, aktueller Kandidat wird mit Remy-Ziel8d19ccf abgeglichen. Neue kombinierte Prüfung/CI vor Merge und getrennten Functions/Rules/Hosting-Nachweisen. Keine echten fremden Kontoaktionen oder Production. [Übergabe](workstreams/admin-account-actions-20261011.md) |
+
+
+## 11.10.2026 — Games-Produktion: bestehende Task GC-GAMES-PIPELINE-01
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-GAMES-PIPELINE-01 | Gemeinsamer Produktionsworkflow mit gleichwertigen 2D-/3D-Profilen; Kochspiel 2D, Lerninsel 3D | Dokumentationskonsolidierung, branch_only; keine Spielimplementierung behauptet | Kanonischer [Guide](docs/games/GREAT_GAMES_WORKFLOW.md) und [Spielbrief](docs/games/GAME_PROJECT_TEMPLATE.md). Bestehende PR153/185 als getrennte Entwürfe erhalten; Dokumentlinks, CI und unabhängige Prüfung auf dem Konsolidierungsbranch abwarten, danach gezielte Mainintegration. [Übergabe](workstreams/great-games-production-20261006.md) |
