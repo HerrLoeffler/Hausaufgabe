@@ -110,6 +110,37 @@ struct GradeCrewWebView: UIViewRepresentable {
                 return
             }
             webView.callAsyncJavaScript("""
+                                        const aiFieldIds = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', audioQuestionCount: 'aiAudioQuestionCount', audioAnswerQuestionCount: 'aiAudioAnswerQuestionCount', materialMode: 'aiMaterialMode', customNotes: 'aiCustomNotes', personalPreferences: 'aiPersonalPreferences' };
+                                        if (payload?.formSession && (!window.GradeCrewRemyAudit || await window.GradeCrewRemyAudit.session() !== payload.formSession)) throw new Error('Das GradeCrew-Konto wurde gewechselt. Bitte beginne die Anfrage erneut.');
+                                        if (action === 'verifyDraft') {
+                                          let assistant = window.__gradeCrewRemyFieldVerifier;
+                                          if (!assistant) {
+                                            const { getApp } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js');
+                                            const { getFunctions, httpsCallable } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js');
+                                            if (getApp().options.projectId !== 'hausaufgabe-staging') throw new Error('Die Staging-Verbindung konnte nicht bestätigt werden.');
+                                            assistant = httpsCallable(getFunctions(getApp(), 'europe-west1'), 'crewAssistant', { timeout: 60000 });
+                                            window.__gradeCrewRemyFieldVerifier = assistant;
+                                          }
+                                          const response = await assistant({ crewId: 'remy', text: payload.conversationText, uiLocale: 'de-DE', context: { screen: 'ai_create', aiForm: payload.draft || {} } });
+                                          const action = response?.data?.action;
+                                          if (action?.type !== 'patch_ai_form' || !action.patch) throw new Error('Remy konnte die Zuordnung noch nicht bestätigen. Bitte erneut versuchen.');
+                                          return { status: 'checked', patch: action.patch };
+                                        }
+                                        if (action === 'verifyAiForm') {
+                                          const labels = { subject: 'Fach', grade: 'Klasse', topic: 'Thema', count: 'Aufgabenanzahl', customNotes: 'Eigene Wünsche', imageQuestionCount: 'Bilder', audioQuestionCount: 'Höraufgaben', audioAnswerQuestionCount: 'Audioantworten' };
+                                          for (const [key, id] of Object.entries(aiFieldIds)) {
+                                            const expected = payload?.draft?.[key];
+                                            if (expected === undefined || expected === null) continue;
+                                            const actual = document.getElementById(id)?.value;
+                                            if (actual === undefined || String(actual) !== String(expected)) throw new Error('Die Angabe „' + (labels[key] || 'Testeinstellung') + '“ wurde nicht korrekt übernommen. Bitte erneut versuchen.');
+                                          }
+                                          if (Array.isArray(payload?.allowedTypes)) {
+                                            const actual = new Set(Array.from(document.querySelectorAll('#aiTypeChecks input[type="checkbox"]:checked')).map(input => input.value));
+                                            const expected = new Set(payload.allowedTypes);
+                                            if (actual.size !== expected.size || Array.from(expected).some(type => !actual.has(type))) throw new Error('Die Aufgabentypen wurden nicht korrekt übernommen.');
+                                          }
+                                          return { status: 'checked' };
+                                        }
                                         if (action === 'openAiForm') {
                                           const aiView = document.getElementById('aiView');
                                           if (!aiView) throw new Error('Der GradeCrew-Testeditor ist nicht verfügbar.');
@@ -169,7 +200,7 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           const aiGrid = aiView.querySelector('.aiGrid');
                                           if (aiGrid) aiGrid.hidden = true;
                                           window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
-                                          return { status: 'ready', personalPreferences: document.getElementById('aiPersonalPreferences')?.value || '', materialNames: Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem strong')).map(item => item.textContent || '') };
+                                          return { status: 'ready', formSession: await window.GradeCrewRemyAudit.session(), personalPreferences: document.getElementById('aiPersonalPreferences')?.value || '', materialNames: Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem strong')).map(item => item.textContent || '') };
                                         }
                                         if (action === 'showAiOptions') {
                                           const aiGrid = document.querySelector('#aiView .aiGrid');
@@ -178,18 +209,27 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           aiGrid.scrollIntoView({ block: 'start', behavior: 'smooth' });
                                           return { status: 'ready' };
                                         }
+                                        if (action === 'auditPendingTests') {
+                                          if (!window.GradeCrewRemyAudit) throw new Error('Die Medienprüfung ist noch nicht verfügbar.');
+                                          return await window.GradeCrewRemyAudit.inspect();
+                                        }
                                         if (action === 'createAiTest') {
                                           const button = document.getElementById('generateAiTestBtn');
                                           const aiView = document.getElementById('aiView');
                                           const progress = document.getElementById('aiProgress');
                                           if (!button) throw new Error('Der Test kann gerade nicht erstellt werden.');
                                           if (button.disabled) throw new Error('Der Test ist noch nicht bereit. Bitte prüfe deine Angaben.');
+                                          if (!window.GradeCrewRemyAudit) throw new Error('Die Medienprüfung ist noch nicht verfügbar.');
+                                          const receipt = await window.GradeCrewRemyAudit.prepare(payload?.draft || {});
                                           if (progress) { progress.textContent = ''; progress.classList.remove('error'); }
                                           button.click();
                                           for (let i = 0; i < 1200; i++) {
                                             if (progress?.classList.contains('error')) throw new Error(progress.textContent || 'Der Testauftrag wurde nicht gestartet.');
                                             // The existing app leaves the editor only after startAiTestJob returns a jobId.
-                                            if (aiView?.classList.contains('hidden')) return { status: 'accepted' };
+                                            if (aiView?.classList.contains('hidden')) {
+                                              await window.GradeCrewRemyAudit.remember(receipt);
+                                              return { status: 'accepted' };
+                                            }
                                             await new Promise(resolve => setTimeout(resolve, 100));
                                           }
                                           throw new Error('Die Bestätigung dauert länger als erwartet. Bitte unter Meine Tests prüfen, bevor du erneut abschickst.');
@@ -231,8 +271,8 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           throw new Error('Das Entfernen dauert zu lange. Bitte erneut versuchen.');
                                         }
                                         if (action === 'populateAiForm') {
-                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', audioQuestionCount: 'aiAudioQuestionCount', audioAnswerQuestionCount: 'aiAudioAnswerQuestionCount', materialMode: 'aiMaterialMode', customNotes: 'aiCustomNotes', personalPreferences: 'aiPersonalPreferences' };
-                                          for (const [key, id] of Object.entries(fields)) {
+
+                                          for (const [key, id] of Object.entries(aiFieldIds)) {
                                             const value = payload?.draft?.[key];
                                             const input = document.getElementById(id);
                                             if (input && value !== undefined && value !== null) {
@@ -265,7 +305,11 @@ struct GradeCrewWebView: UIViewRepresentable {
                         return
                     }
                     completion(.success(object))
-                case let .failure(error): completion(.failure(error))
+                case let .failure(error):
+                    let underlying = error as NSError
+                    let message = (underlying.userInfo["WKJavaScriptExceptionMessage"] as? String ?? error.localizedDescription)
+                        .replacingOccurrences(of: "Error: ", with: "")
+                    completion(.failure(NSError(domain: "GradeCrewQuickRemy", code: underlying.code, userInfo: [NSLocalizedDescriptionKey: String(message.prefix(300))])))
                 }
             }
         }

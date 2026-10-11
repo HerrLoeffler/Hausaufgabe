@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TeacherRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
     @State private var loadError: String?
@@ -12,6 +13,14 @@ struct TeacherRootView: View {
     @State private var webManifestCommit: String?
     @State private var homeNavigation = GradeCrewHomeNavigation()
     @State private var quickRemyCall: GradeCrewQuickRemyCall?
+    @State private var auditMessage: String?
+    @State private var auditNeedsReview = false
+    @State private var auditGeneration = 0
+    @State private var auditRefresh = 0
+
+    private var auditKey: String {
+        "\(route)-\(isAuthRestored)-\(quickRemyCall != nil)-\(auditGeneration)-\(auditRefresh)"
+    }
 
     private var authState: GradeCrewNativeBridgePolicy.AuthState { homeNavigation.authState }
     private var route: GradeCrewHomeNavigation.Route { homeNavigation.route }
@@ -81,6 +90,10 @@ struct TeacherRootView: View {
         }
         .background(GradeCrewDesignTokens.Colors.background)
         .animation(.easeInOut(duration: 0.18), value: route)
+        .task(id: auditKey) { await monitorGenerationAudit() }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active { auditRefresh += 1 }
+        }
         .sheet(isPresented: $showBetaSettings) {
             NavigationStack {
                 Form {
@@ -195,6 +208,14 @@ struct TeacherRootView: View {
                 .frame(maxWidth: 760)
                 .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
 
+                if let auditMessage {
+                    Text(auditMessage)
+                        .font(.footnote)
+                        .foregroundStyle(auditNeedsReview ? GradeCrewDesignTokens.Colors.danger : GradeCrewDesignTokens.Colors.muted)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: 480)
+                        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
+                }
                 if let loadError { connectionError(loadError) }
             }
             .frame(maxWidth: .infinity)
@@ -294,7 +315,38 @@ struct TeacherRootView: View {
     }
 
     private func receiveAuthState(_ newState: GradeCrewNativeBridgePolicy.AuthState) {
+        switch newState {
+        case let .signedIn(_, changed):
+            if changed { auditGeneration += 1; auditMessage = nil }
+        case .signedOut, .checking:
+            auditGeneration += 1
+            auditMessage = nil
+        }
         homeNavigation.receive(newState)
+    }
+
+    @MainActor
+    private func monitorGenerationAudit() async {
+        guard route == .home, case .signedIn = authState, let call = quickRemyCall else { return }
+        let generation = auditGeneration
+        for _ in 0..<30 {
+            guard !Task.isCancelled, generation == auditGeneration, route == .home, scenePhase == .active else { return }
+            do {
+                let result: [String: Any] = try await withCheckedThrowingContinuation { continuation in
+                    call("auditPendingTests", [:]) { continuation.resume(with: $0) }
+                }
+                guard !Task.isCancelled, generation == auditGeneration else { return }
+                auditNeedsReview = result["status"] as? String == "needsReview"
+                auditMessage = result["message"] as? String
+                if result["status"] as? String != "pending" { return }
+            } catch {
+                guard generation == auditGeneration else { return }
+                auditNeedsReview = true
+                auditMessage = "Die spätere Medienprüfung ist gerade nicht erreichbar. Bitte den Test in GradeCrew prüfen."
+                return
+            }
+            try? await Task.sleep(nanoseconds: 10_000_000_000)
+        }
     }
 
     private func openRemy() { homeNavigation.openRemy() }

@@ -50,6 +50,9 @@ asset_build = obj('build-Resources/Assets.xcassets', isa='PBXBuildFile', fileRef
 bridge_ref = obj('Resources/gradecrew-native-bridge.js', isa='PBXFileReference',
                  lastKnownFileType='sourcecode.javascript', path='Resources/gradecrew-native-bridge.js', sourceTree='<group>')
 bridge_build = obj('build-Resources/gradecrew-native-bridge.js', isa='PBXBuildFile', fileRef=bridge_ref)
+audit_ref = obj('Resources/gradecrew-remy-audit.js', isa='PBXFileReference',
+                lastKnownFileType='sourcecode.javascript', path='Resources/gradecrew-remy-audit.js', sourceTree='<group>')
+audit_build = obj('build-Resources/gradecrew-remy-audit.js', isa='PBXBuildFile', fileRef=audit_ref)
 
 product = obj(
     'product',
@@ -59,10 +62,10 @@ product = obj(
     sourceTree='BUILT_PRODUCTS_DIR',
 )
 products = obj('products', isa='PBXGroup', children=[product], name='Products', sourceTree='<group>')
-main = obj('main', isa='PBXGroup', children=files + [asset_ref, bridge_ref, products], sourceTree='<group>')
+main = obj('main', isa='PBXGroup', children=files + [asset_ref, bridge_ref, audit_ref, products], sourceTree='<group>')
 sources = obj('sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=builds, runOnlyForDeploymentPostprocessing='0')
 frameworks = obj('frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
-resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build, bridge_build], runOnlyForDeploymentPostprocessing='0')
+resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build, bridge_build, audit_build], runOnlyForDeploymentPostprocessing='0')
 
 project_configs = []
 target_configs = []

@@ -24,7 +24,8 @@ struct QuickRemyView: View {
     private enum SpeechTarget { case remy, wishes }
     @State private var speechTarget: SpeechTarget = .remy
     @State private var allowedTypes: Set<String> = ["single", "multi", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords"]
-    @State private var showMaterialImporter = false
+    @State private var expectedMedia: [String: Int] = [:]
+    @State private var formSession: String?
     @State private var materialNames: [String] = []
     @State private var materialConfirmed = false
     @State private var isUploadingMaterial = false
@@ -96,11 +97,8 @@ struct QuickRemyView: View {
             await recoverPendingSubmission()
             await openAiForm()
         }
-        .onDisappear { clearConversation() }
-        .fileImporter(isPresented: $showMaterialImporter, allowedContentTypes: materialContentTypes, allowsMultipleSelection: true) { result in
-            if case let .success(urls) = result { Task { await uploadMaterials(urls) } }
-            else if case let .failure(error) = result { materialError = error.localizedDescription }
-        }
+        .onDisappear { workGeneration = UUID(); capture.cancel() }
+
     }
 
     private var remyVoiceCard: some View {
@@ -127,7 +125,7 @@ struct QuickRemyView: View {
             .accessibilityLabel(status == .recording ? "Aufnahme beenden" : "Remy antippen und Testwunsch einsprechen")
             speechFeedback
             if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
-                ProgressView(workStatus == .preparing ? "Remy trägt deine Angaben ein …" : "")
+                ProgressView(workStatus == .preparing ? "Remy prüft deine Angaben …" : "")
                     .controlSize(.small).tint(GradeCrewDesignTokens.Colors.primary)
                     .padding(.bottom, 12)
             }
@@ -278,7 +276,7 @@ struct QuickRemyView: View {
     }
 
     private var mediaOptions: some View {
-        DisclosureGroup("Bilder & Audio") {
+        DisclosureGroup(mediaSummary) {
             VStack(spacing: 10) {
                 nativeField("Aufgaben mit Bild (0–5)", text: $draft.imageQuestionCount, keyboard: .numberPad)
                 nativeField("Höraufgaben (0–5)", text: $draft.audioQuestionCount, keyboard: .numberPad)
@@ -291,10 +289,14 @@ struct QuickRemyView: View {
         DisclosureGroup("Material hinzufügen\(materialNames.isEmpty ? "" : " (\(materialNames.count))")") {
             VStack(alignment: .leading, spacing: 10) {
                 Toggle("Ich darf das Material an OpenAI übermitteln; es enthält keine personenbezogenen Daten.", isOn: $materialConfirmed).font(.caption)
-                Button { showMaterialImporter = true } label: {
-                    Label(isUploadingMaterial ? "Material wird hochgeladen …" : "Dateien auswählen", systemImage: "paperclip")
-                }
-                .disabled(!materialConfirmed || isUploadingMaterial || materialNames.count >= 5 || !aiFormReady || workStatus == .submitting)
+                QuickRemyMaterialPicker(
+                    enabled: materialConfirmed && aiFormReady && workStatus != .submitting && workStatus != .preparing,
+                    remainingSlots: 5 - materialNames.count,
+                    uploading: isUploadingMaterial,
+                    onFiles: uploadMaterials,
+                    onImage: uploadImage,
+                    onError: { materialError = $0 }
+                )
                 Text("PDF, Bild, Text, Word, PowerPoint oder Tabelle · bis zu 5 Dateien, je 15 MB")
                     .font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 ForEach(Array(materialNames.enumerated()), id: \.offset) { index, name in
@@ -317,8 +319,28 @@ struct QuickRemyView: View {
         }
     }
 
-    private var materialContentTypes: [UTType] {
-        [.pdf, .jpeg, .png, .plainText, .commaSeparatedText] + ["webp", "docx", "pptx", "xlsx"].compactMap { UTType(filenameExtension: $0) }
+    private var mediaSummary: String {
+        var parts: [String] = []
+        if let n = Int(draft.imageQuestionCount), n > 0 { parts.append("\(n) Bilder") }
+        if let n = Int(draft.audioQuestionCount), n > 0 { parts.append("\(n) Höraufgaben") }
+        if let n = Int(draft.audioAnswerQuestionCount), n > 0 { parts.append("\(n) Audioantworten") }
+        return parts.isEmpty ? "Bilder & Audio" : "Bilder & Audio · " + parts.joined(separator: " · ")
+    }
+
+    @MainActor
+    private func uploadImage(_ data: Data, _ name: String) async {
+        guard !isUploadingMaterial, materialConfirmed else { return }
+        isUploadingMaterial = true
+        materialError = nil
+        defer { isUploadingMaterial = false }
+        do {
+            guard materialNames.count < 5, !data.isEmpty, data.count <= 15 * 1024 * 1024 else {
+                throw quickRemyError("Bitte höchstens fünf Materialien mit jeweils bis zu 15 MB auswählen.")
+            }
+            let result = try await invoke("uploadMaterial", payload: ["name": name, "mimeType": "image/jpeg", "base64": data.base64EncodedString(), "confirmed": true])
+            guard result["status"] as? String == "ready" else { throw quickRemyError("Das Foto wurde nicht bestätigt.") }
+            materialNames = result["materialNames"] as? [String] ?? materialNames
+        } catch { materialError = error.localizedDescription }
     }
 
     private var formPayload: [String: Any] {
@@ -461,6 +483,7 @@ struct QuickRemyView: View {
                 throw quickRemyError("Der Testeditor konnte nicht geöffnet werden. Bitte erneut versuchen.")
             }
             aiFormReady = true
+            formSession = result["formSession"] as? String
             if personalPreferences.isEmpty { personalPreferences = result["personalPreferences"] as? String ?? "" }
             materialNames = result["materialNames"] as? [String] ?? []
             if workStatus == .failed && conversationText.isEmpty { workStatus = .idle }
@@ -483,7 +506,7 @@ struct QuickRemyView: View {
             return
         }
         conversationText = updatedConversation
-        draft.applySpeechHints(segment, expectingCount: missingFields.contains("count"))
+        expectedMedia.merge(draft.applySpeechHints(segment, expectingCount: missingFields.contains("count"))) { _, latest in latest }
         await runPreparation()
     }
 
@@ -525,27 +548,43 @@ struct QuickRemyView: View {
                 if !returned.count.isEmpty { draft.count = returned.count }
                 if !returned.wishes.isEmpty { draft.wishes = returned.wishes }
             }
-            let synced = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload])
+            let verification = try await invoke("verifyDraft", payload: ["conversationText": conversationText, "draft": draft.knownFieldsPayload])
+            guard workGeneration == token else { return }
+            guard verification["status"] as? String == "checked", let patch = verification["patch"] as? [String: Any] else {
+                throw quickRemyError("Remy konnte die Angaben noch nicht gegenprüfen. Bitte erneut versuchen.")
+            }
+            let mismatches = try draft.applyAssistantPatch(patch, expectedMedia: expectedMedia)
+            let validTypes = Set(questionTypes.map { $0.0 })
+            if let types = patch["allowedTypes"] as? [String], !types.isEmpty { allowedTypes = Set(types).intersection(validTypes) }
+            if let exclude = patch["excludeTypes"] as? [String] { allowedTypes.subtract(exclude) }
+            let synced = try await invoke("populateAiForm", payload: formPayload)
             guard synced["status"] as? String == "ready" else {
                 throw quickRemyError("Remys Angaben konnten nicht in den Testeditor übernommen werden.")
             }
-            let responseMissingFields = result["missingFields"] as? [String]
-            if let question = QuickRemyFollowUpPolicy.question(
-                status: result["status"] as? String,
-                missingFields: responseMissingFields,
-                question: result["question"] as? String
-            ) {
-                missingFields = responseMissingFields ?? []
-                workError = question
+            if !mismatches.isEmpty {
+                missingFields = []
+                workError = "Bei der Bild- oder Audiozahl unterscheiden sich die Prüfungen. Bitte die sichtbaren Zahlen kurz prüfen und gegebenenfalls korrigieren."
                 workStatus = .needsInfo
                 return
             }
-            guard result["status"] as? String == "ready", let request = result["preparedRequest"] as? [String: Any] else {
-                throw quickRemyError("Remy hat eine ungültige Antwort zurückgegeben.")
+            if draft.preparedRequest != nil {
+                missingFields = []
+                workStatus = .readyForReview
+                return
             }
-            missingFields = []
-            if result["draft"] == nil { draft = QuickRemyDraft(payload: request) }
-            workStatus = .readyForReview
+            missingFields = ["subject", "grade", "topic", "count"].filter { field in
+                switch field {
+                case "subject": return draft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                case "grade": return draft.grade.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                case "topic": return draft.topic.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                default: return !(1...100).contains(Int(draft.count) ?? 0)
+                }
+            }
+            let prompts = ["subject": "welches Fach", "grade": "welche Klasse", "topic": "welches Thema", "count": "wie viele Aufgaben"]
+            workError = missingFields == ["count"] ? "Wie viele Aufgaben soll ich erstellen?" :
+                "Bitte ergänze: " + missingFields.compactMap { prompts[$0] }.joined(separator: ", ") + "?"
+            workStatus = .needsInfo
+
         } catch {
             guard workGeneration == token else { return }
             workError = error.localizedDescription
@@ -570,7 +609,9 @@ struct QuickRemyView: View {
         do {
             let fields = try await invoke("populateAiForm", payload: formPayload)
             guard fields["status"] as? String == "ready" else { throw quickRemyError("Deine Angaben konnten nicht übernommen werden.") }
-            let result = try await invoke("createAiTest", payload: [:])
+            let verified = try await invoke("verifyAiForm", payload: formPayload)
+            guard verified["status"] as? String == "checked" else { throw quickRemyError("Die Testangaben wurden noch nicht bestätigt.") }
+            let result = try await invoke("createAiTest", payload: formPayload)
             guard result["status"] as? String == "accepted" else { throw quickRemyError("Der Testauftrag wurde noch nicht bestätigt.") }
             workStatus = .accepted
             workError = nil
@@ -620,7 +661,9 @@ struct QuickRemyView: View {
     private func invoke(_ action: String, payload: [String: Any]) async throws -> [String: Any] {
         guard let call else { throw quickRemyError("Die GradeCrew-Verbindung ist noch nicht bereit. Bitte erneut versuchen.") }
         return try await withCheckedThrowingContinuation { continuation in
-            call(action, payload) { result in continuation.resume(with: result) }
+            var scopedPayload = payload
+            if let formSession { scopedPayload["formSession"] = formSession }
+            call(action, scopedPayload) { result in continuation.resume(with: result) }
         }
     }
 

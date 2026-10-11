@@ -5,7 +5,7 @@ const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, 'Sources/TeacherWebPortalView.swift'), 'utf8');
 const script = source.split('webView.callAsyncJavaScript("""')[1].split('""",')[0];
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-function fixture({ fail = false } = {}) {
+function fixture({ fail = false, assistant } = {}) {
   const elements = new Map();
   const classes = new Set();
   const aiView = { classList: { contains: x => classes.has(x) } };
@@ -15,7 +15,7 @@ function fixture({ fail = false } = {}) {
   elements.set('aiView', aiView); elements.set('generateAiTestBtn', button); elements.set('aiProgress', progress);
   const document = { getElementById: id => elements.get(id), querySelectorAll: () => [] };
   const execute = new AsyncFunction('action','payload','document','window','Event', script);
-  return { elements, run: (action, payload = {}) => execute(action, payload, document, {}, Event) };
+  return { elements, run: (action, payload = {}) => execute(action, payload, document, { __gradeCrewRemyFieldVerifier: assistant, GradeCrewRemyAudit: { session: async () => 'current-session', prepare: async expected => ({expected}), remember: async () => {} } }, Event) };
 }
 test('creation waits for acknowledged background start before returning home', async () => {
   const f = fixture(); let resolved = false;
@@ -64,4 +64,29 @@ test('material handoff preserves file bytes and waits for the existing uploader'
 });
 test('material upload refuses unconfirmed rights before reading a file', async () => {
   await assert.rejects(uploadFixture().run('uploadMaterial', { confirmed: false }), /Materialprüfung/);
+});
+
+test('form read-back rejects a dropped audio count before starting a test', async () => {
+  const f = fixture();
+  f.elements.set('aiAudioQuestionCount', { value: '0' });
+  await assert.rejects(f.run('verifyAiForm', { draft: { audioQuestionCount: 2 } }), /Höraufgaben/);
+  f.elements.get('aiAudioQuestionCount').value = '2';
+  assert.equal((await f.run('verifyAiForm', { draft: { audioQuestionCount: 2 } })).status, 'checked');
+});
+test('independent Remy channel receives the actual utterance and existing native fields', async () => {
+  const patch = { subject: null, grade: null, schoolType: null, region: null, topic: 'Wortarten und Satzglieder', difficulty: null, count: null, points: null, durationMinutes: null, imageQuestionCount: 2, audioQuestionCount: 2, audioAnswerQuestionCount: null, solutionAudioQuestionCount: null, notes: 'Lustige Sätze', allowedTypes: [], excludeTypes: [] };
+  let request;
+  const f = fixture({ assistant: async payload => { request = payload; return { data: { reply: 'Eingetragen', intent: 'create_test', cacheCandidate: false, action: { type: 'patch_ai_form', patch } } }; } });
+  const text = 'Deutsch achte Klasse Wortarten und Satzglieder 15 Aufgaben zwei Bilder zwei Hör Aufgaben, lustige Sätze';
+  const result = await f.run('verifyDraft', { conversationText: text, draft: { subject: 'Deutsch', grade: '8', count: 15, imageQuestionCount: 2, audioQuestionCount: 2 } });
+  assert.equal(request.crewId, 'remy');
+  assert.equal(request.text, text);
+  assert.equal(request.context.screen, 'ai_create');
+  assert.equal(request.context.aiForm.audioQuestionCount, 2);
+  assert.equal(result.status, 'checked');
+  assert.equal(result.patch.notes, 'Lustige Sätze');
+});
+test('a callback from an old account cannot populate the new account form', async () => {
+  const f=fixture();
+  await assert.rejects(f.run('populateAiForm',{ formSession:'old-session',draft:{ subject:'Deutsch' } }), /Konto wurde gewechselt/);
 });

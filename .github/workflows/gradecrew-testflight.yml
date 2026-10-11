@@ -84,6 +84,7 @@ jobs:
           python3 native/GradeCrewTeacher/test_native_bridge.py
           node --test native/GradeCrewTeacher/test_quick_remy_auth_bridge.cjs
           node --test native/GradeCrewTeacher/test_quick_remy_form_bridge.cjs
+          node --test native/GradeCrewTeacher/test_quick_remy_generation_audit.cjs
 
       - name: Prepare GradeCrew assets and Xcode project
         shell: bash

@@ -29,6 +29,11 @@ final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
         controller.addScriptMessageHandler(self, contentWorld: .page, name: "gradecrewNative")
         controller.addUserScript(WKUserScript(source: source.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
                                              injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        if let auditResource = Bundle.main.url(forResource: "gradecrew-remy-audit", withExtension: "js"),
+           let auditSource = try? String(contentsOf: auditResource, encoding: .utf8) {
+            controller.addUserScript(WKUserScript(source: auditSource.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
+                                                 injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
     }
 
     func cancelPendingRequest() {

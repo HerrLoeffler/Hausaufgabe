@@ -67,8 +67,10 @@ struct QuickRemyDraft {
     }
 
     /// Explicit subject/class/count hints fill immediately; the existing Remy service interprets the full wish.
-    mutating func applySpeechHints(_ text: String, expectingCount: Bool = false) {
+    @discardableResult
+    mutating func applySpeechHints(_ text: String, expectingCount: Bool = false) -> [String: Int] {
         let lower = text.lowercased()
+        var expectedMedia: [String: Int] = [:]
         let subjects = [("englisch|english", "Englisch"), ("mathematik|mathe", "Mathematik"),
                         ("deutsch", "Deutsch"), ("sachunterricht|hsu", "Sachunterricht"),
                         ("biologie|bio", "Biologie"), ("geschichte", "Geschichte"),
@@ -103,18 +105,72 @@ struct QuickRemyDraft {
         if let number = Int(normalized), (1...100).contains(number) { count = String(number) }
         for (field, pattern) in [
             ("image", "\\b(\\d|\(countWords))\\s+(?:aufgaben mit (?:einem )?bild|bilder|aufgabenbilder)\\b"),
-            ("audio", "\\b(\\d|\(countWords))\\s+(?:höraufgaben|hörfragen|listening questions)\\b"),
+            ("audio", "\\b(\\d|\(countWords))\\s+(?:hör\\s*aufgaben|hör\\s*fragen|listening questions)\\b"),
             ("answers", "\\b(\\d|\(countWords))\\s+(?:aufgaben mit (?:audioantworten|vorgelesenen antworten)|audioantworten|lösungen als audio)\\b")
         ] {
             if let raw = firstCapture(pattern), let number = Int(numberWords[raw] ?? raw), (0...5).contains(number) {
                 if field == "image" { imageQuestionCount = String(number) }
                 else if field == "audio" { audioQuestionCount = String(number) }
                 else { audioAnswerQuestionCount = String(number) }
+                let key = field == "image" ? "imageQuestionCount" : field == "audio" ? "audioQuestionCount" : "audioAnswerQuestionCount"
+                expectedMedia[key] = number
             }
         }
         for value in ["Grundschule", "Mittelschule", "Realschule", "Gymnasium", "Gesamtschule", "Förderschule", "Berufsschule"] {
             if lower.contains(value.lowercased()) { schoolType = value; break }
         }
+        return expectedMedia
+    }
+
+    /// Merge the independent full Remy interpretation without losing manually supplied wishes.
+    mutating func applyAssistantPatch(_ patch: [String: Any], expectedMedia: [String: Int]) throws -> [String] {
+        var next = self
+        var mismatches: [String] = []
+        func invalid() -> NSError {
+            NSError(domain: "GradeCrewQuickRemy", code: 2, userInfo: [NSLocalizedDescriptionKey: "Remys Gegenprüfung hat ungültige Angaben geliefert. Bitte erneut versuchen."])
+        }
+        for (key, maximum) in [("subject", 120), ("grade", 60), ("topic", 500), ("schoolType", 100), ("region", 100), ("notes", 1500)] {
+            guard let raw = patch[key], !(raw is NSNull) else { continue }
+            guard let value = raw as? String, value.count <= maximum else { throw invalid() }
+            let text = value.trimmingCharacters(in: .whitespacesAndNewlines)
+            if text.isEmpty { continue }
+            switch key {
+            case "subject": next.subject = text
+            case "grade": next.grade = text
+            case "topic": next.topic = text
+            case "schoolType": next.schoolType = text
+            case "region": next.region = text
+            default:
+                if next.wishes.range(of: text, options: .caseInsensitive) == nil {
+                    next.wishes = next.wishes.isEmpty ? text : "\(next.wishes)\n\(text)"
+                }
+            }
+        }
+        if let raw = patch["difficulty"], !(raw is NSNull) {
+            guard let value = raw as? String, ["leicht", "mittel", "anspruchsvoll", "gemischt"].contains(value) else { throw invalid() }
+            next.difficulty = value
+        }
+        for (key, maximum) in [("count", 100), ("imageQuestionCount", 5), ("audioQuestionCount", 5), ("audioAnswerQuestionCount", 5)] {
+            guard let raw = patch[key], !(raw is NSNull) else { continue }
+            guard let value = raw as? Int, (key == "count" ? 1 : 0)...maximum ~= value else { throw invalid() }
+            if let expected = expectedMedia[key], value != expected { mismatches.append(key); continue }
+            switch key {
+            case "count": next.count = String(value)
+            case "imageQuestionCount": next.imageQuestionCount = String(value)
+            case "audioQuestionCount": next.audioQuestionCount = String(value)
+            default: next.audioAnswerQuestionCount = String(value)
+            }
+        }
+        if let raw = patch["points"], !(raw is NSNull) {
+            guard let value = raw as? Double, value.isFinite, value >= 0.5 else { throw invalid() }
+            next.points = String(value)
+        }
+        if let duration = patch["durationMinutes"] as? Int, duration > 0 {
+            let note = "Gewünschte Bearbeitungszeit: ca. \(duration) Minuten."
+            if !next.wishes.contains(note) { next.wishes = next.wishes.isEmpty ? note : "\(next.wishes)\n\(note)" }
+        }
+        self = next
+        return mismatches
     }
 
     func validationError(allowedTypes: Set<String>) -> String? {
