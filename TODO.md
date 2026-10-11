@@ -483,3 +483,10 @@ GC-POCOCK-RESEARCH-01 · aktueller textueller Abschluss:40/40Inventar-IDs,16Lang
 
 
 GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://github.com/HerrLoeffler/Hausaufgabe/pull/194) finalab738f822b3b15c1d2ef18f75c762c1ef0d228b5 nach unabhängigem Doku-/Metadatenreview ohne Findings auf main@3142a6e42f2daca8d35b1b84b086a506a4b99a9b integriert. Kandidat-Handoff38082215129/DevelopmentStatus38082215063 und ready-DevelopmentStatus38082255964 success. EigenerBericht/Review, Zusammenfassung, kleineMetadaten, Registry und vorhandene Launch-/Privacyübergaben integriert; keineProdukt-/Deploystufe daraus. Researchregistrierung integrated; Folgeumsetzung/Pilot bleibt eigener Auftrag.
+
+
+## Pädagogische Medienbasis — laufender Fachauftrag
+
+| ID | Aufgabe | Status | Nächster Schritt |
+|---|---|---|---|
+| GC-PEDAGOGY-KB-01 | Downloads/ZIPs und alle 125 Bildungslogin-Medien mit sämtlichen Seiten und Ressourcen analysieren | In Arbeit; vollständige Medienprüfung offen | [Medien-Arbeitsplan](docs/superpowers/plans/2026-10-11-medien-vollanalyse.md), [Medien-Übergabe](workstreams/pedagogy-media-20261011.md). Originale und detaillierte anonyme Register lokal. Getrennter Lehrplanbestand bleibt in PR208. |
