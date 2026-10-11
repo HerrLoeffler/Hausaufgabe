@@ -134,3 +134,14 @@ Der Server liefert für „Meine Tests“ nur Zuweisungen zurück, die zum angem
 - Fachlehrkräfte sehen nur die ihnen zugewiesenen Klassen/Fächer und dafür freigegebene Ergebnisse. Die Schuladministration vergibt diese Rechte; ASV-Import alleine schaltet nichts frei.
 - Lehrkraft legt separat fest, wann Ergebnisse sichtbar werden. Geschlossen bedeutet nicht automatisch „Noten veröffentlicht“.
 - Scheitert die Vorbereitung einer Freigabe, bleibt sie für Schüler unsichtbar und kann idempotent fortgesetzt werden; keine halbe Klassenfreigabe.
+
+
+## Prototyp-Prüfstand – 11.10.2026
+
+Der separate statische Mock liegt auf feature/classroom-student-management-v1 unter prototypes/classroom-student-management/index.html, Commit 17fc4278e2e58f124f0c5624d39513fdfa9833d2. Er zeigt synthetische Konten, eine private Testentwurfsituation, Klassen-/Fach- und Empfängerauswahl, geplante oder sofortige Freigabe, die resultierende Schüleransicht sowie den Ausschluss eines anderen Kurses. Die Daten bleiben in-memory im Browser-Tab.
+
+Statisch geprüft: HTMLParser erfolgreich, JS-Syntax erfolgreich geparst, Remote- und lokale Datei bytegenau identisch (29.185 Bytes), keine externen URL-Referenzen oder Fetch/XHR/LocalStorage-Aufrufe. Keine echten CSVs geöffnet oder hochgeladen.
+
+Noch nicht geprüft: echter Browser-Klick-/Darstellungstest und menschliche Verständlichkeit. Die verfügbare Browseroberfläche blockierte file://; diese Beschränkung wurde nicht umgangen. Keine Firebase-, App-, CI-, Staging- oder Production-Verbindung. Der Mock belegt daher weder tatsächliche Berechtigungen noch Schüler-Login oder Backend-Sicherheit.
+
+Konkrete Frage an den Nutzer: Ist ohne Erklärung klar, dass der Entwurf unsichtbar bleibt, „9b · Technik“ samt Termin ausdrücklich veröffentlicht werden muss und nur ein zugeordneter Schüler den Test sieht? Welcher Schritt oder Begriff ist verwirrend?

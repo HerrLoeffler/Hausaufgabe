@@ -228,3 +228,16 @@ Nutzerfrage: Was sieht ein Schüler, bevor Lehrkräfte etwas zuweisen, und wie e
 Festgehalten: Ein Schülerkonto zeigt zunächst eine verständliche Leeransicht. Ein Quizentwurf ist privat. Die Techniklehrkraft wählt beim expliziten Veröffentlichen den bestätigten Kurs „Klasse · Fach“, Zeitraum und etwaige gezielte Schüler-Ausnahmen. Server prüft ihre Zuständigkeit, bereitet die feste Zielgruppe vollständig vor und gibt danach die Zuweisung frei. Der Schüler sieht den Test bei „Anstehend“ oder „Jetzt verfügbar“ mit Fachlabel Technik. Nachträge sind ausdrücklich; spätere Klassenaufnahmen fügen sich nicht heimlich in einen bereits veröffentlichten Test ein. Beendete Mitgliedschaft sperrt Zugriff. Ergebnis-/Notenfreigabe bleibt separat.
 
 Liste und Startversuch werden serverseitig anhand persönlicher StudentIdentity, aktiver Mitgliedschaft, Zielgruppenfreigabe, Zeitraum und Rechten geprüft. Testversuch/Bewertung bleiben bei Secure Assessment. Kein Code oder Deploy ausgeführt. Detaillierter Ablauf: [Lehrer-/Schüler-UX](../docs/CLASSROOM_TEACHER_UX_V1.md), besonders Abschnitt „Von der Lehrkraft bis zum Test auf dem Schülergerät“.
+
+
+## UX-Prototyp – Checkpoint 11.10.2026
+
+Prüffrage: Versteht eine Lehrkraft, dass ein Testentwurf privat bleibt und erst nach ausdrücklicher Zuweisung zu Klasse/Fach bei den richtigen Schüler:innen erscheint? Sieht ein Schüler ohne Freigabe den erklärenden Leerzustand, der Zugewiesene den Test zum korrekten Zeitpunkt und ein anderes Schülerkonto aus 9c keinen Zugriff?
+
+Produktbranch: feature/classroom-student-management-v1. Gesicherter Prototype-Commit: 17fc4278e2e58f124f0c5624d39513fdfa9833d2 (Parent bb91ce3590d773472ece60c4dd881da729bd32c1). Neue einzige Branch-Datei: prototypes/classroom-student-management/index.html. Es ist eine statische, eigenständige HTML-Vorschau mit erfundenen Schüler:innen und einer 9b-Technik-Klasse; keine CSV, keine ASV-Werte, keine Firebase-/Serververbindung, keine App-Verdrahtung. Lokale Review-Kopie: classroom-prototype-preview/index.html im aufrufenden Projektarbeitsbereich.
+
+Geprüft: Remote-Datei stimmt bytegenau mit lokaler Kopie überein (29.185 Bytes); HTMLParser akzeptiert Dokument; eingebettetes JavaScript syntaktisch erfolgreich geparst; keine externen URL-Referenzen, Fetch-/XHR-Aufrufe oder Browser-Speicherung gefunden. Ein visueller Klicktest wurde nicht ausgeführt: die verfügbare Browseroberfläche blockierte file:// ausdrücklich; alternative Browser-/Ausführungswege wurden nicht verwendet. Menschliche Sicht-/Bedienprüfung bleibt offen.
+
+Keine App-CI, kein Produktcode in der GradeCrew-Weboberfläche, keine PR für den Produktbranch, keine Integration, kein Staging und kein Production-Deploy. Classroom Release-Stufe bleibt branch_only. Der separate Dokumentations-PR #141 bleibt offen/Draft und unverändert in seiner Rolle.
+
+Exakte nächste Aktion: Martin öffnet die lokale Review-Kopie und beurteilt den Ablauf „Lehrkraft weist 9b · Technik zu → Zielschüler sieht geplant/aktiv → fremde Klasse bleibt ausgeschlossen“. Seine Rückmeldung ist noch ausstehend. Danach UI-Korrektur am Mock; reguläre Produktimplementierung oder Staging separat beauftragen/freigeben.

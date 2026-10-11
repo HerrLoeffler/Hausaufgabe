@@ -1049,3 +1049,8 @@ Die Lehrkraft erstellt oder bearbeitet zunächst einen privaten Quiz-Entwurf. Be
 Die Freigabe hält die Zielgruppe zum Veröffentlichungszeitpunkt fest. Wegen möglicher Klassengröße werden Schüler-Grant-Datensätze einzeln gespeichert, nicht als großes ID-Array in einem Dokument. Die Schüleransicht fragt serverseitig nur passende, aktuelle Freigaben für die angemeldete StudentIdentity ab. Ein neuer Import oder eine Klassenmitgliedschaft allein zeigt keine Prüfung; eine Freigabe allein reicht ebenfalls ohne aktive passende Mitgliedschaft nicht. Änderungen nach Freigabe benötigen eine nachvollziehbare Nachtragsaktion. Teilweise vorbereitete Freigaben bleiben unsichtbar.
 
 Status im Schülerkonto: geplant → anstehend, geöffnet → jetzt verfügbar, abgegeben/geschlossen → eigener Status; Noten und Rückmeldungen werden erst durch eine separate Ergebnisfreigabe sichtbar. Der Server autorisiert sowohl die Liste als auch den Startversuch. Ein direkter Quiz-Link überspringt keine Klassen-, Zeit- oder Rechteprüfung. Details des Bedienablaufs stehen in [CLASSROOM_TEACHER_UX_V1.md](CLASSROOM_TEACHER_UX_V1.md).
+
+
+# 30. UX-Prototyp als nächster Prüfschritt
+
+Der statische, Firebase-freie Lehrer-/Schüler-Mock ist auf dem Classroom-Aufgabenbranch unter prototypes/classroom-student-management/index.html gesichert (Commit 17fc4278e2e58f124f0c5624d39513fdfa9833d2). Er prüft allein die Bedienfrage, wie ausdrückliche Zuweisung zu Klasse/Fach die Schüleransicht füllt. Keine CSV, echten Schülerdaten, Backend- oder Staging-Verbindung. Statische Syntax-/Netzwerk-/Speicherprüfung bestanden; visueller Klicktest und menschliche Beurteilung ausstehend. Siehe [Prüfstand und Grenzen](CLASSROOM_TEACHER_UX_V1.md#prototyp-prüfstand-11-10-2026).
