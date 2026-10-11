@@ -9,9 +9,9 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 ## Gesicherter Erkenntnisstand
 
 - Erste Quellen- und Schulstrukturberichte für 16 Länder liegen in vier Landesdateien vor. Sie belegen noch kein vollständiges Fach- oder Dokumentinventar.
-- Mathematik Grundschule: 14 Länder im definierten Erstumfang ausgewertet, Thüringen teilweise, Saarland offen. Keines der 16 Länder ist als unabhängig zweitgeprüft belegt.
-- Saarland: neuer Plan ab 01.08.2026 amtlich gelistet, PDF-Endpunkt zuletzt HTTP 403. Thüringen: Geltung 2010 und Struktur belegt, Haupttext im Portal nur für angemeldete Nutzer erreichbar. Diese Fälle bleiben als Zugriffslücken offen; andere Fachpakete können weiterlaufen.
-- Die TSV-Register sind angelegt. Saarland und Thüringen Mathematik Grundschule sind als offene Zugänge erfasst. Bremen: 13 Primarstufen-PDFs inventarisiert, neun Fachpläne direkt geladen und fachlich erstgesichtet. Hinzu kamen 81 Sek-I-/Sek-II-Portaleinträge zu 76 URLs; 73 zusätzliche Dokumentzeilen wurden erfasst, ihre Volltexte und Geltungen noch nicht geprüft. Das Register umfasst damit 88 Dokumentzeilen insgesamt, einschließlich Saarland/Thüringen und nicht verbindlicher Dokumentarten. Es ist kein Vollständigkeitsbefund.
+- Mathematik Grundschule: 15 Länder im definierten Erstumfang ausgewertet, Thüringen teilweise. Saarland 2026 wurde im amtlichen Volltext erschlossen. Keines der 16 Länder ist als unabhängig zweitgeprüft belegt.
+- Saarland: neuer Plan ab 01.08.2026 im amtlichen Volltext gelesen; Kohortenuebergang und Zweitsichtung offen. Thüringen: Geltung 2010 und Struktur belegt, Haupttext im Portal nur für angemeldete Nutzer erreichbar. Diese Fälle bleiben als Zugriffslücken offen; andere Fachpakete können weiterlaufen.
+- Die TSV-Register sind angelegt. Saarland Mathematik und Deutsch Grundschule 2026 sind inhaltlich erstgesichtet; Thüringen Mathematik bleibt teilweise. Das Saarländer Grundschulportal wurde mit 14 PDF-Einträgen inventarisiert. Bremen: 13 Primarstufen-PDFs inventarisiert, neun Fachpläne direkt geladen und fachlich erstgesichtet. Hinzu kamen 81 Sek-I-/Sek-II-Portaleinträge zu 76 URLs; 73 zusätzliche Dokumentzeilen wurden erfasst, ihre Volltexte und Geltungen noch nicht geprüft. Das Register umfasst damit 101 Dokumentzeilen insgesamt, einschließlich Saarland/Thüringen und nicht verbindlicher Dokumentarten. Es ist kein Vollständigkeitsbefund.
 
 ## Artefakte
 
@@ -20,6 +20,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 - [Registerschema](../../../analysis/GC-PEDAGOGY-KB-01/register/README.md)
 - [Fortschritts- und Lückenbericht](../../../analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md)
 - [Mathematik Grundschule](../../../analysis/GC-PEDAGOGY-KB-01/subjects/mathematik-grundschule.md)
+- [Saarland Mathematik 2026](../../../analysis/GC-PEDAGOGY-KB-01/subjects/saarland-mathematik-grundschule-2026.md) und [Deutsch 2026](../../../analysis/GC-PEDAGOGY-KB-01/subjects/saarland-deutsch-grundschule-2026.md)
 - [Bremen Grundschule: Fachpläne](../../../analysis/GC-PEDAGOGY-KB-01/subjects/bremen-grundschule-fachplaene.md)
 - [Bremen Sekundarstufen: Portalinventar und Geltung](../../../analysis/GC-PEDAGOGY-KB-01/states/bremen-sek-inventar-und-geltung.md)
 - `analysis/GC-PEDAGOGY-KB-01/states/`: vier Landesberichte mit allen 16 Ländern.
@@ -27,7 +28,7 @@ Alle amtlich geltenden Lehrpläne aller Fächer in 16 Ländern für Grundschule,
 ## Fortsetzung
 
 1. Bremen Grundschule: die direkt geladenen Fachpläne Deutsch und Mathematik vollständig bis auf Ebene der einzelnen Standards und Jahrgangsendpunkte auswerten; den früheren Mathematik-Bericht mit der PDF abgleichen.
-2. Mathematik Grundschule: amtliche Volltexte Saarland und Thüringen weiter erschließen, 14 andere Landesauswertungen auf Geltung und Aussagen zweitprüfen. Zugangsblocker separat markieren.
+2. Mathematik Grundschule: amtlichen Volltext Thüringen erschließen, Saarländer Kohortenregeln prüfen und die 15 Landesauswertungen auf Geltung und Aussagen zweitprüfen. Zugangsblocker separat markieren.
 3. Vollständiges Dokumentinventar für 16 Länder und alle Zielwege aufbauen. Die Fächerzahl ergibt sich erst daraus. Danach Fachpakete, Zweitprüfung, amtliche Aufgabenprofile und Abschlusskontrolle gemäß Arbeitsplan.
 4. Nach jedem sinnvoll abgeschlossenen Fachpaket Register, Fortschrittsindex und diese Übergabe mit Quellen- und Prüfdatum aktualisieren.
 

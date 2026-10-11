@@ -5,7 +5,7 @@
 **Erste Welle:** Grundschule, Haupt-/Mittelschulbildungsgang, Realschulbildungsgang, Gymnasium (Sek I und Sek II getrennt), alle Fächer und alle 16 Länder.  
 **Datenschutz:** Diese Auswertung speichert keine Buchtitel, Autor:innen, Verlage, Ausgaben, ISBNs, Cover, Produkt-/Plattformkennungen, Lizenzcodes oder Rückverknüpfungen. Sie behandelt ausschließlich amtliche Lehrplanquellen.
 
-**Aktuelle Arbeitsgrundlage:** [Lehrplan-Vollauswertung](../../../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Registerschema](../register/README.md) und [Pflege-/Abnahmeverfahren](pflege-und-abnahme.md). Die Register sind erst begonnen: Saarland und Thüringen Mathematik Grundschule stehen als offene Zugänge darin. Für Bremen Grundschule sind 13 amtlich verlinkte PDF-Dokumente und die [Fach-Erstsichtung](../subjects/bremen-grundschule-fachplaene.md) ergänzt. Die Bremer Sekundarstufen sind mit [81 Portaleinträgen](../states/bremen-sek-inventar-und-geltung.md) erfasst, ihre Fachinhalte noch nicht geprüft. Für den Stand einzelner Quellen gelten Register und Fachberichte, nicht ältere Kurzformulierungen in diesem Lagebild.
+**Aktuelle Arbeitsgrundlage:** [Lehrplan-Vollauswertung](../../../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Registerschema](../register/README.md) und [Pflege-/Abnahmeverfahren](pflege-und-abnahme.md). Die Register sind erst begonnen: Saarland Mathematik Grundschule ist inhaltlich geprüft; Thüringen bleibt wegen des Haupttextzugangs teilweise offen. Für Saarland Grundschule sind 14 amtliche PDF-Einträge inventarisiert und Deutsch/Mathematik 2026 im Volltext erstgesichtet. Für Bremen Grundschule sind 13 amtlich verlinkte PDF-Dokumente und die [Fach-Erstsichtung](../subjects/bremen-grundschule-fachplaene.md) ergänzt. Die Bremer Sekundarstufen sind mit [81 Portaleinträgen](../states/bremen-sek-inventar-und-geltung.md) erfasst, ihre Fachinhalte noch nicht geprüft. Für den Stand einzelner Quellen gelten Register und Fachberichte, nicht ältere Kurzformulierungen in diesem Lagebild.
 
 ## Status in Kürze
 
@@ -24,7 +24,7 @@ Für **16 von 16 Ländern** liegt nun ein erster Länderbaustein mit offiziellen
 | Niedersachsen | teilweise erfasst | Portal-/Fachfamilien überblickt | selektive Beispiele und Struktur | vollständige Fach-/Dokumentliste, Gültigkeit und Einzelpläne |
 | Nordrhein-Westfalen | teilweise erfasst | Portal-/Fachfamilien überblickt | selektive Beispiele und Struktur | vollständige Fach-/Dokumentliste, Schulform-/Bildungsgang-Mapping, Einzelpläne |
 | Rheinland-Pfalz | teilweise erfasst | Datenbank- und Fachfamilien überblickt | Grundlegung/Sachunterricht und Strukturstichprobe | Datenbankbestand, aktuelle G8/G9- und RS+-Pläne, Einzelpläne |
-| Saarland | teilweise erfasst | Schul-/Bildungsgangstruktur überblickt | Beispiele Gemeinschaftsschule/Gymnasium/Oberstufe | vollständige GS- und Fachlisten, Bildungsgangniveau, Einzelpläne |
+| Saarland | GS-Portal mit 14 PDF-Einträgen erfasst; Sekundarstufen teilweise | Schul-/Bildungsgangstruktur überblickt | Mathematik und Deutsch GS 2026 erstgesichtet; Beispiele Gemeinschaftsschule/Gymnasium/Oberstufe | übrige Fachinhalte, Sekundarstufen-Inventar, Bildungsgangniveau und Zweitsichtung |
 | Sachsen | erster Länderbaustein | Portal-/Fachfamilien überblickt | einzelne Dokument-/Versionsbeispiele | vollständige Fachinventare und Einzelpläne |
 | Sachsen-Anhalt | erster Länderbaustein | Fachlisten/Planarchitektur überblickt | Mathematik-Grundschulplan 2026 inhaltlich vollständig im definierten Umfang ausgewertet; Reform-/Implementationsstand dokumentiert | übrige Grundschulfächer, Sekundarschule, Gymnasium und vollständige Fachinventare |
 | Schleswig-Holstein | erster Länderbaustein | Fachportal-/Schulformstruktur überblickt | Rahmen-/Versionsstichprobe | vollständige Fachinventare und Einzelpläne; Entwürfe von geltenden Plänen trennen |
@@ -34,13 +34,13 @@ Für **16 von 16 Ländern** liegt nun ein erster Länderbaustein mit offiziellen
 
 ## Laufende fachweise Auswertung
 
-Erster Fachblock ist [Mathematik Grundschule](../subjects/mathematik-grundschule.md). Der KMK-Standard 2022 ist ausgewertet; der Landesstand ist aktuell **14 Länder im definierten Primarstufen-Umfang ausgewertet, Thüringen teilweise ausgewertet, Saarland offen**. Neben den zuvor vertieften Ländern wurden die Fachtexte für Bremen (amtlich indexierter Volltext), Nordrhein-Westfalen, Rheinland-Pfalz und Schleswig-Holstein geprüft. Für Thüringen sind amtliche Implementationsmaterialien und Fachtextauszüge hinzugekommen; eine vollständige jahrgangsbezogene Auswertung verhindert der Zugang zum Haupttext. Beim Saarland ist der ab 01.08.2026 geltende neue Plan amtlich gelistet, aber sein PDF liefert 403. Die Zählung bezieht sich nur auf Mathematik Primarstufe, nicht auf die gesamte erste Lehrplanwelle.
+Erster Fachblock ist [Mathematik Grundschule](../subjects/mathematik-grundschule.md). Der KMK-Standard 2022 ist ausgewertet; der Landesstand ist aktuell **15 Länder im definierten Primarstufen-Umfang erstgesichtet, Thüringen teilweise ausgewertet**. Neben den zuvor vertieften Ländern wurden die Fachtexte für Bremen (amtlich indexierter Volltext), Nordrhein-Westfalen, Rheinland-Pfalz und Schleswig-Holstein geprüft. Für Thüringen sind amtliche Implementationsmaterialien und Fachtextauszüge hinzugekommen; eine vollständige jahrgangsbezogene Auswertung verhindert der Zugang zum Haupttext. Der aktuelle Saarländer Kernlehrplan 2026 wurde im amtlichen 28-seitigen PDF inhaltlich erstgesichtet; Kohortenübergang und Gegenprüfung bleiben offen. Die Zählung bezieht sich nur auf Mathematik Primarstufe, nicht auf die gesamte erste Lehrplanwelle.
 
 | Mathematik Grundschule | Länder |
 |---|---|
-| Inhaltlich ausgewertet im definierten Umfang | Baden-Württemberg, Bayern, Berlin, Brandenburg, Bremen, Hamburg, Hessen, Mecklenburg-Vorpommern, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Sachsen, Sachsen-Anhalt, Schleswig-Holstein |
+| Inhaltlich ausgewertet im definierten Umfang | Baden-Württemberg, Bayern, Berlin, Brandenburg, Bremen, Hamburg, Hessen, Mecklenburg-Vorpommern, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Saarland, Sachsen, Sachsen-Anhalt, Schleswig-Holstein |
 | Teilweise ausgewertet | Thüringen (Kompetenzarchitektur und Fachtextauszüge vertieft; jahrgangsbezogene Volltextauswertung offen) |
-| Noch offen | Saarland |
+| Ohne inhaltliche Erstsichtung | keines; Thüringen bleibt teilweise |
 
 ## Verlässliche gemeinsame Bezugspunkte
 
@@ -76,7 +76,7 @@ Jedes Dokument erhält mindestens: Land; amtliche Zuständigkeit; Zielbereich/Or
 1. Die 16 Länderbausteine gegen die amtlichen Landesportale systematisch nachprüfen und bei jedem Eintrag Schulart, Bildungsgang, Fach und Jahrgang belegen. Nicht vorhandene eigenständige Schularten ausdrücklich als integrierte Bildungsgänge abbilden.
 2. Ein vollständiges Dokumentregister je Land × Zielbereich × Fach erzeugen; Portalindex, Gesetz/Verordnung, Rahmenvorgabe, Fachlehrplan und Beispielaufgabe voneinander unterscheiden.
 3. Gültigkeitsstatus und Versionsübergänge aktuell verifizieren; Entwürfe und Anhörungen separat markieren und nicht als geltendes Curriculum ausgeben.
-4. Mathematik Grundschule abschließen: den ab 01.08.2026 geltenden Saarlandplan auswerten und die jahrgangsbezogenen Erwartungen des Thüringer Plans vollständig prüfen. Der Saarland-PDF-Endpunkt liefert aktuell 403; der Thüringer Haupttext ist auf angemeldete Portalnutzer beschränkt. Amtliche Thüringer Implementationsmaterialien wurden zusätzlich ausgewertet, reichen aber nicht zur Vollständigkeitsmarkierung. Keine älteren oder nichtamtlichen Texte als Ersatz verwenden. Danach Quellen, Versionen und Fortschritt über alle 16 Länder abgleichen; erst dann den Fachblock schließen und Deutsch Grundschule beginnen.
+4. Mathematik Grundschule abschließen: die jahrgangsbezogenen Erwartungen des Thüringer Plans vollständig prüfen. Der Haupttext ist auf angemeldete Portalnutzer beschränkt; amtliche Implementationsmaterialien reichen nicht zur Vollständigkeitsmarkierung. Den Saarländer Kohortenübergang und die Erstextraktion gegenprüfen. Danach Quellen, Versionen und Fortschritt über alle 16 Länder abgleichen. Parallel weitere Fächer und Schularten fachweise erschließen.
 5. Ergebnisse fachweise und landesweise gegenprüfen; amtliche Aufgabenprofile und Abschlussprüfungen den geprüften Kompetenzen zuordnen. Der Medienbestand gehört erst zur späteren Phase.
 
 ## Geltungsgrenze
