@@ -28,6 +28,7 @@
 | `analysis/GC-PEDAGOGY-KB-01/register/zuordnungen.tsv` | Verknüpfung Dokument × Schulweg × Fach/Lernbereich × Jahrgang/Niveau/Kohorte. Mehrfachgeltung erzeugt mehrere Zuordnungen, keine fiktiven Dokumentkopien. |
 | `analysis/GC-PEDAGOGY-KB-01/register/kompetenzen.tsv` | In eigenen Worten verdichtete amtliche Anforderungen mit Originalgliederung, Endpunkt und genauer Fundstelle. |
 | `analysis/GC-PEDAGOGY-KB-01/register/aufgabenprofile.tsv` | Amtlich belegte Aufgabenanforderungen und Beispieltypen, jeweils mit Kompetenz- und Quellenverweis. Keine Lehrwerksaufgaben. |
+| `analysis/GC-PEDAGOGY-KB-01/register/pruefungen.tsv` | Amtliche Abschlussprüfungen und veröffentlichte Prüfungsanforderungen je Land, Abschluss, Fach und Jahr; Verknüpfung mit Lehrplankompetenzen. |
 | `analysis/GC-PEDAGOGY-KB-01/register/prueflog.tsv` | Zweitprüfung, Korrekturen, Versionwechsel und offener Zugang. |
 | `analysis/GC-PEDAGOGY-KB-01/subjects/` | Lesbare Fachpakete je Zielweg und Fach; bestehendes Paket Mathematik Grundschule wird fortgeführt. |
 | `analysis/GC-PEDAGOGY-KB-01/states/` | Amtliche Landesportale, Zuständigkeiten und Originalstruktur. |
@@ -91,9 +92,11 @@
 
 - [ ] Aus den Fachplänen pro Kompetenz die geforderte Handlung, mögliche Aufgabenform, Anforderungsbereich, Operatoren und erwartete Darstellung ableiten; solche Ableitungen als Interpretation kennzeichnen.
 - [ ] Wo KMK, IQB oder Land amtliche Beispielaufgaben veröffentlichen, deren Aufgabenart knapp paraphrasieren und mit Kompetenz/Fundstelle verbinden. Kein Volltext der Beispielaufgabe wird gespeichert.
+- [ ] Abschlussprüfungen für die Zielwege inventarisieren: je Land, Abschlussart, Fach, Prüfungsjahr und geltender Fassung die amtlichen Prüfungsregelungen, Operatoren, Anforderungsbereiche, zugelassenen Hilfsmittel und veröffentlichten Aufgaben erfassen. Nichtöffentliches Prüfmaterial als `nicht_zugaenglich` ausweisen.
+- [ ] Veröffentlichte Prüfungsanforderungen den Lehrplankompetenzen zuordnen und Abweichungen, Jahrgangs-/Kohortenbezug sowie landesspezifische Prüfungsformate dokumentieren. Eine Prüfung illustriert einen Ausschnitt und beweist keine vollständige Lehrplanabdeckung.
 - [ ] Pro Fachpaket prüfen, welche Anforderungen durch amtliche Beispiele illustriert sind, welche nur im Lehrplan formuliert sind und wo Beispiele fehlen.
 
-**Abnahme:** Aufgabenprofile verweisen auf geprüfte Lehrplankompetenzen und amtliche Quelle; sie behaupten keine Sichtung der späteren Lehrwerke.
+**Abnahme:** Aufgabenprofile und Prüfungszeilen verweisen auf geprüfte Lehrplankompetenzen und amtliche Quelle. Für jeden relevanten Abschluss ist die Verfügbarkeit veröffentlichter Prüfungen oder eine belegte Zugangslücke festgehalten; eine Sichtung späterer Lehrwerke wird nicht behauptet.
 
 ### 7. Gesamtabschluss prüfen
 
