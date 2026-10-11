@@ -1,9 +1,11 @@
 # Lehrplan-Kompass Deutschland — Fortschritt und Lücken
 
-**Arbeitskennung:** `GC-PEDAGOGY-KB-01` (vorläufig; siehe Projektübergabe)  
+**Arbeitskennung:** `GC-PEDAGOGY-KB-01` (im [Draft-PR #208](https://github.com/HerrLoeffler/Hausaufgabe/pull/208) registriert; Integration auf `main` offen)  
 **Stichtag:** 11. Oktober 2026  
 **Erste Welle:** Grundschule, Haupt-/Mittelschulbildungsgang, Realschulbildungsgang, Gymnasium (Sek I und Sek II getrennt), alle Fächer und alle 16 Länder.  
 **Datenschutz:** Diese Auswertung speichert keine Buchtitel, Autor:innen, Verlage, Ausgaben, ISBNs, Cover, Produkt-/Plattformkennungen, Lizenzcodes oder Rückverknüpfungen. Sie behandelt ausschließlich amtliche Lehrplanquellen.
+
+**Aktuelle Arbeitsgrundlage:** [Lehrplan-Vollauswertung](../../../docs/superpowers/plans/2026-10-11-lehrplan-vollauswertung.md), [Registerschema](../register/README.md) und [Pflege-/Abnahmeverfahren](pflege-und-abnahme.md). Die Register sind erst begonnen; bisher sind Saarland und Thüringen Mathematik Grundschule als offene Zugänge übertragen. Für den tatsächlichen Stand einzelner Quellen gelten die Register und Fachberichte, nicht ältere Kurzformulierungen in diesem Lagebild.
 
 ## Status in Kürze
 
@@ -67,7 +69,7 @@ Erster Fachblock ist [Mathematik Grundschule](../subjects/mathematik-grundschule
 
 Jedes Dokument erhält mindestens: Land; amtliche Zuständigkeit; Zielbereich/Originalschulform; Bildungsgang bzw. Abschlussniveau; Fach oder integrierter Lernbereich; Jahrgänge/Endpunkte; Dokumentart; Originalgliederung; offizielle URL; Version/Stand; Gültig-ab und Übergangshinweis; Abruf-/Prüfdatum; Zugänglichkeit; Sichtungsstatus; geprüfte Abschnitte; in eigenen Worten zusammengefasste Kompetenzen und Inhalte; Progressionsmerkmale; Aufgaben-/Leistungsbezug soweit ausdrücklich genannt; Querschnittsbezüge; offene Fragen; Quelle/Fundstelle.
 
-**Sichtungsstatuswerte:** `offen` → `Quelle erreichbar` → `Metadaten erfasst` → `Inhalt teilweise ausgewertet` → `Inhalt vollständig im definierten Umfang ausgewertet` → `Zweitprüfung` (optional). „Vollständig“ ist nur relativ zu einem ausdrücklich beschriebenen Umfang zulässig; keine pauschale Vollständigkeitsbehauptung für ein ganzes Fach oder Land ohne Inventarabgleich.
+**Sichtungsstatuswerte:** `entdeckt` → `metadaten_geprueft` → `inhalt_teilweise` → `inhalt_ausgewertet` → `zweitgeprueft`; blockierte oder unklare Quellen werden getrennt markiert. Die positive Zweitsichtung ist für die Abschlusszählung Pflicht. „Vollständig“ ist nur relativ zu einem ausdrücklich beschriebenen Umfang zulässig; keine pauschale Vollständigkeitsbehauptung für ein ganzes Fach oder Land ohne Inventarabgleich.
 
 ## Nächste Ausführungsschritte
 
@@ -75,7 +77,7 @@ Jedes Dokument erhält mindestens: Land; amtliche Zuständigkeit; Zielbereich/Or
 2. Ein vollständiges Dokumentregister je Land × Zielbereich × Fach erzeugen; Portalindex, Gesetz/Verordnung, Rahmenvorgabe, Fachlehrplan und Beispielaufgabe voneinander unterscheiden.
 3. Gültigkeitsstatus und Versionsübergänge aktuell verifizieren; Entwürfe und Anhörungen separat markieren und nicht als geltendes Curriculum ausgeben.
 4. Mathematik Grundschule abschließen: den ab 01.08.2026 geltenden Saarlandplan auswerten und die jahrgangsbezogenen Erwartungen des Thüringer Plans vollständig prüfen. Der Saarland-PDF-Endpunkt liefert aktuell 403; der Thüringer Haupttext ist auf angemeldete Portalnutzer beschränkt. Amtliche Thüringer Implementationsmaterialien wurden zusätzlich ausgewertet, reichen aber nicht zur Vollständigkeitsmarkierung. Keine älteren oder nichtamtlichen Texte als Ersatz verwenden. Danach Quellen, Versionen und Fortschritt über alle 16 Länder abgleichen; erst dann den Fachblock schließen und Deutsch Grundschule beginnen.
-5. Ergebnisse fachweise und landesweise gegenprüfen; dann mit dem getrennten Medien-/Aufgabenregister abgleichen. Die zugelassene Medienanalyse speichert keine Buchidentitäten und keine Codes.
+5. Ergebnisse fachweise und landesweise gegenprüfen; amtliche Aufgabenprofile und Abschlussprüfungen den geprüften Kompetenzen zuordnen. Der Medienbestand gehört erst zur späteren Phase.
 
 ## Geltungsgrenze
 
