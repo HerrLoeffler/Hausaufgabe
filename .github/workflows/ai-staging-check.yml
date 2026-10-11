@@ -20,6 +20,7 @@ on:
       - 'feature/review-mode-*'
       - 'feature/local-staging-*'
       - 'fix/audio-*'
+      - 'feat/admin-account-*'
       - 'fix/visual-backlog-*'
       - 'fix/gc-security-*'
       - 'fix/staging-feedback-*'
@@ -225,6 +226,12 @@ jobs:
 
       - name: Review mode rights, outbox and isolated scenes
         run: node --experimental-vm-modules --test tools/ui/review-mode.test.cjs tools/ui/review-scenes.test.cjs tools/review-preview/server.test.mjs
+
+      - name: Admin account selection and confirmation regressions
+        run: |
+          node --check admin-account-actions.mjs
+          node --check functions/admin-account-callables.js
+          node --test tools/ui/admin-account-actions.test.cjs
 
       - name: Smoke test staging build
         run: |

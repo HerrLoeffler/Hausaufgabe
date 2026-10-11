@@ -1,5 +1,5 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -56,7 +56,7 @@ async function readCurrentRole() {
   if (!uid) return false;
   try {
     const snap = await getDoc(doc(db, "users", uid));
-    return snap.exists() && snap.data()?.role === "admin" && snap.data()?.status !== "suspended";
+    return snap.exists() && snap.data()?.role === "admin" && (!snap.data()?.status || snap.data()?.status === "active") && !snap.data()?.accountDeletionId;
   } catch (_) {
     return false;
   }
@@ -64,7 +64,9 @@ async function readCurrentRole() {
 
 async function refreshUsers() {
   if (!currentAdmin) return;
+  const caller = auth.currentUser?.uid;
   const snap = await getDocs(collection(db, "users"));
+  if (auth.currentUser?.uid !== caller || !currentAdmin) return;
   userCache = new Map(snap.docs.map(item => [item.id, { id: item.id, ...item.data() }]));
 }
 
@@ -94,6 +96,8 @@ function installToolbar() {
   toolbar.querySelector("#gcToggleArchivedTestAccounts")?.addEventListener("click", event => {
     showArchived = !showArchived;
     event.currentTarget.textContent = showArchived ? "Archivierte Testkonten ausblenden" : "Archivierte Testkonten anzeigen";
+    tableRoot.dataset.gcShowArchived = showArchived ? "1" : "0";
+    document.dispatchEvent(new CustomEvent("gradecrew:admin-archived-visibility"));
     decorateTeacherTable();
   });
 }
@@ -108,7 +112,7 @@ function decorateTeacherTable() {
     const row = button.closest("tr");
     if (!row || !user) continue;
 
-    const nameCell = row.querySelector("td:first-child");
+    const nameCell = row.querySelector("td[data-account-name]") || row.querySelector("td:first-child");
     nameCell?.querySelectorAll(".gcAdminTestBadge").forEach(node => node.remove());
     if (user.isTestAccount === true && nameCell) {
       const badge = document.createElement("span");
@@ -168,40 +172,11 @@ function renderDetailControls(uid) {
   controls.dataset.signature = signature;
   controls.className = "gcAdminTestAccountControls";
   controls.innerHTML = `
-    <label>Rolle
-      <select id="gcAdminRoleSelect" ${ownAccount ? "disabled" : ""}>
-        <option value="teacher" ${isAdmin ? "" : "selected"}>Lehrkraft</option>
-        <option value="admin" ${isAdmin ? "selected" : ""}>Admin</option>
-      </select>
-    </label>
     <button type="button" class="button secondary" id="gcToggleTestAccount" ${isAdmin || isArchived ? "disabled" : ""}>${isTest ? "Testkonto entfernen" : "Als Testkonto markieren"}</button>
     ${isTest && !ownAccount ? `<button type="button" class="button ${isArchived ? "secondary" : "ghost"}" id="gcArchiveTestAccount">${isArchived ? "Testkonto wieder aktivieren" : "Testkonto archivieren"}</button>` : ""}
     <p class="gcAdminTestNote">${isArchived ? "Archivierte Testkonten sind gesperrt. Vor dem Entfernen der Testkonto-Markierung bitte zuerst wieder aktivieren." : isTest ? `Dieses Konto ist als Testkonto markiert. Rolle: ${escapeHtml(roleLabel(user.role))}.` : "Testkonto markieren trennt Entwicklungs-/Testkonten von echten Lehrkräften. Admin-Konten können nicht als Testkonto markiert werden."}</p>
   `;
   actions.appendChild(controls);
-
-  controls.querySelector("#gcAdminRoleSelect")?.addEventListener("change", async event => {
-    const nextRole = event.currentTarget.value === "admin" ? "admin" : "teacher";
-    if (nextRole === user.role) return;
-    if (isTest && nextRole === "admin") {
-      alert("Ein Testkonto kann nicht gleichzeitig Admin sein. Entferne zuerst die Testkonto-Markierung.");
-      event.currentTarget.value = user.role || "teacher";
-      return;
-    }
-    if (!confirm(`${user.displayName || user.email || "Dieses Konto"} wirklich zu „${roleLabel(nextRole)}“ ändern?`)) {
-      event.currentTarget.value = user.role || "teacher";
-      return;
-    }
-    event.currentTarget.disabled = true;
-    try {
-      await saveUser(uid, { role: nextRole }, `Rolle auf ${roleLabel(nextRole)} geändert.`);
-    } catch (error) {
-      console.error(error);
-      alert("Rolle konnte nicht geändert werden.");
-      event.currentTarget.disabled = false;
-      event.currentTarget.value = user.role || "teacher";
-    }
-  });
 
   controls.querySelector("#gcToggleTestAccount")?.addEventListener("click", async event => {
     const nextValue = !isTest;
@@ -224,28 +199,9 @@ function renderDetailControls(uid) {
     }
   });
 
-  controls.querySelector("#gcArchiveTestAccount")?.addEventListener("click", async event => {
-    if (!isTest) return;
-    const nextArchived = !isArchived;
-    const text = nextArchived
-      ? `${user.displayName || user.email || "Dieses Testkonto"} archivieren? Der Login wird gesperrt und das Konto aus der normalen Lehrkräfteliste ausgeblendet. Es wird noch nichts endgültig gelöscht.`
-      : `${user.displayName || user.email || "Dieses Testkonto"} wieder aktivieren?`;
-    if (!confirm(text)) return;
-    event.currentTarget.disabled = true;
-    try {
-      await saveUser(uid, {
-        isTestAccount: true,
-        isTestAccountArchived: nextArchived,
-        status: nextArchived ? "suspended" : "active",
-        testAccountArchivedAt: nextArchived ? serverTimestamp() : null,
-        testAccountArchivedBy: nextArchived ? (auth.currentUser?.uid || "") : null
-      }, nextArchived ? "Testkonto archiviert." : "Testkonto wieder aktiviert.");
-      renderDetailControls(uid);
-    } catch (error) {
-      console.error(error);
-      alert("Testkonto konnte nicht archiviert werden.");
-      event.currentTarget.disabled = false;
-    }
+  controls.querySelector("#gcArchiveTestAccount")?.addEventListener("click", () => {
+    if (!isTest || ownAccount) return;
+    document.dispatchEvent(new CustomEvent("gradecrew:admin-account-action", {detail:{action:"archive",targets:[uid],value:!isArchived}}));
   });
 }
 
@@ -279,6 +235,17 @@ export async function installAdminTestAccountControls() {
   if (!currentAdmin) return;
   await refreshUsers();
   installListeners();
+  document.addEventListener("gradecrew:admin-accounts-updated", async () => { await refreshUsers(); scheduleDecorate(); });
+  onAuthStateChanged(auth, async user => {
+    const uid = user?.uid; selectedUid = ""; userCache.clear(); currentAdmin = false;
+    document.getElementById(CONTROLS_ID)?.remove();
+    document.getElementById(TOOLBAR_ID)?.remove();
+    if (!uid) return;
+    const allowed = await readCurrentRole();
+    if (auth.currentUser?.uid !== uid) return;
+    currentAdmin = allowed;
+    if (allowed) { await refreshUsers(); if (auth.currentUser?.uid === uid) scheduleDecorate(); }
+  });
   scheduleDecorate();
 }
 

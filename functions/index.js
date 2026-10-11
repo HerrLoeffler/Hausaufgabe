@@ -29,6 +29,7 @@ const { normalizeRightsReport } = require("./lib/rights-report");
 const { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount } = require("./lib/ai-job");
 const { solutionAudioScript, planSolutionAudioIndexes } = require("./lib/solution-audio");
 const { answerAudioIndexes, generateAnswerAudios, setAnswerAudioAssets } = require("./lib/audio-answers");
+const { requireAccountWrite } = require("./lib/account-state");
 const { reserveJob, releaseJob } = require("./lib/job-slots");
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 
@@ -378,7 +379,7 @@ exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async r
   const jobRef = db.collection("aiJobs").doc(createHash("sha256").update(`${uid}:${requestId}`).digest("hex").slice(0, 40));
   const lockRef = aiJobLock(uid);
   const now = Timestamp.now();
-  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, jobData: {
+  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, beforeReserve: tx => requireAccountWrite(tx, db, uid), jobData: {
       ownerId: uid, status: "queued", stage: "queued", progressMessage: "Erstellung wird gestartet …", percent: 0,
       completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, answerAudioCompleted: 0, answerAudioTotal: input.audioAnswerQuestionCount || 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
       subject: input.subject, grade: input.grade, topic: input.topic, requestId,

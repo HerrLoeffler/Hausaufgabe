@@ -9,7 +9,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "node --test",
-    "check": "node --check main.js && node --check review-mode-callables.js && node --check index.js && find lib -name '*.js' -print0 | xargs -0 -n1 node --check && eslint main.js index.js review-mode-callables.js lib test"
+    "check": "node --check admin-account-callables.js && node --check main.js && node --check review-mode-callables.js && node --check index.js && find lib -name '*.js' -print0 | xargs -0 -n1 node --check && eslint main.js index.js admin-account-callables.js review-mode-callables.js lib test"
   },
   "dependencies": {
     "firebase-admin": "^14.4.0",
