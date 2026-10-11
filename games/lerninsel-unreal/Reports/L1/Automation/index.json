@@ -1,0 +1,93 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "4076FBDA154B78FF321D2C9758078E7F",
+			"instanceName": "Mac.fritz.box-52478",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.10-11.01.54",
+	"succeeded": 0,
+	"succeededWithWarnings": 1,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 21.685323715209961,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "WorldPreview",
+			"fullTestPath": "GradeCrew.Lerninsel.WorldPreview",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"4076FBDA154B78FF321D2C9758078E7F"
+			],
+			"duration": 21.685323715209961,
+			"dateTime": "2026.10.10-11.01.32",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.10-11.01.41"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.10-11.01.41"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.10-11.01.51"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.10-11.01.51"
+				}
+			],
+			"warnings": 4,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

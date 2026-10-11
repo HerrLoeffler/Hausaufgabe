@@ -1,0 +1,24 @@
+{
+  "master_triangles": 295556,
+  "seated_height_m": 0.9278910644352436,
+  "rig": false,
+  "animation_tested": false,
+  "engine_import_tested": false,
+  "variants": [
+    {
+      "name": "SM_Fox_LOD0",
+      "triangles": 6000,
+      "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Characters/SM_Fox_LOD0.fbx"
+    },
+    {
+      "name": "SM_Fox_LOD1",
+      "triangles": 3000,
+      "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Characters/SM_Fox_LOD1.fbx"
+    },
+    {
+      "name": "SM_Fox_Stone",
+      "triangles": 6000,
+      "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Characters/SM_Fox_Stone.fbx"
+    }
+  ]
+}

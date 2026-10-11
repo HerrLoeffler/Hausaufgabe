@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "01",
+    "title": "Baumfamilien",
+    "purpose": "20 Baumstudien: Silhouette, Schichtung, Wurzeln und Blickachsen",
+    "motifs": [
+      {
+        "id": "01.01",
+        "description": "Goldene Eiche, gesamte unregelmäßige Krone"
+      },
+      {
+        "id": "01.02",
+        "description": "Eiche mit sichtbarer Verzweigung aus Augenhöhe"
+      },
+      {
+        "id": "01.03",
+        "description": "Orange Ahornkrone vor heller Mauer"
+      },
+      {
+        "id": "01.04",
+        "description": "Schattiger Kronenkern und warme Blattspitzen"
+      },
+      {
+        "id": "01.05",
+        "description": "Birke mit hellem Stamm am sicheren Nebenweg"
+      },
+      {
+        "id": "01.06",
+        "description": "Lindenfamilie in limettengrün"
+      },
+      {
+        "id": "01.07",
+        "description": "Linde über einer Steinbank, freie Sicht darunter"
+      },
+      {
+        "id": "01.08",
+        "description": "Kiefer mit gestaffelten horizontalen Kronen"
+      },
+      {
+        "id": "01.09",
+        "description": "Schlanke Zypresse als Turmrahmung"
+      },
+      {
+        "id": "01.10",
+        "description": "Rosa Blütenbaum, zurückhaltende Akzentfarbe"
+      },
+      {
+        "id": "01.11",
+        "description": "Doppelbaumgruppe ohne identische Silhouette"
+      },
+      {
+        "id": "01.12",
+        "description": "Junger Baum neben altem verzweigtem Stamm"
+      },
+      {
+        "id": "01.13",
+        "description": "Drei Kronenhöhen als Tiefenstaffelung"
+      },
+      {
+        "id": "01.14",
+        "description": "Wurzeln am Weg außerhalb der Gehfläche"
+      },
+      {
+        "id": "01.15",
+        "description": "Astgabel und kleine Zweige im Detail"
+      },
+      {
+        "id": "01.16",
+        "description": "Goldene Blattgruppe aus drei Lichtwerten"
+      },
+      {
+        "id": "01.17",
+        "description": "Lime Blattgruppe bei gleicher Materialwirkung"
+      },
+      {
+        "id": "01.18",
+        "description": "Rosa Blattgruppe bei gleicher Materialwirkung"
+      },
+      {
+        "id": "01.19",
+        "description": "Bäume rahmen ein rotes Tor ohne es zu verdecken"
+      },
+      {
+        "id": "01.20",
+        "description": "Fünf ausgewählte Familien als Größenvergleich"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Baumfamilien. 20 Baumstudien: Silhouette, Schichtung, Wurzeln und Blickachsen.\nPanels:\n01. Goldene Eiche, gesamte unregelmäßige Krone\n02. Eiche mit sichtbarer Verzweigung aus Augenhöhe\n03. Orange Ahornkrone vor heller Mauer\n04. Schattiger Kronenkern und warme Blattspitzen\n05. Birke mit hellem Stamm am sicheren Nebenweg\n06. Lindenfamilie in limettengrün\n07. Linde über einer Steinbank, freie Sicht darunter\n08. Kiefer mit gestaffelten horizontalen Kronen\n09. Schlanke Zypresse als Turmrahmung\n10. Rosa Blütenbaum, zurückhaltende Akzentfarbe\n11. Doppelbaumgruppe ohne identische Silhouette\n12. Junger Baum neben altem verzweigtem Stamm\n13. Drei Kronenhöhen als Tiefenstaffelung\n14. Wurzeln am Weg außerhalb der Gehfläche\n15. Astgabel und kleine Zweige im Detail\n16. Goldene Blattgruppe aus drei Lichtwerten\n17. Lime Blattgruppe bei gleicher Materialwirkung\n18. Rosa Blattgruppe bei gleicher Materialwirkung\n19. Bäume rahmen ein rotes Tor ohne es zu verdecken\n20. Fünf ausgewählte Familien als Größenvergleich",
+    "path": "boards/01.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "02",
+    "title": "Boden und Küste",
+    "purpose": "20 Material- und Landschaftsstudien",
+    "motifs": [
+      {
+        "id": "02.01",
+        "description": "Warmer Kalksteinweg mit ruhigen großen Fugen"
+      },
+      {
+        "id": "02.02",
+        "description": "Sandweg mit klarer Graskante"
+      },
+      {
+        "id": "02.03",
+        "description": "Moosige Mauerkante außerhalb einer Wortfläche"
+      },
+      {
+        "id": "02.04",
+        "description": "Ockerfarbener Fels mit drei Absätzen"
+      },
+      {
+        "id": "02.05",
+        "description": "Küstenschichtung vor ruhigem blauem Meer"
+      },
+      {
+        "id": "02.06",
+        "description": "Breite sichere Treppe ohne Sprung"
+      },
+      {
+        "id": "02.07",
+        "description": "Niedrige Grasinsel mit dichtem Rand"
+      },
+      {
+        "id": "02.08",
+        "description": "Farnfamilie mit klaren Blattgruppen"
+      },
+      {
+        "id": "02.09",
+        "description": "Schilf am unbetretbaren Wasserrand"
+      },
+      {
+        "id": "02.10",
+        "description": "Helles Steinplateau mit Geländer"
+      },
+      {
+        "id": "02.11",
+        "description": "Kleine überquerbare Wurzel außerhalb der Rätselmitte"
+      },
+      {
+        "id": "02.12",
+        "description": "Ruhige Meerfläche mit weicher Schaumkante"
+      },
+      {
+        "id": "02.13",
+        "description": "Laubhäufchen nur außerhalb lesbarer Platten"
+      },
+      {
+        "id": "02.14",
+        "description": "Sandsteinbogen auf tatsächlichen Trägern"
+      },
+      {
+        "id": "02.15",
+        "description": "Gras und Kies als sichere Nebenroute"
+      },
+      {
+        "id": "02.16",
+        "description": "Bruchkante mit kleinem Sockelabsatz"
+      },
+      {
+        "id": "02.17",
+        "description": "Runder Platz mit zwei klaren Ausgängen"
+      },
+      {
+        "id": "02.18",
+        "description": "Kalkstein und Sand in einem Raum"
+      },
+      {
+        "id": "02.19",
+        "description": "Nebenweg mit Aussicht statt Sackgassenstrafe"
+      },
+      {
+        "id": "02.20",
+        "description": "Vergleich fünf ruhiger Bodenmaterialien"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Boden und Küste. 20 Material- und Landschaftsstudien.\nPanels:\n01. Warmer Kalksteinweg mit ruhigen großen Fugen\n02. Sandweg mit klarer Graskante\n03. Moosige Mauerkante außerhalb einer Wortfläche\n04. Ockerfarbener Fels mit drei Absätzen\n05. Küstenschichtung vor ruhigem blauem Meer\n06. Breite sichere Treppe ohne Sprung\n07. Niedrige Grasinsel mit dichtem Rand\n08. Farnfamilie mit klaren Blattgruppen\n09. Schilf am unbetretbaren Wasserrand\n10. Helles Steinplateau mit Geländer\n11. Kleine überquerbare Wurzel außerhalb der Rätselmitte\n12. Ruhige Meerfläche mit weicher Schaumkante\n13. Laubhäufchen nur außerhalb lesbarer Platten\n14. Sandsteinbogen auf tatsächlichen Trägern\n15. Gras und Kies als sichere Nebenroute\n16. Bruchkante mit kleinem Sockelabsatz\n17. Runder Platz mit zwei klaren Ausgängen\n18. Kalkstein und Sand in einem Raum\n19. Nebenweg mit Aussicht statt Sackgassenstrafe\n20. Vergleich fünf ruhiger Bodenmaterialien",
+    "path": "boards/02.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "03",
+    "title": "Architektur und Mechanik",
+    "purpose": "20 original gestaltete Bauobjekte",
+    "motifs": [
+      {
+        "id": "03.01",
+        "description": "Roter Gittertorrahmen mit hellem Steinsockel"
+      },
+      {
+        "id": "03.02",
+        "description": "Tor geschlossen, Kabel dunkel"
+      },
+      {
+        "id": "03.03",
+        "description": "Tor halb geöffnet, Durchgang noch gesperrt"
+      },
+      {
+        "id": "03.04",
+        "description": "Tor vollständig geöffnet, Kabel mint"
+      },
+      {
+        "id": "03.05",
+        "description": "Niedriger Rundbogen am Ankunftspunkt"
+      },
+      {
+        "id": "03.06",
+        "description": "Brunnen mit ruhigem Wasser und Messauslass"
+      },
+      {
+        "id": "03.07",
+        "description": "Füllhebel aus Kupfer neben dem Brunnen"
+      },
+      {
+        "id": "03.08",
+        "description": "Ablassbecken mit eindeutiger Minusmarkierung"
+      },
+      {
+        "id": "03.09",
+        "description": "Satzplatz mit kleinen Häuserfassaden"
+      },
+      {
+        "id": "03.10",
+        "description": "Terrakottadach mit modellierten Reihen"
+      },
+      {
+        "id": "03.11",
+        "description": "Steinbank als Beobachtungslandmarke"
+      },
+      {
+        "id": "03.12",
+        "description": "Kabelkanal eingelassen im Stein"
+      },
+      {
+        "id": "03.13",
+        "description": "Startstein mit rundem Beginn"
+      },
+      {
+        "id": "03.14",
+        "description": "Schlussstein mit eigener Prüfmarke"
+      },
+      {
+        "id": "03.15",
+        "description": "Rücknahmestein am sicheren Rand"
+      },
+      {
+        "id": "03.16",
+        "description": "Turm mit genau acht getrennten Fenstern"
+      },
+      {
+        "id": "03.17",
+        "description": "Turm mit vier hellen und vier dunklen Fenstern"
+      },
+      {
+        "id": "03.18",
+        "description": "Steingeländer mit sichtbaren Pfosten"
+      },
+      {
+        "id": "03.19",
+        "description": "Mauerabschluss mit abgestuften Kappen"
+      },
+      {
+        "id": "03.20",
+        "description": "Eine Materialfamilie Stein Kupfer Rostrot Wasser"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Architektur und Mechanik. 20 original gestaltete Bauobjekte.\nPanels:\n01. Roter Gittertorrahmen mit hellem Steinsockel\n02. Tor geschlossen, Kabel dunkel\n03. Tor halb geöffnet, Durchgang noch gesperrt\n04. Tor vollständig geöffnet, Kabel mint\n05. Niedriger Rundbogen am Ankunftspunkt\n06. Brunnen mit ruhigem Wasser und Messauslass\n07. Füllhebel aus Kupfer neben dem Brunnen\n08. Ablassbecken mit eindeutiger Minusmarkierung\n09. Satzplatz mit kleinen Häuserfassaden\n10. Terrakottadach mit modellierten Reihen\n11. Steinbank als Beobachtungslandmarke\n12. Kabelkanal eingelassen im Stein\n13. Startstein mit rundem Beginn\n14. Schlussstein mit eigener Prüfmarke\n15. Rücknahmestein am sicheren Rand\n16. Turm mit genau acht getrennten Fenstern\n17. Turm mit vier hellen und vier dunklen Fenstern\n18. Steingeländer mit sichtbaren Pfosten\n19. Mauerabschluss mit abgestuften Kappen\n20. Eine Materialfamilie Stein Kupfer Rostrot Wasser",
+    "path": "boards/03.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "04",
+    "title": "Verbengarten",
+    "purpose": "20 Raum- und Zustandsansichten aus Ego-Perspektive",
+    "motifs": [
+      {
+        "id": "04.01",
+        "description": "Ankunft bei160cm Augenhöhe, orange Kronen und rotes Tor"
+      },
+      {
+        "id": "04.02",
+        "description": "Probe mit vier Wortplatten und zwei Auswahlplätzen"
+      },
+      {
+        "id": "04.03",
+        "description": "Wortplatte ruhig lesbar ohne Blattüberdeckung"
+      },
+      {
+        "id": "04.04",
+        "description": "Wortkontext bewusst geöffnet"
+      },
+      {
+        "id": "04.05",
+        "description": "Eine ausgewählte und eine freie Probeplatte"
+      },
+      {
+        "id": "04.06",
+        "description": "Zwei ausgewählte Platten, weitere Auswahl begrenzt"
+      },
+      {
+        "id": "04.07",
+        "description": "Falsche Auswahl mit Formmarkierung und Rücknahmeweg"
+      },
+      {
+        "id": "04.08",
+        "description": "Erfolgreiche Probe öffnet kleines Tor"
+      },
+      {
+        "id": "04.09",
+        "description": "Hauptfeld drei Reihen mit je drei Platten"
+      },
+      {
+        "id": "04.10",
+        "description": "Sicherer Außenweg neben dem Feld"
+      },
+      {
+        "id": "04.11",
+        "description": "Runder Beginn vor Reihe eins"
+      },
+      {
+        "id": "04.12",
+        "description": "Erster mittiger Verbenschritt"
+      },
+      {
+        "id": "04.13",
+        "description": "Randkontakt auf neutraler Fuge"
+      },
+      {
+        "id": "04.14",
+        "description": "Zweiter Schritt in der nächsten Reihe"
+      },
+      {
+        "id": "04.15",
+        "description": "Vorzeitige spätere Reihe bleibt ohne Fortschritt"
+      },
+      {
+        "id": "04.16",
+        "description": "Falsches Wort mit dauerhaft anderem Symbol"
+      },
+      {
+        "id": "04.17",
+        "description": "Rücknahme des letzten Schritts"
+      },
+      {
+        "id": "04.18",
+        "description": "Vollständiger Weg vor Schlussbestätigung"
+      },
+      {
+        "id": "04.19",
+        "description": "Gelöstes Gartentor und eine Turmlampe"
+      },
+      {
+        "id": "04.20",
+        "description": "Neuer Kontext als freiwillige Transferaufgabe"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Verbengarten. 20 Raum- und Zustandsansichten aus Ego-Perspektive.\nPanels:\n01. Ankunft bei160cm Augenhöhe, orange Kronen und rotes Tor\n02. Probe mit vier Wortplatten und zwei Auswahlplätzen\n03. Wortplatte ruhig lesbar ohne Blattüberdeckung\n04. Wortkontext bewusst geöffnet\n05. Eine ausgewählte und eine freie Probeplatte\n06. Zwei ausgewählte Platten, weitere Auswahl begrenzt\n07. Falsche Auswahl mit Formmarkierung und Rücknahmeweg\n08. Erfolgreiche Probe öffnet kleines Tor\n09. Hauptfeld drei Reihen mit je drei Platten\n10. Sicherer Außenweg neben dem Feld\n11. Runder Beginn vor Reihe eins\n12. Erster mittiger Verbenschritt\n13. Randkontakt auf neutraler Fuge\n14. Zweiter Schritt in der nächsten Reihe\n15. Vorzeitige spätere Reihe bleibt ohne Fortschritt\n16. Falsches Wort mit dauerhaft anderem Symbol\n17. Rücknahme des letzten Schritts\n18. Vollständiger Weg vor Schlussbestätigung\n19. Gelöstes Gartentor und eine Turmlampe\n20. Neuer Kontext als freiwillige Transferaufgabe",
+    "path": "boards/04.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "05",
+    "title": "Satzplatz",
+    "purpose": "20 Ansichten für Satzglieder und Reihenfolge",
+    "motifs": [
+      {
+        "id": "05.01",
+        "description": "Rosa und lime Bäume um einen hellen kleinen Platz"
+      },
+      {
+        "id": "05.02",
+        "description": "Vier Wortgruppen in einer vollständigen Bank"
+      },
+      {
+        "id": "05.03",
+        "description": "Vier leere Sockel vor einem geschlossenen Tor"
+      },
+      {
+        "id": "05.04",
+        "description": "Erste Wortgruppe auf dem ersten Sockel"
+      },
+      {
+        "id": "05.05",
+        "description": "Verb auf zweiter Satzgliedposition"
+      },
+      {
+        "id": "05.06",
+        "description": "Drei Wortgruppen, ein freier Sockel"
+      },
+      {
+        "id": "05.07",
+        "description": "Vollständiger Aussagesatz vor Prüfung"
+      },
+      {
+        "id": "05.08",
+        "description": "Gültiger Satz beginnt mit dem Subjekt"
+      },
+      {
+        "id": "05.09",
+        "description": "Gültiger Satz beginnt mit dem Objekt"
+      },
+      {
+        "id": "05.10",
+        "description": "Gültiger Satz beginnt mit der Zeitangabe"
+      },
+      {
+        "id": "05.11",
+        "description": "Ungewöhnlicher gültiger Satz bleibt zugelassen"
+      },
+      {
+        "id": "05.12",
+        "description": "Verb auf erster Position als Frage markiert"
+      },
+      {
+        "id": "05.13",
+        "description": "Verb auf dritter Position mit Positionshinweis"
+      },
+      {
+        "id": "05.14",
+        "description": "Doppelter Satzteil wird nicht kopiert"
+      },
+      {
+        "id": "05.15",
+        "description": "Gezielte Rücknahme des letzten Teils"
+      },
+      {
+        "id": "05.16",
+        "description": "Wortkontext groß lesbar im ruhigen Fokus"
+      },
+      {
+        "id": "05.17",
+        "description": "Vier ausgewählte Sockel und mint Verbindung"
+      },
+      {
+        "id": "05.18",
+        "description": "Toröffnung nach getrennter Bestätigung"
+      },
+      {
+        "id": "05.19",
+        "description": "Abkürzung zurück zum Knotenplatz"
+      },
+      {
+        "id": "05.20",
+        "description": "Anderer Beispielsatz in freiwilliger Übung"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Satzplatz. 20 Ansichten für Satzglieder und Reihenfolge.\nPanels:\n01. Rosa und lime Bäume um einen hellen kleinen Platz\n02. Vier Wortgruppen in einer vollständigen Bank\n03. Vier leere Sockel vor einem geschlossenen Tor\n04. Erste Wortgruppe auf dem ersten Sockel\n05. Verb auf zweiter Satzgliedposition\n06. Drei Wortgruppen, ein freier Sockel\n07. Vollständiger Aussagesatz vor Prüfung\n08. Gültiger Satz beginnt mit dem Subjekt\n09. Gültiger Satz beginnt mit dem Objekt\n10. Gültiger Satz beginnt mit der Zeitangabe\n11. Ungewöhnlicher gültiger Satz bleibt zugelassen\n12. Verb auf erster Position als Frage markiert\n13. Verb auf dritter Position mit Positionshinweis\n14. Doppelter Satzteil wird nicht kopiert\n15. Gezielte Rücknahme des letzten Teils\n16. Wortkontext groß lesbar im ruhigen Fokus\n17. Vier ausgewählte Sockel und mint Verbindung\n18. Toröffnung nach getrennter Bestätigung\n19. Abkürzung zurück zum Knotenplatz\n20. Anderer Beispielsatz in freiwilliger Übung",
+    "path": "boards/05.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "06",
+    "title": "Bruchleitungen",
+    "purpose": "20 Mengen-, Pfad- und Beckenstudien",
+    "motifs": [
+      {
+        "id": "06.01",
+        "description": "Wasserterrasse mit einem klaren1-Liter-Becken"
+      },
+      {
+        "id": "06.02",
+        "description": "Leere Anlage mit zehn gleichen Markierungen"
+      },
+      {
+        "id": "06.03",
+        "description": "Runder Start und drei getrennte Leitungsäste"
+      },
+      {
+        "id": "06.04",
+        "description": "RouteA mit drei Teilmengen zum Ganzen"
+      },
+      {
+        "id": "06.05",
+        "description": "RouteB endet unterhalb der Vollmarke"
+      },
+      {
+        "id": "06.06",
+        "description": "RouteC endet bei sieben Zehnteln"
+      },
+      {
+        "id": "06.07",
+        "description": "Eine Hälfte entspricht fünf Zehnteln"
+      },
+      {
+        "id": "06.08",
+        "description": "Ein Fünftel entspricht zwei Zehnteln"
+      },
+      {
+        "id": "06.09",
+        "description": "Drei Zehntel als ruhiger Wasserstand"
+      },
+      {
+        "id": "06.10",
+        "description": "Getrennte Astgeometrie ohne Querabkürzung"
+      },
+      {
+        "id": "06.11",
+        "description": "Eine ausgewählte Kante und nächster Knoten"
+      },
+      {
+        "id": "06.12",
+        "description": "Unvollständiger Ast vor einer Prüfung"
+      },
+      {
+        "id": "06.13",
+        "description": "Rückwärtsnehmen einer zuletzt gesetzten Kante"
+      },
+      {
+        "id": "06.14",
+        "description": "Mengenanzeige bei vier Fünfteln"
+      },
+      {
+        "id": "06.15",
+        "description": "Mengenanzeige bei sieben Zehnteln"
+      },
+      {
+        "id": "06.16",
+        "description": "Volles Becken nach richtiger Gesamtmenge"
+      },
+      {
+        "id": "06.17",
+        "description": "Gate bleibt während Bewegung noch gesperrt"
+      },
+      {
+        "id": "06.18",
+        "description": "Offener Weg nach bestätigtem Becken"
+      },
+      {
+        "id": "06.19",
+        "description": "Andere Skala für freiwillige Zwölftelaufgabe"
+      },
+      {
+        "id": "06.20",
+        "description": "Vergleich halbes Viertel- und Zehntelbecken"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Bruchleitungen. 20 Mengen-, Pfad- und Beckenstudien.\nPanels:\n01. Wasserterrasse mit einem klaren1-Liter-Becken\n02. Leere Anlage mit zehn gleichen Markierungen\n03. Runder Start und drei getrennte Leitungsäste\n04. RouteA mit drei Teilmengen zum Ganzen\n05. RouteB endet unterhalb der Vollmarke\n06. RouteC endet bei sieben Zehnteln\n07. Eine Hälfte entspricht fünf Zehnteln\n08. Ein Fünftel entspricht zwei Zehnteln\n09. Drei Zehntel als ruhiger Wasserstand\n10. Getrennte Astgeometrie ohne Querabkürzung\n11. Eine ausgewählte Kante und nächster Knoten\n12. Unvollständiger Ast vor einer Prüfung\n13. Rückwärtsnehmen einer zuletzt gesetzten Kante\n14. Mengenanzeige bei vier Fünfteln\n15. Mengenanzeige bei sieben Zehnteln\n16. Volles Becken nach richtiger Gesamtmenge\n17. Gate bleibt während Bewegung noch gesperrt\n18. Offener Weg nach bestätigtem Becken\n19. Andere Skala für freiwillige Zwölftelaufgabe\n20. Vergleich halbes Viertel- und Zehntelbecken",
+    "path": "boards/06.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "07",
+    "title": "Mess-Eimer",
+    "purpose": "20 präzise Objekt- und Handlungsvorlagen",
+    "motifs": [
+      {
+        "id": "07.01",
+        "description": "Ein kleiner Mess-Eimer mit Aufschrift1L"
+      },
+      {
+        "id": "07.02",
+        "description": "Zylindrischer Innenraum statt großer Tank"
+      },
+      {
+        "id": "07.03",
+        "description": "Gleichmäßige Zehntelskala mit Null und Voll"
+      },
+      {
+        "id": "07.04",
+        "description": "Eimer leer auf einem niedrigen Sockel"
+      },
+      {
+        "id": "07.05",
+        "description": "Ein Zehntel Wasser, einhundert Milliliter"
+      },
+      {
+        "id": "07.06",
+        "description": "Zwei Zehntel Wasser unter dem Ziel"
+      },
+      {
+        "id": "07.07",
+        "description": "Drei Zehntel Wasser als Zielmenge"
+      },
+      {
+        "id": "07.08",
+        "description": "Vier Zehntel Wasser über dem Ziel"
+      },
+      {
+        "id": "07.09",
+        "description": "Voller Eimer mit zehn Zehnteln"
+      },
+      {
+        "id": "07.10",
+        "description": "Runder geschlossener Metallrand im Detail"
+      },
+      {
+        "id": "07.11",
+        "description": "Ein plausibler dünner Tragegriff"
+      },
+      {
+        "id": "07.12",
+        "description": "Transparentes Gefäß mit sichtbarer Wasserlinie"
+      },
+      {
+        "id": "07.13",
+        "description": "Aufnehmen am Sockel"
+      },
+      {
+        "id": "07.14",
+        "description": "Getragener Eimer vollständig im unteren Blick"
+      },
+      {
+        "id": "07.15",
+        "description": "Gut lesbare ergänzende Skala am Bildrand"
+      },
+      {
+        "id": "07.16",
+        "description": "Füllen am Brunnen in einer Portion"
+      },
+      {
+        "id": "07.17",
+        "description": "Ablassen einer Portion am Nebenbecken"
+      },
+      {
+        "id": "07.18",
+        "description": "Eimer falsch auf Platte, wieder aufnehmbar"
+      },
+      {
+        "id": "07.19",
+        "description": "Richtige Menge auf Platte öffnet das Tor"
+      },
+      {
+        "id": "07.20",
+        "description": "Pause unterbricht einen noch unbestätigten Hub"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Mess-Eimer. 20 präzise Objekt- und Handlungsvorlagen.\nPanels:\n01. Ein kleiner Mess-Eimer mit Aufschrift1L\n02. Zylindrischer Innenraum statt großer Tank\n03. Gleichmäßige Zehntelskala mit Null und Voll\n04. Eimer leer auf einem niedrigen Sockel\n05. Ein Zehntel Wasser, einhundert Milliliter\n06. Zwei Zehntel Wasser unter dem Ziel\n07. Drei Zehntel Wasser als Zielmenge\n08. Vier Zehntel Wasser über dem Ziel\n09. Voller Eimer mit zehn Zehnteln\n10. Runder geschlossener Metallrand im Detail\n11. Ein plausibler dünner Tragegriff\n12. Transparentes Gefäß mit sichtbarer Wasserlinie\n13. Aufnehmen am Sockel\n14. Getragener Eimer vollständig im unteren Blick\n15. Gut lesbare ergänzende Skala am Bildrand\n16. Füllen am Brunnen in einer Portion\n17. Ablassen einer Portion am Nebenbecken\n18. Eimer falsch auf Platte, wieder aufnehmbar\n19. Richtige Menge auf Platte öffnet das Tor\n20. Pause unterbricht einen noch unbestätigten Hub",
+    "path": "boards/07.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "08",
+    "title": "Felsfenster",
+    "purpose": "20 Beobachtungs- und Suchstudien",
+    "motifs": [
+      {
+        "id": "08.01",
+        "description": "Sichere Küstenschleife mit vier erreichbaren Reliefs"
+      },
+      {
+        "id": "08.02",
+        "description": "Fundrelief ein Zehntel auf einem Fels"
+      },
+      {
+        "id": "08.03",
+        "description": "Fundrelief ein Fünftel an einer Mauer"
+      },
+      {
+        "id": "08.04",
+        "description": "Fundrelief zwei Fünftel an einem Träger"
+      },
+      {
+        "id": "08.05",
+        "description": "Fundrelief eine Hälfte an einer Bank"
+      },
+      {
+        "id": "08.06",
+        "description": "Entdeckte Reliefs als getrennte Skizzenliste"
+      },
+      {
+        "id": "08.07",
+        "description": "Genau drei leere Auswahlplätze"
+      },
+      {
+        "id": "08.08",
+        "description": "Drei ausgewählte Funde vor Mengenprüfung"
+      },
+      {
+        "id": "08.09",
+        "description": "Eine falsche Dreiermenge unter dem Ganzen"
+      },
+      {
+        "id": "08.10",
+        "description": "Eine falsche Dreiermenge über dem Ganzen"
+      },
+      {
+        "id": "08.11",
+        "description": "Richtige Menge, Blickausrichtung noch offen"
+      },
+      {
+        "id": "08.12",
+        "description": "Steinbank kennzeichnet großzügigen Standbereich"
+      },
+      {
+        "id": "08.13",
+        "description": "Drei Formen auf unterschiedlich entfernten Trägern"
+      },
+      {
+        "id": "08.14",
+        "description": "Getrennte Formen aus falschem Blick"
+      },
+      {
+        "id": "08.15",
+        "description": "Zusammenpassende Kurve vom Aussichtspunkt"
+      },
+      {
+        "id": "08.16",
+        "description": "Kontrastumrisse ohne Kamerateleport"
+      },
+      {
+        "id": "08.17",
+        "description": "Blickhilfe als bewusste eigene Aktion"
+      },
+      {
+        "id": "08.18",
+        "description": "Letzte Verbindung wird manuell bestätigt"
+      },
+      {
+        "id": "08.19",
+        "description": "Mintkabel läuft zum Turm nach Erfolg"
+      },
+      {
+        "id": "08.20",
+        "description": "Vier helle Signale am Prototypabschluss"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Felsfenster. 20 Beobachtungs- und Suchstudien.\nPanels:\n01. Sichere Küstenschleife mit vier erreichbaren Reliefs\n02. Fundrelief ein Zehntel auf einem Fels\n03. Fundrelief ein Fünftel an einer Mauer\n04. Fundrelief zwei Fünftel an einem Träger\n05. Fundrelief eine Hälfte an einer Bank\n06. Entdeckte Reliefs als getrennte Skizzenliste\n07. Genau drei leere Auswahlplätze\n08. Drei ausgewählte Funde vor Mengenprüfung\n09. Eine falsche Dreiermenge unter dem Ganzen\n10. Eine falsche Dreiermenge über dem Ganzen\n11. Richtige Menge, Blickausrichtung noch offen\n12. Steinbank kennzeichnet großzügigen Standbereich\n13. Drei Formen auf unterschiedlich entfernten Trägern\n14. Getrennte Formen aus falschem Blick\n15. Zusammenpassende Kurve vom Aussichtspunkt\n16. Kontrastumrisse ohne Kamerateleport\n17. Blickhilfe als bewusste eigene Aktion\n18. Letzte Verbindung wird manuell bestätigt\n19. Mintkabel läuft zum Turm nach Erfolg\n20. Vier helle Signale am Prototypabschluss",
+    "path": "boards/08.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "09",
+    "title": "Inselzusammenhang",
+    "purpose": "20 Übersichten und Blickbeziehungen",
+    "motifs": [
+      {
+        "id": "09.01",
+        "description": "Originale Insel mit Garten Satzplatz Wasser und Küste"
+      },
+      {
+        "id": "09.02",
+        "description": "Insel mit acht unterschiedlichen geplanten Zonen"
+      },
+      {
+        "id": "09.03",
+        "description": "Garten zu Satzplatz durch ein lesbares Tor"
+      },
+      {
+        "id": "09.04",
+        "description": "Satzplatz zu Wasser durch einen Bogen"
+      },
+      {
+        "id": "09.05",
+        "description": "Wasser zu Küste mit Meerblick"
+      },
+      {
+        "id": "09.06",
+        "description": "Küste zu Turm mit markanter Bank"
+      },
+      {
+        "id": "09.07",
+        "description": "Turm als Fernlandmarke aus dem Garten"
+      },
+      {
+        "id": "09.08",
+        "description": "Turm als Fernlandmarke vom Satzplatz"
+      },
+      {
+        "id": "09.09",
+        "description": "Turm als Fernlandmarke von der Wasserterrasse"
+      },
+      {
+        "id": "09.10",
+        "description": "Knotenplatz mit rückkehrbarem Seitenweg"
+      },
+      {
+        "id": "09.11",
+        "description": "Geöffnete Abkürzung verbindet frühere Räume"
+      },
+      {
+        "id": "09.12",
+        "description": "Heckenlabyrinth als geplanter späterer Raum"
+      },
+      {
+        "id": "09.13",
+        "description": "Spiegelgarten als geplanter späterer Raum"
+      },
+      {
+        "id": "09.14",
+        "description": "Klangwald als geplanter späterer Raum"
+      },
+      {
+        "id": "09.15",
+        "description": "Leuchtturm-Innenraum als geplanter späterer Raum"
+      },
+      {
+        "id": "09.16",
+        "description": "Ruhige Höhenschichtung ohne unpassierbare Sprünge"
+      },
+      {
+        "id": "09.17",
+        "description": "Uferweg um eine Felsgruppe"
+      },
+      {
+        "id": "09.18",
+        "description": "Platz mit klarer Haupt- und Nebenroute"
+      },
+      {
+        "id": "09.19",
+        "description": "Landschaftsmassen statt weißem Fliesenflur"
+      },
+      {
+        "id": "09.20",
+        "description": "Vier gebaute und vier geplante Bereiche unterscheiden"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Inselzusammenhang. 20 Übersichten und Blickbeziehungen.\nPanels:\n01. Originale Insel mit Garten Satzplatz Wasser und Küste\n02. Insel mit acht unterschiedlichen geplanten Zonen\n03. Garten zu Satzplatz durch ein lesbares Tor\n04. Satzplatz zu Wasser durch einen Bogen\n05. Wasser zu Küste mit Meerblick\n06. Küste zu Turm mit markanter Bank\n07. Turm als Fernlandmarke aus dem Garten\n08. Turm als Fernlandmarke vom Satzplatz\n09. Turm als Fernlandmarke von der Wasserterrasse\n10. Knotenplatz mit rückkehrbarem Seitenweg\n11. Geöffnete Abkürzung verbindet frühere Räume\n12. Heckenlabyrinth als geplanter späterer Raum\n13. Spiegelgarten als geplanter späterer Raum\n14. Klangwald als geplanter späterer Raum\n15. Leuchtturm-Innenraum als geplanter späterer Raum\n16. Ruhige Höhenschichtung ohne unpassierbare Sprünge\n17. Uferweg um eine Felsgruppe\n18. Platz mit klarer Haupt- und Nebenroute\n19. Landschaftsmassen statt weißem Fliesenflur\n20. Vier gebaute und vier geplante Bereiche unterscheiden",
+    "path": "boards/09.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "10",
+    "title": "Ego-Bedienung",
+    "purpose": "20 Bedien- und Blickstudien",
+    "motifs": [
+      {
+        "id": "10.01",
+        "description": "Freier Ego-Blick ohne Avatar in der Bildmitte"
+      },
+      {
+        "id": "10.02",
+        "description": "Kleine unaufdringliche Zielmarke"
+      },
+      {
+        "id": "10.03",
+        "description": "Ein klarer Hinweis für nahes Objekt"
+      },
+      {
+        "id": "10.04",
+        "description": "Wortkontext mit großer lesbarer Schrift"
+      },
+      {
+        "id": "10.05",
+        "description": "Bestätigen und Zurück als getrennte Flächen"
+      },
+      {
+        "id": "10.06",
+        "description": "Pointer wählt eine konkrete Wortplatte"
+      },
+      {
+        "id": "10.07",
+        "description": "Kameradrag verändert keine Antwort"
+      },
+      {
+        "id": "10.08",
+        "description": "Vier Satzsockel als große Auswahlflächen"
+      },
+      {
+        "id": "10.09",
+        "description": "Start und Rücknahme auf einer Rätseltafel"
+      },
+      {
+        "id": "10.10",
+        "description": "Leitungsknoten mit genügend Abstand"
+      },
+      {
+        "id": "10.11",
+        "description": "Touchbereich links bewegt, rechts schaut"
+      },
+      {
+        "id": "10.12",
+        "description": "Touchaktion eindeutig vom Blickbereich getrennt"
+      },
+      {
+        "id": "10.13",
+        "description": "Pause mit Weiter und Sichtfeld"
+      },
+      {
+        "id": "10.14",
+        "description": "Fokus hält die Weltbewegung sicher an"
+      },
+      {
+        "id": "10.15",
+        "description": "Rückkehr ohne gehaltene alte Bewegung"
+      },
+      {
+        "id": "10.16",
+        "description": "Zehntelskala ohne widersprüchliche Literangabe"
+      },
+      {
+        "id": "10.17",
+        "description": "Felsfund und Lösungsauswahl als getrennte Handlungen"
+      },
+      {
+        "id": "10.18",
+        "description": "Gut lesbare Hilfe ohne ganze Antwort"
+      },
+      {
+        "id": "10.19",
+        "description": "Abschlussansicht mit genau vier Signalen"
+      },
+      {
+        "id": "10.20",
+        "description": "Ruhiges Logbuch für Entdeckungen und gelöste Regeln"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Ego-Bedienung. 20 Bedien- und Blickstudien.\nPanels:\n01. Freier Ego-Blick ohne Avatar in der Bildmitte\n02. Kleine unaufdringliche Zielmarke\n03. Ein klarer Hinweis für nahes Objekt\n04. Wortkontext mit großer lesbarer Schrift\n05. Bestätigen und Zurück als getrennte Flächen\n06. Pointer wählt eine konkrete Wortplatte\n07. Kameradrag verändert keine Antwort\n08. Vier Satzsockel als große Auswahlflächen\n09. Start und Rücknahme auf einer Rätseltafel\n10. Leitungsknoten mit genügend Abstand\n11. Touchbereich links bewegt, rechts schaut\n12. Touchaktion eindeutig vom Blickbereich getrennt\n13. Pause mit Weiter und Sichtfeld\n14. Fokus hält die Weltbewegung sicher an\n15. Rückkehr ohne gehaltene alte Bewegung\n16. Zehntelskala ohne widersprüchliche Literangabe\n17. Felsfund und Lösungsauswahl als getrennte Handlungen\n18. Gut lesbare Hilfe ohne ganze Antwort\n19. Abschlussansicht mit genau vier Signalen\n20. Ruhiges Logbuch für Entdeckungen und gelöste Regeln",
+    "path": "boards/10.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "11",
+    "title": "Fehler und Wiederaufnahme",
+    "purpose": "20 Vorher-Nachher-Zustandspaare",
+    "motifs": [
+      {
+        "id": "11.01",
+        "description": "Ungewählte Platte mit neutralem Rand"
+      },
+      {
+        "id": "11.02",
+        "description": "Gewählte richtige Platte mit eigenem Symbol"
+      },
+      {
+        "id": "11.03",
+        "description": "Gewählte falsche Platte mit Fehlersymbol"
+      },
+      {
+        "id": "11.04",
+        "description": "Volle Auswahl bleibt begrenzt"
+      },
+      {
+        "id": "11.05",
+        "description": "Teilversuch bleibt vor Prüfung sichtbar"
+      },
+      {
+        "id": "11.06",
+        "description": "Letzter Schritt wird gezielt zurückgenommen"
+      },
+      {
+        "id": "11.07",
+        "description": "Bestätigte Lösung bleibt nach Rücknahme offen"
+      },
+      {
+        "id": "11.08",
+        "description": "Falsche Wassermenge öffnet nichts"
+      },
+      {
+        "id": "11.09",
+        "description": "Eimeraufnahme aus einer Fehlposition"
+      },
+      {
+        "id": "11.10",
+        "description": "Korrigierte Wassermenge öffnet das Tor"
+      },
+      {
+        "id": "11.11",
+        "description": "Unterbrochener Drag erhält letzten Knoten"
+      },
+      {
+        "id": "11.12",
+        "description": "Fokusverlust beendet Bewegung"
+      },
+      {
+        "id": "11.13",
+        "description": "Pause verwirft unbestätigte Portion"
+      },
+      {
+        "id": "11.14",
+        "description": "Gespeicherte Funde bleiben in der Skizzenliste"
+      },
+      {
+        "id": "11.15",
+        "description": "Gültige Bruchvorwahl bleibt bei Rückkehr erhalten"
+      },
+      {
+        "id": "11.16",
+        "description": "Sicherer Start nach ungültiger Spielerposition"
+      },
+      {
+        "id": "11.17",
+        "description": "Wiederholt gedrücktes Ende erzeugt kein zweites Signal"
+      },
+      {
+        "id": "11.18",
+        "description": "Fehler wird lokal erklärt statt aggressivem Blinken"
+      },
+      {
+        "id": "11.19",
+        "description": "Seitenweg lässt Rückkehr zu früheren Räumen zu"
+      },
+      {
+        "id": "11.20",
+        "description": "Vor und nach einem vollständig gelösten Gebiet"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Fehler und Wiederaufnahme. 20 Vorher-Nachher-Zustandspaare.\nPanels:\n01. Ungewählte Platte mit neutralem Rand\n02. Gewählte richtige Platte mit eigenem Symbol\n03. Gewählte falsche Platte mit Fehlersymbol\n04. Volle Auswahl bleibt begrenzt\n05. Teilversuch bleibt vor Prüfung sichtbar\n06. Letzter Schritt wird gezielt zurückgenommen\n07. Bestätigte Lösung bleibt nach Rücknahme offen\n08. Falsche Wassermenge öffnet nichts\n09. Eimeraufnahme aus einer Fehlposition\n10. Korrigierte Wassermenge öffnet das Tor\n11. Unterbrochener Drag erhält letzten Knoten\n12. Fokusverlust beendet Bewegung\n13. Pause verwirft unbestätigte Portion\n14. Gespeicherte Funde bleiben in der Skizzenliste\n15. Gültige Bruchvorwahl bleibt bei Rückkehr erhalten\n16. Sicherer Start nach ungültiger Spielerposition\n17. Wiederholt gedrücktes Ende erzeugt kein zweites Signal\n18. Fehler wird lokal erklärt statt aggressivem Blinken\n19. Seitenweg lässt Rückkehr zu früheren Räumen zu\n20. Vor und nach einem vollständig gelösten Gebiet",
+    "path": "boards/11.png",
+    "status": "generated_and_visually_seen"
+  },
+  {
+    "id": "12",
+    "title": "Licht und Materialqualität",
+    "purpose": "20 Farb-, Schatten- und Detailstudien",
+    "motifs": [
+      {
+        "id": "12.01",
+        "description": "Goldener Garten am stabilen klaren Vormittag"
+      },
+      {
+        "id": "12.02",
+        "description": "Seitliches Licht auf gut lesbaren Wortflächen"
+      },
+      {
+        "id": "12.03",
+        "description": "Orange Kronen vor ruhigem blauem Himmel"
+      },
+      {
+        "id": "12.04",
+        "description": "Lime Kronen vor warmem Kalkstein"
+      },
+      {
+        "id": "12.05",
+        "description": "Rosa Akzentkrone ohne violette Gesamtwelt"
+      },
+      {
+        "id": "12.06",
+        "description": "Kühles Meer kontrastiert mit heller Küste"
+      },
+      {
+        "id": "12.07",
+        "description": "Weiche Schattenkerne unter dichtem Baumlaub"
+      },
+      {
+        "id": "12.08",
+        "description": "Relief mit dunkler Vertiefung und hellem Rand"
+      },
+      {
+        "id": "12.09",
+        "description": "Rostrote Mechanik im neutralen Stein"
+      },
+      {
+        "id": "12.10",
+        "description": "Kupferleitung dunkel vor Lösung"
+      },
+      {
+        "id": "12.11",
+        "description": "Kupferleitung mit zurückhaltendem mint Signal"
+      },
+      {
+        "id": "12.12",
+        "description": "Helles Haus mit modelliertem Dachabsatz"
+      },
+      {
+        "id": "12.13",
+        "description": "Fels mit großen Formen und sekundären Bruchflächen"
+      },
+      {
+        "id": "12.14",
+        "description": "Zylindrisches Wassergefäß ohne große Spiegelblendung"
+      },
+      {
+        "id": "12.15",
+        "description": "Becken mit klarer ruhiger Wasserhöhe"
+      },
+      {
+        "id": "12.16",
+        "description": "Steinoberfläche ohne störende Schrifttextur"
+      },
+      {
+        "id": "12.17",
+        "description": "Vegetationsrahmen lässt Hauptweg offen"
+      },
+      {
+        "id": "12.18",
+        "description": "Vergleich kleiner und größerer Blickwinkel"
+      },
+      {
+        "id": "12.19",
+        "description": "Nahdetail und Fernsilhouette derselben Baumfamilie"
+      },
+      {
+        "id": "12.20",
+        "description": "Vier konsistente Bereichspaletten nebeneinander"
+      }
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: production reference contact sheet for an original first-person educational puzzle island. The two input screenshots are STYLE REFERENCES ONLY: warm golden foliage, sculpted irregular trees, ivory and ochre limestone, red iron gates, blue sea, tiny restrained mint solved cables, clear sunny painterly 3D forms. Do not copy the exact island or game assets. NOT pixel art, NOT Pokemon, NOT blocky engine cubes, NOT realistic gritty dark fantasy. Landscape concept sheet with exactly20 distinct panels arranged5 columns by4 rows, equal gutters, numbered01 through20 in reading order with small plain labels. Close asset studies where specified; world panels at160cm first-person eye height/FOV75 unless explicitly an island overview. Consistent visual identity across every panel. No large title, no watermark, no extra NPCs, no decorative fake educational text. Preserve readability of physical spaces. Numerical correctness and final UI will be rebuilt from authored data; this sheet is only concept art. \nBoard theme: Licht und Materialqualität. 20 Farb-, Schatten- und Detailstudien.\nPanels:\n01. Goldener Garten am stabilen klaren Vormittag\n02. Seitliches Licht auf gut lesbaren Wortflächen\n03. Orange Kronen vor ruhigem blauem Himmel\n04. Lime Kronen vor warmem Kalkstein\n05. Rosa Akzentkrone ohne violette Gesamtwelt\n06. Kühles Meer kontrastiert mit heller Küste\n07. Weiche Schattenkerne unter dichtem Baumlaub\n08. Relief mit dunkler Vertiefung und hellem Rand\n09. Rostrote Mechanik im neutralen Stein\n10. Kupferleitung dunkel vor Lösung\n11. Kupferleitung mit zurückhaltendem mint Signal\n12. Helles Haus mit modelliertem Dachabsatz\n13. Fels mit großen Formen und sekundären Bruchflächen\n14. Zylindrisches Wassergefäß ohne große Spiegelblendung\n15. Becken mit klarer ruhiger Wasserhöhe\n16. Steinoberfläche ohne störende Schrifttextur\n17. Vegetationsrahmen lässt Hauptweg offen\n18. Vergleich kleiner und größerer Blickwinkel\n19. Nahdetail und Fernsilhouette derselben Baumfamilie\n20. Vier konsistente Bereichspaletten nebeneinander",
+    "path": "boards/12.png",
+    "status": "generated_and_visually_seen"
+  }
+]

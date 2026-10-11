@@ -1,0 +1,180 @@
+[
+  {
+    "id": 100,
+    "title": "Zwei Verben finden",
+    "type": "Wortarten",
+    "instruction": "Finde zwei Wörter, die sagen, was jemand tut. Klicke die Wörter an; der ganze Stein wird blau.",
+    "goal": "Zwei Verben markieren",
+    "variants": "Direktklick oder E; erneuter Klick nimmt die Wahl zurück.",
+    "hints": [
+      "Was tut jemand gerade?",
+      "Ein Verb beschreibt eine Handlung.",
+      "„läuft“ und „springt“ sind Verben. Suche passende Wörter."
+    ],
+    "hidden_clue": "Fußspuren zeigen zu den Tun-Wörtern.",
+    "clue_location": "Steinweg am Startgarten",
+    "prerequisites": [],
+    "follow_up": "Das erste Tor öffnet sich.",
+    "completion_flag": "intro"
+  },
+  {
+    "id": 200,
+    "title": "Der Verbweg",
+    "type": "Wortarten und Reihenfolge",
+    "instruction": "Gehe von Reihe 1 bis Reihe 3. Wähle in jeder Reihe genau ein Verb: Was tut jemand?",
+    "goal": "Drei Verben in Reihenfolge wählen",
+    "variants": "Direktklick, E oder kurz auf den Wortsteinen stehen.",
+    "hints": [
+      "Beginne ganz vorne bei Reihe 1.",
+      "Ein Verb sagt, was jemand tut.",
+      "Suche je ein Tun-Wort in Reihe 1, 2 und 3."
+    ],
+    "hidden_clue": "Kleine Blattspuren zeigen von vorne nach hinten.",
+    "clue_location": "Boden vor Reihe 1",
+    "prerequisites": [
+      100
+    ],
+    "follow_up": "Das Tor zum Satzgarten öffnet sich.",
+    "completion_flag": "verbs"
+  },
+  {
+    "id": 300,
+    "title": "Der Satz für den Fuchs",
+    "type": "Satzbau",
+    "instruction": "Lege die vier Wortteile zu einem Satz. Das Verb „öffnet“ gehört auf Platz 2.",
+    "goal": "Einen vollständigen Satz legen",
+    "variants": "Wortteile lassen sich zurücknehmen und neu ordnen.",
+    "hints": [
+      "Lies die Wortteile laut in deiner Reihenfolge.",
+      "Im Aussagesatz steht das Verb meistens auf Platz 2.",
+      "„Heute öffnet der Fuchs den Eingang.“"
+    ],
+    "hidden_clue": "Vier Pfotenabdrücke führen vom Satzplatz zum versteinerten Fuchs.",
+    "clue_location": "Satzhof beim Fuchs",
+    "prerequisites": [
+      200
+    ],
+    "follow_up": "Der Fuchs wacht auf, läuft zum Tor, zieht am Seil und löst den Riegel.",
+    "completion_flag": "sentence"
+  },
+  {
+    "id": 400,
+    "title": "300 ml im Eimer",
+    "type": "Messen und Brüche",
+    "instruction": "Fülle denselben 1-Liter-Eimer bis 3/10. Jeder kleine Schritt sind 1/10 Liter = 100 ml.",
+    "goal": "300 ml auf die Platte stellen",
+    "variants": "Wasser lässt sich einfüllen und wieder ablassen.",
+    "hints": [
+      "Ein Liter hat zehn gleich große Zehntel.",
+      "3/10 Liter sind 300 ml.",
+      "Fülle dreimal 100 ml ein und stelle den Eimer auf die Platte."
+    ],
+    "hidden_clue": "Drei blaue Rillen leiten vom Hahn zur Platte.",
+    "clue_location": "Eimerterrasse",
+    "prerequisites": [
+      300
+    ],
+    "follow_up": "Die Tür zur zweiten Wasserprobe öffnet sich.",
+    "completion_flag": "water"
+  },
+  {
+    "id": 500,
+    "title": "Ein ganzer Liter",
+    "type": "Messen und Brüche",
+    "instruction": "Hol denselben Messbecher von der ersten Probe. Fülle ihn hier bis 1 Liter und gieße ihn in das Becken.",
+    "goal": "1000 ml einfüllen und ausgießen",
+    "variants": "100 oder 200 ml einfüllen; je 100 ml ablassen; unbegrenzt versuchen.",
+    "hints": [
+      "Der Becher fasst genau 1 Liter.",
+      "Die Skala zählt in Zehnteln: 10/10 sind 1 Liter.",
+      "Fülle bis zur 10/10-Linie und gieße dann ins Becken."
+    ],
+    "hidden_clue": "Die zehn Rillen am Becher passen zu den zehn Linien am Becken.",
+    "clue_location": "Messbecher und Zielbecken",
+    "prerequisites": [
+      400
+    ],
+    "follow_up": "Das Wasserbecken hebt das nächste Tor.",
+    "completion_flag": "fractions"
+  },
+  {
+    "id": 600,
+    "title": "Alles eine Frage der Perspektive",
+    "type": "Rätsel und Beobachten",
+    "instruction": "Stell dich auf die runde Bodenmarkierung. Schau dich um, bis die drei Bögen einen geschlossenen Ring bilden. Drücke E.",
+    "goal": "Drei getrennte Bögen als einen Ring erkennen",
+    "variants": "Vom Standpunkt aus langsam nach links/rechts schauen und neu versuchen.",
+    "hints": [
+      "Der Ring ist nicht von überall zu sehen.",
+      "Suche die runde Markierung vor der Aussicht.",
+      "Stelle dich mitten auf den Ring und richte die Bögen mit Maus oder Finger aus."
+    ],
+    "hidden_clue": "Drei Kerben auf der Markierung zeigen in Richtung der Bögen.",
+    "clue_location": "Runde Aussichtskante",
+    "prerequisites": [
+      500
+    ],
+    "follow_up": "Die Ringform aktiviert das vierte Signal und öffnet den Weg.",
+    "completion_flag": "coast"
+  },
+  {
+    "id": 700,
+    "title": "Vier Signale",
+    "type": "Erkunden",
+    "instruction": "Du hast vier Signale auf der Insel geweckt. Geh zum Turm und drücke E, um sie zu verbinden.",
+    "goal": "Den Turmabschnitt abschließen",
+    "variants": "Bei Bedarf in Ruhe zurückgehen und die offenen Wege prüfen.",
+    "hints": [
+      "Achte auf die vier grünen Lichtlinien.",
+      "Jede Linie beginnt an einem gelösten Tor.",
+      "Folge den Linien zum Turm und prüfe das große Zeichen."
+    ],
+    "hidden_clue": "Vier eingelassene Lichtlinien treffen sich am Turm.",
+    "clue_location": "Hauptweg und Signalturm",
+    "prerequisites": [
+      600
+    ],
+    "follow_up": "Der erste Inselabschnitt ist abgeschlossen.",
+    "completion_flag": "finale"
+  },
+  {
+    "id": 820,
+    "title": "Wortarten-Zusatz",
+    "type": "Zusatz und Sprache",
+    "instruction": "Lies den Satz: „Das Laufen macht Spaß.“ Welche Wortart ist „Laufen“ hier?",
+    "goal": "Nomen erkennen",
+    "variants": "Zusatzfrage; Hauptweg bleibt offen.",
+    "hints": [
+      "Schau auf den Artikel davor.",
+      "Ein Artikel kann vor einem Nomen stehen.",
+      "„Das“ zeigt hier: Laufen ist ein Nomen."
+    ],
+    "hidden_clue": "Ein kleiner Artikelstein steht vor dem Satz.",
+    "clue_location": "Zusatzplatz im Satzgarten",
+    "prerequisites": [
+      200
+    ],
+    "follow_up": "Ein kleines Zusatzlicht geht an.",
+    "completion_flag": "bonus-words"
+  },
+  {
+    "id": 821,
+    "title": "Bruch-Zusatz",
+    "type": "Zusatz und Brüche",
+    "instruction": "Welcher Bruch ergänzt 1/6 + 1/4 zu einem Ganzen?",
+    "goal": "7/12 auswählen",
+    "variants": "Zusatzfrage; Hauptweg bleibt offen.",
+    "hints": [
+      "Suche einen gemeinsamen Nenner.",
+      "1/6 sind 2/12, 1/4 sind 3/12.",
+      "Zusammen sind das 5/12. Es fehlen 7/12."
+    ],
+    "hidden_clue": "Zwölf kleine Kerben umrunden den Zusatzstein.",
+    "clue_location": "Zusatzplatz bei der Wasserterrasse",
+    "prerequisites": [
+      500
+    ],
+    "follow_up": "Ein kleines Zusatzlicht geht an.",
+    "completion_flag": "bonus-fractions"
+  }
+]

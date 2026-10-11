@@ -1,0 +1,277 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "487A5C156F44808883BDD1BC69A4CE84",
+			"instanceName": "Mac.fritz.box-20041",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.08-13.33.54",
+	"succeeded": 0,
+	"succeededWithWarnings": 1,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 25.785030364990234,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "FourPuzzles",
+			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"487A5C156F44808883BDD1BC69A4CE84"
+			],
+			"duration": 12.879090309143066,
+			"dateTime": "2026.10.08-13.33.28",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.30"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.30"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.40"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.40"
+				}
+			],
+			"warnings": 4,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Play",
+			"fullTestPath": "GradeCrew.Lerninsel.Play",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"487A5C156F44808883BDD1BC69A4CE84"
+			],
+			"duration": 12.905941009521484,
+			"dateTime": "2026.10.08-13.33.41",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(365): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogEditorAutomationTests: Lerninsel took 0.039 to load.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogPlayLevel: Destroying online subsystem :Context_1",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently_IncludingInitialMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CaptureDuringMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Choice tints its full stone without tinting another' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-13.33.43"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.50"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.50"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogPlayLevel: Shutting down PIE online subsystems",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-13.33.54"
+				}
+			],
+			"warnings": 2,
+			"errors": 1,
+			"artifacts": []
+		}
+	]
+}

@@ -1,0 +1,333 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "5833DCAEED4A9E06A3C95188C7C82601",
+			"instanceName": "Mac.fritz.box-36362",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.08-16.52.30",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 7.1920166015625,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "Fox",
+			"fullTestPath": "GradeCrew.Lerninsel.Fox",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"5833DCAEED4A9E06A3C95188C7C82601"
+			],
+			"duration": 7.1920166015625,
+			"dateTime": "2026.10.08-16.52.23",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(361): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogEditorAutomationTests: Lerninsel took 0.062 to load.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently_IncludingInitialMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Synchronously lazy loading font file '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' with subface index 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Took 0.002023 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' (160K) on Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Freetype font face in memory successfully created with synchronously loaded raw font file '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' subface 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Font face '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' subface index 0 successfully added to font face map in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CaptureDuringMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.23"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.24"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.24"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.24"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CaptureDuringMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.24"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Lost window focus suspends fox and world animation' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-16.52.24"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Fox walk clears the sentence undo post with body margin' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "Unknown",
+					"lineNumber": 0,
+					"timestamp": "2026.10.08-16.52.25"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.30"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> CaptureDuringMouseDown",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.30"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.30"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CaptureDuringMouseDown -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.30"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogPlayLevel: Shutting down PIE online subsystems",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-16.52.30"
+				}
+			],
+			"warnings": 2,
+			"errors": 2,
+			"artifacts": []
+		}
+	]
+}

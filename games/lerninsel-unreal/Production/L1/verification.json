@@ -1,0 +1,166 @@
+{
+  "task_id": "GC-GAMES-LERNINSEL-L1",
+  "game": "Lerninsel",
+  "parent_id": "GC-GAMES-ESCAPE-VISUAL-01",
+  "checkpoint_remote": "218726f4a880d36dd2f8f98ffb8324fb414ce1c4",
+  "checkpoint_local": "a390aa0",
+  "checkpoint_runtime_tree": "c6e3e91eeb993b635a7da5bc180ecb758bdc8eaf",
+  "full_suite": {
+    "date_utc": "2026.10.10-10.59.04",
+    "tests": [
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Controls",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 2
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 2
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Fox",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 2
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Play",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 2
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.WorldPreview",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 4
+      }
+    ]
+  },
+  "final_world_preview": {
+    "date_utc": "2026.10.10-11.10.38",
+    "state": "Success",
+    "errors": 0,
+    "warnings": 0,
+    "source_report": "Reports/L1/final-check-all.json"
+  },
+  "portable_checks": 231,
+  "screenshots": [
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-00.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "f6e3ac7320f9999192d63f4eaddeb2c051f0d9650aac4173591ee0d6b0852b5a"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-01.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "e818d773e79bea243bd47faaa0a32c032a0e3afab2001ae41134ebb8d87fcf2c"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-02.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "806f461eda2bd7d288a9798f5f61c4f8f67b77514c08317562d29cdacb375ae5"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-03.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "409a50bdf1889f304212c1dfeefe03261d8764d42caf84aea4629729d2aa2dbe"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-04.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "b6d1f50283516dcb95d4162a3e6aaae76cad911ced6948ffbc434643310540d6"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-05.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "0629b6057e3e934e84d272da840aa0ffca31ff13eda2258a954c8bc0ed2c1041"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-06.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "10fdcd5b227de9d48196ea32a40beab060dc9238fc3c36eb5393e0c6aaf8cc65"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-07.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "406061e0fbf9cf9a0c9bade0baebf3fb9395d163962f9eec8c6c58407a69aa05"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-08.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "fa4e649280022c9dd87488281c6c95e020665cee18435b418e941b9584c16a5e"
+    },
+    {
+      "path": "games/lerninsel-unreal/Reports/L1/WorldPreview-09.png",
+      "width": 2027,
+      "height": 1090,
+      "sha256": "8026079f9d219946000c87aecb0512ecd743ea4d99c272a7dbaab820bb75a1c2"
+    }
+  ],
+  "limits": [
+    "Scripted camera poses and sampled sweeps, not uninterrupted walking route",
+    "Art island is visual scenery beside interactive corridor; no collision or puzzles 5-8",
+    "No iPad/browser test, user/final-art approval, merge or deployment",
+    "Common TODO/registry owner update pending; targeted patch saved"
+  ],
+  "final_check_all": {
+    "date_utc": "2026.10.10-11.10.38",
+    "command": "Tools/check_all.sh",
+    "exit": 0,
+    "portable": 231,
+    "tests": [
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Controls",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Fox",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.Play",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "fullTestPath": "GradeCrew.Lerninsel.WorldPreview",
+        "state": "Success",
+        "errors": 0,
+        "warnings": 0
+      }
+    ]
+  },
+  "source_inventory_rechecked_unchanged": true,
+  "tested_code_files_sha256": {
+    "games/lerninsel-unreal/Content/Maps/Lerninsel_Weltvorschau.umap": "9dafffd19a2d5afdc6c33f3a6a77682fc76c56893e64898d0b411c6d2f158072",
+    "games/lerninsel-unreal/Source/Lerninsel/IslandWorldPreviewAutomation.cpp": "7505824ac35f7ebecd88682ee86f26cebee1d119eac96ed3f2cd01930a02e9d8",
+    "games/lerninsel-unreal/Tools/import_world_preview.py": "8441d35c6d6d8d1fb970156ee292ebe62c97f14977de42b6c710d9f58fa0e5c6",
+    "games/lerninsel-unreal/Tools/test_editor.sh": "5fd61bc8154493e658c4b3512f1a9c7b33440672b4b6a124e36aa587c237ba81",
+    "games/lerninsel-unreal/Tools/test_world_preview.sh": "029593642b39d75e347d10f5cdf54d36fffb07d0e34bdc847595c82a15179975",
+    "games/lerninsel-unreal/Tools/validate_automation_report.py": "68362a2c98bec1b612f246d1eceb5ed7cef5209130af16d03f1f2cacf6bc9626"
+  }
+}
