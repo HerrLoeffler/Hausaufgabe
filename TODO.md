@@ -513,3 +513,7 @@ PR221 integriert b1251b56200030190cb86c4b9b20c529a1bea05f, gc34/139Dateien. Node
 ## GC-WEB-REPAIR-20261007 — gc34-Nachbesserungen / vollständiger lokaler Stand
 
 **Aktiv, noch kein neuer Deploy.** Nutzer verlangt sämtliche lokalen Produktverbesserungen aufStaging: echte Höraufgabenfrage/ein öffentlicher Fragevertrag, Startanimation, ET, Coco-Erinnerungs-/Telefonbilder, Entfernung altesBereichtool, Remy nebenNeuerTest/blauerPapierkorb und bestehender Farbvertrag. Vollständiger337-Datei-Sourceabgleich gesichert; lokale Verbesserungen getrennt von alten Sicherheitsrückschritten rekonstruieren. Audio/Coco/Farbautoren getrennt, vorhandeneGuardserhalten, unabhängigerReview/Referenzvollständigkeit/echterlokal-vs-StagingAbgleich Pflicht. ETlocal-onlyEndpoints benötigen sicherenStagingvertrag, keineblindöffentlicheWorkbenchServerkopie. LetzterechterRelease bleibtb1251b/gc34. [Übergabe](workstreams/feedback-release-20261011.md).
+
+
+### GC-PLUGINS-01 — ArtCraft/PdfCraft Kurztest (11.10.2026)
+- [x] Offizielle portable CLI v0.6.0 am Archivhash geprüft; synthetisches Arbeitsblatt getrennt, kombiniert und kommentiert; unabhängige 7/7 Inhaltschecks und Renderprüfung bestanden. [Nachweis und Grenzen](workstreams/plugins-pdfcraft-pilot-20261011.md). Internes Werkzeug8/10, App-Abhängigkeit4/10; kein Deploy/Installationspaket. Optional nächster Schritt: drei anonymisierte echte PDF-Exporte vergleichen; noch nicht beauftragt.

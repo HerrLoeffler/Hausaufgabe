@@ -1,0 +1,19 @@
+# GC-PLUGINS-01 — PdfCraft Kurztest
+
+Stand: 2026-10-11. Owner: GradeCrew-Plugins recherchieren (01a10e37-4955-7db3-957f-d397b9dd8dc4). Auftrag: kurzer erster Test der zuvor bewerteten ArtCraft-Alternativen, zuerst PdfCraft. Kein Produktcode, keine Konto-Verbindung, keine Staging-/Production-Änderung.
+
+## Unveränderliche Testquelle
+Offizielle portable PdfCraft CLI v0.6.0; Release https://github.com/storytold/pdfcraft/releases/tag/v0.6.0, Quellcommit laut Release 53a5880386789fc3531e54f6e6ffdef9a8e41f1a. Archiv pdfcraft-cli-0.6.0-macos-universal.zip, 58.516.543 Bytes. SHA256 85bf80b0732f2556f3133e25693d1f1dfdd2683cd6236aa154bb19f73515b7cf stimmt mit GitHub-Assetdigest überein. Entpackt nur im eigenen Analysepfad, kein globales Installieren, kein permanenter MCP-Prozess, keine Provideraufrufe. Runtime-Modell/Aufwand und Kosten: unbekannt; kein Modellwechsel.
+
+## Tatsächlich ausgeführt
+Synthetisches zweiseitiges GradeCrew-Deutsch-Arbeitsblatt mit Musterlösung, Umlauten, Aufgaben und Punkten mit vorhandenem ReportLab erzeugt. PdfCraft CLI: info, text, extract je Seite, combine, comment_add (Highlight und FreeText) via rootbegrenztem run-Skript, doc_save und render. pypdf liest alle Ergebnisse unabhängig erneut: 7/7 Inhaltsprüfungen bestanden (Seitenzahl, getrennte Aufgaben ohne Lösung, getrennte Lösung, Reihenfolge und vollständiger Text beim Zusammenfügen, ä ö ü Ä Ö Ü ß, beide Annotationstypen, deutscher Kommentarinhalt). PdfCraft-Rendering sowie unabhängige Poppler-Renderings der kommentierten Seite und Lösung tatsächlich visuell geprüft: lesbar, Kommentar und Highlight korrekt positioniert, keine abgeschnittenen Inhalte. Fontgewicht unterscheidet sich bei der unabhängigen Standardschrift-Ersetzung; kein Nachweis pixelidentischer Typografie.
+
+Versuchshistorie: Sandbox-DNS blockierte ersten Download; einmalige eng begrenzte Netzwerkfreigabe lieferte offizielle Datei. Optionaler fitz-Import fehlte; keine Nachinstallation. Erster Poppler-Lauf hatte falsche Fontconfig-Pfade/Cache-Warnungen; eigener Fontconfig mit vorhandenem Systemfontpfad und eigenem Cache korrigiert, finaler Lauf Exit0 und leeres Fehlerlog. Diese Umgebungsfehler sind keine PdfCraft-Funktionsfehler. PdfCraft-Aufrufe alle Exit0.
+
+## Bewertung nach denselben Kriterien
+Kriterien: konkreter GradeCrew-Nutzen, beobachtete Ergebnisqualität, Einrichtungs-/Wartungsaufwand. Internes PDF-Hilfswerkzeug jetzt **8/10** (zuvor7): Aufgaben/Lösung trennen, Material bündeln und Rückmeldung funktionieren im kleinen tatsächlichen Test und sind skriptbar. Zentrale App-Abhängigkeit **4/10** (zuvor3): erster Integrationsbaustein funktioniert, aber keine repräsentativen GradeCrew-Exporte, iPad-/Browser-UI, OCR, Formulare, komplexen Fonts/Barrierefreiheit oder Fehler-/Lastfälle geprüft. Alpha-Hinweise aus README bleiben relevant. Andere Craft-Apps wurden nicht ausgeführt und erhalten keine neue Testbewertung.
+
+Empfehlung: zunächst optionales internes Werkzeug für PDF-Aufbereitung. Nächster begrenzter Schritt ist Vergleich an drei anonymisierten echten GradeCrew-PDF-Exporten (Aufgaben, Bilder, mehrseitige Lösung); erst danach eine App-Anbindung entscheiden. Kein generisches Pluginpaket installieren.
+
+## Belege und Übergabe
+Lokale Dateien: analysis/GC-PLUGINS-01/pdfcraft-pilot/{worksheet.pdf,tasks.pdf,answers.pdf,recombined.pdf,commented.pdf,steps.json,tools.json,comments-result.json,verification.json,commented.png,commented-independent.png,answers-independent.png,poppler.log}. Binärtool und Testmedien nicht ins öffentliche Repo hochgeladen. Quellen: https://github.com/storytold/pdfcraft und crates/automation/README.md am Release v0.6.0. Verwendeter PDF-Skill: openai-primary-runtime/pdf/26.1011.11113; bestehende Python-/Poppler-Abhängigkeiten wiederverwendet. Kein Release-Stufenwechsel; PR209-Restarbeit unabhängig erhalten, nicht erneut gestartet.
