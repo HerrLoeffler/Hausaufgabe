@@ -231,7 +231,12 @@ struct QuickRemySpeechTests {
         await timeoutCapture.start()
         timeoutService.emit("Englisch Farben", final: false)
         timeoutCapture.stop()
-        try? await Task.sleep(nanoseconds: 2_100_000_000)
+        // Timer delivery is asynchronous, especially on a busy CI runner.
+        // Wait for the observable outcome, while still failing a stuck capture.
+        let timeoutDeadline = Date().addingTimeInterval(6)
+        while timeoutCapture.flow.status == .transcribing && Date() < timeoutDeadline {
+            try? await Task.sleep(nanoseconds: 20_000_000)
+        }
         assert(timeoutCapture.flow.status == .transcribed, "Stopping must finish with heard words even if Apple never sends a final callback")
         assert(timeoutCapture.flow.transcript == "Englisch Farben")
         let lateTranscript = timeoutService.partial
