@@ -9,11 +9,13 @@ checks = r'''
 let draft = QuickRemyDraft(payload: [
     "subject": "Englisch",
     "grade": "4",
-    "topic": "Farben und Schulsachen"
+    "topic": "Farben und Schulsachen",
+    "customNotes": "Bitte ohne Bilder."
 ])
 assert(draft.subject == "Englisch")
 assert(draft.grade == "4")
 assert(draft.topic == "Farben und Schulsachen")
+assert(draft.wishes == "Bitte ohne Bilder.")
 assert(draft.count.isEmpty)
 assert(draft.preparedRequest == nil)
 assert(draft.knownFieldsPayload["subject"] as? String == "Englisch")
@@ -28,6 +30,7 @@ assert(prepared["subject"] as? String == "Englisch")
 assert(prepared["grade"] as? String == "4")
 assert(prepared["topic"] as? String == "Farben und Schulsachen")
 assert(prepared["count"] as? Int == 5)
+assert(prepared["customNotes"] as? String == "Bitte ohne Bilder.")
 complete.count = "0"
 assert(complete.preparedRequest == nil)
 complete.count = "101"

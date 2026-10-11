@@ -32,26 +32,18 @@ struct QuickRemyView: View {
     var body: some View {
         VStack(spacing: 4) {
             navigationHeader
-            VStack(spacing: 9) {
-                HStack(spacing: 12) {
-                    remyMainArtwork.frame(width: 76, height: 76)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Was brauchst du?")
-                            .font(.system(size: 19, weight: .bold, design: .rounded))
-                            .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                        Text(statusMessage)
-                            .font(.system(size: 13))
-                            .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                            .lineLimit(2)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(statusMessage)
-                            .accessibilityAddTraits(.updatesFrequently)
-                    }
-                    .layoutPriority(1)
-                }
-
+            VStack(spacing: 8) {
+                remyMainArtwork
                 microphoneButton
+
+                if !statusMessage.isEmpty {
+                    Text(statusMessage)
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .accessibilityAddTraits(.updatesFrequently)
+                }
 
                 if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
                     ProgressView()
@@ -60,14 +52,10 @@ struct QuickRemyView: View {
                         .accessibilityLabel(progressMessage)
                 }
                 followUpCard
+                quickReviewCard
 
-                if workStatus == .accepted {
-                    Label("Remy hat den Auftrag erhalten.", systemImage: "checkmark.circle.fill")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.positive)
-                }
                 if workStatus == .failed {
-                    Button(recoveryNeedsRetry ? "Auftrag erneut abgleichen" : (conversationText.isEmpty ? "Testeditor erneut öffnen" : "Remy erneut fragen")) {
+                    Button(recoveryNeedsRetry ? "Erneut versuchen" : (conversationText.isEmpty ? "Testeditor öffnen" : "Remy erneut fragen")) {
                         Task {
                             if recoveryNeedsRetry { await recoverPendingSubmission() }
                             else if conversationText.isEmpty { await openAiForm() }
@@ -77,7 +65,8 @@ struct QuickRemyView: View {
                     .buttonStyle(.bordered)
                 }
             }
-            .padding(12)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
             .frame(maxWidth: 560)
             .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
 
@@ -87,11 +76,6 @@ struct QuickRemyView: View {
                     .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
             }
 
-            Text("Sprache bleibt auf dem Gerät. Kein Audio-Upload.")
-                .font(.system(size: 12))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
         }
         .frame(maxWidth: .infinity)
         .padding(.bottom, 4)
@@ -117,7 +101,7 @@ struct QuickRemyView: View {
         Image(GradeCrewAssets.NativeImage.remyMicrophone)
             .resizable()
             .scaledToFit()
-            .frame(width: 76, height: 76)
+            .frame(width: 156, height: 156)
             .accessibilityLabel("Remy mit Mikrofon")
     }
 
@@ -198,6 +182,7 @@ struct QuickRemyView: View {
         if status == .recording { return "Aufnahme beenden" }
         if status == .transcribed { return "An Remy senden" }
         if workStatus == .needsInfo { return "Antwort sprechen" }
+        if workStatus == .readyForReview { return "Wunsch ergänzen" }
         return "Mikrofon"
     }
 
@@ -205,9 +190,10 @@ struct QuickRemyView: View {
     private func sendCapturedTranscript() {
         let transcript = capture.flow.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !transcript.isEmpty else { return }
+        let addToWishes = workStatus == .readyForReview
         pendingTranscript = transcript
         capture.cancel()
-        Task { await prepareTranscript(transcript) }
+        Task { await prepareTranscript(transcript, addToWishes: addToWishes) }
     }
 
     @ViewBuilder
@@ -247,6 +233,40 @@ struct QuickRemyView: View {
         workStatus == .needsInfo && missingFields.contains("count") && Int(draft.count) == nil
     }
 
+    @ViewBuilder
+    private var quickReviewCard: some View {
+        if workStatus == .readyForReview {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    TextField("Fach", text: $draft.subject)
+                        .textFieldStyle(.roundedBorder)
+                    TextField("Klasse", text: $draft.grade)
+                        .textFieldStyle(.roundedBorder)
+                }
+                TextField("Thema", text: $draft.topic)
+                    .textFieldStyle(.roundedBorder)
+                HStack(spacing: 8) {
+                    TextField("Aufgaben", text: $draft.count)
+                        .textFieldStyle(.roundedBorder)
+                    TextField("Wünsche (optional)", text: $draft.wishes)
+                        .textFieldStyle(.roundedBorder)
+                }
+                Button("Test erstellen") { Task { await submitTest() } }
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
+                    .disabled(draft.preparedRequest == nil)
+                Button("Weitere Einstellungen") { Task { await showMoreOptions() } }
+                    .font(.footnote.weight(.medium))
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(12)
+            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+        }
+    }
+
     private var progressMessage: String {
         if status == .requestingPermission { return "Mikrofon wird vorbereitet" }
         if status == .transcribing { return "Sprache wird lokal erkannt" }
@@ -255,23 +275,23 @@ struct QuickRemyView: View {
     }
 
     private var statusMessage: String {
-        if workStatus == .recovering { return "Ein offener Remy-Auftrag wird abgeglichen." }
-        if workStatus == .preparing { return "Remy prüft den Wunsch und fragt nur bei fehlenden Pflichtangaben nach." }
-        if workStatus == .readyForReview { return "Deine Angaben stehen im Testeditor darunter. Ergänze dort die Auswahl und erstelle den Test." }
-        if workStatus == .accepted { return "" }
-        if workStatus == .failed { return workError ?? "Remy konnte die Anfrage nicht senden. Bitte versuche es erneut." }
-        if workStatus == .needsInfo { return "Ergänze die Angaben im Testentwurf oder sprich deine Antwort ein." }
+        if workStatus == .recovering { return "Prüfe offenen Auftrag …" }
+        if workStatus == .preparing { return "Remy füllt den Test aus …" }
+        if workStatus == .readyForReview { return "Entwurf bereit · prüfen oder ergänzen" }
+        if workStatus == .accepted { return "Test wird erstellt …" }
+        if workStatus == .failed { return workError ?? "Senden fehlgeschlagen · erneut versuchen" }
+        if workStatus == .needsInfo { return "Rückfrage · sprich deine Ergänzung" }
         switch status {
-        case .idle: return "Tippe auf das Mikrofon und sprich deinen Testwunsch."
-        case .requestingPermission: return "Bitte erlaube Mikrofon und Spracheingabe."
-        case .permissionDenied: return "Mikrofon oder Spracheingabe ist nicht freigegeben."
-        case .recognizerUnavailable: return "Die deutsche Spracherkennung ist gerade nicht verfügbar."
-        case .onDeviceRecognitionUnavailable: return "Lokale deutsche Spracherkennung ist nicht verfügbar."
-        case .recording: return "Remy hört zu. Tippe erneut, wenn du fertig bist."
-        case .transcribing: return "Remy wandelt deine Spracheingabe auf diesem Gerät in Text um."
-        case .transcribed: return "Prüfe kurz, ob der erkannte Testwunsch stimmt."
-        case .emptyTranscript: return "Es wurde kein Text erkannt. Sprich bitte erneut."
-        case .failed: return "Die lokale Erkennung ist fehlgeschlagen. Bitte versuche es erneut."
+        case .idle: return ""
+        case .requestingPermission: return "Mikrofon freigeben"
+        case .permissionDenied: return "Mikrofonzugriff fehlt"
+        case .recognizerUnavailable: return "Spracherkennung nicht verfügbar"
+        case .onDeviceRecognitionUnavailable: return "Lokale Spracherkennung nicht verfügbar"
+        case .recording: return "Remy hört zu · tippen zum Beenden"
+        case .transcribing: return "Aufnahme wird erkannt …"
+        case .transcribed: return "Wunsch erkannt · senden"
+        case .emptyTranscript: return "Nichts erkannt · erneut sprechen"
+        case .failed: return "Erkennung fehlgeschlagen · erneut versuchen"
         }
     }
 
@@ -293,7 +313,7 @@ struct QuickRemyView: View {
     }
 
     @MainActor
-    private func prepareTranscript(_ transcript: String) async {
+    private func prepareTranscript(_ transcript: String, addToWishes: Bool = false) async {
         guard !transcript.isEmpty, workStatus != .preparing, workStatus != .accepted else { return }
         let segment = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
         let updatedConversation = conversationText.isEmpty ? segment : "\(conversationText)\nErgänzung: \(segment)"
@@ -303,6 +323,10 @@ struct QuickRemyView: View {
             return
         }
         conversationText = updatedConversation
+        if addToWishes {
+            let prior = draft.wishes.trimmingCharacters(in: .whitespacesAndNewlines)
+            draft.wishes = prior.isEmpty ? segment : "\(prior)\n\(segment)"
+        }
         await runPreparation()
     }
 
@@ -337,7 +361,12 @@ struct QuickRemyView: View {
             ])
             guard workGeneration == token else { return }
             if let fields = result["draft"] as? [String: Any] {
-                draft = QuickRemyDraft(payload: fields)
+                let responseDraft = QuickRemyDraft(payload: fields)
+                if !responseDraft.subject.isEmpty { draft.subject = responseDraft.subject }
+                if !responseDraft.grade.isEmpty { draft.grade = responseDraft.grade }
+                if !responseDraft.topic.isEmpty { draft.topic = responseDraft.topic }
+                if !responseDraft.count.isEmpty { draft.count = responseDraft.count }
+                if !responseDraft.wishes.isEmpty { draft.wishes = responseDraft.wishes }
             }
             let synced = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload])
             guard synced["status"] as? String == "ready" else {
@@ -406,6 +435,33 @@ struct QuickRemyView: View {
         guard let call else { throw quickRemyError("Die GradeCrew-Verbindung ist noch nicht bereit. Bitte erneut versuchen.") }
         return try await withCheckedThrowingContinuation { continuation in
             call(action, payload) { result in continuation.resume(with: result) }
+        }
+    }
+
+    @MainActor
+    private func submitTest() async {
+        guard draft.preparedRequest != nil else { return }
+        do {
+            let fields = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload])
+            guard fields["status"] as? String == "ready" else { throw quickRemyError("Die Angaben konnten nicht übernommen werden.") }
+            let result = try await invoke("createAiTest", payload: [:])
+            guard result["status"] as? String == "started" else { throw quickRemyError("Der Test konnte nicht gestartet werden.") }
+            workStatus = .accepted
+            workError = nil
+        } catch {
+            workError = error.localizedDescription
+            workStatus = .failed
+        }
+    }
+
+    @MainActor
+    private func showMoreOptions() async {
+        do {
+            let result = try await invoke("showAiOptions", payload: [:])
+            guard result["status"] as? String == "ready" else { throw quickRemyError("Die weiteren Einstellungen konnten nicht geöffnet werden.") }
+        } catch {
+            workError = error.localizedDescription
+            workStatus = .failed
         }
     }
 

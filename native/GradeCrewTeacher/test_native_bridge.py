@@ -14,6 +14,11 @@ assert "createView?.classList.contains('hidden')" in web_portal
 assert "Sag mir, welchen Test du brauchst" in web_portal
 assert "nativeQuickRemyHidden" in web_portal
 assert "Erstellung ist bereit." in web_portal
+assert "pageHead" in web_portal and "aiDataNote" in web_portal
+assert "legacyAiDetails" in web_portal
+assert "action === 'createAiTest'" in web_portal
+assert "action === 'showAiOptions'" in web_portal
+assert "aiGrid.hidden = true" in web_portal
 assert "setTimeout(resolve, 50)" in web_portal
 assert "action === 'populateAiForm'" in web_portal
 assert "input.dispatchEvent(new Event('input'" in web_portal

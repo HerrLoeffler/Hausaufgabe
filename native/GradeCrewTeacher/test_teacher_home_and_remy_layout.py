@@ -37,7 +37,12 @@ assert "QuickRemyDraft" in remy
 assert '"knownFields": draft.knownFieldsPayload' in remy
 assert "draftReviewCard" not in remy
 assert "submitPreparedRequest" not in remy
-assert ".frame(width: 76, height: 76)" in remy
+assert ".frame(width: 156, height: 156)" in remy
+assert 'Text("Was brauchst du?")' not in remy
+assert "quickReviewCard" in body
+assert 'Button("Test erstellen")' in remy
+assert 'Button("Weitere Einstellungen")' in remy
+assert 'Sprache bleibt auf dem Gerät. Kein Audio-Upload.' not in remy
 assert 'Task { await prepareTranscript(capture.flow.transcript) }' not in remy
 assert "remyMainArtwork" in body, "Remy needs the transparent illustration above the existing full form."
 assert 'Text("Dein Testentwurf")' not in remy, "The existing web form remains the single source of truth for test options."

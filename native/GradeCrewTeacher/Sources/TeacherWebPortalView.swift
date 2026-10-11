@@ -159,11 +159,34 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           window.__gradeCrewQuickRemyObserver?.disconnect();
                                           window.__gradeCrewQuickRemyObserver = new MutationObserver(hideDuplicateRemy);
                                           window.__gradeCrewQuickRemyObserver.observe(aiView, { childList: true, subtree: true });
+                                          for (const selector of ['.pageHead', '.aiDataNote', '.legacyAiDetails']) {
+                                            const explanation = aiView.querySelector(selector);
+                                            if (explanation) {
+                                              explanation.hidden = true;
+                                              explanation.dataset.nativeQuickRemyHidden = 'true';
+                                            }
+                                          }
+                                          const aiGrid = aiView.querySelector('.aiGrid');
+                                          if (aiGrid) aiGrid.hidden = true;
                                           window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
                                           return { status: 'ready' };
                                         }
+                                        if (action === 'showAiOptions') {
+                                          const aiGrid = document.querySelector('#aiView .aiGrid');
+                                          if (!aiGrid) throw new Error('Die weiteren Testeinstellungen sind nicht verfügbar.');
+                                          aiGrid.hidden = false;
+                                          aiGrid.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                                          return { status: 'ready' };
+                                        }
+                                        if (action === 'createAiTest') {
+                                          const button = document.getElementById('generateAiTestBtn');
+                                          if (!button) throw new Error('Der Test kann gerade nicht erstellt werden.');
+                                          if (button.disabled) throw new Error('Der Test ist noch nicht bereit. Bitte prüfe deine Angaben.');
+                                          button.click();
+                                          return { status: 'started' };
+                                        }
                                         if (action === 'populateAiForm') {
-                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', topic: 'aiTopic', count: 'aiCount' };
+                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', topic: 'aiTopic', count: 'aiCount', customNotes: 'aiCustomNotes' };
                                           for (const [key, id] of Object.entries(fields)) {
                                             const value = payload?.draft?.[key];
                                             const input = document.getElementById(id);
