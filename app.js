@@ -36,6 +36,8 @@ import {
   collectionGroup,
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
+import { createAccountController } from "./admin-account-actions.mjs?v=1";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
 import { createAiClient } from "./ai-client.js?v=2.3.1-gc33";
@@ -7889,6 +7891,23 @@ function adminUserStatusKey(u) {
   return "active";
 }
 
+let adminAccountController = null;
+function accountController() {
+  if (!adminAccountController && $("adminTeachersTable")) adminAccountController = createAccountController({
+    root: $("adminTeachersTable"), getSession: () => state.user?.uid,
+    call: async (name, data) => (await httpsCallable(getFunctions(app, "europe-west1"), name)(data)).data,
+    refresh: async () => { await loadAdminData(false); document.dispatchEvent(new CustomEvent("gradecrew:admin-accounts-updated")); },
+    open: openAdminTeacher, formatDate: fmtDate
+  });
+  return adminAccountController;
+}
+document.addEventListener("gradecrew:account-changed", () => adminAccountController?.reset());
+document.addEventListener("gradecrew:admin-archived-visibility", renderAdminTeachers);
+document.addEventListener("gradecrew:admin-account-action", event => {
+  if (state.profile?.role !== "admin") return;
+  const { action, targets, value } = event.detail || {};
+  void accountController()?.start(action, targets, value);
+});
 function renderAdminTeachers() {
   const root = $("adminTeachersTable");
   if (!root) return;
@@ -7896,6 +7915,7 @@ function renderAdminTeachers() {
   const status = $("adminTeacherStatusFilter")?.value || "all";
   const sort = $("adminTeacherSort")?.value || "name";
   const users = state.adminUsers
+    .filter((u) => !u.isTestAccountArchived || root.dataset.gcShowArchived === "1")
     .filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term))
     .filter((u) => status === "all" || adminUserStatusKey(u) === status)
     .sort((a,b)=>{
@@ -7905,32 +7925,7 @@ function renderAdminTeachers() {
         : sort === "status" ? adminUserStatusKey(a).localeCompare(adminUserStatusKey(b), "de") : 0;
       return difference || String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de");
     });
-  if (!users.length) { root.innerHTML = `<div class="emptyInline">Keine Lehrkräfte gefunden.</div>`; return; }
-  root.innerHTML = `<table><thead><tr><th>Lehrkraft</th><th>Status</th><th>Rolle</th><th>Registriert</th><th>Letzte Aktivität</th><th>Tests</th><th></th></tr></thead><tbody>${users.map((u)=>`<tr><td><strong>${escapeHtml(u.displayName || "–")}</strong><small>${escapeHtml(u.email || "")}</small></td><td><span class="status ${u.status === "suspended" ? "ended" : "published"}">${u.status === "suspended" ? "Gesperrt" : "Aktiv"}</span></td><td><select class="adminTeacherRole" data-id="${escapeHtml(u.id)}" aria-label="Rolle von ${escapeHtml(u.displayName || u.email || "Lehrkraft")}" ${u.id === state.user.uid ? "disabled" : ""}><option value="teacher" ${u.role === "admin" ? "" : "selected"}>Lehrkraft</option><option value="admin" ${u.role === "admin" ? "selected" : ""} ${u.isTestAccount === true ? "disabled" : ""}>Admin</option></select></td><td>${escapeHtml(fmtDate(u.createdAt))}</td><td>${escapeHtml(fmtDate(u.lastActiveAt))}</td><td>${teacherQuizCount(u.id)}</td><td><button class="button ghost adminTeacherOpen" data-id="${escapeHtml(u.id)}" type="button">Öffnen</button></td></tr>`).join("")}</tbody></table>`;
-  root.querySelectorAll(".adminTeacherOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTeacher(btn.dataset.id)));
-  root.querySelectorAll(".adminTeacherRole").forEach((select)=>select.addEventListener("change",()=>changeAdminTeacherRole(select)));
-}
-
-async function changeAdminTeacherRole(select) {
-  const user = state.adminUsers.find((item)=>item.id === select.dataset.id);
-  if (!user || user.id === state.user.uid) return;
-  const nextRole = select.value === "admin" ? "admin" : "teacher";
-  if (nextRole === user.role) return;
-  if (user.isTestAccount === true && nextRole === "admin") { select.value = user.role || "teacher"; return; }
-  if (!confirm(`${user.displayName || user.email || "Dieses Konto"} wirklich zu „${nextRole === "admin" ? "Admin" : "Lehrkraft"}“ ändern?`)) { select.value = user.role || "teacher"; return; }
-  select.disabled = true;
-  try {
-    await updateDoc(doc(db, "users", user.id), { role: nextRole, roleUpdatedAt: serverTimestamp(), roleUpdatedBy: state.user.uid });
-    await writeAdminAudit("user_role_changed", { userId: user.id, fromRole: user.role || "teacher", toRole: nextRole });
-    toast("Rolle geändert.");
-    await loadAdminData(false);
-  } catch (err) {
-    console.error(err);
-    select.value = user.role || "teacher";
-    toast("Rolle konnte nicht geändert werden.", "error");
-  } finally {
-    select.disabled = false;
-  }
+  accountController()?.render(users.map(u => ({...u, quizCount: teacherQuizCount(u.id)})), {allUsers: state.adminUsers});
 }
 
 function exportAdminTeachersCsv() {
@@ -7968,15 +7963,7 @@ async function adminSendPasswordReset(user) {
 async function toggleUserSuspension(user) {
   if (!user || user.id === state.user.uid) return;
   const suspend = user.status !== "suspended";
-  const verb = suspend ? "sperren" : "entsperren";
-  if (!confirm(`${user.displayName || user.email} wirklich ${verb}?`)) return;
-  try {
-    await updateDoc(doc(db, "users", user.id), { status: suspend ? "suspended" : "active", statusUpdatedAt: serverTimestamp(), statusUpdatedBy: state.user.uid });
-    await writeAdminAudit(suspend ? "user_suspended" : "user_unsuspended", { userId: user.id, email: user.email || "" });
-    toast(suspend ? "Account gesperrt." : "Account entsperrt.");
-    await loadAdminData(false);
-    openAdminTeacher(user.id);
-  } catch (err) { console.error(err); toast("Accountstatus konnte nicht geändert werden.", "error"); }
+  void accountController()?.start("status", [user.id], suspend ? "suspended" : "active");
 }
 
 function adminQuizStatus(q) {

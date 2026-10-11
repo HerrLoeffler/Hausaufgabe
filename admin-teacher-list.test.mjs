@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
+import { createAccountController } from './admin-account-actions.mjs';
 
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
@@ -24,7 +25,13 @@ function setup() {
   };
   const context = {
     document: dom.window.document,
-    state,
+    state, app: {}, createAccountController, CustomEvent: dom.window.CustomEvent,
+    getFunctions: () => ({}),
+    httpsCallable: (_functions,name) => async data => {
+      updates.push({name,data});
+      if(name === 'previewAdminAccountAction')return {data:{operationId:'synthetic',targets:data.targets.map(id=>({id,label:id,code:'allowed'}))}};
+      return {data:{status:'complete',outcomes:[{id:'a',code:'complete'}]}};
+    },
     $: id => dom.window.document.getElementById(id),
     normalize: text => String(text).toLowerCase(),
     escapeHtml: text => String(text ?? ''),
@@ -57,7 +64,7 @@ test('teacher list sorts by newest registration and by quiz count', () => {
   dom.window.close();
 });
 
-test('admin can change another regular teacher role directly in the list', async () => {
+test('admin previews and confirms another regular teacher role through the server action', async () => {
   const { dom, context, updates } = setup();
   context.renderAdminTeachers();
   const select = dom.window.document.querySelector('.adminTeacherRole[data-id="a"]');
@@ -66,8 +73,14 @@ test('admin can change another regular teacher role directly in the list', async
   select.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
   await new Promise(resolve => setTimeout(resolve, 0));
   assert.equal(updates.length, 1);
-  assert.equal(updates[0][0][2], 'a');
-  assert.equal(updates[0][1].role, 'admin');
+  assert.equal(updates[0].name, 'previewAdminAccountAction');
+  assert.deepEqual(Array.from(updates[0].data.targets), ['a']);
+  assert.equal(updates[0].data.value, 'admin');
+  dom.window.document.querySelector('[data-confirm]').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(updates.length, 2);
+  assert.equal(updates[1].name, 'executeAdminAccountAction');
+  assert.equal(updates[1].data.operationId, 'synthetic');
   assert.equal(dom.window.document.querySelector('.adminTeacherRole[data-id="admin"]').disabled, true);
   assert.equal(dom.window.document.querySelector('.adminTeacherRole[data-id="b"] option[value="admin"]').disabled, true);
   dom.window.close();

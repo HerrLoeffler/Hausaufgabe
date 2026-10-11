@@ -10,8 +10,9 @@ function activeJobIds(lock = {}) {
   return [...new Set([...(Array.isArray(lock.activeJobIds) ? lock.activeJobIds : []), lock.activeJobId].filter(id => typeof id === "string" && id))];
 }
 
-async function reserveJob(db, { uid, jobRef, lockRef, now, jobData }) {
+async function reserveJob(db, { uid, jobRef, lockRef, now, jobData, beforeReserve }) {
   return db.runTransaction(async tx => {
+    if (beforeReserve) await beforeReserve(tx);
     const previous = await tx.get(jobRef);
     const previousData = previous.data() || {};
     const retryQueueFailure = previous.exists && previousData.ownerId === uid && previousData.status === "failed" && previousData.stage === "queue-failed";

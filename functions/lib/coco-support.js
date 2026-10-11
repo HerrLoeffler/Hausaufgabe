@@ -20,7 +20,7 @@ async function searchOwnedTests(repo,uid,query) {
  }));
  return {matches:matches.sort((a,b)=>a.title.localeCompare(b.title)).slice(0,12),unindexedImages,failures,checked:checked.length,truncated:quizzes.length>100};
 }
-async function memoryOperation(db,ref,data,stamp) {
+async function memoryOperation(db,ref,data,stamp,beforeWrite) {
  const op=data.operation||"read";
  if(op==="read")return normalizeMemory((await ref.get()).data());
  if(!["clear","preferences","remember"].includes(op))throw new Error("Unbekannte Gedächtnisaktion.");
@@ -28,6 +28,7 @@ async function memoryOperation(db,ref,data,stamp) {
  const turnId=String(data.turnId||"").slice(0,100);
  if(op==="remember"&&!/^[a-zA-Z0-9_-]{8,100}$/.test(turnId))throw new Error("Ungültiger Gesprächsschritt.");
  return db.runTransaction(async tx=>{
+  if(beforeWrite)await beforeWrite(tx);
   const old=(await tx.get(ref)).data()||{};const current=normalizeMemory(old);
   if(op==="clear"){const cleared=normalizeMemory({generation:current.generation+1});tx.set(ref,{...cleared,turnIds:[],updatedAt:stamp()});return cleared;}
   if(expected!==current.generation)throw Object.assign(new Error("memory-reset"),{code:"memory-reset"});

@@ -23,21 +23,21 @@ test("bootstrap waits for Firebase auth instead of giving up during startup", ()
 
 test("role and test-account controls are admin-gated", () => {
   assert.match(source, /snap\.data\(\)\?\.role === "admin"/);
-  assert.match(source, /gcAdminRoleSelect/);
+  assert.doesNotMatch(source, /id="gcAdminRoleSelect"/);
   assert.match(source, /isTestAccount/);
   assert.match(source, /Als Testkonto markieren/);
 });
 
 test("archive is reversible and suspends login instead of deleting data", () => {
   assert.match(source, /isTestAccountArchived/);
-  assert.match(source, /status: nextArchived \? "suspended" : "active"/);
+  assert.match(source, /action:"archive",targets:\[uid\],value:!isArchived/);
   assert.match(source, /Testkonto wieder aktivieren/);
   assert.doesNotMatch(source, /deleteUser|deleteDoc|recursiveDelete/);
 });
 
 test("admins cannot accidentally mark an admin as a test account through the UI", () => {
   assert.match(source, /id="gcToggleTestAccount" \$\{isAdmin \|\| isArchived \? "disabled" : ""\}/);
-  assert.match(source, /Ein Testkonto kann nicht gleichzeitig Admin sein/);
+  assert.match(source, /isAdmin \|\| isArchived/);
 });
 
 test("detail controls render idempotently to avoid mutation-observer loops", () => {

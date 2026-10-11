@@ -375,3 +375,13 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .cocoGuideTarget{outline:3px solid #d73743!important;outline-offset:5px;box-shadow:0 0 0 8px #d737431c!important;animation:cocoGuideGlow 1.8s ease-in-out 3}
 @keyframes cocoGuideGlow{50%{outline-offset:9px}}
 @media(prefers-reduced-motion:reduce){.cocoGuideTarget{animation:none}}
+
+/* Account administration uses the existing GradeCrew palette and native controls. */
+.adminAccountToolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:var(--radius)}
+.adminAccountToolbar label{display:flex;align-items:center;gap:6px}.adminAccountToolbar select,.adminAccountRowActions select{width:auto;min-height:42px;margin:0;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text)}
+.adminAccountRowActions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:nowrap}.adminAccountSelection{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12px}
+#adminTeachersTable input[type=checkbox]{width:20px;height:20px;margin:0;accent-color:var(--primary)}
+.adminAccountDialog{max-width:min(620px,calc(100vw - 32px));max-height:85vh;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+.adminAccountDialog::backdrop{background:rgba(24,32,51,.45)}.adminAccountDialog li{margin:8px 0}.adminAccountDialog h2{margin-top:0}.adminAccountDialog p{line-height:1.5}.adminAccountDialog .actions{justify-content:flex-end;flex-wrap:wrap}
+#adminTeachersTable [data-action-result]:not(:empty){white-space:pre-line;padding:10px 0;color:var(--text)}
+@media(max-width:640px){.adminAccountToolbar{align-items:stretch}.adminAccountToolbar strong{flex-basis:100%}.adminAccountRowActions{flex-wrap:wrap;min-width:190px}.adminAccountDialog{padding:18px}}
