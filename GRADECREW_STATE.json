@@ -2011,5 +2011,36 @@
     "canonicalRun": 37631350330,
     "canonicalReceipt": 11486023795,
     "userAcceptance": "pending"
+  },
+  "adminAccountActions": {
+    "task": "GC-WEB-REPAIR-20261007-ADMIN",
+    "phase": "branch_only",
+    "branch": "feat/admin-account-actions-20261011",
+    "pr": 209,
+    "integrationTarget": "feature/gradecrew-app-integration",
+    "observedIntegrationHead": "8d19ccfdf6c70a5f67a5dcbfe431a945b6dfcfdd",
+    "sourceEvidence": {
+      "productHead": "33cdb56a5a2eabca2900261bc247a6e73b348275",
+      "ci": 38101819504,
+      "review": "independent_source_and_scoped_fix_review_no_open_critical_important",
+      "currentCandidate": "reconciling_remy_before_new_exact_ci"
+    },
+    "localUi": {
+      "url": "http://127.0.0.1:8772/",
+      "verified": "existing_logged_in_safari_row_actions_and_selection2_filter1_reset0; controller9tests_passed; no_account_execution",
+      "foreignChangesPreserved": true
+    },
+    "authorization": {
+      "staging": true,
+      "production": false,
+      "evidence": "User directly answered Ja, auf Staging funktionsfähig machen on2026-10-11"
+    },
+    "staging": {
+      "hosting": "not_deployed",
+      "functions": "previewAdminAccountAction_404_before_release",
+      "rules": "current_live_matches_base05306c",
+      "userAcceptance": "pending"
+    },
+    "nextAction": "Finish combined immutable candidate, independent integration delta review and exact CI; publish Functions/Rules/Web once and test only synthetic accounts."
   }
 }

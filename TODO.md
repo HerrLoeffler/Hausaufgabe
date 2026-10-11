@@ -483,3 +483,9 @@ GC-POCOCK-RESEARCH-01 · aktueller textueller Abschluss:40/40Inventar-IDs,16Lang
 
 
 GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://github.com/HerrLoeffler/Hausaufgabe/pull/194) finalab738f822b3b15c1d2ef18f75c762c1ef0d228b5 nach unabhängigem Doku-/Metadatenreview ohne Findings auf main@3142a6e42f2daca8d35b1b84b086a506a4b99a9b integriert. Kandidat-Handoff38082215129/DevelopmentStatus38082215063 und ready-DevelopmentStatus38082255964 success. EigenerBericht/Review, Zusammenfassung, kleineMetadaten, Registry und vorhandene Launch-/Privacyübergaben integriert; keineProdukt-/Deploystufe daraus. Researchregistrierung integrated; Folgeumsetzung/Pilot bleibt eigener Auftrag.
+
+## 11.10.2026 — Kontoverwaltung auf bestehender Testseite
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-WEB-REPAIR-20261007-ADMIN | Kontoauswahl, Rollen, Sperren und bestätigte Löschung in der bestehenden Administration | **Lokale UI auf 8772 geprüft; Staging-Freigabe erteilt, Zusammenführung läuft** | [PR209](https://github.com/HerrLoeffler/Hausaufgabe/pull/209); geprüfte ursprüngliche Produktquelle33cdb56 mit CI38101819504, aktueller Kandidat wird mit Remy-Ziel8d19ccf abgeglichen. Neue kombinierte Prüfung/CI vor Merge und getrennten Functions/Rules/Hosting-Nachweisen. Keine echten fremden Kontoaktionen oder Production. [Übergabe](workstreams/admin-account-actions-20261011.md) |

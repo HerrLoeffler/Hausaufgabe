@@ -584,6 +584,15 @@
       "state": "integrated",
       "handoff": "workstreams/research-videos-20261011.md",
       "relatedBranches": []
+    },
+    {
+      "id": "admin-account-actions-20261011",
+      "title": "GC-WEB-REPAIR-20261007-ADMIN: Kontoverwaltung in vorhandener Testseite",
+      "primaryBranch": "feat/admin-account-actions-20261011",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/admin-account-actions-20261011.md",
+      "relatedBranches": []
     }
   ]
 }
