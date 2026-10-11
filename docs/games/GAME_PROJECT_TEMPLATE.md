@@ -16,7 +16,7 @@ Der [verbindliche Produktionsworkflow](GREAT_GAMES_WORKFLOW.md) enthält gemeins
 - Art Direction: Palette und Rollen, Form/Silhouette, Typografie, Perspektive, Materialien/Licht, Bewegung, UI-Beispiele:
 - Kleinster vollständiger Abschnitt: eine Szene/ein Level, eine Kerninteraktion, eine Lernaufgabe, Hilfe, Feedback und Abschluss:
 - Spätere Ideen, ausdrücklich außerhalb des ersten Abschnitts:
-- Bestehende GradeCrew-Lern-, Eingabe-, Bewertungs-, Speicher- und Feedbackverträge, die wiederverwendet werden:
+- Bestehende GradeCrew-Lern-, Eingabe-, Bewertungs-, Speicher- und Feedbackverträge, die wiederverwendet werden; aktuelle Verfügbarkeit pro Spiel belegen:
 - Assetprovenienz, bearbeitbare Quellen, Export-/Importweg und verantwortliche Personen:
 - Zielgerätebudgets für Startzeit, Paket-/Assetgröße, Speicher und Bildrate; Messgerät und Messweg:
 - Abnahmekriterien mit konkretem Nachweis je Profil, Laufzeit und Gerät; Preview/Editor, Runtime und Geräteprüfung getrennt:
@@ -43,4 +43,4 @@ Für jeden Fachauftrag genau einen Eigentümer und klare Eingaben/Ausgaben festl
 - Budget/Versuchslimit und bestehende Historie:
 - Rückgabe: Commit/PR, tatsächliche Prüfungen, Ergebnisdateien und offene Punkte:
 
-Neue Referenzbilder, Klassen, Assets oder Runtimeänderungen nur im jeweiligen autorisierten Auftrag anlegen. Keine Zugangsdaten, personenbezogenen Testdaten oder unfreigegebenen Schülerinhalte in Briefing und Übergabe speichern.
+Neue Referenzbilder, Klassen, Assets oder Runtimeänderungen nur im jeweiligen autorisierten Auftrag anlegen. Eine gemeinsame native Feedback-/KI-Brücke ist nicht belegt; Prototypfeedback daher nur im autorisierten Arbeitskontext dokumentieren, bis ein konkreter vorhandener Vertrag geprüft und ein Folgeauftrag freigegeben ist. Keine Zugangsdaten, personenbezogenen Testdaten oder unfreigegebenen Schülerinhalte in Briefing und Übergabe speichern.
