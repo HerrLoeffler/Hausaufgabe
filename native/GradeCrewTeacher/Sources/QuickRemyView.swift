@@ -20,6 +20,14 @@ struct QuickRemyView: View {
     @State private var recoveryNeedsRetry = false
 
     private enum RemyWorkStatus { case idle, recovering, preparing, needsInfo, readyForReview, accepted, failed }
+    private enum SpeechTarget { case remy, wishes }
+    @State private var speechTarget: SpeechTarget = .remy
+    @State private var allowedTypes: Set<String> = ["single", "multi", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords"]
+    private let questionTypes: [(String, String)] = [
+        ("single", "Single Choice"), ("multi", "Multiple Choice"), ("text", "Freitext"),
+        ("dropdown", "Dropdown"), ("truefalse", "Richtig / Falsch"), ("gapfill", "Lückentext"),
+        ("matching", "Zuordnen"), ("ordering", "Sortieren"), ("grouping", "Gruppieren"), ("markwords", "Wörter markieren"), ("number", "Zahlenaufgaben")
+    ]
 
     private var status: QuickRemySpeechFlow.Status { capture.flow.status }
     private var canStartRecording: Bool {
@@ -30,56 +38,49 @@ struct QuickRemyView: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 0) {
             navigationHeader
-            VStack(spacing: 8) {
-                remyMainArtwork
-                microphoneButton
-
-                if !statusMessage.isEmpty {
-                    Text(statusMessage)
-                        .font(.footnote.weight(.medium))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .accessibilityAddTraits(.updatesFrequently)
-                }
-
-                if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
-                    ProgressView()
-                        .controlSize(.small)
-                        .tint(GradeCrewDesignTokens.Colors.primary)
-                        .accessibilityLabel(progressMessage)
-                }
-                followUpCard
-                quickReviewCard
-
-                if workStatus == .failed {
-                    Button(recoveryNeedsRetry ? "Erneut versuchen" : (conversationText.isEmpty ? "Testeditor öffnen" : "Remy erneut fragen")) {
-                        Task {
-                            if recoveryNeedsRetry { await recoverPendingSubmission() }
-                            else if conversationText.isEmpty { await openAiForm() }
-                            else { await retryPreparation() }
-                        }
+            ScrollView {
+                VStack(spacing: 14) {
+                    remyVoiceCard
+                    nativeTestForm
+                    if status == .permissionDenied, let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                        Link("App-Einstellungen öffnen", destination: settingsURL)
+                            .font(.footnote)
+                            .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
                     }
-                    .buttonStyle(.bordered)
+                    if workStatus == .failed { retryButton }
+                    if workStatus == .accepted {
+                        Label("Testauftrag wurde übergeben.", systemImage: "checkmark.circle.fill")
+                            .font(.footnote.weight(.semibold)).foregroundStyle(GradeCrewDesignTokens.Colors.positive)
+                    }
+                    Text("Sprache wird auf diesem Gerät erkannt.")
+                        .font(.system(size: 12)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                 }
+                .padding(.horizontal, 14)
+                .padding(.bottom, 24)
+                .frame(maxWidth: 560)
+                .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .frame(maxWidth: 560)
-            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
-
-            if status == .permissionDenied, let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                Link("App-Einstellungen öffnen", destination: settingsURL)
-                    .font(.footnote)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-            }
-
+            .scrollDismissesKeyboard(.interactively)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, 4)
         .background(GradeCrewDesignTokens.Colors.background)
+        .onChange(of: capture.flow.status) { newStatus in
+            guard newStatus == .transcribed else { return }
+            let transcript = capture.flow.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !transcript.isEmpty else { return }
+            switch speechTarget {
+            case .remy:
+                pendingTranscript = transcript
+                capture.cancel()
+                Task { await prepareTranscript(transcript) }
+            case .wishes:
+                let current = draft.wishes.trimmingCharacters(in: .whitespacesAndNewlines)
+                draft.wishes = current.isEmpty ? transcript : "\(current)\n\(transcript)"
+                capture.cancel()
+                Task { await syncDraftToWebForm() }
+            }
+        }
         .onChange(of: scenePhase) { phase in
             if phase != .active {
                 recoveryChecking = true
@@ -92,207 +93,209 @@ struct QuickRemyView: View {
             await recoverPendingSubmission()
             await openAiForm()
         }
-        .onDisappear {
-            clearConversation()
-        }
+        .onDisappear { clearConversation() }
     }
 
-    private var remyMainArtwork: some View {
-        Image(GradeCrewAssets.NativeImage.remyMicrophone)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 156, height: 156)
-            .accessibilityLabel("Remy mit Mikrofon")
-    }
-
-    private var microphoneButton: some View {
-        Button {
-            if status == .recording {
-                capture.stop()
-            } else if status == .transcribed {
-                sendCapturedTranscript()
-            } else {
-                pendingTranscript = nil
-                Task { await capture.start() }
-            }
-        } label: {
-            Label(microphoneActionTitle, systemImage: status == .recording ? "stop.fill" : "mic.fill")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 58)
-                .background(status == .recording ? GradeCrewDesignTokens.Colors.crewRust : GradeCrewDesignTokens.Colors.primary, in: Capsule())
-        }
-        .buttonStyle(.plain)
-        .frame(maxWidth: 560)
-        .disabled(recoveryChecking || unresolvedSubmission || (!canStartRecording && status != .recording) || workStatus == .preparing || workStatus == .accepted)
-    }
-
-    private var recognizedTranscriptCard: some View {
-        Group {
-            if let visibleTranscript = pendingTranscript ?? (capture.flow.transcript.isEmpty ? nil : capture.flow.transcript) {
-                VStack(alignment: .leading, spacing: GradeCrewDesignTokens.Spacing.sm) {
-                    Text("Erkannter Text")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    Text(visibleTranscript)
-                        .font(.system(size: 20))
+    private var remyVoiceCard: some View {
+        VStack(spacing: 3) {
+            Button(action: toggleRemyRecording) {
+                VStack(spacing: 0) {
+                    Image(GradeCrewAssets.NativeImage.remyMicrophone)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 220, height: 220)
+                        .contentShape(Rectangle())
+                    Text(status == .recording ? "Ich höre zu …" : "Sprich mir schnell ein, was du willst.")
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .textSelection(.enabled)
-                    if status == .transcribed {
-                        Text("Prüfe den Text und tippe oben auf „An Remy senden“.")
-                            .font(.footnote)
-                            .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 14)
+                        .padding(.bottom, 14)
+                }
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(recoveryChecking || unresolvedSubmission || workStatus == .preparing || workStatus == .accepted || status == .transcribing || status == .requestingPermission)
+            .accessibilityLabel(status == .recording ? "Aufnahme beenden" : "Remy antippen und Testwunsch einsprechen")
+            if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
+                ProgressView(workStatus == .preparing ? "Remy trägt deine Angaben ein …" : "")
+                    .controlSize(.small).tint(GradeCrewDesignTokens.Colors.primary)
+                    .padding(.bottom, 12)
+            }
+            if workStatus == .needsInfo {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Remy fragt kurz nach").font(.headline)
+                    Text(workError ?? "Ergänze die fehlenden Angaben oben im Formular.")
+                        .font(.subheadline).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                    if countSuggestionChips {
+                        HStack {
+                            ForEach([5, 10, 15], id: \.self) { value in
+                                Button("\(value) Aufgaben") { Task { await chooseTaskCount(value) } }
+                                    .buttonStyle(.borderedProminent).tint(GradeCrewDesignTokens.Colors.soft)
+                                    .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                            }
+                        }
                     }
                 }
-                .padding(GradeCrewDesignTokens.Spacing.lg)
-                .frame(maxWidth: 560, alignment: .leading)
-                .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal, 12).padding(.bottom, 12)
             }
         }
+        .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 22))
+    }
+
+    private var nativeTestForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Dein Test").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
+            HStack(spacing: 10) {
+                nativeField("Fach", text: $draft.subject)
+                nativeField("Klasse", text: $draft.grade)
+            }
+            HStack(spacing: 10) {
+                nativeField("Schulart", text: $draft.schoolType)
+                nativeField("Bundesland", text: $draft.region)
+            }
+            nativeField("Thema", text: $draft.topic)
+            HStack(spacing: 10) {
+                nativeField("Aufgaben", text: $draft.count, keyboard: .numberPad)
+                nativeField("Gesamtpunkte", text: $draft.points, keyboard: .decimalPad)
+            }
+            HStack {
+                Text("Schwierigkeit").font(.subheadline.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                Spacer()
+                Picker("Schwierigkeit", selection: $draft.difficulty) {
+                    Text("Leicht").tag("leicht")
+                    Text("Mittel").tag("mittel")
+                    Text("Anspruchsvoll").tag("anspruchsvoll")
+                    Text("Gemischt").tag("gemischt")
+                }.pickerStyle(.menu)
+            }
+            nativeField("Aufgaben mit Bild (0–5)", text: $draft.imageQuestionCount, keyboard: .numberPad)
+            DisclosureGroup("Aufgabentypen (\(allowedTypes.count))") {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 7) {
+                    ForEach(questionTypes, id: \.0) { value, title in
+                        Toggle(title, isOn: Binding(
+                            get: { allowedTypes.contains(value) },
+                            set: { enabled in if enabled { allowedTypes.insert(value) } else { allowedTypes.remove(value) } }
+                        )).font(.caption)
+                    }
+                }.padding(.top, 8)
+            }
+            .font(.subheadline.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("Eigene Wünsche (optional)").font(.subheadline.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                    Spacer()
+                    Button(action: toggleWishesRecording) {
+                        Image(systemName: status == .recording && speechTarget == .wishes ? "stop.circle.fill" : "mic.circle.fill")
+                            .font(.system(size: 28)).foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(status == .recording && speechTarget != .wishes || status == .transcribing || status == .requestingPermission)
+                    .accessibilityLabel("Eigene Wünsche einsprechen")
+                }
+                TextEditor(text: $draft.wishes)
+                    .frame(minHeight: 72, maxHeight: 112)
+                    .padding(6)
+                    .scrollContentBackground(.hidden)
+                    .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
+            }
+            if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
+                Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
+            }
+            Button(action: { Task { await submitTest() } }) {
+                HStack(spacing: 8) {
+                    if workStatus == .preparing { ProgressView().tint(.white) }
+                    Text(workStatus == .accepted ? "Testauftrag übergeben" : "Test erstellen")
+                }
+                .font(.system(size: 17, weight: .semibold)).foregroundStyle(.white)
+                .frame(maxWidth: .infinity).frame(height: 52)
+                .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
+            }
+            .buttonStyle(.plain)
+            .disabled(draft.preparedRequest == nil || !aiFormReady || recoveryChecking || unresolvedSubmission || workStatus == .preparing || workStatus == .accepted)
+            if workStatus == .failed, let workError { Text(workError).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
+        }
+        .padding(14)
+        .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 18))
+        .onChange(of: draft.subject) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.grade) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.schoolType) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.region) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.topic) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.count) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.points) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.difficulty) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.imageQuestionCount) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draft.wishes) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: allowedTypes) { _ in Task { await syncDraftToWebForm() } }
+    }
+
+    private func nativeField(_ title: String, text: Binding<String>, keyboard: UIKeyboardType = .default) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(.caption.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+            TextField(title, text: text)
+                .keyboardType(keyboard)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, 11).frame(height: 44)
+                .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var retryButton: some View {
+        Button(recoveryNeedsRetry ? "Auftrag erneut abgleichen" : (conversationText.isEmpty ? "Erneut laden" : "Remy erneut fragen")) {
+            Task {
+                if recoveryNeedsRetry { await recoverPendingSubmission() }
+                else if conversationText.isEmpty { await openAiForm() }
+                else { await retryPreparation() }
+            }
+        }.buttonStyle(.bordered)
     }
 
     private var navigationHeader: some View {
         HStack {
             Button(action: onBack) {
                 Label("Start", systemImage: "chevron.left")
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-                    .padding(.horizontal, 15)
-                    .frame(height: 48)
+                    .font(.system(size: 17, weight: .medium)).foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                    .padding(.horizontal, 15).frame(height: 48)
                     .background(GradeCrewDesignTokens.Colors.soft, in: Capsule())
             }
             .buttonStyle(.plain)
             Spacer()
+            Text("Remy fragen").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
+            Spacer()
             Color.clear.frame(width: 52, height: 52).accessibilityHidden(true)
         }
-        .overlay {
-            Text("Remy fragen")
-                .font(.system(size: 19, weight: .bold, design: .rounded))
-                .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                .allowsHitTesting(false)
-        }
-        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-        .padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
+        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg).padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
         .background(GradeCrewDesignTokens.Colors.background)
     }
 
-    private var microphoneActionTitle: String {
-        if status == .recording { return "Aufnahme beenden" }
-        if status == .transcribed { return "An Remy senden" }
-        if workStatus == .needsInfo { return "Antwort sprechen" }
-        if workStatus == .readyForReview { return "Wunsch ergänzen" }
-        return "Mikrofon"
+    private func toggleRemyRecording() {
+        if status == .recording { capture.stop(); return }
+        speechTarget = .remy
+        pendingTranscript = nil
+        Task { await capture.start() }
     }
 
-
-    private func sendCapturedTranscript() {
-        let transcript = capture.flow.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !transcript.isEmpty else { return }
-        let addToWishes = workStatus == .readyForReview
-        pendingTranscript = transcript
-        capture.cancel()
-        Task { await prepareTranscript(transcript, addToWishes: addToWishes) }
-    }
-
-    @ViewBuilder
-    private var followUpCard: some View {
-        if workStatus == .needsInfo {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Remy fragt kurz nach")
-                    .font(.headline)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                Text(workError ?? "Ergänze bitte noch die fehlenden Angaben.")
-                    .font(.body)
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                if countSuggestionChips {
-                    HStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
-                        ForEach([5, 10, 15], id: \.self) { value in
-                            Button("\(value) Aufgaben") {
-                                Task { await chooseTaskCount(value) }
-                            }
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-                            .padding(.horizontal, 13)
-                            .padding(.vertical, 11)
-                            .background(GradeCrewDesignTokens.Colors.soft, in: Capsule())
-                            .accessibilityHint("Setzt die Aufgabenzahl auf \(value) und fragt Remy nach weiteren fehlenden Angaben.")
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(12)
-            .frame(maxWidth: 560, alignment: .leading)
-            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
-        }
+    private func toggleWishesRecording() {
+        if status == .recording && speechTarget == .wishes { capture.stop(); return }
+        guard canStartRecording else { return }
+        speechTarget = .wishes
+        Task { await capture.start() }
     }
 
     private var countSuggestionChips: Bool {
         workStatus == .needsInfo && missingFields.contains("count") && Int(draft.count) == nil
     }
 
-    @ViewBuilder
-    private var quickReviewCard: some View {
-        if workStatus == .readyForReview {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
-                    TextField("Fach", text: $draft.subject)
-                        .textFieldStyle(.roundedBorder)
-                    TextField("Klasse", text: $draft.grade)
-                        .textFieldStyle(.roundedBorder)
-                }
-                TextField("Thema", text: $draft.topic)
-                    .textFieldStyle(.roundedBorder)
-                HStack(spacing: 8) {
-                    TextField("Aufgaben", text: $draft.count)
-                        .textFieldStyle(.roundedBorder)
-                    TextField("Wünsche (optional)", text: $draft.wishes)
-                        .textFieldStyle(.roundedBorder)
-                }
-                Button("Test erstellen") { Task { await submitTest() } }
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 48)
-                    .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
-                    .disabled(draft.preparedRequest == nil)
-                Button("Weitere Einstellungen") { Task { await showMoreOptions() } }
-                    .font(.footnote.weight(.medium))
-                    .frame(maxWidth: .infinity)
-            }
-            .padding(12)
-            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
-        }
-    }
-
-    private var progressMessage: String {
-        if status == .requestingPermission { return "Mikrofon wird vorbereitet" }
-        if status == .transcribing { return "Sprache wird lokal erkannt" }
-        if workStatus == .recovering { return "Vorheriger Auftrag wird abgeglichen" }
-        return "Remy prüft die Angaben"
-    }
-
-    private var statusMessage: String {
-        if workStatus == .recovering { return "Prüfe offenen Auftrag …" }
-        if workStatus == .preparing { return "Remy füllt den Test aus …" }
-        if workStatus == .readyForReview { return "Entwurf bereit · prüfen oder ergänzen" }
-        if workStatus == .accepted { return "Test wird erstellt …" }
-        if workStatus == .failed { return workError ?? "Senden fehlgeschlagen · erneut versuchen" }
-        if workStatus == .needsInfo { return "Rückfrage · sprich deine Ergänzung" }
-        switch status {
-        case .idle: return ""
-        case .requestingPermission: return "Mikrofon freigeben"
-        case .permissionDenied: return "Mikrofonzugriff fehlt"
-        case .recognizerUnavailable: return "Spracherkennung nicht verfügbar"
-        case .onDeviceRecognitionUnavailable: return "Lokale Spracherkennung nicht verfügbar"
-        case .recording: return "Remy hört zu · tippen zum Beenden"
-        case .transcribing: return "Aufnahme wird erkannt …"
-        case .transcribed: return "Wunsch erkannt · senden"
-        case .emptyTranscript: return "Nichts erkannt · erneut sprechen"
-        case .failed: return "Erkennung fehlgeschlagen · erneut versuchen"
-        }
+    private func syncDraftToWebForm() async {
+        guard aiFormReady else { return }
+        do {
+            _ = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload, "allowedTypes": Array(allowedTypes)])
+        } catch { /* The creation action reports a clear error if synchronization is unavailable. */ }
     }
 
     @MainActor
@@ -313,7 +316,7 @@ struct QuickRemyView: View {
     }
 
     @MainActor
-    private func prepareTranscript(_ transcript: String, addToWishes: Bool = false) async {
+    private func prepareTranscript(_ transcript: String) async {
         guard !transcript.isEmpty, workStatus != .preparing, workStatus != .accepted else { return }
         let segment = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
         let updatedConversation = conversationText.isEmpty ? segment : "\(conversationText)\nErgänzung: \(segment)"
@@ -323,10 +326,6 @@ struct QuickRemyView: View {
             return
         }
         conversationText = updatedConversation
-        if addToWishes {
-            let prior = draft.wishes.trimmingCharacters(in: .whitespacesAndNewlines)
-            draft.wishes = prior.isEmpty ? segment : "\(prior)\n\(segment)"
-        }
         await runPreparation()
     }
 
@@ -361,12 +360,12 @@ struct QuickRemyView: View {
             ])
             guard workGeneration == token else { return }
             if let fields = result["draft"] as? [String: Any] {
-                let responseDraft = QuickRemyDraft(payload: fields)
-                if !responseDraft.subject.isEmpty { draft.subject = responseDraft.subject }
-                if !responseDraft.grade.isEmpty { draft.grade = responseDraft.grade }
-                if !responseDraft.topic.isEmpty { draft.topic = responseDraft.topic }
-                if !responseDraft.count.isEmpty { draft.count = responseDraft.count }
-                if !responseDraft.wishes.isEmpty { draft.wishes = responseDraft.wishes }
+                let returned = QuickRemyDraft(payload: fields)
+                if !returned.subject.isEmpty { draft.subject = returned.subject }
+                if !returned.grade.isEmpty { draft.grade = returned.grade }
+                if !returned.topic.isEmpty { draft.topic = returned.topic }
+                if !returned.count.isEmpty { draft.count = returned.count }
+                if !returned.wishes.isEmpty { draft.wishes = returned.wishes }
             }
             let synced = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload])
             guard synced["status"] as? String == "ready" else {
@@ -391,6 +390,22 @@ struct QuickRemyView: View {
             workStatus = .readyForReview
         } catch {
             guard workGeneration == token else { return }
+            workError = error.localizedDescription
+            workStatus = .failed
+        }
+    }
+
+    @MainActor
+    private func submitTest() async {
+        guard draft.preparedRequest != nil else { return }
+        do {
+            let fields = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload, "allowedTypes": Array(allowedTypes)])
+            guard fields["status"] as? String == "ready" else { throw quickRemyError("Deine Angaben konnten nicht übernommen werden.") }
+            let result = try await invoke("createAiTest", payload: [:])
+            guard result["status"] as? String == "started" else { throw quickRemyError("Der Test konnte nicht gestartet werden.") }
+            workStatus = .accepted
+            workError = nil
+        } catch {
             workError = error.localizedDescription
             workStatus = .failed
         }
@@ -435,33 +450,6 @@ struct QuickRemyView: View {
         guard let call else { throw quickRemyError("Die GradeCrew-Verbindung ist noch nicht bereit. Bitte erneut versuchen.") }
         return try await withCheckedThrowingContinuation { continuation in
             call(action, payload) { result in continuation.resume(with: result) }
-        }
-    }
-
-    @MainActor
-    private func submitTest() async {
-        guard draft.preparedRequest != nil else { return }
-        do {
-            let fields = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload])
-            guard fields["status"] as? String == "ready" else { throw quickRemyError("Die Angaben konnten nicht übernommen werden.") }
-            let result = try await invoke("createAiTest", payload: [:])
-            guard result["status"] as? String == "started" else { throw quickRemyError("Der Test konnte nicht gestartet werden.") }
-            workStatus = .accepted
-            workError = nil
-        } catch {
-            workError = error.localizedDescription
-            workStatus = .failed
-        }
-    }
-
-    @MainActor
-    private func showMoreOptions() async {
-        do {
-            let result = try await invoke("showAiOptions", payload: [:])
-            guard result["status"] as? String == "ready" else { throw quickRemyError("Die weiteren Einstellungen konnten nicht geöffnet werden.") }
-        } catch {
-            workError = error.localizedDescription
-            workStatus = .failed
         }
     }
 

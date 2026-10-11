@@ -49,8 +49,8 @@ struct TeacherRootView: View {
                 onAuthStateChanged: receiveAuthState,
                 onQuickRemyBridgeReady: { quickRemyCall = $0 }
             )
-            .opacity(route == .workspace || route == .signIn || route == .quickRemy ? 1 : 0)
-            .allowsHitTesting(route == .workspace || route == .signIn || route == .quickRemy)
+            .opacity(route == .workspace || route == .signIn ? 1 : 0)
+            .allowsHitTesting(route == .workspace || route == .signIn)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if route == .quickRemy {
                     QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
