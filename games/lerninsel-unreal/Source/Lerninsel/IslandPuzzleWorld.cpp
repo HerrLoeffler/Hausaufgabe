@@ -32,7 +32,7 @@ void AIslandGameMode::PuzzleInteract(int Id){if(!CanInspect(Id)){Notify(TEXT("LÃ
  if(Focus>=0)if(auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0))){C->CancelInput();C->UpdateMode();}
 }
 void AIslandGameMode::ShowHint(int Requested){int Id=Requested;if(Id==0)Id=Focus==820?820:Focus==821?821:Island::CurrentTaskId(State);const Island::TaskDefinition* Definition=nullptr;for(const auto& Task:Island::TaskDefinitions())if(Task.Id==Id){Definition=&Task;break;}if(!Definition){Notify(TEXT("Im Moment ist keine weitere Aufgabe offen."));return;}int& Step=HintSteps.FindOrAdd(Id);Step=FMath::Clamp(Step+1,1,3);Notify(FString(UTF8_TO_TCHAR(Definition->Hints[Step-1])));}
-void AIslandGameMode::UIAction(int Code){auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0));
+void AIslandGameMode::UIAction(int Code){if(IsLevelOneReferenceMode()){LevelOneUIAction(Code);return;}auto* C=Cast<AIslandController>(UGameplayStatics::GetPlayerController(this,0));
  if(Code==9005&&Paused){ReplayFox();return;}
  if(Code==9000&&Paused){Paused=false;if(C){C->CancelInput();C->UpdateMode();}return;}
  if(Paused&&Code>=9002&&Code<=9004&&C){C->SetMouseSensitivity(Code==9004?1.f:C->MouseSensitivity+(Code==9002?-.25f:.25f));if(C->FocusWidget)C->FocusWidget->Refresh();return;}

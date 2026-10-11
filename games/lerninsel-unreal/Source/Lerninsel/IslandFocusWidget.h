@@ -6,11 +6,13 @@ class USlider;class UTextBlock;class UButton;class UCanvasPanel;class UIslandFoc
 struct FIslandPaintEdge{int From,To;FVector2D Start,End;};
 UCLASS() class UIslandUICommand:public UObject{
  GENERATED_BODY()
- public:UPROPERTY() UIslandFocusWidget* Owner;int Command=0,ExpectedFocus=-1;bool ExpectedPause=false;UFUNCTION() void Run();
+ public:UPROPERTY() UIslandFocusWidget* Owner;int Command=0,ExpectedFocus=-1,ExpectedLevelMenu=-1;bool ExpectedPause=false;UFUNCTION() void Run();
 };
 UCLASS() class UIslandFocusWidget:public UUserWidget{
  GENERATED_BODY()
  public:virtual TSharedRef<SWidget> RebuildWidget()override;virtual void NativeTick(const FGeometry&,float)override;
+ virtual FReply NativeOnPreviewKeyDown(const FGeometry&,const FKeyEvent&)override;
+ virtual FReply NativeOnKeyUp(const FGeometry&,const FKeyEvent&)override;
  virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnMouseMove(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnMouseButtonUp(const FGeometry&,const FPointerEvent&)override;
  virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent&)override;
  virtual FReply NativeOnTouchStarted(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnTouchMoved(const FGeometry&,const FPointerEvent&)override;virtual FReply NativeOnTouchEnded(const FGeometry&,const FPointerEvent&)override;
@@ -18,6 +20,8 @@ UCLASS() class UIslandFocusWidget:public UUserWidget{
  UPROPERTY() USlider* MouseSlider=nullptr;UPROPERTY() UTextBlock* MouseSpeedLabel=nullptr;
  UFUNCTION() void MouseSensitivityChanged(float Value);UFUNCTION() void MouseSensitivityCommitted();
  UButton* ButtonFor(int)const;void CancelPointer();AIslandGameMode* Game()const;void Refresh();
+ void RefreshLevelOneMenu();void FocusLevelOneFirst();
+ UPROPERTY() TArray<UWidget*> LevelOneFocusOrder;
  UPROPERTY() UCanvasPanel* Body;UPROPERTY() TArray<UIslandUICommand*> Commands;UPROPERTY() TMap<int,UButton*> Buttons;
  mutable TArray<FIslandPaintEdge> PaintedEdges;
  FString Signature;bool PointerOwned=false;int PointerId=-2;

@@ -6,6 +6,7 @@ from pathlib import Path
 
 known_tests = {
     "GradeCrew.Lerninsel.Controls",
+    "GradeCrew.Lerninsel.LevelOne",
     "GradeCrew.Lerninsel.FourPuzzles",
     "GradeCrew.Lerninsel.Fox",
     "GradeCrew.Lerninsel.Play",

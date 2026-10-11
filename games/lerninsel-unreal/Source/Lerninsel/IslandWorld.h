@@ -7,8 +7,11 @@
 #include "GameFramework/SaveGame.h"
 #include "Core/IslandRules.h"
 #include "Core/IslandTasks.h"
+#include "Core/IslandLevelOneLayout.h"
 #include "IslandWorld.generated.h"
-class UProceduralMeshComponent;class UMaterialInstanceDynamic;class UIslandFocusWidget;class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;
+class UProceduralMeshComponent;class UMaterialInstanceDynamic;class UIslandFocusWidget;class UCameraComponent;class UStaticMeshComponent;class UTextRenderComponent;class UPrimitiveComponent;
+enum class EIslandSessionProfile:uint8 {Normal,LevelOneReference,LevelOneContinuation};
+enum class ELevelOneMenu:uint8 {Start,Playing,Pause,Settings,RestartConfirm,Completed};
 UCLASS() class AIslandCharacter:public ACharacter {
  GENERATED_BODY()
  public:AIslandCharacter();UPROPERTY() UCameraComponent* Camera;virtual void SetupPlayerInputComponent(UInputComponent*)override;virtual void Tick(float)override;
@@ -17,9 +20,12 @@ UCLASS() class AIslandCharacter:public ACharacter {
 UCLASS() class AIslandController:public APlayerController {
  GENERATED_BODY()
  public:virtual void BeginPlay()override;virtual void SetupInputComponent()override;virtual void PlayerTick(float)override;
+ virtual bool InputKey(const FInputKeyEventArgs&)override;
  void Interact();void Escape();void ShowHint();void PointerDown();void CancelInput();void HandleWindowFocus(bool);void UpdateMode();int PickWorldTarget(float,float)const;
+ int PickLevelOneTarget(const FVector&,const FVector&)const;void ActivateLevelOneTarget(int);
+ void LevelOneKeyReleased(const FKey&);TSet<FKey> LevelOneHeldKeys;bool LevelOneAwaitFreshInput=false;float LevelOneLookCooldown=0;
  UPROPERTY() UIslandFocusWidget* FocusWidget=nullptr;
- float MouseSensitivity=1.f;FString PreferencesSlot=TEXT("LerninselPreferencesV1");
+ float MouseSensitivity=1.f,PreferencesFOV=75.f;FString PreferencesSlot=TEXT("LerninselPreferencesV1");
  void SetMouseSensitivity(float,bool=true);bool SavePreferences();bool LoadPreferences();
  void TouchPressed(ETouchIndex::Type,FVector);void TouchMoved(ETouchIndex::Type,FVector);void TouchReleased(ETouchIndex::Type,FVector);
  Island::TouchOwnership Ownership;FVector2D TouchMove=FVector2D::ZeroVector;FVector2D TouchOrigin[10],TouchLast[10];bool TouchUsed=false,KeysArmed=true;
@@ -30,7 +36,7 @@ UCLASS() class UIslandSave:public USaveGame {
 };
 UCLASS() class UIslandPreferences:public USaveGame {
  GENERATED_BODY()
- public:UPROPERTY() float MouseSensitivity=1.f;
+ public:UPROPERTY() float MouseSensitivity=1.f;UPROPERTY() float FieldOfView=75.f;
 };
 struct FIslandTarget{int Id;FVector Pos;FString Label,Context;};
 struct FIslandGate{AActor* Actor=nullptr;float Angle=0;UStaticMeshComponent* Barrier=nullptr;};
@@ -38,6 +44,23 @@ struct FIslandFoxPart{UProceduralMeshComponent* Mesh=nullptr;UMaterialInstanceDy
 UCLASS() class AIslandGameMode:public AGameModeBase {
  GENERATED_BODY()
  public:AIslandGameMode();virtual void BeginPlay()override;virtual void Tick(float)override;
+ EIslandSessionProfile SessionProfile=EIslandSessionProfile::Normal;
+ ELevelOneMenu LevelOneMenu=ELevelOneMenu::Start,LevelOneReturnMenu=ELevelOneMenu::Start;
+ bool IsLevelOneReferenceMode()const{return SessionProfile==EIslandSessionProfile::LevelOneReference;}
+ bool IsLevelOneSession()const{return SessionProfile!=EIslandSessionProfile::Normal;}
+ FString SessionSaveSlot()const;FString SessionPreferencesSlot()const;
+ void BeginLevelOneSession();void BuildLevelOneWorld();void TickLevelOne(float);void RefreshLevelOneWorld(float);
+ void SetLevelOneMenu(ELevelOneMenu);void LevelOneUIAction(int);void LevelOneEscape();void LevelOneInteract(int,bool=false);
+ bool SaveLevelOneAttempt();bool LoadLevelOneAttempt();void ResetLevelOneAttempt();bool ResolveLevelOneSafePose(const FVector&,FVector&)const;
+ void RecoverLevelOnePose();bool PrepareLevelOneContinuation();bool OpenLevelOneContinuation();void RegisterLevelOneTarget(UPrimitiveComponent*,int);
+ void WriteLevelOneEvidence(float);double LevelOneEvidenceTime=0,LevelOneRecordTime=0;int LevelOneRecordFrame=0;
+ FGuid LevelOneAttemptId;bool LevelOneHasSave=false;FVector LevelOneLastSafe=FVector(-2800,0,90);int LevelOneCheckpoint=0,LevelOneRecoveryCount=0;
+ Island::LevelOneFootVisit LevelOneFoot;Island::LevelOneIntentGuard LevelOneIntent;
+ UPROPERTY() UProceduralMeshComponent* LevelOneTerrain=nullptr;
+ UPROPERTY() TMap<UPrimitiveComponent*,int> LevelOneTargetComponents;
+ UPROPERTY() TArray<UStaticMeshComponent*> LevelOneWordFloors;
+ UPROPERTY() TArray<UStaticMeshComponent*> LevelOneCentres;
+ UPROPERTY() TArray<UTextRenderComponent*> LevelOneStatusLabels;
  Island::State State;Island::PlateContact Contact;TArray<FIslandTarget> Targets;TArray<FIslandGate> Gates;
  TArray<UStaticMeshComponent*> IntroTiles,PathTiles,Cables,Signals;TArray<UTextRenderComponent*> IntroMarks,PathMarks;
  FVector ObservationStand=FVector(9400,-850,1088);FRotator ObservationView=FRotator(-12,-90,0);TArray<UTextRenderComponent*> SentenceSlots;UStaticMeshComponent* BasinWater=nullptr;float BasinHeight=0;
