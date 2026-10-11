@@ -197,11 +197,7 @@ struct QuickRemyView: View {
                     .disabled(status == .recording && speechTarget != .wishes || status == .transcribing || status == .requestingPermission)
                     .accessibilityLabel("Eigene Wünsche einsprechen")
                 }
-                TextEditor(text: $draft.wishes)
-                    .frame(minHeight: 72, maxHeight: 112)
-                    .padding(6)
-                    .scrollContentBackground(.hidden)
-                    .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
+                wishesEditor
             }
             if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
                 Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
@@ -222,6 +218,14 @@ struct QuickRemyView: View {
         .onChange(of: draft.imageQuestionCount) { _ in Task { await syncDraftToWebForm() } }
         .onChange(of: draft.wishes) { _ in Task { await syncDraftToWebForm() } }
         .onChange(of: allowedTypes) { _ in Task { await syncDraftToWebForm() } }
+    }
+
+    private var wishesEditor: some View {
+        TextEditor(text: $draft.wishes)
+            .frame(minHeight: 72, maxHeight: 112)
+            .padding(6)
+            .scrollContentBackground(.hidden)
+            .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
     }
 
     private var submitButton: some View {
