@@ -64,6 +64,11 @@ struct QuickRemySpeechFlow {
     }
 
     mutating func fail(_ failure: QuickRemySpeechFailure) {
+        guard status == .requestingPermission || status == .recording || status == .transcribing else { return }
+        if failure == .recognitionFailed, !transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            receiveTranscript(transcript, isFinal: true)
+            return
+        }
         switch failure {
         case .permissionDenied: status = .permissionDenied
         case .recognizerUnavailable: status = .recognizerUnavailable
@@ -139,6 +144,13 @@ final class QuickRemySpeechCapture: ObservableObject {
         guard flow.status == .recording else { return }
         flow.stopRecording()
         service.stop()
+        let generation = startGeneration
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            guard let self, self.startGeneration == generation, self.flow.status == .transcribing else { return }
+            self.flow.receiveTranscript(self.flow.transcript, isFinal: true)
+            self.service.cancel()
+        }
     }
 
     func useText(_ value: String) {
@@ -193,6 +205,7 @@ final class OnDeviceGermanSpeechService: QuickRemySpeechService {
         request.shouldReportPartialResults = true
         request.taskHint = .dictation
         request.requiresOnDeviceRecognition = true
+        request.contextualStrings = ["Englisch", "Deutsch", "Mathematik", "Klasse", "Aufgaben", "Grundschule", "Mittelschule", "Realschule", "Gymnasium"]
 
         let inputNode = audioEngine.inputNode
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: inputNode.outputFormat(forBus: 0)) { buffer, _ in

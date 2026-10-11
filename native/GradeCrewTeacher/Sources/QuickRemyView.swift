@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct QuickRemyView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -19,10 +20,16 @@ struct QuickRemyView: View {
     @State private var unresolvedSubmission = false
     @State private var recoveryNeedsRetry = false
 
-    private enum RemyWorkStatus { case idle, recovering, preparing, needsInfo, readyForReview, accepted, failed }
+    private enum RemyWorkStatus { case idle, recovering, preparing, submitting, needsInfo, readyForReview, accepted, failed }
     private enum SpeechTarget { case remy, wishes }
     @State private var speechTarget: SpeechTarget = .remy
     @State private var allowedTypes: Set<String> = ["single", "multi", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords"]
+    @State private var showMaterialImporter = false
+    @State private var materialNames: [String] = []
+    @State private var materialConfirmed = false
+    @State private var isUploadingMaterial = false
+    @State private var materialError: String?
+    @State private var personalPreferences = ""
     private let questionTypes: [(String, String)] = [
         ("single", "Single Choice"), ("multi", "Multiple Choice"), ("text", "Freitext"),
         ("dropdown", "Dropdown"), ("truefalse", "Richtig / Falsch"), ("gapfill", "Lückentext"),
@@ -82,18 +89,18 @@ struct QuickRemyView: View {
             }
         }
         .onChange(of: scenePhase) { phase in
-            if phase != .active {
-                recoveryChecking = true
-                clearConversation()
-            } else {
-                Task { await recoverPendingSubmission() }
-            }
+            // Permission sheets briefly make the app inactive. Preserve the request and draft.
+            if phase == .background { capture.cancel() }
         }
         .task {
             await recoverPendingSubmission()
             await openAiForm()
         }
         .onDisappear { clearConversation() }
+        .fileImporter(isPresented: $showMaterialImporter, allowedContentTypes: materialContentTypes, allowsMultipleSelection: true) { result in
+            if case let .success(urls) = result { Task { await uploadMaterials(urls) } }
+            else if case let .failure(error) = result { materialError = error.localizedDescription }
+        }
     }
 
     private var remyVoiceCard: some View {
@@ -116,8 +123,9 @@ struct QuickRemyView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .disabled(recoveryChecking || unresolvedSubmission || workStatus == .preparing || workStatus == .accepted || status == .transcribing || status == .requestingPermission)
+            .disabled(recoveryChecking || unresolvedSubmission || isUploadingMaterial || workStatus == .preparing || workStatus == .submitting || workStatus == .accepted || status == .transcribing || status == .requestingPermission)
             .accessibilityLabel(status == .recording ? "Aufnahme beenden" : "Remy antippen und Testwunsch einsprechen")
+            speechFeedback
             if status == .requestingPermission || status == .transcribing || workStatus == .recovering || workStatus == .preparing {
                 ProgressView(workStatus == .preparing ? "Remy trägt deine Angaben ein …" : "")
                     .controlSize(.small).tint(GradeCrewDesignTokens.Colors.primary)
@@ -150,6 +158,27 @@ struct QuickRemyView: View {
     private var nativeTestForm: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Dein Test").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
+            coreFields
+            mediaOptions
+            questionTypePicker
+            wishesSection
+            materialsSection
+            DisclosureGroup("Persönliche KI-Vorgaben") {
+                TextEditor(text: $personalPreferences).frame(height: 70)
+            }
+            if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
+                Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
+            }
+            submitButton
+            if workStatus == .failed, let workError { Text(workError).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
+        }
+        .padding(14)
+        .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 18))
+        .onChange(of: draftSyncKey) { _ in scheduleDraftSync() }
+    }
+
+    private var coreFields: some View {
+        Group {
             HStack(spacing: 10) {
                 nativeField("Fach", text: $draft.subject)
                 nativeField("Klasse", text: $draft.grade)
@@ -173,7 +202,10 @@ struct QuickRemyView: View {
                     Text("Gemischt").tag("gemischt")
                 }.pickerStyle(.menu)
             }
-            nativeField("Aufgaben mit Bild (0–5)", text: $draft.imageQuestionCount, keyboard: .numberPad)
+        }
+    }
+
+    private var questionTypePicker: some View {
             DisclosureGroup("Aufgabentypen (\(allowedTypes.count))") {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 7) {
                     ForEach(questionTypes, id: \.0) { value, title in
@@ -185,6 +217,9 @@ struct QuickRemyView: View {
                 }.padding(.top, 8)
             }
             .font(.subheadline.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
+    }
+
+    private var wishesSection: some View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("Eigene Wünsche (optional)").font(.subheadline.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
@@ -199,21 +234,13 @@ struct QuickRemyView: View {
                 }
                 wishesEditor
             }
-            if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
-                Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
-            }
-            submitButton
-            if workStatus == .failed, let workError { Text(workError).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
-        }
-        .padding(14)
-        .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 18))
-        .onChange(of: draftSyncKey) { _ in scheduleDraftSync() }
     }
 
     private var draftSyncKey: String {
         let fields = [draft.subject, draft.grade, draft.schoolType, draft.region, draft.topic,
                       draft.count, draft.points, draft.difficulty, draft.imageQuestionCount,
-                      draft.wishes, allowedTypes.sorted().joined(separator: ",")]
+                      draft.wishes, draft.audioQuestionCount, draft.audioAnswerQuestionCount, draft.materialMode,
+                      personalPreferences, allowedTypes.sorted().joined(separator: ",")]
         return fields.joined(separator: "\u{1F}")
     }
 
@@ -229,15 +256,124 @@ struct QuickRemyView: View {
             .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
     }
 
+    @ViewBuilder
+    private var speechFeedback: some View {
+        if !capture.flow.transcript.isEmpty {
+            Text(capture.flow.transcript).font(.footnote).lineLimit(3).padding(.horizontal, 14)
+        }
+        if let message = speechFailureMessage {
+            Text(message).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger)
+                .padding(.horizontal, 14).padding(.bottom, 10)
+        }
+    }
+
+    private var speechFailureMessage: String? {
+        switch status {
+        case .permissionDenied: return "Bitte Mikrofon und Spracherkennung in den App-Einstellungen erlauben."
+        case .recognizerUnavailable, .onDeviceRecognitionUnavailable: return "Deutsche Spracherkennung ist auf diesem Gerät gerade nicht verfügbar."
+        case .emptyTranscript: return "Ich habe keine Wörter gehört. Tippe mich an und versuche es noch einmal."
+        case .failed: return "Die Aufnahme konnte nicht erkannt werden. Bitte noch einmal versuchen."
+        default: return nil
+        }
+    }
+
+    private var mediaOptions: some View {
+        DisclosureGroup("Bilder & Audio") {
+            VStack(spacing: 10) {
+                nativeField("Aufgaben mit Bild (0–5)", text: $draft.imageQuestionCount, keyboard: .numberPad)
+                nativeField("Höraufgaben (0–5)", text: $draft.audioQuestionCount, keyboard: .numberPad)
+                nativeField("Vorgelesene Antworten (0–5)", text: $draft.audioAnswerQuestionCount, keyboard: .numberPad)
+            }.padding(.top, 8)
+        }
+    }
+
+    private var materialsSection: some View {
+        DisclosureGroup("Material hinzufügen\(materialNames.isEmpty ? "" : " (\(materialNames.count))")") {
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle("Ich darf das Material an OpenAI übermitteln; es enthält keine personenbezogenen Daten.", isOn: $materialConfirmed).font(.caption)
+                Button { showMaterialImporter = true } label: {
+                    Label(isUploadingMaterial ? "Material wird hochgeladen …" : "Dateien auswählen", systemImage: "paperclip")
+                }
+                .disabled(!materialConfirmed || isUploadingMaterial || materialNames.count >= 5 || !aiFormReady || workStatus == .submitting)
+                Text("PDF, Bild, Text, Word, PowerPoint oder Tabelle · bis zu 5 Dateien, je 15 MB")
+                    .font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                ForEach(Array(materialNames.enumerated()), id: \.offset) { index, name in
+                    HStack {
+                        Text(name).font(.caption).lineLimit(1)
+                        Spacer()
+                        Button { Task { await removeMaterial(index) } } label: { Image(systemName: "xmark.circle") }
+                            .disabled(isUploadingMaterial || workStatus == .submitting)
+                            .accessibilityLabel("\(name) entfernen")
+                    }
+                }
+                if !materialNames.isEmpty {
+                    Picker("Material verwenden", selection: $draft.materialMode) {
+                        Text("Als Anregung").tag("inspiration")
+                        Text("Nur Inhalte aus dem Material").tag("only")
+                    }.pickerStyle(.menu)
+                }
+                if let materialError { Text(materialError).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
+            }.padding(.top, 8)
+        }
+    }
+
+    private var materialContentTypes: [UTType] {
+        [.pdf, .jpeg, .png, .plainText, .commaSeparatedText] + ["webp", "docx", "pptx", "xlsx"].compactMap { UTType(filenameExtension: $0) }
+    }
+
+    private var formPayload: [String: Any] {
+        var fields = draft.knownFieldsPayload
+        fields["subject"] = draft.subject
+        fields["grade"] = draft.grade
+        fields["topic"] = draft.topic
+        fields["customNotes"] = draft.wishes
+        fields["personalPreferences"] = personalPreferences
+        return ["draft": fields, "allowedTypes": Array(allowedTypes), "materialConfirmed": materialConfirmed]
+    }
+
+    @MainActor
+    private func uploadMaterials(_ urls: [URL]) async {
+        guard !isUploadingMaterial, materialConfirmed else { return }
+        isUploadingMaterial = true
+        materialError = nil
+        defer { isUploadingMaterial = false }
+        do {
+            for url in urls {
+                guard materialNames.count < 5 else { throw quickRemyError("Maximal fünf Materialien pro Test.") }
+                let access = url.startAccessingSecurityScopedResource()
+                defer { if access { url.stopAccessingSecurityScopedResource() } }
+                let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                guard size > 0, size <= 15 * 1024 * 1024 else { throw quickRemyError("\(url.lastPathComponent): Bitte eine Datei bis 15 MB wählen.") }
+                let bytes = try Data(contentsOf: url)
+                let mime = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+                let result = try await invoke("uploadMaterial", payload: ["name": url.lastPathComponent, "mimeType": mime, "base64": bytes.base64EncodedString(), "confirmed": true])
+                guard result["status"] as? String == "ready" else { throw quickRemyError("Das Material wurde nicht bestätigt.") }
+                materialNames = result["materialNames"] as? [String] ?? materialNames
+            }
+        } catch { materialError = error.localizedDescription }
+    }
+
+    @MainActor
+    private func removeMaterial(_ index: Int) async {
+        guard !isUploadingMaterial else { return }
+        isUploadingMaterial = true
+        defer { isUploadingMaterial = false }
+        do {
+            let result = try await invoke("removeMaterial", payload: ["index": index])
+            materialNames = result["materialNames"] as? [String] ?? materialNames
+            materialError = nil
+        } catch { materialError = error.localizedDescription }
+    }
+
     private var submitButton: some View {
         Button {
             Task { await submitTest() }
         } label: {
             HStack(spacing: 8) {
-                if workStatus == .preparing {
+                if workStatus == .submitting {
                     ProgressView().tint(.white)
                 }
-                Text(workStatus == .accepted ? "Testauftrag übergeben" : "Test erstellen")
+                Text(workStatus == .submitting ? "Wird übergeben …" : "Test erstellen")
             }
             .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(.white)
@@ -248,7 +384,7 @@ struct QuickRemyView: View {
         .buttonStyle(.plain)
         .disabled(
             draft.preparedRequest == nil || !aiFormReady || recoveryChecking ||
-            unresolvedSubmission || workStatus == .preparing || workStatus == .accepted
+            unresolvedSubmission || workStatus == .preparing || workStatus == .submitting || workStatus == .accepted || isUploadingMaterial
         )
     }
 
@@ -282,6 +418,7 @@ struct QuickRemyView: View {
                     .background(GradeCrewDesignTokens.Colors.soft, in: Capsule())
             }
             .buttonStyle(.plain)
+            .disabled(workStatus == .submitting)
             Spacer()
             Text("Remy fragen").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
             Spacer()
@@ -310,9 +447,9 @@ struct QuickRemyView: View {
     }
 
     private func syncDraftToWebForm() async {
-        guard aiFormReady else { return }
+        guard aiFormReady, workStatus != .submitting else { return }
         do {
-            _ = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload, "allowedTypes": Array(allowedTypes)])
+            _ = try await invoke("populateAiForm", payload: formPayload)
         } catch { /* The creation action reports a clear error if synchronization is unavailable. */ }
     }
 
@@ -324,6 +461,8 @@ struct QuickRemyView: View {
                 throw quickRemyError("Der Testeditor konnte nicht geöffnet werden. Bitte erneut versuchen.")
             }
             aiFormReady = true
+            if personalPreferences.isEmpty { personalPreferences = result["personalPreferences"] as? String ?? "" }
+            materialNames = result["materialNames"] as? [String] ?? []
             if workStatus == .failed && conversationText.isEmpty { workStatus = .idle }
             workError = nil
         } catch {
@@ -344,6 +483,7 @@ struct QuickRemyView: View {
             return
         }
         conversationText = updatedConversation
+        draft.applySpeechHints(segment, expectingCount: missingFields.contains("count"))
         await runPreparation()
     }
 
@@ -415,14 +555,27 @@ struct QuickRemyView: View {
 
     @MainActor
     private func submitTest() async {
-        guard draft.preparedRequest != nil else { return }
+        guard workStatus != .submitting, !isUploadingMaterial else { return }
+        if !materialNames.isEmpty && !materialConfirmed {
+            workError = "Bitte die Prüfung der hochgeladenen Materialien bestätigen."
+            workStatus = .failed
+            return
+        }
+        if let error = draft.validationError(allowedTypes: allowedTypes) {
+            workError = error
+            workStatus = .failed
+            return
+        }
+        workStatus = .submitting
         do {
-            let fields = try await invoke("populateAiForm", payload: ["draft": draft.knownFieldsPayload, "allowedTypes": Array(allowedTypes)])
+            let fields = try await invoke("populateAiForm", payload: formPayload)
             guard fields["status"] as? String == "ready" else { throw quickRemyError("Deine Angaben konnten nicht übernommen werden.") }
             let result = try await invoke("createAiTest", payload: [:])
-            guard result["status"] as? String == "started" else { throw quickRemyError("Der Test konnte nicht gestartet werden.") }
+            guard result["status"] as? String == "accepted" else { throw quickRemyError("Der Testauftrag wurde noch nicht bestätigt.") }
             workStatus = .accepted
             workError = nil
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            onBack()
         } catch {
             workError = error.localizedDescription
             workStatus = .failed

@@ -11,6 +11,7 @@ import shutil
 import struct
 import subprocess
 import tempfile
+import zlib
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent.parent
@@ -167,6 +168,28 @@ def verify_png(path: Path, *, expected_size=(SIZE, SIZE), opaque=True) -> None:
         raise SystemExit("Generated GradeCrew image has invalid dimensions.")
     if opaque and color_type not in (2, 3):
         raise SystemExit(f"Generated AppIcon unexpectedly contains an alpha-capable PNG color type: {color_type}")
+    offset = 8
+    compressed = []
+    last_chunk = None
+    try:
+        while offset < len(data):
+            length = struct.unpack(">I", data[offset:offset + 4])[0]
+            kind = data[offset + 4:offset + 8]
+            payload = data[offset + 8:offset + 8 + length]
+            checksum = data[offset + 8 + length:offset + 12 + length]
+            if len(payload) != length or len(checksum) != 4:
+                raise ValueError("truncated PNG chunk")
+            if zlib.crc32(kind + payload) & 0xffffffff != struct.unpack(">I", checksum)[0]:
+                raise ValueError("invalid PNG checksum")
+            if kind == b"IDAT":
+                compressed.append(payload)
+            offset += length + 12
+            last_chunk = kind
+        if last_chunk != b"IEND":
+            raise ValueError("missing PNG end marker")
+        zlib.decompress(b"".join(compressed))
+    except (ValueError, struct.error, zlib.error) as error:
+        raise SystemExit(f"GradeCrew PNG is incomplete or corrupt: {path.name}: {error}")
 
 
 def render_native_illustrations() -> None:

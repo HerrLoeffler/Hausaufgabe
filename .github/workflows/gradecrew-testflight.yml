@@ -78,9 +78,12 @@ jobs:
           python3 native/GradeCrewTeacher/test_quick_remy_followup_policy.py
           python3 native/GradeCrewTeacher/test_teacher_home_and_remy_layout.py
           python3 native/GradeCrewTeacher/test_native_artwork_sources.py
+          python3 native/GradeCrewTeacher/test_native_artwork_integrity.py
+          python3 native/GradeCrewTeacher/test_quick_remy_draft.py
           python3 native/GradeCrewTeacher/test_quick_remy_speech.py
           python3 native/GradeCrewTeacher/test_native_bridge.py
           node --test native/GradeCrewTeacher/test_quick_remy_auth_bridge.cjs
+          node --test native/GradeCrewTeacher/test_quick_remy_form_bridge.cjs
 
       - name: Prepare GradeCrew assets and Xcode project
         shell: bash

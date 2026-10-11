@@ -6,6 +6,20 @@ import tempfile
 root = Path(__file__).parent
 source = root / "Sources" / "QuickRemyDraft.swift"
 checks = r'''
+var spoken = QuickRemyDraft()
+spoken.applySpeechHints("Vierte Klasse Englisch Farben und Schulsachen")
+assert(spoken.subject == "Englisch")
+assert(spoken.grade == "4")
+spoken.topic = "Farben und Schulsachen"
+spoken.applySpeechHints("fünf", expectingCount: true)
+assert(spoken.count == "5")
+assert(spoken.subject == "Englisch" && spoken.grade == "4" && spoken.topic == "Farben und Schulsachen")
+spoken.applySpeechHints("Mathe Klasse 6 zehn Aufgaben")
+assert(spoken.subject == "Mathematik" && spoken.grade == "6" && spoken.count == "10")
+var ambiguous = QuickRemyDraft()
+ambiguous.applySpeechHints("Ich brauche etwas für morgen")
+assert(ambiguous.subject.isEmpty && ambiguous.grade.isEmpty && ambiguous.count.isEmpty)
+
 let draft = QuickRemyDraft(payload: [
     "subject": "Englisch",
     "grade": "4",
@@ -44,6 +58,16 @@ assert(complete.knownFieldsPayload["schoolType"] as? String == "Grundschule")
 assert(complete.knownFieldsPayload["difficulty"] as? String == "leicht")
 assert(complete.knownFieldsPayload["points"] as? Double == 10)
 assert(complete.knownFieldsPayload["imageQuestionCount"] as? Int == 3)
+complete.audioQuestionCount = "2"
+complete.audioAnswerQuestionCount = "3"
+assert(complete.knownFieldsPayload["audioQuestionCount"] as? Int == 2)
+assert(complete.knownFieldsPayload["audioAnswerQuestionCount"] as? Int == 3)
+assert(complete.validationError(allowedTypes: ["single"]) == nil)
+assert(complete.validationError(allowedTypes: ["text"]) != nil)
+complete.audioQuestionCount = "6"
+assert(complete.validationError(allowedTypes: ["single"]) != nil)
+spoken.applySpeechHints("davon zwei Höraufgaben und drei Audioantworten")
+assert(spoken.audioQuestionCount == "2" && spoken.audioAnswerQuestionCount == "3")
 complete.count = "0"
 assert(complete.preparedRequest == nil)
 complete.count = "101"

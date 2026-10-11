@@ -66,6 +66,18 @@ struct QuickRemySpeechTests {
         assert(capture.flow.status == .transcribed)
         assert(capture.flow.transcript == "Mathematik Klasse 6: Brüche")
 
+        // iOS may end recognition with an error after already producing words.
+        let recoveryService = FakeSpeechService()
+        let recoveryCapture = QuickRemySpeechCapture(service: recoveryService)
+        await recoveryCapture.start()
+        recoveryService.emit("Vierte Klasse Englisch Farben und Schulsachen", final: false)
+        await Task.yield()
+        recoveryCapture.stop()
+        recoveryService.failed?(.recognitionFailed)
+        await Task.yield()
+        assert(recoveryCapture.flow.status == .transcribed, "A final recognition error must preserve captured words")
+        assert(recoveryCapture.flow.transcript == "Vierte Klasse Englisch Farben und Schulsachen")
+
         capture.cancel()
         assert(capture.flow.status == .idle)
         assert(capture.flow.transcript.isEmpty)

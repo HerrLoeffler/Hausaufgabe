@@ -169,7 +169,7 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           const aiGrid = aiView.querySelector('.aiGrid');
                                           if (aiGrid) aiGrid.hidden = true;
                                           window.scrollTo(0, aiView.getBoundingClientRect().top + window.scrollY);
-                                          return { status: 'ready' };
+                                          return { status: 'ready', personalPreferences: document.getElementById('aiPersonalPreferences')?.value || '', materialNames: Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem strong')).map(item => item.textContent || '') };
                                         }
                                         if (action === 'showAiOptions') {
                                           const aiGrid = document.querySelector('#aiView .aiGrid');
@@ -180,17 +180,62 @@ struct GradeCrewWebView: UIViewRepresentable {
                                         }
                                         if (action === 'createAiTest') {
                                           const button = document.getElementById('generateAiTestBtn');
+                                          const aiView = document.getElementById('aiView');
+                                          const progress = document.getElementById('aiProgress');
                                           if (!button) throw new Error('Der Test kann gerade nicht erstellt werden.');
                                           if (button.disabled) throw new Error('Der Test ist noch nicht bereit. Bitte prüfe deine Angaben.');
+                                          if (progress) { progress.textContent = ''; progress.classList.remove('error'); }
                                           button.click();
-                                          return { status: 'started' };
+                                          for (let i = 0; i < 1200; i++) {
+                                            if (progress?.classList.contains('error')) throw new Error(progress.textContent || 'Der Testauftrag wurde nicht gestartet.');
+                                            // The existing app leaves the editor only after startAiTestJob returns a jobId.
+                                            if (aiView?.classList.contains('hidden')) return { status: 'accepted' };
+                                            await new Promise(resolve => setTimeout(resolve, 100));
+                                          }
+                                          throw new Error('Die Bestätigung dauert länger als erwartet. Bitte unter Meine Tests prüfen, bevor du erneut abschickst.');
+                                        }
+                                        if (action === 'uploadMaterial' || action === 'removeMaterial') {
+                                          const names = () => Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem strong')).map(item => item.textContent || '');
+                                          const before = names().length;
+                                          if (action === 'uploadMaterial') {
+                                            if (!payload?.confirmed) throw new Error('Bitte die Materialprüfung bestätigen.');
+                                            if (before >= 5) throw new Error('Maximal fünf Materialien pro Test.');
+                                            const input = document.getElementById('aiMaterialInput');
+                                            const confirmation = document.getElementById('aiMaterialConfirmed');
+                                            if (!input || !confirmation) throw new Error('Der Materialupload ist noch nicht verfügbar.');
+                                            const raw = atob(payload.base64 || '');
+                                            if (!raw.length || raw.length > 15 * 1024 * 1024) throw new Error('Bitte eine Datei bis 15 MB wählen.');
+                                            const bytes = Uint8Array.from(raw, character => character.charCodeAt(0));
+                                            const transfer = new DataTransfer();
+                                            transfer.items.add(new File([bytes], payload.name, { type: payload.mimeType }));
+                                            confirmation.checked = true;
+                                            input.files = transfer.files;
+                                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                                            for (let i = 0; i < 1200; i++) {
+                                              if (names().length > before) return { status: 'ready', materialNames: names() };
+                                              if (i > 2 && document.getElementById('aiProgress')?.classList.contains('hidden')) throw new Error('Das Material konnte nicht hochgeladen werden. Bitte Datei und Verbindung prüfen.');
+                                              await new Promise(resolve => setTimeout(resolve, 100));
+                                            }
+                                            throw new Error('Der Materialupload dauert zu lange. Bitte erneut versuchen.');
+                                          }
+                                          const rows = Array.from(document.querySelectorAll('#aiMaterialList .aiMaterialItem'));
+                                          const row = rows[payload?.index];
+                                          const remove = row?.querySelector('button');
+                                          if (!remove) throw new Error('Das Material wurde nicht gefunden.');
+                                          remove.click();
+                                          for (let i = 0; i < 1200; i++) {
+                                            if (names().length < before) return { status: 'ready', materialNames: names() };
+                                            if (i > 2 && !row.classList.contains('questionAiBusy')) throw new Error('Das Material konnte nicht entfernt werden. Bitte erneut versuchen.');
+                                            await new Promise(resolve => setTimeout(resolve, 100));
+                                          }
+                                          throw new Error('Das Entfernen dauert zu lange. Bitte erneut versuchen.');
                                         }
                                         if (action === 'populateAiForm') {
-                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', customNotes: 'aiCustomNotes' };
+                                          const fields = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', audioQuestionCount: 'aiAudioQuestionCount', audioAnswerQuestionCount: 'aiAudioAnswerQuestionCount', materialMode: 'aiMaterialMode', customNotes: 'aiCustomNotes', personalPreferences: 'aiPersonalPreferences' };
                                           for (const [key, id] of Object.entries(fields)) {
                                             const value = payload?.draft?.[key];
                                             const input = document.getElementById(id);
-                                            if (input && value !== undefined && value !== null && String(value).trim()) {
+                                            if (input && value !== undefined && value !== null) {
                                               input.value = String(value);
                                               input.dispatchEvent(new Event('input', { bubbles: true }));
                                               input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -198,11 +243,13 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           }
                                           const selectedTypes = new Set(Array.isArray(payload?.allowedTypes) ? payload.allowedTypes : []);
                                           for (const input of document.querySelectorAll('#aiTypeChecks input[type="checkbox"]')) {
-                                            if (selectedTypes.size && input.checked !== selectedTypes.has(input.value)) {
+                                            if (Array.isArray(payload?.allowedTypes) && input.checked !== selectedTypes.has(input.value)) {
                                               input.checked = selectedTypes.has(input.value);
                                               input.dispatchEvent(new Event('change', { bubbles: true }));
                                             }
                                           }
+                                          const confirmation = document.getElementById('aiMaterialConfirmed');
+                                          if (confirmation && typeof payload?.materialConfirmed === 'boolean') confirmation.checked = payload.materialConfirmed;
                                           return { status: 'ready' };
                                         }
                                         const api = window.GradeCrewQuickRemy;
