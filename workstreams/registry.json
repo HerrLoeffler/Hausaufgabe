@@ -581,7 +581,7 @@
       "title": "GC-VIDEO-INSIGHTS-20261011: Julian-Ivanov- und StrategieNerd-Videorecherche",
       "primaryBranch": "docs/gc-video-insights-20261011",
       "integrationTarget": "main",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/research-videos-20261011.md",
       "relatedBranches": []
     }

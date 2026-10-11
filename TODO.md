@@ -19,7 +19,7 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
-| GC-VIDEO-INSIGHTS-20261011 | Caption-/Videoanalyse aller Julian-Ivanov- und StrategieNerd-Videos vom 11.04. bis 11.10.2026, einschließlich regulärer Videos, Shorts und Streams; zusätzlich jv5-Xhp5s_k | **Recherche dokumentiert; PR offen, nicht integriert** | Alle Videos inventarisiert; StrategieNerd-Folgen nach Spiel/Serie gruppiert, 19 visuelle Proben und Grenzen der 49 Primärquellenprüfungen offengelegt. Zentrale führt den finalen Delta-Review des offenen Draft-PR #207 durch; keine Release-Erfüllung oder automatische Folgeentscheidung. [Ergebnisindex](docs/research/video-insights-20261011-summary.md) · [Übergabe](workstreams/research-videos-20261011.md) |
+| GC-VIDEO-INSIGHTS-20261011 | Caption-/Videoanalyse aller Julian-Ivanov- und StrategieNerd-Videos vom 11.04. bis 11.10.2026, einschließlich regulärer Videos, Shorts und Streams; zusätzlich jv5-Xhp5s_k | **Recherche dokumentiert und in main integriert; keine Release-Erfüllung** | Alle Videos inventarisiert; StrategieNerd-Folgen nach Spiel/Serie gruppiert, 19 visuelle Proben und Grenzen der 49 Primärquellenprüfungen offengelegt. Dokumentationsintegration via PR #207 in main@57106997; kein Produkt-, Installations-, Pilot- oder Deploy-Status. [Ergebnisindex](docs/research/video-insights-20261011-summary.md) · [Übergabe](workstreams/research-videos-20261011.md) |
 
 ## P0 – vor einem neuen öffentlichen Release
 

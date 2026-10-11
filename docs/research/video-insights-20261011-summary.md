@@ -26,4 +26,4 @@ Keine Volltranskripte oder Captiontexte werden in die öffentlichen Repository-D
 - [StrategieNerd: visuelle Proben, Gruppen und Primärquellen](strategie-nerd-20261011-methods.md)
 - [Taskübergabe](../../workstreams/research-videos-20261011.md)
 
-Die Recherche ist inhaltlich dokumentiert; PR #207 bleibt ein offener Draft und ist nicht integriert. Das ist keine Release-Erfüllung und ändert keine Produkt-, Installations-, Pilot- oder Deployment-Stufe.
+Die Recherche ist als Dokumentation in main integriert (PR #207, Merge-Commit 57106997f26723bef0760858e398a337cef83fdd). Dies ist keine Produkt-, Installations-, Pilot-, Release- oder Deployment-Stufe.
