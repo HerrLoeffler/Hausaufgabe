@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-09 20:24 UTC",
+  "observed_at": "2026-10-11 20:29 UTC",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+    "observed_integration_head": "b1251b56200030190cb86c4b9b20c529a1bea05f",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -56,22 +56,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success37985594616_commit_c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+      "combined_ci": "success38171691368_commit_b1251b56200030190cb86c4b9b20c529a1bea05f",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success37985751663_receipt_11643695405",
-      "staging_functions": "success37985751577_receipt_11642334706",
-      "staging_rules": "secure_rules_live_verified_8_anonymous_probes_HTTP403_20261009",
+      "hosting_preview": "success38171814566_receipt11713154403",
+      "staging_functions": "success38171814538_receipt11714014948",
+      "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
-      "user_acceptance": "pending_for_c475d0e7c6feb14f3d62ba179ccfb7cabbcfdec7",
+      "user_acceptance": "pending_for_b1251b56200030190cb86c4b9b20c529a1bea05f",
       "production": "not_requested",
-      "staging_assessment_functions": "success37985751577_receipt_11643610715",
+      "staging_assessment_functions": "success38171814538_receipt11713429053",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success37986203915_attempt2_receipt_11643860414"
+      "canonical_hosting": "success38172084789_receipt11714780489"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 131,
+    "preview_verified_files": 139,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin can use Coco on local/Staging; review support behavior. Remaining old images get explicit bounded one-time descriptions when needed. No Production approval.",
+    "next_action": "Martin reviews gc34. Legacy listening tasks require explicit public instruction; no automatic private-text promotion. Physical-device acceptance remains separate; no Production approval.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -239,6 +239,30 @@
       "user_acceptance": "pending; agent live checks completed",
       "production": "unchanged",
       "handoff": "workstreams/coco-support-memory-20261009.md"
+    },
+    "feedback_release_20261011": {
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "stage": "staging_deployed",
+      "pr": 221,
+      "branch": "fix/staging-feedback-20261011",
+      "candidate": "f243d3a076a7939b319bc732bcd08eab3de39fc3",
+      "integration": "b1251b56200030190cb86c4b9b20c529a1bea05f",
+      "candidate_ci": 38171575617,
+      "merge_ci": 38171691368,
+      "functions_run": 38171814538,
+      "ai_receipt": 11714014948,
+      "assessment_receipt": 11713429053,
+      "preview_run": 38171814566,
+      "preview_receipt": 11713154403,
+      "canonical_run": 38172084789,
+      "canonical_receipt": 11714780489,
+      "rules_sha256": "195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807",
+      "version": "2.3.1-gc34",
+      "browser_smoke": "actual_authenticated_read_only_saved_preview_audio_modes_locked_controls_local_QR",
+      "user_acceptance": "pending",
+      "device_test": "not_performed",
+      "production": "unchanged",
+      "handoff": "workstreams/feedback-release-20261011.md"
     }
   },
   "production": {
