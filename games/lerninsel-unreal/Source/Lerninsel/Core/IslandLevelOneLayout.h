@@ -11,6 +11,7 @@ inline double LevelOneGroundZ(double x,double /*y*/=0){
  return 90*(1-smooth((x+2000)/550));
 }
 inline bool LevelOnePoseInBounds(double x,double y,double z){return std::isfinite(x)&&std::isfinite(y)&&std::isfinite(z)&&x>=-3050&&x<=1770&&std::abs(y)<=1050&&z>=40&&z<=400;}
+inline double LevelOneContinuationLimit(const State& s){return !s.intro?-190:!s.verbs?1310:!s.sentence?3060:!s.water?5010:!s.fractions?6460:!s.coast?11510:12800;}
 struct LevelOneFootVisit {
  int tile=-1;double dwell=0;bool consumed=false,needsExit=false;
  void Reset(){tile=-1;dwell=0;consumed=false;needsExit=false;}

@@ -14,6 +14,19 @@ vertex=edit.create_material_expression(mat,unreal.MaterialExpressionVertexColor,
 edit.connect_material_property(vertex,'',unreal.MaterialProperty.MP_EMISSIVE_COLOR)
 edit.recompile_material(mat)
 unreal.EditorAssetLibrary.save_loaded_asset(mat)
+text_path='/Game/Materials/Level1Reference/M_ReferenceText'
+text=unreal.load_asset(text_path)
+if not text:
+    default=unreal.get_default_object(unreal.TextRenderComponent).get_editor_property('text_material')
+    assert default
+    text=unreal.EditorAssetLibrary.duplicate_asset(default.get_path_name().split('.')[0],text_path)
+assert isinstance(text,unreal.Material)
+text.set_editor_property('shading_model',unreal.MaterialShadingModel.MSM_UNLIT)
+text.set_editor_property('two_sided',True)
+color=edit.create_material_expression(text,unreal.MaterialExpressionVertexColor,-200,300)
+edit.connect_material_property(color,'',unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+edit.recompile_material(text)
+unreal.EditorAssetLibrary.save_loaded_asset(text)
 levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 name='/Game/Maps/Lerninsel_Level1Ref'
 assert levels.load_level(name) if unreal.EditorAssetLibrary.does_asset_exist(name) else levels.new_level(name)

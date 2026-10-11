@@ -1,21 +1,17 @@
-# Level1 implementation — GC-GAMES-LERNINSEL-LEVEL1-PLAN-20261011
+# Level1: lokaler Vorab-Teststand — 11.10.2026
 
-Spiel: Lerninsel. Parent GC-GAMES-ESCAPE-VISUAL-01; L1-history GC-GAMES-LERNINSEL-L1 preserved.
-Human approval 11.10.2026: build approved PR219@5315f67; profile S, deliberate stepping with E/click alternative, whole blue stones without checkmarks. No further design gate.
-Owner GC · Lerninsel · Gameplay & Integration, 01a12568-0502-7831-9451-a7f8d91ce950. Own exclusive checkout work/lerninsel-l1; implementation branch feature/lerninsel-level1-reference-20261011 based on remote5315f67. Original source checkout untouched.
-Fresh main startup/contract/assurance/games rules read. Development Status38141038786: game+19/-127, PR175/219 drafts; known design/.gitignore overlaps untouched. No Unreal/Blender session at start. No merge/deploy/paid provider work.
-Requested Sol6.1/medium; actual runtime/usage unknown; no live model switch. A/B only on final unchanged candidate, reused existing reviewers.
-Baseline portable231 passed. No new runtime result yet.
+GC-GAMES-LERNINSEL-LEVEL1-PLAN-20261011; Parent GC-GAMES-ESCAPE-VISUAL-01; L1 history GC-GAMES-LERNINSEL-L1. Owner GC · Lerninsel · Gameplay & Integration, 01a12568-0502-7831-9451-a7f8d91ce950. Genehmigter Plan PR219@5315f67; eigene Implementierung PR220 auf feature/lerninsel-level1-reference-20261011. Originalcheckout und normale Spielstände unverändert. Kein Merge/Deploy.
 
-## Ledger and rulings
+## Spielstart
 
-Plan: docs/games/lerninsel/20261011-level1/meilensteine.md and spielbrief.md.
-M1/M2→M3 shared interface: terrain/physical word top and component-ID hitbinding must agree with step centre. M3→M4: one input path/profile S and same state drives HUD/menu. M2/M4→M5: safe poses, initial mode and slots selected before all loads. M5→M6: same attempt GUID and isolated continuation.
-Ruling: author small native Unreal terrain/vegetation/stone scene using existing project materials and Engine basic shapes, not reconstruct a particular proprietary object/figure through Three.js. img2threejs v2.0.0 SKILL.md read for suitability. No new downloaded assets/figures/paid images; source geometry will be inspectable and native. Cost if wrong: scene art may still require later manual polish, explicitly judged in real camera.
-Tasks M1/M2/M3/M4/M5/M6 active/pending; M7 A/B final once; M8 local reviewable delivery. Save old modes intact; no ET/shared/backends/normal map edits.
-Next: RED→GREEN profile/step guards, then native geometry and map binding.
+Lerninsel Level 1 spielen.command startet nach erfolgreichem aktuellen UE5.8-Build die eigene Map Lerninsel_Level1Ref. Der getrennte Neustarter beginnt nur diesen Versuch neu; Einstellungen bleiben erhalten. WASD bewegt, Maus schaut, E/Klick wählt, H gibt Hilfe, Esc pausiert. Im Verbweg zählt eine bewusste Mitte-Berührung ab0,30s; E/Klick bleibt Alternative. Ganze ausgewählte Steine bleiben blau; grün ist nur die getrennte Lösungsleitung.
 
-## Native scene checkpoint
+## Verifikation und Grenzen
 
-Local dff8179: reference/continuation classes, actual rendered/cooked90cm hill with200cm plateau, own original sky material/map creator, physical wordstones and component pick identities, S visit/intent rules, simple UMG menus, scoped save/preferences and starter. UE5.8 compile succeeded; new map/material saved with LERNINSEL_LEVEL1_MAP_READY. Creator returned1 due known engine bootstrap self-test messages; no Python error; actual map mode is being checked by fixtures rather than inferring success from marker alone.
-Native test first run session46939, isolated LevelOneSlotSuffix=EngineFixture; report .build/level1-fixture-report-first, log .build/level1-fixture-first.log. Current expanded regression source and saved map will be checkpointed together. No ordinary-WASD result yet. Normal maps/materials/source checkout unchanged.
+Aktueller Build erfolgreich. 495 portable Checks erfolgreich; sechs frische native Tests erfolgreich, null Testfehler,16 Warnungen (einschließlich fehlender normaler Saves im isolierten Checkout). Native Fixtures prüfen echte Terrain-/Wortstein-/Torkollisionen, einmalige Foot-Auswahl/Undo, stabile Menübuttons, falsches Introfeedback, eigene Saves/Preferences, reparierbaren Handoff und Fortschrittsgrenze. Die Fixtureposes und direkten Aktionen sind ausdrücklich kein normaler Durchlauf.
+
+Realer Desktopbeleg: Enter startet unmittelbar; W bewegt tatsächlich über den geformten Hügel; Esc öffnet die Pause. Vollständige normale Route mit Maus/E/Klick und echter Satzgarten-Übergang **nicht bestanden/nicht nachgewiesen**: CUA-Mausbindung meldet teilweise noWindowsAvailable und erzeugt beim relativen Mausfang Blicksprünge. Keine Teleportfixture als Input-PASS umgedeutet. Lokaler Vorab-Teststand für menschliches Ausprobieren, keine vollständige Gameplay-/Kinder-/iPad-/Webabnahme. Art bleibt einfach; Wortkontrast und natürliche Szene brauchen menschliche Sichtprüfung.
+
+A/B einmalig und read-only wiederverwendet. A: Menüfokusverlust, Continuation-Posegrenze und wiederverwendeter beschädigter Handoff korrigiert. B: falscher Intro-Korrekturhinweis korrigiert; Art-/Input-Abnahmegrenzen festgehalten. Kein weiterer Full-Audit oder Designzyklus.
+
+source-manifest.json bindet geprüfte Quellen/Map/Materialien; native-regression-six.json ist der letzte vollständige Enginebericht. Reale lokale Frames und Fixturebilder liegen unter Reports/Level1Reference, werden nicht als vollständiger Durchlauf veröffentlicht. Externe GameET-Daten nicht gesendet; Plugin im Spiel fehlt. Requested Sol6.1/medium; tatsächlicher Runtime-/Kostenstand nicht verifiziert.

@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/Button.h"
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/GameplayStatics.h"
@@ -31,15 +32,18 @@ class FLevelOneCheck:public IAutomationLatentCommand{
   if(!G||!G->Player()){if(FPlatformTime::Seconds()-Start<40)return false;Test->AddError(TEXT("Level-one PIE absent"));return true;}
   auto* P=G->Player();auto* C=Cast<AIslandController>(P->Controller);if(!C)return false;
   if(Phase==0){if(FPlatformTime::Seconds()-Start<3)return false;
+   C->SetIgnoreLookInput(true);C->SetIgnoreMoveInput(true);
    Test->TestTrue(TEXT("Map chooses isolated mode without CLI flag"),G->IsLevelOneReferenceMode());
    Test->TestTrue(TEXT("Reference save is isolated"),G->SaveSlot.StartsWith(TEXT("LerninselLevel1ReferenceV1")));
    Test->TestEqual(TEXT("Preferences selected before loading"),C->PreferencesSlot,G->SessionPreferencesSlot());
    Test->TestEqual(TEXT("Only two early gates"),G->Gates.Num(),2);Test->TestNotNull(TEXT("Real collision terrain"),G->LevelOneTerrain);
    Test->TestTrue(TEXT("Start is a real paused menu"),G->Paused&&G->LevelOneMenu==ELevelOneMenu::Start);
+   auto* InitialButton=C->FocusWidget?C->FocusWidget->ButtonFor(11000):nullptr;if(C->FocusWidget)C->FocusWidget->NativeTick(FGeometry(),.1f);Test->TestTrue(TEXT("Initial menu button remains stable across ticks"),InitialButton&&C->FocusWidget->ButtonFor(11000)==InitialButton);
    Test->TestTrue(TEXT("Actual start menu fixture captured"),LevelOneCapture(W,TEXT("Fixture-Start.png")));
    UGameplayStatics::LoadDataFromSlot(NormalBefore,TEXT("LerninselV1"),0);UGameplayStatics::LoadDataFromSlot(PrefsBefore,TEXT("LerninselPreferencesV1"),0);
    G->ResetLevelOneAttempt();G->LevelOneUIAction(11000);
-   for(double X:{-2800.,-2450.,-2200.,-2100.,-2000.,-1750.,-1450.,-1000.,0.,1000.}){FHitResult Hit;FCollisionQueryParams Q;Q.AddIgnoredActor(P);bool Found=W->LineTraceSingleByChannel(Hit,FVector(X,0,300),FVector(X,0,-100),ECC_Pawn,Q);Test->TestTrue(TEXT("Terrain floor is actual authored elevation"),Found&&FMath::Abs(Hit.ImpactPoint.Z-Island::LevelOneGroundZ(X,0))<.5);}
+   G->Apply(Island::Action::IntroToggle,1);G->Apply(Island::Action::IntroToggle,3);Test->TestTrue(TEXT("Wrong intro pair explains its own reversible selection"),G->Feedback.Contains(TEXT("blaues Wort")));G->ResetLevelOneAttempt();
+   for(double X:{-2800.,-2450.,-2200.,-2100.,-2000.,-1750.,-1450.,-1000.,0.,1000.}){FHitResult Hit;FCollisionQueryParams Q;Q.AddIgnoredActor(P);bool Found=W->LineTraceSingleByChannel(Hit,FVector(X,0,300),FVector(X,0,-100),ECC_Pawn,Q);Test->TestTrue(TEXT("Terrain floor is actual authored elevation"),Found&&Hit.ImpactNormal.Z>.9&&FMath::Abs(Hit.ImpactPoint.Z-Island::LevelOneGroundZ(X,0))<.5);}
    for(int I=0;I<G->LevelOneWordFloors.Num();++I){auto* Body=G->LevelOneWordFloors[I];FVector At=Body->GetComponentLocation();FHitResult Hit;FCollisionQueryParams Q;Q.AddIgnoredActor(P);W->LineTraceSingleByChannel(Hit,At+FVector(0,0,200),At-FVector(0,0,100),ECC_Pawn,Q);Test->TestTrue(TEXT("Visible word stone has real matching pawn top"),Hit.GetComponent()==Body&&FMath::Abs(Hit.ImpactPoint.Z-10)<.5);}
    Test->TestEqual(TEXT("Character step height remains30cm"),P->GetCharacterMovement()->MaxStepHeight,30.f);
    P->SetActorLocation(FVector(-300,0,90));FHitResult Closed;P->SetActorLocation(FVector(0,0,90),true,&Closed);Test->TestTrue(TEXT("Closed intro gate blocks actual capsule"),Closed.bBlockingHit);
@@ -57,6 +61,9 @@ class FLevelOneCheck:public IAutomationLatentCommand{
    P->SetActorLocation(FVector(550,-460,90));G->Tick(.1f);P->SetActorLocation(G->Target(204)->Pos+FVector(0,0,88));G->Tick(.31f);Test->TestEqual(TEXT("Exit then deliberate correct centre rearms"),G->State.pathCount,2);
    P->SetActorLocation(FVector(800,-460,90));G->Tick(.1f);P->SetActorLocation(G->Target(208)->Pos+FVector(0,0,88));G->Tick(.31f);Test->TestTrue(TEXT("Three real dwell choices auto-check route"),G->State.verbs&&G->State.pathCount==3);Test->TestTrue(TEXT("Final gate waits for animation"),G->GateBlocks(1));G->RefreshLevelOneWorld(1.5f);
    P->SetActorLocation(FVector(1200,75,90));FHitResult Open;P->SetActorLocation(FVector(1450,75,90),true,&Open);Test->TestFalse(TEXT("Fully open exit gate permits capsule"),Open.bBlockingHit);
+   Test->TestTrue(TEXT("Valid solved attempt prepares isolated handoff"),G->PrepareLevelOneContinuation());
+   FString HandoffSlot=G->SessionSaveSlot().Replace(TEXT("Reference"),TEXT("Handoff"));auto* BadHandoff=Cast<UIslandLevelOneSave>(UGameplayStatics::LoadGameFromSlot(HandoffSlot,0));Test->TestNotNull(TEXT("Handoff exists"),BadHandoff);if(BadHandoff){BadHandoff->ScenarioId=TEXT("damaged");UGameplayStatics::SaveGameToSlot(BadHandoff,HandoffSlot,0);Test->TestTrue(TEXT("Same-attempt damaged handoff can be repaired"),G->PrepareLevelOneContinuation());auto* Repaired=Cast<UIslandLevelOneSave>(UGameplayStatics::LoadGameFromSlot(HandoffSlot,0));Test->TestTrue(TEXT("Repair writes correct scenario and attempt"),Repaired&&Repaired->ScenarioId==TEXT("lerninsel-level1-continuation")&&Repaired->AttemptId==G->LevelOneAttemptId);}
+   G->SessionProfile=EIslandSessionProfile::LevelOneContinuation;FVector Unsafe;Test->TestFalse(TEXT("Continuation rejects pose beyond unsolved sentence"),G->ResolveLevelOneSafePose(FVector(4000,0,90),Unsafe));G->SessionProfile=EIslandSessionProfile::LevelOneReference;
    Test->TestTrue(TEXT("Reference saves own valid state"),G->SaveLevelOneAttempt());Snapshot=UTF8_TO_TCHAR(Island::Serialize(G->State).c_str());G->State=Island::State();Test->TestTrue(TEXT("Own reference resume loads"),G->LoadLevelOneAttempt());Test->TestEqual(TEXT("LI4 exact response state restored"),FString(UTF8_TO_TCHAR(Island::Serialize(G->State).c_str())),Snapshot);
    auto* Damaged=Cast<UIslandLevelOneSave>(UGameplayStatics::LoadGameFromSlot(G->SaveSlot,0));Damaged->Position=FVector(-9999,0,88);UGameplayStatics::SaveGameToSlot(Damaged,G->SaveSlot,0);Test->TestTrue(TEXT("Invalid pose still preserves valid learning flags"),G->LoadLevelOneAttempt());Test->TestTrue(TEXT("Invalid pose recovers to new actual arrival"),G->State.verbs&&P->GetActorLocation().X==-2800);
    Damaged->ScenarioId=TEXT("different-scenario");UGameplayStatics::SaveGameToSlot(Damaged,G->SaveSlot,0);Test->TestFalse(TEXT("Wrong scenario fails closed"),G->LoadLevelOneAttempt());G->SaveLevelOneAttempt();

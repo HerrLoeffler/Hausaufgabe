@@ -147,6 +147,7 @@ void AIslandGameMode::BuildPuzzleWorld(){auto* W=GetWorld();auto* A=W->SpawnActo
 
 void AIslandGameMode::BuildLevelOneWorld(){
  auto* W=GetWorld();auto* A=W->SpawnActor<AActor>();Root(A);A->SetActorLabel(TEXT("Level 1 - authored reference environment"));
+ auto RefLabel=[&](const FString& Text,FVector Pos,float Size,FRotator Rotation=FRotator(0,180,0),bool Relative=false,const TCHAR* Color=TEXT("24342B")){auto* L=Label(A,Text,Pos,Size,Rotation,Relative,Color);if(auto* M=LoadObject<UMaterial>(nullptr,TEXT("/Game/Materials/Level1Reference/M_ReferenceText")))L->SetTextMaterial(M);return L;};
  // This triangle surface is both the rendered hill and its actual collision floor.
  LevelOneTerrain=NewObject<UProceduralMeshComponent>(A);LevelOneTerrain->SetupAttachment(A->GetRootComponent());LevelOneTerrain->RegisterComponent();LevelOneTerrain->bUseComplexAsSimpleCollision=true;LevelOneTerrain->bUseAsyncCooking=false;
  TArray<FVector> V,N;TArray<int32> I;TArray<FVector2D> U;TArray<FLinearColor> C;TArray<FProcMeshTangent> T;
@@ -155,7 +156,7 @@ void AIslandGameMode::BuildLevelOneWorld(){
   double Centre=PX< -1450?80*FMath::Sin(FMath::Clamp((PX+2800)/1350.,0.,1.)*PI):0;
   bool Path=(PX< -1300&&FMath::Abs(PY-Centre)<120)||((PX>=-1300&&PX< -180)&&FMath::Abs(PY)<340)||((PX>=-180&&PX<150)&&FMath::Abs(PY)<140)||(PX>=150&&PX<1000&&FMath::Abs(PY+460)<80)||(PX>=1000&&FMath::Abs(PY)<150);
   FLinearColor Base=Col(Path?TEXT("D9C7A3"):TEXT("718B43"));float Shade=1+FMath::Sin(PX*.036)*FMath::Cos(PY*.024)*.04;C.Add(FLinearColor(Base.R*Shade,Base.G*Shade,Base.B*Shade,1));
-  if(X<NX&&Y<NY){int B=X*(NY+1)+Y;I.Append({B,B+NY+1,B+1,B+NY+1,B+NY+2,B+1});}
+  if(X<NX&&Y<NY){int B=X*(NY+1)+Y;I.Append({B,B+1,B+NY+1,B+NY+1,B+1,B+NY+2});}
  }
  LevelOneTerrain->CreateMeshSection_LinearColor(0,V,I,N,U,C,T,true);LevelOneTerrain->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);LevelOneTerrain->SetCollisionResponseToAllChannels(ECR_Block);LevelOneTerrain->SetMaterial(0,Mat(A,FLinearColor::White));
  // Open sky is an original vertex-colour dome; no copied panorama or texture.
@@ -179,22 +180,22 @@ void AIslandGameMode::BuildLevelOneWorld(){
   if(Id<200)IntroTiles.Add(Body);else PathTiles.Add(Body);
   // Registered tilted/front sign and the solid stone share one visible target identity.
   auto* Sign=Shape(A,TEXT("Cube"),P+FVector(50,0,42),FVector(.12,1.14,.64),TEXT("E7D7B5"),FRotator::ZeroRotator,true);Sign->SetMaterial(0,Body->GetMaterial(0));RegisterLevelOneTarget(Sign,Id);
-  Label(A,WordText,P+FVector(43,0,44),24,FRotator(0,180,0),false,TEXT("24342B"));
+  RefLabel(WordText,P+FVector(43,0,44),24,FRotator(0,180,0),false,TEXT("24342B"));
   AddTarget(Id,P+FVector(0,0,10),WordText,Context);
-  if(Id>=200){auto* Status=Label(A,TEXT(""),P+FVector(43,0,20),10,FRotator(0,180,0),false,TEXT("24342B"));LevelOneStatusLabels.Add(Status);
+  if(Id>=200){auto* Status=RefLabel(TEXT(""),P+FVector(43,0,20),10,FRotator(0,180,0),false,TEXT("24342B"));LevelOneStatusLabels.Add(Status);
    // Flat material/geometry outline: physical upper surface remains the real10cm stone top.
    for(int S:{-1,1}){LevelOneCentres.Add(Shape(A,TEXT("Cube"),P+FVector(0,S*42,10.15),FVector(.84,.025,.002),TEXT("B5A27D")));LevelOneCentres.Add(Shape(A,TEXT("Cube"),P+FVector(S*42,0,10.15),FVector(.025,.84,.002),TEXT("B5A27D")));}
   }
  };
  const TCHAR* IntroWords[]={TEXT("laufen"),TEXT("Baum"),TEXT("singen"),TEXT("blau")};const TCHAR* IntroContexts[]={TEXT("Wir laufen zum Tor."),TEXT("Der Baum wächst."),TEXT("Die Kinder singen."),TEXT("Das Tor ist blau.")};
  for(int K=0;K<4;++K)Word(100+K,FVector(-780+(K/2)*235,(K%2?1:-1)*180,0),IntroWords[K],IntroContexts[K]);
- auto Sign=[&](int Id,FVector P,const FString& Title,const FString& Context){auto* B=Shape(A,TEXT("Cube"),P+FVector(0,0,90),FVector(.16,1.6,.8),TEXT("9A4833"),FRotator::ZeroRotator,true);RegisterLevelOneTarget(B,Id);Shape(A,TEXT("Cylinder"),P+FVector(0,0,40),FVector(.16,.16,.8),TEXT("79563A"));Label(A,Title,P+FVector(-9,0,92),17,FRotator(0,180,0),false,TEXT("FFF0D0"));AddTarget(Id,P+FVector(0,0,90),Title,Context);};
+ auto Sign=[&](int Id,FVector P,const FString& Title,const FString& Context){auto* B=Shape(A,TEXT("Cube"),P+FVector(0,0,90),FVector(.16,1.6,.8),TEXT("9A4833"),FRotator::ZeroRotator,true);RegisterLevelOneTarget(B,Id);Shape(A,TEXT("Cylinder"),P+FVector(0,0,40),FVector(.16,.16,.8),TEXT("79563A"));RefLabel(Title,P+FVector(-9,0,92),17,FRotator(0,180,0),false,TEXT("FFF0D0"));AddTarget(Id,P+FVector(0,0,90),Title,Context);};
  Sign(10,FVector(-1080,-320,0),TEXT("Finde zwei Verben"),TEXT("Was tut jemand?"));Sign(11,FVector(-330,-350,0),TEXT("Hilfe  ·  H"),TEXT("Finde die zwei Verben."));
  Sign(20,FVector(30,-480,0),TEXT("Verbweg starten"),TEXT("Gehe auf ein Verb in jeder Reihe."));Sign(22,FVector(610,-620,0),TEXT("Schritt zurück"),TEXT("Nimm nur den letzten Schritt zurück."));Sign(21,FVector(1170,-380,0),TEXT("Weitergehen"),TEXT("Drei richtige Reihen öffnen das Tor."));
  const TCHAR* Words[]={TEXT("singt"),TEXT("Baum"),TEXT("blau"),TEXT("klein"),TEXT("sucht"),TEXT("Tor"),TEXT("Stein"),TEXT("laut"),TEXT("öffnet")};const TCHAR* Contexts[]={TEXT("Der Vogel singt."),TEXT("Der Baum steht am Weg."),TEXT("Das Tor ist blau."),TEXT("Die Hütte ist klein."),TEXT("Der Fuchs sucht den Eingang."),TEXT("Das Tor ist geschlossen."),TEXT("Der Stein liegt hier."),TEXT("Der Ton ist laut."),TEXT("Die Eule öffnet das Tor.")};
  for(int K=0;K<9;++K)Word(200+K,FVector(300+(K/3)*250,(K%3-1)*180,0),Words[K],Contexts[K]);
- for(int Row=0;Row<3;++Row)Label(A,FString::Printf(TEXT("REIHE %d"),Row+1),FVector(300+Row*250,-355,42),16,FRotator(0,180,0));
+ for(int Row=0;Row<3;++Row)RefLabel(FString::Printf(TEXT("REIHE %d"),Row+1),FVector(300+Row*250,-355,42),16,FRotator(0,180,0));
  for(int K=0;K<2;++K){float From=K==0?-470:880,End=K==0?-150:1350;Shape(A,TEXT("Cube"),FVector((From+End)*.5,330,4),FVector((End-From)/100,.08,.025),TEXT("B19F7B"));Cables.Add(Shape(A,TEXT("Cube"),FVector((From+End)*.5,330,5.3),FVector((End-From)/100,.035,.012),TEXT("62C7AE"),FRotator::ZeroRotator,false,false,true));}
- Label(A,TEXT("Satzgarten →"),FVector(1600,-450,100),23,FRotator(0,180,0),false,TEXT("24342B"));
+ RefLabel(TEXT("Satzgarten →"),FVector(1600,-450,100),23,FRotator(0,180,0),false,TEXT("24342B"));
  RefreshLevelOneWorld(0);
 }

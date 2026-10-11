@@ -114,7 +114,7 @@ bool AIslandGameMode::ResolveLevelOneSafePose(const FVector& Requested,FVector& 
  if(IsLevelOneReferenceMode()){
   if(!Island::LevelOnePoseInBounds(Requested.X,Requested.Y,Requested.Z))return false;
   const double Limit=!State.intro?-190:!State.verbs?1310:1770;if(Requested.X>Limit)return false;
- }else if(Requested.X< -1900||Requested.X>12800||FMath::Abs(Requested.Y)>1200||Requested.Z<40||Requested.Z>1280)return false;
+ }else if(Requested.X>Island::LevelOneContinuationLimit(State)||Requested.X< -1900||Requested.X>12800||FMath::Abs(Requested.Y)>1200||Requested.Z<40||Requested.Z>1280)return false;
  FCollisionQueryParams Q;Q.AddIgnoredActor(Player());FHitResult Hit;
  double Z=IsLevelOneReferenceMode()?Island::LevelOneGroundZ(Requested.X,Requested.Y):Requested.Z-88;
  if(!GetWorld()->LineTraceSingleByChannel(Hit,FVector(Requested.X,Requested.Y,Z+220),FVector(Requested.X,Requested.Y,Z-120),ECC_Pawn,Q))return false;
@@ -152,11 +152,16 @@ void AIslandGameMode::RecoverLevelOnePose(){
  FVector Safe;if(!ResolveLevelOneSafePose(LevelOneLastSafe,Safe))Safe=IsLevelOneReferenceMode()?FVector(-2800,0,90.2):FVector(1540,0,90.2);
  Player()->SetActorLocation(Safe);Player()->GetCharacterMovement()->StopMovementImmediately();LevelOneFoot.BlockUntilExit();if(auto* C=Cast<AIslandController>(Player()->Controller))C->CancelInput();Notify(TEXT("Zurück auf dem Weg."));
 }
-bool AIslandGameMode::OpenLevelOneContinuation(){
+bool AIslandGameMode::PrepareLevelOneContinuation(){
  if(!IsLevelOneReferenceMode()||!State.intro||!State.verbs||GateBlocks(1))return false;
  if(!SaveLevelOneAttempt()||!FPackageName::DoesPackageExist(TEXT("/Game/Maps/Lerninsel"))){Notify(TEXT("Der Abschnitt konnte nicht fortgesetzt werden."));return false;}
  auto* Existing=Cast<UIslandLevelOneSave>(UGameplayStatics::DoesSaveGameExist(LevelOneScopedSlot(TEXT("LerninselLevel1HandoffV1")),0)?UGameplayStatics::LoadGameFromSlot(LevelOneScopedSlot(TEXT("LerninselLevel1HandoffV1")),0):nullptr);
- if(!Existing||Existing->AttemptId!=LevelOneAttemptId){auto* S=Cast<UIslandLevelOneSave>(UGameplayStatics::CreateSaveGameObject(UIslandLevelOneSave::StaticClass()));S->ScenarioId=TEXT("lerninsel-level1-continuation");S->AttemptId=LevelOneAttemptId;S->Snapshot=UTF8_TO_TCHAR(Island::Serialize(State).c_str());S->Position=FVector(1540,0,90.2);S->View=FRotator(-4,0,0);if(!UGameplayStatics::SaveGameToSlot(S,LevelOneScopedSlot(TEXT("LerninselLevel1HandoffV1")),0)){Notify(TEXT("Der Abschnitt konnte nicht fortgesetzt werden."));return false;}}
+ Island::State ExistingState;bool Reusable=Existing&&Existing->AttemptId==LevelOneAttemptId&&Existing->ScenarioId==TEXT("lerninsel-level1-continuation")&&Existing->LayoutRevision==1&&Island::Deserialize(TCHAR_TO_UTF8(*Existing->Snapshot),ExistingState)&&ExistingState.intro&&ExistingState.verbs;
+ if(!Reusable){auto* S=Cast<UIslandLevelOneSave>(UGameplayStatics::CreateSaveGameObject(UIslandLevelOneSave::StaticClass()));S->ScenarioId=TEXT("lerninsel-level1-continuation");S->AttemptId=LevelOneAttemptId;S->Snapshot=UTF8_TO_TCHAR(Island::Serialize(State).c_str());S->Position=FVector(1540,0,90.2);S->View=FRotator(-4,0,0);if(!UGameplayStatics::SaveGameToSlot(S,LevelOneScopedSlot(TEXT("LerninselLevel1HandoffV1")),0)){Notify(TEXT("Der Abschnitt konnte nicht fortgesetzt werden."));return false;}}
+ return true;
+}
+bool AIslandGameMode::OpenLevelOneContinuation(){
+ if(!PrepareLevelOneContinuation())return false;
  UGameplayStatics::OpenLevel(this,FName(TEXT("/Game/Maps/Lerninsel")),true,TEXT("game=/Script/Lerninsel.IslandLevelOneContinuationGameMode"));return true;
 }
 

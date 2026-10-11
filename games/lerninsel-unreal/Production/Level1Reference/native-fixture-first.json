@@ -1,0 +1,117 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "MBP-von-Martin.fritz.box",
+			"instance": "D0ABF3E76C4074470EF0C2B26144A925",
+			"instanceName": "MBP-von-Martin.fritz.box-30104",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.11-19.12.50",
+	"succeeded": 0,
+	"succeededWithWarnings": 1,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 9.5506525039672852,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "LevelOne",
+			"fullTestPath": "GradeCrew.Lerninsel.LevelOne",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D0ABF3E76C4074470EF0C2B26144A925"
+			],
+			"duration": 9.5506525039672852,
+			"dateTime": "2026.10.11-19.12.40",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogStreaming: Failed to read file '../../../../../../martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-l1/games/lerninsel-unreal/Saved/SaveGames/LerninselV1.sav' error.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.43"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogStreaming: Failed to read file '../../../../../../martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-l1/games/lerninsel-unreal/Saved/SaveGames/LerninselPreferencesV1.sav' error.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.43"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogStreaming: Failed to read file '../../../../../../martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-l1/games/lerninsel-unreal/Saved/SaveGames/LerninselV1.sav' error.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.43"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogStreaming: Failed to read file '../../../../../../martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-l1/games/lerninsel-unreal/Saved/SaveGames/LerninselPreferencesV1.sav' error.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.43"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: FMacPlatformProcess::CreateProc: posix_spawn(\"/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id\") failed (86, Bad CPU type in executable)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.49"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHAL: Failed to launch Tool. (/Users/Shared/Epic Games/UE_5.8/Engine/Extras/ThirdPartyNotUE/libimobiledevice/Mac/idevice_id)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-19.12.49"
+				}
+			],
+			"warnings": 6,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

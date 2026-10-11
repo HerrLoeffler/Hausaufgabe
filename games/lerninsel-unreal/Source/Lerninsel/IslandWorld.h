@@ -23,7 +23,7 @@ UCLASS() class AIslandController:public APlayerController {
  virtual bool InputKey(const FInputKeyEventArgs&)override;
  void Interact();void Escape();void ShowHint();void PointerDown();void CancelInput();void HandleWindowFocus(bool);void UpdateMode();int PickWorldTarget(float,float)const;
  int PickLevelOneTarget(const FVector&,const FVector&)const;void ActivateLevelOneTarget(int);
- void LevelOneKeyReleased(const FKey&);TSet<FKey> LevelOneHeldKeys;bool LevelOneAwaitFreshInput=false;
+ void LevelOneKeyReleased(const FKey&);TSet<FKey> LevelOneHeldKeys;bool LevelOneAwaitFreshInput=false;float LevelOneLookCooldown=0;
  UPROPERTY() UIslandFocusWidget* FocusWidget=nullptr;
  float MouseSensitivity=1.f,PreferencesFOV=75.f;FString PreferencesSlot=TEXT("LerninselPreferencesV1");
  void SetMouseSensitivity(float,bool=true);bool SavePreferences();bool LoadPreferences();
@@ -52,7 +52,7 @@ UCLASS() class AIslandGameMode:public AGameModeBase {
  void BeginLevelOneSession();void BuildLevelOneWorld();void TickLevelOne(float);void RefreshLevelOneWorld(float);
  void SetLevelOneMenu(ELevelOneMenu);void LevelOneUIAction(int);void LevelOneEscape();void LevelOneInteract(int,bool=false);
  bool SaveLevelOneAttempt();bool LoadLevelOneAttempt();void ResetLevelOneAttempt();bool ResolveLevelOneSafePose(const FVector&,FVector&)const;
- void RecoverLevelOnePose();bool OpenLevelOneContinuation();void RegisterLevelOneTarget(UPrimitiveComponent*,int);
+ void RecoverLevelOnePose();bool PrepareLevelOneContinuation();bool OpenLevelOneContinuation();void RegisterLevelOneTarget(UPrimitiveComponent*,int);
  void WriteLevelOneEvidence(float);double LevelOneEvidenceTime=0,LevelOneRecordTime=0;int LevelOneRecordFrame=0;
  FGuid LevelOneAttemptId;bool LevelOneHasSave=false;FVector LevelOneLastSafe=FVector(-2800,0,90);int LevelOneCheckpoint=0,LevelOneRecoveryCount=0;
  Island::LevelOneFootVisit LevelOneFoot;Island::LevelOneIntentGuard LevelOneIntent;

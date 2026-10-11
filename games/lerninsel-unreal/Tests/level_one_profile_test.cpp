@@ -28,5 +28,11 @@ int main(){int checks=0;auto check=[&](bool ok,const char* label){++checks;if(!o
  check(Island::LevelOneStartPath(s)==Island::Result::Already&&s.pathFailed&&s.pathCount==2,"repeat start preserves error for correction");
  Island::Apply(s,Island::Action::PathUndo);
  check(s.pathCount==1&&!s.pathFailed&&s.path[0]==0,"undo only last");
+ Island::State continuation;continuation.intro=continuation.verbs=true;
+ check(Island::LevelOneContinuationLimit(continuation)==3060,"unsolved sentence bounds resume");
+ continuation.sentence=true;check(Island::LevelOneContinuationLimit(continuation)==5010,"unsolved water bounds resume");
+ continuation.water=true;check(Island::LevelOneContinuationLimit(continuation)==6460,"unsolved fractions bounds resume");
+ continuation.fractions=true;check(Island::LevelOneContinuationLimit(continuation)==11510,"unsolved coast bounds resume");
+ continuation.coast=true;check(Island::LevelOneContinuationLimit(continuation)==12800,"solved continuation full extent");
  std::cout<<"PASS "<<checks<<" level-one profile/intent checks\n";
 }
