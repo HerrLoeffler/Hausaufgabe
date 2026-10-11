@@ -219,8 +219,8 @@ const DEFAULT_TEACHER_TOUR_CONFIG = Object.freeze({
     },
     {
       icon: "✨",
-      title: "Tests mit KI erstellen",
-      text: "Unter „+ Neuer Test“ kannst du einen kompletten Test mit KI erzeugen und anschließend im Editor anpassen.",
+      title: "Test mit Remy erstellen",
+      text: "Unter „+ Neuer Test“ kannst du Remy deinen Test beschreiben. Anschließend passt du die Aufgaben im Editor an.",
       bullets: ["Gib Fach, Klasse und Thema vor. Alles Weitere ist anpassbar.", "⚠ KI-Erstellungen kosten Geld – auch Bilder, Änderungen und Varianten. Bitte gezielt nutzen."]
     },
     {
@@ -436,9 +436,9 @@ function renderFirstAiGuideStep(step) {
   } else if (step === "ai") {
     card.innerHTML = firstAiGuideCardHtml({
       eyebrow: "Schritt 2 von 4",
-      title: "Wähle „Mit KI erstellen“",
+      title: "Wähle „Test mit Remy erstellen“",
       text: "So erstellt GradeCrew den ersten Entwurf für dich. Danach kannst du jede Aufgabe normal bearbeiten.",
-      extra: '<div class="firstAiGuidePointer">Klicke auf „Mit KI erstellen“.</div>'
+      extra: '<div class="firstAiGuidePointer">Klicke auf „Test mit Remy erstellen“.</div>'
     });
   } else if (step === "details") {
     card.innerHTML = firstAiGuideCardHtml({
@@ -451,7 +451,7 @@ function renderFirstAiGuideStep(step) {
   } else if (step === "generate") {
     card.innerHTML = firstAiGuideCardHtml({
       eyebrow: "Schritt 4 von 4",
-      title: "Jetzt mit KI erstellen",
+      title: "Test mit Remy erstellen",
       text: "Klicke auf „Test erstellen“. GradeCrew erzeugt den Entwurf im Hintergrund und prüft ihn anschließend automatisch.",
       extra: '<div class="firstAiGuideCost"><strong>⚠ Kostenhinweis</strong><span>Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen.</span></div><div class="firstAiGuidePointer">Zum Starten den markierten Button anklicken.</div>'
     });
@@ -1003,13 +1003,6 @@ function setTeacherBar() {
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
-  const staging = appEnvironment === "staging";
-  const env = $("environmentBadge");
-  if (env) {
-    env.textContent = staging ? "TESTUMGEBUNG" : "";
-    env.classList.toggle("hidden", !staging || !loggedIn);
-  }
-  $("stagingBanner")?.classList.toggle("hidden", !staging);
 }
 
 function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
@@ -1390,6 +1383,37 @@ document.addEventListener('gradecrew:start-guest-tour', () => {
   crewTour.start();
 });
 
+function installAiInfoDismissal() {
+  document.querySelectorAll(".aiFieldInfo").forEach(details => {
+    if (details.dataset.escapeDismissBound) return;
+    details.dataset.escapeDismissBound = "true";
+    const summary = details.querySelector("summary");
+    const reopen = () => details.classList.remove("aiInfoDismissed");
+    summary?.addEventListener("click", reopen);
+    details.addEventListener("pointerenter", () => {
+      reopen();
+      details.classList.add("aiInfoHovered");
+    });
+    details.addEventListener("pointerleave", () => details.classList.remove("aiInfoHovered"));
+    details.addEventListener("focusout", event => {
+      if (!details.contains(event.relatedTarget)) reopen();
+    });
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    const visibleTips = Array.from(document.querySelectorAll(".aiFieldInfo")).filter(details =>
+      details.open || details.matches(":focus-within") || details.matches(":hover") || details.classList.contains("aiInfoHovered")
+    );
+    if (!visibleTips.length) return;
+    event.preventDefault();
+    visibleTips.forEach(details => {
+      details.open = false;
+      details.classList.add("aiInfoDismissed");
+    });
+  });
+}
+installAiInfoDismissal();
+
 $("newQuizBtn").addEventListener("click", openCreateView);
 $("emptyNewQuizBtn").addEventListener("click", openCreateView);
 $("backFromCreate")?.addEventListener("click", loadDashboard);
@@ -1539,6 +1563,11 @@ async function dismissAiJob(job, button) {
   }
 }
 
+function aiJobTitle(job) {
+  if (job.generationMode === "variant") return "Emmi-Variante";
+  return job.sourceQuizId ? "Ähnlicher Test" : "Test";
+}
+
 function renderAiJobs() {
   const host = $("aiJobsList");
   const recent = state.aiJobs.filter(job => {
@@ -1557,7 +1586,7 @@ function renderAiJobs() {
     const percentage = Math.max(0, Math.min(100, Number(job.percent) || 0));
     card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}${finished ? " aiJobReady" : ""}`;
     card.innerHTML = `<div class="aiJobStatusIcon" aria-hidden="true">${failed ? "!" : finished ? "✓" : "⋯"}</div>
-      <div class="aiJobBody"><strong>${escapeHtml(job.sourceQuizId ? "Ähnlicher Test" : "Test")} · ${escapeHtml(job.topic || job.subject || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
+      <div class="aiJobBody"><strong>${escapeHtml(aiJobTitle(job))} · ${escapeHtml(job.topic || job.subject || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
       <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}${job.audioTotal ? ` · ${Number(job.audioCompleted || 0)} von ${Number(job.audioTotal)} Höraudios` : ""}${job.answerAudioTotal ? ` · ${Number(job.answerAudioCompleted || 0)} von ${Number(job.answerAudioTotal)} Audioantwort-Aufgaben` : ""}${job.solutionAudioTotal ? ` · ${Number(job.solutionAudioCompleted || 0)} von ${Number(job.solutionAudioTotal)} Audio-Lösungen` : ""}`}</small></div>
       ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
       <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
@@ -1735,7 +1764,11 @@ function renderQuizList() {
     card.querySelector(".dashboardPublishToggle")?.addEventListener("change", event => toggleDashboardPublished(q, event.currentTarget));
     card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
     card.querySelector(".results").addEventListener("click", () => openResults(q.id));
-    card.querySelector(".duplicate")?.addEventListener("click", () => duplicateQuiz(q.id));
+    card.querySelector(".duplicate")?.addEventListener("click", event => openQuizDuplicateChoiceDialog(
+      event.currentTarget,
+      () => duplicateQuiz(q.id, "exact"),
+      ({ close }) => duplicateQuiz(q.id, "emmi-variant", close)
+    ));
     card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
     card.querySelector(".teacherShare")?.addEventListener("click", () => shareQuizTemplate(q.id));
     card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
@@ -1913,10 +1946,94 @@ async function createQuiz() {
   renderEditorState(state.currentQuiz);
 }
 
-async function duplicateQuiz(code) {
+function openQuizDuplicateChoiceDialog(trigger, onExactCopy, onEmmiVariant) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "shareDialog quizDuplicateDialog";
+  dialog.setAttribute("aria-labelledby", "quizDuplicateChoiceTitle");
+  dialog.setAttribute("aria-describedby", "quizDuplicateChoiceDescription");
+  dialog.innerHTML = `
+    <div class="shareDialogHead">
+      <div><span class="eyebrow">Test duplizieren</span><h2 id="quizDuplicateChoiceTitle">Wie möchtest du weiterarbeiten?</h2></div>
+      <button class="iconButton quizDuplicateDismiss" type="button" aria-label="Auswahl schließen">×</button>
+    </div>
+    <p id="quizDuplicateChoiceDescription">Wähle, wie der neue Entwurf entstehen soll.</p>
+    <div class="quizDuplicateChoices" role="group" aria-label="Art der Kopie">
+      <button class="button secondary quizDuplicateChoice" type="button" data-choice="exact" aria-describedby="quizDuplicateExactDescription">
+        <span><strong>Exakte Kopie</strong><small id="quizDuplicateExactDescription">Gleiche Aufgaben, Reihenfolge, Punkte und Einstellungen in einem neuen Entwurf.</small></span>
+      </button>
+      <button class="button secondary quizDuplicateChoice" type="button" data-choice="emmi" aria-describedby="quizDuplicateEmmiDescription">
+        <span><strong>Emmi-Variante</strong><small id="quizDuplicateEmmiDescription">Ähnliche, anders formulierte Aufgaben mit denselben Lernzielen und Vorgaben.</small></span>
+      </button>
+    </div>
+    <p class="quizDuplicateStatus" role="status" aria-live="polite"></p>
+    <div class="shareDialogFoot quizDuplicateFoot"><button class="button ghost quizDuplicateCancel" type="button">Abbrechen</button></div>`;
+
+  const exactButton = dialog.querySelector('[data-choice="exact"]');
+  const emmiButton = dialog.querySelector('[data-choice="emmi"]');
+  const closeButton = dialog.querySelector(".quizDuplicateDismiss");
+  const cancelButton = dialog.querySelector(".quizDuplicateCancel");
+  const status = dialog.querySelector(".quizDuplicateStatus");
+  const choiceButtons = [exactButton, emmiButton];
+  const dismissButtons = [closeButton, cancelButton];
+  let running = false;
+
+  const close = (restoreFocus = true) => {
+    if (!dialog.isConnected) return;
+    try { if (dialog.open) dialog.close(); } catch { dialog.removeAttribute("open"); }
+    dialog.remove();
+    const heading = document.querySelector("#editorView:not(.hidden) #editorHeading");
+    if (restoreFocus && trigger?.isConnected) trigger.focus();
+    else if (heading) heading.focus({ preventScroll: true });
+    else if (trigger?.isConnected) trigger.focus();
+  };
+
+  const dismiss = () => { if (!running) close(true); };
+  dismissButtons.forEach(button => button.addEventListener("click", dismiss));
+  dialog.addEventListener("cancel", event => {
+    event.preventDefault();
+    dismiss();
+  });
+
+  const run = async (button, action) => {
+    if (running) return;
+    running = true;
+    [...choiceButtons, ...dismissButtons].forEach(control => { control.disabled = true; });
+    status.setAttribute("role", "status");
+    status.textContent = button.dataset.choice === "emmi" ? "Emmi startet die neue Variante …" : "Kopie wird erstellt …";
+    try {
+      const result = await action({ close: () => close(false) });
+      if (result === false) throw new Error("copy failed");
+      close(false);
+    } catch (error) {
+      if (!dialog.isConnected) return;
+      running = false;
+      [...choiceButtons, ...dismissButtons].forEach(control => { control.disabled = false; });
+      status.setAttribute("role", "alert");
+      status.setAttribute("aria-live", "assertive");
+      const actionLabel = button.dataset.choice === "emmi" ? "Die Variante konnte nicht gestartet werden." : "Die Kopie konnte nicht erstellt werden.";
+      const reason = error?.userMessage || "Du kannst es erneut versuchen oder abbrechen.";
+      status.textContent = `${actionLabel} ${reason}`;
+      button.focus();
+    }
+  };
+
+  exactButton.addEventListener("click", () => { void run(exactButton, onExactCopy); });
+  emmiButton.addEventListener("click", () => { void run(emmiButton, onEmmiVariant); });
+  document.body.appendChild(dialog);
+  try { dialog.showModal(); } catch { dialog.setAttribute("open", ""); }
+  exactButton.focus();
+  return dialog;
+}
+
+async function duplicateQuiz(code, mode = "exact", closeDialog = null) {
   const source = state.quizzes.find((q) => q.id === code);
-  if (!source) return;
-  if (source.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  if (!source) return false;
+  if (source.rightsHold) {
+    toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+    return false;
+  }
+  if (mode === "emmi-variant") return startAiVariantQueueJob(source);
+  let draftCreated = false;
   try {
     const [qSnap, audioDraftResult] = await Promise.all([
       getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
@@ -1963,6 +2080,7 @@ async function duplicateQuiz(code) {
       solutionAudioReady: !questions.some(q => Boolean(q.solutionAudioScript))
     };
     const { code: newCode } = await createQuizDocument(base);
+    draftCreated = true;
     const copiedAudioDrafts = [];
     const copiedSolutionAudioDrafts = [];
     for (let i = 0; i < questions.length; i += 1) {
@@ -1978,9 +2096,60 @@ async function duplicateQuiz(code) {
     await aiApi.syncQuestionAudioDrafts({ quizId: newCode, drafts: copiedAudioDrafts, solutionDrafts: copiedSolutionAudioDrafts });
     toast("Test dupliziert.");
     await openEditor(newCode);
+    return true;
   } catch (err) {
     console.error(err);
-    toast("Test konnte nicht dupliziert werden.", "error");
+    toast(draftCreated ? "Der neue Entwurf konnte nicht vollständig kopiert werden. Prüfe ihn unter „Meine Tests“, bevor du es erneut versuchst." : "Test konnte nicht dupliziert werden.", "error");
+    return draftCreated;
+  }
+}
+
+async function startAiVariantQueueJob(sourceQuiz) {
+  if (!sourceQuiz?.id) return false;
+  if (state.aiStarting) return false;
+  if (state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2) {
+    throw Object.assign(new Error("Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist."), { userMessage: "Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist." });
+  }
+  state.pendingVariantRequests ||= new Map();
+  const clientRequestId = state.pendingVariantRequests.get(sourceQuiz.id)
+    || `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  state.pendingVariantRequests.set(sourceQuiz.id, clientRequestId);
+  state.aiStarting = true;
+  try {
+    let response;
+    try {
+      response = await aiApi.startAiTestVariantJob({ sourceQuizId: sourceQuiz.id, clientRequestId });
+    } catch (error) {
+      if (["functions/not-found", "not-found", "functions/unimplemented", "unimplemented"].includes(String(error?.code || ""))) {
+        throw Object.assign(new Error("Die Variantenfunktion ist auf diesem Server noch nicht verfügbar."), {
+          userMessage: "Die Variantenfunktion ist auf diesem Server noch nicht verfügbar. Bitte versuche es später erneut."
+        });
+      }
+      throw error;
+    }
+    const validVariantAck = response?.generationMode === "variant" && response?.contractVersion === 1
+      && /^[a-f0-9]{40}$/i.test(String(response?.jobId || ""));
+    if (!validVariantAck) {
+      throw Object.assign(new Error("Die Serverantwort hat die Varianten-Erstellung nicht bestätigt."), {
+        userMessage: "Die Varianten-Erstellung wurde nicht bestätigt. Bitte versuche es erneut."
+      });
+    }
+    state.pendingVariantRequests.delete(sourceQuiz.id);
+    if (!state.aiJobs.some(job => job.id === response.jobId)) state.aiJobs.push({
+      id: response.jobId, status: "queued", generationMode: "variant", sourceQuizId: sourceQuiz.id,
+      topic: sourceQuiz.title || "Ausgangstest", subject: sourceQuiz.subject || "", grade: sourceQuiz.grade || "",
+      requestedCount: Number(sourceQuiz.questionCount) || 0, createdAt: Date.now()
+    });
+    toast(response.resumed ? "Deine Varianten-Erstellung läuft bereits. Den Fortschritt findest du unter „Meine Tests“." : "Emmi erstellt eine neue Variante. Den Fortschritt findest du unter „Meine Tests“.");
+    try { await loadDashboard(); }
+    catch (refreshError) { console.warn("Variantenauftrag wurde gestartet, Dashboard konnte noch nicht aktualisiert werden:", refreshError); }
+    return true;
+  } catch (error) {
+    const userMessage = error?.userMessage || aiFriendlyError(error);
+    throw Object.assign(new Error(userMessage || "Bitte versuche es erneut."), { userMessage: userMessage || "Bitte versuche es erneut." });
+  } finally {
+    state.aiStarting = false;
+    renderAiJobs();
   }
 }
 
@@ -2440,9 +2609,9 @@ async function saveSettings() {
 
 // ---------- KI Prompt + JSON Import ----------
 $("backFromAi").addEventListener("click", loadDashboard);
-$("generatePromptBtn").addEventListener("click", generateAiPrompt);
-$("copyPromptBtn").addEventListener("click", () => copyText($("aiPromptOutput").value, "Prompt kopiert."));
-$("importJsonBtn").addEventListener("click", importAiJson);
+$("generatePromptBtn")?.addEventListener("click", generateAiPrompt);
+$("copyPromptBtn")?.addEventListener("click", () => copyText($("aiPromptOutput")?.value || "", "Prompt kopiert."));
+$("importJsonBtn")?.addEventListener("click", importAiJson);
 $("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://chatgpt.com/", "ChatGPT"));
 $("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
 $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
@@ -2727,6 +2896,8 @@ async function applyGeneratedAudio(rawQuestion, q, code, questionId) {
   if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat für die Höraufgabe kein Audio geliefert.");
   Object.assign(q, result.asset);
   q.audioScript = script;
+  q.audioPresentation = intent.presentation === "listening-only" ? "listening-only" : "supplement";
+  q.audioInstruction = String(intent.instruction || "").trim().slice(0, 1000);
   q.audioNeedsRegeneration = false;
 }
 
@@ -2936,6 +3107,12 @@ function normalizeImportedQuestion(rawInput, index, report) {
   const q = newQuestion(type, false);
   const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
   q.text = String(rawText || "").trim();
+  // Only the explicit public field is imported; never promote a legacy private text.
+  const audioIntent = raw.audioIntent;
+  if (audioIntent?.kind === "ai_generated" || raw.audioPresentation === "listening-only") {
+    q.audioPresentation = (audioIntent?.presentation || raw.audioPresentation) === "listening-only" ? "listening-only" : "supplement";
+    q.audioInstruction = String(audioIntent?.instruction || raw.audioInstruction || "").trim().slice(0, 1000);
+  }
   if (!q.text) {
     q.text = `Aufgabe ${index + 1}`;
     pushUnique(report.warnings, `Aufgabe ${index + 1}: Fragetext fehlt und muss im Editor ergänzt werden.`);
@@ -3421,7 +3598,12 @@ $("previewBtn").addEventListener("click", async () => {
   const wasNew = state.newManualQuiz;
   const uid = state.user?.uid;
   try {
-    if (!(await saveCurrentQuiz(false))) { preview.close(); return; }
+    // A saved, unchanged test needs no writes; active audio drafts are immutable.
+    if ((wasNew || state.isDirty) && !(await saveCurrentQuiz(false))) {
+      preview.close();
+      toast("Schüleransicht nicht geöffnet: Speichern fehlgeschlagen. Prüfe die angezeigten Hinweise und versuche es erneut.", "error");
+      return;
+    }
     if (!state.currentQuiz || (!wasNew && state.currentQuiz.id !== quizId) || state.user?.uid !== uid) { preview.close(); return; }
     if (!preview.closed) preview.location.replace(baseStudentUrl(state.currentQuiz.id, true));
     try { localStorage.setItem(`firstTestPreview:${uid}:${state.currentQuiz.id}`, "opened"); } catch (_) {}
@@ -3764,7 +3946,9 @@ function questionForAi(q) {
   copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
   delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
   delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
-  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), presentation: q.audioPresentation === "listening-only" ? "listening-only" : "supplement", instruction: String(q.audioInstruction || "").trim().slice(0, 1000), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  delete copy.audioInstruction;
+  delete copy.audioPresentation;
   delete copy.audioAnswerItems;
   delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
   if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, audioDataUrl, audioNeedsRegeneration, ...option }) => option);
@@ -4155,7 +4339,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (response.question?.audioIntent?.kind === "ai_generated") {
       await applyGeneratedAudio(response.question, next, target.quizId, next.id);
     } else if (!variant && !targetType && (q.audioScript || getQuestionAudioSrc(q))) {
-      for (const key of ["audioScript", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration"]) next[key] = q[key];
+      for (const key of ["audioScript", "audioInstruction", "audioPresentation", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration"]) next[key] = q[key];
     }
     index = editorQuestionIndex(state, target);
     if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
@@ -4687,25 +4871,58 @@ function renderQuestionAudioEditor(container, q) {
     speakAnswers.disabled = locked;
     shortcuts.appendChild(speakAnswers);
   }
-  container.appendChild(shortcuts);
-  const details = document.createElement("details");
-  details.className = "questionAudioPanel";
-  details.open = false;
-  details.innerHTML = `<summary><span>Audio anhören und anpassen</span><span class="questionAudioState">${hasAudio && hasScript && !q.audioNeedsRegeneration ? "bereit" : hasAudio && !hasScript ? "Hörtext fehlt" : hasScript ? "Audio erzeugen" : ""}</span></summary>
+  const details = document.createElement("section");
+  details.className = "questionAudioPanel questionAudioMain";
+  details.setAttribute("aria-label", "Audio zur Aufgabe");
+  details.innerHTML = `<div class="questionAudioHeading"><strong>Audio</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
     <div class="questionAudioBody">
-      <label class="stack compact"><span>Anzeige für Schüler</span><select class="questionAudioPresentation"><option value="supplement">Text und Audio</option><option value="listening-only">Nur hören</option></select></label>
-      <label class="stack compact"><span>Eigener Hörtext <small>optional · nur für Lehrkraft/Admin · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Nur ausfüllen, wenn du einen anderen Text oder einen eigenen Hördialog verwenden möchtest."></textarea></label>
+      <label class="stack compact"><span>Anzeige für Schüler</span><select class="questionAudioPresentation"><option value="supplement">Text und Audio</option><option value="listening-only">Nur Audio</option></select></label>
       <div class="questionAudioPreview"></div>
+      <div class="questionAudioInstructionGroup">
+      <label class="stack compact"><span>Sichtbarer Arbeitsauftrag <small>für Schüler · ohne Hörtext oder Lösungen</small></span><textarea class="questionAudioInstruction" rows="2" maxlength="1000" placeholder="z. B. Höre den Hörtext. Wähle genau zwei Antworten aus."></textarea></label>
+      <div class="questionAudioInstructionActions"></div>
+      <small class="questionAudioInstructionWarning" role="status"></small>
+      </div>
+      <details class="questionAudioEdit"><summary>Audio bearbeiten</summary><div class="questionAudioEditBody">
+      <label class="stack compact"><span>Hörtext <small>privat · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
       <div class="questionAudioActions"></div>
-      <small class="questionAudioDisclosure">Der private Hörtext wird im Schülerbereich nicht als Transkript angezeigt.</small>
+      <small class="questionAudioDisclosure">Dieser Text bleibt für Schüler verborgen.</small>
+      </div></details>
     </div>`;
   container.appendChild(details);
+  details.querySelector(".questionAudioEditBody").prepend(shortcuts);
   const input = details.querySelector(".questionAudioScript");
+  const instruction = details.querySelector(".questionAudioInstruction");
+  const instructionWarning = details.querySelector(".questionAudioInstructionWarning");
+  const updateInstructionWarning = () => {
+    details.querySelector(".questionAudioInstructionGroup").hidden = q.audioPresentation !== "listening-only";
+    instructionWarning.textContent = q.audioPresentation === "listening-only" && !String(q.audioInstruction || "").trim()
+      ? "Arbeitsauftrag fehlt. Trage nur den Auftrag ein – ohne Hörtext oder Lösungen." : "";
+  };
+  instruction.value = String(q.audioInstruction || "");
+  instruction.disabled = locked;
+  instruction.addEventListener("input", () => {
+    q.audioInstruction = instruction.value.slice(0, 1000);
+    updateInstructionWarning();
+    markDirty();
+  });
+  const copyInstruction = makeMiniButton("Frage übernehmen", () => {
+    if (locked) return;
+    q.audioInstruction = String(q.text || "").trim().slice(0, 1000);
+    instruction.value = q.audioInstruction;
+    updateInstructionWarning();
+    markDirty();
+  });
+  copyInstruction.classList.add("copyQuestionAudioInstruction");
+  copyInstruction.title = "Übernimmt den Fragetext als öffentlichen Auftrag. Prüfe vorher, dass er keine Hörtexte oder Lösungen enthält.";
+  copyInstruction.disabled = locked || !String(q.text || "").trim();
+  details.querySelector(".questionAudioInstructionActions").appendChild(copyInstruction);
+  updateInstructionWarning();
   const presentation = details.querySelector(".questionAudioPresentation");
   presentation.value = q.audioPresentation === "listening-only" ? "listening-only" : "supplement";
   presentation.querySelector('option[value="listening-only"]').disabled = ["gapfill", "markwords"].includes(q.type);
   presentation.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-  presentation.addEventListener("change", () => { cancelQuestionAudioOperation(q); q.audioPresentation = presentation.value; markDirty(); });
+  presentation.addEventListener("change", () => { cancelQuestionAudioOperation(q); q.audioPresentation = presentation.value; updateInstructionWarning(); markDirty(); });
   input.value = String(q.audioScript || "");
   input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   input.addEventListener("input", event => {
@@ -4723,8 +4940,8 @@ function renderQuestionAudioEditor(container, q) {
   if (hasAudio && !hasScript) {
     const warning = document.createElement("small");
     warning.className = "aiInputError";
-    warning.textContent = "Der private Hörtext ist hier nicht verfügbar, z. B. bei einer geteilten Vorlage. Bitte Hörtext eintragen und Audio neu erzeugen oder Audio entfernen.";
-    preview.appendChild(warning);
+    warning.textContent = "Hörtext fehlt. Zum Ändern einen Text eintragen und Audio neu erzeugen.";
+    details.querySelector(".questionAudioEditBody").appendChild(warning);
   }
   if (hasAudio) {
     const audio = document.createElement("audio");
@@ -4742,7 +4959,7 @@ function renderQuestionAudioEditor(container, q) {
   }
 
   const actions = details.querySelector(".questionAudioActions");
-  const generate = makeMiniButton("Eigenen Hörtext vorlesen", () => generateAiAudioForQuestion(q, container));
+  const generate = makeMiniButton("Audio erzeugen", () => generateAiAudioForQuestion(q, container));
   generate.classList.add("generateQuestionAudio");
   generate.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   actions.appendChild(generate);
@@ -5693,6 +5910,7 @@ function sanitizeQuestionForSave(q) {
   }
   if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
   if (q.audioPresentation === "listening-only") base.audioPresentation = "listening-only";
+  if (String(q.audioInstruction || "").trim()) base.audioInstruction = String(q.audioInstruction).trim().slice(0, 1000);
   if (q.audioAnswerMode === "audio-only") base.audioAnswerMode = "audio-only";
   if (q.audioAnswerMode === "audio-only" && !["single", "multi", "dropdown"].includes(q.type)) base.audioAnswerItems = questionAnswerAudioEntries(q).map(entry => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: String(entry.asset?.audioDataUrl || ""), audioNeedsRegeneration: !entry.asset || entry.asset.audioNeedsRegeneration === true || entry.asset.sourceText !== entry.sourceText }));
   if (["single", "multi", "dropdown"].includes(q.type)) {
@@ -6548,7 +6766,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
-    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(getQuestionImageSrc(q) ? contentLabels.listeningImageInstruction : contentLabels.listeningInstruction) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(String(q.audioInstruction || "").trim() || contentLabels.missingListeningInstruction) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 
     if (getQuestionImageSrc(q)) {

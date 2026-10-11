@@ -38,9 +38,10 @@ const audioIntentSchema = {
     kind: { type: "string", enum: ["none", "ai_generated"] },
     script: { type: "string" },
     presentation: { type: "string", enum: ["supplement", "listening-only"] },
+    instruction: { type: "string", maxLength: 1000, description: "Öffentlicher Arbeitsauftrag ohne Hörtext oder Lösungen. Bei listening-only erforderlich, bei none leer." },
     reason: { type: "string" }
   },
-  required: ["kind", "script", "presentation", "reason"]
+  required: ["kind", "script", "presentation", "instruction", "reason"]
 };
 const questionSchema = {
   type: "object", additionalProperties: false,

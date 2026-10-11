@@ -195,7 +195,7 @@ function questionShell(question, index) {
 
   const title = document.createElement("h2");
   if (question.type === "gapfill") title.textContent = "Lückentext";
-  else if (question.audioPresentation === "listening-only") title.textContent = assessmentContentLabels(currentQuiz?.contentLocale)[question.image?.src ? "listeningImageInstruction" : "listeningInstruction"];
+  else if (question.audioPresentation === "listening-only") title.textContent = String(question.audioInstruction || "").trim() || assessmentContentLabels(currentQuiz?.contentLocale).missingListeningInstruction;
   else title.innerHTML = formatMathText(question.text || "Aufgabe");
   section.appendChild(title);
 

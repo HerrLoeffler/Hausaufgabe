@@ -12,12 +12,11 @@
   <link rel="stylesheet" href="crew-clay.css?v=3" />
   <link rel="stylesheet" href="workspace.css?v=2.3.1-gc2" />
   <link rel="icon" href="assets/gradecrew/penguin-icon.svg" type="image/svg+xml" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <script src="assets/vendor/qrcodejs-1.0.0.min.js" defer></script>
 <link rel="stylesheet" href="review-mode.css">
 </head>
 <body>
   <a class="skipLink" href="#mainContent">Zum Inhalt springen</a>
-  <div id="stagingBanner" class="stagingBanner hidden">STAGING · Testumgebung · Bitte nur Testdaten verwenden</div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <header class="topbar">
@@ -26,7 +25,6 @@
       <span class="brandCopy"><strong>GradeCrew</strong><small>Tests. Einfach digital.</small></span>
     </button>
     <div id="userBar" class="userBar hidden">
-      <span id="environmentBadge" class="envBadge hidden"></span>
       <span id="userLabel"></span>
       <button id="adminTopBtn" class="button ghost hidden" type="button">Administration</button>
       <button id="settingsTopBtn" class="button ghost" type="button">Einstellungen</button>
@@ -127,7 +125,7 @@
         </button>
         <button id="createAiBtn" class="createChoiceCard" type="button">
           <span class="choiceIcon choiceIconPurple"><img src="assets/gradecrew/falcon-create.svg" width="64" height="64" alt=""></span>
-          <span class="choiceText"><strong>Mit KI erstellen</strong><small>Erzeuge eine passende Testvorlage und bearbeite sie anschließend im Editor.</small></span>
+          <span class="choiceText"><strong>Test mit Remy erstellen</strong><small>Remy erstellt deinen Test passend zu Thema und Klasse.</small></span>
           <span class="choiceArrow">→</span>
         </button>
         <article class="createChoiceCard importChoiceCard">
@@ -314,10 +312,10 @@
 
     <section id="aiView" class="view hidden">
       <div class="pageHead">
-        <div><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Mit KI erstellen</span><h1>Test mit KI erstellen</h1><img class="pageCrewArtwork" src="assets/gradecrew/falcon-create.svg" width="88" height="88" alt=""><p>Dein Thema, deine Klasse, dein Entwurf. Du prüfst die Aufgaben und entscheidest, was bleibt.</p></div>
+        <div class="aiPageIntro"><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><div class="aiPageHeadContent"><div class="aiPageHeadText"><h1>Test mit Remy erstellen</h1><p>Remy erstellt deinen Test passend zu Thema und Klasse.</p></div><img class="aiPageRemyHero" src="assets/gradecrew/remy-test-creation-typewriter.png" width="112" height="114" alt="Remy an der Schreibmaschine"></div></div>
       </div>
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
-      <p class="aiDataNote">Thema, Wünsche und hochgeladene Materialien werden für die Erstellung an OpenAI übermittelt. Bitte keine personenbezogenen Daten eingeben.</p>
+      <p class="aiDataNote">Thema, Wünsche und Uploads gehen an OpenAI. Bitte keine personenbezogenen Daten eingeben.</p>
       <div class="aiGrid">
         <article class="card">
           <div class="aiSectionTitle"><span aria-hidden="true">1</span><div><h2>Test festlegen</h2><p>Die wichtigsten Angaben für deinen Entwurf.</p></div></div>
@@ -332,15 +330,26 @@
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
           <p id="aiPointsHint" class="hint" aria-live="polite"></p>
+          <div class="aiCoreActions">
+            <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
+            <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
+            <small class="hint aiCostNote">Kosten können für Tests, Bilder und Audio entstehen.</small>
+            <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
+            <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
+          </div>
+          <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Wünsche <small>optional</small></summary>
           <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
           </details>
           <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
           <details class="gradecrewPreferenceDetails"><summary>Persönliche KI-Vorgaben <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Vorgaben für meine Tests <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
           <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorgaben speichern</button><small class="hint">Nur in deinem Profil gespeichert; bei KI-Erstellungen an OpenAI übermittelt. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
+          </details>
         </article>
+        <div class="aiSideSteps">
         <article class="card">
           <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material &amp; Bilder</h2><p>Optional ergänzen, was wirklich hilft.</p></div></div>
+          <details class="aiOptionalMedia"><summary>Material oder Bilder hinzufügen <small>optional</small></summary>
           <div class="aiUploadNotice" id="aiUploadNotice">
             <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich darf dieses Material speichern und an OpenAI übermitteln; es enthält keine personenbezogenen Daten.</span></label>
             <details class="aiUploadLegalDetails">
@@ -353,38 +362,46 @@
           </div>
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
           <div id="aiMaterialList" class="aiMaterialList"></div>
-          <div class="stack compact aiOptionsBlock">
+          <section class="aiMaterialOptions" aria-labelledby="aiMaterialOptionsTitle">
+            <h3 id="aiMaterialOptionsTitle">Material und Bilder</h3>
+            <div class="stack compact aiOptionsBlock">
             <label>Material verwenden<select id="aiMaterialMode" disabled><option value="inspiration">Als Anregung</option><option value="only">Nur Inhalte aus dem Material</option></select></label>
             <small class="hint">Nach dem Upload auswählbar. Hochgeladene Dateien werden an OpenAI übermittelt.</small>
             <label>Aufgaben mit Bild (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
             <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
-            <label>Höraufgaben mit Audio (0–5)<input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" /></label>
-            <p id="aiAudioCountHint" class="hint">Aufgaben werden vorgelesen · kein Autoplay · im Editor anhörbar.</p>
-            <label>Aufgaben mit vorgelesenen Antwortmöglichkeiten (0–5)<input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" /></label>
-            <p id="aiAudioAnswerCountHint" class="hint">Jede Antwortmöglichkeit ist einzeln anhörbar und auswählbar.</p>
+            </div>
+          </section>
+          </details>
+        </article>
+        <article class="card">
+          <div class="aiSectionTitle"><span aria-hidden="true">3</span><div><h2>Audio</h2><p>Höraufgaben optional ergänzen.</p></div></div>
+          <details class="aiOptionalAudio"><summary>Höraufgaben festlegen <small>optional</small></summary>
+          <section class="aiAudioOptions" aria-labelledby="aiAudioOptionsTitle">
+            <h3 id="aiAudioOptionsTitle">Höraufgaben</h3>
+            <p class="hint">Lege fest, ob Aufgaben oder Antwortoptionen vorgelesen werden. Audio startet nicht automatisch und ist im Editor anhörbar.</p>
+            <div class="stack compact">
+              <div class="aiAudioOption">
+                <div class="aiAudioOptionLabel"><label for="aiAudioQuestionCount">Aufgaben mit Hörtext (0–5)</label>
+                  <details class="aiFieldInfo"><summary aria-label="Beispiel für Aufgaben mit Hörtext">ⓘ</summary><span>Beispiel: Die Klasse hört eine kurze Durchsage und beantwortet eine Frage. Bei „Nur hören“ ist die Aufgabenfassung nur im Audio; bei „mit sichtbarer Frage“ erscheint zusätzlich ein Fragetext.</span></details>
+                </div>
+                <input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" />
+                <p id="aiAudioCountHint" class="hint">Der Hörtext wird nicht automatisch abgespielt.</p>
+              </div>
+              <div class="aiAudioOption">
+                <div class="aiAudioOptionLabel"><label for="aiAudioAnswerQuestionCount">Aufgaben mit vorgelesenen Antwortoptionen (0–5)</label>
+                  <details class="aiFieldInfo"><summary aria-label="Beispiel für vorgelesene Antwortoptionen">ⓘ</summary><span>Beispiel: Eine Schülerin kann einzelne Antwortoptionen anhören und auswählen. Die Antworttexte bleiben verborgen; Arbeitsanweisung und Kategorien bleiben sichtbar.</span></details>
+                </div>
+                <input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" />
+                <p id="aiAudioAnswerCountHint" class="hint">Antworttexte werden einzeln hörbar und bleiben für Schüler verborgen.</p>
+              </div>
+            </div>
+          </section>
             <label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
             <p id="aiSolutionAudioCountHint" class="hint" hidden>Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
-          </div>
-          <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
-          <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
-          <small class="hint aiCostNote">Das Erstellen von Tests, Bildern und Audio kann Kosten verursachen.</small>
-          <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
-          <small class="hint">Du kannst die Seite schließen. Weiter geht’s unter „Meine Tests“. Vor dem Veröffentlichen bitte prüfen.</small>
+          </details>
         </article>
+        </div>
       </div>
-      <details class="card legacyAiDetails">
-        <summary>Erweiterter manueller JSON-Import</summary>
-        <p>Der bisherige Copy-&amp;-Paste-Weg bleibt als Rückfalloption erhalten.</p>
-        <div class="actions"><button id="generatePromptBtn" class="button secondary" type="button">Prompt erzeugen</button><button id="copyPromptBtn" class="button secondary" type="button">Prompt kopieren</button><button id="openChatGptBtn" class="button providerButton" type="button">ChatGPT öffnen</button><button id="openClaudeBtn" class="button providerButton" type="button">Claude öffnen</button><button id="openGeminiBtn" class="button providerButton" type="button">Gemini öffnen</button></div>
-        <label class="jsonFieldLabel" for="aiPromptOutput">Prompt für die KI</label>
-        <textarea id="aiPromptOutput" class="codeArea" rows="10" readonly placeholder="Hier erscheint dein Prompt …"></textarea>
-        <label class="jsonFieldLabel" for="aiJsonInput">JSON-Antwort der KI</label>
-        <textarea id="aiJsonInput" class="codeArea" rows="10" placeholder="JSON-Antwort hier einfügen …"></textarea>
-        <div id="aiJsonHelp" class="jsonHelp hidden"></div>
-        <div class="actions"><button id="importJsonBtn" class="button primary" type="button">Antwort importieren</button></div>
-        <input id="aiJsonFile" aria-label="JSON-Datei importieren" type="file" accept=".json,application/json" class="hidden" />
-        <button id="selectJsonFileBtn" class="linkButton" type="button">JSON-Datei auswählen</button>
-      </details>
     </section>
 
     <section id="editorView" class="view hidden">

@@ -62,6 +62,116 @@ test('brand and crew are present before scripts, without modifying authored cont
   assert.equal(card.querySelector('.qText').value, 'Ein Beispiel mit Testify im Aufgabentext');
 });
 
+test('dashboard route focus hides only the programmatic heading ring', t => {
+  const styles = source('styles.css');
+  assert.match(styles, /#dashboardView\s+\.pageHead\s+h1\[tabindex=["']-1["']\]:focus\s*\{[^}]*outline\s*:\s*none/i);
+  assert.match(styles, /\.quizDuplicateDialog\s+\.quizDuplicateChoice:focus-visible\s*\{[^}]*outline\s*:/i);
+  assert.match(source('interface.js'), /target\.focus\(\{\s*preventScroll:\s*true\s*\}\)/);
+});
+
+test('AI material and audio options stay grouped and explain the two audio modes accessibly', t => {
+  const w = fixture(t);
+  const material = w.document.querySelector('.aiMaterialOptions');
+  const audio = w.document.querySelector('.aiAudioOptions');
+  assert.ok(material && audio);
+  assert.equal(material.contains(w.$('aiMaterialMode')), true);
+  assert.equal(material.contains(w.$('aiImageQuestionCount')), true);
+  assert.equal(audio.contains(w.$('aiAudioQuestionCount')), true);
+  assert.equal(audio.contains(w.$('aiAudioAnswerQuestionCount')), true);
+  assert.equal(w.$('aiAudioQuestionCount').max, '5');
+  assert.equal(w.$('aiAudioAnswerQuestionCount').max, '5');
+  const info = Array.from(audio.querySelectorAll('.aiFieldInfo'));
+  assert.equal(info.length, 2);
+  info[0].querySelector('summary').click();
+  assert.equal(info[0].open, true);
+  assert.match(info[0].textContent, /Nur hören/);
+  assert.match(info[1].textContent, /Antworttexte bleiben verborgen/);
+  assert.match(source('styles.css'), /aiFieldInfo:not\(\.aiInfoDismissed\):focus-within>span/);
+  const dismissal = fn('installAiInfoDismissal');
+  w.eval(`window.installAiInfoDismissal = (${dismissal}); window.installAiInfoDismissal();`);
+  const summary = info[0].querySelector('summary');
+  const outside = w.document.createElement('button');
+  w.document.body.append(outside);
+  outside.focus();
+  info[0].dispatchEvent(new w.Event('pointerenter'));
+  assert.equal(info[0].classList.contains('aiInfoHovered'), true);
+  w.document.body.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  assert.equal(info[0].open, false);
+  assert.equal(info[0].classList.contains('aiInfoDismissed'), true);
+  info[0].dispatchEvent(new w.Event('pointerleave'));
+  info[0].dispatchEvent(new w.Event('pointerenter'));
+  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
+  summary.click();
+  assert.equal(info[0].open, true);
+  summary.focus();
+  w.document.body.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  assert.equal(info[0].open, false);
+  assert.equal(info[0].classList.contains('aiInfoDismissed'), true);
+  info[0].dispatchEvent(new w.Event('pointerenter'));
+  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
+  summary.click();
+  assert.equal(info[0].open, true);
+  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
+  assert.match(source('app.js'), /audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount/);
+});
+
+test('dashboard duplicate action opens a keyboard accessible choice before copying', async t => {
+  const w = fixture(t);
+  const render = fn('renderQuizList');
+  assert.match(render, /openQuizDuplicateChoiceDialog\(/);
+  assert.match(render, /\(\)\s*=>\s*duplicateQuiz\(q\.id,\s*["']exact["']\)/);
+  assert.match(render, /\(\{\s*close\s*\}\)\s*=>\s*duplicateQuiz\(q\.id,\s*["']emmi-variant["'],\s*close\)/);
+  const duplicate = fn('duplicateQuiz');
+  assert.match(duplicate, /createQuizDocument\(base\)/);
+  assert.match(duplicate, /collection\(db,\s*["']quizzes["'],\s*newCode,\s*["']questions["']\)/);
+  assert.match(duplicate, /position:\s*i\s*\+\s*1/);
+  assert.match(duplicate, /mode\s*===\s*["']emmi-variant["']/);
+  assert.doesNotMatch(duplicate, /updateDoc\(doc\(db,\s*["']quizzes["'],\s*code/);
+  assert.doesNotMatch(duplicate, /collection\(db,\s*["']quizzes["'],\s*code,\s*["']results["']/);
+
+  const chooser = fn('openQuizDuplicateChoiceDialog');
+  w.eval(`window.openQuizDuplicateChoiceDialog = (${chooser});`);
+  const trigger = w.document.createElement('button');
+  trigger.textContent = 'Duplizieren';
+  w.document.body.append(trigger);
+  trigger.focus();
+
+  let calls = 0;
+  let finishCopy;
+  const dialog = w.openQuizDuplicateChoiceDialog(trigger, () => {
+    calls += 1;
+    return new Promise(resolve => { finishCopy = resolve; });
+  }, async () => { throw new Error('sensitive backend detail'); });
+  assert.equal(dialog.open, true);
+  assert.equal(dialog.getAttribute('aria-labelledby'), 'quizDuplicateChoiceTitle');
+  assert.match(dialog.textContent, /Exakte Kopie/);
+  assert.match(dialog.textContent, /Emmi-Variante/);
+
+  const exact = dialog.querySelector('[data-choice="exact"]');
+  assert.equal(w.document.activeElement, exact);
+  exact.click();
+  assert.equal(exact.disabled, true);
+  exact.click();
+  assert.equal(calls, 1);
+  assert.match(dialog.querySelector('[role="status"]').textContent, /wird erstellt/i);
+  finishCopy(true);
+  await settle();
+  assert.equal(dialog.isConnected, false);
+  assert.equal(w.document.activeElement, trigger);
+
+  const failed = w.openQuizDuplicateChoiceDialog(trigger, async () => {}, async () => {
+    throw new Error('sensitive backend detail');
+  });
+  failed.querySelector('[data-choice="emmi"]').click();
+  await settle();
+  assert.equal(failed.open, true);
+  assert.equal(failed.querySelector('[data-choice="emmi"]').disabled, false);
+  assert.equal(failed.querySelector('[role="alert"]').textContent.includes('sensitive backend detail'), false);
+  failed.dispatchEvent(new w.Event('cancel', { cancelable: true }));
+  assert.equal(failed.isConnected, false);
+  assert.equal(w.document.activeElement, trigger);
+});
+
 test('tutorial artwork survives every next/back step and custom icons remain visible', t => {
   const w = fixture(t);
   const steps = ['👋', '✨', '☺', '↻', '🧭'].map(icon => ({ icon, title: 'Schritt', text: 'Kurz', bullets: [] }));
@@ -424,4 +534,38 @@ test('grading keeps the question image, names the points field and restores focu
   w.$('closeReview').click();
   assert.equal(w.document.activeElement, w.$('review-origin'));
   assert.equal(w.$('reviewPanel').classList.contains('hidden'), true);
+});
+
+test('published test QR uses the local encoder and carries the exact test link', async t => {
+  const w = fixture(t);
+  const vendorScript = w.document.querySelector('script[src="assets/vendor/qrcodejs-1.0.0.min.js"]');
+  assert.ok(vendorScript, 'the QR encoder is bundled locally');
+  assert.equal([...w.document.querySelectorAll('script[src]')].some(script => /cdnjs\.cloudflare\.com\/ajax\/libs\/qrcodejs/.test(script.src)), false);
+
+  w.eval(source(vendorScript.getAttribute('src')));
+  const NativeQRCode = w.QRCode;
+  w.QRCode = function CapturingQRCode(element, options) {
+    w.generatedQRCode = new NativeQRCode(element, options);
+    return w.generatedQRCode;
+  };
+  w.QRCode.CorrectLevel = NativeQRCode.CorrectLevel;
+  w.eval(fn('baseStudentUrl'));
+  w.state = { currentQuiz: null };
+  w.db = {};
+  w.doc = () => ({});
+  w.getDoc = async () => ({ exists: () => true, data: () => ({ published: true }) });
+  w.clearPublishSubscriptions = () => {};
+  w.setupTeacherLivePanel = () => {};
+  w.showView = () => {};
+  w.guestTourRepo = null;
+  w.crewTour = null;
+  w.eval(fn('showPublish'));
+
+  await w.showPublish('3FMDLLTA');
+  const link = 'https://hausaufgabe-staging.web.app/?test=3FMDLLTA';
+  assert.equal(w.$('publishedCode').textContent, '3FMDLLTA');
+  assert.equal(w.$('publishedLink').value, link);
+  assert.equal(w.generatedQRCode._oQRCode.dataList[0].data, link);
+  assert.ok(w.$('qrcode').querySelector('table, canvas, img'));
+  assert.doesNotMatch(w.$('qrcode').textContent, /QR-Code-Bibliothek konnte nicht geladen werden/);
 });

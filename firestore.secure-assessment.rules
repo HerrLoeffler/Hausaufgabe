@@ -22,6 +22,18 @@ service cloud.firestore {
         && currentUserData().get('status', 'active') == 'active';
     }
 
+    // Publishing must not recreate a student entry point for a deleted/deleting owner.
+    // End/archive/read support remains governed by the existing policies below.
+    function quizPublicationOwnerAvailable() {
+      let ownerId = request.resource.data.get('ownerId', '');
+      return request.resource.data.get('published', false) != true
+        || (ownerId is string && ownerId.size() > 0
+          && exists(/databases/$(database)/documents/users/$(ownerId))
+          && !exists(/databases/$(database)/documents/accountDeletions/$(ownerId))
+          && get(/databases/$(database)/documents/users/$(ownerId)).data.get('accountDeletionId', '') == ''
+          && get(/databases/$(database)/documents/users/$(ownerId)).data.get('status', 'active') != 'deleting');
+    }
+
     function ownsQuiz(quizId) {
       return accountActive()
         && get(/databases/$(database)/documents/quizzes/$(quizId)).data.ownerId == request.auth.uid;
@@ -145,7 +157,7 @@ service cloud.firestore {
                     && request.resource.data.ownerId == request.auth.uid
                     && request.resource.data.get('rightsHold', false) == false;
 
-      allow update: if isAdmin()
+      allow update: if quizPublicationOwnerAvailable() && (isAdmin()
                     || (
                       accountActive()
                       && resource.data.ownerId == request.auth.uid
@@ -154,7 +166,7 @@ service cloud.firestore {
                       && request.resource.data.get('rightsHoldAt', null) == resource.data.get('rightsHoldAt', null)
                       && request.resource.data.get('rightsHoldBy', null) == resource.data.get('rightsHoldBy', null)
                       && ownerQuizUpdateAllowed()
-                    );
+                    ));
 
       // A running assessment must not disappear underneath active attempts.
       // Owners delete only inactive/ended/trash quizzes; admins retain support access.

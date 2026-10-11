@@ -58,6 +58,7 @@ export function createAiClient(app, getUid) {
     reportRightsIssue: call("reportRightsIssue", 30000),
     generateTest: call("generateTest", 540000, withGenerationLocale),
     startAiTestJob: call("startAiTestJob", 60000, withGenerationLocale),
+    startAiTestVariantJob: call("startAiTestVariantJob", 60000),
     prepareQuickRemy: call("prepareQuickRemy", 60000),
     submitQuickRemy: call("submitQuickRemy", 60000),
     getQuickRemySubmission: call("getQuickRemySubmission", 30000),

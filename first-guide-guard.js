@@ -134,7 +134,7 @@ function scheduleSpotlightSync() {
 function isElephantStep(card) {
   const eyebrow = card?.querySelector(".eyebrow")?.textContent || "";
   const title = card?.querySelector("h2")?.textContent || "";
-  return /Schritt\s+[234]\s+von\s+4/i.test(eyebrow) || /KI-Test wird erstellt/i.test(title) || /Jetzt mit KI erstellen/i.test(title);
+  return /Schritt\s+[234]\s+von\s+4/i.test(eyebrow) || /KI-Test wird erstellt/i.test(title) || /Test mit Remy erstellen/i.test(title);
 }
 
 function polishGuideCopy() {
@@ -157,7 +157,7 @@ function polishGuideCopy() {
 
   const title = card.querySelector("h2")?.textContent || "";
   const paragraph = card.querySelector("h2 + p");
-  if (paragraph && /Wähle\s+[„\"]Mit KI erstellen/i.test(title)) {
+  if (paragraph && /Wähle\s+[„\"]Test mit Remy erstellen/i.test(title)) {
     paragraph.textContent = "Ab hier übernimmt unser Elefant. Er hilft dir, aus deinen Vorgaben einen passenden Test zu erstellen.";
   }
   scheduleSpotlightSync();

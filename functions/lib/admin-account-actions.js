@@ -1,9 +1,10 @@
 "use strict";
 const { createHash, randomUUID } = require("node:crypto");
+const { FieldValue } = require("firebase-admin/firestore");
 const { HttpsError } = require("firebase-functions/v2/https");
 const active = p => p?.role === "admin" && (!p.status || p.status === "active") && !p.accountDeletionId;
-const deletesAccount = action => ["delete", "recover-delete"].includes(action);
-const storedRow = row => ({id:row.id,fingerprint:row.fingerprint,identityFingerprint:row.identityFingerprint,code:row.code,...(row.recoverySourceId?{recoverySourceId:row.recoverySourceId,originalInitiatorId:row.originalInitiatorId,deletionIdentityFingerprint:row.deletionIdentityFingerprint}: {})});
+const deletesAccount = action => ["delete", "end-tests-delete", "recover-delete"].includes(action);
+const storedRow = row => ({id:row.id,fingerprint:row.fingerprint,identityFingerprint:row.identityFingerprint,code:row.code,testsToEnd:(row.testsToEnd||[]).map(({id,fingerprint})=>({id,fingerprint})),...(row.recoverySourceId?{recoverySourceId:row.recoverySourceId,originalInitiatorId:row.originalInitiatorId,deletionIdentityFingerprint:row.deletionIdentityFingerprint}: {})});
 const fail = (code, message) => { throw new HttpsError(code, message); };
 function validateAction(data = {}) {
   const { action, value, targets } = data;
@@ -16,9 +17,9 @@ function planAction(target, admins, action, caller, targets = [target.id]) {
   if (target.id === caller) return {code:"self-protected"};
   if (target.accountDeletionId) return {code:"deletion-pending"};
   if (action.action === "role" && action.value === "admin" && target.isTestAccount === true) return {code:"test-account"};
-  if (target.isTestAccountArchived === true && !["archive", "delete"].includes(action.action)) return {code:"archived-account"};
+  if (target.isTestAccountArchived === true && !["archive", "delete", "end-tests-delete"].includes(action.action)) return {code:"archived-account"};
   if (action.action === "archive" && (target.isTestAccount !== true || target.role === "admin")) return {code:"test-account"};
-  const removesAdmin = action.action === "delete" || (action.action === "role" && action.value !== "admin") || (action.action === "status" && action.value !== "active");
+  const removesAdmin = deletesAccount(action.action) || (action.action === "role" && action.value !== "admin") || (action.action === "status" && action.value !== "active");
   if (active(target) && removesAdmin && !admins.some(p => active(p) && !targets.includes(p.id))) return {code:"last-admin"};
   return {code:"allowed"};
 }
@@ -28,6 +29,9 @@ function fingerprint(p = {}) {
 }
 function identityFingerprint(id, identity) {
   return createHash("sha256").update(JSON.stringify([id,identity?.email||"",identity?.metadata?.creationTime||"",!!identity])).digest("hex");
+}
+function testFingerprint(id, q) {
+  return createHash("sha256").update(JSON.stringify([id,q.ownerId,q.title||"",q.published===true,q.ended===true,q.sessionState||"",q.sessionRunId||"",q.publishedAt||null,q.reopenedAt||null,q.endedAt||null])).digest("hex");
 }
 function createAccountActions({ db, auth, now = () => Date.now() }) {
   const lock = db.doc("accountActionControl/revision");
@@ -50,7 +54,7 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       const snap = await tx.get(db.doc(`users/${id}`));
       const p = snap.exists ? {...snap.data(),id} : {id,missing:true};
       let code = p.missing ? "missing" : planAction(p,adminRows.docs.map(s=>({...s.data(),id:s.id})),spec,uid,spec.targets).code;
-      let recoverySourceId, originalInitiatorId, deletionIdentityFingerprint, sourceBinding = "";
+      let recoverySourceId, originalInitiatorId, deletionIdentityFingerprint, sourceBinding = "", testsToEnd = [];
       if (spec.action === "recover-delete") {
         const deletion = await tx.get(db.doc(`accountDeletions/${id}`));
         recoverySourceId = deletion.data()?.operationId;
@@ -71,7 +75,11 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       if (deletesAccount(spec.action) && code === "allowed") {
         const quizzes = await tx.get(db.collection("quizzes").where("ownerId", "==", id).limit(501));
         if (quizzes.size > 500) code = "scope-too-large";
-        else if (quizzes.docs.some(s=>{const q=s.data();return q.published===true && q.ended!==true && q.isDeleted!==true;})) code = "active-exam";
+        else {
+          testsToEnd = quizzes.docs.filter(s=>s.data().published===true).map(s=>({id:s.id,title:s.data().title||s.id,fingerprint:testFingerprint(s.id,s.data()),alreadyEnded:s.data().ended===true})).sort((a,b)=>a.id.localeCompare(b.id));
+          // Recovery never silently expands a previously confirmed deletion to new tests.
+          if (spec.action !== "end-tests-delete" && testsToEnd.length) code = "active-exam";
+        }
       }
       if (deletesAccount(spec.action) && code === "allowed") {
         const jobs = await tx.get(db.collection("aiJobs").where("ownerId", "==", id).limit(101));
@@ -83,7 +91,11 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       const actualIdentityFingerprint = identityFingerprint(id,identity);
       if (spec.action === "recover-delete" && code === "allowed" && identity && actualIdentityFingerprint !== deletionIdentityFingerprint) code = "identity-changed";
       const boundFingerprint = sourceBinding ? createHash("sha256").update(fingerprint(p)+sourceBinding).digest("hex") : fingerprint(p);
-      rows.push({id,label:p.displayName||identity?.displayName||p.email||id,email:identity?.email||p.email||"",fingerprint:boundFingerprint,identityFingerprint:actualIdentityFingerprint,code,profileExists:snap.exists,...(recoverySourceId&&originalInitiatorId?{recoverySourceId,originalInitiatorId,deletionIdentityFingerprint}: {})});
+      rows.push({id,label:p.displayName||identity?.displayName||p.email||id,email:identity?.email||p.email||"",fingerprint:boundFingerprint,identityFingerprint:actualIdentityFingerprint,code,testsToEnd,profileExists:snap.exists,...(recoverySourceId&&originalInitiatorId?{recoverySourceId,originalInitiatorId,deletionIdentityFingerprint}: {})});
+    }
+    // Bound the entire atomic reservation, including all targets, below Firestore's write limit.
+    if (rows.filter(r=>r.code==="allowed").reduce((count,r)=>count+r.testsToEnd.length,0)>100) {
+      for (const row of rows) if (row.code==="allowed" && deletesAccount(spec.action)) row.code="scope-too-large";
     }
     return {rows,revision:Number(control.data()?.revision||0),recoverySources};
   }
@@ -95,7 +107,7 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       tx.create(db.doc(`accountActions/${operationId}`),{uid,spec,rows:rows.map(storedRow),expiresAt,status:"preview",createdAt:now()});
       return rows;
     });
-    return {operationId,expiresAt,action:spec.action,value:spec.value??null,targets:rows.map(({id,label,email,code})=>({id,label,email,code})),extent:"Anmeldung, Profil, private Einstellungen, Cocos Kontogedächtnis/Bildsuchindex, private KI-Aufträge und persönliche Hinweis-Lesemarkierungen werden gelöscht. Tests, Abgaben und Ergebnisse sowie gemeinsame/fremde Daten bleiben erhalten."};
+    return {operationId,expiresAt,action:spec.action,value:spec.value??null,targets:rows.map(({id,label,email,code,testsToEnd})=>({id,label,email,code,testsToEnd:testsToEnd.map(({id,title})=>({id,title}))})),extent:"Anmeldung, Profil, private Einstellungen, Cocos Kontogedächtnis/Bildsuchindex, private KI-Aufträge und persönliche Hinweis-Lesemarkierungen werden gelöscht. Veröffentlichte Tests dieser Konten werden zuerst beendet und unveröffentlicht; die bestehende kurze Abgabe-Nachfrist bleibt erhalten. Tests, Abgaben und Ergebnisse sowie gemeinsame/fremde Daten bleiben erhalten."};
   }
   async function execute(request) {
     const uid = await requireCaller(request), operationId = request.data?.operationId;
@@ -113,11 +125,16 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       if (saved.status === "preview") {
         if (saved.expiresAt < now()) fail("failed-precondition", "Bestätigung ist abgelaufen. Bitte erneut auswählen.");
         const {rows,revision,recoverySources} = await read(tx,uid,saved.spec);
-        if (rows.some((r,i)=>r.fingerprint!==saved.rows[i].fingerprint || r.identityFingerprint!==saved.rows[i].identityFingerprint || r.code!==saved.rows[i].code)) fail("failed-precondition", "Konten wurden inzwischen geändert. Bitte erneut bestätigen.");
+        if (rows.some((r,i)=>r.fingerprint!==saved.rows[i].fingerprint || r.identityFingerprint!==saved.rows[i].identityFingerprint || r.code!==saved.rows[i].code || JSON.stringify((r.testsToEnd||[]).map(({id,fingerprint})=>({id,fingerprint})))!==JSON.stringify(saved.rows[i].testsToEnd||[]))) fail("failed-precondition", "Konten wurden inzwischen geändert. Bitte erneut bestätigen.");
         const outcomes = rows.map(({id,code})=>({id,code:code==="allowed"?(deletesAccount(saved.spec.action)?"pending":"complete"):code}));
         for(const row of rows.filter(r=>r.code==="allowed")) {
           const ref = db.doc(`users/${row.id}`), s=saved.spec;
           const patch = deletesAccount(s.action) ? {status:"deleting",accountDeletionId:operationId} : s.action==="role" ? {role:s.value} : s.action==="status" ? {status:s.value} : {isTestAccountArchived:s.value,status:s.value?"suspended":"active",testAccountArchivedAt:s.value?now():null,testAccountArchivedBy:s.value?uid:null};
+          // Test closure and the account tombstone commit atomically before any Auth/private deletion.
+          for (const test of row.testsToEnd) tx.update(db.doc(`quizzes/${test.id}`), {
+            published:false,ended:true,sessionState:"ended",updatedAt:FieldValue.serverTimestamp(),
+            ...(test.alreadyEnded ? {} : {endedAt:FieldValue.serverTimestamp()})
+          });
           if(row.profileExists) tx.update(ref,patch);
           if(deletesAccount(s.action)) tx.set(db.doc(`accountDeletions/${row.id}`),{operationId,at:now()});
         }
@@ -148,6 +165,8 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
       try {
         // A transfer invalidates the old worker before another target can be touched.
         await db.runTransaction(async tx=>{
+          const published=await tx.get(db.collection("quizzes").where("ownerId","==",outcome.id).limit(501));
+          if(published.size>500 || published.docs.some(s=>s.data().published===true)) throw Object.assign(new Error("tests-not-ended"),{code:"tests-not-ended"});
           const latest=(await tx.get(opRef)).data(), tombstone=await tx.get(db.doc(`accountDeletions/${outcome.id}`)), profile=await tx.get(db.doc(`users/${outcome.id}`));
           if(latest?.leaseId!==leaseId || latest.leaseUntil<=now() || tombstone.data()?.operationId!==operationId || (profile.exists && profile.data().accountDeletionId!==operationId)) fail("aborted","Die Löschung wurde inzwischen übernommen. Bitte neu prüfen.");
         });
@@ -166,7 +185,7 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
         }
         await db.doc(`users/${outcome.id}`).delete();
         outcome.code="complete";delete outcome.reason;
-      } catch (error) {if(error.code==="aborted")throw error;outcome.code="failed";if(error.code==="identity-changed")outcome.reason="identity-changed";}
+      } catch (error) {if(error.code==="aborted")throw error;outcome.code="failed";if(["identity-changed","tests-not-ended"].includes(error.code))outcome.reason=error.code;}
       await db.runTransaction(async tx=>{
         const latest=(await tx.get(opRef)).data();
         if(latest.leaseId!==leaseId)fail("aborted","Eine Wiederholung hat die Aktion übernommen.");

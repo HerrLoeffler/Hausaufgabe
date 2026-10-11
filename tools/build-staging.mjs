@@ -17,7 +17,8 @@ const files = [
   'ai-json-tools.js', 'ai-client.js', 'quick-remy-bridge.js', 'auth-profile.js', 'ui-enhancements.js', 'visual-enhancements.js', 'mobile-viewport-polish.js', 'first-guide-responsive.js', 'crew-tour-responsive.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'crew-telemetry-client.mjs', 'crew-statistics-admin.mjs', 'admin-account-actions.mjs', 'admin-test-account-bootstrap.mjs', 'admin-test-account-controls.mjs', 'crew-assistant-ui.js', 'crew-assistant-core.js', 'crew-assistant-core.mjs', 'emmi-whole-test-revision.mjs', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'tutorial-ordering-guard.js', 'gate-e-lab.js', 'assessment-receipt-check.mjs', 'gradecrew-brand.js',
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs', 'secure-assessment-teacher-polish.js',
-  'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js'
+  'secure-student.html', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js',
+  'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
 files.push(
   'gradecrew-workspace-upgrade.mjs',
@@ -27,7 +28,8 @@ files.push(
   'gradecrew-hero-demo-flow.mjs',
   'gradecrew-hero-scene.css',
   'assets/gradecrew/crew-classroom-v3.webp', 'assets/gradecrew/crew-classroom-wide-v4.png',
-  'assets/gradecrew/cuddly-hedgehog.webp'
+  'assets/gradecrew/remy-test-creation-typewriter.png', 'assets/gradecrew/remy-test-input-microphone.png',
+  'assets/gradecrew/cuddly-hedgehog.webp', 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png'
 );
 for (const name of await fs.readdir(path.join(root, 'assets/gradecrew'))) {
   if (name.endsWith('.svg')) files.push(`assets/gradecrew/${name}`);
