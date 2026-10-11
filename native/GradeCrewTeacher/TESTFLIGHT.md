@@ -10,6 +10,15 @@ Der bestehende Upload archiviert ohne Development-Signing und signiert erst beim
 
 Standard-Web-URL: `https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/`. Normales Staging ist Fallback. Web-Hosting und native App sind zwei getrennte Updates; ein neuer App-Build veröffentlicht keine Web-Funktionen.
 
+## Physischer Gerätetest für 0.1.17
+
+1. Version/Build in TestFlight prüfen. Beim Wiederherstellen der Anmeldung müssen alle vier Tiere um das Logo erscheinen und sich kurz einordnen; eine schnelle Anmeldung darf sofort zum Menü wechseln.
+2. Im Menü müssen Coco, Remy, Emmi und Wilma rund um das Logo sichtbar sein. „GradeCrew öffnen“ zeigt das GradeCrew-Zeichen statt vier Vierecken.
+3. In den iOS-Bedienungshilfen „Bewegung reduzieren“ aktivieren: die Crew bleibt vollständig sichtbar, ohne Einlaufanimation. Große Schrift, kleineres iPhone und iPad ebenfalls prüfen.
+4. Remy zweimal aufnehmen/absenden und „Remy → Start → GradeCrew öffnen“ prüfen. Die funktionierende Sprachaufnahme, Formularübernahme und Rückkehr zu „Meine Tests“ bleiben unverändert.
+
+Die Geräte-Rückmeldung vom 11.10.2026 bestätigt zwei erfolgreiche Remy-Durchläufe unter 0.1.16 (Build 33). Das neue Branding ist eine eigene Geräteabnahme. Ein grüner Upload bestätigt nicht allein die Installationsbereitschaft in TestFlight.
+
 ## Physischer Gerätetest für 0.1.16
 
 1. Version und Build in TestFlight prüfen. Upload, Apple-Verarbeitung und Installation sind getrennte Zustände.

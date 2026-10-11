@@ -4,11 +4,11 @@ Die SwiftUI-/WKWebView-App nutzt die vorhandene GradeCrew-Webplattform mit persi
 
 ## Stand und lokale Entwicklung
 
-Kanonischer App-Branch: `feature/shared-gradecrew-design-system`. 0.1.15 wurde auf TestFlight hochgeladen; die Geräte-Rückmeldung bestätigt Übermittlung, Formular und die ergänzten Material-/Audiofunktionen, meldet aber Textverlust bei Pausen und einen leeren Arbeitsbereich nach dem Verlassen von Remy.
+Kanonischer App-Branch: feature/shared-gradecrew-design-system. **0.1.16 (Build 33)** wurde auf TestFlight hochgeladen. Die Rückmeldung vom 11.10.2026 bestätigt zwei schnelle, erfolgreiche Remy-Aufnahmen und Testübermittlungen auf dem iPhone. Dieser Aufnahme- und Formularablauf bleibt in 0.1.17 unverändert.
 
-**0.1.16** behebt den Aufnahmeablauf: früher Text beim ersten Start wird angenommen, leere Abschlüsse behalten gehörte Wörter, Sprechabschnitte werden anhand ihrer Audiozeiten gesammelt und Korrekturen ersetzt. Bei fehlenden Zeiten werden disjunkte Angaben erhalten und kumulative Hypothesen zusammengeführt. Das Mikrofon bleibt über Erkennungsaufgaben hinweg aktiv; zweimalige automatische Fehlererholung ist begrenzt. Alte Rückmeldungen können neue Aufnahmen nicht beenden. Unter Remy bleibt der Text auch während der Formularübernahme sichtbar. „GradeCrew öffnen“ stellt die normale Ansicht wieder her und öffnet „Meine Tests“; das alte Staging-Prüfwerkzeug ist in der App ausgeblendet.
+**0.1.17** ergänzt das native Markenbild: Coco, Remy, Emmi und Wilma umgeben das GradeCrew-Logo auf dem Auswahlbildschirm und beim Wiederherstellen der Anmeldung. Beim Laden formiert sich die Crew einmal in weniger als 0,4 Sekunden; die Animation verzögert weder Anmeldung noch Navigation und entfällt bei „Bewegung reduzieren“. „GradeCrew öffnen“ trägt das GradeCrew-Zeichen. Alle Tierbilder kommen aus dem gemeinsamen Asset-Manifest; keine neue Kopie oder generierte Figur.
 
-Der native Remy-Einstieg pflegt das Testformular; Anmeldung und bestehende GradeCrew-Dienste bleiben gemeinsam genutzt. GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und iPhone-Abnahme werden separat dokumentiert. Die aktuelle Geräteprüfung steht in [TESTFLIGHT.md](TESTFLIGHT.md).
+GitHub-CI, TestFlight-Upload, Apple-Verarbeitung und Geräteabnahme werden separat dokumentiert. Die aktuelle Geräteprüfung steht in [TESTFLIGHT.md](TESTFLIGHT.md).
 
 ```bash
 python3 native/GradeCrewTeacher/prepare_testflight_assets.py

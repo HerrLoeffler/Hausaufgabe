@@ -176,12 +176,7 @@ struct TeacherRootView: View {
         ScrollView {
             VStack(spacing: GradeCrewDesignTokens.Spacing.xxl) {
                 VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                    Image(GradeCrewAssets.NativeImage.brandIcon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 260, maxHeight: 72)
-                        .clipShape(Circle())
-                        .accessibilityLabel("GradeCrew")
+                    GradeCrewBrandSignature()
                     Text("Was möchtest du tun?")
                         .font(.system(size: GradeCrewDesignTokens.Typography.pageTitle, weight: .semibold, design: .rounded))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
@@ -201,7 +196,8 @@ struct TeacherRootView: View {
                     actionCard(
                         title: "GradeCrew öffnen",
                         subtitle: "Tests ansehen und bearbeiten",
-                        symbol: "rectangle.grid.2x2.fill",
+                        symbol: "graduationcap.fill",
+                        illustration: GradeCrewAssets.NativeImage.brandIcon,
                         tint: GradeCrewDesignTokens.Colors.primary,
                         action: openWorkspace
                     )
@@ -228,12 +224,7 @@ struct TeacherRootView: View {
 
     private var authRestoringScreen: some View {
         VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-            Image(GradeCrewAssets.NativeImage.brandIcon)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 260, maxHeight: 72)
-                .clipShape(Circle())
-                .accessibilityLabel("GradeCrew")
+            GradeCrewBrandSignature(animateEntrance: true)
             ProgressView("Anmeldung wird wiederhergestellt …")
                 .tint(GradeCrewDesignTokens.Colors.primary)
                 .foregroundStyle(GradeCrewDesignTokens.Colors.muted)

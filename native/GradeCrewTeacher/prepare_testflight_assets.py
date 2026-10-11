@@ -26,6 +26,8 @@ PREVIEW_SIZE = SIZE - (2 * INSET)
 NATIVE_ILLUSTRATIONS = {
     "GradeCrewCocoWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["coco"]["welcome"],
     "GradeCrewRemyWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["welcome"],
+    "GradeCrewEmmiWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["emmi"]["welcome"],
+    "GradeCrewWilmaWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["wilma"]["welcome"],
     "GradeCrewRemyMicrophone": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["microphone"],
     "GradeCrewBrandIcon": BRAND_ICON,
 }
@@ -221,7 +223,7 @@ def render_native_illustrations() -> None:
             "images": [{"filename": image_path.name, "idiom": "universal"}],
             "info": {"author": "xcode", "version": 1}
         }, indent=2) + "\n")
-    print("Prepared native GradeCrew artwork from canonical Coco/Remy sources and brand icon.")
+    print("Prepared native GradeCrew artwork from canonical Coco/Remy/Emmi/Wilma sources and brand icon.")
 
 
 render_icon()

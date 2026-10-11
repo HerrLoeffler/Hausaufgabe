@@ -39,6 +39,8 @@ enum GradeCrewAssets {
     enum NativeImage {
         static let cocoWelcome = "GradeCrewCocoWelcome"
         static let remyWelcome = "GradeCrewRemyWelcome"
+        static let emmiWelcome = "GradeCrewEmmiWelcome"
+        static let wilmaWelcome = "GradeCrewWilmaWelcome"
         static let remyMicrophone = "GradeCrewRemyMicrophone"
         static let brandIcon = "GradeCrewBrandIcon"
     }
