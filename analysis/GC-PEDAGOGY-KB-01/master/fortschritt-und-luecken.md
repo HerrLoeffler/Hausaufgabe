@@ -86,3 +86,7 @@ Jedes Dokument erhält mindestens: Land; amtliche Zuständigkeit; Zielbereich/Or
 ## Geltungsgrenze
 
 Dieser Kompass ist eine Arbeitsübersicht, keine Rechtsberatung, keine amtliche Bestätigung curricularer Vollständigkeit und keine Aussage über die Qualität eines einzelnen Unterrichtsmediums. Schulinterne Curricula, sonderpädagogische Förderschwerpunkte, berufliche Bildung sowie besondere Schul-/Sprachprofile bleiben als Folgeumfang gesondert zu kennzeichnen.
+
+### Aktueller Fortsetzungsschritt Baden-Württemberg (11.10.2026)
+
+Der Gymnasial-Fachplanindex ist jetzt als eigener Bericht mit Fassungsgruppen übernommen; Gymnasium Sek I und gymnasiale Oberstufe G8/G9 stehen separat im Schulwegregister. Die amtliche G9-Information belegt: ab SJ 2025/26 Regelform, zunächst Klassen 5 und 6 aufwachsend, G8-Züge bleiben möglich. Die Inkrafttretensübersicht belegt gestaffelte Kohorten für zahlreiche V3.0-Fassungen (2026/27 Klasse 5–7), Profilfremdsprachen (2027/28 Klasse 8) und spät beginnende Wahlfächer (teils 2030/31 Klasse 11). Detailbericht: `states/baden-wuerttemberg-gymnasium-inventar-2026-10-11.md`. Das Register enthält 133 Zeilen, davon 11 Schulwege, 133 Dokument-/Indexdatensätze und 55 Zuordnungen; Dubletten der jeweiligen Schlüssel: 0. Diese Gesamtsumme umfasst vorhandene Altbestände und Portalindexzeilen; sie beweist keine Vollständigkeit. Als nächstes folgen die einzelnen Fach-/Fassungszeilen des BW-Gymnasiums, die restlichen Sek-I-Zeilen und offene Grundschulübergänge. Kein BW-Fach ist damit inhaltlich vollständig ausgewertet.
