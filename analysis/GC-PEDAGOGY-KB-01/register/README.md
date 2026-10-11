@@ -21,6 +21,7 @@ Alle Dateien sind UTF-8-TSV mit Kopfzeile. Ein Feld enthält weder Tabulator noc
 1. Zuerst `schulwege.tsv` und `dokumente.tsv`, dann `zuordnungen.tsv`. Eine Fachauswertung ohne konkrete Geltungszeile zählt nicht als abgeschlossen.
 2. `dokumentart` unterscheidet mindestens `fachplan`, `allgemeiner_teil`, `rahmenplan`, `bildungsstandard`, `verordnung`, `handreichung`, `beispielaufgabe`, `portalindex` und `entwurf`. Nur verbindliche, für den Zielweg geltende Quellen zählen zum Abschlussnenner; weitere Quellen bleiben sichtbar.
 3. `quelle_status` und `auswertungs_status` sind getrennt: Ein abrufbarer Link belegt keine Lektüre. Zulässige Auswertungswerte: `entdeckt`, `metadaten_geprueft`, `inhalt_teilweise`, `inhalt_ausgewertet`, `zweitgeprueft`, `zugriff_blockiert`, `version_unklar`, `nicht_anwendbar`.
+   `quelle_status` beginnt mit `amtlich_gelistet` und wird erst nach Volltext- und Versionsprüfung auf `volltext_geprueft` gesetzt. Technische Zugangshürden stehen im separaten Feld `zugriff`.
 4. Eine blockierte Quelle erhält `zugriff_blockiert` plus technischen oder rechtlichen Grund und eine nächste Handlung. Ein Entwurf ersetzt keine geltende Fassung. Bei aufwachsender Einführung steht die betroffene Kohorte in `zuordnungen.tsv`.
 5. `inhalt_ausgewertet` setzt eine tatsächlich geprüfte Originalquelle voraus. Bei amtlich indexierten Volltextabschnitten ohne PDF-Download wird die Methode im Fachbericht genannt. `zweitgeprueft` setzt einen positiven Eintrag in `prueflog.tsv` voraus.
 6. In `kompetenzen.tsv` werden Anforderungen in eigenen Worten und mit kurzer Fundstelle erfasst. Komplette Lehrplanseiten, Beispielaufgaben oder Lösungen werden nicht kopiert.
@@ -34,4 +35,4 @@ Die kleinste Abschlussprüfung ist **Land × amtlicher Schulweg × Fach/Lernbere
 
 ## Bereits vorliegender Arbeitsstand
 
-Die bisherigen Länderberichte unter `../states/` und das Fachpaket `../subjects/mathematik-grundschule.md` sind Recherchebelege. Ihre Daten werden schrittweise in das Register übertragen und dabei gegen die aktuellen amtlichen Quellen geprüft. Eine leere oder unvollständige TSV-Datei ist kein Hinweis auf fehlende Landeslehrpläne, sondern ein noch offener Übertragungsstand.
+Die bisherigen Länderberichte unter `../states/` und das Fachpaket `../subjects/mathematik-grundschule.md` sind Recherchebelege. Ihre Daten werden schrittweise in das Register übertragen und dabei gegen die aktuellen amtlichen Quellen geprüft. Der Übertrag beginnt mit den zwei offenen Mathematik-Grundschulzugängen Saarland und Thüringen. Ein unvollständiges TSV-Register ist kein Hinweis auf fehlende Landeslehrpläne, sondern ein noch offener Übertragungsstand.
