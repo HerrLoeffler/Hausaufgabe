@@ -207,17 +207,18 @@ struct QuickRemyView: View {
         }
         .padding(14)
         .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 18))
-        .onChange(of: draft.subject) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.grade) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.schoolType) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.region) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.topic) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.count) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.points) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.difficulty) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.imageQuestionCount) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: draft.wishes) { _ in Task { await syncDraftToWebForm() } }
-        .onChange(of: allowedTypes) { _ in Task { await syncDraftToWebForm() } }
+        .onChange(of: draftSyncKey) { _ in scheduleDraftSync() }
+    }
+
+    private var draftSyncKey: String {
+        let fields = [draft.subject, draft.grade, draft.schoolType, draft.region, draft.topic,
+                      draft.count, draft.points, draft.difficulty, draft.imageQuestionCount,
+                      draft.wishes, allowedTypes.sorted().joined(separator: ",")]
+        return fields.joined(separator: "\u{1F}")
+    }
+
+    private func scheduleDraftSync() {
+        Task { await syncDraftToWebForm() }
     }
 
     private var wishesEditor: some View {
