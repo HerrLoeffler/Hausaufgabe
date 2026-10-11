@@ -23,10 +23,27 @@ function normalizeText(value, field, maximum) {
   return text;
 }
 
+function normalizeKnownFields(value = {}) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw invalid("Remys bisherige Testangaben sind ungültig.");
+  const known = {};
+  for (const [field, maximum] of [["subject", 120], ["grade", 60], ["topic", 500]]) {
+    const item = value[field];
+    if (item === undefined || item === null) continue;
+    if (typeof item !== "string" || item.trim().length > maximum) throw invalid(`Remys Angabe für ${field} ist ungültig.`);
+    if (item.trim()) known[field] = item.trim();
+  }
+  if (value.count !== undefined && value.count !== null) {
+    if (!Number.isInteger(value.count) || value.count < 1 || value.count > 100) throw invalid("Remys Aufgabenzahl ist ungültig.");
+    known.count = value.count;
+  }
+  return known;
+}
+
 function normalizePrepareRequest(data = {}) {
   return {
     requestId: normalizeRequestId(data.requestId),
-    conversationText: normalizeText(data.conversationText, "Sprachtext", MAX_CONVERSATION_CHARS)
+    conversationText: normalizeText(data.conversationText, "Sprachtext", MAX_CONVERSATION_CHARS),
+    knownFields: normalizeKnownFields(data.knownFields)
   };
 }
 
@@ -40,9 +57,25 @@ function normalizePreparedRequest(value = {}) {
   return { subject, grade, topic, count };
 }
 
+function normalizeDraft(value = {}) {
+  if (value !== undefined && value !== null && (typeof value !== "object" || Array.isArray(value))) throw invalid("Remys Entwurf ist ungültig.");
+  const source = value || {};
+  const draft = {};
+  for (const [field, maximum] of [["subject", 120], ["grade", 60], ["topic", 500]]) {
+    const item = source[field];
+    if (item !== undefined && item !== null && (typeof item !== "string" || item.trim().length > maximum)) throw invalid(`Remys Entwurf für ${field} ist ungültig.`);
+    draft[field] = typeof item === "string" ? item.trim() : "";
+  }
+  const count = source.count;
+  if (count !== undefined && count !== null && (!Number.isInteger(count) || count < 1 || count > 100)) throw invalid("Remys Entwurf für Aufgaben ist ungültig.");
+  draft.count = count ?? null;
+  return draft;
+}
+
 function normalizePrepareResult(value = {}) {
   if (value.status === "ready") {
-    return { status: "ready", preparedRequest: normalizePreparedRequest(value.preparedRequest) };
+    const preparedRequest = normalizePreparedRequest(value.preparedRequest);
+    return { status: "ready", preparedRequest, draft: preparedRequest };
   }
   if (value.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > REQUIRED_FIELDS.size) {
     throw invalid("Ungültige Remy-Rückfrage.");
@@ -54,20 +87,23 @@ function normalizePrepareResult(value = {}) {
   return {
     status: "needsInfo",
     missingFields,
-    question: normalizeText(value.question, "Rückfrage", MAX_QUESTION_CHARS)
+    question: normalizeText(value.question, "Rückfrage", MAX_QUESTION_CHARS),
+    draft: normalizeDraft(value.draft)
   };
 }
 
-function buildPrepareResult(extracted = {}, defaults = {}) {
-  const count = extracted.count === null || extracted.count === undefined ? defaults.count : extracted.count;
+function buildPrepareResult(extracted = {}, defaults = {}, knownFields = {}) {
+  const count = extracted.count === null || extracted.count === undefined
+    ? (knownFields.count ?? defaults.count)
+    : extracted.count;
   if (count !== undefined && count !== null && (!Number.isInteger(count) || count < 1 || count > 100)) {
     throw invalid("Die Aufgabenzahl muss zwischen 1 und 100 liegen.");
   }
   const preparedRequest = {
-    subject: typeof extracted.subject === "string" && extracted.subject.trim() ? extracted.subject.trim() : defaults.subject,
-    grade: typeof extracted.grade === "string" && extracted.grade.trim() ? extracted.grade.trim() : defaults.grade,
-    topic: typeof extracted.topic === "string" && extracted.topic.trim() ? extracted.topic.trim() : "",
-    count
+    subject: typeof extracted.subject === "string" && extracted.subject.trim() ? extracted.subject.trim() : (knownFields.subject || defaults.subject || ""),
+    grade: typeof extracted.grade === "string" && extracted.grade.trim() ? extracted.grade.trim() : (knownFields.grade || defaults.grade || ""),
+    topic: typeof extracted.topic === "string" && extracted.topic.trim() ? extracted.topic.trim() : (knownFields.topic || ""),
+    count: count ?? null
   };
   const missingFields = [...REQUIRED_FIELDS].filter(field => field === "count"
     ? !Number.isInteger(preparedRequest.count) : !preparedRequest[field]);
@@ -78,7 +114,7 @@ function buildPrepareResult(extracted = {}, defaults = {}) {
     : missingFields.length === 1 ? `${parts[0][0].toLocaleUpperCase("de-DE")}${parts[0].slice(1)}?`
       : `${parts.slice(0, -1).join(", ")} und ${parts.at(-1)}`;
   const completeQuestion = missingFields.length === 1 ? question : `${question[0].toLocaleUpperCase("de-DE")}${question.slice(1)} soll ich verwenden?`;
-  return normalizePrepareResult({ status: "needsInfo", missingFields, question: completeQuestion });
+  return normalizePrepareResult({ status: "needsInfo", missingFields, question: completeQuestion, draft: preparedRequest });
 }
 
 function normalizeSubmitRequest(data = {}) {
@@ -95,6 +131,7 @@ function normalizeRecoveryRequest(data = {}) {
 module.exports = {
   MAX_CONVERSATION_CHARS,
   normalizePrepareRequest,
+  normalizeKnownFields,
   normalizePrepareResult,
   buildPrepareResult,
   normalizeSubmitRequest,

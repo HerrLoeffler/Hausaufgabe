@@ -14,12 +14,34 @@ function preparedRequest(value) {
   return { subject: value.subject.trim(), grade: value.grade.trim(), topic: value.topic.trim(), count: value.count };
 }
 
+function partialDraft(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Remys Entwurf ist ungültig.");
+  const result = {};
+  for (const [field, maximum] of [["subject", 120], ["grade", 60], ["topic", 500]]) {
+    const item = value[field];
+    if (item !== undefined && item !== null && (typeof item !== "string" || item.trim().length > maximum)) throw new Error(`Remys Entwurf für ${field} ist ungültig.`);
+    if (item !== undefined && item !== null && item.trim()) result[field] = item.trim();
+  }
+  if (value.count !== undefined && value.count !== null) {
+    if (!Number.isInteger(value.count) || value.count < 1 || value.count > 100) throw new Error("Remys Aufgabenzahl ist ungültig.");
+    result.count = value.count;
+  }
+  return result;
+}
+
+function knownFields(value) {
+  return partialDraft(value || {});
+}
+
 function validatePrepareResult(value) {
-  if (value?.status === "ready") return { status: "ready", preparedRequest: preparedRequest(value.preparedRequest) };
+  if (value?.status === "ready") {
+    const request = preparedRequest(value.preparedRequest);
+    return { status: "ready", preparedRequest: request, draft: request };
+  }
   if (value?.status !== "needsInfo" || !Array.isArray(value.missingFields) || value.missingFields.length < 1 || value.missingFields.length > REQUIRED_FIELDS.size ||
       new Set(value.missingFields).size !== value.missingFields.length || value.missingFields.some(field => !REQUIRED_FIELDS.has(field)) ||
       typeof value.question !== "string" || !value.question.trim() || value.question.length > 280) throw new Error("Remys Rückfrage ist ungültig.");
-  return { status: "needsInfo", missingFields: [...value.missingFields], question: value.question.trim() };
+  return { status: "needsInfo", missingFields: [...value.missingFields], question: value.question.trim(), draft: partialDraft(value.draft) };
 }
 
 function createQuickRemyBridge({ auth, api, storage }) {
@@ -61,9 +83,10 @@ function createQuickRemyBridge({ auth, api, storage }) {
       const session = captureSession();
       const id = requestId(payload?.requestId);
       if (typeof payload.conversationText !== "string" || !payload.conversationText.trim() || payload.conversationText.length > 2500) throw new Error("Der Testwunsch muss zwischen 1 und 2500 Zeichen lang sein.");
+      const fields = knownFields(payload.knownFields);
       return dedupe(`prepare:${session.uid}:${id}`, async () => {
         assertCurrent(session);
-        const result = await api.prepareQuickRemy({ requestId: id, conversationText: payload.conversationText.trim() });
+        const result = await api.prepareQuickRemy({ requestId: id, conversationText: payload.conversationText.trim(), knownFields: fields });
         assertCurrent(session);
         return validatePrepareResult(result);
       });
@@ -108,4 +131,4 @@ function createQuickRemyBridge({ auth, api, storage }) {
   });
 }
 
-export { createQuickRemyBridge, validatePrepareResult };
+export { createQuickRemyBridge, validatePrepareResult, knownFields };

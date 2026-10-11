@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(require.resolve('./quick-remy-bridge.js'), 'utf8')
-  .replace('export { createQuickRemyBridge, validatePrepareResult };', 'module.exports = { createQuickRemyBridge, validatePrepareResult };');
+  .replace('export { createQuickRemyBridge, validatePrepareResult, knownFields };', 'module.exports = { createQuickRemyBridge, validatePrepareResult, knownFields };');
 const context = vm.createContext({ module: { exports: {} }, Map, Promise, Set, Error, Object, Number, String, RegExp });
 vm.runInContext(source, context);
 const { createQuickRemyBridge } = context.module.exports;
@@ -13,14 +13,14 @@ test('authenticated web bridge calls the intended callables without forwarding U
   const bridge = createQuickRemyBridge({
     auth: { currentUser: { uid: 'private-user-id' } },
     api: {
-      prepareQuickRemy: async payload => { calls.push(['prepare', payload]); return { status: 'needsInfo', missingFields: ['topic'], question: 'Welches Thema?' }; },
+      prepareQuickRemy: async payload => { calls.push(['prepare', payload]); return { status: 'needsInfo', missingFields: ['count'], question: 'Wie viele Aufgaben?', draft: { subject: 'Englisch', grade: '4', topic: 'Farben und Schulsachen', count: null } }; },
       submitQuickRemy: async payload => { calls.push(['submit', payload]); return { status: 'accepted', jobId: 'job-1234567890' }; }
     }
   });
-  assert.equal(JSON.stringify(await bridge.prepare({ requestId: 'voice-1', conversationText: ' Mathe, Klasse 6 ' })), JSON.stringify({ status: 'needsInfo', missingFields: ['topic'], question: 'Welches Thema?' }));
+  assert.equal(JSON.stringify(await bridge.prepare({ requestId: 'voice-1', conversationText: ' Mathe, Klasse 6 ', knownFields: { subject: 'Englisch', grade: '4', topic: 'Farben und Schulsachen', count: null } })), JSON.stringify({ status: 'needsInfo', missingFields: ['count'], question: 'Wie viele Aufgaben?', draft: { subject: 'Englisch', grade: '4', topic: 'Farben und Schulsachen' } }));
   assert.equal(JSON.stringify(await bridge.submit({ requestId: 'voice-1', preparedRequest: { subject: 'Mathematik', grade: '6', topic: 'Brüche', count: 8, uid: 'spoofed' } })), JSON.stringify({ status: 'accepted', jobId: 'job-1234567890' }));
   assert.equal(JSON.stringify(calls), JSON.stringify([
-    ['prepare', { requestId: 'voice-1', conversationText: 'Mathe, Klasse 6' }],
+    ['prepare', { requestId: 'voice-1', conversationText: 'Mathe, Klasse 6', knownFields: { subject: 'Englisch', grade: '4', topic: 'Farben und Schulsachen' } }],
     ['submit', { requestId: 'voice-1', preparedRequest: { subject: 'Mathematik', grade: '6', topic: 'Brüche', count: 8 } }]
   ]));
 });
@@ -39,10 +39,10 @@ test('bridge rejects unauthenticated, malformed, oversized, and invalid success 
 
 test('bridge accepts a follow-up covering all four required fields', async () => {
   const bridge = createQuickRemyBridge({ auth: { currentUser: { uid: 'teacher-1' } }, api: {
-    prepareQuickRemy: async () => ({ status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?' })
+    prepareQuickRemy: async () => ({ status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?', draft: {} })
   } });
   assert.equal(JSON.stringify(await bridge.prepare({ requestId: 'voice-1', conversationText: 'Ich möchte einen Test erstellen.' })), JSON.stringify({
-    status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?'
+    status: 'needsInfo', missingFields: ['subject', 'grade', 'topic', 'count'], question: 'Welches Fach, welche Klasse, welches Thema und wie viele Aufgaben?', draft: {}
   }));
 });
 
