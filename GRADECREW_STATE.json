@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-11 20:29 UTC",
+  "observed_at": "2026-10-12 00:16 CEST (2026-10-11 22:16 UTC)",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "b1251b56200030190cb86c4b9b20c529a1bea05f",
+    "observed_integration_head": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -56,22 +56,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success38171691368_commit_b1251b56200030190cb86c4b9b20c529a1bea05f",
+      "combined_ci": "success38178714448_commit_d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success38171814566_receipt11713154403",
-      "staging_functions": "success38171814538_receipt11714014948",
+      "hosting_preview": "success38178844102_receipt11716733398",
+      "staging_functions": "success38178844003_attempt2_receipt11716807408",
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
-      "user_acceptance": "pending_for_b1251b56200030190cb86c4b9b20c529a1bea05f",
+      "user_acceptance": "pending; readonly dashboard_gc35_and_login_DOM_gc36_verified; physical_devices_and_identified_legacyq5q8_unverified",
       "production": "not_requested",
-      "staging_assessment_functions": "success38171814538_receipt11713429053",
+      "staging_assessment_functions": "success38178844003_receipt11716253528",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success38172084789_receipt11714780489"
+      "canonical_hosting": "success38179306263_receipt11716594995"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 139,
+    "preview_verified_files": 164,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin reviews gc34. Legacy listening tasks require explicit public instruction; no automatic private-text promotion. Physical-device acceptance remains separate; no Production approval.",
+    "next_action": "Martin tests gc36. Existing criterion-less legacy MC tasks need explicit public questions; safe procedural R/F fallback does not prove any unidentified recording is sufficient. No automatic transcript promotion/migration; physical-device/user acceptance separate.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -154,7 +154,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-coco-support-20261009-c3a5fdcf.json",
+    "canonical_request": "automation/canonical-staging-requests/gc36-login-copy-20261011.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -266,20 +266,56 @@
     },
     "feedback_followup_20261011": {
       "task_id": "GC-WEB-REPAIR-20261007",
-      "stage": "branch_only",
-      "last_verified_staging": "b1251b56200030190cb86c4b9b20c529a1bea05f",
+      "stage": "staging_deployed",
+      "last_verified_staging": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
       "scope": "all local product improvements, not only gc34 component subset",
-      "source_inventory_paths": 337,
-      "source_equal_paths": 208,
+      "source_inventory_paths": 377,
+      "source_equal_paths": 243,
       "authors": {
         "audio": "fix/audio-question-single-field-20261011",
         "coco": "fix/coco-staging-ui-cleanup-20261011",
-        "color": "release_owner_isolated_reconstruction_pending"
+        "color": "fix/local-color-contract-20261011"
       },
-      "independent_review": "pending",
-      "deployment": "not_performed",
-      "production": "not_authorized",
-      "handoff": "workstreams/feedback-release-20261011.md"
+      "independent_review": "combined_PASS0b2; fixtures_PASS386ab72",
+      "deployment": "canonical_hosting_AI_Assessment_verified",
+      "production": "unchanged",
+      "handoff": "workstreams/feedback-release-20261011.md",
+      "commit": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+      "version": "2.3.1-gc36",
+      "pr": 223,
+      "branch": "fix/staging-feedback-login-copy-20261011",
+      "inventory_sha256": "3a02d62eb7eb166f15b375086a78f269f808d0edbcb7b4ad383f94429ada4fce",
+      "candidate_ci": 38178571533,
+      "merge_ci": 38178714448,
+      "functions_run": 38178844003,
+      "ai_receipt": 11716807408,
+      "assessment_receipt": 11716253528,
+      "preview_run": 38178844102,
+      "preview_receipt": 11716733398,
+      "canonical_run": 38179306263,
+      "canonical_receipt": 11716594995,
+      "files": 164,
+      "rules_sha256": "195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807",
+      "local_alignment": "minimal_owned_hunks_verified; backups_preserved",
+      "asset_alignment": "29CrewPNG_stage_localHTTP_localSource_build_exact",
+      "login_copy_followup": {
+        "stage": "staging_deployed",
+        "pr": 223,
+        "commit": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+        "candidate_ci": 38178571533,
+        "merge_ci": 38178714448,
+        "version": "2.3.1-gc36",
+        "canonical_run": 38179306263,
+        "receipt": 11716594995
+      },
+      "user_acceptance": "pending; actualq5q8_not_identified; register/mobile_not_verified",
+      "included_prs": [
+        222,
+        223
+      ],
+      "browser_smoke": "gc35 authenticated dashboard/Coco/ET; gc36 existing Browser4 actual visible login neutral and both DOM hints neutral, no visible STAGING; separate fresh-browser locked limitation",
+      "service_source_equality": "functions_bc969318fabb33d06a3a0ec3194e732ca27bd6a3;assessment_c53d079766c47e55e431a714bc29be5bcefea67d;unchanged_from_d62",
+      "deploy_attempt_history": "AIattempt1 getCrewTelemetrySummary update request failed; bounded sameSHA attempt2 success; Assessment/Preview attempt1 success retained"
     }
   },
   "production": {

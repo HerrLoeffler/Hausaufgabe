@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -494,7 +494,7 @@
     {
       "id": "web-repair-20261007",
       "title": "Web UI / Remy / gated audio choices",
-      "primaryBranch": "feature/audio-switch-overflow-20261007",
+      "primaryBranch": "fix/staging-feedback-login-copy-20261011",
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
       "handoff": "workstreams/feedback-release-20261011.md",
@@ -503,7 +503,12 @@
         "feature/audio-web-repair-20261007",
         "fix/web-acceptance-regressions-20261007",
         "feature/audio-web-acceptance-20261007",
-        "fix/staging-feedback-20261011"
+        "fix/staging-feedback-20261011",
+        "fix/staging-feedback-followup-20261011",
+        "fix/staging-feedback-login-copy-20261011",
+        "fix/audio-question-single-field-20261011",
+        "fix/coco-staging-ui-cleanup-20261011",
+        "fix/local-color-contract-20261011"
       ]
     },
     {
