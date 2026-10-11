@@ -496,3 +496,10 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
 | GC-GAMES-PIPELINE-01 | Gemeinsamer Produktionsworkflow mit gleichwertigen 2D-/3D-Profilen; Kochspiel 2D, Lerninsel 3D | **Dokumentationsguide in main integriert** (PR #217, Merge `f2da067`; main zuletzt `a3eefe` geprüft); keine Spielimplementierung behauptet | [Verbindlicher Guide](docs/games/GREAT_GAMES_WORKFLOW.md) und [Spielbrief](docs/games/GAME_PROJECT_TEMPLATE.md). Unabhängiger Review PASS für Head `340fc84` (Receipt-SHA `1131d27f…`); Doku-CI auf PR-Head und Merge-Commit erfolgreich. PR153/185 unverändert. Keine Runtime-, Geräte-, Asset- oder Deployabnahme. Reale visuelle Assetqualität bleibt als bestehender Folgepunkt GC-IMG2THREEJS-01 / GC-GAMES-ESCAPE-VISUAL-01 offen. Nächster Schritt: Guide im nächsten separat autorisierten Spielauftrag anwenden. [Übergabe](workstreams/great-games-production-20261006.md) |
+
+
+## GC-PEDAGOGY-KB-01 Aufgabenpool-Anbindung
+
+| ID | Auftrag | Stand | Nächster Schritt |
+|---|---|---|---|
+| GC-PEDAGOGY-KB-01 | Passende geprüfte Aufgabenprofile nach Fach, Jahrgang und Schulart automatisch bei der Testgenerierung berücksichtigen | **Code und CI grün; noch nicht integriert/deployed.** [PR218](https://github.com/HerrLoeffler/Hausaufgabe/pull/218), Commit64d78d19fd48b50b440adf829c26de5e85c5dc4f. 53 eigene anonyme Startprofile, strikte Prüf-/Kontext-/Mediengates, unveränderter Erstprompt ohne Treffer. 248 lokale Functions-Tests unter Node22/24; GitHub Functions/Lint/BugOps-Regeln success38137059508. | [Übergabe](workstreams/pedagogical-pool-20261011.md). Qualifizierte Integration in bestehenden App-Branch und Staging-Aktivierung; Modellqualität/Nutzertest offen. Lokal archivierte Originale und größere, teils ungeprüfte Register bleiben separat; vollständige Medienanalyse aus PR214/208 offen. |

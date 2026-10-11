@@ -605,6 +605,15 @@
       "state": "integrated",
       "handoff": "workstreams/admin-account-actions-20261011.md",
       "relatedBranches": []
+    },
+    {
+      "id": "pedagogical-pool-20261011",
+      "title": "GC-PEDAGOGY-KB-01: geprüfter Aufgabenpool in Testgenerierung",
+      "primaryBranch": "feat/pedagogy-pool-20261011",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/pedagogical-pool-20261011.md",
+      "relatedBranches": []
     }
   ]
 }
