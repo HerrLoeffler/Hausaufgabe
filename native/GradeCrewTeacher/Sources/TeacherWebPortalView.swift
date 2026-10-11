@@ -2,6 +2,8 @@ import SwiftUI
 import WebKit
 import UIKit
 
+typealias GradeCrewQuickRemyCall = (_ action: String, _ payload: [String: Any], _ completion: @escaping (Result<[String: Any], Error>) -> Void) -> Void
+
 struct GradeCrewAppEnvironment {
     static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
     static var stagingBaseURL: URL { GradeCrewBetaEnvironment.baseURL(for: UserDefaults.standard.string(forKey: GradeCrewBetaEnvironment.preferenceKey) ?? "") }
@@ -88,6 +90,8 @@ struct GradeCrewWebView: UIViewRepresentable {
     var onShowDiagnostics: (() -> Void)? = nil
     var onLoadedURLChanged: ((URL?) -> Void)? = nil
     var onWebManifestCommitChanged: ((String?) -> Void)? = nil
+    var onAuthStateChanged: ((GradeCrewNativeBridgePolicy.AuthState) -> Void)? = nil
+    var onQuickRemyBridgeReady: ((@escaping GradeCrewQuickRemyCall) -> Void)? = nil
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
         var parent: GradeCrewWebView
@@ -95,9 +99,29 @@ struct GradeCrewWebView: UIViewRepresentable {
         var lastURL: URL
         var lastReloadID: Int
         private var cancelDialog: (() -> Void)?
-        private weak var hostWebView: WKWebView?
+        weak var hostWebView: WKWebView?
         private var downloadDestinations: [ObjectIdentifier: URL] = [:]
         let nativeBridge = GradeCrewNativeBridge()
+        lazy var quickRemyCall: GradeCrewQuickRemyCall = { [weak self] action, payload, completion in
+            guard let self, let webView = self.hostWebView,
+                  webView.url?.scheme?.lowercased() == "https",
+                  webView.url?.host?.lowercased() == self.parent.url.host?.lowercased() else {
+                completion(.failure(NSError(domain: "GradeCrewQuickRemy", code: 1, userInfo: [NSLocalizedDescriptionKey: "GradeCrew ist noch nicht bereit. Bitte erneut versuchen."])))
+                return
+            }
+            webView.callAsyncJavaScript("const api = window.GradeCrewQuickRemy; const method = api?.[action]; if (typeof method !== 'function') throw new Error('Remy ist in GradeCrew noch nicht verfügbar.'); return await method(payload);",
+                                        arguments: ["action": action, "payload": payload], in: nil, in: .page) { result in
+                switch result {
+                case let .success(value):
+                    guard let object = value as? [String: Any] else {
+                        completion(.failure(NSError(domain: "GradeCrewQuickRemy", code: 2, userInfo: [NSLocalizedDescriptionKey: "GradeCrew hat eine ungültige Antwort zurückgegeben."])))
+                        return
+                    }
+                    completion(.success(object))
+                case let .failure(error): completion(.failure(error))
+                }
+            }
+        }
         private var latestNavigation: WKNavigation?
         private var requestedMainURL: URL?
 
@@ -105,6 +129,10 @@ struct GradeCrewWebView: UIViewRepresentable {
             self.parent = parent
             self.lastReloadID = parent.reloadID
             self.lastURL = parent.url
+            super.init()
+            nativeBridge.onAuthStateChanged = { [weak self] state in
+                self?.parent.onAuthStateChanged?(state)
+            }
         }
 
         @objc func handleDiagnosticsGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -115,6 +143,7 @@ struct GradeCrewWebView: UIViewRepresentable {
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             latestNavigation = navigation
             nativeBridge.beginNavigation()
+            parent.onAuthStateChanged?(.checking)
             parent.isLoading = true
             parent.errorMessage = nil
             parent.onLoadedURLChanged?(nil)
@@ -130,6 +159,8 @@ struct GradeCrewWebView: UIViewRepresentable {
             guard navigation === latestNavigation else { return }
             parent.isLoading = false
             parent.errorMessage = nil
+            hostWebView = webView
+            parent.onQuickRemyBridgeReady?(quickRemyCall)
             parent.onLoadedURLChanged?(webView.url)
             let loadedURL = webView.url
             webView.callAsyncJavaScript("return await window.GradeCrewNative.diagnostics();", arguments: [:], in: nil, in: .page) { [weak self, weak webView] result in
@@ -150,6 +181,7 @@ struct GradeCrewWebView: UIViewRepresentable {
             if nativeBridge.restoreAfterFailedNavigation() {
                 parent.isLoading = false
                 parent.onLoadedURLChanged?(webView.url)
+                webView.evaluateJavaScript("window.GradeCrewNative?.refreshAuthState?.()")
             }
             finishWith(error: error)
         }
@@ -158,6 +190,11 @@ struct GradeCrewWebView: UIViewRepresentable {
             if (error as NSError).code == NSURLErrorCancelled { return }
             parent.isLoading = false
             parent.errorMessage = error.localizedDescription
+        }
+
+        private func restoreNativeAuthAfterCancelledNavigation(in webView: WKWebView) {
+            guard nativeBridge.restoreAfterFailedNavigation() else { return }
+            webView.evaluateJavaScript("window.GradeCrewNative?.refreshAuthState?.()")
         }
 
         private func openExternallyIfNeeded(_ requestURL: URL, navigationType: WKNavigationType) -> Bool {
@@ -209,14 +246,16 @@ struct GradeCrewWebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
-            if navigationAction.request.url == requestedMainURL { nativeBridge.restoreAfterFailedNavigation() }
+            if navigationAction.request.url == requestedMainURL {
+                restoreNativeAuthAfterCancelledNavigation(in: webView)
+            }
             hostWebView = webView
             download.delegate = self
         }
 
         func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
             if navigationResponse.isForMainFrame && navigationResponse.response.url == requestedMainURL {
-                nativeBridge.restoreAfterFailedNavigation()
+                restoreNativeAuthAfterCancelledNavigation(in: webView)
             }
             hostWebView = webView
             download.delegate = self
@@ -369,6 +408,7 @@ struct GradeCrewWebView: UIViewRepresentable {
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             cancelActiveDialog()
             nativeBridge.beginNavigation()
+            parent.onAuthStateChanged?(.checking)
             parent.onLoadedURLChanged?(nil)
             parent.onWebManifestCommitChanged?(nil)
             parent.isLoading = false
@@ -406,6 +446,8 @@ struct GradeCrewWebView: UIViewRepresentable {
         configuration.applicationNameForUserAgent = "GradeCrew-iOS/\(GradeCrewAppEnvironment.version)"
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        context.coordinator.hostWebView = webView
+        onQuickRemyBridgeReady?(context.coordinator.quickRemyCall)
         context.coordinator.nativeBridge.attach(to: webView, selectedBaseURL: url)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
@@ -438,6 +480,9 @@ struct GradeCrewWebView: UIViewRepresentable {
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         context.coordinator.parent = self
+        context.coordinator.nativeBridge.onAuthStateChanged = { [weak coordinator = context.coordinator] state in
+            coordinator?.parent.onAuthStateChanged?(state)
+        }
 
         if !context.coordinator.didLoadInitialURL {
             context.coordinator.didLoadInitialURL = true

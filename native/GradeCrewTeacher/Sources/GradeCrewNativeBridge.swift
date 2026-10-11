@@ -4,6 +4,7 @@ import WebKit
 
 /// Owns bridge replies and temporary files for one WebView, never its login/data.
 final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
+    var onAuthStateChanged: ((GradeCrewNativeBridgePolicy.AuthState) -> Void)?
     private weak var webView: WKWebView?
     private var selectedBaseURL: URL?
     private var documentState = GradeCrewNativeBridgePolicy.DocumentState()
@@ -93,8 +94,15 @@ final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
             return
         }
         switch request.action {
+        case "authState":
+            guard let authState = request.authState else {
+                reject("invalidRequest", "Der Anmeldestatus ist ungültig.", replyHandler)
+                return
+            }
+            onAuthStateChanged?(authState)
+            replyHandler(["ok": true, "result": ["accepted": true]], nil)
         case "capabilities":
-            replyHandler(["ok": true, "result": ["version": 1, "actions": ["shareFile", "diagnostics"],
+            replyHandler(["ok": true, "result": ["version": 1, "actions": ["shareFile", "diagnostics", "authState"],
                                                   "maximumFileBytes": GradeCrewNativeBridgePolicy.maximumFileBytes]], nil)
         case "diagnostics":
             replyHandler(["ok": true, "result": ["appVersion": GradeCrewAppEnvironment.version,

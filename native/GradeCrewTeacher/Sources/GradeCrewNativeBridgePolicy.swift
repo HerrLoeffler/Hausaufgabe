@@ -3,6 +3,12 @@ import CoreFoundation
 
 /// The native bridge deliberately has narrower privileges than link navigation.
 enum GradeCrewNativeBridgePolicy {
+    enum AuthState: Equatable {
+        case checking
+        case signedIn(accountLabel: String, accountChanged: Bool)
+        case signedOut
+    }
+
     static let version = 1
     static let maximumFileBytes = 12 * 1024 * 1024
     static let maximumEncodedBytes = ((maximumFileBytes + 2) / 3) * 4
@@ -28,6 +34,7 @@ enum GradeCrewNativeBridgePolicy {
         let id: String
         let action: String
         let file: File?
+        let authState: AuthState?
     }
 
     enum Failure: String, Error {
@@ -51,8 +58,13 @@ enum GradeCrewNativeBridgePolicy {
               let id = object["id"] as? String, !id.isEmpty, id.utf8.count <= 80,
               id.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || "-_.".contains($0)) }),
               let action = object["action"] as? String,
-              ["capabilities", "diagnostics", "shareFile"].contains(action) else { throw Failure.invalidRequest }
-        if action != "shareFile" { return Request(id: id, action: action, file: nil) }
+              ["capabilities", "diagnostics", "shareFile", "authState"].contains(action) else { throw Failure.invalidRequest }
+        if action == "authState" {
+            guard let payload = object["payload"] as? [String: Any],
+                  let authState = parseAuthState(payload) else { throw Failure.invalidRequest }
+            return Request(id: id, action: action, file: nil, authState: authState)
+        }
+        if action != "shareFile" { return Request(id: id, action: action, file: nil, authState: nil) }
         guard let payload = object["payload"] as? [String: Any],
               let name = payload["filename"] as? String, !name.isEmpty, name.utf8.count <= 1024,
               let rawMIME = payload["mimeType"] as? String, rawMIME.utf8.count <= 100,
@@ -77,7 +89,26 @@ enum GradeCrewNativeBridgePolicy {
         default:
             guard String(data: data, encoding: .utf8) != nil else { throw Failure.unsupportedFile }
         }
-        return Request(id: id, action: action, file: File(filename: filename, mimeType: mime, data: data))
+        return Request(id: id, action: action, file: File(filename: filename, mimeType: mime, data: data), authState: nil)
+    }
+
+    private static func parseAuthState(_ payload: [String: Any]) -> AuthState? {
+        guard let state = payload["state"] as? String else { return nil }
+        switch state {
+        case "checking", "signedOut":
+            guard Set(payload.keys) == ["state"] else { return nil }
+            return state == "checking" ? .checking : .signedOut
+        case "signedIn":
+            guard Set(payload.keys) == ["state", "accountLabel", "accountChanged"],
+                  let label = payload["accountLabel"] as? String,
+                  let accountChanged = payload["accountChanged"] as? Bool else { return nil }
+            let trimmed = label.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty, trimmed.utf8.count <= 160,
+                  trimmed.unicodeScalars.allSatisfy({ !CharacterSet.controlCharacters.contains($0) }) else { return nil }
+            return .signedIn(accountLabel: trimmed, accountChanged: accountChanged)
+        default:
+            return nil
+        }
     }
 
     private static func safeFilename(_ value: String) -> String {

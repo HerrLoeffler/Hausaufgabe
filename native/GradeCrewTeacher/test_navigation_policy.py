@@ -41,4 +41,4 @@ print("GradeCrew navigation/download policy: passed")
 with tempfile.TemporaryDirectory() as work:
     script = Path(work) / "navigation.swift"
     script.write_text(beta + "\n" + policy + "\n" + checks)
-    subprocess.run(["swift", str(script)], check=True)
+    subprocess.run(["swift", "-module-cache-path", str(Path(work) / "module-cache"), str(script)], check=True)

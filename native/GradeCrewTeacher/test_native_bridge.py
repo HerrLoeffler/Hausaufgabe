@@ -56,6 +56,15 @@ let json = try parse(fileRequest("a.json", "application/json", Data("{\"status\"
 assert(json.file != nil)
 let diag = try parse(["version": 1, "id": "diag", "action": "diagnostics"])
 assert(diag.file == nil)
+let validAuth: String
+ do {
+    validAuth = try parse(["version": 1, "id": "auth", "action": "authState", "payload": ["state": "signedIn", "accountLabel": "Lehrkraft@example.de", "accountChanged": true]]).action
+ } catch { validAuth = "rejected" }
+assert(validAuth == "authState")
+rejects(["version": 1, "id": "auth", "action": "authState", "payload": ["state": "signedIn", "accountLabel": " ", "accountChanged": false]])
+rejects(["version": 1, "id": "auth", "action": "authState", "payload": ["state": "signedIn", "accountLabel": String(repeating: "a", count: 161), "accountChanged": false]])
+rejects(["version": 1, "id": "auth", "action": "authState", "payload": ["state": "signedIn", "accountLabel": "Martin", "accountChanged": false, "uid": "must-not-cross"]])
+rejects(["version": 1, "id": "auth", "action": "authState", "payload": ["state": "unknown"]])
 print("Native bridge contract: passed (origin, frame, payload, MIME, bounds, bytes, cleanup)")
 var document = GradeCrewNativeBridgePolicy.DocumentState()
 assert(!document.isReady)
@@ -75,4 +84,4 @@ print("Document lifecycle: passed (cancelled navigation restores only the intact
 with tempfile.TemporaryDirectory() as work:
     script = Path(work) / "bridge.swift"
     script.write_text((root / "Sources/GradeCrewBetaEnvironment.swift").read_text() + "\n" + source.read_text() + "\n" + checks)
-    subprocess.run(["swift", str(script)], check=True)
+    subprocess.run(["swift", "-module-cache-path", str(Path(work) / "module-cache"), str(script)], check=True)

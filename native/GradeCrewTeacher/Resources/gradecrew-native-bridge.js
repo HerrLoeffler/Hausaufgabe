@@ -6,6 +6,8 @@
   if (!handler || window.top !== window.self || location.origin !== config.origin) return;
   const maximumFileBytes = 12 * 1024 * 1024;
   let sharing = false;
+  let latestAuthState = null;
+  let authPublicationGeneration = 0;
   const fallbackAnchors = new WeakSet();
   const types = { csv: 'text/csv', pdf: 'application/pdf', txt: 'text/plain', json: 'application/json', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg' };
 
@@ -50,8 +52,29 @@
     return { ...native, webManifestCommit };
   }
 
+  async function setAuthState(authState) {
+    if (!authState || !['checking', 'signedIn', 'signedOut'].includes(authState.state)) {
+      throw new Error('Der Anmeldestatus ist ungültig.');
+    }
+    const payload = authState.state === 'signedIn'
+      ? { state: 'signedIn', accountLabel: String(authState.accountLabel || '').slice(0, 160), accountChanged: authState.accountChanged === true }
+      : { state: authState.state };
+    latestAuthState = payload;
+    const generation = ++authPublicationGeneration;
+    const result = await request('authState', payload);
+    if (generation === authPublicationGeneration && latestAuthState === payload && payload.state === 'signedIn') {
+      latestAuthState = { ...payload, accountChanged: false };
+    }
+    return result;
+  }
+
+  async function refreshAuthState() {
+    if (!latestAuthState) return null;
+    return request('authState', latestAuthState);
+  }
+
   Object.defineProperty(window, 'GradeCrewNative', { configurable: false, writable: false,
-    value: Object.freeze({ version: 1, capabilities: () => request('capabilities'), diagnostics, shareFile }) });
+    value: Object.freeze({ version: 1, capabilities: () => request('capabilities'), diagnostics, shareFile, setAuthState, refreshAuthState }) });
 
   function isBlobDownload(anchor) {
     if (!anchor?.download || fallbackAnchors.has(anchor) || !anchor.href?.startsWith('blob:')) return false;

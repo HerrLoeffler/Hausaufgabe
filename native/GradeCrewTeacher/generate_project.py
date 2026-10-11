@@ -102,6 +102,7 @@ for name in ['Debug', 'Release']:
             'INFOPLIST_KEY_NSCameraUsageDescription': 'GradeCrew benötigt die Kamera, um Fotos und Dokumente direkt für Tests aufzunehmen.',
             'INFOPLIST_KEY_NSPhotoLibraryUsageDescription': 'GradeCrew benötigt Zugriff auf deine Fotos, damit du Bilder für Tests auswählen kannst.',
             'INFOPLIST_KEY_NSMicrophoneUsageDescription': 'GradeCrew benötigt das Mikrofon für Spracheingaben an Remy und weitere Sprachfunktionen.',
+            'INFOPLIST_KEY_NSSpeechRecognitionUsageDescription': 'GradeCrew wandelt deine Remy-Spracheingabe direkt auf diesem Gerät in Text um. Audio wird nicht hochgeladen.',
             'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone': 'UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
             'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad': 'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
             'ASSETCATALOG_COMPILER_APPICON_NAME': 'AppIcon',
