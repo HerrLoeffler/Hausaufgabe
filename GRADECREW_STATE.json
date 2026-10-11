@@ -2014,11 +2014,11 @@
   },
   "adminAccountActions": {
     "task": "GC-WEB-REPAIR-20261007-ADMIN",
-    "phase": "branch_only",
+    "phase": "integrated",
     "branch": "feat/admin-account-actions-20261011",
     "pr": 209,
     "integrationTarget": "feature/gradecrew-app-integration",
-    "observedIntegrationHead": "8d19ccfdf6c70a5f67a5dcbfe431a945b6dfcfdd",
+    "observedIntegrationHead": "9363fe9842b502c4a2780bf007acef6881af6213",
     "sourceEvidence": {
       "productHead": "33cdb56a5a2eabca2900261bc247a6e73b348275",
       "ci": 38101819504,
@@ -2041,6 +2041,11 @@
       "rules": "current_live_matches_base05306c",
       "userAcceptance": "pending"
     },
-    "nextAction": "Finish combined immutable candidate, independent integration delta review and exact CI; publish Functions/Rules/Web once and test only synthetic accounts."
+    "nextAction": "Await existing exact integration CI/downstream WIF Functions and preview receipts, publish exact secure Rules, promote verified build and test synthetic accounts on8772.",
+    "sourceHead": "6b1f14c88e63e08038e4e2fed5ca42017534c8c7",
+    "sourceCi": 38104518447,
+    "integrationCommit": "9363fe9842b502c4a2780bf007acef6881af6213",
+    "tree": "785d1f32e66dfce406089c4e6d113079b0724773",
+    "integrationCi": 38104693107
   }
 }

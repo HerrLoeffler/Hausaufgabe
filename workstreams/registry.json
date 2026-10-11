@@ -602,7 +602,7 @@
       "title": "GC-WEB-REPAIR-20261007-ADMIN: Kontoverwaltung in vorhandener Testseite",
       "primaryBranch": "feat/admin-account-actions-20261011",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/admin-account-actions-20261011.md",
       "relatedBranches": []
     }

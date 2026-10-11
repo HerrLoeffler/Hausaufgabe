@@ -488,7 +488,7 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |
 |---|---|---|---|
-| GC-WEB-REPAIR-20261007-ADMIN | Kontoauswahl, Rollen, Sperren und bestätigte Löschung in der bestehenden Administration | **Lokale UI auf 8772 geprüft; Staging-Freigabe erteilt, Zusammenführung läuft** | [PR209](https://github.com/HerrLoeffler/Hausaufgabe/pull/209); geprüfte ursprüngliche Produktquelle33cdb56 mit CI38101819504, aktueller Kandidat wird mit Remy-Ziel8d19ccf abgeglichen. Neue kombinierte Prüfung/CI vor Merge und getrennten Functions/Rules/Hosting-Nachweisen. Keine echten fremden Kontoaktionen oder Production. [Übergabe](workstreams/admin-account-actions-20261011.md) |
+| GC-WEB-REPAIR-20261007-ADMIN | Kontoauswahl, Rollen, Sperren und bestätigte Löschung in der bestehenden Administration | **Integriert9363fe98; Staging-Veröffentlichung in Arbeit** | [PR209](https://github.com/HerrLoeffler/Hausaufgabe/pull/209) gemergt nach unabhängiger Integrationsprüfung und exakter Kandidaten-CI38104518447. Mergebaum identisch geprüftem Kandidaten; bestehende Merge-CI38104693107 läuft. Getrennte Functions/Rules/Hosting-Nachweise und synthetischer Test auf8772 folgen. Production unverändert. [Übergabe](workstreams/admin-account-actions-20261011.md) |
 
 
 ## 11.10.2026 — Games-Produktion: bestehende Task GC-GAMES-PIPELINE-01
