@@ -179,15 +179,15 @@ function renderDetailControls(uid) {
   actions.appendChild(controls);
 
   controls.querySelector("#gcToggleTestAccount")?.addEventListener("click", async event => {
+    const button = event.currentTarget;
     const nextValue = !isTest;
     if (!confirm(nextValue
       ? `${user.displayName || user.email || "Dieses Konto"} als Testkonto markieren?`
       : `Testkonto-Markierung bei ${user.displayName || user.email || "diesem Konto"} entfernen?`)) return;
-    event.currentTarget.disabled = true;
+    button.disabled = true;
     try {
       await saveUser(uid, {
         isTestAccount: nextValue,
-        isTestAccountArchived: false,
         testAccountUpdatedAt: serverTimestamp(),
         testAccountUpdatedBy: auth.currentUser?.uid || ""
       }, nextValue ? "Als Testkonto markiert." : "Testkonto-Markierung entfernt.");
@@ -195,7 +195,7 @@ function renderDetailControls(uid) {
     } catch (error) {
       console.error(error);
       alert("Testkonto-Markierung konnte nicht geändert werden.");
-      event.currentTarget.disabled = false;
+      button.disabled = false;
     }
   });
 

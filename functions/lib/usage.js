@@ -1,6 +1,7 @@
 "use strict";
 const { HttpsError } = require("firebase-functions/v2/https");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
+const { requireAccountWrite } = require("./account-state");
 const { LIMITS, RETENTION } = require("./constants");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -45,6 +46,7 @@ async function consumeQuota(uid, kind) {
   const nowDate = new Date();
   const ref = db.doc(`users/${uid}/aiUsage/${dayKey(nowDate)}`);
   await db.runTransaction(async tx => {
+    await requireAccountWrite(tx, db, uid);
     const snap = await tx.get(ref); const data = snap.data() || {};
     const minute = minuteKey(nowDate);
     const kindMinuteKey = `${kind}MinuteKey`;
@@ -70,15 +72,13 @@ async function logUsage(uid, kind, usage = {}, extra = {}) {
   const normalizedKind = safeKind(kind);
   const rollupRef = db.doc(`users/${uid}/aiUsageRollups/${monthKey(nowDate)}-${normalizedKind}`);
   const details = compactExtra(extra);
-  const batch = db.batch();
-
-  batch.set(eventRef, {
+  const event = {
     ...details,
     kind: String(kind || "unknown").slice(0, 80),
     ...numbers,
     createdAt: Timestamp.now(),
     expiresAt: expiryTimestamp(RETENTION.aiEventDays, nowDate.getTime())
-  });
+  };
 
   const rollup = {
     month: monthKey(nowDate),
@@ -92,8 +92,11 @@ async function logUsage(uid, kind, usage = {}, extra = {}) {
   };
   if (typeof details.model === "string" && details.model) rollup.lastModel = details.model.slice(0, 120);
   if (typeof details.promptVersion === "string" && details.promptVersion) rollup.lastPromptVersion = details.promptVersion.slice(0, 120);
-  batch.set(rollupRef, rollup, { merge: true });
-  await batch.commit();
+  await db.runTransaction(async tx => {
+    await requireAccountWrite(tx, db, uid);
+    tx.set(eventRef, event);
+    tx.set(rollupRef, rollup, { merge: true });
+  });
 }
 
 // Quotas are enforced before an AI call. A later telemetry write must not discard
