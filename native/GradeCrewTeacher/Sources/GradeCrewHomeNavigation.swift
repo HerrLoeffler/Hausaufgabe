@@ -1,7 +1,7 @@
 import Foundation
 
 struct GradeCrewHomeNavigation {
-    enum Route: Equatable { case home, workspace, quickRemy }
+    enum Route: Equatable { case home, signIn, workspace, quickRemy }
 
     private(set) var route: Route = .home
     private(set) var authState: GradeCrewNativeBridgePolicy.AuthState = .checking
@@ -42,7 +42,7 @@ struct GradeCrewHomeNavigation {
     mutating func openSignIn() {
         guard isAuthRestored else { return }
         shouldReturnHomeAfterLogin = true
-        route = .workspace
+        route = .signIn
     }
 
     mutating func openWorkspace() {

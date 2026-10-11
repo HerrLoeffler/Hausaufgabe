@@ -19,6 +19,7 @@ enum GradeCrewAssets {
         static let primary = "assets/gradecrew/elephant-create.svg"
         static let welcome = "assets/gradecrew/elephant-create-welcome.svg"
         static let writingScene = "assets/gradecrew/clay-remy-writing.svg"
+        static let microphone = "assets/gradecrew/remy-microphone-v1.png"
     }
 
     enum Emmi {
@@ -38,6 +39,7 @@ enum GradeCrewAssets {
     enum NativeImage {
         static let cocoWelcome = "GradeCrewCocoWelcome"
         static let remyWelcome = "GradeCrewRemyWelcome"
+        static let remyMicrophone = "GradeCrewRemyMicrophone"
         static let brandIcon = "GradeCrewBrandIcon"
     }
 

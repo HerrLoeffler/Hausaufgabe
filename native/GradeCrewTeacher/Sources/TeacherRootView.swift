@@ -20,6 +20,12 @@ struct TeacherRootView: View {
         GradeCrewBetaEnvironment.homeURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
     }
 
+    private var signInURL: URL {
+        GradeCrewBetaEnvironment.signInURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
+    }
+
+    private var webURL: URL { route == .signIn ? signInURL : homeURL }
+
     private var environmentLabel: String {
         GradeCrewBetaEnvironment.environmentLabel(for: previewPreference)
     }
@@ -33,7 +39,7 @@ struct TeacherRootView: View {
     var body: some View {
         ZStack {
             GradeCrewWebView(
-                url: homeURL,
+                url: webURL,
                 reloadID: reloadID,
                 isLoading: $isLoading,
                 errorMessage: $loadError,
@@ -43,10 +49,10 @@ struct TeacherRootView: View {
                 onAuthStateChanged: receiveAuthState,
                 onQuickRemyBridgeReady: { quickRemyCall = $0 }
             )
-            .opacity(route == .workspace ? 1 : 0)
-            .allowsHitTesting(route == .workspace)
+            .opacity(route == .workspace || route == .signIn ? 1 : 0)
+            .allowsHitTesting(route == .workspace || route == .signIn)
             .safeAreaInset(edge: .top, spacing: 0) {
-                if route == .workspace {
+                if route == .workspace || route == .signIn {
                     HStack {
                         Button {
                             homeNavigation.showHome()
@@ -347,10 +353,6 @@ private struct GradeCrewSignInScreen: View {
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                     .multilineTextAlignment(.center)
 
-                CocoOpeningDoor()
-                    .frame(height: 88)
-                    .accessibilityHidden(true)
-
                 VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
                     Text("Melde dich mit deinem GradeCrew-Konto an.")
                         .font(.system(size: GradeCrewDesignTokens.Typography.body))
@@ -396,63 +398,6 @@ private struct GradeCrewSignInScreen: View {
             .padding(.bottom, GradeCrewDesignTokens.Spacing.xxl)
         }
         .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
-        .task {
-            guard !isSignInVisible else { return }
-            guard !reduceMotion else {
-                isSignInVisible = true
-                return
-            }
-            try? await Task.sleep(nanoseconds: 750_000_000)
-            guard !Task.isCancelled else { return }
-            withAnimation(.easeOut(duration: 0.28)) { isSignInVisible = true }
-        }
-    }
-}
-
-private struct CocoOpeningDoor: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var isOpen = false
-
-    var body: some View {
-        ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 22)
-                .fill(GradeCrewDesignTokens.Colors.soft)
-                .frame(width: 102, height: 78)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 22)
-                        .stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1)
-                }
-            Image(GradeCrewAssets.NativeImage.cocoWelcome)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 72, height: 78)
-                .offset(x: 26)
-            RoundedRectangle(cornerRadius: 14)
-                .fill(GradeCrewDesignTokens.Colors.primary)
-                .frame(width: 56, height: 76)
-                .overlay(alignment: .trailing) {
-                    Circle()
-                        .fill(GradeCrewDesignTokens.Colors.surface)
-                        .frame(width: 9, height: 9)
-                        .padding(.trailing, 9)
-                }
-                .rotation3DEffect(
-                    .degrees(isOpen ? -72 : 0),
-                    axis: (x: 0, y: 1, z: 0),
-                    anchor: .leading,
-                    perspective: 0.72
-                )
-        }
-        .frame(width: 130, height: 88)
-        .task {
-            guard !isOpen else { return }
-            guard !reduceMotion else {
-                isOpen = true
-                return
-            }
-            try? await Task.sleep(nanoseconds: 120_000_000)
-            guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: 0.72)) { isOpen = true }
-        }
+        .task { isSignInVisible = true }
     }
 }

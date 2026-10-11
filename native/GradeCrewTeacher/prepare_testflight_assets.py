@@ -25,6 +25,7 @@ PREVIEW_SIZE = SIZE - (2 * INSET)
 NATIVE_ILLUSTRATIONS = {
     "GradeCrewCocoWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["coco"]["welcome"],
     "GradeCrewRemyWelcome": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["welcome"],
+    "GradeCrewRemyMicrophone": REPO / MANIFEST["root"] / MANIFEST["mascots"]["remy"]["microphone"],
     "GradeCrewBrandIcon": BRAND_ICON,
 }
 
@@ -176,25 +177,28 @@ def render_native_illustrations() -> None:
             raise SystemExit(f"Canonical GradeCrew illustration is missing: {source}")
         imageset = resources / f"{asset_name}.imageset"
         imageset.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix="gradecrew-illustration-preview-") as temp:
-            temp_dir = Path(temp)
-            result = subprocess.run(
-                ["qlmanage", "-t", "-s", "900", "-o", str(temp_dir), str(source)],
-                text=True,
-                capture_output=True,
-            )
-            previews = sorted(temp_dir.glob("*.png"))
-            if result.returncode != 0 or not previews:
-                details = (result.stderr or result.stdout or "Quick Look produced no PNG preview").strip()
-                raise SystemExit(f"Could not rasterize GradeCrew illustration {source}: {details}")
-            image_path = imageset / f"{asset_name}.png"
-            shutil.copyfile(previews[0], image_path)
+        image_path = imageset / f"{asset_name}.png"
+        if source.suffix.lower() == ".png":
+            shutil.copyfile(source, image_path)
+        else:
+            with tempfile.TemporaryDirectory(prefix="gradecrew-illustration-preview-") as temp:
+                temp_dir = Path(temp)
+                result = subprocess.run(
+                    ["qlmanage", "-t", "-s", "900", "-o", str(temp_dir), str(source)],
+                    text=True,
+                    capture_output=True,
+                )
+                previews = sorted(temp_dir.glob("*.png"))
+                if result.returncode != 0 or not previews:
+                    details = (result.stderr or result.stdout or "Quick Look produced no PNG preview").strip()
+                    raise SystemExit(f"Could not rasterize GradeCrew illustration {source}: {details}")
+                shutil.copyfile(previews[0], image_path)
         verify_png(image_path, expected_size=None, opaque=False)
         (imageset / "Contents.json").write_text(json.dumps({
             "images": [{"filename": image_path.name, "idiom": "universal"}],
             "info": {"author": "xcode", "version": 1}
         }, indent=2) + "\n")
-    print("Prepared native GradeCrew artwork from canonical Coco, Remy, and brand SVGs.")
+    print("Prepared native GradeCrew artwork from canonical Coco/Remy sources and brand icon.")
 
 
 render_icon()

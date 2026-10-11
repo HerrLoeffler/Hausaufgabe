@@ -38,12 +38,22 @@ enum GradeCrewBetaEnvironment {
     }
 
     static func homeURL(preference: String, version: String) -> URL {
+        appURL(preference: preference, version: version, intent: nil)
+    }
+
+    static func signInURL(preference: String, version: String) -> URL {
+        appURL(preference: preference, version: version, intent: "login")
+    }
+
+    private static func appURL(preference: String, version: String, intent: String?) -> URL {
         var components = URLComponents(url: baseURL(for: preference), resolvingAgainstBaseURL: false)!
-        components.queryItems = [
+        var items = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),
             URLQueryItem(name: "appVersion", value: version)
         ]
+        if let intent { items.append(URLQueryItem(name: "intent", value: intent)) }
+        components.queryItems = items
         return components.url!
     }
 }
