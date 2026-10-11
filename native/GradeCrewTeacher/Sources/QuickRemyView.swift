@@ -206,17 +206,7 @@ struct QuickRemyView: View {
             if let visibleTranscript = pendingTranscript, !visibleTranscript.isEmpty {
                 Text(visibleTranscript).font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted).lineLimit(2)
             }
-            Button(action: { Task { await submitTest() } }) {
-                HStack(spacing: 8) {
-                    if workStatus == .preparing { ProgressView().tint(.white) }
-                    Text(workStatus == .accepted ? "Testauftrag übergeben" : "Test erstellen")
-                }
-                .font(.system(size: 17, weight: .semibold)).foregroundStyle(.white)
-                .frame(maxWidth: .infinity).frame(height: 52)
-                .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
-            }
-            .buttonStyle(.plain)
-            .disabled(draft.preparedRequest == nil || !aiFormReady || recoveryChecking || unresolvedSubmission || workStatus == .preparing || workStatus == .accepted)
+            submitButton
             if workStatus == .failed, let workError { Text(workError).font(.footnote).foregroundStyle(GradeCrewDesignTokens.Colors.danger) }
         }
         .padding(14)
@@ -232,6 +222,29 @@ struct QuickRemyView: View {
         .onChange(of: draft.imageQuestionCount) { _ in Task { await syncDraftToWebForm() } }
         .onChange(of: draft.wishes) { _ in Task { await syncDraftToWebForm() } }
         .onChange(of: allowedTypes) { _ in Task { await syncDraftToWebForm() } }
+    }
+
+    private var submitButton: some View {
+        Button {
+            Task { await submitTest() }
+        } label: {
+            HStack(spacing: 8) {
+                if workStatus == .preparing {
+                    ProgressView().tint(.white)
+                }
+                Text(workStatus == .accepted ? "Testauftrag übergeben" : "Test erstellen")
+            }
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+            .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(
+            draft.preparedRequest == nil || !aiFormReady || recoveryChecking ||
+            unresolvedSubmission || workStatus == .preparing || workStatus == .accepted
+        )
     }
 
     private func nativeField(_ title: String, text: Binding<String>, keyboard: UIKeyboardType = .default) -> some View {
