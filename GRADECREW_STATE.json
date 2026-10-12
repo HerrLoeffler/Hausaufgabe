@@ -316,6 +316,26 @@
       "browser_smoke": "gc35 authenticated dashboard/Coco/ET; gc36 existing Browser4 actual visible login neutral and both DOM hints neutral, no visible STAGING; separate fresh-browser locked limitation",
       "service_source_equality": "functions_bc969318fabb33d06a3a0ec3194e732ca27bd6a3;assessment_c53d079766c47e55e431a714bc29be5bcefea67d;unchanged_from_d62",
       "deploy_attempt_history": "AIattempt1 getCrewTelemetrySummary update request failed; bounded sameSHA attempt2 success; Assessment/Preview attempt1 success retained"
+    },
+    "design_mobile_auth_followup": {
+      "task_id": "GC-DESIGN-05",
+      "related_task": "GC-IOS-02",
+      "stage": "branch_only",
+      "branch": "fix/gc-design-05-mobile-auth-20261012",
+      "base": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+      "last_verified_staging": "2.3.1-gc36/164",
+      "source": "pending_author_immutable_candidate",
+      "authorization": "explicit_user12Oct normalStaging; noProduction/newProvider/grant",
+      "owners": {
+        "product": "mobile_auth_design",
+        "native": "native_auth_header",
+        "release": "feedback_staging_release",
+        "review": "student_regression_review"
+      },
+      "native_scope": "primary9ec318d sendsintentlogin; separate source/unsignedbuild/draftPR only; TestFlightnotdelivered",
+      "preservation_manifest": "workstreams/gc-design-05-gc36-preservation-20261012.json",
+      "handoff": "workstreams/gc-design-05-mobile-auth-20261012.md",
+      "next": "authorimmutableSource+boundedtests and independentreview thennormalexactCI/integration/staging"
     }
   },
   "production": {
