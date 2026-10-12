@@ -49,3 +49,9 @@ TODO/STATE/Registry on this historical Games branch contain only a scoped task s
 branch_only. No CI/merge/Hosting/Functions/Rules/deployed Binomial round or device acceptance. Production unchanged. Next: authorized staging host deploys exact reviewed candidate with wrapper and records returned URL, then performs actual student join/score check.
 
 Model requested/observed runtime identity and usage unknown; no supported live model switch performed. Skills read: using-superpowers, brainstorming (bounded scope already explicit), worktree isolation, TDD, requesting-code-review, verification-before-completion. User instructed immediate execution; no repeat design permission round.
+
+## Saved remote/CI checkpoint
+
+PR224 https://github.com/HerrLoeffler/Hausaufgabe/pull/224; runtime candidate96cc5b0b4473237a22ce97c379f68aeff98c5587, tree869e9c0bb85b842e5163ff2446c5bddbd2e1f829 exactly equals local079f08d tree. Shell push unavailable; GitHub connector saved the identical tree. Games Lab Checks38224683291/job114729168627 completed success, including isolated build,26tests and Chromium browser-smoke (backend/QR fixtures). This is CI evidence, NOT real deployed binomial/QR/device acceptance. Local Playwrightdownload failure is distinct from successful hosted CI browser install.
+
+Independent follow-up review of isolated deploywrapper and UI regressions: no concrete issue. Wrapper target isolation checked, no real deploy executed. Remote candidate CI_GREEN; deployment/device blockers unchanged. Next action remains authorized staging Firebase session running wrapper on this exact runtime candidate. No production permission requested.
