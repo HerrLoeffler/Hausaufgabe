@@ -123,7 +123,7 @@
   function gatherConfig() {
     const operations = checkedValues('operation');
     const domains = checkedValues('domain');
-    if (!operations.length) throw new Error('Bitte mindestens eine Grundrechenart auswählen.');
+    if (!operations.length) throw new Error('Bitte mindestens einen Aufgabentyp auswählen.');
     if (!domains.length) throw new Error('Bitte mindestens einen Zahlenbereich auswählen.');
     return {
       version: 4,
@@ -136,6 +136,16 @@
       roundMode: state.mode === 'liveTeacher' ? 'live' : 'practice'
     };
   }
+
+  document.getElementById('binomialQuickStart').addEventListener('click', () => {
+    document.querySelectorAll('input[name="operation"]').forEach(input => { input.checked = input.value === 'binomial'; });
+    document.querySelectorAll('input[name="domain"]').forEach(input => { input.checked = input.value === 'natural'; });
+    document.querySelector('input[name="level"][value="n1"]').checked = true;
+    document.querySelector('input[name="duration"][value="3"]').checked = true;
+    el.leaderboardMode.value = 'live';
+    el.showSolution.checked = true;
+    refreshSetupLevelDetails();
+  });
 
   function configSummary(config) {
     const ops = config.operations.map(op => OP_SYMBOL[op]).join(' ');
@@ -317,7 +327,7 @@
     if (!correct && s.lockSeconds > 0) {
       startPenaltyLock(s.lockSeconds);
     } else {
-      window.setTimeout(nextQuestion, correct ? 380 : 500);
+      window.setTimeout(nextQuestion, state.currentQuestion.operation === 'binomial' ? 2500 : correct ? 380 : 500);
     }
   }
 
@@ -469,6 +479,7 @@
     el.formError.textContent = '';
     try {
       const result = await api('createRoom', { config });
+      if (config.operations.includes('binomial') && !result.config.operations.includes('binomial')) throw new Error('Binomische Formeln sind im Live-Backend noch nicht veröffentlicht. Bitte noch keine Klasse beitreten lassen.');
       state.mode = 'liveTeacher'; state.config = result.config; state.roomCode = result.code; state.hostToken = result.hostToken;
       renderTeacherShell();
       showView(el.teacherRoomView);

@@ -91,7 +91,7 @@
       <form id="setupForm" class="setupColumns">
         <div class="card settingsCard">
           <section class="settingSection">
-            <div class="sectionHead"><span>1</span><div><strong>Grundrechenarten</strong><small>Eine oder mehrere auswählen.</small></div></div>
+            <div class="sectionHead"><span>1</span><div><strong>Aufgaben</strong><small>Eine oder mehrere auswählen.</small></div></div>
             <div class="choiceGrid four">
               <label class="checkTile"><input type="checkbox" name="operation" value="add" checked><span><b>+</b>Addition</span></label>
               <label class="checkTile"><input type="checkbox" name="operation" value="sub" checked><span><b>−</b>Subtraktion</span></label>
@@ -100,6 +100,11 @@
             </div>
           </section>
 
+          <section class="settingSection">
+            <button type="button" id="binomialQuickStart" class="secondaryButton">Klasse 10: nur Binomische Formeln · 3 Minuten</button>
+            <p class="muted">(x + b)², (x − b)² und (x + b)(x − b) · b von 1 bis 5 · vier Antworten.</p>
+            <label class="checkTile"><input type="checkbox" name="operation" value="binomial"><span><b>(a ± b)²</b>Binomische Formeln · leicht</span></label>
+          </section>
           <section class="settingSection">
             <div class="sectionHead"><span>2</span><div><strong>Zahlenbereiche</strong><small>Mehrere Bereiche werden gleichmäßig gemischt.</small></div></div>
             <div class="choiceGrid two">

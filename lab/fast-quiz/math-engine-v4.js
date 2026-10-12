@@ -23,8 +23,8 @@
     key() { return `${this.n}/${this.d}`; }
   }
 
-  const OP_SYMBOL = { add: '+', sub: '−', mul: '×', div: '÷' };
-  const OP_LABEL = { add: 'Addition', sub: 'Subtraktion', mul: 'Multiplikation', div: 'Division' };
+  const OP_SYMBOL = { add: '+', sub: '−', mul: '×', div: '÷', binomial: 'Binomische Formeln' };
+  const OP_LABEL = { add: 'Addition', sub: 'Subtraktion', mul: 'Multiplikation', div: 'Division', binomial: 'Binomische Formeln' };
   const DOMAIN_LABEL = { natural: 'Natürliche Zahlen', integer: 'Ganze Zahlen', decimal: 'Dezimalzahlen', fraction: 'Brüche' };
   const LEVEL_LABEL = {
     n1: 'Niveau 1 · Grundlagen',
@@ -288,6 +288,22 @@
     };
   }
 
+  function binomialQuestion(rng, form) {
+    const b = int(rng, 1, 5);
+    const term = (middle, constant) => `x²${middle ? ` ${middle < 0 ? '−' : '+'} ${Math.abs(middle)}x` : ''} ${constant < 0 ? '−' : '+'} ${Math.abs(constant)}`;
+    const middle = form === 'plus' ? 2 * b : form === 'minus' ? -2 * b : 0;
+    const constant = form === 'difference' ? -b * b : b * b;
+    const correct = term(middle, constant);
+    const prompt = form === 'difference' ? `(x + ${b})(x − ${b}) = ?` : `(x ${form === 'plus' ? '+' : '−'} ${b})² = ?`;
+    const rule = form === 'plus' ? '(a + b)² = a² + 2ab + b²' : form === 'minus' ? '(a − b)² = a² − 2ab + b²' : '(a + b)(a − b) = a² − b²';
+    return {
+      id: `binomial:${form}:${b}`, prompt, correct,
+      options: uniqueStrings(rng, correct, [term(-middle, constant), term(0, -constant), term(b, constant), term(middle, -constant)], i => term(middle + i, constant)),
+      explanation: `${rule}. Hier: ${prompt.replace(' = ?', '')} = ${correct}.`,
+      domain: 'natural', operation: 'binomial'
+    };
+  }
+
   function createEngine(config) {
     const rng = createRng(config.seed >>> 0);
     const operations = config.operations?.length ? [...config.operations] : ['add', 'sub', 'mul', 'div'];
@@ -295,6 +311,7 @@
     const level = LEVEL_LABEL[config.level] ? config.level : 'n2';
     const combinations = domains.flatMap(domain => operations.map(operation => ({ domain, operation })));
     const seen = new Set();
+    let binomialCycle = [];
     let cycle = [];
 
     function nextPair() {
@@ -302,6 +319,10 @@
       return cycle.shift();
     }
     function build(pair) {
+      if (pair.operation === 'binomial') {
+        if (!binomialCycle.length) binomialCycle = shuffle(rng, ['plus', 'minus', 'difference']);
+        return binomialQuestion(rng, binomialCycle.shift());
+      }
       if (pair.domain === 'natural') return naturalQuestion(rng, pair.operation, level);
       if (pair.domain === 'integer') return integerQuestion(rng, pair.operation, level);
       if (pair.domain === 'decimal') return decimalQuestion(rng, pair.operation, level);
@@ -310,7 +331,7 @@
     function next() {
       const pair = nextPair();
       let question = build(pair);
-      for (let attempt = 0; attempt < 24 && seen.has(question.id); attempt += 1) question = build(pair);
+      for (let attempt = 0; attempt < 24 && pair.operation !== 'binomial' && seen.has(question.id); attempt += 1) question = build(pair);
       seen.add(question.id);
       return question;
     }
