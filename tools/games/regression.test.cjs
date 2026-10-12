@@ -160,3 +160,39 @@ test('root and child release manifests verify the actual files including the sha
   assert.equal(config.functions, undefined);
   assert.equal(config.firestore, undefined);
 });
+
+test('binomial quick choice configures existing live room and retains QR join URL', async () => {
+  const { w, document:d, requests } = await openPage('fast-quiz', '?mode=live', w => {
+    w.fetch = async (url, init) => {
+      const body=JSON.parse(init.body);
+      w.__requests ||= []; w.__requests.push(body);
+      const data=body.action==='createRoom' ? {code:'001234',hostToken:'test-only',config:body.payload.config} : {status:'waiting',playerCount:0,maxPlayers:30,players:[],leaderboard:[]};
+      return new Response(JSON.stringify({ok:true,data}));
+    };
+    w.QRCode=Object.assign(function(target,options){w.__qr=options.text;},{CorrectLevel:{M:0}});
+  });
+  try {
+    d.getElementById('binomialQuickStart').click();
+    d.getElementById('setupForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    await new Promise(resolve=>setTimeout(resolve,35));
+    const config=w.__requests.find(r=>r.action==='createRoom').payload.config;
+    assert.deepEqual(Array.from(config.operations),['binomial']);
+    assert.equal(config.durationSec,180);
+    assert.equal(config.leaderboardMode,'live');
+    assert.equal(d.getElementById('teacherRoomView').hidden,false);
+    assert.equal(w.__qr,'https://games.example/fast-quiz/?join=001234');
+  } finally {w.close();}
+});
+
+test('old live backend cannot silently substitute arithmetic for a binomial round', async () => {
+  const {w,document:d}=await openPage('fast-quiz','?mode=live', w=>{
+    w.fetch=async()=>new Response(JSON.stringify({ok:true,data:{code:'001234',hostToken:'test-only',config:{operations:['add']}}}));
+  });
+  try {
+    d.getElementById('binomialQuickStart').click();
+    d.getElementById('setupForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    await new Promise(resolve=>setTimeout(resolve,35));
+    assert.equal(d.getElementById('teacherRoomView').hidden,true);
+    assert.match(d.getElementById('formError').textContent,/noch nicht veröffentlicht/);
+  } finally {w.close();}
+});
