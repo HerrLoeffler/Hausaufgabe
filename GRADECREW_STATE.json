@@ -335,7 +335,35 @@
       "native_scope": "primary9ec318d sendsintentlogin; separate source/unsignedbuild/draftPR only; TestFlightnotdelivered",
       "preservation_manifest": "workstreams/gc-design-05-gc36-preservation-20261012.json",
       "handoff": "workstreams/gc-design-05-mobile-auth-20261012.md",
-      "next": "authorimmutableSource+boundedtests and independentreview thennormalexactCI/integration/staging"
+      "next": "authorimmutableSource+boundedtests and independentreview thennormalexactCI/integration/staging",
+      "author_partial": {
+        "local": "e928156ca45f5683dbf12632e72be0d58bbaefd5",
+        "remote": "2e94710f8349a7bb175d3d2f4527b7fd52413f37",
+        "tree": "96aca52c2a2cc79fd51e42410b3fafd905ea9fb5",
+        "status": "partial; CSS/provider/visualfinal pending, nofinalCI/Review"
+      },
+      "remy_copy": {
+        "text": "Keine Zeit? Sag mir kurz, welchen Test du brauchst.",
+        "orientation": "Fach, Klasse, Thema und Wünsche",
+        "scope": "sourceplacement verification; existing handlers/Functions unchanged"
+      },
+      "native": {
+        "task": "GC-IOS-02",
+        "pr": 225,
+        "head": "38bb03b138a3e3284a5a66e4dd60c4d6529e9bbc",
+        "branch": "fix/gc-ios-02-auth12-native",
+        "base": "feature/shared-gradecrew-design-system@9ec318da0955e059e33057bb61102729d36a2a57",
+        "stage": "ci_green",
+        "ci": 38279296020,
+        "review": "independentPASS3pertinenttests+iPhone/iPadScreens",
+        "distribution": "pending explicit Human approval; nativePrimary merge automatically signs/uploads TestFlight; DO NOT MERGE",
+        "limits": "unsigned Sim renders, interactiveCUA InvalidApp, no physical/newTestFlight acceptance"
+      },
+      "development_audit": {
+        "run": 38278754272,
+        "attempt1": "failure activePrimary registered before authorremote existed",
+        "attempt2": "success114913142261 after2e947publication"
+      }
     }
   },
   "production": {

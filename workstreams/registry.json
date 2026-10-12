@@ -170,7 +170,8 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "relatedBranches": [
-        "feature/gradecrew-secure-ios"
+        "feature/gradecrew-secure-ios",
+        "fix/gc-ios-02-auth12-native"
       ]
     },
     {
