@@ -66,21 +66,26 @@ struct TeacherRootView: View {
                 if route == .quickRemy {
                     QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
                         .transition(.move(edge: .top).combined(with: .opacity))
-                } else if route == .workspace || route == .signIn {
+                }
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if route == .workspace || route == .signIn {
                     HStack {
                         Button {
                             homeNavigation.showHome()
                         } label: {
-                            Label("Start", systemImage: "house.fill")
+                            Image(systemName: "house.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.plain)
+                        .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                        .accessibilityLabel("Start")
+                        .accessibilityHint("Zur nativen GradeCrew-Auswahl zurückkehren")
                         Spacer()
-                        Text("GradeCrew")
-                            .font(.headline)
-                            .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                     }
                     .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-                    .padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
                     .background(.regularMaterial)
                 }
             }
@@ -164,6 +169,7 @@ struct TeacherRootView: View {
             authRestoringScreen
         case .signedOut:
             GradeCrewSignInScreen(
+                animationStartedAt: brandAnimationStartedAt,
                 loadError: loadError,
                 onSignIn: { homeNavigation.openSignIn() },
                 onRetry: retryWorkspace
@@ -187,8 +193,8 @@ struct TeacherRootView: View {
 
                 HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
                     actionCard(
-                        title: "Remy fragen",
-                        subtitle: "Test kurz einsprechen",
+                        title: "Keine Zeit?",
+                        subtitle: "Sag mir kurz, welchen Test du brauchst.",
                         symbol: "mic.fill",
                         illustration: GradeCrewAssets.NativeImage.remyMicrophoneForward,
                         tint: GradeCrewDesignTokens.Colors.crewRust,
@@ -393,8 +399,8 @@ struct TeacherRootView: View {
 }
 
 private struct GradeCrewSignInScreen: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isSignInVisible = false
+    let animationStartedAt: Date
     let loadError: String?
     let onSignIn: () -> Void
     let onRetry: () -> Void
@@ -402,21 +408,16 @@ private struct GradeCrewSignInScreen: View {
     var body: some View {
         ScrollView {
             VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-                Image(GradeCrewAssets.NativeImage.brandIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 52, height: 52)
-                    .clipShape(Circle())
-                    .accessibilityLabel("GradeCrew")
-                    .padding(.top, GradeCrewDesignTokens.Spacing.xl)
+                GradeCrewBrandSignature(animationStartedAt: animationStartedAt)
+                    .padding(.top, GradeCrewDesignTokens.Spacing.lg)
 
-                Text("Willkommen bei GradeCrew")
+                Text("Willkommen zurück in der Crew")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                     .multilineTextAlignment(.center)
 
                 VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                    Text("Melde dich mit deinem GradeCrew-Konto an.")
+                    Text("Deine Tests. Deine Ideen. Deine Crew.")
                         .font(.system(size: GradeCrewDesignTokens.Typography.body))
                         .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
                         .multilineTextAlignment(.center)
