@@ -1120,14 +1120,29 @@ $("registerForm").addEventListener("submit", async (e) => {
   }
 });
 
-$("forgotBtn").addEventListener("click", async () => {
-  const email = $("loginEmail").value.trim() || prompt("E-Mail-Adresse für den Passwort-Reset:");
-  if (!email) return;
+let passwordResetPending = false;
+$("resetForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (passwordResetPending) return;
+  const email = $("resetEmail").value.trim();
+  if (!email || !$("resetForm").reportValidity()) return;
+  const generation = authStateGeneration;
+  const status = $("resetStatus");
+  const button = $("resetSubmit");
+  const isCurrent = () => generation === authStateGeneration && $("authView")?.dataset.entryState === "reset";
+  const sentMessage = "Falls ein Konto mit dieser E-Mail-Adresse besteht, erhältst du einen Link. Schau auch im Spam-Ordner nach.";
+  passwordResetPending = true;
+  button.disabled = true;
+  status.textContent = "Link wird angefordert …";
   try {
     await sendPasswordResetEmail(auth, email);
-    toast("Reset-E-Mail wurde versendet.");
+    if (isCurrent()) status.textContent = sentMessage;
   } catch (err) {
-    toast(authMessage(err), "error");
+    if (isCurrent()) status.textContent = err?.code === "auth/user-not-found"
+      ? sentMessage : "Der Link konnte gerade nicht angefordert werden. Prüfe deine E-Mail-Adresse und versuche es erneut.";
+  } finally {
+    passwordResetPending = false;
+    button.disabled = false;
   }
 });
 

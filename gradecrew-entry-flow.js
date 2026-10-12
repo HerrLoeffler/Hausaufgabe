@@ -11,10 +11,25 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
 const stateIds = Object.freeze({
   start: "gcEntryStart",
   login: "gcEntryLogin",
-  register: "gcEntryRegister"
+  register: "gcEntryRegister",
+  reset: "gcEntryReset"
 });
 
 let activeState = "start";
+
+function initialEntryState() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("test") || params.get("preview") === "1") return "start";
+  const intent = params.get("intent");
+  return ["login", "register", "reset"].includes(intent) ? intent : "start";
+}
+
+function syncEntryIntent(next) {
+  const url = new URL(window.location.href);
+  if (next === "start") url.searchParams.delete("intent");
+  else url.searchParams.set("intent", next);
+  window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+}
 
 function setState(next, { focus = true } = {}) {
   if (!stateIds[next]) return;
@@ -32,6 +47,7 @@ function setState(next, { focus = true } = {}) {
   if (authView) authView.dataset.entryState = next;
   $("gcEntryLoginOpen")?.classList.toggle("hidden", next !== "start");
   if (!focus) return;
+  syncEntryIntent(next);
   requestAnimationFrame(() => {
     const root = $(stateIds[next]);
     const target = next === "start" ? root?.querySelector("h1") : root?.querySelector("[data-entry-autofocus], input:not([type=hidden]), button, a[href]");
@@ -50,6 +66,12 @@ function showRegister() {
   $("registerForm")?.classList.remove("hidden");
   $("loginForm")?.classList.add("hidden");
   setState("register");
+}
+
+function showReset() {
+  $("resetEmail").value = $("loginEmail")?.value.trim() || "";
+  $("resetStatus").textContent = "";
+  setState("reset");
 }
 
 function showStart() {
@@ -207,16 +229,31 @@ function buildEntrySurface() {
     <section id="gcEntryLogin" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryLoginTitle">
       <button type="button" class="gcEntryBack" data-entry-back>← Zurück</button>
       <div class="gcEntryLoginScene">
-        <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryLoginTitle">Willkommen zurück</h1><p>Melde dich an und mach dort weiter, wo du aufgehört hast.</p><div id="gcEntryLoginTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryLoginFormHost"></div><p class="gcEntrySwitch">Noch kein Account? <button type="button" id="gcEntrySwitchRegister">Account erstellen</button></p></div>
-        <div class="gcEntryLoginCoco"><img src="./assets/gradecrew/coco-login-heart-17.png" alt="Coco begrüßt dich mit einem Herzballon: Schön, dass du da bist!" width="210" height="180"></div>
+        <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryLoginTitle">Willkommen zurück in der Crew.</h1><p>Melde dich an und mach dort weiter, wo du aufgehört hast.</p><div id="gcEntryLoginTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryLoginFormHost"></div><p class="gcEntrySwitch">Neu bei GradeCrew? <button type="button" id="gcEntrySwitchRegister">Konto erstellen</button></p></div>
+        <div class="gcEntryAuthArtwork"><img src="./assets/gradecrew/crew-classroom-wide-v4.png" alt="Coco, Remy, Emmi und Wilma heißen dich in der Crew willkommen." width="1774" height="887"></div>
       </div>
     </section>
 
     <section id="gcEntryRegister" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryRegisterTitle">
       <button type="button" class="gcEntryBack" data-entry-back>← Zurück</button>
-      <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryRegisterTitle">Account erstellen</h1><p>Deine vorhandene Registrierung bleibt unverändert – hier bekommt sie nur einen eigenen, ruhigen Zustand.</p><div id="gcEntryRegisterTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryRegisterFormHost"></div><p class="gcEntrySwitch">Schon dabei? <button type="button" id="gcEntrySwitchLogin">Anmelden</button></p></div>
+      <div class="gcEntryLoginScene">
+        <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryRegisterTitle">Werde Teil der Crew.</h1><p>Dein Konto für eigene Tests, neue Ideen und gemeinsame Lernmomente.</p><div id="gcEntryRegisterTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryRegisterFormHost"></div><p class="gcEntrySwitch">Schon dabei? <button type="button" id="gcEntrySwitchLogin">Anmelden</button></p></div>
+        <div class="gcEntryAuthArtwork"><img src="./assets/gradecrew/crew-classroom-wide-v4.png" alt="Coco, Remy, Emmi und Wilma heißen dich in der Crew willkommen." width="1774" height="887"></div>
+      </div>
     </section>
 
+    <section id="gcEntryReset" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryResetTitle">
+      <button type="button" class="gcEntryBack" id="gcEntryResetBack">← Zur Anmeldung</button>
+      <div class="gcEntryAuthPanel">
+        <h1 id="gcEntryResetTitle">Passwort vergessen?</h1><p>Gib deine E-Mail-Adresse ein. Wir schicken dir einen Link, mit dem du ein neues Passwort festlegen kannst.</p>
+        <form id="resetForm" class="stack authForm">
+          <label for="resetEmail">E-Mail<input id="resetEmail" type="email" autocomplete="email" required data-entry-autofocus /></label>
+          <button id="resetSubmit" class="button primary" type="submit">Link senden</button>
+          <p id="resetStatus" class="hint" role="status" aria-live="polite"></p>
+        </form>
+        <p class="gcEntrySwitch"><button type="button" id="gcEntryResetLogin">Zur Anmeldung</button></p>
+      </div>
+    </section>
   </div>`;
 
   installPublicHeader();
@@ -233,6 +270,11 @@ function buildEntrySurface() {
   $("gcEntryRegisterTabHost").append(registerTab);
   $("gcEntryRegisterFormHost").append(registerForm);
   if (notice) authView.prepend(notice);
+  loginForm.setAttribute("aria-labelledby", "gcEntryLoginTitle");
+  registerForm.setAttribute("aria-labelledby", "gcEntryRegisterTitle");
+  const registerHeading = registerForm.querySelector("h2");
+  if (registerHeading) registerHeading.hidden = true;
+  registerForm.querySelector('button[type="submit"]').textContent = "Konto erstellen";
 
   loginTab.classList.add("gcEntryCompatTab");
   registerTab.classList.add("gcEntryCompatTab");
@@ -247,6 +289,9 @@ function buildEntrySurface() {
   $("gcEntryLoginOpen").addEventListener("click", showLogin);
   $("gcEntrySwitchRegister").addEventListener("click", showRegister);
   $("gcEntrySwitchLogin").addEventListener("click", showLogin);
+  $("forgotBtn").addEventListener("click", showReset);
+  $("gcEntryResetBack").addEventListener("click", showLogin);
+  $("gcEntryResetLogin").addEventListener("click", showLogin);
   authView.querySelectorAll("[data-entry-back]").forEach(button => button.addEventListener("click", showStart));
   installHeroDemo($("gcEntryStart"));
   translateTree(authView);
@@ -254,7 +299,10 @@ function buildEntrySurface() {
   document.addEventListener("gradecrew:signed-out", () => {
     if (!$("authView")?.classList.contains("hidden")) showStart();
   });
-  setState("start", { focus: false });
+  const initialState = initialEntryState();
+  loginForm.classList.toggle("hidden", initialState === "register");
+  registerForm.classList.toggle("hidden", initialState !== "register");
+  setState(initialState, { focus: false });
   installHeroViewportFit(authView);
   return true;
 }
