@@ -44,13 +44,16 @@ function setState(next, { focus = true } = {}) {
     section.setAttribute("aria-hidden", String(hidden));
   }
   const authView = $("authView");
-  if (authView) authView.dataset.entryState = next;
+  if (authView) {
+    authView.dataset.entryState = next;
+    authView.dataset.entryRevision = String((Number(authView.dataset.entryRevision) || 0) + 1);
+  }
   $("gcEntryLoginOpen")?.classList.toggle("hidden", next !== "start");
   if (!focus) return;
   syncEntryIntent(next);
   requestAnimationFrame(() => {
     const root = $(stateIds[next]);
-    const target = next === "start" ? root?.querySelector("h1") : root?.querySelector("[data-entry-autofocus], input:not([type=hidden]), button, a[href]");
+    const target = next === "start" ? root?.querySelector("h1") : (root?.querySelector("[data-entry-autofocus]") || root?.querySelector("input:not([type=hidden])") || root?.querySelector("button, a[href]"));
     if (target && next === "start") target.tabIndex = -1;
     target?.focus?.({ preventScroll: true });
   });
@@ -82,6 +85,8 @@ function installHeroViewportFit(authView) {
   let frame = 0;
   const fit = () => {
     frame = 0;
+    const visibleHeight = window.visualViewport?.height || window.innerHeight;
+    document.body?.style?.setProperty('--gc-entry-viewport-height', `${visibleHeight}px`);
     const page = authView.querySelector('.gcHeroPage');
     const visual = authView.querySelector('.gcHeroVisual');
     const stage = authView.querySelector('.gcHeroStage');
@@ -297,7 +302,7 @@ function buildEntrySurface() {
   translateTree(authView);
 
   document.addEventListener("gradecrew:signed-out", () => {
-    if (!$("authView")?.classList.contains("hidden")) showStart();
+    if (!$("authView")?.classList.contains("hidden")) setState(initialEntryState(), { focus: false });
   });
   const initialState = initialEntryState();
   loginForm.classList.toggle("hidden", initialState === "register");

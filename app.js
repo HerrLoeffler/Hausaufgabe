@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc36";
+const APP_VERSION = "2.3.1-gc37";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -40,9 +40,9 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { createAccountController } from "./admin-account-actions.mjs?v=1";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc36";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc36";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc36";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc37";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc37";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc37";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -1127,9 +1127,11 @@ $("resetForm")?.addEventListener("submit", async (event) => {
   const email = $("resetEmail").value.trim();
   if (!email || !$("resetForm").reportValidity()) return;
   const generation = authStateGeneration;
+  const revision = $("authView")?.dataset.entryRevision;
   const status = $("resetStatus");
   const button = $("resetSubmit");
-  const isCurrent = () => generation === authStateGeneration && $("authView")?.dataset.entryState === "reset";
+  const isCurrent = () => generation === authStateGeneration && $("authView")?.dataset.entryState === "reset"
+    && $("authView")?.dataset.entryRevision === revision && !$("authView").classList.contains("hidden");
   const sentMessage = "Falls ein Konto mit dieser E-Mail-Adresse besteht, erhältst du einen Link. Schau auch im Spam-Ordner nach.";
   passwordResetPending = true;
   button.disabled = true;
