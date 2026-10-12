@@ -57,3 +57,12 @@ Externstart-Receipt12.10.2026 17:06UTC: PR225 normal gemerged als `77119be516815
 
 
 Zwischennachweis: TestFlightRun38282021673/Job114921317823 meldet Routing, Navigation, NativeHome/Remy, Assets und unsigned iOSArchive success; Exportoptions success. Cloudsign/Upload-Schritt13 ist in_progress, noch kein Uploadsuccess. Browser-App-Store-Connect öffnet Loginseite ohne bestehende Anmeldung; keine Credentials eingetragen, kein neuer OAuth-/IAM-/Keyzugriff. AppleProcessing/Testerassignment/Installierbarkeit damit weiterhin unbekannt. Nächster Schritt: ausschließlich diesen Uploadschritt bis terminalem Receipt prüfen.
+
+
+## TestFlight-Uploadreceipt — 12.10.2026 17:10UTC
+
+Run38282021673 attempt1, Job114921317823 completed/success. Exactmerge/source `77119be5168150f7fa14076565b5099e856cb8d4`, reviewed Runtimebaum `97730a20c37b2f49ec06e223f33ee347ad985bf7`. Marketingversion0.1.18 / Build37 (`CURRENT_PROJECT_VERSION=37` im echten Archivaufruf). Joblog: ARCHIVE SUCCEEDED17:09:17UTC; „Progress90%: Upload succeeded.“17:10:35UTC; EXPORT SUCCEEDED17:10:35UTC. Routing/Navigation/NativeHome/Remy/Assets/Archive/Cloudsign-Upload und Cleanup alle success, Workflow aktualisiert17:10:44UTC. Link https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38282021673 . Keine weiteren Versuche/Dispatchs, kein Signing-/SDK-/Secret-/Providerwechsel.
+
+Bestätigte Stufe: native primary integrated + CIgreen + TestFlightupload successful. Apple-Verarbeitung, Testergruppe/Assignment, TestFlight-Installierbarkeit, physische Gerätetest-/Keyboard-/VoiceOverabnahme weiterhin nicht geprüft. App-Store-Connect-Browser zeigt Login ohne bestehende Sitzung; keine neue Anmeldung/Credentials/Keys vorgenommen. Kein Production-/AppStoreProductionrelease, Webdeploy bleibt separater GC37-Receipt.
+
+Nächster ausführbarer Schritt: Martin meldet sich in bestehendem App-Store-Connect-Konto an beziehungsweise prüft TestFlight0.1.18(37); danach AppleProcessing/Testerfreigabe/Installierbarkeit und tatsächlichen geladenenWeb-SHA erfassen, anschließend Header/Home/Keyboard/Remy auf iPhone/iPad testen. Uploadreceipt ersetzt diese Geräteabnahme nicht. CommonmainOwner bekommt exakten Receipt zur TODO/STATE-Aktualisierung. Diese Receiptbranch verändert nur vorhandenen Handoff, reviewedRuntimecandidate bleibt unverändert.
