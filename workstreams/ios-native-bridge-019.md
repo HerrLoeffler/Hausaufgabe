@@ -54,3 +54,6 @@ Diese Receiptbranch enthält nur Handoffappend; der geprüfte Runtimecandidate/P
 
 
 Externstart-Receipt12.10.2026 17:06UTC: PR225 normal gemerged als `77119be5168150f7fa14076565b5099e856cb8d4`, Runtimebaum exakt weiterhin `97730a20c37b2f49ec06e223f33ee347ad985bf7`. Bestehender pushWorkflow automatisch gestartet: TestFlightRun38282021673, attempt1, run_number37 (erwarteter Build37), Marketingversion0.1.18, initial queued. Keine manuellen zweiten Dispatchs/Providerstarts. UnsignedArchive/Upload/AppleProcessing/TesterAssignment/Installierbarkeit noch nicht belegt. Nächster Schritt: denselben Run38282021673 bis Archive/Upload beobachten und Receipt prüfen.
+
+
+Zwischennachweis: TestFlightRun38282021673/Job114921317823 meldet Routing, Navigation, NativeHome/Remy, Assets und unsigned iOSArchive success; Exportoptions success. Cloudsign/Upload-Schritt13 ist in_progress, noch kein Uploadsuccess. Browser-App-Store-Connect öffnet Loginseite ohne bestehende Anmeldung; keine Credentials eingetragen, kein neuer OAuth-/IAM-/Keyzugriff. AppleProcessing/Testerassignment/Installierbarkeit damit weiterhin unbekannt. Nächster Schritt: ausschließlich diesen Uploadschritt bis terminalem Receipt prüfen.
