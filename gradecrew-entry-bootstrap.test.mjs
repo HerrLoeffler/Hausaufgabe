@@ -30,7 +30,7 @@ test('public entry installs on the real app document and preserves auth controls
     requestAnimationFrame: callback => w.setTimeout(callback, 0)
   });
   try {
-    const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=6');
+    const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
     assert.equal(installGradeCrewEntryFlow(), true);
     for (const id of ['loginForm', 'registerForm', 'joinForm', 'forgotBtn', 'loginEmail', 'loginPassword', 'registerName', 'registerEmail', 'registerPassword', 'registerPassword2', 'joinCode']) {
       assert.ok(w.document.getElementById(id), `${id} must survive entry installation`);
@@ -105,7 +105,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     requestAnimationFrame: callback => w.setTimeout(callback, 0)
   });
   try {
-    const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=6');
+    const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
     assert.equal(installGradeCrewEntryFlow(), true);
     const appSource = fs.readFileSync('app.js', 'utf8');
     const source = appSource.slice(0, appSource.indexOf('import { initializeApp')) + appSource.slice(appSource.indexOf('const diagnostics ='));
@@ -260,4 +260,130 @@ test('app bootstrap binds its real auth controls after public entry installation
     for (const [key, value] of Object.entries(previous)) value === undefined ? delete globalThis[key] : globalThis[key] = value;
     w.close();
   }
+});
+
+test('native auth intent opens the requested real form and keeps route context', async () => {
+  const previous = Object.fromEntries(['window', 'document', 'MutationObserver', 'NodeFilter', 'HTMLImageElement', 'matchMedia', 'requestAnimationFrame'].map(key => [key, globalThis[key]]));
+  try {
+    for (const [intent, expected] of [['login', 'login'], ['register', 'register'], ['reset', 'reset'], ['https://evil.example/', 'start'], ['login&test=ABCD1234', 'start'], ['login&preview=1', 'start']]) {
+      const url = `https://hausaufgabe-staging.web.app/?gradecrewApp=teacher&source=ios&appVersion=0.1.9&intent=${intent.includes('&') ? intent : encodeURIComponent(intent)}&template=TEST1234&returnUrl=${encodeURIComponent('https://evil.example/')}`;
+      const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), { url });
+      const w = dom.window;
+      w.scrollTo = () => {};
+      w.HTMLDialogElement.prototype.close = function () { this.open = false; };
+      Object.assign(globalThis, { window: w, document: w.document, MutationObserver: w.MutationObserver, NodeFilter: w.NodeFilter,
+        HTMLImageElement: w.HTMLImageElement, matchMedia: () => ({ matches: false, addEventListener() {} }), requestAnimationFrame: callback => w.setTimeout(callback, 0) });
+      const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
+      assert.equal(installGradeCrewEntryFlow(), true);
+      assert.equal(w.document.getElementById('authView').dataset.entryState, expected, `intent=${intent}`);
+      assert.equal(w.location.href, url, 'entry selection must not navigate to an untrusted return URL or lose context');
+      w.document.dispatchEvent(new w.Event('gradecrew:signed-out'));
+      assert.equal(w.document.getElementById('authView').dataset.entryState, expected, 'initial signed-out provider result must preserve requested auth entry');
+      if (expected === 'login') {
+        assert.equal(w.document.getElementById('loginForm').classList.contains('hidden'), false);
+        assert.match(w.document.getElementById('gcEntryLoginTitle').textContent, /Willkommen zurück in der Crew\./);
+        w.document.getElementById('loginEmail').value = 'teacher@example.test';
+        w.document.getElementById('forgotBtn').click();
+        assert.equal(w.document.getElementById('authView').dataset.entryState, 'reset');
+        assert.equal(w.document.getElementById('resetEmail').value, 'teacher@example.test');
+        await new Promise(resolve => w.setTimeout(resolve, 10));
+        assert.equal(w.document.activeElement.id, 'resetEmail', 'recovery opens with focus in its email field');
+        w.document.getElementById('gcEntryResetLogin').click();
+        assert.equal(w.document.getElementById('authView').dataset.entryState, 'login');
+        w.document.getElementById('gcEntrySwitchRegister').click();
+        assert.equal(w.document.getElementById('authView').dataset.entryState, 'register');
+        assert.equal(w.document.querySelectorAll('#registerForm').length, 1);
+        await new Promise(resolve => w.setTimeout(resolve, 10));
+        assert.equal(w.document.activeElement.id, 'registerName', 'registration opens with focus in its first field');
+        assert.match(w.document.getElementById('gcEntryRegisterTitle').textContent, /Werde Teil der Crew\./);
+        assert.ok(w.document.querySelector('#gcEntryRegister img[src*="crew-classroom"]'));
+        w.document.querySelector('#gcEntryRegister [data-entry-back]').click();
+        assert.equal(w.document.getElementById('authView').dataset.entryState, 'start');
+        assert.equal(new URL(w.location.href).searchParams.has('intent'), false, 'back removes the login intent so refresh stays on the start');
+        assert.equal(new URL(w.location.href).searchParams.get('template'), 'TEST1234');
+      }
+      w.close();
+      await new Promise(resolve => setImmediate(resolve));
+    }
+  } finally {
+    for (const [key, value] of Object.entries(previous)) value === undefined ? delete globalThis[key] : globalThis[key] = value;
+  }
+});
+
+test('password recovery uses the existing provider once, shows status and protects a departed screen', async () => {
+  const dom = new JSDOM('<form id="loginForm"><input id="loginEmail"><button id="forgotBtn"></button></form><form id="registerForm"></form><form id="resetForm"><input id="resetEmail" type="email" required><button id="resetSubmit" type="submit">Link senden</button><p id="resetStatus" role="status"></p></form><section id="authView" data-entry-state="reset"></section>');
+  const w = dom.window;
+  const calls = [];
+  let finish, fail;
+  const source = fs.readFileSync('app.js', 'utf8');
+  const handlers = source.slice(source.indexOf('// ---------- Auth / Landing ----------'), source.indexOf('$("logoutBtn").addEventListener'));
+  const context = vm.createContext({ document: w.document, $: id => w.document.getElementById(id), bindTabs() {}, auth: {}, authStateGeneration: 1,
+    sendPasswordResetEmail: (...args) => { calls.push(args); return new Promise((resolve, reject) => { finish = resolve; fail = reject; }); },
+    prompt() { assert.fail('reset must use the real form, never a prompt'); }, toast() {}, authMessage: () => 'Bitte versuche es erneut.' });
+  try {
+    vm.runInContext(handlers, context);
+    w.document.getElementById('resetEmail').value = ' teacher@example.test ';
+    const submit = () => w.document.getElementById('resetForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
+    submit(); submit();
+    assert.equal(calls.length, 1, 'repeat submit while awaiting provider must not send a second reset');
+    assert.equal(calls[0][1], 'teacher@example.test');
+    assert.equal(w.document.getElementById('resetSubmit').disabled, true);
+    finish(); await new Promise(resolve => setImmediate(resolve));
+    assert.match(w.document.getElementById('resetStatus').textContent, /Falls ein Konto/);
+    assert.equal(w.document.getElementById('resetSubmit').disabled, false);
+    w.document.getElementById('resetStatus').textContent = '';
+    submit();
+    w.document.getElementById('authView').dataset.entryState = 'login';
+    const waitingStatus = w.document.getElementById('resetStatus').textContent;
+    finish(); await new Promise(resolve => setImmediate(resolve));
+    assert.equal(w.document.getElementById('resetStatus').textContent, waitingStatus, 'late recovery response must not update a departed screen');
+    w.document.getElementById('authView').dataset.entryState = 'reset';
+    w.document.getElementById('authView').dataset.entryRevision = '1';
+    submit();
+    w.document.getElementById('authView').dataset.entryRevision = '2';
+    w.document.getElementById('resetStatus').textContent = 'Neue Ansicht';
+    finish(); await new Promise(resolve => setImmediate(resolve));
+    assert.equal(w.document.getElementById('resetStatus').textContent, 'Neue Ansicht', 'a late result must not overwrite a newly opened reset screen');
+    submit(); fail({ code: 'auth/user-not-found', message: 'Account does not exist' });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.match(w.document.getElementById('resetStatus').textContent, /Falls ein Konto/);
+    submit(); fail({ code: 'auth/network-request-failed', message: 'sensitive provider details' });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.match(w.document.getElementById('resetStatus').textContent, /versuche es erneut/);
+    assert.doesNotMatch(w.document.getElementById('resetStatus').textContent, /sensitive|does not exist/);
+    const count = calls.length;
+    w.document.getElementById('resetEmail').value = 'invalid-email'; submit();
+    assert.equal(calls.length, count, 'invalid email must not reach the provider');
+  } finally { w.close(); }
+});
+
+test('registration submits to the existing Firebase provider and preserves the teacher profile contract', async () => {
+  const dom = new JSDOM('<form id="loginForm"></form><form id="registerForm"><input id="registerName"><input id="registerEmail"><input id="registerPassword"><input id="registerPassword2"></form>');
+  const w = dom.window;
+  const calls = [], writes = [], profiles = [];
+  const source = fs.readFileSync('app.js', 'utf8');
+  const handlers = source.slice(source.indexOf('// ---------- Auth / Landing ----------'), source.indexOf('$("logoutBtn").addEventListener'));
+  const context = vm.createContext({ document: w.document, $: id => w.document.getElementById(id), bindTabs() {}, auth: {}, db: {},
+    createUserWithEmailAndPassword: async (...args) => { calls.push(args); return { user: { uid: 'synthetic-teacher' } }; },
+    updateProfile: async (...args) => profiles.push(args), setDoc: async (...args) => writes.push(args), doc: (...args) => args,
+    serverTimestamp: () => 'synthetic-time', APP_VERSION: 'test', DEFAULT_SETTINGS: {}, DEFAULT_SCALE: {}, deepClone: value => JSON.parse(JSON.stringify(value)),
+    toast() {}, authMessage: () => 'Fehler' });
+  try {
+    vm.runInContext(handlers, context);
+    for (const [id, value] of [['registerName', ' Test Teacher '], ['registerEmail', ' teacher@example.test '], ['registerPassword', 'local-only'], ['registerPassword2', 'different']]) w.document.getElementById(id).value = value;
+    const submit = () => w.document.getElementById('registerForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
+    submit(); await new Promise(resolve => setImmediate(resolve));
+    assert.equal(calls.length, 0, 'mismatched password must not reach the provider');
+    w.document.getElementById('registerPassword2').value = 'local-only';
+    submit(); await new Promise(resolve => setImmediate(resolve));
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][1], 'teacher@example.test');
+    assert.equal(calls[0][2], 'local-only');
+    assert.equal(profiles[0][1].displayName, 'Test Teacher');
+    assert.equal(writes.length, 1);
+    assert.equal(writes[0][0][1], 'users');
+    assert.equal(writes[0][0][2], 'synthetic-teacher');
+    assert.equal(writes[0][1].role, 'teacher');
+    assert.equal(writes[0][1].status, 'active');
+  } finally { w.close(); }
 });

@@ -38,7 +38,7 @@ test('teacher startup loads and activates public entry before app handlers', () 
   const tokensIndex = startup.indexOf('./generated/gradecrew-design-tokens.css?v=1.1.0');
   const dashboardIndex = startup.indexOf('./gradecrew-dashboard-foundation.css?v=1');
   const startscreenIndex = startup.indexOf('./gradecrew-auth-startscreen.css?v=4');
-  const startscreenPolishIndex = startup.indexOf('./gradecrew-auth-startscreen-polish.css?v=1');
+  const startscreenPolishIndex = startup.indexOf('./gradecrew-auth-startscreen-polish.css?v=2');
   const entryIndex = startup.search(/\bawait import\(["']\.\/gradecrew-entry-flow\.js(?:\?[^"']*)?["']\)/);
   const installIndex = startup.indexOf('installGradeCrewEntryFlow();');
   const appIndex = startup.search(/\bawait import\(["']\.\/app\.js(?:\?[^"']*)?["']\)/);

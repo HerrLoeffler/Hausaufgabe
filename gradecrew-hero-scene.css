@@ -370,3 +370,39 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
 }
 
 @media(min-width:781px){#authView .gcHeroHit{display:none}}
+
+/* GC-DESIGN-05 mobile: content determines height, keeping the crew and actions together. */
+@media(max-width:780px) {
+  #authView .gcHeroStage { min-height: 0; height: auto; justify-content: flex-start; gap: 0; padding-bottom: 12px; }
+  #authView .gcHeroLead { padding: 16px 16px 12px; }
+  #authView .gcHeroLead h1 { font-size: clamp(24px, 6.6vw, 36px); line-height: 1.12; }
+  #authView .gcHeroLead p { margin-top: 6px; font-size: clamp(14px, 3.8vw, 19px); line-height: 1.3; }
+  #authView .gcHeroVisual { width: min(100%, 640px); }
+  #authView .gcHeroRoles { margin: -14px 12px 0; gap: 6px; z-index: 1; }
+  #authView .gcHeroRoles button { min-height: 48px; padding: 7px 3px; border-radius: var(--gc-radius-control); }
+  #authView .gcHeroRoles strong { font-size: 15px; }
+  #authView .gcHeroRoles small { font-size: 11px; margin-top: 3px; }
+  #authView .gcHeroActions { width: calc(100% - 24px); margin: 14px auto 0; }
+  #authView .gcHeroTutorialEntry .button { min-height: 48px; font-size: 16px; }
+  #authView .gcHeroTutorialEntry small { font-size: 12px; line-height: 1.3; }
+  #authView .gcHeroJoin { margin: 14px 12px 0; padding: 12px; border-radius: var(--gc-radius-panel); box-shadow: none; }
+  #authView .gcHeroJoin > label { margin-bottom: 7px; font-size: 14px; }
+  #authView .gcHeroJoin #joinForm label { font-size: 12px; }
+  #authView .gcHeroJoin #joinCode, #authView .gcHeroJoin .gcEntryJoinSubmit { min-height: 48px; }
+  #authView .gcHeroJoin .gcEntryJoinSubmit { min-width: 98px; font-size: 14px; }
+  #authView .gcEntryBenefitsCompact { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; padding: 12px 10px 40px; }
+  #authView .gcEntryBenefitsCompact strong { font-size: 12px; line-height: 1.2; }
+  #authView .gcEntryBenefitsCompact small { font-size: 11px; line-height: 1.2; }
+}
+@media(max-width:780px) {
+  #authView .gcHeroLead h1 strong span { color: inherit; }
+  #authView .gcHeroVisual {
+    width: calc(100% - 24px);
+    max-width: 640px;
+    border-radius: 22px 22px 28px 28px;
+    overflow: hidden;
+    mask-image: linear-gradient(#000 88%, transparent);
+  }
+  #authView .gcHeroRoles { margin-top: -20px; }
+  #authView .gcHeroTutorialEntry .button, #authView .gcHeroJoin .gcEntryJoinSubmit { background: var(--gc-colors-primary); border-color: var(--gc-colors-primary); }
+}

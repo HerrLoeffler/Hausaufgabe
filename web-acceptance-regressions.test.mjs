@@ -8,12 +8,14 @@ const { JSDOM } = require('./tools/ui/node_modules/jsdom');
 const app = fs.readFileSync('app.js', 'utf8');
 
 test('returning to the public start focuses its heading rather than the invisible Remy hotspot', () => {
-  const dom=new JSDOM('<section id="authView"><section id="gcEntryStart"><button class="gcHeroHit">Remy hotspot</button><h1>GradeCrew</h1><button>Remy</button></section><section id="gcEntryLogin"></section><section id="gcEntryRegister"></section></section>');
+  const dom=new JSDOM('<section id="authView"><section id="gcEntryStart"><button class="gcHeroHit">Remy hotspot</button><h1>GradeCrew</h1><button>Remy</button></section><section id="gcEntryLogin"></section><section id="gcEntryRegister"></section></section>', {url:'https://gradecrew.example/?intent=login&template=ABCD1234'});
   const source=fs.readFileSync('gradecrew-entry-flow.js','utf8');
-  const code=source.slice(source.indexOf('function setState('),source.indexOf('\nfunction showLogin'));
-  const context={document:dom.window.document,$:id=>dom.window.document.getElementById(id),stateIds:{start:'gcEntryStart',login:'gcEntryLogin',register:'gcEntryRegister'},activeState:null,requestAnimationFrame:callback=>callback()};
+  const code=source.slice(source.indexOf('function syncEntryIntent('),source.indexOf('\nfunction showLogin'));
+  const context={window:dom.window,URL,document:dom.window.document,$:id=>dom.window.document.getElementById(id),stateIds:{start:'gcEntryStart',login:'gcEntryLogin',register:'gcEntryRegister'},activeState:null,requestAnimationFrame:callback=>callback()};
   vm.runInNewContext(code+'\nsetState("start")',context);
   assert.equal(dom.window.document.activeElement.tagName,'H1');
+  assert.equal(new URL(dom.window.location.href).searchParams.has('intent'),false);
+  assert.equal(new URL(dom.window.location.href).searchParams.get('template'),'ABCD1234');
   dom.window.close();
 });
 
