@@ -21,6 +21,12 @@ Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und
 |---|---|---|---|
 | GC-VIDEO-INSIGHTS-20261011 | Caption-/Videoanalyse aller Julian-Ivanov- und StrategieNerd-Videos vom 11.04. bis 11.10.2026, einschließlich regulärer Videos, Shorts und Streams; zusätzlich jv5-Xhp5s_k | **Recherche dokumentiert und in main integriert; keine Release-Erfüllung** | Alle Videos inventarisiert; StrategieNerd-Folgen nach Spiel/Serie gruppiert, 19 visuelle Proben und Grenzen der 49 Primärquellenprüfungen offengelegt. Dokumentationsintegration via PR #207 in main@57106997; kein Produkt-, Installations-, Pilot- oder Deploy-Status. [Ergebnisindex](docs/research/video-insights-20261011-summary.md) · [Übergabe](workstreams/research-videos-20261011.md) |
 
+## 12.10.2026 — FastQuiz: binomische Formeln
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-GAMES-FASTQUIZ-BINOMIAL-20261012 | Bestehendes Fast Quiz um leichte binomische Formeln / Klasse10 /3Minuten ergänzen | **Eigenes Staging deployed; PR224 offen/unmerged.** Source `2e5f8b8e`, CI38227329308 grün, fastquiz-Functions und43Dateien im eigenen7-Tage-Kanal bestätigt; echter synthetischer Lehrer-/Schülerlauf bis Endstand2/3/150 erfolgreich. | [Spiel öffnen](https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app/fast-quiz/?mode=live), gültig bis19.10.2026 11:19CEST. Schnellwahl→Runde erstellen→QR/Code teilen→Start. Physical QR/iPad/phone/Nutzerabnahme offen; gc36/Rules/Production unverändert. [Übergabe](workstreams/fastquiz-binomial-20261012.md) · [Receipts](workstreams/fastquiz-binomial-release-receipts-20261012.json) |
+
 ## P0 – vor einem neuen öffentlichen Release
 
 | ID | Aufgabe | Status | Baustelle / nächster Schritt |

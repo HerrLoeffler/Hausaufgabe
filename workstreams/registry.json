@@ -620,6 +620,14 @@
       "state": "active",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
       "relatedBranches": []
+    },
+    {
+      "id": "fastquiz-binomial-20261012",
+      "title": "Fast Quiz: binomische Formeln, Klasse10",
+      "primaryBranch": "feat/fastquiz-binomial-20261012",
+      "integrationTarget": "lab/games-structure",
+      "state": "integration_ready",
+      "handoff": "workstreams/fastquiz-binomial-20261012.md"
     }
   ]
 }

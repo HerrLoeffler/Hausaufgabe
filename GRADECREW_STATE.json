@@ -2142,5 +2142,41 @@
     "integrationCommit": "9363fe9842b502c4a2780bf007acef6881af6213",
     "tree": "785d1f32e66dfce406089c4e6d113079b0724773",
     "integrationCi": 38104693107
+  },
+  "fastQuizBinomial20261012": {
+    "task_id": "GC-GAMES-FASTQUIZ-BINOMIAL-20261012",
+    "stage": "staging_deployed",
+    "observed_at": "2026-10-12 09:34 UTC",
+    "branch": "feat/fastquiz-binomial-20261012",
+    "commit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+    "pr": 224,
+    "integration": "PR224 open/unmerged; isolated preview only",
+    "ci": 38227329308,
+    "ci_job": 114737935595,
+    "ci_conclusion": "success Node22+Chromium",
+    "functions": {
+      "project": "hausaufgabe-staging",
+      "codebase": "fastquiz",
+      "id": "fastQuizApi",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "hash": "441ec0390d6d6c564ad9baae57f34ef3aeaeb202",
+      "verified": "CLI update success + actual room retains binomial"
+    },
+    "hosting": {
+      "project": "hausaufgabe-staging",
+      "channel": "gradecrew-binomial-20261012",
+      "url": "https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app/fast-quiz/?mode=live",
+      "expires": "2026-10-19 11:19:14 CEST",
+      "hosted_files": 43,
+      "manifest_hashes_verified": 42
+    },
+    "synthetic_test": "real deployed teacher/student tabs, QR URL/code join, three formula types, correct/wrong/5s pause, synchronized live score, natural180s end2of3/67percent/150",
+    "user_acceptance": "pending; physicalcamera/device/classload not tested",
+    "production": "unchanged",
+    "rules": "unchanged; not deployed",
+    "handoff": "workstreams/fastquiz-binomial-20261012.md",
+    "receipts": "workstreams/fastquiz-binomial-release-receipts-20261012.json",
+    "next": "Martin opens isolated link, chooses Klasse10 binomial3minutes, creates fresh room, shares QR/code and starts after pupils join"
   }
 }

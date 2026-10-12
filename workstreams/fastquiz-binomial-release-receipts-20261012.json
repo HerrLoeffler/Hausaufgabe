@@ -1,0 +1,91 @@
+{
+  "task": "GC-GAMES-FASTQUIZ-BINOMIAL-20261012",
+  "source": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+  "pr": 224,
+  "integration": "open_unmerged_PR224; own isolated preview release",
+  "ci": 38227329308,
+  "ciJob": 114737935595,
+  "functions": {
+    "source": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+    "project": "hausaufgabe-staging",
+    "id": "fastQuizApi",
+    "region": "europe-west1",
+    "runtime": "nodejs22",
+    "codebase": "fastquiz",
+    "labels": {
+      "deployment-tool": "cli-firebase",
+      "firebase-functions-codebase": "fastquiz",
+      "firebase-functions-hash": "441ec0390d6d6c564ad9baae57f34ef3aeaeb202"
+    },
+    "cliDeployExit": 0,
+    "sourceFiles": {
+      "lab/fast-quiz-functions/index.js": "4e675d3a5a57302a199749494de32521394c262b38c9e8c28928a57c058d3256",
+      "lab/fast-quiz-functions/package.json": "8a6892e62e1ee98814aa61eef909e80ebafd7b7800d8dbe9516c90e52fc2723b",
+      "firebase.fastquiz.json": "ff935e57be2f6f2780a1d98408233d86b7eceb8acfea24c162b1e28dcece0a97"
+    }
+  },
+  "hosting": {
+    "target": "hausaufgabe-staging",
+    "channel": "gradecrew-binomial-20261012",
+    "url": "https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app",
+    "gameUrl": "https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app/fast-quiz/?mode=live",
+    "expires": "2026-10-19 11:19:14 CEST",
+    "cliDeployExit": 0,
+    "hostedFiles": 43,
+    "manifestHashes": 42,
+    "allManifestHashesMatched": true,
+    "indexTransform": "reviewed existing build injects shared shell; packaged index matches expected compiled build"
+  },
+  "syntheticFlow": {
+    "roomCode": "316351",
+    "pseudonym": "QA-Binom01",
+    "config": {
+      "version": 4,
+      "operations": [
+        "binomial"
+      ],
+      "domains": [
+        "natural"
+      ],
+      "level": "n1",
+      "durationSec": 180,
+      "scoring": {
+        "correctPoints": 100,
+        "wrongPenalty": 50,
+        "lockSeconds": 5,
+        "speedBonus": true,
+        "streakBonus": true,
+        "allowNegative": true,
+        "showSolution": true
+      },
+      "leaderboardMode": "live",
+      "roundMode": "live"
+    },
+    "status": "finished",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 67,
+    "finalScore": 150,
+    "teacherFinal": "BEENDET/Endstand150",
+    "join": "actual QR-emittedURL opened + six-digit code entered in deployed student form",
+    "feedback": "all3 formula types; correct+100; wrong-50 and5s pause; correct expansion shown",
+    "limits": "no physicalcamera QRscan/iPad/phone/classload;1syntheticparticipant only; no secureassessment/servervalidatedmark claim"
+  },
+  "canonicalGradeCrewUnchanged": {
+    "commit": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+    "version": "2.3.1-gc36",
+    "files": 164
+  },
+  "credentials": "existing FirebaseCLI authorization used normally; no new OAuth/IAM/credential transfer",
+  "proofFiles": [
+    "functions-receipt.json",
+    "hosting-receipt.json",
+    "build-http-hashes.json",
+    "browser-source-and-final-state.json",
+    "synthetic-room-final.json",
+    "teacher-final.png",
+    "player-final.png"
+  ],
+  "requestedModel": "Sol/medium",
+  "actualModel": "unknown"
+}
