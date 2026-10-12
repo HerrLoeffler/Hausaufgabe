@@ -193,8 +193,8 @@ struct TeacherRootView: View {
 
                 HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
                     actionCard(
-                        title: "Remy fragen",
-                        subtitle: "Test kurz einsprechen",
+                        title: "Keine Zeit?",
+                        subtitle: "Sag mir kurz, welchen Test du brauchst.",
                         symbol: "mic.fill",
                         illustration: GradeCrewAssets.NativeImage.remyMicrophoneForward,
                         tint: GradeCrewDesignTokens.Colors.crewRust,
