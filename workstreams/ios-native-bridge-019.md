@@ -22,3 +22,16 @@ Nächster Schritt: Foundation-Dateivertrag mit zuerst fehlschlagenden Verhaltens
 - Grafische Xcode-Steuerung meldete am 06.10. noWindowsAvailable. Projekt erzeugt und mit xcodebuild erfolgreich kompiliert; kein GUI-/Simulator-/Gerätenachweis daraus.
 - Review ausgenommen: physische Präsentation, tatsächliche iPhone/iPad-Abnahme, Apple-Verarbeitung und TestFlight-Freigabe.
 - GitHub-/CI-Sicherung ist der nächste Schritt; neuer 0.1.9-Upload noch nicht gestartet. Historischer 0.1.8-(18)-Nachweis bleibt separat.
+
+
+## 12.10.2026 — GC-DESIGN-05 mobile auth / GC-IOS-02 Native-Anteil
+
+Ausführender Owner: `/root/native_auth_header`, Zentrale koordiniert. Bestehende Tasks, Budget-/Versuchshistorie erhalten; keine zweite Task. Chat-Link unbekannt. Angefordert Sol6.1/medium für begrenzten Native-UI-Scope, tatsächliche Runtime/Usage unknown.
+
+Sauberer eigener Checkout `/private/tmp/gc-native-auth12`, Branch `fix/gc-ios-02-auth12-native`, Basis frisch von `feature/shared-gradecrew-design-system` @ `9ec318da0955e059e33057bb61102729d36a2a57`. main-Regeln einschließlich START_HERE, AGENTS, STATE, TODO, Registry, CHAT_CONTRACT, CHAT_RECOVERY, Assurance/Skills gelesen. Development Status38270796153 / Job114884263777 erfolgreich und Log geprüft; offener PR145 betrifft historische Dokumentation, kein konkurrierender aktueller Native-Source-PR gefunden. Native Primary hat keine aktuelle ios-app-v2.md; historischer main-Handoff bleibt separate Quelle.
+
+Beide Nutzerbilder IMG_2488/IMG_2489 betrachtet. Ursache: TeacherRootView fügt über dem bestehenden Webkopf eine zusätzliche Start/GradeCrew-Zeile ein. Begrenzte Änderung allein in TeacherRootView: Start als explizit zugänglichen Haus-Iconbutton in kompakte untere Safe-Area-Navigation verschoben (44×44pt Ziel); Web behält eine Kopfzeile. Signed-out-Einstieg nutzt vorhandene reviewed GradeCrewBrandSignature mit demselben Startzeitpunkt und Copy „Willkommen zurück in der Crew“. Sicherer signInURL, Auth-/Cookie-/Session-/Bridge-/Download-/Share-/Diagnose- und Remy-Dateien unverändert. Webauthor besitzt Authform/Register/Reset. Keine Assets neu erzeugt, keine neue Firebase-/SDKarchitektur.
+
+Relevante Assurance: SEC04/06 Authgrenze durch unveränderten sicheren URL-/Bridgevertrag erhalten; SEC20 Regression mittels bestehenden Native-Suiten/unsigned Build zu prüfen. PRIV14/15 lesbare Bedienung/Bewegung: vorhandene Reduce-Motion-/Crew-A11ybehandlung wiederverwendet, Start explizit beschriftet; physische große-Schrift-/VoiceOverabnahme nicht geprüft. Andere Daten-/Kosten-/Retentionkontrollen nicht relevant für reines SwiftUI-Layout ohne Datenpfadänderung.
+
+Checkpoint: Sourcefix implementiert; sieben bestehende Native-Suiten (BetaURL, Navigation, Bridge, Home, BrandMotion, Atlas, Layout) und regulärer unsigned Simulatorbuild erfolgreich. Physische Geräte-/CI-Abnahme offen. Status branch_only. Kein Upload/Signing/TestFlightstart, kein Webdeploy/Production. Nächster Schritt: vorhandene native Routing/Bridge/Brand-Suiten und regulären unsigned Simulatorbuild ausführen. Gemeinsame TODO/STATE-Aktualisierung durch releaseowner `/root/feedback_staging_release`.
