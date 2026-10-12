@@ -192,12 +192,14 @@
       "title": "Öffentlicher GradeCrew Startscreen",
       "primaryBranch": "fix/gc-design-05-mobile-auth-20261012",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/gc-design-05-mobile-auth-20261012.md",
       "relatedBranches": [
         "feature/design-startscreen-entry-activation-fix",
         "feature/design-startscreen-masterpiece-v1",
-        "feature/design-startscreen-v1"
+        "feature/design-startscreen-v1",
+        "fix/staging-feedback-mobile-auth-20261012",
+        "fix/staging-feedback-mobile-auth-ci-20261012"
       ]
     },
     {

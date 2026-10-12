@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+    "observed_integration_head": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -56,22 +56,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success38178714448_commit_d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+      "combined_ci": "success38282770458_commit_fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success38178844102_receipt11716733398",
-      "staging_functions": "success38178844003_attempt2_receipt11716807408",
+      "hosting_preview": "success38282960088_receipt11761704040",
+      "staging_functions": "success38282959918_receipt11762526088",
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
-      "desktop_ipad_iphone_test": "not_verified_for_fa51e278_browser_policy_unavailable",
-      "user_acceptance": "pending; readonly dashboard_gc35_and_login_DOM_gc36_verified; physical_devices_and_identified_legacyq5q8_unverified",
+      "desktop_ipad_iphone_test": "sourceauthoractualCuaDesktop/mobile/shortViewport +independentreview; liveanonymous/mobile/physicaldeviceunverified",
+      "user_acceptance": "pending_for_gc37; actualPreviewneutralentry+authrestore; freshanonymousforms/physicaldevices notverified",
       "production": "not_requested",
-      "staging_assessment_functions": "success38178844003_receipt11716253528",
+      "staging_assessment_functions": "success38282959918_receipt11761529376",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success38179306263_receipt11716594995"
+      "canonical_hosting": "success38283900267_receipt11762766814"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 164,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin tests gc36. Existing criterion-less legacy MC tasks need explicit public questions; safe procedural R/F fallback does not prove any unidentified recording is sufficient. No automatic transcript promotion/migration; physical-device/user acceptance separate.",
+    "next_action": "Martin opens canonical gc37 and tests direct login/register/reset on real devices. TestFlight0.1.18(37) upload succeeded, Appleprocessing/testerassignment/installability require confirmation; no further Webrelease needed.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -154,7 +154,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc36-login-copy-20261011.json",
+    "canonical_request": "automation/canonical-staging-requests/gc37-mobile-auth-20261012.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -320,11 +320,11 @@
     "design_mobile_auth_followup": {
       "task_id": "GC-DESIGN-05",
       "related_task": "GC-IOS-02",
-      "stage": "branch_only",
+      "stage": "staging_deployed",
       "branch": "fix/gc-design-05-mobile-auth-20261012",
       "base": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
-      "last_verified_staging": "2.3.1-gc36/164",
-      "source": "pending_author_immutable_candidate",
+      "last_verified_staging": "fd9/gc37/164; normalNativePreferredPreview andcanonicalmarkersidentical",
+      "source": "c8bd72586e77e3bcfea74af8184c0ea9f0d71ed9",
       "authorization": "explicit_user12Oct normalStaging; noProduction/newProvider/grant",
       "owners": {
         "product": "mobile_auth_design",
@@ -335,7 +335,7 @@
       "native_scope": "primary9ec318d sendsintentlogin; separate source/unsignedbuild/draftPR only; TestFlightnotdelivered",
       "preservation_manifest": "workstreams/gc-design-05-gc36-preservation-20261012.json",
       "handoff": "workstreams/gc-design-05-mobile-auth-20261012.md",
-      "next": "authorimmutableSource+boundedtests and independentreview thennormalexactCI/integration/staging",
+      "next": "Martin opens canonical gc37 and tests direct login/register/reset on real devices. TestFlight0.1.18(37) upload succeeded, Appleprocessing/testerassignment/installability require confirmation; no further Webrelease needed.",
       "author_partial": {
         "local": "e928156ca45f5683dbf12632e72be0d58bbaefd5",
         "remote": "2e94710f8349a7bb175d3d2f4527b7fd52413f37",
@@ -350,20 +350,51 @@
       "native": {
         "task": "GC-IOS-02",
         "pr": 225,
-        "head": "38bb03b138a3e3284a5a66e4dd60c4d6529e9bbc",
-        "branch": "fix/gc-ios-02-auth12-native",
-        "base": "feature/shared-gradecrew-design-system@9ec318da0955e059e33057bb61102729d36a2a57",
-        "stage": "ci_green",
+        "source": "38bb03b138a3e3284a5a66e4dd60c4d6529e9bbc",
+        "integration": "77119be5168150f7fa14076565b5099e856cb8d4",
+        "reviewed_tree": "97730a20c37b2f49ec06e223f33ee347ad985bf7",
+        "stage": "integrated",
         "ci": 38279296020,
-        "review": "independentPASS3pertinenttests+iPhone/iPadScreens",
-        "distribution": "pending explicit Human approval; nativePrimary merge automatically signs/uploads TestFlight; DO NOT MERGE",
-        "limits": "unsigned Sim renders, interactiveCUA InvalidApp, no physical/newTestFlight acceptance"
+        "review": "independentPASS3tests+iPhone/iPadScreens",
+        "authorization": "Human explicit Ja, auch über TestFlight veröffentlichen viaRoot",
+        "testflight_run": 38282021673,
+        "job": 114921317823,
+        "version": "0.1.18",
+        "build": 37,
+        "upload": "successArchive/Cloudsign/Export/Upload17:10:35UTC",
+        "apple_processing": "started17:10:35UTC; completion/testerassignment/installabilityunverified",
+        "physical_device": "notverified; interactiveCUA InvalidApp",
+        "receipt_handoff": "https://github.com/HerrLoeffler/Hausaufgabe/blob/21e63b490e4d800b8cca6cfb71452255e300c315/workstreams/ios-native-bridge-019.md",
+        "production": "unchanged"
       },
       "development_audit": {
         "run": 38278754272,
         "attempt1": "failure activePrimary registered before authorremote existed",
         "attempt2": "success114913142261 after2e947publication"
-      }
+      },
+      "integration": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+      "pr": 226,
+      "version": "2.3.1-gc37",
+      "files": 164,
+      "ci_branch": "fix/staging-feedback-mobile-auth-ci-20261012",
+      "candidate_ci": 38282312768,
+      "merge_ci": 38282770458,
+      "admin_ci": 38282770457,
+      "review": "independentPASSc8/8tests/fresh164hashes",
+      "preview_run": 38282960088,
+      "preview_receipt": 11761704040,
+      "functions_run": 38282959918,
+      "ai_receipt": 11762526088,
+      "assessment_receipt": 11761529376,
+      "canonical_run": 38283900267,
+      "canonical_receipt": 11762766814,
+      "rules_sha256": "195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807",
+      "preservation": "all164paths/29PNG retained; oldaudio/color/QR/Admin/ETcontracts unchanged; FastQuizmanifest/app/service441ec039 unchanged",
+      "qa": "actualPreviewinitialneutralentry/gc37footer+existingAuthDashboardrestore; canonicalQAJSONnavigation blockedbyclient1attempt; authoritativecanonicalreceipt/HTTP/RootAPIverified",
+      "qa_report_sha256": "2e8f57b0372e3a78678d01b69209df03960ffff57bf5914c67a1e8a6622c9c8f",
+      "user_acceptance": "pending; freshanonymousRegister/Reset andphysicaldevices notverified; no realmail/accountwrites",
+      "production": "unchanged",
+      "receipts": "workstreams/gc-design-05-release-receipts-20261012.json"
     }
   },
   "production": {

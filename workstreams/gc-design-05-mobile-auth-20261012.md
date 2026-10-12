@@ -1,5 +1,23 @@
 # GC-DESIGN-05 — direkter Auth-Einstieg und mobile Homepage, 12.10.2026
 
+## Verifizierter Auslieferungsabschluss — 12.10.2026
+
+Web **fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf /2.3.1-gc37 /164Dateien** ist auf https://hausaufgabe-staging.web.app/ und normalem app-integration Preview201hlnau identisch deployed; letzterer wird von der installierten nativen signInURL bevorzugt. SourcePR226 c8/treef244 independently PASS8Tests+FreshBuild164/allhashes. Normale erforderliche Node22Candidate38282312768/job114922278971 und Merge38282770458/job114923793525 success; Admin38282770457 success. PR226 normalmerged. Preview38282960088 Receipt11761704040; AI/Assessment38282959918 Receipts11762526088/11761529376 exactfd9/upstream38282770458; canonical38283900267 Receipt11762766814. Beide tatsächlichen öffentlichen Markerfd9/gc37/164 geprüft. Trusted main requestea24 adds only gc37-mobile-auth JSON; kein Controller-/Pipelinewechsel.
+
+Alle164Basispfade vorhanden, alle29CrewPNG unverändert. Nur6ownedRuntimepfade geändert. Positive gc35-Funktionen/Animationen, safeaudioquestion/privateTranscript, Farb-/Gap-Fixes, QR, SavedPreview, Admin/Assessment/ET/Memoryguards erhalten. FastQuiz separatesöffentlichesManifest/SourceappSHA2882cef… und fastQuizApi-Servicehash441ec039… nach Webdeploy identisch,0Raumaufrufe. Sichere Rules195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807 nicht neu deployed; Production unverändert.
+
+Native **0.1.18 Build37** nach ausdrücklicher Humanfreigabe „Ja, auch über TestFlight veröffentlichen“: PR225 reviewed38bb normalmerged77119be5168150f7fa14076565b5099e856cb8d4/tree97730a20 unchanged. NativeChecks38279296020 success; autoTestFlight38282021673 attempt1/job114921317823 success. ActualArchive/Cloudsign/Upload/Export, Upload17:10:35UTC und „Uploaded package is processing“ belegt. **Appleprocessing-Abschluss, Testerassignment, Installierbarkeit und physischer Gerätetest nicht verifiziert.** Keine zweite IOSPrimary-Publikation/ExtraDispatch/Signingconfigänderung. [Immutable native receiptHDF](https://github.com/HerrLoeffler/Hausaufgabe/blob/21e63b490e4d800b8cca6cfb71452255e300c315/workstreams/ios-native-bridge-019.md).
+
+QAbelege getrennt: Autor source3d6/C8 reale CUA Desktop390x844/short420 Login/Register/Reset/Home/Scrollbilder und344root+138UIexit0, bekannte JSDOMteardown-Warnung offen dokumentiert; unabhängiger8Test-/Buildreview. Echter Previewread sah gc37Footer, initialneutralpublicentry ohneSTAGING und vorhandeneauthentifizierteDashboardrestoration. Frische anonyme Register/Reset-/DemoPause-/ReducedMotion-/ViewportLivepfade mangels neuerUnauthsession nichtverifiziert; keineKonten/Resetmails/Logout/Providerwrites. CanonicalQA frischeChrome-JSONnavigation einmalERR_BLOCKED_BY_CLIENT, keinRetry/Umweg; eigenerQAJSONread nichtbehauptet. CanonicalactualReceipt/HTTP/RootpurposeAPI dagegen exaktverified. QAReportSHA2562e8f57b0372e3a78678d01b69209df03960ffff57bf5914c67a1e8a6622c9c8f. Source-/Viewportbilder sind keine physischen iPhone/iPad-/Installationsbelege.
+
+Git-Eventhistorie: AliasdirektaufbestehendemC8 erzeugte nurCreate, keinenPush. AIworkflowSource deklariertworkflow_dispatch, liegt aber nichtaufdefaultmain (404), deshalbActionsUIkeinRunbutton. NeuerownedsupportedRefbeiD6→normalleasegeprüftFF zuidentischemC8 (0behind/2ahead) startete38282312768. KeineDummy-/Produkt-/Versioncommits, force/reset/neueTrigger. FrühererRegistryAuditfehlenderAuthorref wurde nachPartial2e947 einmalread-onlyrerungrün; Historie bewahrt. KeinefrühereProvider-/Budget-/Game-/Releasekette wiederholt.
+
+[Separate tokenfreie Receipts](gc-design-05-release-receipts-20261012.json). Permanente lokale Belege: analysis/GC-DESIGN-05-20261012/release-checkpoint.json und release-proof/; Autorenbilder/logs: analysis/GC-DESIGN-05/mobile-auth-20261012. Neue Task-/Kostenreservierung/bezahltGeneratorrunde nichtangelegt. Release angefordertSol6.1/medium, UIhigh; actualRuntimeunknown.
+Nächster Schritt: Martin öffnet kurzeStagingadresse und prüft Login/Register/Reset/Back/Home auf seinen Geräten; TestFlight0.1.18(37) Verarbeitung/Testerfreigabe undinstalliertesHeader-/Keyboard-/Remy-Verhalten bestätigen. Kein weiterer technischer Webdeploy/Gaterepeat erforderlich.
+
+## Historische Plan-/Source-/Freigabecheckpoints (unten zeitlich lesen)
+
+
 Bestehende Task GC-DESIGN-05, native Beziehung GC-IOS-02. Root hat den direkten Nutzerauftrag bestätigt: Anmeldung ohne Homepage-Zwischenschritt, Konto erstellen und Passwort vergessen, Crew-Bild und schöne mobile Homepage, alle bisherigen Funktionen und Animationen erhalten, anschließend normales Staging. Keine neue Task-ID, Kostenreservierung, bezahlte Generatorrunde oder Production-Freigabe.
 
 ## Zuständigkeit und frische Basis

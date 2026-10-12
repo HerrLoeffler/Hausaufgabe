@@ -1,0 +1,159 @@
+{
+  "task": "GC-DESIGN-05",
+  "web": {
+    "source": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+    "version": "2.3.1-gc37",
+    "files": 164,
+    "reviewedCandidate": "c8bd72586e77e3bcfea74af8184c0ea9f0d71ed9",
+    "pr": 226,
+    "candidateCI": 38282312768,
+    "mergeCI": 38282770458,
+    "adminCI": 38282770457,
+    "preview": {
+      "project": "hausaufgabe-staging",
+      "channel": "gradecrew-app-integration",
+      "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+      "verified_files": 164,
+      "ci_run": "38282960088",
+      "device_test": "not_performed"
+    },
+    "ai": {
+      "project": "hausaufgabe-staging",
+      "scope": "functions:ai",
+      "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+      "integrationBranch": "feature/gradecrew-app-integration",
+      "workflowRun": 38282959918,
+      "upstreamCiRun": 38282770458,
+      "verifiedFunctions": [
+        "crewAssistant",
+        "reviseWholeTest",
+        "recordCrewTelemetry",
+        "getCrewTelemetrySummary",
+        "cleanupCrewTelemetry",
+        "reviewMode"
+      ],
+      "productionChanged": false,
+      "firestoreRulesChanged": false,
+      "hostingChanged": false,
+      "createdAt": "2026-10-12T17:18:10.501Z"
+    },
+    "assessment": {
+      "project": "hausaufgabe-staging",
+      "scope": "functions:assessment",
+      "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+      "integrationBranch": "feature/gradecrew-app-integration",
+      "workflowRun": 38282959918,
+      "upstreamCiRun": 38282770458,
+      "verifiedFunctions": [
+        "getAssessmentInfo",
+        "startAssessmentAttempt",
+        "resumeAssessmentAttempt",
+        "submitAssessmentAttempt",
+        "getAssessmentReceipt",
+        "cleanupAssessmentPrivateOnQuizDelete"
+      ],
+      "productionChanged": false,
+      "firestoreRulesChanged": false,
+      "hostingChanged": false,
+      "aiFunctionsChanged": false,
+      "createdAt": "2026-10-12T17:17:24.678Z"
+    },
+    "canonical": {
+      "project": "hausaufgabe-staging",
+      "channel": "live",
+      "url": "https://hausaufgabe-staging.web.app/",
+      "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+      "sourcePreviewRun": 38282960088,
+      "upstreamCiRun": 38282770458,
+      "version": "sites/hausaufgabe-staging/versions/277d03f2f8a15f94",
+      "previousLiveVersion": "sites/hausaufgabe-staging/versions/ac3c42126cb397be",
+      "verifiedFiles": 164,
+      "workflowRun": 38283900267,
+      "functionsChanged": false,
+      "rulesChanged": false,
+      "productionChanged": false,
+      "deviceTest": "not_performed"
+    },
+    "markers": [
+      {
+        "label": "canonical",
+        "url": "https://hausaufgabe-staging.web.app/release.json",
+        "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+        "version": "2.3.1-gc37",
+        "files": 164
+      },
+      {
+        "label": "nativePreferredPreview",
+        "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/release.json",
+        "commit": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+        "version": "2.3.1-gc37",
+        "files": 164
+      }
+    ]
+  },
+  "native": {
+    "pr": 225,
+    "head": "38bb03b138a3e3284a5a66e4dd60c4d6529e9bbc",
+    "basis": "9ec318da",
+    "scope": "nativeHeader/Welcome/Remycopy existingHDF",
+    "phase": "native primary integrated; TestFlight upload success",
+    "gate": "explicit Human approved; sole native owner executed once, no extra merge/dispatch",
+    "localProof": "unsignedSimbuild/iPhone402pt/iPad1032pt rendering; interactiveCUA InvalidApp, physicalnotverified",
+    "version": "0.1.18 unchanged, buildnumber GITHUB_RUN_NUMBER",
+    "review": "independent PASS38bb03b,3pertinenttests+iPhone/iPadScreens",
+    "ci": 38279296020,
+    "distributionApproval": "direct Human Ja auchüberTestFlightveröffentlichen confirmedRoot",
+    "ciConclusion": "success",
+    "merge": "77119be5168150f7fa14076565b5099e856cb8d4",
+    "testflightRun": 38282021673,
+    "testflightJob": 114921317823,
+    "expectedVersionBuild": "0.1.18(37) actual archive build",
+    "upload": "success actualArchive+CloudSignUpload+EXPORT, Appleprocessing START",
+    "receiptBranch": "docs/gc-ios-02-auth12-release-receipts@21e63b490e4d800b8cca6cfb71452255e300c315",
+    "processing": "completion/testerassignment/installable/physicaldevice unknown; noASCsession"
+  },
+  "preservation": {
+    "candidateRemote": "c8bd72586e77e3bcfea74af8184c0ea9f0d71ed9",
+    "candidateLocal": "3d6cd06df6273e6ab5a2f56dfdfa150a77341521",
+    "base": "d6cd4e733e1a3b8e8b63a14058a364389f3f4488",
+    "version": "2.3.1-gc37",
+    "files": 164,
+    "missingBasePaths": [],
+    "pngDifferences": [],
+    "changedRuntime": [
+      "app.js",
+      "gradecrew-auth-startscreen-polish.css",
+      "gradecrew-entry-flow.js",
+      "gradecrew-hero-scene.css",
+      "index.html",
+      "startup.js"
+    ],
+    "build": "/private/tmp/gc-mobile-auth-source3d6-build-20261012/public/release.json"
+  },
+  "fastQuiz": {
+    "webSource": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf",
+    "gameManifestUnchanged": true,
+    "gameAppSHA256": "2882cefdda8cf2942bbc074ee7c804fa33018fb669d36b786f6a3ac2c89e6071",
+    "gameAppUnchanged": true,
+    "service": {
+      "id": "fastQuizApi",
+      "region": "europe-west1",
+      "codebase": "fastquiz",
+      "hash": "441ec0390d6d6c564ad9baae57f34ef3aeaeb202"
+    },
+    "serviceUnchanged": true,
+    "roomCalls": 0
+  },
+  "qa": {
+    "report": "release-proof/gc37-browser-smoke.md",
+    "sha256": "2e8f57b0372e3a78678d01b69209df03960ffff57bf5914c67a1e8a6622c9c8f",
+    "scope": "actualpreviewgc37footer/initialneutralpublicentry +existingauthenticated dashboardrestore",
+    "limits": "freshsignedoutregister/reset/demopause/reducedmotion/physicaldevice notverified; nologout/writes",
+    "canonicalLimit": "one fresh Chrome/release.json navigation blocked byclient; no retry; canonical actual markers viaReleaseOwner/RootAPI receipt, not QAown JSONread"
+  },
+  "rulesSHA256": "195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807",
+  "productionChanged": false,
+  "requestedModel": "Sol6.1/medium release,high UI",
+  "actualModel": "unknown"
+}
