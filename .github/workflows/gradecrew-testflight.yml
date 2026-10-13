@@ -66,6 +66,10 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Install pinned DOM test dependency
+        run: npm ci --prefix tools/ui
+        env:
+          NODE_AUTH_TOKEN: ''
       - name: Test beta environment routing
         run: python3 native/GradeCrewTeacher/test_beta_environment.py
 
@@ -75,6 +79,8 @@ jobs:
       - name: Test native home and Remy voice flow
         run: |
           python3 native/GradeCrewTeacher/test_home_navigation_policy.py
+          python3 native/GradeCrewTeacher/test_auth_input_policy.py
+          NODE_PATH="$GITHUB_WORKSPACE/tools/ui/node_modules" node --test native/GradeCrewTeacher/test_native_auth_js.cjs native/GradeCrewTeacher/test_native_workspace_js.cjs
           python3 native/GradeCrewTeacher/test_quick_remy_followup_policy.py
           python3 native/GradeCrewTeacher/test_teacher_home_and_remy_layout.py
           python3 native/GradeCrewTeacher/test_native_artwork_sources.py

@@ -4,6 +4,7 @@ struct TeacherRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
+    @State private var authFormPresented = false
     @State private var workspaceOpening = false
     @State private var brandAnimationStartedAt = Date()
     @State private var loadError: String?
@@ -35,7 +36,7 @@ struct TeacherRootView: View {
         GradeCrewBetaEnvironment.signInURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
     }
 
-    private var webURL: URL { route == .signIn ? signInURL : homeURL }
+    private var webURL: URL { homeURL }
 
     private var environmentLabel: String {
         GradeCrewBetaEnvironment.environmentLabel(for: previewPreference)
@@ -60,8 +61,8 @@ struct TeacherRootView: View {
                 onAuthStateChanged: receiveAuthState,
                 onQuickRemyBridgeReady: { quickRemyCall = $0 }
             )
-            .opacity(route == .workspace || route == .signIn ? 1 : 0)
-            .allowsHitTesting(route == .workspace || route == .signIn)
+            .opacity(route == .workspace ? 1 : 0)
+            .allowsHitTesting(route == .workspace)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if route == .quickRemy {
                     QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
@@ -69,7 +70,7 @@ struct TeacherRootView: View {
                 }
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                if route == .workspace || route == .signIn {
+                if route == .workspace {
                     HStack {
                         Button {
                             homeNavigation.showHome()
@@ -90,7 +91,7 @@ struct TeacherRootView: View {
                 }
             }
 
-            if route == .home {
+            if route == .home || route == .signIn {
                 homeScreen
                     .transition(.opacity)
             }
@@ -164,18 +165,22 @@ struct TeacherRootView: View {
 
     @ViewBuilder
     private var homeScreen: some View {
-        switch authState {
-        case .checking:
-            authRestoringScreen
-        case .signedOut:
-            GradeCrewSignInScreen(
+        // Firebase briefly publishes checking during login/profile loading. Keep
+        // the native form and its pending result alive through that transition.
+        if authFormPresented {
+            GradeCrewAuthView(
                 animationStartedAt: brandAnimationStartedAt,
                 loadError: loadError,
-                onSignIn: { homeNavigation.openSignIn() },
+                call: quickRemyCall,
                 onRetry: retryWorkspace
             )
-        case .signedIn(_, _):
-            homeMenuScreen
+        } else {
+            switch authState {
+            case .checking, .signedOut:
+                authRestoringScreen
+            case .signedIn(_, _):
+                homeMenuScreen
+            }
         }
     }
 
@@ -317,12 +322,18 @@ struct TeacherRootView: View {
     private func receiveAuthState(_ newState: GradeCrewNativeBridgePolicy.AuthState) {
         switch newState {
         case let .signedIn(_, changed):
+            authFormPresented = false
             if changed { auditGeneration += 1; auditMessage = nil }
-        case .signedOut, .checking:
+        case .signedOut:
+            authFormPresented = true
+            auditGeneration += 1
+            auditMessage = nil
+        case .checking:
             auditGeneration += 1
             auditMessage = nil
         }
         homeNavigation.receive(newState)
+        if case .signedOut = newState { homeNavigation.showHome() }
     }
 
     @MainActor
@@ -395,72 +406,5 @@ struct TeacherRootView: View {
         homeNavigation.beginAuthCheck()
         reloadID += 1
         showBetaSettings = false
-    }
-}
-
-private struct GradeCrewSignInScreen: View {
-    @State private var isSignInVisible = false
-    let animationStartedAt: Date
-    let loadError: String?
-    let onSignIn: () -> Void
-    let onRetry: () -> Void
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-                GradeCrewBrandSignature(animationStartedAt: animationStartedAt)
-                    .padding(.top, GradeCrewDesignTokens.Spacing.lg)
-
-                Text("Willkommen zurück in der Crew")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                    .multilineTextAlignment(.center)
-
-                VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                    Text("Deine Tests. Deine Ideen. Deine Crew.")
-                        .font(.system(size: GradeCrewDesignTokens.Typography.body))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                        .multilineTextAlignment(.center)
-                    Button(action: onSignIn) {
-                        Label("Mit GradeCrew anmelden", systemImage: "person.crop.circle.fill")
-                            .font(.system(size: 17, weight: .semibold))
-                            .frame(maxWidth: .infinity, minHeight: 54)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(GradeCrewDesignTokens.Colors.primary)
-                    Text("Nach der Anmeldung bleibt dein Konto in der App gespeichert.")
-                        .font(.footnote)
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                        .multilineTextAlignment(.center)
-                    if let loadError {
-                        VStack(spacing: GradeCrewDesignTokens.Spacing.sm) {
-                            Text("GradeCrew ist gerade nicht erreichbar.")
-                                .font(.subheadline.weight(.semibold))
-                            Text(loadError)
-                                .font(.footnote)
-                                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                                .multilineTextAlignment(.center)
-                            Button("Erneut versuchen", action: onRetry).buttonStyle(.bordered)
-                        }
-                    }
-                }
-                .frame(maxWidth: 520)
-                .padding(GradeCrewDesignTokens.Spacing.lg)
-                .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
-                .overlay {
-                    RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card)
-                        .stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1)
-                }
-                .opacity(isSignInVisible ? 1 : 0)
-                .offset(y: isSignInVisible ? 0 : 12)
-                .accessibilityHidden(!isSignInVisible)
-                .allowsHitTesting(isSignInVisible)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-            .padding(.bottom, GradeCrewDesignTokens.Spacing.xxl)
-        }
-        .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
-        .task { isSignInVisible = true }
     }
 }

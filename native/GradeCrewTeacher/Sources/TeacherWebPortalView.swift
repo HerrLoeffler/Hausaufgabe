@@ -110,6 +110,10 @@ struct GradeCrewWebView: UIViewRepresentable {
                 return
             }
             webView.callAsyncJavaScript("""
+                                        if (['authPrepare', 'authLogin', 'authRegister', 'authReset'].includes(action)) {
+                                            if (!window.GradeCrewNativeAuth) throw new Error('Die Anmeldung ist noch nicht bereit. Bitte erneut verbinden.');
+                                            return await window.GradeCrewNativeAuth.perform(action, payload);
+                                        }
                                         const aiFieldIds = { subject: 'aiSubject', grade: 'aiGrade', schoolType: 'aiSchoolType', region: 'aiRegion', topic: 'aiTopic', count: 'aiCount', difficulty: 'aiDifficulty', points: 'aiPoints', imageQuestionCount: 'aiImageQuestionCount', audioQuestionCount: 'aiAudioQuestionCount', audioAnswerQuestionCount: 'aiAudioAnswerQuestionCount', materialMode: 'aiMaterialMode', customNotes: 'aiCustomNotes', personalPreferences: 'aiPersonalPreferences' };
                                         if (payload?.formSession && (!window.GradeCrewRemyAudit || await window.GradeCrewRemyAudit.session() !== payload.formSession)) throw new Error('Das GradeCrew-Konto wurde gewechselt. Bitte beginne die Anfrage erneut.');
                                         if (action === 'openWorkspace') {

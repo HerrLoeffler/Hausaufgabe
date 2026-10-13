@@ -29,6 +29,13 @@ final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
         controller.addScriptMessageHandler(self, contentWorld: .page, name: "gradecrewNative")
         controller.addUserScript(WKUserScript(source: source.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
                                              injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        for name in ["gradecrew-native-workspace", "gradecrew-native-auth"] {
+            if let resource = Bundle.main.url(forResource: name, withExtension: "js"),
+               let script = try? String(contentsOf: resource, encoding: .utf8) {
+                controller.addUserScript(WKUserScript(source: script.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
+                                                     injectionTime: .atDocumentStart, forMainFrameOnly: true))
+            }
+        }
         // Older Staging previews still install the retired annotation tool.
         // Its CSS is scoped to this app's selected origin and main frame.
         let appPresentation = """

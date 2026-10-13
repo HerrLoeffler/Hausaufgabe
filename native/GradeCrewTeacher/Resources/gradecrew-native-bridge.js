@@ -60,6 +60,8 @@
       ? { state: 'signedIn', accountLabel: String(authState.accountLabel || '').slice(0, 160), accountChanged: authState.accountChanged === true }
       : { state: authState.state };
     latestAuthState = payload;
+    if (payload.state !== 'signedIn') window.GradeCrewNativeWorkspace?.restoredAccount(null);
+    window.GradeCrewNativeAuth?.syncAccount?.().catch(() => {});
     const generation = ++authPublicationGeneration;
     const result = await request('authState', payload);
     if (generation === authPublicationGeneration && latestAuthState === payload && payload.state === 'signedIn') {
@@ -74,7 +76,7 @@
   }
 
   Object.defineProperty(window, 'GradeCrewNative', { configurable: false, writable: false,
-    value: Object.freeze({ version: 1, capabilities: () => request('capabilities'), diagnostics, shareFile, setAuthState, refreshAuthState }) });
+    value: Object.freeze({ version: 1, capabilities: () => request('capabilities'), diagnostics, shareFile, setAuthState, refreshAuthState, readAuthState: () => latestAuthState ? { ...latestAuthState } : null }) });
 
   function isBlobDownload(anchor) {
     if (!anchor?.download || fallbackAnchors.has(anchor) || !anchor.href?.startsWith('blob:')) return false;
