@@ -1,0 +1,48 @@
+{
+  "task": "GC-WEB-REPAIR-20261007",
+  "stage": "preview_verified_canonical_requested",
+  "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "tree": "17814c64d432c5deb04560cab49f3ae58c7f08ca",
+  "candidate": "e18b767030ece184a38145470f90c5aeaa374d93",
+  "pr": 233,
+  "ci": {
+    "failed": 38399603476,
+    "candidate": 38400685794,
+    "merge": 38401650150,
+    "conclusion": "success"
+  },
+  "services": {
+    "run": 38401855293,
+    "aiArtifact": 11816121752,
+    "assessmentArtifact": 11815766955,
+    "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+    "newCallable": {
+      "name": "configurePracticeSolutionRelease",
+      "operation": "Successful create",
+      "job": 115311282563
+    },
+    "cleanup": {
+      "name": "cleanupAssessmentPrivateOnQuizDelete",
+      "operation": "Successful update",
+      "job": 115311282563
+    }
+  },
+  "preview": {
+    "run": 38401855165,
+    "receiptArtifact": 11815871515,
+    "buildArtifact": 11815946311,
+    "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+    "verifiedFiles": 165,
+    "version": "2.3.1-gc39",
+    "unchangedCrewPNGs": 29,
+    "independentPublicHashCheck": true
+  },
+  "canonicalRequest": {
+    "id": "gc39-feedback-20261013",
+    "previewRunId": 38401855165,
+    "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b"
+  },
+  "productionChanged": false,
+  "rulesChanged": false,
+  "deviceTest": "not_performed"
+}
