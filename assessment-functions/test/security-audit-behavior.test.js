@@ -267,3 +267,130 @@ test('failed contract construction does not consume quota or store partial attem
   assert.equal(quota(f).count, 1);
   assert.equal([...f.docs.keys()].filter(k => k.includes('/attempts/')).length, 1);
 });
+
+
+// SR01–04: only an explicitly authorized, private publication policy is practice.
+function practiceFixture({ showSolutions = true } = {}) {
+  const f = fixture();
+  const quiz = f.docs.get(`quizzes/${f.quizId}`);
+  Object.assign(quiz, { ownerId: 'owner', published: false, ended: false,
+    solutionReleaseMode: 'practice_after_submit', resultMode: 'none', showSolutions });
+  f.docs.set('users/owner', { role: 'teacher', status: 'active' });
+  f.docs.set('users/other', { role: 'teacher', status: 'active' });
+  f.docs.set('users/admin', { role: 'admin', status: 'active' });
+  f.teacher = (data, uid = 'owner') => f.exports.configurePracticeSolutionRelease({ ...f.request(data), auth: uid ? { uid } : null });
+  f.publish = async () => {
+    const prepared = await f.teacher({ action: 'prepare' });
+    return f.teacher({ action: 'publish', expectedRevision: prepared.revision, confirmAfterSubmit: showSolutions });
+  };
+  return f;
+}
+
+test('SR01 authorized practice releases own solutions before global end with hidden grades', async () => {
+  const f = practiceFixture(); await f.publish();
+  const quiz = f.docs.get(`quizzes/${f.quizId}`); quiz.sessionState = 'running';
+  const a = await f.start('practice'); await f.start('other');
+  assert.equal(Object.hasOwn(a, 'solutions'), false);
+  assert.equal(JSON.stringify(a).includes('numericAnswer'), false);
+  const { receipt } = await f.submit(a.attemptId);
+  assert.equal(receipt.solutionsReleased, true);
+  assert.equal(receipt.solutions[0].answer, '4');
+  for (const key of ['totalPoints', 'percent', 'grade']) assert.equal(Object.hasOwn(receipt, key), false);
+  assert.equal(quiz.ended, false);
+});
+
+test('SR02 draft practice flag, hidden grades and student start never authorize early release', async () => {
+  const f = fixture(); const quiz = f.docs.get(`quizzes/${f.quizId}`);
+  Object.assign(quiz, { resultMode: 'none', startMode: 'student', publishedAt: f.now,
+    solutionReleaseMode: 'practice_after_submit', showSolutions: true });
+  const a = await f.start('unconfirmed'); await f.submit(a.attemptId);
+  assert.equal((await f.receipt(a.attemptId)).receipt.solutionsReleased, false);
+});
+
+test('SR03 practice publication requires exact explicit confirmation and rejects edited settings or keys', async () => {
+  for (const change of [q => { q.resultMode = 'points'; }, q => { q.showSolutions = false; },
+    (q, f) => { f.docs.get(`quizzes/${f.quizId}/questions/q1`).numericAnswer = 9; }]) {
+    const f = practiceFixture(); const prepared = await f.teacher({ action: 'prepare' });
+    change(f.docs.get(`quizzes/${f.quizId}`), f);
+    await assert.rejects(f.teacher({ action: 'publish', expectedRevision: prepared.revision, confirmAfterSubmit: true }), { code: 'aborted' });
+    assert.equal(f.docs.get(`quizzes/${f.quizId}`).published, false);
+  }
+  const f = practiceFixture(); const prepared = await f.teacher({ action: 'prepare' });
+  await assert.rejects(f.teacher({ action: 'publish', expectedRevision: prepared.revision }), { code: 'failed-precondition' });
+});
+
+test('SR04 private practice snapshot survives later key and audio edits without rebuilding solutions', async () => {
+  const f = practiceFixture();
+  f.docs.set(`quizzes/${f.quizId}/audioScripts/q1`, { solutionAudioDataUrl: 'data:audio/wav;base64,T0xE', solutionAudioAiGenerated: false });
+  await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('audio'); await f.submit(a.attemptId);
+  f.docs.get(`quizzes/${f.quizId}/questions/q1`).numericAnswer = 99;
+  f.docs.get(`quizzes/${f.quizId}/audioScripts/q1`).solutionAudioDataUrl = 'data:audio/wav;base64,TkVX';
+  const receipt = (await f.receipt(a.attemptId)).receipt;
+  assert.equal(receipt.solutions[0].answer, '4');
+  assert.equal(receipt.solutions[0].audio.src, 'data:audio/wav;base64,T0xE');
+  assert.equal(receipt.solutions[0].audio.aiGenerated, false);
+});
+
+test('SR04 receipt rejects forged tokens and no submission; hold and deletion suppress all solutions', async () => {
+  const f = practiceFixture(); await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('guards');
+  await assert.rejects(f.receipt(a.attemptId), { code: 'failed-precondition' });
+  await f.submit(a.attemptId);
+  await assert.rejects(f.exports.getAssessmentReceipt(f.request({ attemptId: a.attemptId, attemptToken: 'B'.repeat(43) })), { code: 'permission-denied' });
+  const quiz = f.docs.get(`quizzes/${f.quizId}`);
+  for (const key of ['rightsHold', 'isDeleted']) {
+    quiz[key] = true;
+    const receipt = (await f.receipt(a.attemptId)).receipt;
+    assert.equal(receipt.solutionsReleased, false); assert.equal(Object.hasOwn(receipt, 'solutions'), false);
+    quiz[key] = false;
+  }
+});
+
+test('teacher policy rejects anonymous foreign blocked and deleting accounts before question reads', async () => {
+  const f = practiceFixture();
+  for (const uid of [null, 'other', 'missing']) {
+    const reads = f.questionReads;
+    await assert.rejects(f.teacher({ action: 'prepare' }, uid), { code: uid ? 'permission-denied' : 'unauthenticated' });
+    assert.equal(f.questionReads, reads);
+  }
+  for (const block of ['blocked', 'deleting']) {
+    f.docs.get('users/owner').status = block;
+    await assert.rejects(f.teacher({ action: 'prepare' }), { code: 'permission-denied' });
+  }
+  f.docs.get('users/owner').status = 'active'; f.docs.set('accountDeletions/owner', {});
+  await assert.rejects(f.teacher({ action: 'prepare' }), { code: 'permission-denied' });
+});
+
+test('admin may authorize practice while unavailable owner prevents publication', async () => {
+  const f = practiceFixture(); const prepared = await f.teacher({ action: 'prepare' }, 'admin');
+  await f.teacher({ action: 'publish', expectedRevision: prepared.revision, confirmAfterSubmit: true }, 'admin');
+  assert.equal(f.docs.get(`quizzes/${f.quizId}`).published, true);
+  const unavailable = practiceFixture(); unavailable.docs.get('users/owner').status = 'deleting';
+  await assert.rejects(unavailable.teacher({ action: 'prepare' }, 'admin'), { code: 'permission-denied' });
+});
+
+test('late teacher release uses existing practice revision snapshot even after submit deleted grading keys', async () => {
+  const f = practiceFixture({ showSolutions: false }); await f.publish();
+  f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('late'); await f.submit(a.attemptId);
+  const before = (await f.receipt(a.attemptId)).receipt;
+  assert.equal(before.solutionsReleased, false); assert.equal(before.solutionsConfigured, true);
+  const privateData = f.docs.get(`assessmentPrivate/${f.quizId}_${a.attemptId}`);
+  assert.equal(Object.hasOwn(privateData, 'gradingKey'), false);
+  f.docs.get(`quizzes/${f.quizId}/questions/q1`).numericAnswer = 99;
+  const policy = f.docs.get(`assessmentPolicies/${f.quizId}`);
+  await f.teacher({ action: 'release', expectedRevision: policy.revision, confirmAfterSubmit: true });
+  assert.equal((await f.receipt(a.attemptId)).receipt.solutions[0].answer, '4');
+  privateData.solutionSnapshot = null;
+  assert.equal((await f.receipt(a.attemptId)).receipt.solutionsReleased, false);
+});
+
+test('late release cannot turn an exam or another run into practice', async () => {
+  const exam = fixture(); exam.docs.get(`quizzes/${exam.quizId}`).ownerId = 'owner'; exam.docs.set('users/owner', { role: 'teacher', status: 'active' });
+  await assert.rejects(exam.exports.configurePracticeSolutionRelease({ ...exam.request({ action: 'release', expectedRevision: 'f'.repeat(64), confirmAfterSubmit: true }), auth: { uid: 'owner' } }), { code: 'failed-precondition' });
+  const f = practiceFixture({ showSolutions: false }); await f.publish();
+  const revision = f.docs.get(`assessmentPolicies/${f.quizId}`).revision;
+  f.docs.get(`quizzes/${f.quizId}`).sessionRunId = 'another-run';
+  await assert.rejects(f.teacher({ action: 'release', expectedRevision: revision, confirmAfterSubmit: true }), { code: 'failed-precondition' });
+});
