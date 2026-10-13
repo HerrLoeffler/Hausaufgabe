@@ -1,6 +1,6 @@
 # GC-GAMES-LERNINSEL-ADAPTIVE-PLAN-20261013
 
-13.10.2026. Ausführender Fachchat GC · Lerninsel · Gameplay & Integration, [Chat](codex://threads/01a12568-0502-7831-9451-a7f8d91ce950); Zentrale01a1183f-dad9-7640-8a82-23107c980d6e koordiniert. Auftrag ausschließlich Machbarkeit/Dokumentation. Own checkout work/lerninsel-adaptive-plan, Branch docs/lerninsel-adaptive-plan-20261013, main-Basis a0f16f9cf64c74dcdacefa489d2e7a1da1b58881. Zielmain, DraftPR folgt. Angefordert Sol6.1/medium, actual Runtime/Usage/Kosten unknown; keine neuen Providerreservierungen, alte Tasks/Budgets/Versuche unverändert.
+13.10.2026. Ausführender Fachchat GC · Lerninsel · Gameplay & Integration, [Chat](codex://threads/01a12568-0502-7831-9451-a7f8d91ce950); Zentrale01a1183f-dad9-7640-8a82-23107c980d6e koordiniert. Auftrag ausschließlich Machbarkeit/Dokumentation. Own checkout work/lerninsel-adaptive-plan, Branch docs/lerninsel-adaptive-plan-20261013, main-Basis a0f16f9cf64c74dcdacefa489d2e7a1da1b58881. Zielmain, [DraftPR230](https://github.com/HerrLoeffler/Hausaufgabe/pull/230). Angefordert Sol6.1/medium, actual Runtime/Usage/Kosten unknown; keine neuen Providerreservierungen, alte Tasks/Budgets/Versuche unverändert.
 
 ## Gesicherter Umfang
 
@@ -16,6 +16,10 @@ Relevante Assurance-Scope: SEC06/07 private Schlüssel/Antwortbewertung und PRIV
 
 ## Prüfungen / Stufe / Grenzen
 
-Dokumentdateiscope, lokale Links, JSONsyntax, Tabellenrechnungen, identische Rücklesung und git diff --check werden am Kandidaten geprüft. Keine Produkt-/Runtime-/Last-/AI-/Gerätetests, keine Revieweragenten. Geplante Gates bleiben offen. Stufe branch_only/documentation; CI/Integration/Hosting/Functions/Rules/Nutzertest/Production nicht durch diesen Auftrag verändert. Gemeinsame TODO/STATE/Registry nur als [gezielter Ownerpatch](../docs/games/lerninsel/20261013-adaptive/owner-patch.md), nicht parallel überschrieben.
+Dokumentdateiscope, lokale Links, JSONsyntax, Tabellenrechnungen, identische Rücklesung und git diff --check am Kandidaten geprüft: PASS. Keine Produkt-/Runtime-/Last-/AI-/Gerätetests, keine Revieweragenten. Geplante Gates bleiben offen. Stufe branch_only/documentation; CI/Integration/Hosting/Functions/Rules/Nutzertest/Production nicht durch diesen Auftrag verändert. Gemeinsame TODO/STATE/Registry nur als [gezielter Ownerpatch](../docs/games/lerninsel/20261013-adaptive/owner-patch.md), nicht parallel überschrieben.
 
 Genau nächster Schritt: Zentrale legt Martin Übungs-MVP für Web-first samt begrenzter künftiger Runtimequalifikation vor. Weiterer Bau benötigt einen Folgeauftrag; der bestehende erste Level und seine frühere Input-/Artabnahme bleiben separat offen. Vor Wiederaufnahme eigenen Branch/PR und aktuellemain/Apprefs prüfen; keinen neuen Versuch/Budgetreset anlegen.
+
+## Gesicherter Dokumentationscheckpoint
+
+PR230 offen/Draft, Remote-Dokumentkandidat bdda1a03677fb3c3f9f83439b9d274a275c2dfa6 und lokaler0948efd6f477a2a95e76db891569308f318e3636 haben denselben Tree56a8e5d38d4f86ade9c26a24d006ea11fa4b3b0c. Acht neue Dokumentdateien, keine Produktdatei verändert. Folgender Metadatennachtrag ergänzt nur PR-/Prüfnachweis; kein weiterer Review-/Forschungsloop. Abschlussreadback prüft alle acht Gitblob-SHAs, kein Runtime-PASS.
