@@ -10,6 +10,7 @@ const {
   validAttemptToken,
   secureTokenMatches,
   buildAssessmentContract,
+  authoringFingerprint,
   gradeSubmission,
   gradeFromPercent,
   sanitizeAnswersForStorage,
@@ -40,6 +41,143 @@ const SUBMIT_GRACE_SECONDS = 30;
 const END_SUBMIT_GRACE_SECONDS = 90;
 const PRIVATE_PAYLOAD_SOFT_LIMIT_BYTES = 850_000;
 const RESULT_MODES = new Set(["none", "points", "points_percent", "points_grade"]);
+
+const PRACTICE_MODE = "practice_after_submit";
+
+function publicationRevision(quiz, fingerprint, audioDocs = []) {
+  return sha256(JSON.stringify({
+    version: 1, fingerprint,
+    solutionReleaseMode: quiz.solutionReleaseMode || "exam_after_end",
+    showSolutions: quiz.showSolutions === true,
+    resultMode: normalizeResultMode(quiz.resultMode),
+    startMode: sessionMode(quiz), timeLimitMinutes: timeLimitMinutes(quiz),
+    gradeScaleSnapshot: gradingScaleSnapshot(quiz),
+    contentLocale: quiz.contentLocale || "de-DE", gradingLocale: quiz.gradingLocale || quiz.contentLocale || "de-DE",
+    audio: audioDocs.map(item => [item.id, sha256(String(item.data()?.solutionAudioDataUrl || "")), item.data()?.solutionNeedsRegeneration === true]).sort((a, b) => a[0].localeCompare(b[0]))
+  }));
+}
+
+async function readSolutionAudio(quizId, tx) {
+  return (await tx.get(getFirestore().collection(`quizzes/${quizId}/audioScripts`))).docs;
+}
+
+function snapshotSolutionAudio(quizId, revision, solutions, audioDocs) {
+  const audio = new Map(audioDocs.map(item => [item.id, item.data()]));
+  const refs = {};
+  const assets = [];
+  for (const solution of solutions) {
+    const data = audio.get(solution.id);
+    const src = String(data?.solutionAudioDataUrl || "");
+    if (data?.solutionNeedsRegeneration === true || !src.startsWith("data:audio/") || Buffer.byteLength(src) > 950_000) continue;
+    const digest = sha256(src);
+    const assetId = sha256(`${quizId}:${revision}:${solution.id}:${digest}`);
+    refs[solution.id] = { assetId, digest, revision };
+    assets.push({ assetId, data: { quizId, revision, questionId: solution.id, digest, audio: { src, aiGenerated: data.solutionAudioAiGenerated !== false } } });
+  }
+  return { refs, assets };
+}
+
+async function persistSolutionAssets(quizId, assets) {
+  // Only final, committed attempt bytes reach this writer. Separate bounded
+  // commits avoid Firestore's 10 MiB request limit; the quiz read prevents
+  // recreating orphaned assets after a concurrent hard deletion or hold.
+  const db = getFirestore();
+  let chunk = [];
+  let bytes = 0;
+  const commit = entries => db.runTransaction(async tx => {
+    const quiz = await tx.get(db.doc(`quizzes/${quizId}`));
+    if (!quiz.exists || quiz.data()?.isDeleted === true || quiz.data()?.rightsHold === true) {
+      throw new HttpsError("failed-precondition", "Dieser Test ist nicht mehr verfügbar.");
+    }
+    for (const asset of entries) tx.set(db.doc(`assessmentSolutionAssets/${asset.assetId}`), asset.data);
+  });
+  for (const asset of assets || []) {
+    const size = Buffer.byteLength(JSON.stringify(asset.data)) + 1024;
+    if (chunk.length && (bytes + size > 7_500_000 || chunk.length >= 400)) {
+      await commit(chunk); chunk = []; bytes = 0;
+    }
+    chunk.push(asset); bytes += size;
+  }
+  if (chunk.length) await commit(chunk);
+}
+
+async function authorizePolicyTeacher(request, quiz, tx) {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "Bitte als Lehrkraft anmelden.");
+  const ownerId = String(quiz?.ownerId || "");
+  if (!ownerId) throw new HttpsError("permission-denied", "Die zuständige Lehrkraft fehlt.");
+  const [user, deletion, owner, ownerDeletion] = await Promise.all([
+    tx.get(getFirestore().doc(`users/${uid}`)), tx.get(getFirestore().doc(`accountDeletions/${uid}`)),
+    tx.get(getFirestore().doc(`users/${ownerId}`)), tx.get(getFirestore().doc(`accountDeletions/${ownerId}`))
+  ]);
+  const data = user.data() || {};
+  if (!user.exists || deletion.exists || (data.status || "active") !== "active"
+    || data.accountDeletionId || !["teacher", "admin"].includes(data.role || "teacher")
+    || (uid !== ownerId && data.role !== "admin")
+    || !owner.exists || ownerDeletion.exists || owner.data()?.accountDeletionId
+    || (owner.data()?.status || "active") !== "active") {
+    throw new HttpsError("permission-denied", "Für diesen Test fehlt die Berechtigung zur Lösungsfreigabe.");
+  }
+}
+
+// Private publication evidence cannot be forged through client quiz writes.
+// A draft practice flag is never itself an authorization.
+exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("configurePracticeSolutionRelease", async request => {
+  const quizId = cleanQuizId(request.data?.quizId);
+  const action = request.data?.action;
+  if (!["prepare", "publish", "release"].includes(action)) throw new HttpsError("invalid-argument", "Ungültige Freigabeaktion.");
+  const db = getFirestore();
+  const quizRef = db.doc(`quizzes/${quizId}`);
+  const policyRef = db.doc(`assessmentPolicies/${quizId}`);
+  return db.runTransaction(async tx => {
+    const quizSnap = await tx.get(quizRef);
+    if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht.");
+    const quiz = quizSnap.data();
+    await authorizePolicyTeacher(request, quiz, tx);
+    if (quiz.isDeleted === true || quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Dieser Test ist gesperrt.");
+    if (action === "release") {
+      const saved = await tx.get(policyRef);
+      const policy = saved.data();
+      if (!saved.exists || policy.version !== 1 || policy.mode !== PRACTICE_MODE
+        || policy.sessionRunId !== effectiveRunId(quiz, quizId)) {
+        throw new HttpsError("failed-precondition", "Diese Testrunde wurde nicht als Übung veröffentlicht.");
+      }
+      if (request.data?.expectedRevision !== policy.revision) throw new HttpsError("aborted", "Die Übungsrunde wurde geändert.");
+      if (request.data?.confirmAfterSubmit !== true) throw new HttpsError("failed-precondition", "Bitte die Sichtbarkeit nach Abgabe bestätigen.");
+      // Do not read current questions or keys: existing private attempt snapshots
+      // are the only source for an already submitted practice attempt.
+      tx.update(policyRef, { released: true, updatedAt: Timestamp.now() });
+      tx.update(quizRef, { practiceSolutionsReleased: true, updatedAt: Timestamp.now() });
+      return { revision: policy.revision, released: true };
+    }
+    if (quiz.solutionReleaseMode !== PRACTICE_MODE) throw new HttpsError("failed-precondition", "Bitte ausdrücklich den Übungsmodus wählen.");
+    if (quiz.published === true && quiz.ended !== true) throw new HttpsError("failed-precondition", "Die laufende Runde darf nicht umgestellt werden.");
+    if (audioReleaseBlockedByMetadata(quiz) || quiz.audioReady === false
+      || quiz.showSolutions === true && quiz.solutionAudioReady === false) throw new HttpsError("failed-precondition", "Die Audios sind noch nicht bereit.");
+    const questions = await readQuestions(quizId, tx);
+    if (!questions.length) throw new HttpsError("failed-precondition", "Dieser Test enthält keine Aufgaben.");
+    const audio = await readSolutionAudio(quizId, tx);
+    const revision = publicationRevision(quiz, authoringFingerprint(questions, contractOptions(quiz)), audio);
+    const needsConfirmation = quiz.showSolutions === true;
+    if (action === "prepare") return { revision, needsConfirmation };
+    if (request.data?.expectedRevision !== revision) throw new HttpsError("aborted", "Inhalt oder Einstellungen wurden geändert. Bitte erneut veröffentlichen.");
+    if (needsConfirmation && request.data?.confirmAfterSubmit !== true) throw new HttpsError("failed-precondition", "Bitte die Sichtbarkeit nach Abgabe bestätigen.");
+    const now = Timestamp.now();
+    const runId = sessionMode(quiz) === "teacher" ? `run_${randomBytes(16).toString("hex")}` : null;
+    const publishedQuiz = { ...quiz, publishedAt: now, reopenedAt: now, sessionRunId: runId };
+    const policy = { version: 1, mode: PRACTICE_MODE, revision, sessionRunId: effectiveRunId(publishedQuiz, quizId), released: needsConfirmation, updatedAt: now };
+    tx.set(policyRef, policy);
+    const patch = {
+      published: true, ended: false, publishedAt: now, reopenedAt: now,
+      sessionState: sessionMode(quiz) === "teacher" ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null,
+      practiceSolutionRevision: revision, practiceSolutionsReleased: needsConfirmation,
+      contentLocale: quiz.contentLocale || "de-DE", gradingLocale: quiz.gradingLocale || quiz.contentLocale || "de-DE",
+      localeContractVersion: Number(quiz.localeContractVersion) || 1, updatedAt: now
+    };
+    tx.update(quizRef, patch);
+    return { revision, published: true, sessionRunId: runId, sessionState: patch.sessionState, practiceSolutionsReleased: needsConfirmation };
+  });
+}));
 
 function cleanQuizId(value) {
   const quizId = String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -345,14 +483,25 @@ async function readStartQuota(request, quizId, tx) {
   return { ref, data: { count: count + 1, quizId, day, updatedAt: Timestamp.now() } };
 }
 
-function makeReceipt(submission, quiz = null, privateData = null) {
+function makeReceipt(submission, quiz = null, privateData = null, publicationPolicy = null) {
   const mode = normalizeResultMode(submission?.resultMode);
-  const configured = submission?.showSolutionsAfterEnd === true && mode !== "none";
+  const frozen = privateData?.solutionPolicy;
+  const practice = frozen?.version === 1 && frozen.mode === PRACTICE_MODE
+    && submission?.solutionPolicy?.version === 1 && submission.solutionPolicy.mode === PRACTICE_MODE
+    && frozen.revision === submission.solutionPolicy.revision
+    && frozen.sessionRunId === submission.sessionRunId && frozen.sessionRunId === privateData.sessionRunId
+    && privateData.attemptId === submission.attemptId;
+  const practiceReleased = practice && (frozen.enabled === true || publicationPolicy?.version === 1
+    && publicationPolicy.mode === PRACTICE_MODE && publicationPolicy.revision === frozen.revision
+    && publicationPolicy.sessionRunId === frozen.sessionRunId && publicationPolicy.released === true);
+  const configured = practice || submission?.showSolutionsAfterEnd === true && mode !== "none";
   const endedAtMillis = toMillis(quiz?.endedAt);
-  const released = configured
+  const examReleased = !practice && configured
     && quiz?.ended === true
     && Number.isFinite(endedAtMillis)
-    && Date.now() > endedAtMillis + END_SUBMIT_GRACE_SECONDS * 1000
+    && Date.now() > endedAtMillis + END_SUBMIT_GRACE_SECONDS * 1000;
+  const released = (practiceReleased || examReleased)
+    && quiz != null
     && quiz?.isDeleted !== true
     && quiz?.rightsHold !== true
     && Array.isArray(privateData?.solutionSnapshot);
@@ -364,6 +513,7 @@ function makeReceipt(submission, quiz = null, privateData = null) {
     resultMode: mode,
     submittedAtMillis: toMillis(submission?.submittedAt),
     solutionsConfigured: configured,
+    solutionReleaseMode: practice ? PRACTICE_MODE : "exam_after_end",
     solutionsReleased: released
   };
   if (!receipt.needsReview && ["points", "points_percent", "points_grade"].includes(mode)) {
@@ -376,28 +526,34 @@ function makeReceipt(submission, quiz = null, privateData = null) {
   return receipt;
 }
 
-async function attachReleasedSolutionAudio(quizId, receipt) {
+async function attachReleasedSolutionAudio(quizId, receipt, privateData) {
   if (!receipt?.solutionsReleased || !Array.isArray(receipt.solutions) || !receipt.solutions.length) return receipt;
-  const snap = await getFirestore().collection(`quizzes/${quizId}/audioScripts`).get();
-  const assets = new Map();
-  for (const item of snap.docs) {
-    const data = item.data() || {};
-    if (data.solutionNeedsRegeneration === true) continue;
-    const src = String(data.solutionAudioDataUrl || "");
-    if (!src.startsWith("data:audio/")) continue;
-    assets.set(item.id, {
-      src,
-      aiGenerated: data.solutionAudioAiGenerated !== false
-    });
+  // Legacy attempts have no immutable audio evidence. Never attach current
+  // author audio merely because its question id matches an older solution.
+  const refs = privateData?.solutionAudioRefs || {};
+  let audioBytes = 0;
+  let partial = false;
+  const solutions = [];
+  for (const solution of receipt.solutions) {
+    const ref = refs[String(solution?.id || "")];
+    if (!ref || !/^[a-f0-9]{64}$/.test(ref.assetId || "")) { solutions.push(solution); continue; }
+    const snapshot = await getFirestore().doc(`assessmentSolutionAssets/${ref.assetId}`).get();
+    const asset = snapshot.data();
+    if (!snapshot.exists || asset.quizId !== quizId || asset.revision !== ref.revision
+      || asset.questionId !== solution.id || asset.digest !== ref.digest
+      || sha256(String(asset.audio?.src || "")) !== ref.digest) { solutions.push(solution); continue; }
+    const size = Buffer.byteLength(String(asset.audio?.src || ""));
+    if (audioBytes + size > 8_000_000) { partial = true; solutions.push(solution); continue; }
+    audioBytes += size;
+    solutions.push({ ...solution, audio: asset.audio });
   }
-  if (!assets.size) return receipt;
-  return {
-    ...receipt,
-    solutions: receipt.solutions.map(solution => {
-      const audio = assets.get(String(solution?.id || ""));
-      return audio ? { ...solution, audio } : solution;
-    })
-  };
+  return { ...receipt, solutions, ...(partial ? { solutionAudioPartial: true } : {}) };
+}
+
+async function buildReleasedReceipt(quizId, submission, quiz, privateData) {
+  const policy = privateData?.solutionPolicy?.mode === PRACTICE_MODE
+    ? (await getFirestore().doc(`assessmentPolicies/${quizId}`).get()).data() : null;
+  return attachReleasedSolutionAudio(quizId, makeReceipt(submission, quiz, privateData, policy), privateData);
 }
 
 function contractForQuestions(questions, privateData) {
@@ -438,7 +594,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   // Only the final, committed callback result may escape a transaction retry.
-  const { storedAttempt, storedPrivate, currentQuiz, newContract } = await db.runTransaction(async tx => {
+  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets } = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const existingAttempt = await tx.get(aRef);
     const existingPrivate = await tx.get(pRef);
@@ -459,11 +615,23 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
       assertSameRun(storedAttempt, currentQuiz, quizId);
-      return { storedAttempt, storedPrivate, currentQuiz, newContract: null };
+      let solutionAssets = [];
+      if (Object.keys(storedPrivate.solutionAudioRefs || {}).length) {
+        const audio = await readSolutionAudio(quizId, tx);
+        const revision = Object.values(storedPrivate.solutionAudioRefs)[0].revision;
+        const candidates = snapshotSolutionAudio(quizId, revision, storedPrivate.solutionSnapshot || [], audio).assets;
+        // Repair only the exact old media bytes, never newly edited author audio.
+        for (const asset of candidates) {
+          if (storedPrivate.solutionAudioRefs[asset.data.questionId]?.assetId === asset.assetId
+            && !(await tx.get(db.doc(`assessmentSolutionAssets/${asset.assetId}`))).exists) solutionAssets.push(asset);
+        }
+      }
+      return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
 
     // Quota/authentication must precede the expensive author-question query.
     const quota = await readStartQuota(request, quizId, tx);
+    const policySnap = currentQuiz.solutionReleaseMode === PRACTICE_MODE ? await tx.get(db.doc(`assessmentPolicies/${quizId}`)) : null;
     const questions = await readQuestions(quizId, tx);
     if (!questions.length) throw new HttpsError("failed-precondition", "Dieser Test enthält keine Aufgaben.");
     const newPaperSecret = createPaperSecret();
@@ -479,7 +647,21 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     const deadlineAt = deadlineMillis(startedAtMillis, limit);
     const scale = gradingScaleSnapshot(currentQuiz);
     const resultMode = normalizeResultMode(currentQuiz.resultMode);
-    const showSolutionsAfterEnd = currentQuiz.showSolutions === true && resultMode !== "none";
+    const showSolutionsAfterEnd = currentQuiz.solutionReleaseMode !== PRACTICE_MODE && currentQuiz.showSolutions === true && resultMode !== "none";
+    const publicationPolicy = policySnap?.data();
+    let solutionPolicy = null;
+    let solutionSnapshot = showSolutionsAfterEnd ? newSolutionSnapshot : null;
+    let audioSnapshot = { refs: {}, assets: [] };
+    const snapshotAudio = currentQuiz.solutionReleaseMode === PRACTICE_MODE || showSolutionsAfterEnd;
+    const audio = snapshotAudio ? await readSolutionAudio(quizId, tx) : [];
+    if (currentQuiz.solutionReleaseMode === PRACTICE_MODE && publicationPolicy?.version === 1 && publicationPolicy.mode === PRACTICE_MODE && publicationPolicy.sessionRunId === currentRunId) {
+      if (publicationPolicy.revision !== publicationRevision(currentQuiz, newContract.authoringFingerprint, audio)) {
+        throw new HttpsError("failed-precondition", "Die veröffentlichte Übung wurde geändert. Bitte die Lehrkraft um eine neue Veröffentlichung bitten.");
+      }
+      solutionPolicy = { version: 1, mode: PRACTICE_MODE, revision: publicationPolicy.revision, sessionRunId: currentRunId, enabled: publicationPolicy.released === true };
+      solutionSnapshot = newSolutionSnapshot;
+    }
+    if (solutionSnapshot) audioSnapshot = snapshotSolutionAudio(quizId, solutionPolicy?.revision || newContract.authoringFingerprint, solutionSnapshot, audio);
     const created = {
       attemptId: id,
       quizId,
@@ -494,6 +676,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       gradeScaleSnapshot: scale,
       resultMode,
       showSolutionsAfterEnd,
+      solutionPolicy,
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
       secureAssessmentVersion: 2,
@@ -509,7 +692,9 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       authoringFingerprint: newContract.authoringFingerprint,
       gradingKey: newContract.gradingKey,
       decoderShape: newDecoderShape,
-      solutionSnapshot: showSolutionsAfterEnd ? newSolutionSnapshot : null,
+      solutionSnapshot,
+      solutionPolicy,
+      solutionAudioRefs: audioSnapshot.refs,
       shuffleQuestions: initialOptions.shuffleQuestions,
       shuffleAnswers: initialOptions.shuffleAnswers,
       sessionRunId: currentRunId,
@@ -520,15 +705,17 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
-    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract };
+    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
   });
+
+  await persistSolutionAssets(quizId, solutionAssets);
 
   if (storedAttempt.status === "submitted") {
     const saved = await submissionRef(quizId, id).get();
     if (!saved.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
     return {
       ...attemptPublicState(storedAttempt, currentQuiz || initialQuiz, null),
-      receipt: makeReceipt({ id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
+      receipt: await buildReleasedReceipt(quizId, { id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
     };
   }
   const contract = newContract || contractForQuestions(await readQuestions(quizId), storedPrivate);
@@ -555,7 +742,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     if (!submissionSnap.exists) throw new HttpsError("data-loss", "Die Abgabe konnte nicht geladen werden.");
     return {
       ...attemptPublicState(attempt, initialQuiz, null),
-      receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, initialQuiz, privateData)
+      receipt: await buildReleasedReceipt(quizId, { id: submissionSnap.id, ...submissionSnap.data() }, initialQuiz, privateData)
     };
   }
 
@@ -612,9 +799,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   const sRef = submissionRef(quizId, id);
-  let receipt;
-
-  await db.runTransaction(async tx => {
+  const receiptContext = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const attemptSnap = await tx.get(aRef);
     const privateSnap = await tx.get(pRef);
@@ -625,8 +810,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     assertAttemptToken(privateData, token);
     if (existingSubmission.exists || attempt.status === "submitted") {
       if (!existingSubmission.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
-      receipt = makeReceipt({ id: existingSubmission.id, ...existingSubmission.data() }, quizSnap.exists ? quizSnap.data() : null, privateData);
-      return;
+      return { submission: { id: existingSubmission.id, ...existingSubmission.data() }, quiz: quizSnap.exists ? quizSnap.data() : null, privateData };
     }
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
     const quiz = quizSnap.data();
@@ -669,6 +853,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       gradeScaleSnapshot: scale,
       resultMode,
       showSolutionsAfterEnd: attempt.showSolutionsAfterEnd === true,
+      solutionPolicy: privateData.solutionPolicy || null,
       status: result.needsReview ? "review" : "graded",
       timeLimitMinutes: attempt.timeLimitMinutes || null,
       sessionRunId: attempt.sessionRunId || null,
@@ -696,20 +881,21 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       authoringFingerprint: FieldValue.delete(),
       updatedAt: submittedAt
     });
-    receipt = makeReceipt(submission, quiz, privateData);
+    return { submission, quiz, privateData };
   });
-  return { receipt };
+  return { receipt: await buildReleasedReceipt(quizId, receiptContext.submission, receiptContext.quiz, receiptContext.privateData) };
 }));
 
 exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentReceipt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
   const id = cleanAttemptId(request.data?.attemptId);
   const token = cleanAttemptToken(request.data?.attemptToken);
-  const [quizSnap, attemptSnap, privateSnap, submissionSnap] = await Promise.all([
+  const [quizSnap, attemptSnap, privateSnap, submissionSnap, policySnap] = await Promise.all([
     getFirestore().doc(`quizzes/${quizId}`).get(),
     attemptRef(quizId, id).get(),
     assessmentPrivateRef(quizId, id).get(),
-    submissionRef(quizId, id).get()
+    submissionRef(quizId, id).get(),
+    getFirestore().doc(`assessmentPolicies/${quizId}`).get()
   ]);
   if (!attemptSnap.exists || !privateSnap.exists) throw new HttpsError("not-found", "Dieser Bearbeitungsversuch existiert nicht mehr.");
   assertAttemptToken(privateSnap.data(), token);
@@ -717,7 +903,8 @@ exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentRecei
   const receipt = makeReceipt(
     { id: submissionSnap.id, ...submissionSnap.data() },
     quizSnap.exists ? quizSnap.data() : null,
-    privateSnap.data()
+    privateSnap.data(),
+    policySnap.exists ? policySnap.data() : null
   );
-  return { receipt: await attachReleasedSolutionAudio(quizId, receipt) };
+  return { receipt: await attachReleasedSolutionAudio(quizId, receipt, privateSnap.data()) };
 }));

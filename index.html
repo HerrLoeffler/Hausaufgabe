@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GradeCrew – Tests. Einfach digital.</title>
   <meta name="crew-art-version" content="clay-2" />
-  <meta name="app-version" content="2.3.1-gc38" />
+  <meta name="app-version" content="2.3.1-gc39" />
   <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc2" />
@@ -35,13 +35,9 @@
 
   <main id="mainContent" class="shell" tabindex="-1">
     <section id="authView" class="view">
+      <p class="card" role="status" aria-live="polite" data-i18n-key="system.loading" data-i18n-fallback="GradeCrew wird geladen …">GradeCrew wird geladen …</p>
+      <div hidden>
       <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
-      <div class="authIntro">
-        <div class="authIntroCopy"><span class="eyebrow">Deine Crew für digitale Tests</span><h1>Gute Tests.<br><span>Weniger Aufwand.</span></h1><p>Erstellen, durchführen und bewerten – an einem Ort.</p>
-          <div class="crewRoles" aria-label="Deine Crew"><span>Erstellen</span><span>Überarbeiten</span><span>Bewerten</span></div>
-        </div>
-        <div class="authGuide gcClayHero"><img src="assets/gradecrew/clay-welcome.svg" width="580" height="348" alt="Coco, Remy, Emmi und Wilma – deine GradeCrew" fetchpriority="high"><span class="authGuideCaption">Deine Crew. Schritt für Schritt an deiner Seite.</span></div>
-      </div>
       <div class="heroGrid">
         <article class="card heroCard">
           <span class="eyebrow">Für Schülerinnen und Schüler</span>
@@ -78,6 +74,7 @@
             <p class="hint">Dein Arbeitsbereich für Tests und Vorlagen.</p>
           </form>
         </article>
+      </div>
       </div>
     </section>
 
@@ -302,7 +299,7 @@
                 <option value="points_grade">Punkte + Prozent + Note anzeigen</option>
               </select>
             </label>
-            <label class="checkRow"><input id="defaultShowSolutions" type="checkbox" /> Richtige Lösungen nach der Abgabe anzeigen</label>
+            <label class="checkRow"><input id="defaultShowSolutions" type="checkbox" /> Richtige Lösungen freigeben – Zeitpunkt im Test festlegen</label>
           </div>
         </article>
         <article class="card gradeScalePanel">
@@ -446,7 +443,9 @@
                 <label>Hinweis für Schüler<textarea id="quizDescription" rows="4"></textarea></label>
                 <label>Notenschlüssel<select id="quizGradeScale"></select></label>
                 <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
-                <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
+                <label>Lösungsfreigabe<select id="quizSolutionReleaseMode"><option value="exam_after_end">Prüfung – nach Testende und Nachfrist</option><option value="practice_after_submit">Übung – nach eigener Abgabe</option></select></label>
+                <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Lösungen für diese Durchführung freigeben</label>
+                <small class="hint">Die Übungsfreigabe ist unabhängig von der Punkte- und Notenanzeige.</small>
                 <div class="settingGroup">
                   <div class="settingGroupTitle"><span>▶</span><div><strong>Start &amp; Durchführung</strong><small>Bestimme, wie der Test im Unterricht beginnt.</small></div></div>
                   <label>Start des Tests<select id="quizStartMode"><option value="student">Schüler startet selbst</option><option value="teacher">Lehrkraft startet für alle</option></select></label>
@@ -471,7 +470,7 @@
     </section>
 
     <section id="publishView" class="view hidden">
-      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" aria-label="Link zum Test für Schüler" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div class="actions center"><button id="openPublishedStudentBtn" class="button secondary" type="button">Test selbst ausfüllen</button></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
+      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" aria-label="Link zum Test für Schüler" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div class="actions center"><button id="openPublishedStudentBtn" class="button secondary" type="button">Test selbst ausfüllen</button></div><div class="actions center"><button id="releasePracticeSolutionsBtn" class="button secondary hidden" type="button">Übungslösungen jetzt freigeben</button></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
     </section>
 
     <section id="resultsView" class="view hidden">
@@ -579,12 +578,12 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc38</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc39</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer>
   <a id="gradecrewEtLauncher" class="gcEtLauncher hidden" href="http://127.0.0.1:8772/__dev" target="_blank" rel="noopener noreferrer" aria-label="ET lokal öffnen. Die Entwicklungswerkbank muss auf diesem Rechner laufen." title="ET · Lokale Entwicklungswerkbank (nur wenn sie auf diesem Rechner läuft)"><span aria-hidden="true">ET</span><small>lokal</small></a>
 
   <div id="startupNotice" class="startupNotice hidden" role="status" aria-live="polite"><span id="startupMessage"></span><button type="button" id="startupRetry" class="button secondary hidden">Erneut laden</button></div>
   <noscript><p class="startupNotice">Bitte JavaScript aktivieren, um GradeCrew zu verwenden.</p></noscript>
-  <script type="module" src="startup.js?v=2.3.1-gc38-quick-remy1"></script>
+  <script type="module" src="startup.js?v=2.3.1-gc39-quick-remy1"></script>
 </body>
 </html>

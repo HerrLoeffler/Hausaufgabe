@@ -86,6 +86,8 @@ async function seed() {
       tokenHash: "secret"
     });
     await setDoc(doc(db, "assessmentRateLimits", "rate1"), { quizId, count: 1 });
+    await setDoc(doc(db, "assessmentPolicies", quizId), { version: 1, mode: "practice_after_submit", revision: "synthetic", released: true });
+    await setDoc(doc(db, "assessmentSolutionAssets", "synthetic-audio"), { quizId, revision: "synthetic", audio: { src: "data:audio/wav;base64,QUJD" } });
   });
 }
 
@@ -173,9 +175,13 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
   });
 
   await t.test("server-only collections stay closed even to owner and admin", async () => {
-    for (const db of [owner, admin]) {
+    for (const db of [anonymous, owner, other, admin]) {
       await assertFails(getDoc(doc(db, "assessmentPrivate", `${quizId}_secure-sub`)));
       await assertFails(getDoc(doc(db, "assessmentRateLimits", "rate1")));
+      for (const [collection, id] of [["assessmentPolicies", quizId], ["assessmentSolutionAssets", "synthetic-audio"]]) {
+        await assertFails(getDoc(doc(db, collection, id)));
+        await assertFails(setDoc(doc(db, collection, id), { released: true }));
+      }
     }
   });
 

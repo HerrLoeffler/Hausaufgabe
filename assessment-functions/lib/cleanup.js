@@ -14,12 +14,14 @@ exports.cleanupAssessmentPrivateOnQuizDelete = onDocumentDeleted({
   const quizId = String(event.params.quizId || "");
   if (!quizId) return;
   const db = getFirestore();
-  const snapshot = await db.collection("assessmentPrivate").where("quizId", "==", quizId).get();
-  if (snapshot.empty) return;
+  const [snapshot, assets] = await Promise.all([
+    db.collection("assessmentPrivate").where("quizId", "==", quizId).get(),
+    db.collection("assessmentSolutionAssets").where("quizId", "==", quizId).get()
+  ]);
 
   // Classroom-sized assessments stay far below 500 attempts. Chunking keeps the
   // cleanup correct even if a test was used by many cohorts before deletion.
-  const docs = snapshot.docs;
+  const docs = [...snapshot.docs, ...assets.docs, { ref: db.doc(`assessmentPolicies/${quizId}`) }];
   for (let offset = 0; offset < docs.length; offset += 400) {
     const batch = db.batch();
     docs.slice(offset, offset + 400).forEach(doc => batch.delete(doc.ref));
