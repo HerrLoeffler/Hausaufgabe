@@ -77,6 +77,30 @@ function snapshotSolutionAudio(quizId, revision, solutions, audioDocs) {
   return { refs, assets };
 }
 
+async function persistSolutionAssets(quizId, assets) {
+  // Only final, committed attempt bytes reach this writer. Separate bounded
+  // commits avoid Firestore's 10 MiB request limit; the quiz read prevents
+  // recreating orphaned assets after a concurrent hard deletion or hold.
+  const db = getFirestore();
+  let chunk = [];
+  let bytes = 0;
+  const commit = entries => db.runTransaction(async tx => {
+    const quiz = await tx.get(db.doc(`quizzes/${quizId}`));
+    if (!quiz.exists || quiz.data()?.isDeleted === true || quiz.data()?.rightsHold === true) {
+      throw new HttpsError("failed-precondition", "Dieser Test ist nicht mehr verfügbar.");
+    }
+    for (const asset of entries) tx.set(db.doc(`assessmentSolutionAssets/${asset.assetId}`), asset.data);
+  });
+  for (const asset of assets || []) {
+    const size = Buffer.byteLength(JSON.stringify(asset.data)) + 1024;
+    if (chunk.length && (bytes + size > 7_500_000 || chunk.length >= 400)) {
+      await commit(chunk); chunk = []; bytes = 0;
+    }
+    chunk.push(asset); bytes += size;
+  }
+  if (chunk.length) await commit(chunk);
+}
+
 async function authorizePolicyTeacher(request, quiz, tx) {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError("unauthenticated", "Bitte als Lehrkraft anmelden.");
@@ -507,17 +531,23 @@ async function attachReleasedSolutionAudio(quizId, receipt, privateData) {
   // Legacy attempts have no immutable audio evidence. Never attach current
   // author audio merely because its question id matches an older solution.
   const refs = privateData?.solutionAudioRefs || {};
-  const solutions = await Promise.all(receipt.solutions.map(async solution => {
+  let audioBytes = 0;
+  let partial = false;
+  const solutions = [];
+  for (const solution of receipt.solutions) {
     const ref = refs[String(solution?.id || "")];
-    if (!ref || !/^[a-f0-9]{64}$/.test(ref.assetId || "")) return solution;
+    if (!ref || !/^[a-f0-9]{64}$/.test(ref.assetId || "")) { solutions.push(solution); continue; }
     const snapshot = await getFirestore().doc(`assessmentSolutionAssets/${ref.assetId}`).get();
     const asset = snapshot.data();
     if (!snapshot.exists || asset.quizId !== quizId || asset.revision !== ref.revision
       || asset.questionId !== solution.id || asset.digest !== ref.digest
-      || sha256(String(asset.audio?.src || "")) !== ref.digest) return solution;
-    return { ...solution, audio: asset.audio };
-  }));
-  return { ...receipt, solutions };
+      || sha256(String(asset.audio?.src || "")) !== ref.digest) { solutions.push(solution); continue; }
+    const size = Buffer.byteLength(String(asset.audio?.src || ""));
+    if (audioBytes + size > 8_000_000) { partial = true; solutions.push(solution); continue; }
+    audioBytes += size;
+    solutions.push({ ...solution, audio: asset.audio });
+  }
+  return { ...receipt, solutions, ...(partial ? { solutionAudioPartial: true } : {}) };
 }
 
 async function buildReleasedReceipt(quizId, submission, quiz, privateData) {
@@ -564,7 +594,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   // Only the final, committed callback result may escape a transaction retry.
-  const { storedAttempt, storedPrivate, currentQuiz, newContract } = await db.runTransaction(async tx => {
+  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets } = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const existingAttempt = await tx.get(aRef);
     const existingPrivate = await tx.get(pRef);
@@ -585,7 +615,18 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
       assertSameRun(storedAttempt, currentQuiz, quizId);
-      return { storedAttempt, storedPrivate, currentQuiz, newContract: null };
+      let solutionAssets = [];
+      if (Object.keys(storedPrivate.solutionAudioRefs || {}).length) {
+        const audio = await readSolutionAudio(quizId, tx);
+        const revision = Object.values(storedPrivate.solutionAudioRefs)[0].revision;
+        const candidates = snapshotSolutionAudio(quizId, revision, storedPrivate.solutionSnapshot || [], audio).assets;
+        // Repair only the exact old media bytes, never newly edited author audio.
+        for (const asset of candidates) {
+          if (storedPrivate.solutionAudioRefs[asset.data.questionId]?.assetId === asset.assetId
+            && !(await tx.get(db.doc(`assessmentSolutionAssets/${asset.assetId}`))).exists) solutionAssets.push(asset);
+        }
+      }
+      return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
 
     // Quota/authentication must precede the expensive author-question query.
@@ -664,9 +705,10 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
-    for (const asset of audioSnapshot.assets) tx.set(db.doc(`assessmentSolutionAssets/${asset.assetId}`), asset.data);
-    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract };
+    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
   });
+
+  await persistSolutionAssets(quizId, solutionAssets);
 
   if (storedAttempt.status === "submitted") {
     const saved = await submissionRef(quizId, id).get();

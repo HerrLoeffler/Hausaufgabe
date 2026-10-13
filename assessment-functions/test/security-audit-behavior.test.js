@@ -13,10 +13,21 @@ function fixture() {
   const docs = new Map();
   const deleted = Symbol('deleted');
   let questionReads = 0;
+  let assetReads = 0;
+  const assetBatchSizes = [];
   let retryBeforeCommit = null;
-  const ref = path => ({ path, get: async () => snap(path) });
+  const ref = path => ({ path, get: async () => { if (path.startsWith("assessmentSolutionAssets/")) assetReads++; return snap(path); } });
   const snap = path => ({ exists: docs.has(path), id: path.split('/').pop(), ref: ref(path), data: () => docs.get(path) });
   const db = {
+    batch: () => {
+      const entries = [];
+      return { set: (r, value) => entries.push([r, value]), commit: async () => {
+        const bytes = Buffer.byteLength(JSON.stringify(entries));
+        assetBatchSizes.push(bytes);
+        assert.ok(bytes < 8_000_000, 'bounded immutable audio commit');
+        entries.forEach(([r, value]) => docs.set(r.path, value));
+      } };
+    },
     doc: ref,
     collection: path => {
       const read = async () => {
@@ -28,13 +39,17 @@ function fixture() {
     },
     runTransaction: async callback => {
       const writes = [];
+      const assetEntries = [];
       const result = await callback({
         get: async r => {
           assert.equal(writes.length, 0, 'Firestore requires reads before writes');
           return r.path ? snap(r.path) : r.get();
         },
         create: (r, value) => writes.push(() => { assert.equal(docs.has(r.path), false); docs.set(r.path, value); }),
-        set: (r, value) => writes.push(() => docs.set(r.path, { ...docs.get(r.path), ...value })),
+        set: (r, value) => {
+          if (r.path.startsWith('assessmentSolutionAssets/')) assetEntries.push([r, value]);
+          writes.push(() => docs.set(r.path, { ...docs.get(r.path), ...value }));
+        },
         update: (r, value) => writes.push(() => {
           const next = { ...docs.get(r.path), ...value };
           for (const key of Object.keys(next)) if (next[key] === deleted) delete next[key];
@@ -45,6 +60,11 @@ function fixture() {
         const winner = retryBeforeCommit; retryBeforeCommit = null;
         await winner(); // Discard this transaction's staged writes, then replay.
         return db.runTransaction(callback);
+      }
+      if (assetEntries.length) {
+        const bytes = Buffer.byteLength(JSON.stringify(assetEntries));
+        assert.ok(bytes < 8_000_000, 'bounded immutable audio transaction');
+        assetBatchSizes.push(bytes);
       }
       writes.forEach(write => write());
       return result;
@@ -80,6 +100,8 @@ function fixture() {
   const receipt = id => exports.getAssessmentReceipt(request({ attemptId: id, attemptToken: token }));
   return { exports, docs, quizId, token, now, request, start, submit, receipt,
     get questionReads() { return questionReads; },
+    get assetReads() { return assetReads; },
+    assetBatchSizes,
     retryNextTransaction(winner) { retryBeforeCommit = winner; } };
 }
 
@@ -426,4 +448,52 @@ test('late-release receipt remains consistent across submitted resume start retr
   assert.equal(resumed.receipt.solutionsReleased, true);
   assert.equal((await f.start('consistent')).receipt.solutionsReleased, true);
   assert.equal((await f.submit(a.attemptId)).receipt.solutionsReleased, true);
+});
+
+
+test('unreleased practice and invalid tokens never read immutable solution audio assets', async () => {
+  const f = practiceFixture({ showSolutions: false });
+  f.docs.set(`quizzes/${f.quizId}/audioScripts/q1`, { solutionAudioDataUrl: 'data:audio/wav;base64,T0xE' });
+  await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('noaudioleak'); await f.submit(a.attemptId); await f.receipt(a.attemptId);
+  assert.equal(f.assetReads, 0);
+  await assert.rejects(f.exports.getAssessmentReceipt(f.request({ attemptId: a.attemptId, attemptToken: 'B'.repeat(43) })), { code: 'permission-denied' });
+  assert.equal(f.assetReads, 0);
+  await f.teacher({ action: 'release', expectedRevision: f.docs.get(`assessmentPolicies/${f.quizId}`).revision, confirmAfterSubmit: true });
+  assert.equal((await f.receipt(a.attemptId)).receipt.solutions[0].audio.src, 'data:audio/wav;base64,T0xE');
+  assert.equal(f.assetReads, 1);
+});
+
+
+test('thirty 400KB solution audios use bounded immutable commits and a bounded receipt payload', async () => {
+  const f = practiceFixture();
+  for (let i = 1; i <= 30; i++) {
+    const id = 'q' + i;
+    f.docs.set(`quizzes/${f.quizId}/questions/${id}`, { id, position: i, type: 'number', text: '2+2', points: 1, numericAnswer: 4 });
+    f.docs.set(`quizzes/${f.quizId}/audioScripts/${id}`, { solutionAudioDataUrl: 'data:audio/wav;base64,' + 'A'.repeat(400000) });
+  }
+  await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('boundedcommit'); await f.submit(a.attemptId);
+  assert.equal([...f.docs.keys()].filter(k => k.startsWith('assessmentSolutionAssets/')).length, 30);
+  assert.equal(f.assetBatchSizes.length, 2);
+  assert.ok(f.assetBatchSizes.every(bytes => bytes < 8_000_000));
+  const receipt = (await f.receipt(a.attemptId)).receipt;
+  assert.equal(receipt.solutions.length, 30);
+  assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 8_500_000);
+  assert.equal(receipt.solutionAudioPartial, true);
+});
+
+test('missing immutable audio can be repaired on authenticated start retry only from its exact stored digest', async () => {
+  const f = practiceFixture();
+  f.docs.set(`quizzes/${f.quizId}/audioScripts/q1`, { solutionAudioDataUrl: 'data:audio/wav;base64,T0xE' });
+  await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('repairmedia');
+  const assetId = f.docs.get(`assessmentPrivate/${f.quizId}_${a.attemptId}`).solutionAudioRefs.q1.assetId;
+  f.docs.delete('assessmentSolutionAssets/' + assetId);
+  await f.start('repairmedia');
+  assert.equal(f.docs.get('assessmentSolutionAssets/' + assetId)?.audio.src, 'data:audio/wav;base64,T0xE');
+  f.docs.delete('assessmentSolutionAssets/' + assetId);
+  f.docs.get(`quizzes/${f.quizId}/audioScripts/q1`).solutionAudioDataUrl = 'data:audio/wav;base64,TkVX';
+  await f.start('repairmedia');
+  assert.equal(f.docs.has('assessmentSolutionAssets/' + assetId), false);
 });

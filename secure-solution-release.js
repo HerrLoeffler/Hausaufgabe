@@ -68,6 +68,11 @@ function renderSolutions(receipt) {
     list.appendChild(article);
   });
   panel.appendChild(list);
+  if (receipt.solutionAudioPartial) {
+    const note = document.createElement("p");
+    note.textContent = "Einige Lösungsaudios sind zu umfangreich. Die Textlösungen sind vollständig verfügbar.";
+    panel.appendChild(note);
+  }
 }
 
 function renderAvailable(receipt) {

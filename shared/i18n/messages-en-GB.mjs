@@ -18,6 +18,7 @@ export const enGBMessages = Object.freeze({
   "nav.teachers": "For teachers",
   "nav.help": "Help",
   ...source({
+    "Einige Lösungsaudios sind zu umfangreich. Die Textlösungen sind vollständig verfügbar.": "Some solution audio exceeds the size limit. All text solutions remain available.",
     "Lösungsfreigabe": "Solution release",
     "Prüfung – nach Testende und Nachfrist": "Exam – after the test ends and submission grace",
     "Übung – nach eigener Abgabe": "Practice – after own submission",

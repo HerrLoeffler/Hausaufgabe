@@ -117,16 +117,19 @@ const signInWithEmailAndPassword = (...args) => { requireProductionData(); retur
 const sendPasswordResetEmail = (...args) => { requireProductionData(); return firebaseSendPasswordReset(...args); };
 const signOut = (...args) => { requireProductionData(); return firebaseSignOut(...args); };
 const updateProfile = (...args) => { requireProductionData(); return firebaseUpdateProfile(...args); };
-const practicePublisher = createPracticePublisher({
+let practicePublisher;
+function getPracticePublisher() {
+  return practicePublisher ||= createPracticePublisher({
   call: async data => {
     requireProductionData();
     return (await httpsCallable(getFunctions(app, "europe-west1"), "configurePracticeSolutionRelease")(data)).data;
   }
-});
+  });
+}
 async function publishPracticeQuiz(quiz) {
   const uid = state.user?.uid;
   const revision = draftRevision;
-  return practicePublisher.publish(quiz, {
+  return getPracticePublisher().publish(quiz, {
     unchanged: () => state.user?.uid === uid && draftRevision === revision,
     onChange: async () => {
       await openEditor(quiz.id);
@@ -6320,7 +6323,7 @@ $("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
   const quiz = state.currentQuiz;
   const uid = state.user?.uid;
   try {
-    const released = await practicePublisher.release(quiz, { unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === quiz.id });
+    const released = await getPracticePublisher().release(quiz, { unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === quiz.id });
     if (released) toast("Lösungen für diese Übungsrunde freigegeben.");
   } catch (error) { toast(error.message || "Lösungsfreigabe fehlgeschlagen.", "error"); }
   finally { button.disabled = false; }
@@ -6405,7 +6408,7 @@ function setupTeacherLivePanel(code) {
 function renderTeacherLivePanel(quiz, attempts, submissions) {
   const panel = $("teacherLivePanel");
   if (!panel || !quiz) return;
-  $("releasePracticeSolutionsBtn")?.classList.toggle("hidden", guestTourRepo !== null || !quiz.practiceSolutionRevision || quiz.practiceSolutionsReleased === true || quiz.rightsHold === true || quiz.isDeleted === true);
+  $("releasePracticeSolutionsBtn")?.classList.toggle("hidden", guestTourRepo !== null || quiz.solutionReleaseMode !== "practice_after_submit" || !quiz.practiceSolutionRevision || quiz.practiceSolutionsReleased === true || quiz.rightsHold === true || quiz.isDeleted === true);
   if (state.publishClockInterval) clearInterval(state.publishClockInterval);
   state.publishClockInterval = null;
 

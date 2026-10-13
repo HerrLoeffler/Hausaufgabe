@@ -40,7 +40,7 @@ test("stale solution audio is invalidated and publishing fails closed", () => {
 test("secure assessment attaches solution audio only after the existing solution gate", () => {
   assert.match(lifecycle, /if \(!receipt\?\.solutionsReleased/);
   assert.match(lifecycle, /solutionNeedsRegeneration === true/);
-  assert.match(lifecycle, /attachReleasedSolutionAudio\(quizId, receipt\)/);
+  assert.match(lifecycle, /attachReleasedSolutionAudio\(quizId, receipt, privateSnap\.data\(\)\)/);
   assert.match(solutionUi, /solution\.audio\?\.src/);
   assert.match(solutionUi, /audio\.controls = true/);
   assert.doesNotMatch(solutionUi, /\.autoplay\s*=\s*true|autoplay=/);
@@ -62,7 +62,7 @@ test("integrated V2 keeps all audio authoring data browser-private and release-g
   const helperEnd = lifecycle.indexOf("\n}", helperStart);
   const helper = lifecycle.slice(helperStart, helperEnd);
   const releaseGate = helper.indexOf("if (!receipt?.solutionsReleased");
-  const audioRead = helper.indexOf('collection(`quizzes/${quizId}/audioScripts`)');
+  const audioRead = helper.indexOf('doc(`assessmentSolutionAssets/${ref.assetId}`)');
   assert.ok(helperStart >= 0, "solution-audio release helper missing");
   assert.ok(releaseGate >= 0, "solution release gate missing");
   assert.ok(audioRead > releaseGate, "private solution audio must only be read after the solution-release gate");
