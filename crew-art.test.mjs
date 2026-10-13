@@ -12,12 +12,15 @@ test('Clay sprites are self-contained, have six bounded pose views and preserve 
   assert.ok(!svg.includes('<script'));
  }
 });
-test('Clay integration ships its stylesheet and respects reduced motion without an observer',()=>{
+test('Clay styles respect reduced motion and the current public hero ships without legacy first-paint artwork',()=>{
  const css=fs.readFileSync('crew-clay.css','utf8');
  assert.ok(css.includes('prefers-reduced-motion:reduce'));
  assert.ok(!css.includes('infinite'));
  assert.ok(fs.readFileSync('tools/build-staging.mjs','utf8').includes("'crew-clay.css'"));
- assert.ok(fs.readFileSync('index.html','utf8').includes('clay-welcome.svg'));
+ assert.ok(fs.readFileSync('gradecrew-entry-flow.js','utf8').includes('crew-classroom-wide-v4.png'));
+ assert.ok(fs.readFileSync('tools/build-staging.mjs','utf8').includes("'assets/gradecrew/crew-classroom-wide-v4.png'"));
+ assert.ok(fs.existsSync('assets/gradecrew/crew-classroom-wide-v4.png'));
+ assert.ok(!fs.readFileSync('index.html','utf8').includes('clay-welcome.svg'));
 });
 
 

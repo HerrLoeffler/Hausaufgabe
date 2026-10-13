@@ -35,7 +35,9 @@ function renderSolutions(receipt) {
   const heading = document.createElement("h2");
   heading.textContent = "Lösungen";
   const intro = document.createElement("p");
-  intro.textContent = "Der Test wurde beendet. Deine Lehrkraft hat die Lösungsanzeige freigegeben.";
+  intro.textContent = receipt.solutionReleaseMode === "practice_after_submit"
+    ? "Deine Lehrkraft hat die Lösungen nach deiner Abgabe freigegeben."
+    : "Der Test wurde beendet. Deine Lehrkraft hat die Lösungsanzeige freigegeben.";
   panel.append(heading, intro);
 
   const list = document.createElement("div");
@@ -66,16 +68,38 @@ function renderSolutions(receipt) {
     list.appendChild(article);
   });
   panel.appendChild(list);
+  if (receipt.solutionAudioPartial) {
+    const note = document.createElement("p");
+    note.textContent = "Einige Lösungsaudios sind zu umfangreich. Die Textlösungen sind vollständig verfügbar.";
+    panel.appendChild(note);
+  }
+}
+
+function renderAvailable(receipt) {
+  const panel = solutionPanel();
+  if (!panel) return;
+  panel.replaceChildren();
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "button secondary";
+  button.textContent = "Lösungen anzeigen";
+  button.addEventListener("click", () => renderSolutions(receipt));
+  panel.appendChild(button);
 }
 
 function renderWaiting(receipt) {
   const panel = solutionPanel();
   if (!panel) return;
   panel.replaceChildren();
+  const heading = document.createElement("h2");
+  heading.textContent = "Warten auf Freigabe";
+  panel.appendChild(heading);
   const note = document.createElement("p");
   note.className = "secureSolutionNote";
   note.textContent = receipt.solutionsConfigured
-    ? "Lösungen bleiben bis zum Testende und dem Ablauf der kurzen Abgabe-Nachfrist geschützt."
+    ? receipt.solutionReleaseMode === "practice_after_submit"
+      ? "Deine Lehrkraft hat die Lösungen für diese Übung noch nicht freigegeben."
+      : "Lösungen bleiben bis zum Testende und dem Ablauf der kurzen Abgabe-Nachfrist geschützt."
     : "Für diesen Test ist keine Lösungsanzeige freigegeben.";
   panel.appendChild(note);
 
@@ -93,10 +117,10 @@ function renderReceiptSolutions(receipt) {
   removeLegacyNote();
   const state = receipt.solutionsReleased
     ? `released:${JSON.stringify(receipt.solutions || [])}`
-    : `waiting:${receipt.solutionsConfigured === true}`;
+    : `waiting:${receipt.solutionsConfigured === true}:${receipt.solutionReleaseMode || "exam_after_end"}`;
   if (state === lastRenderedState && host?.querySelector("[data-secure-solution-release]")) return;
   lastRenderedState = state;
-  if (receipt.solutionsReleased && Array.isArray(receipt.solutions)) renderSolutions(receipt);
+  if (receipt.solutionsReleased && Array.isArray(receipt.solutions)) renderAvailable(receipt);
   else renderWaiting(receipt);
 }
 
