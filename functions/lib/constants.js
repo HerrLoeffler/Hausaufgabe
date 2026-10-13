@@ -20,7 +20,7 @@ const MATERIAL_MIME_TYPES = Object.freeze([
 const LIMITS = Object.freeze({
   maxQuestions: 100,
   maxPromptChars: 6000,
-  maxMaterials: 5,
+  maxMaterials: 10,
   maxMaterialBytes: 15 * 1024 * 1024,
   maxVisualQuestions: 5,
   maxAudioQuestions: 5,
