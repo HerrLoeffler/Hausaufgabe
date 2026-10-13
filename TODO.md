@@ -537,3 +537,10 @@ ActualHTTP all29 packaged Crew PNGs agree canonical/localHTTP/localSource/build.
 Private Hörtext is never auto-published. New fromTask preserves its already-public question; listening tasks use one explicit publicquestion field, canonical clearing cannot revive nested old criteria. Only playable listening R/F uses generic DE/EN procedural fallback; it does not prove an unidentified old recording contains a sufficient statement. Userq5/q8 semantics unknown without testcode. Old criterion-less MC tasks need explicit teacher-reviewed public instructions; no migration performed. No real attempts/deletion/paid generation/user-data writes. User acceptance remains separate.
 
 Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-reconciliation-20261011.md and release-proof-20261011/ (component/canonical receipts, full assets, local alignment/CSS backup proofs, service equality, independent reviews, browser/HTTP smoke). Final STATE/TODO/registry update is documentation only; no new product release.
+
+
+## 13.10.2026 — Test-Rallye: vierte Games-Kachel (Planungsentwurf)
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-GAMES-TEST-RALLYE-01 | Vorschlag für vierte Webspiel-Kachel: vorhandenen GradeCrew-Test mit bestehenden automatisch bewertbaren Aufgaben im Games-Rundenfluss spielen | **Planungsentwurf auf Docs-Branch; keine Umsetzung freigegeben.** Task-ID auf main ohne Treffer. | Drei Produktfragen offen: nach falscher Antwort weiter oder später Wiederholungsmodus; Teilpunkte/Sperre bei Teilfehlern; Freitext sofort oder später. Neue serverseitige Spiel-Abgabe nötig, keine bestehende Games-Micrograding-API belegt. [Plan](docs/games/test-rallye-plan-20261013.md) · [Übergabe](workstreams/test-rallye-plan-20261013.md) |
