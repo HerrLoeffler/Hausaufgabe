@@ -43,12 +43,12 @@ Die offizielle [VIDIS-Teilnahmeseite](https://www.vidis.schule/teilnahmeprozess/
 
 ### Website und die beiden Apps
 
-Die Website erhält in der Präsentation den größten Produktanteil: Test mit Remy vorbereiten, als Lehrkraft prüfen/mit Emmi verbessern, per Code/Link/QR teilen, Antworten abgeben und Ergebnisse auswerten. Materialupload bis10Dateien, Bild-/Höraufgaben und kontrollierte Übungs-/Prüfungslösungen gehören zum vorhandenen Kern. Die Crewrollen sind Coco (Hilfe/Orientierung), Remy (Erstellen), Emmi (Verbessern), Wilma (Prüfen). Zwei schematische, ausdrücklich synthetische Beispielansichten erläutern Erstellung und Schüleraufgabe; keine Aufnahmen echter Schüler oder Nutzerkonten.
+Die **Web-App im Browser ist das größte und zentrale Hauptprodukt** und erhält den Schwerpunkt der Vorstellung. Danach folgen die Teacher-App als App-Abbildung der Web-App für Lehrkräfte und die Secure-App für die vorgesehene Testdurchführung durch Schüler. Diese Reihenfolge ist im Verzeichnis und in den Produktfolien ausdrücklich sichtbar. Ablauf des Hauptprodukts: Test mit Remy vorbereiten, als Lehrkraft prüfen/mit Emmi verbessern, per Code/Link/QR teilen, Antworten abgeben und Ergebnisse auswerten. Materialupload bis10Dateien, Bild-/Höraufgaben und kontrollierte Übungs-/Prüfungslösungen gehören zum vorhandenen Kern. Die Crewrollen sind Coco (Hilfe/Orientierung), Remy (Erstellen), Emmi (Verbessern), Wilma (Prüfen). Zwei schematische, ausdrücklich synthetische Beispielansichten erläutern Erstellung und Schüleraufgabe; keine Aufnahmen echter Schüler oder Nutzerkonten.
 
 Die zwei Apps werden anhand tatsächlicher Repo-Ziele als **GradeCrew Teacher** und **GradeCrew Secure** eingeordnet, nicht als zwei Plattformversionen derselben App oder fertige Games-App. Quelle jeweils nativer Stand77119be5168150f7fa14076565b5099e856cb8d4:
 
-- [GradeCrew Teacher](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewTeacher/README.md): iPhone/iPad-Zugang für Lehrkräfte mit integrierter Website, nativen Eingabehilfen für Remy sowie Teilen/Downloads. TestFlight0.1.18(37) wurde hochgeladen, Run38282021673. Apple-Verfügbarkeit und Geräteabnahme werden nicht daraus abgeleitet.
-- [GradeCrew Secure](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewSecure/README.md): iPad-Entwicklungsprototyp für Testcode und Schüleransicht. Geschützter Prüfungsmodus ist Entwicklungsziel; native Freigabe, Hardware-/Integrationstests offen. Keine Gerätesperre-/AAC-/AppStore-/Sicherheitsgarantie behaupten. Alte Backend-Negativaussagen des Prototyp-README beschreiben nicht automatisch den heutigen Websitebackend.
+- [GradeCrew Teacher](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewTeacher/README.md): iPhone/iPad-App für Lehrkräfte, die die Browser-Web-App abbildet und zur Erstellung digitaler Leistungsnachweise dient. Die Teacher-App ist ein Zugang zum gemeinsamen Webprodukt, kein unabhängiges zweites Kernprodukt. Native Eingabehilfen für Remy sowie Teilen/Downloads ergänzen diesen Zugang. TestFlight0.1.18(37) wurde hochgeladen, Run38282021673. Apple-Verfügbarkeit und Geräteabnahme werden nicht daraus abgeleitet.
+- [GradeCrew Secure](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewSecure/README.md): iPad-Entwicklungsprototyp, in dem Schüler ihre Tests ausführen sollen; Testcode und Schüleransicht bilden den vorgesehenen Zugang. Geschützter Prüfungsmodus ist Entwicklungsziel; native Freigabe, Hardware-/Integrationstests offen. Keine Gerätesperre-/AAC-/AppStore-/Sicherheitsgarantie behaupten. Alte Backend-Negativaussagen des Prototyp-README beschreiben nicht automatisch den heutigen Websitebackend.
 
 ## 2a. Martins drei Ziele und unsere Arbeitsdefinition
 
@@ -97,20 +97,20 @@ Diese Zeitwörter sind Zielhorizonte des Nutzers, keine zugesagten Termine. Wir 
 
 ## 5. Tatsächliches PowerPoint-Verzeichnis
 
-16:9, GradeCrew-Blau/Violett, Arial, klare große editierbare Texte und vorhandene Crew-Grafiken. Quellen und kurze Sprechhinweise stehen in den Foliennotizen. Website ist Schwerpunkt. Keine Zahlen-Deko, erfundenen Kunden-/Marktzahlen oder Zertifizierungslogos.
+16:9, GradeCrew-Blau/Violett, Arial, große editierbare Texte und authentische vorhandene Crew-/Logo-Grafiken. Version3 gestaltet die Produktgeschichte lebendiger: dunkler Titel-/Fragenhintergrund, farbige Themenflächen im Verzeichnis, warme Gründerfolie mit Coco, vergrößerte Web-/App-Beispiele, Remy/Wilma als Rollenbegleiter und drei farbige Roadmapstufen. Sachliche Anhangfragen bleiben ruhig und erhalten eine kräftige Titelzone. Grafiken überdecken keine Fachinhalte; synthetische Produktansichten sind ausdrücklich gekennzeichnet. Quellen und kurze Sprechhinweise stehen in den Foliennotizen. Website ist Schwerpunkt. Keine Zahlen-Deko, erfundenen Kunden-/Marktzahlen oder Zertifizierungslogos.
 
 | Folie | Titel / Inhalt |
 |---|---|
 | 1 | GradeCrew: aus dem Unterricht in den nächsten Schritt; Gespräch mit Philipp Geim19.10. |
-| 2 | Klares Verzeichnis: Martin/Idee, Website/Crew, zweiApps, Bundeslandpartner/VIDIS, Pilot/Review/Finanzierung. |
+| 2 | Klares farbiges Verzeichnis: Martin/Idee, Web-App als Hauptprodukt im Browser, Teacher-/Secure-App, Bundeslandpartner/VIDIS, Pilot/Review/Finanzierung. |
 | 3 | Martin kurz vorstellen: Gründer, aus eigenem Unterrichtsalltag, selbst getestet, nächstes Ziel. |
 | 4 | Problem: Vorbereiten, Durchführen und Nacharbeiten in einem Ablauf. |
-| 5 | Websitekern: Test vorbereiten, prüfen, teilen, bearbeiten und auswerten. |
+| 5 | Web-App im Browser ausdrücklich als Hauptprodukt: Test vorbereiten, prüfen, teilen, bearbeiten und auswerten. |
 | 6 | Testvorbereitung als schematische synthetische Beispielansicht. |
 | 7 | Schüleraufgabe als schematische synthetische Beispielansicht; Zugang und Ergebnis. |
 | 8 | Coco, Remy, Emmi, Wilma und jeweilige Rolle. |
-| 9 | GradeCrew Teacher: mobiler Lehrerzugang, TestFlight-Upload belegt, Geräteabnahme offen. |
-| 10 | GradeCrew Secure: iPad-Entwicklungsprototyp; geschützter Prüfungsmodus als Ziel. |
+| 9 | GradeCrew Teacher: Browser-Web-App in der Lehrkräfte-App; digitale Leistungsnachweise erstellen, native Eingabe-/Teilen-/Downloadhilfen. Erprobung; TestFlightnachweis und Geräteabnahme in Notizen. |
+| 10 | GradeCrew Secure: vorgesehen für Testdurchführung durch Schüler; iPad-Entwicklungsprototyp, geschützter Prüfungsmodus als Ziel. |
 | 11 | Ehrlicher Stand: hilfreicher Gründerbericht, dokumentierter Technikstand, offene Pilot-/Reviewnachweise. |
 | 12 | Drei Nutzerziele: bereit für Bundeslandpartner → Partner → VIDIS-Anbindung. |
 | 13 | Bezahlter begrenzter Pilot, echte Kosten, passende Finanzierungsroute. |
