@@ -12,7 +12,7 @@ Start friert Policy, Revision und private Lösungen samt passenden Audioassets e
 ## Planung / Ausführung
 - [x] RED: synthetische echte Handlerfälle für unmittelbare Übung/none, fehlende Bestätigung, falsche Rolle/Token, keine Abgabe, Hold/Delete, veraltete Revision, spätere Freigabe und Audio-/Keyänderung.
 - [x] GREEN: enges Teacher-Callable und private Policy/Attemptrevision in secure-lifecycle; bisherige Prüfungsgrenzen unverändert.
-- [ ] RED/GREEN: beide UI-Publishpfade, Editorpolicy und klarer Schüler-Serverzustand; Buildmanifest neues UI-Modul erhalten.
+- [x] RED/GREEN: beide UI-Publishpfade, Editorpolicy und klarer Schüler-Serverzustand; Buildmanifest neues UI-Modul erhalten.
 - [ ] Ganze betroffene Testsuiten/Syntax/Build, unabhängiger exakter Kandidatenreview, DraftPR und Handoff sichern.
 
 Skills using-superpowers(Subagent-Ausnahme), brainstorming, writing-plans, using-git-worktrees, TDD+writing-good-tests, systematic-debugging, executing-plans, verification-before-completion tatsächlich gelesen. Vollständiger autorisierter SR01–04-Auftrag legt Design und Ausführung fest; kein erneuter identischer Approvalflow. Erste30 vorhandene fokussierte Tests auf unveränderter Basis bestanden. NativeWorktree auf Projektmirror ohne .git ungeeignet; eigener getrennter Gitclone. Bootautor besitzt nur index authView-Hunk; app/settings/pub-Hunks abgestimmt. Main-Doku zunächst soleOwner Bootautor.
@@ -25,3 +25,10 @@ branch_only: Plan gesichert, produktiver Code unverändert. Keine CI/Integration
 
 ## Checkpoint 1
 28 tatsächliche Handler-/Securityverhaltenstests bestanden (8 neue Fälle zunächst rot: fehlender Callable). Neue private assessmentPolicies-Evidenz und configurePracticeSolutionRelease-Callable implementiert. Source-Policy allein gibt nichts frei; Token/ownsubmit/Delete/Hold und Prüfungsnachfrist bestehen. Staging-Functions müssen neues Callable mitdeployen und explizit verifizieren. UI noch offen; keine vollständige Fertigmeldung.
+
+## Checkpoint 2 / vollständiger Implementierungskandidat
+Private policy plus serverberechnete Inhalts-/Einstellungsrevision, bestätigter Practice-Publish, late release derselben veröffentlichten Runde, frozen Attempt/Submissionpolicy, Lösungssnapshot und separate hash-/revisiongebundene assessmentSolutionAssets implementiert. Keine aktuellen Audiofallbacks für alte Attempts ohne Bindungsbeweis. Große860KB-Audios vergrößern das private Attemptpayload nicht; Medien über950KB werden beim Snapshot ausgelassen, Textlösungen bleiben verfügbar. Quiz-Löschtrigger entfernt Policy+Assets auch ohne verbleibende Attempts. Alle Receiptwege sind bei late release konsistent; Submit-Transaktionsresultat stammt aus finalem Callback.
+
+Editorpolicy, Drafts und Duplikate erhalten Auswahl. Dashboard+Editor+Wiederöffnen nutzen denselben Practicepublisher; DefaultExam behält bestehende Veröffentlichung. Neue Prüfungshinweise nur wenn Lösungen unmittelbar verfügbar werden. Schüler: Warten auf Freigabe / Lösungen anzeigen ausschließlich aus Serverreceipt, kein neues Polling. Optionale späte Teacherfreigabe im Publishview. Deutsche Copy und Englischquelle ergänzt; bestehende29CrewPNGs/164Assetpfade bleiben.
+
+Fokussiert:33Backend/Security/Cleanup+24Frontend (inkl13neuer Behaviorcases) grün unter bundledNode24.19.0; Node22/exakteCI noch ausstehend. RED-Belege:8fehlendeBackendfunktionen,2realeAudiogrenzfälle,4realePublishwege,2Schülerzustände,3LateReceipt/Cleanupfälle. Vollsuiten/Syntax/Build unmittelbar als nächster Schritt, danach unabhängiger exakter Kandidatenreview. Kein CI-/Deploy-/Nutzertestbeleg dieses Standes.

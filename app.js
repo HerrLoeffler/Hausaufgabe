@@ -53,6 +53,7 @@ import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
+import { createPracticePublisher } from "./practice-solution-publication.mjs";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAudioPublicationBlocked } from "./secure-audio-publication.mjs?v=1";
 import { installReviewMode } from "./review-mode.mjs";
@@ -116,6 +117,25 @@ const signInWithEmailAndPassword = (...args) => { requireProductionData(); retur
 const sendPasswordResetEmail = (...args) => { requireProductionData(); return firebaseSendPasswordReset(...args); };
 const signOut = (...args) => { requireProductionData(); return firebaseSignOut(...args); };
 const updateProfile = (...args) => { requireProductionData(); return firebaseUpdateProfile(...args); };
+const practicePublisher = createPracticePublisher({
+  call: async data => {
+    requireProductionData();
+    return (await httpsCallable(getFunctions(app, "europe-west1"), "configurePracticeSolutionRelease")(data)).data;
+  }
+});
+async function publishPracticeQuiz(quiz) {
+  const uid = state.user?.uid;
+  const revision = draftRevision;
+  return practicePublisher.publish(quiz, {
+    unchanged: () => state.user?.uid === uid && draftRevision === revision,
+    onChange: async () => {
+      await openEditor(quiz.id);
+      const field = $("quizSolutionReleaseMode");
+      if (field) { const section = field.closest("details"); if (section) section.open = true; field.focus(); }
+    }
+  });
+}
+
 const studentSubmissionBusy = new Set();
 const studentConfirmationPending = new Map();
 const completedStudentSubmissions = new Set();
@@ -1864,6 +1884,12 @@ async function applyDashboardPublication(q, toggle) {
   }
   try {
     if (wantsPublished) {
+      const practice = await publishPracticeQuiz(q);
+      if (practice === null) { if (toggle) toggle.checked = false; return; }
+      if (practice) {
+        Object.assign(q, practice, { published: true, ended: false });
+        toast("Test veröffentlicht."); renderQuizList(); renderAiJobs(); return;
+      }
       const teacherMode = q.startMode === "teacher";
       const runId = teacherMode ? randomId("run") : null;
       const contentLocale = q.contentLocale || "de-DE";
@@ -2079,6 +2105,7 @@ async function duplicateQuiz(code, mode = "exact", closeDialog = null) {
       gradeScaleSnapshot: deepClone(getQuizScale(source)),
       resultMode: source.resultMode || getSettings().defaultResultMode,
       showSolutions: source.showSolutions ?? getSettings().defaultShowSolutions,
+      solutionReleaseMode: source.solutionReleaseMode || "exam_after_end",
       timeLimitMinutes: Number(source.timeLimitMinutes) > 0 ? Number(source.timeLimitMinutes) : null,
       startMode: source.startMode === "teacher" ? "teacher" : "student",
       shuffleQuestions: Boolean(source.shuffleQuestions),
@@ -2331,6 +2358,15 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
     if (!await checkQuizAudioPublication({ ...current, id: code })) return;
     if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
     if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
+    if (current.solutionReleaseMode === "practice_after_submit") {
+      const practice = await publishPracticeQuiz({ ...current, id: code });
+      if (!practice) return;
+      if (state.currentQuiz?.id === code) Object.assign(state.currentQuiz, practice, { published: true, ended: false });
+      toast("Test wieder geöffnet.");
+      if (returnToEditor) { updateSummary(); updateEditorPublishControls(); showPublish(code); }
+      else await loadDashboard();
+      return;
+    }
     const teacherMode = current.startMode === "teacher";
     const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", code), {
@@ -2467,6 +2503,7 @@ async function importSharedTemplate() {
         : deepClone(getScaleById(getSettings().defaultGradeScaleId)),
       resultMode: quiz.resultMode || getSettings().defaultResultMode,
       showSolutions: quiz.showSolutions ?? getSettings().defaultShowSolutions,
+      solutionReleaseMode: quiz.solutionReleaseMode || "exam_after_end",
       timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
       startMode: quiz.startMode === "teacher" ? "teacher" : "student",
       shuffleQuestions: Boolean(quiz.shuffleQuestions),
@@ -3786,6 +3823,7 @@ function renderEditorState(q) {
   populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
   $("quizResultMode").value = q.resultMode || "points_grade";
   $("quizShowSolutions").checked = q.showSolutions ?? true;
+  $("quizSolutionReleaseMode").value = q.solutionReleaseMode === "practice_after_submit" ? "practice_after_submit" : "exam_after_end";
   $("quizStartMode").value = q.startMode === "teacher" ? "teacher" : "student";
   $("quizShuffleQuestions").checked = Boolean(q.shuffleQuestions);
   $("quizShuffleAnswers").checked = Boolean(q.shuffleAnswers);
@@ -3824,7 +3862,7 @@ function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
     markDirty();
   });
 });
-["quizGradeScale", "quizResultMode", "quizShowSolutions", "quizShuffleQuestions", "quizShuffleAnswers"].forEach((id) => {
+["quizGradeScale", "quizResultMode", "quizShowSolutions", "quizSolutionReleaseMode", "quizShuffleQuestions", "quizShuffleAnswers"].forEach((id) => {
   $(id).addEventListener("change", () => markDirty());
 });
 $("quizStartMode")?.addEventListener("change", () => {
@@ -5827,6 +5865,7 @@ function updateEditorPublishControls() {
   const ended = Boolean(state.currentQuiz.ended);
   const published = Boolean(state.currentQuiz.published) && !ended;
   const blocked = Boolean(state.currentQuiz.rightsHold);
+  if ($("quizSolutionReleaseMode")) $("quizSolutionReleaseMode").disabled = published || blocked;
   $("endQuizBtn")?.classList.toggle("hidden", !published || blocked);
   if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz || blocked;
   if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked || state.aiStarting
@@ -5851,6 +5890,7 @@ function editorDraftSnapshot() {
       description: $("quizDescription").value, gradeScaleId: scaleId,
       gradeScaleSnapshot: deepClone(scale), resultMode: $("quizResultMode").value,
       showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
       timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
       startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
       shuffleAnswers: $("quizShuffleAnswers").checked,
@@ -6098,6 +6138,7 @@ async function saveCurrentQuiz(showMessage = true) {
       grade: $("quizGrade").value.trim(), description: $("quizDescription").value.trim(),
       gradeScaleId: scaleId, gradeScaleSnapshot: getScaleById(scaleId),
       resultMode: $("quizResultMode").value, showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
       timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
       startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
       shuffleAnswers: $("quizShuffleAnswers").checked, questionCount: state.questions.length,
@@ -6141,6 +6182,7 @@ async function saveCurrentQuiz(showMessage = true) {
       gradeScaleSnapshot: scaleSnapshot,
       resultMode: $("quizResultMode").value,
       showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
       timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
       startMode: $("quizStartMode").value === "teacher" ? "teacher" : "student",
       shuffleQuestions: $("quizShuffleQuestions").checked,
@@ -6232,6 +6274,14 @@ async function publishCurrentQuiz() {
     return;
   }
   try {
+    const practice = await publishPracticeQuiz(state.currentQuiz);
+    if (practice === null) return;
+    if (practice) {
+      Object.assign(state.currentQuiz, practice, { published: true, ended: false });
+      state.pendingImportReport = null;
+      renderImportReviewBanner(); renderAiJobs(); updateSummary(); updateEditorPublishControls();
+      toast("Test veröffentlicht."); showPublish(state.currentQuiz.id); return;
+    }
     const teacherMode = state.currentQuiz.startMode === "teacher";
     const runId = teacherMode ? randomId("run") : null;
     await updateDoc(doc(db, "quizzes", state.currentQuiz.id), {
@@ -6263,6 +6313,19 @@ async function publishCurrentQuiz() {
 }
 
 // ---------- Teilen / QR ----------
+$("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
+  const button = $("releasePracticeSolutionsBtn");
+  if (button.disabled) return;
+  button.disabled = true;
+  const quiz = state.currentQuiz;
+  const uid = state.user?.uid;
+  try {
+    const released = await practicePublisher.release(quiz, { unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === quiz.id });
+    if (released) toast("Lösungen für diese Übungsrunde freigegeben.");
+  } catch (error) { toast(error.message || "Lösungsfreigabe fehlgeschlagen.", "error"); }
+  finally { button.disabled = false; }
+});
+
 $("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
 $("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
 $("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
@@ -6342,6 +6405,7 @@ function setupTeacherLivePanel(code) {
 function renderTeacherLivePanel(quiz, attempts, submissions) {
   const panel = $("teacherLivePanel");
   if (!panel || !quiz) return;
+  $("releasePracticeSolutionsBtn")?.classList.toggle("hidden", guestTourRepo !== null || !quiz.practiceSolutionRevision || quiz.practiceSolutionsReleased === true || quiz.rightsHold === true || quiz.isDeleted === true);
   if (state.publishClockInterval) clearInterval(state.publishClockInterval);
   state.publishClockInterval = null;
 

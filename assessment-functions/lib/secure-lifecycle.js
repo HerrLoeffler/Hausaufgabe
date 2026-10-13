@@ -61,15 +61,20 @@ async function readSolutionAudio(quizId, tx) {
   return (await tx.get(getFirestore().collection(`quizzes/${quizId}/audioScripts`))).docs;
 }
 
-function snapshotSolutionAudio(solutions, audioDocs) {
-  const assets = new Map(audioDocs.map(item => [item.id, item.data()]));
-  return solutions.map(solution => {
-    const data = assets.get(solution.id);
+function snapshotSolutionAudio(quizId, revision, solutions, audioDocs) {
+  const audio = new Map(audioDocs.map(item => [item.id, item.data()]));
+  const refs = {};
+  const assets = [];
+  for (const solution of solutions) {
+    const data = audio.get(solution.id);
     const src = String(data?.solutionAudioDataUrl || "");
-    return data?.solutionNeedsRegeneration !== true && src.startsWith("data:audio/")
-      ? { ...solution, audio: { src, aiGenerated: data.solutionAudioAiGenerated !== false } }
-      : solution;
-  });
+    if (data?.solutionNeedsRegeneration === true || !src.startsWith("data:audio/") || Buffer.byteLength(src) > 950_000) continue;
+    const digest = sha256(src);
+    const assetId = sha256(`${quizId}:${revision}:${solution.id}:${digest}`);
+    refs[solution.id] = { assetId, digest, revision };
+    assets.push({ assetId, data: { quizId, revision, questionId: solution.id, digest, audio: { src, aiGenerated: data.solutionAudioAiGenerated !== false } } });
+  }
+  return { refs, assets };
 }
 
 async function authorizePolicyTeacher(request, quiz, tx) {
@@ -497,30 +502,28 @@ function makeReceipt(submission, quiz = null, privateData = null, publicationPol
   return receipt;
 }
 
-async function attachReleasedSolutionAudio(quizId, receipt) {
+async function attachReleasedSolutionAudio(quizId, receipt, privateData) {
   if (!receipt?.solutionsReleased || !Array.isArray(receipt.solutions) || !receipt.solutions.length) return receipt;
-  // New practice audio was frozen alongside its private solution revision.
-  if (receipt.solutionReleaseMode === PRACTICE_MODE) return receipt;
-  const snap = await getFirestore().collection(`quizzes/${quizId}/audioScripts`).get();
-  const assets = new Map();
-  for (const item of snap.docs) {
-    const data = item.data() || {};
-    if (data.solutionNeedsRegeneration === true) continue;
-    const src = String(data.solutionAudioDataUrl || "");
-    if (!src.startsWith("data:audio/")) continue;
-    assets.set(item.id, {
-      src,
-      aiGenerated: data.solutionAudioAiGenerated !== false
-    });
-  }
-  if (!assets.size) return receipt;
-  return {
-    ...receipt,
-    solutions: receipt.solutions.map(solution => {
-      const audio = assets.get(String(solution?.id || ""));
-      return audio ? { ...solution, audio } : solution;
-    })
-  };
+  // Legacy attempts have no immutable audio evidence. Never attach current
+  // author audio merely because its question id matches an older solution.
+  const refs = privateData?.solutionAudioRefs || {};
+  const solutions = await Promise.all(receipt.solutions.map(async solution => {
+    const ref = refs[String(solution?.id || "")];
+    if (!ref || !/^[a-f0-9]{64}$/.test(ref.assetId || "")) return solution;
+    const snapshot = await getFirestore().doc(`assessmentSolutionAssets/${ref.assetId}`).get();
+    const asset = snapshot.data();
+    if (!snapshot.exists || asset.quizId !== quizId || asset.revision !== ref.revision
+      || asset.questionId !== solution.id || asset.digest !== ref.digest
+      || sha256(String(asset.audio?.src || "")) !== ref.digest) return solution;
+    return { ...solution, audio: asset.audio };
+  }));
+  return { ...receipt, solutions };
+}
+
+async function buildReleasedReceipt(quizId, submission, quiz, privateData) {
+  const policy = privateData?.solutionPolicy?.mode === PRACTICE_MODE
+    ? (await getFirestore().doc(`assessmentPolicies/${quizId}`).get()).data() : null;
+  return attachReleasedSolutionAudio(quizId, makeReceipt(submission, quiz, privateData, policy), privateData);
 }
 
 function contractForQuestions(questions, privateData) {
@@ -607,14 +610,17 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     const publicationPolicy = policySnap?.data();
     let solutionPolicy = null;
     let solutionSnapshot = showSolutionsAfterEnd ? newSolutionSnapshot : null;
+    let audioSnapshot = { refs: {}, assets: [] };
+    const snapshotAudio = currentQuiz.solutionReleaseMode === PRACTICE_MODE || showSolutionsAfterEnd;
+    const audio = snapshotAudio ? await readSolutionAudio(quizId, tx) : [];
     if (currentQuiz.solutionReleaseMode === PRACTICE_MODE && publicationPolicy?.version === 1 && publicationPolicy.mode === PRACTICE_MODE && publicationPolicy.sessionRunId === currentRunId) {
-      const audio = await readSolutionAudio(quizId, tx);
       if (publicationPolicy.revision !== publicationRevision(currentQuiz, newContract.authoringFingerprint, audio)) {
         throw new HttpsError("failed-precondition", "Die veröffentlichte Übung wurde geändert. Bitte die Lehrkraft um eine neue Veröffentlichung bitten.");
       }
       solutionPolicy = { version: 1, mode: PRACTICE_MODE, revision: publicationPolicy.revision, sessionRunId: currentRunId, enabled: publicationPolicy.released === true };
-      solutionSnapshot = snapshotSolutionAudio(newSolutionSnapshot, audio);
+      solutionSnapshot = newSolutionSnapshot;
     }
+    if (solutionSnapshot) audioSnapshot = snapshotSolutionAudio(quizId, solutionPolicy?.revision || newContract.authoringFingerprint, solutionSnapshot, audio);
     const created = {
       attemptId: id,
       quizId,
@@ -647,6 +653,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       decoderShape: newDecoderShape,
       solutionSnapshot,
       solutionPolicy,
+      solutionAudioRefs: audioSnapshot.refs,
       shuffleQuestions: initialOptions.shuffleQuestions,
       shuffleAnswers: initialOptions.shuffleAnswers,
       sessionRunId: currentRunId,
@@ -657,6 +664,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
+    for (const asset of audioSnapshot.assets) tx.set(db.doc(`assessmentSolutionAssets/${asset.assetId}`), asset.data);
     return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract };
   });
 
@@ -665,7 +673,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     if (!saved.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
     return {
       ...attemptPublicState(storedAttempt, currentQuiz || initialQuiz, null),
-      receipt: makeReceipt({ id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
+      receipt: await buildReleasedReceipt(quizId, { id: saved.id, ...saved.data() }, currentQuiz || initialQuiz, storedPrivate)
     };
   }
   const contract = newContract || contractForQuestions(await readQuestions(quizId), storedPrivate);
@@ -692,7 +700,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     if (!submissionSnap.exists) throw new HttpsError("data-loss", "Die Abgabe konnte nicht geladen werden.");
     return {
       ...attemptPublicState(attempt, initialQuiz, null),
-      receipt: makeReceipt({ id: submissionSnap.id, ...submissionSnap.data() }, initialQuiz, privateData)
+      receipt: await buildReleasedReceipt(quizId, { id: submissionSnap.id, ...submissionSnap.data() }, initialQuiz, privateData)
     };
   }
 
@@ -749,9 +757,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   const sRef = submissionRef(quizId, id);
-  let receipt;
-
-  await db.runTransaction(async tx => {
+  const receiptContext = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const attemptSnap = await tx.get(aRef);
     const privateSnap = await tx.get(pRef);
@@ -762,8 +768,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     assertAttemptToken(privateData, token);
     if (existingSubmission.exists || attempt.status === "submitted") {
       if (!existingSubmission.exists) throw new HttpsError("data-loss", "Die abgeschlossene Abgabe fehlt.");
-      receipt = makeReceipt({ id: existingSubmission.id, ...existingSubmission.data() }, quizSnap.exists ? quizSnap.data() : null, privateData);
-      return;
+      return { submission: { id: existingSubmission.id, ...existingSubmission.data() }, quiz: quizSnap.exists ? quizSnap.data() : null, privateData };
     }
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
     const quiz = quizSnap.data();
@@ -834,9 +839,9 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       authoringFingerprint: FieldValue.delete(),
       updatedAt: submittedAt
     });
-    receipt = makeReceipt(submission, quiz, privateData);
+    return { submission, quiz, privateData };
   });
-  return { receipt };
+  return { receipt: await buildReleasedReceipt(quizId, receiptContext.submission, receiptContext.quiz, receiptContext.privateData) };
 }));
 
 exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentReceipt", async request => {
@@ -859,5 +864,5 @@ exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentRecei
     privateSnap.data(),
     policySnap.exists ? policySnap.data() : null
   );
-  return { receipt: await attachReleasedSolutionAudio(quizId, receipt) };
+  return { receipt: await attachReleasedSolutionAudio(quizId, receipt, privateSnap.data()) };
 }));

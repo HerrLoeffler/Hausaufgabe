@@ -394,3 +394,36 @@ test('late release cannot turn an exam or another run into practice', async () =
   f.docs.get(`quizzes/${f.quizId}`).sessionRunId = 'another-run';
   await assert.rejects(f.teacher({ action: 'release', expectedRevision: revision, confirmAfterSubmit: true }), { code: 'failed-precondition' });
 });
+
+
+test('large solution audio does not inflate the private attempt payload and assets remain revision bound', async () => {
+  const f = practiceFixture();
+  const src = 'data:audio/wav;base64,' + 'A'.repeat(860000);
+  f.docs.set(`quizzes/${f.quizId}/audioScripts/q1`, { solutionAudioDataUrl: src });
+  await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('largeaudio'); await f.submit(a.attemptId);
+  const privateData = f.docs.get(`assessmentPrivate/${f.quizId}_${a.attemptId}`);
+  assert.ok(Buffer.byteLength(JSON.stringify(privateData)) < 10000);
+  assert.equal((await f.receipt(a.attemptId)).receipt.solutions[0].audio.src, src);
+});
+
+test('legacy attempts without revision-bound audio never attach current edited solution audio', async () => {
+  const f = fixture(); const a = await f.start('legacy'); await f.submit(a.attemptId);
+  const privateData = f.docs.get(`assessmentPrivate/${f.quizId}_${a.attemptId}`);
+  delete privateData.solutionAudioRefs;
+  f.docs.set(`quizzes/${f.quizId}/audioScripts/q1`, { solutionAudioDataUrl: 'data:audio/wav;base64,TkVX' });
+  Object.assign(f.docs.get(`quizzes/${f.quizId}`), { ended: true, endedAt: f.now - 90001 });
+  const receipt = (await f.receipt(a.attemptId)).receipt;
+  assert.equal(receipt.solutionsReleased, true);
+  assert.equal(Object.hasOwn(receipt.solutions[0], 'audio'), false);
+});
+
+test('late-release receipt remains consistent across submitted resume start retry and repeated submit', async () => {
+  const f = practiceFixture({ showSolutions: false }); await f.publish(); f.docs.get(`quizzes/${f.quizId}`).sessionState = 'running';
+  const a = await f.start('consistent'); await f.submit(a.attemptId);
+  await f.teacher({ action: 'release', expectedRevision: f.docs.get(`assessmentPolicies/${f.quizId}`).revision, confirmAfterSubmit: true });
+  const resumed = await f.exports.resumeAssessmentAttempt(f.request({ attemptId: a.attemptId, attemptToken: f.token }));
+  assert.equal(resumed.receipt.solutionsReleased, true);
+  assert.equal((await f.start('consistent')).receipt.solutionsReleased, true);
+  assert.equal((await f.submit(a.attemptId)).receipt.solutionsReleased, true);
+});

@@ -446,7 +446,9 @@
                 <label>Hinweis für Schüler<textarea id="quizDescription" rows="4"></textarea></label>
                 <label>Notenschlüssel<select id="quizGradeScale"></select></label>
                 <label>Nach Abgabe<select id="quizResultMode"><option value="none">Nur Abgabe bestätigen</option><option value="points">Punkte anzeigen</option><option value="points_percent">Punkte + Prozent</option><option value="points_grade">Punkte + Prozent + Note</option></select></label>
-                <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Richtige Lösungen anzeigen</label>
+                <label>Lösungsfreigabe<select id="quizSolutionReleaseMode"><option value="exam_after_end">Prüfung – nach Testende und Nachfrist</option><option value="practice_after_submit">Übung – nach eigener Abgabe</option></select></label>
+                <label class="checkRow"><input id="quizShowSolutions" type="checkbox" /> Lösungen für diese Durchführung freigeben</label>
+                <small class="hint">Die Übungsfreigabe ist unabhängig von der Punkte- und Notenanzeige.</small>
                 <div class="settingGroup">
                   <div class="settingGroupTitle"><span>▶</span><div><strong>Start &amp; Durchführung</strong><small>Bestimme, wie der Test im Unterricht beginnt.</small></div></div>
                   <label>Start des Tests<select id="quizStartMode"><option value="student">Schüler startet selbst</option><option value="teacher">Lehrkraft startet für alle</option></select></label>
@@ -471,7 +473,7 @@
     </section>
 
     <section id="publishView" class="view hidden">
-      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" aria-label="Link zum Test für Schüler" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div class="actions center"><button id="openPublishedStudentBtn" class="button secondary" type="button">Test selbst ausfüllen</button></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
+      <div class="card publishCard"><button id="backFromPublish" class="linkButton left" type="button">← Zum Test</button><div class="publishHero"><span class="successIcon">✓</span><div><span class="eyebrow">Bereit für die Klasse</span><h1>Test ist veröffentlicht</h1><p>Schüler öffnen den Test über Code, Link oder QR-Code.</p></div></div><div class="publishGrid"><div><span class="labelText">Testcode</span><div id="publishedCode" class="bigCode"></div><div class="actions center"><button id="copyCodeBtn" class="button secondary" type="button">Code kopieren</button><button id="copyLinkBtn" class="button primary" type="button">Link kopieren</button></div><input id="publishedLink" aria-label="Link zum Test für Schüler" class="shareLink" type="text" readonly /></div><div class="qrWrap"><div id="qrcode"></div></div></div><div class="actions center"><button id="openPublishedStudentBtn" class="button secondary" type="button">Test selbst ausfüllen</button></div><div class="actions center"><button id="releasePracticeSolutionsBtn" class="button secondary hidden" type="button">Übungslösungen jetzt freigeben</button></div><div id="teacherLivePanel" class="teacherLivePanel"></div></div>
     </section>
 
     <section id="resultsView" class="view hidden">
