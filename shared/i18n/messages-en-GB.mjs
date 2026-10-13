@@ -277,7 +277,7 @@ export const enGBMessages = Object.freeze({
     "Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.": "The original file is stored temporarily in Firebase Storage and sent to OpenAI to create the test. Please also check names, photos and file metadata. Do not upload textbook pages or publisher worksheets unless the rights holder has explicitly permitted processing by an external AI service.",
     "Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.": "Original files are removed after a generation attempt. Without a generation attempt, files are deleted during daily cleanup once they are older than 24 hours. OpenAI may retain API content in security logs for up to 30 days by default; exceptions may apply.",
     "Material hinzufügen": "Add material",
-    "PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 15 MB": "PDF, photo, screenshot, text, Word, PowerPoint or spreadsheet · max. 15 MB",
+    "PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB": "PDF, photo, screenshot, text, Word, PowerPoint or spreadsheet · max. 10 files · max. 15 MB",
     "Material verwenden": "Use material",
     "Als Anregung": "As inspiration",
     "Nur Inhalte aus dem Material": "Only content from the material",

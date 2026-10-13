@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc37";
+const APP_VERSION = "2.3.1-gc38";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -40,9 +40,9 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { createAccountController } from "./admin-account-actions.mjs?v=1";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc37";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc37";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc37";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc38";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc38";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc38";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -2862,7 +2862,7 @@ async function handleAiMaterialFiles(event) {
     return;
   }
   for (const file of files) {
-    if (state.aiMaterials.length >= 5) { toast("Maximal fünf Materialien pro Generierung.", "error"); break; }
+    if (state.aiMaterials.length >= 10) { toast("Maximal zehn Materialien pro Generierung.", "error"); break; }
     try {
       setAiProgress(`${file.name} wird hochgeladen …`);
       const material = await aiApi.uploadMaterial(file, pct => setAiProgress(`${file.name} wird hochgeladen … ${pct}%`));
