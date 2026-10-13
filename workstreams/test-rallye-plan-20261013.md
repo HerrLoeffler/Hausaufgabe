@@ -31,7 +31,7 @@ Nur Planungsdokumentation und Task-Zuordnung. Keine Produkt-/Spiel-/Testdatei, k
 ## Zwischenstand
 
 - Lokal geändert: keine lokale Checkout-Änderung; Dokumentation wird über GitHub-API auf eigenem Branch angelegt.
-- Auf GitHub gesichert (Commit): nach dem Schreiben einzutragen.
+- Auf GitHub gesichert (Commits): Plan/Handoff c0b409bbd750f4c244202b75979fd3f207402add; TODO cd858e9bc77005491e94adb8972479286c9175f2; Registry 868acab4867599320dcf4f64f007470497872d6c. Aktueller Branch-Head nach Übergabeupdate erneut prüfen.
 - Geprüft (Befehl / CI-Link / Ergebnis / Commit): keine Produktprüfungen ausgeführt oder beauftragt; Dokumentationsinhalt und PR-Diff nach dem Schreiben lesend prüfen.
 - Deployed (Ziel / URL / Commit / Nachweis): nicht zutreffend.
 - Gerätetest (Gerät / Version / Ergebnis): nicht zutreffend.
@@ -46,7 +46,7 @@ Planungsentwurf in PR prüfen und anschließend die drei offenen Produktfragen m
 
 ## Wiederaufnahme nach Abbruch
 
-- Letzter gesicherter Teilschritt / Zeitpunkt (UTC): Task-ID auf aktuellem main gegen TODO/Registry/Status ohne Treffer geprüft; isolierter Docs-Branch angelegt; gemeinsame TODO-/Registry-/FastQuiz-/Games-Vorlagen auf main gelesen. Dokumentationsschreiben in diesem Turn.
+- Letzter gesicherter Teilschritt / Zeitpunkt (UTC): Task-ID auf aktuellem main gegen TODO/Registry/Status ohne Treffer geprüft; isolierter Docs-Branch angelegt; gemeinsame TODO-/Registry-/FastQuiz-/Games-Vorlagen auf main gelesen. Plan- und Übergabedatei gesichert; TODO/Registry frisch von main gelesen und nur um diesen Workstream ergänzt.
 - Gepushter Codecommit / Remote-Branch: Code nicht geändert; docs/test-rallye-plan-20261013; Dokumentationscommit nach Erstellung einzutragen.
 - Ungesicherte Änderungen / Checkout-Pfad (oder keine / unbekannt): keine lokale Arbeitskopie; Connector-Schreibvorgänge.
 - Laufende oder unklare Vorgänge (Run-/Request-ID, URL, Ergebnis; oder keine / unbekannt): kein Build/Test/Deploy gestartet.
