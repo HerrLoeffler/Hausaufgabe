@@ -9,4 +9,6 @@ function assertPlayer(player,token){if(!/^[A-Za-z0-9_-]{32,100}$/.test(token||''
 function cleanCode(value){if(!/^\d{6}$/.test(value||''))reject('Bitte sechsstelligen Rundencode eingeben.');return value}
 function cleanIdentity(value){if(!/^[A-Za-z0-9_-]{20,100}$/.test(value||''))reject('Ungültige Teilnehmer-ID.');return value}
 function cleanAlias(value){const s=String(value||'').trim();if(!s||s.length>24||/[<>\x00-\x1f]/.test(s))reject('Bitte ein Kürzel mit 1–24 Zeichen eingeben.');return s}
-module.exports={assertOwner,canDevelop,assertDevelopment,hashToken,assertPlayer,cleanCode,cleanIdentity,cleanAlias};
+function assertHostProfile({exists,profile={},deletionExists}){if(!exists||deletionExists||profile.accountDeletionId||(profile.status&&profile.status!=="active")||profile.disabled===true||!["teacher","admin"].includes(profile.role||"teacher"))reject("Ein freigeschaltetes Lehrkraftkonto ist erforderlich.");}
+function assertPlayableQuiz(quiz){if(!quiz||quiz.isDeleted===true||quiz.rightsHold===true)reject("Dieser Test ist nicht verfügbar oder gesperrt.");}
+module.exports={assertHostProfile,assertPlayableQuiz,assertOwner,canDevelop,assertDevelopment,hashToken,assertPlayer,cleanCode,cleanIdentity,cleanAlias};

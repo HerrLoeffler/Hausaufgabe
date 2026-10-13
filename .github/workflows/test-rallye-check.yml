@@ -1,0 +1,20 @@
+name: Test Rallye Checks
+on:
+  push:
+    branches: ['feat/test-rallye-*']
+  pull_request:
+    paths: ['lab/test-rallye/**','lab/test-rallye-functions/**','tools/test-rallye/**','tools/build-test-rallye-preview.mjs','lab/shared/**','lab/games-hub/**','.github/workflows/test-rallye-check.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix tools/games --no-audit --no-fund
+      - run: node --test tools/test-rallye/*.cjs tools/test-rallye/*.mjs tools/games/*.test.cjs assessment-functions/test/*.test.js
+      - run: node --check lab/test-rallye-functions/index.js && node --check lab/test-rallye/app.js
+      - run: node tools/build-test-rallye-preview.mjs "$RUNNER_TEMP/test-rallye-build"

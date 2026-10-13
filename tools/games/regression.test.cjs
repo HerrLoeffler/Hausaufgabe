@@ -56,7 +56,9 @@ function change(w, element, value) {
 test('hub filters by subject and topic, resets an empty result, and updates direct mode links', async () => {
   const { w, document: d } = await openPage();
   try {
-    assert.equal(d.querySelectorAll('.gameCard').length, 3);
+    assert.equal(d.querySelectorAll('.gameCard').length, 4);
+    assert.deepEqual([...d.querySelectorAll('.gameCard')].map(card=>card.dataset.game), ['fast-quiz','fehlerjagd-deutsch','vocab-rush','test-rallye']);
+    assert.match(d.querySelector('[data-game="test-rallye"] .primary').href, /test-rallye\/\?mode=live$/);
     d.querySelector('[data-subject="german"]').click();
     assert.equal(d.querySelector('.gameCard').dataset.game, 'fehlerjagd-deutsch');
     change(w, d.getElementById('gameSearch'), 'Brüche');
@@ -89,7 +91,9 @@ test('favorites persist, retain keyboard focus, and can be removed inside the fa
 test('invalid or inaccessible storage does not stop the hub', async () => {
   for (const value of ['broken json', '{"not":"an array"}', '["unknown-game"]']) {
     const { w, document: d } = await openPage('', '', w => w.localStorage.setItem('gradecrew-games-favorites-v1', value));
-    try { assert.equal(d.querySelectorAll('.gameCard').length, 3); } finally { w.close(); }
+    try { assert.equal(d.querySelectorAll('.gameCard').length, 4);
+    assert.deepEqual([...d.querySelectorAll('.gameCard')].map(card=>card.dataset.game), ['fast-quiz','fehlerjagd-deutsch','vocab-rush','test-rallye']);
+    assert.match(d.querySelector('[data-game="test-rallye"] .primary').href, /test-rallye\/\?mode=live$/); } finally { w.close(); }
   }
   const { w, document: d } = await openPage('', '', w => {
     Object.defineProperty(w, 'localStorage', { get() { throw new w.DOMException('Disabled', 'SecurityError'); } });
