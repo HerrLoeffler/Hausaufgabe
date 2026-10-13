@@ -361,3 +361,14 @@ export function collectQuestionAnswer(question, section) {
   return null;
 }
 
+
+// Restore only the local draft input. Authoritative cursor/score/version still come from API.
+export function restoreQuestionAnswer(question, section, value) {
+ if(!section)return;
+ if(['single','multi','truefalse'].includes(question.type))section.querySelectorAll('input').forEach(input=>input.checked=Array.isArray(value)?value.includes(input.value):input.value===value);
+ else if(['text','number','dropdown'].includes(question.type))section.querySelector('textarea,input,select').value=value||'';
+ else if(question.type==='gapfill')section.querySelectorAll('.secureGap').forEach((input,index)=>input.value=value?.[index]||'');
+ else if(['matching','grouping'].includes(question.type))section.querySelectorAll('select').forEach(input=>input.value=value?.[input.dataset.leftId||input.dataset.itemId]||'');
+ else if(question.type==='ordering'&&Array.isArray(value)){const list=section.querySelector('.secureOrderList'),rows=[...list.children],ids=new Set(rows.map(row=>row.dataset.itemId));if(value.length===rows.length&&new Set(value).size===rows.length&&value.every(id=>ids.has(id)))value.forEach(id=>list.appendChild(rows.find(row=>row.dataset.itemId===id)));}
+ else if(question.type==='markwords'){section.querySelectorAll('.secureWord').forEach(button=>{const index=button.dataset.wordIndex,color=Array.isArray(value)?'':value?.[index]||'',group=(question.markGroups||[]).find(group=>group.color===color),selected=Array.isArray(value)?value.includes(index):Boolean(group);button.classList.toggle('selected',selected);button.dataset.markColor=group?.color||'';button.textContent=button.dataset.originalWord+(selected&&group?` (${group.name})`:'');button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',button.textContent)});}
+}
