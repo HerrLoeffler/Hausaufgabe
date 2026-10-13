@@ -387,3 +387,106 @@ test('registration submits to the existing Firebase provider and preserves the t
     assert.equal(writes[0][1].status, 'active');
   } finally { w.close(); }
 });
+
+// First-paint and delayed-entry regressions exercise the real bootstrap document.
+const firstPaintHtml = fs.readFileSync('index.html', 'utf8');
+const baseStyles = fs.readFileSync('styles.css', 'utf8');
+
+function fixture() {
+  const dom = new JSDOM(firstPaintHtml, { url: 'https://gradecrew.example/', pretendToBeVisual: true });
+  const style = dom.window.document.createElement('style');
+  style.textContent = baseStyles;
+  dom.window.document.head.append(style);
+  const NativeObserver = dom.window.MutationObserver;
+  dom.observers = [];
+  dom.window.MutationObserver = class extends NativeObserver {
+    constructor(callback) { super(callback); dom.observers.push(this); }
+  };
+  return dom;
+}
+
+function visibleText(node, window) {
+  if (node.nodeType === 3) return node.textContent;
+  if (node.nodeType !== 1) return '';
+  for (let ancestor = node; ancestor; ancestor = ancestor.parentElement) {
+    const style = window.getComputedStyle(ancestor);
+    if (ancestor.hidden || ancestor.classList.contains('hidden') || style.display === 'none' || style.visibility === 'hidden') return '';
+  }
+  return [...node.childNodes].map(child => visibleText(child, window)).join(' ');
+}
+
+test('before modules start the actual document shows a neutral loader, not legacy hero or unfinished forms', () => {
+  const dom = fixture();
+  try {
+    const w = dom.window, auth = w.document.getElementById('authView');
+    const initial = visibleText(auth, w);
+    assert.doesNotMatch(initial, /Gute Tests|Weniger Aufwand|Testcode eingeben|Willkommen zurück/);
+    assert.match(initial, /GradeCrew wird geladen/);
+    assert.equal(auth.querySelector('img[src*="clay-welcome"]'), null, 'obsolete first-paint art must not be requested');
+    for (const id of ['joinForm', 'loginForm', 'registerForm', 'loginTab', 'registerTab', 'forgotBtn']) {
+      const control = w.document.getElementById(id);
+      assert.ok(control, `bootstrap preserves ${id}`);
+      assert.equal(visibleText(control, w).trim(), '', `${id} is not exposed before handlers are ready`);
+    }
+  } finally { dom.window.close(); }
+});
+
+test('real entry installation moves the same forms into the modern scene and keeps login, register, reset and join', async () => {
+  const dom = fixture(), w = dom.window;
+  const keys = ['window', 'document', 'MutationObserver', 'NodeFilter', 'HTMLImageElement', 'matchMedia', 'requestAnimationFrame'];
+  const previous = Object.fromEntries(keys.map(key => [key, globalThis[key]]));
+  w.scrollTo = () => {};
+  w.HTMLElement.prototype.scrollIntoView = () => {};
+  Object.assign(globalThis, { window: w, document: w.document, MutationObserver: w.MutationObserver,
+    NodeFilter: w.NodeFilter, HTMLImageElement: w.HTMLImageElement,
+    matchMedia: () => ({ matches: false, addEventListener() {} }), requestAnimationFrame: callback => w.setTimeout(callback, 0) });
+  try {
+    const forms = Object.fromEntries(['joinForm', 'loginForm', 'registerForm'].map(id => [id, w.document.getElementById(id)]));
+    const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
+    assert.equal(installGradeCrewEntryFlow(), true);
+    for (const [id, form] of Object.entries(forms)) assert.equal(w.document.getElementById(id), form);
+    assert.ok(w.document.querySelector('#gcEntryStart .gcHeroArtwork[src*="crew-classroom-wide-v4"]'));
+    assert.doesNotMatch(visibleText(w.document.getElementById('authView'), w), /GradeCrew wird geladen/);
+    assert.ok(visibleText(forms.joinForm, w).includes('Test öffnen'));
+    w.document.getElementById('gcEntryLoginOpen').click();
+    assert.ok(visibleText(forms.loginForm, w).includes('Anmelden'));
+    w.document.getElementById('gcEntrySwitchRegister').click();
+    assert.ok(visibleText(forms.registerForm, w).includes('Konto erstellen'));
+    w.document.getElementById('gcEntrySwitchLogin').click();
+    w.document.getElementById('forgotBtn').click();
+    assert.ok(visibleText(w.document.getElementById('gcEntryReset'), w).includes('Passwort vergessen'));
+  } finally {
+    dom.observers.forEach(observer => observer.disconnect());
+    w.close();
+    for (const [key, value] of Object.entries(previous)) value === undefined ? delete globalThis[key] : globalThis[key] = value;
+  }
+});
+
+test('slow and failed entry imports keep an accessible status and usable retry instead of exposing legacy controls', async () => {
+  const dom = fixture(), w = dom.window;
+  const timers = new Map(); let nextTimer = 0, failEntry, reloads = 0;
+  const entry = new Promise((_resolve, reject) => { failEntry = reject; });
+  const context = { document: w.document, HTMLImageElement: w.HTMLImageElement, URL, URLSearchParams,
+    location: { search: '', href: 'https://gradecrew.example/', reload: () => { reloads += 1; } },
+    window: { setTimeout: callback => { timers.set(++nextTimer, callback); return nextTimer; }, clearTimeout: id => timers.delete(id) },
+    gradeCrewI18n: { t: (_key, _params, fallback) => fallback }, GRADECREW_ASSETS: { brand: {} },
+    installStagingShortLogin: () => {}, console: { error() {}, warn() {} },
+    loadModule: specifier => specifier.includes('gradecrew-entry-flow') ? entry : Promise.reject(new Error('Unexpected import')) };
+  vm.createContext(context);
+  const startup = fs.readFileSync('startup.js', 'utf8').replace(/^import .+;\n/gm, '').replace(/\bimport\(/g, 'loadModule(');
+  const running = vm.runInContext(`(async () => { ${startup}\n })()`, context);
+  try {
+    const notice = w.document.getElementById('startupNotice');
+    assert.ok(notice.classList.contains('hidden'));
+    timers.values().next().value();
+    assert.ok(visibleText(notice, w).includes('GradeCrew wird geladen'));
+    failEntry(new Error('Simulated entry module download failure'));
+    await running;
+    assert.ok(visibleText(notice, w).includes('konnte nicht vollständig geladen'));
+    const retry = w.document.getElementById('startupRetry');
+    assert.ok(visibleText(retry, w).includes('Erneut laden'));
+    retry.click();
+    assert.equal(reloads, 1);
+    assert.equal(visibleText(w.document.getElementById('loginForm'), w).trim(), '');
+  } finally { w.close(); }
+});
