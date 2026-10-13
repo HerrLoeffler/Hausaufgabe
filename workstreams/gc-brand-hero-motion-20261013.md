@@ -65,3 +65,16 @@ Nach Martins Feedback zum V2-Storyboard **einen isolierten Animatic des ersten Z
 - Was darf noch nicht als erledigt gelten? Flüssige Animation, Produkt-UI, Geräteprüfung, Homepage-Integration, Deploy.
 - Was muss vor Wiederholung geprüft werden? Aktuelle GitHub-Task/PR/Branch-Lage und vorhandene Bilddateien; frühere Generierung nicht blind wiederholen.
 - Genau ein nächster ausführbarer Schritt: Martins Feedback zu den drei Präsentationsposen und zum Kameraschritt in den Animatic übertragen.
+
+## Fortschreibung 13.10.2026 — abspielbarer Animatic v1
+
+Martin hat die bewegte Gesamtprobe ausdrücklich beauftragt und präzisiert: **ein iPad, auf allen Stationen gleich groß**, genügend Lesezeit. Der frühere nächste Schritt „nur erster Zyklus“ ist durch diesen Auftrag überholt. Die frühere Kamerafahrt/Vergrößerung des Geräts ist für diesen Test verworfen; stattdessen wird der Tablet-Inhalt darunter lesbar gespiegelt.
+
+- Isolierte lokale Artefakte: `/Users/martin/.codex/visualizations/2026/10/12/01a130fa-babb-7de3-bfeb-785499e7c061/gradecrew-homepage-experiment-20261013/animation-animatic-v1/` mit `index.html`, `animatic.js`, fünf experimentellen Bildplatten, sechs Desktop-Prüfbildern, einem Mobile-Prüfbild, `gradecrew-crew-animatic-v1.mp4` und `README.md`.
+- Tatsächlich exportiert: 480 Frames, 1280 × 1052, 12 fps, 40,0 Sekunden; MP4 ~18 MB. Dauer ist ein Test für Verständlichkeit, kein Homepage-Commitment.
+- Inhalt: Remy erstellt Frage 1 zum Nomen im Satz „Der kleine Igel schläft.“; Emmi ergänzt passende Frage 2 nach dem beschreibenden Wort, ohne die erste zu ersetzen; Wilma zeigt **Beispielantworten** und beispielhaft 2/2 Punkte. Eine physische Tablet-Ebene wechselt Remy → Emmi → Wilma.
+- Geprüft: dieselbe berechnete Tablet-Breite 174,078 px in sechs Desktop-Szenen; DE/EN-Umschaltung und Weiterschalten im lokalen Browserlauf; 390-px-Ansicht ohne horizontalen Überlauf. Mobile Tablet-Details selbst sind klein, der Textbereich trägt die Lesbarkeit. Keine echten iPad-/iPhone-Gerätetests.
+- **Qualitätsgrenze:** fünf separat erzeugte KI-Schlüsselbilder überblenden sichtbar; Hände greifen das Tablet noch nicht physisch glaubwürdig. Das iPad wirkt teils auf dem Tisch. Der Animatic prüft Erzählfolge und Timing, nicht finale Figurenanimation. Die Beispiel-UI ist kein echter App-Screenshot.
+- Keine Änderungen an Homepage, normalem Staging, Production, Tutorial oder Registrierung. Keine PR, kein Deploy. Der Stand verbleibt als lokaler visueller Entwurf plus diese Dokumentation auf dem Aufgabenbranch.
+
+**Nächster Schritt:** Martin sieht den 40-Sekunden-Animatic und bewertet Story, Lesetempo und Gesten. Falls die Richtung trägt, eine einzelne Übergabe mit konsistentem Figuren-Rig/Vordergrundhänden als Qualitäts-Pilot ausarbeiten; echte Produktansichten erst gegen die aktuelle Oberfläche abgleichen. Danach über eine spätere Homepage-Integration gesondert entscheiden.
