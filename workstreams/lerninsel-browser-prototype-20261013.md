@@ -19,3 +19,7 @@ Whitespaceprüfung nur für eigene Source-/Dokument-/Starterdateien grün. Unver
 ## Gesicherter Probecheckpoint
 
 [DraftPR234](https://github.com/HerrLoeffler/Hausaufgabe/pull/234), Sourcecheckpoint2b19624b3e2e62a8cce1ad5011798d6b380eb567, lokaler Peer cd7653c4422eccf321bc6c7f4111f4342664bdc7, identischer Tree8eb0bc4200397c47bcc3cfd75844e7c99827f1c3.25eigene neue Dateien;14Tests/aktuelle UI-Nachweise. Folgender Übergabemetadatennachtrag verändert keine Runtime. Keine Produktintegration/Deploy-/Lernfreigabe; Humanverdikt pending. Eigener Browser-Teststand bleibt über18771 und Rebootstarter erreichbar.
+
+## Menschliches Verdict13.10.2026: Teacherflow abgelehnt
+
+„Nein, so ist es nicht gedacht“: Lehrer sollen wie in digitalen Leistungsnachweisen etwa zehn Aufgaben vorgeben, nicht Brüche/Mechanikparameter manuell einstellen. Technische14Tests/Browserbelege bleiben historisch wahr, sind keine UX-Abnahme. Das manuelle Eingabekonzept wird nicht weiter als Zielprodukt ausgebaut. Die vorgeschlagene nächste Probe übernimmt einen ganzen Fragenbatch und erzeugt daraus automatisch geprüfte Bausteine/Level; Denkauftrag, noch kein neuer Implementierungs-/Providerstart. Neue Korrekturdokumentation liegt in PlanPR230 unter automatische-test-umsetzung.md; alte Budgets/Versuche erhalten.
