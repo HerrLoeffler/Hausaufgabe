@@ -1,6 +1,6 @@
 # GradeCrew – Plan für das Erstgespräch am 19. Oktober 2026
 
-Stand: 13.10.2026. Unterauftrag von GC-FINANCE-BAYSTARTUP-20261008. Zweck: Beratung und mögliche Finanzierung. Gesprächspartner, Dauer und Ort noch unbekannt. Dies ist ein Fragen- und Folienplan, keine fertige PowerPoint und kein Finanzierungsangebot.
+Stand: 13.10.2026. Unterauftrag von GC-FINANCE-BAYSTARTUP-20261008. Zweck: Beratung und mögliche Finanzierung. Gesprächspartner vom Nutzer bestätigt: Philipp Geim von BayStartUP. Dauer und Ort noch unbekannt. Dies ist ein Fragen- und Folienplan, keine fertige PowerPoint und kein Finanzierungsangebot.
 
 ## 1. Was Montag erreicht werden soll
 
@@ -11,6 +11,18 @@ Einstiegsvorschlag: „Ich habe GradeCrew aus einem konkreten Problem im Unterri
 Martins ergänzte Ziele: kurzfristig bereit für einen Bundeslandpartner, mittelfristig Bundeslandpartner, langfristig VIDIS-Anbindung. Diese Ziele sind noch zu erreichende Stufen, keine derzeitigen Zusagen oder Freigaben.
 
 Erst 3–5 Minuten Vorstellung beziehungsweise kurze Demo, anschließend Gespräch. Acht bis zehn Folien sind Reserve und Gesprächsunterstützung, kein zwingender durchgehender Vortrag.
+
+## 1a. Fünf persönliche Fragen an Philipp Geim
+
+Die offizielle [LAGARDE1-Gründungsberatungsseite](https://lagarde1.de/grundungsberatung/) beschreibt Philipp Geim als BayStartUP-Startup-Coach für digitale Geschäftsmodelle, mit Themen von Team und Geschäftsmodell bis Finanzierung. Deshalb richten wir das Erstgespräch auf konkrete Empfehlungen und nächste Schritte aus; eine eigene Investorenrolle oder garantierte Vermittlungen werden nicht angenommen. Quelle am 13.10.2026 gelesen.
+
+1. **Landespartner:** „Welchen Weg empfiehlst du uns zu einem Bundeslandpartner? Welche zuständige Stelle sollten wir zuerst ansprechen, und könntest du beim richtigen Kontakt helfen?“
+2. **Bezahlter Pilot:** „Welches erste Kundensegment und welchen bezahlten Pilot würdest du empfehlen? Wie testen wir Zahler, Preis und Nutzen – und welche Nachweise würdest du danach sehen wollen?“
+3. **Readiness und Fachleute:** „Welche Lücken sollte ein externer Reviewer zuerst prüfen, damit unser Kernangebot belastbar partnerfähig wird? Kennst du geeignete Code-/Security- und Datenschutzfachleute für ein kleines klar bepreistes Paket?“
+4. **Finanzierung des nächsten Schritts:** „Wie würdest du den Bedarf bis zum nächsten Readiness-Meilenstein planen? Welche Kosten und Gründerzeit sollten hinein, und passen zunächst Pilotumsatz, Förderung oder Beteiligung?“
+5. **Coaching und Vereinbarung:** „Welches Coaching oder Unterstützungsangebot passt jetzt zu uns? Welche drei nächsten Schritte, Unterlagen und Ansprechpartner sollten wir mit einem Folgetermin festlegen?“
+
+Marken-, Steuer-, Vertrags- und Schulrechtsfragen bleiben im ausführlichen Katalog. Philipp bitten wir um Orientierung und passende Fachkontakte; den persönlichen Steuerstatus beziehungsweise rechtliche Freigaben entscheidet qualifizierte Beratung oder die zuständige Stelle. Einstieg weiterhin 3–5 Minuten mit synthetischer Demo; keine Gesprächsdauer, Programmaufnahme oder Kontakte zugesagt.
 
 ## 2. Fakten und offene Nachweise
 
@@ -98,7 +110,7 @@ Folien 1–4 bilden die kurze Vorstellung. 5–10 werden je nach Gesprächsverla
 - Gewerbe-/Steuererfassung, einschlägige Bescheide und Umsatzübersicht für eine gesonderte vertrauliche Beratung bereithalten; keine Steuer- oder Identifikationsnummern im Chat veröffentlichen.
 - Rechts-/Datenschutz-/Technikfragen mit gewünschtem Ansprechpartner und Notizfeldern „Antwort / Owner / Termin“.
 
-Zuerst noch klären: Name/Funktion des Gegenübers und Dauer; Zielgruppe/Region für ersten Pilot; tatsächlicher Gründungs-/Beschäftigungsstatus; bestätigte Nutzung/Zahlungen und aktuelle Kosten. Diese Angaben fehlen und werden nicht ersetzt.
+Gesprächspartner ist bestätigt: Philipp Geim von BayStartUP. Zuerst noch klären: Dauer und Ort; Zielgruppe/Region für ersten Pilot; tatsächlicher Gründungs-/Beschäftigungsstatus; bestätigte Nutzung/Zahlungen und aktuelle Kosten. Diese Angaben fehlen und werden nicht ersetzt.
 
 ## 7. Aktuelle Quellen und fachliche Einordnung
 
@@ -115,4 +127,4 @@ Recherchiert am 13.10.2026, ausschließlich offizielle Gesetzes-/Behörden-/Kamm
 
 ## Arbeitsgrenzen und Sicherung
 
-Planung abgeschlossen als erster reviewbarer Entwurf. Keine PPTX, Kontaktaufnahme, Einreichung, Marke-/Gewerbe-/Steuerhandlung, Prüfung privater Unterlagen, technische Migration, Appänderung oder Deployment. Kein neuer Kapitalbetrag festgelegt. Nächster Schritt: Martin korrigiert/ergänzt Gesprächspartner und Prioritäten; danach kann derselbe Plan als PowerPoint beauftragt werden.
+Planung abgeschlossen als erster reviewbarer Entwurf. Keine PPTX, Kontaktaufnahme, Einreichung, Marke-/Gewerbe-/Steuerhandlung, Prüfung privater Unterlagen, technische Migration, Appänderung oder Deployment. Kein neuer Kapitalbetrag festgelegt. Nächster Schritt: Martin ergänzt Dauer/Ort und priorisiert die Fragen für das Coaching; danach kann derselbe Plan als PowerPoint beauftragt werden.
