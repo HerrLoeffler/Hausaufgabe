@@ -1827,6 +1827,12 @@ async function toggleDashboardPublished(q, toggle) {
   }
 }
 
+// TODO GC-WEB-REPAIR-20261007 (nur vorgemerkt): Bei einer später explizit gewählten
+// Übungs-Lösungsanzeige nach eigener Abgabe vor Veröffentlichung bestätigen lassen:
+// „Nach der Abgabe können Lernende die Lösungen anzeigen“ – „So veröffentlichen“ /
+// „Einstellung ändern“. Bestätigung an die autorisierte Policyrevision binden;
+// Änderung verwirft sie. Keine Übung aus resultMode/showSolutions allein ableiten.
+// Details: workstreams/solution-release-notes-20261013.md auf main.
 async function applyDashboardPublication(q, toggle) {
   const wantsPublished = Boolean(toggle?.checked);
   const action = dashboardPublicationAction(q, wantsPublished);
@@ -6215,6 +6221,9 @@ async function saveCurrentQuiz(showMessage = true) {
   }
 }
 
+// TODO GC-WEB-REPAIR-20261007: Derselbe künftige, policyabhängige Hinweis gehört
+// auch in diesen Editor-Publishweg; keine allgemeine Warnung bei jeder Veröffentlichung.
+// Nur Vermerk, aktuelle Veröffentlichung und Prüfungsgates bleiben unverändert.
 async function publishCurrentQuiz() {
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;

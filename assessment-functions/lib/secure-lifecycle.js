@@ -345,6 +345,16 @@ async function readStartQuota(request, quizId, tx) {
   return { ref, data: { count: count + 1, quizId, day, updatedAt: Timestamp.now() } };
 }
 
+// TODO GC-WEB-REPAIR-20261007 / GC-SECURITY-02 (nur vorgemerkt): Eine künftige,
+// ausdrücklich von berechtigter Lehrkraft bestätigte Übungspolicy darf Lösungen
+// nach tokengeprüfter eigener Abgabe erlauben, unabhängig von Ergebnisanzeige.
+// Policyrevision vor Publish bestätigen/binden; keine Übung aus resultMode=none
+// oder einem Browserflag ableiten. Spätere autorisierte Freigabe serverseitig lesen.
+// Nur private Lösungen der unveränderten Attemptrevision verwenden, keine Schlüssel
+// aus einem nachträglich geänderten Quiz. Token/Abgabe/Rechte-/Löschsperren erhalten;
+// Geplante Übung: unmittelbar nach eigener Abgabe, auch vor globalem Testende.
+// Der Prüfungsmodus behält sein Ende-/Nachfristgate. Noch keine Laufzeitänderung.
+// Details: workstreams/solution-release-notes-20261013.md auf main.
 function makeReceipt(submission, quiz = null, privateData = null) {
   const mode = normalizeResultMode(submission?.resultMode);
   const configured = submission?.showSolutionsAfterEnd === true && mode !== "none";

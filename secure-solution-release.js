@@ -68,6 +68,11 @@ function renderSolutions(receipt) {
   panel.appendChild(list);
 }
 
+// TODO GC-WEB-REPAIR-20261007 (nur vorgemerkt): Künftig klare Zustände
+// „Warten auf Freigabe“ / „Lösungen anzeigen“ statt technischer Prüfanweisung.
+// Lehrkraftfreigabe nur über frischen serverseitigen Receipt nach eigener Abgabe
+// sichtbar machen; dieser Refreshbutton erteilt keine Freigabe. Kein neues Polling.
+// Details: workstreams/solution-release-notes-20261013.md auf main.
 function renderWaiting(receipt) {
   const panel = solutionPanel();
   if (!panel) return;
