@@ -1,3 +1,43 @@
+# GC-GAMES-TEST-RALLYE-01 — Test-Rallye Umsetzung und Staging
+
+Aktualisiert13.10.2026. Owner: ausführender Games-Fachagent im eigenen Checkout; Koordinator GC · Games-Zentrale. Aktueller Auftrag: detaillierten Plan sichern, unmittelbar implementieren/reviewen und isoliert aufStaging zeigen. Menschliche Steuerung: manuelle Bewertung vollständig ausschließen. Production nicht freigegeben. Quellen sources/ unverändert.
+
+## Aktueller belegter Stand
+
+**staging_deployed, kein user_tested.** Exakter Runtimecommit `797549374df908cb9fd212be14b86e58061b347b`; [PR236](https://github.com/HerrLoeffler/Hausaufgabe/pull/236) offen/Draft/unmerged gegen feature/gradecrew-app-integration. [PlanPR235](https://github.com/HerrLoeffler/Hausaufgabe/pull/235) separater Dokumentationscheckpoint. [Plan](../docs/games/test-rallye-plan-20261013.md), [getrennte Receipts](test-rallye-release-receipts-20261013.json).
+
+[Spiel](https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/test-rallye/) · [vorhandene Editoranmeldung](https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/editor/) · [vierter Kachel im Hub](https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/). Kanal expires20.10.2026 23:37:20CEST. Hostingexit0, alle221DateienHTTP200undSHA256identisch zum lokalenManifest. testRallyeApi und testRallyeCleanup ACTIVE/europe-west1/nodejs22/codebase testrallye, CLIexit0, gemeinsamerFunctionsHashc9b769b38ab04e277b07915f8b32939fd2db179e. Keine Rules, alten Functions, canonical oderProductiondeploys. Canonicalfrischgc39/8f869790/165Files.
+
+143/143automatischeTestsgrün, exakteCI38471572958SUCCESS. UnabhängigerBackend/Core/Auth/Policyreviewc7cdfPASS, unveränderterBackend in797; 28/28BrowserQAchecks58405a2/gleiches797Tree,0JSerrors. RealeChromeeingaben für11Typen, gemischte6erRundeEndstand300/6, Reload/Pendingretry/Countdown/Order-/ColorDrafts. DieserBrowserQAbenutzt klare Auth/API-Mocks und ersetzt keine echteStaging-Lehrerraumprüfung.
+
+**Offen:** tatsächliche Lehrkraftanmeldung, Auswahl/Speichern eines eigenenTests im bestehendenEditor und echterStaging-Lehrer→Schülerjoin→Score→Endstand. Nutzer bestätigt „Noch nicht angemeldet“; keineCredentialsangefragt/kopiert, keinFakesmokealsLiveraumbeleg. NativePreviewzeigtVerbundenundLogin/Code/Kürzel. Livehealth200, unauthlistTests400mitLoginaufforderung+CORS, anonymerdirekterFirestore403PERMISSION_DENIED. AuthenticatedRolesRules/physicalQR/iPad/Phone/30Personen nicht geprüft.
+
+## Startschritte
+
+1. Auf [vorhandener Editoranmeldung](https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/editor/) mit bestehender E-Mail oder Kurzname normal anmelden, eigenenTest erstellen/bearbeiten und speichern (keineKI-Generierung für den Testbeleg erforderlich).
+2. [Test-Rallye](https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/test-rallye/) am selbenOrigin öffnen/zurückgehen, Testsaktualisieren, eigenenTestwählen, Vorprüfung lesen, Dauerwählen undRaum erstellen. Nichtspielbare/manuelle Aufgaben blockieren die gesamteRunde sichtbar; vorhandenenEditorzumUmarbeitenoderanderenTestwählen.
+3. DenQR-/sechsstelligenCode-Link ineinemzweitenTab/Schülerbrowser öffnen, synthetischesKürzelbeimbeauftragtenPrüflauf, gemeinsamStarten. AntwortenexplizitPrüfen;Vollrichtig+100,Core-Netto0−50und5sPause,TeileanteiligohnePause,Weißnicht0/5s,Scorefloor0.
+
+DevelopmentnurfürberechtigtesbestehendesAdministratorkontoinStaging: Test-RallyezeigtOptionEntwicklungsrunde,ServerflagundAdminrolleerforderlich. Reset/SprungändernrunVersion, ReleaseRoomverweigert unabhängigUI. Diagnose/Meldunglokalexportieren, keinZustellungsversprechen. KeinunautorisierterdevLink/Token.
+
+## Assurance und Grenzen
+
+SEC04/06/07/08/11/14/17: taskbezogeneCode-/Adapterbelege, exakteCI/Functions/Hosting; privateRooms/Snapshots/AdminAPI,Owner/Accountdeletion/rightsHold,Score/Cooldown/version/idempotence,noPaperkeys,Limits. LiveOwner-/Token-/Firestore-RetriesbleibenohneLogin nicht geprüft. PRIV07/17/20: Kürzel/minimaleReceiptdaten,keinRohantwortpersistieren,Ownerdeleteadaptergeprüft,stündlicherCleanup ACTIVEmit24hZiel+Schedulinglag,keinabgewarteterLöschzyklus/Schul-/AVVzertifikat. PRIV12/13/14: ehrlicheUIcopy,Originalalt/Colornamen,28BrowserQAchecks/Arrowkontrast;physischeGeräteoffen. KatalogfremderOwnernicht geändert.
+
+NichtblockierenderP3: finalesFeedbacksuffix„WeiterzurnächstenAufgabe“beigleichzeitigerBeendetanzeige;keinneuesControl/Item. BewusstkeinMiddeploySourcechange.
+
+Credentialvorfall: login:list--json gab einmal unerwartet Credentialfelder im internenTooltranskript aus. KeineWertekopie inCode/PR/Receipts; eigeneCode-/Docs- und5ReceiptlogPatternscanfalse. KünftigeCLIAusgabenwhitelisted/redigiert. OwnerprüftggfvorhandeneCredentials/Widerruf,keineunilateraleRevocation/IAMänderung.
+
+## Wiederaufnahme
+
+KeinelaufendenDeploysmehr, beideexit0. Checkout `/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/implementation/test-rallye-20261013`; Runtimebranch797aufGitHubgesichert, lokale584-/c7Versuche erhalten. Dokumentation gerade aufexistierendemDocsPRfortgeführt, keinzweiterTask/Plan. KeinPaidCall/Reservierung; Modell/Usageactualunbekannt.
+
+**Genau nächster Schritt:** nach legitimerNutzeranmeldung tatsächlichen eigenenTest inPreviewEditor auswählen/speichern, Teacherroom/Schülerjoin/Serverpunkte/Endstand spielen und separatbelegen. BestehendenUserAuthflow verwenden; keineTokenkopieausanderemOrigin. Taskbleibtstaging_deployedbiszu diesem Gate und MartinsNutzerabnahme.
+
+GezielterNATcheck: IPlimiternurJoin100/Minute,Create20/Owner/Stunde; playerState/HostPolling2sverbrauchtkeinenIPbucket. 30SchülergemeinsameNATistkeinbekannterQuota-Blocker. KeineLiveKlassenlastprüfungbehauptet.
+
+## Erhaltene Versuchshistorie (historische Planverbote gelten nicht für aktuellen Auftrag)
+
 # GC-GAMES-TEST-RALLYE-01 — Test-Rallye Planungsentwurf
 
 - Aktualisiert (UTC): 2026-10-13
@@ -68,3 +108,31 @@ AssuranceauswahlSEC04/06/07/08/11/14/17,PRIV07/17/20/12/13/14. Keine3DProduktion
 NächsterSchritt: Plancheckpointcommit/push, dann isoliertenRuntimekandidaten mit Tests zuerst aufbauen.
 
 Menschliche Steuerung13.10.2026: „manuelle bewertung rausnehmen!!“ — manuelle Bewertung vollständig aus Rallye ausgeschlossen. Keine spätere manuelle Freigabe/Jury/Teilrunde; manualReview und unklare Textkeys blockieren gesamteRunde sichtbar. NormaleEditorfeatures außerhalbRallye unverändert. Plan aktualisiert vorRuntimebau.
+
+## Runtimecheckpoint1
+
+Eigener Branch feat/test-rallye-20261013 aufWeb8f869790, eigeneProduktdateien alleinigerSchreiber. GezieltesReusePR224lab/Builder/GamesTests; alteProduktfiles unangetastet. 19neueCore/Policy/RendererTests RED→GREEN (VersionReset undOrdinaryMarkwordsRegression zusätzlich). ExistingAssessment85/85grün. Erst falscherNode--testDirectoryAufruf korrigiert auf*.test.js, keineProduktfailureverschwiegen. FunctionsNode22-Abhängigkeiten installiert nach ersterfehlgeschlagenerPATH-postinstallProbe, RuntimeNode24 fürUnitcheck, tatsächlichesDeployNode22. Dependencywarnings bestehenderfixierterFirebasevendor(glob/node-domexception) dokumentiert, keinunangefragterDependencyrewrite.
+
+Planreview umgesetzt: DevelopmentserverEnvironment+enable+adminRole; runVersion+Receipt,Netto0gradeführt−50/5s, Helpdialog. Ownerfeld tatsächlichownerId imWebquery bestätigt. PrivateSnapshots proItem<850KB, stündlichisolierteCleanupFunction24h+bis1hLag. GapfillRenderer liefert bestehendesArrayformat, Coreakzeptiert; TestannahmeObject aufOriginalarray korrigiert.
+
+Frontend/Serverkandidat angelegt, noch keinBrowser/Deployclaim. Previewbuild1fehlte neuerChildlab-release.json (ursächlichBuildervertrag), behoben underneuterBuildfolgt. Credentialhygiene: eigenerTextscanfalse fürTokenwerte; login:list--json einmaligeinterneToolausgabe unbeabsichtigt, keineLogumleitung/Commit/Artefaktcopy, künftig nurredigierteBoolchecks. KeineglobaleRevocation/IAMänderung.
+
+NächsterSchritt: Previewbuild/Browser undtransactionalEndpointVerhalten prüfen, unabhängigenReviewerCheckpoint anbieten.
+
+Remote Runtimecheckpoint: ad46498e04563784c8a3a49507faba25e3b6ea31 auf feat/test-rallye-20261013, Treeba92b8d12368e9c1704b6a60c2fb06a17d4442bf identisch lokal e79a2f5; alle82BlobIDs vorRefupdate exaktverglichen. Shellgitpush ohneAuthnichtmöglich, vorhandenerConnectorwrites genutzt. KeineSecrets/Credentialtransfer. Games26erRegression:2Tests schlagen alleinwegen erwarteteralter3Kachelannahme fehl; präzise4Kachel-/alte3routeTests folgen, keineTestsübersprungen.
+
+## Reviewfixcheckpoint2
+
+UnabhängigerReviewer e79 bestätigte dreiBlockercluster: fehlende/deletingOwnerprofile und accountDeletions, isDeleted/rightsHoldQuelle, abgeschnitteneTyparrays/kleinePunkte/staleSupplementalAudio. MitzusätzlichennegativenTests RED→GREEN behoben. HostprüfungundjedeRoomTransaction (auchSpieler) prüfenbestehendenWebaccount-state-Vertrag undQuelltestsperren. Ruling: Sourceinhaltsänderungen bleibendurchSnapshotisoliert; bestehendeRechte-/Account-/Löschsperren blockierenauchlaufendeRallye, weilserverAdminAPIdieseGrenzen nichtumgehendarf. NichtalsfehlendeSnapshotimmutabilitätwerten.
+
+23neueTestsgrün, Gamesregressions26gesamt (zwei3Kachelassertionenzuvor24/26rot; jetztsemantische4KachelIds+RallyeliveURLergänzt); vollständigerSuiteRecheckfolgtimnächstenSchritt. PublicPaper-Formlimits20options/30pairs/40order/20groups/40jeGroup und200Objecteinträge/Marktargets,finite0.5Grid,Text-/MediaLängenundstaleSupplementalAudio blockierenvorStartsichtbar. KeineVendorcoreänderung. Helpdialog tatsächlicherCUABrowser8837sichtbar, Servernochundeployed. HTTPtransactionIntegrationnochoffen.
+
+HTTPendpointAdaptertest6/6 grün: tatsächlicheronRequestHandler mitisoliertemFirestoreTestadapter,read-before-write/serializablecommit; concurrentduplicate,auth/owner/holds,paperkeydeny,clientscoreignoriert,immutability,finished,rejoin/cooldown,devdenial,Ownerdelete/periodiccleanup. Das istkeineLiveFirestore-/Emulator-/Stagingbehauptung. AuthUIDummy nurimTestadapter, ProductnimmtFirebaseverifyIdToken. Alles140/140vorGapFollowupgrün.
+
+Reviewer31cRecheck:134unabhängigeTestsgrün; nochGapalternativen>20/Antwortlänge>1000validiertundmitRegressionRED→GREENblockiert. CIworkflow/isolierterDeploywrapperangelegt. EigenerlocalCUATab8837background, Helpdialognatürlichbelegt; keineLehrerlogin-/StagingFullflowbehauptung.
+
+## IndependentreviewundDeploybereitschaft
+
+CODE/POLICY-PASS unabhängigerReviewer exactc7cdf5c,141/141 TestsundGapreprosvomReviewerbestätigt. Alle4Findingclustergeschlossen; bewusstkeinLiveFirestore/Rules/IAM/Browser/CI/Deploynachweis. Nachc7neuerbegrenzterDeltarestoresordering/markwordsDraftsinOriginalrenderermodul; zusätzlicherRED→GREENTest, appdelegiertalleTypen. Devcontrolsindapp.jsintegriertstattgeplanterseparaterdev.mjs;Servergateistmaßgeblich. VorhandeneFirebaseCLIprojects:listread-onlyfrisch:exit0/statussuccess/stagingProjectVisibletrue, nurBooleanWhitelist ausgegeben.\n
+
+UnabhängigerPlayQA31c: alle11OriginaltypenRenderer+CoreinChrome(+100),vorPrüfen0writes,MultiTeil+50noLock,lostResponse+ReloadsameRequestID2HTTPcalls/1CorewritePASS;keineechteHostauth/LiveServiceQA. Wortfarben/OrderingDraftverlustP2bestätigt→072680aFixTest. P2OrderingpfeilWhiteonWhitebestätigt→engscoped#questionOrderbuttonink;Countdown5Minkurz4:00glitchbestätigt→gemeinsameCeilSecondsFormatierungplusGrenztestRED→GREEN. FinalQArecheckangefordert; keineReproauslassen.

@@ -639,13 +639,13 @@
     },
     {
       "id": "test-rallye-plan-20261013",
-      "title": "GC-GAMES-TEST-RALLYE-01: Test-Rallye vierte Games-Kachel (Plan und autorisierte Umsetzung)",
-      "primaryBranch": "docs/test-rallye-plan-20261013",
-      "integrationTarget": "main",
+      "title": "GC-GAMES-TEST-RALLYE-01: Test-Rallye vierte Games-Kachel",
+      "primaryBranch": "feat/test-rallye-20261013",
+      "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "handoff": "workstreams/test-rallye-plan-20261013.md",
       "relatedBranches": [
-        "feat/test-rallye-20261013",
+        "docs/test-rallye-plan-20261013",
         "lab/games-structure",
         "feat/fastquiz-binomial-20261012"
       ]

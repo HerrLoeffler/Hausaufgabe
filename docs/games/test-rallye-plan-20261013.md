@@ -66,9 +66,9 @@ POST `/testRallyeApi`: `{action,payload}` → `{ok,data}` oder redigierter Fehle
 
 `playerState({code,clientId,token})`: Status, Serverzeit, Frist, Score, cursor, cooldownUntil und genau aktuelles lösungsfreies Item; abgeschlossene Receipt ohne Lösungsschlüssel. `submit({code,clientId,token,requestId,questionId,answer,skip})`: Firestoretransaction prüft Raum/Teilnehmer/Snapshotversion/Frist/cursor/Sperre; gradingKey nur serverseitig; Receipt+Score+cursor+Sperrende atomar. Clientscore/Clientzeit ignorieren. Gleiche requestId vor Fristchecks aus Receipt wiedergeben; keine Dopplung. Neue Anfrage für altes Item verweigert.
 
-`hostState({code})`: Owneronly Board mit Kürzel, Score, Fortschritt/status; `finishRoom`, `deleteRoom`: Owneronly, Delete löscht Spielunterdokumente ohne Originaltest. Nur autorisierter Developmentraum `devReset`, `devJump` (Ownerprüfung+immutable Developmentflag); Release verweigert. Feedbackexport lokal mit Commit/Roomstatus/itemtype/repro-Text, keine tokens/Antworten/Schülerdaten.
+`hostState({code})`: Owneronly Board mit Kürzel, Score, Fortschritt/status; `finishRoom`, `deleteRoom`: Owneronly, Delete löscht Spielunterdokumente ohne Originaltest. Nur autorisierter Developmentraum `devReset`, `devJump` (Ownerprüfung+immutable Developmentflag+StagingEnvironment+serverEnable+adminRole); Release verweigert auch fürOwner. Reset/Sprung erhöhtrunVersion, receipts/requestversion können keineRunde überschreiten. Feedbackexport lokal mit Commit/Roomstatus/itemtype/repro-Text, keine tokens/Antworten/Schülerdaten.
 
-Collection `testRallyeRooms` ist private server-only; Publicclient hat keine Firestorezugriffe. Neue Collection gegen deployed deny-defaultRules prüfen; bei fehlender Denygrenze Release dieses Pfads blockieren und exakt Owner koordinieren, keine globalen Rulesdeploys. Private Snapshot unter Roomprivate; Teilnehmer/Receipts privat. Timestamp expiresAt24h, explizite Ownerdeletefunktion; TTLpolicy nur nach bestehender zulässiger Konfiguration, sonst cleanup beim Zugriff und dokumentierte verbleibende Frist. Antwortdaten nur maximal nötige Receiptresultate, Rohantwort nach Bewertung nicht persistent. Raid-/Enumerationantworten keine Testtitel/Schülerdaten.
+Collection `testRallyeRooms` ist private server-only; Publicclient hat keine Firestorezugriffe. Neue Collection gegen deployed deny-defaultRules prüfen; bei fehlender Denygrenze Release dieses Pfads blockieren und exakt Owner koordinieren, keine globalen Rulesdeploys. Private Snapshot unter Roomprivate; Teilnehmer/Receipts privat. Timestamp expiresAt24h, explizite Ownerdeletefunktion und isolierte stündliche testRallyeCleanup-Function. Ziel24h mit bis1hSchedulinglag; Löschroutine/Deployreceipt separat verifizieren. Antwortdaten nur maximal nötige Receiptresultate, Rohantwort nach Bewertung nicht persistent. Raid-/Enumerationantworten keine Testtitel/Schülerdaten.
 
 ## Capability-Matrix
 
@@ -86,7 +86,7 @@ Collection `testRallyeRooms` ist private server-only; Publicclient hat keine Fir
 | markwords | Wortbuttons,benannteFarbwahl bis4Farben | Coreword-/colorIDs Teilpunkte | fehlendeTargets/Passage/falsche Farben |
 | text | vorhandenes Textfeld | ausschließlich normalisierte acceptedAnswers | manualReview oder keine eindeutigen acceptedAnswers |
 
-Bild-/Audioprojektion benutzt `buildAssessmentContract`; stale/incomplete audio und listening-only textabhängige Aufgaben blockiert mit Aufgabennummer. Kein stilles Wegwerfen; wenn irgendein Item unsupported ist, gesamte Runde vor Start sichtbar blockieren. Punkte müssen>0 sein. Quellemax80Items/RoomDocPayload<700KB; zu große Originaltests klar melden. Reihenfolge position+id stabil. Paperkeine correct,numericAnswer,tolerance,acceptedAnswers,targets,markedIndices,manualReview. Aufgabenschlüssel/Hash niemals durch hostState/playerState/Fehler/Export weitergeben.
+Bild-/Audioprojektion benutzt `buildAssessmentContract`; stale/incomplete audio und listening-only textabhängige Aufgaben blockiert mit Aufgabennummer. Kein stilles Wegwerfen; wenn irgendein Item unsupported ist, gesamte Runde vor Start sichtbar blockieren. Punkte müssen>0 sein. Quellemax80Items; Snapshot auf private Einzeldokumente proAufgabe verteilt (<850KB/Item), kein Gesamt700KBLimit; zu große Originaltests klar melden. Reihenfolge position+id stabil. Paperkeine correct,numericAnswer,tolerance,acceptedAnswers,targets,markedIndices,manualReview. Aufgabenschlüssel/Hash niemals durch hostState/playerState/Fehler/Export weitergeben.
 
 ## Zustandsmodell, Uhren, Retries
 
@@ -98,51 +98,51 @@ PendingSubmit mit requestId+answer im sessionStorage bis bestätigter Receipt; b
 
 ### Task1: Plan und Sourcecheckpoint
 
-- [ ] Plan gegen Spezifikation/Interfaces selbst prüfen; jeden Reviewfocus einem Test zuordnen.
-- [ ] Docsbranch Plan/Handoff/TODO/Registry aktualisieren, commit/push; PR235 Titel/Beschreibung an neuen Nutzerauftrag anpassen. Parent konkreten SHA/Link schicken.
-- [ ] Runtimebranch vomWebSHA und eng übernommenen Gamesquellen isolieren; Basisbelege und laufende Vorgänge sichern.
+- [x] Plan gegen Spezifikation/Interfaces selbst prüfen; jeden Reviewfocus einem Test zuordnen.
+- [x] Docsbranch Plan/Handoff/TODO/Registry aktualisieren, commit/push; PR235 Titel/Beschreibung an neuen Nutzerauftrag anpassen. Parent konkreten SHA/Link schicken.
+- [x] Runtimebranch vomWebSHA und eng übernommenen Gamesquellen isolieren; Basisbelege und laufende Vorgänge sichern.
 
 ### Task2: Bewertung und private StateMachine
 
 Interfaces: `preflight(questions) -> {ok,issues,counts}`; `snapshot(questions,secret) -> {paper,key,fingerprint}`; `submitTransition(room,player,payload,nowMillis) -> {player,receipt}`; `publicPlayerState(room,player,nowMillis) -> PublicState`.
 
-- [ ] Tests zuerst: richtige+100/falsche−50floor0/Teilpunkte50ohneSperre/skip0mit5s; Zahlkomma;4Farbgruppen; duplicateID; andererItemID; Frist/Sperre; invalidshape und maxpayload; paperdenyfields; unsupportedmanual; sourceimmutability.
-- [ ] Node `--test tools/test-rallye/core.test.cjs` rot für fehlende Funktionen beobachten.
-- [ ] Kleinen Core implementieren, vorhandenes assessment-gradeQuestion verwenden, Tests grün; gesamte bestehende Assessmenttests ausführen, Ergebnis/abweichende Fehler ehrlich berichten.
-- [ ] Commit und Übergabe sichern.
+- [x] Tests zuerst: richtige+100/falsche−50floor0/Teilpunkte50ohneSperre/skip0mit5s; Zahlkomma;4Farbgruppen; duplicateID; andererItemID; Frist/Sperre; invalidshape und maxpayload; paperdenyfields; unsupportedmanual; sourceimmutability.
+- [x] Node `--test tools/test-rallye/core.test.cjs` rot für fehlende Funktionen beobachten.
+- [x] Kleinen Core implementieren, vorhandenes assessment-gradeQuestion verwenden, Tests grün; gesamte bestehende Assessmenttests ausführen, Ergebnis/abweichende Fehler ehrlich berichten.
+- [x] Commit und Übergabe sichern.
 
 ### Task3: Auth und transactionalAPI
 
 Consumes Task2, produziert oben APIaktionen. Tests über isolierten Repositoryadapter mit synthetischen Testdaten; echter Firestoretransaction im Endpoint.
 
-- [ ] Tests zuerst: fehlendesAuth/fremderOwner; joincredentialHash/rejoin; concurrent duplicate; serverignores score; hostboardonly; ReleaseDevDenied; Ownerdelete; privateprojection.
-- [ ] Node `--test tools/test-rallye/api.test.cjs` erwartete Rotphase, dann minimale API/validation/rate-limits.
-- [ ] Syntaxcheck+beideSuiten grün; deny-default deployedRules/source belegen, keine neueRulesfreigabe behaupten.
-- [ ] Commit und Checkpoint vor externer Ausführung.
+- [x] Tests zuerst: fehlendesAuth/fremderOwner; joincredentialHash/rejoin; concurrent duplicate; serverignores score; hostboardonly; ReleaseDevDenied; Ownerdelete; privateprojection.
+- [x] Node `--test tools/test-rallye/api.test.cjs` erwartete Rotphase, dann minimale API/validation/rate-limits.
+- [x] Syntaxcheck+beideSuiten grün; deny-default deployedRules/source belegen, keine neueRulesfreigabe behaupten.
+- [x] Commit und Checkpoint vor externer Ausführung.
 
 ### Task4: Originalrenderer und完整 gemischte Runde
 
 Interfaces: `renderQuestion(question,index,locale)` erzeugtDOM; `collectQuestionAnswer(question,section)` ergibt Corepayload.
 
-- [ ] Rendererinteractiontests für multi/gapfill/matching/order/group/4colors/Bild/Audio und keyleak zuerst; RED→extrahierterRenderer→GREEN.
-- [ ] Hostauth über bestehenden angemeldeten GradeCrewAccount; listTests/preflight und `/editor/` Create/Editlink mit Rückweg. Auswahlrefetch nach Editorreturn; Roomerstellung ohne KI.
-- [ ] Schülercode/Kürzeljoin, Lobby/QR/Start, score/countdown/oneitem/explizit prüfen, skip und Ergebnisansicht; Board laufend+Endstand.
-- [ ] Pendingrequest/reload/offline/Serverzeit UIgates und echte gemischte Referenzrunde lokal mit APIadapter; keine Fixtures als Stagingbeweis.
-- [ ] Parent frühen funktionsfähigen Kandidat für unabhängigen Review melden, Commit sichern.
+- [x] Rendererinteractiontests für multi/gapfill/matching/order/group/4colors/Bild/Audio und keyleak zuerst; RED→extrahierterRenderer→GREEN.
+- [x] Hostauth über bestehenden angemeldeten GradeCrewAccount; listTests/preflight und `/editor/` Create/Editlink mit Rückweg. Auswahlrefetch nach Editorreturn; Roomerstellung ohne KI.
+- [x] Schülercode/Kürzeljoin, Lobby/QR/Start, score/countdown/oneitem/explizit prüfen, skip und Ergebnisansicht; Board laufend+Endstand.
+- [x] Pendingrequest/reload/offline/Serverzeit UIgates und echte gemischte Referenzrunde lokal mit APIadapter; keine Fixtures als Stagingbeweis.
+- [x] Parent frühen funktionsfähigen Kandidat für unabhängigen Review melden, Commit sichern.
 
 ### Task5: AlleTypen, Dev und Hubregression
 
-- [ ] übrige Typen vollständig aktivieren, unsupportedPreflight sichtbar; normale ReleaseDevaktionen backenddenied testen.
-- [ ] bounded Devjump/reset/diagnostics/export, nach Feedback normales Weiterspielen; keine Zustellungsbehauptung.
-- [ ] vierteKachel/Navigation in bestehendem Hub hinzufügen; alte3Games/Codejoin/Binomik prüfen, vorhandene Gamesregressions ausführen.
-- [ ] Responsive/focus/smallviewport/Touchsimulation im echten Browser; keine physischeGeräteabnahme behaupten.
-- [ ] Buildmanifest+Functionsconfig+CI mit exaktem RuntimeSHA; unabhängige Reviewfindings reproduzieren/fixen und erneut zielgerichtet prüfen.
+- [x] übrige Typen vollständig aktivieren, unsupportedPreflight sichtbar; normale ReleaseDevaktionen backenddenied testen.
+- [x] bounded Devjump/reset/diagnostics/export, nach Feedback normales Weiterspielen; keine Zustellungsbehauptung.
+- [x] vierteKachel/Navigation in bestehendem Hub hinzufügen; alte3Games/Codejoin/Binomik prüfen, vorhandene Gamesregressions ausführen.
+- [x] Responsive/focus/smallviewport/Touchsimulation im echten Browser; keine physischeGeräteabnahme behaupten.
+- [x] Buildmanifest+Functionsconfig+CI mit exaktem RuntimeSHA; unabhängige Reviewfindings reproduzieren/fixen und erneut zielgerichtet prüfen.
 
 ### Task6: IsoliertesStaging und tatsächlicher Lehrer/Schülerlauf
 
-- [ ] Frisches main/target/status und lokale laufende Vorgänge, deployziel+exactSHA benennen; gesicherten Checkpoint vorStart.
-- [ ] vorhandenen legitimen FirebaseCLIlogin normal verwenden; nur `functions:testrallye` in hausaufgabe-staging deployen; echten Receipt mit Functionhash/SourceSHA/exit sichern. Kein credentialexport.
-- [ ] geprüften Hostingbuild in eigenen7TageChannel `gradecrew-test-rallye-20261013` deployen; echte URL/expiry/manifesthashes/exit sichern, canonicalRelease8f869790 weiterhin prüfen.
+- [x] Frisches main/target/status und lokale laufende Vorgänge, deployziel+exactSHA benennen; gesicherten Checkpoint vorStart.
+- [x] vorhandenen legitimen FirebaseCLIlogin normal verwenden; nur `functions:testrallye` in hausaufgabe-staging deployen; echten Receipt mit Functionhash/SourceSHA/exit sichern. Kein credentialexport.
+- [x] geprüften Hostingbuild in eigenen7TageChannel `gradecrew-test-rallye-20261013` deployen; echte URL/expiry/manifesthashes/exit sichern, canonicalRelease8f869790 weiterhin prüfen.
 - [ ] HTTP allerManifestdateien+APIhealth prüfen; tatsächliche LehrerAuth/OwnTestauswahl/Create/Edit und zweiBrowserjoin/Start/gemischteAntworten, Score/Sperre/Reload/Endstand durchführen. Synthetisches Kürzel, keine Kundendatenexporte. Testquelle nur eigener synthetischer Test oder vom legitim angemeldeten Nutzer ausgewählterTest.
 - [ ] getrennter Hosting-/Functions-/Rules-/Browsernachweis, konkreter Nutzerlink und Schritte; PR/CI/Review und Grenzen sichern. user_tested erst nach Martins Abnahme.
 
@@ -155,3 +155,7 @@ EigenerPreview ist entfernbar/ablaufend, canonical unverändert. Neue isolierte 
 Owner: ausführender Rallye-Fachagent; unabhängiger Review/Playowner durch Games-Zentrale. SEC04/06/07/08/11/14/17 für dependencies,auth,ownership,protectedstate,limits,input,projection; PRIV07/17/20 für minimaleKürzel/Retention/delete; PRIV12/13/14 für ehrlicheCopy,Bildalt/Farbbezeichnungen/Kontrast. Originalkataloge/rollen gelesen; Scopebelege in Handoff, keine fremdenKataloge überschreiben. Schul/AVVfacts unbekannt, keine Legalzertifizierung aus synthetischerPreviewrunde.
 
 Selbstprüfung vorBau: Nutzeranforderungen denTasks1–6 zugeordnet, Rendering/Corepayload und opaqueIDs konsistent, fünfReviewfocus-Testgruppen explizit, Plan enthält Codeverträge statt ausformulierterFunktionsbodies. Bekannte Unsicherheit: tatsächlicher FirebaseCLIlogin und LehrerAuthbrowser erst live zu belegen; derzeit keinDeploy/CI/Spieldurchlauf behauptet. Stand: Plancheckpoint vorbereitet, Implementierung folgt direkt gemäß Auftrag.
+
+## Gesicherter Ausführungsstand13.10.2026
+
+Plan→Umsetzung→Reviews→CI→isolierteFunctions/Hosting erfolgt aus7975493. 143Tests/28BrowserQAchecksgrün,221gehosteteHashesverifiziert. Siehe[aktuellenHandoff](../../workstreams/test-rallye-plan-20261013.md)und[Receipts](../../workstreams/test-rallye-release-receipts-20261013.json). NativerStagingTeacher/OwnTest/JoinScoreendGatebleibtoffenbislegitimeAnmeldung;MockQAistkeinersetzung. Keinuser_tested/Productionclaim.
