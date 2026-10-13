@@ -1,6 +1,6 @@
 # GradeCrew – Plan für das Erstgespräch am 19. Oktober 2026
 
-Stand: 13.10.2026. Unterauftrag von GC-FINANCE-BAYSTARTUP-20261008. Zweck: Beratung und mögliche Finanzierung. Gesprächspartner vom Nutzer bestätigt: Philipp Geim von BayStartUP. Dauer und Ort noch unbekannt. Dies ist ein Fragen- und Folienplan, keine fertige PowerPoint und kein Finanzierungsangebot.
+Stand: 13.10.2026. Unterauftrag von GC-FINANCE-BAYSTARTUP-20261008. Zweck: Beratung und mögliche Finanzierung. Gesprächspartner vom Nutzer bestätigt: Philipp Geim von BayStartUP. Dauer und Ort noch unbekannt. Der zunächst beauftragte Plan wurde auf ausdrücklichen Folgeauftrag in eine editierbare PowerPoint umgesetzt. Dieses Dokument ist die vollständige Gesprächsgrundlage; es enthält kein Finanzierungsangebot.
 
 ## 1. Was Montag erreicht werden soll
 
@@ -10,7 +10,7 @@ Einstiegsvorschlag: „Ich habe GradeCrew aus einem konkreten Problem im Unterri
 
 Martins ergänzte Ziele: kurzfristig bereit für einen Bundeslandpartner, mittelfristig Bundeslandpartner, langfristig VIDIS-Anbindung. Diese Ziele sind noch zu erreichende Stufen, keine derzeitigen Zusagen oder Freigaben.
 
-Erst 3–5 Minuten Vorstellung beziehungsweise kurze Demo, anschließend Gespräch. Acht bis zehn Folien sind Reserve und Gesprächsunterstützung, kein zwingender durchgehender Vortrag.
+Erst 3–5 Minuten Vorstellung beziehungsweise kurze Demo, anschließend Gespräch. Die Präsentation umfasst 14 Hauptfolien plus 6 Anhangfolien. Für den Einstieg ausgewählte Folien nutzen; alle Folien sind Gesprächsunterstützung, kein zwingender durchgehender Vortrag. Die genaue Gesprächsdauer ist noch unbekannt.
 
 ## 1a. Fünf persönliche Fragen an Philipp Geim
 
@@ -36,6 +36,19 @@ Marken-, Steuer-, Vertrags- und Schulrechtsfragen bleiben im ausführlichen Kata
 ### VIDIS: belegte Anforderungen, nicht unser bereits erreichter Status
 
 Die offizielle [VIDIS-Teilnahmeseite](https://www.vidis.schule/teilnahmeprozess/) verlangt derzeit Zusammenarbeit mit mindestens einem Bundesland; das Partnerland kündigt Anbieter beim VIDIS-Team an. Vorbereitung ohne Partnerland ist möglich, ein eigenes Onboarding dafür erst in Vorbereitung. Formal genannt werden separater Login, WebApp, OIDC-Client und fertig entwickeltes Schulangebot; native Apps können derzeit nicht angebunden werden. Die digitale Datenschutz-Selbstauskunft benötigt AVV/TOM, AGB/Nutzungsbedingungen, Datenschutzerklärung und AVVs mit Subdienstleistern; alte Word-Versionen werden nicht angenommen. Auf erste Einschätzung folgen technische Test-/Produktivanbindung, finale Datenschutzprüfung und länderspezifische Freigaben. Eine Freischaltung aller Länder erfolgt nicht automatisch; zusätzliche Prüfungen sind möglich. Dauer hängt unter anderem von Unterlagen und Ressourcen ab. Gelesen am 13.10.2026; keine Anmeldung, Zusage oder GradeCrew-Prüfung erfolgt.
+
+### Kurze Vorstellung von Martin
+
+„Ich bin Martin, Gründer von GradeCrew. Ich habe GradeCrew aus meinem eigenen Unterrichtsalltag heraus entwickelt und selbst im Alltag getestet. Mein Ziel ist, digitale Tests einfacher vorzubereiten und durchzuführen. Jetzt möchte ich klären, wie daraus ein verlässliches, zahlendes Pilotangebot wird.“ Nur bekannte Angaben verwendet; Nachname, konkreter Beruf/Schultyp und zusätzliche Biografie bleiben ohne Nutzerbestätigung offen.
+
+### Website und die beiden Apps
+
+Die Website erhält in der Präsentation den größten Produktanteil: Test mit Remy vorbereiten, als Lehrkraft prüfen/mit Emmi verbessern, per Code/Link/QR teilen, Antworten abgeben und Ergebnisse auswerten. Materialupload bis10Dateien, Bild-/Höraufgaben und kontrollierte Übungs-/Prüfungslösungen gehören zum vorhandenen Kern. Die Crewrollen sind Coco (Hilfe/Orientierung), Remy (Erstellen), Emmi (Verbessern), Wilma (Prüfen). Zwei schematische, ausdrücklich synthetische Beispielansichten erläutern Erstellung und Schüleraufgabe; keine Aufnahmen echter Schüler oder Nutzerkonten.
+
+Die zwei Apps werden anhand tatsächlicher Repo-Ziele als **GradeCrew Teacher** und **GradeCrew Secure** eingeordnet, nicht als zwei Plattformversionen derselben App oder fertige Games-App. Quelle jeweils nativer Stand77119be5168150f7fa14076565b5099e856cb8d4:
+
+- [GradeCrew Teacher](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewTeacher/README.md): iPhone/iPad-Zugang für Lehrkräfte mit integrierter Website, nativen Eingabehilfen für Remy sowie Teilen/Downloads. TestFlight0.1.18(37) wurde hochgeladen, Run38282021673. Apple-Verfügbarkeit und Geräteabnahme werden nicht daraus abgeleitet.
+- [GradeCrew Secure](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewSecure/README.md): iPad-Entwicklungsprototyp für Testcode und Schüleransicht. Geschützter Prüfungsmodus ist Entwicklungsziel; native Freigabe, Hardware-/Integrationstests offen. Keine Gerätesperre-/AAC-/AppStore-/Sicherheitsgarantie behaupten. Alte Backend-Negativaussagen des Prototyp-README beschreiben nicht automatisch den heutigen Websitebackend.
 
 ## 2a. Martins drei Ziele und unsere Arbeitsdefinition
 
@@ -82,22 +95,34 @@ Diese Zeitwörter sind Zielhorizonte des Nutzers, keine zugesagten Termine. Wir 
 | B – Was bedeuten spätere Verwässerung, Informationsrechte, Mitspracherechte, Liquidationspräferenz und Exit-Erwartung für mich? | Nennbetrag und Prozent allein beschreiben einen Deal nicht. | Coach und eigener Beteiligungsanwalt | Verständlicher Vergleich konkreter Bedingungen erst bei vorliegendem Angebot. |
 | B – Was ist dauerhaft schwer kopierbar: Workflowwissen, geprüfte Inhalte, Vertrieb, Integration, Vertrauen? | „Mit KI erstellt“ ist keine belastbare Differenzierung. | Coach und Zielkunden | Nachprüfbare Differenzierung ohne Schülerdaten als Geschäftsmodell. |
 
-## 5. Plan für die spätere PowerPoint
+## 5. Tatsächliches PowerPoint-Verzeichnis
 
-Gestaltungsvorschlag: GradeCrew-Blau/Violett, klare Typografie, viel Weißraum, ein dezent eingesetztes Crew-Bild, echte Produktansichten mit synthetischen Daten. Eine Aussage pro Folie; Belege und Quellen in Notizen/Anhang. Keine Zahlen-Deko, künstliche Marktgrößen oder ungesicherte Zertifizierungslogos.
+16:9, GradeCrew-Blau/Violett, Arial, klare große editierbare Texte und vorhandene Crew-Grafiken. Quellen und kurze Sprechhinweise stehen in den Foliennotizen. Website ist Schwerpunkt. Keine Zahlen-Deko, erfundenen Kunden-/Marktzahlen oder Zertifizierungslogos.
 
-1. **GradeCrew aus dem Unterrichtsalltag** – Gründerproblem, Ziel des heutigen Gesprächs. Etwa 30 Sekunden.
-2. **Das konkrete Problem** – Vorbereitung, Varianten, Durchführung und Auswertung; Belastung als Nutzererfahrung, nicht erfundene Zeitstatistik.
-3. **Ein durchgängiger Arbeitsablauf** – Eine synthetische kurze Demo: Test vorbereiten → Lehrkraft prüft → Klasse bearbeitet → Ergebnis. Etwa 90 Sekunden.
-4. **Was bereits erprobt ist – was noch geprüft werden muss** – Gründerbericht, technischer Stagingstand, offene Geräte-/Rechts-/Pilotnachweise. Keine Release-SHAs im Hauptvortrag.
-5. **Der erste zahlende Pilot** – Kundensegment, begrenzter Scope, Preis als zu testende Frage, Erfolgskriterien und Anschlussvertrag.
-6. **Geschäftsmodell und Positionierung** – Hypothesen Lehrkraft/Schule/Nutzung; bezahlbarer Kern und Auswahlfrage statt erfundener Umsatzkurve.
-7. **Vertrauen und Betrieb** – Unabhängiger Code-/Securityreview, Datenschutzrollen, Lehrkraftkontrolle, Backup/Support; jeweils Owner und noch offene Nachweise.
-8. **Vom Partnerangebot zur VIDIS-Anbindung** – Kurzfristig bereit für einen Bundeslandpartner → mittelfristig bestätigter Bundeslandpartner → langfristig VIDIS-Anbindung mit jeweiliger Landesfreigabe. Paid-Pilot-Nachweise begleiten den Weg. Mittelverwendung zuerst bis zur nächsten Readiness-Abnahme bepreisen, nicht eine globale Wunschsumme festlegen; keine unbelegten Monatsfristen.
-9. **Welche Unterstützung wir suchen** – Richtiger Landesansprechpartner, bezahlte Pilotkontakte, qualifizierte Reviewer/Berater und Finanzierung des nächsten Readiness-Meilensteins.
-10. **Entscheidungen und nächste Schritte** – Drei Vereinbarungen mit Person und Termin.
+| Folie | Titel / Inhalt |
+|---|---|
+| 1 | GradeCrew: aus dem Unterricht in den nächsten Schritt; Gespräch mit Philipp Geim19.10. |
+| 2 | Klares Verzeichnis: Martin/Idee, Website/Crew, zweiApps, Bundeslandpartner/VIDIS, Pilot/Review/Finanzierung. |
+| 3 | Martin kurz vorstellen: Gründer, aus eigenem Unterrichtsalltag, selbst getestet, nächstes Ziel. |
+| 4 | Problem: Vorbereiten, Durchführen und Nacharbeiten in einem Ablauf. |
+| 5 | Websitekern: Test vorbereiten, prüfen, teilen, bearbeiten und auswerten. |
+| 6 | Testvorbereitung als schematische synthetische Beispielansicht. |
+| 7 | Schüleraufgabe als schematische synthetische Beispielansicht; Zugang und Ergebnis. |
+| 8 | Coco, Remy, Emmi, Wilma und jeweilige Rolle. |
+| 9 | GradeCrew Teacher: mobiler Lehrerzugang, TestFlight-Upload belegt, Geräteabnahme offen. |
+| 10 | GradeCrew Secure: iPad-Entwicklungsprototyp; geschützter Prüfungsmodus als Ziel. |
+| 11 | Ehrlicher Stand: hilfreicher Gründerbericht, dokumentierter Technikstand, offene Pilot-/Reviewnachweise. |
+| 12 | Drei Nutzerziele: bereit für Bundeslandpartner → Partner → VIDIS-Anbindung. |
+| 13 | Bezahlter begrenzter Pilot, echte Kosten, passende Finanzierungsroute. |
+| 14 | Fünf Fragen an Philipp und konkrete nächste Vereinbarungen. |
+| 15 | Anhang: Marke, Gewerbe und Steuerstatus; qualifizierte Ansprechpartner. |
+| 16 | Anhang: Datenschutzrollen, Datenflüsse, Verträge/Fristen und konkrete Genehmigung. |
+| 17 | Anhang: abgegrenzter externer Code-/Security-/Rechtereview sowie Betrieb/Migration. |
+| 18 | Anhang: VIDIS-Teilnahmeweg und individuelle Landesfreigabe, keine native Appanbindung. |
+| 19 | Anhang: Kostenblöcke und6/12/18Monatsszenarien, ohne erfundene Beträge. |
+| 20 | Anhang: Quellen, Nachweise und mitzubringende Unterlagen. |
 
-Folien 1–4 bilden die kurze Vorstellung. 5–10 werden je nach Gesprächsverlauf geöffnet. Interner Anhang: vollständiger Fragenkatalog, Kostenblatt, Belegstatus und Quellen; nicht alles ungefragt präsentieren.
+Für eine kurze Vorstellung beispielsweise Folien1/3/5/9/10 auswählen; Ablauf/Websiteansichten nach Bedarf zeigen. Drei bis fünf Minuten bleiben eine Orientierung für einen kurzen Einstieg, keine bestätigte gesamte Gesprächsdauer. Die restlichen Hauptfolien strukturieren das anschließende Coaching; Anhänge nur bei passender Frage öffnen. Der vollständige interne Fragenkatalog steht weiterhin oben in Abschnitten3/4; die Folien vermeiden Textwände.
 
 ## 6. Bis Montag mitbringen
 
@@ -127,4 +152,4 @@ Recherchiert am 13.10.2026, ausschließlich offizielle Gesetzes-/Behörden-/Kamm
 
 ## Arbeitsgrenzen und Sicherung
 
-Planung abgeschlossen als erster reviewbarer Entwurf. Keine PPTX, Kontaktaufnahme, Einreichung, Marke-/Gewerbe-/Steuerhandlung, Prüfung privater Unterlagen, technische Migration, Appänderung oder Deployment. Kein neuer Kapitalbetrag festgelegt. Nächster Schritt: Martin ergänzt Dauer/Ort und priorisiert die Fragen für das Coaching; danach kann derselbe Plan als PowerPoint beauftragt werden.
+Gesprächsplan und PowerPoint lokal erstellt. Keine Kontaktaufnahme, Einreichung, Marke-/Gewerbe-/Steuerhandlung, Prüfung privater Unterlagen, technische Migration, Appänderung oder Deployment. Kein neuer Kapitalbetrag festgelegt. Nächster Schritt: Martin ergänzt bei Bedarf Dauer/Ort und persönliche Angaben und probt die ausgewählte Kurzvorstellung am Präsentationsgerät.
