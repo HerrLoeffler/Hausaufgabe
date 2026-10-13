@@ -15,3 +15,7 @@ Gezielter TODOownerpatch: dieselbe Adaptive-Task um „lokale Browser-Eingabepro
 Genau nächste Aktion: Martin testet eigene konkrete Unterrichtsfragen über den lokalen Link. Vor weiterer Arbeit dieses Ergebnis, Branch/PR und tatsächlichen Serverstatus prüfen; nicht neues Projekt/Attempt/Budget starten. Kein erneuter Agenten-/Vollreview-/Forschungszyklus für diesen Prototyp.
 
 Whitespaceprüfung nur für eigene Source-/Dokument-/Starterdateien grün. Unveränderte offiziell gehashte Three.js-Vendorbytes und rohe Rot-Testlogs enthalten ursprüngliche Whitespacewarnungen; diese Nachweise werden nicht kosmetisch verändert. Vendorcode ist für GitHub als vendored markiert. Kein Runtime-/Logikfehler aus diesen Formatwarnungen abgeleitet.
+
+## Gesicherter Probecheckpoint
+
+[DraftPR234](https://github.com/HerrLoeffler/Hausaufgabe/pull/234), Sourcecheckpoint2b19624b3e2e62a8cce1ad5011798d6b380eb567, lokaler Peer cd7653c4422eccf321bc6c7f4111f4342664bdc7, identischer Tree8eb0bc4200397c47bcc3cfd75844e7c99827f1c3.25eigene neue Dateien;14Tests/aktuelle UI-Nachweise. Folgender Übergabemetadatennachtrag verändert keine Runtime. Keine Produktintegration/Deploy-/Lernfreigabe; Humanverdikt pending. Eigener Browser-Teststand bleibt über18771 und Rebootstarter erreichbar.
