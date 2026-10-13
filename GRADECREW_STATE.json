@@ -1661,6 +1661,28 @@
       "model_quality": "not_observed_no_live_provider_calls",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
       "next_action": "qualified integration to existing app integration branch and Staging activation; physical/model quality acceptance separate"
+    },
+    {
+      "id": "test-rallye-plan-20261013",
+      "task_id": "GC-GAMES-TEST-RALLYE-01",
+      "stage": "staging_deployed",
+      "branch": "feat/test-rallye-20261013",
+      "integration_target": "feature/gradecrew-app-integration",
+      "commit": "797549374df908cb9fd212be14b86e58061b347b",
+      "pull_request": 236,
+      "plan_pull_request": 235,
+      "integration": "open_unmerged",
+      "ci": 38471572958,
+      "hosting_preview": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+      "functions": "testRallyeApi+testRallyeCleanup/testrallye/europe-west1/nodejs22/ACTIVE",
+      "hosting_hashes": "221/221HTTP200SHA256",
+      "real_teacher_student_flow": "pending_legitimate_teacher_login; user confirmed not signed in",
+      "user_tested": false,
+      "physical_device_acceptance": "not_checked",
+      "production": "not_requested",
+      "handoff": "workstreams/test-rallye-plan-20261013.md",
+      "receipts": "workstreams/test-rallye-release-receipts-20261013.json",
+      "next_action": "legitimate same-origin editor login, own test selection/save, actual staging room join/server score/endstate"
     }
   ],
   "deployments": [

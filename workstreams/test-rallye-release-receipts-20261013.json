@@ -1,0 +1,189 @@
+{
+  "task": "GC-GAMES-TEST-RALLYE-01",
+  "stage": "staging_deployed",
+  "source": "797549374df908cb9fd212be14b86e58061b347b",
+  "webBase": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "gamesBase": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+  "runtimePR": 236,
+  "planPR": 235,
+  "integration": "open_unmerged",
+  "ci": {
+    "run": 38471572958,
+    "conclusion": "success",
+    "commit": "797549374df908cb9fd212be14b86e58061b347b",
+    "tests": 143
+  },
+  "independentCodeReview": {
+    "scope": "backend/core/auth/policy/http adapter",
+    "result": "PASS",
+    "source": "c7cdf5ca54c489c01a004e7ea823738626055d83",
+    "sourceParity": "unchanged backend in deployment7975493",
+    "limits": "not live Firebase/Auth/Rules/IAM proof"
+  },
+  "independentBrowserQA": {
+    "localSource": "58405a27d8df4da408b2ccadc70d43d2a215b609",
+    "deployedTreeEquivalent": "797549374df908cb9fd212be14b86e58061b347b",
+    "checks": 28,
+    "pageJsErrors": 0,
+    "result": "PASS",
+    "continuousMixedReference": {
+      "items": 6,
+      "score": 300,
+      "board": "same300/6done"
+    },
+    "limits": "local real Chrome with explicit FirebaseAuth/API memory stubs; no real staging teacher role/test owner/Firestore/QR camera/physical device/classroom concurrency proof",
+    "nonblockingMinor": "final receipt copy still says next question alongside finished result; no next question/control offered"
+  },
+  "functions": {
+    "mode": "functions",
+    "exit": 0,
+    "source": "797549374df908cb9fd212be14b86e58061b347b",
+    "project": "hausaufgabe-staging",
+    "successLines": [
+      "✔  functions[testrallye:testRallyeApi(europe-west1)] Successful create operation.",
+      "✔  functions[testrallye:testRallyeCleanup(europe-west1)] Successful create operation.",
+      "✔  Deploy complete!"
+    ],
+    "sourceFilesSha256": {
+      "lab/test-rallye-functions/index.js": "b278625928d61cba31f623a7d06d7a42124f45ed9cee0bd43a30a2d76e13ab5a",
+      "lab/test-rallye-functions/core.js": "86c132760342fac28d3899e7adc8a999217efb62e16abef6d28cf2c65b28d36f",
+      "lab/test-rallye-functions/policy.js": "f29b9beca597af87f4054539d790a1661d78a065bd6fa2a9b0fe0cadc56f9b85",
+      "lab/test-rallye-functions/vendor/assessment-core.js": "de3f4e844138bdcdfdef30ff8760fa057a5b18692b1570139414f21389ee748a",
+      "lab/test-rallye-functions/package.json": "f0ee8f1f62a25d56cf75ff9feb0574e96276cff36c720b27e9afaa971c68e8ba",
+      "lab/test-rallye-functions/package-lock.json": "c0580b97db74f8ac0e1add9a46707cd9aa60f419a82e4ae94770c830b8d19faa",
+      "firebase.testrallye.json": "63082c4cf62b29eaf6753394ccdecb00698241d6c4518158db7478c2d82793db"
+    }
+  },
+  "functionMetadata": {
+    "exit": 0,
+    "status": "success",
+    "functions": [
+      {
+        "id": "testRallyeApi",
+        "region": "europe-west1",
+        "runtime": "nodejs22",
+        "codebase": "testrallye",
+        "state": "ACTIVE",
+        "labels": {
+          "deployment-tool": "cli-firebase",
+          "firebase-functions-codebase": "testrallye",
+          "firebase-functions-hash": "c9b769b38ab04e277b07915f8b32939fd2db179e"
+        },
+        "platform": "gcfv2"
+      },
+      {
+        "id": "testRallyeCleanup",
+        "region": "europe-west1",
+        "runtime": "nodejs22",
+        "codebase": "testrallye",
+        "state": "ACTIVE",
+        "labels": {
+          "deployment-scheduled": "true",
+          "firebase-functions-codebase": "testrallye",
+          "firebase-functions-hash": "c9b769b38ab04e277b07915f8b32939fd2db179e",
+          "deployment-tool": "cli-firebase"
+        },
+        "platform": "gcfv2"
+      }
+    ]
+  },
+  "hosting": {
+    "mode": "hosting",
+    "exit": 0,
+    "source": "797549374df908cb9fd212be14b86e58061b347b",
+    "project": "hausaufgabe-staging",
+    "successLines": [
+      "✔  Deploy complete!",
+      "✔  hosting:channel: Channel URL (hausaufgabe-staging): https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app [expires 2026-10-20 23:37:20]"
+    ]
+  },
+  "hostingIntegrity": {
+    "url": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+    "source": "797549374df908cb9fd212be14b86e58061b347b",
+    "manifestStatus": 200,
+    "manifestMatchesLocal": true,
+    "files": 221,
+    "hashMatches": 221,
+    "failures": [],
+    "anonymousFirestore": {
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED"
+    },
+    "limits": "Anonymous Firestore denial does not prove authenticated-role rules; no teacher-token read/export."
+  },
+  "livePublicChecks": {
+    "apiHealth": {
+      "status": 200,
+      "ok": true,
+      "game": "test-rallye",
+      "version": 1
+    },
+    "unauthHost": {
+      "status": 400,
+      "ok": false,
+      "error": "Bitte mit deinem GradeCrew-Konto anmelden.",
+      "corsOrigin": "https://hausaufgabe-staging.web.app"
+    },
+    "anonymousFirestore": {
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED",
+      "source": "corrected pageSize query in hosting integrity report"
+    },
+    "canonical": {
+      "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+      "version": "2.3.1-gc39",
+      "files": 165
+    }
+  },
+  "actualBrowser": {
+    "url": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/test-rallye/",
+    "observed": "Verbunden; legitimate teacher login plus student code/alias form",
+    "teacherAuthenticated": false,
+    "realTeacherStudentRoomJoinScoreEndstate": "pending user login; no credentials requested/copied"
+  },
+  "rules": {
+    "deployedByTask": false,
+    "anonymousDirectFirestore": {
+      "httpStatus": 403,
+      "error": "PERMISSION_DENIED"
+    },
+    "authenticatedRoleRuleProof": "not checked without teacher login"
+  },
+  "development": {
+    "stagingOnly": true,
+    "serverEnabled": true,
+    "requiresExistingAdminRole": true,
+    "releaseRoomsDenyActions": true,
+    "serverResetJumpIncrementVersion": true,
+    "feedback": "local redacted export only; no delivery claim"
+  },
+  "retention": {
+    "targetHours": 24,
+    "periodicCleanup": "testRallyeCleanup ACTIVE, hourly; scheduling lag can add up to1hour; full live expiry wait not performed",
+    "ownerDelete": "HTTP adapter tested; no real room created/deleted this release"
+  },
+  "canonicalUnchanged": {
+    "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+    "version": "2.3.1-gc39",
+    "files": 165
+  },
+  "production": {
+    "requested": false,
+    "deployedByTask": false
+  },
+  "links": {
+    "game": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/test-rallye/",
+    "editorLogin": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/editor/",
+    "hub": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app/"
+  },
+  "hygiene": {
+    "oneCredentialToolOutputIncident": "CLI login:list --json unexpectedly exposed credential fields in internal tool output; values never copied to code/PR/log artifacts; future checks strictly redacted",
+    "ownCodeDocsPatternScan": false,
+    "receiptLogPatternScan": false,
+    "ownerAction": "review active CLI credentials and rotate/revoke if owner judges exposure requires it; no unilateral global revocation or IAM change"
+  },
+  "requestedModel": "inherited",
+  "actualModel": "unknown",
+  "paidCalls": "none",
+  "budget": "none assigned; existing histories retained"
+}
