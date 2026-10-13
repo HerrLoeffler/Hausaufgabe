@@ -29,7 +29,7 @@ final class GradeCrewNativeBridge: NSObject, WKScriptMessageHandlerWithReply {
         controller.addScriptMessageHandler(self, contentWorld: .page, name: "gradecrewNative")
         controller.addUserScript(WKUserScript(source: source.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),
                                              injectionTime: .atDocumentStart, forMainFrameOnly: true))
-        for name in ["gradecrew-native-workspace", "gradecrew-native-auth"] {
+        for name in ["gradecrew-native-workspace", "gradecrew-native-auth", "gradecrew-native-question-editor"] {
             if let resource = Bundle.main.url(forResource: name, withExtension: "js"),
                let script = try? String(contentsOf: resource, encoding: .utf8) {
                 controller.addUserScript(WKUserScript(source: script.replacingOccurrences(of: "__GRADECREW_CONFIG__", with: json),

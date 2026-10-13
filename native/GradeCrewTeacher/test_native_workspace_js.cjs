@@ -29,7 +29,7 @@ function browser(t, { native = true, currentOrigin = origin, frame = false, stor
   if (native) w.webkit = { messageHandlers: { gradecrewNative: { postMessage() {} } } };
   for (const [key, value] of Object.entries(storage)) w.localStorage.setItem(key, value);
   const controls = {}, clicks = {};
-  for (const id of ['gradecrewTourBtn', 'newQuizBtn', 'trashBtn', 'settingsTopBtn', 'logoutBtn', 'saveSettingsBtn', 'aiGenerateBtn']) {
+  for (const id of ['adminTopBtn', 'gradecrewTourBtn', 'newQuizBtn', 'trashBtn', 'settingsTopBtn', 'logoutBtn', 'saveSettingsBtn', 'aiGenerateBtn']) {
     const node = w.document.getElementById(id); controls[id] = node; clicks[id] = 0;
     if (node) node.onclick = () => { clicks[id]++; };
   }
@@ -60,12 +60,13 @@ test('the original Crew entry precedes the compact hero and original actions fol
   assert.equal(large(b).nextElementSibling, dashboard.querySelector('.pageHead'));
   const overview = b.doc.getElementById('dashboardOverview');
   assert.ok(overview.nextElementSibling.contains(b.controls.newQuizBtn));
-  for (const id of ['gradecrewTourBtn', 'newQuizBtn', 'trashBtn']) {
+  for (const id of ['adminTopBtn', 'gradecrewTourBtn', 'newQuizBtn', 'trashBtn']) {
     assert.equal(b.doc.getElementById(id), b.controls[id]);
     b.doc.getElementById(id).click(); assert.equal(b.clicks[id], 1);
   }
-  assert.match(b.controls.trashBtn.textContent, /Papierkorb/);
-  assert.equal(b.controls.trashBtn.parentNode.contains(b.controls.newQuizBtn), true);
+  assert.equal(b.controls.trashBtn.textContent.trim(), '');
+  assert.equal(b.controls.trashBtn.parentNode.contains(b.controls.newQuizBtn), false);
+  assert.ok(b.controls.trashBtn.closest('.gcNativeWorkspaceTitleRow'));
   assert.equal(b.doc.getElementById('aiView').innerHTML, '<button id="aiGenerateBtn">Generieren</button><p id="remyAudit">Audit bleibt</p>');
   assert.equal(b.doc.getElementById('cocoAssistant').textContent, 'Coco');
   assert.equal(b.doc.getElementById('appFooter').textContent, 'Status');
@@ -141,11 +142,12 @@ test('repeated dashboard renders and locale observations remain idempotent and r
   }
   assert.equal(b.doc.querySelectorAll('.gcWorkspaceCrewEntry').length, 1);
   assert.equal(b.doc.querySelectorAll('#gcNativeSettingsTutorialBtn').length, 1);
-  assert.equal(b.doc.querySelectorAll('[data-gc-native-trash-label]').length, 1);
+  assert.equal(b.doc.querySelectorAll('[data-gc-native-trash-label]').length, 0);
   assert.equal(large(b).querySelectorAll(':scope > small').length, 1);
   b.doc.documentElement.lang = 'en-GB'; await settle();
   assert.equal(b.doc.getElementById('gcNativeSettingsTutorialBtn').textContent, 'Start tutorial');
-  assert.match(b.controls.trashBtn.textContent, /Trash/);
+  assert.equal(b.controls.trashBtn.textContent.trim(), '');
+  assert.ok(b.controls.trashBtn.getAttribute('aria-label'));
   b.controls.gradecrewTourBtn.click(); assert.equal(b.clicks.gradecrewTourBtn, 1);
   b.controls.newQuizBtn.click(); assert.equal(b.clicks.newQuizBtn, 1);
 });
@@ -177,4 +179,38 @@ test('settings replay returns through the shared back handler before the real da
   b.doc.getElementById('gcNativeSettingsTutorialBtn').click();
   await settle();
   assert.equal(returns, 1); assert.equal(starts, 1);
+});
+
+
+test('Crew and new-test containers center within the complete workspace width and trash follows the title', t => {
+  const b=browser(t); b.api.restoredAccount('teacher-a');
+  const titleRow=b.doc.querySelector('.gcNativeWorkspaceTitleRow');
+  assert.ok(titleRow); assert.ok(titleRow.contains(b.doc.querySelector('.pageHead h1')));
+  assert.ok(titleRow.contains(b.controls.trashBtn));
+  assert.equal(large(b).parentNode.id, 'dashboardView');
+  const entryStyle=b.w.getComputedStyle(large(b));
+  assert.equal(entryStyle.marginLeft,'auto'); assert.equal(entryStyle.marginRight,'auto');
+  const actions=b.w.getComputedStyle(b.doc.querySelector('.dashboardActions'));
+  assert.equal(actions.display,'flex'); assert.equal(actions.justifyContent,'center');
+});
+
+test('app header retains existing role controls and gives language select room for its complete label', async t => {
+  const markup=html.replace('<head></head>', '<head><style>.gradecrewLanguageControl select{max-width:108px}</style></head>')
+    .replace('<header class="topbar">','<header class="topbar gradecrewLanguageReady"><button class="brand"><strong>GradeCrew</strong></button><div id="gradecrewLanguageControl" class="gradecrewLanguageControl"><select><option value="de-DE">DE · Deutsch</option><option value="en-GB">EN · English</option></select></div>');
+  const b=browser(t,{markup});
+  const language=b.doc.querySelector('#gradecrewLanguageControl select'); const bar=b.doc.getElementById('userBar');
+  assert.equal(b.w.getComputedStyle(language).maxWidth,'none');
+  assert.ok(b.doc.querySelector('header.topbar[data-gc-native-header]'));
+  for(const id of ['adminTopBtn','settingsTopBtn','logoutBtn']) assert.equal(b.doc.getElementById(id),b.controls[id]);
+  assert.equal(language.options[0].textContent,'DE · Deutsch');
+  assert.equal(b.doc.getElementById('adminTopBtn').classList.contains('hidden'),true);
+  bar.classList.add('hidden'); await settle();
+  assert.equal(bar.classList.contains('hidden'),true);
+});
+
+
+test('legacy relative offsets cannot shift the centered new-test action', t => {
+  const b=browser(t,{markup:html.replace('<head></head>', '<head><style>#dashboardView #newQuizBtn{position:relative;left:-14px;right:14px}</style></head>')});
+  const css=b.w.getComputedStyle(b.controls.newQuizBtn);
+  assert.equal(css.left,'auto'); assert.equal(css.right,'auto');
 });

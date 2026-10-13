@@ -56,7 +56,7 @@ audit_build = obj('build-Resources/gradecrew-remy-audit.js', isa='PBXBuildFile',
 
 app_script_refs = []
 app_script_builds = []
-for name in ['gradecrew-native-auth', 'gradecrew-native-workspace']:
+for name in ['gradecrew-native-auth', 'gradecrew-native-workspace', 'gradecrew-native-question-editor']:
     path = f'Resources/{name}.js'
     ref = obj(path, isa='PBXFileReference', lastKnownFileType='sourcecode.javascript', path=path, sourceTree='<group>')
     app_script_refs.append(ref)
