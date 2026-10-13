@@ -211,7 +211,7 @@ GC-AUTOMATION-13 / Wiederaufnahme „Main GC (w)“ (04.10.2026): Letzter konkre
 
 | Aufgabe | Stand | Nächster Schritt |
 | --- | --- | --- |
-| GC-WEB-REPAIR-20261007 | Vollständiger lokaler Produktabgleich, Audiofrage/Farben, Crew-Motive/Startanimation, ET und neutraler Login | **Kanonisch gc36 deployed `d6cd4e733e1a3b8e8b63a14058a364389f3f4488`; Nutzer-/Geräteabnahme offen.** PR222/223; Node22CI38178714448, Preview38178844102, AI/Assessment38178844003 (ein gleicher AI-Retry erfolgreich), canonical38179306263/11716594995;164 Dateien.377-Pfad-Inventar vollständig zugeordnet,29PNG-Hashes Stage/lokal identisch, minimaler lokaler Abgleich mit Backups. SecureRules195 unverändert/Production aus. Legacyq5/q8 nicht identifiziert, keine automatische privateText-Publikation. [Übergabe](workstreams/feedback-release-20261011.md) |
+| GC-WEB-REPAIR-20261007 | Web-Reparaturpaket und Staging-Feedback | **Gc38 kanonisch auf Staging deployed (`44ab6540`, 2.3.1-gc38); Nutzer-/Geräteabnahme offen.** PR #227 hebt die generische Materialgrenze von 5 auf 10 für Bilder und Dokumente an; Kandidaten-CI `38353390214`, Merge-CI `38353699126`, Preview `38353858238` / Receipt `11791359970`, AI-/Assessment-Functions `38353858268` / Receipts `11791594353` und `11791976375`, kanonisch `38354325678` / Receipt `11791699830`; 164 Dateien. Kein echter Upload/Testlauf, Production und Rules unverändert. [Übergabe](workstreams/feedback-images10-20261013.md) · [Receipts](workstreams/feedback-images10-release-receipts-20261013.json) |
 
 
 ## 2026-10-07 07:20 Europe/Berlin — gezielte Nutzertest-Nachkorrektur

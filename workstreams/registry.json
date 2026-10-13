@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-12",
+  "updatedAt": "2026-10-13",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -498,10 +498,10 @@
     {
       "id": "web-repair-20261007",
       "title": "Web UI / Remy / gated audio choices",
-      "primaryBranch": "fix/staging-feedback-login-copy-20261011",
+      "primaryBranch": "fix/staging-feedback-images10-20261013",
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
-      "handoff": "workstreams/feedback-release-20261011.md",
+      "handoff": "workstreams/feedback-images10-20261013.md",
       "relatedBranches": [
         "feature/gc-web-polish-20261007",
         "feature/audio-web-repair-20261007",

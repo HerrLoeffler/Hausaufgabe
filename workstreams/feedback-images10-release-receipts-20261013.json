@@ -1,0 +1,74 @@
+{
+  "taskId": "GC-WEB-REPAIR-20261007",
+  "scope": "Existing generic uploaded-material total cap increased from 5 to 10 for materials used in test creation, including images and documents.",
+  "pr": {
+    "number": 227,
+    "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/227",
+    "merged": true,
+    "head": "685de7865d52a4549cc00adf7cadeacbbf0b9497",
+    "mergeCommit": "44ab6540a9ac0cd4a144dd25eb84a7198d22498b"
+  },
+  "source": {
+    "candidateLocal": "bdbf59bd097d0578168ee858098d37627655b5d8",
+    "tree": "fd4d0af2b9e7ea4dc74d10e268bc758928199137",
+    "base": "fd9a8f990c9951c2b1f7b7a254d8ca009e39fabf"
+  },
+  "checks": {
+    "candidateNode22": {
+      "run": 38353390214,
+      "job": 115150651089,
+      "result": "success"
+    },
+    "mergedNode22": {
+      "run": 38353699126,
+      "result": "success"
+    },
+    "admin": {
+      "run": 38353699178,
+      "result": "success"
+    },
+    "authorFocusedTests": "13/13 passed",
+    "independentReview": {
+      "result": "approved",
+      "evidence": "analysis/GC-WEB-REPAIR-20261007-IMAGE-LIMIT/review-bdbf59b.md",
+      "sha256": "4c1333c332e4721632646b44d0185254db18f87d1104e4e85a635d152edd10fb"
+    }
+  },
+  "staging": {
+    "version": "2.3.1-gc38",
+    "source": "44ab6540a9ac0cd4a144dd25eb84a7198d22498b",
+    "files": 164,
+    "preview": {
+      "run": 38353858238,
+      "receipt": 11791359970,
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app"
+    },
+    "functions": {
+      "run": 38353858268,
+      "aiReceipt": 11791594353,
+      "assessmentReceipt": 11791976375,
+      "result": "success"
+    },
+    "canonical": {
+      "run": 38354325678,
+      "receipt": 11791699830,
+      "url": "https://hausaufgabe-staging.web.app"
+    }
+  },
+  "boundaries": {
+    "genericMaterialLimit": 10,
+    "generatedImageQuestions": "unchanged, 0–5",
+    "audio": "unchanged, 5",
+    "maxFileSize": "unchanged, 15 MB",
+    "mimePolicy": "unchanged",
+    "quota": "unchanged",
+    "rules": "unchanged",
+    "production": "unchanged; not requested",
+    "testFlight": "unchanged",
+    "realUploadsOrTestCreation": "not performed",
+    "paidGeneration": "not performed",
+    "userOrPhysicalDeviceAcceptance": "pending"
+  },
+  "nextStep": "Martin tests an actual upload and test creation on canonical Staging; then record user/device acceptance if completed.",
+  "observedAt": "2026-10-13"
+}
