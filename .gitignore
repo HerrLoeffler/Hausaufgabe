@@ -1,0 +1,8 @@
+.superpowers/
+games/lerninsel-unreal/Binaries/
+games/lerninsel-unreal/Intermediate/
+games/lerninsel-unreal/Saved/
+games/lerninsel-unreal/DerivedDataCache/
+games/lerninsel-unreal/.build/
+games/lerninsel-unreal/*.xcodeproj/
+games/lerninsel-unreal/*.xcworkspace/

@@ -1,0 +1,3189 @@
+{
+  "objects": [
+    {
+      "object": "SM_Fox_ContinuousSculpt",
+      "triangles": 183112,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Ear_-1",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_InnerEar_-1",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Ear_1",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_InnerEar_1",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyeSocket_-1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyeIris_-1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyePupil_-1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Catchlight_-1",
+      "triangles": 168,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_MouthCorner_-1",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyeSocket_1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyeIris_1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_EyePupil_1",
+      "triangles": 528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Catchlight_1",
+      "triangles": 168,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_MouthCorner_1",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Nose",
+      "triangles": 720,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Nostril_-1",
+      "triangles": 288,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Nostril_1",
+      "triangles": 288,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_BrushTail",
+      "triangles": 6528,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_LayeredBodyFur",
+      "triangles": 75558,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_LayeredTailFur",
+      "triangles": 24822,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_-1_0",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_-1_1",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_-1_2",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_1_0",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_1_1",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_ToeSeam_1_2",
+      "triangles": 36,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_LOD0_Mesh",
+      "triangles": 6000,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_LOD1_Mesh",
+      "triangles": 3000,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "SM_Fox_Stone_Mesh",
+      "triangles": 6000,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.004",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.005",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.006",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.007",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_plank.008",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_beam",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bridge_beam.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_BridgeModule_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.001",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.001",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.002",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.002",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.003",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.003",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.004",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.004",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Bush_01_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.005",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.005",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.006",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.006",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.007",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.007",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.008",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.008",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.009",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.009",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Bush_02_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.010",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.010",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.011",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.011",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.012",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.012",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.013",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.013",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "Bush_inner_volume.014",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.014",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 180,
+      "non_manifold_edges": 180,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Bush_03_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Driftwood",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Driftwood_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Fence_post",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Fence_post.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Fence_rail",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Fence_rail.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_FencePanel_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.001",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.002",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.003",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.004",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.005",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.001",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.001",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.006",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.007",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.008",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.009",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.010",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.011",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.002",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.002",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.012",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.013",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.014",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.015",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.016",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.017",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.003",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.003",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.018",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.019",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.020",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.021",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.022",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.023",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.004",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.004",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.024",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.025",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.026",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.027",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.028",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.029",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.005",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.005",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.030",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.031",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.032",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.033",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.034",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.035",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_stem.006",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_center.006",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.036",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.037",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.038",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.039",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.040",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Flower_petal.041",
+      "triangles": 20,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.001",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.002",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.003",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.004",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.005",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.006",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.007",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.008",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.009",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.010",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.011",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.012",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.013",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.014",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.015",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_blade.016",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Terrain_piece",
+      "triangles": 320,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_IslandGrass_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_base",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_glass",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_frame",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_frame.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_frame.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_frame.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_cap",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Lantern_candle",
+      "triangles": 124,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Lantern_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Path_slab",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Path_slab.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Path_slab.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_PathModule_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Rock",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Rock_01_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Rock.001",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Rock_02_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Rock.002",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Rock_03_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.001",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.002",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.003",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.004",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.005",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.006",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.007",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Shell_rib.008",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Terrain_piece.001",
+      "triangles": 320,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_ShoreSand_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Sign_post",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Sign_board",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Sign_text",
+      "triangles": 696,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Sign_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Terrain_piece.002",
+      "triangles": 320,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Grass_cap",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Transition_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_trunk",
+      "triangles": 96,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.015",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.001",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.001",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.016",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.002",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.002",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.017",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.003",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.003",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.018",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.004",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.004",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.019",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.005",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.005",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.020",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.006",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.006",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.021",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Tree_01_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_trunk.001",
+      "triangles": 96,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.007",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.007",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.022",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.008",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.008",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.023",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.009",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.009",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.024",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.010",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.010",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.025",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.011",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.011",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.026",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.012",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.012",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.027",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.013",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.013",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.028",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Tree_02_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_trunk.002",
+      "triangles": 96,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.014",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.014",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.029",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.015",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.015",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.030",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.016",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.016",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.031",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.017",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.017",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.032",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.018",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.018",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.033",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.019",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.019",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.034",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "Tree_branch.020",
+      "triangles": 48,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Crown_inner_volume.020",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Leaves.035",
+      "triangles": 200,
+      "uv_layers": 1,
+      "boundary_edges": 200,
+      "non_manifold_edges": 200,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_Tree_03_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.004",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.005",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.006",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.007",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Wall_stone.008",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Env_WallModule_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.004",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.005",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.006",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.007",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.008",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_pier.009",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.004",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.005",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.006",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.007",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arch_wedge.008",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Gate_Arch_00",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Gate_Arch_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.003",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.004",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.005",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.006",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_wood_plank.007",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_iron_strap",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_iron_strap.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_hinge",
+      "triangles": 124,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Door_hinge.001",
+      "triangles": 124,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Gate_Door_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Latch_backplate",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bolt_sliding",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Gate_Latch_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "RopeLoop_animated",
+      "triangles": 660,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_open_shell.001",
+      "triangles": 576,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_band.002",
+      "triangles": 384,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_band.003",
+      "triangles": 384,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_pivot_handle",
+      "triangles": 272,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_Bucket_Handle_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_open_shell",
+      "triangles": 576,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_band",
+      "triangles": 384,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Bucket_band.001",
+      "triangles": 384,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_Bucket_Open_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Drain_body",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Drain_lever",
+      "triangles": 60,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Drain_volume",
+      "triangles": 364,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_Drain_100ml_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_plinth",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_spout",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_action_top",
+      "triangles": 124,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_volume",
+      "triangles": 352,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_drop_0",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_Inflow_100ml_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_plinth.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_spout.001",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_action_top.001",
+      "triangles": 124,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_volume.001",
+      "triangles": 440,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_drop_0.001",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Tap_drop_1",
+      "triangles": 80,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_Inflow_200ml_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_hollow_body",
+      "triangles": 896,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_large_handle",
+      "triangles": 144,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_thick_rim",
+      "triangles": 512,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_01",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_01",
+      "triangles": 132,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_02",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_02",
+      "triangles": 220,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_03",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_03",
+      "triangles": 272,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_04",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_04",
+      "triangles": 180,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_05",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_05",
+      "triangles": 212,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_06",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_06",
+      "triangles": 244,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_07",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_07",
+      "triangles": 140,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_08",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_08",
+      "triangles": 316,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_09",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_09",
+      "triangles": 256,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_mark_10",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_fraction_10",
+      "triangles": 228,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_capacity",
+      "triangles": 32,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Cup_Water_3of10",
+      "triangles": 252,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_MeasuringCup_1L_01",
+      "triangles": 60,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_base",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_end",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_end.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_side",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_side.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_water",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Trough_target",
+      "triangles": 32,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Prop_WaterTrough_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_block",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_symbol",
+      "triangles": 44,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_LogicBlock_01_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_block.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_symbol.001",
+      "triangles": 24,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_LogicBlock_02_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_block.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Logic_symbol.002",
+      "triangles": 116,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_LogicBlock_03_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arc_fragment",
+      "triangles": 500,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arc_fragment.001",
+      "triangles": 500,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Arc_fragment.002",
+      "triangles": 500,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Station_base",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Station_panel",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Station_hint",
+      "triangles": 732,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_Station_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Ground_marker",
+      "triangles": 384,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_ViewpointMarker_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Whole_selectable_stone",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Word_label",
+      "triangles": 560,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_WordStone_01_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Whole_selectable_stone.001",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Word_label.001",
+      "triangles": 276,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_WordStone_02_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Whole_selectable_stone.002",
+      "triangles": 108,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "Word_label.002",
+      "triangles": 428,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    },
+    {
+      "object": "UCX_SM_Puzzle_WordStone_03_01",
+      "triangles": 12,
+      "uv_layers": 1,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "negative_scale": false
+    }
+  ],
+  "interpretation": "Foliage uses open two-sided leaf surfaces. Other boundary edges require review; no claim of rig-ready topology. Counts do not test intersections or animation."
+}
