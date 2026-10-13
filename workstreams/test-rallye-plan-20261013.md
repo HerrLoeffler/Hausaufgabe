@@ -54,3 +54,17 @@ Planungsentwurf in PR prüfen und anschließend die drei offenen Produktfragen m
 - Was darf noch nicht als erledigt gelten? Umsetzung, sichere serverseitige Bewertung, UX/Devices, Freitextregeln, Testlauf, CI, Integration, Staging, Nutzertest und Production.
 - Was muss vor Wiederholung geprüft werden? PR/Branch und Actions-Stand, damit Dokumentationsschritte nicht doppelt angelegt werden.
 - Genau ein nächster ausführbarer Schritt: offene Produktfragen besprechen und akzeptierte Entscheidungen in Plan/Übergabe aktualisieren.
+
+## 2026-10-13 neuer Ausführungsauftrag
+
+Nutzer fordert ausdrücklich ausführlichen dokumentierten Plan, danach direkte Umsetzung/Review/Tests und isoliertes Staging mit Spiel-Link. Früheres reines Planungsverbot ist dadurch aufgehoben; Production bleibt verboten. Aktueller main d3dd36d5, Web/Assessment8f869790, Games55e58e4, FastQuizPR2242e5f8b8e frisch geprüft. DocsPR235 offen/draft48a2424; kein zweiter Plan/Task. Eigener Checkout implementation/test-rallye-20261013; nativeWorktree im Projektmirror nicht möglich (Not a git repository), daher eigener frischer Clone. Shellnetzzugriff via autorisierteEscalation funktioniert.
+
+Live development_status.py nach frischemFetch:27aktiveWorkstreams,24Overlapwarnungen,11historischkritischveralteteBranches; eigenePlanfiles überlappen nur Koordination, Produktarbeit separat aufWebbasis. PRvergleich lokal ohneGITHUB_TOKEN, konkretePRs ergänzend viaConnector geprüft. CanonicalRelease API:gc39/8f869790/165Files. Umfangreiche Regeln inklGames/Assurance/Skills gelesen. Referenzprüfung: secure-student.js enthält alle11PublicPaperRenderer, assessment-core.js opaque IDs/Teilpunkte/solutiondeny; diese werden wiederverwendet. FastQuizclientScores werden ausdrücklich nicht übernommen.
+
+Detaillierter Plan ersetzt vorherigen Entwurf in gleicher Datei; Defaults aus akzeptiertem Auftrag verbindlich dokumentiert. ProductRuntimebranch feat/test-rallye-20261013 folgt nach gepushtemPlancheckpoint. DocsPR bleibt Dokumentation. KeineProducttests/Build/Deploy schon behauptet. Budget/Usage/actualModel unbekannt; keinePaidCalls/Reservierungen/Modellwechsel; alteVersuche bleiben erhalten. Skills reading:writing-plans,using-git-worktrees,executing-plans,TDD,brainstorming,frontend-design,firebase-hosting-basics; direkteAusführungsanweisung hat Vorrang vor generischererneuterApprovalrunde.
+
+AssuranceauswahlSEC04/06/07/08/11/14/17,PRIV07/17/20/12/13/14. Keine3DProduktion,img2threejs nichtrelevant für2DDOM/Testadapter. Keine laufenden eigenenDeploy/Buildrequests; lokaleProcessinventur sandboxed verweigert, keineausstehendenknownRequestIDs.
+
+NächsterSchritt: Plancheckpointcommit/push, dann isoliertenRuntimekandidaten mit Tests zuerst aufbauen.
+
+Menschliche Steuerung13.10.2026: „manuelle bewertung rausnehmen!!“ — manuelle Bewertung vollständig aus Rallye ausgeschlossen. Keine spätere manuelle Freigabe/Jury/Teilrunde; manualReview und unklare Textkeys blockieren gesamteRunde sichtbar. NormaleEditorfeatures außerhalbRallye unverändert. Plan aktualisiert vorRuntimebau.
