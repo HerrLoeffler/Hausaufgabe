@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>GradeCrew Games · Spiel auswählen</title>
+  <meta name="description" content="Fast Quiz, Fehlerjagd Deutsch und Vocab Rush: üben, Highscores spielen oder live mit deiner Klasse starten.">
+  <link rel="icon" href="assets/gradecrew/brand-icon-v1.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="shared/brand-core.css">
+  <script src="shared/games-catalog.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skipLink" href="#games">Zur Spielauswahl</a>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="GradeCrew Games Startseite"><img class="brandMark" src="assets/gradecrew/brand-icon-v1.svg" width="40" height="40" alt=""><span><strong>GradeCrew</strong><small>Games</small></span></a>
+    <nav class="topNav" aria-label="Navigation"><a href="#games">Spiele</a><a href="#join">Runde beitreten</a></nav>
+    <span class="labBadge">GAMES LAB</span>
+  </header>
+  <main class="shell">
+    <div class="heroLayout">
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">GRADECREW GAMES</p>
+        <h1 id="pageTitle">Dein Spiel.<br>Dein Modus.</h1>
+        <p>Allein trainieren, deinen Highscore verbessern oder gemeinsam mit der Klasse spielen.</p>
+        <a class="textLink" href="#games">Spiel auswählen <span aria-hidden="true">↓</span></a>
+      </section>
+      <section id="join" class="joinCard" aria-labelledby="joinTitle">
+        <p class="eyebrow">DU HAST EINEN RUNDENCODE?</p>
+        <h2 id="joinTitle">Hier bist du richtig.</h2>
+        <p>Wähle das Spiel deiner Klasse und gib den Code ein. Mit dem QR-Code kommst du direkt in die passende Runde.</p>
+        <form id="joinForm">
+          <label for="joinGame">Spiel</label>
+          <select id="joinGame" name="game" required><option value="">Spiel auswählen</option></select>
+          <label for="joinCode">6-stelliger Rundencode</label>
+          <div class="joinRow"><input id="joinCode" name="join" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="[0-9]{6}" maxlength="6" required placeholder="123456" aria-describedby="joinHint"><button class="primary" type="submit">Weiter →</button></div>
+          <small id="joinHint">Dein Kürzel gibst du im nächsten Schritt ein.</small>
+        </form>
+      </section>
+    </div>
+    <section id="games" class="library" aria-labelledby="gamesTitle">
+      <div class="sectionHeading"><div><p class="eyebrow">SPIELAUSWAHL</p><h2 id="gamesTitle">Was möchtest du machen?</h2></div><span id="gameCount" class="countBadge">3 Spiele</span></div>
+      <fieldset class="modePicker"><legend class="srOnly">Spielmodus</legend>
+        <label><input type="radio" name="hub-mode" value="practice" checked><span><b>01</b> Üben</span></label>
+        <label><input type="radio" name="hub-mode" value="highscore"><span><b>02</b> All-Time-Highscore</span></label>
+        <label><input type="radio" name="hub-mode" value="live"><span><b>03</b> Live mit Lehrkraft</span></label>
+      </fieldset>
+      <p id="modeDescription" class="modeDescription">Wähle Inhalte und Regeln für dein eigenes Training.</p>
+      <div class="filterBar"><div id="subjectFilters" class="filterGroup" aria-label="Nach Fach filtern"><button type="button" data-subject="all" aria-pressed="true">Alle Fächer</button></div><div class="filterTools"><button id="favoritesOnly" class="favoriteFilter" type="button" aria-pressed="false"><span aria-hidden="true">☆</span> Favoriten</button><label class="searchLabel"><span class="srOnly">Spiel oder Thema suchen</span><input id="gameSearch" type="search" placeholder="Spiel oder Thema suchen" autocomplete="off"></label></div></div>
+      <div id="gameGrid" class="games"></div>
+      <p id="resultsStatus" class="srOnly" role="status" aria-live="polite"></p>
+      <div id="emptyState" class="emptyState" hidden><h3>Kein passendes Spiel.</h3><p>Ändere deine Suche oder markiere ein Spiel als Favorit.</p><button id="resetFilters" class="secondary" type="button">Alle Spiele anzeigen</button></div>
+      <noscript><style>#joinForm,.modePicker,.filterBar,#modeDescription{display:none}</style><div class="fallback"><p>Öffne dein Spiel und wähle dort Üben, Highscore oder Live mit Lehrkraft:</p><a href="fast-quiz/">Fast Quiz →</a><a href="fehlerjagd-deutsch/">Fehlerjagd Deutsch →</a><a href="vocab-rush/">Vocab Rush →</a></div></noscript>
+    </section>
+    <section class="howItWorks" aria-labelledby="howTitle"><div><p class="eyebrow">IM UNTERRICHT</p><h2 id="howTitle">Eine Runde, drei Schritte.</h2></div><ol><li><b>1</b><span><strong>Lehrkraft stellt ein</strong>Spiel wählen, „Live mit Lehrkraft“ öffnen und die Runde vorbereiten.</span></li><li><b>2</b><span><strong>Klasse tritt bei</strong>QR-Code scannen oder Spiel und Rundencode eingeben.</span></li><li><b>3</b><span><strong>Gemeinsam starten</strong>Die Lehrkraft startet die Runde und sieht das Live-Scoreboard.</span></li></ol></section>
+    <footer class="footer"><span>GradeCrew Games · 3 Spiele, ein gemeinsamer Einstieg.</span><small>Favoriten bleiben in diesem Browser gespeichert.</small></footer>
+  </main>
+</body>
+</html>
