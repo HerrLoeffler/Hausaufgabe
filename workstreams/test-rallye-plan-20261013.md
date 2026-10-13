@@ -31,7 +31,7 @@ Nur Planungsdokumentation und Task-Zuordnung. Keine Produkt-/Spiel-/Testdatei, k
 ## Zwischenstand
 
 - Lokal geändert: keine lokale Checkout-Änderung; Dokumentation wird über GitHub-API auf eigenem Branch angelegt.
-- Auf GitHub gesichert (Commits): Plan/Handoff c0b409bbd750f4c244202b75979fd3f207402add; TODO cd858e9bc77005491e94adb8972479286c9175f2; Registry 868acab4867599320dcf4f64f007470497872d6c. Aktueller Branch-Head nach Übergabeupdate erneut prüfen.
+- Auf GitHub gesichert (Commits): Plan/Handoff c0b409bbd750f4c244202b75979fd3f207402add; TODO cd858e9bc77005491e94adb8972479286c9175f2; Registry 868acab4867599320dcf4f64f007470497872d6c. Finaler Dokumentationsbranch-Head zum Checkpoint: 2e2b8fcbd2f836f40fe2b7b4323af9326b5fc7fe.
 - Geprüft (Befehl / CI-Link / Ergebnis / Commit): keine Produktprüfungen ausgeführt oder beauftragt; Dokumentationsinhalt und PR-Diff nach dem Schreiben lesend prüfen.
 - Deployed (Ziel / URL / Commit / Nachweis): nicht zutreffend.
 - Gerätetest (Gerät / Version / Ergebnis): nicht zutreffend.
