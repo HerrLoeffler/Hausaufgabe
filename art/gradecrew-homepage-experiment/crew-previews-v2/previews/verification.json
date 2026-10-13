@@ -1,0 +1,34 @@
+{
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "document": 1440,
+      "dialog": 0,
+      "dialogClient": 0
+    },
+    {
+      "name": "ipad",
+      "width": 820,
+      "height": 1180,
+      "document": 820,
+      "dialog": 0,
+      "dialogClient": 0
+    },
+    {
+      "name": "iphone",
+      "width": 390,
+      "height": 844,
+      "document": 390,
+      "dialog": 0,
+      "dialogClient": 0
+    }
+  ],
+  "keyboard": true,
+  "manualReading": true,
+  "reducedMotion": true,
+  "externalRequests": [],
+  "errors": [],
+  "failedResponses": []
+}

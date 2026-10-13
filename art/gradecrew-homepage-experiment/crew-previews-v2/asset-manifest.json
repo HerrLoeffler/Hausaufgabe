@@ -1,0 +1,54 @@
+{
+  "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "files": {
+    "assets/brand-icon.svg": {
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2",
+      "bytes": 9232
+    },
+    "assets/classroom-lightblue.png": {
+      "sha256": "df7da4db142f17c158da9b61ea8a6ae30ade3852e2f1865ab1d736522ef734ea",
+      "bytes": 2071777
+    },
+    "assets/classroom-original.png": {
+      "sha256": "eaad8b8d81b19de8ebcfb326cc522af1e43aac3a56178e8231cb40692e9698a7",
+      "bytes": 2104486
+    },
+    "assets/coco-footer-guide.png": {
+      "sha256": "4412374a7da6817235156f05ef2596e5326c161cb23c21cac7251c6bf742aeb0",
+      "bytes": 116806
+    },
+    "assets/coco-help-phone.png": {
+      "sha256": "031ff6051c3953f3ce2f0b96af10b35850300a7d1d5abaff86e2255db744ccdd",
+      "bytes": 292570
+    },
+    "assets/cuddly-hedgehog.webp": {
+      "sha256": "50b641f7248f66e4adad3b49ce0b008e9eeaaa6512493feb41b364de2babdcf2",
+      "bytes": 125718
+    },
+    "assets/emmi-colors.png": {
+      "sha256": "33f0631ca6a471510a2bd28c85f1fbc58d3995ac561931caf19c0ac037151bc5",
+      "bytes": 313238
+    },
+    "assets/remy-microphone-lightblue.png": {
+      "sha256": "4451ffb47e72c52c67aa13cf8d7b14e2059058ecd6880d34d05177eaac47bb49",
+      "bytes": 1301297
+    },
+    "assets/remy-microphone.png": {
+      "sha256": "6152a5fa1a17558d4cdd07d948783e60560e54aa781717f95a94d631f404645b",
+      "bytes": 267808
+    },
+    "assets/remy-new-test-tablet.png": {
+      "sha256": "946db8428037934e04d1d92cbd9f02b7ab71bf98a9bfe11b56fd7c2237dd8c9e",
+      "bytes": 1564949
+    },
+    "assets/remy-tablet-lightblue.png": {
+      "sha256": "e0cca7c07cc3646a36995d48f9e8e2642ac084a3e901a1ab8124525a4afb7092",
+      "bytes": 1402696
+    },
+    "assets/wilma-grading.png": {
+      "sha256": "3d4a04beeff5e00060bb76b60f369d41cc576e893ffa74f87e93e50074026fc7",
+      "bytes": 377589
+    }
+  }
+}

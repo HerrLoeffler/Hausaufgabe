@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>GradeCrew · Crew-Einblicke V2 · Experiment</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="style.css"><script type="module" src="demo.mjs"></script>
+</head>
+<body>
+<svg class="icon-definitions" aria-hidden="true"><defs><symbol id="play" viewBox="0 0 16 16"><path d="M5 3.5 12 8l-7 4.5Z" fill="currentColor"/></symbol></defs></svg>
+<div class="experiment-bar"><span data-t="experiment">Separates Experiment · neue Crew-Einblicke</span><button id="compareOpen" type="button" data-t="compare">Remys Farbe vergleichen</button></div>
+<header class="topbar"><div class="brand"><img src="assets/brand-icon.svg" alt="" width="34" height="34"><strong>GradeCrew</strong></div><div class="header-actions"><button type="button" id="signIn" data-t="login">Anmelden</button><div class="languages" aria-label="DE / EN"><button type="button" data-language="de" aria-pressed="true">DE</button><button type="button" data-language="en" aria-pressed="false">EN</button></div></div></header>
+<main id="authView">
+<section class="hero" aria-labelledby="welcomeTitle">
+<div class="scene">
+<img class="classroom" src="assets/classroom-lightblue.png" alt="Coco, Remy, Emmi und Wilma im Klassenzimmer" width="1774" height="887" fetchpriority="high">
+<div class="hero-heading"><h1 id="welcomeTitle"><span data-t="welcome">Willkommen bei</span> GradeCrew.</h1><p data-t="subtitle">Digitale Tests. Schnell & einfach.</p></div>
+<div class="coco-invite"><span>Coco</span><p data-t="tryCrew">Lerne uns kurz kennen – wähle einen Namen.</p></div>
+<div class="figure-hits" aria-hidden="true"><button type="button" class="hit hit-coco" data-open="coco" tabindex="-1"></button><button type="button" class="hit hit-remy" data-open="remy" tabindex="-1"></button><button type="button" class="hit hit-emmi" data-open="emmi" tabindex="-1"></button><button type="button" class="hit hit-wilma" data-open="wilma" tabindex="-1"></button></div>
+</div>
+<div class="crew-names" aria-label="Crew">
+<button type="button" class="name-button" data-open="coco"><img src="assets/coco-footer-guide.png" alt="" class="name-portrait"><span class="name-copy"><strong>Coco</strong><span data-t="cocoRole">Dein Guide</span><small><svg aria-hidden="true"><use href="#play"/></svg><span data-t="short">Kurz ansehen</span></small></span></button>
+<button type="button" class="name-button" data-open="remy"><img src="assets/remy-tablet-lightblue.png" alt="" class="name-portrait"><span class="name-copy"><strong>Remy</strong><span data-t="remyRole">Erstellen</span><small><svg aria-hidden="true"><use href="#play"/></svg><span data-t="short">Kurz ansehen</span></small></span></button>
+<button type="button" class="name-button" data-open="emmi"><img src="assets/emmi-colors.png" alt="" class="name-portrait"><span class="name-copy"><strong>Emmi</strong><span data-t="emmiRole">Verbessern</span><small><svg aria-hidden="true"><use href="#play"/></svg><span data-t="short">Kurz ansehen</span></small></span></button>
+<button type="button" class="name-button" data-open="wilma"><img src="assets/wilma-grading.png" alt="" class="name-portrait"><span class="name-copy"><strong>Wilma</strong><span data-t="wilmaRole">Prüfen</span><small><svg aria-hidden="true"><use href="#play"/></svg><span data-t="short">Kurz ansehen</span></small></span></button>
+</div>
+<div class="tutorial-entry"><button type="button" id="tutorialStart" class="primary" data-t="meetCrew">Tutorial starten</button><small data-t="tutorialDuration">Ohne Konto · ca. 6–7 Minuten</small></div>
+</section>
+<section class="student-entry"><label for="testcode" data-t="student">Du hast einen Testcode?</label><form id="joinForm"><input id="testcode" name="code" placeholder="z. B. K7M4X2PA" maxlength="12" autocomplete="off"><button type="submit" class="primary" data-t="openTest">Test öffnen</button></form></section>
+<ul class="benefits">
+<li><img src="assets/coco-footer-guide.png" alt=""><div><strong data-t="benefitGuide">Dein Ratgeber</strong><small data-t="benefitGuideDetail">Hilft dir weiter</small></div></li>
+<li><img src="assets/remy-tablet-lightblue.png" alt=""><div><strong data-t="benefitCreate">Schnell erstellt</strong><small data-t="benefitCreateDetail">In wenigen Minuten</small></div></li>
+<li><img src="assets/emmi-colors.png" alt=""><div><strong data-t="benefitImprove">Frische Ideen</strong><small data-t="benefitImproveDetail">Neue Aufgabenvarianten</small></div></li>
+<li><img src="assets/wilma-grading.png" alt=""><div><strong data-t="benefitGrade">Direkt ausgewertet</strong><small data-t="benefitGradeDetail">Ergebnisse im Überblick</small></div></li>
+</ul>
+<p class="prototype-note" data-t="prototypeNote">Homepage-Experiment. Die Beispielansichten zeigen den Ablauf; sie sind keine echten Produktscreenshots.</p>
+<dialog id="gcHeroDialog" class="gcHeroDialog" aria-labelledby="gcHeroDialogTitle" aria-describedby="gcHeroDemoStatus">
+<button type="button" id="gcHeroDialogClose" class="gcHeroDialogClose" aria-label="Schließen" autofocus>×</button>
+<p id="gcHeroDialogEyebrow" class="gcHeroDialogEyebrow">Ein kurzer Einblick</p><h2 id="gcHeroDialogTitle"></h2>
+<p id="gcHeroDemoStatus"></p><ol id="demoSteps" class="demo-steps"></ol>
+<div id="gcHeroDemoWorkspace" class="gcHeroDemoWorkspace"></div>
+<div class="gcHeroDemoControls"><button type="button" id="gcHeroDemoPrev">Zurück</button><button type="button" id="gcHeroDemoNext">Weiter</button><button type="button" id="gcHeroDemoReplay">Nochmal ansehen</button><button type="button" id="gcHeroDemoNextCrew" hidden>Nächste Figur</button></div>
+<p id="demoNote" class="demo-note"></p>
+</dialog>
+<dialog id="compareDialog" class="compare-dialog" aria-labelledby="compareTitle"><button type="button" id="compareClose" class="dialog-close" aria-label="Schließen">×</button><h2 id="compareTitle" data-t="compTitle">Ein Remy. Ein Hellblau.</h2><p data-t="compBody">Hero-Szene und Einzelposen verwenden dieselbe sanfte Farbrichtung.</p><div class="colour-comparison"><figure><img src="assets/classroom-original.png" alt="Originalszene mit grauem Remy"><figcaption data-t="before">Vorher</figcaption></figure><figure><img src="assets/classroom-lightblue.png" alt="Neue Szene mit hellblauem Remy"><figcaption data-t="after">Hellblau</figcaption></figure><figure class="pose"><img src="assets/remy-new-test-tablet.png" alt="Original-Tabletpose"><figcaption data-t="before">Vorher</figcaption></figure><figure class="pose"><img src="assets/remy-tablet-lightblue.png" alt="Hellblaue Tabletpose"><figcaption data-t="after">Hellblau</figcaption></figure></div></dialog>
+<dialog id="noticeDialog" class="notice-dialog" aria-labelledby="noticeTitle"><h2 id="noticeTitle"></h2><p id="noticeBody"></p><p id="noticeTrial"></p><button type="button" id="noticeClose" class="primary" data-t="labClose">Weiter ansehen</button></dialog>
+</main>
+</body>
+</html>
