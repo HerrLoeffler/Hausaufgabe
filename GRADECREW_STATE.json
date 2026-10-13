@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "44ab6540a9ac0cd4a144dd25eb84a7198d22498b",
+    "observed_integration_head": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -56,22 +56,22 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success38353699126_commit_44ab6540a9ac0cd4a144dd25eb84a7198d22498b",
+      "combined_ci": "success38401650150_commit_8f8697901f8c1aea89897be855ca2872c82d0f2b",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success38353858238_receipt11791359970",
-      "staging_functions": "success38353858268_receipt11791594353",
+      "hosting_preview": "success38401855165_receipt11815871515",
+      "staging_functions": "success38401855293_receipt11816121752",
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "sourceauthoractualCuaDesktop/mobile/shortViewport +independentreview; liveanonymous/mobile/physicaldeviceunverified",
-      "user_acceptance": "pending; actual upload/test-creation and physical-device acceptance not performed",
+      "user_acceptance": "pending_gc39; no physical device, real practice submission, or paid generation test performed",
       "production": "not_requested",
-      "staging_assessment_functions": "success38353858268_receipt11791976375",
+      "staging_assessment_functions": "success38401855293_receipt11815766955_plus_new_callable_successful_create",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success38354325678_receipt11791699830"
+      "canonical_hosting": "success38403541381_receipt11816811004"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 164,
+    "preview_verified_files": 165,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin tests an actual material upload and test creation on canonical gc38 Staging; user/device acceptance remains pending. Production not requested.",
+    "next_action": "Martin tests canonical gc39 startup/login and explicitly published practice solutions after own submission; broader physical-device acceptance remains pending. Production not requested.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -154,7 +154,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc37-mobile-auth-20261012.json",
+    "canonical_request": "automation/canonical-staging-requests/gc39-feedback-20261013.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -420,6 +420,77 @@
       "production": "unchanged",
       "handoff": "workstreams/feedback-images10-20261013.md",
       "receipts": "workstreams/feedback-images10-release-receipts-20261013.json"
+    },
+    "feedback_gc39_20261013": {
+      "task": "GC-WEB-REPAIR-20261007",
+      "stage": "staging_deployed",
+      "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+      "tree": "17814c64d432c5deb04560cab49f3ae58c7f08ca",
+      "candidate": "e18b767030ece184a38145470f90c5aeaa374d93",
+      "pr": 233,
+      "ci": {
+        "failed": 38399603476,
+        "candidate": 38400685794,
+        "merge": 38401650150,
+        "conclusion": "success"
+      },
+      "services": {
+        "run": 38401855293,
+        "aiArtifact": 11816121752,
+        "assessmentArtifact": 11815766955,
+        "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+        "newCallable": {
+          "name": "configurePracticeSolutionRelease",
+          "operation": "Successful create",
+          "job": 115311282563
+        },
+        "cleanup": {
+          "name": "cleanupAssessmentPrivateOnQuizDelete",
+          "operation": "Successful update",
+          "job": 115311282563
+        }
+      },
+      "preview": {
+        "run": 38401855165,
+        "receiptArtifact": 11815871515,
+        "buildArtifact": 11815946311,
+        "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+        "verifiedFiles": 165,
+        "version": "2.3.1-gc39",
+        "unchangedCrewPNGs": 29,
+        "independentPublicHashCheck": true
+      },
+      "canonicalRequest": {
+        "id": "gc39-feedback-20261013",
+        "previewRunId": 38401855165,
+        "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b"
+      },
+      "productionChanged": false,
+      "rulesChanged": false,
+      "deviceTest": "not_performed",
+      "canonicalRun": 38403541381,
+      "canonicalStatus": "success",
+      "canonical": {
+        "project": "hausaufgabe-staging",
+        "channel": "live",
+        "url": "https://hausaufgabe-staging.web.app/",
+        "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+        "sourcePreviewRun": 38401855165,
+        "upstreamCiRun": 38401650150,
+        "version": "sites/hausaufgabe-staging/versions/582e47dbd89d2eef",
+        "previousLiveVersion": "sites/hausaufgabe-staging/versions/be68e23f1344e497",
+        "verifiedFiles": 165,
+        "workflowRun": 38403541381,
+        "functionsChanged": false,
+        "rulesChanged": false,
+        "productionChanged": false,
+        "deviceTest": "not_performed",
+        "receiptArtifact": 11816811004,
+        "independentPublicHashCheck": true
+      },
+      "userAcceptance": "pending",
+      "handoff": "workstreams/feedback-gc39-release-20261013.md",
+      "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json"
     }
   },
   "production": {
@@ -1128,7 +1199,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Martin tests new normal test creation, reset/voice intake and audio conversion. Private audio publication stays blocked until separately proven Rules/Gates; no automatic chat collection.",
+      "next_action": "Martin tests canonical gc39 startup/login and explicitly published practice solutions after own submission; broader physical-device acceptance remains pending. Production not requested.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -1199,6 +1270,15 @@
         "screenshot_local": "analysis/web-acceptance-20261007/staging-workspace-094546a4.jpg",
         "physical_device_acceptance": "not_performed",
         "paid_generation_test": "not_performed"
+      },
+      "latest_feedback_gc39_20261013": {
+        "stage": "staging_deployed",
+        "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+        "pr": 233,
+        "version": "2.3.1-gc39",
+        "handoff": "workstreams/feedback-gc39-release-20261013.md",
+        "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json",
+        "user_test": "pending"
       }
     },
     {

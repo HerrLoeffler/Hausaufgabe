@@ -498,10 +498,10 @@
     {
       "id": "web-repair-20261007",
       "title": "Web UI / Remy / gated audio choices",
-      "primaryBranch": "fix/staging-feedback-images10-20261013",
+      "primaryBranch": "fix/staging-feedback-gc39-20261013",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
-      "handoff": "workstreams/startup-flash-20261013.md",
+      "state": "integrated",
+      "handoff": "workstreams/feedback-gc39-release-20261013.md",
       "relatedBranches": [
         "feature/gc-web-polish-20261007",
         "feature/audio-web-repair-20261007",
@@ -515,7 +515,8 @@
         "fix/local-color-contract-20261011",
         "fix/gc-startup-flash-20261013",
         "feature/practice-solution-release-20261013",
-        "fix/gc-ai-01-generation-notes-20261013"
+        "fix/gc-ai-01-generation-notes-20261013",
+        "fix/staging-feedback-images10-20261013"
       ]
     },
     {
