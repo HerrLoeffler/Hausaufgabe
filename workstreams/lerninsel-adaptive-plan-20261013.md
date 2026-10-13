@@ -23,3 +23,7 @@ Genau nächster Schritt: Zentrale legt Martin Übungs-MVP für Web-first samt be
 ## Gesicherter Dokumentationscheckpoint
 
 PR230 offen/Draft, Remote-Dokumentkandidat bdda1a03677fb3c3f9f83439b9d274a275c2dfa6 und lokaler0948efd6f477a2a95e76db891569308f318e3636 haben denselben Tree56a8e5d38d4f86ade9c26a24d006ea11fa4b3b0c. Acht neue Dokumentdateien, keine Produktdatei verändert. Folgender Metadatennachtrag ergänzt nur PR-/Prüfnachweis; kein weiterer Review-/Forschungsloop. Abschlussreadback prüft alle acht Gitblob-SHAs, kein Runtime-PASS.
+
+## 13.10.2026 · Menschliche Korrektur nach Browserprobe
+
+PR234-Teacherflow ausdrücklich nicht akzeptiert: Lehrkraft soll Tests/etwa zehn feste Fragen wie beim bestehenden digitalen Leistungsnachweis vorgeben; die Mechanikparameter und Levelzusammenstellung entstehen automatisch. [Korrigierter Ablauf und nächste Probe](../docs/games/lerninsel/20261013-adaptive/automatische-test-umsetzung.md). Appschemas frisch an8f8697901f8c1aea89897be855ca2872c82d0f2b geprüft; diese ergänzen historischen44ab-Beleg, kein laufender Test-/Provideraufruf. Der Mapper ist Vorschlag, keine neue Implementierungsfreigabe aus „Überleg dir“. Geplante Freigabevorschau ist fachlich, nicht manuelles Levelbauen. Alte Budget-/Task-/Probe-/Testbelege erhalten.

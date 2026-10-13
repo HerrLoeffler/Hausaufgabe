@@ -1,5 +1,7 @@
 # Entscheidungsvorlage: Lerninsel aus Lehrer-Tests
 
+Aktuell präzisiert durch [Martins Korrektur des Teacherflows](automatische-test-umsetzung.md): Lehrkraft gibt etwa zehn Aufgaben vor; daraus entstehen automatisch Mechanikparameter und Level. Kein normales manuelles Rätselkonfigurieren.
+
 **Machbar ist eine geprüfte 3D-Spielwelt, die Lehrer-Tests als Daten einsetzt.** Neue Aufgaben ändern Worte, Einheiten, Vorlagen und begrenzte Routen, gewöhnlich ohne neuen Enginebuild oder neue Modelle. Nicht jede Frage passt als Rätsel; ein gleichwertiges Aufgabenpanel bleibt verfügbar.
 
 Empfehlung: zuerst ausdrücklich freigegebene **Übung**, Deutsch/Mathematik, eine Referenzszene mit vier Bausteinen. Freie AI-3D-/Codegeneration pro Test wäre teurer, schwerer fachlich zu prüfen und deutlich wartungsintensiver. Der vorhandene serverseitige Assessmentkern bleibt Bewertungsinstanz; Lösungen gehören nicht in Schülerpakete. Richtigkeitsabhängige Tore können bei Prüfungen Lösungen verraten und brauchen ein anderes Konzept.
