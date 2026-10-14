@@ -1,4 +1,20 @@
-# Aufgabe: GC-LEARNING-WISSENSREISE-01
+# Aufgabe GC-LEARNING-WISSENSREISE-01 — aktueller Stand14.10.2026
+
+- Ausführender Owner: **wissensreise_implementation**, Fachagent; ursprüngliche Planung durch wissensreise_plan ist unten als Historie gekennzeichnet.
+- Koordinator: bestehende GC · Games-Zentrale, Thread01a11864-3ec7-7091-acc0-9ff292f530f3.
+- Status: **staging_deployed / isolated_preview_only**. Code noch nicht integriert; user_tested=false, Production unverändert.
+- Runtimebranch: feat/wissensreise-20261014, [DraftPR238](https://github.com/HerrLoeffler/Hausaufgabe/pull/238), unveränderter geprüfter/deployter Commit **7b35f9ff23c5b824ca0e85402a5270751c0b06c5**. BasisGC39 8f8697901f8c1aea89897be855ca2872c82d0f2b.
+- Main-Dokumentationsweg: docs/wissensreise-plan-20261014, [DraftPR237](https://github.com/HerrLoeffler/Hausaufgabe/pull/237); Planfreigabe mit korrigiertem Testeingang, scoped TODO/Registry/STATE und dauerhafte Receipts. Nicht nur zur Besprechung; keine Main-Mergefreigabe.
+- Belege: exakte Node22-CI38574847338 erfolgreich,285Functions-/6DOMtests, unabhängiger Code- und Browserreview. Hosting170/170Payload-Hashes,12neueFunctionsACTIVE,43bestehende unverändert; kanonisches Staging und Rules unverändert. [Releasebeleg](../docs/learning/wissensreise-evidence-20261014/staging-7b35.json).
+- Ziel: eigener vorhandener oder mit Remy erstellter Test → passende Varianten und geführtes Lernen/freies Üben → bewusste Prüfung/Freigabe → Link/QR → kontinuierliches Lernen ohne Noten/manuelle Bewertung.0/120/180Sekunden; allein Countdown beendet Zeitrunde. Budget3×12Puffer und ehrliche Wiederholung beiAusfall/Kappe.
+- Noch offen: tatsächlich angemeldeter eigener Test und Cloudablauf, Providersemantik/Nachfüllungs-IAM, physische Geräte, Klassenlast und Nutzerabnahme. Kein vollständiger Abschluss aller ursprünglichen Masterplan-Ausweitungen.
+- Genau nächster Schritt: Martin öffnet [isolierte Wissensreise](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html), meldet sich über [Anmeldung/Testeditor](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/index.html) an und wählt einen eigenen inaktiven Test.
+
+## Historie: ursprüngliche Planungsübergabe vor dem Umsetzungsauftrag
+
+Die folgenden ursprünglichen Planungsabschnitte dokumentieren den damaligen Stand vor Genehmigung und Codearbeit. Aussagen wie „zur Besprechung“, „branch_only“ oder „kein Produktcode/Deploy“ gelten ausschließlich für diese Historie. Die späteren Umsetzungs- und Releaseabschnitte sowie der aktuelle Kopf oben ersetzen sie für den heutigen Stand.
+
+### Ursprünglicher Planungsauftrag GC-LEARNING-WISSENSREISE-01
 
 - Aktualisiert: 2026-10-14 (UTC; genaue Speicherzeit im Git-Commit).
 - Verantwortlicher Fachchat: wissensreise_plan, ausführende Produktplanung/Dokumentation.
