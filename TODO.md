@@ -537,3 +537,7 @@ ActualHTTP all29 packaged Crew PNGs agree canonical/localHTTP/localSource/build.
 Private Hörtext is never auto-published. New fromTask preserves its already-public question; listening tasks use one explicit publicquestion field, canonical clearing cannot revive nested old criteria. Only playable listening R/F uses generic DE/EN procedural fallback; it does not prove an unidentified old recording contains a sufficient statement. Userq5/q8 semantics unknown without testcode. Old criterion-less MC tasks need explicit teacher-reviewed public instructions; no migration performed. No real attempts/deletion/paid generation/user-data writes. User acceptance remains separate.
 
 Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-reconciliation-20261011.md and release-proof-20261011/ (component/canonical receipts, full assets, local alignment/CSS backup proofs, service equality, independent reviews, browser/HTTP smoke). Final STATE/TODO/registry update is documentation only; no new product release.
+
+
+### GC-PLUGINS-01 — Godot Beratung (14.10.2026)
+- [x] Offizielle Engine-/Lizenz-/Webexport-Dokumentation gegen GradeCrew-Produktionsvorgaben eingeordnet: neue2D-Lernspiele8/10, Kern-Webapp-Ersatz2/10, sofortige Unreal-Migration3/10. Reine Recherche, kein Installations-/Migrationsauftrag. [Begründung und Grenzen](workstreams/plugins-pdfcraft-pilot-20261011.md). Optionaler Folgepunkt: ein2D-Referenzabschnitt und echter Ziel-iPad-Vergleich, nur bei gesondertem Auftrag.
