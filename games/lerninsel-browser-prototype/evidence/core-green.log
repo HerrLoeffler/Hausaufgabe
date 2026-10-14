@@ -1,0 +1,22 @@
+✔ teacher authored question and context run exactly, not default examples (1.270125ms)
+✔ custom fraction and unit drive measured result (0.533792ms)
+✔ invalid fraction and unrepresentable scale cannot be launched (0.325625ms)
+✔ contradictory visible fraction is rejected (0.097083ms)
+✔ German verb selection requires sentence context and valid chosen options (0.102417ms)
+✔ ordering accepts explicitly entered alternatives (0.109959ms)
+✔ duplicate tokens are ambiguous and invalid orders are rejected (0.06ms)
+✔ matching keeps pairs, validates empty/duplicate answers (0.117708ms)
+✔ teacher edit cannot change already compiled round (0.069708ms)
+✔ unknown type, oversized lesson, empty title and prompt fail (0.116125ms)
+✔ default four stations compile and are answerable (0.106959ms)
+✔ changing teacher option texts clears stale correctness before launch (0.116708ms)
+✔ explicit whole and absolute fraction cannot contradict configured amount (0.249833ms)
+✔ unrelated teacher question cannot silently become a measuring puzzle (0.090583ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.163541

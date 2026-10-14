@@ -1,0 +1,45 @@
+✔ teacher authored question and context run exactly, not default examples (1.262834ms)
+✔ custom fraction and unit drive measured result (0.503833ms)
+✔ invalid fraction and unrepresentable scale cannot be launched (0.295084ms)
+✔ contradictory visible fraction is rejected (0.111875ms)
+✔ German verb selection requires sentence context and valid chosen options (0.105875ms)
+✔ ordering accepts explicitly entered alternatives (0.108875ms)
+✔ duplicate tokens are ambiguous and invalid orders are rejected (0.059125ms)
+✔ matching keeps pairs, validates empty/duplicate answers (0.119208ms)
+✔ teacher edit cannot change already compiled round (0.082916ms)
+✔ unknown type, oversized lesson, empty title and prompt fail (0.123167ms)
+✔ default four stations compile and are answerable (0.109542ms)
+✔ changing teacher option texts clears stale correctness before launch (0.118ms)
+✔ explicit whole and absolute fraction cannot contradict configured amount (0.258625ms)
+✖ unrelated teacher question cannot silently become a measuring puzzle (2.271458ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.159958
+
+✖ failing tests:
+
+test at games/lerninsel-browser-prototype/tests/core.test.mjs:21:1
+✖ unrelated teacher question cannot silently become a measuring puzzle (2.271458ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(compileLesson({title:'Deutsch',tasks:[{id:'m',type:'measure',subject:'Deutsch',prompt:'Welche Wörter sind Verben?',context:'Die Kinder singen.',capacity:1,unit:'L',numerator:3,denominator:10}]}).errors.some(s=>s.includes('Messstation')))
+  
+      at TestContext.<anonymous> (file:///Users/martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-browser-prototype/games/lerninsel-browser-prototype/tests/core.test.mjs:21:89)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
