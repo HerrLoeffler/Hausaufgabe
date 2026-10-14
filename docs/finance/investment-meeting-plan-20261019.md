@@ -1,155 +1,165 @@
-# GradeCrew – Plan für das Erstgespräch am 19. Oktober 2026
+# GradeCrew – Gesprächsplan und Präsentation V4
 
-Stand: 13.10.2026. Unterauftrag von GC-FINANCE-BAYSTARTUP-20261008. Zweck: Beratung und mögliche Finanzierung. Gesprächspartner vom Nutzer bestätigt: Philipp Geim von BayStartUP. Dauer und Ort noch unbekannt. Der zunächst beauftragte Plan wurde auf ausdrücklichen Folgeauftrag in eine editierbare PowerPoint umgesetzt. Dieses Dokument ist die vollständige Gesprächsgrundlage; es enthält kein Finanzierungsangebot.
+Stand: 14.10.2026. Bestehende Task GC-FINANCE-BAYSTARTUP-20261008. Gespräch am Montag,19.Oktober2026 mit Philipp Geim von BayStartUP: Erstberatung und mögliche Finanzierung, kein fertiges Beteiligungsangebot. Dauer und Ort nicht bestätigt. Version4 ist eine vollständige inhaltliche/optische Neufassung nach konkreter Nutzerkritik, einschließlich GradeCrewGames. Versionen1–3 und private Finanzierungsoriginale bleiben erhalten.
 
-## 1. Was Montag erreicht werden soll
+## 1. Ziel des Gesprächs
 
-Wir wollen einen realistischen Weg vom im eigenen Unterricht erprobten Produkt zu ersten rechtlich und technisch sauber betriebenen, zahlenden Piloten. Am Ende sollen drei Dinge feststehen: welcher nächste Meilenstein sinnvoll ist, welche Fachleute und Pilotpartner helfen können, und wie wir den dafür erforderlichen Kapitalbedarf ermitteln.
+GradeCrew kurz und verständlich vorstellen und herausfinden, wie es sinnvoll weitergeht: passende Partner, erste bezahlte Piloten, qualifizierte technische/datenschutzrechtliche/geschäftliche Begleitung und realistische Kostenorientierung. Wir benötigen noch keine erfundene Investmentsumme, sondern Hilfe beim Bestimmen des nächsten sinnvollen Schritts und seiner Kosten.
 
-Einstiegsvorschlag: „Ich habe GradeCrew aus einem konkreten Problem im Unterricht entwickelt und im eigenen Alltag getestet. Der Kern hilft Lehrkräften, digitale Aufgaben vorzubereiten, zu prüfen und mit der Klasse durchzuführen. Ich möchte jetzt herausfinden, wie daraus ein verlässlich betreutes, zahlendes Pilotangebot wird – und welche Finanzierung dafür wirklich sinnvoll ist.“
+Die Web-App im Browser ist das größte und zentrale Hauptprodukt und Schwerpunkt der Vorstellung. Danach folgt die GradeCrewApp: dieselbe Web-App als Handy-App für Lehrkräfte, um Tests zu erstellen, zu überblicken und einzusehen. GradeCrewSecure ist für die Schüler-Testdurchführung vorgesehen; geschützter Prüfungsmodus bleibt ein Entwicklungsziel des iPad-Prototyps. GradeCrewGames ergänzt spielerisches Üben und wird als eigener kurzer Bereich mit unterschiedlichen Entwicklungsständen vorgestellt.
 
-Martins ergänzte Ziele: kurzfristig bereit für einen Bundeslandpartner, mittelfristig Bundeslandpartner, langfristig VIDIS-Anbindung. Diese Ziele sind noch zu erreichende Stufen, keine derzeitigen Zusagen oder Freigaben.
+## 2. Fünf Kapitel
 
-Erst 3–5 Minuten Vorstellung beziehungsweise kurze Demo, anschließend Gespräch. Die Präsentation umfasst 14 Hauptfolien plus 6 Anhangfolien. Für den Einstieg ausgewählte Folien nutzen; alle Folien sind Gesprächsunterstützung, kein zwingender durchgehender Vortrag. Die genaue Gesprächsdauer ist noch unbekannt.
+1. **Ich, Martin**
+2. **Web-App**
+3. **Apps & GradeCrewGames**
+4. **Ziele**
+5. **Offene Fragen & Wünsche**
 
-## 1a. Fünf persönliche Fragen an Philipp Geim
+Die sichtbare Folienfußzeile verwendet stets den passenden Kapitelindex, keinen zusätzlichen wechselnden Unterkapitelnamen. Der Einstieg heißt „Gesprächsplan“, nicht „Unser Gesprächsplan“. Das Cover enthält ausschließlich „GradeCrew“ und das Originalzeichen/Logo auf hellem Hintergrund: keine Crew, kein Slogan, keine Unterheadline, kein Gesprächspartner/Datum.
 
-Die offizielle [LAGARDE1-Gründungsberatungsseite](https://lagarde1.de/grundungsberatung/) beschreibt Philipp Geim als BayStartUP-Startup-Coach für digitale Geschäftsmodelle, mit Themen von Team und Geschäftsmodell bis Finanzierung. Deshalb richten wir das Erstgespräch auf konkrete Empfehlungen und nächste Schritte aus; eine eigene Investorenrolle oder garantierte Vermittlungen werden nicht angenommen. Quelle am 13.10.2026 gelesen.
+## 3. Vorstellung und Produktgeschichte
 
-1. **Landespartner:** „Welchen Weg empfiehlst du uns zu einem Bundeslandpartner? Welche zuständige Stelle sollten wir zuerst ansprechen, und könntest du beim richtigen Kontakt helfen?“
-2. **Bezahlter Pilot:** „Welches erste Kundensegment und welchen bezahlten Pilot würdest du empfehlen? Wie testen wir Zahler, Preis und Nutzen – und welche Nachweise würdest du danach sehen wollen?“
-3. **Readiness und Fachleute:** „Welche Lücken sollte ein externer Reviewer zuerst prüfen, damit unser Kernangebot belastbar partnerfähig wird? Kennst du geeignete Code-/Security- und Datenschutzfachleute für ein kleines klar bepreistes Paket?“
-4. **Finanzierung des nächsten Schritts:** „Wie würdest du den Bedarf bis zum nächsten Readiness-Meilenstein planen? Welche Kosten und Gründerzeit sollten hinein, und passen zunächst Pilotumsatz, Förderung oder Beteiligung?“
-5. **Coaching und Vereinbarung:** „Welches Coaching oder Unterstützungsangebot passt jetzt zu uns? Welche drei nächsten Schritte, Unterlagen und Ansprechpartner sollten wir mit einem Folgetermin festlegen?“
+### Ich, Martin
 
-Marken-, Steuer-, Vertrags- und Schulrechtsfragen bleiben im ausführlichen Katalog. Philipp bitten wir um Orientierung und passende Fachkontakte; den persönlichen Steuerstatus beziehungsweise rechtliche Freigaben entscheidet qualifizierte Beratung oder die zuständige Stelle. Einstieg weiterhin 3–5 Minuten mit synthetischer Demo; keine Gesprächsdauer, Programmaufnahme oder Kontakte zugesagt.
+Die direkt bestätigte persönliche Kurzvorstellung ist vollständig in der lokalen Präsentation und lokalen Gesprächsplanfassung enthalten. Alter und Hobbys bleiben im lokalen Artefakt; öffentliches Repo dokumentiert nur Struktur und Herkunft der Nutzerbestätigung.
 
-## 2. Fakten und offene Nachweise
+GradeCrew entstand aus Martins eigenem Unterrichtsalltag und wurde dort persönlich erprobt. Keine weiteren biografischen Angaben, Schulnamen, Berufsstatusdetails oder ein erfundenes Gründerfoto ergänzen.
 
-- Nutzerbericht: Martin erlebt das Produkt im eigenen Unterrichtsalltag als sehr hilfreich. Einsatzumfang, Zeitersparnis und Rückmeldungen weiterer Lehrkräfte sind noch zu erfassen. Das ist noch keine zahlende Traktion oder repräsentative Wirksamkeitsstudie.
-- Technischer Stand laut frisch gelesenen Projektunterlagen und übergebenem Releasebeleg: kanonisches Staging gc39, Source 8f8697901f8c1aea89897be855ca2872c82d0f2b, 165 Dateien. CI/Review und getrennte Hosting-/Functions-Nachweise vorhanden. Keine daraus abgeleitete Production-, Datenschutz- oder Gerätefreigabe; gc39-Browser-/Geräteabnahme noch offen.
-- Produktkern: Tests erstellen und überarbeiten; Material, Bilder und Audio; mehrere Aufgabentypen; Zugang per Code/Link/QR; serverseitige Abgabe/Bewertung; kontrollierte Lösungen, explizite Übungsfreigabe; Crew-Assistenten. Promptregeln verbessern Aufgabenhinweise, sind keine Garantie fehlerfreier Aufgaben.
-- Mobile Website und iOS-Arbeit vorhanden; TestFlight-Upload 0.1.18 (37) belegt, Verfügbarkeit auf Martins Geräten nicht allein dadurch bewiesen.
-- Games/FastQuiz/Lerninsel/Pizza haben unterschiedliche Prototyp-/Planungsstände und gehören nicht als durchgehend fertiges Verkaufsangebot in den Hauptpitch.
-- Offen: bestätigte zahlende Kunden/Umsätze, Verträge, Pilotfreigaben, aktueller steuerlicher Status, Rechtsform, tatsächliche Kosten und Gründervergütung. Frühere Finanzierungszahlen sind unbestätigte Szenarien und werden nicht als aktueller Bedarf präsentiert.
+### Web-App
 
-### VIDIS: belegte Anforderungen, nicht unser bereits erreichter Status
+Sichtbarer Folientitel nur **„Web-App“**, kein Werbetitel. Zugang für Lehrkräfte und Lernende. Ablauf:
+- Testbedingungen und Vorbereitung mit Remy.
+- Lehrkraft prüft und überarbeitet mit Emmi.
+- Zugang über QR-Code, Testcode oder Link.
+- Antworten abgeben und Ergebnisse auswerten.
 
-Die offizielle [VIDIS-Teilnahmeseite](https://www.vidis.schule/teilnahmeprozess/) verlangt derzeit Zusammenarbeit mit mindestens einem Bundesland; das Partnerland kündigt Anbieter beim VIDIS-Team an. Vorbereitung ohne Partnerland ist möglich, ein eigenes Onboarding dafür erst in Vorbereitung. Formal genannt werden separater Login, WebApp, OIDC-Client und fertig entwickeltes Schulangebot; native Apps können derzeit nicht angebunden werden. Die digitale Datenschutz-Selbstauskunft benötigt AVV/TOM, AGB/Nutzungsbedingungen, Datenschutzerklärung und AVVs mit Subdienstleistern; alte Word-Versionen werden nicht angenommen. Auf erste Einschätzung folgen technische Test-/Produktivanbindung, finale Datenschutzprüfung und länderspezifische Freigaben. Eine Freischaltung aller Länder erfolgt nicht automatisch; zusätzliche Prüfungen sind möglich. Dauer hängt unter anderem von Unterlagen und Ressourcen ab. Gelesen am 13.10.2026; keine Anmeldung, Zusage oder GradeCrew-Prüfung erfolgt.
+Eine eigene große Produktfolie zeigt Testvorbereitung und Schüleraufgabe nebeneinander als schematische, ausdrücklich synthetische Beispielansichten. Keine echten Schülernamen, Antworten oder Materialien veröffentlichen; kein Screenshot einer tatsächlichen Oberfläche behaupten. Vorhandene Bild-/Audiomöglichkeiten und Materialupload können mündlich erwähnt werden; die Folien werden nicht mit technischen Details überladen. Die Lehrkraftprüfung ist Bestandteil des Ablaufs.
 
-### Kurze Vorstellung von Martin
+### Die Crew
 
-„Ich bin Martin, Gründer von GradeCrew. Ich habe GradeCrew aus meinem eigenen Unterrichtsalltag heraus entwickelt und selbst im Alltag getestet. Mein Ziel ist, digitale Tests einfacher vorzubereiten und durchzuführen. Jetzt möchte ich klären, wie daraus ein verlässliches, zahlendes Pilotangebot wird.“ Nur bekannte Angaben verwendet; Nachname, konkreter Beruf/Schultyp und zusätzliche Biografie bleiben ohne Nutzerbestätigung offen.
+Sichtbarer Titel: **„Die Crew begleitet den Arbeitsablauf“**. Coco steht **übergeordnet** in einer Supportzeile mit „Hilfe & Orientierung“. Darunter liegen drei große bebilderte Testrollen in Reihenfolge:
+**Remy – Test vorbereiten → Emmi – Verbessern → Wilma – Überprüfen**.
+Keine zweite Textvorstellung, keine vier gleichrangigen Ablaufkarten.
 
-### Website und die beiden Apps
+### Meine Erfahrung im Unterricht
 
-Die **Web-App im Browser ist das größte und zentrale Hauptprodukt** und erhält den Schwerpunkt der Vorstellung. Danach folgen die Teacher-App als App-Abbildung der Web-App für Lehrkräfte und die Secure-App für die vorgesehene Testdurchführung durch Schüler. Diese Reihenfolge ist im Verzeichnis und in den Produktfolien ausdrücklich sichtbar. Ablauf des Hauptprodukts: Test mit Remy vorbereiten, als Lehrkraft prüfen/mit Emmi verbessern, per Code/Link/QR teilen, Antworten abgeben und Ergebnisse auswerten. Materialupload bis10Dateien, Bild-/Höraufgaben und kontrollierte Übungs-/Prüfungslösungen gehören zum vorhandenen Kern. Die Crewrollen sind Coco (Hilfe/Orientierung), Remy (Erstellen), Emmi (Verbessern), Wilma (Prüfen). Zwei schematische, ausdrücklich synthetische Beispielansichten erläutern Erstellung und Schüleraufgabe; keine Aufnahmen echter Schüler oder Nutzerkonten.
+Die Aussagen sind ausdrücklich Martins persönliche Erfahrung:
+- Im Unterricht bereits getestet.
+- Den Kindern macht es Spaß.
+- Es funktioniert in meinem Alltag.
 
-Die zwei Apps werden anhand tatsächlicher Repo-Ziele als **GradeCrew Teacher** und **GradeCrew Secure** eingeordnet, nicht als zwei Plattformversionen derselben App oder fertige Games-App. Quelle jeweils nativer Stand77119be5168150f7fa14076565b5099e856cb8d4:
+Anschließende offene Frage: **„Wie verhält sich GradeCrew bei mehr Nutzern und höherem Datenverkehr?“** Keine repräsentative Studie, bestätigte Nutzerzahl, Lernwirksamkeitsmessung oder Lastgarantie aus dem Nutzerbericht ableiten.
 
-- [GradeCrew Teacher](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewTeacher/README.md): iPhone/iPad-App für Lehrkräfte, die die Browser-Web-App abbildet und zur Erstellung digitaler Leistungsnachweise dient. Die Teacher-App ist ein Zugang zum gemeinsamen Webprodukt, kein unabhängiges zweites Kernprodukt. Native Eingabehilfen für Remy sowie Teilen/Downloads ergänzen diesen Zugang. TestFlight0.1.18(37) wurde hochgeladen, Run38282021673. Apple-Verfügbarkeit und Geräteabnahme werden nicht daraus abgeleitet.
-- [GradeCrew Secure](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewSecure/README.md): iPad-Entwicklungsprototyp, in dem Schüler ihre Tests ausführen sollen; Testcode und Schüleransicht bilden den vorgesehenen Zugang. Geschützter Prüfungsmodus ist Entwicklungsziel; native Freigabe, Hardware-/Integrationstests offen. Keine Gerätesperre-/AAC-/AppStore-/Sicherheitsgarantie behaupten. Alte Backend-Negativaussagen des Prototyp-README beschreiben nicht automatisch den heutigen Websitebackend.
+### GradeCrew App
 
-## 2a. Martins drei Ziele und unsere Arbeitsdefinition
+Sichtbarer Titel **„GradeCrew App“**, kein „Teacher“ auf sichtbaren Folien. Die Web-App als Handy-App: Tests erstellen, überblicken und einsehen. Phoneframe ist ein gekennzeichnetes Schema.
 
-| Ziel | Was wir dafür im Plan klären | Welcher Nachweis fehlt heute? |
+Interne Einordnung: das tatsächliche Repo-Ziel heißt GradeCrewTeacher; es integriert den gemeinsamen Webablauf in eine iPhone-/iPad-App und ergänzt native Eingabe-/Teilen-/Downloadhilfen. TestFlight0.1.18(37)-Upload wurde belegt; Geräteabnahme/Apple-Verfügbarkeit/AppStorefreigabe bleiben getrennte Nachweise. Kein unabhängiges zweites Webprodukt oder bereits allgemein verfügbarer Store-Release behaupten.
+
+### GradeCrew Secure
+
+Sichtbarer Status: **„iPad · Entwicklungsprototyp“**.
+**Ziel: Tests in einem geschützten Prüfungsmodus durchführen.** Während des Tests den Prüfungsmodus nicht verlassen und andere Apps nicht als Schummelhilfe nutzen. Das ist die gewünschte Funktion, keine bereits geprüfte unverlassbare/100%schummelsichere Gerätesperre. Native Freigabe, Hardware-/Integrationstests und AAC-Entitlement nicht aus einer Anfragedatei ableiten. Schematischer Tabletrahmen ist entsprechend beschriftet.
+
+### GradeCrew Games
+
+Eine einzelne anschauliche Folie: **„GradeCrewGames“** / spielerisch üben. Beispiel **FastQuiz**: kurze Quizrunden mit Aufgaben und Rückmeldung. Schematische Beispielansicht einer binomischen Formel, klar als Testversion gekennzeichnet. Weitere Spiele und Lernwelten sind in Entwicklung; keine durchgehend fertige Produktpalette, AppStorefreigabe oder zahlende Schulkunden behaupten.
+
+Interner Nachweis: bestehende FastQuiz-HDF auf aktuellem main wurde14.10.gelesen; isolierter Stagingpreview und eine synthetische Teacher-/Student-Runde sind dokumentiert. Keine physische Geräte-/Kamera-/Klassenlastabnahme daraus. Der dokumentierte Previewkanal läuft am19.10.um11:19CEST aus; eine Live-Demo am Gesprächstermin ist damit nicht zugesagt. Lerninsel-/Kochspielprofile im Gamesguide sind Entwicklungs-/Produktionsvorgaben, kein pauschaler Fertignachweis. Keine neuen Spiele, Builds oder Deployments für diese Präsentation starten.
+
+## 4. Ziele – vier Horizonte
+
+| Horizont | Ziel | Was wir klären müssen |
 |---|---|---|
-| **Kurzfristig: bereit für einen Bundeslandpartner** | Abgegrenzten stabilen Angebotskern, Geräte-/Browserabnahme, Datenschutz- und Vertragsunterlagen, unabhängigen Code-/Security-/Rechtereview, Support/Restore und pädagogische Fehlerkontrolle priorisieren; OIDC-Fähigkeit zunächst fachlich einschätzen lassen. | Eine bestätigte Readiness-/Gap-Prüfung mit Verantwortlichen, Aufwand und offenen Punkten. Aktuelles Staging und CI allein reichen nicht. OIDC-Anbindung nicht als implementiert behaupten. |
-| **Mittelfristig: Bundeslandpartner** | Zuständige Person, Kooperationsmodell und konkrete Anforderungen eines Landes finden. Einzelne Pilotlehrkräfte, Schul-LOI oder Schulkauf sind hilfreich, aber nicht automatisch Landespartnerschaft. | Tatsächliche bestätigte Zusammenarbeit und zuständiger Landespartner für den vorgesehenen Teilnahmeweg. |
-| **Langfristig: VIDIS-Anbindung** | Den offiziellen Teilnahmeprozess und die jeweilige Landesfreigabe als eigene Meilensteine mit Kosten/Ownern planen. SSO-Zugang, Lizenzverkauf, Budget und Zahlung bleiben getrennte Geschäftsfragen. | Erfolgreich abgeschlossene Prüfung/Anbindung und konkrete Freigabe; weder bundesweite Aktivierung noch Umsatz sind garantiert. |
+| Kurzfristig | Für einen Bundeslandpartner vorbereiten | Kernnachweise, Datenschutz und Geschäftliches klären; Produktpassung und Mehrwert prüfen. |
+| Mittelfristig | Bundeslandpartner gewinnen | Zusammenarbeit und größere Pilotprojekte. |
+| Langfristig | VIDIS-Anbindung | Breiter Zugang in Deutschland als Ziel. |
+| Sehr langfristig | Internationalisierung | Angebot in weiteren Ländern nutzbar machen. |
 
-Diese Zeitwörter sind Zielhorizonte des Nutzers, keine zugesagten Termine. Wir definieren hier Gesprächs- und Prüfbedarf; keine Registrierung, technische Umsetzung, Migration oder Kontaktaufnahme wird gestartet. Die konkrete Bitte an den Gesprächspartner lautet: „Wer kann uns helfen, die Lücken bis zur Bundeslandpartner-Readiness zu bestimmen, belastbar zu bepreisen und den richtigen Landespartner zu erreichen?“
+Auf der Folie als **2×2 breite Karten**, keine schmalen vier Spalten mit Wortumbrüchen. Diese Horizonte sind Nutzerziele, keine zugesagten Fristen oder vorhandenen Verträge/Freigaben. Keine eigene VIDIS-Prozessdetailfolie.
 
-## 3. Zehn Muss-Fragen
+Intern weiterhin beachten: offizieller VIDIS-Teilnahmeprozess verlangt aktuell einen Bundeslandpartner, WebApp/separatenLogin/OIDC-Fähigkeit sowie fachliche/technische Prüfung; native Apps sind derzeit nicht anbindbar. Individuelle Länderfreigaben sind erforderlich, keine automatische bundesweite Aktivierung. SSO, Lizenz und Zahlung bleiben verschiedene Fragen.
 
-| Priorität / Frage | Warum wichtig? | Wen fragen? | Welche Antwort oder Entscheidung brauchen wir? |
-|---|---|---|---|
-| 1. Wie erreichen wir eine verbindliche Zusammenarbeit mit einem Bundesland, und wer kann den richtigen Landesansprechpartner vermitteln? | Martins mittelfristiges Ziel benötigt einen tatsächlichen Landespartner; Schulinteresse und Landespartnerschaft sind verschiedene Schritte. | Coach, geeigneter Landesansprechpartner | Zuständiger Weg, erwartete Nachweise und nächste Gespräche; noch keine vorhandene Kooperation behaupten. |
-| 2. Welche Lücken müssen wir schließen, damit der abgegrenzte GradeCrew-Kern bereit für einen Bundeslandpartner ist, und was kostet dieser nächste Meilenstein? | Kurzfristige Readiness muss sich an prüfbaren Nachweisen orientieren. | Coach, externer Technik-/Datenschutzreviewer | Priorisierte Gap-Liste, Abnahmekriterien, Owner und echte Angebote statt pauschalem Gesamtinvestment. |
-| 3. Wie starten wir daneben einen bezahlten begrenzten Pilot: tatsächlicher Zahler, Genehmigungsweg, Dauer, Preis, Support, Erfolgskriterien und Anschlussvertrag? | Pilotumsatz und Landes-/SSO-Anbindung dürfen nicht gleichgesetzt werden. | Coach, Pilotpartner/Schule/Träger, Vertragsanwalt | Erstes Kundensegment, prüfbarer Pilotrahmen und Zugang zu Budgetentscheidern; SSO, Lizenz und Zahlung separat klären. |
-| 4. Was muss vor einem Pilot mit echten Schülerdaten geklärt und geprüft sein, wer entscheidet das und wer übernimmt welchen Teil? | Datenschutz ist Teil des Einsatzmodells und nicht erst eine spätere Formalie. | Datenschutzfachperson, schulischer Datenschutzbeauftragter, Schule/Träger | Datenfluss-/Rollenprüfung, Rechtsgrundlage, nötige Verträge/Informationen, Löschfristen und Freigabeweg. |
-| 5. Wer kann den überwiegend KI-unterstützt entwickelten Code unabhängig prüfen, und welches kleine Prüfpaket benötigen wir zuerst? | Einzelne erfolgreiche Tests ersetzen keine Wartbarkeits-, Betriebs- oder Sicherheitsbewertung. | Gesprächspartner für Kontakte; erfahrener externer Entwickler/Sicherheitsprüfer | Angebot mit klarer Quelle, Umfang, Befunden, Prioritäten und Nachprüfung – kein vages Zertifikat. |
-| 6. Welche Finanzierung passt zum nächsten Readiness-Meilenstein, und wie ermitteln wir Bedarf für 6, 12 und 18 Monate bei verzögertem Vertrieb? | Piloterlöse, Eigenmittel, Förderung und Angel dienen unterschiedlichen Phasen; Gewinn und Liquidität sind verschieden. | Coach/Förderberatung, Steuerberater, Martin mit Rechnungen | Finanzierungsweg und Kostenmodell inklusive KI/Firebase, Review, Recht, Support/Vertrieb, Gründervergütung, Steuern und Reserve; Nachweise vor Investment. |
-| 7. Was fehlt für saubere erste Rechnungen und Verträge: bestehendes Gewerbe erweitern, Rechtsform, Haftung und mein tatsächlicher Umsatzsteuerstatus? | Eine „Umsatzsteuernummer“ allein beantwortet den Status nicht. | Steuerberater/Finanzamt, IHK, gegebenenfalls Anwalt | Fachkontakte und private Prüfung vorhandener Erfassung/Bescheide/Umsätze, bevor Rechnungen gestellt werden. |
-| 8. Wie klären wir GradeCrew als Marke: ältere Rechte, Wort-/Bildmarke, Klassen, Deutschland/EU, Inhaber und Zeitpunkt? | Öffentliche Nutzung und spätere Umbenennung können teuer werden; Eintragung allein klärt nicht alle älteren Rechte. | Markenanwalt/Recherchefachperson; Gesprächspartner für Kontakt | Rechercheauftrag und begründete Anmeldestrategie, keine ungeprüfte Anmeldung. |
-| 9. Was ist unser stärkster Fokus gegenüber bestehenden Lösungen, und welche Funktionen sollten wir zunächst verschieben? | Ein zu breites Produkt erhöht Kosten und erschwert Verkauf und Zuverlässigkeit. | Coach/Investor und echte Zielkunden | Enger Pilot-/Partnerkern, belegbarer Nutzen und klare Abgrenzung; Games als mögliche spätere Erweiterung. |
-| 10. Welche drei konkreten Schritte vereinbaren wir mit Ansprechpartner und Termin? | Das Gespräch soll mehr liefern als allgemeines Feedback. | Gesprächspartner | Einführung zu Landes-/Pilot-/Review-/Fachkontakten, nächste Unterlagen und Folgetermin. |
+## 5. Sieben offene Fragen
 
-## 4. Weitere Fragen – gezielt nach Gesprächsverlauf
+| Thema / Frage | Warum interessiert uns das? | Ansprechpartner / benötigtes Ergebnis |
+|---|---|---|
+| Kosten: **„Welche Kosten kommen auf mich zu – und wer hilft mir, sie realistisch einzuschätzen?“** | Bedarf und Know-how fehlen; keine verlässliche Summe bekannt. | Coach für Orientierung, konkrete technische/rechtliche Angebote und Steuerberatung; realistische Kostenblöcke, Prioritäten, nächster Schritt. |
+| Partner: **„Wie finde ich einen passenden Bundeslandpartner?“** | Landeszusammenarbeit ist mittelfristiges Ziel. | Coach für passende Kontakte/Empfehlung, tatsächliche Landeszuständige; klarer Zugang und erforderliche Nachweise, keine garantierte Vermittlung. |
+| Geld verdienen: **„Wie verdiene ich mit einem Pilotprojekt erstes Geld – wer nutzt, entscheidet und bezahlt?“** | Nutzer, Entscheider und Zahler können verschieden sein. | Coach, Schule/Träger/Pilotkunde; begrenzter Pilot, Preis-/Vertragsweg, Erfolgskriterien und Anschluss. Keine erfundenen zahlenden Kunden. |
+| Marke: **„Ist es sinnvoll, den Markennamen jetzt schon vor dem Markteintritt anzumelden?“** | Frühes Branding und späterer Name sollen sinnvoll abgesichert werden. | Markenfachperson; Recherche und begründeter Zeitpunkt. Nutzervermutung „frei“ ist kein Markennachweis, keine Anmeldung ausführen. |
+| Geschäftliches: **„Was brauche ich für Gewerbe, Rechtsform und Steuern?“** | Bestehender Status und erste saubere Rechnungen sind offen. | IHK, Steuerberater/Finanzamt, gegebenenfalls Anwalt; private Erfassung/Bescheide/Umsätze prüfen. USt-Nummer allein klärt Kleinunternehmerstatus nicht. |
+| Datenschutz: **„Wer unterstützt mich bei einem DSGVO-konformen Betrieb – und was kostet das?“** | Eine verlässliche Begleitung und konkreter Aufwand fehlen. | Datenschutzfachperson, Schule/Träger/örtlicherDatenschutzbeauftragter; konkrete Rollen, Datenflüsse/Provider, Verträge/Informationen, Löschfristen und Einsatzfreigabe. Kein Zertifikat/pauschale Freigabe behaupten. |
+| KI-Code: **„Wer versteht und prüft meinen KI-generierten Code und hilft bei Betrieb, Wartung und höherer Last?“** | Unabhängiges Verständnis, Alltagsbetrieb, Skalierung und Aufwand sollen geklärt werden. | Externer erfahrener Entwickler/Sicherheits-/Betriebsreviewer; kleiner abgegrenzter Review, Prioritäten, Aufwand/Kosten und Zuständigkeit. Nicht pauschal unsicher wegen KI urteilen. |
 
-| Priorität / Frage | Warum wichtig? | Wen fragen? | Benötigtes Ergebnis |
-|---|---|---|---|
-| A – Wer darf Pilot und Bestellung genehmigen, aus welchem Budget, mit welchen Beschaffungs-/Vergabeschritten und Fristen? | Schulinteresse kann ohne Einkaufsweg steckenbleiben. | Schule/Träger, Coach mit EdTech-Erfahrung | Entscheiderkarte, Budgetzyklus, Vertrags- und Zahlungsweg. |
-| A – Welche Messung überzeugt: Zeitersparnis, regelmäßige Nutzung, weniger Nacharbeit, Zahlungsbereitschaft, Verlängerung? | Gründererfahrung soll zu nachvollziehbarer Traktion werden. | Pilotlehrkräfte, Coach | Vorher/nachher-Messung und datensparsame Erfolgskriterien; Lernwirksamkeit nur mit geeigneter eigener Untersuchung behaupten. |
-| A – Lehrkraftlizenz, Schullizenz oder Nutzungskontingent: was verstehen Käufer und was deckt variable KI-/Audiokosten? | Ein niedriger Preis kann bei hoher Nutzung unrentabel werden. | Zielkunden, Coach | Preisinterviews und zwei testbare Modelle mit Kostenobergrenzen, ohne vorschnell finalen Preis festzulegen. |
-| A – Welche Verantwortungs-/Haftungsgrenzen gelten bei falschen KI-Aufgaben, automatischer Bewertung und prüfungsrelevanter Nutzung? | Fachprüfung und pädagogische Entscheidung müssen nachvollziehbar sein. | Schul-/IT-Rechtsanwalt, Fachlehrkräfte | Produktzwecke, Lehrkraftprüfung, Korrektur-/Beschwerdeweg, gegebenenfalls passende Versicherungsprüfung. |
-| A – Wie ordnen Fachleute KI-Nutzung und automatische Bewertung rechtlich ein, einschließlich gegebenenfalls relevanter KI-Verordnung? | Die tatsächliche Nutzung ist entscheidend, nicht nur das Label „KI“. | Qualifizierter IT-/Datenschutzanwalt | Einzelfall-Einordnung und umsetzbare Pflichten; kein pauschales Konformitätsversprechen. |
-| A – Falls Beschäftigung im Schuldienst vorliegt: was gilt für Nebentätigkeit, Dienstmaterial, Schülerdaten und Verkauf an die eigene Schule? | Rollen, Rechte und mögliche Interessenkonflikte früh klären. | Dienstherr/Arbeitgeber, Rechtsberatung | Beschäftigungsbezogene Genehmigungen und klare Trennung; Martins Status wird nicht angenommen. |
-| A – Welche Teamlücke schließen wir zuerst: externer CTO, Sicherheitsreview, Datenschutz, Vertrieb oder Support? | Solo-Betrieb kann den nächsten Pilot begrenzen. | Coach, Fachanbieter | Kleines erstes Leistungspaket, Angebot und verantwortliche Person. |
-| B – Welche Rechte haben wir an Code, Bibliotheken, Crew-Bildern, Audio und Unterrichtsmaterialien; wie dokumentieren wir KI-generierte Beiträge? | Technische Funktionsfähigkeit beweist weder Eigentum noch Nutzungsrechte. | IP-/IT-Anwalt, Lizenzreviewer | Rechte-/Lizenzinventar und konkrete Nachweise/Problembehebung, keine pauschale Eigentumsaussage. |
-| B – Welche Daten gehen an Firebase/OpenAI/weitere Anbieter, einschließlich Logs, Support und Metadaten? Welche Unterauftragnehmer/Drittländer sind relevant? | EU-Hosting allein entscheidet Datenschutz nicht. | Datenschutzfachperson und Technikreviewer | Vollständiges minimiertes Datenflussbild und Vertrags-/Transferprüfung. |
-| B – Was lässt sich exportieren, löschen, sichern und wiederherstellen; was kostet ein Provider-/Regionswechsel? | Späte Migration darf laufende Schulprüfungen und alte Ergebnisse nicht beschädigen. | Externer technischer Reviewer, Datenschutzberatung | Export-/Restore-Probe, Migrationsplan für Accounts/Medien/Attempts/Schlüssel/Verträge, Aufwand und Rückfallweg. Keine Migration heute starten. |
-| B – Welche Supportzeit, Verfügbarkeit und Wiederherstellung können wir im Pilot verbindlich zusagen? | Versprechen müssen zur tatsächlichen Betriebsfähigkeit passen. | Technikreviewer, Pilotkunde, Anwalt | Realistische Servicegrenzen, Ansprechpartner und Vorfallablauf. |
-| B – Welche Fördermöglichkeiten passen zu Standort, Gründungsstand, Team und Ausgaben; muss ein Antrag vor Beauftragung gestellt werden? | Förderfähigkeit und Startzeitpunkt sind programmspezifisch. | Förderberatung/Coach | Passende Programme mit aktueller Prüfung, keine ungeprüfte Förderzusage. |
-| B – Bei echtem Investorinteresse: Ticketgröße, Folgefinanzierung, Branchenkenntnis, aktive Unterstützung, Entscheidungsprozess? | Kapitalgeber muss zu Phase und Schulmarkt passen. | Investor | Erwartungsabgleich und Kriterien; noch keine Anteilszusage. |
-| B – Was bedeuten spätere Verwässerung, Informationsrechte, Mitspracherechte, Liquidationspräferenz und Exit-Erwartung für mich? | Nennbetrag und Prozent allein beschreiben einen Deal nicht. | Coach und eigener Beteiligungsanwalt | Verständlicher Vergleich konkreter Bedingungen erst bei vorliegendem Angebot. |
-| B – Was ist dauerhaft schwer kopierbar: Workflowwissen, geprüfte Inhalte, Vertrieb, Integration, Vertrauen? | „Mit KI erstellt“ ist keine belastbare Differenzierung. | Coach und Zielkunden | Nachprüfbare Differenzierung ohne Schülerdaten als Geschäftsmodell. |
+Die sichtbaren Fragen sind auf zwei übersichtliche Folien verteilt: Partner/Pilot/Marke/Gewerbe und Kosten/Datenschutz/Technik. Keine separate Finanzierungskalkulationsfolie und kein „Fünf Fragen an Philipp“-Jargon.
 
-## 5. Tatsächliches PowerPoint-Verzeichnis
+### Vertiefende Nachfragen bei Bedarf – nur intern
 
-16:9, GradeCrew-Blau/Violett, Arial, große editierbare Texte und authentische vorhandene Crew-/Logo-Grafiken. Version3 gestaltet die Produktgeschichte lebendiger: dunkler Titel-/Fragenhintergrund, farbige Themenflächen im Verzeichnis, warme Gründerfolie mit Coco, vergrößerte Web-/App-Beispiele, Remy/Wilma als Rollenbegleiter und drei farbige Roadmapstufen. Sachliche Anhangfragen bleiben ruhig und erhalten eine kräftige Titelzone. Grafiken überdecken keine Fachinhalte; synthetische Produktansichten sind ausdrücklich gekennzeichnet. Quellen und kurze Sprechhinweise stehen in den Foliennotizen. Website ist Schwerpunkt. Keine Zahlen-Deko, erfundenen Kunden-/Marktzahlen oder Zertifizierungslogos.
+- Wer genehmigt einen Pilot und aus welchem Budget wird bezahlt? Welche Beschaffungs- und Vertragswege gelten?
+- Welche Datenschutz-/Rechts-/Betriebsnachweise brauchen wir **vor** echten Schülerdaten, und welche qualifizierte Person bewertet den konkreten Schul-/KI-Einsatz?
+- Was kostet das erste kleine externe Code-/Security-/Wartbarkeits-/Rechtepaket, und was wird tatsächlich überprüft?
+- Wer kümmert sich im Alltag um Vorfälle, Support, Updates, Backup/Wiederherstellung und Export/Providerwechsel?
+- Welche Pilotmessung zeigt Zeitersparnis, Nutzung oder Zahlungsbereitschaft nachvollziehbar, ohne neue personenbezogene Daten zu sammeln?
+- Welche Förderung, Eigenmittel, Piloterlöse oder spätere Beteiligung passen zur aktuellen Phase? Welche Voraussetzungen und gegebenenfalls Antragszeitpunkte müssen fachlich geprüft werden?
+- Wie berücksichtigen wir Gründerzeit/-vergütung, KI/Infrastruktur, externe Leistungen, Steuern und Reserve? Historische Finanzierungszahlen bleiben unbestätigte Szenarien.
+- Falls für das Beschäftigungsverhältnis relevant: wie Nebentätigkeit, Dienstmaterial und mögliche Interessenkonflikte sauber klären? Keine zusätzliche Beschäftigungsstatusannahme.
+- Falls später konkretes Investorinteresse entsteht: Erwartungen, Beteiligungsbedingungen und Verwässerung separat qualifiziert verstehen; keine Anteils-/Investmentzusage heute.
 
-| Folie | Titel / Inhalt |
+## 6. Wünsche als Gesprächsergebnis
+
+1. Klare nächste Schritte.
+2. Geeignete Ansprechpartner.
+3. Technische, Datenschutz- und geschäftliche Begleitung.
+4. Realistische Kostenorientierung.
+
+Keine Investmentsumme, keine garantiert verfügbaren Kontakte, keine Anmeldung oder Einreichung. Zum Abschluss möglichst konkrete Person/Zuständigkeit, nächstes Dokument und Folgetermin notieren.
+
+## 7. Finale Folienfolge V4
+
+| Folie | Kapitel / Inhalt |
 |---|---|
-| 1 | GradeCrew: aus dem Unterricht in den nächsten Schritt; Gespräch mit Philipp Geim19.10. |
-| 2 | Klares farbiges Verzeichnis: Martin/Idee, Web-App als Hauptprodukt im Browser, Teacher-/Secure-App, Bundeslandpartner/VIDIS, Pilot/Review/Finanzierung. |
-| 3 | Martin kurz vorstellen: Gründer, aus eigenem Unterrichtsalltag, selbst getestet, nächstes Ziel. |
-| 4 | Problem: Vorbereiten, Durchführen und Nacharbeiten in einem Ablauf. |
-| 5 | Web-App im Browser ausdrücklich als Hauptprodukt: Test vorbereiten, prüfen, teilen, bearbeiten und auswerten. |
-| 6 | Testvorbereitung als schematische synthetische Beispielansicht. |
-| 7 | Schüleraufgabe als schematische synthetische Beispielansicht; Zugang und Ergebnis. |
-| 8 | Coco, Remy, Emmi, Wilma und jeweilige Rolle. |
-| 9 | GradeCrew Teacher: Browser-Web-App in der Lehrkräfte-App; digitale Leistungsnachweise erstellen, native Eingabe-/Teilen-/Downloadhilfen. Erprobung; TestFlightnachweis und Geräteabnahme in Notizen. |
-| 10 | GradeCrew Secure: vorgesehen für Testdurchführung durch Schüler; iPad-Entwicklungsprototyp, geschützter Prüfungsmodus als Ziel. |
-| 11 | Ehrlicher Stand: hilfreicher Gründerbericht, dokumentierter Technikstand, offene Pilot-/Reviewnachweise. |
-| 12 | Drei Nutzerziele: bereit für Bundeslandpartner → Partner → VIDIS-Anbindung. |
-| 13 | Bezahlter begrenzter Pilot, echte Kosten, passende Finanzierungsroute. |
-| 14 | Fünf Fragen an Philipp und konkrete nächste Vereinbarungen. |
-| 15 | Anhang: Marke, Gewerbe und Steuerstatus; qualifizierte Ansprechpartner. |
-| 16 | Anhang: Datenschutzrollen, Datenflüsse, Verträge/Fristen und konkrete Genehmigung. |
-| 17 | Anhang: abgegrenzter externer Code-/Security-/Rechtereview sowie Betrieb/Migration. |
-| 18 | Anhang: VIDIS-Teilnahmeweg und individuelle Landesfreigabe, keine native Appanbindung. |
-| 19 | Anhang: Kostenblöcke und6/12/18Monatsszenarien, ohne erfundene Beträge. |
-| 20 | Anhang: Quellen, Nachweise und mitzubringende Unterlagen. |
+| 1 | Helles Cover, ausschließlich GradeCrew + Originalzeichen/Logo. |
+| 2 | Gesprächsplan mit den fünf Kapiteln, Kapitel03 umfasst Apps & GradeCrewGames. |
+| 3 | 01 Ich,Martin: direkt bestätigte Kurzbiografie, Ursprung im Unterrichtsalltag; keine Willkommensfigur. |
+| 4 | 02 Web-App: Lehrkräfte/Lernende, Vorbereitung/Prüfung/Zugang/Ergebnisse. |
+| 5 | 02 Web-App: große synthetische Testvorbereitungs-/Schüleransichten nebeneinander. |
+| 6 | 02 Web-App: Cocoübergeordnet, darunterRemy→Emmi→Wilma mit knappen Rollen. |
+| 7 | 02 Web-App: Meine Erfahrung im Unterricht und offene Last-/Datenverkehrsfrage. |
+| 8 | 03 Apps&Games: GradeCrewApp, gleicheWeb-Appmobil, Tests erstellen/überblicken/einsehen. |
+| 9 | 03 Apps&Games: GradeCrewSecure, iPadPrototyp und geschützterPrüfungsmodus alsZiel. |
+| 10 | 03 Apps&Games: GradeCrewGames, FastQuiz als veranschaulichteTestversion, andereSpieleinEntwicklung. |
+| 11 | 04 Ziele: vierHorizonte in2×2breitenKarten. |
+| 12 | 05 OffeneFragen&Wünsche: Landespartner/Pilot/Marke/Gewerbe. |
+| 13 | 05 OffeneFragen&Wünsche: Kosten/Datenschutz/KI-Code,Betrieb,Wartung/Last. |
+| 14 | 05 OffeneFragen&Wünsche: konkreteWünsche an das Gesprächsergebnis. |
 
-Für eine kurze Vorstellung beispielsweise Folien1/3/5/9/10 auswählen; Ablauf/Websiteansichten nach Bedarf zeigen. Drei bis fünf Minuten bleiben eine Orientierung für einen kurzen Einstieg, keine bestätigte gesamte Gesprächsdauer. Die restlichen Hauptfolien strukturieren das anschließende Coaching; Anhänge nur bei passender Frage öffnen. Der vollständige interne Fragenkatalog steht weiterhin oben in Abschnitten3/4; die Folien vermeiden Textwände.
+**Entfernt:** „Ein Ablauf statt viele einzelne Schritte“, „Der nächste Schritt muss bezahlbar sein“, „Fünf Fragen an Philipp“, VIDIS-Prozessdetailfolie, separate Finanzierungskalkulationsfolie und Quellenfolie. Quellen/Statusgrenzen stehen nur im internen Plan und in Notizen. Teacher als technischer Repo-Name erscheint nicht sichtbar in der Präsentation. Canonical Schreibweisen GradeCrew, Emmi, VIDIS.
 
-## 6. Bis Montag mitbringen
+**Gestaltung:** hell, ruhig, professionell; originaleLogo/Crewassets, großformatige editierbare Produktbeispiele und gut lesbare Fragen. Keine dunkleTitel-/Fragenfolie, keine zusätzlichenSlogans. Variierendehellblaue/violette/warmeFlächen und sinnvolleIllustrationen,keineDekoüberFachtext. KeineAnimationenjetzt; Animationen erst nach inhaltlicher/optischerÜberarbeitung gesondert ansehen.
 
-- Eine 60–90-Sekunden-Demo mit synthetischem Test und Screenshots/Video als Ausfallreserve, am tatsächlich verwendeten Gerät vorher geprüft. Keine Schülernamen, Noten oder privaten Materialien zeigen.
-- Zwei bis drei konkrete Alltagserfahrungen: welcher Ablauf half, was musste nachgebessert werden, was sagte eine andere Lehrkraft? Umfang und Herkunft ehrlich nennen.
-- Übersicht vorhandener Kundenkontakte und tatsächlich bestätigter Zusagen/Verträge; Interessensbekundung, Pilotnutzung und Zahlung getrennt.
-- Private Liste echter monatlicher Rechnungen/Kosten: KI, Infrastruktur, Tools, Hardware, Versicherungen; daneben benötigte externe Angebote, Support-/Vertriebszeit und gewünschte Gründervergütung.
-- Finanzplan als drei Szenarien mit 6/12/18 Monaten und verzögertem Pilotstart; noch unbekannte Werte sichtbar offen. Keine frühere Szenariosumme als Nachfrageziel ausgeben.
-- Bereits vorhandenen BayStartUP-Zweitseiter nur als gekennzeichneten Arbeitsentwurf, nicht als bestätigte Ist-/Bedarfsrechnung.
-- Gewerbe-/Steuererfassung, einschlägige Bescheide und Umsatzübersicht für eine gesonderte vertrauliche Beratung bereithalten; keine Steuer- oder Identifikationsnummern im Chat veröffentlichen.
-- Rechts-/Datenschutz-/Technikfragen mit gewünschtem Ansprechpartner und Notizfeldern „Antwort / Owner / Termin“.
+## 8. Bis Montag vorbereiten
 
-Gesprächspartner ist bestätigt: Philipp Geim von BayStartUP. Zuerst noch klären: Dauer und Ort; Zielgruppe/Region für ersten Pilot; tatsächlicher Gründungs-/Beschäftigungsstatus; bestätigte Nutzung/Zahlungen und aktuelle Kosten. Diese Angaben fehlen und werden nicht ersetzt.
+- Präsentation am tatsächlich verwendeten Gerät öffnen und den kurzen Produktablauf proben; noch keine nativePowerPoint-Gerätedarstellung behauptet.
+- Synthetischen Test oder vorhandene Bilder als Demo-Ausfallreserve, keine echten Schüler-/Kontodaten.
+- Zwei bis drei konkrete Alltagsbeispiele und tatsächlich vorliegende Pilotkontakte/Interessensbekundungen; Zahlung und Nutzung getrennt.
+- Private Liste tatsächlicher laufender Kosten und gewünschter externer Leistungen/Gründerzeit. Keine unbestätigte Finanzierungssumme als Bedarf ausgeben.
+- Gewerbe-/Steuerunterlagen für gesonderte vertrauliche Fachberatung bereithalten; keine Identifikationsnummern im Chat/Repo veröffentlichen.
+- OffeneFragen/Wünsche mit Notizfeldern Antwort/Zuständigkeit/NächsterSchritt; Gesprächsdauer und Ort noch klären.
 
-## 7. Aktuelle Quellen und fachliche Einordnung
+## 9. Interne Quellen und Beleggrenzen
 
-Recherchiert am 13.10.2026, ausschließlich offizielle Gesetzes-/Behörden-/Kammer-/BayStartUP-Quellen. Es wurden keine persönliche Steuerakte, echten Schülerdaten oder Kontoinhalte geprüft.
+- Nutzerberichte und direkte Präzisierungen14.10.2026: Produktstruktur, Bio, Alltagsreaktion, Ziele, Fragen und Designwünsche. Kein unabhängiger Kunden-/Wirkungsnachweis.
+- [GradeCrewTeacherREADME@77119](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewTeacher/README.md) und [GradeCrewSecureREADME@77119](https://github.com/HerrLoeffler/Hausaufgabe/blob/77119be5168150f7fa14076565b5099e856cb8d4/native/GradeCrewSecure/README.md): tatsächliche nativeZiele; SecurePrototyp-/Hardware-/Integrationsstatus separat. Websitebackend wird nicht aus alten README-Negativsätzen bewertet.
+- [FastQuiz-HDF](https://github.com/HerrLoeffler/Hausaufgabe/blob/main/workstreams/fastquiz-binomial-20261012.md), Blob a90eddb05773776bc669d61286ca0e6aaaed8d41, und [Gamesworkflow](https://github.com/HerrLoeffler/Hausaufgabe/blob/main/docs/games/GREAT_GAMES_WORKFLOW.md), Blob7ce04926690d5faaeae37b87db86be51f1364966: am14.10.frischgelesen. Unterschiedliche Reife erhalten; keinGames-Neubau/Deploy.
+- [VIDIS-Teilnahmeprozess](https://www.vidis.schule/teilnahmeprozess/), gelesen13.10.: Partnerland/Web/OIDC und individuelleFreigaben; kein automatischer Deutschlandvertrieb. Keine Aufnahme/Portalregistrierung erfolgt.
+- [LAGARDE1-Gründungsberatung](https://lagarde1.de/grundungsberatung/), gelesen13.10.: PhilippGeim alsBayStartUPCoach für digitaleGeschäftsmodelle. Keine eigeneInvestorrolle/garantierteVermittlung.
+- [DPMA-Recherche](https://www.dpma.de/marken/markenrecherche/index.html) und [DPMA-Prüfung](https://www.dpma.de/marken/pruefung_eintragung_verlaengerung/), gelesen13.10.: ältere Rechte werden imAnmeldeverfahren nicht umfassend geprüft. KeineMarkenfreiheitGradeCrew festgestellt.
+- [§19UStG](https://www.gesetze-im-internet.de/ustg_1980/__19.html) und [IHK-UStID](https://www.ihk-muenchen.de/ratgeber/steuern/steuerarten/umsatzsteuer/umsatzsteuer-identifikationsnummer/), gelesen13.10.: persönlicheAnwendung/Verzicht/Gründungsjahr fachlichprüfen; Nummer allein sagt keinenKleinunternehmerstatus. KeinepersönlicheSteuerberatung/Steuerakte.
+- [BayernKM-Schuldatenschutz](https://www.km.bayern.de/recht/datenschutz-an-schulen) und [BayLDA-Auftragsverarbeitung](https://www.lda.bayern.de/de/thema_auftragsverarbeitung.html), gelesen13.10.: konkreteRollen/Genehmigung/Verträge vorEchtdaten fachlichprüfen, EURegion/erfolgreicheTests sind keinRechtszertifikat.
+- [BayStartUP-Finanzierungscoaching](https://www.baystartup.de/startups/hilfe-kapitalsuche) und [Businessplanhandbuch](https://www.baystartup.de/fileadmin/Dokumente/Downloads/Handbuch_Businessplan_Erstellung.pdf), S127: methodischeKosten-/Liquiditätsorientierung; frühereZahlen sind kein aktuellerBestätigungsnachweis.
 
-- [§ 19 UStG](https://www.gesetze-im-internet.de/ustg_1980/__19.html): allgemeine Umsatzgrenzen 25.000 Euro Vorjahr/100.000 Euro laufendes Jahr; Verzicht bindet mindestens fünf Kalenderjahre. Gründungsjahr, Gesamtumsatz und konkreter Verzicht müssen im Einzelfall geprüft werden. Keine Diagnose aus einer Nummer.
-- [IHK München – Umsatzsteuer-Identifikationsnummer](https://www.ihk-muenchen.de/ratgeber/steuern/steuerarten/umsatzsteuer/umsatzsteuer-identifikationsnummer/): auch Kleinunternehmer können eine USt-ID haben. Steuernummer, USt-ID und persönliche Steuer-ID sind zu unterscheiden. Ausländische Leistungsbezüge/Reverse Charge gehören gesondert zur Steuerberatung.
-- [DPMA – Recherche](https://www.dpma.de/marken/markenrecherche/index.html) und [Prüfung/Eintragung](https://www.dpma.de/marken/pruefung_eintragung_verlaengerung/): ältere kollidierende Rechte werden im Anmeldeverfahren nicht geprüft; Register-/Ähnlichkeits- und sonstige Kennzeichenprüfung vor Strategieentscheidung.
-- [Bayerisches Kultusministerium – Datenschutz an Schulen](https://www.km.bayern.de/recht/datenschutz-an-schulen): für die dort beschriebenen digitalen Werkzeuge entscheidet Schulleitung im Einvernehmen mit Schulaufwandsträger, örtlicher Datenschutzbeauftragter wird einbezogen. Für konkreten Pilot/Schultyp Zuständigkeit und Rechtsrahmen prüfen, keine automatische Zulassung von GradeCrew daraus.
-- [BayLDA – Auftragsverarbeitung](https://www.lda.bayern.de/de/thema_auftragsverarbeitung.html): Art.28 verlangt geeignete Garantien des Auftragsverarbeiters. Konkrete Rollen und Verträge vor Datenverarbeitung prüfen, Anbieter- und Schulpflichten unterscheiden.
-- [IHK München – nebenberuflich selbstständig](https://www.ihk-muenchen.de/ratgeber/gruendung/nebenberuflich-selbststaendig/): Anmeldung/steuerliche Erfassung und Beschäftigungsverhältnis früh klären; konkrete Dienst-/Beamtenregeln individuell prüfen.
-- [BayStartUP – Hilfe bei der Kapitalsuche](https://www.baystartup.de/startups/hilfe-kapitalsuche): Vorbereitung, Finanzierungsstrategie und Investorenpassung stehen vor Matching; keine operativen Rechts-/Steuerleistungen daraus ableiten.
-- [BayStartUP – Downloads](https://www.baystartup.de/baystartup/downloads) und [Handbuch Businessplan-Erstellung, Finanzplanung S.127](https://www.baystartup.de/fileadmin/Dokumente/Downloads/Handbuch_Businessplan_Erstellung.pdf): Bedarf aus Liquidität, Kosten, nachvollziehbaren Annahmen und Puffer ableiten. Das verlinkte ältere Handbuch wird nur für diese zeitstabile Planungsmethodik genutzt, nicht für aktuelle Förder-/Steuerregeln.
+## Arbeitsstand und Grenzen
 
-## Arbeitsgrenzen und Sicherung
-
-Gesprächsplan und PowerPoint lokal erstellt. Keine Kontaktaufnahme, Einreichung, Marke-/Gewerbe-/Steuerhandlung, Prüfung privater Unterlagen, technische Migration, Appänderung oder Deployment. Kein neuer Kapitalbetrag festgelegt. Nächster Schritt: Martin ergänzt bei Bedarf Dauer/Ort und persönliche Angaben und probt die ausgewählte Kurzvorstellung am Präsentationsgerät.
+Lokale editierbarePowerPointV4 mit14Folien und14Notizen erstellt; FinaleDatei GradeCrew_Erstgespraech_20261019_v4_final.pptx. KeineAnimation. GebündeltePackage-/Geometrie-/Font-/Reimportprüfung und echtefinalePNG-Sichtprüfung erfolgen unabhängig voneinander; automatischesPASS beweist nicht die optischeQualität. Root hat zunächst Crew-Hierarchie und schmaleZielkarten beanstandet; beide konkret korrigiert und neuePNG geprüft. KeineApp-/Game-/Produktcodeänderung,Build-/Staging-/Productionarbeit,Migration,Kontaktaufnahme,Versendung,Marken-/Gewerbe-/Steuermeldung oderEinreichung. Finanzierungsoriginale/altePräsentationsversionen bleiben unverändert. Genau nächsterSchritt: Martin prüft die neueV4 undprobtamGerät; Animationen erst danach separat besprechen.
