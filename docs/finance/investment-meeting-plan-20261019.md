@@ -163,3 +163,10 @@ Keine Investmentsumme, keine garantiert verfügbaren Kontakte, keine Anmeldung o
 ## Arbeitsstand und Grenzen
 
 Lokale editierbarePowerPointV4 mit14Folien und14Notizen erstellt; FinaleDatei GradeCrew_Erstgespraech_20261019_v4_final.pptx. KeineAnimation. GebündeltePackage-/Geometrie-/Font-/Reimportprüfung und echtefinalePNG-Sichtprüfung erfolgen unabhängig voneinander; automatischesPASS beweist nicht die optischeQualität. Root hat zunächst Crew-Hierarchie und schmaleZielkarten beanstandet; beide konkret korrigiert und neuePNG geprüft. KeineApp-/Game-/Produktcodeänderung,Build-/Staging-/Productionarbeit,Migration,Kontaktaufnahme,Versendung,Marken-/Gewerbe-/Steuermeldung oderEinreichung. Finanzierungsoriginale/altePräsentationsversionen bleiben unverändert. Genau nächsterSchritt: Martin prüft die neueV4 undprobtamGerät; Animationen erst danach separat besprechen.
+
+
+## V5 Abschluss – 14.10.2026
+
+Die finale lokale Präsentation liegt unter `outputs/gradecrew-investment-20261019/files/GradeCrew_Erstgespraech_20261019_v5_final.pptx`: 14 Folien, 14 Notizen, 4.847.563 Bytes, SHA-256 `a6703edfb774bc3247619ffbba142b347f7f797f2c6d6913ea5e3673f0b2776a`. Die V5-Folge setzt die bestätigte Struktur um: kurze Vorstellung, Web-App als Schwerpunkt, Crewablauf, App und Secure-Prototyp, FastQuiz, Ziele sowie konkrete offene Fragen. Die vier zuletzt korrigierten Ansichten (Folie 2, 5, 6 und 7) wurden erneut gerendert und visuell geprüft; die vollständigen 14 Folien liegen als Kontaktbogen vor.
+
+Das Titelbild enthält PowerPoint-Timing für vier automatische native Fade-Effekte auf den Crew-Bildern (Start 200/550/900/1250 ms, Dauer je 600 ms, zusammen 1.850 ms). Die Paketstruktur wurde geprüft; native Wiedergabe in PowerPoint ist noch nicht bestätigt. Die Datei ist lokal bereit. Keine PDF- oder Videoausgabe erstellt; keine Mainintegration, Produktänderung, Einreichung, Kontaktaufnahme oder Bereitstellung.
