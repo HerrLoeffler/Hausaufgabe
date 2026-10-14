@@ -537,3 +537,9 @@ ActualHTTP all29 packaged Crew PNGs agree canonical/localHTTP/localSource/build.
 Private Hörtext is never auto-published. New fromTask preserves its already-public question; listening tasks use one explicit publicquestion field, canonical clearing cannot revive nested old criteria. Only playable listening R/F uses generic DE/EN procedural fallback; it does not prove an unidentified old recording contains a sufficient statement. Userq5/q8 semantics unknown without testcode. Old criterion-less MC tasks need explicit teacher-reviewed public instructions; no migration performed. No real attempts/deletion/paid generation/user-data writes. User acceptance remains separate.
 
 Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-reconciliation-20261011.md and release-proof-20261011/ (component/canonical receipts, full assets, local alignment/CSS backup proofs, service equality, independent reviews, browser/HTTP smoke). Final STATE/TODO/registry update is documentation only; no new product release.
+
+## 14.10.2026 — Wissensreise: reiner Produktplan
+
+| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+|---|---|---|---|
+| GC-LEARNING-WISSENSREISE-01 | Eigene Materialien und Tests in didaktische Lernwege ohne Benotung umwandeln | **Vorschlag zur Besprechung; branch_only/documentation** | Ausführlicher [Masterplan](docs/learning/WISSENSREISE_MASTERPLAN_20261014.md), eigener Docsbranch docs/wissensreise-plan-20261014 und [Übergabe](workstreams/wissensreise-plan-20261014.md). Gemeinsamer Inhaltskern mit getrennten Test-/Test-Rallye-/Wissensreise-Regeln empfohlen; keine manuelle Antwortbewertung. Kein Produktcode, Build, Providerstart, Integration oder Deploy. Nächster Schritt: Name, Pilotziel, Owner und Startumfang besprechen. PR235/236 und vorhandener Release Train unverändert. |

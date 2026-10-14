@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -636,6 +636,15 @@
       "integrationTarget": "lab/games-structure",
       "state": "integration_ready",
       "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    },
+    {
+      "id": "learning-wissensreise-20261014",
+      "title": "GC-LEARNING-WISSENSREISE-01: Lernmodus aus eigenen Materialien und Tests – Plan",
+      "primaryBranch": "docs/wissensreise-plan-20261014",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/wissensreise-plan-20261014.md",
+      "relatedBranches": []
     }
   ]
 }
