@@ -1,5 +1,5 @@
-import {COLOURS_TEST} from './test-data.mjs';
-import { createDemoFlow, LAST_PHASE } from './flow-v3.mjs';
+import {COLOURS_TEST} from './test-data.mjs?v=5-polish-2';
+import { createDemoFlow, LAST_PHASE } from './flow-v3.mjs?v=5-polish-2';
 import { heroText as t } from './copy-v3.mjs';
 
 const make = (tag, className = '', key = '') => {
@@ -18,8 +18,8 @@ function animal(name){return '<span role="img" aria-label="'+descriptions[name]+
 function formatLabel(type){return tr(({single:'singleFormat',listening:'listeningFormat',matching:'matchingFormat',text:'textFormat',ordering:'orderingFormat','image-choice':'imageChoiceFormat'})[type]);}
 function questionDetail(q,index,interactive){
  let html=q.image?'<div class="question-picture">'+animal(q.image)+'</div>':'';
- if(q.audio)html+='<audio controls preload="metadata" src="'+q.audio+'" aria-label="English listening question"></audio><p class="audio-hint">'+tr('listeningHint')+'</p>';
- if(q.options)html+='<div class="question-options">'+q.options.map((word,i)=>'<label><input type="radio" name="sample-'+index+'" value="'+i+'" '+(interactive?'':'disabled')+'><span>'+safe(word)+'</span></label>').join('')+'</div>';
+ if(q.audio)html+='<audio controls preload="metadata" src="'+q.audio+'" aria-label="English listening question"></audio>';
+ if(q.options)html+='<div class="question-options">'+q.options.map((word,i)=>'<label><input type="radio" name="sample-'+index+'" value="'+i+'" '+(interactive?'':'disabled')+'><span>'+(['red','blue','yellow','green'].includes(word)?'<i class="choice-swatch patch-'+word+'" aria-hidden="true"></i>':'')+safe(word)+'</span></label>').join('')+'</div>';
  if(q.images)html+='<div class="picture-options">'+q.images.map((name,i)=>'<label><input type="radio" name="picture-'+index+'" value="'+i+'" '+(interactive?'':'disabled')+'>'+animal(name)+'<span>'+String.fromCharCode(65+i)+'</span></label>').join('')+'</div>';
  if(q.words)html+='<div class="match-demo"><div>'+q.words.map(w=>'<span>'+w+'</span>').join('')+'</div><div>'+q.patches.map(w=>'<span class="colour-patch patch-'+w+'" role="img" aria-label="'+w+' colour patch"></span>').join('')+'</div></div>';
  if(q.items)html+='<div class="order-demo">'+q.items.map(w=>'<span>'+safe(w)+'</span>').join('')+'</div>';
@@ -36,7 +36,8 @@ export function installHeroDemo(root) {
   const tutorial=make('button','crew-tutorial','tutorialStart');tutorial.type='button';
   tutorial.addEventListener('click',()=>window.dispatchEvent(new Event('gradecrew:experiment-tutorial-request')));
   $('gcHeroDialogEyebrow').before(tutorial);
-  const hint=make('p','crew-click-hint','clickNames');root.querySelector('.gcHeroTutorialEntry').prepend(hint);
+  const homeTutorial=make('button','crew-home-tutorial','tutorialStart');homeTutorial.type='button';document.getElementById('gcEntryLoginOpen').after(homeTutorial);homeTutorial.addEventListener('click',()=>window.dispatchEvent(new Event('gradecrew:experiment-tutorial-request')));
+  const hint=make('p','crew-click-hint','clickNames');root.querySelector('.gcHeroLead').append(hint);
   root.querySelectorAll('.gcHeroRoles button').forEach(button=>{const play=make('span','role-play');play.textContent='▷';play.setAttribute('aria-hidden','true');button.append(play);});
   const tourDialog=make('dialog','experiment-tour-note');
   tourDialog.innerHTML='<button type="button" class="tour-note-close" aria-label="'+tr('close')+'">×</button><h2>'+tr('tutorialNoteTitle')+'</h2><p>'+tr('tutorialNote')+'</p>';
@@ -66,7 +67,7 @@ export function installHeroDemo(root) {
         button.setAttribute('aria-label', t(`${name}Action`));
       });
     }
-    tutorial.textContent=t('tutorialStart');hint.textContent=t('clickNames');tourDialog.querySelector('h2').textContent=t('tutorialNoteTitle');tourDialog.querySelector('p').textContent=t('tutorialNote');
+    tutorial.textContent=t('tutorialStart');homeTutorial.textContent=t('tutorialStart');hint.textContent=t('clickNames');tourDialog.querySelector('h2').textContent=t('tutorialNoteTitle');tourDialog.querySelector('p').textContent=t('tutorialNote');
     $('gcHeroDialogClose').setAttribute('aria-label', t('close'));
     if (state) render();
   };
@@ -100,9 +101,9 @@ function renderCoco(sheet,phase){
       paper.append(head);
       if(phase===1){
         if(inspectedQuestion!==null){
-          const q=COLOURS_TEST.questions[inspectedQuestion];
-          const back=make('button','overview-back','backOverview');back.type='button';back.addEventListener('click',()=>{inspectedQuestion=null;render();});paper.append(back);
-          const task=make('div','question-demo');task.dataset.questionId=q.id;task.innerHTML='<small>'+tr('sampleQuestion')+' '+(inspectedQuestion+1)+' / 10</small><h4 lang="en">'+safe(q.prompt)+'</h4>'+questionDetail(q,inspectedQuestion,true);paper.append(task);
+          const q=COLOURS_TEST.questions[inspectedQuestion];head.classList.add('sample-header');head.innerHTML='<small>'+tr('testMeta')+'</small><strong>'+tr('sampleQuestion')+' '+(inspectedQuestion+1)+' / 10</strong>';
+          const back=make('button','overview-back','backOverview');back.type='button';back.addEventListener('click',()=>{inspectedQuestion=null;render();});head.append(back);
+          const task=make('div','question-demo');task.dataset.questionId=q.id;task.innerHTML='<h4 lang="en">'+safe(q.prompt)+'</h4>'+questionDetail(q,inspectedQuestion,true);paper.append(task);
         }else{
           const list=make('div','whole-test');
           COLOURS_TEST.questions.forEach((q,i)=>{
@@ -115,7 +116,8 @@ function renderCoco(sheet,phase){
         const index=phase===2?0:1;
         const q=COLOURS_TEST.questions[index];
         const task=make('div','question-demo');task.dataset.questionId=q.id;
-        task.innerHTML='<small>'+tr('sampleQuestion')+' '+(index+1)+' / 10</small><h4 lang="en">'+safe(q.prompt)+'</h4>'+questionDetail(q,index,true);
+        head.classList.add('sample-header');head.innerHTML='<small>'+tr('testMeta')+'</small><strong>'+tr('sampleQuestion')+' '+(index+1)+' / 10</strong>';
+        task.innerHTML='<h4 lang="en">'+safe(q.prompt)+'</h4>'+questionDetail(q,index,true);
         paper.append(task);
       }
     }
@@ -206,6 +208,7 @@ function renderCoco(sheet,phase){
     }
     $('gcHeroDemoWorkspace').querySelectorAll('audio').forEach(a=>a.pause());
     $('gcHeroDemoWorkspace').replaceChildren(sheet);
+    if(running){const progress=make('div','crew-progress');progress.setAttribute('aria-hidden','true');$('gcHeroDemoWorkspace').append(progress);}
   }
 
   resetFlow();

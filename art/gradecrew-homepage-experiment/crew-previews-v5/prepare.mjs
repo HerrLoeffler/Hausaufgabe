@@ -12,7 +12,7 @@ for(const [file,mode] of [['index.html','v5'],['baseline.html','baseline']]){
  await writeFile(file,h);
 }
 let entry=await readFile('baseline/gradecrew-entry-flow.js','utf8');
-entry=entry.replace('./generated/','./baseline/generated/').replace('./shared/','./baseline/shared/').replace('import "./gradecrew-hero-copy.mjs?v=1";','import "./baseline/gradecrew-hero-copy.mjs?v=1";').replace('./gradecrew-hero-demo.mjs?v=1','./demo-v3.mjs');
+entry=entry.replace('./generated/','./baseline/generated/').replace('./shared/','./baseline/shared/').replace('import "./gradecrew-hero-copy.mjs?v=1";','import "./baseline/gradecrew-hero-copy.mjs?v=1";').replace('./gradecrew-hero-demo.mjs?v=1','./demo-v3.mjs?v=5-final-2');
 await writeFile('entry-v3.mjs',entry);
 const tour=await readFile('baseline/gradecrew-tour-v7.js','utf8');
 await writeFile('tutorial-fixture.mjs',tour.slice(tour.indexOf('const single ='),tour.indexOf('export function preparedResponse')));

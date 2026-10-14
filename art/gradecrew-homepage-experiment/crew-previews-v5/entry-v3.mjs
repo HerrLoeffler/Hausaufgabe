@@ -1,7 +1,7 @@
 import { GRADECREW_ASSETS } from "./baseline/generated/gradecrew-assets.js?v=1.2.0";
 import { translateTree } from "./baseline/shared/i18n/browser-runtime.mjs?v=3";
 import "./baseline/gradecrew-hero-copy.mjs?v=1";
-import { installHeroDemo } from "./demo-v3.mjs";
+import { installHeroDemo } from "./demo-v3.mjs?v=5-final-2";
 
 const $ = id => document.getElementById(id);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({

@@ -1,0 +1,3504 @@
+[
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "coco",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "coco",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          278
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          287
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          317
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          326
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "emmi",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "emmi",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "emmi",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "emmi",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "wilma",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "wilma",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "questions": [
+      {
+        "id": "colours-1",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Look at the rabbit. Which colour is the scarf?\nred\nblue\nyellow\ngreen",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-2",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Listen and choose the correct picture.\nA\nB\nC",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-3",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Which word completes the sentence: The frog is ____?\ngreen\nrabbit\nwindow\nhappy",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-4",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Match each colour word to the correct colour patch.\nred\nblue\ngreen\nyellow",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-5",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Look at the duck. Complete the sentence: The duck is ____.",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-6",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Which phrase describes the butterfly?\nA blue butterfly.\nAn blue butterfly.\nA butterfly blue.",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-7",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Look at the frog. Choose the matching sentence.\nThe frog is green.\nThe frog is blue.\nThe frog is red.",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-8",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Put the words in the correct order.\nhas\na red scarf.\nThe rabbit",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-9",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Which animal is yellow?\nA\nB\nC",
+        "workspace": [
+          392,
+          392
+        ]
+      },
+      {
+        "id": "colours-10",
+        "paper": [
+          304,
+          304
+        ],
+        "question": "Write two short sentences about things in your classroom. Include a colour in each sentence.",
+        "workspace": [
+          392,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "questions": [
+      {
+        "id": "colours-1",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-2",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-3",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-4",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-5",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-6",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-7",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-8",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-9",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      },
+      {
+        "id": "colours-10",
+        "paper": [
+          244,
+          244
+        ],
+        "viewport": [
+          957,
+          523
+        ],
+        "workspace": [
+          262,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "1",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "coco",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "remy",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "1",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "emmi",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "1",
+    "controlsBottom": 479,
+    "controlsTop": 435,
+    "crew": "wilma",
+    "dialogBottom": 511,
+    "paperBottom": 421,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          919,
+          499
+        ],
+        "scroll": [
+          919,
+          499
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          687,
+          244
+        ],
+        "scroll": [
+          687,
+          244
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          879,
+          262
+        ],
+        "scroll": [
+          879,
+          262
+        ]
+      }
+    ],
+    "viewport": [
+      957,
+      523
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "coco",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "remy",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "remy",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "remy",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "remy",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "emmi",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "emmi",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "emmi",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "wilma",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "wilma",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 898,
+    "controlsTop": 854,
+    "crew": "wilma",
+    "dialogBottom": 940,
+    "paperBottom": 834,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          782,
+          700
+        ],
+        "scroll": [
+          782,
+          700
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          495,
+          406
+        ],
+        "scroll": [
+          495,
+          406
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          734,
+          432
+        ],
+        "scroll": [
+          734,
+          432
+        ]
+      }
+    ],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "coco",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "remy",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          312,
+          304
+        ],
+        "scroll": [
+          312,
+          304
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          392
+        ],
+        "scroll": [
+          328,
+          392
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "emmi",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 627,
+    "controlsTop": 583,
+    "crew": "wilma",
+    "dialogBottom": 659,
+    "paperBottom": 570,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          352,
+          651
+        ],
+        "scroll": [
+          352,
+          651
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          312,
+          321
+        ],
+        "scroll": [
+          312,
+          321
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          328,
+          409
+        ],
+        "scroll": [
+          328,
+          409
+        ]
+      }
+    ],
+    "viewport": [
+      390,
+      667
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 0,
+    "controlsTop": 0,
+    "crew": "wilma",
+    "dialogBottom": 0,
+    "paperBottom": 0,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          0,
+          0
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          0,
+          0
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          0,
+          0
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "remy",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "remy",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "1",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "remy",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "2",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "remy",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "3",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "remy-paper crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "coco",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "crew-paper coco-welcome",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "emmi",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "autoplay": "0",
+    "controlsBottom": 666,
+    "controlsTop": 622,
+    "crew": "wilma",
+    "dialogBottom": 708,
+    "paperBottom": 602,
+    "phase": "0",
+    "sizes": [
+      {
+        "class": "gcHeroDialog crew-unified is-paused",
+        "client": [
+          1040,
+          696
+        ],
+        "scroll": [
+          1040,
+          696
+        ]
+      },
+      {
+        "class": "crew-paper",
+        "client": [
+          753,
+          402
+        ],
+        "scroll": [
+          753,
+          402
+        ]
+      },
+      {
+        "class": "gcHeroDemoWorkspace",
+        "client": [
+          992,
+          428
+        ],
+        "scroll": [
+          992,
+          428
+        ]
+      }
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  }
+]
