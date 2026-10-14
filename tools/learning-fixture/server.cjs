@@ -10,6 +10,7 @@ const root=path.resolve(__dirname,'../..'),docs=new Map(),sources={
  MARK2:{ownerId:'teacher',title:'QA · Vier Farben und Wörter',subject:'Deutsch',questions:[{id:'q1',type:'markwords',text:'Markiere die Wortarten in vier Gruppen.',passage:'Der Hund läuft schnell.',targetWords:['Hund'],markGroups:[{name:'Artikel',color:'purple',words:['Der']},{name:'Nomen',color:'blue',words:['Hund']},{name:'Verb',color:'orange',words:['läuft']},{name:'Adjektiv',color:'green',words:['schnell']}]},{id:'q2',type:'markwords',text:'Markiere alle Nomen.',passage:'Die Katze spielt im Garten.',targetWords:['Katze','Garten']}]},
  GAP2:{ownerId:'teacher',title:'QA · Lücken und Reihenfolge',subject:'Deutsch',questions:[{id:'q1',type:'gapfill',text:'Die Katze [schläft|ruht] auf dem Sofa.'},{id:'q2',type:'ordering',text:'Ordne die Satzteile.',items:['Die Katze','schläft','auf dem Sofa'],acceptedOrders:[{indices:[2,1,0]}]}]}
 };
+sources.TEST50={ownerId:'teacher',title:'QA · Eigener Test mit50Aufgaben',subject:'Mathematik',questions:Array.from({length:50},(_,i)=>({id:`q${i}`,type:'number',text:`${i+1} + 2 = ?`,numericAnswer:i+3}))};
 let offset=0,batch=0;
 const repo={loadSource:async id=>structuredClone(sources[id]),get:async key=>structuredClone(docs.get(key)),mutate:async(key,fn)=>{const result=await fn(structuredClone(docs.get(key)));if(result.value)docs.set(key,structuredClone(result.value));return result.output;}};
 const svc=createLearningService({repo,now:()=>Date.now()+offset,enqueue:async job=>setTimeout(()=>svc.processBuffer(job),200),generateBatch:async data=>{batch++;return Array.from({length:12},(_,i)=>{
@@ -28,7 +29,7 @@ const server=http.createServer(async(req,res)=>{
  try{
  if(req.url==='/api'&&req.method==='POST'){let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>100000)throw new Error('too large');}const {name,data}=JSON.parse(raw),method=routes[name];if(!method)throw new Error('unknown method');const result=['start','step','refill'].includes(method)?await svc[method](data):await svc[method]('teacher',data);res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify(result));}
  if(req.url==='/qa/advance'&&req.method==='POST'){offset+=60000;res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify({advanced:60}));}
- if(req.url==='/qa/sources'){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify(Object.entries(sources).map(([id,s])=>({id,title:s.title}))));}
+ if(req.url==='/qa/sources'){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify(Object.entries(sources).map(([id,s])=>({id,title:s.title,questionCount:s.questions.length}))));}
  const route=new URL(req.url,'http://localhost').pathname;const file=route==='/'||route==='/fixture/'?path.join(__dirname,'fixture.html'):path.join(root,route);
  if(!(file.startsWith(path.join(root,'learning/'))||file.startsWith(path.join(root,'assets/gradecrew/'))||file.startsWith(path.join(root,'assets/vendor/'))||file===path.join(root,'generated/gradecrew-design-tokens.css')||file===path.join(__dirname,'fixture.html')))throw new Error('not served');
  res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html':file.endsWith('.css')?'text/css':file.endsWith('.png')?'image/png':'text/javascript'});res.end(fs.readFileSync(file));
