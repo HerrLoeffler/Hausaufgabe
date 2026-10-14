@@ -10,8 +10,8 @@ function harness(){
  rows.set('quizzes/ABCD/questions/q1',{position:0,type:'number',text:'2 + 3 = ?',numericAnswer:5});rows.set('quizzes/ABCD/questions/q2',{position:1,type:'number',text:'3 * 4 = ?',numericAnswer:12});
  const snapshot=path=>({exists:rows.has(path),data:()=>structuredClone(rows.get(path)),id:path.split('/').pop()});
  const doc=path=>({path,get:async()=>snapshot(path),collection:name=>query(`${path}/${name}`)});
- const query=path=>({path,isQuery:true,orderBy(){return this;},limit(){return this;}});
- const get=async ref=>{reads++;if(!ref.isQuery)return snapshot(ref.path);return{docs:[...rows.keys()].filter(p=>p.startsWith(ref.path+'/')&&p.split('/').length===ref.path.split('/').length+1).map(p=>snapshot(p))};};
+ const query=path=>({path,isQuery:true,orderBy(field){this.orderField=field;return this;},limit(n){this.max=n;return this;}});
+ const get=async ref=>{reads++;if(!ref.isQuery)return snapshot(ref.path);return{docs:[...rows.keys()].filter(p=>p.startsWith(ref.path+'/')&&p.split('/').length===ref.path.split('/').length+1).filter(p=>!ref.orderField||rows.get(p)[ref.orderField]!==undefined).slice(0,ref.max||Infinity).map(p=>snapshot(p))};};
  const db={doc,get,runTransaction:async fn=>{let mutated=false;return fn({get:async ref=>{assert.equal(mutated,false,'Firestore rejects reads after writes');return get(ref);},set:(ref,value)=>{mutated=true;writes++;rows.set(ref.path,structuredClone(value));}});}};
  const wrap=(_opts,fn)=>({run:fn});
  const accessContext={module:{exports:{}},exports:{},require:name=>name.includes('firebase-functions')?{HttpsError}:name.includes('firebase-admin')?{getFirestore:()=>db}:null};accessContext.exports=accessContext.module.exports;vm.runInNewContext(fs.readFileSync(require.resolve('../lib/access'),'utf8'),accessContext);
@@ -43,4 +43,21 @@ test("actual draft→generation→publish→public play→idempotent refill uses
  await h.handlers.processLearningBuffer.run({data:h.jobs[0]});assert.ok(h.rows.get(`learningBuffers/${draft.id}`).items.length>0);
  await assert.rejects(h.call('developLearningSession',{...access,action:'reset'},'teacher'),{code:'permission-denied'});
  h.rows.get('quizzes/ABCD').rightsHold=true;await assert.rejects(h.call('stepLearningSession',{...access,action:'resume'},null));
+});
+
+test("authenticated own 50-question test and 100-question boundary prepare; legacy positions are retained",async()=>{
+ const h=harness();for(let i=3;i<=100;i++)h.rows.set(`quizzes/ABCD/questions/q${i}`,{position:i,type:'number',text:`${i} + 2 = ?`,numericAnswer:i+2});
+ const input={sourceId:'ABCD',requestId:'request-large-test',duration:180,formats:['number']};
+ for(let i=51;i<=100;i++)h.rows.delete(`quizzes/ABCD/questions/q${i}`);
+ const d=await h.call('prepareLearningDraft',input);assert.equal(d.sourceCount,50);assert.equal(d.items.length,50);
+ for(let i=51;i<=100;i++)h.rows.set(`quizzes/ABCD/questions/q${i}`,{position:i,type:'number',text:`${i} + 2 = ?`,numericAnswer:i+2});
+ delete h.rows.get('quizzes/ABCD/questions/q100').position;assert.equal((await h.call('prepareLearningDraft',{...input,requestId:'request-hundred'})).items.length,100);
+ h.rows.set('quizzes/ABCD/questions/q101',{type:'number',text:'101 + 2 = ?',numericAnswer:103});
+ await assert.rejects(h.call('prepareLearningDraft',{...input,requestId:'request-too-many'}),/100/);
+});
+test("inline image is excluded individually, compact plain questions remain; media edits invalidate source",async()=>{
+ const h=harness();h.rows.get('quizzes/ABCD/questions/q1').imageDataUrl='data:image/png;base64,'+'x'.repeat(90000);
+ const d=await h.call('prepareLearningDraft',{sourceId:'ABCD',requestId:'request-media',duration:0,formats:['number']});assert.equal(d.sourceCount,2);assert.equal(d.items.length,1);assert.equal(d.excluded.length,1);assert.match(d.excluded[0].reason,/Medien/);
+ const stored=h.rows.get(`learningDrafts/${d.id}`);assert.equal(JSON.stringify(stored).includes('base64'),false);
+ h.rows.get('quizzes/ABCD/questions/q1').imageDataUrl+='changed';await assert.rejects(h.call('getLearningDraft',{draftId:d.id}),/geändert/);
 });

@@ -12,3 +12,10 @@ test("selected gap view can be derived from a choice source with bound objective
 test("foreign source bindings and learning-goal drift review are rejected", async () => {
  const q={id:"x",type:"number",text:"2 + 3 = ?",numericAnswer:5}; const generate=createBatchGenerator({consumeQuota:async()=>{},recordUsage:async()=>{},structuredResponse:async()=>({usage:{},data:{variants:[{sourceId:"foreign",question:q}]}})}); await assert.rejects(generate({ownerId:"t",sourceQuestions:[q],context:{},existing:[]}));
 });
+
+test("three bounded source batches cover questions beyond40 without sending private or media fields",async()=>{
+ const sources=Array.from({length:100},(_,i)=>({id:`q${i}`,type:'number',text:`${i}+2?`,numericAnswer:i+2,ownerPrivateMeta:'hidden',imageDataUrl:'private-bytes'})),seen=new Set();let n=0;
+ const generate=createBatchGenerator({consumeQuota:async()=>{},recordUsage:async()=>{},structuredResponse:async request=>{n++;if(n%2===0)return{data:{issues:[]}};const wire=JSON.parse(request.userPrompt);assert.equal(wire.sources.length<=40,true);assert.equal(request.userPrompt.includes('private-bytes'),false);assert.equal(request.userPrompt.includes('ownerPrivateMeta'),false);wire.sources.forEach(q=>seen.add(q.id));return{data:{variants:Array.from({length:12},(_,i)=>({sourceId:wire.sources[i%wire.sources.length].id,question:{type:'number',text:`Batch${n} Beispiel${i}?`,numericAnswer:i},learning:{objective:'Gleiches Lernziel',explanation:'Erklärung',hint:'Hinweis',workedExample:'Beispiel'}}))}};}});
+ for(let batchIndex=0;batchIndex<3;batchIndex++)await generate({ownerId:'t',sourceQuestions:sources,context:{},existing:[],batchIndex});
+ assert.equal(seen.size,100);
+});

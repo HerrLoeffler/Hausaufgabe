@@ -56,3 +56,9 @@ test("guided learning binds mode and persists explanatory guided independent rep
 test("single-variant route cannot bypass selected output formats",async()=>{
  const h=harness(),d=await h.svc.prepare('teacher',{...args,formats:['gapfill']});await assert.rejects(h.svc.generate('teacher',{draftId:d.id,requestId:'gen-123456',sourceItemId:'b'}));assert.equal(h.calls(),0);
 });
+
+test("compact learning copy reports source coverage and excludes oversized tasks individually",async()=>{
+ const h=harness();h.source.questions.push({id:'large',type:'text',text:'x'.repeat(5001),acceptedAnswers:['a']});
+ const d=await h.svc.prepare('teacher',args);assert.equal(d.sourceCount,3);assert.equal(d.sourceUsed,2);assert.equal(d.excluded.length,1);
+ await assert.rejects(h.svc.prepare('teacher',{...args,requestId:'empty-format',formats:[]}),/Übungsart/);
+});

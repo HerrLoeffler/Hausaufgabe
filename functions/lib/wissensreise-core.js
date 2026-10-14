@@ -20,6 +20,7 @@ function arithmetic(q) {
 function calculate(a, b, op) { if (op === "+") return a + b; if (op === "-" || op === "−") return a - b; if (/[\/÷]/.test(op)) return a / b; return a * b; }
 function compileQuestion(q) {
   if (!q || !FORMATS.includes(q.type) || !String(q.text || "").trim() || q.manualReview === true) throw new Error("Dieses Format hat keinen zuverlässigen automatischen Schlüssel.");
+  if(q.hasMedia)throw new Error("Medienabhängige Aufgaben brauchen einen geprüften Lernadapter.");
   if(String(q.text).length>5000||JSON.stringify(q).length>18000)throw new Error("Die Aufgabe ist für diesen Lernadapter zu umfangreich.");
   if (q.imageUrl || q.imageDataUrl || q.audioPresentation === "listening-only" || q.audioIntent?.presentation === "listening-only" || q.audioAnswerMode === "audio-only") throw new Error("Medienabhängige Aufgaben brauchen einen geprüften Lernadapter.");
   const item = { sourceId: String(q.id || ""), type: q.type, text: q.text.slice(0, 5000), hint: "Schau dir den Arbeitsauftrag und die angebotenen Begriffe noch einmal an.", payload: {}, key: null, arithmetic: null };

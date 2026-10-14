@@ -10,7 +10,7 @@ const { requireAccountWrite } = require("./account-state");
 const { REGION } = require("./constants");
 const { digest } = require("./wissensreise-core");
 const { createLearningService } = require("./wissensreise-service");
-const SOURCE_FIELDS = ["id", "type", "text", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "imageUrl", "imageDataUrl", "audioPresentation", "audioAnswerMode", "audioIntent"];
+const { QUESTION_FIELDS: SOURCE_FIELDS, sourceQuestion } = require("./wissensreise-source");
 function firestoreRepository(db) {
   return {
     get: async path => (await db.doc(path).get()).data(),
@@ -18,9 +18,9 @@ function firestoreRepository(db) {
     loadSource: async sourceId => db.runTransaction(async tx => {
       const ref = db.doc(`quizzes/${sourceId}`), snap = await tx.get(ref); if (!snap.exists) throw new Error("Test nicht gefunden."); const quiz = snap.data();
       await requireAccountWrite(tx,db,quiz.ownerId);
-      const questions = await tx.get(ref.collection("questions").orderBy("position").limit(41));
+      const questions = await tx.get(ref.collection("questions").limit(101));
       const projection = Object.fromEntries(["ownerId", "title", "subject", "grade", "topic", "published", "ended", "rightsHold", "isDeleted", "status", "generationStatus"].filter(key => quiz[key] !== undefined).map(key => [key, quiz[key]]));
-      projection.questions = questions.docs.map(q => Object.fromEntries(Object.entries({ ...q.data(), id: q.id }).filter(([key]) => SOURCE_FIELDS.includes(key))));
+      projection.questions = questions.docs.map(q => ({...q.data(),id:q.id})).sort((a,b)=>(Number.isFinite(a.position)?a.position:Infinity)-(Number.isFinite(b.position)?b.position:Infinity)||a.id.localeCompare(b.id)).map(sourceQuestion);
       return projection;
     })
   };

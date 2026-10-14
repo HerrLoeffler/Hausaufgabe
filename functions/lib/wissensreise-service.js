@@ -11,7 +11,7 @@ function solution(task) {
   if(task.type==="markwords")return Array.isArray(task.key)?task.public.tokens.filter(t=>task.key.includes(t.index)).map(t=>t.text).join("; "):Object.entries(task.key).map(([index,color])=>`${task.public.tokens.find(t=>String(t.index)===index)?.text}: ${task.public.markGroups.find(g=>g.color===color)?.name}`).join("; ");
   return Array.isArray(task.key) ? task.key.map(key=>Array.isArray(key)?key.join(" oder "):key).join("; ") : String(task.key);
 }
-function draftView(draft) { return { id: draft.id, title: draft.title, sourceId: draft.sourceId, duration: draft.duration, mode:draft.mode, formats: draft.formats, revision: revision(draft), status: draft.status, excluded: draft.excluded, generatedCount: draft.generatedCount, remainingBudget: 6 - draft.generatedCount, requests: Object.values(draft.requests).map(r => ({ status: r.status, requestId: r.requestId })), items: draft.items.map((item,i) => { const task = present(item,i * 37); return { id: item.id, sourceId: item.sourceId, task: { ...task.public, id: task.id }, learning:item.learning||null, solution: solution(task), kind: item.kind || "source", parametric: Boolean(item.arithmetic) }; }) }; }
+function draftView(draft) { return { id: draft.id, title: draft.title, sourceId: draft.sourceId, sourceCount:draft.sourceCount??draft.sourceQuestions.length, sourceUsed:draft.sourceQuestions.length, duration: draft.duration, mode:draft.mode, formats: draft.formats, revision: revision(draft), status: draft.status, excluded: draft.excluded, generatedCount: draft.generatedCount, remainingBudget: 6 - draft.generatedCount, requests: Object.values(draft.requests).map(r => ({ status: r.status, requestId: r.requestId })), items: draft.items.map((item,i) => { const task = present(item,i * 37); return { id: item.id, sourceId: item.sourceId, task: { ...task.public, id: task.id }, learning:item.learning||null, solution: solution(task), kind: item.kind || "source", parametric: Boolean(item.arithmetic) }; }) }; }
 function createLearningService({ repo, generate, generateBatch, enqueue, now = Date.now }) {
   const expiry = days => now() + days * 86400000;
   async function source(uid, sourceId) { const value = await repo.loadSource(id(sourceId)); assertSource(value, uid); return value; }
@@ -29,15 +29,17 @@ function createLearningService({ repo, generate, generateBatch, enqueue, now = D
       if (![0,120,180].includes(data.duration)) throw new Error("Wähle freies Lernen, zwei oder drei Minuten.");
       const mode=data.mode||"practice";if(!["practice","guided"].includes(mode))throw new Error("Wähle geführtes Lernen oder freies Üben.");
       const formats = Array.isArray(data.formats) ? [...new Set(data.formats)].filter(t => FORMATS.includes(t)).sort() : FORMATS;
-      if (!formats.length || !Array.isArray(s.questions) || !s.questions.length || s.questions.length > 40||JSON.stringify(s.questions).length>60000) throw new Error("Wähle unterstützte Formate und einen Test mit höchstens40kompakten Aufgaben (60000Zeichen insgesamt).");
+      if (!formats.length) throw new Error("Wähle mindestens eine Übungsart.");
+      if (!Array.isArray(s.questions) || !s.questions.length) throw new Error("Dieser Test enthält noch keine gespeicherten Aufgaben.");
+      if (s.questions.length>100) throw new Error("Dieser Test überschreitet das GradeCrew-Limit von100Aufgaben. Wähle einen Test mit höchstens100Aufgaben.");
       const binding = digest({ sourceId: data.sourceId, sourceFingerprint: digest(s), duration: data.duration, formats,mode });
       const draftId = digest({ uid, requestId }).slice(0,40);
       return repo.mutate(`learningDrafts/${draftId}`, old => {
         if (old) { if (old.ownerId !== uid || old.binding !== binding) throw new Error("Diese Anfrage gehört bereits zu einer anderen Lernkopie."); return { output: draftView(old) }; }
-        const items = [], excluded = [], sourceQuestions = [];
-        for (const q of s.questions) {try { const item = compileQuestion(q); sourceQuestions.push(q);if(formats.includes(q.type))items.push(item);else excluded.push({sourceId:q.id,reason:"Originalansicht nicht gewählt; passende Varianten in gewählten Lernansichten können erzeugt werden."}); } catch (e) { excluded.push({ sourceId: String(q.id || ""), reason: e.message }); } }
+        const items = [], excluded = [], sourceQuestions = [];let sourceBytes=0;
+        for (const q of s.questions) {try { const item = compileQuestion(q);const bytes=Buffer.byteLength(JSON.stringify(q));if(sourceBytes+bytes>60000)throw new Error("Die kompakte Lernkopie ist voll. Diese Aufgabe ist nicht enthalten; nutze einen kürzeren Ausgangstest für den übrigen Inhalt.");sourceBytes+=bytes;sourceQuestions.push(q);if(formats.includes(q.type))items.push(item);else excluded.push({sourceId:q.id,reason:"Originalansicht nicht gewählt; passende Varianten in gewählten Lernansichten können erzeugt werden."}); } catch (e) { excluded.push({ sourceId: String(q.id || ""), reason: e.message }); } }
         if (!sourceQuestions.length) throw new Error("Keine zuverlässig automatisch spielbare Ausgangsaufgabe gefunden.");
-        const d = { id: draftId, ownerId: uid, sourceId: data.sourceId, sourceFingerprint: digest(s), title: String(s.title || "Wissensreise").slice(0,160), context: { subject: String(s.subject || ""), grade: String(s.grade || ""), topic: String(s.topic || s.title || "") }, binding, formats,mode, duration: data.duration, sourceQuestions, items, excluded, generatedCount: 0, batchCount: 0, requests: {}, status: "draft", expiresAt: expiry(7) };
+        const d = { id: draftId, ownerId: uid, sourceId: data.sourceId, sourceFingerprint: digest(s), title: String(s.title || "Wissensreise").slice(0,160), context: { subject: String(s.subject || ""), grade: String(s.grade || ""), topic: String(s.topic || s.title || "") }, binding, formats,mode, duration: data.duration, sourceCount:s.questions.length, sourceQuestions, items, excluded, generatedCount: 0, batchCount: 0, requests: {}, status: "draft", expiresAt: expiry(7) };
         return { value: d, output: draftView(d) };
       });
     },
@@ -53,7 +55,7 @@ function createLearningService({ repo, generate, generateBatch, enqueue, now = D
       });
       if(!reserved)return draftView(await owned(uid,d.id));
       try {
-        const items=await generateBatch({ownerId:uid,sourceQuestions:d.sourceQuestions,context:d.context,existing:d.items,formats:d.formats});await currentSource(d);
+        const items=await generateBatch({ownerId:uid,sourceQuestions:d.sourceQuestions,context:d.context,existing:d.items,formats:d.formats,batchIndex:d.batchCount||0});await currentSource(d);
         await repo.mutate(`learningDrafts/${d.id}`,value=>{if(value.requests[key]?.status!=="running"||value.status!=="draft")return{output:null};value.items.push(...items);value.requests[key].status="ready";return{value};});
       } catch(error){await repo.mutate(`learningDrafts/${d.id}`,value=>{if(value.requests[key]?.status==="running"){value.requests[key].status="failed";value.requests[key].message=String(error.message).slice(0,300);}return{value};});}
       return draftView(await owned(uid,d.id));
@@ -140,7 +142,7 @@ function createLearningService({ repo, generate, generateBatch, enqueue, now = D
       if(!p||p.expiresAt<=now()||!p.autoVariants)return;
       const reserved=await repo.mutate(`learningBuffers/${publicationId}`,b=>{if(!b||b.jobs[batchId]?.status!=="queued")return{output:false};if(b.jobs[batchId].validUntil<=now()){b.jobs[batchId].status="cancelled";return{value:b,output:false};}b.jobs[batchId].status="running";return{value:b,output:true};});if(!reserved)return;
       const shouldContinue=async()=>{const b=await repo.get(`learningBuffers/${publicationId}`);return b?.jobs[batchId]?.status==="running"&&b.jobs[batchId].validUntil>now();};
-      try {await currentSource(p);const b=await repo.get(`learningBuffers/${publicationId}`),items=await generateBatch({ownerId:p.ownerId,sourceQuestions:p.sourceQuestions,context:p.context,existing:[...p.items,...b.items],formats:p.formats,shouldContinue});await currentSource(p);await repo.mutate(`learningBuffers/${publicationId}`,value=>{if(value.jobs[batchId]?.status!=="running"||value.jobs[batchId].validUntil<=now())return{output:null};value.items.push(...items);value.jobs[batchId].status="ready";return{value};});}
+      try {await currentSource(p);const b=await repo.get(`learningBuffers/${publicationId}`),items=await generateBatch({ownerId:p.ownerId,sourceQuestions:p.sourceQuestions,context:p.context,existing:[...p.items,...b.items],formats:p.formats,batchIndex:Number(batchId.split("-")[1])-1,shouldContinue});await currentSource(p);await repo.mutate(`learningBuffers/${publicationId}`,value=>{if(value.jobs[batchId]?.status!=="running"||value.jobs[batchId].validUntil<=now())return{output:null};value.items.push(...items);value.jobs[batchId].status="ready";return{value};});}
       catch(error){await repo.mutate(`learningBuffers/${publicationId}`,b=>{b.jobs[batchId].status="failed";b.jobs[batchId].message=String(error.message).slice(0,300);return{value:b};});}
     },
     async develop(uid,data) {

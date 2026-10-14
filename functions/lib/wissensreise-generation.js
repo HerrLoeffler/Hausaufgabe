@@ -1,12 +1,14 @@
 "use strict";
 const { questionSchemaForType } = require("./schemas");
 const { compileQuestion, digest } = require("./wissensreise-core");
+const { questionData } = require("./wissensreise-source");
 let configured;
 function createBatchGenerator({ structuredResponse, consumeQuota, recordUsage }) {
-  return async ({ ownerId, sourceQuestions, context, existing, formats, shouldContinue=async()=>true }) => {
+  return async ({ ownerId, sourceQuestions, context, existing, formats, batchIndex=0, shouldContinue=async()=>true }) => {
     if(!await shouldContinue())throw new Error("Die Lernrunde benötigt keine weiteren Varianten.");
     await consumeQuota(ownerId,"test");
-    const slots = sourceQuestions.slice(0,40), usage = {}, addUsage = result => { for(const key of ["input_tokens","output_tokens","total_tokens"]) usage[key]=Number(usage[key]||0)+Number(result.usage?.[key]||0); };
+    const start=(Math.max(0,Math.floor(batchIndex))*40)%sourceQuestions.length;
+    const slots = sourceQuestions.slice(start,start+40).map(questionData), usage = {}, addUsage = result => { for(const key of ["input_tokens","output_tokens","total_tokens"]) usage[key]=Number(usage[key]||0)+Number(result.usage?.[key]||0); };
     const targetFormats=formats?.length?formats:[...new Set(slots.map(q=>q.type))];
     const learningSchema={type:"object",additionalProperties:false,properties:{objective:{type:"string",minLength:1,maxLength:240},explanation:{type:"string",minLength:1,maxLength:600},hint:{type:"string",minLength:1,maxLength:400},workedExample:{type:"string",minLength:1,maxLength:800}},required:["objective","explanation","hint","workedExample"]};
     const schema = { type:"object",additionalProperties:false,properties:{ variants:{type:"array",minItems:12,maxItems:12,items:{type:"object",additionalProperties:false,properties:{sourceId:{type:"string",enum:slots.map(q=>q.id)},question:{anyOf:targetFormats.map(type=>questionSchemaForType(type,{allowImages:false,allowAudio:false}))},learning:learningSchema},required:["sourceId","question","learning"]}}},required:["variants"] };
