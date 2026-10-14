@@ -201,3 +201,16 @@ Der Nutzer hat einen kurzen interaktiven Schluss freigegeben: **„Noch Fragen? 
 - **Wilma / Victoria** (`iiABcyfvsoqbxubwCKFM`): „Dann schaue ich noch einmal genau hin: Sind die Aufgaben verständlich?“ — Flow `nbNNelz8cSFBnMkHVcnT`, Session `7so7Lx7svTKacnKaZGHS4`, 4,48 s, Schätzung 70 Credits / 0,70 US-Cent.
 
 Die Summe der Kostenschätzungen beträgt 299 Credits / 2,99 US-Cent; das sind Schätzwerte, keine bestätigte Rechnung. **Keine Hörbewertung liegt vor.** Frühere Lisa-Coco-Probe über Runway bleibt Teil der Historie, ist aber nicht Teil dieser vier ElevenLabs-Proben. Es wurden keine weiteren Generierungen gestartet. Der gewünschte Produktionsumfang ist vorerst ein einfaches Startseiten-Niveau mit wenigen passenden Posen; diese Animation ist noch nicht umgesetzt. Keine Video-Aussage über ElevenLabs daraus ableiten; Runway-Free-Videolimit bleibt auf Runway beschränkt.
+
+## 14.10.2026 — Nutzerfreigabe der jüngeren Crew-Stimmen
+
+Der Nutzer hat die jüngere zweite Stimmenrunde gehört und ausdrücklich bestätigt: „die stimmen sind super! Gerne das so als dialog jetzt vorbereiten“. Die frühere Coco/Irene- und Remy/Lennart-Runde wird nicht weiterverwendet; die damals akzeptablen Emmi/Lyra- und Wilma/Victoria-Stimmen werden ebenfalls durch die jüngere bevorzugte Runde ersetzt.
+
+- **Coco / Milly Maple** (`VD1if7jDVYtAKs4P0FIY`): Flow `AXxuRLWXVeEPRNslyO7c`, Session `28KI9uk1LjWwDzUW6DtL`, 4,56 s.
+- **Remy / Dylan Carter** (`5Axpbpycg8qWQ7LexavI`): Flow `4LNoaGxRJe59op4YJ1BR`, Session `1QdvouevtmY9EIoletEm`, 6,00 s.
+- **Emmi / Lumi** (`zndmYEEoWWxRYyEL2ZZY`): Flow `dM29bzNVv5uRhQvJHHR7`, Session `PFeLf7S3Dj8Uhku8VyTV6`, 6,16 s.
+- **Wilma / Skittle Bee** (`xLCJR8xcZX2YjImGFyGw`): Flow `JAoas4mbY8Q6Qoe5bT91`, Session `8lAaE7sdzzXetFrt2Hpx4`, 4,64 s.
+
+Alle vier Proben wurden mit `eleven_v4`, je einer Variation, erfolgreich abgeschlossen. Kostenschätzung: 299 Credits / 2,99 US-Cent; keine bestätigte Abrechnung. Der Nutzer hat den Klang dieser jüngeren Stimmen freigegeben. Die Regel bleibt: ElevenLabs nur für Präsentationsmedien, nie für GradeCrew-Tests oder Hörtexte verwenden.
+
+Die Sprecherin/die Sprecher werden nun in einen kurzen dialogischen Satzfluss eingebunden. Die getrennte Facharbeit an zehn freigegebenen Dialogzeilen, gemischtem Audio und Timingmanifest läuft noch; dafür liegt noch kein Ergebnis vor. Keine vollständige Audio-/Videoanimation, keine weitere PPTX und keine Änderung an V5. Keine neue ElevenLabs-Generation in diesem Checkpoint gestartet. V5 bleibt der unveränderte Präsentationsstand. Als nächster Schritt folgt die Prüfung des tatsächlich gelieferten Dialog-/Timingmanifests; keine Produktionsreife ableiten, bevor die Übergabe vorliegt.
