@@ -9,7 +9,7 @@
 - Aufgabenbranch: docs/wissensreise-plan-20261014.
 - Basiscommit: d3dd36d5b63062de7d4702c40ac1dd87574cc484 (frischer main).
 - Integrationsziel: main ausschließlich für spätere Dokumentationsintegration; keine Mergefreigabe.
-- PR: DraftPR wird zu diesem Branch angelegt; GitHub-Branch/PR-Stand live prüfen.
+- PR: [DraftPR237](https://github.com/HerrLoeffler/Hausaufgabe/pull/237), open/unmerged; nur zur Besprechung.
 - Betroffene Dateien: docs/learning/WISSENSREISE_MASTERPLAN_20261014.md, diese Übergabe, eine eigene TODO-Sektion, ein eigener Registry-Eintrag.
 - Überschneidungen: TODO/Registry sind gemeinsame Dateien. Frisch gelesen, vorhandene Einträge erhalten; keine fremden Taskzeilen verändert. Inhaltlich Pool/Classroom/Test-Rallye nur gelesen/verknüpft. PR235/236/218 und Lerninselpläne unverändert.
 
@@ -23,12 +23,12 @@ Reine Fachplanung: Architektur, Quellen-/Inhaltsmodell, Teacher-/Learnerflow, Ü
 
 ## Akzeptanzkriterien und Zwischenstand
 
-- Ausführlicher deutscher Entwurf mit2856 Wörtern vor finalen Quellenkorrekturen lokal gesichert.
+- Ausführlicher deutscher Entwurf mit2855 Wörtern vor finalen Quellenkorrekturen lokal gesichert.
 - Bestehende elf Fragetypen von geplanten Ansichten getrennt.
 - Kein Ranking/Noten/Strafsperren im Lernmodus, zuverlässige Schlüssel oder unbewertete Reflexion.
 - Binomisches Beispiel mathematisch kontrolliert: (x+3)²=x²+6x+9; (2x+3)²=4x²+12x+9; (x−3)²=x²−6x+9.
 - Eigene Task, wiederaufnehmbare Übergabe und begrenzte TODO/Registry-Zuordnung.
-- Quellen-, Kontext- und Regelsichtung durchgeführt; lokale Strukturprüfung und Remote-Diffprüfung werden am Kandidaten durchgeführt.
+- Quellen-, Kontext- und Regelsichtung durchgeführt; lokale Strukturprüfung und Remote-Diffprüfung am Kandidaten ae9e2cfb59bf25c22ed647fb4720164f4c873154 durchgeführt.
 - GitHub-Sicherung: Commit in dieser Branchhistorie; letzter konkreter SHA ist im Abschlussbericht/PR ersichtlich. Keine selbstreferenzielle Commit-SHA im selben Commit erfinden.
 - Code: kein Produktcode. CI: für neuen Plan nicht als bestanden behauptet. Integration: nicht erfolgt. Staging-Hosting/Functions/Rules: nicht erfolgt. Nutzer-/Gerätetest: nicht erfolgt. Production: unverändert.
 - GRADECREW_STATE.json bleibt unverändert: keine Feature- oder Release-Stufenänderung, nur branch_only/documentation.
@@ -66,3 +66,11 @@ Vor Bauauftrag: gemeinsamer GradeCrew-Lernmodus, Name/Pilotziel, menschlicher Pr
 - Kostenreservierungen/Provider-Versuche: keine neuen Starts; bestehende Aufgabenbudgets unberührt. Documentation-Sicherungsversuch1; kein Retry unbekannter Mutation.
 - Vor Wiederholung: Remotehead/PR und diese vier Dateien prüfen, gleiche Task-ID behalten. Test-Rallye nicht neu starten.
 - Genau nächster ausführbarer Schritt: Martin bespricht die nötigen Produktentscheidungen aus Abschnitt16 des Plans; anschließend gesonderten nächsten Auftrag abgrenzen.
+
+## Gesicherter Checkpoint 14.10.2026, 12:45 UTC
+
+Plan/TODO/Registry/Handoff wurden atomar als ae9e2cfb59bf25c22ed647fb4720164f4c873154 (Tree d872f4997bb5ff0919b1872747ef8c786fd71d4c) gesichert. Remotecompare main d3dd36d5 → ae9e2cfb bestätigt genau vier Dokudateien,1Commit ahead/0behind. Remoteplan bytegleich lokal; lokale Prüfung:2855Wörter,16Abschnitte, Registry gültig, je1Task-/Registryeintrag, keine Whitespacefehler; zusätzlicher Scopecheck erfolgreich. Relative Links zeigen auf frisch gelesene vorhandene Übergaben beziehungsweise eigene neue Handoffdatei.
+
+Automatische Dokumentationschecks am Kandidaten ae9e2cfb: [Project handoff checks38566288754](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38566288754) und [Development Status38566288745](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38566288745) completed/success. Das sind Koordinations-/Dokuchecks, keine Wissensreise-Produkt-/Runtime-CI oder Nutzerabnahme. Dieser Nachtrag ändert ausschließlich die eigene Übergabe; Nachtragchecks sind erst mit separatem Ergebnis belegt. Fachliche Quellen-/Mathematikselbstprüfung durchgeführt, unabhängige inhaltliche Prüfung durch die Zentrale folgt. Planstatus bleibt Vorschlag/branch_only/documentation.
+
+Zusätzlich gelesen: /Users/martin/.codex/plugins/cache/openai-curated-remote/superpowers/6.4.2/skills/verification-before-completion/SKILL.md. Tatsächliche Prüfungen und nicht geprüfte Produktstufen oben getrennt dokumentiert.
