@@ -224,3 +224,8 @@ Umsetzung: gemeinsamerEndeinladungsdialog mitOriginalvierCrewArt, DE/ENfreundlic
 ### ElevenLabs-Startreceipt V6
 
 Estimateflow jJtLLiEsxaKNEc8AoTYD,528Credits/USD0.0528/vierTakes,nothingcharged. EinmaligerErstellstart:{"flow":"jJtLLiEsxaKNEc8AoTYD","node":"NUsNozEP3os2PvaRRlJO","sessions":["nr9laMwno2vhieWdsHqu","5sDn7GSTRkrJeFQ7EHmi","XKpPs2Ix5Bw3oZADyqFN","B9S0la68lx3GA8qdzE8w"],"summary":{"nodes_run":1,"generations_started":4,"failed":0,"generations_by_node":{"NUsNozEP3os2PvaRRlJO":4}}}. Ergebnisnochprüfen, keinRetry/neuerGenerationstart. Signed/OOBURLs bewusstnichtgespeichert. NächsterSchrittStatuspoll undlokaleEinladungsimplementierungparallelzumAudioabschluss.
+
+
+### ElevenLabs-Ergebnisreceipt V6
+
+AllevierTakescompleted/keineFailures. Flow jJtLLiEsxaKNEc8AoTYD; Generationen kn3zoqYKl7Whtt6ODHFf(7.36s), reoJj5CIVc4gCtQu4YvR(7.36s), 0pu8rwvwARwBU1SWHG2t(7.44s), Da9keUPE3zFv7SehE4i8(7.36s). TatsächlicheKostenje132Credits/USD0.0132,gesamt528Credits/USD0.0528. NativeMCPeinmalgestartet,keineRegeneration. Alle4MP3lokalgesichert, Take1alsvorläufigeAuswahl135869Bytes/44100HzMono128kbps/afinfo7.392653s; Provider7.36s. DownloaddurchSandboxDNS zunächstverweigert; gereviewterDownloadnurdervorhandenenArtefakteerfolgreich, keineweiterenGenerierungen. V6eigenerServer8783/Session95513;V5unverändert. EinladungundblaueCTAimplementiert,23/23regressionTestsnachbeabsichtigtemMP3Pfadupdategrün; echteBrowserprüfungjetzt. VoiceQualitätsurteilMartinnochpending.
