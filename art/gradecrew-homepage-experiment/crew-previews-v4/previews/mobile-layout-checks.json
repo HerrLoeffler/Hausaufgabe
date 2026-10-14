@@ -1,0 +1,26 @@
+[
+  {
+    "columns": "205px minmax(0px, 1fr)",
+    "crew": "coco",
+    "scrollWidth": 352,
+    "width": 352
+  },
+  {
+    "columns": "205px minmax(0px, 1fr)",
+    "crew": "remy",
+    "scrollWidth": 352,
+    "width": 352
+  },
+  {
+    "columns": "205px minmax(0px, 1fr)",
+    "crew": "emmi",
+    "scrollWidth": 352,
+    "width": 352
+  },
+  {
+    "columns": "205px minmax(0px, 1fr)",
+    "crew": "wilma",
+    "scrollWidth": 352,
+    "width": 352
+  }
+]

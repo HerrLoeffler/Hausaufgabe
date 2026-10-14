@@ -1,0 +1,102 @@
+{
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "staging_reference": "gc39@8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "unit_tests": {
+    "pass": 14,
+    "fail": 0,
+    "command": "node --test *.test.mjs"
+  },
+  "browser": "Codex IAB via CUA",
+  "actual_viewports": [
+    [
+      1280,
+      720
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "passed": [
+    "Coco 3 manual steps, original corded phone, concrete help example",
+    "Remy 4 manual steps, whole 10 question test, picture and listening examples",
+    "native audio Play observed paused=false/currentTime=0.119156, duration=5.470658",
+    "No visible transcript in listening task",
+    "DE/EN UI independent of English test language",
+    "Guest create/settings simulations preserve name and draft",
+    "Mode switch clears password; no extra name field",
+    "Browser back and Escape preserve name and draft",
+    "Already signed-in create skips gate; both skip paths unit-tested",
+    "Mobile dialog scrollWidth equals clientWidth",
+    "Source preservation and canonical release hashes",
+    "Corrected visible classroom screenshots pixel-match original start area",
+    "Emmi/Wilma dialog content pixel-match",
+    "Original startup dynamic styles function copied byte-identical and inserted after i18n bootstrap",
+    "Original page id gradecrewPage; header flex restored; DE/EN Sign in label verified",
+    "Original watchStickyHeight observes header; no editor gives measured zero",
+    "Final initial entry animation completion triggers original fitter; start height642 =720 -78, stage546 =720-78-96",
+    "Header in central independent Chrome at1200x773 matches actual live flex x568.203 width104.546875",
+    "Central independent final actual live comparison PASS: same Chrome1200x773, V3 DE start y78 h695, header x568.203 width104.546, root topbar-height78px. Actual full classroom/4roles/CTA/testcode/benefits seen."
+  ],
+  "pixel_comparison": [
+    {
+      "v3": "start-v3-desktop.jpg",
+      "baseline": "start-baseline-desktop.jpg",
+      "image_dimensions": [
+        1280,
+        720
+      ],
+      "compared_rectangle": [
+        0,
+        0,
+        1280,
+        610
+      ],
+      "difference_bbox": null
+    },
+    {
+      "v3": "emmi-v3.jpg",
+      "baseline": "emmi-baseline.jpg",
+      "image_dimensions": [
+        1280,
+        720
+      ],
+      "compared_rectangle": [
+        145,
+        140,
+        1130,
+        590
+      ],
+      "difference_bbox": null
+    },
+    {
+      "v3": "wilma-v3.jpg",
+      "baseline": "wilma-baseline.jpg",
+      "image_dimensions": [
+        1280,
+        720
+      ],
+      "compared_rectangle": [
+        145,
+        140,
+        1130,
+        590
+      ],
+      "difference_bbox": null
+    }
+  ],
+  "limitations": [
+    "iPhone/iPad dimensions in browser, no physical devices/Safari/VoiceOver",
+    "Reduced-motion phase behavior unit-tested, OS preference not exercised",
+    "Account gate separate finale fixture, not integrated into full tutorial",
+    "No actual auth/account/terms flow",
+    "No CI/integration/deployment",
+    "Initial clipped start screenshots invalid; overwritten with visually inspected full-page JPEG snapshots before comparison",
+    "An intermediate header translation TypeError was found and fixed by importing translateTree from its original runtime module. Old console messages can persist across reload.",
+    "Direct public staging reference opened in IAB restored an existing authenticated session automatically; only stylesheet/page-context metadata read, no private action/form/sign-out performed, reference tab closed. Experiment itself runs no app/backend code."
+  ]
+}

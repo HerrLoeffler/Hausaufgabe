@@ -1,0 +1,98 @@
+{
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "version": "V4 isolated experiment",
+  "source_checkpoint": "cce6dbcf7b1869e5870167de9ee020608409588e",
+  "unit_tests": {
+    "passed": 18,
+    "failed": 0,
+    "command": "node --test *.test.mjs",
+    "new_journey_red": 4,
+    "new_journey_green": 4
+  },
+  "browser": "Codex IAB, CUA only",
+  "actual_viewports": [
+    [
+      1280,
+      720
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "actual_paths": [
+    "DE complete Coco0→1→2→Remy0→1→2→3→Emmi0→1→2→Wilma0→1→2→finish",
+    "EN complete same sequence, translated next character labels",
+    "Coco New test click→Remy, ipad+iphone",
+    "Direct figure navigation, native Enter/Escape/focus return",
+    "Remy native audio Play: playing=true,currentTime=0.114343",
+    "Remy10task overview retained, same image/audio examples",
+    "All4mobile dialogs scrollWidth=clientWidth=352, visual stacked layout",
+    "Original E/W example-renderer blocks byte equal; only wrappers/timing/navigation changed",
+    "No warning/error logs in V4tab"
+  ],
+  "mobile_measurements": [
+    {
+      "columns": "205px minmax(0px, 1fr)",
+      "crew": "coco",
+      "scrollWidth": 352,
+      "width": 352
+    },
+    {
+      "columns": "205px minmax(0px, 1fr)",
+      "crew": "remy",
+      "scrollWidth": 352,
+      "width": 352
+    },
+    {
+      "columns": "205px minmax(0px, 1fr)",
+      "crew": "emmi",
+      "scrollWidth": 352,
+      "width": 352
+    },
+    {
+      "columns": "205px minmax(0px, 1fr)",
+      "crew": "wilma",
+      "scrollWidth": 352,
+      "width": 352
+    }
+  ],
+  "assets": {
+    "new_edits": 3,
+    "builtin_imagegen": true,
+    "targets": [
+      "assets/crew-classroom-lightblue-v4.png",
+      "assets/remy-tablet-lightblue-v4.png",
+      "assets/remy-microphone-lightblue-v4.png"
+    ],
+    "colour_reference": "baseline/assets/gradecrew/remy-footer-letter-r-v4.png",
+    "portraits_alpha_extrema": [
+      0,
+      255
+    ],
+    "scene_dimensions": [
+      1774,
+      887
+    ]
+  },
+  "preservation": {
+    "v3_source_receipt": "5a093ee403977146a09677903d70f44aee1530fe",
+    "baseline_original_assets_unchanged": true,
+    "canonical_staging_unchanged": true,
+    "product_files_written": [],
+    "backend_or_provider_runtime": false
+  },
+  "limitations": [
+    "Browser dimensions only, not physical iPad/iPhone/Safari/VoiceOver",
+    "ReducedMotiontrue/false unit behavior, OS preference untested",
+    "No CI/merge/deploy/useracceptance",
+    "Prepared independent role examples, not real shared backend test workflow",
+    "V3 account finale fixture retained, no actual auth/full tour",
+    "Minor imagegen reconstruction differences possible outside the colour correction; whole-scene pixel identity not asserted",
+    "Mobile layout measurements gridTemplateColumns property inactive because mobile sheet display:block; visual stack verified"
+  ]
+}
