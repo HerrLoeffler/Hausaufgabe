@@ -1666,7 +1666,7 @@
       "id": "learning-wissensreise-20261014",
       "task_id": "GC-LEARNING-WISSENSREISE-01",
       "branch": "feat/wissensreise-20261014",
-      "observed_head": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+      "observed_head": "ec7512600bf6d48541cb304d746dca96b78358b5",
       "stage": "staging_deployed",
       "scope": "isolated_preview_only",
       "pull_request": 238,
@@ -1679,7 +1679,13 @@
       "production": "not_requested_unchanged",
       "handoff": "workstreams/wissensreise-plan-20261014.md",
       "receipt": "docs/learning/wissensreise-evidence-20261014/staging-7b35.json",
-      "next_action": "Martin signs in through isolated index.html and chooses own inactive saved test; actual cloud/model/device acceptance remains open"
+      "next_action": "Review exact ec751 game settings/source100 fix, exact CI, then update same isolated preview and verify authenticated50-question preparation",
+      "deployed_head": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+      "candidate_stage": "code_review_and_browser_qa_pending",
+      "candidate_ci": "AIStagingChecks38600305961 in_progress observed by root; no rerun",
+      "authenticated_source_list_verified": true,
+      "last_user_attempt": "authenticated own50-question test failed40-question cap; reproduced through live UI, no paid generation",
+      "followup_receipt": "docs/learning/wissensreise-evidence-20261014/followup-settings-ec751.json"
     }
   ],
   "deployments": [

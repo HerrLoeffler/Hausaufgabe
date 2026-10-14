@@ -2,13 +2,13 @@
 
 - Ausführender Owner: **wissensreise_implementation**, Fachagent; ursprüngliche Planung durch wissensreise_plan ist unten als Historie gekennzeichnet.
 - Koordinator: bestehende GC · Games-Zentrale, Thread01a11864-3ec7-7091-acc0-9ff292f530f3.
-- Status: **staging_deployed / isolated_preview_only**. Code noch nicht integriert; user_tested=false, Production unverändert.
-- Runtimebranch: feat/wissensreise-20261014, [DraftPR238](https://github.com/HerrLoeffler/Hausaufgabe/pull/238), unveränderter geprüfter/deployter Commit **7b35f9ff23c5b824ca0e85402a5270751c0b06c5**. BasisGC39 8f8697901f8c1aea89897be855ca2872c82d0f2b.
+- Status: **Fortsetzung: Sourcegrößenfehler und Spieleinstellungen in Prüfung**. Bisheriges isoliertes Deployment7b35 besteht; neuer Kandidat noch nicht deployed. Code nicht integriert, vollständige Nutzerabnahme offen, Production unverändert.
+- Runtimebranch: feat/wissensreise-20261014, [DraftPR238](https://github.com/HerrLoeffler/Hausaufgabe/pull/238), bisheriger geprüfter/deployter Commit **7b35f9ff23c5b824ca0e85402a5270751c0b06c5**; aktueller Fixkandidat **ec7512600bf6d48541cb304d746dca96b78358b5**. BasisGC39 8f8697901f8c1aea89897be855ca2872c82d0f2b.
 - Main-Dokumentationsweg: docs/wissensreise-plan-20261014, [DraftPR237](https://github.com/HerrLoeffler/Hausaufgabe/pull/237); Planfreigabe mit korrigiertem Testeingang, scoped TODO/Registry/STATE und dauerhafte Receipts. Nicht nur zur Besprechung; keine Main-Mergefreigabe.
 - Belege: exakte Node22-CI38574847338 erfolgreich,285Functions-/6DOMtests, unabhängiger Code- und Browserreview. Hosting170/170Payload-Hashes,12neueFunctionsACTIVE,43bestehende unverändert; kanonisches Staging und Rules unverändert. [Releasebeleg](../docs/learning/wissensreise-evidence-20261014/staging-7b35.json).
 - Ziel: eigener vorhandener oder mit Remy erstellter Test → passende Varianten und geführtes Lernen/freies Üben → bewusste Prüfung/Freigabe → Link/QR → kontinuierliches Lernen ohne Noten/manuelle Bewertung.0/120/180Sekunden; allein Countdown beendet Zeitrunde. Budget3×12Puffer und ehrliche Wiederholung beiAusfall/Kappe.
 - Noch offen: tatsächlich angemeldeter eigener Test und Cloudablauf, Providersemantik/Nachfüllungs-IAM, physische Geräte, Klassenlast und Nutzerabnahme. Kein vollständiger Abschluss aller ursprünglichen Masterplan-Ausweitungen.
-- Genau nächster Schritt: Martin öffnet [isolierte Wissensreise](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html), meldet sich über [Anmeldung/Testeditor](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/index.html) an und wählt einen eigenen inaktiven Test.
+- Genau nächster Schritt: Exakten Settings-/Sourcefix und CI abnehmen, dieselbe Vorschau aktualisieren und den bereits angemeldeten eigenen50-Fragen-Test vorbereiten. Keine erneute Anmeldung und keine bezahlte Modellprobe.
 
 ## Historie: ursprüngliche Planungsübergabe vor dem Umsetzungsauftrag
 
@@ -144,3 +144,15 @@ Status **staging_deployed/isolated_preview_only**, nichtintegrated/user_tested/p
 Genau nächsterSchritt: Martin öffnet die isoliertePreview, meldet sich überIndexan und wählt einen eigenen inaktivenTest. Code- und MainDocsPRs danach gezielt integrieren, niemals kanonischesStaging/Production automatischübernehmen.
 
 Ergänzender unabhängiger [Live-Hosting-Browserbeleg](../docs/learning/wissensreise-evidence-20261014/browser-live-hosting-7b35.md): tatsächlicher Previeweinstieg und normales Loginmodal, Releaseprojekt/Commit/170-DateiManifest und4LiveUI-Hashes exakt geprüft, Konsole sauber. Kein angemeldeter Benutzer-, Lernsession- oder Generierungsstart.
+
+## Fortsetzung nach echtem Nutzertest:50-Fragen-Quelle und vorhandene Spieleinstellungen
+
+QA hat im vorhandenen angemeldeten Previewtab47eigene Tests geladen und das Vorbereiten reproduziert. Die sichtbare Testkarte belegt50Aufgaben. loadSource limit41 plus prepare max40 lösten die allgemeine40/60000-Meldung aus; kein Authfehler. Es wurden keine Testinhalte, Lösungsschlüssel, Nutzerkennungen oder Tokens protokolliert. Die bisherigen synthetischen2-Fragen-Proben deckten diese real zulässige Sourcegröße nicht ab.
+
+Fix f45c0a5: bestehender100-Fragen-Contract,101 klar abgewiesen; Legacyfragen ohneposition erhalten. Rohmedien werden privat gehasht und nicht in Lernkopie/Providerprompt kopiert; medienabhängige oder übergroße Einzelaufgaben werden begründet ausgeschlossen. Die kompakte Lernkopie behält ein60000-Byte-Budget; Coverage sourceCount/sourceUsed und Ausschlussgründe sichtbar. Drei begrenzte40-Quellen-Promptfenster können insgesamt100Quellen anbieten, keine Behauptung100erzeugter Varianten; die36-Varianten-Grenze bleibt.
+
+Settingskandidat ec7512600bf6d48541cb304d746dca96b78358b5 (Treee503b7d4895c9a18cecfde9f3d1da83c6cfdba17, lokalb1a7571958cddaac79e5d1724cb0759ffe420aac): FastQuiz-Templates/Controls und gemeinsame Spielnavigation nach vollständigem Source-/Stylevergleich übernommen. Vier nummerierte Test/Übungsarten/Lernmodus/Dauer-Blöcke, Auswahlkarten, Zusammenfassung und primäres Trainingvorbereiten; Aufgabenprüfung als aufklappbare Ansicht, Coverage sichtbar. Mathe-/Deutsch-/Englisch-Screenshots dienen als Vergleich, keine festen Themen, Punkte oder Strafsperren übernommen. Eigener synthetischer50-Fragen-QAfall ergänzt.
+
+RED→GREEN: actualCallable50-Fragen-Fehler reproduziert;50/100/101, Legacypositionen,90000-Zeichen-Inlinebild mit restlicher Plainfrage, Medienänderungsfingerprint und alle100Quellen-Promptfenster. Fullfunctions289/289, DOM7/7, eslint und Build171 bestanden lokal. AIStagingChecks38600305961 läuft laut Root. Unabhängiger Backendreview f45 frühe27Checks PASS; kombinierter Review und BrowserQA warten auf endgültigen Befund. Noch keine neue Deployment-/Nutzerfunktionsbehauptung. [Strukturierter Beleg](../docs/learning/wissensreise-evidence-20261014/followup-settings-ec751.json).
+
+Unabhängiger kombinierter Codereview ec751 PASS:15RemoteBlobs exakt,27targetBackend,DOM7,eslint/diffcheck/171Build. Die neue Sourceprojektion kann bestehende7b35Lernkopien wegen geänderter Fingerprints ungültig machen; diese müssen bewusst neu vorbereitet und geprüft werden. Keine automatische Neugenerierung und keine Kompatibilitätsbehauptung.
