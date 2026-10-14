@@ -1,0 +1,47 @@
+[
+  {
+    "v3": "start-v3-desktop.jpg",
+    "baseline": "start-baseline-desktop.jpg",
+    "image_dimensions": [
+      1280,
+      720
+    ],
+    "compared_rectangle": [
+      0,
+      0,
+      1280,
+      610
+    ],
+    "difference_bbox": null
+  },
+  {
+    "v3": "emmi-v3.jpg",
+    "baseline": "emmi-baseline.jpg",
+    "image_dimensions": [
+      1280,
+      720
+    ],
+    "compared_rectangle": [
+      145,
+      140,
+      1130,
+      590
+    ],
+    "difference_bbox": null
+  },
+  {
+    "v3": "wilma-v3.jpg",
+    "baseline": "wilma-baseline.jpg",
+    "image_dimensions": [
+      1280,
+      720
+    ],
+    "compared_rectangle": [
+      145,
+      140,
+      1130,
+      590
+    ],
+    "difference_bbox": null
+  }
+]

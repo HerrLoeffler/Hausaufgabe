@@ -1,0 +1,610 @@
+{
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "scope": "local experiment V3",
+  "files": {
+    "preservation.test.mjs": {
+      "bytes": 2783,
+      "sha256": "21b15d033855cf59167577a9d9c403358b3d3a473462c156b3e9ae1ca5aa11b4"
+    },
+    "index.html": {
+      "bytes": 5244,
+      "sha256": "08cdcaacfe9c718698af14f82f4f4b06c7c58ea25afbae3f8668fe15d1876af8"
+    },
+    "test-data.mjs": {
+      "bytes": 2253,
+      "sha256": "44528a3bddcce4cccaf6864bb5b980454d61545b05317235d1659c03816c1257"
+    },
+    "preview.test.mjs": {
+      "bytes": 2351,
+      "sha256": "b99cd3bcd96298927348c4bfe198ac615739de4971322277112539a81c7d0429"
+    },
+    "flow.test.mjs": {
+      "bytes": 730,
+      "sha256": "cf71e57a4ab83347320aad5dfd403f521dae4e06b8a0c80b86d80a46617e320c"
+    },
+    "finale.mjs": {
+      "bytes": 9524,
+      "sha256": "052af9d32c18a2d4d0755820cef54b17996191924a01f3f67d8f16fd01c647e3"
+    },
+    "baseline.html": {
+      "bytes": 5274,
+      "sha256": "3e299e9d79ccb3e9d852d125f3c41e2e2d2d2c68dea085e24c08df17c1a3a766"
+    },
+    "entry-v3.mjs": {
+      "bytes": 19146,
+      "sha256": "a3db367ac83f7470a4f492aa1fb5dba02508f2eb1a64957e87f3c0edca21fc77"
+    },
+    "README.md": {
+      "bytes": 6600,
+      "sha256": "8bd862ff5a3f1196738939301a43da8888075537b879d64e5064a300fbe21c8a"
+    },
+    "demo-v3.mjs": {
+      "bytes": 14316,
+      "sha256": "ad601f90e855ac2acdddf529db5225b74413be85e02159318aca598a0ef7bf7c"
+    },
+    "v3.css": {
+      "bytes": 16345,
+      "sha256": "363c5d7c1b8bb05f6cb80ccce948cd6f38ecb3268353bb81dd7719973df7229f"
+    },
+    "package.json": {
+      "bytes": 129,
+      "sha256": "776c965c58db581a59a93c49abe61d62fde5526fa73f204e0bc8aaf4c839bfdc"
+    },
+    "preview-start.mjs": {
+      "bytes": 3977,
+      "sha256": "b474a7f58011228946fc598e4b976c318524eae938cd915b95e9fd69242d93c8"
+    },
+    "tutorial-finale.html": {
+      "bytes": 1400,
+      "sha256": "ef52b12ecbc45362e299304d64ae4043b05e79e1c9ddc2905eb50244f8765832"
+    },
+    "flow-v3.mjs": {
+      "bytes": 1123,
+      "sha256": "8b9a4b08ab156e00e03d56f29a8187cc8ef15fccba150e37faad43f8648ab504"
+    },
+    "PROMPTS.md": {
+      "bytes": 2706,
+      "sha256": "e886bd1582d6cd59c7192a3999b9f780d3b788a3cbfa7a7ea0a8718fde903caf"
+    },
+    "tutorial-gate.mjs": {
+      "bytes": 998,
+      "sha256": "12085012f5c3e0356d5c29c752dedd1a6a49c3704d6492457b051fb2cafb71f5"
+    },
+    "tutorial-fixture.mjs": {
+      "bytes": 2345,
+      "sha256": "5b3872b13a57fe661c39a01be937489798a16a5f295774b5130f00db26ba7dfa"
+    },
+    "copy-v3.mjs": {
+      "bytes": 3937,
+      "sha256": "c461a8751830062b7d34654d344228e6aed084219d204558e0e59fe9f40d600e"
+    },
+    "prepare.mjs": {
+      "bytes": 4589,
+      "sha256": "b0bb2f7825af8c2c559a5be05070ad8d811361ee46a63dd3797268c0165fc97e"
+    },
+    "baseline/auth-profile.js": {
+      "bytes": 219,
+      "sha256": "2b13f53d4c96b96839f3c6f9894d42931c925bff0ee8a963e5366fb8ca3af14b"
+    },
+    "baseline/interface.js": {
+      "bytes": 3887,
+      "sha256": "08cea481618116309fde7574962acc2720f48b04081ba31e41e0d1d87d27f094"
+    },
+    "baseline/gradecrew-entry-flow.js": {
+      "bytes": 19135,
+      "sha256": "a1cc1e4636bfc34d9f8626078c4544ff51fead4ce643dc37ac049e69e0255eeb"
+    },
+    "baseline/gradecrew-workspace-upgrade.css": {
+      "bytes": 15565,
+      "sha256": "5b719bdcf297f253df86e1f63f9617999616c2106669669759704c8dbb702c79"
+    },
+    "baseline/gradecrew-logo.css": {
+      "bytes": 869,
+      "sha256": "99ec4a2d7433b0b2d7e8d3ca6e5f4cef9b745b9d9aaa8f4b49d2ddf3f750945b"
+    },
+    "baseline/crew-clay.css": {
+      "bytes": 3221,
+      "sha256": "300abe24372f14580bd23cdd08bfd1acef12cc384e97df7ad26b85c977deba05"
+    },
+    "baseline/index.html": {
+      "bytes": 56689,
+      "sha256": "5d9f1e0049369d36085cc6fe6aced1973e2e198534845d29880f834bcf8289c5"
+    },
+    "baseline/gradecrew-tour-v7.js": {
+      "bytes": 59313,
+      "sha256": "dbd7f83ff8ea82e52ba3d51f9ff843b8a23f1f499dd55ace0061aea2202450a0"
+    },
+    "baseline/styles.css": {
+      "bytes": 89806,
+      "sha256": "b306d72d46d8063b8d9a00a270eb630413fe8d74ad55e0d5a8e272a662185a00"
+    },
+    "baseline/startup.js": {
+      "bytes": 6093,
+      "sha256": "fb4e0547c6b71a6b534263d2ba8208065511b4b7394ef15d87ee78e205fefe5f"
+    },
+    "baseline/gradecrew-tour-v8.js": {
+      "bytes": 7228,
+      "sha256": "451513df883bfc1621cf2b2731d5997e473fdebdbed0c9e3e3fbc008ace00241"
+    },
+    "baseline/gradecrew-auth-startscreen-polish.css": {
+      "bytes": 29070,
+      "sha256": "26eb588b641dfdc2a5e5f54e6b09cc5bdf579c561b93e8c35d5498e343b33302"
+    },
+    "baseline/gradecrew-brand.css": {
+      "bytes": 11553,
+      "sha256": "2f5140ab4ed4b6980e8ea7dd39d8247c7510b85111be3d92748edfe610885cba"
+    },
+    "baseline/gradecrew-auth-startscreen.css": {
+      "bytes": 34041,
+      "sha256": "8ef7cc5fb3233932c0a8799a3dc7afa21f7306185f7c5a2ef78f597c5f1669de"
+    },
+    "baseline/gradecrew-hero-demo.mjs": {
+      "bytes": 10209,
+      "sha256": "187e76a7854063e4c82cb92e2812f1c7e25fe783ae9bc463b236d8f3f038e255"
+    },
+    "baseline/gradecrew-tour.js": {
+      "bytes": 48,
+      "sha256": "fcd850eff6bbed30746fa0d627fe01ecaced30b2c19c17eca42e2ef6ecb80a25"
+    },
+    "baseline/gradecrew-brand.js": {
+      "bytes": 154,
+      "sha256": "0e89b0f1bb307bada5d4e37aee1a3eefd56355fd830a04c1c6103bbbfc0c5137"
+    },
+    "baseline/staging-short-login.mjs": {
+      "bytes": 2736,
+      "sha256": "b4cc09b67905d8d415c8caeea4ed3bc22a9865999c0d3f7f970771dda99fbfdf"
+    },
+    "baseline/release.json": {
+      "bytes": 17421,
+      "sha256": "c6ae3131eafcc20b2b65e7befc1240440037a3549e5654b007b9cbb4557864cc"
+    },
+    "baseline/guest-tour-port.mjs": {
+      "bytes": 2450,
+      "sha256": "4dcba08385b10e6f9137c8200dbba9cb4bcae0cd7ecabb18b83776b3204b63d1"
+    },
+    "baseline/gradecrew-hero-demo-flow.mjs": {
+      "bytes": 1521,
+      "sha256": "a46eb5487afde88530ff821c6532edced973408a92cb146b62a6bbd967b5b84b"
+    },
+    "baseline/tutorial-choice-v1.css": {
+      "bytes": 1911,
+      "sha256": "3a985483241fcd51218731754d668040d4cf5ef87e536d401ecc58e355c6dd07"
+    },
+    "baseline/gradecrew-dashboard-foundation.css": {
+      "bytes": 11463,
+      "sha256": "7b14fe9825dc737d480c478dfaeeacc589c6c650d06326d192e36ca86ea5537c"
+    },
+    "baseline/workspace.css": {
+      "bytes": 21617,
+      "sha256": "85983ef15b3e25c203a6a7bfbd423ff40eecba8f9124936994f9bc73c798c836"
+    },
+    "baseline/gradecrew-hero-copy.mjs": {
+      "bytes": 12223,
+      "sha256": "8f1d509e5ee61eb2b4ad501a7a6409c6347e63f7dd5c6b62ce1473f95bf36209"
+    },
+    "baseline/review-mode.css": {
+      "bytes": 2633,
+      "sha256": "9c8d41f8dd60073368fdf579334a220f84ac5fd11683c2dc12e3cf1ffc752fca"
+    },
+    "baseline/gradecrew-hero-scene.css": {
+      "bytes": 36852,
+      "sha256": "319410a6e50d9d75b45622672214b95813e9f83ec1bc221c0d3ecf03757776af"
+    },
+    "baseline/snapshot-manifest.json": {
+      "bytes": 15818,
+      "sha256": "e600ed71f1eab6a5d64c2cddb27baac7d661cd615b2311d842be68f02d411da4"
+    },
+    "baseline/app.js": {
+      "bytes": 509392,
+      "sha256": "13d1f844ebecdb5df9d2a9b557fbe9f236b4415f7a97ada780943bb260c10391"
+    },
+    "baseline/design-system.css": {
+      "bytes": 18352,
+      "sha256": "e90ff189c94f78b9e94e98a9f9f91b35ecc17636deb8402dd709809d4b482437"
+    },
+    "baseline/generated/gradecrew-assets.js": {
+      "bytes": 1908,
+      "sha256": "d4cfe1172ef99e2bb4b23c0132825c0470f1cf3b2f0818dead77dcde5f4cde08"
+    },
+    "baseline/generated/gradecrew-design-tokens.css": {
+      "bytes": 1503,
+      "sha256": "0971535f40fda6edd4a6d785d21abd38984b81f2e30b7c396b60d9a2e1378aa4"
+    },
+    "baseline/shared/i18n/assessment-locale-ui.mjs": {
+      "bytes": 9756,
+      "sha256": "eff62eaebc21b580729547239f61e2ac99e682d40b505189280e4f830601a75f"
+    },
+    "baseline/shared/i18n/browser-runtime.mjs": {
+      "bytes": 19634,
+      "sha256": "ab2524ea78c839ff7686cbad628553375efeb56306cad18b2a662a37f9563c93"
+    },
+    "baseline/shared/i18n/messages-de-DE.mjs": {
+      "bytes": 955,
+      "sha256": "8144151bb1ac7a81b454c8aac52ebac2bfaf6367b5b0642116430b5c995014b6"
+    },
+    "baseline/shared/i18n/i18n-core.mjs": {
+      "bytes": 5901,
+      "sha256": "accf1184479991655c04011a41e3413f2214943298b8412ba38494ee33a998ec"
+    },
+    "baseline/shared/i18n/messages-en-GB.mjs": {
+      "bytes": 47439,
+      "sha256": "a5e739616bf1c2f675b3addba181ce6d349177010fbb2c56d20f266752563dba"
+    },
+    "baseline/shared/i18n/extensions-en-GB-crew.mjs": {
+      "bytes": 6314,
+      "sha256": "2328422c280fa8af3d547daee1563d671ce814204e1c3e025f5b47cfac72bbf5"
+    },
+    "baseline/shared/i18n/assessment-locale.mjs": {
+      "bytes": 3874,
+      "sha256": "643bb83f7001104019e80e9aa4797546097a8dd6f9dc9e2634a613f023c95d86"
+    },
+    "baseline/shared/i18n/bootstrap.mjs": {
+      "bytes": 647,
+      "sha256": "81d5d57999cb27af6ecb07125012b2ec3a55bd7bbd467a7e6c2779c98a43f5f0"
+    },
+    "baseline/assets/gradecrew/emmi-footer-glance.png": {
+      "bytes": 126625,
+      "sha256": "88ff79e7a7c9692c00c89d7b3a5127fefb5fb2bf818b3ab8d96ad45cdb3a5ca2"
+    },
+    "baseline/assets/gradecrew/elephant-create-welcome.svg": {
+      "bytes": 202749,
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    "baseline/assets/gradecrew/crew-lineup.svg": {
+      "bytes": 1232,
+      "sha256": "82666c90e1251220a5a0c996a00a228e4a60af9fa44e95bfd484e6b446746128"
+    },
+    "baseline/assets/gradecrew/clay-thanks-remy.svg": {
+      "bytes": 231063,
+      "sha256": "1b46b2fb0e4e82f7bc55af2432333dd2086c13366bec7d7c23c882303d0a36f8"
+    },
+    "baseline/assets/gradecrew/remy-microphone.png": {
+      "bytes": 267808,
+      "sha256": "6152a5fa1a17558d4cdd07d948783e60560e54aa781717f95a94d631f404645b"
+    },
+    "baseline/assets/gradecrew/wilma-footer-glance.png": {
+      "bytes": 147683,
+      "sha256": "063f71185b3e111b93e49e67550b95d1d4cccfed35c8a6b893e81ba06b0e13b6"
+    },
+    "baseline/assets/gradecrew/coco-footer-run-10.png": {
+      "bytes": 749280,
+      "sha256": "41e08ea22a8e9e499f7d5dc4549be4e80fc0b1f56eab14e43777f4ba5f75f560"
+    },
+    "baseline/assets/gradecrew/clay-remy-writing.svg": {
+      "bytes": 231921,
+      "sha256": "b6ec52048bac84ffcc5e21046e267ff6989192f094aed8ee1af89e24043c80c8"
+    },
+    "baseline/assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png": {
+      "bytes": 2098535,
+      "sha256": "a9c26c8475c3d4782e559c73f6a182b2850df9c01ddfc497060c21b81efe3da5"
+    },
+    "baseline/assets/gradecrew/clay-welcome.svg": {
+      "bytes": 231060,
+      "sha256": "eaec2be5dfa28a16b4fdf187723e16c0879640c5eb326895fdd7f78aaaa7ed10"
+    },
+    "baseline/assets/gradecrew/crew-classroom-v3.webp": {
+      "bytes": 254938,
+      "sha256": "fa907ee987c24844e0f3647b325122aaa8d3f7204385de452299bb5eb90dde4d"
+    },
+    "baseline/assets/gradecrew/penguin-icon.svg": {
+      "bytes": 9232,
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    "baseline/assets/gradecrew/cuddly-hedgehog.webp": {
+      "bytes": 125718,
+      "sha256": "50b641f7248f66e4adad3b49ce0b008e9eeaaa6512493feb41b364de2babdcf2"
+    },
+    "baseline/assets/gradecrew/remy-create-choice.png": {
+      "bytes": 39261,
+      "sha256": "8236df87763031e4c2495948499423ad5b19c990b46a3ac417d59867ed40ed25"
+    },
+    "baseline/assets/gradecrew/clay-thanks-emmi.svg": {
+      "bytes": 224175,
+      "sha256": "0badb63aeca2d969ac738bfc0b105cafd1ec9a8cbd40f69af20cb85a570b374a"
+    },
+    "baseline/assets/gradecrew/emmi-footer-improve.png": {
+      "bytes": 136706,
+      "sha256": "b44ccc2ccd3ef4b624a5d7e3842901949261c8c0ebab3b3d84408e4d0c238613"
+    },
+    "baseline/assets/gradecrew/coco-login-heart-17.png": {
+      "bytes": 1350072,
+      "sha256": "8633357fddd95a2878807f5075cca1a0195eed0d6a5a91032db9e922fae2f4ac"
+    },
+    "baseline/assets/gradecrew/brand-primary-v1.svg": {
+      "bytes": 9290,
+      "sha256": "755f94c0ecc23b02c110b04a95485cc17c0d8e98b07ac03d403de998c3f698a7"
+    },
+    "baseline/assets/gradecrew/wilma-footer-letter-w-v2.png": {
+      "bytes": 148695,
+      "sha256": "44e070666fbe25017ba477308bdd9a9f0e041bd9b495107a5be070531b6e3412"
+    },
+    "baseline/assets/gradecrew/coco-workspace-greeting.svg": {
+      "bytes": 4514,
+      "sha256": "afc67c5bef8b443610fb24ce13f790a0a3bb5e1af0d4ea459b8d5de564df5a56"
+    },
+    "baseline/assets/gradecrew/coco-footer-glance-v4.png": {
+      "bytes": 92229,
+      "sha256": "2dee5ea6314c02e1e20e7839450928c88366ad5481977f5bc211169e5ed2c17e"
+    },
+    "baseline/assets/gradecrew/wilma-worksheet-flying.png": {
+      "bytes": 27127,
+      "sha256": "fd542e361d1e553904f3dfba386281b33133deff2066b33af4c193d580a31c99"
+    },
+    "baseline/assets/gradecrew/clay-finale.svg": {
+      "bytes": 231064,
+      "sha256": "e47ae7ca1b4a6c9fbd4cf91b0b7e1a409679be84bcdab70aa6176e7bd1b9a834"
+    },
+    "baseline/assets/gradecrew/brand-icon-v1.svg": {
+      "bytes": 9232,
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    "baseline/assets/gradecrew/emmi-footer-letter-e-v2.png": {
+      "bytes": 126977,
+      "sha256": "edb0ba07b8948b2ca57bb453b0747bcc89be052b9a40d949d59f902079bfe011"
+    },
+    "baseline/assets/gradecrew/wilma-grading.png": {
+      "bytes": 377589,
+      "sha256": "3d4a04beeff5e00060bb76b60f369d41cc576e893ffa74f87e93e50074026fc7"
+    },
+    "baseline/assets/gradecrew/penguin-guide-welcome.svg": {
+      "bytes": 194721,
+      "sha256": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1"
+    },
+    "baseline/assets/gradecrew/remy-test-creation-typewriter.png": {
+      "bytes": 1631828,
+      "sha256": "3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777"
+    },
+    "baseline/assets/gradecrew/trash-bin-3d.png": {
+      "bytes": 22400,
+      "sha256": "30f5a4e6e96b8ba40b934153e6fc8418dfcbefb9088087b52b5e838fb258f9b7"
+    },
+    "baseline/assets/gradecrew/brand-icon.svg": {
+      "bytes": 9232,
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    "baseline/assets/gradecrew/clay-coco-name.svg": {
+      "bytes": 192001,
+      "sha256": "1a46e20e65f6ad58450e031710b6b5f50f4d4ed0c2a9999c95288a4762a3c3a7"
+    },
+    "baseline/assets/gradecrew/remy-footer-create.png": {
+      "bytes": 122813,
+      "sha256": "3f4d65183f6f96e901e2c68cc2e385d6012c6a6d604fd8fd2125026991accf8c"
+    },
+    "baseline/assets/gradecrew/remy-footer-run-10.png": {
+      "bytes": 821852,
+      "sha256": "964761550ad20dbb728df6d719dedff93a06bebb6dc14c04f7247302e905d3b8"
+    },
+    "baseline/assets/gradecrew/remy-new-test-button.png": {
+      "bytes": 155064,
+      "sha256": "a7c0188d01079e3c04719722c1e7541e0939afc1aacf47caa15b82a6766eeb6d"
+    },
+    "baseline/assets/gradecrew/clay-wait.svg": {
+      "bytes": 224175,
+      "sha256": "c41ee1fcbb6ee27116da4e1ae25dd7550330440b7c62bd6b3cf588ee20330198"
+    },
+    "baseline/assets/gradecrew/clay-save.svg": {
+      "bytes": 224176,
+      "sha256": "d60c9c7701d90e96e03100300321ac3fd3e31ddec680780379f5922ca4a8de74"
+    },
+    "baseline/assets/gradecrew/coco-help-phone.png": {
+      "bytes": 292570,
+      "sha256": "031ff6051c3953f3ce2f0b96af10b35850300a7d1d5abaff86e2255db744ccdd"
+    },
+    "baseline/assets/gradecrew/wilma-footer-run-10.png": {
+      "bytes": 1186584,
+      "sha256": "d90c7f6641ee5535b0c1361dac2edd296caf63e44488f5bee1fb7367bd1270b0"
+    },
+    "baseline/assets/gradecrew/clay-introduce-emmi.svg": {
+      "bytes": 320313,
+      "sha256": "bcaa36019ae01c58fc9ccaa49ac22cfaa86643f83c7260e2b7a5dbbbe0239caa"
+    },
+    "baseline/assets/gradecrew/crew-classroom-wide-v4.png": {
+      "bytes": 2104486,
+      "sha256": "eaad8b8d81b19de8ebcfb326cc522af1e43aac3a56178e8231cb40692e9698a7"
+    },
+    "baseline/assets/gradecrew/remy-test-input-microphone.png": {
+      "bytes": 1326545,
+      "sha256": "3a557063b8e1813564d51750d71d0de1d47b99a27cef3b2b89ba4fe7d0692cb1"
+    },
+    "baseline/assets/gradecrew/emmi-footer-run-10.png": {
+      "bytes": 961694,
+      "sha256": "399ddaccbdc7a747f4f06839afbd5d4ae9a7354171f961fe1a6e4f0f24386bd3"
+    },
+    "baseline/assets/gradecrew/owl-grade-welcome.svg": {
+      "bytes": 222997,
+      "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c"
+    },
+    "baseline/assets/gradecrew/demo-books.svg": {
+      "bytes": 869,
+      "sha256": "2e42859dd4e5a36c0c0ba00302b06d6d99fe9f17c58384641d50617432a0dc51"
+    },
+    "baseline/assets/gradecrew/clay-retry.svg": {
+      "bytes": 224176,
+      "sha256": "99242b01f6c9fec73431cb8b3941c4801d5fe4feec27dbfabbebdb064cd611c5"
+    },
+    "baseline/assets/gradecrew/coco-footer-letter-c-v5.png": {
+      "bytes": 85772,
+      "sha256": "9f71b95f96cefdf9fd3caccb7e583df20d2599820effaaa7c90f59e90e867184"
+    },
+    "baseline/assets/gradecrew/demo-crew.svg": {
+      "bytes": 231064,
+      "sha256": "e47ae7ca1b4a6c9fbd4cf91b0b7e1a409679be84bcdab70aa6176e7bd1b9a834"
+    },
+    "baseline/assets/gradecrew/penguin-guide.svg": {
+      "bytes": 194721,
+      "sha256": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1"
+    },
+    "baseline/assets/gradecrew/clay-thanks-wilma.svg": {
+      "bytes": 224176,
+      "sha256": "8d64dd425e86b062ef9a2c6d625b931042acee606d19d4794d75748f0ba09ce6"
+    },
+    "baseline/assets/gradecrew/elephant-create.svg": {
+      "bytes": 202749,
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    "baseline/assets/gradecrew/falcon-create.svg": {
+      "bytes": 202749,
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    "baseline/assets/gradecrew/clay-introduce-remy.svg": {
+      "bytes": 250965,
+      "sha256": "ceca068fba5989742314eed8e2008f5e9f814affe7987b500373f2eb3a0fb14d"
+    },
+    "baseline/assets/gradecrew/demo-pencil.svg": {
+      "bytes": 475,
+      "sha256": "c76d9ecfa23ba9ac1dd59e6d76ea52e04777c48b5a0acfb734f5012f92dd756b"
+    },
+    "baseline/assets/gradecrew/wilma-footer-grade.png": {
+      "bytes": 168284,
+      "sha256": "23b9760322ec58c33d26e60daa7a6d18189e93bef70ca5f52dffe1bf21755baa"
+    },
+    "baseline/assets/gradecrew/emmi-colors.png": {
+      "bytes": 313238,
+      "sha256": "33f0631ca6a471510a2bd28c85f1fbc58d3995ac561931caf19c0ac037151bc5"
+    },
+    "baseline/assets/gradecrew/clay-introduce-wilma.svg": {
+      "bytes": 253361,
+      "sha256": "ed5dfeb675d65924abbd3ad1f1b9c0d6f42e34e8bf1f4103e4daa61a3207f5a5"
+    },
+    "baseline/assets/gradecrew/remy-footer-letter-r-v4.png": {
+      "bytes": 117903,
+      "sha256": "cea45164776b75d348738c64c50da94b8348cca37edf014632e0864ccf9a1204"
+    },
+    "baseline/assets/gradecrew/coco-footer-guide.png": {
+      "bytes": 116806,
+      "sha256": "4412374a7da6817235156f05ef2596e5326c161cb23c21cac7251c6bf742aeb0"
+    },
+    "baseline/assets/gradecrew/owl-grade.svg": {
+      "bytes": 222997,
+      "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c"
+    },
+    "baseline/assets/gradecrew/fox-improve.svg": {
+      "bytes": 263681,
+      "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248"
+    },
+    "baseline/assets/gradecrew/fox-improve-welcome.svg": {
+      "bytes": 263681,
+      "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248"
+    },
+    "baseline/assets/gradecrew/clay-your-turn.svg": {
+      "bytes": 224177,
+      "sha256": "a932a9923b4f08cdd31b74bea5e832656f8d356118c0c17040c6b7b17d2ececc"
+    },
+    "baseline/assets/gradecrew/demo-backpack.svg": {
+      "bytes": 567,
+      "sha256": "1f3487e436273acc4fe03a7b8e7b9576074126b66421519995a650f51ae7dae0"
+    },
+    "baseline/assets/gradecrew/demo-cat.svg": {
+      "bytes": 116666,
+      "sha256": "52ac04794706a1aa303670c25f848782203b1b5a4eda013b4aa7ec9fa2a7ffe3"
+    },
+    "baseline/assets/gradecrew/remy-new-test-tablet.png": {
+      "bytes": 1564949,
+      "sha256": "946db8428037934e04d1d92cbd9f02b7ab71bf98a9bfe11b56fd7c2237dd8c9e"
+    },
+    "previews/remy-overview-ipad.jpg": {
+      "bytes": 82056,
+      "sha256": "af956ec8c46297c40b904536a25b8807c5ec099877d593b591ea0f54c1d47852"
+    },
+    "previews/start-v3-desktop.jpg": {
+      "bytes": 155583,
+      "sha256": "ad73c7ab339b312788709541f718e3ef13248f005b54bacd6e0a70bc6f11c0e1"
+    },
+    "previews/coco-help-ipad.jpg": {
+      "bytes": 67473,
+      "sha256": "14feef1f7b4c8ee59ab31ee0299211bd0a85e4bf3467b54d51c263b87f655636"
+    },
+    "previews/coco-account-iphone-en.jpg": {
+      "bytes": 34675,
+      "sha256": "3fb7853e5ae1e895ae9db6c67c7b807105be4915b8bcb1d0c20c377f87a71bb2"
+    },
+    "previews/remy-overview-desktop.jpg": {
+      "bytes": 74040,
+      "sha256": "11b3964f97015a3b68d66b5f939f41b5292e90fbfa6d50cf9aa865d653b3a6fa"
+    },
+    "previews/remy-overview-iphone-en.jpg": {
+      "bytes": 41623,
+      "sha256": "27bcaebfa47efe37bc051e5449696da187e053ecade82058b3544ef667b98cd8"
+    },
+    "previews/remy-picture-desktop.jpg": {
+      "bytes": 56738,
+      "sha256": "c62c305a15db8b6574ca53ed104813d14faf83b36678c8e5fba25d67e65f3f77"
+    },
+    "previews/pixel-comparison.json": {
+      "bytes": 717,
+      "sha256": "03f08b6e0ea8825eb8fcdeb6d6eec5ac0fcf76955bd5df72506eee6fa4df5ac7"
+    },
+    "previews/start-baseline-desktop.jpg": {
+      "bytes": 155583,
+      "sha256": "ad73c7ab339b312788709541f718e3ef13248f005b54bacd6e0a70bc6f11c0e1"
+    },
+    "previews/remy-audio-desktop.jpg": {
+      "bytes": 68121,
+      "sha256": "85ee35236066a3fa721281e7b05d6f4430780a310b810d28a469d272abec5389"
+    },
+    "previews/start-baseline-1200.jpg": {
+      "bytes": 158369,
+      "sha256": "04211dd4b4f8aa56c8e5c71afb6708430dbff540746020e8572ed3046fd0d964"
+    },
+    "previews/emmi-v3.jpg": {
+      "bytes": 56014,
+      "sha256": "38b495905b3865959e7a06f4dcf74eddc49840b50f50f637a27c0e5393758242"
+    },
+    "previews/coco-account-iphone.jpg": {
+      "bytes": 36894,
+      "sha256": "8a9b5e8b1a6c380c9c9581b9ea60c1013a11e592d277f6ddcfc51ff8981f7c14"
+    },
+    "previews/coco-help-desktop.jpg": {
+      "bytes": 61411,
+      "sha256": "5ad11e23330e3b8504ed6120c2a3b242008174704a386fb4ff98bf39a86a1c06"
+    },
+    "previews/verification.json": {
+      "bytes": 3677,
+      "sha256": "34961b5e70adfed586a289add0327e5854ae4142cc95bb319ca02677f9434d81"
+    },
+    "previews/remy-overview-iphone.jpg": {
+      "bytes": 42505,
+      "sha256": "2a77c4b96d24ff8226a4efe89403ea945ea461879aeb90f1aacbe39a51eec880"
+    },
+    "previews/emmi-baseline.jpg": {
+      "bytes": 56014,
+      "sha256": "38b495905b3865959e7a06f4dcf74eddc49840b50f50f637a27c0e5393758242"
+    },
+    "previews/wilma-v3.jpg": {
+      "bytes": 67056,
+      "sha256": "98c9edca9ee864f2bd3ec17df159a657661071564c83cc089b6f284fd7811ec8"
+    },
+    "previews/remy-audio-iphone.jpg": {
+      "bytes": 43048,
+      "sha256": "f1f0342772650c52c8b9efc5b63c97296571576d092af0aeb1e4a717c870fac0"
+    },
+    "previews/coco-account-desktop.jpg": {
+      "bytes": 58595,
+      "sha256": "3617ad3f37752caae430b49745a5ac3cac42ed0f30e1daeb1377a45a3e849fce"
+    },
+    "previews/wilma-baseline.jpg": {
+      "bytes": 67056,
+      "sha256": "98c9edca9ee864f2bd3ec17df159a657661071564c83cc089b6f284fd7811ec8"
+    },
+    "previews/coco-help-iphone.jpg": {
+      "bytes": 39111,
+      "sha256": "e51dc2a6ec53083d0bcd3312e5c5af68d72d704b2d190ce60cbe9b0bdeb89060"
+    },
+    "assets/colours-animals-atlas.png": {
+      "bytes": 2376934,
+      "sha256": "705f52799a7d0f9c1f0fed37e7f5743bca4302875b193d351edc0ab0b7f8d3ec"
+    },
+    "assets/colours-listening.wav": {
+      "bytes": 245352,
+      "sha256": "94e78fa105f2f74f234c347bc8d2e53ea5a0c52af90cb3909722190b57602eca"
+    },
+    "assets/colours-listening.aiff": {
+      "bytes": 245352,
+      "sha256": "ff3e4fb9cf26c1984f065a5d6ebf65b30a5e178940e6c0c00215e82831bae773"
+    },
+    "assets/coco-join-crew.png": {
+      "bytes": 1288467,
+      "sha256": "6dee1c303e62c6dff633dc4dc792e942e3b85af5c318ad7a3c56d68671ec3f6c"
+    }
+  }
+}
