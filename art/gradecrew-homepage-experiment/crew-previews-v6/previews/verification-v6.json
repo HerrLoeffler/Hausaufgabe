@@ -1,0 +1,335 @@
+{
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "stage": "branch_only",
+  "invitationChecks": [
+    {
+      "buttons": [
+        {
+          "label": "Tutorial starten",
+          "rect": {
+            "bottom": 550.03125,
+            "height": 46.5,
+            "left": 475.25,
+            "right": 631.796875,
+            "top": 503.53125,
+            "width": 156.546875,
+            "x": 475.25,
+            "y": 503.53125
+          }
+        },
+        {
+          "label": "Vielleicht später",
+          "rect": {
+            "bottom": 550.03125,
+            "height": 46.5,
+            "left": 641.796875,
+            "right": 804.734375,
+            "top": 503.53125,
+            "width": 162.9375,
+            "x": 641.796875,
+            "y": 503.53125
+          }
+        }
+      ],
+      "client": [
+        650,
+        432
+      ],
+      "images": [
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/coco-help-phone.png"
+        },
+        {
+          "loaded": true,
+          "src": "../assets/remy-tablet-lightblue-v4.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/emmi-colors.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/wilma-grading.png"
+        }
+      ],
+      "open": true,
+      "scroll": [
+        650,
+        432
+      ],
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "label": "Tutorial starten",
+          "rect": {
+            "bottom": 413.9375,
+            "height": 46.5,
+            "left": 313.75,
+            "right": 470.296875,
+            "top": 367.4375,
+            "width": 156.546875,
+            "x": 313.75,
+            "y": 367.4375
+          }
+        },
+        {
+          "label": "Vielleicht später",
+          "rect": {
+            "bottom": 413.9375,
+            "height": 46.5,
+            "left": 480.296875,
+            "right": 643.234375,
+            "top": 367.4375,
+            "width": 162.9375,
+            "x": 480.296875,
+            "y": 367.4375
+          }
+        }
+      ],
+      "client": [
+        650,
+        345
+      ],
+      "images": [
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/coco-help-phone.png"
+        },
+        {
+          "loaded": true,
+          "src": "../assets/remy-tablet-lightblue-v4.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/emmi-colors.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/wilma-grading.png"
+        }
+      ],
+      "open": true,
+      "scroll": [
+        650,
+        345
+      ],
+      "viewport": [
+        957,
+        523
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "label": "Tutorial starten",
+          "rect": {
+            "bottom": 413.9375,
+            "height": 46.5,
+            "left": 313.75,
+            "right": 470.296875,
+            "top": 367.4375,
+            "width": 156.546875,
+            "x": 313.75,
+            "y": 367.4375
+          }
+        },
+        {
+          "label": "Vielleicht später",
+          "rect": {
+            "bottom": 413.9375,
+            "height": 46.5,
+            "left": 480.296875,
+            "right": 643.234375,
+            "top": 367.4375,
+            "width": 162.9375,
+            "x": 480.296875,
+            "y": 367.4375
+          }
+        }
+      ],
+      "client": [
+        650,
+        345
+      ],
+      "images": [
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/coco-help-phone.png"
+        },
+        {
+          "loaded": true,
+          "src": "../assets/remy-tablet-lightblue-v4.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/emmi-colors.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/wilma-grading.png"
+        }
+      ],
+      "open": true,
+      "scroll": [
+        650,
+        345
+      ],
+      "viewport": [
+        957,
+        523
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "label": "Start tutorial",
+          "rect": {
+            "bottom": 498.1875,
+            "height": 46.5,
+            "left": 37,
+            "right": 353,
+            "top": 451.6875,
+            "width": 316,
+            "x": 37,
+            "y": 451.6875
+          }
+        },
+        {
+          "label": "Maybe later",
+          "rect": {
+            "bottom": 554.6875,
+            "height": 46.5,
+            "left": 37,
+            "right": 353,
+            "top": 508.1875,
+            "width": 316,
+            "x": 37,
+            "y": 508.1875
+          }
+        }
+      ],
+      "client": [
+        352,
+        482
+      ],
+      "images": [
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/coco-help-phone.png"
+        },
+        {
+          "loaded": true,
+          "src": "../assets/remy-tablet-lightblue-v4.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/emmi-colors.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/wilma-grading.png"
+        }
+      ],
+      "open": true,
+      "scroll": [
+        352,
+        482
+      ],
+      "viewport": [
+        390,
+        667
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "label": "Tutorial starten",
+          "rect": {
+            "bottom": 498.1875,
+            "height": 46.5,
+            "left": 37,
+            "right": 353,
+            "top": 451.6875,
+            "width": 316,
+            "x": 37,
+            "y": 451.6875
+          }
+        },
+        {
+          "label": "Vielleicht später",
+          "rect": {
+            "bottom": 554.6875,
+            "height": 46.5,
+            "left": 37,
+            "right": 353,
+            "top": 508.1875,
+            "width": 316,
+            "x": 37,
+            "y": 508.1875
+          }
+        }
+      ],
+      "client": [
+        352,
+        482
+      ],
+      "images": [
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/coco-help-phone.png"
+        },
+        {
+          "loaded": true,
+          "src": "../assets/remy-tablet-lightblue-v4.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/emmi-colors.png"
+        },
+        {
+          "loaded": true,
+          "src": "./assets/gradecrew/wilma-grading.png"
+        }
+      ],
+      "open": true,
+      "scroll": [
+        352,
+        482
+      ],
+      "viewport": [
+        390,
+        667
+      ]
+    }
+  ],
+  "audio": {
+    "duration": 7.36,
+    "playing": true,
+    "src": "http://127.0.0.1:8783/assets/remy-listening-take-1.mp3",
+    "time": 0.209546
+  },
+  "tests": 23,
+  "browserErrors": [],
+  "actions": [
+    "Wilma final → invitation",
+    "Maybe later → homepage",
+    "Close → homepage",
+    "Header/dialog/homepage tutorial CTA → invitation",
+    "Invitation start → explicitly unconnected experiment tutorial notice"
+  ],
+  "limits": [
+    "Actual full tutorial start not connected",
+    "No live homepage or Staging changes",
+    "No physical device, Safari, VoiceOver or user voice acceptance"
+  ],
+  "audioPauseOnInvitation": {
+    "invitationOpen": true,
+    "paused": true
+  }
+}

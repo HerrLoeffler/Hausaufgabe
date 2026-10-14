@@ -1,0 +1,141 @@
+/* Experimental layout only. Content is split into bounded views, never clipped. */
+#authView .gcHeroDialog.crew-unified{width:min(1040px,calc(100% - 24px));height:min(700px,calc(100svh - 24px));max-height:calc(100svh - 24px);padding:20px 24px;box-sizing:border-box;overflow:auto;border-radius:20px}
+#authView .gcHeroDialog.crew-unified[open]{display:grid;grid-template-rows:30px auto auto 44px minmax(0,1fr) 44px 14px;gap:8px}
+#authView .gcHeroDialog.crew-unified .gcHeroDialogEyebrow{margin:0;align-self:center;font-size:12px}
+#authView .gcHeroDialog.crew-unified h2{font-size:26px;line-height:1.15;margin:0 45px 0 0}
+#authView .gcHeroDialog.crew-unified #gcHeroDemoStatus{font-size:14px;line-height:1.3;margin:0;min-height:0;color:#4a607e}
+#authView .gcHeroDialog.crew-unified .gcHeroDialogClose{top:12px;right:14px;min-height:44px;width:44px;height:44px}
+.crew-tutorial{position:absolute;top:12px;right:70px;border:1px solid #8eb7ee;border-radius:9px;background:#eaf3ff;color:#15529e;min-height:44px;padding:8px 14px;font-size:13px;font-weight:750;cursor:pointer}
+.crew-steps{margin:0;gap:7px}.crew-step{min-height:44px;padding:7px 13px}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoWorkspace{min-height:0;height:100%;padding:12px 16px;box-sizing:border-box;position:relative}
+#authView .gcHeroDialog.crew-unified .gcHeroSheet{min-height:0;height:100%;padding:0;gap:20px;grid-template-columns:185px minmax(0,1fr);align-items:center}
+#authView .gcHeroDialog.crew-unified .demo-art{height:100%;min-height:0;gap:12px}
+#authView .gcHeroDialog.crew-unified .demo-art>img{width:100%;height:min(245px,70%);object-fit:contain}
+#authView .gcHeroDialog.crew-unified .mascot-line{font-size:15px;line-height:1.35;margin:0;max-width:195px}
+#authView .gcHeroDialog.crew-unified .crew-paper{min-height:0;padding:16px 20px;box-sizing:border-box;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:8px}
+#authView .gcHeroDialog.crew-unified .crew-paper>*{margin:0}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoControls{margin:0;gap:7px;flex-wrap:nowrap;min-width:0}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoControls button{padding:8px 13px;font-size:13px;line-height:1.15;min-height:44px;margin:0;white-space:nowrap}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoControls #gcHeroDemoNext{width:auto;margin-left:auto}
+#authView .gcHeroDialog.crew-unified [hidden]{display:none!important}
+.v3-demo-boundary{margin:0;font-size:10px;line-height:14px}
+.coco-welcome>small{font-size:12px;font-weight:750;color:#476181}.coco-welcome h3{font-size:30px;letter-spacing:-.035em;color:#183c64;margin:0}.coco-message{font-size:20px;line-height:1.45;max-width:420px;color:#334e72}
+.coco-location{position:relative;min-height:110px;border:1px solid #dce7f1;border-radius:10px;background:#f6f9fd;margin-top:8px!important;padding:12px;color:#586d86;font-size:12px;display:flex;align-items:flex-start}
+.coco-help-marker{position:absolute;bottom:12px;right:12px;display:flex;align-items:center;gap:7px;padding:5px 12px 5px 6px;border:1px solid #afc8e5;border-radius:40px;color:#2a527d;background:white;animation:target-reveal .7s ease-out both}.coco-help-marker img{width:34px;height:40px;object-fit:contain}
+.paper-header{margin:0!important;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.paper-header h3{font-size:22px;line-height:1.1;margin:0}.paper-header>small{width:100%;font-size:11px;line-height:1.2}.paper-header>p{font-size:11px;margin:0}
+.whole-test{gap:6px 8px;flex:1;min-height:0;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,minmax(0,1fr))}
+button.test-outline-task{display:flex;gap:7px;align-items:center;text-align:left;padding:5px 8px;min-height:32px;min-width:0;font-family:inherit;cursor:pointer}.test-outline-task strong{font-size:12px;line-height:1.15}.test-outline-task small{display:block;font-size:10px;color:#536b87;line-height:1.1;margin-top:3px}.task-arrow{margin-left:auto;color:#5684ba;font-size:20px}.task-number{padding:3px 6px}
+.test-outline-task:hover{background:#edf6ff;border-color:#85b5e8}.test-outline-task:focus-visible{outline:3px solid #1769e0;outline-offset:1px}
+.wish-note{padding:0}.wish-note>small{font-size:12px;font-weight:750}.wish-note blockquote{font-size:24px;line-height:1.4;margin:14px 0}.wish-tags{margin-top:10px}.wish-tags>span{font-size:11px;padding:7px 10px}
+.question-demo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 12px;padding-top:8px;min-height:0;align-items:center}
+.question-demo>small,.question-demo>h4,.question-demo>audio,.question-demo>.audio-hint,.question-demo>.picture-options,.question-demo>.match-demo,.question-demo>.order-demo,.question-demo>.sample-answer{grid-column:1/-1}
+.question-demo>small{font-size:11px;color:#526c89}.question-demo h4{font-size:21px;line-height:1.25;margin:0}.question-picture{margin:0}.question-picture .animal-img{width:145px;max-width:100%}
+.question-options{gap:6px;grid-template-columns:1fr}.question-options label{min-height:38px;padding:7px 10px;font-size:14px}.question-options input{margin:0}
+.question-demo:not(:has(.question-picture))>.question-options{grid-column:1/-1;grid-template-columns:1fr 1fr}
+.question-demo audio{margin:0;height:34px}.audio-hint{margin:0;font-size:10px}.picture-options{gap:10px;margin:0}.picture-options .animal-img{max-width:125px}.picture-options label{padding:5px;gap:0}.question-demo>.sample-answer{height:40px;min-height:40px;padding:8px;margin:0}
+.overview-back{align-self:flex-start;font-size:12px;background:#eff6ff;color:#245582;border:1px solid #c4d9ef;border-radius:7px;min-height:36px;padding:6px 10px;cursor:pointer}
+#authView .crew-paper .gcHeroSheetMeta{margin:0;font-size:11px;line-height:1.2}
+#authView .crew-paper .gcHeroDraft{font-size:22px;line-height:1.3;margin:0}
+#authView .gcHeroDialog[data-phase="2"] .crew-paper>.gcHeroDraft,#authView .gcHeroDialog[data-phase="2"] .crew-paper>.gcHeroSheetMeta{display:none}
+#authView .crew-paper .gcHeroImproved{padding:0;border:0;margin:0;display:flex;flex-direction:column;gap:8px}
+#authView .crew-paper .gcHeroClearQuestion{font-size:20px;line-height:1.3;margin:0}
+#authView .crew-paper .gcHeroIllustrated{padding:8px 10px;gap:12px;margin:0;grid-template-columns:1fr 100px}
+#authView .crew-paper .gcHeroHedgehog{width:100px;height:88px}
+#authView .crew-paper .gcHeroSentence{font-size:19px;line-height:1.4;margin:0}
+#authView .crew-paper .gcHeroLegend{margin:6px 0 0;font-size:10px;gap:5px}
+#authView .crew-paper .gcHeroSideNote{font-size:11px;line-height:1.35;margin:0}
+#authView .crew-paper .gcHeroCapabilities{margin:0;gap:5px;flex-wrap:wrap}
+#authView .crew-paper .gcHeroCapabilities span{padding:4px 7px;font-size:10px}
+#authView .crew-paper .gcHeroSheetTitle{font-size:21px;line-height:1.25;margin:0}
+#authView .crew-paper .gcHeroGradingSentence{font-size:16px;line-height:1.3;margin:0}
+#authView .crew-paper .gcHeroStudentAnswer{padding:9px 12px;margin:0}
+#authView .crew-paper .gcHeroStudentAnswer strong{font-size:23px;line-height:1.2}
+#authView .crew-paper .gcHeroScore{padding:8px 12px;margin:0;font-size:12px}
+#authView .crew-paper .gcHeroPoints strong{font-size:28px;line-height:1.2}
+#authView .crew-paper .gcHeroPoints small{font-size:11px}
+#authView .crew-paper .gcHeroPrevious{font-size:13px}
+#authView .crew-paper .gcHeroChecking,#authView .crew-paper .gcHeroEditing{height:3px;margin:0}
+.crew-click-hint{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffffee;border:1px solid #c8d8ea;border-radius:30px;padding:5px 10px;margin:0;font-size:11px;line-height:1.3;color:#224569}
+.role-play{margin-left:6px;color:#2866b8;font-size:11px}
+#authView .gcHeroRoles button:hover{box-shadow:0 0 0 3px #a3c8fb}
+.experiment-tour-note{border:0;border-radius:18px;width:min(500px,calc(100% - 32px));padding:28px;color:#183554}.experiment-tour-note::backdrop{background:#10274870}.experiment-tour-note h2{font-size:24px;margin:0 40px 14px 0}.experiment-tour-note p{font-size:16px;line-height:1.55}.tour-note-close{position:absolute;right:10px;top:10px;width:44px;height:44px;font-size:24px;border:0;border-radius:50%;cursor:pointer}
+@media(max-height:620px) and (min-width:701px){
+#authView .gcHeroDialog.crew-unified{padding:12px 20px}
+#authView .gcHeroDialog.crew-unified[open]{grid-template-rows:30px auto auto 44px minmax(0,1fr) 44px 14px;gap:6px}
+#authView .gcHeroDialog.crew-unified h2{font-size:23px}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoWorkspace{padding:8px 12px}
+#authView .gcHeroDialog.crew-unified .gcHeroSheet{grid-template-columns:150px minmax(0,1fr);gap:16px}
+#authView .gcHeroDialog.crew-unified .crew-paper{padding:10px 14px;gap:6px}
+#authView .gcHeroDialog.crew-unified .mascot-line{font-size:13px}
+.coco-welcome h3{font-size:26px}.coco-message{font-size:18px;line-height:1.35}.coco-location{min-height:78px;padding:8px;margin:0!important}
+.paper-header h3{font-size:19px}.wish-note blockquote{font-size:21px;margin:10px 0}.question-demo h4{font-size:18px}.question-picture .animal-img{width:122px}.picture-options .animal-img{max-width:88px}.question-options label{min-height:32px;padding:5px 10px;font-size:13px}
+#authView .crew-paper .gcHeroIllustrated{padding:4px 8px}#authView .crew-paper .gcHeroHedgehog{width:80px;height:70px}#authView .crew-paper .gcHeroStudentAnswer{padding:6px 10px}
+}
+@media(max-width:700px){
+#authView .gcHeroDialog.crew-unified{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);padding:12px;border-radius:16px}
+#authView .gcHeroDialog.crew-unified[open]{grid-template-rows:40px auto auto 44px minmax(0,1fr) 44px 14px;gap:8px}
+.crew-tutorial{top:10px;right:63px;min-height:40px;padding:7px 10px;font-size:12px}
+#authView .gcHeroDialog.crew-unified .gcHeroDialogEyebrow{font-size:10px;max-width:140px}
+#authView .gcHeroDialog.crew-unified h2{font-size:21px;margin:0;line-height:1.15}
+#authView .gcHeroDialog.crew-unified #gcHeroDemoStatus{font-size:12px;line-height:1.35}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoWorkspace{padding:10px}
+#authView .gcHeroDialog.crew-unified .gcHeroSheet{display:grid;grid-template-columns:1fr;grid-template-rows:90px minmax(0,1fr);gap:10px}
+#authView .gcHeroDialog.crew-unified .demo-art{display:flex;flex-direction:row;gap:12px;justify-content:center}
+#authView .gcHeroDialog.crew-unified .demo-art>img{width:90px;height:90px}
+#authView .gcHeroDialog.crew-unified .mascot-line{font-size:12px;max-width:165px;text-align:left}
+#authView .gcHeroDialog.crew-unified .crew-paper{padding:12px;gap:7px}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoControls button{padding:8px 9px;font-size:12px;min-width:0}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoControls #gcHeroDemoNext{width:auto;margin-left:auto}
+#gcHeroDemoReplay{font-size:0!important}#gcHeroDemoReplay::after{content:'↻';font-size:22px}
+.crew-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.crew-step{padding-inline:4px}
+.coco-welcome h3{font-size:25px}.coco-message{font-size:18px;line-height:1.4}.coco-location{min-height:90px}
+.wish-note blockquote{font-size:21px;margin:12px 0}.paper-header{gap:5px}.paper-header h3{font-size:19px}.paper-header>p{font-size:10px}
+.whole-test{grid-template-columns:1fr;grid-template-rows:repeat(10,minmax(0,1fr));gap:3px}.test-outline-task strong{font-size:12px}.test-outline-task small{display:none}button.test-outline-task{min-height:24px;padding:3px 6px}.task-number{font-size:10px;padding:2px 5px}.task-arrow{font-size:15px}
+.question-demo{gap:6px;grid-template-columns:90px minmax(0,1fr)}.question-demo h4{font-size:17px}.question-picture .animal-img{width:90px}.question-options label{font-size:13px;min-height:34px;padding:6px}.question-demo>audio{height:35px}.picture-options{gap:5px}.picture-options .animal-img{width:100%;max-width:100px}.picture-options label{padding:5px 3px}.picture-options input{left:3px;top:3px}
+.match-demo{gap:10px}.order-demo{gap:5px}.order-demo span{font-size:12px;padding:6px}
+#authView .crew-paper .gcHeroIllustrated{grid-template-columns:1fr 70px;padding:5px;gap:5px}#authView .crew-paper .gcHeroHedgehog{width:70px;height:65px}#authView .crew-paper .gcHeroSentence{font-size:17px}#authView .crew-paper .gcHeroClearQuestion{font-size:17px}
+#authView .crew-paper .gcHeroSheetTitle{font-size:19px}#authView .crew-paper .gcHeroGradingSentence{font-size:14px}
+.crew-click-hint{position:static;transform:none;white-space:normal;text-align:center;font-size:11px;margin:0 0 8px;padding:6px 10px}
+}
+@media(max-width:700px) and (max-height:720px){
+#authView .gcHeroDialog.crew-unified[open]{gap:6px}
+#authView .gcHeroDialog.crew-unified .gcHeroSheet{grid-template-rows:65px minmax(0,1fr);gap:7px}
+#authView .gcHeroDialog.crew-unified .demo-art>img{height:65px;width:65px}
+#authView .gcHeroDialog.crew-unified .crew-paper{padding:9px;gap:5px}
+#authView .gcHeroDialog.crew-unified .gcHeroDemoWorkspace{padding:7px}
+.coco-message{font-size:16px}.coco-welcome h3{font-size:23px}.coco-location{min-height:74px}.wish-note blockquote{font-size:19px}.wish-tags{gap:4px}.wish-tags>span{font-size:10px;padding:5px 7px}
+}
+@media(prefers-reduced-motion:reduce){#authView .crew-unified *{animation:none!important;transition:none!important}}
+
+#authView .gcHeroDialog.crew-unified.is-paused *{animation:none!important}
+.choice-swatch{display:inline-block;width:12px;height:12px;border:1px solid #ffffff55;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.question-options label:has(input:checked){background:#eaf3ff;border-color:#1769e0;box-shadow:0 0 0 1px #1769e0}
+.crew-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:#bdd5f1;border-radius:0 0 18px 18px;overflow:hidden}
+.crew-progress::after{content:'';display:block;height:100%;width:100%;background:var(--hero-color);transform-origin:left;animation:crew-countdown 5s linear forwards}
+#authView .gcHeroDialog.crew-unified.is-paused .crew-progress{display:none}
+@keyframes crew-countdown{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.paper-header.sample-header{flex-wrap:nowrap;gap:6px;flex:none}
+.paper-header.sample-header>small{width:auto;margin:0;font-size:11px}
+.paper-header.sample-header>strong{font-size:11px;color:#526c89}
+#authView .question-demo{flex:none}
+@media(min-width:701px){.question-demo:has(.question-picture)>.question-options{grid-template-columns:1fr 1fr}}
+@media(max-height:620px) and (min-width:701px){.question-demo{gap:6px;padding-top:5px}.picture-options .animal-img{max-width:100px}.picture-options label{flex-direction:row;justify-content:center;gap:6px}.picture-options label>span:last-child{font-size:12px}.question-picture .animal-img{width:125px}.overview-back{min-height:28px;padding:4px 9px}}
+
+.paper-header.sample-header .overview-back{margin-left:auto;min-height:28px;font-size:11px;padding:5px 8px}
+.question-demo:has(.question-picture)>.sample-answer{grid-column:2;width:100%;box-sizing:border-box}
+@media(max-height:620px) and (min-width:701px){.question-demo:has(.question-picture) .question-picture .animal-img{width:100px}.question-demo:has(.question-picture)>.question-options{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.paper-header.sample-header:has(.overview-back){flex-wrap:wrap}.paper-header.sample-header .overview-back{flex-basis:100%;margin:0}.question-demo>.sample-answer{width:100%;box-sizing:border-box}}
+#authView .crew-paper .gcHeroAnswerMark{top:50%;bottom:auto;right:12px;transform:translateY(-50%);font-size:25px}
+@media(max-width:700px){
+.coco-location{min-height:100px}.coco-location>span{font-size:10px;line-height:1.25}
+.whole-test{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(5,minmax(44px,1fr));gap:5px}
+button.test-outline-task{min-height:44px;padding:4px 5px;gap:4px}.test-outline-task strong{font-size:11px;line-height:1.2}.task-number{flex:none}.task-arrow{font-size:14px}
+}
+
+.crew-home-tutorial{margin-left:auto;min-height:44px;border:1px solid #90b9ef;border-radius:9px;padding:8px 13px;background:#eaf3ff;color:#15529e;font-size:13px;font-weight:750;cursor:pointer;white-space:nowrap}
+body:not(.gcPublicEntryMode) .crew-home-tutorial{display:none}
+@media(max-width:700px){.crew-home-tutorial{display:none}}
+
+#authView .gcHeroLead .crew-click-hint{position:static;bottom:auto;left:auto;transform:none;display:table;margin:8px auto 0;padding:5px 10px;font-size:11px;line-height:1.3;letter-spacing:0;font-weight:500;white-space:normal;max-width:100%;pointer-events:none}
+.role-play{position:absolute;right:6px;top:7px;margin:0;font-size:11px;line-height:1}
