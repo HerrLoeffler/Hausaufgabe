@@ -85,6 +85,29 @@ final class NativeLayoutTests: XCTestCase {
         XCTAssertTrue(Self.violations(["header":header,"other":overlapping],width:320,height:568).contains { $0.contains("overlaps") })
     }
 
+    func testSnapshotContentRecognizesPaintedMonochromeForms() throws {
+        let url = try XCTUnwrap(Bundle.main.url(forResource: "painted-grouping-ci", withExtension: "png", subdirectory: "SnapshotSamples"))
+        XCTAssertTrue(LayoutReportStore.hasPaintedContent(try XCTUnwrap(UIImage(contentsOfFile: url.path))), "The actual CI form is visibly painted despite its limited palette")
+        let size = CGSize(width: 128, height: 128)
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        let monochrome = UIGraphicsImageRenderer(size: CGSize(width: 32, height: 32), format: format).image { _ in
+            UIColor.white.setFill(); UIRectFill(CGRect(x: 0, y: 0, width: 32, height: 32))
+            UIColor.black.setFill()
+            for y in stride(from: 0, to: 32, by: 8) { UIRectFill(CGRect(x: 4, y: y, width: 24, height: 4)) }
+        }
+        XCTAssertTrue(LayoutReportStore.hasPaintedContent(monochrome), "Painted content does not require nine distinct colors")
+        for color in [UIColor.black, .white, .clear] {
+            let blank = renderer.image { _ in color.setFill(); UIRectFill(CGRect(origin: .zero, size: size)) }
+            XCTAssertFalse(LayoutReportStore.hasPaintedContent(blank), "Uniform snapshots must fail")
+        }
+        let dot = renderer.image { _ in
+            UIColor.white.setFill(); UIRectFill(CGRect(origin: .zero, size: size))
+            UIColor.black.setFill(); UIRectFill(CGRect(x: 64, y: 64, width: 1, height: 1))
+        }
+        XCTAssertFalse(LayoutReportStore.hasPaintedContent(dot), "One pixel does not establish a painted screen")
+    }
+
     func testNativeScreenMatrix() async throws {
         try LayoutReportStore.clear(prefix: "native-")
         for viewport in LayoutViewport.matrix {
@@ -185,10 +208,33 @@ final class NativeLayoutTests: XCTestCase {
 enum LayoutReportStore {
     static var directory: URL { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("LayoutReports") }
     static func hasPaintedContent(_ image: UIImage) -> Bool {
-        guard let cg = image.cgImage, let context = CGContext(data: nil, width: 32, height: 32, bitsPerComponent: 8, bytesPerRow: 128, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
-        context.draw(cg, in: CGRect(x: 0, y: 0, width: 32, height: 32))
-        guard let data = context.data?.assumingMemoryBound(to: UInt32.self) else { return false }
-        return Set(UnsafeBufferPointer(start: data, count: 1024)).count > 8
+        // A correctly painted monochrome form can have only seven colors when
+        // sparsely sampled. Use explicit interpolation and visible contrast area,
+        // rather than a palette-size requirement that varies across iOS versions.
+        let side = 128, count = side * side
+        let bitmap = CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
+        guard let cg = image.cgImage, let context = CGContext(data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: side * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: bitmap) else { return false }
+        context.setFillColor(UIColor.white.cgColor); context.fill(CGRect(x: 0, y: 0, width: side, height: side))
+        context.interpolationQuality = .high
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: side, height: side))
+        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else { return false }
+        var histogram: [Int: Int] = [:]
+        for i in 0..<count {
+            let offset = i * 4
+            let bucket = (Int(data[offset]) >> 4) << 8 | (Int(data[offset + 1]) >> 4) << 4 | Int(data[offset + 2]) >> 4
+            histogram[bucket, default: 0] += 1
+        }
+        guard let dominant = histogram.max(by: { $0.value < $1.value })?.key else { return false }
+        let background = [((dominant >> 8) & 15) * 16 + 7, ((dominant >> 4) & 15) * 16 + 7, (dominant & 15) * 16 + 7]
+        var contrasting = 0
+        for i in 0..<count {
+            if (0..<3).contains(where: { abs(Int(data[i * 4 + $0]) - background[$0]) >= 32 }) {
+                contrasting += 1
+                // 0.39% of the sampled surface; a single pixel cannot pass.
+                if contrasting >= 64 { return true }
+            }
+        }
+        return false
     }
     static func clear(prefix: String) throws {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

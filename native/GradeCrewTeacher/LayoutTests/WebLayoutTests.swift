@@ -27,7 +27,7 @@ final class WebLayoutTests: XCTestCase {
 
     private func js(_ source: String) async throws -> Any? { try await web.evaluateJavaScript(source) }
     func testWebSmallPhone() async throws {
-        for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&type=single", "screen=editor&lang=de&type=single&variant=media"] { try await check(s, viewport: LayoutViewport.matrix[0]) }
+        for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&type=single", "screen=editor&lang=de&type=single&variant=media", "screen=editor&lang=de&role=teacher&type=grouping"] { try await check(s, viewport: LayoutViewport.matrix[0]) }
     }
     func testWebLargeTabletMedia() async throws {
         for viewport in [LayoutViewport.matrix[7], LayoutViewport.matrix[8], LayoutViewport.matrix[9]] {

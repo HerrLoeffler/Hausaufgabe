@@ -18,7 +18,9 @@ app_source = ns['ident']('build-Sources/GradeCrewTeacherApp.swift')
 sources = obj('layout-host-sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=[b for b in ns['builds'] if b != app_source] + builds, runOnlyForDeploymentPostprocessing='0')
 webref = obj('layout-web', isa='PBXFileReference', lastKnownFileType='folder', path='LayoutTests/GeneratedWeb', sourceTree='<group>')
 webbuild = obj('build-layout-web', isa='PBXBuildFile', fileRef=webref)
-resources = obj('layout-resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=objects[ns['resources']]['files'] + [webbuild], runOnlyForDeploymentPostprocessing='0')
+snapshotref = obj('snapshot-samples', isa='PBXFileReference', lastKnownFileType='folder', path='LayoutTests/SnapshotSamples', sourceTree='<group>')
+snapshotbuild = obj('build-snapshot-samples', isa='PBXBuildFile', fileRef=snapshotref)
+resources = obj('layout-resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=objects[ns['resources']]['files'] + [webbuild, snapshotbuild], runOnlyForDeploymentPostprocessing='0')
 host_product = obj('layout-host-product', isa='PBXFileReference', explicitFileType='wrapper.application', path='GradeCrewLayoutHost.app', sourceTree='BUILT_PRODUCTS_DIR')
 host_configs = []
 for name in ['Debug', 'Release']:
@@ -42,7 +44,7 @@ proxy = obj('layout-host-proxy', isa='PBXContainerItemProxy', containerPortal=ns
 dependency = obj('layout-host-dependency', isa='PBXTargetDependency', target=host, targetProxy=proxy)
 test_product = obj('layout-test-product', isa='PBXFileReference', explicitFileType='wrapper.cfbundle', path='GradeCrewLayoutChecks.xctest', sourceTree='BUILT_PRODUCTS_DIR')
 tests = obj('layout-tests', isa='PBXNativeTarget', name='GradeCrewLayoutChecks', productName='GradeCrewLayoutChecks', productReference=test_product, productType='com.apple.product-type.bundle.unit-test', buildConfigurationList=test_list, buildPhases=[test_sources], buildRules=[], dependencies=[dependency])
-objects[main]['children'] += refs + testrefs + [webref]
+objects[main]['children'] += refs + testrefs + [webref, snapshotref]
 objects[products]['children'] = [host_product, test_product]
 objects[ns['project']]['targets'] = [host, tests]
 project_dir = ROOT / 'GradeCrewLayoutChecks.xcodeproj'
