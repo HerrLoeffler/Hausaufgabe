@@ -443,6 +443,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 
 module.exports = {
   ...existing,
+  ...require("./lib/wissensreise-callables").learningCallables(existing.regenerateQuestion),
   ...require("./admin-account-callables"),
   ...require("./review-mode-callables"),
   aggregateBugFeedback,
