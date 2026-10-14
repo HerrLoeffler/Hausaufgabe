@@ -541,3 +541,8 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 
 ### GC-PLUGINS-01 — Godot Beratung (14.10.2026)
 - [x] Offizielle Engine-/Lizenz-/Webexport-Dokumentation gegen GradeCrew-Produktionsvorgaben eingeordnet: neue2D-Lernspiele8/10, Kern-Webapp-Ersatz2/10, sofortige Unreal-Migration3/10. Reine Recherche, kein Installations-/Migrationsauftrag. [Begründung und Grenzen](workstreams/plugins-pdfcraft-pilot-20261011.md). Optionaler Folgepunkt: ein2D-Referenzabschnitt und echter Ziel-iPad-Vergleich, nur bei gesondertem Auftrag.
+
+
+### GC-PLUGINS-01 — Spielwerkzeuge und unabhängige Reviews (14.10.2026)
+- [x] Ablaufvorschlag gegen bestehenden Spieleworkflow geprüft und durch zwei getrennte KI-Konzeptreviews beurteilt (je8/10). [Vorschlag, Belege und Grenzen](workstreams/plugins-game-tool-review-20261014.md). Kein Godot-/Geräte-/Einzelspieltest oder Installationsauftrag daraus ableiten.
+- [ ] Vorschlag im nächsten autorisierten Spielauftrag konkretisieren: passende Programme nach Rolle, bestehender Build als Ausgangspunkt, bei offener Entscheidung gleicher Referenzabschnitt in2Varianten, zwei blinde Erstbewertungen, echte Geräte-/Lerntests und klares Ende. Noch keine automatische Testpipeline aktiviert.
