@@ -1,0 +1,127 @@
+{
+  "sha": "ec7512600bf6d48541cb304d746dca96b78358b5",
+  "selected_count": 11,
+  "active_count": 11,
+  "unselected_count": 44,
+  "unselected_deep_unchanged": 44,
+  "unselected_changed": [],
+  "functions": [
+    {
+      "id": "cancelLearningVariant",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "developLearningSession",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "generateLearningBuffer",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e2d6e4bec02ba95adfbc3e009d080ff24ef3aa41"
+    },
+    {
+      "id": "generateLearningVariant",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e2d6e4bec02ba95adfbc3e009d080ff24ef3aa41"
+    },
+    {
+      "id": "getLearningDraft",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "prepareLearningDraft",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "processLearningBuffer",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e2d6e4bec02ba95adfbc3e009d080ff24ef3aa41"
+    },
+    {
+      "id": "publishLearningDraft",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "requestLearningRefill",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "startLearningSession",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    },
+    {
+      "id": "stepLearningSession",
+      "region": "europe-west1",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "codebase": "ai",
+      "hash": "e68d5131e96342c0ab11553a7294acfb59eb433a"
+    }
+  ],
+  "hosting": {
+    "hausaufgabe-staging": {
+      "site": "hausaufgabe-staging",
+      "url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+      "version": "",
+      "expireTime": "2026-10-21T16:50:05.282967459Z"
+    }
+  },
+  "provider_calls": 0,
+  "hosting_payload_hashes_verified": 171,
+  "release_manifest_exact": true,
+  "canonical_commit_unchanged": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "teacher_unauthenticated_status": {
+    "prepareLearningDraft": 401,
+    "getLearningDraft": 401,
+    "generateLearningVariant": 401,
+    "generateLearningBuffer": 401,
+    "cancelLearningVariant": 401,
+    "publishLearningDraft": 401,
+    "developLearningSession": 401
+  },
+  "preview_url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html",
+  "source_sha": "ec7512600bf6d48541cb304d746dca96b78358b5",
+  "hosting_deploy_session": 92801,
+  "functions_deploy_session": 57391,
+  "rules_changed": false,
+  "production_changed": false,
+  "ci_run": 38600305961,
+  "ci_status": "success"
+}

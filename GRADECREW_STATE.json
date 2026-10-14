@@ -1661,6 +1661,38 @@
       "model_quality": "not_observed_no_live_provider_calls",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
       "next_action": "qualified integration to existing app integration branch and Staging activation; physical/model quality acceptance separate"
+    },
+    {
+      "id": "learning-wissensreise-20261014",
+      "task_id": "GC-LEARNING-WISSENSREISE-01",
+      "branch": "feat/wissensreise-20261014",
+      "observed_head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "stage": "staging_deployed",
+      "scope": "isolated_preview_only",
+      "pull_request": 238,
+      "integration": "PR238 open/draft/unmerged against feature/gradecrew-app-integration",
+      "ci": "success38600305961;exactNode22/functions289/DOM7/secureRulesEmulator/build171",
+      "staging": "11updatedLearningFunctionsACTIVE;43existing+learningCleanup44unselecteddeepunchanged;canonical8f869790unchanged",
+      "preview_url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html",
+      "user_tested": false,
+      "provider_semantics": "unverified_no_paid_probe",
+      "production": "not_requested_unchanged",
+      "handoff": "workstreams/wissensreise-plan-20261014.md",
+      "receipt": "docs/learning/wissensreise-evidence-20261014/staging-ec751.json",
+      "next_action": "User reloads same preview and reviews learning copy; paid-generation/provider semantics, publish/play cloud acceptance and device/classroom tests remain separate",
+      "deployed_head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "candidate_stage": "staging_deployed_scoped_fix_verified",
+      "candidate_ci": "success38600305961 exactec751 Node22job115977527496/functions289/DOM7/build171",
+      "authenticated_source_list_verified": true,
+      "last_user_attempt": "same existing auth and same50-question source prepare PASS:46usable,4excluded; no generation/publication",
+      "followup_receipt": "docs/learning/wissensreise-evidence-20261014/followup-settings-ec751.json",
+      "authenticated_prepare_verified": true,
+      "actual_user_prepare": {
+        "source_count": 50,
+        "usable_count": 46,
+        "excluded_count": 4,
+        "status": "pass"
+      }
     }
   ],
   "deployments": [
@@ -1903,6 +1935,21 @@
       "user_test": "pending",
       "production": false,
       "rules_deployed": false
+    },
+    {
+      "environment": "staging-preview",
+      "type": "hosting_and_selected_learning_functions",
+      "task_id": "GC-LEARNING-WISSENSREISE-01",
+      "project": "hausaufgabe-staging",
+      "channel": "gradecrew-wissensreise-20261014",
+      "verified_commit": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "verified_files": 171,
+      "selected_function_updates": 11,
+      "unselected_functions_unchanged": 44,
+      "canonical_commit_unchanged": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+      "rules_changed": false,
+      "production_changed": false,
+      "evidence": "docs/learning/wissensreise-evidence-20261014/staging-ec751.json"
     }
   ],
   "blockers": [

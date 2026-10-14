@@ -1,0 +1,50 @@
+{
+  "task_id": "GC-LEARNING-WISSENSREISE-01",
+  "candidate_sha": "ec7512600bf6d48541cb304d746dca96b78358b5",
+  "candidate_tree": "e503b7d4895c9a18cecfde9f3d1da83c6cfdba17",
+  "deployed_sha": "ec7512600bf6d48541cb304d746dca96b78358b5",
+  "reproduction": {
+    "auth_restored": true,
+    "own_tests_loaded": 47,
+    "source_question_count_visible": 50,
+    "failed_condition": "source loader41 + prepare max40 despite main test max100",
+    "paid_calls": 0,
+    "private_source_material_saved": false
+  },
+  "fix": {
+    "max_source_questions": 100,
+    "source_read_limit": 101,
+    "source_copy_max_bytes": 60000,
+    "source_media": "fingerprint only; excluded per item",
+    "batch_source_windows": 40,
+    "maximum_batches": 3,
+    "maximum_new_variants": 36,
+    "questions_without_position": "retained"
+  },
+  "validation": {
+    "functions_tests": 289,
+    "dom_tests": 7,
+    "build_files": 171,
+    "eslint": "pass",
+    "ci_run": 38600305961,
+    "ci_status_observed": "success exactec751 log Node22job115977527496",
+    "code_review": "independent final SOURCE PASS ec751;15 remote blobs,27 targeted backend,7 DOM,eslint,diffcheck,build171",
+    "browser_qa": "independent Settings TEST50 desktop390 keyboard restore/playPASS; actual existing authenticated same source50 prepare46/50PASS"
+  },
+  "deploy_scope": "same isolated preview and affected existing new learning functions only after exact review+CI; canonical/old43/rules/production unchanged",
+  "compatibility": "Old7b35 source fingerprints can require deliberate recreate; no automatic paid regeneration",
+  "actual_user_prepare": {
+    "source_count": 50,
+    "usable_count": 46,
+    "excluded_count": 4,
+    "status": "pass",
+    "provider_calls": 0,
+    "publication_created": false,
+    "source_unchanged": true,
+    "private_draft_created": true,
+    "excluded_reasons": {
+      "Medienabhängige Aufgaben brauchen einen geprüften Lernadapter.": 4
+    }
+  },
+  "open_p2": "Duration0 label Freies Lernen can be confused with guided mode; rename to Ohne Zeitlimit later, no code change in this release"
+}

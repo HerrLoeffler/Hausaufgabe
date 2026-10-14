@@ -1,0 +1,234 @@
+{
+  "taskId": "GC-LEARNING-WISSENSREISE-01",
+  "stage": "staging_deployed",
+  "scope": "isolated preview only, code PR open/draft/unmerged",
+  "sourceHead": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+  "sourceTree": "325482b916b5443b7bc001f03ef4a8d2f7070923",
+  "ci": {
+    "head": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+    "run": 38574847338,
+    "job": 115889128192,
+    "conclusion": "success",
+    "node": "22",
+    "functionsTests": 285,
+    "domTests": 6,
+    "buildPayloadFiles": 170,
+    "steps": "all27relevantStepsSuccess",
+    "source": "coordinator actual Actions run metadata plus implementer fetched complete job steps/log"
+  },
+  "independentCodeReview": "code-review-7b35.md PASS;24/24remoteBlobs/285packageTests/DOM6/170build",
+  "independentBrowserQA": "browser-qa-7b35.md plus earlier bounded receipts; synthetic transport, not live authenticated cloud acceptance",
+  "hosting": {
+    "observedAt": "2026-10-14T13:57:47.921Z",
+    "project": "hausaufgabe-staging",
+    "commit": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+    "url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+    "manifestStatus": 200,
+    "verifiedAssets": 170,
+    "totalManifestAssets": 170,
+    "failures": [],
+    "canonical": {
+      "status": 200,
+      "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+      "version": "2.3.1-gc39"
+    }
+  },
+  "hostingChannel": "gradecrew-wissensreise-20261014",
+  "hostingExpires": "2026-10-21 15:56:04 CEST",
+  "hostedFilesIncludingManifest": 171,
+  "functions": {
+    "observedAt": "2026-10-14T14:01:44.350Z",
+    "project": "hausaufgabe-staging",
+    "commit": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+    "existingCount": 43,
+    "afterCount": 55,
+    "existingUnchanged": true,
+    "newFunctions": [
+      {
+        "id": "cancelLearningVariant",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "cleanupLearningData",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "schedule"
+      },
+      {
+        "id": "developLearningSession",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "generateLearningBuffer",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "4ef0126144c3e9dfd58ca0081bdc58e7722d3e87",
+        "trigger": "callable"
+      },
+      {
+        "id": "generateLearningVariant",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "4ef0126144c3e9dfd58ca0081bdc58e7722d3e87",
+        "trigger": "callable"
+      },
+      {
+        "id": "getLearningDraft",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "prepareLearningDraft",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "processLearningBuffer",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "4ef0126144c3e9dfd58ca0081bdc58e7722d3e87",
+        "trigger": "task"
+      },
+      {
+        "id": "publishLearningDraft",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "requestLearningRefill",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "startLearningSession",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      },
+      {
+        "id": "stepLearningSession",
+        "state": "ACTIVE",
+        "runtime": "nodejs22",
+        "region": "europe-west1",
+        "codebase": "ai",
+        "hash": "3114328de52bda550eda902642299b8d810e4f9c",
+        "trigger": "callable"
+      }
+    ],
+    "anonymous": [
+      {
+        "name": "prepareLearningDraft",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "getLearningDraft",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "generateLearningVariant",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "generateLearningBuffer",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "cancelLearningVariant",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "publishLearningDraft",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      },
+      {
+        "name": "developLearningSession",
+        "http": 401,
+        "errorStatus": "UNAUTHENTICATED"
+      }
+    ],
+    "rules": [
+      {
+        "collection": "learningDrafts",
+        "anonymousHttp": 403
+      },
+      {
+        "collection": "learningPublications",
+        "anonymousHttp": 403
+      },
+      {
+        "collection": "learningSessions",
+        "anonymousHttp": 403
+      },
+      {
+        "collection": "learningBuffers",
+        "anonymousHttp": 403
+      }
+    ]
+  },
+  "firestoreMetadata": {
+    "database": "(default)",
+    "type": "FIRESTORE_NATIVE",
+    "edition": "STANDARD",
+    "location": "eur3"
+  },
+  "unchanged": {
+    "existingFunctions": 43,
+    "rules": "not deployed",
+    "canonicalHostingCommit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+    "production": "not requested or changed"
+  },
+  "notVerified": [
+    "real authenticated teacher saved source → publication → learner cloud loop",
+    "real model generation and content quality",
+    "CloudTasks live refill invocation and IAM",
+    "physical QR/iPad/device/classroom load",
+    "user acceptance"
+  ],
+  "budget": "max3buffers×12 per publication + existing account quotas; exhaustion/failure honestly repeats validated tasks until timer",
+  "credentials": "existing login used; no token/key/login JSON exposed; no provider probe",
+  "independentLiveHostingQA": "browser-live-hosting-7b35.md; actual native browser preview entry/login UI, exact release/4UIhashes; no authenticated session or provider"
+}

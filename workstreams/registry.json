@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -636,6 +636,17 @@
       "integrationTarget": "lab/games-structure",
       "state": "integration_ready",
       "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    },
+    {
+      "id": "learning-wissensreise-20261014",
+      "title": "GC-LEARNING-WISSENSREISE-01: Wissensreise aus eigenen Tests mit geführtem Lernen",
+      "primaryBranch": "feat/wissensreise-20261014",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/wissensreise-plan-20261014.md",
+      "relatedBranches": [
+        "docs/wissensreise-plan-20261014"
+      ]
     }
   ]
 }
