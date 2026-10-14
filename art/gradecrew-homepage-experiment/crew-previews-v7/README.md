@@ -1,26 +1,35 @@
-# GradeCrew V6 — ElevenLabs und freundliche Tutorial-Einladung
+# GradeCrew V7 — Coco lädt die Crew ein
 
-Task GC-BRAND-HERO-MOTION-20261013. Isoliertes lokales Experiment, keine Produkt-/Staging-/Productionänderung. V5Source1d7203ad/V5Server8782 und Vorversionen bleiben erhalten.
+Task GC-BRAND-HERO-MOTION-20261013. Separates lokales Experiment. Bestehende Homepage, Staging, Production und Vorversionen unverändert.
 
-## Umsetzung
+## Änderungen
 
-- Remys englische Hörfrage nutzt ElevenLabs eleven_v4 / Teddy Twinkle – Cute Cartoon Boy. Wärme, ruhige Aussprache und kleine Pausen per Audiotags; derselbe vorbereitete Text und dieselben Bildantworten. Take1 vorläufig ausgewählt. Keine Stimme geklont. Keine Schüler-/Konto-/Credentialdaten an den Anbieter übermittelt.
-- Einmaliger Erstelllauf mit vier Tooldefault-Takes; alle completed,7.36/7.36/7.44/7.36Sekunden. Je132Credits/USD0.0132,gesamt528Credits/USD0.0528. Vollständige Receipt ohne Signed/OOBURLs in ELEVENLABS-V6.json. Vier MP3s gesichert, keine automatische Neugenerierung. Qualitäts-/Stimmurteil durch Martin offen.
-- Nach Wilmas Einblickbeenden erscheint die Original-Crew: Coco mit Schnurtelefon, der bereits hellblaue Remy, Emmi und Wilma als vier unveränderte Portraitkopien. Kein neues Markenbild generiert. Bestehendes Gruppenbild wegen abweichender Remyfarbe nicht eingesetzt.
-- „Willst du die Crew noch besser kennenlernen?“ / „Erstelle mit uns deinen ersten Test – Schritt für Schritt.“ mit blauem Tutorialstart und „Vielleicht später“. DE/EN, Schließen/Escape bleiben verfügbar. Bestehende Homepage-/Header-/Dialog-Tutorialbuttons öffnen dieselbe Einladung; ihre Akzentfarbe jetzt kräftig blau.
-- Das vollständige bestehende Tutorial ist noch NICHT in die lokale Vorschau eingebunden. Der blaue Einladungsbutton zeigt danach den klaren lokalen Hinweis. Keine behauptete Fulltour-Ausführung, kein Sprung zur synthetischen Abschlussfixture und keine automatische Stagingnavigation.
-- V5Layout/NoScroll/C/E/W5sAutoplay/RemyManual/hellblaue Assets erhalten. Neue Einladung suspendiert den Previewtimer und pausiert Audio. Später/Close setzt eine darunterliegende Vorschau fort; nach Wilmaabschluss geht es zur Homepage. Keine Trial-/Signup-/Auth-/Fulltourengineänderung.
+- Generischer Hinweis unter der Headline entfernt. Sprechblase bei Coco: „Klick auf meinen Bauch – ich stelle dir die Crew kurz vor!“ / „Tap my belly – I’ll introduce you to the crew!“. Bauchregion anklickbar; Namensbutton für Tastatur erhalten. Mobile Blase flacher oberhalb der Gesichter.
+- Erste Bildfrage: Bär mit rotem Regenmantel und gelben Gummistiefeln. „Which two things is the bear wearing?“ mit vier Kleidungspaaren. Zehn Aufgaben, 14 Punkte. Keine zweite Häschen-Schalfrage.
+- Häschen-Hörfrage, Bilder und ElevenLabs-MP3 bytegleich zu V6. Keine neue Audiogenerierung.
+- Homepage-, Header- und Einblick-Tutorialbutton starten direkt die lokale Original-Gasttour. Nach Wilma bleibt die freundliche Einladung, deren Tutorialbutton dasselbe Ziel öffnet.
 
-## Start und Prüfung
+## Originaltutorial als isolierte lokale Kopie
 
-`python3 -m http.server 8783 --bind 127.0.0.1` in diesem Ordner. http://127.0.0.1:8783/ . Eigener ServerSession95513, nur Loopback. Quelldateien/art und Original-Baseline separat; kein Clouddeploy.
+Route /tour-runtime/index.html. Originale App-Oberfläche und Tutorial aus gc39 / 8f8697901f8c1aea89897be855ca2872c82d0f2b. Vier Tour-/GuestRepository-Dateien bytegleich zur Baseline. Zusätzlich gelesene Originalmodule unter tour-reference/ unverändert; baseline/ unverändert.
 
-23/23 bestehende Tests frischgrün. Testpfad für Hörfrage bewusst von alter System-WAV auf neue ElevenLabs-MP3 geändert; vorheriger22/23-Lauf scheiterte ausschließlich an diesem erwarteten Dateipfad. Keine neue Flow-/Enginefunktion außerhalb Einladung. OriginalheroMarkup/Fitter/Styles und E/WRenderer weiterbytegleich; V5komplette Höhenprobe bleibt als historische V5Evidenz erhalten, nicht als V6neu ausgegeben.
+Runtime-Fassade ersetzt ausschließlich Firebase-SDK-Importe und Konfiguration. Auth-, Datenbank-, Storage- und Callable-Aktionen werfen; kein SDK oder Anbieteraufruf. CSP connect-src self und form-action none. Original-InMemoryGuestRepository hält vorbereitete Übungsdaten nur im Arbeitsspeicher. Keine echte KI, Registrierung, Trial oder Cloudveröffentlichung. Gasttour-Exit führt zur eigenen Homepage. Die separate finale.html-Fixture wird nicht vom Tutorialstart benutzt.
 
-Tatsächliche CUA-Prüfung: Wilmafinal→Einladung; Später→Homepage; Header/Modal/Homepage-Tutorialbuttons→Einladung; Einladungstart→klarer Vorschauhinweis; Close funktioniert. Größen1280×720 (650×432),957×523 (650×345),390×667 DE/EN (352×482): DialogclientHeight=scrollHeight, alle vier Bilder geladen und beide46.5pxButtonssichtbar. BrowserohneWarn/Error. NativeAudio tatsächlich neue assets/remy-listening-take-1.mp3,duration7.36,playing=true,currentTime0.209546. Audio pausiert beim Einladungswechsel tatsächlich paused=true beobachtet. Hintergrundscroll bei Einladung gesperrt; finaleDesktopaufnahme enthält dieses letzte Verhalten. NativePlayer überAX bedient; DOM-Playwright kann dessen internePlaytaste nicht finden, kein Appfehler.
+## Prüfung
 
-Belege in previews/verification-v6.json, invitation-desktop.jpg/invitation-small-desktop.jpg/invitation-iphone-de.jpg/invitation-iphone-en.jpg/remy-elevenlabs.jpg. Mobilebilder vorletzter Hintergrundscrollsperre; Dialoghöhen/Copys/layout unverändert, kein internerÜberlauf. Keine physischeGeräte-,Safari-,VoiceOver-,OSReducedMotion-,CI-,Integrations-,Nutzerstimmen- oder Deploymentabnahme. Stufe branch_only.
+28/28 Node-Tests einschließlich Backendverbot, Originalerhalt und Unterschied der Bild-/Hörfrage. Original-Hero-Markup, Fitter, E/W-Renderer und geprüfte Assets unverändert. Take1-Gitblob weiterhin 20d155c9c20354dd84de08aa459e09714031f00e.
 
-SEC15/18 und PRIV12–15/19 nurlokal: CSPconnect-srcnone/keineAppFirebase/keinRuntimeProvider; neueAudiogenerierung ausdrücklich vomHuman autorisiert, synthetischer Übungssatz. RemoteMedia einmal als lokale Einbauartefakte heruntergeladen; SandboxDNS zunächst blockiert, gereviewter Download vorhandenerArtefakte erfolgreich, kein erneuter Generationstart. Token-/CodexUsage/RuntimeModellEffortunknown, kein programmatischerWechsel/kein Budgetreset/keine Delegation.
+CUA: Bauchaktion funktioniert bei 390×667, 957×523 und 768×1024. Bärenfrage: iPhone Dialog 651/651, Paper 321/321; kleiner Desktop EN Dialog 499/499, Paper 244/244 (clientHeight/scrollHeight). Coco iPad 700/700. DE/EN-Hinweis geprüft. Vorhandene Häschen-MP3 korrekt eingebunden.
 
-Nächster Schritt: Martin hört die neue Remy-Stimme und beurteilt die Einladung. Echte Fulltour-Zielverknüpfung offen. Keine automatische Produktübernahme.
+Original-Gasttutorial tatsächlich gestartet: Homepagebutton → Coco-Willkommen ohne Einladung → Neuer Test → Remy → Originalfelder automatisch ausgefüllt → lokaler Zehn-Aufgaben-Entwurf → Übergabe an Emmi. Wilma-Kurzeinblick beenden → Einladung → echter Coco-Tutorialstart geprüft. Keine Browser-Warn-/Fehlerlogs in diesen Abläufen.
+
+Grenzen: kein erneuter kompletter Tourdurchlauf bis Schülerabgabe, Bewertung und Tutorialende; keine vollständige Tourabnahme. Keine physischen Geräte-, Safari-, VoiceOver-, CI- oder Deploymentprüfung.
+
+## Start und Sicherung
+
+python3 -m http.server 8784 --bind 127.0.0.1
+Vorschau http://127.0.0.1:8784/ . Loopback-Server Session37581.
+
+Codecheckpoint 3d76e3a0f647822bb7dc37617900d699dfac594a auf docs/gc-brand-hero-motion-20261013. Status branch_only. Kein PR, Merge oder Deploy. Ein imagegen-Aufruf; PROMPTS-V7.md. Keine weiteren ElevenLabs-Aufrufe. Task-, Versuchs- und Budgethistorie erhalten; keine Delegation oder Modellwechsel. Tatsächlicher Runtime-/Token-/Modellverbrauch unavailable.
+
+Belege: previews/home-desktop.jpg, home-iphone.jpg, remy-bear-iphone.jpg, remy-bear-small-desktop.jpg, tutorial-created.jpg. Nächster Schritt: Martins visuelle Rückmeldung.

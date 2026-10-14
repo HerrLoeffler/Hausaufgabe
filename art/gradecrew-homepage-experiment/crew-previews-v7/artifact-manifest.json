@@ -1,0 +1,2250 @@
+{
+  "task": "GC-BRAND-HERO-MOTION-20261013",
+  "version": "V7",
+  "source": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+  "stage": "branch_only",
+  "server": "127.0.0.1:8784",
+  "checkpoint": "3d76e3a0f647822bb7dc37617900d699dfac594a",
+  "files": [
+    {
+      "path": "ELEVENLABS-V6.json",
+      "bytes": 2169,
+      "sha": "242fc7697d8fc86cf5514e09c460550d1bff4226"
+    },
+    {
+      "path": "PROMPTS-V4.md",
+      "bytes": 3325,
+      "sha": "ce9f6ce93b72020bb0eab50dd4277a0167509501"
+    },
+    {
+      "path": "PROMPTS-V7.md",
+      "bytes": 1346,
+      "sha": "7274b006e715952034b5b404777e45a358cc0367"
+    },
+    {
+      "path": "PROMPTS.md",
+      "bytes": 2706,
+      "sha": "fa9022d6f364b2169ceca0dc387bf0fe6c5df1c5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3569,
+      "sha": "3a7233324817a6f74e12a638b11d9a8820801370"
+    },
+    {
+      "path": "assets/bear-rain-v7.png",
+      "bytes": 1325092,
+      "sha": "cd9e8c9e18a9f6bfdf84bd5e39ef0c3670634d53"
+    },
+    {
+      "path": "assets/coco-join-crew.png",
+      "bytes": 1288467,
+      "sha": "934a58865f0d2f0bedf8f338adcae5214e21eebd"
+    },
+    {
+      "path": "assets/colours-animals-atlas.png",
+      "bytes": 2376934,
+      "sha": "e59cab4ca2c266ccc092da82527ee62958fecc5f"
+    },
+    {
+      "path": "assets/colours-listening.aiff",
+      "bytes": 245352,
+      "sha": "523b82b7ab188a0d916203f38362c745d73c5820"
+    },
+    {
+      "path": "assets/colours-listening.wav",
+      "bytes": 245352,
+      "sha": "a4bf527ead2acbc21d0c52c33e4f398e45bec88d"
+    },
+    {
+      "path": "assets/crew-classroom-lightblue-v4.png",
+      "bytes": 2075895,
+      "sha": "b30698ba3dcb9fde2b12299a75f230bed64f2772"
+    },
+    {
+      "path": "assets/gradecrew/brand-icon-v1.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "assets/gradecrew/brand-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "assets/gradecrew/brand-primary-v1.svg",
+      "bytes": 9290,
+      "sha": "c4c3db88b82bdd1de08fd8a80389ba72d0b28702"
+    },
+    {
+      "path": "assets/gradecrew/clay-coco-name.svg",
+      "bytes": 192001,
+      "sha": "00be0f8e861a24fba0d7f08332e55c44306fc101"
+    },
+    {
+      "path": "assets/gradecrew/clay-finale.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "assets/gradecrew/clay-introduce-emmi.svg",
+      "bytes": 320313,
+      "sha": "c597bc9342ceb759ad8c25d7d59d22fb1ad0b6c8"
+    },
+    {
+      "path": "assets/gradecrew/clay-introduce-remy.svg",
+      "bytes": 250965,
+      "sha": "4d1101644fe9a79e2c1cb987ac9bc8fe13b7f485"
+    },
+    {
+      "path": "assets/gradecrew/clay-introduce-wilma.svg",
+      "bytes": 253361,
+      "sha": "5facd4798105beeb012f49b73eceea43078d0ab4"
+    },
+    {
+      "path": "assets/gradecrew/clay-remy-writing.svg",
+      "bytes": 231921,
+      "sha": "75c96c8015f2886b6bf8193af7f3a897e5363af8"
+    },
+    {
+      "path": "assets/gradecrew/clay-retry.svg",
+      "bytes": 224176,
+      "sha": "0a0e92fab37d051ffd42d879c463a140facf5909"
+    },
+    {
+      "path": "assets/gradecrew/clay-save.svg",
+      "bytes": 224176,
+      "sha": "05b6bccf05d174cd76df2209a2c7f88fd3b5f8d6"
+    },
+    {
+      "path": "assets/gradecrew/clay-thanks-emmi.svg",
+      "bytes": 224175,
+      "sha": "76071a18452303aa141a1caa2e807fb7c95030a9"
+    },
+    {
+      "path": "assets/gradecrew/clay-thanks-remy.svg",
+      "bytes": 231063,
+      "sha": "45045f47854f1284f0c46c732e0c96b8101b9c6c"
+    },
+    {
+      "path": "assets/gradecrew/clay-thanks-wilma.svg",
+      "bytes": 224176,
+      "sha": "70b16f7b7c0e45a50ee6b725f790516c3775e05c"
+    },
+    {
+      "path": "assets/gradecrew/clay-wait.svg",
+      "bytes": 224175,
+      "sha": "0a30bcfaeb668b2981050fd90adf223c180976da"
+    },
+    {
+      "path": "assets/gradecrew/clay-welcome.svg",
+      "bytes": 231060,
+      "sha": "10151ad2d7ed8e4fe4dd438dd72a37da7e12ee4d"
+    },
+    {
+      "path": "assets/gradecrew/clay-your-turn.svg",
+      "bytes": 224177,
+      "sha": "9d1ef4cd2853980c249e9af47f6525dfeecc433a"
+    },
+    {
+      "path": "assets/gradecrew/coco-footer-glance-v4.png",
+      "bytes": 92229,
+      "sha": "268e26694d7beccca59e5fe1be1af3f8821ca7ea"
+    },
+    {
+      "path": "assets/gradecrew/coco-footer-guide.png",
+      "bytes": 116806,
+      "sha": "1fe8b1c1cb782f8601758d1788a6205b7aae22bb"
+    },
+    {
+      "path": "assets/gradecrew/coco-footer-letter-c-v5.png",
+      "bytes": 85772,
+      "sha": "f3286bb4c4503b85d43c3c6cbfa50e5714e5080b"
+    },
+    {
+      "path": "assets/gradecrew/coco-footer-run-10.png",
+      "bytes": 749280,
+      "sha": "3338c10a6bc6ab8afd4c3b3c1e9cc47912485a92"
+    },
+    {
+      "path": "assets/gradecrew/coco-help-phone.png",
+      "bytes": 292570,
+      "sha": "50bac4244f8fd58ec59963678903857f9b798f68"
+    },
+    {
+      "path": "assets/gradecrew/coco-login-heart-17.png",
+      "bytes": 1350072,
+      "sha": "51a1587f8a5a069c02ef0b88b3bb9acdd83dd72e"
+    },
+    {
+      "path": "assets/gradecrew/coco-workspace-greeting.svg",
+      "bytes": 4514,
+      "sha": "b4b99cd5cb1a87a05a0e4ac06ebab47e222cba78"
+    },
+    {
+      "path": "assets/gradecrew/crew-classroom-v3.webp",
+      "bytes": 254938,
+      "sha": "f994deda38f1134f85ac9f35f0125e340f5b02a1"
+    },
+    {
+      "path": "assets/gradecrew/crew-classroom-wide-v4.png",
+      "bytes": 2104486,
+      "sha": "1a639b7291954aac578c0fbc9a6fa371178d65e5"
+    },
+    {
+      "path": "assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png",
+      "bytes": 2098535,
+      "sha": "7cbf20a4d9b2039bd97fbffc7f37909896d25b0e"
+    },
+    {
+      "path": "assets/gradecrew/crew-lineup.svg",
+      "bytes": 1232,
+      "sha": "68f6f6252b92b335b83901e224c632555003a5d5"
+    },
+    {
+      "path": "assets/gradecrew/cuddly-hedgehog.webp",
+      "bytes": 125718,
+      "sha": "7a82bc96114f74197080e6e5ce368ef66866c2f1"
+    },
+    {
+      "path": "assets/gradecrew/demo-backpack.svg",
+      "bytes": 567,
+      "sha": "87b5c13e1e82f584666b6a298850b8d9afb17774"
+    },
+    {
+      "path": "assets/gradecrew/demo-books.svg",
+      "bytes": 869,
+      "sha": "0d2e21a43fc7f3b915e4b7c0a294c4669bda2202"
+    },
+    {
+      "path": "assets/gradecrew/demo-cat.svg",
+      "bytes": 116666,
+      "sha": "2fe69d659fa683fd5aa3ce910786cb5dc01a0b34"
+    },
+    {
+      "path": "assets/gradecrew/demo-crew.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "assets/gradecrew/demo-pencil.svg",
+      "bytes": 475,
+      "sha": "330fd420792e632cb5aa77bd329a776ccad3696f"
+    },
+    {
+      "path": "assets/gradecrew/elephant-create-welcome.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "assets/gradecrew/elephant-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "assets/gradecrew/emmi-colors.png",
+      "bytes": 313238,
+      "sha": "5840b92f5e73e043de8599afa014b0fcd509215f"
+    },
+    {
+      "path": "assets/gradecrew/emmi-footer-glance.png",
+      "bytes": 126625,
+      "sha": "45f3ae7a2060ce4ec236badad73853ca75a481cf"
+    },
+    {
+      "path": "assets/gradecrew/emmi-footer-improve.png",
+      "bytes": 136706,
+      "sha": "facba90b29cea21ec10dd423edf8e75ad514cb62"
+    },
+    {
+      "path": "assets/gradecrew/emmi-footer-letter-e-v2.png",
+      "bytes": 126977,
+      "sha": "022e6e29fbbb11277c92e5c3cb6ad033eb87d42a"
+    },
+    {
+      "path": "assets/gradecrew/emmi-footer-run-10.png",
+      "bytes": 961694,
+      "sha": "964e7493d8bd32f86a2a8cae03ef0ccfd85564b2"
+    },
+    {
+      "path": "assets/gradecrew/falcon-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "assets/gradecrew/fox-improve-welcome.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "assets/gradecrew/fox-improve.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "assets/gradecrew/owl-grade-welcome.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "assets/gradecrew/owl-grade.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "assets/gradecrew/penguin-guide-welcome.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "assets/gradecrew/penguin-guide.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "assets/gradecrew/penguin-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "assets/gradecrew/remy-create-choice.png",
+      "bytes": 39261,
+      "sha": "6f206f519aa1c85ff1cd9334403de3f15688ee64"
+    },
+    {
+      "path": "assets/gradecrew/remy-footer-create.png",
+      "bytes": 122813,
+      "sha": "b468a8a618a4c7a35825871ba5db64d4167f85b9"
+    },
+    {
+      "path": "assets/gradecrew/remy-footer-letter-r-v4.png",
+      "bytes": 117903,
+      "sha": "abe4bdb6870a0f9bc875fefa3e0ac0438d072575"
+    },
+    {
+      "path": "assets/gradecrew/remy-footer-run-10.png",
+      "bytes": 821852,
+      "sha": "52c2a92873abfd89ab88c9192501cb1da504d7cc"
+    },
+    {
+      "path": "assets/gradecrew/remy-microphone.png",
+      "bytes": 267808,
+      "sha": "65a57d72aefb1c745e361988999354c2b6ae738e"
+    },
+    {
+      "path": "assets/gradecrew/remy-new-test-button.png",
+      "bytes": 155064,
+      "sha": "b9ea5d88a5b5a004f739a11a5b19a1a9fdfde497"
+    },
+    {
+      "path": "assets/gradecrew/remy-new-test-tablet.png",
+      "bytes": 1564949,
+      "sha": "744c8dfacfc0507597e0d9c945634f4f3dda0693"
+    },
+    {
+      "path": "assets/gradecrew/remy-test-creation-typewriter.png",
+      "bytes": 1631828,
+      "sha": "cbf08b8766e83f75272f8abc20bc657b17b23818"
+    },
+    {
+      "path": "assets/gradecrew/remy-test-input-microphone.png",
+      "bytes": 1326545,
+      "sha": "6f7d28cfc39f957b6194060616cbf6be7881e092"
+    },
+    {
+      "path": "assets/gradecrew/trash-bin-3d.png",
+      "bytes": 22400,
+      "sha": "8987de14654c37b95ae9625ca37deef4b343c50e"
+    },
+    {
+      "path": "assets/gradecrew/wilma-footer-glance.png",
+      "bytes": 147683,
+      "sha": "22bc2ab3fc56ee79fdb51f64d24397f17b1e734e"
+    },
+    {
+      "path": "assets/gradecrew/wilma-footer-grade.png",
+      "bytes": 168284,
+      "sha": "7e5a57cc68dcf13cbff8b9f9ec454a3c40791682"
+    },
+    {
+      "path": "assets/gradecrew/wilma-footer-letter-w-v2.png",
+      "bytes": 148695,
+      "sha": "058d8266ae900add1d97e9ba28a289e0f729fa9d"
+    },
+    {
+      "path": "assets/gradecrew/wilma-footer-run-10.png",
+      "bytes": 1186584,
+      "sha": "fe613ae4ad1d49773021841ef7edf43aa59e9a46"
+    },
+    {
+      "path": "assets/gradecrew/wilma-grading.png",
+      "bytes": 377589,
+      "sha": "fd3543e6e8b120ea09c3bb3735ae24e4657244bb"
+    },
+    {
+      "path": "assets/gradecrew/wilma-worksheet-flying.png",
+      "bytes": 27127,
+      "sha": "7e7d792913e8e2ae4bd9573a2e2a3a3834630c5a"
+    },
+    {
+      "path": "assets/remy-listening-take-1.mp3",
+      "bytes": 135869,
+      "sha": "20d155c9c20354dd84de08aa459e09714031f00e"
+    },
+    {
+      "path": "assets/remy-listening-take-2.mp3",
+      "bytes": 135869,
+      "sha": "a9a6e777e7f468ed44263529435f321ca3e536cb"
+    },
+    {
+      "path": "assets/remy-listening-take-3.mp3",
+      "bytes": 137123,
+      "sha": "80acace3dfa88b470dacda913e62d697588d2102"
+    },
+    {
+      "path": "assets/remy-listening-take-4.mp3",
+      "bytes": 135869,
+      "sha": "3d03a70eece1376752dd7861ee6e52ffb904640b"
+    },
+    {
+      "path": "assets/remy-microphone-lightblue-v4.png",
+      "bytes": 1265813,
+      "sha": "037c3f88313dd4870f7aef1890627b7ab65034ca"
+    },
+    {
+      "path": "assets/remy-tablet-lightblue-v4.png",
+      "bytes": 1254243,
+      "sha": "7bd19948eddd6c6b84e4efc678ef40e7fa1fc5a1"
+    },
+    {
+      "path": "autoplay.test.mjs",
+      "bytes": 2530,
+      "sha": "76463b9634a69846fcb64c9647f7f27c389da663"
+    },
+    {
+      "path": "baseline/app.js",
+      "bytes": 509392,
+      "sha": "d796d3ee710362010821bd2b828f7db8fb150e61"
+    },
+    {
+      "path": "baseline/assets/gradecrew/brand-icon-v1.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "baseline/assets/gradecrew/brand-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "baseline/assets/gradecrew/brand-primary-v1.svg",
+      "bytes": 9290,
+      "sha": "c4c3db88b82bdd1de08fd8a80389ba72d0b28702"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-coco-name.svg",
+      "bytes": 192001,
+      "sha": "00be0f8e861a24fba0d7f08332e55c44306fc101"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-finale.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-introduce-emmi.svg",
+      "bytes": 320313,
+      "sha": "c597bc9342ceb759ad8c25d7d59d22fb1ad0b6c8"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-introduce-remy.svg",
+      "bytes": 250965,
+      "sha": "4d1101644fe9a79e2c1cb987ac9bc8fe13b7f485"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-introduce-wilma.svg",
+      "bytes": 253361,
+      "sha": "5facd4798105beeb012f49b73eceea43078d0ab4"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-remy-writing.svg",
+      "bytes": 231921,
+      "sha": "75c96c8015f2886b6bf8193af7f3a897e5363af8"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-retry.svg",
+      "bytes": 224176,
+      "sha": "0a0e92fab37d051ffd42d879c463a140facf5909"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-save.svg",
+      "bytes": 224176,
+      "sha": "05b6bccf05d174cd76df2209a2c7f88fd3b5f8d6"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-thanks-emmi.svg",
+      "bytes": 224175,
+      "sha": "76071a18452303aa141a1caa2e807fb7c95030a9"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-thanks-remy.svg",
+      "bytes": 231063,
+      "sha": "45045f47854f1284f0c46c732e0c96b8101b9c6c"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-thanks-wilma.svg",
+      "bytes": 224176,
+      "sha": "70b16f7b7c0e45a50ee6b725f790516c3775e05c"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-wait.svg",
+      "bytes": 224175,
+      "sha": "0a30bcfaeb668b2981050fd90adf223c180976da"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-welcome.svg",
+      "bytes": 231060,
+      "sha": "10151ad2d7ed8e4fe4dd438dd72a37da7e12ee4d"
+    },
+    {
+      "path": "baseline/assets/gradecrew/clay-your-turn.svg",
+      "bytes": 224177,
+      "sha": "9d1ef4cd2853980c249e9af47f6525dfeecc433a"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-footer-glance-v4.png",
+      "bytes": 92229,
+      "sha": "268e26694d7beccca59e5fe1be1af3f8821ca7ea"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-footer-guide.png",
+      "bytes": 116806,
+      "sha": "1fe8b1c1cb782f8601758d1788a6205b7aae22bb"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-footer-letter-c-v5.png",
+      "bytes": 85772,
+      "sha": "f3286bb4c4503b85d43c3c6cbfa50e5714e5080b"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-footer-run-10.png",
+      "bytes": 749280,
+      "sha": "3338c10a6bc6ab8afd4c3b3c1e9cc47912485a92"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-help-phone.png",
+      "bytes": 292570,
+      "sha": "50bac4244f8fd58ec59963678903857f9b798f68"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-login-heart-17.png",
+      "bytes": 1350072,
+      "sha": "51a1587f8a5a069c02ef0b88b3bb9acdd83dd72e"
+    },
+    {
+      "path": "baseline/assets/gradecrew/coco-workspace-greeting.svg",
+      "bytes": 4514,
+      "sha": "b4b99cd5cb1a87a05a0e4ac06ebab47e222cba78"
+    },
+    {
+      "path": "baseline/assets/gradecrew/crew-classroom-v3.webp",
+      "bytes": 254938,
+      "sha": "f994deda38f1134f85ac9f35f0125e340f5b02a1"
+    },
+    {
+      "path": "baseline/assets/gradecrew/crew-classroom-wide-v4.png",
+      "bytes": 2104486,
+      "sha": "1a639b7291954aac578c0fbc9a6fa371178d65e5"
+    },
+    {
+      "path": "baseline/assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png",
+      "bytes": 2098535,
+      "sha": "7cbf20a4d9b2039bd97fbffc7f37909896d25b0e"
+    },
+    {
+      "path": "baseline/assets/gradecrew/crew-lineup.svg",
+      "bytes": 1232,
+      "sha": "68f6f6252b92b335b83901e224c632555003a5d5"
+    },
+    {
+      "path": "baseline/assets/gradecrew/cuddly-hedgehog.webp",
+      "bytes": 125718,
+      "sha": "7a82bc96114f74197080e6e5ce368ef66866c2f1"
+    },
+    {
+      "path": "baseline/assets/gradecrew/demo-backpack.svg",
+      "bytes": 567,
+      "sha": "87b5c13e1e82f584666b6a298850b8d9afb17774"
+    },
+    {
+      "path": "baseline/assets/gradecrew/demo-books.svg",
+      "bytes": 869,
+      "sha": "0d2e21a43fc7f3b915e4b7c0a294c4669bda2202"
+    },
+    {
+      "path": "baseline/assets/gradecrew/demo-cat.svg",
+      "bytes": 116666,
+      "sha": "2fe69d659fa683fd5aa3ce910786cb5dc01a0b34"
+    },
+    {
+      "path": "baseline/assets/gradecrew/demo-crew.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "baseline/assets/gradecrew/demo-pencil.svg",
+      "bytes": 475,
+      "sha": "330fd420792e632cb5aa77bd329a776ccad3696f"
+    },
+    {
+      "path": "baseline/assets/gradecrew/elephant-create-welcome.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "baseline/assets/gradecrew/elephant-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "baseline/assets/gradecrew/emmi-colors.png",
+      "bytes": 313238,
+      "sha": "5840b92f5e73e043de8599afa014b0fcd509215f"
+    },
+    {
+      "path": "baseline/assets/gradecrew/emmi-footer-glance.png",
+      "bytes": 126625,
+      "sha": "45f3ae7a2060ce4ec236badad73853ca75a481cf"
+    },
+    {
+      "path": "baseline/assets/gradecrew/emmi-footer-improve.png",
+      "bytes": 136706,
+      "sha": "facba90b29cea21ec10dd423edf8e75ad514cb62"
+    },
+    {
+      "path": "baseline/assets/gradecrew/emmi-footer-letter-e-v2.png",
+      "bytes": 126977,
+      "sha": "022e6e29fbbb11277c92e5c3cb6ad033eb87d42a"
+    },
+    {
+      "path": "baseline/assets/gradecrew/emmi-footer-run-10.png",
+      "bytes": 961694,
+      "sha": "964e7493d8bd32f86a2a8cae03ef0ccfd85564b2"
+    },
+    {
+      "path": "baseline/assets/gradecrew/falcon-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "baseline/assets/gradecrew/fox-improve-welcome.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "baseline/assets/gradecrew/fox-improve.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "baseline/assets/gradecrew/owl-grade-welcome.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "baseline/assets/gradecrew/owl-grade.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "baseline/assets/gradecrew/penguin-guide-welcome.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "baseline/assets/gradecrew/penguin-guide.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "baseline/assets/gradecrew/penguin-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-create-choice.png",
+      "bytes": 39261,
+      "sha": "6f206f519aa1c85ff1cd9334403de3f15688ee64"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-footer-create.png",
+      "bytes": 122813,
+      "sha": "b468a8a618a4c7a35825871ba5db64d4167f85b9"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-footer-letter-r-v4.png",
+      "bytes": 117903,
+      "sha": "abe4bdb6870a0f9bc875fefa3e0ac0438d072575"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-footer-run-10.png",
+      "bytes": 821852,
+      "sha": "52c2a92873abfd89ab88c9192501cb1da504d7cc"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-microphone.png",
+      "bytes": 267808,
+      "sha": "65a57d72aefb1c745e361988999354c2b6ae738e"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-new-test-button.png",
+      "bytes": 155064,
+      "sha": "b9ea5d88a5b5a004f739a11a5b19a1a9fdfde497"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-new-test-tablet.png",
+      "bytes": 1564949,
+      "sha": "744c8dfacfc0507597e0d9c945634f4f3dda0693"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-test-creation-typewriter.png",
+      "bytes": 1631828,
+      "sha": "cbf08b8766e83f75272f8abc20bc657b17b23818"
+    },
+    {
+      "path": "baseline/assets/gradecrew/remy-test-input-microphone.png",
+      "bytes": 1326545,
+      "sha": "6f7d28cfc39f957b6194060616cbf6be7881e092"
+    },
+    {
+      "path": "baseline/assets/gradecrew/trash-bin-3d.png",
+      "bytes": 22400,
+      "sha": "8987de14654c37b95ae9625ca37deef4b343c50e"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-footer-glance.png",
+      "bytes": 147683,
+      "sha": "22bc2ab3fc56ee79fdb51f64d24397f17b1e734e"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-footer-grade.png",
+      "bytes": 168284,
+      "sha": "7e5a57cc68dcf13cbff8b9f9ec454a3c40791682"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-footer-letter-w-v2.png",
+      "bytes": 148695,
+      "sha": "058d8266ae900add1d97e9ba28a289e0f729fa9d"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-footer-run-10.png",
+      "bytes": 1186584,
+      "sha": "fe613ae4ad1d49773021841ef7edf43aa59e9a46"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-grading.png",
+      "bytes": 377589,
+      "sha": "fd3543e6e8b120ea09c3bb3735ae24e4657244bb"
+    },
+    {
+      "path": "baseline/assets/gradecrew/wilma-worksheet-flying.png",
+      "bytes": 27127,
+      "sha": "7e7d792913e8e2ae4bd9573a2e2a3a3834630c5a"
+    },
+    {
+      "path": "baseline/auth-profile.js",
+      "bytes": 219,
+      "sha": "b5aa8e7dcaada2ac5f01bb140a39acc43b4a640d"
+    },
+    {
+      "path": "baseline/crew-clay.css",
+      "bytes": 3221,
+      "sha": "622106045d34efc0d21e099051cdf05782c9e6cc"
+    },
+    {
+      "path": "baseline/design-system.css",
+      "bytes": 18352,
+      "sha": "f3c69ede579f044a2aed1712e5543cfb80aef27b"
+    },
+    {
+      "path": "baseline/generated/gradecrew-assets.js",
+      "bytes": 1908,
+      "sha": "e328503c2a2dbbc45a7fb1fd46c95ffe491cb78f"
+    },
+    {
+      "path": "baseline/generated/gradecrew-design-tokens.css",
+      "bytes": 1503,
+      "sha": "52ab446662ae25d84cc5db3521edb9fd7a628456"
+    },
+    {
+      "path": "baseline/gradecrew-auth-startscreen-polish.css",
+      "bytes": 29070,
+      "sha": "e652a4c6b55ff57556a3bf1f9ca8761dc8133d6e"
+    },
+    {
+      "path": "baseline/gradecrew-auth-startscreen.css",
+      "bytes": 34041,
+      "sha": "8c05ff0d5cc02b254acc4554d59c46661dba6776"
+    },
+    {
+      "path": "baseline/gradecrew-brand.css",
+      "bytes": 11553,
+      "sha": "65b115a487ca5256a57b8e65d93783029b7184a4"
+    },
+    {
+      "path": "baseline/gradecrew-brand.js",
+      "bytes": 154,
+      "sha": "7e39c4640c1a1167133c700355c255afb581d516"
+    },
+    {
+      "path": "baseline/gradecrew-dashboard-foundation.css",
+      "bytes": 11463,
+      "sha": "19fd37bee1934e2576b495393f58fe0588f46d81"
+    },
+    {
+      "path": "baseline/gradecrew-entry-flow.js",
+      "bytes": 19135,
+      "sha": "0dd863a47fae6978e495cf447bd389e44c78fa5f"
+    },
+    {
+      "path": "baseline/gradecrew-hero-copy.mjs",
+      "bytes": 12223,
+      "sha": "88c79a9a2c4c0a4f881052a51e851f93f195ef33"
+    },
+    {
+      "path": "baseline/gradecrew-hero-demo-flow.mjs",
+      "bytes": 1521,
+      "sha": "06d1c91b27da7e5961face34267c4f99c765954d"
+    },
+    {
+      "path": "baseline/gradecrew-hero-demo.mjs",
+      "bytes": 10209,
+      "sha": "ccd57093d34cc1b0da2db880c2796769ca4877ff"
+    },
+    {
+      "path": "baseline/gradecrew-hero-scene.css",
+      "bytes": 36852,
+      "sha": "8b75ae6d26cd18827ff1ebd6ad409b8a77017635"
+    },
+    {
+      "path": "baseline/gradecrew-logo.css",
+      "bytes": 869,
+      "sha": "860cec0d448128988b5d5d4047e449518465a87c"
+    },
+    {
+      "path": "baseline/gradecrew-tour-v7.js",
+      "bytes": 59313,
+      "sha": "4d5c9ffda674a388cb7bdb57474c78be6785e940"
+    },
+    {
+      "path": "baseline/gradecrew-tour-v8.js",
+      "bytes": 7228,
+      "sha": "00181fd8fdd1eaf44193d1f7bb046987428e8bee"
+    },
+    {
+      "path": "baseline/gradecrew-tour.js",
+      "bytes": 48,
+      "sha": "88a2fd8638fee35bd33b3c7fe21c2702ef347eee"
+    },
+    {
+      "path": "baseline/gradecrew-workspace-upgrade.css",
+      "bytes": 15565,
+      "sha": "9afa98822d644ca17d97db47d1327f73f43fabcf"
+    },
+    {
+      "path": "baseline/guest-tour-port.mjs",
+      "bytes": 2450,
+      "sha": "cb2b9613b6d474b28a9d86a8eaa84adea0206c02"
+    },
+    {
+      "path": "baseline/index.html",
+      "bytes": 56689,
+      "sha": "55fb76f1df938dc32340af881c16a14d7d60a644"
+    },
+    {
+      "path": "baseline/interface.js",
+      "bytes": 3887,
+      "sha": "9fe9951e4bde224528baf187a905ee813388947e"
+    },
+    {
+      "path": "baseline/release.json",
+      "bytes": 17421,
+      "sha": "85a57e7ca3d33ea9e80f7cbbbdf10ac4626ac47c"
+    },
+    {
+      "path": "baseline/review-mode.css",
+      "bytes": 2633,
+      "sha": "75bb9d87c27418d36689ce5f0c47dcae3a16ad29"
+    },
+    {
+      "path": "baseline/shared/i18n/assessment-locale-ui.mjs",
+      "bytes": 9756,
+      "sha": "ab47e97409310d36c0b3d97dc85064b086f942f3"
+    },
+    {
+      "path": "baseline/shared/i18n/assessment-locale.mjs",
+      "bytes": 3874,
+      "sha": "91018104a52250f53135a7ad6347155ce5e52c51"
+    },
+    {
+      "path": "baseline/shared/i18n/bootstrap.mjs",
+      "bytes": 647,
+      "sha": "b4ea00a11e402d182095de539a42e1d92a80e299"
+    },
+    {
+      "path": "baseline/shared/i18n/browser-runtime.mjs",
+      "bytes": 19634,
+      "sha": "4dcc4e38080250a0b5eed1f9e21cbe7efb90fd89"
+    },
+    {
+      "path": "baseline/shared/i18n/extensions-en-GB-crew.mjs",
+      "bytes": 6314,
+      "sha": "ee48aebfab8495a7eb7fc7c95f9bffd697f2391d"
+    },
+    {
+      "path": "baseline/shared/i18n/i18n-core.mjs",
+      "bytes": 5901,
+      "sha": "cfcafdd134528f6f66873d86caed5b076e18e58b"
+    },
+    {
+      "path": "baseline/shared/i18n/messages-de-DE.mjs",
+      "bytes": 955,
+      "sha": "b80356a6e494bfcd0b40d0af1cdf5c86cbc70db9"
+    },
+    {
+      "path": "baseline/shared/i18n/messages-en-GB.mjs",
+      "bytes": 47439,
+      "sha": "bbf8a5a70f5f8d2126b1754127ca0fc4580a90bc"
+    },
+    {
+      "path": "baseline/snapshot-manifest.json",
+      "bytes": 15818,
+      "sha": "f781edbddddd8abc3fc212c75b855aae869da98e"
+    },
+    {
+      "path": "baseline/staging-short-login.mjs",
+      "bytes": 2736,
+      "sha": "716ca980ec22d61b9b7c413efbdb153dc03bddc5"
+    },
+    {
+      "path": "baseline/startup.js",
+      "bytes": 6093,
+      "sha": "c6287150558550973295ae552a3be4ce78793499"
+    },
+    {
+      "path": "baseline/styles.css",
+      "bytes": 89806,
+      "sha": "beaa091a1499e7c74ff74456013308a0a95c149d"
+    },
+    {
+      "path": "baseline/tutorial-choice-v1.css",
+      "bytes": 1911,
+      "sha": "2f3ec9bd187930be90af7afc38c593526dab3276"
+    },
+    {
+      "path": "baseline/workspace.css",
+      "bytes": 21617,
+      "sha": "ca8bef55aa545d3d54f8c09ed57dcd778d739c44"
+    },
+    {
+      "path": "baseline.html",
+      "bytes": 5274,
+      "sha": "6fc571d6260d2f0d6aca26e9181390dd09177982"
+    },
+    {
+      "path": "compact-v5.css",
+      "bytes": 16587,
+      "sha": "9b6d50a14b673c12535968f24010abd105a9dfc1"
+    },
+    {
+      "path": "copy-v3.mjs",
+      "bytes": 6351,
+      "sha": "6d30f59d9f88372b3722fc5ad6bd3dd27cc6426d"
+    },
+    {
+      "path": "demo-v3.mjs",
+      "bytes": 19848,
+      "sha": "3f0c0e524c41b13a57ac388bf920ecb5aa834f15"
+    },
+    {
+      "path": "entry-v3.mjs",
+      "bytes": 19158,
+      "sha": "bc45d87f7c8fd5b69eac5b95e300ebb307099d37"
+    },
+    {
+      "path": "finale.mjs",
+      "bytes": 9524,
+      "sha": "357edf5ae6429085b9c7221cd22de04cacba33cc"
+    },
+    {
+      "path": "flow-v3.mjs",
+      "bytes": 1696,
+      "sha": "d8aa831fc3454a284d2c6021f4bc26251dce2956"
+    },
+    {
+      "path": "flow.test.mjs",
+      "bytes": 831,
+      "sha": "724efb11e990ed43e1af04e01b3e84234c084448"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5244,
+      "sha": "c77718b1ce27d23bc6c941636f78e8d72869e574"
+    },
+    {
+      "path": "invitation-v6.css",
+      "bytes": 2320,
+      "sha": "a74d87cdb6e06222f2793c637eebaa9178b8eee5"
+    },
+    {
+      "path": "journey.test.mjs",
+      "bytes": 1602,
+      "sha": "b8663ec9c43cf2a609baad96fc91c45b5e729d89"
+    },
+    {
+      "path": "package.json",
+      "bytes": 129,
+      "sha": "0379f46d9370b451a5e86c15a4017c0bab437a1a"
+    },
+    {
+      "path": "prepare.mjs",
+      "bytes": 5195,
+      "sha": "f75dfacd8aea845d742c7fd49966d90ee6a2b576"
+    },
+    {
+      "path": "preservation.test.mjs",
+      "bytes": 2783,
+      "sha": "545d5be13613c260d4dff1dc427516198ec0ce65"
+    },
+    {
+      "path": "preview-start.mjs",
+      "bytes": 4568,
+      "sha": "53d1612b8484e8de265d7f83b8016c5c4103b0e6"
+    },
+    {
+      "path": "preview.test.mjs",
+      "bytes": 2829,
+      "sha": "4a163b65deb8be7a311b8f101d1bdac6a2b0671a"
+    },
+    {
+      "path": "previews/home-desktop.jpg",
+      "bytes": 159847,
+      "sha": "a2627142eb6745b46efcbd7618104f51ebdfe512"
+    },
+    {
+      "path": "previews/home-iphone.jpg",
+      "bytes": 58082,
+      "sha": "0ffffb9731b503187a407501b15be93af1a3fbcd"
+    },
+    {
+      "path": "previews/remy-bear-iphone.jpg",
+      "bytes": 39515,
+      "sha": "75aff671a4d71b9ff1c1c897ad02965e82525384"
+    },
+    {
+      "path": "previews/remy-bear-small-desktop.jpg",
+      "bytes": 49231,
+      "sha": "f1ca3e8b98e9083431622a665867a2a1f6bc6bc2"
+    },
+    {
+      "path": "previews/tutorial-created.jpg",
+      "bytes": 81986,
+      "sha": "9ccd8aebea27acac4c71bbe6ed4e2d0962044db6"
+    },
+    {
+      "path": "runtime-isolation.test.mjs",
+      "bytes": 1600,
+      "sha": "d87d2710659c20de3e4524777610dd2288da295f"
+    },
+    {
+      "path": "runtime-sdk-exports.json",
+      "bytes": 540,
+      "sha": "605e0113e26a027ad3a252b562d1058793d26fdf"
+    },
+    {
+      "path": "test-data.mjs",
+      "bytes": 2350,
+      "sha": "092c6ae282dce9d083e215b4af0f559c02894ab4"
+    },
+    {
+      "path": "tour-reference/admin-account-actions.mjs",
+      "bytes": 14092,
+      "sha": "ac39312d1cba2354d680e2e8bae114a4aa701cc5"
+    },
+    {
+      "path": "tour-reference/admin-ai-access.js",
+      "bytes": 3884,
+      "sha": "b10dd2b34d97524f8c5465edad6d3258cdda7236"
+    },
+    {
+      "path": "tour-reference/admin-log-tools.mjs",
+      "bytes": 4043,
+      "sha": "46e44df1935c9aa9facc5454df99618788adba77"
+    },
+    {
+      "path": "tour-reference/admin-test-account-bootstrap.mjs",
+      "bytes": 982,
+      "sha": "a8543c9b6ed369e076458e69b81377ccfd64a387"
+    },
+    {
+      "path": "tour-reference/admin-test-account-controls.mjs",
+      "bytes": 10677,
+      "sha": "c41ba0d5e2e85300d9f3c2441d5f04837e1cf207"
+    },
+    {
+      "path": "tour-reference/ai-client.js",
+      "bytes": 4586,
+      "sha": "41545a52e0d773fb71c05b4b59064470f8a17614"
+    },
+    {
+      "path": "tour-reference/ai-json-tools.js",
+      "bytes": 8923,
+      "sha": "5e0a1756c771144d785231f3528e08def44bb806"
+    },
+    {
+      "path": "tour-reference/ai-review-state.js",
+      "bytes": 4217,
+      "sha": "a6b20a4beb0855d080492a6414a8ea00d19d5c80"
+    },
+    {
+      "path": "tour-reference/assessment-receipt-check.mjs",
+      "bytes": 522,
+      "sha": "df04f603d51438a9f7e3e603a94383883f008dc0"
+    },
+    {
+      "path": "tour-reference/assets/vendor/qrcodejs-1.0.0.min.js",
+      "bytes": 19927,
+      "sha": "993e88f396640f881b69f98db7a4d17401ef83ca"
+    },
+    {
+      "path": "tour-reference/assets/vendor/qrcodejs-LICENSE.txt",
+      "bytes": 1098,
+      "sha": "93c33233fa538ff9af27374eb13c6ea5147f7a3e"
+    },
+    {
+      "path": "tour-reference/bug-ops.mjs",
+      "bytes": 7221,
+      "sha": "482e4153ccbaf5567d0f13eae792b50d02780aa8"
+    },
+    {
+      "path": "tour-reference/crew-assistant-core.js",
+      "bytes": 47,
+      "sha": "cbc43d88b23a8ffa08659c83ed6b473a2f73bf17"
+    },
+    {
+      "path": "tour-reference/crew-assistant-core.mjs",
+      "bytes": 31978,
+      "sha": "275b71ce309887606dc5f96f1931a97346a0017f"
+    },
+    {
+      "path": "tour-reference/crew-assistant-ui.js",
+      "bytes": 26793,
+      "sha": "20782c634cbe9c437cc565a23cd9ca1162ee5921"
+    },
+    {
+      "path": "tour-reference/crew-statistics-admin.mjs",
+      "bytes": 5785,
+      "sha": "6fa7679d4613fb025274735e4bba39592d758c20"
+    },
+    {
+      "path": "tour-reference/crew-telemetry-client.mjs",
+      "bytes": 4257,
+      "sha": "acb082f07f9e7bd4ad672850b835844348334bbb"
+    },
+    {
+      "path": "tour-reference/crew-tour-gc22-polish.js",
+      "bytes": 9963,
+      "sha": "a624c0da2bf44fa1512bdc845fdc254024a91a5f"
+    },
+    {
+      "path": "tour-reference/crew-tour-gc23-polish.js",
+      "bytes": 14446,
+      "sha": "e1f2fdff771641e6c46f138e4e4fbed380ca4d85"
+    },
+    {
+      "path": "tour-reference/crew-tour-gc24-polish.js",
+      "bytes": 10562,
+      "sha": "3f27c2bcab444ab6cfa31139425b625fa5aa6fba"
+    },
+    {
+      "path": "tour-reference/crew-tour-gc25-final-polish.js",
+      "bytes": 8068,
+      "sha": "8692ccd54fa82ac38cfb72a01d4e46bb913dc33a"
+    },
+    {
+      "path": "tour-reference/crew-tour-gc26-story-polish.js",
+      "bytes": 7933,
+      "sha": "49c8b181c03801d3feed3912ba152056aa40bbb7"
+    },
+    {
+      "path": "tour-reference/crew-tour-hardening.js",
+      "bytes": 4050,
+      "sha": "bdcd7799f27333e4f1bf8c9c49956cf1f4d18a47"
+    },
+    {
+      "path": "tour-reference/crew-tour-responsive.js",
+      "bytes": 7459,
+      "sha": "34c0596305d8cd895098ae6dbd5f86e4956483f9"
+    },
+    {
+      "path": "tour-reference/diagnostics.mjs",
+      "bytes": 2888,
+      "sha": "ee64146309f34bd54279c5671e014226daba5a47"
+    },
+    {
+      "path": "tour-reference/editor-drafts.js",
+      "bytes": 2010,
+      "sha": "de0123f387c2203412127fbaad68bf369656b894"
+    },
+    {
+      "path": "tour-reference/emmi-whole-test-revision.mjs",
+      "bytes": 13218,
+      "sha": "5662520830d0785d34c59c5b69ac4b4a816879d9"
+    },
+    {
+      "path": "tour-reference/firebase-config.js",
+      "bytes": 402,
+      "sha": "f9c68d09b240cdedad3d20f85e67921b6cd8a188"
+    },
+    {
+      "path": "tour-reference/first-guide-guard.js",
+      "bytes": 7655,
+      "sha": "4ba4fb5a1cac5214a83f084c10f2c2c98551d1ac"
+    },
+    {
+      "path": "tour-reference/first-guide-responsive.js",
+      "bytes": 10359,
+      "sha": "6912b2d4e8fe0ee2d92529490140cf9efccac424"
+    },
+    {
+      "path": "tour-reference/functions/lib/review-checks.json",
+      "bytes": 14438,
+      "sha": "a65e61d6bd8302f8f476703ecc149afa0e33bcf0"
+    },
+    {
+      "path": "tour-reference/gate-e-lab.js",
+      "bytes": 21724,
+      "sha": "419d245c6469e64f66a6aa197861a0cd01e64a1b"
+    },
+    {
+      "path": "tour-reference/gradecrew-tour.css",
+      "bytes": 14599,
+      "sha": "fe8582423725a814d0c24ae6137ad64bf423ebdb"
+    },
+    {
+      "path": "tour-reference/gradecrew-workspace-upgrade.mjs",
+      "bytes": 9570,
+      "sha": "105655248f6ba8240b386704c4f9bdf98e303ec7"
+    },
+    {
+      "path": "tour-reference/layout-enhancements.js",
+      "bytes": 98,
+      "sha": "d8b75555a8260fe924464f381ebf091f8a6fbe22"
+    },
+    {
+      "path": "tour-reference/mobile-viewport-polish.js",
+      "bytes": 2655,
+      "sha": "575ec12d55795c3d36301bd2a2c7cf9eb2c1a4d5"
+    },
+    {
+      "path": "tour-reference/ordering-grading.mjs",
+      "bytes": 1723,
+      "sha": "1f44cae024fa5a90c1fd7db849a5d6b4e7812143"
+    },
+    {
+      "path": "tour-reference/practice-solution-publication.mjs",
+      "bytes": 3016,
+      "sha": "9d52539ef23dcf9c83738d0d3a16a29c2de390f2"
+    },
+    {
+      "path": "tour-reference/quick-remy-bridge.js",
+      "bytes": 6680,
+      "sha": "e2c3de6d21b82ca0af8fbd7a9f9f6fe994e91991"
+    },
+    {
+      "path": "tour-reference/remy-ai-help.js",
+      "bytes": 32694,
+      "sha": "b7912da5a93ec0571fd86dab507abd0005e485eb"
+    },
+    {
+      "path": "tour-reference/review-capture.mjs",
+      "bytes": 5858,
+      "sha": "f5d0e9011091fe4f88c2e74ffb419faa5446bfde"
+    },
+    {
+      "path": "tour-reference/review-mode.mjs",
+      "bytes": 24189,
+      "sha": "a0d2c6c3f6e1f5e2a1f0bf9a61415ce58369e17e"
+    },
+    {
+      "path": "tour-reference/review-store.mjs",
+      "bytes": 1585,
+      "sha": "9b5eb74b5607b75e3bb0978b23214f5ce85547bd"
+    },
+    {
+      "path": "tour-reference/secure-assessment-client.js",
+      "bytes": 8151,
+      "sha": "47c730896586ccaaff57a750682a75776f3ea16d"
+    },
+    {
+      "path": "tour-reference/secure-assessment-teacher-polish.js",
+      "bytes": 3774,
+      "sha": "b2cc67f2eff8a190b25ad91aadd936d87032c14d"
+    },
+    {
+      "path": "tour-reference/secure-audio-publication.mjs",
+      "bytes": 668,
+      "sha": "8b148f3d25fa02172365bd5c74cd5d00b155b965"
+    },
+    {
+      "path": "tour-reference/secure-deadline-guard.js",
+      "bytes": 5373,
+      "sha": "cb03fa3d13df709f7a8cb10ecb29122c55b12e2c"
+    },
+    {
+      "path": "tour-reference/secure-draft-persistence.js",
+      "bytes": 4200,
+      "sha": "e06d17eaf130640022adb1cc139d50f7d2ed245b"
+    },
+    {
+      "path": "tour-reference/secure-result-policy.js",
+      "bytes": 1221,
+      "sha": "85af206b14fbd1865c349326f90354c959428aab"
+    },
+    {
+      "path": "tour-reference/secure-solution-release.js",
+      "bytes": 6253,
+      "sha": "24ea306cef4c1de52fa70c85d8af82c5ac971609"
+    },
+    {
+      "path": "tour-reference/secure-student.css",
+      "bytes": 8601,
+      "sha": "86d4dddf512b4dab290d307de86edb8fd112429f"
+    },
+    {
+      "path": "tour-reference/secure-student.html",
+      "bytes": 4068,
+      "sha": "d1a5ad1b719be72fca34c471fa305e17474923a8"
+    },
+    {
+      "path": "tour-reference/secure-student.js",
+      "bytes": 34089,
+      "sha": "e8705251981ef082163198010fd56c8ba19ef1d8"
+    },
+    {
+      "path": "tour-reference/shared/math-display.mjs",
+      "bytes": 660,
+      "sha": "bc688256a676760f396ebf0202fab04e698fadb0"
+    },
+    {
+      "path": "tour-reference/student-attempt-guard.js",
+      "bytes": 7258,
+      "sha": "89d304babe0155e0ea4d99ca94b513c800fe0314"
+    },
+    {
+      "path": "tour-reference/student-submit-confirm.mjs",
+      "bytes": 2330,
+      "sha": "68d03b30493ad08bab80477e1ff804f2e9240567"
+    },
+    {
+      "path": "tour-reference/teacher-copy-polish.js",
+      "bytes": 5229,
+      "sha": "d325761cca20d3788fd5cafa210d2397d9428154"
+    },
+    {
+      "path": "tour-reference/tutorial-ordering-guard.js",
+      "bytes": 10546,
+      "sha": "9a50f382e658831f935b6e9c226fe9b433516d08"
+    },
+    {
+      "path": "tour-reference/tutorial-variant-fallback.js",
+      "bytes": 5601,
+      "sha": "4ef4d692de81cdaaf87cec8ca7640645e09abd2b"
+    },
+    {
+      "path": "tour-reference/ui-enhancements.js",
+      "bytes": 8582,
+      "sha": "3e310f4211611f690d2cb9c948605697c4016953"
+    },
+    {
+      "path": "tour-reference/variant-enhancements.js",
+      "bytes": 13851,
+      "sha": "5f002d77372a406a6cfe0f412b55163a4eb201d9"
+    },
+    {
+      "path": "tour-reference/visual-enhancements.js",
+      "bytes": 6454,
+      "sha": "afeef14aa2218235d83ef1ffe824048cfae01365"
+    },
+    {
+      "path": "tour-runtime/admin-account-actions.mjs",
+      "bytes": 14092,
+      "sha": "ac39312d1cba2354d680e2e8bae114a4aa701cc5"
+    },
+    {
+      "path": "tour-runtime/admin-ai-access.js",
+      "bytes": 3804,
+      "sha": "75cfd92a72a2e09f202712b2de491616e92cd543"
+    },
+    {
+      "path": "tour-runtime/admin-log-tools.mjs",
+      "bytes": 4043,
+      "sha": "46e44df1935c9aa9facc5454df99618788adba77"
+    },
+    {
+      "path": "tour-runtime/admin-test-account-bootstrap.mjs",
+      "bytes": 907,
+      "sha": "a6ad7ccbf81b1f84caed94b32ceb723f86e6f537"
+    },
+    {
+      "path": "tour-runtime/admin-test-account-controls.mjs",
+      "bytes": 10559,
+      "sha": "2fbafb289c4c3fbfcc4a60f616eb3824ea039198"
+    },
+    {
+      "path": "tour-runtime/ai-client.js",
+      "bytes": 4502,
+      "sha": "aa0a6093abbc6d6585d54a20a346f2b7e39decb1"
+    },
+    {
+      "path": "tour-runtime/ai-json-tools.js",
+      "bytes": 8923,
+      "sha": "5e0a1756c771144d785231f3528e08def44bb806"
+    },
+    {
+      "path": "tour-runtime/ai-review-state.js",
+      "bytes": 4217,
+      "sha": "a6b20a4beb0855d080492a6414a8ea00d19d5c80"
+    },
+    {
+      "path": "tour-runtime/app.js",
+      "bytes": 509231,
+      "sha": "9c4cba40dc3a37084a00c0d61ec959c03ead8e0b"
+    },
+    {
+      "path": "tour-runtime/assessment-receipt-check.mjs",
+      "bytes": 522,
+      "sha": "df04f603d51438a9f7e3e603a94383883f008dc0"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/brand-icon-v1.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/brand-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/brand-primary-v1.svg",
+      "bytes": 9290,
+      "sha": "c4c3db88b82bdd1de08fd8a80389ba72d0b28702"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-coco-name.svg",
+      "bytes": 192001,
+      "sha": "00be0f8e861a24fba0d7f08332e55c44306fc101"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-finale.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-introduce-emmi.svg",
+      "bytes": 320313,
+      "sha": "c597bc9342ceb759ad8c25d7d59d22fb1ad0b6c8"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-introduce-remy.svg",
+      "bytes": 250965,
+      "sha": "4d1101644fe9a79e2c1cb987ac9bc8fe13b7f485"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-introduce-wilma.svg",
+      "bytes": 253361,
+      "sha": "5facd4798105beeb012f49b73eceea43078d0ab4"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-remy-writing.svg",
+      "bytes": 231921,
+      "sha": "75c96c8015f2886b6bf8193af7f3a897e5363af8"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-retry.svg",
+      "bytes": 224176,
+      "sha": "0a0e92fab37d051ffd42d879c463a140facf5909"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-save.svg",
+      "bytes": 224176,
+      "sha": "05b6bccf05d174cd76df2209a2c7f88fd3b5f8d6"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-thanks-emmi.svg",
+      "bytes": 224175,
+      "sha": "76071a18452303aa141a1caa2e807fb7c95030a9"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-thanks-remy.svg",
+      "bytes": 231063,
+      "sha": "45045f47854f1284f0c46c732e0c96b8101b9c6c"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-thanks-wilma.svg",
+      "bytes": 224176,
+      "sha": "70b16f7b7c0e45a50ee6b725f790516c3775e05c"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-wait.svg",
+      "bytes": 224175,
+      "sha": "0a30bcfaeb668b2981050fd90adf223c180976da"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-welcome.svg",
+      "bytes": 231060,
+      "sha": "10151ad2d7ed8e4fe4dd438dd72a37da7e12ee4d"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/clay-your-turn.svg",
+      "bytes": 224177,
+      "sha": "9d1ef4cd2853980c249e9af47f6525dfeecc433a"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-footer-glance-v4.png",
+      "bytes": 92229,
+      "sha": "268e26694d7beccca59e5fe1be1af3f8821ca7ea"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-footer-guide.png",
+      "bytes": 116806,
+      "sha": "1fe8b1c1cb782f8601758d1788a6205b7aae22bb"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-footer-letter-c-v5.png",
+      "bytes": 85772,
+      "sha": "f3286bb4c4503b85d43c3c6cbfa50e5714e5080b"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-footer-run-10.png",
+      "bytes": 749280,
+      "sha": "3338c10a6bc6ab8afd4c3b3c1e9cc47912485a92"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-help-phone.png",
+      "bytes": 292570,
+      "sha": "50bac4244f8fd58ec59963678903857f9b798f68"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-login-heart-17.png",
+      "bytes": 1350072,
+      "sha": "51a1587f8a5a069c02ef0b88b3bb9acdd83dd72e"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/coco-workspace-greeting.svg",
+      "bytes": 4514,
+      "sha": "b4b99cd5cb1a87a05a0e4ac06ebab47e222cba78"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/crew-classroom-v3.webp",
+      "bytes": 254938,
+      "sha": "f994deda38f1134f85ac9f35f0125e340f5b02a1"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/crew-classroom-wide-v4.png",
+      "bytes": 2104486,
+      "sha": "1a639b7291954aac578c0fbc9a6fa371178d65e5"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png",
+      "bytes": 2098535,
+      "sha": "7cbf20a4d9b2039bd97fbffc7f37909896d25b0e"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/crew-lineup.svg",
+      "bytes": 1232,
+      "sha": "68f6f6252b92b335b83901e224c632555003a5d5"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/cuddly-hedgehog.webp",
+      "bytes": 125718,
+      "sha": "7a82bc96114f74197080e6e5ce368ef66866c2f1"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/demo-backpack.svg",
+      "bytes": 567,
+      "sha": "87b5c13e1e82f584666b6a298850b8d9afb17774"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/demo-books.svg",
+      "bytes": 869,
+      "sha": "0d2e21a43fc7f3b915e4b7c0a294c4669bda2202"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/demo-cat.svg",
+      "bytes": 116666,
+      "sha": "2fe69d659fa683fd5aa3ce910786cb5dc01a0b34"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/demo-crew.svg",
+      "bytes": 231064,
+      "sha": "7c0ec66495b81ba6314b090e2b23111a5e3e25b3"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/demo-pencil.svg",
+      "bytes": 475,
+      "sha": "330fd420792e632cb5aa77bd329a776ccad3696f"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/elephant-create-welcome.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/elephant-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/emmi-colors.png",
+      "bytes": 313238,
+      "sha": "5840b92f5e73e043de8599afa014b0fcd509215f"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/emmi-footer-glance.png",
+      "bytes": 126625,
+      "sha": "45f3ae7a2060ce4ec236badad73853ca75a481cf"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/emmi-footer-improve.png",
+      "bytes": 136706,
+      "sha": "facba90b29cea21ec10dd423edf8e75ad514cb62"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/emmi-footer-letter-e-v2.png",
+      "bytes": 126977,
+      "sha": "022e6e29fbbb11277c92e5c3cb6ad033eb87d42a"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/emmi-footer-run-10.png",
+      "bytes": 961694,
+      "sha": "964e7493d8bd32f86a2a8cae03ef0ccfd85564b2"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/falcon-create.svg",
+      "bytes": 202749,
+      "sha": "0931ddbf4fd1f19dc1d676810eee037264a58eb3"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/fox-improve-welcome.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/fox-improve.svg",
+      "bytes": 263681,
+      "sha": "ae7bc1b26bd03e31d1df2842fae2bc6c5dc9fb69"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/owl-grade-welcome.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/owl-grade.svg",
+      "bytes": 222997,
+      "sha": "f6ac88af08d9a110abb80c995c6a5901b2068127"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/penguin-guide-welcome.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/penguin-guide.svg",
+      "bytes": 194721,
+      "sha": "0afd5518acb78faa4de6c4f60b6bf58373c445c0"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/penguin-icon.svg",
+      "bytes": 9232,
+      "sha": "83c235b4cbac1d348c530969a15c252255b52ee6"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-create-choice.png",
+      "bytes": 39261,
+      "sha": "6f206f519aa1c85ff1cd9334403de3f15688ee64"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-footer-create.png",
+      "bytes": 122813,
+      "sha": "b468a8a618a4c7a35825871ba5db64d4167f85b9"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-footer-letter-r-v4.png",
+      "bytes": 117903,
+      "sha": "abe4bdb6870a0f9bc875fefa3e0ac0438d072575"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-footer-run-10.png",
+      "bytes": 821852,
+      "sha": "52c2a92873abfd89ab88c9192501cb1da504d7cc"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-microphone.png",
+      "bytes": 267808,
+      "sha": "65a57d72aefb1c745e361988999354c2b6ae738e"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-new-test-button.png",
+      "bytes": 155064,
+      "sha": "b9ea5d88a5b5a004f739a11a5b19a1a9fdfde497"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-new-test-tablet.png",
+      "bytes": 1564949,
+      "sha": "744c8dfacfc0507597e0d9c945634f4f3dda0693"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-test-creation-typewriter.png",
+      "bytes": 1631828,
+      "sha": "cbf08b8766e83f75272f8abc20bc657b17b23818"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/remy-test-input-microphone.png",
+      "bytes": 1326545,
+      "sha": "6f7d28cfc39f957b6194060616cbf6be7881e092"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/trash-bin-3d.png",
+      "bytes": 22400,
+      "sha": "8987de14654c37b95ae9625ca37deef4b343c50e"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-footer-glance.png",
+      "bytes": 147683,
+      "sha": "22bc2ab3fc56ee79fdb51f64d24397f17b1e734e"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-footer-grade.png",
+      "bytes": 168284,
+      "sha": "7e5a57cc68dcf13cbff8b9f9ec454a3c40791682"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-footer-letter-w-v2.png",
+      "bytes": 148695,
+      "sha": "058d8266ae900add1d97e9ba28a289e0f729fa9d"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-footer-run-10.png",
+      "bytes": 1186584,
+      "sha": "fe613ae4ad1d49773021841ef7edf43aa59e9a46"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-grading.png",
+      "bytes": 377589,
+      "sha": "fd3543e6e8b120ea09c3bb3735ae24e4657244bb"
+    },
+    {
+      "path": "tour-runtime/assets/gradecrew/wilma-worksheet-flying.png",
+      "bytes": 27127,
+      "sha": "7e7d792913e8e2ae4bd9573a2e2a3a3834630c5a"
+    },
+    {
+      "path": "tour-runtime/assets/vendor/qrcodejs-1.0.0.min.js",
+      "bytes": 19927,
+      "sha": "993e88f396640f881b69f98db7a4d17401ef83ca"
+    },
+    {
+      "path": "tour-runtime/assets/vendor/qrcodejs-LICENSE.txt",
+      "bytes": 1098,
+      "sha": "93c33233fa538ff9af27374eb13c6ea5147f7a3e"
+    },
+    {
+      "path": "tour-runtime/auth-profile.js",
+      "bytes": 219,
+      "sha": "b5aa8e7dcaada2ac5f01bb140a39acc43b4a640d"
+    },
+    {
+      "path": "tour-runtime/bug-ops.mjs",
+      "bytes": 7221,
+      "sha": "482e4153ccbaf5567d0f13eae792b50d02780aa8"
+    },
+    {
+      "path": "tour-runtime/crew-assistant-core.js",
+      "bytes": 47,
+      "sha": "cbc43d88b23a8ffa08659c83ed6b473a2f73bf17"
+    },
+    {
+      "path": "tour-runtime/crew-assistant-core.mjs",
+      "bytes": 31978,
+      "sha": "275b71ce309887606dc5f96f1931a97346a0017f"
+    },
+    {
+      "path": "tour-runtime/crew-assistant-ui.js",
+      "bytes": 26675,
+      "sha": "b3a64e0ddc6032b90c1f3bbb506aa95456ecc4f9"
+    },
+    {
+      "path": "tour-runtime/crew-clay.css",
+      "bytes": 3221,
+      "sha": "622106045d34efc0d21e099051cdf05782c9e6cc"
+    },
+    {
+      "path": "tour-runtime/crew-statistics-admin.mjs",
+      "bytes": 5705,
+      "sha": "c2a265f1f80e759df0fdc3df8ceeadb93b0ddc51"
+    },
+    {
+      "path": "tour-runtime/crew-telemetry-client.mjs",
+      "bytes": 4177,
+      "sha": "8b8a13e9040eb1d6c7f894b0eb40cbc976cb36e1"
+    },
+    {
+      "path": "tour-runtime/crew-tour-gc22-polish.js",
+      "bytes": 9963,
+      "sha": "a624c0da2bf44fa1512bdc845fdc254024a91a5f"
+    },
+    {
+      "path": "tour-runtime/crew-tour-gc23-polish.js",
+      "bytes": 14446,
+      "sha": "e1f2fdff771641e6c46f138e4e4fbed380ca4d85"
+    },
+    {
+      "path": "tour-runtime/crew-tour-gc24-polish.js",
+      "bytes": 10562,
+      "sha": "3f27c2bcab444ab6cfa31139425b625fa5aa6fba"
+    },
+    {
+      "path": "tour-runtime/crew-tour-gc25-final-polish.js",
+      "bytes": 8068,
+      "sha": "8692ccd54fa82ac38cfb72a01d4e46bb913dc33a"
+    },
+    {
+      "path": "tour-runtime/crew-tour-gc26-story-polish.js",
+      "bytes": 7933,
+      "sha": "49c8b181c03801d3feed3912ba152056aa40bbb7"
+    },
+    {
+      "path": "tour-runtime/crew-tour-hardening.js",
+      "bytes": 4050,
+      "sha": "bdcd7799f27333e4f1bf8c9c49956cf1f4d18a47"
+    },
+    {
+      "path": "tour-runtime/crew-tour-responsive.js",
+      "bytes": 7459,
+      "sha": "34c0596305d8cd895098ae6dbd5f86e4956483f9"
+    },
+    {
+      "path": "tour-runtime/design-system.css",
+      "bytes": 18352,
+      "sha": "f3c69ede579f044a2aed1712e5543cfb80aef27b"
+    },
+    {
+      "path": "tour-runtime/diagnostics.mjs",
+      "bytes": 2888,
+      "sha": "ee64146309f34bd54279c5671e014226daba5a47"
+    },
+    {
+      "path": "tour-runtime/editor-drafts.js",
+      "bytes": 2010,
+      "sha": "de0123f387c2203412127fbaad68bf369656b894"
+    },
+    {
+      "path": "tour-runtime/emmi-whole-test-revision.mjs",
+      "bytes": 13218,
+      "sha": "5662520830d0785d34c59c5b69ac4b4a816879d9"
+    },
+    {
+      "path": "tour-runtime/firebase-config.js",
+      "bytes": 181,
+      "sha": "1c5483a2e346a71700bc3f3865757b6f610073d4"
+    },
+    {
+      "path": "tour-runtime/firebase-local.mjs",
+      "bytes": 2740,
+      "sha": "47e50f6d97bdec88c552f6ca71afde1295823642"
+    },
+    {
+      "path": "tour-runtime/first-guide-guard.js",
+      "bytes": 7655,
+      "sha": "4ba4fb5a1cac5214a83f084c10f2c2c98551d1ac"
+    },
+    {
+      "path": "tour-runtime/first-guide-responsive.js",
+      "bytes": 10359,
+      "sha": "6912b2d4e8fe0ee2d92529490140cf9efccac424"
+    },
+    {
+      "path": "tour-runtime/functions/lib/review-checks.json",
+      "bytes": 14438,
+      "sha": "a65e61d6bd8302f8f476703ecc149afa0e33bcf0"
+    },
+    {
+      "path": "tour-runtime/gate-e-lab.js",
+      "bytes": 21563,
+      "sha": "55d38045e56a11a64a4ba8d3f658edd832cacfbb"
+    },
+    {
+      "path": "tour-runtime/generated/gradecrew-assets.js",
+      "bytes": 1908,
+      "sha": "e328503c2a2dbbc45a7fb1fd46c95ffe491cb78f"
+    },
+    {
+      "path": "tour-runtime/generated/gradecrew-design-tokens.css",
+      "bytes": 1503,
+      "sha": "52ab446662ae25d84cc5db3521edb9fd7a628456"
+    },
+    {
+      "path": "tour-runtime/gradecrew-auth-startscreen-polish.css",
+      "bytes": 29070,
+      "sha": "e652a4c6b55ff57556a3bf1f9ca8761dc8133d6e"
+    },
+    {
+      "path": "tour-runtime/gradecrew-auth-startscreen.css",
+      "bytes": 34041,
+      "sha": "8c05ff0d5cc02b254acc4554d59c46661dba6776"
+    },
+    {
+      "path": "tour-runtime/gradecrew-brand.css",
+      "bytes": 11553,
+      "sha": "65b115a487ca5256a57b8e65d93783029b7184a4"
+    },
+    {
+      "path": "tour-runtime/gradecrew-brand.js",
+      "bytes": 154,
+      "sha": "7e39c4640c1a1167133c700355c255afb581d516"
+    },
+    {
+      "path": "tour-runtime/gradecrew-dashboard-foundation.css",
+      "bytes": 11463,
+      "sha": "19fd37bee1934e2576b495393f58fe0588f46d81"
+    },
+    {
+      "path": "tour-runtime/gradecrew-entry-flow.js",
+      "bytes": 19135,
+      "sha": "0dd863a47fae6978e495cf447bd389e44c78fa5f"
+    },
+    {
+      "path": "tour-runtime/gradecrew-hero-copy.mjs",
+      "bytes": 12223,
+      "sha": "88c79a9a2c4c0a4f881052a51e851f93f195ef33"
+    },
+    {
+      "path": "tour-runtime/gradecrew-hero-demo-flow.mjs",
+      "bytes": 1521,
+      "sha": "06d1c91b27da7e5961face34267c4f99c765954d"
+    },
+    {
+      "path": "tour-runtime/gradecrew-hero-demo.mjs",
+      "bytes": 10209,
+      "sha": "ccd57093d34cc1b0da2db880c2796769ca4877ff"
+    },
+    {
+      "path": "tour-runtime/gradecrew-hero-scene.css",
+      "bytes": 36852,
+      "sha": "8b75ae6d26cd18827ff1ebd6ad409b8a77017635"
+    },
+    {
+      "path": "tour-runtime/gradecrew-logo.css",
+      "bytes": 869,
+      "sha": "860cec0d448128988b5d5d4047e449518465a87c"
+    },
+    {
+      "path": "tour-runtime/gradecrew-tour-v7.js",
+      "bytes": 59313,
+      "sha": "4d5c9ffda674a388cb7bdb57474c78be6785e940"
+    },
+    {
+      "path": "tour-runtime/gradecrew-tour-v8.js",
+      "bytes": 7228,
+      "sha": "00181fd8fdd1eaf44193d1f7bb046987428e8bee"
+    },
+    {
+      "path": "tour-runtime/gradecrew-tour.css",
+      "bytes": 14599,
+      "sha": "fe8582423725a814d0c24ae6137ad64bf423ebdb"
+    },
+    {
+      "path": "tour-runtime/gradecrew-tour.js",
+      "bytes": 48,
+      "sha": "88a2fd8638fee35bd33b3c7fe21c2702ef347eee"
+    },
+    {
+      "path": "tour-runtime/gradecrew-workspace-upgrade.css",
+      "bytes": 15565,
+      "sha": "9afa98822d644ca17d97db47d1327f73f43fabcf"
+    },
+    {
+      "path": "tour-runtime/gradecrew-workspace-upgrade.mjs",
+      "bytes": 9570,
+      "sha": "105655248f6ba8240b386704c4f9bdf98e303ec7"
+    },
+    {
+      "path": "tour-runtime/guest-tour-port.mjs",
+      "bytes": 2450,
+      "sha": "cb2b9613b6d474b28a9d86a8eaa84adea0206c02"
+    },
+    {
+      "path": "tour-runtime/index.html",
+      "bytes": 56866,
+      "sha": "f5a4a93cea4dc2877998f3885e8bccd04324767d"
+    },
+    {
+      "path": "tour-runtime/interface.js",
+      "bytes": 3887,
+      "sha": "9fe9951e4bde224528baf187a905ee813388947e"
+    },
+    {
+      "path": "tour-runtime/layout-enhancements.js",
+      "bytes": 98,
+      "sha": "d8b75555a8260fe924464f381ebf091f8a6fbe22"
+    },
+    {
+      "path": "tour-runtime/mobile-viewport-polish.js",
+      "bytes": 2655,
+      "sha": "575ec12d55795c3d36301bd2a2c7cf9eb2c1a4d5"
+    },
+    {
+      "path": "tour-runtime/ordering-grading.mjs",
+      "bytes": 1723,
+      "sha": "1f44cae024fa5a90c1fd7db849a5d6b4e7812143"
+    },
+    {
+      "path": "tour-runtime/practice-solution-publication.mjs",
+      "bytes": 3016,
+      "sha": "9d52539ef23dcf9c83738d0d3a16a29c2de390f2"
+    },
+    {
+      "path": "tour-runtime/quick-remy-bridge.js",
+      "bytes": 6680,
+      "sha": "e2c3de6d21b82ca0af8fbd7a9f9f6fe994e91991"
+    },
+    {
+      "path": "tour-runtime/release.json",
+      "bytes": 17421,
+      "sha": "85a57e7ca3d33ea9e80f7cbbbdf10ac4626ac47c"
+    },
+    {
+      "path": "tour-runtime/remy-ai-help.js",
+      "bytes": 32614,
+      "sha": "afe7af32a6758184e9a0a2b8b0f3e4b7153685e5"
+    },
+    {
+      "path": "tour-runtime/review-capture.mjs",
+      "bytes": 5858,
+      "sha": "f5d0e9011091fe4f88c2e74ffb419faa5446bfde"
+    },
+    {
+      "path": "tour-runtime/review-mode.css",
+      "bytes": 2633,
+      "sha": "75bb9d87c27418d36689ce5f0c47dcae3a16ad29"
+    },
+    {
+      "path": "tour-runtime/review-mode.mjs",
+      "bytes": 24189,
+      "sha": "a0d2c6c3f6e1f5e2a1f0bf9a61415ce58369e17e"
+    },
+    {
+      "path": "tour-runtime/review-store.mjs",
+      "bytes": 1585,
+      "sha": "9b5eb74b5607b75e3bb0978b23214f5ce85547bd"
+    },
+    {
+      "path": "tour-runtime/secure-assessment-client.js",
+      "bytes": 8108,
+      "sha": "4218342994b1c46a4301efe1107412e941ca1da0"
+    },
+    {
+      "path": "tour-runtime/secure-assessment-teacher-polish.js",
+      "bytes": 3774,
+      "sha": "b2cc67f2eff8a190b25ad91aadd936d87032c14d"
+    },
+    {
+      "path": "tour-runtime/secure-audio-publication.mjs",
+      "bytes": 668,
+      "sha": "8b148f3d25fa02172365bd5c74cd5d00b155b965"
+    },
+    {
+      "path": "tour-runtime/secure-deadline-guard.js",
+      "bytes": 5336,
+      "sha": "cc40426c75e2a359c7bc8576e5a9d1dd3abf0b48"
+    },
+    {
+      "path": "tour-runtime/secure-draft-persistence.js",
+      "bytes": 4200,
+      "sha": "e06d17eaf130640022adb1cc139d50f7d2ed245b"
+    },
+    {
+      "path": "tour-runtime/secure-result-policy.js",
+      "bytes": 1221,
+      "sha": "85af206b14fbd1865c349326f90354c959428aab"
+    },
+    {
+      "path": "tour-runtime/secure-solution-release.js",
+      "bytes": 6216,
+      "sha": "4b445db2662699320ad9217162dd17098ef8e1af"
+    },
+    {
+      "path": "tour-runtime/secure-student.css",
+      "bytes": 8601,
+      "sha": "86d4dddf512b4dab290d307de86edb8fd112429f"
+    },
+    {
+      "path": "tour-runtime/secure-student.html",
+      "bytes": 4068,
+      "sha": "d1a5ad1b719be72fca34c471fa305e17474923a8"
+    },
+    {
+      "path": "tour-runtime/secure-student.js",
+      "bytes": 34052,
+      "sha": "d2d4c5d46f729652bb4a3ed0cc0b0da6221c8dde"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/assessment-locale-ui.mjs",
+      "bytes": 9684,
+      "sha": "f72f847003649656e2174f5c04edbbad4b00c9e4"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/assessment-locale.mjs",
+      "bytes": 3874,
+      "sha": "91018104a52250f53135a7ad6347155ce5e52c51"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/bootstrap.mjs",
+      "bytes": 647,
+      "sha": "b4ea00a11e402d182095de539a42e1d92a80e299"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/browser-runtime.mjs",
+      "bytes": 19634,
+      "sha": "4dcc4e38080250a0b5eed1f9e21cbe7efb90fd89"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/extensions-en-GB-crew.mjs",
+      "bytes": 6314,
+      "sha": "ee48aebfab8495a7eb7fc7c95f9bffd697f2391d"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/i18n-core.mjs",
+      "bytes": 5901,
+      "sha": "cfcafdd134528f6f66873d86caed5b076e18e58b"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/messages-de-DE.mjs",
+      "bytes": 955,
+      "sha": "b80356a6e494bfcd0b40d0af1cdf5c86cbc70db9"
+    },
+    {
+      "path": "tour-runtime/shared/i18n/messages-en-GB.mjs",
+      "bytes": 47439,
+      "sha": "bbf8a5a70f5f8d2126b1754127ca0fc4580a90bc"
+    },
+    {
+      "path": "tour-runtime/shared/math-display.mjs",
+      "bytes": 660,
+      "sha": "bc688256a676760f396ebf0202fab04e698fadb0"
+    },
+    {
+      "path": "tour-runtime/snapshot-manifest.json",
+      "bytes": 15818,
+      "sha": "f781edbddddd8abc3fc212c75b855aae869da98e"
+    },
+    {
+      "path": "tour-runtime/staging-short-login.mjs",
+      "bytes": 2736,
+      "sha": "716ca980ec22d61b9b7c413efbdb153dc03bddc5"
+    },
+    {
+      "path": "tour-runtime/startup.js",
+      "bytes": 6093,
+      "sha": "c6287150558550973295ae552a3be4ce78793499"
+    },
+    {
+      "path": "tour-runtime/student-attempt-guard.js",
+      "bytes": 7258,
+      "sha": "89d304babe0155e0ea4d99ca94b513c800fe0314"
+    },
+    {
+      "path": "tour-runtime/student-submit-confirm.mjs",
+      "bytes": 2330,
+      "sha": "68d03b30493ad08bab80477e1ff804f2e9240567"
+    },
+    {
+      "path": "tour-runtime/styles.css",
+      "bytes": 89806,
+      "sha": "beaa091a1499e7c74ff74456013308a0a95c149d"
+    },
+    {
+      "path": "tour-runtime/teacher-copy-polish.js",
+      "bytes": 5229,
+      "sha": "d325761cca20d3788fd5cafa210d2397d9428154"
+    },
+    {
+      "path": "tour-runtime/tour-local-start.mjs",
+      "bytes": 3511,
+      "sha": "5883d3f80b1e34e300867095bdc9142f246f3b04"
+    },
+    {
+      "path": "tour-runtime/tutorial-choice-v1.css",
+      "bytes": 1911,
+      "sha": "2f3ec9bd187930be90af7afc38c593526dab3276"
+    },
+    {
+      "path": "tour-runtime/tutorial-ordering-guard.js",
+      "bytes": 10546,
+      "sha": "9a50f382e658831f935b6e9c226fe9b433516d08"
+    },
+    {
+      "path": "tour-runtime/tutorial-variant-fallback.js",
+      "bytes": 5601,
+      "sha": "4ef4d692de81cdaaf87cec8ca7640645e09abd2b"
+    },
+    {
+      "path": "tour-runtime/ui-enhancements.js",
+      "bytes": 8582,
+      "sha": "3e310f4211611f690d2cb9c948605697c4016953"
+    },
+    {
+      "path": "tour-runtime/variant-enhancements.js",
+      "bytes": 13851,
+      "sha": "5f002d77372a406a6cfe0f412b55163a4eb201d9"
+    },
+    {
+      "path": "tour-runtime/visual-enhancements.js",
+      "bytes": 6454,
+      "sha": "afeef14aa2218235d83ef1ffe824048cfae01365"
+    },
+    {
+      "path": "tour-runtime/workspace.css",
+      "bytes": 21617,
+      "sha": "ca8bef55aa545d3d54f8c09ed57dcd778d739c44"
+    },
+    {
+      "path": "tutorial-finale.html",
+      "bytes": 1400,
+      "sha": "f36a955332d6ff57831aa8a91b38716e94ac86f3"
+    },
+    {
+      "path": "tutorial-fixture.mjs",
+      "bytes": 2345,
+      "sha": "f882e42c0b84ea1009a739c73a962eb23cc419f4"
+    },
+    {
+      "path": "tutorial-gate.mjs",
+      "bytes": 998,
+      "sha": "a611ba8c0b5a7310efed794e313c44f0c416c5c2"
+    },
+    {
+      "path": "v3.css",
+      "bytes": 17912,
+      "sha": "4b85ee991122eab1d62b61e18471a8beb0cc88c2"
+    },
+    {
+      "path": "v7.css",
+      "bytes": 1113,
+      "sha": "166ebb7e6cdb6c7cb13b2ba46d236bc6c42007e5"
+    }
+  ]
+}
