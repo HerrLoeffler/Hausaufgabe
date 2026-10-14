@@ -242,3 +242,8 @@ EinblickbeendenbeiWilma→neuefreundlicheEinladungmitvierOriginalportraitKopienu
 README/ELEVENLABSReceipt,4MP3s,5JPEGs,verification-v6.json,Manifest148Dateiengesichert. DesktopJPEGfinal;mobilesDialoglayoutvorletzterHintergrundscrollsperre,erklärteGrenze. Stagebranch_onlymitlokalenTests,keineCI-/Integration-/Staging-/Production-/physischenGeräte-/Safari-/VoiceOver-/HumanStimm-/Designabnahme. SEC15/18 undPRIV12–15/19lokalunverändertplusbegrenzterautorisierterProviderExportöffentlichemÜbungssatz;keineRuntimeProviderAPI/Accountwrites. RuntimeModelEffort/CodexTokenkostenunknown,keinWechsel/Delegation/Budgetreset.
 
 NächsterSchrittMartin hörtRemy undbeurteilt diefreundlicheEinladung; echteFulltour-Zielverknüpfung bleibt offenesgesondertesIntegrationsteil. KeineautomatischeProduktübernahmeoderneuePlanfreigabefrage. FinalSourceReceiptfolgtunten.
+
+
+### Tatsächlicher Remote-Receipt V6
+
+Finalsource **5a6d69ee96a58cfe3917fbc8c0aa46efc3a9d94f**, Tree **d6d85c044553c17ec846ca0f6757281c8d5364a7**, docs/gc-brand-hero-motion-20261013.149V6Artefakte+eigeneTODO/Handoff(151entries). NativeBlob/Tree/Commit-Sicherung, normalerFastforwardmit erwarteter657cfe14HeadSHA, RemoteRefdanachbestätigt; alle27RootdateienremoteSHAgleichlokal,alle9neuenMP3/JPEGBinariesbeimUploadGitSHAgeprüft. V5/Vorversionen/GuardianReservierungennichtverändert.23/23TestsundkonkreteCUAAudio/Einladungsbelege,keineCI/Merge/Deploy/Nutzerabnahme. Stimme4Takes528CreditsUSD0.0528separaterHumanauftrag,keineRegeneration. Reviewbar127.0.0.1:8783; echteFulltour-Verknüpfungweiteroffen,keinProdukt-/Staging-/Productionwrite.
