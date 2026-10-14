@@ -147,6 +147,11 @@
  };
  // Destructive probes are limited to temporary fixture nodes/inline styles and restore immediately.
  window.gcLayoutAuditSelfTest=()=>{
+  const describe=element=>{
+   const r=rect(element),style=getComputedStyle(element);
+   return {selector:selector(element),rect:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},hidden:element.hidden,connected:element.isConnected,parent:element.parentElement?selector(element.parentElement):null,position:style.position,display:style.display,visibility:style.visibility,opacity:style.opacity,zIndex:style.zIndex,transform:style.transform,pointerEvents:style.pointerEvents,overflowX:style.overflowX,overflowY:style.overflowY};
+  };
+  const hit=(x,y)=>({x,y,top:document.elementFromPoint(x,y)?selector(document.elementFromPoint(x,y)):null,stack:document.elementsFromPoint(x,y).slice(0,8).map(selector)});
   const checks=[];const probe=document.createElement('div');probe.id='gcAuditOverflowProbe';probe.style.cssText='position:absolute;left:0;top:0;width:calc(100vw + 80px);height:12px';probe.textContent='Auditor overflow proof';document.body.append(probe);
   checks.push({rule:'horizontal-overflow',passed:window.gcLayoutAudit().issues.some(x=>x.rule==='horizontal-overflow'||(x.rule==='element-overflow'&&x.selector==='#gcAuditOverflowProbe'))});probe.remove();
   const button=document.querySelector('#newQuizBtn');const view=document.getElementById('dashboardView');
@@ -172,15 +177,28 @@
   const toggleTarget=document.querySelector('#dashboardView .dashboardPublishControl');
   if(coco&&toggleTarget&&view){
    const oldStyle=coco.getAttribute('style'),oldClass=view.className,oldHidden=coco.hidden,oldParent=coco.parentNode,oldNext=coco.nextSibling;view.classList.remove('hidden');coco.hidden=false;
+   const savedScroll=window.scrollY;
+   // Establish fixed positioning BEFORE measuring/scrolling. Otherwise a static
+   // body portal adds44pt to document height; removing it after scrollIntoView can
+   // clamp a short dashboard's bottom scroll and move the target by exactly44pt.
+   coco.style.setProperty('transition','none','important');coco.style.setProperty('position','fixed','important');coco.style.setProperty('z-index','2147483646','important');
+   coco.style.setProperty('left','0px','important');coco.style.setProperty('top','0px','important');coco.style.setProperty('right','auto','important');coco.style.setProperty('bottom','auto','important');
    // Backdrop-filter on the sticky heading establishes a fixed-position containing
    // block. Move the ORIGINAL launcher to body for an unambiguous viewport probe.
-   document.body.append(coco);
-   const savedScroll=window.scrollY;
+   document.body.append(coco);void coco.offsetWidth;
    // Put an actual existing target in view, then cover it with the actual launcher.
    toggleTarget.scrollIntoView({block:'center',behavior:'instant'});const targetInView=rect(toggleTarget);
-   coco.style.setProperty('transition','none','important');coco.style.setProperty('position','fixed','important');coco.style.setProperty('z-index','2147483646','important');
-   coco.style.setProperty('left',targetInView.left+'px','important');coco.style.setProperty('top',targetInView.top+'px','important');coco.style.setProperty('right','auto','important');coco.style.setProperty('bottom','auto','important');
-   const measured=window.gcLayoutAudit();checks.push({rule:'control-occluded',passed:measured.issues.some(x=>x.rule==='control-occluded'&&x.selector===selector(toggleTarget)),observed:measured.metrics.occludedTargets});
+   const targetBeforeOverlay=describe(toggleTarget);
+   const targetHitBeforeOverlay=hit((targetInView.left+targetInView.right)/2,(targetInView.top+targetInView.bottom)/2);
+   const beforeHit=document.elementFromPoint((targetInView.left+targetInView.right)/2,(targetInView.top+targetInView.bottom)/2);
+   const targetUnobstructed=beforeHit===toggleTarget||toggleTarget.contains(beforeHit);
+   coco.style.setProperty('left',targetInView.left+'px','important');coco.style.setProperty('top',targetInView.top+'px','important');
+   const targetAtAudit=describe(toggleTarget),cocoAtAudit=describe(coco);
+   const cr=cocoAtAudit.rect;
+   const points=[[.5,.5],[.25,.25],[.75,.25],[.25,.75],[.75,.75]].map(([dx,dy])=>hit(cr.left+cr.width*dx,cr.top+cr.height*dy));
+   const measured=window.gcLayoutAudit();
+   const targetStable=Math.abs(targetAtAudit.rect.top-targetBeforeOverlay.rect.top)<epsilon&&Math.abs(targetAtAudit.rect.left-targetBeforeOverlay.rect.left)<epsilon;
+   checks.push({rule:'control-occluded',passed:targetUnobstructed&&targetStable&&measured.issues.some(x=>x.rule==='control-occluded'&&x.selector===selector(toggleTarget)),observed:measured.metrics.occludedTargets,diagnostic:{viewport:{width:innerWidth,height:innerHeight,scrollX,scrollY,visualViewport:window.visualViewport?{width:visualViewport.width,height:visualViewport.height,offsetLeft:visualViewport.offsetLeft,offsetTop:visualViewport.offsetTop,pageLeft:visualViewport.pageLeft,pageTop:visualViewport.pageTop,scale:visualViewport.scale}:null},targetUnobstructed,targetStable,targetBeforeOverlay,targetHitBeforeOverlay,targetAtAudit,cocoAtAudit,points,targetAfterAudit:describe(toggleTarget),cocoAfterAudit:describe(coco)}});
    if(oldStyle===null)coco.removeAttribute('style');else coco.setAttribute('style',oldStyle);
    oldParent.insertBefore(coco,oldNext?.parentNode===oldParent?oldNext:null);coco.hidden=oldHidden;view.className=oldClass;window.scrollTo({top:savedScroll,behavior:'instant'});
   }

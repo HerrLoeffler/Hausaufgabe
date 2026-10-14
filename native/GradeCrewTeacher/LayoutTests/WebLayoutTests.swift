@@ -29,6 +29,11 @@ final class WebLayoutTests: XCTestCase {
     func testWebSmallPhone() async throws {
         for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&type=single", "screen=editor&lang=de&type=single&variant=media"] { try await check(s, viewport: LayoutViewport.matrix[0]) }
     }
+    func testWebLargeTabletMedia() async throws {
+        for viewport in [LayoutViewport.matrix[7], LayoutViewport.matrix[8], LayoutViewport.matrix[9]] {
+            for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&role=teacher&type=single&variant=media"] { try await check(s, viewport: viewport) }
+        }
+    }
     func testWebScreenMatrix() async throws {
         try LayoutReportStore.clear(prefix: "web-")
         let types = ["single","multi","text","dropdown","truefalse","gapfill","matching","ordering","grouping","markwords","number"]
