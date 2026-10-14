@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><base href="./baseline/"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'none'; object-src 'none'; form-action 'none'">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GradeCrew · V5 Experiment</title>
+  <meta name="crew-art-version" content="clay-2" />
+  <meta name="app-version" content="2.3.1-gc39" />
+  <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="crew-clay.css?v=3" />
+  <link rel="stylesheet" href="workspace.css?v=2.3.1-gc2" />
+  <link rel="icon" href="assets/gradecrew/penguin-icon.svg" type="image/svg+xml" />
+  
+<link rel="stylesheet" href="review-mode.css">
+</head><body id="gradecrewPage" data-experiment="v5">  <header class="topbar">
+    <button id="brandBtn" class="brand" type="button" aria-label="GradeCrew Startseite">
+      <span class="brandMark" aria-hidden="true"><span class="brandLetter">G</span><span class="brandTick">✓</span></span>
+      <span class="brandCopy"><strong>GradeCrew</strong><small>Tests. Einfach digital.</small></span>
+    </button>
+    <div id="userBar" class="userBar hidden">
+      <span id="userLabel"></span>
+      <button id="adminTopBtn" class="button ghost hidden" type="button">Administration</button>
+      <button id="settingsTopBtn" class="button ghost" type="button">Einstellungen</button>
+      <button id="logoutBtn" class="button ghost" type="button">Abmelden</button>
+    </div>
+    <button id="gcEntryLoginOpen" class="gcHeroLogin hidden" type="button" data-i18n-key="hero.login" data-i18n-fallback="Anmelden">Anmelden</button>
+  </header>
+
+<main id="mainContent" class="shell" tabindex="-1">    <section id="authView" class="view">
+      <p class="card" role="status" aria-live="polite" data-i18n-key="system.loading" data-i18n-fallback="GradeCrew wird geladen …">GradeCrew wird geladen …</p>
+      <div hidden>
+      <div id="sharedLoginNotice" class="shareNotice hidden"><strong>Geteilte Testvorlage</strong><span>Melde dich als Lehrkraft an oder erstelle einen Account. Danach kannst du den Test als eigene Kopie übernehmen.</span></div>
+      <div class="heroGrid">
+        <article class="card heroCard">
+          <span class="eyebrow">Für Schülerinnen und Schüler</span>
+          <h2>Testcode eingeben</h2>
+          <p>Mit dem Code deiner Lehrkraft geht’s direkt los. Ohne Account.</p>
+          <form id="joinForm" class="stack compact">
+            <label>Testcode
+              <input id="joinCode" type="text" autocomplete="off" maxlength="16" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7M4X2PA" />
+            </label>
+            <button class="button primary" type="submit">Test öffnen</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <span class="eyebrow teacherEyebrow">Für Lehrkräfte</span>
+          <div class="tabs" role="tablist" aria-label="Lehrerzugang">
+            <button id="loginTab" class="tab active" type="button" role="tab" aria-controls="loginForm" aria-selected="true" tabindex="0">Anmelden</button>
+            <button id="registerTab" class="tab" type="button" role="tab" aria-controls="registerForm" aria-selected="false" tabindex="-1">Account erstellen</button>
+          </div>
+          <form id="loginForm" class="stack authForm" role="tabpanel" aria-labelledby="loginTab" tabindex="0">
+            <h2>Willkommen zurück</h2>
+            <label>E-Mail<input id="loginEmail" type="email" autocomplete="email" required /></label>
+            <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
+            <button class="button primary" type="submit">Anmelden</button>
+            <button id="forgotBtn" class="linkButton" type="button">Passwort vergessen?</button>
+          </form>
+          <form id="registerForm" class="stack authForm hidden" role="tabpanel" aria-labelledby="registerTab" tabindex="0">
+            <h2>Lehrer-Account erstellen</h2>
+            <label>Name<input id="registerName" type="text" autocomplete="name" required /></label>
+            <label>E-Mail<input id="registerEmail" type="email" autocomplete="email" required /></label>
+            <label>Passwort<input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required /></label>
+            <label>Passwort wiederholen<input id="registerPassword2" type="password" minlength="6" autocomplete="new-password" required /></label>
+            <button class="button primary" type="submit">Account erstellen</button>
+            <p class="hint">Dein Arbeitsbereich für Tests und Vorlagen.</p>
+          </form>
+        </article>
+      </div>
+      </div>
+    </section>
+
+</main>  <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer><script type="module" src="../preview-start.mjs"></script></body></html>
