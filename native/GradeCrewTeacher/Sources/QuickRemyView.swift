@@ -3,6 +3,11 @@ import UniformTypeIdentifiers
 
 struct QuickRemyView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var showMedia = false
+    @State private var showTypes = false
+    @State private var showMaterials = false
+    @State private var showPreferences = false
     let onBack: () -> Void
     let call: GradeCrewQuickRemyCall?
 
@@ -67,9 +72,11 @@ struct QuickRemyView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.bottom, 24)
-                .frame(maxWidth: 560)
+                .gcLayout("remy.content", role: "center")
+                .frame(maxWidth: GradeCrewLayoutGuides.formMaxWidth)
                 .frame(maxWidth: .infinity)
             }
+            .gcLayout("remy.scroll.viewport", role: "viewport")
             .scrollDismissesKeyboard(.interactively)
         }
         .background(GradeCrewDesignTokens.Colors.background)
@@ -112,6 +119,7 @@ struct QuickRemyView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 220, height: 220)
+                        .gcLayout("remy.portrait", role: "center")
                         .contentShape(Rectangle())
                     Text(status == .recording ? "Ich höre zu … Zum Beenden antippen." : "Sprich mir schnell ein, was du willst.")
                         .font(.system(size: 16, weight: .medium, design: .rounded))
@@ -156,6 +164,16 @@ struct QuickRemyView: View {
         .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 22))
     }
 
+    private func optionSection<Content: View>(_ title: String, expanded: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) -> some View {
+        DisclosureGroup(isExpanded: expanded, content: content) {
+            Text(title)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, minHeight: GradeCrewLayoutGuides.minimumTapSize, alignment: .leading)
+                .contentShape(Rectangle())
+                .gcLayout("remy.disclosure.\(title)", role: "control")
+        }
+    }
+
     private var nativeTestForm: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Dein Test").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
@@ -164,7 +182,7 @@ struct QuickRemyView: View {
             questionTypePicker
             wishesSection
             materialsSection
-            DisclosureGroup("Persönliche KI-Vorgaben") {
+            optionSection("Persönliche KI-Vorgaben", expanded: $showPreferences) {
                 TextEditor(text: $personalPreferences).frame(height: 70)
             }
             submitButton
@@ -175,18 +193,24 @@ struct QuickRemyView: View {
         .onChange(of: draftSyncKey) { _ in scheduleDraftSync() }
     }
 
+    private var fieldPairLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
+            : AnyLayout(HStackLayout(spacing: 10))
+    }
+
     private var coreFields: some View {
         Group {
-            HStack(spacing: 10) {
+            fieldPairLayout {
                 nativeField("Fach", text: $draft.subject)
                 nativeField("Klasse", text: $draft.grade)
             }
-            HStack(spacing: 10) {
+            fieldPairLayout {
                 nativeField("Schulart", text: $draft.schoolType)
                 nativeField("Bundesland", text: $draft.region)
             }
             nativeField("Thema", text: $draft.topic)
-            HStack(spacing: 10) {
+            fieldPairLayout {
                 nativeField("Aufgaben", text: $draft.count, keyboard: .numberPad)
                 nativeField("Gesamtpunkte", text: $draft.points, keyboard: .decimalPad)
             }
@@ -204,13 +228,15 @@ struct QuickRemyView: View {
     }
 
     private var questionTypePicker: some View {
-            DisclosureGroup("Aufgabentypen (\(allowedTypes.count))") {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 7) {
+            optionSection("Aufgabentypen (\(allowedTypes.count))", expanded: $showTypes) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: dynamicTypeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 7) {
                     ForEach(questionTypes, id: \.0) { value, title in
                         Toggle(title, isOn: Binding(
                             get: { allowedTypes.contains(value) },
                             set: { enabled in if enabled { allowedTypes.insert(value) } else { allowedTypes.remove(value) } }
                         )).font(.caption)
+                            .frame(minHeight: GradeCrewLayoutGuides.minimumTapSize)
+                            .gcLayout("remy.type.\(value)", role: "control")
                     }
                 }.padding(.top, 8)
             }
@@ -225,10 +251,12 @@ struct QuickRemyView: View {
                     Button(action: toggleWishesRecording) {
                         Image(systemName: status == .recording && speechTarget == .wishes ? "stop.circle.fill" : "mic.circle.fill")
                             .font(.system(size: 28)).foregroundStyle(GradeCrewDesignTokens.Colors.primary)
+                            .frame(minWidth: 44, minHeight: 44)
                     }
                     .buttonStyle(.plain)
                     .disabled(status == .recording && speechTarget != .wishes || status == .transcribing || status == .requestingPermission)
                     .accessibilityLabel("Eigene Wünsche einsprechen")
+                    .gcLayout("remy.wishes.microphone", role: "tap", parent: "remy.scroll.viewport")
                 }
                 wishesEditor
             }
@@ -252,6 +280,7 @@ struct QuickRemyView: View {
             .padding(6)
             .scrollContentBackground(.hidden)
             .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
+
     }
 
     @ViewBuilder
@@ -284,7 +313,7 @@ struct QuickRemyView: View {
     }
 
     private var mediaOptions: some View {
-        DisclosureGroup(mediaSummary) {
+        optionSection(mediaSummary, expanded: $showMedia) {
             VStack(spacing: 10) {
                 nativeField("Aufgaben mit Bild (0–5)", text: $draft.imageQuestionCount, keyboard: .numberPad)
                 nativeField("Höraufgaben (0–5)", text: $draft.audioQuestionCount, keyboard: .numberPad)
@@ -294,9 +323,11 @@ struct QuickRemyView: View {
     }
 
     private var materialsSection: some View {
-        DisclosureGroup("Material hinzufügen\(materialNames.isEmpty ? "" : " (\(materialNames.count))")") {
+        optionSection("Material hinzufügen\(materialNames.isEmpty ? "" : " (\(materialNames.count))")", expanded: $showMaterials) {
             VStack(alignment: .leading, spacing: 10) {
                 Toggle("Ich darf das Material an OpenAI übermitteln; es enthält keine personenbezogenen Daten.", isOn: $materialConfirmed).font(.caption)
+                    .frame(minHeight: GradeCrewLayoutGuides.minimumTapSize)
+                    .gcLayout("remy.material.permission", role: "control")
                 QuickRemyMaterialPicker(
                     enabled: materialConfirmed && aiFormReady && workStatus != .submitting && workStatus != .preparing,
                     remainingSlots: 5 - materialNames.count,
@@ -412,6 +443,7 @@ struct QuickRemyView: View {
             .background(GradeCrewDesignTokens.Colors.primary, in: Capsule())
         }
         .buttonStyle(.plain)
+        .gcLayout("remy.submit", role: "tap", parent: "remy.scroll.viewport")
         .disabled(
             draft.preparedRequest == nil || !aiFormReady || recoveryChecking ||
             unresolvedSubmission || workStatus == .preparing || workStatus == .submitting || workStatus == .accepted || isUploadingMaterial
@@ -421,12 +453,16 @@ struct QuickRemyView: View {
     private func nativeField(_ title: String, text: Binding<String>, keyboard: UIKeyboardType = .default) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(.caption.weight(.medium)).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .gcLayout("remy.label.\(title)")
             TextField(title, text: text)
                 .keyboardType(keyboard)
                 .textFieldStyle(.plain)
-                .padding(.horizontal, 11).frame(height: 44)
+                .padding(.horizontal, 11).padding(.vertical, 10).frame(minHeight: GradeCrewLayoutGuides.minimumTapSize)
                 .background(GradeCrewDesignTokens.Colors.background, in: RoundedRectangle(cornerRadius: 10))
+                .gcLayout("remy.input.\(title)", role: "textInput")
         }.frame(maxWidth: .infinity, alignment: .leading)
+            .gcLayout("remy.field.\(title)", role: "field")
     }
 
     private var retryButton: some View {
@@ -437,6 +473,8 @@ struct QuickRemyView: View {
                 else { await retryPreparation() }
             }
         }.buttonStyle(.bordered)
+            .frame(minHeight: GradeCrewLayoutGuides.minimumTapSize)
+            .gcLayout("remy.retry", role: "tap", parent: "remy.scroll.viewport")
     }
 
     private var navigationHeader: some View {
@@ -449,10 +487,14 @@ struct QuickRemyView: View {
             }
             .buttonStyle(.plain)
             .disabled(workStatus == .submitting)
-            Spacer()
+            .frame(width: 92)
+            .gcLayout("remy.back", role: "tap")
             Text("Remy fragen").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(GradeCrewDesignTokens.Colors.text)
-            Spacer()
-            Color.clear.frame(width: 52, height: 52).accessibilityHidden(true)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity)
+                .gcLayout("remy.nav.title", role: "center", text: "Remy fragen", fontSize: 19)
+            Color.clear.frame(width: 92, height: 52).accessibilityHidden(true)
         }
         .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg).padding(.vertical, GradeCrewDesignTokens.Spacing.sm)
         .background(GradeCrewDesignTokens.Colors.background)
@@ -690,3 +732,17 @@ struct QuickRemyView: View {
         NSError(domain: "GradeCrewQuickRemy", code: 1, userInfo: [NSLocalizedDescriptionKey: message])
     }
 }
+
+#if GRADECREW_LAYOUT_TESTS
+extension QuickRemyView {
+    init(layoutTestExpanded: Bool, call: GradeCrewQuickRemyCall? = nil) {
+        self.init(onBack: {}, call: call)
+        _showMedia = State(initialValue: layoutTestExpanded)
+        _showTypes = State(initialValue: layoutTestExpanded)
+        _showMaterials = State(initialValue: layoutTestExpanded)
+        _showPreferences = State(initialValue: layoutTestExpanded)
+        _materialConfirmed = State(initialValue: false)
+        _draft = State(initialValue: QuickRemyDraft(payload: ["subject": "Deutsch", "grade": "8. Klasse", "topic": "Wortarten und Satzglieder", "count": 15, "customNotes": "Lustige Sätze und Beispiele aus dem Schulalltag.", "imageQuestionCount": 2, "audioQuestionCount": 2]))
+    }
+}
+#endif

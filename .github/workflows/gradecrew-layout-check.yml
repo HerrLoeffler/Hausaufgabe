@@ -1,0 +1,48 @@
+name: GradeCrew Adaptive Layout Checks
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  layout-matrix:
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [phone, tablet]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned fixture test dependency
+        run: npm ci --prefix tools/ui
+        env:
+          NODE_AUTH_TOKEN: ''
+      - name: Verify current integration source matches offline fixtures
+        run: python3 native/GradeCrewTeacher/LayoutTests/verify_integration_source.py
+      - name: Verify report completeness guard
+        run: python3 native/GradeCrewTeacher/test_layout_runner.py
+      - name: Verify offline fixtures and layout detector
+        run: NODE_PATH="$GITHUB_WORKSPACE/tools/ui/node_modules" node --test native/GradeCrewTeacher/LayoutTests/Web/test_*.cjs
+      - name: Prepare canonical native assets
+        run: python3 native/GradeCrewTeacher/prepare_testflight_assets.py
+      - name: Check SwiftUI and WebKit on iPhone and iPad simulators
+        run: python3 native/GradeCrewTeacher/LayoutTests/run_layout_checks.py --family "${{ matrix.family }}" --output "$RUNNER_TEMP/GradeCrewLayoutMatrix"
+      - name: Save geometry reports, screenshots and simulator logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradecrew-layout-${{ matrix.family }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/GradeCrewLayoutMatrix/summary.json
+            ${{ runner.temp }}/GradeCrewLayoutMatrix/gallery.html
+            ${{ runner.temp }}/GradeCrewLayoutMatrix/*/reports/**
+            ${{ runner.temp }}/GradeCrewLayoutMatrix/*/xcodebuild.log

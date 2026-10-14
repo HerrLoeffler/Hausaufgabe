@@ -20,7 +20,11 @@ struct QuickRemyMaterialPicker: View {
     var body: some View {
         Button { showSources = true } label: {
             Label(uploading ? "Material wird hochgeladen …" : "Material auswählen", systemImage: "paperclip")
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, minHeight: GradeCrewLayoutGuides.minimumTapSize, alignment: .leading)
+                .contentShape(Rectangle())
         }
+        .gcLayout("remy.material.picker", role: "tap", parent: "remy.scroll.viewport")
         .disabled(!enabled || uploading || remainingSlots < 1)
         .confirmationDialog("Material hinzufügen", isPresented: $showSources, titleVisibility: .visible) {
             Button("Fotomediathek") { showPhotos = true }

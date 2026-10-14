@@ -75,7 +75,20 @@
 #dashboardView[data-gc-native-workspace] > .gcWorkspaceCrewEntry > small { color:var(--muted,#5e6b7b); font-size:12px; }
 #settingsView > .gcNativeTutorialReplay { display:flex; justify-content:flex-start; margin:0 0 16px; }
 #settingsView #gcNativeSettingsTutorialBtn { min-height:44px; }
-.topbar[data-gc-native-header] #gradecrewLanguageControl select { max-width:none !important; min-width:132px !important; width:auto !important; text-overflow:clip; white-space:nowrap; }
+#dashboardView[data-gc-native-workspace] .dashboardPublishControl, #settingsView label:has(> input[type="checkbox"]), #settingsView label:has(> input[type="radio"]) { min-width:44px; min-height:44px; box-sizing:border-box; }
+#gcCrewLauncher[data-gc-native-coco] {
+  position:static !important; inset:auto !important; width:44px !important; height:44px !important; min-width:44px !important; min-height:44px !important; max-width:44px !important; max-height:44px !important;
+  flex:0 0 44px; display:flex !important; flex-direction:column; align-items:center; justify-content:center; gap:0; padding:1px !important; margin:0 !important; box-sizing:border-box; border-radius:10px; box-shadow:none !important; z-index:auto !important; justify-self:end;
+}
+#gcCrewLauncher[data-gc-native-coco][hidden] { display:none !important; }
+#gcCrewLauncher[data-gc-native-coco] > img { width:30px !important; height:30px !important; object-fit:contain; flex:0 0 30px; }
+#gcCrewLauncher[data-gc-native-coco] > span { display:block !important; font-size:10px; line-height:10px; }
+.gcNativeCocoHeadingRow { display:flex; align-items:center; justify-content:space-between; gap:12px; min-width:0; width:100%; flex:1; }
+.gcNativeCocoHeadingRow > h1 { min-width:0; flex:1; }
+.gcNativeCocoDock { display:flex; justify-content:flex-end; margin:0 0 12px; }
+.topbar[data-gc-native-header] > .brand { min-height:44px !important; }
+#dashboardView[data-gc-native-workspace] .dashboardToolbar select, #settingsView select { min-height:44px !important; height:44px !important; }
+.topbar[data-gc-native-header] #gradecrewLanguageControl select { max-width:none !important; min-width:132px !important; min-height:44px !important; height:44px !important; width:auto !important; text-overflow:clip; white-space:nowrap; }
 @media(max-width:900px) {
   .topbar[data-gc-native-header].gradecrewLanguageReady { grid-template-columns:minmax(0,1fr) max-content !important; grid-template-areas:"brand language" "user user" !important; gap:12px 8px !important; padding:12px !important; height:auto !important; }
   .topbar[data-gc-native-header] > .brand { min-width:0; gap:6px; }
@@ -172,6 +185,34 @@
     button.disabled = !currentAccount || !document.getElementById('gradecrewTourBtn');
   }
 
+  function updateCoco() {
+    const launcher = document.getElementById('gcCrewLauncher');
+    if (!launcher) return;
+    const view = [...document.querySelectorAll('main > .view')].find(section => !section.hidden && !section.classList.contains('hidden'));
+    if (!view) return;
+    let target = view.id === 'dashboardView' ? view.querySelector('.gcNativeWorkspaceTitleRow') : null;
+    if (!target) {
+      const heading = view.querySelector(':scope > .pageHead h1');
+      if (heading) {
+        target = heading.closest('.gcNativeCocoHeadingRow');
+        if (!target) {
+          target = document.createElement('div'); target.className = 'gcNativeCocoHeadingRow';
+          heading.before(target); target.append(heading);
+        }
+      }
+    }
+    if (!target) {
+      target = view.querySelector(':scope > .gcNativeCocoDock');
+      if (!target) { target = document.createElement('div'); target.className = 'gcNativeCocoDock'; view.prepend(target); }
+    }
+    launcher.setAttribute('data-gc-native-coco', '');
+    if (launcher.parentNode !== target) {
+      const old = launcher.parentElement;
+      target.append(launcher);
+      if (old?.classList.contains('gcNativeCocoDock') && !old.children.length) old.remove();
+    }
+  }
+
   const observer = new MutationObserver(() => {
     if (scheduled) return;
     scheduled = true;
@@ -189,6 +230,9 @@
       return;
     }
     observer.observe(main, { childList: true });
+    for (const view of main.querySelectorAll(':scope > .view')) observer.observe(view, { attributes:true, attributeFilter:['class','hidden'] });
+    // The assistant mounts once as a direct body child after its optional module loads.
+    observer.observe(document.body, { childList:true });
     observer.observe(dashboard, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden'] });
     observer.observe(settings, { childList: true, subtree: true });
     const header = document.querySelector('header.topbar');
@@ -197,9 +241,9 @@
   }
 
   function refresh() {
-    if (!started) return;
+    if (!started || typeof document === 'undefined' || !document?.documentElement || !document.body) { observer.disconnect(); return; }
     observer.disconnect();
-    try { updateWorkspace(); updateSettings(); updateHeader(); }
+    try { updateWorkspace(); updateSettings(); updateHeader(); updateCoco(); }
     finally { observe(); }
   }
 

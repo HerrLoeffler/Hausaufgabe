@@ -44,11 +44,13 @@ struct GradeCrewAuthView: View {
         ScrollView {
             VStack(spacing: 20) {
                 GradeCrewBrandSignature(animationStartedAt: animationStartedAt)
+                    .gcLayout("auth.brand", role: "center")
                 Text(heading)
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(GradeCrewDesignTokens.Colors.text)
                     .accessibilityAddTraits(.isHeader)
+                    .gcLayout("auth.heading", role: "center", text: heading, fontSize: 28)
                 formFields
                 feedback
                 Button(action: submit) {
@@ -64,11 +66,13 @@ struct GradeCrewAuthView: View {
                 .background(GradeCrewDesignTokens.Colors.primary, in: RoundedRectangle(cornerRadius: 12))
                 .opacity(canSubmit ? 1 : 0.55)
                 .disabled(!canSubmit)
+                .gcLayout("auth.submit", role: "tap")
                 modeLinks
             }
             .padding(.horizontal, 24)
             .padding(.top, 16)
             .padding(.bottom, 32)
+            .gcLayout("auth.content", role: "center")
             .frame(maxWidth: 460)
             .frame(maxWidth: .infinity)
         }
@@ -135,6 +139,7 @@ struct GradeCrewAuthView: View {
                 .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1))
                 .accessibilityLabel(label)
+                .gcLayout("auth.field.\(label)", role: "tap")
         }
         .foregroundStyle(GradeCrewDesignTokens.Colors.text)
     }
@@ -171,9 +176,12 @@ struct GradeCrewAuthView: View {
         VStack(spacing: 4) {
             if mode == .login {
                 Button("Passwort vergessen?") { changeMode(.reset) }
+                    .gcLayout("auth.link.reset", role: "tap")
                 Button("Konto erstellen") { changeMode(.register) }
+                    .gcLayout("auth.link.register", role: "tap")
             } else {
                 Button("Zurück zur Anmeldung") { changeMode(.login) }
+                    .gcLayout("auth.link.login", role: "tap")
             }
         }
         .font(.subheadline.weight(.medium))
@@ -257,3 +265,12 @@ private struct AuthLinkStyle: ButtonStyle {
             .opacity(configuration.isPressed ? 0.65 : 1)
     }
 }
+
+#if GRADECREW_LAYOUT_TESTS
+extension GradeCrewAuthView {
+    init(layoutTestMode: GradeCrewAuthInputPolicy.Mode, error: String? = nil, call: GradeCrewQuickRemyCall? = nil) {
+        self.init(animationStartedAt: .distantPast, loadError: error, call: call, onRetry: {})
+        _mode = State(initialValue: layoutTestMode)
+    }
+}
+#endif

@@ -23,7 +23,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  layout-check:
+    uses: ./.github/workflows/gradecrew-layout-check.yml
+
   build-and-upload:
+    needs: layout-check
     name: Build and upload GradeCrew
     runs-on: macos-26
     timeout-minutes: 45

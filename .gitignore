@@ -72,3 +72,10 @@ public/
 # Reproducible Teacher build outputs (the bridge JS remains a source resource).
 native/GradeCrewTeacher/GradeCrewTeacher.xcodeproj/
 native/GradeCrewTeacher/Resources/Assets.xcassets/
+
+# Isolated layout-check host and generated offline fixture bundle.
+native/GradeCrewTeacher/GradeCrewLayoutChecks.xcodeproj/
+native/GradeCrewTeacher/LayoutTests/GeneratedWeb/
+
+# Python caches are never source evidence.
+__pycache__/

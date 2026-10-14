@@ -12,6 +12,9 @@
   const english = () => document.documentElement.lang.toLowerCase().startsWith('en');
   const css = `
 #editorView .questionCard[data-gc-native-question] { padding:14px; min-width:0; }
+#editorView .questionCard[data-gc-native-question] button { min-width:44px !important; min-height:44px !important; height:auto !important; }
+#editorView .questionCard[data-gc-native-question] select { min-height:44px !important; height:44px !important; box-sizing:border-box; }
+#editorView .questionCard[data-gc-native-question] summary { min-height:44px !important; height:auto !important; box-sizing:border-box; }
 #editorView .questionCard[data-gc-native-question] .questionTop { margin-bottom:10px; padding-bottom:10px; }
 #editorView .questionCard[data-gc-native-question] .questionGrid {
   display:grid; grid-template-columns:minmax(0,1fr) 84px !important; gap:10px; align-items:end;
@@ -22,7 +25,10 @@
 #editorView .questionCard[data-gc-native-question] :is(.qType,.qPoints) { min-height:44px; width:100%; padding:9px 10px; }
 #editorView .questionCard[data-gc-native-question] .qText { min-height:74px; line-height:1.45; }
 #editorView .questionCard[data-gc-native-question] > .answerEditor { margin-top:10px; padding-top:10px; }
-#editorView .questionCard[data-gc-native-question] .optionRow { grid-template-columns:26px minmax(0,1fr) 32px; gap:6px; }
+#editorView .questionCard[data-gc-native-question] .optionRow { grid-template-columns:44px minmax(0,1fr) 44px; gap:6px; }
+#editorView .questionCard[data-gc-native-question] label:has(> input[type="checkbox"]), #editorView .questionCard[data-gc-native-question] label:has(> input[type="radio"]) { min-width:44px; min-height:44px; box-sizing:border-box; }
+#editorView .questionCard[data-gc-native-question] .gcNativeChoiceTarget { display:flex; align-items:center; justify-content:center; width:44px; height:44px; margin:0; padding:0; }
+#editorView .questionCard[data-gc-native-question] .gcNativeChoiceTarget > input { margin:0; }
 #editorView .questionCard[data-gc-native-question] .optionRow > input:not([type=radio]):not([type=checkbox]) { min-height:44px; font-size:16px; min-width:0; }
 #editorView .questionCard[data-gc-native-question] > .gcNativeQuestionMedia { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; margin-top:12px; }
 #editorView .questionCard[data-gc-native-question] .gcNativeMediaDisclosure { min-width:0; border:1px solid var(--line,#dfe5ec); border-radius:10px; background:var(--card,#fff); }
@@ -40,6 +46,11 @@
 #editorView .questionCard[data-gc-native-question] .gcNativeMediaDisclosure > :is(.questionImageEditor,.questionAudioEditor) { margin:0; padding:0 10px 10px; min-width:0; }
 #editorView .questionCard[data-gc-native-question] .gcNativeMediaDisclosure > .questionImageEditor > .imageEditorTitle { display:none; }
 #editorView .questionCard[data-gc-native-question] .gcNativeMediaDisclosure audio { max-width:100%; }
+@media(max-width:360px) {
+  #editorView .questionCard[data-gc-native-question] .questionGrid > label { grid-column:1 / -1; }
+  #editorView .questionCard[data-gc-native-question] .questionGrid > .pointsLabel { display:flex; flex-direction:row; align-items:center; gap:10px; }
+  #editorView .questionCard[data-gc-native-question] .questionGrid > .pointsLabel > .qPoints { width:84px; }
+}
 `;
 
   function shape(card) {
@@ -120,6 +131,12 @@
       wrapper.append(disclosure(image, 'image', key), disclosure(audio, 'audio', key));
     }
     if (answer.nextElementSibling !== wrapper) answer.after(wrapper);
+    // Enlarge the real answer control's hit region without cloning or replacing it.
+    for (const input of card.querySelectorAll('.optionRow > input[type="checkbox"], .optionRow > input[type="radio"]')) {
+      if (input.labels?.length) continue;
+      const label = document.createElement('label'); label.className = 'gcNativeChoiceTarget';
+      input.before(label); label.append(input);
+    }
     card.setAttribute('data-gc-native-question', '');
     labels(image, 'image'); labels(audio, 'audio');
   }

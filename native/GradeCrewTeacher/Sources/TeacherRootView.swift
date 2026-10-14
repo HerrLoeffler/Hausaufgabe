@@ -185,67 +185,29 @@ struct TeacherRootView: View {
     }
 
     private var homeMenuScreen: some View {
-        ScrollView {
-            VStack(spacing: GradeCrewDesignTokens.Spacing.xxl) {
-                VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                    GradeCrewBrandSignature(animationStartedAt: brandAnimationStartedAt)
-                    Text("Was möchtest du tun?")
-                        .font(.system(size: GradeCrewDesignTokens.Typography.pageTitle, weight: .semibold, design: .rounded))
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                    accountStatus
-                }
-                .padding(.top, GradeCrewDesignTokens.Spacing.xxl)
-
-                HStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-                    actionCard(
-                        title: "Keine Zeit?",
-                        subtitle: "Sag mir kurz, welchen Test du brauchst.",
-                        symbol: "mic.fill",
-                        illustration: GradeCrewAssets.NativeImage.remyMicrophoneForward,
-                        tint: GradeCrewDesignTokens.Colors.crewRust,
-                        action: openRemy
-                    )
-                    actionCard(
-                        title: "GradeCrew öffnen",
-                        subtitle: "Tests ansehen und bearbeiten",
-                        symbol: "graduationcap.fill",
-                        illustration: GradeCrewAssets.NativeImage.brandIcon,
-                        tint: GradeCrewDesignTokens.Colors.primary,
-                        action: openWorkspace
-                    )
-                }
-                .frame(maxWidth: 760)
-                .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-
-                if let auditMessage {
-                    Text(auditMessage)
-                        .font(.footnote)
-                        .foregroundStyle(auditNeedsReview ? GradeCrewDesignTokens.Colors.danger : GradeCrewDesignTokens.Colors.muted)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: 480)
-                        .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-                }
-                if workspaceOpening { ProgressView("Deine Tests werden geöffnet …").font(.footnote) }
-                if let loadError { connectionError(loadError) }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, GradeCrewDesignTokens.Spacing.xxl)
+        GradeCrewHomeMenuView(
+            animationStartedAt: brandAnimationStartedAt,
+            accountLabel: accountLabel,
+            isAuthRestored: isAuthRestored,
+            workspaceOpening: workspaceOpening,
+            auditMessage: auditMessage,
+            auditNeedsReview: auditNeedsReview,
+            openRemy: openRemy,
+            openWorkspace: openWorkspace
+        ) {
+            if let loadError { connectionError(loadError) }
         }
-        .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
+    }
+
+    private var accountLabel: String {
+        if case let .signedIn(label, _) = authState { return label }
+        return ""
     }
 
     private var authRestoringScreen: some View {
-        VStack(spacing: GradeCrewDesignTokens.Spacing.lg) {
-            GradeCrewBrandSignature(animationStartedAt: brandAnimationStartedAt)
-            ProgressView("Anmeldung wird wiederhergestellt …")
-                .tint(GradeCrewDesignTokens.Colors.primary)
-                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                .accessibilityLabel("Gespeicherte GradeCrew-Anmeldung wird geprüft")
+        GradeCrewAuthRestoringView(animationStartedAt: brandAnimationStartedAt) {
             if let loadError { connectionError(loadError) }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(GradeCrewDesignTokens.Spacing.xl)
-        .background(GradeCrewDesignTokens.Colors.background.ignoresSafeArea())
     }
 
     private func connectionError(_ message: String) -> some View {
@@ -263,60 +225,6 @@ struct TeacherRootView: View {
         .frame(maxWidth: 520)
         .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.card))
         .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-    }
-
-    @ViewBuilder
-    private var accountStatus: some View {
-        switch authState {
-        case let .signedIn(accountLabel, _):
-            Label(accountLabel, systemImage: "person.crop.circle.fill")
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                .accessibilityLabel("Angemeldet als \(accountLabel)")
-        case .checking, .signedOut:
-            EmptyView()
-        }
-    }
-
-    private func actionCard(title: String, subtitle: String, symbol: String, illustration: String? = nil, tint: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: GradeCrewDesignTokens.Spacing.md) {
-                if let illustration {
-                    Image(illustration)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 104, height: 78)
-                        .accessibilityHidden(true)
-                    .frame(height: 78)
-                } else {
-                    Image(systemName: symbol)
-                        .font(.system(size: 30, weight: .semibold))
-                        .foregroundStyle(tint)
-                        .frame(height: 78)
-                }
-                Text(title)
-                    .font(.system(size: GradeCrewDesignTokens.Typography.cardTitle, weight: .semibold))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.text)
-                    .multilineTextAlignment(.center)
-                Text(subtitle)
-                    .font(.system(size: GradeCrewDesignTokens.Typography.body))
-                    .foregroundStyle(GradeCrewDesignTokens.Colors.muted)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, minHeight: 196)
-            .padding(GradeCrewDesignTokens.Spacing.lg)
-            .background(GradeCrewDesignTokens.Colors.surface, in: RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.largeCard))
-            .overlay {
-                RoundedRectangle(cornerRadius: GradeCrewDesignTokens.Radius.largeCard)
-                    .stroke(GradeCrewDesignTokens.Colors.border, lineWidth: 1)
-            }
-        }
-        .buttonStyle(.plain)
-        .disabled(!isAuthRestored || workspaceOpening)
-        .opacity(isAuthRestored ? 1 : 0.55)
-        .accessibilityHint(isAuthRestored ? subtitle : "Aktionen verfügbar, sobald die Anmeldung geprüft wurde.")
     }
 
     private func receiveAuthState(_ newState: GradeCrewNativeBridgePolicy.AuthState) {

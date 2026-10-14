@@ -48,3 +48,21 @@ node --test native/GradeCrewTeacher/test_native_bridge_js.cjs
 ```
 
 `GradeCrew Native Checks` prüft den isolierten Kandidaten ohne Signing/Upload. Der bestehende TestFlight-Workflow bleibt eine eigene Release-Stufe. Keine neue Firebase-Apple-SDK-Anmeldung oder native Kopie des Editors ist hierfür nötig.
+
+## Adaptive Layout-Prüfung
+
+```bash
+python3 native/GradeCrewTeacher/prepare_testflight_assets.py
+python3 native/GradeCrewTeacher/LayoutTests/verify_integration_source.py
+python3 native/GradeCrewTeacher/LayoutTests/run_layout_checks.py --output /private/tmp/gradecrew-layout-checks
+```
+
+Der letzte Befehl erzeugt einen eigenen unsignierten Testhost (`de.gradecrew.layoutchecks`) und führt die tatsächlichen SwiftUI-Ansichten sowie WebKit mit lokalen Testdaten auf einem iPhone- und einem iPad-Simulator aus. Das Ausgabeverzeichnis muss neu/leer sein. `summary.json` ist maschinenlesbar; `gallery.html` zeigt die Screenshots. Optional: `--family phone|tablet` und eine passende `--device-id`.
+
+Zwölf logische Inhaltsgrößen von 320 Punkten bis zum großen iPad, Querformat und schmale iPad-Fenster sind in `LayoutTests/layout-policy.json` festgelegt. Hinzu kommen große Bedienungsschrift, lange Namen/Fehlermeldungen, native Anmelde-/Registrierungs-/Reset-/Ladeansichten, Remy mit aufgeklappten Optionen sowie DE/EN, Lehrer-/Adminrollen und alle elf Aufgabentypen im eingebetteten Editor. Scrollbereiche werden tatsächlich besucht, damit auch verzögert erzeugte native Rasterzellen und untere Web-Bedienelemente geprüft werden.
+
+Die Regeln verlangen gemeinsame Mittelachsen für Logos/Hauptaktionen, gleich große parallele Startkarten, ausgeglichene Ränder, mindestens 44 Punkte für geprüfte Bedienflächen, vollständige Texte und Bilder sowie keine seitliche Überbreite oder gegenseitige Überdeckung. Formulartexte bleiben linksbündig. Vertikales Scrollen ist erlaubt. Coco erhält in der App einen Platz in der jeweiligen Überschrift statt Aufgaben zu verdecken; im normalen Browser bleibt die bestehende Darstellung erhalten.
+
+Der wiederverwendbare Workflow `GradeCrew Adaptive Layout Checks` ist eine Pflichtabhängigkeit vor dem TestFlight-Build und Upload. Fehlende Fälle/Bilder, Messfehler und ein fehlschlagender Xcode-Lauf verhindern Grün. Gezielte Gegenproben beweisen, dass Überbreite, Versatz, kleine Auswahlfelder und verdeckte Bedienelemente erkannt werden. Die real ausgelieferten Staging-Dateien werden vor CI gegen die geprüften Offline-Dateien gehasht; Abweichungen erfordern eine bewusste Aktualisierung der Testgrundlage.
+
+Die Fenstergrößen sind Layout-Simulationen auf beiden Gerätefamilien, keine Abnahme jedes Gerätemodells oder jeder iOS-Version. Mikrofon, Kamera, Systemtastatur, Autofill und Leistung brauchen weiterhin reale Gerätetests. Screenshots werden auch visuell geprüft; optische Qualität wird nicht allein durch einen grünen Geometrietest garantiert. Der Testhost liest keine echten Konten, fordert keine Geräteberechtigungen an, erzeugt keine echten Tests und kann nicht zu Production deployen.
