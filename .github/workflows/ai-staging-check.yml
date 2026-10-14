@@ -25,6 +25,7 @@ on:
       - 'fix/visual-backlog-*'
       - 'fix/gc-security-*'
       - 'fix/staging-feedback-*'
+      - 'feat/wissensreise-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
@@ -67,6 +68,9 @@ jobs:
 
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
+
+      - name: Wissensreise DOM contracts
+        run: node --test tools/ui/wissensreise.test.cjs
 
       - name: Practice solution publication tests
         run: node --test practice-solution-publication.test.mjs

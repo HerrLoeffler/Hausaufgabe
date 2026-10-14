@@ -1,0 +1,7 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wissensreise synthetische QA</title><link rel="stylesheet" href="/generated/gradecrew-design-tokens.css"><link rel="stylesheet" href="/learning/learning.css"></head><body><main class="learningPage"><p>Isolierte synthetische QA: echte Lernlogik, Mock für Quelltests und KI. Keine Firebase-/Provideraufrufe.</p><button id="advance">QA-Uhr 60s vorsetzen</button><div id="learningRoot"></div></main><script src="/assets/vendor/qrcodejs-1.0.0.min.js"></script><script type="module">
+import {createTeacher}from'/learning/ui.mjs';import{createPlayer}from'/learning/play.mjs';
+const call=async(name,data)=>{const response=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,data})});const result=await response.json();if(!response.ok)throw new Error(result.error);return result;};
+const root=document.querySelector('#learningRoot'),params=new URLSearchParams(location.search);let player;
+if(params.has('learn'))player=await createPlayer(root,{call,publicationId:params.get('learn'),development:params.has('dev'),onExit:()=>{location.href='/fixture/';}});else createTeacher(root,{call,shareBase:location.origin+'/fixture/',loadTests:async()=>(await fetch('/qa/sources')).json()});
+document.querySelector('#advance').onclick=async()=>{await fetch('/qa/advance',{method:'POST'});await player?.resume();};
+</script></body></html>

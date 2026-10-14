@@ -1,0 +1,30 @@
+const test = require('node:test'); const assert = require('node:assert/strict');
+test('public renderer reads shuffled indexes for matching, ordering, choice and gap without keys', async () => {
+  const { JSDOM } = require('jsdom'); const { renderTask } = await import('../../learning/play.mjs');
+  const document = new JSDOM('<main></main>').window.document, root = document.querySelector('main');
+  for (const task of [{ type: 'single', text: '?', options: ['A','B'] }, { type: 'matching', text: '?', left: ['Haus','laufen'], right: ['Verb','Nomen'] }, { type: 'ordering', text: '?', items: ['C','A','B'] }, { type: 'gapfill', text: 'Der Hund ___.', gapCount: 1 }]) {
+    const answer = renderTask(root, task); assert.ok(root.textContent.includes('?') || task.type === 'gapfill'); assert.equal(typeof answer, 'function'); assert.equal(root.querySelectorAll('button,input,select').length > 0, true);
+  }
+});
+test('countdown uses server offset and only timer ends a timed round', async () => {
+  const { remainingSeconds } = await import('../../learning/play.mjs');
+  assert.equal(remainingSeconds({ endsAt: 180000, serverNow: 0 }, 0, 3000),177);
+  assert.equal(remainingSeconds({ endsAt: null, serverNow: 0 },0,999999),null);
+  assert.equal(remainingSeconds({ endsAt: 180000, serverNow: 179999 },50,51),0);
+});
+test('saved owner-bound draft is recovered without duplicating an unknown generation',async()=>{
+ const{JSDOM}=require('jsdom');const{createTeacher}=await import('../../learning/ui.mjs');const dom=new JSDOM('<main></main>',{url:'http://localhost'});global.sessionStorage=dom.window.sessionStorage;sessionStorage.setItem('gc-learning-draft',JSON.stringify({draftId:'saved-draft',requestId:'pending-request'}));const calls=[];
+ createTeacher(dom.window.document.querySelector('main'),{shareBase:'http://localhost/learning.html',loadTests:async()=>[{id:'ABCD',title:'Eigener Test'}],call:async(name,data)=>{calls.push({name,data});return{id:'saved-draft',title:'Test',sourceId:'ABCD',duration:180,formats:['number'],items:[],excluded:[],requests:[{status:'running'}],status:'draft'};}});
+ await new Promise(r=>setTimeout(r,0));assert.deepEqual(calls.map(c=>c.name),['getLearningDraft']);assert.match(dom.window.document.querySelector('[role=status]').textContent,/läuft noch/);assert.equal(dom.window.document.querySelector('#learningSource').value,'ABCD');delete global.sessionStorage;
+});
+test('cancel remains usable while generation is in progress',async()=>{
+ const{JSDOM}=require('jsdom');const{createTeacher}=await import('../../learning/ui.mjs');const dom=new JSDOM('<main></main>',{url:'http://localhost'});global.sessionStorage=dom.window.sessionStorage;let resolveGenerate;const calls=[],draft={id:'draft-1234',sourceId:'ABCD',duration:0,formats:['number'],items:[],excluded:[],requests:[],status:'draft'};
+ createTeacher(dom.window.document.querySelector('main'),{shareBase:'http://localhost/learning.html',loadTests:async()=>[{id:'ABCD'}],call:async(name)=>{calls.push(name);if(name==='generateLearningBuffer')return new Promise(r=>resolveGenerate=r);return draft;}});await new Promise(r=>setTimeout(r,0));dom.window.document.querySelector('#learningSource').value='ABCD';dom.window.document.querySelector('form').dispatchEvent(new dom.window.Event('submit',{cancelable:true}));await new Promise(r=>setTimeout(r,0));[...dom.window.document.querySelectorAll('button')].find(b=>b.textContent==='Passende neue Varianten erzeugen').click();await new Promise(r=>setTimeout(r,0));const cancel=dom.window.document.querySelector('[data-cancel]');assert.equal(cancel.disabled,false);cancel.click();await new Promise(r=>setTimeout(r,0));assert.ok(calls.includes('cancelLearningVariant'));resolveGenerate(draft);await new Promise(r=>setTimeout(r,0));delete global.sessionStorage;
+});
+test('expired session offers a real new round and keeps its approved duration',async()=>{
+ const{JSDOM}=require('jsdom');const{createPlayer}=await import('../../learning/play.mjs');const dom=new JSDOM('<main></main>',{url:'http://localhost'}),storage=dom.window.localStorage;let calls=0;const player=await createPlayer(dom.window.document.querySelector('main'),{publicationId:'pub-1234',storage,call:async()=>{calls++;return{sessionId:'session-1234',token:'private',title:'Test',revision:'revision',index:0,serverNow:1000,endsAt:calls===1?0:181000,duration:180,ended:calls===1,task:calls===1?null:{id:'opaque',type:'number',text:'2+3?',unit:''}};}});
+ const restart=[...dom.window.document.querySelectorAll('button')].find(b=>b.textContent==='Neue Runde');assert.equal(restart.hidden,false);restart.click();await new Promise(r=>setTimeout(r,0));assert.equal(calls,2);assert.equal(restart.hidden,true);assert.equal(dom.window.document.querySelector('[role=timer]').textContent,'3:00');player.dispose();
+});
+test('teacher can inspect marking passage and named colors before approving a draft',async()=>{
+ const{JSDOM}=require('jsdom');const{createTeacher}=await import('../../learning/ui.mjs');const dom=new JSDOM('<main></main>',{url:'http://localhost'});global.sessionStorage=dom.window.sessionStorage;sessionStorage.setItem('gc-learning-draft',JSON.stringify({draftId:'mark-draft'}));createTeacher(dom.window.document.querySelector('main'),{shareBase:'http://localhost',loadTests:async()=>[{id:'MARK2'}],call:async()=>({id:'mark-draft',sourceId:'MARK2',duration:0,formats:['markwords'],requests:[],excluded:[],items:[{task:{text:'Markiere',tokens:[{text:'Der Hund läuft.'}],markGroups:[{name:'Nomen',color:'blue'},{name:'Verb',color:'orange'}]},solution:'Hund: Nomen; läuft: Verb'}]})});await new Promise(r=>setTimeout(r,0));const preview=dom.window.document.querySelector('.learningPreview').textContent;assert.match(preview,/Der Hund läuft/);assert.match(preview,/Nomen \(blau\)/);delete global.sessionStorage;
+});
