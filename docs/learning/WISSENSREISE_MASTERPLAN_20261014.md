@@ -1,8 +1,22 @@
+# Verbindlicher Umsetzungsstand vom14.10.2026
+
+Der Nutzer hat PlanPR237 genehmigt und den Eingang korrigiert: **immer ein eigener existierender oder mit Remy erzeugter Test, kein festes Thema**. Die folgende ursprüngliche ausführliche Architekturplanung bleibt als Verlauf erhalten. Dieser Absatz und die [Receipts](wissensreise-evidence-20261014/staging-7b35.json) bestimmen den ersten belegten Umsetzungsumfang; direkte Material-/OCR-Pipelines, zusätzliche Medien/Plattformen und weitergehende adaptive Lernpfade sind nicht automatisch fertig.
+
+Implementiert und isoliert auf Staging: Testauswahl → Geführtlernen/Freiüben → passende Ausgabeformate und optional0/120/180Sekunden → Generieren/Prüfen/Freigeben → Link/QR → dreistufige Hilfe, Pause/Resume und neue Runde. Quellenanzahl beendet eine Zeitrunde niemals. Elf zuverlässig geschlüsselte Textformate einschließlich vier benannter Markierungsfarben werden unterstützt; passende Konversionen z.B. Auswahl→Lücke erhalten das Lernziel. Unpassende Umformungen oder Medienabhängigkeiten blockieren sichtbar. Geführtes Lernen verwendet Anschauen, Unterstützung, selbständiges Bearbeiten und spätere Wiederholung; quellegebundene Erklärmetadaten werden geprüft, fehlende geprüfte Erklärungen ausdrücklich angezeigt. Keine Noten, Strafsperren, manuelle Antwortbewertung oder Kompetenzbehauptung.
+
+Generische ähnliche neue Beispiele nutzen die vorhandene Produktroute mit getrennter Quellenziel-/Schwierigkeits-/Schlüssel-/Metaprüfung. Eine zweite KI-Anfrage garantiert keine fachliche Richtigkeit. Höchstens drei Puffer mit je12Varianten pro Freigabe und bestehende Kontolimits; deduplizierte frühe Nachfüllung, keine bezahlte Anfrage pro Spielaufgabe. Rechenvarianten nur bei exakt erkanntem und kontrolliertem Schlüssel. Bei Quota, Ausfall oder Budgetende werden geprüfte Aufgaben offen als Wiederholung bisCountdown weiter angeboten. Keine Behauptung unendlich neuer Inhalte oder gemessener Lernwirkung.
+
+Draft-CodePR238 bleibt unmerged gegenGC39, Commit7b35f9ff23c5b824ca0e85402a5270751c0b06c5. ExakteCI38574847338 und unabhängige Code-/Browserprüfung bestanden. [Isolierte Vorschau](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html):12neueFunctionsACTIVE und170Payload-Hashes geprüft;43bestehendeFunctions, kanonisches Staging, Rules und Production unverändert. Echte Anmeldung mit eigenem Test, Providerqualität/Nachfüllung und physische Geräte bleiben Nutzer-/Umgebungsabnahme. **Dies ist keine vollständige Auslieferung aller ursprünglichen Masterplan-Ideen.**
+
+---
+
+> Verbindliche Korrektur 14.10.2026: eigener Test → Formate/Dauer → automatisch passende Übungen und fachlich ähnliche Varianten → Prüfen/Freigeben → Link/QR. Freies Lernen oder optional120/180Sekunden; allein Countdown beendet eine Zeitrunde. Zwei Quellfragen begrenzen niemals die Rundendauer. Mathe/Wortarten/Satzglieder unten sind synthetische QA, kein Themenpilot. Keine Noten, manuelle Antwortbewertung oder Strafsperren. Geprüfter Vorabpuffer + sichere Präsentationsvarianten, begrenzte Remyroute vor Veröffentlichung; bei fehlenden neuen Beispielen ehrliche Wiederholungsanzeige, kein KI-Aufruf pro Spielaufgabe.
+
 # GradeCrew Wissensreise – Masterplan zur Besprechung
 
-Stand: 14.10.2026 · Task **GC-LEARNING-WISSENSREISE-01** · **Vorschlag, keine genehmigte Bauvorgabe**.
+Stand: 14.10.2026 · Task **GC-LEARNING-WISSENSREISE-01** · **Genehmigte Umsetzung mit Nutzerkorrektur: testgetriebener generischer Lernmodus**.
 
-Beauftragt ist ausschließlich ein ausführlicher Plan. Produktcode, Builds, neue Provideraufrufe, Installationen, Integration und Deployments sind nicht beauftragt. Dieser Text beschreibt empfohlene Ziele; er behauptet keine fertige Lernplattform. Fakten sind im Bestandsabschnitt belegt, Vorschläge als Empfehlungen formuliert, menschliche Entscheidungen am Ende gesammelt.
+Der Nutzer hat die Umsetzung genehmigt. Eingang ist immer ein eigener existierender oder mit Remy erstellter Test; keine feste Themenwahl. Production bleibt ausgeschlossen, isolierte Stagingpreview erst nach unabhängiger Abnahme und exakter CI. Dieser Text beschreibt empfohlene Ziele; er behauptet keine fertige Lernplattform. Fakten sind im Bestandsabschnitt belegt, Vorschläge als Empfehlungen formuliert, menschliche Entscheidungen am Ende gesammelt.
 
 ## 1. Produktidee und Name
 

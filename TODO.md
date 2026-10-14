@@ -538,8 +538,9 @@ Private Hörtext is never auto-published. New fromTask preserves its already-pub
 
 Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-reconciliation-20261011.md and release-proof-20261011/ (component/canonical receipts, full assets, local alignment/CSS backup proofs, service equality, independent reviews, browser/HTTP smoke). Final STATE/TODO/registry update is documentation only; no new product release.
 
-## 14.10.2026 — Wissensreise: reiner Produktplan
 
-| ID | Aufgabe | Status | Baustelle / nächster Schritt |
+## Wissensreise aus eigenen Tests — GC-LEARNING-WISSENSREISE-01
+
+| Task | Ziel | Belegter Stand | Nächster Schritt |
 |---|---|---|---|
-| GC-LEARNING-WISSENSREISE-01 | Eigene Materialien und Tests in didaktische Lernwege ohne Benotung umwandeln | **Vorschlag zur Besprechung; branch_only/documentation** | Ausführlicher [Masterplan](docs/learning/WISSENSREISE_MASTERPLAN_20261014.md), eigener Docsbranch docs/wissensreise-plan-20261014 und [Übergabe](workstreams/wissensreise-plan-20261014.md). Gemeinsamer Inhaltskern mit getrennten Test-/Test-Rallye-/Wissensreise-Regeln empfohlen; keine manuelle Antwortbewertung. Kein Produktcode, Build, Providerstart, Integration oder Deploy. Nächster Schritt: Name, Pilotziel, Owner und Startumfang besprechen. PR235/236 und vorhandener Release Train unverändert. |
+| GC-LEARNING-WISSENSREISE-01 | Eigener Test oder Remy-Test → passende Übungen und ähnliche Varianten ohne Noten/manuelle Bewertung | **Isolierte Staging-Vorschau**, kein kanonisches Gesamtstaging: [DraftPR238](https://github.com/HerrLoeffler/Hausaufgabe/pull/238), Commit7b35f9ff; exakte Node22-CI38574847338, unabhängiger Code-/Browserreview. Hosting170/170Hashes,12neueFunctionsACTIVE,43bestehende unverändert. Geführtlernen/Freiüben,0/120/180s, serverseitige Schlüssel, höchstens3×12Puffer und ehrliche Wiederholung bisCountdown. [Plan](docs/learning/WISSENSREISE_MASTERPLAN_20261014.md), [Übergabe](workstreams/wissensreise-plan-20261014.md), [Receipt](docs/learning/wissensreise-evidence-20261014/staging-7b35.json). Production/Rules/Release Train unverändert. | Martin öffnet [Wissensreise](https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html), meldet sich über die Testseite an und wählt einen eigenen inaktiven Test. Angemeldeter Cloudablauf, Modellqualität, CloudTasks-Live-Nachfüllung, physische Geräte und Nutzerabnahme bleiben offen. |

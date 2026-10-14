@@ -1661,6 +1661,25 @@
       "model_quality": "not_observed_no_live_provider_calls",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
       "next_action": "qualified integration to existing app integration branch and Staging activation; physical/model quality acceptance separate"
+    },
+    {
+      "id": "learning-wissensreise-20261014",
+      "task_id": "GC-LEARNING-WISSENSREISE-01",
+      "branch": "feat/wissensreise-20261014",
+      "observed_head": "7b35f9ff23c5b824ca0e85402a5270751c0b06c5",
+      "stage": "staging_deployed",
+      "scope": "isolated_preview_only",
+      "pull_request": 238,
+      "integration": "PR238 open/draft/unmerged against feature/gradecrew-app-integration",
+      "ci": "success38574847338;exactNode22/functions285/DOM6/secureRulesEmulator/build170",
+      "staging": "12newFunctionsACTIVE;43existingunchanged;canonical8f869790unchanged",
+      "preview_url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app/learning.html",
+      "user_tested": false,
+      "provider_semantics": "unverified_no_paid_probe",
+      "production": "not_requested_unchanged",
+      "handoff": "workstreams/wissensreise-plan-20261014.md",
+      "receipt": "docs/learning/wissensreise-evidence-20261014/staging-7b35.json",
+      "next_action": "Martin signs in through isolated index.html and chooses own inactive saved test; actual cloud/model/device acceptance remains open"
     }
   ],
   "deployments": [

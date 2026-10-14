@@ -639,12 +639,14 @@
     },
     {
       "id": "learning-wissensreise-20261014",
-      "title": "GC-LEARNING-WISSENSREISE-01: Lernmodus aus eigenen Materialien und Tests – Plan",
-      "primaryBranch": "docs/wissensreise-plan-20261014",
-      "integrationTarget": "main",
+      "title": "GC-LEARNING-WISSENSREISE-01: Wissensreise aus eigenen Tests mit geführtem Lernen",
+      "primaryBranch": "feat/wissensreise-20261014",
+      "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "handoff": "workstreams/wissensreise-plan-20261014.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "docs/wissensreise-plan-20261014"
+      ]
     }
   ]
 }
